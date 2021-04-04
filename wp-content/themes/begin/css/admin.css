@@ -1,0 +1,71 @@
+[id*="ajax_text"] h3:before, 
+[id*="zmtabs"] h3:before, 
+[id*="mday_post"] h3:before, 
+[id*="author_widget"] h3:before, 
+[id*="about"] h3:before, 
+[id*="feed"] h3:before, 
+[id*="img_cat"] h3:before, 
+[id*="timing_post"] h3:before, 
+[id*="same_post"] h3:before, 
+[id*="php_text"] h3:before, 
+[id*="like_most"] h3:before, 
+[id*="slider_post"] h3:before, 
+[id*="advert"] h3:before, 
+[id*="wpzm-users_favorites"] h3:before, 
+[id*="specified_post"] h3:before,  
+[id*="wpzm-most_favorited_posts"] h3:before, 
+[id*="show_widget"] h3:before, 
+[id*="tao_widget"] h3:before, 
+[id*="img_widget"] h3:before, 
+[id*="video_widget"] h3:before, 
+[id*="new_cat"] h3:before, 
+[id*="updated_posts"] h3:before, 
+[id*="week_post"] h3:before, 
+[id*="hot_commend"] h3:before, 
+[id*="hot_comment"] h3:before, 
+[id*="hot_post_img"] h3:before, 
+[id*="cx_tag_cloud"] h3:before, 
+[id*="child_cat"] h3:before, 
+[id*="ajax_login"] h3:before, 
+[id*="pages_recent_comments"] h3:before, 
+[id*="related_post"] h3:before, 
+[id*="site_profile"] h3:before, 
+[id*="readers"] h3:before, 
+[id*="recent_comments"] h3:before, 
+[id*="random_post"] h3:before, 
+[id*="ajax_widget"] h3:before, 
+[id*="tag_post"] h3:before, 
+[id*="tree_menu"] h3:before, 
+[id*="widget_cat_icon"] h3:before, 
+[id*="widget_cover"] h3:before, 
+[id*="widget_tree_cat"] h3:before, 
+[id*="widget_notice"] h3:before, 
+[id*="widget_special"] h3:before, 
+[id*="recently_viewed"] h3:before, 
+[id*="widget_filter"] h3:before, 
+[id*="widget_color_cat"] h3:before, 
+[id*="special_list"] h3:before, 
+[id*="special_tag"] h3:before, 
+[id*="cat_popular"] h3:before, 
+[id*="widget_cat_tag"] h3:before, 
+[id*="bulletin_cat"] h3:before, 
+[id*="begin_comment_list"] h3:before, 
+[id*="begin_favorite_post_widget"] h3:before, 
+[id*="ids_post"] h3:before{
+	content: "\e600";
+	font-family: cx;
+	font-size: 16px !important;
+	color: #0073aa;
+	font-weight: normal;
+	vertical-align: middle;
+	margin: 0 8px 0 0;
+}
+
+#menu-appearance .menu-icon:before {
+	content: "\e600";
+	font-family: cx;
+	font-size: 15px !important;
+	font-weight: normal;
+	line-height: 23px;
+	vertical-align: middle;
+}

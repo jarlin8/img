@@ -1,0 +1,32 @@
+@font-face {
+	font-family: "cx";
+	src: url('iconfont.eot?t=1602630874916');
+	src: url('iconfont.eot?t=1602630874916#iefix') format('embedded-opentype'),
+	url('iconfont.woff?t=1602630874916') format('woff'),
+	url('iconfont.ttf?t=1602630874916') format('truetype'),
+	url('iconfont.svg?t=1602630874916#cx') format('svg');
+}
+
+.cx {
+	font-family: "cx" !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.cx-haibao:before {
+	content: "\e623";
+}
+
+.cx-weixin:before {
+	content: "\e6bb";
+}
+
+.cx-alipay:before {
+	content: "\e61a";
+}
+
+.cx-begin:before {
+	content: "\e600";
+}

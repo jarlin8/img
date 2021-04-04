@@ -1,0 +1,1028 @@
+/*nGUTENBERG STYLES */
+@import url(../../includes/amalinkspro-fontello/css/amalinkspro-fontello.css);
+@import url(../../includes/amalinkspro-fontello/css/animation.css);
+.wp-block-amalinkspro-legacy-insert-imagelink-html a {
+  text-decoration: none;
+  color: transparent;
+  display: inline-block; }
+  .wp-block-amalinkspro-legacy-insert-imagelink-html a:hover {
+    text-decoration: none; }
+
+.wp-block-amalinkspro-legacy-insert-imagelink-html.aligncenter {
+  text-align: center; }
+
+.amalinkspro-clear {
+  clear: both; }
+
+/* CTA Buttons */
+.amalinkspro-cta-wrap {
+  display: block;
+  padding: 15px 0; }
+  .amalinkspro-cta-wrap.alignnone, .amalinkspro-cta-wrap.align-none {
+    padding: 15px 0; }
+  .amalinkspro-cta-wrap.aligncenter, .amalinkspro-cta-wrap.align-center {
+    text-align: center; }
+  .amalinkspro-cta-wrap.alignright, .amalinkspro-cta-wrap.align-right {
+    float: right;
+    margin-left: 20px; }
+  .amalinkspro-cta-wrap.alignleft, .amalinkspro-cta-wrap.align-left {
+    margin-right: 20px; }
+  .amalinkspro-cta-wrap .amalinkspro-cta-btn {
+    display: inline-block;
+    padding: 15px 30px;
+    width: auto;
+    text-align: center;
+    color: #fff;
+    font-size: 18px;
+    line-height: 1.2;
+    text-decoration: none;
+    text-shadow: none;
+    border: 1px solid #0073aa;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    background: #7db9e8;
+    background: -moz-linear-gradient(top, #7db9e8 6%, #1e5799 96%);
+    background: -webkit-linear-gradient(top, #7db9e8 6%, #1e5799 96%);
+    background: linear-gradient(to bottom, #7db9e8 6%, #1e5799 96%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7db9e8', endColorstr='#1e5799',GradientType=0 ); }
+    .amalinkspro-cta-wrap .amalinkspro-cta-btn:hover {
+      box-shadow: none;
+      color: #fff;
+      text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4);
+      background: #1e5799;
+      background: -moz-linear-gradient(top, #1e5799 2%, #1e5799 4%, #7db9e8 97%, #7db9e8 97%);
+      background: -webkit-linear-gradient(top, #1e5799 2%, #1e5799 4%, #7db9e8 97%, #7db9e8 97%);
+      background: linear-gradient(to bottom, #1e5799 2%, #1e5799 4%, #7db9e8 97%, #7db9e8 97%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=0 );
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden; }
+  .amalinkspro-cta-wrap.amalinkspro-center {
+    text-align: center; }
+  .amalinkspro-cta-wrap.amalinkspro-left {
+    text-align: left; }
+  .amalinkspro-cta-wrap.amalinkspro-right {
+    text-align: right; }
+  .amalinkspro-cta-wrap.amalinkspro-cta-button-plain-small a {
+    display: inline-block;
+    padding: 10px 30px;
+    text-align: center;
+    text-decoration: none;
+    border-color: 1px solid #000;
+    background: #000;
+    color: #fff;
+    border-radius: 360px;
+    transition: all 200ms; }
+  .amalinkspro-cta-wrap.amalinkspro-cta-button-plain-small.amalinkspro-red a {
+    background: #ff0000;
+    color: #fff;
+    border-color: 440000; }
+    .amalinkspro-cta-wrap.amalinkspro-cta-button-plain-small.amalinkspro-red a:hover {
+      background: #e60000; }
+  .amalinkspro-cta-wrap.amalinkspro-cta-button-plain-small.amalinkspro-green a {
+    background: #17c717;
+    color: #fff;
+    border-color: #00a000; }
+    .amalinkspro-cta-wrap.amalinkspro-cta-button-plain-small.amalinkspro-green a:hover {
+      background: #14b014; }
+
+.amalinkspro-showcase .amalinkspro-showcase-bottom-cta-link {
+  position: relative;
+  padding-right: 100px; }
+
+.alp-prime-eligible-tag {
+  display: inline-block;
+  background: rgba(50, 50, 50, 0.03);
+  padding: 10px;
+  width: auto;
+  border-radius: 6px;
+  transition: all 200ms;
+  text-align: center;
+  vertical-align: middle;
+  margin-left: 10px;
+  margin-right: 10px; }
+  .alp-prime-eligible-tag.not-eligible {
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 0;
+    position: relative;
+    border: 6px solid #dedede;
+    margin: 0; }
+    .alp-prime-eligible-tag.not-eligible:after {
+      content: '';
+      height: 6px;
+      width: 48px;
+      background: rgba(0, 0, 0, 0.1);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg); }
+    .alp-prime-eligible-tag.not-eligible .alp-prime-eligible-tag-top {
+      color: #d6d6d6;
+      font-style: normal;
+      font-size: 12px;
+      line-height: 48px;
+      margin: 0;
+      width: 48px; }
+  .alp-prime-eligible-tag:hover {
+    background: #fff;
+    background: rgba(200, 200, 200, 0.03); }
+  .alp-prime-eligible-tag-top {
+    font-size: 16px;
+    line-height: 16px;
+    font-weight: bold;
+    font-style: italic;
+    color: #3aa7f9;
+    display: block;
+    width: 55px;
+    text-transform: uppercase;
+    font-family: 'Helvetica', sand-serif; }
+  .alp-prime-eligible-tag-bottom {
+    font-size: 13px;
+    letter-spacing: 1px;
+    line-height: 13px;
+    font-weight: 100;
+    font-style: normal;
+    color: #333;
+    width: 55px;
+    display: block;
+    font-family: 'Helvetica', sand-serif;
+    text-transform: lowercase; }
+  .amalinkspro-showcase .amalinkspro-showcase-stats-col-info .alp-prime-eligible-tag {
+    width: auto;
+    max-width: 100%;
+    margin: 0 0 20px 0; }
+    .amalinkspro-showcase .amalinkspro-showcase-stats-col-info .alp-prime-eligible-tag-top {
+      display: inline-block;
+      width: auto;
+      margin-right: 10px;
+      font-size: 20px;
+      line-height: 20px; }
+    .amalinkspro-showcase .amalinkspro-showcase-stats-col-info .alp-prime-eligible-tag-bottom {
+      width: auto;
+      display: inline-block;
+      font-size: 16px;
+      line-height: 16px; }
+  .amalinkspro-showcase .amalinkspro-showcase-bottom-cta-link .alp-prime-eligible-tag {
+    padding: 0;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 5px;
+    position: absolute;
+    top: 50%;
+    left: -73px;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: none;
+    width: auto;
+    text-align: center; }
+    .amalinkspro-showcase .amalinkspro-showcase-bottom-cta-link .alp-prime-eligible-tag-top {
+      width: 50px;
+      margin-right: 10px;
+      font-size: 14px;
+      line-height: 14px; }
+    .amalinkspro-showcase .amalinkspro-showcase-bottom-cta-link .alp-prime-eligible-tag-bottom {
+      width: 50px;
+      font-size: 12px;
+      line-height: 12px; }
+    .amalinkspro-showcase .amalinkspro-showcase-bottom-cta-link .alp-prime-eligible-tag:hover {
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: none; }
+
+.amalinkspro-text-link.amalinkspro-addtocart {
+  position: relative; }
+  .amalinkspro-text-link.amalinkspro-addtocart .amalinkspro-hidden-addtocartform {
+    position: absolute;
+    top: -35px;
+    right: -50px;
+    transform: translateX(-50%);
+    z-index: 1; }
+  .amalinkspro-text-link.amalinkspro-addtocart:hover .amalinkspro-hidden-addtocartform {
+    display: inline-block; }
+
+.amalinkspro-hidden-addtocartform {
+  background: #fff;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  height: 46px;
+  display: none; }
+  .amalinkspro-hidden-addtocartform input[type=image] {
+    cursor: pointer; }
+
+.amalinkspro-showcase-preview {
+  background: #fff; }
+  .amalinkspro-showcase-preview .alp-showcase-img-wrap {
+    position: relative; }
+    .amalinkspro-showcase-preview .alp-showcase-img-wrap img {
+      z-index: 0; }
+    .amalinkspro-showcase-preview .alp-showcase-img-wrap i {
+      position: absolute;
+      font-size: 14px;
+      line-height: 24px;
+      z-index: 1;
+      cursor: pointer; }
+      .amalinkspro-showcase-preview .alp-showcase-img-wrap i.icon-amalinkspro-edit {
+        top: 5px;
+        right: 50%;
+        color: #999;
+        background: #fff;
+        height: 24px;
+        width: 23px;
+        border-radius: 12px;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        margin-right: 3px; }
+        .amalinkspro-showcase-preview .alp-showcase-img-wrap i.icon-amalinkspro-edit:before {
+          margin: 0; }
+        .amalinkspro-showcase-preview .alp-showcase-img-wrap i.icon-amalinkspro-edit:hover {
+          color: #333;
+          box-shadow: 0 0 6px rgba(0, 0, 0, 0.4); }
+      .amalinkspro-showcase-preview .alp-showcase-img-wrap i.icon-amalinkspro-eye, .amalinkspro-showcase-preview .alp-showcase-img-wrap i.icon-amalinkspro-eye-off {
+        top: 5px;
+        left: 50%;
+        color: #999;
+        background: #fff;
+        height: 24px;
+        width: 23px;
+        border-radius: 12px;
+        font-size: 14px;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        margin-left: 3px; }
+        .amalinkspro-showcase-preview .alp-showcase-img-wrap i.icon-amalinkspro-eye:hover, .amalinkspro-showcase-preview .alp-showcase-img-wrap i.icon-amalinkspro-eye-off:hover {
+          color: #333;
+          box-shadow: 0 0 6px rgba(0, 0, 0, 0.4); }
+  .amalinkspro-showcase-preview.not-selected:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.8); }
+  .amalinkspro-showcase-preview.not-selected .alp-showcase-functions-edit {
+    display: none; }
+  .amalinkspro-showcase-preview .alp-showcase-functions {
+    position: absolute;
+    top: 10px;
+    bottom: 10px;
+    background: #f9f9f9;
+    right: -91px;
+    z-index: 1;
+    padding: 10px; }
+    .amalinkspro-showcase-preview .alp-showcase-functions span {
+      display: block;
+      width: 50px;
+      text-align: center;
+      height: 20px;
+      padding: 10px;
+      background: #dedede;
+      margin: 0 0 10px 0;
+      cursor: pointer;
+      transition: all 200ms; }
+      .amalinkspro-showcase-preview .alp-showcase-functions span:hover {
+        background: #999999;
+        color: #fff; }
+      .amalinkspro-showcase-preview .alp-showcase-functions span.alp-showcase-functions-note {
+        background: none;
+        font-size: 12px;
+        line-height: 14px;
+        color: #000; }
+        .amalinkspro-showcase-preview .alp-showcase-functions span.alp-showcase-functions-note:hover {
+          background: none;
+          color: #000; }
+
+.amalinkspro-showcase {
+  padding: 15px;
+  background: #fff;
+  border: 1px solid #dedede;
+  margin: 0;
+  border-radius: 3px;
+  position: relative;
+  overflow: visible !important;
+  margin-bottom: 60px !important;
+  max-width: 1000px;
+  width: 100%;
+  opacity: 1;
+  transform: translateY(20px); }
+  .amalinkspro-showcase.on-display {
+    opacity: 1;
+    transform: translateX(0px) translateY(0) translateZ(0px);
+    transition: opacity 500ms cubic-bezier(0.55, 0.085, 0.68, 0.53), transform 500ms cubic-bezier(0.55, 0.085, 0.68, 0.53); }
+  .amalinkspro-showcase.amalinkspro-align-left {
+    margin-right: auto; }
+  .amalinkspro-showcase.amalinkspro-align-center {
+    margin-right: auto;
+    margin-left: auto; }
+  .amalinkspro-showcase.amalinkspro-align-right {
+    margin-left: auto; }
+  .amalinkspro-showcase .alp-prices-accuracy {
+    margin: 15px 0 0 0;
+    font-size: 14px;
+    line-height: 18px;
+    font-style: italic;
+    opacity: 0.7; }
+  .amalinkspro-showcase .amalinkspro-showcase-previewlink {
+    position: relative;
+    padding: 55px;
+    color: #ff9900;
+    transition: all 200ms;
+    text-decoration: none;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 18px;
+    display: block;
+    background: #fff;
+    padding: 10px 10px 10px 55px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: none; }
+    .amalinkspro-showcase .amalinkspro-showcase-previewlink.alp-showcase-header {
+      margin: 20px; }
+    .amalinkspro-showcase .amalinkspro-showcase-previewlink.alp-showcase-body {
+      background: #333;
+      color: #fff; }
+      .amalinkspro-showcase .amalinkspro-showcase-previewlink.alp-showcase-body:hover {
+        background: #222; }
+    .amalinkspro-showcase .amalinkspro-showcase-previewlink i.icon-amalinkspro-link-icon {
+      margin-right: 5px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 45px;
+      line-height: 1;
+      text-align: center;
+      background: #ff9900;
+      color: #fff;
+      font-size: 30px;
+      border-radius: 6px 0 0 6px;
+      transition: all 200ms;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); }
+      .amalinkspro-showcase .amalinkspro-showcase-previewlink i.icon-amalinkspro-link-icon:before {
+        top: 50%;
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0; }
+    .amalinkspro-showcase .amalinkspro-showcase-previewlink:hover {
+      color: #e28800;
+      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4); }
+      .amalinkspro-showcase .amalinkspro-showcase-previewlink:hover i.icon-amalinkspro-link-icon {
+        background: #e28800;
+        text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.3); }
+  .amalinkspro-showcase h2, .amalinkspro-showcase h2:first-child {
+    background: #4c4c4c;
+    margin: -15px -15px 15px;
+    color: #fff;
+    padding: 15px;
+    font-size: 24px;
+    line-height: 26px; }
+    .amalinkspro-showcase h2 .alp-showcase-title, .amalinkspro-showcase h2:first-child .alp-showcase-title {
+      display: block; }
+    .amalinkspro-showcase h2 input[type=text].alp-showcase-spec-val-editable-textarea, .amalinkspro-showcase h2:first-child input[type=text].alp-showcase-spec-val-editable-textarea {
+      margin: 15px;
+      font-size: 18px;
+      line-height: 22px;
+      float: left;
+      display: block;
+      width: 50%; }
+    .amalinkspro-showcase h2 a input[type=text].alp-showcase-amalink-editable, .amalinkspro-showcase h2:first-child a input[type=text].alp-showcase-amalink-editable {
+      margin: 0;
+      font-size: 14px;
+      line-height: 18px;
+      float: none;
+      padding: 2px;
+      height: 20px;
+      display: inline-block;
+      width: 129px; }
+  .amalinkspro-showcase span.alp-showcase-1-title-col,
+  .amalinkspro-showcase span.alp-showcase-2-title-col,
+  .amalinkspro-showcase span.alp-showcase-3-title-col {
+    float: right;
+    max-width: 50%; }
+  .amalinkspro-showcase .alp-showcase-1-title-col,
+  .amalinkspro-showcase .alp-showcase-2-title-col,
+  .amalinkspro-showcase .alp-showcase-3-title-col {
+    position: relative;
+    display: block; }
+  .amalinkspro-showcase .alp-showcase-img-wrap {
+    float: right;
+    margin: 0; }
+    .amalinkspro-showcase .alp-showcase-img-wrap img.amalinkspro-showcase-main-img {
+      max-width: 110px;
+      height: auto;
+      display: block; }
+  .amalinkspro-showcase-stats-col {
+    width: 100%; }
+    @media only screen and (min-width: 820px) {
+      .amalinkspro-showcase-stats-col {
+        width: calc( 50% - 65px);
+        float: left; } }
+  .amalinkspro-showcase ul {
+    margin: 0 10px 0 0;
+    list-style-type: none; }
+    .amalinkspro-showcase ul li {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+      line-height: 22px;
+      cursor: default; }
+      .amalinkspro-showcase ul li span {
+        font-size: 16px;
+        line-height: 140%; }
+      .amalinkspro-showcase ul li strong {
+        color: #979797;
+        font-size: 16px; }
+      .amalinkspro-showcase ul li .amalinkspro-license-loading-gif {
+        margin: 0;
+        width: 12px;
+        height: auto;
+        display: inline; }
+      .amalinkspro-showcase ul li .icon-amalinkspro-edit {
+        cursor: pointer;
+        color: #b7d8ad; }
+      .amalinkspro-showcase ul li .icon-amalinkspro-eye {
+        cursor: pointer;
+        color: #add8d7; }
+      .amalinkspro-showcase ul li .icon-amalinkspro-eye-off {
+        cursor: pointer;
+        color: #f95353; }
+  .amalinkspro-showcase input[type=text].alp-showcase-spec-val-editable {
+    height: 16px;
+    padding: 2px;
+    display: inline-block;
+    width: auto;
+    font-size: 12px; }
+  .amalinkspro-showcase.not-selected:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.8); }
+  .amalinkspro-showcase.not-selected .alp-showcase-functions-note {
+    opacity: 0.4; }
+  .amalinkspro-showcase.amalinkspro-showcase-1 .amalinkspro-showcase-previewlink {
+    margin: 20px; }
+    .amalinkspro-showcase.amalinkspro-showcase-1 .amalinkspro-showcase-previewlink > span {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      font-weight: 600;
+      width: calc( 100% - 70px); }
+  .amalinkspro-showcase.amalinkspro-showcase-1 .alp-showcase-img-wrap {
+    float: right; }
+  .amalinkspro-showcase.amalinkspro-showcase-1 span.alp-showcase-1-title-col {
+    padding: 0; }
+  .amalinkspro-showcase.amalinkspro-showcase-2 {
+    max-width: 500px; }
+    .amalinkspro-showcase.amalinkspro-showcase-2 .amalinkspro-showcase-stats-col {
+      width: 100%;
+      float: none; }
+      .amalinkspro-showcase.amalinkspro-showcase-2 .amalinkspro-showcase-stats-col li {
+        padding: 10px;
+        margin: 0; }
+        .amalinkspro-showcase.amalinkspro-showcase-2 .amalinkspro-showcase-stats-col li:nth-child(even) {
+          background: #f9f9f9;
+          /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f1f1f1+0,f1f1f1+100&0+0,1+100 */
+          background: -moz-linear-gradient(left, rgba(241, 241, 241, 0) 0%, #f1f1f1 100%);
+          /* FF3.6-15 */
+          background: -webkit-linear-gradient(left, rgba(241, 241, 241, 0) 0%, #f1f1f1 100%);
+          /* Chrome10-25,Safari5.1-6 */
+          background: linear-gradient(to right, rgba(241, 241, 241, 0) 0%, #f1f1f1 100%);
+          /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+          filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00f1f1f1', endColorstr='#f1f1f1',GradientType=1 );
+          /* IE6-9 */ }
+    .amalinkspro-showcase.amalinkspro-showcase-2 .amalinkspro-showcase-previewlink.alp-showcase-body {
+      margin: 20px 0 0 0;
+      padding: 20px 10px 20px 55px;
+      text-align: center;
+      font-size: 18px;
+      top: inherit;
+      transform: none;
+      display: block; }
+      .amalinkspro-showcase.amalinkspro-showcase-2 .amalinkspro-showcase-previewlink.alp-showcase-body i.icon-amalinkspro-link-icon {
+        width: 75px;
+        font-size: 30px; }
+    .amalinkspro-showcase.amalinkspro-showcase-2 .amalinkspro-showcase-2-img-col {
+      float: right;
+      padding: 15px; }
+      .amalinkspro-showcase.amalinkspro-showcase-2 .amalinkspro-showcase-2-img-col .amalinkspro-showcase-main-img {
+        float: left;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+        max-width: inherit; }
+      .amalinkspro-showcase.amalinkspro-showcase-2 .amalinkspro-showcase-2-img-col .alp-showcase-img-wrap {
+        float: right; }
+    .amalinkspro-showcase.amalinkspro-showcase-2 h2 input[type=text].alp-showcase-spec-val-editable-textarea {
+      float: left;
+      margin: 15px; }
+    .amalinkspro-showcase.amalinkspro-showcase-2 h2 img {
+      box-shadow: none; }
+    .amalinkspro-showcase.amalinkspro-showcase-2 h2 .amalinkspro-showcase-img-link {
+      display: block;
+      box-shadow: none; }
+      .amalinkspro-showcase.amalinkspro-showcase-2 h2 .amalinkspro-showcase-img-link:hover {
+        box-shadow: none; }
+      .amalinkspro-showcase.amalinkspro-showcase-2 h2 .amalinkspro-showcase-img-link img {
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.6); }
+  .amalinkspro-showcase.amalinkspro-showcase-3 .alp-showcase-3-images {
+    float: right;
+    width: 60%;
+    padding: 0 0 0 20px; }
+    .amalinkspro-showcase.amalinkspro-showcase-3 .alp-showcase-3-images .amalinkspro-chosen-item-previewlink {
+      top: inherit;
+      transform: none; }
+  .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink {
+    top: 50%;
+    transform: translateY(calc( -50% - 10px)); }
+    .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink.alp-showcase-body {
+      margin: 20px 0 0 0;
+      padding: 20px 10px 20px 55px;
+      text-align: center;
+      font-size: 18px;
+      top: inherit;
+      transform: none;
+      display: block; }
+      .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink.alp-showcase-body i.icon-amalinkspro-link {
+        width: 75px;
+        font-size: 30px; }
+  .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-showcase-stats-col {
+    width: 40%;
+    margin: 0; }
+    .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-showcase-stats-col li {
+      text-align: center;
+      position: relative;
+      margin-bottom: 10px; }
+      .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-showcase-stats-col li:nth-child(even) {
+        background: #f9f9f9;
+        padding: 10px;
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f1f1f1+0,f1f1f1+100&0+0,1+100 */
+        background: -moz-linear-gradient(left, rgba(241, 241, 241, 0) 0%, #f1f1f1 100%);
+        /* FF3.6-15 */
+        background: -webkit-linear-gradient(left, rgba(241, 241, 241, 0) 0%, #f1f1f1 100%);
+        /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to right, rgba(241, 241, 241, 0) 0%, #f1f1f1 100%);
+        /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00f1f1f1', endColorstr='#f1f1f1',GradientType=1 );
+        /* IE6-9 */ }
+      .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-showcase-stats-col li span .icon-amalinkspro-edit {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%); }
+      .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-showcase-stats-col li .label-wrap {
+        display: inline; }
+        .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-showcase-stats-col li .label-wrap i {
+          position: absolute;
+          left: 5px;
+          top: 50%;
+          transform: translateY(-50%); }
+      .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-showcase-stats-col li strong {
+        display: block; }
+  .amalinkspro-showcase.amalinkspro-showcase-3 .sortable-images {
+    margin: 0;
+    position: relative; }
+    .amalinkspro-showcase.amalinkspro-showcase-3 .sortable-images:after {
+      content: '';
+      height: 0;
+      display: block;
+      width: 100%;
+      clear: both;
+      margin: 0;
+      position: relative; }
+  .amalinkspro-showcase.amalinkspro-showcase-3 a .sortable-images li {
+    cursor: pointer; }
+  .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink.alp-showcase-body-images {
+    background: #fff;
+    padding: 0;
+    position: relative; }
+    .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink.alp-showcase-body-images:hover {
+      background: #fff; }
+    .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink.alp-showcase-body-images:focus {
+      box-shadow: none; }
+    .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink.alp-showcase-body-images .amalinkspro-showcase-main-img {
+      margin: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      display: inline-block;
+      padding: 0;
+      border: 5px solid #fff;
+      transition: all 200ms ease;
+      top: 0;
+      position: relative;
+      float: none;
+      box-shadow: none; }
+    .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink.alp-showcase-body-images .sortable-images.alp-showcase-stacked-imgs .alp-showcase-img-wrap {
+      width: 100%;
+      float: none; }
+    .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink.alp-showcase-body-images .alp-showcase-img-wrap {
+      display: block;
+      width: 50%;
+      float: left;
+      margin: 0;
+      text-align: center;
+      box-sizing: border-box;
+      padding: 0;
+      position: relative;
+      z-index: 1; }
+      .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink.alp-showcase-body-images .alp-showcase-img-wrap:nth-child(odd) {
+        clear: both; }
+      .amalinkspro-showcase.amalinkspro-showcase-3 .amalinkspro-chosen-item-previewlink.alp-showcase-body-images .alp-showcase-img-wrap:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 2; }
+  .amalinkspro-showcase.amalinkspro-showcase-auto {
+    min-height: 300px; }
+  .amalinkspro-showcase.amalinkspro-showcase-4, .amalinkspro-showcase.amalinkspro-showcase-auto {
+    padding: 30px;
+    box-sizing: border-box;
+    border: 1px solid #f3f3f3;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 90px !important;
+    max-width: 960px; }
+    .amalinkspro-showcase.amalinkspro-showcase-4 .alp-showcase-img-wrap, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-showcase-img-wrap {
+      float: none;
+      display: block;
+      overflow: hidden; }
+    .amalinkspro-showcase.amalinkspro-showcase-4.aligncenter, .amalinkspro-showcase.amalinkspro-showcase-4.align-center, .amalinkspro-showcase.amalinkspro-showcase-auto.aligncenter, .amalinkspro-showcase.amalinkspro-showcase-auto.align-center {
+      margin-left: auto;
+      margin-right: auto; }
+    .amalinkspro-showcase.amalinkspro-showcase-4.alignright, .amalinkspro-showcase.amalinkspro-showcase-4.align-right, .amalinkspro-showcase.amalinkspro-showcase-auto.alignright, .amalinkspro-showcase.amalinkspro-showcase-auto.align-right {
+      float: right;
+      margin-left: 20px; }
+    .amalinkspro-showcase.amalinkspro-showcase-4.alignleft, .amalinkspro-showcase.amalinkspro-showcase-4.align-left, .amalinkspro-showcase.amalinkspro-showcase-auto.alignleft, .amalinkspro-showcase.amalinkspro-showcase-auto.align-left {
+      margin-right: 20px; }
+    .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col {
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 1;
+      position: relative; }
+      .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img {
+        text-align: center;
+        overflow: hidden;
+        z-index: 2;
+        padding-bottom: 20px; }
+        @media only screen and (min-width: 820px) {
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img {
+            width: 45%;
+            float: right;
+            padding: 0 0 20px 25px; } }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img img, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img img {
+          float: none;
+          display: inline-block;
+          margin: 0 0 10px 0;
+          max-width: 100%; }
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img img.amalinkspro-chosen-product-main-img, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img img.amalinkspro-chosen-product-main-img {
+            max-width: 100%; }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img .alp-showcase-img-link, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img .alp-showcase-img-link {
+          display: block;
+          color: transparent;
+          text-decoration: none;
+          box-shadow: none;
+          border: none;
+          margin: 0;
+          padding: 0; }
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img .alp-showcase-img-link:hover, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img .alp-showcase-img-link:hover {
+            color: transparent;
+            text-decoration: none;
+            box-shadow: none; }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img .alp-amazon-api-star-rating, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img .alp-amazon-api-star-rating {
+          width: 300px;
+          height: 18px;
+          overflow: hidden;
+          position: relative;
+          margin: 15px auto; }
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img .alp-amazon-api-star-rating iframe, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img .alp-amazon-api-star-rating iframe {
+            position: absolute;
+            top: -98px;
+            left: -17px;
+            height: auto;
+            z-index: 1;
+            border: 0;
+            overflow: hidden;
+            max-width: 410px;
+            overflow: hidden;
+            width: 410px;
+            pointer-events: none;
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0 0 30px 0; }
+            @media only screen and (min-width: 820px) {
+              .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img .alp-amazon-api-star-rating iframe, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img .alp-amazon-api-star-rating iframe {
+                left: 0;
+                margin: 15px auto;
+                top: -113px;
+                transform: none; } }
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img .alp-amazon-api-star-rating a, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img .alp-amazon-api-star-rating a {
+            position: absolute;
+            left: -2px;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            background: transparent !important;
+            text-decoration: none !important;
+            box-shadow: none;
+            border: none;
+            box-shadow: none; }
+            .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-img .alp-amazon-api-star-rating a:hover, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-img .alp-amazon-api-star-rating a:hover {
+              box-shadow: none; }
+      .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info {
+        padding-top: 30px; }
+        @media only screen and (min-width: 820px) {
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info {
+            float: none;
+            padding-top: 0; } }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info a, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info a {
+          font-size: 18px;
+          line-height: 22px;
+          font-weight: bold;
+          margin-bottom: 30px;
+          display: block;
+          text-decoration: none;
+          box-shadow: none; }
+          @media only screen and (min-width: 820px) {
+            .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info a, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info a {
+              font-size: 24px;
+              line-height: 28px; } }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .amalinkspro-showcase-4-titlebox, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .amalinkspro-showcase-4-titlebox {
+          border: none;
+          clear: none; }
+          @media only screen and (min-width: 820px) {
+            .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .amalinkspro-showcase-4-titlebox, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .amalinkspro-showcase-4-titlebox {
+              text-align: left; } }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-features ul, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-features ul {
+          margin-bottom: 30px;
+          padding: 0 !important;
+          margin-left: 0 !important; }
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-features ul li, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-features ul li {
+            list-style-type: none;
+            padding: 0 0 0 28px;
+            background-image: url(../../includes/images/checkmark.png);
+            background-position: 0 -2px;
+            background-repeat: no-repeat;
+            font-size: 14px;
+            line-height: 18px;
+            margin: 0 0 10px 0;
+            background-size: 20px;
+            position: relative;
+            text-align: left; }
+            .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-features ul li i, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-features ul li i {
+              position: absolute;
+              left: -35px;
+              top: 0; }
+              .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-features ul li i.icon-amalinkspro-eye, .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-features ul li i.icon-amalinkspro-eye-off, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-features ul li i.icon-amalinkspro-eye, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-features ul li i.icon-amalinkspro-eye-off {
+                left: -56px; }
+            .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-features ul li:before, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-features ul li:before {
+              content: none !important;
+              display: none !important; }
+            .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-features ul li:before, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-features ul li:before {
+              content: none !important;
+              display: none !important; }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-reviews, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-reviews {
+          clear: both; }
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-reviews h2, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-reviews h2 {
+            margin: 30px 0 0;
+            position: relative;
+            background: #efecec;
+            color: #444;
+            font-size: 16px;
+            line-height: 22px;
+            cursor: pointer; }
+            @media only screen and (min-width: 820px) {
+              .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-reviews h2, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-reviews h2 {
+                font-size: 18px;
+                line-height: 22px; } }
+            .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-reviews h2:before, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-reviews h2:before {
+              content: '';
+              display: none; }
+            .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-reviews h2:after, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-reviews h2:after {
+              content: '';
+              position: absolute;
+              right: 15px;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 0;
+              height: 0;
+              border-left: 10px solid transparent;
+              border-right: 10px solid transparent;
+              border-top: 14px solid #c5c5c5; }
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-reviews.reviews-open, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-reviews.reviews-open {
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+            transition: all 100ms; }
+            .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-reviews.reviews-open h2, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-reviews.reviews-open h2 {
+              background: #909090;
+              color: #fff;
+              padding: 15px; }
+              .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-reviews.reviews-open h2:after, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-reviews.reviews-open h2:after {
+                border-bottom: 14px solid #c5c5c5;
+                border-top: none; }
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .showcase-4-reviews iframe, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .showcase-4-reviews iframe {
+            border: none;
+            width: 100%;
+            height: 400px;
+            max-height: 0;
+            margin: 0; }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .alp-title-prime-logo, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .alp-title-prime-logo {
+          display: block;
+          margin: 0 0 20px 0;
+          max-width: 80px;
+          position: relative; }
+          @media only screen and (min-width: 820px) {
+            .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-stats-col-info .alp-title-prime-logo, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-stats-col-info .alp-title-prime-logo {
+              margin: 0 auto 20px 0;
+              left: inherit; } }
+    .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-bottom-cta, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-bottom-cta {
+      padding: 15px 0 0 0;
+      margin: 0;
+      border-top: 1px solid #dedede;
+      text-align: center; }
+      @media only screen and (min-width: 820px) {
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-bottom-cta, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-bottom-cta {
+          text-align: right; } }
+      .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-bottom-cta-price, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-bottom-cta-price {
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 50px;
+        display: inline-block; }
+      .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-bottom-cta-link, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-bottom-cta-link {
+        text-align: center;
+        border: 1px solid #9c7e31;
+        border-color: #9c7e31 #90742d #786025 !important;
+        border-radius: 3px;
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+        background: #f0c14b;
+        background: linear-gradient(to bottom, #f7dfa5, #f0c14b) repeat scroll 0 0 rgba(0, 0, 0, 0);
+        color: #111 !important;
+        padding: 15px;
+        font-size: 14px;
+        transition: all 100ms;
+        display: inline-block;
+        text-decoration: none; }
+        @media only screen and (min-width: 820px) {
+          .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-bottom-cta-link, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-bottom-cta-link {
+            margin-left: 15px; } }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-bottom-cta-link .icon-amalinkspro-link-icon, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-bottom-cta-link .icon-amalinkspro-link-icon {
+          display: none; }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-bottom-cta-link:hover, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-bottom-cta-link:hover {
+          background: linear-gradient(to bottom, #f5d78e, #eeb933) repeat scroll 0 0 rgba(0, 0, 0, 0);
+          text-decoration: none; }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-bottom-cta-link .alp-btn-prime-logo, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-bottom-cta-link .alp-btn-prime-logo {
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 0 0 10px;
+          width: 50px;
+          box-shadow: none; }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-bottom-cta-link input.alp-showcase-amalink-editable, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-bottom-cta-link input.alp-showcase-amalink-editable {
+          display: inline;
+          width: 60%;
+          padding: 5px;
+          font-size: 14px;
+          height: 16px;
+          margin: 0; }
+      .amalinkspro-showcase.amalinkspro-showcase-4 .amalinkspro-showcase-bottom-cta .icon-amalinkspro-edit, .amalinkspro-showcase.amalinkspro-showcase-auto .amalinkspro-showcase-bottom-cta .icon-amalinkspro-edit {
+        position: absolute;
+        right: 13px; }
+    .amalinkspro-showcase.amalinkspro-showcase-4 .alp-prices-accuracy, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-prices-accuracy {
+      position: absolute;
+      left: 30px;
+      transform: translateY(150%);
+      bottom: 0;
+      font-size: 12px;
+      font-style: italic; }
+      .amalinkspro-showcase.amalinkspro-showcase-4 .alp-prices-accuracy .alp-js-apidate-disclaimer, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-prices-accuracy .alp-js-apidate-disclaimer {
+        width: 20px;
+        height: 20px;
+        border-radius: 20px;
+        background: #f1f1f1;
+        line-height: 20px;
+        text-align: center;
+        position: absolute;
+        left: -25px;
+        top: -1px;
+        opacity: 0.8;
+        cursor: pointer; }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .alp-prices-accuracy .alp-js-apidate-disclaimer:hover, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-prices-accuracy .alp-js-apidate-disclaimer:hover {
+          opacity: 1; }
+    .amalinkspro-showcase.amalinkspro-showcase-4 .alp-prices-discalimer, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-prices-discalimer {
+      position: relative;
+      left: 0;
+      top: 100%;
+      transform: translateY(21%);
+      font-size: 12px;
+      font-style: italic;
+      padding: 15px;
+      background: #fff;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+      display: none; }
+      .amalinkspro-showcase.amalinkspro-showcase-4 .alp-prices-discalimer .alp-js-close-price-info-popup, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-prices-discalimer .alp-js-close-price-info-popup {
+        position: absolute;
+        background: #fff;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+        height: 36px;
+        width: 36px;
+        border-radius: 18px;
+        left: -18px;
+        top: -17px;
+        cursor: pointer;
+        font-size: 14px;
+        opacity: 0.8;
+        cursor: pointer;
+        text-align: center; }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .alp-prices-discalimer .alp-js-close-price-info-popup:hover, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-prices-discalimer .alp-js-close-price-info-popup:hover {
+          opacity: 1; }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .alp-prices-discalimer .alp-js-close-price-info-popup:before, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-prices-discalimer .alp-js-close-price-info-popup:before {
+          content: "\f158";
+          font: 400 31px/36px dashicons;
+          color: #6b6b6b;
+          speak: none;
+          vertical-align: middle;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale; }
+    .amalinkspro-showcase.amalinkspro-showcase-4 .alp-showcase-loader, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-showcase-loader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      z-index: 3;
+      margin: 0;
+      padding: 0; }
+      .amalinkspro-showcase.amalinkspro-showcase-4 .alp-showcase-loader span, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-showcase-loader span {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: auto;
+        height: auto;
+        margin: 0;
+        padding: 0; }
+      .amalinkspro-showcase.amalinkspro-showcase-4 .alp-showcase-loader i, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-showcase-loader i {
+        width: auto;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        font-size: 142px;
+        color: rgba(0, 0, 0, 0.1); }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .alp-showcase-loader i.dot-expand, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-showcase-loader i.dot-expand {
+          animation: dot-expander 1s; }
+
+@keyframes dot-expander {
+  0% {
+    transform: scale(1); }
+  50% {
+    transform: scale(1.5); }
+  100% {
+    transform: scale(1); } }
+        .amalinkspro-showcase.amalinkspro-showcase-4 .alp-showcase-loader i:before, .amalinkspro-showcase.amalinkspro-showcase-auto .alp-showcase-loader i:before {
+          margin: 0; }
+    .amalinkspro-showcase.amalinkspro-showcase-4.narrow-showcase .amalinkspro-showcase-bottom-cta-link, .amalinkspro-showcase.amalinkspro-showcase-auto.narrow-showcase .amalinkspro-showcase-bottom-cta-link {
+      width: 100%;
+      margin-left: 0; }
+    .amalinkspro-showcase.amalinkspro-showcase-4.narrow-showcase .amalinkspro-showcase-bottom-cta-link, .amalinkspro-showcase.amalinkspro-showcase-auto.narrow-showcase .amalinkspro-showcase-bottom-cta-link {
+      margin-top: 10px; }
+
+.amalinkspro-image-link .alignnone {
+  margin: 5px 20px 20px 0; }
+
+.amalinkspro-image-link .aligncenter,
+.amalinkspro-image-link div.aligncenter {
+  display: block;
+  margin: 5px auto 5px auto; }
+
+.amalinkspro-image-link .alignright {
+  float: right;
+  margin: 5px 0 20px 20px; }
+
+.amalinkspro-image-link .alignleft {
+  float: left;
+  margin: 5px 20px 20px 0; }
+
+.amalinkspro-image-link img.alignright {
+  float: right;
+  margin: 5px 0 20px 20px; }
+
+.amalinkspro-image-link img.alignnone {
+  margin: 5px 20px 20px 0; }
+
+.amalinkspro-image-link img.alignleft {
+  float: left;
+  margin: 5px 20px 20px 0; }
+
+.amalinkspro-image-link img.aligncenter {
+  display: block;
+  margin-left: auto;
+  margin-right: auto; }
+
+#alp-amazon_addtocart_form {
+  display: none; }
+
+/*# sourceMappingURL=amalinkspro-public.css.map */
