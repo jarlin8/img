@@ -1,1 +1,0 @@
-!function(){tinymce.PluginManager.add("wptao_shop_button",function(a,b){a.addButton("wptao_shop_button",{title:"调用其它文章商品",image:b+"/icon.png",onclick:function(){var b=a.selection.getContent();(b||(b=prompt("请填写文章ID，多个用英文逗号[,]分开",""),null!==b&&""!=b))&&(b=b.replace(new RegExp("，","g"),","),b="[shop id"+(b.indexOf(",")>=0?"s":"")+'="'+b+'" /]',a.selection.setContent(b))}})})}();
