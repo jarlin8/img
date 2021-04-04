@@ -1,2 +1,2 @@
 # img
-我的图床
+wordpress jsdelivr CDN remote.
