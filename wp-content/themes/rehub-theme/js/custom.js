@@ -184,6 +184,12 @@ jQuery(document).ready(function($) {
             });
         }else{
             $( "#main_header .responsive_nav_wrap #mobile-menu-icons" ).append( $(".logo-section .mobileinmenu").clone()); 
+            let rtltrue = (jQuery('body').hasClass('rtl')) ? true : false;
+            if(rtltrue){
+                document.querySelector("a.logo_image_mobile img").setAttribute("style", "right:55px; left:auto; transform:none;");
+            }else{
+                document.querySelector("a.logo_image_mobile img").setAttribute("style", "left:55px; transform:none;");
+            }
         }
     }             
     if ($('#logo_mobile_wrapper').length > 0) {

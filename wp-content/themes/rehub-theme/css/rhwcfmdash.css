@@ -5,7 +5,7 @@
 #wcfm-main-content{ padding: 0}#wcfm-main-contentainer{margin: 0}
 .wcfm-collapse-content{padding: 15px}
 #wcfm-content{border:none;}
-.wcfmfa.fa-pull-left,{margin-right:.3em}.wcfmfa.fa-pull-right{margin-left:.3em}
+.wcfmfa.fa-pull-left{margin-right:0.3em}.wcfmfa.fa-pull-right{margin-left:0.3em}
 .wcfm_dashboard_wc_reports_sales, #wcfm_dashboard_wcfm_region_stats_expander{padding: 0}
 .wcfm-collapse .wcfm-container, .wcfm-tabWrap{box-shadow: 0 3px 5px #ddd}
 .wcfm-tabWrap{padding-top:20px;}
@@ -65,7 +65,6 @@ div.wcfm-collapse-content h2{margin: 15px 0 25px 0}
 #wcfm-main-contentainer .wcfmmp_profile_complete_progress_label{text-shadow: 1px 1px 0 #bbeab2;}
 #wcfm-main-contentainer .wcfm_membership_review_plan{background: transparent !important; padding: 0 !important; margin-bottom: 10px !important}
 #wcfm-main-contentainer .wcfm_membership_review_plan .wcfm_review_plan_description{color: #888 !important}
-#wcfm-main-contentainer .wcfm_store_hours_label{width: 35% !important}
 div.wcfm-collapse-content h2{display:block;}
 div.wcfm-collapse-content .wcfm_vendor_settings_heading h2{margin: 5px;}
 .wcfm-tabWrap-content{padding: 20px 0 0 0;}

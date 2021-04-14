@@ -130,8 +130,8 @@ p.demo_store { position: fixed; top: 0; left: 0; right: 0; margin: 0; width: 100
 .woocommerce .woocommerce-ordering .nice-select .list{right: 0; left: auto}
 .woocommerce a.button.loading, .woocommerce button.button.loading, .woocommerce input.button.loading, .woocommerce #respond #submit.loading{ color: #777; border: 1px solid #f7f6f7; }
 .woocommerce button.button.loading:before, .woocommerce input.button.loading:before, .woocommerce #respond input#submit.loading:before{ content: ""; position: absolute; top: 0; right: 0; left: 0; bottom: 0; background: url(../images/woo/ajax-loader.gif) center no-repeat rgba(255,255,255,0.65); }
-.woocommerce a.added_to_cart{ margin: 0 3px; padding-top: .1em; white-space: nowrap; display: inline-block; text-decoration: underline; font-size: 12px }
-.woocommerce .products .product a.added_to_cart{ display: block;}
+.woocommerce a.added_to_cart{ margin: 3px 0; padding-top: .1em; white-space: nowrap; display: block; text-decoration: underline; font-size: 12px }
+.ajax_add_to_cart + a.added_to_cart{display:none}
 .woocommerce .quantity{  position: relative; margin: 0 auto; overflow: hidden; }
 .woocommerce .quantity input.qty { width: 54px; height: 45px; float: left; text-align: center; border:none; border-bottom: 1px solid #ccc; font-weight: bold; border-radius: 0; font-size: 18px; padding: 0 0 0 13px;outline: none; }
 .list_woo .rh_gr_btn_block .price del{display: inline-block;}

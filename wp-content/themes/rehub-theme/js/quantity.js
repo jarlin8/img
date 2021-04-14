@@ -52,6 +52,8 @@ jQuery(document).ready(function($) {
                 }
             }
 
+            $(this).closest('.rh-loop-quantity').find('.ajax_add_to_cart').attr('data-quantity', parseInt($(this).closest('.rh-loop-quantity').find('.qty').val()));
+
             $qty.trigger('change');
         });
 
@@ -112,4 +114,10 @@ jQuery(document).ready(function($) {
                 });
             }, 500 );
         });
+
+        if ( $('.rh-loop-quantity form.cart').length ) {
+            $('.rh-loop-quantity .qty').on('input', function() {
+                $(this).closest('.rh-loop-quantity').find('.ajax_add_to_cart').attr('data-quantity', $(this).val());
+            });
+        }  
 });

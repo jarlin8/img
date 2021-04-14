@@ -4,7 +4,7 @@
 	Description: A Hybrid magazine/shop/review/news Wordpress Theme
 	Author: Wpsoul
 	Author URI: https://wpsoul.com/
-	Version: 15.1.1
+	Version: 15.4.4
 	Tags: two-columns, fluid-layout, custom-background, threaded-comments, translation-ready, custom-menu
 	License: 
 	License URI:
@@ -642,7 +642,7 @@ img.lazyloaded {opacity: 1;transition: opacity 500ms ease-in;}
 .listitem_column, .listitem_content_meta > div, .rh_listcolumn{padding: 0 15px}
 .listitem_column.listbuild_image{min-width: 160px; max-width: 160px; padding-left: 25px}
 .listitem_column.listbuild_review{min-width: 95px; max-width: 95px}
-.listitem_column.listbuild_btn{min-width: 200px; max-width: 200px; padding-right: 25px}
+.listitem_column.listbuild_btn{min-width: 200px; padding-right: 25px}
 .listitem_column.listbuild_btn .priced_block .btn_offer_block, .listitem_column.listbuild_btn a.woo_loop_btn {margin: 0 auto;display: block;font-size: 17px;line-height: 20px;padding: 13px 20px;}
 .listitem_column.listbuild_btn .rehub_offer_coupon{display: block;}
 .top_rating_item .listitem_title_row .top_rating_title{font-size: 16px}
