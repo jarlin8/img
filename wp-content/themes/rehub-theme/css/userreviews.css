@@ -30,7 +30,7 @@ span.user_reviews_view_pc_title{font: bold 13px/16px Arial; text-transform: uppe
 .user_reviews_view_criteria_line .userstar-rating{float: right;}
 .user_reviews_view_score .userstar-rating{ float: left; font-size: 15px; margin-bottom: 6px; height: 18px; line-height: 18px;}
 .userstar-rating span:before{ color: #ff9800}
-.user-review-criteria .rate-bar-bar{ background-color:#ff9800}
+body .user-review-criteria .rate-bar-bar{ background-color:#ff9800}
 .rate_bar_wrap_two_reviews { overflow: hidden;border-top: 1px dashed #d2d2d2; border-bottom: 1px dashed #d2d2d2; padding: 10px 0 0 0; margin-top: 20px; position: relative }
 .pros_cons_values_in_rev{border-bottom: 1px dashed #d2d2d2; margin: 20px 0 0 0; padding: 0 0 10px 0; overflow: hidden;}
 article.post .rate_bar_wrap_two_reviews a.link_to_review{ position: absolute; bottom: 0; right: 0; font-weight: bold; text-decoration: underline;}

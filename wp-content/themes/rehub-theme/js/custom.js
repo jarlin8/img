@@ -185,10 +185,13 @@ jQuery(document).ready(function($) {
         }else{
             $( "#main_header .responsive_nav_wrap #mobile-menu-icons" ).append( $(".logo-section .mobileinmenu").clone()); 
             let rtltrue = (jQuery('body').hasClass('rtl')) ? true : false;
-            if(rtltrue){
-                document.querySelector("a.logo_image_mobile img").setAttribute("style", "right:55px; left:auto; transform:none;");
-            }else{
-                document.querySelector("a.logo_image_mobile img").setAttribute("style", "left:55px; transform:none;");
+            var mobilelogo = document.querySelector("a.logo_image_mobile img");
+            if(mobilelogo.length > 0){
+                if(rtltrue){
+                    mobilelogo.setAttribute("style", "right:55px; left:auto; transform:none;");
+                }else{
+                    mobilelogo.setAttribute("style", "left:55px; transform:none;");
+                }
             }
         }
     }             
@@ -311,6 +314,7 @@ jQuery(document).ready(function($) {
         if ( $video.parents( 'object' ).length ) return;
         if ($video.parent().hasClass('wpb_video_wrapper')) return;
         if ($video.parent().hasClass('video-container')) return;
+        if ($video.parent().hasClass('wp-block-embed__wrapper')) return;
         if ($video.parent().parent().hasClass('slides')) return;
         if ( ! $video.prop( 'id' ) ) $video.attr( 'id', 'rvw' + Math.floor( Math.random() * 999999 ) );
         $video.wrap( '<div class="video-container"></div>');
