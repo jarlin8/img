@@ -173,7 +173,7 @@ jQuery(document).ready(function($) {
                     if(autoAlpha) multiargs.autoAlpha = parseInt(autoAlpha)/100;
                     if(du) multiargs.duration = parseFloat(du);
                     if(de) multiargs.delay = parseFloat(de);
-                    if(origin) multiargs.transformOrigin = parseFloat(origin);
+                    if(origin) multiargs.transformOrigin = origin;
                     if(!customtime) customtime = ">";
                     if(ea){
                         var $ease = ea.split("-");

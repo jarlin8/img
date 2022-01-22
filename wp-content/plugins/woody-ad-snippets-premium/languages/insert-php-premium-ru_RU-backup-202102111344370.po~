@@ -1,0 +1,493 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Woody code snippets premium\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-02-11 12:38+0000\n"
+"PO-Revision-Date: 2021-02-11 12:46+0000\n"
+"Last-Translator: \n"
+"Language-Team: Русский\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
+"n%10<=4 &&(n%100<10||n%100 >= 20)? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.5.0; wp-5.6.1\n"
+"X-Domain: insert-php-premium"
+
+#. %s: size in bytes
+#: admin/pages/import.php:402
+#, php-format
+msgid "(Maximum size: %s)"
+msgstr "(Максимальный размер: %s)"
+
+#: admin/metaboxes/revisions.php:70 admin/pages/revisions.php:326
+#: admin/pages/revisions.php:381
+msgid "Access denied"
+msgstr "Доступ запрещён"
+
+#: admin/pages/import.php:132
+msgid "Active"
+msgstr "Активные"
+
+#: includes/classes/class.snippet.php:108
+msgid "Addblocker"
+msgstr "Addblocker"
+
+#: admin/pages/import.php:140
+msgid "All"
+msgstr "Все"
+
+#: admin/pages/import.php:187
+msgid "An error occurred when processing the import files."
+msgstr "При обработке файлов импорта произошла ошибка."
+
+#: includes/classes/class.snippet.php:141
+msgid "Android Browser"
+msgstr "Android браузер"
+
+#: includes/classes/class.snippet.php:311
+msgid "Attendance by time of day"
+msgstr "Посещаемость по времени суток"
+
+#: includes/classes/class.snippet.php:291
+msgid "Auditory"
+msgstr "Аудитория"
+
+#: includes/classes/class.snippet.php:438
+msgid "Automatic update"
+msgstr "Автоматическое обновление"
+
+#: includes/classes/class.snippet.php:124
+msgid "Browser"
+msgstr "Браузер"
+
+#: includes/classes/class.snippet.php:354
+msgid "Check geolocation"
+msgstr "Проверить геолокацию"
+
+#: admin/pages/import.php:398
+msgid "Choose files from your computer:"
+msgstr "Выберите файл:"
+
+#: admin/pages/import.php:393
+msgid ""
+"Choose one or more Php Snippets (.json/.zip) files to upload, then click "
+"\"Upload files and import\"."
+msgstr ""
+"Выберите один или несколько файлов сниппетов (.json/.zip) для загрузки, "
+"затем нажмите кнопку \"Загрузить файлы и импортировать\"."
+
+#: includes/classes/class.snippet.php:133
+msgid "Chrome Mobile"
+msgstr "Chrome Mobile"
+
+#: includes/classes/class.snippet.php:137
+msgid "Chromium"
+msgstr "Chromium"
+
+#: admin/includes/class.actions.snippet.php:84
+#: admin/includes/class.actions.snippet.php:103
+msgid "Clone"
+msgstr "Клонировать"
+
+#: admin/metaboxes/revisions.php:46
+msgid "Code Revisions"
+msgstr "Изменения кода"
+
+#: admin/metaboxes/revisions.php:172
+msgid "Compare"
+msgstr "Сравнение"
+
+#: includes/classes/class.snippet.php:378
+msgid "Complete download"
+msgstr ""
+
+#. Author of the plugin
+msgid "Creative Motion <info@cm-wp.com>"
+msgstr ""
+
+#: includes/shortcodes/shortcode-custom.php:68
+msgid "Custom shortcode: PHP snippets error (not found the snippet ID)"
+msgstr ""
+
+#: includes/classes/class.snippet.php:457
+msgid "Database"
+msgstr ""
+
+#: admin/metaboxes/revisions.php:174
+msgid "Delete"
+msgstr ""
+
+#: includes/classes/class.snippet.php:281
+msgid "Desktop"
+msgstr ""
+
+#: includes/classes/class.snippet.php:120
+msgid "Determines whether the user use Addblocker on website."
+msgstr ""
+
+#: includes/classes/class.snippet.php:212
+msgid "Determines whether the user use cookie on website."
+msgstr ""
+
+#: includes/classes/class.snippet.php:228
+msgid "Determines whether the user use javascript on website."
+msgstr ""
+
+#: includes/classes/class.snippet.php:196
+msgid "Determines whether the user use selected browser."
+msgstr ""
+
+#: includes/classes/class.snippet.php:284
+msgid "Determines whether the user use selected device type."
+msgstr ""
+
+#: includes/classes/class.snippet.php:260
+msgid "Determines whether the user use selected OS."
+msgstr ""
+
+#: includes/classes/class.snippet.php:264
+msgid "Device type"
+msgstr ""
+
+#: includes/classes/class.snippet.php:442
+msgid "Disabled"
+msgstr ""
+
+#: admin/pages/import.php:386
+msgid ""
+"Do not import any duplicate snippets; leave all existing snippets unchanged."
+msgstr ""
+
+#: includes/classes/class.snippet.php:371
+msgid "Downloading..."
+msgstr ""
+
+#: admin/pages/import.php:365
+msgid "Duplicate Snippets"
+msgstr ""
+
+#: includes/classes/class.snippet.php:446
+msgid "Enabled"
+msgstr ""
+
+#: includes/classes/class.snippet.php:457
+msgid "exists"
+msgstr ""
+
+#: admin/pages/import.php:360
+msgid "Export"
+msgstr ""
+
+#: admin/pages/import.php:424
+msgid "Export all snippets"
+msgstr ""
+
+#: includes/classes/class.snippet.php:145
+msgid "Firefox"
+msgstr ""
+
+#: includes/classes/class.snippet.php:149
+msgid "Firefox Mobile"
+msgstr ""
+
+#: includes/classes/class.snippet.php:301
+#: includes/classes/class.snippet.php:402
+msgid "Geolocation"
+msgstr ""
+
+#: includes/classes/class.snippet.php:245
+msgid "GNU/Linux"
+msgstr ""
+
+#: includes/classes/class.snippet.php:249
+msgid "Google Android"
+msgstr ""
+
+#: includes/classes/class.snippet.php:129
+msgid "Google Chrome"
+msgstr ""
+
+#: includes/classes/class.snippet.php:253
+msgid "Google Chrome OS"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://cm-wp.com"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://woodysnippet.com/"
+msgstr ""
+
+#: admin/pages/import.php:374
+msgid ""
+"Ignore any duplicate snippets: import all snippets from the file regardless "
+"and leave all existing snippets unchanged."
+msgstr ""
+
+#: admin/pages/import.php:357
+msgid "Import"
+msgstr ""
+
+#: admin/pages/import.php:31
+msgid "Import/Export"
+msgstr ""
+
+#: includes/classes/class.snippet.php:412
+msgid "IP geolocation database"
+msgstr ""
+
+#: includes/classes/class.snippet.php:241
+msgid "Mac OS"
+msgstr ""
+
+#: includes/classes/class.snippet.php:420
+msgid "MaxMind"
+msgstr ""
+
+#: includes/classes/class.snippet.php:353
+msgid "MaxMind IP geolocation database file not found."
+msgstr ""
+
+#: includes/classes/class.snippet.php:457
+msgid "missing"
+msgstr ""
+
+#: includes/classes/class.snippet.php:269
+msgid "Mobile"
+msgstr ""
+
+#: includes/classes/class.snippet.php:173
+msgid "Mobile Safari"
+msgstr ""
+
+#: includes/classes/class.snippet.php:177
+msgid "MSIE"
+msgstr ""
+
+#: includes/classes/class.snippet.php:181
+msgid "MSIE Mobile"
+msgstr ""
+
+#: includes/classes/class.snippet.php:117
+#: includes/classes/class.snippet.php:209
+#: includes/classes/class.snippet.php:225
+msgid "No"
+msgstr ""
+
+#: admin/pages/import.php:212
+msgid "No files selected!"
+msgstr ""
+
+#: admin/pages/import.php:206
+msgid "No snippets were exported."
+msgstr ""
+
+#: admin/pages/import.php:193
+msgid "No snippets were imported."
+msgstr ""
+
+#: admin/pages/import.php:136
+msgid "Not active"
+msgstr "Не активные"
+
+#: admin/pages/revisions.php:95
+msgid "Not enough revisions to compare"
+msgstr ""
+
+#: includes/classes/class.snippet.php:153
+msgid "Opera"
+msgstr ""
+
+#: includes/classes/class.snippet.php:161
+msgid "Opera Mini"
+msgstr ""
+
+#: includes/classes/class.snippet.php:157
+msgid "Opera Mobile"
+msgstr ""
+
+#: includes/classes/class.snippet.php:232
+msgid "Operating system"
+msgstr ""
+
+#: includes/classes/class.snippet.php:193
+msgid "Other"
+msgstr ""
+
+#: includes/classes/class.snippet.php:257
+msgid "Other с Java ME"
+msgstr ""
+
+#: includes/classes/class.snippet.php:277
+msgid "Phone"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Premium Executes PHP code, uses conditional logic to insert ads, text, media "
+"content and external service’s code. Ensures no content duplication."
+msgstr ""
+
+#: admin/pages/import.php:380
+msgid ""
+"Replace any existing snippets with a newly imported snippet of the same name."
+msgstr ""
+
+#: admin/metaboxes/revisions.php:145 admin/metaboxes/revisions.php:148
+msgid "Restore"
+msgstr ""
+
+#: admin/pages/revisions.php:114
+msgid "Return to editor"
+msgstr ""
+
+#: admin/pages/revisions.php:24
+msgid "Revisions"
+msgstr ""
+
+#: includes/classes/class.snippet.php:169
+msgid "Safari"
+msgstr ""
+
+#: includes/classes/class.snippet.php:189
+msgid "Samsung Internet"
+msgstr ""
+
+#: includes/classes/class.snippet.php:450
+msgid "Select \"Enabled\" for automatic database update once per month."
+msgstr ""
+
+#: admin/pages/import.php:74
+msgid "Select all"
+msgstr ""
+
+#: includes/classes/class.snippet.php:424
+msgid "Select IP geolocation database"
+msgstr ""
+
+#: admin/pages/import.php:174
+msgid "Snippet tags"
+msgstr ""
+
+#: admin/pages/import.php:149
+msgid "Snippet types"
+msgstr ""
+
+#. %s: var/www/site.com/wp-content/uploads/GeoLite2-City.mmdb
+#: includes/classes/class.snippet.php:460
+#, php-format
+msgid "Specify the path to the location of the database file. (Default: %s)"
+msgstr ""
+
+#: admin/pages/import.php:122
+msgid "Status"
+msgstr ""
+
+#: admin/pages/import.php:144
+msgid "Status for snippets"
+msgstr ""
+
+#. %1$d: number imported snippets
+#: admin/pages/import.php:196
+#, php-format
+msgid "Successfully imported <strong>%1$d</strong> snippet."
+msgid_plural "Successfully imported <strong>%1$d</strong> snippets."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: includes/classes/class.snippet.php:273
+msgid "Tabled"
+msgstr ""
+
+#: admin/pages/import.php:165
+msgid "Tags"
+msgstr ""
+
+#: includes/classes/class.snippet.php:104
+msgid "Technology"
+msgstr ""
+
+#: includes/classes/class.snippet.php:307
+msgid "The number of pages viewed by the user per session"
+msgstr ""
+
+#: includes/classes/class.snippet.php:313
+msgid "The time interval during which the user entered"
+msgstr ""
+
+#: includes/classes/class.snippet.php:319
+msgid "The total number of sessions opened by the user"
+msgstr ""
+
+#: includes/classes/class.snippet.php:317
+msgid "Total number of visits"
+msgstr ""
+
+#: admin/pages/import.php:160
+msgid "Types of snippets"
+msgstr ""
+
+#: includes/classes/class.snippet.php:185
+msgid "UCWEB"
+msgstr ""
+
+#: admin/pages/import.php:391
+msgid "Upload Files"
+msgstr ""
+
+#: admin/pages/import.php:412
+msgid "Upload files and import"
+msgstr "Загрузить файлы и импортировать"
+
+#: includes/classes/class.snippet.php:200
+msgid "Use cookie"
+msgstr ""
+
+#: includes/classes/class.snippet.php:216
+msgid "Use javascript"
+msgstr ""
+
+#: includes/classes/class.snippet.php:295
+msgid "User country"
+msgstr ""
+
+#: includes/classes/class.snippet.php:305
+msgid "Viewing depth"
+msgstr ""
+
+#: includes/classes/class.snippet.php:416
+msgid "Webnet77"
+msgstr ""
+
+#: admin/pages/import.php:367
+msgid ""
+"What should happen if an existing snippet is found with an identical name to "
+"an imported snippet?"
+msgstr ""
+
+#: includes/classes/class.snippet.php:237
+msgid "Windows"
+msgstr ""
+
+#: admin/pages/import.php:352
+msgid "Woody ad snippets Import"
+msgstr ""
+
+#. Name of the plugin
+msgid "Woody code snippets premium"
+msgstr ""
+
+#: includes/classes/class.snippet.php:113
+#: includes/classes/class.snippet.php:205
+#: includes/classes/class.snippet.php:221
+msgid "Yes"
+msgstr ""
+
+#: includes/classes/class.snippet.php:165
+msgid "Яндекс.Браузер"
+msgstr "Яндекс.Браузер"

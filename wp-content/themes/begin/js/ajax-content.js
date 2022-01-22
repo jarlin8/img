@@ -15,6 +15,7 @@ jQuery(function($){
 				for( i=0; i <= response.length; i++ ){
 					$('#ajax-content'+i).html(response[i]);
 				}
+				lazy();
 			});
 		}
 		count++;

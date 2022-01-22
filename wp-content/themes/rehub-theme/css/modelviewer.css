@@ -32,6 +32,7 @@
     border-radius: 18px;
     border: 1px solid #DADCE0;
     color:cornflowerblue;
+    display: inline-block;
 }
 .progress-bar {
     display: block;

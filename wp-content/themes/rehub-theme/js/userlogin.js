@@ -147,13 +147,14 @@ jQuery(document).ready(function($) {
       e.stopPropagation();
       $( this ).parent().find( '.user-dropdown-intop-menu' ).toggleClass('user-dropdown-intop-open');
       $(this).toggleClass('user-ava-intop-open');
+      $(this).closest('.user-dropdown-intop').toggleClass('user-dropdown-intop-open');
    });
    $( document ).on('click', '.user-dropdown-intop-menu', function(e) {
       e.stopPropagation();
    });    
    $( document ).on('click', function() {
       $( '.user-dropdown-intop-menu' ).removeClass('user-dropdown-intop-open');
+      $( '.user-dropdown-intop' ).removeClass('user-dropdown-intop-open');
       $( '.user-ava-intop' ).removeClass('user-ava-intop-open');
-      $( '.re_tax_dropdown' ).removeClass('active');
    }); 
 });

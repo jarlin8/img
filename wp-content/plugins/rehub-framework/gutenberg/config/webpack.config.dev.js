@@ -27,7 +27,7 @@ const externals = require( './externals' );
 module.exports = {
 	entry: {
 		'editor': path.resolve( __dirname, '../src/blocks.js' ),
-		'frontend': path.resolve( __dirname, '../src/block-backend.js' ),
+		'format': path.resolve( __dirname, '../src/formatting.js' ),
 	},
 	output: {
 		path: path.resolve( __dirname, '../assets/js/' ),

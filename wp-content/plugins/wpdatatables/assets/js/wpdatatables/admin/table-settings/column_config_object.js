@@ -211,6 +211,12 @@ var WDTColumn = function (column, parent_table) {
     this.filterDefaultValue = null;
 
     /**
+     * Toggle the search in select-box/ multiselect-box filters
+     * @type {int}
+     */
+    this.searchInSelectBox = 1;
+
+    /**
      * Editor input type for editable tables
      * @type {null}
      */
@@ -227,6 +233,12 @@ var WDTColumn = function (column, parent_table) {
      * @type {string}
      */
     this.editingDefaultValue = null;
+
+    /**
+     * Toggle the search in select-box entry editing for this column
+     * @type {int}
+     */
+    this.searchInSelectBoxEditing = 1;
 
     /**
      * Conditional formatting rules
@@ -276,6 +288,16 @@ var WDTColumn = function (column, parent_table) {
     this.linkNoFollowAttribute = 0;
 
     /**
+     * Set NOREFERRER link
+     */
+    this.linkNoreferrerAttribute = 0;
+
+    /**
+     * Set SPONSORED link
+     */
+    this.linkSponsoredAttribute = 0;
+
+    /**
      *  Open link column as a button
      */
     this.linkButtonAttribute = 0;
@@ -310,10 +332,12 @@ var WDTColumn = function (column, parent_table) {
         this.display_header = column.display_header || null;
         this.editingDefaultValue = column.editingDefaultValue || null;
         this.editingNonEmpty = column.input_mandatory || 0;
+        this.searchInSelectBoxEditing = column.searchInSelectBoxEditing || 0;
         this.editor_type = column.editor_type || 'none';
         this.exactFiltering = column.exactFiltering || 0;
         this.filter_type = column.filter_type || 'text';
         this.filterDefaultValue = column.filterDefaultValue || null;
+        this.searchInSelectBox = column.searchInSelectBox || 0;
         this.filtering = typeof column.filtering !== 'undefined' ? column.filtering : 1;
         this.globalSearchColumn = column.globalSearchColumn || 0;
         this.filterLabel = column.filterLabel || null;
@@ -326,6 +350,8 @@ var WDTColumn = function (column, parent_table) {
         this.id_column = column.id_column || 0;
         this.linkTargetAttribute = column.linkTargetAttribute || '_self';
         this.linkNoFollowAttribute = column.linkNoFollowAttribute || 0;
+        this.linkNoreferrerAttribute = column.linkNoreferrerAttribute || 0;
+        this.linkSponsoredAttribute = column.linkSponsoredAttribute || 0;
         this.linkButtonAttribute = column.linkButtonAttribute || 0;
         this.linkButtonLabel = column.linkButtonLabel || null;
         this.linkButtonClass = column.linkButtonClass || null;
@@ -859,6 +885,22 @@ WDTColumn.prototype.getNonEmpty = function () {
 };
 
 /**
+ * Set search in select-box for editing
+ * @param {int} searchInSelectBoxEdit
+ */
+WDTColumn.prototype.setSearchInSelectBoxEditing = function (searchInSelectBoxEdit) {
+    this.searchInSelectBoxEditing = searchInSelectBoxEdit;
+};
+
+/**
+ * Get search in select-box for editing
+ * @return {int}
+ */
+WDTColumn.prototype.getSearchInSelectBoxEditing = function () {
+    return this.searchInSelectBoxEditing;
+};
+
+/**
  * Set Conditional Formatting rules
  * @param {array} conditionalFormatting
  */
@@ -1033,6 +1075,8 @@ WDTColumn.prototype.fillInputs = function () {
     jQuery('#wdt-column-width').val(this.width);
     jQuery('#wdt-link-target-attribute').prop('checked', this.linkTargetAttribute === '_self' ? 0 : 1);
     jQuery('#wdt-link-nofollow-attribute').prop('checked', this.linkNoFollowAttribute).change();
+    jQuery('#wdt-link-noreferrer-attribute').prop('checked', this.linkNoreferrerAttribute).change();
+    jQuery('#wdt-link-sponsored-attribute').prop('checked', this.linkSponsoredAttribute).change();
     jQuery('#wdt-link-button-attribute').prop('checked', this.linkButtonAttribute).change();
     jQuery('#wdt-link-button-label').val(this.linkButtonLabel);
     jQuery('#wdt-link-button-class').val(this.linkButtonClass);
@@ -1124,6 +1168,7 @@ WDTColumn.prototype.fillInputs = function () {
         jQuery('#wdt-column-exact-filtering').prop('checked', this.exactFiltering).change();
         jQuery('#wdt-column-range-slider').prop('checked',this.rangeSlider).change();
         jQuery('#wdt-column-filter-label').val(this.filterLabel);
+        jQuery('#wdt-search-in-selectbox').prop('checked', this.searchInSelectBox).change();
 
         if (this.filter_type != 'none') {
             jQuery('#wdt-column-filter-type').selectpicker('val', this.filter_type);
@@ -1131,6 +1176,10 @@ WDTColumn.prototype.fillInputs = function () {
 
             if (this.filter_type === 'checkbox' && this.parent_table.filtering_form === 1) {
                 jQuery('#wdt-checkboxes-in-modal').prop('checked', this.checkboxesInModal).change();
+            }
+
+            if (jQuery.inArray(this.filter_type, ['select', 'multiselect']) !== -1) {
+                jQuery('#wdt-search-in-selectbox').prop('checked', this.searchInSelectBox).change();
             }
 
             if (this.filterDefaultValue) {
@@ -1174,6 +1223,7 @@ WDTColumn.prototype.fillInputs = function () {
         jQuery('li.column-editing-settings-tab').show();
         jQuery('#wdt-column-editor-input-type').selectpicker('val', this.editor_type).change();
         jQuery('#wdt-column-not-null').prop('checked', this.editingNonEmpty);
+        jQuery('#wdt-search-in-selectbox-editing').prop('checked', this.searchInSelectBoxEditing).change();
         if (this.editingDefaultValue) {
             if (jQuery.inArray(this.editor_type, ['selectbox', 'multi-selectbox']) != -1) {
                 if(typeof this.editingDefaultValue === 'object') {
@@ -1314,6 +1364,8 @@ WDTColumn.prototype.applyChanges = function () {
     this.css_class = jQuery('#wdt-column-css-class').val();
     this.linkTargetAttribute = jQuery('#wdt-link-target-attribute').is(':checked') ? '_blank' : '_self';
     this.linkNoFollowAttribute = jQuery('#wdt-link-nofollow-attribute').is(':checked') ? 1 : 0;
+    this.linkNoreferrerAttribute = jQuery('#wdt-link-noreferrer-attribute').is(':checked') ? 1 : 0;
+    this.linkSponsoredAttribute = jQuery('#wdt-link-sponsored-attribute').is(':checked') ? 1 : 0;
     this.linkButtonAttribute = jQuery('#wdt-link-button-attribute').is(':checked') ? 1 : 0;
     this.linkButtonLabel = jQuery('#wdt-link-button-label').val();
     this.linkButtonClass = jQuery('#wdt-link-button-class').val();
@@ -1331,7 +1383,8 @@ WDTColumn.prototype.applyChanges = function () {
 
     this.color = jQuery('#wdt-column-color').val();
     this.visible = jQuery('#wdt-column-visible').is(':checked') ? 1 : 0;
-    this.width = jQuery('#wdt-column-width').val();
+    let tempColumnWidth = jQuery('#wdt-column-width').val();
+    this.width = tempColumnWidth.indexOf('px') != -1 ? tempColumnWidth.replace('px','') : tempColumnWidth
     this.decimalPlaces = ( ( this.type == 'float' || this.type == 'formula' ) && jQuery('#wdt-column-decimal-places').val() != '' ) ?
         jQuery('#wdt-column-decimal-places').val() : -1;
     if (jQuery.inArray(this.type, ['date', 'datetime']) !== -1) {
@@ -1371,6 +1424,7 @@ WDTColumn.prototype.applyChanges = function () {
     this.exactFiltering = jQuery('#wdt-column-exact-filtering').is(':checked') ? 1 : 0;
     this.filterLabel = jQuery('#wdt-column-filter-label').val();
     this.globalSearchColumn = jQuery('#wdt-column-enable-global-search').is(':checked') ? 1 : 0;
+    this.searchInSelectBox = jQuery('#wdt-search-in-selectbox').is(':checked') ? 1 : 0;
 
     if (jQuery.inArray(this.filter_type, ['text', 'number']) != -1) {
         this.filterDefaultValue = jQuery('#wdt-filter-default-value').val();
@@ -1388,6 +1442,7 @@ WDTColumn.prototype.applyChanges = function () {
 
     this.editor_type = this.type === 'formula' ? 'none' : jQuery('#wdt-column-editor-input-type').val();
     this.editingNonEmpty = jQuery('#wdt-column-not-null').is(':checked') ? 1 : 0;
+    this.searchInSelectBoxEditing = jQuery('#wdt-search-in-selectbox-editing').is(':checked') ? 1 : 0;
     this.rangeSlider = jQuery('#wdt-column-range-slider').is(':checked') ? 1 : 0;
 
     if ( typeof callbackApplyUIChangesForNewColumnOption !== 'undefined' ) {
@@ -1433,10 +1488,12 @@ WDTColumn.prototype.getJSON = function () {
         display_header: this.display_header,
         editingDefaultValue: this.editingDefaultValue,
         editingNonEmpty: this.editingNonEmpty,
+        searchInSelectBoxEditing: this.searchInSelectBoxEditing,
         editor_type: this.editor_type,
         exactFiltering: this.exactFiltering,
         filter_type: this.filter_type,
         filterDefaultValue: this.filterDefaultValue,
+        searchInSelectBox: this.searchInSelectBox,
         filtering: this.filtering,
         globalSearchColumn: this.globalSearchColumn,
         filterLabel: this.filterLabel,
@@ -1449,6 +1506,8 @@ WDTColumn.prototype.getJSON = function () {
         id_column: this.id_column,
         linkTargetAttribute: this.linkTargetAttribute,
         linkNoFollowAttribute: this.linkNoFollowAttribute,
+        linkNoreferrerAttribute: this.linkNoreferrerAttribute,
+        linkSponsoredAttribute: this.linkSponsoredAttribute,
         linkButtonAttribute: this.linkButtonAttribute,
         linkButtonLabel: this.linkButtonLabel,
         linkButtonClass: this.linkButtonClass,

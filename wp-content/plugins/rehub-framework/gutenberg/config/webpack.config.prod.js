@@ -32,7 +32,7 @@ const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP === 'true';
 module.exports = {
 	entry: {
 		'editor': path.resolve( __dirname, '../src/blocks.js' ),
-		'frontend': path.resolve( __dirname, '../src/block-frontend.js' ),
+		'format': path.resolve( __dirname, '../src/formatting.js' ),
 	},
 	output: {
 		path: path.resolve( __dirname, '../assets/js/' ),

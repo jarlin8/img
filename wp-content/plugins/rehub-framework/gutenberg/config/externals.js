@@ -31,6 +31,8 @@ const externals = [
 	'date',
 	'data',
 	'i18n',
+	'compose',
+	'rich-text',
 ].reduce(
 	( externals, name ) => ( {
 		...externals,

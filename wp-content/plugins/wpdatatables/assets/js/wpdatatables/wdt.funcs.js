@@ -27,6 +27,9 @@ jQuery(document).ready(function ($) {
 
     if (typeof ($.fn.dataTableExt) !== 'undefined') {
 
+        /* Throw datatables errors in Console*/
+        $.fn.dataTableExt.errMode = 'throw';
+
         /* Clear filters */
         $.fn.dataTableExt.oApi.fnFilterClear = function (oSettings) {
             /* Remove global filter */
@@ -159,6 +162,11 @@ jQuery(document).ready(function ($) {
                 if (!_.contains(['MM/Y','MMM Y','Y'], wdtDateFormat)) {
                     wdtAddDatePlaceholders($(this));
                 }
+                if ($('.wdtscroll').length && $(this).parents('table').length != 0){
+                    var leftPos  = $(this).offset().left - $('.wdtscroll').offset().left
+                    var topPos   = $(this).offset().top
+                    $( ".bootstrap-datetimepicker-widget" ).css('inset', topPos + 'px auto auto ' + leftPos + 'px')
+                }
             });
     });
 
@@ -175,6 +183,11 @@ jQuery(document).ready(function ($) {
             .off('dp.show')
             .on('dp.show', function () {
                 $(this).parent().find('div.bootstrap-datetimepicker-widget').addClass('wdt-datetimepicker-modal');
+                if ($('.wdtscroll').length && $(this).parents('table').length != 0){
+                    var leftPos  = $(this).offset().left - $('.wdtscroll').offset().left
+                    var topPos   = $(this).offset().top
+                    $( ".bootstrap-datetimepicker-widget" ).css('inset', topPos + 'px auto auto ' + leftPos + 'px')
+                }
             });
     });
 
@@ -194,7 +207,13 @@ jQuery(document).ready(function ($) {
               if (!_.contains(['MM/Y','MMM Y','Y'], wdtDateFormat)) {
                 wdtAddDatePlaceholders($(this));
               }
+                if ($('.wdtscroll').length && $(this).parents('table').length != 0){
+                    var leftPos  = $(this).offset().left - $('.wdtscroll').offset().left
+                    var topPos   = $(this).offset().top
+                    $( ".bootstrap-datetimepicker-widget" ).css('inset', topPos + 'px auto auto ' + leftPos + 'px')
+                }
             });
+
     });
 
 });

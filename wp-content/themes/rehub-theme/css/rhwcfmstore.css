@@ -110,9 +110,7 @@ a.wcfm_vendor_badge img, div.wcfm_vendor_badge img{border-radius: 50%}
     line-height: 22px;
     width:100%;
 }
-#wcfm_membership_container a.wcfm_submit_button{
-padding: 18px 25px !important;
-    font-size: 20px; font-weight: bold;}
+
     .wcfm-membership-wrapper{
     padding: 30px 35px !important;
     background: #fff;
@@ -141,7 +139,6 @@ border-bottom: 1px dotted #fff9 !important;}
 #wcfm-main-contentainer .wcfm_membership_review_plan, #wcfm-main-contentainer .wcfm_membership_pay{padding-bottom: 0px !important}
 #wcfm-main-contentainer .wcfm_membership_review_plan .wcfm_review_plan_features{border: 1px solid #ccc; font-size: 88%;}
 #wcfm-main-contentainer .wcfm_membership_pay{background: #eaf6f2}
-#wcfm_membership_container a.wcfm_submit_button{display: inline-block; margin-top: 25px}
 #wcfm-main-contentainer .wcfm_membership_thankyou_content{text-align: center !important;}
 #wcfmmp-store .bd_icon_box .wcfm_store_enquiry span, #wcfmmp-store .bd_icon_box .wcfm_store_enquiry{font-size: 14px !important; font-weight: bold !important;}
 #wcfmmp-store .bd_icon_box .follow:hover, #wcfmmp-store .bd_icon_box .wcfm_store_enquiry:hover, #wcfmmp-store .bd_icon_box .wcfm_store_chatnow:hover, #wcfmmp-store .social_area ul li:hover{background: #08b7e4 !important}

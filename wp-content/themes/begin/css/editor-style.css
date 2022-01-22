@@ -1,1 +1,270 @@
-html .content.mceContentBody{font:16px "Microsoft YaHei",微软雅黑,Helvetica;color:#555;line-height:1.9;margin:10px 20px 10px 10px;padding:14px 5px 5px 5px !important;max-width:750px;min-height:350px;border:1px dashed #ddd;position:relative;}html .footer_inf_t.mceContentBody,html .footer_inf_b.mceContentBody{font:16px "Microsoft YaHei",微软雅黑,Helvetica;color:#555;line-height:1.8;}html .content.mceContentBody:before{content:'正文版心';font-size:13px;color:#ddd;position:absolute;left:10px;top:-12px;display:block;background:#fff;}dl{margin-bottom:1.6em;}dt{font-weight:bold;}dd{margin-bottom:1.6em;}table,th,td{border:1px solid #eaeaea;}table{border-collapse:separate;border-spacing:0;border-width:1px 0 0 1px;margin:0 0 10px;}caption,th,td{font-weight:normal;text-align:left;}th{border-width:0 1px 1px 0;font-weight:700;}td{border-width:0 1px 1px 0;}th,td{padding:10px;}hr{height:1px;margin:10px 0;border:none;border-top:1px solid #ddd;}a img{border:0;}a{color:#3690cf;text-decoration:none;}p,ul,ol,dd,pre{margin:0 0 5px 0;-webkit-hyphens:auto;-moz-hyphens:auto;-ms-hyphens:auto;hyphens:auto;word-wrap:break-word;}h2{font-size:19px;line-height:190%;margin:10px -10px;padding:0 0 0 5px;border-left:5px solid #e40000;}h3,h4{font-size:17px;line-height:190%;margin:10px -10px;padding:0 0 0 5px;border-left:5px solid #0088cc;}h5{font-size:16px;text-indent:2em;}p{text-align:justify;margin:0 0 15px;}ul li,ol li{margin:0 0 0 10px;line-height:190%;}ul li{list-style:square;}ol li{list-style:decimal;}blockquote{width:94%;color:#8b8b8b;margin:0 auto;padding:10px;clear:both;border:1px dashed #ddd;}fieldset{width:94%;padding:5px 15px;margin:0 0 10px 0;border:1px solid #ddd;}legend{font-weight:bold;padding:5px;}img{height:auto;max-width:100%;vertical-align:middle;}.wp-caption{background:#f3f3f3;border:1px solid #ebebeb;padding:5px;border-radius:3px;}.wp-caption img[class*="wp-image-"]{display:block;margin:0;}.wp-caption-dt{line-height:0 !important;margin:0 0 5px 0;}.wp-caption-dd{font-size:14px;text-align:center !important;}blockquote.wp-embedded-content{display:none;}.wp-embedded-content{width:100%;}img.centered{display:block;margin:0 auto 10px;}img.alignnone{margin:0 0 10px 0;display:block;}img.alignright{margin:0 0 10px 10px;display:inline;}img.alignleft{margin:0 10px 10px 0;display:inline;}.aligncenter{display:block;margin:0 auto 10px;}.alignright{float:right;margin:0 0 10px 10px;}.alignleft{float:left;margin:0 10px 10px 0;}pre{background:#fff;font:14px "Microsoft YaHei",微软雅黑,Helvetica;line-height:1.8;max-width:96%;overflow:auto;margin:10px auto;padding:10px;white-space:pre;white-space:pre-wrap;word-wrap:break-word;border:1px dashed #ccc;}.dp-highlighter ul li,.dp-highlighter ol li{margin:0 0 0 50px;line-height:190%;}.dp-highlighter{background:#fff;border:1px dashed #ccc;width:96%;word-break:break-all;white-space:normal;overflow:auto;margin:10px auto;padding:5px;}.dp-highlighter:hover,pre:hover{background:#fafafa;border:1px dashed #0088cc;}.dp-highlighter .bar{padding:2px;display:none;}.dp-highlighter ol{margin:0px 0px 1px -15px;padding:2px;color:#666;}
+html .content.mceContentBody {
+	font: 16px "Microsoft YaHei",微软雅黑,Helvetica;
+	color: #555;
+	line-height: 1.9;
+	margin: 10px 20px 10px 10px;
+	padding: 14px 5px 5px 5px !important;
+	max-width: 750px;
+	min-height: 350px;
+	border: 1px dashed #e7e7e7;
+	position: relative;
+}
+
+html .footer_inf_t.mceContentBody,html {
+	font: 14px "Microsoft YaHei",微软雅黑,Helvetica;
+	color: #555;
+	line-height: 100%;
+}
+
+html .content.mceContentBody:before {
+	content: '正文版心';
+	font-size: 13px;
+	color: #e7e7e7;
+	position: absolute;
+	left: 10px;
+	top: -12px;
+	display: block;
+	background: #fff;
+}
+
+dl {
+	margin-bottom: 1.6em;
+}
+
+dt {
+	font-weight: bold;
+}
+
+dd {
+	margin-bottom: 1.6em;
+}
+
+table,th,td {
+	border: 1px solid #eaeaea;
+}
+
+table {
+	border-collapse: separate;
+	border-spacing: 0;
+	border-width: 1px 0 0 1px;
+	margin: 0 0 10px;
+}
+
+caption,th,td {
+	font-weight: normal;
+	text-align: left;
+}
+
+th {
+	border-width: 0 1px 1px 0;
+	font-weight: 700;
+}
+
+td {
+	border-width: 0 1px 1px 0;
+}
+
+th,td {
+	padding: 10px;
+}
+
+hr {
+	height: 1px;
+	margin: 10px 0;
+	border: none;
+	border-top: 1px solid #e7e7e7;
+}
+
+a img {
+	border: 0;
+}
+
+a {
+	color: #3690cf;
+	text-decoration: none;
+}
+
+p,ul,ol,dd,pre {
+	margin: 0 0 5px 0;
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	-ms-hyphens: auto;
+	hyphens: auto;
+	word-wrap: break-word;
+}
+
+h2 {
+	font-size: 19px;
+	line-height: 190%;
+	margin: 10px -10px;
+	padding: 0 0 0 5px;
+	border-left: 5px solid #e40000;
+}
+
+h3,h4 {
+	font-size: 17px;
+	line-height: 190%;
+	margin: 10px -10px;
+	padding: 0 0 0 5px;
+	border-left: 5px solid #0088cc;
+}
+h6, 
+h5 {
+	font-size: 16px;
+}
+
+p {
+	text-align: justify;
+	margin: 0 0 15px;
+}
+
+ul li,ol li {
+	margin: 0 0 0 10px;
+	line-height: 190%;
+}
+
+ul li {
+	list-style: square;
+}
+
+ol li {
+	list-style: decimal;
+}
+
+blockquote {
+	width: 94%;
+	color: #8b8b8b;
+	margin: 0 auto;
+	padding: 10px;
+	clear: both;
+	border: 1px dashed #e7e7e7;
+}
+
+fieldset {
+	width: 94%;
+	padding: 5px 15px;
+	margin: 0 0 10px 0;
+	border: 1px solid #e7e7e7;
+}
+
+legend {
+	font-weight: bold;
+	padding: 5px;
+}
+
+img {
+	height: auto;
+	max-width: 100%;
+	vertical-align: middle;
+}
+
+.wp-caption {
+	background: #f3f3f3;
+	border: 1px solid #ebebeb;
+	padding: 5px;
+	border-radius: 3px;
+}
+
+.wp-caption img[class*="wp-image-"] {
+	display: block;
+	margin: 0;
+}
+
+.wp-caption-dt {
+	line-height: 0 !important;
+	margin: 0 0 5px 0;
+}
+
+.wp-caption-dd {
+	font-size: 14px;
+	text-align: center !important;
+}
+
+blockquote.wp-embedded-content {
+	display: none;
+}
+
+.wp-embedded-content {
+	width: 100%;
+}
+
+img.centered {
+	display: block;
+	margin: 0 auto 10px;
+}
+
+img.alignnone {
+	margin: 0 0 10px 0;
+	display: block;
+}
+
+img.alignright {
+	margin: 0 0 10px 10px;
+	display: inline;
+}
+
+img.alignleft {
+	margin: 0 10px 10px 0;
+	display: inline;
+}
+
+.aligncenter {
+	display: block;
+	margin: 0 auto;
+}
+
+.alignright {
+	float: right;
+	margin: 0 0 10px 10px;
+}
+
+.alignleft {
+	float: left;
+	margin: 0 10px 10px 0;
+}
+
+pre {
+	background: #fff;
+	font: 14px "Microsoft YaHei",微软雅黑,Helvetica;
+	line-height: 1.8;
+	max-width: 96%;
+	overflow: auto;
+	margin: 10px auto;
+	padding: 10px;
+	white-space: pre;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	border: 1px dashed #ccc;
+}
+
+.dp-highlighter ul li,.dp-highlighter ol li {
+	margin: 0 0 0 50px;
+	line-height: 190%;
+}
+
+.dp-highlighter {
+	background: #fff;
+	border: 1px dashed #ccc;
+	width: 96%;
+	word-break: break-all;
+	white-space: normal;
+	overflow: auto;
+	margin: 10px auto;
+	padding: 5px;
+}
+
+.dp-highlighter:hover,pre:hover {
+	background: #fafafa;
+	border: 1px dashed #0088cc;
+}
+
+.dp-highlighter .bar {
+	padding: 2px;
+	display: none;
+}
+
+.dp-highlighter ol {
+	margin: 0px 0px 1px -15px;
+	padding: 2px;
+	color: #666;
+}

@@ -4,7 +4,7 @@ jQuery(document).ready(function() {
 	var copy_text_label_safari = 'Press "⌘ + C" to copy';
 	var copy_text_label_other_browser = 'Press "Ctrl + C" to copy';
 
-	var copyButton = '<div class="btn-clipboard" title="复制" data-original-title="Copy to clipboard">' + copy_text_label + '</div>';
+	var copyButton = '<div class="btn-clipboard bgt" title="复制" data-original-title="Copy to clipboard">' + copy_text_label + '</div>';
 	jQuery('pre').each(function() {
 		jQuery(this).wrap('<div class="codebox"/>');
 	});

@@ -126,4 +126,7 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         $(this).closest('.re_tax_dropdown').toggleClass('active');
     }); 
+    $( document ).on('click', function() {
+        $( '.re_tax_dropdown' ).removeClass('active');
+     }); 
 }); 

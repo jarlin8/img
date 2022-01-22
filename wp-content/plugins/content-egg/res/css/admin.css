@@ -157,22 +157,6 @@
     color: #e32;
 }
 
-.cegg-pro-label
-{
-    display: inline;
-    padding: .2em .6em .3em;
-    font-size: 45%;
-    font-weight: bold;
-    color: #fff;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: .25em;
-    background-color: #337ab7;
-    position: relative;
-    top: -15px;    
-}
-
 @media (max-width: 768px) {
     .cegg-maincol{ margin: 0}
     .cegg-rightcol{ position: static;    width: auto;}
@@ -324,3 +308,29 @@ table.wp-list-table mark.inactive{
     border-top: 0px;
 }
 
+.egg-label {
+    display: inline;
+    padding: .3em .6em .3em;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    vertical-align: baseline;
+    border-radius: .25em;
+    font-size: 85%;
+}
+
+.egg-label-success, .egg-label-active {
+    background-color: #00ba37;
+}
+
+.egg-label-error, .egg-label-inactive {
+    background-color: #d63638;
+}
+
+.egg-label-pro
+{
+    font-size: 55%;
+    background-color: #337ab7;
+    position: relative;
+    top: -15px;    
+}

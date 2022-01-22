@@ -1,9 +1,9 @@
 .float-posts-nav{ opacity: 0 ;transition: all .7s ease-in-out; }
 .postNavigation { position: fixed; bottom: 0;  margin-top: -47px;z-index: 9999; height: 100px; transition: all .7s ease-in-out;}
-.postNavigation a { display: inline-block; background: #DFDFDF; transition: all .4s ease-in-out; vertical-align: middle; position: relative; width: 40px; height: 100px; color: #fff; }
-.postNavigation a:before { position: absolute; font-size: 28px; top: 50%; margin-top: -14px;line-height: 28px; }
-.prevPostBox a:before { content: "\f104"; left: 12px }
-.nextPostBox a:before { content: "\f105";right: 12px }
+.postNavigation .postnavprev { display: inline-block; background: #DFDFDF; transition: all .4s ease-in-out; vertical-align: middle; position: relative; width: 40px; height: 100px; color: #fff; }
+.postNavigation .postnavprev:before { position: absolute; font-size: 28px; top: 50%; margin-top: -14px;line-height: 28px; }
+.prevPostBox .postnavprev:before { content: "\f104"; left: 12px }
+.nextPostBox .postnavprev:before { content: "\f105";right: 12px }
 .nextPostBox { right: 0; }
 .prevPostBox { left: 0; }
 .postNavigation .thumbnail {float: right;margin-left: 5px;position: relative;width: 70px;height: 70px; text-align: center;}
@@ -14,14 +14,14 @@
 .postNavigation .inner-prevnext {position: absolute;top: 0;height: 100%;padding: 15px;width: 290px;background-color: #fff; color: #111 !important;  transition: all .2s ease-in-out 0.3s;}
 .postNavigation.nextPostBox .inner-prevnext{margin: 0 0 0 40px; left: 0; }
 .postNavigation.prevPostBox .inner-prevnext{margin: 0 40px 0 0; right: 0;}
-.openedprevnext .postNavigation a{width: 138px}
-.openedprevnext .prevPostBox a:before{ left: 114px}
-.openedprevnext .nextPostBox a:before{right: 114px}
-.openedprevnext .prevPostBox a:hover:before{ left: 12px}
-.openedprevnext .nextPostBox a:hover:before{right: 12px}
-.postNavigation a:hover {color: #fff; width: 330px }
-.postNavigation.nextPostBox a:hover .inner-prevnext{ margin: 0 40px 0 0; opacity: 1}
-.postNavigation.prevPostBox a:hover .inner-prevnext{ margin: 0 0 0 40px; opacity: 1}
+.openedprevnext .postNavigation .postnavprev{width: 138px}
+.openedprevnext .prevPostBox .postnavprev:before{ left: 114px}
+.openedprevnext .nextPostBox .postnavprev:before{right: 114px}
+.openedprevnext .prevPostBox .postnavprev:hover:before{ left: 12px}
+.openedprevnext .nextPostBox .postnavprev:hover:before{right: 12px}
+.postNavigation .postnavprev:hover {color: #fff; width: 330px }
+.postNavigation.nextPostBox .postnavprev:hover .inner-prevnext{ margin: 0 40px 0 0; opacity: 1}
+.postNavigation.prevPostBox .postnavprev:hover .inner-prevnext{ margin: 0 0 0 40px; opacity: 1}
 .float-posts-nav.scrollvisible{ opacity: 1}
 .breadcrumb { margin-bottom: 20px; color: #999; font-size: 12px; line-height: 14px }
 .breadcrumb a { color: #666; text-decoration: none; }

@@ -46,3 +46,8 @@ li.toplevel_page_flatsome-panel img{
 }
 .flatsome-panel .inner-panel.success{border-color: green!important; opacity: .6}
 .flatsome-panel .inner-panel.success h5{color: green!important;}
+
+.flatsome-token-migrator__selector {
+	display: flex;
+	align-items: center;
+}

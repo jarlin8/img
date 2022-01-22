@@ -177,6 +177,10 @@
     overflow-x: scroll;
 }
 
+.wpDataTablesWrapper div.wdtscroll .wpDataTable tfoot td #wdt-number-range-slider {
+    margin-top: 0 !important;
+}
+
 .wpDataTablesWrapper table.scroll  {
     width: auto !important;
 }
@@ -712,6 +716,11 @@ div.wdt-checkbox-modal-wrap div.wdt-checkbox-option label {
     background: none !important;
 }
 
+#wdt-frontend-modal .editDialogInput.bootstrap-select.open,
+#wdt-frontend-modal .wdt-datetimepicker-modal.bootstrap-datetimepicker-widget{
+    z-index: 200001 !important
+}
+
 .wpdt-c .wpDataTablesWrapper .dataTables_length .bootstrap-select.length_menu {
     width: 80px;
     padding: 0 5px;
@@ -721,6 +730,7 @@ div.wdt-checkbox-modal-wrap div.wdt-checkbox-option label {
 .wpdt-c .wpDataTablesWrapper .dataTables_length .bootstrap-select .dropdown-toggle {
     height: 100%;
     top: 0px;
+    color: #c4c5c6;
 }
 
 .wpdt-c .wpDataTablesWrapper .dataTables_length .bootstrap-select .dropdown-toggle:after {

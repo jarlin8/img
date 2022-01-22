@@ -78,7 +78,6 @@ gulp.task('style-editor-rtl', function () {
 gulp.task('style', function () {
 	return gulp.src([path.resolve(__dirname, './src/general.scss'), path.resolve(__dirname, './src/**/style.scss')])
 		.pipe(sass(sassOptions).on('error', sass.logError))
-		.pipe(concat('backend.css'))
 		.pipe(postcss(postCSSOptions))
 		.pipe(gulp.dest('assets/css/'))
 });

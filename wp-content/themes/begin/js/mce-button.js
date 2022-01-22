@@ -44,6 +44,15 @@
 								editor.insertContent('[login]'+selected+'[/login]');
 							}
 						},
+
+						{
+							text: '会员可见',
+							icon: 'preview',
+							onclick: function() {
+								selected = tinyMCE.activeEditor.selection.getContent();
+								editor.insertContent('[hide]'+selected+'[/hide]');
+							}
+						},
 					]
 				},
 
@@ -60,15 +69,23 @@
 
 						{
 							text: '链接按钮',
-							icon: 'newtab',
+							icon: 'nonbreaking',
 							onclick: function() {
 								editor.insertContent('[link href=' + '链接地址]按钮名称[/link]');
 							}
 						},
 
 						{
+							text: '居中按钮',
+							icon: 'nonbreaking',
+							onclick: function() {
+								editor.insertContent('[but href=' + '链接地址]居中按钮[/but]');
+							}
+						},
+
+						{
 							text: '弹窗下载',
-							icon: 'newtab',
+							icon: 'nonbreaking',
 							onclick: function() {
 								editor.insertContent('[button]文件下载[/button]');
 							}
@@ -76,16 +93,25 @@
 
 						{
 							text: '直达按钮',
-							icon: 'newtab',
+							icon: 'nonbreaking',
 							onclick: function() {
 								editor.insertContent('[go]' + '');
 							}
 						},
+
+						{
+							text: '弹窗链接',
+							icon: 'nonbreaking',
+							onclick: function() {
+								editor.insertContent('[beiframe href=' + '链接地址]按钮名称[/beiframe]');
+							}
+						},
+
 					]
 				},
 
 				{
-					text: '综合功能',
+					text: '图片相关',
 					menu: [
 						{
 							text: '添加相册',
@@ -113,12 +139,26 @@
 								editor.insertContent('[hide_img]'+selected+'[/hide_img]');
 							}
 						},
+					]
+				},
+
+				{
+					text: '综合功能',
+					menu: [
 
 						{
 							text: '字体图标',
 							icon: 'paste',
 							onclick: function() {
 								editor.insertContent('[fontzm icon="图标代码" size="24" color="c40000" sup="0"]');
+							}
+						},
+
+						{
+							text: '登录按钮',
+							icon: 'user',
+							onclick: function() {
+								editor.insertContent('[loginbut sup="0"]登录[/loginbut]');
 							}
 						},
 
@@ -137,6 +177,14 @@
 							onclick: function() {
 								selected = tinyMCE.activeEditor.selection.getContent();
 								editor.insertContent('[two_column]'+selected+'[/two_column]');
+							}
+						},
+
+						{
+							text: '嵌入文章',
+							icon: 'newdocument',
+							onclick: function() {
+								editor.insertContent('[quote ids=文章ID]' + '');
 							}
 						},
 
@@ -167,6 +215,14 @@
 						},
 
 						{
+							text: '插入章节',
+							icon: 'line',
+							onclick: function() {
+								editor.insertContent('[chapter text=section]' + '');
+							}
+						},
+
+						{
 							text: 'fieldset标签',
 							icon: 'template',
 							onclick: function() {
@@ -177,7 +233,7 @@
 
 						{
 							text: 'iframe标签',
-							icon: 'template',
+							icon: 'tablerowprops',
 							onclick: function() {
 								editor.insertContent('[iframe src="网址"' + ']');
 							}
@@ -188,6 +244,15 @@
 							icon: 'upload',
 							onclick: function() {
 								editor.insertContent('[ad]' + '');
+							}
+						},
+
+						{
+							text: '浅色文字',
+							icon: 'forecolor',
+							onclick: function() {
+								selected = tinyMCE.activeEditor.selection.getContent();
+								editor.insertContent('[bec]'+selected+'[/bec]');
 							}
 						},
 

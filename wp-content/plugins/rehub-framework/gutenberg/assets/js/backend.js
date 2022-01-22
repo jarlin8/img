@@ -1,1 +1,258 @@
-var frontend=function(e){function t(r){if(i[r])return i[r].exports;var n=i[r]={i:r,l:!1,exports:{}};return e[r].call(n.exports,n,n.exports,t),n.l=!0,n.exports}var i={};return t.m=e,t.c=i,t.d=function(e,i,r){t.o(e,i)||Object.defineProperty(e,i,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var i=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(i,"a",i),i},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=424)}({424:function(e,t,i){"use strict";window.NodeList&&!window.NodeList.prototype.forEach&&(window.NodeList.prototype.forEach=Array.prototype.forEach);var r=i(425);r.keys().forEach(function(e){return r(e)})},425:function(e,t,i){function r(e){return i(n(e))}function n(e){var t=s[e];if(!(t+1))throw new Error("Cannot find module '"+e+"'.");return t}var s={"./slider/frontend.js":426};r.keys=function(){return Object.keys(s)},r.resolve=n,e.exports=r,r.id=425},426:function(e,t,i){"use strict";var r=function(e){return e&&e.__esModule?e:{default:e}}(i(427));window.rehubSlider=function(){function e(e){this.sliderNode=e,this.currentSlideIndex=0,this.setupElements()}var t=e.prototype;return t.setupElements=function(){this.$prevArrow=jQuery(this.sliderNode).find(".rh-slider-arrow--prev"),this.$nextArrow=jQuery(this.sliderNode).find(".rh-slider-arrow--next"),this.$items=jQuery(this.sliderNode).find(".rh-slider-item"),this.$thumbs=jQuery(this.sliderNode).find(".rh-slider-thumbs-item"),this.$dots=jQuery(this.sliderNode).find(".rh-slider-dots__item")},t.getSlideIndex=function(e){return"right"===e?(this.$items.length===this.currentSlideIndex+1&&(this.currentSlideIndex=-1),this.currentSlideIndex+=1):(0===this.currentSlideIndex&&(this.currentSlideIndex=this.$items.length),this.currentSlideIndex-=1),this.currentSlideIndex},t.removeActiveClasses=function(){this.$items.each(function(e,t){jQuery(t).removeClass("rh-slider-item--visible")}),this.$thumbs.each(function(e,t){jQuery(t).removeClass("rh-slider-thumbs-item--active")}),this.$dots.each(function(e,t){jQuery(t).removeClass("rh-slider-dots__item--active")})},t.moveSlide=function(e){this.removeActiveClasses(),this.$items.eq(e).addClass("rh-slider-item--visible"),this.$thumbs.eq(e).addClass("rh-slider-thumbs-item--active"),this.$dots.eq(e).addClass("rh-slider-dots__item--active")},t.addListeners=function(){var e=this,t=this;this.$prevArrow.on("click.bind",function(t){t.preventDefault(),e.moveSlide(e.getSlideIndex())}),this.$nextArrow.on("click.bind",function(t){t.preventDefault(),e.moveSlide(e.getSlideIndex("right"))}),this.$thumbs.each(function(e,i){jQuery(i).on("click.bind",function(i){i.preventDefault(),t.currentSlideIndex=e,t.moveSlide(e)})}),this.$dots.each(function(e,i){jQuery(i).on("click.bind",function(i){i.preventDefault(),t.currentSlideIndex=e,t.moveSlide(e)})})},t.removeListeners=function(){this.$prevArrow.off("click.bind"),this.$nextArrow.off("click.bind"),this.$thumbs.each(function(e,t){jQuery(t).off("click.bind")}),this.$dots.each(function(e,t){jQuery(t).off("click.bind")})},t.swipeDetect=function(){var e,t,i,r=this,n=this.sliderNode.querySelectorAll(".rh-slider-item img");Array.prototype.forEach.call(n,function(n){n.addEventListener("touchstart",function(i){var r=i.changedTouches[0];e="none",t=r.pageX,i.preventDefault()},!1),n.addEventListener("touchmove",function(e){e.preventDefault()},!1),n.addEventListener("touchend",function(n){if(n.target.className.indexOf("rh-slider-arrow--prev")>=0)return void r.$prevArrow.trigger("click.bind");if(n.target.className.indexOf("rh-slider-arrow--next")>=0)return void r.$nextArrow.trigger("click.bind");var s=n.changedTouches[0];i=s.pageX-t,Math.abs(i)>=100&&(e=i<0?"right":"left"),r.moveSlide(r.getSlideIndex(e)),n.preventDefault()},!1)})},t.init=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:0;this.$items.eq(e).addClass("rh-slider-item--visible"),this.$thumbs.eq(e).addClass("rh-slider-thumbs-item--active"),this.$dots.eq(e).addClass("rh-slider-dots__item--active"),this.addListeners(),this.swipeDetect()},t.update=function(){this.removeActiveClasses(),this.removeListeners(),this.setupElements(),this.init(this.currentSlideIndex)},t.destroy=function(){this.removeActiveClasses(),this.removeListeners()},e}(),(0,r.default)(function(){var e=jQuery(".js-hook__slider");if(0===e.length)return!1;e.each(function(e,t){new window.rehubSlider(t).init()})})},427:function(e,t,i){"use strict";function r(e){if("complete"===document.readyState||"interactive"===document.readyState)return void e();document.addEventListener("DOMContentLoaded",e)}Object.defineProperty(t,"__esModule",{value:!0}),t.default=r}});
+window.rehubSlider = function( options ) {
+	options = extend({
+		slider: '',
+	}, options || {} );
+	
+	var container = options.slider.querySelector( '.rh-slider__inner' ),
+		controlsContainer = options.slider.querySelector( '.rh-slider-controls' ),
+		prevButton = controlsContainer.children[0],
+        nextButton = controlsContainer.children[1],
+		thumbsContainer = options.slider.querySelector( '.rh-slider-thumbs__row' ),
+		slideItems = container.children,
+		slideCount = slideItems ?  slideItems.length : 0,
+		index = getStartIndex( getOption('startIndex') ),
+		indexCached = index,
+		slideBy = 1, 
+		panStart = false,
+		initPosition = {},
+        lastPosition = {},
+		swipeAngle = 15,
+		moveDirectionExpected = '?';
+
+	var controlsEvents = {
+        'click': onControlsClick,
+	};
+	var thumbsEvents = {
+        'click': onThumbClick,
+	};
+	var touchEvents = {
+        'touchstart': onPanStart,
+        'touchmove': onPanMove,
+        'touchend': onPanEnd,
+	};
+
+	function update () {
+		slideItems = options.slider.querySelector( '.rh-slider__inner' ).children;
+		slideCount = slideItems ?  slideItems.length : 0;
+	}
+
+	addEvents(controlsContainer, controlsEvents);
+	addEvents(thumbsContainer, thumbsEvents);
+	addEvents(container, touchEvents);
+	setSlidePositions();
+
+	function setSlidePositions () {
+		for (var i = 0; i < slideItems.length; i++) {
+			let item = slideItems[i];
+			if (i === 0 ) { 
+				item.style.left = '0%'; 
+			} else {
+				item.style.left = '100%';
+			}
+		};
+		thumbsContainer.children[0].classList.add('rh-slider-thumbs-item--active');
+	}
+
+	function onPanStart (e) {
+		panStart = true;
+		var $ = getEvent(e);
+		if ( !isTouchEvent(e) ) {
+			preventDefaultBehavior(e);
+		}
+		lastPosition.x = initPosition.x = $.changedTouches[0].clientX;
+		lastPosition.y = initPosition.y = $.changedTouches[0].clientY;
+	}
+
+	function onPanMove (e) {
+		if (panStart) {
+			var $ = getEvent(e);
+			lastPosition.x = $.changedTouches[0].clientX;
+			lastPosition.y = $.changedTouches[0].clientY;
+			if (moveDirectionExpected === '?') { moveDirectionExpected = getMoveDirectionExpected(); }
+		}
+	}
+
+	function onPanEnd (e) {
+		if (panStart) {
+			panStart = false;
+
+			var $ = getEvent(e);
+			lastPosition.x = $.changedTouches[0].clientX;
+			lastPosition.y = $.changedTouches[0].clientY;
+			var dist = getDist(lastPosition, initPosition);
+			if (Math.abs(dist)) {
+				if (!isTouchEvent(e)) {
+				  // prevent "click"
+				  var target = getTarget(e);
+				  addEvents(target, {'click': function preventClick (e) {
+					preventDefaultBehavior(e);
+					removeEvents(target, {'click': preventClick});
+				  }});
+				}
+				if (moveDirectionExpected) {
+					onControlsClick(e, dist > 0 ? -1 : 1);
+				}
+			}
+		}
+	}
+
+	function getDist(a, b) { 
+		return a.x - b.x; 
+	}
+
+	function getMoveDirectionExpected () {
+		return getTouchDirection(toDegree(lastPosition.y - initPosition.y, lastPosition.x - initPosition.x), swipeAngle) === 'horizontal';
+	}
+
+	function getTouchDirection(angle, range) {
+		var direction = false,
+			gap = Math.abs(90 - Math.abs(angle));
+		if (gap >= 90 - range) {
+			direction = 'horizontal';
+		} else if (gap <= range) {
+			direction = 'vertical';
+		}
+		return direction;
+	}
+
+	function toDegree (y, x) {
+		return Math.atan2(y, x) * (180 / Math.PI);
+	}
+
+	function isTouchEvent (e) {
+		return e.type.indexOf('touch') >= 0;
+	}
+	
+	function onControlsClick (e, dir) {
+		if (!dir) {
+			e = getEvent(e);
+			var target = getTarget(e);
+			while (target !== controlsContainer && [prevButton, nextButton].indexOf(target) < 0) { 
+				target = target.parentNode; 
+			}
+			var targetIn = [prevButton, nextButton].indexOf(target);
+			if (targetIn >= 0) {
+				dir = targetIn === 0 ? -1 : 1;
+			}
+		}
+		if (dir) {
+			index += slideBy * dir;
+			render();
+		}
+	}
+
+	function onThumbClick (e) {
+		e = getEvent(e);
+		var target = getTarget(e);
+		target = target.parentNode;
+		if( target.hasAttribute('data-slide') ){
+			index = Number(target.getAttribute('data-slide'));
+			if ( index !== indexCached ) {
+				render();
+			}
+		}
+	}
+
+	function render () {
+		index = Math.max( 0, Math.min(slideCount - 1, index));
+		if (index !== indexCached ){
+			transformCore();
+		}
+	}
+
+	function transformCore () {
+		animateSlide(indexCached, true);
+        animateSlide(index);
+        indexCached = index;
+	}
+
+	function animateSlide (number, isOut) {
+		var l = number + 1;
+		for (var i = number; i < l; i++) {
+			var item = slideItems[i];
+			item.style.left = (i - index) * 100 / 1 + '%';
+		}
+		if(isOut){
+			thumbsContainer.children[number].classList.remove('rh-slider-thumbs-item--active');
+		} else {
+			thumbsContainer.children[number].classList.add('rh-slider-thumbs-item--active');
+		}
+	}
+
+	function getEvent (e) {
+		e = e || window.event;
+		return e;
+	}
+
+	function getTarget (e) {
+		return e.target || window.event.srcElement;
+	}
+
+	function getStartIndex (ind) {
+		ind = ind ? Math.max( 0, Math.min( slideCount - 1, ind ) ) : 0;
+		return ind;
+	}
+
+	function getOption (item) {
+		var result = options[item];
+		return result;
+	}
+	function preventDefaultBehavior (e) {
+		e.preventDefault ? e.preventDefault() : e.returnValue = false;
+	}
+
+	return {
+		update: update
+	}
+}
+
+function extend() {
+	var obj, name, copy, target = arguments[0] || {}, i = 1, length = arguments.length;
+	for (; i < length; i++) {
+		if ((obj = arguments[i]) !== null) {
+			for (name in obj) {
+				copy = obj[name];
+				if (target === copy) {
+					continue;
+				} else if (copy !== undefined) {
+					target[name] = copy;
+				}
+			}
+		}
+	}
+	return target;
+}
+
+function addEvents(el, obj, preventScrolling) {
+	var supportsPassive = false;
+	try {
+		var opts = Object.defineProperty({}, 'passive', {
+			get: function() {
+				supportsPassive = true;
+			}
+		});
+		window.addEventListener("test", null, opts);
+	} catch (e) {}
+	var passiveOption = supportsPassive ? { passive: true } : false;
+	for (var prop in obj) {
+		var option = ['touchstart', 'touchmove'].indexOf(prop) >= 0 && !preventScrolling ? passiveOption : false;
+		el.addEventListener(prop, obj[prop], option);
+	}
+}
+
+function removeEvents(el, obj) {
+	var supportsPassive = false;
+	try {
+		var opts = Object.defineProperty({}, 'passive', {
+			get: function() {
+				supportsPassive = true;
+			}
+		});
+		window.addEventListener("test", null, opts);
+	} catch (e) {}
+	var passiveOption = supportsPassive ? { passive: true } : false;
+	for (var prop in obj) {
+	  var option = ['touchstart', 'touchmove'].indexOf(prop) >= 0 ? passiveOption : false;
+	  el.removeEventListener(prop, obj[prop], option);
+	}
+}

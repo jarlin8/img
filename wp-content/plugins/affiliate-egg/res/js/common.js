@@ -1,5 +1,5 @@
 jQuery(document).ready(function ($) {
-    $(".affegg-delete").click(function () {
+    $(".affegg-delete").on('click', function () {
         if (!confirm(affeggL10n.are_you_shure)) {
             return false;
         }

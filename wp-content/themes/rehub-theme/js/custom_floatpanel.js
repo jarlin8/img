@@ -6,7 +6,7 @@ jQuery(document).ready(function($) {
 		var floatpanellinks = $('.float-panel-woo-info').clone(true).addClass('wpsm_pretty_colored float-panel-top-links pt10 pl15 pr15 pb10 rh-float-panel');
 		$('body').prepend(floatpanellinks);
 		$('.float-panel-top-links').removeClass('rh-line-left ml15');
-		$('.float-panel-top-links .float-panel-woo-links').removeClass('font80').addClass('font90 scroll-on-mobile');
+		$('.float-panel-top-links .float-panel-woo-links').removeClass('font80').addClass('font90 smart-scroll-desktop');
 		if($('.re-stickyheader').length > 0){
 			var stickyheight = $('.re-stickyheader').outerHeight();
 			floatpanellinks.css("top", stickyheight);

@@ -25,7 +25,7 @@
 
   function gotoUxBuilder () {
     if (window.flatsome_gutenberg) {
-      window.location = window.flatsome_gutenberg.edit_button.url
+      window.top.location.href = window.flatsome_gutenberg.edit_button.url
     }
   }
 

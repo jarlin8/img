@@ -169,9 +169,10 @@ var singleClick = false;
 
                                 var mandatory = $inputElement.hasClass('mandatory') ? 'mandatory ' : '';
                                 var foreignKeyRule = $inputElement.hasClass('wdt-foreign-key-select') ? 'wdt-foreign-key-select ' : '';
+                                var searchInSelect = $inputElement.hasClass('wdt-search-in-select') ? ' wdt-search-in-select ' : '';
 
                                 // Recreate the selectbox element
-                                $selectpickerBlock.html('<div class="fg-line"><select id="' + tableDescription.tableId + '_' + $inputElement.data('key') + '" data-input_type="' + inputElementType + '" data-key="' + $inputElement.data('key') + '" class="form-control editDialogInput selectpicker ' + mandatory + 'wdt-possible-values-ajax ' + foreignKeyRule + '" data-live-search="true" data-live-search-placeholder="' + wpdatatables_frontend_strings.search + '" data-column_header="' + $inputElement.data('column_header') + '"></select></div>');
+                                $selectpickerBlock.html('<div class="fg-line"><select id="' + tableDescription.tableId + '_' + $inputElement.data('key') + '" title="' + wpdatatables_frontend_strings.nothingSelected + '" data-input_type="' + inputElementType + '" data-key="' + $inputElement.data('key') + '" class="form-control editDialogInput selectpicker ' + mandatory + 'wdt-possible-values-ajax ' + foreignKeyRule + searchInSelect + '" data-live-search="true" data-live-search-placeholder="' + wpdatatables_frontend_strings.search + '" data-column_header="' + $inputElement.data('column_header') + '"></select></div>');
                                 if (inputElementType === 'multi-selectbox')
                                     $selectpickerBlock.find('select').attr('multiple', 'multiple');
 
@@ -248,6 +249,13 @@ var singleClick = false;
                                 $inputElement.selectpicker('val', val);
                                 $inputElement.selectpicker('refresh');
                             }
+
+                            // Hide/Show search box in select/multiselect edit input
+                            if (searchInSelect === ''){
+                                $inputElement.closest('div.editDialogInput').find('.bs-searchbox').hide();
+                            } else {
+                                $inputElement.closest('div.editDialogInput').find('.bs-searchbox').show();
+                            }
                         } else {
                             if (inputElementType == 'attachment' || $.inArray(columnType, ['icon']) !== -1) {
                                 columnType = $inputElement.parent().data('column_type');
@@ -297,8 +305,8 @@ var singleClick = false;
                                             editor.setContent(val);
                                         },
                                         menubar: false,
-                                        plugins: 'link image media lists hr colorpicker fullscreen textcolor',
-                                        toolbar: 'undo redo formatselect bold italic underline strikethrough subscript superscript | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | hr fullscreen | link unlink image | forecolor backcolor removeformat'
+                                        plugins: 'link image media lists hr colorpicker fullscreen textcolor code',
+                                        toolbar: 'undo redo formatselect bold italic underline strikethrough subscript superscript | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | hr fullscreen | link unlink image | forecolor backcolor removeformat | code'
                                     });
                                 }
                             }
@@ -442,7 +450,7 @@ var singleClick = false;
                                 wdtNotify(wpdatatables_edit_strings.error, returnData.error, 'danger');
                             }
                         },
-                        error: function () {
+                        error: function (xhr, response) {
                             $(tableDescription.selector + '_edit_dialog').closest('.modal-dialog').find('.wdt-preload-layer').animateFadeOut();
                             wdtNotify(wpdatatables_edit_strings.error, wpdatatables_frontend_strings.databaseInsertError, 'danger');
                         }
@@ -463,11 +471,12 @@ var singleClick = false;
                                 var $selectpickerBlock = $('select#' + tableDescription.tableId + '_' + column.origHeader).closest('.fg-line').parent();
 
                                 var mandatory = column.mandatory ? 'mandatory ' : '';
-                                var possibleValuesAjax = column.possibleValuesAjax ? 'wdt-possible-values-ajax ' : '';
+                                var possibleValuesAjax = (column.possibleValuesAjax) ? 'wdt-possible-values-ajax ' : '';
                                 var foreignKeyRule = column.foreignKeyRule ? 'wdt-foreign-key-select ' : '';
+                                var searchInSelect = column.searchInSelectBoxEditing ? ' wdt-search-in-select ' : '';
 
                                 // Recreate the selectbox element
-                                $selectpickerBlock.html('<div class="fg-line"><select id="' + tableDescription.tableId + '_' + column.origHeader + '" data-input_type="' + column.editorInputType + '" data-key="' + column.origHeader + '" class="form-control editDialogInput selectpicker ' + mandatory + possibleValuesAjax + foreignKeyRule + '" data-live-search="true" data-live-search-placeholder="' + wpdatatables_frontend_strings.search + '" data-column_header="' + column.displayHeader + '"></select></div>');
+                                $selectpickerBlock.html('<div class="fg-line"><select id="' + tableDescription.tableId + '_' + column.origHeader + '" data-input_type="' + column.editorInputType + '" data-key="' + column.origHeader + '" class="form-control editDialogInput selectpicker ' + mandatory + possibleValuesAjax + foreignKeyRule + searchInSelect +'" data-live-search="true" data-live-search-placeholder="' + wpdatatables_frontend_strings.search + '" data-column_header="' + column.displayHeader + '"></select></div>');
                                 if (column.editorInputType === 'multi-selectbox')
                                     $selectpickerBlock.find('select').attr('multiple', 'multiple');
 
@@ -528,6 +537,12 @@ var singleClick = false;
                                     }
                                 });
                             }
+                            // Hide/Show search box in select/multiselect edit input
+                            if (column.searchInSelectBoxEditing !== 1){
+                                $('select#' + tableDescription.tableId + '_' + column.origHeader).closest('div.editDialogInput').find('.bs-searchbox').hide();
+                            } else {
+                                $('select#' + tableDescription.tableId + '_' + column.origHeader).closest('div.editDialogInput').find('.bs-searchbox').show();
+                            }
                         }
 
                         if (column.defaultValue) {
@@ -566,8 +581,8 @@ var singleClick = false;
                                             editor.setContent(column.defaultValue);
                                         },
                                         menubar: false,
-                                        plugins: 'link image media lists hr colorpicker fullscreen textcolor',
-                                        toolbar: 'undo redo formatselect bold italic underline strikethrough subscript superscript | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | hr fullscreen | link unlink image | forecolor backcolor removeformat'
+                                        plugins: 'link image media lists hr colorpicker fullscreen textcolor code',
+                                        toolbar: 'undo redo formatselect bold italic underline strikethrough subscript superscript | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | hr fullscreen | link unlink image | forecolor backcolor removeformat | code'
                                     });
                                 }
                             } else {
@@ -1019,7 +1034,8 @@ var singleClick = false;
             if (tableDescription.advancedFilterEnabled) {
                 $('#' + tableDescription.tableId).dataTable().columnFilter(tableDescription.advancedFilterOptions);
                 for (var i in wpDataTablesHooks.onRenderFilter) {
-                    wpDataTablesHooks.onRenderFilter[i](tableDescription);
+                    if (!isNaN(i))
+                        wpDataTablesHooks.onRenderFilter[i](tableDescription);
                 }
             }
 
@@ -1273,8 +1289,8 @@ var singleClick = false;
                                 tinymce.init({
                                     selector: '#' + $(this).attr('id'),
                                     menubar: false,
-                                    plugins: 'link image media lists hr colorpicker fullscreen textcolor',
-                                    toolbar: 'undo redo formatselect bold italic underline strikethrough subscript superscript | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | hr fullscreen | link unlink image | forecolor backcolor removeformat'
+                                    plugins: 'link image media lists hr colorpicker fullscreen textcolor code',
+                                    toolbar: 'undo redo formatselect bold italic underline strikethrough subscript superscript | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | hr fullscreen | link unlink image | forecolor backcolor removeformat | code'
                                 });
                             }
                         });
@@ -1341,9 +1357,13 @@ var singleClick = false;
                             modal.find(tableDescription.selector + '_ok_edit_dialog i' ).removeClass('wpdt-icon-check-circle');
                             modal.find(tableDescription.selector + '_ok_edit_dialog i' ).addClass('wpdt-icon-check-double-reg');
                         }
-
+                        // Reset values in edit modal
                         $('#wdt-frontend-modal .editDialogInput').val('').css('border', '');
                         $('#wdt-frontend-modal tr.idRow .editDialogInput').val('0');
+                        $('#wdt-frontend-modal .fileinput').removeClass('fileinput-exists').addClass('fileinput-new');
+                        $('#wdt-frontend-modal .fileinput').find('div.fileinput-exists').removeClass('fileinput-exists').addClass('fileinput-new');
+                        $('#wdt-frontend-modal .fileinput').find('.fileinput-filename').text('');
+                        $('#wdt-frontend-modal .fileinput').find('.fileinput-preview').html('');
 
                         $('#wdt-frontend-modal .editDialogInput').each(function (index) {
                             if ($(this).data('input_type') == 'mce-editor') {
@@ -1353,8 +1373,8 @@ var singleClick = false;
                                 tinymce.init({
                                     selector: '#' + $(this).attr('id'),
                                     menubar: false,
-                                    plugins: 'link image media lists hr colorpicker fullscreen textcolor',
-                                    toolbar: 'undo redo formatselect bold italic underline strikethrough subscript superscript | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | hr fullscreen | link unlink image | forecolor backcolor removeformat'
+                                    plugins: 'link image media lists hr colorpicker fullscreen textcolor code',
+                                    toolbar: 'undo redo formatselect bold italic underline strikethrough subscript superscript | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | hr fullscreen | link unlink image | forecolor backcolor removeformat | code'
                                 });
                             }
                         });
@@ -1444,6 +1464,7 @@ var singleClick = false;
                             $.ajax({
                                 url: tableDescription.adminAjaxBaseUrl,
                                 type: 'POST',
+                                dataType: 'json',
                                 data: {
                                     action: 'wdt_delete_table_row',
                                     id_key: tableDescription.idColumnKey,
@@ -1451,10 +1472,17 @@ var singleClick = false;
                                     table_id: tableDescription.tableWpId,
                                     wdtNonce: $('#wdtNonceFrontendEdit_' + tableDescription.tableWpId).val()
                                 },
-                                success: function () {
+                                success: function (data) {
                                     wpDataTables[tableDescription.tableId].fnDraw(false);
-                                    $('#wdt-delete-modal').modal('hide');
-                                    wdtNotify(wpdatatables_edit_strings.success, wpdatatables_edit_strings.rowDeleted, 'success')
+                                    if (data.error == '') {
+                                        $('#wdt-delete-modal').modal('hide');
+                                        wdtNotify(wpdatatables_edit_strings.success, wpdatatables_edit_strings.rowDeleted, 'success');
+                                    } else {
+                                        wdtNotify(wpdatatables_edit_strings.error, data.error, 'danger');
+                                    }
+                                },
+                                error: function () {
+                                    wdtNotify(wpdatatables_edit_strings.error, wpdatatables_edit_strings.databaseDeleteError, 'danger');
                                 }
                             });
                         }
@@ -1558,6 +1586,7 @@ var singleClick = false;
              */
             if(tableDescription.masterDetail !== undefined && tableDescription.masterDetail){
                 for (var i in wpDataTablesHooks.onRenderDetails) {
+                    if (!isNaN(i))
                     wpDataTablesHooks.onRenderDetails[i](tableDescription);
                 }
             }
@@ -1604,7 +1633,11 @@ function wdtApplyCellAction($cell, action, setVal) {
             $cell.attr('style', 'background-color: "" !important');
             break;
         case 'setCellContent':
-            $cell.html(setVal);
+            if ($cell.children().hasClass('responsiveExpander')){
+                $cell.html(setVal).prepend('<span class="responsiveExpander"></span>');
+            } else {
+                $cell.html(setVal);
+            }
             break;
         case 'setCellClass':
             $cell.addClass(setVal);
@@ -1768,6 +1801,13 @@ function wdtCheckConditionalFormatting(conditionalFormattingRules, params, eleme
     } else if (params.columnType == 'time') {
         cellVal = moment(getPurifiedValue(element, responsive), params.momentTimeFormat).toDate();
         ruleVal = moment(conditionalFormattingRules.cellVal, params.momentTimeFormat).toDate();
+    } else if (params.columnType == 'link') {
+        if (responsive) {
+            cellVal = element.children('.columnValue').html();
+        } else {
+            cellVal = element.clone().html();
+        }
+        ruleVal = conditionalFormattingRules.cellVal;
     } else {
         // Process string comparison
         cellVal = getPurifiedValue(element, responsive);

@@ -16,6 +16,7 @@
          * Init wpdtEditor (instance of Handsontable)
          */
         if (container.length) {
+
             var wpdtEditor = new Handsontable(container[0], {
                 startRows: rowNumber,
                 startCols: colNumber,
@@ -46,8 +47,8 @@
                                     {
                                         key: 'alignment:left',
                                         name: 'Left',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 cellActionButtons[5].click()
                                             }, 0);
                                         }
@@ -55,8 +56,8 @@
                                     {
                                         key: 'alignment:center',
                                         name: 'Center',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 cellActionButtons[6].click()
                                             }, 0);
                                         }
@@ -64,8 +65,8 @@
                                     {
                                         key: 'alignment:right',
                                         name: 'Right',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 cellActionButtons[7].click()
                                             }, 0);
                                         }
@@ -73,8 +74,8 @@
                                     {
                                         key: 'alignment:justify',
                                         name: 'Justify',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 cellActionButtons[8].click()
                                             }, 0);
                                         }
@@ -85,8 +86,8 @@
                                     {
                                         key: 'alignment:top',
                                         name: 'Top',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 cellActionButtons[10].click()
                                             }, 0);
                                         }
@@ -94,8 +95,8 @@
                                     {
                                         key: 'alignment:middle',
                                         name: 'Middle',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 cellActionButtons[9].click()
                                             }, 0);
                                         }
@@ -103,8 +104,8 @@
                                     {
                                         key: 'alignment:bottom',
                                         name: 'Bottom',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 cellActionButtons[11].click()
                                             }, 0);
                                         }
@@ -121,8 +122,8 @@
                                     {
                                         key: 'wrapping:wrap',
                                         name: 'Wrap',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 cellActionButtons[12].click()
                                             }, 0);
                                         }
@@ -130,8 +131,8 @@
                                     {
                                         key: 'wrapping:overflow',
                                         name: 'Overflow',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 cellActionButtons[13].click()
                                             }, 0);
                                         }
@@ -139,8 +140,8 @@
                                     {
                                         key: 'wrapping:clip',
                                         name: 'Clip',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 cellActionButtons[14].click()
                                             }, 0);
                                         }
@@ -161,8 +162,8 @@
                                     {
                                         key: 'add:link',
                                         name: 'Link',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 $('#wpdt-link').click()
                                             }, 0);
                                         }
@@ -170,8 +171,8 @@
                                     {
                                         key: 'add:media',
                                         name: 'Media',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 $('#wpdt-media').click()
                                             }, 0);
                                         }
@@ -179,8 +180,8 @@
                                     {
                                         key: 'add:html',
                                         name: 'HTML code',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 $('#wpdt-html').click()
                                             }, 0);
                                         }
@@ -188,8 +189,8 @@
                                     {
                                         key: 'add:shortcode',
                                         name: 'Shortcode',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 $('#wpdt-do-shortcode').click()
                                             }, 0);
                                         }
@@ -197,8 +198,8 @@
                                     {
                                         key: 'add:star',
                                         name: 'Star rating',
-                                        callback: function(key, selection, clickEvent) {
-                                            setTimeout(function() {
+                                        callback: function (key, selection, clickEvent) {
+                                            setTimeout(function () {
                                                 $('#wpdt-star-rating').click()
                                             }, 0);
                                         }
@@ -209,8 +210,8 @@
                         'separator7': Handsontable.plugins.ContextMenu.SEPARATOR,
                         'clear': {
                             name: 'Clear table data',
-                            callback: function(key, selection, clickEvent) {
-                                setTimeout(function() {
+                            callback: function (key, selection, clickEvent) {
+                                setTimeout(function () {
                                     $('#wpdt-clear').click()
                                 }, 0);
                             }
@@ -233,8 +234,8 @@
                     return cellPrp
                 },
                 afterSelection: (row, column, row2, column2, preventScrolling, selectionLayerLevel) => {
-                       disableButtons();
-                       updateActiveButtons()
+                    disableButtons();
+                    updateActiveButtons()
                 }
             });
             wpdtEditor.selectCell(0, 0);
@@ -429,9 +430,9 @@
                         $('#wdt-error-modal').modal('show');
                         $('.wdt-preload-layer').animateFadeOut();
                     } else {
-                        if (data.reload){
+                        if (data.reload) {
                             location.reload()
-                        }else {
+                        } else {
                             $('.wdt-preload-layer').animateFadeOut();
                             var heightHT = jQuery('.ht_master .wtHider');
                             wpdtEditor.updateSettings({
@@ -519,6 +520,8 @@
                 mainValignButtonIcon = $('#wpdt-valign-button i:first-child'),
                 mainWrapButtonIcon = $('#wpdt-wrap-button i:first-child'),
                 textColorButton = $('#wpdt-text-color'),
+                fontSizeSelect = $('#wpdt-font-size'),
+                fontFamilySelect = $('#wpdt-font-family'),
                 linkButton = $('#wpdt-link'),
                 mediaButton = $('#wpdt-media'),
                 htmlButton = $('#wpdt-html'),
@@ -559,6 +562,28 @@
             } else {
                 bgColorButton.removeAttr('style');
                 bgColorButton.css("border-bottom-color", "#FFFFFF");
+            }
+            // Update Font size select
+            if (cellClasses.indexOf('wpdt-fs-') !== -1) {
+                let fontSize = cellClasses.substring(cellClasses.indexOf('wpdt-fs-') + 8, cellClasses.indexOf('wpdt-fs-') + 14);
+                const regex = new RegExp("^0+(?!$)", 'g');
+                // Replaces the matched
+                // value with given string
+                fontSize = fontSize.replaceAll(regex, "");
+                fontSizeSelect.val(fontSize)
+            } else {
+                fontSizeSelect.val(13)
+            }
+            // Update Font family select
+            if (cellClasses.indexOf('wpdt-ff-') !== -1) {
+                let fontFamily = cellClasses.substring(cellClasses.indexOf('wpdt-ff-') + 8, cellClasses.indexOf('wpdt-ff-') + 14);
+                const regex = new RegExp("^0+(?!$)", 'g');
+                // Replaces the matched
+                // value with given string
+                fontFamily = fontFamily.replaceAll(regex, "");
+                fontFamilySelect.val(fontFamily)
+            } else {
+                fontFamilySelect.val(0)
             }
             // Update Horizontal right align button
             if (cellClasses.indexOf('wpdt-align-right') !== -1) {
@@ -727,9 +752,10 @@
         }
 
         /**
-         * Add dynamic color classes for cells
+         * Add dynamic classes for cells
          */
-        function addDynamicStyle(selectedCells, color, partClass) {
+        function addDynamicStyle(selectedCells, value, partClass, fontFamilyArr = []) {
+            let newValue;
             for (var index = 0; index < selectedCells.length; index += 1) {
                 var item = selectedCells[index],
                     startRow = Math.min(item[0], item[2]),
@@ -744,9 +770,26 @@
                         cell.className = typeof cell.className == 'string' ? cell.className : '';
 
                         if (cell.className.indexOf(partClass) !== -1) {
-                            newClassName = cell.className.replace(cell.className.substring(cell.className.indexOf(partClass), cell.className.indexOf(partClass) + 14), partClass + color);
+                            if (partClass == 'wpdt-ff-' || partClass == 'wpdt-fs-') {
+                                newValue = String(value).padStart(6, '0');
+                            } else {
+                                newValue = value;
+                            }
+                            if (newValue != ''){
+                                newClassName = cell.className.replace(cell.className.substring(cell.className.indexOf(partClass), cell.className.indexOf(partClass) + 14), partClass + newValue);
+                            } else {
+                                newClassName = cell.className.replace(cell.className.substring(cell.className.indexOf(partClass), cell.className.indexOf(partClass) + 14), '');
+                            }
                         } else {
-                            newClassName = cell.className + ' ' + partClass + color;
+                            if (partClass == 'wpdt-ff-' || partClass == 'wpdt-fs-') {
+                                newClassName = cell.className + ' ' + partClass + String(value).padStart(6, '0');
+                            } else {
+                                if (value != ''){
+                                    newClassName = cell.className + ' ' + partClass + value;
+                                } else {
+                                    newClassName = cell.className + ' ';
+                                }
+                            }
                         }
                         wpdtEditor.setCellMeta(rowIndex, columnIndex, 'className', newClassName.trimStart());
                     }
@@ -754,9 +797,14 @@
             }
             wpdtEditor.render();
             if (partClass === 'wpdt-tc-') {
-                addStylesheetRules('.' + partClass + color, 'color:#' + color + ' !important;')
-            } else {
-                addStylesheetRules('.' + partClass + color, 'background-color:#' + color + ' !important;');
+                addStylesheetRules('.' + partClass + value, 'color:#' + value + ' !important;')
+            } else if (partClass === 'wpdt-bc-') {
+                addStylesheetRules('.' + partClass + value, 'background-color:#' + value + ' !important;');
+            } else if (partClass === 'wpdt-fs-') {
+                addStylesheetRules('.' + partClass + String(value).padStart(6, '0'), 'font-size:' + value + 'px !important;');
+            } else if (partClass === 'wpdt-ff-') {
+                let fontFamily = value === '0' ? 'inherit' : fontFamilyArr[value - 1];
+                addStylesheetRules('.' + partClass + String(value).padStart(6, '0'), 'font-family:' + fontFamily + ' !important;');
             }
         }
 
@@ -998,7 +1046,7 @@
                         hsla: false,
                         hsva: false,
                         cmyk: false,
-                        clear: false,
+                        clear: true ,
                         input: true,
                         save: true
                     }
@@ -1021,6 +1069,9 @@
                 jQuery(element).css("border-bottom-color", color.toHEXA().toString(0));
                 selectedColor = pickr.getColor().toHEXA().toString(0).replace('#', "");
                 addDynamicStyle(selectedCells, selectedColor, partClass);
+            }).on('clear', color => {
+                jQuery(element).css("border-bottom-color", "");
+                addDynamicStyle(selectedCells, '', partClass);
             })
         }
 
@@ -1204,6 +1255,19 @@
         });
 
         /**
+         * Apply font-size and font-family for text in the cell
+         */
+        $('#wpdt-font-size,#wpdt-font-family').on('change', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            let target = $(this)[0].id,
+                selectValue = $(this).val(),
+                selectedCells = wpdtEditor.getSelected(),
+                fontFamilyArr = $(this).data('wpdt-fonts'),
+                partClass = (target == 'wpdt-font-size') ? 'wpdt-fs-' : 'wpdt-ff-';
+            addDynamicStyle(selectedCells, selectValue, partClass, fontFamilyArr);
+        });
+        /**
          * Insert media in cell
          */
         $('#wpdt-media').click(function (e) {
@@ -1217,6 +1281,7 @@
             wp.media.editor.send.attachment = function (props, attachment) {
                 window.wpActiveEditor = null;
                 wpdtEditor.setDataAtCell(highlightRow, highlightCol, adoptToHTML(attachment, props));
+                $('.wdt-save-data').click();
             };
             if (typeof wp !== 'undefined' && wp.media && wp.media.editor)
                 wp.media.editor.open();
@@ -1298,6 +1363,8 @@
                 $('#wpdt-link-text').val(linkData.data('link-text'));
                 $("#wpdt-link-target-attribute").prop("checked", linkData.data('link-target') === true);
                 $("#wpdt-link-nofollow-attribute").prop("checked", linkData.data('link-nofollow') === true);
+                $("#wpdt-link-noreferrer-attribute").prop("checked", linkData.data('link-noreferrer') === true);
+                $("#wpdt-link-sponsored-attribute").prop("checked", linkData.data('link-sponsored') === true);
                 $("#wpdt-link-button-attribute").prop("checked", linkData.data('link-btn-status') === true);
                 if (linkData.data('link-btn-status') === true) {
                     $('div.wpdt-link-button-class-block').show();
@@ -1311,6 +1378,8 @@
                 $('#wpdt-link-text').val('');
                 $("#wpdt-link-target-attribute").prop("checked", false);
                 $("#wpdt-link-nofollow-attribute").prop("checked", false);
+                $("#wpdt-link-noreferrer-attribute").prop("checked", false);
+                $("#wpdt-link-sponsored-attribute").prop("checked", false);
                 $("#wpdt-link-button-attribute").prop("checked", false);
                 $('div.wpdt-link-button-text-block').hide();
                 $('div.wpdt-link-button-class-block').hide();
@@ -1320,7 +1389,7 @@
             $('#wdt-backend-insert-link-button').on('click', function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                let targetAttr, formdata, dataAttr, selectedRange = wpdtEditor.getSelectedRange()[0],
+                let targetAttr, rel, nofollowAttr, noreferrerAttr, sponsoredAttr,  formdata, dataAttr, selectedRange = wpdtEditor.getSelectedRange()[0],
                     highlightRow = selectedRange.highlight.row,
                     highlightCol = selectedRange.highlight.col,
                     linkUrl = $('#wpdt-link-url'),
@@ -1328,13 +1397,18 @@
                     linkText = $('#wpdt-link-text'),
                     linkTextValue = linkText.val(),
                     linkTarget = $("#wpdt-link-target-attribute").is(":checked") || 0,
-                    linkNoFollow = $("#wpdt-link-nofollow-attribute").is(":checked") || 0,
+                    linkNofollow = $("#wpdt-link-nofollow-attribute").is(":checked") || 0,
+                    linkNoreferrer = $("#wpdt-link-noreferrer-attribute").is(":checked") || 0,
+                    linkSponsored = $("#wpdt-link-sponsored-attribute").is(":checked") || 0,
                     linkButtonStatus = $("#wpdt-link-button-attribute").is(":checked") || 0,
                     buttonClass = $("#wpdt-button-class").val(),
                     pattern = new RegExp('^(https?)://');
 
                 targetAttr = linkTarget ? "_blank" : "_self";
-                noFollowAttr = linkNoFollow ? 'rel="nofollow"' : '';
+                nofollowAttr = linkNofollow ? ' nofollow ' : '';
+                noreferrerAttr = linkNoreferrer ? ' noreferrer ' : '';
+                sponsoredAttr = linkSponsored ? ' sponsored ' : '';
+                rel = nofollowAttr + noreferrerAttr + sponsoredAttr;
 
                 if (linkUrlValue == '') {
                     linkUrl.closest('.col-sm-12').siblings('.error-msg').show();
@@ -1355,15 +1429,17 @@
                 dataAttr += ' data-link-url="' + linkUrl + '"';
                 dataAttr += ' data-link-text="' + linkTextValue + '"';
                 dataAttr += ' data-link-target="' + linkTarget + '"';
-                dataAttr += ' data-link-nofollow="' + linkNoFollow + '"';
+                dataAttr += ' data-link-nofollow="' + linkNofollow + '"';
+                dataAttr += ' data-link-noreferrer="' + linkNoreferrer + '"';
+                dataAttr += ' data-link-sponsored="' + linkSponsored + '"';
                 dataAttr += ' data-link-btn-status="' + linkButtonStatus + '"';
                 dataAttr += ' data-link-btn-class="' + buttonClass + '"';
                 dataAttr += ' data-link-content="wpdt-link-content"';
 
                 if (!linkButtonStatus) {
-                    formdata = '<a class="wpdt-link-content" href="' + linkUrl + '" ' + noFollowAttr + ' target="' + targetAttr + '"' + dataAttr + '>' + linkTextValue + '</a>';
+                    formdata = '<a class="wpdt-link-content" href="' + linkUrl + '" ' + ' rel="' + rel + '"' + ' target="' + targetAttr + '"' + dataAttr + '>' + linkTextValue + '</a>';
                 } else {
-                    formdata = '<a class="wpdt-link-content" href="' + linkUrl + '" ' + noFollowAttr + ' target="' + targetAttr + '" ' + dataAttr + '><button class="' + buttonClass + '">' + linkTextValue + '</button></a>';
+                    formdata = '<a class="wpdt-link-content" href="' + linkUrl + '" ' + ' rel="' + rel + '"' + ' target="' + targetAttr + '" ' + dataAttr + '><button class="' + buttonClass + '">' + linkTextValue + '</button></a>';
                 }
 
                 wpdtEditor.setDataAtCell(highlightRow, highlightCol, formdata);
@@ -1414,7 +1490,7 @@
                         editor.setContent($('#wpdt-tiny-mce').val());
                     }
                 },
-                height : "400",
+                height: "400",
                 menubar: false,
                 forced_root_block: "div",
                 forced_root_block_attrs: {
@@ -1602,22 +1678,22 @@
                     showNumber = $('#wpdt-star-rating-number').is(":checked"),
                     colHeaderArr = wpdtEditor.getColHeader();
 
-                
+
                 starRateElement.css("margin-bottom", "5px");
                 starWrapper = '<div class="rating">';
                 isInt = Number.isInteger(rating);
                 ratingEnd = rating % 1 === 0 ? rating : Math.floor(rating)
                 for (var i = 0; i < maxValue; i++) {
-                    if (i < ratingEnd){
+                    if (i < ratingEnd) {
                         starWrapper += '<span class="full rated"></span>';
-                    }else if (!isInt && i == ratingEnd) {
+                    } else if (!isInt && i == ratingEnd) {
                         starWrapper += '<span class="half half-reflect"></span>';
-                    }else {
+                    } else {
                         starWrapper += '<span class="full"></span>';
                     }
                 }
                 starWrapper += '</div>';
-                if (showNumber){
+                if (showNumber) {
                     starWrapper += '<div class="rateNum">' + rating + '/' + maxValue + '</div>'
                 }
 
@@ -1690,7 +1766,7 @@
                 disableButtons();
                 getWidthData();
                 getHeightData();
-                wpdtEditor.selectCell(0,0)
+                wpdtEditor.selectCell(0, 0)
             });
             wpdtEditor.addHook('afterCreateCol', function (insertColumnIndex, amount, source) {
                 disableButtons();
@@ -1715,7 +1791,7 @@
                     wpdtEditor.allWidths.splice(insertColumnIndex + n, 0, wpdtEditor.allWidths[selectedColumnIndex]);
                 }
                 getHeightData();
-                wpdtEditor.selectCell(0,0)
+                wpdtEditor.selectCell(0, 0)
             });
             wpdtEditor.addHook('beforeRemoveRow', function (from, amount) {
                 var merge = wpdtEditor.getPlugin('mergeCells').mergedCellsCollection.mergedCells,
@@ -1747,7 +1823,7 @@
                     }
                 }
                 disableButtons();
-                setTimeout(function() {
+                setTimeout(function () {
                     let heightHT = $('.ht_master .wtHider');
                     wpdtEditor.updateSettings({
                         height: setHeightHT(heightHT)
@@ -1853,7 +1929,7 @@
          * Set wpdtEditor height after tabs switching
          */
         $('.wdt-simple-table-settings .edit-table-settings-tab a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            setTimeout(function() {
+            setTimeout(function () {
                 let heightHT = $('.ht_master .wtHider');
                 wpdtEditor.updateSettings({
                     height: setHeightHT(heightHT)

@@ -11,7 +11,7 @@ jQuery(document).ready(function($){
 	}));
 	ias.extension(new IASSpinnerExtension());
 	ias.extension(new IASNoneLeftExtension({
-		text: '已是最后',
+		text: '',
 	}));
 	ias.on('rendered',
 	function(items) {

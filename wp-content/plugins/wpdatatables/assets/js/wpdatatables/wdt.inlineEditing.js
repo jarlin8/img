@@ -259,8 +259,8 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                     selector: obj.params.editSelector,
                     auto_focus: obj.params.editInputId,
                     menubar: false,
-                    plugins: 'link image media lists hr colorpicker fullscreen textcolor',
-                    toolbar: 'undo redo formatselect bold italic underline strikethrough subscript superscript | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | hr fullscreen | link unlink image | forecolor backcolor removeformat',
+                    plugins: 'link image media lists hr colorpicker fullscreen textcolor code',
+                    toolbar: 'undo redo formatselect bold italic underline strikethrough subscript superscript | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | hr fullscreen | link unlink image | forecolor backcolor removeformat | code',
                     init_instance_callback: function (editor) {
                         editor.on('blur', function (e) {
                             tinymce.triggerSave();
@@ -331,10 +331,13 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                 $(obj.params.editSelector).focus();
 
                 // Saving event
+                var hasFired = false;
                 $(obj.params.editSelector).blur(function () {
-                    obj.params.value = $(this).val();
-
-                    obj.validateAndSave($(this));
+                    if(!hasFired){
+                        hasFired = true;
+                        obj.params.value = $(this).val();
+                        obj.validateAndSave($(this));
+                    }
                 })
             },
             datetimeCell: function () {
@@ -348,10 +351,13 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                 $(obj.params.editSelector).focus();
 
                 // Saving event
+                var hasFired = false;
                 $(obj.params.editSelector).blur(function () {
-                    obj.params.value = $(this).val();
-
-                    obj.validateAndSave($(this));
+                    if(!hasFired){
+                        hasFired = true;
+                        obj.params.value = $(this).val();
+                        obj.validateAndSave($(this));
+                    }
                 })
             },
             selectboxCell: function () {

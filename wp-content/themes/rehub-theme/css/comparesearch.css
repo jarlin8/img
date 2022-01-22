@@ -83,13 +83,7 @@
 /* Transitions 			*/
 /************************/
 
-.rh-outer-wrap {
-	position: relative;
-	transition: transform 0.5s;
-}
-.rh-outer-wrap-move {
-	transform: scale3d(0.7,0.7,1);
-}
+
 .rh-outer-wrap-move .btn-comp-search {
 	pointer-events: none;
 	opacity: 0;

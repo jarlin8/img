@@ -69,6 +69,8 @@
     content: '\f140'
 }
 
+.wc-metaboxes .postbox{border:none}
+
 .rehub-meta_factory-metabox .rh-meta-divider{margin-bottom:5px;}
 
 .rehub-meta_factory-metabox button.dashicons-before.dashicons-no-alt.rehub-remove-group-row {

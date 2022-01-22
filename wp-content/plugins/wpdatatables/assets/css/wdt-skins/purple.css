@@ -16,7 +16,7 @@
 .wpdt-c.wdt-skin-purple .wpDataTablesWrapper {
     margin-bottom: 0;
     background: #ffffff;
-    padding: 0 16px 16px 16px;
+    padding: 16px;
 }
 
 .wpdt-c.wdt-skin-purple .wpDataTablesWrapper table.wpDataTable {
@@ -1873,6 +1873,7 @@ div.dt-button-collection.wdt-skin-purple a.dt-button.buttons-copy{
     border-radius: 0 !important;
     cursor: pointer;
     background-image: none;
+    text-decoration: none;
 }
 
 div.dt-button-collection.wdt-skin-purple a.dt-button.buttons-columnVisibility:last-child,

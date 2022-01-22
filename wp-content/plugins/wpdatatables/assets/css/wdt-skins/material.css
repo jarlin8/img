@@ -8,11 +8,13 @@
     font-size: 13px;
 }
 
-.wpdt-c.wdt-skin-material table thead th,
-.wpdt-c.wdt-skin-material table tbody td,
-.wpdt-c.wdt-skin-material table tfoot td{
-    font-family: 'Roboto', sans-serif !important;
+.wpdt-c.wdt-skin-material table.wpDataTable {
+    font-family: 'Roboto', sans-serif;
     font-weight: 100;
+}
+.wpdt-c.wdt-skin-material .wpDataTablesWrapper table.wpDataTable thead th,
+.wpdt-c.wdt-skin-material .wpDataTablesWrapper table.wpDataTable tbody td,
+.wpdt-c.wdt-skin-material .wpDataTablesWrapper table.wpDataTable tfoot td {
     color: rgba(0, 0, 0, 0.87);
 }
 
@@ -355,7 +357,6 @@
 /*  Popover tools  */
 
 .wpdt-c.wdt-skin-material .wpDataTablesPopover.editTools {
-    min-width: 160px;
     padding: 5px 0;
     margin: 2px 0 0;
     list-style: none;

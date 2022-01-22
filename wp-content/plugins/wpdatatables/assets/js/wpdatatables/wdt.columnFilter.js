@@ -825,7 +825,7 @@ function wdtCreateSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th, ser
     }
 
     // Label of the selectbox if "Filter label" option is set
-    var selectTitle = aoColumn.filterLabel ? aoColumn.filterLabel : '';
+    var selectTitle = aoColumn.filterLabel ? aoColumn.filterLabel : wpdatatables_frontend_strings.nothingSelected;
 
     // Create selectbox HTML with live search
     var select = '<select class="wdt-select-filter wdt-filter-control selectpicker" title="' + selectTitle + '" data-index="' + columnIndex + '" data-live-search="true" data-live-search-placeholder="' + wpdatatables_frontend_strings.search + '">';
@@ -932,10 +932,22 @@ function wdtCreateSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th, ser
             // Workaround for AJAX selectbox to be able to have predefined values
             select.trigger('change').data('AjaxBootstrapSelect').list.cache = {};
         }
+        // Hide/Show search box in filter
+        if (aoColumn.searchInSelectBox !== 1){
+            jQuery(th).find('.bs-searchbox').hide();
+        } else {
+            jQuery(th).find('.bs-searchbox').show();
+        }
+
     } else {
         select.selectpicker('refresh');
-        // Hide search in selectbox if possibleValuesAjax is All
-        jQuery(th).find('.bs-searchbox').hide();
+        // Hide/Show search box in filter
+        if (aoColumn.searchInSelectBox !== 1){
+            // Hide search in selectbox if possibleValuesAjax is All
+            jQuery(th).find('.bs-searchbox').hide();
+        } else {
+            jQuery(th).find('.bs-searchbox').show();
+        }
 
         // Filter the table if default value is set
         if (aoColumn.defaultValue && !serverSide) {
@@ -987,7 +999,8 @@ function wdtCreateMultiSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th
     }
 
     // Label of the selectbox if "Filter label" option is set
-    var selectTitle = aoColumn.filterLabel ? aoColumn.filterLabel : '';
+
+    var selectTitle = aoColumn.filterLabel ? aoColumn.filterLabel : wpdatatables_frontend_strings.nothingSelected;;
 
     // Create selectbox HTML with live search
     var select = '<select class="wdt-multiselect-filter wdt-filter-control selectpicker" title="' + selectTitle + '" data-index="' + columnIndex + '" multiple data-live-search="true" data-live-search-placeholder="' + wpdatatables_frontend_strings.search + '">';
@@ -1039,7 +1052,7 @@ function wdtCreateMultiSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th
     th.wrapInner('<span class="filter_column filter_select" data-filter_type="multiselectbox" data-index="' + columnIndex + '" />');
 
     // Add event to perform search on selectbox change
-    select.change(function (e) {
+    select.on('change.selectChange', function (e) {
         multiSelectboxSearch.call(jQuery(this));
     });
 
@@ -1087,11 +1100,21 @@ function wdtCreateMultiSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th
             // Workaround for AJAX selectbox to be able to have predefined values
             select.trigger('change').data('AjaxBootstrapSelect').list.cache = {};
         }
+        // Hide/Show search box in filter
+        if (aoColumn.searchInSelectBox !== 1){
+            jQuery(th).find('.bs-searchbox').hide();
+        } else {
+            jQuery(th).find('.bs-searchbox').show();
+        }
 
     } else {
         select.selectpicker('refresh');
-        // Hide search in multi-selectbox if possibleValuesAjax is All
-        jQuery(th).find('.bs-searchbox').hide();
+        if (aoColumn.searchInSelectBox !== 1) {
+            // Hide search in multi-selectbox if possibleValuesAjax is All
+            jQuery(th).find('.bs-searchbox').hide();
+        } else {
+            jQuery(th).find('.bs-searchbox').show();
+        }
 
         // Filter the table if default value is set
         if (aoColumn.defaultValue[0] && !serverSide) {

@@ -3,7 +3,7 @@
 .egg-container .rating_small > span {display: inline-block;position: relative;font-size: 16px;color: #4285F4;}     
 .egg-container .rating_default > span {display: inline-block;position: relative;font-size: 22px;color: #4285F4;}          
 span.rating_small{white-space:nowrap}
-.egg-container .egg-stars-container {position: relative; display: inline-block; color: transparent; font-size: 20px; word-wrap: normal !important;}
+.egg-container .egg-stars-container {position: relative; display: inline-block; color: transparent; font-size: 20px; word-wrap: normal !important;overflow: hidden;}
 .egg-container .egg-stars-container:before {position: absolute;top: 0;left: 0;content: '★★★★★';color: lightgray;}
 .egg-container .egg-stars-container:after {position: absolute;top: 0;left: 0;content: '★★★★★';color: #fcc10a;overflow: hidden;}
 .egg-stars-0:after { width: 0%; } .egg-stars-10:after { width: 10%; } .egg-stars-20:after { width: 20%; } .egg-stars-30:after { width: 30%; } .egg-stars-40:after { width: 40%; } .egg-stars-50:after { width: 50%; } .egg-stars-60:after { width: 60%; } .egg-stars-70:after { width: 70%; } .egg-stars-80:after { width: 80%; } .egg-stars-90:after { width: 90%; } .egg-stars-100:after { width: 100%; }

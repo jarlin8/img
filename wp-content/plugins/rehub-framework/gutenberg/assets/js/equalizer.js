@@ -35,21 +35,35 @@
             }
         });
     }
-    document.addEventListener('DOMContentLoaded', equalize());
-    window.addEventListener('resize', function() { equalize() } );
 
-    function enableSlider(){
-
-    }
-    document.addEventListener('DOMContentLoaded', enableSlider());
+    var table = document.querySelector('.comparison-table');
+    var tableType = table.getAttribute('data-table-type');
+    var swiper = {destroyed: true}; 
+    document.addEventListener('DOMContentLoaded', function() {
+        equalize();
+        if(window.innerWidth < 768 && 'slide' === tableType){
+            swiper = new Swiper( '.swiper-container', {
+                navigation: {
+                  nextEl: '.comparison-control-next',
+                  prevEl: '.comparison-control-prev',
+                }
+            });
+        }
+    });
+    window.addEventListener('resize', function() { 
+        equalize();
+        if( 'slide' === tableType ){
+            if(window.innerWidth >= 768 && !swiper.destroyed ){
+                swiper.destroy( true, true );
+            }
+            if(window.innerWidth < 768 && swiper.destroyed ){
+                swiper = new Swiper( '.swiper-container', {
+                    navigation: {
+                    nextEl: '.comparison-control-next',
+                    prevEl: '.comparison-control-prev',
+                    }
+                });
+            }
+        }
+    } );
 })();
-function getPrevTableItem(){
-    var child = document.querySelector('.comparison-wrapper .comparison-item:last-child');
-    var parent = document.querySelector('.comparison-wrapper');
-    parent.prepend(child);
-}
-function getNextTableItem( ){
-    var child = document.querySelector('.comparison-wrapper .comparison-item:first-child');
-    var parent = document.querySelector('.comparison-wrapper');
-    parent.appendChild(child);
-}

@@ -19,11 +19,11 @@
 .wpdt-c.wdt-skin-graphite .wpDataTablesWrapper .wdt-checkbox-filter.btn,
 #wdt-filter-widget .wdt-skin-graphite .wdt-checkbox-filter.btn {
     background-color: #313131; /* th background color */
-    background-image: -webkit-gradient(linear,0 0,0 100%,from(#4c4c4c),to(#313131)) !important;
-    background-image: -webkit-linear-gradient(top,#4c4c4c,#313131) !important;
-    background-image: -o-linear-gradient(top,#4c4c4c,#313131) !important;
-    background-image: linear-gradient(to bottom,#4c4c4c,#313131) !important;
-    background-image: -moz-linear-gradient(top,#4c4c4c,#313131) !important;
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#4c4c4c),to(#313131)) ;
+    background-image: -webkit-linear-gradient(top,#4c4c4c,#313131) ;
+    background-image: -o-linear-gradient(top,#4c4c4c,#313131) ;
+    background-image: linear-gradient(to bottom,#4c4c4c,#313131) ;
+    background-image: -moz-linear-gradient(top,#4c4c4c,#313131) ;
     background-repeat: repeat-x;
     filter: progid:dximagetransform.microsoft.gradient(startColorstr= '#ff4c4c4c',endColorstr= '#ff313131',GradientType= 0) !important;
     border-color: #000000; /* th border color */
@@ -58,11 +58,11 @@
 .wpdt-c.wdt-skin-graphite .wpDataTablesWrapper .wdt-checkbox-filter.btn:hover,
 #wdt-filter-widget .wdt-skin-graphite .wdt-checkbox-filter.btn:hover {
     background-color: #000000;  /* th active/hover background color */
-    background-image: -webkit-gradient(linear,0 0,0 100%,from(#313131),to(#000)) !important;
-    background-image: -webkit-linear-gradient(top,#313131,#000) !important;
-    background-image: -o-linear-gradient(top,#313131,#000) !important;
-    background-image: linear-gradient(to bottom,#313131,#000) !important;
-    background-image: -moz-linear-gradient(top,#313131,#000) !important;
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#313131),to(#000));
+    background-image: -webkit-linear-gradient(top,#313131,#000);
+    background-image: -o-linear-gradient(top,#313131,#000);
+    background-image: linear-gradient(to bottom,#313131,#000);
+    background-image: -moz-linear-gradient(top,#313131,#000);
     filter: progid:dximagetransform.microsoft.gradient(startColorstr= '#ff313131',endColorstr= '#ff000000',GradientType= 0) !important;
 }
 

@@ -5,7 +5,6 @@
 /*Vendors*/
 .wpsm-button .rh-user-favor-shop{display: block;}
 .wc_vendors_dash_links a.button{ font-size: 13px; padding: 6px 12px}
-.wcvendors-pro-dashboard-wrapper *{}
 .wcvendors-pro-dashboard-wrapper {font-size: 15px;line-height: 22px;}
 .wcv-grid .wcv_dashboard_overview {background-color: #fff;border: 1px solid #e1e1e1;padding: 20px 2em 20px 0;margin: 10px 0 30px 0 !important;}
 .wcv-grid h3{font-size: 19px !important}
@@ -100,10 +99,10 @@ span.product_count_in_member { position: absolute; bottom: 0; right: 0; backgrou
 body .wcv-grid .wcv-button:hover{color: #111 !important}
 .wcvendor_store_stars a, .wcvendor_store_stars{text-decoration: none; color: #fff; font-style: normal;}
 .wcvendor_store_stars a i{color: #ffd700}
-#wcvendor_profile_wrap h1{color: #fff; text-shadow: 0 1px 1px #666; margin: 0 0 10px 0; font-size: 24px;line-height: 26px}
+#wcvendor_profile_wrap h1{color: #fff; text-shadow: 0 1px 1px #666; margin: 0 0 12px 0; font-size: 24px;line-height: 28px}
 .wcvendor_store_stars{margin: 0 0 10px 0; line-height: 15px}
 .wcvendor_store_stars span.text{font-size: 12px; margin: 0 5px}
-.wcvendor_store_desc{font: italic 14px/18px Arial;}
+.wcvendor_store_desc{font: italic 14px/21px Arial;}
 .wcvendor_store_desc a{color: #fff}
 #wcvendor_profile_menu{background: #f9f9f9;overflow: hidden; border-bottom: 1px solid #ededed}
 .wcvendor_profile_menu_items{border-left: 1px solid #eee; margin-left:170px;float: left; }
@@ -199,9 +198,12 @@ table.wcv-table tr td, table.wcv-table tr th{border-bottom: 1px solid #E1E1E1;}
 .rtl .vendor_store_details_title i{float: right; margin: 2px 0 0 4px}
 .rtl .wcv-verified-vendor i{margin: 0 0 0 3px}
 /*.wcv-shade{z-index:9000 !important}*/
+.dokan-store-support-btn{width:auto !important}
 #wcmp-store-conatiner .wcmp-store-detail-list li{list-style: none;}
-.store-coupon-wrap{color: #de5959;background: #ffe9e9;border: 2px dashed #fbc4c4;padding: 20px 30px;margin-bottom: 25px; position: relative;}
-.store-coupon-wrap:before {
+.dokan-store-products-filter-area .product-name-search, input[type="submit"].dokan-btn-theme{border-radius: 0 !important;}
+.store-coupon-wrap{grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));display: grid;column-gap: 20px;}
+.store-coupon-wrap .code{color: #de5959;background: #ffe9e9;border: 2px dashed #fbc4c4;padding: 20px 30px;margin-bottom: 25px; position: relative;}
+.store-coupon-wrap .code:before {
     content: '';
     position: absolute;
     top: 0;
@@ -214,7 +216,7 @@ table.wcv-table tr td, table.wcv-table tr th{border-bottom: 1px solid #E1E1E1;}
     background: -ms-radial-gradient(.6em .6em, circle, white .55em, rgba(255,255,255,0) .6em) -.6em -.6em, -ms-radial-gradient(1em 50%, circle, white .35em, rgba(255,255,255,0) .4em), -ms-radial-gradient(1em 47%, circle, rgba(0,0,0,.4) .4em, transparent .43em);
     background: -webkit-radial-gradient(.6em .6em, circle, white .55em, rgba(255,255,255,0) .6em) -.6em -.6em, -webkit-radial-gradient(1em 50%, circle, white .35em, rgba(255,255,255,0) .4em), -webkit-radial-gradient(1em 47%, circle, rgba(0,0,0,.4) .4em, transparent .43em);
 }
-.store-coupon-wrap:after {
+.store-coupon-wrap .code:after {
     content: '';
     position: absolute;
     top: .25em;
@@ -226,6 +228,11 @@ table.wcv-table tr td, table.wcv-table tr th{border-bottom: 1px solid #E1E1E1;}
 }
 .store-coupon-wrap .coupon-title{font-size: 18px;margin-bottom: 10px;font-weight: bold;}
 .store-coupon-wrap .coupon-body{font-size: 16px}
+@media (max-width: 500px){
+    .dokan-store-products-filter-area .dokan-store-products-ordeby{display: flex;flex-wrap: wrap;}
+    .dokan-store-products-filter-area .product-name-search{flex-grow: 1; margin:0 0 20px 0}
+}
+
 .dokan-dashboard .dokan-dashboard-content a.sale_schedule{text-decoration: underline;}
 .dokan-settings-content .dokan-settings-area .dokan-banner{margin: 0 auto 30px auto; max-width: 100%}
 .rh-container > .dokan-dashboard-wrap{padding-top:20px;}
@@ -278,7 +285,7 @@ table.wcv-table tr td, table.wcv-table tr th{border-bottom: 1px solid #E1E1E1;}
 .vendor_store_in_bp{display: block;}
 .vendor_store_in_bp_last_products{text-align: center; display: block;  width: 100%; padding: 25px 5px; clear: both}
 .vendor_store_in_bp_shopname{display: block;  width: 100%; padding: 15px 15px 15px 60px; clear: both; border: 1px dashed #ccc; border-left:none; border-right: none}
-.vendor_store_in_bp_image, .vendor_store_in_bp_single{float: left; display: inline-block}
+.vendor_store_in_bp_image, .vendor_store_in_bp_single{float: left;}
 .rh_vendors_listflat .vendor_store_in_bp_single{width: auto}
 .vendor_store_in_bp_image{width: 50px}
 .wcv_vendorslist{ overflow: hidden; margin: 0 0 30px 0;}

@@ -51,7 +51,7 @@
           return self.redirectToBuilder()
         }
         if (wp.data.select('core/editor').didPostSaveRequestSucceed()) {
-          location.href = self.editUrl
+          window.top.location.href = self.editUrl
           self.editButton.innerHTML += '...'
         } else {
           self.editButton.classList.remove('is-busy')

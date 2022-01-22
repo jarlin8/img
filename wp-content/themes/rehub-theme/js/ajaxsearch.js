@@ -24,7 +24,6 @@ var re_ajax_search = {
     _current_selection_index:0,
     _last_request_results_count:0,
     _first_down_up:true,
-    _is_search_open:false,
 
     init: function init() {
 
@@ -188,10 +187,6 @@ var re_ajax_search = {
         var iconsearch = callelem.parent().find('.rhi-sync'); 
         iconsearch.removeClass('rhi-sync fa-spin').addClass('rhi-search');
         callelem.removeClass('searching-now');
-        var winheight = jQuery(window).height();
-        if (winheight < 700){
-          callelem.parent().parent().find('.re-aj-search-wrap').addClass( 're-aj-search-overflow' );
-        }
 
     },
 
@@ -201,6 +196,7 @@ var re_ajax_search = {
     do_ajax_call: function do_ajax_call(elem) {
         var posttypes = elem.data('posttype');
         var enable_compare = elem.data('enable_compare');
+        var aff = elem.data('aff');
         if(elem.prevObject == undefined){
             var catid = elem.data('catid');
         }else{
@@ -232,6 +228,7 @@ var re_ajax_search = {
                 re_string: search_query,
                 posttypesearch: posttypes,
                 enable_compare : enable_compare,
+                aff_link: aff,
                 catid : catid,
                 security : rhscriptvars.searchnonce,
             }
