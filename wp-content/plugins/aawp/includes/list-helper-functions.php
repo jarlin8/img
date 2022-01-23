@@ -32,7 +32,7 @@ function aawp_get_product_asins_from_list_data( $data ) {
     foreach ( $data as $Item ) {
 
         /** var Flowdee\AmazonPAAPI5WP\Item $Item */
-        if ( method_exists( $Item, 'getASIN' ) && ! empty( $product_asin = $Item->getASIN() ) )
+        if ( is_object( $Item ) && method_exists( $Item, 'getASIN' ) && ! empty( $product_asin = $Item->getASIN() ) )
             $product_asins[] = $product_asin;
     }
 

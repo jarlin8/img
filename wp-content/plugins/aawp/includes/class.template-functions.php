@@ -620,7 +620,7 @@ if ( ! class_exists( 'AAWP_Template_Functions') ) {
                 $image_link_title = $this->get_product_image_link_title();
 
                 if ( !empty( $image_link) && $image_link != 'none' ) {
-                    $thumb = '<a href="' . $image_link . '" title="' . $image_link_title . '" rel="nofollow" target="_blank">' . $thumb . '</a>';
+                    $thumb = '<a href="' . $image_link . '" title="' . $image_link_title . '" rel="nofollow noopener sponsored" target="_blank">' . $thumb . '</a>';
                 }
 
                 return $thumb;
@@ -681,7 +681,7 @@ if ( ! class_exists( 'AAWP_Template_Functions') ) {
             $title = $this->get_product_title();
 
             if ( $url && $title ) {
-                $link = '<a href="' . $url . '" title="' . $title . '" target="_blank" rel="nofollow">' . $title . '</a>';
+                $link = '<a href="' . $url . '" title="' . $title . '" target="_blank" rel="nofollow noopener sponsored">' . $title . '</a>';
             }
 
             return apply_filters( 'aawp_func_product_link', $link, $type );
@@ -978,7 +978,7 @@ if ( ! class_exists( 'AAWP_Template_Functions') ) {
             $classes = apply_filters( 'aawp_star_rating_classes', $classes, $this->atts );
 
             if ( ! empty ( $url ) && $args['link'] ) {
-                $star_rating = '<a class="' . $classes . '" href="' . $url . '" title="' . __('Reviews on Amazon', 'aawp') . '" rel="nofollow" target="_blank"><span style="width: ' . $percentage . '%;"></span></a>';
+                $star_rating = '<a class="' . $classes . '" href="' . $url . '" title="' . __('Reviews on Amazon', 'aawp') . '" rel="nofollow noopener sponsored" target="_blank"><span style="width: ' . $percentage . '%;"></span></a>';
             } else {
                 $star_rating = '<span class="' . $classes . '"><span style="width: ' . $percentage . '%;"></span></span>';
             }
@@ -1267,7 +1267,7 @@ if ( ! class_exists( 'AAWP_Template_Functions') ) {
                     'text' => $button_text,
                     'title' => $button_text,
                     'target' => '_blank',
-                    'rel' => 'nofollow',
+                    'rel' => 'nofollow noopener sponsored',
                     'attributes' => ''
                 );
             }

@@ -363,6 +363,12 @@ if (!class_exists('AAWP_Support')) {
                         <?php echo ( isset ( $this->fopen['enabled'] ) && $this->fopen['enabled'] ) ? $enabled : $disabled; ?>
                     </td>
                 </tr>
+                <tr class="alternate">
+                    <th><?php printf( esc_html__( 'PHP "%1$s" limit', 'aawp' ), 'max_input_vars' ); ?></th>
+                    <td>
+                        <?php echo ini_get('max_input_vars' ); ?>
+                    </td>
+                </tr>
                 </tbody>
             </table>
 
@@ -464,7 +470,7 @@ if (!class_exists('AAWP_Support')) {
                             <div class="meta-box-sortables ui-sortable">
                                 <div class="postbox">
                                     <div class="inside">
-                                        <form action="options.php" method="post">
+                                        <form action="<?php echo admin_url( 'options.php' ); ?>" method="post">
                                             <?php settings_fields( 'aawp_support' ); ?>
                                             <?php do_settings_sections( 'aawp_support' ); ?>
 

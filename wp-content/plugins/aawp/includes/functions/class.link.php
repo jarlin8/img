@@ -110,8 +110,8 @@ if ( !class_exists( 'AAWP_Link_Settings' ) ) {
 
             <p>
                 <u><?php _e('Example', 'aawp'); ?></u>:
-                <a class="aawp-link" href="http://www.amazon.de/gp/product/144934190X/ref=as_li_tl?ie=UTF8&camp=1638&creative=19454&creativeASIN=144934190X&linkCode=as2&tag=aawp-21" title="WordPress: The Missing Manual" target="_blank" rel="nofollow">WordPress: The Missing Manual</a>
-                <a id="aawp_link_icon_preview_container" class="aawp-link-icon-container"<?php if ($this->link_icon == '0') echo ' style="display: none;"'; ?> href="http://www.amazon.de/gp/product/144934190X/ref=as_li_tl?ie=UTF8&camp=1638&creative=19454&creativeASIN=144934190X&linkCode=as2&tag=aawp-21" title="WordPress: The Missing Manual" target="_blank" rel="nofollow">
+                <a class="aawp-link" href="http://www.amazon.de/gp/product/144934190X/ref=as_li_tl?ie=UTF8&camp=1638&creative=19454&creativeASIN=144934190X&linkCode=as2&tag=aawp-21" title="WordPress: The Missing Manual" target="_blank" rel="nofollow noopener sponsored">WordPress: The Missing Manual</a>
+                <a id="aawp_link_icon_preview_container" class="aawp-link-icon-container"<?php if ($this->link_icon == '0') echo ' style="display: none;"'; ?> href="http://www.amazon.de/gp/product/144934190X/ref=as_li_tl?ie=UTF8&camp=1638&creative=19454&creativeASIN=144934190X&linkCode=as2&tag=aawp-21" title="WordPress: The Missing Manual" target="_blank" rel="nofollow noopener sponsored">
                     <span id="aawp_link_icon_preview" class="aawp-link-icon <?php if ($this->link_icon != '0') echo $this->link_icon; ?>"></span>
                 </a>
             </p>
@@ -243,7 +243,7 @@ if ( !class_exists( 'AAWP_Link_Functions' ) ) {
                     $output .= ' href="' . $link_url . '"';
                     $output .= ' title="' . $link_title . '"';
                     $output .= ' target="_blank"';
-                    $output .= ' rel="nofollow"';
+                    $output .= ' rel="nofollow noopener sponsored"';
                     $output .= ' ' . $link_container;
                 $output .= '>';
                 $output .= ( 'none' != $link_text ) ? $link_text : ''; // Text
@@ -264,7 +264,7 @@ if ( !class_exists( 'AAWP_Link_Functions' ) ) {
                         $output .= ' href="' . $link_url . '"';
                         $output .= ' title="' . $link_title . '"';
                         $output .= ' target="_blank"';
-                        $output .= ' rel="nofollow"';
+                        $output .= ' rel="nofollow noopener sponsored"';
                         $output .= ' ' . $link_container;
                     $output .= '>';
                     $output .= '<span class="aawp-link-icon ' . $link_icon . '"></span>'; // Icon

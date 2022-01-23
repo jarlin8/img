@@ -16,9 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
     <?php $this->the_product_ribbons(); ?>
 
     <div class="aawp-product__inner">
-        <a class="aawp-product__image-link aawp-product__image" href="<?php echo $this->get_product_image_link(); ?>" title="<?php echo $this->get_product_image_link_title(); ?>" rel="nofollow" target="_blank" style="background-image: url('<?php echo $this->get_product_image(); ?>');"></a>
+        <a class="aawp-product__image-link" href="<?php echo $this->get_product_image_link(); ?>" title="<?php echo $this->get_product_image_link_title(); ?>" rel="nofollow noopener sponsored" target="_blank">
+            <img class="aawp-product__image" src="<?php echo $this->get_product_image(); ?>" alt="<?php echo $this->get_product_image_alt(); ?>" <?php $this->the_product_image_title(); ?> />
+        </a>
         <div class="aawp-product__content">
-            <a class="aawp-product__title" href="<?php echo $this->get_product_url(); ?>" title="<?php echo $this->get_product_link_title(); ?>" rel="nofollow" target="_blank"><?php echo $this->get_product_title(); ?></a>
+            <a class="aawp-product__title" href="<?php echo $this->get_product_url(); ?>" title="<?php echo $this->get_product_link_title(); ?>" rel="nofollow noopener sponsored" target="_blank"><?php echo $this->get_product_title(); ?></a>
             <div class="aawp-product__teaser">
                 <?php echo $this->get_product_teaser( $format = 'paragraph' ); ?>
             </div>

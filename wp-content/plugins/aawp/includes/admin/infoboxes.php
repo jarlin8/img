@@ -84,7 +84,7 @@ add_action( 'aawp_support_infoboxes', 'aawp_settings_infobox_support', 20 );
 function aawp_get_settings_infobox_support_header() {
 
     $header = array(
-        'img' => 'https://cdn.flowdee.de/aawp/assets/aawp-banner-infobox-service-480x200.jpg',
+        'img' => aawp_get_assets_url() . 'img/banner-service.png',
         'url' => ( aawp_is_lang_de() ) ? 'https://aawp.de/' : 'https://getaawp.com/'
     );
 
@@ -159,8 +159,8 @@ function aawp_settings_infobox_newsletter() {
 
     aawp_settings_infobox_render( $title, $body );
 }
-add_action( 'aawp_settings_infoboxes', 'aawp_settings_infobox_newsletter', 30 );
-add_action( 'aawp_support_infoboxes', 'aawp_settings_infobox_newsletter', 30 );
+//add_action( 'aawp_settings_infoboxes', 'aawp_settings_infobox_newsletter', 30 );
+//add_action( 'aawp_support_infoboxes', 'aawp_settings_infobox_newsletter', 30 );
 
 function aawp_settings_infobox_translations() {
 
@@ -185,8 +185,8 @@ function aawp_settings_infobox_translations() {
 
     aawp_settings_infobox_render( $title, $body );
 }
-add_action( 'aawp_settings_infoboxes', 'aawp_settings_infobox_translations', 40 );
-add_action( 'aawp_support_infoboxes', 'aawp_settings_infobox_translations', 40 );
+//add_action( 'aawp_settings_infoboxes', 'aawp_settings_infobox_translations', 40 );
+//add_action( 'aawp_support_infoboxes', 'aawp_settings_infobox_translations', 40 );
 
 /*
  * Render HTML

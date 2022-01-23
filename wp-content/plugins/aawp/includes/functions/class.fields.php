@@ -310,7 +310,7 @@ if ( !class_exists( 'AAWP_Fields_Functions' ) ) {
                     $link_url = $template_handler->get_product_url();
                     $link_title = ( ! empty( $this->atts['link_title'] ) ) ? $template_handler->get_product_link_title() : $result;
 
-                    $result = '<a class="' . $link_class . '" href="' . $link_url . '" title="' . $link_title . '" target="_blank" rel="nofollow">' . $result . '</a>';
+                    $result = '<a class="' . $link_class . '" href="' . $link_url . '" title="' . $link_title . '" target="_blank" rel="nofollow noopener sponsored">' . $result . '</a>';
                 }
 
                 // Get container attributes for later action

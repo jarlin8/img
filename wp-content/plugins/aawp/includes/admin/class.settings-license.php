@@ -514,27 +514,44 @@ if ( ! class_exists( 'AAWP_Settings_License' ) ) {
          */
         private function get_remote_plugin_version() {
 
-            $plugin_version = get_transient( 'aawp_remote_plugin_version' );
+            $remote_plugin_version = get_transient( 'aawp_remote_plugin_version' );
+
+            //aawp_debug_log( __CLASS__ . ' >> ' . __FUNCTION__ . ' >> $remote_plugin_version: ' . $remote_plugin_version );
 
             // Stored plugin version found
-            if ( ! empty( $plugin_version ) )
-                return $plugin_version;
+            if ( ! empty( $remote_plugin_version ) )
+                return $remote_plugin_version;
 
-            // Fetch latest version from remote API
-            $response = wp_remote_get( 'https://cdn.kwindo.de/aawp/remote-data/plugin-version.json', array( 'timeout' => 15, 'sslverify' => false ) );
+            // Fetch the latest version from remote API
+            $api_params = array(
+                'edd_action' => 'get_version',
+                'item_id' => 1367
+            );
+
+            // Send GET request to API.
+            $response = wp_remote_get( 'https://getaawp.com/edd-sl-api/', array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
 
             // make sure the response came back okay
             if ( is_wp_error( $response ) )
                 return false;
 
             // decode the license data
-            $plugin_version = json_decode( wp_remote_retrieve_body( $response ) );
+            $remote_plugin_data = json_decode( wp_remote_retrieve_body( $response ) );
+            //aawp_debug_log( __CLASS__ . ' >> ' . __FUNCTION__ . ' >> $remote_plugin_data' );
+            //aawp_debug_log( $remote_plugin_data );
 
-            if ( ! empty( $plugin_version ) && is_string( $plugin_version ) ) {
-                // Stored plugin version
-                set_transient( 'aawp_remote_plugin_version', $plugin_version, 60 * 60 * 24 ); // 24 Hours
+            if ( ! empty( $remote_plugin_data ) && ! empty ( $remote_plugin_data->new_version ) && is_string( $remote_plugin_data->new_version ) ) {
 
-                return $plugin_version;
+                $remote_plugin_version = sanitize_text_field( $remote_plugin_data->new_version );
+
+                //aawp_debug_log( __CLASS__ . ' >> ' . __FUNCTION__ . ' >> $remote_plugin_version' );
+                //aawp_debug_log( $remote_plugin_version );
+
+                // Cache latest remote plugin version.
+                set_transient( 'aawp_remote_plugin_version', $remote_plugin_version, 60 * 60 * 24 * 7 ); // 7 days
+
+                // Return.
+                return $remote_plugin_version;
             }
 
             return null;

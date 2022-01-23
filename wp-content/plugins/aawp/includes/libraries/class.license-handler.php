@@ -25,7 +25,7 @@ class AAWP_License_Handler {
     public function __construct( $api_url, $api_data = null ) {
 
         // Setup API.
-        $this->api_url = trailingslashit( $api_url );
+        $this->api_url = trailingslashit( $api_url ) . 'edd-sl-api/';
         $this->api_data = $api_data;
 
         // Setup item.
@@ -146,7 +146,7 @@ class AAWP_License_Handler {
         // Default API parameters.
         $api_params = array(
             'edd_action' => $edd_action,
-            'license' => 'nullmasterinbabiato',
+            'license' => trim( $license ),
             'item_id' => ( ! empty ( $this->item_id ) ) ? absint( $this->item_id ) : '',
             'item_name' => ( ! empty ( $this->item_name ) ) ? urlencode( $this->item_name ) : '',
             'url' => home_url()
@@ -157,14 +157,13 @@ class AAWP_License_Handler {
 
         // Send POST request to API.
         $response = wp_remote_post( $this->api_url, array( 'timeout' => 15, 'sslverify' => false, 'body' => $api_params ) );
+        //aawp_debug_log( __CLASS__ . ' >> ' . __FUNCTION__ . ' >> api_url: ' . $this->api_url );
 
-       
+        if ( is_wp_error( $response ) )
+            return $response->get_error_message();
 
         $license_data = json_decode( wp_remote_retrieve_body( $response ) );
-		$license_data->license = 'active';
-		$license_data->error = '';
-		$license_data->expires = strtotime('+1200 days');
-		
+
         //$this->debug_log( 'AAWP_License_Handler >> make_request() >> $license_data:' );
         //$this->debug_log( $license_data );
 
@@ -294,13 +293,34 @@ class AAWP_License_Handler {
      */
     public function display_license_info( $license_info, $echo = true ) {
 
-        $license_status = 'valid';
-   		$license_error = null;
-        $license_limit = 999;
-        $license_icon = 'yes-alt';
-        $license_status_color = 'green';
-       
+        $license_status = ( ! empty ( $license_info['status'] ) ) ? $license_info['status'] : 'inactive';
+        $license_error = ( ! empty ( $license_info['error'] ) ) ? $license_info['error'] : null;
+        $license_limit = ( ! empty ( $license_info['data']->license_limit ) ) ? absint ( $license_info['data']->license_limit ) : 0;
 
+        //$license_error = array( 'code' => 'no_activations_left', 'message' => 'Your license key has reached its activation limit.' );
+
+        // Icon.
+        if ( 'valid' === $license_status ) {
+            $license_icon = 'yes-alt';
+            $license_status_color = 'green';
+        } elseif ( 'expired' === $license_status ) {
+            $license_icon = 'warning';
+            $license_status_color = 'orange';
+        } else {
+            $license_icon = 'dismiss';
+            $license_status_color = 'red';
+        }
+
+        /*
+        $license_limit = 1;
+
+        if ( ! is_multisite() && ( ! empty ( $license_limit ) && $license_limit < 3 ) ) {
+            $license_icon = 'warning';
+            $license_status_color = 'orange';
+        }
+        */
+
+        // Start output.
         ob_start();
         ?>
         <div class="fd-license-info">

@@ -29,7 +29,7 @@ function aawp_is_license_valid() {
     //aawp_debug_log( __FUNCTION__ . ' >> $aawp_license_is_valid is: ' . $aawp_license_is_valid );
 
     if ( is_bool( $aawp_license_is_valid ) )
-        return true;
+        return $aawp_license_is_valid;
 
     // Default.
     $aawp_license_is_valid = false;
@@ -61,7 +61,7 @@ function aawp_is_license_valid() {
 
     //aawp_debug_log( __FUNCTION__ . ' >> $aawp_license_is_valid set to: ' . $aawp_license_is_valid );
 
-    return true;
+    return $aawp_license_is_valid;
 }
 
 /**

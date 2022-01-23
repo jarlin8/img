@@ -32,13 +32,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             <tr <?php $this->the_product_container(); ?>>
                 <td class="thumb">
-                    <a href="<?php echo $this->get_product_image_link(); ?>" title="<?php echo $this->get_product_image_link_title(); ?>" rel="nofollow" target="_blank">
+                    <a href="<?php echo $this->get_product_image_link(); ?>" title="<?php echo $this->get_product_image_link_title(); ?>" rel="nofollow noopener sponsored" target="_blank">
                         <img src="<?php echo $this->get_product_image('small'); ?>" alt="<?php echo $this->get_product_image_alt(); ?>" <?php $this->the_product_image_title(); ?> />
                     </a>
                 </td>
                 <td class="title">
                     <a href="<?php echo $this->get_product_url(); ?>" title="<?php echo $this->get_product_link_title(); ?>"
-                       rel="nofollow" target="_blank"><?php echo $this->get_product_title(); ?>
+                       rel="nofollow noopener sponsored" target="_blank"><?php echo $this->get_product_title(); ?>
                     </a>
                 </td>
                 <td class="rating"><?php echo ( $this->get_product_rating() ) ? $this->get_product_star_rating() : __('No ratings yet', 'aawp'); ?></td>

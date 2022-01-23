@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         <div class="aawp-box__thumb">
             <a class="aawp-box__image-link"
-               href="<?php echo $this->get_product_url(); ?>" title="<?php echo $this->get_product_image_link_title(); ?>" rel="nofollow" target="_blank">
+               href="<?php echo $this->get_product_url(); ?>" title="<?php echo $this->get_product_image_link_title(); ?>" rel="nofollow noopener sponsored" target="_blank">
                 <img class="aawp-box__image" src="<?php echo $this->get_product_image(); ?>" alt="<?php echo $this->get_product_image_alt(); ?>" />
             </a>
 
@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
 
         <div class="aawp-box__content">
-            <a class="aawp-box__title" href="<?php echo $this->get_product_url(); ?>" title="<?php echo $this->get_product_link_title(); ?>" rel="nofollow" target="_blank">
+            <a class="aawp-box__title" href="<?php echo $this->get_product_url(); ?>" title="<?php echo $this->get_product_link_title(); ?>" rel="nofollow noopener sponsored" target="_blank">
                 <?php echo $this->get_product_title(); ?>
             </a>
         </div>

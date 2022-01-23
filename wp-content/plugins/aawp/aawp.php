@@ -3,7 +3,7 @@
  * Plugin Name:     AAWP
  * Plugin URI:      https://getaawp.com
  * Description:     The best WordPress plugin for Amazon Affiliates.
- * Version:         3.15.1
+ * Version:         3.17.2
  * Author:          AAWP
  * Author URI:      https://getaawp.com
  * Text Domain:     aawp
@@ -16,7 +16,6 @@
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-update_option('aawp_licensing', array('server_overwrite'=>true,'key'=>'nullmasterinbabiato','connection_error'=>false,'status'=>'valid','info' => array('checked_at' => date('Y-m-d H:i:s',time()))));
 if ( ! class_exists( 'AAWP' ) ) {
 
     /**
@@ -43,7 +42,7 @@ if ( ! class_exists( 'AAWP' ) ) {
          * @since  3.9.0
          * @var    string
          */
-        private $version = '3.15.1';
+        private $version = '3.17.2';
 
         /**
          * The settings instance variable.
@@ -365,7 +364,7 @@ if ( ! class_exists( 'AAWP' ) ) {
 
                 if ( ! empty( $license_server['url'] ) && ! empty( $license_server['item_id'] ) && ! empty( $license_server['item_name'] )  ) {
 
-                    $AAWP_Plugin_Updater = new AAWP_Plugin_Updater( $licensing['server'], __FILE__, array(
+                    $AAWP_Plugin_Updater = new AAWP_Plugin_Updater( trailingslashit( $license_server['url'] ) . 'edd-sl-api/', __FILE__, array(
                             'version'   => AAWP_VERSION,
                             'license'   => $licensing['key'],
                             'item_id'   => $license_server['item_id'],

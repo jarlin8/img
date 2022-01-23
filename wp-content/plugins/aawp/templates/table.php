@@ -39,13 +39,13 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <td class="aawp-table__td-position" data-label="<?php echo $this->get_product_numbering_label(); ?>"><?php echo $this->get_product_numbering(); ?></td>
                 <?php } ?>
                 <td class="aawp-table__td-thumb" data-label="<?php _e('Preview', 'aawp'); ?>">
-                    <a href="<?php echo $this->get_product_image_link(); ?>" title="<?php echo $this->get_product_image_link_title(); ?>" rel="nofollow" target="_blank">
+                    <a href="<?php echo $this->get_product_image_link(); ?>" title="<?php echo $this->get_product_image_link_title(); ?>" rel="nofollow noopener sponsored" target="_blank">
                         <img class="aawp-product__img" src="<?php echo $this->get_product_image(); ?>" alt="<?php echo $this->get_product_image_alt(); ?>" <?php $this->the_product_image_title(); ?> />
                     </a>
                 </td>
                 <td class="aawp-table__td-title" data-label="<?php _e('Product', 'aawp'); ?>">
                     <a class="aawp-product__title" href="<?php echo $this->get_product_url(); ?>" title="<?php echo $this->get_product_link_title(); ?>"
-                       rel="nofollow" target="_blank"><?php echo $this->truncate( $this->get_product_title(), 100 ); ?>
+                       rel="nofollow noopener sponsored" target="_blank"><?php echo $this->truncate( $this->get_product_title(), 100 ); ?>
                     </a>
                 </td>
                 <?php if ( $this->show_star_rating() ) { ?>

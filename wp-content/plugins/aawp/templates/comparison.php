@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <?php $this->setup_item($i, $item); ?>
 
                     <td class="thumb" data-label="<?php _e('Preview', 'aawp'); ?>">
-                        <a href="<?php echo $this->get_product_image_link(); ?>" title="<?php echo $this->get_product_image_link_title(); ?>" rel="nofollow" target="_blank">
+                        <a href="<?php echo $this->get_product_image_link(); ?>" title="<?php echo $this->get_product_image_link_title(); ?>" rel="nofollow noopener sponsored" target="_blank">
                             <img src="<?php echo $this->get_product_image(); ?>" alt="<?php echo $this->get_product_image_alt(); ?>" <?php $this->the_product_image_title(); ?> />
                         </a>
                     </td>
@@ -39,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
                     <td class="title" data-label="<?php _e('Product', 'aawp'); ?>">
                         <a href="<?php echo $this->get_product_url(); ?>" title="<?php echo $this->get_product_link_title(); ?>"
-                           rel="nofollow" target="_blank"><?php echo $this->truncate( $this->get_product_title(), 50 ); ?>
+                           rel="nofollow noopener sponsored" target="_blank"><?php echo $this->truncate( $this->get_product_title(), 50 ); ?>
                         </a>
                     </td>
                 <?php endforeach; ?>

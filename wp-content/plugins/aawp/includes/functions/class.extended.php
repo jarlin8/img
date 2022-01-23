@@ -616,7 +616,7 @@ function aawp_get_prime_check_logo( $atts = array() ) {
     $ref_link = aawp_get_amazon_prime_url( $country, $tracking_id );
 
     if ( !empty ( $ref_link ) && 'linked' === $check_prime )
-        return '<a class="' . $classes . '" href="' . $ref_link . '" title="' . $title . '" rel="nofollow" target="_blank"></a>';
+        return '<a class="' . $classes . '" href="' . $ref_link . '" title="' . $title . '" rel="nofollow noopener sponsored" target="_blank"></a>';
 
     return $prime_logo;
 }

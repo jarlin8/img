@@ -497,7 +497,7 @@ function aawp_admin_table_products_meta_box_render( $post ) {
                                                 <label>
                                                     <input class="widefat" type="checkbox"
                                                            name="aawp_table_products[<?php echo $product_id; ?>][rows][<?php echo $row_id; ?>][values][custom_button_nofollow]"
-                                                           value="1" <?php if ( $product_row_value_custom_button_nofollow ) echo 'checked="checked"'; ?> /> <?php _e('nofollow', 'aawp' ); ?>
+                                                           value="1" <?php if ( $product_row_value_custom_button_nofollow ) echo 'checked="checked"'; ?> /> <?php _e('sponsored', 'aawp' ); ?>
                                                 </label>
                                             </div>
                                         </div>
@@ -1422,7 +1422,8 @@ function aawp_the_table_product_data( $table_row_id, $table_product_id ) {
 
             $title = aawp_get_field_value( $asin, 'title' );
 
-            $output = '<span class="aawp-tb-thumb" style="background-image: url(' . esc_html( $image ) . ');"><img src="' . aawp_get_assets_url() . 'img/thumb-spacer.png" alt="' . esc_html( $title ) . '" /></span>';
+            //$output = '<span class="aawp-tb-thumb" style="background-image: url(' . esc_html( $image ) . ');"><img src="' . aawp_get_assets_url() . 'img/thumb-spacer.png" alt="' . esc_html( $title ) . '" /></span>';
+            $output = '<span class="aawp-tb-thumb"><img src="' . esc_html( $image ) . '" alt="' . esc_html( $title ) . '" /></span>';
 
             if ( $linked )
                 $link_text = aawp_get_field_value( $asin, 'title' );
@@ -1517,7 +1518,7 @@ function aawp_the_table_product_data( $table_row_id, $table_product_id ) {
                 $output .= ' target="_blank"';
 
             if ( isset( $data['values']['custom_button_nofollow'] ) && '1' == $data['values']['custom_button_nofollow'] )
-                $output .= ' rel="nofollow"';
+                $output .= ' rel="nofollow noopener sponsored"';
 
             $output .= '>';
             $output .= $custom_button_text;
@@ -1577,7 +1578,7 @@ function aawp_the_table_product_data( $table_row_id, $table_product_id ) {
                 }
             }
 
-            $output = '<a href="' . esc_url( $link_url ) .'" title="' . esc_html( $link_text ) . '" target="_blank" rel="nofollow"' . $data_attributes . '>' . $output . '</a>';
+            $output = '<a href="' . esc_url( $link_url ) .'" title="' . esc_html( $link_text ) . '" target="_blank" rel="nofollow noopener sponsored"' . $data_attributes . '>' . $output . '</a>';
         }
     }
 

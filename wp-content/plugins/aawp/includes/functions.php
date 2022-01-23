@@ -726,6 +726,8 @@ function aawp_format_price_currency( $price ) {
         $suffix = 'AED '; //aawp_get_currency_symbol( 'AED' ) . ' ';
     } elseif ( 'sg' === $country ) {
         $suffix = 'S$ '; //aawp_get_currency_symbol( 'SGD' ) . ' ';
+    } elseif ( 'se' === $country ) {
+        $suffix = ' kr';
     } elseif ( 'sa' === $country ) {
         $prefix = aawp_get_currency_symbol('SAR') . ' ';
     }
@@ -735,7 +737,7 @@ function aawp_format_price_currency( $price ) {
     $number_sep_th  = ',';
     $number_sep_dec = '.';
 
-    if ( in_array( $country, $euro_countries ) || 'com.br' === $country ) {
+    if ( in_array( $country, $euro_countries ) || 'com.br' === $country || 'se' === $country ) {
         $number_sep_th  = '.';
         $number_sep_dec = ',';
     }

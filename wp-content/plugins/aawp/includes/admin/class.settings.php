@@ -69,13 +69,12 @@ if (!class_exists('AAWP_Settings')) {
                 wp_die( __('You do not have sufficient permissions to access this page.', 'aawp') );
             }
 
+            $current_tab_url = add_query_arg( array( 'tab' => $this->current_tab ), admin_url( 'admin.php?page=aawp-settings' ) );
+
             //require_once AAWP_PLUGIN_DIR . 'includes/admin/infoboxes.php';
             //require_once AAWP_PLUGIN_DIR . 'includes/settings/notices.php';
             //require_once AAWP_PLUGIN_DIR . 'includes/settings/page.php';
             ?>
-
-            <?php  ?>
-
             <div class="wrap aawp-wrap">
                 <h2>
                     <img class="aawp-icon-settings" src="<?php echo AAWP_PLUGIN_URL . 'assets/img/icon-settings.png'; ?>" />
@@ -100,7 +99,7 @@ if (!class_exists('AAWP_Settings')) {
                             <div class="meta-box-sortables ui-sortable">
                                 <div class="postbox">
                                     <div class="inside">
-                                        <form method="post" action="options.php">
+                                        <form method="post" action="<?php echo admin_url( 'options.php' ); ?>">
                                             <?php wp_nonce_field( 'aawp_update_options', '_wpnonce_aawp_update_options' ); ?>
                                             <?php settings_fields( 'aawp_' . $this->current_tab ); ?>
                                             <?php do_settings_sections( 'aawp_' . $this->current_tab ); ?>
@@ -111,13 +110,13 @@ if (!class_exists('AAWP_Settings')) {
                                             </p>
                                         </form>
 
-                                        <form method="post" action="?page=aawp-settings&tab=<?php echo $this->current_tab; ?>" style="display: inline-block;">
+                                        <form method="post" action="<?php echo esc_url( $current_tab_url ); ?>" style="display: inline-block;">
                                             <?php wp_nonce_field( 'aawp_renew_cache', '_wpnonce_aawp_renew_cache' ); ?>
                                             <?php submit_button(__('Renew Cache', 'aawp'), 'delete small', 'aawp_renew_cache', false); ?>
                                         </form>
 
                                         <?php if ( aawp_is_product_local_images_activated() ) { ?>
-                                            <form method="post" action="?page=aawp-settings&tab=<?php echo $this->current_tab; ?>" style="display: inline-block;">
+                                            <form method="post" action="<?php echo esc_url( $current_tab_url ); ?>" style="display: inline-block;">
                                                 <?php wp_nonce_field( 'aawp_renew_images_cache', '_wpnonce_aawp_renew_images_cache' ); ?>
                                                 <?php submit_button(__('Renew Images Cache', 'aawp'), 'delete small', 'aawp_renew_images_cache', false); ?>
                                             </form>
