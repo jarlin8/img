@@ -155,6 +155,10 @@
                                     $arg_array['gridtype'] = 'compact';
                                     $arg_array['columns'] = '5_col'; 
                                 }
+                                else if(rehub_option('brand_taxonomy_layout') == 'mobilegrid'){
+                                    $arg_array['gridtype'] = 'mobile';
+                                    $arg_array['columns'] = '4_col'; 
+                                }
                                 else{
                                    $arg_array['columns'] = '4_col';
                                 }
@@ -163,6 +167,10 @@
                                 if(rehub_option('brand_taxonomy_layout') == 'compact_grid'){
                                     $arg_array['gridtype'] = 'compact';
                                     $arg_array['columns'] = '4_col'; 
+                                }
+                                else if(rehub_option('brand_taxonomy_layout') == 'mobilegrid'){
+                                    $arg_array['gridtype'] = 'mobile';
+                                    $arg_array['columns'] = '3_col'; 
                                 }
                                 else{
                                    $arg_array['columns'] = '3_col';

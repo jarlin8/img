@@ -268,30 +268,14 @@
                         <div class="alert alert-info m-b-0" role="alert">
                             <i class="wpdt-icon-info-circle-full"></i>
                             <ul>
-                                <li><strong>Feature:</strong> Added new options for link columns in datatables (noreferrer and sponsored attributes)</li>
-                                <li><strong>Feature:</strong> Added new options for link editor in simple table (noreferrer and sponsored attributes)</li>
-                                <li><strong>Feature:</strong> Added clear button in color-picker in simple table.</li>
-                                <li><strong>Improvement:</strong> Added pagination above the table on browse page for tables and charts.</li>
-                                <li><strong>Improvement:</strong> Updating table from Google spreadsheet with standard method (no more cache issues)</li>
-                                <li><strong>Improvement:</strong> Add new pre-formatted hooks for all column types in datatables:
-                                    wpdatatables_filter_date_cell_before_formatting, wpdatatables_filter_time_cell_before_formatting,
-                                    wpdatatables_filter_datetime_cell_before_formatting, wpdatatables_filter_link_cell_before_formatting,
-                                    wpdatatables_filter_email_cell_before_formatting, wpdatatables_filter_string_cell_before_formatting,
-                                    wpdatatables_filter_int_cell_before_formatting, wpdatatables_filter_float_cell_before_formatting
-                                    and wpdatatables_filter_image_cell_before_formatting.</li>
-                                <li><strong>Improvement:</strong> Add new hooks for filtering and editing definition:
-                                    wpdatatables_filter_js_editing_definition, wpdatatables_filter_js_editing_definition_values,
-                                    wpdatatables_filter_js_filtering_definition and wpdatatables_filter_js_filtering_definition_values</li>
-                                <li><strong>Bugfix:</strong> Fixed notice for deprecated hook in Gutenberg.</li>
-                                <li><strong>Bugfix:</strong> Fixed issue with browsing tables and charts with search term.</li>
-                                <li><strong>Bugfix:</strong> Fixed resetting CSS rule for background and text color in simple table editor.</li>
-                                <li><strong>Bugfix:</strong> Fixed double notification for time and datetime columns after inline editing</li>
-                                <li><strong>Bugfix:</strong> Fixed datepicker position for inline editing.</li>
-                                <li><strong>Bugfix:</strong> Fixed issue with new hooks in wpDataCharts.</li>
-                                <li><strong>Bugfix:</strong> Fixed issue with bubble chart and follow table filtering.</li>
-                                <li><strong>Bugfix:</strong> Fixed issue with separate MySQL connection.</li>
-                                <li><strong>Bugfix:</strong> Fixed issue with datepicker on Excel like table.</li>
-                                <li><strong>Bugfix:</strong> Fixed issue with line and area chart in Chartjs engine on same page.</li>
+                                <li><strong>Feature:</strong> Added new option to show/hide search field in select-box/multiselect-box filters.</li>
+                                <li><strong>Feature:</strong> Added new option to show/hide search field in Single-value select-box/Multi-value select-box in edit modal.</li>
+                                <li><strong>Feature:</strong> Added new options for simple table: "Remove borders", "Border collapse" and "Border spacing".</li>
+                                <li><strong>Feature:</strong> Added new option "Page Orientation" for PDF export reports.</li>
+                                <li><strong>Feature:</strong> Added new option "Paper Size" for PDF export reports.</li>
+                                <li><strong>Improvement:</strong> Improved checking for existing PHP extension - zlib on the server.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with double loading for multiselect filter.</li>
+                                <li>Compatibility with WordPress 5.8.1 approved.</li>
                                 <li>Other small bug fixes and stability improvements.</li>
                             </ul>
                         </div>

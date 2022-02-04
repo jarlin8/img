@@ -630,20 +630,20 @@ add_action('wp_ajax_nopriv_show_tab', 'show_tab_ajax');
 add_action('wp_ajax_show_tab', 'show_tab_ajax');
 function show_tab_ajax() {
   	if (!isset($_POST['rating_tabs_id']) || !wp_verify_nonce($_POST['rating_tabs_id'], 'rating_tabs_nonce'))
-    die(sha1(microtime())); // return some random trash :)
+    wp_die(sha1(microtime())); // return some random trash :)
 
   	if (!isset($_POST['post_id']) || !isset($_POST['tab_number']))
-    	die(sha1(microtime())); // return some random trash :)
+    	wp_die(sha1(microtime())); // return some random trash :)
 
   	$post_id = (int)$_POST['post_id'];
   	$tab_number = (int)$_POST['tab_number'];
   	$posttype = (isset($_POST['posttype']) && $_POST['posttype'] == 'product') ? 'product' : 'post';
   	if (empty($post_id) || empty($tab_number) || $post_id<1 || $tab_number<1 || $tab_number>4)
-    	die(sha1(microtime())); // return some random trash :)
+    	wp_die(sha1(microtime())); // return some random trash :)
 
   	$comments_count = wp_count_comments($post_id);
   	if (empty($comments_count->approved))
-    	die('No comments on this post');
+    	wp_die(esc_html__('No comments on this post', 'rehub-theme'));
   	unset($comments_count);
 
 	$comments_v = get_comments(array(

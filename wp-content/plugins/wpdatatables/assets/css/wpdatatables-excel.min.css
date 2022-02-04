@@ -1,9 +1,6 @@
 div.wpExcelTable {
     clear:both;
 }
-.wpExcelTable .handsontableInputHolder {
-    background: white;
-}
 
 .wpExcelTable_search_filter {
     float: left;

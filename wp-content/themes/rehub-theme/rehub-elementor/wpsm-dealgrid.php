@@ -47,6 +47,7 @@ class Widget_Wpsm_Compactgrid_loop_Mod extends WPSM_Content_Widget_Base {
             'options'     => [
                 'full'           => esc_html__( 'Full Deal Grid', 'rehub-theme' ),
                 'compact'           => esc_html__( 'Compact Deal Grid (Coupon)', 'rehub-theme' ),
+                'mobile'           => esc_html__( 'Mobile Optimized Grid', 'rehub-theme' ),
             ],
             'label_block' => true,
         ]);
@@ -70,7 +71,7 @@ class Widget_Wpsm_Compactgrid_loop_Mod extends WPSM_Content_Widget_Base {
             'type'        => \Elementor\Controls_Manager::SWITCHER,
             'label'       => esc_html__( 'Disable actions?', 'rehub-theme' ),
             'description' => esc_html__( 'This will disable thumbs and comment count in bottom', 'rehub-theme' ),
-            'condition'   => [ 'gridtype' => [ 'full' ] ],
+            'condition'   => [ 'gridtype' => [ 'full', 'mobile' ] ],
             'label_on'    => esc_html__('Yes', 'rehub-theme'),
             'label_off'   => esc_html__('No', 'rehub-theme'),
             'return_value'      => '1',

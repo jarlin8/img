@@ -111,35 +111,7 @@ $theme_url = 'https://wpsoul.com/';
 		<?php if( $registeredlicense == true && empty($lb_verify_res['data']['plugins']) ) :?>
 			<p style="color:red;font-size:180%" class="notofficialtheme">You can't download bonus plugins, because you are using nulled or not official theme version. Please, purchase theme on <a href="https://themeforest.net/item/rehub-directory-multi-vendor-shop-coupon-affiliate-theme/7646339">Themeforest</a>, otherwise, your site can be blocked.</p>
 		<?php endif;?>
-		<div class="feature-section theme-browser rendered">
-			<div class="theme">
-				<div class="theme-screenshot">
-					<img src="<?php echo get_template_directory_uri() . '/admin/screens/images/gs.jpg';?>" alt="theme">
-					<div class="plugin-info">Gutenberg page builder</div>
-				</div>
-				<h3 class="theme-name">Greenshift</h3>
-				<div class="theme-actions">
-					<?php if( $registeredlicense == true ) :?>						
-						<a href="<?php echo esc_url($lb_verify_res['data']['plugins']['greenshift']);?>" class="button button-primary" title="Get link">Download</a>
-					<?php else :?>
-						<?php printf( '<a href="%s" class="button button-primary">%s</a>', admin_url( 'admin.php?page=rehub' ), esc_html__("Register theme to get link", "rehub-theme" ) ); ?>
-					<?php endif;?>		
-				</div>
-			</div>	
-			<div class="theme">
-				<div class="theme-screenshot">
-					<img src="<?php echo get_template_directory_uri() . '/admin/screens/images/vcomposer.png';?>" alt="theme">
-					<div class="plugin-info">Enhanced layout builder</div>
-				</div>
-				<h3 class="theme-name">WP Bakery Composer</h3>
-				<div class="theme-actions">
-					<?php if( $registeredlicense == true ) :?>						
-						<a href="<?php echo esc_url($lb_verify_res['data']['plugins']['js_composer']);?>" class="button button-primary" title="Get link">Download</a>
-					<?php else :?>
-						<?php printf( '<a href="%s" class="button button-primary">%s</a>', admin_url( 'admin.php?page=rehub' ), esc_html__("Register theme to get link", "rehub-theme" ) ); ?>
-					<?php endif;?>		
-				</div>
-			</div>					
+		<div class="feature-section theme-browser rendered">				
 			<div class="theme">
 				<div class="theme-screenshot">
 					<img src="<?php echo get_template_directory_uri()?>/admin/screens/images/apf.jpg" alt="theme">
@@ -293,7 +265,21 @@ $theme_url = 'https://wpsoul.com/';
 						<?php printf( '<a href="%s" class="button button-primary">%s</a>', admin_url( 'admin.php?page=rehub' ), esc_html__("Register theme to get link", "rehub-theme" ) ); ?>
 					<?php endif;?>		
 				</div>
-			</div>										
+			</div>
+			<div class="theme">
+				<div class="theme-screenshot">
+					<img src="<?php echo get_template_directory_uri() . '/admin/screens/images/vcomposer.png';?>" alt="theme">
+					<div class="plugin-info">Enhanced layout builder</div>
+				</div>
+				<h3 class="theme-name">WP Bakery Composer</h3>
+				<div class="theme-actions">
+					<?php if( $registeredlicense == true ) :?>						
+						<a href="<?php echo esc_url($lb_verify_res['data']['plugins']['js_composer']);?>" class="button button-primary" title="Get link">Download</a>
+					<?php else :?>
+						<?php printf( '<a href="%s" class="button button-primary">%s</a>', admin_url( 'admin.php?page=rehub' ), esc_html__("Register theme to get link", "rehub-theme" ) ); ?>
+					<?php endif;?>		
+				</div>
+			</div>											
 		</div>
 	</div>
 

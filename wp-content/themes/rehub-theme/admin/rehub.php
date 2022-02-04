@@ -453,7 +453,8 @@ if ( ! class_exists( 'Rehub_Admin' ) ) {
 				?>		
 			}
 			.rehub-main-btn-bg > a{color: <?php echo ''.$btncolortext ?> !important;}
-			.rehub-main-color, .wp-block-rehub-offer-listing .c-offer-listing__title, .wp-block .c-offer-listing .c-offer-listing__read-more{color: <?php echo ''.$maincolor; ?>;}			
+			.rehub-main-color, .wp-block-rehub-offer-listing .c-offer-listing__title, .wp-block .c-offer-listing .c-offer-listing__read-more{color: <?php echo ''.$maincolor; ?>;}		
+			.rehub-main-color-bg{background-color: <?php echo ''.$maincolor; ?>;}	
 			.rehub-main-color-border, nav.top_menu > ul > li.vertical-menu.border-main-color .sub-menu, .rh-main-bg-hover:hover, .wp-block-quote, ul.def_btn_link_tabs li.active a, .editor-styles-wrapper .wp-block-pullquote{border-color: <?php echo ''.$maincolor; ?> !important;}
 			.rehub-sec-color-bg,
 			.rh-slider-arrow,

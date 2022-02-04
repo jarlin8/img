@@ -43,6 +43,9 @@ $additional_vars = array('exerpt_count'=> '', 'disable_meta'=>'', 'enable_btn'=>
 if($archive_layout == 'compactgrid' || $archive_layout == 'compactgridfull'){
     $additional_vars['gridtype'] = 'compact';
 }
+if($archive_layout == 'mobilegrid' || $archive_layout == 'mobilegridfull'){
+    $additional_vars['gridtype'] = 'mobile';
+}
 $jsonargs = json_encode($args);
 $json_innerargs = json_encode($additional_vars);
 $cat_filter_panel = rehub_option('category_filter_panel');
@@ -202,11 +205,11 @@ $cat_filter_panel = rehub_option('category_filter_panel');
                     <?php echo rh_generate_incss('offergrid');?>               
                     <div class="eq_grid pt5 rh-flex-eq-height <?php echo (rehub_option('width_layout') =='extended') ? 'col_wrap_six' : 'col_wrap_fifth';?> <?php echo esc_attr($infinitescrollwrap);?>" data-filterargs='<?php echo ''.$jsonargs.'';?>' data-template="compact_grid" id="<?php echo esc_attr($containerid);?>" data-innerargs='<?php echo ''.$json_innerargs.'';?>'>
 
-                <?php elseif ($archive_layout == 'dealgrid') : ?>
+                <?php elseif ($archive_layout == 'dealgrid' || $archive_layout == 'mobilegrid') : ?>
                     <?php echo rh_generate_incss('offergrid');?>               
                     <div class="eq_grid pt5 rh-flex-eq-height <?php echo (rehub_option('width_layout') =='extended') ? 'col_wrap_fourth' : 'col_wrap_three';?> <?php echo esc_attr($infinitescrollwrap);?>" data-filterargs='<?php echo ''.$jsonargs.'';?>' data-template="compact_grid" id="<?php echo esc_attr($containerid);?>" data-innerargs='<?php echo ''.$json_innerargs.'';?>'>
 
-                <?php elseif ($archive_layout == 'dealgridfull') : ?>
+                <?php elseif ($archive_layout == 'dealgridfull' || $archive_layout == 'mobilegridfull') : ?>
                     <?php echo rh_generate_incss('offergrid');?>              
                     <div class="eq_grid pt5 rh-flex-eq-height <?php echo (rehub_option('width_layout') =='extended') ? 'col_wrap_six' : 'col_wrap_fifth';?> <?php echo esc_attr($infinitescrollwrap);?>" data-filterargs='<?php echo ''.$jsonargs.'';?>' data-template="compact_grid" id="<?php echo esc_attr($containerid);?>" data-innerargs='<?php echo ''.$json_innerargs.'';?>'>                                                                      
                 <?php else : ?>
@@ -239,7 +242,9 @@ $cat_filter_panel = rehub_option('category_filter_panel');
                             <?php include(rh_locate_template('inc/parts/column_grid.php')); ?>   
 
                         <?php elseif ($archive_layout == 'compactgrid' || $archive_layout == 'compactgridfull') : ?>
-                            <?php $gridtype = 'compact'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>                                              
+                            <?php $gridtype = 'compact'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>  
+                        <?php elseif ($archive_layout == 'mobilegrid' || $archive_layout == 'mobilegridfull') : ?>
+                            <?php $gridtype = 'mobile'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>                                            
                         <?php elseif ($archive_layout == 'dealgrid' || $archive_layout == 'dealgridfull') : ?>
                             <?php include(rh_locate_template('inc/parts/compact_grid.php')); ?>
                      

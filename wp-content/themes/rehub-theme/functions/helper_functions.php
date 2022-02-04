@@ -1702,12 +1702,12 @@ if(!function_exists('rh_generate_incss')) {
               .offer_grid figure {position: relative; text-align: center; margin: 0 auto 15px auto; overflow: hidden;  vertical-align: middle; }
               .offer_grid.coupon_grid figure img {height: 80px;}
               .offer_grid figure img{width: auto;display: inline-block;transition: all ease-in-out .2s;}
-              .offer_grid.col_item{border: 1px solid #ddd; padding: 12px; }
+              .offer_grid.col_item{border: 1px solid rgba(159,159,159, 0.35); padding: 12px; transition: box-shadow 0.4s ease;}
               .offer_act_enabled.col_item{padding-bottom: 53px}
               .offer_grid .price_count{font-weight: bold; font-size:17px;padding: 0;}
               .offer_grid .price_count del {display: block;font-size: 13px;color: #666;vertical-align: top;font-weight: normal; text-align: left;}
               .offer_grid .rehub_offer_coupon span{ font-size: 14px; text-transform: none;}
-              .offer_grid h3 { height: 36px; font-size: 15px; line-height:18px; }
+              .offer_grid h3 { height: 36px; font-size: 15px; line-height:18px; font-weight:normal !important }
               .col_wrap_fifth .offer_grid h3{font-size: 14px;}
               .col_wrap_six .offer_grid h3{font-size: 13px; line-height:16px; height: 32px;}
               .offer_grid:hover{   box-shadow: 0 0 20px #ddd;}
@@ -1729,7 +1729,7 @@ if(!function_exists('rh_generate_incss')) {
               .btn_act_for_grid .thumbplus, .btn_act_for_grid .thumbminus{margin-bottom: 3px}
               .btn_act_for_grid .thumbscount:before {content: "\e86d";line-height: 38px;display: inline-block;margin-right: 8px;}
               .re_actions_for_grid .thumbscount{float: none; margin: 0; line-height: 38px; font-size: inherit;}
-              .re_actions_for_grid .comm_number_for_grid:before {content: "\e932";margin-right: 5px;}
+              .comm_number_for_grid:before {content: "\e932";margin-right: 5px;}
               .re_actions_for_grid .thumbplus.heartplus{font-size: 15px}
               .offer_grid_com .meta_for_grid{overflow: hidden; line-height: 18px}
               .offer_grid_com .store_for_grid{text-align: left;line-height: 12px;}
@@ -1737,6 +1737,14 @@ if(!function_exists('rh_generate_incss')) {
               .offer_grid .not_masked_coupon{margin: 10px auto 0 auto;font-size: 12px;background: #e7f9dd;padding: 6px;border-color: #42A40D;color: #37840D;display: block;}
               .no_padding_wrap .offer_grid.col_item{border: 1px solid #eee; border-top: none; border-left: none}
               .no_padding_wrap .eq_grid{border: 1px solid #eee; border-right: none; border-bottom: none; padding: 0}
+              .offer_grid.mobile_grid .price_count{font-size:20px}
+              .offer_grid.mobile_grid .price_count del{opacity:1; color:#dd7064; display:inline-block; margin: 0 3px}
+              .offer_grid.mobile_grid .rh_notice_wrap{font-size: 75% !important;font-weight: normal !important;opacity: 0.5;}
+              .offer_grid.mobile_grid.offer_grid .cat_link_meta a{text-transform:capitalize}
+              .mobile_grid .two_col_btn_for_grid{margin-top:25px; position:absolute; bottom:0; left:0; right:0; padding:0 12px 12px 12px}
+              .mobile_grid.offer_grid .info_in_dealgrid{margin-bottom:0}
+              .mobile_grid.offer_grid h3 { height: 54px; display: -webkit-box;overflow: hidden;-webkit-box-orient: vertical;-webkit-line-clamp: 3; }
+
               @media(max-width: 1024px){
                 .offer_grid_com .btn_act_for_grid .table_cell_thumbs, .offer_grid_com .btn_act_for_grid:hover .thumbscount{display: inline;}
                 .btn_act_for_grid .thumbscount:before{display: none;}
@@ -1748,20 +1756,30 @@ if(!function_exists('rh_generate_incss')) {
                 .coupon_grid .grid_desc_and_btn{ text-align:center; border-top: 1px dashed #ccc; padding-top: 15px; text-align: center;}
               }
               @media (max-width: 567px){
+                .mobile_compact_grid.col_item {width: 100% !important;margin: 0 0 14px 0 !important;}
                 .mobile_compact_grid figure{float: left;width: 110px !important; margin: 0 15px 8px 0 !important;}
                 .offer_grid figure img, figure.eq_figure img{height:120px;}
                 .mobile_compact_grid .grid_onsale{padding:1px 5px; font-size:11px}
-                .mobile_compact_grid figure img{height: 120px; }
                 .mobile_compact_grid .grid_desc_and_btn{float: left; width: calc(100% - 130px) !important; border-top:none !important; padding-top:0 !important;text-align: inherit !important;}
                 .mobile_compact_grid .priced_block{margin: 0}
                 .mobile_compact_grid .priced_block .btn_offer_block{display: block; margin: 0 0 14px 0}
-                .mobile_compact_grid.offer_grid h3{height: auto; min-height: 1px; margin: 0 0 14px 0}
+                .mobile_compact_grid.offer_grid h3{height: auto; min-height: 1px; margin: 0 0 5px 0 !important}
                 .mobile_compact_grid .rehub_offer_coupon{left: 0; width: 100%; margin: 10px 0;}
                 .mobile_compact_grid .priced_block .btn_offer_block{padding: 10px 12px}
                 .mobile_compact_grid .meta_for_grid{clear: both;}
                 .mobile_compact_grid .priced_block .btn_offer_block:not(.coupon_btn):before{top: 10px}
                 .rtl .mobile_compact_grid figure{float: right; margin: 0 0 8px 15px !important;}
                 .rtl .mobile_compact_grid .grid_desc_and_btn{float: right;}
+
+                .mobile_grid.mobile_compact_grid.offer_grid h3{font-size:14px}
+                .offer_grid.mobile_grid .price_count{font-size:18px}
+                .offer_grid.mobile_grid.col_item{padding:7px !important}
+                .offer_grid.mobile_grid .re_actions_for_grid{display:none}
+                .offer_grid.mobile_grid .thumbplus, .offer_grid.mobile_grid .thumbminus{border:none}
+                .offer_grid.mobile_grid .thumbminus{margin-right:4px}
+                .mobile_grid .two_col_btn_for_grid{margin-top:5px; position:static; padding:0}
+                .mobile_grid.mobile_compact_grid figure img{height:100px}
+
               }
             ';           
         }

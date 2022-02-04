@@ -84,15 +84,17 @@ function rehub_before_import_setup( $current_import ){
 	    }
 	}
 	$rplugins = admin_url( 'admin.php?page=rehub-plugins' );
-	$wpplugins = admin_url( 'plugin-install.php' );
-	$childthemeurl = 'http://rehubdocs.wpsoul.com/docs/rehub-theme/child-themes/';	
+	$wpplugins = admin_url( 'plugin-install.php' );	
 	if(!$registeredlicense){
 		printf( '<h3>To get access to ALL demo stacks, you must register your purchase.<br />See the <a href="%s">Product Registration tab</a> for instructions on how to complete registration.</h3>', admin_url( 'admin.php?page=rehub' ) );	
 		exit();		
 	}	
 
-	if( 'RePick' === $current_import['import_file_name'] ) {
-
+	if( 'RePick' === $current_import['import_file_name'] || 'ReMag' === $current_import['import_file_name'] || 'ReCash' === $current_import['import_file_name'] ) {
+		if($registeredlicense && empty($lb_verify_res['data']['themes'])){
+			echo '<p style="color:red;font-size:180%" class="notofficialtheme">You have no access to demo import, because you are using nulled or not official theme version. Please, purchase theme on <a href="https://themeforest.net/item/rehub-directory-multi-vendor-shop-coupon-affiliate-theme/7646339">Themeforest</a>, otherwise, your site can be blocked.</p>';		
+			exit();			
+		}
 	}else{
 		if($registeredlicense && empty($lb_verify_res['data']['themes'])){
 			echo '<p style="color:red;font-size:180%" class="notofficialtheme">You have no access to demo import, because you are using nulled or not official theme version. Please, purchase theme on <a href="https://themeforest.net/item/rehub-directory-multi-vendor-shop-coupon-affiliate-theme/7646339">Themeforest</a>, otherwise, your site can be blocked.</p>';		
@@ -133,16 +135,13 @@ function rehub_import_files() {
 		}
 		$rplugins = admin_url( 'admin.php?page=rehub-plugins' );
 		$wpplugins = admin_url( 'plugin-install.php' );
-		$childthemeurl = 'http://rehubdocs.wpsoul.com/docs/rehub-theme/child-themes/';
 		$themeaffoptions = admin_url( 'admin.php?page=vpt_option#_menu_aff' );
 		$themegenoptions = admin_url( 'admin.php?page=vpt_option#_menu_1' );
 		$requirednotice = esc_html__('Make sure that you have active next required plugins:', 'rehub-theme');
 		$optionalnotice = esc_html__('Next plugins are optional. To get full demo functions, make sure that you installed and activated them. However, they are not required for demo and theme, if you think that you will not need them, just ignore them. If you have no optional plugins before import, you will have some warnings after demo import. Ignore them!', 'rehub-theme');
-		$themenotice = esc_html__('Make sure that you have active next Theme:', 'rehub-theme');
 		$themeoptionnotice = esc_html__('Make sure that you have active next Theme options:', 'rehub-theme');
 		$installpnotice = esc_html__('Install plugins', 'rehub-theme');
 		$installonotice = esc_html__('Activate option', 'rehub-theme');
-		$installtnotice = esc_html__('How to get child theme', 'rehub-theme');
 
 		if (!defined( 'WPFEPP_VERSION' )){
 			$rhfrontendnotice = '<li><span style="color:red">RH Frontend Publishing Pro - NOT active</span>. <a href="'.$rplugins.'" target="_blank">Install plugin</a></li>';
@@ -181,12 +180,19 @@ function rehub_import_files() {
 			$rhrslidernotice = '<li>Revolution Slider - <span style="color:green">active</span></li>';
 		}
 
-		if (!class_exists('MetaDataFilter')){
-			$rhmdtfnotice = '<li><span style="color:red">MDTF - NOT active</span>. <a href="'.$rplugins.'" target="_blank">'.$installpnotice.'</a></li>';
+		if (!defined('GREENSHIFT_DIR_URL')){
+			$rhgsnotice = '<li><span style="color:red">Greenshift - NOT active</span>. <a href="'.$rplugins.'" target="_blank">'.$installpnotice.'</a></li>';
 		}
 		else{
-			$rhmdtfnotice = '<li>MDTF - <span style="color:green">active</span></li>';
-		}				
+			$rhgsnotice = '<li>Greenshift - <span style="color:green">active</span></li>';
+		}
+
+		if (!defined('GREENSHIFTGSAP_DIR_URL')){
+			$rhgsanimatenotice = '<li><span style="color:red">Greenshift Animation Addon - NOT active</span>. <a href="'.$rplugins.'" target="_blank">'.$installpnotice.'</a></li>';
+		}
+		else{
+			$rhgsanimatenotice = '<li>Greenshift Animation Addon - <span style="color:green">active</span></li>';
+		}
 
 		if (!class_exists('Woocommerce')){
 			$rhwoonotice = '<li><span style="color:red">Woocommerce - NOT active</span>. <a href="'.$wpplugins.'?s=woocommerce&tab=search&type=term" target="_blank">'.$installpnotice.'</a></li>';
@@ -252,7 +258,7 @@ function rehub_import_files() {
 		$tutorialnotice = 'After installation, please, go to Tutorial Link in your main menu for further setup and explanations';
 
 		$remagnotice = $requirednotice.'<ol>';
-		$remagnotice .= $rhelnotice;
+		$remagnotice .= $rhgsnotice;
 		$remagnotice .='</ol>';
 		$remagnotice .= $optionalnotice.' <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a><ol>';
 		$remagnotice .= $rhbpnotice;
@@ -271,7 +277,7 @@ function rehub_import_files() {
 
 		$recashnotice = $requirednotice.'<ol>';
 		$recashnotice .= $rhfrontendnotice;
-		$recashnotice .= $rhelnotice;
+		$recashnotice .= $rhgsnotice;
 		$recashnotice .='</ol>';
 		$recashnotice .= $optionalnotice.' <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a><ol>';
 		$recashnotice .= $rhbpnotice;
@@ -629,7 +635,7 @@ function rehub_after_import_setup( $current_import ) {
 	
 	switch ( $import_file_name ) {
 		case 'ReMag' :
-			$front_page = get_page_by_title( 'Homepage Rehub' );
+			$front_page = get_page_by_title( 'Homepage Remag' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'ReViewit' :
@@ -658,7 +664,7 @@ function rehub_after_import_setup( $current_import ) {
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break;
 		case 'ReCash':
-			$front_page = get_page_by_title( 'Homepage Recash' );
+			$front_page = get_page_by_title( 'Greenshift Recash' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break;
 		case 'ReDeal':

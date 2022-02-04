@@ -24,8 +24,6 @@ class ImageWDTColumn extends WDTColumn
      */
     public function prepareCellOutput($content)
     {
-        $content = apply_filters('wpdatatables_filter_image_cell_before_formatting', $content, $this->getParentTable()->getWpId());
-
         if (empty($content)) {
             return '';
         }
@@ -35,7 +33,8 @@ class ImageWDTColumn extends WDTColumn
         } else {
             $formattedValue = "<img src='{$content}' />";
         }
-        return apply_filters('wpdatatables_filter_image_cell', $formattedValue, $this->getParentTable()->getWpId());
+        $formattedValue = apply_filters('wpdatatables_filter_image_cell', $formattedValue, $this->getParentTable()->getWpId());
+        return $formattedValue;
     }
 
 }

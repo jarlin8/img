@@ -51,11 +51,11 @@ $aff_link = (rehub_option('disable_inner_links') == 1) ? 1 : 0;
                 <?php echo rh_generate_incss('offergrid');?>              
                 <div class="eq_grid pt5 rh-flex-eq-height <?php echo (rehub_option('width_layout') =='extended') ? 'col_wrap_six' : 'col_wrap_fifth';?>">
 
-            <?php elseif (rehub_option('search_layout') == 'dealgrid') : ?>               
+            <?php elseif (rehub_option('search_layout') == 'dealgrid' || rehub_option('search_layout') == 'mobilegrid') : ?>               
                 <div class="eq_grid pt5 rh-flex-eq-height <?php echo (rehub_option('width_layout') =='extended') ? 'col_wrap_fourth' : 'col_wrap_three';?>">
                 <?php echo rh_generate_incss('offergrid');?>
 
-            <?php elseif (rehub_option('search_layout') == 'dealgridfull') : ?>               
+            <?php elseif (rehub_option('search_layout') == 'dealgridfull' || rehub_option('search_layout') == 'mobilegridfull') : ?>               
                 <div class="eq_grid pt5 rh-flex-eq-height <?php echo (rehub_option('width_layout') =='extended') ? 'col_wrap_six' : 'col_wrap_fifth';?>">
                 <?php echo rh_generate_incss('offergrid');?>                                                                      
             <?php else : ?>
@@ -85,7 +85,9 @@ $aff_link = (rehub_option('disable_inner_links') == 1) ? 1 : 0;
                         <?php include(rh_locate_template('inc/parts/color_grid.php')); ?>                      
 
                 <?php elseif (rehub_option('search_layout') == 'compactgrid' || rehub_option('search_layout') == 'compactgridfull') : ?>
-                    <?php $gridtype = 'compact'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>                                              
+                    <?php $gridtype = 'compact'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>    
+                <?php elseif (rehub_option('search_layout') == 'mobilegrid' || rehub_option('search_layout') == 'mobilegridfull') : ?>
+                    <?php $gridtype = 'mobile'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>                                           
                 <?php elseif (rehub_option('search_layout') == 'dealgrid' || rehub_option('search_layout') == 'dealgridfull') : ?>
                     <?php include(rh_locate_template('inc/parts/compact_grid.php')); ?>
              

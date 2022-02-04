@@ -85,7 +85,9 @@ $archive_layout = rehub_option('archive_layout');
                                 <?php include(rh_locate_template('inc/parts/color_grid.php')); ?>                        
 
                         <?php elseif ($archive_layout == 'compactgrid' || $archive_layout == 'compactgridfull') : ?>
-                            <?php $gridtype = 'compact'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>                                              
+                            <?php $gridtype = 'compact'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>          
+                        <?php elseif ($archive_layout == 'compactgrid' || $archive_layout == 'compactgridfull') : ?>
+                            <?php $gridtype = 'compact'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>                                    
                         <?php elseif ($archive_layout == 'dealgrid' || $archive_layout == 'dealgridfull') : ?>
                             <?php include(rh_locate_template('inc/parts/compact_grid.php')); ?>
                      

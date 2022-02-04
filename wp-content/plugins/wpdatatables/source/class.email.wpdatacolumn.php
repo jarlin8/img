@@ -24,15 +24,14 @@ class EmailWDTColumn extends WDTColumn
      */
     public function prepareCellOutput($content)
     {
-        $content = apply_filters('wpdatatables_filter_email_cell_before_formatting', $content, $this->getParentTable()->getWpId());
-
         if (strpos($content, '||') !== false) {
             list($link, $content) = explode('||', $content);
             $formattedValue = "<a href='mailto:{$link}'>{$content}</a>";
         } else {
             $formattedValue = "<a href='mailto:{$content}'>{$content}</a>";
         }
-        return apply_filters('wpdatatables_filter_email_cell', $formattedValue, $this->getParentTable()->getWpId());
+        $formattedValue = apply_filters('wpdatatables_filter_email_cell', $formattedValue, $this->getParentTable()->getWpId());
+        return $formattedValue;
     }
 
 }

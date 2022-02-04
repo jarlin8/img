@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 <?php global $post;?>
-<?php $small = (isset($small)) ? $small : '';?>
+<?php $small = (isset($small) && $small !== 'false') ? $small : '';?>
 <?php $secondtype = (isset($secondtype)) ? $secondtype : '';?>
 <div class="news_out_thumb">
 	<figure class="position-relative mb20">

@@ -331,13 +331,10 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                 $(obj.params.editSelector).focus();
 
                 // Saving event
-                var hasFired = false;
                 $(obj.params.editSelector).blur(function () {
-                    if(!hasFired){
-                        hasFired = true;
-                        obj.params.value = $(this).val();
-                        obj.validateAndSave($(this));
-                    }
+                    obj.params.value = $(this).val();
+
+                    obj.validateAndSave($(this));
                 })
             },
             datetimeCell: function () {
@@ -351,13 +348,10 @@ var inlineEditClass = function (tableDescription, dataTableOptions, $) {
                 $(obj.params.editSelector).focus();
 
                 // Saving event
-                var hasFired = false;
                 $(obj.params.editSelector).blur(function () {
-                    if(!hasFired){
-                        hasFired = true;
-                        obj.params.value = $(this).val();
-                        obj.validateAndSave($(this));
-                    }
+                    obj.params.value = $(this).val();
+
+                    obj.validateAndSave($(this));
                 })
             },
             selectboxCell: function () {

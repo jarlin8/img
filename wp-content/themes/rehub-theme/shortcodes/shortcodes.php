@@ -4235,11 +4235,10 @@ function wpsm_tax_archive_shortcode( $atts, $content = null ) {
 					else{
 						$imgcl = 'src="'. esc_url($thumbnail_url) .'"';
 					}
-					$term_titles .= ($thumbnail_url && $leftimage) ? '<a href="'. esc_url(get_term_link($term)) .'" title="'. esc_attr(sprintf( esc_html__('View all post filed under %s', 'rehub-theme' ), $term->name)) .'" class="mr15"><img '.$imgcl.' alt="'. esc_attr($term->name) .'" /></a>' : '';
 					if($thumbnail_url && $leftimage){
 						$term_titles .= '<a href="'. esc_url(get_term_link($term)) .'" title="'. esc_attr(sprintf( esc_html__('View all post filed under %s', 'rehub-theme' ), $term->name)) .'" class="mr15"><img src="'. esc_url($thumbnail_url) .'" alt="'. esc_attr($term->name) .'"';
 						if(!$originalimg){
-							$term_titles .= ' width="'. $imageheight .'"';
+							$term_titles .= ' width="'. $imageheight .'"  height="'. $imageheight .'"';
 						}
 						$term_titles .= '/></a>';
 					}					
@@ -4252,7 +4251,7 @@ function wpsm_tax_archive_shortcode( $atts, $content = null ) {
 					if($thumbnail_url && !$leftimage){
 						$term_titles .= '<a href="'. esc_url(get_term_link($term)) .'" title="'. esc_attr(sprintf( esc_html__('View all post filed under %s', 'rehub-theme' ), $term->name)) .'" class="rh-flex-right-align"><img '.$imgcl.' alt="'. esc_attr($term->name) .'"';
 						if(!$originalimg){
-							$term_titles .= ' width="'. $imageheight .'"';
+							$term_titles .= ' width="'. $imageheight .'"  height="'. $imageheight .'"';
 						}
 						$term_titles .= '/></a>';
 					}				

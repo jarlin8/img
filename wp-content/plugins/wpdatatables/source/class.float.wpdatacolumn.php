@@ -2,8 +2,7 @@
 
 defined('ABSPATH') or die('Access denied.');
 
-class FloatWDTColumn extends WDTColumn
-{
+class FloatWDTColumn extends WDTColumn {
 
     protected $_jsDataType = 'formatted-num';
     protected $_dataType = 'float';
@@ -12,8 +11,7 @@ class FloatWDTColumn extends WDTColumn
      * FloatWDTColumn constructor.
      * @param array $properties
      */
-    public function __construct($properties = array())
-    {
+    public function __construct($properties = array()) {
         parent::__construct($properties);
         $this->_dataType = 'float';
         $this->_filterType = 'number';
@@ -25,10 +23,7 @@ class FloatWDTColumn extends WDTColumn
      * @param $content
      * @return mixed|string
      */
-    public function prepareCellOutput($content)
-    {
-
-        $content = apply_filters('wpdatatables_filter_float_cell_before_formatting', $content, $this->getParentTable()->getWpId());
+    public function prepareCellOutput($content) {
 
         if ($content === '' || $content === null) {
             $content = '';
@@ -52,14 +47,14 @@ class FloatWDTColumn extends WDTColumn
             );
         }
 
-        return apply_filters('wpdatatables_filter_float_cell', $formattedValue, $this->getParentTable()->getWpId());
+        $formattedValue = apply_filters('wpdatatables_filter_float_cell', $formattedValue, $this->getParentTable()->getWpId());
+        return $formattedValue;
     }
 
     /**
      * @return string
      */
-    public function getGoogleChartColumnType()
-    {
+    public function getGoogleChartColumnType() {
         return 'number';
     }
 

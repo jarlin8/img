@@ -1224,7 +1224,7 @@ ob_start();
 	<?php echo rh_generate_incss('featgrid'); ?>
 	<div class="featured_grid">	
 		<?php $col_number = 0; if($products->have_posts()): while($products->have_posts()): $products->the_post(); global $post; global $product; $col_number ++; ?>
-			<?php if ($col_number == 2) {echo '<div class=" smart-scroll-desktop one-col-mob scroll-on-mob-nomargin disabletabletspadding col-feat-50 rh-flex-columns rh-flex-space-between pl10">';}?>
+			<?php if ($col_number == 2) {echo '<div class=" smart-scroll-mobile one-col-mob scroll-on-mob-nomargin disabletabletspadding col-feat-50 rh-flex-columns rh-flex-space-between pl10">';}?>
 			<?php 
 		  		$image_id = get_post_thumbnail_id($post->ID);  
 		  		if ($col_number == 1) {
@@ -1235,7 +1235,7 @@ ob_start();
 		  		}	
 				$image_url = (!empty($image_url[0])) ? $image_url[0] : get_template_directory_uri() . '/images/default/noimage_800_520.png';			
 			?>
-			<div class="col-feat-grid rh-hovered-wrap flowhidden item-<?php echo ''.$col_number;?>">
+			<div class="col-feat-grid col_item rh-hovered-wrap flowhidden item-<?php echo ''.$col_number;?>">
 				<style scoped>
 					#<?php echo ''.$rand_id;?> .item-<?php echo ''.$col_number;?>{
 						background-image: url('<?php echo esc_url($image_url) ;?>');
@@ -1621,6 +1621,8 @@ else {
 }  
 $containerid = 'rh_woolist_' . mt_rand(); 
 $ajaxoffset = (int)$show + (int)$offset; 
+$additional_vars = array();
+$additional_vars['attrelpanel'] = $attrelpanel;
 ob_start(); 
 ?>
 
@@ -1640,8 +1642,9 @@ ob_start();
 	<?php 
 		if(!empty($args['paged'])){unset($args['paged']);}
 		$jsonargs = json_encode($args);
+		$json_innerargs = json_encode($additional_vars);
 	?> 
-	<div class="woo_offer_list <?php echo ''.$infinitescrollwrap; ?>" data-filterargs='<?php echo ''.$jsonargs.'';?>' data-template="woolistpart" id="<?php echo esc_attr($containerid);?>">	                    
+	<div class="woo_offer_list <?php echo ''.$infinitescrollwrap; ?>" data-innerargs='<?php echo ''.$json_innerargs.'';?>' data-filterargs='<?php echo ''.$jsonargs.'';?>' data-template="woolistpart" id="<?php echo esc_attr($containerid);?>">	                    
 		<a name="woo-link-list"></a>		
 		<?php while ( $wp_query->have_posts() ) : $wp_query->the_post();  global $product;  ?>
 			<?php include(rh_locate_template('inc/parts/woolistpart.php')); ?>
@@ -2060,6 +2063,9 @@ $build_args = shortcode_atts(array(
 	'taxdrop' => '',
 	'taxdroplabel' => '',
 	'taxdropids' => '',	
+	'enableimage'=>'',
+	'mobilescroll'=> '',
+	'mobilescrollwidth' => 280
 ), $atts, 'wpsm_colorgrid'); 
 extract($build_args);            
 if ($enable_pagination =='2'){
@@ -2075,6 +2081,7 @@ $containerid = 'rh_colorgrid_' . mt_rand();
 $ajaxoffset = (int)$show + (int)$offset;   
 $additional_vars = array();
 $additional_vars['columns'] = $columns;
+$additional_vars['enableimage'] = $enableimage;
 ob_start(); 
 ?>
 <?php rehub_vc_filterpanel_render($filterpanel, $containerid, $taxdrop, $taxdroplabel, $taxdropids, $filterheading);?>
@@ -2106,7 +2113,8 @@ ob_start();
 		$jsonargs = json_encode($args);
 		$json_innerargs = json_encode($additional_vars);
 	?>   
-	<div class="coloredgrid rh-flex-eq-height <?php echo ''.$infinitescrollwrap.$col_number_class;?>" data-filterargs='<?php echo ''.$jsonargs.'';?>' data-template="color_grid" id="<?php echo esc_attr($containerid);?>" data-innerargs='<?php echo ''.$json_innerargs.'';?>'>                    
+	<?php if($mobilescroll):?><div class="smart-scroll-mobile"><?php endif;?>
+	<div class="coloredgrid pt5 rh-flex-eq-height <?php echo ''.$infinitescrollwrap.$col_number_class;?>" data-filterargs='<?php echo ''.$jsonargs.'';?>' data-template="color_grid" id="<?php echo esc_attr($containerid);?>" data-innerargs='<?php echo ''.$json_innerargs.'';?>'>                    
 		
 		<?php while ( $wp_query->have_posts() ) : $wp_query->the_post();?>
 			<?php include(rh_locate_template('inc/parts/color_grid.php')); ?>
@@ -2121,6 +2129,7 @@ ob_start();
 
 	</div>
 	<div class="clearfix"></div>
+	<?php if($mobilescroll):?></div><?php endif;?>
 <?php endif; wp_reset_query(); ?>
 
 <?php 
@@ -3648,7 +3657,7 @@ ob_start();
 	<?php echo rh_generate_incss('featgrid');?>
 	<div class="featured_grid flowhidden">	
 		<?php $col_number = 0; if($wp_query->have_posts()): while($wp_query->have_posts()): $wp_query->the_post(); global $post; $col_number ++; ?>
-		<?php if ($col_number == 2) {echo '<div class=" smart-scroll-desktop one-col-mob scroll-on-mob-nomargin disabletabletspadding col-feat-50 rh-flex-columns rh-flex-space-between pl10">';}?>
+		<?php if ($col_number == 2) {echo '<div class=" smart-scroll-mobile one-col-mob scroll-on-mob-nomargin disabletabletspadding col-feat-50 rh-flex-columns rh-flex-space-between pl10">';}?>
 			<?php 
 		  		$image_id = get_post_thumbnail_id($post->ID);  
 		  		if ($col_number == 1) {
@@ -3659,7 +3668,7 @@ ob_start();
 		  		}	
 				$image_url = (!empty($image_url[0])) ? $image_url[0] : '';			
 			?>
-			<div class="col-feat-grid flowhidden rh-hovered-wrap item-<?php echo ''.$col_number;?>">
+			<div class="col-feat-grid col_item flowhidden rh-hovered-wrap item-<?php echo ''.$col_number;?>">
 				<style scoped>
 					#<?php echo ''.$rand_id;?> .item-<?php echo ''.$col_number;?>{
 						background-image: url('<?php echo esc_url($image_url) ;?>');

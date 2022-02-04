@@ -340,7 +340,6 @@ div.summary{float: left;}
 .rtl.woocommerce .woo_top_meta .rh_woo_star{float: right;}
 .rhgreedylinks{-ms-justify-content: flex-start;-webkit-justify-content: flex-start;justify-content: flex-start;}
 .delimiter .fa-angle-right:before{content: "\f104";}
-.rtl .smart-scroll-mobile > div{margin-right: 0 !important; margin-left: 10px !important}
 .wpsm_pros{padding-left: 0; padding-right: 15px}
 .wpsm_pros ul li:before, .wpsm_cons ul li:before{ padding-right: 8px; padding-left: 8px;}
 .re-line-badge.re-line-small-label{margin: 0 0 5px 5px;}

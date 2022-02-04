@@ -399,7 +399,7 @@ class WDTTools
         }
         $url_arr = explode('/', $url);
         $spreadsheet_key = $url_arr[count($url_arr) - 2];
-        $csv_url = "https://docs.google.com/spreadsheets/d/{$spreadsheet_key}/export?format=csv&id={$spreadsheet_key}";
+        $csv_url = "https://docs.google.com/spreadsheets/d/{$spreadsheet_key}/pub?hl=en_US&hl=en_US&single=true&output=csv";
         if (strpos($url, '#') !== false) {
             $url_query = parse_url($url, PHP_URL_FRAGMENT);
         } else {

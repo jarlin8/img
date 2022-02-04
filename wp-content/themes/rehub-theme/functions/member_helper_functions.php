@@ -60,7 +60,7 @@ if(!function_exists('rh_author_detail_box')){
         ?>
             <div class="author_detail_box clearfix"><?php echo get_avatar( $author_ID, '69', '', $name ); ?>
                 <style scoped>
-                    .author_detail_box { background-color: #fff; border: 1px solid #ededed; padding: 20px 0px; margin: 5px auto 40px auto; position: relative; min-height: 90px;}
+                    .author_detail_box { background-color: #fff; border: 1px solid #ededed; padding: 20px 0px; margin: 5px auto 40px auto; position: relative; min-height: 90px;width: 100%}
                     .author_detail_box a{text-decoration: none;}
                     .archive .author_detail_box { margin: 0 0 10px 0 }
                     .author_detail_box .avatar {width: 71px; position: absolute; left: 20px; top: 15px; }

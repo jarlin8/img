@@ -62,11 +62,11 @@ $aff_link = (rehub_option('disable_inner_links') == 1) ? 1 : 0;
                 <?php elseif (rehub_option('archive_layout') == 'cardblogfull') : ?>
                     <div class="coloredgrid rh-flex-eq-height <?php echo (rehub_option('width_layout') =='extended') ? 'col_wrap_fifth' : 'col_wrap_fourth';?>">
 
-                <?php elseif (rehub_option('archive_layout') == 'dealgrid') : ?>
+                <?php elseif (rehub_option('archive_layout') == 'dealgrid' || rehub_option('archive_layout') == 'mobilegrid') : ?>
                     <div class="eq_grid pt5 rh-flex-eq-height <?php echo (rehub_option('width_layout') =='extended') ? 'col_wrap_fourth' : 'col_wrap_three';?>">
                         <?php echo rh_generate_incss('offergrid');?>
 
-                <?php elseif (rehub_option('archive_layout') == 'dealgridfull') : ?>
+                <?php elseif (rehub_option('archive_layout') == 'dealgridfull' || rehub_option('archive_layout') == 'mobilegridfull') : ?>
                     <div class="eq_grid pt5 rh-flex-eq-height <?php echo (rehub_option('width_layout') =='extended') ? 'col_wrap_six' : 'col_wrap_fifth';?>">
                     <?php echo rh_generate_incss('offergrid');?>
                 <?php else : ?>
@@ -96,6 +96,8 @@ $aff_link = (rehub_option('disable_inner_links') == 1) ? 1 : 0;
 
                         <?php elseif (rehub_option('archive_layout') == 'compactgrid' || rehub_option('archive_layout') == 'compactgridfull') : ?>
                             <?php $gridtype = 'compact'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>
+                        <?php elseif (rehub_option('archive_layout') == 'mobilegrid' || rehub_option('archive_layout') == 'mobilegridfull') : ?>
+                            <?php $gridtype = 'mobile'; include(rh_locate_template('inc/parts/compact_grid.php')); ?>
                         <?php elseif (rehub_option('archive_layout') == 'dealgrid' || rehub_option('archive_layout') == 'dealgridfull') : ?>
                             <?php include(rh_locate_template('inc/parts/compact_grid.php')); ?>
 

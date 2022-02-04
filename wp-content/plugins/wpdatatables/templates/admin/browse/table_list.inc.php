@@ -10,9 +10,6 @@
             </div>
         </div>
         <div class="col-xs-6">
-            <div class="pull-right pagination-container">
-                <?php $this->pagination('top'); ?>
-            </div>
             <div class="pull-right search-box-container">
                 <?php $this->search_box('search', 'search_id'); ?>
             </div>
