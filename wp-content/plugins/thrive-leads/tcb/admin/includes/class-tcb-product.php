@@ -96,6 +96,7 @@ class TCB_Product extends TVE_Dash_Product_Abstract {
 					'tcb_lightbox',
 					TCB_CT_POST_TYPE,
 					TCB_Symbols_Post_Type::SYMBOL_POST_TYPE,
+					\TCB\inc\helpers\FormSettings::POST_TYPE,
 				),
 				'fields'         => 'ids',
 				'posts_per_page' => '-1',
@@ -112,7 +113,6 @@ class TCB_Product extends TVE_Dash_Product_Abstract {
 			'tve_social_fb_app_id',
 			'tve_comments_disqus_shortname',
 			'tve_comments_facebook_admins',
-
 			'tve_fa_kit',
 			'tve_user_templates',
 		);

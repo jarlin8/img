@@ -34,7 +34,8 @@
 		static parseTCBContent( content, architectContent ) {
 			//remove empty tags because yoast kind fails on parse here
 			if ( architectContent ) {
-				const $content = $( '<div>' ).html( architectContent );
+				const contentSelector = '.tcb-style-wrap',
+					$content = $( '<div>' ).append( $( architectContent ).find( contentSelector ).addBack( contentSelector ) );
 
 				$content.find( '*:empty:not(img,input,br)' ).remove();
 

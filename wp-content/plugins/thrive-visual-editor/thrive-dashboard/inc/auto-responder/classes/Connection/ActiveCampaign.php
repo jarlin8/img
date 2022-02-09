@@ -424,7 +424,7 @@ class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connec
 
 		if ( is_array( $custom_fields ) ) {
 			foreach ( $custom_fields as $field ) {
-				if ( ! empty( $field['type'] ) && in_array( $field['type'], $allowed_types, true ) && 1 === (int)$field['visible'] ) {
+				if ( ! empty( $field['type'] ) && in_array( $field['type'], $allowed_types, true ) && 1 === (int) $field['visible'] ) {
 					$custom_data[] = $this->normalize_custom_field( $field );
 				}
 			}
@@ -442,7 +442,7 @@ class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connec
 	 */
 	protected function normalize_custom_field( $field ) {
 
-		$field = (array)$field;
+		$field = (array) $field;
 
 		return array(
 			'id'    => ! empty( $field['id'] ) ? $field['id'] : '',
@@ -601,11 +601,10 @@ class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connec
 	 * @return array|mixed
 	 */
 	public function set_custom_autoresponder_fields( $fields, $field, $action_data ) {
-		if ( $field !== 'mailing_list' &&
-		     property_exists( $action_data, 'autoresponder' )
-		     && property_exists( $action_data->autoresponder, 'value' )
-		     && property_exists( $action_data->autoresponder->subfield, 'mailing_list' )
-		) {
+		if ( is_array( $field ) ) {
+			$field = $field[0];
+		}
+		if ( $field !== 'mailing_list' && ! empty( $action_data->autoresponder->subfield->mailing_list->value ) ) {
 			$fields                      = [];
 			$available_fields            = \Thrive\Automator\Items\Action_Field::get();
 			$field                       = $available_fields['form_list'];

@@ -90,6 +90,19 @@ class ColoredPostGrid extends Basic {
 			'type' => 'string',
 			'default' => '0',
 		),
+		'enableimage'=> array(
+			'type'=> 'boolean',
+		),
+		'mobilescroll'=> array(
+			'type'=> 'boolean',
+		),
+		'imageopacity'=> array(
+			'type'=> 'number',
+		),
+		'mobilescrollwidth'=> array(
+			'type'=> 'number',
+			'default'=> 280
+		),
 	);
 
 	protected function render( $settings = array(), $inner_content = '' ) {

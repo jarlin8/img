@@ -3,6 +3,7 @@
 namespace TVE\Dashboard\Automator;
 
 use Thrive\Automator\Items\Data_Field;
+use function wc_get_order_status_name;
 use function wc_get_order_statuses;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,10 +45,11 @@ class Woo_Order_Status_Filter extends Data_Field {
 	public static function get_options_callback() {
 		$statuses = array();
 
-		foreach ( wc_get_order_statuses() as $key => $status ) {
-			$statuses[ $key ] = array(
-				'label' => $status,
-				'id'    => $key,
+		foreach ( wc_get_order_statuses() as $key => $label ) {
+			$status   = 'wc-' === substr( $key, 0, 3 ) ? substr( $key, 3 ) : $key;
+			$statuses[ $status ] = array(
+				'label' => $label,
+				'id'    => $status,
 			);
 		}
 

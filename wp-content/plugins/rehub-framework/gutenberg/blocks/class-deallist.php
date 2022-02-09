@@ -90,6 +90,9 @@ class DealList extends Basic {
 			'type' => 'string',
 			'default' => '0',
 		),
+		'aff_link' => array(
+			'type'    => 'string',
+		),
 	);
 
 	protected function render( $settings = array(), $inner_content = '' ) {

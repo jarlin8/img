@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thrive-content-builder 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-13 10:53+0200\n"
+"POT-Creation-Date: 2022-01-25 14:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1758,7 +1758,7 @@ msgstr ""
 
 #: inc/classes/class-tcb-editor.php:761
 #: inc/classes/elements/class-tcb-landing-page-element.php:47
-#: inc/functions.php:3533
+#: inc/functions.php:3542
 msgid "Landing Page"
 msgstr ""
 
@@ -1772,7 +1772,7 @@ msgstr ""
 msgid "Post"
 msgstr ""
 
-#: inc/classes/class-tcb-editor.php:1143
+#: inc/classes/class-tcb-editor.php:1149
 msgid "Change Template"
 msgstr ""
 
@@ -1839,39 +1839,51 @@ msgstr ""
 msgid "Transform"
 msgstr ""
 
-#: inc/classes/class-tcb-element-abstract.php:606
+#: inc/classes/class-tcb-element-abstract.php:386
+msgid "Lazy load"
+msgstr ""
+
+#: inc/classes/class-tcb-element-abstract.php:395
+msgid "Uniform display heights"
+msgstr ""
+
+#: inc/classes/class-tcb-element-abstract.php:403
+msgid "Lazy load background inherited from"
+msgstr ""
+
+#: inc/classes/class-tcb-element-abstract.php:637
 #: inc/backbone/element-states.phtml:23
 msgid "Expanded"
 msgstr ""
 
-#: inc/classes/class-tcb-element-abstract.php:654
+#: inc/classes/class-tcb-element-abstract.php:685
 msgid "Thrive Integrations"
 msgstr ""
 
-#: inc/classes/class-tcb-element-abstract.php:663
+#: inc/classes/class-tcb-element-abstract.php:694
 msgid "Foundation"
 msgstr ""
 
-#: inc/classes/class-tcb-element-abstract.php:672
+#: inc/classes/class-tcb-element-abstract.php:703
 msgid "Building Blocks"
 msgstr ""
 
-#: inc/classes/class-tcb-element-abstract.php:681
+#: inc/classes/class-tcb-element-abstract.php:712
 msgid "Widgets"
 msgstr ""
 
-#: inc/classes/class-tcb-element-abstract.php:757
+#: inc/classes/class-tcb-element-abstract.php:788
 msgid ""
 "Group styling disabled. The styling will be applied only for the selected "
 "element."
 msgstr ""
 
-#: inc/classes/class-tcb-element-abstract.php:758
+#: inc/classes/class-tcb-element-abstract.php:789
 msgid ""
 "Group styling active. The same styling will be applied to similar elements."
 msgstr ""
 
-#: inc/classes/class-tcb-element-abstract.php:791
+#: inc/classes/class-tcb-element-abstract.php:822
 #: inc/classes/elements/class-tcb-credit-element.php:99
 #: inc/classes/elements/class-tcb-lead-generation-submit-element.php:98
 #: inc/classes/elements/class-tcb-rating-element.php:87
@@ -2031,7 +2043,7 @@ msgstr ""
 #: inc/classes/class-tcb-login-element-handler.php:442
 #: inc/classes/elements/class-tcb-lead-generation-element.php:261
 #: inc/classes/elements/class-tcb-megamenu-element.php:68
-#: inc/classes/elements/class-tcb-menu-element.php:455
+#: inc/classes/elements/class-tcb-menu-element.php:458
 #, php-format
 msgid "-- Dropdown %s"
 msgstr ""
@@ -2342,6 +2354,110 @@ msgstr ""
 msgid "Widget"
 msgstr ""
 
+#: inc/classes/conditional-display/conditions/class-string-comparison.php:78
+msgid "Equals"
+msgstr ""
+
+#: inc/classes/conditional-display/conditions/class-string-comparison.php:82
+msgid "Contains"
+msgstr ""
+
+#: inc/classes/conditional-display/conditions/class-string-comparison.php:86
+msgid "Does not Contain"
+msgstr ""
+
+#: inc/classes/conditional-display/conditions/class-string-comparison.php:90
+msgid "Exists"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-day-of-week.php:47
+msgid "Monday"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-day-of-week.php:51
+msgid "Tuesday"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-day-of-week.php:55
+msgid "Wednesday"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-day-of-week.php:59
+msgid "Thursday"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-day-of-week.php:63
+msgid "Friday"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-day-of-week.php:67
+msgid "Saturday"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-day-of-week.php:71
+msgid "Sunday"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:47
+msgid "January"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:51
+msgid "February"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:55
+msgid "March"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:59
+msgid "April"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:63
+msgid "May"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:67
+msgid "June"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:71
+msgid "July"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:75
+msgid "August"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:79
+msgid "September"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:83
+msgid "October"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:87
+msgid "November"
+msgstr ""
+
+#: inc/classes/conditional-display/fields/time/class-month.php:91
+msgid "December"
+msgstr ""
+
+#: inc/classes/conditional-display/post-types/class-conditional-display-group.php:38
+msgid "Conditional display group"
+msgstr ""
+
+#: inc/classes/conditional-display/post-types/class-global-conditional-set.php:21
+msgid "Global condition set"
+msgstr ""
+
+#: inc/classes/conditional-display/rest-api/class-global-sets.php:141
+msgid "A global set with this name already exists!"
+msgstr ""
+
 #: inc/classes/content-templates/class-tcb-content-templates-api.php:315
 msgid "Could not extract the archive file"
 msgstr ""
@@ -2392,7 +2508,7 @@ msgstr ""
 #: inc/classes/elements/class-tcb-lead-generation-submit-element.php:44
 #: inc/classes/elements/class-tcb-login-form-input-element.php:60
 #: inc/classes/elements/class-tcb-logo-element.php:80
-#: inc/classes/elements/class-tcb-search-form-element.php:119
+#: inc/classes/elements/class-tcb-search-form-element.php:130
 #: inc/classes/elements/class-tcb-user-profile-element.php:93
 #: inc/classes/elements/user-profile/class-tcb-user-profile-item-element.php:42
 #: inc/classes/notifications/elements/class-notifications-content-wrapper.php:139
@@ -2407,7 +2523,7 @@ msgstr ""
 #: inc/classes/elements/class-tcb-lead-generation-submit-element.php:48
 #: inc/classes/elements/class-tcb-login-form-input-element.php:64
 #: inc/classes/elements/class-tcb-logo-element.php:84
-#: inc/classes/elements/class-tcb-search-form-element.php:124
+#: inc/classes/elements/class-tcb-search-form-element.php:135
 #: inc/classes/notifications/elements/class-notifications-content-wrapper.php:135
 #: inc/i18n.php:368
 msgid "Right"
@@ -2906,7 +3022,7 @@ msgstr ""
 #: inc/classes/elements/class-tcb-menu-item-image-element.php:106
 #: inc/classes/elements/class-tcb-number-counter-element.php:147
 #: inc/classes/elements/class-tcb-rating-element.php:100
-#: inc/classes/elements/class-tcb-search-form-element.php:168
+#: inc/classes/elements/class-tcb-search-form-element.php:179
 #: inc/classes/elements/class-tcb-social-follow-item-element.php:82
 #: inc/classes/elements/class-tcb-tab-item-element.php:118
 #: inc/classes/elements/post-list-sub-elements/class-tcb-post-thumbnail-element.php:150
@@ -4161,21 +4277,21 @@ msgid "Simple Mega Menu"
 msgstr ""
 
 #: inc/classes/elements/class-tcb-megamenu-element.php:58
-#: inc/classes/elements/class-tcb-menu-element.php:445
+#: inc/classes/elements/class-tcb-menu-element.php:448
 msgid "Top Level Items"
 msgstr ""
 
 #: inc/classes/elements/class-tcb-megamenu-element.php:60
 #: inc/classes/elements/class-tcb-megamenu-element.php:109
 #: inc/classes/elements/class-tcb-megamenu-element.php:117
-#: inc/classes/elements/class-tcb-menu-element.php:447
-#: inc/classes/elements/class-tcb-menu-element.php:463
+#: inc/classes/elements/class-tcb-menu-element.php:450
+#: inc/classes/elements/class-tcb-menu-element.php:466
 #, php-format
 msgid "-- Item %s"
 msgstr ""
 
 #: inc/classes/elements/class-tcb-megamenu-element.php:66
-#: inc/classes/elements/class-tcb-menu-element.php:453
+#: inc/classes/elements/class-tcb-menu-element.php:456
 msgid "All Dropdowns"
 msgstr ""
 
@@ -4199,15 +4315,15 @@ msgstr ""
 
 #: inc/classes/elements/class-tcb-megamenu-element.php:91
 #: inc/classes/elements/class-tcb-megamenu-element.php:99
-#: inc/classes/elements/class-tcb-menu-element.php:469
-#: inc/classes/elements/class-tcb-menu-element.php:477
+#: inc/classes/elements/class-tcb-menu-element.php:472
+#: inc/classes/elements/class-tcb-menu-element.php:480
 msgid "All Menu Images"
 msgstr ""
 
 #: inc/classes/elements/class-tcb-megamenu-element.php:93
 #: inc/classes/elements/class-tcb-megamenu-element.php:101
-#: inc/classes/elements/class-tcb-menu-element.php:471
-#: inc/classes/elements/class-tcb-menu-element.php:479
+#: inc/classes/elements/class-tcb-menu-element.php:474
+#: inc/classes/elements/class-tcb-menu-element.php:482
 #, php-format
 msgid "-- Menu Image %s"
 msgstr ""
@@ -4242,13 +4358,13 @@ msgstr ""
 
 #: inc/classes/elements/class-tcb-megamenu-item-element.php:58
 #: inc/classes/elements/class-tcb-menu-item-element.php:91
-#: inc/classes/elements/class-tcb-search-form-element.php:83
+#: inc/classes/elements/class-tcb-search-form-element.php:94
 msgid "Text only"
 msgstr ""
 
 #: inc/classes/elements/class-tcb-megamenu-item-element.php:59
 #: inc/classes/elements/class-tcb-menu-item-element.php:92
-#: inc/classes/elements/class-tcb-search-form-element.php:87
+#: inc/classes/elements/class-tcb-search-form-element.php:98
 #: inc/classes/elements/class-tcb-social-element.php:126
 msgid "Icon only"
 msgstr ""
@@ -4382,7 +4498,7 @@ msgstr ""
 msgid "Disable links to current page"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-menu-element.php:461
+#: inc/classes/elements/class-tcb-menu-element.php:464
 msgid "All Dropdown Items"
 msgstr ""
 
@@ -5061,40 +5177,40 @@ msgstr ""
 msgid "Autoscroll to content when revealed"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-search-form-element.php:91
+#: inc/classes/elements/class-tcb-search-form-element.php:102
 msgid "Icon & text"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-search-form-element.php:103
+#: inc/classes/elements/class-tcb-search-form-element.php:114
 msgid "With button"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-search-form-element.php:108
+#: inc/classes/elements/class-tcb-search-form-element.php:119
 msgid "Without button"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-search-form-element.php:133
+#: inc/classes/elements/class-tcb-search-form-element.php:144
 msgid "Display options"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-search-form-element.php:138
+#: inc/classes/elements/class-tcb-search-form-element.php:149
 msgid "Expand search"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-search-form-element.php:139
+#: inc/classes/elements/class-tcb-search-form-element.php:150
 msgid "Show overlay"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-search-form-element.php:140
-#: inc/classes/elements/class-tcb-search-form-element.php:146
+#: inc/classes/elements/class-tcb-search-form-element.php:151
+#: inc/classes/elements/class-tcb-search-form-element.php:157
 msgid "Show tooltip"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-search-form-element.php:157
+#: inc/classes/elements/class-tcb-search-form-element.php:168
 msgid "Search field width"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-search-form-element.php:178
+#: inc/classes/elements/class-tcb-search-form-element.php:189
 msgid "View expanded search in the editor"
 msgstr ""
 
@@ -5123,7 +5239,7 @@ msgstr ""
 msgid "Content covers entire screen width"
 msgstr ""
 
-#: inc/classes/elements/class-tcb-section-element.php:190
+#: inc/classes/elements/class-tcb-section-element.php:193
 msgid "Inherit Width from Landing Page"
 msgstr ""
 
@@ -6290,106 +6406,106 @@ msgstr ""
 msgid "Continue Reading"
 msgstr ""
 
-#: inc/functions.php:2743
+#: inc/functions.php:2750
 msgid ""
 "Thrive Leads Shortcode could not be rendered, please check it in Thrive "
 "Leads Section!"
 msgstr ""
 
-#: inc/functions.php:3302
+#: inc/functions.php:3311
 msgid "No menu items have been found."
 msgstr ""
 
-#: inc/functions.php:3531
+#: inc/functions.php:3540
 msgid "Thrive Architect Content"
 msgstr ""
 
-#: inc/functions.php:3532
+#: inc/functions.php:3541
 msgid "Thrive Architect Custom CSS"
 msgstr ""
 
-#: inc/functions.php:3846
+#: inc/functions.php:3855
 #, php-format
 msgid "Only %s files are accepted"
 msgstr ""
 
-#: inc/functions.php:3918
+#: inc/functions.php:3927
 msgid "Something went wrong! Please contact site owner"
 msgstr ""
 
-#: inc/functions.php:3943 inc/i18n.php:137
+#: inc/functions.php:3952 inc/i18n.php:137
 msgid ""
 "We are detecting suspicious activity from your device. Please try in another "
 "browser or contact the website administrator."
 msgstr ""
 
-#: inc/functions.php:3951
+#: inc/functions.php:3960
 msgid "The email address is required"
 msgstr ""
 
-#: inc/functions.php:3958
+#: inc/functions.php:3967
 msgid "The email address is invalid"
 msgstr ""
 
-#: inc/functions.php:4008
+#: inc/functions.php:4017
 msgid "User consent is required"
 msgstr ""
 
-#: inc/functions.php:4032
+#: inc/functions.php:4049
 msgid "No connection for this form"
 msgstr ""
 
-#: inc/functions.php:4269
+#: inc/functions.php:4287
 msgid "All categories"
 msgstr ""
 
-#: inc/functions.php:4408
+#: inc/functions.php:4426
 msgid "M j, Y @ G:i"
 msgstr ""
 
-#: inc/functions.php:4410
+#: inc/functions.php:4428
 #, php-format
 msgid "%s ago"
 msgstr ""
 
-#: inc/functions.php:4621
+#: inc/functions.php:4641
 msgid "Copy"
 msgstr ""
 
-#: inc/functions.php:4622
+#: inc/functions.php:4642
 msgid "ERROR: The username field is empty."
 msgstr ""
 
-#: inc/functions.php:4623
+#: inc/functions.php:4643
 msgid "ERROR: The password field is empty."
 msgstr ""
 
-#: inc/functions.php:4624
+#: inc/functions.php:4644
 msgid "ERROR: Enter a username or email address."
 msgstr ""
 
-#: inc/functions.php:4625
+#: inc/functions.php:4645
 #, php-format
 msgid "At least %s characters are needed"
 msgstr ""
 
-#: inc/functions.php:4626
+#: inc/functions.php:4646
 msgid "No headings found"
 msgstr ""
 
-#: inc/functions.php:4628
+#: inc/functions.php:4648
 msgid "<strong>Error</strong>: This field is required"
 msgstr ""
 
-#: inc/functions.php:4629
+#: inc/functions.php:4649
 msgid "<strong>Error</strong>: Please type your email address."
 msgstr ""
 
-#: inc/functions.php:4630
+#: inc/functions.php:4650
 msgid "<strong>Error</strong>: The email address isn&#8217;t correct."
 msgstr ""
 
-#: inc/functions.php:4631
+#: inc/functions.php:4651
 msgid "<strong>Error</strong>: Password mismatch"
 msgstr ""
 
@@ -9582,6 +9698,10 @@ msgstr ""
 msgid "Reorder Toggles"
 msgstr ""
 
+#: inc/backbone/controls/tooltip/conditional-lazy-load-tooltip.phtml:5
+msgid "Learn more about these options."
+msgstr ""
+
 #: inc/backbone/controls/tooltip/lg-answer-tag-tooltip.phtml:7
 #: inc/backbone/controls/tooltip/lg-string-input-options.phtml:16
 msgid "Learn more here"
@@ -9678,6 +9798,10 @@ msgstr ""
 #: inc/backbone/inline/column-options.phtml:9
 #, php-format
 msgid "%d Columns"
+msgstr ""
+
+#: inc/backbone/drop-panels/edit-name.phtml:2
+msgid "Edit display name"
 msgstr ""
 
 #: inc/backbone/drop-panels/reset-state.phtml:6

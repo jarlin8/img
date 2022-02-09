@@ -90,6 +90,10 @@ class DealGrid extends Basic {
 			'type' => 'string',
 			'default' => '0',
 		),
+		'gridtype' => array(
+			'type' => 'string',
+			'default' => 'mobile',
+		),
 	);
 
 	protected function render( $settings = array(), $inner_content = '' ) {

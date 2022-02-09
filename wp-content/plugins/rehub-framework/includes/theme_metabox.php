@@ -128,7 +128,7 @@ class RH_Meta_Box_Post {
 			'rehub-metabox-css',
 			RH_FRAMEWORK_URL . '/assets/css/theme-metabox.css',
 			false,
-			'2.1'
+			'2.2'
 		);
 
 		wp_enqueue_script(
@@ -1190,7 +1190,7 @@ class RH_Meta_Box_Post {
 		}
 
 		if(class_exists('WooCommerce')){
-			add_meta_box( 'rh-wc-product-video', esc_html__( "Product video, 3D model", "rehub-framework" ), array($this, 'wc_video_output'), 'product', 'side', 'low' );
+			add_meta_box( 'rh-wc-product-video', esc_html__( "360 gallery, video, 3D", "rehub-framework" ), array($this, 'wc_video_output'), 'product', 'side', 'low' );
 			add_meta_box( 'side_rh_woo', esc_html__( "Product Layout", "rehub-framework" ), array($this, 'wc_side_output'), 'product', 'side', 'high' );
 			if(function_exists('rh_woo_cm_edit_pros_cons')){
 				add_meta_box( 'rh_woo_pros_section_edit_comment', esc_html__( "Pros and Cons", "rehub-framework" ), 'rh_woo_cm_edit_pros_cons', 'comment', 'normal' );
@@ -1366,6 +1366,59 @@ class RH_Meta_Box_Post {
 		$post_id = $post->ID;
 		wp_nonce_field( 'rehub_post_meta_save', 'rehub_post_meta_nonce' );
 		?>
+		<div id="rehub-post-images">
+			<div class="inside">
+				<div id="rh_post_images_container">
+					<ul class="rh_post_images">
+						<?php
+							if ( metadata_exists( 'post', $post->ID, 'rh_post_image_gallery' ) ) {
+								$post_image_gallery = get_post_meta( $post->ID, 'rh_post_image_gallery', true );
+							} else {
+								// Backwards compat
+								$attachment_ids = get_posts( 'post_parent=' . $post->ID . '&numberposts=-1&post_type=attachment&orderby=menu_order&order=ASC&post_mime_type=image&fields=ids&meta_value=0' );
+								$attachment_ids = array_diff( $attachment_ids, array( get_post_thumbnail_id() ) );
+								$post_image_gallery = implode( ',', $attachment_ids );
+							}
+		
+							$attachments = array_filter( explode( ',', $post_image_gallery ) );
+							$update_meta = false;
+							$updated_gallery_ids = array();
+		
+							if ( ! empty( $attachments ) ) {
+								foreach ( $attachments as $attachment_id ) {
+									$attachment = wp_get_attachment_image( $attachment_id, 'thumbnail' );
+		
+									// if attachment is empty skip
+									if ( empty( $attachment ) ) {
+										$update_meta = true;
+										continue;
+									}
+		
+									echo '<li class="image" data-attachment_id="' . esc_attr( $attachment_id ) . '">
+										' . $attachment . '
+										<ul class="actions">
+											<li><a href="#" class="delete tips" data-tip="' . esc_attr__( "Delete image", "rehub-framework" ) . '">' . esc_html__( "Delete", "rehub-framework" ) . '</a></li>
+										</ul>
+									</li>';
+		
+									// rebuild ids to be saved
+									$updated_gallery_ids[] = $attachment_id;
+								}
+		
+								// need to update post meta to set new gallery ids
+								if ( $update_meta ) {
+									update_post_meta( $post->ID, 'rh_post_image_gallery', implode( ',', $updated_gallery_ids ) );
+								}
+							}
+						?>
+					</ul>
+					<input type="hidden" id="rh_post_image_gallery" name="rh_post_image_gallery" value="<?php echo esc_attr( $post_image_gallery ); ?>" />
+				</div>
+				<p class="rh_add_post_images hide-if-no-js">
+					<a href="#" data-choose="<?php esc_attr_e( "Add Images to 360 Gallery", "rehub-framework" ); ?>" data-update="<?php esc_attr_e( "Add to 360 gallery", "rehub-framework" ); ?>" data-delete="<?php esc_attr_e( "Delete image", "rehub-framework" ); ?>" data-text="<?php esc_attr_e( "Delete", "rehub-framework" ); ?>"><?php esc_html_e( "Add 360 gallery images", "rehub-framework" ); ?></a>
+				</p>
+			</div>
+		</div>
 		<div id="product_video_container" class="hide-if-no-js">
 			<textarea id="rh_product_video" rows="3" name="rh_product_video"><?php echo get_post_meta( $post_id, 'rh_product_video', true );?></textarea>
 			<p class="howto"><?php esc_html_e('Add video links, each link from new line. Youtube and vimeo are supported', 'rehub-framework'); ?></p>
@@ -1722,6 +1775,16 @@ class RH_Meta_Box_Post {
 				delete_post_meta($post_id, 'rehub_review_overall_score');
 			}
 
+			//Saving gallery
+			if( !empty($_POST['rh_post_image_gallery']) && !is_array($_POST['rh_post_image_gallery'])){
+				$attachment_ids = sanitize_text_field( $_POST['rh_post_image_gallery']);
+				$attachment_ids = explode(",", $attachment_ids);
+				$attachment_ids = array_filter($attachment_ids);
+				$attachment_ids = implode(',', $attachment_ids);
+				update_post_meta( $post_id, 'rh_post_image_gallery', $attachment_ids );
+			}elseif(isset($_POST['rh_post_image_gallery'])){
+				delete_post_meta( $post_id, 'rh_post_image_gallery' );
+			}
 
 
 			self::$saved_meta_boxes = true;

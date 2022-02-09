@@ -22,7 +22,7 @@
 				<span class="tve_btn_txt"><?php echo esc_html( $data['button-label'] ); ?></span>
 			</button>
 		</div>
-		<div class="thrv-sf-input" data-css="<?php echo esc_attr( $data['data-css-input'] ); ?>" style="display: none">
+		<div class="thrv-sf-input" data-css="<?php echo esc_attr( $data['data-css-input'] ); ?>">
 			<input type="search" placeholder="<?php echo esc_attr( $data['input-placeholder'] ); ?>" name="s" value="<?php echo esc_attr( get_search_query() ); ?>"/>
 		</div>
 		<?php foreach ( $data['post-types'] as $type => $label ) : ?>

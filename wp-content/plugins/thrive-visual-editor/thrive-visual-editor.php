@@ -3,7 +3,7 @@
 /*
 Plugin Name: Thrive Architect
 Plugin URI: http://www.thrivethemes.com
-Version: 3.5.2
+Version: 3.6
 Author: <a href="http://www.thrivethemes.com">Thrive Themes</a>
 Description: Live front end editor for your WordPress content
 */

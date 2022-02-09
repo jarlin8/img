@@ -592,6 +592,8 @@ function tve_leads_delete_post( $group_id ) {
 	$tvedb->delete_logs( array( 'main_group_id' => $group_id ) );
 	$post->post_status = 'trash';
 
+	do_action( 'tve_leads_delete_post', $post->ID );
+
 	return wp_update_post( $post );
 }
 

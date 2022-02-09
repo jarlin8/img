@@ -1050,9 +1050,10 @@ class TCB_Editor {
 	 * Sets post after given post ID
 	 *
 	 * @param int|WP_POST $post
+	 * @param boolean     $set_global_post
 	 */
-	public function set_post( $post ) {
-		if ( is_integer( $post ) ) {
+	public function set_post( $post, $set_global_post = false ) {
+		if ( is_numeric( $post ) ) {
 			$this->post = get_post( $post );
 		} elseif ( $post instanceof WP_Post ) {
 			$this->post = $post;
@@ -1062,6 +1063,11 @@ class TCB_Editor {
 		 */
 		global $tve_post;
 		$tve_post = $this->post;
+
+		if ( $set_global_post ) {
+			global $post;
+			$post = $tve_post;
+		}
 	}
 
 	/**

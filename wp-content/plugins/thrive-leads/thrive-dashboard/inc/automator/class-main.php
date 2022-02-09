@@ -119,7 +119,7 @@ class Main {
 
 	public static function launch_woocommerce_extra_hooks() {
 		if ( static::woo_exists() ) {
-			add_action( 'woocommerce_refund_created', array(
+			add_action( 'woocommerce_order_refunded', array(
 				'TVE\Dashboard\Automator\Main',
 				'do_woocommerce_refund_product_action',
 			) );

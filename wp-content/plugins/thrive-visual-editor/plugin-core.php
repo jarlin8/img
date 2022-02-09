@@ -121,6 +121,7 @@ require_once TVE_TCB_ROOT_PATH . 'inc/classes/logo/class-tcb-logo.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/woocommerce/classes/class-main.php';
 
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/notifications/class-main.php';
+require_once TVE_TCB_ROOT_PATH . 'inc/classes/conditional-display/class-main.php';
 
 require_once TVE_TCB_ROOT_PATH . 'inc/automator/class-main.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/symbols/class-tcb-symbols-post-type.php';
@@ -136,6 +137,7 @@ require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-login-element-handler.ph
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-user-profile-handler.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/helpers/form.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/helpers/file-upload.php';
+require_once TVE_TCB_ROOT_PATH . 'inc/helpers/form-hooks.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-show-when.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-scripts.php';
 
@@ -295,6 +297,8 @@ add_action( 'init', function () {
 	tve_load_tcb_classes();
 
 	\TCB\Notifications\Main::init();
+
+	\TCB\ConditionalDisplay\Main::init();
 } );
 
 \TCB\Lightspeed\Main::init();

@@ -282,6 +282,7 @@
 #rehub-post-images .inside{margin:0;padding:0}
 #rehub-post-images .inside .rh_add_post_images{padding:12px}
 #rehub-post-images .inside #rh_post_images_container{padding:0 0 0 9px}
+#rh-wc-product-video #rh_post_images_container{padding:0 !important}
 #rehub-post-images .inside #rh_post_images_container ul{margin:0;padding:0}
 #rehub-post-images .inside #rh_post_images_container ul:after, 
 #rehub-post-images .inside #rh_post_images_container ul:before{content:" ";display:table}

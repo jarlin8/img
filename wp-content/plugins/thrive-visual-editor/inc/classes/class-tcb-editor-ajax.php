@@ -21,7 +21,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 	 * Class TCB_Editor_Ajax
 	 */
 	class TCB_Editor_Ajax {
-		const ACTION = 'tcb_editor_ajax';
+		const ACTION    = 'tcb_editor_ajax';
 		const NONCE_KEY = 'tve-le-verify-sender-track129';
 
 		/**
@@ -1244,7 +1244,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$data = array();
 
 			$post_id = (int) $this->param( 'post_id', 0 );
-			tcb_editor()->set_post( $post_id );
+			tcb_editor()->set_post( $post_id, true );
 
 			if ( tcb_editor()->can_use_landing_pages() ) {
 				$data['lp_templates']       = class_exists( 'TCB_Landing_Page' ) ? TCB_Landing_Page::templates_v2() : array();

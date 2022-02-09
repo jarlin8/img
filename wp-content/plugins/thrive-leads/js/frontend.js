@@ -83,6 +83,24 @@ TL_Front.lightspeed_assets = function ( assets ) {
 
 	loadModule()
 }
+/**
+ * Add the conditions from TL in the localized conditions preview object
+ *
+ * @param allData - request data
+ */
+TL_Front.conditional_display = function ( allData ) {
+	/* if we have conditional displays on the request, we append them to the localized variable */
+	if ( typeof allData !== 'undefined' && allData.lazy_load_conditional_preview && tcb_condition_sets ) {
+		allData.lazy_load_conditional_preview.forEach( function ( display ) {
+			var index = tcb_condition_sets.findIndex( function ( item ) {
+				return item.key === display.key
+			} );
+			if ( index === - 1 ) {
+				tcb_condition_sets.push( display );
+			}
+		} )
+	}
+}
 
 TL_Front.$document = ThriveGlobal.$j( document );
 
@@ -338,7 +356,11 @@ ThriveGlobal.$j( function () {
 		TL_Front.do_impression();
 	}
 
-	TL_Front.ajax_load_callback = function ( response ) {
+	TL_Front.ajax_load_callback = function ( response, allData ) {
+		if ( allData ) {
+			TL_Front.conditional_display( allData );
+		}
+
 		if ( ! response || ! response.res || ! response.js || ! response.html ) {
 			return;
 		}
@@ -370,7 +392,7 @@ ThriveGlobal.$j( function () {
 					if ( ! post.length ) {
 						post = ThriveGlobal.$j( '#tve_editor.tar-main-content' );
 					}
-					var p = post.find( 'p' ).filter( ':visible' ).not( '.thrv_table p, form p, .tcb-post-list p, .thrv_text_element div p' );
+					var p = post.find( 'p' ).filter( ':visible' ).not( '.thrv_table p, form p, .tcb-post-list p, .thrv_text_element div p, p.wp-caption-text' );
 
 					if ( p.length === 0 && position === 0 ) {
 						post.prepend( html );
@@ -560,6 +582,11 @@ ThriveGlobal.$j( function () {
 			return isFluent;
 		}
 
+		function isHappyForm( $form ) {
+			var formID = $form.attr( 'id' );
+			return formID && formID.includes( 'happyforms' ) && window.HappyForms;
+		}
+
 		/**
 		 * listen for the forms submission, and send tracking data requests
 		 * the submit listener is delegated just to be sure we can track everything
@@ -569,7 +596,7 @@ ThriveGlobal.$j( function () {
 				type = $form.parents( '.tve-leads-conversion-object' ).first().attr( 'data-tl-type' ),
 				custom_fields = {};
 
-			if ( $form.data( 'tve-force-submit' ) || $form.closest( '.thrv_custom_html_shortcode' ).length || $form.data( 'tl-do-submit' ) || ! type || ! TL_Const.forms[ type ] || isFluentForm( $form ) ) {
+			if ( $form.data( 'tve-force-submit' ) || $form.closest( '.thrv_custom_html_shortcode' ).length || $form.data( 'tl-do-submit' ) || ! type || ! TL_Const.forms[ type ] || isFluentForm( $form ) || isHappyForm( $form ) ) {
 				return true;
 			}
 			$form.tve_form_loading();
@@ -1061,6 +1088,9 @@ TL_Front.open_lightbox = function ( $target, TargetEvent ) {
 	if ( TargetEvent && TargetEvent.tve_trigger === 'exit' ) {
 		$target.data( 'shown-on-exit', true );
 	}
+
+	/* trigger a custom event after we opened the lightbox */
+	TCB_Front.$window.trigger( 'tl_after_lightbox_open', $target );
 };
 
 TL_Front.open_two_step_lightbox = TL_Front.open_lightbox;

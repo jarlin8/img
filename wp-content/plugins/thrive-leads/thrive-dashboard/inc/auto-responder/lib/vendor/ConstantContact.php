@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Time: 10:30 AM
  */
 class Thrive_Dash_Api_ConstantContact {
-	CONST URL = 'https://api.constantcontact.com/v2/';
+	const URL = 'https://api.constantcontact.com/v2/';
 
 	protected $api_key;
 	protected $api_token;
@@ -120,7 +120,7 @@ class Thrive_Dash_Api_ConstantContact {
 				'Content-Type'  => 'application/json',
 				"Authorization" => "Bearer " . $this->api_token,
 			),
-			'body'    => json_encode( $params )
+			'body'    => $params
 		);
 
 		if ( $type === 'put' ) {

@@ -45,10 +45,21 @@ class TCB_Search_Form_Element extends TCB_Cloud_Template_Element_Abstract {
 	}
 
 	/**
+	 * HTML layout of the element for when it's dragged in the canvas
+	 *
 	 * @return string
 	 */
-	public function html() {
-		return TCB_Search_Form::render();
+	public function html_placeholder( $title = null ) {
+		if ( empty( $title ) ) {
+			$title = $this->name();
+		}
+
+		return tcb_template( 'elements/element-placeholder', array(
+			'icon'       => $this->icon(),
+			'class'      => 'tcb-ct-placeholder',
+			'title'      => $title,
+			'extra_attr' => 'data-ct="search_form-0" data-tcb-elem-type="search_form" data-specific-modal="search_form"',
+		), true );
 	}
 
 	/**

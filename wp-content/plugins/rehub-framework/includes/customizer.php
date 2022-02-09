@@ -2915,28 +2915,28 @@ final class REHub_Framework_Customizer {
 	public function fonts_saving_customizer( $key, $opt ){
 		$new_value = [];
 		if( 'rehub_nav_font_group' == $key ){
-			$new_value['font'] = $opt['rehub_nav_font'];
-			$new_value['weights'] = $opt['rehub_nav_font_weight'];
-			$new_value['styles'] = $opt['rehub_nav_font_style'];
-			$new_value['subsets'] = $opt['rehub_nav_font_subset'];
+			$new_value['font'] = (!empty($opt['rehub_nav_font'])) ? $opt['rehub_nav_font'] : '';
+			$new_value['weights'] = (!empty($opt['rehub_nav_font_weight'])) ? $opt['rehub_nav_font_weight'] : '';
+			$new_value['styles'] = (!empty($opt['rehub_nav_font_style'])) ? $opt['rehub_nav_font_style'] : '';
+			$new_value['subsets'] = (!empty($opt['rehub_nav_font_subset'])) ? $opt['rehub_nav_font_subset'] : '';
 		}
 		if( 'rehub_headings_font_group' == $key ){
-			$new_value['font'] = $opt['rehub_headings_font'];
-			$new_value['weights'] = $opt['rehub_headings_font_weight'];
-			$new_value['styles'] = $opt['rehub_headings_font_style'];
-			$new_value['subsets'] = $opt['rehub_headings_font_subset'];
+			$new_value['font'] = (!empty($opt['rehub_headings_font'])) ? $opt['rehub_headings_font'] : '';
+			$new_value['weights'] = (!empty($opt['rehub_headings_font_weight'])) ? $opt['rehub_headings_font_weight'] : '';
+			$new_value['styles'] = (!empty($opt['rehub_headings_font_style'])) ? $opt['rehub_headings_font_style'] : '';
+			$new_value['subsets'] = (!empty($opt['rehub_headings_font_subset'])) ? $opt['rehub_headings_font_subset'] : '';
 		}
 		if( 'rehub_btn_font_group' == $key ){
-			$new_value['font'] = $opt['rehub_btn_font'];
-			$new_value['weights'] = $opt['rehub_btn_font_weight'];
-			$new_value['styles'] = $opt['rehub_btn_font_style'];
-			$new_value['subsets'] = $opt['rehub_btn_font_subset'];
+			$new_value['font'] = (!empty($opt['rehub_btn_font'])) ? $opt['rehub_btn_font'] : '';
+			$new_value['weights'] = (!empty($opt['rehub_btn_font_weight'])) ? $opt['rehub_btn_font_weight'] : '';
+			$new_value['styles'] = (!empty($opt['rehub_btn_font_style'])) ? $opt['rehub_btn_font_style'] : '';
+			$new_value['subsets'] = (!empty($opt['rehub_btn_font_subset'])) ? $opt['rehub_btn_font_subset'] : '';
 		}
 		if( 'rehub_body_font_group' == $key ){
-			$new_value['font'] = $opt['rehub_body_font'];
-			$new_value['weights']= $opt['rehub_body_font_weight'];
-			$new_value['styles'] = $opt['rehub_body_font_style'];
-			$new_value['subsets'] = $opt['rehub_body_font_subset'];
+			$new_value['font'] = (!empty($opt['rehub_body_font'])) ? $opt['rehub_body_font'] : '';
+			$new_value['weights']= (!empty($opt['rehub_body_font_weight'])) ? $opt['rehub_body_font_weight'] : '';
+			$new_value['styles'] = (!empty($opt['rehub_body_font_style'])) ? $opt['rehub_body_font_style'] : '';
+			$new_value['subsets'] = (!empty($opt['rehub_body_font_subset'])) ? $opt['rehub_body_font_subset'] : '';
 		}
 		$new_value = json_encode( $new_value );
 		return $new_value;

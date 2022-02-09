@@ -995,7 +995,11 @@ function tvd_get_post_type_label( $post_type = '' ) {
 	$post_type_label = ucfirst( $post_type );
 
 	if ( $post_type_object !== null ) {
-		$post_type_label = empty( $post_type_object->labels->singular_name ) ? $post_type_object->label : $post_type_object->labels->singular_name;
+		$prefix = '';
+		if ( ! empty( $post_type_object->labels->singular_name ) && $post_type === 'product' && $post_type_object->labels->singular_name === __( 'Product', 'woocommerce' ) ) {
+			$prefix = 'WooCommerce ';
+		}
+		$post_type_label = $prefix . ( empty( $post_type_object->labels->singular_name ) ? $post_type_object->label : $post_type_object->labels->singular_name );
 	}
 
 	return $post_type_label;
@@ -1123,4 +1127,32 @@ function thrive_safe_unserialize( $data ) {
 	}
 
 	return unserialize( $data );
+}
+
+/**
+ * Returns the update channel
+ * beta/stable
+ *
+ * @return string
+ */
+function tvd_get_update_channel() {
+	return get_option( 'tve_update_option', 'stable' );
+}
+
+/**
+ * Returns true if the update channel is beta
+ *
+ * @return bool
+ */
+function tvd_update_is_using_beta_channel() {
+	return tvd_get_update_channel() === 'beta';
+}
+
+/**
+ * Returns true if the update channel is stable
+ *
+ * @return bool
+ */
+function tvd_update_is_using_stable_channel() {
+	return tvd_get_update_channel() === 'stable';
 }

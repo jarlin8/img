@@ -139,7 +139,7 @@ class Main {
 				break;
 			case 'dynamic_product_link':
 				$product_id = $attr['product-id'];
-				$link       = get_site_url() . '/' . $attr['redirect-destination'] . '/';
+				$link       = $attr['redirect-destination'] === 'cart' ? wc_get_cart_url() : Woo_Main::get_checkout_url();
 
 				if ( $product_id ) {
 					$variation_id = empty( $attr['product-variation-id'] ) ? 0 : $attr['product-variation-id'];

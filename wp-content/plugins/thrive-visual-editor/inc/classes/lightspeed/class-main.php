@@ -256,6 +256,7 @@ class Main {
 		 * @return array
 		 */
 		return apply_filters( 'tcb_lightspeed_excluded_post_types', [
+			'attachment',
 			\TVD\Login_Editor\Post_Type::NAME,
 			'product_variation',
 			//TODO: this is just temporary

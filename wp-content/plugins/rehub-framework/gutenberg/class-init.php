@@ -53,6 +53,7 @@ final class Init {
         Blocks\ColoredPostGrid::instance();
         Blocks\DealGrid::instance();
         Blocks\DealList::instance();
+        Blocks\SimpleList::instance();
         Blocks\WCDeal::instance();
         Blocks\NewsDirectoryList::instance();
         Blocks\NewsBlock::instance();

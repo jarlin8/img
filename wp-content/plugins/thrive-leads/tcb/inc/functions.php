@@ -1129,6 +1129,11 @@ function tve_editor_content( $content, $use_case = null ) {
 			'tve_shortcode_config' => $is_editor_page,
 		), true );
 
+		if ( ! $is_editor_page ) {
+			$header = tcb_clean_frontend_content( $header );
+			$footer = tcb_clean_frontend_content( $footer );
+		}
+
 		$tve_saved_content = $header . $tve_saved_content . $footer;
 	}
 
@@ -1930,7 +1935,9 @@ function tve_remove_theme_css() {
  * only enqueue scripts on our own editor pages
  */
 function tve_enqueue_editor_scripts() {
-	if ( is_editor_page() && tve_is_post_type_editable( get_post_type( get_the_ID() ) ) ) {
+	$post_id = get_the_ID();
+
+	if ( is_editor_page() && tve_is_post_type_editable( get_post_type( $post_id ) ) ) {
 
 		$js_suffix = TCB_Utils::get_js_suffix();
 
@@ -1939,7 +1946,6 @@ function tve_enqueue_editor_scripts() {
 		 * in this case, users should still be able to edit stuff from outside the TCB plugin, such as forms
 		 */
 		if ( tve_tcb__license_activated() || apply_filters( 'tcb_skip_license_check', false ) ) {
-			$post_id = get_the_ID();
 
 			/**
 			 * apply extra filters that should check if the user can actually use the editor to edit this particular piece of content
@@ -1993,7 +1999,7 @@ function tve_enqueue_editor_scripts() {
 				$all_fonts_enqueue = apply_filters( 'tve_filter_custom_fonts_for_enqueue_in_editor', $all_fonts );
 				tve_enqueue_fonts( $all_fonts_enqueue );
 
-				$post_type = get_post_type( get_the_ID() );
+				$post_type = get_post_type( $post_id );
 				/**
 				 * we need to enforce this check here, so that we don't make http requests from https pages
 				 */
@@ -2025,12 +2031,13 @@ function tve_enqueue_editor_scripts() {
 					'cpanel_dir'                    => tve_editor_url() . '/editor',
 					'shortcodes_dir'                => tve_editor_url() . '/shortcodes/templates/',
 					'editor_dir'                    => tve_editor_css(),
-					'post_id'                       => get_the_ID(),
-					'post_url'                      => get_permalink( get_the_ID() ),
+					'post_id'                       => $post_id,
+					'post_url'                      => get_permalink( $post_id ),
 					'tve_version'                   => TVE_VERSION,
 					'ajax_url'                      => $admin_base_url . 'admin-ajax.php',
 					'is_rtl'                        => (int) is_rtl(),
 					'woocommerce'                   => \TCB\Integrations\WooCommerce\Main::get_localized_data(),
+					'conditional_display'           => \TCB\ConditionalDisplay\Main::get_localized_data(),
 					'custom_fonts'                  => $all_fonts,
 					'post_type'                     => $post_type,
 					'taxonomies'                    => get_object_taxonomies( 'post', 'object' ),
@@ -2050,8 +2057,8 @@ function tve_enqueue_editor_scripts() {
 					),
 					'post_list_pagination'          => TCB_Utils::get_pagination_localized_data(),
 					'post_image'                    => array(
-						'featured' => TCB_Post_List_Featured_Image::get_default_url( get_the_ID() ),
-						'author'   => TCB_Post_List_Author_Image::get_default_url( get_the_ID() ),
+						'featured' => TCB_Post_List_Featured_Image::get_default_url( $post_id ),
+						'author'   => TCB_Post_List_Author_Image::get_default_url( $post_id ),
 						'user'     => tcb_dynamic_user_image_instance( get_current_user_id() )->get_default_url(),
 					),
 					'user_image'                    => array(
@@ -2579,7 +2586,7 @@ function tve_thrive_shortcodes( $content, $keep_config = false ) {
 		}
 
 		/**
-		 * we dont want to apply this shortcode if $keep_config is true => is_editor
+		 * we don't want to apply this shortcode if $keep_config is true => is_editor
 		 */
 		if ( $shortcode === 'tve_leads_additional_fields_filters' && $keep_config === true ) {
 			continue;
@@ -2818,7 +2825,9 @@ function tcb_render_wp_shortcode( $content ) {
 /**
  * replace all the {tcb_post_} shortcodes with actual values
  *
- * @param $content
+ * @param string $content
+ *
+ * @return string
  */
 function tve_do_custom_content_shortcodes( $content ) {
 	/**
@@ -4026,11 +4035,20 @@ function tve_api_form_submit( $output = true ) {
 	} elseif ( ! empty( $data['__tcb_lg_fc'] ) ) {
 		$connections = Thrive_Dash_List_Manager::decodeConnectionString( $data['__tcb_lg_fc'] ); // previous version
 	}
+	$form_messages = [];
+
+	if ( isset( $data['__tcb_lg_msg'] ) ) {
+		$form_messages = Thrive_Dash_List_Manager::decodeConnectionString( $data['__tcb_lg_msg'] );
+	}
 
 	if ( empty( $connections ) ) {
-		return TCB_Utils::maybe_send_json( array(
-			'error' => __( 'No connection for this form', 'thrive-cb' ),
-		), $output );
+		//send also the success just in case is needed
+		return TCB_Utils::maybe_send_json(
+			[
+				'form_messages' => $form_messages,
+				'error'         => __( 'No connection for this form', 'thrive-cb' ),
+			],
+			$output );
 	}
 
 	//these are not needed anymore
@@ -4047,8 +4065,8 @@ function tve_api_form_submit( $output = true ) {
 	 */
 	$data = apply_filters( 'tcb_api_subscribe_data', $data );
 
-	if ( isset( $data['__tcb_lg_msg'] ) ) {
-		$result['form_messages'] = Thrive_Dash_List_Manager::decodeConnectionString( $data['__tcb_lg_msg'] );
+	if ( ! empty( $form_messages ) ) {
+		$result['form_messages'] = $form_messages;
 	}
 
 	$available = Thrive_Dash_List_Manager::getAvailableAPIs( true );
@@ -4555,13 +4573,13 @@ if ( ! function_exists( 'tve_frontend_enqueue_scripts' ) ) {
 	 */
 	function tve_frontend_enqueue_scripts() {
 		$post_id = get_the_ID();
+		global $wp_query;
 
 		if ( ! apply_filters( 'tcb_overwrite_scripts_enqueue', false ) && ! is_editor_page_raw() ) {
 			/**
 			 * enqueue scripts and styles only for posts / pages that actually have tcb content
 			 * also enqueue if the post content contains our gutenberg blocks
 			 */
-			global $wp_query;
 			if ( empty( $wp_query->posts ) ) {
 				return;
 			}
@@ -4612,11 +4630,13 @@ if ( ! function_exists( 'tve_frontend_enqueue_scripts' ) ) {
 		$frontend_options = array(
 			'ajaxurl'          => admin_url( 'admin-ajax.php' ),
 			'is_editor_page'   => is_editor_page(),
-			'page_events'      => isset( $events ) ? $events : array(),
+			'page_events'      => isset( $events ) ? $events : [],
 			'is_single'        => (string) ( (int) is_singular() ),
 			'social_fb_app_id' => tve_get_social_fb_app_id(),
 			'dash_url'         => TVE_DASH_URL,
 			'queried_object'   => TCB_Utils::get_filtered_queried_object(),
+			'query_vars'       => empty( $wp_query->query ) ? [] : $wp_query->query,
+			'$_POST'           => $_POST,
 			'translations'     => array(
 				'Copy'             => __( 'Copy', 'thrive-cb' ),
 				'empty_username'   => __( 'ERROR: The username field is empty.', 'thrive-cb' ),
@@ -5170,7 +5190,7 @@ function tcb_allow_unfiltered_html( $tags, $context = null ) {
 		}
 
 		$tags['input'] = array_merge( $tags['input'], array(
-			'value'            => true,
+			'value' => true,
 		) );
 	}
 
@@ -5383,6 +5403,28 @@ function tve_get_locale() {
 	}
 
 	return $locale;
+}
+
+/**
+ * Set query vars on the global query
+ *
+ * @param $query_vars
+ *
+ * @return void
+ */
+function tve_set_query_vars_data( $query_vars ) {
+	/** @var \WP_Query */
+	global $wp_query;
+	/* set the global query to the one from the page so we can convert shortcodes better and verify conditions */
+	$wp_query->query( $query_vars );
+	if ( $wp_query->is_singular() ) {
+		$wp_query->the_post();
+	}
+
+	/**
+	 * Fire a hook for other global initializations ( such as apprentice course, lesson, module )
+	 */
+	do_action( 'tcb_set_query_vars_data' );
 }
 
 /**

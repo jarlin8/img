@@ -46,6 +46,10 @@
 					<?php tcb_icon( 'test' ); ?>
 				</a>
 			<?php endif ?>
+
+			<a class="mouseenter mouseleave sidebar-item tcb-sidebar-icon-tooltip" data-fn-mouseenter="toggleTooltip" data-fn-mouseleave="toggleTooltip" data-tooltip-type="conditional-display" data-toggle="conditional-display">
+				<?php tcb_icon( 'control-switch' ); ?>
+			</a>
 			<?php do_action( 'tcb_sidebar_extra_links' ); ?>
 		</div>
 
@@ -99,7 +103,17 @@
 		</div>
 		<div class="scroll-content"><?php tcb_template( 'settings' ); ?></div>
 	</div>
-
+	<div class="drawer" data-drawer="conditional-display">
+		<div class="header">
+			<span class="text">
+				<?php echo esc_attr__( 'Conditioned content', 'thrive-cb' ); ?>
+			</span>
+			<div class="s-links s-normal">
+				<a href="javascript:void(0)" class="s-icon click close" data-fn="hide_drawers"><?php tcb_icon( 'times-regular' ); ?></a>
+			</div>
+		</div>
+		<ul class="conditional-display-hierarchy"></ul>
+	</div>
 	<div class="tve-custom-code-wrapper full-width" style="display: none">
 		<textarea id="tve-custom-css-code"></textarea>
 		<div class="tve-css-buttons-wrapper">

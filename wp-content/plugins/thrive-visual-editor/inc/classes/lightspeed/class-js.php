@@ -102,14 +102,24 @@ class JS {
 	 * @return array|array[]
 	 */
 	public function get_modules_urls() {
-		$urls = [];
-
 		$modules_to_load = $this->get_modules_to_load();
 
-		foreach ( $modules_to_load as $module ) {
-			$urls = array_merge( $urls, static::get_module_data( $module, 'libraries' ) );
+		return JS::get_js_urls( $modules_to_load );
+	}
 
-			$urls[ $module ] = JSModule::get_instance( $module, [] )->get_url();
+	/**
+	 * Return urls for an array of modules
+	 *
+	 * @return array|array[]
+	 */
+	public static function get_js_urls( $modules ) {
+		$urls = [];
+		if ( is_array( $modules ) ) {
+			foreach ( $modules as $module ) {
+				$urls = array_merge( $urls, static::get_module_data( $module, 'libraries' ) );
+
+				$urls[ $module ] = JSModule::get_instance( $module, [] )->get_url();
+			}
 		}
 
 		return $urls;
@@ -205,6 +215,9 @@ class JS {
 			],
 			'countdown'             => [
 				'identifier' => '.tve-countdown',
+			],
+			'conditional-display'   => [
+				'identifier' => '[data-display-group]',
 			],
 			'search-form'           => [
 				'identifier' => '.thrv-search-form',

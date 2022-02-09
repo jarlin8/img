@@ -96,7 +96,7 @@ class Main {
 
 		if ( ! $in_editor && ! empty( $attr['hide-title'] ) ) {
 			/* by removing this action we actually hide the title; the action is added back in after_render() */
-			remove_action( 'woocommerce_shop_loop_subcategory_title', 'woocommerce_template_loop_category_title', 10 );
+			remove_action( 'woocommerce_shop_loop_subcategory_title', 'woocommerce_template_loop_category_title' );
 		}
 
 		/* add our custom text wrapper through woo actions */
@@ -115,10 +115,10 @@ class Main {
 	 * @param $attr
 	 * @param $in_editor
 	 */
-	public static function after_render( &$attr, $in_editor ) {
+	public static function after_render( $attr, $in_editor ) {
 		if ( ! $in_editor && ! empty( $attr['hide-title'] ) ) {
 			/* re-add the action that we removed so we don't affect other product categories  */
-			add_action( 'woocommerce_shop_loop_subcategory_title', 'woocommerce_template_loop_category_title', 10 );
+			add_action( 'woocommerce_shop_loop_subcategory_title', 'woocommerce_template_loop_category_title' );
 		}
 
 		/* remove our custom text wrapper */

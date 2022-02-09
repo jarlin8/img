@@ -137,7 +137,16 @@ class Hooks {
 
 					if ( currentStylesheet.parentElement.tagName !== 'HEAD' ) {
 						/* always make sure that those styles end up in the head */
-						document.head.prepend( currentStylesheet )
+						const stylesheetID = currentStylesheet.id;
+						/**
+						 * make sure that there is only one copy of the css
+						 * e.g display CSS
+						 */
+						if ( ( ! stylesheetID || ( stylesheetID && ! document.querySelector( `head #${stylesheetID}` ) ) ) ) {
+							document.head.prepend( currentStylesheet )
+						} else {
+							currentStylesheet.remove();
+						}
 					}
 				}
 			}

@@ -415,6 +415,9 @@ class TCB_Menu_Element extends TCB_Cloud_Template_Element_Abstract {
 					),
 				),
 			),
+			'conditional-display' => [
+				'hidden' => false,
+			],
 		);
 
 		return array_merge( $menu, $this->group_component() );

@@ -389,6 +389,9 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 			case 'PATCH':
 				return tve_leads_save_form_type( $model );
 			case 'DELETE':
+
+				do_action( 'tve_leads_delete_post', (int) $this->param( 'ID', 0 ) );
+
 				return tve_leads_save_form_type( array(
 					'ID'          => $this->param( 'ID', 0 ),
 					'post_status' => 'trash',

@@ -222,10 +222,10 @@ class Add_User extends Action {
 	 *
 	 * @return bool
 	 */
-	public static function is_compatible_with_trigger( $trigger ) {
+	public static function is_compatible_with_trigger( $provided_data_objects ) {
 		$action_data_keys = static::get_required_data_objects() ?: array();
 
-		return count( array_intersect( $action_data_keys, $trigger::get_provided_data_objects() ) ) > 0;
+		return count( array_intersect( $action_data_keys, $provided_data_objects ) ) > 0;
 	}
 
 	public function can_run( $data ) {

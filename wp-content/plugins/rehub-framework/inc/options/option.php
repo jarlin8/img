@@ -70,12 +70,20 @@ $theme_options =  array(
 									'label' => esc_html__('Deal Grid layout', 'rehub-framework'),
 								),
 								array(
+									'value' => 'mobilegrid',
+									'label' => esc_html__('Mobile Optimized Deal Grid layout', 'rehub-framework'),
+								),
+								array(
 									'value' => 'cardblog',
 									'label' => esc_html__('Cards', 'rehub-framework'),
 								),								
 								array(
 									'value' => 'dealgridfull',
 									'label' => esc_html__('Full width Deal Grid layout', 'rehub-framework'),
+								),
+								array(
+									'value' => 'mobilegridfull',
+									'label' => esc_html__('Mobile Optimized Full width Deal Grid layout', 'rehub-framework'),
 								),
 								array(
 									'value' => 'compactgridfull',
@@ -138,12 +146,20 @@ $theme_options =  array(
 									'label' => esc_html__('Deal Grid layout', 'rehub-framework'),
 								),
 								array(
+									'value' => 'mobilegrid',
+									'label' => esc_html__('Mobile Optimized Deal Grid layout', 'rehub-framework'),
+								),
+								array(
 									'value' => 'cardblog',
 									'label' => esc_html__('Cards', 'rehub-framework'),
 								),									
 								array(
 									'value' => 'dealgridfull',
 									'label' => esc_html__('Full width Deal Grid layout', 'rehub-framework'),
+								),
+								array(
+									'value' => 'mobilegridfull',
+									'label' => esc_html__('Mobile Optimized Full width Deal Grid layout', 'rehub-framework'),
 								),
 								array(
 									'value' => 'compactgridfull',
@@ -2043,6 +2059,10 @@ $theme_options =  array(
 									'label' => esc_html__('Deal grid', 'rehub-framework'),
 								),
 								array(
+									'value' => 'mobilegrid',
+									'label' => esc_html__('Mobile Optimized Deal Grid layout', 'rehub-framework'),
+								),
+								array(
 									'value' => 'regular_grid',
 									'label' => esc_html__('Regular grid', 'rehub-framework'),
 								),
@@ -2397,14 +2417,7 @@ $theme_options =  array(
 							'label' => esc_html__('Enable lazyload script on thumbnails', 'rehub-framework'),
 							'description' => esc_html__('For better image perfomance. Sometimes can be buggy with other scripts', 'rehub-framework'),
 							'default' => '1',
-						),										
-						array(
-							'type' => 'toggle',
-							'name' => 'criticalcss',
-							'label' => esc_html__('Enable Critical Css', 'rehub-framework'),
-							'description' => esc_html__('Experimental, can help to improve render blocking for speed', 'rehub-framework').' <a href="https://wpsoul.com/how-optimize-speed-of-wordpress/" target="_blank">Read more</a>',
-							'default' => '0',
-						),											
+						),																				
 						array(
 							'type' => 'toggle',
 							'name' => 'exclude_author_meta',

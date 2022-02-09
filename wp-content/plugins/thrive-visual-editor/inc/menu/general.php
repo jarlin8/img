@@ -15,6 +15,46 @@
 	</div>
 </div>
 
+<div id="tve-conditional-display-component" class="tve-component" data-view="ConditionalDisplay">
+	<div class="dropdown-header" data-prop="docked">
+		<div class="group-description">
+			<?php echo esc_html__( 'Conditional Display', 'thrive-cb' ) ?>
+		</div>
+		<i></i>
+	</div>
+	<div class="dropdown-content">
+		<div class="display-order">
+			<?php echo esc_html__( 'Display order', 'thrive-cb' ) ?>
+		</div>
+		<div class="display-list">
+			<div class="custom-display-list"></div>
+			<div class="default-display-list"></div>
+		</div>
+		<button class="tve-button green ghost long click mt-10" data-fn="addDisplay">
+			<?php tcb_icon( 'plus-regular' ); ?>
+			<?php echo esc_html__( 'Add display', 'thrive-cb' ) ?>
+		</button>
+		<div class="tve-advanced-controls mt-20 hide-states">
+			<div class="dropdown-header with-info" data-prop="advanced">
+				<div class="dropdown-info">
+					<span class="mr-10"><?php echo esc_html__( 'Advanced', 'thrive-cb' ); ?></span>
+					<span class="click tve-lazy-load-info" data-fn="openTooltip"><?php tcb_icon( 'info-circle-solid' ); ?></span>
+				</div>
+			</div>
+
+			<div class="dropdown-content pt-0">
+				<div class="hide-states">
+					<div class="tve-control no-space" data-view="LazyLoad"></div>
+					<div class="tve-cond-lazy-load-settings">
+						<div class="tve-control no-space" data-view="UniformHeights"></div>
+						<div class="tve-control full-width" data-view="InheritBackground"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="tve-styles-templates-component" class="tve-component" data-view="StylesTemplates">
 	<div class="dropdown-header" data-prop="docked">
 		<?php echo esc_html__( 'HTML Attributes', 'thrive-cb' ); ?>
