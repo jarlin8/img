@@ -263,19 +263,26 @@
                                  </span>
                         </p>
                         <p class="wpdt-text wpdt-font m-b-18">
-                            A major update with a couple of new features, bug fixes, and stability improvements:
+                            Major update with a couple of new features, improvements, and several bug fixes:
                         </p>
                         <div class="alert alert-info m-b-0" role="alert">
                             <i class="wpdt-icon-info-circle-full"></i>
                             <ul>
-                                <li><strong>Feature:</strong> Added new option to show/hide search field in select-box/multiselect-box filters.</li>
-                                <li><strong>Feature:</strong> Added new option to show/hide search field in Single-value select-box/Multi-value select-box in edit modal.</li>
-                                <li><strong>Feature:</strong> Added new options for simple table: "Remove borders", "Border collapse" and "Border spacing".</li>
-                                <li><strong>Feature:</strong> Added new option "Page Orientation" for PDF export reports.</li>
-                                <li><strong>Feature:</strong> Added new option "Paper Size" for PDF export reports.</li>
-                                <li><strong>Improvement:</strong> Improved checking for existing PHP extension - zlib on the server.</li>
-                                <li><strong>BugFix:</strong> Fixed issue with double loading for multiselect filter.</li>
-                                <li>Compatibility with WordPress 5.8.1 approved.</li>
+                                <li><strong>Feature:</strong> Added new chart engine - ApexCharts with 20 new chart types and more new options. </li>
+                                <li><strong>Feature:</strong> Added features to create Synchronized charts with ApexCharts engine. </li>
+                                <li><strong>Feature:</strong> Added integration with Avada Website builder.</li>
+                                <li><strong>Feature:</strong> Added integration with DIVI Website builder.</li>
+                                <li><strong>Improvement:</strong> Added export file name parameter in module for WPBakery page builder</li>
+                                <li><strong>Improvement:</strong> Replaced deprecated methods for Elementor integration</li>
+                                <li><strong>Improvement:</strong> Increased table, columns, and charts id's in database structure from int(11) to bigint(20)</li>
+                                <li><strong>Bugfix:</strong> Fixed enqueue minify version wpdatatables-bootstrap.min.css</li>
+                                <li><strong>Bugfix:</strong> Fixed issue with foreign keys and non-serverside table</li>
+                                <li><strong>Bugfix:</strong> Fixed conditional formatting for int and float columns with empty values</li>
+                                <li><strong>Bugfix:</strong> Fixed issue with conditional formatting and "Add column class" option</li>
+                                <li><strong>Bugfix:</strong> Fixed notice when WP CLI is used</li>
+                                <li><strong>Bugfix:</strong> Fixed issue with multiple radial pie highcharts on the page</li>
+                                <li><strong>Bugfix:</strong> Fixed issue with a large number of predefined values</li>
+                                <li>Compatibility with WordPress 5.9 approved.</li>
                                 <li>Other small bug fixes and stability improvements.</li>
                             </ul>
                         </div>

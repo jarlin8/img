@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-15 07:21+0200\n"
-"PO-Revision-Date: 2021-09-15 07:21+0200\n"
+"POT-Creation-Date: 2022-02-10 12:00+0100\n"
+"PO-Revision-Date: 2022-02-10 12:00+0100\n"
 "Last-Translator: narozhfy <narozhnyy.alexandr@yandex.ru>\n"
 "Language-Team: Русский\n"
 "Language: ru_RU\n"
@@ -29,11 +29,12 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-2: wpdatatables/assets/js/tagsinput\n"
 
 #: reportbuilder/assets/js/frontend/report_builder.js:34
+#: wpdatatables/assets/js/wpdatatables/wdt.apexcharts.js:846
 #: wpdatatables/assets/js/wpdatatables/wdt.chartJS.js:239
 #: wpdatatables/assets/js/wpdatatables/wdt.chartJS.min.js:10
 #: wpdatatables/assets/js/wpdatatables/wdt.googleCharts.js:335
 #: wpdatatables/assets/js/wpdatatables/wdt.googleCharts.min.js:19
-#: wpdatatables/assets/js/wpdatatables/wdt.highcharts.js:585
+#: wpdatatables/assets/js/wpdatatables/wdt.highcharts.js:587
 #: wpdatatables/assets/js/wpdatatables/wdt.highcharts.min.js:17
 msgid "tr"
 msgstr ""
@@ -118,16 +119,16 @@ msgid "Report with ID "
 msgstr ""
 
 #: reportbuilder/reportbuilder.php:453 reportbuilder/reportbuilder.php:467
-#: wdt-formidable-integration/wdt-formidable-integration.php:600
-#: wdt-formidable-integration/wdt-formidable-integration.php:614
-#: wdt-gravity-integration/wdt-gravity-integration.php:1561
-#: wdt-gravity-integration/wdt-gravity-integration.php:1575
-#: wdt-master-detail/wdt-master-detail.php:1105
-#: wdt-master-detail/wdt-master-detail.php:1119
+#: wdt-formidable-integration/wdt-formidable-integration.php:606
+#: wdt-formidable-integration/wdt-formidable-integration.php:620
+#: wdt-gravity-integration/wdt-gravity-integration.php:1602
+#: wdt-gravity-integration/wdt-gravity-integration.php:1616
+#: wdt-master-detail/wdt-master-detail.php:1110
+#: wdt-master-detail/wdt-master-detail.php:1124
 #: wdt-powerful-filters/wdt-powerful-filters.php:788
 #: wdt-powerful-filters/wdt-powerful-filters.php:802
-#: wpdatatables/controllers/wdt_functions.php:1070
-#: wpdatatables/controllers/wdt_functions.php:1085
+#: wpdatatables/controllers/wdt_functions.php:1083
+#: wpdatatables/controllers/wdt_functions.php:1098
 msgid "settings"
 msgstr "настройки"
 
@@ -143,7 +144,7 @@ msgstr ""
 #: reportbuilder/source/class.vcintegration.php:26
 #: reportbuilder/templates/activation.inc.php:8
 #: wpdatatables/templates/admin/addons/addons.inc.php:148
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:587
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:578
 msgid "Report Builder"
 msgstr "Report Builder"
 
@@ -186,7 +187,7 @@ msgid "Actions"
 msgstr ""
 
 #: reportbuilder/source/class.browsereports.php:112
-#: wpdatatables/source/class.wdtbrowsechartstable.php:424
+#: wpdatatables/source/class.wdtbrowsechartstable.php:484
 #: wpdatatables/source/class.wdtbrowsetable.php:346
 #: wpdatatables/templates/admin/chart_wizard/steps/step3.inc.php:11
 #: wpdatatables/templates/admin/chart_wizard/steps/step3.inc.php:32
@@ -206,8 +207,8 @@ msgid "DOCX and XLSX Report Builder buttons and inputs"
 msgstr ""
 
 #: reportbuilder/source/class.vcintegration.php:29
-#: wpdatatables/controllers/wdt_functions.php:1226
-#: wpdatatables/controllers/wdt_functions.php:1285
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:16
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:83
 msgid "Content"
 msgstr ""
 
@@ -355,13 +356,14 @@ msgstr "Деактивировать"
 #: reportbuilder/templates/admin_actions.tpl.php:6
 #: wpdatatables/source/class.wdtbrowsechartstable.php:161
 #: wpdatatables/source/class.wdtbrowsetable.php:214
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:322
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:313
 msgid "Configure"
 msgstr "Настроить"
 
 #: reportbuilder/templates/admin_actions.tpl.php:7
 #: wpdatatables/templates/admin/addons/addons.inc.php:48
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:480
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1861
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:471
 msgid "Download"
 msgstr ""
 
@@ -373,7 +375,7 @@ msgstr ""
 #: wpdatatables/source/class.wdtbrowsechartstable.php:167
 #: wpdatatables/source/class.wdtbrowsetable.php:221
 #: wpdatatables/source/class.wdttools.php:452
-#: wpdatatables/source/class.wpdatatable.php:3910
+#: wpdatatables/source/class.wpdatatable.php:3924
 #: wpdatatables/templates/admin/browse/bulk_actions.inc.php:14
 #: wpdatatables/templates/admin/settings/tabs/separate_connection_form.php:166
 #: wpdatatables/templates/admin/settings/tabs/separate_connection_form.php:172
@@ -532,7 +534,7 @@ msgid "Close"
 msgstr "Закрыть"
 
 #: reportbuilder/templates/steps/step_1.inc.php:6
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:58
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:59
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:82
 msgid "Data source"
 msgstr "Источник данных"
@@ -665,22 +667,22 @@ msgid "Create Report"
 msgstr ""
 
 #: reportbuilder/templates/wizard.tpl.php:26
-#: wdt-gravity-integration/templates/edit_modal.php:61
+#: wdt-gravity-integration/templates/edit_modal.php:73
 #: wpdatatables/source/class.wdttools.php:435
 #: wpdatatables/source/class.wdttools.php:575
 #: wpdatatables/templates/admin/browse/chart/duplicate_chart_modal.inc.php:43
 #: wpdatatables/templates/admin/browse/table/duplicate_table_modal.inc.php:61
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:42
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:43
 #: wpdatatables/templates/admin/chart_wizard/range_picker_modal.inc.php:32
 #: wpdatatables/templates/admin/common/HTMLModal.inc.php:43
-#: wpdatatables/templates/admin/common/linkModal.inc.php:117
+#: wpdatatables/templates/admin/common/linkModal.inc.php:139
 #: wpdatatables/templates/admin/common/shortcodeModal.inc.php:48
 #: wpdatatables/templates/admin/common/starModal.inc.php:73
 #: wpdatatables/templates/admin/constructor/constructor.inc.php:29
 #: wpdatatables/templates/admin/settings/settings.inc.php:26
 #: wpdatatables/templates/admin/table-settings/add_column_modal.inc.php:126
 #: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:20
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1169
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1201
 #: wpdatatables/templates/admin/table-settings/columns_list_modal.inc.php:31
 #: wpdatatables/templates/admin/table-settings/formula_editor_modal.inc.php:82
 #: wpdatatables/templates/admin/table-settings/possible_values_merge_list_modal.inc.php:22
@@ -723,13 +725,13 @@ msgid "Save report "
 msgstr ""
 
 #: reportbuilder/templates/wizard.tpl.php:79
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:109
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:110
 #: wpdatatables/templates/admin/constructor/constructor.inc.php:75
 msgid "Next "
 msgstr "Следующий"
 
 #: reportbuilder/templates/wizard.tpl.php:81
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:111
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:112
 #: wpdatatables/templates/admin/constructor/constructor.inc.php:77
 msgid " Previous"
 msgstr "Предыдущая"
@@ -742,7 +744,7 @@ msgstr "Предыдущая"
 #: wpdatatables/templates/admin/support/support.inc.php:31
 #: wpdatatables/templates/admin/support/support.inc.php:47
 #: wpdatatables/templates/admin/system-info/system_info.inc.php:29
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1164
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1196
 #: wpdatatables/templates/admin/table-settings/simple_table_settings_block.inc.php:680
 #: wpdatatables/templates/admin/table-settings/table_preview_block.inc.php:95
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:2153
@@ -841,8 +843,8 @@ msgid ""
 "version "
 msgstr ""
 
-#: wdt-formidable-integration/wdt-formidable-integration.php:603
-#: wdt-formidable-integration/wdt-formidable-integration.php:619
+#: wdt-formidable-integration/wdt-formidable-integration.php:609
+#: wdt-formidable-integration/wdt-formidable-integration.php:625
 #, php-format
 msgid ""
 "To receive automatic updates license activation is required. Please visit %s "
@@ -990,18 +992,18 @@ msgstr ""
 msgid "Editing files is not supported at the moment"
 msgstr ""
 
-#: wdt-gravity-integration/templates/edit_modal.php:29
+#: wdt-gravity-integration/templates/edit_modal.php:41
 msgid ""
 "Editing Gravity forms which contain Captcha is not supported in "
 "wpDataTables. Please disable Captcha."
 msgstr ""
 
-#: wdt-gravity-integration/templates/edit_modal.php:65
+#: wdt-gravity-integration/templates/edit_modal.php:77
 #: wpdatatables/templates/frontend/edit_dialog.inc.php:174
 msgid "Submit"
 msgstr "Отправить"
 
-#: wdt-gravity-integration/templates/edit_modal.php:65
+#: wdt-gravity-integration/templates/edit_modal.php:77
 #: wpdatatables/templates/frontend/edit_dialog.inc.php:174
 msgid "OK"
 msgstr "ОК"
@@ -1037,21 +1039,21 @@ msgstr ""
 msgid "Show user only their own entries"
 msgstr ""
 
-#: wdt-gravity-integration/wdt-gravity-integration.php:163
+#: wdt-gravity-integration/wdt-gravity-integration.php:164
 msgid ""
 "Gravity Forms integration for wpDataTables is an add-on - please install and "
 "activate wpDataTables and Gravity Forms to be able to use it!"
 msgstr ""
 
-#: wdt-gravity-integration/wdt-gravity-integration.php:172
+#: wdt-gravity-integration/wdt-gravity-integration.php:173
 msgid ""
 "Gravity Forms integration for wpDataTables add-on requires wpDataTables "
 "version "
 msgstr ""
 
-#: wdt-gravity-integration/wdt-gravity-integration.php:559
-#: wpdatatables/controllers/wdt_ajax_actions.php:235
-#: wpdatatables/source/class.wpdatatable.php:3310
+#: wdt-gravity-integration/wdt-gravity-integration.php:566
+#: wpdatatables/controllers/wdt_ajax_actions.php:241
+#: wpdatatables/source/class.wpdatatable.php:3324
 msgid ""
 "You are trying to load a table of an unknown type. Probably you did not "
 "activate the addon which is required to use this table type."
@@ -1059,14 +1061,14 @@ msgstr ""
 "Вы пытаетесь загрузить таблицу неизвестного типа. Возможно, вы не "
 "активировали аддон, который требуется для использования этого типа таблицы."
 
-#: wdt-gravity-integration/wdt-gravity-integration.php:1564
+#: wdt-gravity-integration/wdt-gravity-integration.php:1605
 #, php-format
 msgid ""
 "To receive automatic updates license activation is required. Please visit %s "
 "to activate Gravity Forms integration for wpDataTables."
 msgstr ""
 
-#: wdt-gravity-integration/wdt-gravity-integration.php:1580
+#: wdt-gravity-integration/wdt-gravity-integration.php:1621
 #, php-format
 msgid ""
 "To receive automatic updates license activation is required. Please visit %s "
@@ -1189,23 +1191,23 @@ msgstr ""
 msgid "Show/hide Master-detail column"
 msgstr ""
 
-#: wdt-master-detail/wdt-master-detail.php:659
+#: wdt-master-detail/wdt-master-detail.php:664
 msgid ""
 "Master-detail Tables for wpDataTables is an add-on - please install and "
 "activate wpDataTables to be able to use it!"
 msgstr ""
 
-#: wdt-master-detail/wdt-master-detail.php:668
+#: wdt-master-detail/wdt-master-detail.php:673
 msgid ""
 "Master-Detail Tables add-on for wpDataTables requires wpDataTables version "
 msgstr ""
 
-#: wdt-master-detail/wdt-master-detail.php:836
+#: wdt-master-detail/wdt-master-detail.php:841
 msgid "Details"
 msgstr ""
 
-#: wdt-master-detail/wdt-master-detail.php:1108
-#: wdt-master-detail/wdt-master-detail.php:1124
+#: wdt-master-detail/wdt-master-detail.php:1113
+#: wdt-master-detail/wdt-master-detail.php:1129
 #, php-format
 msgid ""
 "To receive automatic updates license activation is required. Please visit %s "
@@ -1349,8 +1351,8 @@ msgstr "wpDataCharts"
 
 #: wpdatatables/controllers/wdt_admin.php:52
 #: wpdatatables/controllers/wdt_admin.php:53
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:36
 #: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:37
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:38
 #: wpdatatables/templates/admin/dashboard/dashboard.inc.php:63
 #: wpdatatables/templates/admin/dashboard/dashboard.inc.php:168
 msgid "Create a Chart"
@@ -1358,7 +1360,7 @@ msgstr "Создать диаграмму"
 
 #: wpdatatables/controllers/wdt_admin.php:60
 #: wpdatatables/controllers/wdt_admin.php:61
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:316
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:307
 #: wpdatatables/templates/admin/settings/settings.inc.php:21
 #: wpdatatables/templates/admin/table-settings/simple_table_settings_block.inc.php:35
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:51
@@ -1386,7 +1388,7 @@ msgid "Lite vs Premium"
 msgstr ""
 
 #: wpdatatables/controllers/wdt_admin.php:100
-#: wpdatatables/controllers/wdt_functions.php:1128
+#: wpdatatables/controllers/wdt_functions.php:1141
 msgid "Add-ons"
 msgstr "Дополнения"
 
@@ -1400,19 +1402,19 @@ msgstr "Дополнения"
 msgid "Welcome page"
 msgstr ""
 
-#: wpdatatables/controllers/wdt_admin.php:509
-#: wpdatatables/controllers/wdt_admin.php:559
-#: wpdatatables/controllers/wdt_admin.php:615
-#: wpdatatables/controllers/wdt_admin.php:635
-#: wpdatatables/controllers/wdt_admin.php:658
-#: wpdatatables/controllers/wdt_admin.php:706
-#: wpdatatables/controllers/wdt_admin.php:733
-#: wpdatatables/controllers/wdt_admin.php:753
-#: wpdatatables/controllers/wdt_admin.php:773
-#: wpdatatables/controllers/wdt_admin.php:793
-#: wpdatatables/controllers/wdt_admin.php:813
-#: wpdatatables/controllers/wdt_admin.php:833
-#: wpdatatables/controllers/wdt_admin.php:853
+#: wpdatatables/controllers/wdt_admin.php:516
+#: wpdatatables/controllers/wdt_admin.php:566
+#: wpdatatables/controllers/wdt_admin.php:622
+#: wpdatatables/controllers/wdt_admin.php:642
+#: wpdatatables/controllers/wdt_admin.php:665
+#: wpdatatables/controllers/wdt_admin.php:713
+#: wpdatatables/controllers/wdt_admin.php:740
+#: wpdatatables/controllers/wdt_admin.php:760
+#: wpdatatables/controllers/wdt_admin.php:780
+#: wpdatatables/controllers/wdt_admin.php:800
+#: wpdatatables/controllers/wdt_admin.php:820
+#: wpdatatables/controllers/wdt_admin.php:840
+#: wpdatatables/controllers/wdt_admin.php:860
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
@@ -1424,80 +1426,80 @@ msgstr "При попытке импорта таблицы произошла �
 msgid "There was an error while trying to import table. Exception: "
 msgstr "При попытке импорта таблицы произошла ошибка. Текст ошибки: "
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:430
-#: wpdatatables/controllers/wdt_ajax_actions.php:480
-#: wpdatatables/controllers/wdt_ajax_actions.php:693
+#: wpdatatables/controllers/wdt_ajax_actions.php:436
+#: wpdatatables/controllers/wdt_ajax_actions.php:486
+#: wpdatatables/controllers/wdt_ajax_actions.php:699
 msgid "There was an error trying to update the row! Error: "
 msgstr "При попытке изменить строку произошла ошибка! Ошибка: "
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:442
-#: wpdatatables/controllers/wdt_ajax_actions.php:505
-#: wpdatatables/controllers/wdt_ajax_actions.php:663
+#: wpdatatables/controllers/wdt_ajax_actions.php:448
+#: wpdatatables/controllers/wdt_ajax_actions.php:511
+#: wpdatatables/controllers/wdt_ajax_actions.php:669
 msgid "There was an error trying to insert a new row! Error: "
 msgstr "При попытке добавления строки произошла ошибка! Текст ошибки: "
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:577
+#: wpdatatables/controllers/wdt_ajax_actions.php:583
 msgid "Bad column names supplied: "
 msgstr "Заданы неверные имена колонок: "
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:579
+#: wpdatatables/controllers/wdt_ajax_actions.php:585
 msgid "ID column not supplied"
 msgstr "ID-колонка не задана"
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:584
+#: wpdatatables/controllers/wdt_ajax_actions.php:590
 msgid "ID column not supplied for a cell"
 msgstr "ID-колонка не задана для ячейки"
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:804
-#: wpdatatables/controllers/wdt_ajax_actions.php:816
+#: wpdatatables/controllers/wdt_ajax_actions.php:810
+#: wpdatatables/controllers/wdt_ajax_actions.php:822
 msgid "There was an error trying to delete the row! Error: "
 msgstr ""
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:806
+#: wpdatatables/controllers/wdt_ajax_actions.php:812
 msgid ""
 "There was an error in your database when you are trying to delete the row! "
 msgstr ""
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:846
-#: wpdatatables/controllers/wdt_ajax_actions.php:860
+#: wpdatatables/controllers/wdt_ajax_actions.php:852
+#: wpdatatables/controllers/wdt_ajax_actions.php:866
 msgid "Nothing to delete."
 msgstr "Нечего удалять."
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:850
-#: wpdatatables/controllers/wdt_ajax_actions.php:864
+#: wpdatatables/controllers/wdt_ajax_actions.php:856
+#: wpdatatables/controllers/wdt_ajax_actions.php:870
 msgid "Bad request format."
 msgstr "Запрос в неверном формате."
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:874
+#: wpdatatables/controllers/wdt_ajax_actions.php:880
 msgid "You don't have permission to change this table."
 msgstr "У вас недостаточно прав для редактирования этой таблицы."
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:882
+#: wpdatatables/controllers/wdt_ajax_actions.php:888
 msgid "Supplied id column not exist."
 msgstr "Заданная ID-колонка не существует."
 
-#: wpdatatables/controllers/wdt_ajax_actions.php:907
-#: wpdatatables/controllers/wdt_ajax_actions.php:923
+#: wpdatatables/controllers/wdt_ajax_actions.php:913
+#: wpdatatables/controllers/wdt_ajax_actions.php:929
 msgid "There was an error trying to delete row! Error: "
 msgstr "Ошибка при попытке удаления ряда! Текст ошибки: "
 
-#: wpdatatables/controllers/wdt_functions.php:599
+#: wpdatatables/controllers/wdt_functions.php:605
 #, fuzzy
 msgid "wpDataChart with provided ID not found!"
 msgstr "Таблица wpDataTable с заданным ID не найдена!"
 
-#: wpdatatables/controllers/wdt_functions.php:635
-#: wpdatatables/controllers/wdt_functions.php:724
+#: wpdatatables/controllers/wdt_functions.php:648
+#: wpdatatables/controllers/wdt_functions.php:737
 msgid "wpDataTable with provided ID not found!"
 msgstr "Таблица wpDataTable с заданным ID не найдена!"
 
-#: wpdatatables/controllers/wdt_functions.php:734
+#: wpdatatables/controllers/wdt_functions.php:747
 msgid "Provided column is not Integer or Float column type"
 msgstr ""
 "Предоставленный столбец не является типом столбца типа Integer или Float"
 
-#: wpdatatables/controllers/wdt_functions.php:1073
-#: wpdatatables/controllers/wdt_functions.php:1090
+#: wpdatatables/controllers/wdt_functions.php:1086
+#: wpdatatables/controllers/wdt_functions.php:1103
 #, php-format
 msgid ""
 "To receive automatic updates license activation is required. Please visit %s "
@@ -1506,95 +1508,181 @@ msgstr ""
 "Для получения автоматических обновлений требуется активация лицензии. "
 "Пожалуйста, посетите %s, чтобы активировать wpDataTables."
 
-#: wpdatatables/controllers/wdt_functions.php:1125
+#: wpdatatables/controllers/wdt_functions.php:1138
 msgid "Go to Settings"
 msgstr ""
 
-#: wpdatatables/controllers/wdt_functions.php:1131
+#: wpdatatables/controllers/wdt_functions.php:1144
 msgid "Docs"
 msgstr ""
 
-#: wpdatatables/controllers/wdt_functions.php:1156
+#: wpdatatables/controllers/wdt_functions.php:1169
 #, php-format
 msgid "By %s"
 msgstr ""
 
-#: wpdatatables/controllers/wdt_functions.php:1163
+#: wpdatatables/controllers/wdt_functions.php:1176
 msgid "View details"
 msgstr ""
 
-#: wpdatatables/controllers/wdt_functions.php:1193
-msgid "Choose a table"
-msgstr "Выберите таблицу"
-
-#: wpdatatables/controllers/wdt_functions.php:1225
-msgid "Interactive Responsive Table"
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:45
+msgid "Choose a wpDataTable:"
 msgstr ""
 
-#: wpdatatables/controllers/wdt_functions.php:1232
-msgid "wpDataTable"
-msgstr "wpDataTable таблица"
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:46
+msgid "Select the wpDataTable ID to display on the page."
+msgstr ""
 
-#: wpdatatables/controllers/wdt_functions.php:1236
-msgid "Choose the wpDataTable from a dropdown"
-msgstr "Выберите таблицу wpDataTable из выпадающего списка"
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:52
+msgid "Table view:"
+msgstr ""
 
-#: wpdatatables/controllers/wdt_functions.php:1241
-msgid "Table view"
-msgstr "Отображение таблицы"
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:53
+msgid "Choose table view."
+msgstr ""
 
-#: wpdatatables/controllers/wdt_functions.php:1245
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:48
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:62
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:78
+msgid "Set placeholder %VAR1%:"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:63
+msgid "If you use the %VAR1% placeholder, you can assign a value here."
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:70
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:88
+msgid "Set placeholder %VAR2%:"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:71
+msgid "If you use the %VAR2% placeholder, you can assign a value here."
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:78
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:98
+msgid "Set placeholder %VAR3%:"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:79
+msgid "If you use the %VAR3% placeholder, you can assign a value here."
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:86
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:65
+msgid "Export file name"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:87
+msgid "Set the name for the export file."
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:115
+msgid "Choose a wpDataChart:"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:116
+msgid "Select the wpDataChart ID to display on the page."
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:131
+msgid "Please select wpDataTable ID."
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:135
+msgid "Please select wpDataChart ID."
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:143
+msgid "Table: "
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/avada/class.wdtavadaelements.php:156
+msgid "Chart: "
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/divi-wpdt/includes/modules/WpDataChart/WpDataChart.php:59
+msgid "Choose a wpDataChart"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/divi-wpdt/includes/modules/WpDataTable/WpDataTable.php:57
+msgid "Choose a wpDataTable"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/divi-wpdt/includes/modules/WpDataTable/WpDataTable.php:63
+msgid "Choose table view"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/divi-wpdt/includes/modules/WpDataTable/WpDataTable.php:65
+msgid "regular"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/divi-wpdt/includes/modules/WpDataTable/WpDataTable.php:69
+msgid "Insert the %VAR1% placeholder"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/divi-wpdt/includes/modules/WpDataTable/WpDataTable.php:74
+msgid "Insert the %VAR2% placeholder"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/divi-wpdt/includes/modules/WpDataTable/WpDataTable.php:79
+msgid "Insert the %VAR3% placeholder"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/divi-wpdt/includes/modules/WpDataTable/WpDataTable.php:84
+msgid "Set the name for the export file"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataChartsElementorWidget.php:48
+msgid "wpDataChart content"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataChartsElementorWidget.php:55
+msgid "Select wpDataChart:"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:48
+msgid "wpDataTable content"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:55
+msgid "Select wpDataTable:"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:65
+msgid "Choose table view:"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:68
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:35
 msgid "Regular wpDataTable"
 msgstr "Стандартная wpDataTable таблица"
 
-#: wpdatatables/controllers/wdt_functions.php:1246
-msgid "Excel-like table"
-msgstr "Таблица типа Excel"
-
-#: wpdatatables/controllers/wdt_functions.php:1251
-msgid "Variable placeholder #1"
-msgstr "Переменная №1"
-
-#: wpdatatables/controllers/wdt_functions.php:1254
-#: wpdatatables/controllers/wdt_functions.php:1262
-#: wpdatatables/controllers/wdt_functions.php:1270
-msgid "Variables"
-msgstr "Переменные"
-
-#: wpdatatables/controllers/wdt_functions.php:1255
-msgid "If you used the VAR1 placeholder you can assign a value to it here"
-msgstr "Если вы использовали переменную VAR1, вы можете здесь задать значение"
-
-#: wpdatatables/controllers/wdt_functions.php:1259
-msgid "Variable placeholder #2"
-msgstr "Переменная №2"
-
-#: wpdatatables/controllers/wdt_functions.php:1263
-msgid "If you used the VAR2 placeholder you can assign a value to it here"
-msgstr "Если вы использовали переменную VAR2, вы можете здесь задать значение"
-
-#: wpdatatables/controllers/wdt_functions.php:1267
-msgid "Variable placeholder #3"
-msgstr "Переменная №3"
-
-#: wpdatatables/controllers/wdt_functions.php:1271
-msgid "If you used the VAR3 placeholder you can assign a value to it here"
-msgstr "Если вы использовали переменную VAR3, вы можете здесь задать значение"
-
-#: wpdatatables/controllers/wdt_functions.php:1284
-msgid "Google or Highcharts chart based on a wpDataTable"
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:69
+msgid "Excel-like wpDataTable"
 msgstr ""
 
-#: wpdatatables/controllers/wdt_functions.php:1291
-msgid "wpDataChart"
-msgstr "Диаграмма wpDataChart"
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:81
+msgid "Insert %VAR1% placeholder"
+msgstr ""
 
-#: wpdatatables/controllers/wdt_functions.php:1295
-msgid "Choose one of wpDataCharts from the list"
-msgstr "Выберите одну из диаграмм wpDataCharts из списка"
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:91
+msgid "Insert %VAR2% placeholder"
+msgstr ""
 
-#: wpdatatables/source/WpDataChartsGutenbergBlock.php:28
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:101
+msgid "Insert %VAR3% placeholder"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:108
+msgid "Set name for export file:"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/elementor/widgets/class.wpDataTablesElementorWidget.php:111
+msgid "Insert name for export file"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/gutenberg/WpDataChartsGutenbergBlock.php:28
 msgid ""
 "Choose the chart that you’ve just created in the dropdown below, and the "
 "shortcode will be inserted automatically."
@@ -1602,7 +1690,7 @@ msgstr ""
 "Выберите диаграмму, которую вы только что создали, в раскрывающемся списке "
 "ниже, и шорткод будет вставлен автоматически."
 
-#: wpdatatables/source/WpDataTablesGutenbergBlock.php:29
+#: wpdatatables/integrations/page_builders/gutenberg/WpDataTablesGutenbergBlock.php:29
 msgid ""
 "Choose the table that you’ve just created in the dropdown below, and the "
 "shortcode will be inserted automatically. You are able to provide values for "
@@ -1611,6 +1699,78 @@ msgstr ""
 "Выберите таблицу, которую вы только что создали, в раскрывающемся списке "
 "ниже, и шорткод будет вставлен автоматически. Вы можете предоставить "
 "значения для заполнителей, а также для имени файла экспорта."
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:15
+msgid "Interactive Responsive Table"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:22
+msgid "wpDataTable"
+msgstr "wpDataTable таблица"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:26
+msgid "Choose the wpDataTable from a dropdown"
+msgstr "Выберите таблицу wpDataTable из выпадающего списка"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:31
+msgid "Table view"
+msgstr "Отображение таблицы"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:36
+msgid "Excel-like table"
+msgstr "Таблица типа Excel"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:41
+msgid "Variable placeholder #1"
+msgstr "Переменная №1"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:44
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:52
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:60
+msgid "Variables"
+msgstr "Переменные"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:45
+msgid "If you used the VAR1 placeholder you can assign a value to it here"
+msgstr "Если вы использовали переменную VAR1, вы можете здесь задать значение"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:49
+msgid "Variable placeholder #2"
+msgstr "Переменная №2"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:53
+msgid "If you used the VAR2 placeholder you can assign a value to it here"
+msgstr "Если вы использовали переменную VAR2, вы можете здесь задать значение"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:57
+msgid "Variable placeholder #3"
+msgstr "Переменная №3"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:61
+msgid "If you used the VAR3 placeholder you can assign a value to it here"
+msgstr "Если вы использовали переменную VAR3, вы можете здесь задать значение"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:68
+msgid "Export file"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:69
+msgid ""
+"If you use export buttons like CSV or Excel, you can set custom export file "
+"name here"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:82
+msgid "Google, Chart.js, Highcharts or Apexcharts chart based on a wpDataTable"
+msgstr ""
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:89
+msgid "wpDataChart"
+msgstr "Диаграмма wpDataChart"
+
+#: wpdatatables/integrations/page_builders/wpbakery/wdtBakeryBlock.php:93
+msgid "Choose one of wpDataCharts from the list"
+msgstr "Выберите одну из диаграмм wpDataCharts из списка"
 
 #: wpdatatables/source/class.constructor.php:425
 #: wpdatatables/source/class.constructor.php:432
@@ -1664,8 +1824,8 @@ msgstr ""
 
 #: wpdatatables/source/class.wdtbrowsechartstable.php:28
 #: wpdatatables/source/class.wdtbrowsetable.php:33
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:18
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:995
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:17
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1482
 msgid "Title"
 msgstr "Название"
 
@@ -1713,6 +1873,7 @@ msgstr "Линеечная диаграмма"
 
 #: wpdatatables/source/class.wdtbrowsechartstable.php:227
 #: wpdatatables/source/class.wdtbrowsechartstable.php:281
+#: wpdatatables/source/class.wdtbrowsechartstable.php:356
 #, fuzzy
 msgid "Stacked Bar Chart"
 msgstr "Линеечная диаграмма с накоплением"
@@ -1730,12 +1891,14 @@ msgstr "Диаграмма с областями и накоплением"
 #: wpdatatables/source/class.wdtbrowsechartstable.php:236
 #: wpdatatables/source/class.wdtbrowsechartstable.php:260
 #: wpdatatables/source/class.wdtbrowsechartstable.php:317
+#: wpdatatables/source/class.wdtbrowsechartstable.php:344
 msgid "Line Chart"
 msgstr "Линейная диаграмма"
 
 #: wpdatatables/source/class.wdtbrowsechartstable.php:239
 #: wpdatatables/source/class.wdtbrowsechartstable.php:290
 #: wpdatatables/source/class.wdtbrowsechartstable.php:335
+#: wpdatatables/source/class.wdtbrowsechartstable.php:380
 #, fuzzy
 msgid "Pie Chart"
 msgstr "Круговая диаграмма"
@@ -1747,6 +1910,7 @@ msgstr "Пузырьковая диаграмма"
 
 #: wpdatatables/source/class.wdtbrowsechartstable.php:245
 #: wpdatatables/source/class.wdtbrowsechartstable.php:296
+#: wpdatatables/source/class.wdtbrowsechartstable.php:386
 msgid "Donut Chart"
 msgstr "Кольцевая диаграмма"
 
@@ -1778,11 +1942,13 @@ msgid "Spiderweb chart"
 msgstr "Диаграмма - паук"
 
 #: wpdatatables/source/class.wdtbrowsechartstable.php:269
+#: wpdatatables/source/class.wdtbrowsechartstable.php:347
 #, fuzzy
 msgid "Spline Chart"
 msgstr "Линейная диаграмма"
 
 #: wpdatatables/source/class.wdtbrowsechartstable.php:272
+#: wpdatatables/source/class.wdtbrowsechartstable.php:374
 msgid "Basic Area Chart"
 msgstr "Обычная диаграмма с областями"
 
@@ -1793,14 +1959,17 @@ msgid "Stacked Area Chart"
 msgstr "Диаграмма с областями и накоплением"
 
 #: wpdatatables/source/class.wdtbrowsechartstable.php:278
+#: wpdatatables/source/class.wdtbrowsechartstable.php:359
 msgid "Basic Bar Chart"
 msgstr "Обычная линеечная диаграмма"
 
 #: wpdatatables/source/class.wdtbrowsechartstable.php:284
+#: wpdatatables/source/class.wdtbrowsechartstable.php:353
 msgid "Basic Column Chart"
 msgstr "Обычная колоночная диаграмма"
 
 #: wpdatatables/source/class.wdtbrowsechartstable.php:287
+#: wpdatatables/source/class.wdtbrowsechartstable.php:365
 #, fuzzy
 msgid "Stacked Column Chart"
 msgstr "Колоночная диаграмма с накоплением"
@@ -1836,6 +2005,7 @@ msgid "Treemap level Chart"
 msgstr "Диаграмма уровня древовидной карты"
 
 #: wpdatatables/source/class.wdtbrowsechartstable.php:329
+#: wpdatatables/source/class.wdtbrowsechartstable.php:392
 msgid "Radar Chart"
 msgstr " Диаграмма-радар"
 
@@ -1847,24 +2017,65 @@ msgstr "Диаграмма с полярными областями"
 msgid "Doughnut Chart"
 msgstr "Кольцевая диаграмма"
 
-#: wpdatatables/source/class.wdtbrowsechartstable.php:353
+#: wpdatatables/source/class.wdtbrowsechartstable.php:350
+msgid "Step Line Chart"
+msgstr ""
+
+#: wpdatatables/source/class.wdtbrowsechartstable.php:362
+msgid "100% Stacked Bar Chart"
+msgstr ""
+
+#: wpdatatables/source/class.wdtbrowsechartstable.php:368
+msgid "100% Stacked Column Chart"
+msgstr ""
+
+#: wpdatatables/source/class.wdtbrowsechartstable.php:371
+msgid "Spline Area Chart"
+msgstr ""
+
+#: wpdatatables/source/class.wdtbrowsechartstable.php:377
+msgid "Stepline Chart"
+msgstr ""
+
+#: wpdatatables/source/class.wdtbrowsechartstable.php:383
+msgid "Pie Chart With Gradient"
+msgstr ""
+
+#: wpdatatables/source/class.wdtbrowsechartstable.php:389
+msgid "Donut Chart With Gradient"
+msgstr ""
+
+#: wpdatatables/source/class.wdtbrowsechartstable.php:395
+msgid "Radialbar Chart"
+msgstr ""
+
+#: wpdatatables/source/class.wdtbrowsechartstable.php:398
+msgid "Radialbar Chart With Gauge"
+msgstr ""
+
+#: wpdatatables/source/class.wdtbrowsechartstable.php:410
 msgid "Google"
 msgstr "Гугл"
 
-#: wpdatatables/source/class.wdtbrowsechartstable.php:356
+#: wpdatatables/source/class.wdtbrowsechartstable.php:413
 msgid "Highcharts"
 msgstr "Круговая диаграмма Highcharts"
 
-#: wpdatatables/source/class.wdtbrowsechartstable.php:359
+#: wpdatatables/source/class.wdtbrowsechartstable.php:416
 msgid "Chart.js"
 msgstr " Диаграмма.js"
 
-#: wpdatatables/source/class.wdtbrowsechartstable.php:476
+#: wpdatatables/source/class.wdtbrowsechartstable.php:419
+msgid "Apexcharts"
+msgstr ""
+
+#: wpdatatables/source/class.wdtbrowsechartstable.php:536
 msgid "No wpDataCharts in the system yet."
 msgstr "Диаграмм пока не создано"
 
 #: wpdatatables/source/class.wdtbrowsetable.php:34
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:171
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:172
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:193
 #: wpdatatables/templates/admin/constructor/constructor_column_block.inc.php:31
 #: wpdatatables/templates/admin/constructor/constructor_file_preview.inc.php:34
 #: wpdatatables/templates/admin/table-settings/add_column_modal.inc.php:47
@@ -1895,15 +2106,15 @@ msgid "Manual"
 msgstr "Ручной ввод"
 
 #: wpdatatables/source/class.wdtbrowsetable.php:274
-#: wpdatatables/source/class.wpdatatable.php:3764
-#: wpdatatables/source/class.wpdatatable.php:3848
+#: wpdatatables/source/class.wpdatatable.php:3778
+#: wpdatatables/source/class.wpdatatable.php:3862
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:1126
 msgid "Excel"
 msgstr "Excel"
 
 #: wpdatatables/source/class.wdtbrowsetable.php:277
-#: wpdatatables/source/class.wpdatatable.php:3776
-#: wpdatatables/source/class.wpdatatable.php:3861
+#: wpdatatables/source/class.wpdatatable.php:3790
+#: wpdatatables/source/class.wpdatatable.php:3875
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:1127
 msgid "CSV"
 msgstr "CSV"
@@ -1941,14 +2152,18 @@ msgstr "Таблиц wpDataTables пока не создано"
 msgid "There was an error trying to fetch the table data: "
 msgstr "Произошла ошибка при попытке получить данные таблицы:"
 
-#: wpdatatables/source/class.wdtconfigcontroller.php:601
+#: wpdatatables/source/class.wdtconfigcontroller.php:603
 msgid "Table in data source has no rows."
 msgstr "Таблица в источнике не содержит строк"
 
-#: wpdatatables/source/class.wdtconfigcontroller.php:657
+#: wpdatatables/source/class.wdtconfigcontroller.php:659
 msgid ""
 "One or more columns doesn't have a header. Please enter headers for all "
 "columns in order to proceed."
+msgstr ""
+
+#: wpdatatables/source/class.wdtconfigcontroller.php:1283
+msgid "Select a "
 msgstr ""
 
 #: wpdatatables/source/class.wdttools.php:18
@@ -1986,20 +2201,20 @@ msgstr "Дробное число"
 #: wpdatatables/source/class.wdttools.php:24
 #: wpdatatables/templates/admin/constructor/constructor_column_block.inc.php:43
 #: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:357
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1051
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1083
 msgid "Date"
 msgstr "Дата"
 
 #: wpdatatables/source/class.wdttools.php:25
 #: wpdatatables/templates/admin/constructor/constructor_column_block.inc.php:44
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1052
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1084
 msgid "Datetime"
 msgstr "Дата + Время"
 
 #: wpdatatables/source/class.wdttools.php:26
 #: wpdatatables/templates/admin/constructor/constructor_column_block.inc.php:45
 #: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:359
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1053
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1085
 msgid "Time"
 msgstr "Время"
 
@@ -2021,7 +2236,7 @@ msgstr "Картинка"
 
 #: wpdatatables/source/class.wdttools.php:30
 #: wpdatatables/templates/admin/constructor/constructor_column_block.inc.php:49
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1056
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1088
 msgid "Attachment"
 msgstr "Вложение"
 
@@ -2089,8 +2304,8 @@ msgid "Please select columns that you want to use in table"
 msgstr "Пожалуйста выберите столбец который вы хотите использовать в таблице"
 
 #: wpdatatables/source/class.wdttools.php:447
-#: wpdatatables/source/class.wpdatatable.php:3788
-#: wpdatatables/source/class.wpdatatable.php:3874
+#: wpdatatables/source/class.wpdatatable.php:3802
+#: wpdatatables/source/class.wpdatatable.php:3888
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:1128
 msgid "Copy"
 msgstr "Копировать"
@@ -3256,25 +3471,25 @@ msgid ""
 "page. <br><br>You may now finish this tutorial. "
 msgstr ""
 
-#: wpdatatables/source/class.wdttools.php:1909
-#: wpdatatables/source/class.wdttools.php:1933
+#: wpdatatables/source/class.wdttools.php:1922
+#: wpdatatables/source/class.wdttools.php:1946
 msgid "User do not have permissions to delete this row! "
 msgstr ""
 
-#: wpdatatables/source/class.wdttools.php:1911
-#: wpdatatables/source/class.wdttools.php:1935
+#: wpdatatables/source/class.wdttools.php:1924
+#: wpdatatables/source/class.wdttools.php:1948
 msgid "User do not have permission to update data!"
 msgstr ""
 
-#: wpdatatables/source/class.wpdatachart.php:1490
+#: wpdatatables/source/class.wpdatachart.php:2040
 msgid "Only one column can be of type String"
 msgstr "Только один столбец может иметь тип String"
 
-#: wpdatatables/source/class.wpdatachart.php:1493
+#: wpdatatables/source/class.wpdatachart.php:2043
 msgid "You are mixing data types (several date axes and several number)"
 msgstr "Вы смешиваете типы данных (несколько осей даты и несколько чисел)"
 
-#: wpdatatables/source/class.wpdatatable.php:2546
+#: wpdatatables/source/class.wpdatatable.php:2548
 msgid ""
 "No data fetched!  <br/> If you are trying to save table for the first time, "
 "please enter some date before saving so table could be set accurately. <br/> "
@@ -3284,28 +3499,28 @@ msgstr ""
 "введите данные перед сохранением, чтобы таблица могла быть создана. <br/> Вы "
 "можете удалить их позже, если для начала вам нужна пустая таблица."
 
-#: wpdatatables/source/class.wpdatatable.php:2548
+#: wpdatatables/source/class.wpdatatable.php:2550
 msgid "Rendered query: "
 msgstr "Предоставленный запрос:"
 
-#: wpdatatables/source/class.wpdatatable.php:2550
+#: wpdatatables/source/class.wpdatatable.php:2552
 msgid " MySQL said: "
 msgstr "MySQL сказал:"
 
-#: wpdatatables/source/class.wpdatatable.php:3075
+#: wpdatatables/source/class.wpdatatable.php:3083
 msgid "Unable to calculate"
 msgstr "Невозможно вычислить"
 
-#: wpdatatables/source/class.wpdatatable.php:3082
+#: wpdatatables/source/class.wpdatatable.php:3090
 msgid "Result for first 5 rows: "
 msgstr "Результат для первых 5 строк:"
 
-#: wpdatatables/source/class.wpdatatable.php:3084
+#: wpdatatables/source/class.wpdatatable.php:3092
 msgid "Unable to calculate, error message: "
 msgstr "Невозможно вычислить, сообщение об ошибке:"
 
-#: wpdatatables/source/class.wpdatatable.php:3647
-#: wpdatatables/source/class.wpdatatable.php:3650
+#: wpdatatables/source/class.wpdatatable.php:3661
+#: wpdatatables/source/class.wpdatatable.php:3664
 #: wpdatatables/templates/admin/chart_wizard/steps/step3.inc.php:86
 #: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:578
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:355
@@ -3313,43 +3528,43 @@ msgstr "Невозможно вычислить, сообщение об оши�
 msgid "All"
 msgstr "Все"
 
-#: wpdatatables/source/class.wpdatatable.php:3710
+#: wpdatatables/source/class.wpdatatable.php:3724
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:774
 #: wpdatatables/templates/frontend/filter_form.inc.php:30
 msgid "Clear filters"
 msgstr "Очистить фильтры"
 
-#: wpdatatables/source/class.wpdatatable.php:3737
-#: wpdatatables/source/class.wpdatatable.php:3820
+#: wpdatatables/source/class.wpdatatable.php:3751
+#: wpdatatables/source/class.wpdatatable.php:3834
 #: wpdatatables/templates/admin/table-settings/columns_list_modal.inc.php:12
 msgid "Columns"
 msgstr "Колонки"
 
-#: wpdatatables/source/class.wpdatatable.php:3750
-#: wpdatatables/source/class.wpdatatable.php:3833
+#: wpdatatables/source/class.wpdatatable.php:3764
+#: wpdatatables/source/class.wpdatatable.php:3847
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:1125
 msgid "Print"
 msgstr "Печать"
 
-#: wpdatatables/source/class.wpdatatable.php:3800
-#: wpdatatables/source/class.wpdatatable.php:3886
+#: wpdatatables/source/class.wpdatatable.php:3814
+#: wpdatatables/source/class.wpdatatable.php:3900
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:1129
 msgid "PDF"
 msgstr "PDF"
 
-#: wpdatatables/source/class.wpdatatable.php:3808
+#: wpdatatables/source/class.wpdatatable.php:3822
 msgid "Export"
 msgstr "Экспорт"
 
-#: wpdatatables/source/class.wpdatatable.php:3901
+#: wpdatatables/source/class.wpdatatable.php:3915
 msgid "New entry"
 msgstr "Новое значение"
 
-#: wpdatatables/source/class.wpdatatable.php:3905
+#: wpdatatables/source/class.wpdatatable.php:3919
 msgid "Edit"
 msgstr "Редактировать"
 
-#: wpdatatables/source/class.wpdatatable.php:3939
+#: wpdatatables/source/class.wpdatatable.php:3953
 msgid "Search table"
 msgstr "Найти таблицу"
 
@@ -3366,12 +3581,12 @@ msgid ""
 msgstr ""
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:36
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:462
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:453
 msgid "Free"
 msgstr ""
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:40
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:469
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:460
 msgid "Forminator Forms integration for wpDataTables"
 msgstr ""
 
@@ -3383,12 +3598,12 @@ msgid ""
 msgstr ""
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:55
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:482
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:522
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:563
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:603
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:644
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:684
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:473
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:513
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:554
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:594
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:635
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:675
 msgid "Learn more"
 msgstr ""
 
@@ -3398,12 +3613,12 @@ msgstr ""
 #: wpdatatables/templates/admin/addons/addons.inc.php:167
 #: wpdatatables/templates/admin/addons/addons.inc.php:203
 #: wpdatatables/templates/admin/addons/addons.inc.php:236
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:489
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:530
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:571
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:611
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:652
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:692
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:480
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:521
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:562
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:602
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:643
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:683
 #: wpdatatables/templates/admin/system-info/system_info.inc.php:281
 #: wpdatatables/templates/admin/system-info/system_info.inc.php:302
 #: wpdatatables/templates/admin/system-info/system_info.inc.php:320
@@ -3418,12 +3633,12 @@ msgid "NEW"
 msgstr ""
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:79
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:506
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:497
 msgid "Master Detail Tables for wpDataTables"
 msgstr "Основные таблицы сведений для wpDataTables"
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:82
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:510
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:501
 msgid ""
 "A wpDataTables addon which allows showing additional details for a specific "
 "row in a popup or a separate page or post."
@@ -3442,16 +3657,16 @@ msgstr ""
 #: wpdatatables/templates/admin/addons/addons.inc.php:161
 #: wpdatatables/templates/admin/addons/addons.inc.php:197
 #: wpdatatables/templates/admin/addons/addons.inc.php:230
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:518
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:559
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:599
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:640
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:680
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:509
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:550
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:590
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:631
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:671
 msgid "Purchase"
 msgstr ""
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:115
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:547
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:538
 msgid "Powerful Filters for wpDataTables"
 msgstr "Мощные фильтры для wpDataTables"
 
@@ -3467,7 +3682,7 @@ msgstr ""
 "поиска."
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:151
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:591
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:582
 msgid ""
 "A unique tool that allows you to generate almost any Word DOCX and Excel "
 "XLSX documents filled in with actual data from your database."
@@ -3476,12 +3691,12 @@ msgstr ""
 "и Excel XLSX документ, заполняя их актуальными данными из БД"
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:183
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:628
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:619
 msgid "Formidable Forms integration for wpDataTables"
 msgstr "Интеграция Formidable Forms с wpDataTables"
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:186
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:632
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:623
 msgid ""
 "Tool that adds \"Formidable Form\" as a new table type and allows you to "
 "create wpDataTables from Formidable Forms entries data."
@@ -3491,12 +3706,12 @@ msgstr ""
 "Forms."
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:216
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:668
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:659
 msgid "Gravity Forms integration for wpDataTables"
 msgstr "Интеграция Gravity Forms for wpDataTables"
 
 #: wpdatatables/templates/admin/addons/addons.inc.php:219
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:672
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:663
 msgid ""
 "Tool that adds \"Gravity Form\" as a new table type and allows you to create "
 "wpDataTables from Gravity Forms entries data."
@@ -3564,51 +3779,55 @@ msgstr ""
 msgid "Duplicate database table"
 msgstr "Клонировать таблицу"
 
-#: wpdatatables/templates/admin/browse/table_list.inc.php:47
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:114
+#: wpdatatables/templates/admin/browse/table_list.inc.php:50
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:115
 #: wpdatatables/templates/admin/settings/settings.inc.php:108
 msgid " View Documentation"
 msgstr ""
 
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:56
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:57
 msgid "Chart title & type"
 msgstr "Название и тип диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:60
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:61
 msgid "Data range"
 msgstr "Диапазон данных"
 
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:62
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:63
 msgid "Formatting and preview"
 msgstr "Форматирование и просмотр"
 
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:64
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:65
 msgid "Save and get shortcode"
 msgstr "Сохранить и добавить шорткод"
 
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:105
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:106
 msgid "Browse charts"
 msgstr ""
 
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:138
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:139
 msgid "Serie"
 msgstr "Серия"
 
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:142
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:143
 msgid "Label"
 msgstr "Ярлык"
 
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:156
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:157
 #: wpdatatables/templates/admin/settings/tabs/color_and_font_settings.php:681
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:2000
 msgid "Color"
 msgstr "Цвет"
 
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:192
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:212
+msgid "Chart line/area image"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:227
 msgid "Vertical axis"
 msgstr "Вертикальное ось"
 
-#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:196
+#: wpdatatables/templates/admin/chart_wizard/chart_wizard.inc.php:231
 msgid "Show vertical axis"
 msgstr "Показать вертикальную ось"
 
@@ -3621,11 +3840,100 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:13
 #: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/chartjs.inc.php:12
 #: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/google_charts.inc.php:12
 #: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:13
 msgid "Line chart"
 msgstr "Линейная диаграмма"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:26
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:26
+#, fuzzy
+msgid "Spline chart"
+msgstr "Линейная диаграмма"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:39
+msgid "Stepline chart"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:52
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:95
+msgid "Basic column chart"
+msgstr "Обычная колоночная диаграмма"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:65
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:108
+msgid "Stacked column chart"
+msgstr "Колоночная диаграмма с накоплением"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:78
+#, php-format
+msgid "100% stacked column chart"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:90
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:65
+msgid "Basic bar chart"
+msgstr "Обычная линеечная диаграмма"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:103
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/google_charts.inc.php:89
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:78
+msgid "Stacked bar chart"
+msgstr "Линеечная диаграмма с накоплением"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:116
+#, php-format
+msgid "100% stacked bar chart"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:129
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:39
+msgid "Basic area chart"
+msgstr "Обычная диаграмма с областями"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:142
+msgid "Spline area chart"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:155
+msgid "Stepline area chart"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:168
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/chartjs.inc.php:91
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/google_charts.inc.php:101
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:121
+msgid "Pie chart"
+msgstr "Круговая диаграмма"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:181
+msgid "Pie chart with gradient"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:194
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/google_charts.inc.php:125
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:147
+msgid "Donut chart"
+msgstr "Кольцевая диаграмма"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:207
+msgid "Donut chart with gradient"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:220
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/chartjs.inc.php:62
+msgid "Radar chart"
+msgstr "Радарная диаграмма"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:232
+msgid "Radial bar chart"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/apexcharts.inc.php:245
+msgid "Radial bar chart with gauge"
+msgstr ""
 
 #: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/chartjs.inc.php:24
 #: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/google_charts.inc.php:24
@@ -3642,19 +3950,9 @@ msgstr "Диаграмма с областями и накоплением"
 msgid "Column chart"
 msgstr "Колоночная диаграмма"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/chartjs.inc.php:62
-msgid "Radar chart"
-msgstr "Радарная диаграмма"
-
 #: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/chartjs.inc.php:75
 msgid "Polar area chart"
 msgstr "Полярная диаграмма с областями"
-
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/chartjs.inc.php:91
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/google_charts.inc.php:101
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:121
-msgid "Pie chart"
-msgstr "Круговая диаграмма"
 
 #: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/chartjs.inc.php:104
 msgid "Doughnut chart"
@@ -3673,16 +3971,6 @@ msgstr "Диаграмма с областями и накоплением"
 msgid "Bar chart"
 msgstr "Линеечная диаграмма"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/google_charts.inc.php:89
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:78
-msgid "Stacked bar chart"
-msgstr "Линеечная диаграмма с накоплением"
-
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/google_charts.inc.php:125
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:147
-msgid "Donut chart"
-msgstr "Кольцевая диаграмма"
-
 #: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/google_charts.inc.php:137
 msgid "Gauge chart"
 msgstr "Калибровочная диаграмма"
@@ -3698,27 +3986,6 @@ msgstr "Диаграмма - свечки"
 #: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/google_charts.inc.php:180
 msgid "Waterfall chart"
 msgstr "Диаграмма \"водопад\""
-
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:26
-#, fuzzy
-msgid "Spline chart"
-msgstr "Линейная диаграмма"
-
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:39
-msgid "Basic area chart"
-msgstr "Обычная диаграмма с областями"
-
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:65
-msgid "Basic bar chart"
-msgstr "Обычная линеечная диаграмма"
-
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:95
-msgid "Basic column chart"
-msgstr "Обычная колоночная диаграмма"
-
-#: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:108
-msgid "Stacked column chart"
-msgstr "Колоночная диаграмма с накоплением"
 
 #: wpdatatables/templates/admin/chart_wizard/steps/charts_pick/highcharts.inc.php:134
 msgid "Pie with gradient chart"
@@ -3893,76 +4160,81 @@ msgstr "Выбранные строки"
 msgid "Range picker..."
 msgstr "Выбор диапазона…"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:11
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:10
 msgid "Chart"
 msgstr " Диаграмма"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:14
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:13
 msgid "Series"
 msgstr "Серии"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:16
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:15
 msgid "Axes"
 msgstr " Оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:20
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:796
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:19
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1261
 msgid "Tooltip"
 msgstr "Подсказка"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:22
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:945
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:21
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1432
 msgid "Legend"
 msgstr "Легенда"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:24
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1160
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:23
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1648
 msgid "Exporting"
 msgstr "Экспорт"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:27
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1303
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:26
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1791
 msgid "Credits"
 msgstr "Ссылка на источник"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:36
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:28
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1842
+msgid "Toolbar"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:37
 msgid "Series settings"
 msgstr "Настройки серий"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:38
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:39
 msgid ""
 "If you want to redefine the series labels and colors you can do it here."
 msgstr ""
 "Если вы хотите переопределить настройки ярлыков и цветов для серий, вы "
 "можете сделать это здесь"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:48
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:49
 msgid "Curve type"
 msgstr "Тип кривой"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:50
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:446
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:51
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:773
 msgid "Controls the curve of the lines"
 msgstr "Контролирует тип кривой в отрисованных линиях"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:54
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:55
 msgid "Check for smoothed lines"
 msgstr "Включите для сглаживания кривых"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:62
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:63
 msgid "Chart width"
 msgstr "Ширина диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:64
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:65
 #, fuzzy
 msgid "The width of the chart."
 msgstr "Ширина диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:87
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:88
 msgid "Responsive width"
 msgstr "Адаптивная ширина"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:89
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:90
 msgid ""
 "If you tick this chart width will always adjust to 100% width of the "
 "container"
@@ -3970,23 +4242,23 @@ msgstr ""
 "Если данная опция включена, диаграмма всегда будет растягиваться на 100% "
 "ширины родительского элемента"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:93
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:94
 msgid "Responsive chart width"
 msgstr "Адаптивная ширина диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:98
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:99
 msgid "Chart height"
 msgstr "Высота диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:100
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:101
 msgid "The height of the chart."
 msgstr "Высота диаграммы."
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:123
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:124
 msgid "Group chart"
 msgstr "Группировать данные в диаграмме"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:125
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:126
 msgid ""
 "If you tick this checkbox, the values of the rows with same label will be "
 "summed up and rendered as a single series. If you leave it unticked all rows "
@@ -3996,13 +4268,40 @@ msgstr ""
 "суммироваться и отображаться как один ряд. Если вы оставите его без галочки, "
 "все строки будут отображаться как отдельные серии."
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:129
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:130
 msgid "Enable grouping"
 msgstr "Включить группировку"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:134
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:807
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:976
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:135
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:141
+msgid "Enable animation"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:137
+msgid ""
+"If you tick this checkbox, the chart will animate when loading. For charts "
+"with a lot of data, this could slow down the page"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:147
+msgid "Start angle"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:149
+msgid "Set the starting angle of the radial bar."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:168
+msgid "End angle"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:170
+msgid "Set the ending angle of the radial bar."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:190
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1272
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1463
 #: wpdatatables/templates/admin/settings/tabs/color_and_font_settings.php:105
 #: wpdatatables/templates/admin/settings/tabs/color_and_font_settings.php:426
 #: wpdatatables/templates/admin/settings/tabs/color_and_font_settings.php:661
@@ -4011,63 +4310,76 @@ msgstr "Включить группировку"
 msgid "Background color"
 msgstr "Цвет общего фона"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:136
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:192
 #, fuzzy
 msgid "The background color for the outer chart area."
 msgstr "Цвет фона внешней области диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:153
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:826
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1066
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:209
+msgid "Text color"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:211
+msgid "Choose the color of the text color for the chart."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:228
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1291
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1553
 msgid "Border width"
 msgstr "Ширина границы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:155
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:230
 #, fuzzy
 msgid "The pixel width of the outer chart border."
 msgstr "Ширина границы внешней области диаграммы в пикселях"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:178
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:851
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1091
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:253
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1316
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1578
 #: wpdatatables/templates/admin/settings/tabs/color_and_font_settings.php:124
 #: wpdatatables/templates/admin/settings/tabs/color_and_font_settings.php:445
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:1681
 msgid "Border color"
 msgstr "Цвет границы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:180
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:255
 #, fuzzy
 msgid "The color of the outer chart border."
 msgstr "Цвет внешней границы диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:198
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:870
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1110
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:273
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1335
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1597
 msgid "Border radius"
 msgstr "Радиус границы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:200
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:308
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:275
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:635
 #, fuzzy
 msgid "The corner radius of the outer chart border."
 msgstr "Угловой радиус внешней границы диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:223
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:298
 msgid "Zoom type"
 msgstr "Тип зуммирования (приближения)"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:225
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:300
 msgid "Decides in what dimensions the user can zoom by dragging the mouse"
 msgstr ""
 "Определяет, в каких измерениях пользователь может приближать диаграмму мышью"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:242
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:248
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:300
+msgid ". For Apexcharts you have to have zoom enabled in the toolbar."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:315
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:321
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1866
 msgid "Panning"
 msgstr "Панорамирование"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:244
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:317
 msgid ""
 "Allow panning in a chart. Best used with panKey to combine zooming and "
 "panning"
@@ -4075,76 +4387,252 @@ msgstr ""
 "Разрешить “панорамирование” в диаграмме. Установите также клавишу для "
 "панорамного обзора, чтобы комбинировать приближение и панорамный обзор"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:253
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:326
 msgid "Pan key"
 msgstr "Клавиша панорамного обзора"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:255
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:328
 msgid "Allows setting a key to switch between zooming and panning"
 msgstr ""
 "Устанавливает клавишу, которая будет переключать приближение и панорамный "
 "обзор"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:270
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:343
 msgid "Plot background color"
 msgstr "Цвет фона области прорисовки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:272
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:345
 #, fuzzy
 msgid "The background color or gradient for the plot area."
 msgstr "Цвет фона или градиент внутренней области прорисовки диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:289
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:362
 msgid "Plot background image"
 msgstr "Фоновая картинка для области прорисовки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:291
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:364
 #, fuzzy
 msgid "The URL for an image to use as the plot background."
 msgstr ""
 "URL-адрес картинки для использования в качестве фона области прорисовки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:306
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:383
+msgid "Chart area/line image"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:385
+msgid ""
+"The URL for an image to use as the background image of the chart area or "
+"line. If you have multiple series, this image is applied to all of them. If "
+"you want each series to have a different image property, leave this blank."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:405
+msgid "Monochrome"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:407
+msgid ""
+"A single color will be used as a base and shades for the chart will be "
+"generated from that color"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:411
+msgid "Enable monochrome color palette"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:416
+msgid "Monochrome color to use"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:418
+msgid "Choose the color to use for generating a monochromatic design."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:436
+msgid "Color palette"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:438
+msgid ""
+"When enabled, you can pick a predefined color palette for your chart. Leave "
+"this unchecked if you want to use the monochrome design."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:442
+msgid "Use a color palette"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:448
+msgid "Palette"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:450
+msgid "Choose between 10 predefined color palettes."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:455
+msgid "Palette 1"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:456
+msgid "Palette 2"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:457
+msgid "Palette 3"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:458
+msgid "Palette 4"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:459
+msgid "Palette 5"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:460
+msgid "Palette 6"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:461
+msgid "Palette 7"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:462
+msgid "Palette 8"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:463
+msgid "Palette 9"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:464
+msgid "Palette 10"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:471
+msgid "Marker size"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:473
+msgid ""
+"Sets the size of the marker point. For larger amounts of data points, it is "
+"recommended to set this to 0 to optimize performance."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:499
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1659
+msgid "Data labels"
+msgstr "Ярлыки данных"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:501
+msgid ""
+"If you leave this checked, data labels will be shown on the chart. For "
+"larger amounts of data, it is recommended to keep this option turned off for "
+"optimal perfermance."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:505
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1665
+msgid "Show data labels"
+msgstr "Отображать ярлыки данных"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:511
+msgid "Drop shadow"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:513
+msgid "Enable a dropshadow."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:517
+msgid "Enable dropshadow"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:524
+msgid "Dropshadow blur"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:526
+msgid ""
+"Set the blur distance for the shadow. You can set any value starting with 1."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:545
+msgid "Dropshadow opacity"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:547
+msgid "Set the opacity of the shadow ranging between 1 and 100."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:568
+msgid "Dropshadow color"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:570
+msgid "Choose the color of the dropshadow."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:590
+msgid "Top"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:592
+msgid "Set top offset for the dropshadow."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:611
+#: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:584
+msgid "Left"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:613
+msgid "Set left offset for the dropshadow."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:633
 msgid "Plot border width"
 msgstr "Ширина границы области прорисовки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:331
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:658
 msgid "Plot border color"
 msgstr "Цвет границы области прорисовки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:333
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:660
 #, fuzzy
 msgid "The color of the inner chart or plot area border."
 msgstr "Цвет внутренней границы области прорисовки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:350
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:677
 #: wpdatatables/templates/admin/settings/tabs/color_and_font_settings.php:45
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:1599
 msgid "Font size"
 msgstr "Размер шрифта"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:352
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:679
 msgid "The default font size, in pixels, of all text in the chart."
 msgstr "Размер шрифта по умолчанию, в пикселях, всего текста в диаграмме."
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:375
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:702
 msgid "Font name"
 msgstr "Имя шрифта"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:377
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:704
 #, fuzzy
 msgid "The default font face for all text in the chart."
 msgstr "Название шрифта для использования в ярлыках в диаграмме"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:392
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:719
 msgid "Font style"
 msgstr "Стиль шрифта"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:394
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:721
 msgid "The default font style for all text in the chart"
 msgstr "Стиль шрифта по умолчанию для всего текста в диаграмме"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:410
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:737
 #: wpdatatables/templates/admin/settings/tabs/color_and_font_settings.php:70
 #: wpdatatables/templates/admin/settings/tabs/color_and_font_settings.php:144
 #: wpdatatables/templates/admin/settings/tabs/color_and_font_settings.php:465
@@ -4153,49 +4641,83 @@ msgstr "Стиль шрифта по умолчанию для всего тек
 msgid "Font color"
 msgstr "Цвет шрифта"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:412
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:739
 #, fuzzy
 msgid "The default font color for all text in the chart."
 msgstr "Название шрифта для использования в ярлыках в диаграмме"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:429
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:435
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:756
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:762
 msgid "3D"
 msgstr "3D"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:431
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:758
 msgid "Check for 3D pie chart"
 msgstr "Включите для трехмерной круговой диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:444
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:771
 msgid "Grid"
 msgstr "Сетка"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:450
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:777
 msgid "Do you want to show grid on the chart?"
 msgstr ""
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:455
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:782
+msgid "Grid line color"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:784
+msgid "Color of grid borders / lines"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:801
+msgid "Grid stroke dash"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:803
+msgid ""
+"Creates dashes in the grid. Higher number creates more space between dashes "
+"in the border."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:826
+msgid "Grid position"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:828
+msgid "Whether to place grid behind chart paths of in front."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:843
+msgid "Axes lines to show"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:845
+msgid "Choose which axes lines to show"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:857
 msgid "Grid line style"
 msgstr "Стиль линий сетки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:457
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:859
 msgid "The dash or dot style of the grid lines"
 msgstr "Пунктирный или точечный стиль для линий сетки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:482
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:884
 msgid "Horizontal axis label"
 msgstr "Ярлык горизонтальной оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:484
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:886
 msgid "Name of the horizontal axis."
 msgstr "Имя горизонтальной оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:499
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:901
 msgid "Horizontal crosshair"
 msgstr "Крестик горизонтальной оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:501
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:903
 msgid ""
 "Configure a horizontal crosshair that follows either the mouse pointer or "
 "the hovered point lines"
@@ -4203,15 +4725,15 @@ msgstr ""
 "Настройте крестик (прицел) горизонтальной оси, который будет следовать за "
 "курсором, или за выделенными секторами диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:505
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:907
 msgid "Show x-Axis crosshair"
 msgstr "Отображать крестик для оси X"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:510
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:912
 msgid "Horizontal axis direction"
 msgstr "Направление горизонтальной оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:512
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:914
 msgid ""
 "The direction in which the values along the horizontal axis grow. Specify -1 "
 "to reverse the order of the values"
@@ -4219,19 +4741,19 @@ msgstr ""
 "Направление возрастания значений по горизонтальной оси. -1 инвертирует "
 "направление"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:528
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:930
 msgid "Vertical axis label"
 msgstr "Ярлык вертикальной оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:530
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:932
 msgid "Name of the vertical axis."
 msgstr "Имя вертикальной оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:545
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:947
 msgid "Vertical crosshair"
 msgstr "Крестик вертикальной оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:547
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:949
 msgid ""
 "Configure a vertical crosshair that follows either the mouse pointer or the "
 "hovered point lines"
@@ -4239,15 +4761,15 @@ msgstr ""
 "Настройте крестик (прицел) вертикальной оси, который будет следовать за "
 "курсором, или за выделенными секторами диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:551
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:953
 msgid "Show y-Axis crosshair"
 msgstr "Отображать крестик для оси Y"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:556
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:958
 msgid "Vertical axis direction"
 msgstr "Направление вертикальной оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:558
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:960
 msgid ""
 "The direction in which the values along the vertical axis grow. Specify -1 "
 "to reverse the order of the values"
@@ -4255,54 +4777,83 @@ msgstr ""
 "Направление, в котором данные вертикальной оси будут возрастать. -1 "
 "инвертирует направление"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:574
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:976
+msgid "Stroke width"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:978
+msgid ""
+"Sets the width of border for svg path. Smaller values correspond to smaller "
+"line thickness."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1003
 msgid "Vertical axis min value"
 msgstr "Минимальное значение вертикальной оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:576
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1005
 msgid "The minimum value of the axis."
 msgstr "Минимальное значение оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:601
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1030
 msgid "Vertical axis max value"
 msgstr "Максимальное значение вертикальной оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:603
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1032
 msgid "The maximum value of the axis."
 msgstr "Максимальное значение оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:626
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1055
+msgid "Tick amount"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1057
+msgid "Number of tick intervals to show on the y-axis."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1080
 msgid "Invert"
 msgstr "Инвертировать"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:628
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1082
 msgid ""
 "Whether to invert the axes so that the x axis is vertical and y axis is "
 "horizontal"
 msgstr ""
 "Транспонировать оси, т.е. поменять вертикальные и горизонтальные оси местами"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:632
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1086
 msgid "Invert chart axes"
 msgstr "Транспонировать оси"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:642
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1091
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1097
+msgid "Reverse y-axis"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1093
+msgid ""
+"Flip the chart upside down making it inversed and draw y-axis from bigger to "
+"smaller numbers."
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1107
 msgid "Chart title"
 msgstr "Название диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:644
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1109
 msgid "Do you want to show the chart title on the page?"
 msgstr ""
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:648
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1113
 msgid "Show title"
 msgstr "Отображать заголовок"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:653
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1118
 msgid "Title floating"
 msgstr "“Плавающее” название"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:655
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1120
 msgid ""
 "When the title is floating, the plot area will not move to make space for it"
 msgstr ""
@@ -4310,23 +4861,23 @@ msgstr ""
 "для отображения названия, название будет отрисовываться во внутренней "
 "области диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:659
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1124
 msgid "Enable floating"
 msgstr "Включить плавающее название"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:664
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1129
 msgid "Title align"
 msgstr "Выравнивание названия"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:666
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1131
 msgid "The horizontal alignment of the title"
 msgstr "Горизонтальное выравнивание названия"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:682
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1147
 msgid "Title position"
 msgstr "Расположение заголовка"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:684
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1149
 msgid ""
 "Position of the title. Possible values are 'top', 'left', 'bottom' and "
 "'right'"
@@ -4334,80 +4885,80 @@ msgstr ""
 "Положение заголовка. Возможные значения: « top», « left», « bottom» и « "
 "right»"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:701
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1166
 msgid "Title font name"
 msgstr "Шрифт заголовка"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:703
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1168
 msgid "The default font face for text in the title."
 msgstr "Шрифт по умолчанию для текста в заголовке."
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:718
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1183
 msgid "Title font style"
 msgstr "Стиль заголовка"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:720
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1185
 msgid "The default font style for text in the title"
 msgstr "Стиль шрифта по умолчанию для текста в заголовке"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:737
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1202
 msgid "Title font color"
 msgstr "Цвет шрифта заголовка"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:739
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1204
 #, fuzzy
 msgid "The default font color for text in the title."
 msgstr "Название шрифта для использования в ярлыках в диаграмме"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:756
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1221
 msgid "Subtitle"
 msgstr "Подзаголовок"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:758
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1223
 msgid "The chart's subtitle."
 msgstr "Подзаголовок диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:773
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1238
 msgid "Subtitle align"
 msgstr "Выравнивание подзаголовка"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:775
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1240
 msgid "The horizontal alignment of the subtitle"
 msgstr "Горизонтальное выравнивание подзаголовка"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:798
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1263
 msgid "Enable or disable the tooltip"
 msgstr "Включить или выключить всплывающую подсказку"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:802
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1267
 msgid "Show tooltip"
 msgstr "Отображать подсказку"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:809
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1274
 #, fuzzy
 msgid "The background color for the tooltip."
 msgstr "Цвет фона подсказки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:828
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1293
 #, fuzzy
 msgid "The pixel width of the tooltip border."
 msgstr "Толщина границы всплывающей подсказки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:853
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1318
 #, fuzzy
 msgid "The color of the tooltip border."
 msgstr "Цвет границы всплывающей подсказки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:872
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1337
 #, fuzzy
 msgid "The radius of the rounded border corners."
 msgstr "Радиус закругления границы всплывающей подсказки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:895
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1360
 msgid "Shared tooltip"
 msgstr "Объединить всплывающую подсказку"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:897
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1362
 msgid ""
 "When the tooltip is shared, the entire plot area will capture mouse movement "
 "or touch events"
@@ -4415,201 +4966,251 @@ msgstr ""
 "Если включено объединение всплывающей подсказки, она будет появляться для "
 "всех серий диаграммы при движении мыши по области прорисовки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:901
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1366
 msgid "Share tooltip"
 msgstr "Объединить всплывающую подсказку"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:906
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1371
 msgid "Value prefix"
 msgstr "Префикс значений во всплывающей подсказке"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:908
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1373
 msgid "A string to prepend to each series' y value"
 msgstr ""
 "Префикс будет добавлен перед значениями оси Y во всплывающей подсказке "
 "(например, знак валюты)"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:923
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1388
 msgid "Value suffix"
 msgstr "Суффикс значений во всплывающей подсказке"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:925
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1390
 msgid "A string to append to each series' y value"
 msgstr ""
 "Суффикс будет добавлен после значений оси Y во всплывающей подсказке "
 "(например, обозначение единиц)"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:947
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1405
+msgid "Follow cursor"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1407
+msgid ""
+"Follow the cursor position instead of putting tooltip on actual data points"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1411
+msgid "Enable follow cursor"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1416
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1422
+msgid "Fill with series color"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1418
+msgid ""
+"If you leave this checked, the tooltip background will be filled with the "
+"corresponding series color"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1434
 msgid "Enable or disable the legend"
 msgstr "Включить или выключить отображение легенды"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:951
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1438
 msgid "Show legend"
 msgstr "Отображать легенду"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:956
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1443
 msgid "Position"
 msgstr "Позиция"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:958
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1445
 msgid "Position of the legend"
 msgstr "Позиционирование легенды"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:978
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1465
 #, fuzzy
 msgid "The background color of the legend."
 msgstr "Фоновый цвет легенды"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:997
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1484
 msgid "A title to be added on top of the legend"
 msgstr "Название, отображаемое над легендой"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1012
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1499
 msgid "Layout"
 msgstr "Расположение"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1014
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1501
 msgid "The layout of the legend items"
 msgstr "Расположение элементов легенды"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1029
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1516
 msgid "Align"
 msgstr "Выравнивание"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1031
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1518
 msgid "The horizontal alignment of the legend box within the chart area"
 msgstr "Горизонтальное выравнивание блока легенды внутри области диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1047
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1534
 #: wpdatatables/templates/admin/table-settings/simple_table_settings_block.inc.php:220
 msgid "Vertical align"
 msgstr "Вертикальное выравнивание"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1049
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1536
 msgid "The vertical alignment of the legend box"
 msgstr "Вертикальное выравнивание блока легенды"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1068
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1555
 #, fuzzy
 msgid "The width of the drawn border around the legend."
 msgstr "Ширина отображаемой границы вокруг легенды"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1093
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1580
 #, fuzzy
 msgid "The color of the drawn border around the legend."
 msgstr "Цвет границы вокруг легенды"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1112
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1599
 #, fuzzy
 msgid "The border corner radius of the legend."
 msgstr "Радиус закругления границы вокруг блока легенды"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1135
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1622
 msgid "Legend position"
 msgstr "Положение легенды"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1137
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1624
 msgid ""
 "Position of the legend. Possible values are 'top', 'left', 'bottom' and "
 "'right'"
 msgstr ""
 "Расположение легенды. Возможные значения 'top', 'left', 'bottom' и 'right'"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1162
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1650
 msgid "Whether to enable the exporting module"
 msgstr "Где разрешить модуль экспорта"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1166
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1654
 msgid "Export chart"
 msgstr "Экспорт диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1171
-msgid "Data labels"
-msgstr "Ярлыки данных"
-
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1173
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1661
 msgid "Add data labels to improve readability of the exported chart"
 msgstr ""
 "Добавьте метки данных, чтобы улучшить читаемость экспортированной диаграммы"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1177
-msgid "Show data labels"
-msgstr "Отображать ярлыки данных"
-
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1182
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1670
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1872
 msgid "File name"
 msgstr "Имя файла"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1184
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1672
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1874
 msgid "The filename, without extension, to use for the exported chart"
 msgstr ""
 "Имя файла, без расширения, для использования в экспортированной диаграмме"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1199
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1687
 msgid "Width"
 msgstr "Ширина"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1201
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1689
 #, fuzzy
 msgid "The width of the original chart when exported."
 msgstr "Ширина диаграммы при экспорте"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1224
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1712
 msgid "Button align"
 msgstr "Расположение кнопки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1226
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1714
 msgid "Alignment for the export button"
 msgstr "Выравнивание кнопки экспорта"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1243
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1731
 msgid "Button vertical align"
 msgstr "Вертикальное выравнивание кнопки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1245
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1733
 msgid "The vertical alignment of the export button"
 msgstr "Вертикальное выравнивание кнопки экспорта"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1262
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1750
 msgid "Button color"
 msgstr "Цвет кнопки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1264
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1752
 msgid "The color of the symbol's stroke or line."
 msgstr "Цвет зачеркнутых символов или линии."
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1281
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:725
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1769
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:757
 msgid "Button text"
 msgstr "Текст кнопки"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1283
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1771
 msgid "A text string to add to the individual button"
 msgstr "Текст, отображаемый на кнопке экспорта"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1305
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1793
 msgid "Whether to show the credits text"
 msgstr "Отображать ли текст ссылки на источник"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1309
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1797
 msgid "Show credits"
 msgstr "Отображение ссылки на источник"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1314
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1802
 msgid "Credits href"
 msgstr "URL со ссылки на источник"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1316
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1804
 msgid "The URL for the credits label"
 msgstr "URL со ссылки на источник"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1331
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1819
 msgid "Credits text"
 msgstr "Текст ссылки на источник"
 
-#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1333
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1821
 msgid "The text for the credits label"
 msgstr "Текст ссылки на источник"
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1844
+msgid "Whether to show the toolbar"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1848
+msgid "Show toolbar"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1854
+msgid "Buttons in the toolbar"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1856
+msgid "Choose which buttons to show in the toolbar"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1862
+msgid "Selection"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1863
+msgid "Zoom"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1864
+msgid "Zoom in"
+msgstr ""
+
+#: wpdatatables/templates/admin/chart_wizard/steps/step4.inc.php:1865
+msgid "Zoom out"
+msgstr ""
 
 #: wpdatatables/templates/admin/chart_wizard/steps/step5.inc.php:5
 msgid "Your chart is ready!"
@@ -4668,15 +5269,25 @@ msgid "Make NOFOLLOW link"
 msgstr ""
 
 #: wpdatatables/templates/admin/common/linkModal.inc.php:87
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:718
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:710
+msgid "Make NOREFERRER link"
+msgstr ""
+
+#: wpdatatables/templates/admin/common/linkModal.inc.php:98
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:726
+msgid "Make SPONSORED link"
+msgstr ""
+
+#: wpdatatables/templates/admin/common/linkModal.inc.php:109
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:750
 msgid "Set the link to appear as a button"
 msgstr "Определить ссылку для отображения в виде кнопки"
 
-#: wpdatatables/templates/admin/common/linkModal.inc.php:96
+#: wpdatatables/templates/admin/common/linkModal.inc.php:118
 msgid "Button class:"
 msgstr ""
 
-#: wpdatatables/templates/admin/common/linkModal.inc.php:121
+#: wpdatatables/templates/admin/common/linkModal.inc.php:143
 msgid "Insert link"
 msgstr ""
 
@@ -5220,62 +5831,62 @@ msgstr ""
 msgid "Version "
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:292
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:283
 msgid "You are a premium user!"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:298
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:289
 msgid "Manage your subscriptions"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:305
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:296
 msgid "Thank you for choosing wpDataTables Premium"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:307
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:298
 msgid ""
 "Enjoy using our premium features and professional support that we provide "
 "through our "
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:308
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:299
 msgid " ticketing system."
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:330
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:321
 msgid "Basic system info:"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:333
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:324
 msgid "PHP"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:340
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:331
 #: wpdatatables/templates/admin/settings/tabs/separate_connection_form.php:50
 msgid "MySQL"
 msgstr "MySQL сервер"
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:350
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:341
 msgid "Zip extension "
 msgstr "Расширение индекса"
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:360
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:351
 msgid "Curl extension "
 msgstr "Скручивание"
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:372
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:363
 msgid "View Full System Info"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:381
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:372
 msgid "News Blog"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:386
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:377
 msgid "Checkout useful articles from wpdatatables.com"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:435
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:426
 msgid ""
 "Never miss notifications about new cool features, promotions,\n"
 "                                    giveaways or freebies – subscribe to our "
@@ -5283,11 +5894,11 @@ msgid ""
 "                                    about 1 message per month and never spam!"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:452
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:443
 msgid "wpDataTables Addons"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:454
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:445
 msgid ""
 "While wpDataTables itself provides quite a large amount of features and "
 "unlimited customisation, flexibility, you can achieve even more with our "
@@ -5296,28 +5907,28 @@ msgid ""
 "Premium version)"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:473
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:464
 msgid ""
 "Tool that adds \"Forminator Form\" as a new table type and allows you to "
 "create wpDataTables from Forminator Forms submissions."
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:551
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:542
 msgid ""
 "An add-on for wpDataTables that provides powerful filtering features: "
 "cascade filtering, applying filters on button click, hide table before "
 "filtering."
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:703
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:694
 msgid "Need booking plugin?"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:712
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:703
 msgid "Appointments and Events WordPress Booking Plugin"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:715
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:706
 msgid ""
 "Amelia is a simple yet powerful automated booking specialist, working 24/7 "
 "to make sure your customers can book appointments or events and pay online "
@@ -5326,15 +5937,15 @@ msgid ""
 "flawlessly manage 300,000+ appointments and events worldwide each month."
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:718
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:709
 msgid "Rating: 4.8 - ‎123 reviews"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:722
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:713
 msgid "Learn More"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:733
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:724
 #: wpdatatables/templates/admin/getting-started/getting_started.inc.php:221
 #: wpdatatables/templates/admin/lite-vs-premium/lite_vs_premium.inc.php:483
 #: wpdatatables/templates/admin/support/support.inc.php:78
@@ -5343,7 +5954,7 @@ msgstr ""
 msgid "Made by"
 msgstr ""
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:741
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:732
 #: wpdatatables/templates/admin/getting-started/getting_started.inc.php:229
 #: wpdatatables/templates/admin/lite-vs-premium/lite_vs_premium.inc.php:491
 #: wpdatatables/templates/admin/support/support.inc.php:45
@@ -5354,7 +5965,7 @@ msgstr ""
 msgid "Documentation"
 msgstr "Документация по wpDataTables"
 
-#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:745
+#: wpdatatables/templates/admin/dashboard/dashboard.inc.php:736
 #: wpdatatables/templates/admin/getting-started/getting_started.inc.php:233
 #: wpdatatables/templates/admin/lite-vs-premium/lite_vs_premium.inc.php:495
 #: wpdatatables/templates/admin/support/support.inc.php:24
@@ -5686,7 +6297,7 @@ msgstr ""
 #: wpdatatables/templates/admin/settings/settings.inc.php:31
 #: wpdatatables/templates/admin/settings/settings.inc.php:103
 #: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:25
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1172
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1204
 #: wpdatatables/templates/admin/table-settings/simple_table_settings_block.inc.php:47
 #: wpdatatables/templates/admin/table-settings/simple_table_settings_block.inc.php:48
 #: wpdatatables/templates/admin/table-settings/table_preview_block.inc.php:103
@@ -6393,12 +7004,12 @@ msgid ""
 msgstr ""
 
 #: wpdatatables/templates/admin/settings/tabs/main_plugin_settings.php:216
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:806
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:838
 msgid "Ascending"
 msgstr "По возрастанию"
 
 #: wpdatatables/templates/admin/settings/tabs/main_plugin_settings.php:217
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:807
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:839
 msgid "Descending"
 msgstr "По убыванию"
 
@@ -7336,12 +7947,12 @@ msgid "DateTime"
 msgstr "Дата + Время"
 
 #: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:360
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1054
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1086
 msgid "URL link"
 msgstr "URL ссылка"
 
 #: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:361
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1055
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1087
 msgid "E-mail link"
 msgstr "E-mail ссылка"
 
@@ -7435,14 +8046,10 @@ msgstr "Список значений"
 #: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:491
 msgid ""
 "Enter the possible values for this column in this list, separate by pressing "
-"ENTER or comma. Click \"Read from table\" to fetch the list from existing "
-"column values. Values will be used in selectbox and checkbox filters and "
-"editors for the column."
+"ENTER or comma. Click Read from table to fetch the list from existing column "
+"values. Values will be used in selectbox and checkbox filters and editors "
+"for the column."
 msgstr ""
-"Введите возможные значения для этого столбца в этом списке, разделив их "
-"нажатием ENTER или запятой. Нажмите «Читать из таблицы», чтобы получить "
-"список из существующих значений столбца. Значения будут использоваться в "
-"фильтрах и редакторах selectbox и checkbox для столбца."
 
 #: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:493
 msgid "Reset"
@@ -7658,56 +8265,72 @@ msgstr ""
 msgid "Make the link a nofollow link"
 msgstr ""
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:710
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:712
+msgid "Set the link to a noreferrer link"
+msgstr ""
+
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:718
+msgid "Make the link a noreferrer link"
+msgstr ""
+
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:728
+msgid "Set the link to a sponsored link"
+msgstr ""
+
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:734
+msgid "Make the link a sponsored link"
+msgstr ""
+
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:742
 msgid "Show link as a button"
 msgstr "Показывать ссылку как кнопку"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:712
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:744
 msgid "The link will be shown as a button "
 msgstr "ССылка будет показана как кнопка"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:739
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:771
 msgid "Button class"
 msgstr "Класс кнопки"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:763
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:795
 msgid "Allow sorting"
 msgstr "Разрешить сортировку"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:765
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:797
 msgid "Disable this to disallow sorting for this column."
 msgstr "Запретить сортировку для этого столбца."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:771
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:803
 msgid "Allow sorting for this column"
 msgstr "Разрешить сортировку для столбца"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:778
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:810
 msgid "Use as default sorting column"
 msgstr "Использовать как столбец для сортировки по умолчанию"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:780
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:786
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:812
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:818
 msgid "Sort table by this column on load"
 msgstr "Сортировать таблицу по этому столбцу при загрузке"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:797
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:829
 msgid "Default sorting direction"
 msgstr "Направление сортировки по умолчанию"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:799
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:831
 msgid "Choose whether to sort ascending or descending by default."
 msgstr "Выберите, сортировать по возрастанию или по убыванию по умолчанию."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:825
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:857
 msgid "Add a filter for this column"
 msgstr "Добавить фильтр в этот столбец"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:833
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:865
 msgid "Enable filtering for column"
 msgstr "Разрешить фильтрацию для столбца"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:840
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:872
 msgid ""
 "Enabling this switch will add a filter for this column. Disable to remove "
 "the filter for this column."
@@ -7715,81 +8338,81 @@ msgstr ""
 "Включение этого параметра добавит фильтр для этого столбца. Отключите чтобы "
 "удалить фильтр из этого столбца."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:849
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:881
 msgid "Allow filtering"
 msgstr "Разрешить фильтрацию"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:856
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:888
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:708
 msgid "Global search"
 msgstr "Глобальный поиск"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:858
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:890
 msgid ""
 "If this option is turned off, the column will not appear in your global "
 "search results. The filtering option will also be disabled."
 msgstr ""
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:864
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:896
 msgid "Enable this column in Global search"
 msgstr ""
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:873
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:905
 msgid "Filter type"
 msgstr "Тип фильтра"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:875
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:907
 msgid ""
 "You can redefine the filter type here, it will affect the filtering logic."
 msgstr ""
 "Вы можете переопределить тип фильтра здесь, это повлияет на логику "
 "фильтрации."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:882
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:914
 msgid "Text"
 msgstr "Текст"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:883
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:915
 msgid "Number"
 msgstr "Число"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:884
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:916
 msgid "Number range"
 msgstr "Числовой диапазон"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:885
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:917
 msgid "Date range"
 msgstr "Диапазон дат"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:886
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:918
 msgid "DateTime range"
 msgstr "Диапазон даты-времени"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:887
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:919
 msgid "Time range"
 msgstr "Диапазон времени"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:888
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:920
 msgid "Selectbox"
 msgstr "Выбрать"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:889
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:921
 msgid "Multiselectbox"
 msgstr "Список с несколькими вариантами"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:890
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:922
 msgid "Checkbox"
 msgstr "Checkbox"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:899
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:931
 msgid "Filter label"
 msgstr "Метка для фильтра"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:907
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:939
 msgid "Custom filter label"
 msgstr "Пользовательское название фильтра"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:914
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:946
 msgid ""
 "You can change the filter label (placeholder) for this column here, if you "
 "would like to show some custom text instead of default."
@@ -7798,11 +8421,11 @@ msgstr ""
 "вы хотите показать какой-либо пользовательский текст вместо значения по "
 "умолчанию."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:932
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:964
 msgid "Exact filtering"
 msgstr "Точный фильтр"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:934
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:966
 msgid ""
 "Enable exact search to use exact match logic for filtering, disable to allow "
 "partial match."
@@ -7810,28 +8433,28 @@ msgstr ""
 "Включить точный поиск, чтобы использовать логику точного соответствия для "
 "фильтрации, отключить, чтобы разрешить частичное совпадение."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:940
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:972
 msgid "Enable exact filtering"
 msgstr "Включить точную фильтрацию"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:946
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:978
 msgid "Range slider"
 msgstr "Выбор диапазона"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:948
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:980
 msgid "Enable number range slider  for filtering"
 msgstr "Включить ползунок диапазона чисел для фильтрации"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:954
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:986
 msgid "Number range slider"
 msgstr "Ползунок диапазона чисел"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:961
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1086
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:993
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1118
 msgid "Predefined value(s)"
 msgstr "Предопределенные значения"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:963
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:995
 msgid ""
 "Define value(s) that will be set as default pre-defined filter value(s) on "
 "page load."
@@ -7839,64 +8462,64 @@ msgstr ""
 "Определите значение (я), которое будет установлено в качестве "
 "предопределенных значений фильтра при загрузке страницы."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:998
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1030
 msgid "Render in modal"
 msgstr "Визуализация в модале"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1000
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1032
 msgid "Render checkboxes in modal."
 msgstr "Сделать флажки в модальном."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1006
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1038
 msgid "Render checkboxes in modal"
 msgstr "Сделать флажки в модальном."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1012
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1044
 msgid "Search in selectbox/multiselectbox"
 msgstr ""
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1014
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1020
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1046
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1052
 msgid "Enable search in selectbox/multiselectbox"
 msgstr ""
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1037
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1069
 msgid "Editor input type"
 msgstr "Тип поля ввода"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1039
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1071
 msgid "Choose which kind of editor input to use for this column."
 msgstr "Выберите, какой тип ввода редактора использовать для этого столбца."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1045
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1077
 msgid "None"
 msgstr "Ничего"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1046
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1078
 msgid "One-line edit"
 msgstr "Редактирование в таблице"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1047
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1079
 msgid "Multi-line edit"
 msgstr "Многолинейная строка"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1048
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1080
 msgid "HTML editor"
 msgstr "HTML редактор"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1049
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1081
 msgid "Single-value selectbox"
 msgstr "Список с 1 вариантом выбора"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1050
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1082
 msgid "Multi-value selectbox"
 msgstr "Список с несколькими вариантами"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1066
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1098
 msgid "Column cannot be empty"
 msgstr "Столбец не может быть пустым"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1068
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1100
 msgid ""
 "Enable to make this column mandatory. Users will see a warning when trying "
 "to save with empty input."
@@ -7904,11 +8527,11 @@ msgstr ""
 "Включите, чтобы сделать этот столбец обязательным. Пользователи увидят "
 "предупреждение при попытке сохранить с пустым значением."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1074
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1106
 msgid "Cannot be empty"
 msgstr "Не может быть пустым"
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1088
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1120
 msgid ""
 "If you would like to have some values pre-defined in editors (i.e. default "
 "editor values) please enter these here."
@@ -7916,21 +8539,21 @@ msgstr ""
 "Если вы хотите, чтобы некоторые значения были предварительно определены в "
 "редакторах (то есть значения редактора по умолчанию), введите их здесь."
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1111
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1143
 msgid "Search in select-box for editing"
 msgstr ""
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1113
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1145
 msgid ""
 "Enable search in select-box for entry editing when number of possible values "
 "to load is All."
 msgstr ""
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1119
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1151
 msgid "Enable search in select-box for entry editing"
 msgstr ""
 
-#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1141
+#: wpdatatables/templates/admin/table-settings/column_settings_panel.inc.php:1173
 msgid "Add New Rule"
 msgstr ""
 
@@ -8839,10 +9462,6 @@ msgstr ""
 msgid "Center"
 msgstr ""
 
-#: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:584
-msgid "Left"
-msgstr ""
-
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:593
 #: wpdatatables/templates/admin/table-settings/table_settings_block.inc.php:601
 msgid "Pagination Layout"
@@ -9532,61 +10151,19 @@ msgstr "Очистить все фильтры"
 msgid "Dynamic title for modals"
 msgstr "Динамическое название для модальных"
 
-#: wpdatatables/widgets/class.wpDataChartsElementorWidget.php:28
-msgid "wpDataChart content"
-msgstr ""
+#~ msgid "Choose a table"
+#~ msgstr "Выберите таблицу"
 
-#: wpdatatables/widgets/class.wpDataChartsElementorWidget.php:35
-msgid "Select wpDataChart:"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:28
-msgid "wpDataTable content"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:35
-msgid "Select wpDataTable:"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:45
-msgid "Choose table view:"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:49
-msgid "Excel-like wpDataTable"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:58
-msgid "Set placeholder %VAR1%:"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:61
-msgid "Insert %VAR1% placeholder"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:68
-msgid "Set placeholder %VAR2%:"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:71
-msgid "Insert %VAR2% placeholder"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:78
-msgid "Set placeholder %VAR3%:"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:81
-msgid "Insert %VAR3% placeholder"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:88
-msgid "Set name for export file:"
-msgstr ""
-
-#: wpdatatables/widgets/class.wpDataTablesElementorWidget.php:91
-msgid "Insert name for export file"
-msgstr ""
+#~ msgid ""
+#~ "Enter the possible values for this column in this list, separate by "
+#~ "pressing ENTER or comma. Click \"Read from table\" to fetch the list from "
+#~ "existing column values. Values will be used in selectbox and checkbox "
+#~ "filters and editors for the column."
+#~ msgstr ""
+#~ "Введите возможные значения для этого столбца в этом списке, разделив их "
+#~ "нажатием ENTER или запятой. Нажмите «Читать из таблицы», чтобы получить "
+#~ "список из существующих значений столбца. Значения будут использоваться в "
+#~ "фильтрах и редакторах selectbox и checkbox для столбца."
 
 #~ msgid ""
 #~ "A wpDataTables addon which allows showing additional details for a "

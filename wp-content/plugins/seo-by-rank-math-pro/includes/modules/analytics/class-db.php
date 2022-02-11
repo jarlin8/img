@@ -472,8 +472,11 @@ class DB {
 	 * @param array  $rows Data rows to insert.
 	 */
 	public static function add_adsense( $date, $rows ) {
-		global $wpdb;
+		if ( ! \MyThemeShop\Helpers\DB::check_table_exists( 'rank_math_analytics_adsense' ) ) {
+			return;
+		}
 
+		global $wpdb;
 		foreach ( $rows as $row ) {
 			$earnings = floatval( $row['cells'][1]['value'] );
 			if ( empty( $earnings ) ) {

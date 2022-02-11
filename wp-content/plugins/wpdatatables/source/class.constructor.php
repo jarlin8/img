@@ -481,7 +481,7 @@ class wpDataTableConstructor
         $this->_prepareMySQLJoinedQueryStructure($columnQuoteStart, $columnQuoteEnd);
 
         // Prepare the query itself
-        $this->_query = $this->_buildMySQLQuery($columnQuoteStart, $columnQuoteEnd);
+        $this->_query = wdtSanitizeQuery($this->_buildMySQLQuery($columnQuoteStart, $columnQuoteEnd));
     }
 
 
@@ -2008,7 +2008,7 @@ class wpDataTableConstructor
         }
 
         // Fill in with default value if requested
-        $column_data['default_value'] = $column_data['type'] === 'multiselect' ? sanitize_text_field(implode(", ", $column_data['default_value'])) : sanitize_text_field($column_data['default_value']);
+        $column_data['default_value'] = sanitize_text_field($column_data['default_value']);
         if ($column_data['fill_default'] == 1 && $column_data['default_value']) {
 
             $valueQuoute = "'";

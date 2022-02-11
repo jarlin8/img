@@ -13,6 +13,8 @@ namespace RankMathPro;
 use RankMath\Helper;
 use RankMath\Traits\Hooker;
 use MyThemeShop\Helpers\Url;
+use MyThemeShop\Helpers\Str;
+use MyThemeShop\Helpers\Arr;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -31,6 +33,8 @@ class Common {
 	public function __construct() {
 		$this->action( 'rank_math/admin_bar/items', 'add_admin_bar_items' );
 		$this->filter( 'rank_math/metabox/values', 'add_json_data' );
+		$this->filter( 'wp_helpers_is_affiliate_link', 'is_affiliate_link', 10, 2 );
+		$this->filter( 'rank_math/link/add_attributes', 'can_add_attributes' );
 	}
 
 	/**
@@ -69,6 +73,42 @@ class Common {
 		}
 
 		return $values;
+	}
+
+	/**
+	 * Checks whether a link is an affiliate link.
+	 *
+	 * @param string $is_affiliate Is affiliate link.
+	 * @param string $url          Anchor link.
+	 *
+	 * @return string
+	 */
+	public function is_affiliate_link( $is_affiliate, $url ) {
+		$url      = str_replace( home_url(), '', $url );
+		$prefixes = Arr::from_string( Helper::get_settings( 'general.affiliate_link_prefixes' ), "\n" );
+
+		if ( empty( $url ) || empty( $prefixes ) ) {
+			return $is_affiliate;
+		}
+
+		foreach ( $prefixes as $prefix ) {
+			if ( Str::starts_with( $prefix, trim( $url ) ) ) {
+				$is_affiliate = true;
+				break;
+			}
+		}
+
+		return $is_affiliate;
+	}
+
+	/**
+	 * Run a fucntion to add sponsored rel tag to the affiliate links.
+	 *
+	 * @param bool $value Whether to run the function to add link attributes.
+	 */
+	public function can_add_attributes( $value ) {
+		$prefixes = Arr::from_string( Helper::get_settings( 'general.affiliate_link_prefixes' ), "\n" );
+		return ! empty( $prefixes ) ? true : $value;
 	}
 
 	/**

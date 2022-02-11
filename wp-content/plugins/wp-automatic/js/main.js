@@ -44,7 +44,7 @@ jQuery(document).ready(function()
 	jQuery(".TTWForm select:not('.translate_t,.no-unify'), .TTWForm input:radio, .TTWForm input:file ,.TTWForm input:checkbox").not(".no-unify").uniform();
 
     // Date and Range Inputs
-	jQuery("#field1, #field2 , #field255, #field256, #field1s,  #fieldz1,#field5zzzg, #fieldlimit, #fieldlimit2,#random_tags_count_field,#cg_minimum_width_f,#cg_min_length").rangeinput();
+	jQuery("#field1, #field2 , #field255, #field256, #field1s,  #fieldz1,#field5zzzg, #fieldlimit, #fieldlimit2,#random_tags_count_field,#cg_minimum_width_f,#cg_min_length,#cg_max_length").rangeinput();
 
     /**
 	 * Get the jQuery Tools Validator to validate checkbox and radio groups
@@ -584,13 +584,13 @@ jQuery(document).ready(function()
     	    
     	    	jQuery('#campaign_run').addClass('run').removeClass('run_load');
 
-    	    	jQuery('#welcome-panel').remove();
-    	    	jQuery('#status-meta-boxes .inside').append('<div style="display:none;margin-top:0" dir="ltr" class="welcome-panel" id="welcome-panel"> '+ data +' <a dir="rtl" style="right:10px !important" href="#" class="welcome-panel-close">Dismiss</a><div class="welcome-panel-content"></div></div>');
-    	    	jQuery('#welcome-panel').slideDown('slow',function(){
+    	    	jQuery('#wp-automatic-welcome-panel').remove();
+    	    	jQuery('#status-meta-boxes .inside').append('<div style="display:none;margin-top:0" dir="ltr" class="wp-automatic-welcome-panel" id="wp-automatic-welcome-panel"> '+ data +' <a dir="rtl" style="right:10px !important" href="#" class="wp-automatic-welcome-panel-close">Dismiss</a></div>');
+    	    	jQuery('#wp-automatic-welcome-panel').slideDown('slow',function(){
     	    		
     	    		// handle close button
-    	    		jQuery('.welcome-panel-close').click(function(){
-    	    			jQuery('#welcome-panel').remove();
+    	    		jQuery('.wp-automatic-welcome-panel-close').click(function(){
+    	    			jQuery('#wp-automatic-welcome-panel').remove();
     	    			return false;
     	    		});
     	    		
@@ -626,12 +626,12 @@ jQuery(document).ready(function()
     	     	jQuery('#campaign_run').addClass('run').removeClass('run_load');
 
 	    	    	jQuery('#welcome-panel').remove();
-	    	    	jQuery('#status-meta-boxes .inside').append('<div style="display:none;margin-top:0" dir="ltr" class="welcome-panel" id="welcome-panel"> '+  two + ' ' +  three + ' ' + four +  ' <a dir="rtl" style="right:10px !important" href="#" class="welcome-panel-close">Dismiss</a><div class="welcome-panel-content"></div></div>');
-	    	    	jQuery('#welcome-panel').slideDown('slow',function(){
+	    	    	jQuery('#status-meta-boxes .inside').append('<div style="display:none;margin-top:0;padding-top:10px;" dir="ltr" class="wp-automatic-welcome-panel" id="wp-automatic-welcome-panel"> '+  two + ' ' +  three + ' ' + four +  ' <a dir="rtl" style="right:10px !important" href="#" class="wp-automatic-welcome-panel-close">Dismiss</a></div>');
+	    	    	jQuery('#wp-automatic-welcome-panel').slideDown('slow',function(){
 	    	    		
 	    	    		// handle close button
-	    	    		jQuery('.welcome-panel-close').click(function(){
-	    	    			jQuery('#welcome-panel').remove();
+	    	    		jQuery('.wp-automatic-welcome-panel-close').click(function(){
+	    	    			jQuery('#wp-automatic-welcome-panel').remove();
 	    	    			return false;
 	    	    		});
 	    	    		
@@ -1042,6 +1042,8 @@ jQuery(document).ready(function()
 					return;
 				}
 				
+				var which = jQuery(theTrigger).parent().parent().find('input[type="text"]').attr('name');
+				
 				var iframeUrl = ajaxurl+'?action=wp_automatic_iframe&address='+encodeURIComponent(mySrc)+'&theCookie=' +  encodeURIComponent(theCookie)  ;
 				
 				// Encoding
@@ -1049,11 +1051,36 @@ jQuery(document).ready(function()
 					iframeUrl = iframeUrl + '&clean_encoding=yes';
 				}
 				
+				console.log(which);
+				
+				
+				//JS support
+				if( which == 'cg_ml_visual[]' || which == 'cg_feed_visual[]'){
+					//single posts on feeds and multi-page scraper
+				 
+					if( jQuery('input[value="OPT_FEED_APIFY"]').prop('checked') == true){
+						iframeUrl = iframeUrl + '&js_enabled=yes';
+					}
+					
+				}else if( which == 'cg_ml_lnk_visual[]' ){ 	
+					
+					if( jQuery('input[value="OPT_FEED_APIFY2"]').prop('checked') == true){
+						iframeUrl = iframeUrl + '&js_enabled=yes';
+					}
+					
+				}else{
+					
+					//OPT_FEED_APIFY : single page scraper 
+					
+					if( jQuery('input[value="OPT_FEED_APIFY"]').prop('checked') == true ||  jQuery('input[value="OPT_FEED_APIFY2"]').prop('checked') == true ){
+						iframeUrl = iframeUrl + '&js_enabled=yes';
+					}
+				}
 				// SOURCE campaign type
 				iframeUrl = iframeUrl + '&sourse=' + jQuery('#camp_type').val() ; 
 				 
 				// WHICH button
-				iframeUrl = iframeUrl +  '&which=' + jQuery(theTrigger).parent().parent().find('input[type="text"]').attr('name');
+				iframeUrl = iframeUrl +  '&which=' + which;
 				
 				$('.wmBox_overlay .wmBox_scaleWrap').append('<iframe id="insepector_frame" src="'+ iframeUrl +'">');
 				

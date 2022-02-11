@@ -54,6 +54,9 @@ msgstr ""
 msgid "Please activate Schema & Sitemap module to use this module."
 msgstr ""
 
+msgid "Random Word"
+msgstr ""
+
 msgid "Persistent random word chosen from a list"
 msgstr ""
 
@@ -61,6 +64,12 @@ msgid "Non-persistent random word chosen from a list. A new random word will be 
 msgstr ""
 
 msgid "Off"
+msgstr ""
+
+msgid "Default Thumbnail Watermark"
+msgstr ""
+
+msgid "Select the default watermark that will be applied if no specific watermark is selected."
 msgstr ""
 
 msgid "Custom Image Watermarks"
@@ -79,12 +88,6 @@ msgid "Add Image"
 msgstr ""
 
 msgid "Name*"
-msgstr ""
-
-msgid "Default Thumbnail Watermark"
-msgstr ""
-
-msgid "Select the default watermark that will be applied if no specific watermark is selected."
 msgstr ""
 
 msgid "A Custom Watermark item could not be saved because the name field is empty."
