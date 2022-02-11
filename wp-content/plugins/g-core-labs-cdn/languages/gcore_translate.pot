@@ -1,0 +1,185 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: G-Core Labs\n"
+"POT-Creation-Date: 2020-12-11 08:55+0300\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: _e;__\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: ajax/save.php:4 includes/admin.php:4
+msgid "General"
+msgstr ""
+
+#: ajax/save.php:5 includes/admin.php:5
+msgid "File types"
+msgstr ""
+
+#: ajax/save.php:6 includes/admin.php:6
+msgid "Folders"
+msgstr ""
+
+#: ajax/save.php:7 includes/admin.php:7
+msgid "Exceptions"
+msgstr ""
+
+#: ajax/save.php:222 includes/admin.php:150 index.php:22
+msgid "CDN settings"
+msgstr ""
+
+#: ajax/save.php:239 includes/admin.php:177
+msgid "Enable CDN"
+msgstr ""
+
+#: ajax/save.php:240 includes/admin.php:179
+msgid "In the paths to files conforming to the rules specified below, a domain will be replaced with a personal domain."
+msgstr ""
+
+#: ajax/save.php:244 includes/admin.php:183
+msgid "Personal domain (for configuring CNAME)"
+msgstr ""
+
+#: ajax/save.php:246 ajax/save.php:286 ajax/save.php:318 ajax/save.php:341
+#: includes/admin.php:185 includes/function.php:161
+msgid "Example"
+msgstr ""
+
+#: ajax/save.php:247 includes/admin.php:186
+msgid "Specify the personal domain with a scheme corresponding to the one specified in G-Core Labs control panel. If you are using a domain in your zone, make sure that this domain is added in the DNS provider settings."
+msgstr ""
+
+#: ajax/save.php:252 ajax/save.php:292 ajax/save.php:324
+msgid "Save"
+msgstr ""
+
+#: ajax/save.php:252
+msgid "Save and Go"
+msgstr ""
+
+#: ajax/save.php:259 includes/admin.php:198
+msgid "Specify the types of files you want to distribute via CDN."
+msgstr ""
+
+#: ajax/save.php:262 includes/admin.php:205
+msgid "Type Images"
+msgstr ""
+
+#: ajax/save.php:263 includes/admin.php:212
+msgid "Type Video"
+msgstr ""
+
+#: ajax/save.php:264 includes/admin.php:219
+msgid "Type Audio"
+msgstr ""
+
+#: ajax/save.php:267 includes/admin.php:228
+msgid "Type JS"
+msgstr ""
+
+#: ajax/save.php:268 includes/admin.php:235
+msgid "Type CSS"
+msgstr ""
+
+#: ajax/save.php:269 includes/admin.php:242
+msgid "Type Archive"
+msgstr ""
+
+#: ajax/save.php:272 ajax/save.php:304 includes/admin.php:252
+#: includes/admin.php:307
+msgid "Advanced property"
+msgstr ""
+
+#: ajax/save.php:282 ajax/save.php:314 ajax/save.php:337
+#: includes/function.php:157
+msgid "Delete"
+msgstr ""
+
+#: ajax/save.php:287 ajax/save.php:319 ajax/save.php:342
+#: includes/function.php:162
+msgid "Add"
+msgstr ""
+
+#: ajax/save.php:296
+msgid "Specify folders containing files you want to distribute via CDN. Leave this field blank to distribute files from all folders via CDN. Please note that only files that match file types specified on the File Types tab will be delivered via CDN."
+msgstr ""
+
+#: ajax/save.php:299 includes/admin.php:276
+msgid "Folder Templates"
+msgstr ""
+
+#: ajax/save.php:300 includes/admin.php:283
+msgid "Folder Plugins"
+msgstr ""
+
+#: ajax/save.php:301 includes/admin.php:290
+msgid "Folder Content"
+msgstr ""
+
+#: ajax/save.php:328 includes/admin.php:324
+msgid "Specify the URLs you want to add to the exceptions list and not distribute them via CDN."
+msgstr ""
+
+#: includes/about.php:1 index.php:25
+msgid "About"
+msgstr ""
+
+#: includes/about.php:2
+msgid "Author"
+msgstr ""
+
+#: includes/about.php:3
+msgid "Version"
+msgstr ""
+
+#: includes/about.php:4
+msgid "Supported WordPress version: 5.4 and above"
+msgstr ""
+
+#: includes/admin.php:191 includes/admin.php:262 includes/admin.php:317
+msgid "Next"
+msgstr ""
+
+#: includes/admin.php:261 includes/admin.php:316 includes/admin.php:328
+msgid "Previous"
+msgstr ""
+
+#: includes/admin.php:269
+msgid "Specify folders containing files you want to distribute via CDN. Please note that only files that match file types specified on the File Types tab will be delivered via CDN."
+msgstr ""
+
+#: includes/admin.php:297
+msgid "Folder Wordpress"
+msgstr ""
+
+#: includes/admin.php:339
+msgid "Saved"
+msgstr ""
+
+#: includes/admin.php:342
+msgid "Deleted"
+msgstr ""
+
+#: includes/admin.php:345
+msgid "Added"
+msgstr ""
+
+#: includes/help.php:3 index.php:24
+msgid "Help"
+msgstr ""
+
+#: includes/help.php:6
+msgid "If you have questions regarding CDN integration, please email us at"
+msgstr ""
+
+#: includes/stream.php:1
+msgid "Streaming"
+msgstr ""

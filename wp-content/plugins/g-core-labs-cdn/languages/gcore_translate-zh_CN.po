@@ -1,0 +1,212 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: G-Core Labs\n"
+"POT-Creation-Date: 2020-12-11 08:56+0300\n"
+"PO-Revision-Date: 2022-01-21 17:32+0800\n"
+"Last-Translator: 奋斗啦 <jarlin@laowei8.com>\n"
+"Language-Team: p_zhukovskiy@gcore.lu\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: _e;__\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: ajax/save.php:4 includes/admin.php:4
+msgid "General"
+msgstr "基本设置"
+
+#: ajax/save.php:5 includes/admin.php:5
+msgid "File types"
+msgstr "文件格式"
+
+#: ajax/save.php:6 includes/admin.php:6
+msgid "Folders"
+msgstr "文件夹"
+
+#: ajax/save.php:7 includes/admin.php:7
+msgid "Exceptions"
+msgstr "例外"
+
+#: ajax/save.php:222 includes/admin.php:150 index.php:22
+msgid "CDN settings"
+msgstr "CDN设置"
+
+#: ajax/save.php:239 includes/admin.php:177
+msgid "Enable CDN"
+msgstr "启动CDN"
+
+#: ajax/save.php:240 includes/admin.php:179
+msgid ""
+"In the paths to files conforming to the rules specified below, a domain will "
+"be replaced with a personal domain."
+msgstr "在符合以下的规则的文件途径，私人域名将代替域名。"
+
+#: ajax/save.php:244 includes/admin.php:183
+msgid "Personal domain (for configuring CNAME)"
+msgstr "私人域名（为了设置CNAME)"
+
+#: ajax/save.php:246 ajax/save.php:286 ajax/save.php:318 ajax/save.php:341
+#: includes/admin.php:185 includes/function.php:161
+msgid "Example"
+msgstr "例如"
+
+#: ajax/save.php:247 includes/admin.php:186
+msgid ""
+"Specify the personal domain with a scheme corresponding to the one specified "
+"in G-Core Labs control panel. If you are using a domain in your zone, make "
+"sure that this domain is added in the DNS provider settings."
+msgstr ""
+"使用与 G-Core Labs 控制面板中指定的方案相对应的方案指定个人域。如果您在您的区"
+"域中使用域，请确保在 DNS 提供程序设置中添加了该域。"
+
+#: ajax/save.php:252 ajax/save.php:292 ajax/save.php:324
+msgid "Save"
+msgstr "保存"
+
+#: ajax/save.php:252
+msgid "Save and Go"
+msgstr "保存并开始"
+
+#: ajax/save.php:259 includes/admin.php:198
+msgid "Specify the types of files you want to distribute via CDN."
+msgstr "请添加您要通过CDN传送的文件格式。"
+
+#: ajax/save.php:262 includes/admin.php:205
+msgid "Type Images"
+msgstr "图片"
+
+#: ajax/save.php:263 includes/admin.php:212
+msgid "Type Video"
+msgstr "视频"
+
+#: ajax/save.php:264 includes/admin.php:219
+msgid "Type Audio"
+msgstr "音频"
+
+#: ajax/save.php:267 includes/admin.php:228
+msgid "Type JS"
+msgstr "JS类型"
+
+#: ajax/save.php:268 includes/admin.php:235
+msgid "Type CSS"
+msgstr "CSS类型"
+
+#: ajax/save.php:269 includes/admin.php:242
+msgid "Type Archive"
+msgstr "类型存档"
+
+#: ajax/save.php:272 ajax/save.php:304 includes/admin.php:252
+#: includes/admin.php:307
+msgid "Advanced property"
+msgstr "高级属性"
+
+#: ajax/save.php:282 ajax/save.php:314 ajax/save.php:337
+#: includes/function.php:157
+msgid "Delete"
+msgstr "删除"
+
+#: ajax/save.php:287 ajax/save.php:319 ajax/save.php:342
+#: includes/function.php:162
+msgid "Add"
+msgstr "添加"
+
+#: ajax/save.php:296
+msgid ""
+"Specify folders containing files you want to distribute via CDN. Leave this "
+"field blank to distribute files from all folders via CDN. Please note that "
+"only files that match file types specified on the File Types tab will be "
+"delivered via CDN."
+msgstr ""
+"请指定包含要通过CDN分发的文件的文件夹。如果要把所有的文件夹的文件通过CDN传"
+"送，请将此字段留空。请注意，只有与“文件类型”标签上指定的文件类型匹配的文件才"
+"会通过CDN传送。"
+
+#: ajax/save.php:299 includes/admin.php:276
+msgid "Folder Templates"
+msgstr "模板文"
+
+#: ajax/save.php:300 includes/admin.php:283
+msgid "Folder Plugins"
+msgstr "插件"
+
+#: ajax/save.php:301 includes/admin.php:290
+msgid "Folder Content"
+msgstr "内容"
+
+#: ajax/save.php:328 includes/admin.php:324
+msgid ""
+"Specify the URLs you want to add to the exceptions list and not distribute "
+"them via CDN."
+msgstr "请添加您不要通过CDN传送而要加入例外的文件格式。"
+
+#: includes/about.php:1 index.php:25
+msgid "About"
+msgstr "关于"
+
+#: includes/about.php:2
+msgid "Author"
+msgstr "作者"
+
+#: includes/about.php:3
+msgid "Version"
+msgstr "版本"
+
+#: includes/about.php:4
+msgid "Supported WordPress version: 5.4 and above"
+msgstr "支持WordPress版本：5.4以上"
+
+#: includes/admin.php:191 includes/admin.php:262 includes/admin.php:317
+msgid "Next"
+msgstr "下一项"
+
+#: includes/admin.php:261 includes/admin.php:316 includes/admin.php:328
+msgid "Previous"
+msgstr "前一项"
+
+#: includes/admin.php:269
+msgid ""
+"Specify folders containing files you want to distribute via CDN. Please note "
+"that only files that match file types specified on the File Types tab will "
+"be delivered via CDN."
+msgstr ""
+"请指定包含要通过CDN分发的文件的文件夹。请注意，只有与“文件类型”标签上指定的文"
+"件类型匹配的文件才会通过CDN传送。"
+
+#: includes/admin.php:297
+msgid "Folder Wordpress"
+msgstr "文件夹 Wordpress"
+
+#: includes/admin.php:339
+msgid "Saved"
+msgstr "已保存"
+
+#: includes/admin.php:342
+msgid "Deleted"
+msgstr "已删除"
+
+#: includes/admin.php:345
+msgid "Added"
+msgstr "已添加"
+
+#: includes/help.php:3 index.php:24
+msgid "Help"
+msgstr "帮助"
+
+#: includes/help.php:6
+msgid "If you have questions regarding CDN integration, please email us at"
+msgstr "关于CDN的问题请发送到"
+
+#: includes/stream.php:1
+msgid "Streaming"
+msgstr "流媒体"
+
+#, fuzzy
+#~| msgid "Specify the types of files you want to distribute via CDN."
+#~ msgid "Specify the folders containing files you want to distribute via CDN."
+#~ msgstr "请添加您要通过CDN传送的文件格式。"
