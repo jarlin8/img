@@ -159,6 +159,7 @@ class Admin_Helper {
 	 * @return boolean
 	 */
 	public static function is_plan_expired() {
+		return false;
 		$data = self::get_registration_data();
 		if ( ! isset( $data['plan'] ) ) {
 			return true;

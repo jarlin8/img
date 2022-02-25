@@ -14,6 +14,7 @@ use Exception;
 use RankMath\Helper;
 use RankMath\Traits\Hooker;
 use RankMathPro\Analytics\DB;
+use RankMath\Analytics\DB as AnalyticsDB;
 use RankMathPro\Google\Adsense;
 use RankMathPro\Google\Analytics;
 
@@ -209,7 +210,7 @@ class Jobs {
 
 		for ( $current = 1; $current <= $days; $current++ ) {
 			$date = Helper::get_date( 'Y-m-d', $start - ( DAY_IN_SECONDS * $current ), false, true );
-			if ( DB::date_exists( $date, $action ) ) {
+			if ( AnalyticsDB::date_exists( $date, $action ) ) {
 				continue;
 			}
 

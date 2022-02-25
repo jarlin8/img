@@ -17,7 +17,6 @@ use RankMath\Analytics\Stats;
 use RankMathPro\Google\Adsense;
 
 use MyThemeShop\Helpers\Str;
-use MyThemeShop\Helpers\DB as DB_Helper;
 use MyThemeShop\Database\Database;
 
 defined( 'ABSPATH' ) || exit;
@@ -211,34 +210,6 @@ class DB {
 
 		$rank_math_gsc_has_data = $id > 0 ? true : false;
 		return $rank_math_gsc_has_data;
-	}
-
-	/**
-	 * Check if a data exists in the console, analytics, adsense table at specified date.
-	 *
-	 * @param  string $date   Date.
-	 * @param  string $action Action.
-	 * @return boolean
-	 */
-	public static function date_exists( $date, $action = 'console' ) {
-		$table = [
-			'console'   => DB_Helper::check_table_exists( 'rank_math_analytics_gsc' ) ? 'rank_math_analytics_gsc' : '',
-			'analytics' => DB_Helper::check_table_exists( 'rank_math_analytics_ga' ) ? 'rank_math_analytics_ga' : '',
-			'adsense'   => DB_Helper::check_table_exists( 'rank_math_analytics_adsense' ) ? 'rank_math_analytics_adsense' : '',
-		];
-
-		if ( empty( $table[ $action ] ) ) {
-			return true; // Should return true to avoid further data fetch action.
-		}
-
-		$table = self::table( $table[ $action ] );
-
-		$id = $table
-			->select( 'id' )
-			->where( 'DATE(created)', $date )
-			->getVar();
-
-		return $id > 0 ? true : false;
 	}
 
 	/**
