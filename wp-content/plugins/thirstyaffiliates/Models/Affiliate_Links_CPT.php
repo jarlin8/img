@@ -336,6 +336,22 @@ class Affiliate_Links_CPT implements Model_Interface , Initiable_Interface {
 
         return $html;
     }
+    
+    /**
+     * Add custom HTML ta tag
+     *
+     * @since 3.10.4
+     * @access public
+     *
+     * @param array $tags     List of allowed HTML tags
+     * @param string $context Context name
+     * @return array          Array of allowed HTML tags
+     */
+    public function add_affiliate_link_tag( $tags, $context ) {
+        $tags['ta'] = $tags['a'];
+
+        return $tags;
+    }
 
     /**
      * Register metaboxes
@@ -1001,6 +1017,7 @@ class Affiliate_Links_CPT implements Model_Interface , Initiable_Interface {
 
         // replace permalink with link ID
         add_filter( 'get_sample_permalink_html', array( $this , 'replace_permalink_with_id' ), 10 , 2 );
+        add_filter( 'wp_kses_allowed_html', array( $this, 'add_affiliate_link_tag' ), 10, 2 );
 
         // metaboxes
         add_action( 'add_meta_boxes' , array( $this , 'register_metaboxes' ) );

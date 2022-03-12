@@ -4,8 +4,8 @@ Donate link:
 Tags: affiliate, link, affiliate link management, link cloaker, link redirect, shortlink, thirstyaffiliates, thirsty affiliates
 Requires at least: 5.0
 Requires PHP: 5.6
-Tested up to: 5.8
-Stable tag: 3.10.3
+Tested up to: 5.9
+Stable tag: 3.10.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,11 @@ See our [Knowledge Base](https://thirstyaffiliates.com/knowledge-base/?utm_sourc
 5. Settings page
 
 == Changelog ==
+
+= 3.10.4 =
+* Bug Fix: Inserting links not working for non-admins
+* Bug Fix: Allow uppercase extensions in external image links
+* Bug Fix: Fatal error in the stats trimmer on PHP8
 
 = 3.10.3 =
 * Bug Fix: User-specific language setting having no effect on plugin translations

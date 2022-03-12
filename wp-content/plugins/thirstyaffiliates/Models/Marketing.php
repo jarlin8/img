@@ -204,6 +204,32 @@ class Marketing implements Model_Interface , Activatable_Interface , Initiable_I
      */
     public function show_review_request_notice() {
 
+        // Only show to admins
+        if ( ! current_user_can( 'manage_options' ) ) {
+          return;
+        }
+
+        // Check for the constant to disable the prompt
+        if ( defined( 'TA_DISABLE_REVIEW_PROMPT' ) && true == TA_DISABLE_REVIEW_PROMPT ) {
+          return;
+        }
+
+        // Notice has been delayed
+        $delayed_option = get_option( 'ta_review_prompt_delay' );
+        if ( ! empty( $delayed_option['delayed_until'] ) && time() < $delayed_option['delayed_until'] ) {
+          return;
+        }
+
+        // Notice has been removed
+        if ( get_option( 'ta_review_prompt_removed' ) ) {
+          return;
+        }
+
+        // Backwards compat
+        if ( get_transient( 'ta_review_prompt_delay' ) ) {
+          return;
+        }
+
         $screen = get_current_screen();
 
         $post_type = get_post_type();
@@ -212,11 +238,7 @@ class Marketing implements Model_Interface , Activatable_Interface , Initiable_I
 
         $review_request_response = get_option( Plugin_Constants::REVIEW_REQUEST_RESPONSE );
 
-        if ( get_option( 'ta_review_prompt_removed' ) ) {
-            return;
-        }
-
-        if ( ! is_admin() || ! current_user_can( 'manage_options' ) || $post_type !== Plugin_Constants::AFFILIATE_LINKS_CPT || get_option( Plugin_Constants::SHOW_REQUEST_REVIEW ) !== 'yes' || ( $review_request_response !== 'review-later' && ! empty( $review_request_response ) ) )
+        if ( ! is_admin() || get_option( Plugin_Constants::SHOW_REQUEST_REVIEW ) !== 'yes' || ( $review_request_response !== 'review-later' && ! empty( $review_request_response ) ) )
             return;
 
         ?>
@@ -229,37 +251,42 @@ class Marketing implements Model_Interface , Activatable_Interface , Initiable_I
                 <p><?php _e( 'That\'s awesome! Could you please do me a BIG favor and give it a 5-star rating on WordPress to help us spread the word and boost our motivation?', 'thirstyaffiliates' ); ?></p>
                 <p style="font-weight: bold;">~ Blair Williams<br>CEO of ThirstyAffiliates</p>
                 <p>
-                    <a style="display: inline-block; margin-right: 10px;" href="https://wordpress.org/support/plugin/thirstyaffiliates/reviews/?filter=5#new-post" onclick="delayReviewPrompt('remove')" target="_blank"><?php esc_html_e( 'Okay, you deserve it', 'thirstyaffiliates' ); ?></a>
-                    <a style="display: inline-block; margin-right: 10px;" href="#" onclick="delayReviewPrompt('delay')"><?php esc_html_e( 'Nope, maybe later', 'thirstyaffiliates' ); ?></a>
-                    <a href="#" onclick="delayReviewPrompt('remove')"><?php esc_html_e( 'I already did', 'thirstyaffiliates' ); ?></a>
+                    <a style="display: inline-block; margin-right: 10px;" href="https://wordpress.org/support/plugin/thirstyaffiliates/reviews/?filter=5#new-post" onclick="delayReviewPrompt(event, 'remove', true, true)" target="_blank"><?php esc_html_e( 'Okay, you deserve it', 'thirstyaffiliates' ); ?></a>
+                    <a style="display: inline-block; margin-right: 10px;" href="#" onclick="delayReviewPrompt(event, 'delay', true, false)"><?php esc_html_e( 'Nope, maybe later', 'thirstyaffiliates' ); ?></a>
+                    <a href="#" onclick="delayReviewPrompt(event, 'remove', true, false)"><?php esc_html_e( 'I already did', 'thirstyaffiliates' ); ?></a>
                 </p>
             </div>
             <div id="ta_review_no" style="display: none;">
                 <p><?php _e( 'We\'re sorry to hear you aren\'t enjoying ThirstyAffiliates. We would love a chance to improve. Could you take a minute and let us know what we can do better?', 'thirstyaffiliates' ); ?></p>
                 <p>
-                    <a style="display: inline-block; margin-right: 10px;" href="https://thirstyaffiliates.com/plugin-feedback/?utm_source=plugin_admin&utm_medium=link&utm_campaign=in_plugin&utm_content=request_review" onclick="delayReviewPrompt('remove')" target="_blank"><?php esc_html_e( 'Give Feedback', 'thirstyaffiliates' ); ?></a>
-                    <a href="#" onclick="delayReviewPrompt('remove')"><?php esc_html_e( 'No thanks', 'thirstyaffiliates' ); ?></a>
+                    <a style="display: inline-block; margin-right: 10px;" href="https://thirstyaffiliates.com/plugin-feedback/?utm_source=plugin_admin&utm_medium=link&utm_campaign=in_plugin&utm_content=request_review" onclick="delayReviewPrompt(event, 'remove', true, true)" target="_blank"><?php esc_html_e( 'Give Feedback', 'thirstyaffiliates' ); ?></a>
+                    <a href="#" onclick="delayReviewPrompt(event, 'remove', true, false)"><?php esc_html_e( 'No thanks', 'thirstyaffiliates' ); ?></a>
                 </p>
             </div>
         </div>
         <script>
 
-            function delayReviewPrompt(type, triggerClick = true) {
-                if ( triggerClick ) {
-                    jQuery('#ta_review_notice').fadeOut();
-                }
-                jQuery.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'ta_dismiss_review_prompt',
-                        nonce: "<?php echo wp_create_nonce( 'ta_dismiss_review_prompt' ) ?>",
-                        type: type
-                    },
-                })
-                .done(function(data) {
+            function delayReviewPrompt(event, type, triggerClick = true, openLink = false) {
+              event.preventDefault();
+              if ( triggerClick ) {
+                jQuery('#ta_review_notice').fadeOut();
+              }
+              if ( openLink ) {
+                var href = event.target.href;
+                window.open(href, '_blank');
+              }
+              jQuery.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                  action: 'ta_dismiss_review_prompt',
+                  nonce: "<?php echo wp_create_nonce( 'ta_dismiss_review_prompt' ) ?>",
+                  type: type
+                },
+              })
+              .done(function(data) {
 
-                });
+              });
             }
 
             jQuery(document).ready(function($) {
@@ -271,7 +298,7 @@ class Marketing implements Model_Interface , Activatable_Interface , Initiable_I
                     $('#ta_review_' + selection).show();
                 });
                 $('body').on('click', '#ta_review_notice .notice-dismiss', function(event) {
-                    delayReviewPrompt('delay', false);
+                    delayReviewPrompt(event, 'delay', false);
                 });
             });
         </script>
@@ -544,7 +571,9 @@ class Marketing implements Model_Interface , Activatable_Interface , Initiable_I
                     'status' => 'removed'
                 ) );
             } else if ( 'delay' === $_POST['type'] ) {
-                set_transient( 'ta_review_prompt_delay', true, WEEK_IN_SECONDS );
+                update_option( 'ta_review_prompt_delay', array(
+                  'delayed_until' => time() + WEEK_IN_SECONDS
+                ) );
                 wp_send_json_success( array(
                     'status' => 'delayed'
                 ) );

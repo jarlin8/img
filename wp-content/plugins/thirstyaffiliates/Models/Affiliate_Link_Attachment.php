@@ -300,7 +300,7 @@ class Affiliate_Link_Attachment implements Model_Interface , Initiable_Interface
             $response = array( 'status' => 'fail' , 'error_msg' => __( 'Invalid AJAX call' , 'thirstyaffiliates' ) );
         elseif ( ! isset( $_POST[ 'url' ] ) || ! isset( $_POST[ 'link_id' ] ) )
             $response = array( 'status' => 'fail' , 'error_msg' => __( 'Missing required post data' , 'thirstyaffiliates' ) );
-        elseif ( ! filter_var( $_POST[ 'url' ] , FILTER_VALIDATE_URL ) || ! in_array( pathinfo( $_POST[ 'url' ] , PATHINFO_EXTENSION ) , $allowed_extensions ) )
+        elseif ( ! filter_var( $_POST[ 'url' ] , FILTER_VALIDATE_URL ) || ! in_array( strtolower( pathinfo( $_POST[ 'url' ] , PATHINFO_EXTENSION ) ) , $allowed_extensions ) )
             $response = array( 'status' => 'fail' , 'error_msg' => __( 'The external image source is not a valid url.' , 'thirstyaffiliates' ) );
         else {
 

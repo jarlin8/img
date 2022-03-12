@@ -939,7 +939,7 @@ class Stats_Reporting implements Model_Interface , Initiable_Interface , Activat
             // Proceed on deleting data when $click_ids are present
             if ( is_array( $click_ids ) && ! empty( $click_ids ) ) {
 
-                $click_ids_string = implode( $click_ids , ',' );
+                $click_ids_string = implode( ',', $click_ids );
 
                 // delete click data
                 $wpdb->query( "DELETE FROM $clicks_meta_db WHERE click_id IN ( $click_ids_string )" );
