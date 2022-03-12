@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '6641ff434c06f68166319868fcce1858ab1d8411',
+    'reference' => '39a59d9807057c3bcf68ff7dfbc64ea24efca7d6',
     'name' => 'mythemeshop/rank-math-pro',
   ),
   'versions' => 
@@ -42,7 +42,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '6641ff434c06f68166319868fcce1858ab1d8411',
+      'reference' => '39a59d9807057c3bcf68ff7dfbc64ea24efca7d6',
     ),
   ),
 );

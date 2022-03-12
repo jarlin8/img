@@ -933,6 +933,27 @@ msgstr ""
 msgid "Sorry, no post id found."
 msgstr ""
 
+msgid "Submitted and indexed"
+msgstr ""
+
+msgid "URL is unknown to Google"
+msgstr ""
+
+msgid "Crawled - currently not indexed"
+msgstr ""
+
+msgid "Discovered - currently not indexed"
+msgstr ""
+
+msgid "Indexed, not submitted in sitemap"
+msgstr ""
+
+msgid "Submitted URL marked ‘noindex’"
+msgstr ""
+
+msgid "Duplicate, submitted URL not selected as canonical"
+msgstr ""
+
 msgid "Mark Unsolved."
 msgstr ""
 

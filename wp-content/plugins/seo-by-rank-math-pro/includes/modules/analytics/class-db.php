@@ -74,6 +74,15 @@ class DB {
 	}
 
 	/**
+	 * Get inspections table.
+	 *
+	 * @return \MyThemeShop\Database\Query_Builder
+	 */
+	public static function inspections() {
+		return Database::table( 'rank_math_analytics_inspections' );
+	}
+
+	/**
 	 * Get links table.
 	 *
 	 * @return \MyThemeShop\Database\Query_Builder
@@ -543,5 +552,64 @@ class DB {
 		}
 
 		return $count;
+	}
+
+
+	/**
+	 * Get stats from DB for "Presence on Google" widget:
+	 * All unique coverage_state values and their counts.
+	 */
+	public static function get_presence_stats() {
+		$results = self::inspections()
+			->select( [ 'coverage_state', 'COUNT(*)' => 'count' ] )
+			->groupBy( 'coverage_state' )
+			->orderBy( 'count', 'DESC' )
+			->get();
+
+		$results = array_map(
+			'absint',
+			array_combine(
+				array_column( $results, 'coverage_state' ),
+				array_column( $results, 'count' )
+			)
+		);
+
+		return $results;
+	}
+
+	/**
+	 * Get stats from DB for "Top Statuses" widget.
+	 */
+	public static function get_status_stats() {
+		$statuses = [
+			'VERDICT_UNSPECIFIED',
+			'PASS',
+			'PARTIAL',
+			'FAIL',
+			'NEUTRAL',
+		];
+
+		// Get all unique index_verdict values and their counts.
+		$index_statuses = self::inspections()
+			->select(
+				[
+					'index_verdict',
+					'COUNT(*)' => 'count',
+				]
+			)
+			->groupBy( 'index_verdict' )
+			->orderBy( 'count', 'DESC' )
+			->get();
+
+		$results = array_fill_keys( $statuses, 0 );
+		foreach ( $index_statuses as $status ) {
+			if ( empty( $status->index_verdict ) ) {
+				continue;
+			}
+
+			$results[ $status->index_verdict ] += $status->count;
+		}
+
+		return $results;
 	}
 }

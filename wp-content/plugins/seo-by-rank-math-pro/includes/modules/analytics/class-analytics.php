@@ -73,6 +73,7 @@ class Analytics {
 		new Summary();
 		new Ajax();
 		new Email_Reports();
+		new Url_Inspection();
 	}
 
 	/**
@@ -99,6 +100,7 @@ class Analytics {
 		Helper::add_json( 'isLinkModuleActive', Helper::is_module_active( 'link-counter' ) );
 		Helper::add_json( 'isSchemaModuleActive', Helper::is_module_active( 'rich-snippet' ) );
 		Helper::add_json( 'isAnalyticsConnected', \RankMath\Google\Analytics::is_analytics_connected() );
+		Helper::add_json( 'dateFormat', get_option( 'date_format' ) );
 
 		$preference['topKeywords']['ctr']    = false;
 		$preference['topKeywords']['ctr']    = false;
@@ -195,6 +197,7 @@ class Analytics {
 				'wp-date',
 				'wp-html-entities',
 				'wp-api-fetch',
+				'rank-math-analytics',
 			],
 			rank_math_pro()->version,
 			true
