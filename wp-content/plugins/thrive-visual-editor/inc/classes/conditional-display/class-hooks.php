@@ -108,8 +108,6 @@ class Hooks {
 			tve_set_query_vars_data( $_GET['query_vars'] );
 		}
 
-		$post_id = isset( $_GET['post_id'] ) ? (int) $_GET['post_id'] : 0;
-
 		if ( is_array( $_GET['groups'] ) ) {
 			foreach ( $_GET['groups'] as $display_group_key ) {
 				$display_group = Conditional_Display_Group::get_instance( $display_group_key );

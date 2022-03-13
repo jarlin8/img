@@ -68,7 +68,7 @@ class Tag_User extends Action {
 	}
 
 	public static function get_required_data_objects() {
-		return array( 'user_data', 'form_data' );
+		return array( 'user_data', 'form_data', 'email_data' );
 	}
 
 	/**
@@ -140,11 +140,14 @@ class Tag_User extends Action {
 		 */
 		$data_sets   = array_diff( $data_sets, [ 'user_data' ] );
 		$data_sets[] = 'user_data';
+
+		global $automation_data;
 		while ( ! empty( $data_sets ) && empty( $email ) ) {
 			$set = array_shift( $data_sets );
 
-			if ( ! empty( $data[ $set ] ) && $data[ $set ]->can_provide_email() ) {
-				$email = $data[ $set ]->get_provided_email();
+			$data_object = $automation_data->get( $set );
+			if ( ! empty( $data_object ) && $data_object->can_provide_email() ) {
+				$email = $data_object->get_provided_email();
 			}
 		}
 
@@ -188,9 +191,9 @@ class Tag_User extends Action {
 	public function can_run( $data ) {
 		$valid          = true;
 		$available_data = array();
-
+		global $automation_data;
 		foreach ( static::get_required_data_objects() as $key ) {
-			if ( ! empty( $data[ $key ] ) ) {
+			if ( ! empty( $automation_data->get( $key ) ) ) {
 				$available_data[] = $key;
 			}
 		}

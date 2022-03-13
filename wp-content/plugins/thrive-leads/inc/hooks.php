@@ -130,6 +130,14 @@ function tve_leads_init() {
 	}
 }
 
+function tl_hide_export_content( $allow, $post ) {
+	if ( in_array( $post->post_type, array( TVE_LEADS_POST_FORM_TYPE, TVE_LEADS_POST_TWO_STEP_LIGHTBOX, TVE_LEADS_POST_SHORTCODE_TYPE, TVE_LEADS_POST_TWO_STEP_LIGHTBOX ) ) ) {
+		$allow = false;
+	}
+
+	return $allow;
+}
+
 /**
  * Register widgets used in the plugin.
  */
@@ -242,9 +250,9 @@ function tve_leads_register_group() {
  */
 function tve_leads_query_group() {
 	/**
-	 * no forms should be displayed on WP feeds
+	 * no forms should be displayed on WP feeds. avoid expensive queries when identifying crawlers
 	 */
-	if ( is_feed() || is_comment_feed() ) {
+	if ( is_feed() || is_comment_feed() || tve_dash_is_crawler() ) {
 		return;
 	}
 
@@ -293,19 +301,16 @@ function tve_leads_query_group() {
 	$manager = new Thrive_Leads_Display_Settings_Manager( TVE_LEADS_VERSION );
 	$manager->load_dependencies();
 
-	$groups = tve_leads_get_groups( array(
-		'full_data'       => false,
-		'tracking_data'   => false,
-		'active_tests'    => false,
-		'completed_tests' => false,
-	) );
+	/** @var Thrive_Leads_DB $tvedb */
+	global $tvedb;
+	$groups = $tvedb->get_groups_with_options();
 
 	global $wp_query;
 	$should_reset_queried_object = $wp_query->queried_object === null;
 
 	foreach ( $groups as $group ) {
-		$saved_options = new Thrive_Leads_Group_Options( $group->ID );
-		$saved_options->initOptions();
+		$saved_options = new Thrive_Leads_Group_Options( $group->ID, $group->show_group_options, $group->hide_group_options );
+
 		/* if at least one is_page() check is made, we need to unset the queried_object field */
 		if ( $saved_options->displayGroup() ) {
 			$inbound_cookie_key = "tl_inbound_link_params_{$group->ID}";
@@ -981,7 +986,7 @@ function tve_leads_print_footer_scripts() {
 	 * @see tve_leads_filter_tu_body_end()
 	 */
 	//echo sprintf( '<script type="text/javascript">/*<![CDATA[*/if ( !window.TL_Const ) var TL_Const=%s/*]]> */</script>', $js );
-	echo sprintf( '<script type="text/javascript">/*<![CDATA[*/if ( !window.TL_Const ) {var TL_Const=%s;} else {ThriveGlobal.$j.extend(true, TL_Const, %s)} /*]]> */</script>', $js, $js );
+	echo sprintf( '<script type="text/javascript">/*<![CDATA[*/if ( !window.TL_Const ) {var TL_Const=%s;} else { TL_Front && TL_Front.extendConst && TL_Front.extendConst(%s)} /*]]> */</script>', $js, $js );
 
 	if ( ! empty( $GLOBALS['tve_lead_impressions'] ) && ! current_user_can( 'manage_options' ) && ! TL_Product::has_access() ) {
 		$js = '<script type="text/javascript">var TL_Front = TL_Front || {}; TL_Front.impressions_data = TL_Front.impressions_data || {};';

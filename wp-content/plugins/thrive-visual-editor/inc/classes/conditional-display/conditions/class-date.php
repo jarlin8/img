@@ -32,18 +32,38 @@ class Date extends Date_And_Time_Picker {
 		$field_value = $data['field_value'];
 
 		if ( ! empty( $field_value ) ) {
-			if ( $this->get_operator() === 'equals' ) {
-				$compared_value = $this->get_value();
+			$formatted_field_value    = strtotime( $data['field_value'] );
+			$formatted_compared_value = strtotime( $this->get_value() );
 
-				$result = strtotime( date( 'Y/m/d', strtotime( $field_value ) ) )
-				          ===
-				          strtotime( date( 'Y/m/d', strtotime( $compared_value ) ) );
-			} else {
-				$result = parent::apply( $data );
+			switch ( $this->get_operator() ) {
+				case 'equals':
+					$result = strtotime( date( 'Y/m/d', $formatted_field_value ) )
+					          ===
+					          strtotime( date( 'Y/m/d', $formatted_compared_value ) );
+					break;
+				case 'between':
+					/* reduce the format to date-only */
+					$formatted_start_interval = strtotime( date( 'Y/m/d', $formatted_compared_value ) );
+					$formatted_end_interval   = strtotime( date( 'Y/m/d', strtotime( $this->get_extra() ) ) );
+					$formatted_field_value    = strtotime( date( 'Y/m/d', $formatted_field_value ) );
+
+					$result = $formatted_field_value >= $formatted_start_interval &&
+					          $formatted_field_value <= $formatted_end_interval;
+					break;
+				default:
+					$result = parent::apply( $data );
 			}
 		}
 
 		return $result;
+	}
+
+	public static function get_operators() {
+		return array_merge( parent::get_operators(), [
+			'between' => [
+				'label' => 'between',
+			],
+		] );
 	}
 
 	public static function get_control_type() {

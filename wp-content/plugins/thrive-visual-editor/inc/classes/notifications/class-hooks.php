@@ -43,14 +43,14 @@ class Hooks {
 	 * Enqueue scripts in the main frame
 	 */
 	public static function main_frame_enqueue() {
-		tve_dash_enqueue_script( 'tve-notifications-main', tve_editor_js() . '/notifications-main.min.js', [ 'jquery' ] );
+		tve_dash_enqueue_script( 'tve-notifications-main', tve_editor_js( '/notifications-main.min.js' ), [ 'jquery' ] );
 	}
 
 	/**
 	 * Used to localize the elements (wrapper and message)
 	 */
 	public static function enqueue_scripts() {
-		tve_dash_enqueue_script( 'tve-notifications-main', tve_editor_js() . '/notifications-main.min.js', [ 'jquery' ] );
+		static::main_frame_enqueue();
 
 		$elements = [];
 		foreach ( Main::$elements as $element ) {
@@ -79,7 +79,7 @@ class Hooks {
 	 */
 	public static function editor_enqueue() {
 		if ( Main::is_edit_screen() ) {
-			tve_dash_enqueue_script( 'tve-notifications-editor', tve_editor_js() . '/notifications-editor.min.js', [ 'jquery' ] );
+			tve_dash_enqueue_script( 'tve-notifications-editor', tve_editor_js( '/notifications-editor.min.js' ), [ 'jquery' ] );
 		}
 	}
 

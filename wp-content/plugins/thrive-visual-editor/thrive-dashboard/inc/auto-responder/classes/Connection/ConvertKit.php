@@ -351,6 +351,21 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	}
 
 	/**
+	 * delete a contact from the list
+	 *
+	 * @param string $email
+	 * @param array $arguments
+	 *
+	 * @return mixed
+	 */
+	public function deleteSubscriber( $email, $arguments = array() ) {
+		$api     = $this->getApi();
+		$result = $api->unsubscribeUser( $email, $arguments );
+		return isset( $result['subscriber']['id'] );
+
+	}
+
+	/**
 	 * Get available custom fields for this api connection
 	 *
 	 * @param null $list_id

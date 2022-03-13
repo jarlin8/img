@@ -2,6 +2,9 @@
 
 namespace TVE\Dashboard\Automator;
 
+use Thrive\Automator\Items\Action_Field;
+use Thrive_Dash_List_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -9,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Form_List_Field
  */
-class Form_List_Field extends \Thrive\Automator\Items\Action_Field {
+class Form_List_Field extends Action_Field {
 	/**
 	 * Field name
 	 */
@@ -35,7 +38,8 @@ class Form_List_Field extends \Thrive\Automator\Items\Action_Field {
 	 * $$value will be replaced by field value
 	 * $$length will be replaced by value length
 	 *
-	 * @var string
+	 *
+	 * @return string
 	 */
 	public static function get_preview_template() {
 		return 'Form: $$value';
@@ -52,7 +56,7 @@ class Form_List_Field extends \Thrive\Automator\Items\Action_Field {
 	public static function get_options_callback() {
 		$args         = func_get_args();
 		$values       = array();
-		$api_instance = \Thrive_Dash_List_Manager::connectionInstance( $args[0] );
+		$api_instance = Thrive_Dash_List_Manager::connectionInstance( $args[0] );
 		if ( $api_instance && $api_instance->isConnected() && $api_instance->hasForms() ) {
 			$values = $api_instance->getForms();
 		}

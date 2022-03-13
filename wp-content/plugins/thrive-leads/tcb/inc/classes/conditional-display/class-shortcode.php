@@ -41,8 +41,8 @@ class Shortcode {
 		$all_displays = '';
 
 		if ( $display_group !== null ) {
-			/* We should not localize the groups during optimization or form post lists */
-			if ( ! $during_optimization && empty( $GLOBALS[ TCB_DO_NOT_RENDER_POST_LIST ] ) ) {
+			/* We should not localize the groups during optimization or during post list / symbol render */
+			if ( ! $during_optimization && static::should_localize() ) {
 				/* Basically localize the data related to conditional display */
 				$display_group->localize( static::is_preview(), $is_editor_page );
 			}
@@ -72,6 +72,20 @@ class Shortcode {
 		}
 
 		return $during_optimization ? $all_displays : $content;
+	}
+
+	/**
+	 * There are cases when we do not want to localize the displays, such as post list render or symbol render during lazy load.
+	 * @return bool
+	 */
+	public static function should_localize() {
+		$should_localize = \TCB_Post_List::is_outside_post_list_render();
+
+		if ( wp_doing_ajax() ) {
+			$should_localize = $should_localize && \TCB_Symbol_Template::is_outside_symbol_render();
+		}
+
+		return $should_localize;
 	}
 
 	/**

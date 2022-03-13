@@ -283,11 +283,11 @@ class Conditional_Display_Group {
 	}
 
 	public function get_display_heights() {
-		return get_post_meta( $this->post->ID, static::DISPLAY_HEIGHTS_META_KEY, true );
+		return $this->post ? get_post_meta( $this->post->ID, static::DISPLAY_HEIGHTS_META_KEY, true ) : [];
 	}
 
 	public function get_inherit_background() {
-		return get_post_meta( $this->post->ID, static::INHERIT_BACKGROUND_META_KEY, true );
+		return $this->post ? get_post_meta( $this->post->ID, static::INHERIT_BACKGROUND_META_KEY, true ) : '';
 	}
 
 	/**
@@ -319,11 +319,16 @@ class Conditional_Display_Group {
 	}
 
 	/**
-	 * @param array $groups
+	 * @param array|string $groups
 	 *
 	 * @return void
 	 */
 	public static function save_groups( $groups = [] ) {
+		/* content templates save the groups in the JSON format, so we must decode first */
+		if ( ! empty( $groups ) && ! is_array( $groups ) ) {
+			$groups = json_decode( stripslashes( $groups ), true );
+		}
+
 		if ( is_array( $groups ) ) {
 			foreach ( $groups as $group ) {
 				if ( isset( $group['key'] ) ) {

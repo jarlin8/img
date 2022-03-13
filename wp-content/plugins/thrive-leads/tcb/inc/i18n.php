@@ -266,6 +266,7 @@ return array(
 	'warning_link_inside_link'           => __( 'You cannot have nested links inside containers. Please remove the link of the ##split## in order to drop the new element', $d ),
 	'warning_link_insert_inside_link'    => __( 'You cannot have nested links inside containers. Please remove the link of the ##split## in order to insert new link', $d ),
 	'warning_link_pasted_inside_link'    => __( 'You cannot have nested links inside containers. Pasted text contains links. Try to remove the link of the', $d ),
+	'prevent_nested_links'               => __( 'You cannot have nested links inside containers. Remove the links inside this element in order to insert new link', $d ),
 	'elements'                           => array(
 		'user_profile'       => __( 'User Profile', $d ),
 		'progressbar'        => __( 'Progress Bar', $d ),
@@ -331,6 +332,8 @@ return array(
 	'category_created'                   => __( 'The Category was successfully created!', $d ),
 	'warning_symbol_inside'              => __( "All the symbols inside this element will be automatically unlinked. It's not possible to save a symbol or a template that contain another symbol.", $d ),
 	'warning_symbol_inside_lp'           => __( "All the symbols inside the page will be unlinked so you don't loose their content.", $d ),
+	'warning_conditional_inside'         => __( 'This page contains multiple state elements with conditional display logic. Please be aware that if you import this content on another site the elements will not be rendered.', $d ),
+	'import_empty_content'               => __( 'The imported content is empty. The archive might be corrupted.', $d ),
 	'search_elem'                        => __( 'Search', $d ),
 	'choose_elem'                        => __( 'Choose', $d ),
 	'warning_change_ct'                  => __( 'If you change your %s template, you will lose all the content that you have added to your existing %s!', $d ),

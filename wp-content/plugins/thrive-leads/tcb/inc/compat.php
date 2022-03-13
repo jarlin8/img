@@ -806,6 +806,18 @@ add_filter( 'tve_dash_yoast_sitemap_exclude_taxonomies', static function ( $taxo
 } );
 
 /**
+ * Replace page & post identifiers
+ *
+ */
+add_action( 'after_thrive_clone_item', static function ( $new_id, $old_id ) {
+	$css = tve_get_post_meta( $new_id, 'tve_custom_css' );
+
+	$css = str_replace( [ "page-id-$old_id", "postid-$old_id" ], [ "page-id-$new_id", "postid-$new_id" ], $css );
+
+	tve_update_post_meta( $new_id, 'tve_custom_css', $css );
+}, 10, 2 );
+
+/**
  * Modify the page, header/footer, and template sections content so that Digital Access Pass shortcodes are rendered
  */
 add_filter( 'thrive_template_structure', 'tcb_dap_shortcode_in_content' );

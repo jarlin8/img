@@ -5,6 +5,7 @@
  *
  * @package thrive-dashboard
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -159,13 +160,6 @@ function tve_dash_enqueue_script( $handle, $src = '', $deps = array(), $ver = fa
 		$src = preg_replace( '/\.min.js$/', '.js', $src );
 	}
 	wp_enqueue_script( $handle, $src, $deps, $ver, $in_footer );
-}
-
-/**
- * Display Access manager page
- */
-function tve_dash_access_manager_main_page() {
-	TVD_AM::instance()->display_page();
 }
 
 /**

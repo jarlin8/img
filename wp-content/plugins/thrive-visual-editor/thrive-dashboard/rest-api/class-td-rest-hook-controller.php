@@ -137,18 +137,16 @@ class TD_REST_Hook_Controller extends TD_REST_Controller {
 	/**
 	 * The endpoint where the Integration unsubscribes the webhook
 	 *
-	 * @return array|WP_Error
+	 * @return true
 	 */
 	public function unsubscribe() {
 
-		$deleted = delete_option( $this->_get_option_name() );
-		$return  = new WP_Error( 'td_fail_unsubscribe', __( 'Could not unsubscribe the webhook', TVE_DASH_TRANSLATE_DOMAIN ) );
+		/**
+		 * Mind that if option does not exist false is return by delete_option()
+		 */
+		delete_option( $this->_get_option_name() );
 
-		if ( true === $deleted ) {
-			$return = true;
-		}
-
-		return $return;
+		return true;
 	}
 
 	/**

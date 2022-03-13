@@ -128,7 +128,7 @@ class TCB_Lightbox extends TCB_Post {
 	 */
 	public function output_layout() {
 		if ( is_editor_page() ) {
-			tve_enqueue_style( 'tve_lightbox_post', tve_editor_css() . '/editor_lightbox.css' );
+			tve_enqueue_style( 'tve_lightbox_post', tve_editor_css( 'editor_lightbox.css' ) );
 		}
 
 		/**

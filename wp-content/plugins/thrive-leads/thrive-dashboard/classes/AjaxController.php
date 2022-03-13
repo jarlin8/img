@@ -5,6 +5,11 @@
  *
  * @package thrive-dashboard
  */
+
+use TVD\Dashboard\Access_Manager\Admin_Bar_Visibility;
+use TVD\Dashboard\Access_Manager\Login_Redirect;
+use TVD\Dashboard\Access_Manager\Main;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -469,54 +474,132 @@ class TVE_Dash_AjaxController {
 	 * @return array
 	 */
 	public function changeCapabilityAction() {
-		/* Check if the current can use AM */
-		if ( ! current_user_can( TVE_DASH_CAPABILITY ) ) {
-			$response = array(
-				'success' => false,
-				'message' => __( 'You do not have this capability', TVE_DASH_TRANSLATE_DOMAIN ),
-			);
+		$response = array();
 
-			return $response;
+		if ( is_super_admin() ) {
+			if ( current_user_can( TVE_DASH_CAPABILITY ) ) {
+				$role = $this->param( 'role' );
+				if ( $wp_role = get_role( $role ) ) {
+					$capability = $this->param( 'capability' );
+					$action     = $this->param( 'capability_action' );
+
+					/** User should not be allowed to remove TD capability of the administrator */
+					if ( $role === 'administrator' && $capability === TVE_DASH_CAPABILITY ) {
+						$response = array(
+							'success' => false,
+							'message' => __( 'You are not allowed to remove this capability!', TVE_DASH_TRANSLATE_DOMAIN ),
+						);
+					} else {
+						/**
+						 * Add the capability to edit Thrive CPT was set for the users which have edit_posts capability
+						 *
+						 * eg. Edit Leads Form if you have granted access
+						 *
+						 */
+						$wp_role->add_cap( TVE_DASH_EDIT_CPT_CAPABILITY );
+
+						if ( $action === 'add' ) {
+							$wp_role->add_cap( $capability );
+						} else {
+							$wp_role->remove_cap( $capability );
+						}
+
+						$success  = $action === 'add' ? $wp_role->has_cap( $capability ) : ! $wp_role->has_cap( $capability );
+						$response = array(
+							'success' => $success,
+							'message' => $success ? __( 'Capability changed successfully', TVE_DASH_TRANSLATE_DOMAIN ) : __( 'Changing capability failed', TVE_DASH_TRANSLATE_DOMAIN ),
+						);
+					}
+				} else {
+					$response = array(
+						'success' => false,
+						'message' => __( 'This role does not exist anymore', TVE_DASH_TRANSLATE_DOMAIN ),
+					);
+				}
+
+			} else {
+				$response = array(
+					'success' => false,
+					'message' => __( 'You do not have this capability', TVE_DASH_TRANSLATE_DOMAIN ),
+				);
+			}
 		}
-		$role = $this->param( 'role' );
 
-		/* Check if the role still exists */
-		if ( ! $wp_role = get_role( $role ) ) {
+		return $response;
+	}
+
+	/**
+	 * Add functionalities for users
+	 *
+	 * @return array
+	 */
+	public function updateUserFunctionalityAction() {
+		$response = array();
+
+		if ( is_super_admin() ) {
+			$functionality_tag = $this->param( 'functionality' );
+			$role              = $this->param( 'role' );
+			$updated_value     = $this->param( 'value' );
+
+			$functionality = Main::get_all_functionalities( $functionality_tag );
+			$functionality::update_option_value( $role, $updated_value );
+			$success = $functionality::get_option_value( $role ) === $updated_value;
+
 			$response = array(
-				'success' => false,
-				'message' => __( 'This role does not exist anymore', TVE_DASH_TRANSLATE_DOMAIN ),
+				'success' => $success,
+				'message' => $success ? __( 'Functionality changed successfully', TVE_DASH_TRANSLATE_DOMAIN ) : __( 'Changing functionality failed', TVE_DASH_TRANSLATE_DOMAIN ),
 			);
-
-			return $response;
 		}
 
-		$capability = $this->param( 'capability' );
-		$action     = $this->param( 'capability_action' );
+		return $response;
+	}
 
-		/** User should not be allowed to remove TD capability of the administrator */
-		if ( $role === 'administrator' && $capability === TVE_DASH_CAPABILITY ) {
+	/**
+	 * Reset capabilities & functionalities to their default value
+	 *
+	 * @return array
+	 */
+	public function resetCapabilitiesToDefaultAction() {
+		$response = array();
+
+		if ( is_super_admin() ) {
+			$role                    = $this->param( 'role' );
+			$wp_role                 = get_role( $role );
+			$should_have_capability  = $role === 'administrator' || $role === 'editor';
+			$capability_action       = $should_have_capability ? 'add' : 'remove';
+			$updated_products        = array();
+			$updated_functionalities = array();
+			$success                 = true;
+
+			/* Reset product capabilities */
+			foreach ( Main::get_products() as $product ) {
+				if ( $capability_action === 'add' ) {
+					$wp_role->add_cap( $product['prod_capability'] );
+				} else if ( $capability_action = 'remove' ) {
+					$wp_role->remove_cap( $product['prod_capability'] );
+				}
+				$updated_products[ $product['tag'] ] = $wp_role->has_cap( $product['prod_capability'] );
+				$success                             = $success && ( $should_have_capability === $updated_products[ $product['tag'] ] );
+			}
+
+			/* Reset functionalities */
+			foreach ( Main::get_all_functionalities() as $functionality ) {
+				$default_value     = $functionality::get_default();
+				$functionality_tag = $functionality::get_tag();
+
+				$functionality::update_option_value( $role, $default_value );
+				$success                                       = $success && $functionality::get_option_value( $role ) === $default_value;
+				$updated_functionalities[ $functionality_tag ] = $functionality::get_option_value( $role );
+			}
+
+
 			$response = array(
-				'success' => false,
-				'message' => __( 'You are not allowed to remove this capability!', TVE_DASH_TRANSLATE_DOMAIN ),
+				'success'                 => $success,
+				'message'                 => $success ? __( 'Default values were set successfully', TVE_DASH_TRANSLATE_DOMAIN ) : __( 'Changing functionality failed', TVE_DASH_TRANSLATE_DOMAIN ),
+				'updated_products'        => $updated_products,
+				'updated_functionalities' => $updated_functionalities,
 			);
-
-			return $response;
 		}
-
-		/**
-		 * Addthe capability to edit Thrive CPT was set for the users which have edit_posts capability
-		 *
-		 * eg. Edit Leads Form if you have granted access
-		 *
-		 */
-		$wp_role->add_cap( TVE_DASH_EDIT_CPT_CAPABILITY );
-		$action === 'add' ? $wp_role->add_cap( $capability ) : $wp_role->remove_cap( $capability );
-
-		$success  = $action === 'add' ? $wp_role->has_cap( $capability ) : ! $wp_role->has_cap( $capability );
-		$response = array(
-			'success' => $success,
-			'message' => $success ? '' : __( 'Changing capability failed', TVE_DASH_TRANSLATE_DOMAIN ),
-		);
 
 		return $response;
 	}

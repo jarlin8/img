@@ -6,6 +6,7 @@
  */
 
 namespace TCB\Notifications;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }

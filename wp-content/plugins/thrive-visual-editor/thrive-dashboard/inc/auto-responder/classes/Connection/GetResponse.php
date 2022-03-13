@@ -165,6 +165,39 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	}
 
 	/**
+	 * delete a contact from the list
+	 *
+	 * @param string $email
+	 * @param array $arguments
+	 *
+	 * @return mixed
+	 */
+	public function deleteSubscriber( $email, $arguments = array() ) {
+		$api = $this->getApi();
+		if ( ! empty( $email ) ) {
+
+			$contacts = $api->searchContacts(
+				array(
+					'query' => array(
+						'email' => $email
+					),
+				)
+			);
+
+			if ( ! empty( $contacts ) ) {
+				foreach ( $contacts as $contact ) {
+					$api->deleteContact( $contact->contactId, array() );
+
+				}
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * add a contact to a list
 	 *
 	 * @param string $list_identifier
@@ -222,7 +255,8 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 					/**
 					 * this contact may be in other list but try to add it in the current on
 					 */
-					return $api->addContact( $params );
+					$api->addContact( $params );
+					return true;
 				} catch ( Exception $e ) {
 				}
 
@@ -520,7 +554,7 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	 * Prepare custom fields for api call
 	 *
 	 * @param array $custom_fields
-	 * @param null  $list_identifier
+	 * @param null $list_identifier
 	 *
 	 * @return array
 	 */
@@ -548,7 +582,7 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	}
 
 	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
+		return array( 'mailing_list' );
 	}
 }
 

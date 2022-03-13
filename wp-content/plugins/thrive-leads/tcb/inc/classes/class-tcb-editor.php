@@ -254,11 +254,11 @@ class TCB_Editor {
 
 		wp_enqueue_script( 'tcb-scrollbar', TVE_DASH_URL . '/js/util/jquery.scrollbar.min.js' );
 
-		wp_enqueue_script( 'tcb-moment', tve_editor_url() . '/editor/js/libs/moment.min.js' );
+		wp_enqueue_script( 'tcb-moment', tve_editor_url( 'editor/js/libs/moment.min.js' ) );
 
 		$locale = tve_get_locale();
 		if ( file_exists( TVE_TCB_ROOT_PATH . '/editor/js/libs/moment-locale/' . $locale . '.js' ) ) {
-			wp_enqueue_script( 'tcb-moment-locale', tve_editor_url() . '/editor/js/libs/moment-locale/' . $locale . '.js' );
+			wp_enqueue_script( 'tcb-moment-locale', tve_editor_url( 'editor/js/libs/moment-locale/' . $locale . '.js' ) );
 		}
 
 		if ( function_exists( 'wp_enqueue_code_editor' ) ) {
@@ -281,9 +281,9 @@ class TCB_Editor {
 			'backbone',
 		) );
 
-		tve_enqueue_script( 'tve-main', tve_editor_js() . '/main' . $js_suffix, $main_deps, false, true );
+		tve_enqueue_script( 'tve-main', tve_editor_js( '/main' . $js_suffix ), $main_deps, false, true );
 
-		tve_enqueue_style( 'tve2_editor_style', tve_editor_css() . '/main/style.css' );
+		tve_enqueue_style( 'tve2_editor_style', tve_editor_css( 'main/style.css' ) );
 
 		/* wp-auth-login */
 		wp_enqueue_script( 'wp-auth-check' );
@@ -304,11 +304,11 @@ class TCB_Editor {
 		tve_enqueue_style( 'tve-editor-font', 'https://fonts.googleapis.com/css?family=Rubik:400,500,700' );
 
 		//Default datepicker design
-		wp_enqueue_style( 'jquery-ui-datepicker', tve_editor_css() . '/jquery-ui-1.10.4.custom.min.css' );
+		wp_enqueue_style( 'jquery-ui-datepicker', tve_editor_css( 'jquery-ui-1.10.4.custom.min.css' ) );
 
 		if ( tve_check_if_thrive_theme() ) {
 			/* include the css needed for the shortcodes popup (users are able to insert Thrive themes shortcode inside the WP editor on frontend) - using the "Insert WP Shortcode" element */
-			tve_enqueue_style( 'tve_shortcode_popups', tve_editor_css() . '/thrive_shortcodes_popup.css' );
+			tve_enqueue_style( 'tve_shortcode_popups', tve_editor_css( 'thrive_shortcodes_popup.css' ) );
 		}
 
 		/*Include Select2*/
@@ -941,6 +941,8 @@ class TCB_Editor {
 				}
 				$display = 'hide';
 				break;
+			default:
+				break;
 		}
 
 		return apply_filters( 'tcb_sidebar_icon_availability', $display, $icon, $this );
@@ -968,12 +970,10 @@ class TCB_Editor {
 
 		$landing_page = tcb_landing_page( $this->post->ID );
 
-		$data = apply_filters( 'tcb_alter_template_data', array(
+		return apply_filters( 'tcb_alter_template_data', array(
 			'styles' => $landing_page->template_styles,
 			'vars'   => $landing_page->template_vars,
 		), $landing_page );
-
-		return $data;
 	}
 
 	/**
@@ -1044,6 +1044,32 @@ class TCB_Editor {
 		$is_allowed = apply_filters( 'tve_allowed_post_type', true, $this->post->post_type );
 
 		return apply_filters( 'tcb_can_use_landing_pages', $is_allowed );
+	}
+
+	/**
+	 * Whether or not the current post can use external content
+	 *
+	 * @return false|mixed|void
+	 */
+	public function allow_import_content() {
+		if ( ! $this->post ) {
+			return false;
+		}
+
+		return apply_filters( 'tcb_can_import_content', true, $this->post );
+	}
+
+	/**
+	 * Whether or not the current post can export its content
+	 *
+	 * @return false|mixed|void
+	 */
+	public function allow_export_content() {
+		if ( ! $this->post ) {
+			return false;
+		}
+
+		return apply_filters( 'tcb_can_export_content', ! $this->is_landing_page(), $this->post );
 	}
 
 	/**

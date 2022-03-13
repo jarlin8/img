@@ -14,13 +14,13 @@ defined( 'TVE_CLOUD_LP_FOLDER' ) || define( 'TVE_CLOUD_LP_FOLDER', 'tcb_lp_templ
  */
 class TCB_Landing_Page_Cloud_Templates_Api {
 
-	const API_KEY = '@(#$*%)^SDFKNgjsdi870234521SADBNC#';
+	const API_KEY  = '@(#$*%)^SDFKNgjsdi870234521SADBNC#';
 	const API_PASS = '!!@#ThriveIsTheBest123$$@#';
 
 	const DEBUG_LOCAL = false;
 
-	const API_URL = 'http://landingpages.thrivethemes.com/cloud-api/index-api.php';
-	const API_SERVICE = 'http://service-api.thrivethemes.com/cloud-templates-api';
+	const API_URL         = 'http://landingpages.thrivethemes.com/cloud-api/index-api.php';
+	const API_SERVICE     = 'http://service-api.thrivethemes.com/cloud-templates-api';
 	const API_SERVICE_DEV = 'http://thrive.service/cloud-api/index-api.php';
 
 	/**
@@ -90,7 +90,7 @@ class TCB_Landing_Page_Cloud_Templates_Api {
 	public function get_template_list( $filters = array() ) {
 		$params = apply_filters( 'tcb_get_cloud_templates_default_args', array(
 			'route'           => 'getAll',
-			'tar_version'     => TVE_VERSION,
+			'tar_version'     => defined( 'TCB_CLOUD_DEBUG' ) && TCB_CLOUD_DEBUG ? '10' : TVE_VERSION,
 			'tar_cloud_debug' => defined( 'TCB_CLOUD_DEBUG' ) && TCB_CLOUD_DEBUG ? '1' : '0',
 		) );
 		if ( ! empty( $filters ) ) {
@@ -387,6 +387,20 @@ class TCB_Landing_Page_Transfer {
 	private $import_config = array();
 
 	/**
+	 * Zip data
+	 *
+	 * @var string
+	 */
+	protected $cfg_name = 'lp.json';
+	protected $html_file_name = 'lp.html';
+	protected $archive_prefix = 'tve-lp-';
+
+	/**
+	 * Whether or not LP vars should be replaced by their values on export
+	 */
+	protected $allow_lp_vars = false;
+
+	/**
 	 * get the wp upload dir info
 	 *
 	 * @return array
@@ -435,7 +449,8 @@ class TCB_Landing_Page_Transfer {
 
 		$config['cloud_template'] = tve_is_cloud_template( $config['tve_landing_page'] );
 
-		$config['tve_version'] = TVE_VERSION; /* just to be able to validate imports later on, if we'll need some kind of compatibility checks */
+		$config['tve_version']            = TVE_VERSION; /* just to be able to validate imports later on, if we'll need some kind of compatibility checks */
+		$config['tve_original_post_type'] = get_post_type( $page_id ); /* just in case we need it to prevent imports to other post types */
 
 		$page_content = apply_filters( 'tcb.export_page_content', $config['tve_updated_post'], $page_id );
 		unset( $config['tve_updated_post'] ); // we do not need these in the config file
@@ -468,7 +483,7 @@ class TCB_Landing_Page_Transfer {
 
 		$uploads_dir = $this->getUploadDir();
 
-		$zip_filename = 'tve-lp-' . $template_name . '.zip';
+		$zip_filename = $this->archive_prefix . $template_name . '.zip';
 
 		@unlink( $uploads_dir['path'] . $zip_filename );
 
@@ -510,7 +525,7 @@ class TCB_Landing_Page_Transfer {
 		$config['font_pack'] = isset( $this->exported_font_pack ) ? $this->exported_font_pack : array();
 
 		/* add the contents of the page, in a separate file */
-		$zip->addFromString( 'lp.html', $page_content );
+		$zip->addFromString( $this->html_file_name, $page_content );
 
 		/* it's possible that this landing page or some of it's lightboxes have some extra icon packs (added from previous imports) */
 		$this->exportExtraIconPacks( $zip, $config );
@@ -521,7 +536,7 @@ class TCB_Landing_Page_Transfer {
 		}
 
 		/* add the json config file */
-		$zip->addFromString( 'lp.json', json_encode( $config ) );
+		$zip->addFromString( $this->cfg_name, json_encode( $config ) );
 
 		if ( ! @$zip->close() ) {
 			throw new Exception( 'Could not write the zip file' );
@@ -1053,11 +1068,9 @@ class TCB_Landing_Page_Transfer {
 		/* 1b. include the icon pack as an extra resource to be saved in the landing page */
 		if ( ! empty( $config['icon_pack'] ) ) {
 			$new_icon_pack = $this->importIconPack( $config, $zip );
-			if ( ! empty( $new_icon_pack ) && ! empty( $config['icon_pack']['icons'] ) && count( $config['icon_pack']['icons'] ) == count( $new_icon_pack['icons'] ) ) {
-				if ( $new_icon_pack['icons'][0] != $config['icon_pack']['icons'][0] ) {
-					$icon_search  = $config['icon_pack']['icons'];
-					$icon_replace = $new_icon_pack['icons'];
-				}
+			if ( ! empty( $new_icon_pack ) && ! empty( $config['icon_pack']['icons'] ) && count( $config['icon_pack']['icons'] ) === count( $new_icon_pack['icons'] ) && $new_icon_pack['icons'][0] !== $config['icon_pack']['icons'][0] ) {
+				$icon_search  = $config['icon_pack']['icons'];
+				$icon_replace = $new_icon_pack['icons'];
 			}
 
 			/* the default icons should not be included anymore in the LP or any of the lightboxes */
@@ -1083,7 +1096,7 @@ class TCB_Landing_Page_Transfer {
 		$image_map = $this->importImages( $config, $zip );
 
 		/* 3. import all lightboxes (create new posts with type tcb_lightbox) */
-		$lightbox_id_map = $this->importLightboxes( $config, $image_map, $zip );
+		$lightbox_id_map = $this->importLightboxes( $config, $image_map );
 
 		/* 3. page-level events - check if we have a lightbox there and replace its ID */
 		if ( ! empty( $config['tve_page_events'] ) ) {
@@ -1112,7 +1125,7 @@ class TCB_Landing_Page_Transfer {
 		}
 
 		/* 5. update the meta-field for TCB content - we need to parse the content and replace lightbox ids inside the event manager parameters */
-		$page_content = $zip->getFromName( 'lp.html' );
+		$page_content = $zip->getFromName( $this->html_file_name );
 		$this->importParseImageLinks( $page_content, $image_map );
 		$this->importReplaceLightboxIds( $page_content, $lightbox_id_map );
 		if ( isset( $icon_search ) && isset( $icon_replace ) ) {
@@ -1137,7 +1150,7 @@ class TCB_Landing_Page_Transfer {
 		}
 
 		/* finally, save this import also as a landing page template */
-		$template_name     = str_replace( 'tve-lp-', '', $template_name );
+		$template_name     = str_replace( $this->archive_prefix, '', $template_name );
 		$templates_content = get_option( 'tve_saved_landing_pages_content' ); // this should get unserialized automatically
 		$templates_meta    = get_option( 'tve_saved_landing_pages_meta' ); // this should get unserialized automatically
 
@@ -1243,19 +1256,20 @@ class TCB_Landing_Page_Transfer {
 	 * @throws Exception
 	 */
 	protected function importReadConfig( ZipArchive $zip ) {
-		/* 1. check if lp.json exists in the archive */
-		if ( false === $zip->locateName( 'lp.json' ) ) {
+		/* 1. check if json exists in the archive */
+
+		if ( false === $zip->locateName( $this->cfg_name ) ) {
 			throw new Exception( __( 'This archive does not seem to be generated from Thrive Architect - unable to find the config file', 'thrive-cb' ) );
 		}
 
-		/* 2. check if lp.html exists - the Landing Page contents */
-		if ( false === $zip->locateName( 'lp.json' ) ) {
+		/* 2. check if html exists - the Landing Page contents */
+		if ( false === $zip->locateName( $this->html_file_name ) ) {
 			throw new Exception( __( 'This archive does not seem to be generated from Thrive Architect - unable to find the content file', 'thrive-cb' ) );
 		}
 
 		/* 3. extract the config array from the json config file */
-		$contents = trim( $zip->getFromName( 'lp.json' ) );
-		$config   = json_decode( $zip->getFromName( 'lp.json' ), true );
+		$contents = trim( $zip->getFromName( $this->cfg_name ) );
+		$config   = json_decode( $zip->getFromName( $this->cfg_name ), true );
 
 		/**
 		 * Also support the base64-encoded config files
@@ -1264,11 +1278,12 @@ class TCB_Landing_Page_Transfer {
 			$config = @unserialize( @base64_decode( $contents ) );
 		}
 
+
 		if ( empty( $config ) ) {
 			throw new Exception( __( 'This archive does not seem to be generated from Thrive Architect - could not decode the configuration', 'thrive-cb' ) );
 		}
 
-		if ( empty( $config['tve_landing_page'] ) ) {
+		if ( $this->should_check_lp_page() && empty( $config['tve_landing_page'] ) ) {
 			throw new Exception( __( 'This archive does not seem to be generated from Thrive Architect - configuration file is invalid', 'thrive-cb' ) );
 		}
 
@@ -1294,6 +1309,15 @@ class TCB_Landing_Page_Transfer {
 		}
 
 		return $config;
+	}
+
+	/**
+	 * Whether or not we expect a LP to be imported
+	 *
+	 * @return bool
+	 */
+	protected function should_check_lp_page() {
+		return true;
 	}
 
 	/**
@@ -2090,7 +2114,7 @@ class TCB_Landing_Page_Transfer {
 						/**
 						 * If there are global import rules, we need to prepend them into custom css
 						 */
-						$config['tve_custom_css'] = join( '', $_POST['global_import_rules'] ) . $config['tve_custom_css'];
+						$config['tve_custom_css'] = join( '', wp_unslash( $_POST['global_import_rules'] ) ) . $config['tve_custom_css'];
 					}
 				}
 
@@ -2100,7 +2124,7 @@ class TCB_Landing_Page_Transfer {
 			/**
 			 * When using export TAR function
 			 */
-			$config['tve_custom_css'] = tve_prepare_global_variables_for_front( $config['tve_custom_css'], true, false );
+			$config['tve_custom_css'] = tve_prepare_global_variables_for_front( $config['tve_custom_css'], true, $this->allow_lp_vars );
 		}
 
 		if ( ! empty( $_REQUEST['post_id'] ) && is_numeric( $_REQUEST['post_id'] ) ) {

@@ -105,6 +105,18 @@ TL_Front.conditional_display = function ( allData ) {
 TL_Front.$document = ThriveGlobal.$j( document );
 
 /**
+ * Extend the TL_Const object being careful not to overwrite some of its fields.
+ *
+ * @param {*} configuration
+ */
+TL_Front.extendConst = function ( configuration ) {
+	if ( TL_Const.current_screen ) { // this makes sure the original screen data is not changed
+		delete configuration.current_screen;
+	}
+	ThriveGlobal.$j.extend( true, TL_Const, configuration );
+}
+
+/**
  * Emulates the default document.write function - but appending elements with jquery - thus not breaking the body on document.write after domready
  * @param str
  */

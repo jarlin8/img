@@ -48,7 +48,7 @@ class Woocommerce {
 
 	public static function get_woo_js_modules() {
 		return [
-			'tve_woo'        => tve_editor_js() . '/woo' . \TCB_Utils::get_js_suffix(),
+			'tve_woo'        => tve_editor_js( '/woo' . \TCB_Utils::get_js_suffix() ),
 			'selectWoo'      => static::get_modules_urls( 'assets/js/selectWoo/selectWoo.full.js' ),
 			'woocommerce'    => static::get_modules_urls( 'assets/js/frontend/woocommerce.js' ),
 			'cart-fragments' => static::get_modules_urls( 'assets/js/frontend/cart-fragments.js' ),

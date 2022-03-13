@@ -309,6 +309,9 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 				) );
 
 				$user_id = wp_insert_user( $user_data );
+				if ( $user_id ) {
+					do_action( 'thrive_register_form_through_wordpress_user', $user_id, $arguments );
+				}
 
 			} else {
 				return $this->build_field_error( __( '<strong>Error</strong>: This email is already registered. Please choose another one.' ), 'email' );

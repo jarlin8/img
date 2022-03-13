@@ -9,7 +9,7 @@
 		<div class="dropdown-content">
 			<?php if ( tcb_editor()->is_landing_page() ) : ?>
 				<div class="field-section p-texts center-text">
-					<button class="style-input lp-typography-button tve-button click" data-fn="f:main.sidebar_extra.settings.landing_page_fonts">
+					<button class="style-input lp-typography-button tve-button click" data-fn="f:main.sidebar_extra.settings.landingPageFonts">
 						<?php echo esc_html__( 'Edit landing page typography', 'thrive-cb' ); ?>
 					</button>
 				</div>

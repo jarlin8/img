@@ -2,7 +2,6 @@
 
 namespace TCB\Integrations\Automator;
 
-
 use Thrive\Automator\Items\Data_Object;
 
 if ( ! defined( 'ABSPATH' ) ) {

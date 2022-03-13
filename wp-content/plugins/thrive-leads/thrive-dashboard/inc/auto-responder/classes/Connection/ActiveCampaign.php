@@ -204,6 +204,29 @@ class Thrive_Dash_List_Connection_ActiveCampaign extends Thrive_Dash_List_Connec
 	}
 
 	/**
+	 * delete a contact from the list
+	 *
+	 * @param string $email
+	 * @param array $arguments
+	 *
+	 * @return mixed
+	 */
+	public function deleteSubscriber( $email, $arguments = array() ) {
+		$api     = $this->getApi();
+		$contact = $api->call( 'contact_view_email', array( 'email' => $email ) );
+
+		if ( isset( $contact['result_code'] ) && $contact['result_code'] == 1 ) {
+
+			$body = array( 'id' => $contact['id'] );
+			$result = $api->call( 'contact_delete', $body, array() );
+			return isset( $result['result_code'] ) && $result['result_code'] == 1;
+		}
+
+		return true;
+
+	}
+
+	/**
 	 * add a contact to a list
 	 *
 	 * @param mixed $list_identifier

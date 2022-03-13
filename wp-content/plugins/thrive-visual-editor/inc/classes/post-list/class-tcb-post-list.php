@@ -18,6 +18,8 @@ defined( 'TCB_SHORTCODE_CLASS' ) || define( 'TCB_SHORTCODE_CLASS', 'tcb-shortcod
 /* class that applies ONLY to the post-list shortcodes */
 defined( 'TCB_DO_NOT_RENDER_POST_LIST' ) || define( 'TCB_DO_NOT_RENDER_POST_LIST', 'do-not-render-post-list' );
 
+defined( 'TCB_RENDERING_SYMBOL' ) || define( 'TCB_RENDERING_SYMBOL', 'tcb-symbol-render' );
+
 defined( 'TCB_POST_WRAPPER_CLASS' ) || define( 'TCB_POST_WRAPPER_CLASS', 'post-wrapper' );
 defined( 'TCB_POST_LIST_LOCALIZE' ) || define( 'TCB_POST_LIST_LOCALIZE', 'tcb_post_list_localize' );
 
@@ -579,8 +581,7 @@ class TCB_Post_List {
 
 							default:
 								$post_terms = wp_get_post_terms( $queried_object->ID, $taxonomy, array( 'fields' => 'ids' ) );
-								if ( ! empty( $post_terms ) ) {
-									$query_args['tax_query'][] = array(
+								if ( ! empty( $post_terms ) && ! ( $post_terms instanceof WP_Error ) ) {									$query_args['tax_query'][] = array(
 										'taxonomy' => $taxonomy,
 										'field'    => 'term_id',
 										'terms'    => array_map( function ( $term ) {

@@ -19,6 +19,7 @@ abstract class Condition {
 	private $value;
 	private $operator;
 	private $um;
+	private $extra;
 
 	public function __construct( $data ) {
 		$this->prepare_data( $data );
@@ -29,6 +30,10 @@ abstract class Condition {
 
 		if ( ! empty( $data['operator'] ) ) {
 			$this->operator = $data['operator'];
+		}
+
+		if ( ! empty( $data['extra'] ) ) {
+			$this->extra = $data['extra'];
 		}
 
 		if ( ! empty( $data['um'] ) ) {
@@ -46,6 +51,10 @@ abstract class Condition {
 
 	public function get_um() {
 		return $this->um;
+	}
+
+	public function get_extra() {
+		return $this->extra;
 	}
 
 	/**
@@ -97,7 +106,7 @@ abstract class Condition {
 		return [
 			'label'                  => static::get_label(),
 			'operators'              => $operators,
-			'extra_operators'         => static::get_extra_operators(),
+			'extra_operators'        => static::get_extra_operators(),
 			'is_hidden'              => static::is_hidden(),
 			'control_type'           => static::get_control_type(),
 			'display_size'           => static::get_display_size(),

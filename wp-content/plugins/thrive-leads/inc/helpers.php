@@ -2321,6 +2321,10 @@ function tve_leads_format_date( $date_string, $format = null ) {
  */
 function tve_leads_get_form_placeholder( $type, $control_variation = null ) {
 
+	$o_type = $type;
+	if ( $type === 'before_widget' ) {
+		$type = 'widget';
+	}
 	if ( empty( $GLOBALS['tve_lead_forms'][ $type ]['form_type'] ) && $control_variation === null ) {
 		$placeholder = sprintf( '<span style="display:none" class="tl-placeholder-f-type-%s"></span>', $type );
 	} else {
@@ -2355,8 +2359,8 @@ function tve_leads_get_form_placeholder( $type, $control_variation = null ) {
 			$form_style = 'display:none';
 		}
 
-		switch ( $type ) {
-			case 'widget':
+		switch ( $o_type ) {
+			case 'before_widget':
 				$placeholder = sprintf( '<div style="%s" class="tl-widget-container %s">%s', $form_style, $form_class, $placeholder_content );
 				break;
 

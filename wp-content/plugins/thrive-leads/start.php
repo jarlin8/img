@@ -125,6 +125,7 @@ add_action( 'plugins_loaded', 'tve_leads_load_dash_version' );
 add_filter( 'td_nm_trigger_types', 'tve_leads_filter_nm_trigger_types' );
 
 add_filter( 'tcb_post_grid_banned_types', 'tve_leads_add_post_grid_banned_types' );
+add_filter( 'tcb_can_export_content', 'tl_hide_export_content', 10, 2 );
 
 if ( ! is_admin() ) {
 

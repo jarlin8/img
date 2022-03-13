@@ -66,7 +66,7 @@ class Add_User extends Action {
 	}
 
 	public static function get_required_data_objects() {
-		return array( 'user_data', 'form_data' );
+		return array( 'user_data', 'form_data', 'email_data' );
 	}
 
 	/**
@@ -115,14 +115,16 @@ class Add_User extends Action {
 		 */
 		$data_sets   = array_diff( $data_sets, [ 'user_data' ] );
 		$data_sets[] = 'user_data';
+
+		global $automation_data;
 		/**
 		 * Try to get email for available data objects
 		 */
 		while ( ! empty( $data_sets ) && empty( $email ) ) {
-			$set = array_shift( $data_sets );
-
-			if ( ! empty( $data[ $set ] ) && $data[ $set ]->can_provide_email() ) {
-				$email = $data[ $set ]->get_provided_email();
+			$set         = array_shift( $data_sets );
+			$data_object = $automation_data->get( $set );
+			if ( ! empty( $data_object ) && $data_object->can_provide_email() ) {
+				$email = $data_object->get_provided_email();
 			}
 		}
 
@@ -169,12 +171,12 @@ class Add_User extends Action {
 	 *
 	 * @param $data
 	 *
-	 * @return array|\string[][]|\string[][][]
+	 * @return array|string[][]|string[][][]
 	 */
 	public static function get_action_mapped_fields( $data ) {
 		$fields = static::get_required_action_fields();
 		if ( property_exists( $data, 'autoresponder' ) ) {
-			$api_instance = \Thrive_Dash_List_Manager::connectionInstance( $data->autoresponder->value );
+			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $data->autoresponder->value );
 			if ( $api_instance->isConnected() && $api_instance->hasForms() ) {
 				$fields = array( 'autoresponder' => array( 'mailing_list' => array( 'form_list' ) ) );
 			}
@@ -188,7 +190,7 @@ class Add_User extends Action {
 		$api_instance = Thrive_Dash_List_Manager::connectionInstance( $selected_value );
 
 		if ( ! $api_instance && property_exists( $action_data, 'autoresponder' ) ) {
-			$api_instance = \Thrive_Dash_List_Manager::connectionInstance( $action_data->autoresponder->value );
+			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $action_data->autoresponder->value );
 		}
 
 		$fields = array();
@@ -231,9 +233,9 @@ class Add_User extends Action {
 	public function can_run( $data ) {
 		$valid          = true;
 		$available_data = array();
-
+		global $automation_data;
 		foreach ( static::get_required_data_objects() as $key ) {
-			if ( ! empty( $data[ $key ] ) ) {
+			if ( ! empty( $automation_data->get( $key ) ) ) {
 				$available_data[] = $key;
 			}
 		}

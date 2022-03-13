@@ -9,8 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden
 }
 
-use \TCB\inc\helpers\FormSettings;
-use \TCB\inc\helpers\FileUploadConfig;
+use TCB\inc\helpers\FileUploadConfig;
+use TCB\inc\helpers\FormSettings;
 use TCB\Notifications\Main;
 
 if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
@@ -639,7 +639,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 							$upload_dir = tve_filter_upload_user_template_location( wp_upload_dir() );
 							$base       = $upload_dir['basedir'] . $upload_dir['subdir'];
-							$file_name  = $base . '/' . basename( $meta[ $template_index ]['preview_image']['url'] );;
+							$file_name  = $base . '/' . basename( $meta[ $template_index ]['preview_image']['url'] );
 							@unlink( $file_name );
 						}
 
@@ -727,6 +727,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 						'tpl_section'      => get_post_meta( $post_id, 'thrv_lp_template_section', true ),
 						'tpl_contentbox'   => get_post_meta( $post_id, 'thrv_lp_template_contentbox', true ),
 						'tpl_palettes'     => get_post_meta( $post_id, 'thrv_lp_template_palettes', true ),
+						'tpl_skin_tag'     => get_post_meta( $post_id, 'theme_skin_tag', true ),
 						'date'             => date( 'Y-m-d' ),
 					);
 					/**
@@ -1098,7 +1099,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$this->error( 'Invalid color name! It must contain a maximum of ' . $max_name_characters . ' characters' );
 			}
 
-			$global_colors = tcb_color_manager()->get_list();;
+			$global_colors = tcb_color_manager()->get_list();
 			if ( ! is_array( $global_colors ) ) {
 				/**
 				 * Security check: if the option is not empty and somehow the stored value is not an array, make it an array.
@@ -1378,7 +1379,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 				$smart_config = $this->param( 'smart_config', '', false );
 				if ( ! empty( $smart_config ) ) {
-					$global_styles[ $identifier ]['smart_config'] = json_decode( stripslashes( $smart_config ), true );;
+					$global_styles[ $identifier ]['smart_config'] = json_decode( stripslashes( $smart_config ), true );
 				}
 
 				if ( is_numeric( $active ) && (int) $active === 0 ) {
@@ -2290,6 +2291,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$tpls = tcb_elements()->element_factory( 'contentblock' )->get_blocks();
 			}
 
+			global $wpdb;
 			if ( ! empty( $wpdb->last_error ) ) {
 				$this->error( $wpdb->last_error );
 			}
@@ -2396,6 +2398,68 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			return $response;
 		}
 
+		public function action_content_export() {
+			$response = array(
+				'success' => true,
+			);
+
+			$template_name = sanitize_file_name( $this->param( 'template_name' ) );
+			$post_id       = (int) $this->param( 'post_id' );
+
+			if ( empty( $template_name ) || empty( $post_id ) ) {
+				$response['success'] = false;
+				$response['message'] = __( 'Invalid request', 'thrive-cb' );
+			} else {
+				$transfer = new TCB_Content_Handler();
+
+				try {
+					$data                = $transfer->export( $post_id, $template_name );
+					$response['url']     = $data['url'];
+					$response['message'] = __( 'Content exported successfully!', 'thrive-cb' );
+
+				} catch ( Exception $e ) {
+					$response['success'] = false;
+					$response['message'] = $e->getMessage();
+				}
+			}
+
+			return $response;
+		}
+
+		public function action_content_import() {
+			$response = array(
+				'success' => true,
+				'message' => '',
+			);
+
+			$page_id       = (int) $this->param( 'page_id' );
+			$attachment_id = (int) $this->param( 'attachment_id' );
+
+			$allow_import = apply_filters( 'tve_allow_import_content', true, get_post_type( $page_id ) );
+			if ( empty( $attachment_id ) || empty( $page_id ) || ! $allow_import ) {
+				$this->error( 'Invalid attachment id', 'thrive-cb' );
+			}
+
+			$transfer = new TCB_Content_Handler();
+			try {
+				$file         = get_attached_file( $attachment_id, true );
+				$content_data = $transfer->import( $file, $page_id );
+
+				$content_data['content'] = tve_do_wp_shortcodes( tve_thrive_shortcodes( stripslashes( $content_data['content'] ), true ), true );
+				//do shortcode to make sure that all elements are properly displayed
+				$content_data['content']    = do_shortcode( $content_data['content'] );
+				$content_data['inline_css'] = do_shortcode( $content_data['inline_css'] );
+
+				$response['content_data'] = apply_filters( 'tve_import_content_data', $content_data );
+				$response['message']      = __( 'Content imported successfully!', 'thrive-cb' );
+
+			} catch ( Exception $e ) {
+				$this->error( $e->getMessage() );
+			}
+
+			return $response;
+		}
+
 		/**
 		 * export a Landing Page as a Zip file
 		 */
@@ -2410,23 +2474,19 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			if ( empty( $template_name ) || empty( $post_id ) || ! tve_post_is_landing_page( $post_id ) ) {
 				$response['success'] = false;
 				$response['message'] = __( 'Invalid request', 'thrive-cb' );
+			} else {
+				$transfer            = new TCB_Landing_Page_Transfer();
+				$thumb_attachment_id = (int) $this->param( 'thumb_id', 0 );
 
-				return $response;
-			}
+				try {
+					$data                = $transfer->export( $post_id, $template_name, $thumb_attachment_id );
+					$response['url']     = $data['url'];
+					$response['message'] = __( 'Landing Page exported successfully!', 'thrive-cb' );
 
-			$transfer = new TCB_Landing_Page_Transfer();
-
-			$thumb_attachment_id = (int) $this->param( 'thumb_id', 0 );
-
-			try {
-
-				$data                = $transfer->export( $post_id, $template_name, $thumb_attachment_id );
-				$response['url']     = $data['url'];
-				$response['message'] = __( 'Landing Page exported successfully!', 'thrive-cb' );
-
-			} catch ( Exception $e ) {
-				$response['success'] = false;
-				$response['message'] = $e->getMessage();
+				} catch ( Exception $e ) {
+					$response['success'] = false;
+					$response['message'] = $e->getMessage();
+				}
 			}
 
 			return $response;

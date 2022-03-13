@@ -3,9 +3,11 @@
 /*
 Plugin Name: Thrive Architect
 Plugin URI: http://www.thrivethemes.com
-Version: 3.6
+Version: 3.7
 Author: <a href="http://www.thrivethemes.com">Thrive Themes</a>
 Description: Live front end editor for your WordPress content
+Text domain: thrive-cb
+Domain Path: /languages
 */
 
 defined( 'TVE_EDITOR_URL' ) || define( 'TVE_EDITOR_URL', plugin_dir_url( __FILE__ ) );
@@ -449,7 +451,6 @@ function tve_reset_cloud_templates_meta() {
 	tve_save_downloaded_templates( array() );
 }
 
-
 /**
  * Just initialize the PluginUpdateChecker included from dash
  */
@@ -479,7 +480,7 @@ function tve_update_checker() {
  */
 
 function architect_set_product_icon( $info ) {
-	$info->icons['1x'] = tve_editor_css() . '/images/thrive-architect-logo.png';
+	$info->icons['1x'] = tve_editor_css( 'images/thrive-architect-logo.png' );
 
 	return $info;
 }

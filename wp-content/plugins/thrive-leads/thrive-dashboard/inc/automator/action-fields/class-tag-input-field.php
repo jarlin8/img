@@ -2,6 +2,8 @@
 
 namespace TVE\Dashboard\Automator;
 
+use Thrive\Automator\Items\Action_Field;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -9,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Tag_Input_Field
  */
-class Tag_Input_Field extends \Thrive\Automator\Items\Action_Field {
+class Tag_Input_Field extends Action_Field {
 
 	/**
 	 * Field name
@@ -36,7 +38,8 @@ class Tag_Input_Field extends \Thrive\Automator\Items\Action_Field {
 	 * $$value will be replaced by field value
 	 * $$length will be replaced by value length
 	 *
-	 * @var string
+	 *
+	 * @return string
 	 */
 	public static function get_preview_template() {
 		return '$$length tags';

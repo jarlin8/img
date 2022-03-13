@@ -104,24 +104,29 @@ class Thrive_Dash_Api_ConstantContact {
 	 * @throws Thrive_Dash_Api_ConstantContact_AlreadyExistException
 	 */
 	protected function make_request( $path, $params = array(), $type = 'post', $extra = array() ) {
-		switch ( $type ) {
-			case 'get':
-				$fn = 'tve_dash_api_remote_get';
-				break;
-			default:
-				$fn = 'tve_dash_api_remote_post';
-				break;
-		}
-
-		$url = self::URL . $path . "?" . http_build_query( array_merge( array( 'api_key' => $this->api_key ), $extra ) );
 
 		$args = array(
 			'headers' => array(
 				'Content-Type'  => 'application/json',
 				"Authorization" => "Bearer " . $this->api_token,
 			),
-			'body'    => $params
+
 		);
+
+		switch ( $type ) {
+			case 'get':
+				$fn = 'tve_dash_api_remote_get';
+				$args['body']    = $params;
+				break;
+			default:
+				$args['body']    = json_encode($params);
+				$fn = 'tve_dash_api_remote_post';
+				break;
+		}
+
+		$url = self::URL . $path . "?" . http_build_query( array_merge( array( 'api_key' => $this->api_key ), $extra ) );
+
+
 
 		if ( $type === 'put' ) {
 			$args['method'] = 'put';

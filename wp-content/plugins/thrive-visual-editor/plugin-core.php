@@ -103,6 +103,7 @@ require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-icon-manager.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/lightspeed/class-main.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-post.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-utils.php';
+require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-content-handler.php';
 
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-search-form.php';
 

@@ -49,7 +49,7 @@ class TD_TTW_User_Licenses {
 			$tag = ! empty( $item['tag'] ) ? $item['tag'] : '';
 
 			if ( is_array( $tag ) ) {
-				$tag = in_array( self::TTB_TAG, $tag )
+				$tag = in_array( self::TTB_TAG, $tag, true )
 					? self::TTB_TAG
 					: TD_TTW_License::MEMBERSHIP_TAG;
 			}
@@ -145,7 +145,7 @@ class TD_TTW_User_Licenses {
 			return $this->_licenses_instances[ $tag ];
 		}
 
-		return new TD_TTW_License( [] );
+		return new TD_TTW_License( array() );
 	}
 
 	/**
@@ -208,9 +208,12 @@ class TD_TTW_User_Licenses {
 			$url = admin_url( 'plugins.php' );
 		}
 
-		return add_query_arg( array(
-			TD_TTW_User_Licenses::RECHECK_KEY => 1,
-		), $url );
+		return add_query_arg(
+			array(
+				TD_TTW_User_Licenses::RECHECK_KEY => 1,
+			),
+			$url
+		);
 	}
 
 	/**
@@ -228,7 +231,7 @@ class TD_TTW_User_Licenses {
 		include $this->path( 'templates/debugger.phtml' );
 		$html = ob_get_clean();
 
-		if ( $return === true ) {
+		if ( true === $return ) {
 			return $html;
 		}
 
@@ -255,7 +258,7 @@ class TD_TTW_User_Licenses {
 			$licenses = false;
 		}
 
-		if ( $licenses !== false ) {
+		if ( false !== $licenses ) {
 
 			return $licenses;
 		}
@@ -276,6 +279,8 @@ class TD_TTW_User_Licenses {
 		$body = json_decode( $body, true );
 
 		if ( ! is_array( $body ) || ! isset( $body['success'] ) || $body['success'] === false ) {
+			set_transient( self::NAME, array(), self::CACHE_LIFE_TIME );
+
 			return array();
 		}
 

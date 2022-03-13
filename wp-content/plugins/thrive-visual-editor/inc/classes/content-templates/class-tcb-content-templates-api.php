@@ -49,7 +49,7 @@ class TCB_Content_Templates_Api extends TCB_Landing_Page_Cloud_Templates_Api {
 			$args,
 			array(
 				'route'       => 'getAll',
-				'tar_version' => TVE_VERSION,
+				'tar_version' => defined( 'TCB_CLOUD_DEBUG' ) && TCB_CLOUD_DEBUG ? '10' : TVE_VERSION,
 				'type'        => $type,
 				'ct'          => md5( time() ),
 			)

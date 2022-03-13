@@ -19,7 +19,7 @@ if ( ! isset( $defaults ) || empty( $args ) || ! is_array( $args ) ) {
 		<h1><?php echo esc_html( $args['name'] ); ?> version: <?php echo esc_html( $args['current_version'] ); ?></h1>
 	</div>
 	<div>
-		<p>Are you sure you want to switch to the sable version?</p>
+		<p>Are you sure you want to switch to the stable version?</p>
 	</div>
 	<div class="wpr-submit-wrap">
 		<input type="submit" value="Switch to stable version" class="button-primary"/>

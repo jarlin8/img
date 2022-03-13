@@ -417,6 +417,29 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 	}
 
 	/**
+	 * delete a contact from the list
+	 *
+	 * @param string $email
+	 * @param array $arguments
+	 *
+	 * @return mixed
+	 */
+	public function deleteSubscriber( $email, $arguments = array() ) {
+		$api = $this->getApi();
+		if ( ! empty( $email ) && ! empty( $arguments['list_identifier'] ) ) {
+
+			$contact = $this->get_contact( $arguments['list_identifier'], $email );
+
+			if ( ! empty( $contact ) && $contact->status !== 'archived' ) {
+				$user_hash = md5( $email );
+				$api->request( 'lists/' . $arguments['list_identifier'] . '/members/' . $user_hash, array(), 'DELETE' );
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * @param mixed $list_identifier
 	 * @param array $arguments
 	 *
@@ -464,7 +487,6 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 			}
 
 			$member = $this->get_contact( $list_identifier, $email );
-
 			if ( $member ) { //update contact
 				$api->request( 'lists/' . $list_identifier . '/members/' . $user_hash, $data, 'PUT' );
 			} else { //create contact
@@ -994,7 +1016,7 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 	 * Prepare custom fields for api call
 	 *
 	 * @param array $custom_fields
-	 * @param null  $list_identifier
+	 * @param null $list_identifier
 	 *
 	 * @return array
 	 */

@@ -58,7 +58,9 @@ function tve_dash_admin_menu() {
 			__( 'Access Manager', TVE_DASH_TRANSLATE_DOMAIN ),
 			'manage_options',
 			'tve_dash_access_manager',
-			'tve_dash_access_manager_main_page'
+			function () {
+				require_once( TVE_DASH_PATH . '/inc/access-manager/includes/templates/access-manager.php' );
+			}
 		);
 	}
 
@@ -81,9 +83,6 @@ function tve_dash_admin_menu() {
 		'manage_options',
 		'tve-updates',
 		static function () {
-			tve_dash_enqueue();
-			wp_enqueue_media(); //Weeded for wp object localization in JS
-
 			require_once( TVE_DASH_PATH . '/inc/plugin-updates/update-channel.php' );
 		}
 	);
@@ -109,7 +108,10 @@ function tve_dash_admin_menu() {
 			);
 			$args     = wp_parse_args( $_GET, $defaults );
 
-			if ( ! empty( $args['type'] ) && ! empty( $args['tvd_channel'] ) && $args['tvd_channel'] === 'tvd_switch_to_stable_channel' && in_array( $args['type'], [ 'plugin', 'theme' ] ) ) {
+			if ( ! empty( $args['type'] ) && ! empty( $args['tvd_channel'] ) && $args['tvd_channel'] === 'tvd_switch_to_stable_channel' && in_array( $args['type'], [
+					'plugin',
+					'theme',
+				] ) ) {
 				$name = sanitize_text_field( $args['name'] );
 
 				if ( $args['type'] === 'theme' ) {
@@ -281,6 +283,7 @@ function tve_dash_needs_enqueue( $hook ) {
 		'admin_page_tve_dash_api_error_log',
 		'admin_page_tve_dash_api_connect',
 		'thrive-dashboard_page_tve_dash_access_manager',
+		'admin_page_tve-updates',
 	);
 
 	$accepted_hooks = apply_filters( 'tve_dash_include_ui', $accepted_hooks, $hook );
@@ -322,6 +325,7 @@ function tve_dash_admin_enqueue_scripts( $hook ) {
 
 	if ( tve_dash_needs_enqueue( $hook ) ) {
 		tve_dash_enqueue();
+		wp_enqueue_media(); //Weeded for wp object localization in JS
 	}
 
 	/**
@@ -359,6 +363,14 @@ function tve_dash_admin_dequeue_conflicting( $hook ) {
 		wp_deregister_style( 'select2' );
 		wp_dequeue_script( 'select2' );
 		wp_deregister_script( 'select2' );
+
+		//FS poster select2
+		wp_dequeue_style( 'fsp-select2' );
+		wp_deregister_style( 'fsp-select2' );
+		wp_dequeue_style( 'fsp-select2-custom' );
+		wp_deregister_style( 'fsp-select2-custom' );
+		wp_dequeue_script( 'fsp-select2' );
+		wp_deregister_script( 'fsp-select2' );
 	}
 }
 
@@ -385,32 +397,33 @@ function tve_dash_enqueue() {
 			'ajax_retry_api_log'  => 'tve_dash_api_form_retry',
 		),
 		'routes'             => array(
-			'settings'          => 'generalSettings',
-			'license'           => 'license',
-			'active_states'     => 'activeState',
-			'error_log'         => 'getErrorLogs',
-			'affiliate_links'   => 'affiliateLinks',
-			'add_aff_id'        => 'saveAffiliateId',
-			'get_aff_id'        => 'getAffiliateId',
-			'token'             => 'token',
-			'save_token'        => 'saveToken',
-			'delete_token'      => 'deleteToken',
-			'change_capability' => 'changeCapability',
+			'settings'                      => 'generalSettings',
+			'license'                       => 'license',
+			'active_states'                 => 'activeState',
+			'error_log'                     => 'getErrorLogs',
+			'affiliate_links'               => 'affiliateLinks',
+			'add_aff_id'                    => 'saveAffiliateId',
+			'get_aff_id'                    => 'getAffiliateId',
+			'token'                         => 'token',
+			'save_token'                    => 'saveToken',
+			'delete_token'                  => 'deleteToken',
+			'change_capability'             => 'changeCapability',
+			'update_user_functionality'     => 'updateUserFunctionality',
+			'reset_capabilities_to_default' => 'resetCapabilitiesToDefault',
 		),
 		'translations'       => array(
-			'UnknownError'      => __( 'Unknown error', TVE_DASH_TRANSLATE_DOMAIN ),
-			'Deleting'          => __( 'Deleting...', TVE_DASH_TRANSLATE_DOMAIN ),
-			'Testing'           => __( 'Testing...', TVE_DASH_TRANSLATE_DOMAIN ),
-			'Loading'           => __( 'Loading...', TVE_DASH_TRANSLATE_DOMAIN ),
-			'ConnectionWorks'   => __( 'Connection works!', TVE_DASH_TRANSLATE_DOMAIN ),
-			'ConnectionFailed'  => __( 'Connection failed!', TVE_DASH_TRANSLATE_DOMAIN ),
-			'Unlimited'         => __( 'Unlimited', TVE_DASH_TRANSLATE_DOMAIN ),
-			'CapabilityError'   => __( 'You are not allowed to remove this capability!', TVE_DASH_TRANSLATE_DOMAIN ),
-			'CapabilitySuccess' => __( 'Capability changed successfully', TVE_DASH_TRANSLATE_DOMAIN ),
-			'RequestError'      => 'Request error, please contact Thrive developers !',
-			'Copy'              => 'Copy',
-			'ImportedKit'       => __( 'Kit successfully imported', TVE_DASH_TRANSLATE_DOMAIN ),
-			'RemovedKit'        => __( 'Kit removed', TVE_DASH_TRANSLATE_DOMAIN ),
+			'UnknownError'     => __( 'Unknown error', TVE_DASH_TRANSLATE_DOMAIN ),
+			'Deleting'         => __( 'Deleting...', TVE_DASH_TRANSLATE_DOMAIN ),
+			'Testing'          => __( 'Testing...', TVE_DASH_TRANSLATE_DOMAIN ),
+			'Loading'          => __( 'Loading...', TVE_DASH_TRANSLATE_DOMAIN ),
+			'ConnectionWorks'  => __( 'Connection works!', TVE_DASH_TRANSLATE_DOMAIN ),
+			'ConnectionFailed' => __( 'Connection failed!', TVE_DASH_TRANSLATE_DOMAIN ),
+			'Unlimited'        => __( 'Unlimited', TVE_DASH_TRANSLATE_DOMAIN ),
+			'CapabilityError'  => __( 'You are not allowed to remove this capability!', TVE_DASH_TRANSLATE_DOMAIN ),
+			'RequestError'     => 'Request error, please contact Thrive developers !',
+			'Copy'             => 'Copy',
+			'ImportedKit'      => __( 'Kit successfully imported', TVE_DASH_TRANSLATE_DOMAIN ),
+			'RemovedKit'       => __( 'Kit removed', TVE_DASH_TRANSLATE_DOMAIN ),
 		),
 		'products'           => array(
 			TVE_Dash_Product_LicenseManager::ALL_TAG => 'All products',
@@ -869,8 +882,14 @@ add_action( 'wp_ajax_tve_update_settings', static function () {
 		/**
 		 * We need to delete transients on channel changed to refresh the update cache
 		 */
-		delete_transient( 'update_themes' );
-		delete_transient( 'update_plugins' );
+		foreach ( get_plugins() as $plugin_file => $plugin_data ) {
+			$slug = dirname( plugin_basename( $plugin_file ) );
+
+			if ( strpos( $slug, 'thrive-' ) !== false ) {
+				delete_option( 'external_updates-' . $slug );
+			}
+		}
+		wp_clean_update_cache();
 
 		wp_die( 'Success!' );
 	}
@@ -1065,3 +1084,15 @@ add_filter( 'wpseo_sitemap_exclude_taxonomy', static function ( $exclude, $tax_n
 
 	return $exclude;
 }, 10, 2 );
+
+/**
+ * Loads the class used for Conditional Display in TAR
+ */
+function tve_load_conditional_display_classes() {
+	if ( class_exists( '\TCB\ConditionalDisplay\Main', false ) ) {
+		require_once TVE_DASH_PATH . '/inc/conditional-display/class-main.php';
+		\TVE\Architect\ConditionalDisplay\Main::init();
+	}
+}
+
+add_action( 'init', 'tve_load_conditional_display_classes', 11 );

@@ -7,6 +7,7 @@
 
 namespace TVD\Content_Sets;
 
+use TVD\Cache\Cache_Exception;
 use function TVD\Cache\content_set_cache;
 use function TVD\Cache\meta_cache;
 
@@ -341,7 +342,7 @@ class Set implements \JsonSerializable {
 	 */
 	public static function identify_from_object( $post_or_term, $return_type = 'objects' ) {
 		if ( ! $post_or_term instanceof \WP_Post && ! $post_or_term instanceof \WP_Term ) {
-			throw new \RuntimeException( 'Invalid argument for `identify_from_request`' );
+			return array();
 		}
 		$sets = array();
 
@@ -539,31 +540,42 @@ class Set implements \JsonSerializable {
 			$id = get_queried_object_id();
 		}
 
-		$cache   = content_set_cache( $object );
+		try {
+			$cache = content_set_cache( $object );
+		} catch ( Cache_Exception $e ) {
+			/* when receiving invalid data, make sure the execution continues */
+			return [];
+		}
+
 		$matched = $cache->get_or_store( $id, static function () use ( $object ) {
 			return static::identify_from_object( $object, 'ids' );
 		} );
 
 		if ( $cache->hit() ) {
 			/**
-			 * We need to find all sets that are matched and the rule contains the time related rules
+			 * This generates unused queries
+			 * The purpose of this functionality is to fetch content sets with dynamic data - such as pusblied_date
+			 * This functionality was removed from the initial content sets release
 			 */
-			$sets = static::get_items( array( 'post__in' => $matched, 's' => Rule::FIELD_PUBLISHED_DATE ) );
-
-			/**
-			 * For time related rules we apply again the match logic
-			 *
-			 * @var $set Set
-			 */
-			foreach ( $sets as $set ) {
-				if ( ! $set->has_matching_rules( $object ) ) {
-					/**
-					 * If the rules has no matches, we exclude it from the matched list
-					 */
-					$index = array_search( $set->ID, $matched );
-					unset( $matched[ $index ] );
-				}
-			}
+//			/**
+//			 * We need to find all sets that are matched and the rule contains the time related rules
+//			 */
+//			$sets = static::get_items( array( 'post__in' => $matched, 's' => Rule::FIELD_PUBLISHED_DATE ) );
+//
+//			/**
+//			 * For time related rules we apply again the match logic
+//			 *
+//			 * @var $set Set
+//			 */
+//			foreach ( $sets as $set ) {
+//				if ( ! $set->has_matching_rules( $object ) ) {
+//					/**
+//					 * If the rules has no matches, we exclude it from the matched list
+//					 */
+//					$index = array_search( $set->ID, $matched );
+//					unset( $matched[ $index ] );
+//				}
+//			}
 
 			$matched = array_values( $matched ); //We need this to reset the indexes
 		}

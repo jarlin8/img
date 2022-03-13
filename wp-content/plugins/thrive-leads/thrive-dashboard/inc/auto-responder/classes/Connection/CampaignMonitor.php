@@ -53,7 +53,7 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 		if ( empty( $key ) ) {
 			return $this->error( __( 'You must provide a valid Campaign Monitor key', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
-		$this->setCredentials( compact('key', 'email') );
+		$this->setCredentials( compact( 'key', 'email' ) );
 
 		$result = $this->testConnection();
 
@@ -218,6 +218,25 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 	}
 
 	/**
+	 * delete a contact from the list
+	 *
+	 * @param string $email
+	 * @param array $arguments
+	 *
+	 * @return mixed
+	 */
+	public function deleteSubscriber( $email, $arguments = array() ) {
+		$api = $this->getApi();
+		if ( ! empty( $arguments['list_identifier'] ) && ! empty( $email ) ) {
+			$list = $api->get_list( $arguments['list_identifier'] );
+			$list->delete_subscriber( $email );
+
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Return the connection email merge tag
 	 *
 	 * @return String
@@ -245,9 +264,9 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 	}
 
 	/**
-	 * @param array $params  which may contain `list_id`
-	 * @param bool  $force   make a call to API and invalidate cache
-	 * @param bool  $get_all where to get lists with their custom fields
+	 * @param array $params which may contain `list_id`
+	 * @param bool $force make a call to API and invalidate cache
+	 * @param bool $get_all where to get lists with their custom fields
 	 *
 	 * @return array
 	 */
@@ -446,7 +465,7 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 	 * Prepare custom fields for api call
 	 *
 	 * @param array $custom_fields
-	 * @param null  $list_identifier
+	 * @param null $list_identifier
 	 *
 	 * @return array
 	 */
@@ -486,6 +505,6 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 	}
 
 	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
+		return array( 'mailing_list' );
 	}
 }

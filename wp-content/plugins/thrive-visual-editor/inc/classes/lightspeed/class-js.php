@@ -244,7 +244,7 @@ class JS {
 			'image-gallery'         => [
 				'identifier' => '.tcb-image-gallery',
 				'libraries'  => [
-					'image-gallery-libs' => tve_editor_js() . '/image-gallery-libs.min.js',
+					'image-gallery-libs' => tve_editor_js( '/image-gallery-libs.min.js' ),
 				],
 			],
 			'lead-generation'       => [
@@ -279,7 +279,7 @@ class JS {
 				'identifier' => '.tve-progress-bar-wrapper',
 			],
 			'social-share'          => [
-				'identifier' => '.thrv_social_custom',
+				'identifier' => '.thrv_social_custom,.tve_social_custom',
 			],
 			'table'                 => [
 				'identifier' => '.thrv_table',

@@ -358,7 +358,6 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 
 			if ( strpos( $field, 'textarea' ) !== false ) { /* preserve textarea formatting */
 				$value = ! empty( $args[ $field ] ) ? sanitize_textarea_field( $args[ $field ] ) : '';
-				$value = str_replace( ' ', '&nbsp;', $value );
 			} else {
 				$field = str_replace( '[]', '', $field );
 				if ( ! empty( $args[ $field ] ) ) {

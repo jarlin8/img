@@ -15,10 +15,12 @@ function tve_editor_css( $file = null ) {
 }
 
 /**
+ * @param string $file
+ *
  * @return string the url to the editor/js folder
  */
-function tve_editor_js() {
-	return tve_editor_url() . '/editor/js/dist';
+function tve_editor_js( $file = '' ) {
+	return tve_editor_url() . '/editor/js/dist' . $file;
 }
 
 /**
@@ -1688,7 +1690,7 @@ function tve_parse_events( &$content ) {
  * @return array
  */
 function tve_get_style_families() {
-	return [ 'Flat' => tve_editor_css() . '/thrive_flat.css?ver=' . TVE_VERSION ];
+	return [ 'Flat' => tve_editor_css( 'thrive_flat.css' ) . '?ver=' . TVE_VERSION ];
 }
 
 /**
@@ -1959,10 +1961,10 @@ function tve_enqueue_editor_scripts() {
 				 */
 				wp_enqueue_script( 'jquery-ui-resizable' );
 
-				tve_enqueue_script( 'tcb-froala', tve_editor_url( 'editor/js/dist/froala' . $js_suffix ), array( 'tve_editor', 'backbone' ) );
+				tve_enqueue_script( 'tcb-froala', tve_editor_js( '/froala' . $js_suffix ), [ 'tve_editor', 'backbone' ] );
 
 				/** control panel scripts and dependencies */
-				tve_enqueue_script( 'tve_editor', tve_editor_js() . '/editor' . $js_suffix, array(
+				tve_enqueue_script( 'tve_editor', tve_editor_js( '/editor' . $js_suffix ), array(
 					'jquery',
 					'jquery-ui-autocomplete',
 					'jquery-ui-slider',
@@ -1991,8 +1993,8 @@ function tve_enqueue_editor_scripts() {
 				wp_enqueue_script( 'vooplayer_script', 'https://s3.spotlightr.com/assets/vooplayer.js', array(), '', false );
 
 				// now enqueue the styles
-				tve_enqueue_style( 'tve_editor_style', tve_editor_css() . '/editor.css' );
-				tve_enqueue_style( 'tve_inner_style', tve_editor_css() . '/editor/style.css' );
+				tve_enqueue_style( 'tve_editor_style', tve_editor_css( 'editor.css' ) );
+				tve_enqueue_style( 'tve_inner_style', tve_editor_css( 'editor/style.css' ) );
 
 				// custom fonts from Font Manager
 				$all_fonts         = tve_get_all_custom_fonts();
@@ -2131,7 +2133,9 @@ function tve_get_regular_post_types() {
 		'attachment',
 		'tcb_lightbox',
 		'tcb_symbol',
-		'tve_notifications',
+		TCB\Notifications\Post_Type::NAME,
+		TCB\ConditionalDisplay\PostTypes\Global_Conditional_Set::NAME,
+		TCB\ConditionalDisplay\PostTypes\Conditional_Display_Group::NAME,
 	) );
 
 	$all = get_post_types( array( 'public' => true ) );
@@ -4681,7 +4685,7 @@ if ( ! function_exists( 'tve_frontend_enqueue_scripts' ) ) {
 			add_action( 'wp_print_styles', 'tve_remove_theme_css', PHP_INT_MAX );
 
 			if ( ! \TCB\Lightspeed\Main::has_optimized_assets( $post_id ) ) {
-				tve_enqueue_style( 'the_editor_no_theme', tve_editor_css() . '/no-theme.css' );
+				tve_enqueue_style( 'the_editor_no_theme', tve_editor_css( 'no-theme.css' ) );
 			}
 		}
 

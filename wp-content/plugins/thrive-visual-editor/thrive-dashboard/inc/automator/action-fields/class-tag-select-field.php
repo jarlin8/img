@@ -2,6 +2,9 @@
 
 namespace TVE\Dashboard\Automator;
 
+use Thrive\Automator\Items\Action_Field;
+use Thrive_Dash_List_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -9,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Tag_Select_Field
  */
-class Tag_Select_Field extends \Thrive\Automator\Items\Action_Field {
+class Tag_Select_Field extends Action_Field {
 	/**
 	 * Field name
 	 */
@@ -35,7 +38,8 @@ class Tag_Select_Field extends \Thrive\Automator\Items\Action_Field {
 	 * $$value will be replaced by field value
 	 * $$length will be replaced by value length
 	 *
-	 * @var string
+	 *
+	 * @return string
 	 */
 	public static function get_preview_template() {
 		return 'List: $$value';
@@ -49,7 +53,7 @@ class Tag_Select_Field extends \Thrive\Automator\Items\Action_Field {
 		$args   = func_get_args();
 		if ( ! empty( $args ) ) {
 			$api          = $args[0];
-			$api_instance = \Thrive_Dash_List_Manager::connectionInstance( $api );
+			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $api );
 			if ( $api_instance && $api_instance->isConnected() ) {
 
 				$tags = $api_instance->getTags();

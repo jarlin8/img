@@ -211,7 +211,7 @@ class TCB_Admin {
 		wp_enqueue_style( 'wp-pointer' );
 		wp_enqueue_script( 'wp-pointer' );
 
-		tve_enqueue_script( 'tcb-admin-edit-post', tve_editor_js() . '/admin' . $js_suffix );
+		tve_enqueue_script( 'tcb-admin-edit-post', tve_editor_js( '/admin' . $js_suffix ) );
 		wp_localize_script( 'tcb-admin-edit-post', 'TCB_Post_Edit_Data', array_merge( tcb_admin_get_localization(), array(
 			'post_id'      => get_the_ID(),
 			'landing_page' => tve_post_is_landing_page(),
@@ -327,7 +327,7 @@ class TCB_Admin {
 		) );
 		echo '</script>';
 		$js_suffix = TCB_Utils::get_js_suffix();
-		tve_enqueue_script( 'thrive-gutenberg-switch', tve_editor_url() . '/editor/js/dist/gutenberg' . $js_suffix, array( 'jquery' ) );
+		tve_enqueue_script( 'thrive-gutenberg-switch', tve_editor_js( '/gutenberg' . $js_suffix ), array( 'jquery' ) );
 	}
 
 	/**

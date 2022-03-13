@@ -199,6 +199,30 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	}
 
 	/**
+	 * delete a contact from the list
+	 *
+	 * @param string $email
+	 * @param array $arguments
+	 *
+	 * @return mixed
+	 */
+	public function deleteSubscriber( $email, $arguments = array() ) {
+		$api = $this->getApi();
+
+
+		if ( ! empty( $email ) && ! empty( $arguments['list_identifier'] ) ) {
+
+			$contact = $this->get_contact( $arguments['list_identifier'], $email );
+			if ( ! empty( $contact ) ) {
+				$user_hash = md5( $email );
+				$api->request( 'lists/' . $arguments['list_identifier'] . '/members/' . $user_hash, array(), 'DELETE' );
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * add a contact to a list
 	 *
 	 * @param mixed $list_identifier
@@ -723,6 +747,10 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 		}
 	}
 
+	public function getTags() {
+		return $this->get_tags();
+	}
+
 
 	/**
 	 * get relevant data from webhook trigger
@@ -770,7 +798,16 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	}
 
 	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
+		return array( 'mailing_list' );
+	}
+
+	public function get_automator_autoresponder_tag_fields() {
+		return array( 'tag_select' );
+	}
+
+	public function updateTags( $email, $tags = '', $extra = array() ) {
+		$args            = $this->getArgsForTagsUpdate( $email, $tags, $extra );
+		return $this->addSubscriber( $tags, $args );
 	}
 }
 

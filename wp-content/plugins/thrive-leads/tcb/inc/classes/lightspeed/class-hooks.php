@@ -47,7 +47,7 @@ class Hooks {
 
 		if ( Main::is_optimizing() && current_user_can( 'edit_post', $post_to_optimize ) ) {
 			tve_dash_enqueue_script(
-				'tcb-lightspeed-optimize', tve_editor_js() . '/lightspeed-optimize.min.js',
+				'tcb-lightspeed-optimize', tve_editor_js( '/lightspeed-optimize.min.js' ),
 				/**
 				 * Filer used to add dependencies for the optimization script in case we want something to be loaded earlier
 				 *

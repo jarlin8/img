@@ -65,10 +65,11 @@ class TCB_Logo {
 
 		/* get the src for each attachment ID */
 		foreach ( $active_logos as $key => $logo ) {
-			$logo_data                      = static::get_attachment_data( $logo['id'], $logo );
-			$active_logos[ $key ]['src']    = $logo_data['src'];
-			$active_logos[ $key ]['width']  = $logo_data['width'];
-			$active_logos[ $key ]['height'] = $logo_data['height'];
+			$logo_data                        = static::get_attachment_data( $logo['id'], $logo );
+			$active_logos[ $key ]['src']      = $logo_data['src'];
+			$active_logos[ $key ]['width']    = $logo_data['width'];
+			$active_logos[ $key ]['height']   = $logo_data['height'];
+			$active_logos[ $key ]['data-alt'] = empty( $logo_data['data-alt'] ) ? '' : $logo_data['data-alt'];
 		}
 
 		$data['logo'] = array(
@@ -105,11 +106,16 @@ class TCB_Logo {
 		/* set the desktop source as a fallback; get only the src here, since this is an all-browser compatible version */
 		$fallback_data = static::get_attachment_data( $desktop_id, self::get_logos()[ $desktop_id ] );
 
+		/* If we do not have alt in attr, we read it from fallback data */
+		if ( empty( $attr['data-alt'] ) ) {
+			$attr['data-alt'] = empty( $fallback_data['data-alt'] ) ? '' : $fallback_data['data-alt'];
+		}
+
 		$img_attr = array(
 			'src'    => $fallback_data['src'],
 			'height' => $fallback_data['height'],
 			'width'  => $fallback_data['width'],
-			'alt'    => empty( $attr['data-alt'] ) ? '' : $attr['data-alt'],
+			'alt'    => $attr['data-alt'],
 			'style'  => ! empty( $attr['data-img-style'] ) ? $attr['data-img-style'] : '',
 		);
 
@@ -232,9 +238,10 @@ class TCB_Logo {
 				$data = static::get_placeholder_data( $id );
 			} else {
 				$data = array(
-					'src'    => $attachment_data[0],
-					'width'  => $attachment_data[1],
-					'height' => $attachment_data[2],
+					'src'      => $attachment_data[0],
+					'width'    => $attachment_data[1],
+					'height'   => $attachment_data[2],
+					'data-alt' => trim( strip_tags( get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) ),
 				);
 			}
 		}

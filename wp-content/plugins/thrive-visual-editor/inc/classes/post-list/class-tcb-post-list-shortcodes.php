@@ -771,7 +771,7 @@ class TCB_Post_List_Shortcodes {
 		$style_css      = '';
 		$post_list_vars = apply_filters( 'tcb_get_post_list_variables', '', $article_id );
 		if ( ! empty( $post_list_vars ) ) {
-			$style_css .= sprintf( 'article#post-%d{%s}', $article_id, $post_list_vars );;
+			$style_css .= sprintf( 'article#post-%d{%s}', $article_id, $post_list_vars );
 		}
 
 		return $style_css;

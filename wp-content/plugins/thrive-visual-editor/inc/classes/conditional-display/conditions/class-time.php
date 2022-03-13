@@ -29,17 +29,24 @@ class Time extends Date_And_Time_Picker {
 	}
 
 	public function apply( $data ) {
-		$compared_value = $this->get_value();
-		$field_value    = $data['field_value'];
+		$compared_value        = $this->get_value();
+		$formatted_field_value = strtotime( $data['field_value'] );
 
-		$formatted_compared_value = $compared_value['hours'] . ':' . $compared_value['minutes'];
+		$formatted_compared_value = strtotime( $compared_value['hours'] . ':' . $compared_value['minutes'] );
 
 		switch ( $this->get_operator() ) {
 			case 'before':
-				$result = strtotime( $field_value ) <= strtotime( $formatted_compared_value );
+				$result = $formatted_field_value <= $formatted_compared_value;
 				break;
 			case 'after':
-				$result = strtotime( $field_value ) >= strtotime( $formatted_compared_value );
+				$result = $formatted_field_value >= $formatted_compared_value;
+				break;
+			case 'between':
+				$formatted_start_interval = $formatted_compared_value;
+				$formatted_end_interval   = strtotime( $this->get_extra()['hours'] . ':' . $this->get_extra()['minutes'] );
+
+				$result = $formatted_field_value >= $formatted_start_interval &&
+				          $formatted_field_value <= $formatted_end_interval;
 				break;
 			default:
 				$result = false;
@@ -54,11 +61,14 @@ class Time extends Date_And_Time_Picker {
 
 	public static function get_operators() {
 		return [
-			'before' => [
+			'before'  => [
 				'label' => 'before',
 			],
-			'after'  => [
+			'after'   => [
 				'label' => 'after',
+			],
+			'between' => [
+				'label' => 'between',
 			],
 		];
 	}

@@ -292,6 +292,18 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	public abstract function addSubscriber( $list_identifier, $arguments );
 
 	/**
+	 * delete a contact matching arguments
+	 *
+	 * @param string $email
+	 * @param array $arguments
+	 *
+	 * @return mixed
+	 */
+	public function deleteSubscriber( $email, $arguments = array() ) {
+		return false;
+	}
+
+	/**
 	 * get all Subscriber Lists from this API service
 	 * it will first check a local cache for the existing lists
 	 *
@@ -843,7 +855,7 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 
 		$custom_fields = tve_sanitize_data_recursive( $custom_fields );
 
-		return set_transient( $this->_custom_fields_transient, $custom_fields );
+		return set_transient( $this->_custom_fields_transient, $custom_fields, WEEK_IN_SECONDS );
 	}
 
 	public function processField( $field ) {

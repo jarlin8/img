@@ -102,6 +102,10 @@ class Meta_Cache {
 				$parsed_type = 'comment';
 				break;
 
+			case $type instanceof \WP_Post_Type:
+				$parsed_type = 'post_type';
+				break;
+
 			case $type instanceof \WP_User:
 				$parsed_type = 'user';
 				break;

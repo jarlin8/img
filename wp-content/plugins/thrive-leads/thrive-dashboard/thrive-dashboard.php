@@ -54,12 +54,15 @@ require_once TVE_DASH_PATH . '/inc/smart-site/class-tvd-smart-const.php';
 require_once TVE_DASH_PATH . '/inc/smart-site/classes/class-tvd-rest-controller.php';
 require_once TVE_DASH_PATH . '/inc/smart-site/classes/endpoints/class-tvd-groups-controller.php';
 require_once TVE_DASH_PATH . '/inc/smart-site/classes/endpoints/class-tvd-fields-controller.php';
-require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am.php';
+require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-access-manager.php';
 require_once TVE_DASH_PATH . '/inc/marketing/functions.php';
 require_once TVE_DASH_PATH . '/inc/ttw-account/classes/class-td-ttw-update-manager.php';
 require_once TVE_DASH_PATH . '/inc/automator/class-main.php';
 require_once TVE_DASH_PATH . '/inc/smart-site/classes/class-tvd-content-sets.php';
 require_once TVE_DASH_PATH . '/inc/cache/meta-cache.php';
+require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am-functionality.php';
+require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am-admin-bar-visibility.php';
+require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am-login-redirect.php';
 
 /**
  * AUTO-LOADERS
@@ -101,8 +104,14 @@ if ( wp_doing_ajax() || apply_filters( 'tve_leads_include_auto_responder', true 
 add_action( 'init', 'tve_dash_init_action' );
 add_action( 'init', 'tve_dash_load_text_domain' );
 /* priority -1 so we can be compatible with WP Cerber */
-add_action( 'init', array( 'TVD\Login_Editor\Main', 'init' ), - 1 );
-add_action( 'init', array( 'TVD\Coming_Soon\Main', 'init' ), - 1 );
+add_action( 'init',
+	function () {
+		TVD\Login_Editor\Main::init();
+		TVD\Coming_Soon\Main::init();
+		TVD\Dashboard\Access_Manager\Main::init();
+		TVD\Dashboard\Access_Manager\Admin_Bar_Visibility::init();
+		TVD\Dashboard\Access_Manager\Login_Redirect::init();
+	}, - 1 );
 if ( defined( 'WPSEO_FILE' ) ) {
 	/* Yoast SEO plugin installed -> use a hook provided by the plugin for configuring meta "robots" */
 	add_filter( 'wpseo_robots_array', function ( $robots ) {

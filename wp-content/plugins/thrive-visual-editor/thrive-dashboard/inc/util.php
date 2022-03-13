@@ -40,16 +40,42 @@ function tve_dash_get_thrivethemes_shares( $network = 'facebook' ) {
  */
 function tve_dash_fetch_share_count_facebook( $url ) {
 	$credentials = Thrive_Dash_List_Manager::credentials( 'facebook' );
+
 	if ( ! empty( $credentials ) && ! empty( $credentials['app_id'] ) && ! empty( $credentials['app_secret'] ) ) {
-		$fb_url = add_query_arg( array(
+		/* General query args for the Facebook API requests */
+		$query_args  = array(
 			'id'           => rawurlencode( $url ),
 			'access_token' => $credentials['app_id'] . '|' . $credentials['app_secret'],
-			//changed from engagement to og_object{engagement} to get the accurate number of shares
-			//unofficial reference: https://developers.facebook.com/community/threads/178543204270768/
-			'fields'       => 'og_object{engagement}',
-		), 'https://graph.facebook.com/v11.0/' );
+		);
+		$url_post_id = url_to_postid( $url );
 
-		$data = _tve_dash_util_helper_get_json( $fb_url );
+		/* If we have an id, the url is on this site, so we can save the last updated time */
+		if ( $url_post_id ) {
+			$last_updated_time = get_post_meta( url_to_postid( $url ), 'tve_facebook_count_updated', true );
+			$updated_time      = current_time( 'timestamp' );
+
+			/* We scrape the url every hour or if it was not already scraped */
+			if ( empty( $last_updated_time ) || $updated_time - $last_updated_time > ( 60 * 60 ) ) {
+				$update_query_args = $query_args;
+				/* Reference here: https://developers.facebook.com/docs/sharing/opengraph/using-objects#update */
+				$update_query_args['scraped'] = 'true';
+				$fb_url_update     = add_query_arg( $update_query_args, 'https://graph.facebook.com/v12.0/' );
+
+				/* Make the post call so that Facebook will scrape again the url */
+				_tve_dash_util_helper_get_json( $fb_url_update, 'wp_remote_post' );
+
+				/* Update in post meta the time of the last update */
+				update_post_meta( $url_post_id, 'tve_facebook_count_updated', $updated_time );
+			}
+		}
+
+		/* Changed from engagement to og_object{engagement} to get the accurate number of shares
+		Unofficial reference: https://developers.facebook.com/community/threads/178543204270768/ */
+		$query_args['fields'] = 'og_object{engagement}';
+		$fb_url_get     = add_query_arg( $query_args, 'https://graph.facebook.com/v12.0/' );
+
+		/* Get the Share count */
+		$data = _tve_dash_util_helper_get_json( $fb_url_get );
 	}
 
 	return ! empty( $data['og_object'] ) && ! empty( $data['og_object']['engagement'] ) ? (int) $data['og_object']['engagement']['count'] : 0;

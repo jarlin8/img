@@ -2,7 +2,7 @@
 
 namespace TVE\Dashboard\Automator;
 
-use Thrive\Automator\Items\Action_Fields;
+use Thrive\Automator\Items\Action_Field;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Autoresponder_Field
  */
-class Optin_Type_Field extends \Thrive\Automator\Items\Action_Field {
+class Optin_Type_Field extends Action_Field {
 
 	/**
 	 * Field name

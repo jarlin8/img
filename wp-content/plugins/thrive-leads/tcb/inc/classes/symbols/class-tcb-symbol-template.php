@@ -30,6 +30,7 @@ class TCB_Symbol_Template {
 	 * @return mixed|string
 	 */
 	public static function render_content( $config = array(), $do_shortcodes = false ) {
+		static::enter_symbol_render();
 
 		$symbol_id = ( ! empty( $config ) && isset( $config['id'] ) ) ? $config['id'] : get_the_ID();
 		$content   = self::content( $symbol_id );
@@ -86,6 +87,8 @@ class TCB_Symbol_Template {
 		$content = apply_filters( 'tcb_symbol_template', $content );
 
 		$content = preg_replace( '!\s+!', ' ', $content );
+
+		static::exit_symbol_render();
 
 		return $content;
 	}
@@ -230,6 +233,29 @@ class TCB_Symbol_Template {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Check if a symbol is rendering right now
+	 *
+	 * @return bool
+	 */
+	public static function is_outside_symbol_render() {
+		return empty( $GLOBALS[ TCB_RENDERING_SYMBOL ] );
+	}
+
+	/**
+	 * Mark that we started rendering a symbol
+	 */
+	public static function enter_symbol_render() {
+		$GLOBALS[ TCB_RENDERING_SYMBOL ] = true;
+	}
+
+	/**
+	 * Mark that we finished rendering a symbol
+	 */
+	public static function exit_symbol_render() {
+		$GLOBALS[ TCB_RENDERING_SYMBOL ] = false;
 	}
 
 	/**

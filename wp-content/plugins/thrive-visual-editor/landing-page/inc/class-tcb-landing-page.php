@@ -765,6 +765,9 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 				return $this;
 			}
 			foreach ( $this->config['fonts'] as $font ) {
+				if ( strrpos( $font, 'fonts.googleapis.com' ) !== false && tve_dash_is_google_fonts_blocked() ) {
+					continue;
+				}
 				echo sprintf( '<link href="%s" rel="stylesheet" type="text/css" />', esc_url( $font ) );
 			}
 
@@ -945,7 +948,7 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 			if ( ! empty( $this->globals['body_class'] ) ) {
 				$lp_data['class'] .= ' ' . ( is_array( $this->globals['body_class'] ) ? implode( ' ', $this->globals['body_class'] ) : $this->globals['body_class'] );
 			}
-
+			$lp_data['class'] = apply_filters( 'tcb_lp_body_class', $lp_data['class'] );
 			return $lp_data;
 		}
 
@@ -1641,7 +1644,7 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 						$this->meta( $meta_name, $meta[ $template_index ][ $meta_data_key ] );
 					}
 				}
-
+				$this->meta( 'theme_skin_tag', empty( $meta['tpl_skin_tag'] ) ? '' : $meta['tpl_skin_tag'] );
 				$this->meta( 'tve_disable_theme_dependency', $meta[ $template_index ]['theme_dependency'] );
 				$this->meta( "tve_content_before_more{$key}", $content['before_more'] );
 				$this->meta( "tve_content_more_found{$key}", $content['more_found'] );

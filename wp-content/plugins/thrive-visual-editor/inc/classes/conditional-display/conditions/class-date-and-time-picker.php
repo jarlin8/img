@@ -29,18 +29,18 @@ class Date_And_Time_Picker extends Condition {
 	}
 
 	public function apply( $data ) {
-		$compared_value = $this->get_value();
-		$field_value    = $data['field_value'];
+		$formatted_field_value    = strtotime( $data['field_value'] );
+		$formatted_compared_value = strtotime( $this->get_value() );
 
 		switch ( $this->get_operator() ) {
 			case 'before':
-				$result = strtotime( $field_value ) < strtotime( $compared_value );
+				$result = $formatted_field_value < $formatted_compared_value;
 				break;
 			case 'after':
-				$result = strtotime( $field_value ) > strtotime( $compared_value );
+				$result = $formatted_field_value > $formatted_compared_value;
 				break;
 			case 'equals':
-				$result = strtotime( date( 'Y/m/d', strtotime( $field_value ) ) ) === strtotime( date( 'Y/m/d', strtotime( $compared_value ) ) );
+				$result = strtotime( date( 'Y/m/d', $formatted_field_value ) ) === strtotime( date( 'Y/m/d', $formatted_compared_value ) );
 				break;
 			default:
 				$result = false;

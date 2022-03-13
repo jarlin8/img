@@ -154,7 +154,7 @@ class Css {
 				}
 			} else {
 				/* load thrive flat only if this post needs it. */
-				if ( ! Main::is_enabled() || Main::requires_architect_assets( $this->ID ) ) {
+				if ( static::should_load_flat() || ! Main::is_enabled() || Main::requires_architect_assets( $this->ID ) ) {
 					static::enqueue_flat();
 				}
 
@@ -366,7 +366,7 @@ class Css {
 	 * @return string
 	 */
 	public static function get_flat_url( $include_version = true ) {
-		return tve_editor_css() . '/thrive_flat.css' . ( $include_version ? '?v=' . TVE_VERSION : '' );
+		return tve_editor_css( 'thrive_flat.css' ) . ( $include_version ? '?v=' . TVE_VERSION : '' );
 	}
 
 	/**

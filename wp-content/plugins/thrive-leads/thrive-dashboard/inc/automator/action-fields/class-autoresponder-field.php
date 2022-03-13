@@ -2,7 +2,8 @@
 
 namespace TVE\Dashboard\Automator;
 
-use Thrive\Automator\Items\Action_Fields;
+use Thrive\Automator\Items\Action_Field;
+use Thrive_Dash_List_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
@@ -11,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Autoresponder_Field
  */
-class Autoresponder_Field extends \Thrive\Automator\Items\Action_Field {
+class Autoresponder_Field extends Action_Field {
 	/**
 	 * Field name
 	 */
@@ -37,7 +38,8 @@ class Autoresponder_Field extends \Thrive\Automator\Items\Action_Field {
 	 * $$value will be replaced by field value
 	 * $$length will be replaced by value length
 	 *
-	 * @var string
+	 *
+	 * @return string
 	 */
 	public static function get_preview_template() {
 		return 'Autoresponder: $$value';
@@ -47,7 +49,10 @@ class Autoresponder_Field extends \Thrive\Automator\Items\Action_Field {
 	 * For multiple option inputs, name of the callback function called through ajax to get the options
 	 */
 	public static function get_options_callback() {
-		$apis   = \Thrive_Dash_List_Manager::getAvailableAPIs( true, [
+		$app           = func_get_args();
+		$is_tag_action = ! empty( $app[0] ) && $app[0] === Tag_User::get_id();
+
+		$apis   = Thrive_Dash_List_Manager::getAvailableAPIs( true, [
 			'email',
 			'webinar',
 			'other',
@@ -55,13 +60,16 @@ class Autoresponder_Field extends \Thrive\Automator\Items\Action_Field {
 			'social',
 			'sellings',
 			'integrations',
-			'email',
-			'storage'
+			'storage',
 		] );
 		$values = array();
 		foreach ( $apis as $api ) {
 			//email is seen as autoresponder
-			if ( ! in_array( $api->getKey(), array( 'email', 'wordpress' ) ) ) {
+			$allow_tags = true;
+			if ( $is_tag_action ) {
+				$allow_tags = $api->hasTags();
+			}
+			if ( $allow_tags && ! in_array( $api->getKey(), array( 'email', 'wordpress' ) ) ) {
 				$values[ $api->getKey() ] = array( 'id' => $api->getKey(), 'label' => $api->getTitle() );
 			}
 		}

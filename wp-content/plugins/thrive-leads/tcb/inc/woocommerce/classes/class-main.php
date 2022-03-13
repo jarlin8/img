@@ -130,7 +130,7 @@ class Main {
 	 */
 	public static function enqueue_scripts() {
 		if ( self::needs_woo_enqueued() ) {
-			tve_enqueue_script( 'tve_woo', tve_editor_js() . '/woo' . \TCB_Utils::get_js_suffix(), [ 'jquery', 'tve_frontend' ], false, true );
+			tve_enqueue_script( 'tve_woo', tve_editor_js( '/woo' . \TCB_Utils::get_js_suffix() ), [ 'jquery', 'tve_frontend' ], false, true );
 		}
 	}
 
