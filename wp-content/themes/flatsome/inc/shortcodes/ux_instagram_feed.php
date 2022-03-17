@@ -89,8 +89,7 @@ function ux_instagram_feed( $atts, $content = null ) {
 				if ( $caption ) {
 					$caption = $item['description'];
 				}
-				?>
-				<div class="img has-hover no-overflow">
+				?><div class="img has-hover no-overflow">
 					<div class="dark instagram-image-container image-<?php echo $image_hover; ?> instagram-image-type--<?php echo $item['type']; ?>">
 						<a href="<?php echo $item['link']; ?>" target="_blank" rel="noopener noreferrer" class="plain">
 							<?php echo flatsome_get_image( $image_url, false, $caption ); ?>
@@ -102,8 +101,7 @@ function ux_instagram_feed( $atts, $content = null ) {
 							<?php } ?>
 						</a>
 					</div>
-				</div>
-				<?php
+				</div><?php
 				echo '</div></div>';
 			}
 

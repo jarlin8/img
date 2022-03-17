@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<!--[if lte IE 9 ]><html class="ie lt-ie9" <?php language_attributes(); ?>> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!--><html <?php language_attributes(); ?>> <!--<![endif]-->
+<!--[if lte IE 9 ]><html <?php language_attributes(); ?> class="ie lt-ie9 <?php flatsome_html_classes(); ?>"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html <?php language_attributes(); ?> class="<?php flatsome_html_classes(); ?>"> <!--<![endif]-->
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
 	<link rel="profile" href="http://gmpg.org/xfn/11" />
@@ -8,7 +8,12 @@
 
 	<?php wp_head(); ?>
 </head>
-<body>
+
+<body <?php body_class(); ?>>
+
+<?php do_action( 'flatsome_after_body_open' ); ?>
+<?php wp_body_open(); ?>
+
 <div id="wrapper">
 	<main id="main" class="<?php flatsome_main_classes(); ?>">
 		<?php

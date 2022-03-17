@@ -26,7 +26,7 @@ if ( get_theme_mod( 'body_bg' ) ) echo 'html{background-color:' . get_theme_mod(
 
 if(get_theme_mod('site_width')) {
 $site_width = intval(get_theme_mod('site_width')); ?>
-.full-width .ubermenu-nav, .container, .row{max-width: <?php echo $site_width - 30; ?>px}
+.container-width, .full-width .ubermenu-nav, .container, .row{max-width: <?php echo $site_width - 30; ?>px}
 .row.row-collapse{max-width: <?php echo $site_width - 60; ?>px}
 .row.row-small{max-width: <?php echo $site_width - 37.5; ?>px}
 .row.row-large{max-width: <?php echo $site_width; ?>px}

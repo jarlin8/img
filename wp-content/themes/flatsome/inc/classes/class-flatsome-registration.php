@@ -83,8 +83,14 @@ final class Flatsome_Registration extends Flatsome_Base_Registration {
 			return new WP_Error( 'missing-purchase-code', __( 'No purchase code.', 'flatsome' ) );
 		}
 
-		$id     = $this->get_option( 'id', '0' );
-		$result = $this->api->send_request( "/v1/license/$code/$id/latest-version", 'latest-version' );
+		$id  = $this->get_option( 'id', '0' );
+		$url = "/v1/license/$code/$id/latest-version";
+
+		if ( get_theme_mod( 'release_channel' ) === 'beta' ) {
+			$url .= '?prerelease=1';
+		}
+
+		$result = $this->api->send_request( $url, 'latest-version' );
 
 		if ( is_wp_error( $result ) ) {
 			$statuses = array( 400, 403, 404, 409, 410, 423 );

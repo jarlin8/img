@@ -172,8 +172,7 @@ function ux_pages($atts) {
             if($grid[$current]['size'] == 'medium') $image_size = 'medium';
         }
 
-      ?>
-        <div class="<?php echo implode(' ', $classes_col); ?>" <?php echo $animate;?>>
+      ?><div class="<?php echo implode(' ', $classes_col); ?>" <?php echo $animate;?>>
           <div class="col-inner" <?php echo get_shortcode_inline_css($css_col); ?>>
           <a class="plain" href="<?php echo get_the_permalink($page->ID); ?>" title="<?php echo $page->post_title; ?>" target="<?php echo $target; ?>">
             <div class="<?php echo implode(' ', $classes_box); ?>">
@@ -192,8 +191,7 @@ function ux_pages($atts) {
               </div>
             </a>
             </div>
-          </div>
-         <?php
+          </div><?php
     } // Loop
     echo '</div>';
 

@@ -279,6 +279,20 @@ $theme_url = 'https://wpsoul.com/';
 						<?php printf( '<a href="%s" class="button button-primary">%s</a>', admin_url( 'admin.php?page=rehub' ), esc_html__("Register theme to get link", "rehub-theme" ) ); ?>
 					<?php endif;?>		
 				</div>
+			</div>
+			<div class="theme">
+				<div class="theme-screenshot">
+					<img src="<?php echo get_template_directory_uri()?>/admin/screens/images/rhfakeactivity.png" alt="theme">
+					<div class="plugin-info">Custom Fields Bulk update</div>
+				</div>
+				<h3 class="theme-name">RH Fake Activity</h3>
+				<div class="theme-actions">
+					<?php if( $registeredlicense == true ) :?>						
+						<a href="<?php echo esc_url($lb_verify_res['data']['plugins']['rh-fake-acivity']);?>" class="button button-primary" title="Get link">Download</a>
+					<?php else :?>
+						<?php printf( '<a href="%s" class="button button-primary">%s</a>', admin_url( 'admin.php?page=rehub' ), esc_html__("Register theme to get link", "rehub-theme" ) ); ?>
+					<?php endif;?>		
+				</div>
 			</div>											
 		</div>
 	</div>

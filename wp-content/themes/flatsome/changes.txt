@@ -1,3 +1,38 @@
+--- 3.15.4 ---
+NEW: Release channel option (stable/beta).
+
+FIXED: Updated unannounced change of form login text string.
+FIXED: PHP notice if no color is set on UX Color attribute.
+FIXED: Swatches label center and right alignment on single product.
+FIXED: Related product title indent with an increased site container width.
+FIXED: Clear cart after payment on simple and focused templates in some cases.
+FIXED: Missing return value in swatch preview column content filter.
+FIXED: Product box swatch selected variation image in off-canvas.
+FIXED: Lightbox tall images intersecting with the viewport.
+FIXED: Builder: WCML custom product featured image reset.
+FIXED: Typo in Flatsome registration admin notice string.
+FIXED: Scroll to in combination with hidden sliders.
+FIXED: Equalize product box in off-canvas.
+
+ENHANCEMENT: Vertical Menu dropdown now responds to Container width & Full width menu item design.
+
+Note: Beta pre releases will from now on now be presented in the WP update panel if enabled. Betas are the
+versions of choice for testers in preparation for a theme release. They provide a short-term-stable point
+to report bugs against. Grab these to make sure the upcoming release works well on your infrastructure.
+
+--- 3.15.3 ---
+NEW: WooCommerce 6.1 compatibility.
+
+ENHANCEMENT: Auto height for custom-sized vertical menu dropdowns.
+
+FIXED: Open correct image in galleries.
+FIXED: Open correct video with multiple video buttons.
+FIXED: Toggle accordions when clicking on arrow.
+FIXED: Site logo src=(unknown) if logo was not used pre 3.15.
+FIXED: Product gallery thumbnail slider arrows for 5 thumbs.
+FIXED: Swatches cache when an attribute is updated.
+FIXED: Various RTL improvements.
+
 --- 3.15.2 ---
 FIXED: Script file naming compatibility on some servers.
 FIXED: Yoast integration options did not show (due to Yoast codebase changes).

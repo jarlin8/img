@@ -1,5 +1,4 @@
 <?php
-namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
@@ -114,7 +113,6 @@ class Select2Ajax_Control extends \Elementor\Base_Data_Control {
 /**
  * Register a custom control in elementor
  */
-add_action( 'elementor/controls/controls_registered', function () {
-    $controls_manager = Plugin::$instance->controls_manager;
-    $controls_manager->register_control( 'select2ajax', new Select2Ajax_Control );
-} );
+
+
+

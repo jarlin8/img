@@ -11,7 +11,7 @@ $logo_link           = $logo_link ? $logo_link : home_url( '/' );
 $width               = get_theme_mod( 'logo_width', 200 );
 $height              = get_theme_mod( 'header_height', 90 );
 
-if ( ! is_numeric( $site_logo_id ) ) {
+if ( ! empty( $site_logo_id ) && ! is_numeric( $site_logo_id ) ) {
 	// Fallback to `logo_width` and `header_height` if
 	// the logo is a string, ie. it's the default value.
 	$site_logo = array( $site_logo_id, $width, $height );

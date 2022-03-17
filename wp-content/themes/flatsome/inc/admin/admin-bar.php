@@ -479,6 +479,13 @@ $wp_admin_bar->add_menu( array(
 
 $wp_admin_bar->add_menu( array(
  'parent' => 'options_advanced',
+ 'id' => 'options_advanced_updates',
+ 'title' => 'Updates',
+ 'href' =>  $advanced_url.'of-option-updates'
+));
+
+$wp_admin_bar->add_menu( array(
+ 'parent' => 'options_advanced',
  'id' => 'options_advanced_backup',
  'title' => 'Backup / Import',
  'href' =>  $advanced_url.'of-option-backupandimport'

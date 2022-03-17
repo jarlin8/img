@@ -51,15 +51,15 @@ img{max-width:100%; height:auto}
 .wp-block *{box-sizing: border-box;}
 @media(max-width:768px){
     body .disablemobilepadding{padding: 0 !important;}
-    .hideonmobile{filter: grayscale(100%);opacity: 0.2;}
+    .hideonmobile{display: none}
     .mobilecenterdisplay, .mobilecenterdisplay > *{text-align: center !important;justify-content: center !important;}
 }
 @media(max-width:499px){
     .mobilesblockdisplay{display: block !important; text-align: inherit !important}
 }
-@media (min-width: 1140px){
-	.desktopdisplaynone{filter: grayscale(100%);opacity: 0.2;}
+@media (min-width: 1025px){
+	.desktopdisplaynone{display: none}
 }
 @media (max-width: 1140px) and (min-width: 768px){
-	.onlytabletnone{filter: grayscale(100%);opacity: 0.2;}
+	.onlytabletnone{display: none}
 }

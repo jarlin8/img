@@ -1847,7 +1847,7 @@ if(!function_exists('rh_generate_incss')) {
         }
         else if($type === 'fullwidthopt'){
             $output .= '
-              #rh_p_l_fullwidth_opt .title_single_area h1{ font-size: 46px; line-height: 48px; }
+              #rh_p_l_fullwidth_opt .title_single_area h1{ font-size: clamp(36px, 4vw, 46px); line-height: 48px; }
               #rh_p_l_fullwidth_opt .title_single_area .post-meta span{margin-right:20px;}
               span.cat_link_meta:before, span.comm_count_meta:before{opacity:0.33;}
               .post-readopt.full_width .post-inner{margin-left:auto !important; margin-right:auto !important}

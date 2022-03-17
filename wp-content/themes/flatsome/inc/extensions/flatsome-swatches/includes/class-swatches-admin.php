@@ -52,6 +52,7 @@ class Swatches_Admin {
 		// Add attribute option fields.
 		add_action( 'woocommerce_attribute_added', array( $this, 'add_attribute_options' ), 10, 2 );
 		add_action( 'woocommerce_attribute_updated', array( $this, 'update_attribute_options' ), 10, 3 );
+		add_action( 'woocommerce_attribute_updated', array( flatsome_swatches(), 'cache_clear' ), 10, 3 );
 		add_action( 'woocommerce_attribute_deleted', array( $this, 'delete_attribute_option' ), 10 );
 	}
 
@@ -342,11 +343,13 @@ class Swatches_Admin {
 	}
 
 	/**
-	 * Render thumbnail HTML depend on attribute type
+	 * Render thumbnail HTML depending on attribute type.
 	 *
 	 * @param string     $content Current content.
 	 * @param string     $column  Column name.
 	 * @param string|int $term_id Term ID.
+	 *
+	 * @return string The column HTML content.
 	 */
 	public function add_attribute_column_content( $content, $column, $term_id ) {
 		if ( 'ux_swatch_preview' === $column ) {
@@ -386,5 +389,7 @@ class Swatches_Admin {
 					break;
 			}
 		}
+
+		return $content;
 	}
 }

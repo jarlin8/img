@@ -3,10 +3,13 @@
 global $post, $product;
 
 $attachment_ids = $product->get_gallery_image_ids();
-$thumb_count    = count( $attachment_ids ) + 1;
+$post_thumbnail = has_post_thumbnail();
+$thumb_count    = count( $attachment_ids );
+
+if ( $post_thumbnail ) $thumb_count++;
 
 // Disable thumbnails if there is only one extra image.
-if ( $thumb_count == 1 ) {
+if ( $post_thumbnail && $thumb_count == 1 ) {
 	return;
 }
 
@@ -20,7 +23,6 @@ if ( is_rtl() ) {
 
 if ( $attachment_ids ) {
 	$loop          = 0;
-	$columns       = apply_filters( 'woocommerce_product_thumbnails_columns', 4 );
 	$image_size    = 'thumbnail';
 	$gallery_class = array( 'product-thumbnails', 'thumbnails' );
 
@@ -32,7 +34,7 @@ if ( $attachment_ids ) {
 
 	$gallery_thumbnail = wc_get_image_size( apply_filters( 'woocommerce_gallery_thumbnail_size', 'woocommerce_' . $image_size ) );
 
-	if ( $thumb_count <= 5 ) {
+	if ( $thumb_count < 5 ) {
 		$gallery_class[] = 'slider-no-arrows';
 	}
 
@@ -54,7 +56,7 @@ if ( $attachment_ids ) {
 		<?php
 
 
-		if ( has_post_thumbnail() ) :
+		if ( $post_thumbnail ) :
 			?>
 			<div class="col is-nav-selected first">
 				<a>

@@ -17,7 +17,7 @@ function flatsome_maintenance_admin_notice() {
 
 	if ( in_array( $screen->id, array( 'update-core', 'update-core-network' ), true ) && ! flatsome_envato()->registration->is_registered() ) {
 		?>
-		<div class="updated"><p><?php echo sprintf( __( '<a href="%s">Please enter your purchase code</a> to activate Flatsome and get one-click updates.', 'flatsome' ), esc_url_raw( network_admin_url( 'admin.php?page=flatsome-panel' ) ) ); ?></p></div>';
+		<div class="updated"><p><?php echo sprintf( __( '<a href="%s">Please enter your purchase code</a> to activate Flatsome and get one-click updates.', 'flatsome' ), esc_url_raw( network_admin_url( 'admin.php?page=flatsome-panel' ) ) ); ?></p></div>
 		<?php
 	}
 

@@ -189,8 +189,7 @@ function ux_gallery($atts) {
         }
 
         $image_output = wp_get_attachment_image( $id, $image_size, false, $atts );
-      ?>
-        <div class="<?php echo implode(' ', $classes_col); ?>" <?php echo $animate;?>>
+      ?><div class="<?php echo implode(' ', $classes_col); ?>" <?php echo $animate;?>>
           <div class="col-inner">
             <?php echo $link_start; ?>
             <div class="<?php echo implode(' ', $classes_box); ?>">
@@ -218,8 +217,7 @@ function ux_gallery($atts) {
             </div>
             <?php echo $link_end; ?>
           </div>
-         </div>
-         <?php
+         </div><?php
     } // Loop
 
     get_flatsome_repeater_end($repeater);

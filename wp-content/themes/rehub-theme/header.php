@@ -87,7 +87,16 @@
                 <?php endif; ?>
                 <?php $header_template = (rehub_option('rehub_header_style') !='') ? rehub_option('rehub_header_style') : 'header_seven' ;?>
                 <?php if($header_template == 'header_second' || $header_template == 'header_four' || $header_template == 'header_nine') {$header_template = 'header_seven';}?>
-                <?php include(rh_locate_template('inc/header_layout/'.$header_template.'.php')); ?>
+                <?php if(is_numeric($header_template) && function_exists('rh_wp_reusable_render')):?>
+                
+                    <div class="header_clean_style clearfix pt0 pb0 <?php if (rehub_option('rehub_sticky_nav') ==true){echo 'rh-stickme ';}?>">                      
+                        <?php echo rh_wp_reusable_render(array('id' => $header_template));?>                  
+                    </div>
+                    
+                <?php else:?>
+                    <?php include(rh_locate_template('inc/header_layout/'.$header_template.'.php')); ?>
+                <?php endif;?>
+
 
             </div>  
         </header>

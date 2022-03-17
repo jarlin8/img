@@ -90,7 +90,7 @@ function rehub_before_import_setup( $current_import ){
 		exit();		
 	}	
 
-	if( 'RePick' === $current_import['import_file_name'] || 'ReMag' === $current_import['import_file_name'] || 'ReCash' === $current_import['import_file_name'] ) {
+	if( 'RePick' === $current_import['import_file_name'] || 'ReMag' === $current_import['import_file_name'] || 'ReCash' === $current_import['import_file_name'] || 'ReDeal' === $current_import['import_file_name']  ) {
 		if($registeredlicense && empty($lb_verify_res['data']['themes'])){
 			echo '<p style="color:red;font-size:180%" class="notofficialtheme">You have no access to demo import, because you are using nulled or not official theme version. Please, purchase theme on <a href="https://themeforest.net/item/rehub-directory-multi-vendor-shop-coupon-affiliate-theme/7646339">Themeforest</a>, otherwise, your site can be blocked.</p>';		
 			exit();			
@@ -288,7 +288,8 @@ function rehub_import_files() {
 		$recashnotice .='</ol>';
 
 		$redealnotice = $requirednotice.'<ol>';
-		$redealnotice .= $rhelnotice;
+		$redealnotice .= $rhgsnotice;
+		$redealnotice .= $rhgsanimatenotice;
 		$redealnotice .='</ol>';
 		$redealnotice .= $optionalnotice.' <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a><ol>';
 		$redealnotice .= $rhbpnotice;
@@ -668,7 +669,7 @@ function rehub_after_import_setup( $current_import ) {
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break;
 		case 'ReDeal':
-			$front_page = get_page_by_title( 'Homepage Redeal' );
+			$front_page = get_page_by_title( 'Greenshift Frontpage' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			$themeoptionmenu = get_term_by('name', 'Menu for logo section', 'nav_menu');
 			break;			

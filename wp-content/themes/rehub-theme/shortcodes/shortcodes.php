@@ -397,6 +397,10 @@ if(!function_exists('wpsm_code_shortcode')) {
 // Main
 if( !function_exists('wpsm_accordion_main_shortcode') ) {
 	function wpsm_accordion_main_shortcode( $atts, $content = null  ) {		
+
+		extract( shortcode_atts( array(
+		  'disableschema' => ''
+		), $atts ) );
         
 		// Remove all instances of "<p>&nbsp;</p><br>" to avoid extra lines.
 		$content = do_shortcode($content);
@@ -405,8 +409,9 @@ if( !function_exists('wpsm_accordion_main_shortcode') ) {
 		
 		wp_enqueue_script('rhaccordion');
 		wp_enqueue_style('rhaccordion');
+		$schema = ($disableschema) ? '' : ' itemscope="" itemtype="https://schema.org/FAQPage"';
 		// Display the accordion	
-		return '<div class="wpsm-accordion mb30" data-accordion="yes" itemscope="" itemtype="https://schema.org/FAQPage">' .$content . '</div>';
+		return '<div class="wpsm-accordion mb30" data-accordion="yes"'.$schema.'>' .$content . '</div>';
 	}
 }
 
@@ -415,9 +420,12 @@ if( !function_exists('wpsm_accordion_section_shortcode') ) {
 	function wpsm_accordion_section_shortcode( $atts, $content = null  ) {
 		extract( shortcode_atts( array(
 		  'title' => 'Title',
+		  'disableschema' => ''
 		), $atts ) );
+
+		$schema = ($disableschema) ? '' : ' itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question"';
 		  
-	   return '<div class="wpsm-accordion-item close" itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question"><h3 class="wpsm-accordion-trigger" itemprop="name">'. $title .'</h3><div class="accordion-content"  itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><div itemprop="text">' . do_shortcode($content) . '</div></div></div>';
+	   return '<div class="wpsm-accordion-item close"'.$schema.'><h3 class="wpsm-accordion-trigger" itemprop="name">'. $title .'</h3><div class="accordion-content"  itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"><div itemprop="text">' . do_shortcode($content) . '</div></div></div>';
 	}
 }
 
@@ -3677,7 +3685,7 @@ function wpsm_get_custom_value($atts, $content = null){
     $field = esc_attr($field);
     $attrfield = esc_attr($attrfield);
     global $post;
-    $post_id = (NULL === $post_id) ? $post->ID : (int)$post_id;
+    $post_id = (NULL === $post_id && is_object($post)) ? $post->ID : (int)$post_id;
     if ($type=='custom'){
     	$result = get_post_meta($post_id, $field, true);
     }else if($type=='attribute' || $type=='local'){
@@ -5349,8 +5357,7 @@ function rh_ce_search_form( $atts=array(), $content = null ) {
 	extract( $build_args ); 
 	ob_start(); 
 	?>
-	<style scope> 
-.cssProgress{opacity: 0; visibility: hidden;    -webkit-transform: translate3d(0, 25px, 0);transform: translate3d(0, 25px, 0);    -webkit-transition: all .4s ease-out;transition: all .4s ease-out;}.cssProgress.active{opacity: 1; visibility:visible ;-webkit-transform: translate3d(0, 0, 0);transform: translate3d(0, 0, 0);}.progress2{position: relative;overflow: hidden;width: 100%;    background-color: #EEE;box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.2);}.progress2 .cssProgress-bar {height: 14px;}.cssProgress .cssProgress-active {-webkit-animation: cssProgressActive 2s linear infinite;-ms-animation: cssProgressActive 2s linear infinite;animation: cssProgressActive 2s linear infinite;}.cssProgress .cssProgress-stripes, .cssProgress .cssProgress-active, .cssProgress .cssProgress-active-right {background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, 0.125) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.125) 50%, rgba(255, 255, 255, 0.125) 75%, transparent 75%, transparent);background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.125) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.125) 50%, rgba(255, 255, 255, 0.125) 75%, transparent 75%, transparent);background-size: 35px 35px;}.cssProgress .cssProgress-success {background-color: #41bc03 !important;}.cssProgress .cssProgress-bar {display: block;float: left;width: 0%;box-shadow: inset 0px -1px 2px rgba(0, 0, 0, 0.1);}@-webkit-keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@-ms-keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@-webkit-keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}@-ms-keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}@keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}</style>
+	<style scope> .custom_search_box{padding: 20px 0; }.custom_search_box form{ position: relative; display: block; width: 100%;}.custom_search_box input[type="text"] {transition: all 0.5s ease-out; background: #f6f6f6;border: 3px solid #ececec;height: 50px;width: 100%;padding:0 55px 0 40px;outline: none;  }@media(min-width: 1224px){.custom_search_box input[type="text"]{font-size: 115%}.custom_search_box.flat_style_form input[type="text"]{font-size: 105%}}.custom_search_box i.inside-search{ position: absolute; top: 50%; left: 16px; margin-top: -8px}.custom_search_box.flat_style_form i{display: none;}.custom_search_box button[type="submit"] { padding: 0 13px; position: absolute; height: calc(100% - 6px); right: 3px; top:3px;  color: #fff !important; font-size: 130% !important; margin: 0; border-radius: 0; box-shadow: none !important;}.custom_search_box input[type="text"]:focus, .custom_search_box input[type="text"]:hover{border-color: #666; background-color: #fff}.custom_search_box.flat_style_form input[type="text"] {border-width: 1px;height: 52px;padding:0 130px 0 20px; }.custom_search_box.flat_style_form button[type="submit"] { padding: 0 35px; height: 100%; right: 0; top:0; font-size: 100% !important;}.cssProgress{opacity: 0; visibility: hidden;    -webkit-transform: translate3d(0, 25px, 0);transform: translate3d(0, 25px, 0);    -webkit-transition: all .4s ease-out;transition: all .4s ease-out;}.cssProgress.active{opacity: 1; visibility:visible ;-webkit-transform: translate3d(0, 0, 0);transform: translate3d(0, 0, 0);}.progress2{position: relative;overflow: hidden;width: 100%;    background-color: #EEE;box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.2);}.progress2 .cssProgress-bar {height: 14px;}.cssProgress .cssProgress-active {-webkit-animation: cssProgressActive 2s linear infinite;-ms-animation: cssProgressActive 2s linear infinite;animation: cssProgressActive 2s linear infinite;}.cssProgress .cssProgress-stripes, .cssProgress .cssProgress-active, .cssProgress .cssProgress-active-right {background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, 0.125) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.125) 50%, rgba(255, 255, 255, 0.125) 75%, transparent 75%, transparent);background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.125) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.125) 50%, rgba(255, 255, 255, 0.125) 75%, transparent 75%, transparent);background-size: 35px 35px;}.cssProgress .cssProgress-success {background-color: #41bc03 !important;}.cssProgress .cssProgress-bar {display: block;float: left;width: 0%;box-shadow: inset 0px -1px 2px rgba(0, 0, 0, 0.1);}@-webkit-keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@-ms-keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@-webkit-keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}@-ms-keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}@keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}</style>
 	<?php wp_enqueue_script( 'rh-ce-search-form', get_template_directory_uri() . '/js/cefrontsearch.js', array( 'jquery' ), 1.0, true );?>	
 	<div class="progress-animate-onclick width-100p position-relative custom_search_box flat_style_form">
 		<div class="cssProgress mb10">
@@ -5808,11 +5815,11 @@ function wpsm_reviewbox( $atts, $content = null ) {
 						$out .=' class="wpsm-one-half wpsm-column-first"';
 					endif;
 					$out .='>';
-					$out .='<div class="wpsm_pros"><div class="title_pros">'.esc_html($prostitle).'</div><ul>';		
+					$out .='<div class="wpsm_pros"><div class="title_pros">'.$prostitle.'</div><ul>';		
 					$prosvalues = explode(PHP_EOL, $pros);
 					foreach ($prosvalues as $prosvalue) {
 						if(!empty($prosvalue)){
-							$out .='<li>'.esc_html($prosvalue).'</li>';						
+							$out .='<li>'.$prosvalue.'</li>';						
 						}
 					}
 					$out .='</ul></div></div>';
@@ -5821,11 +5828,11 @@ function wpsm_reviewbox( $atts, $content = null ) {
 					$out .='<div';
 					$out .=' class="wpsm-one-half wpsm-column-last"';
 					$out .='>';
-					$out .='<div class="wpsm_cons"><div class="title_cons">'.esc_html($constitle).'</div><ul>';
+					$out .='<div class="wpsm_cons"><div class="title_cons">'.$constitle.'</div><ul>';
 					$consvalues = explode(PHP_EOL, $cons);
 					foreach ($consvalues as $consvalue) {
 						if(!empty($consvalue)){
-							$out .='<li>'.esc_html($consvalue).'</li>';
+							$out .='<li>'.$consvalue.'</li>';
 						}
 					}
 					$out .='</ul></div></div>';

@@ -4,8 +4,9 @@
 		<div id="footercustomarea">	
 			<?php dynamic_sidebar( 'footercustom' ); ?>
 		</div>
-	<?php endif; ?>		
-	 <?php if ( ! function_exists( 'elementor_theme_do_location' ) || ! elementor_theme_do_location( 'footer' ) ) :?>
+	<?php endif; ?>	
+	<?php $footer_template = rehub_option('footer_template');?>	
+	 <?php if ( (! function_exists( 'elementor_theme_do_location' ) || ! elementor_theme_do_location( 'footer' )) && !is_numeric($footer_template) ) :?>
 		<?php 
 
 			$footer_style = (rehub_option('footer_style') == '1') ? ' white_style' : ' dark_style';
@@ -59,6 +60,11 @@
 		</footer>
 		<?php endif; ?>
 	<?php endif; ?>
+	<?php if(is_numeric($footer_template)):?>
+		<div class="footer_clean_style post clearfix">                      
+			<?php echo rh_wp_reusable_render(array('id' => $footer_template));?>                  
+		</div>
+	<?php endif;?>
 	<!-- FOOTER -->
 </div><!-- Outer End -->
 <span class="rehub_scroll" id="topcontrol" data-scrollto="#top_ankor"><i class="rhicon rhi-chevron-up"></i></span>

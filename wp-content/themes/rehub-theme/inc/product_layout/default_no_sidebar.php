@@ -13,6 +13,7 @@
     <div class="rh-content-wrap clearfix">
         <!-- Main Side -->
         <div class="main-side page clearfix full_width woo_default_no_sidebar" id="content">
+            <style scoped>.woocommerce div.product form.cart .group_table td{padding: 10px 5px}</style>
             <div class="post">
                 <?php do_action( 'woocommerce_before_main_content' );?>
                 <?php if(!rehub_option('rehub_disable_breadcrumbs')){woocommerce_breadcrumb();}?>

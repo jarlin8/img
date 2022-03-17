@@ -59,6 +59,7 @@
     <?php $addstyles = '#main_header{position: absolute;}  
     #main_header, .main-nav{background:none transparent !important;}  
     nav.top_menu > ul > li > a, .logo_section_wrap .user-ava-intop:after, .dl-menuwrapper button i, .dl-menuwrapper .re-compare-icon-toggle, nav.top_menu > ul > li > a{color: #fff !important} 
+    .main-nav{border:none !important}
     .dl-menuwrapper button svg line{stroke:#fff !important}
     .responsive_nav_wrap{background:transparent !important}';
     if (rehub_option('rehub_header_color_background') ==''){

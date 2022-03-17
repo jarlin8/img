@@ -24,7 +24,12 @@ add_action( 'elementor/elements/categories_registered', function( $elements_mana
 add_action( 'init', function () {
     // Ajax general callback methods  and control
     require_once (locate_template('rehub-elementor/controls/ajax-callbacks.php'));
-    require_once (locate_template('rehub-elementor/controls/select2ajax-control.php'));
+    function register_rehub_selectajax_control( $controls_manager ) {
+        require_once (locate_template('rehub-elementor/controls/select2ajax-control.php'));
+        $controls_manager->register( new Select2Ajax_Control );
+    }
+    add_action( 'elementor/controls/register', 'register_rehub_selectajax_control' );
+    
     // Abstracts
     require_once (rh_locate_template('rehub-elementor/abstracts/content-base-widget.php'));
 

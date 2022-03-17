@@ -82,13 +82,23 @@ class Swatches_Frontend {
 		ob_start();
 		?>
 		<?php if ( get_theme_mod( 'swatches_layout' ) === 'stacked' ) : ?>
+			.variations th,
 			.variations td {
 			display: block;
 			}
 
-			.variations td.label {
+			.variations .label {
 			display: flex;
 			align-items: center;
+			}
+
+			.variations .label label {
+			margin: .5em 0;
+			}
+
+			.ux-swatch-selected-value {
+			font-weight: normal;
+			font-size: .9em;
 			}
 		<?php endif; ?>
 
@@ -428,7 +438,7 @@ class Swatches_Frontend {
 
 			switch ( $type_tmp ) {
 				case 'ux_color':
-					$color = flatsome_swatches()->parse_ux_color_term_meta( $swatch['ux_color'] );
+					$color = flatsome_swatches()->parse_ux_color_term_meta( isset( $swatch['ux_color'] ) ? $swatch['ux_color'] : '' );
 
 					if ( $color['class'] ) $color_classes[] = $color['class'];
 

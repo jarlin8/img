@@ -89,6 +89,10 @@ if($registeredlicense){
 		"demo16"=> array(
 			"link"=>"https://reviewit.wpsoul.net/",
 			"name"=>"ReViewit"
+		),
+		"demo19"=> array(
+			"link"=>"https://reviewit.wpsoul.net/",
+			"name"=>"ReLearn"
 		)					
 	);
 }

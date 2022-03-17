@@ -4,7 +4,8 @@
 	Description: A Hybrid magazine/shop/review/news Wordpress Theme
 	Author: Wpsoul
 	Author URI: https://wpsoul.com/
-	Version: 17.7.2
+	Secret Key: 79ec684eb95bbd822fa1b06b7a2631b5
+	Version: 17.8
 	Tags: two-columns, fluid-layout, custom-background, threaded-comments, translation-ready, custom-menu
 	License: 
 	License URI:
@@ -222,7 +223,7 @@ body:not(.noinnerpadding) .rh-post-wrapper {background:#fff; border: 1px solid #
 .main-side{min-height: 70vh }
 .sidebar, .side-twocol { width: 336px; float: right; overflow: hidden;}
 .sidebar.authorsidebar{column-count: auto !important; }
-.full_post_area.content, .full_post_area.rh-container{width: 100%; overflow: hidden; padding: 0;}
+.full_post_area.content, .full_post_area.rh-container{width: 100%; padding: 0;}
 .full_post_area .rh-content-wrap{padding: 0}
 .vc_row{margin-right: 0; margin-left: 0} 
 .wpsm-one-half { width: 48%; }
@@ -280,7 +281,7 @@ body:not(.noinnerpadding) .rh-post-wrapper {background:#fff; border: 1px solid #
 	body .disabletabletpadding{padding: 0 !important;}.tabmt25{margin-top:25px !important}
 	.logo-section .mobileinmenu, .hideontablet{display: none !important;}
 	.logo-section #mobile-menu-icons .mobileinmenu{display: inline-block !important;}
-	.responsive_nav_wrap { display: block;}
+	.responsive_nav_wrap, .showontablet { display: block;}
 	.rh_woocartmenu-amount, .header-actions-logo, .header_seven_style .search{ display: none;}
 	.tabletcenterdisplay{text-align: center !important;}
 	.tabletblockdisplay{display: block !important;width: 100% !important;float: none !important; margin: 0 0 10px 0; clear: both !important}
@@ -389,7 +390,7 @@ body:not(.noinnerpadding) .rh-post-wrapper {background:#fff; border: 1px solid #
 	.desktabldisplaynone{display: none !important;}
 	.floatactive .hideonfloattablet {display: none;}
 }
-@media (min-width: 1140px){
+@media (min-width: 1025px){
 	.desktopdisplaynone{display: none !important;}
 	.floatactive .hideonfloatdesktop {display: none;}
 }
@@ -568,7 +569,7 @@ img.lazyloaded {opacity: 1;transition: opacity 500ms ease-in;}
 .footer_widget .widget .title, .footer_widget .widget h2{margin: 20px 0 25px 0;font-size: 18px;padding: 0;border: none;}
 .footer_widget .widget .title:after, .widget.better_menu .title:after{display: none;}
 .widget_categories li, .widget_archive li, .widget_nav_menu li, .widget_pages li, .login_widget ul li { margin-bottom: 6px }
-.widget_recent_entries li, .widget_recent_comments ul li, .widget_product_categories li { margin-bottom: 10px }
+.widget_recent_entries li, .widget_recent_comments ul li, .widget_product_categories li, .wp-block-latest-posts.wp-block-latest-posts__list li{ margin-bottom: 10px }
 .widget_categories li a, .widget_archive li a, .widget_nav_menu li a, .widget_recent_entries li a, .widget_recent_comments ul li a, .widget_pages ul li a, .login_widget ul li a, .widget_product_categories ul li a, .widget_meta ul li a { text-decoration: underline; color: #111; }
 .widget_nav_menu ul.sub-menu, .widget_product_categories ul.children { margin: 6px 0 }
 .widget_nav_menu ul.sub-menu li, .widget_product_categories ul.children li { font-size: 12px; margin-bottom: 3px; padding-left: 12px; }

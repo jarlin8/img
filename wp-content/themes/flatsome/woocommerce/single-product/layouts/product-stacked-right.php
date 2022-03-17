@@ -14,7 +14,7 @@
 			</div>
 
 			<div class="product-info summary col-fit col entry-summary <?php flatsome_product_summary_classes();?>">
-	      <div class="is-sticky-column"><div class="is-sticky-column__inner">
+			<?php flatsome_sticky_column_open(); ?>
 	        <div class="product-stacked-info">
 	              <?php if(!get_theme_mod('product_header') && get_theme_mod('product_next_prev_nav',1)) { ?>
 	                <div class="product-stacked-next-prev-nav absolute top right hide-for-medium">
@@ -37,7 +37,7 @@
 	        			?>
 	          </div>
 	        </div>
-	      </div></div>
+			<?php flatsome_sticky_column_close(); ?>
 		</div>
 
 		<div id="product-sidebar" class="mfp-hide">

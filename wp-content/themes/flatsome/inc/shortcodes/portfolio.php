@@ -249,8 +249,7 @@ get_flatsome_repeater_start($repeater);
               if($grid[$current]['size']) $image_size = $grid[$current]['size'];
           }
 
-          ?>
-          <div class="<?php echo implode(' ', $classes_col); ?>" data-terms="<?php echo strip_tags( get_the_term_list( get_the_ID(), 'featured_item_category', "[&quot;", "&quot;,&quot;", "&quot;]" ) ); ?>" <?php echo $animate; ?>>
+          ?><div class="<?php echo implode(' ', $classes_col); ?>" data-terms="<?php echo strip_tags( get_the_term_list( get_the_ID(), 'featured_item_category', "[&quot;", "&quot;,&quot;", "&quot;]" ) ); ?>" <?php echo $animate; ?>>
           <div class="col-inner" <?php echo get_shortcode_inline_css($css_col); ?>>
           <a href="<?php echo $link; ?>" class="plain <?php echo $has_lightbox; ?>">
           <div class="<?php echo implode(' ', $classes_box); ?>">
@@ -274,8 +273,7 @@ get_flatsome_repeater_start($repeater);
            </div>
            </a>
            </div>
-           </div>
-          <?php
+           </div><?php
           endwhile;
           endif;
           wp_reset_query();
