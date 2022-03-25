@@ -63,6 +63,7 @@ class Analytics {
 
 		if ( Helper::has_cap( 'analytics' ) ) {
 			$this->action( 'rank_math/admin_bar/items', 'admin_bar_items', 11 );
+			$this->action( 'rank_math_seo_details', 'post_column_search_traffic' );
 		}
 
 		Posts::get();
@@ -628,6 +629,47 @@ class Analytics {
 	}
 
 	/**
+	 * Add search traffic value in seo detail of post lists
+	 *
+	 * @param int $post_id object Id.
+	 */
+	public function post_column_search_traffic( $post_id ) {
+		if ( ! Authentication::is_authorized() ) {
+			return;
+		}
+
+		$analytics           = get_option( 'rank_math_google_analytic_options' );
+		$analytics_connected = ! empty( $analytics ) && ! empty( $analytics['view_id'] );
+
+		static $traffic_data;
+		if ( null === $traffic_data ) {
+			$post_ids = $this->get_queried_post_ids();
+			if ( empty( $post_ids ) ) {
+				$traffic_data = [];
+				return;
+			}
+
+			$traffic_data = $analytics_connected ? Pageviews::get_traffic_by_object_ids( $post_ids ) : Pageviews::get_impressions_by_object_ids( $post_ids );
+		}
+
+		if ( ! isset( $traffic_data[ $post_id ] ) ) {
+			return;
+		}
+		?>
+		<span class="rank-math-column-display rank-math-search-traffic">
+			<strong>
+				<?php
+					$analytics_connected
+						? esc_html_e( 'Search Traffic:', 'rank-math-pro' )
+						: esc_html_e( 'Search Impression:', 'rank-math-pro' );
+				?>
+			</strong>
+			<?php echo esc_html( number_format( $traffic_data[ $post_id ] ) ); ?>
+		</span>
+		<?php
+	}
+
+	/**
 	 * Extend the date_exists() function to include the additional tables.
 	 *
 	 * @param  string $tables Tables.
@@ -638,5 +680,26 @@ class Analytics {
 		$tables['adsense']   = DB_Helper::check_table_exists( 'rank_math_analytics_adsense' ) ? 'rank_math_analytics_adsense' : '';
 
 		return $tables;
+	}
+
+	/**
+	 * Get queried post ids.
+	 */
+	private function get_queried_post_ids() {
+		global $wp_query;
+		if ( empty( $wp_query->posts ) ) {
+			return false;
+		}
+
+		$post_ids = array_filter(
+			array_map(
+				function( $post ) {
+					return isset( $post->ID ) ? $post->ID : '';
+				},
+				$wp_query->posts
+			)
+		);
+
+		return $post_ids;
 	}
 }
