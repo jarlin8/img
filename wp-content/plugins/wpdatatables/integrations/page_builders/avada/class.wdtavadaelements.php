@@ -179,6 +179,9 @@ class WPDataTables_Fusion_Elements
  */
 function is_fusion_builder_active()
 {
+    if (!function_exists('is_plugin_active')) {
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    }
     if (is_plugin_active('fusion-builder/fusion-builder.php') &&
         function_exists('fusion_is_element_enabled') &&
         class_exists('Fusion_Element'))

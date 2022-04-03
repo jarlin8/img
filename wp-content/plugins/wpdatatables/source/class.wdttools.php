@@ -430,6 +430,7 @@ class WDTTools
     {
         return array(
             'add_new_entry' => __('Add new entry', 'wpdatatables'),
+            'duplicate_entry' => __('Duplicate entry', 'wpdatatables'),
             'back_to_date' => __('Back to date', 'wpdatatables'),
             'browse_file' => __('Browse', 'wpdatatables'),
             'cancel' => __('Cancel', 'wpdatatables'),
@@ -1486,20 +1487,25 @@ class WDTTools
     {
         $htmlString = stripcslashes($htmlString);
         $htmlString = '<div>' . $htmlString . '</div>';
-        $domd = new DOMDocument();
-        $domd->loadHTML(mb_convert_encoding($htmlString, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        foreach ($domd->getElementsByTagName('*') as $node) {
-            $remove = array();
-            foreach ($node->attributes as $attributeName => $attribute) {
-                if (substr($attributeName, 0, 2) == 'on') {
-                    $remove[] = $attributeName;
+        if ( function_exists( 'mb_convert_encoding' ) ) {
+            $domd = new DOMDocument();
+            $domd_status = @$domd->loadHTML(mb_convert_encoding($htmlString, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR | LIBXML_NOWARNING);
+            if ($domd_status) {
+                foreach ($domd->getElementsByTagName('*') as $node) {
+                    $remove = array();
+                    foreach ($node->attributes as $attributeName => $attribute) {
+                        if (substr($attributeName, 0, 2) == 'on') {
+                            $remove[] = $attributeName;
+                        }
+                    }
+                    foreach ($remove as $i) {
+                        $node->removeAttribute($i);
+                    }
                 }
-            }
-            foreach ($remove as $i) {
-                $node->removeAttribute($i);
+                return substr($domd->saveHTML($domd->documentElement), 5, -6);
             }
         }
-        return substr($domd->saveHTML($domd->documentElement), 5, -6);
+        return $htmlString;
     }
 
     /**
