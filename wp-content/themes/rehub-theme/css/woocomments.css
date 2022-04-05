@@ -7,7 +7,7 @@
 .woocommerce #reviews #comments ol.commentlist li { clear:both; overflow:hidden; padding: 0; margin: 0 0 20px; position: relative; background: 0; border: 0; }
 .woocommerce #reviews #comments ol.commentlist li .meta { color: #777; font-size: 0.75em; text-transform: uppercase; }
 .woocommerce #reviews #comments ol.commentlist li img.avatar{padding: 3px; width: 75px; height: auto; background: #f7f6f7; border: 1px solid #f0eef0; margin: 0; line-height: 1; border-radius: 100px }
-.woocommerce #reviews #comments ol.commentlist li .comment-text { margin: 0 0 0 95px; }
+.woocommerce #reviews #comments ol.commentlist li .comment-text { margin: 0 0 0 1px; }
 .woocommerce #reviews #comments ol.commentlist li .comment-text p, .rh_reviewlist p { margin: 0 0 10px;line-height: 22px; }
 .woocommerce #reviews #comments .commentlist > li:before { content: ""; }
 .woocommerce #reviews #comments .comment_container{border: 1px solid rgba(206,206,206,0.23);padding: 15px;overflow: hidden;}
