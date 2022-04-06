@@ -458,7 +458,7 @@ ul.page-numbers li span.current, ul.page-numbers li a:hover, ul.page-numbers li.
 .def_btn.active_ajax_pagination:before{ font-weight: normal; display: inline-block; font-size:17px; content: "\f021"; animation: fa-spin 1s linear infinite; margin-right: 5px }
 .no_more_posts{text-align: center; clear: both; display: block;margin: 20px 0;width: 100%;flex-basis: 100%;}
 .post-meta { margin-bottom: 12px; font-size: 12px; line-height: 12px; font-style: italic; color: #999;}
-span.date_meta:before, span.cat_link_meta:before, span.comm_count_meta:before, span.postview_meta:before, span.admin_meta:before{ font-size: 3px;line-height: 12px;vertical-align: middle; padding-right: 5px; content: "\f111"; font-style:normal;}
+span.date_meta:before, span.cat_link_meta:before, span.comm_count_meta:before, span.postview_meta:before, span.admin_meta:before{ font-size: 3px;line-height: 12px;vertical-align: middle; padding-right: 5px; content: "\f2f7"; font-style:normal;}
 .admin_meta .admin img{vertical-align: middle; margin-right: 5px; border-radius: 50%}
 span.postview_meta:before{content: "\f06e"; font-size: 12px; }
 span.comm_count_meta:before{content: "\f4ad"; font-size: 12px;}
@@ -859,7 +859,7 @@ ul.rh-big-tabs-ul .rh-big-tabs-li.active a{color: #111;font-weight: bold;}
 .rh-float-panel{transform: translateY(-100%);opacity: 0;visibility: hidden;transition: all 0.5s ease;position: fixed;left: 0; top: 0; z-index: 100000;background: rgba(255, 255, 255, 0.97);box-shadow: 0 0 20px rgb(187 187 187 / 36%);width: 100%;}
 .darkbg.rh-float-panel{box-shadow: 0 0 20px #000;}
 .rh-float-panel.floating{opacity:1; visibility:visible;transform: translateY(0) !important; }
-.float-panel-woo-image img{max-height:50px; width:auto}
+.float-panel-woo-image img{max-height:50px; /*width:auto*/}
 .rh_deal_block .not_masked_coupon i, .rh-float-panel .not_masked_coupon{display: none !important;}
 .width-250{width: 250px}.width-100{width: 100px}.width-80{width: 80px}.width-150{width: 150px}.width-125{width: 125px}.width-200{width: 200px}.width-300{width: 300px}.width-100p{width: 100%}
 .width-100-calc{width: calc(100% - 100px);}.width-80-calc{width: calc(100% - 80px);}
