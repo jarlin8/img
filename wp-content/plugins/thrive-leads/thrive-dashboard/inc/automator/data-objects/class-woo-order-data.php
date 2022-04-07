@@ -2,6 +2,10 @@
 
 namespace TVE\Dashboard\Automator;
 
+use Exception;
+use Thrive\Automator\Items\Data_Object;
+use function wc_get_order;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -9,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Woo_Order_Data
  */
-class Woo_Order_Data extends \Thrive\Automator\Items\Data_Object {
+class Woo_Order_Data extends Data_Object {
 
 	/**
 	 * Get the data-object identifier
@@ -85,14 +89,14 @@ class Woo_Order_Data extends \Thrive\Automator\Items\Data_Object {
 
 	public static function create_object( $param ) {
 		if ( empty( $param ) ) {
-			throw new \Exception( 'No parameter provided for Woo_Order_Data object' );
+			throw new Exception( 'No parameter provided for Woo_Order_Data object' );
 		}
 
 		$order = null;
 		if ( is_a( $param, 'WC_Order' ) ) {
 			$order = $param;
 		} elseif ( is_numeric( $param ) ) {
-			$order = \wc_get_order( $param );
+			$order = wc_get_order( $param );
 		}
 
 		if ( $order ) {

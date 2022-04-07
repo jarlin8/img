@@ -198,8 +198,5 @@ class Thrive_Dash_List_Connection_Ontraport extends Thrive_Dash_List_Connection_
 		return '[Email]';
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
 
 }

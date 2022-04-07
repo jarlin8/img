@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Thrive_Dash_List_Connection_MadMimi extends Thrive_Dash_List_Connection_Abstract {
 	/**
 	 * Return the connection type
+	 *
 	 * @return String
 	 */
 	public static function getType() {
@@ -114,7 +115,7 @@ class Thrive_Dash_List_Connection_MadMimi extends Thrive_Dash_List_Connection_Ab
 			foreach ( $audienceList as $key => $item ) {
 				$lists [] = array(
 					'id'   => $item['name'],
-					'name' => $item['name']
+					'name' => $item['name'],
 				);
 			}
 
@@ -151,13 +152,10 @@ class Thrive_Dash_List_Connection_MadMimi extends Thrive_Dash_List_Connection_Ab
 
 	/**
 	 * Return the connection email merge tag
+	 *
 	 * @return String
 	 */
 	public static function getEmailMergeTag() {
 		return '(email)';
-	}
-
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
 	}
 }

@@ -143,7 +143,9 @@ class Thrive_Dash_List_Connection_MailerLite extends Thrive_Dash_List_Connection
 	 * @return bool|string true for success or string error message for failure
 	 */
 	public function addSubscriber( $list_identifier, $arguments ) {
-		list( $first_name, $last_name ) = $this->_getNameParts( $arguments['name'] );
+		if ( isset( $arguments['name'] ) ) {
+			list( $first_name, $last_name ) = $this->_getNameParts( $arguments['name'] );
+		}
 
 		/** @var Thrive_Dash_Api_MailerLite $api */
 		$api            = $this->getApi();
@@ -167,8 +169,12 @@ class Thrive_Dash_List_Connection_MailerLite extends Thrive_Dash_List_Connection
 		try {
 			/** @var Thrive_Dash_Api_MailerLite_Groups $groupsApi */
 			$groupsApi = $api->groups();
+			if ( empty( $arguments['automator_custom_fields'] ) ) {
+				$args['fields'] = array_merge( $args['fields'], $this->_generateCustomFields( $arguments ) );
+			} else {
+				$args['fields'] = array_merge( $args['fields'], $arguments['automator_custom_fields'] );
+			}
 
-			$args['fields'] = array_merge( $args['fields'], $this->_generateCustomFields( $arguments ) );
 
 			$groupsApi->addSubscriber( $list_identifier, $args );
 
@@ -239,6 +245,7 @@ class Thrive_Dash_List_Connection_MailerLite extends Thrive_Dash_List_Connection
 			'name'  => $field->title,
 			'type'  => $field->type,
 			'label' => $field->title,
+			'key'   => $field->key,
 		);
 	}
 
@@ -267,16 +274,47 @@ class Thrive_Dash_List_Connection_MailerLite extends Thrive_Dash_List_Connection
 			if ( ! isset( $field[0] ) ) {
 				continue;
 			}
-
-			$chunks               = explode( ' ', $field[0]['name'] );
-			$chunks               = array_map( 'strtolower', $chunks );
-			$field_key            = implode( '_', $chunks );
-			$name                 = strpos( $id['type'], 'mapping_' ) !== false ? $id['type'] . '_' . $key : $key;
-			$cf_form_name         = str_replace( '[]', '', $name );
-			$result[ $field_key ] = $this->processField( $args[ $cf_form_name ] );
+			$_name        = $field[0]['key'] ?: $field[0]['name'];
+			$chunks       = explode( ' ', $_name );
+			$chunks       = array_map( 'strtolower', $chunks );
+			$field_key    = implode( '_', $chunks );
+			$name         = strpos( $id['type'], 'mapping_' ) !== false ? $id['type'] . '_' . $key : $key;
+			$cf_form_name = str_replace( '[]', '', $name );
+			$value        = isset( $args[ $cf_form_name ] ) ? $this->processField( $args[ $cf_form_name ] ) : '';
+			if ( $value ) {
+				$result[ $field_key ] = $value;
+			}
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Build custom fields mapping for automations
+	 *
+	 * @param $automation_data
+	 *
+	 * @return array
+	 */
+	public function build_automation_custom_fields( $automation_data ) {
+		$mapped_data = [];
+		$fields      = $this->get_api_custom_fields( array() );
+		foreach ( $automation_data['api_fields'] as $pair ) {
+			$value = sanitize_text_field( $pair['value'] );
+			if ( $value ) {
+				foreach ( $fields as $field ) {
+					if ( (int) $field['id'] === (int) $pair['key'] ) {
+						$_name                 = $field['key'] ?: $field['name'];
+						$_name                 = explode( ' ', $_name );
+						$_name                 = array_map( 'strtolower', $_name );
+						$_name                 = implode( '_', $_name );
+						$mapped_data[ $_name ] = $value;
+					}
+				}
+			}
+		}
+
+		return $mapped_data;
 	}
 
 	/**
@@ -392,8 +430,10 @@ class Thrive_Dash_List_Connection_MailerLite extends Thrive_Dash_List_Connection
 
 		foreach ( $api_fields as $field ) {
 			foreach ( $custom_fields as $key => $custom_field ) {
-				if ( (int) $field['id'] === (int) $key ) {
-					$chunks = explode( ' ', $field['name'] );
+				if ( (int) $field['id'] === (int) $key && $custom_field ) {
+
+					$_name  = $field['key'] ?: $field['name'];
+					$chunks = explode( ' ', $_name );
 					$chunks = array_map( 'strtolower', $chunks );
 					$cf_key = implode( '_', $chunks );
 
@@ -409,7 +449,12 @@ class Thrive_Dash_List_Connection_MailerLite extends Thrive_Dash_List_Connection
 		return $prepared_fields;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
+
+	public function get_automator_add_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'mailing_list', 'api_fields' ) );
+	}
+
+	public function hasCustomFields() {
+		return true;
 	}
 }

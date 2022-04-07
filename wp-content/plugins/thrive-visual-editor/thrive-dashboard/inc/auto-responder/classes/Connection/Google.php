@@ -22,6 +22,7 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 
 	/**
 	 * Return the connection type
+	 *
 	 * @return String
 	 */
 	public static function getType() {

@@ -284,9 +284,7 @@ function tve_dash_get_features() {
 		$enabled['access_manager'] = true;
 	}
 
-	$thrive_features = array_intersect_key( $thrive_features, array_filter( $enabled ) );
-
-	return $thrive_features;
+	return array_intersect_key( $thrive_features, array_filter( $enabled ) );
 }
 
 /**

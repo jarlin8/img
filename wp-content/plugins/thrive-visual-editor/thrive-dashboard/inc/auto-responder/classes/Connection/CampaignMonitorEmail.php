@@ -176,7 +176,7 @@ class Thrive_Dash_List_Connection_CampaignMonitorEmail extends Thrive_Dash_List_
 		$files   = get_post_meta( $post_data['_asset_group'], 'tve_asset_group_files', true );
 		$subject = get_post_meta( $post_data['_asset_group'], 'tve_asset_group_subject', true );
 
-		if ( $subject == '' ) {
+		if ( $subject === '' ) {
 			$subject = get_option( 'tve_leads_asset_mail_subject' );
 		}
 
@@ -190,7 +190,7 @@ class Thrive_Dash_List_Connection_CampaignMonitorEmail extends Thrive_Dash_List_
 
 		$html_content = $asset->post_content;
 
-		if ( $html_content == '' ) {
+		if ( $html_content === '' ) {
 			$html_content = get_option( 'tve_leads_asset_mail_body' );
 		}
 

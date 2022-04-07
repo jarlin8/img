@@ -37,7 +37,7 @@ class Optin_Type_Field extends Action_Field {
 	/**
 	 * For multiple option inputs, name of the callback function called through ajax to get the options
 	 */
-	public static function get_options_callback() {
+	public static function get_options_callback( $action_id, $action_data ) {
 		return array(
 			's' => array(
 				'id'   => 's',

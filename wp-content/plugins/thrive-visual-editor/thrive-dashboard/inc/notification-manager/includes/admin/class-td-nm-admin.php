@@ -112,7 +112,6 @@ class TD_NM_Admin {
 		 */
 		if ( $screen->id === 'toplevel_page_tve_dash_section' ) {
 			add_filter( 'tve_dash_filter_features', array( $this, 'admin_notification_feature' ) );
-			add_filter( 'tve_dash_features', array( $this, 'admin_enable_feature' ) );
 		}
 
 		/**
@@ -138,20 +137,6 @@ class TD_NM_Admin {
 			'btn_link'    => add_query_arg( 'page', $this->_dashboard_page, admin_url( 'admin.php' ) ),
 			'btn_text'    => __( "Manage Notifications", TVE_DASH_TRANSLATE_DOMAIN ),
 		);
-
-		return $features;
-	}
-
-	/**
-	 * Enable the NM feature to be displayed on Thrive Features Section
-	 *
-	 * @param $features
-	 *
-	 * @return mixed
-	 */
-	public function admin_enable_feature( $features ) {
-
-		$features['notification_manager'] = true;
 
 		return $features;
 	}

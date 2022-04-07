@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Thrive_Dash_List_Connection_SGAutorepondeur extends Thrive_Dash_List_Connection_Abstract {
 	/**
 	 * Return the connection type
+	 *
 	 * @return String
 	 */
 	public static function getType() {
@@ -176,6 +177,7 @@ class Thrive_Dash_List_Connection_SGAutorepondeur extends Thrive_Dash_List_Conne
 
 	/**
 	 * Return the connection email merge tag
+	 *
 	 * @return String
 	 */
 	public static function getEmailMergeTag() {
@@ -193,8 +195,5 @@ class Thrive_Dash_List_Connection_SGAutorepondeur extends Thrive_Dash_List_Conne
 		return $this;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
 
 }

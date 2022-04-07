@@ -236,7 +236,12 @@ class Thrive_Dash_List_Connection_SendinblueV3 extends Thrive_Dash_List_Connecti
 			$merge_tags['TELEFON'] = $the_phone;
 		}
 
-		$attributes = array_merge( $merge_tags, $this->_generate_custom_fields( $arguments ) );
+
+		if ( empty( $arguments['automator_custom_fields'] ) ) {
+			$attributes = array_merge( $merge_tags, $this->_generate_custom_fields( $arguments ) );
+		} else {
+			$attributes = array_merge( $merge_tags, $arguments['automator_custom_fields'] );
+		}
 
 		$data = array(
 			'email'         => $arguments['email'],
@@ -252,8 +257,6 @@ class Thrive_Dash_List_Connection_SendinblueV3 extends Thrive_Dash_List_Connecti
 			$api->create_update_user( $data );
 
 			return true;
-		} catch ( Thrive_Dash_Api_SendinBlue_Exception $e ) {
-			return $e->getMessage() ?: __( 'Unknown SendinBlue Error', TVE_DASH_TRANSLATE_DOMAIN );
 		} catch ( Exception $e ) {
 			return $e->getMessage() ?: __( 'Unknown Error', TVE_DASH_TRANSLATE_DOMAIN );
 		}
@@ -289,9 +292,9 @@ class Thrive_Dash_List_Connection_SendinblueV3 extends Thrive_Dash_List_Connecti
 	}
 
 	/**
-	 * @param array $params  which may contain `list_id`
-	 * @param bool  $force   make a call to API and invalidate cache
-	 * @param bool  $get_all where to get lists with their custom fields
+	 * @param array $params which may contain `list_id`
+	 * @param bool $force make a call to API and invalidate cache
+	 * @param bool $get_all where to get lists with their custom fields
 	 *
 	 * @return array
 	 */
@@ -386,6 +389,35 @@ class Thrive_Dash_List_Connection_SendinblueV3 extends Thrive_Dash_List_Connecti
 
 		return $result;
 	}
+
+	/**
+	 * Build custom fields mapping for automations
+	 *
+	 * @param $automation_data
+	 *
+	 * @return object
+	 */
+	public function build_automation_custom_fields( $automation_data ) {
+		$mapped_data = [];
+		$fields      = $this->get_api_custom_fields( array() );
+
+		foreach ( $automation_data['api_fields'] as $pair ) {
+			foreach ( $fields as $field ) {
+
+				if ( $field['id'] == $pair['key'] ) {
+					$value = sanitize_text_field( $pair['value'] );
+
+					if ( $value ) {
+						$mapped_data[ $field['name'] ] = $value;
+					}
+				}
+
+			}
+		}
+
+		return $mapped_data;
+	}
+
 
 	/**
 	 * Build mapped custom fields array based on form params
@@ -484,7 +516,7 @@ class Thrive_Dash_List_Connection_SendinblueV3 extends Thrive_Dash_List_Connecti
 	 * Prepare custom fields for api call
 	 *
 	 * @param array $custom_fields
-	 * @param null  $list_identifier
+	 * @param null $list_identifier
 	 *
 	 * @return array
 	 */
@@ -494,7 +526,7 @@ class Thrive_Dash_List_Connection_SendinblueV3 extends Thrive_Dash_List_Connecti
 
 		foreach ( $api_fields as $field ) {
 			foreach ( $custom_fields as $key => $custom_field ) {
-				if ( $field['id'] === $key ) {
+				if ( $custom_field && $field['id'] === $key ) {
 					$prepared_fields[ $key ] = $custom_field;
 				}
 			}
@@ -507,7 +539,12 @@ class Thrive_Dash_List_Connection_SendinblueV3 extends Thrive_Dash_List_Connecti
 		return $prepared_fields;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		return array( 'mailing_list' );
+
+	public function get_automator_add_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'mailing_list', 'api_fields' ) );
+	}
+
+	public function hasCustomFields() {
+		return true;
 	}
 }

@@ -250,9 +250,8 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 */
 	public function expiresIn() {
 		$expires_at = $this->param( 'expires_at' );
-		$diff       = (int) ( ( $expires_at - time() ) / ( 3600 * 24 ) );
 
-		return $diff;
+		return (int) ( ( $expires_at - time() ) / ( 3600 * 24 ) );
 	}
 
 	/**
@@ -359,7 +358,4 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
 }

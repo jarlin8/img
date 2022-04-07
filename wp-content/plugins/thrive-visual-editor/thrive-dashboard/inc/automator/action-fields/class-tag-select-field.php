@@ -48,20 +48,25 @@ class Tag_Select_Field extends Action_Field {
 	/**
 	 * For multiple option inputs, name of the callback function called through ajax to get the options
 	 */
-	public static function get_options_callback() {
+	public static function get_options_callback( $action_id, $action_data ) {
 		$values = array();
-		$args   = func_get_args();
-		if ( ! empty( $args ) ) {
-			$api          = $args[0];
+
+		if ( ! empty( $action_data ) ) {
+			if ( is_string( $action_data ) ) {
+				$api = $action_data;
+			} else if ( property_exists( $action_data, 'autoresponder' ) ) {
+				$api = $action_data->autoresponder->value;
+			}
+		}
+		if ( ! empty( $api ) ) {
 			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $api );
-			if ( $api_instance && $api_instance->isConnected() ) {
+			if ( $api_instance && $api_instance->is_connected() ) {
 
 				$tags = $api_instance->getTags();
 				foreach ( $tags as $key => $tag ) {
 					$values[ $key ] = [ 'name' => $tag, 'id' => $key ];
 				}
 			}
-
 		}
 
 		return $values;

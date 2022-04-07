@@ -119,7 +119,7 @@ class Thrive_Dash_List_Manager {
 			/**
 			 * Allow custom isConnected implementations
 			 */
-			if ( $onlyConnected && ! $instance->isConnected() ) {
+			if ( $onlyConnected && ! $instance->is_connected() ) {
 				continue;
 			}
 			if ( $onlyNames ) {
@@ -129,7 +129,39 @@ class Thrive_Dash_List_Manager {
 			}
 		}
 
-		return $lists;
+		return apply_filters( 'tvd_api_available_connections', $lists, $onlyConnected );
+	}
+
+	/**
+	 * @return array
+	 */
+	public static function get_third_party_autoresponders() {
+		return apply_filters( 'tvd_third_party_autoresponders', [] );
+	}
+
+	/**
+	 * @param $api_key
+	 *
+	 * @return mixed|Thrive_Dash_List_Connection_Abstract|null
+	 */
+	public static function get_api_instance( $api_key ) {
+		if ( ! $api_key ) {
+			return null;
+		}
+
+		$api_instance = null;
+
+		$available_APIs = Thrive_Dash_List_Manager::getAvailableAPIs( true );
+
+		if ( array_key_exists( $api_key, $available_APIs ) ) {
+			if ( $available_APIs[ $api_key ] instanceof Thrive_Dash_List_Connection_Abstract ) {
+				$api_instance = Thrive_Dash_List_Manager::connectionInstance( $api_key );
+			} else {
+				$api_instance = $available_APIs[ $api_key ];
+			}
+		}
+
+		return $api_instance;
 	}
 
 	/**
@@ -212,7 +244,7 @@ class Thrive_Dash_List_Manager {
 				continue;
 			}
 
-			if ( $onlyConnected && ! $instance->isConnected() ) {
+			if ( $onlyConnected && ! $instance->is_connected() ) {
 				continue;
 			}
 
@@ -384,7 +416,7 @@ class Thrive_Dash_List_Manager {
 
 	public static function available() {
 		if ( ! self::$_available ) {
-			self::$_available = apply_filters( "tve_filter_available_connection", self::$AVAILABLE );
+			self::$_available = apply_filters( 'tve_filter_available_connection', self::$AVAILABLE );
 		}
 
 		return self::$_available;

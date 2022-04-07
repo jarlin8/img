@@ -3,6 +3,7 @@
 namespace TCB\Integrations\Automator;
 
 use Thrive\Automator\Items\Data_Object;
+use Thrive\Automator\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
@@ -16,6 +17,10 @@ class Submit_Form extends \Thrive\Automator\Items\Trigger {
 
 	public static function get_wp_hook() {
 		return 'tcb_api_form_submit';
+	}
+
+	public function get_automation_wp_hook() {
+		return empty( $this->data['form_identifier']['value'] ) ? static::get_wp_hook() : Utils::create_dynamic_trigger( static::get_wp_hook(), strtolower( trim( preg_replace( '/[^A-Za-z0-9-]+/', '-', $this->data['form_identifier']['value'] ) ) ) );
 	}
 
 	public static function get_provided_data_objects() {
@@ -35,7 +40,7 @@ class Submit_Form extends \Thrive\Automator\Items\Trigger {
 	}
 
 	public static function get_description() {
-		return 'Triggers on each connection of a form on submit';
+		return 'Triggers when a visitor submits a form built with the Thrive Visual Editor';
 	}
 
 	public static function get_image() {
@@ -60,6 +65,12 @@ class Submit_Form extends \Thrive\Automator\Items\Trigger {
 
 		if ( ! empty( $params ) ) {
 			$form_data = $params[0];
+			foreach ( $params[0] as $key => $param ) {
+				if ( is_array( $param ) ) {
+					$form_data[ $key ] = implode( ',', $param );
+				}
+			}
+
 			/* get all registered data objects and see which ones we use for this trigger */
 			$data_object_classes = Data_Object::get();
 
@@ -91,5 +102,13 @@ class Submit_Form extends \Thrive\Automator\Items\Trigger {
 		}
 
 		return $data_objects;
+	}
+
+	public static function get_required_trigger_fields() {
+		return [ 'form_identifier' ];
+	}
+
+	public static function sync_trigger_data( $trigger_data ) {
+		return tve_sync_form_data( $trigger_data );
 	}
 }

@@ -333,6 +333,8 @@ class TCB_Post_List_Shortcodes {
 			), $attr );
 		}
 
+		$content = nl2br( $content );
+
 		return $content;
 	}
 

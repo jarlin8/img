@@ -495,6 +495,7 @@ function process_form_data( $data ) {
 	}
 
 	$file_data = array();
+	$file_urls = array();
 	/* transform storage file IDs into URLs */
 	if ( ! empty( $data['_tcb_files'] ) ) {
 		/* if email has been submitted, and the filenames should include the email, we need to trigger a file rename for each submitted file */
@@ -509,20 +510,16 @@ function process_form_data( $data ) {
 			}
 		}
 
-		$file_urls = array();
 		foreach ( $data['_tcb_files'] as $index => $file_id ) {
 			/* filedata gets populated if the file needs to be renamed. Using it to avoid extra API calls  */
 			$data['_tcb_files'][ $index ] = isset( $file_data[ $file_id ] ) ? $file_data[ $file_id ] : $api->get_file_data( $file_id );
 			$file_urls[]                  = $data['_tcb_files'][ $index ]['url'];
 		}
-
-		/**
-		 * Mapped field: needs the file URL to be sent to the autoresponder
-		 */
-		if ( ! empty( $data['tcb_file_field'] ) ) {
-			$data[ $data['tcb_file_field'] ] = $file_urls;
-		}
 	}
+	/**
+	 * Mapped field: needs the file URL to be sent to the autoresponder
+	 */
+	$data[ $data['tcb_file_field'] ] = $file_urls;
 
 	return $data;
 }
@@ -584,6 +581,6 @@ add_action( 'wp_ajax_tcb_file_upload', 'TCB\inc\helpers\handle_upload' );
 add_action( 'wp_ajax_nopriv_tcb_file_remove', 'TCB\inc\helpers\handle_remove' );
 add_action( 'wp_ajax_tcb_file_remove', 'TCB\inc\helpers\handle_remove' );
 
-add_filter( 'tcb_api_subscribe_data', 'TCB\inc\helpers\process_form_data' );
+add_filter( 'tcb_before_api_subscribe_data', 'TCB\inc\helpers\process_form_data' );
 add_filter( 'thrive_api_email_message', 'TCB\inc\helpers\process_email_message', 10, 2 );
 add_filter( 'thrive_email_message_field', 'TCB\inc\helpers\process_email_field', 10, 3 );

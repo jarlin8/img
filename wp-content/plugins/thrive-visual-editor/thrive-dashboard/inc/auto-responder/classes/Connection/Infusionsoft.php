@@ -202,7 +202,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	 * delete a contact from the list
 	 *
 	 * @param string $email
-	 * @param array $arguments
+	 * @param array  $arguments
 	 *
 	 * @return mixed
 	 */
@@ -319,7 +319,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 			// Update custom fields
 			// Make another call to update custom mapped fields in order not to break the subscription call,
 			// if custom data doesn't pass API custom fields validation
-			if ( ! empty( $arguments['tve_mapping'] ) ) {
+			if ( ! empty( $arguments['tve_mapping'] ) || ! empty( $arguments['automator_custom_fields'] ) ) {
 				$this->updateCustomFields( $contact_id, $arguments );
 			}
 
@@ -622,15 +622,16 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	 * @return bool
 	 */
 	public function updateCustomFields( $contact_id, $arguments ) {
-
-		$saved = false;
-
 		if ( ! is_int( $contact_id ) || empty( $arguments ) ) {
-			return $saved;
+			return false;
 		}
-
+		$saved = false;
 		try {
-			$custom_fields = $this->buildMappedCustomFields( $arguments );
+			if ( empty( $arguments['automator_custom_fields'] ) ) {
+				$custom_fields = $this->buildMappedCustomFields( $arguments );
+			} else {
+				$custom_fields = $arguments['automator_custom_fields'];
+			}
 
 			if ( ! empty( $custom_fields ) ) {
 				$api = $this->getApi();
@@ -688,16 +689,34 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 						$cf_form_name         = str_replace( '[]', '', $cf_form_name );
 						if ( ! empty( $args[ $cf_form_name ] ) ) {
 							$args[ $cf_form_name ] = $this->processField( $args[ $cf_form_name ] );
+							// Build key => value pairs as the API needs
+							$custom_fields[ '_' . $mapped_form_field_id ] = sanitize_text_field( $args[ $cf_form_name ] );
 						}
-
-						// Build key => value pairs as the API needs
-						$custom_fields[ '_' . $mapped_form_field_id ] = sanitize_text_field( $args[ $cf_form_name ] );
 					}
 				}
 			}
 		}
 
 		return $custom_fields;
+	}
+
+	/**
+	 * Build custom fields mapping for automations
+	 *
+	 * @param $automation_data
+	 *
+	 * @return array
+	 */
+	public function build_automation_custom_fields( $automation_data ) {
+		$mapped_data = array();
+		foreach ( $automation_data['api_fields'] as $pair ) {
+			$value = sanitize_text_field( $pair['value'] );
+			if ( $value ) {
+				$mapped_data["_{$pair['key']}"] = $value;
+			}
+		}
+
+		return $mapped_data;
 	}
 
 	/**
@@ -781,7 +800,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 
 		foreach ( $api_fields as $field ) {
 			foreach ( $custom_fields as $key => $custom_field ) {
-				if ( $field['id'] === $key ) {
+				if ( $field['id'] === $key && $custom_field ) {
 
 					$prepared_fields[ '_' . $key ] = $custom_field;
 
@@ -797,17 +816,24 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 		return $prepared_fields;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		return array( 'mailing_list' );
+
+	public function get_automator_add_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'mailing_list', 'api_fields' ) );
 	}
 
-	public function get_automator_autoresponder_tag_fields() {
-		return array( 'tag_select' );
+	public function get_automator_tag_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'tag_select' ) );
 	}
+
 
 	public function updateTags( $email, $tags = '', $extra = array() ) {
-		$args            = $this->getArgsForTagsUpdate( $email, $tags, $extra );
+		$args = $this->getArgsForTagsUpdate( $email, $tags, $extra );
+
 		return $this->addSubscriber( $tags, $args );
+	}
+
+	public function hasCustomFields() {
+		return true;
 	}
 }
 

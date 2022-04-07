@@ -5,6 +5,9 @@
  *
  * @package thrive-dashboard
  */
+
+use MailPoet\API\API;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -156,7 +159,7 @@ class Thrive_Dash_List_Connection_MailPoet extends Thrive_Dash_List_Connection_A
 
 			// Compatibility with latest version 3.21.0+
 			if ( class_exists( 'MailPoet\API\API' ) ) {
-				$mailpoet   = new \MailPoet\API\API();
+				$mailpoet   = new API();
 				$errors     = array();
 				$subscriber = array();
 
@@ -249,7 +252,7 @@ class Thrive_Dash_List_Connection_MailPoet extends Thrive_Dash_List_Connection_A
 			// Compatibility with latest version 3.21.0+
 			if ( class_exists( 'MailPoet\API\API' ) ) {
 
-				$mailpoet           = new \MailPoet\API\API();
+				$mailpoet           = new API();
 				$subscription_lists = $mailpoet::MP( 'v1' )->getLists();
 
 				if ( is_array( $subscription_lists ) && ! empty( $subscription_lists ) ) {
@@ -283,9 +286,5 @@ class Thrive_Dash_List_Connection_MailPoet extends Thrive_Dash_List_Connection_A
 		}
 
 		return $lists;
-	}
-
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
 	}
 }

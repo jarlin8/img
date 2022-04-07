@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class TCB_Custom_Fields_Shortcode
  */
 class TCB_Custom_Fields_Shortcode {
-	const GLOBAL_SHORTCODE_URL = 'thrive_custom_fields_shortcode_url';
+	const GLOBAL_SHORTCODE_URL  = 'thrive_custom_fields_shortcode_url';
 	const GLOBAL_SHORTCODE_DATA = 'thrive_custom_fields_shortcode_data';
 
 	private $pattern_replacement = array(
@@ -382,23 +382,28 @@ class TCB_Custom_Fields_Shortcode {
 	/**
 	 * Renders the dynamic filed user
 	 *
+	 * @param array $args
+	 *
 	 * @return string
 	 */
-	private function render_dynamic_field_user( $args = array() ) {
-		$user = get_current_user_id();
-		if ( ! $user ) {
+	private function render_dynamic_field_user( $args = [] ) {
+		$user_id = get_current_user_id();
+
+		if ( ! $user_id ) {
 			return '';
 		}
 
-		$args['alt']          = ! empty( $args['alt'] ) ? $args['alt'] : '';
-		$args['title']        = ! empty( $args['title'] ) ? $args['title'] : '';
-		$args['data-classes'] = ! empty( $args['data-classes'] ) ? $args['data-classes'] : 'tve_image';
-		$args['data-css']     = ! empty( $args['data-css'] ) ? $args['data-css'] : '';
+		$args = wp_parse_args( $args, [
+			'alt'          => '',
+			'title'        => '',
+			'data-css'     => '',
+			'data-classes' => 'tve_image',
+		] );
 
-		return get_avatar( get_current_user_id(), 256, '', $args['alt'], array(
+		return get_avatar( $user_id, 256, '', $args['alt'], [
 			'class'      => $args['data-classes'],
 			'extra_attr' => 'loading="lazy" data-d-f="user" title="' . $args['title'] . '" width="500" height="500" data-css="' . $args['data-css'] . '"',
-		) );
+		] );
 	}
 
 	/**
@@ -1365,8 +1370,16 @@ class TCB_Custom_Fields_Shortcode {
 							break;
 						default:
 							$aux = get_field_object( $field_key );
-							if ( ! empty( $aux['display_format'] ) ) {     //Render Date, Date-Time, Time in display format selected by user
-								$field = array( 'value' => date_format( DateTime::createFromFormat( $aux['return_format'], $aux['value'] ), $aux['display_format'] ) );
+							if ( ! empty( $aux['display_format'] ) ) {
+								/* if the locale is english, we can use the date formatting functions, otherwise they don't work properly */
+								if ( strpos( get_locale(), 'en' ) === 0 ) {
+									/* not sure if this conversion is 100% needed or intended ( it converts return_format to display_format, but the descriptions in ACF are misleading ) */
+									$date_value = date_format( DateTime::createFromFormat( $aux['return_format'], $aux['value'] ), $aux['display_format'] );
+								} else {
+									$date_value = $aux['value'];
+								}
+
+								$field = [ 'value' => $date_value ];
 							} else if ( $value['type'] === 'checkbox' ) {  //Convert from Checkbox array to string
 								$field = array( 'value' => implode( ', ', $value['value'] ) );
 							} else {

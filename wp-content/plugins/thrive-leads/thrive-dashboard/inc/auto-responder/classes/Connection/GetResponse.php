@@ -168,7 +168,7 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	 * delete a contact from the list
 	 *
 	 * @param string $email
-	 * @param array $arguments
+	 * @param array  $arguments
 	 *
 	 * @return mixed
 	 */
@@ -179,7 +179,7 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 			$contacts = $api->searchContacts(
 				array(
 					'query' => array(
-						'email' => $email
+						'email' => $email,
 					),
 				)
 			);
@@ -256,6 +256,7 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 					 * this contact may be in other list but try to add it in the current on
 					 */
 					$api->addContact( $params );
+
 					return true;
 				} catch ( Exception $e ) {
 				}
@@ -331,12 +332,9 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 						$cf_form_name  = str_replace( '[]', '', $cf_form_name );
 						if ( ! empty( $args[ $cf_form_name ] ) ) {
 							$args[ $cf_form_name ] = $this->processField( $args[ $cf_form_name ] );
-							array_push(
-								$mapped_data,
-								array(
-									'customFieldId' => $mapped_api_id,
-									'value'         => array( sanitize_text_field( $args[ $cf_form_name ] ) ),
-								)
+							$mapped_data[]         = array(
+								'customFieldId' => $mapped_api_id,
+								'value'         => array( sanitize_text_field( $args[ $cf_form_name ] ) ),
 							);
 						}
 
@@ -504,9 +502,7 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	 */
 	public function get_custom_fields( $params = array() ) {
 
-		$fields = array_merge( parent::get_custom_fields(), $this->_mapped_custom_fields );
-
-		return $fields;
+		return array_merge( parent::get_custom_fields(), $this->_mapped_custom_fields );
 	}
 
 	/**
@@ -554,7 +550,7 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 	 * Prepare custom fields for api call
 	 *
 	 * @param array $custom_fields
-	 * @param null $list_identifier
+	 * @param null  $list_identifier
 	 *
 	 * @return array
 	 */
@@ -570,19 +566,15 @@ class Thrive_Dash_List_Connection_GetResponse extends Thrive_Dash_List_Connectio
 			foreach ( $custom_fields as $key => $custom_field ) {
 				if ( $field['id'] == $key ) {
 
-					array_push( $prepared_fields, array(
+					$prepared_fields[] = array(
 						'customFieldId' => $field['id'],
 						'value'         => array( $custom_field ),
-					) );
+					);
 				}
 			}
 		}
 
 		return $prepared_fields;
-	}
-
-	public function get_automator_autoresponder_fields() {
-		return array( 'mailing_list' );
 	}
 }
 

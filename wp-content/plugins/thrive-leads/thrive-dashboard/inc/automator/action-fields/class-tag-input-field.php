@@ -17,7 +17,7 @@ class Tag_Input_Field extends Action_Field {
 	 * Field name
 	 */
 	public static function get_name() {
-		return 'Add the following tags to the user';
+		return 'Tags';
 	}
 
 	/**

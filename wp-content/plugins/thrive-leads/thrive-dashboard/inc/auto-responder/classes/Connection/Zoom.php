@@ -174,9 +174,6 @@ class Thrive_Dash_List_Connection_Zoom extends Thrive_Dash_List_Connection_Abstr
 
 			return false;
 		}
-	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
 	}
 }

@@ -321,8 +321,9 @@ class Thrive_Dash_List_Connection_Zapier extends Thrive_Dash_List_Connection_Abs
 		return '';
 	}
 
-	public function get_automator_autoresponder_fields() {
-		return array( 'tag_input' );
+
+	public function get_automator_add_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'tag_input', 'api_fields' ) );
 	}
 }
 

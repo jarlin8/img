@@ -949,6 +949,7 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 				$lp_data['class'] .= ' ' . ( is_array( $this->globals['body_class'] ) ? implode( ' ', $this->globals['body_class'] ) : $this->globals['body_class'] );
 			}
 			$lp_data['class'] = apply_filters( 'tcb_lp_body_class', $lp_data['class'] );
+
 			return $lp_data;
 		}
 
@@ -1586,6 +1587,7 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 				$this->meta_delete( 'tve_landing_page' );
 				//Delete Also The Setting To Disable Theme CSS
 				$this->meta_delete( 'tve_disable_theme_dependency' );
+				tve_clean_up_meta_leftovers( $this->post->ID );
 
 				return $this;
 			}

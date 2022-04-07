@@ -5,6 +5,7 @@
  *
  * @package thrive-dashboard
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -145,7 +146,14 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 			$api = $this->getApi();
 
 			$arguments['custom_fields_ids'] = $this->buildMappedCustomFields( $arguments );
-			$arguments['fields']            = $this->_generateCustomFields( $arguments );
+			$arguments['fields'] = new stdClass();
+
+			if ( ! empty( $arguments['custom_fields_ids'] ) ) {
+				$arguments['fields'] = $this->_generateCustomFields( $arguments );
+			} else if ( ! empty( $arguments['automator_custom_fields'] ) ) {
+				$arguments['fields'] = $arguments['automator_custom_fields'];
+				unset( $arguments['automator_custom_fields'] );
+			}
 
 			$api->subscribeForm( $list_identifier, $arguments );
 
@@ -197,10 +205,12 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 
 					unset( $_name[0] );
 
-					$_name              = implode( '_', $_name );
-					$name               = strpos( $id['type'], 'mapping_' ) !== false ? $id['type'] . '_' . $key : $key;
-					$cf_form_name       = str_replace( '[]', '', $name );
-					$response[ $_name ] = $this->processField( $args[ $cf_form_name ] );
+					$_name        = implode( '_', $_name );
+					$name         = strpos( $id['type'], 'mapping_' ) !== false ? $id['type'] . '_' . $key : $key;
+					$cf_form_name = str_replace( '[]', '', $name );
+					if ( ! empty( $args[ $cf_form_name ] ) ) {
+						$response[ $_name ] = $this->processField( $args[ $cf_form_name ] );
+					}
 				}
 			}
 		}
@@ -212,6 +222,41 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 
 		return (object) $response;
 	}
+
+	/**
+	 * Build custom fields mapping for automations
+	 *
+	 * @param $automation_data
+	 *
+	 * @return object
+	 */
+	public function build_automation_custom_fields( $automation_data ) {
+		$mapped_data = [];
+		$fields      = $this->_getCustomFields( false );
+		foreach ( $automation_data['api_fields'] as $pair ) {
+			$value = sanitize_text_field( $pair['value'] );
+			if ( $value ) {
+				foreach ( $fields as $field ) {
+					if ( (int) $field['id'] === (int) $pair['key'] ) {
+						/**
+						 * Ex cf: ck_field_84479_first_custom_field
+						 * Needed Result: first_custom_field
+						 */
+						$_name = $field['name'];
+						$_name = str_replace( 'ck_field_', '', $_name );
+						$_name = explode( '_', $_name );
+						unset( $_name[0] );
+						$_name                 = implode( '_', $_name );
+						$mapped_data[ $_name ] = $value;
+					}
+				}
+
+			}
+		}
+
+		return (object) $mapped_data;
+	}
+
 
 	/**
 	 * Return the connection email merge tag
@@ -261,9 +306,8 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	public function get_api_custom_fields( $params, $force = false, $get_all = false ) {
 
 		$response = $this->_getCustomFields( $force );
-		$response = is_array( $response ) ? $response : array();
 
-		return $response;
+		return is_array( $response ) ? $response : array();
 	}
 
 	protected function normalize_custom_field( $data ) {
@@ -316,6 +360,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 			}
 		}
 
+
 		return $mapped_data;
 	}
 
@@ -354,13 +399,14 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 * delete a contact from the list
 	 *
 	 * @param string $email
-	 * @param array $arguments
+	 * @param array  $arguments
 	 *
 	 * @return mixed
 	 */
 	public function deleteSubscriber( $email, $arguments = array() ) {
-		$api     = $this->getApi();
+		$api    = $this->getApi();
 		$result = $api->unsubscribeUser( $email, $arguments );
+
 		return isset( $result['subscriber']['id'] );
 
 	}
@@ -393,7 +439,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 
 		foreach ( $api_fields as $field ) {
 			foreach ( $custom_fields as $key => $custom_field ) {
-				if ( (int) $field['id'] === (int) $key ) {
+				if ( (int) $field['id'] === (int) $key && $custom_field ) {
 					$str_to_replace = $cf_prefix . $field['id'] . '_';
 					$cf_key         = str_replace( $str_to_replace, '', $field['name'] );
 
@@ -411,7 +457,11 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 		return $prepared_fields;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list', 'tag_input' );
+	public function get_automator_add_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'mailing_list' => array( 'api_fields' ), 'tag_input' => array() ) );
+	}
+
+	public function hasCustomFields() {
+		return true;
 	}
 }

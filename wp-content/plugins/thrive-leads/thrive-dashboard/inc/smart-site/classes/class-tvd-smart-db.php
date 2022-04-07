@@ -329,7 +329,7 @@ class TVD_Smart_DB {
 	/**
 	 * Get groups with fields
 	 *
-	 * @param int     $id
+	 * @param int $id
 	 * @param boolean $with_fields
 	 *
 	 * @return array|object|null
@@ -469,7 +469,9 @@ class TVD_Smart_DB {
 				if ( empty( $field_data['address1'] ) ) {
 					$data = $unavailable;
 				} else {
-					$data = implode( empty( $args['multiline'] ) ? ', ' : '<br>', array_filter( $field_data ) );
+					$address_fields = [ 'address1', 'address2', 'city', 'state', 'zip', 'country' ];
+					$field_data     = array_replace( array_fill_keys( $address_fields, null ), $field_data );
+					$data           = implode( empty( $args['multiline'] ) ? ', ' : '<br>', array_filter( $field_data ) );
 				}
 				break;
 			// phone field
@@ -499,7 +501,7 @@ class TVD_Smart_DB {
 	 * Get fields for group or by ID
 	 *
 	 * @param array $group
-	 * @param int   $id
+	 * @param int $id
 	 *
 	 * @return array|object|null
 	 */
@@ -541,7 +543,7 @@ class TVD_Smart_DB {
 	 * Get fields of a specific type which have some data
 	 *
 	 * @param array $group_id
-	 * @param int   $type
+	 * @param int $type
 	 *
 	 * @return array|object|null
 	 */

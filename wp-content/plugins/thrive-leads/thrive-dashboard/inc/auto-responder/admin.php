@@ -84,11 +84,12 @@ function tve_dash_api_admin_notices() {
 	$connected_apis = Thrive_Dash_List_Manager::getAvailableAPIs( true );
 	$warnings       = array();
 
-	foreach ( $connected_apis as $instance ) {
-		if ( $instance->param( '_nd' ) ) {
+	foreach ( $connected_apis as $api_instance ) {
+		if ( ! $api_instance instanceof Thrive_Dash_List_Connection_Abstract || $api_instance->param( '_nd' ) ) {
 			continue;
 		}
-		$warnings = array_merge( $warnings, $instance->getWarnings() );
+
+		$warnings = array_merge( $warnings, $api_instance->getWarnings() );
 	}
 
 	$nonce = sprintf( '<span class="nonce" style="display:none">%s</span>', wp_create_nonce( 'tve_api_dismiss' ) );
@@ -108,19 +109,19 @@ function tve_dash_api_admin_notices() {
  * main entry point
  */
 function tve_dash_api_connect() {
-	require_once dirname( __FILE__ ) . '/misc.php';
+	require_once __DIR__ . '/misc.php';
 
 	$available_apis = Thrive_Dash_List_Manager::getAvailableAPIs();
 	foreach ( $available_apis as $key => $api ) {
 		/** @var Thrive_Dash_List_Connection_Abstract $api */
-		if ( $api->isConnected() || $api->isRelated() ) {
+		if ( $api->is_connected() || $api->isRelated() ) {
 			unset( $available_apis[ $key ] );
 		}
 	}
 	$connected_apis = Thrive_Dash_List_Manager::getAvailableAPIs( true );
 
 	foreach ( $connected_apis as $key => $api ) {
-		if ( $api->isRelated() ) {
+		if ( ! $api instanceof Thrive_Dash_List_Connection_Abstract || $api->isRelated() ) {
 			unset( $connected_apis[ $key ] );
 		}
 	}
@@ -141,7 +142,7 @@ function tve_dash_api_connect() {
 
 	Thrive_Dash_List_Manager::flashMessages();
 
-	include dirname( __FILE__ ) . '/views/admin-list.php';
+	include __DIR__ . '/views/admin-list.php';
 }
 
 /**

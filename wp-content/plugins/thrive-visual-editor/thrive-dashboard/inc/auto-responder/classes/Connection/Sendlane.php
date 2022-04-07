@@ -8,13 +8,13 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
+
 /**
  * Created by PhpStorm.
  * User: User
  * Date: 11/21/2018
  * Time: 13:37
  */
-
 class Thrive_Dash_List_Connection_Sendlane extends Thrive_Dash_List_Connection_Abstract {
 	/**
 	 * Return the connection type
@@ -172,7 +172,7 @@ class Thrive_Dash_List_Connection_Sendlane extends Thrive_Dash_List_Connection_A
 		return 'VAR_EMAIL';
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list', 'tag_input' );
+	public function get_automator_add_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'mailing_list', 'api_fields', 'tag_input' ) );
 	}
 }

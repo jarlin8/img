@@ -282,6 +282,7 @@ abstract class TCB_Symbol_Element_Abstract extends TCB_Cloud_Template_Element_Ab
 		 */
 		$symbol_data = array_merge( array(
 			'has_icons' => 0,
+			'class'     => '',
 		), $symbol_data );
 
 		/**
@@ -293,6 +294,7 @@ abstract class TCB_Symbol_Element_Abstract extends TCB_Cloud_Template_Element_Ab
 		update_post_meta( $symbol_data['id'], 'tve_custom_css', $symbol_data['css'] );
 		update_post_meta( $symbol_data['id'], 'tve_globals', $symbol_data['tve_globals'] );
 		update_post_meta( $symbol_data['id'], 'thrive_icon_pack', $symbol_data['has_icons'] );
+		update_post_meta( $symbol_data['id'], 'tve_extra_class', $symbol_data['class'] );
 
 		$symbol = get_post( $symbol_data['id'] );
 
@@ -417,6 +419,7 @@ abstract class TCB_Symbol_Element_Abstract extends TCB_Cloud_Template_Element_Ab
 		update_post_meta( $post_id, 'tve_custom_css', $symbol_data['css'] );
 		update_post_meta( $post_id, 'tve_globals', $symbol_data['tve_globals'] );
 		update_post_meta( $post_id, 'thrive_icon_pack', $symbol_data['has_icons'] );
+		update_post_meta( $post_id, 'tve_extra_class', $symbol_data['class'] );
 
 		\TCB\Lightspeed\Main::handle_optimize_saves( $post_id, $symbol_data );
 	}

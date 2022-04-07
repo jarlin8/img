@@ -292,10 +292,9 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 
 		$html = ob_get_clean();
 
-		$html = $html . $this->generate_custom_fields_html( $args, $labels );
-		$html = preg_replace( "/[\r\n]+/", "", $html );
+		$html .= $this->generate_custom_fields_html( $args, $labels );
 
-		return $html;
+		return preg_replace( "/[\r\n]+/", "", $html );
 	}
 
 	/**
@@ -336,9 +335,8 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 				}
 			}
 		);
-		$custom_fields = array_merge( $custom_fields, array_keys( $mapping ) );
 
-		return $custom_fields;
+		return array_merge( $custom_fields, array_keys( $mapping ) );
 	}
 
 	/**

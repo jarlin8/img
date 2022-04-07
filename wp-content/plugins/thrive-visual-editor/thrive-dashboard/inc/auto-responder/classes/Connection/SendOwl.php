@@ -15,6 +15,7 @@ class Thrive_Dash_List_Connection_SendOwl extends Thrive_Dash_List_Connection_Ab
 
 	/**
 	 * Return the connection type
+	 *
 	 * @return String
 	 */
 	public static function getType() {

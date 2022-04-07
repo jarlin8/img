@@ -131,7 +131,7 @@ class Thrive_Dash_List_Connection_FluentCRM extends Thrive_Dash_List_Connection_
 
 		$data = [
 			'email' => $arguments['email'],
-			'lists' => array( $list_identifier )
+			'lists' => array( $list_identifier ),
 		];
 
 		$data = array_merge( $data, $name_array, $prepared_args );
@@ -140,7 +140,7 @@ class Thrive_Dash_List_Connection_FluentCRM extends Thrive_Dash_List_Connection_
 			$fluent  = FluentCrmApi( 'contacts' );
 			$contact = $fluent->createOrUpdate( $data );
 
-			if ( $contact->status == 'pending' ) {
+			if ( $contact->status === 'pending' ) {
 				$contact->sendDoubleOptinEmail();
 			}
 
@@ -154,7 +154,7 @@ class Thrive_Dash_List_Connection_FluentCRM extends Thrive_Dash_List_Connection_
 	/**
 	 * Import tags
 	 *
-	 * @return bool|string true for success or error message for failure
+	 * @return array true for success or error message for failure
 	 */
 	public function importTags( $tags ) {
 		$imported_tags = array();
@@ -163,15 +163,15 @@ class Thrive_Dash_List_Connection_FluentCRM extends Thrive_Dash_List_Connection_
 			$tags = explode( ',', trim( $tags, ' ,' ) );
 
 			foreach ( $tags as $tag ) {
-				array_push( $inserted_tags, array(
+				$inserted_tags[] = array(
 					'title' => $tag,
-				) );
+				);
 			}
 
 			$inserted_tags = FluentCrmApi( 'tags' )->importBulk( $inserted_tags );//[1,2,3]
 
 			foreach ( $inserted_tags as $new_tag ) {
-				array_push( $imported_tags, $new_tag->id );
+				$imported_tags[] = $new_tag->id;
 
 			}
 		}
@@ -377,7 +377,7 @@ class Thrive_Dash_List_Connection_FluentCRM extends Thrive_Dash_List_Connection_
 		return '{{contact.email}}';
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list', 'optin', 'tag_input' );
+	public function get_automator_add_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'mailing_list', 'api_fields', 'optin', 'tag_input' ) );
 	}
 }

@@ -462,7 +462,7 @@ class Thrive_Dash_List_Connection_Sendinblue extends Thrive_Dash_List_Connection
 
 		foreach ( $api_fields as $field ) {
 			foreach ( $custom_fields as $key => $custom_field ) {
-				if ( $field['id'] === $key ) {
+				if ( $custom_field && $field['id'] === $key ) {
 					$prepared_fields[ $key ] = $custom_field;
 				}
 			}
@@ -475,9 +475,7 @@ class Thrive_Dash_List_Connection_Sendinblue extends Thrive_Dash_List_Connection
 		return $prepared_fields;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
+
 	/**
 	 * Checks if a connection is V3
 	 *
@@ -498,7 +496,7 @@ class Thrive_Dash_List_Connection_Sendinblue extends Thrive_Dash_List_Connection
 		$api              = $this->getApi();
 		$api_key          = $this->param( 'key' );
 		$upgrade_response = array();
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'sendinblueemail' );
+		$related_api      = Thrive_Dash_List_Manager::connectionInstance( 'sendinblueemail' );
 
 		try {
 			$upgrade_response = $api->upgrade_to_v3( $api_key );

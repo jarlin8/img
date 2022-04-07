@@ -26,6 +26,7 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 
 	/**
 	 * Return the connection type
+	 *
 	 * @return String
 	 */
 	public static function getType() {
@@ -137,7 +138,7 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 		/** @var Thrive_Dash_Api_Facebook $api */
 		$api = $this->getApi();
 
-		$login_url = $api->getLoginUrl( array(
+		return $api->getLoginUrl( array(
 			'scope'        => self::$scopes,
 			'redirect_uri' => add_query_arg( array(
 				'page'       => 'tve_dash_api_connect',
@@ -146,8 +147,6 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 				'app_secret' => $this->param( 'app_secret' ),
 			), admin_url( 'admin.php' ) ),
 		) );
-
-		return $login_url;
 	}
 
 	/**

@@ -581,7 +581,8 @@ class TCB_Post_List {
 
 							default:
 								$post_terms = wp_get_post_terms( $queried_object->ID, $taxonomy, array( 'fields' => 'ids' ) );
-								if ( ! empty( $post_terms ) && ! ( $post_terms instanceof WP_Error ) ) {									$query_args['tax_query'][] = array(
+								if ( ! empty( $post_terms ) && ! is_wp_error( $post_terms ) ) {
+									$query_args['tax_query'][] = array(
 										'taxonomy' => $taxonomy,
 										'field'    => 'term_id',
 										'terms'    => array_map( function ( $term ) {

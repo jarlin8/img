@@ -94,7 +94,7 @@ class Thrive_Dash_List_Connection_Mandrill extends Thrive_Dash_List_Connection_A
 					foreach ( $level1 as $level2 ) {
 						if ( ! $message ) {
 							$message = $level2;
-						};
+						}
 					}
 				}
 			} else {

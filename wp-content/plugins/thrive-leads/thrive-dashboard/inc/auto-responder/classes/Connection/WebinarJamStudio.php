@@ -140,7 +140,7 @@ class Thrive_Dash_List_Connection_WebinarJamStudio extends Thrive_Dash_List_Conn
 	 * @return mixed
 	 */
 	protected function _apiInstance() {
-		return new Thrive_Dash_Api_WebinarJamStudio( $this->param( 'key' ), $this->param('version') );
+		return new Thrive_Dash_Api_WebinarJamStudio( $this->param( 'key' ), $this->param( 'version' ) );
 	}
 
 	/**
@@ -169,7 +169,5 @@ class Thrive_Dash_List_Connection_WebinarJamStudio extends Thrive_Dash_List_Conn
 		}
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
+
 }

@@ -49,13 +49,14 @@ class Thrive_Dash_List_Connection_ArpReach extends Thrive_Dash_List_Connection_A
 	public function readCredentials() {
 		$url     = ! empty( $_POST['connection']['url'] ) ? sanitize_text_field( $_POST['connection']['url'] ) : '';
 		$app_key = ! empty( $_POST['connection']['api_key'] ) ? sanitize_text_field( $_POST['connection']['api_key'] ) : '';
-		$lists   = ! empty( $_POST['connection']['lists'] ) ? map_deep( $_POST['connection']['lists'], 'sanitize_text_field' ) : array();
-
-		$lists = array_filter( $lists );
 
 		if ( empty( $url ) || empty( $app_key ) ) {
 			return $this->error( __( "Invalid URL or API key", TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
+
+		$lists = ! empty( $_POST['connection']['lists'] ) ? map_deep( $_POST['connection']['lists'], 'sanitize_text_field' ) : array();
+
+		$lists = array_filter( $lists );
 
 		if ( empty( $lists ) ) {
 			return $this->error( __( 'Please provide at least one list for your subscribers', TVE_DASH_TRANSLATE_DOMAIN ) );
@@ -99,9 +100,7 @@ class Thrive_Dash_List_Connection_ArpReach extends Thrive_Dash_List_Connection_A
 	 * @return mixed
 	 */
 	protected function _apiInstance() {
-		$api = new Thrive_Dash_Api_ArpReach( $this->param( 'url' ), $this->param( 'api_key' ) );
-
-		return $api;
+		return new Thrive_Dash_Api_ArpReach( $this->param( 'url' ), $this->param( 'api_key' ) );
 	}
 
 	/**
@@ -183,9 +182,5 @@ class Thrive_Dash_List_Connection_ArpReach extends Thrive_Dash_List_Connection_A
 	 */
 	public static function getEmailMergeTag() {
 		return '{EMAIL_ADDRESS}';
-	}
-
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
 	}
 }

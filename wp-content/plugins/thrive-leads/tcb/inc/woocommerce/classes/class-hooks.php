@@ -7,6 +7,8 @@
 
 namespace TCB\Integrations\WooCommerce;
 
+use TCB\Lightspeed\Woocommerce;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -36,6 +38,8 @@ class Hooks {
 		add_action( 'tcb_editor_enqueue_scripts', array( 'TCB\Integrations\WooCommerce\Main', 'enqueue_scripts' ) );
 
 		add_action( 'tve_frontend_extra_scripts', array( 'TCB\Integrations\WooCommerce\Main', 'enqueue_scripts' ) );
+
+		add_action( 'tve_lightspeed_enqueue_module_scripts', [ __CLASS__, 'check_woo_modules_to_enqueue' ], 10, 2 );
 	}
 
 	public static function add_filters() {
@@ -243,5 +247,29 @@ class Hooks {
 		$data['lightspeed']['woo_modules'] = \TCB\Lightspeed\Woocommerce::get_woocommerce_assets( null, 'identifier' );
 
 		return $data;
+	}
+
+	/**
+	 * Check if posts has woo modules to include
+	 *
+	 * @param $post_id
+	 * @param $modules
+	 *
+	 * @return void
+	 */
+	public static function check_woo_modules_to_enqueue( $post_id, $modules ) {
+		$woo_modules = get_post_meta( $post_id, Woocommerce::WOO_MODULE_META_NAME, true );
+
+		if ( ! empty( $woo_modules ) ) {
+			add_filter( 'tcb_lightspeed_optimize_woo', '__return_true' );
+
+			static::enqueue_scripts();
+
+			Main::enqueue_scripts();
+
+			foreach ( Woocommerce::get_woo_styles() as $handle => $src ) {
+				wp_enqueue_style( $handle, $src );
+			}
+		}
 	}
 }

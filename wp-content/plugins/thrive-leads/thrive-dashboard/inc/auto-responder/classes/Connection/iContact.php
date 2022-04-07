@@ -171,7 +171,4 @@ class Thrive_Dash_List_Connection_iContact extends Thrive_Dash_List_Connection_A
 
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
 }

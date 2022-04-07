@@ -53,12 +53,24 @@ class Form_List_Field extends Action_Field {
 		return 'select';
 	}
 
-	public static function get_options_callback() {
-		$args         = func_get_args();
-		$values       = array();
-		$api_instance = Thrive_Dash_List_Manager::connectionInstance( $args[0] );
-		if ( $api_instance && $api_instance->isConnected() && $api_instance->hasForms() ) {
-			$values = $api_instance->getForms();
+	public static function get_options_callback( $action_id, $action_data ) {
+		$values = array();
+
+		if ( ! empty( $action_data ) ) {
+			if ( is_string( $action_data ) ) {
+				$api = $action_data;
+			} else if ( property_exists( $action_data, 'autoresponder' ) ) {
+				$api = $action_data->autoresponder->value;
+			}
+		}
+		if ( ! empty( $api ) ) {
+			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $api );
+			if ( $api_instance && $api_instance->is_connected() && $api_instance->has_forms() ) {
+				$forms = $api_instance->getForms();
+				if ( ! empty( $forms[ $action_data->autoresponder->subfield->mailing_list->value ] ) ) {
+					$values = $forms[ $action_data->autoresponder->subfield->mailing_list->value ];
+				}
+			}
 		}
 
 		return $values;

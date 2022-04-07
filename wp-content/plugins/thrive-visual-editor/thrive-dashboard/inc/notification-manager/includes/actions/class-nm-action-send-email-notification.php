@@ -37,7 +37,7 @@ class TD_NM_Action_Send_Email_Notification extends TD_NM_Action_Abstract {
 				'date'          => date( 'Y-m-d H:i:s' ),
 				'error_message' => sanitize_textarea_field( $e->getMessage() ),
 				'api_data'      => serialize( tve_sanitize_data_recursive( $prepared_data ) ),
-				'connection'    => $connection->getKey(),
+				'connection'    => $connection->get_key(),
 				'list_id'       => 'asset',
 			);
 

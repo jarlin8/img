@@ -2,6 +2,10 @@
 
 namespace TVE\Dashboard\Automator;
 
+use Exception;
+use Thrive\Automator\Items\Data_Object;
+use function wc_get_product;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -9,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Woo_Product_Data
  */
-class Woo_Product_Data extends \Thrive\Automator\Items\Data_Object {
+class Woo_Product_Data extends Data_Object {
 	/**
 	 * Get the data-object identifier
 	 *
@@ -75,7 +79,7 @@ class Woo_Product_Data extends \Thrive\Automator\Items\Data_Object {
 
 	public static function create_object( $param ) {
 		if ( empty( $param ) ) {
-			throw new \Exception( 'No parameter provided for Woo_Product_Data object' );
+			throw new Exception( 'No parameter provided for Woo_Product_Data object' );
 		}
 
 		$product = null;
@@ -84,7 +88,7 @@ class Woo_Product_Data extends \Thrive\Automator\Items\Data_Object {
 		} elseif ( is_a( $param, 'WC_Product' ) ) {
 			$product = $param;
 		} elseif ( is_numeric( $param ) ) {
-			$product = \wc_get_product( $param );
+			$product = wc_get_product( $param );
 		}
 
 		if ( $product ) {

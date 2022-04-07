@@ -15,6 +15,7 @@ unset( $available_apis['zoom'] );
 	TVE_Dash.API.ConnectedAPIs = new TVE_Dash.API.collections.Connections(<?php echo Thrive_Dash_List_Manager::toJSON( $connected_apis ); ?>);
 	TVE_Dash.API.AvailableAPIs = new TVE_Dash.API.collections.Connections(<?php echo Thrive_Dash_List_Manager::toJSON( $available_apis ); ?>);
 	TVE_Dash.API.ToBeConnected = new TVE_Dash.API.models.ToBeConnected();
+	TVE_Dash.API.ThirdPartyAPIs = new Backbone.Collection(<?php echo json_encode( Thrive_Dash_List_Manager::get_third_party_autoresponders() ); ?>);
 	TVE_Dash.API.APITypes = new TVE_Dash.API.collections.APITypes(<?php echo json_encode( $types ); ?>);
 </script>
 
@@ -24,6 +25,11 @@ unset( $available_apis['zoom'] );
 <div class="tvd-container tvd-hide tvd-show-onload">
 	<h3 class="tvd-section-title"><?php echo esc_html__( "Active Connections", TVE_DASH_TRANSLATE_DOMAIN ) ?></h3>
 	<div class="tvd-row tvd-api-list"></div>
+
+	<?php if ( ! empty( Thrive_Dash_List_Manager::get_third_party_autoresponders() ) ) : ?>
+		<h3 class="tvd-section-title"><?php echo esc_html__( 'Third Party Connections', TVE_DASH_TRANSLATE_DOMAIN ) ?></h3>
+		<div class="tvd-row tvd-third-party-api-list"></div>
+	<?php endif; ?>
 
 	<div class="tvd-row">
 		<div class="tvd-col tvd-s12">
@@ -105,7 +111,7 @@ unset( $available_apis['zoom'] );
 						<select id="selected-api">
 							<optgroup label="" class="tvd-hide">
 								<option
-									value="none"><?php echo esc_html__( "- Select an app -", TVE_DASH_TRANSLATE_DOMAIN ) ?></option>
+										value="none"><?php echo esc_html__( "- Select an app -", TVE_DASH_TRANSLATE_DOMAIN ) ?></option>
 							</optgroup>
 						</select>
 					</div>
@@ -173,7 +179,6 @@ unset( $available_apis['zoom'] );
 				<# } #>
 
 				<# } #>
-
 
 				<# } #>
 			</p>
@@ -272,6 +277,34 @@ unset( $available_apis['zoom'] );
 			<h4 class="tvd-dark-text">
 				<#= text ? text : 'Testing...' #>
 			</h4>
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="tvd-third-party-api">
+	<div class="tvd-col tvd-s12 tvd-m4 tvd-l3">
+		<div class="tvd-card tvd-white tvd-small">
+			<div class="tvd-card-image" style="background-image: url('<#= item.get('thumbnail') #>');">
+				<img src="<#= item.get('thumbnail') #>">
+			</div>
+
+			<div class="tvd-card-action">
+				<div class="tvd-row">
+					<div class="tvd-col tvd-s12 tvd-m6 tvd-third-party-label">
+						<h4>
+							<#= item.get( 'title' ) #>
+						</h4>
+					</div>
+					<div class="tvd-col tvd-s12 tvd-m6">
+						<div class="tvd-right tvd-flex-mid">
+							<a href="<#= item.get( 'controls_link' ) #>" class="tvd-api-link" target="_blank">
+								<i class="tvd-icon-pencil tvd-left"></i>
+							</a>
+							<span class="tvd-api-status-icon status-<#= item.get( 'is_connected' ) ? 'green' : 'red' #>"</span>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </script>

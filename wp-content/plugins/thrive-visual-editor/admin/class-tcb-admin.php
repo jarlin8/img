@@ -162,10 +162,12 @@ class TCB_Admin {
 	public function dashboard_add_features( $features ) {
 
 		if ( tcb_has_external_cap() ) {
-			$features['font_manager']     = true;
-			$features['icon_manager']     = true;
-			$features['api_connections']  = true;
-			$features['general_settings'] = true;
+			$features['smart_site']           = true;
+			$features['font_manager']         = true;
+			$features['icon_manager']         = true;
+			$features['api_connections']      = true;
+			$features['general_settings']     = true;
+			$features['notification_manager'] = true;
 		}
 
 		return $features;

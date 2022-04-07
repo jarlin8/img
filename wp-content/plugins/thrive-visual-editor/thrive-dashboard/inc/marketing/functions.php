@@ -43,7 +43,7 @@ function thrv_update_tags( $connection, $data = array() ) {
 		$tags = implode( ',', $tags );
 	}
 
-	return $api_instance->updateTags( $email, $tags, $extra );
+	return $api_instance->update_tags( $email, $tags, $extra );
 }
 
 /**

@@ -49,6 +49,10 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 		return true;
 	}
 
+	public function hasCustomFields() {
+		return true;
+	}
+
 	/**
 	 * output the setup form html
 	 *
@@ -174,7 +178,10 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 			if ( ! empty( $arguments['tve_mapping'] ) ) {
 				$fields      = $this->prepare_api_custom_fields( $arguments );
 				$proprieties = (object) array_merge( (array) $proprieties, $fields );
+			} else if ( ! empty( $arguments['automator_custom_fields'] ) ) {
+				$proprieties = (object) array_merge( (array) $proprieties, $arguments['automator_custom_fields'] );
 			}
+
 
 			if ( ! empty( $tags ) ) {
 				foreach ( $tags as $tag ) {
@@ -304,6 +311,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 * instantiate the API code required for this connection
 	 *
 	 * @return mixed
+	 * @throws Exception
 	 */
 	protected function _apiInstance() {
 		return new Thrive_Dash_Api_Drip( $this->param( 'token' ) );
@@ -466,7 +474,27 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 			}
 		}
 
+
 		return $fields;
+	}
+
+	/**
+	 * Build custom fields mapping for automations
+	 *
+	 * @param $automation_data
+	 *
+	 * @return array
+	 */
+	public function build_automation_custom_fields( $automation_data ) {
+		$mapped_data = array();
+		foreach ( $automation_data['api_fields'] as $pair ) {
+			$value = sanitize_text_field( $pair['value'] );
+			if ( $value ) {
+				$mapped_data[ $pair['key'] ] = $value;
+			}
+		}
+
+		return $mapped_data;
 	}
 
 	/**
@@ -536,7 +564,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 
 		foreach ( $api_fields as $field ) {
 			foreach ( $custom_fields as $key => $custom_field ) {
-				if ( $field['id'] === $key ) {
+				if ( $field['id'] === $key && $custom_field ) {
 
 					$prepared_fields[ $key ] = $custom_field;
 
@@ -552,7 +580,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 		return $prepared_fields;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list', 'optin', 'tag_input' );
+	public function get_automator_add_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'mailing_list', 'optin', 'api_fields', 'tag_input' ) );
 	}
 }

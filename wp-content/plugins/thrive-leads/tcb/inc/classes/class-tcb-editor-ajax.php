@@ -775,7 +775,10 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 			/* Handle the css, js and additional saves */
 			\TCB\Lightspeed\Main::handle_optimize_saves( $post_id, $_POST );
-
+			/**
+			 * Remove old unused meta
+			 */
+			tve_clean_up_meta_leftovers( $post_id );
 			/**
 			 * trigger also a post / page update for the caching plugins to know there has been a save
 			 * update post here so we can have access to its meta when a revision of it is saved
@@ -852,16 +855,19 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		 * @return array
 		 */
 		public function action_get_api() {
-			$api   = $this->param( 'api' );
-			$force = (bool) $this->param( 'force' );
-			$extra = $this->param( 'extra' );
+			$api_key = $this->param( 'api' );
+			$force   = (bool) $this->param( 'force' );
+			$extra   = $this->param( 'extra' );
 
-			if ( ! $api || ! array_key_exists( $api, Thrive_Dash_List_Manager::available() ) ) {
-				return array();
+			$data = [];
+
+			if ( $api_key ) {
+				$connection = Thrive_Dash_List_Manager::get_api_instance( $api_key );
+
+				$data = $connection->get_api_data( $extra, $force );
 			}
-			$connection = Thrive_Dash_List_Manager::connectionInstance( $api );
 
-			return $connection->get_api_data( $extra, $force );
+			return $data;
 		}
 
 		/**
@@ -1702,6 +1708,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				'element_type'     => $this->param( 'element_type' ),
 				'thumb'            => $this->param( 'thumb', null, false ),
 				'has_icons'        => $this->param( 'has_icons' ),
+				'class'            => $this->param( 'class' ),
 			);
 
 			if ( empty( $symbol_data['id'] ) ) {

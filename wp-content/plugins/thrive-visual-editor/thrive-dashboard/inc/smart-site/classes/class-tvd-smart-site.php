@@ -112,7 +112,6 @@ if ( ! class_exists( 'TVD_Smart_Site' ) ) :
 			 */
 			if ( $screen->id === 'toplevel_page_tve_dash_section' ) {
 				add_filter( 'tve_dash_filter_features', array( $this, 'smart_site_feature' ) );
-				add_filter( 'tve_dash_features', array( $this, 'smart_site_enable_feature' ) );
 			}
 
 			/**
@@ -140,20 +139,6 @@ if ( ! class_exists( 'TVD_Smart_Site' ) ) :
 				'btn_link'    => add_query_arg( 'page', $this->_dashboard_page, admin_url( 'admin.php' ) ),
 				'btn_text'    => __( "Smart Settings", TVE_DASH_TRANSLATE_DOMAIN ),
 			);
-
-			return $features;
-		}
-
-		/**
-		 * Enable the NM feature to be displayed on Thrive Features Section
-		 *
-		 * @param $features
-		 *
-		 * @return mixed
-		 */
-		public function smart_site_enable_feature( $features ) {
-
-			$features['smart_site'] = true;
 
 			return $features;
 		}

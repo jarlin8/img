@@ -273,8 +273,5 @@ class Thrive_Dash_List_Connection_SendGrid extends Thrive_Dash_List_Connection_A
 		return $this;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
 
 }

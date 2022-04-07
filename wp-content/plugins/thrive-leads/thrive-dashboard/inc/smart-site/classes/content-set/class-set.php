@@ -341,10 +341,11 @@ class Set implements \JsonSerializable {
 	 * @return array
 	 */
 	public static function identify_from_object( $post_or_term, $return_type = 'objects' ) {
-		if ( ! $post_or_term instanceof \WP_Post && ! $post_or_term instanceof \WP_Term ) {
-			return array();
-		}
 		$sets = array();
+
+		if ( ! $post_or_term instanceof \WP_Post && ! $post_or_term instanceof \WP_Term ) {
+			return $sets;
+		}
 
 		/**
 		 * @var Set $set

@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_Abstract {
 
 	protected $api_error_type = 'string';
-	private $acf_identifier = 'tve_acf_';
+	private   $acf_identifier = 'tve_acf_';
 
 	/**
 	 * Set current error type output
@@ -224,7 +224,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 * Construct an error object to be sent as result. Depending on $this->api_error_type, formats the message as a string or an assoc array
 	 *
 	 * @param string|array $message
-	 * @param string $field
+	 * @param string       $field
 	 */
 	protected function build_field_error( $message, $field ) {
 		if ( $this->api_error_type !== 'string' && ! is_array( $message ) ) {
@@ -243,7 +243,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 * @param mixed $list_identifier
 	 * @param array $arguments
 	 *
-	 * @return mixed
+	 * @return bool|string|Thrive_Dash_List_Connection_Wordpress
 	 */
 	public function addSubscriber( $list_identifier, $arguments ) {
 		/**
@@ -288,7 +288,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 		 * if we already have this username
 		 */
 		if ( $user_id ) {
-			$username              = $username . rand( 3, 5 );
+			$username              .= rand( 3, 5 );
 			$user_id               = null;
 			$arguments['username'] = $username;
 		}
@@ -297,11 +297,11 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 		 * check if passwords parameters exist and if they are the same in case they're two
 		 */
 		if ( isset( $arguments['password'] ) ) {
-			if ( isset( $arguments['confirm_password'] ) && $arguments['password'] != $arguments['confirm_password'] ) {
+			if ( isset( $arguments['confirm_password'] ) && $arguments['password'] !== $arguments['confirm_password'] ) {
 				return $this->error( __( 'Passwords do not match', TVE_DASH_TRANSLATE_DOMAIN ) );
 			}
 
-			if ( ! $user_id && email_exists( $arguments['email'] ) == false ) {
+			if ( ! $user_id && email_exists( $arguments['email'] ) === false ) {
 				$user_data = apply_filters( 'tvd_create_user_data', array(
 					'user_login' => $username,
 					'user_pass'  => $arguments['password'],
@@ -310,7 +310,13 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 
 				$user_id = wp_insert_user( $user_data );
 				if ( $user_id ) {
-					do_action( 'thrive_register_form_through_wordpress_user', $user_id, $arguments );
+					$data = $arguments;
+					unset( $data['password'], $data['confirm_password'] );
+					do_action( 'thrive_register_form_through_wordpress_user', $user_id, $data );
+
+					$slug = strtolower( trim( preg_replace( '/[^A-Za-z0-9-]+/', '-', $data['_tcb_id'] ) ) );
+
+					do_action( 'thrive_register_form_through_wordpress_user_' . $slug, $user_id, $data );
 				}
 
 			} else {

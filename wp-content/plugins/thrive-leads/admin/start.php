@@ -4,7 +4,7 @@ define( 'TL_DASHBOARD_PAGE', 'thrive-dashboard_page_thrive_leads_dashboard' );
 define( 'TL_REPORTING_PAGE', 'admin_page_thrive_leads_reporting' );
 define( 'TL_CONTACTS_PAGE', 'admin_page_thrive_leads_contacts' );
 define( 'TL_ASSETS_PAGE', 'admin_page_thrive_leads_asset_delivery' );
-
+define( 'TL_NONCE_KEY', 'tl-verify-track-sender-666' );
 
 add_action( 'admin_init', 'tve_leads_admin_init' );
 add_filter( 'tve_dash_admin_product_menu', 'tve_leads_admin_menu' );
@@ -125,6 +125,7 @@ function tve_leads_admin_enqueue( $hook ) {
 		'CHART_GREY'                            => '#C0C0C0',
 		'CHART_COLORS'                          => $tve_leads_chart_colors,
 		'toast_timeout'                         => 3000,
+		'security'                              => wp_create_nonce( TL_NONCE_KEY ),
 		'date_intervals'                        => array(
 			'last_7_days'       => TVE_LAST_7_DAYS,
 			'last_30_days'      => TVE_LAST_30_DAYS,

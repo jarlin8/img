@@ -316,11 +316,13 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 		return '%Subscriber:EmailAddress%';
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list', 'tag_select' );
+
+	public function get_automator_add_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'mailing_list', 'api_fields', 'tag_select' ) );
 	}
 
-	public function get_automator_autoresponder_tag_fields() {
-		return array( 'tag_select' );
+	public function get_automator_tag_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'tag_select' ) );
 	}
+
 }

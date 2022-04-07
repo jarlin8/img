@@ -5,6 +5,9 @@
  * @package thrive-visual-editor
  */
 
+use TCB\Lightspeed\Css;
+use TCB\Lightspeed\JS;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -132,12 +135,12 @@ class TCB_Symbol_Template {
 
 		$css = "<style class='tve-symbol-custom-style'>" . static::css( $symbol_id ) . '</style>';
 
-		$lightspeed = \TCB\Lightspeed\Css::get_instance( $symbol_id );
+		$lightspeed = Css::get_instance( $symbol_id );
 
 		if ( $lightspeed->should_load_optimized_styles() ) {
 			$css = $lightspeed->get_optimized_styles() . $css;
 		} else {
-			\TCB\Lightspeed\Css::enqueue_flat();
+			Css::enqueue_flat();
 		}
 
 		return $css;
@@ -200,9 +203,9 @@ class TCB_Symbol_Template {
 
 				if ( TCB_Utils::is_rest() || wp_doing_ajax() ) {
 					/* we should return this inline when we retrieve the symbol with ajax */
-					$js_modules = \TCB\Lightspeed\JS::get_instance( $symbol_id )->load_modules( true );
+					$js_modules = JS::get_instance( $symbol_id )->load_modules( true );
 				} else {
-					\TCB\Lightspeed\JS::get_instance( $symbol_id )->enqueue_scripts();
+					JS::get_instance( $symbol_id )->enqueue_scripts();
 				}
 
 				/**
@@ -218,9 +221,12 @@ class TCB_Symbol_Template {
 				$content = '<div class="thrive-shortcode-html thrive-symbol-shortcode ' . $shortcode_class . '"' . $name . self::data_attr( $symbol_id ) . '>' . $css . $js_modules . $content . '</div>';
 
 				if ( $wrap ) {
+					$extra_classes = get_post_meta( $symbol_id, 'tve_extra_class', true );
+
+					$classes = array( 'thrv_wrapper', 'thrv_symbol', 'thrive-shortcode', "thrv_$type", 'tve_no_drag', "thrv_symbol_$symbol_id", $extra_classes, static::symbol_state_class( $type ) );
 
 					$content = TCB_Utils::wrap_content( $content, 'div', "thrive-$type",
-						array( 'thrv_wrapper', 'thrv_symbol', 'thrive-shortcode', "thrv_$type", 'tve_no_drag', "thrv_symbol_$symbol_id", self::symbol_state_class( $type ) ),
+						$classes,
 						array(
 							'data-id'            => $symbol_id,
 							'data-selector'      => ".thrv_symbol_$symbol_id",

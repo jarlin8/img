@@ -393,8 +393,4 @@ class Thrive_Dash_List_Connection_Zoho extends Thrive_Dash_List_Connection_Abstr
 		return $prepared_fields;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
-
 }

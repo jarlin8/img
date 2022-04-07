@@ -162,9 +162,4 @@ class Thrive_Dash_List_Connection_Sendy extends Thrive_Dash_List_Connection_Abst
 	public static function getEmailMergeTag() {
 		return '[Email]';
 	}
-
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
-
 }

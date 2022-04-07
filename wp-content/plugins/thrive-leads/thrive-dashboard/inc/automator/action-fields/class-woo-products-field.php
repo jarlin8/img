@@ -48,7 +48,7 @@ class Woo_Products_Field extends Action_Field {
 	/**
 	 * For multiple option inputs, name of the callback function called through ajax to get the options
 	 */
-	public static function get_options_callback() {
+	public static function get_options_callback( $action_id, $action_data ) {
 		$products = array();
 		foreach ( wc_get_products( array( 'limit' => - 1 ) ) as $key => $product ) {
 			$id               = $product->get_id();

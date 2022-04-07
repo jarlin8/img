@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Thrive_Dash_List_Connection_ReCaptcha extends Thrive_Dash_List_Connection_Abstract {
 	/**
 	 * Return the connection type
+	 *
 	 * @return String
 	 */
 	public static function getType() {
@@ -88,7 +89,7 @@ class Thrive_Dash_List_Connection_ReCaptcha extends Thrive_Dash_List_Connection_
 
 		$_capthca_params = array(
 			'response' => '',
-			'secret'   => $this->param( 'secret_key' )
+			'secret'   => $this->param( 'secret_key' ),
 		);
 
 		$request  = tve_dash_api_remote_post( $CAPTCHA_URL, array( 'body' => $_capthca_params ) );

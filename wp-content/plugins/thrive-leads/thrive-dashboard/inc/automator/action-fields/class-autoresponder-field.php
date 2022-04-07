@@ -48,9 +48,8 @@ class Autoresponder_Field extends Action_Field {
 	/**
 	 * For multiple option inputs, name of the callback function called through ajax to get the options
 	 */
-	public static function get_options_callback() {
-		$app           = func_get_args();
-		$is_tag_action = ! empty( $app[0] ) && $app[0] === Tag_User::get_id();
+	public static function get_options_callback( $action_id, $action_data ) {
+		$is_tag_action = $action_id === Tag_User::get_id();
 
 		$apis   = Thrive_Dash_List_Manager::getAvailableAPIs( true, [
 			'email',
@@ -67,10 +66,10 @@ class Autoresponder_Field extends Action_Field {
 			//email is seen as autoresponder
 			$allow_tags = true;
 			if ( $is_tag_action ) {
-				$allow_tags = $api->hasTags();
+				$allow_tags = $api->has_tags();
 			}
-			if ( $allow_tags && ! in_array( $api->getKey(), array( 'email', 'wordpress' ) ) ) {
-				$values[ $api->getKey() ] = array( 'id' => $api->getKey(), 'label' => $api->getTitle() );
+			if ( $allow_tags && ! in_array( $api->get_key(), array( 'email', 'wordpress' ) ) ) {
+				$values[ $api->get_key() ] = array( 'id' => $api->get_key(), 'label' => $api->get_title() );
 			}
 		}
 

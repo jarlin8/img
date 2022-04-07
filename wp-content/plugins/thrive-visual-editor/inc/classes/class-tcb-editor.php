@@ -475,8 +475,8 @@ class TCB_Editor {
 		$api_connections      = array();
 		$api_connections_data = array();
 		foreach ( Thrive_Dash_List_Manager::getAvailableAPIs( true, array( 'email', 'social', 'storage' ) ) as $key => $connection_instance ) {
-			$api_connections[ $key ]      = $connection_instance->getTitle();
-			$api_connections_data[ $key ] = $connection_instance->getDataForSetup();
+			$api_connections[ $key ]      = $connection_instance->get_title();
+			$api_connections_data[ $key ] = $connection_instance->get_data_for_setup();
 		}
 
 		$data = array(
@@ -605,6 +605,7 @@ class TCB_Editor {
 				 *
 				 */
 				'file_upload_validation' => apply_filters( 'tcb_file_upload_validation', true ),
+				'custom_tag_apis'        => TCB_Utils::get_api_list_with_tag_support(),
 			),
 			'froalaMode'                    => get_user_meta( $current_user->ID, 'froalaMode', true ),
 			'default_styles'                => tve_get_default_styles( false ),

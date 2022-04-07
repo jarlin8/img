@@ -3,8 +3,6 @@
 namespace TVE\Dashboard\Automator;
 
 use Thrive\Automator\Items\Action;
-use Thrive\Automator\Items\Action_Field;
-use Thrive\Automator\Utils;
 use Thrive_Dash_List_Manager;
 use function Thrive\Automator\tap_logger;
 
@@ -140,32 +138,59 @@ class Add_User extends Action {
 			return false;
 		}
 
-		if ( ! empty( $this->additional['tag_input'] ) && $api->hasTags() ) {
+		if ( ! empty( $this->additional['tag_input'] ) && $api->has_tags() ) {
 			$tags = $this->additional['tag_input'];
 			if ( is_array( $tags ) ) {
 				$tags = implode( ', ', $tags );
 			}
-			$api_load[ $api->getTagsKey() ] = $tags;
+			$api_load[ $api->get_tags_key() ] = $tags;
 		}
 
-		if ( ! empty( $this->additional['tag_select'] ) && $api->hasTags() ) {
-			$tags                           = $this->additional['tag_select'];
-			$api_load[ $api->getTagsKey() ] = $tags;
+		if ( ! empty( $this->additional['tag_select'] ) && $api->has_tags() ) {
+			$tags                             = $this->additional['tag_select'];
+			$api_load[ $api->get_tags_key() ] = $tags;
 		}
 
-		if ( ! empty( $this->additional['optin'] ) && $api->hasTags() ) {
+		if ( ! empty( $this->additional['optin'] ) && $api->has_tags() ) {
 			$api_load[ $api->getOptinKey() ] = $this->additional['optin'];
 		}
 
-		if ( ! empty( $this->additional['form_list'] ) && $api->hasForms() ) {
-			$load[ $api->getFormsKey() ] = $this->additional['form_list'];
+		if ( ! empty( $this->additional['form_list'] ) && $api->has_forms() ) {
+			$api_load[ $api->getFormsKey() ] = $this->additional['form_list'];
 		}
 
 		$list_identifier = ! empty( $this->additional['mailing_list'] ) ? $this->additional['mailing_list'] : null;
 
-		return $api->addSubscriber( $list_identifier, $api_load );
+		if ( ! empty( $this->additional['api_fields'] ) ) {
+			$name = $this->get_specific_field_value( 'name' );
+			if ( ! empty( $name ) ) {
+				$api_load['name'] = $name;
+			}
+			$phone = $this->get_specific_field_value( 'phone' );
+			if ( ! empty( $phone ) ) {
+				$api_load['phone'] = $phone;
+			}
+		}
+
+		if ( ! empty( $this->additional['api_fields'] ) && $api->has_custom_fields() ) {
+			$api_load['automator_custom_fields'] = $api->build_automation_custom_fields( $this->additional );
+		}
+
+		return $api->add_subscriber( $list_identifier, $api_load );
 	}
 
+	public function get_specific_field_value( $field, $unset = true ) {
+		$key   = array_search( $field, array_column( $this->additional['api_fields'], 'key' ) );
+		$value = false;
+		if ( $key !== false ) {
+			$value = $this->additional['api_fields'][ $key ]['value'];
+			if ( $unset ) {
+				array_splice( $this->additional['api_fields'], $key, 1 );
+			}
+		}
+
+		return $value;
+	}
 	/**
 	 * For APIs with forms add it as required field
 	 *
@@ -176,42 +201,23 @@ class Add_User extends Action {
 	public static function get_action_mapped_fields( $data ) {
 		$fields = static::get_required_action_fields();
 		if ( property_exists( $data, 'autoresponder' ) ) {
-			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $data->autoresponder->value );
-			if ( $api_instance->isConnected() && $api_instance->hasForms() ) {
-				$fields = array( 'autoresponder' => array( 'mailing_list' => array( 'form_list' ) ) );
+			$api_instance = \Thrive_Dash_List_Manager::get_api_instance( $data->autoresponder->value );
+
+			if ( $api_instance !== null && $api_instance->is_connected() ) {
+				$fields = $api_instance->get_automator_add_autoresponder_mapping_fields();
 			}
 		}
 
 		return $fields;
 	}
 
-
-	public static function get_subfields( $field, $selected_value, $action_data ) {
-		$api_instance = Thrive_Dash_List_Manager::connectionInstance( $selected_value );
-
-		if ( ! $api_instance && property_exists( $action_data, 'autoresponder' ) ) {
-			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $action_data->autoresponder->value );
-		}
-
-		$fields = array();
-		if ( $api_instance->isConnected() ) {
-			$field_keys = $api_instance->get_automator_autoresponder_fields();
-
-			if ( ! empty( $field_keys ) ) {
-				$available_fields = Action_Field::get();
-				foreach ( $field_keys as $subfield ) {
-					$subfield_class = $available_fields[ $subfield ];
-					$state_data     = $subfield_class::localize();
-					if ( $subfield === 'tag_input' ) {
-						$state_data['validators'] = array();
-					}
-					if ( Utils::is_multiple( $subfield_class::get_type() ) ) {
-						$state_data['values'] = $subfield_class::get_options_callback( $selected_value );
-					}
-					$fields[ $state_data['id'] ] = $state_data;
-				}
-			}
-			$fields = $api_instance->set_custom_autoresponder_fields( $fields, $field, $action_data );
+	public static function get_subfields( $subfields, $current_value, $action_data ) {
+		$fields = parent::get_subfields( $subfields, $current_value, $action_data );
+		/**
+		 * Remove required validation for tags
+		 */
+		if ( isset( $fields[ Tag_Input_Field::get_id() ] ) ) {
+			$fields[ Tag_Input_Field::get_id() ]['validators'] = array();
 		}
 
 		return $fields;

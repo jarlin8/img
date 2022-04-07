@@ -147,7 +147,4 @@ class Thrive_Dash_List_Connection_Sendfox extends Thrive_Dash_List_Connection_Ab
 		return $result;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
 }

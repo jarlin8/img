@@ -46,7 +46,6 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 	 * @return string|void
 	 */
 	public function readCredentials() {
-
 		$key   = ! empty( $_POST['connection']['key'] ) ? sanitize_text_field( $_POST['connection']['key'] ) : '';
 		$email = ! empty( $_POST['connection']['email'] ) ? sanitize_email( $_POST['connection']['email'] ) : '';
 
@@ -121,7 +120,6 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 	 * @return mixed
 	 */
 	protected function _apiInstance() {
-
 		return new Thrive_Dash_Api_CampaignMonitor( $this->param( 'key' ) );
 	}
 
@@ -199,10 +197,11 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 
 					$list->create_custom_field( $custom_field );
 				}
-				array_push( $subscriber['CustomFields'], array(
+
+				$subscriber['CustomFields'][] = array(
 					'Key'   => 'Phone',
 					'Value' => (string) $arguments['phone'],
-				) );
+				);
 			}
 
 			$_custom_fields = $this->_generate_custom_fields( array_merge( $arguments, array( 'list_id' => $list_identifier ) ) );
@@ -221,7 +220,7 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 	 * delete a contact from the list
 	 *
 	 * @param string $email
-	 * @param array $arguments
+	 * @param array  $arguments
 	 *
 	 * @return mixed
 	 */
@@ -233,6 +232,7 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 
 			return true;
 		}
+
 		return false;
 	}
 
@@ -264,9 +264,9 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 	}
 
 	/**
-	 * @param array $params which may contain `list_id`
-	 * @param bool $force make a call to API and invalidate cache
-	 * @param bool $get_all where to get lists with their custom fields
+	 * @param array $params  which may contain `list_id`
+	 * @param bool  $force   make a call to API and invalidate cache
+	 * @param bool  $get_all where to get lists with their custom fields
 	 *
 	 * @return array
 	 */
@@ -465,7 +465,7 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 	 * Prepare custom fields for api call
 	 *
 	 * @param array $custom_fields
-	 * @param null $list_identifier
+	 * @param null  $list_identifier
 	 *
 	 * @return array
 	 */
@@ -502,9 +502,5 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 		}
 
 		return $prepared_fields;
-	}
-
-	public function get_automator_autoresponder_fields() {
-		return array( 'mailing_list' );
 	}
 }

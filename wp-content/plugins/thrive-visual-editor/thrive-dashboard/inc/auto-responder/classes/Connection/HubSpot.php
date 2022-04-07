@@ -112,7 +112,7 @@ class Thrive_Dash_List_Connection_HubSpot extends Thrive_Dash_List_Connection_Ab
 			foreach ( $contactLists as $key => $item ) {
 				$lists [] = array(
 					'id'   => $item['listId'],
-					'name' => $item['name']
+					'name' => $item['name'],
 				);
 			}
 
@@ -152,14 +152,11 @@ class Thrive_Dash_List_Connection_HubSpot extends Thrive_Dash_List_Connection_Ab
 
 	/**
 	 * Return the connection email merge tag
+	 *
 	 * @return String
 	 */
 	public static function getEmailMergeTag() {
 		return '{{contact.email}}';
-	}
-
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
 	}
 
 }

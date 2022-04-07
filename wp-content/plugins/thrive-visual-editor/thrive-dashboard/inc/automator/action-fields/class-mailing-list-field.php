@@ -48,24 +48,30 @@ class Mailing_List_Field extends Action_Field {
 	/**
 	 * For multiple option inputs, name of the callback function called through ajax to get the options
 	 */
-	public static function get_options_callback() {
+	public static function get_options_callback( $action_id, $action_data ) {
 		$values = array();
-		$args   = func_get_args();
-		if ( ! empty( $args ) ) {
-			$api          = $args[0];
-			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $api );
-			if ( $api_instance && $api_instance->isConnected() ) {
 
-				$values = $api_instance->getLists( false );
-				if ( $api_instance->hasForms() ) {
+		if ( ! empty( $action_data ) ) {
+			if ( is_string( $action_data ) ) {
+				$api = $action_data;
+			} else if ( property_exists( $action_data, 'autoresponder' ) ) {
+				$api = $action_data->autoresponder->value;
+			}
+		}
+		if ( ! empty( $api ) ) {
+			$api_instance = \Thrive_Dash_List_Manager::get_api_instance( $api );
+
+			if ( $api_instance && $api_instance->is_connected() ) {
+				$values = $api_instance->get_lists( false );
+				if ( $api_instance->has_forms() ) {
 					$forms = $api_instance->getForms();
 					foreach ( $values as $key => $list ) {
 						$values[ $key ]['values'] = $forms[ $list['id'] ];
 					}
 				}
 			}
-
 		}
+
 
 		return $values;
 	}

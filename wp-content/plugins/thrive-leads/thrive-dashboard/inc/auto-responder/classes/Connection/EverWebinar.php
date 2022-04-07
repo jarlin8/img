@@ -202,17 +202,11 @@ class Thrive_Dash_List_Connection_EverWebinar extends Thrive_Dash_List_Connectio
 		$ever_webinar = $this->getApi();
 
 		try {
-			$list = $ever_webinar->get_webinars();
-
-			return $list;
+			return $ever_webinar->get_webinars();
 		} catch ( Exception $e ) {
 			$this->_error = $e->getMessage();
 
 			return false;
 		}
-	}
-
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
 	}
 }

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Thrive_Dash_List_Connection_Twitter extends Thrive_Dash_List_Connection_Abstract {
 
 	protected $_key = 'twitter';
-	private $url = 'https://api.twitter.com/1.1/';
+	private   $url  = 'https://api.twitter.com/1.1/';
 
 	/**
 	 * Thrive_Dash_List_Connection_Twitter constructor.

@@ -403,10 +403,16 @@ class Thrive_Dash_Api_ActiveCampaign {
 					'global_fields' => 1,
 				)
 			);
-
-			if ( ! empty( $result[0]['fields'] ) ) {
-				$custom_fields = $result[0]['fields'];
+			//go through all lists and take all fields
+			if ( is_array( $result ) ) {
+				foreach ( $result as $list ) {
+					if ( ! empty( $list['fields'] ) ) {
+						$custom_fields = array_merge( $custom_fields, $list['fields'] );
+					}
+				}
 			}
+			$unique_ids    = array_unique( array_column( $custom_fields, 'id' ) );
+			$custom_fields = array_intersect_key( $custom_fields, $unique_ids );
 		} catch ( Thrive_Dash_Api_ActiveCampaign_Exception $e ) {
 			return $e->getMessage();
 		}

@@ -232,7 +232,4 @@ class Thrive_Dash_List_Connection_MailRelay extends Thrive_Dash_List_Connection_
 		return $this;
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
 }

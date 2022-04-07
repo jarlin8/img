@@ -63,6 +63,21 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	}
 
 	/**
+	 * If the snake_case version of the function does not exist, attempt to call the camelCase version.
+	 *
+	 * @param $method
+	 * @param $arguments
+	 *
+	 * @return mixed
+	 */
+	public function __call( $method, $arguments ) {
+		$camel_case_method_name = implode( '', array_map( 'ucfirst', explode( '_', $method ) ) );
+		$camel_case_method_name = lcfirst( $camel_case_method_name );
+
+		return method_exists( $this, $camel_case_method_name ) ? call_user_func_array( [ $this, $camel_case_method_name ], $arguments ) : null;
+	}
+
+	/**
 	 * Return the connection type
 	 *
 	 * @return String
@@ -282,8 +297,6 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	public abstract function testConnection();
 
 	/**
-	 * add a contact to a list
-	 *
 	 * @param mixed $list_identifier
 	 * @param array $arguments
 	 *
@@ -295,7 +308,7 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 * delete a contact matching arguments
 	 *
 	 * @param string $email
-	 * @param array $arguments
+	 * @param array  $arguments
 	 *
 	 * @return mixed
 	 */
@@ -313,7 +326,7 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 * @see self::_getLists()
 	 */
 	public function getLists( $use_cache = true ) {
-		if ( ! $this->isConnected() ) {
+		if ( ! $this->is_connected() ) {
 			$this->_error = $this->getTitle() . ' ' . __( 'is not connected', TVE_DASH_TRANSLATE_DOMAIN );
 
 			return false;
@@ -340,7 +353,7 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 * @return bool
 	 */
 	public function getGroups( $list_id ) {
-		if ( ! $this->isConnected() ) {
+		if ( ! $this->is_connected() ) {
 			$this->_error = $this->getTitle() . ' ' . __( 'is not connected', TVE_DASH_TRANSLATE_DOMAIN );
 
 			return false;
@@ -362,33 +375,34 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	}
 
 	/**
-	 * get an array with field keys that are required for automator subscribe user action
+	 * Get fields mapping specific to an API for add to autoresponder action
 	 *
-	 * @return array
+	 * @return string[][]
 	 */
-	public function get_automator_autoresponder_fields() {
-		return array();
+	public function get_automator_add_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'mailing_list', 'api_fields' ) );
+	}
+
+	/**
+	 * Get fields mapping specific to an API for tag in autoresponder action
+	 *
+	 * @return string[][]
+	 */
+	public function get_automator_tag_autoresponder_mapping_fields() {
+		return array( 'autoresponder' => array( 'tag_input' ) );
 	}
 
 	/**
 	 * Enable custom subfields based on api
+	 *
 	 * @param $fields
 	 * @param $field
 	 * @param $action_data
 	 *
 	 * @return mixed
 	 */
-	public function set_custom_autoresponder_fields( $fields, $field, $action_data ) {
+	public function set_custom_autoresponder_fields( $fields, $field, $action_id, $action_data ) {
 		return $fields;
-	}
-
-	/**
-	 * get an array with field keys required by automator tag user in autoresponder action
-	 *
-	 * @return array
-	 */
-	public function get_automator_autoresponder_tag_fields() {
-		return array( 'tag_input' );
 	}
 
 	/**
@@ -435,7 +449,7 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	public function prepareJSON() {
 		$properties = array(
 			'key'             => $this->getKey(),
-			'connected'       => $this->isConnected(),
+			'connected'       => $this->is_connected(),
 			'credentials'     => $this->getCredentials(),
 			'title'           => $this->getTitle(),
 			'type'            => $this->getType(),
@@ -520,7 +534,7 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 
 		if ( true === $force || false === $data ) {
 			$data = array(
-				'lists'          => $this->getLists( false ),
+				'lists'          => $this->get_lists( false ),
 				'extra_settings' => $this->get_extra_settings( $params ),
 				'custom_fields'  => $this->get_custom_fields( $params ),
 			);
@@ -656,7 +670,7 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	}
 
 	public function getForms() {
-		if ( ! $this->isConnected() ) {
+		if ( ! $this->is_connected() ) {
 			$this->_error = $this->getTitle() . ' ' . __( 'is not connected', TVE_DASH_TRANSLATE_DOMAIN );
 
 			return false;
@@ -872,7 +886,15 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 * @return bool
 	 */
 	public function hasTags() {
+		return false;
+	}
 
+	/**
+	 * Whether or not the current integration can provide custom fields
+	 *
+	 * @return false
+	 */
+	public function hasCustomFields() {
 		return false;
 	}
 
@@ -882,7 +904,6 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 * @return string
 	 */
 	public function getTagsKey() {
-
 		return $this->_key . '_tags';
 	}
 
@@ -924,11 +945,11 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 */
 	public function pushTags( $tags, $data = array() ) {
 
-		if ( ! $this->hasTags() && ( ! is_array( $tags ) || ! is_string( $tags ) ) ) {
+		if ( ! $this->has_tags() && ( ! is_array( $tags ) || ! is_string( $tags ) ) ) {
 			return $data;
 		}
 
-		$_key = $this->getTagsKey();
+		$_key = $this->get_tags_key();
 
 		if ( ! isset( $data[ $_key ] ) ) {
 			$data[ $_key ] = '';
@@ -1022,7 +1043,7 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 */
 	public function getArgsForTagsUpdate( $email, $tags = '', $extra = array() ) {
 
-		$tags_key = $this->getTagsKey();
+		$tags_key = $this->get_tags_key();
 
 		$return = array(
 			'email'   => $email,
@@ -1079,6 +1100,15 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 		return method_exists( $this, 'getAllCustomFields' ) ? $this->getAllCustomFields( true ) : array();
 	}
 
+	public function get_custom_fields_by_list( $list = null ) {
+		$fields = $this->getAvailableCustomFields();
+		if ( $list && isset( $fields[ $list ] ) ) {
+			$fields = $fields[ $list ];
+		}
+
+		return $fields;
+	}
+
 	/**
 	 * Get a sanitized value from post
 	 *
@@ -1091,6 +1121,17 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 		}
 
 		return map_deep( $_POST[ $key ], 'sanitize_text_field' );
+	}
+
+	/**
+	 * Build custom fields mapping for automations
+	 *
+	 * @param $automation_data
+	 *
+	 * @return array
+	 */
+	public function build_automation_custom_fields( $automation_data ) {
+		return array();
 	}
 }
 

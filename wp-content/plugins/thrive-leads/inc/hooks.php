@@ -2644,7 +2644,7 @@ function tve_leads_set_inbound_link_cookies() {
 		);
 		$cookie_data = array();
 		foreach ( $expected as $field ) {
-			$cookie_data[ $field ] = isset( $_REQUEST[ $field ] ) ? $_REQUEST[ $field ] : '';
+			$cookie_data[ $field ] = isset( $_REQUEST[ $field ] ) ? thrive_safe_unserialize( stripslashes( $_REQUEST[ $field ] ) ) : '';
 		}
 		if ( $cookie_data['tl_target_all'] ) {
 			$groups = tve_leads_get_group_ids();

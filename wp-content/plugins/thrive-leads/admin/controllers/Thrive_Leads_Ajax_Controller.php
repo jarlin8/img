@@ -51,12 +51,18 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 	 * @return array|object
 	 */
 	public function handle() {
+
+		if ( wp_verify_nonce( $this->param( 'security' ), TL_NONCE_KEY ) === false ) {
+			$this->error( __( 'This page has expired. Please reload and try again', 'thrive-leads' ), 403 );
+		}
+
 		/**
 		 * Checking if the user still has the right to use the product
 		 */
 		if ( ! TL_Product::has_access() ) {
 			$this->error( __( 'You do not have this capability', 'thrive-leads' ) );
 		}
+
 		$route = $this->param( 'route' );
 
 		$route      = preg_replace( '#([^a-zA-Z0-9-])#', '', $route );
@@ -130,10 +136,9 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 
 				$shortcode->content_locking = get_post_meta( $id, 'tve_content_locking', true );
 				$shortcode->content_locking = $shortcode->content_locking == '' ? 0 : intval( $shortcode->content_locking );
-				$shortcode->shortcode_code  = ( $shortcode->content_locking == 1 ) ? '[thrive_lead_lock id=\'' . $_GET['ID'] . '\']Hidden Content[/thrive_lead_lock]' : '[thrive_leads id=\'' . $_GET['ID'] . '\']';
+				$shortcode->shortcode_code  = ( $shortcode->content_locking == 1 ) ? '[thrive_lead_lock id=\'' . $id . '\']Hidden Content[/thrive_lead_lock]' : '[thrive_leads id=\'' . $id . '\']';
 
 				return $shortcode;
-				break;
 		}
 	}
 
@@ -158,7 +163,7 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 			case 'DELETE':
 				return tve_leads_delete_post( $this->param( 'ID', 0 ) );
 			case 'GET':
-				$two_step_lightbox = tve_leads_get_form_type( $_GET['ID'], array(
+				$two_step_lightbox = tve_leads_get_form_type( $this->param( 'ID', 0 ), array(
 					'completed_tests' => true,
 				) );
 				if ( ! $two_step_lightbox ) {
@@ -176,7 +181,6 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 				$two_step_lightbox->content_locking        = 0;
 
 				return $two_step_lightbox;
-				break;
 		}
 	}
 

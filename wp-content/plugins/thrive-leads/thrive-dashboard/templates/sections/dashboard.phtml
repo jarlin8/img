@@ -1,36 +1,39 @@
 <?php require_once( TVE_DASH_PATH . '/templates/header.phtml' ); ?>
-<div class="tvd-container">
-    <h3 class="tvd-section-title"><?php echo __("Your installed products", TVE_DASH_TRANSLATE_DOMAIN) ?></h3>
+	<div class="tvd-container">
+		<?php if ( ! empty( $products ) ): ?>
+			<h3 class="tvd-section-title"><?php echo __( "Your installed products", TVE_DASH_TRANSLATE_DOMAIN ) ?></h3>
 
-    <div class="tvd-row" id="tvd-installed-products">
-        <?php /** @var TVE_Dash_Product_Abstract $item */ ?>
-        <?php foreach ($products as $item) : ?>
-            <?php $item->render(); ?>
-        <?php endforeach; ?>
-    </div>
+			<div class="tvd-row" id="tvd-installed-products">
+				<?php /** @var TVE_Dash_Product_Abstract $item */ ?>
+				<?php foreach ( $products as $item ) : ?>
+					<?php $item->render(); ?>
+				<?php endforeach; ?>
+			</div>
 
-    <?php if (!empty($thrive_features)) : ?>
-        <h3 class="tvd-section-title"><?php echo __('Thrive features', TVE_DASH_TRANSLATE_DOMAIN) ?></h3>
-        <div class="tvd-row">
-            <?php foreach ($thrive_features as $key => $thrive_feature) : ?>
-                <div class="tvd-col tvd-s6 tvd-ms6 tvd-m4 tvd-l3">
-                    <div class="tvd-card tvd-white tvd-medium">
-                        <div class="tvd-card-content tvd-new-cc">
-                            <div class="tvd-center-align tvd-w-svg">
-	                            <span><?php echo dashboard_icon( $thrive_feature['icon'] ) ?></span>
-                            </div>
-                            <h2 class="tvd-card-title"><?php echo $thrive_feature['title'] ?></h2>
-                            <p class="tvd-center"><?php echo $thrive_feature['description'] ?></p>
-                            <div class="tvd-card-action">
-                                <a class="tvd-waves-effect tvd-waves-light tvd-btn tvd-btn-green tvd-full-btn" href="<?php echo $thrive_feature['btn_link'] ?>"><?php echo $thrive_feature['btn_text'] ?></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach ?>
-        </div>
-    <?php endif ?>
-    <?php /* these are examples of the current feature set:
+		<?php endif; ?>
+
+		<?php if ( ! empty( $thrive_features ) ) : ?>
+			<h3 class="tvd-section-title"><?php echo __( 'Thrive features', TVE_DASH_TRANSLATE_DOMAIN ) ?></h3>
+			<div class="tvd-row">
+				<?php foreach ( $thrive_features as $key => $thrive_feature ) : ?>
+					<div class="tvd-col tvd-s6 tvd-ms6 tvd-m4 tvd-l3">
+						<div class="tvd-card tvd-white tvd-medium">
+							<div class="tvd-card-content tvd-new-cc">
+								<div class="tvd-center-align tvd-w-svg">
+									<span><?php echo dashboard_icon( $thrive_feature['icon'] ) ?></span>
+								</div>
+								<h2 class="tvd-card-title"><?php echo $thrive_feature['title'] ?></h2>
+								<p class="tvd-center"><?php echo $thrive_feature['description'] ?></p>
+								<div class="tvd-card-action">
+									<a class="tvd-waves-effect tvd-waves-light tvd-btn tvd-btn-green tvd-full-btn" href="<?php echo $thrive_feature['btn_link'] ?>"><?php echo $thrive_feature['btn_text'] ?></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php endforeach ?>
+			</div>
+		<?php endif ?>
+		<?php /* these are examples of the current feature set:
     <div class="tvd-row">
         <div class="tvd-col tvd-s12 tvd-m6 tvd-l3">
             <div class="tvd-card tvd-white tvd-medium">
@@ -93,5 +96,5 @@
         </div>
     </div>
     END: examples of the current feature set */ ?>
-</div>
+	</div>
 <?php include TVE_DASH_PATH . '/css/font/dashboard-icons.svg' ?>

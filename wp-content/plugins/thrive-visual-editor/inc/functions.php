@@ -1507,7 +1507,7 @@ function tcb_custom_editable_content() {
 		$GLOBALS['tcb_landing_page'] = $tcb_landing_page;
 
 		/* base CSS file for all Page Templates */
-		if ( ! tve_check_if_thrive_theme() && ! \TCB\Lightspeed\Main::has_optimized_assets( $post_id ) ) {
+		if ( ! tve_check_if_thrive_theme() && ! \TCB\Lightspeed\Main::has_optimized_assets( $post_id ) && tve_in_architect() ) {
 			tve_enqueue_style( 'tve_landing_page_base_css', tve_editor_url( 'landing-page/templates/css/base.css' ), 99 );
 		}
 
@@ -3642,6 +3642,50 @@ function tve_post_has_changed( $post_has_changed, $last_revision, $post ) {
 }
 
 /**
+ * Clean up post meta which might have metadata from old LP templates applied
+ *
+ * @param $post_id
+ *
+ * @return void
+ */
+function tve_clean_up_meta_leftovers( $post_id = 0 ) {
+	if ( empty( $post_id ) ) {
+		$post_id = get_the_ID();
+	}
+	$meta_keys  = tve_get_used_meta_keys();
+	$meta_regex = implode( '|', $meta_keys );
+
+	global $wpdb;
+
+	$query = $wpdb->prepare( "SELECT meta_id, meta_key FROM $wpdb->postmeta WHERE post_id = %d AND meta_key REGEXP %s", $post_id, $meta_regex );
+	$query .= "AND meta_key NOT LIKE '%tve_revision%'";
+
+	$results = $wpdb->get_results( $query, ARRAY_A );
+
+	$landing_page = get_post_meta( $post_id, 'tve_landing_page', true );
+	if ( ! empty( $results ) ) {
+		foreach ( $results as $meta ) {
+			/**
+			 * Preserve generic metadata
+			 */
+			if ( in_array( $meta['meta_key'], $meta_keys, true ) ) {
+				continue;
+			}
+			/**
+			 * Remove metadata if we dont have a LP set at the time
+			 * or if the current LP is different than the one from meta name
+			 */
+			if ( ! $landing_page || ( $landing_page && strpos( $meta['meta_key'], $landing_page ) === false ) ) {
+				if ( ! function_exists( 'delete_meta' ) ) {
+					require_once( ABSPATH . 'wp-admin/includes/post.php' );
+				}
+				delete_meta( $meta['meta_id'] );
+			}
+		}
+	}
+}
+
+/**
  * Return an array with meta keys that are used for custom content on posts
  *
  * @return array
@@ -3649,7 +3693,7 @@ function tve_post_has_changed( $post_has_changed, $last_revision, $post ) {
  *
  */
 function tve_get_used_meta_keys() {
-	$meta_keys = array(
+	return array(
 		'tve_landing_page',
 		'tve_disable_theme_dependency',
 		'tve_content_before_more',
@@ -3667,8 +3711,6 @@ function tve_get_used_meta_keys() {
 		'tve_updated_post',
 		'tve_has_wistia_popover',
 	);
-
-	return $meta_keys;
 }
 
 /**
@@ -4022,6 +4064,10 @@ function tve_api_form_submit( $output = true ) {
 		), $output );
 	}
 
+	/**
+	 * Filter data before triggering api submit hook
+	 */
+	$data = apply_filters( 'tcb_before_api_subscribe_data', $data );
 
 	$post = $data;
 	unset( $post['action'], $post['__tcb_lg_fc'], $post['_back_url'] );
@@ -4034,6 +4080,8 @@ function tve_api_form_submit( $output = true ) {
 	 */
 	do_action( 'tcb_api_form_submit', $post );
 
+	$slug = strtolower( trim( preg_replace( '/[^A-Za-z0-9-]+/', '-', $data['_tcb_id'] ) ) );
+	do_action( 'tcb_api_form_submit_' . $slug, $post );
 	if ( isset( $settings ) ) {
 		$connections = $settings->apis;
 	} elseif ( ! empty( $data['__tcb_lg_fc'] ) ) {
@@ -4140,7 +4188,7 @@ function tve_api_add_subscriber( $connection, $list_identifier, $data, $log_erro
 		$connection = Thrive_Dash_List_Manager::connectionInstance( $connection );
 	}
 
-	$key = $connection->getKey();
+	$key = $connection->get_key();
 
 	/**
 	 * filter - allows modifying the sent data to each individual API instance
@@ -4152,7 +4200,7 @@ function tve_api_add_subscriber( $connection, $list_identifier, $data, $log_erro
 	$data = apply_filters( 'tcb_api_subscribe_data_instance', $data, $connection, $list_identifier );
 
 	/** @var Thrive_Dash_List_Connection_Abstract $connection */
-	$result = $connection->addSubscriber( $list_identifier, $data );
+	$result = $connection->add_subscriber( $list_identifier, $data );
 
 	if ( ! $log_error || true === $result || ( $key === 'klicktipp' && filter_var( $result, FILTER_VALIDATE_URL ) !== false ) ) {
 		/**
@@ -4192,7 +4240,7 @@ function tve_api_add_subscriber( $connection, $list_identifier, $data, $log_erro
 		'date'          => date( 'Y-m-d H:i:s' ),
 		'error_message' => tve_sanitize_data_recursive( $db_error, 'sanitize_text_field' ),
 		'api_data'      => serialize( tve_sanitize_data_recursive( $data, 'sanitize_text_field' ) ),
-		'connection'    => $connection->getKey(),
+		'connection'    => $connection->get_key(),
 		'list_id'       => maybe_serialize( tve_sanitize_data_recursive( $list_identifier, 'sanitize_text_field' ) ),
 	);
 
@@ -4658,8 +4706,9 @@ if ( ! function_exists( 'tve_frontend_enqueue_scripts' ) ) {
 			'routes'           => array(
 				'posts' => get_rest_url( get_current_blog_id(), 'tcb/v1' . '/posts' ),
 			),
-			'nonce'            => TCB_Utils::create_nonce(),
-			'allow_video_src'  => tve_dash_allow_video_src(),
+			'nonce'           => TCB_Utils::create_nonce(),
+			'allow_video_src' => tve_dash_allow_video_src(),
+			'lead_generation_custom_tag_apis' => TCB_Utils::get_api_list_with_tag_support(),
 		);
 
 		tve_enqueue_social_scripts();

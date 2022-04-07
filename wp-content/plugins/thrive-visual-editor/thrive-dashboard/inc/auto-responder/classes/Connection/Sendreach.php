@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Thrive_Dash_List_Connection_Sendreach extends Thrive_Dash_List_Connection_Abstract {
 	/**
 	 * Return the connection type
+	 *
 	 * @return String
 	 */
 	public static function getType() {
@@ -196,7 +197,7 @@ class Thrive_Dash_List_Connection_Sendreach extends Thrive_Dash_List_Connection_
 			$endpoint->create( $list_identifier, array(
 				'EMAIL' => $arguments['email'], // the confirmation email will be sent!!! Use valid email address
 				'FNAME' => $first_name,
-				'LNAME' => $last_name
+				'LNAME' => $last_name,
 			) );
 		} catch ( Exception $e ) {
 			return $e->getMessage();
@@ -230,7 +231,4 @@ class Thrive_Dash_List_Connection_Sendreach extends Thrive_Dash_List_Connection_
 		return '[EMAIL]';
 	}
 
-	public function get_automator_autoresponder_fields() {
-		 return array( 'mailing_list' );
-	}
 }

@@ -826,6 +826,15 @@ class TCB_Utils {
 	}
 
 	/**
+	 * @return string[]
+	 */
+	public static function get_api_list_with_tag_support() {
+		$apis_that_support_tags = [ 'activecampaign', 'aweber', 'convertkit', 'drip', 'klicktipp', 'mailchimp', 'sendlane', 'zapier' ];
+
+		return apply_filters( 'tcb_lead_generation_apis_with_tag_support', $apis_that_support_tags );
+	}
+
+	/**
 	 * Get some values from the queried object.
 	 *
 	 * @return array

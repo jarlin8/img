@@ -3,7 +3,6 @@
 namespace TVE\Dashboard\Automator;
 
 use Thrive\Automator\Items\Action;
-use Thrive\Automator\Items\Action_Field;
 use Thrive_Dash_List_Manager;
 use function Thrive\Automator\tap_logger;
 
@@ -77,34 +76,28 @@ class Tag_User extends Action {
 	 * @return array
 	 */
 	public static function get_required_action_fields() {
-		return array( 'autoresponder' => true );
+		return array( 'autoresponder' => 'tag_input' );
 	}
 
-	public static function get_subfields( $field, $selected_value, $action_data ) {
-		$api_instance = Thrive_Dash_List_Manager::connectionInstance( $selected_value );
-		$fields       = array();
-		if ( $api_instance && $api_instance->isConnected() ) {
-			$field_keys = $api_instance->get_automator_autoresponder_tag_fields();
+	/**
+	 * For APIs with forms add it as required field
+	 *
+	 * @param $data
+	 *
+	 * @return array|string[][]|string[][][]
+	 */
+	public static function get_action_mapped_fields( $data ) {
+		$fields = static::get_required_action_fields();
+		if ( property_exists( $data, 'autoresponder' ) ) {
+			$api_instance = \Thrive_Dash_List_Manager::get_api_instance( $data->autoresponder->value );
 
-			$multiple_option_types = array( 'autocomplete', 'checkbox', 'select' );
-
-			if ( ! empty( $field_keys ) ) {
-				$available_fields = Action_Field::get();
-				foreach ( $field_keys as $subfield ) {
-					$subfield_class = $available_fields[ $subfield ];
-					$state_data     = $subfield_class::localize();
-
-					if ( in_array( $subfield_class::get_type(), $multiple_option_types ) ) {
-						$state_data['values'] = $subfield_class::get_options_callback( $selected_value );
-					}
-					$fields[ $state_data['id'] ] = $state_data;
-				}
+			if ( $api_instance !== null && $api_instance->is_connected() ) {
+				$fields = $api_instance->get_automator_tag_autoresponder_mapping_fields();
 			}
 		}
 
 		return $fields;
 	}
-
 
 	public function prepare_data( $data = array() ) {
 		if ( ! empty( $data['extra_data'] ) ) {
@@ -172,7 +165,7 @@ class Tag_User extends Action {
 			$extra['list_identifier'] = $this->additional['mailing_list'];
 		}
 
-		$api->updateTags( $email, $tags_value, $extra );
+		$api->update_tags( $email, $tags_value, $extra );
 	}
 
 	/**

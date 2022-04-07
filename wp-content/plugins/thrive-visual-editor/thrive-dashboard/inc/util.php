@@ -5,6 +5,13 @@
  *
  * @package thrive-dashboard
  */
+
+use TCB\inc\helpers\FormSettings;
+use TCB\Integrations\Automator\Form_Identifier;
+use Thrive\Automator\Items\Data_Object;
+use Thrive\Automator\Items\Filter;
+use Thrive\Automator\Items\Trigger;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -59,7 +66,7 @@ function tve_dash_fetch_share_count_facebook( $url ) {
 				$update_query_args = $query_args;
 				/* Reference here: https://developers.facebook.com/docs/sharing/opengraph/using-objects#update */
 				$update_query_args['scraped'] = 'true';
-				$fb_url_update     = add_query_arg( $update_query_args, 'https://graph.facebook.com/v12.0/' );
+				$fb_url_update                = add_query_arg( $update_query_args, 'https://graph.facebook.com/v12.0/' );
 
 				/* Make the post call so that Facebook will scrape again the url */
 				_tve_dash_util_helper_get_json( $fb_url_update, 'wp_remote_post' );
@@ -72,7 +79,7 @@ function tve_dash_fetch_share_count_facebook( $url ) {
 		/* Changed from engagement to og_object{engagement} to get the accurate number of shares
 		Unofficial reference: https://developers.facebook.com/community/threads/178543204270768/ */
 		$query_args['fields'] = 'og_object{engagement}';
-		$fb_url_get     = add_query_arg( $query_args, 'https://graph.facebook.com/v12.0/' );
+		$fb_url_get           = add_query_arg( $query_args, 'https://graph.facebook.com/v12.0/' );
 
 		/* Get the Share count */
 		$data = _tve_dash_util_helper_get_json( $fb_url_get );
@@ -293,8 +300,8 @@ function tve_dash_get_menu_products_order() {
  * Enqueue a script during an ajax call - this will make sure the script will be loaded in the page when the ajax call returns content
  *
  * @param string|array $handle
- * @param string|null $url if empty, it will try to get it from the WP_Scripts object
- * @param string $extra_js extra javascript to be outputted before the script
+ * @param string|null  $url      if empty, it will try to get it from the WP_Scripts object
+ * @param string       $extra_js extra javascript to be outputted before the script
  *
  * @return bool
  */
@@ -326,8 +333,8 @@ function tve_dash_ajax_enqueue_script( $handle, $url = null, $extra_js = null ) 
  * Enqueue a CSS external stylesheet during an ajax call
  *
  * @param string|array $handle
- * @param string|null $url if empty, it will try to get it from the WP_Scripts object
- * @param string $extra_js extra javascript to be outputted before the script
+ * @param string|null  $url      if empty, it will try to get it from the WP_Scripts object
+ * @param string       $extra_js extra javascript to be outputted before the script
  *
  * @return bool
  */
@@ -431,7 +438,7 @@ function tve_get_debug_data() {
  * Formats the message differently in WP_CLI
  *
  * @param string $error_type error message type. if none is identified, it will be outputted as the error message
- * @param mixed $_ any number of additional parameters to be used depending on $error_type
+ * @param mixed  $_          any number of additional parameters to be used depending on $error_type
  */
 function tve_dash_show_activation_error( $error_type, $_ = null ) {
 
@@ -539,6 +546,67 @@ function tve_dash_get_webhook_trigger_integrated_apis() {
 			'kb_article' => 'http://help.thrivethemes.com/en/articles/4741872-how-to-set-up-incoming-webhooks-in-thrive-ultimatum-using-generic-webhook',
 		),
 	);
+}
+
+/**
+ * Sync form data with specific custom fields setup
+ *
+ * @param $trigger_data
+ *
+ * @return array|mixed
+ * @throws Exception
+ */
+function tve_sync_form_data( $trigger_data ) {
+	if ( empty( $trigger_data['extra_data']['form_identifier']['value'] ) || $trigger_data['extra_data']['form_identifier']['value'] === 'none' ) {
+		$trigger = Trigger::get_by_id( $trigger_data['id'] );
+
+		if ( ! $trigger ) {
+			return $trigger_data;
+		}
+
+		$default = $trigger::get_info();
+		if ( ! empty( $trigger_data['conditions'] ) ) {
+			$default['conditions'] = $trigger_data['conditions'];
+		}
+		$default['extra_data']                               = $trigger_data['extra_data'];
+		$default['extra_data']['form_identifier']['value']   = '';
+		$default['extra_data']['form_identifier']['preview'] = '';
+
+		return $default;
+	}
+	$custom_fields = [];
+	$form          = FormSettings::get_one( $trigger_data['extra_data']['form_identifier']['value'] );
+	if ( ! empty( $form ) ) {
+		$data_fields                                    = Data_Object::get_all_filterable_fields( [ 'form_data' ] );
+		$trigger_data['filterable_fields']['form_data'] = $data_fields['form_data'];
+		$not_custom                                     = [ 'email', 'phone', 'name', 'password', 'confirm_password' ];
+		foreach ( $form->inputs as $input ) {
+			if ( ! empty( $input['id'] ) && ! in_array( $input['id'], $not_custom, true ) ) {
+				$custom_fields[ $input['id'] ]            = [
+					'id'            => $input['id'],
+					'validators'    => [],
+					'name'          => $input['label'],
+					'description'   => 'Custom field',
+					'tooltip'       => 'Custom field',
+					'placeholder'   => 'Custom field',
+					'is_ajax_field' => false,
+					'value_type'    => 'string',
+					'shortcode_tag' => '%' . $input['id'] . '%',
+					'dummy_value'   => $input['label'] . ' field value',
+					'primary_key'   => false,
+					'filters'       => [ 'string_ec' ],
+				];
+				$custom_fields[ $input['id'] ]['filters'] = Filter::get_field_filters( $custom_fields[ $input['id'] ] );
+			}
+
+		}
+		if ( ! empty( $custom_fields ) ) {
+			unset( $trigger_data['filterable_fields']['form_data'][ Form_Identifier::get_id() ] );
+			$trigger_data['filterable_fields']['form_data'] = array_merge( $trigger_data['filterable_fields']['form_data'], $custom_fields );
+		}
+	}
+
+	return $trigger_data;
 }
 
 

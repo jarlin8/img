@@ -1,55 +1,23 @@
 ( $ => {
 
-	class TCBYoastPlugin {
-		static register() {
-			YoastSEO.app.registerPlugin( 'tcbYoastPlugin', {status: 'loading'} );
+	const TCBYoastPlugin = require( './classes/tcb-yoast-plugin' ),
+		TCBRankMathPlugin = require( './classes/tcb-rankmath-plugin' );
 
-			TCBYoastPlugin.fetchData()
-		}
-
-		static fetchData() {
-			$.ajax( {
-				url: ajaxurl,
-				type: 'post',
-				dataType: 'json',
-				data: {
-					post_id: TCB_Post_Edit_Data.post_id,
-					action: 'get_tcb_content'
-				}
-			} ).done( response => {
-				YoastSEO.app.pluginReady( 'tcbYoastPlugin' );
-
-				/**
-				 * @param modification    {string}    The name of the filter
-				 * @param callable        {function}  The callable
-				 * @param pluginName      {string}    The plugin that is registering the modification.
-				 * @param priority        {number}    (optional) Used to specify the order in which the callables
-				 *                                    associated with a particular filter are called. Lower numbers
-				 *                                    correspond with earlier execution.
-				 */
-				YoastSEO.app.registerModification( 'content', content => TCBYoastPlugin.parseTCBContent( content, response.content ), 'tcbYoastPlugin', 5 );
-			} );
-		}
-
-		static parseTCBContent( content, architectContent ) {
-			//remove empty tags because yoast kind fails on parse here
-			if ( architectContent ) {
-				const contentSelector = '.tcb-style-wrap',
-					$content = $( '<div>' ).append( $( architectContent ).find( contentSelector ).addBack( contentSelector ) );
-
-				$content.find( '*:empty:not(img,input,br)' ).remove();
-
-				architectContent = $content[ 0 ].innerHTML;
-			}
-
-			return architectContent ? architectContent : content;
-		}
-	}
+	window.TCBYoastPlugin = TCBYoastPlugin;
 
 	/**
 	 * YoastSEO content analysis integration
 	 */
 	$( window ).on( 'YoastSEO:ready', TCBYoastPlugin.register );
+
+	/**
+	 * RankMath content analysis integration
+	 */
+	$( document ).ready( function () {
+		if ( typeof window.rankMath !== 'undefined' ) {
+			new TCBRankMathPlugin();
+		}
+	} );
 
 	/**
 	 * this is not been used anymore, I don't think we managed to identify whether or not the post has been saved as draft
