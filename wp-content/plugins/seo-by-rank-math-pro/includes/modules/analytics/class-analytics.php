@@ -64,6 +64,11 @@ class Analytics {
 		if ( Helper::has_cap( 'analytics' ) ) {
 			$this->action( 'rank_math/admin_bar/items', 'admin_bar_items', 11 );
 			$this->action( 'rank_math_seo_details', 'post_column_search_traffic' );
+
+			if ( Helper::get_settings( 'general.analytics_stats' ) ) {
+				$this->action( 'wp_enqueue_scripts', 'enqueue' );
+				$this->filter( 'rank_math/analytics/post_data', 'add_index_verdict_data', 10, 2 );
+			}
 		}
 
 		Posts::get();
@@ -75,6 +80,27 @@ class Analytics {
 		new Ajax();
 		new Email_Reports();
 		new Url_Inspection();
+	}
+
+	/**
+	 * Change user perference.
+	 *
+	 * @param  array           $data array.
+	 * @param  WP_REST_Request $request post object.
+	 * @return array $data sorted array.
+	 */
+	public function add_index_verdict_data( $data, \WP_REST_Request $request ) {
+		$data['indexVerdict'] = strtolower( DB::get_index_verdict( $data['page'] ) );
+
+		return $data;
+	}
+
+	public function enqueue() {
+		$uri = untrailingslashit( plugin_dir_url( __FILE__ ) );
+		wp_enqueue_style( 'rank-math-analytics-pro-stats', $uri . '/assets/css/admin-bar.css', null, rank_math_pro()->version );
+		wp_enqueue_script( 'rank-math-analytics-pro-stats', $uri . '/assets/js/admin-bar.js', [ 'jquery', 'wp-data', 'wp-api-fetch', 'wp-components' ], rank_math_pro()->version, true );
+
+		Helper::add_json( 'dateFormat', get_option( 'date_format' ) );
 	}
 
 	/**

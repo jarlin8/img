@@ -612,4 +612,20 @@ class DB {
 
 		return $results;
 	}
+
+	/**
+	 * Get stats from DB for "Top Statuses" widget.
+	 */
+	public static function get_index_verdict( $page ) {
+		$verdict = self::inspections()
+			->select(
+				[
+					'index_verdict',
+				]
+			)
+			->where( 'page', '=', $page )
+			->one();
+		
+		return ! empty( $verdict ) ? current( $verdict ) : '';
+	}
 }

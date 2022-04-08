@@ -274,7 +274,7 @@ class Rest extends WP_REST_Controller {
 
 		$keywords_data = [];
 		foreach ( $focus_keywords as $focus_keyword ) {
-			$keywords = explode( ',', $focus_keyword );
+			$keywords = explode( ',', mb_strtolower( $focus_keyword ) );
 			if ( $secondary_keyword ) {
 				$keywords_data = array_merge( $keywords, $keywords_data );
 			} else {
@@ -297,6 +297,7 @@ class Rest extends WP_REST_Controller {
 	 */
 	public function add_track_keyword( WP_REST_Request $request ) {
 		$keywords = $request->get_param( 'keyword' );
+		$keywords = mb_strtolower( filter_var( $keywords, FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_FLAG_NO_ENCODE_QUOTES ) );
 		if ( empty( $keywords ) ) {
 			return new WP_Error(
 				'param_value_empty',
@@ -408,8 +409,6 @@ class Rest extends WP_REST_Controller {
 			);
 		}
 
-		$force = \boolval( $request->get_param( 'force' ) );
-
 		if ( Helper::is_localhost() ) {
 			return [
 				'page_score'          => 0,
@@ -426,7 +425,10 @@ class Rest extends WP_REST_Controller {
 		if ( false !== $pre ) {
 			return $pre;
 		}
-		if ( $force || $this->should_update_pagespeed( $id ) ) {
+
+		$force        = \boolval( $request->get_param( 'force' ) );
+		$is_admin_bar = \boolval( $request->get_param( 'isAdminBar' ) );
+		if ( $force || ( ! $is_admin_bar && $this->should_update_pagespeed( $id ) ) ) {
 			// Page Score.
 			$analyzer = new SEO_Analyzer();
 			$score    = $analyzer->get_page_score( $url );
