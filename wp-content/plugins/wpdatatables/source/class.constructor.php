@@ -1316,19 +1316,34 @@ class wpDataTableConstructor
     {
         $lowerSQLQuery = strtolower($this->_query);
         if (strpos($lowerSQLQuery, 'delete ') !== false ||
-            strpos($lowerSQLQuery, 'delete') !== false ||
+            strpos($lowerSQLQuery, 'delete/*') !== false ||
+            strpos($lowerSQLQuery, 'delete--') !== false ||
+            strpos($lowerSQLQuery, 'delete#') !== false ||
             strpos($lowerSQLQuery, 'update ') !== false ||
-            strpos($lowerSQLQuery, 'update') !== false ||
+            strpos($lowerSQLQuery, 'update/*') !== false ||
+            strpos($lowerSQLQuery, 'update--') !== false ||
+            strpos($lowerSQLQuery, 'update#') !== false ||
             strpos($lowerSQLQuery, 'insert ') !== false ||
-            strpos($lowerSQLQuery, 'insert') !== false ||
+            strpos($lowerSQLQuery, 'insert#') !== false ||
+            strpos($lowerSQLQuery, 'insert/*') !== false ||
+            strpos($lowerSQLQuery, 'insert--') !== false ||
+            strpos($lowerSQLQuery, 'insert#') !== false ||
             strpos($lowerSQLQuery, 'drop ') !== false ||
-            strpos($lowerSQLQuery, 'drop') !== false ||
+            strpos($lowerSQLQuery, 'drop/*') !== false ||
+            strpos($lowerSQLQuery, 'drop--') !== false ||
+            strpos($lowerSQLQuery, 'drop#') !== false ||
             strpos($lowerSQLQuery, 'truncate ') !== false ||
-            strpos($lowerSQLQuery, 'truncate') !== false ||
+            strpos($lowerSQLQuery, 'truncate/*') !== false ||
+            strpos($lowerSQLQuery, 'truncate--') !== false ||
+            strpos($lowerSQLQuery, 'truncate#') !== false ||
             strpos($lowerSQLQuery, 'create ') !== false ||
-            strpos($lowerSQLQuery, 'create') !== false ||
+            strpos($lowerSQLQuery, 'create/*') !== false ||
+            strpos($lowerSQLQuery, 'create--') !== false ||
+            strpos($lowerSQLQuery, 'create#') !== false ||
             strpos($lowerSQLQuery, 'alter ') !== false ||
-            strpos($lowerSQLQuery, 'alter') !== false)
+            strpos($lowerSQLQuery, 'alter--') !== false ||
+            strpos($lowerSQLQuery, 'alter#') !== false ||
+            strpos($lowerSQLQuery, 'alter/*') !== false)
             return __('<div class="alert alert-danger"><i class="wpdt-icon-exclamation-triangle"></i>No results found. Please check if this query is correct and DOES NOT contain SQL reserved words! Table Constructor needs a query that returns data to build a wpDataTable.', 'wpdatatables');
 
         if (Connection::isSeparate($connection)) {

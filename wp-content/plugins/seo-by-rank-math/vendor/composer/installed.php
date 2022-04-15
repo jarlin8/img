@@ -5,7 +5,7 @@
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '0632aeedf85f1bee505adbb9cc92eff94f466785',
+        'reference' => 'ba7eaf5248a96b44706a6d4e3e9c9aca06634017',
         'name' => 'rankmath/seo-by-rank-math',
         'dev' => true,
     ),
@@ -52,7 +52,7 @@
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '0632aeedf85f1bee505adbb9cc92eff94f466785',
+            'reference' => 'ba7eaf5248a96b44706a6d4e3e9c9aca06634017',
             'dev_requirement' => false,
         ),
         'woocommerce/action-scheduler' => array(

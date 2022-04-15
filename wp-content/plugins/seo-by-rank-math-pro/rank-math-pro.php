@@ -9,10 +9,10 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Rank Math SEO PRO
- * Version:           3.0.10
+ * Version:           3.0.10.1
  * Plugin URI:        https://rankmath.com/wordpress/plugin/seo-suite/
  * Secret Key:        83a5bb0e2ad5164690bc7a42ae592cf5
- * Description:       Super-charge your website’s SEO with the Rank Math PRO options like Site Analytics, SEO Performance, Custom Schema Templates, News/Video Sitemaps, etc.
+ * Description:       Super-charge your website's SEO with the Rank Math PRO options like Site Analytics, SEO Performance, Custom Schema Templates, News/Video Sitemaps, etc.
  * Author:            Rank Math
  * Author URI:        https://s.rankmath.com/pro
  * License:           GPL-2.0+
@@ -33,7 +33,7 @@ update_option( 'rank_math_connect_data', [
      'username'  => 'Rank-Math-Pro',
      'email'     => 'activated@rankmath.com',
      'api_key'   => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-     'plan'      => 'agency',
+     'plan'      => 'business',
      'connected' => true,
 ] );
 update_option( 'rank_math_registration_skip', 1 );
@@ -47,8 +47,8 @@ add_action( 'init', function() {
                          'response' => [ 'code' => 200, 'message' => 'OK' ],
                          'body'     => json_encode( [
                               'error' => '',
-                              'plan'  => 'agency',
-                              'keywords' => get_option( 'rank_math_keyword_quota', [ 'available' => 50000, 'taken' => 0 ] ),
+                              'plan'  => 'business',
+                              'keywords' => get_option( 'rank_math_keyword_quota', [ 'available' => 25000, 'taken' => 0 ] ),
                               'analytics' => 'on',
                          ] ),
                      ];
@@ -56,7 +56,7 @@ add_action( 'init', function() {
                     if ( isset( $parsed_args['body']['count'] ) ) {
                          return [
                               'response' => [ 'code' => 200, 'message' => 'OK' ],
-                              'body'     => json_encode( [ 'available' => 50000, 'taken' => $parsed_args['body']['count'] ] ),
+                              'body'     => json_encode( [ 'available' => 25000, 'taken' => $parsed_args['body']['count'] ] ),
                          ];
                     }
 
@@ -79,14 +79,14 @@ final class RankMathPro {
 	 *
 	 * @var string
 	 */
-	public $version = '3.0.10';
+	public $version = '3.0.10.1';
 
 	/**
 	 * Minimum version of Rank Math SEO.
 	 *
 	 * @var string
 	 */
-	public $rank_math_min_version = '1.0.86';
+	public $rank_math_min_version = '1.0.86.2';
 
 	/**
 	 * Holds various class instances

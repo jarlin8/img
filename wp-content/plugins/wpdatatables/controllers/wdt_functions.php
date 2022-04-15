@@ -891,19 +891,33 @@ function wdtCurrentUserCanEdit($tableEditorRoles, $id) {
  */
 function wdtSanitizeQuery($query) {
     $query = str_replace('DELETE', '', $query);
-    $query = str_replace('delete', '', $query);
+    $query = str_replace('DELETE ', '', $query);
+    $query = str_replace(' DELETE ', '', $query);
+    $query = str_replace(' delete ', '', $query);
     $query = str_replace('DROP', '', $query);
-    $query = str_replace('drop', '', $query);
+    $query = str_replace('DROP ', '', $query);
+    $query = str_replace(' DROP ', '', $query);
+    $query = str_replace(' drop ', '', $query);
     $query = str_replace('INSERT', '', $query);
-    $query = str_replace('insert', '', $query);
+    $query = str_replace('INSERT ', '', $query);
+    $query = str_replace(' INSERT ', '', $query);
+    $query = str_replace(' insert ', '', $query);
     $query = str_replace('UPDATE', '', $query);
-    $query = str_replace('update', '', $query);
+    $query = str_replace('UPDATE ', '', $query);
+    $query = str_replace(' UPDATE ', '', $query);
+    $query = str_replace(' update ', '', $query);
     $query = str_replace('TRUNCATE', '', $query);
-    $query = str_replace('truncate', '', $query);
+    $query = str_replace('TRUNCATE ', '', $query);
+    $query = str_replace(' TRUNCATE ', '', $query);
+    $query = str_replace(' truncate ', '', $query);
     $query = str_replace('CREATE', '', $query);
-    $query = str_replace('create', '', $query);
+    $query = str_replace('CREATE ', '', $query);
+    $query = str_replace(' CREATE ', '', $query);
+    $query = str_replace(' create ', '', $query);
     $query = str_replace('ALTER', '', $query);
-    $query = str_replace('alter', '', $query);
+    $query = str_replace('ALTER ', '', $query);
+    $query = str_replace(' ALTER ', '', $query);
+    $query = str_replace(' alter ', '', $query);
     $query = stripslashes($query);
 
     $query = apply_filters('wpdt_sanitize_query',$query);

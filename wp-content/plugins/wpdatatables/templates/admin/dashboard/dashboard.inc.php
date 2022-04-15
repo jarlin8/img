@@ -263,16 +263,15 @@
                                  </span>
                         </p>
                         <p class="wpdt-text wpdt-font m-b-18">
-                            New update with new feature, improvements, and bug fixes:
+                            New update with bug fixes:
                         </p>
                         <div class="alert alert-info m-b-0" role="alert">
                             <i class="wpdt-icon-info-circle-full"></i>
                             <ul>
-                                <li><strong>Feature:</strong> Added new shortcode parameter for calculation functions to show only value.</li>
-                                <li><strong>Improvement:</strong> Improved sanitizing user data.</li>
-                                <li><strong>BugFix:</strong> Fixed issue with merge cells from context menu.</li>
-                                <li><strong>BugFix:</strong> Fixed issue with showing filters for large tables when Display length is All.</li>
-                                <li><strong>BugFix:</strong> Fixed issue with conditional formatting for int/float columns.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with conditional formatting for int or float column when responsive is turned on for first column in table.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with loading tables with SQL queries.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with inserting spaces for column prefix and suffix.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with title in filter in widget shown as HTML.</li>
                                 <li>Other small bug fixes</li>
                             </ul>
                         </div>

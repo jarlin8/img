@@ -96,6 +96,10 @@ class Analytics {
 	}
 
 	public function enqueue() {
+		if ( ! Authentication::is_authorized() || ! \RankMath\Google\Console::is_console_connected() ) {
+			return;
+		}
+
 		$uri = untrailingslashit( plugin_dir_url( __FILE__ ) );
 		wp_enqueue_style( 'rank-math-analytics-pro-stats', $uri . '/assets/css/admin-bar.css', null, rank_math_pro()->version );
 		wp_enqueue_script( 'rank-math-analytics-pro-stats', $uri . '/assets/js/admin-bar.js', [ 'jquery', 'wp-data', 'wp-api-fetch', 'wp-components' ], rank_math_pro()->version, true );
