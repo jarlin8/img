@@ -268,7 +268,9 @@ class Hooks {
 			Main::enqueue_scripts();
 
 			foreach ( Woocommerce::get_woo_styles() as $handle => $src ) {
-				wp_enqueue_style( $handle, $src );
+				$media = strpos( $handle, 'smallscreen' ) === false ? 'all' : 'only screen and (max-width: 768px)';
+
+				wp_enqueue_style( $handle, $src, [], false, $media );
 			}
 		}
 	}

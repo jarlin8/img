@@ -965,7 +965,7 @@ msgstr ""
 msgid "State:"
 msgstr ""
 
-#: ../inc/backbone/element-states.phtml:5, ../inc/backbone/element-states.phtml:14, ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:69
+#: ../inc/backbone/element-states.phtml:5, ../inc/backbone/element-states.phtml:14, ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:69, ../inc/backbone/controls/contact-form/edit-cf-item.phtml:50
 msgid "Normal"
 msgstr ""
 
@@ -989,28 +989,148 @@ msgstr ""
 msgid "Element does not have cloud templates"
 msgstr ""
 
+#: ../inc/classes/class-tcb-contact-form.php:101
+msgid "ERROR: Empty Config"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:112
+msgid "ERROR: Invalid Config"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:118
+msgid "ERROR: Security Warning"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:145
+msgid "Please create a Zapier API connection"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:190
+msgid "Ups, we encountered some issues, please try again later!"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:186
+msgid "Invalid reCAPTCHA!"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:177
+msgid "The posted data is completely empty!"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:279
+msgid "[%s] Contact Form submission confirmation"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:412, ../inc/classes/conditional-display/fields/time/class-current-date.php:32
+msgid "Date"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:413, ../inc/menu/countdown.php:41, ../inc/menu/countdownevergreen.php:23, ../inc/menu/countdown_old.php:28, ../inc/classes/conditional-display/fields/time/class-current-time.php:32
+msgid "Time"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:482, ../inc/classes/class-tcb-contact-form.php:485, ../inc/classes/class-tcb-custom-fields-shortcode.php:150, ../inc/views/elements/contact_form.php:17
+msgid "First Name"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:486, ../inc/classes/class-tcb-custom-fields-shortcode.php:152
+msgid "John"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:490
+msgid "Invalid First Name"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:493, ../inc/classes/class-tcb-contact-form.php:497, ../inc/classes/class-tcb-custom-fields-shortcode.php:155
+msgid "Last Name"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:498, ../inc/classes/class-tcb-custom-fields-shortcode.php:157
+msgid "Doe"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:501
+msgid "Invalid Last Name"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:504, ../inc/classes/class-tcb-contact-form.php:508
+msgid "Full Name"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:509
+msgid "John Doe"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:512
+msgid "Invalid Full Name"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:515, ../inc/classes/class-tcb-contact-form.php:519, ../inc/views/elements/contact_form.php:25
+msgid "Email Address"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:520
+msgid "j.doe@inbox.com"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:523
+msgid "Invalid Email"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:526, ../inc/classes/class-tcb-contact-form.php:530, ../inc/views/elements/contact_form.php:33, ../inc/backbone/lead-generation/apis/email-extra/settings.phtml:2
+msgid "Message"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:531
+msgid "Type your message here..."
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:533
+msgid "Invalid Message"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:536, ../inc/classes/class-tcb-contact-form.php:540
+msgid "Phone Number"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:541
+msgid "+1 555 2368"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:544
+msgid "Invalid Phone"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:547, ../inc/classes/class-tcb-contact-form.php:551
+msgid "Website"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:552
+msgid "https://yourwebsite.com/"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:555
+msgid "Invalid URL"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:558
+msgid "Recaptcha"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:562, ../inc/classes/class-tcb-contact-form.php:563
+msgid "ReCaptcha"
+msgstr ""
+
+#: ../inc/classes/class-tcb-contact-form.php:566
+msgid "Invalid reCAPTCHA"
+msgstr ""
+
 #: ../inc/classes/class-tcb-content-handler.php:62
 msgid "Could not open the archive file"
 msgstr ""
 
 #: ../inc/classes/class-tcb-custom-fields-shortcode.php:145, ../inc/classes/class-tcb-custom-fields-shortcode.php:147, ../inc/classes/conditional-display/fields/user/class-user-id.php:32
 msgid "Username"
-msgstr ""
-
-#: ../inc/classes/class-tcb-custom-fields-shortcode.php:150
-msgid "First Name"
-msgstr ""
-
-#: ../inc/classes/class-tcb-custom-fields-shortcode.php:152
-msgid "John"
-msgstr ""
-
-#: ../inc/classes/class-tcb-custom-fields-shortcode.php:155
-msgid "Last Name"
-msgstr ""
-
-#: ../inc/classes/class-tcb-custom-fields-shortcode.php:157
-msgid "Doe"
 msgstr ""
 
 #: ../inc/classes/class-tcb-custom-fields-shortcode.php:1133
@@ -1297,7 +1417,7 @@ msgstr ""
 msgid "Group styling active. The same styling will be applied to similar elements."
 msgstr ""
 
-#: ../inc/classes/class-tcb-element-abstract.php:822, ../inc/classes/elements/class-tcb-credit-element.php:99, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:98, ../inc/classes/elements/class-tcb-rating-element.php:87, ../inc/classes/elements/class-tcb-social-element.php:93, ../inc/views/actions/tooltip.php:12, ../inc/backbone/controls/decoration/divider.phtml:4, ../inc/classes/elements/countdown/class-tcb-countdown-old-element.php:77, ../inc/classes/elements/countdown/class-tcb-countdownevergreen-element.php:75
+#: ../inc/classes/class-tcb-element-abstract.php:822, ../inc/classes/elements/class-tcb-credit-element.php:99, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:98, ../inc/classes/elements/class-tcb-rating-element.php:87, ../inc/classes/elements/class-tcb-social-element.php:93, ../inc/views/actions/tooltip.php:12, ../inc/backbone/controls/contact-form/edit-cf-item.phtml:57, ../inc/backbone/controls/decoration/divider.phtml:4, ../inc/classes/elements/countdown/class-tcb-countdown-old-element.php:77, ../inc/classes/elements/countdown/class-tcb-countdownevergreen-element.php:75
 msgid "Style"
 msgstr ""
 
@@ -1373,27 +1493,27 @@ msgstr ""
 msgid "Exit Group Styling"
 msgstr ""
 
-#: ../inc/classes/class-tcb-login-element-handler.php:411
+#: ../inc/classes/class-tcb-login-element-handler.php:411, ../inc/classes/elements/class-tcb-contact-form-element.php:174
 msgid "Grouped Form Items"
 msgstr ""
 
-#: ../inc/classes/class-tcb-login-element-handler.php:412
+#: ../inc/classes/class-tcb-login-element-handler.php:412, ../inc/classes/elements/class-tcb-contact-form-element.php:175
 msgid "-- Form Item %s"
 msgstr ""
 
-#: ../inc/classes/class-tcb-login-element-handler.php:417
+#: ../inc/classes/class-tcb-login-element-handler.php:417, ../inc/classes/elements/class-tcb-contact-form-element.php:180
 msgid "Grouped Inputs"
 msgstr ""
 
-#: ../inc/classes/class-tcb-login-element-handler.php:418, ../inc/classes/elements/class-tcb-lead-generation-element.php:242
+#: ../inc/classes/class-tcb-login-element-handler.php:418, ../inc/classes/elements/class-tcb-contact-form-element.php:181, ../inc/classes/elements/class-tcb-lead-generation-element.php:242
 msgid "-- Input %s"
 msgstr ""
 
-#: ../inc/classes/class-tcb-login-element-handler.php:423
+#: ../inc/classes/class-tcb-login-element-handler.php:423, ../inc/classes/elements/class-tcb-contact-form-element.php:186
 msgid "Grouped Labels"
 msgstr ""
 
-#: ../inc/classes/class-tcb-login-element-handler.php:424, ../inc/classes/class-tcb-login-element-handler.php:490, ../inc/classes/elements/class-tcb-lead-generation-element.php:236
+#: ../inc/classes/class-tcb-login-element-handler.php:424, ../inc/classes/class-tcb-login-element-handler.php:490, ../inc/classes/elements/class-tcb-contact-form-element.php:187, ../inc/classes/elements/class-tcb-lead-generation-element.php:236
 msgid "-- Label %s"
 msgstr ""
 
@@ -1703,7 +1823,7 @@ msgstr ""
 msgid "Invalid file configuration"
 msgstr ""
 
-#: ../inc/menu/audio.php:15, ../inc/menu/block.php:15, ../inc/menu/button.php:16, ../inc/menu/cell.php:16, ../inc/menu/click-tweet.php:16, ../inc/menu/column.php:16, ../inc/menu/columns.php:16, ../inc/menu/commentsdisqus.php:15, ../inc/menu/commentsfacebook.php:15, ../inc/menu/contentblock.php:16, ../inc/menu/contentbox.php:16, ../inc/menu/countdown.php:24, ../inc/menu/countdownevergreen.php:16, ../inc/menu/countdown_digit.php:3, ../inc/menu/countdown_old.php:18, ../inc/menu/countdown_separator.php:3, ../inc/menu/credit.php:15, ../inc/menu/ct_symbol.php:15, ../inc/menu/divider.php:15, ../inc/menu/dynamic_dropdown.php:14, ../inc/menu/fillcounter.php:15, ../inc/menu/footer.php:15, ../inc/menu/gmap.php:16, ../inc/menu/header.php:16, ../inc/menu/html.php:15, ../inc/menu/icon.php:15, ../inc/menu/image.php:15, ../inc/menu/image_caption.php:16, ../inc/menu/image_carousel_arrows.php:15, ../inc/menu/image_carousel_dots.php:15, ../inc/menu/image_gallery.php:15, ../inc/menu/landing_page.php:15, ../inc/menu/lead_generation.php:14, ../inc/menu/lead_generation_checkbox.php:14, ../inc/menu/lead_generation_checkbox_option.php:14, ../inc/menu/lead_generation_file.php:14, ../inc/menu/lead_generation_gdpr.php:14, ../inc/menu/lead_generation_input.php:14, ../inc/menu/lead_generation_radio.php:14, ../inc/menu/lead_generation_radio_option.php:14, ../inc/menu/lead_generation_recaptcha.php:14, ../inc/menu/lead_generation_select.php:14, ../inc/menu/lead_generation_select_option.php:14, ../inc/menu/lead_generation_submit.php:14, ../inc/menu/lead_generation_textarea.php:14, ../inc/menu/link.php:16, ../inc/menu/login.php:15, ../inc/menu/login_form.php:8, ../inc/menu/login_form_input.php:9, ../inc/menu/megamenu_column.php:15, ../inc/menu/megamenu_dropdown.php:15, ../inc/menu/megamenu_image.php:14, ../inc/menu/megamenu_item.php:15, ../inc/menu/menu.php:22, ../inc/menu/menu_item.php:15, ../inc/menu/menu_item_image.php:13, ../inc/menu/notification_message.php:3, ../inc/menu/numberedlist.php:15, ../inc/menu/number_counter.php:15, ../inc/menu/pagination_button.php:17, ../inc/menu/pagination_label.php:15, ../inc/menu/postgrid.php:15, ../inc/menu/pricing_table.php:14, ../inc/menu/progressbar.php:16, ../inc/menu/progressbar_old.php:16, ../inc/menu/progress_line.php:16, ../inc/menu/rating.php:13, ../inc/menu/registration_form.php:14, ../inc/menu/responsivevideo.php:16, ../inc/menu/reveal.php:15, ../inc/menu/search_form.php:8, ../inc/menu/search_form_input.php:8, ../inc/menu/section.php:16, ../inc/menu/social.php:13, ../inc/menu/social_follow.php:13, ../inc/menu/social_follow_item.php:15, ../inc/menu/social_share_button.php:15, ../inc/menu/styledlist.php:15, ../inc/menu/submit_button.php:16, ../inc/menu/symbol.php:15, ../inc/menu/table.php:16, ../inc/menu/tabs.php:16, ../inc/menu/tabs_old.php:16, ../inc/menu/tab_image.php:3, ../inc/menu/tab_item.php:15, ../inc/menu/text.php:16, ../inc/menu/toc.php:15, ../inc/menu/toc_bullet.php:3, ../inc/menu/toc_heading.php:3, ../inc/menu/toc_number.php:3, ../inc/menu/toc_old.php:15, ../inc/menu/toc_title.php:3, ../inc/menu/toggle.php:16, ../inc/menu/toggle_old.php:16, ../inc/menu/toggle_title.php:16, ../inc/menu/up_input.php:10, ../inc/menu/up_item.php:10, ../inc/menu/user_profile.php:10, ../inc/menu/video_cover.php:14, ../inc/menu/wordpress.php:15, ../inc/views/notifications/components/notification.php:14
+#: ../inc/menu/audio.php:15, ../inc/menu/block.php:15, ../inc/menu/button.php:16, ../inc/menu/cell.php:16, ../inc/menu/click-tweet.php:16, ../inc/menu/column.php:16, ../inc/menu/columns.php:16, ../inc/menu/commentsdisqus.php:15, ../inc/menu/commentsfacebook.php:15, ../inc/menu/contact_form.php:14, ../inc/menu/contact_form_submit.php:14, ../inc/menu/contentblock.php:16, ../inc/menu/contentbox.php:16, ../inc/menu/countdown.php:24, ../inc/menu/countdownevergreen.php:16, ../inc/menu/countdown_digit.php:3, ../inc/menu/countdown_old.php:18, ../inc/menu/countdown_separator.php:3, ../inc/menu/credit.php:15, ../inc/menu/ct_symbol.php:15, ../inc/menu/divider.php:15, ../inc/menu/dynamic_dropdown.php:14, ../inc/menu/fillcounter.php:15, ../inc/menu/footer.php:15, ../inc/menu/form_submit.php:14, ../inc/menu/gmap.php:16, ../inc/menu/header.php:16, ../inc/menu/html.php:15, ../inc/menu/icon.php:15, ../inc/menu/image.php:15, ../inc/menu/image_caption.php:16, ../inc/menu/image_carousel_arrows.php:15, ../inc/menu/image_carousel_dots.php:15, ../inc/menu/image_gallery.php:15, ../inc/menu/landing_page.php:15, ../inc/menu/lead_generation.php:14, ../inc/menu/lead_generation_checkbox.php:14, ../inc/menu/lead_generation_checkbox_option.php:14, ../inc/menu/lead_generation_file.php:14, ../inc/menu/lead_generation_gdpr.php:14, ../inc/menu/lead_generation_input.php:14, ../inc/menu/lead_generation_radio.php:14, ../inc/menu/lead_generation_radio_option.php:14, ../inc/menu/lead_generation_recaptcha.php:14, ../inc/menu/lead_generation_select.php:14, ../inc/menu/lead_generation_select_option.php:14, ../inc/menu/lead_generation_submit.php:14, ../inc/menu/lead_generation_textarea.php:14, ../inc/menu/link.php:16, ../inc/menu/login.php:15, ../inc/menu/login_form.php:8, ../inc/menu/login_form_input.php:9, ../inc/menu/megamenu_column.php:15, ../inc/menu/megamenu_dropdown.php:15, ../inc/menu/megamenu_image.php:14, ../inc/menu/megamenu_item.php:15, ../inc/menu/menu.php:22, ../inc/menu/menu_item.php:15, ../inc/menu/menu_item_image.php:13, ../inc/menu/notification_message.php:3, ../inc/menu/numberedlist.php:15, ../inc/menu/number_counter.php:15, ../inc/menu/pagination_button.php:17, ../inc/menu/pagination_label.php:15, ../inc/menu/postgrid.php:15, ../inc/menu/pricing_table.php:14, ../inc/menu/progressbar.php:16, ../inc/menu/progressbar_old.php:16, ../inc/menu/progress_line.php:16, ../inc/menu/rating.php:13, ../inc/menu/registration_form.php:14, ../inc/menu/responsivevideo.php:16, ../inc/menu/reveal.php:15, ../inc/menu/search_form.php:8, ../inc/menu/search_form_input.php:8, ../inc/menu/section.php:16, ../inc/menu/social.php:13, ../inc/menu/social_follow.php:13, ../inc/menu/social_follow_item.php:15, ../inc/menu/social_share_button.php:15, ../inc/menu/styledlist.php:15, ../inc/menu/submit_button.php:16, ../inc/menu/symbol.php:15, ../inc/menu/table.php:16, ../inc/menu/tabs.php:16, ../inc/menu/tabs_old.php:16, ../inc/menu/tab_image.php:3, ../inc/menu/tab_item.php:15, ../inc/menu/text.php:16, ../inc/menu/toc.php:15, ../inc/menu/toc_bullet.php:3, ../inc/menu/toc_heading.php:3, ../inc/menu/toc_number.php:3, ../inc/menu/toc_old.php:15, ../inc/menu/toc_title.php:3, ../inc/menu/toggle.php:16, ../inc/menu/toggle_old.php:16, ../inc/menu/toggle_title.php:16, ../inc/menu/up_input.php:10, ../inc/menu/up_item.php:10, ../inc/menu/user_profile.php:10, ../inc/menu/video_cover.php:14, ../inc/menu/wordpress.php:15, ../inc/views/notifications/components/notification.php:14
 msgid "Main Options"
 msgstr ""
 
@@ -1735,6 +1855,34 @@ msgstr ""
 msgid "This only works if you are friends on Facebook with the moderator(s)"
 msgstr ""
 
+#: ../inc/menu/contact_form.php:19
+msgid "Form Fields"
+msgstr ""
+
+#: ../inc/menu/contact_form.php:22, ../inc/backbone/controls/pricing-table/price-instance-controls.phtml:19
+msgid "ADD NEW"
+msgstr ""
+
+#: ../inc/menu/contact_form.php:36
+msgid "Comma-separated lists of tags"
+msgstr ""
+
+#: ../inc/menu/contact_form.php:44, ../inc/backbone/modals/cf-settings.php:2, ../inc/backbone/controls/contact-form/settings.phtml:5
+msgid "Email & after submit setup"
+msgstr ""
+
+#: ../inc/menu/contact_form.php:51, ../inc/menu/general.php:40, ../inc/menu/general.php:114, ../inc/menu/image_caption.php:47, ../inc/menu/lead_generation.php:113, ../inc/menu/login.php:94, ../inc/menu/progressbar.php:48, ../inc/menu/registration_form.php:61, ../inc/menu/table.php:48, ../inc/menu/tabs_old.php:38, ../inc/menu/text.php:44, ../inc/backbone/controls/audio.phtml:15, ../inc/backbone/controls/layout.phtml:37, ../inc/backbone/controls/responsive-video-settings.phtml:154
+msgid "Advanced"
+msgstr ""
+
+#: ../inc/menu/contact_form.php:56, ../inc/menu/lead_generation.php:128, ../inc/menu/registration_form.php:76, ../inc/menu/user_profile.php:48
+msgid "Edit error messages"
+msgstr ""
+
+#: ../inc/menu/contact_form_submit.php:21, ../inc/menu/form_submit.php:21, ../inc/menu/lead_generation_input.php:22, ../inc/menu/lead_generation_submit.php:21, ../inc/menu/login_form_input.php:16
+msgid "Remove Input Icon"
+msgstr ""
+
 #: ../inc/menu/contentbox.php:25
 msgid "Add link to Content Box"
 msgstr ""
@@ -1749,10 +1897,6 @@ msgstr ""
 
 #: ../inc/menu/countdown.php:32, ../inc/menu/image_gallery.php:28, ../inc/menu/social.php:19, ../inc/menu/social_follow.php:19, ../inc/menu/user_profile.php:16, ../inc/menu/widget.php:23, ../inc/views/notifications/components/notification.php:20
 msgid "Edit design"
-msgstr ""
-
-#: ../inc/menu/countdown.php:41, ../inc/menu/countdownevergreen.php:23, ../inc/menu/countdown_old.php:28, ../inc/classes/conditional-display/fields/time/class-current-time.php:32
-msgid "Time"
 msgstr ""
 
 #: ../inc/menu/countdown.php:61, ../inc/menu/countdown_old.php:36
@@ -1837,10 +1981,6 @@ msgstr ""
 
 #: ../inc/menu/general.php:35
 msgid "Add display"
-msgstr ""
-
-#: ../inc/menu/general.php:40, ../inc/menu/general.php:114, ../inc/menu/image_caption.php:47, ../inc/menu/lead_generation.php:113, ../inc/menu/login.php:94, ../inc/menu/progressbar.php:48, ../inc/menu/registration_form.php:61, ../inc/menu/table.php:48, ../inc/menu/tabs_old.php:38, ../inc/menu/text.php:44, ../inc/backbone/controls/audio.phtml:15, ../inc/backbone/controls/layout.phtml:37, ../inc/backbone/controls/responsive-video-settings.phtml:154
-msgid "Advanced"
 msgstr ""
 
 #: ../inc/menu/general.php:60
@@ -2095,10 +2235,6 @@ msgstr ""
 msgid "Requires integration with Google ReCaptcha"
 msgstr ""
 
-#: ../inc/menu/lead_generation.php:128, ../inc/menu/registration_form.php:76, ../inc/menu/user_profile.php:48
-msgid "Edit error messages"
-msgstr ""
-
 #: ../inc/menu/lead_generation_checkbox.php:27, ../inc/menu/lead_generation_radio.php:27
 msgid "Options"
 msgstr ""
@@ -2117,10 +2253,6 @@ msgstr ""
 
 #: ../inc/menu/lead_generation_file.php:20
 msgid "Edit File Upload"
-msgstr ""
-
-#: ../inc/menu/lead_generation_input.php:22, ../inc/menu/lead_generation_submit.php:21, ../inc/menu/login_form_input.php:16
-msgid "Remove Input Icon"
 msgstr ""
 
 #: ../inc/menu/lead_generation_select.php:32
@@ -2415,11 +2547,11 @@ msgstr ""
 msgid "Display location"
 msgstr ""
 
-#: ../inc/menu/social.php:50, ../inc/classes/elements/class-tcb-button-element.php:88, ../inc/classes/elements/class-tcb-lead-generation-input-element.php:61, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:44, ../inc/classes/elements/class-tcb-login-form-input-element.php:60, ../inc/classes/elements/class-tcb-logo-element.php:80, ../inc/classes/elements/class-tcb-search-form-element.php:130, ../inc/classes/elements/class-tcb-user-profile-element.php:93, ../inc/classes/elements/user-profile/class-tcb-user-profile-item-element.php:42, ../inc/classes/notifications/elements/class-notifications-content-wrapper.php:139
+#: ../inc/menu/social.php:50, ../inc/classes/elements/class-tcb-button-element.php:88, ../inc/classes/elements/class-tcb-contact-form-submit-element.php:50, ../inc/classes/elements/class-tcb-form-submit-element.php:54, ../inc/classes/elements/class-tcb-lead-generation-input-element.php:61, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:44, ../inc/classes/elements/class-tcb-login-form-input-element.php:60, ../inc/classes/elements/class-tcb-logo-element.php:80, ../inc/classes/elements/class-tcb-search-form-element.php:130, ../inc/classes/elements/class-tcb-user-profile-element.php:93, ../inc/classes/elements/user-profile/class-tcb-user-profile-item-element.php:42, ../inc/classes/notifications/elements/class-notifications-content-wrapper.php:139
 msgid "Left"
 msgstr ""
 
-#: ../inc/menu/social.php:51, ../inc/classes/elements/class-tcb-button-element.php:89, ../inc/classes/elements/class-tcb-lead-generation-input-element.php:65, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:48, ../inc/classes/elements/class-tcb-login-form-input-element.php:64, ../inc/classes/elements/class-tcb-logo-element.php:84, ../inc/classes/elements/class-tcb-search-form-element.php:135, ../inc/classes/notifications/elements/class-notifications-content-wrapper.php:135
+#: ../inc/menu/social.php:51, ../inc/classes/elements/class-tcb-button-element.php:89, ../inc/classes/elements/class-tcb-contact-form-submit-element.php:54, ../inc/classes/elements/class-tcb-form-submit-element.php:58, ../inc/classes/elements/class-tcb-lead-generation-input-element.php:65, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:48, ../inc/classes/elements/class-tcb-login-form-input-element.php:64, ../inc/classes/elements/class-tcb-logo-element.php:84, ../inc/classes/elements/class-tcb-search-form-element.php:135, ../inc/classes/notifications/elements/class-notifications-content-wrapper.php:135
 msgid "Right"
 msgstr ""
 
@@ -2913,6 +3045,94 @@ msgstr ""
 
 #: ../inc/backbone/conditional-display/sidebar-group-item.phtml:8
 msgid "displays"
+msgstr ""
+
+#: ../inc/backbone/contact-form/email-setup-form.phtml:1
+msgid "Where do you want to receive your messages?"
+msgstr ""
+
+#: ../inc/backbone/contact-form/email-setup-form.phtml:4
+msgid "To (email):"
+msgstr ""
+
+#: ../inc/backbone/contact-form/email-setup-form.phtml:10
+msgid "Subject:"
+msgstr ""
+
+#: ../inc/backbone/contact-form/email-setup-form.phtml:19
+msgid "CC:"
+msgstr ""
+
+#: ../inc/backbone/contact-form/email-setup-form.phtml:23, ../inc/backbone/contact-form/email-setup-form.phtml:31
+msgid "You can add multiple emails separated by commas"
+msgstr ""
+
+#: ../inc/backbone/contact-form/email-setup-form.phtml:27
+msgid "BCC:"
+msgstr ""
+
+#: ../inc/backbone/contact-form/email-setup-form.phtml:36
+msgid "Add more recipients"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:4
+msgid "Reload page"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:8
+msgid "Redirect to custom URL"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:12
+msgid "Show success notification"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:19
+msgid "Insert the url where you want user to be redirected"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:23
+msgid "Insert the notification text which will appear when the Contact Form will be sent"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:26, ../inc/classes/notifications/elements/class-notifications-content-wrapper.php:28
+msgid "Notification"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:31
+msgid "Send confirmation email to user"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:43
+msgid "Subject"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:47
+msgid "Add shortcodes:"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:55
+msgid "Would you like to personalize the Sender Details?"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:63, ../inc/views/modals/email-settings.php:41
+msgid "From name"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:66
+msgid "From Name:"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:70, ../inc/views/modals/email-settings.php:46
+msgid "From email"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:73
+msgid "From Email:"
+msgstr ""
+
+#: ../inc/backbone/contact-form/submit-setup-form.phtml:77
+msgid "Reply-To"
 msgstr ""
 
 #: ../inc/backbone/content-blocks/favorites.php:1
@@ -3551,15 +3771,15 @@ msgstr ""
 msgid "No lists available. Add a new API from API's dashboard or choose another API connection."
 msgstr ""
 
-#: ../inc/backbone/login/edit-form-label.phtml:4, ../inc/backbone/controls/lead-generation/edit-option.phtml:2
+#: ../inc/backbone/login/edit-form-label.phtml:4, ../inc/backbone/controls/contact-form/edit-cf-item.phtml:22, ../inc/backbone/controls/lead-generation/edit-option.phtml:2
 msgid "Label"
 msgstr ""
 
-#: ../inc/backbone/login/edit-form-label.phtml:12, ../inc/classes/elements/class-tcb-lead-generation-input-element.php:42, ../inc/classes/elements/class-tcb-lead-generation-textarea-element.php:48, ../inc/classes/elements/class-tcb-login-form-input-element.php:71, ../inc/classes/elements/class-tcb-search-form-input-element.php:77, ../inc/backbone/controls/lead-generation/edit-field.phtml:24
+#: ../inc/backbone/login/edit-form-label.phtml:12, ../inc/classes/elements/class-tcb-lead-generation-input-element.php:42, ../inc/classes/elements/class-tcb-lead-generation-textarea-element.php:48, ../inc/classes/elements/class-tcb-login-form-input-element.php:71, ../inc/classes/elements/class-tcb-search-form-input-element.php:77, ../inc/backbone/controls/contact-form/edit-cf-item.phtml:30, ../inc/backbone/controls/lead-generation/edit-field.phtml:24
 msgid "Placeholder"
 msgstr ""
 
-#: ../inc/backbone/login/edit-form-label.phtml:19, ../inc/backbone/controls/lead-generation/edit-field.phtml:32
+#: ../inc/backbone/login/edit-form-label.phtml:19, ../inc/backbone/controls/contact-form/edit-cf-item.phtml:38, ../inc/backbone/controls/lead-generation/edit-field.phtml:32
 msgid "Required"
 msgstr ""
 
@@ -3569,10 +3789,6 @@ msgstr ""
 
 #: ../inc/backbone/login/options.phtml:1, ../inc/backbone/lead-generation/submit-options/submit-options.phtml:1
 msgid "Choose Action"
-msgstr ""
-
-#: ../inc/backbone/modals/cf-settings.php:2
-msgid "Email & after submit setup"
 msgstr ""
 
 #: ../inc/backbone/modals/cf-settings.php:13
@@ -4047,7 +4263,7 @@ msgstr ""
 msgid "Full Width"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-button-element.php:208, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:59
+#: ../inc/classes/elements/class-tcb-button-element.php:208, ../inc/classes/elements/class-tcb-contact-form-submit-element.php:65, ../inc/classes/elements/class-tcb-form-submit-element.php:69, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:59
 msgid "Button width"
 msgstr ""
 
@@ -4173,6 +4389,50 @@ msgstr ""
 
 #: ../inc/classes/elements/class-tcb-contact-form-element.php:39, ../inc/classes/elements/class-tcb-lead-generation-contact-form-element.php:23
 msgid "Contact Form"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-element.php:104
+msgid "Labels"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-element.php:114
+msgid "Required Marks"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-element.php:122
+msgid "Connect to Zapier"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-element.php:130, ../inc/classes/elements/class-tcb-postgrid-element.php:518, ../inc/views/modals/lp-save-template.php:24, ../inc/backbone/lead-generation/apis/activecampaign.phtml:29, ../inc/backbone/lead-generation/apis/aweber.phtml:17, ../inc/backbone/lead-generation/apis/convertkit.phtml:22, ../inc/backbone/lead-generation/apis/default-tag-controls.phtml:3, ../inc/backbone/lead-generation/apis/drip.phtml:36, ../inc/backbone/lead-generation/apis/fluentcrm.phtml:32, ../inc/backbone/lead-generation/apis/mailchimp.phtml:44, ../inc/backbone/lead-generation/apis/sendlane.phtml:22, ../inc/backbone/lead-generation/apis/zapier.phtml:11, ../inc/woocommerce/views/components/shop.php:75
+msgid "Tags"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-element.php:135, ../inc/backbone/lead-generation/apis/zapier.phtml:5
+msgid "Send IP Address"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-input-element.php:22
+msgid "Contact Form Input"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-item-element.php:15
+msgid "Contact Form Item"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-label-element.php:22
+msgid "Contact Form Label"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-submit-element.php:15
+msgid "Contact Form Submit"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-submit-element.php:46, ../inc/classes/elements/class-tcb-form-submit-element.php:50, ../inc/classes/elements/class-tcb-lead-generation-input-element.php:57, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:40, ../inc/classes/elements/class-tcb-login-form-input-element.php:56
+msgid "Icon Side"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-contact-form-submit-element.php:73, ../inc/classes/elements/class-tcb-form-submit-element.php:77, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:67
+msgid "Button Align"
 msgstr ""
 
 #: ../inc/classes/elements/class-tcb-contentblock-element.php:281
@@ -4347,7 +4607,7 @@ msgstr ""
 msgid "Credit Card"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-credit-element.php:77, ../inc/classes/elements/class-tcb-icon-element.php:68, ../inc/classes/elements/class-tcb-image-element.php:93, ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:65, ../inc/classes/elements/class-tcb-link-element.php:108, ../inc/classes/elements/class-tcb-logo-element.php:67, ../inc/classes/elements/class-tcb-megamenu-item-element.php:82, ../inc/classes/elements/class-tcb-menu-item-element.php:127, ../inc/classes/elements/class-tcb-menu-item-image-element.php:106, ../inc/classes/elements/class-tcb-number-counter-element.php:147, ../inc/classes/elements/class-tcb-rating-element.php:100, ../inc/classes/elements/class-tcb-search-form-element.php:179, ../inc/classes/elements/class-tcb-social-follow-item-element.php:82, ../inc/classes/elements/class-tcb-tab-item-element.php:118, ../inc/classes/elements/post-list-sub-elements/class-tcb-post-thumbnail-element.php:150, ../inc/classes/elements/toc/class-tcb-toc-bullet-element.php:47, ../inc/woocommerce/classes/shortcodes/mini-cart/class-element.php:84, ../inc/woocommerce/classes/shortcodes/mini-cart/sub-elements/class-cart-count.php:54, ../inc/woocommerce/classes/shortcodes/mini-cart/sub-elements/class-cart-icon.php:55, ../inc/woocommerce/classes/shortcodes/shop/sub-elements/class-product-rating.php:67
+#: ../inc/classes/elements/class-tcb-credit-element.php:77, ../inc/classes/elements/class-tcb-icon-element.php:68, ../inc/classes/elements/class-tcb-image-element.php:93, ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:65, ../inc/classes/elements/class-tcb-link-element.php:108, ../inc/classes/elements/class-tcb-logo-element.php:67, ../inc/classes/elements/class-tcb-megamenu-item-element.php:82, ../inc/classes/elements/class-tcb-menu-item-element.php:127, ../inc/classes/elements/class-tcb-menu-item-image-element.php:106, ../inc/classes/elements/class-tcb-number-counter-element.php:147, ../inc/classes/elements/class-tcb-rating-element.php:100, ../inc/classes/elements/class-tcb-search-form-element.php:179, ../inc/classes/elements/class-tcb-social-follow-item-element.php:82, ../inc/classes/elements/class-tcb-tab-item-element.php:118, ../inc/backbone/controls/contact-form/edit-cf-item.phtml:46, ../inc/classes/elements/post-list-sub-elements/class-tcb-post-thumbnail-element.php:150, ../inc/classes/elements/toc/class-tcb-toc-bullet-element.php:47, ../inc/woocommerce/classes/shortcodes/mini-cart/class-element.php:84, ../inc/woocommerce/classes/shortcodes/mini-cart/sub-elements/class-cart-count.php:54, ../inc/woocommerce/classes/shortcodes/mini-cart/sub-elements/class-cart-icon.php:55, ../inc/woocommerce/classes/shortcodes/shop/sub-elements/class-product-rating.php:67
 msgid "Size"
 msgstr ""
 
@@ -4577,6 +4837,14 @@ msgstr ""
 
 #: ../inc/classes/elements/class-tcb-form-state-element.php:6
 msgid "Form State"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-form-submit-element.php:16
+msgid "Form Submit"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-form-submit-element.php:43, ../inc/views/elements/icon.php:16
+msgid "Add Icon"
 msgstr ""
 
 #: ../inc/classes/elements/class-tcb-gmap-element.php:23
@@ -5071,10 +5339,6 @@ msgstr ""
 msgid "Lead Generation Input"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-lead-generation-input-element.php:57, ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:40, ../inc/classes/elements/class-tcb-login-form-input-element.php:56
-msgid "Icon Side"
-msgstr ""
-
 #: ../inc/classes/elements/class-tcb-lead-generation-radio-element.php:15
 msgid "Radio Field"
 msgstr ""
@@ -5123,11 +5387,11 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:37
+#: ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:37, ../inc/backbone/controls/contact-form/edit-cf-item.phtml:61
 msgid "Light"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:41
+#: ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:41, ../inc/backbone/controls/contact-form/edit-cf-item.phtml:62
 msgid "Dark"
 msgstr ""
 
@@ -5135,7 +5399,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:73
+#: ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:73, ../inc/backbone/controls/contact-form/edit-cf-item.phtml:51
 msgid "Compact"
 msgstr ""
 
@@ -5173,10 +5437,6 @@ msgstr ""
 
 #: ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:15
 msgid "Lead Generation Submit"
-msgstr ""
-
-#: ../inc/classes/elements/class-tcb-lead-generation-submit-element.php:67
-msgid "Button Align"
 msgstr ""
 
 #: ../inc/classes/elements/class-tcb-lead-generation-textarea-element.php:15
@@ -5800,10 +6060,6 @@ msgstr ""
 
 #: ../inc/classes/elements/class-tcb-postgrid-element.php:512
 msgid "No categories were found satisfying your Query"
-msgstr ""
-
-#: ../inc/classes/elements/class-tcb-postgrid-element.php:518, ../inc/views/modals/lp-save-template.php:24, ../inc/backbone/lead-generation/apis/activecampaign.phtml:29, ../inc/backbone/lead-generation/apis/aweber.phtml:17, ../inc/backbone/lead-generation/apis/convertkit.phtml:22, ../inc/backbone/lead-generation/apis/default-tag-controls.phtml:3, ../inc/backbone/lead-generation/apis/drip.phtml:36, ../inc/backbone/lead-generation/apis/fluentcrm.phtml:32, ../inc/backbone/lead-generation/apis/mailchimp.phtml:44, ../inc/backbone/lead-generation/apis/sendlane.phtml:22, ../inc/backbone/lead-generation/apis/zapier.phtml:11, ../inc/woocommerce/views/components/shop.php:75
-msgid "Tags"
 msgstr ""
 
 #: ../inc/classes/elements/class-tcb-postgrid-element.php:523
@@ -6946,6 +7202,10 @@ msgstr ""
 msgid "or drag an element into the page"
 msgstr ""
 
+#: ../inc/views/elements/contact_form.php:43
+msgid "Send Message"
+msgstr ""
+
 #: ../inc/views/elements/contentblock.php:17
 msgid "Add Content Block"
 msgstr ""
@@ -6968,10 +7228,6 @@ msgstr ""
 
 #: ../inc/views/elements/html.php:17
 msgid "Insert Custom HTML"
-msgstr ""
-
-#: ../inc/views/elements/icon.php:16
-msgid "Add Icon"
 msgstr ""
 
 #: ../inc/views/elements/image-gallery.php:16
@@ -7296,14 +7552,6 @@ msgstr ""
 
 #: ../inc/views/modals/email-settings.php:35
 msgid "BCC"
-msgstr ""
-
-#: ../inc/views/modals/email-settings.php:41
-msgid "From name"
-msgstr ""
-
-#: ../inc/views/modals/email-settings.php:46
-msgid "From email"
 msgstr ""
 
 #: ../inc/views/modals/email-settings.php:58, ../inc/views/modals/email-settings.php:80
@@ -7922,6 +8170,14 @@ msgstr ""
 msgid "Saved Templates"
 msgstr ""
 
+#: ../inc/backbone/controls/contact-form/edit-cf-item.phtml:13
+msgid "Field Type"
+msgstr ""
+
+#: ../inc/backbone/controls/contact-form/edit-cf-item.phtml:69
+msgid "You can’t add a Recaptcha field because you don’t have a Google API connection available. For more info %s ."
+msgstr ""
+
 #: ../inc/backbone/controls/contentbox/image-tooltip.phtml:2
 msgid "See Background Style Panel for more advanced background image settings"
 msgstr ""
@@ -8160,10 +8416,6 @@ msgstr ""
 
 #: ../inc/backbone/controls/pricing-table/price-instance-controls.phtml:16
 msgid "Price Boxes"
-msgstr ""
-
-#: ../inc/backbone/controls/pricing-table/price-instance-controls.phtml:19
-msgid "ADD NEW"
 msgstr ""
 
 #: ../inc/backbone/controls/pricing-table/price-instance-controls.phtml:31
@@ -8662,10 +8914,6 @@ msgstr ""
 msgid "Choose which role will be granted to new users"
 msgstr ""
 
-#: ../inc/backbone/lead-generation/apis/zapier.phtml:5
-msgid "Send IP Address"
-msgstr ""
-
 #: ../inc/backbone/lead-generation/apis/zoom.phtml:5
 msgid "Select user:"
 msgstr ""
@@ -9058,10 +9306,6 @@ msgstr ""
 msgid "Notification message"
 msgstr ""
 
-#: ../inc/classes/notifications/elements/class-notifications-content-wrapper.php:28
-msgid "Notification"
-msgstr ""
-
 #: ../inc/classes/notifications/elements/class-notifications-content-wrapper.php:54
 msgid "Display position"
 msgstr ""
@@ -9366,10 +9610,6 @@ msgstr ""
 msgid "would create files similar to the following:-"
 msgstr ""
 
-#: ../inc/backbone/lead-generation/apis/email-extra/settings.phtml:2
-msgid "Message"
-msgstr ""
-
 #: ../inc/backbone/lead-generation/apis/extra/mailchimp-group.phtml:1
 msgid "Choose your group:"
 msgstr ""
@@ -9416,10 +9656,6 @@ msgstr ""
 
 #: ../inc/classes/conditional-display/fields/request/class-url-query-string.php:32
 msgid "URL Query String"
-msgstr ""
-
-#: ../inc/classes/conditional-display/fields/time/class-current-date.php:32
-msgid "Date"
 msgstr ""
 
 #: ../inc/classes/conditional-display/fields/time/class-day-of-month.php:32

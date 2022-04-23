@@ -9,4 +9,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
 
-return '3.8';
+return '3.8.2';

@@ -24,7 +24,9 @@ class Main {
 	 *
 	 */
 	public static function init() {
-		self::add_hooks();
+		if ( defined( 'THRIVE_AUTOMATOR_RUNNING' ) ) {
+			self::add_hooks();
+		}
 	}
 
 	/**

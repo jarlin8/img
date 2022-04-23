@@ -206,6 +206,10 @@ class JS {
 			'audio'                 => [
 				'identifier' => '.thrv_audio',
 			],
+			/* this is the old contact form element which is no longer visible in the sidebar, but still has frontend JS */
+			'contact-form-compat'   => [
+				'identifier' => '.thrv-contact-form',
+			],
 			'content-reveal'        => [
 				'identifier' => '.thrv_content_reveal',
 			],
@@ -309,7 +313,11 @@ class JS {
 			}, $data );
 		}
 
-		return empty( $module ) ? $data : $data[ $module ];
+		if ( ! empty( $module ) ) {
+			$data = isset( $data[ $module ] ) ? $data[ $module ] : [];
+		}
+
+		return $data;
 	}
 
 	/**

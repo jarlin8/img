@@ -3,7 +3,7 @@
 /*
 Plugin Name: Thrive Leads
 Plugin URI: https://thrivethemes.com
-Version: 3.6
+Version: 3.6.2
 Author: <a href="https://thrivethemes.com">Thrive Themes</a>
 Description: The ultimate lead capture solution for Wordpress
 Text Domain: thrive-leads
