@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { isUndefined, isEmpty, get } from 'lodash'
+import { isUndefined, get } from 'lodash'
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n'
 import { Component } from '@wordpress/element'
+import { applyFilters } from '@wordpress/hooks'
 
 /**
  * Internal dependencies
@@ -144,29 +145,26 @@ class AdminBarStats extends Component {
 	}
 
 	getIndexVerdict() {
-		this.data.indexVerdict = ! isPro() ? 'undefined' : this.data.indexVerdict
-		if ( isEmpty( this.data.indexVerdict ) ) {
-			return
-		}
-
-		const className = 'indexing_state verdict indexing allowed ' + this.data.indexVerdict
-		const blurredClass = ! isPro() ? 'rank-math-item blur index-status' : 'rank-math-item index-status'
-		return (
-			<div className={ blurredClass }>
-				<h3>
-					{ __( 'Index Status', 'rank-math' ) }
-					<span className="rank-math-tooltip">
-						<em className="dashicons-before dashicons-editor-help"></em>
-						<span>
-							{ __( 'URL Inspection Status', 'rank-math' ) }
+		return applyFilters(
+			'rank-math-analytics-stats-index-verdict',
+			(
+				<div className="rank-math-item blur index-status">
+					<h3>
+						{ __( 'Index Status', 'rank-math' ) }
+						<span className="rank-math-tooltip">
+							<em className="dashicons-before dashicons-editor-help"></em>
+							<span>
+								{ __( 'URL Inspection Status', 'rank-math' ) }
+							</span>
 						</span>
-					</span>
-				</h3>
-				<div className="score">
-					<i className={ className }></i>
-					<span>{ this.data.indexVerdict }</span>
+					</h3>
+					<div className="verdict">
+						<i className="indexing_state verdict indexing allowed undefined"></i>
+						<span>undefined</span>
+					</div>
 				</div>
-			</div>
+			),
+			this.data
 		)
 	}
 

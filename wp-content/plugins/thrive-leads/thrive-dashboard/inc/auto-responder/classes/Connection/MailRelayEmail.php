@@ -83,7 +83,7 @@ class Thrive_Dash_List_Connection_MailRelayEmail extends Thrive_Dash_List_Connec
 		 * Try to connect to the autoresponder too
 		 */
 		/** @var Thrive_Dash_List_Connection_MailRelay $related_api */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'mailrelay' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'mailrelay' );
 
 		$r_result = true;
 		if ( ! $related_api->isConnected() ) {

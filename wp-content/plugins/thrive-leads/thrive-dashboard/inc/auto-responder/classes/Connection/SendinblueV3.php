@@ -32,7 +32,7 @@ class Thrive_Dash_List_Connection_SendinblueV3 extends Thrive_Dash_List_Connecti
 	 * @return void
 	 */
 	public function outputSetupForm() {
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'sendinblueemail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'sendinblueemail' );
 		if ( $related_api->isConnected() ) {
 			$this->setParam( 'new_connection', 1 );
 		}
@@ -71,7 +71,7 @@ class Thrive_Dash_List_Connection_SendinblueV3 extends Thrive_Dash_List_Connecti
 		$this->save();
 
 		/** @var Thrive_Dash_List_Connection_SendinblueEmail $related_api */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'sendinblueemail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'sendinblueemail' );
 
 		if ( isset( $_POST['connection']['new_connection'] ) && (int) $_POST['connection']['new_connection'] ) {
 			/**
@@ -275,7 +275,7 @@ class Thrive_Dash_List_Connection_SendinblueV3 extends Thrive_Dash_List_Connecti
 		/**
 		 * disconnect the email service too
 		 */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'sendinblueemail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'sendinblueemail' );
 		$related_api->setCredentials( array() );
 		Thrive_Dash_List_Manager::save( $related_api );
 

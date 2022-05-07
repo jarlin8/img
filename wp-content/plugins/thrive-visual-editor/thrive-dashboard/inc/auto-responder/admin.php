@@ -81,7 +81,7 @@ function tve_dash_api_admin_notices() {
 	}
 
 	require_once dirname( __FILE__ ) . '/misc.php';
-	$connected_apis = Thrive_Dash_List_Manager::getAvailableAPIs( true );
+	$connected_apis = Thrive_Dash_List_Manager::get_available_apis( true );
 	$warnings       = array();
 
 	foreach ( $connected_apis as $api_instance ) {
@@ -111,14 +111,14 @@ function tve_dash_api_admin_notices() {
 function tve_dash_api_connect() {
 	require_once __DIR__ . '/misc.php';
 
-	$available_apis = Thrive_Dash_List_Manager::getAvailableAPIs();
+	$available_apis = Thrive_Dash_List_Manager::get_available_apis();
 	foreach ( $available_apis as $key => $api ) {
 		/** @var Thrive_Dash_List_Connection_Abstract $api */
 		if ( $api->is_connected() || $api->isRelated() ) {
 			unset( $available_apis[ $key ] );
 		}
 	}
-	$connected_apis = Thrive_Dash_List_Manager::getAvailableAPIs( true );
+	$connected_apis = Thrive_Dash_List_Manager::get_available_apis( true );
 
 	foreach ( $connected_apis as $key => $api ) {
 		if ( ! $api instanceof Thrive_Dash_List_Connection_Abstract || $api->isRelated() ) {
@@ -172,7 +172,7 @@ function tve_dash_api_handle_save() {
 	}
 
 	$doing_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
-	$connection = Thrive_Dash_List_Manager::connectionInstance( $api );
+	$connection = Thrive_Dash_List_Manager::connection_instance( $api );
 
 	if ( is_null( $connection ) ) {
 		return;
@@ -242,7 +242,7 @@ function tve_dash_api_api_handle_redirect() {
 	$doing_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
 	require_once dirname( __FILE__ ) . '/misc.php';
-	$connection = Thrive_Dash_List_Manager::connectionInstance( sanitize_text_field( $_REQUEST['api'] ) );
+	$connection = Thrive_Dash_List_Manager::connection_instance( sanitize_text_field( $_REQUEST['api'] ) );
 
 	if ( is_null( $connection ) ) {
 		return;
@@ -331,7 +331,7 @@ function tve_dash_api_hide_notice() {
 
 	require_once dirname( __FILE__ ) . '/misc.php';
 
-	$connection = Thrive_Dash_List_Manager::connectionInstance( $key );
+	$connection = Thrive_Dash_List_Manager::connection_instance( $key );
 	$connection->setParam( '_nd', 1 )->save();
 
 	exit( '1' );

@@ -99,7 +99,7 @@ class TD_REST_Controller extends WP_REST_Controller {
 		if ( $api === 'general' ) {
 			$data = tve_dash_get_general_webhook_data( $request );
 		} else {
-			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $api );
+			$api_instance = Thrive_Dash_List_Manager::connection_instance( $api );
 			if ( $api_instance ) {
 				$data = $api_instance->getWebhookdata( $request );
 			}

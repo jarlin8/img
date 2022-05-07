@@ -38,7 +38,7 @@ class Api_Fields extends Action_Field {
 	}
 
 	public static function get_preview_template() {
-		return 'Fields: $$length';
+		return '';
 	}
 
 	/**
@@ -64,7 +64,7 @@ class Api_Fields extends Action_Field {
 			}
 		}
 		if ( ! empty( $api ) ) {
-			$api_instance = \Thrive_Dash_List_Manager::get_api_instance( $api );
+			$api_instance = \Thrive_Dash_List_Manager::connection_instance( $api );
 
 			if ( $api_instance && $api_instance->is_connected() && $api_instance->has_custom_fields() ) {
 				$mailing_list  = empty( $action_data->autoresponder->subfield->mailing_list->value ) ? '' : $action_data->autoresponder->subfield->mailing_list->value;

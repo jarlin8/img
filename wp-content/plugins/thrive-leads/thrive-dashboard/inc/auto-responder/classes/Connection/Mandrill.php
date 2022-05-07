@@ -48,7 +48,7 @@ class Thrive_Dash_List_Connection_Mandrill extends Thrive_Dash_List_Connection_A
 	 * @return void
 	 */
 	public function outputSetupForm() {
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'mailchimp' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'mailchimp' );
 		if ( $related_api->isConnected() ) {
 			$credentials = $related_api->getCredentials();
 			$this->setParam( 'mailchimp_key', $credentials['key'] );
@@ -114,7 +114,7 @@ class Thrive_Dash_List_Connection_Mandrill extends Thrive_Dash_List_Connection_A
 			 * Try to connect to the email service too
 			 */
 			/** @var Thrive_Dash_List_Connection_Mandrill $related_api */
-			$related_api = Thrive_Dash_List_Manager::connectionInstance( 'mailchimp' );
+			$related_api = Thrive_Dash_List_Manager::connection_instance( 'mailchimp' );
 			$r_result    = true;
 			if ( ! $related_api->isConnected() ) {
 				$r_result = $related_api->readCredentials();

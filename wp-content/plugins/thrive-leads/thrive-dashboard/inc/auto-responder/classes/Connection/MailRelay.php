@@ -32,7 +32,7 @@ class Thrive_Dash_List_Connection_MailRelay extends Thrive_Dash_List_Connection_
 	 * @return void
 	 */
 	public function outputSetupForm() {
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'mailrelayemail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'mailrelayemail' );
 		if ( $related_api->isConnected() ) {
 			$this->setParam( 'new_connection', 1 );
 		}
@@ -74,7 +74,7 @@ class Thrive_Dash_List_Connection_MailRelay extends Thrive_Dash_List_Connection_
 		 */
 		$this->save();
 		/** @var Thrive_Dash_List_Connection_MailRelayEmail $related_api */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'mailrelayemail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'mailrelayemail' );
 
 		if ( isset( $connection['new_connection'] ) && (int) $connection['new_connection'] === 1 ) {
 			/**
@@ -225,7 +225,7 @@ class Thrive_Dash_List_Connection_MailRelay extends Thrive_Dash_List_Connection_
 		/**
 		 * disconnect the email service too
 		 */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'mailrelayemail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'mailrelayemail' );
 		$related_api->setCredentials( array() );
 		Thrive_Dash_List_Manager::save( $related_api );
 

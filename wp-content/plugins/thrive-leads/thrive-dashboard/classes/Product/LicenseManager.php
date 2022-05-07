@@ -17,28 +17,28 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class TVE_Dash_Product_LicenseManager {
 	const LICENSE_OPTION_NAME = 'thrive_license';
-	const TCB_TAG = 'tcb';
-	const TL_TAG = 'tl';
-	const TCW_TAG = 'tcw';
-	const ALL_TAG = 'all';
-	const TU_TAG = 'tu';
-	const THO_TAG = 'tho';
-	const TVO_TAG = 'tvo';
-	const TQB_TAG = 'tqb';
-	const TCM_TAG = 'tcm';
-	const TVA_TAG = 'tva';
-	const TAB_TAG = 'tab';
+	const TCB_TAG             = 'tcb';
+	const TL_TAG              = 'tl';
+	const TCW_TAG             = 'tcw';
+	const ALL_TAG             = 'all';
+	const TU_TAG              = 'tu';
+	const THO_TAG             = 'tho';
+	const TVO_TAG             = 'tvo';
+	const TQB_TAG             = 'tqb';
+	const TCM_TAG             = 'tcm';
+	const TVA_TAG             = 'tva';
+	const TAB_TAG             = 'tab';
 
-	const TAG_FOCUS = 'focusblog';
-	const TAG_LUXE = 'luxe';
-	const TAG_IGNITION = 'ignition';
-	const TAG_MINUS = 'minus';
-	const TAG_SQUARED = 'squared';
-	const TAG_VOICE = 'voice';
+	const TAG_FOCUS     = 'focusblog';
+	const TAG_LUXE      = 'luxe';
+	const TAG_IGNITION  = 'ignition';
+	const TAG_MINUS     = 'minus';
+	const TAG_SQUARED   = 'squared';
+	const TAG_VOICE     = 'voice';
 	const TAG_PERFORMAG = 'performag';
-	const TAG_PRESSIVE = 'pressive';
-	const TAG_STORIED = 'storied';
-	const TAG_RISE = 'rise';
+	const TAG_PRESSIVE  = 'pressive';
+	const TAG_STORIED   = 'storied';
+	const TAG_RISE      = 'rise';
 
 	protected $secret_key = '@#$()%*%$^&*(#@$%@#$%93827456MASDFJIK3245';
 
@@ -254,5 +254,29 @@ class TVE_Dash_Product_LicenseManager {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Based on $text_domain returns a tag associated
+	 *
+	 * @param string $text_domain
+	 *
+	 * @return string
+	 */
+	public static function get_product_tag( $text_domain ) {
+		$mapping = array(
+			'thrive-cb'             => self::TCB_TAG,
+			'thrive-leads'          => self::TL_TAG,
+			'thrive-clever-widgets' => self::TCW_TAG,
+			'thrive-ult'            => self::TU_TAG,
+			'thrive-headline'       => self::THO_TAG,
+			'thrive-ovation'        => self::TVO_TAG,
+			'thrive-quiz-builder'   => self::TQB_TAG,
+			'thrive-comments'       => self::TCM_TAG,
+			'thrive-apprentice'     => self::TVA_TAG,
+			'thrive-optimize'       => self::TAB_TAG,
+		);
+
+		return isset( $mapping[ $text_domain ] ) ? $mapping[ $text_domain ] : '';
 	}
 }

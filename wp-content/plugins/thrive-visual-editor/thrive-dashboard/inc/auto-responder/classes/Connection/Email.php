@@ -93,7 +93,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 				$_list = 'email';
 			}
 
-			$_instance = Thrive_Dash_List_Manager::connectionInstance( $_list );
+			$_instance = Thrive_Dash_List_Manager::connection_instance( $_list );
 
 			if ( ! method_exists( $_instance, 'sendMultipleEmails' ) ) {
 				continue;
@@ -128,7 +128,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 			),
 		);
 
-		foreach ( Thrive_Dash_List_Manager::getAvailableAPIsByType( true, array( 'email' ) ) as $email_provider ) {
+		foreach ( Thrive_Dash_List_Manager::get_available_apis( true, [ 'include_types' => [ 'email' ] ] ) as $email_provider ) {
 
 			/**
 			 * @var Thrive_Dash_List_Connection_Abstract $email_provider
@@ -189,7 +189,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 
 		$response = array();
 
-		foreach ( Thrive_Dash_List_Manager::getAvailableAPIsByType( true, array( 'email' ) ) as $email_provider ) {
+		foreach ( Thrive_Dash_List_Manager::get_available_apis( true, [ 'include_types' => [ 'email' ] ] ) as $email_provider ) {
 
 			/**
 			 * @var Thrive_Dash_List_Connection_Abstract $email_provider
@@ -312,7 +312,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 			$mapping = thrive_safe_unserialize( base64_decode( $args['tve_mapping'] ) );
 		}
 
-		$apis = Thrive_Dash_List_Manager::getAvailableAPIsByType( true, array( 'email', 'other' ) );
+		$apis = Thrive_Dash_List_Manager::get_available_apis( true, [ 'include_types' => [ 'email', 'other' ] ] );
 
 		$custom_fields   = array();
 		$excluded_fields = array( 'name', 'email', 'phone' );

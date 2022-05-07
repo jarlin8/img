@@ -740,6 +740,19 @@ add_action( 'admin_enqueue_scripts', function () {
 }, PHP_INT_MAX );
 
 /**
+ * Compatibility with Rank Math
+ *
+ * We don't need their scripts inside the editor
+ * Added in wp_enqueue_scripts because there is the place where they register their scripts
+ */
+add_action( 'wp_enqueue_scripts', function () {
+	if ( is_editor_page_raw() ) {
+		wp_deregister_script( 'rank-math-analytics-stats' );
+		wp_dequeue_script( 'rank-math-analytics-stats' );
+	}
+}, PHP_INT_MAX );
+
+/**
  * Fixes a compatibility issue with optimole that causes src attribute replacement to not function correctly on landing pages
  */
 add_action( 'tcb_landing_page_template_redirect', function () {

@@ -9,7 +9,8 @@
 			<?php echo __( 'Refresh', TVE_DASH_TRANSLATE_DOMAIN ) ?>
 		</a>
 	</div>
-	<?php foreach ( $this->get() as $license ) : ?>
+	<?php foreach ( $this->get_licenses_details() as $license_data ) : ?>
+		<?php $license = new TD_TTW_License( $license_data ); ?>
 		<?php /** @var TD_TTW_License $license */ ?>
 		<div class="td-ttw-license-details">
 			<span> <?php echo $license->get_name() ?> </span>

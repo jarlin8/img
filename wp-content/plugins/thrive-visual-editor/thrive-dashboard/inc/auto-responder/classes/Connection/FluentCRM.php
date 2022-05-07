@@ -32,7 +32,13 @@ class Thrive_Dash_List_Connection_FluentCRM extends Thrive_Dash_List_Connection_
 	 * @return bool
 	 */
 	public function hasTags() {
+		return true;
+	}
 
+	/**
+	 * @return bool
+	 */
+	public function has_optin() {
 		return true;
 	}
 

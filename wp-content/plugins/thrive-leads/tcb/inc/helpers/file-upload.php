@@ -228,7 +228,7 @@ class FileUploadConfig extends FormSettings {
 			return new \WP_Error( 'Missing file upload service. Please contact site owner' );
 		}
 
-		return \Thrive_Dash_List_Manager::connectionInstance( $api_connection );
+		return \Thrive_Dash_List_Manager::connection_instance( $api_connection );
 	}
 
 	/**

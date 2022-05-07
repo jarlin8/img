@@ -155,7 +155,7 @@ class Term_Rule extends Rule {
 	public function get_frontend_term( $item ) {
 		$term = get_term( $item );
 
-		if ( empty( $term ) ) {
+		if ( empty( $term ) || is_wp_error( $term ) ) {
 			return array();
 		}
 

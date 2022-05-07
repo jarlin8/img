@@ -276,8 +276,16 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 
 			foreach ( Thrive_Dash_List_Manager::decodeConnectionString( $arguments['tve_mapping'] ) as $field_name => $spec ) {
 				$field_name = str_replace( '[]', '', $field_name );
-				if ( ! empty( $spec['wordpress'] ) && strpos( $field_name, 'mapping_' ) !== false ) {
-					$arguments[ $spec['wordpress'] ] = $this->processField( $arguments[ $field_name ] );
+
+				if ( ! empty( $spec['wordpress'] ) ) {
+					if ( strpos( $field_name, 'mapping_' ) !== false ) {
+						$arguments[ $spec['wordpress'] ] = $this->processField( $arguments[ $field_name ] );
+					}
+
+					if ( isset( $arguments[ $field_name ] ) && in_array( $spec['_field'], $profile_fields, true ) ) {
+						/* map specific user fields */
+						$arguments[ $spec['_field'] ] = $arguments[ $field_name ];
+					}
 				}
 			}
 		}
@@ -288,7 +296,8 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 		 * if we already have this username
 		 */
 		if ( $user_id ) {
-			$username              .= rand( 3, 5 );
+			$username .= rand( 3, 5 );
+
 			$user_id               = null;
 			$arguments['username'] = $username;
 		}
@@ -318,11 +327,9 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 
 					do_action( 'thrive_register_form_through_wordpress_user_' . $slug, $user_id, $data );
 				}
-
 			} else {
 				return $this->build_field_error( __( '<strong>Error</strong>: This email is already registered. Please choose another one.' ), 'email' );
 			}
-
 		} else {
 			/* create a sanitized user_login string */
 			$sanitized_user_login = trim( sanitize_user( $arguments['email'], true ) );
@@ -345,6 +352,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 				$has_profile_update         = true;
 			}
 		}
+
 		if ( isset( $has_profile_update ) ) {
 			wp_update_user( $userdata );
 		}
@@ -358,7 +366,6 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 					update_field( $id, $field, 'user_' . $user_id );
 				}
 			}
-
 		}
 
 		if ( isset( $has_profile_update ) ) {
@@ -400,9 +407,18 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 */
 	public function get_custom_fields( $params = array() ) {
 		return array(
-			array( 'id' => 'name', 'placeholder' => __( 'Name', 'thrive-cb' ) ),
-			array( 'id' => 'password', 'placeholder' => __( 'Password', 'thrive-cb' ) ),
-			array( 'id' => 'confirm_password', 'placeholder' => __( 'Confirm password', 'thrive-cb' ) ),
+			array(
+				'id'          => 'name',
+				'placeholder' => __( 'Name', 'thrive-cb' ),
+			),
+			array(
+				'id'          => 'password',
+				'placeholder' => __( 'Password', 'thrive-cb' ),
+			),
+			array(
+				'id'          => 'confirm_password',
+				'placeholder' => __( 'Confirm password', 'thrive-cb' ),
+			),
 		);
 	}
 

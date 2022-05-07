@@ -168,7 +168,7 @@ function _tve_dash_api__autoload( $basepath, $className, $v = array() ) {
 	/**
 	 *  Added folder namespacing by API version [used in /auto-responder/classes/Connection/v and /auto-responder/lib/vendor/]
 	 *  Load the class from the version folder if exists based on template [versioning and version] params [for new implementations]
-	 *  Versioned class will be instantiated in Thrive_Dash_List_Manager::connectionInstance()
+	 *  Versioned class will be instantiated in Thrive_Dash_List_Manager::connection_instance()
 	 */
 	if ( ! empty( $v['version'] ) && ( ! empty( $v['versioning'] ) && (int) $v['versioning'] === 1 ) ) {
 		$api_version    = $v['version'];
@@ -290,7 +290,7 @@ function tve_dash_api_form_retry() {
 
 	if ( $list_id == "asset" ) {
 
-		$api = Thrive_Dash_List_Manager::connectionInstance( $connection_name );
+		$api = Thrive_Dash_List_Manager::connection_instance( $connection_name );
 		if ( ! $api ) {
 			$response = __( 'Cannot establish API connection', TVE_DASH_TRANSLATE_DOMAIN );
 		} else {

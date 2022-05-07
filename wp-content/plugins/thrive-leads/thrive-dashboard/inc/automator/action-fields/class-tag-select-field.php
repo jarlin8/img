@@ -42,7 +42,7 @@ class Tag_Select_Field extends Action_Field {
 	 * @return string
 	 */
 	public static function get_preview_template() {
-		return 'List: $$value';
+		return '';
 	}
 
 	/**
@@ -59,7 +59,7 @@ class Tag_Select_Field extends Action_Field {
 			}
 		}
 		if ( ! empty( $api ) ) {
-			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $api );
+			$api_instance = Thrive_Dash_List_Manager::connection_instance( $api );
 			if ( $api_instance && $api_instance->is_connected() ) {
 
 				$tags = $api_instance->getTags();

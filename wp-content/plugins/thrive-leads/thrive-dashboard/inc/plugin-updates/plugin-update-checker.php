@@ -553,7 +553,8 @@ if ( ! class_exists( 'TVE_PluginUpdateChecker_1_3_2', false ) ) {
 					 */
 					if ( class_exists( 'TD_TTW_Messages_Manager', false ) ) {
 
-						if ( true !== TD_TTW_Update_Manager::can_see_updates() ) {
+						$can_see_updates = TD_TTW_Update_Manager::can_see_updates();
+						if ( ! $can_see_updates || null === TD_TTW_Messages_Manager::get_update_message( $state, $plugin_data ) ) {
 							return null;
 						}
 
@@ -561,8 +562,14 @@ if ( ! class_exists( 'TVE_PluginUpdateChecker_1_3_2', false ) ) {
 					}
 
 					if ( ! empty( $update->upgrade_notice ) ) {
-						remove_action( 'in_plugin_update_message-' . $this->pluginFile, array( $this, 'upgrade_notice' ), 10 );
-						add_action( 'in_plugin_update_message-' . $this->pluginFile, array( $this, 'upgrade_notice' ), 10, 2 );
+						remove_action( 'in_plugin_update_message-' . $this->pluginFile, array(
+							$this,
+							'upgrade_notice'
+						), 10 );
+						add_action( 'in_plugin_update_message-' . $this->pluginFile, array(
+							$this,
+							'upgrade_notice'
+						), 10, 2 );
 					}
 
 					return $update;

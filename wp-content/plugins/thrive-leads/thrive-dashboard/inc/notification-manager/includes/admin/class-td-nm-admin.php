@@ -302,8 +302,8 @@ class TD_NM_Admin {
 	}
 
 	public function get_email_services() {
-		$email_services     = Thrive_Dash_List_Manager::getAvailableAPIsByType( false, array( 'email' ) );
-		$connected_services = Thrive_Dash_List_Manager::getAvailableAPIsByType( true, array( 'email' ) );
+		$email_services     = Thrive_Dash_List_Manager::get_available_apis( false, [ 'include_types' => [ 'email' ] ] );
+		$connected_services = Thrive_Dash_List_Manager::get_available_apis( true, [ 'include_types' => [ 'email' ] ] );
 		$connected_keys     = array_keys( $connected_services );
 
 		$active_connection = get_option( 'tvd-nm-email-service' );

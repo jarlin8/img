@@ -42,14 +42,14 @@ class Mailing_List_Field extends Action_Field {
 	 * @return string
 	 */
 	public static function get_preview_template() {
-		return 'List: $$value';
+		return '$$value list';
 	}
 
 	/**
 	 * For multiple option inputs, name of the callback function called through ajax to get the options
 	 */
 	public static function get_options_callback( $action_id, $action_data ) {
-		$values = array();
+		$lists = [];
 
 		if ( ! empty( $action_data ) ) {
 			if ( is_string( $action_data ) ) {
@@ -59,21 +59,17 @@ class Mailing_List_Field extends Action_Field {
 			}
 		}
 		if ( ! empty( $api ) ) {
-			$api_instance = \Thrive_Dash_List_Manager::get_api_instance( $api );
+			$api_instance = \Thrive_Dash_List_Manager::connection_instance( $api );
 
 			if ( $api_instance && $api_instance->is_connected() ) {
-				$values = $api_instance->get_lists( false );
+				$lists = $api_instance->get_lists( false );
 				if ( $api_instance->has_forms() ) {
-					$forms = $api_instance->getForms();
-					foreach ( $values as $key => $list ) {
-						$values[ $key ]['values'] = $forms[ $list['id'] ];
-					}
+					$lists = static::add_form_data( $lists, $api_instance->get_forms() );
 				}
 			}
 		}
 
-
-		return $values;
+		return $lists;
 	}
 
 	public static function get_id() {
@@ -90,5 +86,23 @@ class Mailing_List_Field extends Action_Field {
 
 	public static function get_validators() {
 		return array( 'required' );
+	}
+
+	/**
+	 * @param array $lists
+	 * @param array $forms
+	 *
+	 * @return array
+	 */
+	public static function add_form_data( $lists, $forms ) {
+		foreach ( $lists as $key => $list ) {
+			if ( is_array( $list ) ) {
+				$lists[ $key ]['values'] = $forms[ $list['id'] ];
+			} else {
+				$lists[ $key ]->values = $forms[ $list->id ];
+			}
+		}
+
+		return $lists;
 	}
 }

@@ -72,7 +72,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	 *
 	 * @return array
 	 */
-	public function pushTags( $tags, $data = array() ) {
+	public function push_tags( $tags, $data = array() ) {
 
 		$data['tqb_tags'] = implode( ', ', $tags );
 

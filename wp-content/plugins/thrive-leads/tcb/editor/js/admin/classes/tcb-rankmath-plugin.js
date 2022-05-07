@@ -1,10 +1,12 @@
 ( $ => {
-	module.exports = class TCBRankMathPlugin {
+	const TCBSeoPlugin = require( './tcb-seo-plugin' );
+
+	module.exports = class TCBRankMathPlugin extends TCBSeoPlugin {
 		/**
 		 * Class constructor
 		 */
 		constructor() {
-			this.init();
+			super();
 			this.hooks();
 		}
 
@@ -30,21 +32,15 @@
 		/**
 		 * Fetch Post Content from TCB
 		 */
-		fetchContent() {
-			$.ajax( {
-				url: ajaxurl,
-				type: 'post',
-				dataType: 'json',
-				data: {
-					post_id: TCB_Post_Edit_Data.post_id,
-					action: 'tve_get_seo_content'
-				}
-			} ).done( response => {
-				this.content = response.content;
-				if ( typeof window.rankMathEditor !== 'undefined' ) {
-					rankMathEditor.refresh( 'content' );
-				}
-			} );
+		sendContent( fetchedContent ) {
+			this.content = fetchedContent;
+			if ( typeof window.rankMathEditor !== 'undefined' ) {
+				rankMathEditor.refresh( 'content' );
+			}
+		}
+
+		afterFetch( response ) {
+			this.sendContent( response );
 		}
 	}
 } )( jQuery );

@@ -11,7 +11,7 @@ $create_account             = $data['create_account'];
  * at this stage, we have a list of existing connections that are to be displayed in a list
  */
 
-$available = Thrive_Dash_List_Manager::getAvailableAPIs( true );
+$available = Thrive_Dash_List_Manager::get_available_apis( true );
 $helper    = new Thrive_Dash_Api_CustomHtml();
 $form_type = $helper->getFormType();
 $form_type !== 'lead_generation' ? $variations = $helper->getFormVariations() : $variations = array();

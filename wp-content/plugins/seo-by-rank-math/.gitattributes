@@ -72,7 +72,7 @@ includes/modules/analytics/assets/src export-ignore
 includes/modules/instant-indexing/assets/src export-ignore
 includes/modules/woocommerce/assets/src export-ignore
 includes/modules/content-ai/assets/src export-ignore
-includes/modules/content-ai/assets/src export-ignore
+includes/modules/content-ai/assets/scss export-ignore
 
 # Remove development files form vendor folder
 assets/vendor/bourbon export-ignore

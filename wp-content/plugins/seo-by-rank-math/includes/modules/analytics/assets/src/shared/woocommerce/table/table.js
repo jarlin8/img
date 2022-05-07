@@ -365,7 +365,7 @@ class Table extends Component {
 												'<a href="' + rankMath.adminurl + '?page=rank-math-options-general#setting-panel-analytics"><strong>' + __( "Rank Math > General Settings > Analytics > Click 'Update data manually' button.", 'rank-math' ) + '</strong></a>',
 											),
 										} }>
-									</div>=
+									</div>
 								</td>
 							</tr>
 						) }

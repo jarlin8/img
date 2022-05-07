@@ -24,6 +24,10 @@ class Woo_Order_Data extends Data_Object {
 		return 'woo_order_data';
 	}
 
+	public static function get_nice_name() {
+		return 'WooCommerce order';
+	}
+
 	/**
 	 * Array of field object keys that are contained by this data-object
 	 *
@@ -31,6 +35,7 @@ class Woo_Order_Data extends Data_Object {
 	 */
 	public static function get_fields() {
 		return array(
+			'woo_order_id',
 			'order_number',
 			'order_key',
 			'customer_id',
@@ -101,7 +106,7 @@ class Woo_Order_Data extends Data_Object {
 
 		if ( $order ) {
 			return array(
-				'order_id'           => $order->get_id(),
+				'woo_order_id'       => $order->get_id(),
 				'order_number'       => $order->get_order_number(),
 				'order_key'          => $order->get_order_key(),
 				'customer_id'        => $order->get_customer_id(),

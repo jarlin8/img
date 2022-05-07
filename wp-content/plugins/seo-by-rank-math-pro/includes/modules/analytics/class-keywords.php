@@ -430,7 +430,6 @@ class Keywords {
 		$dates_query = sprintf( " AND created BETWEEN '%s' AND '%s' ", Stats::get()->compare_start_date, Stats::get()->compare_end_date );
 		$query = "SELECT MAX(id) as id FROM {$wpdb->prefix}rank_math_analytics_gsc WHERE 1 = 1 {$dates_query} AND {$dimension} IN ( SELECT keyword from {$wpdb->prefix}rank_math_analytics_keyword_manager {$where_like_keyword} GROUP BY keyword ) GROUP BY {$dimension}";
 		$old_ids = $wpdb->get_results( $query );
-		// phpcs:enable
 
 		// Step4. Get id list from above result.
 		$old_ids       = wp_list_pluck( $old_ids, 'id' );
@@ -472,8 +471,7 @@ class Keywords {
 		$keywords = '(\'' . join( '\', \'', $keywords ) . '\')';
 
 		// step7. Get other metrics data.
-		// phpcs:disable
-		$query = $wpdb->prepare(
+		$query   = $wpdb->prepare(
 			"SELECT t1.{$dimension} as {$dimension}, t1.clicks, t1.impressions, t1.ctr,
 				COALESCE( t1.clicks - t2.clicks, 0 ) as diffClicks,
 				COALESCE( t1.impressions - t2.impressions, 0 ) as diffImpressions,
@@ -489,7 +487,6 @@ class Keywords {
 			Stats::get()->compare_end_date
 		);
 		$metrics = $wpdb->get_results( $query, ARRAY_A );
-		// phpcs:enable
 
 		// Step8. Merge above two results.
 		$positions = Stats::get()->set_dimension_as_key( $positions, $dimension );
@@ -692,7 +689,6 @@ class Keywords {
 		$keywords      = \array_map( 'esc_sql', $keywords );
 		$keywords      = '(\'' . join( '\', \'', $keywords ) . '\')';
 
-		// phpcs:disable
 		$query = $wpdb->prepare(
 			"SELECT a.query, a.position, t.date, t.range_group
 			FROM {$wpdb->prefix}rank_math_analytics_gsc AS a
@@ -707,7 +703,7 @@ class Keywords {
 			Stats::get()->start_date,
 			Stats::get()->end_date
 		);
-		$data = $wpdb->get_results( $query );
+		$data  = $wpdb->get_results( $query );
 		// phpcs:enable
 
 		$data = Stats::get()->filter_graph_rows( $data );
@@ -744,8 +740,8 @@ class Keywords {
 				'sub_where' => " AND page IN ('" . join( "', '", $pages ) . "')",
 			]
 		);
-
 		return $console;
+
 	}
 
 	/**

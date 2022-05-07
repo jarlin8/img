@@ -32,6 +32,22 @@ class TCB_REST_Symbols_Controller extends WP_REST_Posts_Controller {
 		add_filter( "rest_insert_{$this->post_type}", array( $this, 'rest_insert_symbol' ), 10, 2 );
 		add_action( "rest_after_insert_{$this->post_type}", array( $this, 'rest_after_insert' ), 10, 2 );
 		add_action( 'rest_delete_' . TCB_Symbols_Taxonomy::SYMBOLS_TAXONOMY, array( $this, 'rest_delete_category' ), 10, 1 );
+		add_action( "rest_{$this->post_type}_query", array( $this, 'override_per_page' ), 10, 1 );
+	}
+
+	/**
+	 * Override the per page limit for the rest api in case there are people with over 100 symbols
+	 *
+	 * @param $args
+	 *
+	 * @return mixed
+	 */
+	public function override_per_page( $params ) {
+		if ( isset( $params['posts_per_page'] ) ) {
+			$params['posts_per_page'] = '300';
+		}
+
+		return $params;
 	}
 
 	/**
@@ -459,7 +475,7 @@ class TCB_REST_Symbols_Controller extends WP_REST_Posts_Controller {
 	 */
 	public function move_symbol( $new_term_id, $post_obj ) {
 
-		if ( intval( $new_term_id ) === 0 ) {
+		if ( (int) $new_term_id === 0 ) {
 			//if the new category is the uncategorized one, we just have to delete the existing ones
 			return $this->remove_current_terms( $post_obj );
 		}

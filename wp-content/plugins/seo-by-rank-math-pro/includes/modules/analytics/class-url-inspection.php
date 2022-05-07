@@ -10,8 +10,9 @@
 
 namespace RankMathPro\Analytics;
 
-use RankMathPro\Analytics\DB;
+use RankMath\Helper;
 use RankMath\Traits\Hooker;
+use RankMathPro\Analytics\DB;
 
 /**
  * Url_Inspection class.
@@ -27,6 +28,7 @@ class Url_Inspection {
 		$this->filter( 'rank_math/analytics/url_inspection_map_properties', 'map_inspection_properties', 10, 2 );
 		$this->action( 'rank_math/analytics/get_inspections_query', 'add_filter_params', 10, 2 );
 		$this->action( 'rank_math/analytics/get_inspections_count_query', 'add_filter_params', 10, 2 );
+		$this->filter( 'rank_math/analytics/post_data', 'add_index_verdict_data', 10, 2 );
 	}
 
 	/**
@@ -78,5 +80,21 @@ class Url_Inspection {
 	 */
 	public static function get_status_stats() {
 		return DB::get_status_stats();
+	}
+
+	/**
+	 * Change user perference.
+	 *
+	 * @param  array           $data array.
+	 * @param  WP_REST_Request $request post object.
+	 * @return array $data sorted array.
+	 */
+	public function add_index_verdict_data( $data, \WP_REST_Request $request ) {
+		if ( ! Helper::can_add_index_status() ) {
+			return $data;
+		}
+
+		$data['indexStatus'] = DB::get_index_verdict( $data['page'] );
+		return $data;
 	}
 }

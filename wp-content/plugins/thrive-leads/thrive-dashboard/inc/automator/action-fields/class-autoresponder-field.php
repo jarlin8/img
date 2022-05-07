@@ -42,7 +42,7 @@ class Autoresponder_Field extends Action_Field {
 	 * @return string
 	 */
 	public static function get_preview_template() {
-		return 'Autoresponder: $$value';
+		return '$$value';
 	}
 
 	/**
@@ -51,15 +51,17 @@ class Autoresponder_Field extends Action_Field {
 	public static function get_options_callback( $action_id, $action_data ) {
 		$is_tag_action = $action_id === Tag_User::get_id();
 
-		$apis   = Thrive_Dash_List_Manager::getAvailableAPIs( true, [
-			'email',
-			'webinar',
-			'other',
-			'recaptcha',
-			'social',
-			'sellings',
-			'integrations',
-			'storage',
+		$apis   = Thrive_Dash_List_Manager::get_available_apis( true, [
+			'exclude_types' => [
+				'email',
+				'webinar',
+				'other',
+				'recaptcha',
+				'social',
+				'sellings',
+				'integrations',
+				'storage',
+			],
 		] );
 		$values = array();
 		foreach ( $apis as $api ) {

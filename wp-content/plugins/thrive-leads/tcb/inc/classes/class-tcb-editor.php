@@ -474,7 +474,7 @@ class TCB_Editor {
 		/* build api connections localization */
 		$api_connections      = array();
 		$api_connections_data = array();
-		foreach ( Thrive_Dash_List_Manager::getAvailableAPIs( true, array( 'email', 'social', 'storage' ) ) as $key => $connection_instance ) {
+		foreach ( Thrive_Dash_List_Manager::get_available_apis( true, [ 'exclude_types' => [ 'email', 'social', 'storage' ] ] ) as $key => $connection_instance ) {
 			$api_connections[ $key ]      = $connection_instance->get_title();
 			$api_connections_data[ $key ] = $connection_instance->get_data_for_setup();
 		}
@@ -525,7 +525,7 @@ class TCB_Editor {
 					'client_id' => isset( $credentials['client_id'] ) ? $credentials['client_id'] : '',
 					'logo'      => file_exists( $base_path . 'square/' . $png ) ? ( $base_url . 'square/' . $png ) : ( $base_url . $png ),
 				);
-			}, Thrive_Dash_List_Manager::getAvailableAPIsByType( true, array( 'storage' ) ) ),
+			}, Thrive_Dash_List_Manager::get_available_apis( true, [ 'include_types' => [ 'storage' ] ] ) ),
 			'connected_apis_custom_fields'  => is_callable( 'Thrive_Dash_List_Manager::getAvailableCustomFields' ) ? Thrive_Dash_List_Manager::getAvailableCustomFields() : array(),
 			'apis_custom_fields_mapper'     => is_callable( 'Thrive_Dash_List_Manager::getCustomFieldsMapper' ) ? Thrive_Dash_List_Manager::getCustomFieldsMapper() : array(),
 			'colors'                        => array(
@@ -636,6 +636,20 @@ class TCB_Editor {
 				$data['global_styles']['tpl_button']     = $landing_page->template_styles['button'];
 				$data['global_styles']['tpl_section']    = $landing_page->template_styles['section'];
 				$data['global_styles']['tpl_contentbox'] = $landing_page->template_styles['contentbox'];
+			}
+
+			/* Only localize when TTB is not active */
+			if ( ! tve_dash_is_ttb_active() ) {
+				$lp_palettes_instance = $landing_page->get_palette_instance();
+				if ( $lp_palettes_instance ) {
+					$data['template_palettes'] = $lp_palettes_instance->get_smart_lp_palettes_v2();
+					$data['skin_colors'] = array(
+						'skin_palettes'      => $lp_palettes_instance->get_smart_lp_palettes_v2(),
+						'skin_main_variable' => '--tcb-theme-main-master',
+						'palette_colors'     => $lp_palettes_instance->tcb_get_palettes_from_config(),
+					);
+				}
+
 			}
 		}
 
@@ -972,8 +986,9 @@ class TCB_Editor {
 		$landing_page = tcb_landing_page( $this->post->ID );
 
 		return apply_filters( 'tcb_alter_template_data', array(
-			'styles' => $landing_page->template_styles,
-			'vars'   => $landing_page->template_vars,
+			'styles'        => $landing_page->template_styles,
+			'vars'          => $landing_page->template_vars,
+			'skin_palettes' => $landing_page->palettes,
 		), $landing_page );
 	}
 

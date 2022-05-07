@@ -171,6 +171,20 @@ class Main {
 			do_action( 'thrive_woo_product_purchase_processing', $product, $user );
 		}
 	}
+
+	/**
+	 * Filter the data objects that might provide user data
+	 */
+	public static function get_email_data_sets() {
+		$data_sets = apply_filters( 'tvd_automator_api_data_sets', [] );
+		/**
+		 * Make sure that user_data is always the last item
+		 */
+		$data_sets   = array_diff( $data_sets, [ 'user_data' ] );
+		$data_sets[] = 'user_data';
+
+		return $data_sets;
+	}
 }
 
 add_action( 'thrive_automator_init', array( 'TVE\Dashboard\Automator\Main', 'init' ) );

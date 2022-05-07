@@ -35,7 +35,7 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 		return true;
 	}
 
-	public function pushTags( $tags, $data = array() ) {
+	public function push_tags( $tags, $data = array() ) {
 
 		if ( ! $this->hasTags() && ( ! is_array( $tags ) || ! is_string( $tags ) ) ) {
 			return $data;

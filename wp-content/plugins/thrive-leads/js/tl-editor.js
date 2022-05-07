@@ -653,7 +653,10 @@ TVE.leads.StateSwitchAction = TVE.leads.LightboxStateAction.extend( {
 				TL_Editor.state.ajax( {
 					custom_action: 'duplicate',
 					id: link.getAttribute( 'data-id' )
-				} ).done( TL_Editor.state.insertResponse );
+				} ).done( function ( response ) {
+					TL_Editor.state.insertResponse( response );
+					TVE.Components.lead_generation.removeSettingsId( TVE.Editor_Page.editor ); //remove old LG settings id
+				} );
 			} );
 
 			return false;

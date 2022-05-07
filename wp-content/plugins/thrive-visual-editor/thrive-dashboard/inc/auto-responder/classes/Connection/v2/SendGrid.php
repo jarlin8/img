@@ -39,7 +39,7 @@ class Thrive_Dash_List_Connection_SendGrid extends Thrive_Dash_List_Connection_A
 	 */
 	public function outputSetupForm() {
 
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'sendgridemail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'sendgridemail' );
 		if ( $related_api->isConnected() ) {
 			$this->setParam( 'new_connection', 1 );
 		}
@@ -74,7 +74,7 @@ class Thrive_Dash_List_Connection_SendGrid extends Thrive_Dash_List_Connection_A
 		$this->save();
 
 		/** @var Thrive_Dash_List_Connection_SendGridEmail $related_api */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'sendgridemail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'sendgridemail' );
 
 		if ( isset( $_POST['connection']['new_connection'] ) && intval( $_POST['connection']['new_connection'] ) === 1 ) {
 			/**
@@ -232,7 +232,7 @@ class Thrive_Dash_List_Connection_SendGrid extends Thrive_Dash_List_Connection_A
 		/**
 		 * disconnect the email service too
 		 */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'sendgridemail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'sendgridemail' );
 		$related_api->setCredentials( array() );
 		Thrive_Dash_List_Manager::save( $related_api );
 

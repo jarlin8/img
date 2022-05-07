@@ -230,7 +230,7 @@ function tve_dash_admin_menu() {
  */
 add_filter( 'plugin_action_links', static function ( $actions, $plugin_file, $plugin_data, $context ) {
 
-	if ( ! isset( $plugin_data['slug'], $plugin_data['Version'] ) ) {
+	if ( ! isset( $plugin_data['Version'] ) ) {
 		return $actions;
 	}
 
@@ -239,12 +239,14 @@ add_filter( 'plugin_action_links', static function ( $actions, $plugin_file, $pl
 		return $actions;
 	}
 
-	if ( strpos( $plugin_data['slug'], 'thrive-' ) !== false && strpos( $plugin_data['Version'], 'beta' ) !== false && tvd_update_is_using_stable_channel() ) {
+	$slug = isset( $plugin_data['slug'] ) ? $plugin_data['slug'] : sanitize_title( $plugin_data['Name'] );
+
+	if ( strpos( $slug, 'thrive-' ) !== false && strpos( $plugin_data['Version'], 'beta' ) !== false && tvd_update_is_using_stable_channel() ) {
 		$stable_url = add_query_arg(
 			array(
 				'current_version' => urlencode( $plugin_data['Version'] ),
 				'name'            => urlencode( $plugin_data['Name'] ),
-				'plugin_slug'     => urlencode( $plugin_data['slug'] ),
+				'plugin_slug'     => urlencode( $slug ),
 				'_wpnonce'        => wp_create_nonce( 'tvd_switch_stable_channel_nonce' ),
 				'type'            => 'plugin',
 				'plugin_file'     => $plugin_file,

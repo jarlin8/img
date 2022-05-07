@@ -32,7 +32,7 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 	 * @return void
 	 */
 	public function outputSetupForm() {
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'campaignmonitoremail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'campaignmonitoremail' );
 		if ( $related_api->isConnected() ) {
 			$this->setParam( 'new_connection', 1 );
 		}
@@ -66,7 +66,7 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 		$this->save();
 
 		/** @var Thrive_Dash_List_Connection_CampaignMonitorEmail $related_api */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'campaignmonitoremail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'campaignmonitoremail' );
 
 		if ( isset( $_POST['connection']['new_connection'] ) && (int) $_POST['connection']['new_connection'] === 1 ) {
 			/**
@@ -256,7 +256,7 @@ class Thrive_Dash_List_Connection_CampaignMonitor extends Thrive_Dash_List_Conne
 		/**
 		 * disconnect the email service too
 		 */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'campaignmonitoremail' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'campaignmonitoremail' );
 		$related_api->setCredentials( array() );
 		Thrive_Dash_List_Manager::save( $related_api );
 

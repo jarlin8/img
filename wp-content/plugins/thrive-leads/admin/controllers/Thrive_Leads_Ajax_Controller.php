@@ -209,7 +209,7 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 							return update_option( 'tve_api_delivery_service', $connection );
 						case 'test_service':
 							$connection = $this->param( 'test_connection', array() );
-							$api        = Thrive_List_Manager::connectionInstance( $connection );
+							$api        = Thrive_List_Manager::connection_instance( $connection );
 							$test       = $api->testConnection();
 							if ( $test === true ) {
 								$class = "updated";
@@ -911,7 +911,7 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 
 	public function addAssetAPIAction() {
 		$connection      = $this->param( 'api', array() );
-		$api             = Thrive_List_Manager::connectionInstance( $connection );
+		$api             = Thrive_List_Manager::connection_instance( $connection );
 		$connection_type = get_option( 'tve_api_delivery_service', false );
 
 		if ( $connection_type == false ) {

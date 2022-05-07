@@ -329,7 +329,7 @@ class TVD_Smart_DB {
 	/**
 	 * Get groups with fields
 	 *
-	 * @param int $id
+	 * @param int     $id
 	 * @param boolean $with_fields
 	 *
 	 * @return array|object|null
@@ -449,14 +449,16 @@ class TVD_Smart_DB {
 			                    '!' .
 			                    '</span>' .
 			                    $unavailable_name .
-			                    '</span>' .
-			                    '<span class="thrive-tooltip-wrapper">' .
-			                    '<span class="thrive-shortcode-tooltip">' .
-			                    __( 'This global variable hasn\'t been set.  Define your global variables in the', TVE_DASH_TRANSLATE_DOMAIN ) .
-			                    '<br>' .
-			                    '<a><span onClick=window.open("' . add_query_arg( 'page', 'tve_dash_smart_site', admin_url( 'admin.php' ) ) . '","_blank") >' . ' ' . __( ' Global Fields dashboard', TVE_DASH_TRANSLATE_DOMAIN ) . '</span></a>' .
-			                    '</span>' .
 			                    '</span>';
+			if ( empty( $args['hide-tooltip'] ) ) {
+				$unavailable .= '<span class="thrive-tooltip-wrapper">' .
+				                '<span class="thrive-shortcode-tooltip">' .
+				                __( 'This global variable hasn\'t been set.  Define your global variables in the', TVE_DASH_TRANSLATE_DOMAIN ) .
+				                '<br>' .
+				                '<a><span onClick=window.open("' . add_query_arg( 'page', 'tve_dash_smart_site', admin_url( 'admin.php' ) ) . '","_blank") >' . ' ' . __( ' Global Fields dashboard', TVE_DASH_TRANSLATE_DOMAIN ) . '</span></a>' .
+				                '</span>' .
+				                '</span>';
+			}
 		}
 
 		switch ( (int) $field['type'] ) {
@@ -484,7 +486,16 @@ class TVD_Smart_DB {
 				break;
 			//link field
 			case TVD_Smart_DB::$types['link']:
-				$data = empty( $field_data['url'] ) ? $unavailable : '<a ' . ( ! empty( $args['link-css-attr'] ) ? 'data-css="' . $args['link-css-attr'] . '"' : '' ) . ' href="' . $field_data['url'] . '" target="_blank">' . $field_data['text'] . '</a>';
+				if ( empty( $field_data['url'] ) ) {
+					$data = $unavailable;
+				} else {
+					if ( empty( $args['prevent-link'] ) ) {
+						$field_value = '<a ' . ( ! empty( $args['link-css-attr'] ) ? 'data-css="' . $args['link-css-attr'] . '"' : '' ) . ' href="' . $field_data['url'] . '" target="_blank">' . $field_data['text'] . '</a>';
+					} else {
+						$field_value = $field_data['text'];
+					}
+					$data = $field_value;
+				}
 				break;
 			// location field
 			case TVD_Smart_DB::$types['location']:
@@ -501,7 +512,7 @@ class TVD_Smart_DB {
 	 * Get fields for group or by ID
 	 *
 	 * @param array $group
-	 * @param int $id
+	 * @param int   $id
 	 *
 	 * @return array|object|null
 	 */
@@ -543,7 +554,7 @@ class TVD_Smart_DB {
 	 * Get fields of a specific type which have some data
 	 *
 	 * @param array $group_id
-	 * @param int $type
+	 * @param int   $type
 	 *
 	 * @return array|object|null
 	 */

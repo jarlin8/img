@@ -1,37 +1,29 @@
 ( $ => {
-	module.exports = class TCBYoastPlugin {
-		static register() {
+	const TCBSeoPlugin = require( './tcb-seo-plugin' );
+
+	module.exports = class TCBYoastPlugin extends TCBSeoPlugin {
+		init() {
 			YoastSEO.app.registerPlugin( 'tcbYoastPlugin', {status: 'loading'} );
 
-			TCBYoastPlugin.fetchData()
+			this.fetchContent();
 		}
 
-		static fetchData() {
-			$.ajax( {
-				url: ajaxurl,
-				type: 'post',
-				dataType: 'json',
-				data: {
-					post_id: TCB_Post_Edit_Data.post_id,
-					action: 'tve_get_seo_content'
-				}
-			} ).done( response => {
-				YoastSEO.app.pluginReady( 'tcbYoastPlugin' );
+		sendContent( fetchedContent ) {
+			YoastSEO.app.pluginReady( 'tcbYoastPlugin' );
 
-				/**
-				 * @param modification    {string}    The name of the filter
-				 * @param callable        {function}  The callable
-				 * @param pluginName      {string}    The plugin that is registering the modification.
-				 * @param priority        {number}    (optional) Used to specify the order in which the callables
-				 *                                    associated with a particular filter are called. Lower numbers
-				 *                                    correspond with earlier execution.
-				 */
-				YoastSEO.app.registerModification( 'content', content => TCBYoastPlugin.parseTCBContent( content, response.content ), 'tcbYoastPlugin', 5 );
-			} );
+			/**
+			 * @param modification    {string}    The name of the filter
+			 * @param callable        {function}  The callable
+			 * @param pluginName      {string}    The plugin that is registering the modification.
+			 * @param priority        {number}    (optional) Used to specify the order in which the callables
+			 *                                    associated with a particular filter are called. Lower numbers
+			 *                                    correspond with earlier execution.
+			 */
+			YoastSEO.app.registerModification( 'content', content => this.parseTCBContent( content, fetchedContent ), 'tcbYoastPlugin', 5 );
 		}
 
-		static parseTCBContent( content, architectContent ) {
-			//remove empty tags because yoast kind fails on parse here
+		parseTCBContent( content, architectContent ) {
+			/* Remove empty tags because yoast kind fails on parse here */
 			if ( architectContent ) {
 				const contentSelector = '.tcb-style-wrap',
 					$content = $( `<div>${architectContent}</div>` ).find( contentSelector );
@@ -42,6 +34,10 @@
 			}
 
 			return architectContent ? architectContent : content;
+		}
+
+		afterFetch( response ) {
+			this.sendContent( response );
 		}
 	}
 } )( jQuery );

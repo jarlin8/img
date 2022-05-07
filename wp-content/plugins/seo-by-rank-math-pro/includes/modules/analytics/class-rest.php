@@ -421,7 +421,7 @@ class Rest extends WP_REST_Controller {
 		}
 
 		$url = get_permalink( $post_id );
-		$pre = apply_filters( 'rank_math/analytics/pre_pagespeed', false, $post_id, $force );
+		$pre = apply_filters( 'rank_math/analytics/pre_pagespeed', false, $post_id, $request );
 		if ( false !== $pre ) {
 			return $pre;
 		}

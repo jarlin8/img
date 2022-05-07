@@ -47,7 +47,13 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 	 * @return bool
 	 */
 	public function hasTags() {
+		return true;
+	}
 
+	/**
+	 * @return bool
+	 */
+	public function has_optin() {
 		return true;
 	}
 
@@ -57,7 +63,7 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 	 * @return void
 	 */
 	public function outputSetupForm() {
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'mandrill' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'mandrill' );
 		if ( $related_api->isConnected() ) {
 			$credentials = $related_api->getCredentials();
 			$this->setParam( 'email', $credentials['email'] );
@@ -100,14 +106,14 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 		$this->save();
 
 		/** @var Thrive_Dash_List_Connection_Mandrill $related_api */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'mandrill' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'mandrill' );
 
 		if ( ! empty( $mandrill_key ) ) {
 			/**
 			 * Try to connect to the email service too
 			 */
 
-			$related_api = Thrive_Dash_List_Manager::connectionInstance( 'mandrill' );
+			$related_api = Thrive_Dash_List_Manager::connection_instance( 'mandrill' );
 			$r_result    = true;
 			if ( ! $related_api->isConnected() ) {
 				$r_result = $related_api->readCredentials();
@@ -169,7 +175,7 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 		/**
 		 * disconnect the email service too
 		 */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'mandrill' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'mandrill' );
 		$related_api->setCredentials( array() );
 		Thrive_Dash_List_Manager::save( $related_api );
 

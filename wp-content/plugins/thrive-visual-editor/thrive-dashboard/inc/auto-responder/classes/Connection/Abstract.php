@@ -64,17 +64,32 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 
 	/**
 	 * If the snake_case version of the function does not exist, attempt to call the camelCase version.
+	 * Can be deleted after we switch everything to snake_case.
 	 *
-	 * @param $method
+	 * @param $method_name
 	 * @param $arguments
 	 *
 	 * @return mixed
 	 */
-	public function __call( $method, $arguments ) {
-		$camel_case_method_name = implode( '', array_map( 'ucfirst', explode( '_', $method ) ) );
-		$camel_case_method_name = lcfirst( $camel_case_method_name );
+	public function __call( $method_name, $arguments ) {
+		$camel_case_method_name = tve_dash_to_camel_case( $method_name );
 
 		return method_exists( $this, $camel_case_method_name ) ? call_user_func_array( [ $this, $camel_case_method_name ], $arguments ) : null;
+	}
+
+	/**
+	 * Same as above, but for static calls.
+	 * Can be deleted after we switch everything to snake_case.
+	 *
+	 * @param $method_name
+	 * @param $arguments
+	 *
+	 * @return mixed
+	 */
+	public static function __callStatic( $method_name, $arguments ) {
+		$camel_case_method_name = tve_dash_to_camel_case( $method_name );
+
+		return method_exists( __CLASS__, $camel_case_method_name ) ? call_user_func_array( [ static::class, $camel_case_method_name ], $arguments ) : null;
 	}
 
 	/**
@@ -116,12 +131,12 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	}
 
 	/**
-	 * @param array $connectionDetails
+	 * @param array $connection_details
 	 *
 	 * @return Thrive_Dash_List_Connection_Abstract
 	 */
-	public function setCredentials( $connectionDetails ) {
-		$this->_credentials = $connectionDetails;
+	public function setCredentials( $connection_details ) {
+		$this->_credentials = $connection_details;
 
 		return $this;
 	}
@@ -899,6 +914,15 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	}
 
 	/**
+	 * Whether or not the current integration has multiple opt-in types
+	 *
+	 * @return false
+	 */
+	public function has_optin() {
+		return false;
+	}
+
+	/**
 	 * Get tags key for the api
 	 *
 	 * @return string
@@ -943,27 +967,26 @@ abstract class Thrive_Dash_List_Connection_Abstract {
 	 *
 	 * @return array
 	 */
-	public function pushTags( $tags, $data = array() ) {
-
-		if ( ! $this->has_tags() && ( ! is_array( $tags ) || ! is_string( $tags ) ) ) {
+	public function push_tags( $tags, $data = [] ) {
+		if ( empty( $tags ) || ! $this->has_tags() ) {
 			return $data;
-		}
-
-		$_key = $this->get_tags_key();
-
-		if ( ! isset( $data[ $_key ] ) ) {
-			$data[ $_key ] = '';
 		}
 
 		if ( is_array( $tags ) ) {
 			$tags = implode( ', ', $tags );
+		} else if ( ! is_string( $tags ) ) {
+			$tags = '';
 		}
 
-		$data[ $_key ] = empty( $data[ $_key ] )
-			? $tags
-			: $data[ $_key ] . ', ' . $tags;
+		$tag_key = $this->get_tags_key();
 
-		$data[ $_key ] = trim( $data[ $_key ] );
+		if ( empty( $data[ $tag_key ] ) ) {
+			$tag_data = $tags;
+		} else {
+			$tag_data = $data[ $tag_key ] . ( empty( $tags ) ? '' : ', ' . $tags );
+		}
+
+		$data[ $tag_key ] = trim( $tag_data );
 
 		return $data;
 	}

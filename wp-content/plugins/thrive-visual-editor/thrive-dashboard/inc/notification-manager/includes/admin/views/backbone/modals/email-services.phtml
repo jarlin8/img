@@ -56,7 +56,7 @@
 		</div>
 	</div>
 </div>
-<?php foreach ( Thrive_Dash_List_Manager::getAvailableAPIsByType( false, array( 'email' ) ) as $key => $api ) : ?>
+<?php foreach ( Thrive_Dash_List_Manager::get_available_apis( false, [ 'include_types' => [ 'email' ] ] ) as $key => $api ) : ?>
 	<?php /** @var $api Thrive_Dash_List_Connection_Abstract */ ?>
 	<div class="tvd-nm-connection-form" data-key="<?php echo $key ?>" style="display: none">
 		<?php echo $api->outputSetupForm() ?>

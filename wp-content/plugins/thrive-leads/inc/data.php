@@ -3233,7 +3233,7 @@ function tve_leads_get_chart_annotations( $filter, $chart_data ) {
  * @return mixed
  */
 function tve_leads_get_wizard_proprieties( $asset_groups = array() ) {
-	$connected_apis = Thrive_List_Manager::getAvailableAPIsByType( true, array( 'email' ) );
+	$connected_apis = Thrive_List_Manager::get_available_apis( true, [ 'include_types' => [ 'email' ] ] );
 	if ( empty( $connected_apis ) ) {
 		$proprieties['connections'] = 0;
 	} else {

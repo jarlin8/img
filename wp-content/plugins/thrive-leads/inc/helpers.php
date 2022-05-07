@@ -2216,7 +2216,7 @@ function tve_leads_asset_delivery_setup_valid() {
 	$connection     = get_option( 'tve_api_delivery_service', false );
 	$email_body     = get_option( 'tve_leads_asset_mail_subject', false );
 	$email_subject  = get_option( 'tve_leads_asset_mail_body', false );
-	$connected_apis = Thrive_List_Manager::getAvailableAPIsByType( true, array( 'email' ) );
+	$connected_apis = Thrive_List_Manager::get_available_apis( true, [ 'include_types' => [ 'email' ] ] );
 
 	return ! empty( $connection ) && ! empty( $email_body ) && ! empty( $email_subject ) && ! empty( $connected_apis );
 }

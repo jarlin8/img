@@ -81,7 +81,7 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 		 * Try to connect to the autoresponder too
 		 */
 		/** @var Thrive_Dash_List_Connection_SendinblueV3 $related_api */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'sendinblue' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'sendinblue' );
 
 		$response = true;
 		if ( ! $related_api->isConnected() ) {

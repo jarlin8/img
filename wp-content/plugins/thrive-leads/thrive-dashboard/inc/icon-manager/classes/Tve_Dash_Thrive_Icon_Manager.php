@@ -133,7 +133,7 @@ if ( ! class_exists( 'Tve_Dash_Thrive_Icon_Manager' ) ) {
 
 				update_option( 'thrive_icon_pack', $new_icon_pack );
 
-				$this->messages['success']  = $success . 'You will be redirected to the previous page in <span id="tve-redirect-count">2</span> seconds.';
+				$this->messages['success']  = $success . 'You will be redirected to the previous page in %s seconds.';
 				$this->messages['redirect'] = admin_url( 'admin.php?page=tve_dash_icon_manager' );
 			}
 		}

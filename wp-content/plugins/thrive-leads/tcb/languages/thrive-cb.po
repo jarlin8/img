@@ -77,7 +77,7 @@ msgstr ""
 msgid "The template saved!"
 msgstr ""
 
-#: ../admin/includes/class-tcb-admin-ajax.php:313, ../admin/includes/class-tcb-admin-ajax.php:339, ../inc/classes/class-tcb-editor-ajax.php:2383
+#: ../admin/includes/class-tcb-admin-ajax.php:313, ../admin/includes/class-tcb-admin-ajax.php:339, ../inc/classes/class-tcb-editor-ajax.php:2386
 msgid "Invalid template"
 msgstr ""
 
@@ -101,27 +101,27 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: ../admin/includes/class-tcb-symbols-rest-controller.php:91, ../admin/includes/class-tcb-symbols-rest-controller.php:142, ../admin/includes/class-tcb-symbols-rest-controller.php:151, ../inc/classes/class-tcb-editor-ajax.php:1523, ../inc/classes/class-tcb-editor-ajax.php:1533, ../inc/classes/class-tcb-editor-ajax.php:1556, ../inc/classes/class-tcb-editor-ajax.php:1580, ../inc/classes/class-tcb-editor-ajax.php:1592, ../inc/classes/class-tcb-editor-ajax.php:1615, ../inc/classes/class-tcb-editor-ajax.php:1651, ../inc/classes/class-tcb-editor-ajax.php:1680, ../inc/classes/class-tcb-editor-ajax.php:1698, ../inc/classes/class-tcb-editor-ajax.php:1756, ../inc/classes/class-tcb-editor-ajax.php:1795
+#: ../admin/includes/class-tcb-symbols-rest-controller.php:107, ../admin/includes/class-tcb-symbols-rest-controller.php:158, ../admin/includes/class-tcb-symbols-rest-controller.php:167, ../inc/classes/class-tcb-editor-ajax.php:1526, ../inc/classes/class-tcb-editor-ajax.php:1536, ../inc/classes/class-tcb-editor-ajax.php:1559, ../inc/classes/class-tcb-editor-ajax.php:1583, ../inc/classes/class-tcb-editor-ajax.php:1595, ../inc/classes/class-tcb-editor-ajax.php:1618, ../inc/classes/class-tcb-editor-ajax.php:1654, ../inc/classes/class-tcb-editor-ajax.php:1683, ../inc/classes/class-tcb-editor-ajax.php:1701, ../inc/classes/class-tcb-editor-ajax.php:1759, ../inc/classes/class-tcb-editor-ajax.php:1798
 msgid "Invalid element type"
 msgstr ""
 
-#: ../admin/includes/class-tcb-symbols-rest-controller.php:146, ../inc/classes/class-tcb-editor-ajax.php:1584, ../inc/classes/class-tcb-editor-ajax.php:1619
+#: ../admin/includes/class-tcb-symbols-rest-controller.php:162, ../inc/classes/class-tcb-editor-ajax.php:1587, ../inc/classes/class-tcb-editor-ajax.php:1622
 msgid "Missing template id"
 msgstr ""
 
-#: ../admin/includes/class-tcb-symbols-rest-controller.php:214
+#: ../admin/includes/class-tcb-symbols-rest-controller.php:230
 msgid "Sorry, you are not allowed to create global elements with the same title"
 msgstr ""
 
-#: ../admin/includes/class-tcb-symbols-rest-controller.php:276
+#: ../admin/includes/class-tcb-symbols-rest-controller.php:292
 msgid "We were not able to copy the symbol"
 msgstr ""
 
-#: ../admin/includes/class-tcb-symbols-rest-controller.php:322
+#: ../admin/includes/class-tcb-symbols-rest-controller.php:338
 msgid "The inital thumbnail doesn't exists"
 msgstr ""
 
-#: ../admin/includes/class-tcb-symbols-rest-controller.php:354
+#: ../admin/includes/class-tcb-symbols-rest-controller.php:370
 msgid "Copy of "
 msgstr ""
 
@@ -865,87 +865,87 @@ msgstr ""
 msgid "Continue Reading"
 msgstr ""
 
-#: ../inc/functions.php:2754
+#: ../inc/functions.php:2766
 msgid "Thrive Leads Shortcode could not be rendered, please check it in Thrive Leads Section!"
 msgstr ""
 
-#: ../inc/functions.php:3315
+#: ../inc/functions.php:3327
 msgid "No menu items have been found."
 msgstr ""
 
-#: ../inc/functions.php:3544
+#: ../inc/functions.php:3556
 msgid "Thrive Architect Content"
 msgstr ""
 
-#: ../inc/functions.php:3545
+#: ../inc/functions.php:3557
 msgid "Thrive Architect Custom CSS"
 msgstr ""
 
-#: ../inc/functions.php:3546, ../inc/classes/class-tcb-editor.php:762, ../inc/classes/elements/class-tcb-landing-page-element.php:47
+#: ../inc/functions.php:3558, ../inc/classes/class-tcb-editor.php:776, ../inc/classes/elements/class-tcb-landing-page-element.php:47
 msgid "Landing Page"
 msgstr ""
 
-#: ../inc/functions.php:3973
+#: ../inc/functions.php:3985
 msgid "Something went wrong! Please contact site owner"
 msgstr ""
 
-#: ../inc/functions.php:3998
+#: ../inc/functions.php:4010
 msgid "We are detecting suspicious activity from your device. Please try in another browser or contact the website administrator."
 msgstr ""
 
-#: ../inc/functions.php:4006
+#: ../inc/functions.php:4018
 msgid "The email address is required"
 msgstr ""
 
-#: ../inc/functions.php:4013
+#: ../inc/functions.php:4025
 msgid "The email address is invalid"
 msgstr ""
 
-#: ../inc/functions.php:4063
+#: ../inc/functions.php:4075
 msgid "User consent is required"
 msgstr ""
 
-#: ../inc/functions.php:4101
+#: ../inc/functions.php:4114
 msgid "No connection for this form"
 msgstr ""
 
-#: ../inc/functions.php:4339
+#: ../inc/functions.php:4352
 msgid "All categories"
 msgstr ""
 
-#: ../inc/functions.php:4480
+#: ../inc/functions.php:4493
 msgid "%s ago"
 msgstr ""
 
-#: ../inc/functions.php:4693
+#: ../inc/functions.php:4706
 msgid "Copy"
 msgstr ""
 
-#: ../inc/functions.php:4694
+#: ../inc/functions.php:4707
 msgid "ERROR: The username field is empty."
 msgstr ""
 
-#: ../inc/functions.php:4695
+#: ../inc/functions.php:4708
 msgid "ERROR: The password field is empty."
 msgstr ""
 
-#: ../inc/functions.php:4696
+#: ../inc/functions.php:4709
 msgid "ERROR: Enter a username or email address."
 msgstr ""
 
-#: ../inc/functions.php:4697
+#: ../inc/functions.php:4710
 msgid "At least %s characters are needed"
 msgstr ""
 
-#: ../inc/functions.php:4698, ../inc/backbone/controls/preview-list-inline-item.php:6
+#: ../inc/functions.php:4711, ../inc/backbone/controls/preview-list-inline-item.php:6
 msgid "No headings found"
 msgstr ""
 
-#: ../inc/functions.php:4700
+#: ../inc/functions.php:4713
 msgid "<strong>Error</strong>: This field is required"
 msgstr ""
 
-#: ../inc/functions.php:4703
+#: ../inc/functions.php:4716
 msgid "<strong>Error</strong>: Password mismatch"
 msgstr ""
 
@@ -1209,131 +1209,131 @@ msgstr ""
 msgid "Invalid Parameters! A color must contain a name and a color string!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1509
+#: ../inc/classes/class-tcb-editor-ajax.php:1512
 msgid "Lightbox created"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1659, ../inc/classes/class-tcb-editor-ajax.php:2139, ../inc/classes/class-tcb-symbol-element-abstract.php:154
+#: ../inc/classes/class-tcb-editor-ajax.php:1662, ../inc/classes/class-tcb-editor-ajax.php:2142, ../inc/classes/class-tcb-symbol-element-abstract.php:154
 msgid "Error when retrieving symbols"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1675
+#: ../inc/classes/class-tcb-editor-ajax.php:1678
 msgid "Missing ID"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1717
+#: ../inc/classes/class-tcb-editor-ajax.php:1720
 msgid "Missing symbol title"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1751, ../inc/classes/class-tcb-symbol-element-abstract.php:277, ../inc/classes/class-tcb-symbol-element-abstract.php:438
+#: ../inc/classes/class-tcb-editor-ajax.php:1754, ../inc/classes/class-tcb-symbol-element-abstract.php:277, ../inc/classes/class-tcb-symbol-element-abstract.php:438
 msgid "Missing symbol id"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1790
+#: ../inc/classes/class-tcb-editor-ajax.php:1793
 msgid "Missing preview file"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1861
+#: ../inc/classes/class-tcb-editor-ajax.php:1864
 msgid "Invalid arguments"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2072
+#: ../inc/classes/class-tcb-editor-ajax.php:2075
 msgid "You are not allowed to update this meta"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2226
+#: ../inc/classes/class-tcb-editor-ajax.php:2229
 msgid "File upload for post %s"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2358, ../inc/classes/class-tcb-editor-ajax.php:2394
+#: ../inc/classes/class-tcb-editor-ajax.php:2361, ../inc/classes/class-tcb-editor-ajax.php:2397
 msgid "Invalid task"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2425
+#: ../inc/classes/class-tcb-editor-ajax.php:2428
 msgid "Content exported successfully!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2418, ../inc/classes/class-tcb-editor-ajax.php:2483, ../inc/helpers/file-upload.php:257
+#: ../inc/classes/class-tcb-editor-ajax.php:2421, ../inc/classes/class-tcb-editor-ajax.php:2486, ../inc/helpers/file-upload.php:257
 msgid "Invalid request"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2461
+#: ../inc/classes/class-tcb-editor-ajax.php:2464
 msgid "Content imported successfully!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2491
+#: ../inc/classes/class-tcb-editor-ajax.php:2494
 msgid "Landing Page exported successfully!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2525
+#: ../inc/classes/class-tcb-editor-ajax.php:2528
 msgid "Landing Page imported successfully!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:668
+#: ../inc/classes/class-tcb-editor.php:682
 msgid "Standard fields"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:671
+#: ../inc/classes/class-tcb-editor.php:685
 msgid "List all the fields and data captured in the form"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:675
+#: ../inc/classes/class-tcb-editor.php:689
 msgid "The first name of visitor"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:679
+#: ../inc/classes/class-tcb-editor.php:693
 msgid "The email of visitor"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:683
+#: ../inc/classes/class-tcb-editor.php:697
 msgid "The phone of visitor"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:687
+#: ../inc/classes/class-tcb-editor.php:701
 msgid "Lists all files uploaded by the user (if any)."
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:695
+#: ../inc/classes/class-tcb-editor.php:709
 msgid "Other"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:698
+#: ../inc/classes/class-tcb-editor.php:712
 msgid "Date of submission"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:702
+#: ../inc/classes/class-tcb-editor.php:716
 msgid "Time of submission"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:706
+#: ../inc/classes/class-tcb-editor.php:720
 msgid "The title of your Wordpress site"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:710
+#: ../inc/classes/class-tcb-editor.php:724
 msgid "Page containing the form"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:714
+#: ../inc/classes/class-tcb-editor.php:728
 msgid "TIP address of visitor"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:718
+#: ../inc/classes/class-tcb-editor.php:732
 msgid "\"Chrome 3.3.2\" for example"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:722
+#: ../inc/classes/class-tcb-editor.php:736
 msgid "The slug of form e.g \"/form/123\""
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:767, ../inc/classes/elements/class-tcb-post-element.php:18, ../inc/classes/conditional-display/fields/referral/class-post.php:33
+#: ../inc/classes/class-tcb-editor.php:781, ../inc/classes/elements/class-tcb-post-element.php:18, ../inc/classes/conditional-display/fields/referral/class-post.php:33
 msgid "Post"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:765, ../inc/classes/elements/class-tcb-post-element.php:18, ../inc/classes/post-list/class-tcb-post-list-content.php:64, ../inc/classes/conditional-display/fields/referral/class-page.php:27
+#: ../inc/classes/class-tcb-editor.php:779, ../inc/classes/elements/class-tcb-post-element.php:18, ../inc/classes/post-list/class-tcb-post-list-content.php:64, ../inc/classes/conditional-display/fields/referral/class-page.php:27
 msgid "Page"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor.php:1176
+#: ../inc/classes/class-tcb-editor.php:1191
 msgid "Change Template"
 msgstr ""
 
@@ -1539,7 +1539,7 @@ msgstr ""
 
 #. translators: %s represents index of the unlocked item
 #. translators: %s represents index of the unlocked item
-#: ../inc/classes/class-tcb-login-element-handler.php:442, ../inc/classes/elements/class-tcb-lead-generation-element.php:260, ../inc/classes/elements/class-tcb-megamenu-element.php:68, ../inc/classes/elements/class-tcb-menu-element.php:458
+#: ../inc/classes/class-tcb-login-element-handler.php:442, ../inc/classes/elements/class-tcb-lead-generation-element.php:260, ../inc/classes/elements/class-tcb-megamenu-element.php:68, ../inc/classes/elements/class-tcb-menu-element.php:457
 msgid "-- Dropdown %s"
 msgstr ""
 
@@ -1707,11 +1707,11 @@ msgstr ""
 msgid "Link to post title"
 msgstr ""
 
-#: ../inc/classes/class-tcb-utils.php:295, ../inc/classes/class-tcb-utils.php:351, ../inc/classes/class-tcb-utils.php:374, ../inc/classes/class-tcb-utils.php:414, ../inc/classes/class-tcb-utils.php:442, ../inc/backbone/inline/dynamiclink-popup.phtml:25, ../inc/backbone/inline/staticlink-popup.phtml:4, ../inc/views/actions/link.php:13, ../inc/views/modals/instructions.php:15
+#: ../inc/classes/class-tcb-utils.php:295, ../inc/classes/class-tcb-utils.php:351, ../inc/classes/class-tcb-utils.php:374, ../inc/classes/class-tcb-utils.php:414, ../inc/classes/class-tcb-utils.php:442, ../inc/backbone/inline/dynamiclink-popup.phtml:24, ../inc/backbone/inline/staticlink-popup.phtml:4, ../inc/views/actions/link.php:13, ../inc/views/modals/instructions.php:15
 msgid "Open in new tab"
 msgstr ""
 
-#: ../inc/classes/class-tcb-utils.php:301, ../inc/classes/class-tcb-utils.php:357, ../inc/classes/class-tcb-utils.php:380, ../inc/classes/class-tcb-utils.php:420, ../inc/classes/class-tcb-utils.php:448
+#: ../inc/classes/class-tcb-utils.php:301, ../inc/classes/class-tcb-utils.php:357, ../inc/classes/class-tcb-utils.php:380, ../inc/classes/class-tcb-utils.php:420, ../inc/classes/class-tcb-utils.php:448, ../inc/backbone/inline/dynamiclink-popup.phtml:25
 msgid "No follow"
 msgstr ""
 
@@ -2711,27 +2711,19 @@ msgstr ""
 msgid "Select an element as your target and click \"Add jumplink\" when you are done."
 msgstr ""
 
-#: ../inc/views/control-panel.php:51
-msgid "You can migrate this element to Thrive Architect. Click the following button to migrate the element"
-msgstr ""
-
-#: ../inc/views/control-panel.php:52
-msgid "Migrate element"
-msgstr ""
-
-#: ../inc/views/control-panel.php:58
+#: ../inc/views/control-panel.php:53
 msgid "Multiple selection mode activated. You can now move the selected elements across the page."
 msgstr ""
 
-#: ../inc/views/control-panel.php:64
+#: ../inc/views/control-panel.php:59
 msgid "Exit mode"
 msgstr ""
 
-#: ../inc/views/control-panel.php:79
+#: ../inc/views/control-panel.php:74
 msgid "Expand panel"
 msgstr ""
 
-#: ../inc/views/control-panel.php:80, ../inc/views/control-panel.php:80
+#: ../inc/views/control-panel.php:75, ../inc/views/control-panel.php:75
 msgid "Collapse panel"
 msgstr ""
 
@@ -3039,7 +3031,7 @@ msgstr ""
 msgid "Available in the full version of Thrive Architect"
 msgstr ""
 
-#: ../inc/backbone/cloud-templates/cloud-template-item.php:18, ../inc/backbone/cloud-templates/item.phtml:10, ../inc/backbone/landing-pages/item.phtml:41, ../inc/views/modals/landing-pages.php:77
+#: ../inc/backbone/cloud-templates/cloud-template-item.php:18, ../inc/backbone/cloud-templates/item.phtml:10, ../inc/backbone/landing-pages/item.phtml:41, ../inc/views/modals/landing-pages.php:90
 msgid "Upgrade"
 msgstr ""
 
@@ -3303,7 +3295,7 @@ msgstr ""
 msgid "Duplicate"
 msgstr ""
 
-#: ../inc/backbone/controls/preview-list-inline-item.php:26, ../inc/backbone/controls/preview-list-item.phtml:38, ../inc/backbone/controls/preview-toggle-list-item.phtml:33, ../inc/backbone/inline/dynamiclink-popup.phtml:29, ../inc/backbone/inline/staticlink-popup.phtml:10, ../inc/views/modals/lp-export.php:28, ../inc/backbone/controls/custom-fields/fields-data.phtml:14, ../inc/backbone/controls/link/element-link.phtml:47, ../inc/backbone/controls/menu/preview-list-item.php:12, ../inc/backbone/inline/shortcodes/main.phtml:21, ../inc/backbone/lead-generation/apis/drip.phtml:106
+#: ../inc/backbone/controls/preview-list-inline-item.php:26, ../inc/backbone/controls/preview-list-item.phtml:38, ../inc/backbone/controls/preview-toggle-list-item.phtml:33, ../inc/backbone/inline/dynamiclink-popup.phtml:43, ../inc/backbone/inline/staticlink-popup.phtml:10, ../inc/views/modals/lp-export.php:28, ../inc/backbone/controls/custom-fields/fields-data.phtml:14, ../inc/backbone/controls/link/element-link.phtml:47, ../inc/backbone/controls/menu/preview-list-item.php:12, ../inc/backbone/inline/shortcodes/main.phtml:21, ../inc/backbone/lead-generation/apis/drip.phtml:106
 msgid "Remove"
 msgstr ""
 
@@ -3631,15 +3623,15 @@ msgstr ""
 msgid "This hyperlink is inherited from the Dynamic Text settings. Edit or disable it from the Dynamic text dropdown"
 msgstr ""
 
-#: ../inc/backbone/inline/dynamiclink-popup.phtml:21, ../inc/backbone/controls/link/element-link.phtml:39
+#: ../inc/backbone/inline/dynamiclink-popup.phtml:20, ../inc/backbone/controls/link/element-link.phtml:39
 msgid "Enter shortcode... [ example ]"
 msgstr ""
 
-#: ../inc/backbone/inline/dynamiclink-popup.phtml:26, ../inc/backbone/inline/staticlink-popup.phtml:5
-msgid "Nofollow"
+#: ../inc/backbone/inline/dynamiclink-popup.phtml:32
+msgid "Redirect after successful logout"
 msgstr ""
 
-#: ../inc/backbone/inline/dynamiclink-popup.phtml:28, ../inc/backbone/inline/staticlink-popup.phtml:9, ../inc/backbone/controls/custom-fields/fields-data.phtml:13, ../inc/backbone/controls/link/element-link.phtml:46, ../inc/backbone/inline/shortcodes/main.phtml:18
+#: ../inc/backbone/inline/dynamiclink-popup.phtml:42, ../inc/backbone/inline/staticlink-popup.phtml:9, ../inc/backbone/controls/custom-fields/fields-data.phtml:13, ../inc/backbone/controls/link/element-link.phtml:46, ../inc/backbone/inline/shortcodes/main.phtml:18
 msgid "Insert"
 msgstr ""
 
@@ -3693,6 +3685,10 @@ msgstr ""
 
 #: ../inc/backbone/inline/postlist-links.phtml:6
 msgid "Comments Link"
+msgstr ""
+
+#: ../inc/backbone/inline/staticlink-popup.phtml:5
+msgid "Nofollow"
 msgstr ""
 
 #: ../inc/backbone/landing-pages/item.phtml:35
@@ -4247,19 +4243,19 @@ msgstr ""
 msgid "Size and alignment"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-button-element.php:182, ../inc/classes/elements/class-tcb-login-element.php:140, ../inc/classes/elements/class-tcb-menu-element.php:154, ../inc/classes/elements/class-tcb-social-element.php:156, ../inc/classes/elements/class-tcb-social-follow-element.php:75, ../inc/woocommerce/classes/shortcodes/product-categories/class-element.php:198, ../inc/woocommerce/classes/shortcodes/shop/class-element.php:226
+#: ../inc/classes/elements/class-tcb-button-element.php:182, ../inc/classes/elements/class-tcb-login-element.php:140, ../inc/classes/elements/class-tcb-menu-element.php:153, ../inc/classes/elements/class-tcb-social-element.php:156, ../inc/classes/elements/class-tcb-social-follow-element.php:75, ../inc/woocommerce/classes/shortcodes/product-categories/class-element.php:198, ../inc/woocommerce/classes/shortcodes/shop/class-element.php:226
 msgid "Align Left"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-button-element.php:188, ../inc/classes/elements/class-tcb-login-element.php:146, ../inc/classes/elements/class-tcb-menu-element.php:160, ../inc/classes/elements/class-tcb-social-element.php:162, ../inc/classes/elements/class-tcb-social-follow-element.php:80, ../inc/woocommerce/classes/shortcodes/product-categories/class-element.php:204, ../inc/woocommerce/classes/shortcodes/shop/class-element.php:232
+#: ../inc/classes/elements/class-tcb-button-element.php:188, ../inc/classes/elements/class-tcb-login-element.php:146, ../inc/classes/elements/class-tcb-menu-element.php:159, ../inc/classes/elements/class-tcb-social-element.php:162, ../inc/classes/elements/class-tcb-social-follow-element.php:80, ../inc/woocommerce/classes/shortcodes/product-categories/class-element.php:204, ../inc/woocommerce/classes/shortcodes/shop/class-element.php:232
 msgid "Align Center"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-button-element.php:193, ../inc/classes/elements/class-tcb-login-element.php:151, ../inc/classes/elements/class-tcb-menu-element.php:165, ../inc/classes/elements/class-tcb-social-element.php:167, ../inc/classes/elements/class-tcb-social-follow-element.php:85, ../inc/woocommerce/classes/shortcodes/product-categories/class-element.php:209, ../inc/woocommerce/classes/shortcodes/shop/class-element.php:237
+#: ../inc/classes/elements/class-tcb-button-element.php:193, ../inc/classes/elements/class-tcb-login-element.php:151, ../inc/classes/elements/class-tcb-menu-element.php:164, ../inc/classes/elements/class-tcb-social-element.php:167, ../inc/classes/elements/class-tcb-social-follow-element.php:85, ../inc/woocommerce/classes/shortcodes/product-categories/class-element.php:209, ../inc/woocommerce/classes/shortcodes/shop/class-element.php:237
 msgid "Align Right"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-button-element.php:198, ../inc/classes/elements/class-tcb-login-element.php:156, ../inc/classes/elements/class-tcb-menu-element.php:170, ../inc/classes/elements/class-tcb-menu-element.php:413, ../inc/classes/elements/class-tcb-social-element.php:172, ../inc/classes/elements/class-tcb-social-follow-element.php:90
+#: ../inc/classes/elements/class-tcb-button-element.php:198, ../inc/classes/elements/class-tcb-login-element.php:156, ../inc/classes/elements/class-tcb-menu-element.php:169, ../inc/classes/elements/class-tcb-menu-element.php:412, ../inc/classes/elements/class-tcb-social-element.php:172, ../inc/classes/elements/class-tcb-social-follow-element.php:90
 msgid "Full Width"
 msgstr ""
 
@@ -4403,7 +4399,7 @@ msgstr ""
 msgid "Connect to Zapier"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-contact-form-element.php:130, ../inc/classes/elements/class-tcb-postgrid-element.php:518, ../inc/views/modals/lp-save-template.php:24, ../inc/backbone/lead-generation/apis/activecampaign.phtml:29, ../inc/backbone/lead-generation/apis/aweber.phtml:17, ../inc/backbone/lead-generation/apis/convertkit.phtml:22, ../inc/backbone/lead-generation/apis/default-tag-controls.phtml:3, ../inc/backbone/lead-generation/apis/drip.phtml:36, ../inc/backbone/lead-generation/apis/fluentcrm.phtml:32, ../inc/backbone/lead-generation/apis/mailchimp.phtml:44, ../inc/backbone/lead-generation/apis/sendlane.phtml:22, ../inc/backbone/lead-generation/apis/zapier.phtml:11, ../inc/woocommerce/views/components/shop.php:75
+#: ../inc/classes/elements/class-tcb-contact-form-element.php:130, ../inc/classes/elements/class-tcb-postgrid-element.php:518, ../inc/views/modals/lp-save-template.php:24, ../inc/backbone/lead-generation/apis/activecampaign.phtml:29, ../inc/backbone/lead-generation/apis/aweber.phtml:17, ../inc/backbone/lead-generation/apis/convertkit.phtml:22, ../inc/backbone/lead-generation/apis/default-tag-controls.phtml:4, ../inc/backbone/lead-generation/apis/drip.phtml:36, ../inc/backbone/lead-generation/apis/fluentcrm.phtml:32, ../inc/backbone/lead-generation/apis/mailchimp.phtml:44, ../inc/backbone/lead-generation/apis/sendlane.phtml:22, ../inc/backbone/lead-generation/apis/zapier.phtml:11, ../inc/woocommerce/views/components/shop.php:75
 msgid "Tags"
 msgstr ""
 
@@ -4747,11 +4743,11 @@ msgstr ""
 msgid "Dropdown animation"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-dynamic-dropdown-element.php:157, ../inc/classes/elements/class-tcb-lead-generation-select-element.php:183, ../inc/classes/elements/class-tcb-menu-element.php:210
+#: ../inc/classes/elements/class-tcb-dynamic-dropdown-element.php:157, ../inc/classes/elements/class-tcb-lead-generation-select-element.php:183, ../inc/classes/elements/class-tcb-menu-element.php:209
 msgid "None (instant)"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-dynamic-dropdown-element.php:158, ../inc/classes/elements/class-tcb-lead-generation-select-element.php:184, ../inc/classes/elements/class-tcb-menu-element.php:211
+#: ../inc/classes/elements/class-tcb-dynamic-dropdown-element.php:158, ../inc/classes/elements/class-tcb-lead-generation-select-element.php:184, ../inc/classes/elements/class-tcb-menu-element.php:210
 msgid "Fade In and Out "
 msgstr ""
 
@@ -4759,7 +4755,7 @@ msgstr ""
 msgid "Slide Down"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-dynamic-dropdown-element.php:160, ../inc/classes/elements/class-tcb-lead-generation-select-element.php:186, ../inc/classes/elements/class-tcb-menu-element.php:214
+#: ../inc/classes/elements/class-tcb-dynamic-dropdown-element.php:160, ../inc/classes/elements/class-tcb-lead-generation-select-element.php:186, ../inc/classes/elements/class-tcb-menu-element.php:213
 msgid "Fold Out"
 msgstr ""
 
@@ -4815,11 +4811,11 @@ msgstr ""
 msgid "Match height to screen"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-form-icon-element.php:55, ../inc/classes/elements/class-tcb-lightbox-element.php:81, ../inc/classes/elements/class-tcb-menu-element.php:352, ../inc/classes/elements/class-tcb-toggle-title-element.php:125, ../inc/classes/elements/toc/class-tcb-toc-title-element.php:96
+#: ../inc/classes/elements/class-tcb-form-icon-element.php:55, ../inc/classes/elements/class-tcb-lightbox-element.php:81, ../inc/classes/elements/class-tcb-menu-element.php:351, ../inc/classes/elements/class-tcb-toggle-title-element.php:125, ../inc/classes/elements/toc/class-tcb-toc-title-element.php:96
 msgid "Icon color"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-form-icon-element.php:64, ../inc/classes/elements/class-tcb-menu-element.php:361
+#: ../inc/classes/elements/class-tcb-form-icon-element.php:64, ../inc/classes/elements/class-tcb-menu-element.php:360
 msgid "Icon size"
 msgstr ""
 
@@ -5395,7 +5391,7 @@ msgstr ""
 msgid "Dark"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:49, ../inc/classes/elements/class-tcb-login-element.php:89, ../inc/classes/elements/class-tcb-menu-element.php:240, ../inc/classes/elements/class-tcb-pagination-element.php:61, ../inc/classes/elements/class-tcb-progressbar-element.php:90, ../inc/classes/elements/class-tcb-social-element.php:124, ../inc/views/modals/cloud-templates-categories.php:24, ../inc/views/modals/ct-symbols.php:19, ../inc/backbone/controls/scroll/parallax-effect.phtml:3
+#: ../inc/classes/elements/class-tcb-lead-generation-recaptcha-element.php:49, ../inc/classes/elements/class-tcb-login-element.php:89, ../inc/classes/elements/class-tcb-menu-element.php:239, ../inc/classes/elements/class-tcb-pagination-element.php:61, ../inc/classes/elements/class-tcb-progressbar-element.php:90, ../inc/classes/elements/class-tcb-social-element.php:124, ../inc/views/modals/cloud-templates-categories.php:24, ../inc/views/modals/ct-symbols.php:19, ../inc/backbone/controls/scroll/parallax-effect.phtml:3
 msgid "Type"
 msgstr ""
 
@@ -5423,11 +5419,11 @@ msgstr ""
 msgid "Dropdown Style"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-lead-generation-select-element.php:174, ../inc/classes/elements/class-tcb-menu-element.php:201
+#: ../inc/classes/elements/class-tcb-lead-generation-select-element.php:174, ../inc/classes/elements/class-tcb-menu-element.php:200
 msgid "Dropdown Icon"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-lead-generation-select-element.php:181, ../inc/classes/elements/class-tcb-menu-element.php:208, ../inc/classes/elements/class-tcb-toc-element.php:243, ../inc/classes/elements/class-tcb-toggle-element.php:126
+#: ../inc/classes/elements/class-tcb-lead-generation-select-element.php:181, ../inc/classes/elements/class-tcb-menu-element.php:207, ../inc/classes/elements/class-tcb-toc-element.php:243, ../inc/classes/elements/class-tcb-toggle-element.php:126
 msgid "Dropdown Animation"
 msgstr ""
 
@@ -5591,7 +5587,7 @@ msgstr ""
 msgid "Simple Mega Menu"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-megamenu-element.php:58, ../inc/classes/elements/class-tcb-menu-element.php:448
+#: ../inc/classes/elements/class-tcb-megamenu-element.php:58, ../inc/classes/elements/class-tcb-menu-element.php:447
 msgid "Top Level Items"
 msgstr ""
 
@@ -5600,11 +5596,11 @@ msgstr ""
 #. translators: %s represents index of the unlocked item
 #. translators: %s represents index of the unlocked item
 #. translators: %s represents index of the unlocked item
-#: ../inc/classes/elements/class-tcb-megamenu-element.php:60, ../inc/classes/elements/class-tcb-megamenu-element.php:109, ../inc/classes/elements/class-tcb-megamenu-element.php:117, ../inc/classes/elements/class-tcb-menu-element.php:450, ../inc/classes/elements/class-tcb-menu-element.php:466
+#: ../inc/classes/elements/class-tcb-megamenu-element.php:60, ../inc/classes/elements/class-tcb-megamenu-element.php:109, ../inc/classes/elements/class-tcb-megamenu-element.php:117, ../inc/classes/elements/class-tcb-menu-element.php:449, ../inc/classes/elements/class-tcb-menu-element.php:465
 msgid "-- Item %s"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-megamenu-element.php:66, ../inc/classes/elements/class-tcb-menu-element.php:456
+#: ../inc/classes/elements/class-tcb-megamenu-element.php:66, ../inc/classes/elements/class-tcb-menu-element.php:455
 msgid "All Dropdowns"
 msgstr ""
 
@@ -5626,7 +5622,7 @@ msgstr ""
 msgid "-- Menu Description %s"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-megamenu-element.php:91, ../inc/classes/elements/class-tcb-megamenu-element.php:99, ../inc/classes/elements/class-tcb-menu-element.php:472, ../inc/classes/elements/class-tcb-menu-element.php:480
+#: ../inc/classes/elements/class-tcb-megamenu-element.php:91, ../inc/classes/elements/class-tcb-megamenu-element.php:99, ../inc/classes/elements/class-tcb-menu-element.php:471, ../inc/classes/elements/class-tcb-menu-element.php:479
 msgid "All Menu Images"
 msgstr ""
 
@@ -5634,7 +5630,7 @@ msgstr ""
 #. translators: %s represents index of the unlocked item
 #. translators: %s represents index of the unlocked item
 #. translators: %s represents index of the unlocked item
-#: ../inc/classes/elements/class-tcb-megamenu-element.php:93, ../inc/classes/elements/class-tcb-megamenu-element.php:101, ../inc/classes/elements/class-tcb-menu-element.php:474, ../inc/classes/elements/class-tcb-menu-element.php:482
+#: ../inc/classes/elements/class-tcb-megamenu-element.php:93, ../inc/classes/elements/class-tcb-megamenu-element.php:101, ../inc/classes/elements/class-tcb-menu-element.php:473, ../inc/classes/elements/class-tcb-menu-element.php:481
 msgid "-- Menu Image %s"
 msgstr ""
 
@@ -5694,91 +5690,91 @@ msgstr ""
 msgid "Menu Source"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:113, ../inc/classes/elements/class-tcb-menu-item-element.php:64, ../inc/classes/elements/class-tcb-tabs-element.php:112
+#: ../inc/classes/elements/class-tcb-menu-element.php:112, ../inc/classes/elements/class-tcb-menu-item-element.php:64, ../inc/classes/elements/class-tcb-tabs-element.php:112
 msgid "Hover Effect"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:126
+#: ../inc/classes/elements/class-tcb-menu-element.php:125
 msgid "Content Alignment"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:181
+#: ../inc/classes/elements/class-tcb-menu-element.php:180
 msgid "Menu width"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:190
+#: ../inc/classes/elements/class-tcb-menu-element.php:189
 msgid "Expand Style"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:192, ../inc/classes/elements/class-tcb-toggle-element.php:23, ../inc/classes/elements/class-tcb-toggle-old-element.php:23
+#: ../inc/classes/elements/class-tcb-menu-element.php:191, ../inc/classes/elements/class-tcb-toggle-element.php:23, ../inc/classes/elements/class-tcb-toggle-old-element.php:23
 msgid "Toggle"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:193
+#: ../inc/classes/elements/class-tcb-menu-element.php:192
 msgid "Drop right"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:194
+#: ../inc/classes/elements/class-tcb-menu-element.php:193
 msgid "Drop left"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:212
+#: ../inc/classes/elements/class-tcb-menu-element.php:211
 msgid "Slide Down #1"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:213
+#: ../inc/classes/elements/class-tcb-menu-element.php:212
 msgid "Slide Down #2"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:222
+#: ../inc/classes/elements/class-tcb-menu-element.php:221
 msgid "Toggle hamburger"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:232, ../inc/classes/elements/class-tcb-menu-element.php:251, ../inc/classes/elements/class-tcb-social-element.php:136, ../inc/classes/elements/class-tcb-tabs-old-element.php:64, ../inc/backbone/controls/layout/position-relative.phtml:12
+#: ../inc/classes/elements/class-tcb-menu-element.php:231, ../inc/classes/elements/class-tcb-menu-element.php:250, ../inc/classes/elements/class-tcb-social-element.php:136, ../inc/classes/elements/class-tcb-tabs-old-element.php:64, ../inc/backbone/controls/layout/position-relative.phtml:12
 msgid "Horizontal"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:237, ../inc/classes/elements/class-tcb-menu-element.php:255, ../inc/classes/elements/class-tcb-social-element.php:137, ../inc/classes/elements/class-tcb-tabs-old-element.php:68, ../inc/backbone/controls/layout/position-relative.phtml:13
+#: ../inc/classes/elements/class-tcb-menu-element.php:236, ../inc/classes/elements/class-tcb-menu-element.php:254, ../inc/classes/elements/class-tcb-social-element.php:137, ../inc/classes/elements/class-tcb-tabs-old-element.php:68, ../inc/backbone/controls/layout/position-relative.phtml:13
 msgid "Vertical"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:246
+#: ../inc/classes/elements/class-tcb-menu-element.php:245
 msgid "Spacing"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:259
+#: ../inc/classes/elements/class-tcb-menu-element.php:258
 msgid "Between"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:267
+#: ../inc/classes/elements/class-tcb-menu-element.php:266
 msgid "Split menu with logo"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:277
+#: ../inc/classes/elements/class-tcb-menu-element.php:276
 msgid "Closed"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:282
+#: ../inc/classes/elements/class-tcb-menu-element.php:281
 msgid "Open"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:285
+#: ../inc/classes/elements/class-tcb-menu-element.php:284
 msgid "Menu State"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:324
+#: ../inc/classes/elements/class-tcb-menu-element.php:323
 msgid "Menu Display"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:336
+#: ../inc/classes/elements/class-tcb-menu-element.php:335
 msgid "Menu Icon"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:370
+#: ../inc/classes/elements/class-tcb-menu-element.php:369
 msgid "Disable links to current page"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-menu-element.php:464
+#: ../inc/classes/elements/class-tcb-menu-element.php:463
 msgid "All Dropdown Items"
 msgstr ""
 
@@ -7066,6 +7062,10 @@ msgstr ""
 msgid "Article Components"
 msgstr ""
 
+#: ../inc/classes/symbols/class-tcb-symbol-template.php:357
+msgid "(Imported)"
+msgstr ""
+
 #: ../inc/classes/symbols/class-tcb-symbols-block.php:77
 msgid "Thrive Library"
 msgstr ""
@@ -7694,11 +7694,19 @@ msgstr ""
 msgid "Landing Page Library"
 msgstr ""
 
-#: ../inc/views/modals/landing-pages.php:71
+#: ../inc/views/modals/landing-pages.php:54
+msgid "Theme Landing Page sets"
+msgstr ""
+
+#: ../inc/views/modals/landing-pages.php:61
+msgid "Smart Landing page sets"
+msgstr ""
+
+#: ../inc/views/modals/landing-pages.php:84
 msgid "BACK to library"
 msgstr ""
 
-#: ../inc/views/modals/landing-pages.php:89
+#: ../inc/views/modals/landing-pages.php:102
 msgid "Apply Template"
 msgstr ""
 
@@ -8746,16 +8754,28 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-#: ../inc/backbone/lead-generation/apis/activecampaign.phtml:17
+#: ../inc/backbone/lead-generation/apis/activecampaign.phtml:17, ../inc/backbone/lead-generation/apis/default-form-controls.phtml:4
 msgid "Choose the form you want to use:"
 msgstr ""
 
-#: ../inc/backbone/lead-generation/apis/activecampaign.phtml:24
+#: ../inc/backbone/lead-generation/apis/activecampaign.phtml:24, ../inc/backbone/lead-generation/apis/default-form-controls.phtml:11
 msgid "No forms available!"
 msgstr ""
 
 #: ../inc/backbone/lead-generation/apis/convertkit.phtml:9, ../inc/backbone/lead-generation/apis/mailster.phtml:9, ../inc/backbone/lead-generation/apis/sendlane.phtml:9
 msgid "No lists found"
+msgstr ""
+
+#: ../inc/backbone/lead-generation/apis/default-optin-controls.phtml:3
+msgid "Choose the type of optin you would like for your integration"
+msgstr ""
+
+#: ../inc/backbone/lead-generation/apis/default-optin-controls.phtml:7, ../inc/backbone/lead-generation/apis/drip.phtml:73, ../inc/backbone/lead-generation/apis/fluentcrm.phtml:21, ../inc/backbone/lead-generation/apis/mailchimp.phtml:33, ../inc/backbone/lead-generation/apis/mailster.phtml:27
+msgid "Single optin"
+msgstr ""
+
+#: ../inc/backbone/lead-generation/apis/default-optin-controls.phtml:8, ../inc/backbone/lead-generation/apis/drip.phtml:75, ../inc/backbone/lead-generation/apis/fluentcrm.phtml:22, ../inc/backbone/lead-generation/apis/mailchimp.phtml:34, ../inc/backbone/lead-generation/apis/mailster.phtml:28
+msgid "Double optin"
 msgstr ""
 
 #: ../inc/backbone/lead-generation/apis/drip.phtml:3
@@ -8792,14 +8812,6 @@ msgstr ""
 
 #: ../inc/backbone/lead-generation/apis/drip.phtml:68
 msgid "Choose opt-in type:"
-msgstr ""
-
-#: ../inc/backbone/lead-generation/apis/drip.phtml:73, ../inc/backbone/lead-generation/apis/fluentcrm.phtml:21, ../inc/backbone/lead-generation/apis/mailchimp.phtml:33, ../inc/backbone/lead-generation/apis/mailster.phtml:27
-msgid "Single optin"
-msgstr ""
-
-#: ../inc/backbone/lead-generation/apis/drip.phtml:75, ../inc/backbone/lead-generation/apis/fluentcrm.phtml:22, ../inc/backbone/lead-generation/apis/mailchimp.phtml:34, ../inc/backbone/lead-generation/apis/mailster.phtml:28
-msgid "Double optin"
 msgstr ""
 
 #: ../inc/backbone/lead-generation/apis/drip.phtml:84

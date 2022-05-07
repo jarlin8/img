@@ -136,7 +136,7 @@ function tve_leads_admin_enqueue( $hook ) {
 			'last_12_months'    => TVE_LAST_12_MONTHS,
 			'custom_date_range' => TVE_CUSTOM_DATE_RANGE,
 		),
-		'api_connections'                       => Thrive_List_Manager::getAvailableAPIs( true, array( 'captcha', 'email', 'social' ) ),
+		'api_connections' => Thrive_List_Manager::get_available_apis( true, [ 'exclude_types' => [ 'captcha', 'email', 'social' ] ] ),
 	);
 
 	/**
@@ -548,8 +548,7 @@ function thrive_leads_asset_delivery() {
 	);
 	$asset_groups   = tve_leads_get_asset_groups( array( 'active_test' => false ) );
 
-//	$connected_apis = Thrive_List_Manager::getAvailableAPIsByType( true, array( 'email' ) );
-	$all_apis = Thrive_List_Manager::getAvailableAPIsByType( false, array( 'email' ) );
+	$all_apis = Thrive_List_Manager::get_available_apis( false, [ 'include_types' => [ 'email' ] ] );
 
 	$apis            = array();
 	$connected_apis  = array();
@@ -720,7 +719,7 @@ function tve_leads_get_api_connection_list() {
 	if ( ! $api || ! array_key_exists( $api, Thrive_List_Manager::$AVAILABLE ) ) {
 		exit();
 	}
-	$connection = Thrive_List_Manager::connectionInstance( $api );
+	$connection = Thrive_List_Manager::connection_instance( $api );
 	$cache      = empty( $_REQUEST['force_fetch'] );
 	$lists      = $connection->getLists( $cache );
 	wp_send_json( $lists );
@@ -743,7 +742,7 @@ function tve_leads_get_api_extra_fields() {
 		}
 	}
 
-	$connection = Thrive_List_Manager::connectionInstance( $api );
+	$connection = Thrive_List_Manager::connection_instance( $api );
 	ob_start();
 	$connection->renderExtraEditorSettings( $args );
 	$content = ob_get_contents();

@@ -104,6 +104,11 @@ class Thrive_Dash_List_Connection_SendOwl extends Thrive_Dash_List_Connection_Ab
 	 * @return mixed
 	 */
 	protected function _apiInstance() {
+
+		if ( empty( $this->param( 'key' ) ) || empty( $this->param( 'secret' ) ) ) {
+			return null;
+		}
+
 		return new Thrive_Dash_Api_SendOwl( array(
 				'apiKey'    => $this->param( 'key' ),
 				'secretKey' => $this->param( 'secret' ),

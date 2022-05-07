@@ -195,7 +195,7 @@ class Thrive_Dash_Api_GoToWebinar {
 	 */
 	protected function save() {
 
-		$connection = Thrive_Dash_List_Manager::connectionInstance( 'gotowebinar' );
+		$connection = Thrive_Dash_List_Manager::connection_instance( 'gotowebinar' );
 		$connection->setCredentials( $this->getCredentials() );
 		$connection->save();
 	}
@@ -351,7 +351,7 @@ class Thrive_Dash_Api_GoToWebinar {
 
 		// Grab saved data if not already in instance
 		if ( ! $this->username || ! $this->password ) {
-			$connection  = Thrive_Dash_List_Manager::connectionInstance( 'gotowebinar' );
+			$connection  = Thrive_Dash_List_Manager::connection_instance( 'gotowebinar' );
 			$credentials = $connection->getCredentials();
 
 			$settings       = array_merge( $settings, $credentials );

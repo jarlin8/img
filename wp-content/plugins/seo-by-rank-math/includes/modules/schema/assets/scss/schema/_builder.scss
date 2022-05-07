@@ -416,6 +416,10 @@
             &__content {
                 padding: 0;
 
+                &:before {
+                    margin: 0;
+                }
+
                 button.is-secondary {
                     line-height: 26px;
 

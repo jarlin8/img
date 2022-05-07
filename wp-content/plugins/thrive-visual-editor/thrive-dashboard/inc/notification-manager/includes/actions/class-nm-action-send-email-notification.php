@@ -125,7 +125,7 @@ class TD_NM_Action_Send_Email_Notification extends TD_NM_Action_Abstract {
 			return false;
 		}
 
-		return Thrive_Dash_List_Manager::connectionInstance( $connection );
+		return Thrive_Dash_List_Manager::connection_instance( $connection );
 	}
 
 	/**

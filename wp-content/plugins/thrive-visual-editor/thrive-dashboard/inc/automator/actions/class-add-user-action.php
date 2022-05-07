@@ -102,19 +102,13 @@ class Add_User extends Action {
 		}
 	}
 
+
 	public function do_action( $data ) {
 		$email = '';
-		/**
-		 * Filter the data objects that might provide user data
-		 */
-		$data_sets = apply_filters( 'tvd_automator_api_data_sets', [] );
-		/**
-		 * Make sure that user_data is always the last item
-		 */
-		$data_sets   = array_diff( $data_sets, [ 'user_data' ] );
-		$data_sets[] = 'user_data';
+
 
 		global $automation_data;
+		$data_sets = Main::get_email_data_sets();
 		/**
 		 * Try to get email for available data objects
 		 */
@@ -126,12 +120,13 @@ class Add_User extends Action {
 			}
 		}
 
+
 		if ( empty( $email ) ) {
 			return false;
 		}
 		$api_load = array( 'email' => $email );
 
-		$apis = Thrive_Dash_List_Manager::getAvailableAPIs( true );
+		$apis = Thrive_Dash_List_Manager::get_available_apis( true );
 
 		$api = $apis[ $this->autoresponder ];
 		if ( empty( $api ) ) {
@@ -151,12 +146,12 @@ class Add_User extends Action {
 			$api_load[ $api->get_tags_key() ] = $tags;
 		}
 
-		if ( ! empty( $this->additional['optin'] ) && $api->has_tags() ) {
-			$api_load[ $api->getOptinKey() ] = $this->additional['optin'];
+		if ( ! empty( $this->additional['optin'] ) && $api->has_optin() ) {
+			$api_load[ $api->get_optin_key() ] = $this->additional['optin'];
 		}
 
 		if ( ! empty( $this->additional['form_list'] ) && $api->has_forms() ) {
-			$api_load[ $api->getFormsKey() ] = $this->additional['form_list'];
+			$api_load[ $api->get_forms_key() ] = $this->additional['form_list'];
 		}
 
 		$list_identifier = ! empty( $this->additional['mailing_list'] ) ? $this->additional['mailing_list'] : null;
@@ -201,7 +196,7 @@ class Add_User extends Action {
 	public static function get_action_mapped_fields( $data ) {
 		$fields = static::get_required_action_fields();
 		if ( property_exists( $data, 'autoresponder' ) ) {
-			$api_instance = \Thrive_Dash_List_Manager::get_api_instance( $data->autoresponder->value );
+			$api_instance = \Thrive_Dash_List_Manager::connection_instance( $data->autoresponder->value );
 
 			if ( $api_instance !== null && $api_instance->is_connected() ) {
 				$fields = $api_instance->get_automator_add_autoresponder_mapping_fields();
@@ -240,7 +235,7 @@ class Add_User extends Action {
 		$valid          = true;
 		$available_data = array();
 		global $automation_data;
-		foreach ( static::get_required_data_objects() as $key ) {
+		foreach ( Main::get_email_data_sets() as $key ) {
 			if ( ! empty( $automation_data->get( $key ) ) ) {
 				$available_data[] = $key;
 			}

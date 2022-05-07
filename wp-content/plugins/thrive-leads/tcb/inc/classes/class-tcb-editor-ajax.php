@@ -862,7 +862,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$data = [];
 
 			if ( $api_key ) {
-				$connection = Thrive_Dash_List_Manager::get_api_instance( $api_key );
+				$connection = Thrive_Dash_List_Manager::connection_instance( $api_key );
 
 				$data = $connection->get_api_data( $extra, $force );
 			}
@@ -884,7 +884,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				return array();
 			}
 
-			$connection = Thrive_Dash_List_Manager::connectionInstance( $api );
+			$connection = Thrive_Dash_List_Manager::connection_instance( $api );
 
 			return $connection->get_api_extra( $extra, $params );
 		}
@@ -983,15 +983,15 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 		 * Crud Operations on global gradients
 		 */
 		public function action_global_gradients() {
-			$name        = $this->param( 'name' );
-			$gradient    = $this->param( 'gradient', null, false );
-			$id          = $this->param( 'id' );
-			$active      = ! is_numeric( $this->param( 'active' ) ) ? 1 : 0;
-			$custom_name = is_numeric( $this->param( 'custom_name' ) )
-			               && in_array( $this->param( 'custom_name' ), array(
-				0,
-				1,
-			) ) ? $this->param( 'custom_name' ) : 0;
+			$name     = $this->param( 'name' );
+			$gradient = $this->param( 'gradient', null, false );
+			$id       = $this->param( 'id' );
+			$active   = is_numeric( $this->param( 'active' ) ) ? 0 : 1;
+
+			$custom_name = (int) $this->param( 'custom_name' );
+			if ( empty( $custom_name ) || $custom_name !== 1 ) {
+				$custom_name = 0;
+			}
 
 			$max_name_characters          = 50;
 			$global_gradients_option_name = apply_filters( 'tcb_global_gradients_option_name', 'thrv_global_gradients' );
@@ -1037,7 +1037,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$index = - 1;
 
 				foreach ( $global_gradients as $key => $global_g ) {
-					if ( intval( $global_g['id'] ) === intval( $id ) ) {
+					if ( (int) $global_g['id'] === (int) $id ) {
 						$index = $key;
 						break;
 					}
@@ -1079,11 +1079,11 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$id          = $this->param( 'id' );
 			$active      = (int) $this->param( 'active', 1 );
 			$linked_vars = $this->param( 'linked_variables', array() );
-			$custom_name = is_numeric( $this->param( 'custom_name' ) )
-			               && in_array( $this->param( 'custom_name' ), array(
-				0,
-				1,
-			) ) ? $this->param( 'custom_name' ) : 0;
+
+			$custom_name = (int) $this->param( 'custom_name' );
+			if ( empty( $custom_name ) || $custom_name !== 1 ) {
+				$custom_name = 0;
+			}
 
 			$max_name_characters = 50;
 
@@ -1134,7 +1134,7 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				$index = - 1;
 
 				foreach ( $global_colors as $key => $global_c ) {
-					if ( intval( $global_c['id'] ) === intval( $id ) ) {
+					if ( (int) $global_c['id'] === (int) $id ) {
 						$index = $key;
 						break;
 					}
@@ -1193,8 +1193,11 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			$value       = $this->param( 'value', '', false );
 			$id          = $this->param( 'id' );
 			$linked_vars = $this->param( 'linked_variables', array(), false );
-			$custom_name = is_numeric( $this->param( 'custom_name' ) )
-			               && in_array( $this->param( 'custom_name' ), array( 0, 1 ) ) ? $this->param( 'custom_name' ) : 0;
+
+			$custom_name = (int) $this->param( 'custom_name' );
+			if ( empty( $custom_name ) || $custom_name !== 1 ) {
+				$custom_name = 0;
+			}
 
 			if ( ! in_array( $type, array( 'color', 'gradient' ) ) ) {
 				$this->error( 'Invalid type' );
@@ -2553,6 +2556,81 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			} else {
 				update_post_meta( $post_id, $name, (int) $value );
 			}
+
+			return $response;
+		}
+
+		/**
+		 * Changes the active palette of a LP by changing the active ID in the config
+		 *
+		 * @return bool[]
+		 */
+		public function action_change_palette() {
+			$response = array(
+				'success' => true,
+			);
+
+			$previous_id = (int) $this->param( 'previous_id' );
+			$active_id   = (int) $this->param( 'active_id' );
+			$version     = (int) $this->param( 'version' );
+			$post_id     = (int) $this->param( 'post_id' );
+
+			if ( $previous_id === $active_id ) {
+				//We do nothing here
+				return $response;
+			}
+
+			$landing_page        = tcb_landing_page( $post_id );
+			$lp_palette_instance = $landing_page->get_palette_instance();
+
+			if ( $version === 2 ) {
+
+				$config = $lp_palette_instance->get_smart_lp_palettes_v2( $post_id );
+
+				$config['active_id'] = $active_id;
+
+				$lp_palette_instance->update_lp_palettes_v2( $config );
+				$lp_palette_instance->update_master_hsl( $config['palettes'][ $active_id ]['modified_hsl'], $active_id );
+			}
+
+			return $response;
+		}
+
+		/**
+		 * Update the master color in Palette
+		 * Also used for reset
+		 *
+		 *
+		 * @return bool[] $response
+		 */
+		public function action_update_palette() {
+			$response = array(
+				'success' => true,
+			);
+
+			$hsl                 = $this->param( 'hsl' );
+			$post_id             = $this->param( 'post_id' );
+			$landing_page        = tcb_landing_page( $post_id );
+			$lp_palette_instance = $landing_page->get_palette_instance();
+			$skin_palettes       = $lp_palette_instance->get_smart_lp_palettes_v2();
+			$active_id           = ! empty( $skin_palettes ) ? (int) $skin_palettes['active_id'] : 0;
+
+			$landing_page->update_master_hsl( $hsl, $active_id );
+			$landing_page->update_variables_in_config( $hsl );
+
+			return $response;
+		}
+
+		public function action_update_auxiliary_variable() {
+			$response = array(
+				'success' => true,
+			);
+
+			$post_id  = (int) $this->param( 'post_id' );
+			$color_id = (int) $this->param( 'id' );
+			$color    = (string) $this->param( 'color' );
+
+			tcb_landing_page( $post_id )->update_auxiliary_variable( $color_id, $color );
 
 			return $response;
 		}

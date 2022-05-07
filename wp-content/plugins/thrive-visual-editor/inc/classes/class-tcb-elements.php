@@ -70,7 +70,7 @@ class TCB_Elements {
 			}
 
 			/* if the item is a file, include it */
-			if ( is_file( $item_path ) ) {
+			if ( is_file( $item_path ) && substr( $item_path, - 3 ) === 'php' ) {
 				$element = str_replace( array( 'class-tcb-', '-element.php' ), '', $item );
 				$element = self::capitalize_class_name( $element );
 

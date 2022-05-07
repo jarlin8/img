@@ -76,7 +76,7 @@ class Thrive_Dash_List_Connection_SendGridEmail extends Thrive_Dash_List_Connect
 		 * Try to connect to the autoresponder too
 		 */
 		/** @var Thrive_Dash_List_Connection_SendGrid $related_api */
-		$related_api = Thrive_Dash_List_Manager::connectionInstance( 'sendgrid' );
+		$related_api = Thrive_Dash_List_Manager::connection_instance( 'sendgrid' );
 
 		$r_result = true;
 		if ( ! $related_api->isConnected() ) {

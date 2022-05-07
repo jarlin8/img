@@ -20,8 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @property int    ttw_id
  * @property string ttw_salt
  * @property string ttw_email
- * @property bool   status
+ * @property string status
  * @property string ttw_expiration datetime until the current connection is known by TTW; ttw_salt has to be refreshed after this date;
+ * @static new TD_TTW_Connection get_instance
  */
 class TD_TTW_Connection {
 
@@ -51,12 +52,12 @@ class TD_TTW_Connection {
 
 	private function __construct() {
 
-		$this->_data = get_option( self::NAME, array() );
+		$this->_data = get_option( static::NAME, array() );
 	}
 
 	public function is_connected() {
 
-		return $this->status === self::CONNECTED;
+		return static::CONNECTED === $this->status;
 	}
 
 	/**
@@ -64,16 +65,19 @@ class TD_TTW_Connection {
 	 */
 	public function disconnect() {
 
-		delete_option( self::NAME );
-		delete_transient( TD_TTW_User_Licenses::NAME );
+		delete_option( static::NAME );
+		thrive_delete_transient( TD_TTW_User_Licenses::NAME );
 	}
 
 	public function get_login_url() {
 
-		return add_query_arg( array(
-			'callback_url' => urlencode( base64_encode( $this->get_callback_url() ) ),
-			'td_site'      => base64_encode( get_site_url() ),
-		), self::get_ttw_url() . '/connect-account' );
+		return add_query_arg(
+			array(
+				'callback_url' => urlencode( base64_encode( $this->get_callback_url() ) ),
+				'td_site'      => base64_encode( get_site_url() ),
+			),
+			static::get_ttw_url() . '/connect-account/'
+		);
 	}
 
 	/**
@@ -84,11 +88,13 @@ class TD_TTW_Connection {
 	protected function get_callback_url() {
 
 		$url = admin_url( 'admin.php?page=tve_dash_ttw_account' );
-		$url = add_query_arg( array(
-			'td_token' => base64_encode( $this->get_token() ),
-		), $url );
 
-		return $url;
+		return add_query_arg(
+			array(
+				'td_token' => base64_encode( $this->get_token() ),
+			),
+			$url
+		);
 	}
 
 	/**
@@ -127,7 +133,7 @@ class TD_TTW_Connection {
 	 */
 	public function encrypt( $str ) {
 
-		$str .= '-' . self::SIGNATURE;
+		$str .= '-' . static::SIGNATURE;
 
 		$str = base64_encode( $str );
 
@@ -156,7 +162,7 @@ class TD_TTW_Connection {
 	 */
 	public static function is_debug_mode() {
 
-		return defined( 'TD_TTW_DEBUG' ) && TD_TTW_DEBUG || ( ! empty( $_REQUEST['td_debug'] ) );
+		return ( defined( 'TD_TTW_DEBUG' ) && TD_TTW_DEBUG ) || ! empty( $_REQUEST['td_debug'] );
 	}
 
 	/**
@@ -169,7 +175,7 @@ class TD_TTW_Connection {
 			return trim( TTW_URL, '/' );
 		}
 
-		if ( self::is_debug_mode() ) {
+		if ( static::is_debug_mode() ) {
 
 			return get_option( 'tpm_ttw_url', 'https://staging.thrivethemes.com' );
 		}
@@ -212,7 +218,7 @@ class TD_TTW_Connection {
 
 		$html = ob_get_clean();
 
-		if ( $return === true ) {
+		if ( true === $return ) {
 			return $html;
 		}
 
@@ -296,9 +302,9 @@ class TD_TTW_Connection {
 	 */
 	protected function _save_connection( $data ) {
 
-		$data['status'] = self::CONNECTED;
+		$data['status'] = static::CONNECTED;
 		$this->_data    = $data;
-		update_option( self::NAME, $data );
+		update_option( static::NAME, $data );
 
 		return true;
 	}

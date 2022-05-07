@@ -45,11 +45,17 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 * @return bool
 	 */
 	public function hasTags() {
-
 		return true;
 	}
 
 	public function hasCustomFields() {
+		return true;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function has_optin() {
 		return true;
 	}
 

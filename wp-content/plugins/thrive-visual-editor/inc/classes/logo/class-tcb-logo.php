@@ -140,7 +140,11 @@ class TCB_Logo {
 
 		/* We have to process the shortcode here because we cannot send it as a param inside another shortcode ( logo ) */
 		if ( ! empty( $attr['data-dynamic-link'] ) ) {
-			$attr['href'] = do_shortcode( "[{$attr['data-dynamic-link']} id={$attr['data-shortcode-id']}]" );
+			$shortcode = "{$attr['data-dynamic-link']} id={$attr['data-shortcode-id']}";
+			if ( ! empty( $attr['data-custom-redirect'] ) ) {
+				$shortcode .= " logout-redirect={$attr['data-custom-redirect']}";
+			}
+			$attr['href'] = do_shortcode( "[{$shortcode}]" );
 		}
 
 		/* embed the img in a link instead of wrapping it in a div (if an url exists) */

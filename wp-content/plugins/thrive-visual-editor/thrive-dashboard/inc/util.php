@@ -223,40 +223,58 @@ function _tve_dash_util_helper_get_json( $url, $fn = 'wp_remote_get' ) {
  * Checks if the current request is performed by a crawler. It identifies crawlers by inspecting the user agent string
  *
  * @param bool $apply_filter Whether or not to apply the crawler detection filter ( tve_dash_is_crawler )
- * @param bool $check_cache_plugins
  *
  * @return int|false False form empty UAS. int 1|0 if a crawler has|not been detected
  */
 function tve_dash_is_crawler( $apply_filter = false ) {
 
-	if ( isset( $GLOBALS['thrive_dashboard_bot_detection'] ) ) {
-		return $GLOBALS['thrive_dashboard_bot_detection'];
-	}
 	/**
 	 * wp_is_mobile() checks to go before bot detection. There are some cases where a false positive is recorded. Example: Pinterest
 	 * The Pinterest app built-in web browser's UA string contains "Pinterest" which is flagged as a crawler
 	 */
 	if ( empty( $_SERVER['HTTP_USER_AGENT'] ) || wp_is_mobile() ) {
-		return $GLOBALS['thrive_dashboard_bot_detection'] = false;
+		return false;
 	}
 
-	$user_agent = sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] );
+	if ( isset( $GLOBALS['thrive_dashboard_bot_detection'] ) ) {
+		$is_crawler = $GLOBALS['thrive_dashboard_bot_detection'];
+	}
 
-	$uas_list = require plugin_dir_path( __FILE__ ) . '_crawlers.php';
-	$regexp   = '#(' . implode( '|', $uas_list ) . ')#i';
+	if ( ! isset( $is_crawler ) ) {
+		$user_agent = sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] );
 
-	if ( ! $apply_filter ) {
-		return $GLOBALS['thrive_dashboard_bot_detection'] = preg_match( $regexp, $user_agent );
+		$uas_list = require plugin_dir_path( __FILE__ ) . '_crawlers.php';
+		$regexp   = '#(' . implode( '|', $uas_list ) . ')#i';
+
+		$is_crawler = preg_match( $regexp, $user_agent );
+
+		/*
+		 * Apply the filter to allow overwriting the bot detection. Can be used by 3rd party plugins to force the initial ajax request
+		 * This filter is incorrectly named, it is just being applied during the localization of frontend ajax data from thrive-dashboard
+		 */
+		if ( $apply_filter ) {
+			/**
+			 * Filter tve_dash_is_crawler
+			 *
+			 * @param int $detected 1|0 whether the crawler is detected
+			 *
+			 * @since 1.0.20
+			 */
+			$is_crawler = apply_filters( 'tve_dash_is_crawler', $is_crawler );
+		}
 	}
 
 	/**
-	 * Filter tve_dash_is_crawler
+	 * Finally, filter the value, allowing any other 3rd party plugin to override bot detection.
+	 * To be used in cases where the page is actually fetched by a bot used by a caching plugin to render a cached version of the page.
 	 *
-	 * @param int $detected 1|0 whether or not the crawler is detected
+	 * @param int $is_crawler Whether a bot has been detected or not ( 1 / 0 )
 	 *
-	 * @since 1.0.20
+	 * @return int
 	 */
-	return apply_filters( 'tve_dash_is_crawler', $GLOBALS['thrive_dashboard_bot_detection'] = preg_match( $regexp, $user_agent ) );
+	$GLOBALS['thrive_dashboard_bot_detection'] = (int) apply_filters( 'tve_dash_is_crawler_override', $is_crawler );
+
+	return $GLOBALS['thrive_dashboard_bot_detection'];
 }
 
 /**
@@ -520,7 +538,7 @@ function tve_dash_get_webhook_trigger_integrated_apis() {
 			'label'              => 'FluentCRM',
 			'image'              => TVE_DASH_URL . '/inc/auto-responder/views/images/fluentcrm.png',
 			'custom_integration' => true,
-			'data'               => Thrive_Dash_List_Manager::connectionInstance( 'fluentcrm' )->get_tags(),
+			'data'               => Thrive_Dash_List_Manager::connection_instance( 'fluentcrm' )->get_tags(),
 			'selected'           => false,
 			'kb_article'         => 'http://help.thrivethemes.com/en/articles/5024011-how-to-set-up-incoming-webhooks-in-thrive-ultimatum-using-fluentcrm',
 		),
@@ -621,6 +639,12 @@ function tve_dash_get_general_webhook_data( $request ) {
 	$contact = $request->get_param( 'email' );
 
 	return array( 'email' => empty( $contact ) ? '' : $contact );
+}
+
+function tve_dash_to_camel_case( $string ) {
+	$string = implode( '', array_map( 'ucfirst', explode( '_', $string ) ) );
+
+	return lcfirst( $string );
 }
 
 function tve_dash_is_ttb_active() {

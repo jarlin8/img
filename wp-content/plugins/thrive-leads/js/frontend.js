@@ -347,6 +347,9 @@ ThriveGlobal.$j( function () {
 		if ( position === 'top' ) {
 			ThriveGlobal.$j( 'body' ).animate( {marginTop: 0}, 200, function () {
 				document.body.style.removeProperty( 'margin-top' );
+				if ( TCB_Front && TCB_Front.$window ) {
+					TCB_Front.$window.trigger( 'scroll' );
+				}
 			} );
 		} else if ( position === 'bottom' ) {
 			ThriveGlobal.$j( 'body' ).animate( {marginBottom: 0 + 'px'}, 200, function () {
@@ -1155,6 +1158,15 @@ TL_Front.open_ribbon = function ( $target ) {
 				}
 			}, 100 );
 
+		ThriveGlobal.$j( 'body' ).on( 'tcb-sticky-initialized', function ( event, stickyElement ) {
+			var height = $target.hasClass( 'tve-leads-triggered' ) ? Math.max( $target.outerHeight(), editorHeight ) : 0;
+
+			/* We need to update the position of a sticky header when the ribbon is added */
+			if ( ! tve_frontend_options.is_editor_page && stickyElement.className.includes( 'thrv_header' ) ) {
+				stickyElement.style.setProperty( 'margin-top', height + 'px', 'important' );
+			}
+		} );
+
 		$target.off( 'switchstate' ).on( 'switchstate', function ( e, $target ) {
 			var args = Array.prototype.slice.call( arguments, 1 );
 			TL_Front.switch_ribbon_state.apply( TL_Front, args );
@@ -1464,9 +1476,6 @@ TL_Front.close_form = function ( element, trigger, action, config ) {
 				$close = jQuery( '<span class="tve-ribbon-close" style="display: none"></span>' ).appendTo( $parent );
 			}
 			$close.trigger( 'click' );//there already exists a bind for close
-			if ( TCB_Front && TCB_Front.$window ) {
-				TCB_Front.$window.trigger( 'scroll' );
-			}
 			break;
 		case 'slide-in':
 			$parent.find( '.tve_ea_thrive_leads_form_close' ).trigger( 'click' );//there already exists a bind for close

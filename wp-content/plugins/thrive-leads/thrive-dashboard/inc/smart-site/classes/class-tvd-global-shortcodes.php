@@ -80,7 +80,7 @@ class TVD_Global_Shortcodes {
 					}
 					$shortcode_content = '<a ' . implode( ' ', $attributes ) . '>' . $shortcode_content . '</a>';
 				}
-			} elseif ( isset( $link_attr['className'] ) && function_exists( 'mb_convert_encoding' ) ) {
+			} elseif ( extension_loaded( 'dom' ) && isset( $link_attr['className'] ) && function_exists( 'mb_convert_encoding' ) ) {
 				/**
 				 * For elements already containing an a link just add the old classes (e.g global styles)
 				 */
@@ -500,10 +500,15 @@ class TVD_Global_Shortcodes {
 	 */
 	public function global_shortcode_url( $args ) {
 		$data = '';
+
 		if ( isset( $args['id'] ) ) {
 			$groups = $this->global_data();
 			$id     = (int) $args['id'];
 			$data   = empty( $groups[ $id ] ) ? '' : $groups[ $id ]['url'];
+		}
+
+		if ( isset( $args['logout-redirect'] ) ) {
+			$data .= '&redirect_to=' . $args['logout-redirect'];
 		}
 
 		return $data;
@@ -571,8 +576,9 @@ class TVD_Global_Shortcodes {
 	 */
 	public static function content_shortcode( $args ) {
 		$value = '';
+		global $post;
 
-		if ( is_singular() ) {
+		if ( is_singular() || ( wp_doing_ajax() && ! empty( $post ) ) ) {
 			if ( isset( $args['id'] ) ) {
 				$func = "get_{$args['id']}";
 				if ( function_exists( $func ) ) {

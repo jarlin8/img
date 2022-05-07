@@ -202,7 +202,7 @@ class TD_NM_Admin_Ajax_Controller {
 	 * @return mixed
 	 */
 	public function setupconnection_action() {
-		$connection = Thrive_Dash_List_Manager::connectionInstance( $this->param( 'api' ) );
+		$connection = Thrive_Dash_List_Manager::connection_instance( $this->param( 'api' ) );
 
 		$_POST['api']        = $this->param( 'api' );
 		$_POST['connection'] = $this->param( 'connection' );
@@ -222,7 +222,7 @@ class TD_NM_Admin_Ajax_Controller {
 	 * @return string
 	 */
 	public function connectiontest_action() {
-		$connection = Thrive_Dash_List_Manager::connectionInstance( $this->param( 'service' ) );
+		$connection = Thrive_Dash_List_Manager::connection_instance( $this->param( 'service' ) );
 
 		return is_string( $tested = $connection->testConnection() ) ? $this->error( $tested ) : array( 'success' => __( 'Connection OK', TVE_DASH_TRANSLATE_DOMAIN ) );
 	}

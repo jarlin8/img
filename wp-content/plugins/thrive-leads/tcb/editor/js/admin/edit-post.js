@@ -1,21 +1,25 @@
 ( $ => {
 
 	const TCBYoastPlugin = require( './classes/tcb-yoast-plugin' ),
-		TCBRankMathPlugin = require( './classes/tcb-rankmath-plugin' );
+		TCBRankMathPlugin = require( './classes/tcb-rankmath-plugin' ),
+		RankMathInstance = new TCBRankMathPlugin(),
+		YoastInstance = new TCBYoastPlugin();
 
 	window.TCBYoastPlugin = TCBYoastPlugin;
 
 	/**
 	 * YoastSEO content analysis integration
 	 */
-	$( window ).on( 'YoastSEO:ready', TCBYoastPlugin.register );
+	$( window ).on( 'YoastSEO:ready', () => {
+		YoastInstance.init();
+	} );
 
 	/**
 	 * RankMath content analysis integration
 	 */
 	$( document ).ready( function () {
 		if ( typeof window.rankMath !== 'undefined' ) {
-			new TCBRankMathPlugin();
+			RankMathInstance.init();
 		}
 	} );
 

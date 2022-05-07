@@ -24,7 +24,7 @@ class Submit_Form extends \Thrive\Automator\Items\Trigger {
 	}
 
 	public static function get_provided_data_objects() {
-		return [ 'form_data', 'user_data' ];
+		return [ 'form_data', 'user_data', 'email_data' ];
 	}
 
 	public static function get_hook_params_number() {
@@ -91,6 +91,13 @@ class Submit_Form extends \Thrive\Automator\Items\Trigger {
 				if ( ! empty( $matched_user ) ) {
 					$user_data = tvd_get_current_user_details( $matched_user->ID );
 				}
+
+				if ( empty( $data_object_classes['email_data'] ) ) {
+					$data_objects['email_data'] = [ 'email' => $form_data['email'] ];
+				} else {
+					$data_objects['email_data'] = new $data_object_classes['email_data']( $form_data['email'], $aut_id );
+				}
+
 			}
 			if ( ! empty( $user_data ) ) {
 				if ( empty( $data_object_classes['user_data'] ) ) {

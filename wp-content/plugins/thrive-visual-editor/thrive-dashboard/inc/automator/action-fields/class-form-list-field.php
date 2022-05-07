@@ -42,7 +42,7 @@ class Form_List_Field extends Action_Field {
 	 * @return string
 	 */
 	public static function get_preview_template() {
-		return 'Form: $$value';
+		return '';
 	}
 
 	public static function get_id() {
@@ -64,9 +64,9 @@ class Form_List_Field extends Action_Field {
 			}
 		}
 		if ( ! empty( $api ) ) {
-			$api_instance = Thrive_Dash_List_Manager::connectionInstance( $api );
+			$api_instance = Thrive_Dash_List_Manager::connection_instance( $api );
 			if ( $api_instance && $api_instance->is_connected() && $api_instance->has_forms() ) {
-				$forms = $api_instance->getForms();
+				$forms = $api_instance->get_forms();
 				if ( ! empty( $forms[ $action_data->autoresponder->subfield->mailing_list->value ] ) ) {
 					$values = $forms[ $action_data->autoresponder->subfield->mailing_list->value ];
 				}

@@ -812,7 +812,7 @@ function tve_leads_send_asset( $post_data ) {
 	if ( ! $connection ) {
 		return;
 	}
-	$api = Thrive_List_Manager::connectionInstance( $connection );
+	$api = Thrive_List_Manager::connection_instance( $connection );
 	if ( ! $api ) {
 		return;
 	}
@@ -986,7 +986,7 @@ function tve_leads_print_footer_scripts() {
 	 * @see tve_leads_filter_tu_body_end()
 	 */
 	//echo sprintf( '<script type="text/javascript">/*<![CDATA[*/if ( !window.TL_Const ) var TL_Const=%s/*]]> */</script>', $js );
-	echo sprintf( '<script type="text/javascript">/*<![CDATA[*/if ( !window.TL_Const ) {var TL_Const=%s;} else { TL_Front && TL_Front.extendConst && TL_Front.extendConst(%s)} /*]]> */</script>', $js, $js );
+	echo sprintf( '<script type="text/javascript">/*<![CDATA[*/if ( !window.TL_Const ) {var TL_Const=%s;} else { window.TL_Front && TL_Front.extendConst && TL_Front.extendConst(%s)} /*]]> */</script>', $js, $js );
 
 	if ( ! empty( $GLOBALS['tve_lead_impressions'] ) && ! current_user_can( 'manage_options' ) && ! TL_Product::has_access() ) {
 		$js = '<script type="text/javascript">var TL_Front = TL_Front || {}; TL_Front.impressions_data = TL_Front.impressions_data || {};';
@@ -2644,7 +2644,16 @@ function tve_leads_set_inbound_link_cookies() {
 		);
 		$cookie_data = array();
 		foreach ( $expected as $field ) {
-			$cookie_data[ $field ] = isset( $_REQUEST[ $field ] ) ? thrive_safe_unserialize( stripslashes( $_REQUEST[ $field ] ) ) : '';
+			$cookie_data[ $field ] = '';
+			if ( isset( $_REQUEST[ $field ] ) ) {
+				$data = $_REQUEST[ $field ];
+				if ( is_array( $data ) ) {
+					$data = array_map( 'stripslashes', $data );
+				} else {
+					$data = stripslashes( $data );
+				}
+				$cookie_data[ $field ] = thrive_safe_unserialize( $data );
+			}
 		}
 		if ( $cookie_data['tl_target_all'] ) {
 			$groups = tve_leads_get_group_ids();
@@ -2833,7 +2842,7 @@ function tve_leads_one_click_signup() {
 		$postId          = get_the_ID();
 		$api_connections = get_post_meta( $postId, 'tve_leads_api_connections', true );
 		if ( tve_leads_is_one_click_signup_valid( $postId, $data ) ) {
-			$available           = Thrive_List_Manager::getAvailableAPIs( true );
+			$available           = Thrive_List_Manager::get_available_apis( true );
 			$available_api_names = array();
 			foreach ( $available as $key => $connection ) {
 				array_push( $available_api_names, $key );

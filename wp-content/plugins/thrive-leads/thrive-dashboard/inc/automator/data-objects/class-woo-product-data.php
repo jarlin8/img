@@ -23,6 +23,10 @@ class Woo_Product_Data extends Data_Object {
 		return 'woo_product_data';
 	}
 
+	public static function get_nice_name() {
+		return 'WooCommerce product';
+	}
+
 	/**
 	 * Array of field object keys that are contained by this data-object
 	 *
@@ -93,6 +97,7 @@ class Woo_Product_Data extends Data_Object {
 
 		if ( $product ) {
 			return array(
+				'woo_product_id'             => $product->get_id(),
 				'product_type'               => $product->get_type(),
 				'woo_product_name'           => $product->get_name(),
 				'product_slug'               => $product->get_slug(),
@@ -141,5 +146,21 @@ class Woo_Product_Data extends Data_Object {
 		}
 
 		return $product;
+	}
+
+	public static function get_data_object_options() {
+
+		$options = [];
+
+		foreach ( wc_get_products( array( 'limit' => - 1 ) ) as $product ) {
+			$name           = $product->get_name();
+			$id             = $product->get_id();
+			$options[ $id ] = array(
+				'id'    => $id,
+				'label' => $name,
+			);
+		}
+
+		return $options;
 	}
 }

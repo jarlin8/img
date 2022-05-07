@@ -17,6 +17,33 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class TCB_Symbol_Template {
 
+	private static $instances = [];
+
+	private static $exportable_meta = [
+		'tve_updated_post',
+		'tve_custom_css',
+		'tve_globals',
+	];
+
+	/**
+	 * @param $symbol_id
+	 *
+	 * @return TCB_Symbol_Template
+	 */
+	public static function get_instance( $symbol_id = null ) {
+		if ( empty( self::$instances[ $symbol_id ] ) ) {
+			self::$instances[ $symbol_id ] = new self( $symbol_id );
+		}
+
+		return self::$instances[ $symbol_id ];
+	}
+
+	public function __construct( $symbol_id ) {
+		$this->ID   = (int) $symbol_id;
+		$this->post = get_post( $symbol_id );
+	}
+
+
 	/**
 	 * Stores symbol types that contain states
 	 *
@@ -73,14 +100,13 @@ class TCB_Symbol_Template {
 		if ( ! is_editor_page() && ! wp_doing_ajax() ) {
 			$content = tve_restore_script_tags( $content );
 
-			$content = tve_get_shared_styles( $content ) . $content;
-
 			/**
-			 * IF yoast is active reset printed styles because they mess up the post queries
+			 * IF yoast is active do not store the parsed styles in the global cache - it will mess up the post queries
 			 */
-			if ( is_plugin_active( 'wordpress-seo/wp-seo.php' ) ) {
-				$GLOBALS['tve_parsed_shared_styles'] = array();
-			}
+			$yoast_seo_active = is_plugin_active( 'wordpress-seo/wp-seo.php' );
+
+			$content = tve_get_shared_styles( $content, '', true, ! $yoast_seo_active ) . $content;
+
 			//if it has custom icons make sure that font family is loaded
 			if ( tve_get_post_meta( $symbol_id, 'thrive_icon_pack' ) ) {
 				TCB_Icon_Manager::enqueue_icon_pack();
@@ -310,11 +336,59 @@ class TCB_Symbol_Template {
 		$attr = ' data-symbol-id="' . (int) $symbol_id . '"';
 
 		foreach ( $globals as $k => $value ) {
-			if ( strpos( $k, 'data-' ) === 0 ) {
+			if ( strncmp( $k, 'data-', 5 ) === 0 ) {
 				$attr .= ' ' . $k . '="' . esc_attr( $value ) . '"';
 			}
 		}
 
 		return $attr;
+	}
+
+	/**
+	 * Create new symbol based on import data
+	 *
+	 * @param array  $data
+	 * @param string $section_type
+	 *
+	 * @return int|WP_Error
+	 */
+	public static function import( $data, $section_type ) {
+		$symbol_id = wp_insert_post( [
+			'post_title'  => sanitize_title( $data['post_title'] ) . ' ' . __( '(Imported)', 'thrive-cb' ) . '#' . mt_rand( 0, 10000 ),
+			'post_type'   => TCB_Symbols_Post_Type::SYMBOL_POST_TYPE,
+			'post_status' => 'publish',
+			'meta_input'  => $data['meta_input'],
+		] );
+
+		if ( ! empty( $data['ID'] ) ) {
+			$css = $data['meta_input']['tve_custom_css'];
+			/* replace the old selector with the new one */
+			$css = str_replace( 'thrv_symbol_' . $data['ID'], 'thrv_symbol_' . $symbol_id, $css );
+
+			update_post_meta( $symbol_id, 'tve_custom_css', $css );
+		}
+
+		wp_set_object_terms( $symbol_id, [ $section_type . 's' ], TCB_Symbols_Taxonomy::SYMBOLS_TAXONOMY, true );
+
+		return $symbol_id;
+	}
+
+	/**
+	 * Export symbol data
+	 *
+	 * @return array
+	 */
+	public function export() {
+		$data = [
+			'ID'         => $this->ID,
+			'post_title' => $this->post->post_title,
+			'meta_input' => [],
+		];
+
+		foreach ( static::$exportable_meta as $key ) {
+			$data['meta_input'][ $key ] = get_post_meta( $this->ID, $key, true );
+		}
+
+		return $data;
 	}
 }

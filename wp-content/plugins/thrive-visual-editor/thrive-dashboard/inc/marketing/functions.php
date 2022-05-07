@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function thrv_update_tags( $connection, $data = array() ) {
 
-	$api_instance = Thrive_Dash_List_Manager::connectionInstance( $connection );
+	$api_instance = Thrive_Dash_List_Manager::connection_instance( $connection );
 
 	if ( true !== $api_instance instanceof Thrive_Dash_List_Connection_Abstract ) {
 		return false;
@@ -63,7 +63,7 @@ function thrv_update_tags( $connection, $data = array() ) {
  */
 function thrv_add_custom_fields( $connection, $data = array() ) {
 
-	$api_instance = Thrive_Dash_List_Manager::connectionInstance( $connection );
+	$api_instance = Thrive_Dash_List_Manager::connection_instance( $connection );
 
 	if ( true !== $api_instance instanceof Thrive_Dash_List_Connection_Abstract ) {
 		return false;
@@ -102,7 +102,7 @@ function thrv_add_custom_fields( $connection, $data = array() ) {
  * @api
  */
 function thrv_get_available_custom_fields( $connection ) {
-	$api_instance = Thrive_Dash_List_Manager::connectionInstance( $connection );
+	$api_instance = Thrive_Dash_List_Manager::connection_instance( $connection );
 
 	if ( true !== $api_instance instanceof Thrive_Dash_List_Connection_Abstract ) {
 		return false;
@@ -131,7 +131,7 @@ function thrv_get_available_custom_fields( $connection ) {
  * @api
  */
 function thrv_get_available_lists( $connection ) {
-	$api_instance = Thrive_Dash_List_Manager::connectionInstance( $connection );
+	$api_instance = Thrive_Dash_List_Manager::connection_instance( $connection );
 
 	if ( true !== $api_instance instanceof Thrive_Dash_List_Connection_Abstract ) {
 		return false;

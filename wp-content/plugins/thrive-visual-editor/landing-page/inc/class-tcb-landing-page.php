@@ -128,6 +128,15 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 		private static $instances = array();
 
 		/**
+		 * Instance of LP Palettes
+		 *
+		 * @var bool | TCB_LP_Palettes instance
+		 */
+		private $lp_palette_instance;
+
+		public $skin_typography;
+
+		/**
 		 * sent all necessary parameters to avoid extra calls to get_post_meta
 		 *
 		 * @param int    $landing_page_id
@@ -178,6 +187,18 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 				 * @param TCB_Landing_Page class instance
 				 */
 				$this->palettes = apply_filters( 'tcb_get_page_palettes', $this->get_template_palettes(), $this );
+
+				/* We only want to do this when the theme is not active */
+				if ( ! tve_dash_is_ttb_active() ) {
+					if ( empty( $this->palettes ) && ! empty( $this->config['skin_palettes'] ) && ! empty( $this->config['skin_palettes_config'] ) && ! empty( $this->config['skin_typography'] ) ) {
+						$this->palettes            = $this->config['skin_palettes'];
+						$this->has_template_data   = true;
+						$this->lp_palette_instance = $this->get_palette_instance();
+					}
+					if ( ! empty( $this->config['skin_typography'] ) ) {
+						$this->skin_typography = $this->config['skin_typography'];
+					}
+				}
 
 				foreach ( $this->template_styles as $key => $value ) {
 					$this->template_styles[ $key ] = $this->get_template_styles( $key );
@@ -409,6 +430,7 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 
 		/**
 		 * Outputs Landing Page template global variables
+		 * TODO change this function to be on the LP instance, we already use the id there
 		 *
 		 * This variables comes from
 		 */
@@ -447,6 +469,20 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 					$master_variable = reset( $master_variables );
 
 					echo tve_prepare_master_variable( $master_variable ); //phpcs:ignore
+				}
+				/* We only print the variables when TTB is not active */
+				if ( ! tve_dash_is_ttb_active() ) {
+					/* We need LP config to get the palettes configs from it */
+					$config = tve_get_landing_page_config( tve_post_is_landing_page( $post_id ) );
+
+					$lp_palettes_instance = new TCB_LP_Palettes( $post_id, $config['skin_palettes'], $config['skin_palettes_config'] );
+
+					$skin_palettes = $lp_palettes_instance->get_variables_for_css();
+
+					/* Print the css on the page */
+					if ( ! empty( $skin_palettes ) ) {
+						echo $skin_palettes;
+					}
 				}
 			}
 		}
@@ -755,6 +791,109 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 		}
 
 		/**
+		 * Returns the Palettes instance specific to this LP
+		 *
+		 * @return bool|TCB_LP_Palettes
+		 */
+		public function get_palette_instance() {
+			if ( $this->lp_palette_instance === null && ! empty( $this->config['skin_palettes'] ) && ! empty( $this->config['skin_palettes_config'] ) ) {
+				$this->lp_palette_instance = new TCB_LP_Palettes( $this->id, $this->config['skin_palettes'], $this->config['skin_palettes_config'] );
+			}
+
+			return $this->lp_palette_instance;
+		}
+
+		/**
+		 * Updates the auxiliary variable from the Palette instance
+		 *
+		 * @param $color_id
+		 * @param $color
+		 */
+		public function update_auxiliary_variable( $color_id, $color ) {
+			$this->get_palette_instance()->update_auxiliary_variable( $color_id, $color );
+		}
+
+
+		/**
+		 * Checks if a variable is auxiliary it's not the master variable)
+		 *
+		 * @param $id
+		 *
+		 * @return bool
+		 */
+		public function is_auxiliary_variable( $id ) {
+			return $this->get_palette_instance()->is_auxiliary_variable( $id );
+		}
+
+		/**
+		 * Updates the Master variable from the Palette instance
+		 *
+		 * @param array $master_variables
+		 * @param       $active_id
+		 */
+		public function update_master_hsl( $master_variables = [], $active_id = 0 ) {
+			$this->get_palette_instance()->update_master_hsl( $master_variables, $active_id );
+		}
+
+		/**
+		 * Updates the colors in the Palettes config
+		 *
+		 * @param $hsl
+		 */
+		public function update_variables_in_config( $hsl ) {
+			$this->get_palette_instance()->update_variables_in_config( $hsl );
+		}
+
+		/**
+		 * Function that allows the central style panel to be displayed on a content edited with TAR
+		 *
+		 * @param bool $return
+		 *
+		 * @return bool
+		 */
+		public static function tcb_skin_allow_central_style_panel( $return = false ) {
+			$lp_id        = get_the_ID();
+			$landing_page = tcb_landing_page( $lp_id );
+
+			if ( $landing_page->is_landing_page() && ! tve_dash_is_ttb_active() && $landing_page->has_skin_style_panel() ) {
+				$return = true;
+			}
+
+			return $return;
+		}
+
+		/**
+		 * Prints the skin typography on a page, this will be called only when we have TTB LPs but no TTB active
+		 *
+		 * @param $post_id
+		 */
+		public static function print_skin_typography( $post_id ) {
+			$lp_typography = tcb_landing_page( $post_id )->skin_typography;
+
+			if ( ! empty( $lp_typography ) ) {
+				/* Replace the variable to match the colors from config */
+				$lp_typography = str_replace( '--tcb-color-', TCB_LP_Palettes::SKIN_COLOR_VARIABLE_PREFIX, $lp_typography );
+
+				echo '<style type="text/css" class="tcb_skin_lp_typography">' . $lp_typography . '</style>';
+			}
+		}
+
+		/**
+		 * Checks if an LP has a Central Style panel from a skin
+		 *
+		 * @return bool
+		 */
+		public function has_skin_style_panel() {
+			$lp_palettes_instance = $this->get_palette_instance();
+
+			if ( ! $lp_palettes_instance ) {
+				return false;
+			}
+
+			return ! empty( $lp_palettes_instance->get_smart_lp_palettes_v2() ) && $lp_palettes_instance->get_smart_lp_palettes_config_v2();
+		}
+
+		/**
 		 * outputs <link>s for each font used by the page
 		 * fonts come from the configuration array
 		 *
@@ -800,6 +939,7 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 				'thrive-default-styles',
 				'tve_user_custom_style',
 				'tve_custom_style',
+				'tcb_skin_lp_typography',
 				'tve_global_style',
 				'tve_global_variables',
 				'optm_lazyload',
@@ -1429,6 +1569,10 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 				$this->check_lightbox( false );
 			}
 
+			if ( empty( $this->cloud_template_data['sections'] ) ) {
+				$this->meta( 'sections', '' );
+			}
+
 			tve_update_post_custom_fonts( $this->post->ID, array() );
 		}
 
@@ -1528,6 +1672,22 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 			$this->update_template_global_styles();
 			$this->update_template_palettes();
 
+			$this->lp_palette_instance = $this->get_palette_instance();
+
+			if ( ! empty( $config ) ) {
+				if ( ! empty( $config['skin_palettes'] ) ) {
+					$this->lp_palette_instance->update_lp_palettes_v2( $config['skin_palettes'] );
+				}
+
+				if ( ! empty( $config['skin_palettes_config'] ) ) {
+					$this->lp_palette_instance->update_lp_palettes_config_v2( $config['skin_palettes_config'] );
+				}
+
+				if ( ! empty( $config['skin_palettes'] ) && ! empty( $config['skin_palettes_config'] ) ) {
+					$this->has_template_data = true;
+				}
+			}
+
 			return $this;
 		}
 
@@ -1618,6 +1778,11 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 				$content        = $contents[ $template_index ];
 				$this->template = $landing_page_template = $meta[ $template_index ]['template'];
 
+				/* replace old ids just in case */
+				$content = json_encode( $content );
+				$content = preg_replace( '/page-id-\d*/m', "page-id-{$this->post->ID}", $content );
+				$content = json_decode( $content, true );
+
 				if ( empty( $content['more_found'] ) ) {
 					$content['more_found']  = false;
 					$content['before_more'] = $content['content'];
@@ -1655,6 +1820,7 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 				$this->meta( "tve_updated_post{$key}", $content['content'] );
 				$this->meta( "tve_globals{$key}", ! empty( $content['tve_globals'] ) ? $content['tve_globals'] : array() );
 				$this->meta( 'tve_global_scripts', ! empty( $content['tve_global_scripts'] ) ? $content['tve_global_scripts'] : array() );
+				$this->meta( 'sections', isset( $content['sections'] ) ? $content['sections'] : [] );
 			}
 
 			$this->meta( 'tve_landing_page', $this->template );
@@ -1892,6 +2058,8 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 		return apply_filters( 'tcb_landing_page_default_content', $content, $is_lightbox, $file_suffix );
 	}
 
+	//TODO let's move the filters in another file, and check what functions shoul not be static
+
 	add_action( 'tcb_get_extra_global_variables', array( 'TCB_Landing_Page', 'output_landing_page_variables' ), PHP_INT_MAX );
 
 	add_filter( 'tcb_get_extra_global_styles', array( 'TCB_Landing_Page', 'add_landing_page_styles' ) );
@@ -1899,4 +2067,10 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 	add_filter( 'tcb_prepare_global_variables_for_front', array( 'TCB_Landing_Page', 'prepare_landing_page_variables_for_front' ), 10, 2 );
 
 	add_filter( 'tcb_get_special_blocks_set', array( 'TCB_Landing_Page', 'get_lp_set' ) );
+
+	add_filter( 'tcb_allow_central_style_panel', array( 'TCB_Landing_Page', 'tcb_skin_allow_central_style_panel' ) );
+
+	add_filter( 'tcb_has_central_style_panel', array( 'TCB_Landing_Page', 'tcb_skin_allow_central_style_panel' ) );
+
+	add_action( 'tcb_print_custom_style', array( 'TCB_Landing_Page', 'print_skin_typography' ) );
 }

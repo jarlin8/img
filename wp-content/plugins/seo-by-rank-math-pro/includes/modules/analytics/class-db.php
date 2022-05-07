@@ -407,14 +407,23 @@ class DB {
 
 		// Build placeholders for each row, and add values to data array.
 		foreach ( $rows as $row ) {
-			if ( empty( $row['dimensions'][1] ) || Str::contains( '?', $row['dimensions'][1] ) ) {
-				continue;
+			if ( ! isset( $row['dimensionValues'] ) ) {
+				if ( empty( $row['dimensions'][1] ) || Str::contains( '?', $row['dimensions'][1] ) ) {
+					continue;
+				}
+				$data[] = $date;
+				$data[] = Stats::get_relative_url( self::remove_hash( $row['dimensions'][1] ) );
+				$data[] = $row['metrics'][0]['values'][0];
+				$data[] = $row['metrics'][0]['values'][1];
+			} else {
+				if ( empty( $row['dimensionValues'][0]['value'] ) || Str::contains( '?', $row['dimensionValues'][0]['value'] ) ) {
+					continue;
+				}
+				$data[] = $date;
+				$data[] = $row['dimensionValues'][0]['value'];
+				$data[] = $row['metricValues'][0]['value'];
+				$data[] = $row['metricValues'][1]['value'];
 			}
-
-			$data[] = $date;
-			$data[] = Stats::get_relative_url( self::remove_hash( $row['dimensions'][1] ) );
-			$data[] = $row['metrics'][0]['values'][0];
-			$data[] = $row['metrics'][0]['values'][1];
 
 			$placeholders[] = '(' . implode( ', ', $placeholder ) . ')';
 		}
@@ -618,14 +627,10 @@ class DB {
 	 */
 	public static function get_index_verdict( $page ) {
 		$verdict = self::inspections()
-			->select(
-				[
-					'index_verdict',
-				]
-			)
+			->select()
 			->where( 'page', '=', $page )
 			->one();
-		
-		return ! empty( $verdict ) ? current( $verdict ) : '';
+
+		return (array) $verdict;
 	}
 }
