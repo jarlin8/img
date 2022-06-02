@@ -14,6 +14,7 @@ return array(
     'RankMathPro\\Admin\\Amp' => $baseDir . '/includes/admin/class-amp.php',
     'RankMathPro\\Admin\\Api' => $baseDir . '/includes/admin/class-api.php',
     'RankMathPro\\Admin\\Bulk_Actions' => $baseDir . '/includes/admin/class-bulk-actions.php',
+    'RankMathPro\\Admin\\CSV' => $baseDir . '/includes/admin/class-csv.php',
     'RankMathPro\\Admin\\CSV_Import_Export\\CSV_Import_Export' => $baseDir . '/includes/admin/csv-import-export/class-csv-import-export.php',
     'RankMathPro\\Admin\\CSV_Import_Export\\Exporter' => $baseDir . '/includes/admin/csv-import-export/class-exporter.php',
     'RankMathPro\\Admin\\CSV_Import_Export\\Import_Background_Process' => $baseDir . '/includes/admin/csv-import-export/class-import-background-process.php',

@@ -349,7 +349,7 @@ class Image_Seo_Pro {
 		$attrs['alt'] = sprintf( __( 'Avatar of %s', 'rank-math-pro' ), $new_alt );
 		$attrs['alt'] = apply_filters( 'rank_math_pro/images/avatar_alt', $attrs['alt'], $id_or_email );
 
-		$new = '<img' . HTML::attributes_to_string( $attrs ) . '/>';
+		$new = '<img' . HTML::attributes_to_string( $attrs ) . '>';
 
 		// Change image title and alt casing.
 		$this->alt_change_case   = Helper::get_settings( 'general.img_alt_change_case' );
@@ -479,10 +479,18 @@ class Image_Seo_Pro {
 			return $content;
 		}
 
-		// Todo: change description case but ignore HTML tags & entities.
-		$content = $this->change_case( $content, Helper::get_settings( 'general.img_description_change_case' ) );
+		$parts = preg_split( '/(<[^>]+>)/', $content, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+		$new   = '';
+		foreach ( $parts as $i => $part ) {
+			if ( '<' === substr( trim( $part ), 0, 1 ) ) {
+				$new .= $part;
+				continue;
+			}
 
-		return $content;
+			$new .= $this->change_case( $part, Helper::get_settings( 'general.img_description_change_case' ) );
+		}
+
+		return $new;
 	}
 
 	/**

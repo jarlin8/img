@@ -213,6 +213,6 @@ class Display_Conditions {
 			return 'include' === $operator;
 		}
 
-		return true;
+		return 'exclude' === $operator;
 	}
 }

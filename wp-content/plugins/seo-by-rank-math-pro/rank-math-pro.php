@@ -9,7 +9,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Rank Math SEO PRO
- * Version:           3.0.12
+ * Version:           3.0.13
  * Plugin URI:        https://rankmath.com/wordpress/plugin/seo-suite/
  * Secret Key:        83a5bb0e2ad5164690bc7a42ae592cf5
  * Description:       Super-charge your website's SEO with the Rank Math PRO options like Site Analytics, SEO Performance, Custom Schema Templates, News/Video Sitemaps, etc.
@@ -32,7 +32,7 @@ add_filter( 'rank_math/admin/sensitive_data_encryption', '__return_false' );
 update_option( 'rank_math_connect_data', [
      'username'  => 'Rank-Math-Pro',
      'email'     => 'activated@rankmath.com',
-     'api_key'   => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+     'api_key'   => 'cxydWrXJGxtTjjDbjKWnwKJUrjtJRpmE',
      'plan'      => 'business',
      'connected' => true,
 ] );
@@ -79,14 +79,14 @@ final class RankMathPro {
 	 *
 	 * @var string
 	 */
-	public $version = '3.0.12';
+	public $version = '3.0.13';
 
 	/**
 	 * Minimum version of Rank Math SEO.
 	 *
 	 * @var string
 	 */
-	public $rank_math_min_version = '1.0.89';
+	public $rank_math_min_version = '1.0.90';
 
 	/**
 	 * Holds various class instances
@@ -543,3 +543,5 @@ function rank_math_pro() {
 
 // Start it.
 rank_math_pro();
+/* Anti-Leecher Indentifier */
+/* Credited By BABIATO-FORUM */

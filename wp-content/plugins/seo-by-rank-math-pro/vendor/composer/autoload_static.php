@@ -15,6 +15,7 @@ class ComposerStaticInit0d9f807883abadeb2577675a9c386005
         'RankMathPro\\Admin\\Amp' => __DIR__ . '/../..' . '/includes/admin/class-amp.php',
         'RankMathPro\\Admin\\Api' => __DIR__ . '/../..' . '/includes/admin/class-api.php',
         'RankMathPro\\Admin\\Bulk_Actions' => __DIR__ . '/../..' . '/includes/admin/class-bulk-actions.php',
+        'RankMathPro\\Admin\\CSV' => __DIR__ . '/../..' . '/includes/admin/class-csv.php',
         'RankMathPro\\Admin\\CSV_Import_Export\\CSV_Import_Export' => __DIR__ . '/../..' . '/includes/admin/csv-import-export/class-csv-import-export.php',
         'RankMathPro\\Admin\\CSV_Import_Export\\Exporter' => __DIR__ . '/../..' . '/includes/admin/csv-import-export/class-exporter.php',
         'RankMathPro\\Admin\\CSV_Import_Export\\Import_Background_Process' => __DIR__ . '/../..' . '/includes/admin/csv-import-export/class-import-background-process.php',
