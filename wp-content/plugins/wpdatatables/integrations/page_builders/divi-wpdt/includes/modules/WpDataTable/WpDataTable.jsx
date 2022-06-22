@@ -14,7 +14,7 @@ class WpDataTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-     shortcode: this.shortcode
+      shortcode: this.shortcode
     };
   }
 
@@ -25,11 +25,22 @@ class WpDataTable extends Component {
     let var1 = this.props.var1;
     let var2 = this.props.var2;
     let var3 = this.props.var3;
+    let var4 = this.props.var4;
+    let var5 = this.props.var5;
+    let var6 = this.props.var6;
+    let var7 = this.props.var7;
+    let var8 = this.props.var8;
+    let var9 = this.props.var9;
     let export_file_name = this.props.export_file_name;
     let tablesCount = parseInt(this.props.table_array_length);
 
     if (tablesCount === 1) {
       return "Please create a wpDataTable first. You can find detailed instructions in our docs on this <a target='_blank' href='https://wpdatatables.com/documentation/general/features-overview/'>link</a>.";
+    }
+
+    if (!isNumeric(tableId)) {
+      tableId = tableId.substring(tableId.lastIndexOf('(id: ') + 4);
+      tableId = tableId.substring(0, tableId.lastIndexOf(')'));
     }
 
     if (!parseInt(tableId)) {
@@ -47,6 +58,24 @@ class WpDataTable extends Component {
     }
     if (var3) {
       shortcode += ' var3=' + var3;
+    }
+    if (var4) {
+      shortcode += ' var4=' + var4;
+    }
+    if (var5) {
+      shortcode += ' var5=' + var5;
+    }
+    if (var6) {
+      shortcode += ' var6=' + var6;
+    }
+    if (var7) {
+      shortcode += ' var7=' + var7;
+    }
+    if (var8) {
+      shortcode += ' var8=' + var8;
+    }
+    if (var9) {
+      shortcode += ' var9=' + var9;
     }
     if (export_file_name) {
       shortcode += ' export_file_name=' + export_file_name;
@@ -87,6 +116,10 @@ class WpDataTable extends Component {
     )
   }
 
+}
+function isNumeric(str) {
+  if (typeof str != "string") return false
+  return !isNaN(str) && !isNaN(parseFloat(str))
 }
 
 export default WpDataTable;

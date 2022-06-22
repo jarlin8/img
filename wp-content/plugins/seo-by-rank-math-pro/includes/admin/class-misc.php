@@ -71,7 +71,7 @@ class Misc {
 	 */
 	public static function header_pro_badge() {
 		if ( ProAdminHelper::is_business_plan() ) {
-			echo '<span class="rank-math-pro-badge business">Business</span>';
+			echo '<span class="rank-math-pro-badge agency">Agency</span>';
 			return;
 		}
 

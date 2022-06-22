@@ -57,7 +57,7 @@ class WDTTools
      */
     public static function applyPlaceholders($string)
     {
-        global $wdtVar1, $wdtVar2, $wdtVar3, $wpdb;
+        global $wdtVar1, $wdtVar2, $wdtVar3, $wdtVar4, $wdtVar5, $wdtVar6, $wdtVar7, $wdtVar8, $wdtVar9, $wpdb;
 
         $table = isset($_POST['table']) ? json_decode(stripslashes($_POST['table'])) : null;
 
@@ -180,6 +180,36 @@ class WDTTools
         // Shortcode VAR3
         if (strpos($string, '%VAR3%') !== false) {
             $string = str_replace('%VAR3%', addslashes($wdtVar3), $string);
+        }
+
+        // Shortcode VAR4
+        if (strpos($string, '%VAR4%') !== false) {
+            $string = str_replace('%VAR4%', addslashes($wdtVar4), $string);
+        }
+
+        // Shortcode VAR5
+        if (strpos($string, '%VAR5%') !== false) {
+            $string = str_replace('%VAR5%', addslashes($wdtVar5), $string);
+        }
+
+        // Shortcode VAR6
+        if (strpos($string, '%VAR6%') !== false) {
+            $string = str_replace('%VAR6%', addslashes($wdtVar6), $string);
+        }
+
+        // Shortcode VAR7
+        if (strpos($string, '%VAR7%') !== false) {
+            $string = str_replace('%VAR7%', addslashes($wdtVar7), $string);
+        }
+
+        // Shortcode VAR8
+        if (strpos($string, '%VAR8%') !== false) {
+            $string = str_replace('%VAR8%', addslashes($wdtVar8), $string);
+        }
+
+        // Shortcode VAR9
+        if (strpos($string, '%VAR9%') !== false) {
+            $string = str_replace('%VAR9%', addslashes($wdtVar9), $string);
         }
 
         return $string;
@@ -1251,16 +1281,10 @@ class WDTTools
             ]
         );
 
-        if (!is_wp_error($request) || wp_remote_retrieve_response_code($request) === 200) {
-            if (json_decode($request['body'])) {
-                /** @var stdClass $remoteInformation */
-                $remoteInformation = unserialize(json_decode($request['body'])->info);
-                if (isset($remoteInformation->force_deactivate) && $remoteInformation->force_deactivate === true) {
-                    self::deactivatePlugin($slug);
-                }
+        if ((!is_wp_error($request) || wp_remote_retrieve_response_code($request) === 200) && isset($request['body'])) {
+            $body = json_decode($request['body']);
 
-                return unserialize(json_decode($request['body'])->info);
-            }
+            return $body && isset($body->info) ? unserialize($body->info) : false;
         }
 
         return false;
@@ -1462,6 +1486,7 @@ class WDTTools
             }
             if ($isMySql) {
                 $string = $wpdb->_real_escape($string);
+                $string = $wpdb->remove_placeholder_escape($string);
             }
         }
         $string = self::wrapQuotes($string, $connection);
@@ -1949,9 +1974,9 @@ class WDTTools
                 $query = "SELECT {$leftSysIdentifier}{$idColumnName}{$rightSysIdentifier} FROM {$mySqlTableName} WHERE {$leftSysIdentifier}{$idColumnName}{$rightSysIdentifier} = {$idValCheck} AND {$leftSysIdentifier}{$userIDColumnName}{$rightSysIdentifier} =" . get_current_user_id();
                 if (!$sql->getField($query)) {
                     if ($action == 'delete'){
-                        $returnResult['error'] = __('User do not have permissions to delete this row! ', 'wpdatatables');
+                        $returnResult['error'] = __('User does not have permissions to delete this row! ', 'wpdatatables');
                     } else {
-                        $returnResult['error'] = __('User do not have permission to update data!', 'wpdatatables');
+                        $returnResult['error'] = __('User does not have permission to update data!', 'wpdatatables');
                     }
                     echo json_encode($returnResult);
                     exit();

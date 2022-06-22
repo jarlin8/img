@@ -9,7 +9,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Rank Math SEO PRO
- * Version:           3.0.13
+ * Version:           3.0.14
  * Plugin URI:        https://rankmath.com/wordpress/plugin/seo-suite/
  * Secret Key:        83a5bb0e2ad5164690bc7a42ae592cf5
  * Description:       Super-charge your website's SEO with the Rank Math PRO options like Site Analytics, SEO Performance, Custom Schema Templates, News/Video Sitemaps, etc.
@@ -32,8 +32,8 @@ add_filter( 'rank_math/admin/sensitive_data_encryption', '__return_false' );
 update_option( 'rank_math_connect_data', [
      'username'  => 'Rank-Math-Pro',
      'email'     => 'activated@rankmath.com',
-     'api_key'   => 'cxydWrXJGxtTjjDbjKWnwKJUrjtJRpmE',
-     'plan'      => 'business',
+     'api_key'   => 'rtExxTyybrRXpLfmwRHJyKhmsYqWFkpa',
+     'plan'      => 'agency',
      'connected' => true,
 ] );
 update_option( 'rank_math_registration_skip', 1 );
@@ -47,8 +47,8 @@ add_action( 'init', function() {
                          'response' => [ 'code' => 200, 'message' => 'OK' ],
                          'body'     => json_encode( [
                               'error' => '',
-                              'plan'  => 'business',
-                              'keywords' => get_option( 'rank_math_keyword_quota', [ 'available' => 25000, 'taken' => 0 ] ),
+                              'plan'  => 'agency',
+                              'keywords' => get_option( 'rank_math_keyword_quota', [ 'available' => 50000, 'taken' => 0 ] ),
                               'analytics' => 'on',
                          ] ),
                      ];
@@ -56,7 +56,7 @@ add_action( 'init', function() {
                     if ( isset( $parsed_args['body']['count'] ) ) {
                          return [
                               'response' => [ 'code' => 200, 'message' => 'OK' ],
-                              'body'     => json_encode( [ 'available' => 25000, 'taken' => $parsed_args['body']['count'] ] ),
+                              'body'     => json_encode( [ 'available' => 50000, 'taken' => $parsed_args['body']['count'] ] ),
                          ];
                     }
 
@@ -79,14 +79,14 @@ final class RankMathPro {
 	 *
 	 * @var string
 	 */
-	public $version = '3.0.13';
+	public $version = '3.0.14';
 
 	/**
 	 * Minimum version of Rank Math SEO.
 	 *
 	 * @var string
 	 */
-	public $rank_math_min_version = '1.0.90';
+	public $rank_math_min_version = '1.0.91';
 
 	/**
 	 * Holds various class instances
@@ -365,7 +365,7 @@ final class RankMathPro {
 		}
 
 		if ( Helper::is_module_active( 'redirections' ) ) {
-			new \RankMathPro\Redirections\Redirections_Pro();
+			new \RankMathPro\Redirections\Redirections();
 		}
 
 		if ( function_exists( 'acf' ) && Helper::is_module_active( 'acf' ) ) {
