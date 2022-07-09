@@ -550,6 +550,12 @@ ThriveGlobal.$j( function () {
 
 		setTimeout( dom_ready, 50 );
 		TL_Const.forms = response.js;
+
+		/* After the wait we should search for the placeholders and remove them
+		because for hidden displays we get no response and we don't have any way of replacing them with content */
+		setTimeout( function () {
+			ThriveGlobal.$j( '.tl-preload-form' ).remove();
+		}, 1000 );
 	};
 
 	function init() {
@@ -1158,14 +1164,13 @@ TL_Front.open_ribbon = function ( $target ) {
 				}
 			}, 100 );
 
-		ThriveGlobal.$j( 'body' ).on( 'tcb-sticky-initialized', function ( event, stickyElement ) {
-			var height = $target.hasClass( 'tve-leads-triggered' ) ? Math.max( $target.outerHeight(), editorHeight ) : 0;
+		var $header = ThriveGlobal.$j( 'body' ).find( '.thrv_header.tve-scroll-sticky' );
 
-			/* We need to update the position of a sticky header when the ribbon is added */
-			if ( ! tve_frontend_options.is_editor_page && stickyElement.className.includes( 'thrv_header' ) ) {
-				stickyElement.style.setProperty( 'margin-top', height + 'px', 'important' );
-			}
-		} );
+		if ( $header.length && position === 'top' ) {
+			var extraOffset = parseFloat( $header.css( '--tcb-header-extra-offset' ) ) || 0;
+
+			$header.css( '--tcb-header-extra-offset', extraOffset + initial_height + 'px' );
+		}
 
 		$target.off( 'switchstate' ).on( 'switchstate', function ( e, $target ) {
 			var args = Array.prototype.slice.call( arguments, 1 );
@@ -1476,6 +1481,14 @@ TL_Front.close_form = function ( element, trigger, action, config ) {
 				$close = jQuery( '<span class="tve-ribbon-close" style="display: none"></span>' ).appendTo( $parent );
 			}
 			$close.trigger( 'click' );//there already exists a bind for close
+
+			var $header = ThriveGlobal.$j( 'body' ).find( '.thrv_header.tve-scroll-sticky' );
+
+			if ( $header.length ) {
+				var extraOffset = ( parseFloat( $header.css( '--tcb-header-extra-offset' ) ) - $parent.outerHeight( true ) ) + 'px'
+
+				$header.css( '--tcb-header-extra-offset', extraOffset );
+			}
 			break;
 		case 'slide-in':
 			$parent.find( '.tve_ea_thrive_leads_form_close' ).trigger( 'click' );//there already exists a bind for close

@@ -10,84 +10,93 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Thrive_Dash_List_Manager {
+	/**
+	 * @var bool
+	 */
 	public static $ADMIN_HAS_ERROR = false;
 
-	public static $API_TYPES
-		= array(
-			'autoresponder' => 'Email Marketing',
-			'webinar'       => 'Webinars',
-			'other'         => 'Other',
-			'recaptcha'     => 'Recaptcha',
-			'social'        => 'Social',
-			'sellings'      => 'Sales',
-			'integrations'  => 'Integration Services',
-			'email'         => 'Email Delivery',
-			'storage'       => 'File Storage',
-		);
+	/**
+	 * @var string[]
+	 */
+	public static $API_TYPES = [
+		'autoresponder' => 'Email Marketing',
+		'webinar'       => 'Webinars',
+		'other'         => 'Other',
+		'recaptcha'     => 'Recaptcha',
+		'social'        => 'Social',
+		'sellings'      => 'Sales',
+		'integrations'  => 'Integration Services',
+		'email'         => 'Email Delivery',
+		'storage'       => 'File Storage',
+	];
 
-	public static $AVAILABLE
-		= array(
-			'email'                => 'Thrive_Dash_List_Connection_Email',
-			'activecampaign'       => 'Thrive_Dash_List_Connection_ActiveCampaign',
-			'arpreach'             => 'Thrive_Dash_List_Connection_ArpReach',
-			'aweber'               => 'Thrive_Dash_List_Connection_AWeber',
-			'campaignmonitor'      => 'Thrive_Dash_List_Connection_CampaignMonitor',
-			'constantcontact'      => 'Thrive_Dash_List_Connection_ConstantContact',
-			'convertkit'           => 'Thrive_Dash_List_Connection_ConvertKit',
-			'drip'                 => 'Thrive_Dash_List_Connection_Drip',
-			'facebook'             => 'Thrive_Dash_List_Connection_Facebook',
-			'fluentcrm'            => 'Thrive_Dash_List_Connection_FluentCRM',
-			'get-response'         => 'Thrive_Dash_List_Connection_GetResponse',
-			'google'               => 'Thrive_Dash_List_Connection_Google',
-			'gotowebinar'          => 'Thrive_Dash_List_Connection_GoToWebinar',
-			'hubspot'              => 'Thrive_Dash_List_Connection_HubSpot',
-			'icontact'             => 'Thrive_Dash_List_Connection_iContact',
-			'infusionsoft'         => 'Thrive_Dash_List_Connection_Infusionsoft',
-			'klicktipp'            => 'Thrive_Dash_List_Connection_KlickTipp',
-			'madmimi'              => 'Thrive_Dash_List_Connection_MadMimi',
-			'mailchimp'            => 'Thrive_Dash_List_Connection_Mailchimp',
-			'mailerlite'           => 'Thrive_Dash_List_Connection_MailerLite',
-			'mailpoet'             => 'Thrive_Dash_List_Connection_MailPoet',
-			'mailrelay'            => 'Thrive_Dash_List_Connection_MailRelay',
-			'mautic'               => 'Thrive_Dash_List_Connection_Mautic',
-			'ontraport'            => 'Thrive_Dash_List_Connection_Ontraport',
-			'recaptcha'            => 'Thrive_Dash_List_Connection_ReCaptcha',
-			'sendreach'            => 'Thrive_Dash_List_Connection_Sendreach',
-			'sendgrid'             => 'Thrive_Dash_List_Connection_SendGrid',
-			'sendinblue'           => 'Thrive_Dash_List_Connection_SendinblueV3',
-			'sendy'                => 'Thrive_Dash_List_Connection_Sendy',
-			'sg-autorepondeur'     => 'Thrive_Dash_List_Connection_SGAutorepondeur',
-			'twitter'              => 'Thrive_Dash_List_Connection_Twitter',
-			'webinarjamstudio'     => 'Thrive_Dash_List_Connection_WebinarJamStudio',
-			'wordpress'            => 'Thrive_Dash_List_Connection_Wordpress',
-			'mailster'             => 'Thrive_Dash_List_Connection_Mailster',
-			'sendfox'              => 'Thrive_Dash_List_Connection_Sendfox',
-			'zoho'                 => 'Thrive_Dash_List_Connection_Zoho',
+	/**
+	 * @var string[]
+	 */
+	public static $AVAILABLE = [
+		'email'                => 'Thrive_Dash_List_Connection_Email',
+		'activecampaign'       => 'Thrive_Dash_List_Connection_ActiveCampaign',
+		'arpreach'             => 'Thrive_Dash_List_Connection_ArpReach',
+		'aweber'               => 'Thrive_Dash_List_Connection_AWeber',
+		'campaignmonitor'      => 'Thrive_Dash_List_Connection_CampaignMonitor',
+		'constantcontact'      => 'Thrive_Dash_List_Connection_ConstantContact',
+		'convertkit'           => 'Thrive_Dash_List_Connection_ConvertKit',
+		'drip'                 => 'Thrive_Dash_List_Connection_Drip',
+		'facebook'             => 'Thrive_Dash_List_Connection_Facebook',
+		'fluentcrm'            => 'Thrive_Dash_List_Connection_FluentCRM',
+		'get-response'         => 'Thrive_Dash_List_Connection_GetResponse',
+		'google'               => 'Thrive_Dash_List_Connection_Google',
+		'gotowebinar'          => 'Thrive_Dash_List_Connection_GoToWebinar',
+		'hubspot'              => 'Thrive_Dash_List_Connection_HubSpot',
+		'icontact'             => 'Thrive_Dash_List_Connection_iContact',
+		'infusionsoft'         => 'Thrive_Dash_List_Connection_Infusionsoft',
+		'klicktipp'            => 'Thrive_Dash_List_Connection_KlickTipp',
+		'madmimi'              => 'Thrive_Dash_List_Connection_MadMimi',
+		'mailchimp'            => 'Thrive_Dash_List_Connection_Mailchimp',
+		'mailerlite'           => 'Thrive_Dash_List_Connection_MailerLite',
+		'mailpoet'             => 'Thrive_Dash_List_Connection_MailPoet',
+		'mailrelay'            => 'Thrive_Dash_List_Connection_MailRelay',
+		'mautic'               => 'Thrive_Dash_List_Connection_Mautic',
+		'ontraport'            => 'Thrive_Dash_List_Connection_Ontraport',
+		'recaptcha'            => 'Thrive_Dash_List_Connection_ReCaptcha',
+		'sendreach'            => 'Thrive_Dash_List_Connection_Sendreach',
+		'sendgrid'             => 'Thrive_Dash_List_Connection_SendGrid',
+		'sendinblue'           => 'Thrive_Dash_List_Connection_SendinblueV3',
+		'sendy'                => 'Thrive_Dash_List_Connection_Sendy',
+		'sg-autorepondeur'     => 'Thrive_Dash_List_Connection_SGAutorepondeur',
+		'twitter'              => 'Thrive_Dash_List_Connection_Twitter',
+		'webinarjamstudio'     => 'Thrive_Dash_List_Connection_WebinarJamStudio',
+		'wordpress'            => 'Thrive_Dash_List_Connection_Wordpress',
+		'mailster'             => 'Thrive_Dash_List_Connection_Mailster',
+		'sendfox'              => 'Thrive_Dash_List_Connection_Sendfox',
+		'zoho'                 => 'Thrive_Dash_List_Connection_Zoho',
 
-			/* notification manger - these are now included in the dashboard - services for email notifications */
-			'awsses'               => 'Thrive_Dash_List_Connection_Awsses',
-			'campaignmonitoremail' => 'Thrive_Dash_List_Connection_CampaignMonitorEmail',
-			'mailgun'              => 'Thrive_Dash_List_Connection_Mailgun',
-			'mandrill'             => 'Thrive_Dash_List_Connection_Mandrill',
-			'mailrelayemail'       => 'Thrive_Dash_List_Connection_MailRelayEmail',
-			'postmark'             => 'Thrive_Dash_List_Connection_Postmark',
-			'sendgridemail'        => 'Thrive_Dash_List_Connection_SendGridEmail',
-			'sendinblueemail'      => 'Thrive_Dash_List_Connection_SendinblueEmailV3',
-			'sparkpost'            => 'Thrive_Dash_List_Connection_SparkPost',
-			'sendowl'              => 'Thrive_Dash_List_Connection_SendOwl',
-			'sendlane'             => 'Thrive_Dash_List_Connection_Sendlane',
-			'zoom'                 => 'Thrive_Dash_List_Connection_Zoom',
-			'everwebinar'          => 'Thrive_Dash_List_Connection_EverWebinar',
+		/* notification manger - these are now included in the dashboard - services for email notifications */
+		'awsses'               => 'Thrive_Dash_List_Connection_Awsses',
+		'campaignmonitoremail' => 'Thrive_Dash_List_Connection_CampaignMonitorEmail',
+		'mailgun'              => 'Thrive_Dash_List_Connection_Mailgun',
+		'mandrill'             => 'Thrive_Dash_List_Connection_Mandrill',
+		'mailrelayemail'       => 'Thrive_Dash_List_Connection_MailRelayEmail',
+		'postmark'             => 'Thrive_Dash_List_Connection_Postmark',
+		'sendgridemail'        => 'Thrive_Dash_List_Connection_SendGridEmail',
+		'sendinblueemail'      => 'Thrive_Dash_List_Connection_SendinblueEmailV3',
+		'sparkpost'            => 'Thrive_Dash_List_Connection_SparkPost',
+		'sendowl'              => 'Thrive_Dash_List_Connection_SendOwl',
+		'sendlane'             => 'Thrive_Dash_List_Connection_Sendlane',
+		'zoom'                 => 'Thrive_Dash_List_Connection_Zoom',
+		'everwebinar'          => 'Thrive_Dash_List_Connection_EverWebinar',
 
-			/* integrations services */
-			'zapier'               => 'Thrive_Dash_List_Connection_Zapier',
+		/* integrations services */
+		'zapier'               => 'Thrive_Dash_List_Connection_Zapier',
 
-			/* File Storage */
-			'google_drive'         => 'Thrive_Dash_List_Connection_FileUpload_GoogleDrive',
-			'dropbox'              => 'Thrive_Dash_List_Connection_FileUpload_Dropbox',
-		);
+		/* File Storage */
+		'google_drive'         => 'Thrive_Dash_List_Connection_FileUpload_GoogleDrive',
+		'dropbox'              => 'Thrive_Dash_List_Connection_FileUpload_Dropbox',
+	];
 
-	private static $_available = [];
+	private static $_available      = [];
+	public static  $api_instances   = [];
+	public static  $all_credentials = [];
 
 	/**
 	 * If the snake_case version of the function does not exist, attempt to call the camelCase version.
@@ -110,6 +119,9 @@ class Thrive_Dash_List_Manager {
 		], $arguments ) : null;
 	}
 
+	/**
+	 * @var array
+	 */
 	public static $default_api_filter = [
 		'include_types' => [], /* by default everything is included */
 		'exclude_types' => [], /* only taken into account if 'include' is empty ( they are mutually exclusive ) */
@@ -117,8 +129,8 @@ class Thrive_Dash_List_Manager {
 	];
 
 	/**
-	 * todo: This is deprecated and will be deleted in 2-3 releases. - when deleting, also delete Test_API_Manager::test_getAvailableAPIs
-	 * For now it has to stay because we changed the parameters of the function and this is called from the other plugins ( as long as they're not updated )
+	 * This has to stay because we changed the parameters of the function and this is called from the other plugins ( as long as they're not updated ).
+	 * This is also called from TTW, so it can't be deleted for now.
 	 *
 	 * @param bool  $only_connected
 	 * @param array $exclude_types
@@ -161,7 +173,7 @@ class Thrive_Dash_List_Manager {
 				static::should_include_api( $instance, $api_filter ) &&
 				( ! $only_connected || static::is_api_connected( $key, $instance ) )
 			) {
-				$lists[ $key ] = $api_filter['only_names'] ? $instance->getTitle() : $instance;
+				$lists[ $key ] = $api_filter['only_names'] ? $instance->get_title() : $instance;
 			}
 		}
 
@@ -169,8 +181,8 @@ class Thrive_Dash_List_Manager {
 	}
 
 	/**
-	 * @param $key
-	 * @param $instance
+	 * @param string                               $key
+	 * @param Thrive_Dash_List_Connection_Abstract $instance
 	 *
 	 * @return bool
 	 */
@@ -179,8 +191,8 @@ class Thrive_Dash_List_Manager {
 	}
 
 	/**
-	 * @param $instance
-	 * @param $api_filter
+	 * @param Thrive_Dash_List_Connection_Abstract $instance
+	 * @param array                                $api_filter
 	 *
 	 * @return bool
 	 */
@@ -208,7 +220,7 @@ class Thrive_Dash_List_Manager {
 	/**
 	 * @param bool $get_localized_data
 	 *
-	 * @return mixed|void
+	 * @return array
 	 */
 	public static function get_third_party_autoresponders( $get_localized_data = true ) {
 		return apply_filters( 'tvd_third_party_autoresponders', [], $get_localized_data );
@@ -216,6 +228,8 @@ class Thrive_Dash_List_Manager {
 
 	/**
 	 * Build custom fields for all available connections
+	 * Can be renamed to get_available_custom_fields in 2-3 releases
+	 * @return array
 	 */
 	public static function getAvailableCustomFields() {
 		$custom_fields = [];
@@ -226,14 +240,15 @@ class Thrive_Dash_List_Manager {
 		 * @var Thrive_Dash_List_Connection_Abstract $api
 		 */
 		foreach ( $apis as $api_name => $api ) {
-			$custom_fields[ $api_name ] = $api->get_api_custom_fields( array(), false, true );
+			$custom_fields[ $api_name ] = $api->get_api_custom_fields( [], false, true );
 		}
 
 		return $custom_fields;
 	}
 
 	/**
-	 * Get the harcoded mapper from the first connected API
+	 * Get the hardcoded mapper from the first connected API
+	 * Can be renamed to get_custom_fields_mapper in 2-3 releases
 	 *
 	 * @return array
 	 */
@@ -251,7 +266,7 @@ class Thrive_Dash_List_Manager {
 				break;
 			}
 
-			$mapper = $api->getMappedCustomFields();
+			$mapper = $api->get_custom_fields_mapping();
 		}
 
 		return $mapper;
@@ -279,7 +294,7 @@ class Thrive_Dash_List_Manager {
 		foreach ( self::available() as $key => $api ) {
 			/** @var Thrive_Dash_List_Connection_Abstract $instance */
 			$instance = self::connectionInstance( $key, isset( $credentials[ $key ] ) ? $credentials[ $key ] : array() );
-			if ( ( $onlyConnected && empty( $credentials[ $key ] ) ) || ! in_array( $instance::getType(), $include_types, true ) ) {
+			if ( ( $onlyConnected && empty( $credentials[ $key ] ) ) || ! in_array( $instance::get_type(), $include_types, true ) ) {
 				continue;
 			}
 
@@ -293,12 +308,10 @@ class Thrive_Dash_List_Manager {
 		return $lists;
 	}
 
-	public static $all_credentials = [];
-
 	/**
-	 * Fetch the connection credentials for a specific connection (or for all at once)
+	 * Fetch the connection credentials for a specific connection (or fetch them all)
 	 *
-	 * @param string $key if empty, all will be returned
+	 * @param string $key if empty, all the credentials will be returned
 	 *
 	 * @return array
 	 */
@@ -330,20 +343,20 @@ class Thrive_Dash_List_Manager {
 	}
 
 	/**
-	 * save the credentials for an instance
+	 * Save the credentials for an instance
 	 *
 	 * @param Thrive_Dash_List_Connection_Abstract $instance
 	 */
 	public static function save( $instance ) {
 		//put the credentials in this global array
 		//so that for the next save call this array contains the previous credentials
-		static::$all_credentials[ $instance->getKey() ] = $instance->getCredentials();
+		static::$all_credentials[ $instance->get_key() ] = $instance->getCredentials();
 
 		/**
 		 * Invalidate cache for Email Connection
 		 * - so that Email connection get to know the new email provider
 		 */
-		if ( $instance::getType() === 'email' ) {
+		if ( $instance::get_type() === 'email' ) {
 			delete_transient( 'tve_api_data_email' );
 		}
 
@@ -351,14 +364,25 @@ class Thrive_Dash_List_Manager {
 	}
 
 	/**
+	 * Used in TTW, do not delete.
+	 *
+	 * @param string $key
+	 *
+	 * @return Thrive_Dash_List_Connection_Abstract
+	 * @deprecated
+	 */
+	public static function connectionInstance( $key ) {
+		return static::connection_instance( $key );
+	}
+
+	/**
 	 * Factory method for a connection instance
-	 * todo: Can be renamed into connection_instance after 2-3 releases.
 	 *
 	 * @param string $key
 	 *
 	 * @return Thrive_Dash_List_Connection_Abstract
 	 */
-	public static function connectionInstance( $key ) {
+	public static function connection_instance( $key ) {
 		$apis = array_merge( static::available(), static::get_third_party_autoresponders( false ) );
 
 		if ( ! isset( $apis[ $key ] ) ) {
@@ -366,9 +390,14 @@ class Thrive_Dash_List_Manager {
 		}
 
 		if ( is_subclass_of( $apis[ $key ], 'Thrive_Dash_List_Connection_Abstract', true ) ) {
-			/** @var Thrive_Dash_List_Connection_Abstract $instance */
-			$instance = new $apis[ $key ]( $key );
-			$instance->setCredentials( static::credentials( $key ) );
+			if ( empty( static::$api_instances[ $key ] ) ) {
+				/** @var Thrive_Dash_List_Connection_Abstract $instance */
+				$instance = new $apis[ $key ]( $key );
+				$instance->set_credentials( static::credentials( $key ) );
+
+				static::$api_instances[ $key ] = $instance;
+			}
+			$instance = static::$api_instances[ $key ];
 		} else {
 			/* if the API class does not extend abstract, we assume that it's a third party API. In this case, the instance should be found in the list */
 			$instance = $apis[ $key ];
@@ -384,10 +413,10 @@ class Thrive_Dash_List_Manager {
 	 * @param string $message
 	 */
 	public static function message( $type, $message ) {
-		if ( $type == 'error' ) {
+		if ( $type === 'error' ) {
 			self::$ADMIN_HAS_ERROR = true;
 		}
-		$messages          = get_option( 'tve_api_admin_notices', array() );
+		$messages          = get_option( 'tve_api_admin_notices', [] );
 		$messages[ $type ] = $message;
 
 		update_option( 'tve_api_admin_notices', $messages );
@@ -396,22 +425,10 @@ class Thrive_Dash_List_Manager {
 	/**
 	 * reads out all messages (success / error from the options table)
 	 */
-	public static function flashMessages() {
-		$GLOBALS['thrive_list_api_message'] = get_option( 'tve_api_admin_notices', array() );
+	public static function flash_messages() {
+		$GLOBALS['thrive_list_api_message'] = get_option( 'tve_api_admin_notices', [] );
 
 		delete_option( 'tve_api_admin_notices' );
-	}
-
-	/**
-	 * transform the array of connections into one input string
-	 * this is a really simple encrypt system, is there any need for a more complicated one ?
-	 *
-	 * @param array $connections a list of key => value pairs (api => list)
-	 *
-	 * @return string
-	 */
-	public static function encodeConnectionString( $connections = array() ) {
-		return base64_encode( serialize( $connections ) );
 	}
 
 	/**
@@ -421,25 +438,30 @@ class Thrive_Dash_List_Manager {
 	 *
 	 * @return array
 	 */
-	public static function decodeConnectionString( $string ) {
+	public static function decode_connections_string( $string ) {
 		if ( empty( $string ) ) {
-			return array();
+			return [];
 		}
 		$string = @base64_decode( $string );
 		if ( empty( $string ) ) {
-			return array();
+			return [];
 		}
 		$data = thrive_safe_unserialize( $string );
 
-		return empty( $data ) || ! is_array( $data ) ? array() : tve_sanitize_data_recursive( $data, 'sanitize_textarea_field' );
+		return empty( $data ) || ! is_array( $data ) ? [] : tve_sanitize_data_recursive( $data, 'sanitize_textarea_field' );
 	}
 
-	public static function toJSON( $APIs = array() ) {
+	/**
+	 * @param array $APIs
+	 *
+	 * @return false|string
+	 */
+	public static function to_json( $APIs = [] ) {
 		if ( ! is_array( $APIs ) || empty( $APIs ) ) {
-			return json_encode( array() );
+			return json_encode( [] );
 		}
 
-		$list = array();
+		$list = [];
 
 		foreach ( $APIs as $key => $instance ) {
 
@@ -448,12 +470,15 @@ class Thrive_Dash_List_Manager {
 				continue;
 			}
 
-			$list[] = $instance->prepareJSON();
+			$list[] = $instance->prepare_json();
 		}
 
 		return json_encode( $list );
 	}
 
+	/**
+	 * @return array|mixed|void
+	 */
 	public static function available() {
 		if ( ! self::$_available ) {
 			self::$_available = apply_filters( 'tve_filter_available_connection', self::$AVAILABLE );

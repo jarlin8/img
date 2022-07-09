@@ -498,8 +498,11 @@ function tve_leads_shortcode_render( $attributes = array() ) {
 		return '';
 	}
 
-	/* SUPP-13169 - don't load shortcodes in head while yoast changes meta tags */
-	if ( is_feed() || doing_action( 'wpseo_head' ) ) {
+	if (
+		is_feed() ||
+		doing_action( 'wpseo_head' ) || /* SUPP-13169 - don't load shortcodes in head while yoast changes meta tags */
+		( ! empty( $_REQUEST['action'] ) && $_REQUEST['action'] === 'editpost' ) /* SUPP-14391 - yoast conflict - do not render during post save */
+	) {
 		return '';
 	}
 	// $attributes must be always array and from the parameter it can come with the empty string.

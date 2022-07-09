@@ -168,7 +168,7 @@ class Thrive_Dash_Api_Zoho {
 	 * @return array
 	 * @throws Exception
 	 */
-	public function addSubscriber( $args ) {
+	public function add_subscriber( $args ) {
 
 		$args['resfmt'] = 'json';
 

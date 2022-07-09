@@ -28,6 +28,7 @@ class Thrive_Dash_Api_AWeber_EntryDataArray implements ArrayAccess, Countable, I
 		return sizeOf( $this->data );
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		return ( isset( $this->data[ $offset ] ) );
 	}
@@ -36,6 +37,7 @@ class Thrive_Dash_Api_AWeber_EntryDataArray implements ArrayAccess, Countable, I
 		return $this->data[ $offset ];
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 		$this->data[ $offset ]       = $value;
 		$this->parent->{$this->name} = $this->data;
@@ -43,6 +45,7 @@ class Thrive_Dash_Api_AWeber_EntryDataArray implements ArrayAccess, Countable, I
 		return $value;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		unset( $this->data[ $offset ] );
 	}

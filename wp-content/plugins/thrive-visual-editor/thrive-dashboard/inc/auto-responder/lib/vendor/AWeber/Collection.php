@@ -186,12 +186,15 @@ class Thrive_Dash_Api_AWeber_Collection extends Thrive_Dash_Api_AWeber_Response 
 	 * http://php.net/manual/en/class.arrayaccess.php
 	 */
 
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 
 		if ( $offset >= 0 && $offset < $this->total_size ) {

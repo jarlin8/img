@@ -74,10 +74,8 @@ class Form_Identifier extends \Thrive\Automator\Items\Trigger_Field {
 						        ->save( $post_title, array( 'post_parent' => $lg->post_parent ) );
 					}
 					$inputs     = $lg_post->inputs;
-					$ids        = array_column( $inputs, 'id' );
-					$not_custom = [ 'email', 'phone', 'name', 'password', 'confirm_password' ];
-					if ( ! empty( $inputs ) && count( array_diff( $ids, $not_custom ) ) ) {
-						$lgs[ $form_id ] = [
+					if ( ! empty( $inputs ) ) {
+						$lgs[ $lg->ID ] = [
 							'label' => $form_id,
 							'id'    => $lg->ID,
 						];

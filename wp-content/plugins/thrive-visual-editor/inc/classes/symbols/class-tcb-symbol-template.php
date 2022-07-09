@@ -63,7 +63,7 @@ class TCB_Symbol_Template {
 		static::enter_symbol_render();
 
 		$symbol_id = ( ! empty( $config ) && isset( $config['id'] ) ) ? $config['id'] : get_the_ID();
-		$content   = self::content( $symbol_id );
+		$content   = static::content( $symbol_id );
 
 		/* prepare Events configuration */
 		tve_parse_events( $content );
@@ -198,7 +198,7 @@ class TCB_Symbol_Template {
 	public static function symbol_state_class( $symbol_type ) {
 		$cls = '';
 
-		if ( in_array( $symbol_type, self::$symbol_with_states, true ) ) {
+		if ( in_array( $symbol_type, static::$symbol_with_states, true ) ) {
 			$cls = 'tve-default-state';
 		}
 
@@ -222,8 +222,8 @@ class TCB_Symbol_Template {
 			$post = get_post( $symbol_id );
 
 			if ( $post instanceof WP_Post && $post->post_status === 'publish' ) {
-				$content    = self::render_content( $config, $wrap );
-				$css        = self::tcb_symbol_get_css( $config );
+				$content    = static::render_content( $config, $wrap );
+				$css        = static::tcb_symbol_get_css( $config );
 				$type       = substr( TCB_Symbols_Taxonomy::get_symbol_type( $symbol_id ), 0, - 1 );
 				$js_modules = '';
 
@@ -241,10 +241,10 @@ class TCB_Symbol_Template {
 					$type = 'gutenberg_block';
 				}
 
-				$shortcode_class = in_array( $type, self::$symbol_with_states, true ) ? 'tve-default-state' : '';
+				$shortcode_class = in_array( $type, static::$symbol_with_states, true ) ? 'tve-default-state' : '';
 				$name            = is_editor_page_raw() ? ' data-name="' . esc_attr( $post->post_title ) . '"' : '';
 
-				$content = '<div class="thrive-shortcode-html thrive-symbol-shortcode ' . $shortcode_class . '"' . $name . self::data_attr( $symbol_id ) . '>' . $css . $js_modules . $content . '</div>';
+				$content = '<div class="thrive-shortcode-html thrive-symbol-shortcode ' . $shortcode_class . '"' . $name . static::data_attr( $symbol_id ) . '>' . $css . $js_modules . $content . '</div>';
 
 				if ( $wrap ) {
 					$extra_classes = get_post_meta( $symbol_id, 'tve_extra_class', true );

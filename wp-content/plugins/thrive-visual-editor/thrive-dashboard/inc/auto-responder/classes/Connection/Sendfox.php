@@ -16,7 +16,7 @@ class Thrive_Dash_List_Connection_Sendfox extends Thrive_Dash_List_Connection_Ab
 	 *
 	 * @return string
 	 */
-	public function getTitle() {
+	public function get_title() {
 
 		return 'Sendfox';
 	}
@@ -26,9 +26,9 @@ class Thrive_Dash_List_Connection_Sendfox extends Thrive_Dash_List_Connection_Ab
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
+	public function output_setup_form() {
 
-		$this->_directFormHtml( 'sendfox' );
+		$this->output_controls_html( 'sendfox' );
 	}
 
 	/**
@@ -38,15 +38,15 @@ class Thrive_Dash_List_Connection_Sendfox extends Thrive_Dash_List_Connection_Ab
 	 *
 	 * @return mixed|Thrive_Dash_List_Connection_Abstract
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 
 		if ( empty( $_POST['connection']['api_key'] ) ) {
 			return $this->error( __( 'Api key is required', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
 
-		$this->setCredentials( $this->post( 'connection' ) );
+		$this->set_credentials( $this->post( 'connection' ) );
 
-		$result = $this->testConnection();
+		$result = $this->test_connection();
 
 		if ( $result !== true ) {
 			return $this->error( __( 'Could not connect to Sendfox using provided api key.', TVE_DASH_TRANSLATE_DOMAIN ) );
@@ -63,21 +63,21 @@ class Thrive_Dash_List_Connection_Sendfox extends Thrive_Dash_List_Connection_Ab
 	/**
 	 * @return bool|string
 	 */
-	public function testConnection() {
+	public function test_connection() {
 
-		return is_array( $this->_getLists() );
+		return is_array( $this->_get_lists() );
 	}
 
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 
 		try {
 
 			/**
 			 * @var $api Thrive_Dash_Api_Sendfox
 			 */
-			$api = $this->getApi();
+			$api = $this->get_api();
 
-			list( $first_name, $last_name ) = $this->_getNameParts( $arguments['name'] );
+			list( $first_name, $last_name ) = $this->get_name_parts( $arguments['name'] );
 
 			$subscriber_args = array(
 				'email'      => $arguments['email'],
@@ -85,7 +85,7 @@ class Thrive_Dash_List_Connection_Sendfox extends Thrive_Dash_List_Connection_Ab
 				'last_name'  => $last_name,
 			);
 
-			$api->addSubscriber( $list_identifier, $subscriber_args );
+			$api->add_subscriber( $list_identifier, $subscriber_args );
 
 			return true;
 		} catch ( Exception $e ) {
@@ -97,7 +97,7 @@ class Thrive_Dash_List_Connection_Sendfox extends Thrive_Dash_List_Connection_Ab
 	 * @return mixed|Thrive_Dash_Api_Sendfox
 	 * @throws Exception
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 		$api_key = $this->param( 'api_key' );
 
 		return new Thrive_Dash_Api_Sendfox( $api_key );
@@ -106,7 +106,7 @@ class Thrive_Dash_List_Connection_Sendfox extends Thrive_Dash_List_Connection_Ab
 	/**
 	 * @return array|bool
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 
 		$result = array();
 
@@ -115,7 +115,7 @@ class Thrive_Dash_List_Connection_Sendfox extends Thrive_Dash_List_Connection_Ab
 			/**
 			 * @var $api Thrive_Dash_Api_Sendfox
 			 */
-			$api   = $this->getApi();
+			$api   = $this->get_api();
 			$lists = $api->getLists();
 
 			if ( isset( $lists['data'] ) && is_array( $lists['data'] ) ) {

@@ -174,16 +174,17 @@ function tcb_get_preview_url( $post_id = false, $preview = true ) {
 /**
  * Get default edit link for a post (WP edit / a custom dashboard)
  *
- * @param bool $post_id
+ * @param int $post_id
  *
  * @return string
  */
-function tcb_get_default_edit_url( $post_id = false ) {
-	$post_id = ( $post_id ) ? $post_id : get_the_ID();
+function tcb_get_default_edit_url( $post_id = 0 ) {
+	if ( empty( $post_id ) ) {
+		$post_id = get_the_ID();
+	}
 
 	$post      = get_post( $post_id );
 	$edit_link = set_url_scheme( get_edit_post_link( $post_id ) );
-
 
 	/**
 	 * Allows changing the default wp post's edit link
@@ -1024,7 +1025,11 @@ function tve_editor_content( $content, $use_case = null ) {
 
 		/* make images responsive */
 		if ( function_exists( 'wp_filter_content_tags' ) ) {
-			$tve_saved_content = wp_filter_content_tags( $tve_saved_content );
+			try {
+				$tve_saved_content = wp_filter_content_tags( $tve_saved_content );
+			} catch ( Error $e ) {
+				/* just so it won't break the page */
+			}
 		} elseif ( function_exists( 'wp_make_content_images_responsive' ) ) {
 			$tve_saved_content = wp_make_content_images_responsive( $tve_saved_content );
 		}
@@ -2390,7 +2395,7 @@ function tve_load_custom_css( $post_id = null ) {
 		/**
 		 * Used for printing extra css on the page, called from LP class
 		 */
-		do_action('tcb_print_custom_style', $post_id);
+		do_action( 'tcb_print_custom_style', $post_id );
 
 		return;
 	}
@@ -2418,7 +2423,7 @@ function tve_load_custom_css( $post_id = null ) {
 			/**
 			 * Used for printing extra css on the page, called from LP class
 			 */
-			do_action('tcb_print_custom_style', $post->ID);
+			do_action( 'tcb_print_custom_style', $post->ID );
 		}
 
 		$is_editor_page = is_editor_page();
@@ -2706,7 +2711,7 @@ function tve_submit_contact_form() {
 	$posted_data = (array) $_POST;
 	$posted_data = array_diff_key( $posted_data, array( 'action' => '' ) );
 
-	require_once dirname( dirname( __FILE__ ) ) . '/inc/classes/class-tcb-contact-form.php';
+	require_once dirname( __DIR__ ) . '/inc/classes/class-tcb-contact-form.php';
 	$contact_form = new TCB_Contact_Form( $posted_data );
 
 	$response = $contact_form->submit();
@@ -4052,7 +4057,7 @@ function tve_api_form_submit( $output = true ) {
 			'always_send' => [],
 		);
 	} elseif ( ! empty( $data['consent_config'] ) ) {
-		$consent_config = Thrive_Dash_List_Manager::decodeConnectionString( $data['consent_config'] );
+		$consent_config = Thrive_Dash_List_Manager::decode_connections_string( $data['consent_config'] );
 		/**
 		 * if consent_config is disabled, empty it here
 		 */
@@ -4097,12 +4102,12 @@ function tve_api_form_submit( $output = true ) {
 	if ( isset( $settings ) ) {
 		$connections = $settings->apis;
 	} elseif ( ! empty( $data['__tcb_lg_fc'] ) ) {
-		$connections = Thrive_Dash_List_Manager::decodeConnectionString( $data['__tcb_lg_fc'] ); // previous version
+		$connections = Thrive_Dash_List_Manager::decode_connections_string( $data['__tcb_lg_fc'] ); // previous version
 	}
 	$form_messages = [];
 
 	if ( isset( $data['__tcb_lg_msg'] ) ) {
-		$form_messages = Thrive_Dash_List_Manager::decodeConnectionString( $data['__tcb_lg_msg'] );
+		$form_messages = Thrive_Dash_List_Manager::decode_connections_string( $data['__tcb_lg_msg'] );
 	}
 
 	if ( empty( $connections ) ) {
@@ -4543,6 +4548,24 @@ function tcb_auth_check_data( $data ) {
  */
 function tve_filter_upload_user_template_location( $upload ) {
 	$sub_dir = '/thrive-visual-editor/user_templates';
+
+	$upload['path']   = $upload['basedir'] . $sub_dir;
+	$upload['url']    = $upload['baseurl'] . $sub_dir;
+	$upload['subdir'] = $sub_dir;
+
+	return $upload;
+}
+
+/**
+ * Filters the upload landing pages preview location.
+ * Callback used in action_save_landing_page_preview function
+ *
+ * @param $upload
+ *
+ * @return mixed
+ */
+function tve_filter_landing_page_preview_location( $upload ) {
+	$sub_dir = '/thrive-visual-editor/lp_preview';
 
 	$upload['path']   = $upload['basedir'] . $sub_dir;
 	$upload['url']    = $upload['baseurl'] . $sub_dir;
@@ -5385,7 +5408,26 @@ function tve_convert_favorite_colors() {
 function tve_author_social_url() {
 	global $post;
 
-	return empty( $post ) ? [] : (array) get_the_author_meta( 'thrive_social_urls', $post->post_author );
+	return empty( $post ) ? [] : (array) get_the_author_meta( 'thrive_social_urls', tve_get_post_author( $post ) );
+}
+
+
+/**
+ * Returns the post author of a WP_Post
+ * Compatibility with ThriveApprentice plugin where the author of a lesson/course overview is not neccessary the author of the post
+ *
+ * @param WP_Post $post
+ *
+ * @return mixed|void
+ */
+function tve_get_post_author( $post ) {
+	/**
+	 * filters post authors to get the correct one
+	 *
+	 * @param int     $author_id as $post->post_author
+	 * @param WP_Post $post
+	 */
+	return apply_filters( 'tcb_get_post_author', $post->post_author, $post );
 }
 
 /**
@@ -5509,17 +5551,17 @@ function tve_score_password( $passwd ) {
 	$score = 5 * count( array_unique( str_split( $passwd ) ) );
 
 	/* numbers */
-	if ( $num = preg_match_all( "/\d/", $passwd, $matches ) ) {
+	if ( $num = preg_match_all( '/\d/', $passwd, $matches ) ) {
 		$score += ( (int) $num * 2 );
 	}
-	if ( preg_match( "/[a-z]/", $passwd ) ) {
+	if ( preg_match( '/[a-z]/', $passwd ) ) {
 		$score += 10;
 	}
-	if ( preg_match( "/[A-Z]/", $passwd ) ) {
+	if ( preg_match( '/[A-Z]/', $passwd ) ) {
 		$score += 10;
 	}
 	/* special chars*/
-	if ( $num = preg_match_all( "/[^a-zA-Z0-9]/", $passwd, $matches ) ) {
+	if ( $num = preg_match_all( '/[^a-zA-Z0-9]/', $passwd, $matches ) ) {
 		$score += ( 10 * (int) $num );
 	}
 

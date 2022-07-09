@@ -34,6 +34,7 @@ class Woo_Product_Data extends Data_Object {
 	 */
 	public static function get_fields() {
 		return array(
+			'woo_product_id',
 			'product_type',
 			'woo_product_name',
 			'product_slug',

@@ -10,13 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
  $admin_email = get_option( 'admin_email' ); ?>
 <?php $mandirll_key = $this->param( 'mandrill-key' ) ?>
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ); ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ); ?></h2>
 <div class="tvd-row">
 	<p class="card-mb-10">
 		<strong><?php echo esc_html__( 'Notification:', TVE_DASH_TRANSLATE_DOMAIN ) ?> </strong><?php echo esc_html__( 'If you would like to use Transactional emails. You should fill in the Mandrill API Key and Mandrill-approved email address optional fields.', TVE_DASH_TRANSLATE_DOMAIN ) ?>
 	</p>
 	<form class="tvd-col tvd-s12">
-		<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ); ?>"/>
+		<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ); ?>"/>
 		<div class="tvd-input-field">
 			<input id="tvd-mm-api-key" type="text" name="connection[key]"
 					value="<?php echo esc_attr( $this->param( 'key' ) ); ?>">

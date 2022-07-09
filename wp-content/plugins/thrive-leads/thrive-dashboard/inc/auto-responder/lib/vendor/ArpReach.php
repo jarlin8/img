@@ -31,7 +31,7 @@ class Thrive_Dash_Api_ArpReach {
 		$this->api_key = $api_key;
 	}
 
-	public function testConnection() {
+	public function test_connection() {
 		return $this->call_api( 'ping' );
 	}
 

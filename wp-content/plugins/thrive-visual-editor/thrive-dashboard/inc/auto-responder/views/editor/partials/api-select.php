@@ -14,7 +14,7 @@
 					data-ctrl="function:auto_responder.api.api_get_lists" autocomplete="off">
 				<?php foreach ( $connected_apis as $key => $api ) : ?>
 					<option
-						value="<?php echo esc_attr( $key ) ?>"<?php echo $edit_api_key == $key ? ' selected="selected"' : '' ?>><?php echo esc_html( $api->getTitle() ); ?></option>
+						value="<?php echo esc_attr( $key ) ?>"<?php echo $edit_api_key == $key ? ' selected="selected"' : '' ?>><?php echo esc_html( $api->get_title() ); ?></option>
 				<?php endforeach ?>
 			</select>
 		</div>

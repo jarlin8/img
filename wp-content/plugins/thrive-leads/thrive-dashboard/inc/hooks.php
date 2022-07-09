@@ -230,7 +230,7 @@ function tve_dash_admin_menu() {
  */
 add_filter( 'plugin_action_links', static function ( $actions, $plugin_file, $plugin_data, $context ) {
 
-	if ( ! isset( $plugin_data['Version'] ) ) {
+	if ( ! isset( $plugin_data['Version'] ) || ( function_exists( 'is_plugin_active' ) && ! is_plugin_active( $plugin_file ) ) ) {
 		return $actions;
 	}
 
@@ -239,7 +239,7 @@ add_filter( 'plugin_action_links', static function ( $actions, $plugin_file, $pl
 		return $actions;
 	}
 
-	$slug = isset( $plugin_data['slug'] ) ? $plugin_data['slug'] : sanitize_title( $plugin_data['Name'] );
+	$slug = isset( $plugin_data['slug'] ) ? $plugin_data['slug'] : dirname( plugin_basename( $plugin_file ) );
 
 	if ( strpos( $slug, 'thrive-' ) !== false && strpos( $plugin_data['Version'], 'beta' ) !== false && tvd_update_is_using_stable_channel() ) {
 		$stable_url = add_query_arg(

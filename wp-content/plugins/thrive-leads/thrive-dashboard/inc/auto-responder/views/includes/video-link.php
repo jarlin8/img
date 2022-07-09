@@ -8,8 +8,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
- $api_slug = strtolower( str_replace( array( ' ', '-' ), '', $this->getKey() ) ); ?>
-<?php $video_urls = $this->apiVideosUrls(); ?>
+ $api_slug = strtolower( str_replace( array( ' ', '-' ), '', $this->get_key() ) ); ?>
+<?php $video_urls = $this->get_api_video_urls(); ?>
 <?php if ( array_key_exists( $api_slug, $video_urls ) && ! empty( $video_urls[ $api_slug ] ) ) : ?>
 	<div class="ttw-video-urls-container tvd-m6 tvd-no-padding tvd-left ttw-<?php echo esc_attr( $api_slug ); ?>-video">
 		<p class="ttw-video-urls-wrapper">

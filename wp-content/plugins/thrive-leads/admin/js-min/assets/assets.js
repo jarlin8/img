@@ -1,4 +1,4 @@
-/*! Thrive Leads - The ultimate Lead Capture solution for wordpress - 2022-05-04
+/*! Thrive Leads - The ultimate Lead Capture solution for wordpress - 2022-06-29
 * https://thrivethemes.com 
 * Copyright (c) 2022 * Thrive Themes */
 

@@ -57,13 +57,8 @@ class Tag_User extends Action {
 		return 'tap-tag-user';
 	}
 
-	/**
-	 * Get the name of app to which action belongs
-	 *
-	 * @return string
-	 */
-	public static function get_app_name() {
-		return 'Thrive Dashboard';
+	public static function get_app_id() {
+		return 'email';
 	}
 
 	public static function get_required_data_objects() {

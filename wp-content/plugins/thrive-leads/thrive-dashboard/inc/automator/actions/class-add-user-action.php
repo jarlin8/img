@@ -54,13 +54,8 @@ class Add_User extends Action {
 		return 'tap-add-user';
 	}
 
-	/**
-	 * Get the name of app to which action belongs
-	 *
-	 * @return string
-	 */
-	public static function get_app_name() {
-		return 'Thrive Dashboard';
+	public static function get_app_id() {
+		return 'email';
 	}
 
 	public static function get_required_data_objects() {
@@ -186,6 +181,7 @@ class Add_User extends Action {
 
 		return $value;
 	}
+
 	/**
 	 * For APIs with forms add it as required field
 	 *

@@ -1932,8 +1932,8 @@ function tve_leads_get_conversion_rate_test_data( $filter ) {
 	$conversions = 0;
 	$impressions = 0;
 	foreach ( $chart_data_temp as $key ) {
-		$conversions += array_sum( $key['conversion_count'] );
-		$impressions += array_sum( $key['impression_count'] );
+		$conversions += isset( $key['conversion_count'] ) ? array_sum( $key['conversion_count'] ) : 0;
+		$impressions += isset( $key['impression_count'] ) ? array_sum( $key['impression_count'] ) : 0;
 	}
 	$average_rate = (float) tve_leads_conversion_rate( $impressions, $conversions, '', 2 );
 
@@ -2356,7 +2356,7 @@ function tve_leads_get_test( $test_id, $filters = array() ) {
 			//we don't calculate for the control item
 			if ( $index > 0 ) {
 				//Percentage improvement = conversion rate of variation - conversion rate of control
-				if ( is_numeric( $test->items[0]->conversion_rate ) ) {
+				if ( is_numeric( $item->conversion_rate ) && is_numeric( $test->items[0]->conversion_rate ) ) {
 					$item->percentage_improvement = round( ( ( $item->conversion_rate - $test->items[0]->conversion_rate ) * 100 ) / $test->items[0]->conversion_rate, 2 );
 				} else {
 					$item->percentage_improvement = 'N/A';

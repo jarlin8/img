@@ -1,4 +1,4 @@
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ); ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ); ?></h2>
 <?php
 /** @var $this Thrive_Dash_List_Connection_MailPoet */
 ?>
@@ -9,7 +9,7 @@
 		<?php $this->display_video_link(); ?>
 	</div>
 	<form>
-		<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ); ?>">
+		<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ); ?>">
 		<input type="hidden" name="connection[connected]" value="1">
 	</form>
 	<div class="tvd-card-action">

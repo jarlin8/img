@@ -290,6 +290,7 @@ class Rule implements \JsonSerializable {
 	/**
 	 * @return array
 	 */
+	#[\ReturnTypeWillChange]
 	public function jsonSerialize( $frontend = true ) {
 
 		$value = $this->value;

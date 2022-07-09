@@ -14,7 +14,7 @@ global $tvedb;
  */
 class Thrive_Leads_DB {
 	/**
-	 * @var wpdb the $wpdb instance
+	 * @var WP_Query
 	 */
 	protected $wpdb = null;
 
@@ -1720,6 +1720,21 @@ class Thrive_Leads_DB {
 		$sql        = "DELETE FROM {$table_name} WHERE `variation_key` IN ('{$v}')";
 
 		return $this->wpdb->query( $sql );
+	}
+
+	/**
+	 * Check if we have a design variation containing the specific string
+	 *
+	 * @param $string
+	 *
+	 * @return boolean
+	 */
+	public function search_string_in_designs( $string ) {
+		$sql = 'SELECT `key` FROM ' . tve_leads_table_name( 'form_variations' ) . ' WHERE content LIKE %s';
+
+		$this->wpdb->query( $this->prepare( $sql, [ "%$string%" ] ) );
+
+		return $this->wpdb->num_rows > 0;
 	}
 
 	/**

@@ -3,7 +3,6 @@
 namespace TVE\Dashboard\Automator;
 
 use Thrive\Automator\Items\Action_Field;
-use Thrive_Dash_List_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
@@ -42,7 +41,7 @@ class Mailing_List_Field extends Action_Field {
 	 * @return string
 	 */
 	public static function get_preview_template() {
-		return '$$value list';
+		return 'List: $$value';
 	}
 
 	/**

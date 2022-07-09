@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
  $version = $this->param( 'version' ); ?>
 
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ); ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ); ?></h2>
 <div class="tvd-row">
 	<form class="">
-		<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ); ?>"/>
+		<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ); ?>"/>
 		<input type="hidden" name="connection[versioning]" value="1"/>
 		<div class="tvd-col tvd-s10 tvd-extra-options <?php echo empty( $version ) || $version === '1' ? 'tvd-hide"' : ''; ?>">
 			<div class="tvd-input-field">

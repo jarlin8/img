@@ -346,7 +346,7 @@ class Thrive_Dash_Api_GetResponseV3 {
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function getForms( $params = array() ) {
+	public function get_forms( $params = array() ) {
 		return $this->call( 'forms?' . $this->setParams( $params ) );
 	}
 

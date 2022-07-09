@@ -3,7 +3,6 @@
 namespace TCB\Integrations\Automator;
 
 use Thrive\Automator\Items\Data_Object;
-use Thrive\Automator\Items\Trigger;
 use Thrive\Automator\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,8 +31,8 @@ class Register_Form_Submit extends \Thrive\Automator\Items\Trigger {
 		return 2;
 	}
 
-	public static function get_app_name() {
-		return 'Thrive Architect';
+	public static function get_app_id() {
+		return Architect_App::get_id();
 	}
 
 	public static function get_name() {

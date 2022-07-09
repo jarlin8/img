@@ -28,6 +28,7 @@ class TVE_Dash_Product_LicenseManager {
 	const TCM_TAG             = 'tcm';
 	const TVA_TAG             = 'tva';
 	const TAB_TAG             = 'tab';
+	const TPM_TAG             = 'tpm';
 
 	const TAG_FOCUS     = 'focusblog';
 	const TAG_LUXE      = 'luxe';
@@ -265,16 +266,17 @@ class TVE_Dash_Product_LicenseManager {
 	 */
 	public static function get_product_tag( $text_domain ) {
 		$mapping = array(
-			'thrive-cb'             => self::TCB_TAG,
-			'thrive-leads'          => self::TL_TAG,
-			'thrive-clever-widgets' => self::TCW_TAG,
-			'thrive-ult'            => self::TU_TAG,
-			'thrive-headline'       => self::THO_TAG,
-			'thrive-ovation'        => self::TVO_TAG,
-			'thrive-quiz-builder'   => self::TQB_TAG,
-			'thrive-comments'       => self::TCM_TAG,
-			'thrive-apprentice'     => self::TVA_TAG,
-			'thrive-optimize'       => self::TAB_TAG,
+			'thrive-cb'              => self::TCB_TAG,
+			'thrive-leads'           => self::TL_TAG,
+			'thrive-clever-widgets'  => self::TCW_TAG,
+			'thrive-ult'             => self::TU_TAG,
+			'thrive-headline'        => self::THO_TAG,
+			'thrive-ovation'         => self::TVO_TAG,
+			'thrive-quiz-builder'    => self::TQB_TAG,
+			'thrive-comments'        => self::TCM_TAG,
+			'thrive-apprentice'      => self::TVA_TAG,
+			'thrive-optimize'        => self::TAB_TAG,
+			'thrive-product-manager' => self::TPM_TAG,
 		);
 
 		return isset( $mapping[ $text_domain ] ) ? $mapping[ $text_domain ] : '';

@@ -42,7 +42,7 @@ class Tag_Input_Field extends Action_Field {
 	 * @return string
 	 */
 	public static function get_preview_template() {
-		return '';
+		return 'Send tags: $$value';
 	}
 
 	public static function get_id() {

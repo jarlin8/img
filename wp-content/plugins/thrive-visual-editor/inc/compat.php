@@ -727,7 +727,9 @@ add_action( 'wp_head', function () {
 }, PHP_INT_MAX );
 
 /**
- * Compatibility with Oliver POS - A WooCommerce Point of Sale (POS)
+ * Compatibility with:
+ *  -> Oliver POS - A WooCommerce Point of Sale (POS)
+ *  -> Quiz and Survey Master
  *
  * We don't need their styles inside the editor
  * Added in admin_enqueue_scripts because there is the place where they register their styles
@@ -736,6 +738,9 @@ add_action( 'admin_enqueue_scripts', function () {
 	if ( is_editor_page_raw() ) {
 		wp_deregister_style( 'oliver-pos-feedback-css' );
 		wp_dequeue_style( 'oliver-pos-feedback-css' );
+
+		wp_deregister_style( 'qsm_admin_style' );
+		wp_dequeue_style( 'qsm_admin_style' );
 	}
 }, PHP_INT_MAX );
 

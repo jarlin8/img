@@ -1,13 +1,13 @@
 <div id="thrive-api-list">
 	<div class="tve-sp"></div>
 	<?php if ( ! empty( $selected_api ) ) : ?>
-		<?php $list_subtitle = $selected_api->getListSubtitle() ?>
-		<?php $api_key = $selected_api->getKey(); ?>
-		<?php $selected_api->renderBeforeListsSettings( empty( $extra_settings[ $api_key ] ) ? array() : $extra_settings[ $api_key ] ) ?>
+		<?php $list_subtitle = $selected_api->get_list_sub_title() ?>
+		<?php $api_key = $selected_api->get_key(); ?>
+		<?php $selected_api->render_before_lists_settings( empty( $extra_settings[ $api_key ] ) ? array() : $extra_settings[ $api_key ] ) ?>
 		<div class="tve-list-container tve-api-option-group tve-api-option-group-list" <?php echo $api_key == 'drip' && isset( $extra_settings[ $api_key ]['type'] ) && $extra_settings[ $api_key ]['type'] == 'automation' ? 'style="display:none"' : ''; ?>>
 			<?php if ( false === $lists ) : /** this means there's been an error while connecting / communicating to the API */ ?>
 				<p class="error-message" style="color: red">
-					<?php echo esc_html__( 'Error while communicating with the service:', TVE_DASH_TRANSLATE_DOMAIN ) ?><?php echo esc_html( $selected_api->getApiError() ) ?>
+					<?php echo esc_html__( 'Error while communicating with the service:', TVE_DASH_TRANSLATE_DOMAIN ) ?><?php echo esc_html( $selected_api->get_api_error() ) ?>
 				</p>
 			<?php else : ?>
 				<h6><?php echo empty( $list_subtitle ) ? 'Choose your mailing list:' : esc_html( $list_subtitle ) ?></h6>
@@ -29,7 +29,7 @@
 				}
 				?>
 				<?php if ( ! empty( $lists ) || $api_key == 'drip' ) : ?>
-					<?php echo $selected_api->renderExtraEditorSettings( empty( $extra_settings[ $api_key ] ) ? array() : $extra_settings[ $api_key ] ); // phpcs:ignore ?>
+					<?php echo $selected_api->render_extra_editor_settings( empty( $extra_settings[ $api_key ] ) ? array() : $extra_settings[ $api_key ] ); // phpcs:ignore ?>
 				<?php endif ?>
 			<?php endif; /* false === $lists */ ?>
 		</div>

@@ -241,7 +241,7 @@ class TCB_Admin {
 			return;
 		}
 
-		if ( 'page' == $post_type && $page_for_posts && $post_id == $page_for_posts ) {
+		if ( 'page' === $post_type && $page_for_posts && $post_id == $page_for_posts ) {
 			tcb_template( 'admin/cannot-edit-blog-page' );
 
 			return;

@@ -16,21 +16,21 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'autoresponder';
 	}
 
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'ConvertKit / Seva';
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function hasTags() {
+	public function has_tags() {
 
 		return true;
 	}
@@ -40,8 +40,8 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'convertkit' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'convertkit' );
 	}
 
 	/**
@@ -51,16 +51,16 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return mixed
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$key = ! empty( $_POST['connection']['key'] ) ? sanitize_text_field( $_POST['connection']['key'] ) : '';
 
 		if ( empty( $key ) ) {
 			return $this->error( __( 'You must provide a valid ConvertKit API Key', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
 
-		$this->setCredentials( array( 'key' => $key ) );
+		$this->set_credentials( array( 'key' => $key ) );
 
-		$result = $this->testConnection();
+		$result = $this->test_connection();
 
 		if ( $result !== true ) {
 			return $this->error( sprintf( __( 'Could not connect to ConvertKit: %s', TVE_DASH_TRANSLATE_DOMAIN ), $this->_error ) );
@@ -79,8 +79,8 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
-		return is_array( $this->_getLists() );
+	public function test_connection() {
+		return is_array( $this->_get_lists() );
 	}
 
 	/**
@@ -88,7 +88,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return Thrive_Dash_Api_ConvertKit
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 		return new Thrive_Dash_Api_ConvertKit( $this->param( 'key' ) );
 	}
 
@@ -99,18 +99,18 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return array|string for error
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 		/**
 		 * just try getting the lists as a connection test
 		 */
 		try {
 
 			/** @var $api Thrive_Dash_Api_ConvertKit */
-			$api = $this->getApi();
+			$api = $this->get_api();
 
 			$lists = array();
 
-			$data = $api->getForms();
+			$data = $api->get_forms();
 			if ( ! empty( $data ) ) {
 				foreach ( $data as $form ) {
 					if ( ! empty( $form['archived'] ) ) {
@@ -140,10 +140,10 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return mixed
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 		try {
 			/** @var $api Thrive_Dash_Api_ConvertKit */
-			$api = $this->getApi();
+			$api = $this->get_api();
 
 			$arguments['custom_fields_ids'] = $this->buildMappedCustomFields( $arguments );
 			$arguments['fields'] = new stdClass();
@@ -172,7 +172,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 */
 	public function getCustomFields() {
 		/**  @var Thrive_Dash_Api_ConvertKit $api */
-		$api    = $this->getApi();
+		$api    = $this->get_api();
 		$fields = $api->getCustomFields();
 
 		return isset( $fields['custom_fields'] ) ? $fields['custom_fields'] : array();
@@ -186,7 +186,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 */
 	protected function _generateCustomFields( $args ) {
 		/**  @var Thrive_Dash_Api_ConvertKit $api */
-		$api      = $this->getApi();
+		$api      = $this->get_api();
 		$fields   = $this->_getCustomFields( false );
 		$response = array();
 		$ids      = $this->buildMappedCustomFields( $args );
@@ -209,7 +209,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 					$name         = strpos( $id['type'], 'mapping_' ) !== false ? $id['type'] . '_' . $key : $key;
 					$cf_form_name = str_replace( '[]', '', $name );
 					if ( ! empty( $args[ $cf_form_name ] ) ) {
-						$response[ $_name ] = $this->processField( $args[ $cf_form_name ] );
+						$response[ $_name ] = $this->process_field( $args[ $cf_form_name ] );
 					}
 				}
 			}
@@ -263,7 +263,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return String
 	 */
-	public static function getEmailMergeTag() {
+	public static function get_email_merge_tag() {
 		return '{{subscriber.email_address}}';
 	}
 
@@ -275,13 +275,13 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	protected function _getCustomFields( $force ) {
 
 		// Serve from cache if exists and requested
-		$cached_data = $this->_get_cached_custom_fields();
+		$cached_data = $this->get_cached_custom_fields();
 		if ( false === $force && ! empty( $cached_data ) ) {
 			return $cached_data;
 		}
 
 		/** @var $api Thrive_Dash_Api_ConvertKit */
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		$fields = $api->getCustomFields();
 		$fields = isset( $fields['custom_fields'] ) ? $fields['custom_fields'] : array();
@@ -333,7 +333,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 
 		$form_data = thrive_safe_unserialize( base64_decode( $args['tve_mapping'] ) );
 
-		$mapped_fields = $this->getMappedFieldsIDs();
+		$mapped_fields = $this->get_mapped_field_ids();
 
 		foreach ( $mapped_fields as $mapped_field_name ) {
 
@@ -371,7 +371,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return false|int|mixed
 	 */
-	public function addCustomFields( $email, $custom_fields = array(), $extra = array() ) {
+	public function add_custom_fields( $email, $custom_fields = array(), $extra = array() ) {
 
 		if ( empty( $extra['list_identifier'] ) ) {
 			return false;
@@ -379,9 +379,9 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 
 		try {
 			/** @var $api Thrive_Dash_Api_ConvertKit */
-			$api  = $this->getApi();
+			$api  = $this->get_api();
 			$args = array(
-				'fields' => (object) $this->_prepareCustomFieldsForApi( $custom_fields ),
+				'fields' => (object) $this->prepare_custom_fields_for_api( $custom_fields ),
 				'email'  => $email,
 				'name'   => ! empty( $extra['name'] ) ? $extra['name'] : '',
 			);
@@ -403,8 +403,8 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return mixed
 	 */
-	public function deleteSubscriber( $email, $arguments = array() ) {
-		$api    = $this->getApi();
+	public function delete_subscriber( $email, $arguments = array() ) {
+		$api    = $this->get_api();
 		$result = $api->unsubscribeUser( $email, $arguments );
 
 		return isset( $result['subscriber']['id'] );
@@ -418,7 +418,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return array
 	 */
-	public function getAvailableCustomFields( $list_id = null ) {
+	public function get_available_custom_fields( $list_id = null ) {
 
 		return $this->_getCustomFields( true );
 	}
@@ -431,7 +431,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 *
 	 * @return array
 	 */
-	public function _prepareCustomFieldsForApi( $custom_fields = array(), $list_identifier = null ) {
+	public function prepare_custom_fields_for_api( $custom_fields = array(), $list_identifier = null ) {
 
 		$prepared_fields = array();
 		$cf_prefix       = 'ck_field_';
@@ -461,7 +461,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 		return array( 'autoresponder' => array( 'mailing_list' => array( 'api_fields' ), 'tag_input' => array() ) );
 	}
 
-	public function hasCustomFields() {
+	public function has_custom_fields() {
 		return true;
 	}
 }

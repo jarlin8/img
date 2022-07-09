@@ -37,7 +37,7 @@ class Thrive_Dash_Api_ConvertKit {
 	 * @return array|mixed
 	 * @throws Thrive_Dash_Api_ConvertKit_Exception
 	 */
-	public function getForms() {
+	public function get_forms() {
 		$response = $this->_call( 'forms' );
 
 		$forms = isset( $response['forms'] ) ? $response['forms'] : array();

@@ -117,12 +117,17 @@ class TD_TTW_Messages_Manager {
 			'state'       => $state,
 			'plugin_data' => $plugin_data,
 		);
-		$is_connected  = TD_TTW_Connection::get_instance()->is_connected();
+
+		$plugin_tag = TVE_Dash_Product_LicenseManager::get_product_tag( $plugin_data['TextDomain'] );
+		if ( TVE_Dash_Product_LicenseManager::TPM_TAG === $plugin_tag ) {
+			return $message;
+		}
+
+		$is_connected = TD_TTW_Connection::get_instance()->is_connected();
 
 		if ( false === $is_connected ) {
 			$template = 'plugin/disconnected';
 		} else {
-			$plugin_tag = TVE_Dash_Product_LicenseManager::get_product_tag( $plugin_data['TextDomain'] );
 			/** @var TD_TTW_User_Licenses $licenses */
 			$licenses   = TD_TTW_User_Licenses::get_instance();
 			$membership = $licenses->get_membership();

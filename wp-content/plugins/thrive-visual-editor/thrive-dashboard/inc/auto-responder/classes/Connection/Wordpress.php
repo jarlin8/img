@@ -33,7 +33,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return bool
 	 */
-	public function isConnected() {
+	public function is_connected() {
 		return true;
 	}
 
@@ -43,14 +43,14 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'other';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'WordPress account';
 	}
 
@@ -59,7 +59,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return string
 	 */
-	public function getListSubtitle() {
+	public function get_list_sub_title() {
 		return 'Choose the role which should be assigned to your subscribers';
 	}
 
@@ -69,8 +69,8 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'wordpress' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'wordpress' );
 	}
 
 	/**
@@ -78,10 +78,10 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return mixed|void
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$registration_disabled = isset( $_POST['registration_disabled'] ) ? sanitize_text_field( $_POST['registration_disabled'] ) : 0;
 
-		$this->setCredentials( array(
+		$this->set_credentials( array(
 			'connected'             => true,
 			'registration_disabled' => (int) $registration_disabled,
 		) );
@@ -99,7 +99,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
+	public function test_connection() {
 		/**
 		 * wordpress integration is always supported
 		 */
@@ -111,7 +111,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return mixed
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 		// no API instance needed here
 		return null;
 	}
@@ -121,7 +121,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return array
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 
 		$roles = array();
 
@@ -136,8 +136,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	}
 
 	public function get_api_custom_fields( $params, $force = false, $get_all = false ) {
-
-		return $this->getAllCustomFields( $force );
+		return $this->get_all_custom_fields( $force );
 	}
 
 	/**
@@ -147,10 +146,10 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return array|mixed
 	 */
-	public function getAllCustomFields( $force ) {
+	public function get_all_custom_fields( $force ) {
 
 		// Serve from cache if exists and requested
-		$cached_data = $this->_get_cached_custom_fields();
+		$cached_data = $this->get_cached_custom_fields();
 
 		if ( false === $force && ! empty( $cached_data ) ) {
 			return $cached_data;
@@ -177,7 +176,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 			),
 		);
 		$custom_fields  = array();
-		$roles          = $this->_getLists();
+		$roles          = $this->_get_lists();
 
 		if ( is_array( $roles ) ) {
 			foreach ( $roles as $role ) {
@@ -245,7 +244,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return bool|string|Thrive_Dash_List_Connection_Wordpress
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 		/**
 		 * If current request is not "trusted" ( form settings not saved in the database ), the only accepted role is "subscriber"
 		 */
@@ -274,12 +273,12 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 		$profile_fields = array( 'first_name', 'last_name', 'nickname', 'description', 'user_url' );
 		if ( ! empty( $arguments['tve_mapping'] ) ) {
 
-			foreach ( Thrive_Dash_List_Manager::decodeConnectionString( $arguments['tve_mapping'] ) as $field_name => $spec ) {
+			foreach ( Thrive_Dash_List_Manager::decode_connections_string( $arguments['tve_mapping'] ) as $field_name => $spec ) {
 				$field_name = str_replace( '[]', '', $field_name );
 
 				if ( ! empty( $spec['wordpress'] ) ) {
 					if ( strpos( $field_name, 'mapping_' ) !== false ) {
-						$arguments[ $spec['wordpress'] ] = $this->processField( $arguments[ $field_name ] );
+						$arguments[ $spec['wordpress'] ] = $this->process_field( $arguments[ $field_name ] );
 					}
 
 					if ( isset( $arguments[ $field_name ] ) && in_array( $spec['_field'], $profile_fields, true ) ) {
@@ -342,7 +341,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 		}
 
 		if ( ! empty( $arguments['name'] ) ) {
-			list( $arguments['first_name'], $arguments['last_name'] ) = $this->_getNameParts( $arguments['name'] );
+			list( $arguments['first_name'], $arguments['last_name'] ) = $this->get_name_parts( $arguments['name'] );
 		}
 
 		$userdata = array( 'ID' => $user_id );
@@ -427,7 +426,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return bool
 	 */
-	public function canTest() {
+	public function can_test() {
 		return false;
 	}
 
@@ -436,7 +435,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return bool
 	 */
-	public function canDelete() {
+	public function can_delete() {
 		return false;
 	}
 
@@ -447,10 +446,10 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 		return ! empty( $this->_credentials['registration_disabled'] );
 	}
 
-	public function prepareJSON() {
+	public function prepare_json() {
 		$message = $this->isDisabled() ? esc_attr__( 'Connection disabled', TVE_DASH_TRANSLATE_DOMAIN ) : esc_attr__( 'Connection enabled', TVE_DASH_TRANSLATE_DOMAIN );
 
-		return parent::prepareJSON() + array(
+		return parent::prepare_json() + array(
 				'status_icon' => '<span data-tooltip="' . $message . '" class="tvd-api-status-icon tvd-tooltipped status-' . ( $this->isDisabled() ? 'red' : 'green' ) . '"></span>',
 			);
 	}
@@ -460,7 +459,7 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 	 *
 	 * @return array
 	 */
-	public function getDataForSetup() {
+	public function get_data_for_setup() {
 		/* build an error message */
 		$error_message = sprintf(
 			__( 'Your connection with WordPress is currently disabled and will not accept registrations. Enable your WordPress connection from the %sAPI dashboard %shere%s', TVE_DASH_TRANSLATE_DOMAIN ),

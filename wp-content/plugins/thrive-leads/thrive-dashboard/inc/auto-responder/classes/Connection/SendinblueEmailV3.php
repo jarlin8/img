@@ -16,7 +16,7 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 	 *
 	 * @return bool
 	 */
-	public function isRelated() {
+	public function is_related() {
 		return true;
 	}
 
@@ -25,14 +25,14 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'email';
 	}
 
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'SendinBlue';
 	}
 
@@ -41,8 +41,8 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'sendinblueemail' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'sendinblueemail' );
 	}
 
 	/**
@@ -50,7 +50,7 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 	 *
 	 * on error, it should register an error message (and redirect?)
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$ajax_call = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
 		$key = ! empty( $_POST['connection']['key'] ) ? $_POST['connection']['key'] : '';
@@ -62,9 +62,9 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 		}
 		/* For V3 we need to add this on the credentials list */
 		$_POST['connection']['v3'] = true;
-		$this->setCredentials( $_POST['connection'] );
+		$this->set_credentials( $_POST['connection'] );
 
-		$result = $this->testConnection();
+		$result = $this->test_connection();
 
 		if ( $result !== true ) {
 			$message = 'Could not connect to SendinBlue V3 using the provided key (<strong>%s</strong>)';
@@ -84,10 +84,10 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 		$related_api = Thrive_Dash_List_Manager::connection_instance( 'sendinblue' );
 
 		$response = true;
-		if ( ! $related_api->isConnected() ) {
+		if ( ! $related_api->is_connected() ) {
 			$_POST['connection']['new_connection'] = isset( $_POST['connection']['new_connection'] ) ? $_POST['connection']['new_connection'] : 1;
 
-			$response = $related_api->readCredentials();
+			$response = $related_api->read_credentials();
 		}
 
 		if ( $response !== true ) {
@@ -108,11 +108,11 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
+	public function test_connection() {
 		if ( ! $this->is_v3() ) {
-			return parent::testConnection();
+			return parent::test_connection();
 		}
-		$sendinblue = $this->getApi();
+		$sendinblue = $this->get_api();
 
 		$from_email   = get_option( 'admin_email' );
 		$to           = $from_email;
@@ -155,7 +155,7 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 		if ( ! $this->is_v3() ) {
 			return parent::sendCustomEmail( $data );
 		}
-		$sendinblue = $this->getApi();
+		$sendinblue = $this->get_api();
 
 		$from_email = get_option( 'admin_email' );
 
@@ -193,7 +193,7 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 		if ( ! $this->is_v3() ) {
 			return parent::sendMultipleEmails( $data );
 		}
-		$sendinblue = $this->getApi();
+		$sendinblue = $this->get_api();
 
 		$from_email   = get_option( 'admin_email' );
 		$to           = array();
@@ -278,7 +278,7 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 			return true;
 		}
 
-		$sendinblue = $this->getApi();
+		$sendinblue = $this->get_api();
 
 		$asset = get_post( $post_data['_asset_group'] );
 
@@ -341,9 +341,9 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 	 * @return Thrive_Dash_Api_SendinblueV3
 	 * @throws Exception
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 		if ( ! $this->is_v3() ) {
-			return parent::_apiInstance();
+			return parent::get_api_instance();
 		}
 
 		return new Thrive_Dash_Api_SendinblueV3( 'https://api.sendinblue.com/v3', $this->param( 'key' ) );
@@ -354,11 +354,11 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 	 *
 	 * @return array|bool for error
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 		if ( ! $this->is_v3() ) {
-			return parent::_getLists();
+			return parent::_get_lists();
 		}
-		$sendinblue = $this->getApi();
+		$sendinblue = $this->get_api();
 
 		$limit  = 50;
 		$offset = 1;
@@ -394,13 +394,13 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 	 *
 	 * @return bool|string|void
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 		if ( ! $this->is_v3() ) {
-			return parent::addSubscriber( $list_identifier, $arguments );
+			return parent::add_subscriber( $list_identifier, $arguments );
 		}
-		list( $first_name, $last_name ) = $this->_getNameParts( $arguments['name'] );
+		list( $first_name, $last_name ) = $this->get_name_parts( $arguments['name'] );
 
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		$merge_tags = array(
 			'NAME'    => $first_name,
@@ -429,7 +429,7 @@ class Thrive_Dash_List_Connection_SendinblueEmailV3 extends Thrive_Dash_List_Con
 	 *
 	 * @return String
 	 */
-	public static function getEmailMergeTag() {
+	public static function get_email_merge_tag() {
 		return '{EMAIL}';
 	}
 }

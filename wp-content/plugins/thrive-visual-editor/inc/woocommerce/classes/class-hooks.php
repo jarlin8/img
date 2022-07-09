@@ -54,6 +54,8 @@ class Hooks {
 		add_filter( 'tcb_filter_rest_products', [ __CLASS__, 'tcb_filter_products' ], 10, 2 );
 
 		add_filter( 'tcb_main_frame_localize', [ __CLASS__, 'localize_woo_modules' ], 10, 1 );
+
+		add_filter( 'pre_get_posts', [ __CLASS__, 'pre_get_posts' ] );
 	}
 
 	/**
@@ -272,6 +274,35 @@ class Hooks {
 
 				wp_enqueue_style( $handle, $src, [], false, $media );
 			}
+		}
+	}
+
+	/**
+	 * Do not display the hidden products when searching
+	 *
+	 * @param \WP_Query $query
+	 */
+	public static function pre_get_posts( $query ) {
+		if ( $query->is_main_query() && $query->is_search() && isset( $_GET['tcb_sf_post_type'] ) && is_array( $_GET['tcb_sf_post_type'] ) && in_array( 'product', $_GET['tcb_sf_post_type'] ) ) {
+			$tax_query = $query->get( 'tax_query', [] );
+
+			$tax_query[] = [
+				'relation' => 'OR',
+				[
+					'taxonomy' => 'product_visibility',
+					'field'    => 'name',
+					'terms'    => 'exclude-from-catalog',
+					'operator' => 'NOT IN',
+				],
+				[
+					'taxonomy' => 'product_visibility',
+					'field'    => 'name',
+					'terms'    => 'exclude-from-catalog',
+					'operator' => '!=',
+				],
+			];
+
+			$query->set( 'tax_query', $tax_query );
 		}
 	}
 }

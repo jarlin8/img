@@ -475,13 +475,14 @@ if ( ! class_exists( 'TCB_Landing_Page' ) ) {
 					/* We need LP config to get the palettes configs from it */
 					$config = tve_get_landing_page_config( tve_post_is_landing_page( $post_id ) );
 
-					$lp_palettes_instance = new TCB_LP_Palettes( $post_id, $config['skin_palettes'], $config['skin_palettes_config'] );
+					if ( isset( $config['skin_palettes'], $config['skin_palettes_config'] ) ) {
+						$lp_palettes_instance = new TCB_LP_Palettes( $post_id, $config['skin_palettes'], $config['skin_palettes_config'] );
+						$skin_palettes        = $lp_palettes_instance->get_variables_for_css();
 
-					$skin_palettes = $lp_palettes_instance->get_variables_for_css();
-
-					/* Print the css on the page */
-					if ( ! empty( $skin_palettes ) ) {
-						echo $skin_palettes;
+						/* Print the css on the page */
+						if ( ! empty( $skin_palettes ) ) {
+							echo $skin_palettes;
+						}
 					}
 				}
 			}

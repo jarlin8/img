@@ -71,7 +71,7 @@ class Thrive_Dash_Api_ActiveCampaign {
 	 *
 	 * @throws Thrive_Dash_Api_ActiveCampaign_Exception
 	 */
-	public function getForms() {
+	public function get_forms() {
 		$result = $this->call( 'form_getforms' );
 
 		$forms = array();
@@ -93,7 +93,7 @@ class Thrive_Dash_Api_ActiveCampaign {
 	 * @return array
 	 * @throws Thrive_Dash_Api_ActiveCampaign_Exception
 	 */
-	public function addSubscriber( $list_id, $args ) {
+	public function add_subscriber( $list_id, $args ) {
 
 		$email            = ! empty( $args['email'] ) ? $args['email'] : '';
 		$firstName        = ! empty( $args['firstname'] ) ? $args['firstname'] : '';

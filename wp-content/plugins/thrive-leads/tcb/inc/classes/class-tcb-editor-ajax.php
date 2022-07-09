@@ -313,6 +313,54 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 			return $response;
 		}
 
+		public function action_save_landing_page_preview() {
+			$image_name   = str_replace( '\\', '', $this->param( 'img_name' ) );
+			$image_width  = $this->param( 'image_w' );
+			$image_height = $this->param( 'image_h' );
+
+			if ( ! function_exists( 'wp_handle_upload' ) ) {
+				require_once( ABSPATH . 'wp-admin/includes/file.php' );
+			}
+
+			/* Filter to change the default location of the uploaded file */
+			add_filter( 'upload_dir', 'tve_filter_landing_page_preview_location' );
+
+			/* Callback for the file name(it's used for replacing the image instead of creating a new one) */
+			$unique_filename_callback = static function () use ( $image_name ) {
+				return $image_name;
+			};
+
+			$moved_file = wp_handle_upload(
+				$_FILES['img_data'],
+				array(
+					'action'                   => 'tcb_editor_ajax',
+					'unique_filename_callback' => $unique_filename_callback,
+				)
+			);
+
+			if ( ! empty( $moved_file['file'] ) ) {
+				$preview = wp_get_image_editor( $moved_file['file'] );
+
+				if ( ! is_wp_error( $preview ) ) {
+					/* resize to the given width while using the image's native height */
+					$preview->resize( $image_width, null );
+
+					$preview_sizes = $preview->get_size();
+
+					/* crop to the given height ( only if the current height exceeds the required height ) */
+					if ( $preview_sizes['height'] > $image_height ) {
+						$width_to_crop = min( $image_width, $preview_sizes['width'] );
+
+						$preview->crop( 0, 0, $width_to_crop, $image_height );
+					}
+
+					$preview->save( $moved_file['file'] );
+				}
+			}
+
+			remove_filter( 'upload_dir', 'tve_filter_landing_page_preview_location' );
+		}
+
 		/**
 		 * Saves user template (code and picture)
 		 *
@@ -665,8 +713,14 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 				return $response;
 			}
 
-			$key           = $landing_page_template ? ( '_' . $landing_page_template ) : '';
-			$content       = $this->param( 'tve_content', null, false );
+			$key     = $landing_page_template ? ( '_' . $landing_page_template ) : '';
+			$content = $this->param( 'tve_content', null, false );
+
+			/**
+			 * Just in case someone whats to do stuff on content before we save it into db
+			 */
+			$content = apply_filters( 'tcb_save_post_content', $content, $post_id );
+
 			$content_split = tve_get_extended( $content );
 			$content       = str_replace( array( '<!--tvemorestart-->', '<!--tvemoreend-->' ), '', $content );
 			update_post_meta( $post_id, "tve_content_before_more{$key}", $content_split['main'] );

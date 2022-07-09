@@ -305,6 +305,8 @@ class TD_TTW_Connection {
 		$data['status'] = static::CONNECTED;
 		$this->_data    = $data;
 		update_option( static::NAME, $data );
+		/* always delete the stored license details transient when a new connection is made */
+		thrive_delete_transient( TD_TTW_User_Licenses::NAME );
 
 		return true;
 	}

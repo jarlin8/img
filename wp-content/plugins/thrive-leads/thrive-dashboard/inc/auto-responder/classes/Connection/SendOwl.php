@@ -18,14 +18,14 @@ class Thrive_Dash_List_Connection_SendOwl extends Thrive_Dash_List_Connection_Ab
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'sellings';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'SendOwl';
 	}
 
@@ -34,8 +34,8 @@ class Thrive_Dash_List_Connection_SendOwl extends Thrive_Dash_List_Connection_Ab
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'sendowl' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'sendowl' );
 	}
 
 	/**
@@ -43,7 +43,7 @@ class Thrive_Dash_List_Connection_SendOwl extends Thrive_Dash_List_Connection_Ab
 	 *
 	 * @return mixed|void
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$key = ! empty( $_POST['connection']['key'] ) ? sanitize_text_field( $_POST['connection']['key'] ) : '';
 
 		if ( empty( $key ) ) {
@@ -52,9 +52,9 @@ class Thrive_Dash_List_Connection_SendOwl extends Thrive_Dash_List_Connection_Ab
 
 		$url = self::sendowl_url;
 
-		$this->setCredentials( $this->post( 'connection' ) );
+		$this->set_credentials( $this->post( 'connection' ) );
 
-		$result = $this->testConnection();
+		$result = $this->test_connection();
 
 		if ( $result !== true ) {
 			return $this->error( sprintf( __( 'Could not connect to SendOwl using the provided key (<strong>%s</strong>)', TVE_DASH_TRANSLATE_DOMAIN ), $result ) );
@@ -73,10 +73,10 @@ class Thrive_Dash_List_Connection_SendOwl extends Thrive_Dash_List_Connection_Ab
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
+	public function test_connection() {
 		/** @var Thrive_Dash_Api_SendOwl $so */
 
-		$so = $this->getApi();
+		$so = $this->get_api();
 
 		try {
 			$so->getProducts();
@@ -95,7 +95,7 @@ class Thrive_Dash_List_Connection_SendOwl extends Thrive_Dash_List_Connection_Ab
 	 *
 	 * @return bool|string true for success or string error message for failure
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 	}
 
 	/**
@@ -103,7 +103,7 @@ class Thrive_Dash_List_Connection_SendOwl extends Thrive_Dash_List_Connection_Ab
 	 *
 	 * @return mixed
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 
 		if ( empty( $this->param( 'key' ) ) || empty( $this->param( 'secret' ) ) ) {
 			return null;
@@ -121,7 +121,7 @@ class Thrive_Dash_List_Connection_SendOwl extends Thrive_Dash_List_Connection_Ab
 	 *
 	 * @return array
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 		return array();
 	}
 }

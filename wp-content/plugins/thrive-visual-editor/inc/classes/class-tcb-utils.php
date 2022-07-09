@@ -704,7 +704,7 @@ class TCB_Utils {
 		 */
 		$font_data['query']['display'] = 'swap';
 
-		$result = $font_data['base_url'] . '?' . rawurldecode( http_build_query( $font_data['query'], null, '&' ) );
+		$result = $font_data['base_url'] . '?' . rawurldecode( http_build_query( $font_data['query'], '', '&' ) );
 
 		if ( $return_type === 'import' ) {
 			$result = '@import url("' . $result . '");';

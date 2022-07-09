@@ -91,6 +91,7 @@ if ( file_exists( plugin_dir_path( __FILE__ ) . '.flag-nocache' ) ) {
 
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-custom-fields-shortcode.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/compat.php';
+require_once TVE_TCB_ROOT_PATH . 'inc/backwards.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/helpers/social.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/helpers/cloud.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/functions.php';

@@ -27,8 +27,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Main {
 
 	public static function init() {
-		if ( defined( 'THRIVE_AUTOMATOR_RUNNING' ) ) {
-			self::add_hooks();
+		if ( defined( 'THRIVE_AUTOMATOR_RUNNING' )
+		     && ( ( defined( 'TVE_DEBUG' ) && TVE_DEBUG )
+		          || ( defined( 'TAP_VERSION' ) && version_compare( TAP_VERSION, '1.0', '>=' ) ) ) ) {
+			static::add_hooks();
 		}
 	}
 
@@ -42,13 +44,15 @@ class Main {
 	}
 
 	public static function add_hooks() {
-		self::load_data_objects();
-		self::load_fields();
-		self::load_action_fields();
-		self::load_actions();
-		self::load_triggers();
 
-		self::launch_woocommerce_extra_hooks();
+		static::load_apps();
+		static::load_data_objects();
+		static::load_fields();
+		static::load_action_fields();
+		static::load_actions();
+		static::load_triggers();
+
+		static::launch_woocommerce_extra_hooks();
 
 		add_action( 'tap_output_extra_svg', array( 'TVE\Dashboard\Automator\Main', 'display_icons' ) );
 	}
@@ -83,6 +87,12 @@ class Main {
 		}
 	}
 
+	public static function load_apps() {
+		foreach ( static::load_files( 'apps' ) as $app ) {
+			thrive_automator_register_app( new $app() );
+		}
+	}
+
 	public static function load_files( $type ) {
 		$integration_path = static::get_integration_path( $type );
 
@@ -92,7 +102,7 @@ class Main {
 			if ( static::should_load( $file ) ) {
 				require_once $file;
 
-				$class = 'TVE\Dashboard\Automator\\' . self::get_class_name_from_filename( $file );
+				$class = 'TVE\Dashboard\Automator\\' . static::get_class_name_from_filename( $file );
 
 				if ( class_exists( $class ) ) {
 					$local_classes[] = $class;

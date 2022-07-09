@@ -12,8 +12,8 @@ unset( $available_apis['zoom'] );
 
 ?>
 <script type="text/javascript">
-	TVE_Dash.API.ConnectedAPIs = new TVE_Dash.API.collections.Connections(<?php echo Thrive_Dash_List_Manager::toJSON( $connected_apis ); ?>);
-	TVE_Dash.API.AvailableAPIs = new TVE_Dash.API.collections.Connections(<?php echo Thrive_Dash_List_Manager::toJSON( $available_apis ); ?>);
+	TVE_Dash.API.ConnectedAPIs = new TVE_Dash.API.collections.Connections(<?php echo Thrive_Dash_List_Manager::to_json( $connected_apis ); ?>);
+	TVE_Dash.API.AvailableAPIs = new TVE_Dash.API.collections.Connections(<?php echo Thrive_Dash_List_Manager::to_json( $available_apis ); ?>);
 	TVE_Dash.API.ToBeConnected = new TVE_Dash.API.models.ToBeConnected();
 	TVE_Dash.API.ThirdPartyAPIs = new Backbone.Collection(<?php echo json_encode( Thrive_Dash_List_Manager::get_third_party_autoresponders() ); ?>);
 	TVE_Dash.API.APITypes = new TVE_Dash.API.collections.APITypes(<?php echo json_encode( $types ); ?>);
@@ -195,14 +195,14 @@ unset( $available_apis['zoom'] );
 <?php foreach ( $connected_apis as $key => $api ) : ?>
 	<?php /** @var $api Thrive_Dash_List_Connection_Abstract */ ?>
 	<script type="text/template" id="tvd-api-form-<?php echo esc_attr( $key ) ?>">
-		<?php echo $api->outputSetupForm() //phpcs:ignore ?>
+		<?php echo $api->output_setup_form() //phpcs:ignore ?>
 	</script>
 <?php endforeach; ?>
 
 <?php foreach ( $available_apis as $key => $api ) : ?>
 	<?php /** @var $api Thrive_Dash_List_Connection_Abstract */ ?>
 	<script type="text/template" id="tvd-api-form-<?php echo esc_attr( $key ) ?>">
-		<?php echo $api->outputSetupForm() //phpcs:ignore ?>
+		<?php echo $api->output_setup_form() //phpcs:ignore ?>
 	</script>
 <?php endforeach; ?>
 

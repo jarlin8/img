@@ -21,21 +21,21 @@ class Thrive_Dash_List_Connection_Sendlane extends Thrive_Dash_List_Connection_A
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'autoresponder';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'SendLane';
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function hasTags() {
+	public function has_tags() {
 
 		return true;
 	}
@@ -45,14 +45,14 @@ class Thrive_Dash_List_Connection_Sendlane extends Thrive_Dash_List_Connection_A
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'sendlane' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'sendlane' );
 	}
 
 	/**
 	 * @return mixed|Thrive_Dash_List_Connection_Abstract
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 
 		$connection = $this->post( 'connection', array() );
 
@@ -60,8 +60,8 @@ class Thrive_Dash_List_Connection_Sendlane extends Thrive_Dash_List_Connection_A
 			return $this->error( __( 'All fields are required!', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
 
-		$this->setCredentials( $connection );
-		$result = $this->testConnection();
+		$this->set_credentials( $connection );
+		$result = $this->test_connection();
 
 		if ( $result !== true ) {
 			return $this->error( __( 'Could not connect to SendLane using the provided details', TVE_DASH_TRANSLATE_DOMAIN ) );
@@ -78,16 +78,16 @@ class Thrive_Dash_List_Connection_Sendlane extends Thrive_Dash_List_Connection_A
 	/**
 	 * @return bool
 	 */
-	public function testConnection() {
+	public function test_connection() {
 
-		return is_array( $this->_getLists() );
+		return is_array( $this->_get_lists() );
 	}
 
 	/**
 	 * @return mixed|Thrive_Dash_Api_Sendlane
 	 * @throws Thrive_Dash_Api_Sendlane_Exception
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 		$api_url  = $this->param( 'api_url' );
 		$api_key  = $this->param( 'api_key' );
 		$hash_key = $this->param( 'hash_key' );
@@ -98,9 +98,9 @@ class Thrive_Dash_List_Connection_Sendlane extends Thrive_Dash_List_Connection_A
 	/**
 	 * @return array|bool
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 		/** @var Thrive_Dash_Api_Sendlane $api */
-		$api    = $this->getApi();
+		$api    = $this->get_api();
 		$result = $api->call( 'lists' );
 
 		$api->setConnectionStatus( $result['status'] );
@@ -136,17 +136,17 @@ class Thrive_Dash_List_Connection_Sendlane extends Thrive_Dash_List_Connection_A
 	 *
 	 * @return mixed|string
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 		$name_array = array();
 		if ( ! empty( $arguments['name'] ) ) {
-			list( $first_name, $last_name ) = $this->_getNameParts( $arguments['name'] );
+			list( $first_name, $last_name ) = $this->get_name_parts( $arguments['name'] );
 			$name_array = array(
 				'first_name' => $first_name,
 				'last_name'  => $last_name,
 			);
 		}
 		/** @var Thrive_Dash_Api_Sendlane $api */
-		$api  = $this->getApi();
+		$api  = $this->get_api();
 		$args = array(
 			'list_id' => $list_identifier,
 			'email'   => $arguments['email'],
@@ -168,7 +168,7 @@ class Thrive_Dash_List_Connection_Sendlane extends Thrive_Dash_List_Connection_A
 	 *
 	 * @return String
 	 */
-	public static function getEmailMergeTag() {
+	public static function get_email_merge_tag() {
 		return 'VAR_EMAIL';
 	}
 

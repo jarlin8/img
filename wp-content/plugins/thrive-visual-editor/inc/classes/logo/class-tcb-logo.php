@@ -104,7 +104,7 @@ class TCB_Logo {
 		$desktop_id = (int) $attr['data-id-d'];
 
 		/* set the desktop source as a fallback; get only the src here, since this is an all-browser compatible version */
-		$fallback_data = static::get_attachment_data( $desktop_id, self::get_logos()[ $desktop_id ] );
+		$fallback_data = static::get_attachment_data( $desktop_id, static::get_logos()[ $desktop_id ] );
 
 		/* If we do not have alt in attr, we read it from fallback data */
 		if ( empty( $attr['data-alt'] ) ) {

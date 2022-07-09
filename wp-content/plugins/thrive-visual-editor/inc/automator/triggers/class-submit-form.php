@@ -31,8 +31,8 @@ class Submit_Form extends \Thrive\Automator\Items\Trigger {
 		return 1;
 	}
 
-	public static function get_app_name() {
-		return 'Thrive Architect';
+	public static function get_app_id() {
+		return Architect_App::get_id();
 	}
 
 	public static function get_name() {

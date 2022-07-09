@@ -32,7 +32,7 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'webinar';
 	}
 
@@ -43,7 +43,7 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 * @return bool
 	 */
 	public function isExpired() {
-		if ( ! $this->isConnected() ) {
+		if ( ! $this->is_connected() ) {
 			return false;
 		}
 
@@ -62,7 +62,7 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'GoToWebinar';
 	}
 
@@ -71,7 +71,7 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 *
 	 * @return string
 	 */
-	public function getListSubtitle() {
+	public function get_list_sub_title() {
 		return __( 'Choose from the following upcoming webinars', TVE_DASH_TRANSLATE_DOMAIN );
 	}
 
@@ -81,8 +81,8 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'gotowebinar' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'gotowebinar' );
 	}
 
 	/**
@@ -92,7 +92,7 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 *
 	 * @return mixed
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		if ( empty( $_POST['gtw_email'] ) || empty( $_POST['gtw_password'] ) ) {
 			return $this->error( __( 'Email and password are required', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
@@ -106,23 +106,23 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 		);
 
 		/** @var Thrive_Dash_Api_GoToWebinar $api */
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		try {
 			$api->directLogin( $email, $password, $v );
 
-			$credentials = $api->getCredentials();
+			$credentials = $api->get_credentials();
 
 			// Add inbox notification for v2 connection
-			if ( TD_Inbox::instance()->api_is_connected( $this->getKey() ) && ! empty( $credentials['version'] ) && 2 === (int) $credentials['version'] && ! empty( $credentials['versioning'] ) ) {
+			if ( TD_Inbox::instance()->api_is_connected( $this->get_key() ) && ! empty( $credentials['version'] ) && 2 === (int) $credentials['version'] && ! empty( $credentials['versioning'] ) ) {
 
 				$this->add_notification( 'added_v2' );
 
 				// Remove notification from api connection
-				TVE_Dash_InboxManager::instance()->remove_api_connection( $this->getKey() );
+				TVE_Dash_InboxManager::instance()->remove_api_connection( $this->get_key() );
 			}
 
-			$this->setCredentials( $credentials );
+			$this->set_credentials( $credentials );
 
 			/**
 			 * finally, save the connection details
@@ -181,7 +181,7 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 * @return mixed|string
 	 */
 	public function getUsername() {
-		$credentials = (array) $this->getCredentials();
+		$credentials = (array) $this->get_credentials();
 		if ( ! empty( $credentials['username'] ) ) {
 			return $credentials['username'];
 		}
@@ -193,7 +193,7 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 * @return mixed|string
 	 */
 	public function getPassword() {
-		$credentials = (array) $this->getCredentials();
+		$credentials = (array) $this->get_credentials();
 		if ( ! empty( $credentials['password'] ) ) {
 			return $credentials['password'];
 		}
@@ -206,7 +206,7 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
+	public function test_connection() {
 		return true;
 	}
 
@@ -218,19 +218,19 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 *
 	 * @return mixed
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 		/** @var Thrive_Dash_Api_GoToWebinar $api */
-		$api   = $this->getApi();
+		$api   = $this->get_api();
 		$phone = isset( $arguments['phone'] ) ? $arguments['phone'] : null;
 
-		list( $first_name, $last_name ) = $this->_getNameParts( $arguments['name'] );
+		list( $first_name, $last_name ) = $this->get_name_parts( $arguments['name'] );
 
 		if ( empty( $last_name ) ) {
 			$last_name = $first_name;
 		}
 
 		if ( empty( $first_name ) && empty( $last_name ) ) {
-			list( $first_name, $last_name ) = $this->_getNameFromEmail( $arguments['email'] );
+			list( $first_name, $last_name ) = $this->get_name_from_email( $arguments['email'] );
 		}
 
 		try {
@@ -257,18 +257,18 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	/**
 	 * check if the connection is about to expire in less than 30 days or it's already expired
 	 */
-	public function getWarnings() {
-		if ( ! $this->isConnected() ) {
+	public function get_warnings() {
+		if ( ! $this->is_connected() ) {
 			return array();
 		}
 
-		$fix = '<a href="' . admin_url( 'admin.php?page=tve_dash_api_connect' ) . '#edit/' . $this->getKey() . '">' . __( 'Click here to renew the token', TVE_DASH_TRANSLATE_DOMAIN ) . '</a>';
+		$fix = '<a href="' . admin_url( 'admin.php?page=tve_dash_api_connect' ) . '#edit/' . $this->get_key() . '">' . __( 'Click here to renew the token', TVE_DASH_TRANSLATE_DOMAIN ) . '</a>';
 
 		if ( $this->isExpired() ) {
 
 			return array(
-				sprintf( __( 'Thrive API Connections: The access token for %s has expired on %s.', TVE_DASH_TRANSLATE_DOMAIN ), '<strong>' . $this->getTitle() . '</strong>', '<strong>' .
-				                                                                                                                                                              $this->getExpiryDate() . '</strong>' ) . ' ' . $fix . '.',
+				sprintf( __( 'Thrive API Connections: The access token for %s has expired on %s.', TVE_DASH_TRANSLATE_DOMAIN ), '<strong>' . $this->get_title() . '</strong>', '<strong>' .
+				                                                                                                                                                               $this->getExpiryDate() . '</strong>' ) . ' ' . $fix . '.',
 			);
 		}
 
@@ -289,7 +289,7 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 				__( 'Thrive API Connections: The access token for %s will expire in %s days.', TVE_DASH_TRANSLATE_DOMAIN ) );
 
 		return array(
-			sprintf( $message, '<strong>' . $this->getTitle() . '</strong>', '<strong>' . $diff . '</strong>' ) . ' ' . $fix . '.',
+			sprintf( $message, '<strong>' . $this->get_title() . '</strong>', '<strong>' . $diff . '</strong>' ) . ' ' . $fix . '.',
 		);
 	}
 
@@ -299,12 +299,12 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 * @return mixed|Thrive_Dash_Api_GoToWebinar
 	 * @throws Thrive_Dash_Api_GoToWebinar_Exception
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 
 		$access_token = $organizer_key = null;
 		$settings     = array();
 
-		if ( $this->isConnected() && ! $this->isExpired() ) {
+		if ( $this->is_connected() && ! $this->isExpired() ) {
 			$access_token  = $this->param( 'access_token' );
 			$organizer_key = $this->param( 'organizer_key' );
 
@@ -329,9 +329,9 @@ class Thrive_Dash_List_Connection_GoToWebinar extends Thrive_Dash_List_Connectio
 	 *
 	 * @return array|bool for error
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 		/** @var Thrive_Dash_Api_GoToWebinar $api */
-		$api   = $this->getApi();
+		$api   = $this->get_api();
 		$lists = array();
 
 		try {

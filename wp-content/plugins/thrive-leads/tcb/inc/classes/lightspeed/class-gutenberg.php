@@ -55,17 +55,13 @@ class Gutenberg {
 		$id                 = get_the_ID();
 		$is_lp              = tve_post_is_landing_page( $id );
 		$gutenberg_disabled = static::is_gutenberg_disabled( $is_lp );
-		$gutenberg_key      = $is_lp ? static::DISABLE_GUTENBERG_LP : static::DISABLE_GUTENBERG;
-		$has_gutenberg      = get_post_meta( $id, $gutenberg_key, true );
+		$has_gutenberg      = get_post_meta( $id, static::DISABLE_GUTENBERG, true );
 
-		return
-			( empty( get_post_meta( $id, 'tcb2_ready', true ) ) ||
-			  ! isset( $has_gutenberg ) ||
-			  ! empty( $has_gutenberg ) ||
-			  ! $gutenberg_disabled ||
-			  ! empty( $_GET['force-all-js'] ) ||
-			  is_editor_page_raw() || /* never optimize editor JS */
-			  ! empty( get_post_meta( $id, static::HAS_GUTENBERG, true ) ) ); /* make sure the meta is set */
+		if ( ! empty( $_GET['force-all-js'] ) || is_editor_page_raw() || empty( get_post_meta( $id, 'tcb2_ready', true ) ) ) {
+			return true;
+		}
+
+		return ! empty( get_post_meta( $id, static::HAS_GUTENBERG, true ) ) && ! ( isset( $has_gutenberg ) && empty( $has_gutenberg ) ) && ! $gutenberg_disabled;
 	}
 
 	/**

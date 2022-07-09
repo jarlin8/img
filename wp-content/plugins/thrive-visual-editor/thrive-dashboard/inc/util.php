@@ -614,14 +614,15 @@ function tve_sync_form_data( $trigger_data ) {
 					'primary_key'   => false,
 					'filters'       => [ 'string_ec' ],
 				];
-				$custom_fields[ $input['id'] ]['filters'] = Filter::get_field_filters( $custom_fields[ $input['id'] ] );
+				if ( $input['id'] === 'user_consent' ) {
+					$custom_fields[ $input['id'] ]['filters'] = [ 'boolean' ];
+				}
 			}
 
 		}
-		if ( ! empty( $custom_fields ) ) {
-			unset( $trigger_data['filterable_fields']['form_data'][ Form_Identifier::get_id() ] );
-			$trigger_data['filterable_fields']['form_data'] = array_merge( $trigger_data['filterable_fields']['form_data'], $custom_fields );
-		}
+
+		unset( $trigger_data['filterable_fields']['form_data'][ Form_Identifier::get_id() ] );
+		$trigger_data['filterable_fields']['form_data'] = array_merge( $trigger_data['filterable_fields']['form_data'], $custom_fields );
 	}
 
 	return $trigger_data;

@@ -16,32 +16,32 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'autoresponder';
 	}
 
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'KlickTipp';
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function hasTags() {
+	public function has_tags() {
 
 		return true;
 	}
 
 	public function push_tags( $tags, $data = array() ) {
 
-		if ( ! $this->hasTags() && ( ! is_array( $tags ) || ! is_string( $tags ) ) ) {
+		if ( ! $this->has_tags() && ( ! is_array( $tags ) || ! is_string( $tags ) ) ) {
 			return $data;
 		}
 
-		$_key = $this->getTagsKey();
+		$_key = $this->get_tags_key();
 
 		if ( ! isset( $data[ $_key ] ) ) {
 			$data[ $_key ] = array();
@@ -53,7 +53,7 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 
 		$existing_tags = $this->getTags();
 		/** @var Thrive_Dash_Api_KlickTipp $api */
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		try {
 			$api->login();
@@ -88,8 +88,8 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'klicktipp' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'klicktipp' );
 	}
 
 	/**
@@ -99,7 +99,7 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	 *
 	 * @return mixed
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$user     = ! empty( $_POST['connection']['kt_user'] ) ? sanitize_text_field( $_POST['connection']['kt_user'] ) : '';
 		$password = ! empty( $_POST['connection']['kt_password'] ) ? sanitize_text_field( $_POST['connection']['kt_password'] ) : '';
 
@@ -107,18 +107,18 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 			return $this->error( __( 'Email and password are required', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
 
-		$this->setCredentials( array(
+		$this->set_credentials( array(
 			'user'     => $user,
 			'password' => $password,
 		) );
 
 		/** @var Thrive_Dash_Api_KlickTipp $api */
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		try {
 			$api->login();
 
-			$result = $this->testConnection();
+			$result = $this->test_connection();
 
 			if ( $result !== true ) {
 				return $this->error( sprintf( __( 'Could not connect to Klick Tipp using the provided data: %s', TVE_DASH_TRANSLATE_DOMAIN ), $this->_error ) );
@@ -141,8 +141,8 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
-		return is_array( $this->_getLists() );
+	public function test_connection() {
+		return is_array( $this->_get_lists() );
 	}
 
 	/**
@@ -150,7 +150,7 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	 *
 	 * @return mixed
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 		return new Thrive_Dash_Api_KlickTipp( $this->param( 'user' ), $this->param( 'password' ) );
 	}
 
@@ -159,9 +159,9 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	 *
 	 * @return array|bool for error
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 		/** @var Thrive_Dash_Api_KlickTipp $api */
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		try {
 			$api->login();
@@ -198,9 +198,9 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	 *
 	 * @return An object representing the Klicktipp subscriber object.
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 		/** @var Thrive_Dash_Api_KlickTipp $api */
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		try {
 			$api->login();
@@ -214,7 +214,7 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 		$arguments['tagid'] = isset( $arguments['klicktipp_tag'] ) ? $arguments['klicktipp_tag'] : 0;
 
 		if ( ! empty( $arguments['name'] ) ) {
-			list( $first_name, $last_name ) = $this->_getNameParts( $arguments['name'] );
+			list( $first_name, $last_name ) = $this->get_name_parts( $arguments['name'] );
 		}
 		$fields = array();
 
@@ -271,7 +271,7 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 
 		try {
 			/** @var Thrive_Dash_Api_KlickTipp $api */
-			$api  = $this->getApi();
+			$api  = $this->get_api();
 			$tags = $api->getTags();
 		} catch ( Exception $e ) {
 
@@ -299,12 +299,12 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	 *
 	 * @param array $params allow various different calls to this method
 	 */
-	public function renderExtraEditorSettings( $params = array() ) {
+	public function render_extra_editor_settings( $params = array() ) {
 		$params['tags'] = $this->getTags();
 		if ( ! is_array( $params['tags'] ) ) {
 			$params['tags'] = array();
 		}
-		$this->_directFormHtml( 'klicktipp/tags', $params );
+		$this->output_controls_html( 'klicktipp/tags', $params );
 	}
 
 	/**
@@ -312,7 +312,7 @@ class Thrive_Dash_List_Connection_KlickTipp extends Thrive_Dash_List_Connection_
 	 *
 	 * @return String
 	 */
-	public static function getEmailMergeTag() {
+	public static function get_email_merge_tag() {
 		return '%Subscriber:EmailAddress%';
 	}
 

@@ -476,8 +476,8 @@ function tve_dash_get_error_log_entries( $order_by = 'date', $order = 'DESC', $p
 		$unserialized_data                   = thrive_safe_unserialize( $entry->api_data );
 		$models[ $key ]->fields_html         = tve_dash_build_column_api_data( $unserialized_data );
 		$models[ $key ]->api_data            = json_encode( $unserialized_data );
-		$models[ $key ]->connection_explicit = empty( $available_apis[ $entry->connection ] ) ? $entry->connection : $available_apis[ $entry->connection ]->getTitle();
-		$models[ $key ]->connection_type     = empty( $available_apis[ $entry->connection ] ) ? $entry->connection : $available_apis[ $entry->connection ]->getType();
+		$models[ $key ]->connection_explicit = empty( $available_apis[ $entry->connection ] ) ? $entry->connection : $available_apis[ $entry->connection ]->get_title();
+		$models[ $key ]->connection_type     = empty( $available_apis[ $entry->connection ] ) ? $entry->connection : $available_apis[ $entry->connection ]->get_type();
 	}
 
 	$data['models'] = $models;

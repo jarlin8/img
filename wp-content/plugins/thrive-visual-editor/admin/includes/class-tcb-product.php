@@ -31,6 +31,14 @@ class TCB_Product extends TVE_Dash_Product_Abstract {
 		$has_external_access = true;
 		if ( $post_id ) {
 			$has_external_access = current_user_can( 'edit_post', $post_id );
+
+			if ( $has_external_access && isset( $_REQUEST['tar_editor_page'] ) && (int) $_REQUEST['tar_editor_page'] === 1 ) {
+				/* other plugins ( TL, TA, TU ) check post-related info on the 'tcb_user_has_plugin_edit_cap' hook, so we should setup the global post for them */
+				global $post;
+
+				$post = get_post( $post_id );
+				setup_postdata( $post );
+			}
 		}
 
 		/**

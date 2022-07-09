@@ -21,7 +21,7 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 	 * Thrive_Dash_List_Connection_Facebook constructor.
 	 */
 	public function __construct() {
-		$this->setCredentials( Thrive_Dash_List_Manager::credentials( $this->_key ) );
+		$this->set_credentials( Thrive_Dash_List_Manager::credentials( $this->_key ) );
 	}
 
 	/**
@@ -29,14 +29,14 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'social';
 	}
 
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'Facebook';
 	}
 
@@ -45,8 +45,8 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'facebook' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'facebook' );
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 	 *
 	 * @return mixed
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$app_id     = ! empty( $_REQUEST['app_id'] ) ? sanitize_text_field( $_REQUEST['app_id'] ) : '';
 		$app_secret = ! empty( $_REQUEST['app_secret'] ) ? sanitize_text_field( $_REQUEST['app_secret'] ) : '';
 
@@ -64,7 +64,7 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 			return $this->error( __( 'Both Client ID and Client Secret fields are required', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
 
-		$this->setCredentials( array(
+		$this->set_credentials( array(
 			'app_id'     => $app_id,
 			'app_secret' => $app_secret,
 		) );
@@ -72,14 +72,14 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 		/* app has been authorized */
 		if ( isset( $_REQUEST['code'] ) ) {
 
-			$this->getApi()->getUser();
+			$this->get_api()->getUser();
 
 			$this->save();
 
 			return true;
 		}
 
-		$result = $this->testConnection();
+		$result = $this->test_connection();
 
 		if ( $result !== true ) {
 			return $this->error( __( 'You must give access to Facebook <a target="_blank" href="' . $this->getAuthorizeUrl() . '">here</a>.', TVE_DASH_TRANSLATE_DOMAIN ) );
@@ -98,9 +98,9 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
+	public function test_connection() {
 		/** @var Thrive_Dash_Api_Facebook $api */
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		$user = $api->getUser();
 
@@ -136,7 +136,7 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 	public function getAuthorizeUrl() {
 
 		/** @var Thrive_Dash_Api_Facebook $api */
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		return $api->getLoginUrl( array(
 			'scope'        => self::$scopes,
@@ -154,7 +154,7 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 	 *
 	 * @return Thrive_Dash_Api_Facebook
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 
 		$params = array(
 			'appId'  => $this->param( 'app_id' ),
@@ -173,7 +173,7 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 	public function get_comment( $fbid, $comment_id ) {
 
 		/** @var Thrive_Dash_Api_Facebook $api */
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		$comment = array();
 
@@ -204,13 +204,13 @@ class Thrive_Dash_List_Connection_Facebook extends Thrive_Dash_List_Connection_A
 	/**
 	 * @return string
 	 */
-	public function customSuccessMessage() {
+	public function custom_success_message() {
 		return ' ';
 	}
 
-	protected function _getLists() {
+	protected function _get_lists() {
 	}
 
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 	}
 }

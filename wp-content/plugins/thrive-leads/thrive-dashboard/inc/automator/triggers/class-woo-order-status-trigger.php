@@ -54,8 +54,8 @@ class Woo_Order_Status extends Trigger {
 	 *
 	 * @return string
 	 */
-	public static function get_app_name() {
-		return 'WooCommerce';
+	public static function get_app_id() {
+		return Woo_App::get_id();
 	}
 
 	/**

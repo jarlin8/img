@@ -21,14 +21,14 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'email';
 	}
 
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'Amazon SES';
 	}
 
@@ -37,8 +37,8 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'awsses' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'awsses' );
 	}
 
 	/**
@@ -46,7 +46,7 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * on error, it should register an error message (and redirect?)
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$ajax_call = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
 		$key = ! empty( $_POST['connection']['key'] ) ? sanitize_text_field( $_POST['connection']['key'] ) : '';
@@ -73,9 +73,9 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 			'email'     => $email,
 			'country'   => $country,
 		);
-		$this->setCredentials( $credentials );
+		$this->set_credentials( $credentials );
 
-		$result = $this->testConnection();
+		$result = $this->test_connection();
 		if ( $result !== true ) {
 			return $ajax_call ? sprintf( __( 'Could not connect to Amazon Web Services Simple Email Service using the provided key (<strong>%s</strong>)', TVE_DASH_TRANSLATE_DOMAIN ), $result ) : $this->error( sprintf( __( 'Could not connect to Amazon Web Services Simple Email Service using the provided key (<strong>%s</strong>)', TVE_DASH_TRANSLATE_DOMAIN ), $result ) );
 		}
@@ -97,8 +97,8 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
-		$awsses = $this->getApi();
+	public function test_connection() {
+		$awsses = $this->get_api();
 
 		if ( isset( $_POST['connection']['email'] ) ) {
 			$from_email = sanitize_email( $_POST['connection']['email'] );
@@ -148,7 +148,7 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 * @return bool|string true for success or error message for failure
 	 */
 	public function sendCustomEmail( $data ) {
-		$awsses = $this->getApi();
+		$awsses = $this->get_api();
 
 		$credentials = Thrive_Dash_List_Manager::credentials( 'awsses' );
 		if ( isset( $credentials ) ) {
@@ -181,7 +181,7 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 * @return bool|string
 	 */
 	public function sendMultipleEmails( $data ) {
-		$awsses = $this->getApi();
+		$awsses = $this->get_api();
 
 		$credentials = Thrive_Dash_List_Manager::credentials( 'awsses' );
 		if ( isset( $credentials ) ) {
@@ -248,8 +248,8 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 */
 	public function sendEmail( $post_data ) {
 
-		$awsses      = $this->getApi();
-		$credentials = $this->getCredentials();
+		$awsses      = $this->get_api();
+		$credentials = $this->get_credentials();
 
 		$asset = get_post( $post_data['_asset_group'] );
 
@@ -304,7 +304,7 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * @return mixed
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 		switch ( $this->param( 'country' ) ) {
 			case 'ireland':
 				$country = "email.eu-west-1.amazonaws.com";
@@ -325,7 +325,7 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * @return array|bool for error
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 
 	}
 
@@ -337,7 +337,7 @@ class Thrive_Dash_List_Connection_Awsses extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * @return mixed
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 
 	}
 }

@@ -32,7 +32,7 @@ class Thrive_Dash_Api_SendreachV2 {
 		return $this->_send( array( 'action' => 'lists_view' ) );
 	}
 
-	public function addSubscriber( $list_id, $first_name, $last_name, $email ) {
+	public function add_subscriber( $list_id, $first_name, $last_name, $email ) {
 		$params = array(
 			'action'     => 'subscriber_add',
 			'list_id'    => $list_id,

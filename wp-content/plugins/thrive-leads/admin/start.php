@@ -559,12 +559,12 @@ function thrive_leads_asset_delivery() {
 		$credentials = Thrive_List_Manager::credentials( $k );
 		$apis[]      = array(
 			'connection'          => $k,
-			'title'               => $api->getTitle(),
-			'connected'           => $api->isConnected(),
+			'title'               => $api->get_title(),
+			'connected'           => $api->is_connected(),
 			'connection_instance' => $credentials,
 		);
 
-		if ( $api->isConnected() ) {
+		if ( $api->is_connected() ) {
 			$connected_apis[]  = $api;
 			$structured_apis[] = array(
 				'connection'          => $k,
@@ -721,7 +721,7 @@ function tve_leads_get_api_connection_list() {
 	}
 	$connection = Thrive_List_Manager::connection_instance( $api );
 	$cache      = empty( $_REQUEST['force_fetch'] );
-	$lists      = $connection->getLists( $cache );
+	$lists      = $connection->get_lists( $cache );
 	wp_send_json( $lists );
 }
 
@@ -744,7 +744,7 @@ function tve_leads_get_api_extra_fields() {
 
 	$connection = Thrive_List_Manager::connection_instance( $api );
 	ob_start();
-	$connection->renderExtraEditorSettings( $args );
+	$connection->render_extra_editor_settings( $args );
 	$content = ob_get_contents();
 	ob_end_clean();
 	wp_send_json( array( 'html' => $content ) );

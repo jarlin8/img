@@ -23,28 +23,6 @@
 		}
 	} );
 
-	/**
-	 * this is not been used anymore, I don't think we managed to identify whether or not the post has been saved as draft
-	 *
-	 * @param element
-	 */
-	function tve_page_not_ready_notification( element ) {
-		jQuery( element ).pointer( {
-			content: "<h3>You can't edit the post yet!</h3>" +
-			         "<p>In order to edit the post with the Content Builder you have to have:-</p>" +
-			         "<ol><li>Saved the post before (using the 'Save Draft' button)</li>" +
-			         "<li>Set a title for the post / page</li></ol>" +
-			         "<p>Make these changes, and you'll be able to click this button and edit the page!",
-			position: {
-				edge: 'left',
-				align: 'center'
-			},
-			close: function () {
-				// Once the close button is hit
-			}
-		} ).pointer( 'open' );
-	}
-
 	function show_loader() {
 		$( '#tcb-admin-page-loader' ).show();
 	}

@@ -1,7 +1,7 @@
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ); ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ); ?></h2>
 <div class="tvd-row">
 	<form class="tvd-col tvd-s12">
-		<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ); ?>"/>
+		<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ); ?>"/>
 		<div class="tvd-input-field">
 			<input id="tvd-wj-api-key" type="text" name="connection[key]"
 				   value="<?php echo esc_attr( $this->param( 'key' ) ); ?>">
@@ -9,7 +9,7 @@
 		</div>
 		<?php $version = $this->param( 'version' ); ?>
 
-		<?php if ( $this->isConnected() && 4 !== (int) $version ) : ?>
+		<?php if ( $this->is_connected() && 4 !== (int) $version ) : ?>
 			<div class="tvd-col tvd-s12 tvd-m6 tvd-no-padding">
 				<p>
 					<input class="tvd-version-1 tvd-api-show-extra-options" name="connection[version]" type="radio" value="1"

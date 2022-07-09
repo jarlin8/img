@@ -47,7 +47,7 @@ if ( function_exists( 'tve_leads_get_form_variation' ) ) {
 		} ?>
 			<tr>
 				<td width="90%">
-					<?php echo esc_html( $available[ $key ]->getTitle() ); ?>
+					<?php echo esc_html( $available[ $key ]->get_title() ); ?>
 				</td>
 				<td width="10%">
 					<a href="javascript:void(0)" class="tve_click" data-ctrl="function:auto_responder.connection_form"

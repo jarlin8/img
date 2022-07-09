@@ -317,7 +317,7 @@ class TD_NM_Admin {
 		foreach ( $email_services as $key => $instance ) {
 			$item = array(
 				'key'       => $key,
-				'title'     => $instance->getTitle(),
+				'title'     => $instance->get_title(),
 				'connected' => in_array( $key, $connected_keys ),
 				'active'    => $key === $active_connection,
 				'status'    => in_array( $key, $connected_keys ) ? __( 'connected', TVE_DASH_TRANSLATE_DOMAIN ) : __( 'Unset', TVE_DASH_TRANSLATE_DOMAIN ),

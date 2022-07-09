@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $using_https = ( strpos( get_site_url(), 'https://' ) !== false ) && is_ssl() ? true : false;
 ?>
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ); ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ); ?></h2>
 
 <?php if ( ! $using_https ) : ?>
 	<div class="tvd-row tvd-text-red">
@@ -28,7 +28,7 @@ $using_https = ( strpos( get_site_url(), 'https://' ) !== false ) && is_ssl() ? 
 	</div>
 	<div class="tvd-row">
 		<form class="tvd-col tvd-s12 tvd-zapier-rel">
-			<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ); ?>"/>
+			<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ); ?>"/>
 			<div class="tvd-input-field">
 				<input id="tvd-zapier-api-key" readonly type="text" name="connection[api_key]" value="<?php echo esc_attr( $this->get_api_key() ); ?>">
 				<label for="tvd-zapier-api-key"><?php echo esc_html__( 'API key', TVE_DASH_TRANSLATE_DOMAIN ); ?></label>

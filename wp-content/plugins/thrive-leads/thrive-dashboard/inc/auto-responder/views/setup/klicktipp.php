@@ -1,8 +1,8 @@
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ); ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ); ?></h2>
 <div class="tvd-row">
 	<form class="tvd-col tvd-s12">
 		<div class="tvd-input-field">
-			<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ); ?>"/>
+			<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ); ?>"/>
 			<input id="tvd-kt-api-user" type="text" name="connection[kt_user]"
 				   value="<?php echo esc_attr( $this->param( 'user' ) ); ?>">
 			<label for="tvd-kt-api-user"><?php echo esc_html__( "Username", TVE_DASH_TRANSLATE_DOMAIN ) ?></label>

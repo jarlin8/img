@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** var $this Thrive_Dash_List_Connection_Awsses */
 $admin_email = get_option( 'admin_email' );
 ?>
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ) ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ) ?></h2>
 <div class="tvd-row">
 	<form class="tvd-col tvd-s12">
-		<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ) ?>"/>
+		<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ) ?>"/>
 		<div class="tvd-input-field">
 			<input id="tvd-aw-api-email" type="text" name="connection[email]"
 					value="<?php echo esc_attr( $this->param( 'email', $admin_email ) ) ?>">

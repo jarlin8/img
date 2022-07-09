@@ -46,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </div>
 <?php
 $tags_message = __( "Comma-separated lists of tags to assign to a new contact in ActiveCampaign", TVE_DASH_TRANSLATE_DOMAIN );
-$tags_message = apply_filters( 'tvd_tags_text_for_' . $this->getKey(), $tags_message );
+$tags_message = apply_filters( 'tvd_tags_text_for_' . $this->get_key(), $tags_message );
 ?>
 <p><?php echo esc_html( $tags_message ); ?></p>
 <script type="text/javascript">

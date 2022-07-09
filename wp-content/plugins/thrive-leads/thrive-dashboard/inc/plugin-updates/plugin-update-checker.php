@@ -553,12 +553,13 @@ if ( ! class_exists( 'TVE_PluginUpdateChecker_1_3_2', false ) ) {
 					 */
 					if ( class_exists( 'TD_TTW_Messages_Manager', false ) ) {
 
+						$update_message  = TD_TTW_Messages_Manager::get_update_message( $state, $plugin_data );
 						$can_see_updates = TD_TTW_Update_Manager::can_see_updates();
-						if ( ! $can_see_updates || null === TD_TTW_Messages_Manager::get_update_message( $state, $plugin_data ) ) {
+						if ( null === $update_message || ( ! $can_see_updates && strpos( $update_message, 'thrv-deny-updates' ) !== false ) ) {
 							return null;
 						}
 
-						$update->upgrade_notice .= TD_TTW_Messages_Manager::get_update_message( $state, $plugin_data );
+						$update->upgrade_notice .= $update_message;
 					}
 
 					if ( ! empty( $update->upgrade_notice ) ) {

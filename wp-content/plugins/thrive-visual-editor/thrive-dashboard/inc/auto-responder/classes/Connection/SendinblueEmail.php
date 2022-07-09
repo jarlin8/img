@@ -22,7 +22,7 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 *
 	 * @return bool
 	 */
-	public function isRelated() {
+	public function is_related() {
 		return true;
 	}
 
@@ -31,14 +31,14 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'email';
 	}
 
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'SendinBlue';
 	}
 
@@ -47,8 +47,8 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'sendinblueemail' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'sendinblueemail' );
 	}
 
 	/**
@@ -56,7 +56,7 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 *
 	 * on error, it should register an error message (and redirect?)
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$ajax_call = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
 		$key = ! empty( $_POST['connection']['key'] ) ? sanitize_text_field( $_POST['connection']['key'] ) : '';
@@ -65,9 +65,9 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 			return $ajax_call ? __( 'You must provide a valid SendinBlue key', TVE_DASH_TRANSLATE_DOMAIN ) : $this->error( __( 'You must provide a valid SendinBlue key', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
 
-		$this->setCredentials( $this->post( 'connection' ) );
+		$this->set_credentials( $this->post( 'connection' ) );
 
-		$result = $this->testConnection();
+		$result = $this->test_connection();
 
 		if ( $result !== true ) {
 			return $ajax_call ? sprintf( __( 'Could not connect to SendinBlue using the provided key (<strong>%s</strong>)', TVE_DASH_TRANSLATE_DOMAIN ), $result ) : $this->error( sprintf( __( 'Could not connect to SendinBlue using the provided key (<strong>%s</strong>)', TVE_DASH_TRANSLATE_DOMAIN ), $result ) );
@@ -85,10 +85,10 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 		$related_api = Thrive_Dash_List_Manager::connection_instance( 'sendinblue' );
 
 		$r_result = true;
-		if ( ! $related_api->isConnected() ) {
+		if ( ! $related_api->is_connected() ) {
 			$_POST['connection']['new_connection'] = isset( $_POST['connection']['new_connection'] ) ? absint( $_POST['connection']['new_connection'] ) : 1;
 
-			$r_result = $related_api->readCredentials();
+			$r_result = $related_api->read_credentials();
 		}
 
 		if ( $r_result !== true ) {
@@ -110,8 +110,8 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
-		$sendinblue = $this->getApi();
+	public function test_connection() {
+		$sendinblue = $this->get_api();
 
 		$from_email = get_option( 'admin_email' );
 		$to         = $from_email;
@@ -156,7 +156,7 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 * @return bool|string true for success or error message for failure
 	 */
 	public function sendCustomEmail( $data ) {
-		$sendinblue = $this->getApi();
+		$sendinblue = $this->get_api();
 
 		$from_email = get_option( 'admin_email' );
 
@@ -184,7 +184,7 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 * @return bool|string
 	 */
 	public function sendMultipleEmails( $data ) {
-		$sendinblue = $this->getApi();
+		$sendinblue = $this->get_api();
 
 		$from_email = get_option( 'admin_email' );
 
@@ -252,7 +252,7 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 			return true;
 		}
 
-		$sendinblue = $this->getApi();
+		$sendinblue = $this->get_api();
 
 		$asset = get_post( $post_data['_asset_group'] );
 
@@ -314,7 +314,7 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 *
 	 * @return mixed
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 		return new Thrive_Dash_Api_Sendinblue( "https://api.sendinblue.com/v2.0", $this->param( 'key' ) );
 	}
 
@@ -323,8 +323,8 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 *
 	 * @return array|bool for error
 	 */
-	protected function _getLists() {
-		$sendinblue = $this->getApi();
+	protected function _get_lists() {
+		$sendinblue = $this->get_api();
 
 		$data = array(
 			"page"       => 1,
@@ -363,10 +363,10 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 *
 	 * @return mixed
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
-		list( $first_name, $last_name ) = $this->_getNameParts( $arguments['name'] );
+	public function add_subscriber( $list_identifier, $arguments ) {
+		list( $first_name, $last_name ) = $this->get_name_parts( $arguments['name'] );
 
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		$merge_tags = array(
 			'NAME'    => $first_name,
@@ -397,7 +397,7 @@ class Thrive_Dash_List_Connection_SendinblueEmail extends Thrive_Dash_List_Conne
 	 *
 	 * @return String
 	 */
-	public static function getEmailMergeTag() {
+	public static function get_email_merge_tag() {
 		return '{EMAIL}';
 	}
 

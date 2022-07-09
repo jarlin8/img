@@ -57,7 +57,7 @@ class TCB_Post_List {
 
 		$this->attr['element-name'] = $this->is_featured() ? __( 'Featured Content List', 'thrive-cb' ) : __( 'Post List', 'thrive-cb' );
 
-		$this->article_attr = self::post_shortcode_data( $attr );
+		$this->article_attr = static::post_shortcode_data( $attr );
 		$this->article      = unescape_invalid_shortcodes( $article );
 
 		$this->css = empty( $attr['css'] ) ? substr( uniqid( 'tve-u-', true ), 0, 17 ) : $attr['css'];
@@ -925,11 +925,14 @@ class TCB_Post_List {
 		/* replace newlines and tabs */
 		$decoded_string = preg_replace( '/[\r\n]+/', ' ', $decoded_string );
 
+		$query = json_decode( $decoded_string, true );
+
 		$this->query = array_merge(
 		/* default values for query */
 			array( 'paged' => 1 ),
-			json_decode( $decoded_string, true )
+			is_array( $query ) ? $query : []
 		);
+
 		/* this will be localized for each page */
 		unset( $this->query['queried_object'] );
 

@@ -490,7 +490,9 @@ class TVD_Smart_DB {
 					$data = $unavailable;
 				} else {
 					if ( empty( $args['prevent-link'] ) ) {
-						$field_value = '<a ' . ( ! empty( $args['link-css-attr'] ) ? 'data-css="' . $args['link-css-attr'] . '"' : '' ) . ' href="' . $field_data['url'] . '" target="_blank">' . $field_data['text'] . '</a>';
+						$link_attr = TVD_Smart_Shortcodes::tvd_decode_link_attributes( $args );
+
+						$field_value = '<a ' . ( ! empty( $args['link-css-attr'] ) ? 'data-css="' . $args['link-css-attr'] . '"' : '' ) . ' href="' . $field_data['url'] . '" target="' . ( ! empty( $link_attr['target'] ) ? $link_attr['target']  : '' ) .'">' . $field_data['text'] . '</a>';
 					} else {
 						$field_value = $field_data['text'];
 					}

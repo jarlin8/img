@@ -1,4 +1,4 @@
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ); ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ); ?></h2>
 <div class="tvd-row">
 	<form class="tvd-col tvd-s12">
 		<div class="tvd-input-field">
@@ -11,7 +11,7 @@
 				   value="<?php echo esc_attr( $this->param( 'key' ) ); ?>">
 			<label for="tvd-op-api-key"><?php echo esc_html__( "API key", TVE_DASH_TRANSLATE_DOMAIN ) ?></label>
 		</div>
-		<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ); ?>"/>
+		<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ); ?>"/>
 		<?php $this->display_video_link(); ?>
 	</form>
 </div>

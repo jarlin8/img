@@ -12,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 $version = (int) $this->get_version();
 $version = ! $version ? 1 : $version;
 ?>
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ); ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ); ?></h2>
 <div class="tvd-row">
 	<form class="tvd-col tvd-s12">
-		<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ); ?>"/>
+		<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ); ?>"/>
 		<div class="tvd-input-field">
 			<input id="tvd-mm-api-key" type="text" name="connection[key]" value="<?php echo esc_attr( $this->param( 'key' ) ); ?>"/>
 			<label for="tvd-mm-api-key"><?php echo esc_html__( 'API key', TVE_DASH_TRANSLATE_DOMAIN ); ?></label>
@@ -38,7 +38,7 @@ $version = ! $version ? 1 : $version;
 			<label for="tvd-version-1"><?php echo esc_html__( 'Version 1', TVE_DASH_TRANSLATE_DOMAIN ); ?></label>
 		</div>
 		<div class="tvd-col tvd-s12 tvd-m6 tvd-no-padding">
-			<input class="tvd-version-2 tvd-api-show-extra-options" name="connection[version]" type="radio" value="2" id="tvd-version-2" <?php echo ! $this->isConnected() || 2 === $version ? 'checked="checked"' : ''; ?> />
+			<input class="tvd-version-2 tvd-api-show-extra-options" name="connection[version]" type="radio" value="2" id="tvd-version-2" <?php echo ! $this->is_connected() || 2 === $version ? 'checked="checked"' : ''; ?> />
 			<label for="tvd-version-2"><?php echo esc_html__( 'Version 2', TVE_DASH_TRANSLATE_DOMAIN ); ?></label>
 		</div>
 		<input type="hidden" name="connection[versioning]" value="1">

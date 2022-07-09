@@ -43,7 +43,7 @@ class Thrive_Dash_Api_MailerLite_Groups extends Thrive_Dash_Api_MailerLite_ApiAb
 	 *
 	 * @return [type]
 	 */
-	public function addSubscriber( $groupId, $subscriberData = array(), $params = array() ) {
+	public function add_subscriber( $groupId, $subscriberData = array(), $params = array() ) {
 		$endpoint = $this->endpoint . '/' . $groupId . '/subscribers';
 
 		return $this->restClient->post( $endpoint, $subscriberData );

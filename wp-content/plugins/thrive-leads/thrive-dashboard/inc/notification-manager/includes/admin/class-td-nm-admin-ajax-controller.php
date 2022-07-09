@@ -207,7 +207,7 @@ class TD_NM_Admin_Ajax_Controller {
 		$_POST['api']        = $this->param( 'api' );
 		$_POST['connection'] = $this->param( 'connection' );
 
-		if ( is_string( $saved = $connection->readCredentials() ) ) {
+		if ( is_string( $saved = $connection->read_credentials() ) ) {
 			$this->error( $saved );
 		}
 
@@ -224,7 +224,7 @@ class TD_NM_Admin_Ajax_Controller {
 	public function connectiontest_action() {
 		$connection = Thrive_Dash_List_Manager::connection_instance( $this->param( 'service' ) );
 
-		return is_string( $tested = $connection->testConnection() ) ? $this->error( $tested ) : array( 'success' => __( 'Connection OK', TVE_DASH_TRANSLATE_DOMAIN ) );
+		return is_string( $tested = $connection->test_connection() ) ? $this->error( $tested ) : array( 'success' => __( 'Connection OK', TVE_DASH_TRANSLATE_DOMAIN ) );
 	}
 
 	/**

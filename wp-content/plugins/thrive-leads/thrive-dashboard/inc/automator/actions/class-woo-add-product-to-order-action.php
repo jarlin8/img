@@ -58,8 +58,8 @@ class Woo_Add_Product_To_Order extends Action {
 	 *
 	 * @return string
 	 */
-	public static function get_app_name() {
-		return 'WooCommerce';
+	public static function get_app_id() {
+		return Woo_App::get_id();
 	}
 
 	/**

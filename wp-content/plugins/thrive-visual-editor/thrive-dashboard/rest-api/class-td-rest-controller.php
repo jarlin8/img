@@ -101,7 +101,7 @@ class TD_REST_Controller extends WP_REST_Controller {
 		} else {
 			$api_instance = Thrive_Dash_List_Manager::connection_instance( $api );
 			if ( $api_instance ) {
-				$data = $api_instance->getWebhookdata( $request );
+				$data = $api_instance->get_webhook_data( $request );
 			}
 		}
 

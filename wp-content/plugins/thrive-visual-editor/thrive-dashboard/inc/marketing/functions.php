@@ -78,7 +78,7 @@ function thrv_add_custom_fields( $connection, $data = array() ) {
 	$custom_fields = ! empty( $data['custom_fields'] ) && is_array( $data['custom_fields'] ) ? $data['custom_fields'] : array();
 	$extra         = ! empty( $data['extra'] ) ? $data['extra'] : array();
 
-	return $api_instance->addCustomFields( $email, $custom_fields, $extra );
+	return $api_instance->add_custom_fields( $email, $custom_fields, $extra );
 }
 
 /**
@@ -108,7 +108,7 @@ function thrv_get_available_custom_fields( $connection ) {
 		return false;
 	}
 
-	return $api_instance->getAvailableCustomFields();
+	return $api_instance->get_available_custom_fields();
 }
 
 /**
@@ -137,6 +137,6 @@ function thrv_get_available_lists( $connection ) {
 		return false;
 	}
 
-	return $api_instance->getLists( false );
+	return $api_instance->get_lists( false );
 }
 

@@ -361,7 +361,7 @@ class TCB_Elements {
 			 */
 			$file = apply_filters( 'tcb_menu_path_' . $component, $menu_folder . $component . '.php' );
 
-			if ( ! is_file( $file ) ) {
+			if ( empty( $file ) || ! is_file( $file ) ) {
 				continue;
 			}
 			include $file;

@@ -42,7 +42,7 @@ class Autoresponder_Field extends Action_Field {
 	 * @return string
 	 */
 	public static function get_preview_template() {
-		return '$$value';
+		return 'Autoresponder: $$value';
 	}
 
 	/**

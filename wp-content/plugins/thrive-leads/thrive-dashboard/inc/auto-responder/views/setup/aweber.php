@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 /** @var $this Thrive_Dash_List_Connection_AWeber */
 ?>
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ) ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ) ?></h2>
 <?php try { ?>
 	<div class="tvd-row">
 		<p><?php echo esc_html__( 'Click the button below to login to your AWeber account and authorize the API Connection.', TVE_DASH_TRANSLATE_DOMAIN ) ?></p>

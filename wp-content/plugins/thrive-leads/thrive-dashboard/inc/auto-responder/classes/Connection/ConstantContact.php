@@ -21,7 +21,7 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'autoresponder';
 	}
 
@@ -33,7 +33,7 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'Constant Contact';
 	}
 
@@ -42,8 +42,8 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'constant-contact' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'constant-contact' );
 	}
 
 	public function getTokenUrl() {
@@ -57,7 +57,7 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 	 *
 	 * @return mixed
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$api_key   = ! empty( $_POST['connection']['api_key'] ) ? sanitize_text_field( $_POST['connection']['api_key'] ) : '';
 		$api_token = ! empty( $_POST['connection']['api_token'] ) ? sanitize_text_field( $_POST['connection']['api_token'] ) : '';
 
@@ -65,9 +65,9 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 			return $this->error( __( 'You must provide a valid Constant Contact API Key and API token', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
 
-		$this->setCredentials( array( 'api_key' => $api_key, 'api_token' => $api_token ) );
+		$this->set_credentials( array( 'api_key' => $api_key, 'api_token' => $api_token ) );
 
-		$result = $this->testConnection();
+		$result = $this->test_connection();
 
 		if ( $result !== true ) {
 			return $this->error( sprintf( __( 'Could not connect to Constant Contact using the provided API Key and API Token (<strong>%s</strong>)', TVE_DASH_TRANSLATE_DOMAIN ), $result ) );
@@ -86,10 +86,10 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
+	public function test_connection() {
 		try {
 			/** @var Thrive_Dash_Api_ConstantContact $api */
-			$api = $this->getApi();
+			$api = $this->get_api();
 
 			$api->getLists();
 
@@ -105,7 +105,7 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 	 *
 	 * @return mixed
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 		return new Thrive_Dash_Api_ConstantContact( $this->param( 'api_key' ), $this->param( 'api_token' ) );
 	}
 
@@ -114,12 +114,12 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 	 *
 	 * @return array|bool for error
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 		try {
 			$lists = array();
 
 			/** @var Thrive_Dash_Api_ConstantContact $api */
-			$api = $this->getApi();
+			$api = $this->get_api();
 
 			foreach ( $api->getLists() as $item ) {
 				$lists[] = array(
@@ -145,10 +145,10 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 	 *
 	 * @return mixed
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 		try {
 			/** @var Thrive_Dash_Api_ConstantContact $api */
-			$api = $this->getApi();
+			$api = $this->get_api();
 
 			$user = array(
 				'email' => $arguments['email'],
@@ -182,7 +182,7 @@ class Thrive_Dash_List_Connection_ConstantContact extends Thrive_Dash_List_Conne
 	 *
 	 * @return String
 	 */
-	public static function getEmailMergeTag() {
+	public static function get_email_merge_tag() {
 		return '{Email Address}';
 	}
 }

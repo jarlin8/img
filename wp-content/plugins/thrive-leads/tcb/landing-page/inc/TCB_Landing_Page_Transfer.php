@@ -389,7 +389,7 @@ class TCB_Landing_Page_Transfer {
 	 *
 	 * @var string
 	 */
-	protected $cfg_name       = 'lp.json';
+	protected $cfg_name = 'lp.json';
 	protected $html_file_name = 'lp.html';
 	protected $archive_prefix = 'tve-lp-';
 
@@ -584,6 +584,13 @@ class TCB_Landing_Page_Transfer {
 		/* also include the thumbnail for the landing page, if any */
 		if ( ! empty( $thumbnail_attachment_id ) ) {
 			$this->exportThumbnail( $thumbnail_attachment_id, $zip, $config );
+		} else {
+			$exported = $this->exportGeneratedThumbnail( $page_id, $zip );
+
+			if ( $exported ) {
+				$config['thumbnail'] = 'lp-' . $page_id . '.png';
+			}
+
 		}
 
 		/* add the json config file */
@@ -629,6 +636,29 @@ class TCB_Landing_Page_Transfer {
 
 		$config['thumbnail'] = $thumb_name;
 
+	}
+
+	/**
+	 * Get the generated preview of the LP(it's previously done on save)
+	 *
+	 * @param $page_id
+	 * @param $zip
+	 *
+	 * @return false
+	 */
+	protected function exportGeneratedThumbnail( $page_id, $zip ) {
+		$upload = tve_filter_landing_page_preview_location( wp_upload_dir() );
+		$path   = $upload['path'] . '/lp-' . $page_id . '.png';
+
+		$zip->addEmptyDir( 'thumbnail' );
+
+		if ( $zip->addFile( $path, 'thumbnail/' . 'lp-' . $page_id . '.png' ) === false ) {
+			$zip->deleteName( 'thumbnail' );
+
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

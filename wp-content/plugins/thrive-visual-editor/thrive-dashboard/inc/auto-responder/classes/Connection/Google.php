@@ -17,7 +17,7 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 	 * Thrive_Dash_List_Connection_Google constructor.
 	 */
 	public function __construct() {
-		$this->setCredentials( Thrive_Dash_List_Manager::credentials( $this->_key ) );
+		$this->set_credentials( Thrive_Dash_List_Manager::credentials( $this->_key ) );
 	}
 
 	/**
@@ -25,14 +25,14 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'social';
 	}
 
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'Google';
 	}
 
@@ -41,8 +41,8 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'google' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'google' );
 	}
 
 	/**
@@ -52,7 +52,7 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * @return mixed
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$client_id     = ! empty( $_POST['client_id'] ) ? sanitize_text_field( $_POST['client_id'] ) : '';
 		$client_secret = ! empty( $_POST['client_secret'] ) ? sanitize_text_field( $_POST['client_secret'] ) : '';
 
@@ -60,9 +60,9 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 			return $this->error( __( 'Both Client ID and Client Secret fields are required', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
 
-		$this->setCredentials( array( 'client_id' => $client_id, 'client_secret' => $client_secret ) );
+		$this->set_credentials( array( 'client_id' => $client_id, 'client_secret' => $client_secret ) );
 
-		$result = $this->testConnection();
+		$result = $this->test_connection();
 
 		if ( $result !== true ) {
 			return $this->error( sprintf( __( 'Incorrect Client ID.', TVE_DASH_TRANSLATE_DOMAIN ), $result ) );
@@ -81,7 +81,7 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
+	public function test_connection() {
 		//TODO: implement testing the connection
 		return true;
 	}
@@ -89,19 +89,19 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 	/**
 	 * @return string
 	 */
-	public function customSuccessMessage() {
+	public function custom_success_message() {
 		return ' ';
 	}
 
 	/*
 	 * Those functions do not apply
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 	}
 
-	protected function _getLists() {
+	protected function _get_lists() {
 	}
 
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 	}
 }

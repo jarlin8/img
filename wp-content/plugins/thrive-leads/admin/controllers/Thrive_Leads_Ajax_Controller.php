@@ -210,15 +210,15 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 						case 'test_service':
 							$connection = $this->param( 'test_connection', array() );
 							$api        = Thrive_List_Manager::connection_instance( $connection );
-							$test       = $api->testConnection();
+							$test       = $api->test_connection();
 							if ( $test === true ) {
 								$class = "updated";
 
-								return "<div class='" . $class . "'><p>" . __( 'Connection was made successfully', 'thrive-leads' ) . "</p></div>";
+								return esc_html( "<div class='" . $class . "'><p>" . __( 'Connection was made successfully', 'thrive-leads' ) . "</p></div>" );
 							} else {
 								$class = "error";
 
-								return "<div class='" . $class . "'><p>" . $test . "</p></div>";
+								return esc_html( "<div class='" . $class . "'><p>" . $test . "</p></div>" );
 							}
 					}
 				}
@@ -918,7 +918,7 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 			update_option( 'tve_api_delivery_service', $connection );
 		}
 
-		$connect = $api->readCredentials();
+		$connect = $api->read_credentials();
 
 		return $connect;
 

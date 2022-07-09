@@ -23,6 +23,8 @@ class Hooks {
 		add_filter( 'tve_frontend_options_data', array( __CLASS__, 'tve_frontend_data' ) );
 
 		add_filter( 'tve_dash_frontend_ajax_response', [ __CLASS__, 'lazy_load_response' ] );
+
+		add_filter( 'tve_update_symbol_html', [ __CLASS__, 'tve_update_symbol_html' ], 10, 2 );
 	}
 
 	public static function add_actions() {
@@ -249,5 +251,20 @@ class Hooks {
 		$content = Conditional_Display_Group::clone_conditional_groups_in_content( $content, $css_id_map );
 
 		tve_update_post_meta( $new_post_id, 'tve_updated_post', $content );
+	}
+
+	/**
+	 * Conditionals ids for duplicated symbols needs to be regenerated
+	 *
+	 * @param $meta_key
+	 * @param $meta_value
+	 */
+	public static function tve_update_symbol_html( $meta_key, $meta_value ) {
+		/* For the Conditional Display we need to regenerate the ids of the added conditions */
+		if ( $meta_key === 'tve_updated_post' ) {
+			$meta_value = Conditional_Display_Group::clone_conditional_groups_in_content( $meta_value );
+		}
+
+		return $meta_value;
 	}
 }

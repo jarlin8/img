@@ -1,4 +1,4 @@
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ); ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ); ?></h2>
 <?php
 /** @var $this Thrive_Dash_List_Connection_MailPoet */
 ?>
@@ -8,7 +8,7 @@
 		<p><?php echo esc_html__( 'Click the button below to enable MailPoet integration.', TVE_DASH_TRANSLATE_DOMAIN ) ?></p>
 	</div>
 	<form>
-		<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ); ?>">
+		<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ); ?>">
 
 		<?php if ( count( $installed ) > 1 ) : ?>
 			<?php $version = $this->param( 'version' ); ?>

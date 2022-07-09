@@ -8,7 +8,6 @@
 namespace TVE\Dashboard\Automator;
 
 use Thrive\Automator\Items\Action_Field;
-use Thrive_Dash_List_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
@@ -53,7 +52,7 @@ class Api_Fields extends Action_Field {
 			1 => array(
 				'id'    => 'phone',
 				'label' => __( 'Phone', TVE_DASH_TRANSLATE_DOMAIN ),
-			)
+			),
 		);
 
 		if ( ! empty( $action_data ) ) {

@@ -21,7 +21,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @return String
 	 */
-	public static function getType() {
+	public static function get_type() {
 		return 'autoresponder';
 	}
 
@@ -30,25 +30,25 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @return String
 	 */
-	public static function getEmailMergeTag() {
+	public static function get_email_merge_tag() {
 		return '{{ subscriber.email }}';
 	}
 
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'Drip';
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function hasTags() {
+	public function has_tags() {
 		return true;
 	}
 
-	public function hasCustomFields() {
+	public function has_custom_fields() {
 		return true;
 	}
 
@@ -64,8 +64,8 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @return void
 	 */
-	public function outputSetupForm() {
-		$this->_directFormHtml( 'drip' );
+	public function output_setup_form() {
+		$this->output_controls_html( 'drip' );
 	}
 
 	/**
@@ -75,7 +75,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @return mixed
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 		$token     = ! empty( $_POST['connection']['token'] ) ? sanitize_text_field( $_POST['connection']['token'] ) : '';
 		$client_id = ! empty( $_POST['connection']['client_id'] ) ? sanitize_text_field( $_POST['connection']['client_id'] ) : '';
 
@@ -83,9 +83,9 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 			return $this->error( __( 'You must provide a valid Drip token and Client ID', 'thrive-dash' ) );
 		}
 
-		$this->setCredentials( array( 'token' => $token, 'client_id' => $client_id ) );
+		$this->set_credentials( array( 'token' => $token, 'client_id' => $client_id ) );
 
-		$result = $this->testConnection();
+		$result = $this->test_connection();
 
 		if ( $result !== true ) {
 			return $this->error( sprintf( __( 'Could not connect to Drip using the provided Token and Client ID (<strong>%s</strong>)', 'thrive-dash' ), $result ) );
@@ -104,11 +104,11 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @return bool|string true for success or error message for failure
 	 */
-	public function testConnection() {
+	public function test_connection() {
 		try {
 
 			/** @var Thrive_Dash_Api_Drip $api */
-			$api = $this->getApi();
+			$api = $this->get_api();
 
 			$accounts = $api->get_accounts();
 
@@ -137,9 +137,9 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @return mixed
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 		if ( ! empty( $arguments['name'] ) ) {
-			list( $first_name, $last_name ) = $this->_getNameParts( $arguments['name'] );
+			list( $first_name, $last_name ) = $this->get_name_parts( $arguments['name'] );
 		}
 		$phone = ! empty( $arguments['phone'] ) ? $arguments['phone'] : '';
 
@@ -153,7 +153,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 
 		try {
 			/** @var Thrive_Dash_Api_Drip $api */
-			$api         = $this->getApi();
+			$api         = $this->get_api();
 			$proprieties = new stdClass();
 
 			if ( isset( $first_name ) ) {
@@ -245,7 +245,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 
 				$api->delete_subscriber( $user );
 
-				return $this->addSubscriber( $list_identifier, $arguments );
+				return $this->add_subscriber( $list_identifier, $arguments );
 
 			} catch ( Exception $e ) {
 
@@ -290,7 +290,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @param array $params
 	 */
-	public function renderExtraEditorSettings( $params = array() ) {
+	public function render_extra_editor_settings( $params = array() ) {
 		$processed_params = array();
 		$params['optin']  = empty( $params['optin'] ) ? ( isset( $_COOKIE['tve_api_drip_optin'] ) ? sanitize_text_field( $_COOKIE['tve_api_drip_optin'] ) : 'd' ) : $params['optin'];
 		setcookie( 'tve_api_drip_optin', $params['optin'], strtotime( '+6 months' ), '/' );
@@ -304,13 +304,13 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 				}
 			}
 		}
-		$this->_directFormHtml( 'drip/optin-type', $processed_params );
-		$this->_directFormHtml( 'drip/proprieties', $processed_params );
+		$this->output_controls_html( 'drip/optin-type', $processed_params );
+		$this->output_controls_html( 'drip/proprieties', $processed_params );
 	}
 
-	public function renderBeforeListsSettings( $params = array() ) {
+	public function render_before_lists_settings( $params = array() ) {
 
-		$this->_directFormHtml( 'drip/select-type', $params );
+		$this->output_controls_html( 'drip/select-type', $params );
 	}
 
 	/**
@@ -319,7 +319,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 * @return mixed
 	 * @throws Exception
 	 */
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 		return new Thrive_Dash_Api_Drip( $this->param( 'token' ) );
 	}
 
@@ -328,10 +328,10 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @return array|bool for error
 	 */
-	protected function _getLists() {
+	protected function _get_lists() {
 		try {
 			/** @var Thrive_Dash_Api_Drip $api */
-			$api = $this->getApi();
+			$api = $this->get_api();
 
 			$campaigns = $api->get_campaigns(
 				array(
@@ -386,7 +386,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 */
 	public function get_api_custom_fields( $params, $force = false, $get_all = false ) {
 
-		return $this->getAllCustomFields( $force );
+		return $this->get_all_custom_fields( $force );
 	}
 
 	/**
@@ -397,18 +397,18 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 * @return array|mixed
 	 * @throws Exception
 	 */
-	public function getAllCustomFields( $force ) {
+	public function get_all_custom_fields( $force ) {
 
 		$custom_data = array();
 
 		// Serves from cache if exists and requested
-		$cached_data = $this->_get_cached_custom_fields();
+		$cached_data = $this->get_cached_custom_fields();
 		if ( false === $force && ! empty( $cached_data ) ) {
 			return $cached_data;
 		}
 
 		/** @var Thrive_Dash_Api_Drip $api */
-		$api = $this->getApi();
+		$api = $this->get_api();
 
 		// Build custom fields for every list
 		$custom_fields = $api->get_custom_fields(
@@ -510,11 +510,11 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @return false|int|mixed
 	 */
-	public function addCustomFields( $email, $custom_fields = array(), $extra = array() ) {
+	public function add_custom_fields( $email, $custom_fields = array(), $extra = array() ) {
 
 		try {
 			/** @var Thrive_Dash_Api_Drip $api */
-			$api     = $this->getApi();
+			$api     = $this->get_api();
 			$list_id = ! empty( $extra['list_identifier'] ) ? $extra['list_identifier'] : null;
 			$args    = array(
 				'email' => $email,
@@ -522,14 +522,14 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 			if ( ! empty( $extra['name'] ) ) {
 				$args['name'] = $extra['name'];
 			}
-			$this->addSubscriber( $list_id, $args );
+			$this->add_subscriber( $list_id, $args );
 
 			$user = array(
 				'account_id'    => $this->param( 'client_id' ),
 				'campaign_id'   => $list_id,
 				'email'         => $email,
 				'ip_address'    => sanitize_text_field( $_SERVER['REMOTE_ADDR'] ), // phpcs:ignore
-				'custom_fields' => (object) $this->_prepareCustomFieldsForApi( $custom_fields ),
+				'custom_fields' => (object) $this->prepare_custom_fields_for_api( $custom_fields ),
 			);
 
 			$lead = $api->create_or_update_subscriber( $user );
@@ -548,7 +548,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @return array
 	 */
-	public function getWebhookdata( $request ) {
+	public function get_webhook_data( $request ) {
 
 		$contact = $request->get_param( 'subscriber' );
 
@@ -563,7 +563,7 @@ class Thrive_Dash_List_Connection_Drip extends Thrive_Dash_List_Connection_Abstr
 	 *
 	 * @return array
 	 */
-	public function _prepareCustomFieldsForApi( $custom_fields = array(), $list_identifier = null ) {
+	public function prepare_custom_fields_for_api( $custom_fields = array(), $list_identifier = null ) {
 
 		$prepared_fields = array();
 		$api_fields      = $this->get_api_custom_fields( null, true );

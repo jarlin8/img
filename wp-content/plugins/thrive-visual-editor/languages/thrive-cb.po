@@ -77,7 +77,7 @@ msgstr ""
 msgid "The template saved!"
 msgstr ""
 
-#: ../admin/includes/class-tcb-admin-ajax.php:313, ../admin/includes/class-tcb-admin-ajax.php:339, ../inc/classes/class-tcb-editor-ajax.php:2386
+#: ../admin/includes/class-tcb-admin-ajax.php:313, ../admin/includes/class-tcb-admin-ajax.php:339, ../inc/classes/class-tcb-editor-ajax.php:2440
 msgid "Invalid template"
 msgstr ""
 
@@ -85,27 +85,27 @@ msgstr ""
 msgid "The template was deleted!"
 msgstr ""
 
-#: ../admin/includes/class-tcb-product.php:59
+#: ../admin/includes/class-tcb-product.php:67
 msgid "Create beautiful content & conversion optimized landing pages."
 msgstr ""
 
-#: ../admin/includes/class-tcb-product.php:62
+#: ../admin/includes/class-tcb-product.php:70
 msgid "View Video Tutorial"
 msgstr ""
 
-#: ../admin/includes/class-tcb-product.php:75
+#: ../admin/includes/class-tcb-product.php:83
 msgid "Tutorials"
 msgstr ""
 
-#: ../admin/includes/class-tcb-product.php:82
+#: ../admin/includes/class-tcb-product.php:90
 msgid "Support"
 msgstr ""
 
-#: ../admin/includes/class-tcb-symbols-rest-controller.php:107, ../admin/includes/class-tcb-symbols-rest-controller.php:158, ../admin/includes/class-tcb-symbols-rest-controller.php:167, ../inc/classes/class-tcb-editor-ajax.php:1526, ../inc/classes/class-tcb-editor-ajax.php:1536, ../inc/classes/class-tcb-editor-ajax.php:1559, ../inc/classes/class-tcb-editor-ajax.php:1583, ../inc/classes/class-tcb-editor-ajax.php:1595, ../inc/classes/class-tcb-editor-ajax.php:1618, ../inc/classes/class-tcb-editor-ajax.php:1654, ../inc/classes/class-tcb-editor-ajax.php:1683, ../inc/classes/class-tcb-editor-ajax.php:1701, ../inc/classes/class-tcb-editor-ajax.php:1759, ../inc/classes/class-tcb-editor-ajax.php:1798
+#: ../admin/includes/class-tcb-symbols-rest-controller.php:107, ../admin/includes/class-tcb-symbols-rest-controller.php:158, ../admin/includes/class-tcb-symbols-rest-controller.php:167, ../inc/classes/class-tcb-editor-ajax.php:1580, ../inc/classes/class-tcb-editor-ajax.php:1590, ../inc/classes/class-tcb-editor-ajax.php:1613, ../inc/classes/class-tcb-editor-ajax.php:1637, ../inc/classes/class-tcb-editor-ajax.php:1649, ../inc/classes/class-tcb-editor-ajax.php:1672, ../inc/classes/class-tcb-editor-ajax.php:1708, ../inc/classes/class-tcb-editor-ajax.php:1737, ../inc/classes/class-tcb-editor-ajax.php:1755, ../inc/classes/class-tcb-editor-ajax.php:1813, ../inc/classes/class-tcb-editor-ajax.php:1852
 msgid "Invalid element type"
 msgstr ""
 
-#: ../admin/includes/class-tcb-symbols-rest-controller.php:162, ../inc/classes/class-tcb-editor-ajax.php:1587, ../inc/classes/class-tcb-editor-ajax.php:1622
+#: ../admin/includes/class-tcb-symbols-rest-controller.php:162, ../inc/classes/class-tcb-editor-ajax.php:1641, ../inc/classes/class-tcb-editor-ajax.php:1676
 msgid "Missing template id"
 msgstr ""
 
@@ -301,7 +301,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: ../admin/includes/views/templates/symbols/categories.phtml:3, ../inc/classes/symbols/class-tcb-symbols-dashboard.php:104, ../inc/classes/symbols/class-tcb-symbols-dashboard.php:104, ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:78, ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:88, ../inc/views/symbols/symbols-dashboard.php:2
+#: ../admin/includes/views/templates/symbols/categories.phtml:3, ../inc/classes/symbols/class-tcb-symbols-dashboard.php:104, ../inc/classes/symbols/class-tcb-symbols-dashboard.php:104, ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:79, ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:89, ../inc/views/symbols/symbols-dashboard.php:2
 msgid "Symbols"
 msgstr ""
 
@@ -313,7 +313,7 @@ msgstr ""
 msgid "Delete Category"
 msgstr ""
 
-#: ../admin/includes/views/templates/symbols/create.phtml:4, ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:79, ../inc/views/modals/save-elements.php:28
+#: ../admin/includes/views/templates/symbols/create.phtml:4, ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:80, ../inc/views/modals/save-elements.php:28
 msgid "Symbol"
 msgstr ""
 
@@ -333,7 +333,7 @@ msgstr ""
 msgid "Delete Symbol"
 msgstr ""
 
-#: ../admin/includes/views/templates/symbols/item.phtml:21, ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:84
+#: ../admin/includes/views/templates/symbols/item.phtml:21, ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:85
 msgid "Edit Symbol"
 msgstr ""
 
@@ -853,99 +853,99 @@ msgstr ""
 msgid "Thrive Architect and Thrive Leads cannot work with the current configuration of Wordpress SEO. Please go to %s and disable the %s\"Redirect ugly URL's to clean permalinks\"%s option"
 msgstr ""
 
-#: ../inc/functions.php:309, ../inc/functions.php:851
+#: ../inc/functions.php:310, ../inc/functions.php:852
 msgid "Edit with Thrive Architect"
 msgstr ""
 
-#: ../inc/functions.php:861
+#: ../inc/functions.php:862
 msgid "Close Thrive Architect"
 msgstr ""
 
-#: ../inc/functions.php:986, ../inc/functions.php:987, ../inc/functions.php:1049, ../inc/functions.php:1050
+#: ../inc/functions.php:987, ../inc/functions.php:988, ../inc/functions.php:1054, ../inc/functions.php:1055
 msgid "Continue Reading"
 msgstr ""
 
-#: ../inc/functions.php:2766
+#: ../inc/functions.php:2771
 msgid "Thrive Leads Shortcode could not be rendered, please check it in Thrive Leads Section!"
 msgstr ""
 
-#: ../inc/functions.php:3327
+#: ../inc/functions.php:3332
 msgid "No menu items have been found."
 msgstr ""
 
-#: ../inc/functions.php:3556
+#: ../inc/functions.php:3561
 msgid "Thrive Architect Content"
 msgstr ""
 
-#: ../inc/functions.php:3557
+#: ../inc/functions.php:3562
 msgid "Thrive Architect Custom CSS"
 msgstr ""
 
-#: ../inc/functions.php:3558, ../inc/classes/class-tcb-editor.php:776, ../inc/classes/elements/class-tcb-landing-page-element.php:47
+#: ../inc/functions.php:3563, ../inc/classes/class-tcb-editor.php:776, ../inc/classes/elements/class-tcb-landing-page-element.php:47
 msgid "Landing Page"
 msgstr ""
 
-#: ../inc/functions.php:3985
+#: ../inc/functions.php:3990
 msgid "Something went wrong! Please contact site owner"
 msgstr ""
 
-#: ../inc/functions.php:4010
+#: ../inc/functions.php:4015
 msgid "We are detecting suspicious activity from your device. Please try in another browser or contact the website administrator."
 msgstr ""
 
-#: ../inc/functions.php:4018
+#: ../inc/functions.php:4023
 msgid "The email address is required"
 msgstr ""
 
-#: ../inc/functions.php:4025
+#: ../inc/functions.php:4030
 msgid "The email address is invalid"
 msgstr ""
 
-#: ../inc/functions.php:4075
+#: ../inc/functions.php:4080
 msgid "User consent is required"
 msgstr ""
 
-#: ../inc/functions.php:4114
+#: ../inc/functions.php:4119
 msgid "No connection for this form"
 msgstr ""
 
-#: ../inc/functions.php:4352
+#: ../inc/functions.php:4357
 msgid "All categories"
 msgstr ""
 
-#: ../inc/functions.php:4493
+#: ../inc/functions.php:4498
 msgid "%s ago"
 msgstr ""
 
-#: ../inc/functions.php:4706
+#: ../inc/functions.php:4729
 msgid "Copy"
 msgstr ""
 
-#: ../inc/functions.php:4707
+#: ../inc/functions.php:4730
 msgid "ERROR: The username field is empty."
 msgstr ""
 
-#: ../inc/functions.php:4708
+#: ../inc/functions.php:4731
 msgid "ERROR: The password field is empty."
 msgstr ""
 
-#: ../inc/functions.php:4709
+#: ../inc/functions.php:4732
 msgid "ERROR: Enter a username or email address."
 msgstr ""
 
-#: ../inc/functions.php:4710
+#: ../inc/functions.php:4733
 msgid "At least %s characters are needed"
 msgstr ""
 
-#: ../inc/functions.php:4711, ../inc/backbone/controls/preview-list-inline-item.php:6
+#: ../inc/functions.php:4734, ../inc/backbone/controls/preview-list-inline-item.php:6
 msgid "No headings found"
 msgstr ""
 
-#: ../inc/functions.php:4713
+#: ../inc/functions.php:4736
 msgid "<strong>Error</strong>: This field is required"
 msgstr ""
 
-#: ../inc/functions.php:4716
+#: ../inc/functions.php:4739
 msgid "<strong>Error</strong>: Password mismatch"
 msgstr ""
 
@@ -993,135 +993,135 @@ msgstr ""
 msgid "ERROR: Empty Config"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:112
+#: ../inc/classes/class-tcb-contact-form.php:123, ../inc/classes/class-tcb-contact-form.php:131
 msgid "ERROR: Invalid Config"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:118
+#: ../inc/classes/class-tcb-contact-form.php:137
 msgid "ERROR: Security Warning"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:145
+#: ../inc/classes/class-tcb-contact-form.php:164
 msgid "Please create a Zapier API connection"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:190
+#: ../inc/classes/class-tcb-contact-form.php:209
 msgid "Ups, we encountered some issues, please try again later!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:186
+#: ../inc/classes/class-tcb-contact-form.php:205
 msgid "Invalid reCAPTCHA!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:177
+#: ../inc/classes/class-tcb-contact-form.php:196
 msgid "The posted data is completely empty!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:279
+#: ../inc/classes/class-tcb-contact-form.php:298
 msgid "[%s] Contact Form submission confirmation"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:412, ../inc/classes/conditional-display/fields/time/class-current-date.php:32
+#: ../inc/classes/class-tcb-contact-form.php:431, ../inc/classes/conditional-display/fields/time/class-current-date.php:32
 msgid "Date"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:413, ../inc/menu/countdown.php:41, ../inc/menu/countdownevergreen.php:23, ../inc/menu/countdown_old.php:28, ../inc/classes/conditional-display/fields/time/class-current-time.php:32
+#: ../inc/classes/class-tcb-contact-form.php:432, ../inc/menu/countdown.php:41, ../inc/menu/countdownevergreen.php:23, ../inc/menu/countdown_old.php:28, ../inc/classes/conditional-display/fields/time/class-current-time.php:32
 msgid "Time"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:482, ../inc/classes/class-tcb-contact-form.php:485, ../inc/classes/class-tcb-custom-fields-shortcode.php:150, ../inc/views/elements/contact_form.php:17
+#: ../inc/classes/class-tcb-contact-form.php:501, ../inc/classes/class-tcb-contact-form.php:504, ../inc/classes/class-tcb-custom-fields-shortcode.php:150, ../inc/views/elements/contact_form.php:17
 msgid "First Name"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:486, ../inc/classes/class-tcb-custom-fields-shortcode.php:152
+#: ../inc/classes/class-tcb-contact-form.php:505, ../inc/classes/class-tcb-custom-fields-shortcode.php:152
 msgid "John"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:490
+#: ../inc/classes/class-tcb-contact-form.php:509
 msgid "Invalid First Name"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:493, ../inc/classes/class-tcb-contact-form.php:497, ../inc/classes/class-tcb-custom-fields-shortcode.php:155
+#: ../inc/classes/class-tcb-contact-form.php:512, ../inc/classes/class-tcb-contact-form.php:516, ../inc/classes/class-tcb-custom-fields-shortcode.php:155
 msgid "Last Name"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:498, ../inc/classes/class-tcb-custom-fields-shortcode.php:157
+#: ../inc/classes/class-tcb-contact-form.php:517, ../inc/classes/class-tcb-custom-fields-shortcode.php:157
 msgid "Doe"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:501
+#: ../inc/classes/class-tcb-contact-form.php:520
 msgid "Invalid Last Name"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:504, ../inc/classes/class-tcb-contact-form.php:508
+#: ../inc/classes/class-tcb-contact-form.php:523, ../inc/classes/class-tcb-contact-form.php:527
 msgid "Full Name"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:509
+#: ../inc/classes/class-tcb-contact-form.php:528
 msgid "John Doe"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:512
+#: ../inc/classes/class-tcb-contact-form.php:531
 msgid "Invalid Full Name"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:515, ../inc/classes/class-tcb-contact-form.php:519, ../inc/views/elements/contact_form.php:25
+#: ../inc/classes/class-tcb-contact-form.php:534, ../inc/classes/class-tcb-contact-form.php:538, ../inc/views/elements/contact_form.php:25
 msgid "Email Address"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:520
+#: ../inc/classes/class-tcb-contact-form.php:539
 msgid "j.doe@inbox.com"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:523
+#: ../inc/classes/class-tcb-contact-form.php:542
 msgid "Invalid Email"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:526, ../inc/classes/class-tcb-contact-form.php:530, ../inc/views/elements/contact_form.php:33, ../inc/backbone/lead-generation/apis/email-extra/settings.phtml:2
+#: ../inc/classes/class-tcb-contact-form.php:545, ../inc/classes/class-tcb-contact-form.php:549, ../inc/views/elements/contact_form.php:33, ../inc/backbone/lead-generation/apis/email-extra/settings.phtml:2
 msgid "Message"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:531
+#: ../inc/classes/class-tcb-contact-form.php:550
 msgid "Type your message here..."
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:533
+#: ../inc/classes/class-tcb-contact-form.php:552
 msgid "Invalid Message"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:536, ../inc/classes/class-tcb-contact-form.php:540
+#: ../inc/classes/class-tcb-contact-form.php:555, ../inc/classes/class-tcb-contact-form.php:559
 msgid "Phone Number"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:541
+#: ../inc/classes/class-tcb-contact-form.php:560
 msgid "+1 555 2368"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:544
+#: ../inc/classes/class-tcb-contact-form.php:563
 msgid "Invalid Phone"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:547, ../inc/classes/class-tcb-contact-form.php:551
+#: ../inc/classes/class-tcb-contact-form.php:566, ../inc/classes/class-tcb-contact-form.php:570
 msgid "Website"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:552
+#: ../inc/classes/class-tcb-contact-form.php:571
 msgid "https://yourwebsite.com/"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:555
+#: ../inc/classes/class-tcb-contact-form.php:574
 msgid "Invalid URL"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:558
+#: ../inc/classes/class-tcb-contact-form.php:577
 msgid "Recaptcha"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:562, ../inc/classes/class-tcb-contact-form.php:563
+#: ../inc/classes/class-tcb-contact-form.php:581, ../inc/classes/class-tcb-contact-form.php:582
 msgid "ReCaptcha"
 msgstr ""
 
-#: ../inc/classes/class-tcb-contact-form.php:566
+#: ../inc/classes/class-tcb-contact-form.php:585
 msgid "Invalid reCAPTCHA"
 msgstr ""
 
@@ -1153,119 +1153,119 @@ msgstr ""
 msgid "TCB Lightbox"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:299, ../inc/classes/class-tcb-editor-ajax.php:364
+#: ../inc/classes/class-tcb-editor-ajax.php:299, ../inc/classes/class-tcb-editor-ajax.php:412
 msgid "Template could not be generated"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:339
+#: ../inc/classes/class-tcb-editor-ajax.php:387
 msgid "That template name already exists, please use another name"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:392
+#: ../inc/classes/class-tcb-editor-ajax.php:440
 msgid "Template updated!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:392
+#: ../inc/classes/class-tcb-editor-ajax.php:440
 msgid "Template saved!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:402
+#: ../inc/classes/class-tcb-editor-ajax.php:450
 msgid "Invalid parameters!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:424
+#: ../inc/classes/class-tcb-editor-ajax.php:472
 msgid "Category saved!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:434
+#: ../inc/classes/class-tcb-editor-ajax.php:482
 msgid "The content is empty. Please input some content."
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:450
+#: ../inc/classes/class-tcb-editor-ajax.php:498
 msgid "Success! Your content was added."
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:555
+#: ../inc/classes/class-tcb-editor-ajax.php:603
 msgid "You do not have the required permission for this action"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:612, ../inc/classes/class-tcb-editor-ajax.php:613
+#: ../inc/classes/class-tcb-editor-ajax.php:660, ../inc/classes/class-tcb-editor-ajax.php:661
 msgid "Some of the required files were not found. Please try re-downloading this template"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:618, ../inc/classes/class-tcb-editor-ajax.php:628
+#: ../inc/classes/class-tcb-editor-ajax.php:666, ../inc/classes/class-tcb-editor-ajax.php:676
 msgid "All changes saved."
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:938
+#: ../inc/classes/class-tcb-editor-ajax.php:992
 msgid "Content template deleted"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:948, ../inc/classes/class-tcb-editor-ajax.php:963
+#: ../inc/classes/class-tcb-editor-ajax.php:1002, ../inc/classes/class-tcb-editor-ajax.php:1017
 msgid "Invalid Post Parameter"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1094
+#: ../inc/classes/class-tcb-editor-ajax.php:1148
 msgid "Invalid Parameters! A color must contain a name and a color string!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1512
+#: ../inc/classes/class-tcb-editor-ajax.php:1566
 msgid "Lightbox created"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1662, ../inc/classes/class-tcb-editor-ajax.php:2142, ../inc/classes/class-tcb-symbol-element-abstract.php:154
+#: ../inc/classes/class-tcb-editor-ajax.php:1716, ../inc/classes/class-tcb-editor-ajax.php:2196, ../inc/classes/class-tcb-symbol-element-abstract.php:154
 msgid "Error when retrieving symbols"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1678
+#: ../inc/classes/class-tcb-editor-ajax.php:1732
 msgid "Missing ID"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1720
+#: ../inc/classes/class-tcb-editor-ajax.php:1774
 msgid "Missing symbol title"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1754, ../inc/classes/class-tcb-symbol-element-abstract.php:277, ../inc/classes/class-tcb-symbol-element-abstract.php:438
+#: ../inc/classes/class-tcb-editor-ajax.php:1808, ../inc/classes/class-tcb-symbol-element-abstract.php:277, ../inc/classes/class-tcb-symbol-element-abstract.php:438
 msgid "Missing symbol id"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1793
+#: ../inc/classes/class-tcb-editor-ajax.php:1847
 msgid "Missing preview file"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:1864
+#: ../inc/classes/class-tcb-editor-ajax.php:1918
 msgid "Invalid arguments"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2075
+#: ../inc/classes/class-tcb-editor-ajax.php:2129
 msgid "You are not allowed to update this meta"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2229
+#: ../inc/classes/class-tcb-editor-ajax.php:2283
 msgid "File upload for post %s"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2361, ../inc/classes/class-tcb-editor-ajax.php:2397
+#: ../inc/classes/class-tcb-editor-ajax.php:2415, ../inc/classes/class-tcb-editor-ajax.php:2451
 msgid "Invalid task"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2428
+#: ../inc/classes/class-tcb-editor-ajax.php:2482
 msgid "Content exported successfully!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2421, ../inc/classes/class-tcb-editor-ajax.php:2486, ../inc/helpers/file-upload.php:257
+#: ../inc/classes/class-tcb-editor-ajax.php:2475, ../inc/classes/class-tcb-editor-ajax.php:2540, ../inc/helpers/file-upload.php:257
 msgid "Invalid request"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2464
+#: ../inc/classes/class-tcb-editor-ajax.php:2518
 msgid "Content imported successfully!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2494
+#: ../inc/classes/class-tcb-editor-ajax.php:2548
 msgid "Landing Page exported successfully!"
 msgstr ""
 
-#: ../inc/classes/class-tcb-editor-ajax.php:2528
+#: ../inc/classes/class-tcb-editor-ajax.php:2582
 msgid "Landing Page imported successfully!"
 msgstr ""
 
@@ -1623,7 +1623,7 @@ msgstr ""
 msgid "No results have been returned for your Query. Please edit the query for content to display."
 msgstr ""
 
-#: ../inc/classes/class-tcb-search-form.php:114, ../inc/classes/class-tcb-search-form.php:115, ../inc/backbone/post-list/select.phtml:2, ../inc/classes/elements/class-tcb-search-form-element.php:17, ../inc/views/modals/blocks.php:7, ../inc/views/modals/cloud-templates-categories.php:18, ../inc/views/modals/ct-symbols.php:14, ../inc/views/modals/icons.php:18, ../inc/views/modals/landing-pages.php:18
+#: ../inc/classes/class-tcb-search-form.php:143, ../inc/classes/class-tcb-search-form.php:144, ../inc/backbone/post-list/select.phtml:2, ../inc/classes/elements/class-tcb-search-form-element.php:17, ../inc/views/modals/blocks.php:7, ../inc/views/modals/cloud-templates-categories.php:18, ../inc/views/modals/ct-symbols.php:14, ../inc/views/modals/icons.php:18, ../inc/views/modals/landing-pages.php:18
 msgid "Search"
 msgstr ""
 
@@ -4383,8 +4383,8 @@ msgstr ""
 msgid "Order By"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-contact-form-element.php:39, ../inc/classes/elements/class-tcb-lead-generation-contact-form-element.php:23
-msgid "Contact Form"
+#: ../inc/classes/elements/class-tcb-contact-form-element.php:39
+msgid "Contact Form (Old)"
 msgstr ""
 
 #: ../inc/classes/elements/class-tcb-contact-form-element.php:104
@@ -5265,6 +5265,10 @@ msgstr ""
 
 #: ../inc/classes/elements/class-tcb-lead-generation-checkbox-option-element.php:103, ../inc/classes/elements/class-tcb-lead-generation-gdpr-element.php:91
 msgid "Choose checkbox style"
+msgstr ""
+
+#: ../inc/classes/elements/class-tcb-lead-generation-contact-form-element.php:23
+msgid "Contact Form"
 msgstr ""
 
 #: ../inc/classes/elements/class-tcb-lead-generation-element.php:21
@@ -6502,7 +6506,7 @@ msgstr ""
 msgid "Submit Button"
 msgstr ""
 
-#: ../inc/classes/elements/class-tcb-symbol-element.php:23, ../inc/classes/symbols/class-tcb-symbols-post-type.php:75, ../inc/classes/symbols/class-tcb-symbols-post-type.php:79
+#: ../inc/classes/elements/class-tcb-symbol-element.php:23, ../inc/classes/symbols/class-tcb-symbols-post-type.php:77, ../inc/classes/symbols/class-tcb-symbols-post-type.php:81
 msgid "Thrive Symbol"
 msgstr ""
 
@@ -7078,39 +7082,39 @@ msgstr ""
 msgid "Manage Global Elements"
 msgstr ""
 
-#: ../inc/classes/symbols/class-tcb-symbols-post-type.php:78
+#: ../inc/classes/symbols/class-tcb-symbols-post-type.php:80
 msgid "Thrive Symbols"
 msgstr ""
 
-#: ../inc/classes/symbols/class-tcb-symbols-post-type.php:80
+#: ../inc/classes/symbols/class-tcb-symbols-post-type.php:82
 msgid "Add New Thrive Symbol"
 msgstr ""
 
-#: ../inc/classes/symbols/class-tcb-symbols-post-type.php:81
+#: ../inc/classes/symbols/class-tcb-symbols-post-type.php:83
 msgid "Edit Thrive Symbol"
 msgstr ""
 
-#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:80
+#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:81
 msgid "Search Symbols"
 msgstr ""
 
-#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:81
+#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:82
 msgid "All Symbols"
 msgstr ""
 
-#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:82, ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:83
+#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:83, ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:84
 msgid "Parent Symbol"
 msgstr ""
 
-#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:85
+#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:86
 msgid "Update Symbol"
 msgstr ""
 
-#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:86
+#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:87
 msgid "Add New Symbol"
 msgstr ""
 
-#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:87
+#: ../inc/classes/symbols/class-tcb-symbols-taxonomy.php:88
 msgid "New Symbol Name"
 msgstr ""
 

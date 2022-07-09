@@ -494,8 +494,9 @@ function process_form_data( $data ) {
 		return $data;
 	}
 
-	$file_data = array();
-	$file_urls = array();
+	$file_data = [];
+	$file_urls = [];
+	$file_ids  = [];
 	/* transform storage file IDs into URLs */
 	if ( ! empty( $data['_tcb_files'] ) ) {
 		/* if email has been submitted, and the filenames should include the email, we need to trigger a file rename for each submitted file */
@@ -514,12 +515,17 @@ function process_form_data( $data ) {
 			/* filedata gets populated if the file needs to be renamed. Using it to avoid extra API calls  */
 			$data['_tcb_files'][ $index ] = isset( $file_data[ $file_id ] ) ? $file_data[ $file_id ] : $api->get_file_data( $file_id );
 			$file_urls[]                  = $data['_tcb_files'][ $index ]['url'];
+			$file_ids[ $index ]           = $file_id;
 		}
 	}
 	/**
 	 * Mapped field: needs the file URL to be sent to the autoresponder
 	 */
 	$data[ $data['tcb_file_field'] ] = $file_urls;
+	/**
+	 * Preserve the file IDs in the form data so that they can be used later on
+	 */
+	$data['_tcb_files_upload_ids'] = $file_ids;
 
 	return $data;
 }

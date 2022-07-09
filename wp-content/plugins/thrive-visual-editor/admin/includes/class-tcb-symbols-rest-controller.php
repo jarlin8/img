@@ -430,6 +430,14 @@ class TCB_REST_Symbols_Controller extends WP_REST_Posts_Controller {
 	 * @return bool|int
 	 */
 	public function update_symbol_html( $meta_value, $post_obj, $meta_key ) {
+		/**
+		 * Update the symbol html(form meta value) for a specific meta key
+		 *
+		 * @param string $meta_key
+		 * @param string $meta_value
+		 */
+		$meta_value = apply_filters( 'tve_update_symbol_html', $meta_key, $meta_value );
+
 		return update_post_meta( $post_obj->ID, $meta_key, $meta_value );
 	}
 

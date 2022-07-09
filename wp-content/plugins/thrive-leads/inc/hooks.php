@@ -829,7 +829,7 @@ function tve_leads_send_asset( $post_data ) {
 			'date'          => date( 'Y-m-d H:i:s' ),
 			'error_message' => tve_sanitize_data_recursive( $e->getMessage(), 'sanitize_text_field' ),
 			'api_data'      => serialize( tve_sanitize_data_recursive( $post_data, 'sanitize_text_field' ) ),
-			'connection'    => $api->getKey(),
+			'connection'    => $api->get_key(),
 			'list_id'       => 'asset',
 		);
 
@@ -3365,6 +3365,20 @@ function tve_leads_prepare_variation_hook( $form_type_key ) {
 		}
 	}
 }
+
+/**
+ * Search thrive leads design variations if they have a specific string in their architect content
+ */
+add_filter( 'tcb_architect_content_has_string', static function ( $has_string, $string, $post_id ) {
+	if ( ! $has_string ) {
+		global $tvedb;
+		if ( $tvedb->search_string_in_designs( $string ) ) {
+			$has_string = true;
+		}
+	}
+
+	return $has_string;
+}, 14, 3 );
 
 /**
  * Add info article url for Leads Shortcode element

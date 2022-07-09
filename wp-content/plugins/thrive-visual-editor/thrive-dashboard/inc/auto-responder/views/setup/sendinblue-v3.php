@@ -1,10 +1,10 @@
 <?php
 /** var $this Thrive_Dash_List_Connection_SendinblueEmail */
 ?>
-<h2 class="tvd-card-title"><?php echo $this->getTitle() ?></h2>
+<h2 class="tvd-card-title"><?php echo $this->get_title() ?></h2>
 <div class="tvd-row">
 	<form class="tvd-col tvd-s12">
-		<input type="hidden" name="api" value="<?php echo $this->getKey() ?>"/>
+		<input type="hidden" name="api" value="<?php echo $this->get_key() ?>"/>
 		<input type="hidden" name="connection[v3]" value="1"/>
 		<div class="tvd-input-field">
 			<input id="tvd-aw-api-email" type="text" name="connection[key]"

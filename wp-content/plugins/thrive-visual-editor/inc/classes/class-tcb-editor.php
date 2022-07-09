@@ -516,18 +516,18 @@ class TCB_Editor {
 				 */
 				$base_path = TVE_DASH_PATH . '/inc/auto-responder/views/images/';
 				$base_url  = TVE_DASH_URL . '/inc/auto-responder/views/images/';
-				$png       = $connection->getKey() . '.png';
+				$png       = $connection->get_key() . '.png';
 
-				$credentials = $connection->getCredentials();
+				$credentials = $connection->get_credentials();
 
 				return array(
-					'name'      => $connection->getTitle(),
+					'name'      => $connection->get_title(),
 					'client_id' => isset( $credentials['client_id'] ) ? $credentials['client_id'] : '',
 					'logo'      => file_exists( $base_path . 'square/' . $png ) ? ( $base_url . 'square/' . $png ) : ( $base_url . $png ),
 				);
 			}, Thrive_Dash_List_Manager::get_available_apis( true, [ 'include_types' => [ 'storage' ] ] ) ),
-			'connected_apis_custom_fields'  => is_callable( 'Thrive_Dash_List_Manager::getAvailableCustomFields' ) ? Thrive_Dash_List_Manager::getAvailableCustomFields() : array(),
-			'apis_custom_fields_mapper'     => is_callable( 'Thrive_Dash_List_Manager::getCustomFieldsMapper' ) ? Thrive_Dash_List_Manager::getCustomFieldsMapper() : array(),
+			'connected_apis_custom_fields'  => Thrive_Dash_List_Manager::get_available_custom_fields(),
+			'apis_custom_fields_mapper'     => Thrive_Dash_List_Manager::get_custom_fields_mapper(),
 			'colors'                        => array(
 				'favorites'      => tve_convert_favorite_colors(),
 				'globals'        => array_reverse( tcb_color_manager()->get_list() ),

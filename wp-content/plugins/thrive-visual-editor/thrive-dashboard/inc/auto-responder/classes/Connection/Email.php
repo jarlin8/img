@@ -23,7 +23,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	/**
 	 * @return string the API connection title
 	 */
-	public function getTitle() {
+	public function get_title() {
 		return 'Email';
 	}
 
@@ -32,7 +32,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	 *
 	 * @return bool
 	 */
-	public function isRelated() {
+	public function is_related() {
 		return true;
 	}
 
@@ -41,22 +41,22 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	 *
 	 * @return bool
 	 */
-	public function isConnected() {
+	public function is_connected() {
 		return true;
 	}
 
 	/**
 	 * Noting to do here
 	 */
-	public function outputSetupForm() {
+	public function output_setup_form() {
 	}
 
 	/**
 	 * @return true
 	 */
-	public function readCredentials() {
+	public function read_credentials() {
 
-		$this->setCredentials( array( 'connected' => true ) );
+		$this->set_credentials( array( 'connected' => true ) );
 		$this->save();
 
 		return true;
@@ -65,7 +65,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	/**
 	 * @return bool
 	 */
-	public function testConnection() {
+	public function test_connection() {
 		return true;
 	}
 
@@ -77,7 +77,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	 *
 	 * @return array|string
 	 */
-	public function addSubscriber( $list_identifier, $arguments ) {
+	public function add_subscriber( $list_identifier, $arguments ) {
 
 		if ( ! is_array( $list_identifier ) ) {
 			return __( 'Failed to send email', TVE_DASH_TRANSLATE_DOMAIN );
@@ -101,16 +101,16 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 
 			$connection = array_merge( $connection, $arguments );
 
-			$response[ $_instance->getKey() ] = $_instance->sendMultipleEmails( $this->prepare_data_for_email_service( $connection ) );
+			$response[ $_instance->get_key() ] = $_instance->sendMultipleEmails( $this->prepare_data_for_email_service( $connection ) );
 		}
 
 		return $response;
 	}
 
-	protected function _apiInstance() {
+	protected function get_api_instance() {
 	}
 
-	protected function _getLists() {
+	protected function _get_lists() {
 		return $this->get_connected_email_providers();
 	}
 
@@ -134,8 +134,8 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 			 * @var Thrive_Dash_List_Connection_Abstract $email_provider
 			 */
 			$providers[] = array(
-				'id'   => $email_provider->getKey(),
-				'name' => $email_provider->getTitle(),
+				'id'   => $email_provider->get_key(),
+				'name' => $email_provider->get_title(),
 			);
 		}
 
@@ -194,7 +194,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 			/**
 			 * @var Thrive_Dash_List_Connection_Abstract $email_provider
 			 */
-			$response[ $email_provider->getKey() ] = array(
+			$response[ $email_provider->get_key() ] = array(
 				'from_email' => $email_provider->get_email_param(),
 			);
 		}
@@ -359,7 +359,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 			} else {
 				$field = str_replace( '[]', '', $field );
 				if ( ! empty( $args[ $field ] ) ) {
-					$args[ $field ] = $this->processField( $args[ $field ] );
+					$args[ $field ] = $this->process_field( $args[ $field ] );
 				}
 				$value = ! empty( $args[ $field ] ) ? sanitize_text_field( $args[ $field ] ) : '';
 			}
@@ -391,7 +391,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	public function replace_shortcodes( $message, $args ) {
 		$timezone    = get_option( 'gmt_offset' );
 		$time        = date( 'H:i', time() + 3600 * ( $timezone + date( 'I' ) ) );
-		$first_name  = empty( $args['name'] ) ? '' : $this->_getNameParts( $args['name'] )[0];
+		$first_name  = empty( $args['name'] ) ? '' : $this->get_name_parts( $args['name'] )[0];
 		$fields_html = $this->get_email_fields( $message, $args, $time );
 
 		$to_replace = array(
@@ -431,7 +431,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 			$to_replace[] = '[' . $field . ']';
 			$field        = str_replace( '[]', '', $field );
 			if ( ! empty( $args[ $field ] ) ) {
-				$args[ $field ] = $this->processField( $args[ $field ] );
+				$args[ $field ] = $this->process_field( $args[ $field ] );
 			}
 			$value = ! empty( $args[ $field ] ) ? sanitize_textarea_field( $args[ $field ] ) : '';
 			$value = stripslashes( nl2br( str_replace( ' ', '&nbsp;', $value ) ) );
@@ -459,7 +459,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	 *
 	 * @return String
 	 */
-	public static function getEmailMergeTag() {
+	public static function get_email_merge_tag() {
 		return '[user_email]';
 	}
 }

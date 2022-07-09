@@ -32,7 +32,7 @@
 		<?php foreach ( Thrive_Dash_List_Manager::get_available_apis( false, [ 'include_types' => [ 'email' ] ] ) as $key => $api ) : ?>
 			<?php /** @var $api Thrive_Dash_List_Connection_Abstract */ ?>
 			<div class="tve-leads-connection-form" data-key="<?php echo $key ?>" style="">
-				<?php echo $api->outputSetupForm() ?>
+				<?php echo $api->output_setup_form() ?>
 			</div>
 		<?php endforeach; ?>
 	</div>

@@ -9,13 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
  $admin_email = get_option( 'admin_email' ); ?>
-<h2 class="tvd-card-title"><?php echo esc_html( $this->getTitle() ) ?></h2>
+<h2 class="tvd-card-title"><?php echo esc_html( $this->get_title() ) ?></h2>
 <div class="tvd-row">
 	<p>
 		<strong><?php echo esc_html__( 'Note:', TVE_DASH_TRANSLATE_DOMAIN ) ?> </strong><?php echo esc_html__( 'Connecting to Campaign Monitor Email Service will also connect to Campaign Monitor autoresponder.', TVE_DASH_TRANSLATE_DOMAIN ) ?>
 	</p>
 	<form class="tvd-col tvd-s12">
-		<input type="hidden" name="api" value="<?php echo esc_attr( $this->getKey() ) ?>"/>
+		<input type="hidden" name="api" value="<?php echo esc_attr( $this->get_key() ) ?>"/>
 		<input name="connection[new_connection]" type="hidden" value="1"/>
 		<div class="tvd-input-field">
 			<input id="tvd-aw-api-email" type="text" name="connection[email]"
