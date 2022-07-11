@@ -1,0 +1,25 @@
+/*
+  Theme Name: Rehub child theme - Rewise
+  Theme URI: http://revendor.wpsoul.net/
+  Description: A Hybrid magazine/shop/review/news Wordpress Theme
+  Author: Wpsoul
+  Author URI: https://wpsoul.com/
+  Version: 9.0
+  Template: rehub-theme
+  Text Domain: rehubchild
+*/
+
+/* =Theme customization starts here
+-------------------------------------------------------------- */
+
+body { background: none #fff; }
+.main-nav.white_style {background: none #ecf5fa; }
+.main-nav.dark_style{background: none #eb0909; }
+.main-nav.dark_style nav.top_menu > ul > li {
+    border-right: 1px solid rgba(0, 0, 0, 0.15);
+}
+nav.top_menu > ul > li > a:hover, nav.top_menu > ul > li.current-menu-item a, .search-header-contents {border-top-color: transparent !important;}
+.dealScore .thumbscount{background: #dff0ef;}
+.dealScore .label{background: #23b5ac;}
+.eq_grid .col_item{border: 1px solid #ededed;}
+.grid_onsale, .overlay_post_formats.sale_format{background:#43c801}
