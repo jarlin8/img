@@ -10,17 +10,17 @@ use Keywordrush\AffiliateEgg\TextHelper;
  * AliexpresscomParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2014 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class AliexpresscomParser extends ShopParser {
 
     protected $charset = 'utf-8';
     protected $currency = 'USD';
-    protected $user_agent = array('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:73.0) Gecko/20100101 Firefox/73.0');
+    protected $_c;
+    protected $user_agent = array('ia_archiver');
     protected $headers = array(
         'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language' => 'en-us,en;q=0.5',
         'Cache-Control' => 'no-cache',
         'Connection' => 'keep-alive',
     );
@@ -90,15 +90,16 @@ class AliexpresscomParser extends ShopParser {
         if ($this->_product && isset($this->_product['pageModule']['title']))
         {
             $p = explode('-in', $this->_product['pageModule']['title']);
-            return $p[0];
+            return html_entity_decode($p[0]);
         }
 
-        $title = $this->xpathScalar(".//h1[@itemprop='name']");
-        if (!$title)
-            $title = $this->xpathScalar("div//[@class='product-title']");
-        if (!$title)
-            $title = $this->xpathScalar(".//h1");
-        return $title;
+        $xpath = array(
+            ".//h1[@itemprop='name']",
+            ".//div[@class='product-title']",
+            ".//h1",
+        );
+        
+        return $this->xpathScalar($xpath);
     }
 
     // short URL page like https://aliexpress.com/item/32934619441.html
@@ -106,7 +107,8 @@ class AliexpresscomParser extends ShopParser {
     {
         if (!preg_match('/window\.runParams = .+?data: ({.+?reqHost.+?"}}),/ims', $this->dom->saveHTML(), $matches))
             return;
-        $result = json_decode(html_entity_decode($matches[1]), true);
+        
+        $result = json_decode($matches[1], true);
         if (!$result || !isset($result['priceModule']) || !isset($result['pageModule']))
             return false;
 
@@ -120,7 +122,13 @@ class AliexpresscomParser extends ShopParser {
 
     public function parseDescription()
     {
-        return '';
+        $xpath = array(
+            ".//div[contains(@class, 'ProductDescription-module_content')]",
+        );
+        
+        if ($d = $this->xpathScalar($xpath, true))
+            return $d;
+
     }
 
     public function parsePrice()
@@ -131,22 +139,31 @@ class AliexpresscomParser extends ShopParser {
         if ($this->_product && isset($this->_product['priceModule']['minAmount']['value']))
             return $this->_product['priceModule']['minAmount']['value'];
 
-        $price = $this->xpathScalar(".//*[@id='j-multi-currency-price']//*[@itemprop='lowPrice']");
-        if (!$price)
-            $price = $this->xpathScalar(".//dl[@class='product-info-current']//span[@itemprop='price' or @itemprop='lowPrice']");
-        if (!$price)
-            $price = $this->xpathScalar(".//div[@class='cost-box']//b");
-        if (!$price)
-            $price = $this->xpathScalar(".//*[@id='j-sku-discount-price']");
-        if (!$price)
-            $price = $this->xpathScalar(".//*[@id='j-sku-price']//*[@itemprop='lowPrice']");
-        if (!$price)
-            $price = $this->xpathScalar(".//*[@id='j-sku-price']");
+        $xpath = array(
+            ".//div[contains(@class, 'Product_Price__container')]//span[contains(@class, 'product-price-current')]",
+            ".//*[@id='j-multi-currency-price']//*[@itemprop='lowPrice']",
+            ".//dl[@class='product-info-current']//span[@itemprop='price' or @itemprop='lowPrice']",
+            ".//div[@class='cost-box']//b",
+            ".//*[@id='j-sku-discount-price']",
+            ".//*[@id='j-sku-price']//*[@itemprop='lowPrice']",
+            ".//*[@id='j-sku-price']",
+            ".//div/span[contains(@class, 'uniformBannerBoxPrice')]",
+        );
+
+        $price = $this->xpathScalar($xpath);
 
         if ($price)
         {
             $parts = explode('-', $price);
             $price = $parts[0];
+        }
+        
+        $price = str_replace(' ', '', $price);
+        if (strstr($price, 'руб.'))
+        {
+            $price = str_replace(',', '.', $price);
+            $price = str_replace('руб.', '', $price);
+            $this->_c = 'RUB';
         }
         return $price;
     }
@@ -156,20 +173,30 @@ class AliexpresscomParser extends ShopParser {
         if ($this->_product && isset($this->_product['priceModule']['minAmount']['value']))
             return $this->_product['priceModule']['minAmount']['value'];
 
-        $price = $this->xpathScalar(".//dl[@class='product-info-original']//span[@id='sku-price']");
-        if (!$price)
-            $price = $this->xpathScalar(".//*[@id='j-sku-price']");
+        $xpath = array(
+            ".//div[contains(@class, 'Product_Price__container')]//span[contains(@class, 'product-price-origin')]",
+            ".//dl[@class='product-info-original']//span[@id='sku-price']",
+            ".//dl[@class='product-info-current']//span[@itemprop='price' or @itemprop='lowPrice']",
+            ".//*[@id='j-sku-price']",
+        );
+
+
+        $price = $this->xpathScalar($xpath);
 
         if ($price)
         {
             $parts = explode('-', $price);
             $price = $parts[0];
         }
-        $price = TextHelper::parsePriceAmount($price);
-        if ($this->item['price'] != $price)
-            return $price;
-        else
-            return '';
+        
+        $price = str_replace(' ', '', $price);
+        if (strstr($price, 'руб.'))
+        {
+            $price = str_replace(',', '.', $price);
+            $price = str_replace('руб.', '', $price);
+        }
+        
+        return $price;
     }
 
     public function parseManufacturer()
@@ -182,10 +209,13 @@ class AliexpresscomParser extends ShopParser {
         if ($this->_product && isset($this->_product['pageModule']['imagePath']))
             return $this->_product['pageModule']['imagePath'];
 
-        $img = $this->xpathScalar(".//div[@id='img']//div[@class='ui-image-viewer-thumb-wrap']/a/img/@src");
-        if (!$img)
-            $img = $this->xpathScalar(".//*[@id='j-detail-gallery-main']//img/@src");
+        $xpath = array(
+            ".//figure[contains(@class, 'Product_Gallery')]//img/@src",
+            ".//div[@id='img']//div[@class='ui-image-viewer-thumb-wrap']/a/img/@src",
+            ".//*[@id='j-detail-gallery-main']//img/@src",
+        );
 
+        $img = $this->xpathScalar($xpath);
         $img = str_replace('.jpg_640x640', '.jpg_350x350', $img);
 
         return $img;
@@ -210,8 +240,8 @@ class AliexpresscomParser extends ShopParser {
             foreach ($this->_product['specsModule']['props'] as $prop)
             {
                 $feature = array();
-                $feature['name'] = sanitize_text_field($prop['attrName']);
-                $feature['value'] = sanitize_text_field($prop['attrValue']);
+                $feature['name'] = sanitize_text_field(html_entity_decode($prop['attrName']));
+                $feature['value'] = sanitize_text_field(html_entity_decode($prop['attrValue']));
                 $extra['features'][] = $feature;
             }
         }
@@ -231,8 +261,8 @@ class AliexpresscomParser extends ShopParser {
             {
                 if (!empty($values[$i]) && trim($names[$i]) != "Brand Name")
                 {
-                    $feature['name'] = sanitize_text_field(str_replace(':', '', $names[$i]));
-                    $feature['value'] = explode(',', sanitize_text_field($values[$i]));
+                    $feature['name'] = sanitize_text_field(str_replace(':', '', html_entity_decode($names[$i])));
+                    $feature['value'] = explode(',', sanitize_text_field(html_entity_decode($values[$i])));
                     $feature['value'] = join(', ', $feature['value']);
                     $extra['features'][] = $feature;
                 }
@@ -264,8 +294,15 @@ class AliexpresscomParser extends ShopParser {
 
     public function getCurrency()
     {
+        if ($this->_c)
+            return $this->_c;
+        
         if ($this->_product && isset($this->_product['priceModule']['minAmount']['currency']))
             return $this->_product['priceModule']['minAmount']['currency'];
+
+        $price = $this->xpathScalar(".//div/span[contains(@class, 'uniformBannerBoxPrice')]");
+        if (strstr($price, 'руб.'))
+            return 'RUB';
 
         $currency = $this->xpathScalar(".//*[@itemprop='priceCurrency']/@content");
         if (!$currency)

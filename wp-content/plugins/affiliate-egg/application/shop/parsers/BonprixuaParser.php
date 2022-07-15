@@ -71,7 +71,7 @@ class BonprixuaParser extends ShopParser {
         //str_replace('.jpg?h600', '.jpg', $this->parseImg());
     }
 
-    protected function parseFeatures()
+    public function parseFeatures()
     {
         $features = array();
         $feature = array();

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\AdmitadCoupons;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,15 +15,15 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataAdmitadCoupons extends ExtraData {
 
-    public $short_name;
-    public $advcampaign_id;
-    public $rating;
-    public $specie_id;
-    public $promolink;
-    public $exclusive;
-    public $discount;
-    public $types;
-    public $categories;
-    public $special_category;
+	public $short_name;
+	public $advcampaign_id;
+	public $rating;
+	public $specie_id;
+	public $promolink;
+	public $exclusive;
+	public $discount;
+	public $types;
+	public $categories;
+	public $special_category;
 
 }

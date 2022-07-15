@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\AE;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,9 +15,9 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataAE extends ExtraData {
 
-    public $features = array();
-    public $comments = array();
-    public $images = array();
-    public $data = array();
+	public $features = array();
+	public $comments = array();
+	public $images = array();
+	public $data = array();
 
 }

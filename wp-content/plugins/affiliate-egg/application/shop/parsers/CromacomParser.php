@@ -38,24 +38,6 @@ class CromacomParser extends LdShopParser {
         return $this->xpathArray($path);
     }
 
-    public function parseTitle()
-    {
-        $paths = array(
-            ".//h1[@class='pd-title pd-title-normal']",
-        );
-
-        return $this->xpathScalar($paths);
-    }
-
-    public function parseDescription()
-    {
-        $paths = array(
-            ".//div[@class='cp-overview pd-eligibility-wrap']",
-        );
-
-        return $this->xpathScalar($paths, true);
-    }
-
     public function parsePrice()
     {
         $url = strtok($this->getUrl(), '?');

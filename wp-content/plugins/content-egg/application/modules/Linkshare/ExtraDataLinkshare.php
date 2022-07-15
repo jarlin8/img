@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Linkshare;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,10 +15,10 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataLinkshare extends ExtraData {
 
-    public $mid;
-    public $createdon;
-    public $sku;
-    public $upccode;
-    public $keywords;
+	public $mid;
+	public $createdon;
+	public $sku;
+	public $upccode;
+	public $keywords;
 
 }

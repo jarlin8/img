@@ -1,32 +1,33 @@
 <?php
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 /*
  * Name: Gallery
  * 
  * @link: http://miromannino.github.io/Justified-Gallery/
  */
-__('Gallery', 'content-egg-tpl');
+__( 'Gallery', 'content-egg-tpl' );
 ?>
 
-<?php wp_enqueue_style('egg-justified-gallery', ContentEgg\PLUGIN_RES . '/justified_gallery/justifiedGallery.min.css'); ?>
-<?php wp_enqueue_script('egg-justified-gallery', ContentEgg\PLUGIN_RES . '/justified_gallery/jquery.justifiedGallery.min.js'); ?>
-<?php wp_enqueue_style('egg-color-box', ContentEgg\PLUGIN_RES . '/colorbox/colorbox.css'); ?>
-<?php wp_enqueue_script('egg-color-box', ContentEgg\PLUGIN_RES . '/colorbox/jquery.colorbox-min.js'); ?>
+<?php wp_enqueue_style( 'egg-justified-gallery', ContentEgg\PLUGIN_RES . '/justified_gallery/justifiedGallery.min.css' ); ?>
+<?php wp_enqueue_script( 'egg-justified-gallery', ContentEgg\PLUGIN_RES . '/justified_gallery/jquery.justifiedGallery.min.js' ); ?>
+<?php wp_enqueue_style( 'egg-color-box', ContentEgg\PLUGIN_RES . '/colorbox/colorbox.css' ); ?>
+<?php wp_enqueue_script( 'egg-color-box', ContentEgg\PLUGIN_RES . '/colorbox/jquery.colorbox-min.js' ); ?>
 
 <?php
-$rand = rand(0, 100000);
+$rand = rand( 0, 100000 );
 ?>
 
-<?php if ($title): ?>
-    <h3><?php echo esc_html($title); ?></h3>
+<?php if ( $title ): ?>
+    <h3><?php echo esc_html( $title ); ?></h3>
 <?php endif; ?>
 
 <div class="cegg-pixabay-gallery">
-    <?php foreach ($items as $item): ?>
-        <a href="<?php echo $item['img']; ?>" rel="gallery<?php echo $rand; ?>">
-            <img src="<?php echo $item['img']; ?>" alt="<?php echo esc_attr($item['title']); ?>" class="img-thumbnail" />
+	<?php foreach ( $items as $item ): ?>
+        <a href="<?php echo esc_url($item['img']); ?>" rel="gallery<?php echo esc_attr($rand); ?>">
+            <img src="<?php echo esc_url($item['img']); ?>" alt="<?php echo esc_attr( $item['title'] ); ?>"
+                 class="img-thumbnail"/>
         </a>
-    <?php endforeach; ?>
+	<?php endforeach; ?>
 </div>
 <script>
     jQuery(document).ready(function () {

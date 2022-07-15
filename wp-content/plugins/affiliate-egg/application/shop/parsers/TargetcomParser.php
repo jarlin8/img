@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com> 
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2020 keywordrush.com
+ * @copyright Copyright &copy; 2021 keywordrush.com
  */
 class TargetcomParser extends LdShopParser {
 
@@ -25,6 +25,10 @@ class TargetcomParser extends LdShopParser {
 
     public function parseCatalog($max)
     {
+        if ($urls = $this->_getSearchUrls())
+            return $urls;
+
+        // category
         if (!preg_match('~\/\-\/N\-([0-9a-z]+)~', $this->getUrl(), $matches))
             return array();
 
@@ -45,6 +49,34 @@ class TargetcomParser extends LdShopParser {
         foreach ($result['search_response']['items']['Item'] as $item)
         {
             $urls[] = $item['url'];
+        }
+        return $urls;
+    }
+
+    private function _getSearchUrls()
+    {
+        if (!$query = parse_url($this->getUrl(), PHP_URL_QUERY))
+            return array();
+        parse_str($query, $arr);
+        if (!isset($arr['searchTerm']))
+            return array();
+
+        try
+        {
+            $result = $this->requestGet('https://redsky.target.com/redsky_aggregations/v1/web/plp_search_v1?key=ff457966e64d5e877fdbad070f276d18ecec4a01&channel=WEB&count=24&default_purchasability_filter=true&include_sponsored=true&keyword=' . urlencode($arr['searchTerm']) . '&offset=0&page=%2Fs%2F' . urlencode($arr['searchTerm']) . '&platform=desktop&pricing_store_id=86&store_ids=86%2C2106%2C1060%2C2765%2C1799&useragent=Mozilla%2F5.0+%28Macintosh%3B+Intel+Mac+OS+X+10.15%3B+rv%3A91.0%29+Gecko%2F20100101+Firefox%2F91.0&visitor_id=017B7CE4635D020195A67B31B05047C0');
+        } catch (\Exception $e)
+        {
+            return array();
+        }
+        $result = str_replace('<?xml encoding="UTF-8">', '', $result);
+        $result = json_decode($result, true);
+
+        if (!$result || !isset($result['data']['search']['products']))
+            return false;
+        $urls = array();
+        foreach ($result['data']['search']['products'] as $item)
+        {
+            $urls[] = $item['item']['enrichment']['buy_url'];
         }
         return $urls;
     }
@@ -102,9 +134,11 @@ class TargetcomParser extends LdShopParser {
         if (!preg_match('~\/A-(\d+)~', $this->getUrl(), $matches))
             return false;
 
-        $uri = 'https://redsky.target.com/web/pdp_location/v1/tcin/' . $matches[1] . '?pricing_store_id=86&key=eb2551e4accc14f38cc42d32fbc2b2ea';
+        $uri = 'https://redsky.target.com/redsky_aggregations/v1/web/pdp_client_v1?key=ff457966e64d5e877fdbad070f276d18ecec4a01&tcin='. urlencode($matches[1]).'&store_id=86&pricing_store_id=86';
+        
         $json = $this->getRemoteJson($uri);
-        $this->_product = $json;
+        if (isset($json['data']['product']))
+            $this->_product = $json['data']['product'];
     }
 
     public function isInStock()

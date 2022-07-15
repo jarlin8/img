@@ -8,8 +8,8 @@ defined('\ABSPATH') || exit;
  * BlockTemplateManager class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com/
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class BlockTemplateManager extends TemplateManager {
 
@@ -26,6 +26,7 @@ class BlockTemplateManager extends TemplateManager {
         {
             self::$instance = new self;
         }
+
         return self::$instance;
     }
 
@@ -46,11 +47,13 @@ class BlockTemplateManager extends TemplateManager {
 
     public function getCustomTempateDirs()
     {
-        return array(
-            'child-theme' => \get_stylesheet_directory() . '/' . self::CUSTOM_TEMPLATE_DIR, //child theme		
+        $paths = array(
+            'child-theme' => \get_stylesheet_directory() . '/' . self::CUSTOM_TEMPLATE_DIR, //child theme
             'theme' => \get_template_directory() . '/' . self::CUSTOM_TEMPLATE_DIR, // theme
             'custom' => \WP_CONTENT_DIR . '/' . self::CUSTOM_TEMPLATE_DIR,
         );
+        
+        return \apply_filters('content_egg_block_template_dirs', $paths);
     }
 
     public function getModuleId()
@@ -62,13 +65,17 @@ class BlockTemplateManager extends TemplateManager {
     {
         $templates = parent::getTemplatesList($short_mode);
         $templates = \apply_filters('content_egg_block_templates', $templates);
+
         return $templates;
     }
 
     public function render($view_name, array $_data = array())
     {
         if (!self::isCustomTemplate($view_name))
+        {
             $this->enqueueProductsStyle();
+        }
+
         return parent::render($view_name, $_data);
     }
 
@@ -76,14 +83,19 @@ class BlockTemplateManager extends TemplateManager {
     {
         $file = parent::getPartialViewPath($view_name, $block);
         if ($file)
+        {
             return $file;
+        }
 
         // allow render general block templates as partial
         $file = $this->getViewPath($view_name);
         if ($file)
+        {
             return $file;
-        else
+        } else
+        {
             return false;
+        }
     }
 
 }

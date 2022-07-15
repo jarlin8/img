@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\PayTM;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,13 +15,13 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataPayTM extends ExtraData {
 
-    public $seourl;
-    public $url_type;
-    public $promo_text;
-    public $tag;
-    public $product_tag;
-    public $search_weight;
-    public $merchant_name;
-    public $product_code;
+	public $seourl;
+	public $url_type;
+	public $promo_text;
+	public $tag;
+	public $product_tag;
+	public $search_weight;
+	public $merchant_name;
+	public $product_code;
 
 }

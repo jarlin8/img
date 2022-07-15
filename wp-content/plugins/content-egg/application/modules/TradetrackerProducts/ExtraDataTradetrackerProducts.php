@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\TradetrackerProducts;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,11 +15,11 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataTradetrackerProducts extends ExtraData {
 
-    public $deliveryTime;
-    public $deliveryCosts;
-    public $fromPrice;
-    public $stock;
-    public $categoryPath;
-    public $subcategories;
+	public $deliveryTime;
+	public $deliveryCosts;
+	public $fromPrice;
+	public $stock;
+	public $categoryPath;
+	public $subcategories;
 
 }

@@ -1,8 +1,8 @@
 <?php defined('\ABSPATH') || exit; ?>
 <div id="cegg_waiting_products" style="display:none; text-align: center;"> 
-    <h2><?php _e('Working... Please wait...', 'content-egg'); ?></h2> 
+    <h2><?php esc_html_e('Working... Please wait...', 'content-egg'); ?></h2>
     <p>
-        <img src="<?php echo \ContentEgg\PLUGIN_RES; ?>/img/egg_waiting.gif" />
+        <img src="<?php echo esc_url_raw(\ContentEgg\PLUGIN_RES); ?>/img/egg_waiting.gif" />
     </p>
 </div>
 <script type="text/javascript">
@@ -35,19 +35,18 @@ if ($table->current_action() == 'run')
     <div class="wrap">
 
         <h2>
-            <?php _e('Autoblogging', 'content-egg'); ?>
-            <a class="add-new-h2" href="<?php echo get_admin_url(get_current_blog_id(), 'admin.php?page=content-egg-autoblog-edit'); ?>"><?php _e('Add autoblogging', 'content-egg'); ?></a>
+            <?php esc_html_e('Autoblogging', 'content-egg'); ?>
+            <a class="add-new-h2" href="<?php echo esc_url_raw(get_admin_url(get_current_blog_id(), 'admin.php?page=content-egg-autoblog-edit')); ?>"><?php esc_html_e('Add autoblogging', 'content-egg'); ?></a>
         </h2>
-        <?php echo $message; ?>
+        <?php echo wp_kses_post($message); ?>
 
         <div id="poststuff">    
             <p>
-                <?php _e('You can create automatic creating of posts with autoblogging', 'content-egg'); ?>
             </p>        
         </div>    
 
         <form id="eggs-table" method="GET">
-            <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
+            <input type="hidden" name="page" value="content-egg-autoblog"/>
             <?php $table->display() ?>
         </form>
     </div>

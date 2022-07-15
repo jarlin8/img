@@ -1,4 +1,4 @@
--p0o98765432`21	vbnm=== Affiliate Egg Pro ===
+=== Affiliate Egg Pro ===
 Contributors: keywordrush.com
 
 Parse, add, update products from affiliate shops. Let you to earn money from affiliate networks.
@@ -16,6 +16,30 @@ This section describes how to install the plugin and get it working.
 4. Manual - [Affiliate Egg Manual](http://www.keywordrush.com/en/docs/affiliate-egg/)
 
 == Changelog ==
+
+= 10.4.0
+* New: Added support for Scraperapi service.
+* New: Added support for Proxycrawl service.
+* New: Added support for Scrapingdog service.
+
+= Version 10.3.3
+* Fix: Fixed shop parsers.
+
+= Version 10.3.1
+* Fix: Fixed shop parsers.
+
+= Version 10.3.0
+* New: Added support for coupang.com
+
+= Version 10.2.0
+* New: Settings: Buy now button text.
+* New: Added support for shopee.vn
+* New: Added support for shopee.co.id
+* New: Added support for shopee.com.my
+* New: Added support for shopee.co.th
+* New: Added support for shopee.ph
+* New: Added support for shopee.sg
+* New: Added support for shopee.com.br
 
 = Version 10.1.0
 * New: Added support for amazon.pl

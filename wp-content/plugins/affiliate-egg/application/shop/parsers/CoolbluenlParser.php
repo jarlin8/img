@@ -8,13 +8,14 @@ defined('\ABSPATH') || exit;
  * CoolbluenlParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class CoolbluenlParser extends LdShopParser {
 
     protected $charset = 'utf-8';
     protected $currency = 'EUR';
+    protected $user_agent = array('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:100.0) Gecko/20100101 Firefox/100.0');
 
     public function parseCatalog($max)
     {
@@ -46,9 +47,12 @@ class CoolbluenlParser extends LdShopParser {
 
     public function parseOldPrice()
     {
-        $price = $this->xpathScalar(".//div[@class='grid-section-xs--gap-4']//*[@class='sales-price__former-price']");
-        $price = str_replace(',', '', $price);
-        return $price;
+        $paths = array(
+            ".//span[@class='sales-price__former-price']",                        
+            ".//div[@class='grid-section-xs--gap-4']//*[@class='sales-price__former-price']",
+        );
+
+        return $this->xpathScalar($paths);
     }
 
     public function parseExtra()

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Feed\models;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 
 /**
@@ -14,14 +14,12 @@ defined('\ABSPATH') || exit;
  */
 class MyFeed8ProductModel extends MyFeedProductModel {
 
-    public function tableName()
-    {
-        return $this->getDb()->prefix . 'cegg_feed8_product';
-    }
-    
-    public static function model($className = __CLASS__)
-    {
-        return parent::model($className);
-    }
-    
+	public function tableName() {
+		return $this->getDb()->prefix . 'cegg_feed8_product';
+	}
+
+	public static function model( $className = __CLASS__ ) {
+		return parent::model( $className );
+	}
+
 }

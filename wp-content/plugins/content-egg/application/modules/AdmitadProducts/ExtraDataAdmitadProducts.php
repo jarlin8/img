@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\AdmitadProducts;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,10 +15,10 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataAdmitadProducts extends ExtraData {
 
-    public $offer_id;
-    public $id_item;
-    public $model;
-    public $param = array();
-    public $id;
+	public $offer_id;
+	public $id_item;
+	public $model;
+	public $param = array();
+	public $id;
 
 }

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Amazon;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 /**
  * ExtraAmazonCustomerReviews class file
@@ -14,10 +14,10 @@ defined('\ABSPATH') || exit;
 //параметры из AmazonProduct->parseCustomerReviews
 class ExtraAmazonCustomerReviews {
 
-    public $IFrameURL;
-    public $HasReviews;
-    public $AverageRating;
-    public $TotalReviews;
-    public $reviews = array();
+	public $IFrameURL;
+	public $HasReviews;
+	public $AverageRating;
+	public $TotalReviews;
+	public $reviews = array();
 
 }

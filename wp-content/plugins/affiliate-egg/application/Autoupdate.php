@@ -1,6 +1,7 @@
 <?php
 
 namespace Keywordrush\AffiliateEgg;
+defined('\ABSPATH') || exit;
 
 /**
  * Autoupdate class file
@@ -23,7 +24,9 @@ class Autoupdate {
 
     public function __construct($current_version, $plugin_file, $api_base, $slug = null)
     {
-       
+        if (!LicConfig::getInstance()->option('license_key'))
+            return;
+
         $this->current_version = $current_version;
         $this->plugin_file = $plugin_file;
         $this->api_base = $api_base;
@@ -100,8 +103,9 @@ class Autoupdate {
         $response = wp_remote_post(AffiliateEgg::getApiBase(), array(
             'method' => 'POST', 'timeout' => 15, 'httpversion' => '1.0', 'blocking' => true, 'headers' => array(), 'body' => $this->getRequestArray($cmd), 'cookies' => array())
         );
-       
-        $response_code = 200;
+        if (is_wp_error($response))
+            return false;
+        $response_code = (int) wp_remote_retrieve_response_code($response);
 
         if ($response_code != 200)
             return false;
@@ -110,7 +114,7 @@ class Autoupdate {
 
     private function getRequestArray($cmd)
     {
-        return array('cmd' => $cmd, 'd' => parse_url(site_url(), PHP_URL_HOST), 'p' => AffiliateEgg::product_id, 'v' => AffiliateEgg::version(), 'key' => 'J0RX959A9woeqeuRP3PYbtrdIiaJcKTN');
+        return array('cmd' => $cmd, 'd' => parse_url(site_url(), PHP_URL_HOST), 'p' => AffiliateEgg::product_id, 'v' => AffiliateEgg::version(), 'key' => LicConfig::getInstance()->option('license_key'));
     }
 
 }

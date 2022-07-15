@@ -8,14 +8,16 @@ defined('\ABSPATH') || exit;
  * MyntracomParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link http://www.keywordrush.com
+ * @copyright Copyright &copy; 2021 keywordrush.com
  */
 class MyntracomParser extends ShopParser {
 
     protected $charset = 'utf-8';
     protected $currency = 'INR';
     protected $json_data = array();
+    protected $user_agent = array('ia_archiver');
+    
 
     public function parseCatalog($max)
     {

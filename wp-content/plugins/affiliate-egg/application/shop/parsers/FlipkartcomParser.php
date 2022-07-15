@@ -8,8 +8,8 @@ defined('\ABSPATH') || exit;
  * FlipkartcomParser class file
  *
  * @author keywordrush.com <support@keywordrush.com> 
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2018 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2021 keywordrush.com
  */
 class FlipkartcomParser extends LdShopParser {
 
@@ -60,19 +60,13 @@ class FlipkartcomParser extends LdShopParser {
 
     public function parseImg()
     {
-        if ($p = parent::parseImg())
-        {
-            $p = str_replace('http://rukmini1.flixcart.com', 'https://rukminim1.flixcart.com', $p);
-            return str_replace('/image/128/128/', '/image/416/416/', $p);
-        }
         if ($style = $this->xpathScalar(".//ul[@style]/li[@style]/div/div/@style"))
         {
             if (preg_match('/\((.+?)\)/', $style, $matches))
                 return str_replace('/128/128/', '/416/416/', $matches[1]);
         }
 
-        $html = $this->dom->saveHTML();
-        if (preg_match('/,"imageUrl":"(.+?)",/', $html, $matches))
+        if (preg_match('/,"imageUrl":"(.+?)",/', $this->html, $matches))
         {
             $img = $matches[1];
             $img = str_replace('{@width}', 500, $img);
@@ -80,6 +74,11 @@ class FlipkartcomParser extends LdShopParser {
             $img = str_replace('{@quality}', 70, $img);
             return $img;
         }
+        
+        $img = parent::parseImg();
+        $img = str_replace('/416/416/', '/612/612/', $img);
+        $img = str_replace('/128/128/', '/612/612/', $img);
+        return $img;
     }
 
     public function parseExtra()
@@ -88,7 +87,7 @@ class FlipkartcomParser extends LdShopParser {
 
         $names = $this->xpathArray(".//div[normalize-space(text())='Specifications']/..//table//td[contains(@class, 'col-3-12') and position() = 1]");
         $values = $this->xpathArray(".//div[normalize-space(text())='Specifications']/..//table//td[2]");
-        $feature = array();
+        $feature = $extra['features'] = array();
         for ($i = 0; $i < count($names); $i++)
         {
             if (!empty($values[$i]))
@@ -96,6 +95,22 @@ class FlipkartcomParser extends LdShopParser {
                 $feature['name'] = sanitize_text_field($names[$i]);
                 $feature['value'] = sanitize_text_field($values[$i]);
                 $extra['features'][] = $feature;
+            }
+        }
+
+        if (!$extra['features'])
+        {
+            $names = $this->xpathArray(".//div[normalize-space(text())='Product Details']/..//..//div[@class='row']/div[1]");
+            $values = $this->xpathArray(".//div[normalize-space(text())='Product Details']/..//..//div[@class='row']/div[2]");
+            $feature = $extra['features'] = array();
+            for ($i = 0; $i < count($names); $i++)
+            {
+                if (!empty($values[$i]))
+                {
+                    $feature['name'] = sanitize_text_field($names[$i]);
+                    $feature['value'] = sanitize_text_field($values[$i]);
+                    $extra['features'][] = $feature;
+                }
             }
         }
 

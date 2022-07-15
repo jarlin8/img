@@ -7,18 +7,19 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\helpers\CurrencyHelper;
 use ContentEgg\application\components\ExternalFeaturedImage;
+use ContentEgg\application\components\AggregateOffer;
 
 /**
  * Plugin class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class Plugin {
 
-    const version = '9.4.0';
-    const db_version = 53;
+    const version = '10.4.0';
+    const db_version = 55;
     const wp_requires = '4.6.1';
     const slug = 'content-egg';
     const short_slug = 'cegg';
@@ -64,6 +65,10 @@ class Plugin {
             ModuleUpdateScheduler::initAction();
             WooIntegrator::initAction();
             ExternalFeaturedImage::initAction();
+            AggregateOffer::initAction();
+            if (!self::isFree())
+                DataRestController::getInstance()->init();
+                
             new ProductSearchWidget;
             new PriceMoversWidget;
         }

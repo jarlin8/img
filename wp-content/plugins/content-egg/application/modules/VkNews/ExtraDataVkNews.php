@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\VkNews;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,8 +15,8 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataVkNews extends ExtraData {
 
-    public $comments;
-    public $likes;
-    public $reposts;
+	public $comments;
+	public $likes;
+	public $reposts;
 
 }

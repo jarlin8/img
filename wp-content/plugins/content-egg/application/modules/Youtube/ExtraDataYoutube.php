@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Youtube;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,8 +15,8 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataYouTube extends ExtraData {
 
-    public $guid;
-    public $category;
-    public $channel_title;
+	public $guid;
+	public $category;
+	public $channel_title;
 
 }

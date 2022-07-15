@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\CjLinks;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,20 +15,20 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataCjLinks extends ExtraData {
 
-    public $advertiserId;
-    public $advertiserName;
-    public $advertiserSite;
-    public $creativeHeight;
-    public $creativeWidtht;
-    public $language;
-    public $linkHtml;
-    public $destination;
-    public $linkName;
-    public $linkType;
-    public $promotionStartDate;
-    public $promotionEndDate;
-    public $promotionType;
-    public $couponCode;
-    public $category;
+	public $advertiserId;
+	public $advertiserName;
+	public $advertiserSite;
+	public $creativeHeight;
+	public $creativeWidtht;
+	public $language;
+	public $linkHtml;
+	public $destination;
+	public $linkName;
+	public $linkType;
+	public $promotionStartDate;
+	public $promotionEndDate;
+	public $promotionType;
+	public $couponCode;
+	public $category;
 
 }

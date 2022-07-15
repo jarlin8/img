@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\TradetrackerCoupons;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,13 +15,13 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataTradetrackerCoupons extends ExtraData {
 
-    public $campaign = array();
-    public $creationDate;
-    public $modificationDate;
-    public $materialBannerDimension;
-    public $referenceSupported;
-    public $conditions;
-    public $discountFixed;
-    public $discountVariable;
+	public $campaign = array();
+	public $creationDate;
+	public $modificationDate;
+	public $materialBannerDimension;
+	public $referenceSupported;
+	public $conditions;
+	public $discountFixed;
+	public $discountVariable;
 
 }

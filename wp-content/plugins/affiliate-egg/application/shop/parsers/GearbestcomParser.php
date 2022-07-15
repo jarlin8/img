@@ -35,9 +35,15 @@ class GearbestcomParser extends LdShopParser {
 
     public function parseDescription()
     {
-        return $this->xpathScalar(".//*[@class='product_pz'][1]");
+        $path = array(
+            ".//p[@class='textDesc']",
+            ".//div[@class='textDesc']//p[@class='textDescContent']",
+            ".//*[@class='product_pz'][1]",
+        );
+        return $this->xpathScalar($path, true);
     }
 
+    /*
     public function parsePrice()
     {
         if ($price = $this->xpathScalar(".//meta[@property='og:price:amount']/@content"))
@@ -64,10 +70,19 @@ class GearbestcomParser extends LdShopParser {
             return parent::parsePrice();
         return $price;
     }
+     * 
+     */
 
     public function parseOldPrice()
     {
-        return $this->xpathScalar(".//*[@id='js_masterMarketPrice']/@orgp");
+        if ($this->xpathScalar(".//meta[@property='og:price:currency']/@content") != 'USD')
+            return;
+
+        $paths = array(
+            ".//del[@class='goodsIntro_shopPrice js-currency js-panelIntroShopPrice']",
+        );
+
+        return $this->xpathScalar($paths);        
     }
 
     public function parseManufacturer()

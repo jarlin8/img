@@ -79,7 +79,7 @@ return array(
         'uri' => 'http://www.aliexpress.com',
         'ico' => 'http://www.google.com/s2/favicons?domain=http://www.aliexpress.com',
         'cpa' => array(Cpa::CPA_EPNBZ, Cpa::CPA_ADMITAD, Cpa::CPA_GDESLON, Cpa::CPA_ACTIONPAY),
-        'search_uri' => 'https://aliexpress.com/wholesale?SearchText=%KEY+WORD%',
+        'search_uri' => 'https://www.aliexpress.com/wholesale?SearchText=%KEY+WORD%',
         'is_unstable' => true,
     ),
     'quelleru' => array(
@@ -648,6 +648,14 @@ return array(
         'cpa' => array(),
         'search_uri' => 'https://www.amazon.pl/s/ref=nb_sb_noss?field-keywords=%KEYWORD%',
         'is_unstable' => true,
+    ),
+    'amazoneg' => array(
+        'name' => 'Amazon.eg',
+        'uri' => 'https://www.amazon.eg',
+        'ico' => 'http://www.google.com/s2/favicons?domain=http://www.amazon.eg',
+        'cpa' => array(),
+        'search_uri' => 'https://www.amazoneg.eg/s/ref=nb_sb_noss?field-keywords=%KEYWORD%',
+        'is_unstable' => true,
     ),    
     'lamodaua' => array(
         'name' => 'Lamoda.ua',
@@ -1023,6 +1031,7 @@ return array(
         'uri' => 'http://walmart.com',
         'ico' => 'http://www.google.com/s2/favicons?domain=walmart.com',
         'search_uri' => 'https://www.walmart.com/search/?cat_id=&query=%KEYWORD%',
+        'is_unstable' => true,
     ),
     'bestbuycom' => array(
         'name' => 'Bestbuy.com',
@@ -1101,7 +1110,7 @@ return array(
         'ico' => 'http://www.google.com/s2/favicons?domain=foxtrot.com.ua',
         'cpa' => array(Cpa::CPA_ADMITAD),
         'search_uri' => 'http://www.foxtrot.com.ua/ru/search?query=%KEYWORD%',
-        'is_unstable' => true,        
+        'is_unstable' => true,
     ),
     'moyoua' => array(
         'name' => 'Moyo.ua',
@@ -1335,15 +1344,15 @@ return array(
         'uri' => 'https://nl.fnac.be',
         'ico' => 'http://www.google.com/s2/favicons?domain=fnac.be',
         'search_uri' => 'https://www.nl.fnac.be/SearchResult/ResultList.aspx?SCat=0%211&Search=%KEYWORD%&sft=1&sa=0',
-        'is_unstable' => true,        
+        'is_unstable' => true,
     ),
     'fnacfr' => array(
         'name' => 'Fr.fnac.be',
         'uri' => 'https://fr.fnac.be',
         'ico' => 'http://www.google.com/s2/favicons?domain=fnac.fr',
         'search_uri' => 'https://www.fr.fnac.be/SearchResult/ResultList.aspx?SCat=0%211&Search=%KEYWORD%&sft=1&sa=0',
-        'is_unstable' => true,        
-    ),    
+        'is_unstable' => true,
+    ),
     'koovscom' => array(
         'name' => 'Koovs.com',
         'uri' => 'http://koovs.com',
@@ -1517,4 +1526,61 @@ return array(
         'ico' => 'http://www.google.com/s2/favicons?domain=bol.com',
         'search_uri' => 'https://www.bol.com/nl/s/?searchtext=%KEY+WORD%&searchContext=media_all&appliedSearchContextId=&suggestFragment=&adjustedSection=&originalSection=&originalSearchContext=&section=main&N=0&defaultSearchContext=media_all',
     ),
+    'shopeevn' => array(
+        'name' => 'Shopee.vn',
+        'uri' => 'https://shopee.vn',
+        'ico' => 'http://www.google.com/s2/favicons?domain=shopee.vn',
+        'search_uri' => 'https://shopee.vn/search/?keyword=%KEYWORD%',
+    ),
+    'shopeecoid' => array(
+        'name' => 'Shopee.co.id',
+        'uri' => 'https://shopee.co.id',
+        'ico' => 'http://www.google.com/s2/favicons?domain=shopee.co.id',
+        'search_uri' => 'https://shopee.co.id/search/?keyword=%KEYWORD%',
+    ),
+    'shopeecommy' => array(
+        'name' => 'Shopee.com.my',
+        'uri' => 'https://shopee.com.my',
+        'ico' => 'http://www.google.com/s2/favicons?domain=shopee.com.my',
+        'search_uri' => 'https://shopee.com.my/search/?keyword=%KEYWORD%',
+    ),
+    'shopeecoth' => array(
+        'name' => 'Shopee.co.th',
+        'uri' => 'https://shopee.co.th',
+        'ico' => 'http://www.google.com/s2/favicons?domain=shopee.co.th',
+        'search_uri' => 'https://shopee.co.th/search/?keyword=%KEYWORD%',
+    ),
+    'shopeeph' => array(
+        'name' => 'Shopee.ph',
+        'uri' => 'https://shopee.ph',
+        'ico' => 'http://www.google.com/s2/favicons?domain=shopee.ph',
+        'search_uri' => 'https://shopee.ph/search/?keyword=%KEYWORD%',
+    ),
+    'shopeesg' => array(
+        'name' => 'Shopee.sg',
+        'uri' => 'https://shopee.sg',
+        'ico' => 'http://www.google.com/s2/favicons?domain=shopee.sg',
+        'search_uri' => 'https://shopee.sg/search/?keyword=%KEYWORD%',
+    ),
+    'shopeecombr' => array(
+        'name' => 'Shopee.com.br',
+        'uri' => 'https://shopee.com.br',
+        'ico' => 'http://www.google.com/s2/favicons?domain=shopee.com.br',
+        'search_uri' => 'https://shopee.com.br/search/?keyword=%KEYWORD%',
+    ),
+    'shopeecombr' => array(
+        'name' => 'Shopee.com.br',
+        'uri' => 'https://shopee.com.br',
+        'ico' => 'http://www.google.com/s2/favicons?domain=shopee.com.br',
+        'search_uri' => 'https://shopee.com.br/search/?keyword=%KEYWORD%',
+    ),
+    'coupangcom' => array(
+        'name' => 'Coupang.com',
+        'uri' => 'https://www.coupang.com',
+        'ico' => 'http://www.google.com/s2/favicons?domain=coupang.com',
+        'search_uri' => 'https://www.coupang.com/np/search?component=&q=%KEY+WORD%',
+    ),  
+    
 );
+
+

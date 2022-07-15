@@ -52,7 +52,7 @@ class AdminNotice {
     public function getMessage($message_id = null)
     {
         if (!$message_id && !empty($_GET[self::GET_NOTICE_PARAM]))
-            $message_id = $_GET[self::GET_NOTICE_PARAM];
+            $message_id = sanitize_key(wp_unslash($_GET[self::GET_NOTICE_PARAM]));
         else
             return '';
 
@@ -64,7 +64,7 @@ class AdminNotice {
 
         if (!empty($_GET[self::GET_ID_PARAM]))
         {
-            $id = (int) $_GET[self::GET_ID_PARAM];
+            $id = intval(wp_unslash($_GET[self::GET_ID_PARAM]));
             $message = str_replace('%%ID%%', $id, $message);
         }
 
@@ -79,11 +79,11 @@ class AdminNotice {
         $level = 'info';
         if (!empty($_GET[self::GET_LEVEL_PARAM]))
         {
-            $level = $_GET[self::GET_LEVEL_PARAM];
+            $level = sanitize_key(wp_unslash($_GET[self::GET_LEVEL_PARAM]));
             if (!in_array($level, array('error', 'warning', 'info', 'success')))
                 $level = 'info';
         }
-        echo '<div class="notice notice-' . $level . ' is-dismissible"><p>' . $this->getMessage() . '</p></div>';
+        echo '<div class="notice notice-' . esc_attr($level) . ' is-dismissible"><p>' . wp_kses_post($this->getMessage()) . '</p></div>';
     }
 
     public static function add2Url($url, $message, $level = null, $id = null)

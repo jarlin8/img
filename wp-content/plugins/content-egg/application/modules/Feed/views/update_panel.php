@@ -1,3 +1,7 @@
-<?php defined('\ABSPATH') || exit; ?>
-<input type="text" class="input-sm col-md-4" ng-model="updateParams.<?php echo $module_id; ?>.price_min" placeholder="<?php _e('Min. price', 'content-egg') ?>" title="<?php _e('Min. price for automatic update', 'content-egg') ?>" />
-<input type="text" class="input-sm col-md-4" ng-model="updateParams.<?php echo $module_id; ?>.price_max" placeholder="<?php _e('Max. price', 'content-egg') ?>" title="<?php _e('Max. price for automatic update', 'content-egg') ?>" />
+<?php defined( '\ABSPATH' ) || exit; ?>
+<input type="text" class="input-sm col-md-4" ng-model="updateParams.<?php echo esc_attr($module_id); ?>.price_min"
+       placeholder="<?php esc_attr(__( 'Min. price', 'content-egg' )) ?>"
+       title="<?php esc_attr(__( 'Min. price for automatic update', 'content-egg' )) ?>"/>
+<input type="text" class="input-sm col-md-4" ng-model="updateParams.<?php echo esc_attr($module_id); ?>.price_max"
+       placeholder="<?php esc_attr(__( 'Max. price', 'content-egg' )) ?>"
+       title="<?php esc_attr(__( 'Max. price for automatic update', 'content-egg' )) ?>"/>

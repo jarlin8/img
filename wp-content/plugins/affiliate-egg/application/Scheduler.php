@@ -1,6 +1,7 @@
 <?php
 
 namespace Keywordrush\AffiliateEgg;
+defined('\ABSPATH') || exit;
 
 /**
  * Scheduler class file

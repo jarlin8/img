@@ -73,5 +73,4 @@ class BestbuycomParser extends LdShopParser {
         return $this->xpathScalar(".//meta[@id='schemaorg-brand-name']/@content");
     }
 
-
 }

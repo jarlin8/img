@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Aliexpress;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,13 +15,13 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataAliexpress extends ExtraData {
 
-    public $lotNum;
-    public $packageType;
-    public $_30daysCommission;
-    public $commissionRate;
-    public $validTime;
-    public $volume;
-    public $evaluateScore;
-    public $commission;
+	public $lotNum;
+	public $packageType;
+	public $_30daysCommission;
+	public $commissionRate;
+	public $validTime;
+	public $volume;
+	public $evaluateScore;
+	public $commission;
 
 }

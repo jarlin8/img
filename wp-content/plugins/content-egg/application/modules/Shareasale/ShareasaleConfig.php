@@ -126,6 +126,7 @@ class ShareasaleConfig extends AffiliateParserModuleConfig {
         );
         $parent = parent::options();
         $parent['ttl']['default'] = 2592000;
+
         return array_merge($parent, $optiosn);
     }
 

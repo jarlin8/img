@@ -3,6 +3,6 @@
 /*
   Name: List
  */
-__('List', 'content-egg-tpl');
+__( 'List', 'content-egg-tpl' );
 
-$this->renderPartial('list');
+$this->renderPartial( 'list' );

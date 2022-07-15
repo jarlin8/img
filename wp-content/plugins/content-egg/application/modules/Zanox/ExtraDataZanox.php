@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Zanox;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,13 +15,13 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataZanox extends ExtraData {
 
-    public $modified;
-    public $deliveryTime;
-    public $shippingCosts;
-    public $shipping;
-    public $merchantCategory;
-    public $merchantProductId;
-    public $trackingImg;
-    public $programId;
+	public $modified;
+	public $deliveryTime;
+	public $shippingCosts;
+	public $shipping;
+	public $merchantCategory;
+	public $merchantProductId;
+	public $trackingImg;
+	public $programId;
 
 }

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\models;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\helpers\TextHelper;
 
@@ -15,19 +15,17 @@ use ContentEgg\application\helpers\TextHelper;
  */
 class PriceAlertModel extends Model {
 
-    const STATUS_INACTIVE = 0;
-    const STATUS_ACTIVE = 1;
-    const STATUS_DELETED = 3;
-    const CLEAN_DELETED_DAYS = 180;
+	const STATUS_INACTIVE = 0;
+	const STATUS_ACTIVE = 1;
+	const STATUS_DELETED = 3;
+	const CLEAN_DELETED_DAYS = 180;
 
-    public function tableName()
-    {
-        return $this->getDb()->prefix . 'cegg_price_alert';
-    }
+	public function tableName() {
+		return $this->getDb()->prefix . 'cegg_price_alert';
+	}
 
-    public function getDump()
-    {
-        return "CREATE TABLE " . $this->tableName() . " (
+	public function getDump() {
+		return "CREATE TABLE " . $this->tableName() . " (
                     id bigint(20) unsigned NOT NULL auto_increment,
                     unique_id varchar(255) NOT NULL,
                     module_id varchar(255) NOT NULL,
@@ -43,53 +41,53 @@ class PriceAlertModel extends Model {
                     KEY uid (unique_id(80),module_id(30)),
                     KEY status (status)
                     ) $this->charset_collate;";
-    }
+	}
 
-    public static function model($className = __CLASS__)
-    {
-        return parent::model($className);
-    }
+	public static function model( $className = __CLASS__ ) {
+		return parent::model( $className );
+	}
 
-    public function save(array $item)
-    {
-        if (empty($item['create_date']))
-            $item['create_date'] = \current_time('mysql');
-        if (!isset($item['status']))
-            $item['status'] = self::STATUS_INACTIVE;
-        if (!isset($item['activkey']))
-            $item['activkey'] = TextHelper::randomPassword(16);
-        return parent::save($item);
-    }
+	public function save( array $item ) {
+		if ( empty( $item['create_date'] ) ) {
+			$item['create_date'] = \current_time( 'mysql' );
+		}
+		if ( ! isset( $item['status'] ) ) {
+			$item['status'] = self::STATUS_INACTIVE;
+		}
+		if ( ! isset( $item['activkey'] ) ) {
+			$item['activkey'] = TextHelper::randomPassword( 16 );
+		}
 
-    public function cleanOld($days, $optimize = true, $date_field = 'complet_date')
-    {
-        $this->deleteAll('status = ' . self::STATUS_DELETED . ' AND TIMESTAMPDIFF( DAY, ' . $date_field . ', "' . \current_time('mysql') . '") > ' . $days);
-        if ($optimize)
-            $this->optimizeTable();
-    }
+		return parent::save( $item );
+	}
 
-    public function unsubscribeAll($email)
-    {
-        $sql = 'DELETE FROM ' . $this->tableName() . ' WHERE email = %s AND status != %d';
-        $this->getDb()->query($this->getDb()->prepare($sql, $email, self::STATUS_DELETED));
-    }
+	public function cleanOld( $days, $optimize = true, $date_field = 'complet_date' ) {
+		$this->deleteAll( 'status = ' . self::STATUS_DELETED . ' AND TIMESTAMPDIFF( DAY, ' . $date_field . ', "' . \current_time( 'mysql' ) . '") > ' . $days );
+		if ( $optimize ) {
+			$this->optimizeTable();
+		}
+	}
 
-    public static function getStatus($id)
-    {
-        $statuses = self::getStatuses();
-        if (isset($statuses[$id]))
-            return $statuses[$id];
-        else
-            return null;
-    }
+	public function unsubscribeAll( $email ) {
+		$sql = 'DELETE FROM ' . $this->tableName() . ' WHERE email = %s AND status != %d';
+		$this->getDb()->query( $this->getDb()->prepare( $sql, $email, self::STATUS_DELETED ) );
+	}
 
-    public static function getStatuses()
-    {
-        return array(
-            self::STATUS_INACTIVE => 'INACTIVE',
-            self::STATUS_ACTIVE => 'ACTIVE',
-            self::STATUS_DELETED => 'DELETED',
-        );
-    }
+	public static function getStatus( $id ) {
+		$statuses = self::getStatuses();
+		if ( isset( $statuses[ $id ] ) ) {
+			return $statuses[ $id ];
+		} else {
+			return null;
+		}
+	}
+
+	public static function getStatuses() {
+		return array(
+			self::STATUS_INACTIVE => 'INACTIVE',
+			self::STATUS_ACTIVE   => 'ACTIVE',
+			self::STATUS_DELETED  => 'DELETED',
+		);
+	}
 
 }

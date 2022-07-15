@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\CityadsProducts;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,18 +15,18 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataCityadsProducts extends ExtraData {
 
-    public $shop_offer_id;
-    public $offer_id;
-    public $_3mepc;
-    public $_7depc;
-    public $delivery;
-    public $categoryId;
-    public $coupons;
-    public $credit;
-    public $update_date;
-    public $retargeting;
-    public $shop_id;
-    public $orders;
-    public $properties;
+	public $shop_offer_id;
+	public $offer_id;
+	public $_3mepc;
+	public $_7depc;
+	public $delivery;
+	public $categoryId;
+	public $coupons;
+	public $credit;
+	public $update_date;
+	public $retargeting;
+	public $shop_id;
+	public $orders;
+	public $properties;
 
 }

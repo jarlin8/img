@@ -67,21 +67,32 @@ class OfferModule extends AffiliateParserModule {
         {
             $items[$key]['extra']['last_error'] = '';
             if (isset($item['extra']['priceXpath']))
+            {
                 $custom = $item['extra']['priceXpath'];
-            else
+            } else
+            {
                 $custom = '';
+            }
 
             if (!isset($item['extra']['priceXpath']))
+            {
                 $item['extra']['priceXpath'] = '';
+            }
             if (!$priceXpath = $this->getXpath($item['domain'], $item['extra']['priceXpath']))
+            {
                 continue;
+            }
 
             if ($item['orig_url'])
+            {
                 $url = $item['orig_url'];
-            elseif ($item['url'])
+            } elseif ($item['url'])
+            {
                 $url = $item['url'];
-            else
+            } else
+            {
                 continue;
+            }
 
             $priceXpath = explode('%DELIMITER%', $priceXpath);
             try
@@ -91,14 +102,18 @@ class OfferModule extends AffiliateParserModule {
             } catch (\Exception $e)
             {
                 if ($e->getCode() == 404)
+                {
                     $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+                }
 
                 $items[$key]['extra']['last_error'] = $e->getMessage();
                 continue;
             }
 
             if ($items[$key]['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
+            {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
+            }
 
             if (!$price)
             {
@@ -109,6 +124,7 @@ class OfferModule extends AffiliateParserModule {
             // assign new price
             $items[$key]['price'] = (float) TextHelper::parsePriceAmount($price);
         }
+
         return $items;
     }
 
@@ -123,7 +139,7 @@ class OfferModule extends AffiliateParserModule {
             $item['orig_url'] = trim(strip_tags($item['orig_url']));
             $item['img'] = trim(strip_tags($item['img']));
             $item['logo'] = trim(strip_tags($item['logo']));
-            $item['extra']['deeplink'] = trim(strip_tags($item['extra']['deeplink']));
+            $item['extra']['deeplink'] = isset($item['extra']['deeplink']) ? trim(strip_tags($item['extra']['deeplink'])) : '';
             $item['price'] = (float) TextHelper::parsePriceAmount($item['price']);
             $item['priceOld'] = (float) TextHelper::parsePriceAmount($item['priceOld']);
             $item['rating'] = TextHelper::ratingPrepare($item['rating']);
@@ -131,22 +147,32 @@ class OfferModule extends AffiliateParserModule {
             if (!$item['domain'])
             {
                 if (!$item['extra']['deeplink'] && $original_domain = TextHelper::findOriginalDomain($item['orig_url']))
+                {
                     $item['domain'] = $original_domain;
-                else
+                } else
+                {
                     $item['domain'] = TextHelper::getHostName($item['orig_url']);
+                }
             }
 
             if (!$item['title'])
+            {
                 continue;
+            }
             if (!filter_var($item['orig_url'], FILTER_VALIDATE_URL))
+            {
                 continue;
+            }
             if ($item['img'] && !filter_var($item['img'], FILTER_VALIDATE_URL))
+            {
                 continue;
+            }
 
             $deeplink = $this->getDeeplink($item['domain'], $item['extra']['deeplink']);
             $item['url'] = LinkHandler::createAffUrl($item['orig_url'], $deeplink, $item);
             $return[$key] = $item;
         }
+
         return $return;
     }
 
@@ -167,6 +193,7 @@ class OfferModule extends AffiliateParserModule {
             $deeplink = $this->getDeeplink($d['domain'], $d['extra']['deeplink']);
             $data[$key]['url'] = LinkHandler::createAffUrl($d['orig_url'], $deeplink, $d);
         }
+
         return parent::viewDataPrepare($data);
     }
 
@@ -193,23 +220,33 @@ class OfferModule extends AffiliateParserModule {
         }
 
         if (isset(self::$globals[$domain]))
+        {
             return self::$globals[$domain];
-        else
+        } else
+        {
             return false;
+        }
     }
 
     public function getGlobalCustomValue($option, $domain, $custom = '')
     {
         if (!$global = $this->getGlobal($domain))
+        {
             return $custom;
+        }
 
-        if ($custom && (!isset($global['in_priority']) || !(bool) $global['in_priority']))
+        if ($custom && (!isset($global['in_priority']) || !(bool) $global['in_priority'] ))
+        {
             return $custom;
+        }
 
         if (isset($global[$option]))
+        {
             return $global[$option];
-        else
+        } else
+        {
             return null;
+        }
     }
 
 }

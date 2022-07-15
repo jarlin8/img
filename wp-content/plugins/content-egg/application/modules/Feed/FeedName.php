@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Feed;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 /**
  * FeedName class file
@@ -13,40 +13,38 @@ defined('\ABSPATH') || exit;
  */
 class FeedName {
 
-    const OPTION_NAME = 'cegg_feed_names';
+	const OPTION_NAME = 'cegg_feed_names';
 
-    private static $instance;
-    protected static $feeds = array();
+	private static $instance;
+	protected static $feeds = array();
 
-    private function __construct()
-    {
-        $this->init();
-    }
+	private function __construct() {
+		$this->init();
+	}
 
-    public static function getInstance()
-    {
-        if (self::$instance === null)
-            self::$instance = new self;
-        return self::$instance;
-    }
+	public static function getInstance() {
+		if ( self::$instance === null ) {
+			self::$instance = new self;
+		}
 
-    private function init()
-    {
-        self::$feeds = \get_option(self::OPTION_NAME, array());
-    }
+		return self::$instance;
+	}
 
-    public function getName($module_id)
-    {
-        if (isset(self::$feeds[$module_id]))
-            return self::$feeds[$module_id];
-        else
-            return false;
-    }
+	private function init() {
+		self::$feeds = \get_option( self::OPTION_NAME, array() );
+	}
 
-    public function saveName($module_id, $name)
-    {
-        self::$feeds[$module_id] = $name;
-        \update_option(self::OPTION_NAME, self::$feeds);
-    }
+	public function getName( $module_id ) {
+		if ( isset( self::$feeds[ $module_id ] ) ) {
+			return self::$feeds[ $module_id ];
+		} else {
+			return false;
+		}
+	}
+
+	public function saveName( $module_id, $name ) {
+		self::$feeds[ $module_id ] = $name;
+		\update_option( self::OPTION_NAME, self::$feeds );
+	}
 
 }

@@ -8,15 +8,15 @@ defined('\ABSPATH') || exit;
  * AsoscomParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2014 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class AsoscomParser extends ShopParser {
+class AsoscomParser extends LdShopParser {
 
     protected $charset = 'utf-8';
-    protected $currency = 'USD';
-    protected $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0';
-    protected $_old_price = 0;
+    protected $currency = 'GBP';
+    protected $user_agent = array('ia_archiver');
+    protected $_product = array();
     protected $headers = array(
         'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language' => 'en-us,en;q=0.5',
@@ -29,52 +29,41 @@ class AsoscomParser extends ShopParser {
         return $this->xpathArray(".//article[contains(@id, 'product-')]//a/@href");
     }
 
-    public function parseTitle()
+    protected function preParseProduct()
     {
-        return $this->xpathScalar(".//h1");
+        if (!$this->_parseProduct())
+            return false;
+
+        return parent::preParseProduct();
     }
 
+    private function _parseProduct()
+    {
+        if (!preg_match('~\/prd\/(\d+)~', $this->getUrl(), $matches))
+            return;
+
+        $request_url = 'https://www.asos.com/api/product/catalogue/v3/stockprice?productIds='.$matches[1].'&store=COM&currency=GBP&keyStoreDataversion=hgk0y12-29';
+
+        if (!$response = $this->getRemoteJson($request_url))
+            return;
+
+        if (!isset($response[0]))
+            return;
+
+        $this->_product = $response[0];
+        return $this->_product;
+    }    
+    
     public function parsePrice()
     {
-
-        $html = $this->dom->saveHTML();
-        if (!preg_match('/window\.fetch\("(.+?)",/', $html, $matches))
-            return;
-
-        $url = 'https://www.asos.com' . $matches[1];
-
-        $response = \wp_remote_get($url);
-        if (\is_wp_error($response))
-            return;
-
-        $body = \wp_remote_retrieve_body($response);
-        if (!$body)
-            return;
-
-
-        $data = json_decode($body, true);
-
-        if (isset($data[0]['productPrice']['currency']))
-            $this->currency = $data[0]['productPrice']['currency'];
-        if (isset($data[0]['productPrice']['previous']['value']))
-            $this->_old_price = $data[0]['productPrice']['previous']['value'];
-        if (isset($data[0]['productPrice']['current']['value']))
-            return $data[0]['productPrice']['current']['value'];
-    }
-
+        if (isset($this->_product['productPrice']['current']['value']))
+            return $this->_product['productPrice']['current']['value'];
+    }    
+    
     public function parseOldPrice()
     {
-        return $this->_old_price;
-    }
-
-    public function parseImg()
-    {
-        return $this->xpathScalar(".//div[@id='product-gallery']//img/@src");
-    }
-
-    public function getCurrency()
-    {
-        return $this->currency;
+        if (isset($this->_product['productPrice']['previous']['value']))
+            return $this->_product['productPrice']['previous']['value'];
     }
 
 }

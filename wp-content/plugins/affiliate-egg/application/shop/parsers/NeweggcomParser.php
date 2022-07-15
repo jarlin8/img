@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2020 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class NeweggcomParser extends LdShopParser {
 
@@ -21,6 +21,27 @@ class NeweggcomParser extends LdShopParser {
         return $this->xpathArray(array(".//*[@class='items-view is-grid']//a[@class='item-title']/@href", ".//div[@class='item-info']/a/@href"));
     }
 
+    public function parseTitle()
+    {
+        if ($p = parent::parseTitle())
+            return $p;
+
+        return str_replace('- Newegg.com', '', $this->xpathScalar(".//title"));
+    }
+
+    public function parsePrice()
+    {
+        /*
+          if (preg_match('/"OriginalUnitPrice":(.+?),/', $this->dom->saveHTML(), $matches))
+          return $matches[1] * 270;
+         */
+
+        if ($p = parent::parsePrice())
+            return $p;
+        else
+            return $this->xpathScalar(".//li[@class='price-current']");
+    }
+
     public function parseOldPrice()
     {
         return $this->xpathScalar(".//ul[@class='price']//span[@class='price-was-data']");
@@ -28,6 +49,9 @@ class NeweggcomParser extends LdShopParser {
 
     public function parseImg()
     {
+        if ($p = $this->xpathScalar(".//img[@class='product-view-img-original']/@src"))
+            return $p;
+        
         if ($img = $this->xpathScalar(".//meta[@property='og:image']/@content"))
             return $img;
 
@@ -41,31 +65,18 @@ class NeweggcomParser extends LdShopParser {
         return $img;
     }
 
-    public function parseExtra()
+    public function getFeaturesXpath()
     {
-        $extra = parent::parseExtra();
-
-        $extra['features'] = array();
-        $names = $this->xpathArray(".//*[@id='Specs']//dt");
-        $values = $this->xpathArray(".//*[@id='Specs']//dd", true);
-        $feature = array();
-        for ($i = 0; $i < count($names); $i++)
-        {
-            if (empty($values[$i]))
-                continue;
-            if ($names[$i] == 'Features') //too long?
-                continue;
-
-            $feature['name'] = sanitize_text_field($names[$i]);
-
-            $value = $values[$i];
-            $value = preg_replace("~<br*/?>~i", " \n", $value);
-            $value = strip_tags($value);
-            $feature['value'] = $value;
-            $extra['features'][] = $feature;
-        }
-
-        return $extra;
+        return array(
+            array(
+                'name' => ".//div[@id='Specs']//dt",
+                'value' => ".//div[@id='Specs']//dd",
+            ),
+            array(
+                'name' => ".//div[@id='product-details']//div[@class='tab-pane']//th",
+                'value' => ".//div[@id='product-details']//div[@class='tab-pane']//td",
+            ),
+        );
     }
 
     public function isInStock()

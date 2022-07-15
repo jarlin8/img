@@ -30,9 +30,9 @@ class ProductController {
         global $pagenow;
 
         // If we're on an admin page with the referer passed in the QS, prevent it nesting and becoming too long.
-        if ($pagenow == 'admin.php' && isset($_GET['page']) && $_GET['page'] == 'content-egg-product' && !empty($_GET['_wp_http_referer']))
+        if ($pagenow == 'admin.php' && isset($_GET['page']) && $_GET['page'] == 'content-egg-product' && !empty($_GET['_wp_http_referer']) && isset($_SERVER['REQUEST_URI'] ))
         {
-            \wp_redirect(\remove_query_arg(array('_wp_http_referer', '_wpnonce'), \wp_unslash($_SERVER['REQUEST_URI'])));
+            \wp_safe_redirect(\remove_query_arg(array('_wp_http_referer', '_wpnonce'), esc_url_raw(\wp_unslash($_SERVER['REQUEST_URI']))));
             exit;
         }
     }

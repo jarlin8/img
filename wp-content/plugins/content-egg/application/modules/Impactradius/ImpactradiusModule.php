@@ -16,7 +16,7 @@ use ContentEgg\application\modules\Impactradius\ExtraDataImpactradius;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class ImpactradiusModule extends AffiliateParserModule {
 
@@ -55,9 +55,12 @@ class ImpactradiusModule extends AffiliateParserModule {
         $options = array();
 
         if ($is_autoupdate)
+        {
             $limit = $this->config('entries_per_page_update');
-        else
+        } else
+        {
             $limit = $this->config('entries_per_page');
+        }
 
         $query = '';
 
@@ -65,24 +68,34 @@ class ImpactradiusModule extends AffiliateParserModule {
         $minprice = (float) $this->config('minprice');
         $maxprice = (float) $this->config('maxprice');
         if (!empty($query_params['minprice']))
+        {
             $minprice = (float) $query_params['minprice'];
+        }
         if (!empty($query_params['maxprice']))
+        {
             $maxprice = (float) $query_params['maxprice'];
+        }
 
         if ($minprice)
+        {
             $query = 'CurrentPrice>=' . number_format($minprice, 2, '.', '');
+        }
 
         if ($maxprice)
         {
             if ($query)
+            {
                 $query .= ' AND ';
+            }
             $query .= 'CurrentPrice<=' . number_format($maxprice, 2, '.', '');
         }
 
         if ($this->config('in_stock'))
         {
             if ($query)
+            {
                 $query .= ' AND ';
+            }
             $query .= 'StockAvailability="InStock"';
         }
 
@@ -90,7 +103,9 @@ class ImpactradiusModule extends AffiliateParserModule {
         $results = $this->getApiClient()->search($keyword, $options);
 
         if (!isset($results['Items']) || !is_array($results['Items']))
+        {
             return array();
+        }
 
         return $this->prepareResults(array_slice($results['Items'], 0, $limit));
     }
@@ -107,23 +122,33 @@ class ImpactradiusModule extends AffiliateParserModule {
 
             $content->description = strip_tags($r['Description']);
             if ($max_size = $this->config('description_size'))
+            {
                 $content->description = TextHelper::truncate($content->description, $max_size);
+            }
 
             $content->manufacturer = $r['Manufacturer'];
             $content->url = $r['Url'];
             $content->domain = TextHelper::parseDomain($content->url, 'u');
             $content->img = $r['ImageUrl'];
             $content->price = (float) $r['CurrentPrice'];
-            if ((float) $r['OriginalPrice'] > $content->price)
+
+            if (!$content->price && $r['OriginalPrice'])
+                $content->price = (float) $r['OriginalPrice'];
+            elseif ((float) $r['OriginalPrice'] > $content->price)
                 $content->priceOld = (float) $r['OriginalPrice'];
+
             $content->currencyCode = $r['Currency'];
             $content->availability = $r['StockAvailability'];
             if ($r['StockAvailability'] && $r['StockAvailability'] == 'InStock')
+            {
                 $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-            elseif ($r['StockAvailability'])
+            } elseif ($r['StockAvailability'])
+            {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            else
+            } else
+            {
                 $content->stock_status = ContentProduct::STOCK_STATUS_UNKNOWN;
+            }
 
             $content->merchant = $r['CampaignName'];
             $content->category = $r['OriginalFormatCategory'];
@@ -144,6 +169,7 @@ class ImpactradiusModule extends AffiliateParserModule {
             ExtraDataImpactradius::fillAttributes($content->extra, $r);
             $data[] = $content;
         }
+
         return $data;
     }
 
@@ -152,24 +178,37 @@ class ImpactradiusModule extends AffiliateParserModule {
         foreach ($items as $key => $item)
         {
             if (empty($item['extra']['CatalogId']))
+            {
                 continue;
+            }
 
             $result = $this->getApiClient()->product($item['extra']['CatalogId'], $item['unique_id']);
             if (!is_array($result) || !isset($result['Id']))
+            {
                 throw new \Exception('doRequestItems request error.');
+            }
 
-            // assign new price     
+            // assign new price
             $items[$key]['url'] = $result['Url'];
             $items[$key]['price'] = (float) $result['CurrentPrice'];
-            $items[$key]['priceOld'] = (float) $result['OriginalPrice'];
+
+            if (!$items[$key]['price'])
+                $items[$key]['price'] = (float) $result['OriginalPrice'];
+            else
+                $items[$key]['priceOld'] = (float) $result['OriginalPrice'];
 
             if ($result['StockAvailability'] && $result['StockAvailability'] == 'InStock')
+            {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-            elseif ($result['StockAvailability'])
+            } elseif ($result['StockAvailability'])
+            {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            else
+            } else
+            {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_UNKNOWN;
+            }
         }
+
         return $items;
     }
 
@@ -179,6 +218,7 @@ class ImpactradiusModule extends AffiliateParserModule {
         {
             $this->api_client = new ImpactradiusApi($this->config('AccountSid'), $this->config('AuthToken'));
         }
+
         return $this->api_client;
     }
 

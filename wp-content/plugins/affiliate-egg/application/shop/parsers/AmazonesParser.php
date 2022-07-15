@@ -19,6 +19,6 @@ class AmazonesParser extends AmazoncomParser {
     protected $currency = 'EUR';
 
     //protected $user_agent = array('wget');
-    //protected $user_agent = array('DuckDuckBot', 'facebot', 'ia_archiver');
+    protected $user_agent = array('ia_archiver');
     
 }

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\TradedoublerProducts;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,15 +15,15 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataTradedoublerProducts extends ExtraData {
 
-    public $language;
-    public $fields;
-    public $feedId;
-    public $modified;
-    public $availability;
-    public $deliveryTime;
-    public $condition;
-    public $shippingCost;
-    public $sourceProductId;
-    public $programLogo;
+	public $language;
+	public $fields;
+	public $feedId;
+	public $modified;
+	public $availability;
+	public $deliveryTime;
+	public $condition;
+	public $shippingCost;
+	public $sourceProductId;
+	public $programLogo;
 
 }

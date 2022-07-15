@@ -31,6 +31,7 @@ class AwinModule extends AffiliateFeedParserModule {
     public static function getMerchantDomainPairs()
     {
         $pairs = array('Cdiscount FR' => 'cdiscount.com', 'Darty FR' => 'darty.com', 'SANICARE DE' => 'sanicare.de');
+
         return \apply_filters('cegg_awin_merchant_mapping', $pairs);
     }
 
@@ -72,7 +73,10 @@ class AwinModule extends AffiliateFeedParserModule {
     public function getFeedUrl()
     {
         if (!$feed_url = $this->buildFeedUrl())
+        {
             throw new \Exception('Wrong format of Datafeed URL.');
+        }
+
         return $feed_url;
     }
 
@@ -81,17 +85,24 @@ class AwinModule extends AffiliateFeedParserModule {
         $product = array();
         $product['id'] = $data['aw_product_id'];
         if (!(int) $data['in_stock'])
+        {
             $product['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-        else
+        } else
+        {
             $product['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
+        }
         $product['price'] = (float) $data['search_price'];
         $product['title'] = \sanitize_text_field($data['product_name']);
         $product['orig_url'] = $data['merchant_deep_link'];
         if (TextHelper::isEan($data['ean']))
+        {
             $product['ean'] = $data['ean'];
-        else
+        } else
+        {
             $product['ean'] = '';
+        }
         $product['product'] = serialize($data);
+
         return $product;
     }
 
@@ -100,27 +111,38 @@ class AwinModule extends AffiliateFeedParserModule {
         $this->maybeImportProducts();
 
         if ($is_autoupdate)
+        {
             $limit = $this->config('entries_per_page_update');
-        else
+        } else
+        {
             $limit = $this->config('entries_per_page');
+        }
 
         if (TextHelper::isEan($keyword))
+        {
             $results = $this->product_model->searchByEan($keyword, $limit);
-        elseif (filter_var($keyword, FILTER_VALIDATE_URL))
+        } elseif (filter_var($keyword, FILTER_VALIDATE_URL))
+        {
             $results = $this->product_model->searchByUrl($keyword, $this->config('partial_url_match'), $limit);
-        else
+        } else
         {
             $options = array();
             if (!empty($query_params['price_min']))
+            {
                 $options['price_min'] = (float) $query_params['price_min'];
+            }
             if (!empty($query_params['price_min']))
+            {
                 $options['price_max'] = (float) $query_params['price_max'];
+            }
 
             $results = $this->product_model->searchByKeyword($keyword, $limit, $options);
         }
 
         if (!$results)
+        {
             return array();
+        }
 
         return $this->prepareResults($results);
     }
@@ -131,7 +153,9 @@ class AwinModule extends AffiliateFeedParserModule {
         foreach ($results as $key => $product)
         {
             if (!$r = unserialize($product['product']))
+            {
                 continue;
+            }
 
             $content = new ContentProduct;
             $content->unique_id = $r['aw_product_id'];
@@ -148,26 +172,39 @@ class AwinModule extends AffiliateFeedParserModule {
 
             $pairs = self::getMerchantDomainPairs();
             if (isset($pairs[$content->merchant]))
+            {
                 $content->domain = $pairs[$content->merchant];
-            elseif (!strstr($content->orig_url, 'https://www.awin1.com'))
+            } elseif (!strstr($content->orig_url, 'https://www.awin1.com'))
+            {
                 $content->domain = TextHelper::getHostName($content->orig_url);
+            }
 
             if (!empty($r['average_rating']))
+            {
                 $content->rating = TextHelper::ratingPrepare($r['average_rating']);
+            }
             if (!empty($r['product_price_old']))
+            {
                 $content->priceOld = $r['product_price_old'];
-            elseif (!empty($r['base_price_amount']))
+            } elseif (!empty($r['base_price_amount']))
+            {
                 $content->priceOld = $r['base_price_amount'];
-            elseif (!empty($r['base_price']))
+            } elseif (!empty($r['base_price']))
+            {
                 $content->priceOld = $r['base_price'];
+            }
 
             if (isset($r['in_stock']) && !(int) $r['in_stock'])
+            {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            else
+            } else
+            {
                 $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
+            }
 
             $data[] = $content;
         }
+
         return $data;
     }
 
@@ -180,17 +217,24 @@ class AwinModule extends AffiliateFeedParserModule {
             if (!$product)
             {
                 if ($this->product_model->count())
+                {
                     $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+                }
                 continue;
             }
             if (!$r = unserialize($product['product']))
+            {
                 continue;
+            }
 
             $items[$key]['price'] = $r['search_price'];
             if (isset($r['in_stock']) && !(int) $r['in_stock'])
+            {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            else
+            } else
+            {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
+            }
         }
 
         return $items;
@@ -201,7 +245,9 @@ class AwinModule extends AffiliateFeedParserModule {
         $url = $this->config('datafeed_url');
 
         if (!$path = parse_url($url, PHP_URL_PATH))
+        {
             return '';
+        }
 
         $res = 'https://productdata.awin.com/datafeed/download';
 
@@ -210,9 +256,13 @@ class AwinModule extends AffiliateFeedParserModule {
         {
             $value = TextHelper::getParamFromPath($path, $param);
             if ($param == 'apikey' && !$value)
+            {
                 return '';
+            }
             if ($value)
+            {
                 $res .= '/' . $param . '/' . rawurlencode($value);
+            }
         }
 
         $default_params = array(

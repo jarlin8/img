@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Affiliatewindow;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,17 +15,17 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataAffiliatewindow extends ExtraData {
 
-    public $bHotPick;
-    public $sSpecification;
-    public $sPromotion;
-    public $sModel;
-    public $sMerchantImageUrl;
-    public $sDeliveryTime;
-    public $fStorePrice;
-    public $fDeliveryCost;
-    public $sWarranty;
-    public $iMerchantId;
-    public $iCategoryId;
-    public $iAdult;
+	public $bHotPick;
+	public $sSpecification;
+	public $sPromotion;
+	public $sModel;
+	public $sMerchantImageUrl;
+	public $sDeliveryTime;
+	public $fStorePrice;
+	public $fDeliveryCost;
+	public $sWarranty;
+	public $iMerchantId;
+	public $iCategoryId;
+	public $iAdult;
 
 }

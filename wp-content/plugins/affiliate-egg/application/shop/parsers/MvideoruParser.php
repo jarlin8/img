@@ -14,6 +14,13 @@ defined('\ABSPATH') || exit;
 class MvideoruParser extends MicrodataShopParser {
 
     protected $charset = 'utf-8';
+    protected $user_agent = array('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0) Gecko/20100101 Firefox/91.0');
+    protected $headers = array(
+        'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language' => 'en-US,en;q=0.7,es-ES;q=0.3',
+        'Cache-Control' => 'no-cache',
+        'Cookie' => 'MVID_PDP_AVAILABILITY=true; SMSError=; authError=; _JHASH__=575; _HASH__=d1935b336934db2f79d98cddc5304fb5; MVID_TIMEZONE_OFFSET=3; MVID_CITY_ID=CityCZ_975; MVID_GUEST_ID=18142482988; JSESSIONID=XlcFh7zJC2ZXZc8ZMp0ZJL1cLFKFKNL6jj71ZChrBJ7sBHTQ510L!244953764; MVID_GET_LOCATION_BY_DADATA=DaData; MVID_REGION_ID=1; NEED_REQUIRE_APPLY_DISCOUNT=true; HINTS_FIO_COOKIE_NAME=2; PROMOLISTING_WITHOUT_STOCK_AB_TEST=2; searchType2=3; COMPARISON_INDICATOR=false; CACHE_INDICATOR=true; flacktory=no; bIPs=155255760; MVID_KLA…S/YiQhupAgBNQAPgROS3NGEPW00+4MLGD+jWv2vFOA5mvAVERwFBqgxODYTmR/XrvZeRutmdJv+ReWrwc0FZISErwLoJ9UDXw==; flocktory-uuid=2692e21e-71a7-4e5f-a2e8-0c4bbbd98772-8; fgsscgib-w-mvideo=9tduef5d3ad3d8750338ab9038c5bbcf6db963fa; fgsscgib-w-mvideo=9tduef5d3ad3d8750338ab9038c5bbcf6db963fa; _ym_isad=2; tmr_detect=0%7C1631286271667; SameSite=None; _dc_gtm_UA-1873769-1=1; ADRUM=s=1631286266790&r=https%3A%2F%2Fwww.mvideo.ru%2Fproducts%2Fnoutbuk-honor-magicbook-x-15-i5-8-512-gray-bbr-wah9-30056687%3F0; gssc218=; _gat_owox37=1',
+    );
 
     public function parseCatalog($max)
     {

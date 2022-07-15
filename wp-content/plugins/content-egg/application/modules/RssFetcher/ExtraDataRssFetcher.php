@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\RssFetcher;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,6 +15,6 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataRssFetcher extends ExtraData {
 
-    public $allData = array();
+	public $allData = array();
 
 }

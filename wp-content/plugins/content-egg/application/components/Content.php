@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\components;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 /**
  * Content class file
@@ -13,13 +13,13 @@ defined('\ABSPATH') || exit;
  */
 class Content {
 
-    public $unique_id;
-    public $title;
-    public $description;
-    public $img;
-    public $url;
-    //public $redirect;
-    public $last_update;
-    public $extra;
+	public $unique_id;
+	public $title;
+	public $description;
+	public $img;
+	public $url;
+	//public $redirect;
+	public $last_update;
+	public $extra;
 
 }

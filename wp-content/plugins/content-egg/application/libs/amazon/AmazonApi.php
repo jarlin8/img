@@ -10,11 +10,11 @@ use ContentEgg\application\libs\amazon\AwsV4;
 
 /**
  * PHP interface to Amazon Product Advertising API 5.0
- *  
+ *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2021 keywordrush.com
- * 
+ *
  * @link: https://webservices.amazon.com/paapi5/documentation/
  */
 class AmazonApi extends RestClient {
@@ -68,6 +68,7 @@ class AmazonApi extends RestClient {
         $payload['PartnerType'] = 'Associates';
 
         $response = $this->restPost('/paapi5/searchitems', $payload);
+
         return $this->_decodeResponse($response);
     }
 
@@ -80,6 +81,7 @@ class AmazonApi extends RestClient {
         $payload['PartnerType'] = 'Associates';
         $payload['ItemIdType'] = 'ASIN';
         $response = $this->restPost('/paapi5/getitems', $payload);
+
         return $this->_decodeResponse($response);
     }
 
@@ -91,6 +93,7 @@ class AmazonApi extends RestClient {
         $payload['Operation'] = 'GetVariations';
         $payload['PartnerType'] = 'Associates';
         $response = $this->restPost('/paapi5/getvariations', $payload);
+
         return $this->_decodeResponse($response);
     }
 
@@ -98,7 +101,9 @@ class AmazonApi extends RestClient {
     {
         $awsv4 = new AwsV4($this->access_key_id, $this->secret_access_key);
         if (isset($data['Operation']))
+        {
             $awsv4->setOperation($data['Operation']);
+        }
         $data = json_encode($data);
         $awsv4->setRegionName(AmazonLocales::getRegion($this->locale));
         $awsv4->setPath($path);
@@ -106,6 +111,7 @@ class AmazonApi extends RestClient {
         $awsv4->setRequestMethod("POST");
         $awsv4->setHost(parse_url($this->getUri(), PHP_URL_HOST));
         $this->setCustomHeaders($awsv4->getHeaders());
+
         return parent::restPost($path, $data);
     }
 
@@ -115,10 +121,14 @@ class AmazonApi extends RestClient {
         $data = $this->_decodeResponse(\wp_remote_retrieve_body($response));
 
         if ($response_code == 200 && isset($data['Errors']) && count($data) > 1)
+        {
             return;
+        }
 
         if (!isset($data['Errors']))
+        {
             return parent::myErrorHandler($response);
+        }
 
         $errors = array();
         foreach ($data['Errors'] as $error)

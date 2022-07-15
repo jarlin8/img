@@ -2,18 +2,23 @@
 
 namespace Keywordrush\AffiliateEgg;
 
+defined('\ABSPATH') || exit;
+
 /**
  * MapAutoLoader class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2014 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2021 keywordrush.com
  */
 class MapAutoLoader {
 
     private static $classMap = array(
         'AffiliateEgg' => 'application/AffiliateEgg.php',
         'AffiliateEggAdmin' => 'application/admin/AffiliateEggAdmin.php',
+        'Plugin' => 'application/Plugin.php',
+        'PluginAdmin' => 'application/admin/PluginAdmin.php',
+        'LManager' => 'application/admin/LManager.php',
         'EggController' => 'application/admin/EggController.php',
         'HelpController' => 'application/admin/HelpController.php',
         'AutoblogController' => 'application/admin/AutoblogController.php',
@@ -21,6 +26,7 @@ class MapAutoLoader {
         'DeeplinkConfig' => 'application/admin/DeeplinkConfig.php',
         'GeneralConfig' => 'application/admin/GeneralConfig.php',
         'ProxyConfig' => 'application/admin/ProxyConfig.php',
+        'ExtractorConfig' => 'application/admin/ExtractorConfig.php',
         'CookiesConfig' => 'application/admin/CookiesConfig.php',
         'Config' => 'application/admin/Config.php',
         'ShopManager' => 'application/shop/ShopManager.php',
@@ -67,6 +73,12 @@ class MapAutoLoader {
         'GimmeproxyApi' => 'application/GimmeproxyApi.php',
         'RestClient' => 'application/RestClient.php',
         'WpHttpClient' => 'application/WpHttpClient.php',
+        'AdminNotice' => 'application/admin/AdminNotice.php',
+        'ProxycrawlScrap' => 'application/lib/scrap/ProxycrawlScrap.php',
+        'Scrap' => 'application/lib/scrap/Scrap.php',
+        'ScrapFactory' => 'application/lib/scrap/ScrapFactory.php',
+        'ScrapingdogScrap' => 'application/lib/scrap/ScrapingdogScrap.php',
+        'ScraperapiScrap' => 'application/lib/scrap/ScraperapiScrap.php',
     );
 
     public function __construct()

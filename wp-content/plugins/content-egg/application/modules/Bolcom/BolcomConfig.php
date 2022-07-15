@@ -10,17 +10,17 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  * BolcomConfig class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class BolcomConfig extends AffiliateParserModuleConfig {
 
     public function options()
     {
-        $optiosn = array(
-            'apikey' => array(
-                'title' => 'API Access Key <span class="cegg_required">*</span>',
-                'description' => __('Sign up for a developer account with your website at <a target="_blank" href="http://developers.bol.com">developers.bol.com</a> and <a target="_blank" href="https://partnerblog.bol.com/documentatie/open-api/aanmeldformulier-api-toegang/">request a API-key</a>.', 'content-egg'),
+        $options = array(
+            'client_id' => array(
+                'title' => 'Client ID <span class="cegg_required">*</span>',
+                'description' => sprintf(__('You can find your Client ID <a target="_blank" href="%s">here</a>.', 'content-egg'), 'https://partner.bol.com/account/affiliate/myAccount'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
@@ -28,13 +28,27 @@ class BolcomConfig extends AffiliateParserModuleConfig {
                     array(
                         'call' => array('\ContentEgg\application\helpers\FormValidator', 'required'),
                         'when' => 'is_active',
-                        'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'API Access Key'),
+                        'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Client ID'),
+                    ),
+                ),
+            ),
+            'client_secret' => array(
+                'title' => 'Client secret <span class="cegg_required">*</span>',
+                'description' => sprintf(__('You can find your Client secret <a target="_blank" href="%s">here</a>.', 'content-egg'), 'https://partner.bol.com/account/affiliate/myAccount'),
+                'callback' => array($this, 'render_password'),
+                'default' => '',
+                'validator' => array(
+                    'trim',
+                    array(
+                        'call' => array('\ContentEgg\application\helpers\FormValidator', 'required'),
+                        'when' => 'is_active',
+                        'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Client secret'),
                     ),
                 ),
             ),
             'SiteId' => array(
-                'title' => 'Site ID <span class="cegg_required">*</span>',
-                'description' => __('<a target="_blank" href="http://partnerprogramma.bol.com ">Sign up</a> for a partner program account. You can find your Bol.com site ID via <a target="_blank" href="https://partnerprogramma.bol.com/partner/affiliate/account.do">https://partnerprogramma.bol.com/partner/affiliate/account.do</a>.', 'content-egg'),
+                'title' => 'Website code <span class="cegg_required">*</span>',
+                'description' => sprintf(__('You can find your Website code <a target="_blank" href="%s">here</a>.', 'content-egg'), 'https://partner.bol.com/account/affiliate/myAccount'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
@@ -42,8 +56,16 @@ class BolcomConfig extends AffiliateParserModuleConfig {
                     array(
                         'call' => array('\ContentEgg\application\helpers\FormValidator', 'required'),
                         'when' => 'is_active',
-                        'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Site ID'),
+                        'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Website code'),
                     ),
+                ),
+            ),
+            'apikey' => array(
+                'title' => 'API Access Key (depricated)',
+                'callback' => array($this, 'render_input'),
+                'default' => '',
+                'validator' => array(
+                    'trim',
                 ),
             ),
             'entries_per_page' => array(
@@ -125,22 +147,20 @@ class BolcomConfig extends AffiliateParserModuleConfig {
                 ),
                 'default' => 'all',
             ),
-            /*
-              'offers' => array(
-              'title' => __('Offers', 'content-egg'),
-              'callback' => array($this, 'render_dropdown'),
-              'dropdown_options' => array(
-              'all' => __('All', 'content-egg'),
-              'cheapest' => __('Cheapest', 'content-egg'),
-              'secondhand' => __('Secondhand', 'content-egg'),
-              'newoffers' => __('New offers', 'content-egg'),
-              'bolcom' => __('Bol.com', 'content-egg'),
-              'bestoffer' => __('Best offer', 'content-egg'),
-              ),
-              'default' => 'bestoffer',
-              ),
-             * 
-             */
+            'offers' => array(
+                'title' => __('Offers', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'all' => __('All', 'content-egg'),
+                    'cheapest' => __('Cheapest', 'content-egg'),
+                    'secondhand' => __('Secondhand', 'content-egg'),
+                    'newoffers' => __('New offers', 'content-egg'),
+                    'bolcom' => 'Bol.com',
+                    'bestoffer' => __('Best offer', 'content-egg'),
+                    'newoffers,bolcom' => __('New offers', 'content-egg') . ' + Bol.com',
+                ),
+                'default' => 'bestoffer',
+            ),
             'sort' => array(
                 'title' => __('Sort', 'content-egg'),
                 'description' => __('The way the products are sorted', 'content-egg'),
@@ -160,11 +180,21 @@ class BolcomConfig extends AffiliateParserModuleConfig {
                 ),
                 'default' => '',
             ),
+            'description_type' => array(
+                'title' => __('Description type', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'summary' => __('Summary', 'content-egg'),
+                    'short' => __('Short description', 'content-egg'),
+                    'long' => __('Long description', 'content-egg'),
+                ),
+                'default' => 'summary',
+            ),
             'description_size' => array(
                 'title' => __('Trim description', 'content-egg'),
                 'description' => __('Description size in characters (0 - do not cut)', 'content-egg'),
                 'callback' => array($this, 'render_input'),
-                'default' => '300',
+                'default' => '0',
                 'validator' => array(
                     'trim',
                     'absint',
@@ -179,7 +209,11 @@ class BolcomConfig extends AffiliateParserModuleConfig {
                 'section' => 'default',
             ),
         );
-        return array_merge(parent::options(), $optiosn);
+
+        $parent = parent::options();
+        $options = array_merge($parent, $options);
+
+        return self::moveRequiredUp($options);
     }
 
 }

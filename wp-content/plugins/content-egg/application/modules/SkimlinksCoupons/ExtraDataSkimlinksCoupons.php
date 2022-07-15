@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\SkimlinksCoupons;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,8 +15,8 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataSkimlinksCoupons extends ExtraData {
 
-    public $offer_type;
-    public $merchant_details = array();
-    public $terms;
+	public $offer_type;
+	public $merchant_details = array();
+	public $terms;
 
 }

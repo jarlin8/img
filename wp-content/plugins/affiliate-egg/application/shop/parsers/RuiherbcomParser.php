@@ -31,6 +31,7 @@ class RuiherbcomParser extends MicrodataShopParser {
             $urls = array_slice($this->xpathArray(".//*[@class='absolute-link-wrapper']/a/@href"), 0, $max);
         if (!$urls)
             $urls = array_slice($this->xpathArray(".//*[contains(@class, 'product-link')]/a/@href"), 0, $max);
+        
         return $urls;
     }
 

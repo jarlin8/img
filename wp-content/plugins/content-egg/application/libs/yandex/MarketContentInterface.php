@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\libs\yandex;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 /**
  * MarketContentInterface
@@ -14,11 +14,11 @@ defined('\ABSPATH') || exit;
  */
 interface MarketContentInterface {
 
-    public function search($query, $params);
+	public function search( $query, $params );
 
-    public function details($model_id, $params = array());
+	public function details( $model_id, $params = array() );
 
-    public function opinions($model_id, $params = array());
+	public function opinions( $model_id, $params = array() );
 
-    public function offers($model_id, $params = array());
+	public function offers( $model_id, $params = array() );
 }

@@ -26,22 +26,29 @@ use ContentEgg\application\helpers\TemplateHelper;
                 break;
             case 'price':
                 if ($item['price'])
-                    echo TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode']);
+                    echo esc_html(TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode']));
                 break;
             case 'priceold':
-                echo TemplateHelper::formatPriceCurrency($item['priceOld'], $item['currencyCode']);
+                echo esc_html(TemplateHelper::formatPriceCurrency($item['priceOld'], $item['currencyCode']));
                 break;
             case 'currencycode':
                 echo \esc_html($item['currencyCode']);
                 break;
             case 'button':
-                echo '<span class="egg-container"><a' . TemplateHelper::printRel(false) . ' target="_blank" href="' . $item['url'] . '" class="btn btn-danger">' . TemplateHelper::buyNowBtnText(false, $item) . '</a></span>';
+                echo '<span class="egg-container"><a';
+                TemplateHelper::printRel();
+                echo ' target="_blank" href="' . esc_url_raw($item['url']) . '" class="btn btn-danger">';
+                TemplateHelper::buyNowBtnText(true, $item);
+                echo '</a></span>';
                 break;
             case 'stock_status':
-                echo TemplateHelper::getStockStatusStr($item);
+                echo esc_html(TemplateHelper::getStockStatusStr($item));
+                break;
+            case 'description':
+                echo wp_kses_post($item['description']);
                 break;
             case 'url':
-                echo $item['url'];
+                echo esc_url_raw($item['url']);
                 break;
             default:
                 break;

@@ -17,7 +17,7 @@ use ContentEgg\application\libs\amazon\AmazonLocales;
 class AmazonNoApiConfig extends AffiliateParserModuleConfig {
 
     const ALLOWED_LOCALES = array('us', 'ca', 'de', 'es', 'fr', 'in', 'it', 'uk');
-    
+
     public function options()
     {
         $options = array(
@@ -46,8 +46,7 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig {
             ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Number of results for one search query.', 'content-egg') . ' ' .
-                __('It needs a bit more time to get more than 10 results in one request', 'content-egg'),
+                'description' => __('Number of results for one search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -56,7 +55,7 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig {
                     array(
                         'call' => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
                         'arg' => 10,
-                        'message' => __('The field "Results" can not be more than 50.', 'content-egg'),
+                        'message' => __('The field "Results" can not be more than 10.', 'content-egg'),
                     ),
                 ),
                 'section' => 'default',
@@ -88,7 +87,7 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig {
                 ),
                 'default' => 'product',
                 'section' => 'default',
-            ),            
+            ),
             'save_img' => array(
                 'title' => __('Save images', 'content-egg'),
                 'description' => __('Save images to local server', 'content-egg')
@@ -143,6 +142,7 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig {
     {
         $locales = array_keys(self::locales());
         sort($locales);
+
         return array_combine($locales, array_map('strtoupper', $locales));
     }
 
@@ -162,10 +162,15 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig {
         foreach ($locales as $locale => $name)
         {
             if ($locale == $default)
+            {
                 continue;
+            }
             if (self::getInstance()->option('associate_tag_' . $locale))
+            {
                 $active[$locale] = $name;
+            }
         }
+
         return $active;
     }
 

@@ -2,6 +2,8 @@
 
 namespace Keywordrush\AffiliateEgg;
 
+defined('\ABSPATH') || exit;
+
 /**
  * LinkHandler class file
  *
@@ -75,6 +77,10 @@ class LinkHandler {
         if (!$deeplink)
         {
             return $url;
+        } elseif (substr(trim($deeplink), 0, 7) == '[regex]')
+        {
+            // regex preg_replace
+            return self::getRegexReplace($url, $deeplink);
         } elseif (substr(trim($deeplink), 0, 13) == '[profitshare]')
         {
             // ProfitShare link creator
@@ -108,6 +114,27 @@ class LinkHandler {
                 $deeplink = Cpa::deeplinkSetSubid($deeplink, $subid, $priority);
             return $deeplink . urlencode($url);
         }
+    }
+
+    public static function getRegexReplace($url, $regex)
+    {
+        $regex = trim($regex);
+
+        $parts = explode('][', $regex);
+        if (count($parts) != 3)
+            return $url;
+
+        $pattern = $parts[1];
+        $replacement = substr($parts[2], 0, -1);
+
+        // null character allows a premature regex end and "/../e" injection
+        if (strpos($pattern, chr(0)) !== false || !trim($pattern))
+            return $url;
+
+        if ($result = @preg_replace($pattern, $replacement, $url))
+            return $result;
+        else
+            return $url;
     }
 
     private static function getLocalRedirectUrl($id, $affegg_subid, $redirect)
@@ -296,7 +323,7 @@ class LinkHandler {
 
     public static function getMultiDeeplink($deeplink, $url)
     {
-        if (!strstr($deeplink, ';'))
+        if (!strstr($deeplink, ';') || strstr($deeplink, 'ad.doubleclick'))
             return $deeplink;
 
         $url_host = TextHelper::urlHost($url);

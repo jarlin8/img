@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\BingImages;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,16 +15,16 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataBingImages extends ExtraData {
 
-    public $thumbnailUrl;
-    public $datePublished;
-    public $contentSize;
-    public $encodingFormat;
-    public $hostPageDisplayUrl;
-    public $width;
-    public $height;
-    public $thumbnail;
-    public $imageInsightsToken;
-    public $imageId;
-    public $accentColor;
+	public $thumbnailUrl;
+	public $datePublished;
+	public $contentSize;
+	public $encodingFormat;
+	public $hostPageDisplayUrl;
+	public $width;
+	public $height;
+	public $thumbnail;
+	public $imageInsightsToken;
+	public $imageId;
+	public $accentColor;
 
 }

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\components;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 /**
  * ContentCoupon class file
@@ -13,11 +13,11 @@ defined('\ABSPATH') || exit;
  */
 class ContentCoupon extends Content {
 
-    public $code;
-    public $startDate;
-    public $endDate;
-    public $domain;
-    public $merchant;
-    public $logo;
+	public $code;
+	public $startDate;
+	public $endDate;
+	public $domain;
+	public $merchant;
+	public $logo;
 
 }

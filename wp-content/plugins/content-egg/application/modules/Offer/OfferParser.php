@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Offer;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\libs\ParserClient;
 
@@ -15,5 +15,5 @@ use ContentEgg\application\libs\ParserClient;
  *
  */
 class OfferParser extends ParserClient {
-    
+
 }

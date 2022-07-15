@@ -8,8 +8,8 @@ use Keywordrush\AffiliateEgg\TextHelper;
  * LdShopParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2018 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 abstract class LdShopParser extends ShopParser {
 
@@ -19,6 +19,7 @@ abstract class LdShopParser extends ShopParser {
     public function parseLdJson()
     {
         $lds = $this->xpathArray(".//script[@type='application/ld+json']", true);
+
         foreach ($lds as $ld)
         {
             $ld = TextHelper::fixHiddenCharacters($ld);
@@ -33,6 +34,9 @@ abstract class LdShopParser extends ShopParser {
             {
                 foreach ($data['@graph'] as $d)
                 {
+                    if (isset($d['@type']) && is_array($d['@type']))
+                        $d['@type'] = reset($d['@type']);
+                    
                     if (isset($d['@type']) && is_scalar($d['@type']) && (in_array($d['@type'], $this->product_types) || in_array(ucfirst(strtolower($d['@type'])), $this->product_types)))
                         $data = $d;
                 }
@@ -45,6 +49,7 @@ abstract class LdShopParser extends ShopParser {
                 }
             } elseif (isset($data[0]))
                 $data = $data[0];
+
 
             if (isset($data['@type']) && (in_array($data['@type'], $this->product_types) || in_array(ucfirst(strtolower($data['@type'])), $this->product_types)))
             {
@@ -86,6 +91,8 @@ abstract class LdShopParser extends ShopParser {
             return $this->ld_json['offers'][0]['lowPrice'];
         elseif (isset($this->ld_json['priceRange']))
             return $this->ld_json['priceRange'];
+        elseif (isset($this->ld_json['offers'][0]['priceSpecification']['price']))
+            return $this->ld_json['offers'][0]['priceSpecification']['price'];
     }
 
     public function parseManufacturer()
@@ -104,6 +111,8 @@ abstract class LdShopParser extends ShopParser {
                 return $this->ld_json['image']['url'];
             elseif (is_array($this->ld_json['image']) && isset($this->ld_json['image'][0]['url']))
                 return $this->ld_json['image'][0]['url'];
+            elseif (is_array($this->ld_json['image']) && isset($this->ld_json['image'][0]['contentURL']))
+                return $this->ld_json['image'][0]['contentURL'];
             elseif (is_array($this->ld_json['image']) && isset($this->ld_json['image'][0]['contentUrl']))
                 return $this->ld_json['image'][0]['contentUrl'];
             elseif (is_array($this->ld_json['image']) && is_array($this->ld_json['image']) && isset($this->ld_json['image'][0]))
@@ -124,7 +133,7 @@ abstract class LdShopParser extends ShopParser {
 
     public function parseExtra()
     {
-        $extra = array();
+        $extra = parent::parseExtra();
 
         $extra['comments'] = array();
         if (isset($this->ld_json['review']))
@@ -210,6 +219,8 @@ abstract class LdShopParser extends ShopParser {
             return $this->ld_json['offers'][0]['priceCurrency'];
         elseif (isset($this->ld_json['offers']['priceCurrency']))
             return $this->ld_json['offers']['priceCurrency'];
+        elseif (isset($this->ld_json['offers'][0]['priceSpecification']['priceCurrency']))
+            return $this->ld_json['offers'][0]['priceSpecification']['priceCurrency'];
         else
             return parent::getCurrency();
     }

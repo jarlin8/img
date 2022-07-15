@@ -108,6 +108,9 @@ class ParserManager {
         $url = str_replace('%LANG%', $lang, $url);
         // buecher.de search
         $url = str_replace('%BUECHERDE%', base64_encode('query=' . urlencode($keyword) . '&results=15'), $url);
+        // biougnach.ma
+        $url = str_replace('%BIOOUGNACH%', base64_encode(urlencode(urlencode($keyword))), $url);
+        
         return $this->parseCatalog($url, $max, self::HTTP_ARG_ID_SEARCH);
     }
 

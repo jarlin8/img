@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Pixabay;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,17 +15,17 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataPixabay extends ExtraData {
 
-    public $likes;
-    public $favorites;
-    public $views;
-    public $comments;
-    public $downloads;
-    public $previewURL;
-    public $imageWidth;
-    public $user_id;
-    public $user;
-    public $type;
-    public $userImageURL;
-    public $imageHeight;
+	public $likes;
+	public $favorites;
+	public $views;
+	public $comments;
+	public $downloads;
+	public $previewURL;
+	public $imageWidth;
+	public $user_id;
+	public $user;
+	public $type;
+	public $userImageURL;
+	public $imageHeight;
 
 }

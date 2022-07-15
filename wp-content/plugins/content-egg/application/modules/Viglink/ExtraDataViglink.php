@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Viglink;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,6 +15,6 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataViglink extends ExtraData {
 
-    public $country;
+	public $country;
 
 }

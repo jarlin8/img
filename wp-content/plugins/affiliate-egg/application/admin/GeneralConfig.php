@@ -166,9 +166,19 @@ class GeneralConfig extends Config {
                 ),
                 'section' => 'default',
             ),
+            'btn_text_buy_now' => array(
+                'title' => __('Buy now button text', 'affegg'),
+                'description' => sprintf(__('It will be used instead of "%s".', 'affegg'), __('Buy Now', 'affegg-tpl')),
+                'callback' => array($this, 'render_input'),
+                'default' => '',
+                'validator' => array(
+                    'strip_tags',
+                ),
+            ),            
             'price_history_days' => array(
                 'title' => __('Price history', 'affegg'),
-                'description' => __('How long save price history. 0 - deactivate price history.', 'affegg'),
+                'description' => __('How long save price history. 0 - deactivate price history.', 'affegg') . ' ' . 
+                 __('You can use tags: %DOMAIN%, %PRICE%.', 'affegg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 180,
                 'validator' => array(

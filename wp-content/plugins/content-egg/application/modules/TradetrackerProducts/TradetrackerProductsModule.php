@@ -15,7 +15,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class TradetrackerProductsModule extends AffiliateParserModule {
 
@@ -54,9 +54,12 @@ class TradetrackerProductsModule extends AffiliateParserModule {
         $options = array();
 
         if ($is_autoupdate)
+        {
             $options['limit'] = $this->config('entries_per_page_update');
-        else
+        } else
+        {
             $options['limit'] = $this->config('entries_per_page');
+        }
 
         $fields = array(
             'feedID',
@@ -70,7 +73,9 @@ class TradetrackerProductsModule extends AffiliateParserModule {
         foreach ($fields as $f)
         {
             if ($this->config($f))
+            {
                 $options[$f] = $this->config($f);
+            }
         }
 
         /*
@@ -78,14 +83,19 @@ class TradetrackerProductsModule extends AffiliateParserModule {
           $options['priceFrom'] = (float)$query_params['priceFrom'];
           if (!empty($query_params['priceTo']))
           $options['priceTo'] = (float)$query_params['priceTo'];
-         * 
+         *
          */
 
         $results = $this->getApiClient()->getFeedProducts($keyword, $options);
         if (!is_array($results))
+        {
             return array();
+        }
         if (!isset($results[0]) && isset($results['identifier']))
+        {
             $results = array($results);
+        }
+
         return $this->prepareResults($results);
     }
 
@@ -105,7 +115,9 @@ class TradetrackerProductsModule extends AffiliateParserModule {
                 }
             }
             if (!$is_dublicate)
+            {
                 $filtered[] = $r;
+            }
         }
 
         $data = array();
@@ -119,15 +131,21 @@ class TradetrackerProductsModule extends AffiliateParserModule {
                 $lower_name = strtolower($additional['name']);
                 $value = $additional['value'];
                 if ($name == 'brand')
+                {
                     $content->manufacturer = $value;
-                elseif (property_exists($content, $name))
+                } elseif (property_exists($content, $name))
+                {
                     $content->$name = $value;
-                elseif (property_exists($content, $lower_name))
+                } elseif (property_exists($content, $lower_name))
+                {
                     $content->$lower_name = $value;
-                elseif (property_exists($content->extra, $name))
+                } elseif (property_exists($content->extra, $name))
+                {
                     $content->extra->$name = $value;
-                else
+                } else
+                {
                     continue;
+                }
                 unset($r['additional'][$k]);
             }
             $content->extra->additional = $r['additional'];
@@ -143,16 +161,28 @@ class TradetrackerProductsModule extends AffiliateParserModule {
             $content->url = $r['productURL'];
 
             if ($this->config('subId'))
-                $content->url = \add_query_arg('r', $this->config('subId'), $content->url);
+            {
+                $query = parse_url($content->url, PHP_URL_QUERY);
+                parse_str($query, $params);
+                if (isset($params['tt']))
+                {
+                    $content->url = \add_query_arg('tt', $params['tt'] . $this->config('subId'), $content->url);
+                }
+            }
 
             $content->domain = TextHelper::parseDomain($content->url, 'r');
             if (!$content->domain)
+            {
                 $content->domain = TextHelper::parseDomain($content->url, 'u');
+            }
             $content->description = strip_tags($r['description']);
             if ($max_size = $this->config('description_size'))
+            {
                 $content->description = TextHelper::truncate($content->description, $max_size);
+            }
             $data[] = $content;
         }
+
         return $data;
     }
 
@@ -172,9 +202,13 @@ class TradetrackerProductsModule extends AffiliateParserModule {
             }
 
             if (!is_array($results))
+            {
                 return array();
+            }
             if (!isset($results[0]) && isset($results['identifier']))
+            {
                 $results = array($results);
+            }
 
             $results = $this->prepareResults($results);
 
@@ -190,16 +224,20 @@ class TradetrackerProductsModule extends AffiliateParserModule {
             if (!$product)
             {
                 if ($this->config('stock_status') == 'out_of_stock')
+                {
                     $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-                else
+                } else
+                {
                     $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_UNKNOWN;
+                }
                 continue;
             }
-            // assign new price   
+            // assign new price
             $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
             $items[$key]['price'] = $product->price;
             $items[$key]['url'] = $product->url;
         }
+
         return $items;
     }
 
@@ -209,6 +247,7 @@ class TradetrackerProductsModule extends AffiliateParserModule {
         {
             $this->api_client = new TradetrackerSoap($this->config('customerID'), $this->config('passphrase'), $this->config('locale'), $this->config('affiliateSiteID'));
         }
+
         return $this->api_client;
     }
 
@@ -232,19 +271,31 @@ class TradetrackerProductsModule extends AffiliateParserModule {
         $p2 = json_decode(json_encode($p2), true);
 
         if ($p1['url'] == $p2['url'])
+        {
             return true;
+        }
 
         if ($p1['domain'] && $p1['domain'] != $p2['domain'])
+        {
             return false;
+        }
 
         if ($p1['sku'] && $p1['sku'] == $p2['sku'])
+        {
             return true;
+        }
         if ($p1['ean'] && $p1['ean'] == $p2['ean'])
+        {
             return true;
+        }
         if ($p1['img'] && $p1['img'] == $p2['img'])
+        {
             return true;
+        }
         if ($p1['title'] == $p2['title'] && $p1['domain'] == $p2['domain'])
+        {
             return true;
+        }
 
         return false;
     }

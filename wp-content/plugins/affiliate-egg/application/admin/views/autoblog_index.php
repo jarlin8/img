@@ -36,19 +36,19 @@ if ($table->current_action() == 'run')
 <div class="wrap">
 
     <h2>
-<?php _e('Auto Bloging', 'affegg'); ?>
+        <?php _e('Auto Bloging', 'affegg'); ?>
         <a class="add-new-h2" href="<?php echo get_admin_url(get_current_blog_id(), 'admin.php?page=affiliate-egg-autoblog-edit'); ?>"><?php _e('Add Autoblog', 'affegg'); ?></a>
     </h2>
-<?php echo $message; ?>
+    <?php echo $message; ?>
 
     <div id="poststuff">    
         <p>
-<?php _e('With autobloging you can adjust automatic creation of posts. For a task of autobloging use the URL of shop catalog with the updated list of goods, for example, the section "new products ".', 'affegg'); ?>
+            <?php _e('With autobloging you can adjust automatic creation of posts. For a task of autobloging use the URL of shop catalog with the updated list of goods, for example, the section "new products ".', 'affegg'); ?>
         </p>        
     </div>    
 
     <form id="eggs-table" method="GET">
-        <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
-<?php $table->display() ?>
+        <input type="hidden" name="page" value="<?php echo \esc_attr($_REQUEST['page']); ?>"/>
+        <?php $table->display() ?>
     </form>
 </div>

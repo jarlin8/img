@@ -8,10 +8,10 @@ defined('\ABSPATH') || exit;
  * GrouponusParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class GrouponusParser extends ShopParser {
+class GrouponusParser extends LdShopParser {
 
     protected $charset = 'utf-8';
     protected $currency = 'USD';
@@ -38,18 +38,15 @@ class GrouponusParser extends ShopParser {
         return $urls;
     }
 
-    public function parseTitle()
-    {
-        return $this->xpathScalar(".//meta[@property='og:title']/@content");
-    }
-
     public function parseDescription()
     {
-        return $this->xpathScalar(".//div[@itemprop='description']");
+        return $this->xpathScalar(".//section[@id='deal-pitch']", true);
     }
 
     public function parsePrice()
     {
+        if ($p = parent::parsePrice())
+                return $p;
         if ($price = (float) preg_replace('/[^0-9\.]/', '', $this->xpathScalar(".//meta[@itemprop='price']/@content")))
             return $price;
         if ($price = (float) preg_replace('/[^0-9\.]/', '', $this->xpathScalar(".//meta[@itemprop='lowprice']/@content")))
@@ -62,7 +59,7 @@ class GrouponusParser extends ShopParser {
 
     public function parseOldPrice()
     {
-        return $this->xpathScalar(".//*[@class='pricing-options-wrapper']/div");
+        return $this->xpathScalar(array(".//*[@class='breakout-pricing']//div[@class='breakout-option-value']", ".//div[@class='breakout-pricing-messages']//div[@class='breakout-option-value']"));
     }
 
     public function parseManufacturer()
@@ -86,14 +83,6 @@ class GrouponusParser extends ShopParser {
         $extra['images'] = $this->xpathArray(".//ul[@class='gallery-thumbs']/li[@class='gallery-thumbnail']/img/@src");
         $extra['rating'] = TextHelper::ratingPrepare($this->xpathScalar(".//*[contains(@class, 'product-reviews-average-rating')]"));
         return $extra;
-    }
-
-    public function isInStock()
-    {
-        if ($this->parsePrice())
-            return true;
-        else
-            return false;
     }
 
     public function getCurrency()

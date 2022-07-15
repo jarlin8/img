@@ -8,8 +8,8 @@ use Keywordrush\AffiliateEgg\TextHelper;
  * ShopParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2014 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 abstract class ShopParser {
 
@@ -21,7 +21,7 @@ abstract class ShopParser {
     protected $dom;
     protected $url;
     protected $item = array();
-    protected $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:86.0) Gecko/20100101 Firefox/86.0';
+    protected $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:100.0) Gecko/20100101 Firefox/100.0';
     protected $headers = array();
     protected $http_arg_sets = array();
     protected $http_arg_set_id;
@@ -51,7 +51,11 @@ abstract class ShopParser {
 
     public function parseExtra()
     {
-        return array();
+        $extra = array();
+        if($features = $this->parseFeatures())
+            $extra['features'] = $features;
+        
+        return $extra;
     }
 
     public function parseImgLarge()
@@ -130,7 +134,11 @@ abstract class ShopParser {
         if ($this->item['old_price'] <= $this->item['price'])
             $this->item['old_price'] = 0;
 
-        $this->item['manufacturer'] = \wp_encode_emoji(\sanitize_text_field(html_entity_decode($this->parseManufacturer())));
+        $manufacturer = $this->parseManufacturer();
+        if (is_string($manufacturer))
+            $this->item['manufacturer'] = \wp_encode_emoji(\sanitize_text_field(html_entity_decode($manufacturer)));
+        else
+            $this->item['manufacturer'] = '';
         $comments_max_count = GeneralConfig::getInstance()->option('comments_max_count');
 
         $this->item['orig_url'] = $this->getUrl();
@@ -216,7 +224,7 @@ abstract class ShopParser {
     }
 
     public function restPostGet($url, $fix_encoding = true)
-    {
+    { 
         $url = \apply_filters('affegg_parse_product_url', $url);
 
         // Rectional between #! URL to _escaped_fragment_ URL
@@ -236,7 +244,7 @@ abstract class ShopParser {
             $ua = $user_agent;
         $args = array(
             'method' => 'GET',
-            'timeout' => 15,
+            'timeout' => 60,
             'redirection' => 5,
             'sslverify' => false,
             'user-agent' => $ua,
@@ -258,7 +266,12 @@ abstract class ShopParser {
 
         $is_proxy = CurlProxy::initProxy($url);
 
+        ScrapFactory::init();
+        
+        $url = \apply_filters('affegg_create_from_url', $url);
+        
         $response = \wp_remote_request($url, $args);
+
         if (\is_wp_error($response))
         {
             if ($is_proxy)
@@ -401,6 +414,69 @@ abstract class ShopParser {
 
         return $result;
     }
+    
+    public function getFeaturesXpath()
+    {
+        return array();
+    }
+    
+    public function parseFeatures()
+    {
+        if (!$xpaths = $this->getFeaturesXpath())
+            return array();
+
+        if (isset($xpaths['name']) || isset($xpaths['name-value']))
+            $xpaths = array($xpaths);
+
+        foreach ($xpaths as $xpath)
+        {
+            $names = $values = array();
+
+            if (isset($xpath['name-value']))
+            {
+                if (!$name_values = $this->xpathArray($xpath['name-value']))
+                    continue;
+
+                if (isset($xpath['separator']))
+                    $separator = $xpath['separator'];
+                else
+                    $separator = ':';
+
+                foreach ($name_values as $name_value)
+                {
+                    $parts = explode($separator, $name_value, 2);
+                    if (count($parts) !== 2)
+                        continue;
+
+                    $names[] = $parts[0];
+                    $values[] = $parts[1];
+                }
+            } elseif (isset($xpath['name']) && isset($xpath['value']))
+            {
+                $names = $this->xpathArray($xpath['name']);
+                $values = $this->xpathArray($xpath['value']);
+            }
+            
+            if (!$names || !$values || count($names) != count($values))
+                continue;
+
+            $features = array();
+            for ($i = 0; $i < count($names); $i++)
+            {
+                $feature = array();
+                $feature['name'] = ucfirst(\sanitize_text_field(trim($names[$i], " \r\n:-")));
+                $feature['value'] = trim(\sanitize_text_field($values[$i]), " \r\n:-");
+                if (in_array($feature['name'], array('Condition', 'Customer Reviews')))
+                    continue;
+                $features[] = $feature;
+            }
+
+            if ($features)
+                return $features;
+        }
+        return array();
+    }    
+
 
     /*
       public static function seveDebugFile($file_name, $contents)

@@ -5,11 +5,11 @@
     <?php endif; ?>
     <div class="wrap">
         <h2>
-            <?php _e('Content Egg Settings', 'content-egg'); ?>
+            <?php esc_html_e('Content Egg Settings', 'content-egg'); ?>
             <?php if (\ContentEgg\application\Plugin::isPro()): ?>
-            <span class="egg-label egg-label-pro">pro <small>v<?php echo \ContentEgg\application\Plugin::version(); ?></small></span>
+            <span class="egg-label egg-label-pro">pro <small>v<?php echo esc_html(\ContentEgg\application\Plugin::version()); ?></small></span>
             <?php else: ?>
-                <a target="_blank" class="page-title-action" href="<?php echo \ContentEgg\application\Plugin::pluginSiteUrl(); ?>">Go PRO</a>                
+                <a target="_blank" class="page-title-action" href="<?php echo esc_url_raw(\ContentEgg\application\Plugin::pluginSiteUrl()); ?>">Go PRO</a>
             <?php endif; ?>
         </h2>
 

@@ -13,7 +13,7 @@ use ContentEgg\application\libs\RestClient;
  * @link http://www.keywordrush.com/
  * @copyright Copyright &copy; 2017 keywordrush.com
  *
- * @link: https://partnerblog.bol.com/documentatie/open-api/
+ * @link: https://affiliate.bol.com/nl/api-documentatie
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 
@@ -35,12 +35,13 @@ class BolcomApi extends RestClient {
 
     /**
      * Search for items
-     * @link: https://partnerblog.bol.com/documentatie/open-api/handleiding/api-requests/catalog/get-catalogv4search/
+     * @link: https://affiliate.bol.com/nl/api-documentatie#get-catalog-v4-search
      */
     public function search($keywords, array $options)
     {
         $options['q'] = $keywords;
         $response = $this->restGet('/search', $options);
+
         return $this->_decodeResponse($response);
     }
 
@@ -51,9 +52,12 @@ class BolcomApi extends RestClient {
     {
         //The unique id for one or more products (comma separated).
         if (is_array($item_ids))
+        {
             $item_ids = join(',', $item_ids);
+        }
 
         $response = $this->restGet('/products/' . urlencode($item_ids), $options);
+
         return $this->_decodeResponse($response);
     }
 

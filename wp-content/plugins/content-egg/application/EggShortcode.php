@@ -57,7 +57,9 @@ class EggShortcode {
             'product' => '',
             'hide' => '',
             'btn_text' => '',
-            'add_query_arg' => '',            
+            'add_query_arg' => '',   
+            'sort' => '',
+            'order' => '',            
         );
         
         $allowed_atts = \apply_filters('cegg_module_shortcode_atts', $allowed_atts);
@@ -88,6 +90,17 @@ class EggShortcode {
             $a['products'] = TextHelper::getArrayFromCommaList($a['products']);
         if ($a['add_query_arg'])
             parse_str($a['add_query_arg'], $a['add_query_arg']);
+        $allowed_sort = array('price', 'discount', 'reverse');
+        $allowed_order = array('asc', 'desc');
+        $a['sort'] = strtolower($a['sort']);
+        $a['order'] = strtolower($a['order']);
+        if (!in_array($a['sort'], $allowed_sort))
+            $a['sort'] = '';
+        if (!in_array($a['order'], $allowed_order))
+            $a['order'] = '';
+        if ($a['sort'] == 'discount' && !$a['order'])
+            $a['order'] = 'desc';
+        
         if ($a['template'] && $a['module'])
         {
             $a['template'] = ModuleTemplateManager::getInstance($a['module'])->prepareShortcodeTempate($a['template']);

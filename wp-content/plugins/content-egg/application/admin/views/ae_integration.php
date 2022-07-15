@@ -3,7 +3,7 @@
     <div class="cegg-maincol">
     <?php endif; ?>
     <div class="wrap">
-        <h2><?php _e('Integration with Affiliate Egg', 'content-egg') ?></h2>
+        <h2><?php  esc_html_e('Integration with Affiliate Egg', 'content-egg') ?></h2>
         <?php settings_errors(); ?>
 
         <?php if (!ContentEgg\application\admin\AeIntegrationConfig::isAEIntegrationPosible()): ?>
@@ -19,16 +19,16 @@
             <p>
                 You can activate AE parsers as separate modules for Content Egg.
             </p>
-            <a target="_blank" href="https://ce-docs.keywordrush.com/modules/affiliate-egg-integration"><?php _e('Read more...', 'content-egg'); ?></a>
+            <a target="_blank" href="https://ce-docs.keywordrush.com/modules/affiliate-egg-integration"><?php esc_html_e('Read more...', 'content-egg'); ?></a>
         <?php endif; ?>
 
         <?php if (!ContentEgg\application\admin\AeIntegrationConfig::isAEIntegrationPosible()): ?>
-            <p>
-                <b><?php _e('Follow these steps to get started', 'content-egg'); ?>:</b>
+            <div>
+                <b><?php esc_html_e('Follow these steps to get started', 'content-egg'); ?>:</b>
             <ol>
                 <li><?php echo sprintf(__('Install and activate <a target="_blank" href="%s">Affiliate Egg Pro</a>', 'content-egg'), 'https://www.keywordrush.com/affiliateegg'); ?></li>
             </ol>
-            </p>
+            </div>
         <?php else: ?>
             <form action="options.php" method="POST">
                 <?php settings_fields($page_slug); ?>

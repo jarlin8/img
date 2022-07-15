@@ -6,8 +6,8 @@ namespace Keywordrush\AffiliateEgg; defined( '\ABSPATH' ) || exit;
  * TatacliqcomParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2021 keywordrush.com
  */
 class TatacliqcomParser extends ShopParser {
 
@@ -33,7 +33,7 @@ class TatacliqcomParser extends ShopParser {
         $keyword = $arr['text'];
         try
         {
-            $result = $this->requestGet('https://www.tataque.com/marketplacewebservices/v2/mpl/products/searchProducts/?searchText=' . urlencode($keyword) . '&isTextSearch=false&isFilter=false&page=0&isPwa=true&pageSize=40&typeID=all', false);
+            $result = $this->requestGet('https://www.tatacliq.com/marketplacewebservices/v2/mpl/products/searchProducts?searchText='. urlencode($keyword).'%3Arelevance%3AinStockFlag%3Atrue&isKeywordRedirect=false&isKeywordRedirectEnabled=true&channel=WEB&isMDE=true&isTextSearch=false&isFilter=false&qc=false&test=v1&page=0&isPwa=true&pageSize=40&typeID=all', false);
         } catch (\Exception $e)
         {
             return array();

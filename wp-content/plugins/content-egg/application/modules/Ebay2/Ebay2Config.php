@@ -126,6 +126,16 @@ class Ebay2Config extends AffiliateParserModuleConfig {
                 ),
                 'default' => '',
             ),
+            'priority_listing' => array(
+                'title' => __('Priority listings only', 'content-egg'),
+                'description' => __('Priority listings are a subset of eBay listings identified with a higher priority to promote and are eligible for a higher commission.', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'enabled' => __('Enabled', 'content-egg'),
+                    'disabled' => __('Disabled', 'content-egg'),
+                ),
+                'default' => 'disabled',
+            ),
             'category_id' => array(
                 'title' => __('Category ID', 'content-egg'),
                 'description' => __('The category ID is used to limit the results.', 'content-egg') . ' ' .
@@ -298,11 +308,22 @@ class Ebay2Config extends AffiliateParserModuleConfig {
                 'callback' => array($this, 'render_checkbox'),
                 'default' => false,
             ),
+            'image_size' => array(
+                'title' => __('Image size', 'content-egg'),
+                'description' => '',
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'small' => __('Small', 'content-egg'),
+                    'large' => __('Large', 'content-egg'),
+                ),
+                'default' => 'large',
+            ),
         );
         $parent = parent::options();
         $parent['ttl']['default'] = 28800;
         $parent['update_mode']['default'] = 'cron';
         $options = array_merge($parent, $options);
+
         return self::moveRequiredUp($options);
     }
 
@@ -311,8 +332,10 @@ class Ebay2Config extends AffiliateParserModuleConfig {
         // @link: https://developer.ebay.com/api-docs/buy/static/ref-marketplace-supported.html
         // Buy API Support by Marketplace
         return array(
+            'EBAY_AT' => 'AT',
             'EBAY_AU' => 'AU',
             'EBAY_CA' => 'CA',
+            'EBAY_CH' => 'CH',
             'EBAY_DE' => 'DE',
             'EBAY_ES' => 'ES',
             'EBAY_FR' => 'FR',
@@ -330,8 +353,10 @@ class Ebay2Config extends AffiliateParserModuleConfig {
     public static function getCurrencyByLocale($locale)
     {
         $currencies = array(
+            'EBAY_AT' => 'EUR',
             'EBAY_AU' => 'AUD',
             'EBAY_CA' => 'CAD',
+            'EBAY_CH' => 'CHF',
             'EBAY_DE' => 'EUR',
             'EBAY_ES' => 'EUR',
             'EBAY_FR' => 'EUR',
@@ -346,9 +371,12 @@ class Ebay2Config extends AffiliateParserModuleConfig {
         );
 
         if (isset($currencies[$locale]))
+        {
             return $currencies[$locale];
-        else
+        } else
+        {
             return 'USD';
+        }
     }
 
     public static function getDefaultLocale()

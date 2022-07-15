@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Feed\models;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\models\FeedProductModel;
 
@@ -15,9 +15,8 @@ use ContentEgg\application\models\FeedProductModel;
  */
 abstract class MyFeedProductModel extends FeedProductModel {
 
-    public function getDump()
-    {
-        return "CREATE TABLE " . $this->tableName() . " (
+	public function getDump() {
+		return "CREATE TABLE " . $this->tableName() . " (
                     id varchar(255) NOT NULL,
                     stock_status tinyint(1) DEFAULT 0,
                     price float(12,2) DEFAULT NULL,
@@ -32,5 +31,5 @@ abstract class MyFeedProductModel extends FeedProductModel {
                     KEY price (price),
                     FULLTEXT (title)
                     ) $this->charset_collate;";
-    }
+	}
 }

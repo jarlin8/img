@@ -16,14 +16,16 @@ use ContentEgg\application\components\LinkHandler;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class FeedModule extends AffiliateFeedParserModule {
 
     public function info()
     {
         if (!$name = FeedName::getInstance()->getName($this->getId()))
+        {
             $name = __('Add new', 'content-egg');
+        }
 
         return array(
             'name' => 'Feed:' . $name,
@@ -35,11 +37,11 @@ class FeedModule extends AffiliateFeedParserModule {
     {
         return '5.2.0';
     }
-    
+
     public function isFree()
     {
         return true;
-    }    
+    }
 
     public function getParserType()
     {
@@ -68,7 +70,9 @@ class FeedModule extends AffiliateFeedParserModule {
         $classname = '\\ContentEgg\\application\\modules\\Feed\\models\\MyFeed' . $id . 'ProductModel';
 
         if (!class_exists($classname, true))
+        {
             throw new \Exception('Model class does not exist.');
+        }
 
         return $classname::model();
     }
@@ -76,9 +80,12 @@ class FeedModule extends AffiliateFeedParserModule {
     public function isZippedFeed()
     {
         if ($this->config('archive_format') == 'zip')
+        {
             return true;
-        else
+        } else
+        {
             return false;
+        }
     }
 
     public function getFeedUrl()
@@ -86,62 +93,89 @@ class FeedModule extends AffiliateFeedParserModule {
         $url = $this->config('feed_url');
 
         if (!filter_var($url, FILTER_VALIDATE_URL))
+        {
             throw new \Exception('Invalid Feed URL');
+        }
 
         return $url;
     }
-    
+
     protected function feedProductPrepare(array $data)
     {
         $mapped_data = $this->mapProduct($data);
         $missed = array();
+        if (empty($mapped_data['description']))
+            $mapped_data['description'] = '';
         foreach (array_keys(FeedConfig::mappingFields()) as $field)
         {
             if (FeedConfig::isMappingFieldRequared($field) && !isset($mapped_data[$field]))
+            {
                 $missed[] = $field;
+            }
         }
         if ($missed)
+        {
             throw new \Exception(sprintf('Required mapping fields are missing in the feed: %s.', join(', ', $missed)));
+        }
 
         $product = array();
         $product['id'] = sanitize_text_field($mapped_data['id']);
         $product['title'] = \sanitize_text_field($mapped_data['title']);
 
         if (!$product['id'] || !$product['title'])
+        {
             return false;
+        }
 
         if (isset($mapped_data['sale price']) && (float) $mapped_data['sale price'])
-            $product['price'] = (float) $mapped_data['sale price'];
-        else
-            $product['price'] = (float) $mapped_data['price'];
+        {
+            $product['price'] = (float) TextHelper::parsePriceAmount($mapped_data['sale price']);
+        } else
+        {
+            $product['price'] = (float) TextHelper::parsePriceAmount($mapped_data['price']);
+        }
 
         $product['stock_status'] = ContentProduct::STOCK_STATUS_UNKNOWN;
+
         if (!empty($mapped_data['availability']))
         {
             $availability = strtolower($mapped_data['availability']);
             if (strstr($availability, 'out of stock') || strstr($availability, 'outofstock'))
+            {
                 $product['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            else
+            } else
+            {
                 $product['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-        } elseif (!empty($mapped_data['is in stock']))
+            }
+        } elseif (isset($mapped_data['is in stock']) && $mapped_data['is in stock'] !== '')
         {
             if (filter_var($mapped_data['is in stock'], FILTER_VALIDATE_BOOLEAN))
+            {
                 $product['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-            else
+            } else
+            {
                 $product['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+            }
         }
 
         if (isset($mapped_data['gtin']) && TextHelper::isEan($mapped_data['gtin']))
+        {
             $product['ean'] = $mapped_data['gtin'];
-        else
+        } else
+        {
             $product['ean'] = '';
+        }
 
         if (!empty($mapped_data['direct link']))
+        {
             $product['orig_url'] = $mapped_data['direct link'];
-        elseif ($orig_url = TextHelper::findOriginalUrl($mapped_data['affiliate link']))
+        } elseif ($orig_url = TextHelper::findOriginalUrl($mapped_data['affiliate link']))
+        {
             $product['orig_url'] = $orig_url;
-        else
+        } else
+        {
             $product['orig_url'] = $mapped_data['affiliate link'];
+        }
         $product['product'] = serialize($data);
 
         return $product;
@@ -152,27 +186,37 @@ class FeedModule extends AffiliateFeedParserModule {
         $this->maybeImportProducts();
 
         if ($is_autoupdate)
+        {
             $limit = $this->config('entries_per_page_update');
-        else
+        } else
+        {
             $limit = $this->config('entries_per_page');
+        }
 
         if (TextHelper::isEan($keyword))
+        {
             $results = $this->product_model->searchByEan($keyword, $limit);
-        elseif (filter_var($keyword, FILTER_VALIDATE_URL))
+        } elseif (filter_var($keyword, FILTER_VALIDATE_URL))
+        {
             $results = $this->product_model->searchByUrl($keyword, $this->config('partial_url_match'), $limit);
-        else
+        } else
         {
             $options = array();
             if (!empty($query_params['price_min']))
+            {
                 $options['price_min'] = (float) $query_params['price_min'];
+            }
             if (!empty($query_params['price_min']))
+            {
                 $options['price_max'] = (float) $query_params['price_max'];
+            }
 
             $results = $this->product_model->searchByKeyword($keyword, $limit, $options);
-            
         }
         if (!$results)
+        {
             return array();
+        }
 
         return $this->prepareResults($results);
     }
@@ -189,21 +233,27 @@ class FeedModule extends AffiliateFeedParserModule {
                 unset($items[$key]);
                 continue;
             }
-            
+
             $product = $this->product_model->searchById($item['unique_id']);
             if (!$product)
             {
                 if ($this->product_model->count())
+                {
                     $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+                }
                 continue;
             }
             if (!$r = unserialize($product['product']))
+            {
                 continue;
+            }
 
             $r = $this->mapProduct($r);
 
             if (isset($r['availability']))
+            {
                 $items[$key]['availability'] = $r['availability'];
+            }
 
             $items[$key]['stock_status'] = $product['stock_status'];
 
@@ -211,15 +261,19 @@ class FeedModule extends AffiliateFeedParserModule {
             {
                 $items[$key]['price'] = (float) $r['sale price'];
                 if (isset($r['price']) && (float) $r['price'] > $items[$key]['price'])
+                {
                     $items[$key]['priceOld'] = (float) $r['price'];
+                }
             } else
             {
                 $items[$key]['price'] = (float) $r['price'];
                 $items[$key]['priceOld'] = 0;
             }
-            
+
             if ($deeplink)
-                $items[$key]['url'] = LinkHandler::createAffUrl($items[$key]['orig_url'], $deeplink, $item);            
+            {
+                $items[$key]['url'] = LinkHandler::createAffUrl($items[$key]['orig_url'], $deeplink, $item);
+            }
         }
 
         return $items;
@@ -229,11 +283,13 @@ class FeedModule extends AffiliateFeedParserModule {
     {
         $data = array();
         $deeplink = $this->config('deeplink');
-        
+
         foreach ($results as $product)
         {
             if (!$r = unserialize($product['product']))
+            {
                 continue;
+            }
 
             $r = $this->mapProduct($r);
 
@@ -247,42 +303,74 @@ class FeedModule extends AffiliateFeedParserModule {
             {
                 $content->price = (float) $r['sale price'];
                 if (isset($r['price']) && (float) $r['price'] > $content->price)
+                {
                     $content->priceOld = (float) $r['price'];
+                }
             } else
+            {
                 $content->price = (float) $r['price'];
-            
+            }
+
+            if ($content->price)
+            {
+                $content->price = round($content->price, 2);
+            }
+
+            if ($content->priceOld)
+            {
+                $content->priceOld = round($content->priceOld, 2);
+            }
 
             if (isset($r['currency']) && strlen($r['currency']))
+            {
                 $content->currencyCode = $r['currency'];
-            else
+            } else
+            {
                 $content->currencyCode = $this->config('currency');
+            }
 
             if (!empty($r['description']) && $r['title'] != $r['description'])
+            {
                 $content->description = $r['description'];
+            }
 
             if (isset($r['brand']))
+            {
                 $content->manufacturer = $r['brand'];
+            }
             if (isset($r['category']))
+            {
                 $content->category = $r['category'];
+            }
             if (isset($r['availability']))
+            {
                 $content->availability = $r['availability'];
+            }
             if (isset($r['image ​​link']) && filter_var($r['image ​​link'], FILTER_VALIDATE_URL))
+            {
                 $content->img = $r['image ​​link'];
+            }
 
             $content->orig_url = $product['orig_url'];
             $content->stock_status = $product['stock_status'];
             $content->ean = $product['ean'];
 
             if ($content->orig_url != $content->url)
+            {
                 $content->domain = TextHelper::getHostName($content->orig_url);
-            else
+            } else
+            {
                 $content->domain = $this->config('domain');
+            }
 
             if ($deeplink)
+            {
                 $content->url = LinkHandler::createAffUrl($content->orig_url, $deeplink, (array) $content);
-            
+            }
+
             $data[] = $content;
         }
+
         return $data;
     }
 
@@ -309,15 +397,18 @@ class FeedModule extends AffiliateFeedParserModule {
     public function viewDataPrepare($data)
     {
         if (!$deeplink = $this->config('deeplink'))
+        {
             return parent::viewDataPrepare($data);
-        
+        }
+
         foreach ($data as $key => $d)
         {
             $data[$key]['url'] = LinkHandler::createAffUrl($d['orig_url'], $deeplink, $d);
         }
+
         return parent::viewDataPrepare($data);
-    }    
-    
+    }
+
     public function mapProduct(array $data)
     {
         $mapped_data = array();
@@ -325,10 +416,12 @@ class FeedModule extends AffiliateFeedParserModule {
         foreach ($mapping as $field => $feed_field)
         {
             if (isset($data[$feed_field]))
+            {
                 $mapped_data[$field] = $data[$feed_field];
+            }
         }
+
         return $mapped_data;
     }
-    
 
 }

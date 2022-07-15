@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\LomadeeCoupons;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,8 +15,8 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataLomadeeCoupons extends ExtraData {
 
-    public $category = array();
-    public $store = array();
-    public $discount;
+	public $category = array();
+	public $store = array();
+	public $discount;
 
 }

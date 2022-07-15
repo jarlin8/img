@@ -15,6 +15,7 @@ class FnaccomParser extends LdShopParser {
 
     protected $charset = 'utf-8';
     protected $currency = 'EUR';
+    protected $user_agent = array('ia_archiver');
 
     public function parseCatalog($max)
     {

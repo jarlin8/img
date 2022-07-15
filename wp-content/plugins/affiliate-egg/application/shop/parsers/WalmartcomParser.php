@@ -107,6 +107,7 @@ class WalmartcomParser extends MicrodataShopParser {
         return $extra;
     }
 
+    /*
     public function isInStock()
     {
         if ($this->parsePrice())
@@ -114,5 +115,7 @@ class WalmartcomParser extends MicrodataShopParser {
         else
             return false;
     }
+     * 
+     */
 
 }

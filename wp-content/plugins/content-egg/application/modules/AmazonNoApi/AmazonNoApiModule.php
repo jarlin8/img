@@ -61,24 +61,34 @@ class AmazonNoApiModule extends AffiliateParserModule {
     public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
     {
         if (!empty($query_params['locale']) && AmazonLocales::getLocale($query_params['locale']))
+        {
             $locale = $query_params['locale'];
-        else
+        } else
+        {
             $locale = $this->config('locale');
+        }
 
         if ($is_autoupdate)
+        {
             $limit = $this->config('entries_per_page_update');
-        else
+        } else
+        {
             $limit = $this->config('entries_per_page');
+        }
 
         if ($asin = AmazonModule::parseAsinFromUrl($keyword))
+        {
             $keyword = $asin;
+        }
 
         $client = $this->getApiClient();
         $client->setLocale($locale);
         $results = $client->search($keyword);
 
         if (!isset($results['results']) || !is_array($results['results']))
+        {
             return array();
+        }
 
         return $this->prepareResults(array_slice($results['results'], 0, $limit), $locale);
     }
@@ -112,6 +122,7 @@ class AmazonNoApiModule extends AffiliateParserModule {
             $items[$key]['img'] = $product->img;
             $items[$key]['extra'] = ArrayHelper::object2Array($product->extra);
         }
+
         return $items;
     }
 
@@ -122,6 +133,7 @@ class AmazonNoApiModule extends AffiliateParserModule {
         {
             $data[] = $this->prepareResult($r, $locale);
         }
+
         return $data;
     }
 
@@ -152,20 +164,26 @@ class AmazonNoApiModule extends AffiliateParserModule {
         $extra->addToCartUrl = $this->generateAddToCartUrl($locale, $extra->ASIN);
 
         if ($this->config('link_type') == 'add_to_cart')
+        {
             $content->url = $extra->addToCartUrl;
-        else
+        } else
+        {
             $content->url = \add_query_arg('tag', $this->getAssociateTagForLocale($locale), $content->orig_url);
+        }
 
         ExtraDataAmazonNoApi::fillAttributes($extra, $r);
 
         $content->extra = $extra;
+
         return $content;
     }
 
     private function getApiClient()
     {
         if ($this->api_client === null)
+        {
             $this->api_client = new Adsystem();
+        }
 
         return $this->api_client;
     }
@@ -173,9 +191,12 @@ class AmazonNoApiModule extends AffiliateParserModule {
     public function getAssociateTagForLocale($locale)
     {
         if ($locale == $this->config('locale'))
+        {
             return $this->config('associate_tag');
-        else
+        } else
+        {
             return $this->config('associate_tag_' . $locale);
+        }
     }
 
     /**
@@ -206,12 +227,17 @@ class AmazonNoApiModule extends AffiliateParserModule {
     private static function parseAsinFromUrl($url)
     {
         if (!filter_var($url, FILTER_VALIDATE_URL))
+        {
             return false;
+        }
         $regex = '~/(?:exec/obidos/ASIN/|o/|gp/product/|gp/offer-listing/|(?:(?:[^"\'/]*)/)?dp/|)(B[0-9]{2}[0-9A-Z]{7}|[0-9]{9}(X|0-9])|[0-9]{10})(?:(?:/|\?|\#)(?:[^"\'\s]*))?~isx';
         if (preg_match($regex, $url, $matches))
+        {
             return $matches[1];
-        else
+        } else
+        {
             return false;
+        }
     }
 
     private function generateAddToCartUrl($locale, $asin)
@@ -228,9 +254,12 @@ class AmazonNoApiModule extends AffiliateParserModule {
             $tag_id = $this->getAssociateTagForLocale($d['extra']['locale']);
 
             if (strstr($data[$key]['url'], 'AssociateTag='))
+            {
                 $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'AssociateTag', $tag_id);
-            else
+            } else
+            {
                 $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'tag', $tag_id);
+            }
         }
 
         return parent::viewDataPrepare($data);

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\LomadeeProducts;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -12,10 +12,10 @@ use ContentEgg\application\components\ExtraData;
  * @author keywordrush.com <support@keywordrush.com>
  * @link http://www.keywordrush.com/
  * @copyright Copyright &copy; 2017 keywordrush.com
- * 
+ *
  */
 class ExtraDataLomadeeProducts extends ExtraData {
 
-    public $store = array();
+	public $store = array();
 
 }

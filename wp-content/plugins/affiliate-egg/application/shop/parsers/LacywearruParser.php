@@ -72,7 +72,7 @@ class LacywearruParser extends ShopParser {
         return $img;
     }
 
-    protected function parseFeatures()
+    public function parseFeatures()
     {
         $features = array();
         $names = $this->xpathArray(".//div[@class='product_info']//table//tr/td[1]");

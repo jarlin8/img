@@ -10,6 +10,7 @@ use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\components\ModuleApi;
 use ContentEgg\application\components\LManager;
+use ContentEgg\application\components\ReviewNotice;
 use ContentEgg\application\components\FeaturedImage;
 use ContentEgg\application\ModuleUpdateScheduler;
 
@@ -18,7 +19,7 @@ use ContentEgg\application\ModuleUpdateScheduler;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class PluginAdmin {
 
@@ -45,11 +46,14 @@ class PluginAdmin {
         {
             \add_filter('plugin_row_meta', array($this, 'add_plugin_row_meta'), 10, 2);
         }
-        
+
         AdminNotice::getInstance()->adminInit();
         if (!Plugin::isFree())
             LManager::getInstance()->adminInit();
-        
+
+        if (Plugin::isFree())
+            ReviewNotice::getInstance()->adminInit();
+
         if (Plugin::isFree() || (Plugin::isPro() && Plugin::isActivated()) || Plugin::isEnvato())
         {
             GeneralConfig::getInstance()->adminInit();
@@ -64,23 +68,19 @@ class PluginAdmin {
             new ToolsController;
             new ImportExportController;
             AeIntegrationConfig::getInstance()->adminInit();
-            ModuleUpdateScheduler::addScheduleEvent();         
+            ModuleUpdateScheduler::addScheduleEvent();
         }
 
         if (Plugin::isEnvato() && !Plugin::isActivated() && !\get_option(Plugin::slug . '_env_install'))
             EnvatoConfig::getInstance()->adminInit();
         elseif (Plugin::isPro())
             LicConfig::getInstance()->adminInit();
-        
+
         if (Plugin::isPro() && Plugin::isActivated())
         {
             new \ContentEgg\application\Autoupdate(Plugin::version(), plugin_basename(\ContentEgg\PLUGIN_FILE), Plugin::getApiBase(), Plugin::slug);
         }
-        
-        
-        //$module = ModuleManager::factory('Feed__2');
-        //$module->importProducts('http://localhost:8888/feed-test.xml');
-        
+
     }
 
     function admin_load_scripts()
@@ -88,7 +88,7 @@ class PluginAdmin {
         if ($GLOBALS['pagenow'] != 'admin.php' || empty($_GET['page']))
             return;
 
-        $page_pats = explode('-', $_GET['page']);
+        $page_pats = explode('-', sanitize_key(wp_unslash($_GET['page'])));
 
         if (count($page_pats) < 2 || $page_pats[0] . '-' . $page_pats[1] != 'content-egg')
             return;
@@ -98,9 +98,8 @@ class PluginAdmin {
             'are_you_shure' => __('Are you sure?', 'content-egg'),
             'sitelang' => GeneralConfig::getInstance()->option('lang'),
         ));
-        
-        \wp_enqueue_style('contentegg-admin', \ContentEgg\PLUGIN_RES . '/css/admin.css', null, '' . Plugin::version());        
 
+        \wp_enqueue_style('contentegg-admin', \ContentEgg\PLUGIN_RES . '/css/admin.css', null, '' . Plugin::version());
     }
 
     public function add_plugin_row_meta(array $links, $file)
@@ -118,7 +117,7 @@ class PluginAdmin {
 
     public function add_admin_menu()
     {
-        $icon_svg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAUCAYAAABvVQZ0AAAACXBIWXMAAC4jAAAuIwF4pT92AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA1dJREFUeNqNVElMU1EUfQShIIkYNUETBkUIRoNGRUwxYWMUQoxGwSnCBkIUcGRuS39/p99+OkBpy9gCZSodgIImQIACKtGtG+OGhIXRBFmQ4EKjpt77BVILDSzu4v/33rnnnnvuJTRNE/+QQFAQWoGIGCtrSZGeTeMPtDPZVlMpTVHEXFlDpBIJdy/w7RYgjHphHamSy2KSPLaXofPu73unHcthXtdq1Izz882WxnwNJJJSWwG3gOHFhxrVWfJ25Gfcq15vsVadIabpqGqF7MiVTnMVeTfqS+9v02trRYQOYPgfkEpUR14winiy4PFl9LbKdbVCwgJLOZSnFItJQ42APFErUyCR73KnqUIL59uCIW0E2zdpXzzltNrwoX8pGxJggkIde5EsjPgAOJGBNxJ/MPzALFkWY0norGtNXicmcjG1rcj4DxOlOiydcaM9MyiLBMrdBJNBGVKKCgn1utZutDTeD6QfCKaEZNVy2X4y5/5VWs8kM/DNgeEh6pJrbri1Z8a5isD4zYqChxqiuaKGnHBZB9P625o4dhtg9UIROTbSPX56sMOKmjxo0l7Na264nWcOHvkG7e0zDoslcmrwiwKYQWWEKEAbGoTmTTu+3THprmOJicPd49FTjqXoSXvQgEYtHZoY+Ai6vRbIpBFYKseqnFHEhMy6f0D9KagHWgGT7Cb04Dc5kMGp4Vr9SKM6iWAVjDwGL+C47BQySsI1LhfkeK5SxnHMtAIhecwyx8n80J+nauVR5XpndgoZJKUAFN757hl1OYZqASFoOpGUDoc2/75r1F3DsiW7AMOkIM9htEcZyyRpoFxuvtAKsaM9s/Ee27QeyqaDbAV/r+FWyWk3FKOdsJNocu4AfVOoZy+Q92O+gkZNJjp8Y3y2A1LAnGJFPK9zhd/bqtz0GXcBmOCP9L42DW4FAL6EgGqRmBMamWJgl1GGeribMtzl5HldK/A/bGP0NrPhUOMlfl8riwxTXVZbiUZ17t8CEBMVaETRkvACgyb74KT9A2/OvQIbJkEdOOibgOsMi3QsP2GsZzrC61o+MDHwCYz5JnasZwHMuhjpdX49b+8w18GO8wcKumkNUKIJ1vMzsEqmrUWUPNztSRnqcmVZTWXQ+ciW8hpOAipAz788QXuyosK+HQAAAABJRU5ErkJggg==';
+        $icon_svg = 'data:image/svg+xml;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAUCAYAAABvVQZ0AAAACXBIWXMAAC4jAAAuIwF4pT92AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA1dJREFUeNqNVElMU1EUfQShIIkYNUETBkUIRoNGRUwxYWMUQoxGwSnCBkIUcGRuS39/p99+OkBpy9gCZSodgIImQIACKtGtG+OGhIXRBFmQ4EKjpt77BVILDSzu4v/33rnnnnvuJTRNE/+QQFAQWoGIGCtrSZGeTeMPtDPZVlMpTVHEXFlDpBIJdy/w7RYgjHphHamSy2KSPLaXofPu73unHcthXtdq1Izz882WxnwNJJJSWwG3gOHFhxrVWfJ25Gfcq15vsVadIabpqGqF7MiVTnMVeTfqS+9v02trRYQOYPgfkEpUR14winiy4PFl9LbKdbVCwgJLOZSnFItJQ42APFErUyCR73KnqUIL59uCIW0E2zdpXzzltNrwoX8pGxJggkIde5EsjPgAOJGBNxJ/MPzALFkWY0norGtNXicmcjG1rcj4DxOlOiydcaM9MyiLBMrdBJNBGVKKCgn1utZutDTeD6QfCKaEZNVy2X4y5/5VWs8kM/DNgeEh6pJrbri1Z8a5isD4zYqChxqiuaKGnHBZB9P625o4dhtg9UIROTbSPX56sMOKmjxo0l7Na264nWcOHvkG7e0zDoslcmrwiwKYQWWEKEAbGoTmTTu+3THprmOJicPd49FTjqXoSXvQgEYtHZoY+Ai6vRbIpBFYKseqnFHEhMy6f0D9KagHWgGT7Cb04Dc5kMGp4Vr9SKM6iWAVjDwGL+C47BQySsI1LhfkeK5SxnHMtAIhecwyx8n80J+nauVR5XpndgoZJKUAFN757hl1OYZqASFoOpGUDoc2/75r1F3DsiW7AMOkIM9htEcZyyRpoFxuvtAKsaM9s/Ee27QeyqaDbAV/r+FWyWk3FKOdsJNocu4AfVOoZy+Q92O+gkZNJjp8Y3y2A1LAnGJFPK9zhd/bqtz0GXcBmOCP9L42DW4FAL6EgGqRmBMamWJgl1GGeribMtzl5HldK/A/bGP0NrPhUOMlfl8riwxTXVZbiUZ17t8CEBMVaETRkvACgyb74KT9A2/OvQIbJkEdOOibgOsMi3QsP2GsZzrC61o+MDHwCYz5JnasZwHMuhjpdX49b+8w18GO8wcKumkNUKIJ1vMzsEqmrUWUPNztSRnqcmVZTWXQ+ciW8hpOAipAz788QXuyosK+HQAAAABJRU5ErkJggg==';
         $title = 'Content Egg';
         if (Plugin::isPro())
             $title .= ' Pro';

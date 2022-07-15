@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2020 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class ProxyConfig extends Config {
 
@@ -31,6 +31,9 @@ class ProxyConfig extends Config {
     protected function options()
     {
         $options = array(
+            
+        
+            
             'proxies' => array(
                 'title' => __('Proxy List', 'affegg'),
                 'description' => sprintf(__('Сomma-separated list of proxies  in the form of %s, eg: %s.', 'affegg'), 'user:password@proxyserver:proxyport', 'socks4://11.22.33.44:1080,http://10.20.30.40:8080'),

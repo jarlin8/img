@@ -13,8 +13,8 @@ use ContentEgg\application\AutoblogScheduler;
  * AutoblogController class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class AutoblogController {
 
@@ -81,7 +81,7 @@ class AutoblogController {
 
     public function actionIndex()
     {
-        if (!empty($_GET['action']) && $_GET['action'] == 'run')
+        if (!empty($_GET['action']) && $_GET['action'] == 'run' && !empty($_GET['id']))
         {
             @set_time_limit(180);
             AutoblogModel::model()->run((int) $_GET['id']);
@@ -99,8 +99,6 @@ class AutoblogController {
         else
             $batch = false;
 
-        $_POST = array_map('stripslashes_deep', $_POST);
-
         $default = array(
             'id' => 0,
             'name' => '',
@@ -111,6 +109,7 @@ class AutoblogController {
             'user_id' => \get_current_user_id(),
             'template_body' => '',
             'template_title' => '%KEYWORD%',
+            'template_slug' => '',
             'keywords' => array(),
             'category' => \get_option('default_category'),
             'include_modules' => array(),
@@ -130,34 +129,34 @@ class AutoblogController {
         $message = '';
         $notice = '';
 
-        if (!empty($_POST['nonce']) && \wp_verify_nonce($_POST['nonce'], basename(__FILE__)) && !empty($_POST['item']))
+        if (!empty($_POST['nonce']) && \wp_verify_nonce(sanitize_key($_POST['nonce']), basename(__FILE__)) && !empty($_POST['item']))
         {
+            $pitem = isset($_POST['item']) ? wp_unslash($_POST['item']) : array(); // phpcs:ignore
             $item = array();
-            $item['id'] = (int) $_POST['item']['id'];
-            $item['name'] = trim(strip_tags($_POST['item']['name']));
-            $item['status'] = absint($_POST['item']['status']);
-            $item['keywords_per_run'] = absint($_POST['item']['keywords_per_run']);
-            $item['run_frequency'] = absint($_POST['item']['run_frequency']);
-            $item['post_status'] = absint($_POST['item']['post_status']);
-            $item['user_id'] = absint($_POST['item']['user_id']);
-            $item['template_body'] = trim(\wp_kses_post($_POST['item']['template_body']));
-            $item['template_title'] = trim(\wp_strip_all_tags($_POST['item']['template_title']));
-            $item['post_type'] = (isset($_POST['item']['post_type'])) ? $_POST['item']['post_type'] : null;
-            $item['category'] = (isset($_POST['item']['category'])) ? (int) $_POST['item']['category'] : null;
-            $item['include_modules'] = (isset($_POST['item']['include_modules'])) ? $_POST['item']['include_modules'] : array();
-            $item['exclude_modules'] = (isset($_POST['item']['exclude_modules'])) ? $_POST['item']['exclude_modules'] : array();
-            $item['required_modules'] = (isset($_POST['item']['required_modules'])) ? $_POST['item']['required_modules'] : array();
-            $item['autoupdate_modules'] = (isset($_POST['item']['autoupdate_modules'])) ? $_POST['item']['autoupdate_modules'] : array();
-            $item['min_modules_count'] = absint($_POST['item']['min_modules_count']);
-            $item['keywords'] = (isset($_POST['item']['keywords'])) ? explode("\r\n", $_POST['item']['keywords']) : null;
-            $item['custom_field_names'] = (isset($_POST['item']['custom_field_names'])) ? $_POST['item']['custom_field_names'] : array();
-            $item['custom_field_values'] = (isset($_POST['item']['custom_field_values'])) ? $_POST['item']['custom_field_values'] : array();
-            $item['main_product'] = (isset($_POST['item']['main_product'])) ? $_POST['item']['main_product'] : 'min_price';
-            $item['tags'] = (isset($_POST['item']['tags'])) ? TextHelper::commaList($_POST['item']['tags']) : '';
-            $item['config'] = $_POST['item']['config'];
-
-            if (isset($_POST['item']['product_condition']))
-                $item['product_condition'] = $_POST['item']['product_condition'];
+            $item['id'] = isset($pitem['id']) ? absint($pitem['id']) : 0;
+            $item['name'] = isset($pitem['name']) ? \sanitize_text_field($pitem['name']) : '';
+            $item['status'] = isset($pitem['status']) ? absint($pitem['status']) : '';
+            $item['keywords_per_run'] = isset($pitem['keywords_per_run']) ? absint($pitem['keywords_per_run']) : 1;
+            $item['run_frequency'] = isset($pitem['run_frequency']) ? absint($pitem['run_frequency']) : '';
+            $item['post_status'] = isset($pitem['post_status']) ? absint($pitem['post_status']) : '';
+            $item['user_id'] = isset($pitem['user_id']) ? absint($pitem['user_id']) : '';
+            $item['template_body'] = isset($pitem['template_body']) ? \wp_kses_post($pitem['template_body']) : '';
+            $item['template_title'] = isset($pitem['template_title']) ? trim(\sanitize_text_field($pitem['template_title'])) : '';
+            $item['template_slug'] = isset($pitem['template_slug']) ? trim(\sanitize_text_field($pitem['template_slug'])) : '';
+            $item['post_type'] = isset($pitem['post_type']) ? sanitize_key($pitem['post_type']) : null;
+            $item['category'] = isset($pitem['category']) ? intval($pitem['category']) : null;
+            $item['include_modules'] = isset($pitem['include_modules']) ? array_map('sanitize_text_field', $pitem['include_modules']) : array();
+            $item['exclude_modules'] = isset($pitem['exclude_modules']) ? array_map('sanitize_text_field', $pitem['exclude_modules']) : array();
+            $item['required_modules'] = isset($pitem['required_modules']) ? array_map('sanitize_text_field', $pitem['required_modules']) : array();
+            $item['autoupdate_modules'] = isset($pitem['autoupdate_modules']) ? array_map('sanitize_text_field', $pitem['autoupdate_modules']) : array();
+            $item['min_modules_count'] = isset($pitem['min_modules_count']) ? absint($pitem['min_modules_count']) : '';
+            $item['keywords'] = isset($pitem['keywords']) ? array_map('sanitize_text_field', explode("\r\n", $pitem['keywords'])) : null;
+            $item['custom_field_names'] = isset($pitem['custom_field_names']) ? array_map('sanitize_key', $pitem['custom_field_names']) : array();
+            $item['custom_field_values'] = isset($pitem['custom_field_values']) ? array_map('sanitize_text_field', $pitem['custom_field_values']) : array();
+            $item['main_product'] = isset($pitem['main_product']) ? sanitize_key($pitem['main_product']) : 'min_price';
+            $item['tags'] = isset($pitem['tags']) ? sanitize_text_field(TextHelper::commaList($pitem['tags'])) : '';
+            $item['config'] = isset($pitem['config']) ? $pitem['config'] : '';
+            $item['product_condition'] = isset($pitem['product_condition']) ? sanitize_text_field($pitem['product_condition']) : '';
 
             $redirect_url = \get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-autoblog');
             if ($batch)
@@ -181,7 +180,7 @@ class AutoblogController {
             }
 
             // redirect to table list
-            \wp_redirect($redirect_url);
+            \wp_safe_redirect($redirect_url);
             exit;
         } else
         {
@@ -262,15 +261,13 @@ class AutoblogController {
         if (empty($_FILES['item']['name']) || empty($_FILES['item']['name']['keywords_file']))
             return false;
 
-        $file_name = $_FILES['item']['name']['keywords_file'];
-        $file_path = $_FILES['item']['tmp_name']['keywords_file'];
+        $file_name = sanitize_text_field(wp_unslash($_FILES['item']['name']['keywords_file']));
 
         // Get the file type of the upload        
         $supported_types = array('text/csv', 'text/plain');
         $arr_file_type = \wp_check_filetype(basename($file_name));
         $uploaded_type = $arr_file_type['type'];
 
-        // Check if the type is supported. If not, throw an error.
         if (!in_array($uploaded_type, $supported_types))
             return false;
 
@@ -369,6 +366,21 @@ class AutoblogController {
             unset($item['batch']);
         }
         PluginAdmin::getInstance()->render('_metabox_autoblog', array('item' => $item, 'batch' => $batch));
+    }
+
+    private static function createTable()
+    {
+        $models = array('AutoblogModel');
+        $sql = '';
+        foreach ($models as $model)
+        {
+            $m = "\\ContentEgg\\application\\models\\" . $model;
+            $sql .= $m::model()->getDump();
+            $sql .= "\r\n";
+        }
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+        dbDelta($sql);
     }
 
 }

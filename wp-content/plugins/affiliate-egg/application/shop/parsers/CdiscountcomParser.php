@@ -20,6 +20,7 @@ class CdiscountcomParser extends ShopParser {
         'Accept-Language' => 'en-us,en;q=0.5',
         'Cache-Control' => 'no-cache',
         'Connection' => 'keep-alive',
+        'Cookie' => 'challenge=JmNaL4p84LHEfek6eFD6LdahZYzEHwUXJOnnw9EMa2oklVY3FP3IuFr3HljUDvRFqokjUxNeV21bJtgn8_9j-zKiwH2D5746DDILG02pXTgoAKFFj7ogIkqecVnbbyP9PqJZkaQCb6RfZy8Z_wxbl7RjihG9yd2BOvlzQqoDN5BXepF6lB6QQRYREAgVLbgDKB6GQFleujc1i5SY-BJOGg; VisitContextCookie=hWznjkPj8yTwTgXsZ5LjDpF-duoAWM32HlfmN9JNZh3J_-hrTnHKcg; mssctse=W2dNXeEyrPIvX7HFSL5dTzau94EAVMqy7Xxdg1QRiXGajH0s_qkpsQCipC2md9XoYZpb49MZLOs; _$culture=CultureName__fr-FR__; CookieId=CookieId=210623131112XSNXFUME&IsA=0; _$dtype=t:d; cache_cdn=; AMCV_6A63EE6A54FA13E60A…000%7C; s_nr=1624446673484-New; s_pv=F-HP15SFQ2004NF%3AHP%20PC%20Portable%2015s-fq2004nf%20-%2015%2C6%22%20HD%20-%20i3-1115G4%20-%20RAM%204Go%20-%20Stockage%20SSD%20128Go%20-%20Windows%2010%20S%20-%20AZERTY; s_cc=true; AMCVS_6A63EE6A54FA13E60A4C98A7%40AdobeOrg=1; _cs_c=3; _cs_cvars=%7B%7D; _cs_id=eacec16f-5ced-aefb-e679-9ae1cdf063a7.1624446673.1.1624446673.1624446673.1590586488.1658610673163.Lax.0; _cs_s=1.1; TBMCookie_6223335112164439712=610068001624446672/GCJzJXp0gAGsYqPc12/L+uCUeM=; ___utmvm=###########',
     );
 
     public function parseCatalog($max)

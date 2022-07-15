@@ -1,6 +1,7 @@
 <?php
 
 namespace Keywordrush\AffiliateEgg;
+defined('\ABSPATH') || exit;
 
 class AffiliateEgg_Widget extends \WP_Widget {
 

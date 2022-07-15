@@ -4,7 +4,9 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\helpers\TemplateHelper;
 
 if (TemplateHelper::isModuleDataExist($items, 'Amazon', 'AmazonNoApi'))
+{
     \wp_enqueue_script('cegg-frontend', \ContentEgg\PLUGIN_RES . '/js/frontend.js', array('jquery'));
+}
 ?>
 
 <?php if ($title): ?>
@@ -20,16 +22,21 @@ if (TemplateHelper::isModuleDataExist($items, 'Amazon', 'AmazonNoApi'))
             <div class="row">
                 <div class="col-md-12">
                     <div class="cegg-mb25">
-                        <?php $this->renderPartialModule('_item_details_top', array('Flipkart'), array('item' => $item)); ?>                            
+                        <?php $this->renderPartialModule('_item_details_top', array('Flipkart'), array('item' => $item)); ?>
                         <?php $this->renderBlock('item_features', array('item' => $item)); ?>
                         <?php if ($item['description']): ?>
-                            <p><?php echo $item['description']; ?></p>
-                        <?php endif; ?>                    
-                        <?php $this->renderPartialModule('_item_details_bottom', array('Envato', 'Udemy'), array('item' => $item)); ?>                            
+                            <p><?php echo wp_kses_post($item['description']); ?></p>
+                        <?php endif; ?>
+                        <?php
+                        $this->renderPartialModule('_item_details_bottom', array(
+                            'Envato',
+                            'Udemy'
+                                ), array('item' => $item));
+                        ?>
                         <?php $this->renderBlock('item_reviews', array('item' => $item)); ?>
                     </div>
                 </div>
-            </div>    
+            </div>
         </div>
     </div>
 <?php endforeach; ?>

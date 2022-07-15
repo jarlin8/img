@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Daisycon\models;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\models\FeedProductModel;
 
@@ -15,14 +15,12 @@ use ContentEgg\application\models\FeedProductModel;
  */
 class DaisyconProductModel extends FeedProductModel {
 
-    public function tableName()
-    {
-        return $this->getDb()->prefix . 'cegg_daisycon_product';
-    }
+	public function tableName() {
+		return $this->getDb()->prefix . 'cegg_daisycon_product';
+	}
 
-    public function getDump()
-    {
-        return "CREATE TABLE " . $this->tableName() . " (
+	public function getDump() {
+		return "CREATE TABLE " . $this->tableName() . " (
                     id varchar(255) NOT NULL,
                     stock_status tinyint(1) DEFAULT 0,
                     price float(12,2) DEFAULT NULL,
@@ -37,11 +35,10 @@ class DaisyconProductModel extends FeedProductModel {
                     KEY price (price),
                     FULLTEXT (title)
                     ) $this->charset_collate;";
-    }
+	}
 
-    public static function model($className = __CLASS__)
-    {
-        return parent::model($className);
-    }
+	public static function model( $className = __CLASS__ ) {
+		return parent::model( $className );
+	}
 
 }

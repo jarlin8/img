@@ -55,7 +55,7 @@ class ProductSearchWidget extends CEWidget {
         $this->beforeWidget($args, $instance);
 
         // Use current theme search form if it exists
-        echo self::getSearchForm();
+        echo self::getSearchForm(); // phpcs:ignore
 
         $this->afterWidget($args, $instance);
     }

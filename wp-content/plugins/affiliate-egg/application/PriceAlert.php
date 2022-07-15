@@ -1,6 +1,7 @@
 <?php
 
 namespace Keywordrush\AffiliateEgg;
+defined('\ABSPATH') || exit;
 
 /**
  * PriceAlert class file

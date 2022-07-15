@@ -29,7 +29,7 @@ if (!$title)
         <div class="row">
             <div class="col-sm-6 text-center cegg-image-container cegg-mb20">
                 <?php if ($item['img']): ?>
-                    <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo $item['url']; ?>">                    
+                    <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>">                    
                         <?php TemplateHelper::displayImage($item, 350, 350); ?>                        
                     </a>
                 <?php endif; ?>
@@ -40,10 +40,10 @@ if (!$title)
                 <div class="list-group cegg-mt10">
 
                     <?php foreach ($all_items as $key => $item): ?>    
-                        <a<?php TemplateHelper::printRel(); ?> class="list-group-item" target="_blank" href="<?php echo $item['url']; ?>">
+                        <a<?php TemplateHelper::printRel(); ?> class="list-group-item" target="_blank" href="<?php echo esc_url_raw($item['url']); ?>">
                             <?php echo \esc_html(TemplateHelper::getMerhantName($item)); ?>
                             <?php if ($item['price']): ?>
-                                <span<?php if ($item['stock_status'] != -1) echo ' style="background-color: ' . TemplateHelper::getPriceColor() . '"'; ?> class="cegg-price-badge"><?php echo TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode']); ?></span>
+                                <span<?php if ($item['stock_status'] != -1) echo ' style="background-color: ' . esc_attr(TemplateHelper::getPriceColor()) . '"'; ?> class="cegg-price-badge"><?php echo esc_html(TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode'])); ?></span>
                             <?php endif; ?>
                         </a>
                     <?php endforeach; ?>            
@@ -52,7 +52,7 @@ if (!$title)
 
                 <?php if ($amazon_last_updated): ?>
                     <div class="cegg-font60 cegg-lineheight15 text-right">
-                        <?php echo sprintf(TemplateHelper::__('Last Amazon price update was: %s'), $amazon_last_updated); ?>
+                        <?php echo esc_html(sprintf(TemplateHelper::__('Last Amazon price update was: %s'), $amazon_last_updated)); ?>
                         <?php TemplateHelper::printAmazonDisclaimer(); ?>
                     </div>
                 <?php endif; ?>                     

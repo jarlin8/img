@@ -6,11 +6,11 @@ defined('\ABSPATH') || exit;
 
 /**
  * Currency class file
- * 
+ *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
- * 
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
+ *
  */
 class CurrencyHelper {
 
@@ -26,6 +26,7 @@ class CurrencyHelper {
         {
             self::$instance = new CurrencyHelper($locale);
         }
+
         return self::$instance;
     }
 
@@ -99,6 +100,7 @@ class CurrencyHelper {
                     'fr' => 'right',
                     'it' => 'right',
                     'fi' => 'right',
+                    'sk' => 'right',
                 ),
                 'thousand_sep' => '.',
                 'decimal_sep' => ',',
@@ -528,8 +530,47 @@ class CurrencyHelper {
                 'decimal_sep' => '.',
                 'num_decimals' => 0,
                 'name' => 'Philippine Peso',
-            ),            
-            
+            ),
+            'JOD' => array(
+                'currency_symbol' => 'JOD',
+                'currency_pos' => 'right',
+                'thousand_sep' => ',',
+                'decimal_sep' => '.',
+                'num_decimals' => 2,
+                'name' => 'Jordanian Dinar',
+            ),
+            'NOK' => array(
+                'currency_symbol' => 'NOK',
+                'currency_pos' => 'left',
+                'thousand_sep' => ',',
+                'decimal_sep' => '.',
+                'num_decimals' => 2,
+                'name' => 'Norske kroner',
+            ),
+            'NZD' => array(
+                'currency_symbol' => 'NZ $',
+                'currency_pos' => 'left',
+                'thousand_sep' => ',',
+                'decimal_sep' => '.',
+                'num_decimals' => 2,
+                'name' => 'New Zealand dollar',
+            ),
+            'LKR' => array(
+                'currency_symbol' => 'Rs',
+                'currency_pos' => 'left',
+                'thousand_sep' => ',',
+                'decimal_sep' => '.',
+                'num_decimals' => 2,
+                'name' => 'Sri Lankan Rupee',
+            ),
+            'ZAR' => array(
+                'currency_symbol' => 'R',
+                'currency_pos' => 'left',
+                'thousand_sep' => ',',
+                'decimal_sep' => '.',
+                'num_decimals' => 2,
+                'name' => 'South African Rand',
+            ),
         );
     }
 
@@ -546,23 +587,35 @@ class CurrencyHelper {
     private function getValue($currency, $key, $default = null)
     {
         if (isset($this->currencies[$currency]) && isset($this->currencies[$currency][$key]))
+        {
             $value = $this->currencies[$currency][$key];
-        else
+        } else
+        {
             $value = null;
+        }
 
         if (!is_null($value) && is_scalar($value) && $currency == 'MXN')
+        {
             return $value;
+        }
 
         if (is_array($value) && isset($value[$this->locale]))
+        {
             return $value[$this->locale];
-        elseif (isset($this->locales[$this->locale]) && isset($this->locales[$this->locale][$key]))
+        } elseif (isset($this->locales[$this->locale]) && isset($this->locales[$this->locale][$key]))
+        {
             return $this->locales[$this->locale][$key];
-        elseif (is_array($value))
-            return reset($value); // first value
+        } elseif (is_array($value))
+        {
+            return reset($value);
+        } // first value
         elseif (is_scalar($value) && !is_null($value))
+        {
             return $value;
-        else
+        } else
+        {
             return $default;
+        }
     }
 
     public function currencyFormat($amount, $currency, $thousand_sep = null, $decimal_sep = null, $before_symbol = '', $after_symbol = '')
@@ -604,11 +657,18 @@ class CurrencyHelper {
     public function numberFormat($number, $currency, $thousand_sep = null, $decimal_sep = null, $num_decimals = null)
     {
         if (!$thousand_sep)
+        {
             $thousand_sep = $this->getValue($currency, 'thousand_sep', ',');
+        }
         if (!$decimal_sep)
+        {
             $decimal_sep = $this->getValue($currency, 'decimal_sep', '.');
+        }
         if (!$num_decimals)
+        {
             $num_decimals = $this->getValue($currency, 'num_decimals', 2);
+        }
+
         return number_format((float) $number, absint($num_decimals), $decimal_sep, $thousand_sep);
     }
 
@@ -616,6 +676,7 @@ class CurrencyHelper {
     {
         $list = array_keys(self::currencies());
         sort($list);
+
         return $list;
     }
 
@@ -640,7 +701,9 @@ class CurrencyHelper {
             {
                 $results = TextHelper::unserialize_xml(\wp_remote_retrieve_body($response));
                 if (!isset($results['Cube']['Cube']['Cube']))
+                {
                     return 0;
+                }
                 foreach ($results['Cube']['Cube']['Cube'] as $r)
                 {
                     $rates[$r['@attributes']['currency']] = (float) $r['@attributes']['rate'];
@@ -650,13 +713,18 @@ class CurrencyHelper {
         }
 
         if ($from == 'EUR' && isset($rates[$to]))
+        {
             return $rates[$to];
-        elseif ($to == 'EUR' && isset($rates[$from]))
+        } elseif ($to == 'EUR' && isset($rates[$from]))
+        {
             return 1 / $rates[$from];
-        elseif (isset($rates[$from]) && isset($rates[$to]))
+        } elseif (isset($rates[$from]) && isset($rates[$to]))
+        {
             return $rates[$to] / $rates[$from];
-        else
+        } else
+        {
             return 0;
+        }
     }
 
     public static function queryCurrencyRate($from, $to)
@@ -667,12 +735,18 @@ class CurrencyHelper {
     public static function getCurrencyRate($from, $to)
     {
         if ($from == 'RUR')
+        {
             $from = 'RUB';
+        }
         if ($to == 'RUR')
+        {
             $to = 'RUB';
+        }
 
         if ($rate = \apply_filters('content_egg_currency_rate', 0, $from, $to))
+        {
             return $rate;
+        }
 
         $transient_name = 'currency-rate-' . $from . $to;
         if (!isset(self::$currencyRates[$transient_name]))
@@ -685,6 +759,7 @@ class CurrencyHelper {
             }
             self::$currencyRates[$transient_name] = $rate;
         }
+
         return self::$currencyRates[$transient_name];
     }
 

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\TradedoublerCoupons;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,16 +15,16 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataTradedoublerCoupons extends ExtraData {
 
-    public $programId;
-    public $programName;
-    public $voucherTypeId;
-    public $siteSpecific;
-    public $landingUrl;
-    public $discountAmount;
-    public $isPercentage;
-    public $publisherInformation;
-    public $languageId;
-    public $exclusive;
-    public $currencyId;
+	public $programId;
+	public $programName;
+	public $voucherTypeId;
+	public $siteSpecific;
+	public $landingUrl;
+	public $discountAmount;
+	public $isPercentage;
+	public $publisherInformation;
+	public $languageId;
+	public $exclusive;
+	public $currencyId;
 
 }

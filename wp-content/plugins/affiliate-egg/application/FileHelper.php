@@ -1,6 +1,7 @@
 <?php
 
 namespace Keywordrush\AffiliateEgg;
+defined('\ABSPATH') || exit;
 
 /**
  * FileHelper class file

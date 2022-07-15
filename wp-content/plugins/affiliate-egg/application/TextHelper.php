@@ -2,6 +2,8 @@
 
 namespace Keywordrush\AffiliateEgg;
 
+defined('\ABSPATH') || exit;
+
 /**
  * TextHelper class file
  *
@@ -138,6 +140,7 @@ class TextHelper {
 
     public static function ratingPrepare($rating, $min_rating = 1, $max_rating = 5)
     {
+        $rating = (float) $rating;
         $rating = abs(round($rating));
         if ($rating < $min_rating || $rating > $max_rating)
             return null;
@@ -297,6 +300,18 @@ class TextHelper {
     static public function removeExtraBreaks($str)
     {
         return trim(preg_replace("/(\r\n)+/i", "\r\n", $str));
+    }
+
+    static public function getQueryVar($name, $url)
+    {
+        if (!$query = parse_url($url, PHP_URL_QUERY))
+            return null;
+
+        parse_str($query, $vars);
+        if (isset($vars[$name]))
+            return $vars[$name];
+        else
+            return null;
     }
 
 }

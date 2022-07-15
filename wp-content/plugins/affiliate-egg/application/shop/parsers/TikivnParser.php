@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class TikivnParser extends LdShopParser {
 
@@ -34,6 +34,15 @@ class TikivnParser extends LdShopParser {
         return $urls;
     }
 
+    public function parseDescription()
+    {
+        $path = array(
+            ".//div[@class='content']//div[contains(@class, 'ToggleContent__Wrapper-sc')]",
+            ".//div[@class='summary']//div[@class='group border-top']",
+        );
+        return $this->xpathScalar($path, true);
+    }
+
     public function parseOldPrice()
     {
         if (preg_match('/,"list_price":(\d+),"/', $this->dom->saveHTML(), $matches))
@@ -51,9 +60,11 @@ class TikivnParser extends LdShopParser {
     {
         $extra = parent::parseExtra();
 
-        $names = $this->xpathArray(".//div[contains(@class, 'ProductDescription__Wrapper')]//table//tr/td[1]");
-        $values = $this->xpathArray(".//div[contains(@class, 'ProductDescription__Wrapper')]//table//tr/td[2]");
+        $names = $this->xpathArray(".//div[contains(@class, 'style__Wrapper-')]//table//tr/td[1]");
+        $values = $this->xpathArray(".//div[contains(@class, 'style__Wrapper-')]//table//tr/td[2]");
+
         $feature = array();
+        $extra['features'] = array();
         for ($i = 0; $i < count($names); $i++)
         {
             if (!empty($values[$i]))
@@ -62,9 +73,9 @@ class TikivnParser extends LdShopParser {
                 $feature['value'] = \sanitize_text_field($values[$i]);
                 $extra['features'][] = $feature;
             }
-
-            return $extra;
         }
+
+        return $extra;
     }
 
 }

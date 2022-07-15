@@ -87,7 +87,7 @@ class BlockShortcode {
         if ($a['add_query_arg'])
             parse_str($a['add_query_arg'], $a['add_query_arg']);
 
-        $allowed_sort = array('price');
+        $allowed_sort = array('price', 'discount', 'reverse');
         $allowed_order = array('asc', 'desc');
         $a['sort'] = strtolower($a['sort']);
         $a['order'] = strtolower($a['order']);
@@ -95,6 +95,8 @@ class BlockShortcode {
             $a['sort'] = '';
         if (!in_array($a['order'], $allowed_order))
             $a['order'] = '';
+        if ($a['sort'] == 'discount' && !$a['order'])
+            $a['order'] = 'desc';
 
         if ($a['modules'])
         {
@@ -151,21 +153,15 @@ class BlockShortcode {
         }
 
         if ($headers && !empty($headers['shortcoded']))
-        {
-            // convert string to boolean
             $a['shortcoded'] = filter_var($headers['shortcoded'], FILTER_VALIDATE_BOOLEAN);
-        }
 
-        // Module IDs from shortcode param. Validated.
         if ($a['modules'])
             $module_ids = $a['modules'];
         else
             $module_ids = ModuleManager::getInstance()->getParserModulesIdList(true);
 
         if ($supported_module_ids)
-        {
             $module_ids = array_intersect($module_ids, $supported_module_ids);
-        }
 
         return ModuleViewer::getInstance()->viewBlockData($module_ids, $post_id, $a, $content);
     }

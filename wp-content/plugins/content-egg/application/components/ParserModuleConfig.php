@@ -96,13 +96,16 @@ abstract class ParserModuleConfig extends ModuleConfig {
 
         return array_merge(parent::options(), $options);
     }
-    
+
     public function checkRequirements($value)
     {
         if ($requirements = $this->getModuleInstance()->requirements())
+        {
             return false;
-        else
+        } else
+        {
             return true;
+        }
     }
 
     protected static function moveRequiredUp(array $options)
@@ -112,8 +115,10 @@ abstract class ParserModuleConfig extends ModuleConfig {
         foreach ($options as $key => $option)
         {
             if (strpos($option['title'], '*'))
+            {
                 $keys[] = $key;
-            
+            }
+
             $options[$key]['title'] = str_replace('**', '', $option['title']);
         }
 
@@ -125,6 +130,7 @@ abstract class ParserModuleConfig extends ModuleConfig {
         }
 
         $res = array_merge($res, $options);
+
         return $res;
     }
 

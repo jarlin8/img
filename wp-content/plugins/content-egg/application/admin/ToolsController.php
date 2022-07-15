@@ -9,7 +9,6 @@ use ContentEgg\application\helpers\FileHelper;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\components\ModuleManager;
-use ContentEgg\application\helpers\InputHelper;
 
 /**
  * ToolsController class file
@@ -88,7 +87,7 @@ class ToolsController {
         }
         $filename = 'subscribers-' . date('d-m-Y') . '.csv';
         FileHelper::sendDownloadHeaders($filename);
-        echo FileHelper::array2Csv($csv_arr);
+        echo FileHelper::array2Csv($csv_arr); // phpcs:ignore
         exit;
     }
 
@@ -98,7 +97,7 @@ class ToolsController {
             die('You do not have permission to view this page.');
 
         if (isset($_GET['module']))
-            $module_id = TextHelper::clear($_GET['module']);
+            $module_id = TextHelper::clear(\sanitize_text_field(wp_unslash($_GET['module'])));
         else
             die('Module param can not be empty.');
 
@@ -133,7 +132,7 @@ class ToolsController {
         }
         $filename = $module_id . '-data-' . date('d-m-Y') . '.csv';
         FileHelper::sendDownloadHeaders($filename);
-        echo FileHelper::array2Csv($csv_arr);
+        echo FileHelper::array2Csv($csv_arr); // phpcs:ignore
         exit;
     }
 
@@ -143,15 +142,18 @@ class ToolsController {
             die('You do not have permission to view this page.');
 
         if (isset($_GET['module']))
-            $module_id = TextHelper::clear($_GET['module']);
+            $module_id = TextHelper::clear(\sanitize_text_field(wp_unslash($_GET['module'])));
         else
             die('Module param can not be empty.');
 
         if (!ModuleManager::getInstance()->moduleExists($module_id))
             die('The module does not exist.');
 
-        $field = InputHelper::get('field', 'url');
-
+        if (!empty($_GET['field']))
+            $field = sanitize_key(wp_unslash($_GET['field']));
+		else
+			$field = 'url';
+		
         $module = ModuleManager::getInstance()->factory($module_id);
         $model = $module->getProductModel();
 
@@ -164,7 +166,8 @@ class ToolsController {
 
         $filename = $module->getName() . '-' . $field . '-' . date('d-m-Y') . '.txt';
         FileHelper::sendDownloadHeaders($filename);
-        echo join("\r\n", $results);
+	    $results = array_map('sanitize_text_field', $results);
+        echo join("\r\n", $results); // phpcs:ignore
         exit;
     }
 

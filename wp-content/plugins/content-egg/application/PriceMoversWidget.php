@@ -17,8 +17,8 @@ use ContentEgg\application\components\ContentProduct;
  * PriceMoversWidget class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class PriceMoversWidget extends CEWidget {
 
@@ -52,8 +52,11 @@ class PriceMoversWidget extends CEWidget {
 
     public function settings($force = false)
     {
+        /*
         if (!$force && (empty($GLOBALS['pagenow']) || ($GLOBALS['pagenow'] != 'widgets.php' && $GLOBALS['pagenow'] != 'admin-ajax.php')))
             return array();
+         * 
+         */
 
         return
                 array(
@@ -127,13 +130,14 @@ class PriceMoversWidget extends CEWidget {
         if (!$tpl_manager->isTemplateExists($instance['template']))
             return;
 
-        echo $tpl_manager->render($instance['template'], array('items' => $items, 'is_shortcode' => false, 'btn_text' => ''));
+        echo $tpl_manager->render($instance['template'], array('items' => $items, 'is_shortcode' => false, 'btn_text' => '')); // phpcs:ignore
 
         $this->afterWidget($args, $instance);
     }
 
     private function getItems(array $instance)
     {
+
         $cache_key = $this->getCacheKey($instance);
         $items = $this->getCache($cache_key);
         if ($items === null)

@@ -12,6 +12,7 @@ use ContentEgg\application\helpers\ArrayHelper;
 use ContentEgg\application\components\BlockTemplateManager;
 use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\components\ContentProduct;
+use ContentEgg\application\helpers\TemplateHelper;
 
 /**
  * ModuleViewer class file
@@ -163,6 +164,15 @@ class ModuleViewer {
                 }
             }
         }
+        
+        // sort
+        if (!empty($params['sort']))
+        {
+            if ($params['sort'] == 'reverse')
+                $data = array_reverse ($data);
+            elseif ($params['sort'] == 'price' || $params['sort'] == 'discount')
+                $data = TemplateHelper::sortByPrice($data, $params['order'], $params['sort']);
+        }
 
         $module = ModuleManager::factory($module_id);
         $keyword = \get_post_meta($post_id, ContentManager::META_PREFIX_KEYWORD . $module->getId(), true);
@@ -276,6 +286,8 @@ class ModuleViewer {
             if (!isset($params['shortcoded']) || (bool) $params['shortcoded'])
                 Shortcoded::getInstance($post_id)->setShortcodedModule($module_id);
         }
+        
+        
         if (!$data)
             return;
 

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\CjProducts;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,33 +15,33 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataCjProducts extends ExtraData {
 
-    public $advertiserId;
-    public $advertiserName;
-    public $advertiserCategory;
-    public $catalogId;
-    public $isbn;
-    public $manufacturerSku;
-    public $sku;
-    public $upc;
-    // new GraphQl API
-    public $id;
-    public $adId;
-    public $gtin;
-    public $lastUpdated;
-    public $itemListId;
-    public $salePriceEffectiveDateStart;
-    public $salePriceEffectiveDateEnd;
-    public $targetCountry;
-    public $availabilityDate;
-    public $shipping = array();
-    public $color;
-    public $condition;
-    public $energyEfficiencyClass;
-    public $energyEfficiencyClassMax;
-    public $energyEfficiencyClassMin;
-    public $expirationDate;
-    public $mpn;
-    public $unitPricingBaseMeasure;
-    public $unitPricingMeasure;
+	public $advertiserId;
+	public $advertiserName;
+	public $advertiserCategory;
+	public $catalogId;
+	public $isbn;
+	public $manufacturerSku;
+	public $sku;
+	public $upc;
+	// new GraphQl API
+	public $id;
+	public $adId;
+	public $gtin;
+	public $lastUpdated;
+	public $itemListId;
+	public $salePriceEffectiveDateStart;
+	public $salePriceEffectiveDateEnd;
+	public $targetCountry;
+	public $availabilityDate;
+	public $shipping = array();
+	public $color;
+	public $condition;
+	public $energyEfficiencyClass;
+	public $energyEfficiencyClassMax;
+	public $energyEfficiencyClassMin;
+	public $expirationDate;
+	public $mpn;
+	public $unitPricingBaseMeasure;
+	public $unitPricingMeasure;
 
 }

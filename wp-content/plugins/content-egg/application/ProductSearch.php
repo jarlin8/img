@@ -51,7 +51,7 @@ class ProductSearch extends VirtualPage {
 
     public static function viewSearchFrom($atts, $content = "")
     {
-        echo ProductSearchWidget::getSearchForm();
+        echo ProductSearchWidget::getSearchForm(); // phpcs:ignore
     }
 
     public function getSlug()

@@ -7,7 +7,6 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\Plugin;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\helpers\TextHelper;
-use ContentEgg\application\helpers\InputHelper;
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\libs\KeywordDensity;
 use ContentEgg\application\models\AutoblogModel;
@@ -88,20 +87,17 @@ class PrefillController {
         if (empty($_POST['post_id']))
             throw new \Exception("Post ID is undefined.");
 
-        $module_id = TextHelper::clear($_POST['module_id']);
-        $post_id = (int) $_POST['post_id'];
-        $keyword_source = InputHelper::post('keyword_source');
-        $autoupdate = InputHelper::post('autoupdate', false);
-        $autoupdate = filter_var($autoupdate, FILTER_VALIDATE_BOOLEAN);
-        $keyword_count = (int) InputHelper::post('keyword_count');
-        $minus_words = TextHelper::commaList(InputHelper::post('minus_words'));
-        $custom_field_names = InputHelper::post('custom_field_names', array());
-        $custom_field_values = InputHelper::post('custom_field_values', array());
+        $module_id = TextHelper::clear(sanitize_text_field(wp_unslash($_POST['module_id'])));
+        $post_id = intval($_POST['post_id']);
+        $keyword_source = isset($_POST['keyword_source']) ? sanitize_text_field(wp_unslash($_POST['keyword_source'])) : '';
+        $autoupdate = isset($_POST['autoupdate']) ? sanitize_text_field(wp_unslash($_POST['autoupdate'])) : false;
+        $autoupdate = filter_var($autoupdate, FILTER_VALIDATE_BOOLEAN);      
+        $keyword_count = isset($_POST['keyword_count']) ? intval(wp_unslash($_POST['keyword_count'])) : 5;
+        $minus_words = isset($_POST['minus_words']) ? TextHelper::commaList(sanitize_text_field(wp_unslash($_POST['minus_words']))) : '';
+        $custom_field_names = isset($_POST['custom_field_names']) ? array_map('sanitize_text_field', wp_unslash($_POST['custom_field_names'])) : array();
+        $custom_field_values = isset($_POST['custom_field_values']) ? array_map('sanitize_text_field', wp_unslash($_POST['custom_field_values'])) : array();
+        $custom_field = isset($_POST['custom_field']) ? sanitize_key(wp_unslash($_POST['custom_field'])) : '';
 
-        if ($minus_words)
-            $minus_words = explode(',', $minus_words);
-        $custom_field = InputHelper::post('custom_field', '');
-        $custom_field = TextHelper::clear($custom_field);
 
         $parser = ModuleManager::getInstance()->parserFactory($module_id);
         if (!$parser->isActive())
@@ -124,6 +120,7 @@ class PrefillController {
 
         if ($minus_words)
         {
+            $minus_words = explode(',', $minus_words);            
             $keyword = trim(str_replace($minus_words, '', $keyword));
             $keyword = preg_replace("/\s+/ui", ' ', $keyword);
         }
@@ -227,16 +224,15 @@ class PrefillController {
                 return '';
 
             $keyword = \get_post_meta($post_id, ContentManager::META_PREFIX_KEYWORD . $module_id, true);
-            
         } elseif (substr($keyword_source, 0, 5) == '_ean_')
         {
             $module_id = substr($keyword_source, 5);
             if (!ModuleManager::getInstance()->moduleExists($module_id))
                 return '';
-            
+
             if (!$data = ContentManager::getViewData($module_id, $post_id))
                 return '';
-                    
+
             foreach ($data as $d)
             {
                 if (!empty($d['ean']))
@@ -244,7 +240,6 @@ class PrefillController {
                     $keyword = $d['ean'];
                     break;
                 }
-                
             }
         }
 

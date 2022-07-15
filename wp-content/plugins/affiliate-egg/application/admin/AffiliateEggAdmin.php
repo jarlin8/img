@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2020 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class AffiliateEggAdmin {
 
@@ -38,15 +38,19 @@ class AffiliateEggAdmin {
             \add_filter('plugin_row_meta', array($this, 'add_plugin_row_meta'), 10, 2);
         }
 
+        AdminNotice::getInstance()->adminInit();
+
         if (AffiliateEgg::isFree() || (AffiliateEgg::isPro() && AffiliateEgg::isActivated()) || AffiliateEgg::isEnvato())
         {
             new EggController;
             new AutoblogController;
             DeeplinkConfig::getInstance()->adminInit();
             ProxyConfig::getInstance()->adminInit();
+            ExtractorConfig::getInstance()->adminInit();
             CookiesConfig::getInstance()->adminInit();
             GeneralConfig::getInstance()->adminInit();
             new EggThickboxEditorButton;
+            LManager::getInstance()->adminInit();
         }
         if (AffiliateEgg::isEnvato() && !AffiliateEgg::isActivated() && !\get_option(AffiliateEgg::slug . '_env_install'))
             EnvatoConfig::getInstance()->adminInit();
@@ -81,7 +85,7 @@ class AffiliateEggAdmin {
 
     public function add_plugin_row_meta(array $links, $file)
     {
-        if ($file == plugin_basename(PLUGIN_FILE) )
+        if ($file == plugin_basename(PLUGIN_FILE) && LicConfig::getInstance()->option('license_key'))
         {
             return array_merge(
                     $links, array(
@@ -95,11 +99,11 @@ class AffiliateEggAdmin {
 
     public function add_admin_menu()
     {
-        $icon_svg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAsBJREFUeNqNVF1IVEEYnbuL5ksQZVTQS0RQrwXWQ+EPpW5W6q6SBWEUmkZQ6q7u3Zn5ZvZumWlhSBEiYS+SrvtUESQGkVAg6QqmFIb9bLhGZBoVQSB9c9fFdr2iD4fLvTPznfOd890hUkqSACGIQEgQxOcXZKiE3Xl0llf4jNg3cy35DMLyoxRAuJTaLTff+Xcf/f09h74XAlKwkKaIpEUxSzV+ELb6y4KMF7Le0SLWFc1jr/pO81pvQOIa2FanCACLSe1GA2z+dYB+ba2Hrd1VvHgmh07qhrApEmGhKuFFbQhwkVLbKMjLMtYaOUwH8GBqkw7r57JopKeaH9MNqSGZfXlFJgsgpE1ysXY2h34IVvITXgMJJNhflLHmyQLW78aWDRD2ZFUJVQ2AFPcVSR6f4dUzB+nb617YwvxSw/S0jkuQoVS118Buaiz1KqEtZNAoRv7RwZ4/O8lEHbJTPxAvRu9BjBeznqFS1lHTGLPg/1EwC8SSAns9ptJ1Hhw/smmkzQ07+so5nc2in74dYhPTDj7+Zz+djWb7wjcbYBuLBaMlKMIZMSNvCAgSdrLO0UJ2X6nANvYEK6G0uwqcPdXChSRHOi9AZotPbOQyyaP43KgZuV0Hu+Zw+IJVUKy8Uhu5Xy6BMMNZeC4WUmqkzYN+9J9i9HMeG0TJaWqWTOnxdJIg4knHCylvKLK06GLDl1w68qScu2tjZqYu919ZTnasLUGC56B0Jpu+a9ZhE8gFNassYhZSagIc0iaOsodDJbxdDRyqWaMI/ELYV4At3ibxoKkdF2Hvz0w23eaB7epdXRk6mr8SfIFF481DoQp+fD6Dzr8pYg9GXTw45mSh104eGnNZQK25eO9YEQvhXXX3qk+s40qRuryadJ4+4qL3Ivl0MOpgw1MOOozPsCXyaXgK90RzaXiygD69pkM6/kbkH5jyKDIRbkdeAAAAAElFTkSuQmCC';
+        $icon_svg = 'data:image/svg+xml;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAsBJREFUeNqNVF1IVEEYnbuL5ksQZVTQS0RQrwXWQ+EPpW5W6q6SBWEUmkZQ6q7u3Zn5ZvZumWlhSBEiYS+SrvtUESQGkVAg6QqmFIb9bLhGZBoVQSB9c9fFdr2iD4fLvTPznfOd890hUkqSACGIQEgQxOcXZKiE3Xl0llf4jNg3cy35DMLyoxRAuJTaLTff+Xcf/f09h74XAlKwkKaIpEUxSzV+ELb6y4KMF7Le0SLWFc1jr/pO81pvQOIa2FanCACLSe1GA2z+dYB+ba2Hrd1VvHgmh07qhrApEmGhKuFFbQhwkVLbKMjLMtYaOUwH8GBqkw7r57JopKeaH9MNqSGZfXlFJgsgpE1ysXY2h34IVvITXgMJJNhflLHmyQLW78aWDRD2ZFUJVQ2AFPcVSR6f4dUzB+nb617YwvxSw/S0jkuQoVS118Buaiz1KqEtZNAoRv7RwZ4/O8lEHbJTPxAvRu9BjBeznqFS1lHTGLPg/1EwC8SSAns9ptJ1Hhw/smmkzQ07+so5nc2in74dYhPTDj7+Zz+djWb7wjcbYBuLBaMlKMIZMSNvCAgSdrLO0UJ2X6nANvYEK6G0uwqcPdXChSRHOi9AZotPbOQyyaP43KgZuV0Hu+Zw+IJVUKy8Uhu5Xy6BMMNZeC4WUmqkzYN+9J9i9HMeG0TJaWqWTOnxdJIg4knHCylvKLK06GLDl1w68qScu2tjZqYu919ZTnasLUGC56B0Jpu+a9ZhE8gFNassYhZSagIc0iaOsodDJbxdDRyqWaMI/ELYV4At3ibxoKkdF2Hvz0w23eaB7epdXRk6mr8SfIFF481DoQp+fD6Dzr8pYg9GXTw45mSh104eGnNZQK25eO9YEQvhXXX3qk+s40qRuryadJ4+4qL3Ivl0MOpgw1MOOozPsCXyaXgK90RzaXiygD69pkM6/kbkH5jyKDIRbkdeAAAAAElFTkSuQmCC';
         \add_menu_page(__('Storefronts', 'affegg') . ' &lsaquo; Affiliate Egg', 'Affiliate Egg Pro', 'publish_posts', AffiliateEgg::slug, null, $icon_svg);
     }
 
-    public function render($view_name, $_data = null)
+    public static function render($view_name, $_data = null)
     {
         if (is_array($_data))
             extract($_data, EXTR_PREFIX_SAME, 'data');
@@ -149,9 +153,9 @@ class AffiliateEggAdmin {
             $link .= 'affiliate-egg';
         $uri = \get_admin_url(\get_current_blog_id(), $link);
 
-        echo '<div class="update-nag">';
+        echo '<div class="notice notice-error"><p>';
         echo sprintf(__('<a href="%s">Please activate</a> your copy of the Affiliate Egg to receive automatic updates and get direct support.', 'affegg'), $uri);
-        echo '</div>';
+        echo '</p></div>';
     }
 
     public static function isPluginPage()

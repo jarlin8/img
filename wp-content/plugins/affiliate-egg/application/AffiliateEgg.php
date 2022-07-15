@@ -2,22 +2,29 @@
 
 namespace Keywordrush\AffiliateEgg;
 
+defined('\ABSPATH') || exit;
+
 /**
  * AffiliateEgg class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class AffiliateEgg {
 
     const db_version = 52;
-    const version = '10.1.1';
+    const version = '10.4.0';
     const wp_requires = '4.2.0';
     const slug = 'affiliate-egg';
+    const short_slug = 'affegg';
+    const name = 'Affiliate Egg';
     const api_base = 'https://www.keywordrush.com/api/v1';
     const api_base2 = '';
     const product_id = 300;
+    const supportUri = 'https://www.keywordrush.com/contact';
+    const panelUri = 'https://www.keywordrush.com/panel';
+    const website = 'https://www.keywordrush.com';
 
     private static $instance = null;
     private static $is_pro = null;
@@ -87,6 +94,7 @@ class AffiliateEgg {
             \wp_schedule_event(time(), 'hourly', 'affeggcron');
         }
         \add_option('affegg_do_activation_redirect', true);
+        \add_option('affegg_first_activation_date', time());
         self::upgrade_tables();
     }
 
@@ -97,33 +105,65 @@ class AffiliateEgg {
 
     public static function isFree()
     {
-        return false;
+        return !self::isPro();
     }
 
     public static function isPro()
     {
-        
-         self::$is_pro = true;
-        
+        if (self::$is_pro === null)
+        {
+            self::$is_pro = true;
+        }
         return self::$is_pro;
     }
 
     public static function isEnvato()
     {
-        
-        return true;
+        if (self::$is_envato === null)
+        {
+            if (isset($_SERVER['KEYWORDRUSH_DEVELOPMENT']) && $_SERVER['KEYWORDRUSH_DEVELOPMENT'] == 'O')
+                self::$is_envato = false;
+            elseif (file_exists(PLUGIN_PATH . 'application/admin/EnvatoConfig.php') || \get_option(AffiliateEgg::slug . '_env_install'))
+                self::$is_envato = true;
+            else
+                self::$is_envato = false;
+        }
+        return self::$is_envato;
+    }
+
+    public static function getSlug()
+    {
+        return self::slug;
+    }
+
+    public static function getShortSlug()
+    {
+        return self::short_slug;
+    }
+
+    public static function getName()
+    {
+        return self::name;
+    }
+
+    public static function getWebsite()
+    {
+        return self::website;
     }
 
     public static function isActivated()
     {
-       
+        if (self::isPro() && LicConfig::getInstance()->option('license_key'))
             return true;
-        
+        else
+            return false;
     }
 
     public static function isInactiveEnvato()
     {
-       
+        if (self::isEnvato() && !self::isActivated())
+            return true;
+        else
             return false;
     }
 
@@ -208,6 +248,7 @@ class AffiliateEgg {
         $api_urls = array(self::api_base);
         if (self::api_base2)
             $api_urls[] = self::api_base2;
+        
         foreach ($api_urls as $api_url)
         {
             $response = \wp_remote_post($api_url, $params);
@@ -253,7 +294,7 @@ class AffiliateEgg {
 
     public static function pluginSiteUrl()
     {
-        return self::getPluginDomain() . 'affiliateegg';
+        return self::getPluginDomain() . 'affiliateegg?utm_source=affegg&utm_medium=referral&utm_campaign=plugin';
     }
 
     public static function pluginDocsUrl()

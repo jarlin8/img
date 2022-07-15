@@ -50,25 +50,37 @@ class ShareasaleModule extends AffiliateParserModule {
         $options = array();
 
         if ($is_autoupdate)
+        {
             $limit = $this->config('entries_per_page_update');
-        else
+        } else
+        {
             $limit = $this->config('entries_per_page');
+        }
 
         if ($this->config('merchantId'))
+        {
             $options['merchantId'] = $this->config('merchantId');
+        }
         if ($this->config('excludeMerchants'))
+        {
             $options['excludeMerchants'] = $this->config('excludeMerchants');
+        }
 
         $options['affiliateId'] = $this->config('affiliateId');
 
         $results = $this->getShareasaleClient()->products($keyword, $options);
 
         if (!is_array($results) || empty($results['getProductsrecord']))
+        {
             return array();
+        }
 
         if (!isset($results['getProductsrecord'][0]) && isset($results['getProductsrecord']['productid']))
+        {
             $results['getProductsrecord'] = array($results['getProductsrecord']);
+        }
         $results = array_slice($results['getProductsrecord'], 0, $limit);
+
         return $this->prepareResults($results);
     }
 
@@ -81,44 +93,65 @@ class ShareasaleModule extends AffiliateParserModule {
             $content->unique_id = $r['productid'];
 
             if ($r['status'][0] == 'In stock' && $r['status'][1] == 'No')
+            {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK_;
-            else
+            } else
+            {
                 $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
+            }
             $content->title = strip_tags($r['name']);
             $content->url = $r['link'];
             $content->currencyCode = 'USD'; // ???
             $content->currency = TextHelper::currencyTyping($content->currencyCode);
 
             if ($r['manufacture'])
+            {
                 $content->manufacturer = $r['manufacture'];
+            }
             $content->merchant = $r['organization'];
             $content->domain = TextHelper::getHostName('http://' . $r['www']);
             if ($r['bigimage'])
+            {
                 $content->img = $r['bigimage'];
+            }
 
             $r['price'] = (float) $r['price'];
             $r['retailprice'] = (float) $r['retailprice'];
             $content->price = $r['price'];
             if ($r['retailprice'] && $r['retailprice'] < $r['price'])
+            {
                 $content->priceOld = $r['retailprice'];
+            }
             if ($r['description'])
+            {
                 $content->description = $r['description'];
-            elseif ($r['shortdescription'])
+            } elseif ($r['shortdescription'])
+            {
                 $content->description = $r['shortdescription'];
+            }
             if ($max_size = $this->config('description_size'))
+            {
                 $content->description = TextHelper::truncate($content->description, $max_size);
+            }
             if ($r['isbn'])
+            {
                 $content->isbn = $r['isbn'];
+            }
             if ($r['upc'])
+            {
                 $content->upc = $r['upc'];
+            }
             if ($r['sku'])
+            {
                 $content->sku = $r['sku'];
+            }
 
             $content->extra = new ExtraDataShareasale;
             ExtraDataShareasale::fillAttributes($content->extra, $r);
 
             $data[] = $content;
         }
+
         return $data;
     }
 
@@ -128,6 +161,7 @@ class ShareasaleModule extends AffiliateParserModule {
         {
             $this->api_client = new ShareasaleApi($this->config('token'), $this->config('secret'));
         }
+
         return $this->api_client;
     }
 

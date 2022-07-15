@@ -42,6 +42,7 @@ class QwantApi extends RestClient {
         $params['uiv'] = 4;
         $params['t'] = 'images';
         $response = $this->restGet('/images', $params);
+
         return $this->_decodeResponse($response);
     }
 
@@ -53,6 +54,7 @@ class QwantApi extends RestClient {
             'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
         );
         $this->setCustomHeaders($headers);
+
         return parent::restGet($path, $query);
     }
 

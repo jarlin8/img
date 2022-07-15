@@ -49,17 +49,44 @@ class LinkshareModule extends AffiliateParserModule {
         $options = array();
 
         if ($is_autoupdate)
+        {
             $options['max'] = $this->config('entries_per_page_update');
-        else
+        } else
+        {
             $options['max'] = $this->config('entries_per_page');
+        }
 
-        $invalid_characters = array('&', '=', '?', '{', '}', '\\', '(', ')', '[', ']', '-', ';', '~', '|', '$', '!', '>', '*', '%');
+        $invalid_characters = array(
+            '&',
+            '=',
+            '?',
+            '{',
+            '}',
+            '\\',
+            '(',
+            ')',
+            '[',
+            ']',
+            '-',
+            ';',
+            '~',
+            '|',
+            '$',
+            '!',
+            '>',
+            '*',
+            '%'
+        );
         $query = str_replace($invalid_characters, '', $keyword);
 
         if ($this->config('cat'))
+        {
             $options['cat'] = $this->config('cat');
+        }
         if ($this->config('mid'))
+        {
             $options['mid'] = $this->config('mid');
+        }
         if ($this->config('sort'))
         {
             $options['sort'] = $this->config('sort');
@@ -68,10 +95,14 @@ class LinkshareModule extends AffiliateParserModule {
 
         $results = $this->getApiClient()->search($query, $options, $this->config('search_logic'));
         if (!is_array($results) || !isset($results['item']))
+        {
             return array();
+        }
 
         if (!isset($results['item'][0]) && isset($results['item']['mid']))
+        {
             $results['item'] = array($results['item']);
+        }
 
         return $this->prepareResults($results['item']);
     }
@@ -119,39 +150,51 @@ class LinkshareModule extends AffiliateParserModule {
             }
 
             if (is_array($r['price']))
+            {
                 $content->priceOld = (float) $r['price'][0];
-            else
+            } else
+            {
                 $content->priceOld = (float) $r['price'];
+            }
 
             $content->currency = TextHelper::currencyTyping($content->currencyCode);
             $content->url = $r['linkurl'];
             $content->orig_url = TextHelper::parseOriginalUrl($r['linkurl'], 'murl');
-            $content->img = (!empty($r['imageurl'])) ? $r['imageurl'] : '';
-            $content->merchant = ($r['merchantname']) ? $r['merchantname'] : '';
+            $content->img = (!empty($r['imageurl']) ) ? $r['imageurl'] : '';
+            $content->merchant = ( $r['merchantname'] ) ? $r['merchantname'] : '';
             $content->domain = TextHelper::parseDomain($content->url, 'murl');
 
             if (!empty($r['description']['long']))
+            {
                 $content->description = $r['description']['long'];
-            elseif (!empty($r['description']['short']) && trim($r['description']['short']) != $content->title)
+            } elseif (!empty($r['description']['short']) && trim($r['description']['short']) != $content->title)
+            {
                 $content->description = $r['description']['short'];
+            }
             if ($content->description)
             {
                 $content->description = trim(strip_tags($content->description));
                 if ($max_size = $this->config('description_size'))
+                {
                     $content->description = TextHelper::truncate($content->description, $max_size);
+                }
             }
             if (!empty($r['category']['primary']))
+            {
                 $content->category = $r['category']['primary'];
+            }
 
             if (!$content->unique_id)
+            {
                 $content->unique_id = md5($content->title . $content->price);
+            }
 
             $content->extra = new ExtraDataLinkshare;
-            $content->extra->mid = ($r['mid']) ? $r['mid'] : '';
-            $content->extra->createdon = ($r['createdon']) ? strtotime(str_replace('/', ' ', $r['createdon'])) : '';
-            $content->sku = $content->extra->sku = ($r['sku']) ? $r['sku'] : '';
-            $content->upc = $content->extra->upccode = ($r['upccode']) ? $r['upccode'] : '';
-            $content->extra->keywords = ($r['keywords']) ? $r['keywords'] : '';
+            $content->extra->mid = ( $r['mid'] ) ? $r['mid'] : '';
+            $content->extra->createdon = ( $r['createdon'] ) ? strtotime(str_replace('/', ' ', $r['createdon'])) : '';
+            $content->sku = $content->extra->sku = ( $r['sku'] ) ? $r['sku'] : '';
+            $content->upc = $content->extra->upccode = ( $r['upccode'] ) ? $r['upccode'] : '';
+            $content->extra->keywords = ( $r['keywords'] ) ? $r['keywords'] : '';
 
             $data[] = $content;
         }
@@ -165,6 +208,7 @@ class LinkshareModule extends AffiliateParserModule {
         {
             $this->api_client = new LinkshareProductsRest($this->config('token'));
         }
+
         return $this->api_client;
     }
 

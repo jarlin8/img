@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\GoogleImages;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,7 +15,7 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataGoogleImages extends ExtraData {
 
-    public $mime;
-    public $image = array();
+	public $mime;
+	public $image = array();
 
 }

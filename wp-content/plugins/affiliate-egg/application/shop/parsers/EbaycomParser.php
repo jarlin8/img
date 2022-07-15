@@ -34,7 +34,12 @@ class EbaycomParser extends ShopParser {
 
     public function parseTitle()
     {
-        return $this->xpathScalar(".//h1[@itemprop='name']/text()");
+        $xpaths = array(
+            ".//*[@class='x-item-title__mainTitle']",
+            ".//h1[@itemprop='name']/text()",
+        );
+
+        return $this->xpathScalar($xpaths);
     }
 
     public function parseDescription()
@@ -160,6 +165,8 @@ class EbaycomParser extends ShopParser {
         $res = $this->xpath->evaluate("boolean(.//span[@class='msgTextAlign'][contains(.,'This listing has ended')])");
         if (!$res)
             $res = $this->xpath->evaluate("boolean(.//span[@class='msgTextAlign'][contains(.,'This Buy It Now listing has ended')])");
+        if (!$res)
+            $res = $this->xpath->evaluate("boolean(.//span[@class='msgTextAlign'][contains(.,'This item is out of stock')])");
         return ($res) ? false : true;
     }
 

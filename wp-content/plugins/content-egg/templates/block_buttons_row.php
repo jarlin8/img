@@ -30,8 +30,8 @@ $all_items = TemplateHelper::sortAllByPrice($data, $order);
             <?php $i = 0; ?>
             <?php foreach ($all_items as $item): ?>
 
-                    <div class="col-md-<?php echo $col_size; ?> col-xs-12 cegg-btn-cell"> 
-                        <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo $item['url']; ?>" class="btn btn-danger btn-block"><?php TemplateHelper::buyNowBtnText(true, $item, $btn_text); ?></a> 
+                    <div class="col-md-<?php echo esc_attr($col_size); ?> col-xs-12 cegg-btn-cell">
+                        <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>" class="btn btn-danger btn-block"><?php TemplateHelper::buyNowBtnText(true, $item, $btn_text); ?></a> 
                     </div>
 
                     <?php

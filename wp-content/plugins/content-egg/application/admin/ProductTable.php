@@ -91,10 +91,10 @@ class ProductTable extends MyListTable {
         if (!ModuleManager::getInstance()->moduleExists($module_id))
             return;
         $module = ModuleManager::getInstance()->factory($item['module_id']);
-        $output = '<strong>' . $module->getName() . '</strong>';
+        $output = '<strong>' . esc_html($module->getName()) . '</strong>';
 
         if (!$module->isActive())
-            $output .= '<br><mark class="inactive">' . __('inactive', 'content egg') . '</mark>';
+            $output .= '<br><mark class="inactive">' . esc_html(__('inactive', 'content egg')) . '</mark>';
 
         return $output;
     }
@@ -156,7 +156,7 @@ class ProductTable extends MyListTable {
     private function print_modules_dropdown()
     {
         $modules = ModuleManager::getInstance()->getAffiliteModulesList(true);
-        $selected_module_id = !empty($_GET['module_id']) ? TextHelper::clear(\wp_unslash($_GET['module_id'])) : '';
+        $selected_module_id = !empty($_GET['module_id']) ? TextHelper::clear(sanitize_text_field( \wp_unslash($_GET['module_id']))) : '';
 
         echo '<select name="module_id" id="dropdown_module_id"><option value="">' . \esc_html__('Filter by module', 'content-egg') . '</option>';
         foreach ($modules as $module_id => $module_name)
@@ -175,7 +175,7 @@ class ProductTable extends MyListTable {
         // search
         if (!empty($_REQUEST['s']))
         {
-            $s = trim($_REQUEST['s']);
+            $s = trim(sanitize_text_field(wp_unslash($_REQUEST['s'])));
             if ($where)
                 $where .= ' AND ';
 
@@ -201,7 +201,7 @@ class ProductTable extends MyListTable {
 
         if (isset($_GET['module_id']) && $_GET['module_id'] !== '')
         {
-            $module_id = TextHelper::clear(\wp_unslash($_GET['module_id']));
+            $module_id = TextHelper::clear(\sanitize_text_field(\wp_unslash($_GET['module_id'])));
             if (ModuleManager::getInstance()->moduleExists($module_id))
             {
                 if ($where)
@@ -225,7 +225,7 @@ class ProductTable extends MyListTable {
         foreach ($statuses as $status_id => $status_name)
         {
             $total = ProductModel::model()->count('stock_status = ' . (int) $status_id);
-            $class = (isset($_REQUEST['stock_status']) && $_REQUEST['stock_status'] !== '' && (int) $_REQUEST['stock_status'] == $status_id) ? ' class="current"' : '';
+            $class = (isset($_REQUEST['stock_status']) && $_REQUEST['stock_status'] !== '' && \sanitize_text_field(wp_unslash($_REQUEST['stock_status'])) == $status_id) ? ' class="current"' : '';
             $status_links[$status_id] = '<a href="' . $admin_url . '&stock_status=' . (int) $status_id . '"' . $class . '>' . \esc_html($status_name);
             $status_links[$status_id] .= sprintf(' <span class="count">(%s)</span></a>', \number_format_i18n($total));
         }

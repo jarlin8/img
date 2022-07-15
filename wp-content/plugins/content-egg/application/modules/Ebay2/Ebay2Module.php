@@ -18,7 +18,7 @@ use ContentEgg\application\helpers\TemplateHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class Ebay2Module extends AffiliateParserModule {
 
@@ -59,17 +59,24 @@ class Ebay2Module extends AffiliateParserModule {
         $locale = $this->getCurrentLocale($query_params);
 
         if ($is_autoupdate)
+        {
             $options['limit'] = $this->config('entries_per_page_update');
-        else
+        } else
+        {
             $options['limit'] = $this->config('entries_per_page');
+        }
 
         $options['fieldgroups'] = 'EXTENDED'; // This returns the shortDescription field
 
         if ($category_id = $this->config('category_id'))
+        {
             $options['category_ids'] = TextHelper::commaList($category_id);
+        }
 
         if ($sort_order = $this->config('sort_order'))
+        {
             $options['sort'] = $sort_order;
+        }
 
         // Filters
         // @link https://developer.ebay.com/api-docs/buy/static/ref-buy-browse-filters.html
@@ -83,49 +90,93 @@ class Ebay2Module extends AffiliateParserModule {
         }
 
         if ($filter = $this->getFilterBidCount())
+        {
             $filters['bidCount'] = $filter;
+        }
 
         if ($filter = $this->getFilterConditionIds($query_params))
+        {
             $filters['conditionIds'] = $filter;
+        }
 
         if ($buying_options = $this->config('buying_options'))
+        {
             $filters['buyingOptions'] = '{' . join('|', $buying_options) . '}';
+        }
 
         if ($condition = $this->config('condition'))
+        {
             $filters['condition'] = '{' . $condition . '}';
+        }
 
         if ($available_to = $this->config('available_to'))
+        {
             $filters['deliveryCountry'] = strtoupper($available_to);
+        }
 
         if ($this->config('local_pickup_only'))
+        {
             $filters['deliveryOptions'] = '{SELLER_ARRANGED_LOCAL_PICKUP}';
+        }
 
         if ($delivery_postal_code = $this->config('delivery_postal_code'))
+        {
             $filters['deliveryPostalCode'] = $delivery_postal_code;
+        }
 
         if ($exclude_sellers = $this->config('exclude_sellers'))
+        {
             $filters['excludeSellers'] = '{' . TextHelper::commaList($exclude_sellers, ',', '|') . '}';
+        }
 
         if ($sellers = $this->config('sellers'))
+        {
             $filters['sellers'] = '{' . TextHelper::commaList($sellers, ',', '|') . '}';
+        }
 
         if ($exclude_category_ids = $this->config('exclude_category_ids'))
+        {
             $filters['excludeCategoryIds'] = '{' . TextHelper::commaList($exclude_category_ids, ',', '|') . '}';
+        }
 
         if ($location_country = $this->config('location_country'))
+        {
             $filters['itemLocationCountry'] = strtoupper($location_country);
+        }
 
         if ($this->config('free_shipping_only'))
+        {
             $filters['maxDeliveryCost'] = '0';
+        }
 
         if ($this->config('payment_methods'))
+        {
             $filters['paymentMethods'] = '{CREDIT_CARD}';
+        }
 
         if ($this->config('returns_accepted'))
+        {
             $filters['returnsAccepted'] = 'true';
+        }
 
         if ($this->config('description_search'))
+        {
             $filters['searchInDescription'] = 'true';
+        }
+
+        if ($this->config('priority_listing') == 'enabled' && in_array($locale, array(
+                    'EBAY_US',
+                    'EBAY_DE',
+                    'EBAY_FR',
+                    'EBAY_GB',
+                    'EBAY_IT',
+                    'EBAY_ES',
+                    'EBAY_AU',
+                    'EBAY_CA'
+                )))
+        {
+            $filters['priorityListing'] = 'true';
+        }
 
         if ($filters)
         {
@@ -143,7 +194,9 @@ class Ebay2Module extends AffiliateParserModule {
         $results = $client->search($keyword, $options, $this->getHeaders($query_params));
 
         if (!is_array($results) || !isset($results['itemSummaries']))
+        {
             return array();
+        }
 
         return $this->prepareResults($results['itemSummaries'], $locale);
     }
@@ -159,7 +212,9 @@ class Ebay2Module extends AffiliateParserModule {
         {
             $headers['X-EBAY-C-ENDUSERCTX'] = 'affiliateCampaignId=' . $tracking_id;
             if ($custom_id = $this->config('custom_id'))
+            {
                 $headers['X-EBAY-C-ENDUSERCTX'] .= ',affiliateReferenceId=' . $custom_id;
+            }
         }
 
         return $headers;
@@ -168,27 +223,40 @@ class Ebay2Module extends AffiliateParserModule {
     private function getCurrentLocale($query_params)
     {
         if (!empty($query_params['locale']))
+        {
             return $query_params['locale'];
-        else
+        } else
+        {
             return $this->config('locale');
+        }
     }
 
     private function getFilterBidCount()
     {
         if (!$min_bids = $this->config('min_bids'))
+        {
             $min_bids = '';
+        }
 
         if (!$max_bids = $this->config('max_bids'))
+        {
             $max_bids = '';
+        }
 
         if (!$min_bids && !$max_bids)
+        {
             return '';
+        }
 
         $filter = '[';
         if ($min_bids)
+        {
             $filter .= $min_bids;
+        }
         if ($max_bids)
+        {
             $filter .= '..' . $max_bids;
+        }
 
         $filter .= ']';
 
@@ -198,29 +266,45 @@ class Ebay2Module extends AffiliateParserModule {
     private function getFilterPrice($query_params)
     {
         if (!empty($query_params['min_price']))
+        {
             $min_price = $query_params['min_price'];
-        else
+        } else
+        {
             $min_price = $this->config('min_price');
+        }
 
         if (!empty($query_params['max_price']))
+        {
             $max_price = $query_params['max_price'];
-        else
+        } else
+        {
             $max_price = $this->config('max_price');
+        }
 
         if (!$min_price)
+        {
             $min_price = '';
+        }
 
         if (!$max_price)
+        {
             $max_price = '';
+        }
 
         if (!$min_price && !$max_price)
+        {
             return '';
+        }
 
         $filter = '[';
         if ($min_price)
+        {
             $filter .= $min_price;
+        }
         if ($max_price)
+        {
             $filter .= '..' . $max_price;
+        }
 
         $filter .= ']';
 
@@ -242,11 +326,15 @@ class Ebay2Module extends AffiliateParserModule {
             );
 
             if (isset($conditions[$query_params['product_condition']]))
+            {
                 return '{' . $conditions[$query_params['product_condition']] . '}';
+            }
         }
 
         if ($condition_ids = $this->config('condition_ids'))
+        {
             return '{' . TextHelper::commaList($condition_ids, ',', '|') . '}';
+        }
 
         return false;
     }
@@ -270,13 +358,17 @@ class Ebay2Module extends AffiliateParserModule {
             } catch (\Exception $e)
             {
                 if ($e->getCode() == 404)
+                {
                     $items[$unique_id]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+                }
 
                 continue;
             }
 
             if (!is_array($r) || !isset($r['itemId']))
+            {
                 continue;
+            }
 
             $new = $this->prepareResult($r, $locale);
 
@@ -287,6 +379,7 @@ class Ebay2Module extends AffiliateParserModule {
             $items[$unique_id]['url'] = $new->url;
             $items[$unique_id]['orig_url'] = $new->orig_url;
             $items[$unique_id]['stock_status'] = $new->stock_status;
+            $items[$unique_id]['img'] = $new->img;
             $items[$unique_id]['extra']['pricePerUnitDisplay'] = $new->extra->pricePerUnitDisplay;
         }
 
@@ -316,29 +409,47 @@ class Ebay2Module extends AffiliateParserModule {
         $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
 
         if (isset($r['itemAffiliateWebUrl']))
+        {
             $content->url = $r['itemAffiliateWebUrl'];
-        elseif ($deeplink = $this->config('deeplink'))
+        } elseif ($deeplink = $this->config('deeplink'))
+        {
             $content->url = LinkHandler::createAffUrl($content->orig_url, $deeplink);
-        else
+        } else
+        {
             $content->url = $content->orig_url;
+        }
 
         if (isset($r['shortDescription']))
+        {
             $content->description = $r['shortDescription'];
+        }
 
-        if (isset($r['thumbnailImages'][0]['imageUrl']))
+        if ($this->config('image_size') == 'large' && isset($r['thumbnailImages'][0]['imageUrl']))
+        {
             $content->img = $r['thumbnailImages'][0]['imageUrl'];
-        elseif (isset($r['image']['imageUrl']))
+        } elseif (isset($r['image']['imageUrl']))
+        {
             $content->img = $r['image']['imageUrl'];
+        }
 
         $content->price = (float) $r['price']['value'];
         $content->currencyCode = $r['price']['currency'];
         $content->currency = TextHelper::currencyTyping($content->currencyCode);
 
         if (isset($r['marketingPrice']['originalPrice']))
+        {
             $content->priceOld = (float) $r['marketingPrice']['originalPrice']['value'];
+        }
 
         if (isset($r['estimatedAvailabilities'][0]['estimatedAvailabilityStatus']) && $r['estimatedAvailabilities'][0]['estimatedAvailabilityStatus'] == 'OUT_OF_STOCK')
+        {
             $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+        }
+
+        if (isset($r['itemEndDate']) && strtotime($r['itemEndDate']) <= time())
+        {
+            $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+        }
 
         $extra = new ExtraDataEbay2;
         $extra->locale = $locale;
@@ -363,7 +474,9 @@ class Ebay2Module extends AffiliateParserModule {
         $extra->priorityListing = filter_var($extra->priorityListing, FILTER_VALIDATE_BOOLEAN);
 
         if (isset($r['shippingOptions']) && $r['shippingOptions'][0]['shippingCostType'] == 'FIXED' && !(float) $r['shippingOptions'][0]['shippingCost']['value'])
+        {
             $extra->IsEligibleForSuperSaverShipping = true;
+        }
 
         $content->extra = $extra;
 
@@ -388,7 +501,9 @@ class Ebay2Module extends AffiliateParserModule {
         $response = $api_client->requestAccessToken();
 
         if (empty($response['access_token']) || empty($response['expires_in']))
+        {
             throw new \Exception('Ebay Browse API: Invalid Response Format.');
+        }
 
         return array($response['access_token'], (int) $response['expires_in']);
     }

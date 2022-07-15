@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Flipkart;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,20 +15,20 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataFlipkart extends ExtraData {
 
-    public $productFamily = array();
-    public $codAvailable;
-    public $offers = array();
-    public $attributes = array();
-    public $shippingCharges = array();
-    public $estimatedDeliveryTime;
-    public $sellerName;
-    public $sellerAverageRating;
-    public $sellerNoOfRatings;
-    public $keySpecs = array();
-    public $detailedSpecs = array();
-    public $specificationList = array();
-    public $booksInfo = array();
-    public $lifeStyleInfo = array();
-    public $maximumRetailPrice = array();
+	public $productFamily = array();
+	public $codAvailable;
+	public $offers = array();
+	public $attributes = array();
+	public $shippingCharges = array();
+	public $estimatedDeliveryTime;
+	public $sellerName;
+	public $sellerAverageRating;
+	public $sellerNoOfRatings;
+	public $keySpecs = array();
+	public $detailedSpecs = array();
+	public $specificationList = array();
+	public $booksInfo = array();
+	public $lifeStyleInfo = array();
+	public $maximumRetailPrice = array();
 
 }

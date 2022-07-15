@@ -67,14 +67,8 @@ class ProductModel extends Model {
 
     public function scanProducts()
     {
-        $module_ids = array_keys(ModuleManager::getInstance()->getAffiliateParsers(true, true));
-        $meta_keys = array();
-        foreach ($module_ids as $module_id)
-        {
-            $meta_keys[] = "'" . \esc_sql(ContentManager::META_PREFIX_DATA . $module_id) . "'";
-        }
-
         $per_page = 100;
+        $meta_keys = $this->getCeMetaKeys();
         $sql_part = $this->getDb()->postmeta . ' WHERE meta_key IN (' . join(',', $meta_keys) . ') LIMIT ' . $per_page;
         $sql = 'SELECT SQL_CALC_FOUND_ROWS * FROM ' . $sql_part;
         $products = $this->getDb()->get_results($sql);
@@ -83,10 +77,22 @@ class ProductModel extends Model {
 
         for ($page = 2; $page <= ceil($total / $per_page); $page++)
         {
-            $offset = ($page - 1) * $per_page;
+            $offset = ( $page - 1 ) * $per_page;
             $sql = 'SELECT * FROM ' . $sql_part . ' OFFSET ' . $offset;
             $this->processProducts($this->getDb()->get_results($sql));
         }
+    }
+
+    private function getCeMetaKeys()
+    {
+        $module_ids = array_keys(ModuleManager::getInstance()->getAffiliateParsers(true, true));
+        $meta_keys = array();
+        foreach ($module_ids as $module_id)
+        {
+            $meta_keys[] = "'" . \esc_sql(ContentManager::META_PREFIX_DATA . $module_id) . "'";
+        }
+
+        return $meta_keys;
     }
 
     public function maybeScanProducts($forced = false)
@@ -96,8 +102,10 @@ class ProductModel extends Model {
             $this->truncateTable();
             ProductModel::model()->scanProducts();
             \set_transient(self::TRANSIENT_LAST_SYNC_DATE, time(), self::PRODUCTS_TTL);
+
             return true;
         }
+
         return false;
     }
 
@@ -112,16 +120,22 @@ class ProductModel extends Model {
         foreach ($metas as $meta)
         {
             if (!$data = @unserialize($meta->meta_value))
+            {
                 continue;
+            }
 
             // corrupted data?
             if (!is_array($data))
+            {
                 continue;
+            }
 
             $all_products = array_merge($all_products, $this->processModuleData($data, $meta));
         }
         if ($all_products)
+        {
             $this->multipleInsert($all_products);
+        }
     }
 
     private function processModuleData(array $data, $meta)
@@ -130,8 +144,10 @@ class ProductModel extends Model {
         foreach ($data as $unique_id => $d)
         {
             if (!$unique_id)
+            {
                 continue;
-            
+            }
+
             $product = array(
                 'last_update' => '',
                 'stock_status' => ContentProduct::STOCK_STATUS_UNKNOWN,
@@ -145,8 +161,9 @@ class ProductModel extends Model {
             foreach ($product as $k => $v)
             {
                 if (isset($d[$k]))
+                {
                     $product[$k] = $d[$k];
-                elseif (strstr($k, '_'))
+                } elseif (strstr($k, '_'))
                 {
                     $pieces = explode('_', $k);
                     for ($i = 1; $i < count($pieces); $i++)
@@ -155,14 +172,19 @@ class ProductModel extends Model {
                     }
                     $kd = join('', $pieces);
                     if (isset($d[$kd]))
+                    {
                         $product[$k] = $d[$kd];
+                    }
                 }
             }
 
             if ($product['last_update'])
+            {
                 $product['last_update'] = date("Y-m-d H:i:s", $product['last_update']);
-            else
+            } else
+            {
                 $product['last_update'] = null;
+            }
 
             $product['id'] = null;
             $product['create_date'] = \current_time('mysql');
@@ -173,6 +195,7 @@ class ProductModel extends Model {
 
             $products[] = $product;
         }
+
         return $products;
     }
 
@@ -189,9 +212,12 @@ class ProductModel extends Model {
     {
         $statuses = ProductModel::getStockStatuses();
         if (isset($status[$status_id]))
+        {
             return $status[$status_id];
-        else
+        } else
+        {
             return null;
+        }
     }
 
 }

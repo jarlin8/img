@@ -22,8 +22,8 @@ $col_size = 12 / $cols;
             <?php $i = 0; ?>
             <?php foreach ($items as $key => $item): ?>
 
-                <div class="col-md-<?php echo $col_size; ?> cegg-gridbox<?php if (!$is_shortcode) echo ' cegg-gridbox-border'; ?>"> 
-                    <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo $item['url']; ?>">
+                <div class="col-md-<?php echo esc_attr($col_size); ?> cegg-gridbox<?php if (!$is_shortcode) echo ' cegg-gridbox-border'; ?>">
+                    <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>">
 
                         <div class="cegg-thumb">
                             <div class="cegg-position-container2">
@@ -44,7 +44,7 @@ $col_size = 12 / $cols;
 
                             <?php if ($item['rating']): ?>
                                 <div class="cegg-title-rating">
-                                    <?php echo TemplateHelper::printRating($item, 'small'); ?>
+                                    <?php TemplateHelper::printRating($item, 'small'); ?>
                                 </div>
                             <?php endif; ?>            
 
@@ -55,9 +55,9 @@ $col_size = 12 / $cols;
                         <div class="row cegg-mb5">
                             <?php if ($item['_price_movers']['discount_percent'] > 0): ?>
                                 <div class="col-xs-2 cegg-product-discount">
-                                    <span class="product-discount-value"><?php echo $item['_price_movers']['discount_percent']; ?><span class="product-discount-symbol">%</span></span>                
+                                    <span class="product-discount-value"><?php echo esc_html($item['_price_movers']['discount_percent']); ?><span class="product-discount-symbol">%</span></span>
                                     <div class="product-discount-off">
-                                        <?php TemplateHelper::_e('OFF'); ?>
+                                        <?php TemplateHelper::esc_html_e('OFF'); ?>
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -67,15 +67,15 @@ $col_size = 12 / $cols;
                                     <?php if ($item['price']): ?>
 
                                         <?php if ($item['_price_movers']['discount_value']): ?>
-                                            <div class="text-muted"><strike title="<?php echo \esc_attr(TemplateHelper::getDaysAgo($item['_price_movers']['price_old_date'])); ?>"><?php echo TemplateHelper::formatPriceCurrency($item['_price_movers']['price_old'], $item['currencyCode']); ?></strike></div>
+                                            <div class="text-muted"><s title="<?php echo \esc_attr(TemplateHelper::getDaysAgo($item['_price_movers']['price_old_date'])); ?>"><?php echo esc_html(TemplateHelper::formatPriceCurrency($item['_price_movers']['price_old'], $item['currencyCode'])); ?></s></div>
                                         <?php endif; ?>
-                                        <span title="<?php echo \esc_attr(sprintf(TemplateHelper::__('as of %s'), TemplateHelper::dateFormatFromGmt($item['last_update']))); ?>" class="cegg-price cegg-price-color"><?php echo TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode']); ?></span>
+                                        <span title="<?php echo \esc_attr(sprintf(TemplateHelper::__('as of %s'), TemplateHelper::dateFormatFromGmt($item['last_update']))); ?>" class="cegg-price cegg-price-color"><?php echo esc_html(TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode'])); ?></span>
 
                                     <?php endif; ?>
 
                                     <?php if ($item['_price_movers']['discount_value'] > 0): ?>
                                         <span class="text-success">
-                                            &#9660;<?php echo TemplateHelper::formatPriceCurrency($item['_price_movers']['discount_value'], $item['currencyCode']); ?>
+                                            &#9660;<?php echo esc_html(TemplateHelper::formatPriceCurrency($item['_price_movers']['discount_value'], $item['currencyCode'])); ?>
                                         </span>
                                     <?php endif; ?>                        
 

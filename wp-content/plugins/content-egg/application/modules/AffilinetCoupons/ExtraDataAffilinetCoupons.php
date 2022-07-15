@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\AffilinetCoupons;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,13 +15,13 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataAffilinetCoupons extends ExtraData {
 
-    public $ProgramId;
-    public $VoucherType;
-    public $LastChangeDate;
-    public $IntegrationCode;
-    public $IsExclusive;
-    public $MinimumOrderValue;
-    public $CustomerRestriction;
-    public $logo;
+	public $ProgramId;
+	public $VoucherType;
+	public $LastChangeDate;
+	public $IntegrationCode;
+	public $IsExclusive;
+	public $MinimumOrderValue;
+	public $CustomerRestriction;
+	public $logo;
 
 }

@@ -16,7 +16,7 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class AutoblogModel extends Model {
 
@@ -42,6 +42,7 @@ class AutoblogModel extends Model {
                     user_id int(11) DEFAULT NULL,
                     post_count int(11) DEFAULT '0',
                     min_modules_count int(11) DEFAULT '0',
+                    template_slug varchar(255) DEFAULT NULL,                    
                     template_body text,
                     template_title text,
                     keywords mediumtext,
@@ -99,7 +100,9 @@ class AutoblogModel extends Model {
         foreach ($serialized_fileds as $field)
         {
             if (isset($item[$field]) && is_array($item[$field]))
+            {
                 $item[$field] = serialize($item[$field]);
+            }
         }
 
         if (!$item['id'])
@@ -107,10 +110,12 @@ class AutoblogModel extends Model {
             $item['id'] = null;
             $item['create_date'] = \current_time('mysql');
             $this->getDb()->insert($this->tableName(), $item);
+
             return $this->getDb()->insert_id;
         } else
         {
             $this->getDb()->update($this->tableName(), $item, array('id' => $item['id']));
+
             return $item['id'];
         }
     }
@@ -119,7 +124,9 @@ class AutoblogModel extends Model {
     {
         $autoblog = self::model()->findByPk($id);
         if (!$autoblog)
+        {
             return false;
+        }
 
         $autoblog['include_modules'] = unserialize($autoblog['include_modules']);
         $autoblog['exclude_modules'] = unserialize($autoblog['exclude_modules']);
@@ -140,6 +147,7 @@ class AutoblogModel extends Model {
         {
             $autoblog_save['status'] = 0;
             $this->save($autoblog_save);
+
             return false;
         }
 
@@ -148,13 +156,17 @@ class AutoblogModel extends Model {
 
         $keywords_per_run = (int) $autoblog['keywords_per_run'];
         if ($keywords_per_run < 1)
+        {
             $keywords_per_run = 1;
+        }
 
         // create posts
         for ($i = 0; $i < $keywords_per_run; $i++)
         {
             if ($i)
+            {
                 sleep(1);
+            }
 
             $keyword = $autoblog['keywords'][$keyword_id];
 
@@ -166,7 +178,9 @@ class AutoblogModel extends Model {
             {
                 $error_mess = TemplateHelper::formatDatetime(time(), 'timestamp');
                 if (strlen($keyword) < 100)
+                {
                     $error_mess .= ' [' . $keyword . ']';
+                }
                 $error_mess .= ' - ';
                 $autoblog['last_error'] = $error_mess . $e->getMessage();
             }
@@ -186,6 +200,7 @@ class AutoblogModel extends Model {
 
         $autoblog['last_run'] = \current_time('mysql');
         $this->save($autoblog);
+
         return true;
     }
 
@@ -193,11 +208,15 @@ class AutoblogModel extends Model {
     {
         $module_ids = ModuleManager::getInstance()->getParserModulesIdList(true);
         if ($autoblog['include_modules'])
+        {
             $module_ids = array_intersect($module_ids, $autoblog['include_modules']);
+        }
         if ($autoblog['exclude_modules'])
+        {
             $module_ids = array_diff($module_ids, $autoblog['exclude_modules']);
+        }
 
-        // copy module_ids to keys        
+        // copy module_ids to keys
         $module_ids = array_combine($module_ids, $module_ids);
 
         // run required modules first
@@ -207,7 +226,9 @@ class AutoblogModel extends Model {
             {
                 // module not found?
                 if (!isset($module_ids[$required_module]))
+                {
                     throw new \Exception(sprintf(__('Required module %s will not run. The module is not configured or deleted.', 'content-egg'), $required_module));
+                }
 
                 unset($module_ids[$required_module]);
                 $module_ids = array($required_module => $required_module) + $module_ids;
@@ -224,8 +245,9 @@ class AutoblogModel extends Model {
             $k_parts = explode(':', $k, 2);
             // main keyword
             if (count($k_parts) == 1 && !$keyword)
+            {
                 $keyword = trim($k);
-            elseif (count($k_parts) == 2)
+            } elseif (count($k_parts) == 2)
             {
                 $module_id = trim($k_parts[0]);
                 $module_id = str_replace(' ', '', $module_id); // name -> id
@@ -236,19 +258,26 @@ class AutoblogModel extends Model {
                 }
                 $tmp_module_keywords[$module_id] = trim($k_parts[1]);
             } else
-                continue; //error            
+            {
+                continue;
+            } //error
         }
 
         // main keyword not set?
         if (!$keyword)
-            $keyword = reset($tmp_module_keywords); // first
+        {
+            $keyword = reset($tmp_module_keywords);
+        } // first
         $module_keywords = array();
         foreach ($module_ids as $module_id)
         {
             if (isset($tmp_module_keywords[$module_id]))
+            {
                 $module_keywords[$module_id] = $tmp_module_keywords[$module_id];
-            else
+            } else
+            {
                 $module_keywords[$module_id] = $keyword;
+            }
         }
         // .module keywords
 
@@ -259,7 +288,7 @@ class AutoblogModel extends Model {
             $module = ModuleManager::getInstance()->factory($module_id);
             try
             {
-                $data = $module->doRequest($module_keywords[$module_id], $autoblog, true);
+                $data = $module->doMultipleRequests($module_keywords[$module_id], $autoblog, true);
             } catch (\Exception $e)
             {
                 // error
@@ -281,7 +310,9 @@ class AutoblogModel extends Model {
             if ($autoblog['min_modules_count'])
             {
                 if (count($modules_data) + $count < $autoblog['min_modules_count'])
+                {
                     throw new \Exception(sprintf(__('It does not reach the desired amount of data. Minimum required modules: %d.', 'content-egg'), $autoblog['min_modules_count']));
+                }
             }
             $count--;
         }
@@ -297,7 +328,9 @@ class AutoblogModel extends Model {
                 }
             }
             if ($comments_count < (int) $autoblog['config']['min_comments_count'])
+            {
                 throw new \Exception(sprintf(__('Total reviews found: %d. Minimum reviews required: %d.', 'content-egg'), $comments_count, $autoblog['config']['min_comments_count']));
+            }
         }
 
         // main product
@@ -307,7 +340,7 @@ class AutoblogModel extends Model {
         $product_sync = GeneralConfig::getInstance()->option('woocommerce_product_sync');
         $woocommerce_modules = GeneralConfig::getInstance()->option('woocommerce_modules');
 
-        if ($autoblog['post_type'] == 'product' && ($product_sync == 'manually' || !array_intersect_key($modules_data, $woocommerce_modules)) && $main_product)
+        if ($autoblog['post_type'] == 'product' && ( $product_sync == 'manually' || !array_intersect_key($modules_data, $woocommerce_modules) ) && $main_product)
         {
             foreach ($modules_data[$main_product['module_id']] as $i => $product)
             {
@@ -315,7 +348,9 @@ class AutoblogModel extends Model {
                 {
                     $modules_data[$main_product['module_id']][$i]->woo_sync = true;
                     if (GeneralConfig::getInstance()->option('woocommerce_attributes_sync'))
+                    {
                         $modules_data[$main_product['module_id']][$i]->woo_attr = true;
+                    }
                     break;
                 }
             }
@@ -324,12 +359,22 @@ class AutoblogModel extends Model {
         $title = AutoblogModel::buildTemplate($autoblog['template_title'], $modules_data, $keyword, $module_keywords, $main_product);
         $title = \wp_strip_all_tags($title);
         if (!$title)
+        {
             $title = $keyword;
+        }
         $body = AutoblogModel::buildTemplate($autoblog['template_body'], $modules_data, $keyword, $module_keywords, $main_product);
-        if ((bool) $autoblog['post_status'])
-            $post_status = 'publish';
+        if (isset($autoblog['template_slug']))
+            $slug = sanitize_title_with_dashes(AutoblogModel::buildTemplate($autoblog['template_slug'], $modules_data, $keyword, $module_keywords, $main_product));
         else
+            $slug = '';
+
+        if ((bool) $autoblog['post_status'])
+        {
+            $post_status = 'publish';
+        } else
+        {
             $post_status = 'pending';
+        }
 
         // custom fields
         $meta_input = array();
@@ -339,9 +384,12 @@ class AutoblogModel extends Model {
             {
                 $cf_value = $autoblog['custom_field_values'][$i];
                 if (\is_serialized($cf_value))
+                {
                     $cf_value = @unserialize($cf_value);
-                else
+                } else
+                {
                     $cf_value = AutoblogModel::buildTemplate($cf_value, $modules_data, $keyword, $module_keywords, $main_product);
+                }
 
                 $meta_input[$custom_field] = $cf_value;
             }
@@ -349,28 +397,41 @@ class AutoblogModel extends Model {
 
         //tags
         if ($autoblog['tags'])
+        {
             $tags_input = AutoblogModel::buildTemplate($autoblog['tags'], $modules_data, $keyword, $module_keywords, $main_product);
-        else
+        } else
+        {
             $tags_input = '';
+        }
 
         // create category
         if (!empty($autoblog['config']['dynamic_categories']) && $autoblog['config']['dynamic_categories'] == 2 && $main_product['categoryPath'])
         {
             if ($autoblog['post_type'] == 'product')
+            {
                 $categ_id = self::createWooNestedCategories($main_product['categoryPath']);
-            else
+            } else
+            {
                 $categ_id = self::createNestedCategories($main_product['categoryPath']);
+            }
         } elseif (!empty($autoblog['config']['dynamic_categories']) && $autoblog['config']['dynamic_categories'] && $main_product['category'])
         {
             if ($autoblog['post_type'] == 'product')
+            {
                 $categ_id = self::createWooCategory($main_product['category']);
-            else
+            } else
+            {
                 $categ_id = self::createCategory($main_product['category']);
+            }
         } else
+        {
             $categ_id = $autoblog['category'];
+        }
 
         if (!$categ_id)
+        {
             $categ_id = $autoblog['category'];
+        }
         $categ_id = (int) $categ_id;
 
         // create post
@@ -384,10 +445,13 @@ class AutoblogModel extends Model {
             'post_type' => $autoblog['post_type'],
             'meta_input' => $meta_input,
             'tags_input' => $tags_input,
+            'post_name' => $slug,
         );
 
         if (!$post_id = \wp_insert_post($post))
+        {
             throw new \Exception(sprintf(__('Post can\'t be created. Unknown error.', 'content-egg'), $autoblog['min_modules_count']));
+        }
 
         // woocommerce product
         if (\get_post_type($post_id) == 'product')
@@ -399,10 +463,14 @@ class AutoblogModel extends Model {
             $product->save();
 
             if (\term_exists($categ_id, 'product_cat'))
+            {
                 \wp_set_object_terms($post_id, (int) $categ_id, 'product_cat');
+            }
 
             if ($tags_input)
+            {
                 \wp_set_object_terms($post_id, explode(',', $tags_input), 'product_tag');
+            }
         }
 
 
@@ -413,9 +481,12 @@ class AutoblogModel extends Model {
             $i++;
             $autoupdate_keyword = \sanitize_text_field($module_keywords[$module_id]);
             if ($i == count($modules_data))
+            {
                 $last_iteration = true;
-            else
+            } else
+            {
                 $last_iteration = false;
+            }
             ContentManager::saveData($data, $module_id, $post_id, $last_iteration);
             if (in_array($module_id, $autoblog['autoupdate_modules']) && $autoupdate_keyword)
             {
@@ -434,11 +505,15 @@ class AutoblogModel extends Model {
     public static function buildTemplate($template, array $modules_data, $keyword, $module_keywords = array(), $main_product = null)
     {
         if (!$template)
+        {
             return $template;
+        }
 
         $template = TextHelper::spin($template);
         if (!preg_match_all('/%[a-zA-Z0-9_\.\,\(\)]+%/', $template, $matches))
+        {
             return $template;
+        }
 
         $replace = array();
         foreach ($matches[0] as $pattern)
@@ -448,9 +523,12 @@ class AutoblogModel extends Model {
             {
                 preg_match('/%RANDOM\((\d+),(\d+)\)%/', $pattern, $rmatches);
                 if ($rmatches)
+                {
                     $replace[$pattern] = rand((int) $rmatches[1], (int) $rmatches[2]);
-                else
+                } else
+                {
                     $replace[$pattern] = rand(0, 9999999);
+                }
                 continue;
             }
 
@@ -469,9 +547,12 @@ class AutoblogModel extends Model {
                 $module_id = rtrim($pattern_parts[1], '%');
                 $module_id = str_replace(' ', '', $module_id); // name -> id
                 if (isset($module_keywords[$module_id]))
+                {
                     $replace[$pattern] = $module_keywords[$module_id];
-                else
+                } else
+                {
                     $replace[$pattern] = '';
+                }
                 continue;
             }
 
@@ -489,9 +570,12 @@ class AutoblogModel extends Model {
                 $var_name = rtrim($var_name, '%');
 
                 if (isset($main_product[$var_name]))
+                {
                     $replace[$pattern] = $main_product[$var_name];
-                else
+                } else
+                {
                     $replace[$pattern] = '';
+                }
                 continue;
             }
 
@@ -514,9 +598,12 @@ class AutoblogModel extends Model {
             $var_name = rtrim($var_name, '%');
 
             if (array_key_exists($module_id, $modules_data) && isset($modules_data[$module_id][$index]) && property_exists($modules_data[$module_id][$index], $var_name))
+            {
                 $replace[$pattern] = $modules_data[$module_id][$index]->$var_name;
-            else
+            } else
+            {
                 $replace[$pattern] = '';
+            }
         }
 
         return str_ireplace(array_keys($replace), array_values($replace), $template);
@@ -527,17 +614,23 @@ class AutoblogModel extends Model {
         foreach ($keywords as $id => $keyword)
         {
             if (self::isActiveKeyword($keyword))
+            {
                 return $id;
+            }
         }
+
         return false;
     }
 
     public static function isInactiveKeyword($keyword)
     {
         if ($keyword[0] == '[')
+        {
             return true;
-        else
+        } else
+        {
             return false;
+        }
     }
 
     public static function isActiveKeyword($keyword)
@@ -554,15 +647,20 @@ class AutoblogModel extends Model {
     {
         $total_autoblogs = AutoblogModel::model()->count('status = 1');
         if ($total_autoblogs)
+        {
             return true;
-        else
+        } else
+        {
             return false;
+        }
     }
 
     public static function createCategory($category)
     {
         if (!is_array($category))
+        {
             $category = array($category);
+        }
 
         return self::createNestedCategories($category);
     }
@@ -572,27 +670,36 @@ class AutoblogModel extends Model {
         // exists?
         $last = end($categoryPath);
         if ($eid = get_cat_ID($last))
+        {
             return $eid;
+        }
 
         if (!function_exists('\wp_create_category'))
-            require_once(\ABSPATH . 'wp-admin/includes/taxonomy.php');
+        {
+            require_once( \ABSPATH . 'wp-admin/includes/taxonomy.php' );
+        }
 
         $parent = 0;
         foreach ($categoryPath as $category)
         {
-            // If the category already exists, it is not duplicated. 
-            // The ID of the original existing category is returned without error. 
+            // If the category already exists, it is not duplicated.
+            // The ID of the original existing category is returned without error.
             if (!$id = \wp_create_category($category, $parent))
+            {
                 return $id;
+            }
             $parent = $id;
         }
+
         return $id;
     }
 
     public static function createWooCategory($category)
     {
         if (!is_array($category))
+        {
             $category = array($category);
+        }
 
         return self::createWooNestedCategories($category);
     }
@@ -607,11 +714,14 @@ class AutoblogModel extends Model {
             {
                 $ids = \wp_insert_term($category, 'product_cat', array('parent' => $parent));
                 if (\is_wp_error($ids))
+                {
                     return false;
+                }
             }
 
             $parent = $ids['term_id'];
         }
+
         return $parent;
     }
 

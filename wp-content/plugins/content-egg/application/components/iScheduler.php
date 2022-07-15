@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\components;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 /**
  * Scheduler interface file
@@ -13,7 +13,7 @@ defined('\ABSPATH') || exit;
  */
 interface iScheduler {
 
-    public static function getCronTag();
+	public static function getCronTag();
 
-    public static function run();
+	public static function run();
 }

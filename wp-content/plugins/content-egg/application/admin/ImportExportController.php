@@ -30,7 +30,6 @@ class ImportExportController {
 
     public function actionIndex()
     {
-        $_POST = array_map('stripslashes_deep', $_POST);
         $message = '';
         $notice = '';
 
@@ -40,9 +39,9 @@ class ImportExportController {
         // modules
         $all_options = array_merge($all_options, ModuleManager::getInstance()->getOptionsList());
 
-        if (!empty($_POST['nonce']) && \wp_verify_nonce($_POST['nonce'], basename(__FILE__)) && !empty($_POST['import_str']))
+        if (!empty($_POST['nonce']) && \wp_verify_nonce(sanitize_key($_POST['nonce']), basename(__FILE__)) && !empty($_POST['import_str']))
         {
-            $import = json_decode($_POST['import_str'], true);
+            $import = json_decode(sanitize_text_field(wp_unslash($_POST['import_str'])), true);
             if ($import)
             {
                 foreach ($import as $option => $values)

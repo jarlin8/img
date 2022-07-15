@@ -54,6 +54,7 @@ class BookingParser extends LdShopParser {
         if (!$price)
         {
             $price = html_entity_decode(parent::parsePrice());
+
             if (strlen($price) > 20)
             {
                 if (preg_match('/[A-Z]{3}.+?([0-9\.\s\'\,]+)/', $price, $matches))
@@ -143,6 +144,13 @@ class BookingParser extends LdShopParser {
     public function getCurrency()
     {
         $currency = $this->xpathScalar(".//input[@name='selected_currency']/@value");
+
+        if (!$currency)
+        {
+            if (preg_match("/b_selected_currency: '(\w+)'/ims", $this->dom->saveHtml(), $matches))
+                $currency = $matches[1];
+        }
+
         if (!$currency)
             $currency = 'USD';
         return $currency;

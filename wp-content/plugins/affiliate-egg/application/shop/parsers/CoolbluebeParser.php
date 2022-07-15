@@ -19,7 +19,11 @@ class CoolbluebeParser extends CoolbluenlParser {
 
     public function parseOldPrice()
     {
-        return $this->xpathScalar(".//div[@class='grid-section-xs--gap-4']//*[@class='sales-price__former-price']");
+        $xpath = array(
+            ".//span[contains(@class, 'sales-price')]//span[@class='sales-price__former-price']",
+            ".//div[@class='grid-section-xs--gap-4']//*[@class='sales-price__former-price']",
+        );
+        return $this->xpathScalar($xpath);
     }
 
 }

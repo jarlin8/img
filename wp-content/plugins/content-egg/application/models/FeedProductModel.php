@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\models;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\helpers\TextHelper;
 
@@ -15,9 +15,8 @@ use ContentEgg\application\helpers\TextHelper;
  */
 abstract class FeedProductModel extends Model {
 
-    public function getDump()
-    {
-        return "CREATE TABLE " . $this->tableName() . " (
+	public function getDump() {
+		return "CREATE TABLE " . $this->tableName() . " (
                     id bigint(20) unsigned NOT NULL,
                     stock_status tinyint(1) DEFAULT 0,
                     price float(12,2) DEFAULT NULL,
@@ -32,66 +31,67 @@ abstract class FeedProductModel extends Model {
                     KEY price (price),
                     FULLTEXT (title)
                     ) $this->charset_collate;";
-    }
+	}
 
-    public function searchByUrl($url, $partial_match = false, $limit = 1)
-    {
-        $like = $this->getDb()->esc_like($url);
-        if ($partial_match)
-            $like .= '%';
+	public function searchByUrl( $url, $partial_match = false, $limit = 1 ) {
+		$like = $this->getDb()->esc_like( $url );
+		if ( $partial_match ) {
+			$like .= '%';
+		}
 
-        if (!$partial_match)
-            $limit = 1;
+		if ( ! $partial_match ) {
+			$limit = 1;
+		}
 
-        $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE orig_url LIKE %s LIMIT %d', $like, $limit);
-        return $this->getDb()->get_results($sql, \ARRAY_A);
-    }
+		$sql = $this->getDb()->prepare( 'SELECT * FROM ' . $this->tableName() . ' WHERE orig_url LIKE %s LIMIT %d', $like, $limit );
 
-    public function searchByEan($ean, $limit = 10)
-    {
-        $ean = TextHelper::fixEan($ean);
-        $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE ean = %s LIMIT %d', $ean, $limit);
-        return $this->getDb()->get_results($sql, \ARRAY_A);
-    }
+		return $this->getDb()->get_results( $sql, \ARRAY_A );
+	}
 
-    public function searchByKeyword($keyword, $limit = 10, $options = array())
-    {
-        $where = '';
-        if (!empty($options['price_min']))
-            $where = $this->getDb()->prepare('price >= %d', $options['price_min']);
+	public function searchByEan( $ean, $limit = 10 ) {
+		$ean = TextHelper::fixEan( $ean );
+		$sql = $this->getDb()->prepare( 'SELECT * FROM ' . $this->tableName() . ' WHERE ean = %s LIMIT %d', $ean, $limit );
 
-        if (!empty($options['price_max']))
-        {
-            if ($where)
-                $where .= ' AND ';
-            $where .= $this->getDb()->prepare('price <= %d', $options['price_max']);
-        }
-        if ($where)
-            $where = ' AND ' . $where;
+		return $this->getDb()->get_results( $sql, \ARRAY_A );
+	}
 
-        $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE MATCH (title) AGAINST (%s)' . $where . ' LIMIT %d', $keyword, $limit);
-        return $this->getDb()->get_results($sql, \ARRAY_A);
-    }
+	public function searchByKeyword( $keyword, $limit = 10, $options = array() ) {
+		$where = '';
+		if ( ! empty( $options['price_min'] ) ) {
+			$where = $this->getDb()->prepare( 'price >= %d', $options['price_min'] );
+		}
 
-    public function searchById($id)
-    {
-        $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE id = %s LIMIT 1', $id);
-        return $this->getDb()->get_row($sql, \ARRAY_A);
-    }
+		if ( ! empty( $options['price_max'] ) ) {
+			if ( $where ) {
+				$where .= ' AND ';
+			}
+			$where .= $this->getDb()->prepare( 'price <= %d', $options['price_max'] );
+		}
+		if ( $where ) {
+			$where = ' AND ' . $where;
+		}
 
-    public function getAllUrls()
-    {
-        return $this->getDb()->get_col('SELECT orig_url FROM ' . $this->tableName());
-    }
+		$sql = $this->getDb()->prepare( 'SELECT * FROM ' . $this->tableName() . ' WHERE MATCH (title) AGAINST (%s)' . $where . ' LIMIT %d', $keyword, $limit );
 
-    public function getEans()
-    {
-        return $this->getDb()->get_col('SELECT ean FROM ' . $this->tableName() . ' WHERE ean != ""');
-    }
+		return $this->getDb()->get_results( $sql, \ARRAY_A );
+	}
 
-    public function getDublicateEans()
-    {
-        return $this->getDb()->get_col('SELECT ean, COUNT(*) c FROM ' . $this->tableName() . ' WHERE ean != "" GROUP BY ean HAVING c > 1');
-    }
+	public function searchById( $id ) {
+		$sql = $this->getDb()->prepare( 'SELECT * FROM ' . $this->tableName() . ' WHERE id = %s LIMIT 1', $id );
+
+		return $this->getDb()->get_row( $sql, \ARRAY_A );
+	}
+
+	public function getAllUrls() {
+		return $this->getDb()->get_col( 'SELECT orig_url FROM ' . $this->tableName() );
+	}
+
+	public function getEans() {
+		return $this->getDb()->get_col( 'SELECT ean FROM ' . $this->tableName() . ' WHERE ean != ""' );
+	}
+
+	public function getDublicateEans() {
+		return $this->getDb()->get_col( 'SELECT ean, COUNT(*) c FROM ' . $this->tableName() . ' WHERE ean != "" GROUP BY ean HAVING c > 1' );
+	}
 
 }

@@ -72,7 +72,7 @@ if ($table->current_action() == 'update_catalogs')
     </form>	
 
     <form id="eggs-table" method="GET">
-        <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>"/>
+        <input type="hidden" name="page" value="<?php echo \esc_attr($_REQUEST['page']); ?>"/>
         <?php $table->display() ?>
     </form>
 </div>

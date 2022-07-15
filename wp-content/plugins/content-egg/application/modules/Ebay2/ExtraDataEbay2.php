@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Ebay2;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,27 +15,27 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataEbay2 extends ExtraData {
 
-    public $locale;
-    public $seller = array();
-    public $condition;
-    public $conditionId;
-    public $shippingOptions = array();
-    public $buyingOptions = array();
-    public $epid;
-    public $itemLocation = array();
-    public $categories = array();
-    public $images = array();
-    public $qualifiedPrograms = array();
-    public $adultOnly;
-    public $legacyItemId;
-    public $availableCoupons;
-    public $topRatedBuyingExperience;
-    public $priorityListing;
-    public $IsEligibleForSuperSaverShipping;
-    
-    public $unitPriceType;
-    public $unitPrice;
-    public $unitPriceCurrency;
-    public $pricePerUnitDisplay;
-    
+	public $locale;
+	public $seller = array();
+	public $condition;
+	public $conditionId;
+	public $shippingOptions = array();
+	public $buyingOptions = array();
+	public $epid;
+	public $itemLocation = array();
+	public $categories = array();
+	public $images = array();
+	public $qualifiedPrograms = array();
+	public $adultOnly;
+	public $legacyItemId;
+	public $availableCoupons;
+	public $topRatedBuyingExperience;
+	public $priorityListing;
+	public $IsEligibleForSuperSaverShipping;
+
+	public $unitPriceType;
+	public $unitPrice;
+	public $unitPriceCurrency;
+	public $pricePerUnitDisplay;
+
 }

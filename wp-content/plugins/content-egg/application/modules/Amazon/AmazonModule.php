@@ -61,9 +61,12 @@ class AmazonModule extends AffiliateParserModule {
     public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
     {
         if (!empty($query_params['locale']) && AmazonLocales::getLocale($query_params['locale']))
+        {
             $locale = $query_params['locale'];
-        else
+        } else
+        {
             $locale = $this->config('locale');
+        }
 
         $associate_tag = $this->getAssociateTagForLocale($locale);
 
@@ -75,22 +78,31 @@ class AmazonModule extends AffiliateParserModule {
         $options['PartnerTag'] = $associate_tag;
 
         if ($asin = AmazonModule::parseAsinFromUrl($keyword))
+        {
             $keyword = $asin;
+        }
 
         if (TextHelper::isAsin($keyword) && !TextHelper::isEan($keyword))
         {
             $options['ItemIds'] = TextHelper::splitAsins($keyword);
+
             return $this->searchByASINs($client, $options);
         } else
         {
             if ($this->config('title'))
+            {
                 $options['Title'] = $keyword;
-            else
+            } else
+            {
                 $options['Keywords'] = $keyword;
+            }
             if ($is_autoupdate)
+            {
                 $total = $this->config('entries_per_page_update');
-            else
+            } else
+            {
                 $total = $this->config('entries_per_page');
+            }
 
             return $this->searchByKeyword($client, $options, $query_params, $total);
         }
@@ -102,9 +114,14 @@ class AmazonModule extends AffiliateParserModule {
         $options['Resources'] = self::getResources();
 
         if ($v = $this->config('CurrencyOfPreference'))
+        {
             $options['CurrencyOfPreference'] = $v;
+        }
         if ($v = $this->config('LanguagesOfPreference'))
+        {
             $options['LanguagesOfPreference'] = TextHelper::getArrayFromCommaList($v);
+        }
+
         return $options;
     }
 
@@ -112,16 +129,21 @@ class AmazonModule extends AffiliateParserModule {
     {
         $data = $client->GetItems($options);
         if (!is_array($data) || !isset($data['ItemsResult']['Items']))
+        {
             return array();
+        }
         $items = $data['ItemsResult']['Items'];
         $this->addVariationSummary($client, $options, $items);
+
         return $this->prepareResults($items, $client->getLocale(), $client->getAssociateTag());
     }
 
     protected function addVariationSummary($client, array $options, array &$items)
     {
         if (isset($options['ItemIds']))
+        {
             unset($options['ItemIds']);
+        }
         $options['Resources'] = array('VariationSummary.Price.LowestPrice');
 
         // check for parent ASINs
@@ -129,7 +151,9 @@ class AmazonModule extends AffiliateParserModule {
         {
             // child or parent?
             if (isset($item['ParentASIN']))
+            {
                 continue;
+            }
 
             $options['ASIN'] = $item['ASIN'];
             sleep(1);
@@ -141,36 +165,58 @@ class AmazonModule extends AffiliateParserModule {
                 continue;
             }
             if (isset($data['VariationsResult']['VariationSummary']))
+            {
                 $items[$i]['VariationSummary'] = $data['VariationsResult']['VariationSummary'];
+            }
         }
     }
 
     protected function searchByKeyword($client, array $options, array $query_params, $total)
     {
         if (!empty($query_params['minimum_price']))
+        {
             $options['MinPrice'] = TextHelper::pricePenniesDenomination($query_params['minimum_price']);
-        elseif ($this->config('minimum_price'))
+        } elseif ($this->config('minimum_price'))
+        {
             $options['MinPrice'] = TextHelper::pricePenniesDenomination($this->config('minimum_price'));
+        }
         if (!empty($query_params['maximum_price']))
+        {
             $options['MaxPrice'] = TextHelper::pricePenniesDenomination($query_params['maximum_price']);
-        elseif ($this->config('maximum_price'))
+        } elseif ($this->config('maximum_price'))
+        {
             $options['MaxPrice'] = TextHelper::pricePenniesDenomination($this->config('maximum_price'));
+        }
         if (!empty($query_params['min_percentage_off']))
+        {
             $options['MinSavingPercent'] = (int) $query_params['min_percentage_off'];
-        elseif ($this->config('min_percentage_off'))
+        } elseif ($this->config('min_percentage_off'))
+        {
             $options['MinSavingPercent'] = (int) $this->config('min_percentage_off');
+        }
 
         // from autoblog
-        if (isset($query_params['product_condition']) && in_array($query_params['product_condition'], array('new', 'used', 'refurbished')))
+        if (isset($query_params['product_condition']) && in_array($query_params['product_condition'], array(
+                    'new',
+                    'used',
+                    'refurbished'
+                )))
+        {
             $options['Condition'] = ucfirst($query_params['product_condition']);
-        elseif ($v = $this->config('Condition'))
+        } elseif ($v = $this->config('Condition'))
+        {
             $options['Condition'] = $v;
+        }
 
         // v4 module options mapping
         if ($v = $this->config('search_index'))
+        {
             $options['SearchIndex'] = $v;
+        }
         if ($v = $this->config('brouse_node'))
+        {
             $options['BrowseNodeId'] = $v;
+        }
 
         // DeliveryFlags
         $flags = array('AmazonGlobal', 'FreeShipping', 'FulfilledByAmazon', 'Prime');
@@ -178,18 +224,28 @@ class AmazonModule extends AffiliateParserModule {
         foreach ($flags as $flag)
         {
             if ($this->config($flag))
+            {
                 $DeliveryFlags[] = $flag;
+            }
         }
         if ($DeliveryFlags)
+        {
             $options['DeliveryFlags'] = $DeliveryFlags;
+        }
 
         if ($v = $this->config('MinReviewsRating'))
+        {
             $options['MinReviewsRating'] = (int) $v;
+        }
         if ($v = $this->config('SortBy'))
+        {
             $options['SortBy'] = $this->config('SortBy');
+        }
 
         if ($total <= 10)
+        {
             $options['ItemCount'] = $total;
+        }
 
         // Paging Through Results
         $pages_count = ceil($total / 10);
@@ -198,21 +254,31 @@ class AmazonModule extends AffiliateParserModule {
         {
             // Product Advertising API 5.0 is allowed an initial usage limit up to a maximum of 1 request per second
             if ($i > 0)
+            {
                 sleep(1);
+            }
 
             $options['ItemPage'] = $i + 1;
             $data = $client->SearchItems($options);
             if (!is_array($data) || !isset($data['SearchResult']['Items']))
+            {
                 break;
+            }
             if (isset($data['SearchResult']['TotalResultCount']))
+            {
                 $totalPages = (int) $data['SearchResult']['TotalResultCount'] / 10;
-            else
+            } else
+            {
                 $totalPages = 1;
+            }
             $data = array_slice($data['SearchResult']['Items'], 0, $total - count($results));
             $results = array_merge($results, $this->prepareResults($data, $client->getLocale(), $client->getAssociateTag()));
             if ($totalPages <= $i + 1)
+            {
                 break;
+            }
         }
+
         return $results;
     }
 
@@ -225,15 +291,18 @@ class AmazonModule extends AffiliateParserModule {
         foreach ($items as $item)
         {
             if (!empty($item['extra']['locale']))
+            {
                 $locale = $item['extra']['locale'];
-            else
+            } else
             {
                 $locale = $default_locale;
                 $item['extra']['locale'] = $locale;
             }
 
             if (!in_array($locale, $locales))
+            {
                 $locales[] = $locale;
+            }
         }
 
         // request by locale
@@ -244,7 +313,9 @@ class AmazonModule extends AffiliateParserModule {
             foreach ($items as $item)
             {
                 if ($item['extra']['locale'] == $locale)
+                {
                     $request[] = $item;
+                }
             }
 
             // This parameter can have a maximum of 10 values.
@@ -253,7 +324,9 @@ class AmazonModule extends AffiliateParserModule {
             {
                 // If your application is submitting requests faster than once per second per IP address, you may receive error messages from the Product Advertising API until you decrease the rate of your requests.
                 if ($i > 0)
+                {
                     sleep(1);
+                }
 
                 $request10 = array_slice($request, $i * 10, 10);
                 try
@@ -284,14 +357,25 @@ class AmazonModule extends AffiliateParserModule {
 
             $result = $new[$unique_id];
 
-            $fields = array('price', 'priceOld', 'currency', 'currencyCode', 'availability', 'orig_url', 'stock_status', 'url');
+            $fields = array(
+                'price',
+                'priceOld',
+                'currency',
+                'currencyCode',
+                'availability',
+                'orig_url',
+                'stock_status',
+                'url'
+            );
             foreach ($fields as $field)
             {
                 $items[$unique_id][$field] = $result->$field;
             }
             if (!$this->config('save_img'))
+            {
                 $items[$unique_id]['img'] = $result->img;
-            
+            }
+
             // all extra fields
             $items[$unique_id]['extra'] = ArrayHelper::object2Array($result->extra);
         }
@@ -317,6 +401,7 @@ class AmazonModule extends AffiliateParserModule {
         }
 
         $options['ItemIds'] = $item_ids;
+
         return $this->searchByASINs($client, $options);
     }
 
@@ -327,6 +412,7 @@ class AmazonModule extends AffiliateParserModule {
         {
             $data[] = $this->prepareResult($r, $locale, $associate_tag);
         }
+
         return $data;
     }
 
@@ -344,7 +430,9 @@ class AmazonModule extends AffiliateParserModule {
             $content->img = $r['Images']['Primary']['Large']['URL'];
             $extra->primaryImages = $r['Images']['Primary'];
         } elseif (isset($r['Images']['Variants'][0]))
+        {
             $content->img = $r['Images']['Variants'][0]['Large']['URL'];
+        }
         $content->domain = AmazonConfig::getDomainByLocale($locale);
         $content->merchant = ucfirst($content->domain);
         $extra->ASIN = $r['ASIN'];
@@ -352,9 +440,13 @@ class AmazonModule extends AffiliateParserModule {
         $extra->associate_tag = $associate_tag;
         $extra->addToCartUrl = $this->generateAddToCartUrl($locale, $extra->ASIN);
         if (isset($r['ItemInfo']['ByLineInfo']['Manufacturer']))
+        {
             $content->manufacturer = $r['ItemInfo']['ByLineInfo']['Manufacturer']['DisplayValue'];
+        }
         if (isset($r['ItemInfo']['Classifications']['Binding']))
+        {
             $content->category = $r['ItemInfo']['Classifications']['Binding']['DisplayValue'];
+        }
         if (isset($r['ItemInfo']['ExternalIds']['EANs']))
         {
             $content->ean = $r['ItemInfo']['ExternalIds']['EANs']['DisplayValues'][0];
@@ -371,7 +463,9 @@ class AmazonModule extends AffiliateParserModule {
             $content->url = $extra->addToCartUrl;
         }
         if (isset($r['ItemInfo']['Features']['DisplayValues']))
+        {
             $extra->itemAttributes['Feature'] = $r['ItemInfo']['Features']['DisplayValues'];
+        }
 
         if (!empty($r['Images']['Variants']))
         {
@@ -390,25 +484,40 @@ class AmazonModule extends AffiliateParserModule {
         $content->features = array();
         $infos = array();
         if (isset($r['ItemInfo']['ManufactureInfo']))
+        {
             $infos = $r['ItemInfo']['ManufactureInfo'];
+        }
         if (isset($r['ItemInfo']['ProductInfo']))
+        {
             $infos = array_merge($infos, $r['ItemInfo']['ProductInfo']);
+        }
         if (isset($r['ItemInfo']['ContentInfo']))
+        {
             $infos = array_merge($infos, $r['ItemInfo']['ContentInfo']);
+        }
         if (isset($r['ItemInfo']['TechnicalInfo']))
+        {
             $infos = array_merge($infos, $r['ItemInfo']['TechnicalInfo']);
+        }
         foreach ($infos as $info)
         {
             if (!isset($info['Label']) || in_array($info['Label'], array('UnitCount', 'NumberOfItems')))
+            {
                 continue;
+            }
             if (isset($info['DisplayValue']))
+            {
                 $value = $info['DisplayValue'];
-            elseif (isset($info['DisplayValues'][0]['DisplayValue']))
+            } elseif (isset($info['DisplayValues'][0]['DisplayValue']))
+            {
                 $value = $info['DisplayValues'][0]['DisplayValue'];
-            elseif (isset($info['DisplayValues'][0]) && !is_array($info['DisplayValues'][0]))
+            } elseif (isset($info['DisplayValues'][0]) && !is_array($info['DisplayValues'][0]))
+            {
                 $value = $info['DisplayValues'][0];
-            else
+            } else
+            {
                 continue;
+            }
 
             $feature = array(
                 'name' => TemplateHelper::splitAttributeName($info['Label']),
@@ -419,6 +528,7 @@ class AmazonModule extends AffiliateParserModule {
 
         self::fillOfferVars($r, $content, $extra);
         $content->extra = $extra;
+
         return $content;
     }
 
@@ -431,6 +541,7 @@ class AmazonModule extends AffiliateParserModule {
             $associate_tag = $this->config('associate_tag');
             $this->api_client = new AmazonApi($access_key_id, $secret_access_key, $associate_tag);
         }
+
         return $this->api_client;
     }
 
@@ -443,16 +554,24 @@ class AmazonModule extends AffiliateParserModule {
         {
             $offer = $r['Offers']['Listings'][0];
             $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-            $content->availability = $offer['Availability']['Message'];
+            if (isset($offer['Availability']['Message']))
+            {
+                $content->availability = $offer['Availability']['Message'];
+            }
+
             if (isset($offer['Price']))
             {
                 $content->price = $offer['Price']['Amount'];
                 $content->currencyCode = $offer['Price']['Currency'];
             }
             if (isset($offer['SavingBasis']))
+            {
                 $content->priceOld = $offer['SavingBasis']['Amount'];
+            }
         } else
+        {
             $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+        }
 
         if (isset($r['Offers']['Summaries']))
         {
@@ -473,7 +592,9 @@ class AmazonModule extends AffiliateParserModule {
         {
             $extra->IsEligibleForSuperSaverShipping = filter_var($offer['DeliveryInfo']['IsFreeShippingEligible'], FILTER_VALIDATE_BOOLEAN);
             if (isset($offer['DeliveryInfo']['IsAmazonFulfilled']))
+            {
                 $extra->IsAmazonFulfilled = filter_var($offer['DeliveryInfo']['IsAmazonFulfilled'], FILTER_VALIDATE_BOOLEAN);
+            }
             $extra->IsPrimeEligible = filter_var($offer['DeliveryInfo']['IsPrimeEligible'], FILTER_VALIDATE_BOOLEAN);
             $extra->IsBuyBoxWinner = filter_var($offer['IsBuyBoxWinner'], FILTER_VALIDATE_BOOLEAN);
             $extra->IsPrimeExclusive = filter_var($offer['ProgramEligibility']['IsPrimeExclusive'], FILTER_VALIDATE_BOOLEAN);
@@ -482,16 +603,20 @@ class AmazonModule extends AffiliateParserModule {
             $extra->Condition = $offer['Condition']['Value'];
             $extra->MerchantName = $offer['MerchantInfo']['Name'];
             if (isset($offer['Price']['PricePerUnit']))
+            {
                 $extra->PricePerUnit = $offer['Price']['PricePerUnit'];
+            }
             if (isset($offer['Price']['DisplayAmount']))
             {
                 $extra->DisplayAmount = $offer['Price']['DisplayAmount'];
                 if (preg_match('/\((.+?)\)/', $extra->DisplayAmount, $matches))
+                {
                     $extra->pricePerUnitDisplay = $matches[1];
+                }
             }
         }
 
-        // fix for parent ASIN 
+        // fix for parent ASIN
         if (isset($r['VariationSummary']) && isset($r['VariationSummary']['Price']))
         {
             $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
@@ -502,15 +627,20 @@ class AmazonModule extends AffiliateParserModule {
 
         // fix for used prices
         if ($content->price == $extra->lowestUsedPrice && $extra->lowestNewPrice)
+        {
             $content->price = $extra->lowestNewPrice;
+        }
     }
 
     public function getAssociateTagForLocale($locale)
     {
         if ($locale == $this->config('locale'))
+        {
             return $this->config('associate_tag');
-        else
+        } else
+        {
             return $this->config('associate_tag_' . $locale);
+        }
     }
 
     /**
@@ -551,12 +681,17 @@ class AmazonModule extends AffiliateParserModule {
     public static function parseAsinFromUrl($url)
     {
         if (!filter_var($url, FILTER_VALIDATE_URL))
+        {
             return false;
-        $regex = '~/(?:exec/obidos/ASIN/|o/|gp/product/|gp/offer-listing/|(?:(?:[^"\'/]*)/)?dp/|)(B[0-9]{2}[0-9A-Z]{7}|[0-9]{9}(X|0-9])|[0-9]{10})(?:(?:/|\?|\#)(?:[^"\'\s]*))?~isx';
+        }
+        $regex = '~/(?:exec/obidos/ASIN/|o/|gp/product/|gp/offer-listing/|(?:(?:[^"\'/]*)/)?dp/|)(B[0-9]{2}[0-9A-Z]{7}|[0-9]{9}(X|0-9])|[0-9]{10}|B0B[A-Z0-9]{7})(?:(?:/|\?|\#)(?:[^"\'\s]*))?~isx';
         if (preg_match($regex, $url, $matches))
+        {
             return $matches[1];
-        else
+        } else
+        {
             return false;
+        }
     }
 
     private function generateAddToCartUrl($locale, $asin)
@@ -569,14 +704,19 @@ class AmazonModule extends AffiliateParserModule {
     private static function formatProductUrl($url)
     {
         if (!strstr($url, '%'))
+        {
             return $url;
+        }
 
         if (!$parts = parse_url($url))
+        {
             return $urls;
+        }
 
         // fix % in url: https://www.amazon.in/Optimum-Nutrition-100%-Whey-Standard/dp/B002DYJ00C
         $parts['path'] = str_replace('%', '', $parts['path']);
         $result = $parts['scheme'] . '://' . $parts['host'] . $parts['path'] . '?' . $parts['query'];
+
         return $result;
     }
 
@@ -585,28 +725,39 @@ class AmazonModule extends AffiliateParserModule {
         foreach ($data as $key => $d)
         {
             if (empty($data[$key]['merchant']) || $data[$key]['merchant'] == 'Amazon')
+            {
                 $data[$key]['merchant'] = ucfirst($d['domain']);
+            }
 
             if ($this->config('link_type') == 'product' && strstr($d['url'], 'AssociateTag=') && !empty($d['orig_url']))
+            {
                 $data[$key]['url'] = $d['orig_url'];
-            elseif ($this->config('link_type') == 'add_to_cart' && !strstr($d['url'], 'AssociateTag=') && !empty($d['extra']['addToCartUrl']))
+            } elseif ($this->config('link_type') == 'add_to_cart' && !strstr($d['url'], 'AssociateTag=') && !empty($d['extra']['addToCartUrl']))
+            {
                 $data[$key]['url'] = $d['extra']['addToCartUrl'];
+            }
 
             // forced URL update
             if ($this->config('forced_urls_update'))
             {
                 if ($d['extra']['locale'])
+                {
                     $tag_id = $this->getAssociateTagForLocale($d['extra']['locale']);
-                else
+                } else
+                {
                     $tag_id = $this->getAssociateTagForLocale($this->config('locale'));
+                }
 
                 if (strstr($data[$key]['url'], 'AssociateTag='))
+                {
                     $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'AssociateTag', $tag_id);
-                else
+                } else
+                {
                     $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'tag', $tag_id);
+                }
             }
 
-            // forced Associate Tag 
+            // forced Associate Tag
             if ($forced_tag = $this->config('forced_tag'))
             {
                 $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'tag', $forced_tag);

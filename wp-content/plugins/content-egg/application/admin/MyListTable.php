@@ -7,6 +7,7 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\Plugin;
 use ContentEgg\application\models\Model;
 use ContentEgg\application\helpers\TemplateHelper;
+use function ContentEgg\prnx;
 
 /**
  * MyListTable class file
@@ -65,8 +66,8 @@ class MyListTable extends \WP_List_Table {
         $this->process_bulk_action();
 
         $paged = isset($_REQUEST['paged']) ? max(0, intval($_REQUEST['paged']) - 1) : 0;
-        $orderby = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? $_REQUEST['orderby'] : $this->default_orderby();
-        $order = (isset($_REQUEST['order']) && in_array($_REQUEST['order'], array('asc', 'desc'))) ? $_REQUEST['order'] : 'desc';
+        $orderby = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? sanitize_text_field(wp_unslash($_REQUEST['orderby'])) : $this->default_orderby();
+        $order = (isset($_REQUEST['order']) && in_array($_REQUEST['order'], array('asc', 'desc'))) ? sanitize_key($_REQUEST['order']) : 'desc';
 
         $params = array(
             'select' => 'SQL_CALC_FOUND_ROWS *',
@@ -146,11 +147,9 @@ class MyListTable extends \WP_List_Table {
 
     function process_bulk_action()
     {
-        if ($this->current_action() === 'delete')
+        if ($this->current_action() === 'delete' && !empty($_REQUEST['id']))
         {
-            $ids = isset($_GET['id']) ? $_REQUEST['id'] : array();
-            if (!is_array($ids))
-                $ids = (array) $ids;
+            $ids = array_map('intval', (array)$_REQUEST['id']);
             foreach ($ids as $id)
             {
                 $id = (int) $id;

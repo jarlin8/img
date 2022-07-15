@@ -54,7 +54,8 @@ abstract class MicrodataShopParser extends ShopParser {
             ".//*[@itemprop='price']",
             ".//*[@itemprop='lowPrice']",
             ".//meta[@property='og:price:amount']/@content",
-            ".//meta[@property='og:price:standard_amount']/@content"
+            ".//meta[@property='og:price:standard_amount']/@content",
+            ".//meta[@property='product:price:amount']/@content",
         );
         return $this->xpathScalarMulty($paths);
     }
@@ -186,6 +187,7 @@ abstract class MicrodataShopParser extends ShopParser {
             ".//*[@itemprop='offers']//*[@itemprop='priceCurrency']/@content",
             ".//*[@itemtype='http://schema.org/Offer']//*[@itemprop='priceCurrency']/@content",
             ".//*[@itemprop='priceCurrency']/@content",
+            ".//meta[@property='product:price:currency']/@content",
         );
 
         $res = $this->xpathScalarMulty($paths);

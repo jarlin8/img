@@ -12,7 +12,7 @@ use ContentEgg\application\libs\RestClient;
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2021 keywordrush.com
- * 
+ *
  * Ebay Browse API
  * @link: https://developer.ebay.com/api-docs/buy/browse/overview.html
  */
@@ -50,17 +50,19 @@ class EbayBrowse extends RestClient {
 
         $this->setCustomHeaders($headers);
         $response = $this->restGet('/item_summary/search', $options);
+
         return $this->_decodeResponse($response);
     }
-    
+
     public function searchByGtin($gtin, $options = array(), $headers = array())
     {
         $options['gtin'] = $gtin;
 
         $this->setCustomHeaders($headers);
         $response = $this->restGet('/item_summary/search', $options);
+
         return $this->_decodeResponse($response);
-    }    
+    }
 
     /**
      * @link: https://developer.ebay.com/api-docs/buy/browse/resources/item/methods/getItem
@@ -69,6 +71,7 @@ class EbayBrowse extends RestClient {
     {
         $this->setCustomHeaders($headers);
         $response = $this->restGet('/item/' . urlencode($id), $options);
+
         return $this->_decodeResponse($response);
     }
 
@@ -80,12 +83,14 @@ class EbayBrowse extends RestClient {
         );
         $this->setCustomHeaders(array('Authorization' => 'Basic ' . base64_encode($this->app_id . ":" . $this->cert_id)));
         $response = $this->restPost('https://api.ebay.com/identity/v1/oauth2/token', $query);
+
         return $this->_decodeResponse($response);
     }
 
     public function restGet($path, array $query = null)
     {
         $this->addCustomHeaders(array('Authorization' => 'Bearer ' . $this->access_token));
+
         return parent::restGet($path, $query);
     }
 

@@ -19,7 +19,7 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATO
 
 class ImpactradiusApi extends RestClient {
 
-    const _API_VERSION = 11;
+    const _API_VERSION = 12;
     const API_URI_BASE = 'https://product.api.impactradius.com/Mediapartners';
 
     protected $AccountSid;
@@ -34,7 +34,8 @@ class ImpactradiusApi extends RestClient {
 
     /**
      * Constructor
-     * @param  string $responseType
+     *
+     * @param string $responseType
      */
     public function __construct($AccountSid, $AuthToken)
     {
@@ -52,6 +53,7 @@ class ImpactradiusApi extends RestClient {
     {
         $options['Keyword'] = $keyword;
         $response = $this->restGet('/Catalogs/ItemSearch', $options);
+
         return $this->_decodeResponse($response);
     }
 
@@ -59,14 +61,19 @@ class ImpactradiusApi extends RestClient {
     {
         $path = '/Catalogs/' . $catalog_id . '/Items/' . $product_id;
         $response = $this->restGet($path);
+
         return $this->_decodeResponse($response);
     }
 
     public function restGet($path, array $query = null)
     {
-        //$query['IRVersion'] = self::_API_VERSION; // force API version
+        $query['IrVersion'] = self::_API_VERSION; // force API version
         $path = '/' . $this->AccountSid . $path;
-        $this->setCustomHeaders(array('Authorization' => 'Basic ' . base64_encode($this->AccountSid . ':' . $this->AuthToken), 'Accept' => 'application/json'));
+        $this->setCustomHeaders(array(
+            'Authorization' => 'Basic ' . base64_encode($this->AccountSid . ':' . $this->AuthToken),
+            'Accept' => 'application/json'
+        ));
+
         return parent::restGet($path, $query);
     }
 

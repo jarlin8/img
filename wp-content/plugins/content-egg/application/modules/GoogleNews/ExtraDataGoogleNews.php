@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\GoogleNews;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,14 +15,14 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataGoogleNews extends ExtraData {
 
-    public $links = array();
+	public $links = array();
 
 }
 
 class ExtraGoogleNewsLinks {
 
-    public $link;
-    public $source;
-    public $title;
+	public $link;
+	public $source;
+	public $title;
 
 }

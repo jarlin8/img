@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Freebase;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,16 +15,16 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataFreebase extends ExtraData {
 
-    public $article;
-    public $officialWebsite = array();
-    public $topicEquivalentWebpage = array();
-    public $topicalWebpage = array();
-    public $quotations = array();
-    public $notableFor = array();
-    public $notableTypes = array();
-    public $awardNominations = array();
-    public $artistTrack = array();
-    public $dateOfBirth;
-    public $freebaseId;
+	public $article;
+	public $officialWebsite = array();
+	public $topicEquivalentWebpage = array();
+	public $topicalWebpage = array();
+	public $quotations = array();
+	public $notableFor = array();
+	public $notableTypes = array();
+	public $awardNominations = array();
+	public $artistTrack = array();
+	public $dateOfBirth;
+	public $freebaseId;
 
 }

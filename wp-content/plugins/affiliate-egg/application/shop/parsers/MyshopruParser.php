@@ -13,43 +13,78 @@ defined('\ABSPATH') || exit;
  */
 class MyshopruParser extends MicrodataShopParser {
 
-    protected $_html;
-    
+    protected $_product;
+
     public function parseCatalog($max)
     {
-        if (preg_match_all('~"product_id":(\d+)~', $this->dom->saveHTML(), $matches))
-        {
-            $urls = array();
-            foreach ($matches[1] as $m)
-            {
-                $urls[] = '/shop/product/' . $m . '.html';
-            }
-        }
-        return $urls;
+        return array();
     }
-    
+
     public function parseTitle()
     {
-        $this->_html = $this->dom->saveHTML();
-        
-        if ($t = $this->xpathScalar(".//title"))
-        {
-            $parts = explode('|', $t);
-            return reset($parts);
-        }
-                
-    }    
-    
+        if (!$this->_parseProduct())
+            return false;
+
+        if (isset($this->_product['title']))
+            return html_entity_decode($this->_product['title']);
+    }
+
+    public function parseDescription()
+    {
+        if (isset($this->_product['description_short']))
+            return html_entity_decode($this->_product['description_short']);
+    }
+
+    public function parseImg()
+    {
+        if (!empty($this->_product['images'][0]['original']['href']))
+            return $this->_product['images'][0]['original']['href'];
+    }
+
     public function parsePrice()
     {
-        if (preg_match('~"cost":(.+?),~', $this->_html, $matches))
-            return $matches[1];
-    }    
+        if (!empty($this->_product['cost']))
+            return $this->_product['cost'];
+        elseif (!empty($this->_product['old_cost']))
+            return $this->_product['old_cost'];
+    }
 
     public function parseOldPrice()
     {
-        if (preg_match('~"old_cost":(.+?),~', $this->_html, $matches))
-            return $matches[1];
+        if (!empty($this->_product['old_cost']))
+            return $this->_product['old_cost'];
+    }
+
+    public function _parseProduct()
+    {
+
+        $url = strtok($this->getUrl(), '?');
+        if (!preg_match('~\/(\d+)\.html$~', $url, $matches))
+            return false;
+
+        $id = $matches[1];
+        try
+        {
+            $result = $this->requestGet('https://my-shop.ru/cgi-bin/shop2.pl?q=product&id=' . urlencode($id) . '&view_id=2a244fcc-c96d-4adc-855b-f99edefab434', false);
+        } catch (\Exception $e)
+        {
+            return array();
+        }
+        $result = json_decode($result, true);
+
+        if (!$result || !isset($result['product']))
+            return false;
+
+        $this->_product = $result['product'];
+        return $this->_product;
+    }
+
+    public function isInStock()
+    {
+        if (isset($this->_product['availability']['status']) && !$this->_product['availability']['status'])
+            return false;
+        else
+            return true;
     }
 
 }

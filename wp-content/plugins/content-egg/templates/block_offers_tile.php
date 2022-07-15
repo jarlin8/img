@@ -25,7 +25,7 @@ $col_size = ceil(12 / $cols);
             <?php foreach ($data as $module_id => $items): ?>
 
                 <?php foreach ($items as $item): ?>
-                    <div class="col-md-<?php echo $col_size; ?> col-xs-6 cegg-gridbox"> 
+                    <div class="col-md-<?php echo esc_attr($col_size); ?> col-xs-6 cegg-gridbox">
                         <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo \esc_url($item['url']) ?>">
 
                             <div class="cegg-thumb">

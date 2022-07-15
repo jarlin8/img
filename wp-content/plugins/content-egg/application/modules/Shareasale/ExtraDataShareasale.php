@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Shareasale;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,32 +15,32 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataShareasale extends ExtraData {
 
-    public $productid;
-    public $merchantid;
-    public $thumbnail;
-    public $category;
-    public $lastupdated;
-    public $status;
-    public $partnumber;
-    public $merchantcategory;
-    public $merchantsubcategory;
-    public $crosssell;
-    public $merchantgroup;
-    public $compatiablewith;
-    public $quantitydiscount;
-    public $bestseller;
-    public $addtocarturl;
-    public $reviewsurl;
-    public $www;
-    public $programcategory;
-    public $commissiontext;
-    public $salecomm;
-    public $leadcomm;
-    public $hitcomm;
-    public $reversalrate7day;
-    public $reversalrate30day;
-    public $avesale7day;
-    public $avesale30day;
-    public $powerranktop100;
+	public $productid;
+	public $merchantid;
+	public $thumbnail;
+	public $category;
+	public $lastupdated;
+	public $status;
+	public $partnumber;
+	public $merchantcategory;
+	public $merchantsubcategory;
+	public $crosssell;
+	public $merchantgroup;
+	public $compatiablewith;
+	public $quantitydiscount;
+	public $bestseller;
+	public $addtocarturl;
+	public $reviewsurl;
+	public $www;
+	public $programcategory;
+	public $commissiontext;
+	public $salecomm;
+	public $leadcomm;
+	public $hitcomm;
+	public $reversalrate7day;
+	public $reversalrate30day;
+	public $avesale7day;
+	public $avesale30day;
+	public $powerranktop100;
 
 }

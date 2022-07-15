@@ -33,6 +33,15 @@ class BolcomParser extends LdShopParser {
         if (isset($this->ld_json['workExample']['potentialAction']['expectsAcceptanceOf']['price']))
             return $this->ld_json['workExample']['potentialAction']['expectsAcceptanceOf']['price'];
     }
+    
+    public function parseOldPrice()
+    {
+        $paths = array(
+            ".//section[contains(@class, 'buy-block__prices')]//del[@class='buy-block__list-price']",
+        );
+
+        return $this->xpathScalar($paths);
+    }    
 
     public function parseImg()
     {
@@ -52,8 +61,8 @@ class BolcomParser extends LdShopParser {
         $extra = parent::parseExtra();
 
         $extra['features'] = array();
-        $names = $this->xpathArray(".//*[@class='specs__list']/dt/text()[normalize-space()]");
-        $values = $this->xpathArray(".//*[@class='specs__list']/dd");
+        $names = $this->xpathArray(".//div[@class='specs']//dt/text()[normalize-space()]");
+        $values = $this->xpathArray(".//div[@class='specs']//dd");
         $feature = array();
         for ($i = 0; $i < count($names); $i++)
         {

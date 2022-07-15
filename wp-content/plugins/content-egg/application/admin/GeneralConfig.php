@@ -16,7 +16,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class GeneralConfig extends Config {
 
@@ -143,7 +143,7 @@ class GeneralConfig extends Config {
 
         $export_url = \get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-tools&action=subscribers-export');
 
-        return array(
+        $options = array(
             'lang' => array(
                 'title' => __('Website language', 'content-egg'),
                 'description' => __('The frontend language.', 'content-egg'),
@@ -279,6 +279,18 @@ class GeneralConfig extends Config {
                 ),
                 'section' => __('WooCommerce', 'content-egg'),
             ),
+            'aggregate_offer' => array(
+                'title' => __('Aggregate offer', 'content-egg'),
+                'description' => __('Add AggregateOffer to product structured data. This can be used for price comparison sites.', 'content-egg') .
+                '<p class="description">' . __('', 'content-egg') . '</p>',
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'disabled' => __('Disabled', 'content-egg'),
+                    'enabled' => __('Enabled', 'content-egg'),
+                ),
+                'default' => 'disabled',
+                'section' => __('WooCommerce', 'content-egg'),
+            ),
             'filter_bots' => array(
                 'title' => __('Filter bots', 'content-egg'),
                 'description' => __('Bots can\'t activate parsers.', 'content-egg') .
@@ -297,7 +309,7 @@ class GeneralConfig extends Config {
                     'absint',
                     array(
                         'call' => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
-                        'arg' => 365,
+                        'arg' => 1875,
                         'message' => sprintf(__('The field "%s" can\'t be more than %d.', 'content-egg'), __('Price history', 'content-egg'), 365),
                     ),
                 ),
@@ -554,6 +566,10 @@ class GeneralConfig extends Config {
                 'section' => __('Merchants', 'content-egg'),
             ),
         );
+
+        $options = \apply_filters('cegg_general_config', $options);
+
+        return $options;
     }
 
     public static function getDefaultLang()
@@ -590,10 +606,10 @@ class GeneralConfig extends Config {
         $value = isset($args['value'][$i]['value']) ? $args['value'][$i]['value'] : '';
 
         echo '<input name="' . \esc_attr($args['option_name']) . '['
-        . \esc_attr($args['name']) . '][' . $i . '][name]" value="'
+        . \esc_attr($args['name']) . '][' . esc_attr($i) . '][name]" value="'
         . \esc_attr($name) . '" class="text" placeholder="' . \esc_attr(__('Domain name', 'content-egg')) . '"  type="text"/>';
         echo '<input name="' . \esc_attr($args['option_name']) . '['
-        . \esc_attr($args['name']) . '][' . $i . '][value]" value="'
+        . \esc_attr($args['name']) . '][' . esc_attr($i) . '][value]" value="'
         . \esc_attr($value) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('Logo URL', 'content-egg')) . '"  type="text"/>';
     }
 
@@ -612,7 +628,7 @@ class GeneralConfig extends Config {
             echo '</div>';
         }
         if ($args['description'])
-            echo '<p class="description">' . $args['description'] . '</p>';
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
     }
 
     public function formatLogoFields($values)
@@ -667,7 +683,7 @@ class GeneralConfig extends Config {
             echo '</div>';
         }
         if ($args['description'])
-            echo '<p class="description">' . $args['description'] . '</p>';
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
     }
 
     public function frontendTextsSanitize($values)
@@ -687,13 +703,15 @@ class GeneralConfig extends Config {
         $value = isset($args['value'][$i]['shop_info']) ? $args['value'][$i]['shop_info'] : '';
 
         echo '<input style="margin-bottom: 5px;" name="' . \esc_attr($args['option_name']) . '['
-        . \esc_attr($args['name']) . '][' . $i . '][name]" value="'
+        . \esc_attr($args['name']) . '][' . esc_attr($i) . '][name]" value="'
         . \esc_attr($name) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('Domain name', 'content-egg')) . '"  type="text"/>';
 
         echo '<textarea rows="2" name="' . \esc_attr($args['option_name']) . '['
-        . \esc_attr($args['name']) . '][' . $i . '][shop_info]" value="'
+        . \esc_attr($args['name']) . '][' . esc_attr($i) . '][shop_info]" value="'
         . \esc_attr($value) . '" class="large-text code" placeholder="' . \esc_attr(__('Shop info', 'content-egg')) . '"  type="text">' . \esc_html($value) . '</textarea>';
     }
+    
+
 
     public function render_merchants_block($args)
     {
@@ -710,7 +728,7 @@ class GeneralConfig extends Config {
             echo '</div>';
         }
         if ($args['description'])
-            echo '<p class="description">' . $args['description'] . '</p>';
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
     }
 
     public function formatMerchantFields($values)
@@ -736,6 +754,8 @@ class GeneralConfig extends Config {
 
         return $results;
     }
+    
+   
 
     public static function isShopInfoAvailable()
     {

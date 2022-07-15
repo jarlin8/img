@@ -8,8 +8,8 @@ defined('\ABSPATH') || exit;
  * LazadacommyParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link http://www.keywordrush.com
+ * @copyright Copyright &copy; 2021 keywordrush.com
  */
 class LazadacommyParser extends LdShopParser {
 
@@ -51,7 +51,7 @@ class LazadacommyParser extends LdShopParser {
         }
         foreach ($urls as $i => $url)
         {
-            $urls[$i] = preg_replace('/\.html\?.+$/', '.html', $url);
+            $urls[$i] = strtok($url, '?');
         }
         return $urls;
     }
@@ -115,8 +115,10 @@ class LazadacommyParser extends LdShopParser {
 
     public function parseImg()
     {
-        $img = parent::parseImg();
-        return str_replace('-catalog.jpg', '-catalog.jpg_720x720q75.jpg', $img);
+        if ($img = parent::parseImg())
+            return str_replace('-catalog.jpg', '-catalog.jpg_720x720q75.jpg', $img);
+        else
+            return $this->xpathScalar(".//img[@class='pdp-mod-common-image gallery-preview-panel__image']/@src");
     }
 
     public function parseExtra()

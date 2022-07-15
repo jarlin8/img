@@ -1,5 +1,5 @@
-<?php defined('\ABSPATH') || exit; ?>
-<select class="col-md-4 input-sm" ng-model="query_params.<?php echo $module_id; ?>.sortField">
+<?php defined( '\ABSPATH' ) || exit; ?>
+<select class="col-md-4 input-sm" ng-model="query_params.<?php echo esc_attr($module_id); ?>.sortField">
     <option value="">Keyword Relevance</option>
     <option value="POPULARITY">Popularity</option>
     <option value="AVERAGE_EARNINGS_PER_SALE">Avg $/sale</option>

@@ -52,11 +52,11 @@ class Installer {
         self::requirements();
 
         ModuleUpdateScheduler::addScheduleEvent();
-        if (AutoblogModel::isActiveAutoblogs())
-            AutoblogScheduler::addScheduleEvent();
         \add_option(Plugin::slug . '_do_activation_redirect', true);
         \add_option(Plugin::slug . '_first_activation_date', time());
         self::upgradeTables();
+        if (AutoblogModel::isActiveAutoblogs())
+            AutoblogScheduler::addScheduleEvent();        
     }
 
     public static function deactivate()
@@ -95,7 +95,7 @@ class Installer {
         unset($_GET['activate']);
         \deactivate_plugins(\plugin_basename(\ContentEgg\PLUGIN_FILE));
         $e = sprintf('<div class="error"><p>%1$s</p><p><em>%2$s</em> ' . 'cannot be installed!' . '</p></div>', join('</p><p>', $errors), $name[0]);
-        \wp_die($e);
+        \wp_die(wp_kses_post($e));
     }
 
     public static function uninstall()
@@ -173,7 +173,7 @@ class Installer {
         if (\get_option(Plugin::slug . '_do_activation_redirect', false))
         {
             \delete_option(Plugin::slug . '_do_activation_redirect');
-            \wp_redirect(\get_admin_url(\get_current_blog_id(), 'admin.php?page=' . Plugin::slug));
+            \wp_safe_redirect(\get_admin_url(\get_current_blog_id(), 'admin.php?page=' . Plugin::slug));
         }
     }
 

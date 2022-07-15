@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Flickr;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,10 +15,10 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataFlickr extends ExtraData {
 
-    public $tags;
-    public $id;
-    public $secret;
-    public $server;
-    public $farm;
+	public $tags;
+	public $id;
+	public $secret;
+	public $server;
+	public $farm;
 
 }

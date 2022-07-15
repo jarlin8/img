@@ -16,7 +16,7 @@ use Keywordrush\AffiliateEgg\TemplateHelper;
             <table class="table table-hover">
                 <tr>
                     <td><?php _e('Current Price', 'affegg-tpl'); ?></td> 
-                    <td >
+                    <td>
                         <?php if ($item['price']): ?>
                             <?php echo TemplateHelper::formatPriceCurrency($item['price_raw'], $item['currency_code']); ?>
                         <?php else: ?>

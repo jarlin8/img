@@ -5,41 +5,41 @@
     <div class="wrap">
         <h2>
             <?php if ($item['id']): ?>
-                <?php _e('Edit autoblogging', 'content-egg'); ?>
+                <?php esc_html_e('Edit autoblogging', 'content-egg'); ?>
             <?php else: ?>
-                <?php _e('Add autoblogging', 'content-egg'); ?>
+                <?php esc_html_e('Add autoblogging', 'content-egg'); ?>
                 <?php if ($batch): ?>
-                    - <?php _e('bulk adding', 'content-egg'); ?>
+                    - <?php esc_html_e('bulk adding', 'content-egg'); ?>
                 <?php endif; ?>
             <?php endif; ?>
             <?php if (!$batch && !$item['id']): ?>
-                <a class="add-new-h2 button-primary" href="<?php echo \get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-autoblog-edit--batch'); ?>"><?php _e('Bulk adding', 'content-egg'); ?></a>
+                <a class="add-new-h2 button-primary" href="<?php echo esc_url_raw(\get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-autoblog-edit--batch')); ?>"><?php esc_html_e('Bulk adding', 'content-egg'); ?></a>
             <?php endif; ?>
-            <a class="add-new-h2" href="<?php echo \get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-autoblog'); ?>"><?php _e('Back to list', 'content-egg'); ?></a>
+            <a class="add-new-h2" href="<?php echo esc_url_raw(\get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-autoblog')); ?>"><?php esc_html_e('Back to list', 'content-egg'); ?></a>
         </h2>
 
         <?php if (!empty($notice)): ?>
-            <div id="notice" class="error"><p><?php echo $notice ?></p></div>
+            <div id="notice" class="error"><p><?php echo esc_html($notice) ?></p></div>
         <?php endif; ?>
         <?php if (!empty($message)): ?>
-            <div id="message" class="updated"><p><?php echo $message ?></p></div>
+            <div id="message" class="updated"><p><?php echo esc_html($message) ?></p></div>
         <?php endif; ?>
 
         <div id="poststuff">    
             <p>
             </p>    
         </div>    
-        <form action="<?php echo add_query_arg('noheader', 'true'); ?>" id="form" method="POST"<?php if ($batch) echo ' enctype="multipart/form-data" accept-charset="utf-8"'; ?>>
-            <input type="hidden" name="nonce" value="<?php echo $nonce; ?>"/>
-            <input type="hidden" name="item[id]" value="<?php echo $item['id']; ?>"/>
+        <form action="<?php echo esc_url_raw(add_query_arg('noheader', 'true')); ?>" id="form" method="POST"<?php if ($batch) echo ' enctype="multipart/form-data" accept-charset="utf-8"'; ?>>
+            <input type="hidden" name="nonce" value="<?php echo \esc_attr($nonce); ?>"/>
+            <input type="hidden" name="item[id]" value="<?php echo \esc_attr($item['id']); ?>"/>
             <div class="metabox-holder" id="poststuff">
                 <div id="post-body">
                     <div id="post-body-content">
                         <?php $item['batch'] = $batch; ?>
                         <?php do_meta_boxes('autoblog_create', 'normal', $item); ?>
-                        <input type="submit" value="<?php _e('Save', 'content-egg'); ?>" id="autoblog_submit" class="button-primary" name="submit">
+                        <input type="submit" value="<?php esc_html_e('Save', 'content-egg'); ?>" id="autoblog_submit" class="button-primary" name="submit">
 
-                        &nbsp;&nbsp;&nbsp;<?php if ($batch): ?><em><?php _e('Don\'t close page until process finishes. Be patient, can have some time.', 'content-egg'); ?></em><?php endif; ?>
+                        &nbsp;&nbsp;&nbsp;<?php if ($batch): ?><em><?php esc_html_e('Don\'t close page until process finishes. Be patient, can have some time.', 'content-egg'); ?></em><?php endif; ?>
 
                     </div>
                 </div>

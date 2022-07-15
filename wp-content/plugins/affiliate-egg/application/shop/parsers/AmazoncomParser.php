@@ -8,22 +8,22 @@ defined('\ABSPATH') || exit;
  * AmazoncomParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link http://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class AmazoncomParser extends ShopParser {
 
     protected $canonical_domain = 'https://www.amazon.com';
     protected $charset = 'utf-8';
     protected $currency = 'USD';
-    //protected $user_agent = array('DuckDuckBot', 'facebot', 'ia_archiver', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:84.0) Gecko/20100101 Firefox/84.0');
+    //protected $user_agent = array('DuckDuckBot', 'facebot', 'ia_archiver');
     //protected $user_agent = array('wget');
-    protected $user_agent = array('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:86.0) Gecko/20100101 Firefox/86.0');
+    //protected $user_agent = array('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:86.0) Gecko/20100101 Firefox/86.0');
     protected $headers = array(
         'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language' => 'en-us,en;q=0.5',
         'Cache-Control' => 'no-cache',
-            //'Connection' => 'keep-alive',        
+            //'Connection' => 'keep-alive',
     );
 
     public function restPostGet($url, $fix_encoding = true)
@@ -56,6 +56,7 @@ class AmazoncomParser extends ShopParser {
             ".//*[@data-component-type='s-product-image']//a[@class='a-link-normal']/@href",
             ".//div[@class='a-section a-spacing-none']/h2/a/@href",
             ".//h2/a[@class='a-link-normal a-text-normal']/@href",
+            ".//span[@data-component-type='s-product-image']/a/@href",
         );
 
         $urls = $this->xpathArray($xpath);
@@ -189,6 +190,8 @@ class AmazoncomParser extends ShopParser {
         }
 
         $paths = array(
+            ".//span[@class='a-price a-text-price a-size-medium apexPriceToPay']//span[@class='a-offscreen']",
+            ".//div[@class='a-section a-spacing-small a-spacing-top-small']//a/span[@class='a-size-base a-color-price']",
             ".//*[@id='priceblock_dealprice']",
             ".//span[@id='priceblock_ourprice']",
             ".//span[@id='priceblock_saleprice']",
@@ -196,12 +199,16 @@ class AmazoncomParser extends ShopParser {
             ".//*[@id='unqualifiedBuyBox']//*[@class='a-color-price']",
             ".//*[@class='dv-button-text']",
             ".//*[@id='cerberus-data-metrics']/@data-asin-price",
-            ".//*[@class='a-price']/*[@class='a-offscreen']",
+            //".//*[@class='a-price']/*[@class='a-offscreen']",
             ".//div[@id='olp-upd-new-freeshipping']//span[@class='a-color-price']",
             ".//span[@id='rentPrice']",
             ".//span[@id='newBuyBoxPrice']",
             ".//div[@id='olp-new']//span[@class='a-size-base a-color-price']",
             ".//span[@id='unqualified-buybox-olp']//span[@class='a-color-price']",
+            ".//span[@id='price_inside_buybox']",
+            ".//span[@class='slot-price']//span[@class='a-size-base a-color-price a-color-price']",
+            ".//span[@class='a-button-inner']//span[contains(@class, 'a-color-price')]",
+            ".//div[@id='booksHeaderSection']//span[@id='price']",
         );
 
         $price = $this->xpathScalar($paths);
@@ -303,7 +310,7 @@ class AmazoncomParser extends ShopParser {
 
     public function parseExtra()
     {
-        $extra = array();
+        $extra = parent::parseExtra();
 
         $extra['comments'] = array();
         $comments = $this->xpathArray(".//*[contains(@class, 'reviews-content')]//*[contains(@data-hook, 'review-body')]//div[@data-hook]");
@@ -341,97 +348,6 @@ class AmazoncomParser extends ShopParser {
         preg_match("/\/dp\/(.+?)\//msi", $this->getUrl(), $match);
         $extra['item_id'] = isset($match[1]) ? $match[1] : '';
 
-        $extra['features'] = array();
-        $names = $this->xpathArray(".//*[@id='productDetails_techSpec_section_1']//th");
-        $values = $this->xpathArray(".//*[@id='productDetails_techSpec_section_1']//td");
-        $feature = array();
-        for ($i = 0; $i < count($names); $i++)
-        {
-            if (!empty($values[$i]) && $names[$i] != 'Condition:' && $names[$i] != 'Brand:')
-            {
-                $feature['name'] = sanitize_text_field($names[$i]);
-                $feature['value'] = sanitize_text_field($values[$i]);
-                $extra['features'][] = $feature;
-            }
-        }
-
-        $features2 = $this->xpathArray(array(".//*[@id='productDetailsTable']//li[not(@id) and not(@class)]", ".//div[@id='feature-bullets']//li/span", ".//div[@id='detail-bullets']//li"));
-        for ($i = 0; $i < count($features2); $i++)
-        {
-            $parts = explode(':', $features2[$i]);
-            if (count($parts) != 2)
-                continue;
-            $feature['name'] = sanitize_text_field($parts[0]);
-            $feature['value'] = sanitize_text_field($parts[1]);
-            $extra['features'][] = $feature;
-        }
-
-        if (!$extra['features'])
-        {
-            $extra['features'] = array();
-            $names = $this->xpathArray(".//*[contains(@id, 'technicalSpecifications_section')]//th");
-            $values = $this->xpathArray(".//*[contains(@id, 'technicalSpecifications_section')]//td");
-            $feature = array();
-            for ($i = 0; $i < count($names); $i++)
-            {
-                $feature['name'] = sanitize_text_field($names[$i]);
-                $feature['value'] = sanitize_text_field($values[$i]);
-                $extra['features'][] = $feature;
-            }
-        }
-
-        if (!$extra['features'])
-        {
-            $extra['features'] = array();
-            $names = $this->xpathArray(".//*[@id='prodDetails']//td[@class='label']");
-            $values = $this->xpathArray(".//*[@id='prodDetails']//td[@class='value']");
-            $feature = array();
-            for ($i = 0; $i < count($names); $i++)
-            {
-                $feature['name'] = sanitize_text_field($names[$i]);
-                $feature['value'] = sanitize_text_field($values[$i]);
-                $extra['features'][] = $feature;
-            }
-        }
-        if (!$extra['features'])
-        {
-            $extra['features'] = array();
-            $names = $this->xpathArray(".//*[contains(@id, 'technicalSpecifications_section')]//th");
-            $values = $this->xpathArray(".//*[contains(@id, 'technicalSpecifications_section')]//td");
-            $feature = array();
-            for ($i = 0; $i < count($names); $i++)
-            {
-                $feature['name'] = sanitize_text_field($names[$i]);
-                $feature['value'] = sanitize_text_field($values[$i]);
-                $extra['features'][] = $feature;
-            }
-        }
-
-        if (!$extra['features'])
-        {
-            $results = $this->xpathArray(".//div[@id='technical-data']//li");
-            if ($results)
-            {
-                foreach ($results as $res)
-                {
-                    $expl = explode(":", $res, 2);
-                    if (count($expl) == 2)
-                    {
-                        $feature['name'] = sanitize_text_field($expl[0]);
-                        $feature['value'] = sanitize_text_field($expl[1]);
-                        $extra['features'][] = $feature;
-                    }
-                }
-            }
-        }
-
-        foreach ($extra['features'] as $i => $f)
-        {
-            if (in_array($f['name'], array('Amazon Best Sellers Rank', 'Average Customer Review', 'ASIN', 'Customer Reviews', 'Amazon Bestsellers Rank')))
-                unset($extra['features'][$i]);
-        }
-        $extra['features'] = array_values($extra['features']);
-
         $extra['images'] = array();
         $results = $this->xpathArray(".//div[@id='altImages']//ul/li//span[contains(@data-thumb-action, 'image')]//img/@src");
         foreach ($results as $i => $res)
@@ -459,7 +375,51 @@ class AmazoncomParser extends ShopParser {
             $url_parts = parse_url($this->getUrl());
             $extra['reviewUrl'] = $url_parts['scheme'] . '://' . $url_parts['host'] . '/product-reviews/' . $asin . '/';
         }
+
         return $extra;
+    }
+
+    public function getFeaturesXpath()
+    {
+
+        return array(
+            array(
+                'name' => ".//table[contains(@id, 'productDetails_techSpec_section')]//th",
+                'value' => ".//table[contains(@id, 'productDetails_techSpec_section')]//td",
+            ),
+            array(
+                'name' => ".//table[contains(@id, 'technicalSpecifications_section')]//th",
+                'value' => ".//table[contains(@id, 'technicalSpecifications_section')]//td",
+            ),
+            array(
+                'name' => ".//table[contains(@id, 'productDetails_detailBullets_sections')]//th",
+                'value' => ".//table[contains(@id, 'productDetails_detailBullets_sections')]//td",
+            ),
+            array(
+                'name-value' => ".//*[@id='productDetailsTable']//li[not(@id) and not(@class)]",
+                'separator' => ":",
+            ),
+            array(
+                'name' => ".//*[@id='prodDetails']//td[@class='label']",
+                'value' => ".//*[@id='prodDetails']//td[@class='value']",
+            ),
+            array(
+                'name' => ".//*[contains(@id, 'technicalSpecifications_section')]//th",
+                'value' => ".//*[contains(@id, 'technicalSpecifications_section')]//td",
+            ),
+            array(
+                'name-value' => ".//div[@id='technical-data']//li",
+                'separator' => ":",
+            ),
+            array(
+                'name-value' => ".//div[@id='detail-bullets']//li",
+                'separator' => ":",
+            ),
+            array(
+                'name' => ".//div[@id='detailBullets_feature_div']//li/span/span[1]",
+                'value' => ".//div[@id='detailBullets_feature_div']//li/span/span[2]",
+            ),
+        );
     }
 
     public function isInStock()
@@ -468,9 +428,10 @@ class AmazoncomParser extends ShopParser {
             return true;
 
         $availability = trim($this->xpathScalar(".//div[@id='availability']/span/text()"));
+
         if ($availability == 'Currently unavailable.' || $availability == 'Şu anda mevcut değil.' || $availability == 'Attualmente non disponibile.')
             return false;
-        
+
         return true;
     }
 

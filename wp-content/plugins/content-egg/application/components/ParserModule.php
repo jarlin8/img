@@ -15,7 +15,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 abstract class ParserModule extends Module {
 
@@ -35,10 +35,14 @@ abstract class ParserModule extends Module {
         if ($this->is_active === null)
         {
             if ($this->getConfigInstance()->option('is_active'))
+            {
                 $this->is_active = true;
-            else
+            } else
+            {
                 $this->is_active = false;
+            }
         }
+
         return $this->is_active;
     }
 
@@ -58,8 +62,10 @@ abstract class ParserModule extends Module {
         $data = parent::presavePrepare($data, $post_id);
 
         // do not save images for revisions & search results
-        if (($post && wp_is_post_revision($post_id)) || $post_id < 0)
+        if (( $post && wp_is_post_revision($post_id) ) || $post_id < 0)
+        {
             return $data;
+        }
 
         $old_data = ContentManager::getData($post_id, $this->getId());
 
@@ -69,17 +75,23 @@ abstract class ParserModule extends Module {
             if (empty($item['domain']))
             {
                 if (!empty($item['orig_url']))
+                {
                     $url = $item['orig_url'];
-                elseif (!empty($item['img']))
+                } elseif (!empty($item['img']))
+                {
                     $url = $item['img'];
-                else
+                } else
+                {
                     $url = $item['url'];
+                }
 
                 if ($url)
                 {
                     $domain = TextHelper::getHostName($url);
                     if (!in_array($domain, array('buscape.com.br', 'avlws.com')))
+                    {
                         $data[$key]['domain'] = $item['domain'] = $domain;
+                    }
                 }
             }
             // save img
@@ -104,12 +116,14 @@ abstract class ParserModule extends Module {
                 $data[$key] = $item;
             }
         }
+
         return $data;
     }
 
     public static function getFullImgPath($img_path)
     {
         $uploads = \wp_upload_dir();
+
         return trailingslashit($uploads['basedir']) . $img_path;
     }
 
@@ -135,14 +149,17 @@ abstract class ParserModule extends Module {
             foreach ($data as $key => $d)
             {
                 if (isset($d['url']))
-                    $data[$key]['aff_url'] = $d['url']; // url without redirect
-                
+                {
+                    $data[$key]['aff_url'] = $d['url'];
+                } // url without redirect
+
                 $data[$key]['url'] = LocalRedirect::createRedirectUrl($d);
             }
         }
+
         return $data;
     }
-    
+
     public function getAccessToken($force = false)
     {
         $transient_name = Plugin::slug() . '-' . $this->getId() . '-access_token';
@@ -151,22 +168,78 @@ abstract class ParserModule extends Module {
         {
             try
             {
-                list($token, $expires_in) = $this->requestAccessToken();
+                list( $token, $expires_in ) = $this->requestAccessToken();
             } catch (\Exception $e)
             {
                 return false;
             }
             \set_transient($transient_name, $token, (int) $expires_in);
         }
+
         return $token;
-    }   
-    
+    }
+
     public function isFeedParser()
     {
         if ($this->getIdStatic() == ModuleManager::FEED_MODULES_PREFIX)
+        {
             return true;
-        else
+        } else
+        {
             return false;
-    }      
+        }
+    }
+
+    public function doMultipleRequests($keyword, $query_params = array(), $is_autoupdate = false)
+    {
+        if (!\apply_filters('cegg_disable_multiple_keywords', false))
+        {
+            $keywords = explode(',', $keyword, 10);
+        } else
+        {
+            $keywords = array($keyword);
+        }
+
+        $keywords = array_map('trim', $keywords);
+
+        $results = array();
+        foreach ($keywords as $i => $keyword)
+        {
+            if ($i && $this->getId() == 'Amazon')
+            {
+                sleep(1);
+            }
+
+            $results = array_merge($results, $this->doRequest($keyword, $query_params, $is_autoupdate));
+        }
+
+        $results = self::filterDuplicateItems($results);
+
+        return $results;
+    }
+
+    private static function filterDuplicateItems(array $items)
+    {
+        $results = array();
+        foreach ($items as $item)
+        {
+            $dup = false;
+            foreach ($results as $result)
+            {
+                if ($item->unique_id == $result->unique_id)
+                {
+                    $dup = true;
+                    break;
+                }
+            }
+
+            if (!$dup)
+            {
+                $results[] = $item;
+            }
+        }
+
+        return $results;
+    }
 
 }

@@ -5,7 +5,6 @@ namespace ContentEgg\application;
 defined('\ABSPATH') || exit;
 
 use ContentEgg\application\models\PriceAlertModel;
-use ContentEgg\application\helpers\InputHelper;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\models\PriceHistoryModel;
 use ContentEgg\application\components\ContentManager;
@@ -17,7 +16,7 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class PriceAlert {
 
@@ -65,15 +64,15 @@ class PriceAlert {
 
     public function ajaxTrackProduct()
     {
-        if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'cegg-price-alert'))
+        if (!isset($_POST['nonce']) || !\wp_verify_nonce(sanitize_key($_POST['nonce']), 'cegg-price-alert'))
             die('Invalid nonce');
 
-        $module_id = TextHelper::clear(InputHelper::post('module_id', null));
-        $unique_id = TextHelper::clearId(InputHelper::post('unique_id', null));
-        $price = (float) TextHelper::parsePriceAmount(InputHelper::post('price', null));
-        $post_id = (int) InputHelper::post('post_id', null);
-        $email = strtolower(TextHelper::clearId(InputHelper::post('email', null)));
-        $accepted = (bool) InputHelper::post('accepted', null);
+        $module_id = isset($_POST['module_id']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_POST['module_id']))) : null;
+        $unique_id = isset($_POST['unique_id']) ? TextHelper::clearId(sanitize_text_field(wp_unslash($_POST['unique_id']))) : null;
+        $price = isset($_POST['price']) ? (float) TextHelper::parsePriceAmount(sanitize_text_field(wp_unslash($_POST['price']))) : null;
+        $post_id = isset($_POST['post_id']) ? intval(wp_unslash($_POST['post_id'])) : null;
+        $email = isset($_POST['email']) ? strtolower(sanitize_email(wp_unslash($_POST['email']))) : null;
+        $accepted = isset($_POST['accepted']) ? boolval(wp_unslash($_POST['accepted'])) : null;
 
         if (!$module_id || !$unique_id || !$post_id)
             die('Invalid params');
@@ -169,7 +168,7 @@ class PriceAlert {
         }
 
         $body .= $this->getEmailSignature();
-        
+
         self::mail($email, $subject, $body);
     }
 
@@ -199,8 +198,9 @@ class PriceAlert {
 
     public function subscriptionManager()
     {
-        if (!$action = InputHelper::get('ceggaction', null))
-            return;
+        $action = isset($_GET['ceggaction']) ? sanitize_key(wp_unslash($_GET['ceggaction'])) : '';
+		if (!$action)
+			return;
 
         switch ($action)
         {
@@ -220,8 +220,11 @@ class PriceAlert {
 
     private function actionValidateEmail()
     {
-        $email = strtolower(TextHelper::clearId(InputHelper::get('email', null)));
-        $key = TextHelper::clear(InputHelper::get('key', null));
+	    $email = isset($_GET['email']) ? strtolower(sanitize_email(wp_unslash($_GET['email']))) : '';
+	    $key = isset($_GET['key']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_GET['key']))) : '';
+
+		if (!$email || !$key)
+			return;
 
         $where = array(
             'email = %s AND activkey = %s AND status = %d',
@@ -239,8 +242,11 @@ class PriceAlert {
 
     private function actionUnsubscribeAll()
     {
-        $email = strtolower(TextHelper::clearId(InputHelper::get('email', null)));
-        $key = TextHelper::clear(InputHelper::get('key', null));
+	    $email = isset($_GET['email']) ? strtolower(sanitize_email(wp_unslash($_GET['email']))) : '';
+	    $key = isset($_GET['key']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_GET['key']))) : '';
+
+	    if (!$email || !$key)
+		    return;
 
         $where = array(
             'email = %s AND activkey = %s',
@@ -256,8 +262,11 @@ class PriceAlert {
 
     private function actionDeleteSubscription()
     {
-        $email = strtolower(TextHelper::clearId(InputHelper::get('email', null)));
-        $key = TextHelper::clear(InputHelper::get('key', null));
+	    $email = isset($_GET['email']) ? strtolower(sanitize_email(wp_unslash($_GET['email']))) : '';
+	    $key = isset($_GET['key']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_GET['key']))) : '';
+
+	    if (!$email || !$key)
+		    return;
 
         $where = array(
             'email = %s AND activkey = %s',

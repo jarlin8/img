@@ -1,6 +1,7 @@
 <?php
 
 namespace Keywordrush\AffiliateEgg;
+defined('\ABSPATH') || exit;
 
 /**
  * Shortcode class file
@@ -39,6 +40,9 @@ class Shortcode {
 
     private function __construct()
     {
+        if (LManager::isNulled())
+            return;
+        
         if (GeneralConfig::getInstance()->option('ajax_eggs'))
         {
             \add_action('wp_ajax_render_egg', array($this, 'printAjaxEgg'));

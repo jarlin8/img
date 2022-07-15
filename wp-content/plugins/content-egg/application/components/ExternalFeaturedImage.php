@@ -22,12 +22,16 @@ class ExternalFeaturedImage {
     public static function initAction()
     {
         if (GeneralConfig::getInstance()->option('external_featured_images') == 'disabled')
+        {
             return;
+        }
 
         \add_filter('get_post_metadata', array(__CLASS__, 'getFakeThumbnailId'), 10, 4);
 
         if (\is_admin())
+        {
             \add_filter('admin_post_thumbnail_html', array(__CLASS__, 'adminThumbnail'));
+        }
 
         \add_filter('wp_get_attachment_image_src', array(__CLASS__, 'replaceImageSrc'), 10, 4);
         \add_filter('woocommerce_product_get_image_id', array(__CLASS__, 'getFakeImageId'), 99, 2);
@@ -45,16 +49,21 @@ class ExternalFeaturedImage {
         $fake_id = self::FAKE_INT_START;
         $fake_id .= str_repeat('0', $max_len - $post_id_len - strlen($fake_id));
         $fake_id .= $post_id;
+
         return $fake_id;
     }
 
     private static function getRealId($post_id)
     {
         if (strlen(strval($post_id)) != strlen(strval(PHP_INT_MAX)) - 1)
+        {
             return false;
+        }
 
         if (substr((string) $post_id, 0, strlen(self::FAKE_INT_START)) != self::FAKE_INT_START)
+        {
             return false;
+        }
 
         return (int) substr_replace((string) $post_id, '', 0, strlen(self::FAKE_INT_START));
     }
@@ -62,10 +71,14 @@ class ExternalFeaturedImage {
     public static function setImage($data, $module_id, $post_id, $is_last_iteration)
     {
         if (\get_post_type($post_id) == 'product')
+        {
             return;
+        }
 
         if (!$is_last_iteration)
+        {
             return;
+        }
 
         self::setExternalFeaturedImage($post_id);
     }
@@ -73,19 +86,26 @@ class ExternalFeaturedImage {
     public static function setExternalFeaturedImage($post_id, $item = null)
     {
         if (GeneralConfig::getInstance()->option('external_featured_images') == 'enabled_internal_priority' && self::hasInternalImage($post_id))
+        {
             return false;
+        }
 
         if (!$item)
         {
             $data = FeaturedImage::getData($post_id);
             if (!$data)
+            {
                 return;
+            }
             $item = $data[0];
         }
         if (empty($item['img']))
+        {
             return;
+        }
 
         $img_url = $item['img'];
+
         return self::updateExternalMeta($img_url, $post_id);
     }
 
@@ -93,14 +113,18 @@ class ExternalFeaturedImage {
     {
         $old = \get_post_meta($post_id, self::EXTERNAL_URL_META, true);
         if ($old && $old['url'] == $url)
+        {
             return true;
+        }
 
         $save = array();
         $save['url'] = $url;
 
         $width = $height = 0;
         if (ini_get('allow_url_fopen'))
-            list($width, $height) = @getimagesize($url);
+        {
+            list( $width, $height ) = @getimagesize($url);
+        }
         $save['width'] = $width;
         $save['height'] = $height;
 
@@ -111,10 +135,14 @@ class ExternalFeaturedImage {
     {
         global $post;
         if (empty($post) || !$external_img = \get_post_meta($post->ID, self::EXTERNAL_URL_META, true))
+        {
             return $html;
+        }
 
         if (empty($external_img['url']))
+        {
             return $html;
+        }
 
         $html .= '<div><img class="size-post-thumbnail" src="' . \esc_url($external_img['url']) . '">';
         $html .= '<p class="howto">' . __('External featured image', 'content-egg') . '</p></div>';
@@ -125,52 +153,75 @@ class ExternalFeaturedImage {
     public static function getFakeImageId($value, $product)
     {
         if (GeneralConfig::getInstance()->option('external_featured_images') == 'enabled_internal_priority' && self::hasInternalImage($product->get_id()))
+        {
             return $value;
+        }
 
         $product_id = $product->get_id();
         if (\get_post_meta($product_id, self::EXTERNAL_URL_META, true))
+        {
             return self::generateFakeId($product_id);
-        else
+        } else
+        {
             return $value;
+        }
     }
 
     public static function getFakeThumbnailId($value, $object_id, $meta_key, $single)
     {
         if ($meta_key != '_thumbnail_id')
+        {
             return $value;
+        }
 
         if (GeneralConfig::getInstance()->option('external_featured_images') == 'enabled_internal_priority' && self::hasInternalImage($object_id))
+        {
             return $value;
+        }
 
         if (\get_post_meta($object_id, self::EXTERNAL_URL_META, true))
+        {
             return self::generateFakeId($object_id);
-        else
+        } else
+        {
             return $value;
+        }
     }
 
     public static function replaceImageSrc($image, $attachment_id, $size, $icon)
     {
         if (!$post_id = self::getRealId($attachment_id))
+        {
             return $image;
+        }
 
         if (!$external_img = \get_post_meta($post_id, self::EXTERNAL_URL_META, true))
+        {
             return $image;
+        }
 
         $external_url = $external_img['url'];
 
         if ($image_size = self::getImageSize($size))
+        {
             return array($external_url, $image_size['width'], $image_size['height'], $image_size['crop']);
-        else
+        } else
         {
             if (!empty($external_img['width']))
+            {
                 $width = $external_img['width'];
-            else
+            } else
+            {
                 $width = 800;
+            }
 
             if (!empty($external_img['height']))
+            {
                 $height = $external_img['height'];
-            else
+            } else
+            {
                 $height = 600;
+            }
 
             return array($external_url, $width, $height, false);
         }
@@ -189,7 +240,9 @@ class ExternalFeaturedImage {
 
         global $_wp_additional_image_sizes;
         if (isset($_wp_additional_image_sizes[$size]))
+        {
             return $_wp_additional_image_sizes[$size];
+        }
 
         $default = array('thumbnail', 'medium', 'medium_large', 'large');
         if (in_array($size, $default))
@@ -200,16 +253,21 @@ class ExternalFeaturedImage {
                 'crop' => \get_option("{$size}_crop"),
             );
         }
+
         return array();
     }
 
     public static function replaceThumbnail($html, $post_id, $post_thumbnail_id, $size, $attr)
     {
         if (!$external_img = \get_post_meta($post_id, self::EXTERNAL_URL_META, true))
+        {
             return $html;
+        }
 
         if (GeneralConfig::getInstance()->option('external_featured_images') == 'enabled_internal_priority' && self::hasInternalImage($post_id))
+        {
             return $html;
+        }
 
         $url = $external_img['url'];
         $alt = \get_post_field('post_title', $post_id);
@@ -223,6 +281,7 @@ class ExternalFeaturedImage {
             $html .= " $name=" . '"' . $value . '"';
         }
         $html .= ' />';
+
         return $html;
     }
 
@@ -239,32 +298,45 @@ class ExternalFeaturedImage {
         }
 
         if (isset($meta_cache[$meta_key]))
+        {
             $meta_value = $meta_cache[$meta_key][0];
-        else
+        } else
+        {
             $meta_value = false;
+        }
 
         if ($meta_value)
+        {
             return true;
-        else
+        } else
+        {
             return false;
+        }
     }
 
     public static function getExternalUrl($post_id)
     {
         $external_img = \get_post_meta($post_id, self::EXTERNAL_URL_META, true);
         if (!$external_img || empty($external_img['url']))
+        {
             return false;
-        else
+        } else
+        {
             return $external_img['url'];
+        }
     }
 
     public static function addOpengraphImage($object)
     {
         if (!$post_id = \get_the_ID())
+        {
             return;
+        }
 
         if (!$external_url = self::getExternalUrl($post_id))
+        {
             return;
+        }
 
         $object->add_image($external_url);
     }
@@ -272,13 +344,18 @@ class ExternalFeaturedImage {
     public static function addStructuredDataProduct($markup, $product)
     {
         if (!empty($markup['image']))
+        {
             return $markup;
+        }
 
         if (!$external_url = self::getExternalUrl($product->get_id()))
+        {
             return $markup;
+        }
 
         $markup['image'] = $external_url;
+
         return $markup;
-    }
+    }  
 
 }

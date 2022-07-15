@@ -1,11 +1,11 @@
 <?php
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 /*
   Name: Product card (no features)
  */
 
-__('Product card (no features)', 'content-egg');
+__( 'Product card (no features)', 'content-egg' );
 
-$this->renderPartial('item_simple');
+$this->renderPartial( 'item_simple' );

@@ -17,6 +17,56 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+= 10.4.0 =
+* Improvement: Bolcom module: New API authentication method.
+
+= 10.3.0 =
+* New: Option to add AggregateOffer to product structured data.
+
+= 10.2.0 =
+* New: Autoblog: Slug template.
+
+= 10.1.0 =
+* New: Feed module: JSON feed format.
+
+= 10.0.2 =
+* Fix: Tradetracker Products: Reference.
+
+= 10.0.0 =
+* New: Multiple keyword search.
+* Improvement: Alt tag for featured images.
+* Improvement: Feed modules: Update by page view.
+
+= 9.9.2 =
+* New: Amazon module: Amazon.eg support.
+
+= 9.9.0 =
+* New: Ebay module: Added support for AT and CH locales.
+* New: Bolcom module: Description type.
+
+= 9.8.1 =
+* New: REST API: Return woo synced offer only.
+
+= 9.8.0 =
+* New: REST API for module data.
+* New: Module shortcodes: sort parameter.
+
+= 9.7.0 =
+* New: Ebay module: Image size option.
+* Improvement: Tradedoubler module: Migration to the latest API syntax.
+
+= 9.6.0 =
+* New: Ebay module: Priority listing filter.
+
+= 9.5.0 =
+* New: Offer modules: Default currency option.
+* Improvement: Impactradius module: Migration to API v12.
+
+= 9.4.1 =
+* Fix: Ebay module: Local redirects.
+* Fix: Feed modules: Stock status.
+* Fix: Tradedoubler module: Unique IDs.
+
 = 9.4.0 =
 * New: Shortcode parameters: add_query_arg.
 * Improvement: Feed modules: Feeds will be updated twice a day.

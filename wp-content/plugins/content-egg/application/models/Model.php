@@ -24,11 +24,17 @@ abstract class Model {
     public function __construct()
     {
         if (!empty($this->getDb()->charset))
+        {
             $this->charset_collate = 'DEFAULT CHARACTER SET ' . $this->getDb()->charset;
+        }
         if (!empty($this->getDb()->collate))
+        {
             $this->charset_collate .= ' COLLATE ' . $this->getDb()->collate;
+        }
         if (!$this->charset_collate)
+        {
             $this->charset_collate = '';
+        }
     }
 
     public function attributeLabels()
@@ -39,10 +45,12 @@ abstract class Model {
     public function getDb()
     {
         if (self::$db !== null)
+        {
             return self::$db;
-        else
+        } else
         {
             self::$db = $GLOBALS['wpdb'];
+
             return self::$db;
         }
     }
@@ -50,8 +58,9 @@ abstract class Model {
     public static function model($className = __CLASS__)
     {
         if (isset(self::$models[$className]))
+        {
             return self::$models[$className];
-        else
+        } else
         {
             return self::$models[$className] = new $className;
         }
@@ -61,14 +70,21 @@ abstract class Model {
     {
         $labels = $this->attributeLabels();
         if (isset($labels[$attribute]))
+        {
             return $labels[$attribute];
-        else
+        } else
+        {
             return $this->generateAttributeLabel($attribute);
+        }
     }
 
     public function generateAttributeLabel($name)
     {
-        return ucwords(trim(strtolower(str_replace(array('-', '_', '.'), ' ', preg_replace('/(?<![A-Z])[A-Z]/', ' \0', $name)))));
+        return ucwords(trim(strtolower(str_replace(array(
+            '-',
+            '_',
+            '.'
+                                        ), ' ', preg_replace('/(?<![A-Z])[A-Z]/', ' \0', $name)))));
     }
 
     public function find(array $params)
@@ -87,9 +103,12 @@ abstract class Model {
         $sql = 'SELECT ';
 
         if (!empty($params['select']))
+        {
             $sql .= $params['select'];
-        else
+        } else
+        {
             $sql .= ' *';
+        }
         $sql .= ' FROM ' . $this->tableName();
         if ($params)
         {
@@ -100,7 +119,9 @@ abstract class Model {
                     $sql .= ' WHERE ' . $params['where'][0];
                     $values += $params['where'][1];
                 } elseif (!is_array($params['where']))
+                {
                     $sql .= ' WHERE ' . $params['where'];
+                }
             }
             if (!empty($params['group']))
             {
@@ -122,8 +143,11 @@ abstract class Model {
             }
 
             if ($values)
+            {
                 $sql = $this->getDb()->prepare($sql, $values);
+            }
         }
+
         return $sql;
     }
 
@@ -142,6 +166,7 @@ abstract class Model {
         $values = array();
         $sql = 'DELETE FROM ' . $this->tableName();
         $sql .= $this->prepareWhere($where);
+
         return $this->getDb()->query($sql);
     }
 
@@ -149,7 +174,10 @@ abstract class Model {
     {
         $sql = "SELECT COUNT(*) FROM " . $this->tableName();
         if ($where)
+        {
             $sql .= $this->prepareWhere($where);
+        }
+
         return $this->getDb()->get_var($sql);
     }
 
@@ -157,7 +185,10 @@ abstract class Model {
     {
         $sql = "SELECT MAX(" . $colum . ") FROM " . $this->tableName();
         if ($where)
+        {
             $sql .= $this->prepareWhere($where);
+        }
+
         return $this->getDb()->get_var($sql);
     }
 
@@ -165,7 +196,10 @@ abstract class Model {
     {
         $sql = "SELECT MIN(" . $colum . ") FROM " . $this->tableName();
         if ($where)
+        {
             $sql .= $this->prepareWhere($where);
+        }
+
         return $this->getDb()->get_var($sql);
     }
 
@@ -173,41 +207,57 @@ abstract class Model {
     {
         $sql = "SELECT AVG(" . $colum . ") FROM " . $this->tableName();
         if ($where)
+        {
             $sql .= $this->prepareWhere($where);
+        }
+
         return $this->getDb()->get_var($sql);
     }
 
     public function prepareWhere($where, $winclude = true)
     {
         if ($winclude)
+        {
             $sql = ' WHERE ';
-        else
+        } else
+        {
             $sql = '';
+        }
         $values = array();
         if (is_array($where) && isset($where[0]) && isset($where[1]))
         {
             $sql .= $where[0];
             $values += $where[1];
         } elseif (is_string($where))
+        {
             $sql .= $where;
-        else
+        } else
+        {
             throw new \Exception('Wrong WHERE params.');
+        }
         if ($values)
+        {
             $sql = $this->getDb()->prepare($sql, $values);
+        }
+
         return $sql;
     }
 
     public function save(array $item)
     {
+        if (!isset($item['id']))
+            $item['id'] = 0;
         $item['id'] = (int) $item['id'];
         if (!$item['id'])
         {
             $item['id'] = null;
             $this->getDb()->insert($this->tableName(), $item);
+
             return $this->getDb()->insert_id;
         } else
         {
             $this->getDb()->update($this->tableName(), $item, array('id' => $item['id']));
+
             return $item['id'];
         }
     }
@@ -221,7 +271,9 @@ abstract class Model {
     {
         $this->deleteAll('TIMESTAMPDIFF( DAY, ' . $date_field . ', "' . \current_time('mysql') . '") > ' . $days);
         if ($optimize)
+        {
             $this->optimizeTable();
+        }
     }
 
     public function optimizeTable()
@@ -239,9 +291,12 @@ abstract class Model {
         $query = $this->getDb()->prepare('SHOW TABLES LIKE %s', $this->getDb()->esc_like($this->tableName()));
 
         if ($this->getDb()->get_var($query) == $this->tableName())
+        {
             return true;
-        else
+        } else
+        {
             return false;
+        }
     }
 
     public function multipleInsert(array $items, $per_request = 200)
@@ -261,13 +316,14 @@ abstract class Model {
             for ($j = $i * $per_request; $j < $i * $per_request + $per_request; $j++)
             {
                 if (!isset($items[$j]))
+                {
                     break;
+                }
                 $query .= $this->getDb()->prepare($placeholder, $items[$j]) . ', ';
             }
             $query = rtrim($query, " ,") . ';';
             $this->getDb()->query($query);
         }
     }
-    
 
 }

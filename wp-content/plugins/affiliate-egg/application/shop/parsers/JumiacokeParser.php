@@ -8,8 +8,8 @@ defined('\ABSPATH') || exit;
  * JumiacokeParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2018 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2021 keywordrush.com
  */
 require_once dirname(__FILE__) . '/JumiacomegParser.php';
 

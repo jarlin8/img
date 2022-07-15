@@ -6,7 +6,6 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\components\ModuleManager;
-use ContentEgg\application\helpers\InputHelper;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\admin\GeneralConfig;
 
@@ -14,8 +13,8 @@ use ContentEgg\application\admin\GeneralConfig;
  * LocalRedirect class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class LocalRedirect {
 
@@ -51,8 +50,12 @@ class LocalRedirect {
                 $goce = $match[1];
             else
                 $goce = '';
-        } else
-            $goce = InputHelper::get(self::getPrefix());
+        } elseif (isset($_GET[self::getPrefix()]))
+        {
+            $goce = sanitize_text_field(wp_unslash($_GET[self::getPrefix()]));
+        }
+        else
+            return;
 
         if (!$goce)
             return;
@@ -67,7 +70,9 @@ class LocalRedirect {
         if (!$url)
             return;
 
-        \wp_redirect(esc_url_raw($url), 301);
+        $code = (int) \apply_filters('cegg_local_redirect_code', 301);
+
+        \wp_redirect(wp_sanitize_redirect($url), $code); // phpcs:ignore
         exit;
     }
 

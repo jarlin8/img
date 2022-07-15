@@ -2,12 +2,14 @@
 
 namespace Keywordrush\AffiliateEgg;
 
+defined('\ABSPATH') || exit;
+
 /**
  * TemplateHelper class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2021 keywordrush.com
  */
 class TemplateHelper {
 
@@ -308,7 +310,7 @@ class TemplateHelper {
                 });
         </script>';
     }
-    
+
     public static function printRating(array $item, $size = 'default')
     {
         if (empty($item['extra']['rating']))
@@ -318,8 +320,8 @@ class TemplateHelper {
 
         $rating = $item['extra']['rating'] * 20;
         echo '<span class="egg-stars-container egg-stars-' . $size . ' egg-stars-' . $rating . '">★★★★★</span>';
-    }    
-    
+    }
+
     public static function adjustBrightness($hexCode, $adjustPercent)
     {
         $hexCode = ltrim($hexCode, '#');
@@ -338,6 +340,72 @@ class TemplateHelper {
         }
 
         return '#' . implode($hexCode);
-    }    
+    }
+
+    public static function dateFormatFromGmt($timestamp, $time = true)
+    {
+        $format = \get_option('date_format');
+        if ($time)
+            $format .= ' ' . \get_option('time_format');
+
+        // last update date stored in gmt, convert into local time
+        $timestamp = strtotime(\get_date_from_gmt(date('Y-m-d H:i:s', $timestamp)));
+        return \date_i18n($format, $timestamp);
+    }
+
+    private static function replacePatterns($template, array $item)
+    {
+        if (!$item)
+            return $template;
+        if (!preg_match_all('/%[a-zA-Z0-9_\.\,\(\)]+%/', $template, $matches))
+            return $template;
+
+        $replace = array();
+        foreach ($matches[0] as $pattern)
+        {
+            if (stristr($pattern, '%PRICE%'))
+            {
+                if (!empty($item['price']) && !empty($item['currency']))
+                    $replace[$pattern] = TemplateHelper::formatPriceCurrency($item['price'], $item['currency']);
+                else
+                    $replace[$pattern] = '';
+                continue;
+            }
+
+            if (stristr($pattern, '%DOMAIN%'))
+            {
+                if (!empty($item['domain']))
+                    $replace[$pattern] = $item['domain'];
+                else
+                    $replace[$pattern] = '';
+                continue;
+            }
+        }
+        return str_ireplace(array_keys($replace), array_values($replace), $template);
+    }
+
+    public static function btnText($option_name, $default, $print = true, array $item = array(), $forced_text = '')
+    {
+        if ($forced_text)
+            $text = $forced_text;
+        else
+        {
+            $text = GeneralConfig::getInstance()->option($option_name);
+            if (!$text)
+                $text = $default;
+        }
+
+        $text = \esc_attr(self::replacePatterns($text, $item));
+
+        if (!$print)
+            return $text;
+
+        echo $text;
+    }
+
+    public static function buyNowBtnText($print = true, array $item = array(), $forced_text = '')
+    {
+        return self::btnText('btn_text_buy_now', __('Buy Now', 'affegg-tpl'), $print, $item, $forced_text);
+    }
 
 }

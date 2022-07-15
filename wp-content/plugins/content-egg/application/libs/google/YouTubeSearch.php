@@ -1,7 +1,9 @@
 <?php
 
 namespace ContentEgg\application\libs\google;
-defined( '\ABSPATH' ) || exit;
+
+defined('\ABSPATH') || exit;
+
 use ContentEgg\application\libs\RestClient;
 
 /**
@@ -10,7 +12,7 @@ use ContentEgg\application\libs\RestClient;
  * @author keywordrush.com <support@keywordrush.com>
  * @link http://www.keywordrush.com/
  * @copyright Copyright &copy; 2015 keywordrush.com
- * 
+ *
  * @link: https://developers.google.com/youtube/v3/docs/search/list
  *
  */
@@ -30,7 +32,8 @@ class YouTubeSearch extends RestClient {
 
     /**
      * Constructor
-     * @param  string $responseType
+     *
+     * @param string $responseType
      */
     public function __construct($responseType = 'json')
     {
@@ -46,8 +49,7 @@ class YouTubeSearch extends RestClient {
         $_query['videoEmbeddable'] = 'true';
         $_query['type'] = 'video';
 
-        // Разработчики обычно добавляют &format=5 в свои запросы, чтобы ограничить
-        // результаты теми видео, которые могут быть встроены в их сайты.
+
         //$params['format'] = 5;
 
         foreach ($params as $key => $param)
@@ -68,14 +70,15 @@ class YouTubeSearch extends RestClient {
                     break;
                 case 'maxResults':
                 case 'pageToken':
-                    $_query[$key] = ((int) $param > 50) ? 50 : (int) $param;
+                    $_query[$key] = ( (int) $param > 50 ) ? 50 : (int) $param;
                     break;
                 case 'strict':
-                    $_query[$key] = ((bool) $param) ? true : false;
+                    $_query[$key] = ( (bool) $param ) ? true : false;
                     break;
             }
         }
         $response = $this->restGet('/search', $_query);
+
         return $this->_decodeResponse($response);
     }
 

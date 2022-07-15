@@ -13,6 +13,10 @@ $pages = array(
         'slug' => 'affiliate-egg-proxy-settings',
         'name' => __('Proxy Settings', 'affegg'),
     ),
+    'affiliate-egg-extractor-settings' => array(
+        'slug' => 'affiliate-egg-extractor-settings',
+        'name' => __('Extractor Settings', 'affegg'),
+    ),    
 );
 ?>
 <div class="wrap">
@@ -77,6 +81,9 @@ $pages = array(
                         {
                             if ($currency != $pre_currency)
                             {
+                                if ($currency == 'RUB')
+                                    continue;
+                                
                                 if (count($l) == 1 && ($l[0]->isDeprecated() || $l[0]->isUnstable()))
                                     echo '';
                                 else
@@ -88,6 +95,10 @@ $pages = array(
                             {
                                 if ($shop->isDeprecated() || $shop->isUnstable())
                                     continue;
+                                
+                                //if (preg_match('/\.ru$/', $shop->getHost()))
+                                   // continue;
+                                
                                 echo '<tr><td>' . esc_html($shop->getHost()) . '</td></tr>';
                             }
                             $pre_currency = $currency;
@@ -101,14 +112,14 @@ $pages = array(
         <?php if ($page && $page['slug'] == 'affiliate-egg-cookies-settings'): ?>
             <div id="poststuff">    
                 <p>
-                    <?php _e('Read more about this settings', 'affegg') ?> <a target="_blank" href="<?php echo \Keywordrush\AffiliateEgg\AffiliateEgg::pluginDocsUrl(); ?>CustomCookies.html"><?php _e('here', 'affegg'); ?></a>.
+                    <?php _e('Read more about this settings', 'affegg') ?> <a target="_blank" href="<?php echo \Keywordrush\AffiliateEgg\AffiliateEgg::pluginDocsUrl(); ?>/CustomCookies.html"><?php _e('here', 'affegg'); ?></a>.
                 </p>
             </div>        
         <?php endif; ?>        
         <?php if ($page && $page['slug'] == 'affiliate-egg-proxy-settings'): ?>
             <div id="poststuff">    
                 <p>
-                    <?php _e('Read more about this settings', 'affegg') ?> <a target="_blank" href="<?php echo \Keywordrush\AffiliateEgg\AffiliateEgg::pluginDocsUrl(); ?>ProxySettings.html"><?php _e('here', 'affegg'); ?></a>.
+                    <?php _e('Read more about this settings', 'affegg') ?> <a target="_blank" href="<?php echo \Keywordrush\AffiliateEgg\AffiliateEgg::pluginDocsUrl(); ?>/ProxySettings.html"><?php _e('here', 'affegg'); ?></a>.
                 </p>
             </div>        
         <?php endif; ?>        

@@ -41,8 +41,10 @@ class JumiacomegParser extends LdShopParser {
     public function parsePrice()
     {
         if ($p = $this->xpathScalar(array("(.//*[@class='price-box']//*/@data-price)[1]", ".//span[@class='-b -ltr -tal -fs24']")))
-            return $p;
-        else
+        {
+            $parts = explode(' - ', $p);
+            return $parts[0];
+        } else
             return parent::parsePrice();
     }
 
@@ -54,7 +56,13 @@ class JumiacomegParser extends LdShopParser {
             ".//*[@class='row card _no-g -fh -pas']//span[@data-price-old]",
         );
 
-        return $this->xpathScalar($paths);
+        $p = $this->xpathScalar($paths);
+        if ($p)
+        {
+            $parts = explode(' - ', $p);
+
+            return $parts[0];
+        }
     }
 
     public function parseImg()

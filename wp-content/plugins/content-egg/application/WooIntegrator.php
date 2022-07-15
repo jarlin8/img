@@ -146,7 +146,9 @@ class WooIntegrator {
                     $product->set_regular_price($item['price'] * $currency_rate);
                 } else
                 {
-                    $product->set_regular_price($item['priceOld'] * $currency_rate);
+                    if (!\apply_filters('cegg_dont_touch_retail_price', false))
+                        $product->set_regular_price($item['priceOld'] * $currency_rate);    
+                    
                     if (!\apply_filters('cegg_dont_touch_sale_price', false))
                         $product->set_sale_price($item['price'] * $currency_rate);
                 }
@@ -260,7 +262,7 @@ class WooIntegrator {
                     // Register the taxonomy now so that the import works!
                     if (!\taxonomy_exists($taxonomy))
                     {
-                        $taxonomy = TextHelper::truncate($taxonomy, 32, '');
+                        $taxonomy = TextHelper::truncate($taxonomy, 32, '', 'UTF-8', true);
                         \register_taxonomy(
                                 $taxonomy, apply_filters('woocommerce_taxonomy_objects_' . $taxonomy, array('product')), apply_filters('woocommerce_taxonomy_args_' . $taxonomy, array(
                             'hierarchical' => true,
@@ -541,7 +543,9 @@ class WooIntegrator {
 
             $date = TemplateHelper::dateFormatFromGmt($item['last_update'], true);
 
-            echo '<span class="price_updated">' . sprintf(Translator::__('Last updated on %s'), $date) . '</span>';
+            echo '<span class="price_updated">';
+			echo esc_html(sprintf(Translator::__('Last updated on %s'), $date));
+			echo '</span>';
         }
     }
 
@@ -560,7 +564,9 @@ class WooIntegrator {
             if (empty($item['extra']['pricePerUnitDisplay']))
                 return;
 
-            echo '<div class="cegg_price_per_unit">' . sprintf(Translator::__('Price per unit: %s'), $item['extra']['pricePerUnitDisplay']) . '</div>';
+            echo '<div class="cegg_price_per_unit">';
+			echo esc_html(sprintf(Translator::__('Price per unit: %s'), $item['extra']['pricePerUnitDisplay']));
+			echo '</div>';
         }
     }
 

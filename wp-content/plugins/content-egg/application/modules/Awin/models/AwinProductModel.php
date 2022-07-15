@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Awin\models;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\models\FeedProductModel;
 
@@ -15,14 +15,12 @@ use ContentEgg\application\models\FeedProductModel;
  */
 class AwinProductModel extends FeedProductModel {
 
-    public function tableName()
-    {
-        return $this->getDb()->prefix . 'cegg_awin_product';
-    }
+	public function tableName() {
+		return $this->getDb()->prefix . 'cegg_awin_product';
+	}
 
-    public static function model($className = __CLASS__)
-    {
-        return parent::model($className);
-    }
+	public static function model( $className = __CLASS__ ) {
+		return parent::model( $className );
+	}
 
 }

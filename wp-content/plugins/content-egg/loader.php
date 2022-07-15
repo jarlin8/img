@@ -98,12 +98,12 @@ new AutoLoader();
 
 function prn($var, $depth = 10, $highlight = true)
 {
-    echo CVarDumper::dumpAsString($var, $depth, $highlight);
+    echo CVarDumper::dumpAsString($var, $depth, $highlight); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     echo '<br />';
 }
 
 function prnx($var, $depth = 10, $highlight = true)
 {
-    echo CVarDumper::dumpAsString($var, $depth, $highlight);
+    echo CVarDumper::dumpAsString($var, $depth, $highlight); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     die('Exit');
 }

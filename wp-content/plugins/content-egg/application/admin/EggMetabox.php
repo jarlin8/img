@@ -5,7 +5,6 @@ namespace ContentEgg\application\admin;
 defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ModuleManager;
-use ContentEgg\application\helpers\InputHelper;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\components\ContentProduct;
@@ -19,7 +18,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class EggMetabox {
 
@@ -27,9 +26,9 @@ class EggMetabox {
 
     public function __construct()
     {
-        if (LManager::isNulled())
-            return;
-        
+       // if (Plugin::isActivated() && LManager::isNulled())
+      //   return;
+
         \add_action('add_meta_boxes', array($this, 'addMetabox'));
         \add_action('save_post', array($this, 'saveMeta'));
     }
@@ -83,7 +82,7 @@ class EggMetabox {
         $modules = ModuleManager::getInstance()->getModules(true);
         $module_ids = \apply_filters('content_egg_metabox_modules', array_keys($modules));
         $modules = array_intersect_key($modules, array_flip($module_ids));
-        
+
         foreach ($modules as $module)
         {
             $module->enqueueScripts();
@@ -95,7 +94,7 @@ class EggMetabox {
 
     public function renderBlankMetabox($post)
     {
-        _e('Configure and activate modules of Content Egg plugin', 'content-egg');
+        esc_attr_e('Configure and activate modules of Content Egg plugin', 'content-egg');
     }
 
     private function metadataInit()
@@ -236,8 +235,7 @@ class EggMetabox {
 
         \check_admin_referer('contentegg_metabox', 'contentegg_nonce');
 
-        // Check the user's permissions.
-        if ($_POST['post_type'] == 'page')
+        if (isset($_POST['post_type']) && $_POST['post_type'] == 'page')
         {
             if (!current_user_can('edit_page', $post_id))
                 return;
@@ -254,8 +252,18 @@ class EggMetabox {
             $stripslashes = true;
 
         // keywords for automatic updates
-        $keywords = InputHelper::post('cegg_updateKeywords', array(), $stripslashes);
-        $update_params = InputHelper::post('cegg_updateParams', array(), $stripslashes);
+        $keywords = array();
+        if (isset($_POST['cegg_updateKeywords']))
+        {
+            $keywords = array_map('sanitize_text_field', wp_unslash($_POST['cegg_updateKeywords']));
+        }
+        
+        $update_params = array();
+        if (isset($_POST['cegg_updateParams']))
+        {
+            $update_params = array_map('sanitize_text_field', wp_unslash($_POST['cegg_updateParams']));
+        }
+
         foreach ($keywords as $module_id => $keyword)
         {
             if (!ModuleManager::getInstance()->moduleExists($module_id) || !ModuleManager::getInstance()->isModuleActive($module_id))
@@ -281,13 +289,18 @@ class EggMetabox {
         }
 
         // save content data
-        $content = InputHelper::post('cegg_data', array(), $stripslashes);
+        if (isset($_POST['cegg_data']))
+            $content = wp_unslash($_POST['cegg_data']);  // phpcs:ignore
+        else
+            $content = array();
+
         if (!is_array($content))
             return;
 
         $i = 0;
         foreach ($content as $module_id => $data)
         {
+            $module_id = sanitize_text_field($module_id);
             $i++;
             if (!ModuleManager::getInstance()->moduleExists($module_id) || !ModuleManager::getInstance()->isModuleActive($module_id))
                 continue;

@@ -8,8 +8,8 @@ defined('\ABSPATH') || exit;
  * WidgetTemplateManager class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com/
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class WidgetTemplateManager extends TemplateManager {
 
@@ -28,6 +28,7 @@ class WidgetTemplateManager extends TemplateManager {
             $class = get_called_class();
             self::$_instances[$widget_slug] = new $class($widget_slug);
         }
+
         return self::$_instances[$widget_slug];
     }
 
@@ -49,17 +50,22 @@ class WidgetTemplateManager extends TemplateManager {
 
     public function getCustomTempateDirs()
     {
-        return array(
-            'child-theme' => \get_stylesheet_directory() . '/' . self::CUSTOM_TEMPLATE_DIR, //child theme		
+        $paths = array(
+            'child-theme' => \get_stylesheet_directory() . '/' . self::CUSTOM_TEMPLATE_DIR, //child theme
             'theme' => \get_template_directory() . '/' . self::CUSTOM_TEMPLATE_DIR, // theme
             'custom' => \WP_CONTENT_DIR . '/' . self::CUSTOM_TEMPLATE_DIR,
         );
+
+        return \apply_filters('content_egg_widget_template_dirs', $paths);
     }
 
     public function render($view_name, array $_data = array())
     {
         if (!self::isCustomTemplate($view_name))
+        {
             $this->enqueueProductsStyle();
+        }
+
         return parent::render($view_name, $_data);
     }
 

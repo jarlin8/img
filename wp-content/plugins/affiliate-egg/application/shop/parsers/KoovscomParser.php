@@ -8,10 +8,10 @@ defined('\ABSPATH') || exit;
  * KoovscomParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link httpы://www.keywordrush.com
+ * @copyright Copyright &copy; 2021 keywordrush.com
  */
-class KoovscomParser extends ShopParser {
+class KoovscomParser extends LdShopParser {
 
     protected $charset = 'utf-8';
     protected $currency = 'INR';
@@ -24,54 +24,18 @@ class KoovscomParser extends ShopParser {
 
     public function parseCatalog($max)
     {
-        $urls = array_slice($this->xpathArray(".//*[@class='prodBox']//a/@href"), 0, $max);
-        foreach ($urls as $key => $url)
-        {
-            if (!preg_match('/^https?:\/\//', $url))
-                $urls[$key] = "http://www.koovs.com" . $url;
-        }
-        return $urls;
-    }
-
-    public function parseTitle()
-    {
-        return $this->xpathScalar(".//*[@class='product-name']");
-    }
-
-    public function parseDescription()
-    {
-        $res = $this->xpathArray(".//*[@class='ddesc']//ul/li");
-        return \sanitize_text_field(implode('. ', $res));
-    }
-
-    public function parsePrice()
-    {
-        return $this->xpathScalar(array(".//*[@class='pd-price']", ".//*[@class='pd-discount-price']"));
+        return $this->xpathArray(".//li[@class='imageView']//a/@href");
     }
 
     public function parseOldPrice()
     {
-        
-    }
-
-    public function parseManufacturer()
-    {
-        return $this->xpathScalar(".//*[@class='product-brand-name']");
-    }
-
-    public function parseImg()
-    {
-        return $this->xpathScalar(".//*[@class='slick-list']//img/@src");
-    }
-
-    public function parseImgLarge()
-    {
+        return $this->xpathScalar(".//div[@class='pd-right-side']//span[@class='pd-price-striked']");
         
     }
 
     public function parseExtra()
     {
-        $extra = array();
+        $extra = parent::parseExtra();
 
         $extra['features'] = array();
 
@@ -91,9 +55,5 @@ class KoovscomParser extends ShopParser {
         return $extra;
     }
 
-    public function isInStock()
-    {
-        return true;
-    }
 
 }

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Twitter;
 
-defined('\ABSPATH') || exit;
+defined( '\ABSPATH' ) || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -15,17 +15,17 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataTwitter extends ExtraData {
 
-    public $links = array();
+	public $links = array();
 
 }
 
 class ExtraTwitterLinks {
 
-    public $userId;
-    public $statusesCount;
-    public $followersCount;
-    public $friendsCount;
-    public $media;
-    public $profileImage;
+	public $userId;
+	public $statusesCount;
+	public $followersCount;
+	public $friendsCount;
+	public $media;
+	public $profileImage;
 
 }
