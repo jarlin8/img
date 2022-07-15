@@ -591,29 +591,6 @@ if ( ! function_exists( 'of_options' ) ) {
 			'type' => 'checkbox',
 		);
 
-		// Updates.
-		$of_options[] = array(
-			'name' => 'Updates',
-			'type' => 'heading',
-		);
-
-		$of_options[] = array(
-			'name'    => 'Release channel',
-			'id'      => 'release_channel',
-			'std'     => 'stable',
-			'type'    => 'select',
-			'options' => array(
-				'stable' => 'Stable',
-				'beta'   => 'Beta',
-			),
-		);
-
-		$of_options[] = array(
-			'name' => '',
-			'type' => 'warning',
-			'desc' => '<p style="font-size:14px">Use with caution. Do not use prerelease versions on production sites. Beta releases may not be stable.</p>',
-		);
-
 		if ( function_exists( 'ubermenu' ) ) {
 			$of_options[] = array(
 				'name' => 'Ubermenu',
@@ -687,6 +664,29 @@ if ( ! function_exists( 'of_options' ) ) {
 				'type' => 'checkbox',
 			);
 		}
+
+		// Updates.
+		$of_options[] = array(
+			'name' => 'Updates',
+			'type' => 'heading',
+		);
+
+		$of_options[] = array(
+			'name'    => 'Release channel',
+			'id'      => 'release_channel',
+			'std'     => 'stable',
+			'type'    => 'select',
+			'options' => array(
+				'stable' => 'Stable',
+				'beta'   => 'Beta',
+			),
+		);
+
+		$of_options[] = array(
+			'name' => '',
+			'type' => 'warning',
+			'desc' => '<p style="font-size:14px">Use with caution. Do not use prerelease versions on production sites. Beta releases may not be stable.</p>',
+		);
 
 		// Backup Options.
 		$of_options[] = array(

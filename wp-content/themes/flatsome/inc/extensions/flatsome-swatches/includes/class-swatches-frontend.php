@@ -447,10 +447,10 @@ class Swatches_Frontend {
 					break;
 				case 'ux_image':
 					$swatch_classes[]  = 'ux-swatch--image';
-					$swatch_inner_html = wp_get_attachment_image( $swatch['ux_image'], $img_size, false, array(
+					$swatch_inner_html = isset( $swatch['ux_image'] ) ? wp_get_attachment_image( $swatch['ux_image'], $img_size, false, array(
 						'class' => "ux-swatch__img attachment-$img_size size-$img_size",
 						'alt'   => $name,
-					) );
+					) ) : wc_placeholder_img( $img_size );
 					break;
 				case 'ux_label':
 					$swatch_classes[] = 'ux-swatch--label';

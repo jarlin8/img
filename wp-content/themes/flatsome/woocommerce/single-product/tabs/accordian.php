@@ -26,7 +26,7 @@ if ( ! empty( $product_tabs ) ) : ?>
 		<?php foreach ( $product_tabs as $key => $product_tab ) : ?>
 		<div class="accordion-item">
 			<a class="accordion-title plain" href="javascript:void();">
-				<button class="toggle"><i class="icon-angle-down"></i></button>
+				<button class="toggle" aria-label="<?php echo esc_attr__( 'Toggle', 'flatsome' ); ?>"><i class="icon-angle-down"></i></button>
 				<?php echo apply_filters( 'woocommerce_product_' . $key . '_tab_title', $product_tab['title'], $key ); ?>
 			</a>
 			<div class="accordion-inner">

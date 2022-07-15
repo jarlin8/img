@@ -183,7 +183,8 @@ function flatsome_scripts() {
 			'can_edit_pages' => current_user_can( 'edit_pages' ),
 		),
 		'i18n'          => array(
-			'mainMenu' => __( 'Main Menu', 'flatsome' ),
+			'mainMenu'     => __( 'Main Menu', 'flatsome' ),
+			'toggleButton' => __( 'Toggle', 'flatsome' ),
 		),
 		'options'       => array(
 			'cookie_notice_version'          => get_theme_mod( 'cookie_notice_version', '1' ),

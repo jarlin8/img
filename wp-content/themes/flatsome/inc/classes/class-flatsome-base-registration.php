@@ -110,7 +110,7 @@ class Flatsome_Base_Registration {
 	 * @return string
 	 */
 	public function get_code() {
-		return '846b8d75-85b3-4b3e-976c-2e29d386339d';
+		return 'GWrxBEss-VqSg-cJbs-dVvg-QzLEDfLzzExZ';
 	}
 
 	/**

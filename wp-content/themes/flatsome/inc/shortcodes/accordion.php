@@ -51,6 +51,6 @@ function ux_accordion_item( $atts, $content = null ) {
 	), $atts));
 	$classes                 = array( 'accordion-item' );
 	if ( $class ) $classes[] = $class;
-	return '<div class="' . implode( ' ', $classes ) . '"><a href="#" class="accordion-title plain"><button class="toggle"><i class="icon-angle-down"></i></button><span>' . $title . '</span></a><div class="accordion-inner">' . do_shortcode( $content ) . '</div></div>';
+	return '<div class="' . implode( ' ', $classes ) . '"><a href="#" class="accordion-title plain"><button class="toggle" aria-label="' . esc_attr__( 'Toggle', 'flatsome' ) . '"><i class="icon-angle-down"></i></button><span>' . $title . '</span></a><div class="accordion-inner">' . do_shortcode( $content ) . '</div></div>';
 }
 add_shortcode( 'accordion-item', 'ux_accordion_item' );

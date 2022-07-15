@@ -9,11 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-update_option( 'flatsome_wup_purchase_code', '846b8d75-85b3-4b3e-976c-2e29d386339d' );
-update_option( 'flatsome_wup_supported_until', '01.01.2050' );
+update_option( 'flatsome_wup_purchase_code', 'GWrxBEss-VqSg-cJbs-dVvg-QzLEDfLzzExZ' );
+update_option( 'flatsome_wup_supported_until', '14.06.2027' );
 update_option( 'flatsome_wup_buyer', 'Licensed' );
 update_option( 'flatsome_wup_sold_at', time() );
-delete_option( 'flatsome_wup_errors');
+delete_option( 'flatsome_wup_errors', '' );
+delete_option( 'flatsome_wupdates', '');
 /**
  * The Flatsome registration.
  */
@@ -170,7 +171,7 @@ final class Flatsome_WUpdates_Registration extends Flatsome_Base_Registration {
 	 * @return boolean
 	 */
 	public function get_code() {
-		return '846b8d75-85b3-4b3e-976c-2e29d386339d';
+		return 'GWrxBEss-VqSg-cJbs-dVvg-QzLEDfLzzExZ';
 	}
 
 	/**

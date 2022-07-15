@@ -42,15 +42,6 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 		protected $steps  = array();
 
 		/**
-		 * Relative plugin path
-		 *
-		 * @since 1.1.2
-		 *
-		 * @var string
-		 */
-		protected $plugin_path = '';
-
-		/**
 		 * Relative plugin url for this plugin folder, used when enquing scripts
 		 *
 		 * @since 1.1.2
@@ -196,10 +187,8 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 			}
 			$this->page_url = apply_filters( $this->theme_name . '_theme_setup_wizard_page_url', $this->page_url );
 
-			//set relative plugin path url
-			$this->plugin_path = trailingslashit( $this->cleanFilePath( dirname( __FILE__ ) ) );
-			$relative_url = str_replace( $this->cleanFilePath( get_template_directory() ), '', $this->plugin_path );
-			$this->plugin_url = trailingslashit( get_template_directory_uri() . $relative_url );
+			// Set plugin URL directory.
+			$this->plugin_url = trailingslashit( get_template_directory_uri() . '/inc/admin/envato_setup' );
 		}
 
 		/**

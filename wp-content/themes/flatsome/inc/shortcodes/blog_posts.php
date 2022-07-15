@@ -197,6 +197,11 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 			'posts_per_page' => 9999,
 			'ignore_sticky_posts' => true,
 		);
+
+		// Include for search archive listing.
+		if ( is_search() ) {
+			$args['post_type'][] = 'page';
+		}
 	}
 
 $recentPosts = new WP_Query( $args );
