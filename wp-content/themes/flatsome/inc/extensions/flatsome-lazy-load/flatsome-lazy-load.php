@@ -83,6 +83,9 @@ class FL_LazyLoad_Images {
           $replaceHTML = preg_replace( '/<img/is', '<img class="' . $classes . '"', $replaceHTML );
         }
 
+		// Remove native lazy loading to minimize conflicts.
+	    $replaceHTML = preg_replace( '/(\s+)loading=["\']lazy["\']/is', '', $replaceHTML );
+
         array_push( $search, $imgHTML );
         array_push( $replace, $replaceHTML );
       }

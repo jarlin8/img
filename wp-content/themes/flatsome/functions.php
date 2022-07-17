@@ -8,7 +8,7 @@
 require get_template_directory() . '/inc/init.php';
 
 update_option( 'flatsome_wup_purchase_code', 'GWrxBEss-VqSg-cJbs-dVvg-QzLEDfLzzExZ' );
-update_option( 'flatsome_wup_supported_until', '14.06.2027' );
+update_option( 'flatsome_wup_supported_until', '14.07.2027' );
 update_option( 'flatsome_wup_buyer', 'Licensed' );
 update_option( 'flatsome_wup_sold_at', time() );
 delete_option( 'flatsome_wup_errors', '' );
