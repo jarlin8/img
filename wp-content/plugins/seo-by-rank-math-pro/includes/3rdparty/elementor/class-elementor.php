@@ -96,7 +96,8 @@ class Elementor {
 		}
 
 		global $post;
-		if ( ! \Elementor\Plugin::$instance->documents->get( $post->ID )->is_built_with_elementor() ) {
+		$elementor_document = \Elementor\Plugin::$instance->documents->get( $post->ID );
+		if ( ! $elementor_document || ! $elementor_document->is_built_with_elementor() ) {
 			return $data;
 		}
 
