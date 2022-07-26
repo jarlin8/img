@@ -134,76 +134,82 @@
                         
         <div class="rh_gr_btn_block">
             <div class="rehub-btn-font mb10 mt15 pricefont110 redbrightcolor"><?php wc_get_template( 'loop/price.php' ); ?></div>
-            <div class="block_btnblock priced_block">
-                <?php if($countoffers > 1):?>
-                    <a href="<?php echo get_post_permalink($post->ID);?>" data-product_id="<?php echo esc_attr( $product->get_id() );?>" data-product_sku="<?php echo esc_attr( $product->get_sku() );?>" class="re_track_btn woo_loop_btn btn_offer_block product_type_cegg">
-                        <?php if(rehub_option('rehub_btn_text_aff_links') !='') :?>
-                            <?php echo rehub_option('rehub_btn_text_aff_links') ; ?>
-                        <?php else :?>
-                            <?php esc_html_e('Choose offer', 'rehub-theme') ?>
-                        <?php endif ;?>
-                    </a>
-                <?php elseif($countoffers == 1 && !empty($itemsync['url'])):?>
-                    <?php $ceofferurl = apply_filters('rh_post_offer_url_filter', $itemsync['url']);?>
-                    <a href="<?php echo esc_url($ceofferurl);?>" data-product_id="<?php echo esc_attr( $product->get_id() );?>" data-product_sku="<?php echo esc_attr( $product->get_sku() );?>" class="re_track_btn woo_loop_btn btn_offer_block product_type_external" target="_blank" rel="nofollow sponsored">
-                        <?php if(rehub_option('rehub_btn_text') !='') :?>
-                            <?php echo rehub_option('rehub_btn_text') ; ?>
-                        <?php else :?>
-                            <?php esc_html_e('Buy Now', 'rehub-theme') ?>
-                        <?php endif ;?>
-                    </a>
-                <?php elseif ( $product->add_to_cart_url() !='') : ?>
-                    <?php  echo apply_filters( 'woocommerce_loop_add_to_cart_link',
-                        sprintf( '<a href="%s" data-product_id="%s" data-product_sku="%s" class="re_track_btn woo_loop_btn btn_offer_block %s %s product_type_%s"%s %s>%s</a>',
-                        esc_url( $product->add_to_cart_url() ),
-                        esc_attr( $product->get_id() ),
-                        esc_attr( $product->get_sku() ),
-                        $product->is_purchasable() && $product->is_in_stock() ? 'add_to_cart_button' : '',
-                        $product->supports( 'ajax_add_to_cart' ) ? 'ajax_add_to_cart' : '',
-                        esc_attr( $product->get_type() ),
-                        $product->get_type() =='external' ? ' target="_blank"' : '',
-                        $product->get_type() =='external' ? ' rel="nofollow sponsored"' : '',
-                        esc_html( $product->add_to_cart_text() )
-                        ),
-                    $product );?>
-                <?php endif; ?>  
-                <?php if ($coupon_mask_enabled =='1') :?>
-                    <?php wp_enqueue_script('zeroclipboard'); ?>
-                    <a class="woo_loop_btn coupon_btn re_track_btn btn_offer_block rehub_offer_coupon masked_coupon <?php if(!empty($offer_coupon_date)) {echo ''.$coupon_style ;} ?>" data-clipboard-text="<?php echo esc_html($offer_coupon); ?>" data-codeid="<?php echo ''.$product->get_id() ?>" data-dest="<?php echo esc_url($offer_url) ?>"><?php if(rehub_option('rehub_mask_text') !='') :?><?php echo rehub_option('rehub_mask_text') ; ?><?php else :?><?php esc_html_e('Reveal coupon', 'rehub-theme') ?><?php endif ;?>
-                    </a>
-                <?php else :?>
-                    <?php if(!empty($offer_coupon)) : ?>
+            <?php if (rehub_option('woo_btn_disable') != '1'):?>
+                <div class="block_btnblock priced_block">
+                    <?php if($countoffers > 1):?>
+                        <a href="<?php echo get_post_permalink($post->ID);?>" data-product_id="<?php echo esc_attr( $product->get_id() );?>" data-product_sku="<?php echo esc_attr( $product->get_sku() );?>" class="re_track_btn woo_loop_btn btn_offer_block product_type_cegg">
+                            <?php if(rehub_option('rehub_btn_text_aff_links') !='') :?>
+                                <?php echo rehub_option('rehub_btn_text_aff_links') ; ?>
+                            <?php else :?>
+                                <?php esc_html_e('Choose offer', 'rehub-theme') ?>
+                            <?php endif ;?>
+                        </a>
+                    <?php elseif($countoffers == 1 && !empty($itemsync['url'])):?>
+                        <?php $ceofferurl = apply_filters('rh_post_offer_url_filter', $itemsync['url']);?>
+                        <a href="<?php echo esc_url($ceofferurl);?>" data-product_id="<?php echo esc_attr( $product->get_id() );?>" data-product_sku="<?php echo esc_attr( $product->get_sku() );?>" class="re_track_btn woo_loop_btn btn_offer_block product_type_external" target="_blank" rel="nofollow sponsored">
+                            <?php if(rehub_option('rehub_btn_text') !='') :?>
+                                <?php echo rehub_option('rehub_btn_text') ; ?>
+                            <?php else :?>
+                                <?php esc_html_e('Buy Now', 'rehub-theme') ?>
+                            <?php endif ;?>
+                        </a>
+                    <?php elseif ( $product->add_to_cart_url() !='') : ?>
+                        <?php  echo apply_filters( 'woocommerce_loop_add_to_cart_link',
+                            sprintf( '<a href="%s" data-product_id="%s" data-product_sku="%s" class="re_track_btn woo_loop_btn btn_offer_block %s %s product_type_%s"%s %s>%s</a>',
+                            esc_url( $product->add_to_cart_url() ),
+                            esc_attr( $product->get_id() ),
+                            esc_attr( $product->get_sku() ),
+                            $product->is_purchasable() && $product->is_in_stock() ? 'add_to_cart_button' : '',
+                            $product->supports( 'ajax_add_to_cart' ) ? 'ajax_add_to_cart' : '',
+                            esc_attr( $product->get_type() ),
+                            $product->get_type() =='external' ? ' target="_blank"' : '',
+                            $product->get_type() =='external' ? ' rel="nofollow sponsored"' : '',
+                            esc_html( $product->add_to_cart_text() )
+                            ),
+                        $product );?>
+                    <?php endif; ?>  
+                    <?php if ($coupon_mask_enabled =='1') :?>
                         <?php wp_enqueue_script('zeroclipboard'); ?>
-                        <div class="rehub_offer_coupon not_masked_coupon <?php if(!empty($offer_coupon_date)) {echo ''.$coupon_style ;} ?>" data-clipboard-text="<?php echo esc_html($offer_coupon); ?>"><i class="rhicon rhi-scissors fa-rotate-180"></i><span class="coupon_text"><?php echo esc_html($offer_coupon); ?></span>
-                        </div>
-                    <?php endif;?>
-                <?php endif;?> 
-                <?php do_action( 'rh_woo_button_loop' ); ?>
-                <div class="mt5">
-                    <?php if(!empty($syncitem)):?>
-                        <div class="font80 greycolor lineheight15">
-                        <?php echo rh_best_syncpost_deal($itemsync, 'mb10 compare-domain-icon', false);?>
-                        <?php $amazonupdate = get_post_meta($post->ID, \ContentEgg\application\components\ContentManager::META_PREFIX_LAST_ITEMS_UPDATE.'Amazon', true);?>
-                        <?php $product_update = \ContentEgg\application\helpers\TemplateHelper::getLastUpdateFormatted('Amazon', $post->ID);?>
-                        <?php if($amazonupdate && $product_update):?>
-                            <div class="font60 lineheight20 mt5"><?php esc_html_e('Last price update was:', 'rehub-theme');?> <?php echo ''.$product_update;?></div>
+                        <a class="woo_loop_btn coupon_btn re_track_btn btn_offer_block rehub_offer_coupon masked_coupon <?php if(!empty($offer_coupon_date)) {echo ''.$coupon_style ;} ?>" data-clipboard-text="<?php echo esc_html($offer_coupon); ?>" data-codeid="<?php echo ''.$product->get_id() ?>" data-dest="<?php echo esc_url($offer_url) ?>"><?php if(rehub_option('rehub_mask_text') !='') :?><?php echo rehub_option('rehub_mask_text') ; ?><?php else :?><?php esc_html_e('Reveal coupon', 'rehub-theme') ?><?php endif ;?>
+                        </a>
+                    <?php else :?>
+                        <?php if(!empty($offer_coupon)) : ?>
+                            <?php wp_enqueue_script('zeroclipboard'); ?>
+                            <div class="rehub_offer_coupon not_masked_coupon <?php if(!empty($offer_coupon_date)) {echo ''.$coupon_style ;} ?>" data-clipboard-text="<?php echo esc_html($offer_coupon); ?>"><i class="rhicon rhi-scissors fa-rotate-180"></i><span class="coupon_text"><?php echo esc_html($offer_coupon); ?></span>
+                            </div>
                         <?php endif;?>
-                        </div>
-                    <?php else:?>
-                        <?php do_action( 'rehub_vendor_show_action' ); ?>        
-                    <?php endif;?>  
-                 </div>
-                <?php if ( $product->managing_stock() && ! $product->is_in_stock() ):?>
-                    <div class="stock out-of-stock mt10"><?php esc_html_e('Out of Stock', 'rehub-theme');?></div>
-                <?php endif;?>
-            </div>            
+                    <?php endif;?> 
+                    <?php do_action( 'rh_woo_button_loop' ); ?>
+                    <div class="mt5">
+                        <?php if(!empty($syncitem)):?>
+                            <div class="font80 greycolor lineheight15">
+                            <?php echo rh_best_syncpost_deal($itemsync, 'mb10 compare-domain-icon', false);?>
+                            <?php $amazonupdate = get_post_meta($post->ID, \ContentEgg\application\components\ContentManager::META_PREFIX_LAST_ITEMS_UPDATE.'Amazon', true);?>
+                            <?php $product_update = \ContentEgg\application\helpers\TemplateHelper::getLastUpdateFormatted('Amazon', $post->ID);?>
+                            <?php if($amazonupdate && $product_update):?>
+                                <div class="font60 lineheight20 mt5"><?php esc_html_e('Last price update was:', 'rehub-theme');?> <?php echo ''.$product_update;?></div>
+                            <?php endif;?>
+                            </div>
+                        <?php else:?>
+                            <?php do_action( 'rehub_vendor_show_action' ); ?>        
+                        <?php endif;?>  
+                     </div>
+                    <?php if ( $product->managing_stock() && ! $product->is_in_stock() ):?>
+                        <div class="stock out-of-stock mt10"><?php esc_html_e('Out of Stock', 'rehub-theme');?></div>
+                    <?php endif;?>
+                </div>  
+            <?php endif;?>          
         </div>    
     </div>
     <?php if($scoredetails):?>
         <div class="open_dls_onclk flowhidden">
             <?php $summary = get_post_meta((int)$post->ID, '_review_post_summary_text', true);?>
+            <?php $heading = rehub_exerpt_function(array('reviewheading'=> '1'));?>
             <?php if ($summary):?>
-                <div class="border-grey-bottom border-top mt15 pt15 pb15 font90"><?php echo rehub_kses($summary);?></div>
+                <div class="border-grey-bottom mt15 pb15">
+                    <?php if ($heading):?><div class="font140 fontbold mb15"><?php echo esc_html($heading);?></div><?php endif;?>
+                    <?php echo rehub_kses($summary);?>
+                </div>
             <?php endif;?>
             <?php $colclass = ($criteriascore) ? 'wpsm-one-third' : 'wpsm-one-half';?>
             <?php if($criteriascore) : ?>

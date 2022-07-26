@@ -199,4 +199,4 @@ class WPSM_Getter_Widget extends WPSM_Content_Widget_Base {
 
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_Getter_Widget );
+Plugin::instance()->widgets_manager->register( new WPSM_Getter_Widget );

@@ -6,13 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 update_option( 'Rehub_Key', [
-	'tf_username'      => 'GPL',
-	'tf_purchase_code' => 'B5E0B5F8DD8689E6ACA49DD6E6E1A930',
-	'tf_support_date'  => '01.01.2050',
+	'tf_username'      => 'Rehub',
+	'tf_purchase_code' => '1415b451be1a13c283ba771ea52d38bb',
+	'tf_support_date'  => '01.01.2027',
 ] );
-
 if ( !defined( 'RH_MAIN_THEME_VERSION' ) ) {
-	define('RH_MAIN_THEME_VERSION', '17.8');
+	define('RH_MAIN_THEME_VERSION', '18.0');
 }
 if(!defined('REHUB_NAME_ACTIVE_THEME')){
 	define('REHUB_NAME_ACTIVE_THEME', 'REHUB');
@@ -70,6 +69,7 @@ function rehub_framework_register_scripts() {
 	wp_register_style('rhajaxsearch', get_template_directory_uri() . '/css/ajaxsearch.css', array('rhstyle'), RH_MAIN_THEME_VERSION);
 	wp_register_style('rhniceselect', get_template_directory_uri() . '/css/niceselect.css', array(), '1.1');
 	wp_register_style('rhmodelview', get_template_directory_uri() . '/css/modelviewer.css', array(), '1.0');
+	wp_register_style('rhelementor', get_template_directory_uri() . '/css/elementor.css', array(), '1.0');
 	
 	//Scripts
 	wp_register_script('rhinview', get_template_directory_uri() . '/js/inview.js', array('jquery'), '1.1', true);
@@ -142,6 +142,7 @@ function rehub_framework_register_scripts() {
 	wp_register_script('rhelreusableloader', get_template_directory_uri() . '/js/rhelreusableloader.js', array(), '1.0', true);
 	wp_register_script('rhalignfull', get_template_directory_uri() . '/js/alignfull.js', array('jquery', 'rehub'), '1.1', true);
 	wp_register_script('rhvmenu', get_template_directory_uri() . '/js/vertmenu.js', array('jquery'), '1.0');
+	wp_register_script('rh-modelviewer-init', get_template_directory_uri() . '/js/modelviewer-init.js', array(), '1.0');
 }
 }
 if(!is_admin()) add_action('wp_enqueue_scripts', 'rehub_enqueue_scripts',11);
@@ -162,6 +163,7 @@ function rehub_enqueue_scripts() {
 		'fin' => esc_html__( 'That\'s all', 'rehub-theme' ),
 		'noresults' => esc_html__( 'No results found', 'rehub-theme' ),
 		'your_rating' => esc_html__( 'Your Rating:', 'rehub-theme' ),
+		'addedcart' => esc_html__( 'Added to Cart', 'rehub-theme' ),
 		'nonce' => wp_create_nonce('ajaxed-nonce'),
 		'hotnonce' => wp_create_nonce('hotnonce'),
 		'wishnonce' => wp_create_nonce('wishnonce'),
@@ -177,6 +179,7 @@ function rehub_enqueue_scripts() {
 	if (rehub_option('rehub_sticky_nav')) {wp_enqueue_script( 'rhsticky' );}
 	if (rehub_option('rehub_ajax_search')) {wp_enqueue_script( 'rehubajaxsearch' );wp_enqueue_style( 'rhajaxsearch' );}
 	if(rehub_option('enable_regular_fontawesome')){wp_enqueue_style('rehubfontawesome');}
+	if(defined('ELEMENTOR_VERSION')){wp_enqueue_style('rhelementor');}
 
 	$affcoupons_array = array( 
 		'coupontextready' => esc_html__( 'Here is your coupon code', 'rehub-theme' ), 
@@ -185,6 +188,11 @@ function rehub_enqueue_scripts() {
 		'couponorcheck' => esc_html__( 'Or check your new window for opened website', 'rehub-theme' ),						  
 	);		
 	wp_localize_script( 'affegg_coupons', 'coupvars', $affcoupons_array );
+	
+	$modelviewer_array = array( 
+		'url' => get_template_directory_uri(), 					  
+	);		
+	wp_localize_script( 'rh-modelviewer-init', 'modelvars', $modelviewer_array );
 
 	if(is_singular()){
 		if(!is_singular(['product', 'page'])){
@@ -918,7 +926,7 @@ function exclude_images_with_specific_class( $classes ) {
 
 if( !function_exists('rehub_price_clean') ) {
 function rehub_price_clean($price) {
-	$cur_clean = array('8377', 'Rs.', 'руб.', 'RS.' );
+	$cur_clean = array('8377', 'Rs.', '???.', 'RS.' );
 	$price = str_replace($cur_clean, '', $price);
 	if (rehub_option('price_pattern') == 'us') {
 		$price = (float) preg_replace("/[^0-9\.]/","", $price);			
@@ -1569,7 +1577,7 @@ function my_theme_register_required_plugins() {
 			'slug'     				=> 'greenshiftgsap', // The plugin slug (typically the folder name)
 			'source'   				=> get_template_directory() . '/plugins/greenshiftgsap.zip', 
 			'required' 				=> false,
-			'version' 				=> '0.6',
+			'version' 				=> '1.8.3',
 			'force_activation' 		=> false, 
 			'force_deactivation' 	=> false, 
 			'external_url' 			=> '',
@@ -1607,7 +1615,7 @@ function my_theme_register_required_plugins() {
 			'slug'     				=> 'rehub-framework', // The plugin slug (typically the folder name)
 			'source'   				=> get_template_directory() . '/plugins/rehub-framework.zip', 
 			'required' 				=> true,
-			'version' 				=> '16.7',
+			'version' 				=> '18.0',
 			'force_activation' 		=> false, 
 			'force_deactivation' 	=> false, 
 			'external_url' 			=> '',
@@ -1681,7 +1689,7 @@ function re_add_openschema() {
 			$reviewtext = get_post_meta((int)$post->ID, '_review_post_summary_text', true);		
 			if(!$reviewtext){
 				$review_post = rehub_get_review_data();
-				$reviewtext = $review_post['review_post_summary_text'];	
+				$reviewtext = (!empty($review_post['review_post_summary_text'])) ? $review_post['review_post_summary_text'] : '';	
 			}
 			$review_body = ($reviewtext) ? $reviewtext : $post->post_excerpt;
 			$reviewhead = get_post_meta((int)$post->ID, '_review_heading', true);		
@@ -1689,7 +1697,7 @@ function re_add_openschema() {
 				if(!isset($review_post)){
 					$review_post = rehub_get_review_data();
 				}
-				$reviewhead = $review_post['review_post_heading'];	
+				$reviewhead = (!empty($review_post['review_post_heading'])) ? $review_post['review_post_heading'] : '';	
 			}
 			$review_name = ($reviewhead) ? $reviewhead : $post->post_title;
 			$usercount = '';

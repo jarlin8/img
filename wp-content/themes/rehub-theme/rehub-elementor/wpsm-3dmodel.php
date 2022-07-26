@@ -26,6 +26,10 @@ class WPSM_Model_T_Widget extends Widget_Base {
     public function get_style_depends() {
         return [ 'rhmodelview' ];
     }
+
+    public function get_script_depends() {
+        return [ 'rh-modelviewer-init'];
+    }
         /**
      * Get widget icon.
      * @since 1.0.0
@@ -498,54 +502,10 @@ class WPSM_Model_T_Widget extends Widget_Base {
         ';
         echo '<div class="rh-t-model position-relative"><model-viewer id="rh_three_'.esc_attr($widgetId).'" style="width:100%;height:100%;--poster-color: transparent;background-color:transparent;--progress-mask:transparent;--progress-bar-color: #00ab1985" '.$this->get_render_attribute_string( 'rh_tdata' ).'>'.$variantblock.$posterblock.$defaultblock.'</model-viewer></div>';
         $script = '
-        const body = document.body;
-        var loadedtdel = false;
-    
-        const onInteraction = () => {
-          if (loadedtdel === true) {
-            return;
-          }
-          loadedtdel = true;
-    
-          const modelViewerScript = document.createElement("script"); 
-          modelViewerScript.type = "module";
-          modelViewerScript.src = "'.get_template_directory_uri() . '/js/model-viewer.min.js"; 
-          body.appendChild(modelViewerScript);
-    
-          const focusVisible = document.createElement("script");
-          focusVisible.src = "'.get_template_directory_uri() . '/js/focus-visible.js"; 
-          body.appendChild(focusVisible);
-        };
-
-        const onProgress = (event) => {
-            
-            const progressBar = event.target.querySelector(".progress-bar");
-            const updatingBar = event.target.querySelector(".update-bar");
-            updatingBar.style.width = `${event.detail.totalProgress*100}%`;
-            if (event.detail.totalProgress == 1) {
-              progressBar.classList.add("hide");
-            }
-        };
-    
-        body.addEventListener("mouseover", onInteraction, {once:true});
-        body.addEventListener("touchmove", onInteraction, {once:true});
-        body.addEventListener("scroll", onInteraction, {once:true});
-        body.addEventListener("keydown", onInteraction, {once:true});
-        var requestIdleCallback = window.requestIdleCallback || function(cb) {
-            const start = Date.now();
-            return setTimeout(function() {
-                cb({
-                    didTimeout: false,
-                    timeRemaining: function() {
-                        return Math.max(0, 50 - (Date.now() - start));
-                    },
-                });
-            }, 1);
-        };
 
         (() => {
             const modelViewer = document.querySelector("#rh_three_'.esc_attr($widgetId). '");
-            modelViewer.addEventListener("progress", onProgress);
+            modelViewer.addEventListener("progress", onRHProgress);
             const time = performance.now();
             var td_rx = modelViewer.dataset.rx;
             var td_ry = modelViewer.dataset.ry;
@@ -559,7 +519,7 @@ class WPSM_Model_T_Widget extends Widget_Base {
             if(td_loaditer){
             }else{
                 requestIdleCallback(function(){
-                    onInteraction();
+                    onRHInteraction();
                 }, {
                     timeout:  2500
                 });
@@ -626,11 +586,11 @@ class WPSM_Model_T_Widget extends Widget_Base {
         if ( Plugin::$instance->editor->is_edit_mode() ) {  
             echo '<script type="module">'.$script.'</script>';
         }else{
-            wp_add_inline_script('rehub', $script);
+            wp_add_inline_script('rh-modelviewer-init', $script);
         }
         
         //echo '<script type="module" src="'.get_template_directory_uri() . '/js/model-viewer.min.js"></script>';
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_Model_T_Widget );
+Plugin::instance()->widgets_manager->register( new WPSM_Model_T_Widget );

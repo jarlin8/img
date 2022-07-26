@@ -198,7 +198,13 @@ table.wcv-table tr td, table.wcv-table tr th{border-bottom: 1px solid #E1E1E1;}
 .rtl .vendor_store_details_title i{float: right; margin: 2px 0 0 4px}
 .rtl .wcv-verified-vendor i{margin: 0 0 0 3px}
 /*.wcv-shade{z-index:9000 !important}*/
-.dokan-store-support-btn{width:auto !important}
+.dokan-store-support-btn{    background: none !important;
+    color: #111 !important;
+    margin-top: 8px !important;
+    clear: both;
+    box-shadow: none !important;
+    border: 1px solid #e0e0e0 !important;
+    width: 100% !important;}
 #wcmp-store-conatiner .wcmp-store-detail-list li{list-style: none;}
 .dokan-store-products-filter-area .product-name-search, input[type="submit"].dokan-btn-theme{border-radius: 0 !important;}
 .store-coupon-wrap{grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));display: grid;column-gap: 20px;}

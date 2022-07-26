@@ -614,4 +614,4 @@ class Widget_SvgShape extends Widget_Base {
 
 
 }
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_SvgShape );
+Plugin::instance()->widgets_manager->register( new Widget_SvgShape );

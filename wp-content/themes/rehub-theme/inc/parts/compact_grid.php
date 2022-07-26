@@ -2,8 +2,10 @@
 ?>
 <?php global $post; ?>
 <?php
+
 $columns = (isset($columns)) ? $columns : '';
 $gridtype = (isset($gridtype)) ? $gridtype : '';
+$postid = $post->ID;
 
 if (!isset($disable_btn) || !$disable_btn) {
     $disable_btn = (rehub_option('rehub_enable_btn_recash') == 1) ? '' : 1;
@@ -20,8 +22,38 @@ if (!isset($aff_link)) {
 if (!isset($price_meta)) {
     $price_meta = (rehub_option('price_meta_grid')) ? rehub_option('price_meta_grid') : '1';
 }
-
 ?>
+
+<?php $offer_coupon = get_post_meta( $postid, 'rehub_offer_product_coupon', true ); ?>
+<?php $offer_coupon_date = get_post_meta( $postid, 'rehub_offer_coupon_date', true ); ?>
+<?php $offer_coupon_mask = get_post_meta( $postid, 'rehub_offer_coupon_mask', true ); ?>
+<?php $coupon_style = $expired =''; if(!empty($offer_coupon_date)) : ?>
+    <?php
+    $timestamp1 = strtotime($offer_coupon_date);
+    if(strpos($offer_coupon_date, ':') ===false){
+        $timestamp1 += 86399;
+    }
+    $seconds = $timestamp1 - (int)current_time('timestamp',0);
+    $days = floor($seconds / 86400);
+    $seconds %= 86400;
+    if ($days > 0) {
+        $coupon_text = $days.' '.__('days left', 'rehub-theme');
+        $coupon_style = '';
+        $expired = 'no';
+    }
+    elseif ($days == 0){
+      $coupon_text = esc_html__('Last day', 'rehub-theme');
+      $coupon_style = '';
+      $expired = 'no';
+    }
+    else {
+      $coupon_text = esc_html__('Expired', 'rehub-theme');
+      $coupon_style = ' expired_coupon';
+      $expired = '1';
+    }
+    ?>
+<?php endif;?>
+
 <?php
 if ($aff_link == '1') {
     $link = rehub_create_affiliate_link();
@@ -31,6 +63,16 @@ if ($aff_link == '1') {
     $target = '';
 }
 ?>
+
+<?php 
+    $offer_post_url = esc_url(get_post_meta( $postid, 'rehub_offer_product_url', true ));
+    $offer_post_url = apply_filters('rehub_create_btn_url', $offer_post_url);
+?>
+<?php $offer_url = apply_filters('rh_post_offer_url_filter', $offer_post_url ); ?>
+<?php if(empty($offer_url)) {$offer_url = get_the_permalink($postid);}?>
+<?php $coupon_mask_enabled = (!empty($offer_coupon) && ($offer_coupon_mask =='1' || $offer_coupon_mask =='on') && $expired!='1') ? '1' : ''; ?>
+<?php $outsidelinkpart = ($coupon_mask_enabled=='1' && $aff_link=='1') ? ' data-codeid="'.$postid.'" data-dest="'.$offer_url.'" data-clipboard-text="'.$offer_coupon.'" ' : '';?>
+
 <?php
 $dealcat = '';
 if (rehub_option('enable_brand_taxonomy') == 1) {
@@ -62,7 +104,7 @@ if (rehub_option('enable_brand_taxonomy') == 1) {
             }
 
             ?>
-            <a class="img-centered-flex rh-flex-center-align rh-flex-justify-center" href="<?php echo '' . $link; ?>" <?php echo '' . $target; ?>>
+            <a class="img-centered-flex rh-flex-center-align rh-flex-justify-center re_track_btn<?php echo ($outsidelinkpart) ? ' masked_coupon' : '';?>" href="<?php echo '' . $link; ?>" <?php echo '' . $target; ?> <?php echo ''.$outsidelinkpart; ?>>
                 <?php $discountpercentage = get_post_meta($post->ID, 'rehub_offer_discount', true); ?>
                 <?php if ($discountpercentage) : ?>
                     <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center">
@@ -110,8 +152,12 @@ if (rehub_option('enable_brand_taxonomy') == 1) {
                 <?php endif; ?>
 
                 <?php do_action('rehub_after_compact_grid_price'); ?>
-                <h3 class="flowhidden mb10 mt0 fontnormal position-relative <?php if (rehub_option('hotmeter_disable') != '1') : ?><?php echo getHotIconclass($post->ID); ?><?php endif; ?>"><?php echo rh_expired_or_not($post->ID, 'span'); ?><a href="<?php echo '' . $link; ?>" <?php echo '' . $target; ?>><?php the_title(); ?></a></h3>
+                <h3 class="flowhidden mb10 mt0 fontnormal position-relative <?php if (rehub_option('hotmeter_disable') != '1') : ?><?php echo getHotIconclass($post->ID); ?><?php endif; ?>"><?php echo rh_expired_or_not($post->ID, 'span'); ?><a href="<?php echo '' . $link; ?>" <?php echo '' . $target; ?> <?php echo ''.$outsidelinkpart; ?> class="re_track_btn<?php echo ($outsidelinkpart) ? ' masked_coupon' : '';?>"><?php the_title(); ?></a></h3>
                 <?php if ($gridtype == 'mobile') : ?><?php rehub_generate_offerbtn('showme=price&wrapperclass=mb0 fontbold font110'); ?><?php endif; ?>
+                    <?php 
+                        $verify = get_post_meta( $postid, 'rehub_offer_verify_label', true );
+                        if($verify) {echo '<span class="verifymeta mr5 font80 greencolor"><i class="rhicon rhi-shield-check"></i> '.esc_attr($verify).'</span>';}
+                    ?> 
                 <?php $custom_notice = get_post_meta($post->ID, '_notice_custom', true); ?>
                 <?php
                 if ($custom_notice) {

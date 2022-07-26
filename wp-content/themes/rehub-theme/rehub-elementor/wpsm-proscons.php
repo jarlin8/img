@@ -110,4 +110,4 @@ class WPSM_Pros_Cons_Block_Widget extends Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_Pros_Cons_Block_Widget );
+Plugin::instance()->widgets_manager->register( new WPSM_Pros_Cons_Block_Widget );

@@ -563,4 +563,4 @@ class WPSM_Lottie extends Widget_Base {
 	
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_Lottie );
+Plugin::instance()->widgets_manager->register( new WPSM_Lottie );

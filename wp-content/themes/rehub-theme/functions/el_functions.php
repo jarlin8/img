@@ -21,15 +21,16 @@ add_action( 'elementor/elements/categories_registered', function( $elements_mana
     $elements_manager->add_category( 'rhwow-modules', [ 'title' => esc_html__( 'Rehub WOW Animations', 'rehub-theme' ) ] );     
 });
 
+// Ajax general callback methods  and control
+require_once (locate_template('rehub-elementor/controls/ajax-callbacks.php'));
+function register_rehub_selectajax_control( $controls_manager ) {
+    require_once (locate_template('rehub-elementor/controls/select2ajax-control.php'));
+    $controls_manager->register( new Select2Ajax_Control );
+}
+add_action( 'elementor/controls/register', 'register_rehub_selectajax_control' );
+
 add_action( 'init', function () {
-    // Ajax general callback methods  and control
-    require_once (locate_template('rehub-elementor/controls/ajax-callbacks.php'));
-    function register_rehub_selectajax_control( $controls_manager ) {
-        require_once (locate_template('rehub-elementor/controls/select2ajax-control.php'));
-        $controls_manager->register( new Select2Ajax_Control );
-    }
-    add_action( 'elementor/controls/register', 'register_rehub_selectajax_control' );
-    
+
     // Abstracts
     require_once (rh_locate_template('rehub-elementor/abstracts/content-base-widget.php'));
 
@@ -1154,7 +1155,7 @@ function RH_parallax_el_elementor( $obj, $args ) {
             ),
         )
     );
-
+    if ( ! defined( 'ELEMENTOR_PRO_VERSION' ) ) {
     $gsaprepeater = new \Elementor\Repeater();
     $gsaprepeater->add_control(
         'multi_x',
@@ -1406,6 +1407,7 @@ function RH_parallax_el_elementor( $obj, $args ) {
             'rh_gsap' => 'true',
         ),
     ]);
+}
 
     $obj->add_control(
         'rhhr5',

@@ -196,6 +196,7 @@ function rehub_rate_post(){
 
 if( !function_exists('rehub_get_user_rate') ) {
 function rehub_get_user_rate($schema='admin', $type = 'post', $customid = ''){
+
 	wp_enqueue_script( 'rh-userrating', get_template_directory_uri() . '/js/userrating.js', array( 'jquery', 'rehub' ), '1.1', true );
 	if ($type == 'post') {
 		global $post;
@@ -275,6 +276,19 @@ function rehub_get_user_rate($schema='admin', $type = 'post', $customid = ''){
 	else
 		return $output = '<div class="rh-star-ajax"><span class="title_star_ajax"><strong>'.__( "User Rating:" , "rehub-theme" ) .' </strong> <span class="userrating-score">'.$total_users_score.'</span> <small>(<span class="userrating-count">'.$count.'</span> '._n("vote", "votes", $count, "rehub-theme" ) .')</small> </span><div data-rate="'. $total .'" data-id="'.$postid.'" data-ratetype="'.$type.'" class="rate-post-'.$postid.' user-rate'.$rate_active.'"><span class="post-norsp-rate '.$image_style.'-rate-ajax-type">'.$stars.'</span></div><div class="userrating-clear"></div></div>';
 }
+}
+
+if( !function_exists('rehub_simple_star') ) {
+	function rehub_simple_star($atts, $content= null){
+    	$atts = shortcode_atts(
+			array(
+				'schema' => 'admin',
+				'type' => 'post',
+				'customid' => '',
+			), $atts);
+    	extract($atts);
+    	return '<div class="rehub_simple_star"><style scoped>.rehub_simple_star .rh-star-ajax{display:flex; align-items:center;gap: 10px;}.rehub_simple_star .title_star_ajax{order:2; margin-bottom:0 !important}.rehub_simple_star .user-rate{order:1}.rehub_simple_star .userrating-clear{display:none}</style>'.rehub_get_user_rate($schema, $type, $customid).'</div>';
+	}
 }
 
 if( !function_exists('rehub_get_user_rate_criterias') ) {

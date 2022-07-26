@@ -90,9 +90,17 @@ function rh_ajax_woo_cart_loading (el){
 }
 jQuery(document).on( 'added_to_cart', function ( event, fragments, cart_hash ) {
     var widget = jQuery('#rh-woo-cart-panel');
-    if ( ! widget.hasClass( 'active' ) ) {
+    let errorspage = jQuery('.ajaxerrors').length;
+    let nosliding = jQuery('.no_cart_sliding').length;
+    if ( ! widget.hasClass( 'active' ) && errorspage < 1 && nosliding < 1 ) {
         widget.addClass( 'active' );
         rh_ajax_woo_cart_loading(widget); 
+        if(document.getElementById('pgwModal') != null){
+            $.pgwModal('close');
+        }
+    }
+    if(errorspage < 1 && nosliding > 0){
+        jQuery.simplyToast(rhscriptvars.addedcart, 'success');
     }
 });
 jQuery(document).on("click", ".menu-cart-btn", function(e){

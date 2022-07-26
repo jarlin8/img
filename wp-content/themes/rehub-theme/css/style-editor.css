@@ -20,7 +20,7 @@ img{max-width:100%; height:auto}
 .wp-block-latest-comments__comment-author{font-weight: bold; color: #111}	
 .wp-block-pullquote{padding: 3em;border-top: 3px solid #555d66;border-bottom: 3px solid #555d66;}
 .wp-block-pullquote p{line-height: 1.4}
-.wp-block-heading, .editor-post-title__block .editor-post-title__input, blockquote.is-style-large, .wp-block-button .wp-block-button__link, body#tinymce.wp-editor, body#tinymce.wp-editor h1, body#tinymce.wp-editor h2, body#tinymce.wp-editor h3, body#tinymce.wp-editor h4, body#tinymce.wp-editor h5, body#tinymce.wp-editor h6, .wp-block{font-family: Roboto,"Helvetica Neue",-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Oxygen-Sans,sans-serif;}
+.wp-block-heading, .editor-post-title__block .editor-post-title__input, blockquote.is-style-large, .wp-block-button .wp-block-button__link, body#tinymce.wp-editor, body#tinymce.wp-editor h1, body#tinymce.wp-editor h2, body#tinymce.wp-editor h3, body#tinymce.wp-editor h4, body#tinymce.wp-editor h5, body#tinymce.wp-editor h6, .wp-block{font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
 .wp-block-table table:not(.has-background) tr td { background: none repeat scroll 0 0 #f7f7f7; }
 .wp-block-table table:not(.has-background) tr:nth-child(2n+1) td { background: none repeat scroll 0 0 #fff; }	
 .wp-block-table td, .wp-block-table th{border-color: #e8e8e8}	

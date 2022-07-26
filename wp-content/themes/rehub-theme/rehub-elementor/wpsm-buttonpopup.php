@@ -126,4 +126,4 @@ class WPSM_Button_Popup_Widget extends Widget_Base {
 
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_Button_Popup_Widget );
+Plugin::instance()->widgets_manager->register( new WPSM_Button_Popup_Widget );

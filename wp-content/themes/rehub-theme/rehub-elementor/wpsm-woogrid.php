@@ -59,4 +59,4 @@ class Widget_Wpsm_Woo_Products_Grid extends WPSM_Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_Woo_Products_Grid );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_Woo_Products_Grid );

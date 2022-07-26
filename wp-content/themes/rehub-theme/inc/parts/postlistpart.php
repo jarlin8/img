@@ -122,7 +122,11 @@ else {
                         </span>
                     <?php endif;?>
 
-                    <?php if(!empty($offer_coupon_date)) {echo '<span class="listtimeleft mr5 rh-nowrap"> <i class="rhicon rhi-hourglass"></i> '.$coupon_text.'</span>';} ?>                         
+                    <?php if(!empty($offer_coupon_date)) {echo '<span class="listtimeleft mr5 rh-nowrap"> <i class="rhicon rhi-hourglass"></i> '.$coupon_text.'</span>';} ?>   
+                    <?php 
+                        $verify = get_post_meta( $postid, 'rehub_offer_verify_label', true );
+                        if($verify) {echo '<span class="verifymeta mr5 greencolor"><i class="rhicon rhi-shield-check"></i> '.esc_attr($verify).'</span>';}
+                    ?>                      
                 </div>                        
                 <h3 class="font110 mb10 mt0 moblineheight20 <?php echo getHotIconclass($postid, true); ?>"><a href="<?php echo ''.$link;?>" <?php echo ''.$target;?> <?php echo ''.$outsidelinkpart; ?>><?php echo rh_expired_or_not($postid, 'span');?><?php echo ''.$offer_title ;?></a></h3>
                 <?php rehub_generate_offerbtn('showme=price&wrapperclass=pricefont110 rehub-main-color mobpricefont90 fontbold mb5 mr10 lineheight20 floatleft');?>

@@ -148,7 +148,7 @@
                     <?php echo rh_generate_incss('filterstore');?>
                     <?php if (rehub_option('brand_taxonomy_layout') == 'regular_list'):?>
                         <?php echo wpsm_small_thumb_loop_shortcode($arg_array);?>
-                    <?php elseif (rehub_option('brand_taxonomy_layout') == 'deal_grid' || rehub_option('brand_taxonomy_layout') == 'compact_grid'):?>
+                    <?php elseif (rehub_option('brand_taxonomy_layout') == 'deal_grid' || rehub_option('brand_taxonomy_layout') == 'compact_grid' || rehub_option('brand_taxonomy_layout') == 'mobilegrid'):?>
                         <?php 
                             if(rehub_option('width_layout') == 'extended'){
                                 if(rehub_option('brand_taxonomy_layout') == 'compact_grid'){
@@ -157,7 +157,7 @@
                                 }
                                 else if(rehub_option('brand_taxonomy_layout') == 'mobilegrid'){
                                     $arg_array['gridtype'] = 'mobile';
-                                    $arg_array['columns'] = '4_col'; 
+                                    $arg_array['columns'] = '5_col'; 
                                 }
                                 else{
                                    $arg_array['columns'] = '4_col';
@@ -170,7 +170,7 @@
                                 }
                                 else if(rehub_option('brand_taxonomy_layout') == 'mobilegrid'){
                                     $arg_array['gridtype'] = 'mobile';
-                                    $arg_array['columns'] = '3_col'; 
+                                    $arg_array['columns'] = '4_col'; 
                                 }
                                 else{
                                    $arg_array['columns'] = '3_col';

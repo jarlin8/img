@@ -403,7 +403,11 @@ class WPSM_Postfilters{
                     )
                 );
             $args['orderby'] = 'date';
-        } 	    
+        } 
+
+        if ($filter_args->orderby == 'date' && $filter_args->data_source == 'ids'){
+			$args['orderby'] = 'post__in';
+        }	    
 
 	    if ($filter_args->show_coupons_only == '1') { 
 	    	$args['meta_query']['relation'] = 'AND';    
@@ -1312,6 +1316,7 @@ $build_args = shortcode_atts(array(
 	'soldout' => '',
 	'attrelpanel' => '',	
 	'smartscrolllist' => '',
+	'iscart'=>''
 ), $atts, $module_name);
 extract($build_args);
 
@@ -1388,7 +1393,10 @@ ob_start();
 				}
 				elseif($gridtype == 'image'){
 					$gridtypeclass = ' woogridimage';
-				}			
+				}	
+				elseif($gridtype == 'gridmart'){
+					$gridtypeclass = ' grid_mart';
+				}		
 				else{
 					$gridtypeclass = ' grid_woo';
 				}
@@ -1400,6 +1408,10 @@ ob_start();
 				}
 				elseif($gridtype == 'review'){
 					$gridtypetemplate = 'woogridrev';
+				}
+				elseif($gridtype == 'gridmart'){
+					echo rh_generate_incss('gridmart');
+					$gridtypetemplate = 'woogridmart';
 				}
 				elseif($gridtype == 'dealwhite'){
 					$gridtypetemplate = 'woodealgrid';
@@ -1432,7 +1444,9 @@ ob_start();
 					<?php elseif($gridtype == 'dealdark'):?>
 				  		<?php include(rh_locate_template('inc/parts/woodealgriddark.php')); ?>
 					<?php elseif($gridtype == 'image'):?>
-				  		<?php include(rh_locate_template('inc/parts/woogridimage.php')); ?>			  				
+				  		<?php include(rh_locate_template('inc/parts/woogridimage.php')); ?>		
+					<?php elseif($gridtype == 'gridmart'):?>
+				  		<?php include(rh_locate_template('inc/parts/woogridmart.php')); ?>		
 					<?php else:?>
 				  		<?php include(rh_locate_template('inc/parts/woogridpart.php')); ?>					
 					<?php endif;?>  
@@ -2689,9 +2703,15 @@ $secstart = 2;
 $secend = $show;
 $thirdstart = $secend + 1;
 
-if($thirdtype == '1'){
+if($thirdtype == '1' && $secondtype == '1'){
+	$show += 4;
+}
+elseif($thirdtype == '1'){
 	$show += 5;
 }
+elseif($thirdtype == '2' && $secondtype == '1'){
+	$show += 5;
+} 
 elseif($thirdtype == '2'){
 	$show += 6;
 }    
@@ -3835,17 +3855,21 @@ if( !function_exists('wpsm_woo_versus_function') ) {
 	extract( $build_args ); 
 	ob_start(); 
 	?>
-
-    <?php $ids = array_map( 'trim', explode( ",", $ids ) );?>
-    <?php $attr = array_map( 'trim', explode( ",", $attr ) );?>
-    <?php $min = array_map( 'trim', explode( ",", $min ) );?>
+    <?php $ids = (!is_array($ids)) ? array_map( 'trim', explode( ",", $ids ) ) : $ids;?>
+    <?php $attr = (!is_array($attr)) ? array_map( 'trim', explode( ",", $attr ) ) : $attr;?>
+    <?php $min = (!is_array($min)) ? array_map( 'trim', explode( ",", $min ) ) : $min;?>
 
     <?php $attr_array = array();?>
     <?php $i = 0;?>
     <?php if(!empty($attr) && !empty($ids)):?>
         <?php foreach ($attr as $key => $attrvalue) {
         	$i ++;
-            $taxslug = 'pa_'.$attrvalue;
+        	if(stripos($attrvalue, 'pa_') === 0) {
+            	$taxslug = $attrvalue;
+        	}else{
+             	$taxslug = 'pa_'.$attrvalue;       		
+        	}
+
             $tax = get_taxonomy($taxslug);
             if($tax){
                 $taxname = $tax->labels->singular_name;
@@ -3865,8 +3889,11 @@ if( !function_exists('wpsm_woo_versus_function') ) {
             	$min = min($maxvalue);
             	$attr_array[$attrvalue]['minmax'] = $min;
             }
-            $max = max($maxvalue);
-            $attr_array[$attrvalue]['max'] = $max; 
+            if($maxvalue){
+             	$max = max($maxvalue);
+            	$attr_array[$attrvalue]['max'] = $max;            	
+            }
+
 
         }
         ?>

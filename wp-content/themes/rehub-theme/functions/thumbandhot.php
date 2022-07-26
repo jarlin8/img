@@ -152,7 +152,7 @@ function AlreadyHot( $post_id ) { // test if user liked before
         $user_id = $current_user->ID; // current user
         $meta_USERS = get_post_meta( $post_id, "_user_liked" ); // user ids from post meta
         $liked_USERS = ""; // set up array variable     
-        if ( count( $meta_USERS ) != 0 ) { // meta exists, set up values
+        if ( is_numeric($meta_USERS) && count( $meta_USERS ) != 0 ) { // meta exists, set up values
             $liked_USERS = $meta_USERS[0];
         }       
         if( !is_array( $liked_USERS ) ) // make array just in case
@@ -366,7 +366,9 @@ function getHotLike( $post_id ) {
             }
             $onlyuser_class = ' act-rehub-login-popup restrict_for_guests';
         }
-    }   
+    }else{
+        $onlyuser_class = '';
+    }    
     $output = '<div class="hotmeter_wrap flexbasisclear"><div class="hotmeter"><span class="table_cell_hot first_cell"><span id="temperatur'.$post_id.'" class="temperatur';
     if ($temp < 0) :
         $output .= ' cold_temp';

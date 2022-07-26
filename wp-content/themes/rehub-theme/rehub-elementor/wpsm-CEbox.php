@@ -135,4 +135,4 @@ class Widget_Wpsm_CEBox extends WPSM_Content_Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_CEBox );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_CEBox );

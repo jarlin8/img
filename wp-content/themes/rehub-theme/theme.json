@@ -70,27 +70,27 @@
             "customLineHeight" : true,
             "fontFamilies": [
                 {
-                    "fontFamily": "Roboto,\"Helvetica Neue\",-apple-system,system-ui,BlinkMacSystemFont,\"Segoe UI\",Oxygen-Sans,sans-serif",
+                    "fontFamily": "-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif",
                     "slug": "system-font",
                     "name": "Default System Font"
                 },
                 {
-                    "fontFamily": "var(--rehub-nav-font,Roboto,\"Helvetica Neue\",-apple-system,system-ui,BlinkMacSystemFont,\"Segoe UI\",Oxygen-Sans,sans-serif)",
+                    "fontFamily": "var(--rehub-nav-font,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif)",
                     "slug": "rh-nav-font",
                     "name": "Navigation Custom Font"
                 },
                 {
-                    "fontFamily": "var(--rehub-head-font,Roboto,\"Helvetica Neue\",-apple-system,system-ui,BlinkMacSystemFont,\"Segoe UI\",Oxygen-Sans,sans-serif)",
+                    "fontFamily": "var(--rehub-head-font,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif)",
                     "slug": "rh-head-font",
                     "name": "Heading Custom Font"
                 },
                 {
-                    "fontFamily": "var(--rehub-btn-font,Roboto,\"Helvetica Neue\",-apple-system,system-ui,BlinkMacSystemFont,\"Segoe UI\",Oxygen-Sans,sans-serif)",
+                    "fontFamily": "var(--rehub-btn-font,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif)",
                     "slug": "rh-btn-font",
                     "name": "Button Custom Font"
                 },
                 {
-                    "fontFamily": "var(--rehub-body-font,Roboto,\"Helvetica Neue\",-apple-system,system-ui,BlinkMacSystemFont,\"Segoe UI\",Oxygen-Sans,sans-serif)",
+                    "fontFamily": "var(--rehub-body-font,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Oxygen-Sans,Ubuntu,Cantarell,\"Helvetica Neue\",sans-serif)",
                     "slug": "rh-body-font",
                     "name": "Body Custom Font"
                 }

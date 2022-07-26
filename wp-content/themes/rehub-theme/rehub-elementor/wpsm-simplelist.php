@@ -455,4 +455,4 @@ class Widget_Wpsm_Recent_Posts_List extends WPSM_Content_Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_Recent_Posts_List );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_Recent_Posts_List );

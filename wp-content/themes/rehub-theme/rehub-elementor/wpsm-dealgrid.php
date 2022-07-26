@@ -160,4 +160,4 @@ class Widget_Wpsm_Compactgrid_loop_Mod extends WPSM_Content_Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_Compactgrid_loop_Mod );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_Compactgrid_loop_Mod );

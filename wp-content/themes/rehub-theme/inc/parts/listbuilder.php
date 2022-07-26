@@ -16,6 +16,11 @@
 <?php $perpage = (isset($perpage) && $perpage) ? $perpage : '';?>
 <?php $show = (isset($show) && $show) ? $show : 10;?>
 <?php $pagenumber = (isset($pagenumber) && $pagenumber) ? $pagenumber : '';?>
+<?php $isproduct = '';?>
+<?php if(get_post_type($postid) == 'product') {
+    $isproduct = true;
+    global $product;
+}?>
 <?php 
 if (isset($afflink) && $afflink == '1') {
     $link = rehub_create_affiliate_link ();
@@ -26,13 +31,13 @@ else {
     $target = '';  
 }
 ?>
-<div class="r_offer_details rh_listitem top_rating_item<?php if(isset($stacktablet) && $stacktablet):?> stacktablet<?php endif;?>">
+<div class="r_offer_details rh_listitem top_rating_item<?php if(isset($stacktablet) && $stacktablet):?> stacktablet<?php endif;?><?php if($isproduct):?> woocommerce<?php endif;?>">
     <?php if($contentpos == 'titlerow'):?>
         <div class="listitem_title_row pt5 pb5 pr15 pl15 border-grey-bottom flowhidden">
             <?php if($togglelink == 'title'):?>
                 <span class="def_btn fontnormal floatright r_show_hide font80 ml15 rtlmr15"><?php esc_html_e('More details +', 'rehub-theme');?></span>
             <?php endif;?>
-                <?php if(get_post_type($postid) == 'product'):?>
+                <?php if($isproduct):?>
                 <div class="button_action floatright ml15 rtlmr15">
                     <div class="floatleft mr5">
                         <?php $wishlistadded = esc_html__('Added to wishlist', 'rehub-theme');?>
@@ -103,7 +108,15 @@ else {
                         <?php echo do_shortcode($contshortcode);?>                    
                     </div>
                 <?php endif;?>                 
-                <?php if(get_post_type($postid) == 'product'):?>
+                <?php if($isproduct):?>
+                    <?php if (isset($userrating) && $userrating=='1') : ?>
+                        <div class="list_userrating_area">
+                            <?php $average_rating = $product->get_average_rating();
+                            if ($average_rating > 0) {
+                                echo wc_get_rating_html($average_rating);
+                            } ?>
+                        </div>
+                    <?php endif; ?>
                     <div class="button_action">
                         <div class="floatleft mr5 disablefloattablet">
                             <?php $wishlistadded = esc_html__('Added to wishlist', 'rehub-theme');?>
@@ -208,7 +221,7 @@ else {
         
         <?php if(isset($review) && $review):?>
             <div class="listbuild_review listitem_column text-center">
-                <?php if(get_post_type($postid) == 'product'):?>
+                <?php if($isproduct):?>
                     <?php $overall_review  = get_post_meta($postid, 'rehub_review_overall_score', true);?>
                     <?php if ($overall_review){ $overall_review = $overall_review;}?>
                 <?php else:?>   
@@ -235,12 +248,10 @@ else {
         <?php endif;?> 
         <?php if(isset($button) && $button):?>
             <div class="listbuild_btn listitem_column text-center">
-                <?php if(get_post_type($postid) == 'product'):?>
-                    <?php global $product;?>
-                    <?php if ($product->get_price() !='') : ?>
-                        <span class="rehub-btn-font price font110 mb15 fontbold"><?php echo ''.$product->get_price_html(); ?></span>
-                        <div class="mb10"></div>
-                    <?php endif;?>                    
+                <?php if($isproduct):?>
+                    <span class="rehub-btn-font price font110 mb15 fontbold"><?php echo ''.$product->get_price_html(); ?></span>
+                    <div class="mb10"></div>
+                 
                     <?php if ( $product->add_to_cart_url() !='') : ?>
                         <div class="priced_block">
                         <?php  echo apply_filters( 'woocommerce_loop_add_to_cart_link',

@@ -80,4 +80,4 @@ class Widget_Wpsm_Woo_Products_Rows extends WPSM_Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_Woo_Products_Rows );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_Woo_Products_Rows );

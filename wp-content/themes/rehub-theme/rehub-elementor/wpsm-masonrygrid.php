@@ -71,4 +71,4 @@ class Widget_Wpsm_Masonry_Grid extends WPSM_Content_Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_Masonry_Grid );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_Masonry_Grid );

@@ -733,4 +733,4 @@ class WPSM_Canvas_A_Widget extends Widget_Base {
 
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_Canvas_A_Widget );
+Plugin::instance()->widgets_manager->register( new WPSM_Canvas_A_Widget );

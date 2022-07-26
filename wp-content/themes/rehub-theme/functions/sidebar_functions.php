@@ -275,8 +275,9 @@ function rehub_get_social_links($atts, $content = null){
 			<a href="<?php echo rehub_option('rehub_twitter'); ?>" class="tw" rel="nofollow" target="_blank"><i class="rhicon rhi-twitter"></i></a>
 		<?php endif;?>
 
-		<?php if ( rehub_option('rehub_google') != '' ) :?>
-			<a href="<?php echo rehub_option('rehub_google'); ?>" class="gp" rel="nofollow" target="_blank"><i class="rhicon rhi-google-plus"></i></a>
+		<?php if ( rehub_option('rehub_tiktok') != '' ) :?>
+			<style scope>.social_icon .ttk svg{width: 20px; height:20px; fill:#fff;transform: translateY(2px);}.social_icon.small_i .ttk svg{width: 14px;height:14px}.social_icon .ttk{background:black}</style>
+			<a href="<?php echo rehub_option('rehub_tiktok'); ?>" class="ttk" rel="nofollow" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2859 3333" fill-rule="evenodd" clip-rule="evenodd"><path d="M2081 0c55 473 319 755 778 785v532c-266 26-499-61-770-225v995c0 1264-1378 1659-1932 753-356-583-138-1606 1004-1647v561c-87 14-180 36-265 65-254 86-398 247-358 531 77 544 1075 705 992-358V1h551z"/></svg></a>
 		<?php endif;?>
 
 		<?php if ( rehub_option('rehub_instagram') != '' ) :?>

@@ -49,6 +49,10 @@ else {
 if ($current_design == 'grid') {
 	$classes[] = 'rh-flex-eq-height grid_woo';
 }
+elseif ($current_design == 'gridmart') {
+    echo rh_generate_incss('gridmart');
+	$classes[] = 'grid_mart rh-flex-eq-height';
+}
 elseif ($current_design == 'gridtwo') {
     echo rh_generate_incss('offergrid');
 	$classes[] = 'eq_grid pt5 rh-flex-eq-height';

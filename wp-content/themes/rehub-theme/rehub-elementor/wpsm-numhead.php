@@ -114,4 +114,4 @@ class Widget_NumHead extends Widget_Base {
 	}	
 
 }
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_NumHead );
+Plugin::instance()->widgets_manager->register( new Widget_NumHead );

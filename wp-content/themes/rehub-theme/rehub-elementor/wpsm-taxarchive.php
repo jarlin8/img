@@ -261,4 +261,4 @@ class WPSM_Tax_Archive_Widget extends Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_Tax_Archive_Widget );
+Plugin::instance()->widgets_manager->register( new WPSM_Tax_Archive_Widget );

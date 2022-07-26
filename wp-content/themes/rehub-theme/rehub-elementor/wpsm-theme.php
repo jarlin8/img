@@ -305,4 +305,4 @@ class Widget_ThemeElements extends Widget_Base {
 	<?php
 	}
 }
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_ThemeElements );
+Plugin::instance()->widgets_manager->register( new Widget_ThemeElements );

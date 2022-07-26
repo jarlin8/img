@@ -224,4 +224,4 @@ class Widget_Wpsm_Post_Carousel_Mod extends WPSM_Content_Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_Post_Carousel_Mod );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_Post_Carousel_Mod );

@@ -281,7 +281,7 @@ function remove_comment_rates($comment_id) {
 						$postData['criteria'][$i]['average'] = bcdiv($total, $count, 1);
 					}
 				};
-				$postCriteriaAverage += $postData['criteria'][$i]['average'];
+				$postCriteriaAverage += (int)$postData['criteria'][$i]['average'];
 			};
 			if(isset($commentRaitings) && count($commentRaitings) > 0) {
 				$postAverage = bcdiv($postCriteriaAverage, count($commentRaitings), 1);
@@ -412,10 +412,10 @@ function rehub_admin_update_comment( $data, $comment ) {
 
     // Update Review meta
     if( isset( $data['pros_review'] ) ) {
-        update_comment_meta( $comment_id, 'pros_review', sanitize_text_field( $data['pros_review'] ) );
+        update_comment_meta( $comment_id, 'pros_review', sanitize_textarea_field( $data['pros_review'] ) );
     }
     if( isset( $data['cons_review'] ) ) {
-        update_comment_meta( $comment_id, 'cons_review', sanitize_text_field( $data['cons_review'] ) );
+        update_comment_meta( $comment_id, 'cons_review', sanitize_textarea_field( $data['cons_review'] ) );
     }
     if( isset( $data['user_criteria'] ) ) {
         update_comment_meta( $comment_id, 'user_criteria', (array) $data['user_criteria'] );
@@ -492,27 +492,27 @@ if( !function_exists('rh_update_post_rating') ) {
 		$commentRaitingsArray = get_comment_meta($comment_id, 'user_criteria', false);
 		$commentRaitings = $commentRaitingsArray[0];
 		$postData = array();
-		$postCriteriaAverage = $postAverage = $commentTotal = '';
-		
-		for($i = 0; $i < count($commentRaitings); $i++) {
-			$postData['criteria'][$i]['name'] = $commentRaitings[$i]['name'];
-			if(isset($postUserRaitings['criteria'][$i])) {
-				$count = (int) $postUserRaitings['criteria'][$i]['count'] + 1;
-				$total = (float) $commentRaitings[$i]['value'] + (float) $postUserRaitings['criteria'][$i]['value'];
-				$postData['criteria'][$i]['count'] = $count;
-				$postData['criteria'][$i]['value'] = $total;
-				$postData['criteria'][$i]['average'] = bcdiv($total, $count, 1);
-			}
-			else {
-				$postData['criteria'][$i]['count'] = 1;
-				$postData['criteria'][$i]['value'] = (float) $commentRaitings[$i]['value'];
-				$postData['criteria'][$i]['average'] = (float) $commentRaitings[$i]['value'];
-			};
-			$postCriteriaAverage += $postData['criteria'][$i]['average'];
-			$commentTotal += $commentRaitings[$i]['value'];
-		};
+		$postCriteriaAverage = $commentTotal = 0;
 
 		if( isset($commentRaitings) && count($commentRaitings) > 0 ) {
+			for($i = 0; $i < count($commentRaitings); $i++) {
+				$postData['criteria'][$i]['name'] = $commentRaitings[$i]['name'];
+				if(isset($postUserRaitings['criteria'][$i])) {
+					$count = (int) $postUserRaitings['criteria'][$i]['count'] + 1;
+					$total = (float) $commentRaitings[$i]['value'] + (float) $postUserRaitings['criteria'][$i]['value'];
+					$postData['criteria'][$i]['count'] = $count;
+					$postData['criteria'][$i]['value'] = $total;
+					$postData['criteria'][$i]['average'] = bcdiv($total, $count, 1);
+				}
+				else {
+					$postData['criteria'][$i]['count'] = 1;
+					$postData['criteria'][$i]['value'] = (float) $commentRaitings[$i]['value'];
+					$postData['criteria'][$i]['average'] = (float) $commentRaitings[$i]['value'];
+				};
+				$postCriteriaAverage += (float)$postData['criteria'][$i]['average'];
+				$commentTotal += (float)$commentRaitings[$i]['value'];
+			};
+
 			$postAverage = bcdiv($postCriteriaAverage, count($commentRaitings), 1);
 			$commentAverage = bcdiv($commentTotal, count($commentRaitings), 1); 
 			update_post_meta($comment_post_id, 'post_user_raitings', $postData);

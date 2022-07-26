@@ -10,7 +10,7 @@ $aff_link = (rehub_option('disable_inner_links') == 1) ? 1 : 0;
 <div class="rh-container">
     <div class="rh-content-wrap clearfix">
         <!-- Main Side -->
-        <div class="main-side clearfix<?php if (rehub_option('archive_layout') == 'gridfull' || rehub_option('archive_layout') == 'dealgridfull' || rehub_option('archive_layout') == 'compactgridfull' || rehub_option('archive_layout') == 'columngridfull' || rehub_option('archive_layout') == 'cardblogfull') : ?> full_width<?php endif ;?>">
+        <div class="main-side clearfix<?php if (rehub_option('archive_layout') == 'gridfull' || $archive_layout == 'mobilegridfull' || rehub_option('archive_layout') == 'dealgridfull' || rehub_option('archive_layout') == 'compactgridfull' || rehub_option('archive_layout') == 'columngridfull' || rehub_option('archive_layout') == 'cardblogfull') : ?> full_width<?php endif ;?>">
             <?php /* If this is a category archive */ if (is_category()) { ?>
             <div class="wpsm-title position-relative flowhidden mb25 middle-size-title wpsm-cat-title"><h5 class="font140"><?php single_cat_title(); ?></h5></div>
             <?php /* If this is a tag archive */ } elseif( is_tag() ) { ?>
@@ -113,7 +113,7 @@ $aff_link = (rehub_option('disable_inner_links') == 1) ? 1 : 0;
             <div class="clearfix"></div>
         </div>
         <!-- /Main Side -->
-        <?php if (rehub_option('archive_layout') == 'gridfull' || rehub_option('archive_layout') == 'dealgridfull' || rehub_option('archive_layout') == 'compactgridfull' || rehub_option('archive_layout') == 'columngridfull' || rehub_option('archive_layout') == 'cardblogfull') : ?>
+        <?php if (rehub_option('archive_layout') == 'gridfull' || $archive_layout == 'mobilegridfull' || rehub_option('archive_layout') == 'dealgridfull' || rehub_option('archive_layout') == 'compactgridfull' || rehub_option('archive_layout') == 'columngridfull' || rehub_option('archive_layout') == 'cardblogfull') : ?>
         <?php else:?>
             <!-- Sidebar -->
             <?php get_sidebar(); ?>

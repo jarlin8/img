@@ -225,4 +225,4 @@ class WPSM_Versus_Line_Widget extends Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_Versus_Line_Widget );
+Plugin::instance()->widgets_manager->register( new WPSM_Versus_Line_Widget );

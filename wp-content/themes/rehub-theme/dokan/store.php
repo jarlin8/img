@@ -94,6 +94,10 @@ $widget_args = array( 'before_widget' => '<div class="rh-cartbox widget"><div>',
 								$classes[] = 'woo_offer_list';
 							}
 						}
+						elseif ($current_design == 'gridmart'){
+							echo rh_generate_incss('gridmart');
+							$classes[] = 'grid_mart rh-flex-eq-height';
+						}
 						elseif ($current_design == 'gridrev' || $current_design == 'griddigi') {
 							$classes[] = 'rh-flex-eq-height woogridrev';
 						}						
@@ -120,6 +124,9 @@ $widget_args = array( 'before_widget' => '<div class="rh-cartbox widget"><div>',
 								}
 								elseif ($current_design == 'grid'){
 								    include(rh_locate_template('inc/parts/woogridpart.php'));
+								}
+								elseif ($current_design == 'gridmart'){
+								    include(rh_locate_template('inc/parts/woogridmart.php'));
 								}
 								elseif ($current_design == 'deallist'){
 								    include(rh_locate_template('inc/parts/woolistpart.php'));
@@ -199,24 +206,28 @@ $widget_args = array( 'before_widget' => '<div class="rh-cartbox widget"><div>',
 						<div class="pt5 pb5 pl10 pr10"><i class="rhicon rhi-briefcase mr5 rtlml5"></i><?php esc_html_e( 'Total submitted', 'rehub-theme' ); echo ': ' . $totaldeals; ?></div>
 	                    <?php if (!empty($mycredpoint)) :?><div class="pt5 pb5 pl10 pr10"><i class="rhicon rhi-chart-bar mr5 rtlml5"></i><?php echo esc_html($mycredlabel);?>: <?php echo ''.$mycredpoint;?> </div><?php endif;?>
 					</div>
-					<div class="profile-description lineheight25 margincenter mb10">
-						<div class="pt5 pb5 pl10 pr10">
-							<span class="border-grey-bottom blockstyle width-100p mb5 fontbold"><?php esc_html_e( 'Contacts', 'rehub-theme' ); ?></span>
-							<p class="fontitalic font80">
-							<?php if ( isset( $store_address ) && !empty( $store_address ) ) { ?>
-								<i class="rhicon rhi-map-marker-alt"></i> <?php echo ''.$store_address; ?>
-							<?php } ?>
-							<?php if ( !empty( $store_user->get_phone() ) ) { ?>
-								<br />
-								<i class="rhicon rhi-mobile"></i> <a href="tel:<?php echo esc_html( $store_user->get_phone() ); ?>"><?php echo esc_html( $store_user->get_phone() ); ?></a>
-							<?php } ?>
-							<?php if ( $store_user->show_email() == 'yes' ) { ?>
-								<br />
-								<i class="rhicon rhi-envelope"></i> <a href="mailto:<?php echo antispambot( $store_user->get_email() ); ?>"><?php echo antispambot( $store_user->get_email() ); ?></a>
-							<?php } ?>							
-							</p>
+					<?php if(dokan_is_vendor_info_hidden( 'address' ) && dokan_is_vendor_info_hidden( 'phone' ) && dokan_is_vendor_info_hidden( 'email' )):?>
+
+					<?php else :?>
+						<div class="profile-description lineheight25 margincenter mb10">
+							<div class="pt5 pb5 pl10 pr10">
+								<span class="border-grey-bottom blockstyle width-100p mb5 fontbold"><?php esc_html_e( 'Contacts', 'rehub-theme' ); ?></span>
+								<p class="fontitalic font80">
+								<?php if ( ! dokan_is_vendor_info_hidden( 'address' ) && isset( $store_address ) && !empty( $store_address ) ) { ?>
+									<i class="rhicon rhi-map-marker-alt"></i> <?php echo ''.$store_address; ?>
+								<?php } ?>
+								<?php if ( ! dokan_is_vendor_info_hidden( 'phone' ) && ! empty( $store_user->get_phone() ) ) { ?>
+									<br />
+									<i class="rhicon rhi-mobile"></i> <a href="tel:<?php echo esc_html( $store_user->get_phone() ); ?>"><?php echo esc_html( $store_user->get_phone() ); ?></a>
+								<?php } ?>
+								<?php if ( ! dokan_is_vendor_info_hidden( 'email' ) && $store_user->show_email() == 'yes' ) { ?>
+									<br />
+									<i class="rhicon rhi-envelope"></i> <a href="mailto:<?php echo antispambot( $store_user->get_email() ); ?>"><?php echo antispambot( $store_user->get_email() ); ?></a>
+								<?php } ?>							
+								</p>
+							</div>
 						</div>
-					</div>
+					<?php endif;?>
 					<?php if ( $social_fields ) { ?>
 					<div class="profile-socbutton lineheight25 margincenter mb10">
 						<div class="social_icon small_i pt5 pb5 pl10 pr10">

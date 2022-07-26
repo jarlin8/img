@@ -2148,6 +2148,7 @@ function wpsm_topcharts_shortcode( $atts, $content = null ) {
 	extract(shortcode_atts(array(
 			'id' => '',
 			'postids'=> '',
+			'topcontent'=> ''
 		), $atts));
 		
 	if(isset($atts['id']) && $atts['id']):
@@ -2311,7 +2312,9 @@ function wpsm_woocharts_shortcode( $atts, $content = null ) {
             'posttype' => 'product', // comma separated post types
             'taxonomy' => 'product_cat',
             'terms' => '', // comma separated term slugs
-            'disable' => ''			
+            'disable' => '',
+			'topcontent'=> '',
+			'contentlabel'=> 'Additionally'		
 		), $atts));
 	ob_start();
 	$compareids = array();
@@ -2496,6 +2499,14 @@ function wpsm_woocharts_shortcode( $atts, $content = null ) {
 		                            <li class="row_chart_<?php echo (int)$i;?> meta_value_row_chart"><?php echo wc_attribute_label( $attribute_value['name'] ); ?></li>
 		                        <?php endforeach;?>
 							<?php endif;?>
+						<?php else:?>
+							<?php $i = 7;?>
+						<?php endif;?>
+						<?php if ($content && !$topcontent):?>
+							<?php $i++;?>
+							<li class="row_chart_<?php echo (int)$i;?> shortcode_row_chart">
+                            <?php echo esc_attr($contentlabel);?>
+                        	</li> 
 						<?php endif;?>
                     </ul>
                 </div>
@@ -2702,6 +2713,13 @@ function wpsm_woocharts_shortcode( $atts, $content = null ) {
 									<?php endif;?>	
 				                <?php else:?>
 									<?php $i = 7;?>
+								<?php endif;?>
+								<?php if ($content && !$topcontent):?>
+									<?php $i++;?>
+									<li class="row_chart_<?php echo (int)$i;?> shortcode_row_chart">
+                            			<?php echo do_shortcode(wp_kses_post($content));?>
+                        			</li> 
+									
 								<?php endif;?>                                                              
 			            </ul>
 			            </div>
@@ -3675,7 +3693,7 @@ function wpsm_get_custom_value($atts, $content = null){
 	    'showtoggle' => '',
 	    'symbollimit' => '',
 		'spanvalue'=> '',
-		'imageMapper' => ''
+		'imageMapper' => '',
 
 	), $atts));
   	if(!$field && !$attrfield) return;
@@ -3688,7 +3706,7 @@ function wpsm_get_custom_value($atts, $content = null){
     $post_id = (NULL === $post_id && is_object($post)) ? $post->ID : (int)$post_id;
     if ($type=='custom'){
     	$result = get_post_meta($post_id, $field, true);
-    }else if($type=='attribute' || $type=='local'){
+    }else if(($type=='attribute' || $type=='local') && function_exists('wc_get_product')){
 		if($post_id){
 			$post_id = trim($post_id);
 			$post_id = (int)$post_id;
@@ -3707,7 +3725,7 @@ function wpsm_get_custom_value($atts, $content = null){
 	        }
         }    	
     }
-    else if($type=='checkattribute'){
+    else if($type=='checkattribute' && function_exists('wc_get_product')){
 		if($post_id){
 			$post_id = trim($post_id);
 			$post_id = (int)$post_id;
@@ -3733,7 +3751,7 @@ function wpsm_get_custom_value($atts, $content = null){
     	} 
     	return false;
     }
-	else if($type=='swatch'){
+	else if($type=='swatch' && function_exists('wc_get_product')){
 		if($post_id){
 			$post_id = trim($post_id);
 			$post_id = (int)$post_id;
@@ -3858,8 +3876,8 @@ function wpsm_get_custom_value($atts, $content = null){
 		$labelclass = $labelclass.' blockstyle';
 	}else{
 		$labelclass = $labelclass.' mr5 rtlml5';
-	}      
-    if($result){
+	}    
+    if($result && !is_array($result)){
     	if($label && !$labelblock) {$out .='<div class="rh-flex-center-align">';}
 	    if($list){
 	    	$out .= '<li class="ml15 list-type-disc mb0 lineheight15">';
@@ -3948,6 +3966,7 @@ function wpsm_tax_archive_shortcode( $atts, $content = null ) {
 			'child_of' => '',
 			'rows' => 1,
 			'include' => '',
+			'excludeToggle' => '',
 			'anchor_before' => '',
 			'anchor_after' => '',
 			'wrapclass' => 'no_padding_wrap',
@@ -3974,6 +3993,16 @@ function wpsm_tax_archive_shortcode( $atts, $content = null ) {
 
 	if($include){
 		$args['include'] = array_map( 'trim', explode( ",", $include ) );
+		$args['orderby'] = 'include';
+	}
+
+	if(!is_array($taxonomy) && $taxonomy == 'product_cat' && $type !='alpha'){
+		$args['orderby'] = 'menu_order';
+	}
+
+	if($excludeToggle && $include){
+		unset($args['include']);
+		$args['exclude'] = array_map( 'trim', explode( ",", $include ) );
 	}
 	 
 	$terms = get_terms($args );
@@ -4846,7 +4875,11 @@ function wpsm_get_bigoffer($atts){
                             <span class="overall floatleft"><?php echo ''.$overall_review;?>/10 </span>
                             <span class="floatright font70 fontnormal text-read-review"><a href="<?php echo get_the_permalink($post_id) ?>"><?php esc_html_e('Read review', 'rehub-theme');?></a></span>
                             </div>
-                            <?php echo wpsm_bar_shortcode(array('percentage'=>$overall_review_100, 'color'=> $color ));?>
+                            <?php 
+                            	echo '<div class="wpsm-bar minibar wpsm-clearfix" data-percent="'. $overall_review_100 .'%">';
+								echo'<div class="wpsm-bar-bar" style="background: '. $color .';"></div>';
+								echo '</div>';
+							?>
                         </div>                         
                     <?php endif;?>
                     <?php 
@@ -5357,7 +5390,7 @@ function rh_ce_search_form( $atts=array(), $content = null ) {
 	extract( $build_args ); 
 	ob_start(); 
 	?>
-	<style scope> .custom_search_box{padding: 20px 0; }.custom_search_box form{ position: relative; display: block; width: 100%;}.custom_search_box input[type="text"] {transition: all 0.5s ease-out; background: #f6f6f6;border: 3px solid #ececec;height: 50px;width: 100%;padding:0 55px 0 40px;outline: none;  }@media(min-width: 1224px){.custom_search_box input[type="text"]{font-size: 115%}.custom_search_box.flat_style_form input[type="text"]{font-size: 105%}}.custom_search_box i.inside-search{ position: absolute; top: 50%; left: 16px; margin-top: -8px}.custom_search_box.flat_style_form i{display: none;}.custom_search_box button[type="submit"] { padding: 0 13px; position: absolute; height: calc(100% - 6px); right: 3px; top:3px;  color: #fff !important; font-size: 130% !important; margin: 0; border-radius: 0; box-shadow: none !important;}.custom_search_box input[type="text"]:focus, .custom_search_box input[type="text"]:hover{border-color: #666; background-color: #fff}.custom_search_box.flat_style_form input[type="text"] {border-width: 1px;height: 52px;padding:0 130px 0 20px; }.custom_search_box.flat_style_form button[type="submit"] { padding: 0 35px; height: 100%; right: 0; top:0; font-size: 100% !important;}.cssProgress{opacity: 0; visibility: hidden;    -webkit-transform: translate3d(0, 25px, 0);transform: translate3d(0, 25px, 0);    -webkit-transition: all .4s ease-out;transition: all .4s ease-out;}.cssProgress.active{opacity: 1; visibility:visible ;-webkit-transform: translate3d(0, 0, 0);transform: translate3d(0, 0, 0);}.progress2{position: relative;overflow: hidden;width: 100%;    background-color: #EEE;box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.2);}.progress2 .cssProgress-bar {height: 14px;}.cssProgress .cssProgress-active {-webkit-animation: cssProgressActive 2s linear infinite;-ms-animation: cssProgressActive 2s linear infinite;animation: cssProgressActive 2s linear infinite;}.cssProgress .cssProgress-stripes, .cssProgress .cssProgress-active, .cssProgress .cssProgress-active-right {background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, 0.125) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.125) 50%, rgba(255, 255, 255, 0.125) 75%, transparent 75%, transparent);background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.125) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.125) 50%, rgba(255, 255, 255, 0.125) 75%, transparent 75%, transparent);background-size: 35px 35px;}.cssProgress .cssProgress-success {background-color: #41bc03 !important;}.cssProgress .cssProgress-bar {display: block;float: left;width: 0%;box-shadow: inset 0px -1px 2px rgba(0, 0, 0, 0.1);}@-webkit-keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@-ms-keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@-webkit-keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}@-ms-keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}@keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}</style>
+	<style scope> .custom_search_box{padding: 20px 0; }.custom_search_box form{ position: relative; display: block; width: 100%;}.custom_search_box input[type="text"] {transition: all 0.5s ease-out; background: #f6f6f6;border: 3px solid #ececec;height: 50px;width: 100%;padding:0 55px 0 40px;outline: none;  }@media(min-width: 1224px){.custom_search_box input[type="text"]{font-size: 115%}.custom_search_box.flat_style_form input[type="text"]{font-size: 105%}}.custom_search_box i.inside-search{ position: absolute; top: 50%; left: 16px; margin-top: -8px}.custom_search_box.flat_style_form i{display: none;}.custom_search_box button[type="submit"] { padding: 0 13px; position: absolute; height: calc(100% - 6px); right: 3px; top:3px;  color: #fff !important; font-size: 130% !important; margin: 0; border-radius: 0; box-shadow: none !important;}.custom_search_box input[type="text"]:focus, .custom_search_box input[type="text"]:hover{border-color: #666; background-color: #fff}.custom_search_box.flat_style_form input[type="text"] {border-width: 1px;height: 52px;padding:0 130px 0 20px; }.custom_search_box.flat_style_form button[type="submit"] { padding: 0 35px; height: 100%; right: 0; top:0; font-size: 100% !important;}.cssProgress{opacity: 0; visibility: hidden; transform: translate3d(0, 25px, 0);transition: all .4s ease-out;}.cssProgress.active{opacity: 1; visibility:visible ;-webkit-transform: translate3d(0, 0, 0);transform: translate3d(0, 0, 0);}.progress2{position: relative;overflow: hidden;width: 100%;    background-color: #EEE;box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.2);}.progress2 .cssProgress-bar {height: 14px;}.cssProgress .cssProgress-active {-webkit-animation: cssProgressActive 2s linear infinite;-ms-animation: cssProgressActive 2s linear infinite;animation: cssProgressActive 2s linear infinite;}.cssProgress .cssProgress-stripes, .cssProgress .cssProgress-active, .cssProgress .cssProgress-active-right {background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, 0.125) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.125) 50%, rgba(255, 255, 255, 0.125) 75%, transparent 75%, transparent);background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.125) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.125) 50%, rgba(255, 255, 255, 0.125) 75%, transparent 75%, transparent);background-size: 35px 35px;}.cssProgress .cssProgress-success {background-color: #41bc03 !important;}.cssProgress .cssProgress-bar {display: block;float: left;width: 0%;box-shadow: inset 0px -1px 2px rgba(0, 0, 0, 0.1);}@-webkit-keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@-ms-keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@keyframes cssProgressActive {0% {background-position: 0 0;}100% {background-position: 35px 35px;}}@-webkit-keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}@-ms-keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}@keyframes cssProgressActiveRight {0% {background-position: 0 0;}100% {background-position: -35px -35px;}}</style>
 	<?php wp_enqueue_script( 'rh-ce-search-form', get_template_directory_uri() . '/js/cefrontsearch.js', array( 'jquery' ), 1.0, true );?>	
 	<div class="progress-animate-onclick width-100p position-relative custom_search_box flat_style_form">
 		<div class="cssProgress mb10">

@@ -343,4 +343,4 @@ class WPSM_Hover_Banner_Widget extends Widget_Base {
 
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_Hover_Banner_Widget );
+Plugin::instance()->widgets_manager->register( new WPSM_Hover_Banner_Widget );

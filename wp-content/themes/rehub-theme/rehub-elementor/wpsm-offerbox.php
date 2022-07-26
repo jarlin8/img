@@ -282,4 +282,4 @@ class Widget_Offerbox extends WPSM_Content_Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Offerbox );
+Plugin::instance()->widgets_manager->register( new Widget_Offerbox );

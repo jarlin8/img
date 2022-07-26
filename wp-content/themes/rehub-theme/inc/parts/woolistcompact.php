@@ -12,7 +12,7 @@
     <?php $woolink = get_post_permalink($post->ID); $wootarget = '';?>
 <?php endif;?>
 
-<div class="woocommerce type-product woocompactlist rh-flex-columns width-100p mb15 border-grey-bottom pb15 mobilesblockdisplay">    
+<div class="woocommerce type-product woocompactlist rh-flex-columns width-100p mb15 border-grey-bottom pb15 mobilesblockdisplay no_cart_sliding">    
     <?php do_action('woocommerce_before_shop_loop_item');?> 
 	<?php if ( $isvariable ) : ?>
         <?php

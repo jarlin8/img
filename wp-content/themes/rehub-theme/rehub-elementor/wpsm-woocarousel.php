@@ -205,4 +205,4 @@ class Widget_Wpsm_Woo_Products_Carousel extends WPSM_Widget_Base {
 
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_Woo_Products_Carousel );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_Woo_Products_Carousel );

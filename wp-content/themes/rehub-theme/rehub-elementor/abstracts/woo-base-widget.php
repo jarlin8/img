@@ -546,6 +546,7 @@ abstract class WPSM_Widget_Base extends Widget_Base {
                 'review'            => esc_html__( 'Directory', 'rehub-theme' ),
                 'digital'            => esc_html__( 'Digital', 'rehub-theme' ),
                 'dealwhite'            => esc_html__( 'Deal Grid', 'rehub-theme' ),
+                'gridmart' => esc_html__('Market Grid', 'rehub-framework'),
                 'dealdark'            => esc_html__( 'Deal Grid Dark', 'rehub-theme' ),
                 'image'            => esc_html__( 'Images', 'rehub-theme' ),
             ],

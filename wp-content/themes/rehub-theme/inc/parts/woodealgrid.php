@@ -6,6 +6,7 @@ global $post; global $product;
 <?php $classes = array('product', 'col_item', 'type-product', 'border-lightgrey', 'hide_sale_price', 'rehub-main-smooth', 'position-relative', 'rh-shadow5', 'flowvisible', 'woodealgrid', 'whitebg');?>
 <?php $attrelpanel = (isset($attrelpanel)) ? $attrelpanel : '';?>
 <?php $woolinktype = (isset($woolinktype)) ? $woolinktype : '';?>
+<?php $iscart = (isset($iscart)) ? $iscart : '';?>
 <?php $woo_aff_btn = rehub_option('woo_aff_btn');?>
 <?php $affiliatetype = ($product->get_type() =='external') ? true : false;?>
 <?php $soldout = (isset($soldout)) ? $soldout : '';?>
@@ -95,7 +96,7 @@ global $post; global $product;
                     <div class="rh_opacity_5 font80"><i class="rhicon rhi-clock mr5"></i><?php echo ''.$coupon_text;?></div>
                 <?php endif;?>
             </div>
-            <?php if($price_meta != '4'):?>
+            <?php if($price_meta != '4' && !$iscart):?>
                 <div class="rh-flex-right-align pl15">
                     <?php if($syncitem && $price_meta == '1'):?>
                         <?php $celogo = \ContentEgg\application\helpers\TemplateHelper::getMerhantLogoUrl($syncitem, true);?>
@@ -111,7 +112,7 @@ global $post; global $product;
                             <div>       
                                 <?php WPSM_Woohelper::re_show_brand_tax('logo'); //show brand logo?>
                             </div>  
-                        </div>  
+                        </div>   
                     <?php elseif($price_meta == '3'):?>
                         <div class="width-80 height-80 rh-flex-center-align rh-flex-justify-center text-center rh-shadow3 pt5 pb5 pl5 pr5 roundborder8">      
                             <div class="font150 fontbold">
@@ -123,6 +124,14 @@ global $post; global $product;
                             </div>
                         </div>                           
                     <?php endif ;?>
+                </div>
+            <?php elseif($iscart):?>
+                <div class="rh-flex-right-align pl15">
+                    <div class="roundbd8im roundborder8 width-80 height-80 rh-flex-center-align rh-flex-justify-center text-center rh-shadow3 pt5 pb5 pl5 pr5">
+                        <div>       
+                        <?php echo WPSM_image_resizer::show_wp_image('woocommerce_thumbnail'); ?>
+                        </div>  
+                    </div> 
                 </div>
             <?php endif ;?>
         </div>           

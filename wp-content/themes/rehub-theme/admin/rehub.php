@@ -354,7 +354,7 @@ if ( ! class_exists( 'Rehub_Admin' ) ) {
 				--rehub-body-font: <?php echo rehub_option('rehub_body_font'); ?>;
 				}
 			<?php else:?>
-				.editor-styles-wrapper .wp-block{font-family: Roboto,"Helvetica Neue",-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Oxygen-Sans,sans-serif}
+				.editor-styles-wrapper .wp-block{font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif}
 			<?php endif; ?>	
 			<?php if(rehub_option('rehub_headings_font')) : ?>
 				.editor-styles-wrapper .editor-post-title__block .editor-post-title__input, .editor-styles-wrapper h1, .editor-styles-wrapper h2, .editor-styles-wrapper h3, .editor-styles-wrapper h4, .editor-styles-wrapper h5, .editor-styles-wrapper h6, .wp-block-quote.is-style-large{
@@ -452,6 +452,8 @@ if ( ! class_exists( 'Rehub_Admin' ) ) {
 					}
 				?>		
 			}
+			.widget_merchant_list .buttons_col{background-color: <?php echo ''.$btncolor ?> !important;}
+			.widget_merchant_list .buttons_col a{color: <?php echo ''.$btncolortext ?> !important;}
 			.rehub-main-btn-bg > a{color: <?php echo ''.$btncolortext ?> !important;}
 			.rehub-main-color, .wp-block-rehub-offer-listing .c-offer-listing__title, .wp-block .c-offer-listing .c-offer-listing__read-more{color: <?php echo ''.$maincolor; ?>;}		
 			.rehub-main-color-bg{background-color: <?php echo ''.$maincolor; ?>;}	
@@ -465,6 +467,9 @@ if ( ! class_exists( 'Rehub_Admin' ) ) {
 			.rh-admin-note{background: lightblue; padding: 15px;margin: 15px 0;border-radius: 5px;border: 1px solid #65b2c7; font-size: 15px}
 			.re-line-badge.re-line-badge--default{font-size:11px;line-height:1;text-shadow:none}.re-line-badge.re-line-badge--default span:after,.re-line-badge.re-line-badge--default span:before{display:none}
 			.rh-border-line:after{color: <?php echo ''.$maincolor; ?>;}
+			.widget.deal_daywoo, .elementor-widget-wpsm_woofeatured .deal_daywoo{border: 3px solid <?php echo ''.$maincolor; ?>; padding: 20px; background: #fff; }
+			.deal_daywoo .title{color: <?php echo ''.$maincolor; ?>}
+			.deal_daywoo .wpsm-bar-bar{background-color: <?php echo ''.$maincolor; ?> !important}
 			/*.wp-block{max-width:760px;}*/
 			@media (min-width:600px){.editor-post-title__block:not(.is-focus-mode).is-selected .editor-post-title__input{box-shadow:-3px 0 0 0 <?php echo ''.$maincolor; ?>}}
 			@media screen and (max-width: 782px) {

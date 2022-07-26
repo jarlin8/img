@@ -118,7 +118,6 @@ ul.page-numbers li{float:right;}
 a.expand { margin-right: 0px; margin-left: 5px }
 .news-community .priced_block .rh_price_wrapper {float: none; }
 
-.small_post:hover .priced_block .btn_offer_block, .news:hover .priced_block .btn_offer_block{padding: 0.5em 0.6em 0.5em 0.5em;}
 .priced_block .btn_offer_block:after { display: none; }
 .cats_def a { margin-right: 0px; margin-left: 4px; }
 .post-meta span {display: inline-block; margin-right: 0; margin-left: 0;}
@@ -341,7 +340,7 @@ div.summary{float: left;}
 .rhgreedylinks{-ms-justify-content: flex-start;-webkit-justify-content: flex-start;justify-content: flex-start;}
 .delimiter .fa-angle-right:before{content: "\f104";}
 .wpsm_pros{padding-left: 0; padding-right: 15px}
-.wpsm_pros ul li:before, .wpsm_cons ul li:before{ padding-right: 8px; padding-left: 8px;}
+.wpsm_pros ul li:before, .wpsm_cons ul li:before{ padding-right: 0; padding-left: 8px; float: right}
 .re-line-badge.re-line-small-label{margin: 0 0 5px 5px;}
 a.rh-cat-label-title, .rh-cat-label-title a{margin: 0 0 5px 5px;}
 .rh_post_layout_default .wpsm-button {float: left;margin: 0 15px 5px 0;}

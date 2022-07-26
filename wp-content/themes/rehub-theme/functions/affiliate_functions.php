@@ -891,7 +891,7 @@ add_action( 'pre_get_posts', 'rehub_change_post_query' ); //Here we change and e
 if (!function_exists('rehub_change_post_query')){
 	function rehub_change_post_query($q){
 		if (rehub_option('rehub_post_exclude_expired') == '1') {
-		    if (!is_admin() && (is_post_type_archive('post') || is_category() || is_home() || is_feed())) {
+		    if (!is_admin() && (is_post_type_archive('post') || is_category() || is_home() || is_feed()) && $q->get('post_type')=='post') {
 			    $q->set( 'tax_query', array(
 			    	'relation' => 'AND',
 	                array(
@@ -1125,6 +1125,10 @@ function coupon_get_code(){
 
         $response .= '<div class="cpn_info_bl padd20 flowhidden">';
         $response .= '<div class="cpn_post_title width-80-calc floatleft">';
+		$verify = get_post_meta( $codeid, 'rehub_offer_verify_label', true );
+		if($verify) {
+			$response .= '<span class="verifymeta mr5 mb10 greencolor blockstyle"><i class="rhicon rhi-shield-check"></i> '.esc_attr($verify).'</span>';
+		} 
             $response .= '<div class="cpn_title font120 greycolor mb10 fontitalic">'.$posttitle.$shop.'</div>';  
             if(isset($offer_desc)){
                 $response .= '<div class="cpn_desc greycolor mb10 fontitalic">'.esc_html($offer_desc).'</div>';

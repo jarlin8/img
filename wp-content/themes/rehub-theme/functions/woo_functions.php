@@ -48,6 +48,9 @@ if(!function_exists('rh_loop_shop_per_page')){
 		elseif(rehub_option('woo_number') == '24') {
 			$cols = 24;
 		}
+		elseif(rehub_option('woo_number') == '20') {
+			$cols = 20;
+		}
 		elseif(rehub_option('woo_number') == '30') {
 			$cols = 30;
 		}
@@ -617,6 +620,26 @@ function rh_woo_rating_icons_html($html, $rating, $count){
 		}
 	}
 	return $html;
+}
+function rh_woo_rating_icons_wrapper_zero($rating, $count){
+		$html  = '<div class="rh_woo_star" title="'.sprintf( esc_html__( 'Rated %s out of', 'rehub-theme' ), esc_html( (float)$rating )).' 5">';
+		$rating = round($rating, 2);
+		for ($i = 1; $i <= 5; $i++){
+	    	if ($i <= $rating){
+	    		$active = ' active';
+	    	}else{
+	    		$half = $i - 0.5;
+	    		if($half <= $rating){
+		    		$active = ' halfactive';		    			
+	    		}else{
+	    			$active ='';
+	    		}
+	    	}
+	        $html .= '<span class="rhwoostar rhwoostar'.$i.$active.'">&#9733;</span>';
+		}
+		$html .= '<span class="rh_opacity_5 font80 ml10">('.$count.')</span>';
+		$html .= '</div>';
+	return $html;	
 }
 
 add_filter( 'woocommerce_structured_data_product', 'rh_woo_editor_schema', 10, 2 );
@@ -2083,7 +2106,11 @@ if(defined( 'WCFMmp_TOKEN' )){
 
 		return $args;
 	}
-	add_action( 'rehub_vendor_show_action', array('WCFMmp_Frontend', 'wcfmmp_sold_by_product'), 50);
+	
+	if(class_exists('WCFMmp_Frontend')){
+		add_action( 'rehub_vendor_show_action', array('WCFMmp_Frontend', 'wcfmmp_sold_by_product'), 50);
+	}
+	
 
 	function rh_wcfm_menus( $menus ) {
 		$custom_menus = array();
@@ -2270,7 +2297,7 @@ if(!function_exists('rh_soldout_bar')){
 	            set_transient( 'rh-soldout-'. $post_id, $soldout, DAY_IN_SECONDS );
 	        endif;
 	    endif;
-	    if ($soldout > 100){ $soldout = 95;}
+	    if ($soldout >= 100){ $soldout = 95;}
 	    ?>
 		    <?php if($soldout):?>
 			    <div class="soldoutbar <?php echo ''.$marginclass;?>">

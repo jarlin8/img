@@ -89,8 +89,8 @@ function rehub_before_import_setup( $current_import ){
 		printf( '<h3>To get access to ALL demo stacks, you must register your purchase.<br />See the <a href="%s">Product Registration tab</a> for instructions on how to complete registration.</h3>', admin_url( 'admin.php?page=rehub' ) );	
 		exit();		
 	}	
-
-	if( 'RePick' === $current_import['import_file_name'] || 'ReMag' === $current_import['import_file_name'] || 'ReCash' === $current_import['import_file_name'] || 'ReDeal' === $current_import['import_file_name']  ) {
+	$curimp = $current_import['import_file_name'];
+	if( 'RePick' === $curimp || 'ReMag' === $curimp || 'ReCash' === $curimp || 'ReDeal' === $curimp || 'ReViewit' === $curimp || 'ReCart' === $curimp || 'ReCompare' === $curimp || 'ReMart' === $curimp) {
 		if($registeredlicense && empty($lb_verify_res['data']['themes'])){
 			echo '<p style="color:red;font-size:180%" class="notofficialtheme">You have no access to demo import, because you are using nulled or not official theme version. Please, purchase theme on <a href="https://themeforest.net/item/rehub-directory-multi-vendor-shop-coupon-affiliate-theme/7646339">Themeforest</a>, otherwise, your site can be blocked.</p>';		
 			exit();			
@@ -243,10 +243,10 @@ function rehub_import_files() {
 		}			
 
 		if (rehub_option('enable_brand_taxonomy') ){
-			$rhstorenotice = '<li><code>Theme options -> General options -> Enable Affiliate Store taxonomy for posts</code> - <span style="color:green">active</span></li>';
+			$rhstorenotice = '<li><code>Theme options -> Affiliate options -> Enable Affiliate Store taxonomy for posts</code> - <span style="color:green">active</span></li>';
 		}
 		else{
-			$rhstorenotice = '<li><code>Theme options -> General options -> Enable Affiliate Store taxonomy for posts</code> <span style="color:red"> - NOT active</span>. <a href="'.$themeaffoptions.'" target="_blank">'.$installonotice.'</a></li>';		
+			$rhstorenotice = '<li><code>Theme options -> Affiliate options -> Enable Affiliate Store taxonomy for posts</code> <span style="color:red"> - NOT active</span>. <a href="'.$themeaffoptions.'" target="_blank">'.$installonotice.'</a></li>';		
 		}
 		if (rehub_option('enable_blog_posttype') ){
 			$rhblognotice = '<li><code>Theme options -> General options -> Enable separate blog post type</code> - <span style="color:green">active</span></li>';
@@ -268,7 +268,8 @@ function rehub_import_files() {
 		$remagnotice .='</ol>';		
 
 		$reviewitnotice = $requirednotice.'<ol>';
-		$reviewitnotice .= $rhelnotice;
+		$reviewitnotice .= $rhgsnotice;
+		$reviewitnotice .= $rhgsanimatenotice;
 		$reviewitnotice .='</ol>';
 		$reviewitnotice .= $optionalnotice.' <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a><ol>';
 		$reviewitnotice .= $rhfrontendnotice;	
@@ -350,7 +351,8 @@ function rehub_import_files() {
 
 		$recomparenotice = $requirednotice.'<ol>';
 		$recomparenotice .= $rhcenotice;
-		$recomparenotice .= $rhelnotice;
+		$recomparenotice .= $rhgsnotice;
+		$recomparenotice .= $rhgsanimatenotice;
 		$recomparenotice .= $rhwoonotice;
 		$recomparenotice .='</ol>';
 		$recomparenotice .= $optionalnotice.' <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a><ol>';
@@ -393,6 +395,12 @@ function rehub_import_files() {
 		$remarketnotice .='</ol>';		
 		$remarketnotice .= $tutorialnotice;
 
+		$remartnotice = $requirednotice.'<ol>';
+		$remartnotice .= $rhgsnotice;
+		$remartnotice .= $rhwoonotice;	
+		$remartnotice .='</ol>';		
+		$remartnotice .= $tutorialnotice;
+
 		$rethingnotice = $requirednotice.'<ol>';
 		$rethingnotice .= $rhelnotice;
 		$rethingnotice .='</ol>';
@@ -402,7 +410,8 @@ function rehub_import_files() {
 		$rethingnotice .= 'After installation, go to settings of Content Egg and enable Offer or other modules. <a href="http://www.keywordrush.com/en/docs/content-egg" target="_blank">Check docs of Content Egg</a>. Choose "Shortcode only" for Add Content Option. <br><br><a href="https://wpsoul.com/guide-creating-profitable/" target="_blank">How to use plugin with theme in posts</a>, <br><br><a href="https://wpsoul.com/make-smart-profitable-deal-affiliate-comparison-site-woocommerce/" target="_blank">How to use plugin with theme for price comparison in products.</a>';
 
 		$recartnotice = $requirednotice.'<ol>';
-		$recartnotice .= $rhelnotice;
+		$recartnotice .= $rhgsnotice;
+		$recartnotice .= $rhgsanimatenotice;
 		$recartnotice .= $rhwoonotice;
 		$recartnotice .='</ol>';
 		$recartnotice .= $optionalnotice.' <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a><ol>';
@@ -430,14 +439,14 @@ function rehub_import_files() {
 		if(!empty($lb_verify_res["data"])){
 			$demos = array(
 				array(
-					'import_file_name' => 'ReMarket',
+					'import_file_name' => 'ReMart',
 					'categories' => array( esc_html__( 'Multi vendor', 'rehub-theme' ) ),
-					'import_file_url' => esc_url($lb_verify_res["data"]["themes"]["ReMarket"]["content"]),
-					'import_widget_file_url' => esc_url($lb_verify_res["data"]["themes"]["ReMarket"]["widgets"]),
-					'local_import_theme_file' => get_template_directory() . '/admin/demo/remarket-theme.json',			
-					'import_preview_image_url'   => get_template_directory_uri() .'/admin/screens/images/demo9_preview.jpg',
-					'import_notice' => $remarketnotice,
-					'preview_url' => 'https://remarket.wpsoul.com/',
+					'import_file_url' => esc_url($lb_verify_res["data"]["themes"]["ReMart"]["content"]),
+					'import_widget_file_url' => esc_url($lb_verify_res["data"]["themes"]["ReMart"]["widgets"]),
+					'local_import_theme_file' => get_template_directory() . '/admin/demo/remart-theme.json',			
+					'import_preview_image_url'   => get_template_directory_uri() .'/admin/screens/images/demo20_preview.jpg',
+					'import_notice' => $remartnotice,
+					'preview_url' => 'https://remart.lookmetrics.co/',
 				),
 				array(
 					'import_file_name' => 'ReCart',
@@ -615,7 +624,17 @@ function rehub_import_files() {
 					'import_preview_image_url'   => get_template_directory_uri() .'/admin/screens/images/demo16_preview.jpg',
 					'import_notice' => $reviewitnotice,
 					'preview_url' => 'https://reviewit.wpsoul.net/',
-				),					
+				),	
+				array(
+					'import_file_name' => 'ReMarket',
+					'categories' => array( esc_html__( 'Multi vendor', 'rehub-theme' ) ),
+					'import_file_url' => esc_url($lb_verify_res["data"]["themes"]["ReMarket"]["content"]),
+					'import_widget_file_url' => esc_url($lb_verify_res["data"]["themes"]["ReMarket"]["widgets"]),
+					'local_import_theme_file' => get_template_directory() . '/admin/demo/remarket-theme.json',			
+					'import_preview_image_url'   => get_template_directory_uri() .'/admin/screens/images/demo9_preview.jpg',
+					'import_notice' => $remarketnotice,
+					'preview_url' => 'https://remarket.wpsoul.com/',
+				),				
 			);	
 		}		
 	}
@@ -640,7 +659,7 @@ function rehub_after_import_setup( $current_import ) {
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'ReViewit' :
-			$front_page = get_page_by_title( 'Homepage Reviewit' );
+			$front_page = get_page_by_title( 'Greenshift Reviewit Homepage' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break; 	
 		case 'ReGame' :
@@ -718,7 +737,11 @@ function rehub_after_import_setup( $current_import ) {
 			$top_menu = get_term_by( 'slug', 'top-menu', 'nav_menu' );		
 			break;
 		case 'ReCart':
-			$front_page = get_page_by_title( 'Homepage Recart' );
+			$front_page = get_page_by_title( 'Homepage Greenshift' );
+			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
+			break;	
+		case 'ReMart':
+			$front_page = get_page_by_title( 'Homepage Greenshift' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;	
 		case 'ReTour':
@@ -727,7 +750,7 @@ function rehub_after_import_setup( $current_import ) {
 			break;							
 			
 		case 'ReCompare':
-			$front_page = get_page_by_title( 'Homepage Recompare' );
+			$front_page = get_page_by_title( 'Greenshift Homepage' );
 			$blog_page = get_page_by_title( 'News and reviews' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break;

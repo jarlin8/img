@@ -60,17 +60,6 @@ class Widget_Wpsm_Post_Featured_Section extends WPSM_Content_Widget_Base {
     }
 
     protected function control_fields() {
-        $this->add_control( 'feat_type', [
-            'type'        => \Elementor\Controls_Manager::SELECT,
-            'label'       => esc_html__( 'Type of area', 'rehub-theme' ),
-            'description' => esc_html__('Featured area works only in full width row', 'rehub-theme'),
-            'default'     => '3',
-            'options'     => [
-                '2'             => esc_html__( 'Featured full width slider', 'rehub-theme' ),
-                '3'             => esc_html__( 'Featured grid', 'rehub-theme' ),
-            ],
-            'label_block' => true,
-        ]);
 
         $this->add_control( 'show_featured_products', [
             'type'        => \Elementor\Controls_Manager::SWITCHER,
@@ -136,4 +125,4 @@ class Widget_Wpsm_Post_Featured_Section extends WPSM_Content_Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_Post_Featured_Section );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_Post_Featured_Section );

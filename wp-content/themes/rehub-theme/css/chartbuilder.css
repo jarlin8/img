@@ -19,7 +19,7 @@
 .table_view_charts li.heading_row_chart { font-weight: bold; font-size: 15px; line-height: 18px; background-color: #fff !important; border-right-color: #fff !important;border-left-color: #fff !important; padding: 17px 0 17px 4px}
 .table_view_charts .top_chart_item li{text-align: center;}
 .table_view_charts .top_chart_item li.meta_value_left{text-align: inherit;}
-.table_view_charts .top_chart_item figure{height: auto; margin: 0 auto; text-align: center; width: auto; padding: 0; height: 150px}
+.table_view_charts .top_chart_item figure{height: auto; margin: 0 auto; text-align: center; width: auto; padding: 0; height: 150px;align-items: center; display: flex}
 .table_view_charts .top_chart_item figure a{width: auto; height: auto; display: block; border:none;}
 .table_view_charts .top_chart_item figure > a img{ height:auto; width: auto; max-height: 150px; max-width: 100%; border: none; vertical-align: middle; padding: 0}
 .table_view_charts .top_chart_item .star { margin: 0 auto !important}

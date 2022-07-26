@@ -6,7 +6,7 @@ global $post;
 $taxonomy = rh_get_taxonomy_of_post( $post );
 $categories = get_the_terms( $post->ID, $taxonomy );
 $catname = '';
-if( !is_wp_error($categories)){
+if( !is_wp_error($categories) && is_array($categories)){
     $category = $categories[0];
     $catname = $category->name;
 }

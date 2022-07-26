@@ -578,7 +578,6 @@ function rh_bp_get_theme_package_id( $theme_id ){
     return $theme_id = 'legacy';
 }
 add_filter( 'bp_get_theme_package_id', 'rh_bp_get_theme_package_id' );
-
 add_filter('register_setting_args', 'rh_bp_change_theme_package', 10, 4);
 function rh_bp_change_theme_package( $args, $defaults, $option_group, $option_name ){
     global $wp_settings_fields;
@@ -590,7 +589,6 @@ function rh_bp_change_theme_package( $args, $defaults, $option_group, $option_na
     if( false == $legacy || 'nouveau' == $legacy ){
         update_option( '_bp_theme_package_id', 'legacy', 'yes' );
     }
-
     return $args;
 }
 

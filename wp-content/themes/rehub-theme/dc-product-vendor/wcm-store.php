@@ -193,12 +193,16 @@ $widget_args = array( 'before_widget' => '<div class="rh-cartbox widget"><div>',
 						?>						
 						<?php 
 						$current_design = rehub_option('woo_design');
-						if ($current_design == 'grid') {
+						if ($current_design == 'grid' || $current_design == 'gridmart') {
 							$classes[] = 'rh-flex-eq-height grid_woo';
 						}
 						elseif ($current_design == 'gridtwo'){
 							echo rh_generate_incss('offergrid');
 						    $classes[] = 'eq_grid pt5 rh-flex-eq-height';
+						}
+						elseif ($current_design == 'gridmart'){
+							echo rh_generate_incss('gridmart');
+							$classes[] = 'grid_mart rh-flex-eq-height';
 						}
 						elseif ($current_design == 'gridrev' || $current_design == 'griddigi') {
 							$classes[] = 'rh-flex-eq-height woogridrev';
@@ -234,6 +238,9 @@ $widget_args = array( 'before_widget' => '<div class="rh-cartbox widget"><div>',
 								}
 								elseif ($current_design == 'grid'){
 								    include(rh_locate_template('inc/parts/woogridpart.php'));
+								}
+								elseif ($current_design == 'gridmart'){
+								    include(rh_locate_template('inc/parts/woogridmart.php'));
 								}
 								elseif ($current_design == 'gridrev'){
     								include(rh_locate_template('inc/parts/woogridrev.php'));

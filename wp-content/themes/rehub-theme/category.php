@@ -56,7 +56,7 @@ $cat_filter_panel = rehub_option('category_filter_panel');
 <div class="rh-container"> 
     <div class="rh-content-wrap clearfix">
         <!-- Main Side -->
-        <div class="main-side clearfix<?php if ($archive_layout == 'gridfull' || $archive_layout == 'dealgridfull' || $archive_layout == 'compactgridfull' || $archive_layout == 'columngridfull' || $archive_layout == 'cardblogfull') : ?> full_width<?php endif ;?>">
+        <div class="main-side clearfix<?php if ($archive_layout == 'gridfull' || $archive_layout == 'mobilegridfull' || $archive_layout == 'dealgridfull' || $archive_layout == 'compactgridfull' || $archive_layout == 'columngridfull' || $archive_layout == 'cardblogfull') : ?> full_width<?php endif ;?>">
             <div class="wpsm-title position-relative flowhidden mb25 middle-size-title wpsm-cat-title"><div class="font140 fontbold rehub-main-font"><?php single_cat_title(); ?></div></div>
             <?php if( !is_paged()) : ?><article class='top_rating_text post mb15'><?php echo category_description(); ?></article><?php endif ;?>
 
@@ -276,7 +276,7 @@ $cat_filter_panel = rehub_option('category_filter_panel');
 
         </div>  
         <!-- /Main Side -->
-        <?php if ($archive_layout == 'gridfull' || $archive_layout == 'dealgridfull' || $archive_layout == 'compactgridfull' || $archive_layout == 'columngridfull' || $archive_layout == 'cardblogfull') : ?>
+        <?php if ($archive_layout == 'gridfull' || $archive_layout == 'dealgridfull' || $archive_layout == 'compactgridfull' || $archive_layout == 'columngridfull' || $archive_layout == 'cardblogfull' || $archive_layout == 'mobilegridfull') : ?>
         <?php else:?>
             <!-- Sidebar -->
             <?php get_sidebar(); ?>

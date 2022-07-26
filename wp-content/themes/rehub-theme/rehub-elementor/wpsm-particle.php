@@ -138,4 +138,4 @@ class WPSM_Particle_Widget extends Widget_Base {
 
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_Particle_Widget );
+Plugin::instance()->widgets_manager->register( new WPSM_Particle_Widget );

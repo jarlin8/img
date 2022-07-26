@@ -245,4 +245,4 @@ class Widget_Reviewbox extends Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Reviewbox );
+Plugin::instance()->widgets_manager->register( new Widget_Reviewbox );

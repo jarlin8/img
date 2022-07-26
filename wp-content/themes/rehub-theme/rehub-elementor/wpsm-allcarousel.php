@@ -358,4 +358,4 @@ class Widget_Wpsm_All_Carousel extends Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_All_Carousel );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_All_Carousel );

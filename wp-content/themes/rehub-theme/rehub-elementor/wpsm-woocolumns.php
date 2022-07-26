@@ -107,4 +107,4 @@ class Widget_Wpsm_Woo_Products_Columns extends WPSM_Widget_Base {
     }
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new Widget_Wpsm_Woo_Products_Columns );
+Plugin::instance()->widgets_manager->register( new Widget_Wpsm_Woo_Products_Columns );

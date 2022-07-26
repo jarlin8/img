@@ -222,7 +222,7 @@ $active_short_description = is_active_widget( '', '', 'wcv_store_short_descripti
 					?>	
 					<?php $current_design = rehub_option('woo_design');?>				
 					<?php if ($current_design == 'grid') {
-						$classes[] = 'rh-flex-eq-height grid_woo';
+						$classes[] = 'rh-flex-eq-height';
 					}
 					elseif ($current_design == 'list' || $current_design == 'deallist') {
 						$classes[] = 'list_woo';
@@ -233,6 +233,10 @@ $active_short_description = is_active_widget( '', '', 'wcv_store_short_descripti
 					elseif ($current_design == 'gridtwo'){
 						echo rh_generate_incss('offergrid');
 					    $classes[] = 'eq_grid pt5 rh-flex-eq-height';
+					}
+					elseif ($current_design == 'gridmart'){
+						echo rh_generate_incss('gridmart');
+					    $classes[] = 'grid_mart rh-flex-eq-height';
 					}
 					elseif ($current_design == 'gridrev' || $current_design == 'griddigi') {
 						$classes[] = 'rh-flex-eq-height woogridrev';
@@ -256,6 +260,9 @@ $active_short_description = is_active_widget( '', '', 'wcv_store_short_descripti
 							}
 							elseif ($current_design == 'grid'){
 							    include(rh_locate_template('inc/parts/woogridpart.php'));
+							}
+							elseif ($current_design == 'gridmart'){
+							    include(rh_locate_template('inc/parts/woogridmart.php'));
 							}
 							elseif ($current_design == 'deallist'){
 							    include(rh_locate_template('inc/parts/woolistpart.php'));

@@ -36,7 +36,7 @@
 .re-ajax-search.searching-now{position:relative;}
 .re-ajax-search.searching-now {animation: colorsearchchange 1.2s ease-in infinite;}
 @media only screen and (max-width: 479px) {
-	.custom_search_box.flat_style_form button[type="submit"]{padding: 15px; width: 100%; display: block; position: static; margin: 6px 0}
+	.custom_search_box.flat_style_form button[type="submit"]{padding: 15px !important; width: 100%; display: block; position: static; margin: 6px 0; height: auto;}
 	.custom_search_box.flat_style_form input[type="text"]{padding: 0 20px; text-align: center;}
 }
 

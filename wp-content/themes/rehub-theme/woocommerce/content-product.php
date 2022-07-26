@@ -58,6 +58,9 @@ if ($current_design == 'list'){
 elseif ($current_design == 'grid'){
     include(rh_locate_template('inc/parts/woogridpart.php'));
 }
+elseif ($current_design == 'gridmart'){
+    include(rh_locate_template('inc/parts/woogridmart.php'));
+}
 elseif ($current_design == 'deallist'){
     include(rh_locate_template('inc/parts/woolistpart.php'));
 }

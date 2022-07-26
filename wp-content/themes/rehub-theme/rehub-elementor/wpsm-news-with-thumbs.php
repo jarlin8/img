@@ -111,4 +111,4 @@ class WPSM_News_With_Thumbs_Widget extends WPSM_Content_Widget_Base{
 
 }
 
-Plugin::instance()->widgets_manager->register_widget_type( new WPSM_News_With_Thumbs_Widget );
+Plugin::instance()->widgets_manager->register( new WPSM_News_With_Thumbs_Widget );

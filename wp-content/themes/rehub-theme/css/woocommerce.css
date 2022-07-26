@@ -118,7 +118,7 @@ p.demo_store { position: fixed; top: 0; left: 0; right: 0; margin: 0; width: 100
 .woocommerce .products .woo_grid_compact .woo_loop_btn.loading:before{border-radius: 100px}
 .woo_grid_compact figure:not(.notresized) img{ height: 180px; }
 .woo_grid_compact a.woocat {color: #555;text-transform: uppercase;font-size: 11px;}
-.woocommerce .products .product.woo_grid_compact .price del{display: block; font-weight: normal;}
+.woocommerce .products .product.woo_grid_compact .price del, .woo_mart .price del{display: block; font-weight: normal;}
 .woo_compact_grid .heartplus span, .woo_compact_grid .btn_act_for_grid .thumbscount:before, .woocommerce .products .product.woo_compact_grid .price del{display: none;}
 .woo_compact_grid .btn_act_for_grid .thumbscount{margin: 0 4px; font-size: 90%}
 .woocommerce .woo_compact_grid .rh_woo_star{font-size: 18px;}
@@ -202,7 +202,7 @@ td.product-quantity .quantity label{display: none;}
 .woocommerce form .form-row-last { float: right; }
 .woocommerce form .form-row-wide{ clear: both; }
 .form-row-wide label{display: block}.form-row-wide input[type="text"], .form-row-wide textarea, .form-row-wide select{width: 100%}
-.woocommerce ul#shipping_method { list-style: none outside; margin: 0; padding: 0; }
+.woocommerce ul#shipping_method { list-style: none outside; margin: 0; padding: 0;word-break: break-word; }
 .woocommerce ul#shipping_method .amount { font-weight: bold; }
 .woocommerce .comment-notes, .woocommerce-password-strength, .woocommerce-password-hint{color: #999; font-size: 85%; line-height: 20px;}
 .woocommerce-password-strength.bad, .woocommerce-password-strength.short{color: #cc0000}
@@ -237,7 +237,7 @@ td.product-quantity .quantity label{display: none;}
 .woocommerce .widget_shopping_cart .buttons:after{ content: ""; display: block; clear: both; }
 .widget_shopping_cart .remove{ float: right; color: #cc0000 !important; font-size: 22px !important}
 .widget_product_categories{padding-bottom: 4px}
-.cart_list.product_list_widget {overflow-y: auto;-webkit-overflow-scrolling: touch;max-height: 500px;}
+.cart_list.product_list_widget {overflow-y: auto;-webkit-overflow-scrolling: touch;}
 .woocommerce ul.product_list_widget{ list-style: none outside; padding: 0; margin: 0; }
 .woocommerce ul.product_list_widget li:after{ content: ""; display: block; clear: both; }
 .woocommerce ul.product_list_widget li { margin: 0 0 20px 0; list-style: none; border-bottom: 1px solid #ddd; padding-bottom:20px; }

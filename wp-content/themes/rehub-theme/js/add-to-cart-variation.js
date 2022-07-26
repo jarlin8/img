@@ -9,6 +9,7 @@ jQuery( function( $ ) {
 	$( document ).on( 'click', '.variations_form .single_add_to_cart_button', function(e) {
 		
 		e.preventDefault();
+		e.stopPropagation();
 		
 		$variation_form = $( this ).closest( '.variations_form' );
 		var var_id = $variation_form.find( 'input[name=variation_id]' ).val();
@@ -119,6 +120,16 @@ jQuery( function( $ ) {
 			return true;
 		}
 
+	});
+
+	$( document ).on( 'click', '.pgwpopuptrigger', function(e) {
+		let idpopup = $(this).data('popup');
+		$.pgwModal({
+            titleBar: false,
+            maxWidth: 600,
+            target: "#"+idpopup,
+            mainClassName : "pgwModal grid_mart woocommerce variation-sale-popup",
+        }); 
 	});
 
 });

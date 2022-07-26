@@ -4,11 +4,11 @@
 	Description: A Hybrid magazine/shop/review/news Wordpress Theme
 	Author: Wpsoul
 	Author URI: https://wpsoul.com/
-	Secret Key: 79ec684eb95bbd822fa1b06b7a2631b5
-	Version: 17.8
+	Secret Key: 83a5bb0e2ad5164690bc7a42ae592cf5
+	Version: 18.0
 	Tags: two-columns, fluid-layout, custom-background, threaded-comments, translation-ready, custom-menu
-	License: 
-	License URI:
+	License: Babiato
+	License URI: Babiato.co
 	Text Domain: rehub-theme
 ***************************************/
 
@@ -458,7 +458,7 @@ ul.page-numbers li span.current, ul.page-numbers li a:hover, ul.page-numbers li.
 .def_btn.active_ajax_pagination:before{ font-weight: normal; display: inline-block; font-size:17px; content: "\f021"; animation: fa-spin 1s linear infinite; margin-right: 5px }
 .no_more_posts{text-align: center; clear: both; display: block;margin: 20px 0;width: 100%;flex-basis: 100%;}
 .post-meta { margin-bottom: 12px; font-size: 12px; line-height: 12px; font-style: italic; color: #999;}
-span.date_meta:before, span.cat_link_meta:before, span.comm_count_meta:before, span.postview_meta:before, span.admin_meta:before{ font-size: 3px;line-height: 12px;vertical-align: middle; padding-right: 5px; content: "\f2f7"; font-style:normal;color: #f9cc50;}
+span.date_meta:before, span.cat_link_meta:before, span.comm_count_meta:before, span.postview_meta:before, span.admin_meta:before{ font-size: 3px;line-height: 12px;vertical-align: middle; padding-right: 5px; content: "\f111"; font-style:normal;}
 .admin_meta .admin img{vertical-align: middle; margin-right: 5px; border-radius: 50%}
 span.postview_meta:before{content: "\f06e"; font-size: 12px; }
 span.comm_count_meta:before{content: "\f4ad"; font-size: 12px;}
@@ -744,6 +744,7 @@ pre.wp-block-verse, .wp-block-verse pre {color: #191e23;white-space: nowrap;font
 .wp-block-pullquote p{line-height: 36px; font-style: italic;}
 .wp-block-pullquote.alignleft p, .wp-block-pullquote.alignright p {line-height: 24px;}
 .wp-block-image .alignleft{margin-right: 2em}.wp-block-image .alignright{margin-left: 2em }
+.wp-block-image.aligncenter{width: 100%}
 .wp-block-buttons .wp-block-button.full_width{display:block}
 .loading .re-icon-compare:before, .loading.table_view_charts:before, .post_carousel_block.loading:before, .woo_carousel_block.loading:before{content: "\f021" !important;display: inline-block; animation: fa-spin 1s linear infinite;}
 .wp-block-query ul li{list-style: none; margin: inherit}
@@ -859,7 +860,7 @@ ul.rh-big-tabs-ul .rh-big-tabs-li.active a{color: #111;font-weight: bold;}
 .rh-float-panel{transform: translateY(-100%);opacity: 0;visibility: hidden;transition: all 0.5s ease;position: fixed;left: 0; top: 0; z-index: 100000;background: rgba(255, 255, 255, 0.97);box-shadow: 0 0 20px rgb(187 187 187 / 36%);width: 100%;}
 .darkbg.rh-float-panel{box-shadow: 0 0 20px #000;}
 .rh-float-panel.floating{opacity:1; visibility:visible;transform: translateY(0) !important; }
-.float-panel-woo-image img{max-height:50px; /*width:auto*/}
+.float-panel-woo-image img{max-height:50px; width:auto}
 .rh_deal_block .not_masked_coupon i, .rh-float-panel .not_masked_coupon{display: none !important;}
 .width-250{width: 250px}.width-100{width: 100px}.width-80{width: 80px}.width-150{width: 150px}.width-125{width: 125px}.width-200{width: 200px}.width-300{width: 300px}.width-100p{width: 100%}
 .width-100-calc{width: calc(100% - 100px);}.width-80-calc{width: calc(100% - 80px);}
@@ -955,8 +956,8 @@ ul.hidden-links li{float: left;}.zind2{z-index: 2;}.zind1{z-index: 1;}
 
 /* BADGES*/
 .re-line-badge {color: #fff; padding: 5px 10px; background: #77B21D; text-shadow: 0 1px 0 #999; font-weight:bold; font-size: 10px; line-height:14px; position: relative; text-transform: uppercase; display: inline-block; z-index: 9}
-.re-line-badge span:before{content: "★"; margin-right: 4px; font-size: 95%}
-.re-line-badge span:after{content: "★"; margin-left: 4px; font-size: 95%}
+.re-line-badge span:before{content: "?"; margin-right: 4px; font-size: 95%}
+.re-line-badge span:after{content: "?"; margin-left: 4px; font-size: 95%}
 .re-line-badge.re-line-badge--default{font-size:11px;line-height:1;text-shadow:none}.re-line-badge.re-line-badge--default span:after,.re-line-badge.re-line-badge--default span:before{display:none}
 .re-line-badge.re-line-table-badge span:before { width: 0; height: 0; border-style: solid; border-width: 0 8px 8px 0; border-color: transparent #333 transparent transparent; position: absolute; left: 0; top: 100%; content: ""; margin: 0 }
 .re-line-badge.re-line-table-badge:before {width: 0;height: 0;border-style: solid;border-width: 14px 15px 0 0;border-color: #77B21D transparent transparent transparent;position: absolute;left: 100%;top: 0;content: "";}
@@ -1030,7 +1031,7 @@ ul.hidden-links li{float: left;}.zind2{z-index: 2;}.zind1{z-index: 1;}
 .dealScoreWrap .thumbplus, .dealScoreWrap .thumbminus{height: 32px; width: 32px; line-height: 32px; background-color: #fff}
 .coupon_code_in_modal .table_cell_thumbs{display: inline-block; float: none;}
 .hoticonfireclass:before{ content: "\f06d"; margin-right: 5px; color: #CA212A; }
-.gradus_icon:before{vertical-align:top; content: "°"; margin: 0 2px; }
+.gradus_icon:before{vertical-align:top; content: "�"; margin: 0 2px; }
 .cold_temp .gradus_icon:before{content: "\f2dc";font-size: 80%}
 .favorshop_like i{margin: 0 !important; padding: 0 !important;}
 .favorrightside .heart_thumb_wrap{position: absolute; top: 5px; right: 3px;}
@@ -1044,27 +1045,6 @@ ul.hidden-links li{float: left;}.zind2{z-index: 2;}.zind1{z-index: 1;}
 .favour_btn_red .heart_thumb_wrap .thumbscount{position: absolute;top: -5px;right: -10px;border-radius: 10px;display: inline-block;font-size: 9px;line-height: 16px;padding: 0 6px;text-align: center;vertical-align: middle;background: #fff; color: #cc0000}
 .post-meta-left .favour_btn_red .heart_thumb_wrap{display: block;}
 .post-meta-left .favour_in_row{margin: 0 0 10px 0; display: block; width: 100%}
-
-
-/* ELEMENTOR */
-.elementor-widget-container .woocommerce .products, .elementor-widget-container .post_carousel_block, .elementor-widget-container .woo_carousel_block, .elementor-widget-container .wpsm_featured_wrap, .elementor-widget-container .news_block, .elementor-widget-container .news_two_col_block, .elementor-widget-container .top_theme, .elementor-widget-container .countdown_dashboard, .elementor-widget-container .gridcountdown .countdown_dashboard, .elementor-widget-container .wpsm_box, .elementor-widget-container .wpsm-titlebox, .elementor-widget-container .wpsm-banner-wrapper, .elementor-widget-container .elementor-widget-wpsm_versus{margin-bottom: 0; margin-top: 0}
-.elementor-widget-container .custom_search_box{padding: 0}
-.elementor-widget.elementor-widget-wpsm_TabsEvery{margin-bottom: 12px}
-.elementor a.rh-cartbox{box-shadow: rgba(0,0,0,0.15) 0px 1px 2px;}
-.rh-elementor-sticky-true>.elementor-container>.elementor-column{align-self: flex-start; padding-top: 0px}
-.rh-parallax-bg-true, .rh-main-bg-hover .elementor-widget-container a{transition: opacity 0.8s linear !important}
-.elementor-widget-heading b, .elementor-widget-text-editor b{font-weight: bold;}
-.elementor-editor-active .prehidden, .elementor-editor-preview .prehidden{opacity:1; visibility: visible;}
-@media (min-width: 768px){
-	body .elementor-column.el-col250{width: 250px}
-	body .elementor-column.el-calc250{width: calc(100% - 250px);}
-	body .elementor-column.el-col300{width: 300px}
-	body .elementor-column.el-calc300{width: calc(100% - 300px);}
-	body .elementor-column.el-col336{width: 336px}
-	body .elementor-column.el-calc336{width: calc(100% - 336px);}	
-}
-.particles-js-canvas-el{position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0}
-.rh-gsap-wrap, .rh-prlx-mouse, .rhforce3d{perspective: 500px}
 
 /* POST REVIEW BLOCK */
 .rate-bar { position: relative; display: block; margin-bottom: 34px; width: 100%; background: #ddd; height: 14px; transition: 0.4s linear; transition-property: width, background-color; }
@@ -1121,8 +1101,8 @@ span.stars-rate{font-size: 17px;height: 21px !important;line-height: 21px;overfl
 span.stars-rate:before {content: '\e9d7\e9d7\e9d7\e9d7\e9d7';color: #ccc; font-weight: 300}
 span.stars-rate span {overflow: hidden;float: left;top: 0;left: 0;position: absolute;padding-top: 1.5em;background: none transparent !important}
 span.stars-rate span:before {content: "\e9d9\e9d9\e9d9\e9d9\e9d9";top: 0;position: absolute;left: 0;color: #F6A123;}
-span.stars-rate.unix-star:before {content: '★★★★★';}
-span.stars-rate.unix-star span:before {content: "★★★★★";}
+span.stars-rate.unix-star:before {content: '?????';}
+span.stars-rate.unix-star span:before {content: "?????";}
 span.stars-rate.blue-star span:before{color: #ff9800}
 .user-rate { float: right; width: 105px;overflow: hidden; }
 .rh-star-ajax .stars-rate-ajax-type{font-size: 17px;height: 21px !important;line-height: 21px;width: 105px;overflow: hidden;font-weight: normal;text-align: left; background: none transparent !important;text-rendering: auto;-webkit-font-smoothing: antialiased; white-space: nowrap;}
@@ -1386,7 +1366,7 @@ body.pgwModalOpen .rh-container, body.pgwModalOpen #main_header {-webkit-filter:
 .no_padding_wrap .col_wrap_fifth .col_item{width: 20%}
 .no_padding_wrap .col_wrap_six .col_item{width: 16.66%}
 @media (max-width: 1023px) and (min-width: 768px) {
-.col_wrap_fourth, .col_wrap_fifth, .col_wrap_six{margin: 0 -1.5% 20px; overflow: hidden;}
+.col_wrap_fourth, .col_wrap_fifth, .col_wrap_six{margin: 0 -1.5% 20px;}
 .col_wrap_fourth .col_item, .col_wrap_fifth .col_item, .col_wrap_six .col_item {width: 30.33%; margin: 0 1.5% 15px; float: left;}
 .no_padding_wrap .col_wrap_fourth .col_item, .no_padding_wrap .col_wrap_fifth .col_item, .no_padding_wrap .col_wrap_six .col_item{width: 33%; margin: 0}
 .col_wrap_fourth .col_item:nth-child(3n+1), .col_wrap_fifth .col_item:nth-child(3n+1), .col_wrap_six .col_item:nth-child(3n+1){ clear: both;}
@@ -1527,3 +1507,5 @@ body .wpsm-table.wpsm-table-grey table tr th, .table-condensed tr th, .wp-block-
 	.post .rehub_woo_tabs_menu li{ border:1px solid #cecece; margin-bottom: 4px;}
 	.post .rehub_woo_tabs_menu li.current{ border-bottom:1px solid #cecece; background-color:#111; color:#fff;}
 }
+/* Anti-Leecher Indentifier */
+/* Credited By BABIATO-FORUM */

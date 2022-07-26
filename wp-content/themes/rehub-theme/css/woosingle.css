@@ -119,10 +119,11 @@ form.cart div.quantity .screen-reader-text{display: none;}
 .woocommerce div.product form.cart table div.quantity{ float: none; margin: 0; }
 .woocommerce div.product form.cart table small.stock { display: block; float: none; }
 .woocommerce div.product form.cart .variations{margin: 2em 0 1em 0; }
-.woocommerce div.product form.cart .variations .label label{ font-weight: bold; }
-.woocommerce div.product form.cart .variations select{float: left; margin: 0 15px 10px 0; border:none; border-bottom:1px solid #cdcdcd;  }
+.woocommerce div.product form.cart .variations select{float: left; margin: 0 15px 10px 0; border:none; border-bottom:1px solid #cdcdcd;font-size: 15px;-webkit-appearance: none;appearance: none;background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Ctitle%3Edown-arrow%3C%2Ftitle%3E%3Cg%20fill%3D%22%23000000%22%3E%3Cpath%20d%3D%22M10.293%2C3.293%2C6%2C7.586%2C1.707%2C3.293A1%2C1%2C0%2C0%2C0%2C.293%2C4.707l5%2C5a1%2C1%2C0%2C0%2C0%2C1.414%2C0l5-5a1%2C1%2C0%2C1%2C0-1.414-1.414Z%22%20fill%3D%22%23000000%22%3E%3C%2Fpath%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+	background-size: .6em;background-position: 100% center;background-repeat: no-repeat; background-color:transparent; padding: 10px 15px 10px 10px  }
 .full_width .re_wooinner_cta_wrapper form.cart .variations select{width: 100%}
-.woocommerce div.product form.cart .variations .label{ padding: 5px 15px 10px 0; min-width:70px;text-align: inherit;background: none transparent;}
+.woocommerce div.product form.cart .variations .label{ padding: 5px 15px 10px 0; min-width:70px;text-align: left;background: none transparent;}
+.rtl .woocommerce div.product form.cart .variations .label{text-align: right}
 .woocommerce div.product form.cart .variations td{ vertical-align: top; }
 .woocommerce div.product .woocommerce-variation-price .price {font-size: 1.2em;}
 .woocommerce div.product .single_add_to_cart_button, .woocommerce div.product .woo-button-area .masked_coupon {display: inline-block; vertical-align: middle; cursor: pointer; font-weight: 700; font-size: 17px; line-height: 17px; text-align: center; transition: all 0.4s ease 0s !important; padding: 15px 20px; border: none !important; text-transform: uppercase; position: relative; text-shadow: none!important; width: 100%;  }

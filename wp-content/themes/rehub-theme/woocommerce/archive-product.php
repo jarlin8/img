@@ -13,7 +13,6 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 get_header(); 
-wp_enqueue_style('rhniceselect');
 wp_enqueue_script('rhniceselect'); 
 ?>
 <?php $left_sidebar = (rehub_option('rehub_sidebar_left_shop')) ? true : false;?>
@@ -54,6 +53,7 @@ wp_enqueue_script('rhniceselect');
 }  ?>
 <div class="rh-container rh_woo_main_archive"> 
     <div class="rh-content-wrap clearfix <?php if($left_sidebar):?>left-sidebar-archive<?php endif;?>"<?php if($mobile_sidebar){echo ' id="rh_woo_mbl_sidebar"';}?>>
+        <?php echo rh_generate_incss('niceselect');?>
         
         <?php if($left_sidebar && rehub_option('woo_columns') !='4_col'):?>
             <!-- Sidebar -->
@@ -63,7 +63,7 @@ wp_enqueue_script('rhniceselect');
         <?php endif;?>
                  
         <!-- Main Side -->
-        <div class="main-side woocommerce page clearfix<?php if(rehub_option('woo_columns') =='4_col') {echo ' full_width';}?>" id="content">
+        <div class="main-side woocommerce page<?php if(rehub_option('woo_columns') =='4_col') {echo ' full_width';}?>" id="content">
             <article class="post" id="page-<?php the_ID(); ?>">
                 <?php echo rh_generate_incss('woobreadcrumbs');?>
                 <?php do_action( 'woocommerce_before_main_content' );?>

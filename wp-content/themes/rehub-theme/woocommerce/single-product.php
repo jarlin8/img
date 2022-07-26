@@ -86,6 +86,8 @@ get_header(); ?>
     <?php include(rh_locate_template('inc/product_layout/woo_directory.php')); ?>   
 <?php elseif($rh_product_layout_style == 'darkwoo') : ?>
     <?php include(rh_locate_template('inc/product_layout/darkwoo.php')); ?>     
+<?php elseif($rh_product_layout_style == 'marketplace') : ?>
+    <?php include(rh_locate_template('inc/product_layout/full_width_marketplace.php')); ?> 
 <?php elseif($rh_product_layout_style == 'woostack') : ?>
     <?php include(rh_locate_template('inc/product_layout/woostack.php')); ?>                              
 <?php else:?>

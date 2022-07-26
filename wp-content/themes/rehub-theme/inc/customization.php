@@ -189,7 +189,7 @@
 	<?php 
 		$sizearray = array_map( 'trim', explode( ":", rehub_option('body_font_size') ) );
 	?>
-	.post, body .post-readopt .post-inner, body .post-readopt:not(.main-side), body .post-readopt .post {
+	.post, body .post-readopt .post-inner, body .post-readopt:not(.main-side), body .post-readopt .post, .post p {
 		font-size:<?php echo intval($sizearray[0]);?>px;
 		line-height: <?php echo (!empty($sizearray[1])) ? intval($sizearray[1]) : intval($sizearray[0])+12;?>px;	
 	}
@@ -688,6 +688,11 @@ input[type="submit"].dokan-btn-theme:active, a.dokan-btn-theme:active, .dokan-bt
   	--rehub-main-color: <?php echo ''.$maincolor; ?>;
 	--rehub-sec-color: <?php echo ''.$secondarycolor; ?>;
 	--rehub-main-btn-bg: <?php echo ''.$btncolor; ?>;
+	<?php if (rehub_option('rehub_color_link')):?>
+		--rehub-link-color: <?php echo rehub_option('rehub_color_link');?>;
+	<?php elseif($maincolor):?>
+		--rehub-link-color: <?php echo ''.$maincolor;?>;
+	<?php endif; ?>
 }
 
 <?php if(rehub_option('width_layout') =='compact') : ?>
@@ -941,16 +946,16 @@ body.dark_body .products .button_action{background:transparent}
 body.dark_body .products .col_item{background: #2B2B2F !important;border: none;box-shadow: none;}
 <?php endif;?>
 
-<?php if(rehub_option('theme_subset') =='redeal') : ?>
+<?php $themesubset = rehub_option('theme_subset'); if($themesubset =='redeal') : ?>
 	.litesearchstyle form.search-form [type="submit"]{height:40px; line-height:40px; padding: 0 16px}
 	.litesearchstyle form.search-form input[type="text"]{padding-left:15px; height:40px}
 	header .search{max-width:500px; width:100% !important}
 	.header_six_style .head_search{min-width:300px}
 	.logo_section_wrap .wpsm-button.medium{padding:12px 16px; font-size:16px}
-<?php elseif(rehub_option('theme_subset') =='redirect') : ?>
+<?php elseif($themesubset =='redirect') : ?>
 	#main_header .rh-container{width: 100%; padding: 0 20px}
 	@media (max-width: 500px){#main_header .rh-container{width: 100%; padding: 0 12px}}
-<?php elseif(rehub_option('theme_subset') =='relearn') : ?>
+<?php elseif($themesubset =='relearn') : ?>
 	#main_header .rh-container{width: 100%; padding: 0 20px}
 	.logo-section form.search-form{max-width: 800px; margin-left:auto}
 	.logo-section form.search-form input[type=text], .logo-section .product-search-form .nice-select, .logo-section form.search-form [type=submit]{height:48px !important;}
@@ -969,7 +974,7 @@ body.dark_body .products .col_item{background: #2B2B2F !important;border: none;b
 	.tutor-col-4{position:sticky; top:70px}
 	.tutor-course-filter-wrapper>div:first-child h4{margin: 30px 0}
 	.tutor-course-filter-wrapper>div:first-child label{font-size:15px}
-<?php elseif(rehub_option('theme_subset') =='rething') : ?>
+<?php elseif($themesubset =='rething') : ?>
 	.rething_item a.cat {font: 12px Arial;text-transform: uppercase;color: #666 !important;text-decoration: none !important;}
 	.rething_item.small_post{ overflow: hidden; float: left;   padding: 0; text-align: center;}
 	.rething_item.small_post .cat_link_meta:before{ display: none;}
@@ -993,7 +998,7 @@ body.dark_body .products .col_item{background: #2B2B2F !important;border: none;b
 	.rething_item.small_post h2{ letter-spacing: 1px; margin-bottom: 15px}
 	.featured_mediad_wrap{ float: right; margin: 35px 0 15px 55px; width: 300px; height: 250px}
 	.rething_button .btn_more{background-color: transparent;display: inline-block; padding: 10px 22px;font-size: 13px;line-height: 1.33333;text-transform: uppercase; position: relative;  text-decoration: none !important;}
-<?php elseif(rehub_option('theme_subset') =='repick') : ?>
+<?php elseif($themesubset =='repick') : ?>
 	.filter_home_pick .re_filter_panel{box-shadow:none;}
 	.repick_item.small_post { padding: 0; overflow: visible;  }
 	.repick_item figure { min-height: 300px; overflow: hidden; text-align: center; }
@@ -1048,7 +1053,7 @@ body.dark_body .products .col_item{background: #2B2B2F !important;border: none;b
 		.repick_item figure{min-height: 250px}
 		.repick_item.centered_im_grid figure{ height: 250px}
 	}
-<?php elseif(rehub_option('theme_subset') =='recash') : ?>
+<?php elseif($themesubset =='recash') : ?>
 	.widget.tabs > ul{border: none;}
 	.widget.better_menu .bordered_menu_widget, .sidebar .widget.tabs, .widget.outer_widget{border: none; padding: 0; background-color: transparent; box-shadow: none;}
 	.postNavigation .postnavprev{ background-color: #868686}
@@ -1066,7 +1071,7 @@ body.dark_body .products .col_item{background: #2B2B2F !important;border: none;b
 	}
 	.widget.tabsajax .title:before{font-family: rhicons;content:"\e90d"; color:#fa9e19; margin-right:8px;}
 	body .sidebar .wpsm_recent_posts_list .item-small-news, body .elementor-widget-sidebar .wpsm_recent_posts_list .item-small-news {border-bottom: 1px solid #E4E4E4;padding: 10px 0;background: radial-gradient(ellipse at top, rgba(255,255,255,0.75), rgba(255,255,255,0) 75%);}
-<?php elseif (rehub_option('theme_subset') == 'regame'):?>
+<?php elseif ($themesubset == 'regame'):?>
 .logo-section .search-form{border:1px solid #fff}
 .logo-section .search form.search-form input[type="text"]{    background-color: transparent;border: none;color: #fff !important;}
 .logo-section .search form.search-form input[type="text"]::placeholder{color: #f1f1f1;}
@@ -1075,12 +1080,22 @@ body.dark_body .products .col_item{background: #2B2B2F !important;border: none;b
 .logo-section form.search-form [type="submit"] {position: static;background: transparent !important;}
 .heart_thumb_wrap .heartplus:before, .heart_thumb_wrap:hover .heartplus.alreadywish:not(.wishlisted):before, header .rhi-hearttip:before{content:"\e90a"}
 	.heart_thumb_wrap .heartplus.alreadywish:before{content:"\e9d2"}
-<?php elseif(rehub_option('theme_subset') =='redigit') : ?>
+<?php elseif($themesubset =='redigit') : ?>
 	form.search-form input[type=text], .product-search-form .nice-select, form.search-form [type=submit]{height:45px !important;}
 	form.search-form.product-search-form input[type=text]{padding:2px 20px;}
 	.product-search-form .nice-select, form.search-form [type=submit]{line-height:43px !important;}
 	.heart_thumb_wrap .heartplus:before, .heart_thumb_wrap:hover .heartplus.alreadywish:not(.wishlisted):before, header .rhi-hearttip:before{content:"\e90a"}
 	.heart_thumb_wrap .heartplus.alreadywish:before{content:"\e9d2"}
+<?php elseif($themesubset =='remart') : ?>
+	form.search-form input[type="text"], .product-search-form .nice-select{border-color:white}
+	form.search-form [type="submit"]{background:#F6F7F9 !important}
+	form.search-form [type="submit"] i{color:#111 !important}
+	.footer-bottom.white_style {border-top: 1px solid #f6f6f6;}
+	.footer_widget .widget .title, .footer_widget .widget h2{font-size: 16px}
+	.rehub_chimp_flat #mc_embed_signup input.email{border: 1px solid #f4f8fb;}
+	.rehub_chimp_flat #mc_embed_signup input#mc-embedded-subscribe{background: none #f5f7fa;color: #000 !important;font-weight: normal;font-size: 14px;}
+	.main-nav.white_style{border-bottom:none}
+
 <?php endif;?>
 
 
