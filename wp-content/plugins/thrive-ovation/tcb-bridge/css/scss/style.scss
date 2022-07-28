@@ -1,4 +1,4 @@
-@import "bourbon";
+
 @import "editor_to";
 @import url('//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,600');
 
@@ -57,14 +57,20 @@
   float: right;
 }
 
+#tvo-display-testimonials {
+  min-width: 770px;
+}
+
 #tvo-form-settings, #tvo-testimonial-templates, #tvo-display-testimonials {
   font-family: 'Source Sans Pro', sans-serif;
   max-height: 90%;
   top: 5% !important;
+
   .tvd-modal-content {
     box-sizing: border-box;
     padding: 30px;
   }
+
   .tvd-modal-close {
     background: #ccc;
     border-radius: 30px;
@@ -79,7 +85,7 @@
     width: 22px;
     z-index: 300000001;
   }
-  //sorry for this :(
+
   @media only screen and (min-width: 1080px) {
     min-width: 80%;
   }
@@ -93,6 +99,7 @@
     line-height: 1.5em;
     margin-bottom: 20px;
   }
+
   h5 {
     color: #333;
     font-weight: 400;
@@ -101,6 +108,7 @@
     margin-bottom: 20px;
     margin-top: 0;
   }
+
   .tve_lightbox_line {
     border: 0;
     background: #e8e8e8;
@@ -109,10 +117,12 @@
     margin: 20px -30px;
     padding: 0;
   }
+
   table {
     border: 0;
     border-collapse: separate;
     width: 100%;
+
     thead {
       th {
         border: 0;
@@ -122,16 +132,19 @@
         color: #333;
         font-weight: 600;
         padding: 20px;
+
         &:first-child {
           border-top-left-radius: 5px;
           border-left: 1px solid #ccc;
         }
+
         &:last-child {
           border-top-right-radius: 5px;
           border-right: 1px solid #ccc;
         }
       }
     }
+
     tfoot {
       td {
         border: 0;
@@ -141,16 +154,19 @@
         font-size: 16px;
         font-weight: 400;
         padding: 20px;
+
         &:first-child {
           border-bottom-left-radius: 5px;
           border-left: 1px solid #cccccc;
         }
+
         &:last-child {
           border-bottom-right-radius: 5px;
           border-right: 1px solid #cccccc;
         }
       }
     }
+
     thead + tbody {
       tr {
         &:first-child {
@@ -160,6 +176,7 @@
         }
       }
     }
+
     tbody {
       tr.tve_first_row {
         td {
@@ -168,6 +185,7 @@
               left: 0;
             }
           }
+
           &:last-child {
             &:after {
               right: 0;
@@ -175,20 +193,24 @@
           }
         }
       }
+
       tr {
         &:first-child {
           td {
             border-top: 1px solid #cccccc;
           }
         }
+
         &:last-child {
           td {
             border-bottom: 1px solid #ccc;
+
             &:after {
               display: none;
             }
           }
         }
+
         td {
           border: 0;
           background: #fff;
@@ -197,18 +219,23 @@
           font-size: 16px;
           padding: 20px;
           position: relative;
+
           &:first-child {
             border-left: 1px solid #ccc;
+
             &:after {
               left: 20px;
             }
           }
+
           &:last-child {
             border-right: 1px solid #ccc;
+
             &:after {
               right: 20px;
             }
           }
+
           &:after {
             background: #ccc;
             content: '';
@@ -223,6 +250,7 @@
       }
     }
   }
+
   .tve_lightbox_input, .tve_lightbox_textarea {
     box-shadow: 0 2px 7px 0 rgba(#000, .1) inset;
     border: 1px solid #ccc;
@@ -232,45 +260,55 @@
     font-size: 14px;
     outline: none;
     width: 100%;
+
     &::-webkit-input-placeholder {
       color: #333;
     }
+
     &:hover {
       box-shadow: none;
       border: 1px solid rgba(#6e9d43, .35);
       background: #f3f1f1;
     }
+
     &:active, &:focus {
       box-shadow: none;
       border: 1px solid #6e9d43;
       background: #fff;
     }
+
     &[readonly] {
       border: 1px solid #ccc;
     }
   }
+
   .tve_lightbox_input {
     line-height: 40px;
     padding: 0 10px;
   }
+
   .tve_lightbox_input_holder {
     display: inline-block;
     position: relative;
     padding: 5px 20px 5px 0;
+
     &.tve_lightbox_no_label {
       padding-right: 0;
     }
+
     input[type="checkbox"] {
       &:not(:checked),
       &:checked {
         position: absolute;
         visibility: hidden;
+
         + label {
           cursor: pointer;
           font-size: 16px;
           line-height: 20px;
           position: relative;
           padding-left: 35px;
+
           &:before {
             background-color: #fff;
             border: 1px solid #cccccc;
@@ -281,6 +319,7 @@
             top: 2px;
             width: 17px;
           }
+
           &:after {
             content: "\02713";
             color: #fff;
@@ -293,61 +332,48 @@
           }
         }
       }
+
       &:not(:checked) + label:after {
         opacity: 0;
       }
+
       &:checked + label:after {
         color: #686868;
       }
+
       &:checked + label:after {
         opacity: 1;
       }
     }
   }
+
   .tve_lightbox_select_holder {
-    box-shadow: 0 2px 7px 0 rgba(#000, .1) inset, 0 0 0 1px #ccc;
-    background: #fff;
-    min-width: 200px;
-    position: relative;
-    margin-bottom: 10px;
-    &:after {
-      background: #f5f5f5;
-      border-left: 1px solid #ccc;
-      color: #333333;
-      content: "\025BE";
-      font-size: 20px;
-      height: 40px;
-      line-height: 40px;
-      pointer-events: none;
-      position: absolute;
-      top: 0;
-      right: 0;
-      text-align: center;
-      width: 40px;
-    }
     select {
-      background-color: transparent;
-      border: 0;
-      color: #666;
-      cursor: pointer;
-      display: inline-block;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 15px;
-      font-weight: 400;
-      height: 40px;
-      margin: 0;
-      text-indent: 10px;
-      outline: none;
+      border: solid 1px #cdd3d8;
+      border-radius: 4px;
+      box-sizing: border-box;
+      color: #6d7882;
+      font-size: 13px;
+      height: 28px;
+      text-indent: 6px;
+      -moz-appearance: none;
+      -webkit-appearance: none;
       width: 100%;
-      &.tve_ctrl_error {
-        outline: 1px dotted red;
-      }
-      option {
-        background: #fff;
-        font-size: 15px;
-        font-weight: 400;
-      }
+      max-width: 100%;
+      transition: all .3s ease;
+      background: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512' fill='%236d7882' width='8px' height='13px'><path d='M441.9 167.3l-19.8-19.8c-4.7-4.7-12.3-4.7-17 0L224 328.2 42.9 147.5c-4.7-4.7-12.3-4.7-17 0L6.1 167.3c-4.7 4.7-4.7 12.3 0 17l209.4 209.4c4.7 4.7 12.3 4.7 17 0l209.4-209.4c4.7-4.7 4.7-12.3 0-17z'></path></svg>") no-repeat;
+      background-position: right 7px center;
+      appearance: none;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      padding-right: 20px;
+      background-color: #fff;
     }
+  }
+
+  .word_count_lightbox_holder {
+    min-width: 135px;
+    word-break: break-word;
   }
 
   .tve-button {
@@ -362,22 +388,28 @@
     text-align: center;
     text-transform: uppercase;
     transition: 0.3s;
+
     &:focus, &:active {
       outline: none;
     }
+
     &.grey {
       background-color: #6d7882;
     }
+
     &.lightgrey {
       background-color: #969fa6;
     }
+
     &.whitey {
       background-color: #f0f3f3;
       color: #6d7882;
     }
+
     &.blue {
       background-color: #1da5e5;
     }
+
     &.green {
       background-color: #52a13d;
     }
@@ -386,9 +418,11 @@
   .tve_left {
     float: left;
   }
+
   .tve_right {
     float: right;
   }
+
   .tve_overflow_y {
     max-height: 623px;
     margin-bottom: 20px;
@@ -396,13 +430,16 @@
     overflow-y: scroll;
     padding: 2px;
   }
+
   .tve_grid_cell, .tve_cloud_tpl_item {
     margin: 0 10px 20px 10px;
     display: inline-block;
     float: none;
   }
+
   .tve_landing_pages.tve_grid {
     margin: 0;
+
     .tve_grid_cell {
       box-shadow: 0 0 4px 0 rgba(#000, .38);
       box-sizing: border-box;
@@ -412,11 +449,13 @@
       margin-bottom: 25px;
       position: relative;
       padding: 6px 6px 3em;
+
       > img {
         display: block;
         width: 100%;
         height: auto;
       }
+
       .tve_cell_caption_holder {
         color: #333;
         display: block;
@@ -428,10 +467,12 @@
         line-height: 1.1em;
         font-size: 15px;
         text-align: center;
+
         .tve_cell_caption {
           display: block;
         }
       }
+
       > .tve_cell_check {
         border-radius: 50%;
         background: #a5c08b;
@@ -444,9 +485,11 @@
         bottom: -13px;
         width: 26px;
       }
+
       &.tve_cell_selected, &:hover {
         box-shadow: 0 0 0 2px #a5c08b inset;
       }
+
       &.tve_cell_selected {
         .tve_cell_check {
           display: block;
@@ -454,9 +497,11 @@
       }
     }
   }
+
   .tve_cloud_tpl_item {
     float: left;
     margin-bottom: 20px;
+
     .tve_grid_cell {
       display: block;
       float: none !important;
@@ -464,17 +509,21 @@
       width: 100%;
     }
   }
+
   .tve_cell_check {
     text-align: center;
   }
+
   .tve_scT {
     margin: 0;
   }
+
   .tve_scT {
     > ul {
       list-style-type: none;
       margin: 0 !important;
       padding: 0 !important;
+
       li {
         box-sizing: border-box;
         border-left: 0;
@@ -492,17 +541,21 @@
         text-transform: none;
         width: auto !important;
         z-index: 2;
+
         &:first-child {
           border-left: 1px solid #dbdbdb;
         }
+
         &:hover {
           cursor: pointer;
           padding-bottom: 15px !important;
         }
+
         &.tve_tS {
           background: #fff;
           margin-bottom: 0 !important;
           padding-bottom: 15px !important;
+
           &:before {
             background: #80a758;
             content: '';
@@ -513,12 +566,14 @@
             right: 0;
             top: 0;
           }
+
           span {
             color: #333333 !important;
           }
         }
       }
     }
+
     .tve_scTC {
       box-sizing: border-box;
       background: #fff;
@@ -552,6 +607,7 @@
 .tvo-showhide-fields {
   line-height: 29px;
   vertical-align: middle;
+
   label {
     display: inline-block;
   }
@@ -559,6 +615,7 @@
 
 .tvo-menu-relative {
   position: relative;
+
   .tvo_icon_box {
     position: relative;
     top: 1px;
@@ -580,13 +637,16 @@
   left: 0;
   min-width: 130px;
   z-index: 10000;
+
   &.tvo_fields_box {
     min-width: 140px;
   }
+
   .tvo_template_colors {
     margin-bottom: 0;
     width: 130px;
   }
+
   ul {
     margin: 0;
   }
@@ -615,18 +675,23 @@
   text-align: center;
   text-transform: uppercase;
   transition: 0.3s;
+
   &:focus, &:active {
     outline: none;
   }
+
   &.lightgrey {
     background-color: #969fa6;
   }
+
   &.blue {
     background-color: #1da5e5;
   }
+
   &.green {
     background-color: #52a13d;
   }
+
   &.red {
     background-color: #f72200;
   }

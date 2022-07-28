@@ -1027,4 +1027,8 @@ class Thrive_Dash_List_Connection_Mailchimp extends Thrive_Dash_List_Connection_
 	public function get_automator_autoresponder_fields() {
 		return array( 'mailing_list', 'optin', 'tag_input' );
 	}
+
+	public function get_automator_autoresponder_tag_fields() {
+		return array( 'mailing_list', 'tag_input' );
+	}
 }

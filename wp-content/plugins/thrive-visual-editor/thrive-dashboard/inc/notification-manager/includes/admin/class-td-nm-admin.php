@@ -38,10 +38,7 @@ class TD_NM_Admin {
 	}
 
 	public function enqueue_scripts() {
-		$screen    = get_current_screen();
-		$screen_id = $screen ? $screen->id : '';
-
-		if ( $screen_id === 'admin_page_tve_dash_notification_manager' ) {
+		if ( tve_get_current_screen_key() === 'admin_page_tve_dash_notification_manager' ) {
 
 			$current_user = wp_get_current_user();
 
@@ -103,21 +100,19 @@ class TD_NM_Admin {
 	 * Hook into based on current screen
 	 */
 	public function conditional_hooks() {
-		if ( ! $screen = get_current_screen() ) {
-			return;
-		}
+		$screen = tve_get_current_screen_key();
 
 		/**
 		 * Main Dashboard section
 		 */
-		if ( $screen->id === 'toplevel_page_tve_dash_section' ) {
+		if ( $screen === 'toplevel_page_tve_dash_section' ) {
 			add_filter( 'tve_dash_filter_features', array( $this, 'admin_notification_feature' ) );
 		}
 
 		/**
 		 * NM Dashboard
 		 */
-		if ( $screen->id === 'admin_page_tve_dash_notification_manager' ) {
+		if ( $screen === 'admin_page_tve_dash_notification_manager' ) {
 			add_action( 'admin_print_footer_scripts', array( $this, 'admin_backbone_templates' ) );
 		}
 	}

@@ -16,8 +16,8 @@
 function tvo_admin_menu( $menus = array() ) {
 	$menus['tvo'] = array(
 		'parent_slug' => 'tve_dash_section',
-		'page_title'  => __( 'Thrive Ovation', TVO_TRANSLATE_DOMAIN ),
-		'menu_title'  => __( 'Thrive Ovation', TVO_TRANSLATE_DOMAIN ),
+		'page_title'  => __( 'Thrive Ovation', 'thrive-ovation' ),
+		'menu_title'  => __( 'Thrive Ovation', 'thrive-ovation' ),
 		'capability'  => TVO_Product::cap(),
 		'menu_slug'   => 'tvo_admin_dashboard',
 		'function'    => 'tvo_admin_dashboard',
@@ -125,8 +125,8 @@ function tvo_get_localization_parameters() {
 			'filters'      => tvo_get_route_url( 'filters' ),
 		),
 		'social_connections'            => array(
-			'facebook' => $facebook->isConnected(),
-			'twitter'  => $twitter->isConnected(),
+			'facebook' => $facebook->is_connected(),
+			'twitter'  => $twitter->is_connected(),
 		),
 		'testimonial_image_placeholder' => tvo_get_default_image_placeholder(),
 		'breadcrumbs'                   => tvo_get_default_breadcrumbs(),
@@ -173,7 +173,7 @@ function tvo_backbone_templates() {
  * @return array
  */
 function tvo_dashboard_get_connections() {
-	$connected_apis  = Thrive_List_Manager::getAvailableAPIsByType( true, array( 'email' ) );
+	$connected_apis  = Thrive_List_Manager::get_available_apis( true, [ 'include_types' => [ 'email' ] ] );
 	$structured_apis = array();
 	foreach ( $connected_apis as $k => $v ) {
 		$structured_apis[] = array(
@@ -190,7 +190,7 @@ function tvo_dashboard_get_connections() {
  * All mail delivery connections
  */
 function tvo_dashboard_get_all_connections() {
-	$all_apis = Thrive_List_Manager::getAvailableAPIsByType( false, array( 'email' ) );
+	$all_apis  = Thrive_List_Manager::get_available_apis( false, [ 'include_types' => [ 'email' ] ] );
 	$apis     = array();
 	foreach ( $all_apis as $k => $api ) {
 		/** @var Thrive_Dash_List_Connection_Abstract $api */
@@ -198,8 +198,8 @@ function tvo_dashboard_get_all_connections() {
 
 		$apis[] = array(
 			'connection'          => $k,
-			'title'               => $api->getTitle(),
-			'connected'           => $api->isConnected(),
+			'title'               => $api->get_title(),
+			'connected'           => $api->is_connected(),
 			'connection_instance' => $credentials,
 		);
 	}
@@ -213,7 +213,7 @@ function tvo_dashboard_get_all_connections() {
  * @return array
  */
 function tvo_dashboard_get_available_apis() {
-	$connected_apis  = Thrive_List_Manager::getAvailableAPIsByType( false, array( 'email' ) );
+	$connected_apis  = Thrive_List_Manager::get_available_apis( false, [ 'include_types' => [ 'email' ] ] );
 	$structured_apis = array();
 	foreach ( $connected_apis as $k => $v ) {
 		$structured_apis[] = array(

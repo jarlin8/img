@@ -100,24 +100,21 @@ if ( ! class_exists( 'TVD_Smart_Site' ) ) :
 		/**
 		 * Hooks for the edit screen
 		 *
-		 * @param $screen
 		 */
-		public function conditional_hooks( $screen ) {
-			if ( ! $screen = get_current_screen() ) {
-				return;
-			}
+		public function conditional_hooks() {
+			$screen = tve_get_current_screen_key();
 
 			/**
 			 * Main Dashboard section
 			 */
-			if ( $screen->id === 'toplevel_page_tve_dash_section' ) {
+			if ( $screen === 'toplevel_page_tve_dash_section' ) {
 				add_filter( 'tve_dash_filter_features', array( $this, 'smart_site_feature' ) );
 			}
 
 			/**
 			 * Smart Site Dashboard
 			 */
-			if ( $screen->id === 'admin_page_' . $this->_dashboard_page ) {
+			if ( $screen === 'admin_page_' . $this->_dashboard_page ) {
 				add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 				add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 				add_action( 'admin_print_footer_scripts', array( $this, 'backbone_templates' ) );
@@ -137,7 +134,7 @@ if ( ! class_exists( 'TVD_Smart_Site' ) ) :
 				'title'       => 'Smart Site',
 				'description' => __( 'Define variables and values sitewide to use when building content', TVE_DASH_TRANSLATE_DOMAIN ),
 				'btn_link'    => add_query_arg( 'page', $this->_dashboard_page, admin_url( 'admin.php' ) ),
-				'btn_text'    => __( "Smart Settings", TVE_DASH_TRANSLATE_DOMAIN ),
+				'btn_text'    => __( 'Smart Settings', TVE_DASH_TRANSLATE_DOMAIN ),
 			);
 
 			return $features;
@@ -183,10 +180,7 @@ if ( ! class_exists( 'TVD_Smart_Site' ) ) :
 		 * Enqueue admin scripts
 		 */
 		public function enqueue_scripts() {
-			$screen    = get_current_screen();
-			$screen_id = $screen ? $screen->id : '';
-
-			if ( $screen_id === 'admin_page_' . $this->_dashboard_page ) {
+			if ( tve_get_current_screen_key() === 'admin_page_' . $this->_dashboard_page ) {
 				remove_all_actions( 'admin_notices' );
 
 				tve_dash_enqueue();

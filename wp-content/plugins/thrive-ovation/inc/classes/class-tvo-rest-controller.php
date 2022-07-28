@@ -15,12 +15,18 @@ class TVO_REST_Controller {
 	public function register_routes() {
 
 		register_rest_route( self::$namespace . self::$version, '/' . $this->base, array(
+			/**
+			 * Used in TVO_REST_Shortcodes_Controller, TVO_REST_Tags_Controller, TVO_REST_Testimonials_Controller
+			 */
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
 				'permission_callback' => array( $this, 'get_items_permissions_check' ),
 				'args'                => array(),
 			),
+			/**
+			 * Used in TVO_REST_Filters_Controller, TVO_REST_Shortcodes_Controller, TVO_REST_Tags_Controller
+			 */
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'create_item' ),
@@ -29,15 +35,9 @@ class TVO_REST_Controller {
 			),
 		) );
 
-		register_rest_route( self::$namespace . self::$version, '/' . $this->base . '/table', array(
-			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_table_items' ),
-				'permission_callback' => array( $this, 'get_item_permissions_check' ),
-				'args'                => array(),
-			),
-		) );
-
+		/**
+		 * Used in TVO_REST_Shortcodes_Controller, TVO_REST_Testimonials_Controller
+		 */
 		register_rest_route( self::$namespace . self::$version, '/' . $this->base . '/(?P<id>[\d]+)', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
@@ -49,12 +49,18 @@ class TVO_REST_Controller {
 					),
 				),
 			),
+			/**
+			 * Used in TVO_REST_Post_Meta_Controller, TVO_REST_Shortcodes_Controller, TVO_REST_Testimonials_Controller
+			 */
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => array( $this, 'update_item' ),
 				'permission_callback' => array( $this, 'update_item_permissions_check' ),
 				'args'                => $this->get_endpoint_args_for_item_schema( false ),
 			),
+			/**
+			 * Used in TVO_REST_Shortcodes_Controller, TVO_REST_Tags_Controller, TVO_REST_Testimonials_Controller
+			 */
 			array(
 				'methods'             => WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'delete_item' ),
@@ -66,60 +72,7 @@ class TVO_REST_Controller {
 				),
 			),
 		) );
-
-		register_rest_route( self::$namespace . self::$version, '/' . $this->base . '/schema', array(
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( $this, 'get_public_item_schema' ),
-			'permission_callback' => array( $this, 'get_items_permissions_check' ),
-		) );
-
-		register_rest_route( self::$namespace . self::$version, '/' . $this->base . '/activity/(?P<id>[\d]+)/(?P<offset>[\d]+)', array(
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array( $this, 'get_activity_log_extension' ),
-			'permission_callback' => array( $this, 'get_items_permissions_check' ),
-		) );
 	}
-
-	/**
-	 * Prepare a response for inserting into a collection.
-	 *
-	 * @param WP_REST_Response $response Response object.
-	 *
-	 * @return array|WP_REST_Response Response data, ready for insertion into collection data.
-	 */
-	public function prepare_response_for_collection( $response ) {
-		if ( ! ( $response instanceof WP_REST_Response ) ) {
-			return $response;
-		}
-
-		$data  = (array) $response->get_data();
-		$links = WP_REST_Server::get_response_links( $response );
-		if ( ! empty( $links ) ) {
-			$data['_links'] = $links;
-		}
-
-		return $data;
-	}
-
-
-	/**
-	 * Get a collection of items
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 *
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function get_table_items( $request ) {
-		$items = array(); //do a query, call another class, etc
-		$data  = array();
-		foreach ( $items as $item ) {
-			$itemdata = $this->prepare_item_for_response( $item, $request );
-			$data[]   = $this->prepare_response_for_collection( $itemdata );
-		}
-
-		return new WP_REST_Response( $data, 200 );
-	}
-
 
 	/**
 	 * Get a collection of items
@@ -132,8 +85,7 @@ class TVO_REST_Controller {
 		$items = array(); //do a query, call another class, etc
 		$data  = array();
 		foreach ( $items as $item ) {
-			$itemdata = $this->prepare_item_for_response( $item, $request );
-			$data[]   = $this->prepare_response_for_collection( $itemdata );
+			$data[] = $this->prepare_item_for_response( $item, $request );
 		}
 
 		return new WP_REST_Response( $data, 200 );
@@ -147,17 +99,10 @@ class TVO_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_item( $request ) {
-		//get parameters from request
-		$params = $request->get_params();
-		$item   = array();//do a query, call another class, etc
-		$data   = $this->prepare_item_for_response( $item, $request );
+		$item = array();//do a query, call another class, etc
+		$data = $this->prepare_item_for_response( $item, $request );
 
-		//return a response or error based on some conditional
-		if ( 1 == 1 ) {
 		return new WP_REST_Response( $data, 200 );
-		} else {
-			return new WP_Error( 'code', __( 'message', TVO_TRANSLATE_DOMAIN ) );
-		}
 	}
 
 	/**
@@ -168,17 +113,7 @@ class TVO_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
-
-		$item = $this->prepare_item_for_database( $request );
-
-		if ( function_exists( 'slug_some_function_to_create_item' ) ) {
-			$data = slug_some_function_to_create_item( $item );
-			if ( is_array( $data ) ) {
-				return new WP_REST_Response( $data, 200 );
-			}
-		}
-
-		return new WP_Error( 'cant-create', __( 'message', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-create', __( 'message', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -189,16 +124,7 @@ class TVO_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
-		$item = $this->prepare_item_for_database( $request );
-
-		if ( function_exists( 'slug_some_function_to_update_item' ) ) {
-			$data = slug_some_function_to_update_item( $item );
-			if ( is_array( $data ) ) {
-				return new WP_REST_Response( $data, 200 );
-			}
-		}
-
-		return new WP_Error( 'cant-update', __( 'message', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'message', 'thrive-ovation' ), array( 'status' => 500 ) );
 
 	}
 
@@ -210,16 +136,7 @@ class TVO_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function delete_item( $request ) {
-		$item = $this->prepare_item_for_database( $request );
-
-		if ( function_exists( 'slug_some_function_to_delete_item' ) ) {
-			$deleted = slug_some_function_to_delete_item( $item );
-			if ( $deleted ) {
-				return new WP_REST_Response( true, 200 );
-			}
-		}
-
-		return new WP_Error( 'cant-delete', __( 'message', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-delete', __( 'message', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -230,7 +147,7 @@ class TVO_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function get_items_permissions_check( $request ) {
-		return current_user_can( 'edit_something' );
+		return TVO_Product::has_access();
 	}
 
 	/**
@@ -241,7 +158,7 @@ class TVO_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function get_item_permissions_check( $request ) {
-		return $this->get_items_permissions_check( $request );
+		return TVO_Product::has_access();
 	}
 
 	/**
@@ -252,7 +169,7 @@ class TVO_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function create_item_permissions_check( $request ) {
-		return current_user_can( 'edit_something' );
+		return TVO_Product::has_access();
 	}
 
 	/**
@@ -263,7 +180,7 @@ class TVO_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function update_item_permissions_check( $request ) {
-		return $this->create_item_permissions_check( $request );
+		return TVO_Product::has_access();
 	}
 
 	/**
@@ -274,7 +191,7 @@ class TVO_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function delete_item_permissions_check( $request ) {
-		return $this->create_item_permissions_check( $request );
+		return TVO_Product::has_access();
 	}
 
 	/**
@@ -459,14 +376,5 @@ class TVO_REST_Controller {
 		}
 
 		return $schema['title'];
-	}
-
-	/**
-	 * Returns a contextual HTTP error code for authorization failure.
-	 *
-	 * @return integer
-	 */
-	public function rest_authorization_required_code() {
-		return is_user_logged_in() ? 403 : 401;
 	}
 }

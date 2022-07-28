@@ -82,6 +82,17 @@ class Thrive_AB_Variation_Manager {
 
 			);
 
+			if ( $this->_running_test->page_id != $variation->ID ) {
+				$variation_data['page_id']      = $this->_running_test->page_id;
+				$variation_data['variation_id'] = $variation->ID;
+
+				add_filter( 'tcb_lp_body_class', function ( $classes ) use ( $variation_data ) {
+					$classes .= ' page-id-' . $variation_data['variation_id'];
+
+					return $classes;
+				}, 10 );
+			}
+
 			wp_localize_script( 'tab-frontend', 'ThriveAB', $localize_data );
 
 			try {

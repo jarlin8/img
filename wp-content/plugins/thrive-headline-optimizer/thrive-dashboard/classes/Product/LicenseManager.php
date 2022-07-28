@@ -1,6 +1,15 @@
 <?php
 
 /**
+ * Thrive Themes - https://thrivethemes.com
+ *
+ * @package thrive-dashboard
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
+
+/**
  * Created by PhpStorm.
  * User: Danut
  * Date: 12/9/2015
@@ -102,7 +111,7 @@ class TVE_Dash_Product_LicenseManager {
 		}
 
 		if ( $this->isThemeTag( $item ) ) {
-			$licensed = get_option( 'thrive_license_status', false ) === 'ACTIVE';
+			$licensed = true;
 		} else {
 			switch ( $item ) {
 				case self::TCB_TAG:
@@ -115,16 +124,13 @@ class TVE_Dash_Product_LicenseManager {
 					$licensed = get_option( 'tcw_license_status', false ) === 'ACTIVE';
 					break;
 				default:
-					$licensed = false;
+					$licensed = true;
 					break;
 			}
 		}
 
-		if ( $licensed === false ) {
-			$licensed = $this->checkData( $item );
-		}
 
-		return $licensed;
+		return true;
 	}
 
 	/**

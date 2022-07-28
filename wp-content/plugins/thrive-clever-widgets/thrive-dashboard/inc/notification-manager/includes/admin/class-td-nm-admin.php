@@ -364,7 +364,13 @@ class TD_NM_Admin {
 
 			foreach ( $results as $post ) {
 				$post_meta_value = get_post_meta( $post['post_id'], 'td_nm_wordpress_notification', true );
-				printf( '<div data-key="%1$s" class="%2$s"><p>%3$s</p></div>', absint( $post['post_id'] ), 'notice notice-success td_nm_wordpress_notice is-dismissible', esc_html( $post_meta_value['message'] ) );
+				/**
+				 * $post_meta_value['message'] can contain HTML tags
+				 * The string can be of this form:
+				 *
+				 * A new quiz completion was registered. <a href="#">Click here to see the Quiz</a>
+				 */
+				printf( '<div data-key="%1$s" class="%2$s"><p>%3$s</p></div>', absint( $post['post_id'] ), 'notice notice-success td_nm_wordpress_notice is-dismissible', strip_tags( $post_meta_value['message'], '<a>' ) );
 			}
 		}
 	}

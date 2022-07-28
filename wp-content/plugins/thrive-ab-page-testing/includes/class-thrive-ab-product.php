@@ -57,19 +57,19 @@ class Thrive_AB_Product extends TVE_Dash_Product_Abstract {
 		);
 
 		$this->moreLinks = array(
-			'support'   => array(
-				'class'      => '',
-				'icon_class' => 'tvd-icon-life-bouy',
-				'href'       => 'https://thrivethemes.com/forums/forum/plugins/thrive-optimize/',
-				'target'     => '_blank',
-				'text'       => __( 'Support', 'thrive-ab-page-testing' ),
-			),
 			'tutorials' => array(
 				'class'      => '',
 				'icon_class' => 'tvd-icon-graduation-cap',
-				'href'       => 'https://thrivethemes.com/thrive-knowledge-base/thrive-optimize/',
+				'href'       => 'https://thrivethemes.com/thrive-optimize-tutorials/',
 				'target'     => '_blank',
 				'text'       => __( 'Tutorials', 'thrive-ab-page-testing' ),
+			),
+			'support'   => array(
+				'class'      => '',
+				'icon_class' => 'tvd-icon-life-bouy',
+				'href'       => 'https://thrivethemes.com/support/',
+				'target'     => '_blank',
+				'text'       => __( 'Support', 'thrive-ab-page-testing' ),
 			),
 		);
 	}

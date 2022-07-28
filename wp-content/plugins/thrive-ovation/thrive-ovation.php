@@ -4,7 +4,7 @@
  * Plugin URI: https://thrivethemes.com
  * Description: Collect, manage and display conversion boosting testimonials.
  * Author URI: https://thrivethemes.com
- * Version: 2.4.5.1
+ * Version: 3.9
  * Author: <a href="https://thrivethemes.com">Thrive Themes</a>
  * Text Domain: thrive-ovation
  * Domain Path: /languages/

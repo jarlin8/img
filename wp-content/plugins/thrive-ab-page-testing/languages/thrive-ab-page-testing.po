@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thrive-ab-page-testing 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-25 18:39+0200\n"
+"POT-Creation-Date: 2022-07-27 13:43+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Method %s not implemented"
 msgstr ""
 
-#: includes/ajax/class-thrive-ab-ajax-controller.php:290
+#: includes/ajax/class-thrive-ab-ajax-controller.php:292
 #: includes/class-thrive-ab-meta-box-variations-table.php:84
 #: includes/test/class-thrive-ab-test-manager.php:234
 #: includes/views/backbone/modals/winner/test/monetary.php:17
@@ -39,11 +39,11 @@ msgstr ""
 msgid "Revenue"
 msgstr ""
 
-#: includes/ajax/class-thrive-ab-ajax-controller.php:291
+#: includes/ajax/class-thrive-ab-ajax-controller.php:293
 msgid "Goal Page Visit"
 msgstr ""
 
-#: includes/ajax/class-thrive-ab-ajax-controller.php:292
+#: includes/ajax/class-thrive-ab-ajax-controller.php:294
 #: includes/class-thrive-ab-meta-box-variations-table.php:91
 #: includes/test/class-thrive-ab-test-manager.php:244
 #: includes/views/backbone/modals/winner/test/optins.php:17
@@ -51,16 +51,16 @@ msgstr ""
 msgid "Subscriptions"
 msgstr ""
 
-#: includes/ajax/class-thrive-ab-ajax-controller.php:358
+#: includes/ajax/class-thrive-ab-ajax-controller.php:360
 msgid "There was an error in the process."
 msgstr ""
 
-#: includes/ajax/class-thrive-ab-ajax-controller.php:371
+#: includes/ajax/class-thrive-ab-ajax-controller.php:373
 msgid "The test was deleted successfully!"
 msgstr ""
 
-#: includes/ajax/class-thrive-ab-ajax.php:137
-#: includes/ajax/class-thrive-ab-ajax.php:150
+#: includes/ajax/class-thrive-ab-ajax.php:135
+#: includes/ajax/class-thrive-ab-ajax.php:148
 msgid "Page could not be saved!"
 msgstr ""
 
@@ -68,42 +68,42 @@ msgstr ""
 msgid "View test details"
 msgstr ""
 
+#: includes/class-thrive-ab-admin.php:232
 #: includes/class-thrive-ab-admin.php:233
-#: includes/class-thrive-ab-admin.php:234
 #: includes/class-thrive-ab-product.php:56
 msgid "Thrive Optimize"
 msgstr ""
 
-#: includes/class-thrive-ab-admin.php:322
+#: includes/class-thrive-ab-admin.php:321
 msgid "A/B Test Ends"
 msgstr ""
 
-#: includes/class-thrive-ab-admin.php:336
+#: includes/class-thrive-ab-admin.php:335
 msgid "Thrive Dashboard"
 msgstr ""
 
-#: includes/class-thrive-ab-admin.php:337
+#: includes/class-thrive-ab-admin.php:336
 msgid "Optimize Dashboard"
 msgstr ""
 
-#: includes/class-thrive-ab-admin.php:338
+#: includes/class-thrive-ab-admin.php:337
 #, php-format
 msgid "Are you sure you want to delete %s ?"
 msgstr ""
 
-#: includes/class-thrive-ab-admin.php:339
+#: includes/class-thrive-ab-admin.php:338
 msgid "Yes"
 msgstr ""
 
-#: includes/class-thrive-ab-admin.php:340
+#: includes/class-thrive-ab-admin.php:339
 msgid "No"
 msgstr ""
 
-#: includes/class-thrive-ab-admin.php:363
+#: includes/class-thrive-ab-admin.php:362
 msgid "View test"
 msgstr ""
 
-#: includes/class-thrive-ab-admin.php:364
+#: includes/class-thrive-ab-admin.php:363
 #: includes/class-thrive-ab-meta-box-completed-tests-table.php:103
 msgid "View Test"
 msgstr ""
@@ -258,11 +258,11 @@ msgid "Boost Conversion Rates by testing two or more variations of a page."
 msgstr ""
 
 #: includes/class-thrive-ab-product.php:65
-msgid "Support"
+msgid "Tutorials"
 msgstr ""
 
 #: includes/class-thrive-ab-product.php:72
-msgid "Tutorials"
+msgid "Support"
 msgstr ""
 
 #: includes/class-thrive-ab-report-manager.php:157

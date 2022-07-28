@@ -291,8 +291,7 @@ class TCB_Admin {
 			return false;
 		}
 
-		$screen = get_current_screen();
-		if ( empty( $screen ) || ! $screen->base || 'post' != $screen->base ) {
+		if ( 'post' !== tve_get_current_screen_key( 'base' ) ) {
 			return false;
 		}
 
@@ -340,9 +339,7 @@ class TCB_Admin {
 	 * @return string
 	 */
 	public function wp_editor_body_class( $classes ) {
-
-		$screen = get_current_screen();
-		if ( empty( $screen ) || ! $screen->base || 'post' != $screen->base ) {
+		if ( 'post' !== tve_get_current_screen_key( 'base' ) ) {
 			return $classes;
 		}
 		$post_type = get_post_type();

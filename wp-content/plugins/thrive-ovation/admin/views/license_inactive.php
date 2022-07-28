@@ -9,10 +9,10 @@
 		<img src="<?php echo TVO_ADMIN_URL; ?>/img/tvo-logo.png">
 
 		<p>
-			<?php echo __( 'You need to', TVO_TRANSLATE_DOMAIN ); ?>
+			<?php echo __( 'You need to', 'thrive-ovation' ); ?>
 			<a class="tve-license-link"
-			   href="<?php echo admin_url( 'admin.php?page=tve_dash_license_manager_section' ); ?>"><?php echo __( 'activate your license', TVO_TRANSLATE_DOMAIN ); ?></a>
-			<?php echo __( 'before you can use the Thrive Ovation plugin!', TVO_TRANSLATE_DOMAIN ); ?>
+			   href="<?php echo admin_url( 'admin.php?page=tve_dash_license_manager_section' ); ?>"><?php echo __( 'activate your license', 'thrive-ovation' ); ?></a>
+			<?php echo __( 'before you can use the Thrive Ovation plugin!', 'thrive-ovation' ); ?>
 		</p>
 	</div>
 </div>

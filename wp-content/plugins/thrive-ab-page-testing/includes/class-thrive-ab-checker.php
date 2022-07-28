@@ -56,6 +56,10 @@ class Thrive_AB_Checker {
 	 */
 	protected static function is_required_version( $tar_version ) {
 
+		if ( defined( 'TVE_DEBUG' ) && $tar_version === '0.dev' ) {
+			return true;
+		}
+
 		return version_compare( $tar_version, self::$_tar_required['min_version'], '>=' );
 	}
 

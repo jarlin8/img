@@ -1,5 +1,5 @@
 <div class="tvo-form-config">
-	<input type="hidden" class="tags" value='<?php echo json_encode( $config['tags'] ); ?>'>
+	<input type="hidden" class="tags" value='<?php echo empty( $config['tags'] ) ? '[]' : json_encode( $config['tags'] ); ?>'>
 	<input type="hidden" class="shortcode_id" value="<?php echo $config['id']; ?>">
 	<input type="hidden" class="on_success" value="<?php echo $config['on_success_option']; ?>">
 	<?php if ( $config['on_success_option'] == 'redirect' ) : ?><input type="hidden" class="on_redirect" value="<?php echo $config['on_success']; ?>"> <?php endif; ?>
@@ -70,41 +70,40 @@ $site_key    = isset( $captcha_api['site_key'] ) ? $captcha_api['site_key'] : ""
 </script>
 
 <?php if ( ! empty( $google_client_id ) && ! $is_editor ) : ?>
-	<script src="https://apis.google.com/js/api:client.js"></script>
+	<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 	<script type="text/javascript">
-		if ( typeof gapi !== 'undefined' ) {
-			gapi.load( 'auth2', function () {
-				// Retrieve the singleton for the GoogleAuth library and set up the client.
-				if ( ! window.tvo_gapi_loaded ) {
-					auth2 = gapi.auth2.init( {
-						client_id: '<?php echo $google_client_id; ?>',
-						scope: 'profile'
-					} );
-					window.tvo_gapi_loaded = true;
+		window.onGoogleLibraryLoad = () => {
+			const tvoParseJwt = ( token ) => {
+				const base64 = token.split( '.' )[ 1 ].replace( /-/g, '+' ).replace( /_/g, '/' );
+				const jsonPayload = decodeURIComponent( window.atob( base64 ).split( '' ).map( c => '%' + ( '00' + c.charCodeAt( 0 ).toString( 16 ) ).slice( - 2 ) ).join( '' ) )
+
+				return JSON.parse( jsonPayload );
+			}
+
+			/* initialize login functionality */
+			window.google.accounts.id.initialize( {
+				client_id: '<?php echo $google_client_id; ?>',
+				context: 'use',
+				ux_mode: 'popup',
+				auto_prompt: false,
+				callback: authResponse => {
+					const profile = tvoParseJwt( authResponse.credential );
+
+					var $picture = jQuery( '#<?php echo $unique_id; ?> .tvo-picture-wrapper' );
+					$picture.css( 'background-image', 'url(' + profile.picture + ')' );
+					$picture.siblings( '.tvo-remove-image' ).show();
 				}
-				jQuery( '.tvo-google-button' ).each( function () {
-					var $picture = jQuery( this ).parent().siblings( '.tvo-picture-wrapper' );
+			} )
 
-					auth2.attachClickHandler( this, {},
-						function ( googleUser ) {
-							var img = googleUser.getBasicProfile().getImageUrl() + '?sz=512';
-
-							$picture.css( 'background-image', 'url(' + img + ')' );
-							$picture.siblings( '.tvo-remove-image' ).show();
-						}, function () {
-							$picture.css( 'background-image', 'url(' + $picture.data( 'default' ) + ')' );
-						} );
-				} ).click( function () {
-					var $picture = jQuery( this ).parent().siblings( '.tvo-picture-wrapper' );
-					$picture.css( 'background-image', 'url("<?php echo TVO_URL; ?>templates/css/images/loading.gif")' );
-					setTimeout( function () {
-						if ( $picture.css( 'background-image' ).search( 'loading.gif' ) !== - 1 ) {
-							$picture.css( 'background-image', 'url(' + $picture.data( 'default' ) + ')' );
-						}
-					}, 10000 );
-				} )
-			} );
+			window.google.accounts.id.renderButton(
+				document.getElementById( 'tvo-google-login-<?php echo $unique_id; ?>' ), {
+					type: 'standard',
+					theme: 'outline',
+					text: 'signin',
+					width: 150
+				}
+			)
 		}
 	</script>
 <?php endif; ?>

@@ -10,9 +10,9 @@
  */
 class THO_REST_Controller {
 
-	public static $VERSION = 1;
+	public static $VERSION   = 1;
 	public static $NAMESPACE = 'tho/v';
-	public $base = '';
+	public        $base      = '';
 
 	/**
 	 * Register the routes for the objects of the controller.
@@ -20,12 +20,18 @@ class THO_REST_Controller {
 	public function register_routes() {
 
 		register_rest_route( self::$NAMESPACE . self::$VERSION, '/' . $this->base, array(
+			/**
+			 * Used in THO_REST_Posts_Controller, THO_REST_Tests_Controller
+			 */
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
 				'permission_callback' => array( $this, 'get_items_permissions_check' ),
 				'args'                => array(),
 			),
+			/**
+			 * Used in THO_REST_Tests_Controller
+			 */
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'create_item' ),
@@ -34,15 +40,9 @@ class THO_REST_Controller {
 			),
 		) );
 
-		register_rest_route( self::$NAMESPACE . self::$VERSION, '/' . $this->base . '/table', array(
-			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_table_items' ),
-				'permission_callback' => array( $this, 'get_item_permissions_check' ),
-				'args'                => array(),
-			)
-		) );
-
+		/**
+		 * USed in THO_REST_Posts_Controller, THO_REST_Tests_Controller
+		 */
 		register_rest_route( self::$NAMESPACE . self::$VERSION, '/' . $this->base . '/(?P<id>[\d]+)', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
@@ -54,12 +54,18 @@ class THO_REST_Controller {
 					),
 				),
 			),
+			/**
+			 * Used in THO_REST_Tests_Controller, THO_REST_Variation_Controller
+			 */
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => array( $this, 'update_item' ),
 				'permission_callback' => array( $this, 'update_item_permissions_check' ),
 				'args'                => $this->get_endpoint_args_for_item_schema( false ),
 			),
+			/**
+			 * Used in THO_REST_Tests_Controller
+			 */
 			array(
 				'methods'             => WP_REST_Server::DELETABLE,
 				'callback'            => array( $this, 'delete_item' ),
@@ -70,11 +76,6 @@ class THO_REST_Controller {
 					),
 				),
 			),
-		) );
-		register_rest_route( self::$NAMESPACE . self::$VERSION, '/' . $this->base . '/schema', array(
-			'methods'  => WP_REST_Server::READABLE,
-			'callback' => array( $this, 'get_public_item_schema' ),
-			'permission_callback' => '__return_true',
 		) );
 	}
 
@@ -98,26 +99,6 @@ class THO_REST_Controller {
 
 		return $data;
 	}
-
-
-	/**
-	 * Get a collection of items
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 *
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function get_table_items( $request ) {
-		$items = array(); //do a query, call another class, etc
-		$data  = array();
-		foreach ( $items as $item ) {
-			$itemdata = $this->prepare_item_for_response( $item, $request );
-			$data[]   = $this->prepare_response_for_collection( $itemdata );
-		}
-
-		return new WP_REST_Response( $data, 200 );
-	}
-
 
 	/**
 	 * Get a collection of items
@@ -145,17 +126,10 @@ class THO_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_item( $request ) {
-		//get parameters from request
-		$params = $request->get_params();
-		$item   = array();//do a query, call another class, etc
-		$data   = $this->prepare_item_for_response( $item, $request );
+		$item = array();//do a query, call another class, etc
+		$data = $this->prepare_item_for_response( $item, $request );
 
-		//return a response or error based on some conditional
-		if ( 1 == 1 ) {
-			return new WP_REST_Response( $data, 200 );
-		} else {
-			return new WP_Error( 'code', __( 'message', THO_TRANSLATE_DOMAIN ) );
-		}
+		return new WP_REST_Response( $data, 200 );
 	}
 
 	/**
@@ -166,19 +140,7 @@ class THO_REST_Controller {
 	 * @return WP_Error|WP_REST_Request
 	 */
 	public function create_item( $request ) {
-
-		$item = $this->prepare_item_for_database( $request );
-
-		if ( function_exists( 'slug_some_function_to_create_item' ) ) {
-			$data = slug_some_function_to_create_item( $item );
-			if ( is_array( $data ) ) {
-				return new WP_REST_Response( $data, 200 );
-			}
-		}
-
 		return new WP_Error( 'cant-create', __( 'message', THO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
-
-
 	}
 
 	/**
@@ -189,17 +151,7 @@ class THO_REST_Controller {
 	 * @return WP_Error|WP_REST_Request
 	 */
 	public function update_item( $request ) {
-		$item = $this->prepare_item_for_database( $request );
-
-		if ( function_exists( 'slug_some_function_to_update_item' ) ) {
-			$data = slug_some_function_to_update_item( $item );
-			if ( is_array( $data ) ) {
-				return new WP_REST_Response( $data, 200 );
-			}
-		}
-
 		return new WP_Error( 'cant-update', __( 'message', THO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
-
 	}
 
 	/**
@@ -210,15 +162,6 @@ class THO_REST_Controller {
 	 * @return WP_Error|WP_REST_Request
 	 */
 	public function delete_item( $request ) {
-		$item = $this->prepare_item_for_database( $request );
-
-		if ( function_exists( 'slug_some_function_to_delete_item' ) ) {
-			$deleted = slug_some_function_to_delete_item( $item );
-			if ( $deleted ) {
-				return new WP_REST_Response( true, 200 );
-			}
-		}
-
 		return new WP_Error( 'cant-delete', __( 'message', THO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
 	}
 
@@ -230,8 +173,7 @@ class THO_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function get_items_permissions_check( $request ) {
-		//return true; <--use to make readable by all
-		return current_user_can( 'edit_something' );
+		return THO_Product::has_access();
 	}
 
 	/**
@@ -242,7 +184,7 @@ class THO_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function get_item_permissions_check( $request ) {
-		return $this->get_items_permissions_check( $request );
+		return THO_Product::has_access();
 	}
 
 	/**
@@ -253,7 +195,7 @@ class THO_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function create_item_permissions_check( $request ) {
-		return current_user_can( 'edit_something' );
+		return THO_Product::has_access();
 	}
 
 	/**
@@ -264,7 +206,7 @@ class THO_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function update_item_permissions_check( $request ) {
-		return $this->create_item_permissions_check( $request );
+		return THO_Product::has_access();
 	}
 
 	/**
@@ -275,7 +217,7 @@ class THO_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function delete_item_permissions_check( $request ) {
-		return $this->create_item_permissions_check( $request );
+		return THO_Product::has_access();
 	}
 
 	/**
@@ -292,7 +234,7 @@ class THO_REST_Controller {
 	/**
 	 * Prepare the item for the REST response
 	 *
-	 * @param mixed $item WordPress representation of the item.
+	 * @param mixed           $item    WordPress representation of the item.
 	 * @param WP_REST_Request $request Request object.
 	 *
 	 * @return mixed
@@ -424,7 +366,7 @@ class THO_REST_Controller {
 	/**
 	 * Get all the registered additional fields for a given object-type.
 	 *
-	 * @param  string $object_type
+	 * @param string $object_type
 	 *
 	 * @return array
 	 */
@@ -460,14 +402,5 @@ class THO_REST_Controller {
 		}
 
 		return $schema['title'];
-	}
-
-	/**
-	 * Returns a contextual HTTP error code for authorization failure.
-	 *
-	 * @return integer
-	 */
-	public function rest_authorization_required_code() {
-		return is_user_logged_in() ? 403 : 401;
 	}
 }

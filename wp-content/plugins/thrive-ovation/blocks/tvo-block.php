@@ -26,13 +26,14 @@ class TVO_Block {
 
 
 	public static function hooks() {
+		global $wp_version;
 		add_filter( 'tve_allowed_post_type', array( __CLASS__, 'allowed_post_type' ), PHP_INT_MAX, 2 );
 
 		add_filter( 'tcb_custom_post_layouts', array( __CLASS__, 'block_layout' ), 10, 3 );
 
 		add_filter( 'thrive_theme_ignore_post_types', array( __CLASS__, 'thrive_theme_ignore_post_types' ) );
 
-		add_filter( 'block_categories', array( __CLASS__, 'register_block_category' ), 10, 2 );
+		add_filter( version_compare( $wp_version, '5.7.9', '>' ) ? 'block_categories_all' : 'block_categories', array( __CLASS__, 'register_block_category' ), 10, 2 );
 
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 
@@ -91,7 +92,7 @@ class TVO_Block {
 
 
 	public static function enqueue_scripts( $hook ) {
-		if ( 'post.php' == $hook || 'post-new.php' == $hook ) {
+		if ( tve_should_load_blocks() ) {
 			wp_localize_script( 'tvo-capture-block-editor', 'TVO_Data',
 				array(
 					'capture_preview' => TVO_URL . '/blocks/img/capture-preview.png',
@@ -113,19 +114,19 @@ class TVO_Block {
 		}
 
 		$labels = array(
-			'name'               => __( 'Thrive Ovation Blocks', TVO_TRANSLATE_DOMAIN ),
-			'singular_name'      => __( 'Block', TVO_TRANSLATE_DOMAIN ),
-			'add_new'            => __( 'Add New', TVO_TRANSLATE_DOMAIN ),
-			'add_new_item'       => __( 'Add New Block', TVO_TRANSLATE_DOMAIN ),
-			'edit_item'          => __( 'Edit Block', TVO_TRANSLATE_DOMAIN ),
-			'new_item'           => __( 'New Block', TVO_TRANSLATE_DOMAIN ),
-			'all_items'          => __( 'All Blocks', TVO_TRANSLATE_DOMAIN ),
-			'view_item'          => __( 'View Block', TVO_TRANSLATE_DOMAIN ),
-			'search_items'       => __( 'Search Block', TVO_TRANSLATE_DOMAIN ),
-			'not_found'          => __( 'No blocks found', TVO_TRANSLATE_DOMAIN ),
-			'not_found_in_trash' => __( 'No blocks found in trash', TVO_TRANSLATE_DOMAIN ),
+			'name'               => __( 'Thrive Ovation Blocks', 'thrive-ovation' ),
+			'singular_name'      => __( 'Block', 'thrive-ovation' ),
+			'add_new'            => __( 'Add New', 'thrive-ovation' ),
+			'add_new_item'       => __( 'Add New Block', 'thrive-ovation' ),
+			'edit_item'          => __( 'Edit Block', 'thrive-ovation' ),
+			'new_item'           => __( 'New Block', 'thrive-ovation' ),
+			'all_items'          => __( 'All Blocks', 'thrive-ovation' ),
+			'view_item'          => __( 'View Block', 'thrive-ovation' ),
+			'search_items'       => __( 'Search Block', 'thrive-ovation' ),
+			'not_found'          => __( 'No blocks found', 'thrive-ovation' ),
+			'not_found_in_trash' => __( 'No blocks found in trash', 'thrive-ovation' ),
 			'parent_item_colon'  => '',
-			'menu_name'          => __( 'Thrive Blocks', TVO_TRANSLATE_DOMAIN ),
+			'menu_name'          => __( 'Thrive Blocks', 'thrive-ovation' ),
 		);
 
 		$args = array(
@@ -258,7 +259,7 @@ class TVO_Block {
 			array(
 				array(
 					'slug'  => 'thrive',
-					'title' => __( 'Thrive Library', TVO_TRANSLATE_DOMAIN ),
+					'title' => __( 'Thrive Library', 'thrive-ovation' ),
 					'icon'  => '',
 				),
 			),

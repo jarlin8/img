@@ -3128,7 +3128,7 @@ function tve_get_inconclusive_tests() {
 	$running_tests = tve_get_running_inconclusive_tests();
 
 	if ( is_array( $running_tests ) && ! empty( $running_tests ) ) {
-		wp_enqueue_script( 'tve-inconclusive-tests-js', plugins_url( 'thrive-leads/admin/js-min/inconclusive_tests.js' ) );
+		wp_enqueue_script( 'tve-inconclusive-tests-js', plugins_url( 'thrive-leads/admin/js-min/inconclusive_tests.min.js' ) );
 
 
 		$thrive_leads_special_routes = array(

@@ -197,12 +197,12 @@ class Thrive_AB_Admin {
 				$icon_url = thrive_ab()->url( 'assets/images/tab-logo.png' );
 				?>
 				<style type="text/css">
-					.thrive-ab-view-test-action {
-						background: url('<?php echo $icon_url ?>');
-						background-size: 17px 17px;
-						padding-left: 20px;
-						background-repeat: no-repeat;
-					}
+                    .thrive-ab-view-test-action {
+                        background: url('<?php echo $icon_url ?>');
+                        background-size: 17px 17px;
+                        padding-left: 20px;
+                        background-repeat: no-repeat;
+                    }
 				</style>
 				<?php
 				$actions['thrive-ab'] = '<a class="thrive-ab-view-test-action" href="' . $test_url . '">' . __( 'View test details', 'thrive-ab-page-testing' ) . '</a>';
@@ -213,7 +213,6 @@ class Thrive_AB_Admin {
 
 		return $actions;
 	}
-
 
 
 	/**
@@ -357,12 +356,12 @@ class Thrive_AB_Admin {
 	public static function view_test_menu() {
 
 		$view_test_page = new Thrive_AB_Admin_View_Test_Page();
-
+		$has_access     = class_exists( 'Thrive_AB_Product', false ) ? Thrive_AB_Product::cap() : current_user_can( 'manage_options' );
 		add_submenu_page(
 			null,
 			__( 'View test', 'thrive-ab-page-testing' ),
 			__( 'View Test', 'thrive-ab-page-testing' ),
-			Thrive_AB_Product::cap(),
+			$has_access,
 			self::$pages['view_test']['slug'],
 			array( $view_test_page, 'render' )
 		);

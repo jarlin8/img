@@ -42,17 +42,20 @@ class Thrive_AB_Event_Manager {
 
 	public function on_form_submit( $data ) {
 
-		if ( empty( $data['post_id'] ) ) {
+		$post_id = ! empty( $data['frontend_post_id'] ) ? (int)( $data['frontend_post_id'] ) : 0;
+		$post_id = ! empty( $post_id ) ? $post_id : ( isset( $data['post_id'] ) ? (int)$data['post_id'] : 0 );
+
+		if ( empty( $post_id ) ) {
 			return;
 		}
 
-		$post              = get_post( $data['post_id'] );
+		$post              = get_post( $post_id );
 		$is_post_variation = thrive_ab()->maybe_variation( $post );
-		$page_id           = (int) ( $is_post_variation ? $post->post_parent : $post->ID );
+		$page_id           = (int)( $is_post_variation ? $post->post_parent : $post->ID );
 
 		try {
 			$page    = new Thrive_AB_Page( $page_id );
-			$test_id = (int) $page->get_meta()->get( 'running_test_id' );
+			$test_id = (int)$page->get_meta()->get( 'running_test_id' );
 		} catch ( Exception $e ) {
 			return;
 		}
@@ -339,7 +342,7 @@ class Thrive_AB_Event_Manager {
 			foreach ( $underperforming as $test_item ) {
 				$test_item->stop()->save();
 
-				$variation = new Thrive_AB_Variation( (int) $test_item->variation_id );
+				$variation = new Thrive_AB_Variation( (int)$test_item->variation_id );
 				$meta      = $variation->get_meta();
 
 				$removed_traffic += $meta->get( 'traffic' );
@@ -356,7 +359,7 @@ class Thrive_AB_Event_Manager {
 			$extra_traffic = floor( $removed_traffic / sizeof( $leftovers ) );
 
 			foreach ( $leftovers as $test_item ) {
-				$variation = new Thrive_AB_Variation( (int) $test_item->variation_id );
+				$variation = new Thrive_AB_Variation( (int)$test_item->variation_id );
 				$meta      = $variation->get_meta();
 				$traffic   = $meta->get( 'traffic' ) + $extra_traffic;
 

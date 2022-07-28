@@ -1,9 +1,8 @@
 <?php $templates = tvo_get_testimonial_templates( 'capture' ); ?>
 <div class="tvo-frontend-modal">
-	<h4>
-		<?php echo __( 'Testimonial Capture Templates', TVO_TRANSLATE_DOMAIN ) ?>
-	</h4>
-	<hr class="tve_lightbox_line">
+	<span class="tcb-modal-title ml-0 mt-0">
+		<?php echo __( 'Testimonial Capture Templates', 'thrive-ovation' ) ?>
+	</span>
 	<div class="tvo_capture_templates tvo-templates">
 		<?php foreach ( $templates as $template ) : ?>
 			<div class="tvo-template click" data-fn="select" data-value="<?php echo $template['file'] ?>">
@@ -15,8 +14,9 @@
 			</div>
 		<?php endforeach ?>
 	</div>
-	<div class="tve-sp"></div>
-	<button class="tve-button green click tvd-right tvo-save-template" data-fn="save">
-		<?php echo __( 'Save', TVO_TRANSLATE_DOMAIN ); ?>
-	</button>
+	<div class="tcb-modal-footer flex-end">
+		<button class="tve-button green click tvd-right tvo-save-template white-text" data-fn="save">
+			<?php echo __( 'Save', 'thrive-ovation' ); ?>
+		</button>
+	</div>
 </div>

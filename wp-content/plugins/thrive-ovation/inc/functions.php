@@ -94,10 +94,10 @@ function tvo_dashboard_add_features( $features ) {
 }
 
 /**
- * Load plugin text domain @const TVO_TRANSLATE_DOMAIN
+ * Load plugin text domain @const 'thrive-ovation'
  */
 function tvo_load_plugin_textdomain() {
-	$domain = TVO_TRANSLATE_DOMAIN;
+	$domain = 'thrive-ovation';
 	$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 	$path   = 'thrive-ovation/languages/';
 
@@ -167,28 +167,28 @@ function tvo_register_post_types() {
 
 	// Set UI labels for Custom Post Type
 	$labels = array(
-		'name'               => __( 'Thrive Testimonials', TVO_TRANSLATE_DOMAIN ),
-		'singular_name'      => __( 'Thrive Testimonial', TVO_TRANSLATE_DOMAIN ),
-		'menu_name'          => __( 'Thrive Testimonials', TVO_TRANSLATE_DOMAIN ),
-		'parent_item_colon'  => __( 'Parent Thrive Testimonials', TVO_TRANSLATE_DOMAIN ),
-		'all_items'          => __( 'All Thrive Testimonials', TVO_TRANSLATE_DOMAIN ),
-		'view_item'          => __( 'View Thrive Testimonials', TVO_TRANSLATE_DOMAIN ),
-		'add_new_item'       => __( 'Add New Thrive Testimonial', TVO_TRANSLATE_DOMAIN ),
-		'add_new'            => __( 'Add New', TVO_TRANSLATE_DOMAIN ),
-		'edit_item'          => __( 'Edit Thrive Testimonial', TVO_TRANSLATE_DOMAIN ),
-		'update_item'        => __( 'Update Thrive Testimonial', TVO_TRANSLATE_DOMAIN ),
-		'search_items'       => __( 'Search Thrive Testimonial', TVO_TRANSLATE_DOMAIN ),
-		'not_found'          => __( 'Not Found', TVO_TRANSLATE_DOMAIN ),
-		'not_found_in_trash' => __( 'Not found in Trash', TVO_TRANSLATE_DOMAIN ),
+		'name'               => __( 'Thrive Testimonials', 'thrive-ovation' ),
+		'singular_name'      => __( 'Thrive Testimonial', 'thrive-ovation' ),
+		'menu_name'          => __( 'Thrive Testimonials', 'thrive-ovation' ),
+		'parent_item_colon'  => __( 'Parent Thrive Testimonials', 'thrive-ovation' ),
+		'all_items'          => __( 'All Thrive Testimonials', 'thrive-ovation' ),
+		'view_item'          => __( 'View Thrive Testimonials', 'thrive-ovation' ),
+		'add_new_item'       => __( 'Add New Thrive Testimonial', 'thrive-ovation' ),
+		'add_new'            => __( 'Add New', 'thrive-ovation' ),
+		'edit_item'          => __( 'Edit Thrive Testimonial', 'thrive-ovation' ),
+		'update_item'        => __( 'Update Thrive Testimonial', 'thrive-ovation' ),
+		'search_items'       => __( 'Search Thrive Testimonial', 'thrive-ovation' ),
+		'not_found'          => __( 'Not Found', 'thrive-ovation' ),
+		'not_found_in_trash' => __( 'Not found in Trash', 'thrive-ovation' ),
 	);
 
 	// Set other options for Custom Post Type
 	$args = array(
-		'label'               => __( TVO_TESTIMONIAL_POST_TYPE, TVO_TRANSLATE_DOMAIN ),
-		'description'         => __( 'Thrive Ovation is a  Testimonial Management Plugin', TVO_TRANSLATE_DOMAIN ),
+		'label'               => __( TVO_TESTIMONIAL_POST_TYPE, 'thrive-ovation' ),
+		'description'         => __( 'Thrive Ovation is a  Testimonial Management Plugin', 'thrive-ovation' ),
 		'labels'              => $labels,
 		// Features this CPT supports in Post Editor
-		'supports'            => array( 'title', 'editor', 'author', 'thumbnail', 'comments' ),
+		'supports'            => array( 'title', 'editor', 'author', 'thumbnail' ),
 		// You can associate this custom post type with a taxonomy or custom taxonomy.
 		'taxonomies'          => array( 'tvo_tags', 'tvo_properties' ),
 		'hierarchical'        => false,
@@ -204,12 +204,11 @@ function tvo_register_post_types() {
 		'publicly_queryable'  => false,
 		'capability_type'     => 'page',
 	);
-
 	// Registering your Custom Post Type
 	register_post_type( TVO_TESTIMONIAL_POST_TYPE, $args );
 
 	$args = array(
-		'labels'             => array( 'name' => __( 'Thrive Ovation Shortcode', TVO_TRANSLATE_DOMAIN ) ),
+		'labels'             => array( 'name' => __( 'Thrive Ovation Shortcode', 'thrive-ovation' ) ),
 		'public'             => false,
 		'rewrite'            => false,
 		'publicly_queryable' => true,
@@ -234,8 +233,10 @@ function tvo_taxonomy() {
 			'label'        => 'TVO Tags',  //Display name
 			'query_var'    => true,
 			'rewrite'      => array(
-				'slug'       => TVO_TESTIMONIAL_TAG_TAXONOMY, // This controls the base slug that will display before each term
-				'with_front' => false, // Don't display the category base before
+				'slug'       => TVO_TESTIMONIAL_TAG_TAXONOMY,
+				// This controls the base slug that will display before each term
+				'with_front' => false,
+				// Don't display the category base before
 			),
 		)
 	);
@@ -259,7 +260,7 @@ function tvo_comment_columns( $columns ) {
 	$testimonials = tvo_get_testimonials( $filters );
 	$comment_ids  = tvo_comment_check_testimonial( $testimonials );
 
-	$columns['tvo-testimonial-column'] = __( 'Save as Testimonial', TVO_TRANSLATE_DOMAIN );
+	$columns['tvo-testimonial-column'] = __( 'Save as Testimonial', 'thrive-ovation' );
 
 	return $columns;
 }
@@ -277,7 +278,7 @@ function tvo_comment_column( $column, $comment_id ) {
 		if ( ! in_array( $comment_id, $comment_ids ) ) {
 			include TVO_ADMIN_PATH . 'views/comments/comment-column-value.php';
 		} else {
-			echo '<p class="tvo-green-text"><span class="dashicons dashicons-yes"></span> ' . __( 'Saved', TVO_TRANSLATE_DOMAIN ) . '</p>';
+			echo '<p class="tvo-green-text"><span class="dashicons dashicons-yes"></span> ' . __( 'Saved', 'thrive-ovation' ) . '</p>';
 		}
 	}
 }
@@ -291,7 +292,7 @@ function tvo_comment_column( $column, $comment_id ) {
  * @return array
  */
 function tvo_filter_api_types( $types ) {
-	$types['email'] = __( 'Email Delivery', TVO_TRANSLATE_DOMAIN );
+	$types['email'] = __( 'Email Delivery', 'thrive-ovation' );
 
 	return $types;
 }
@@ -337,10 +338,16 @@ function tvo_process_testimonial_actions() {
 				}
 
 				if ( $status === 'approve' ) {
-					do_action( 'tvo_log_testimonial_status_activity', array( 'id' => $testimonial_id, 'status' => TVO_STATUS_READY_FOR_DISPLAY ) );
+					do_action( 'tvo_log_testimonial_status_activity', array(
+						'id'     => $testimonial_id,
+						'status' => TVO_STATUS_READY_FOR_DISPLAY,
+					) );
 					update_post_meta( $testimonial_id, TVO_STATUS_META_KEY, TVO_STATUS_READY_FOR_DISPLAY );
 				} else {
-					do_action( 'tvo_log_testimonial_status_activity', array( 'id' => $testimonial_id, 'status' => TVO_STATUS_REJECTED ) );
+					do_action( 'tvo_log_testimonial_status_activity', array(
+						'id'     => $testimonial_id,
+						'status' => TVO_STATUS_REJECTED,
+					) );
 					update_post_meta( $testimonial_id, TVO_STATUS_META_KEY, TVO_STATUS_REJECTED );
 				}
 
@@ -396,11 +403,11 @@ function tvo_ajax_load_library( $forms ) {
 				'testimonial_route' => tvo_get_route_url( 'testimonials' ) . '/form',
 				'gravatar_route'    => tvo_get_route_url( 'socialmedia' ) . '/gravatar',
 				'translate'         => array(
-					'required'   => __( 'Please fill the required fields.', TVO_TRANSLATE_DOMAIN ),
-					'validEmail' => __( 'Please enter a valid email.', TVO_TRANSLATE_DOMAIN ),
-					'validURL'   => __( 'Please enter a valid URL, /n Make  \n sure you also use the website protocol (http, https, ftp)', TVO_TRANSLATE_DOMAIN ),
-					'submit'     => __( 'Submit', TVO_TRANSLATE_DOMAIN ),
-					'sending'    => __( 'Sending...', TVO_TRANSLATE_DOMAIN ),
+					'required'   => __( 'Please fill the required fields.', 'thrive-ovation' ),
+					'validEmail' => __( 'Please enter a valid email.', 'thrive-ovation' ),
+					'validURL'   => __( 'Please enter a valid URL, /n Make  \n sure you also use the website protocol (http, https, ftp)', 'thrive-ovation' ),
+					'submit'     => __( 'Submit', 'thrive-ovation' ),
+					'sending'    => __( 'Sending...', 'thrive-ovation' ),
 				),
 			);
 		}
@@ -418,7 +425,7 @@ function tvo_ajax_load_library( $forms ) {
  */
 function tvo_filter_nm_trigger_types( $trigger_types ) {
 	if ( ! in_array( 'testimonial_submitted', array_keys( $trigger_types ) ) ) {
-		$trigger_types['testimonial_submitted'] = __( 'Testimonials', TVO_TRANSLATE_DOMAIN );
+		$trigger_types['testimonial_submitted'] = __( 'Testimonials', 'thrive-ovation' );
 	}
 
 	return $trigger_types;
@@ -457,7 +464,8 @@ function tvo_get_testimonial_details( $testimonial, $post_submission_id = '' ) {
 		$testimonial = get_post( $testimonial );
 	}
 
-	$tags = tvo_get_testimonial_tags( $testimonial->ID );
+	$tags             = tvo_get_testimonial_tags( $testimonial->ID );
+	$testimonial_meta = get_post_meta( $testimonial->ID, TVO_POST_META_KEY, true );
 
 	return array(
 		'testimonial_id'             => $testimonial->ID,
@@ -465,6 +473,11 @@ function tvo_get_testimonial_details( $testimonial, $post_submission_id = '' ) {
 		'testimonial_title'          => $testimonial->post_title,
 		'testimonial_submission_url' => ! empty( $post_submission_id ) ? get_permalink( $post_submission_id ) : '',
 		'testimonial_tags'           => $tags,
+		'testimonial_author'         => empty( $testimonial_meta['name'] ) ? '' : $testimonial_meta['name'],
+		'testimonial_author_email'   => empty( $testimonial_meta['email'] ) ? '' : $testimonial_meta['email'],
+		'testimonial_author_role'    => empty( $testimonial_meta['role'] ) ? '' : $testimonial_meta['role'],
+		'testimonial_author_website' => empty( $testimonial_meta['website_url'] ) ? '' : $testimonial_meta['website_url'],
+		'testimonial_author_image'   => empty( $testimonial_meta['picture_url'] ) ? '' : $testimonial_meta['picture_url'],
 	);
 
 }

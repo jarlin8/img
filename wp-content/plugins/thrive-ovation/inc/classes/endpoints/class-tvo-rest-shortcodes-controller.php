@@ -43,7 +43,7 @@ class TVO_REST_Shortcodes_Controller extends TVO_REST_Controller {
 		$config = $request->get_param( 'config' );
 
 		if ( empty( $config ) ) {
-			return new WP_Error( 'cant-get-data', __( 'message', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+			return new WP_Error( 'cant-get-data', __( 'message', 'thrive-ovation' ), array( 'status' => 500 ) );
 		}
 
 		$html = tvo_render_shortcode( $config );
@@ -68,7 +68,7 @@ class TVO_REST_Shortcodes_Controller extends TVO_REST_Controller {
 		$items = tvo_get_shortcodes( $type );
 
 		if ( ! is_array( $items ) ) {
-			return new WP_Error( 'cant-get-data', __( 'message', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+			return new WP_Error( 'cant-get-data', __( 'message', 'thrive-ovation' ), array( 'status' => 500 ) );
 		}
 
 		return new WP_REST_Response( $items, 200 );
@@ -141,7 +141,7 @@ class TVO_REST_Shortcodes_Controller extends TVO_REST_Controller {
 			return new WP_REST_Response( $shortcode, 200 );
 		}
 
-		return new WP_Error( 'cant-create', __( 'message', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-create', __( 'message', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -170,7 +170,7 @@ class TVO_REST_Shortcodes_Controller extends TVO_REST_Controller {
 		if ( is_wp_error( $post_id ) ) {
 			$error = $post_id->get_error_message();
 
-			return new WP_Error( 'cant-update', __( $error, TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+			return new WP_Error( 'cant-update', __( $error, 'thrive-ovation' ), array( 'status' => 500 ) );
 		}
 
 		return new WP_REST_Response( $post_id, 200 );
@@ -235,7 +235,7 @@ class TVO_REST_Shortcodes_Controller extends TVO_REST_Controller {
 			}
 		}
 
-		return new WP_Error( 'Invalid shortcode ID', __( 'Delete action failed', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'Invalid shortcode ID', __( 'Delete action failed', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 	/**

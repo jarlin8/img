@@ -649,5 +649,10 @@ function tve_dash_to_camel_case( $string ) {
 }
 
 function tve_dash_is_ttb_active() {
-	return wp_get_theme()->name === 'Thrive Theme Builder';
+	/**
+	 * Allows template builder website or landing page preview website to hook here and modify this functionality
+	 *
+	 * @returns boolean
+	 */
+	return apply_filters( 'tve_dash_is_ttb_active', wp_get_theme()->name === 'Thrive Theme Builder' );
 }

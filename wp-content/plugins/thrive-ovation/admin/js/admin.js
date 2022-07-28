@@ -2639,7 +2639,7 @@ ThriveOvation.objects = ThriveOvation.objects || {};
 				ThriveOvation.objects.EmailConfig = new ThriveOvation.models.EmailConfig;
 			},
 			render: function () {
-				this.$el.html( this.template( {settings: this.model} ) );
+				this.$el.html( this.template( {settings: this.model} ).replace( /tve-script/g, 'script' ) );
 				ThriveOvation.util.bind_wistia();
 				this.init();
 				this.renderApiConnections();

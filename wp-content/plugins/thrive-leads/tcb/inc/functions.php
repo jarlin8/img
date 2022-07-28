@@ -1780,21 +1780,28 @@ function tve_add_custom_font( $font_data ) {
 /**
  * Update the image size with, url, width and height
  *
- * @param $image_path
- * @param $template
- * @param $image_source
+ * @param string $image_path
+ * @param array  $template
+ * @param string $image_source
+ *
+ * @return array
  */
 function tve_update_image_size( $image_path, $template, $image_source ) {
-	list( $width, $height ) = getimagesize( $image_path );
-	$template = array_merge( $template, array(
-		'thumb' => array(
-			'url' => $image_source,
-			'w'   => $width,
-			'h'   => $height,
-		),
-	) );
+	if ( is_file( $image_path ) ) {
+		list( $width, $height ) = getimagesize( $image_path );
+	} else {
+		$width  = 0;
+		$height = 0;
+	}
 
-	return $template;
+	return array_merge( $template,
+		[
+			'thumb' => [
+				'url' => $image_source,
+				'w'   => $width,
+				'h'   => $height,
+			],
+		] );
 }
 
 /**
@@ -1808,7 +1815,7 @@ function tve_run_plugin_upgrade( $old_version, $new_version ) {
 		/**
 		 * refactoring of user templates
 		 */
-		$user_templates = get_option( 'tve_user_templates', [] );
+		$user_templates = TCB\UserTemplates\Template::get_old_templates();
 		$css            = get_option( 'tve_user_templates_styles' );
 		$new_templates  = [];
 		if ( ! empty( $user_templates ) ) {
@@ -1827,13 +1834,15 @@ function tve_run_plugin_upgrade( $old_version, $new_version ) {
 
 		if ( isset( $found ) ) {
 			usort( $new_templates, 'tve_tpl_sort' );
-			update_option( 'tve_user_templates', $new_templates, 'no' );
+
+			TCB\UserTemplates\Template::save_old_templates( $new_templates );
+
 			delete_option( 'tve_user_templates_styles' );
 		}
 	}
 
 	if ( version_compare( $old_version, '2.4.8', '<' ) ) {
-		$user_templates = get_option( 'tve_user_templates', [] );
+		$user_templates = TCB\UserTemplates\Template::get_old_templates();
 
 		$upload_dir = wp_get_upload_dir();
 		if ( ! empty( $upload_dir['basedir'] ) ) {
@@ -1851,7 +1860,7 @@ function tve_run_plugin_upgrade( $old_version, $new_version ) {
 		}
 
 		if ( isset( $do_update ) ) {
-			update_option( 'tve_user_templates', $user_templates, 'no' );
+			TCB\UserTemplates\Template::save_old_templates( $user_templates );
 		}
 	}
 }
@@ -3032,15 +3041,6 @@ function tve_get_landing_page_config( $template_name ) {
 	$config = include plugin_dir_path( __DIR__ ) . 'landing-page/templates/_config.php';
 
 	return isset( $config[ $template_name ] ) ? $config[ $template_name ] : [];
-}
-
-/**
- * return a list with the current saved Landing Page templates
- */
-function tve_landing_pages_load() {
-	$templates = get_option( 'tve_saved_landing_pages_meta', [] );
-
-	return empty( $templates ) ? [] : array_reverse( $templates, true ); // order by date DESC
 }
 
 /**
@@ -4317,6 +4317,10 @@ function tve_load_tcb_classes() {
 	require_once plugin_dir_path( dirname( __FILE__ ) ) . 'landing-page/inc/TCB_Landing_Page_Transfer.php';
 
 	\TCB\Integrations\WooCommerce\Main::init();
+
+	require_once plugin_dir_path( dirname( __FILE__ ) ) . 'landing-page/inc/saved-landing-pages/class-main.php';
+
+	\TCB\SavedLandingPages\Main::init();
 }
 
 add_action( 'thrive_automator_init', array( 'Tcb\Integrations\Automator\Main', 'init' ) );
@@ -4558,7 +4562,7 @@ function tve_filter_upload_user_template_location( $upload ) {
 
 /**
  * Filters the upload landing pages preview location.
- * Callback used in action_save_landing_page_preview function
+ * Callback used in action_save_page_preview function
  *
  * @param $upload
  *
@@ -4566,6 +4570,24 @@ function tve_filter_upload_user_template_location( $upload ) {
  */
 function tve_filter_landing_page_preview_location( $upload ) {
 	$sub_dir = '/thrive-visual-editor/lp_preview';
+
+	$upload['path']   = $upload['basedir'] . $sub_dir;
+	$upload['url']    = $upload['baseurl'] . $sub_dir;
+	$upload['subdir'] = $sub_dir;
+
+	return $upload;
+}
+
+/**
+ * Filters the upload page&post preview location.
+ * Callback used in action_save_page_preview function
+ *
+ * @param $upload
+ *
+ * @return mixed
+ */
+function tve_filter_content_preview_location( $upload ) {
+	$sub_dir = '/thrive-visual-editor/content_preview';
 
 	$upload['path']   = $upload['basedir'] . $sub_dir;
 	$upload['url']    = $upload['baseurl'] . $sub_dir;

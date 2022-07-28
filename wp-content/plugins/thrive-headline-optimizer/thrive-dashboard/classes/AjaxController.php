@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * Thrive Themes - https://thrivethemes.com
+ *
+ * @package thrive-dashboard
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
 /**
  * Created by PhpStorm.
  * User: Andrei
@@ -105,7 +114,7 @@ class TVE_Dash_AjaxController {
 	 * @return mixed
 	 */
 	private function param( $key, $default = null ) {
-		return isset( $_POST[ $key ] ) ? $_POST[ $key ] : ( isset( $_REQUEST[ $key ] ) ? $_REQUEST[ $key ] : $default );
+		return isset( $_POST[ $key ] ) ? map_deep( $_POST[ $key ], 'sanitize_text_field' ) : ( isset( $_REQUEST[ $key ] ) ? map_deep( $_REQUEST[ $key ], 'sanitize_text_field' ) : $default );
 	}
 
 	/**
@@ -120,22 +129,42 @@ class TVE_Dash_AjaxController {
 	}
 
 	/**
+	 * Save FontAwesomePro kit
+	 */
+	public function saveFaKitAction() {
+
+		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'tve-dash' ) ) {
+			wp_send_json( null, 400 );
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json( 'You do not have access', 403 );
+		}
+
+		update_option( sanitize_text_field( $_POST['option_name'] ), sanitize_text_field( $_POST['option_value'] ) );
+
+		wp_send_json( 'success', 200 );
+	}
+
+	/**
 	 * save global settings for the plugin
 	 */
 	public function generalSettingsAction() {
-		$allowed = array(
+		$allowed = apply_filters( 'tvd_ajax_allowed_settings', array(
 			'tve_social_fb_app_id',
 			'tve_comments_facebook_admins',
 			'tve_comments_disqus_shortname',
 			'tve_google_fonts_disable_api_call',
 			'tvd_enable_login_design',
-			'tve_allow_video_src'
-		);
-		$field   = $this->param( 'field' );
-		$value   = map_deep( $this->param( 'value' ), 'sanitize_text_field' );
+			'tve_allow_video_src',
+			'tvd_coming_soon_page_id',
+		) );
+
+		$field = $this->param( 'field' );
+		$value = map_deep( $this->param( 'value' ), 'sanitize_text_field' );
 
 		if ( ! in_array( $field, $allowed ) ) {
-			exit();
+			wp_die( 'unknown setting.' );
 		}
 
 		$result = array(
@@ -167,9 +196,9 @@ class TVE_Dash_AjaxController {
 	}
 
 	public function licenseAction() {
-		$email = ! empty( $_POST['email'] ) ? trim( $_POST['email'], ' ' ) : '';
-		$key   = ! empty( $_POST['license'] ) ? trim( $_POST['license'], ' ' ) : '';
-		$tag   = ! empty( $_POST['tag'] ) ? trim( $_POST['tag'], ' ' ) : false;
+		$email = ! empty( $_POST['email'] ) ? sanitize_email( trim( $_POST['email'], ' ' ) ) : ''; // phpcs:ignore
+		$key   = ! empty( $_POST['license'] ) ? sanitize_text_field( trim( $_POST['license'], ' ' ) ) : ''; // phpcs:ignore
+		$tag   = ! empty( $_POST['tag'] ) ? sanitize_text_field( trim( $_POST['tag'], ' ' ) ) : false; // phpcs:ignore
 
 		$licenseManager = TVE_Dash_Product_LicenseManager::getInstance();
 		$response       = $licenseManager->checkLicense( $email, $key, $tag );
@@ -425,15 +454,10 @@ class TVE_Dash_AjaxController {
 
 	public function getErrorLogsAction() {
 
-		$order_by     = $_GET['orderby'];
-		$order        = $_GET['order'];
-		$per_page     = $_GET['per_page'];
-		$current_page = $_GET['current_page'];
-
-		$order_by     = ! empty( $order_by ) ? $order_by : 'date';
-		$order        = ! empty( $order ) ? $order : 'DESC';
-		$per_page     = ! empty( $per_page ) ? $per_page : 10;
-		$current_page = ! empty( $current_page ) ? $current_page : 1;
+		$order_by     = ! empty( $_GET['orderby'] ) ? sanitize_text_field( $_GET['orderby'] ) : 'date';
+		$order        = ! empty( $_GET['order'] ) ? sanitize_text_field( $_GET['order'] ) : 'DESC';
+		$per_page     = ! empty( $_GET['per_page'] ) ? sanitize_text_field( $_GET['per_page'] ) : 10;
+		$current_page = ! empty( $_GET['current_page'] ) ? sanitize_text_field( $_GET['current_page'] ) : 1;
 
 		return tve_dash_get_error_log_entries( $order_by, $order, $per_page, $current_page );
 

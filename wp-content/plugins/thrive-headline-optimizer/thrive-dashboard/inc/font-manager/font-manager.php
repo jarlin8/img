@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Thrive Themes - https://thrivethemes.com
+ *
+ * @package thrive-dashboard
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
+
 add_action( "wp_ajax_tve_dash_display_font_manager", "tve_dash_display_font_options" );
 /* Load font manager view in admin */
 function tve_dash_display_font_options() {
@@ -16,7 +25,7 @@ function tve_dash_font_manager_delete() {
 	if ( ! current_user_can( TVE_DASH_CAPABILITY ) ) {
 		wp_die( '' );
 	}
-	$font_id     = $_REQUEST['font_id'];
+	$font_id     = ! empty( $_REQUEST['font_id'] ) ? sanitize_text_field( $_REQUEST['font_id'] ) : '';
 	$old_options = json_decode( get_option( 'thrive_font_manager_options' ), true );
 	$delete_key  = - 1;
 	foreach ( $old_options as $key => $font ) {
@@ -103,7 +112,7 @@ function tve_dash_font_manager_duplicate() {
 	if ( ! current_user_can( TVE_DASH_CAPABILITY ) ) {
 		wp_die( '' );
 	}
-	$font_id     = $_REQUEST['font_id'];
+	$font_id     = ! empty( $_REQUEST['font_id'] ) ? sanitize_text_field( $_REQUEST['font_id'] ) : '';
 	$old_options = json_decode( get_option( 'thrive_font_manager_options' ), true );
 	$option      = null;
 	foreach ( $old_options as $key => $font ) {

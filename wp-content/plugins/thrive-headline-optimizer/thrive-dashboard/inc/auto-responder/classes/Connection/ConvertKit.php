@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Thrive Themes - https://thrivethemes.com
+ *
+ * @package thrive-dashboard
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
+
 class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection_Abstract {
 	/**
 	 * Return the connection type
@@ -42,13 +51,13 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 	 * @return mixed
 	 */
 	public function readCredentials() {
-		$key = ! empty( $_POST['connection']['key'] ) ? $_POST['connection']['key'] : '';
+		$key = ! empty( $_POST['connection']['key'] ) ? sanitize_text_field( $_POST['connection']['key'] ) : '';
 
 		if ( empty( $key ) ) {
 			return $this->error( __( 'You must provide a valid ConvertKit API Key', TVE_DASH_TRANSLATE_DOMAIN ) );
 		}
 
-		$this->setCredentials( $_POST['connection'] );
+		$this->setCredentials( array( 'key' => $key ) );
 
 		$result = $this->testConnection();
 
@@ -278,7 +287,7 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 			return $mapped_data;
 		}
 
-		$form_data = unserialize( base64_decode( $args['tve_mapping'] ) );
+		$form_data = thrive_safe_unserialize( base64_decode( $args['tve_mapping'] ) );
 
 		$mapped_fields = $this->getMappedFieldsIDs();
 
@@ -385,5 +394,9 @@ class Thrive_Dash_List_Connection_ConvertKit extends Thrive_Dash_List_Connection
 		}
 
 		return $prepared_fields;
+	}
+
+	public function get_automator_autoresponder_fields() {
+		 return array( 'mailing_list', 'tag_input' );
 	}
 }

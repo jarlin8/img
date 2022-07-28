@@ -1,4 +1,3 @@
-@import "bourbon";
 
 $font-mdi: 'tvo-frontend-icons';
 $mdi-prefix: 'tvo-f-';
@@ -403,6 +402,18 @@ $icons-font-path: "fonts/" !default;
   }
 }
 
+.tve-button {
+  &.tvo-back {
+    &:hover {
+      opacity: .8;
+    }
+  }
+
+  &.tvo-next {
+    color: #fff;
+  }
+}
+
 .tvo-card {
   border-radius: 2px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.22);
@@ -594,6 +605,8 @@ $icons-font-path: "fonts/" !default;
 
 #tvo-testimonial-display {
   margin-bottom: 20px;
+  padding: 0 10px;
+
   h6 {
     color: #333;
     font-size: 17px;
@@ -639,6 +652,7 @@ $icons-font-path: "fonts/" !default;
   margin-bottom: 20px;
   text-align: center;
   width: 100%;
+  padding: 0 10px;
 
   .tvo-template {
     background: #FFF;
@@ -749,7 +763,7 @@ $icons-font-path: "fonts/" !default;
 
 .tvo_testimonials_count {
   font-family: 'Open Sans', sans-serif;
-  font-size: 2.143em;
+  font-size: 23px;
   font-weight: 300;
   margin: 22px 11px;
   text-align: center;
@@ -967,7 +981,7 @@ $icons-font-path: "fonts/" !default;
   }
   // OFF Knob
   span:before {
-    @include linear-gradient(#fefefe, #e7e7e7);
+    background-image: linear-gradient(#fefefe, #e7e7e7);
     border: 1px solid #a9a9a9;
     border-radius: 100%;
     content: '';
@@ -1073,11 +1087,7 @@ $icons-font-path: "fonts/" !default;
 }
 
 #tcb-modal-capture-form-settings-lightbox, #tcb-modal-display-settings-lightbox, #tcb-modal-display-testimonial-templates-lightbox {
-  overflow: auto;
-  .tve-button {
-    color: #FFF !important;
-    display: inline-block !important;
-  }
+  width: 70%;
 }
 
 #tcb-modal-capture-form-settings-lightbox.loading:before {

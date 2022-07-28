@@ -1,23 +1,23 @@
 <div id="tvo_capture_form_settings" class="tvo-frontend-modal">
 	<h2>
-		<?php echo __( 'Form Settings', TVO_TRANSLATE_DOMAIN ) ?>
+		<?php echo __( 'Form Settings', 'thrive-ovation' ) ?>
 	</h2>
 	<hr class="tve_lightbox_line">
 
 	<table>
 		<thead>
 		<tr>
-			<th><?php echo __( 'Display', TVO_TRANSLATE_DOMAIN ) ?></th>
-			<th><?php echo __( 'Field', TVO_TRANSLATE_DOMAIN ) ?></th>
-			<th><?php echo __( 'Label', TVO_TRANSLATE_DOMAIN ) ?></th>
-			<th><?php echo __( 'Required', TVO_TRANSLATE_DOMAIN ) ?></th>
+			<th><?php echo __( 'Display', 'thrive-ovation' ) ?></th>
+			<th><?php echo __( 'Field', 'thrive-ovation' ) ?></th>
+			<th><?php echo __( 'Label', 'thrive-ovation' ) ?></th>
+			<th><?php echo __( 'Required', 'thrive-ovation' ) ?></th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr>
-			<td><?php echo __( 'Always', TVO_TRANSLATE_DOMAIN ) ?></td>
-			<td><?php echo __( 'Name', TVO_TRANSLATE_DOMAIN ) ?></td>
-			<td><input class="tvo_config_field tve_lightbox_input" name="name_label" value="<?php echo __( 'Name', TVO_TRANSLATE_DOMAIN ); ?>"></td>
+			<td><?php echo __( 'Always', 'thrive-ovation' ) ?></td>
+			<td><?php echo __( 'Name', 'thrive-ovation' ) ?></td>
+			<td><input class="tvo_config_field tve_lightbox_input" name="name_label" value="<?php echo __( 'Name', 'thrive-ovation' ); ?>"></td>
 			<td style="text-align: right">
 				<div class="tve_lightbox_input_holder tve_lightbox_no_label">
 					<input class="tvo_config_field" type="checkbox" name="name_required" id="name_required">
@@ -26,10 +26,10 @@
 			</td>
 		</tr>
 		<tr>
-			<td><?php echo __( 'Always', TVO_TRANSLATE_DOMAIN ) ?></td>
-			<td><?php echo __( 'Email', TVO_TRANSLATE_DOMAIN ) ?></td>
+			<td><?php echo __( 'Always', 'thrive-ovation' ) ?></td>
+			<td><?php echo __( 'Email', 'thrive-ovation' ) ?></td>
 			<td>
-				<input class="tvo_config_field tve_lightbox_input" name="email_label" value="<?php echo __( 'Email', TVO_TRANSLATE_DOMAIN ) ?>">
+				<input class="tvo_config_field tve_lightbox_input" name="email_label" value="<?php echo __( 'Email', 'thrive-ovation' ) ?>">
 			</td>
 			<td style="text-align: right">
 				<div class="tve_lightbox_input_holder tve_lightbox_no_label">
@@ -46,10 +46,10 @@
 				</div>
 			</td>
 			<td>
-				<label for="role_display"><?php echo __( 'Role/Description', TVO_TRANSLATE_DOMAIN ) ?></label>
+				<label for="role_display"><?php echo __( 'Role/Description', 'thrive-ovation' ) ?></label>
 			</td>
 			<td>
-				<input class="tvo_config_field tve_lightbox_input" name="role_label" value="<?php echo __( 'Role', TVO_TRANSLATE_DOMAIN ) ?>">
+				<input class="tvo_config_field tve_lightbox_input" name="role_label" value="<?php echo __( 'Role', 'thrive-ovation' ) ?>">
 			</td>
 			<td style="text-align: right">
 				<div class="tve_lightbox_input_holder tve_lightbox_no_label">
@@ -66,10 +66,10 @@
 				</div>
 			</td>
 			<td>
-				<?php echo __( 'Website URL', TVO_TRANSLATE_DOMAIN ) ?>
+				<?php echo __( 'Website URL', 'thrive-ovation' ) ?>
 			</td>
 			<td>
-				<input class="tvo_config_field tve_lightbox_input tvo_website_url" type="text" name="website_url_label" value="<?php echo __( 'Website URL', TVO_TRANSLATE_DOMAIN ); ?>">
+				<input class="tvo_config_field tve_lightbox_input tvo_website_url" type="text" name="website_url_label" value="<?php echo __( 'Website URL', 'thrive-ovation' ); ?>">
 			</td>
 			<td style="text-align: right">
 				<div class="tve_lightbox_input_holder tve_lightbox_no_label">
@@ -86,7 +86,7 @@
 				</div>
 			</td>
 			<td>
-				<?php echo __( 'Title', TVO_TRANSLATE_DOMAIN ) ?>
+				<?php echo __( 'Title', 'thrive-ovation' ) ?>
 			</td>
 			<td>
 				<input class="tvo_config_field tve_lightbox_input" type="text" name="title_label">
@@ -106,20 +106,20 @@
 			<div class="tvo-card tvo-card-xsmall">
 				<div class="tvo-card-content">
 					<span class="tvo-f-icon-add tvo-add-testimonial"></span>
-					<?php echo __( 'Add New Question', TVO_TRANSLATE_DOMAIN ) ?>
+					<?php echo __( 'Add New Question', 'thrive-ovation' ) ?>
 				</div>
 			</div>
 		</div>
 	</div>
 	<br>
 	<h5>
-		<?php echo __( 'Other settings', TVO_TRANSLATE_DOMAIN ) ?>
+		<?php echo __( 'Other settings', 'thrive-ovation' ) ?>
 	</h5>
 	<div class="tvo-row tvo-collapse">
 		<div class="tvo-col tvo-s4">
 			<p>
 				<span class="tvo-f-icon-image tvo-margin-right-small"></span>
-				<?php echo __( 'Include image field', TVO_TRANSLATE_DOMAIN ) ?>
+				<?php echo __( 'Include image field', 'thrive-ovation' ) ?>
 			</p>
 		</div>
 		<div class="tvo-col tvo-s6">
@@ -135,19 +135,19 @@
 		<div class="tvo-col tvo-s4">
 			<p>
 				<span class="tvo-f-icon-check tvo-text-green tvo-margin-right-small"></span>
-				<?php echo __( 'On successful message', TVO_TRANSLATE_DOMAIN ) ?>
+				<?php echo __( 'On successful message', 'thrive-ovation' ) ?>
 			</p>
 		</div>
-		<div class="tvo-col tvo-s6">
+		<div class="tvo-col tvo-s6 pl-0">
 			<div class="tve_lightbox_select_holder">
-				<select class="tvo_config_field" name="on_success_option" data-message="<?php echo __( 'Thanks for submitting your testimonial.', TVO_TRANSLATE_DOMAIN ); ?>" data-redirect="http://">
-					<option value="message"><?php echo __( 'Show success message', TVO_TRANSLATE_DOMAIN ) ?></option>
-					<option value="redirect"><?php echo __( 'Redirect to url', TVO_TRANSLATE_DOMAIN ) ?></option>
+				<select class="tvo_config_field" name="on_success_option" data-message="<?php echo __( 'Thanks for submitting your testimonial.', 'thrive-ovation' ); ?>" data-redirect="http://">
+					<option value="message"><?php echo __( 'Show success message', 'thrive-ovation' ) ?></option>
+					<option value="redirect"><?php echo __( 'Redirect to url', 'thrive-ovation' ) ?></option>
 				</select>
 			</div>
 			<div>
 				<input class="tvo_config_field tve_lightbox_input" type="text" name="on_success"
-					   value="<?php echo __( 'Thanks for submitting your testimonial.', TVO_TRANSLATE_DOMAIN ); ?>">
+					   value="<?php echo __( 'Thanks for submitting your testimonial.', 'thrive-ovation' ); ?>">
 			</div>
 		</div>
 	</div>
@@ -155,11 +155,11 @@
 		<div class="tvo-col tvo-s4">
 			<p>
 				<span class="tvo-f-icon-chat tvo-text-blue tvo-margin-right-small"></span>
-				<?php echo __( 'Submit button text', TVO_TRANSLATE_DOMAIN ) ?>
+				<?php echo __( 'Submit button text', 'thrive-ovation' ) ?>
 			</p>
 		</div>
 		<div class="tvo-col tvo-s6">
-			<input class="tvo_config_field tve_lightbox_input" type="text" name="button_text" value="<?php echo __( 'Submit', TVO_TRANSLATE_DOMAIN ); ?>">
+			<input class="tvo_config_field tve_lightbox_input" type="text" name="button_text" value="<?php echo __( 'Submit', 'thrive-ovation' ); ?>">
 		</div>
 	</div>
 	<br>
@@ -167,7 +167,7 @@
 		<div class="tvo-col tvo-s4">
 			<p>
 				<span class="tvo-f-icoan-tags tvo-orange-text tvo-margin-right-small"></span>
-				<?php echo __( 'Add tags (optional)', TVO_TRANSLATE_DOMAIN ) ?>
+				<?php echo __( 'Add tags (optional)', 'thrive-ovation' ) ?>
 			</p>
 		</div>
 		<div class="tvo-col tvo-s6">
@@ -184,20 +184,20 @@
 		<div class="tvo-col tvo-s12">
 			<p>
 				<input class="tvo_config_field" type="checkbox" name="reCaptcha_option" id="tvo_activate_reCaptcha" <?php echo $captcha_available ? '' : ' disabled'; ?>>
-				<?php echo __( 'Activate reCaptcha ', TVO_TRANSLATE_DOMAIN ) ?> </p>
+				<?php echo __( 'Activate reCaptcha ', 'thrive-ovation' ) ?> </p>
 
 			<label for="reCaptcha_option">
 				<?php if ( ! $captcha_available ) : ?>
-					<a target="_blank" href= <?php echo admin_url( 'admin.php?page=tve_dash_api_connect' ) ?>> <?php echo __( 'Requires integration with Google ReCaptcha', TVO_TRANSLATE_DOMAIN ) ?> </a>
+					<a target="_blank" href= <?php echo admin_url( 'admin.php?page=tve_dash_api_connect' ) ?>> <?php echo __( 'Requires integration with Google ReCaptcha', 'thrive-ovation' ) ?> </a>
 				<?php else : ?>
-					<p> <?php echo __( 'Please note that only one reCaptcha may be active on a page!', TVO_TRANSLATE_DOMAIN ) ?></p>
+					<p> <?php echo __( 'Please note that only one reCaptcha may be active on a page!', 'thrive-ovation' ) ?></p>
 				<?php endif; ?>
 			</label>
 		</div>
 	</div>
 
 	<button class="tve-button green tve_editor_button tve_editor_button_success click tvd-right" data-fn="save">
-		<?php echo __( 'Save', TVO_TRANSLATE_DOMAIN ); ?>
+		<?php echo __( 'Save', 'thrive-ovation' ); ?>
 	</button>
 </div>
 

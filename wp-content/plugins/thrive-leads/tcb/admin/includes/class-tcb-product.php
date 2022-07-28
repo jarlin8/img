@@ -105,6 +105,8 @@ class TCB_Product extends TVE_Dash_Product_Abstract {
 					TCB_CT_POST_TYPE,
 					TCB_Symbols_Post_Type::SYMBOL_POST_TYPE,
 					\TCB\inc\helpers\FormSettings::POST_TYPE,
+					\TCB\UserTemplates\Template::get_post_type_name(),
+					\TCB\SavedLandingPages\Saved_Lp::get_post_type_name(),
 				),
 				'fields'         => 'ids',
 				'posts_per_page' => '-1',
@@ -122,7 +124,7 @@ class TCB_Product extends TVE_Dash_Product_Abstract {
 			'tve_comments_disqus_shortname',
 			'tve_comments_facebook_admins',
 			'tve_fa_kit',
-			'tve_user_templates',
+			TCB\UserTemplates\Template::OPTION_KEY,
 		);
 
 		foreach ( $options as $option ) {

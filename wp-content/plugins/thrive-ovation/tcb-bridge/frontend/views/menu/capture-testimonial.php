@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="tvo-menu-relative tvo-menu-inline-block">
 			<span class="tvo_toggle_fields tvo_menu_item tvo_icon_box" data-func="toggle_fields" data-toggle=".tvo_color_box">
 				<i class="tvo-f-icon-color-palette"></i>
-				<?php echo __( 'Color', TVO_TRANSLATE_DOMAIN ) ?>
+				<?php echo __( 'Color', 'thrive-ovation' ) ?>
 			</span>
 
 			<div class="tvo_toggle_fields_box tvo_color_box tvo-showhide-fields" style="display: none;">
-				<?php echo __( 'Template Color', TVO_TRANSLATE_DOMAIN ) ?>
+				<?php echo __( 'Template Color', 'thrive-ovation' ) ?>
 				<ul class="tvo_template_colors">
 					<li class="tve_black"><span></span></li>
 					<li class="tve_blue"><span></span></li>

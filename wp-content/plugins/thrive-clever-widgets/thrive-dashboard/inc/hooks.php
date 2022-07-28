@@ -74,6 +74,75 @@ function tve_dash_admin_menu() {
 		}
 	);
 
+	add_submenu_page(
+		null,
+		__( 'Update Info', TVE_DASH_TRANSLATE_DOMAIN ),
+		__( 'Update Info', TVE_DASH_TRANSLATE_DOMAIN ),
+		'manage_options',
+		'tve-updates',
+		static function () {
+			tve_dash_enqueue();
+			wp_enqueue_media(); //Weeded for wp object localization in JS
+
+			require_once( TVE_DASH_PATH . '/inc/plugin-updates/update-channel.php' );
+		}
+	);
+
+	add_submenu_page(
+		null,
+		__( 'Update Info', TVE_DASH_TRANSLATE_DOMAIN ),
+		__( 'Update Info', TVE_DASH_TRANSLATE_DOMAIN ),
+		'manage_options',
+		'tve-update-switch-stable-channel',
+		static function () {
+			//Nonce check
+			check_admin_referer( 'tvd_switch_stable_channel_nonce' );
+
+			$defaults = array(
+				'page'            => 'tve-update-switch-stable-channel',
+				'name'            => '',
+				'current_version' => 0, //Needed only for UI
+				'plugin_file'     => '',
+				'_wpnonce'        => '',//Nonce key
+				'plugin_slug'     => '',
+				'type'            => '',//Theme OR Plugin
+			);
+			$args     = wp_parse_args( $_GET, $defaults );
+
+			if ( ! empty( $args['type'] ) && ! empty( $args['tvd_channel'] ) && $args['tvd_channel'] === 'tvd_switch_to_stable_channel' && in_array( $args['type'], [ 'plugin', 'theme' ] ) ) {
+				$name = sanitize_text_field( $args['name'] );
+
+				if ( $args['type'] === 'theme' ) {
+
+					$theme = 'thrive-theme';
+
+					require_once( TVE_DASH_PATH . '/inc/plugin-updates/classes/class-tvd-theme-upgrader.php' );
+
+					$theme_upgrader = new TVD_Theme_Upgrader( new Theme_Upgrader_Skin( array(
+						'title' => $name,
+						'nonce' => 'upgrade-plugin_' . $theme,
+						'url'   => 'index.php?page=' . esc_url( $args['page'] ) . '&theme_file=' . $theme . 'action=upgrade-theme',
+						'theme' => $theme,
+					) ) );
+					$theme_upgrader->get_latest_version( $theme );
+				} else if ( $args['type'] === 'plugin' ) {
+					require_once( TVE_DASH_PATH . '/inc/plugin-updates/classes/class-tvd-plugin-upgrader.php' );
+
+					$plugin_upgrader = new TVD_Plugin_Upgrader( new Plugin_Upgrader_Skin( array(
+						'title'  => $name,
+						'nonce'  => 'upgrade-plugin_' . esc_html( $args['plugin_slug'] ),
+						'url'    => 'index.php?page=' . esc_url( $args['page'] ) . '&plugin_file=' . esc_url( $args['plugin_file'] ) . 'action=upgrade-plugin',
+						'plugin' => esc_html( $args['plugin_slug'] ),
+					) ) );
+					$plugin_upgrader->get_latest_version( $args['plugin_file'] );
+				}
+			} else {
+				tve_dash_enqueue();
+				require_once( TVE_DASH_PATH . '/inc/plugin-updates/update-switch-stable-channel.php' );
+			}
+		}
+	);
+
 	/**
 	 * @param tve_dash_section parent slug
 	 */
@@ -145,6 +214,47 @@ function tve_dash_admin_menu() {
 	}
 }
 
+/**
+ * Plugin Action Links
+ *
+ * Injects a stable link into plugin actions links used to switch Beta Versions of Thrive Plugins to Stable Versions
+ *
+ * @param $actions
+ * @param $plugin_file
+ * @param $plugin_data
+ * @param $context
+ *
+ * @return array $actions
+ */
+add_filter( 'plugin_action_links', static function ( $actions, $plugin_file, $plugin_data, $context ) {
+
+	if ( ! isset( $plugin_data['slug'], $plugin_data['Version'] ) ) {
+		return $actions;
+	}
+
+	// Multisite check.
+	if ( is_multisite() && ( ! is_network_admin() && ! is_main_site() ) ) {
+		return $actions;
+	}
+
+	if ( strpos( $plugin_data['slug'], 'thrive-' ) !== false && strpos( $plugin_data['Version'], 'beta' ) !== false && tvd_update_is_using_stable_channel() ) {
+		$stable_url = add_query_arg(
+			array(
+				'current_version' => urlencode( $plugin_data['Version'] ),
+				'name'            => urlencode( $plugin_data['Name'] ),
+				'plugin_slug'     => urlencode( $plugin_data['slug'] ),
+				'_wpnonce'        => wp_create_nonce( 'tvd_switch_stable_channel_nonce' ),
+				'type'            => 'plugin',
+				'plugin_file'     => $plugin_file,
+				'page'            => 'tve-update-switch-stable-channel',
+			), admin_url( 'admin.php' ) );
+
+		$actions['tvd-switch-stable-update'] = '<a href="' . esc_url( $stable_url ) . '">' . __( 'Switch to stable version', TVE_DASH_TRANSLATE_DOMAIN ) . '</a>';
+	}
+
+	return $actions;
+}, 10, 4 );
+
 function tve_dash_icon_manager_main_page() {
 	$tve_icon_manager = Tve_Dash_Thrive_Icon_Manager::instance();
 	$tve_icon_manager->mainPage();
@@ -179,6 +289,37 @@ function tve_dash_needs_enqueue( $hook ) {
 }
 
 function tve_dash_admin_enqueue_scripts( $hook ) {
+
+	if ( $hook === 'themes.php' && array_key_exists( 'thrive-theme', wp_get_themes() ) ) {
+
+		$thrive_theme = wp_get_themes()['thrive-theme'];
+
+		if ( wp_get_theme()->name === $thrive_theme->name && tvd_update_is_using_stable_channel() && strpos( $thrive_theme->get( 'Version' ), 'beta' ) !== false ) {
+			$stable_url = add_query_arg(
+				array(
+					'current_version' => urlencode( $thrive_theme->get( 'Version' ) ),
+					'name'            => urlencode( $thrive_theme->get( 'Name' ) ),
+					'plugin_slug'     => urlencode( 'thrive-theme' ),
+					'_wpnonce'        => wp_create_nonce( 'tvd_switch_stable_channel_nonce' ),
+					'type'            => 'theme',
+					'page'            => 'tve-update-switch-stable-channel',
+				), admin_url( 'admin.php' ) );
+
+			wp_enqueue_script( 'tve-dash-theme-switch-stable', TVE_DASH_URL . '/inc/plugin-updates/js/themes-switch-stable.js', array(
+				'jquery',
+				'backbone',
+				'theme',
+			), false, true );
+
+			wp_localize_script( 'tve-dash-theme-switch-stable', 'TVD_STABLE_THEME',
+				array(
+					'name'      => $thrive_theme->name,
+					'link_html' => '<a href="' . $stable_url . '" style="position:absolute;right: 5px; bottom: 5px;" class="tvd-switch-stable-theme button">Switch to stable version</a>',
+				)
+			);
+		}
+	}
+
 	if ( tve_dash_needs_enqueue( $hook ) ) {
 		tve_dash_enqueue();
 	}
@@ -560,7 +701,8 @@ function tve_dash_frontend_ajax_load() {
 
 		$post = get_post( $_POST['post_id'] );
 	}
-
+	//set a global to know we are on dashboard lazy load
+	$GLOBALS['tve_dash_frontend_ajax_load'] = true;
 	foreach ( map_deep( $_POST['tve_dash_data'], 'sanitize_text_field' ) as $key => $data ) {
 		/**
 		 * this is a really ugly one, but is required, because code from various plugins relies on $_POST / $_REQUEST
@@ -581,6 +723,13 @@ function tve_dash_frontend_ajax_load() {
 	if ( ! empty( $GLOBALS['tve_dash_resources'] ) ) {
 		$response['__resources'] = $GLOBALS['tve_dash_resources'];
 	}
+
+	/**
+	 * Used for changing the response on dashboard requests
+	 */
+	$response = apply_filters( 'tve_dash_frontend_ajax_response', $response );
+
+	$GLOBALS['tve_dash_frontend_ajax_load'] = false;
 
 	wp_send_json( $response );
 }
@@ -703,6 +852,31 @@ function tve_dash_admin_bar_menu( $wp_admin_bar ) {
 }
 
 add_action( 'admin_bar_menu', 'tve_dash_admin_bar_menu', 999 );
+
+/**
+ * Update setting for Thrive Suite
+ */
+add_action( 'wp_ajax_tve_update_settings', static function () {
+
+	check_ajax_referer( 'tve-dash' );
+
+	$value = sanitize_text_field( $_POST['value'] );
+
+	if ( current_user_can( 'manage_options' ) && in_array( $value, array( 'stable', 'beta' ) ) ) {
+
+		update_option( 'tve_update_option', $value );
+
+		/**
+		 * We need to delete transients on channel changed to refresh the update cache
+		 */
+		delete_transient( 'update_themes' );
+		delete_transient( 'update_plugins' );
+
+		wp_die( 'Success!' );
+	}
+
+	wp_die( 'Nope!' );
+} );
 
 /* Quick query to remove all of our transients */
 add_action( 'wp_ajax_tve_debug_reset_transient', function () {

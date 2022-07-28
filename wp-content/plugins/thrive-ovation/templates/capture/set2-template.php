@@ -38,7 +38,7 @@
 			<?php if ( !empty($config['reCaptcha_option'])  ) { include 'reCaptcha.php'; } ?>
 			<div class="tvo-form-field tvo-item-m12 tvo-item-col">
 				<button class="tvo-form-button">
-					<?php echo empty( $config['button_text'] ) ? __( 'Submit Testimonial', TVO_TRANSLATE_DOMAIN ) : $config['button_text']; ?>
+					<?php echo empty( $config['button_text'] ) ? __( 'Submit Testimonial', 'thrive-ovation' ) : $config['button_text']; ?>
 					<span class="tvo-submit-arrow"></span>
 				</button>
 			</div>

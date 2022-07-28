@@ -40,7 +40,7 @@
 			<?php if ( !empty($config['reCaptcha_option'])  ) { include 'reCaptcha.php'; } ?>
 			<div class="tvo-form-field tvo-item-m12 tvo-item-col">
 				<button class="tvo-form-button">
-					<?php echo empty( $config['button_text'] ) ? __( 'Submit', TVO_TRANSLATE_DOMAIN ) : $config['button_text']; ?>
+					<?php echo empty( $config['button_text'] ) ? __( 'Submit', 'thrive-ovation' ) : $config['button_text']; ?>
 				</button>
 			</div>
 			<?php include dirname( __FILE__ ) . '/config.php'; ?>

@@ -81,11 +81,11 @@ $is_gutenberg_preview = isset( $_GET['tve_block_preview'] );
 			<path fill="#333333" d="M21.161 12v-2.968l1.29-3.097h1.677l-0.903 2.839h1.419v3.097h-3.484v0.129z"></path>
 			<path fill="#333333" d="M33.677 20h-26.065c-0.004 0-0.008 0-0.013 0-0.563 0-1.019-0.456-1.019-1.019 0-0.005 0-0.009 0-0.014v0.001c-0.002-0.024-0.003-0.052-0.003-0.081 0-0.527 0.428-0.955 0.955-0.955 0.028 0 0.057 0.001 0.084 0.004l-0.004-0h26.194c0.004-0 0.008-0 0.013-0 0.563 0 1.019 0.456 1.019 1.019 0 0.005-0 0.009-0 0.014v-0.001c-0.012 0.575-0.481 1.037-1.058 1.037-0.036 0-0.072-0.002-0.108-0.005l0.004 0z"></path>
 		</svg>
-		<div class="tvo-block-title mb-10"><h2 class="mb-10"><?php echo __( 'Display Testimonial', TVO_TRANSLATE_DOMAIN ); ?></h2></div>
+		<div class="tvo-block-title mb-10"><h2 class="mb-10"><?php echo __( 'Display Testimonial', 'thrive-ovation' ); ?></h2></div>
 		<div class="tvo-new-block-description">
-			<?php echo __( 'Currently this block has no content.', TVO_TRANSLATE_DOMAIN ); ?>
+			<?php echo __( 'Currently this block has no content.', 'thrive-ovation' ); ?>
 		</div>
-		<div class="tvo-new-block-description mb-10"><?php echo __( 'It will update once your block has been saved in Architect.', TVO_TRANSLATE_DOMAIN ); ?></div>
+		<div class="tvo-new-block-description mb-10"><?php echo __( 'It will update once your block has been saved in Architect.', 'thrive-ovation' ); ?></div>
 	</div>
 <?php } else { ?>
 <div class="tve-block-container">
@@ -95,7 +95,7 @@ $is_gutenberg_preview = isset( $_GET['tve_block_preview'] );
 				<div class="thrv_wrapper thrv_tvo_display_testimonials tcb-elem-placeholder">
 						<span class="tcb-inline-placeholder-action with-icon">
 							<?php tcb_icon( 'add', false, 'editor' ); ?>
-							<?php echo __( 'Select Testimonial', TVO_TRANSLATE_DOMAIN ); ?>
+							<?php echo __( 'Select Testimonial', 'thrive-ovation' ); ?>
 						</span>
 				</div>
 			<?php } else { ?>

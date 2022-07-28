@@ -270,7 +270,8 @@ class TCB_REST_Symbols_Controller extends WP_REST_Posts_Controller {
 		}
 
 		/* add the thumbnail data */
-		$response->data['thumb'] = TCB_Utils::get_thumb_data( $post->ID, TCB_Symbols_Post_Type::SYMBOL_THUMBS_FOLDER, static::get_default_thumb_placeholder() );
+		$default_thumb_data      = TCB\UserTemplates\Template::get_placeholder_data();
+		$response->data['thumb'] = TCB_Utils::get_thumb_data( $post->ID, TCB_Symbols_Post_Type::SYMBOL_THUMBS_FOLDER, $default_thumb_data );
 
 		$response->data['edit_url'] = tcb_get_editor_url( $post->ID );
 
@@ -534,20 +535,6 @@ class TCB_REST_Symbols_Controller extends WP_REST_Posts_Controller {
 		register_rest_field( $this->get_object_type(), 'move_symbol', array(
 			'update_callback' => array( $this, 'move_symbol' ),
 		) );
-	}
-
-	/**
-	 * Return the symbol admin preview placeholder data
-	 *
-	 * @return array
-	 */
-	public static function get_default_thumb_placeholder() {
-		return array(
-			'url' => tve_editor_url( 'admin/assets/images/no-template-preview.jpg' ),
-			/* hardcoded sizes taken from 'no-template-preview.jpg' */
-			'h'   => '248',
-			'w'   => '520',
-		);
 	}
 
 	/**

@@ -268,7 +268,7 @@ class TVO_REST_Settings_Controller extends TVO_REST_Controller {
 			return new WP_REST_Response( $landing_page_settings, 200 );
 		}
 
-		return new WP_Error( 'cant-update-landing-settings', __( 'Error while updating the landing page settings', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update-landing-settings', __( 'Error while updating the landing page settings', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -322,11 +322,11 @@ class TVO_REST_Settings_Controller extends TVO_REST_Controller {
 	public function new_api( $request ) {
 		define( 'DOING_AJAX', true );
 		$connection = $request->get_param( 'api' );
-		$api        = Thrive_List_Manager::connectionInstance( $connection );
+		$api        = Thrive_List_Manager::connection_instance( $connection );
 
 		update_option( 'tvo_api_delivery_service', $connection );
 
-		$connect = $api->readCredentials();
+		$connect = $api->read_credentials();
 
 		return new WP_REST_Response( json_encode( $connect ), 200 );
 	}
@@ -342,12 +342,12 @@ class TVO_REST_Settings_Controller extends TVO_REST_Controller {
 		define( 'DOING_AJAX', true );
 		$connection = $request->get_param( 'connection' );
 
-		$api  = Thrive_List_Manager::connectionInstance( $connection );
-		$test = $api->testConnection();
+		$api  = Thrive_List_Manager::connection_instance( $connection );
+		$test = $api->test_connection();
 		if ( $test === true ) {
 			$class = 'updated';
 
-			$result = '<div class="' . $class . '"><p>' . __( 'Connection was made successfully', TVO_TRANSLATE_DOMAIN ) . '</p></div>';
+			$result = '<div class="' . $class . '"><p>' . __( 'Connection was made successfully', 'thrive-ovation' ) . '</p></div>';
 		} else {
 			$class = 'error';
 
@@ -374,7 +374,7 @@ class TVO_REST_Settings_Controller extends TVO_REST_Controller {
 			return new WP_REST_Response( json_encode( $result ), 200 );
 		}
 
-		return new WP_Error( 'cant-update', __( 'Error while updating the email template', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'Error while updating the email template', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -395,7 +395,7 @@ class TVO_REST_Settings_Controller extends TVO_REST_Controller {
 			return new WP_REST_Response( json_encode( $result_template && $result_subject ), 200 );
 		}
 
-		return new WP_Error( 'cant-update', __( 'The email subject and message are mandatory. Error while updating the email template', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'The email subject and message are mandatory. Error while updating the email template', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -422,7 +422,7 @@ class TVO_REST_Settings_Controller extends TVO_REST_Controller {
 			return new WP_REST_Response( $data, 200 );
 		}
 
-		return new WP_Error( 'cant-update', __( 'Error', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'Error', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -441,9 +441,9 @@ class TVO_REST_Settings_Controller extends TVO_REST_Controller {
 		if ( ! empty( $email_template_text ) && ! empty( $email_address ) && ! empty( $email_subject ) ) {
 			$connection = get_option( 'tvo_api_delivery_service', false );
 			if ( ! $connection ) {
-				return new WP_Error( 'cant-update', __( 'No active connection set', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+				return new WP_Error( 'cant-update', __( 'No active connection set', 'thrive-ovation' ), array( 'status' => 500 ) );
 			}
-			$api = Thrive_List_Manager::connectionInstance( $connection );
+			$api = Thrive_List_Manager::connection_instance( $connection );
 
 			$data['html_content'] = $email_template;
 			$data['text_content'] = $email_template_text;
@@ -455,11 +455,11 @@ class TVO_REST_Settings_Controller extends TVO_REST_Controller {
 				return new WP_REST_Response( json_encode( $sent ), 200 );
 			}
 
-			return new WP_Error( 'cant-update', __( 'Sending test email failed', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+			return new WP_Error( 'cant-update', __( 'Sending test email failed', 'thrive-ovation' ), array( 'status' => 500 ) );
 
 		}
 
-		return new WP_Error( 'cant-update', __( 'Sending test email failed', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'Sending test email failed', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 	/**

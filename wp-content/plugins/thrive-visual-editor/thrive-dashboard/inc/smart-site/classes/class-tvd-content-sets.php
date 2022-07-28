@@ -107,10 +107,7 @@ class TVD_Content_Sets {
 	 * Enqueue Content Sets scripts & styles
 	 */
 	public function enqueue_scripts() {
-		$screen    = get_current_screen();
-		$screen_id = $screen ? $screen->id : '';
-
-		if ( $this->allow_enqueue_scripts( $screen_id ) ) {
+		if ( $this->allow_enqueue_scripts( tve_get_current_screen_key() ) ) {
 
 			tve_dash_enqueue_style( 'tvd-content-sets-admin', TVD_Smart_Const::url( 'assets/admin/css/styles-content-sets.css' ) );
 
@@ -253,10 +250,7 @@ class TVD_Content_Sets {
 	 * Add backbone templates
 	 */
 	public function backbone_templates() {
-		$screen    = get_current_screen();
-		$screen_id = $screen ? $screen->id : '';
-
-		if ( $this->allow_enqueue_scripts( $screen_id ) ) {
+		if ( $this->allow_enqueue_scripts( tve_get_current_screen_key() ) ) {
 			$templates = tve_dash_get_backbone_templates( TVD_Smart_Const::path( 'views/admin/content-sets-templates' ), 'content-sets-templates' );
 			tve_dash_output_backbone_templates( $templates );
 		}

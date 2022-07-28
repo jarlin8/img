@@ -3,7 +3,7 @@
 /*
 Plugin Name: Thrive Architect
 Plugin URI: http://www.thrivethemes.com
-Version: 3.10
+Version: 3.11
 Author: <a href="http://www.thrivethemes.com">Thrive Themes</a>
 Description: Live front end editor for your WordPress content
 Text domain: thrive-cb
@@ -89,7 +89,7 @@ add_filter( 'tve_dash_installed_products', 'tcb_add_to_dashboard_list' );
  * @return array
  */
 function tve_process_search_clauses( $pieces, $wp_query ) {
-	if ( is_admin() || empty( $pieces ) || ! $wp_query->is_search() ) {
+	if ( empty( $pieces ) || is_admin() || ! $wp_query->is_search() ) {
 		return $pieces;
 	}
 	/** @var wpdb $wpdb */
@@ -100,15 +100,11 @@ function tve_process_search_clauses( $pieces, $wp_query ) {
 	$q     = $wp_query->query_vars;
 	if ( ! empty( $q['search_terms'] ) ) {
 		foreach ( $q['search_terms'] as $term ) {
-			if ( method_exists( $wpdb, 'esc_like' ) ) { // WP4
-				$term = $wpdb->esc_like( $term );
-			} else {
-				$term = like_escape( $term ); // like escape is deprecated in WP4
-			}
+			$term = $wpdb->esc_like( $term );
 
 			$like  = $n . $term . $n;
 			$query .= "((tve_pm.meta_key = 'tve_updated_post')";
-			$query .= $wpdb->prepare( " AND (tve_pm.meta_value LIKE %s)) OR ", $like );
+			$query .= $wpdb->prepare( ' AND (tve_pm.meta_value LIKE %s)) OR ', $like );
 		}
 	}
 
@@ -116,7 +112,7 @@ function tve_process_search_clauses( $pieces, $wp_query ) {
 		// add to where clause
 		$pieces['where'] = str_replace( "((({$wpdb->posts}.post_title LIKE '{$n}", "( {$query} (({$wpdb->posts}.post_title LIKE '{$n}", $pieces['where'] );
 
-		$pieces['join'] = $pieces['join'] . " LEFT JOIN {$wpdb->postmeta} AS tve_pm ON ({$wpdb->posts}.ID = tve_pm.post_id)";
+		$pieces['join'] .= " LEFT JOIN {$wpdb->postmeta} AS tve_pm ON ({$wpdb->posts}.ID = tve_pm.post_id)";
 
 		if ( empty( $pieces['groupby'] ) ) {
 			$pieces['groupby'] = "{$wpdb->posts}.ID";
@@ -197,7 +193,7 @@ function tve_yoast_seo_integration( $content ) {
 	/**
 	 * if the post is actually a Landing Page, we need to reset all previously saved content, as TCB content is the only one shown
 	 */
-	if ( $lp_template = tve_post_is_landing_page( $post_id ) ) {
+	if ( tve_post_is_landing_page( $post_id ) ) {
 		$content = '';
 	}
 
@@ -206,7 +202,7 @@ function tve_yoast_seo_integration( $content ) {
 	$tve_saved_content = preg_replace( '#<p(.*?)>(.*?)</p>#s', '<p>$2</p>', $tve_saved_content );
 	$tve_saved_content = str_replace( '<p></p>', '', $tve_saved_content );
 
-	$content = $tve_saved_content . " " . $content;
+	$content = $tve_saved_content . ' ' . $content;
 
 	return $content;
 }
@@ -240,7 +236,7 @@ function tve_yoast_sitemap_images( $images, $post_id ) {
 	/**
 	 * if the post is actually a Landing Page, we need to reset all other images and return just the ones setup in the landing page
 	 */
-	if ( $lp_template = tve_post_is_landing_page( $post_id ) ) {
+	if ( tve_post_is_landing_page( $post_id ) ) {
 		$images = array();
 	}
 	$content = tve_get_post_meta( $post_id, 'tve_updated_post' );
@@ -393,8 +389,6 @@ function tve_plugins_loaded_hook() {
 		/* version 3 removed this filter completely - this is handled from javascript from version 3.0 onwards */
 		if ( version_compare( WPSEO_VERSION, '3.0', '<' ) === true ) {
 			add_filter( 'wpseo_pre_analysis_post_content', 'tve_yoast_seo_integration' );
-		} else {
-			/* this is handled from javascript */
 		}
 
 		// YOAST sitemaps - add image links
@@ -449,7 +443,11 @@ function architect_set_product_icon( $info ) {
  * Check for minimum required WordPress version
  */
 function tcb_activation_hook() {
-	if ( ! tcb_wordpress_version_check() ) {
+	if ( tcb_wordpress_version_check() ) {
+		if ( method_exists( \TCB\Lightspeed\Main::class, 'first_time_enable_lightspeed' ) ) {
+			\TCB\Lightspeed\Main::first_time_enable_lightspeed();
+		}
+	} else {
 		/**
 		 * Dashboard not loaded yet, force it to load here
 		 */
@@ -460,10 +458,6 @@ function tcb_activation_hook() {
 		}
 
 		tve_dash_show_activation_error( 'wp_version', 'Thrive Architect', TCB_MIN_WP_VERSION );
-	} else {
-		if ( method_exists( \TCB\Lightspeed\Main::class, 'first_time_enable_lightspeed' ) ) {
-			\TCB\Lightspeed\Main::first_time_enable_lightspeed();
-		}
 	}
 }
 
@@ -481,8 +475,9 @@ function tar_enable_dashboard_features( $features ) {
 	 * Script manager is only active if TAr is available as a standalone plugin for the current user
 	 */
 	if ( TCB_Product::has_access() ) {
-		$features['script_manager'] = true;
-		$features['coming-soon']    = true;
+		$features['script_manager']      = true;
+		$features['coming-soon']         = true;
+		$features['thrive_design_packs'] = true;
 	}
 
 	return $features;

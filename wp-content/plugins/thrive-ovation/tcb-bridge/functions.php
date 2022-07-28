@@ -134,8 +134,8 @@ function tvo_enqueue_editor_scripts() {
 			'ready_to_display_status' => TVO_STATUS_READY_FOR_DISPLAY,
 		),
 		'translations'                  => array(
-			'bigger_value' => __( "The 'from' value should be smaller than the 'to' value", TVO_TRANSLATE_DOMAIN ),
-			'only_numbers' => __( 'Please insert only numbers', TVO_TRANSLATE_DOMAIN ),
+			'bigger_value' => __( "The 'from' value should be smaller than the 'to' value", 'thrive-ovation' ),
+			'only_numbers' => __( 'Please insert only numbers', 'thrive-ovation' ),
 		),
 	) );
 }
@@ -836,11 +836,11 @@ function tvo_load_resources( $content ) {
 function tvo_prepare_shortcode_config( $config ) {
 
 	if ( $config['type'] === 'capture' ) {
-		$config['name_label']        = htmlentities( $config['name_label'], null, 'UTF-8' );
-		$config['email_label']       = htmlentities( $config['email_label'], null, 'UTF-8' );
-		$config['role_label']        = htmlentities( $config['role_label'], null, 'UTF-8' );
-		$config['title_label']       = htmlentities( $config['title_label'], null, 'UTF-8' );
-		$config['website_url_label'] = isset( $config['website_url_label'] ) ? htmlentities( $config['website_url_label'], null, 'UTF-8' ) : '';
+		$config['name_label']        = htmlentities( $config['name_label'], ENT_COMPAT, 'UTF-8' );
+		$config['email_label']       = htmlentities( $config['email_label'], ENT_COMPAT, 'UTF-8' );
+		$config['role_label']        = htmlentities( $config['role_label'], ENT_COMPAT, 'UTF-8' );
+		$config['title_label']       = htmlentities( $config['title_label'], ENT_COMPAT, 'UTF-8' );
+		$config['website_url_label'] = isset( $config['website_url_label'] ) ? htmlentities( $config['website_url_label'], ENT_COMPAT, 'UTF-8' ) : '';
 		$config['questions']         = array_map( 'stripslashes', $config['questions'] );
 		$config['placeholders']      = isset( $config['placeholders'] ) ? array_map( 'stripslashes', $config['placeholders'] ) : array_fill( 0, count( $config['questions'] ), '' );
 		$config['image_display']     = isset( $config['image_display'] ) ? $config['image_display'] : 1;

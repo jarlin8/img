@@ -58,6 +58,7 @@ require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-access-manager.php';
 require_once TVE_DASH_PATH . '/inc/marketing/functions.php';
 require_once TVE_DASH_PATH . '/inc/ttw-account/classes/class-td-ttw-update-manager.php';
 require_once TVE_DASH_PATH . '/inc/automator/class-main.php';
+require_once TVE_DASH_PATH . '/inc/design-packs/class-main.php';
 require_once TVE_DASH_PATH . '/inc/smart-site/classes/class-tvd-content-sets.php';
 require_once TVE_DASH_PATH . '/inc/cache/meta-cache.php';
 require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am-functionality.php';
@@ -111,6 +112,7 @@ add_action( 'init',
 		TVD\Dashboard\Access_Manager\Main::init();
 		TVD\Dashboard\Access_Manager\Admin_Bar_Visibility::init();
 		TVD\Dashboard\Access_Manager\Login_Redirect::init();
+		TVE\Dashboard\Design_Packs\Main::init();
 	}, - 1 );
 if ( defined( 'WPSEO_FILE' ) ) {
 	/* Yoast SEO plugin installed -> use a hook provided by the plugin for configuring meta "robots" */

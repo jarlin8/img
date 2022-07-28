@@ -13,16 +13,6 @@ class TVO_REST_Comments_Controller extends TVO_REST_Controller {
 	 * Register the routes for the objects of the controller.
 	 */
 	public function register_routes() {
-		parent::register_routes();
-
-		register_rest_route( self::$namespace . self::$version, '/' . $this->base . '/import_testimonial', array(
-			array(
-				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'import_testimonial' ),
-				'permission_callback' => array( $this, 'import_testimonial_permissions_check' ),
-			),
-		) );
-
 		register_rest_route( self::$namespace . self::$version, '/' . $this->base . '/import_edit_testimonial', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
@@ -76,14 +66,14 @@ class TVO_REST_Comments_Controller extends TVO_REST_Controller {
 
 					$response = array_merge( $response, array(
 						'class'       => 'notice-success',
-						'notice_text' => __( 'Approval email successfully sent to ' . $testimonial_data['email'], TVO_TRANSLATE_DOMAIN ),
+						'notice_text' => __( 'Approval email successfully sent to ' . $testimonial_data['email'], 'thrive-ovation' ),
 						'email_sent'  => 1,
 					) );
 
 					add_post_meta( $testimonial_id, TVO_STATUS_META_KEY, TVO_STATUS_AWAITING_APPROVAL, true ) or update_post_meta( $testimonial_id, TVO_STATUS_META_KEY, TVO_STATUS_AWAITING_APPROVAL );
 
 					/*Send user emails CODE BEGIN*/
-					$api = Thrive_List_Manager::connectionInstance( $connection );
+					$api = Thrive_List_Manager::connection_instance( $connection );
 
 					$email_template       = tvo_get_email_template();
 					$testimonial_info     = array(
@@ -100,7 +90,7 @@ class TVO_REST_Comments_Controller extends TVO_REST_Controller {
 					if ( $sent !== true ) {
 						$response = array_merge( $response, array(
 							'class'       => 'notice-error',
-							'notice_text' => __( 'An error has occurred while trying to send email to ' . $testimonial_data['email'] . ' ', TVO_TRANSLATE_DOMAIN ) . '<a href="' . admin_url( 'admin.php?page=tve_dash_api_error_log' ) . '">' . __( 'Click here for more information', TVO_TRANSLATE_DOMAIN ) . '</a>',
+							'notice_text' => __( 'An error has occurred while trying to send email to ' . $testimonial_data['email'] . ' ', 'thrive-ovation' ) . '<a href="' . admin_url( 'admin.php?page=tve_dash_api_error_log' ) . '">' . __( 'Click here for more information', 'thrive-ovation' ) . '</a>',
 						) );
 					}
 					/*Send user emails CODE ENDS*/
@@ -109,7 +99,7 @@ class TVO_REST_Comments_Controller extends TVO_REST_Controller {
 					add_post_meta( $testimonial_id, TVO_STATUS_META_KEY, TVO_STATUS_READY_FOR_DISPLAY, true ) or update_post_meta( $testimonial_id, TVO_STATUS_META_KEY, TVO_STATUS_READY_FOR_DISPLAY );
 					$response = array_merge( $response, array(
 						'class'       => 'notice-success',
-						'notice_text' => __( 'The testimonial was successfully created! Click ', TVO_TRANSLATE_DOMAIN ) . '<a href="' . admin_url( 'admin.php?page=tvo_admin_dashboard' ) . '">' . __( 'here', TVO_TRANSLATE_DOMAIN ) . '</a>' . __( ' to view the testimonial.', TVO_TRANSLATE_DOMAIN ),
+						'notice_text' => __( 'The testimonial was successfully created! Click ', 'thrive-ovation' ) . '<a href="' . admin_url( 'admin.php?page=tvo_admin_dashboard' ) . '">' . __( 'here', 'thrive-ovation' ) . '</a>' . __( ' to view the testimonial.', 'thrive-ovation' ),
 					) );
 				}
 
@@ -119,13 +109,13 @@ class TVO_REST_Comments_Controller extends TVO_REST_Controller {
 					'comment_id'  => $testimonial_data['comment_id'],
 				) );
 
-				$response['html'] = '<p class="tvo-green-text"><span class="dashicons dashicons-yes"></span> ' . __( 'Saved', TVO_TRANSLATE_DOMAIN ) . '</p>';
+				$response['html'] = '<p class="tvo-green-text"><span class="dashicons dashicons-yes"></span> ' . __( 'Saved', 'thrive-ovation' ) . '</p>';
 			}
 
 			return new WP_REST_Response( $response, 200 );
 		}
 
-		return new WP_Error( 'cant-edit-import', __( 'ERROR: Empty testimonial', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-edit-import', __( 'ERROR: Empty testimonial', 'thrive-ovation' ), array( 'status' => 500 ) );
 
 	}
 
@@ -164,7 +154,7 @@ class TVO_REST_Comments_Controller extends TVO_REST_Controller {
 	 *
 	 * @param array $testimonial_data
 	 *
-	 * @param $source
+	 * @param       $source
 	 *
 	 * @return array
 	 */

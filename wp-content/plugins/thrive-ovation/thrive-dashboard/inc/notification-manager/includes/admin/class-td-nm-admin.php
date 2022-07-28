@@ -38,10 +38,7 @@ class TD_NM_Admin {
 	}
 
 	public function enqueue_scripts() {
-		$screen    = get_current_screen();
-		$screen_id = $screen ? $screen->id : '';
-
-		if ( $screen_id === 'admin_page_tve_dash_notification_manager' ) {
+		if ( tve_get_current_screen_key() === 'admin_page_tve_dash_notification_manager' ) {
 
 			$current_user = wp_get_current_user();
 
@@ -103,22 +100,19 @@ class TD_NM_Admin {
 	 * Hook into based on current screen
 	 */
 	public function conditional_hooks() {
-		if ( ! $screen = get_current_screen() ) {
-			return;
-		}
+		$screen = tve_get_current_screen_key();
 
 		/**
 		 * Main Dashboard section
 		 */
-		if ( $screen->id === 'toplevel_page_tve_dash_section' ) {
+		if ( $screen === 'toplevel_page_tve_dash_section' ) {
 			add_filter( 'tve_dash_filter_features', array( $this, 'admin_notification_feature' ) );
-			add_filter( 'tve_dash_features', array( $this, 'admin_enable_feature' ) );
 		}
 
 		/**
 		 * NM Dashboard
 		 */
-		if ( $screen->id === 'admin_page_tve_dash_notification_manager' ) {
+		if ( $screen === 'admin_page_tve_dash_notification_manager' ) {
 			add_action( 'admin_print_footer_scripts', array( $this, 'admin_backbone_templates' ) );
 		}
 	}
@@ -143,20 +137,6 @@ class TD_NM_Admin {
 	}
 
 	/**
-	 * Enable the NM feature to be displayed on Thrive Features Section
-	 *
-	 * @param $features
-	 *
-	 * @return mixed
-	 */
-	public function admin_enable_feature( $features ) {
-
-		$features['notification_manager'] = true;
-
-		return $features;
-	}
-
-	/**
 	 * Add page to admin menu so the page could be accessed
 	 */
 	public function admin_menu() {
@@ -174,7 +154,7 @@ class TD_NM_Admin {
 		<div id="tvd-nm-header"></div>
 		<div class="tvd-nm-breadcrumbs-wrapper" id="tvd-nm-breadcrumbs-wrapper"></div>
 		<div id="tvd-nm-wrapper"></div><?php
-		echo ob_get_clean();
+		echo ob_get_clean(); // phpcs:ignore;
 	}
 
 	/**
@@ -317,8 +297,8 @@ class TD_NM_Admin {
 	}
 
 	public function get_email_services() {
-		$email_services     = Thrive_Dash_List_Manager::getAvailableAPIsByType( false, array( 'email' ) );
-		$connected_services = Thrive_Dash_List_Manager::getAvailableAPIsByType( true, array( 'email' ) );
+		$email_services     = Thrive_Dash_List_Manager::get_available_apis( false, [ 'include_types' => [ 'email' ] ] );
+		$connected_services = Thrive_Dash_List_Manager::get_available_apis( true, [ 'include_types' => [ 'email' ] ] );
 		$connected_keys     = array_keys( $connected_services );
 
 		$active_connection = get_option( 'tvd-nm-email-service' );
@@ -332,7 +312,7 @@ class TD_NM_Admin {
 		foreach ( $email_services as $key => $instance ) {
 			$item = array(
 				'key'       => $key,
-				'title'     => $instance->getTitle(),
+				'title'     => $instance->get_title(),
 				'connected' => in_array( $key, $connected_keys ),
 				'active'    => $key === $active_connection,
 				'status'    => in_array( $key, $connected_keys ) ? __( 'connected', TVE_DASH_TRANSLATE_DOMAIN ) : __( 'Unset', TVE_DASH_TRANSLATE_DOMAIN ),
@@ -364,7 +344,13 @@ class TD_NM_Admin {
 
 			foreach ( $results as $post ) {
 				$post_meta_value = get_post_meta( $post['post_id'], 'td_nm_wordpress_notification', true );
-				printf( '<div data-key="%1$s" class="%2$s"><p>%3$s</p></div>', $post['post_id'], 'notice notice-success td_nm_wordpress_notice is-dismissible', $post_meta_value['message'] );
+				/**
+				 * $post_meta_value['message'] can contain HTML tags
+				 * The string can be of this form:
+				 *
+				 * A new quiz completion was registered. <a href="#">Click here to see the Quiz</a>
+				 */
+				printf( '<div data-key="%1$s" class="%2$s"><p>%3$s</p></div>', absint( $post['post_id'] ), 'notice notice-success td_nm_wordpress_notice is-dismissible', strip_tags( $post_meta_value['message'], '<a>' ) );
 			}
 		}
 	}

@@ -140,7 +140,7 @@ class TVO_REST_Tags_Controller extends TVO_REST_Controller {
 	public function delete_item( $request ) {
 		$params = $request->get_body_params();
 		if ( empty( $params['post_id'] ) || empty( $params['id'] ) ) {
-			return new WP_Error( 'cant-delete', __( 'Missing ID from parameter list', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+			return new WP_Error( 'cant-delete', __( 'Missing ID from parameter list', 'thrive-ovation' ), array( 'status' => 500 ) );
 		}
 		$result = tvo_delete_testimonial_tag( $params['post_id'], $params['id'] );
 		if ( $result['status'] == 'error' ) {

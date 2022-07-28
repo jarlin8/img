@@ -153,9 +153,9 @@ class Tvo_Database_Manager {
 
 		echo '<div class="notice notice-error is-dismissible"><p>' .
 		     sprintf(
-			     __( 'There was an error while updating the database tables needed by Thrive Ovation. Detailed error message: %s. If you continue seeing this message, please contact %s', TVO_TRANSLATE_DOMAIN ),
+			     __( 'There was an error while updating the database tables needed by Thrive Ovation. Detailed error message: %s. If you continue seeing this message, please contact %s', 'thrive-ovation' ),
 			     '<strong>' . self::$last_db_error . '</strong>',
-			     '<a target="_blank" href="https://thrivethemes.com/forums/">' . __( 'Thrive Themes Support', TVO_TRANSLATE_DOMAIN ) . '</a>'
+			     '<a target="_blank" href="https://thrivethemes.com/forums/">' . __( 'Thrive Themes Support', 'thrive-ovation' ) . '</a>'
 		     ) .
 		     '</p></div>';
 	}

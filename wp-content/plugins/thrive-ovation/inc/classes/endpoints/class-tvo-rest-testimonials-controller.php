@@ -90,7 +90,7 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 			$response        = json_decode( wp_remote_retrieve_body( $request_captcha ) );
 
 			if ( empty( $response ) || $response->success === false ) {
-				return new WP_Error( 'code', __( 'Please prove us that you are not a robot!!!', TVO_TRANSLATE_DOMAIN ) );
+				return new WP_Error( 'code', __( 'Please prove us that you are not a robot!!!', 'thrive-ovation' ) );
 			}
 		}
 
@@ -99,7 +99,9 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 		$testimonial['source'] = TVO_SOURCE_DIRECT_CAPTURE;
 		$testimonial['status'] = TVO_STATUS_AWAITING_REVIEW;
 
-		$testimonial['content'] = sanitize_textarea_field( $testimonial['content'] ); // don't allow any html if testimonial is being added from frontend
+		$testimonial['content'] = sanitize_textarea_field( $testimonial['content'], true ); // don't allow any html if testimonial is being added from frontend
+		/* Replace the we line wit p tag */
+		$testimonial['content'] = wpautop( $testimonial['content'] );
 
 		$result = tvo_create_testimonial( $testimonial );
 		if ( $result['status'] == 'ok' ) {
@@ -112,23 +114,29 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 			$shortcode_id = $request->get_param( 'shortcode_id' );
 			add_post_meta( $result['testimonial']['id'], 'tvo_shortcode_source', $shortcode_id );
 
-            /**
-             * The hook is triggered when a user submits a testimonial through Thrive Ovation. The hook can be fired multiple times, as the user can leave multiple testimonials.
-             * </br>
-             * Example use case:-  Give students access to a bonus course after they have submitted a testimonial.
-             * </br>
-             * <b>Note:</b> This parameter will provide the user details only if the user is logged in. It will not provide the name/email used when the user submits a testimonial.
-             *
-             * @param array Testimonial Details
-             * @param null|array User Details
-             *
-             * @api
-             */
-			do_action( 'thrive_ovation_testimonial_submit', tvo_get_testimonial_details( $result['testimonial']['id'], $request->get_param( 'post_id' ) ), tvd_get_current_user_details() );
+			if ( is_user_logged_in() ) {
+				$user = wp_get_current_user();
+			} else {
+				$user = get_user_by( 'email', $testimonial['email'] );
+			}
+
+			/**
+			 * The hook is triggered when a user submits a testimonial through Thrive Ovation. The hook can be fired multiple times, as the user can leave multiple testimonials.
+			 * </br>
+			 * Example use case:-  Give students access to a bonus course after they have submitted a testimonial.
+			 * </br>
+			 * <b>Note:</b> This parameter will provide the user details only if the user is logged in. It will not provide the name/email used when the user submits a testimonial.
+			 *
+			 * @param array Testimonial Details
+			 * @param null|array User Details
+			 *
+			 * @api
+			 */
+			do_action( 'thrive_ovation_testimonial_submit', tvo_get_testimonial_details( $result['testimonial']['id'], $request->get_param( 'post_id' ) ), $user );
 
 			return new WP_REST_Response( 1, 200 );
 		} else {
-			return new WP_Error( 'code', __( 'Something went wrong while trying to send data. Please try again.', TVO_TRANSLATE_DOMAIN ) );
+			return new WP_Error( 'code', __( 'Something went wrong while trying to send data. Please try again.', 'thrive-ovation' ) );
 		}
 	}
 
@@ -146,7 +154,7 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 		if ( $result['status'] == 'ok' ) {
 			return new WP_REST_Response( $result['testimonial'], 200 );
 		} else {
-			return new WP_Error( $result['message'], __( 'Creating Testimonial failed', TVO_TRANSLATE_DOMAIN ) );
+			return new WP_Error( $result['message'], __( 'Creating Testimonial failed', 'thrive-ovation' ) );
 		}
 	}
 
@@ -166,9 +174,9 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 			array_push( $tagsArray, $tag['id'] );
 		};
 		if ( $testimonial['title'] == '' ) {
-			$testimonial['title'] = __( 'Copy ', TVO_TRANSLATE_DOMAIN );
+			$testimonial['title'] = __( 'Copy ', 'thrive-ovation' );
 		} else {
-			$testimonial['title'] = __( 'Copy of ', TVO_TRANSLATE_DOMAIN ) . $testimonial['title'];
+			$testimonial['title'] = __( 'Copy of ', 'thrive-ovation' ) . $testimonial['title'];
 		}
 		$testimonial['source'] = 'copy';
 		$testimonial['tags']   = $tagsArray;
@@ -182,7 +190,7 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 		if ( $result['status'] == 'ok' ) {
 			return new WP_REST_Response( $result['testimonial'], 200 );
 		} else {
-			return new WP_Error( $result['message'], __( 'Copy Testimonial failed', TVO_TRANSLATE_DOMAIN ) );
+			return new WP_Error( $result['message'], __( 'Copy Testimonial failed', 'thrive-ovation' ) );
 		}
 	}
 
@@ -236,7 +244,7 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 		if ( $result['status'] == 'ok' ) {
 			return new WP_REST_Response( $result['testimonial'], 200 );
 		} else {
-			return new WP_Error( 'code', __( 'message', TVO_TRANSLATE_DOMAIN ) );
+			return new WP_Error( 'code', __( 'message', 'thrive-ovation' ) );
 		}
 	}
 
@@ -254,13 +262,13 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 		if ( ! empty( $params['id'] ) && ! empty( $params['offset'] ) ) {
 			$data = tvo_get_testimonial_activity_log( $params['id'], $params['offset'] );
 			if ( ! $data ) {
-				return new WP_Error( 'code', __( 'message', TVO_TRANSLATE_DOMAIN ) );
+				return new WP_Error( 'code', __( 'message', 'thrive-ovation' ) );
 			}
 			$data = $this->prepare_item_for_response( $data, $request );
 
 			return new WP_REST_Response( $data, 200 );
 		} else {
-			return new WP_Error( 'code', __( 'message', TVO_TRANSLATE_DOMAIN ) );
+			return new WP_Error( 'code', __( 'message', 'thrive-ovation' ) );
 		}
 	}
 
@@ -334,7 +342,7 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 		$params = $this->prepare_item_for_database( $request );
 
 		if ( empty( $params['id'] ) ) {
-			return new WP_Error( 'cant-update', __( 'Missing ID from parameter list', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+			return new WP_Error( 'cant-update', __( 'Missing ID from parameter list', 'thrive-ovation' ), array( 'status' => 500 ) );
 		}
 
 		$result = tvo_update_testimonial( $params );
@@ -342,7 +350,7 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 			return new WP_REST_Response( $result['testimonial'], 200 );
 		}
 
-		return new WP_Error( 'cant-update', __( 'Error while updating the testimonial', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'Error while updating the testimonial', 'thrive-ovation' ), array( 'status' => 500 ) );
 
 	}
 
@@ -366,7 +374,7 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 			}
 		}
 
-		return new WP_Error( 'cant-delete', __( 'message', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-delete', __( 'message', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -391,7 +399,7 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 			return new WP_REST_Response( $testimonial_ids['tvo_testimonial_elements'], 200 );
 		}
 
-		return new WP_Error( 'cant-delete', __( 'No testimonials selected', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-delete', __( 'No testimonials selected', 'thrive-ovation' ), array( 'status' => 500 ) );
 
 	}
 
@@ -406,7 +414,7 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 		$testimonial_id = $request->get_param( 'testimonial' );
 
 		if ( empty( $testimonial_id ) ) {
-			return new WP_Error( 'cant-update', __( 'Missing ID from parameter list', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+			return new WP_Error( 'cant-update', __( 'Missing ID from parameter list', 'thrive-ovation' ), array( 'status' => 500 ) );
 		}
 
 		$testimonial = tvo_get_testimonial_data( $testimonial_id );
@@ -414,9 +422,9 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 		if ( $testimonial ) {
 			$connection = get_option( 'tvo_api_delivery_service', false );
 			if ( ! $connection ) {
-				return new WP_Error( 'cant-update', __( 'No active connection set', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+				return new WP_Error( 'cant-update', __( 'No active connection set', 'thrive-ovation' ), array( 'status' => 500 ) );
 			}
-			$api                  = Thrive_List_Manager::connectionInstance( $connection );
+			$api                  = Thrive_List_Manager::connection_instance( $connection );
 			$email_template       = tvo_get_email_template();
 			$email_template       = tvo_process_approval_email_content( $email_template, $testimonial );
 			$data['html_content'] = $email_template;
@@ -443,10 +451,10 @@ class TVO_REST_Testimonials_Controller extends TVO_REST_Controller {
 				return new WP_REST_Response( $data, 200 );
 			}
 
-			return new WP_Error( 'cant-update', __( 'Sending approval email failed', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+			return new WP_Error( 'cant-update', __( 'Sending approval email failed', 'thrive-ovation' ), array( 'status' => 500 ) );
 		}
 
-		return new WP_Error( 'cant-send', __( 'Sending approval email failed', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-send', __( 'Sending approval email failed', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 

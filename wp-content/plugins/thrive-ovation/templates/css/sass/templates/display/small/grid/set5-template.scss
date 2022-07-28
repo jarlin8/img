@@ -145,7 +145,7 @@ $font-line-height: 25px;
           .tvo-testimonial-role {
             color: nth($color, 5);
             a {
-              color: nth($color, 5);
+              color: inherit;
             }
           }
         }

@@ -80,8 +80,12 @@ class THO_REST_Logs_Controller extends THO_REST_Controller {
 	public function create_item( $request ) {
 
 		$data      = $this->prepare_item_for_database( $request );
-		$test_id   = sanitize_text_field( $request->get_param( 'test_id' ) );
-		$is_single = sanitize_text_field( $request->get_param( 'is_single' ) );
+		$test_id   = (int) $request->get_param( 'test_id' );
+		$is_single = (bool) $request->get_param( 'is_single' );
+
+		if ( empty( $data['log_type'] ) ) {
+			return new WP_Error( 'invalid_request', 'Invalid request', [ 'status' => 400 ] );
+		}
 
 		/* @var Tho_Db */
 		global $thodb;
@@ -120,16 +124,22 @@ class THO_REST_Logs_Controller extends THO_REST_Controller {
 	 *
 	 * @param WP_REST_Request $request Request object
 	 *
-	 * @return WP_Error|object $prepared_item
+	 * @return array $prepared_item
 	 */
 	protected function prepare_item_for_database( $request ) {
-		$post_id   = $request->get_param( 'post_id' );
+		$post_id   = (int) $request->get_param( 'post_id' );
 		$eng_type  = $request->get_param( 'eng_type' );
-		$log_type  = $request->get_param( 'log_type' );
-		$variation = $request->get_param( 'variation' );
+		$log_type  = (int) $request->get_param( 'log_type' );
+		$variation = (int) $request->get_param( 'variation' );
 		$referrer  = $request->get_param( 'referrer' );
 
-		$log_model = array(
+		if ( is_array( $eng_type ) ) {
+			$eng_type = array_map( 'intval', $eng_type );
+		} else {
+			$eng_type = (int) $eng_type;
+		}
+
+		return array(
 			'date'            => date( 'Y-m-d H:i:s' ),
 			'log_type'        => $log_type,
 			'engagement_type' => $eng_type,
@@ -139,8 +149,6 @@ class THO_REST_Logs_Controller extends THO_REST_Controller {
 			'referrer'        => tho_check_referrer( $referrer ) ? $referrer : '',
 			'archived'        => 0,
 		);
-
-		return $log_model;
 	}
 
 	public function get_table_items( $request ) {
@@ -228,7 +236,7 @@ class THO_REST_Logs_Controller extends THO_REST_Controller {
 			'enum'              => array( THO_CLICK_ENGAGEMENT, THO_SCROLL_ENGAGEMENT, THO_TIME_ENGAGEMENT ),
 		);
 
-		$params['source'] = array(
+		$params['log_type'] = array(
 			'type'              => 'integer',
 			'default'           => null,
 			'sanitize_callback' => 'absint',
@@ -237,6 +245,4 @@ class THO_REST_Logs_Controller extends THO_REST_Controller {
 
 		return $params;
 	}
-
-
 }

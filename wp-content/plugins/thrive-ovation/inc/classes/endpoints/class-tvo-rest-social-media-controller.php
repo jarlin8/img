@@ -13,8 +13,6 @@ class TVO_REST_Social_Media_Controller extends TVO_REST_Controller {
 	 * Register the routes for the objects of the controller.
 	 */
 	public function register_routes() {
-		parent::register_routes();
-
 		register_rest_route( self::$namespace . self::$version, '/' . $this->base . '/import_testimonial', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
@@ -64,7 +62,7 @@ class TVO_REST_Social_Media_Controller extends TVO_REST_Controller {
 
 		$response = array(
 			'code'    => 0,
-			'message' => __( 'Please enter a valid Twitter comment URL', TVO_TRANSLATE_DOMAIN ),
+			'message' => __( 'Please enter a valid Twitter comment URL', 'thrive-ovation' ),
 		);
 
 		if ( strpos( $social_media_url, 'twitter.com' ) !== false ) {
@@ -75,7 +73,7 @@ class TVO_REST_Social_Media_Controller extends TVO_REST_Controller {
 				$response['result'] = $this->get_twitter_testimonial( $id );
 				if ( empty( $response['result']['error'] ) ) {
 					$response['code']             = 1;
-					$response['message']          = __( 'The data was fetched successfully', TVO_TRANSLATE_DOMAIN );
+					$response['message']          = __( 'The data was fetched successfully', 'thrive-ovation' );
 					$response['result']['source'] = 'twitter';
 				} else {
 					$response['code']    = 0;
@@ -104,9 +102,9 @@ class TVO_REST_Social_Media_Controller extends TVO_REST_Controller {
 			'error_message' => '',
 		);
 
-		if ( $facebook->isConnected() == false ) {
+		if ( $facebook->is_connected() == false ) {
 			$testimonial['error']         = 1;
-			$testimonial['error_message'] = __( 'Your Facebook connection is not active.', TVO_TRANSLATE_DOMAIN );
+			$testimonial['error_message'] = __( 'Your Facebook connection is not active.', 'thrive-ovation' );
 
 			return $testimonial;
 		}
@@ -147,9 +145,9 @@ class TVO_REST_Social_Media_Controller extends TVO_REST_Controller {
 			'error_message' => '',
 		);
 
-		if ( $twitter->isConnected() == false ) {
+		if ( $twitter->is_connected() == false ) {
 			$testimonial['error']         = 1;
-			$testimonial['error_message'] = __( 'Your Twitter connection is not active.', TVO_TRANSLATE_DOMAIN );
+			$testimonial['error_message'] = __( 'Your Twitter connection is not active.', 'thrive-ovation' );
 
 			return $testimonial;
 		}

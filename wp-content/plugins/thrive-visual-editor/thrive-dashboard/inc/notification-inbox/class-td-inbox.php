@@ -449,14 +449,7 @@ final class TD_Inbox {
 	 * @return bool
 	 */
 	public function allowed_on_screen() {
-
-		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-
-		if ( ! empty( $current_screen ) && in_array( $current_screen->id, $this->_allowed_screens, true ) ) {
-			return true;
-		}
-
-		return false;
+		return in_array( tve_get_current_screen_key(), $this->_allowed_screens, true );
 	}
 
 	/**

@@ -52,7 +52,7 @@ class Tho_Db {
 				continue;
 			}
 			/* the serialized fields should be trigger_config and tcb_fields */
-			$array[ $field ] = empty( $array[ $field ] ) ? array() : unserialize( $array[ $field ] );
+			$array[ $field ] = empty( $array[ $field ] ) ? array() : unserialize( $array[ $field ], false );
 			$array[ $field ] = wp_unslash( $array[ $field ] );
 
 			/* extra checks to ensure we'll have consistency */
@@ -110,18 +110,18 @@ class Tho_Db {
 	 * Update test items by increasing the views or engagements
 	 *
 	 * @param $variation_id int
-	 * @param $field int|string THO_LOG_IMPRESSION|THO_LOG_ENGAGEMENT
+	 * @param $log_type int|string THO_LOG_IMPRESSION|THO_LOG_ENGAGEMENT
 	 * @param $value string value to be updated
 	 *
 	 * @return int
 	 */
-	public function update_test_items_data( $variation_id, $field, $value = '' ) {
+	public function update_test_items_data( $variation_id, $log_type, $value = '' ) {
 
-
-		if ( $field == THO_LOG_IMPRESSION ) {
+		$log_type = (int) $log_type;
+		if ( $log_type === THO_LOG_IMPRESSION ) {
 			$field = 'views';
 			$value = $field . '+1';
-		} elseif ( $field == THO_LOG_ENGAGEMENT ) {
+		} elseif ( $log_type === THO_LOG_ENGAGEMENT ) {
 			$field = 'engagements';
 			$value = $field . '+1';
 		}
@@ -130,7 +130,7 @@ class Tho_Db {
 			return - 1;
 		}
 
-		$sql = "UPDATE " . tho_table_name( 'test_items' ) . " SET {$field}={$value} WHERE id = %d";
+		$sql = 'UPDATE ' . tho_table_name( 'test_items' ) . " SET {$field}={$value} WHERE id = %d";
 
 		return $this->wpdb->query( $this->prepare( $sql, array( $variation_id ) ) );
 	}
@@ -613,7 +613,6 @@ class Tho_Db {
 			return $this->wpdb->delete( tho_table_name( 'event_log' ), $params );
 		}
 	}
-
 }
 
 $thodb = new Tho_Db();

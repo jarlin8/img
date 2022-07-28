@@ -180,16 +180,16 @@ function tvo_get_testimonial_status_text( $status_id = 0 ) {
 
 	switch ( $status_id ) {
 		case TVO_STATUS_READY_FOR_DISPLAY:
-			return __( 'Ready for Display', TVO_TRANSLATE_DOMAIN );
+			return __( 'Ready for Display', 'thrive-ovation' );
 			break;
 		case TVO_STATUS_AWAITING_APPROVAL:
-			return __( 'Awaiting Approval', TVO_TRANSLATE_DOMAIN );
+			return __( 'Awaiting Approval', 'thrive-ovation' );
 			break;
 		case TVO_STATUS_AWAITING_REVIEW:
-			return __( 'Awaiting Review', TVO_TRANSLATE_DOMAIN );
+			return __( 'Awaiting Review', 'thrive-ovation' );
 			break;
 		case TVO_STATUS_REJECTED:
-			return __( 'Rejected', TVO_TRANSLATE_DOMAIN );
+			return __( 'Rejected', 'thrive-ovation' );
 			break;
 		default:
 			break;
@@ -207,27 +207,27 @@ function tvo_get_testimonial_status_text( $status_id = 0 ) {
  */
 function tvo_get_testimonial_source_text( $source = TVO_SOURCE_PLUGIN ) {
 
-	$return = __( 'via ', TVO_TRANSLATE_DOMAIN );
+	$return = __( 'via ', 'thrive-ovation' );
 
 	switch ( $source ) {
 		case TVO_SOURCE_COMMENTS:
-			$return .= __( 'Wordpress comments', TVO_TRANSLATE_DOMAIN );
+			$return .= __( 'Wordpress comments', 'thrive-ovation' );
 			break;
 		case TVO_SOURCE_SOCIAL_MEDIA:
-			$return .= __( 'social media', TVO_TRANSLATE_DOMAIN );
+			$return .= __( 'social media', 'thrive-ovation' );
 			break;
 		case TVO_SOURCE_DIRECT_CAPTURE:
-			$return .= __( 'direct capture', TVO_TRANSLATE_DOMAIN );
+			$return .= __( 'direct capture', 'thrive-ovation' );
 			break;
 		case TVO_SOURCE_COPY:
-			$return .= __( 'copy', TVO_TRANSLATE_DOMAIN );
+			$return .= __( 'copy', 'thrive-ovation' );
 			break;
 		case TVO_TCM_COMMENTS:
-			$return .= __( 'Thrive comments', TVO_TRANSLATE_DOMAIN );
+			$return .= __( 'Thrive comments', 'thrive-ovation' );
 			break;
 		case TVO_SOURCE_PLUGIN:
 		default:
-			$return = __( 'manually added', TVO_TRANSLATE_DOMAIN );
+			$return = __( 'manually added', 'thrive-ovation' );
 			break;
 	}
 
@@ -372,41 +372,41 @@ function tvo_get_default_breadcrumbs() {
 	return array(
 		array(
 			'key'   => 'base',
-			'title' => __( 'Thrive Dashboard', TVO_TRANSLATE_DOMAIN ),
+			'title' => __( 'Thrive Dashboard', 'thrive-ovation' ),
 			'url'   => menu_page_url( 'tve_dash_section', false ),
 			'kids'  => array(
 				array(
 					'key'   => 'testimonials',
-					'title' => __( 'Thrive Ovation', TVO_TRANSLATE_DOMAIN ),
+					'title' => __( 'Thrive Ovation', 'thrive-ovation' ),
 					'url'   => $plugin_url,
 					'kids'  => array(
 						array(
 							'key'   => 'settings',
-							'title' => __( 'Settings', TVO_TRANSLATE_DOMAIN ),
+							'title' => __( 'Settings', 'thrive-ovation' ),
 							'url'   => $plugin_url . '#settings',
 							'kids'  => false,
 						),
 						array(
 							'key'   => 'testimonial',
-							'title' => __( 'Edit Testimonial', TVO_TRANSLATE_DOMAIN ),
+							'title' => __( 'Edit Testimonial', 'thrive-ovation' ),
 							'url'   => $plugin_url . '#testimonial',
 							'kids'  => false,
 						),
 						array(
 							'key'   => 'capture-shortcodes',
-							'title' => __( 'Capture shortcodes', TVO_TRANSLATE_DOMAIN ),
+							'title' => __( 'Capture shortcodes', 'thrive-ovation' ),
 							'url'   => $plugin_url . '#shortcodes/capture',
 							'kids'  => false,
 						),
 						array(
 							'key'   => 'display-shortcodes',
-							'title' => __( 'Display shortcodes', TVO_TRANSLATE_DOMAIN ),
+							'title' => __( 'Display shortcodes', 'thrive-ovation' ),
 							'url'   => $plugin_url . '#shortcodes/display',
 							'kids'  => false,
 						),
 						array(
 							'key'   => 'socialimport',
-							'title' => __( 'Social Media Import', TVO_TRANSLATE_DOMAIN ),
+							'title' => __( 'Social Media Import', 'thrive-ovation' ),
 							'url'   => $plugin_url . '#socialimport',
 							'kids'  => false,
 						),
@@ -476,11 +476,11 @@ function tvo_get_default_shortcode_config( $type ) {
 		case 'capture':
 			$defaults = array(
 				'template'             => 0,
-				'name_label'           => __( 'Full Name', TVO_TRANSLATE_DOMAIN ),
-				'title_label'          => __( 'Testimonial Title', TVO_TRANSLATE_DOMAIN ),
-				'email_label'          => __( 'Email', TVO_TRANSLATE_DOMAIN ),
-				'role_label'           => __( 'Role', TVO_TRANSLATE_DOMAIN ),
-				'website_url_label'    => __( 'Website URL', TVO_TRANSLATE_DOMAIN ),
+				'name_label'           => __( 'Full Name', 'thrive-ovation' ),
+				'title_label'          => __( 'Testimonial Title', 'thrive-ovation' ),
+				'email_label'          => __( 'Email', 'thrive-ovation' ),
+				'role_label'           => __( 'Role', 'thrive-ovation' ),
+				'website_url_label'    => __( 'Website URL', 'thrive-ovation' ),
 				'name_required'        => 1,
 				'title_required'       => 0,
 				'email_required'       => 0,
@@ -491,13 +491,13 @@ function tvo_get_default_shortcode_config( $type ) {
 				'title_display'        => 0,
 				'image_display'        => 1,
 				'questions'            => array(
-					__( 'What was your experience with our product like?', TVO_TRANSLATE_DOMAIN ),
+					__( 'What was your experience with our product like?', 'thrive-ovation' ),
 				),
 				'placeholders'         => array(),
 				'questions_required'   => array( 1 ),
-				'button_text'          => __( 'Submit', TVO_TRANSLATE_DOMAIN ),
+				'button_text'          => __( 'Submit', 'thrive-ovation' ),
 				'on_success_option'    => 'message',
-				'on_success'           => __( 'Thanks for submitting your testimonial.', TVO_TRANSLATE_DOMAIN ),
+				'on_success'           => __( 'Thanks for submitting your testimonial.', 'thrive-ovation' ),
 				'tags'                 => array(),
 			);
 			break;
@@ -540,7 +540,7 @@ function tvo_get_settings() {
  * @return array
  */
 function tvo_get_ask_permission_email_response( $delivery_service, $email_data = array(), $permission = 1 ) {
-	$response = array( 'html' => '', 'button_text' => __( 'Add testimonial', TVO_TRANSLATE_DOMAIN ) );
+	$response = array( 'html' => '', 'button_text' => __( 'Add testimonial', 'thrive-ovation' ) );
 
 	$landing_page_options = tvo_get_option( TVO_LANDING_PAGE_SETTINGS_OPTION );
 	$email_template       = get_option( TVO_EMAIL_TEMPLATE_OPTION, false );
@@ -548,12 +548,12 @@ function tvo_get_ask_permission_email_response( $delivery_service, $email_data =
 
 	if ( $permission ) {
 		if ( $delivery_service != false && ! empty( $landing_page_options ) && $email_template != false && $email_subject != false ) {
-			$response['button_text'] = __( 'Send email to customer', TVO_TRANSLATE_DOMAIN );
-			$response['html']        = __( 'Email preview', TVO_TRANSLATE_DOMAIN );
-			$response['html']        .= '<a href="javascript:void(0);" onclick="tvo_refresh_preview_email();" class="tvd-margin-left"><span class="tvd-icon-loop2 tvd-margin-right-small"></span>' . __( 'Refresh', TVO_TRANSLATE_DOMAIN ) . '</a>';
+			$response['button_text'] = __( 'Send email to customer', 'thrive-ovation' );
+			$response['html']        = __( 'Email preview', 'thrive-ovation' );
+			$response['html']        .= '<a href="javascript:void(0);" onclick="tvo_refresh_preview_email();" class="tvd-margin-left"><span class="tvd-icon-loop2 tvd-margin-right-small"></span>' . __( 'Refresh', 'thrive-ovation' ) . '</a>';
 			$response['html']        .= '<div class="tvo-preview-email-wrapper">' . tvo_process_approval_email_content( $email_template, $email_data ) . '</div>';
 		} else {
-			$response['html'] = '<span>' . __( "We can't send an approval email because you haven't configured your email settings. ", TVO_TRANSLATE_DOMAIN ) . '<a href="' . admin_url( 'admin.php?page=tvo_admin_dashboard#settings' ) . '" target="_blank">' . __( 'Click here to enable sending of email', TVO_TRANSLATE_DOMAIN ) . '</a>' . __( ' and after you are done ', TVO_TRANSLATE_DOMAIN ) . '<a href="javascript:void(0);" onclick="tvo_refresh_preview_email()">' . __( '  click here to refresh.', TVO_TRANSLATE_DOMAIN ) . '</a></span>';
+			$response['html'] = '<span>' . __( "We can't send an approval email because you haven't configured your email settings. ", 'thrive-ovation' ) . '<a href="' . admin_url( 'admin.php?page=tvo_admin_dashboard#settings' ) . '" target="_blank">' . __( 'Click here to enable sending of email', 'thrive-ovation' ) . '</a>' . __( ' and after you are done ', 'thrive-ovation' ) . '<a href="javascript:void(0);" onclick="tvo_refresh_preview_email()">' . __( '  click here to refresh.', 'thrive-ovation' ) . '</a></span>';
 		}
 	}
 
@@ -581,7 +581,7 @@ function tvo_get_testimonial_shortcode_source( $testimonial_id ) {
 	}
 
 	return array(
-		'name' => __( 'capture form', TVO_TRANSLATE_DOMAIN ),
+		'name' => __( 'capture form', 'thrive-ovation' ),
 		'url'  => '',
 	);
 }
@@ -663,7 +663,7 @@ function tvo_get_facebook_app_id() {
 	$facebook = new Thrive_Dash_List_Connection_Facebook();
 
 	$app_id = '';
-	if ( $facebook->isConnected() ) {
+	if ( $facebook->is_connected() ) {
 		$app_id = $facebook->param( 'app_id', '' );
 	}
 
@@ -680,7 +680,7 @@ function tvo_get_google_client_id() {
 	$google = new Thrive_Dash_List_Connection_Google();
 
 	$client_id = '';
-	if ( $google->isConnected() ) {
+	if ( $google->is_connected() ) {
 		$client_id = $google->param( 'client_id', '' );
 	}
 
@@ -710,11 +710,11 @@ function tvo_enqueue_forms_script() {
 		'gravatar_route'    => tvo_get_route_url( 'socialmedia' ) . '/gravatar',
 		'post_id'           => get_the_ID(),
 		'translate'         => array(
-			'required'   => __( 'Please fill the required fields.', TVO_TRANSLATE_DOMAIN ),
-			'validEmail' => __( 'Please enter a valid email.', TVO_TRANSLATE_DOMAIN ),
-			'validURL'   => __( 'Please enter a valid URL <br> Make sure you also use the website protocol (http, https, ftp)', TVO_TRANSLATE_DOMAIN ),
-			'submit'     => __( 'Submit', TVO_TRANSLATE_DOMAIN ),
-			'sending'    => __( 'Sending...', TVO_TRANSLATE_DOMAIN ),
+			'required'   => __( 'Please fill the required fields.', 'thrive-ovation' ),
+			'validEmail' => __( 'Please enter a valid email.', 'thrive-ovation' ),
+			'validURL'   => __( 'Please enter a valid URL <br> Make sure you also use the website protocol (http, https, ftp)', 'thrive-ovation' ),
+			'submit'     => __( 'Submit', 'thrive-ovation' ),
+			'sending'    => __( 'Sending...', 'thrive-ovation' ),
 		),
 	) );
 }

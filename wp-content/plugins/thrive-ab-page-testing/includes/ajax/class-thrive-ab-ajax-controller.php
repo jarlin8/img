@@ -263,7 +263,9 @@ class Thrive_AB_Ajax_Controller {
 			/**
 			 * Traffic From Edit Post View
 			 */
-			$model = $edit_post_traffic;
+			if ( array_sum( $edit_post_traffic ) < 100 ) {
+				$model = $edit_post_traffic;
+			}
 		}
 
 		foreach ( $model as $id => $traffic ) {

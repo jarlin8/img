@@ -1,4 +1,14 @@
 <?php
+
+/**
+ * Thrive Themes - https://thrivethemes.com
+ *
+ * @package thrive-dashboard
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
 /**
  * Holds different helper functions
  * User: Danut
@@ -27,7 +37,7 @@ function tve_dash_section() {
 function tve_dash_license_manager_section() {
 	$products = tve_dash_get_products( false );
 
-	$returnUrl = esc_url( empty( $_REQUEST['return'] ) ? '' : $_REQUEST['return'] );
+	$returnUrl = esc_url( empty( $_REQUEST['return'] ) ? '' : sanitize_text_field( $_REQUEST['return'] ) );
 
 	/**
 	 * Filter products to only active once
@@ -153,13 +163,6 @@ function tve_dash_enqueue_script( $handle, $src = '', $deps = array(), $ver = fa
 }
 
 /**
- * Display Access manager page
- */
-function tve_dash_access_manager_main_page() {
-	TVD_AM::instance()->display_page();
-}
-
-/**
  * Wrapper over the wp enqueue_style function
  * It will add the version
  *
@@ -281,9 +284,7 @@ function tve_dash_get_features() {
 		$enabled['access_manager'] = true;
 	}
 
-	$thrive_features = array_intersect_key( $thrive_features, array_filter( $enabled ) );
-
-	return $thrive_features;
+	return array_intersect_key( $thrive_features, array_filter( $enabled ) );
 }
 
 /**
@@ -469,14 +470,14 @@ function tve_dash_get_error_log_entries( $order_by = 'date', $order = 'DESC', $p
 
 	$models = $wpdb->get_results( $wpdb->prepare( $sql, $params ) );
 
-	$available_apis = Thrive_Dash_List_Manager::getAvailableAPIs( false, array() );
+	$available_apis = Thrive_Dash_List_Manager::get_available_apis();
 
 	foreach ( $models as $key => $entry ) {
-		$unserialized_data                   = unserialize( $entry->api_data );
+		$unserialized_data                   = thrive_safe_unserialize( $entry->api_data );
 		$models[ $key ]->fields_html         = tve_dash_build_column_api_data( $unserialized_data );
 		$models[ $key ]->api_data            = json_encode( $unserialized_data );
-		$models[ $key ]->connection_explicit = empty($available_apis[ $entry->connection ])? $entry->connection : $available_apis[ $entry->connection ]->getTitle();
-		$models[ $key ]->connection_type     = empty($available_apis[ $entry->connection ])? $entry->connection : $available_apis[ $entry->connection ]->getType();
+		$models[ $key ]->connection_explicit = empty( $available_apis[ $entry->connection ] ) ? $entry->connection : $available_apis[ $entry->connection ]->get_title();
+		$models[ $key ]->connection_type     = empty( $available_apis[ $entry->connection ] ) ? $entry->connection : $available_apis[ $entry->connection ]->get_type();
 	}
 
 	$data['models'] = $models;
@@ -575,7 +576,7 @@ function tve_dash_generate_secret() {
 	$rand = md5( mt_rand() );
 
 	if ( ! empty( $_COOKIE[ TVE_SECRET ] ) ) {
-		$rand = $_COOKIE[ TVE_SECRET ];
+		$rand = sanitize_text_field( $_COOKIE[ TVE_SECRET ] );
 	}
 
 	setcookie( TVE_SECRET, $rand, strtotime( '+1 year' ), '/' );
@@ -757,7 +758,7 @@ function dashboard_icon( $icon, $return = false, $namespace = 'sidebar', $extra_
 		return $html;
 	}
 
-	echo $html;
+	echo $html; // phpcs:ignore
 }
 
 /**
@@ -779,7 +780,7 @@ function tve_dash_get_ip() {
 		) as $key
 	) {
 		if ( true === array_key_exists( $key, $_SERVER ) ) {
-			foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) {
+			foreach ( explode( ',', sanitize_text_field( $_SERVER[ $key ] ) ) as $ip ) {
 				$ip = trim( $ip ); // just to be safe
 
 				if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== false ) {
@@ -801,11 +802,15 @@ function tve_dash_get_ip() {
  *
  * @return array
  */
-function tve_current_user_data() {
-	$current_user = wp_get_current_user();
-	$user_data    = array();
+function tve_current_user_data( $user_id = 0 ) {
+	if ( empty( $user_id ) ) {
+		$current_user = wp_get_current_user();
+	} else {
+		$current_user = get_user_by( 'id', $user_id );
+	}
+	$user_data = array();
 
-	if ( ! empty( $current_user->data ) && ! empty( $current_user->data->ID ) ) {
+	if ( ! empty( $current_user ) && ! empty( $current_user->data ) && ! empty( $current_user->data->ID ) ) {
 		$user_meta = get_user_meta( $current_user->data->ID );
 		$user_data = array(
 			'user_email'   => $current_user->data->user_email,
@@ -834,11 +839,13 @@ function tve_current_user_data() {
  *
  * @return array|null
  */
-function tvd_get_current_user_details() {
-	$user_id = get_current_user_id();
+function tvd_get_current_user_details( $user_id = 0 ) {
+	if ( empty( $user_id ) ) {
+		$user_id = get_current_user_id();
+	}
 
 	if ( ! empty( $user_id ) ) {
-		$current_user_data = tve_current_user_data();
+		$current_user_data = tve_current_user_data( $user_id );
 		$user_meta         = get_user_meta( $current_user_data['id'] );
 
 		$comments_number = get_comments( array(
@@ -856,7 +863,7 @@ function tvd_get_current_user_details() {
 			'membership_level' => $current_user_data['role'],
 			'email'            => $current_user_data['user_email'],
 			'ip_address'       => $current_user_data['ip'],
-			'user_agent'       => ! empty( $_SERVER['HTTP_USER_AGENT'] ) ? esc_html( $_SERVER['HTTP_USER_AGENT'] ) : '',
+			'user_agent'       => ! empty( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ) : '',
 			'comments'         => $comments_number,
 		);
 
@@ -888,7 +895,7 @@ function tvd_get_login_form_data( $status ) {
 
 	return array(
 		'login_page'     => $login_page,
-		'login_redirect' => ! empty( $_REQUEST['redirect_to'] ) ? $_REQUEST['redirect_to'] : '',
+		'login_redirect' => ! empty( $_REQUEST['redirect_to'] ) ? sanitize_text_field( $_REQUEST['redirect_to'] ) : '',
 		'login_time'     => date( 'Y-m-d H:i:s', current_time( 'timestamp' ) ),
 		'result'         => $status,
 	);
@@ -980,7 +987,11 @@ function tvd_get_post_type_label( $post_type = '' ) {
 	$post_type_label = ucfirst( $post_type );
 
 	if ( $post_type_object !== null ) {
-		$post_type_label = empty( $post_type_object->labels->singular_name ) ? $post_type_object->label : $post_type_object->labels->singular_name;
+		$prefix = '';
+		if ( ! empty( $post_type_object->labels->singular_name ) && $post_type === 'product' && $post_type_object->labels->singular_name === __( 'Product', 'woocommerce' ) ) {
+			$prefix = 'WooCommerce ';
+		}
+		$post_type_label = $prefix . ( empty( $post_type_object->labels->singular_name ) ? $post_type_object->label : $post_type_object->labels->singular_name );
 	}
 
 	return $post_type_label;
@@ -1054,6 +1065,28 @@ function tvd_get_acf_user_external_fields( $user_role = false ) {
 }
 
 /**
+ * Try and find a menu id to return
+ *
+ * @return mixed|string
+ */
+function tve_get_default_menu() {
+	$menus = get_terms( 'nav_menu', [ 'hide_empty' => false ] );
+
+	if ( empty( $menus ) ) {
+		$menu_id = 'custom';
+	} else {
+		usort( $menus, static function ( $m1, $m2 ) {
+			return $m2->count - $m1->count;
+		} );
+
+		$menu_id = $menus[0]->term_id;
+	}
+
+	return $menu_id;
+}
+
+
+/**
  * Get webhook route url
  *
  * @param string|bool $user_role
@@ -1064,4 +1097,179 @@ function tvd_get_webhook_route_url( $endpoint ) {
 	$rest_controller = new TD_REST_Controller();
 
 	return get_rest_url() . $rest_controller->get_namespace() . $rest_controller->get_webhook_base() . '/' . $endpoint;
+}
+
+/**
+ * Checks if we are during a theme/plugin update
+ *
+ * @return bool
+ */
+function tvd_is_during_update() {
+	$during_update = false;
+
+	global $hook_suffix;
+
+	if ( defined( 'IFRAME_REQUEST' ) || $hook_suffix === 'update.php' ) {
+		$during_update = true;
+	}
+
+	return $during_update;
+}
+
+/**
+ * @param string $data
+ *
+ * @return mixed
+ */
+function thrive_safe_unserialize( $data ) {
+	if ( ! is_serialized( $data ) ) {
+		return $data;
+	}
+
+	if ( version_compare( '7.0', PHP_VERSION, '<=' ) ) {
+		return unserialize( $data, array( 'allowed_classes' => false ) );
+	}
+
+	/* on php <= 5.6, we need to check if the serialized string contains an object instance */
+	if ( ! is_string( $data ) ) {
+		return false;
+	}
+
+	/* some rudimentary way to check for serialized objects */
+	if ( preg_match( '#(^|;)o:\d+:"[a-z0-9\\\_]+":\d+:#i', $data, $m ) ) {
+		return false;
+	}
+
+	return unserialize( $data );
+}
+
+/**
+ * Returns the update channel
+ * beta/stable
+ *
+ * @return string
+ */
+function tvd_get_update_channel() {
+	return get_option( 'tve_update_option', 'stable' );
+}
+
+/**
+ * Return current screen id
+ *
+ * @param $key
+ *
+ * @return string
+ */
+function tve_get_current_screen_key( $key = 'id' ) {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+	return $screen === null || empty( $screen->$key ) ? '' : $screen->$key;
+}
+
+/**
+ * Returns true if the update channel is beta
+ *
+ * @return bool
+ */
+function tvd_update_is_using_beta_channel() {
+	return tvd_get_update_channel() === 'beta';
+}
+
+/**
+ * Returns true if the update channel is stable
+ *
+ * @return bool
+ */
+function tvd_update_is_using_stable_channel() {
+	return tvd_get_update_channel() === 'stable';
+}
+
+/**
+ *
+ * Replacement for WordPress's set_transient.
+ * There are cases when set_transient() will simply fail if an external cache plugin declares the global $_wp_using_ext_object_cache
+ * ( e.g. using memcached ) BUT the memcached server is not reachable.
+ * In this case both set_transient() and get_transient() will not work.
+ * Use this only if you really want the transient functionality to work regardless of caching plugins.
+ * To be used in critical circumstances, e.g. storing licensing data - as it will add the option with autoload = 'yes', so don't use to store huge amounts of data!
+ *
+ * @param string $transient  Transient name
+ * @param mixed  $value      Transient value
+ * @param int    $expiration Optional. Time until expiration in seconds. Default null (no expiration).
+ *
+ * @return bool True if the value was set, false otherwise.
+ */
+function thrive_set_transient( $transient, $value, $expiration = null ) {
+
+	/**
+	 * Filter the expiration value
+	 *
+	 * @param int $expiration expiration time, in seconds
+	 */
+	$expiration = (int) apply_filters( "thrive_transient_expiration_{$transient}", (int) $expiration );
+
+	/**
+	 * Filter the transient value
+	 *
+	 * @param mixed $value
+	 */
+	$value = apply_filters( "thrive_transient_value_{$transient}", $value );
+
+	$option_name = "_thrive_tr_{$transient}";
+
+	if ( $expiration !== 0 ) {
+		$expiration = time() + $expiration;
+	}
+
+	$data = get_option( $option_name );
+	if ( false === $data ) {
+		// does not exist. add it
+		$result = add_option( $option_name, [
+			'value' => $value,
+			'exp'   => $expiration,
+		] );
+	} else {
+		// transient found, update it
+		$data['value'] = $value;
+		$data['exp']   = $expiration;
+		$result        = update_option( $option_name, $data );
+	}
+
+	return $result;
+}
+
+/**
+ * To be used in conjunction with `thrive_set_transient`
+ *
+ * @param string $transient
+ *
+ * @return bool
+ * @see thrive_set_transient()
+ *
+ */
+function thrive_delete_transient( $transient ) {
+	return delete_option( "_thrive_tr_{$transient}" );
+}
+
+/**
+ * Replacement for WordPress's get_transient()
+ * There are cases when get_transient() will simply fail if an external cache plugin declares
+ * the global $_wp_using_ext_object_cache ( e.g. using memcached ) BUT the memcached server is not reachable.
+ * In this case both set_transient() and get_transient() will not work.
+ *
+ * @param string $transient Transient name
+ *
+ * @return mixed transient value, or false if transient is not set or is expired
+ */
+function thrive_get_transient( $transient ) {
+	$data = get_option( "_thrive_tr_{$transient}" );
+
+	$value = is_array( $data ) && isset( $data['value'], $data['exp'] ) ? $data['value'] : false;
+
+	/* if data has the correct format, then check expiration - if not zero and in the past, return false */
+	if ( $value !== false && $data['exp'] && $data['exp'] < time() ) {
+		$value = false;
+	}
+
+	return $value;
 }

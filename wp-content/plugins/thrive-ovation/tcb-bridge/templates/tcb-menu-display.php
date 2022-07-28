@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</button>
 			</div>
 
-			<hr>
+			<hr class="mt-10">
 
 			<div class="tcb-text-center">
 				<button class="tve-button blue click" data-fn="display_settings">
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</button>
 			</div>
 
-			<hr>
+			<hr class="mt-10">
 			<div class="tve-control" data-view="BackgroundColor"></div>
 			<div class="tve-control" data-view="BorderColor"></div>
 			<div class="tve-control" data-view="TitleColor"></div>

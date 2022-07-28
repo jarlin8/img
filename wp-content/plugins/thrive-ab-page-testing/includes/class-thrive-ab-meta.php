@@ -68,6 +68,8 @@ class Thrive_AB_Meta {
 			'tve_disable_theme_dependency',
 			'_tve_header',
 			'_tve_footer',
+			//template
+			'thrive_post_template'
 
 		);
 	}

@@ -7,7 +7,7 @@
 /**
  * THT plugin version
  */
-defined( 'THO_VERSION' ) || define( 'THO_VERSION', '1.3.9' );
+defined( 'THO_VERSION' ) || define( 'THO_VERSION', '2.3.1' );
 defined( 'THO_MIN_REQUIRED_WP_VERSION' ) || define( 'THO_MIN_REQUIRED_WP_VERSION', '4.4' );
 
 /**

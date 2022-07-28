@@ -17,6 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class TCB_Symbol_Template {
 
+	/**
+	 * Symbols regular expression it matches the symbols config
+	 */
+	const SYMBOL_CONFIG_REGEX = '/__CONFIG_post_symbol__{[^\d]*(\d*)[^}]*}__CONFIG_post_symbol__/';
+	/**
+	 * Symbols regular expression it matches the symbols shortcode
+	 */
+	const SYMBOL_SHORTCODE_REGEX = '/thrive_symbol id=\'(\d*)\'/';
+
 	private static $instances = [];
 
 	private static $exportable_meta = [
@@ -352,7 +361,7 @@ class TCB_Symbol_Template {
 	 *
 	 * @return int|WP_Error
 	 */
-	public static function import( $data, $section_type ) {
+	public static function import( $data, $section_type = null ) {
 		$symbol_id = wp_insert_post( [
 			'post_title'  => sanitize_title( $data['post_title'] ) . ' ' . __( '(Imported)', 'thrive-cb' ) . '#' . mt_rand( 0, 10000 ),
 			'post_type'   => TCB_Symbols_Post_Type::SYMBOL_POST_TYPE,
@@ -368,7 +377,9 @@ class TCB_Symbol_Template {
 			update_post_meta( $symbol_id, 'tve_custom_css', $css );
 		}
 
-		wp_set_object_terms( $symbol_id, [ $section_type . 's' ], TCB_Symbols_Taxonomy::SYMBOLS_TAXONOMY, true );
+		if ( $section_type !== null ) {
+			wp_set_object_terms( $symbol_id, [ $section_type . 's' ], TCB_Symbols_Taxonomy::SYMBOLS_TAXONOMY, true );
+		}
 
 		return $symbol_id;
 	}

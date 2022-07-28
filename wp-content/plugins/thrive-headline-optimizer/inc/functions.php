@@ -248,6 +248,13 @@ function tho_filter_end_content( $content ) {
 		return $content;
 	}
 
+	/**
+	 * We need to make sure that if the content is empty or contains only the the TAR Flag, to leave the content empty
+	 */
+	if ( empty( $content ) || trim( $content ) === '<div class="tcb_flag" style="display: none"></div>' ) {
+		return '';
+	}
+
 	$content .= '<span id="' . THO_END_OF_CONTENT_ID . '" style="display: block; visibility: hidden;"></span>';
 
 	return $content;

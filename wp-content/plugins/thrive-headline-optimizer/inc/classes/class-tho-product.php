@@ -24,19 +24,19 @@ class Tho_Product extends TVE_Dash_Product_Abstract {
 		);
 
 		$this->moreLinks = array(
-			'support'   => array(
-				'class'      => '',
-				'icon_class' => 'tvd-icon-life-bouy',
-				'href'       => 'https://thrivethemes.com/forums/forum/plugins/thrive-headline-optimizer',
-				'target'     => '_blank',
-				'text'       => __( 'Support', THO_TRANSLATE_DOMAIN ),
-			),
 			'tutorials' => array(
 				'class'      => '',
 				'icon_class' => 'tvd-icon-graduation-cap',
-				'href'       => 'https://thrivethemes.com/thrive-knowledge-base/?section_id=8579',
+				'href'       => 'https://help.thrivethemes.com/en/collections/2561613-thrive-headline-optimizer',
 				'target'     => '_blank',
 				'text'       => __( 'Tutorials', THO_TRANSLATE_DOMAIN ),
+			),
+			'support'   => array(
+				'class'      => '',
+				'icon_class' => 'tvd-icon-life-bouy',
+				'href'       => 'https://thrivethemes.com/support/',
+				'target'     => '_blank',
+				'text'       => __( 'Support', THO_TRANSLATE_DOMAIN ),
 			),
 		);
 	}

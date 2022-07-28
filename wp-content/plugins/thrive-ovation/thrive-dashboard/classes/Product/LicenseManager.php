@@ -1,6 +1,15 @@
 <?php
 
 /**
+ * Thrive Themes - https://thrivethemes.com
+ *
+ * @package thrive-dashboard
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
+
+/**
  * Created by PhpStorm.
  * User: Danut
  * Date: 12/9/2015
@@ -8,28 +17,29 @@
  */
 class TVE_Dash_Product_LicenseManager {
 	const LICENSE_OPTION_NAME = 'thrive_license';
-	const TCB_TAG = 'tcb';
-	const TL_TAG = 'tl';
-	const TCW_TAG = 'tcw';
-	const ALL_TAG = 'all';
-	const TU_TAG = 'tu';
-	const THO_TAG = 'tho';
-	const TVO_TAG = 'tvo';
-	const TQB_TAG = 'tqb';
-	const TCM_TAG = 'tcm';
-	const TVA_TAG = 'tva';
-	const TAB_TAG = 'tab';
+	const TCB_TAG             = 'tcb';
+	const TL_TAG              = 'tl';
+	const TCW_TAG             = 'tcw';
+	const ALL_TAG             = 'all';
+	const TU_TAG              = 'tu';
+	const THO_TAG             = 'tho';
+	const TVO_TAG             = 'tvo';
+	const TQB_TAG             = 'tqb';
+	const TCM_TAG             = 'tcm';
+	const TVA_TAG             = 'tva';
+	const TAB_TAG             = 'tab';
+	const TPM_TAG             = 'tpm';
 
-	const TAG_FOCUS = 'focusblog';
-	const TAG_LUXE = 'luxe';
-	const TAG_IGNITION = 'ignition';
-	const TAG_MINUS = 'minus';
-	const TAG_SQUARED = 'squared';
-	const TAG_VOICE = 'voice';
+	const TAG_FOCUS     = 'focusblog';
+	const TAG_LUXE      = 'luxe';
+	const TAG_IGNITION  = 'ignition';
+	const TAG_MINUS     = 'minus';
+	const TAG_SQUARED   = 'squared';
+	const TAG_VOICE     = 'voice';
 	const TAG_PERFORMAG = 'performag';
-	const TAG_PRESSIVE = 'pressive';
-	const TAG_STORIED = 'storied';
-	const TAG_RISE = 'rise';
+	const TAG_PRESSIVE  = 'pressive';
+	const TAG_STORIED   = 'storied';
+	const TAG_RISE      = 'rise';
 
 	protected $secret_key = '@#$()%*%$^&*(#@$%@#$%93827456MASDFJIK3245';
 
@@ -102,7 +112,7 @@ class TVE_Dash_Product_LicenseManager {
 		}
 
 		if ( $this->isThemeTag( $item ) ) {
-			$licensed = get_option( 'thrive_license_status', false ) === 'ACTIVE';
+			$licensed = true;
 		} else {
 			switch ( $item ) {
 				case self::TCB_TAG:
@@ -115,16 +125,13 @@ class TVE_Dash_Product_LicenseManager {
 					$licensed = get_option( 'tcw_license_status', false ) === 'ACTIVE';
 					break;
 				default:
-					$licensed = false;
+					$licensed = true;
 					break;
 			}
 		}
 
-		if ( $licensed === false ) {
-			$licensed = $this->checkData( $item );
-		}
 
-		return $licensed;
+		return true;
 	}
 
 	/**
@@ -245,5 +252,30 @@ class TVE_Dash_Product_LicenseManager {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Based on $text_domain returns a tag associated
+	 *
+	 * @param string $text_domain
+	 *
+	 * @return string
+	 */
+	public static function get_product_tag( $text_domain ) {
+		$mapping = array(
+			'thrive-cb'              => self::TCB_TAG,
+			'thrive-leads'           => self::TL_TAG,
+			'thrive-clever-widgets'  => self::TCW_TAG,
+			'thrive-ult'             => self::TU_TAG,
+			'thrive-headline'        => self::THO_TAG,
+			'thrive-ovation'         => self::TVO_TAG,
+			'thrive-quiz-builder'    => self::TQB_TAG,
+			'thrive-comments'        => self::TCM_TAG,
+			'thrive-apprentice'      => self::TVA_TAG,
+			'thrive-optimize'        => self::TAB_TAG,
+			'thrive-product-manager' => self::TPM_TAG,
+		);
+
+		return isset( $mapping[ $text_domain ] ) ? $mapping[ $text_domain ] : '';
 	}
 }

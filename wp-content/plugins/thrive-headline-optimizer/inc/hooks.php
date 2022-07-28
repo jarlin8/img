@@ -21,7 +21,7 @@ if ( ! is_admin() ) {
 	/**
 	 * Mark the end of content with an element so we can detect it for scroll
 	 */
-	add_filter( 'the_content', 'tho_filter_end_content' );
+	add_filter( 'the_content', 'tho_filter_end_content', 11 );
 }
 
 /**
@@ -46,25 +46,24 @@ add_action( 'rest_api_init', 'tho_create_initial_rest_routes' );
  * Add triggers for logging impressions and engagements
  */
 add_filter( 'the_title', 'tho_add_title_variations', PHP_INT_MAX, 2 );
-add_filter( 'woocommerce_product_title', 'tho_add_woocommerce_title_variation', PHP_INT_MAX, 2 );
 
-/**
- * filter woocommerce breadcrumbs so we can modify the title
- */
-add_filter( 'woocommerce_breadcrumb_defaults', 'tho_change_woo_breadcrumb' );
+if ( defined( 'WC_VERSION' ) ) {
+	add_filter( 'woocommerce_product_title', 'tho_add_woocommerce_title_variation', PHP_INT_MAX, 2 );
 
-/**
- * change woocommerce breadcrumb template at a low priority so it can be overwritten by others
- */
-add_filter( 'woocommerce_locate_template', 'tho_woocommerce_locate_template', 1, 3 );
+	/**
+	 * filter woocommerce breadcrumbs so we can modify the title
+	 */
+	add_filter( 'woocommerce_breadcrumb_defaults', 'tho_change_woo_breadcrumb' );
 
-/**
- * filter products title with the_title
- */
-if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '2.3', '>=' ) ) {
+	/**
+	 * change woocommerce breadcrumb template at a low priority so it can be overwritten by others
+	 */
+	add_filter( 'woocommerce_locate_template', 'tho_woocommerce_locate_template', 1, 3 );
+
+	/**
+	 * filter products title with the_title
+	 */
 	add_filter( 'woocommerce_add_to_cart_fragments', 'tho_filter_product_title', 1, 1 );
-} else {
-	add_filter( 'add_to_cart_fragments', 'tho_filter_product_title', 1, 1 );
 }
 
 /**

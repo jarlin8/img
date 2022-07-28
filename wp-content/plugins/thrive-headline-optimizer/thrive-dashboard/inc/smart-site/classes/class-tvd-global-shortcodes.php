@@ -15,16 +15,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class TVD_Global_Shortcodes {
 
-	public static $dynamic_shortcodes
-		= array(
-			'thrive_global_shortcode_url' => 'global_shortcode_url',
-			'thrv_dynamic_data_request'   => 'request_data_shortcode',
-			'thrv_dynamic_data_date'      => 'date_shortcode',
-			'thrv_dynamic_data_content'   => 'content_shortcode',
-			'thrv_dynamic_data_user'      => 'user_data_shortcode',
-			'thrv_dynamic_data_source'    => 'source_shortcode',
-			'thrv_dynamic_data_user_acf'  => 'acf_user_field',
-		);
+	public static $dynamic_shortcodes = array(
+		'thrive_global_shortcode_url' => 'global_shortcode_url',
+		'thrv_dynamic_data_request'   => 'request_data_shortcode',
+		'thrv_dynamic_data_date'      => 'date_shortcode',
+		'thrv_dynamic_data_content'   => 'content_shortcode',
+		'thrv_dynamic_data_user'      => 'user_data_shortcode',
+		'thrv_dynamic_data_source'    => 'source_shortcode',
+		'thrv_dynamic_data_user_acf'  => 'acf_user_field',
+	);
 
 	public function __construct() {
 		add_filter( 'tcb_content_allowed_shortcodes', array( $this, 'allowed_shortcodes' ) );
@@ -75,7 +74,7 @@ class TVD_Global_Shortcodes {
 							']',
 						), $link_attr['title'] );
 					}
-					$attributes = [];
+					$attributes = array();
 					foreach ( $link_attr as $attr_name => $value ) {
 						$attributes[] = ( $attr_name === 'className' ? 'class' : $attr_name ) . '="' . esc_attr( $value ) . '"';
 					}
@@ -235,7 +234,7 @@ class TVD_Global_Shortcodes {
 
 		$resources = array(
 			'get'    => __( 'URL QueryString', TVE_DASH_TRANSLATE_DOMAIN ),
-			'post'   => __( 'Post variable', TVE_DASH_TRANSLATE_DOMAIN ),
+			'post'   => __( 'POST variable', TVE_DASH_TRANSLATE_DOMAIN ),
 			'cookie' => __( 'Cookie', TVE_DASH_TRANSLATE_DOMAIN ),
 		);
 
@@ -617,7 +616,7 @@ class TVD_Global_Shortcodes {
 		$value   = '';
 
 		if ( isset( $args['id'] ) && in_array( $args['id'], $allowed, true ) && isset( $_SERVER[ $args['id'] ] ) ) {
-			$value = $_SERVER[ $args['id'] ];
+			$value = sanitize_text_field( $_SERVER[ $args['id'] ] );
 		}
 		if ( empty( $value ) && isset( $args['default'] ) ) {
 			$value = $args['default'];
@@ -629,13 +628,34 @@ class TVD_Global_Shortcodes {
 	/**
 	 * Shortcode render for data from $_REQUEST
 	 *
-	 * @param $args
+	 * @param array  $args
+	 * @param string $context
+	 * @param string $tag
 	 *
 	 * @return mixed|string
 	 */
-	public static function request_data_shortcode( $args ) {
-		$value = '';
-		if ( ! empty( $args['var_name'] ) ) {
+	public static function request_data_shortcode( $args = array(), $context = '', $tag = '' ) {
+		$value             = '';
+		$should_load_value = true;
+
+		if ( function_exists( 'is_editor_page' ) && is_editor_page() && ! empty( $tag ) ) {
+			//preserve shortcode in case someone adds it as dynamic link cuz why not
+			if ( empty( $args['inline'] ) ) {
+				$attributes = '';
+
+				foreach ( array( 'var_name', 'id', 'default', 'inline' ) as $key ) {
+					if ( ! empty( $args[ $key ] ) ) {
+						$attributes .= $key . '=' . $args[ $key ] . ' ';
+					}
+				}
+
+				return '[' . $tag . ' ' . trim( $attributes ) . ']';
+			} else {
+				$should_load_value = false;
+			}
+		}
+
+		if ( $should_load_value && ! empty( $args['var_name'] ) ) {
 			/**
 			 * just in case the var_name has spaces check var_Name with underscore
 			 * e.g test 01 comes as test_01
@@ -643,21 +663,21 @@ class TVD_Global_Shortcodes {
 			$fallback_var = strpos( $args['var_name'], ' ' ) !== false ? preg_replace( "/\s/", "_", $args['var_name'] ) : '';
 			switch ( $args['id'] ) {
 				case 'post':
-					$value = isset( $_POST[ $args['var_name'] ] ) ? $_POST[ $args['var_name'] ] : '';
+					$value = isset( $_POST[ $args['var_name'] ] ) ? sanitize_text_field( $_POST[ $args['var_name'] ] ) : '';
 					if ( empty( $value ) && ! empty( $fallback_var ) ) {
-						$value = isset( $_POST[ $fallback_var ] ) ? $_POST[ $fallback_var ] : '';
+						$value = isset( $_POST[ $fallback_var ] ) ? sanitize_text_field( $_POST[ $fallback_var ] ) : '';
 					}
 					break;
 				case 'get':
-					$value = isset( $_GET[ $args['var_name'] ] ) ? $_GET[ $args['var_name'] ] : '';
+					$value = isset( $_GET[ $args['var_name'] ] ) ? sanitize_text_field( $_GET[ $args['var_name'] ] ) : '';
 					if ( empty( $value ) && ! empty( $fallback_var ) ) {
-						$value = isset( $_GET[ $fallback_var ] ) ? $_GET[ $fallback_var ] : '';
+						$value = isset( $_GET[ $fallback_var ] ) ? sanitize_text_field( $_GET[ $fallback_var ] ) : '';
 					}
 					break;
 				case 'cookie':
-					$value = isset( $_COOKIE[ $args['var_name'] ] ) ? $_COOKIE[ $args['var_name'] ] : '';
+					$value = isset( $_COOKIE[ $args['var_name'] ] ) ? sanitize_text_field( $_COOKIE[ $args['var_name'] ] ) : '';
 					if ( empty( $value ) && ! empty( $fallback_var ) ) {
-						$value = isset( $_COOKIE[ $fallback_var ] ) ? $_COOKIE[ $fallback_var ] : '';
+						$value = isset( $_COOKIE[ $fallback_var ] ) ? sanitize_text_field( $_COOKIE[ $fallback_var ] ) : '';
 					}
 					break;
 				default:

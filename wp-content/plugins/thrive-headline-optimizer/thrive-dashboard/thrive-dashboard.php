@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * Thrive Themes - https://thrivethemes.com
+ *
+ * @package thrive-dashboard
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
 /**
  * Place where CONSTANTS, ACTIONS and FILTERS are defined
  * Implementations of all of those are placed into inc/hooks.php
@@ -35,6 +44,7 @@ require_once TVE_DASH_PATH . '/inc/db-manager/class-td-db-migration.php';
 require_once TVE_DASH_PATH . '/inc/db-manager/class-td-db-manager.php';
 require_once TVE_DASH_PATH . '/inc/script-manager/class-tvd-sm.php';
 require_once TVE_DASH_PATH . '/inc/login-editor/classes/class-main.php';
+require_once TVE_DASH_PATH . '/inc/coming-soon/classes/class-main.php';
 require_once TVE_DASH_PATH . '/inc/auth-check/class-tvd-auth-check.php';
 require_once TVE_DASH_PATH . '/inc/smart-site/classes/class-tvd-smart-shortcodes.php';
 require_once TVE_DASH_PATH . '/inc/smart-site/classes/class-tvd-global-shortcodes.php';
@@ -47,6 +57,9 @@ require_once TVE_DASH_PATH . '/inc/smart-site/classes/endpoints/class-tvd-fields
 require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am.php';
 require_once TVE_DASH_PATH . '/inc/marketing/functions.php';
 require_once TVE_DASH_PATH . '/inc/ttw-account/classes/class-td-ttw-update-manager.php';
+require_once TVE_DASH_PATH . '/inc/automator/class-main.php';
+require_once TVE_DASH_PATH . '/inc/smart-site/classes/class-tvd-content-sets.php';
+require_once TVE_DASH_PATH . '/inc/cache/meta-cache.php';
 
 /**
  * AUTO-LOADERS
@@ -67,7 +80,10 @@ if ( is_admin() ) {
 	if ( isset( $features['icon_manager'] ) ) {
 		require_once( TVE_DASH_PATH . '/inc/icon-manager/classes/Tve_Dash_Thrive_Icon_Manager.php' );
 	}
-
+	/**
+	 * Icon library
+	 */
+	require_once( TVE_DASH_PATH . '/inc/icon-manager/classes/Tve_Dash_Icon_Manager.php' );
 	/**
 	 * Inbox notifications
 	 */
@@ -75,7 +91,7 @@ if ( is_admin() ) {
 	TD_Inbox::instance();
 }
 
-if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || apply_filters( 'tve_leads_include_auto_responder', true ) ) {  // I changed this for NM. We should always include autoresponder code in the solution
+if ( wp_doing_ajax() || apply_filters( 'tve_leads_include_auto_responder', true ) ) {  // I changed this for NM. We should always include autoresponder code in the solution
 	require_once TVE_DASH_PATH . '/inc/auto-responder/misc.php';
 }
 
@@ -86,6 +102,7 @@ add_action( 'init', 'tve_dash_init_action' );
 add_action( 'init', 'tve_dash_load_text_domain' );
 /* priority -1 so we can be compatible with WP Cerber */
 add_action( 'init', array( 'TVD\Login_Editor\Main', 'init' ), - 1 );
+add_action( 'init', array( 'TVD\Coming_Soon\Main', 'init' ), - 1 );
 if ( defined( 'WPSEO_FILE' ) ) {
 	/* Yoast SEO plugin installed -> use a hook provided by the plugin for configuring meta "robots" */
 	add_filter( 'wpseo_robots_array', function ( $robots ) {

@@ -34,10 +34,7 @@ class TVD_SM_Admin {
 	}
 
 	public function enqueue_scripts() {
-		$screen    = get_current_screen();
-		$screen_id = $screen ? $screen->id : '';
-
-		if ( $screen_id === 'admin_page_tve_dash_script_manager' ) {
+		if ( tve_get_current_screen_key() === 'admin_page_tve_dash_script_manager' ) {
 			tve_dash_enqueue();
 			tve_dash_enqueue_style( 'tvd-sm-admin-css', TVD_SM_Constants::url( '/assets/css/admin.css' ) );
 			tve_dash_enqueue_script( 'tvd-sm-admin-js', TVD_SM_Constants::url( 'assets/js/dist/admin.min.js' ), array(
@@ -79,14 +76,10 @@ class TVD_SM_Admin {
 	 * Hook based on the current screen
 	 */
 	public function conditional_hooks() {
-		if ( ! $screen = get_current_screen() ) {
-			return;
-		}
-
 		/**
 		 * if screen = script_manager feature then load all the templates for the SM admin side
 		 */
-		if ( $screen->id === 'admin_page_tve_dash_script_manager' ) {
+		if ( tve_get_current_screen_key() === 'admin_page_tve_dash_script_manager' ) {
 			add_action( 'admin_print_scripts', array( $this, 'admin_backbone_templates' ), 9 );
 			add_filter( 'admin_title', array( $this, 'change_title' ) );
 		}

@@ -201,6 +201,9 @@ class Thrive_AB_Page extends Thrive_AB_Post {
 			foreach ( $model['meta'] as $key => $value ) {
 				$variation->get_meta()->update( $key, $value );
 			}
+
+			$original_page = new Thrive_AB_Meta( $model['post_parent'] );
+			$variation->get_meta()->update( 'thrive_post_template', $original_page->get( 'thrive_post_template' ) );
 		}
 
 		return $variation;

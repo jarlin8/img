@@ -89,6 +89,8 @@ if ( file_exists( plugin_dir_path( __FILE__ ) . '.flag-nocache' ) ) {
 	defined( 'TL_CLOUD_DEBUG' ) || define( 'TL_CLOUD_DEBUG', true );
 }
 
+require_once TVE_TCB_ROOT_PATH . 'inc/traits/trait-is-singleton.php';
+
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/class-tcb-custom-fields-shortcode.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/compat.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/backwards.php';
@@ -124,6 +126,10 @@ require_once TVE_TCB_ROOT_PATH . 'inc/woocommerce/classes/class-main.php';
 
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/notifications/class-main.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/conditional-display/class-main.php';
+
+require_once TVE_TCB_ROOT_PATH . 'inc/classes/user-templates/class-main.php';
+/* we must include these before tve_global_options_init() */
+TCB\UserTemplates\Main::includes();
 
 require_once TVE_TCB_ROOT_PATH . 'inc/automator/class-main.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/symbols/class-tcb-symbols-post-type.php';
@@ -346,6 +352,8 @@ add_action( 'init', function () {
 	\TCB\Notifications\Main::init();
 
 	\TCB\ConditionalDisplay\Main::init();
+
+	\TCB\UserTemplates\Main::init();
 } );
 
 \TCB\Lightspeed\Main::init();
@@ -428,7 +436,12 @@ function tcb_custom_css( $css ) {
 		$css = preg_replace( '/@import url\((\\\)?\"(http:|https:)?\/\/fonts\.(googleapis|gstatic)\.com([^)]*)\);/', '', $css );
 	}
 
-	$css = tve_minify_css( $css );
+	/**
+	 * Whether the css should be minified or not
+	 */
+	if ( apply_filters( 'tve_should_minify_css', true ) ) {
+		$css = tve_minify_css( $css );
+	}
 
 	return str_replace( '#tve_editor', tcb_selection_root(), $css );
 }
@@ -462,21 +475,21 @@ function tve_minify_css( $css = '' ) {
  * @param array $events
  */
 if ( ! function_exists( 'tve_page_events' ) ) {
-	function tve_page_events( $events = array() ) {
+	function tve_page_events( $events = [] ) {
 		$triggers = tve_get_event_triggers( 'page' );
 		$actions  = tve_get_event_actions( 'page' );
 
 		/* hold all the javascript callbacks required for the identified actions */
-		$javascript_callbacks = isset( $GLOBALS['tve_event_manager_callbacks'] ) ? $GLOBALS['tve_event_manager_callbacks'] : array();
+		$javascript_callbacks = isset( $GLOBALS['tve_event_manager_callbacks'] ) ? $GLOBALS['tve_event_manager_callbacks'] : [];
 
 		/* holds all the Global JS required by different actions and event triggers on page load */
-		$registered_javascript_globals = isset( $GLOBALS['tve_event_manager_global_js'] ) ? $GLOBALS['tve_event_manager_global_js'] : array();
+		$registered_javascript_globals = isset( $GLOBALS['tve_event_manager_global_js'] ) ? $GLOBALS['tve_event_manager_global_js'] : [];
 
 		/* hold all instances of the Action classes in order to output stuff in the footer, we need to get out of the_content filter */
-		$registered_actions = isset( $GLOBALS['tve_event_manager_actions'] ) ? $GLOBALS['tve_event_manager_actions'] : array();
+		$registered_actions = isset( $GLOBALS['tve_event_manager_actions'] ) ? $GLOBALS['tve_event_manager_actions'] : [];
 
 		/* each trigger instance might also need a bit of javascript to trigger it */
-		$registered_triggers = isset( $GLOBALS['tve_event_manager_triggers'] ) ? $GLOBALS['tve_event_manager_triggers'] : array();
+		$registered_triggers = isset( $GLOBALS['tve_event_manager_triggers'] ) ? $GLOBALS['tve_event_manager_triggers'] : [];
 
 		/*
 		 * all page level events
@@ -565,7 +578,7 @@ function tve_frontend_data( $frontend_options ) {
 	}
 
 	if ( ! $is_editor ) {
-		$frontend_options['post_request_data'] = empty( $_POST ) ? array() : $_POST;
+		$frontend_options['post_request_data'] = empty( $_POST ) ? [] : $_POST;
 	}
 
 	return $frontend_options;

@@ -152,7 +152,7 @@ function tve_leads_admin_enqueue( $hook ) {
 	 */
 	tve_dash_enqueue();
 
-	tve_leads_enqueue_script( 'thrive-leads-init', plugins_url( 'thrive-leads/admin/js-min/_init.js' ), array(
+	tve_leads_enqueue_script( 'thrive-leads-init', plugins_url( 'thrive-leads/admin/js-min/_init.min.js' ), array(
 		'jquery',
 		'backbone',
 		'tve-dash-main-js',
@@ -160,12 +160,12 @@ function tve_leads_admin_enqueue( $hook ) {
 
 	wp_localize_script( 'thrive-leads-init', 'ThriveLeadsConst', $data );
 
-	tve_leads_enqueue_script( 'tve-leads-views', plugins_url( 'thrive-leads/admin/js-min/views.js' ), array(
+	tve_leads_enqueue_script( 'tve-leads-views', plugins_url( 'thrive-leads/admin/js-min/views.min.js' ), array(
 		'jquery',
 		'backbone',
 		'thrive-leads-init',
 	) );
-	tve_leads_enqueue_script( 'tve-leads-models', plugins_url( 'thrive-leads/admin/js-min/models.js' ), array(
+	tve_leads_enqueue_script( 'tve-leads-models', plugins_url( 'thrive-leads/admin/js-min/models.min.js' ), array(
 		'jquery',
 		'backbone',
 		'thrive-leads-init',
@@ -191,12 +191,12 @@ function tve_leads_admin_enqueue( $hook ) {
 				'thrive-leads-init',
 				'tve-dash-highcharts',
 			), false, false );
-			tve_leads_enqueue_script( 'tve-leads-charts', plugins_url( 'thrive-leads/admin/js-min/reporting/charts.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-charts', plugins_url( 'thrive-leads/admin/js-min/reporting/charts.min.js' ), array(
 				'jquery',
 				'backbone',
 				'thrive-leads-init',
 			) );
-			tve_leads_enqueue_script( 'tve-leads-routes', plugins_url( 'thrive-leads/admin/js-min/routes.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-routes', plugins_url( 'thrive-leads/admin/js-min/routes.min.js' ), array(
 				'jquery',
 				'backbone',
 				'jquery-ui-sortable',
@@ -204,7 +204,7 @@ function tve_leads_admin_enqueue( $hook ) {
 				'tve-leads-views',
 				'tve-leads-models',
 			) );
-			tve_leads_enqueue_script( 'tve-leads-dashboard', plugins_url( 'thrive-leads/admin/js-min/dashboard.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-dashboard', plugins_url( 'thrive-leads/admin/js-min/dashboard.min.js' ), array(
 				'jquery',
 				'backbone',
 				'tve-leads-routes',
@@ -214,20 +214,20 @@ function tve_leads_admin_enqueue( $hook ) {
 			break;
 
 		case TL_REPORTING_PAGE:
-			tve_leads_enqueue_script( 'tve-leads-reporting-routes', plugins_url( 'thrive-leads/admin/js-min/reporting/routes.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-reporting-routes', plugins_url( 'thrive-leads/admin/js-min/reporting/routes.min.js' ), array(
 				'jquery',
 				'backbone',
 				'thrive-leads-init',
 				'tve-leads-reporting-views',
 				'tve-leads-reporting-models',
 			) );
-			tve_leads_enqueue_script( 'tve-leads-reporting-views', plugins_url( 'thrive-leads/admin/js-min/reporting/views.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-reporting-views', plugins_url( 'thrive-leads/admin/js-min/reporting/views.min.js' ), array(
 				'jquery',
 				'backbone',
 				'thrive-leads-init',
 				'tve-leads-views',
 			) );
-			tve_leads_enqueue_script( 'tve-leads-reporting-models', plugins_url( 'thrive-leads/admin/js-min/reporting/models.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-reporting-models', plugins_url( 'thrive-leads/admin/js-min/reporting/models.min.js' ), array(
 				'jquery',
 				'backbone',
 				'thrive-leads-init',
@@ -237,12 +237,12 @@ function tve_leads_admin_enqueue( $hook ) {
 				'jquery',
 				'thrive-leads-init',
 			), false, false );
-			tve_leads_enqueue_script( 'tve-leads-charts', plugins_url( 'thrive-leads/admin/js-min/reporting/charts.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-charts', plugins_url( 'thrive-leads/admin/js-min/reporting/charts.min.js' ), array(
 				'jquery',
 				'backbone',
 				'thrive-leads-init',
 			) );
-			tve_leads_enqueue_script( 'tve-leads-reporting', plugins_url( 'thrive-leads/admin/js-min/reporting/reporting.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-reporting', plugins_url( 'thrive-leads/admin/js-min/reporting/reporting.min.js' ), array(
 				'jquery',
 				'backbone',
 				'tve-leads-reporting-routes',
@@ -252,20 +252,20 @@ function tve_leads_admin_enqueue( $hook ) {
 			break;
 
 		case TL_CONTACTS_PAGE:
-			tve_leads_enqueue_script( 'tve-leads-contacts-routes', plugins_url( 'thrive-leads/admin/js-min/contacts/routes.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-contacts-routes', plugins_url( 'thrive-leads/admin/js-min/contacts/routes.min.js' ), array(
 				'jquery',
 				'backbone',
 				'thrive-leads-init',
 				'tve-leads-contacts-views',
 			) );
-			tve_leads_enqueue_script( 'tve-leads-contacts-views', plugins_url( 'thrive-leads/admin/js-min/contacts/views.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-contacts-views', plugins_url( 'thrive-leads/admin/js-min/contacts/views.min.js' ), array(
 				'jquery',
 				'backbone',
 				'thrive-leads-init',
 				'tve-leads-views',
 			) );
 
-			tve_leads_enqueue_script( 'tve-leads-contacts', plugins_url( 'thrive-leads/admin/js-min/contacts/contacts.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-contacts', plugins_url( 'thrive-leads/admin/js-min/contacts/contacts.min.js' ), array(
 				'jquery',
 				'backbone',
 				'tve-leads-contacts-routes',
@@ -277,26 +277,26 @@ function tve_leads_admin_enqueue( $hook ) {
 			wp_enqueue_media();
 			//add_action( 'admin_head', 'wp_editor' );
 			wp_enqueue_script( 'jquery-ui-sortable', false, array( 'jquery' ) );
-			tve_leads_enqueue_script( 'tve-leads-asset-delivery-routes', plugins_url( 'thrive-leads/admin/js-min/assets/routes.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-asset-delivery-routes', plugins_url( 'thrive-leads/admin/js-min/assets/routes.min.js' ), array(
 				'jquery',
 				'backbone',
 				'thrive-leads-init',
 				'tve-leads-asset-delivery-views',
 				'tve-leads-asset-delivery-models',
 			) );
-			tve_leads_enqueue_script( 'tve-leads-asset-delivery-views', plugins_url( 'thrive-leads/admin/js-min/assets/views.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-asset-delivery-views', plugins_url( 'thrive-leads/admin/js-min/assets/views.min.js' ), array(
 				'jquery',
 				'backbone',
 				'thrive-leads-init',
 				'tve-leads-views',
 			) );
-			tve_leads_enqueue_script( 'tve-leads-asset-delivery-models', plugins_url( 'thrive-leads/admin/js-min/assets/models.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-asset-delivery-models', plugins_url( 'thrive-leads/admin/js-min/assets/models.min.js' ), array(
 				'jquery',
 				'backbone',
 				'thrive-leads-init',
 				'tve-leads-models',
 			) );
-			tve_leads_enqueue_script( 'tve-leads-asset-delivery', plugins_url( 'thrive-leads/admin/js-min/assets/assets.js' ), array(
+			tve_leads_enqueue_script( 'tve-leads-asset-delivery', plugins_url( 'thrive-leads/admin/js-min/assets/assets.min.js' ), array(
 				'jquery',
 				'backbone',
 				'tve-leads-asset-delivery-routes',

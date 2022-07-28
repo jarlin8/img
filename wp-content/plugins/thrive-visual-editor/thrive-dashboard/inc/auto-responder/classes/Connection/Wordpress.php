@@ -301,6 +301,10 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 			$arguments['username'] = $username;
 		}
 
+		if ( ! empty( $arguments['name'] ) ) {
+			list( $arguments['first_name'], $arguments['last_name'] ) = $this->get_name_parts( $arguments['name'] );
+		}
+
 		/**
 		 * check if passwords parameters exist and if they are the same in case they're two
 		 */
@@ -310,13 +314,23 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 			}
 
 			if ( ! $user_id && email_exists( $arguments['email'] ) === false ) {
-				$user_data = apply_filters( 'tvd_create_user_data', array(
+				$user_data = array(
 					'user_login' => $username,
 					'user_pass'  => $arguments['password'],
 					'user_email' => $arguments['email'],
-				) );
+				);
 
+				foreach ( $profile_fields as $profile_field ) {
+					if ( ! empty( $arguments[ $profile_field ] ) ) {
+						$user_data[ $profile_field ] = $arguments[ $profile_field ];
+					}
+				}
+				/**
+				 * Filter user data before creating a new user
+				 */
+				$user_data = apply_filters( 'tvd_create_user_data', $user_data );
 				$user_id = wp_insert_user( $user_data );
+
 				if ( $user_id ) {
 					$data = $arguments;
 					unset( $data['password'], $data['confirm_password'] );
@@ -338,10 +352,6 @@ class Thrive_Dash_List_Connection_Wordpress extends Thrive_Dash_List_Connection_
 
 		if ( $user_id instanceof WP_Error ) {
 			return $user_id->get_error_message();
-		}
-
-		if ( ! empty( $arguments['name'] ) ) {
-			list( $arguments['first_name'], $arguments['last_name'] ) = $this->get_name_parts( $arguments['name'] );
 		}
 
 		$userdata = array( 'ID' => $user_id );

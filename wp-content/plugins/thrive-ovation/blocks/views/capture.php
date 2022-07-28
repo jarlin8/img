@@ -78,11 +78,11 @@ $is_gutenberg_preview = isset( $_GET['tve_block_preview'] );
 			<path fill="#333333" d="M11.3 19.6v-3.6l1.5-3.6h2l-1.1 3.4h1.7v3.7h-4.1v0.1z"></path>
 			<path fill="#333333" d="M16.7 19.6v-3.6l1.5-3.6h2l-1.2 3.4h1.7v3.7h-4v0.1z"></path>
 		</svg>
-		<div class="tvo-block-title mb-10"><h2 class="mb-10"><?php echo __( 'Capture Testimonial', TVO_TRANSLATE_DOMAIN ); ?></h2></div>
+		<div class="tvo-block-title mb-10"><h2 class="mb-10"><?php echo __( 'Capture Testimonial', 'thrive-ovation' ); ?></h2></div>
 		<div class="tvo-new-block-description">
-			<?php echo __( 'Currently this block has no content.', TVO_TRANSLATE_DOMAIN ); ?>
+			<?php echo __( 'Currently this block has no content.', 'thrive-ovation' ); ?>
 		</div>
-		<div class="tvo-new-block-description mb-10"><?php echo __( 'It will update once your block has been saved in Architect.', TVO_TRANSLATE_DOMAIN ); ?></div>
+		<div class="tvo-new-block-description mb-10"><?php echo __( 'It will update once your block has been saved in Architect.', 'thrive-ovation' ); ?></div>
 	</div>
 <?php } else { ?>
 <div class="tve-block-container">
@@ -92,7 +92,7 @@ $is_gutenberg_preview = isset( $_GET['tve_block_preview'] );
 				<div class="thrv_wrapper thrv_tvo_capture_testimonials tcb-elem-placeholder">
 					<span class="tcb-inline-placeholder-action with-icon">
 						<?php tcb_icon( 'add', false, 'editor' ); ?>
-						<?php echo __( 'Select Template', TVO_TRANSLATE_DOMAIN ); ?>
+						<?php echo __( 'Select Template', 'thrive-ovation' ); ?>
 					</span>
 				</div>
 			<?php } else { ?>

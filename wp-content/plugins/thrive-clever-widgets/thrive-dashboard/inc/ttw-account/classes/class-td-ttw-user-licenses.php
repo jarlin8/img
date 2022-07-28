@@ -249,6 +249,11 @@ class TD_TTW_User_Licenses {
 		}
 
 		$licenses = get_transient( self::NAME );
+		/* some sanity checks : there are cases when this is an array containing a single empty array. this IF identifies and corrects that case */
+		if ( is_array( $licenses ) && ! empty( $licenses ) && empty( array_filter( $licenses ) ) ) {
+			// force a re-fetch
+			$licenses = false;
+		}
 
 		if ( $licenses !== false ) {
 
@@ -271,7 +276,6 @@ class TD_TTW_User_Licenses {
 		$body = json_decode( $body, true );
 
 		if ( ! is_array( $body ) || ! isset( $body['success'] ) || $body['success'] === false ) {
-
 			set_transient( self::NAME, array(), self::CACHE_LIFE_TIME );
 
 			return array();

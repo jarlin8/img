@@ -52,7 +52,7 @@ class TVO_REST_Post_Meta_Controller extends TVO_REST_Controller {
 			return new WP_REST_Response( $data, 200 );
 		}
 
-		return new WP_Error( 'cant-update', __( 'Error while updating the meta data', TVO_TRANSLATE_DOMAIN ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'Error while updating the meta data', 'thrive-ovation' ), array( 'status' => 500 ) );
 	}
 
 

@@ -86,8 +86,6 @@ class Thrive_AB_Ajax {
 			'product',
 		), array_diff( get_post_types(), apply_filters( 'tcb_post_grid_banned_types', array() ) ) );
 
-		$post_not_in   = array();
-		$post_not_in[] = get_option( 'page_for_posts' );
 		if ( empty( $filters['exclude_id'] ) ) {
 			$filters['exclude_id'] = array();
 		}
@@ -96,7 +94,7 @@ class Thrive_AB_Ajax {
 			'post_type'    => $selected_post_types,
 			'post_status'  => 'publish',
 			's'            => $s,
-			'numberposts'  => 50,
+			'numberposts'  => -1,
 			'post__not_in' => $filters['exclude_id'],
 			'orderby'      => 'title',
 			'order'        => 'ASC',

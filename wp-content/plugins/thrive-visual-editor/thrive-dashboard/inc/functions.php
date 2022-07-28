@@ -1154,6 +1154,19 @@ function tvd_get_update_channel() {
 }
 
 /**
+ * Return current screen id
+ *
+ * @param $key
+ *
+ * @return string
+ */
+function tve_get_current_screen_key( $key = 'id' ) {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+	return $screen === null || empty( $screen->$key ) ? '' : $screen->$key;
+}
+
+/**
  * Returns true if the update channel is beta
  *
  * @return bool

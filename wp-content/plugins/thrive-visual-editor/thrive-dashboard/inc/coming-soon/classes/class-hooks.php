@@ -51,13 +51,9 @@ class Hooks {
 
 
 	public static function render_backbone_templates() {
-		if ( function_exists( 'get_current_screen' ) ) {
-			$screen = get_current_screen();
-
-			if ( $screen !== null && property_exists( $screen, 'id' ) && $screen->id === 'admin_page_tve_dash_coming_soon' ) {
-				$templates = tve_dash_get_backbone_templates( plugin_dir_path( __DIR__ ) . 'views', 'coming-soon' );
-				tve_dash_output_backbone_templates( $templates, 'coming-soon-' );
-			}
+		if ( tve_get_current_screen_key() === 'admin_page_tve_dash_coming_soon' ) {
+			$templates = tve_dash_get_backbone_templates( plugin_dir_path( __DIR__ ) . 'views', 'coming-soon' );
+			tve_dash_output_backbone_templates( $templates, 'coming-soon-' );
 		}
 	}
 

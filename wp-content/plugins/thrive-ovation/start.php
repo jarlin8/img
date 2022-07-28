@@ -34,3 +34,8 @@ require_once dirname( __FILE__ ) . '/inc/classes/class-tvo-db.php';
  * Blocks
  */
 require_once dirname( __FILE__ ) . '/blocks/tvo-block.php';
+
+/**
+ * Automator
+ */
+require_once dirname( __FILE__ ) . '/inc/classes/class-tvo-automator.php';

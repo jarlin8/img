@@ -58,6 +58,8 @@ require_once TVE_DASH_PATH . '/inc/access-manager/class-tvd-am.php';
 require_once TVE_DASH_PATH . '/inc/marketing/functions.php';
 require_once TVE_DASH_PATH . '/inc/ttw-account/classes/class-td-ttw-update-manager.php';
 require_once TVE_DASH_PATH . '/inc/automator/class-main.php';
+require_once TVE_DASH_PATH . '/inc/smart-site/classes/class-tvd-content-sets.php';
+require_once TVE_DASH_PATH . '/inc/cache/meta-cache.php';
 
 /**
  * AUTO-LOADERS

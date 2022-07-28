@@ -36,7 +36,7 @@ class TVO_Privacy {
 	public function personal_data_exporters( $exporters = array() ) {
 
 		$exporters[] = array(
-			'exporter_friendly_name' => __( 'Thrive Ovation', TVO_TRANSLATE_DOMAIN ),
+			'exporter_friendly_name' => __( 'Thrive Ovation', 'thrive-ovation' ),
 			'callback'               => array( $this, 'privacy_exporter' ),
 		);
 
@@ -52,7 +52,7 @@ class TVO_Privacy {
 	 */
 	public function personal_data_erasers( $erasers = array() ) {
 		$erasers[] = array(
-			'eraser_friendly_name' => __( 'Thrive Ovation', TVO_TRANSLATE_DOMAIN ),
+			'eraser_friendly_name' => __( 'Thrive Ovation', 'thrive-ovation' ),
 			'callback'             => array( $this, 'privacy_eraser' ),
 		);
 
@@ -80,60 +80,60 @@ class TVO_Privacy {
 
 				$data = array(
 					array(
-						'name'  => __( 'Author Email', TVO_TRANSLATE_DOMAIN ),
+						'name'  => __( 'Author Email', 'thrive-ovation' ),
 						'value' => $email_address,
 					),
 					array(
-						'name'  => __( 'Date', TVO_TRANSLATE_DOMAIN ),
+						'name'  => __( 'Date', 'thrive-ovation' ),
 						'value' => $testimonial->post_date,
 					),
 				);
 
 				if ( ! empty( $testimonial->post_title ) ) {
 					$data[] = array(
-						'name'  => __( 'Title', TVO_TRANSLATE_DOMAIN ),
+						'name'  => __( 'Title', 'thrive-ovation' ),
 						'value' => $testimonial->post_title,
 					);
 				}
 
 				if ( ! empty( $testimonial->post_content ) ) {
 					$data[] = array(
-						'name'  => __( 'Content', TVO_TRANSLATE_DOMAIN ),
+						'name'  => __( 'Content', 'thrive-ovation' ),
 						'value' => $testimonial->post_content,
 					);
 				}
 
 				if ( ! empty( $testimonial->_tvo_testimonial_attributes['name'] ) ) {
 					$data[] = array(
-						'name'  => __( 'Author Name', TVO_TRANSLATE_DOMAIN ),
+						'name'  => __( 'Author Name', 'thrive-ovation' ),
 						'value' => $testimonial->_tvo_testimonial_attributes['name'],
 					);
 				}
 
 				if ( ! empty( $testimonial->_tvo_testimonial_attributes['role'] ) ) {
 					$data[] = array(
-						'name'  => __( 'Role/Description', TVO_TRANSLATE_DOMAIN ),
+						'name'  => __( 'Role/Description', 'thrive-ovation' ),
 						'value' => $testimonial->_tvo_testimonial_attributes['role'],
 					);
 				}
 
 				if ( ! empty( $testimonial->_tvo_testimonial_attributes['website_url'] ) ) {
 					$data[] = array(
-						'name'  => __( 'Website', TVO_TRANSLATE_DOMAIN ),
+						'name'  => __( 'Website', 'thrive-ovation' ),
 						'value' => $testimonial->_tvo_testimonial_attributes['website_url'],
 					);
 				}
 
 				if ( ! empty( $testimonial->_tvo_testimonial_attributes['picture_url'] ) ) {
 					$data[] = array(
-						'name'  => __( 'Picture', TVO_TRANSLATE_DOMAIN ),
+						'name'  => __( 'Picture', 'thrive-ovation' ),
 						'value' => $testimonial->_tvo_testimonial_attributes['picture_url'],
 					);
 				}
 
 				$export_items[] = array(
 					'group_id'    => 'tvo-user-privacy',
-					'group_label' => __( 'Testimonials', TVO_TRANSLATE_DOMAIN ),
+					'group_label' => __( 'Testimonials', 'thrive-ovation' ),
 					'item_id'     => $testimonial->ID,
 					'data'        => $data,
 				);

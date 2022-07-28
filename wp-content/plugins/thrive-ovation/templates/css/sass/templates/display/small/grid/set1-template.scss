@@ -138,7 +138,7 @@ $background_color: #f9f8f8;
         .tvo-testimonial-role {
           color: nth($color, 5);
           a {
-            color: nth($color, 5);
+            color: inherit;
           }
         }
       }

@@ -4,7 +4,7 @@
  * Plugin URI: https://thrivethemes.com
  * Description: Generate reports to find out how well your site is performing
  * Author URI: https://thrivethemes.com
- * Version: 1.3.9
+ * Version: 2.3.1
  * Author: <a href="https://thrivethemes.com">Thrive Themes</a>
  * Text Domain: thrive-headline
  * Domain Path: /languages/

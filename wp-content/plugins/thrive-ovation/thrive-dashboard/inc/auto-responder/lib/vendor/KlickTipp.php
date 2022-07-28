@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Thrive Themes - https://thrivethemes.com
+ *
+ * @package thrive-dashboard
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
+
 class Thrive_Dash_Api_KlickTipp {
 	private $sessionId;
 	private $sessionName;
@@ -307,8 +316,12 @@ class Thrive_Dash_Api_KlickTipp {
 	 */
 	public function tagByEmail( $email, $tags = array() ) {
 
-		if ( empty( $tags ) || ! is_array( $tags ) ) {
+		if ( empty( $tags ) ) {
 			return false;
+		}
+
+		if ( ! is_array( $tags ) ) {
+			$tags = [ $tags ];
 		}
 
 		$data = array(

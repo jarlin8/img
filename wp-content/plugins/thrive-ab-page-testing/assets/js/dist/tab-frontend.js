@@ -109,15 +109,15 @@
 	};
 	return getRequire(modules, [], '');
 })({
-	"workspace": {
+	"ab-page-testing": {
 		"assets": {
 			"js": {
 				"frontend": {
 					"main.js": function (exports, module, require) {
-						eval("/**\n * Required in frontend only, when a variation is displayed\n * - to allow TCB trigger ajax request for custom html forms to register conversion on TOP\n * - to register impressions for a variation by TD Lazy Loading\n */\nvar ThriveGlobal = ThriveGlobal || {$j: jQuery.noConflict()};\n\nThriveAB = ThriveAB || {};\n\n(function ( $ ) {\n\n\t/**\n\t * DOM Ready\n\t */\n\t$( function () {\n\t\t//hook into dashboard ajax request\n\t\tThriveAB.dashboard_hook();\n\t} );\n\n\t/**\n\t * In case on current variation exists a LG Element with custom html\n\t * we need to set some data on submit() event to allow conversions to be registered\n\t */\n\tif ( typeof ThriveAB.test_type !== 'undefined' && ThriveAB.test_type === 'optins' ) {\n\t\t$( 'body' ).off( 'should_submit_form.tcb' ).on( 'should_submit_form.tcb', '.thrv_lead_generation', function ( event ) {\n\t\t\tevent.flag_need_data = true;\n\t\t\treturn true;\n\t\t} );\n\t}\n\n\t/**\n\t * Try to hook into dashboard ajax lazy load request\n\t * and inject some data to pe processed by TOP on server, usually register impression\n\t */\n\tThriveAB.dashboard_hook = function () {\n\n\t\tif ( typeof TVE_Dash === 'undefined' || TVE_Dash.ajax_sent === true ) {\n\t\t\treturn;\n\t\t}\n\n\t\t$( document ).on( 'tve-dash.load', function () {\n\t\t\t/**\n\t\t\t * assign some data on dash request to be caught on server\n\t\t\t * @see Thrive_AB_Ajax:dashboard_lazy_load()\n\t\t\t */\n\t\t\tTVE_Dash.add_load_item( 'top_lazy_load', ThriveAB.impression_data );\n\t\t} );\n\t};\n\n})( ThriveGlobal.$j );\n//# sourceURL=workspace/assets/js/frontend/main.js");
+						eval("/**\n * Required in frontend only, when a variation is displayed\n * - to allow TCB trigger ajax request for custom html forms to register conversion on TOP\n * - to register impressions for a variation by TD Lazy Loading\n */\nvar ThriveGlobal = ThriveGlobal || {$j: jQuery.noConflict()};\n\nThriveAB = ThriveAB || {};\n\n(function ( $ ) {\n\n\t/**\n\t * DOM Ready\n\t */\n\t$( function () {\n\t\t//hook into dashboard ajax request\n\t\tThriveAB.dashboard_hook();\n\t} );\n\n\t/**\n\t * In case on current variation exists a LG Element with custom html\n\t * we need to set some data on submit() event to allow conversions to be registered\n\t */\n\tif ( typeof ThriveAB.test_type !== 'undefined' && ThriveAB.test_type === 'optins' ) {\n\t\t$( 'body' ).off( 'should_submit_form.tcb' ).on( 'should_submit_form.tcb', '.thrv_lead_generation', function ( event ) {\n\t\t\tevent.flag_need_data = true;\n\t\t\treturn true;\n\t\t} );\n\t}\n\n\t/**\n\t * Try to hook into dashboard ajax lazy load request\n\t * and inject some data to pe processed by TOP on server, usually register impression\n\t */\n\tThriveAB.dashboard_hook = function () {\n\n\t\tif ( typeof TVE_Dash === 'undefined' || TVE_Dash.ajax_sent === true ) {\n\t\t\treturn;\n\t\t}\n\n\t\t$( document ).on( 'tve-dash.load', function () {\n\t\t\t/**\n\t\t\t * assign some data on dash request to be caught on server\n\t\t\t * @see Thrive_AB_Ajax:dashboard_lazy_load()\n\t\t\t */\n\t\t\tTVE_Dash.add_load_item( 'top_lazy_load', ThriveAB.impression_data );\n\t\t} );\n\t};\n\n})( ThriveGlobal.$j );\n//# sourceURL=ab-page-testing/assets/js/frontend/main.js");
 					}
 				}
 			}
 		}
 	}
-})("workspace/assets/js/frontend/main");
+})("ab-page-testing/assets/js/frontend/main");

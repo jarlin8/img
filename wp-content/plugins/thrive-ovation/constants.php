@@ -7,7 +7,7 @@
 /**
  * TO plugin version
  */
-defined( 'TVO_VERSION' ) || define( 'TVO_VERSION', '2.4.5.1' );
+defined( 'TVO_VERSION' ) || define( 'TVO_VERSION', '3.9' );
 defined( 'TVO_MIN_REQUIRED_WP_VERSION' ) || define( 'TVO_MIN_REQUIRED_WP_VERSION', '4.4' );
 
 /**
@@ -34,11 +34,6 @@ defined( 'TVO_DB_PREFIX' ) || define( 'TVO_DB_PREFIX', 'tvo_' );
  * Database version for current TO version
  */
 defined( 'TVO_DB_VERSION' ) || define( 'TVO_DB_VERSION', '1.0' );
-
-/**
- * Translate domain
- */
-defined( 'TVO_TRANSLATE_DOMAIN' ) || define( 'TVO_TRANSLATE_DOMAIN', 'thrive-ovation' );
 
 /**
  * Define the option name from options table

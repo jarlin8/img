@@ -41,17 +41,9 @@ if ( is_admin() ) {
  * Build transient from TTW API with videos URLs
  */
 function tve_api_video_urls() {
+	if ( tve_get_current_screen_key() === 'admin_page_tve_dash_api_connect' ) {
 
-	$allowed_screens = array(
-		'admin_page_tve_dash_api_connect',
-	);
-
-	$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-
-	// On allowed screens
-	if ( ! empty( $current_screen ) && in_array( $current_screen->id, $allowed_screens, true ) ) {
-
-		require_once dirname( __FILE__ ) . '/classes/ApiVideos.php';
+		require_once __DIR__ . '/classes/ApiVideos.php';
 
 		$api_videos = new ApiVideos();
 	}
@@ -75,12 +67,11 @@ function tve_dash_api_admin_menu() {
  * check for any expired connections (expired access tokens), or tokens that are about to expire and display global warnings / error messages
  */
 function tve_dash_api_admin_notices() {
-	$screen = get_current_screen();
-	if ( $screen && $screen->base == 'admin_page_tve_dash_api_connect' ) {
+	if ( tve_get_current_screen_key( 'base' ) === 'admin_page_tve_dash_api_connect' ) {
 		return;
 	}
 
-	require_once dirname( __FILE__ ) . '/misc.php';
+	require_once __DIR__ . '/misc.php';
 	$connected_apis = Thrive_Dash_List_Manager::get_available_apis( true );
 	$warnings       = array();
 

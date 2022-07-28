@@ -38,7 +38,6 @@
   .tvo-#{$template-name}-template.tve_#{$name} {
     .custom-set2, .custom-set5, .custom-set5-grid {
       .tvo-testimonial-quote {
-        border-color: nth($color, 1);
         color: nth($color, 1);
       }
     }
@@ -71,7 +70,6 @@
   .tvo-#{$template-name}-template.tve_#{$name} {
     .custom-set5, .custom-set5-grid {
       .tvo-testimonial-quote {
-        border-color: nth($color, 1);
         color: nth($color, 1);
       }
     }

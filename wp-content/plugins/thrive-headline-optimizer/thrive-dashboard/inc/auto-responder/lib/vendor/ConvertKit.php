@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Thrive Themes - https://thrivethemes.com
+ *
+ * @package thrive-dashboard
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
+
 require_once dirname( __FILE__ ) . "/ConvertKit/Exception.php";
 
 class Thrive_Dash_Api_ConvertKit {

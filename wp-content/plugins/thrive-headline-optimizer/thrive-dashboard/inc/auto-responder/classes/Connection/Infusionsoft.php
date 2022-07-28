@@ -1,6 +1,15 @@
 <?php
 
 /**
+ * Thrive Themes - https://thrivethemes.com
+ *
+ * @package thrive-dashboard
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Silence is golden!
+}
+
+/**
  * Created by PhpStorm.
  * User: radu
  * Date: 02.04.2015
@@ -42,7 +51,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	 * @return string
 	 */
 	public function getTitle() {
-		return 'Infusionsoft';
+		return 'Keap (Infusionsoft)';
 	}
 
 	public function getListSubtitle() {
@@ -59,7 +68,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 
 	/**
 	 * @param array|string $tags
-	 * @param array $data
+	 * @param array        $data
 	 *
 	 * @return array
 	 */
@@ -85,20 +94,20 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	 * @return mixed
 	 */
 	public function readCredentials() {
-		$client_id = ! empty( $_POST['connection']['client_id'] ) ? $_POST['connection']['client_id'] : '';
-		$key       = ! empty( $_POST['connection']['api_key'] ) ? $_POST['connection']['api_key'] : '';
+		$client_id = ! empty( $_POST['connection']['client_id'] ) ? sanitize_text_field( $_POST['connection']['client_id'] ) : '';
+		$key       = ! empty( $_POST['connection']['api_key'] ) ? sanitize_text_field( $_POST['connection']['api_key'] ) : '';
 
 		if ( empty( $key ) || empty( $client_id ) ) {
 			return $this->error( __( 'Client ID and API key are required', 'thrive-dash' ) );
 		}
 
-		$this->setCredentials( $_POST['connection'] );
+		$this->setCredentials( array( 'client_id' => $client_id, 'api_key' => $key ) );
 
 		$result = $this->testConnection();
 
 		if ( true !== $result ) {
 			/* translators: %s: error message */
-			$error = __( 'Could not connect to Infusionsoft using the provided credentials (<strong>%s</strong>)', 'thrive-dash' );
+			$error = __( 'Could not connect to Keap (Infusionsoft) using the provided credentials (<strong>%s</strong>)', 'thrive-dash' );
 
 			return $this->error( sprintf( $error, $result ) );
 		}
@@ -108,7 +117,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 		 */
 		$this->save();
 
-		return $this->success( 'Infusionsoft connected successfully' );
+		return $this->success( 'Keap (Infusionsoft) connected successfully' );
 	}
 
 	/**
@@ -444,9 +453,9 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	}
 
 	/**
-	 * @param array $params which may contain `list_id`
-	 * @param bool $force make a call to API and invalidate cache
-	 * @param bool $get_all where to get lists with their custom fields
+	 * @param array $params  which may contain `list_id`
+	 * @param bool  $force   make a call to API and invalidate cache
+	 * @param bool  $get_all where to get lists with their custom fields
 	 *
 	 * @return array|mixed
 	 */
@@ -502,7 +511,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	/**
 	 * Get API custom text fields and append them to $custom_fields array
 	 *
-	 * @param int $field_id
+	 * @param int   $field_id
 	 * @param array $custom_fields
 	 *
 	 * @return array
@@ -526,7 +535,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 				$page,
 				array(
 					'DataType' => (int) $field_id,
-					'GroupId' =>  '~<>~0',  //I suspect the group ID set to 0 is their way of soft deleting custom fields
+					'GroupId'  => '~<>~0',  //I suspect the group ID set to 0 is their way of soft deleting custom fields
 				),
 				array(
 					'GroupId',
@@ -583,7 +592,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	/**
 	 * Call the API in order to update subscriber's custom fields
 	 *
-	 * @param int $contact_id
+	 * @param int   $contact_id
 	 * @param array $arguments
 	 *
 	 * @return bool
@@ -619,7 +628,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	/**
 	 * Creates and prepare the mapping data from the update call
 	 *
-	 * @param array $args form arguments
+	 * @param array $args          form arguments
 	 * @param array $custom_fields array of custom fields where to append/update
 	 *
 	 * @return array
@@ -630,7 +639,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 			return $custom_fields;
 		}
 
-		$mapped_form_data = unserialize( base64_decode( $args['tve_mapping'] ) );
+		$mapped_form_data = thrive_safe_unserialize( base64_decode( $args['tve_mapping'] ) );
 
 		if ( is_array( $mapped_form_data ) ) {
 
@@ -733,7 +742,7 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 	 * Prepare custom fields for api call
 	 *
 	 * @param array $custom_fields
-	 * @param null $list_identifier
+	 * @param null  $list_identifier
 	 *
 	 * @return array
 	 */
@@ -758,6 +767,10 @@ class Thrive_Dash_List_Connection_Infusionsoft extends Thrive_Dash_List_Connecti
 		}
 
 		return $prepared_fields;
+	}
+
+	public function get_automator_autoresponder_fields() {
+		 return array( 'mailing_list' );
 	}
 }
 

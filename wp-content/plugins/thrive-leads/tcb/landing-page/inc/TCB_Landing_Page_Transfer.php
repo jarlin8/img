@@ -392,6 +392,7 @@ class TCB_Landing_Page_Transfer {
 	protected $cfg_name = 'lp.json';
 	protected $html_file_name = 'lp.html';
 	protected $archive_prefix = 'tve-lp-';
+	protected $thumbnail_prefix = 'lp-';
 
 	/**
 	 * Whether LP vars should be replaced by their values on export
@@ -402,9 +403,11 @@ class TCB_Landing_Page_Transfer {
 	 * @var array
 	 */
 	public $image_map;
+	public $export_symbol_ids;
 
 	public function __construct() {
-		$this->image_map = [];
+		$this->image_map         = [];
+		$this->export_symbol_ids = [];
 	}
 
 	/**
@@ -429,6 +432,27 @@ class TCB_Landing_Page_Transfer {
 	}
 
 	/**
+	 * Get symbol IDs that should be exported
+	 *
+	 * @param $content
+	 *
+	 * @return void
+	 */
+	public function parse_content_symbols( $content ) {
+		preg_match_all( TCB_Symbol_Template::SYMBOL_CONFIG_REGEX, $content, $matches );
+		if ( ! empty( $matches ) && count( $matches ) === 2 ) {
+			$this->export_symbol_ids = array_merge( $this->export_symbol_ids, $matches[1] );
+		}
+
+		preg_match_all( TCB_Symbol_Template::SYMBOL_SHORTCODE_REGEX, $content, $matches );
+		if ( ! empty( $matches ) && count( $matches ) === 2 ) {
+			$this->export_symbol_ids = array_merge( $this->export_symbol_ids, $matches[1] );
+		}
+
+		$this->export_symbol_ids = array_unique( $this->export_symbol_ids );
+	}
+
+	/**
 	 * Export lp sections - header + footer and maybe top & bottom theme sections
 	 *
 	 * @param $page_id
@@ -445,6 +469,10 @@ class TCB_Landing_Page_Transfer {
 
 			if ( ! empty( $section_id ) ) {
 				$symbol = TCB_Symbol_Template::get_instance( $section_id )->export();
+				add_filter( 'tve_should_minify_css', '__return_false' );
+				$symbol['meta_input']['tve_custom_css'] = tve_prepare_global_variables_for_front( $symbol['meta_input']['tve_custom_css'], true );
+				remove_filter( 'tve_should_minify_css', '__return_false' );
+				$this->parse_content_symbols( $symbol['meta_input']['tve_updated_post'] );
 
 				$symbol = json_encode( $symbol );
 
@@ -467,6 +495,44 @@ class TCB_Landing_Page_Transfer {
 		 */
 		return apply_filters( 'tcb_lp_sections_export', $sections, $page_id, $this );
 	}
+
+
+	/**
+	 * Export symbols used in the content
+	 *
+	 * @param $page_id
+	 *
+	 * @return mixed|void
+	 */
+	public function export_symbols( $page_id ) {
+		$symbols = [];
+
+		foreach ( $this->export_symbol_ids as $symbol_id ) {
+			$symbol = TCB_Symbol_Template::get_instance( $symbol_id )->export();
+			add_filter( 'tve_should_minify_css', '__return_false' );
+			$symbol['meta_input']['tve_custom_css'] = tve_prepare_global_variables_for_front( $symbol['meta_input']['tve_custom_css'], true );
+			remove_filter( 'tve_should_minify_css', '__return_false' );
+			$symbol = json_encode( $symbol );
+
+			$symbol = static::replace_ids_on_export( $symbol );
+
+			$this->exportParseImages( $symbol );
+			$symbols [ $symbol_id ] = json_decode( $symbol, true );
+		}
+
+
+		/**
+		 * Filter sections to export for the lp
+		 *
+		 * @param array $sections
+		 * @param int   $page_id
+		 * @param TCB_Landing_Page_Transfer
+		 *
+		 * @return array
+		 */
+		return apply_filters( 'tcb_lp_symbols_export', $symbols, $page_id, $this );
+	}
+
 
 	/**
 	 * create a zip file containing the landing page export
@@ -506,6 +572,8 @@ class TCB_Landing_Page_Transfer {
 
 		$page_content = static::replace_ids_on_export( $page_content );
 
+		$this->parse_content_symbols( $page_content );
+
 		/* parse and replace all image urls (both from img src and background: url(...) */
 		$this->exportImageMap( $page_content, $config );
 
@@ -526,10 +594,15 @@ class TCB_Landing_Page_Transfer {
 
 		if ( $return_data ) {
 			return array(
-				'page_meta'    => $config,
-				'page_content' => $page_content,
-				'image_map'    => $this->image_map,
+				'page_meta'         => $config,
+				'page_content'      => $page_content,
+				'image_map'         => $this->image_map,
+				'export_symbol_ids' => $this->export_symbol_ids,
 			);
+		}
+
+		if ( ! empty( $this->export_symbol_ids ) ) {
+			$config['symbols'] = $this->export_symbols( $page_id );
 		}
 
 		$uploads_dir = $this->getUploadDir();
@@ -588,7 +661,7 @@ class TCB_Landing_Page_Transfer {
 			$exported = $this->exportGeneratedThumbnail( $page_id, $zip );
 
 			if ( $exported ) {
-				$config['thumbnail'] = 'lp-' . $page_id . '.png';
+				$config['thumbnail'] = $this->thumbnail_prefix . $page_id . '.png';
 			}
 
 		}
@@ -648,11 +721,11 @@ class TCB_Landing_Page_Transfer {
 	 */
 	protected function exportGeneratedThumbnail( $page_id, $zip ) {
 		$upload = tve_filter_landing_page_preview_location( wp_upload_dir() );
-		$path   = $upload['path'] . '/lp-' . $page_id . '.png';
+		$path   = $upload['path'] . '/' . $this->thumbnail_prefix . $page_id . '.png';
 
 		$zip->addEmptyDir( 'thumbnail' );
 
-		if ( $zip->addFile( $path, 'thumbnail/' . 'lp-' . $page_id . '.png' ) === false ) {
+		if ( is_file( $path ) && $zip->addFile( $path, 'thumbnail/' . $this->thumbnail_prefix . $page_id . '.png' ) === false ) {
 			$zip->deleteName( 'thumbnail' );
 
 			return false;
@@ -945,8 +1018,7 @@ class TCB_Landing_Page_Transfer {
 				$zip->addFile( $icon_file, $icon_zip_folder . '/fonts/' . basename( $icon_file ) );
 			}
 
-			unset( $config['tve_globals']['extra_icons'][ $i ]['folder'] );
-			unset( $config['tve_globals']['extra_icons'][ $i ]['css'] );
+			unset( $config['tve_globals']['extra_icons'][ $i ]['folder'], $config['tve_globals']['extra_icons'][ $i ]['css'] );
 		}
 
 		$config['tve_globals']['extra_icons'] = array_values( $config['tve_globals']['extra_icons'] );
@@ -1085,7 +1157,7 @@ class TCB_Landing_Page_Transfer {
 	 * @param mixed $file
 	 * @param int   $page_id - the existing page which will be transformed into a landing page
 	 *
-	 * @return int $page_id the ID of the landing page
+	 * @return array $page_id the ID of the landing page
 	 *
 	 * @throws Exception
 	 */
@@ -1097,8 +1169,8 @@ class TCB_Landing_Page_Transfer {
 		if ( $zip->open( $file ) !== true ) {
 			throw new Exception( __( 'Could not open the archive file', 'thrive-cb' ) );
 		}
-
-		$this->import_config = $config = $this->importReadConfig( $zip );
+		$config              = $this->importReadConfig( $zip );
+		$this->import_config = $config;
 		$this->current_page  = get_post( $page_id );
 
 		/**
@@ -1197,7 +1269,8 @@ class TCB_Landing_Page_Transfer {
 			if ( ! isset( $config[ $meta_key ] ) || $meta_key === 'tve_landing_page' ) {
 				continue;
 			}
-			tve_update_post_meta( $page_id, $meta_key, $config[ $meta_key ] );
+			$data = $this->replace_content_symbols_on_insert( $config[ $meta_key ] );
+			tve_update_post_meta( $page_id, $meta_key, $data );
 		}
 
 		/* 5. update the meta-field for TCB content - we need to parse the content and replace lightbox ids inside the event manager parameters */
@@ -1207,10 +1280,14 @@ class TCB_Landing_Page_Transfer {
 
 		$this->importParseImageLinks( $page_content );
 		$this->importReplaceLightboxIds( $page_content, $lightbox_id_map );
-		if ( isset( $icon_search ) && isset( $icon_replace ) ) {
+		if ( isset( $icon_search, $icon_replace ) ) {
 			$page_content = str_replace( $icon_search, $icon_replace, $page_content );
 		}
 		$page_content = $this->importReplaceFontClasses( $font_class_map, $page_content );
+
+		$this->import_symbols( $config );
+
+		$page_content = $this->replace_content_symbols_on_insert( $page_content );
 
 		tve_update_post_meta( $page_id, 'tve_updated_post', $page_content );
 
@@ -1220,7 +1297,7 @@ class TCB_Landing_Page_Transfer {
 				$lb_content = $zip->getFromName( 'lightboxes/' . $old_id . '.html' );
 				$this->importReplaceLightboxIds( $lb_content, $lightbox_id_map );
 				$this->importParseImageLinks( $lb_content );
-				if ( isset( $icon_search ) && isset( $icon_replace ) ) {
+				if ( isset( $icon_search, $icon_replace ) ) {
 					$lb_content = str_replace( $icon_search, $icon_replace, $lb_content );
 				}
 				$lb_content = $this->importReplaceFontClasses( $font_class_map, $lb_content );
@@ -1229,12 +1306,16 @@ class TCB_Landing_Page_Transfer {
 		}
 
 		/* import header, footer and maybe theme sections */
-		$this->import_sections( $page_id, $config );
+		$config = $this->import_sections( $page_id, $config );
 
 		/* finally, save this import also as a landing page template */
-		$template_name     = str_replace( $this->archive_prefix, '', $template_name );
-		$templates_content = get_option( 'tve_saved_landing_pages_content' ); // this should get unserialized automatically
-		$templates_meta    = get_option( 'tve_saved_landing_pages_meta' ); // this should get unserialized automatically
+		$template_name = str_replace( $this->archive_prefix, '', $template_name );
+
+		/**
+		 * Change imported lps name before saving as template
+		 *
+		 */
+		$template_name = apply_filters( 'tve_imported_lp_name', $template_name );
 
 		/**
 		 * For smart Landing Pages, we need to make sure that keys needed for smart landing pages exists inside the json file
@@ -1246,60 +1327,56 @@ class TCB_Landing_Page_Transfer {
 			}
 		}
 
-		if ( ! empty( $templates_meta ) ) {
-			foreach ( $templates_meta as $tpl ) {
-				/* if this has been saved before return - we check the archive filesize - this should be identical for identical imports */
-				if ( ! empty( $tpl['imported'] ) && ! empty( $tpl['zip_filesize'] ) && $tpl['zip_filesize'] == filesize( $file ) && $tpl['name'] === $template_name ) {
-
-					$lading_page = tcb_landing_page( $page_id );
-					$lading_page->set_lp_cloud_template_action( $config );
-					$lading_page->update_template_css_variables( $config['page_vars'] );
-					$lading_page->update_template_global_styles( $config['page_styles'] );
-					$lading_page->update_template_palettes( $config['page_palettes'], true );
-
-					return $page_id;
-				}
-			}
-		}
-		$template_content = array(
+		$template_data = [
 			'content'            => $page_content,
 			'inline_css'         => preg_replace( '/\.page-id-\d*/m', ".page-id-$page_id", $config['tve_custom_css'] ),
 			'custom_css'         => $config['tve_user_custom_css'],
 			'tve_globals'        => $config['tve_globals'],
 			'tve_global_scripts' => $config['tve_global_scripts'],
-			/* read sections from db because in the $config array they are not imported yet */
-			'sections'           => get_post_meta( $page_id, 'sections', true ),
-		);
-		$template_meta    = array(
-			'name'         => $template_name,
-			'template'     => $config['tve_landing_page'],
-			'tags'         => 'imported-template',
-			'date'         => gmdate( 'Y-m-d' ),
-			'imported'     => 1,
-			'zip_filesize' => filesize( $file ),
-			'thumbnail'    => $this->importThumbnail( $config, $zip ),
-		);
+			'name'               => $template_name,
+			'template'           => $config['tve_landing_page'],
+			'tags'               => 'imported-template',
+			'date'               => gmdate( 'Y-m-d' ),
+			'imported'           => 1,
+			'zip_filesize'       => filesize( $file ),
+			'thumbnail'          => $this->importThumbnail( $config, $zip ),
+			'sections'           => isset( $config['sections'] ) ? $config['sections'] : [],
+			'tpl_skin_tag'       => isset( $config['skin_tag'] ) ? $config['skin_tag'] : '',
+		];
 
-		if ( empty( $templates_content ) ) {
-			$templates_content = [];
-			$templates_meta    = [];
+
+		//save page colors & elements for saved template too
+		if ( ! empty( $config['page_vars']['colors'] ) ) {
+			$template_data['tpl_colours'] = $config['page_vars']['colors'];
 		}
-		$templates_content [] = $template_content;
-		$templates_meta []    = $template_meta;
+		if ( ! empty( $config['page_vars']['gradients'] ) ) {
+			$template_data['tpl_gradients'] = $config['page_vars']['gradients'];
+		}
+		if ( ! empty( $config['page_palettes'] ) ) {
+			$template_data['tpl_palettes'] = $config['page_palettes'];
+		}
+		$elements = [
+			'button',
+			'section',
+			'contentbox',
+		];
+		foreach ( $elements as $element ) {
+			if ( ! empty( $config['page_styles'][ $element ] ) ) {
+				$template_data[ 'tpl_' . $element ] = $config['page_styles'][ $element ];
+			}
+		}
 
-		// make sure these are not autoloaded, as it is a potentially huge array
-		add_option( 'tve_saved_landing_pages_content', null, '', 'no' );
+		$template_id = \TCB\SavedLandingPages\Saved_Lp::insert( $template_data );
 
-		update_option( 'tve_saved_landing_pages_content', $templates_content, 'no' );
-		update_option( 'tve_saved_landing_pages_meta', $templates_meta );
+		if ( $page_id ) {
+			$landing_page = tcb_landing_page( $page_id );
+			$landing_page->set_lp_cloud_template_action( $config );
+			$landing_page->update_template_css_variables( $config['page_vars'] );
+			$landing_page->update_template_global_styles( $config['page_styles'] );
+			$landing_page->update_template_palettes( $config['page_palettes'], true );
+		}
 
-		$lading_page = tcb_landing_page( $page_id );
-		$lading_page->set_lp_cloud_template_action( $config );
-		$lading_page->update_template_css_variables( $config['page_vars'] );
-		$lading_page->update_template_global_styles( $config['page_styles'] );
-		$lading_page->update_template_palettes( $config['page_palettes'], true );
-
-		return $page_id;
+		return compact( 'page_id', 'template_id' );
 	}
 
 	/**
@@ -1308,24 +1385,115 @@ class TCB_Landing_Page_Transfer {
 	 * @param $page_id
 	 * @param $config
 	 *
-	 * @return void
+	 * @return array
 	 */
 	public function import_sections( $page_id, $config ) {
 		foreach ( [ 'header', 'footer' ] as $section ) {
 			if ( ! empty( $config['sections'][ $section ] ) ) {
-				$data = json_encode( $config['sections'][ $section ] );
-				$data = $this->replace_image_hash( $data );
+				$old_id = $config['sections'][ $section ]['ID'];
+				$data   = json_encode( $config['sections'][ $section ] );
+				$data   = $this->replace_image_hash( $data );
+				$data   = $this->replace_content_symbols_on_insert( $data );
+
 				$data = json_decode( $data, true );
 
-				$section_id = TCB_Symbol_Template::import( $data, $section );
+				if ( empty( $GLOBALS['tcb_symbol_map'][ $old_id ] ) ) {
+					$section_id = TCB_Symbol_Template::import( $data, $section );
+				} else {
+					$section_id = $GLOBALS['tcb_symbol_map'][ $old_id ];
+				}
 
 				if ( ! empty( $section_id ) ) {
 					update_post_meta( $page_id, "_tve_$section", $section_id );
+					$GLOBALS['tcb_symbol_map'][ $old_id ] = $section_id;
+					$config['sections'][ $section ]['ID'] = $section_id;
+				}
+
+				$config['sections'][ $section ]['meta_input'] = $data['meta_input'];
+			}
+		}
+
+		/**
+		 * Filter config after importing sections
+		 *
+		 * @param array $sections
+		 * @param int   $page_id
+		 * @param TCB_Landing_Page_Transfer
+		 *
+		 * @return array
+		 */
+		return apply_filters( 'tcb_lp_sections_import', $config, $page_id, $this );
+	}
+
+
+	/**
+	 * Insert the symbols and set their mapping
+	 *
+	 * @param $config
+	 *
+	 * @return void
+	 */
+	public function import_symbols( $config ) {
+		if ( ! empty( $config['symbols'] ) ) {
+			foreach ( $config['symbols'] as $symbol ) {
+				$old_symbol_id = $symbol['ID'];
+				if ( empty( $GLOBALS['tcb_symbol_map'][ $old_symbol_id ] ) ) {
+					$data                                        = json_encode( $symbol );
+					$data                                        = $this->replace_image_hash( $data );
+					$data                                        = json_decode( $data, true );
+					$symbol_id                                   = TCB_Symbol_Template::import( $data );
+					$GLOBALS['tcb_symbol_map'][ $old_symbol_id ] = $symbol_id;
 				}
 			}
 		}
 
-		do_action( 'tcb_lp_import_sections', $page_id, $config, $this );
+	}
+
+	/**
+	 * Get existing symbols from the content and replace them with the new ones
+	 *
+	 * @param $content
+	 *
+	 * @return mixed
+	 */
+	public function replace_content_symbols_on_insert( $content ) {
+		if ( ! empty( $GLOBALS['tcb_symbol_map'] ) && is_string( $content ) ) {
+			preg_match_all( TCB_Symbol_Template::SYMBOL_CONFIG_REGEX, $content, $cfg_matches );
+			preg_match_all( TCB_Symbol_Template::SYMBOL_SHORTCODE_REGEX, $content, $shortcode_matches );
+
+			$content = $this->replace_symbols_in_matches( $content, $cfg_matches );
+			$content = $this->replace_symbols_in_matches( $content, $shortcode_matches );
+
+			foreach ( $GLOBALS['tcb_symbol_map'] as $old_symbol_id => $new_symbol_id ) {
+				$content = str_replace( 'thrv_symbol_' . $old_symbol_id, 'thrv_symbol_' . $new_symbol_id, $content );
+			}
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Replace old symbols with new ones based on the mapping
+	 *
+	 * @param $content
+	 * @param $matches
+	 *
+	 * @return array|mixed|string|string[]
+	 */
+	public function replace_symbols_in_matches( $content, $matches ) {
+
+		if ( ! empty( $matches ) && count( $matches ) === 2 ) {
+			foreach ( $matches[1] as $match_index => $symbol_id ) {
+				if ( isset( $GLOBALS['tcb_symbol_map'][ $symbol_id ] ) ) {
+					$old_symbol = $matches[0][ $match_index ];
+					$new_symbol = str_replace( $symbol_id, $GLOBALS['tcb_symbol_map'][ $symbol_id ], $old_symbol );
+					$content    = str_replace( $old_symbol, $new_symbol, $content );
+				}
+			}
+		}
+
+		return $content;
+
 	}
 
 	/**
@@ -2253,7 +2421,7 @@ class TCB_Landing_Page_Transfer {
 						/**
 						 * If there are global import rules, we need to prepend them into custom css
 						 */
-						$config['tve_custom_css'] = join( '', wp_unslash( $_POST['global_import_rules'] ) ) . $config['tve_custom_css'];
+						$config['tve_custom_css'] = implode( '', wp_unslash( $_POST['global_import_rules'] ) ) . $config['tve_custom_css'];
 					}
 				}
 

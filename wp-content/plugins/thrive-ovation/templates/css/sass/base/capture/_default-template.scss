@@ -6,15 +6,15 @@
 @each $name, $color in $color-pallete {
   .tvo_testimonial_form.tve_#{$name}.tvo-#{$template-name}-template {
     .tvo-form-button {
-      @include background-image(linear-gradient(nth($color, 1), nth($color, 2)));
+      background-image: linear-gradient(nth($color, 1), nth($color, 2));
       background-color: nth($color, 1);
 
       &:hover {
-        @include background-image(linear-gradient(nth($color, 3), nth($color, 4)));
+        background-image: linear-gradient(nth($color, 3), nth($color, 4));
       }
 
       &:active {
-        @include background-image(linear-gradient(nth($color, 2), nth($color, 1)));
+        background-image: linear-gradient(nth($color, 2), nth($color, 1));
       }
     }
   }

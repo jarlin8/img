@@ -15,7 +15,7 @@
 function tvo_get_testimonial( $id ) {
 	$testimonial = tvo_get_testimonial_data( $id );
 	if ( ! $testimonial ) {
-		return array( 'status' => 'error', 'message' => __( 'Invalid ID', TVO_TRANSLATE_DOMAIN ) );
+		return array( 'status' => 'error', 'message' => __( 'Invalid ID', 'thrive-ovation' ) );
 	}
 
 	$activity_log                    = tvo_get_testimonial_activity_log( $testimonial['id'] );
@@ -111,7 +111,7 @@ function tvo_update_testimonial( $params ) {
 		return array( 'status' => 'ok', 'testimonial' => $data );
 	}
 
-	return array( 'status' => 'error', 'message' => __( 'Invalid ID', TVO_TRANSLATE_DOMAIN ) );
+	return array( 'status' => 'error', 'message' => __( 'Invalid ID', 'thrive-ovation' ) );
 }
 
 /**
@@ -163,10 +163,10 @@ function tvo_create_testimonial( $params ) {
 			return $testimonial;
 		}
 
-		return array( 'status' => 'error', 'message' => __( 'Invalid ID', TVO_TRANSLATE_DOMAIN ) );
+		return array( 'status' => 'error', 'message' => __( 'Invalid ID', 'thrive-ovation' ) );
 	}
 
-	return array( 'status' => 'error', 'message' => __( 'Missing parameters', TVO_TRANSLATE_DOMAIN ) );
+	return array( 'status' => 'error', 'message' => __( 'Missing parameters', 'thrive-ovation' ) );
 }
 
 /**
@@ -180,11 +180,11 @@ function tvo_delete_testimonial( $id ) {
 
 	if ( get_post_status( $id ) ) {
 		if ( wp_trash_post( $id ) != false ) {
-			return array( 'status' => 'ok', 'message' => __( 'Success', TVO_TRANSLATE_DOMAIN ) );
+			return array( 'status' => 'ok', 'message' => __( 'Success', 'thrive-ovation' ) );
 		}
 	}
 
-	return array( 'status' => 'error', 'message' => __( 'Invalid ID', TVO_TRANSLATE_DOMAIN ) );
+	return array( 'status' => 'error', 'message' => __( 'Invalid ID', 'thrive-ovation' ) );
 }
 
 /**
@@ -229,7 +229,7 @@ function tvo_update_testimonial_tags( $post_id, $new_tags ) {
 function tvo_get_testimonial_tags_ids( $id ) {
 
 	if ( ! get_post_status( $id ) ) {
-		return array( 'status' => 'error', 'message' => __( 'Post id is invalid', TVO_TRANSLATE_DOMAIN ) );
+		return array( 'status' => 'error', 'message' => __( 'Post id is invalid', 'thrive-ovation' ) );
 	}
 
 	$tags   = wp_get_post_terms( $id, TVO_TESTIMONIAL_TAG_TAXONOMY, array() );
@@ -270,7 +270,7 @@ function tvo_get_testimonial_post( $id ) {
 function tvo_get_testimonial_tags( $id ) {
 
 	if ( ! get_post_status( $id ) ) {
-		return array( 'status' => 'error', 'message' => __( 'Post id is invalid', TVO_TRANSLATE_DOMAIN ) );
+		return array( 'status' => 'error', 'message' => __( 'Post id is invalid', 'thrive-ovation' ) );
 	}
 
 	$tags = wp_get_post_terms( $id, TVO_TESTIMONIAL_TAG_TAXONOMY, array() );
@@ -317,7 +317,7 @@ function tvo_save_testimonial_tag( $tag_args ) {
 		if ( is_array( $result ) ) {
 			$tag_args['term_id'] = $result['term_id'];
 		} else {
-			return array( 'status' => 'error', 'message' => __( 'Error', TVO_TRANSLATE_DOMAIN ) );
+			return array( 'status' => 'error', 'message' => __( 'Error', 'thrive-ovation' ) );
 		}
 	}
 
@@ -414,15 +414,15 @@ function tvo_attach_tags_to_testimonial( $post_id, $tag_ids ) {
 function tvo_attach_tag_to_testimonial( $post_id, $tag_id ) {
 
 	if ( ! get_post_status( $post_id ) ) {
-		return array( 'status' => 'error', 'message' => __( 'Post id is invalid', TVO_TRANSLATE_DOMAIN ) );
+		return array( 'status' => 'error', 'message' => __( 'Post id is invalid', 'thrive-ovation' ) );
 	}
 	if ( empty( $tag_id ) ) {
-		return array( 'status' => 'error', 'message' => __( 'Error', TVO_TRANSLATE_DOMAIN ) );
+		return array( 'status' => 'error', 'message' => __( 'Error', 'thrive-ovation' ) );
 	}
 
 	$tag = get_term( $tag_id, TVO_TESTIMONIAL_TAG_TAXONOMY );
 	if ( empty( $tag ) ) {
-		return array( 'status' => 'error', 'message' => __( 'Tag id is invalid', TVO_TRANSLATE_DOMAIN ) );
+		return array( 'status' => 'error', 'message' => __( 'Tag id is invalid', 'thrive-ovation' ) );
 	}
 
 	wp_set_object_terms( $post_id, intval( $tag_id ), TVO_TESTIMONIAL_TAG_TAXONOMY, true );
@@ -441,14 +441,14 @@ function tvo_attach_tag_to_testimonial( $post_id, $tag_id ) {
 function tvo_delete_testimonial_tag( $post_id, $tag_id ) {
 
 	if ( ! get_post_status( $post_id ) ) {
-		return array( 'status' => 'error', 'message' => __( 'Post id is invalid', TVO_TRANSLATE_DOMAIN ) );
+		return array( 'status' => 'error', 'message' => __( 'Post id is invalid', 'thrive-ovation' ) );
 	}
 	if ( ! is_array( $tag_id ) ) {
 		$tag_id = intval( $tag_id );
 
 		$tag = get_term( $tag_id, TVO_TESTIMONIAL_TAG_TAXONOMY );
 		if ( empty( $tag ) ) {
-			return array( 'status' => 'error', 'message' => __( 'Tag id is invalid', TVO_TRANSLATE_DOMAIN ) );
+			return array( 'status' => 'error', 'message' => __( 'Tag id is invalid', 'thrive-ovation' ) );
 		}
 	}
 	wp_remove_object_terms( $post_id, $tag_id, TVO_TESTIMONIAL_TAG_TAXONOMY );
@@ -484,7 +484,7 @@ function tvo_get_testimonial_activity_log( $post_id, $offset = 0 ) {
 	$testimonial = tvo_get_testimonial_post( $post_id );
 
 	if ( ! $testimonial ) {
-		return array( 'status' => 'error', 'message' => __( 'Post id is invalid', TVO_TRANSLATE_DOMAIN ) );
+		return array( 'status' => 'error', 'message' => __( 'Post id is invalid', 'thrive-ovation' ) );
 	}
 
 	global $tvodb;
@@ -507,45 +507,45 @@ function tvo_get_testimonial_activity_log( $post_id, $offset = 0 ) {
 			switch ( $entry['activity_type'] ) {
 				case TVO_LOG_SOURCE_CAPTURE_FORM:
 					$shortcode                     = tvo_get_testimonial_shortcode_source( $post_id );
-					$activity_log[ $key ]['text']  = __( 'Testimonial added through ', TVO_TRANSLATE_DOMAIN ) . '<a href="' . $shortcode['url'] . '">' . $shortcode['name'] . '</a>';
+					$activity_log[ $key ]['text']  = __( 'Testimonial added through ', 'thrive-ovation' ) . '<a href="' . $shortcode['url'] . '">' . $shortcode['name'] . '</a>';
 					$activity_log[ $key ]['class'] = 'tvo-log-source-capture-form';
 					break;
 				case TVO_LOG_SOURCE_WORDPRESS_COMMENTS:
-					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' converted ', TVO_TRANSLATE_DOMAIN ) . '<a target="_blank" href="' . get_edit_comment_link( $activity_data['comment_id'] ) . '">comment</a> ' . __( ' into testimonial ', TVO_TRANSLATE_DOMAIN );
+					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' converted ', 'thrive-ovation' ) . '<a target="_blank" href="' . get_edit_comment_link( $activity_data['comment_id'] ) . '">comment</a> ' . __( ' into testimonial ', 'thrive-ovation' );
 					$activity_log[ $key ]['class'] = 'tvo-log-source-wordpress-comments';
 					break;
 				case TVO_LOG_SOURCE_IMPORT_SOCIAL_MEDIA:
 					preg_match( '/[^\.\/]+\.[^\.\/]+$/', $activity_data['network'], $matches );
-					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' added testimonial from ', TVO_TRANSLATE_DOMAIN ) . ' <a href="' . $activity_data['comment_url'] . '">' . ucfirst( substr( $matches[0], 0, strpos( $matches[0], '.' ) ) ) . '</a>';
+					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' added testimonial from ', 'thrive-ovation' ) . ' <a href="' . $activity_data['comment_url'] . '">' . ucfirst( substr( $matches[0], 0, strpos( $matches[0], '.' ) ) ) . '</a>';
 					$activity_log[ $key ]['class'] = 'tvo-log-source-import-social-media';
 					break;
 				case TVO_LOG_SOURCE_PLUGIN:
-					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' added this testimonial manually ', TVO_TRANSLATE_DOMAIN );
+					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' added this testimonial manually ', 'thrive-ovation' );
 					$activity_log[ $key ]['class'] = 'tvo-log-source-tvo-ovation';
 					break;
 				case TVO_LOG_SOURCE_COPY:
-					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' added this testimonial through copy', TVO_TRANSLATE_DOMAIN );
+					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' added this testimonial through copy', 'thrive-ovation' );
 					$activity_log[ $key ]['class'] = 'tvo-log-copy';
 					break;
 				case TVO_LOG_CONTENT_CHANGED_BY_STAFF:
-					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' updated ', TVO_TRANSLATE_DOMAIN ) . $activity_data['fields'];
+					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' updated ', 'thrive-ovation' ) . $activity_data['fields'];
 					$activity_log[ $key ]['class'] = 'tvo-log-content-changed-by-staff';
 					break;
 				case TVO_LOG_EMAIL_SENT:
-					$activity_log[ $key ]['text']  = __( ' Approval email send to ', TVO_TRANSLATE_DOMAIN ) . $activity_data['email_address'];
+					$activity_log[ $key ]['text']  = __( ' Approval email send to ', 'thrive-ovation' ) . $activity_data['email_address'];
 					$activity_log[ $key ]['class'] = 'tvo-log-email-sent-to-author';
 					break;
 				case TVO_LOG_CHANGED_STATUS:
 					if ( $user_nice_name_with_link ) {
-						$activity_log[ $key ]['text'] = $user_nice_name_with_link . __( ' changed the status of the testimonial form ', TVO_TRANSLATE_DOMAIN ) . tvo_get_testimonial_status_text( $activity_data['previous_status'] ) . ' to ' . tvo_get_testimonial_status_text( $activity_data['current_status'] );
+						$activity_log[ $key ]['text'] = $user_nice_name_with_link . __( ' changed the status of the testimonial form ', 'thrive-ovation' ) . tvo_get_testimonial_status_text( $activity_data['previous_status'] ) . ' to ' . tvo_get_testimonial_status_text( $activity_data['current_status'] );
 					} else {
-						$activity_log[ $key ]['text'] = __( ' Customer changed the status of the testimonial form ', TVO_TRANSLATE_DOMAIN ) . tvo_get_testimonial_status_text( $activity_data['previous_status'] ) . ' to ' . tvo_get_testimonial_status_text( $activity_data['current_status'] );
+						$activity_log[ $key ]['text'] = __( ' Customer changed the status of the testimonial form ', 'thrive-ovation' ) . tvo_get_testimonial_status_text( $activity_data['previous_status'] ) . ' to ' . tvo_get_testimonial_status_text( $activity_data['current_status'] );
 					}
 
 					$activity_log[ $key ]['class'] = 'tvo-log-changed-status';
 					break;
 				case TVO_LOG_CHANGED_PICTURE:
-					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' modified the testimonial ', TVO_TRANSLATE_DOMAIN ) . ' <a href="' . $activity_data['picture'] . '" target="_blank">picture</a>';
+					$activity_log[ $key ]['text']  = $user_nice_name_with_link . __( ' modified the testimonial ', 'thrive-ovation' ) . ' <a href="' . $activity_data['picture'] . '" target="_blank">picture</a>';
 					$activity_log[ $key ]['class'] = 'tvo-log-changed-picture';
 					break;
 				case TVO_LOG_EMAIL_CONFIRMED:
@@ -662,40 +662,40 @@ function tvo_log_testimonial_activity( $testimonial_params = array() ) {
 
 	/*Testimonial Title*/
 	if ( ! tvo_are_strings_equal( $testimonial->post_title, $testimonial_params['title'] ) ) {
-		$fields[] = __( 'title', TVO_TRANSLATE_DOMAIN );
+		$fields[] = __( 'title', 'thrive-ovation' );
 	}
 
 	/*Author name*/
 	if ( ! tvo_are_strings_equal( $testimonial_meta['name'], $testimonial_params['name'] ) ) {
-		$fields[] = __( 'author name', TVO_TRANSLATE_DOMAIN );
+		$fields[] = __( 'author name', 'thrive-ovation' );
 	}
 
 	/*Testimonial text*/
 	if ( ! tvo_are_strings_equal( $testimonial->post_content, $testimonial_params['content'] ) ) {
-		$fields[] = __( 'testimonial text', TVO_TRANSLATE_DOMAIN );
+		$fields[] = __( 'testimonial text', 'thrive-ovation' );
 	}
 
 	/*Email*/
 	if ( ! tvo_are_strings_equal( $testimonial_meta['email'], $testimonial_params['email'] ) ) {
 		if ( ! empty( $testimonial_meta['media_url'] ) ) {
 			if ( strpos( $testimonial_meta['media_url'], 'facebook.com' ) !== false ) {
-				$fields[] = __( 'Facebook ID', TVO_TRANSLATE_DOMAIN );
+				$fields[] = __( 'Facebook ID', 'thrive-ovation' );
 			} elseif ( strpos( $testimonial_meta['media_url'], 'twitter.com' ) !== false ) {
-				$fields[] = __( 'Twitter handle', TVO_TRANSLATE_DOMAIN );
+				$fields[] = __( 'Twitter handle', 'thrive-ovation' );
 			}
 		} else {
-			$fields[] = __( 'email address', TVO_TRANSLATE_DOMAIN );
+			$fields[] = __( 'email address', 'thrive-ovation' );
 		}
 	}
 
 	/*Role*/
 	if ( ! tvo_are_strings_equal( $testimonial_meta['role'], $testimonial_params['role'] ) ) {
-		$fields[] = __( 'role/occupation', TVO_TRANSLATE_DOMAIN );
+		$fields[] = __( 'role/occupation', 'thrive-ovation' );
 	}
 
 	/*Website*/
 	if ( ! tvo_are_strings_equal( $testimonial_meta['website_url'], $testimonial_params['website_url'] ) ) {
-		$fields[] = __( 'web site URL', TVO_TRANSLATE_DOMAIN );
+		$fields[] = __( 'web site URL', 'thrive-ovation' );
 	}
 
 	/*Tags*/
@@ -706,7 +706,7 @@ function tvo_log_testimonial_activity( $testimonial_params = array() ) {
 	$diff_1 = array_diff( $testimonial_params['tags'], $tags );
 	$diff_2 = array_diff( $tags, $testimonial_params['tags'] );
 	if ( ! empty( $diff_1 ) || ! empty( $diff_2 ) ) {
-		$fields[] = __( 'testimonial tags', TVO_TRANSLATE_DOMAIN );
+		$fields[] = __( 'testimonial tags', 'thrive-ovation' );
 	}
 
 	if ( ! empty( $fields ) ) {

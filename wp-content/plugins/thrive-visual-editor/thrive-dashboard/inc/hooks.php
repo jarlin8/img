@@ -339,14 +339,15 @@ function tve_dash_admin_enqueue_scripts( $hook ) {
 }
 
 /**
- * Whether or not we should thrive blocks
+ * Whether we should thrive blocks
  *
  * @return bool
  */
 function tve_should_load_blocks() {
 	$allow  = false;
-	$screen = get_current_screen();
-	if ( ! empty( $screen ) ) {
+	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+	if ( $screen !== null ) {
 		$allow = $screen->is_block_editor();
 	}
 
@@ -374,6 +375,32 @@ function tve_dash_admin_dequeue_conflicting( $hook ) {
 		wp_dequeue_script( 'fsp-select2' );
 		wp_deregister_script( 'fsp-select2' );
 	}
+}
+
+/**
+ * Additional generic data for Vue views
+ * Should be included only in Dashboard pages that use Vue
+ *
+ * @return void
+ */
+function tve_dash_enqueue_vue() {
+	include_once TVE_DASH_PATH . '/css/font/dashboard-icons.svg';
+	wp_enqueue_style( 'media' );
+	wp_enqueue_media();
+	tve_dash_enqueue_script( 'tve-dash-main-vue', TVE_DASH_URL . '/assets/dist/js/dash-vue.js', [ 'lodash', 'jquery' ] );
+
+	wp_localize_script( 'tve-dash-main-vue', 'TD', [
+		'rest_nonce' => wp_create_nonce( 'wp_rest' ),
+		'dash_url'   => esc_url( admin_url( 'admin.php?page=tve_dash_section' ) ),
+	] );
+
+	wp_enqueue_style( 'td-font', '//fonts.googleapis.com/css?family=Roboto:200,300,400,500,600,700,800' );
+	wp_enqueue_script( 'td-select2-script', TVE_DASH_URL . '/js/dist/select2.min.js' );
+
+	/**
+	 * set this flag here so we can later remove conflicting scripts / styles
+	 */
+	$GLOBALS['tve_dash_resources_enqueued'] = true;
 }
 
 /**
@@ -821,10 +848,7 @@ function tve_dash_should_index_page() {
 }
 
 function tve_dash_current_screen() {
-
-	$screen = get_current_screen();
-
-	if ( $screen->id === 'admin_page_tve_dash_license_manager_section' && is_plugin_active( 'thrive-product-manager/thrive-product-manager.php' ) ) {
+	if ( tve_get_current_screen_key() === 'admin_page_tve_dash_license_manager_section' && is_plugin_active( 'thrive-product-manager/thrive-product-manager.php' ) ) {
 		$url = thrive_product_manager()->get_admin_url();
 		wp_redirect( $url );
 		die;
@@ -970,11 +994,7 @@ function tve_dash_incompatible_tar_version() {
 		$titles  = array_column( $products_incompatible_with_tar, 'title' );
 		$screens = array_column( $products_incompatible_with_tar, 'screen' );
 
-		/**
-		 * @var WP_Screen
-		 */
-		$screen = get_current_screen();
-		if ( $screen && in_array( str_replace( 'thrive-dashboard_page_', '', $screen->base ), $screens, true ) ) {
+		if ( in_array( str_replace( 'thrive-dashboard_page_', '', tve_get_current_screen_key( 'base' ) ), $screens, true ) ) {
 			return;
 		}
 

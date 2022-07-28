@@ -2,7 +2,7 @@
 /*
 Plugin Name: Thrive Clever Widgets
 Plugin URI: https://thrivethemes.com
-Version: 2.8
+Version: 2.9.1
 Author: <a href="https://thrivethemes.com">Thrive Themes</a>
 Description: Take control over exactly where your widgets are displayed on your site
 */
@@ -11,7 +11,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'THRIVE_CLEVER_WIDGETS_VERSION', '2.8' );
+define( 'THRIVE_CLEVER_WIDGETS_VERSION', '2.9.1' );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-thrive-clever-widgets-manager.php';
 

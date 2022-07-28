@@ -5,7 +5,7 @@
 		<div class="nav-wrapper">
 			<div class="tvo-logo tvd-left">
 				<a href="<?php menu_page_url( 'tvo_admin_dashboard' ); ?>"
-				   title="<?php echo __( 'Thrive Ovation', TVO_TRANSLATE_DOMAIN ); ?>">
+				   title="<?php echo __( 'Thrive Ovation', 'thrive-ovation' ); ?>">
 					<img src="<?php echo TVO_ADMIN_URL; ?>/img/tvo-logo-white.png">
 				</a>
 			</div>
