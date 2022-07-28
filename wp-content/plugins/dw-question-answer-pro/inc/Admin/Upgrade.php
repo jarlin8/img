@@ -5,7 +5,7 @@ class DWQA_Admin_Upgrade {
 	public function __construct() {
 		add_action( 'init', array( $this, 'add_notice' ) );
 		add_action( 'admin_menu', array( $this, 'add_admin_page' ) );
-		add_action( 'wp_ajax_dwqa_upgrades', array( $this, 'update' ) );
+		add_action( 'wp_ajax_dwqa-upgrades', array( $this, 'ajax_upgrades' ) );
 	}
 
 	public function add_admin_page() {
@@ -13,28 +13,43 @@ class DWQA_Admin_Upgrade {
 	}
 
 	public function screen() {
-		wp_enqueue_script( 'jquery' );
-		?>
+	?>
+
 		<div class="wrap">
-			<h2><?php echo get_admin_page_title() ?></h2>
-			<p><?php _e( 'The upgrade process has started, please be patient. This could take several minutes. You will be automatically redirected when the upgrade is finished...' , 'dwqa' ) ?></p>
+			<h2><?php echo get_admin_page_title(); ?></h2>
+			<p><?php _e('The upgrade process has started, please be patient. This could take several minutes. You will be automatically redirected when the upgrade is finished...','dw-question-answer') ?></p>
 			<span class="spinner" style="visibility: visible; float: none;"></span>
+			<script type="text/javascript">
+			jQuery(document).ready(function($) {
+				function dwqaUpgradeSendRequest( restart ) {
+
+					$.ajax({
+						url: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
+						type: 'POST',
+						dataType: 'json',
+						data: {
+							action: 'dwqa-upgrades',
+							restart: restart,
+						},
+					})
+					.done(function( resp ) {
+						if ( resp.success ) {
+							if ( resp.data.finish ) {
+								document.location.href = '<?php echo admin_url('edit.php?post_type=dwqa-question'); ?>';
+							} else {
+								dwqaUpgradeSendRequest( 0 );
+							}
+						} else {
+							console.log( resp.message );
+						}
+					});
+				}
+
+				dwqaUpgradeSendRequest( 1 );
+
+			});
+			</script>
 		</div>
-		<script type="text/javascript">
-			function do_upgrade() {
-				jQuery.post(ajaxurl, {action:'dwqa_upgrades'}, function(res){
-					if ( res === 'complete' ) {
-						window.location.href = 'edit.php?post_type=dwqa-question';
-					}
-
-					if ( res === 'continue' ) {
-						do_upgrade();
-					}
-				})
-			}
-
-			do_upgrade();
-		</script>
 		<?php
 	}
 
@@ -43,7 +58,7 @@ class DWQA_Admin_Upgrade {
 		if(!current_user_can('manage_options')){
 			return false;
 		}
-		
+
 		$current_db_version = get_option( 'dwqa-db-version', $this->start_version );
 		$db_version = dwqa()->db_version;
 		if ( version_compare( $current_db_version, $db_version, '<' ) ) {
@@ -65,52 +80,81 @@ class DWQA_Admin_Upgrade {
 		<?php
 	}
 
-	public function update() {
 
-		if ( !current_user_can( 'manage_options' ) ) {
-			wp_die( __( 'You do not have permission to do upgrade.', 'dwqa' ) );
-		}
-
-		$current_db_version = get_option( 'dwqa-db-version', $this->start_version );
-		update_option( 'dwqa_doing_upgrade', true );
-
-		// run upgrade version 1.0.7
-		if ( version_compare( $current_db_version, '1.0.7', '<' ) ) {
-			$this->upgrade_v107();
-		}
-
-		delete_option( 'dwqa_doing_upgrade' );
-		dwqa()->admin_notices->remove_notice( 'update' );
-
-		die( 'complete' );
-	}
-
-	/**
-	 * This update will update your answer parent for fast query
-	 */
-	public function upgrade_v107() {
+	public static function upgrade_question_answer_relationship() {
 		global $wpdb;
-		$step = get_option( 'dwqa_upgrades_step', 0 );
-		$next = intval( $step ) + 1;
-		$limit = 20;
-		$offset = (int) $step * (int) $limit;
-		
-		$sql = "SELECT DISTINCT ID FROM {$wpdb->posts} WHERE post_type = 'dwqa-answer' LIMIT {$offset}, {$limit}";
+		$cursor = get_option( 'dwqa_upgrades_step', 0 );
+		$step = 100;
+		$length = $wpdb->get_var( "SELECT count(*) FROM $wpdb->posts p JOIN $wpdb->postmeta pm ON p.ID = pm.post_id WHERE 1=1 AND post_type = 'dwqa-answer' AND pm.meta_key = '_question'" );
+		if( $cursor <= $length ) {
+			$answers = $wpdb->get_results( $wpdb->prepare( "SELECT ID, meta_value as parent FROM $wpdb->posts p JOIN $wpdb->postmeta pm ON p.ID = pm.post_id WHERE 1=1 AND post_type = 'dwqa-answer' AND pm.meta_key = '_question' LIMIT %d, %d ", $cursor, $step ) );
 
-		$answer_ids = $wpdb->get_col( $sql );
-		if ( $answer_ids && !is_wp_error( $answer_ids ) ) {
-			foreach( $answer_ids as $answer_id ) {
-				$question_id = get_post_meta( $answer_id, '_question', true );
-				if ( $question_id ) {
-					$sql = "UPDATE {$wpdb->posts} SET post_parent = {$question_id} WHERE ID = {$answer_id}";
-					$status = $wpdb->query( $sql );
+			if ( ! empty( $answers ) ) {
+				foreach ( $answers as $answer ) {
+					$update = wp_update_post( array( 'ID' => $answer->ID, 'post_parent' => $answer->parent ), true );
 				}
+				$cursor += $step;
+				update_option( 'dwqa_upgrades_step', $cursor );
+				return $cursor;
+			} else {
+				delete_option( 'dwqa_upgrades_step' );
+				return 0;
 			}
-			update_option( 'dwqa_upgrades_step', $next );
-			die( 'continue' );
+		} else {
+			delete_option( 'dwqa_upgrades_step' );
+			return 0;
+		}
+	}
+
+	public static function ajax_upgrades() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'You do not have permission to do this task', 'dw-question-answer' ) ) );
 		}
 
-		delete_option( 'dwqa_upgrades_step' );
-		update_option( 'dwqa-db-version', '1.0.7' );
+		if ( isset( $_POST['restart'] ) && intval( $_POST['restart'] ) ) {
+			delete_option( 'dwqa_upgrades_start' );
+			$start = 0;
+		} else {
+			$start = get_option( 'dwqa_upgrades_start', 0 );
+		}
+
+		switch ( $start ) {
+			case 0:
+				$start += 1;
+				update_option( 'dwqa_upgrades_start', $start );
+				wp_send_json_success( array(
+					'start' => $start,
+					'finish' => 0,
+					'message' => __( 'Just do it..', 'dw-question-answer' )
+				) );
+				break;
+			case 1:
+				$do_next = self::upgrade_question_answer_relationship();
+				if ( ! $do_next ) {
+					$start += 1;
+					update_option( 'dwqa_upgrades_start', $start );
+					$message = sprintf( __( 'Move to next step %d', 'dw-question-answer' ), $start );
+				} else {
+					$message = $do_next;
+				}
+				wp_send_json_success( array(
+					'start' => $start,
+					'finish' => 0,
+					'message' => $message
+				) );
+				break;
+
+			default:
+				delete_option( 'dwqa_upgrades_start' );
+				update_option( 'dwqa-db-version', dwqa()->db_version );
+				dwqa()->admin_notices->remove_notice( 'update' );
+				wp_send_json_success( array(
+					'start' => $start,
+					'finish' => 1,
+					'message' => __('Upgrade process is done','dw-question-answer')
+				) );
+				break;
+		}
 	}
+
 }

@@ -1,33 +1,4 @@
 <?php 
-//luvitas
-add_action( 'init', 'dwqa_anonymous_create_session' );
-function dwqa_anonymous_create_session() {
-	if ( !dwqa_get_current_user_session() ) {
-		$expire = time() + 10*YEAR_IN_SECONDS;
-
-		$secure = is_ssl();
-
-		$secure_in_cookie = $secure && 'https' === parse_url( get_option( 'home' ), PHP_URL_SCHEME );
-
-		if ( $secure ) {
-			$auth_cookie_secure = SECURE_AUTH_COOKIE;
-		} else {
-			$auth_cookie_secure = AUTH_COOKIE;
-		}
-
-		$token = wp_generate_password( 43, false, false );
-
-		setcookie('dwqa_anonymous', $token, $expire, COOKIEPATH, COOKIE_DOMAIN, $secure_in_cookie, true );
-		if ( COOKIEPATH != SITECOOKIEPATH ) {
-			setcookie('dwqa_anonymous', $token, $expire, SITECOOKIEPATH, COOKIE_DOMAIN, $secure_in_cookie, true );
-		}
-	}
-}
-
-function dwqa_get_current_user_session() {
-	return isset( $_COOKIE['dwqa_anonymous'] ) && !empty( $_COOKIE['dwqa_anonymous'] ) ? $_COOKIE['dwqa_anonymous'] : false;
-}
-
 function dwqa_action_vote( ) {
 	$result = array(
 		'error_code'    => 'authorization',  
@@ -69,12 +40,20 @@ function dwqa_action_vote( ) {
 				$votes = array();
 			}
 			
-			//remove vote serialize
-			$data_votes = @unserialize($votes);
-			if ($data_votes !== false) {
-				$votes = $data_votes;
-			}
-			
+			if (version_compare(PHP_VERSION, '8.0') >= 0) {
+				//fix bug with php 8.0
+			   //remove vote serialize
+			   $data_votes = @maybe_unserialize($votes);
+			   if ($data_votes !== false) {
+				   $votes = $data_votes;
+			   }
+		   } else {
+			   //remove vote serialize
+			   $data_votes = @unserialize($votes);
+			   if ($data_votes !== false) {
+				   $votes = $data_votes;
+			   }
+		   }
 			
 			$votes[$dwqa_user_vote_id] = $point;
 			//update
@@ -101,6 +80,35 @@ function dwqa_action_vote( ) {
 }
 add_action( 'wp_ajax_dwqa-action-vote', 'dwqa_action_vote' );
 add_action( 'wp_ajax_nopriv_dwqa-action-vote', 'dwqa_action_vote' );
+
+//luvitas
+add_action( 'init', 'dwqa_anonymous_create_session' );
+function dwqa_anonymous_create_session() {
+	if ( !dwqa_get_current_user_session() ) {
+		$expire = time() + 10*YEAR_IN_SECONDS;
+
+		$secure = is_ssl();
+
+		$secure_in_cookie = $secure && 'https' === parse_url( get_option( 'home' ), PHP_URL_SCHEME );
+
+		if ( $secure ) {
+			$auth_cookie_secure = SECURE_AUTH_COOKIE;
+		} else {
+			$auth_cookie_secure = AUTH_COOKIE;
+		}
+
+		$token = wp_generate_password( 43, false, false );
+
+		setcookie('dwqa_anonymous', $token, $expire, COOKIEPATH, COOKIE_DOMAIN, $secure_in_cookie, true );
+		if ( COOKIEPATH != SITECOOKIEPATH ) {
+			setcookie('dwqa_anonymous', $token, $expire, SITECOOKIEPATH, COOKIE_DOMAIN, $secure_in_cookie, true );
+		}
+	}
+}
+
+function dwqa_get_current_user_session() {
+	return isset( $_COOKIE['dwqa_anonymous'] ) && !empty( $_COOKIE['dwqa_anonymous'] ) ? $_COOKIE['dwqa_anonymous'] : false;
+}
 
 /**
  * Check for current user can vote for the question
@@ -502,5 +510,4 @@ class DWQA_Posts_Base {
 		return true;
 	}
 }
-
 ?>

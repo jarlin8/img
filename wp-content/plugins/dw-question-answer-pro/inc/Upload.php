@@ -47,7 +47,7 @@ class DWQA_Upload {
 			$count_attachment = count(get_children( array( 'post_parent' => $answer_id, 'post_type' => 'attachment') ));
 			$count_file = $max_files - $count_attachment;
 			
-			$overrides = array('test_form' => false, 'upload_error_handler' => 'dwqa_attachment_handle_upload_error');
+			$overrides = array('test_form' => false);
 
 			
 			foreach ($_FILES['dwqa_upload']['error'] as $key => $error) {
@@ -194,13 +194,13 @@ class DWQA_Upload {
 		$edit_id = isset( $_GET['edit'] ) && is_numeric( $_GET['edit'] ) ? $_GET['edit'] : false;
 		if ( $edit_id ){
 			if ( dwqa_current_user_can( 'edit_answer', $post_id ) || dwqa_current_user_can( 'manage_answer' ) ) {
-				$remove_attachment = '<span class="dwqa-attachments-remove-item" data-id="{attachmentid}" data-post="{postid}">Delete</span>';
+				$remove_attachment = '<span class="dwqa-attachments-remove-item" data-id="{attachmentid}" data-post="{postid}">'.__('Delete', 'dwqa').'</span>';
 			}
 		}
 		
 		
 		if (!empty($attachments)) {
-			echo '<h6>Attachments</h6>';
+			echo '<h6>'.__('Attachments', 'dwqa').'</h6>';
 			foreach ($attachments as $attachment) {
 				
 				$file = get_attached_file($attachment->ID);

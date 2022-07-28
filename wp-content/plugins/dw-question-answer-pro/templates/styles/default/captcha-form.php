@@ -30,15 +30,6 @@
 		echo '<div class="g-recaptcha" data-sitekey="'. $public_key .'"></div>';
 		echo '<br></div>';
 		?>
-	<?php elseif ( 'funcaptcha' == dwqa_current_captcha_selected() ) : ?>
-		<?php
-		$public_key = isset( $dwqa_general_settings['funcaptcha-public-key'] ) ?  $dwqa_general_settings['funcaptcha-public-key'] : '';
-		echo '<div class="google-recaptcha">';
-		wp_enqueue_script( 'funcaptcha', 'https://funcaptcha.com/fc/api/', array() );
-		echo '<script src="https://funcaptcha.com/fc/api/" async defer></script>';
-		echo '<div id="funcaptcha" data-pkey="'.$public_key.'"></div>';
-		echo '<br></div>';
-		?>
 	<?php endif; ?>
 </div>
 <?php endif; ?>

@@ -94,18 +94,19 @@ class DWQA_Leaderboard_Widget extends WP_Widget {
 					WHERE post_type = 'dwqa-answer'
 						AND post_status = 'publish'
 						AND post_author <> 0";
+
 		if ( $from ) {
-			$from = date( 'Y-m-d h:i:s', $from );
-			$query .= " AND `{$wpdb->prefix}posts`.post_date > '{$from}'";
+			$from = date( 'Y-m-d 00:00:00', $from );
+			$query .= " AND `{$wpdb->prefix}posts`.post_date >= '{$from}'";
 		}
 		if ( $to ) {
-			$to = date( 'Y-m-d h:i:s', $to );
-			$query .= " AND `{$wpdb->prefix}posts`.post_date < '{$to}'";
+			$to = date( 'Y-m-d 23:59:59', $to );
+			$query .= " AND `{$wpdb->prefix}posts`.post_date <= '{$to}'";
 		}
 
 		$prefix = '-all';
 		if ( $from && $to ) {
-			$prefix = '-' . ( $from - $to );
+			$prefix = '-' . ( $from .'-'. $to );
 		}
 
 		$query .= " GROUP BY `user_id`
@@ -113,6 +114,7 @@ class DWQA_Leaderboard_Widget extends WP_Widget {
 		$users = wp_cache_get( 'dwqa-most-answered' . $prefix );
 		if ( false == $users ) {
 			$users = $wpdb->get_results( $query, ARRAY_A  );
+
 			wp_cache_set( 'dwqa-most-answered', $users );
 		}
 
@@ -147,13 +149,13 @@ class DWQA_Leaderboard_Widget extends WP_Widget {
 		$query = "SELECT count(*) FROM {$wpdb->posts} WHERE post_author = {$user_id} AND post_type = 'dwqa-question'";
 
 		if ( $from ) {
-			$from = date( 'Y-m-d h:i:s', $from );
-			$query .= " AND post_date > '{$from}'";
+			$from = date( 'Y-m-d 00:00:00', $from );
+			$query .= " AND post_date >= '{$from}'";
 		}
 
 		if ( $to ) {
-			$to = date( 'Y-m-d h:i:s', $to );
-			$query .= " AND post_date < '{$to}'";
+			$to = date( 'Y-m-d 23:59:59', $to );
+			$query .= " AND post_date <= '{$to}'";
 		}
 
 		$users = wp_cache_get( 'dwqa-most-answered-question-count' . $prefix );

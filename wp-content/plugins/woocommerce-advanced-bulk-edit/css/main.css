@@ -1416,7 +1416,13 @@ a.selvars:link {
 }
 
 h2 span.version {
-    font-size: 12px;
+    font-size: 14px;
+}
+
+h2 span.top-help-links {
+    margin-left: 12px;
+    font-size: 14px;
+    font-weight: 400;
 }
 
 /* Override chosen multiselect */
@@ -1439,4 +1445,9 @@ h2 span.version {
 
 #split-variations-advanced-options-parent-custom-fields li {
     padding: 5px 0;
+}
+
+/* Fix TinyMCE fullscreen buttons bar being overlapped */
+div.mce-fullscreen {
+    top: 30px !important;
 }

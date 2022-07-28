@@ -1714,7 +1714,7 @@ if(!function_exists('rh_generate_incss')) {
               .offer_grid .price_count{font-weight: bold; font-size:17px;padding: 0;}
               .offer_grid .price_count del {display: block;font-size: 13px;color: #666;vertical-align: top;font-weight: normal; text-align: left;}
               .offer_grid .rehub_offer_coupon span{ font-size: 14px; text-transform: none;}
-              .offer_grid h3 { height: 36px; font-size: 15px; line-height:18px; font-weight:normal !important }
+              .offer_grid h3 { height: 22px; font-size: 22px; line-height:22px; font-weight:normal !important }
               .col_wrap_fifth .offer_grid h3{font-size: 14px;}
               .col_wrap_six .offer_grid h3{font-size: 13px; line-height:16px; height: 32px;}
               .offer_grid:hover{   box-shadow: 0 0 20px #ddd;}

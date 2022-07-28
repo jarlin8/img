@@ -308,6 +308,43 @@ function dwqa_profile_displayed_user_id(){
 	return $user_id;
 }
 
+
+// Update avatar to backend
+global $dwqa_general_settings;
+if ( isset( $dwqa_general_settings['profileAvatar'] ) && $dwqa_general_settings['profileAvatar'] ) {
+add_filter( 'get_avatar' , 'dwqa_profile_get_avatar' , 1 , 6 );
+function dwqa_profile_get_avatar( $avatar, $id_or_email, $size, $default, $alt, $args ) {
+		$user = false;
+
+		if ( is_numeric( $id_or_email ) ) {
+			$id = (int) $id_or_email;
+			$user = get_user_by( 'id' , $id );
+		} elseif ( is_object( $id_or_email ) ) {
+			if ( ! empty( $id_or_email->user_id ) ) {
+				$id = (int) $id_or_email->user_id;
+				$user = get_user_by( 'id' , $id );
+			}
+		} else {
+			$user = get_user_by( 'email', $id_or_email );   
+		}
+
+		if ( $user && is_object( $user ) ) {
+			//get upload dir data
+			$upload_dir = wp_upload_dir();
+			//get user data
+			$user_id = $user->ID;
+			$user_info = get_userdata( $user_id );
+			//using the username for this example
+			$username = $user_info->user_login;
+			//construct src
+			$src = dwqa_get_avatar_url($user_id);
+			$avatar = "<img alt='{$alt}' src='{$src}' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
+		}
+		return $avatar;
+	}
+}
+
+
 function dwqa_profile_tab(){
 	$tab = get_query_var( 'tab' );
 	return $tab?$tab:'questions';
@@ -348,20 +385,18 @@ function dwqa_profile_answer_filter_query($query){
 	$array = $query;
 	$array['post_type'] = 'dwqa-answer';
 	$array['author'] = $displayed_user_id;
-	
-	// use this function to fill per page
-	while(count($post__in) < $query['posts_per_page']){
-		$array['post__not_in '] = $post__in;
-		$results = new WP_Query( $array );
-		
-		if($results->post_count > 0){
-			foreach($results->posts as $result){
+	$array['posts_per_page'] = -1;
+
+	$results = new WP_Query( $array );
+	if($results->post_count > 0){
+		foreach($results->posts as $result){
+			if(!in_array($result->post_parent, $post__in)){
 				$post__in[] = $result->post_parent;
 			}
-		}else{
-			break;
+			
 		}
 	}
+
 	if(empty($post__in)){
 		$post__in = array(0);
 	}
@@ -370,7 +405,100 @@ function dwqa_profile_answer_filter_query($query){
 	return $query;
 }
 
+function dwqa_profile_blogposts() {
+	global $post;
+	global $dwqa_general_settings;
+	$user_id = dwqa_profile_displayed_user_id();
+	$author_name = dwqa_get_display_name($user_id);
+	$args = array( 'posts_per_page' => 12, 'post_type'=> 'post', 'author_name' => $author_name );
+	$myposts = get_posts( $args );
+	$selectedCol = $dwqa_general_settings['choose-blog-col'];
 
+	if ( $myposts ) {
+		echo '<div class="profile-blog dwqa-'.$selectedCol.'">';
+			foreach ( $myposts as $post ) :
+				setup_postdata( $post ); ?>
+				<div class="dwqa-post">
+					<?php if ( has_post_thumbnail() ) : ?>
+						<div class="dwqa-thumb"><?php the_post_thumbnail( array(230, 130) ); ?></div>
+					<?php endif; ?>
+					<div class="dwqa-inner">
+						<h2 class="dwqa-post-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+						<div class="dwqa-post-meta">
+							<span>
+								<?php printf( __( '%s ago', 'dwqa' ), human_time_diff( get_the_time( 'U', $post->ID ), current_time( 'timestamp' ) ) ); ?>
+							</span>
+
+							<span>
+								<?php _e( 'in', 'dwqa' ); ?>: <?php the_category( ', ', '', $post->ID ); ?>
+							</span>
+						</div> 
+					</div>
+				</div>
+			<?php
+			endforeach; 
+			wp_reset_postdata();
+			
+			if( count_user_posts($user_id) > 12 ) {
+				echo '<a class="btnshowall" href="'.home_url('/author/').''.$author_name.'">show all</a>';
+			}
+		echo '</div>';
+
+	} else {
+		// Display message if no post  are found.
+		echo '<p class="dwqa-alert dwqa-alert-info">' . __( 'The author didn\'t add any post.', 'dwqa' ) . '</p>';
+	}
+}
+
+function dwqa_profile_comments_post() {
+	// Get the global `$wp_query` object...
+	global $wp_query;
+	
+	// ...and use it to get post author's id.
+	$post_author_id = dwqa_profile_displayed_user_id();
+
+	// Setup arguments.
+	$args = array (
+		'user_id' => $post_author_id,
+		'orderby' => 'comment_ID'
+	);
+	
+	// Custom comment query.
+	$my_comment_query = new WP_Comment_Query;
+	$comments = $my_comment_query->query( $args );
+	
+	// Check for comments.
+	if ( $comments ) {
+	
+		// Start listing comments.
+		echo '<ul class="author-comments">';
+	
+			// Loop over comments.
+			foreach( $comments as $comment ) {
+				$comment_title = get_the_title( $comment->comment_post_ID );
+				$link = get_permalink( $comment->comment_post_ID );
+
+				echo '<div class="dwqa-cmt-item">';
+					echo '<div class="dwqa-cmt-link">';
+						echo '<i class="fa fa-comments"></i>';
+						echo '<a href="'.get_comment_link($comment->comment_ID).'">'.$comment->comment_content.'</a>';
+					echo '</div>';
+					echo '<div class="dwqa-cmt-meta">';
+						echo '<span>';
+							echo 'On <a href="'.$link.'">'.$comment_title.'</a>';
+						echo '</span>';
+					echo '</div>';
+				echo '</div>';
+			}
+	
+		// Stop listing comments.
+		echo '</ul>';
+	
+	} else {
+		// Display message if no comments are found.
+		echo '<p class="dwqa-alert dwqa-alert-info">' . __( 'The author didn\'t post any comments.', 'dwqa' ) . '</p>';
+	}
+}
 
 class DWQA_User { 
 	private static $instance = null;
@@ -497,6 +625,7 @@ class DWQA_User {
 				add_rewrite_tag('%user%', '([^&]+)');
 				add_rewrite_tag('%tab%', '([^&]+)');
 				
+				add_rewrite_rule('^'.$page_user_profile->post_name.'/([^/]*)/([^/]*)/page/([^/]*)/?','index.php?page_id='.$dwqa_general_settings['pages']['user-profile'].'&user=$matches[1]&tab=$matches[2]&paged=$matches[3]','top');
 				add_rewrite_rule('^'.$page_user_profile->post_name.'/([^/]*)/([^/]*)/?','index.php?page_id='.$dwqa_general_settings['pages']['user-profile'].'&user=$matches[1]&tab=$matches[2]','top');
 				add_rewrite_rule('^'.$page_user_profile->post_name.'/([^/]*)/?','index.php?page_id='.$dwqa_general_settings['pages']['user-profile'].'&user=$matches[1]','top');
 			}
@@ -733,7 +862,7 @@ class DWQA_User {
  	//cover image
 
  	public function getDefaultCoverImageUrl(){
- 		$cover_url = DWQA_URI . 'templates/assets/img/default-cover-image.png';
+ 		$cover_url = DWQA_URI . 'templates/assets/img/default-cover-image.jpg';
  		return apply_filters('dwqa_user_get_default_cover_image_url',  $cover_url);
  	}
  	public function getCoverImageUrl($user_id = false){
@@ -865,7 +994,7 @@ class DWQA_User {
  			return false;
  		}
  		global $wpdb;
- 		$user_count = $wpdb->get_var( "SELECT COUNT(1) AS count FROM $wpdb->posts WHERE post_author = {$user_id} AND post_type = 'dwqa-question'" );
+ 		$user_count = $wpdb->get_var( "SELECT COUNT(1) AS count FROM $wpdb->posts WHERE post_author = {$user_id} AND post_type = 'dwqa-question' AND post_status = 'publish'" );
  		return $user_count?$user_count:0;
  	}
 
@@ -874,7 +1003,7 @@ class DWQA_User {
  			return false;
  		}
  		global $wpdb;
- 		$user_count = $wpdb->get_var( "SELECT COUNT(1) AS count FROM $wpdb->posts WHERE post_author = {$user_id} AND post_type = 'dwqa-answer'" );
+ 		$user_count = $wpdb->get_var( "SELECT COUNT(1) AS count FROM $wpdb->posts WHERE post_author = {$user_id} AND post_type = 'dwqa-answer' AND post_status = 'publish'" );
  		return $user_count?$user_count:0;
  	}
 

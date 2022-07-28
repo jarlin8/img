@@ -1,9 +1,9 @@
-<?php  
-/** 
+<?php
+/**
  * This file was used to include all functions which i can't classify, just use those for support my work
  */
 
-/** 
+/**
  * Array
  */
 function dwqa_array_insert( &$array, $element, $position = null ) {
@@ -22,7 +22,7 @@ function dwqa_array_insert( &$array, $element, $position = null ) {
 	return $array;
 }
 
-if ( ! function_exists( 'dw_strip_email_to_display' ) ) { 
+if ( ! function_exists( 'dw_strip_email_to_display' ) ) {
 	/**
 	 * Strip email for display in front end
 	 * @param  string  $text name
@@ -39,7 +39,7 @@ if ( ! function_exists( 'dw_strip_email_to_display' ) ) {
 		}
 		return $text;
 	}
-}  
+}
 
 // CAPTCHA
 function dwqa_valid_captcha( $type ) {
@@ -56,7 +56,7 @@ function dwqa_valid_captcha( $type ) {
 	if ( 'single-question' == $type && ! dwqa_is_captcha_enable_in_single_question() ) {
 		return true;
 	}
-	
+
 	return apply_filters( 'dwqa_valid_captcha', false );
 }
 
@@ -113,18 +113,18 @@ function dwqa_captcha_check( $res ) {
 	}
 
 	// FunCaptcha
-	if ( $type_selected == 'funcaptcha' ) {
-		if ( empty( $_POST['fc-token'] ) ) {
-			return false;
-		}
+	// if ( $type_selected == 'funcaptcha' ) {
+	// 	if ( empty( $_POST['fc-token'] ) ) {
+	// 		return false;
+	// 	}
 
-		$private_key = isset( $dwqa_general_settings['funcaptcha-private-key'] ) ?  $dwqa_general_settings['funcaptcha-private-key'] : '';
-		$fc_api_url = "https://funcaptcha.com/fc/v/?private_key=" . $private_key . "&session_token=" . $_POST['fc-token'] . "&simple_mode=1";
+	// 	$private_key = isset( $dwqa_general_settings['funcaptcha-private-key'] ) ?  $dwqa_general_settings['funcaptcha-private-key'] : '';
+	// 	$fc_api_url = "https://funcaptcha.com/fc/v/?private_key=" . $private_key . "&session_token=" . $_POST['fc-token'] . "&simple_mode=1";
 
-		if ( file_get_contents( $fc_api_url ) === "1" ) {
-			return true;
-		}
-	}
+	// 	if ( file_get_contents( $fc_api_url ) === "1" ) {
+	// 		return true;
+	// 	}
+	// }
 
 	return $res;
 }
@@ -227,7 +227,7 @@ function dwqa_get_answer_count( $question_id = false ) {
 	}
 
 	$answer_count = get_post_meta( $question_id, '_dwqa_answers_count', true );
-	
+
 	if ( current_user_can( 'edit_posts' ) ) {
 		return $answer_count;
 	} else {
@@ -269,7 +269,7 @@ function dwqa_is_archive_question() {
 	if ( !isset( $dwqa_general_settings['pages']['archive-question'] ) ) {
 		return false;
 	}
-	
+
 	return is_page( $dwqa_general_settings['pages']['archive-question'] );
 }
 
@@ -408,8 +408,15 @@ function dwqa_get_total_vote( $question_id = false ) {
 function dwqa_register_page(){
 	global $dwqa_general_settings;
 
-	$register_page = isset( $dwqa_general_settings['pages']['register-page'] ) ? $dwqa_general_settings['pages']['register-page'] : 0; 
+	$register_page = isset( $dwqa_general_settings['pages']['register-page'] ) ? $dwqa_general_settings['pages']['register-page'] : 0;
 	return $register_page;
+}
+
+function dwqa_thank_page(){
+	global $dwqa_general_settings;
+
+	$thank_page = isset( $dwqa_general_settings['pages']['thank-page'] ) ? $dwqa_general_settings['pages']['thank-page'] : 0;
+	return $thank_page;
 }
 
 add_filter( 'the_content', 'dwqa_disable_do_shortcode', 10 );
@@ -444,7 +451,7 @@ function dwqa_get_post_parent_id( $post_id = false ){
 	if($parent_id){
 		wp_cache_set( 'dwqa_'. $post_id .'_parent_id', $parent_id, 'dwqa', 15*60 );
 	}
-	
+
 	return $parent_id;
 }
 ?>

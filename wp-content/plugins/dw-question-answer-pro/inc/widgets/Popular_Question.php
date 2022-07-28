@@ -48,8 +48,9 @@ class DWQA_Widgets_Popular_Question extends WP_Widget {
 			echo '<ul>';
 			while ( $questions->have_posts() ) { $questions->the_post();
 				echo '<li><a href="'.get_permalink().'" class="question-title">'.get_the_title().'</a>';
+				$user_id = get_post_field( 'post_author', get_the_ID() ) ? get_post_field( 'post_author', get_the_ID() ) : false;
 				if(!$instance['hide_user']){
-					echo __( ' asked by', 'dwqa' ).' '.get_the_author_posts_link();
+					printf( __( '<span> asked by <a href="%1$s">%2$s</a></span>', 'dwqa' ), dwqa_get_author_link( $user_id ), get_the_author() );
 				}
 				if(!$instance['hide_date']){
 					echo ', ' .  sprintf( esc_html__( '%s ago', 'dwqa' ), human_time_diff( get_post_time('U', true) ) );

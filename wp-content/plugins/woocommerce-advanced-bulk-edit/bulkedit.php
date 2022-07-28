@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || die( 'No direct script access allowed!' );
 
 
 class W3ExAdvBulkEditView{
-	
+
 	private static $ins = null;
 	private $attributes      = array();
 	private $attributes_asoc = array();
@@ -14,13 +14,13 @@ class W3ExAdvBulkEditView{
 	private $largeattributes = array();
 	private $iswpml = false;
 	private $isversion3 = false;
-	
+
 	public static function lang_category_id($id,$taxname)
 	{
-	  if(function_exists('icl_object_id')) 
+	  if(function_exists('icl_object_id'))
 	  {
 	    return icl_object_id($id,$taxname,false);
-	  }else 
+	  }else
 	  {
 	  	if(has_filter('wpml_object_id'))
 	  	{
@@ -29,7 +29,7 @@ class W3ExAdvBulkEditView{
 	    	return $id;
 	  }
 	}
-	
+
     public static function init()
     {
        self::instance()->_main();
@@ -40,7 +40,7 @@ class W3ExAdvBulkEditView{
         is_null(self::$ins) && self::$ins = new self;
         return self::$ins;
     }
-    
+
     public static function relpaceInvalid($str)
     {
     	$str = strip_tags($str);
@@ -48,10 +48,10 @@ class W3ExAdvBulkEditView{
       	$str = preg_replace('#\R+#', ' ', $str);
         return $str;
     }
-	
+
 	public function mb_ucfirst($p_str)
 	{
-		if (function_exists('mb_substr') && function_exists('mb_strtoupper') && function_exists('mb_strlen')) 
+		if (function_exists('mb_substr') && function_exists('mb_strtoupper') && function_exists('mb_strlen'))
 		{
 			$string = $p_str;
 			if(mb_strlen($p_str) > 0)
@@ -64,7 +64,7 @@ class W3ExAdvBulkEditView{
 			return ucfirst($p_str);
 		}
 	}
-	
+
 	public function LoadAttributeTerms(&$attr,$name,$iter,$bcat = false,$skiploadfrontpage = false)
 	{
 		global $wpdb;
@@ -85,7 +85,7 @@ class W3ExAdvBulkEditView{
 		{
 			$getquery = "SELECT t.term_id,t.name,t.slug,tt.term_taxonomy_id,tt.parent FROM {$wpdb->prefix}terms as t INNER JOIN {$wpdb->prefix}term_taxonomy AS tt ON t.term_id= tt.term_id WHERE tt.taxonomy IN('". $name ."') ORDER BY t.slug ASC {$limit}";
 		}
-		
+
 		$values = $wpdb->get_results($getquery);
 		if(is_wp_error($values))
 			return false;
@@ -110,11 +110,11 @@ class W3ExAdvBulkEditView{
 				$cat->category_name   = $val->name;
 				$cat->category_slug   = urldecode($val->slug);
 				$cat->category_parent = $val->parent;
-				$this->categories[] = $cat;   
+				$this->categories[] = $cat;
 				$this->cat_asoc[$cat->category_id] = $cat;
 				continue;
 			}
-			
+
 			$value          = new stdClass();
 			$value->id      = $val->term_taxonomy_id;
 			if($this->iswpml)
@@ -132,7 +132,7 @@ class W3ExAdvBulkEditView{
 				$value->slug    = $val->slug;
 				$value->name    = $val->name;
 			}
-		
+
 //			$value->parent  = $val->parent;
 			$attr->values[]  = $value;
 		}
@@ -141,7 +141,7 @@ class W3ExAdvBulkEditView{
 			$curr_settings = get_option('w3exabe_settings');
 			if(!is_array($curr_settings))
 				$curr_settings = array();
-		
+
 			$largetemp = array();
 			if(isset($curr_settings['largeattributes']) && is_array($curr_settings['largeattributes']))
 			{
@@ -154,7 +154,7 @@ class W3ExAdvBulkEditView{
 			$this->LoadAttributeTerms($attr,$name,$iter,$bcat,$skiploadfrontpage);
 		}
 	}
-	
+
 	public function loadAttributes($skiploadfrontpage = false)
 	{
 		//categories
@@ -185,25 +185,25 @@ class W3ExAdvBulkEditView{
 //				   if($id === NULL || $id != $cat->category_id)
 //				   		continue;
 //			   }
-//			 
+//
 //			   $cat->term_id         = $category->term_id;
 //			   $cat->category_name   = $category->name;
 //			   $cat->category_slug   = urldecode($category->slug);
 //			   $cat->category_parent = $category->parent;
-//			   $this->categories[] = $cat;   
+//			   $this->categories[] = $cat;
 //			   $this->cat_asoc[$cat->category_id] = $cat;
 //			};
 //		}else
 		{
 			$this->LoadAttributeTerms($args,'product_cat',0,true);
 		}
-		
 
-		
+
+
 		$curr_settings = get_option('w3exabe_settings');
 		if(!is_array($curr_settings))
 			$curr_settings = array();
-		
+
 		$largetemp = array();
 		if(isset($curr_settings['largeattributes']) && is_array($curr_settings['largeattributes']))
 		{
@@ -216,11 +216,11 @@ class W3ExAdvBulkEditView{
 				return;
 		}
 	    global $wpdb;
-		
+
 		$woo_attrs = $wpdb->get_results("select * from " . $wpdb->prefix . "woocommerce_attribute_taxonomies order by attribute_name",ARRAY_A);
 		$counter = 0;
 //		foreach($woo_attrs as $attr){
-			
+
 		foreach($woo_attrs as $attr)
 		{
 //			if($counter > 15)
@@ -228,15 +228,15 @@ class W3ExAdvBulkEditView{
 			$counter++;
 			$att         = new stdClass();
 			$att->id     = $attr['attribute_id'];
-			$att->name   = $attr['attribute_name'];  
+			$att->name   = $attr['attribute_name'];
 			if(function_exists('wc_sanitize_taxonomy_name'))
 				$att->name = wc_sanitize_taxonomy_name($attr['attribute_name']);
-			$att->label  = $attr['attribute_label']; 
+			$att->label  = $attr['attribute_label'];
 			if(!$att->label)
 				$att->label = ucfirst($att->name);
 			$att->type   = $attr['attribute_type'];
 
-		  
+
 			$att->values = array();
 			$args = array(
 							    'number'     => 99999,
@@ -247,16 +247,16 @@ class W3ExAdvBulkEditView{
 								'fields'     => 'all'
 							);
 //			$attrcount = wp_count_terms( 'pa_' . $att->name, array('hide_empty' => false));
-//			if ( is_wp_error($attrcount) ) 
+//			if ( is_wp_error($attrcount) )
 //				continue;
 //			if($attrcount > 1600)
 //				continue;
 //			if(isset($this->largeattributes[$att->name]) && $this->largeattributes[$att->name] === "1")
-			
-				
+
+
 			$this->LoadAttributeTerms($att,$att->name,0,false,$skiploadfrontpage);
 //			$values     = get_terms( 'pa_' . $att->name, array('hide_empty' => false));
-			
+
 			$skip = false;
 		 	if(count($att->values) > 0)
 			{
@@ -293,7 +293,7 @@ class W3ExAdvBulkEditView{
 						$att->values = array();
 						$skip = true;
 					}
-					
+
 				}
 				if(!$skip)
 					$this->attributes[]  = $att;
@@ -459,7 +459,7 @@ class W3ExAdvBulkEditView{
 		$arr['trans_column_settings'] = __( 'Column Settings', 'woocommerce-advbulkedit');
 		$arr['trans_table_views'] = __( 'Table Views', 'woocommerce-advbulkedit');
 		$arr['trans_custom_fields'] = __( 'Custom Fields', 'woocommerce-advbulkedit');
-		$arr['trans_find_custom_fields'] = __( 'Find Custom Fields', 'woocommerce-advbulkedit');
+		$arr['trans_find_custom_fields'] = __( 'Find Custom / Meta Fields', 'woocommerce-advbulkedit');
 		$arr['trans_plugin_settings'] = __( 'Plugin Settings', 'woocommerce-advbulkedit');
 		$arr['trans_main_settings'] = __( 'Main Settings', 'woocommerce-advbulkedit');
 		$arr['trans_search_settings'] = __( 'Search Fields', 'woocommerce-advbulkedit');
@@ -478,7 +478,7 @@ class W3ExAdvBulkEditView{
 		$arr['trans_skipduplicates'] =  __( 'Skip duplicate variations on creation', 'woocommerce-advbulkedit');
 		$arr['trans_copyparentprice'] =  __( 'Copy prices from parent', 'woocommerce-advbulkedit');
 		$arr['trans_use_builtin'] =  __( 'Use built-in editor when editing descriptions', 'woocommerce-advbulkedit');
-		$arr['trans_bulk_edit_selected'] =  __( 'Bulk edit selected products', 'woocommerce-advbulkedit');
+		$arr['trans_bulk_edit_selected'] =  __( 'Advanced Bulk Editing of Selected Products', 'woocommerce-advbulkedit');
 		$arr['trans_instock'] = __( 'In Stock', 'woocommerce-advbulkedit');
 		if($arr['trans_instock'] === "In Stock")
 			$arr['trans_instock'] = __( 'In Stock', 'woocommerce');
@@ -494,24 +494,29 @@ class W3ExAdvBulkEditView{
 			'of IDs between 900 and 1005. The range includes the limiting values, e.g. 450 and 576.', 'woocommerce-advbulkedit');
 		$arr['split_variations_select_variations'] = __('You have to select some variations, prior to spliiting it.', 'woocommerce-advbulkedit');
 		$arr['split_variations_dialog_title'] = __('Split Variations to Simple Products', 'woocommerce-advbulkedit');
-		
+
 	}
-	
+
 	public function showMainPage()
 	{
 		global $wpdb;
 		global $woocommerce;
-		
+
+		$settings = get_option('w3exabe_settings');
+
         if (isset($_GET['setting_disable_hints']) && $_GET['setting_disable_hints'] == 1) {
-	        $settings = get_option('w3exabe_settings');
 	        $settings['setting_disable_hints'] = 1;
 	        update_option('w3exabe_settings',$settings);
         }
-  
+
 
 		if (isset($_GET['setting_enable_admin_only_visible']) && $_GET['setting_enable_admin_only_visible'] == 1) {
-			$settings = get_option('w3exabe_settings');
 			$settings['setting_enable_admin_only_visible'] = 1;
+			update_option('w3exabe_settings',$settings);
+		}
+
+		if (isset($_GET['setting_display_top_bar_link_bulkedit']) && $_GET['setting_display_top_bar_link_bulkedit'] == 1) {
+			$settings['setting_display_top_bar_link_bulkedit'] = 1;
 			update_option('w3exabe_settings',$settings);
 		}
 
@@ -529,7 +534,7 @@ class W3ExAdvBulkEditView{
 			{
 				$this->iswpml = true;
 			}
-			
+
 		}
 		$this->loadAttributes($skiploadfrontpage);
 		$sel_fields = get_option('w3exabe_columns');
@@ -538,14 +543,14 @@ class W3ExAdvBulkEditView{
 			$sel_fields = W3ExABulkEdit_Integ_ShowHideFieldsPerUser::getColumnsPerUserOption('w3exabe_columns');
         }
 		$purl = plugin_dir_url(__FILE__);
-		
+
 //		for($i = 3200; $i < 22000; $i++)
 //		{
 //			$my_post = array(
 //			  'post_title'    => 'post ua '.$i,
 //			  'post_status'   => 'publish'
 //			);
-//			 
+//
 //			// Insert the post into the database
 //			wp_insert_post( $my_post );
 //		}
@@ -581,9 +586,9 @@ class W3ExAdvBulkEditView{
 			{
 				echo PHP_EOL;
 				echo 'W3Ex._iswpmlenabled = 1;';
-				
+
 			}
-			
+
 		}
 		echo PHP_EOL;
 		if($this->isversion3 )
@@ -596,7 +601,7 @@ class W3ExAdvBulkEditView{
 			$version = (double)$woocommerce->version;
 			if($version > 2.6)
 			{
-				
+
 				echo 'W3Ex._wooversion = '.$version.';';
 				echo PHP_EOL;
 			}
@@ -647,14 +652,7 @@ class W3ExAdvBulkEditView{
 			echo 'W3Ex.attr_cols["'.$attrname.'"] = {id:'.$attr->id.',attr:"'.$attrlabel.'",value:"'.$attrname.'"};';
 			echo PHP_EOL;
 		}
-		$blogusers = get_users( array( 'role' => 'vendor', 'fields' => array( 'ID', 'display_name' ) ));
-		$blogusers1 = get_users( array( 'role' => 'administrator', 'fields' => array( 'ID', 'display_name' ) ));
-		$blogusers = array_merge($blogusers,$blogusers1);
-		$blogusers1 = get_users( array( 'role' => 'shop_manager', 'fields' => array( 'ID', 'display_name' ) ));
-		$blogusers = array_merge($blogusers,$blogusers1);
-		$blogusers1 = get_users( array( 'role' => 'seller', 'fields' => array( 'ID', 'display_name' ) ));
-		$blogusers = array_merge($blogusers,$blogusers1);
-
+		$blogusers = get_users( array( 'role__in' => array('administrator', 'shop_manager', 'seller', 'vendor'), 'fields' => array( 'ID', 'display_name' ) ) );
 		$settings = get_option('w3exabe_settings');
 		if(!is_array($settings))
 			$settings = array();
@@ -675,7 +673,7 @@ class W3ExAdvBulkEditView{
 			echo 'W3Ex.customfieldssel = '. json_encode($sel_fields). ';';
 		    echo PHP_EOL;
 		}
-		
+
 		$sel_fields = get_option('w3exabe_custom');
 		if(is_array($sel_fields) && !empty($sel_fields))
 		{
@@ -695,53 +693,59 @@ class W3ExAdvBulkEditView{
 		if (wcabe_load_integration(WCABE_187_INTEG_LIMIT_SHOP_MANAGER_VIEW)) {
 			W3ExABulkEdit_Integ_LimitShopManagerView::add_js_integ_enable();
 		}
-		
+
 //			$settings = get_option('w3exabe_settings');
 //			if(is_array($settings))
 			{
 				if(isset($settings['tableheight']) && is_numeric($settings['tableheight']))
-				{	
+				{
 					echo 'W3Ex._w3esetting_table_height = "'.$settings['tableheight'].'";'; echo PHP_EOL;
 				}
+				else {
+					$default_table_height = "650";
+					echo 'W3Ex._w3esetting_table_height = "'.$default_table_height.'";'; echo PHP_EOL;
+					$settings['tableheight'] = "650";
+					update_option('w3exabe_settings',$settings);
+				}
 //				if(isset($settings['searchfiltersheight']) && is_numeric($settings['searchfiltersheight']))
-//				{	
+//				{
 //					echo 'W3Ex._w3esetting_filter_height = "'.$settings['searchfiltersheight'].'";'; echo PHP_EOL;
 //				}
 				if(isset($settings['disablesafety']) && is_numeric($settings['disablesafety']))
-				{	
+				{
 					if($settings['disablesafety'] == 1)
 					 echo 'W3Ex._w3esetting_disablesafety = true;'; echo PHP_EOL;
 				}
 				if(isset($settings['showthumbnails']))
-				{	
+				{
 					if($settings['showthumbnails'] == 1)
 					 	echo 'W3Ex._global_settings["showthumbnails"] = true;'; echo PHP_EOL;
 				}
 				if(isset($settings['openimage']))
-				{	
+				{
 					if($settings['openimage'] == 1)
 					 	echo 'W3Ex._global_settings["openimage"] = true;'; echo PHP_EOL;
 				}
 				if(isset($settings['usebuiltineditor']))
-				{	
+				{
 					if($settings['usebuiltineditor'] == 1)
 					 	echo 'W3Ex._global_settings["usebuiltineditor"] = true;'; echo PHP_EOL;
 				}
 				if(isset($settings['filterstate']))
-				{	
+				{
 					if($settings['filterstate'] == 1)
 					 	echo 'W3Ex._global_settings["filterstate"] = true;'; echo PHP_EOL;
 				}
 				if(isset($settings['savebatch']) && is_numeric($settings['savebatch']))
-				{	
+				{
 					echo 'W3Ex._global_settings["savebatch"] = "'.$settings['savebatch'].'";'; echo PHP_EOL;
 				}
 				if(isset($settings['treattagsastext']) && $settings['treattagsastext'] == 1)
-				{	
+				{
 					echo 'W3Ex._global_settings["treattagsastext"] = "1";'; echo PHP_EOL;
 				}
 			}
-			if ( is_plugin_active( 'woocommerce-cost-of-goods/woocommerce-cost-of-goods.php' ) ) 
+			if ( is_plugin_active( 'woocommerce-cost-of-goods/woocommerce-cost-of-goods.php' ) )
 			{
 			    $settings['iswoocostog'] = 1;
 			    update_option('w3exabe_settings',$settings);
@@ -752,7 +756,7 @@ class W3ExAdvBulkEditView{
 					unset($settings['iswoocostog']);
 			   		update_option('w3exabe_settings',$settings);
 				}
-			} 
+			}
 			$arrTranslated = array();
 			$this->loadTranslations($arrTranslated);
 			echo 'W3Ex._translate_strings["trans_bulk_edit_selected"] = "'.self::relpaceInvalid($arrTranslated['trans_bulk_edit_selected']).'";'; echo PHP_EOL;
@@ -842,9 +846,9 @@ class W3ExAdvBulkEditView{
 						    }
 						});
 				   }
-                  
+
          </script>
-         
+
 		<div class="wrap w3exabe">
 		<!--<div id="w3exibaparent">-->
 		<a id="backlink" href="#">&lt; Back</a>
@@ -858,13 +862,31 @@ class W3ExAdvBulkEditView{
 			</div>
 			<span class="icon"></span>
 		</div>
-		<h2><?php _e( 'WooCommerce Advanced Bulk Edit', 'woocommerce-advbulkedit');?><span class="version">(v<?php echo WCABE_VERSION; ?>)</span></h2>
-		<a href="https://wpmelon.com/r/wcabe-getting-started" target="_blank">Getting Started tutorial</a>
-			&nbsp;&nbsp;&nbsp;
-		<a href="https://wpmelon.com/r/whats-new" target="_blank">What's New</a>
-			&nbsp;&nbsp;
-		<a href="https://wpmelon.com/r/support" target="_blank">Get Support</a>
-		<br>
+		<h2>
+			<?php _e( 'WooCommerce Advanced Bulk Edit', 'woocommerce-advbulkedit');?>
+			<span class="version">(v<?php echo WCABE_VERSION; ?>)</span>
+			<span class="top-help-links">
+				<a href="https://wpmelon.com/r/wcabe-getting-started" target="_blank">Getting Started tutorial</a>
+					&nbsp;&nbsp;&nbsp;
+				<a href="https://wpmelon.com/r/whats-new" target="_blank">What's New</a>
+					&nbsp;&nbsp;
+				<a href="https://wpmelon.com/r/support" target="_blank">Get Support</a>
+					&nbsp;&nbsp;
+				<a href="<?php echo WCABE_SITE_URL.'/wcabe-check-for-update/?version='.WCABE_VERSION; ?>"
+					id="btnCheckForUpdate"
+					target="_blank">Check for Updates</a>
+			</span>
+		</h2>
+		<div id="contentCheckForUpdateWrapper" class="content-check-for-update-wrapper" style="display: none;">
+			<span id='btnCheckForUpdateClose' class="close"></span>
+			<div id="contentCheckForUpdate">
+				<p>
+					<?php _e( 'Checking for update ', 'woocommerce-advbulkedit');?>
+					<img class="loading" src="<?php echo $purl;?>images/loading-pulse-1s-200px.png" alt="...loading...">
+				</p>
+				<p>You can also check <a target="_blank" href="<?php echo WCABE_SITE_URL.'/wcabe-check-for-update/?version='.WCABE_VERSION; ?>">directly on our website</a>.</p>
+			</div>
+		</div>
 		<?php
 		if (wcabe_load_integration(WCABE_179_INTEG_SITE_WIDE_OPS)) {
 			W3ExABulkEdit_Integ_SiteWideOps::site_wide_ops_the_link();
@@ -878,12 +900,15 @@ class W3ExAdvBulkEditView{
  <!-- end -->
 			<div id="frontpageinfoholder" style="position:relative;"></div>
 			<!--<input id="showhidecustom" class="button" type="button" value="<?php _e("Save Changes","woocommerce-advbulkedit"); ?>" />-->
-			<div class="notice notice-warning is-dismissible js_issue_notice">
-				<p>If no button is working, please <a href="edit.php?post_type=product&page=advanced_bulk_edit&setting_disable_hints=1">click here</a> to try to auto-fix the issue.</p>
+			<div class="notice notice-error is-dismissible js_issue_notice">
+				<p>
+					If you see this notice, this means there is a JavaScript error which prevents the plugin from loading normally.
+					In most of the cases it's caused by another conflicting plugin.</p>
+				<p>Please, <a href="<?php echo WCABE_SUPPORT_URL; ?>" target="_blank">contact our support</a> to help you solve the issue.</p>
 			</div>
 			<br />
 			<!--<div id="searchfilterswrapper" style="max-height:350px; overflow: auto;border: 1px solid #808080;border-radius: 7px;padding:7px;">-->
-			
+
 			<button id="collapsefilters" class="button-wcabe" data-state="collapse"><?php _e( 'Collapse Filters -', 'woocommerce-advbulkedit');?></button>
 			<input id="searchfilters" type="text" style="width:150px;" placeholder="<?php _e('search filters', 'woocommerce-advbulkedit');?>"></input>
             <button class="btn-info" id="btn-info-filters-section"></button>
@@ -975,7 +1000,7 @@ class W3ExAdvBulkEditView{
 											}
 										}
 									}
-									
+
 								}
 								if(!isset($depth[$cat->term_id]))
 								{
@@ -985,13 +1010,13 @@ class W3ExAdvBulkEditView{
 							}
 						}
 					}
-					
+
 				}
-			
+
 				if (file_exists( __DIR__.'/integrations/category-filter-display-parent-categories.php')) {
 					require_once('integrations/category-filter-display-parent-categories.php');
 				}
-				
+
 				if(count($newcats) == count($cats))
 				{
 					foreach($newcats as $catin)
@@ -1008,7 +1033,7 @@ class W3ExAdvBulkEditView{
 //									$depthstring = $depthstring.'&#09; ';
 									$depthn--;
 								}
-								
+
 							}
 						}
 						//echo '<option value="'.$catin->category_id.'" >'.$depthstring.$catin->category_name.'</option>';
@@ -1018,7 +1043,7 @@ class W3ExAdvBulkEditView{
 						} else {
 							echo '<option value="'.$catin->category_id.'" >'.$depthstring.$catin->category_name.'</option>';
 						}
-						
+
 					}
 				}else
 				{
@@ -1031,12 +1056,12 @@ class W3ExAdvBulkEditView{
 						} else {
 							echo '<option value="'.$catin->category_id.'" >'.$catin->category_name.'</option>';
 						}
-						
+
 					}
 				}
 				//echo '<option value="none" >Uncategorized</option>';
-				
-		
+
+
 			?>
 			</select>&nbsp;<label><input type="checkbox" id="categoryor" style="width:auto;"><?php _e('AND', 'woocommerce-advbulkedit');?></input></label>
 			</td></tr>
@@ -1067,7 +1092,7 @@ class W3ExAdvBulkEditView{
 							echo '<td>';
 						}
 						echo $attr->label.': </td><td><select class="makechosen custattributes" data-placeholder="'.$arrTranslated['trans_data_placeholder'].'" multiple style="width:250px;" data-attrslug="attribute_pa_'.$attr->name.'"> <option value=""></option>';
-						
+
 						foreach($attr->values as $value)
 						{
 							echo '<option value="'.$value->id.'">'.$value->name.'</option>';
@@ -1082,7 +1107,7 @@ class W3ExAdvBulkEditView{
 							$endrow = true;
 							echo '</td></tr>';
 						}
-						$counter++;					
+						$counter++;
 				    }
 					if(!$endrow)
 					{
@@ -1205,7 +1230,7 @@ class W3ExAdvBulkEditView{
 									};
 								}
 							}
-							
+
 							/*foreach($attr->values as $value)
 							{
 								echo '<option value="'.$value->id.'">'.$value->name.'</option>';
@@ -1317,7 +1342,7 @@ class W3ExAdvBulkEditView{
 				<?php _e("Get Products","woocommerce-advbulkedit"); ?>
 			 </button>
 			 &nbsp;&nbsp;
-			  <label><input id="getvariations" type="checkbox" <?php 
+			  <label><input id="getvariations" type="checkbox" <?php
 				if(is_array($settings))
 				{
 					if(isset($settings['isvariations']))
@@ -1354,7 +1379,7 @@ class W3ExAdvBulkEditView{
 				 </div>
 			</div>
 			<br />
-			
+
 			<?php
 				if (file_exists( __DIR__.'/integrations/button-open-print-barcode-tabs.php')) {
 					require_once('integrations/button-open-print-barcode-tabs.php');
@@ -1362,9 +1387,9 @@ class W3ExAdvBulkEditView{
 					echo "<br/><br/>";
 				}
 			?>
-			
-   
-			
+
+
+
 			<?php
 				if (file_exists( __DIR__.'/integrations/copy-paste-variation-prices.php')) {
 					require_once('integrations/copy-paste-variation-prices.php');
@@ -1373,9 +1398,9 @@ class W3ExAdvBulkEditView{
 					echo "<br/><br/>";
 				}
 			?>
-			
-   
-			
+
+
+
 			<?php
 				if (file_exists( __DIR__.'/integrations/copy-images-from-simple-to-variations.php')) {
 					require_once('integrations/copy-images-from-simple-to-variations.php');
@@ -1383,8 +1408,8 @@ class W3ExAdvBulkEditView{
 					echo "<br/><br/>";
 				}
 			?>
-			
-   
+
+
 			<div style="position: relative;">
 				<label><input id="linkededit" type="checkbox"/>
 					<?php _e( 'Bulk editing mode', 'woocommerce-advbulkedit'); ?>
@@ -1421,11 +1446,11 @@ class W3ExAdvBulkEditView{
 				<input id="selectedit" class="button-wcabe" type="button" value="<?php _e( "Selection Manager", "woocommerce-advbulkedit"); ?>" />
 				<button id="bulkedit" class="button-wcabe" type="button">
 				<span class="icon-edit"></span>
-				<?php echo _e( "Bulk Edit", "woocommerce-advbulkedit");?>
+				<?php echo _e( "Advanced Bulk Edit", "woocommerce-advbulkedit");?>
 				</button>
 				<button id="splitvariations" class="button-wcabe" type="button">
 					<span class="icon-split"></span>
-					<?php echo _e( "Split Variations...(BETA)", "woocommerce-advbulkedit");?>
+					<?php echo _e( "Split Variations", "woocommerce-advbulkedit");?>
 				</button>
 				<div id="quicksettingsarea">
 					<input id="quicksettingsbut" class="button-wcabe" type="button" value="<?php _e( "Quick Settings", "woocommerce-advbulkedit"); ?>" />
@@ -1436,34 +1461,34 @@ class W3ExAdvBulkEditView{
 					<template id="btn-info-show-hide-fields-body">
 						<?php _e('To show more fields in the grid or hide the unused fields, please use the button "Show/Hide Fields"', "woocommerce-advbulkedit"); ?>
 						<br><br>
-						<?php _e('If the fields you want to add are not from WooCommerce but from 3rd party plugin, you can try adding them using the button "Find Custom Fields"', "woocommerce-advbulkedit"); ?>
+						<?php _e('If the fields you want to add are not from WooCommerce but from 3rd party plugin, you can try adding them using the button "Find Custom/Meta Fields"', "woocommerce-advbulkedit"); ?>
 					</template>
 				</div>
 			</div>
 			<div id="gridholder">
 				<!--<div style="width:100%;">-->
-				    <div id="myGrid" style="width:100%;height:80vh;"></div>
+				    <div id="myGrid" style="width:100%;height:50vh;"></div>
 				<!--</div>-->
 			</div>
 			<div id="pagingholder" style="position:relative;">
-			<input id="gotopage" class="button" type="button" value="<?php _e( "First", "woocommerce-advbulkedit"); ?>" /><input id="butprevious" class="button" type="button" value="<?php _e( "Previous", "woocommerce-advbulkedit"); ?>" /> <?php _e( "Page", "woocommerce-advbulkedit"); ?>:<input id="gotopagenumber" type="text" value="1" style="width:15px;" readonly/> 	<input id="butnext" class="button" type="button" value="<?php _e( "Next", "woocommerce-advbulkedit"); ?>" /> <?php _e( "Total records", "woocommerce-advbulkedit"); ?>: <div id="totalrecords" style="display:inline-block;padding:0px 6px;"></div><div id="totalpages" style="display:inline-block;"></div><div id="viewingwhich" style="display:inline-block;padding:0px 6px;"></div></div> <br /><br />
-			<div id="revertinfo"><?php _e( "Revert to original value", "woocommerce-advbulkedit"); ?></div> 
+			<input id="gotopage" class="button-wcabe" type="button" value="<?php _e( "First", "woocommerce-advbulkedit"); ?>" /><input id="butprevious" class="button-wcabe" type="button" value="<?php _e( "Previous", "woocommerce-advbulkedit"); ?>" /> <?php _e( "Page", "woocommerce-advbulkedit"); ?>:<input id="gotopagenumber" type="text" value="1" style="width:15px;" readonly/> 	<input id="butnext" class="button-wcabe" type="button" value="<?php _e( "Next", "woocommerce-advbulkedit"); ?>" /> <?php _e( "Total records", "woocommerce-advbulkedit"); ?>: <div id="totalrecords" style="display:inline-block;padding:0px 6px;"></div><div id="totalpages" style="display:inline-block;"></div><div id="viewingwhich" style="display:inline-block;padding:0px 6px;"></div></div> <br /><br />
+			<div id="revertinfo"><?php _e( "Revert to original value", "woocommerce-advbulkedit"); ?></div>
 			<!--<input id="revertcell" class="button" type="button" value="<?php _e( "Active Cell", "woocommerce-advbulkedit"); ?>" />
 			<input id="revertrow" class="button" type="button" value="<?php _e( "Active Row", "woocommerce-advbulkedit"); ?>" />-->
 			<input id="revertselected" class="button-wcabe" type="button" value="<?php _e( "Selected Rows", "woocommerce-advbulkedit"); ?>" />
 			<input id="revertall" class="button-wcabe" type="button" value="<?php _e( "All Rows", "woocommerce-advbulkedit"); ?>" />
 			<br /><br /><br />
-			
-			
+
+
 			<input id="viewdialogbut" class="button-wcabe" type="button" value="<?php _e( "Load/Save View", "woocommerce-advbulkedit"); ?>" />
 			<input id="customfieldsbut" class="button-wcabe" type="button" value="<?php _e( "Custom Fields", "woocommerce-advbulkedit"); ?>" />
-			<input id="findcustomfieldsbut" class="button-wcabe" type="button" value="<?php _e( "Find Custom Fields", "woocommerce-advbulkedit"); ?>" />
+			<input id="findcustomfieldsbut" class="button-wcabe" type="button" value="<?php _e( "Find Custom/Meta Fields", "woocommerce-advbulkedit"); ?>" />
 			<button id="pluginsettingsbut" class="button-wcabe" type="button">
 			   <span class="icon-cog-outline"></span>
 				<?php _e( "Plugin Settings", "woocommerce-advbulkedit"); ?>
 			 </button>
 			<input id="exportproducts" class="button-wcabe" type="button" value="<?php _e( "Export to CSV", "woocommerce-advbulkedit"); ?>" />
-			
+
 			<div class="fileUpload">
     <input id="exportproducts1" class="button-wcabe" type="button" value="<?php _e( "Update via CSV", "woocommerce-advbulkedit"); ?>"
     <?php
@@ -1488,43 +1513,32 @@ class W3ExAdvBulkEditView{
 			<div id="exportinfo"></div>
 			<br/><br/><br/>
 			<div id="exportdialog">
-			<div>
-				<table id="tablecsvexport" cellpadding="10" cellspacing="0">
-					<tr>
-						<td>
-							<input id="exportall" type="radio" value="0" name="exportwhat" checked="checked">
-							<label for="exportall"><?php _e( 'All products in table', 'woocommerce-advbulkedit'); ?></label>
-							<br/><br/>
-							<input id="exportsel" type="radio" value="1" name="exportwhat">
-							<label for="exportsel"><?php _e( 'Selected products only', 'woocommerce-advbulkedit'); ?></label>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<input id="allfields" type="radio" value="0" name="exportwhichfields" checked="checked">
-							<label for="allfields"><?php _e( 'All fields', 'woocommerce-advbulkedit'); ?></label>
-							<br/><br/>
-							<input id="shownfields" type="radio" value="1" name="exportwhichfields">
-							<label for="shownfields"><?php _e( 'Visible fields only', 'woocommerce-advbulkedit'); ?></label>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<?php _e( 'Delimiter', 'woocommerce-advbulkedit'); ?>: 
-							<select id="exportdelimiter">
-								<option value=",">,</option>
-								<option value=";">;</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td style="border-bottom:none; ">
-							<label><?php _e( 'Use real meta values', 'woocommerce-advbulkedit'); ?>: 
-							<input id="userealmeta" type="checkbox"></input></label>
-						</td>
-					</tr>
-				</table>
-			</div>
+
+				<div class="oneline-radio-container">
+					<input id="exportall" type="radio" value="0" name="exportwhat" checked="checked"><label for="exportall"> <?php _e( 'All products in table', 'woocommerce-advbulkedit'); ?></label>
+					&nbsp;&nbsp;&nbsp;
+					<input id="exportsel" type="radio" value="1" name="exportwhat"><label for="exportsel"> <?php _e( 'Selected products only', 'woocommerce-advbulkedit'); ?></label>
+				</div>
+				<hr>
+				<div class="oneline-radio-container">
+					<input id="allfields" type="radio" value="0" name="exportwhichfields" checked="checked"><label for="allfields"> <?php _e( 'All fields', 'woocommerce-advbulkedit'); ?></label>
+					&nbsp;&nbsp;&nbsp;
+					<input id="shownfields" type="radio" value="1" name="exportwhichfields"><label for="shownfields"> <?php _e( 'Visible fields only', 'woocommerce-advbulkedit'); ?></label>
+				</div>
+				<hr>
+				<div>
+					<?php _e( 'Delimiter', 'woocommerce-advbulkedit'); ?>:
+					<select id="exportdelimiter">
+						<option value=",">,</option>
+						<option value=";">;</option>
+					</select>
+				</div>
+				<hr>
+				<div>
+					<input id="userealmeta" type="checkbox">
+					<label for="userealmeta"><?php _e( 'Use real meta values', 'woocommerce-advbulkedit'); ?></label>
+				</div>
+
 			</div>
 			<div id="confirmdialog">
 				<div>
@@ -1549,27 +1563,27 @@ class W3ExAdvBulkEditView{
 						}
 					?>
 					</ul>
-					
+
 					<div id="pluginsettingstab-1">
-				
+
 				<table cellpadding="10" cellspacing="0" style="margin: 0 auto;">
 					<tr>
 						<td>
 							<?php _e( 'Limit on product retrieval', 'woocommerce-advbulkedit'); ?>
 						</td>
 						<td>
-							<input id="productlimit" type="text" style="width:50px;" 
+							<input id="productlimit" type="text" style="width:50px;"
 							<?php
 								$settings = get_option('w3exabe_settings');
 								if(!is_array($settings)) $settings = array();
 								if(isset($settings['settlimit']))
-								{		
+								{
 									echo 'value="'.$settings['settlimit'].'"';
 								}else
 								{
 									echo ' value="1000"';
 								}
-								
+
 							?>
 							>
 						</td>
@@ -1588,7 +1602,7 @@ class W3ExAdvBulkEditView{
 									$settings['savebatch'] = 50;
 								}
 								if(isset($settings['savebatch']) && is_numeric($settings['savebatch']))
-								{		
+								{
 									echo 'value="'.$settings['savebatch'].'"';
 								}else
 								{
@@ -1602,7 +1616,7 @@ class W3ExAdvBulkEditView{
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="gettotalnumber" type="checkbox" autocomplete="off"
-							<?php 
+							<?php
 //						  	$settings = get_option('w3exabe_settings');
 							if(isset($settings['settgetall']))
 							{
@@ -1620,7 +1634,7 @@ class W3ExAdvBulkEditView{
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="deleteimages" type="checkbox"
-							<?php 
+							<?php
 //						  	$settings = get_option('w3exabe_settings');
 							if(isset($settings['deleteimages']))
 							{
@@ -1638,7 +1652,7 @@ class W3ExAdvBulkEditView{
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="deleteinternal" type="checkbox"
-							<?php 
+							<?php
 //						  	$settings = get_option('w3exabe_settings');
 							if(isset($settings['deleteinternal']))
 							{
@@ -1656,7 +1670,7 @@ class W3ExAdvBulkEditView{
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="retrievevariations" type="checkbox"
-							<?php 
+							<?php
 //						  	$settings = get_option('w3exabe_settings');
 							if(isset($settings['settgetvars']))
 							{
@@ -1674,7 +1688,7 @@ class W3ExAdvBulkEditView{
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="includechildren" type="checkbox"
-							<?php 
+							<?php
 //						  	$settings = get_option('w3exabe_settings');
 							if(isset($settings['incchildren']))
 							{
@@ -1687,13 +1701,13 @@ class W3ExAdvBulkEditView{
 							><?php _e( 'Get all children of selected category on search', 'woocommerce-advbulkedit'); ?></label>
 						</td>
 						<td  style="padding-top: 20px;">
-							
+
 						</td>
 					</tr>
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="bgetallvarstaxonomies" type="checkbox"
-							<?php 
+							<?php
 //						  	$settings = get_option('w3exabe_settings');
 							if(isset($settings['bgetallvarstaxonomies']))
 							{
@@ -1706,13 +1720,13 @@ class W3ExAdvBulkEditView{
 							><?php _e( 'Retrieve all variations on custom taxonomy search', 'woocommerce-advbulkedit'); ?></label>
 						</td>
 						<td  style="padding-top: 20px;">
-							
+
 						</td>
 					</tr>
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="disattributes" type="checkbox"
-							<?php 
+							<?php
 							if(isset($settings['disattributes']))
 							{
 								if($settings['disattributes'] == 1)
@@ -1724,33 +1738,26 @@ class W3ExAdvBulkEditView{
 							><?php _e( 'Disable attribute support', 'woocommerce-advbulkedit'); ?></label>
 						</td>
 						<td  style="padding-top: 20px;">
-							
+
 						</td>
 					</tr>
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="useapicalls" type="checkbox"
-							<?php 
-							$echotext = "checked=checked";
-							if(isset($settings['useapicalls']))
-							{
-								if($settings['useapicalls'] == 0)
-								{
-									$echotext = "";
-								}
-							}
-							echo $echotext;	 ?>
-						
+							<?php
+							echo (isset($settings['useapicalls']) && $settings['useapicalls'] == 0) ? "" : "checked=checked";
+							?>
+
 							><?php _e( 'Use API calls when possible', 'woocommerce-advbulkedit'); ?></label>
 						</td>
 						<td  style="padding-top: 20px;">
-							
+
 						</td>
 					</tr>
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="treattagsastext" type="checkbox"
-							<?php 
+							<?php
 							if(isset($settings['treattagsastext']))
 							{
 								if($settings['treattagsastext'] == 1)
@@ -1758,17 +1765,17 @@ class W3ExAdvBulkEditView{
 									echo 'checked=checked';
 								}
 							}
-							?>				 
+							?>
 							><?php _e( 'Treat tags as text taxonomy', 'woocommerce-advbulkedit'); ?></label>
 						</td>
 						<td  style="padding-top: 20px;">
-							
+
 						</td>
 					</tr>
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="dontcheckusedfor" type="checkbox"
-							<?php 
+							<?php
 							$echotext = "checked=checked";
 							if(isset($settings['dontcheckusedfor']))
 							{
@@ -1781,23 +1788,14 @@ class W3ExAdvBulkEditView{
 							><?php _e( 'Do not check "Used for variations" automatically', 'woocommerce-advbulkedit'); ?></label>
 						</td>
 						<td  style="padding-top: 20px;">
-							
+
 						</td>
 					</tr>
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="calldoaction" type="checkbox"
-							<?php 
-							$echotext = "";
-							if(isset($settings['calldoaction']))
-							{
-								if($settings['calldoaction'] == 1)
-								{
-									
-									$echotext = "checked=checked";
-								}
-							}
-							echo $echotext;	 ?>
+							<?php
+							echo (isset($settings['calldoaction']) && $settings['calldoaction'] == 0 ) ? "" : "checked=checked"; ?>
 							><?php _e( 'Call woocommerce action on save', 'woocommerce-advbulkedit'); ?></label>
 						</td>
 						<td  style="padding-top: 20px;">
@@ -1807,7 +1805,7 @@ class W3ExAdvBulkEditView{
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="calldosavepost" type="checkbox"
-							<?php 
+							<?php
 							$echotext = "";
 							if(isset($settings['calldosavepost']))
 							{
@@ -1820,13 +1818,13 @@ class W3ExAdvBulkEditView{
 							><?php _e( 'Call save_post action', 'woocommerce-advbulkedit'); ?></label>
 						</td>
 						<td  style="padding-top: 20px;">
-							
+
 						</td>
 					</tr>
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="confirmsave" type="checkbox"
-							<?php 
+							<?php
 							if(isset($settings['confirmsave']))
 							{
 								if($settings['confirmsave'] == 1)
@@ -1843,7 +1841,7 @@ class W3ExAdvBulkEditView{
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="disablesafety" type="checkbox"
-							<?php 
+							<?php
 							if(isset($settings['disablesafety']))
 							{
 								if($settings['disablesafety'] == 1)
@@ -1868,7 +1866,7 @@ class W3ExAdvBulkEditView{
 								$medium = "";
 								$big = "";
 								if(isset($settings['rowheight']) && is_numeric($settings['rowheight']))
-								{		
+								{
 									if($settings['rowheight'] == "3")
 									{
 										$big = 'selected';
@@ -1892,12 +1890,12 @@ class W3ExAdvBulkEditView{
 							<?php _e( 'Set manual search filters height', 'woocommerce-advbulkedit'); ?>
 						</td>
 						<td width="50%"  style="padding-top: 25px;">
-							<input id="searchfiltersheight" type="text" style="width:50px;" 
+							<input id="searchfiltersheight" type="text" style="width:50px;"
 							<?php
 								$settings = get_option('w3exabe_settings');
 								if(!is_array($settings)) $settings = array();
 								if(isset($settings['searchfiltersheight']) && is_numeric($settings['searchfiltersheight']))
-								{		
+								{
 									echo 'value="'.$settings['searchfiltersheight'].'"';
 								}else
 								{
@@ -1913,12 +1911,12 @@ class W3ExAdvBulkEditView{
 							<?php _e( 'Set manual table height', 'woocommerce-advbulkedit'); ?>
 						</td>
 						<td width="50%"  style="padding-top: 25px;">
-							<input id="tableheight" type="text" style="width:50px;" 
+							<input id="tableheight" type="text" style="width:50px;"
 							<?php
 								$settings = get_option('w3exabe_settings');
 								if(!is_array($settings)) $settings = array();
 								if(isset($settings['tableheight']) && is_numeric($settings['tableheight']))
-								{		
+								{
 									echo 'value="'.$settings['tableheight'].'"';
 								}else
 								{
@@ -1966,7 +1964,12 @@ class W3ExAdvBulkEditView{
 						</td>
 					</tr>
 
-					<?php if (!defined('WCABE_CANT_ACCESS_ADMIN_PLUGIN_SETTINGS')) { ?>
+					<?php
+						if (
+								!defined('WCABE_CANT_ACCESS_ADMIN_PLUGIN_SETTINGS') ||
+								(defined('WP_ALLOW_MULTISITE') && WP_ALLOW_MULTISITE)
+						) {
+					?>
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
 							<label><input id="setting-enable-admin-only-visible" type="checkbox"
@@ -1989,8 +1992,28 @@ class W3ExAdvBulkEditView{
 
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
+							<label><input id="setting-display-topbar-bulkedit-link" type="checkbox"
+									<?php
+									if(isset($settings['setting_display_top_bar_link_bulkedit']))
+									{
+										if($settings['setting_display_top_bar_link_bulkedit'] == 1)
+										{
+											echo 'checked=checked';
+										}
+									}
+									?>
+								><?php _e( 'Hide topbar link "Bulk Edit Products" (needs page reload)', 'woocommerce-advbulkedit'); ?></label>
+						</td>
+						<td  style="padding-top: 20px;">
+
+						</td>
+					</tr>
+
+
+                    <tr>
+						<td width="50%" style="padding-top: 20px;">
 							<label><input id="debugmode" type="checkbox"
-							<?php 
+							<?php
 							if(isset($settings['debugmode']))
 							{
 								if($settings['debugmode'] == 1)
@@ -2047,7 +2070,7 @@ class W3ExAdvBulkEditView{
 				</div>
 				</div>
 			</div>
-			<?php 
+			<?php
 				$setnew = __( 'set new', 'woocommerce-advbulkedit');
 				$prepend = __( 'prepend', 'woocommerce-advbulkedit');
 				$append = __( 'append', 'woocommerce-advbulkedit');
@@ -2068,7 +2091,7 @@ class W3ExAdvBulkEditView{
 				echo 'W3Ex.trans_append = "'.$append.'";'; echo PHP_EOL;
 				echo 'W3Ex.trans_replacetext = "'.$replacetext.'";'; echo PHP_EOL;
 				echo 'W3Ex.trans_ignorecase = "'.$ignorecase.'";'; echo PHP_EOL;
-				echo 'W3Ex.trans_withtext = "'.$withtext.'";'; echo PHP_EOL;						echo 'W3Ex.trans_delete = "'.$delete.'";'; echo PHP_EOL;	
+				echo 'W3Ex.trans_withtext = "'.$withtext.'";'; echo PHP_EOL;						echo 'W3Ex.trans_delete = "'.$delete.'";'; echo PHP_EOL;
 				echo 'W3Ex.trans_incbyvalue = "'.__( "increase by value", "woocommerce-advbulkedit").'";'; echo PHP_EOL;
 				echo 'W3Ex.trans_decbyvalue = "'.__( "decrease by value", "woocommerce-advbulkedit").'";'; echo PHP_EOL;
 				echo 'W3Ex.trans_incbyper = "'.__( "increase by %", "woocommerce-advbulkedit").'";'; echo PHP_EOL;
@@ -2342,7 +2365,7 @@ class W3ExAdvBulkEditView{
 
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="product_tag">
@@ -2356,11 +2379,11 @@ class W3ExAdvBulkEditView{
 							<option value="remove"><?php _e( "remove", "woocommerce-advbulkedit"); ?></option>
 						</select><button class="butnewattribute button-wcabe button-be-wcabe" type="button"><span class="icon-plus-outline"></span>new</button>
 						<div class="divnewattribute">
-		   <input class="inputnewattributename" type="text" placeholder="name" data-slug="product_tag"></input><br/> 
-		   <input class="inputnewattributeslug" type="text" placeholder="slug (optional)"></input><br/> 
+		   <input class="inputnewattributename" type="text" placeholder="name" data-slug="product_tag"></input><br/>
+		   <input class="inputnewattributeslug" type="text" placeholder="slug (optional)"></input><br/>
 		<!--   <select class="selectnewcategory" data-placeholder="select parent(optional)" multiple></select><br/>-->
-		   <button class="butnewattributesave butbulkdialog newcat" style="position:relative;">Ok</button><button class="butnewattributecancel newcat">Cancel</button></div> 
-		   <div class="divnewattributeerror"></div> 
+		   <button class="butnewattributesave butbulkdialog newcat" style="position:relative;">Ok</button><button class="butnewattributecancel newcat">Cancel</button></div>
+		   <div class="divnewattributeerror"></div>
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulkproduct_tag" class="makechosen catselset" style="width:250px;" data-placeholder="select tags" multiple >
@@ -2403,10 +2426,10 @@ class W3ExAdvBulkEditView{
 							}
 						?>
 						</select>
-						
+
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 			<!--	<tr data-id="product_tag">
@@ -2519,7 +2542,7 @@ class W3ExAdvBulkEditView{
 						<input id="set_tax_status" type="checkbox" class="bulkset" data-id="_tax_status"><label for="set_tax_status"><?php echo $arrTranslated['_tax_status']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_tax_status">
@@ -2529,7 +2552,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_tax_class">
@@ -2537,7 +2560,7 @@ class W3ExAdvBulkEditView{
 						<input id="set_tax_class" type="checkbox" class="bulkset" data-id="_tax_class"><label for="set_tax_class"><?php echo $arrTranslated['_tax_class']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_tax_class">
@@ -2547,7 +2570,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_weight">
@@ -2700,7 +2723,7 @@ class W3ExAdvBulkEditView{
 						<input id="bulk_stockvalue" type="text" data-id="_stock" class="bulkvalue" placeholder="Skipped (empty)"/>
 					</td>
 					<td>
-						
+
 					</td>
 					<!--
 					<td>
@@ -2731,14 +2754,14 @@ class W3ExAdvBulkEditView{
 							<option value="rounddown100"><?php _e( "round-down (100)", "woocommerce-advbulkedit"); ?></option>
 						 </select>
 					</td>-->
-					
+
 				</tr>
 				<tr data-id="_stock_status">
 					<td>
 						<input id="set_stock_status" type="checkbox" class="bulkset" data-id="_stock_status"><label for="set_stock_status"><?php echo $arrTranslated['_stock_status']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_stock_status">
@@ -2747,7 +2770,7 @@ class W3ExAdvBulkEditView{
 							<?php
 							if(isset($woocommerce) && property_exists($woocommerce,'version'))
 							{
-								$version = (double)$woocommerce->version; 
+								$version = (double)$woocommerce->version;
 								if($version >= 3.3)
 								{
 									echo '<option value="onbackorder">On backorder</option>';
@@ -2757,7 +2780,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_manage_stock">
@@ -2765,7 +2788,7 @@ class W3ExAdvBulkEditView{
 						<input id="set_manage_stock" type="checkbox" class="bulkset" data-id="_manage_stock"><label for="set_manage_stock"><?php echo $arrTranslated['_manage_stock']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_manage_stock">
@@ -2774,7 +2797,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_backorders">
@@ -2782,7 +2805,7 @@ class W3ExAdvBulkEditView{
 						<input id="set_backorders" type="checkbox" class="bulkset" data-id="_backorders"><label for="set_backorders"><?php echo $arrTranslated['_backorders']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_backorders">
@@ -2792,7 +2815,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_sold_individually">
@@ -2800,7 +2823,7 @@ class W3ExAdvBulkEditView{
 						<input id="set_sold_individually" type="checkbox" class="bulkset" data-id="_sold_individually"><label for="set_sold_individually"><?php echo $arrTranslated['_sold_individually']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_sold_individually">
@@ -2809,7 +2832,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="product_shipping_class">
@@ -2817,7 +2840,7 @@ class W3ExAdvBulkEditView{
 						<input id="setproduct_shipping_class" type="checkbox" class="bulkset" data-id="product_shipping_class" data-type="customtaxh"><label for="setproduct_shipping_class"><?php echo $arrTranslated['product_shipping_class']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulkproduct_shipping_class" class="makechosen catselset" style="width:250px;" data-placeholder="select">
@@ -2844,7 +2867,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_purchase_note">
@@ -2877,7 +2900,7 @@ class W3ExAdvBulkEditView{
 						<input id="setpost_status" type="checkbox" class="bulkset" data-id="post_status"><label for="setpost_status"><?php echo $arrTranslated['post_status']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulkpost_status">
@@ -2888,7 +2911,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_visibility">
@@ -2896,7 +2919,7 @@ class W3ExAdvBulkEditView{
 						<input id="set_visibility" type="checkbox" class="bulkset" data-id="_visibility"><label for="set_visibility"><?php echo $arrTranslated['_visibility']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_visibility">
@@ -2907,7 +2930,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_upsell_ids">
@@ -2959,7 +2982,7 @@ class W3ExAdvBulkEditView{
 						<input id="set_downloadable" type="checkbox" class="bulkset" data-id="_downloadable"><label for="set_downloadable"><?php echo $arrTranslated['_downloadable']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_downloadable">
@@ -2968,7 +2991,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_virtual">
@@ -2976,7 +2999,7 @@ class W3ExAdvBulkEditView{
 						<input id="set_virtual" type="checkbox" class="bulkset" data-id="_virtual"><label for="set_virtual"><?php echo $arrTranslated['_virtual']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_virtual">
@@ -2985,7 +3008,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_download_limit">
@@ -3008,7 +3031,7 @@ class W3ExAdvBulkEditView{
 						<input id="bulk_download_limitvalue" type="text" data-id="_download_limit" class="bulkvalue" placeholder="Skipped (empty)" />
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_download_expiry">
@@ -3031,7 +3054,7 @@ class W3ExAdvBulkEditView{
 						<input id="bulk_download_expiryvalue" type="text" data-id="_download_expiry" class="bulkvalue" placeholder="Skipped (empty)" />
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_download_type">
@@ -3039,7 +3062,7 @@ class W3ExAdvBulkEditView{
 						<input id="set_download_type" type="checkbox" class="bulkset" data-id="_download_type"><label for="set_download_type"><?php echo $arrTranslated['_download_type']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_download_type">
@@ -3049,7 +3072,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_featured">
@@ -3057,7 +3080,7 @@ class W3ExAdvBulkEditView{
 						<input id="set_featured" type="checkbox" class="bulkset" data-id="_featured"><label for="set_featured"><?php echo $arrTranslated['_featured']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulk_featured">
@@ -3066,7 +3089,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_product_url">
@@ -3138,7 +3161,7 @@ class W3ExAdvBulkEditView{
 						<input id="bulkmenu_ordervalue" type="text" data-id="menu_order" class="bulkvalue" placeholder="Skipped (empty)" />
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_variation_description">
@@ -3171,7 +3194,7 @@ class W3ExAdvBulkEditView{
 						<input id="setproduct_type" type="checkbox" class="bulkset" data-id="product_type" data-type="customtaxh"><label for="setproduct_type"><?php echo $arrTranslated['product_type']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulkproduct_type" class="makechosen catselset" style="width:250px;" data-placeholder="select">
@@ -3197,7 +3220,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="comment_status">
@@ -3205,7 +3228,7 @@ class W3ExAdvBulkEditView{
 						<input id="setcomment_status" type="checkbox" class="bulkset" data-id="comment_status"><label for="setcomment_status"><?php echo $arrTranslated['comment_status']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulkcomment_status">
@@ -3214,7 +3237,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="grouped_items">
@@ -3222,10 +3245,10 @@ class W3ExAdvBulkEditView{
 						<input id="setgrouped_items" type="checkbox" class="bulkset" data-id="grouped_items" data-type="customtaxh"><label for="setgrouped_items"><?php echo $arrTranslated['grouped_items']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
-					<?php 
+					<?php
 						$multiple = "";
 //						if($this->isversion3 )
 //							$multiple = "multiple=''";
@@ -3269,7 +3292,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<tr data-id="_custom_attributes">
@@ -3277,8 +3300,8 @@ class W3ExAdvBulkEditView{
 						<input id="set_custom_attributes" type="checkbox" class="bulkset" data-id="_custom_attributes"><label for="set_custom_attributes">Set <?php echo $arrTranslated['_custom_attributes']; ?></label>
 					</td>
 					<td>
-				
-						 
+
+
 						 <select id="bulkadd_custom_attributes" class="bulkselect" data-id="_custom_attributes" disabled="disabled">
 							<option value="new"><?php echo $setnew; ?></option>
 							<option value="addvalue">add value</option>
@@ -3310,12 +3333,12 @@ class W3ExAdvBulkEditView{
 						<input id="setpost_author" type="checkbox" class="bulkset" data-id="post_author" data-type="customtaxh"><label for="setpost_author"><?php echo $arrTranslated['post_author']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td class="nontextnumbertd">
 						 <select id="bulkpost_author" class="makechosen catselset" style="width:250px;" data-placeholder="select">
 						<?php
-							foreach ( $blogusers as $user ) 
+							foreach ( $blogusers as $user )
 							{
 								echo '<option value="'.$user->ID.'" >'.$user->display_name.'</option>';
 							}
@@ -3323,7 +3346,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 				</tr>
 				<!--<tr data-id="post_type">
@@ -3353,10 +3376,10 @@ class W3ExAdvBulkEditView{
 			</table>
 			<br/>
 			</div>
-			
+
 			<!--//select dialog-->
 			<div id="selectdialog">
-			
+
 			<div id="selquickactions">
 				<strong><?php _e( "Quick Selects", "woocommerce-advbulkedit"); ?>:</strong>
 				<a id="selallproducts" href="#" class="sel-manager-quick-action"><?php _e( "All Products", "woocommerce-advbulkedit"); ?></a>
@@ -3392,7 +3415,7 @@ class W3ExAdvBulkEditView{
 			</select>
 			</div>
 			<!--<hr />-->
-			<?php 
+			<?php
 				$t_contains = __( 'contains', 'woocommerce-advbulkedit');
 				$t_doesnot = __( 'does not contain', 'woocommerce-advbulkedit');
 				$t_starts = __( 'starts with', 'woocommerce-advbulkedit');
@@ -3404,8 +3427,8 @@ class W3ExAdvBulkEditView{
 				echo 'W3Ex.trans_starts = "'.$t_starts.'";'; echo PHP_EOL;
 				echo 'W3Ex.trans_ends = "'.$t_ends.'";'; echo PHP_EOL;
 				echo 'W3Ex.trans_isempty = "'.$t_isempty.'";'; echo PHP_EOL;
-//				echo 'W3Ex.trans_withtext = "'.$withtext.'";'; echo PHP_EOL;			
-//				echo 'W3Ex.trans_delete = "'.$delete.'";'; echo PHP_EOL;			
+//				echo 'W3Ex.trans_withtext = "'.$withtext.'";'; echo PHP_EOL;
+//				echo 'W3Ex.trans_delete = "'.$delete.'";'; echo PHP_EOL;
 				echo "</script>";
 			 ?>
 			<table class="custstyle-table">
@@ -3601,7 +3624,7 @@ class W3ExAdvBulkEditView{
 						<input id="select_regular_pricevalue" type="text" placeholder="Skipped (empty)"  data-id="_regular_price" class="selectvalue" />
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3634,7 +3657,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_tax_status" type="checkbox" class="selectset" data-id="_tax_status"><label for="setsel_tax_status"><?php echo $arrTranslated['_tax_status']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_tax_status">
@@ -3644,7 +3667,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3654,7 +3677,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_tax_class" type="checkbox" class="selectset" data-id="_tax_class"><label for="setsel_tax_class"><?php echo $arrTranslated['_tax_class']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_tax_class">
@@ -3664,7 +3687,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3687,7 +3710,7 @@ class W3ExAdvBulkEditView{
 						<input id="select_weightvalue" type="text" placeholder="Skipped (empty)" data-id="_weight" class="selectvalue" />
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3710,7 +3733,7 @@ class W3ExAdvBulkEditView{
 						<input id="select_heightvalue" type="text" placeholder="Skipped (empty)" data-id="_height" class="selectvalue" />
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3733,7 +3756,7 @@ class W3ExAdvBulkEditView{
 						<input id="select_widthvalue" type="text" placeholder="Skipped (empty)" data-id="_width" class="selectvalue" />
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3756,7 +3779,7 @@ class W3ExAdvBulkEditView{
 						<input id="select_lengthvalue" type="text" placeholder="Skipped (empty)" data-id="_length" class="selectvalue" />
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3779,7 +3802,7 @@ class W3ExAdvBulkEditView{
 						<input id="select_stockvalue" type="text" placeholder="Skipped (empty)" data-id="_stock" class="selectvalue" />
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3789,7 +3812,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_stock_status" type="checkbox" class="selectset" data-id="_stock_status"><label for="setsel_stock_status"><?php echo $arrTranslated['_stock_status']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_stock_status">
@@ -3798,7 +3821,7 @@ class W3ExAdvBulkEditView{
 							<?php
 							if(isset($woocommerce) && property_exists($woocommerce,'version'))
 							{
-								$version = (double)$woocommerce->version; 
+								$version = (double)$woocommerce->version;
 								if($version >= 3.3)
 								{
 									echo '<option value="onbackorder">On backorder</option>';
@@ -3808,7 +3831,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3818,7 +3841,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_manage_stock" type="checkbox" class="selectset" data-id="_manage_stock"><label for="setsel_manage_stock"><?php echo $arrTranslated['_manage_stock']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_manage_stock">
@@ -3827,7 +3850,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3837,7 +3860,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_backorders" type="checkbox" class="selectset" data-id="_backorders"><label for="setsel_backorders"><?php echo $arrTranslated['_backorders']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_backorders">
@@ -3847,7 +3870,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3857,7 +3880,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_sold_individually" type="checkbox" class="selectset" data-id="_sold_individually"><label for="setsel_sold_individually"><?php echo $arrTranslated['_sold_individually']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_sold_individually">
@@ -3866,7 +3889,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3926,7 +3949,7 @@ class W3ExAdvBulkEditView{
 						<input id="setselpost_status" type="checkbox" class="selectset" data-id="post_status"><label for="setselpost_status"><?php echo $arrTranslated['post_status']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="selectpost_status">
@@ -3936,7 +3959,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -3946,7 +3969,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_visibility" type="checkbox" class="selectset" data-id="_visibility"><label for="setsel_visibility"><?php echo $arrTranslated['_visibility']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_visibility">
@@ -3957,7 +3980,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -4017,7 +4040,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_downloadable" type="checkbox" class="selectset" data-id="_downloadable"><label for="setsel_downloadable"><?php echo $arrTranslated['_downloadable']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_downloadable">
@@ -4026,7 +4049,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -4036,7 +4059,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_virtual" type="checkbox" class="selectset" data-id="_virtual"><label for="setsel_virtual"><?php echo $arrTranslated['_virtual']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_virtual">
@@ -4045,7 +4068,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -4068,7 +4091,7 @@ class W3ExAdvBulkEditView{
 						<input id="select_download_limitvalue" type="text" placeholder="Skipped (empty)" data-id="_download_limit" class="selectvalue" />
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -4091,7 +4114,7 @@ class W3ExAdvBulkEditView{
 						<input id="select_download_expiryvalue" type="text" placeholder="Skipped (empty)" data-id="_download_expiry" class="selectvalue" />
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -4101,7 +4124,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_download_type" type="checkbox" class="selectset" data-id="_download_type"><label for="setsel_download_type"><?php echo $arrTranslated['_download_type']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_download_type">
@@ -4111,7 +4134,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -4121,7 +4144,7 @@ class W3ExAdvBulkEditView{
 						<input id="setsel_featured" type="checkbox" class="selectset" data-id="_featured"><label for="setsel_featured"><?php echo $arrTranslated['_featured']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="select_featured">
@@ -4130,7 +4153,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -4203,7 +4226,7 @@ class W3ExAdvBulkEditView{
 						<input id="selectmenu_ordervalue" type="text" placeholder="Skipped (empty)" data-id="menu_order" class="selectvalue" />
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -4262,7 +4285,7 @@ class W3ExAdvBulkEditView{
 						<input id="setselcomment_status" type="checkbox" class="selectset" data-id="comment_status"><label for="setselcomment_status"><?php echo $arrTranslated['comment_status']; ?></label>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 						 <select id="selectcomment_status">
@@ -4271,7 +4294,7 @@ class W3ExAdvBulkEditView{
 						</select>
 					</td>
 					<td>
-						
+
 					</td>
 					<td>
 					</td>
@@ -4382,8 +4405,8 @@ class W3ExAdvBulkEditView{
 			</table>
 			<br/>
 			</div>
-			
-		<!--	
+
+		<!--
 		settings dialog
 		-->
 			<!--//show/hide fields-->
@@ -4394,7 +4417,7 @@ class W3ExAdvBulkEditView{
 			    <!--<button id="searchsettingsreset" class="button"><?php _e( 'show all', 'woocommerce-advbulkedit'); ?></button>-->
 			    <br/>
 				<tr>
-					
+
 					<td>
 						<input id="dimage" class="dsettings" data-id="_thumbnail_id" type="checkbox"><label for="dimage"> <?php echo $arrTranslated['_thumbnail_id']; ?></label>
 					</td>
@@ -4413,7 +4436,7 @@ class W3ExAdvBulkEditView{
 					</td>
 				</tr>
 				<tr>
-					
+
 					<td>
 						<input id="dmenu_order" class="dsettings" data-id="menu_order" type="checkbox"><label for="dmenu_order"> <?php echo $arrTranslated['menu_order']; ?></label>
 					</td>
@@ -4903,40 +4926,41 @@ class W3ExAdvBulkEditView{
 			</div>
 			<!--//table views-->
 			<div id="dialogtableviews">
-				<table cellpadding="0" cellspacing="0" id="tableviews">
+				<table cellpadding="0" cellspacing="0" id="tableviews" class="tableviews-ext">
 					<tr>
 						<td style="width:35%;">
-						<label><input type="radio" name="viewdialog" value="savenew">
+						<label><input type="radio" name="viewdialog" value="savenew" class="viewdialog-radio-ext">
 							 <?php _e( 'Save to new view', 'woocommerce-advbulkedit'); ?></label>
 						</td>
-						<td><input type="text" id="viewinputnew"></input></td>
+						<td colspan="2"><input type="text" id="viewinputnew"></input></td>
 					</tr>
 					<tr>
 						<td style="width:35%;">
-						<label><input type="radio" name="viewdialog" value="load" checked="checked">
+						<label><input type="radio" name="viewdialog" value="load" checked="checked" class="viewdialog-radio-ext">
 							 <?php _e( 'Load existing view', 'woocommerce-advbulkedit'); ?></label>
 						</td>
-						<td><select id="viewselectload"><option value="">none</option></select> </td>
+						<td colspan="2"><select id="viewselectload"><option value="">none</option></select> </td>
 					</tr>
 					<tr>
 						<td style="width:35%;">
-						<label><input type="radio" name="viewdialog" value="save">
+						<label><input type="radio" name="viewdialog" value="save" class="viewdialog-radio-ext">
 							<?php _e( 'Save to exisiting view /replace/', 'woocommerce-advbulkedit'); ?></label>
 						</td>
-						<td><select id="viewselectreplace"><option value="">none</option></select></td>
+						<td colspan="2"><select id="viewselectreplace"><option value="">none</option></select></td>
 					</tr>
-					
+
 					<tr>
 						<td style="width:35%;border-bottom: none;">
-						<label><input type="radio" name="viewdialog" value="edit">
+						<label><input type="radio" name="viewdialog" value="edit" class="viewdialog-radio-ext">
 							<?php _e( 'Edit View List', 'woocommerce-advbulkedit'); ?></label>
 						</td>
+						<td>
+							<select id="viewselectedit"><option value="">none</option></select>
+						</td>
 						<td style="border-bottom: none;">
-							<button id="buttonviewrename"><?php _e( 'Rename', 'woocommerce-advbulkedit'); ?></button><select id="viewselectedit"><option value="">none</option></select> to <input type="text" id="viewinputnewname"></input>
-							<br/>
-							<button id="buttonviewdelete"><?php
-echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
-?></button>
+							<p><?php _e( 'Rename', 'woocommerce-advbulkedit'); ?>  to <input type="text" id="viewinputnewname"></input> <button id="buttonviewrename" class="button-wcabe"><?php _e( 'Apply', 'woocommerce-advbulkedit'); ?></button></p>
+							<hr>
+							<p><button id="buttonviewdelete" class="button-wcabe button-warning-wcabe"><?php echo mb_convert_case(__( "delete view", "woocommerce-advbulkedit"), MB_CASE_TITLE, "UTF-8"); ?></button></p>
 						</td>
 					</tr>
 				</table>
@@ -4945,7 +4969,7 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 			<!--//built-in taxonomies select-->
 			<div id="categoriesdialog">
 				<div class="grouped_items">
-				<?php 
+				<?php
 					$classname = "clearothers";
 					if($this->isversion3 )
 						$classname = "clearothersgrouped";
@@ -4981,9 +5005,9 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 						);
 
 						?>
-                    
+
 					<?php
-						
+
 						if (file_exists( __DIR__.'/integrations/catnames-to-ids.php')) {
 							require_once('integrations/catnames-to-ids.php');
 							$args = array(
@@ -4996,7 +5020,7 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 								'checked_ontop'         => true
 							);
 						}
-						
+
                     ?>
 					<ul class="categorychecklist form-no-clear">
 							<?php wp_terms_checklist( 0, $args ); ?>
@@ -5016,11 +5040,11 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 						?>
 					<ul class="categorychecklist form-no-clear">
 							<!--uncomment php below for hiearchical tags-->
-							<?php 
+							<?php
 //							$tagcount = wp_count_terms( 'product_tag', $args );
 //							if(!is_wp_error($tagcount) && $tagcount < 2000)
 //							{
-								wp_terms_checklist( 0, $args ); 
+								wp_terms_checklist( 0, $args );
 //							}
 							?>
 					</ul>
@@ -5065,8 +5089,8 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 				</div>
 				<div class='post_author'>
 					<ul class="categorychecklist form-no-clear clearothers">
-							<?php 
-							foreach ( $blogusers as $user ) 
+							<?php
+							foreach ( $blogusers as $user )
 							{
 								echo '<li>
 				    					<label class="selectit">
@@ -5076,11 +5100,11 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 									</li>'
 								;
 							}
-							
+
 							 ?>
 					</ul>
 				</div>
-				
+
 				<?php
 					if(is_array($this->attributes) && !empty($this->attributes))
 					{
@@ -5106,7 +5130,7 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 							{
 							    ;
 							}
-								
+
 							echo '</ul>';
 							echo '</div>';
 					    }
@@ -5127,7 +5151,7 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 									{
 										echo '<div class="'.$key.'">';
 										echo PHP_EOL;
-										
+
 										if($key === 'product_sale_labels' || $key === 'product_delivery_times')
 										{
 											echo '<ul class="categorychecklist form-no-clear clearothers">';
@@ -5172,7 +5196,7 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 		   .'<button class="butnewattributesave butbulkdialog" style="position:relative;">Ok</button><button class="butnewattributecancel">Cancel</button></div>'
 		   .'<div class="divnewattributeerror"></div></td><td class="nontextnumbertd">'
 						 .'<select id="bulk'.$key.'" class="makechosen catselset" style="width:250px;" data-placeholder="'.str_replace('\\','\\\\',$arrTranslated['trans_data_placeholder']).'" multiple ><option value=""></option>';
-						  
+
 						foreach($attr->values as $value)
 						{
 							$val_name = substr($value->name,0,100);
@@ -5201,7 +5225,7 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 							{
 								if(taxonomy_exists($key))
 								{
-									
+
 									$bulktext = '<tr data-id="'.$key.'"><td>'
 									.'<input id="set'.$key.'" type="checkbox" class="bulkset" data-id="'.$key.'" data-type="customtaxh"><label for="set'.$key.'">Set '.$key.'</label></td><td>'.
 						'<select id="bulkadd'.$key.'" class="bulkselect">'.
@@ -5213,7 +5237,7 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 		   '<input class="inputnewattributename" type="text" placeholder="name" data-slug="'.$key.'"></input><br/> '.
 		  '<input class="inputnewattributeslug" type="text" placeholder="slug (optional)"></input><br/>'.
 		   '<select class="selectnewcategory" data-placeholder="select parent(optional)" multiple></select><br/>'.
-		   '<button class="butnewattributesave butbulkdialog newcat" style="position:relative;">Ok</button><button class="butnewattributecancel newcat">Cancel</button></div>'. 
+		   '<button class="butnewattributesave butbulkdialog newcat" style="position:relative;">Ok</button><button class="butnewattributecancel newcat">Cancel</button></div>'.
 		   '<div class="divnewattributeerror"></div>'.
 							'</td><td class="nontextnumbertd">'
 									 .'<select id="bulk'.$key.'" class="makechosen catselset" style="width:250px;" data-placeholder="'.str_replace('\\','\\\\',$arrTranslated['trans_data_placeholder']).'" multiple ><option value=""></option>';
@@ -5253,7 +5277,7 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 							}
 						}
 					}
-					
+
 					echo '</script>';
 				}
 			?>
@@ -5284,14 +5308,14 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 					$searchtext.= '<option value="'.$category->term_taxonomy_id.'" >'.$catname.'</option>';
 				}
 				$searchtext.= '</select>';
-				
+
 				echo "W3Ex['taxonomyterms".str_replace("'","\'",$key)."'] = '".str_replace("'","\'",$searchtext)."';";
-				
+
 				$key = 'post_author';
 				$searchtext = ' class="makechosen catselset" style="width:250px;" data-placeholder="select" multiple >';
-				 
 
-				foreach ( $blogusers as $user ) 
+
+				foreach ( $blogusers as $user )
 				{
 					$catname = str_replace('"','\"',$user->display_name);
 					$catname = trim(preg_replace('/\s+/', ' ', $catname));
@@ -5299,9 +5323,9 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 				}
 
 				$searchtext.= '</select>';
-				
+
 				echo "W3Ex['taxonomyterms".str_replace("'","\'",$key)."'] = '".str_replace("'","\'",$searchtext)."';";
-				
+
 				$key = 'product_type';
 				$searchtext = ' class="makechosen catselset" style="width:250px;" data-placeholder="select" multiple >';
 				   $argsb = array(
@@ -5325,7 +5349,7 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 					$searchtext.= '<option value="'.$category->term_taxonomy_id.'" >'.$catname.'</option>';
 				}
 				$searchtext.= '</select>';
-				
+
 				echo "W3Ex['taxonomyterms".str_replace("'","\'",$key)."'] = '".str_replace("'","\'",$searchtext)."';";
 				echo '</script>';
 				echo PHP_EOL;
@@ -5362,6 +5386,7 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 							}
 							?>
 							<option value="url">URL</option>
+							<option value="serialized-to-csv">Serialized to CSV</option>
 						</select>
 					</td>
 					<td>
@@ -5374,8 +5399,8 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 				</tr>
 				<tr class="addokcancel">
 					<td>
-						 <button id="addok" class="button">Ok</button>&nbsp;&nbsp;&nbsp;&nbsp;
-						 <button id="addcancel" class="button">Cancel</button>
+						 <button id="addok" class="button-wcabe">Ok</button>&nbsp;&nbsp;&nbsp;&nbsp;
+						 <button id="addcancel" class="button-wcabe">Cancel</button>
 					</td>
 					<td><div id="extracustominfo"></div>
 					</td>
@@ -5383,11 +5408,11 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 					</td>
 				</tr>
 			</table><br />
-			 <button id="addcustomfield" class="button"><?php _e( 'Add Custom Field', 'woocommerce-advbulkedit'); ?></button>
+			 <button id="addcustomfield" class="button-wcabe"><?php _e( 'Add Custom Field', 'woocommerce-advbulkedit'); ?></button>
 		</div>
 		<div id="findcustomfieldsdialog">
-			 <br /><br />
-			 <button id="findcustomfieldsauto" class="button"><?php _e('Find Custom Fields','woocommerce-advbulkedit'); ?></button>&nbsp;(recommended)&nbsp;&nbsp;&nbsp;&nbsp; <button id="findcustomtaxonomies" class="button"><?php _e('Find Taxonomies','woocommerce-advbulkedit'); ?></button>&nbsp;&nbsp;&nbsp;&nbsp;<?php _e('Find custom fields by product ID','woocommerce-advbulkedit'); ?>:<input id="productid" type="text"/><button id="findcustomfield" class="button"><?php _e('Find','woocommerce-advbulkedit'); ?></button> 
+			 <p><?php _e( "Use the tools below to import custom/meta fields or taxonomies. Check the ones you want to add for bulk editing in the products table. When ready, don't forget to click 'Save Selected and Close'.", 'woocommerce-advbulkedit'); ?></p>
+			 <button id="findcustomfieldsauto" class="button-primary-wcabe"><?php _e('Find Custom/Meta Fields','woocommerce-advbulkedit'); ?></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <button id="findcustomtaxonomies" class="button-wcabe"><?php _e('Find Taxonomies','woocommerce-advbulkedit'); ?></button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input id="productid" type="search" placeholder="<?php _e('Find custom/meta fields by product ID','woocommerce-advbulkedit'); ?>"/> <button id="findcustomfield" class="button-wcabe"><?php _e('Find','woocommerce-advbulkedit'); ?></button>
 			 <br /><br /><br />
 			 <table cellpadding="25" cellspacing="0" class="tablecustomfields">
 			</table>
@@ -5395,8 +5420,8 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 		<div id="debuginfo"></div>
 			<iframe id="exportiframe" width="0" height="0">
   			</iframe>
-		
-		
+
+
 		<div id="memorylimit">
 		<?php
 		if(isset($settings['debugmode']))
@@ -5442,16 +5467,16 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 			<DIV style='text-align:right' id="savewordpeditor"><BUTTON>Save</BUTTON><BUTTON id="cancelwordpeditor">Cancel</BUTTON></DIV>
 			</div>
 		</div>
-		
+
 		<div id="split-variations-dlg" class="hidden">
 			<p><?php _e('Transform all selected variations to simple products?','woocommerce-advbulkedit'); ?></p>
 			<p><em><?php _e('Note: Each of the selected variations will be deleted, after transfering to a simple product.','woocommerce-advbulkedit'); ?></em></p>
-			
+
 			<div id="split-variations-advanced-options">
 				<h3><?php _e('Advanced options','woocommerce-advbulkedit'); ?></h3>
 				<div>
 					<p><?php _e('By default all custom fields will be copied from the variation to the new simple product.','woocommerce-advbulkedit'); ?></p>
-					<p><?php _e('To instead copy some of the custom fields from the parent product, please choose these fields:','woocommerce-advbulkedit'); ?></p>
+					<p><?php _e('To instead copy only a selection of the custom fields from the parent product, please choose:','woocommerce-advbulkedit'); ?></p>
 					<h4><?php _e('Custom fields to copy from the parent product:','woocommerce-advbulkedit'); ?></h4>
 					<ul id="split-variations-advanced-options-parent-custom-fields"></ul>
 				</div>
@@ -5459,10 +5484,10 @@ echo $this->mb_ucfirst(__( "delete", "woocommerce-advbulkedit"));
 		</div>
 
 		<?php
-		
+
 	}
-	
-	
+
+
     public function _main()
     {
 		$this->showMainPage();

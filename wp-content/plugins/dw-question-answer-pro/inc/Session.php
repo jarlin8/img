@@ -40,15 +40,23 @@ function dwqa_get_notice_error( $comment = false ) {
 }
 
 
+
+
 class DWQA_Session {
 	protected $_data = array();
 	protected $_dirty = false;
 
 	public function __construct() {
-		if(!session_id()) {
+		add_action('init', array($this, 'init_session'));
+	}
+
+	public function init_session(){
+		if(!session_id() && !is_admin()) {
+			@ob_start(); // Fix error from user feedback
 	        session_start();
 	    }
 	}
+
 	public function __get( $key ) {
 		return $this->get( $key );
 	}

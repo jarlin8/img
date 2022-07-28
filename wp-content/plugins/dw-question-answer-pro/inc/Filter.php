@@ -175,16 +175,16 @@ class DWQA_Filter {
 		$query = wp_parse_args( $args, $query );
 		$query = apply_filters( 'dwqa_prepare_archive_posts', $query );
 
-		// if(isset($query['search_question_title']) && $query['search_question_title'] != ''){
+		if(isset($query['search_question_title']) && $query['search_question_title'] != ''){
 			
-		// 	add_filter( 'posts_where', array($this, 'questions_where'), 10, 2 );
-		// 	$wp_query->dwqa_questions = new WP_Query( $query );
-		// 	remove_filter( 'posts_where', array($this, 'questions_where'), 10, 2 );
-		// }else{
-		// 	$wp_query->dwqa_questions = new WP_Query( $query );
-		// }
+			add_filter( 'posts_where', array($this, 'questions_where'), 10, 2 );
+			$wp_query->dwqa_questions = new WP_Query( $query );
+			remove_filter( 'posts_where', array($this, 'questions_where'), 10, 2 );
+		}else{
+			$wp_query->dwqa_questions = new WP_Query( $query );
+		}
 
-		$wp_query->dwqa_questions = new WP_Query( $query );
+		// $wp_query->dwqa_questions = new WP_Query( $query );
 
 		
 		// sticky question
@@ -393,7 +393,7 @@ class DWQA_Filter {
 		return $array[1];
 	}
 
-	public function questions_where($where, &$wp_query){
+	public function questions_where($where, $wp_query){
 		global $wpdb;
 		if($search_term = $wp_query->get( 'search_question_title' )){
 			/*using the esc_like() in here instead of other esc_sql()*/

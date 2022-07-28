@@ -89,8 +89,10 @@ class DWQA_Template {
 			
 			ob_start();
 
+			$this->remove_all_filters( 'the_content' );
 			remove_filter( 'comments_open', array( $this, 'close_default_comment' ) );
 			remove_filter( 'comments_open', 'dsq_comments_open' ); // disqus system comment
+			
 			echo '<div class="dwqa-container" >';
 			$this->load_template( 'single', 'question' );
 			echo '</div>';
@@ -116,7 +118,8 @@ class DWQA_Template {
 
 			$single_template = isset( $dwqa_options['single-template'] ) ? $dwqa_options['single-template'] : false;
 
-			$this->remove_all_filters( 'the_content' );
+			
+			$this->restore_all_filters( 'the_content' );
 			add_filter( 'body_class', array( $this, 'page_template_body_class' ) );
 			return dwqa_get_template( $page_template );
 		}
@@ -399,8 +402,34 @@ class DWQA_Template {
 			'dwqa-settings',
 			'dwqa-general-settings'
 		);
+
+		add_settings_field(
+			'dwqa_options[choose-blog-col]',
+			__( 'Profile Blog column', 'dwqa' ),
+			array( $this, 'dwqa_choose_blog_col_setting'),
+			'dwqa-settings',
+			'dwqa-general-settings'
+		);
 	}
+
+	function dwqa_choose_blog_col_setting() {
+		global $dwqa_general_settings;
 	
+		$types = apply_filters( 'dwqa_blog_col', array(
+			'list' => __( 'List', 'dwqa' ),
+			'col-2' => __( 'Grid 2 column', 'dwqa' ),
+			'col-3' => __( 'Grid 3 column', 'dwqa' ),
+			'col-4' => __( 'Grid 4 column', 'dwqa' ),
+		) );
+		$total = count( $types );
+		$col_selected = isset( $dwqa_general_settings['choose-blog-col'] ) ? $dwqa_general_settings['choose-blog-col'] : '';
+		echo '<select name="dwqa_options[choose-blog-col]">';
+		foreach( $types as $key => $name ) {
+			echo '<option '.selected( $key, $col_selected, false ).' value="'.$key.'">'.$name.'</option>';
+		}
+		echo '</select>';
+	}
+
 	public function dwqa_choose_style_setting() {
 		global $dwqa_general_settings;
 
@@ -495,7 +524,8 @@ class DWQA_Template {
  */
 function dwqa_breadcrumb() {
 	$wpseo_internallinks = get_option('wpseo_internallinks');
-	if ( function_exists( 'yoast_breadcrumb' ) && $wpseo_internallinks['breadcrumbs-enable'] === true) :
+	// if ( function_exists( 'yoast_breadcrumb' ) && $wpseo_internallinks['breadcrumbs-enable'] === true) :
+	if (  function_exists( 'yoast_breadcrumb' ) && is_array( $wpseo_internallinks ) && $wpseo_internallinks['breadcrumbs-enable'] !== true ) :
 		yoast_breadcrumb( '<div class="breadcrumbs dwqa-breadcrumbs">', '</div>' );
 	else:
 		global $dwqa_general_settings;
@@ -625,9 +655,19 @@ function dwqa_question_paginate_link() {
 			? get_term_link( $cat, get_query_var( 'taxonomy' ) ) 
 			: ( $tag ? get_term_link( $tag, get_query_var( 'taxonomy' ) ) : $archive_question_url );
 
+
+	if(isset( $dwqa_general_settings['pages']['user-profile'] ) && $dwqa_general_settings['pages']['user-profile'] && is_page($dwqa_general_settings['pages']['user-profile'])){
+
+		$user_id = dwqa_profile_displayed_user_id();
+		$tab = dwqa_profile_tab();
+		$url = trailingslashit(dwqa_profile_tab_url($user_id, $tab));
+
+	}
+
+
 	$args = array(
-		'base' => add_query_arg( array( $page_text => '%#%' ), $url ),
-		'format' => '',
+		'base' => $url.'page/%#%',
+		'format' => '%#%',
 		'current' => $page,
 		'total' => $wp_query->dwqa_questions->max_num_pages
 	);
@@ -666,7 +706,10 @@ function dwqa_question_button_action() {
 			$html .= '<a class="dwqa_approve_question" href="'. wp_nonce_url(add_query_arg( array( 'approve' => $ID ), get_permalink() ), 'approve_question_'.$ID, 'dwqa_nonce') .'">' . __( 'Approve', 'dwqa' ) . '</a> ';
 		}
 		
-		if ( dwqa_current_user_can( 'edit_question', $ID ) || dwqa_current_user_can( 'manage_question' ) ) {
+		global $dwqa_general_settings;
+		if ( isset( $dwqa_general_settings['enable-review-question'] ) && $dwqa_general_settings['enable-review-question'] && ! current_user_can( 'manage_options' ) ) {
+			// $html .= '<a class="dwqa_edit_question" title="This question is approved by admin you can not edit" href="">' . __( 'Edit', 'dwqa' ) . '</a> ';
+		} elseif ( dwqa_current_user_can( 'edit_question', $ID ) || dwqa_current_user_can( 'manage_question' ) ) {
 			$html .= '<a class="dwqa_edit_question" href="'. add_query_arg( array( 'edit' => $ID ), get_permalink() ) .'">' . __( 'Edit', 'dwqa' ) . '</a> ';
 		}
 
@@ -818,8 +861,8 @@ function dwqa_enqueue_scripts(){
     }
     $script_version = $dwqa->get_last_update();
 
-    //add cdn font awesome
-    wp_enqueue_style( 'dwqa-font-awesome', 'https://we.laowei8.com/fonts/font-awesome.min.css' );
+    //add font awesome
+	wp_enqueue_style( 'dwqa-font-awesome', $assets_folder . 'css/font-awesome.min.css', array(), $script_version );
 
     // Enqueue style
     wp_enqueue_style( 'dwqa-style', $assets_folder . 'css/style.css', array(), $script_version );
@@ -871,11 +914,11 @@ function dwqa_enqueue_scripts(){
 add_action( 'wp_enqueue_scripts', 'dwqa_enqueue_scripts' );
 
 // funcaptcha script attr
-function dwqa_add_script_attr( $tag, $handle ) {
-	if ( 'funcaptcha' !== $handle ) return $tag;
+// function dwqa_add_script_attr( $tag, $handle ) {
+// 	if ( 'funcaptcha' !== $handle ) return $tag;
 
-	return str_replace( ' src', ' async defer src', $tag );
-}
+// 	return str_replace( ' src', ' async defer src', $tag );
+// }
 
 
 function dwqa_comment_form( $args = array(), $post_id = null ) {
@@ -910,7 +953,7 @@ function dwqa_comment_form( $args = array(), $post_id = null ) {
 		'fields'               => $fields,
 		'comment_field'        => '',
 		'must_log_in'          => '<p class="must-log-in">' . sprintf( __( 'You must be <a href="%s">logged in</a> to post a comment.','dwqa' ), wp_login_url( apply_filters( 'the_permalink', get_permalink( $post_id ) ) ) ) . '</p>',
-		'logged_in_as'         => '<p class="comment-form-comment"><textarea class="dwqa-comment-text" name="comment" placeholder="Comment" rows="2" aria-required="true"></textarea></p>',
+		'logged_in_as'         => '<p class="comment-form-comment"><textarea class="dwqa-comment-text" name="comment" placeholder="'.__('Comment', 'dwqa').'" rows="2" aria-required="true"></textarea></p>',
 		'comment_notes_before' => '<p class="comment-form-comment"><textarea class="dwqa-comment-text" name="comment" placeholder="Comment" rows="2" aria-required="true"></textarea></p>',
 		'comment_notes_after'  => '<p class="form-allowed-tags">' . sprintf( __( 'You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes: %s','dwqa' ), ' <code>' . allowed_tags() . '</code>' ) . '</p>',
 		'id_form'              => 'commentform',

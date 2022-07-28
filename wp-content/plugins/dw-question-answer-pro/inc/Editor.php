@@ -84,11 +84,53 @@ class DWQA_Editor {
 	}
 
 	public function editor( $content, $id, $settings = array() ) {
+
+		$toolbar = '[
+			{
+				name: "bold",
+				action: SimpleMDE.toggleBold,
+				className: "fa fa-bold",
+				title: "'.__("Bold", 'dwqa').'"
+			},
+			{
+				name: "italic",
+				action: SimpleMDE.toggleItalic,
+				className: "fa fa-italic",
+				title: "'.__("Italic", 'dwqa').'"
+			},
+			"|",
+			{
+				name: "link",
+				action: SimpleMDE.drawLink,
+				className: "fa fa-link",
+				title: "'.__("Create Link", 'dwqa').'"
+			},
+			{
+				name: "image",
+				action: SimpleMDE.drawImage,
+				className: "fa fa-picture-o",
+				title: "'.__("Insert Image", 'dwqa').'"
+			},
+			"|",
+			{
+				name: "preview",
+				action: SimpleMDE.togglePreview,
+				className: "fa fa-eye no-disable",
+				title: "'.__("Toggle Preview", 'dwqa').'"
+			},
+			{
+				name: "fullscreen",
+				action: SimpleMDE.toggleFullScreen,
+				className: "fa fa-arrows-alt no-disable no-mobile",
+				title: "'.__("Toggle Fullscreen", 'dwqa').'"
+			},
+		]';
+
 		$default = array(
 			'editor_class' => 'dwqa_editor',
 			'placeholder' => '',
 			'spellchecker' => false,
-			'toolbar' => apply_filters( 'dwqa_markdown_editor_toolbar', "['bold','italic','|','link','image','|','preview','fullscreen']" ),
+			'toolbar' => apply_filters( 'dwqa_markdown_editor_toolbar', $toolbar),
 			'tabsize' => 4,
 			'tabindex' => false,
 			'textarea_rows' => 5,
@@ -113,6 +155,15 @@ class DWQA_Editor {
 				promptURLs: true
 			});
 		</script>
+		<!-- translate Text -->
+		<style>
+			.editor-statusbar .lines:before{
+			    content: '<?php _e('lines: ', 'dwqa')?>' !important;
+			}
+			.editor-statusbar .words:before{
+				content: '<?php _e('words: ', 'dwqa')?>' !important;
+			}
+		</style>
 		<?php
 	}
 }

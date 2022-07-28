@@ -39,11 +39,24 @@ class DWQA_Woocommerce{
 			'dwqa-settings',
 			'dwqa-user-expiration-settings'
 		);
+		
+		add_settings_field(
+			'dwqa_options[add-tabs-question-toSingle-product]',
+			__( 'Add Question tabs to single Product', 'dwqa' ),
+			array($this, 'addQuestiontabtoSingleProduct'),
+			'dwqa-settings',
+			'dwqa-user-expiration-settings'
+		);
 	}
 	public function useUserExpirationWoo(){
 		global $dwqa_general_settings;
 		
 		echo '<p><label for="dwqa_use_user_expiration_woo"><input type="checkbox" name="dwqa_options[use-user-expiration-woo]"  id="dwqa_use_user_expiration_woo" value="1" '.checked( 1, (isset($dwqa_general_settings['use-user-expiration-woo'] ) ? $dwqa_general_settings['use-user-expiration-woo'] : false ) , false ) .'><span class="description">'.__( 'Enable integration with Woocommerce (enable user expiration required)', 'dwqa' ).'</span></label></p>';
+	}
+
+	public function addQuestiontabtoSingleProduct(){
+		global $dwqa_general_settings;
+		echo '<p><label title="You need to create the product name and Question tag as the same." for="add_quesiton_tab_toSingle_Product"><input type="checkbox" name="dwqa_options[add-tabs-question-toSingle-product]"  id="add_quesiton_tab_toSingle_Product" value="1" '.checked( 1, (isset($dwqa_general_settings['add-tabs-question-toSingle-product'] ) ? $dwqa_general_settings['add-tabs-question-toSingle-product'] : false ) , false ) .'><span class="description">'.__( 'Show Questions tabs in single product page', 'dwqa' ).'</span></label></p>';
 	}
 
 	public function orderStatusCompleted($order_id){
@@ -235,6 +248,8 @@ class DWQA_Woocommerce{
 
 		if(isset($_POST['dwqa_woo_enable'])){
 			$product->update_meta_data( 'dwqa_woo_enable', sanitize_text_field( $_POST['dwqa_woo_enable'] ) );
+		} elseif (!isset($_POST['dwqa_woo_enable'])){
+			$product->update_meta_data( 'dwqa_woo_enable', sanitize_text_field( $_POST['dwqa_woo_enable'] ) );
 		}
 
 		if(isset($_POST['dwqa_woo_type'])){
@@ -341,3 +356,39 @@ class DWQA_Woocommerce{
 	}
 }
 endif;
+
+// Add Question tabs to Woo product. 
+global $dwqa_general_settings;
+if ( isset( $dwqa_general_settings['add-tabs-question-toSingle-product'] ) && $dwqa_general_settings['add-tabs-question-toSingle-product'] ) {
+
+	add_filter( 'woocommerce_product_tabs', 'woo_new_product_tab' );
+	function woo_new_product_tab( $tabs ) {
+	// Adds the new tab
+	$tabs['desc_tab'] = array(
+		'title' => __( 'Questions', 'woocommerce' ),
+		'priority' => 50,
+		'callback' => 'woo_new_product_tab_content'
+	);
+	return $tabs;
+	}
+}
+function woo_new_product_tab_content() { ?>
+<?php 
+global $product;
+$product_slug = get_post_field('post_name',  $product->get_id() );
+?>
+<?php $questions = new WP_Query( 'post_type=dwqa-question&posts_per_page=5&orderby=date&dwqa-question_tag=' . $product_slug ); ?>
+<div class="dwqa-questions-list">
+	<?php
+	$term = get_term_by( 'slug', $product_slug, 'dwqa-question_tag' );
+	if ( $questions->have_posts() ) :
+		while ( $questions->have_posts() ) : $questions->the_post();
+		dwqa_load_template( 'content', 'question' );
+		endwhile;
+		echo '<a href="' . esc_url( get_term_link( $term, 'dwqa-question_tag' ) ) .'" class="btn btn-default btn-block">Show More Questions</a>';
+	else : ?>
+		<div class="alert"><?php _e( 'The questions is empty.', 'dw-evo' ); ?></div>
+	<?php endif; ?>
+	<?php wp_reset_postdata(); ?>
+</div>
+<?php } ?>

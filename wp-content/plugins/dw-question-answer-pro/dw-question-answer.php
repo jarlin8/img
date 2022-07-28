@@ -4,7 +4,7 @@
  *  Description: A WordPress plugin developed by DesignWall.com to build a complete Question & Answer system for your WordPress site like Quora, Stackoverflow, etc.
  *  Author: DesignWall
  *  Author URI: http://www.designwall.com
- *  Version: 1.2.1
+ *  Version: 1.3.5
  *  Text Domain: dwqa
  */
 
@@ -15,7 +15,7 @@ if ( !defined( 'ABSPATH' ) ) {
 if ( !class_exists( 'DW_Question_Answer' ) ) :
 
 class DW_Question_Answer {
-	private $last_update = 190820170951; //last update time of the plugin
+	private $last_update = 190820170952; //last update time of the plugin
 
 	public function __construct() {
 		$this->define_constants();
@@ -24,8 +24,8 @@ class DW_Question_Answer {
 		$this->dir = DWQA_DIR;
 		$this->uri = DWQA_URI;
 
-		$this->version = '1.2.1';
-		$this->db_version = '1.0.7';
+		$this->version = '1.3.5';
+		$this->db_version = '1.0.8';
 
 		// load posttype
 		$this->question = new DWQA_Posts_Question();

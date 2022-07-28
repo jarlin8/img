@@ -1,12 +1,11 @@
 jQuery(document).ready(function($){
 	var dwqa__attachments_max_files_upload = $('#dwqa-attachments-max-files-upload').val();
-	var dwqa__attachments_files_uploaded = $('.dwqa-attachments-item-wrap').length;
+	var dwqa__attachments_files_uploaded = $('.dwqa-answer-form .dwqa-attachments-item-wrap').length;
 	if(dwqa__attachments_files_uploaded>=dwqa__attachments_max_files_upload){
 		$('input.dwqa-attachments-button-upload').remove();
 	}
 	$('#dwqa-attachments-add-button-upload').on('click',function(){
-		// console.log('abc');
-		var files_uploaded = $('.dwqa-attachments-item-wrap').length;
+		var files_uploaded = $('.dwqa-answer-form .dwqa-attachments-item-wrap').length;
 		var current_files_upload = $('input.dwqa-attachments-button-upload').length;
 		if(current_files_upload<(dwqa__attachments_max_files_upload-files_uploaded)){
 			$('#dwqa-attachments-wrap-button-upload').append('<br><input type="file" name="dwqa_upload[]" class="dwqa-attachments-button-upload"/>');

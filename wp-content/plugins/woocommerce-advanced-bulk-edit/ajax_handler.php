@@ -103,11 +103,10 @@ class W3ExABulkEditAjaxHandler{
 	public static function CallWooAction($productid,$oldpost = null,$proddata = null)
 	{
 		$post = get_post($productid);
-		do_action( 'woocommerce_update_product',  $productid, $post );
+		$product = wc_get_product($productid);
+		do_action( 'woocommerce_update_product',  $productid, $product );
 		if(self::$bwoosave)
 		{
-			$product = null;
-			$product = wc_get_product($productid);
 			if(!empty($product) && is_object($product))
 			{
 				$product_type = 'simple';
@@ -120,8 +119,8 @@ class W3ExABulkEditAjaxHandler{
 //				}
 				if($post->post_type == 'product_variation')
 				{
-//					do_action( 'woocommerce_process_product_meta_' .$product_type , $productid ); 
-					do_action( 'woocommerce_update_product_variation', $productid );
+//					do_action( 'woocommerce_process_product_meta_' .$product_type , $productid );
+					do_action( 'woocommerce_update_product_variation', $productid, $product );
 				}
 				if($proddata !== null)
 				{
@@ -2655,17 +2654,7 @@ class W3ExABulkEditAjaxHandler{
 			self::WriteDebugInfo( "12.1 after array map " . __LINE__, $curr_settings );
 			$blogusers = array();
 			if ( in_array( 'post_author', self::$columns ) || empty( self::$columns ) ) {
-				$blogusers  = get_users( array( 'role' => 'vendor', 'fields' => array( 'ID', 'display_name' ) ) );
-				$blogusers1 = get_users( array( 'role'   => 'administrator',
-												'fields' => array( 'ID', 'display_name' )
-				) );
-				$blogusers  = array_merge( $blogusers, $blogusers1 );
-				$blogusers1 = get_users( array( 'role'   => 'shop_manager',
-												'fields' => array( 'ID', 'display_name' )
-				) );
-				$blogusers  = array_merge( $blogusers, $blogusers1 );
-				$blogusers1 = get_users( array( 'role' => 'seller', 'fields' => array( 'ID', 'display_name' ) ) );
-				$blogusers  = array_merge( $blogusers, $blogusers1 );
+				$blogusers = get_users( array( 'role__in' => array('administrator', 'shop_manager', 'seller', 'vendor'), 'fields' => array( 'ID', 'display_name' ) ) );
 			}
 			foreach ( $ids as &$id ) {
 				if ( $id->post_parent != 0 && $id->post_type == 'product_variation' ) {
@@ -3006,6 +2995,10 @@ class W3ExABulkEditAjaxHandler{
 							$id->_thumbnail_id_val = $retarr[0];
 						$id->_thumbnail_id_original = "";
 						$id->_thumbnail_id_info     = "";
+						$original_image_url = wp_get_original_image_url($id->_thumbnail_id);
+						if ($original_image_url !== false) {
+							$id->_thumbnail_id_original_image_url = $original_image_url;
+						}
 					}
 					if ( $id->_thumbnail_id != "" && $loadnext ) {
 						if ( array_key_exists( $id->_thumbnail_id, $thumbsidmap ) ) {
@@ -5371,6 +5364,7 @@ class W3ExABulkEditAjaxHandler{
 				//	continue;
 				if(!property_exists($attr,'name') || empty($attr->name))
 					continue;
+				$attrarrays[] = 'pa_'.$attr->name;
 		    }
 		}
 		$bdontcheckusedfor = false;
@@ -9316,6 +9310,12 @@ class W3ExABulkEditAjaxHandler{
 					if(isset($data['setting_enable_admin_only_visible'])) {
 						$curr_settings['setting_enable_admin_only_visible'] = $data['setting_enable_admin_only_visible'];
 					}
+
+
+					if(isset($data['setting_display_top_bar_link_bulkedit'])) {
+						$curr_settings['setting_display_top_bar_link_bulkedit'] = $data['setting_display_top_bar_link_bulkedit'];
+					}
+
 					if(isset($data['debugmode']))
 						$curr_settings['debugmode'] = $data['debugmode'];
 					if(isset($data['deleteimages']))

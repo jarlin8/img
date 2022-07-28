@@ -58,7 +58,7 @@ class DWQA_Handle {
 		}
 
 		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( esc_html(  $_POST['_wpnonce'] ), '_dwqa_add_new_answer' ) ) {
-			dwqa_add_notice( __( '&quot;Helllo&quot;, Are you cheating huh?.', 'dwqa' ), 'error' );
+			dwqa_add_notice( __( '&quot;Hello&quot;, Are you cheating huh?.', 'dwqa' ), 'error' );
 		}
 
 		if ( $_POST['submit-answer'] == __( 'Delete draft', 'dwqa' ) ) {
@@ -131,13 +131,27 @@ class DWQA_Handle {
 		if ( 'private' == get_post_status( $question_id ) ) {
 			$answers['post_status'] = 'private';
 		}
-		
+
 		//if status publish and setting approve answer
 		//Enable approve mode
 		global $dwqa_general_settings;
 		if ( isset( $dwqa_general_settings['answer-approve'] ) && $dwqa_general_settings['answer-approve'] && $answers['post_status'] == 'publish' && !current_user_can( 'manage_options' ) ) {
 			$answers['post_status'] = 'pending';
 		}
+
+		// When a comment/answer/question contains any of these words in its content, it will be held in the moderation queue.
+		// Disallowed Post
+		$disallowed_post = $dwqa_general_settings['disallowed-post-extension'];
+		$string = $_POST['answer-content'];
+		$badwords = explode(',',$disallowed_post);
+
+		$banstring = ($string != str_ireplace($badwords,"XX",$string))? true: false;
+		if ($banstring) {
+			$answers['post_status'] = 'pending';
+		} else {
+			$answers['post_status'] = 'publish';
+		}
+
 
 		if ( $is_anonymous ) {
 			$postarr['dwqa_is_anonymous'] = $is_anonymous;
@@ -240,11 +254,11 @@ class DWQA_Handle {
 				dwqa_add_notice( __( 'This post is not answer.', 'dwqa' ), 'error' );
 			}
 
-			do_action( 'dwqa_prepare_update_answer', $answer_id );
-
 			if ( dwqa_count_notices( 'error' ) > 0 ) {
 				return false;
 			}
+
+			do_action( 'dwqa_prepare_update_answer', $answer_id );
 
 			$args = array(
 				'ID' => $answer_id,
@@ -382,6 +396,7 @@ class DWQA_Handle {
 
 	public function update_comment() {
 		global $post_submit_filter;
+		
 		if ( isset( $_POST['dwqa-edit-comment-submit'] ) ) {
 			if ( ! isset( $_POST['comment_id']) ) {
 				dwqa_add_notice( __( 'Comment is missing', 'dwqa' ), 'error' );
@@ -391,20 +406,33 @@ class DWQA_Handle {
 			$comment_content = apply_filters( 'dwqa_pre_update_comment_content', $comment_content );
 
 			if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['_wpnonce'] ), '_dwqa_edit_comment' ) ) {
-				dwqa_add_notice( __( 'Are you cheating huh?', 'dwqa' ), 'error' );
+				// dwqa_add_notice( __( 'Are you cheating huh?', 'dwqa' ), 'error' );
+				wp_die( __( 'Are you cheating huh?', 'dwqa' ) );
 			}
 
 			if ( !dwqa_current_user_can( 'edit_comment', $comment_id ) && !dwqa_current_user_can( 'manage_comment' ) ) {
 				dwqa_add_notice( __( 'You do not have permission to edit comment.', 'dwqa' ), 'error' );
 			}
 
+			if ( dwqa_count_notices( 'error' ) > 0 ) {
+				return false;
+			}
+			
 			if ( strlen( $comment_content ) <= 0 || ! isset( $comment_id ) || ( int )$comment_id <= 0 ) {
 				dwqa_add_notice( __( 'Comment content must not be empty.', 'dwqa' ), 'error' );
+				return false;
 			} else {
+				
 				$commentarr = array(
 					'comment_ID'        => $comment_id,
 					'comment_content'   => $comment_content
 				);
+				
+				// check only author and admin can edit comment
+				$dwqa_comment_author = get_comment_author( $comment_id ); 
+				if  ( $dwqa_comment_author != get_current_user_id() && !dwqa_current_user_can( 'edit_comment', $comment_id ) && !dwqa_current_user_can( 'manage_comment' ) ) {
+					return false;
+				}
 
 				$intval = wp_update_comment( $commentarr );
 				if ( !is_wp_error( $intval ) ) {
@@ -493,6 +521,23 @@ class DWQA_Handle {
 						 $post_status = 'pending';
 					}
 
+					// When a comment/answer/question contains any of these words in its content, it will be held in the moderation queue.
+					// Disallowed Post
+					$disallowed_post = $dwqa_general_settings['disallowed-post-extension'];
+					$string =  $_POST['question-content'];
+					$badwords = explode(',',$disallowed_post);
+
+					$banstring = ($string != str_ireplace($badwords,"XX",$string))? true: false;
+					if ($banstring) {
+						$post_status = 'pending';
+						dwqa_add_notice( __( 'Your question is waiting moderator.', 'dwqa' ), 'success' );
+						if($dwqa_options['pages']['submit-question']){
+							exit( wp_safe_redirect( get_permalink( $dwqa_options['pages']['submit-question'] ) ) );
+						}
+					} else {
+						$post_status = 'publish';
+					}
+
 					$postarr = array(
 						'comment_status' => 'open',
 						'post_author'    => $user_id,
@@ -543,7 +588,12 @@ class DWQA_Handle {
 								exit( wp_safe_redirect( get_permalink( $dwqa_options['pages']['submit-question'] ) ) );
 							}
 						} else {
-							exit( wp_safe_redirect( get_permalink( $new_question ) ) );
+							$new_question_link = get_permalink( $new_question );
+							$dwqa_thank_page = dwqa_thank_page();
+							if(is_numeric($dwqa_thank_page) && $dwqa_thank_page > 0){
+								$new_question_link = get_permalink($dwqa_thank_page);
+							}
+							exit( wp_safe_redirect($new_question_link) );
 						}
 					}
 				} else {
@@ -580,6 +630,10 @@ class DWQA_Handle {
 					dwqa_add_notice( __( 'This post is not question.', 'dwqa' ), 'error' );
 				}
 
+				if ( dwqa_count_notices( 'error' ) > 0 ) {
+					return false;
+				}
+
 				$question_content = apply_filters( 'dwqa_prepare_edit_question_content', $_POST['question_content'] );
 
 				$tags = isset( $_POST['question-tag'] ) ? esc_html( $_POST['question-tag'] ): '';
@@ -590,10 +644,6 @@ class DWQA_Handle {
 
 				do_action( 'dwqa_prepare_update_question', $question_id );
 
-				if ( dwqa_count_notices( 'error' ) > 0 ) {
-					return false;
-				}
-
 				$args = array(
 					'ID' => $question_id,
 					'post_content' => $question_content,
@@ -603,7 +653,7 @@ class DWQA_Handle {
 						'dwqa-question_tag'		=> explode( ',', $tags )
 					),
 				);
-
+				
 				$new_question_id = wp_update_post( $args );
 
 				if ( !is_wp_error( $new_question_id ) ) {

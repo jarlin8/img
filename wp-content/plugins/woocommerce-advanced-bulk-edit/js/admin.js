@@ -1701,18 +1701,18 @@ W3Ex.abemodule = (function($){
 //		W3Ex._global_settings
 		if(hasselected && !hasedited)
 		{
-			seltext = '<input type="button" class="button" id="showselectedonly" value="'+showsel+'"></input>';
-			alltext = '<input type="button" class="button" id="showallproducts" value="'+showall+'" disabled="disabled"></input>';
+			seltext = '<input type="button" class="button-wcabe" id="showselectedonly" value="'+showsel+'"></input>';
+			alltext = '<input type="button" class="button-wcabe" id="showallproducts" value="'+showall+'" disabled="disabled"></input>';
 		}else
 		{
-			seltext = '<input type="button" class="button" id="showselectedonly" value="'+showsel+'" disabled="disabled"></input>';
-			alltext = '<input type="button" class="button" id="showallproducts" value="'+showall+'" disabled="disabled"></input>';
+			seltext = '<input type="button" class="button-wcabe" id="showselectedonly" value="'+showsel+'" disabled="disabled"></input>';
+			alltext = '<input type="button" class="button-wcabe" id="showallproducts" value="'+showall+'" disabled="disabled"></input>';
 		}
 		if(!hasedited)
 		{
 			if(W3Ex._global_settings.inselectionmode === true)
 			{
-				alltext = '<input type="button" class="button" id="showallproducts" value="'+showall+'"></input>';
+				alltext = '<input type="button" class="button-wcabe" id="showallproducts" value="'+showall+'"></input>';
 			}
 		}
 		var ret = '<table cellpadding="10" cellspacing="0" class="quicksettingstable"><tr> \
@@ -1774,7 +1774,7 @@ W3Ex.abemodule = (function($){
 						<label><input type="checkbox" id="checkshowthumbnails" '+showthumbs+'>'+hover+'</label> \
 					</td> \
 					<td> \
-						<input type="button" class="button" id="savecheckshowthumbnails" value="'+save+'"></input> \
+						<input type="button" class="button-wcabe" id="savecheckshowthumbnails" value="'+save+'"></input> \
 					</td> \
 					</tr> \
 				<tr> \
@@ -1782,7 +1782,7 @@ W3Ex.abemodule = (function($){
 						<label><input type="checkbox" id="openimageforedit" '+openimage+'>'+sedit+'</label> \
 					</td> \
 					<td>\
-						<input type="button" class="button" id="saveopenimageforedit" value="'+save+'"></input> \
+						<input type="button" class="button-wcabe" id="saveopenimageforedit" value="'+save+'"></input> \
 					</td> \
 				</tr>  \
 				<tr> \
@@ -1790,7 +1790,7 @@ W3Ex.abemodule = (function($){
 						<label><input type="checkbox" id="usebuiltineditor" '+usebuiltin+'>'+usebuilt+'</label> \
 					</td> \
 					<td>\
-						<input type="button" class="button" id="saveusebuiltin" value="'+save+'"></input> \
+						<input type="button" class="button-wcabe" id="saveusebuiltin" value="'+save+'"></input> \
 					</td> \
 				</tr>  \
 			</table>  \
@@ -1798,7 +1798,7 @@ W3Ex.abemodule = (function($){
 				<div id="divextrabuttons">\
 				<table cellpadding="10" cellspacing="0" class="quicksettingstable"><tr> \
 					<td width="50%" style="text-align:center;">\
-						<input type="button" class="button" id="gofullscreen" value="Full View"></input> \
+						<input type="button" class="button-wcabe" id="gofullscreen" value="Full View"></input> \
 					</td> \
 					<td style="text-align:center;">\
 						 \
@@ -1946,7 +1946,7 @@ W3Ex.abemodule = (function($){
 					</td> \
 				</tr>  \
 			</table>  \
-			<input id="deletebutr" class="button" type="button" value="'+deletes+'"/> \
+			<input id="deletebutr" class="button-primary-wcabe" type="button" value="'+deletes+'"/> \
 			</div>');
 		}
 		
@@ -2012,7 +2012,7 @@ W3Ex.abemodule = (function($){
 						</td> \
 					</tr>  \
 				</table>  \
-				<input id="addprodbutr" class="button" type="button" value="'+add+'"/> \
+				<input id="addprodbutr" class="button-primary-wcabe" type="button" value="'+add+'"/> \
 				</div>');
 			}
 		}
@@ -2099,7 +2099,7 @@ W3Ex.abemodule = (function($){
 						</td> \
 					</tr>  \
 				</table>  \
-				<input id="duplicateprodbutr" class="button" type="button" value="'+duplicate+'"/> \
+				<input id="duplicateprodbutr" class="button-primary-wcabe" type="button" value="'+duplicate+'"/> \
 				</div>');
 			}	
 			$('.duplicateprodextra').show();
@@ -4222,7 +4222,7 @@ W3Ex.abemodule = (function($){
 	open: function( event, ui ) {
 		 var d = $('.ui-dialog:visible');
 		 $(d).addClass('dialog-zindez');
-		 d[0].style.setProperty('z-index', '300002', 'important');
+		 d[0].style.setProperty('z-index', '1300002', 'important');
 		 $('.ui-dialog:visible').wrap('<div class="w3exabe w3exabedel" />');
 		  $('#addproddialog').css('height','480px');
 		   var winH = $(window).height() - 180;
@@ -4641,7 +4641,7 @@ W3Ex.abemodule = (function($){
 	open: function( event, ui ) {
 		 var d = $('.ui-dialog:visible');
 		 $(d).addClass('dialog-zindez');
-		 d[0].style.setProperty('z-index', '300002', 'important');
+		 d[0].style.setProperty('z-index', '1300002', 'important');
 		 $('.ui-dialog:visible').wrap('<div class="w3exabe w3exabedel" />');
 		  $('.ui-widget-overlay').each(function () {
 			 $(this).next('.ui-dialog').andSelf().wrapAll('<div class="w3exabe w3exabedel" />');
@@ -5778,6 +5778,11 @@ W3Ex.abemodule = (function($){
 					newhtml+= " data-type='customsyncwith' data-field='type'>type: <strong>Sync With</strong></td>";
 				}
 				break;
+				case "serialized-to-csv":
+				{
+					newhtml+= " data-type='serialized-to-csv' data-field='type'>type: <strong>Serialized to CSV</strong></td>";
+				}
+					break;
 				case "custom":
 				{
 					newhtml+= " data-type='custom' data-field='type' data-vals='" + customobj.isnewvals + "'>type: <strong>Custom Taxonomy</td>";
@@ -5798,10 +5803,10 @@ W3Ex.abemodule = (function($){
 					customobj.isvisible = false;
 				if(customobj.isvisible)
 				{
-					newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible" checked="checked">Visible</label><input class="button deletecustomfield" type="button" value="delete" /></td></tr>';
+					newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible" checked="checked">Visible</label><input class="button-wcabe deletecustomfield" type="button" value="delete" /></td></tr>';
 				}else
 				{
-					newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible">Visible</label><input class="button deletecustomfield" type="button" value="delete" /></td></tr>';
+					newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible">Visible</label><input class="button-wcabe deletecustomfield" type="button" value="delete" /></td></tr>';
 				}
 				$(newhtml).insertBefore('.addcontrols');
 				
@@ -5860,6 +5865,15 @@ W3Ex.abemodule = (function($){
 					newitem.editor = Slick.Editors.SyncWith;
 					insertobj.type = 'customsyncwith';
 				}
+
+				else if(customobj.type == "serialized-to-csv")
+				{
+					//newitem.cssClass = "cell-effort-driven";
+					newitem.formatter = Slick.Formatters.SerializedToCSV;
+					newitem.editor = Slick.Editors.SerializedToCSV;
+					insertobj.type = 'serialized-to-csv';
+				}
+
 				else if(customobj.type == "select")
 				{
 					newitem.editor = Slick.Editors.Select;
@@ -6018,6 +6032,13 @@ W3Ex.abemodule = (function($){
 					newitem.formatter = Slick.Formatters.AutocompleteProductSelector;
 					newitem.editor = Slick.Editors.AutocompleteProductSelector;
 				}
+
+				if(item.type == "serialized-to-csv")
+				{
+					newitem.formatter = Slick.Formatters.SerializedToCSV;
+					newitem.editor = Slick.Editors.SerializedToCSV;
+				}
+
 //				if(item.textarea !== undefined)
 //				{
 //					newitem.editor = Slick.Editors.TextArea;
@@ -8753,84 +8774,84 @@ W3Ex.abemodule = (function($){
 			}
 		}
 	});
-	
-	 _grid.onMouseEnter.subscribe(function(e, args) {
 
-			$('#showvarslinkpopup').remove();
-			var cell = _grid.getCellFromEvent(e);
-			var i=0;
-			var node = _grid.getCellNode(cell.row,cell.cell);
-			var box = _grid.getCellNodeBox(cell.row,cell.cell);
-			 var $vartitle = $(node).find('div.showvarslink');
-			if($vartitle.length > 0)
-			{
-				var $container = $("body");
+	_grid.onMouseEnter.subscribe(function (e, args) {
 
-
-				var $wrapper = $('<DIV id="showvarslinkpopup" style="z-index:100;position:absolute;"><a href="javascript:;" class="grouped-items selvars" onclick="window.W3Ex.abemodule.handleSelVars('+$vartitle.attr('data-id')+');">sel vars</a><a href="javascript:;" class="grouped-items selvars" onclick="window.W3Ex.abemodule.handleUnSelVars('+$vartitle.attr('data-id')+');">unsel vars</a></div>')
-					.appendTo($container);
+		$('#showvarslinkpopup').remove();
+		var cell = _grid.getCellFromEvent(e);
+		var i = 0;
+		var node = _grid.getCellNode(cell.row, cell.cell);
+		var box = _grid.getCellNodeBox(cell.row, cell.cell);
+		var $vartitle = $(node).find('div.showvarslink');
+		if ($vartitle.length > 0) {
+			var $container = $("body");
 
 
-			  var position = $vartitle.offset();
-			  var counter = 0;
-			  var dim = "110px";
-			  if($vartitle.length > 1)
+			var $wrapper = $('<DIV id="showvarslinkpopup" style="z-index:100;position:absolute;"><a href="javascript:;" class="grouped-items selvars" onclick="window.W3Ex.abemodule.handleSelVars(' + $vartitle.attr('data-id') + ');">sel vars</a><a href="javascript:;" class="grouped-items selvars" onclick="window.W3Ex.abemodule.handleUnSelVars(' + $vartitle.attr('data-id') + ');">unsel vars</a></div>')
+				.appendTo($container);
+
+
+			var position = $vartitle.offset();
+			var counter = 0;
+			var dim = "110px";
+			if ($vartitle.length > 1)
 				dim = "80px";
 
+			position.left += $(node).width() - $wrapper.width();
+			if (W3Ex._isrtlenabled === true)
+				position.left -= $(node).width() - $wrapper.width();
 
-//         	  $image.css('width','110px');
-//         	  $image.css('height','110px');
-//         	  $wrapper.css('top',box.top);
-//         	  $wrapper.css('left',box.left);
-
-				position.left+=$(node).width() - $wrapper.width();
-				 if(W3Ex._isrtlenabled === true)
-					position.left-=$(node).width() - $wrapper.width();
-
-//				position.top+= $img.height()/2 - $wrapper.height()/2;
-				$wrapper.css(position);
-			}
-			if(W3Ex._global_settings['showthumbnails'] !== true)
-				return;
-			var $img = $(node).find('img.imageover');
-			if($img.length > 0)
-			{
-				   var $container = $("body");
+			$wrapper.css(position);
+		}
+		if (W3Ex._global_settings['showthumbnails'] !== true)
+			return;
+		var $img = $(node).find('img.imageover');
+		if ($img.length > 0) {
+			var $container = $("body");
 
 
-					var $wrapper = $('<DIV id="imagepopup" style="z-index:10000;position:absolute;"/>')
-		  .appendTo($container);
+			var $wrapper = $('<DIV id="imagepopup" style="z-index:10000;position:absolute;" class="imagepopup"/>')
+				.appendTo($container);
 
 
-			  var position = $img.offset();
-			  var counter = 0;
-			  var dim = "110px";
-			  if($img.length > 1)
-				dim = "80px";
-			  $img.each(function()
-			  {
-				   var $image =  $('<img src="" width="'+dim+'" height="'+dim+'">').appendTo($wrapper);
-				   $image.attr('src',$(this).attr('src'));
-				   counter++;
-				   if(counter%3 == 0)
-				   {
+			var position = $img.offset();
+			var counter = 0;
+			var dim = "325px";
+			if ($img.length > 1)
+				dim = "120px";
+			var isTitleSet = false;
+			$img.each(function () {
+				//var $image = $('<img src="" width="' + dim + '" height="' + dim + '">').appendTo($wrapper);
+				var $image = $('<img src="" width="' + dim + '">').appendTo($wrapper);
+				//$image.attr('src', $(this).attr('src'));
+				if ($img.length > 1) {
+					$image.attr('src', $(this).attr('src'));
+				} else {
+					$image.attr('src', $(this).attr('data-original-src'));
+				}
+				if (!isTitleSet && $(this).attr('data-prod-title')) {
+					var title = $(this).attr('data-prod-title').substring(0, 36);
+					if (title.length==36) {
+						title += '...';
+					}
+					$('<div>#'+$(this).attr('data-prod-id')+' '+title+'</div>').prependTo($wrapper);
+					isTitleSet = true;
+				}
+				counter++;
+				if (counter % 3 == 0) {
 					$('<br/>').appendTo($wrapper);
-				   }
+				}
 
-			  })
+			})
 
-//         	  $image.css('width','110px');
-//         	  $image.css('height','110px');
-//         	  $wrapper.css('top',box.top);
-//         	  $wrapper.css('left',box.left);
-				position.left+=$(node).width();
-				position.top+= $img.height()/2 - $wrapper.height()/2;
-				$wrapper.css(position);
-			}
+			position.left += $(node).width();
+			position.top += $img.height() / 2 - $wrapper.height() / 2;
+			$wrapper.css(position);
+		}
 
 
-			//do whatever
-		});
+		//do whatever
+	});
 
 	 _grid.onMouseLeave.subscribe(function(e, args) {
 //     	   var cell = _grid.getCellFromEvent(e);
@@ -10111,7 +10132,7 @@ $("#exportdialog").dialog({
 	open: function( event, ui ) {
 		 var d = $('.ui-dialog:visible');
 		 $(d).addClass('dialog-zindez');
-		 d[0].style.setProperty('z-index', '300002', 'important');
+		 d[0].style.setProperty('z-index', '1300002', 'important');
 		 $('.ui-dialog:visible').wrap('<div class="w3exabe w3exabedel" />');
 		  $('.ui-widget-overlay').each(function () {
 			 $(this).next('.ui-dialog').andSelf().wrapAll('<div class="w3exabe w3exabedel" />');
@@ -10996,7 +11017,7 @@ $("#pluginsettings").dialog({
 		
 		  var d = $('.ui-dialog:visible');
 		  $(d).addClass('dialog-zindez');
-		  d[0].style.setProperty('z-index', '300002', 'important');
+		  d[0].style.setProperty('z-index', '1300002', 'important');
 		  $('.ui-dialog:visible').wrap('<div class="w3exabe w3exabedel" />');
 		  $('.ui-widget-overlay').each(function () {
 			 $(this).next('.ui-dialog').andSelf().wrapAll('<div class="w3exabe w3exabedel" />');
@@ -11101,6 +11122,10 @@ $("#pluginsettings").dialog({
 			settings['setting_enable_admin_only_visible'] = 1;
 		else
 			settings['setting_enable_admin_only_visible'] = 0;
+		if($('#setting-display-topbar-bulkedit-link').is(':checked'))
+			settings['setting_display_top_bar_link_bulkedit'] = 1;
+		else
+			settings['setting_display_top_bar_link_bulkedit'] = 0;
 		if($('#calldoaction').is(':checked'))
 			settings['calldoaction'] = 1;
 		else
@@ -11427,7 +11452,7 @@ $("#bulkdialog").dialog({
 	open: function( event, ui ) {
 		 var d = $('.ui-dialog:visible');
 		 $(d).addClass('dialog-zindez');
-		 d[0].style.setProperty('z-index', '300002', 'important');
+		 d[0].style.setProperty('z-index', '1300002', 'important');
 		 $('.ui-dialog:visible').wrap('<div class="w3exabe w3exabedel" />');
 		  $('#bulkdialog').css('height','520px');
 		  var winH = $(window).height() - 180;
@@ -13521,7 +13546,7 @@ if(!pbatch)
 					}
 				}
 			}
-			
+
 			for (var key in row) 
 			{
 			  if (row.hasOwnProperty(key)) 
@@ -13585,6 +13610,12 @@ if(!pbatch)
 					  if(valtoinsert === undefined)
 						valtoinsert = "";
 					 
+				  }
+				  if(coldef !== undefined && coldef.type === "serialized-to-csv")
+				  {
+					  valtoinsert = wcabehelper.serializeCSV(selitem[key]);
+					  if(valtoinsert === undefined)
+						  valtoinsert = "";
 				  }
 				  if(key.indexOf('_ids') !== -1)
 				  {
@@ -13763,8 +13794,8 @@ if(!pbatch)
 			}
 			
 		}
-		
-		
+
+
 		jQuery.ajax({
 			 type : "post",
 			 dataType : "json",
@@ -14177,7 +14208,7 @@ if(!pbatch)
 		open: function( event, ui ) {
 			 var d = $('.ui-dialog:visible');
 			 $(d).addClass('dialog-zindez');
-			 d[0].style.setProperty('z-index', '300002', 'important');
+			 d[0].style.setProperty('z-index', '1300002', 'important');
 			 $('.ui-dialog:visible').wrap('<div class="w3exabe w3exabedel" />');
 			  $('.ui-widget-overlay').each(function () {
 				 $(this).next('.ui-dialog').andSelf().wrapAll('<div class="w3exabe w3exabedel" />');
@@ -14427,7 +14458,7 @@ if(!pbatch)
 		open: function( event, ui ) {
 			 var d = $('.ui-dialog:visible');
 			 $(d).addClass('dialog-zindez');
-			 d[0].style.setProperty('z-index', '300002', 'important');
+			 d[0].style.setProperty('z-index', '1300002', 'important');
 			 $('.ui-dialog:visible').wrap('<div class="w3exabe w3exabedel" />');
 			  $('.ui-widget-overlay').each(function () {
 				 $(this).next('.ui-dialog').andSelf().wrapAll('<div class="w3exabe w3exabedel" />');
@@ -16009,7 +16040,7 @@ if(!pbatch)
 	open: function( event, ui ) {
 		 var d = $('.ui-dialog:visible');
 		 $(d).addClass('dialog-zindez');
-		 d[0].style.setProperty('z-index', '300002', 'important');
+		 d[0].style.setProperty('z-index', '1300002', 'important');
 		 $('.ui-dialog:visible').wrap('<div class="w3exabe w3exabedel" />');
 		  $('#selectdialog').css('height','500px');
 		  var winH = $(window).height() - 180;
@@ -16276,7 +16307,7 @@ if(!pbatch)
 						$('#findcustomfieldsdialog table').append('<tr><td>Product does not exist</td></tr>');
 						return;
 					}
-					var texttoadd = "<tr><td></td><td>Meta Key</td><td>Meta Value</td><td>Field Name(display as)</td><td></td></tr>";
+					var texttoadd = "<tr><td></td><td>Meta Key</td><td>Meta Value</td><td>Field Name(display as)</td><td>Field Type</td></tr>";
 					for (var i=0; i< metas.length; i++) {
 						var meta = metas[i];
 						if(meta.meta_value === null || meta.meta_value === undefined)
@@ -16286,7 +16317,7 @@ if(!pbatch)
 							meta.meta_value = meta.meta_value.substr(0, 200);
 						meta.meta_value = replaceAll(meta.meta_value,'<', '&lt;');
 						meta.meta_value = replaceAll(meta.meta_value,'<', '&gt;');
-						texttoadd+= '<tr><td data-field=""><input class="customisvisible" type="checkbox"></td><td data-field="metakey" meta-field="'+meta.meta_key+'">'+ meta.meta_key+'</td><td data-field="">'+meta.meta_value+'</td><td data-field="name"><input data-field="inputname" type="text"" value=""></td><td data-field="type">Field type:&nbsp;<select class="fieldtypefound"><option value="text">Text (single line)</option><option value="multitext">Text (multi line)</option><option value="integer">Number (integer)</option><option value="decimal">Number (decimal .00)</option><option value="decimal3">Number (decimal .000)</option><option value="checkbox">Checkbox</option></select></td></tr>';
+						texttoadd+= '<tr><td data-field=""><input class="customisvisible" type="checkbox"></td><td data-field="metakey" meta-field="'+meta.meta_key+'">'+ meta.meta_key+'</td><td data-field="">'+meta.meta_value+'</td><td data-field="name"><input data-field="inputname" type="text"" value=""></td><td data-field="type"><select class="fieldtypefound"><option value="text">Text (single line)</option><option value="multitext">Text (multi line)</option><option value="integer">Number (integer)</option><option value="decimal">Number (decimal .00)</option><option value="decimal3">Number (decimal .000)</option><option value="checkbox">Checkbox</option></select></td></tr>';
 					}
 					if(texttoadd !== "<tr><td></td><td>Meta Key</td><td>Meta Value</td><td>Field Name</td><td></td></tr>")
 						$('#findcustomfieldsdialog table').append(texttoadd);
@@ -16398,7 +16429,7 @@ if(!pbatch)
 						$('#findcustomfieldsdialog table').append('<tr><td>Nothing found</td></tr>');
 						return;
 					}
-					var texttoadd = "<tr><td></td><td>Meta Key</td><td>Meta Value</td><td>Field Name(display as)</td><td></td></tr>";
+					var texttoadd = "<tr><td></td><td>Meta Key</td><td>Meta Value</td><td>Field Name(display as)</td><td>Field Type</td></tr>";
 					var dups = [];
 					for (var i=0; i< metas.length; i++) {
 						var meta = metas[i];
@@ -16421,7 +16452,7 @@ if(!pbatch)
 							'<td data-field="metakey" meta-field="'+meta.meta_key+'">'+ meta.meta_key+'</td>' +
 							'<td data-field="">'+meta.meta_value+'</td>' +
 							'<td data-field="name"><input data-field="inputname" type="text"" value=""></td>' +
-							'<td data-field="type">Field type:&nbsp;<select class="fieldtypefound">' +
+							'<td data-field="type"><select class="fieldtypefound">' +
 							'	<option value="text">Text (single line)</option>' +
 							'	<option value="multitext">Text (multi line)</option>' +
 							'	<option value="integer">Number (integer)</option>' +
@@ -16431,6 +16462,7 @@ if(!pbatch)
 							'	<option value="datetime">DateTime (2020-01-27 22:18:31)</option>' +
 							'	<option value="url">URL (clickable link)</option>' +
 							'	<option value="customsyncwith">Sync With (custom search)</option>' +
+							'	<option value="serialized-to-csv">Serialized to CSV</option>' +
 							'</select></td>' +
 							'</tr>';
 					}
@@ -16604,10 +16636,10 @@ if(!pbatch)
 							ctext = $('#fieldvisible').val();
 							if(ctext == "yes")
 							{
-								newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible" checked="checked">Visible</label><input class="button deletecustomfield" type="button" value="delete" /></td></tr>';
+								newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible" checked="checked">Visible</label><input class="button-wcabe deletecustomfield" type="button" value="delete" /></td></tr>';
 							}else
 							{
-								newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible">Visible</label><input class="button deletecustomfield" type="button" value="delete" /></td></tr>';
+								newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible">Visible</label><input class="button-wcabe deletecustomfield" type="button" value="delete" /></td></tr>';
 							}
 							$(newhtml).insertBefore('.addcontrols');
 							$('#addcustomfield').show();
@@ -16681,6 +16713,11 @@ if(!pbatch)
 				newhtml+= " data-type='url' data-field='type'>type: <strong>URL</strong></td>";
 			}
 			break;
+			case "serialized-to-csv":
+			{
+				newhtml+= " data-type='serialized-to-csv' data-field='type'>type: <strong>Serialized to CSV</strong></td>";
+			}
+			break;
 			case "customsyncwith":
 			{
 				newhtml+= " data-type='customsyncwith' data-field='type'>type: <strong>Sync With</strong></td>";
@@ -16704,10 +16741,10 @@ if(!pbatch)
 		ctext = $('#fieldvisible').val();
 		if(ctext == "yes")
 		{
-			newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible" checked="checked">Visible</label><input class="button deletecustomfield" type="button" value="delete" /></td></tr>';
+			newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible" checked="checked">Visible</label><input class="button-wcabe deletecustomfield" type="button" value="delete" /></td></tr>';
 		}else
 		{
-			newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible">Visible</label><input class="button deletecustomfield" type="button" value="delete" /></td></tr>';
+			newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible">Visible</label><input class="button-wcabe deletecustomfield" type="button" value="delete" /></td></tr>';
 		}
 		$(newhtml).insertBefore('.addcontrols');
 		$('#addcustomfield').show();
@@ -16824,7 +16861,7 @@ if(!pbatch)
 		open: function( event, ui ) {
 			 var d = $('.ui-dialog:visible');
 			 $(d).addClass('dialog-zindez');
-			 d[0].style.setProperty('z-index', '300002', 'important');
+			 d[0].style.setProperty('z-index', '1300002', 'important');
 			/* if($('.ui-widget-overlay:visible').length > 0)
 			 {
 				  $('.ui-widget-overlay').each(function () {
@@ -17008,6 +17045,12 @@ if(!pbatch)
 								newhtml+= " data-type='customsyncwith' data-field='type'>type: <strong>Sync With</strong></td>";
 							}
 							break;
+							case "serialized-to-csv":
+							{
+								newhtml+= " data-type='serialized-to-csv' data-field='type'>type: <strong>Serialized to CSV</strong></td>";
+							}
+							// WCABE-225-new-custom-field-type-for-serialized-data-to-csv }
+							break;
 							case "custom":
 							{
 								newhtml+= " data-type='custom' data-field='type' data-vals='false'>type: <strong>Custom Taxonomy</td>";
@@ -17022,7 +17065,7 @@ if(!pbatch)
 								break;
 						}
 						
-							newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible" checked="checked">Visible</label><input class="button deletecustomfield" type="button" value="delete" /></td></tr>';
+							newhtml+= '<td data-field="isvisible"><label><input type="checkbox" class="customisvisible" checked="checked">Visible</label><input class="button-wcabe deletecustomfield" type="button" value="delete" /></td></tr>';
 							
 						$(newhtml).insertBefore('.addcontrols');
 		
@@ -17097,7 +17140,15 @@ if(!pbatch)
 								newitem.options = customobj.selvals;
 								insertobj.type = 'set';
 								insertobj.options= customobj.selvals;
-							}else if(customobj.type == "custom")
+							}
+							else if(customobj.type == "serialized-to-csv")
+							{
+								newitem.cssClass = "cell-effort-driven";
+								newitem.formatter = Slick.Formatters.SerializedToCSV;
+								newitem.editor = Slick.Editors.SerializedToCSV;
+								insertobj.type = 'serialized-to-csv';
+							}
+							else if(customobj.type == "custom")
 							{
 								newitem.editor = Slick.Editors.Text;
 								insertobj.scope = SCOPE.PRODALL;
@@ -17417,7 +17468,7 @@ if(!pbatch)
 		open: function( event, ui ) {
 			 var d = $('.ui-dialog:visible');
 			 $(d).addClass('dialog-zindez');
-			 d[0].style.setProperty('z-index', '300002', 'important');
+			 d[0].style.setProperty('z-index', '1300002', 'important');
 			/* if($('.ui-widget-overlay:visible').length > 0)
 			 {
 				  $('.ui-widget-overlay').each(function () {

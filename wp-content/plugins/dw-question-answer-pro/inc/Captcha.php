@@ -37,10 +37,10 @@ class DWQA_Captcha {
 			// Enqueued script with localized data.
 			wp_enqueue_script( 'google-recaptcha' );
 		}
-		if ( $this->type_selected ==  'funcaptcha') {
-			wp_enqueue_script( 'funcaptcha', 'https://funcaptcha.com/fc/api/', array() );
-			echo '<script src="https://funcaptcha.com/fc/api/" async defer></script>';
-		}
+		// if ( $this->type_selected ==  'funcaptcha') {
+		// 	wp_enqueue_script( 'funcaptcha', 'https://funcaptcha.com/fc/api/', array() );
+		// 	echo '<script src="https://funcaptcha.com/fc/api/" async defer></script>';
+		// }
 	}
 
 	

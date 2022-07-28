@@ -1,4 +1,4 @@
-<?php  
+<?php
 
 if( !class_exists( 'TGM_Plugin_Activation' ) ) {
 	// load our custom updater
@@ -7,20 +7,22 @@ if( !class_exists( 'TGM_Plugin_Activation' ) ) {
 
 class DWQA_Updater {
 	public function __construct() {
-		global $dwqa_general_settings;
 		add_action('dwqa_after_other_settings', array($this,'dwqa_updater_settings'));
-		
+
+		add_action('init', array($this, 'init_update'));
+	}
+
+	public function init_update(){
+		global $dwqa_general_settings, $dwqa;
 
 		if( isset($dwqa_general_settings['use-auto-update-from-evanto']) && $dwqa_general_settings['use-auto-update-from-evanto']){
-			$token = $dwqa_general_settings['evanto-token'];
-			if(DWQA_Updater::evanto_check_version($token)){
+
+			if (version_compare(DWQA_Updater::get_last_version(), $dwqa->version, ">")) {
 				add_action( 'tgmpa_register', array($this, 'dwqa_update_required_plugins' ));
 			}
-			
 		}
-		
 	}
-	
+
 	public function dwqa_updater_settings(){
 		// Auto update from Evanto Settings
 		add_settings_section(
@@ -37,7 +39,7 @@ class DWQA_Updater {
 			'dwqa-settings',
 			'dwqa-auto-update-settings'
 		);
-		
+
 		add_settings_field(
 			'dwqa_options[evanto-token]',
 			__( 'Evanto Token', 'dwqa' ),
@@ -45,7 +47,7 @@ class DWQA_Updater {
 			'dwqa-settings',
 			'dwqa-auto-update-settings'
 		);
-		
+
 		add_settings_field(
 			'dwqa_options[evanto-connection-status]',
 			__( 'Evanto connection status', 'dwqa' ),
@@ -56,7 +58,7 @@ class DWQA_Updater {
 	}
 	public function dwqa_use_auto_update_from_evanto() {
 		global $dwqa_general_settings;
-		
+
 		echo '<p><label for="dwqa_options_use_auto_update_from_evanto"><input type="checkbox" name="dwqa_options[use-auto-update-from-evanto]"  id="dwqa_options_use_auto_update_from_evanto" value="1" '.checked( 1, (isset($dwqa_general_settings['use-auto-update-from-evanto'] ) ? $dwqa_general_settings['use-auto-update-from-evanto'] : false ) , false ) .'><span class="description">'.__( 'Enable Auto Update', 'dwqa' ).'</span></label></p>';
 	}
 	public function dwqa_evanto_token() {
@@ -67,9 +69,9 @@ class DWQA_Updater {
 	}
 	public function dwqa_evanto_connection_status() {
 		global $dwqa_general_settings;
-		
+
 		$status = __( 'Not Connected', 'dwqa' );
-		
+
 		if(isset($dwqa_general_settings['use-auto-update-from-evanto']) && $dwqa_general_settings['use-auto-update-from-evanto'] && isset($dwqa_general_settings['evanto-token'])){
 			//enable akismet
 			if ( class_exists( 'DWQA_Updater' ) ){
@@ -81,8 +83,8 @@ class DWQA_Updater {
 		}
 		echo '<p>'.$status.'</p>';
 	}
-	
-	
+
+
 	public static function evanto_check_version($token = ''){
 		if(!$token || $token==''){
 			global $dwqa_general_settings;
@@ -103,10 +105,10 @@ class DWQA_Updater {
 			$result = json_decode($response['body'], true);
 			return $result['wordpress_plugin_latest_version'];
 		}
-		
+
 		return false;
 	}
-	
+
 	public static function evanto_get_download($token = ''){
 		if(!$token || $token==''){
 			global $dwqa_general_settings;
@@ -130,9 +132,9 @@ class DWQA_Updater {
 
 		return false;
 	}
-	
-	
-	
+
+
+
 
 	/**
 	 * Register the required plugins for this theme.
@@ -147,16 +149,16 @@ class DWQA_Updater {
 		 * Array of plugin arrays. Required keys are name and slug.
 		 * If the source is NOT from the .org repo, then source is also required.
 		 */
-		 
+
 		$version = DWQA_Updater::evanto_check_version();
 		if(!$version){
 			return false;
 		}
-		$source = DWQA_Updater::evanto_get_download();
+		$source = DWQA_Updater::get_download_url();
 		if(!$source){
 			return false;
 		}
-		
+
 		$plugins = array(
 			// This is an example of how to include a plugin bundled with a theme.
 			array(
@@ -174,5 +176,40 @@ class DWQA_Updater {
 
 		tgmpa( $plugins);
 
+	}
+
+	public static function get_last_version(){
+		$last_check = get_option('dwqa_pro_version_last_check');
+		if($last_check && ($last_check + 86400) > time()){
+			$version = get_option('dwqa_pro_version');
+
+			if($version){
+				return $version;
+			}
+		}
+
+		$version = DWQA_Updater::evanto_check_version();
+		if(!$version){
+			return false;
+		}
+
+
+		update_option('dwqa_pro_version', $version);
+		update_option('dwqa_pro_version_last_check', time());
+		return $source;
+	}
+
+	public static function get_download_url(){
+
+		if(isset($_GET['plugin']) && $_GET['plugin']=='dw-question-answer-pro' && isset($_GET['tgmpa-update']) && $_GET['tgmpa-update']=='update-plugin' ){
+
+			$source = DWQA_Updater::evanto_get_download();
+			if(!$source){
+				return false;
+			}
+
+			return $source;
+		}
+		return '#';
 	}
 }

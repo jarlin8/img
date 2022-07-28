@@ -147,11 +147,13 @@
 .dwqa-questions-list .dwqa-question-item .dwqa-question-meta span {
   letter-spacing: 0.5px;
 }
-
+.dwqa-questions-list .dwqa-question-item .dwqa-question-meta span.dwqa-sep {
+  display: none;
+}
 .dwqa-questions-list div.dwqa-question-item span.dwqa-status {
   height: 24px;
-  left: 26px;
-  top: 68px;
+  left: 24px;
+  top: 66px;
   width: 24px;
  	z-index: 1;
 }
@@ -185,8 +187,8 @@ div.dwqa-question-item span.dwqa-status:after {
   position: absolute;
   left: 0;
   margin-top: 0;
-  top: 24px;
-  width: 36px;
+  top: 24px !important;
+  width: 36px !important;
   height: 36px;
 }
 
@@ -387,7 +389,7 @@ span.dwqa-current {
   .dwqa-questions-list div.dwqa-question-item span.dwqa-status {
     border-radius: 50%;
     left: 20px;
-    top: 44px;
+    top: 60px;
   }
   .dwqa-question-filter a {
     margin-bottom: 5px;

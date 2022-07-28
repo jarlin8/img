@@ -123,6 +123,30 @@ form.dwqa-settings-body input[type=text] {
     margin-bottom: 6px;
 }
 
+.dwqa-important-notice {
+    position: relative;
+    padding: 2em 2em 2em 1.5em;
+    font-style: italic;
+    font-size: 1.1em;
+    line-height: 1.5;
+}
+
+.dwqa-important-notice:before {
+    content: "";
+    background: #198FD9;
+    opacity: 0.1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 4px;
+}
+
+.dwqa-important-notice strong {
+    color: #198FD9;
+}
+
 ul.subsubsub {
     border-bottom: 1px solid #e1e1e1;
 }

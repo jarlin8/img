@@ -214,6 +214,7 @@ class DWQA_Ajax {
 
 	public function update_status() {
 		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['nonce'] ), '_dwqa_update_question_status_nonce' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Are you cheating huh?', 'dwqa' ) ) );
 		}
 		if ( ! isset( $_POST['question'] ) ) {
 			wp_die( 0 );

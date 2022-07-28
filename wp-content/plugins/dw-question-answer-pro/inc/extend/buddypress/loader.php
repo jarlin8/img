@@ -75,9 +75,9 @@ class DWQA_QA_Component extends BP_Component {
 		
 		// define question, answer slug
 		if (!defined( 'BP_DWQA_SLUG_QUESTION' ))
-			define( 'BP_DWQA_SLUG_QUESTION', BP_DWQA_SLUG . '-' . sanitize_title(__('question', 'dwqa') ), 'question');
+			define( 'BP_DWQA_SLUG_QUESTION', BP_DWQA_SLUG . '-' . sanitize_title(__('question', 'dwqa') ), '');
 		if (!defined( 'BP_DWQA_SLUG_ANSWER' ))
-			define( 'BP_DWQA_SLUG_ANSWER', BP_DWQA_SLUG . '-' . sanitize_title(__('answer', 'dwqa') ), 'answer');
+			define( 'BP_DWQA_SLUG_ANSWER', BP_DWQA_SLUG . '-' . sanitize_title(__('answer', 'dwqa') ), '');
 		
 		
 

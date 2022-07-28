@@ -83,16 +83,16 @@ class DWQA_Helptab {
 
 		<span class="label label-warning">Step 1</span> Log in to <strong>Dashboard &gt;&gt; Pages &gt;&gt; Add New</strong>.
 
-		[caption id="" align="aligncenter" width="580"]<img title="dw_question_and_answer_add_question_page" alt="add question page" src="https://image.laowei8.com/welaowei8/2020/08/wechat-personal.png" width="580" height="457" /> Add Question Page[/caption]
+		[caption id="" align="aligncenter" width="580"]<img title="dw_question_and_answer_add_question_page" alt="add question page" src="http://designwall.s3.amazonaws.com/images/guide/dw_qa/add-new-question-page.png" width="580" height="457" /> Add Question Page[/caption]
 
 		<span class="label label-warning">Step 2</span> Set up a menu link for this page. Go to <strong>Appearance &gt;&gt; Menus</strong> to add the page from Step 1 to Menu.
 
-		[caption id="" align="aligncenter" width="580"]<img title="dw_question_and_answer_add_page_to_menu" alt="add pages to menu" src="https://image.laowei8.com/welaowei8/2020/08/wechat-personal.png" width="580" height="342" /> Add Question Page To Menu[/caption]
+		[caption id="" align="aligncenter" width="580"]<img title="dw_question_and_answer_add_page_to_menu" alt="add pages to menu" src="http://designwall.s3.amazonaws.com/images/guide/dw_qa/add-question-page-to-menu.png" width="580" height="342" /> Add Question Page To Menu[/caption]
 
 		<span class="label label-warning">Step 3 </span>Go to <strong>Dashboard &gt;&gt; Questions &gt;&gt; Settings &gt;&gt; General &gt;&gt; Question List Page.
 		</strong>
 
-		[caption id="" align="aligncenter" width="580"]<img title="dw_question_and_answer_question_list_page" alt="Select question list page" src="https://image.laowei8.com/welaowei8/2020/08/wechat-personal.png" width="580" height="182" /> Select Question List Page[/caption]
+		[caption id="" align="aligncenter" width="580"]<img title="dw_question_and_answer_question_list_page" alt="Select question list page" src="http://designwall.s3.amazonaws.com/images/guide/dw_qa/question-list-page.png" width="580" height="182" /> Select Question List Page[/caption]
 		<?php
 		$html = ob_get_contents();
 		ob_end_clean();
@@ -107,17 +107,17 @@ class DWQA_Helptab {
 		<div class="alert">This section is only when you need to re-create the pages. On the latest version of DW Question &amp; Answer plugin, these pages are automatically created and assigned in the back-end, so you will NOT need to follow this section any more.</div>
 		<span class="label label-warning">Step 1</span> Log in to <strong>Dashboard &gt;&gt; Pages &gt;&gt; Add New</strong>
 
-		[caption id="" align="aligncenter" width="578"]<img title="dw_question_and_answer_add_ask_question_page" alt="Add Ask Question Page " src="https://image.laowei8.com/welaowei8/2020/08/wechat-personal.png" width="578" height="457" /> add New Page[/caption]
+		[caption id="" align="aligncenter" width="578"]<img title="dw_question_and_answer_add_ask_question_page" alt="Add Ask Question Page " src="http://designwall.s3.amazonaws.com/images/guide/dw_qa/add-submit-question-page.png" width="578" height="457" /> add New Page[/caption]
 
 		<span class="label label-warning">Step 2</span> Go to <strong>Appearance &gt;&gt; Menus </strong>and add the page from Step 1 to Menu.<strong>
 		</strong>
 
-		[caption id="" align="aligncenter" width="580"]<img title="dw_question_and_answer_add_ask_question_page_to_menu" alt="add question page to menu" src="https://image.laowei8.com/welaowei8/2020/08/wechat-personal.png" width="580" height="312" /> Add Page To Menu[/caption]
+		[caption id="" align="aligncenter" width="580"]<img title="dw_question_and_answer_add_ask_question_page_to_menu" alt="add question page to menu" src="http://designwall.s3.amazonaws.com/images/guide/dw_qa/add-page-to-menu.png" width="580" height="312" /> Add Page To Menu[/caption]
 
 		<span class="label label-warning">Step 3</span> Go to <strong>Questions &gt;&gt; Settings &gt;&gt; General &gt;&gt; Ask Question Page.
 		</strong>
 
-		[caption id="" align="aligncenter" width="580"]<img class=" " title="dw_question_and_answer_ask_question_page_settings" alt="Ask Question Page Settings" src="https://image.laowei8.com/welaowei8/2020/08/wechat-personal.png" width="580" height="229" /> Ask Question Page Settings[/caption]
+		[caption id="" align="aligncenter" width="580"]<img class=" " title="dw_question_and_answer_ask_question_page_settings" alt="Ask Question Page Settings" src="http://designwall.s3.amazonaws.com/images/guide/dw_qa/submit-question-page-settings.png" width="580" height="229" /> Ask Question Page Settings[/caption]
 		<?php
 		$html = ob_get_contents();
 		ob_end_clean();
