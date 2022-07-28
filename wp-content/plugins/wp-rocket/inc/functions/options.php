@@ -217,6 +217,8 @@ function rocket_get_ignored_parameters() {
 		'dm_i'                  => 1,
 		'epik'                  => 1,
 		'pp'                    => 1,
+		'gbraid'                => 1,
+		'wbraid'                => 1,
 	];
 
 	/**
@@ -276,7 +278,7 @@ function get_rocket_cache_reject_uri( $force = false ) { // phpcs:ignore WordPre
 	}
 
 	// Exclude feeds.
-	$uris[] = '/(.+/)?' . $wp_rewrite->feed_base . '/?.+/?';
+	$uris[] = '/(?:.+/)?' . $wp_rewrite->feed_base . '(?:/(?:.+/?)?)?$';
 
 	// Exlude embedded URLs.
 	$uris[] = '/(?:.+/)?embed/';
@@ -405,6 +407,7 @@ function get_rocket_cache_dynamic_cookies() { // phpcs:ignore WordPress.NamingCo
 function get_rocket_cache_reject_ua() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 	$ua   = get_rocket_option( 'cache_reject_ua', [] );
 	$ua[] = 'facebookexternalhit';
+	$ua[] = 'WhatsApp';
 
 	/**
 	 * Filter the rejected User-Agent
@@ -454,12 +457,9 @@ function get_rocket_cache_query_string() { // phpcs:ignore WordPress.NamingConve
  * @return bool true if everything is ok, false otherwise
  */
 function rocket_valid_key() {
-return true;
-}
-
+	return true;
 	delete_transient( 'rocket_check_key_errors' );
-
-	return $valid_details;
+}
 
 /**
  * Determine if the key is valid.
@@ -510,7 +510,7 @@ function rocket_check_key() {
 		if ( '' === $body ) {
 			Logger::error( 'License validation failed. No body available in response.', [ 'license validation process' ] );
 			// Translators: %1$s = opening em tag, %2$s = closing em tag, %3$s = opening link tag, %4$s closing link tag.
-			$message = __( 'License validation failed. Our server could not resolve the request from your website.', 'rocket' ) . '<br>' . sprintf( __( 'Try clicking %1$sSave Changes%2$s below. If the error persists, follow %3$sthis guide%4$s.', 'rocket' ), '<em>', '</em>', '<a href="https://docs.wp-rocket.me/article/100-resolving-problems-with-license-validation#general">', '</a>' );
+			$message = __( 'License validation failed. Our server could not resolve the request from your website.', 'rocket' ) . '<br>' . sprintf( __( 'Try clicking %1$sValidate License%2$s below. If the error persists, follow %3$sthis guide%4$s.', 'rocket' ), '<em>', '</em>', '<a href="https://docs.wp-rocket.me/article/100-resolving-problems-with-license-validation#general">', '</a>' );
 			set_transient( 'rocket_check_key_errors', [ $message ] );
 
 			return $return;
@@ -629,7 +629,7 @@ function rocket_delete_licence_data_file() {
  * Is WP a MultiSite and a subfolder install?
  *
  * @since  3.1.1
- * @author GrÃ©gory Viguier
+ * @author Grégory Viguier
  *
  * @return bool
  */
@@ -657,7 +657,7 @@ function rocket_is_subfolder_install() {
  * It can be seen like the `RewriteBase` from the .htaccess file, but without the trailing slash.
  *
  * @since  3.1.1
- * @author GrÃ©gory Viguier
+ * @author Grégory Viguier
  *
  * @return string
  */
@@ -684,7 +684,7 @@ function rocket_get_home_dirname() {
  * Get the URL of the site's root. It corresponds to the main site's home page URL.
  *
  * @since  3.1.1
- * @author GrÃ©gory Viguier
+ * @author Grégory Viguier
  *
  * @return string
  */

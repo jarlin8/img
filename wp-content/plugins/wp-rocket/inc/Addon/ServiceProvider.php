@@ -3,6 +3,10 @@ namespace WP_Rocket\Addon;
 
 use WP_Rocket\Dependencies\League\Container\ServiceProvider\AbstractServiceProvider;
 use WP_Rocket\Admin\Options_Data;
+use WP_Rocket\Addon\Sucuri\Subscriber as SucuriSubscriber;
+use WPMedia\Cloudflare\APIClient;
+use WPMedia\Cloudflare\Cloudflare;
+use WPMedia\Cloudflare\Subscriber as CloudflareSubscriber;
 
 /**
  * Service provider for WP Rocket addons.
@@ -34,7 +38,7 @@ class ServiceProvider extends AbstractServiceProvider {
 		$options = $this->getContainer()->get( 'options' );
 
 		// Sucuri Addon.
-		$this->getContainer()->share( 'sucuri_subscriber', 'WP_Rocket\Subscriber\Third_Party\Plugins\Security\Sucuri_Subscriber' )
+		$this->getContainer()->share( 'sucuri_subscriber', SucuriSubscriber::class )
 			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 
@@ -50,20 +54,19 @@ class ServiceProvider extends AbstractServiceProvider {
 	 * @param Options_Data $options Instance of options.
 	 */
 	protected function addon_cloudflare( Options_Data $options ) {
-		// If the addon is not enabled, delete the transient and bail out. Don't load the addon.
+		// If the option is not enabled, bail out. Don't load the addon.
 		if ( ! (bool) $options->get( 'do_cloudflare', false ) ) {
-			delete_transient( 'rocket_cloudflare_is_api_keys_valid' );
 			return;
 		}
 
 		$this->provides[] = 'cloudflare_subscriber';
 
-		$this->getContainer()->add( 'cloudflare_api', 'WPMedia\Cloudflare\APIClient' )
+		$this->getContainer()->add( 'cloudflare_api', APIClient::class )
 			->addArgument( rocket_get_constant( 'WP_ROCKET_VERSION' ) );
-		$this->getContainer()->add( 'cloudflare', 'WPMedia\Cloudflare\Cloudflare' )
+		$this->getContainer()->add( 'cloudflare', Cloudflare::class )
 			->addArgument( $options )
 			->addArgument( $this->getContainer()->get( 'cloudflare_api' ) );
-		$this->getContainer()->share( 'cloudflare_subscriber', 'WPMedia\Cloudflare\Subscriber' )
+		$this->getContainer()->share( 'cloudflare_subscriber', CloudflareSubscriber::class )
 			->addArgument( $this->getContainer()->get( 'cloudflare' ) )
 			->addArgument( $options )
 			->addArgument( $this->getContainer()->get( 'options_api' ) )

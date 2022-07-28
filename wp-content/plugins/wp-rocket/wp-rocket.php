@@ -2,10 +2,11 @@
 /**
  * Plugin Name: WP Rocket
  * Plugin URI: https://wp-rocket.me
+ * Secret Key: 83a5bb0e2ad5164690bc7a42ae592cf5
  * Description: The best WordPress performance plugin.
- * Version: 3.10.6
- * Requires at least: 5.4
- * Requires PHP: 7.0
+ * Version: 3.11.4.2
+ * Requires at least: 5.5
+ * Requires PHP: 7.1
  * Code Name: Iego
  * Author: WP Media
  * Author URI: https://wp-media.me
@@ -14,51 +15,19 @@
  * Text Domain: rocket
  * Domain Path: languages
  *
- * Copyright 2013-2021 WP Rocket
- * */
+ * Copyright 2013-2022 WP Rocket
+ */
 
 defined( 'ABSPATH' ) || exit;
 
-delete_transient( 'rocket_check_key_errors' );
-
-$consumer_data = [
-	'consumer_key'   => '********',
-	'consumer_email' => 'activated@wp-rocket.me',
-	'secret_key'     => hash( 'crc32', 'activated@wp-rocket.me' ),
-];
-
-update_option( 'wp_rocket_settings', array_merge( get_option( 'wp_rocket_settings', [] ), $consumer_data ) );
-
-add_filter( 'pre_http_request', function( $pre, $parsed_args, $url ) {
-	if ( strpos( $url, 'https://wp-rocket.me/valid_key.php' ) !== false ) {
-		return [
-			'response' => [ 'code' => 200, 'message' => 'ОК' ],
-			'body'     => json_encode( [ 
-				'success' => true,
-				'data'    => $consumer_data,
-			] )
-		];
-	} else if ( strpos( $url, 'https://wp-rocket.me/stat/1.0/wp-rocket/user.php' ) !== false ) {
-		return [
-			'response' => [ 'code' => 200, 'message' => 'ОК' ],
-			'body'     => json_encode( [
-				'licence_account'    => '-1',
-				'licence_expiration' => 1893456000,
-			] )
-		];
-	} else {
-		return $pre;
-	}
-}, 10, 3 );
-
 // Rocket defines.
-define( 'WP_ROCKET_VERSION',               '3.10.6' );
-define( 'WP_ROCKET_WP_VERSION',            '5.4' );
-define( 'WP_ROCKET_WP_VERSION_TESTED',     '5.8' );
-define( 'WP_ROCKET_PHP_VERSION',           '7.0' );
-define( 'WP_ROCKET_PRIVATE_KEY'         , '44d0389c71f6b8cd089ab610f76575c9');
+define( 'WP_ROCKET_VERSION',               '3.11.4.2' );
+define( 'WP_ROCKET_WP_VERSION',            '5.5' );
+define( 'WP_ROCKET_WP_VERSION_TESTED',     '5.9' );
+define( 'WP_ROCKET_PHP_VERSION',           '7.1' );
+define( 'WP_ROCKET_PRIVATE_KEY',           'ef0e6b913bc47aaefa88582615758ea9');
 define( 'WP_ROCKET_SLUG',                  'wp_rocket_settings' );
-define( 'WP_ROCKET_WEB_MAIN'            , 'https://wp-rocket.me/');
+define( 'WP_ROCKET_WEB_MAIN',              'https://wp-rocket.me/' );
 define( 'WP_ROCKET_WEB_API',               WP_ROCKET_WEB_MAIN . 'api/wp-rocket/' );
 define( 'WP_ROCKET_WEB_CHECK',             WP_ROCKET_WEB_MAIN . 'check_update.php' );
 define( 'WP_ROCKET_WEB_VALID',             WP_ROCKET_WEB_MAIN . 'valid_key.php' );
@@ -112,7 +81,7 @@ if ( ! defined( 'CHMOD_WP_ROCKET_CACHE_DIRS' ) ) {
 	define( 'CHMOD_WP_ROCKET_CACHE_DIRS', 0755 ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 }
 if ( ! defined( 'WP_ROCKET_LASTVERSION' ) ) {
-	define( 'WP_ROCKET_LASTVERSION', '3.9.4' );
+	define( 'WP_ROCKET_LASTVERSION', '3.10.9' );
 }
 
 /**
@@ -163,3 +132,5 @@ if ( $wp_rocket_requirement_checks->check() ) {
 }
 
 unset( $wp_rocket_requirement_checks );
+/* Anti-Leecher Identifier */
+/* Credited By BABIATO-FORUM */
