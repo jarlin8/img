@@ -22,13 +22,17 @@ $d = 'aliyun-oss';
                 <th scope="row"><label for="region"><?php echo __('Region', $d).'/'.__('Endpoint', $d) ?></label></th>
                 <td>
                     <select name="region" id="region">
-                        <option value="oss-cn-hangzhou"><?php echo __('oss-cn-hangzhou', $d)?></option>
+                       <option value="oss-cn-hangzhou"><?php echo __('oss-cn-hangzhou', $d)?></option>
                         <option value="oss-cn-shanghai"><?php echo __('oss-cn-shanghai', $d)?></option>
                         <option value="oss-cn-qingdao"><?php echo __('oss-cn-qingdao', $d)?></option>
                         <option value="oss-cn-beijing"><?php echo __('oss-cn-beijing', $d)?></option>
                         <option value="oss-cn-zhangjiakou"><?php echo __('oss-cn-zhangjiakou', $d)?></option>
                         <option value="oss-cn-huhehaote"><?php echo __('oss-cn-huhehaote', $d)?></option>
+                        <option value="oss-cn-wulanchabu"><?php echo __('oss-cn-wulanchabu', $d)?></option>
                         <option value="oss-cn-shenzhen"><?php echo __('oss-cn-shenzhen', $d)?></option>
+                        <option value="oss-cn-heyuan"><?php echo __('oss-cn-heyuan', $d)?></option>
+                        <option value="oss-cn-guangzhou"><?php echo __('oss-cn-guangzhou', $d)?></option>
+                        <option value="oss-cn-chengdu"><?php echo __('oss-cn-chengdu', $d)?></option>
                         <option value="oss-cn-hongkong"><?php echo __('oss-cn-hongkong', $d)?></option>
                         <option value="oss-us-west-1"><?php echo __('oss-us-west-1', $d)?></option>
                         <option value="oss-us-east-1"><?php echo __('oss-us-east-1', $d)?></option>
@@ -39,6 +43,7 @@ $d = 'aliyun-oss';
                         <option value="oss-ap-northeast-1"><?php echo __('oss-ap-northeast-1', $d)?></option>
                         <option value="oss-ap-south-1"><?php echo __('oss-ap-south-1', $d)?></option>
                         <option value="oss-eu-central-1"><?php echo __('oss-eu-central-1', $d)?></option>
+                        <option value="oss-eu-west-1"><?php echo __('oss-eu-west-1', $d)?></option>
                         <option value="oss-me-east-1"><?php echo __('oss-me-east-1', $d)?></option>
                     </select>
 
@@ -167,6 +172,61 @@ $d = 'aliyun-oss';
             <a href="#more-settings" id="load-more-settings"><?php echo __('Advanced Options', $d) ?></a>
         </p>
         <div style="display: none" id="more-settings">
+            <hr>
+            <h2 class="title"><?php echo __('Aliyun CDN Authentication', $d) ?></h2>
+            <!--URL Authentication settings-->
+            <table class="form-table">
+                <tbody>
+                <tr>
+                    <th scope="row"><?php echo __('Authentication', $d) ?></th>
+                    <td>
+                        <fieldset>
+                            <legend class="screen-reader-text"><span><?php echo __('Authentication', $d) ?></span></legend>
+                            <label for="urlAuth">
+                                <input name="urlAuth" type="checkbox" id="urlAuth"
+                                    <?php echo $options['urlAuth'] ? 'checked' : '' ?>> <?php echo __('Enable', $d) ?>
+                            </label>
+                        </fieldset>
+                        <p class="description"><?php echo __("Enable Url Authentication for Aliyun CDN service, please make sure you've configured CDN URL Authentication Service in Aliyun Console correctly", $d) ?></p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="authMethod"><?php echo __('url Auth Method', $d)?></label></th>
+                    <td>
+                        <select name="authMethod" id="authMethod">
+                            <option value="A"><?php echo __('Method A', $d)?></option>
+                            <option value="B"><?php echo __('Method B', $d)?></option>
+                            <option value="C"><?php echo __('Method C', $d)?></option>
+                        </select>
+                        <p class="description"><?php echo __("Select Authentication Medthod, Method A Recommended", $d) ?><br>
+                        <a href="https://help.aliyun.com/document_detail/85117.html" target="" ><?php echo __('Help me choose', $d)?></a>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="authPrimaryKey"></label><?php echo __('url Auth PrimaryKey', $d) ?></th>
+                    <td>
+                        <input name="authPrimaryKey" type="text" id="authPrimaryKey" value="" placeholder="<?php echo __("You can't see me", $d) ?> " class="regular-text host">
+                        <p class="description"><?php echo __("Set Authentication Key as you like, please don't use AK or SK", $d) ?></p>                    
+                    </td>
+                </tr>
+                <tr style="display:none">
+                    <th scope="row"><label for="authAuxKey"></label><?php echo __('url Auth Aux Key', $d) ?></th>
+                    <td>
+                        <input name="authAuxKey" type="text" id="authAuxKey" value="<?php echo $options['authAuxKey'] ?>" class="regular-text host">              
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="authExpTime"></label><?php echo __('url Auth Exp Time', $d) ?></th>
+                    <td>
+                        <input name="authExpTime" type="number"  min="1" step="1" id="authExpTime" value="<?php echo $options['authExpTime'] ?>" class="regular-text host"> 
+                        <p class="description"><?php echo __("Time of url expiration, set hourly", $d) ?></p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            
+            <hr>
             <h2 class="title"><?php echo __('Advanced Options', $d) ?></h2>
             <table class="form-table">
                 <tbody>
@@ -276,7 +336,18 @@ $d = 'aliyun-oss';
                 $('#export_style_profile').hide();
             }
         });
-
+        /*CDN Authentication*/
+        $('#urlAuth').change(function () {
+            if ($(this).prop('checked')) {
+                $('#authMethod, #authPrimaryKey, #authAuxKey, #authExpTime').attr('disabled', false);
+            } else {
+                $('#authMethod, #authPrimaryKey, #authAuxKey, #authExpTime').attr('disabled', true);
+            }
+        });
+        /*Authentication Method*/
+        var authMethod = '<?php echo $options['authMethod'] ?>';
+        $('#authMethod option[value='+authMethod+']').attr('selected', 'selected');
+        console.log( authMethod )
         $('#load-more-settings').click(function () {
             $('#more-settings').show();
             $(this).remove();
