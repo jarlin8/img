@@ -9,7 +9,8 @@ function curl_exec_follow( &$ch){
 		$exec=curl_exec($ch);
 		$info = curl_getinfo($ch);
 
-		if($info['http_code'] == 301 ||  $info['http_code'] == 302){
+		
+		if($info['http_code'] == 301 ||  $info['http_code'] == 302  ||  $info['http_code'] == 307 ){
 				
 			curl_setopt($ch, CURLOPT_URL, trim($info['redirect_url']));
 			$exec=curl_exec($ch);
@@ -46,6 +47,7 @@ $link=$_GET['link'];//urldecode();
     
     $exec=curl_exec_follow($ch);
 
+    
     
     $res=array();
     //get the link 

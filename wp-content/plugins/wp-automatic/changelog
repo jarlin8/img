@@ -1,3 +1,49 @@
+@16 July 2022 v3.56.2
+Fix: ClickBank module updated to work again after changes
+Fix: Make permalink link directly to the source now works for eBay and AliExpress affiliate links
+
+@5 July 2022 v3.56.1
+NEW: eBay new tag for item condition description
+Fix: Amazon switch from non-API to API campaigns now work
+Fix: TikTok module imporved to bypass if your server is blocked
+Fix: Instagram module updated to cope with new changes
+
+@8 June 2022 v3.56.0
+NEW: Now supports AliExpress 
+New: Amazon option to set a custom location if the server country is different 
+NEW: Multi-page scraper original date extraction algorithm improved
+NEW: Youtube new option to skip live videos 
+NEW: Instagram tag [item_comments_count]
+Fix: eBay module updated to cope with recent changes
+Fix: Instagram module updated to cope with new changes, mulitple images back to work
+Fix: Download images from the content now download webp as well 
+Fix: Multi-page scraper title extraction by regex now consider \s
+Fix: Multi-page scraper now get the title when posting from custom list of ulrs
+Fix: Multi-page scraper/feed extract by REGEX now return correct result for [rule_1] tag
+Fix: Title words as tags now keeps the dot character
+Fix: Twitter post from a specific user up to a specific date now skips pagination
+
+@20 April 2022 v3.55.6 
+Fix: Array error when translation using Google translate is now sorted
+
+@17 April 2022 v3.55.5
+NEW: custom field [featured_img_id] for created thumbnail ID
+NEW: Amazon [item_rating] new tag
+Fix: hyperlinking specific keywords algorithm improved
+Fix: Single page scraper update post duplicate custom fields issue fixed
+Fix: Single page scraper update post date now stay as-is
+
+@12 March 2022 v3.55.4
+Fix: Facebook updatd to cope with new changes
+NEW: Amazon new tag [item_details]
+NEW: eBay affiliate reference ID support 
+
+@11 Febrary 2022 v3.55.3
+Fix: Google translation back to work normally
+NEW: Careerjet now imports the logo image 
+NEW: Reddit can now filter videos only and Gifs only 
+Fix: Amazon images now load correctly
+
 @7 Febrary 2022 v3.55.2
 Fix: Instagram module code updated to work again correctly
 NEW: Option to set the slug to original post slug
@@ -5,7 +51,6 @@ NEW: Option to set the slug to original post slug
 @28 January 2022 v3.55.1
 Fix: UI updated to work with WordPress 5.9
 Fix: amazon last time price updated tag now returns correct date
-
 
 @19 January 2022 v3.55.0
 Fix: eBay module rewritten to use the new eBay Browse API

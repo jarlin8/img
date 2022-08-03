@@ -130,6 +130,7 @@ class WpAutomaticAmazon extends wp_automatic {
 							// hack link_desc contains the slug Designer-Teenitor-Painting-Manicure-Rhinestones i.e https://amazon.com/slug/dp/asin
 							$item = $obj->getItemByAsin ( $asin, $t_row->link_desc );
 							 
+							 
 						
 						} catch ( Exception $e ) {
 							echo '<br>Amazon error:' . $e->getMessage ();
@@ -408,7 +409,13 @@ class WpAutomaticAmazon extends wp_automatic {
 					}
 					
 					// imgs html
-					$cg_am_full_img_t = @$camp_general ['cg_am_full_img_t'];
+					if(in_array('OPT_AM_FULL_IMG' , $this->camp_opt)){
+						$cg_am_full_img_t = stripslashes(@$camp_general ['cg_am_full_img_t'] );
+					}else{
+						$cg_am_full_img_t = '';
+					}
+					
+				 
 					
 					if (trim ( $cg_am_full_img_t ) == '') {
 						$cg_am_full_img_t = '<img src="[img_src]" class="wp_automatic_gallery" />';
@@ -441,8 +448,16 @@ class WpAutomaticAmazon extends wp_automatic {
 					if (trim ( $temp ['product_list_price'] ) == '')
 						$temp ['product_list_price'] = $temp ['price_numeric'];
 					
-						 
-						
+					if(isset($item['item_details'])){
+						$temp['item_details'] = $item['item_details'];
+						$temp['item_manufacture_description'] = $item['item_manufacture_description'];
+					}
+					
+					//review
+					$temp['item_rating'] = '';
+					if(isset($item['item_rating'])) $temp['item_rating'] = $item['item_rating'];
+ 					
+					 
 					return $temp;
 				} else {
 					
@@ -586,7 +601,30 @@ class WpAutomaticAmazon extends wp_automatic {
 			
 			try {
 				
-				$this->simulate_location ( $camp->camp_amazon_region );
+				 //location simulate 
+				if(in_array('OPT_AM_LOC', $camp_opt)){
+					
+					$cookie_content =   $this->cookie_content('wp_automatic_amazon') ;
+					 
+					//delete the cookie if not contining needed session and ubid
+					if( stristr($cookie_content  , trim($camp_general['cg_am_session'])) && stristr($cookie_content  , trim($camp_general['cg_am_ubid'])) ){
+						echo '<br>Current cookieJar contains the needed session-id and ubid, approving it';
+					}else{
+						echo '<br>Deleting currrent cookieJar for setting the new session and ubid';
+						$this->cookie_delete('wp_automatic_amazon') ;
+						
+						if ( isset($camp_general['cg_am_session']) &&  $camp_general['cg_am_session'] != ''  &&  $camp_general['cg_am_ubid'] != '' ){
+							$obj->session_id = trim($camp_general['cg_am_session']);
+							$obj->session_ubid = trim($camp_general['cg_am_ubid']);
+							
+						}
+					
+					}
+					 
+				 
+					
+					
+				}
 				
 				$agent = $this->get_user_agent ();
 				curl_setopt ( $this->ch, CURLOPT_USERAGENT, $agent );

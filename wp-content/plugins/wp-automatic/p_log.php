@@ -18,6 +18,9 @@ function gm_log(){
 	if(isset($_POST['id']) && $_POST['id'] != 'all'){
 		$id=$_POST['id'];
 		$filter = " where action like '%$id' ";
+	}else{
+		$id = '';
+		$act = '';
 	}
 
 
@@ -214,7 +217,8 @@ function gm_log(){
 			<input type="hidden" name="q" value="<?php   echo $query ?>">
 			<?php
 			global $current_user;
-			get_currentuserinfo();
+			//get_currentuserinfo();
+			wp_get_current_user();
 
 			?>
 			<input type="hidden" name="auth"

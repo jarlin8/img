@@ -49,15 +49,15 @@ $source=array( '[source_link]' , 'will be replaced with the original article sou
 $allowed_tags['Articles']=  array(array('[keyword]','Keyword used to get current item'), array('[matched_content]' ,' will be replaced with the original fetched article content'),array('[original_title]','article title'), array('[author_name]','author name') , array('[author_link]','author link')  ,$ad1,$ad2,$source );
 $allowed_tags['ArticlesBase']=  array(array('[keyword]','Keyword used to get current item'), array('[matched_content]' ,' will be replaced with the original fetched article content'),array('[original_title]','article title'), array('[author_name]','author name') , array('[author_link]','author link')  ,$ad1,$ad2,$source );
 $allowed_tags['Feeds']= $allowed_tags['Multi'] =  array( array('[matched_content]' ,' will be replaced with the original fetched article content') ,array('[original_title]','title of the post') , array('[author]','Author name if displayed at the feed or extracted using the extract original author option') ,array('[publish_date]','the date when the feed item published'),array('[feed_name]','Title of the feed extracted from the feed content') ,array('[enclosure_link]','Returns the enclosure link of the item in the feed, this could be an image/audio or video link'),array('[og_img]','Only if you used the option to set a featured image from og:img this tag will return the og:image src url'),array('[rule_{ruleNumber}]','Returns the content from the set rule, for example, if you have set two rules to extract the content using REGEX. [rule_1] returns content from the first rule and [rule_2] returns the second rule content and so on...'),array('[rule_{ruleNumber}_plain]','Returns the content from the set rule in plain text after removing all html tags, for example, if you have set two rules to extract the content using REGEX. [rule_1_plain] returns content from the first rule and [rule_2_plain] returns the second rule content and so on... all in plain text'),$ad1,$ad2,$source , array('[redirect_url]','If the source post URL redirects to another URL, this tag will contain the final redirection URL'), array('[source_domain]','Domain name of the source URL') , array('[source_url_encoded]','Encoded source URL to be added as a parameter on a link') , array( '[cats]' , 'Comma spearated list of the post categories as shown on the RSS feed if exist' ) );
-$allowed_tags['Amazon']=array(array('[keyword]','Keyword used to get current item'), array('[product_img]',' will be replaced with the product image src'), array('[product_imgs_html]','Html of all the product images'), array('[product_imgs]','Comma separated list of image srcs of the product'),array('[product_link]',' will be replaced with the product amazon page link'),array('[chart_url]','get replaced by the add to chart link of the product at amazon'),array('[product_list_price]','Product list price without discount') , array('[list_price_numeric]','Numeric value of the list price without currency') ,array('[price_with_discount]','If on sale, the original and new price are displayed.If not, the list price is displayed this tag is rendered on display to represent current price'),array('[price_with_discount_fixed]','If on sale, the original and new price are displayed.If not, the list price is displayed this tag value get generated when the product firstly added. It does not get updated with new price'),array('[product_price]',' Will be replaced with the product price like $32.10 with currency attached if possible Note  some products will not return a price'),array('[price_numeric]','price in a numeric format like 32.10 this price is suitable for woocommerce product price custom field named _price'), array('[price_currency]','The price currency i.e $ or € etc.'), array('[product_desc]',' will be replaced with the original fetched product descreption')  , array('[product_asin]','Product ASIN'), array('[product_upc]','Product Universal Product Code') , array('[product_brand]','Brand of the item if exists'), array('[product_author]','Author of the item if exists') ,array('[price_update_date]','Date and time when the price was updated by the plugin') ,$ad1,$ad2,$source);
+$allowed_tags['Amazon']=array(array('[keyword]','Keyword used to get current item'), array('[product_img]',' will be replaced with the product image src'), array('[product_imgs_html]','Html of all the product images'), array('[product_imgs]','Comma separated list of image srcs of the product'),array('[product_link]',' will be replaced with the product amazon page link'),array('[chart_url]','get replaced by the add to chart link of the product at amazon'),array('[product_list_price]','Product list price without discount') , array('[list_price_numeric]','Numeric value of the list price without currency') ,array('[price_with_discount]','If on sale, the original and new price are displayed.If not, the list price is displayed this tag is rendered on display to represent current price'),array('[price_with_discount_fixed]','If on sale, the original and new price are displayed.If not, the list price is displayed this tag value get generated when the product firstly added. It does not get updated with new price'),array('[product_price]',' Will be replaced with the product price like $32.10 with currency attached if possible Note  some products will not return a price'),array('[price_numeric]','price in a numeric format like 32.10 this price is suitable for woocommerce product price custom field named _price'), array('[price_currency]','The price currency i.e $ or € etc.'), array('[product_desc]',' will be replaced with the original fetched product descreption') , array('[item_details]','Technical product details/table ')  , array('[product_asin]','Product ASIN'), array('[product_upc]','Product Universal Product Code') , array('[product_brand]','Brand of the item if exists'), array('[product_author]','Author of the item if exists') ,array('[price_update_date]','Date and time when the price was updated by the plugin'),array('[item_rating]', 'Rating of the product out of 5') ,array('[item_manufacture_description]','Date and time when the price was updated by the plugin') ,$ad1,$ad2,$source);
 $allowed_tags['Clickbank']=array( array('[keyword]','Keyword used to get current item'), array('[product_img]',' will be replaced with the product image html') , array('[product_img_src]',' will be replaced with the product image src') , array('[product_link]',' will be replaced with the product sales page with your affiliate link') , array('[product_original_link]',' will be replaced with product sales page link without affiliation')   ,  array('[product_desc]',' will be replaced with the original fetched product descreption'),$ad1,$ad2,$source);
 $allowed_tags['Youtube']=array(array('[keyword]','Keyword used to get current item'), array('[vid_title]','Title of the video') ,array('[vid_player]',' will be replaced with the posted video player embed code') ,array('[vid_id]',' will be replaced with the youtube original vid id'), array('[source_link]',' will be replaced with the youtube original vid link') , array('[vid_img]',' replaced with video thumb img src') , array('[vid_views]',' will be replaced with video views count') , array('[vid_rating]',' will be replaced with stars rating out of 5 of the video') ,  array('[vid_desc]',' will be replaced with the original fetched video descreption') , array('[vid_time]','Video publish timestamp '), array('[vid_date]','Date when the video was published'), array('[vid_duration]','Video duration ') , array('[vid_author]','Video author channel id') , array('[vid_author_title]','Video author title') , array('[vid_likes]','Number of video likes'), array('[vid_dislikes]','Number of video dislikes'),array('[vid_tags]','Video tags comma separated only if the option to post YT tags as tags is active') ,array('[vid_download_url]' , 'Download URL of the video from y2mate.com' )  , $ad1,$ad2,$source );
 $allowed_tags['Vimeo']=array(array('[keyword]','Keyword used to get current item'),array('[vid_title]','title of the video'),  array('[vid_description]',' will be replaced with the original fetched video descreption'), array('[vid_embed]',' will be replaced with the posted video player embed code') ,array('[vid_id]',' will be replaced with the original vid id'), array('[vid_url]',' will be replaced with the vimeo original vid link') , array('[vid_img]',' replaced with video thumb img src') , array('[vid_views]',' will be replaced with video views count') , array('[vid_likes]',' will be replaced with stars likes number of the video')  , array('[vid_duration]','Video duration in seconds'), array('[vid_duration_readable]','Video duration in  hh:mm:ss format'), array('[vid_width]', 'width of the video player'), array('[vid_height]', 'Height of the video player')  ,  array('[vid_created_time]','Video creation time '),array('[vid_modified_time]', 'last modification date') , array('[vid_author_name]','Video author name '),array('[vid_author_id]','video author id') , array('[vid_author_link]','video author link'), array('[vid_author_picutre]','video author picture src link'),array('[vid_tags]','Tags of the video comma separated')  , $ad1,$ad2 );
 $allowed_tags['Flicker']=array(array('[keyword]','Keyword used to get current item'), array('[img_title]','Image Title'),array('[img_author]','Image author ID'),array('[img_src]','Image Src link'),array('[img_src_s]','small square 75x75') , array('[img_src_q]','large square 150x150') , array('[img_src_t]','thumbnail, 100 on longest side') , array('[img_src_m]','small, 240 on longest side') , array('[img_src_n]','small, 320 on longest side') , array('[img_src_z]','medium 640, 640 on longest side') , array('[img_src_c]','medium 800, 800 on longest side†') , array('[img_src_b]','large, 1024 on longest side ') , array('[img_src_h]','large, 1600 on longest side ') , array('[img_src_k]','large, 2048 on longest side ') , array('[img_src_o]','Original Image uploaded with original size') ,array('[img_link]','Image link on flicker'),array('[img_author_name]','Image author name'),array('[img_description]','Image description'),array('[img_date_posted]','Date when the image posted'),array('[img_date_taken]','Date when the image taken'),array('[img_viewed]','Num of views of the image'),array('[img_tags]','image tags on flicker'),$ad1,$ad2,$source );
-$allowed_tags['eBay']=array(array('[keyword]','Keyword used to get current item'),array('[item_id]','added item id on ebay'),array('[item_title]','item title'),array('[item_desc]','item description'),array('[item_images]','html of all item images'),array('[item_img]','item image http source'),array('[item_link]','item link on ebay'),array('[item_bids]','Number of current bids if applicable'),array('[item_price]','current item price'),array('[item_bin]','item buy it now price if applicable'),array('[item_end_date]','item when the listing ends'), array('[item_seller_username]' , 'Username of the seller') , array('[item_seller_url]' , 'URL of the seller'), array('[item_location]' , 'Location of the item'), array('[item_ships_to]' , 'Item shipping to location'), array('[item_condition]' , 'Condition of the item, New or Used') , array('[item_return_policy]' , 'If seller accepts returns'), array('[item_listing_type]' , 'Type of the listing Auction or buy it now'), array('[item_shipping_start]' , 'If seller starts shipping after recieving the payment') , array('[item_subtitle]' , 'Subtitle of the item')  , array('[item_category]' , 'Name of item category') , array('[item_category]' , 'Name of item category') , array('[item_payment]' , 'Available payment method') , array('[item_postal]' , 'Postal code of the item location')  ,$ad1,$ad2,$source );
+$allowed_tags['eBay']=array(array('[keyword]','Keyword used to get current item'),array('[item_id]','added item id on ebay'),array('[item_title]','item title'),array('[item_desc]','item description'),array('[item_images]','html of all item images'),array('[item_img]','item image http source'),array('[item_link]','item link on ebay'),array('[item_bids]','Number of current bids if applicable'),array('[item_price]','current item price'),array('[item_bin]','item buy it now price if applicable'),array('[item_end_date]','item when the listing ends'), array('[item_seller_username]' , 'Username of the seller') , array('[item_seller_url]' , 'URL of the seller'), array('[item_location]' , 'Location of the item'), array('[item_ships_to]' , 'Item shipping to location'), array('[item_condition]' , 'Condition of the item, New or Used') , array('[item_condition_desc]' , 'Description of the condition as added from the seller') , array('[item_return_policy]' , 'If seller accepts returns'), array('[item_listing_type]' , 'Type of the listing Auction or buy it now'), array('[item_shipping_start]' , 'If seller starts shipping after recieving the payment') , array('[item_subtitle]' , 'Subtitle of the item')  , array('[item_category]' , 'Name of item category') , array('[item_category]' , 'Name of item category') , array('[item_payment]' , 'Available payment method') , array('[item_postal]' , 'Postal code of the item location')  ,$ad1,$ad2,$source );
 $allowed_tags['Pinterest'] = array(array('[pin_id]','Numerical id of the posted pin'),array('[pin_url]','Pin url at pinterest.com'),array('[pin_link]','original page link where the pin image exits *only for pins with link back to the source'),array('[pin_title]','Title of the pin'),array('[pin_description]','Description of the pin'),array('[pin_board_id]','Numeric ID of the board the pin belons to'),array('[pin_board_url]','URL of the matching board'),array('[pin_board_name]','Name of the board the pin belons to'),array('[pin_pinner_username]','Username of the pinner'),array('[pin_pinner_full_name]','Full name of the pinner'),array('[pin_pinner_id]','Numeric ID of the pin pinner'),array('[pin_domain]','Domain for the pin if posted from a url'),array('[repin_count]','Number of repins'),array('[pin_img]','Image src link for the pin image'),array('[pin_img_width]','Width of the pin image'),array('[pin_img_height]','Height of the pin image'),$ad1,$ad2);
-$allowed_tags['Instagram'] = array( array('[item_title]','Instagram image title'), array('[item_embed]','The embed code of the item'), array('[item_vid_embed]','Item vido embed code') , array('[item_id]','The instagram pic id'),array('[item_url]','Instagram pic url'),array('[item_description]','Instagram pic description'),array('[item_img]','Instagram image src'),array('[item_images]','Item images HTML code'),array('[item_img_width]','Width of the instagram image'),array('[item_img_height]','Height of the image'),array('[item_user_id]','Instagram user id'),array('[item_user_username]','Username of the instagram image poster'),array('[item_user_name]','user name of the image poster'),array('[item_user_profile_pic]','Image src of the user pic'),array('[item_created_date]','date when the item created'),array('[item_likes_count]','Likes count of the item'),array('[item_tags]','Comma separated list of tags'),array('[item_location_name]','Location name'),array('[item_location_id]','Location ID'),array('[item_location_url]','Location explore link'), array('[video_view_count]','Views count only if the imported item is a video.') ,$ad1,$ad2,$source );
-$allowed_tags['TikTok'] = array(array('[item_id]','Numeric ID of the video'),array('[item_url]','URL of the video'),array('[item_description]','Description of the video'),array('[video_view_count]','Number of times the video was viewed'),array('[item_img]','Cover image url of the video'),array('[item_img_width]','Width of the video cover pic'),array('[item_img_height]','height of the video cover pic'),array('[item_user_id]','Numeric ID of the video user'),array('[item_created_time]','Timestamp when the video was created'),array('[item_created_date]','Date when the video was created'),array('[item_likes_count]','Number of likes'),array('[item_user_username]','username of the video uploader'),array('[item_user_link]','URL of the video Author'),array('[item_user_name]','Name of the video uploader'),array('[item_user_profile_pic]','URL of the video uploader profile pic'),array('[item_tags]','hashtags of the video comma separated'),array('[item_images]',''),array('[item_title]','Title of the video'),array('[item_embed]','Embed code of the video') );
+$allowed_tags['Instagram'] = array( array('[item_title]','Instagram image title'), array('[item_embed]','The embed code of the item'), array('[item_vid_embed]','Item vido embed code') , array('[item_id]','The instagram pic id'),array('[item_url]','Instagram pic url'),array('[item_description]','Instagram pic description'),array('[item_img]','Instagram image src'),array('[item_images]','Item images HTML code'),array('[item_img_width]','Width of the instagram image'),array('[item_img_height]','Height of the image'),array('[item_user_id]','Instagram user id'),array('[item_user_username]','Username of the instagram image poster'),array('[item_user_name]','user name of the image poster'),array('[item_user_profile_pic]','Image src of the user pic'),array('[item_created_date]','date when the item created'),array('[item_likes_count]','Likes count of the item'),array('[item_comments_count]','Comments count of the item'),array('[item_tags]','Comma separated list of tags'),array('[item_location_name]','Location name'),array('[item_location_id]','Location ID'),array('[item_location_url]','Location explore link'), array('[video_view_count]','Views count only if the imported item is a video.') ,$ad1,$ad2,$source );
+$allowed_tags['TikTok'] = array(array('[item_id]','Numeric ID of the video'),array('[item_url]','URL of the video'),array('[item_description]','Description of the video'),array('[item_img]','Cover image url of the video'),array('[item_img_width]','Width of the video cover pic'),array('[item_img_height]','height of the video cover pic'),array('[item_user_username]','username of the video uploader'),array('[item_user_name]','Name of the video uploader'),array('[item_tags]','hashtags of the video comma separated'),array('[item_images]',''),array('[item_title]','Title of the video'),array('[item_embed]','Embed code of the video') );
 $allowed_tags['Facebook'] = $allowed_tags['Facebookposts'] = $allowed_tags['Facebookfeed'] = $allowed_tags['Facebooktagged']= array( array('[post_id]','Facebook post ID including page id'), array('[post_id_single]','Facebook post ID single numeric value') , array('[post_embed]','Embed code of the post') ,  array('[original_title]','Post title'), array('[matched_content]','Post content'),array('[from_name]','Username of the post author'),array('[from_id]','ID of the post author'),array('[from_url]','FB url of the post author'),array('[from_thumbnail]','Thumbnail url of the post author'),array('[shares_count]','Shares count'),array('[original_date]','Date of the post'),array('[original_date_timestamp]','Date of the post timestamp format'),array('[external_url]','External url of the shared post. only if the item is actually a shared link on the page'),array('[image_src]','source url of an image at the post if exists'),array('[likes_count]','Number of likes'),array('[vid_embed]','Embed code of the video if exists'),array('[vid_id]','ID of the video if exists'),array('[vid_url]','URL of the video if exists'), array('[item_tags]','Hashtags comma separated if exist.'),$ad1,$ad2,$source );
 $allowed_tags['Facebookevents'] = array(array('[event_description]','Description of the event'),array('[post_id]','ID of the FB event'),array('[original_title]','Event title'),array('[original_date]','Date when the event was modified'),array('[image_src]','Event cover picture'), array('[interested_count]' , 'number of interested pepole') , array('[going_count]' , 'number of going pepole') , array('[place_name]','Place name where the event will happen'), array('[place_address]','Address of the event location'), array('[place_street]','Street name of the place'),array('[place_city]','Place city'),array('[place_latitude]','Latitude of the place location'),array('[place_longitude]','Longitude of the place'),array('[start_time]','When the event starts'),array('[start_time_timestamp]','Timestamp for the event start time e.g 1535052600'),array('[end_time]','When the event ends'),array('[end_time_timestamp]','Timestamp of when the event ends date e.g 1535052600'),array('[place_map]','Embed code of a map showing the place if exists'),$ad1,$ad2,$source );
 
@@ -84,8 +84,8 @@ $allowed_tags['DailyMotion'] = array( array('[vid_player]','html embed code'),ar
 $allowed_tags['Reddit'] = array(array('[item_title]','Title of the item'),array('[item_description]','Description of the item if exists'),array('[item_url]','URL of the shared content'),array('[item_link]','Reddit link for the post'),array('[item_date]','Timestamp of the post'),array('[item_img]','Image src url if exists'),array('[item_id]','ID of the item'),array('[item_domain]','Domain name of the shared post'),array('[item_score]','Score of the item at Reddit'),array('[item_author]','Author name'),array('[item_gif]','Gif image url if exists'),array('[item_mp4]','mp4 video link if exists'),array('[item_img_html]','Html markup of the item image'),array('[item_embed]','Embed code of a gif/video if exists'),array('[item_gif_embed]','Gif embed code if exists'),array('[item_mp4_embed]','mp4 video embed code if exists'),array('[item_author_link]',''),array('[item_date_formated]','Date and time when the post was published') , array('[item_nsfw]' , 'Returns yes if nsfw or no if not') );
 $allowed_tags['Walmart'] = array(array('[item_img]','Url of the item image'),array('[item_url]','link of the item at Walmart'),array('[product_affiliate_url]','If you have a publisher ID, use this tag for the url as it will has the affiliate tracking'),array('[item_cart_url]','Add to chart url'),array('[item_cart_affiliate_url]','Add to chart url with affiiliate tracking enabled'),array('[item_rating]','Rating of the item'),array('[item_rating_img]','rating image src'),array('[item_list_price]','Item list price'),array('[item_imgs]','Comma separated list of item images'),array('[item_img_html]','Html of the item image'),array('[item_imgs_html]','Html of all item images'),array('[item_link]','Link of the item at Walmart'),$ad1,$ad2);
 $allowed_tags['Single'] = array( array('[matched_content]','Content extracted from all rules'),array('[matched_content_plain]','Content extracted from all rules in plain text after removing all html tags'),array('[source_link]','Original link of the source content'),array('[rule_{ruleNumber}]','Returns the content from the set rule, for example, if you have set two rules to extract the content using REGEX. [rule_1] returns content from the first rule and [rule_2] returns the second rule content and so on...'),array('[rule_{ruleNumber}_plain]','Returns the content from the set rule in plain text after removing all html tags, for example, if you have set two rules to extract the content using REGEX. [rule_1_plain] returns content from the first rule and [rule_2_plain] returns the second rule content and so on... all in plain text'),$ad1,$ad2);
-$allowed_tags['Careerjet'] = array(array('[item_title]','Job title'),array('[item_description]','Job description'),array('[item_url]','URL of the job'),array('[item_date]','Date when the job was posted'),array('[item_date_timestamp]','Date when the job was posted'),array('[item_locations]','Location of the work'),array('[item_site]','Site of the job'),array('[item_company]','Company of the job'),array('[item_salary]','Salary'),array('[item_salary_min]','Minimum salary'),array('[item_salary_max]','Maximum salary'),array('[item_salary_type]','Salary type'),array('[item_salary_currency_code]','Currency of the sallary') , array( '[item_source_site]'  , 'Name of the source site displayed below the job description') ) ;
-
+$allowed_tags['Careerjet'] = array(array('[item_title]','Job title'),array('[item_description]','Job description'),array('[item_url]','URL of the job'),array('[item_date]','Date when the job was posted'),array('[item_date_timestamp]','Date when the job was posted'),array('[item_locations]','Location of the work'),array('[item_site]','Site of the job'),array('[item_company]','Company of the job'),array('[item_salary]','Salary'),array('[item_salary_min]','Minimum salary'),array('[item_salary_max]','Maximum salary'),array('[item_salary_type]','Salary type'),array('[item_salary_currency_code]','Currency of the sallary') , array( '[item_source_site]'  , 'Name of the source site displayed below the job description') , array('[item_logo_html]' , 'HTML of the logo image if available') , array('[item_logo]' , 'src link of the logo image if available') ) ;
+$allowed_tags['Aliexpress'] = array( array('[item_id]','Numeric ID of the item'),    array('[item_url]','Link to the item'),    array('[item_title]','Title'),    array('[item_rating]','Numeric rating value out of 5'),    array('[item_orders]','Number of current orders'),    array('[item_price_current]','current displayed price'),    array('[item_price_original]','price before sale'),    array('[item_images]','Comma separated list of images URLs'),    array('[item_ship_from]','Location of the item'),    array('[item_delivery_time]','Time taken for delivery'),    array('[item_ship_cost]','Shipping costs'),    array('[item_wish_count]','whishes count'),    array('[item_description_url]','Link for the description iframe'),    array('[item_img]','Product featured image URL'),    array('[item_imgs_html]','HTML of the product images'),    array('[item_image_html]','Featured Image HTML'),    array('[item_description]','Description'), array('[item_price_numeric]','Numeric value for the price'),    array('[item_price_original_numeric]','Numeric value for the item price before sale'), array('[price_with_discount]', 'Price and sale price displayed side by side'), array('[item_affiliate_url]' , 'Affiliate link for the item') );
 
 $query="select * from {$prefix}automatic_camps where camp_id='$post_id'";
 $res=$wpdb->get_results($query);
@@ -260,6 +260,7 @@ if (count($res) > 0 ){
 	$camp_options[] = 'OPT_PT_AUTO_TITLE';
 	$camp_options[] = 'OPT_IT_CACHE';
 	$camp_options[] = 'OPT_IU_CACHE';
+	$camp_options[] = 'OPT_AE_CACHE';
 	$camp_options[] = 'OPT_IT_AUTO_TITLE';
 	$camp_options[] = 'OPT_SC_CACHE';
 	$camp_options[] = 'OPT_FB_CACHE';
@@ -297,8 +298,15 @@ if (count($res) > 0 ){
 	$camp_general['cg_minimum_width'] = 100;
 	$camp_general['cg_feed_lazy'] = 'data-src';
 	
+	$keys_array_empty =  '  cg_ml_source   cg_ml_lnk_method   cg_ml_lnk_method   cg_ml_lnk_method   cg_ml_lnk_css   cg_ml_lnk_css_type   cg_ml_lnk_css_size   cg_ml_lnk_css_wrap   cg_ml_lnk_regex   cg_ml_lnk_visual   cg_multi_search_replace   cg_ml_append   cg_ml_cnt_method   cg_ml_cnt_method   cg_ml_cnt_method   cg_ml_cnt_method   cg_ml_cnt_method   cg_ml_cnt_method   cg_ml_cnt_css   cg_ml_cnt_css_type   cg_ml_cnt_css_size   cg_ml_cnt_css_wrap   cg_ml_cnt_regex   cg_ml_page_2_url   cg_ml_page_increment   cg_ml_page_base   cg_ml_infinite   cg_ml_cnt_visual   cg_multi_posts_list   cg_ml_cache   cg_ml_cache   cg_sn_source   cg_sn_ttl_method   cg_sn_ttl_method   cg_sn_ttl_method   cg_sn_ttl_method   cg_sn_css   cg_sn_css_type   cg_sn_css_size   cg_sn_css_wrap   cg_sn_regex   cg_sn_visual   cg_sn_cnt_method   cg_sn_cnt_method   cg_sn_cnt_method   cg_sn_cnt_method   cg_sn_cnt_css   cg_sn_cnt_css_type   cg_sn_cnt_css_size   cg_sn_cnt_css_wrap   cg_sn_cnt_regex   cg_sn_cnt_visual   cg_sn_cookie   cg_sn_after   cg_sn_after   cg_sn_after   cg_sn_after   cg_sn_after   cg_ml_ttl_method   cg_ml_ttl_method   cg_ml_ttl_method   cg_ml_ttl_method   cg_ml_css   cg_ml_css_type   cg_ml_css_size   cg_ml_css_wrap   cg_ml_regex   cg_ml_example   cg_ml_visual   cg_feed_extraction_method   cg_feed_extraction_method   cg_feed_extraction_method   cg_feed_extraction_method   cg_feed_extraction_method   cg_feed_css_size   cg_feed_css_wrap   cg_ml_example_2   cg_feed_visual   cg_allowed_tags   cg_custom_selector_cat   cg_custom_selector_cat   cg_custom_selector_cat   cg_feed_custom_id_cat   cg_parent_cat   cg_ml_cookie   cg_articles_date_last   cg_articles_date_last_val   cg_cj_locale   cg_cj_location   cg_cj_sort   cg_cj_sort   cg_cj_sort   cg_cj_contracttype   cg_cj_contracttype   cg_cj_contracttype   cg_cj_contracttype   cg_cj_contracttype   cg_cj_contracttype   cg_cj_contractperiod   cg_cj_contractperiod   cg_cj_contractperiod   cg_ae_full_img_t   cg_ae_custom_urls   cg_ae_custom_cur   cg_ae_custom_domain   cg_cl_full_img_t   cg_wm_cat   cg_wm_sort   cg_wm_sort   cg_wm_sort   cg_wm_sort   cg_wm_sort   cg_wm_sort   cg_wm_sort_dir   cg_wm_sort_dir   cg_wm_price_from   cg_wm_price_to   cg_rd_page   cg_fb_from   cg_fb_from   cg_fb_title_default   cg_am_condition   cg_am_session   cg_am_ubid   cg_tt_html   cg_tt_user   cg_dm_playlist   cg_dm_width   cg_dm_height   cg_dm_ctr   cg_dm_lang   cg_dm_channel   cg_yt_before   cg_yt_safe   cg_yt_safe   cg_yt_safe   cg_yt_plang   cg_eb_condition   cg_eb_condition   cg_eb_condition   cg_eb_seller_type   cg_eb_seller_type   cg_eb_seller_type   cg_eb_currency   cg_eb_min_bid   cg_eb_max_bid   cg_eb_currency_2   cg_eb_country   cg_eb_postal   cg_default_tags   cg_adjust_tags   cg_post_parent   cg_max_length   cg_poly_lang  cg_keywords_replace cg_am_custom_urls';
+	$keys_array_empty_arr = array_filter( explode(' ' , $keys_array_empty));
+	
+	foreach($keys_array_empty_arr as $keys_array_empty_key){
+		$camp_general[$keys_array_empty_key] = '';
+	}
+	
 	// undefined camp_general keys
-	$camp_generalKeys = "cg_custom_selector,cg_feed_custom_id,cg_custom_selector2,cg_feed_custom_id2,cg_custom_selector3,cg_feed_custom_id3,cg_feed_custom_regex,cg_feed_custom_regex2,cg_part_to_field,cg_custom_strip_selector,cg_feed_custom_strip_id,cg_custom_strip_selector2,cg_feed_custom_strip_id2,cg_custom_strip_selector3,cg_feed_custom_strip_id3,cg_post_strip,cg_custom_selector_tag,cg_feed_custom_id_tag,cg_custom_selector_author,cg_feed_custom_id_author,cg_min_length,cg_feed_encoding,cg_cl_page,cg_iu_media,cg_iu_attribute,cg_iu_lang,cg_fb_source,cg_fb_page,cg_fb_page_id,cg_fb_title_count,cg_am_node,cg_am_order,cg_am_min,cg_am_max,cg_am_param_type,cg_am_param,cg_yt_dte_minutes,cg_vm_user_channel,cg_vm_user,cg_vm_order,cg_vm_order_dir,cg_vm_cc,cg_vm_width,cg_vm_height,cg_sc_user_playlist,cg_sc_user,cg_sc_from,cg_sc_to,cg_pt_user_channel,cg_pt_user,cg_pt_title_count,cg_it_user,cg_it_title_count,cg_tw_lang,cg_yt_playlist,cg_yt_license,cg_yt_type,cg_yt_duration,cg_yt_definition,cg_yt_width,cg_yt_height,cg_yt_ctr,cg_yt_lang,cg_eb_user,cg_eb_site,cg_eb_cat,cg_ebay_custom,cg_eb_listing,cg_eb_order,cg_eb_min,cg_eb_max,cg_eb_iframe_h,cg_eb_param,cg_eb_redirect_end,cg_fl_user,cg_fl_user_album,cg_fl_order,cg_cb_lang,cg_camp_tax,cg_keyword_cat,cg_tags_limit,cg_keyword_tag,cg_content_limit,cg_title_limit,cg_camp_post_regex_exact,cg_camp_post_regex_exclude,cg_wpml_lang,cg_tag_tax,cg_translate_method,cg_ev_filter,cg_ev_cat,cg_ev_tags,cg_ev_author,cg_ev_sort,cg_ev_sort_dir,cg_ev_api";
+	$camp_generalKeys = "cg_custom_selector,cg_feed_custom_id,cg_custom_selector2,cg_feed_custom_id2,cg_custom_selector3,cg_feed_custom_id3,cg_feed_custom_regex,cg_feed_custom_regex2,cg_part_to_field,cg_custom_strip_selector,cg_feed_custom_strip_id,cg_custom_strip_selector2,cg_feed_custom_strip_id2,cg_custom_strip_selector3,cg_feed_custom_strip_id3,cg_post_strip,cg_custom_selector_tag,cg_feed_custom_id_tag,cg_custom_selector_author,cg_feed_custom_id_author,cg_min_length,cg_feed_encoding,cg_cl_page,cg_iu_media,cg_iu_attribute,cg_iu_lang,cg_fb_source,cg_fb_page,cg_fb_page_id,cg_fb_title_count,cg_am_node,cg_am_order,cg_am_min,cg_am_max,cg_am_param_type,cg_am_param,cg_yt_dte_minutes,cg_vm_user_channel,cg_vm_user,cg_vm_order,cg_vm_order_dir,cg_vm_cc,cg_vm_width,cg_vm_height,cg_sc_user_playlist,cg_sc_user,cg_sc_from,cg_sc_to,cg_pt_user_channel,cg_pt_user,cg_pt_title_count,cg_it_user,cg_it_title_count,cg_tw_lang,cg_yt_playlist,cg_yt_license,cg_yt_type,cg_yt_duration,cg_yt_definition,cg_yt_width,cg_yt_height,cg_yt_ctr,cg_yt_lang,cg_eb_user,cg_eb_site,cg_eb_cat,cg_ebay_custom,cg_eb_listing,cg_eb_order,cg_eb_min,cg_eb_max,cg_eb_iframe_h,cg_eb_param,cg_eb_redirect_end,cg_fl_user,cg_fl_user_album,cg_fl_order,cg_cb_lang,cg_camp_tax,cg_keyword_cat,cg_tags_limit,cg_keyword_tag,cg_content_limit,cg_title_limit,cg_camp_post_regex_exact,cg_camp_post_regex_exclude,cg_wpml_lang,cg_tag_tax,cg_translate_method,cg_ev_filter,cg_ev_cat,cg_ev_tags,cg_ev_author,cg_ev_sort,cg_ev_sort_dir,cg_ev_api,cg_cat_replace";
 	$camp_generalKeys = explode(',', $camp_generalKeys);
 	
 	foreach ($camp_generalKeys as $camp_generalKey){
@@ -351,6 +359,7 @@ if (count($res) > 0 ){
 				<option  value="Articles"  <?php @wp_automatic_opt_selected('Articles',$camp_type) ?> >EzineArticles</option>
 				<option  value="Feeds"  <?php @wp_automatic_opt_selected('Feeds',$camp_type) ?> >Feeds</option>
 				<option  value="Amazon"  <?php @wp_automatic_opt_selected('Amazon',$camp_type) ?> >Amazon</option>
+				<option  value="Aliexpress"  <?php @wp_automatic_opt_selected('Aliexpress',$camp_type) ?> >AliExpress</option>
 				<option  value="Clickbank"  <?php @wp_automatic_opt_selected('Clickbank',$camp_type) ?> >Clickbank</option>
 				<option  value="Youtube"  <?php @wp_automatic_opt_selected('Youtube',$camp_type) ?> >Youtube</option>
 				<option  value="Vimeo"  <?php @wp_automatic_opt_selected('Vimeo',$camp_type) ?> >Vimeo</option>
@@ -372,11 +381,7 @@ if (count($res) > 0 ){
 				<option  value="Careerjet"  <?php @wp_automatic_opt_selected('Careerjet',$camp_type) ?> >Careerjet</option>
 				<option  value="Single"  <?php @wp_automatic_opt_selected('Single',$camp_type) ?> >Single-page scraper</option>
 				<option  value="Multi"  <?php @wp_automatic_opt_selected('Multi',$camp_type) ?> >Multi-page scraper</option>
-				
- 		 
-				
-				
-			
+				  
 			</select>
 			
 			<?php if(count($raw_res) != 0)   echo 'Hint: you can not change type . campaign already published <input name="camp_type" type="hidden" value="'.$camp_type.'" />' ?> 
@@ -384,7 +389,7 @@ if (count($res) > 0 ){
 		</div>
           
 
-          <div  id="field111-container" class="field typepart Articles ArticlesBase Amazon Clickbank Youtube Vimeo Flicker  eBay f_100 Pinterest Instagram Twitter SoundCloud Itunes Envato DailyMotion Walmart Careerjet TikTok" style="display:none;" >
+          <div  id="field111-container" class="field typepart Articles ArticlesBase Amazon Clickbank Youtube Vimeo Flicker  eBay f_100 Pinterest Instagram Twitter SoundCloud Itunes Envato DailyMotion Walmart Careerjet TikTok Aliexpress" style="display:none;" >
                <label for="field111">
                     Campaign keywords <i>(search for these keywords) (comma separated)</i>
                </label>
@@ -859,7 +864,7 @@ if (count($res) > 0 ){
 				<div style="margin-top:0;padding-top:0;padding-bottom:20px" class="select_control_div_div cg_ml_cnt_method cg_ml_cnt_method_infinite field f_100">
  		 		 		
  					<div class="field f_100">
-			 			<label>Page HTML after scroll</label> <textarea name="cg_ml_infinite"><?php echo htmlentities( $camp_general['cg_ml_infinite'],ENT_COMPAT, 'UTF-8')     ?></textarea> 	 
+			 			<label>Page HTML after scroll</label> <textarea name="cg_ml_infinite"><?php echo htmlentities( @$camp_general['cg_ml_infinite'],ENT_COMPAT, 'UTF-8')     ?></textarea> 	 
 						<div class="description">Click the scroll button to get as many posts as desired then paste the content of the page above. Check <a target="_blank" href="http://valvepress.com/how-to-import-from-sites-with-infinite-scroll-using-wordpress-automatic-plugin/">this tutorial</a> for more.</div>
 					</div>
 					
@@ -1875,7 +1880,7 @@ if (count($res) > 0 ){
 									            <div id="post_strip_t" class="field f_100">
 									               
 									                <label>
-									                    Allowed html tags 
+									                    Allowed html tags  (tags not to strip)
 									               </label>
 									               
 									                <input value="<?php    echo @$camp_general['cg_allowed_tags']   ?>"  name="cg_allowed_tags" type="text">
@@ -1978,6 +1983,27 @@ if (count($res) > 0 ){
 											            </div>
 											            
 									               </div>
+									               
+									               <div class="option clearfix">
+	                    
+									                    <input name="camp_options[]"  data-controls="post_cat_replace"  value="OPT_ORIGINAL_CATS_REPLACE" type="checkbox">
+									                    <span class="option-title">
+																Replace categories names  
+									                    </span>
+									                    <br> 
+									                    
+											            <div id="post_cat_replace" class="field f_100">
+											               
+											                <label>
+											                    Search|Replace (one per line)
+											               </label>
+											               
+											                <textarea name="cg_cat_replace"><?php echo (  $camp_general['cg_cat_replace'] )  ?></textarea>
+											               <div class="description" >example: sports|Sport<br><br>This will replace the category named sports with Sport so this is the final category name on your site </div>
+											            </div>
+											            
+									               </div>
+						
 						
 									                
 							                    </div>
@@ -2342,7 +2368,7 @@ if (count($res) > 0 ){
 				<label>Localization</label><br>
 				<select name="cg_cj_locale">
 					<?php 
-					$cj_localies= array( array('en_US','United States') , array('en_GB','United Kingdom') , array('cs_CZ','Czech Republic'),array('da_DK','Denmark'),array('de_AT','Austria'),array('de_CH','Switzerland'),array('de_DE','Germany'),array('en_AE','United Arab Emirates'),array('en_AU','Australia'),array('en_CA','Canada'),array('en_CN','China'),array('en_HK','Hong Kong'),array('en_IE','Ireland'),array('id_ID','Indonesia'),array('en_IN','India'),array('en_MY','Malaysia'),array('en_NZ','New Zealand'),array('en_OM','Oman'),array('en_PH','Philippines'),array('en_PK','Pakistan'),array('en_QA','Qatar'),array('en_SG','Singapore'),array('en_ZA','South Africa'),array('en_TW','Taiwan'),array('en_VN','Vietnam'),array('es_AR','Argentina'),array('es_BO','Bolivia'),array('es_CL','Chile'),array('es_CR','Costa Rica'),array('es_DO','Dominican Republic'),array('es_EC','Ecuador'),array('es_ES','Spain'),array('es_GT','Guatemala'),array('es_MX','Mexico'),array('es_PA','Panama'),array('es_PE','Peru'),array('es_PR','Puerto Rico'),array('es_PY','Paraguay'),array('es_UY','Uruguay'),array('es_VE','Venezuela'),array('fi_FI','Finland'),array('fr_CA','Canada'),array('fr_BE','Belgium'),array('fr_CH','Switzerland'),array('fr_FR','France'),array('fr_LU','Luxembourg'),array('fr_MA','Morocco'),array('hu_HU','Hungary'),array('it_IT','Italy'),array('ja_JP','Japan'),array('ko_KR','Korea'),array('nl_BE','Belgium'),array('nl_NL','Netherlands'),array('no_NO','Norway'),array('pl_PL','Poland'),array('pt_PT','Portugal'),array('pt_BR','Brazil'),array('ru_RU','Russia'),array('ru_UA','Ukraine'),array('sv_SE','Sweden'),array('sk_SK','Slovakia'),array('tr_TR','Turkey'),array('uk_UA','Ukraine'),array('vi_VN','Vietnam'),array('zh_CN','China') ,array('en_NG','Nigeria') );
+					$cj_localies= array( array('en_US','United States') , array('en_GB','United Kingdom') , array('cs_CZ','Czech Republic'),array('da_DK','Denmark'),array('de_AT','Austria'),array('de_CH','Switzerland'),array('de_DE','Germany'),array('en_AE','United Arab Emirates'),array('en_AU','Australia'),array('en_CA','Canada'),array('en_CN','China'),array('en_HK','Hong Kong'),array('en_IE','Ireland'),array('id_ID','Indonesia'),array('en_IN','India'),array('en_MY','Malaysia'),array('en_NZ','New Zealand'),array('en_OM','Oman'),array('en_PH','Philippines'),array('en_PK','Pakistan'),array('en_QA','Qatar'),array('en_SG','Singapore'),array('en_ZA','South Africa'),array('en_TW','Taiwan'),array('en_VN','Vietnam'),array('es_AR','Argentina'),array('es_BO','Bolivia'),array('es_CL','Chile'),array('es_CR','Costa Rica'),array('es_DO','Dominican Republic'),array('es_EC','Ecuador'),array('es_ES','Spain'),array('es_GT','Guatemala'),array('es_MX','Mexico'),array('es_PA','Panama'),array('es_PE','Peru'),array('es_PR','Puerto Rico'),array('es_PY','Paraguay'),array('es_UY','Uruguay'),array('es_VE','Venezuela'),array('fi_FI','Finland'),array('fr_CA','Canada'),array('fr_BE','Belgium'),array('fr_CH','Switzerland'),array('fr_FR','France'),array('fr_LU','Luxembourg'),array('fr_MA','Morocco'),array('hu_HU','Hungary'),array('it_IT','Italy'),array('ja_JP','Japan'),array('ko_KR','Korea'),array('nl_BE','Belgium'),array('nl_NL','Netherlands'),array('no_NO','Norway'),array('pl_PL','Poland'),array('pt_PT','Portugal'),array('pt_BR','Brazil'),array('ru_RU','Russia'),array('ru_UA','Ukraine'),array('sv_SE','Sweden'),array('sk_SK','Slovakia'),array('tr_TR','Turkey'),array('uk_UA','Ukraine'),array('vi_VN','Vietnam'),array('zh_CN','China') ,array('en_NG','Nigeria') , array('ar_SA' , 'Sauid Arabia') );
 						
 						foreach($cj_localies as $arrloc ){
 							
@@ -2417,12 +2443,118 @@ if (count($res) > 0 ){
 			
 			<div class="option clearfix">
 				<input name="camp_options[]" value="OPT_CJ_FULL" type="checkbox"> 
-				<span class="option-title">Try to load the full job page and capture the full description</span>
+				<span class="option-title">Try to load the full job page and capture the full description & logo image</span>
 			</div>
 							
 		 </div>
 		 
 		 <!-- /Careerjet part -->
+		 
+		 <!-- Aliexpress part -->
+		 <div  class="field f_100 typepart Aliexpress"  style="display:none">
+		 
+		 	        <div class="option clearfix">
+                    <input name="camp_options[]" data-controls="ae_full_img_t"  value="OPT_AE_FULL_IMG" type="checkbox">
+
+                    <span class="option-title">
+							Modify item images HTML code
+                    </span>
+                    
+                    <br>
+                    
+		            <div id="ae_full_img_t" class="field f_100">
+		               <label>
+		                    Single image template  
+		               </label>
+		               
+		                <input placeholder="<?php echo  htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?>"  value="<?php    echo htmlentities(@$camp_general['cg_ae_full_img_t'],ENT_COMPAT, 'UTF-8')   ?>"  name="cg_ae_full_img_t" type="text">
+		               	
+		               	<div class="description">This is how the plugin will build images html for the [item_imgs_html] tag.<br><br>*Use [img_src] to replace the image src.<br><br> *Use class="wp_automatic_gallery" to display images as gallery<br><br>Default: <?php echo  htmlentities('<img src="[img_src]" class="wp_automatic_gallery" />') ;?></div>
+		               
+		            </div>
+               </div>
+               
+                
+               <div class="option clearfix">
+                    
+                    <input name="camp_options[]"   data-controls="ali_custom_url" value="OPT_ALIEXPRESS_CUSTOM" type="checkbox">
+                    <span class="option-title">
+							Custom AliExpress search URL (AliExpress link containing a list of products ) 
+                    </span>
+                    <br>
+                    
+		            <div id="ali_custom_url" class="field f_100">
+		               <label>
+		                   AliExpress custom Search URL 
+		               </label>
+		               <input type="text" name="cg_ae_custom_urls" value="<?php   echo @$camp_general['cg_ae_custom_urls']  ?>">
+		            	<div class="description">Use [keyword] inside the URL if needed<br>ex1 watches category only search:<br> https://www.aliexpress.com/af/casio.html?SearchText=[keyword]&catId=1511<br><br>ex2:only items with min price=100<br> https://www.aliexpress.com/af/casio.html?CatId=1511&SearchText=casio&minPrice=100<br><br>ex3: Jackets category without a keyword<br>https://www.aliexpress.com/af/category/200000664.html?CatId=200000664&catName=jackets</div>
+		            	
+		            	<div class="field f_100">
+		            	<input  data-controls-r='' name="camp_options[]"   value="OPT_AE_NO_KEYS" type="checkbox">
+		                    <span class="option-title">
+									Don't use keywords and add items from above URL directly 
+		                    </span>
+	                    </div>
+		            
+		       		 </div>
+		        </div>
+		        
+		        <div class="option clearfix">
+                    
+                    <input name="camp_options[]"   data-controls="ali_custom_cur" value="OPT_ALIEXPRESS_CUR" type="checkbox">
+                    <span class="option-title">
+							Set a specific currency
+                    </span>
+                    <br>
+                    
+		            <div id="ali_custom_cur" class="field f_100">
+		               <label>
+		                  Currency code
+		               </label>
+		               <input type="text" placeholder="USD" name="cg_ae_custom_cur" value="<?php   echo @$camp_general['cg_ae_custom_cur']  ?>">
+		            	<div class="description">ex: write USD for United states $ or EUR for euro</div>
+		            	  
+		       		 </div>
+		        </div>
+		         
+		        <div class="option clearfix">
+                    
+                    <input name="camp_options[]"   data-controls="ali_custom_domain" value="OPT_ALIEXPRESS_DOMAIN" type="checkbox">
+                    <span class="option-title">
+							Set a specific country/language
+                    </span>
+                    <br>
+                    
+		            <div id="ali_custom_domain" class="field f_100">
+		               <label>
+		                  AliExpress domain name
+		               </label>
+		               <input type="text" placeholder="https://fr.aliexpress.com/" name="cg_ae_custom_domain" value="<?php   echo @$camp_general['cg_ae_custom_domain']  ?>">
+		            	<div class="description">ex: write https://fr.aliexpress.com/ for French</div>
+		            	  
+		       		 </div>
+		        </div>               
+               
+               <div class="option clearfix">
+	                    <input name="camp_options[]" value="OPT_AE_GALLERY" type="checkbox">
+	                    <span class="option-title">
+								Add item images as a woo-commerce product gallery
+
+	                    </span>
+	                    <br>
+	          	</div>
+	          	
+	          	<div class="option clearfix">
+	                    <input name="camp_options[]"  value="OPT_AE_CACHE" type="checkbox">
+	                    <span class="option-title">
+								Cache items for faster posting (Disable if you want to focus on latest products only) (pagination will not work if enabled)
+	                    </span>
+	                    <br>
+	                     
+	               </div>
+		 
+		 </div>
 		 
 		 <!-- Craigslist part -->
 		 
@@ -2559,7 +2691,7 @@ if (count($res) > 0 ){
 					   <select name="cg_wm_sort_dir">
 						
 							<option value="asc" <?php @wp_automatic_opt_selected('asc',$camp_general['cg_wm_sort_dir']) ?>>Asc</option>
-							<option value="desc" <?php @wp_automatic_opt_selected('desc',$camp_general['cg_SRC_NAME']) ?>>Desc</option>
+							<option value="desc" <?php @wp_automatic_opt_selected('desc',$camp_general['cg_wm_sort_dir']) ?>>Desc</option>
 
 					   </select>
 					   
@@ -2707,6 +2839,22 @@ if (count($res) > 0 ){
 					                    <input name="camp_options[]"   value="OPT_RD_POST_VID" type="checkbox">
 					                    <span class="option-title">
 												Gifs and videos  
+					                    </span>
+					                    <br>
+					         </div>
+					         
+					         <div class="option clearfix">
+					                    <input name="camp_options[]"   value="OPT_RD_POST_GIFS" type="checkbox">
+					                    <span class="option-title">
+												Gifs 
+					                    </span>
+					                    <br>
+					         </div>
+					         
+					         <div class="option clearfix">
+					                    <input name="camp_options[]"   value="OPT_RD_POST_VIDS" type="checkbox">
+					                    <span class="option-title">
+												Videos  
 					                    </span>
 					                    <br>
 					         </div>
@@ -3522,8 +3670,9 @@ if (count($res) > 0 ){
 		              	<label>
 		              	Order 
 		              	</label>
+		              	<br>
 		                
-		                <select  name="cg_am_order" >
+		                <select  name="cg_am_order" style="min-width:140px" >
 			               		<?php 
 			               		$params = array( "Relevance	" , "AvgCustomerReviews" , "Featured" , "NewestArrivals" , "Price:HighToLow" , "Price:LowToHigh	");
 				               			foreach ($params as $param){
@@ -3559,7 +3708,7 @@ if (count($res) > 0 ){
 		              	<label>
 		              	Condition 
 		              	</label>
-		                
+		                <br>
 		                <select  name="cg_am_condition" >
 			               		<?php 
 			               		$params = array( "Any" , "New" , "Used" , "Collectible" , "Refurbished" );
@@ -3599,8 +3748,8 @@ if (count($res) > 0 ){
 		                	$params=array('Actor','Artist','Author','Brand');
 		                ?>
 		                
-		                <div style="float:left;width:40%" >
-			               	<select  name="cg_am_param_type" >
+		                <div >
+			               	<select style="min-width:140px"  name="cg_am_param_type" >
 			               		<?php 
 				               			foreach ($params as $param){
 								?>
@@ -3616,8 +3765,9 @@ if (count($res) > 0 ){
 			               		 
 			               	</select>
 		                 </div>
+		                 <br>
 		               
-		                <div style="width:40%;float:left;margin-left:5px" >
+		                <div >
 		               		<input value="<?php   echo @$camp_general['cg_am_param']  ?>" name="cg_am_param"   type="text">
 		                </div>
 		               
@@ -3756,6 +3906,38 @@ if (count($res) > 0 ){
                     </span>
                     <br>
                </div>
+               </div>
+               
+               <div class="field f_100">
+	               <div class="option clearfix">
+	                    <input name="camp_options[]" data-controls="am_location"  value="OPT_AM_LOC" type="checkbox">
+	
+	                    <span class="option-title">
+								Simulate a custom  location (If your server exists on a different country than current amazon one)
+	                    </span>
+	                    
+	                    <br>
+	                    
+			            <div id="am_location" class="field f_100">
+			               <label>
+			                    session-id	 cookie value  
+			               </label>
+			               
+			                <input   value="<?php    echo  (@$camp_general['cg_am_session'] )   ?>"  name="cg_am_session" type="text">
+			               	
+			               	<br>
+			               	
+			               	<label>
+			                   ubid-main	 cookie value  
+			               </label>
+			               
+			                <input   value="<?php    echo  (@$camp_general['cg_am_ubid'] )   ?>"  name="cg_am_ubid" type="text">
+			               	 
+			               	
+			               	<div class="description">If you are posting from amazon.com but your server is not located in US, set these values to get same products that get displayed for US users. If you do not set them, you will get too less products<br><br>Check <a href="https://valvepress.com/how-to-import-amazon-products-from-a-specific-country-using-wordpress-automatic/" target="_blank">this tutorial</a> on how to get these values</div>
+			               
+			            </div>
+	               </div>
                </div>
                
                
@@ -4221,6 +4403,24 @@ if (count($res) > 0 ){
 			
 			<div  class="field f_100">
 	               <div class="option clearfix">
+	                    
+	                    
+	                    <input data-controls-r="" data-controls="wp_tt_infinte"  name="camp_options[]"  value="OPT_TT_INFINITE" type="checkbox">
+	                    <span class="option-title">
+								Extract videos from this HTML (to import older items or all items)
+	                    </span>
+	                    <br>
+	                    
+	                 <div id="wp_tt_infinte" class="field f_100">
+	                    	<label>TikTok page HTML (Scroll the page then copy the HTML)</label>
+	                    	<textarea name="cg_tt_html"><?php echo htmlentities( @$camp_general['cg_tt_html'],ENT_COMPAT, 'UTF-8')  ?></textarea>
+	                    	<div class="description">Scroll as many times as desired, then paste the page HTML. Check this  <a target="_blank" href="https://valvepress.com/how-to-post-older-tiktok-videos-to-wordpress-using-automatic-plugin/">tutorial</a></div>
+                    </div>                    
+                    
+                    </div>
+                    
+                    <div class="option clearfix">
+	                    
 	                    <input data-controls-r="" data-controls="wp_tt_user"  name="camp_options[]"  value="OPT_TT_USER" type="checkbox">
 	                    <span class="option-title">
 								Post from a specific TikTok user 
@@ -4451,7 +4651,7 @@ if (count($res) > 0 ){
 		 
 		 <div  class="field f_100">
 	               
-	               <div class="option clearfix">
+	               <div class="option clearfix typepart  Twitter Instagram">
 	                    <input name="camp_options[]"  value="OPT_IT_DATE" type="checkbox">
 	                    <span class="option-title">
 								Post items with its original date
@@ -4481,6 +4681,14 @@ if (count($res) > 0 ){
 	                    <div id="wp_it_title_count" class="field f_100">
                     	<label>Limit title to x chars (default is 80 )</label>
                     	<input value="<?php   echo @$camp_general['cg_it_title_count']  ?>" placeholder="80" name="cg_it_title_count"  type="text">
+                    	
+                    	<div class="option clearfix typepart Instagram">
+	                    	<input   name="camp_options[]"  value="OPT_IT_STOP_LINE_BREAK" type="checkbox">
+		                    <span class="option-title">
+									Stop at line breaks (i.e take the title before a new line)  
+		                    </span>
+		                    <br>
+                    	</div>
                     	
                     	<div class="option clearfix typepart Twitter">
 	                    	<input   name="camp_options[]"  value="OPT_IT_TITLE_CLEAN" type="checkbox">
@@ -4933,13 +5141,6 @@ if (count($res) > 0 ){
 		                    </span>
 	                    </div>
 	                    
-	                 <div class="field f_100">
-		            	<input   name="camp_options[]"  value="OPT_YT_LIVE" type="checkbox">
-		                    <span class="option-title">
-									Get live videos as well (Not recommended: increases quote from 3 to 100 per request) 
-		                    </span>
-	                    </div>
-	                    
 	                    
 	                    <div class="description">Tip: If you want to post from many channels, just add the channel ID and activate the option to post without keywords then leave the next 7 options below to thier default values. This will reduce the used quota per request from 100 to 3. Daily quota is 10000 and a single search request takes 100</div>
 	                    <br>
@@ -5138,6 +5339,15 @@ if (count($res) > 0 ){
                     <input name="camp_options[]" value="OPT_YT_LIVE_ONLY" type="checkbox">
                     <span class="option-title">
 							Post live videos only 
+                    </span>
+                    <br>
+               </div>
+               
+               
+               <div class="option clearfix">
+                    <input name="camp_options[]" value="OPT_YT_LIVE_SKIP" type="checkbox">
+                    <span class="option-title">
+							Skip live videos from returned results 
                     </span>
                     <br>
                </div>
@@ -6013,33 +6223,29 @@ if (count($res) > 0 ){
  
 
 					<?php
-	 					$query="select * from {$prefix}automatic_categories where cat_parent ='0' ";
-						$res=$wpdb->get_results($query);
-						//print_r($res);
-						$printedCBCats= array();
+					
+					$categories_main = '["Arts & Entertainment","As Seen on TV","Betting Systems","Business / Investing","Computers / Internet","Cooking, Food & Wine","E-Business & E-Marketing","Education","Employment & Jobs","Fiction","Games","Green Products","Health & Fitness","Home & Garden","Languages","Mobile","Parenting & Families","Politics / Current Events","Reference","Self-Help","Software & Services","Spirituality, New Age & Alternative Beliefs","Sports","Travel"]';
+					$categories_sub   = '[["Architecture","Art","Body Art","Dance","Fashion","Film & Television","General","Humor","Magic Tricks","Music","Photography","Radio","Theater"],["Auto","Backyard Living","General","Health and Beauty","Kitchen Tools and Gadgets"],["Casino Table Games","Football","General","Horse Racing","Poker","Soccer"],["Careers, Industries & Professions","Commodities","Debt","Derivatives","Economics","Equities & Stocks","Foreign Exchange","General","International Business","Management & Leadership","Marketing & Sales","Outsourcing","Personal Finance","Real Estate","Small Biz / Entrepreneurship"],["Databases","Email Services","General","Graphics","Hardware","Networking","Operating Systems","Programming","Software","System Administration","System Analysis & Design","Web Hosting","Web Site Design"],["Baking","BBQ","Cooking","Drinks & Beverages","General","Recipes","Regional & Intl.","Special Diet","Special Occasions","Vegetables / Vegetarian","Wine Making"],["Affiliate Marketing","Article Marketing","Auctions","Banners","Blog Marketing","Classified Advertising","Consulting","Copywriting","Domains","E-commerce Operations","E-zine Strategies","Email Marketing","General","Market Research","Marketing","Niche Marketing","Paid Surveys","Pay Per Click Advertising","Promotion","SEM & SEO","Social Media Marketing","Submitters","Video Marketing"],["Admissions","Educational Materials","Higher Education","K-12","Student Loans","Test Prep & Study Guides"],["Cover Letter & Resume Guides","General","Job Listings","Job Search Guides","Job Skills / Training"],["General"],["Console Guides & Repairs","General","Strategy Guides"],["Alternative Energy","Conservation & Efficiency","General"],["Addiction","Beauty","Dental Health","Dietary Supplements","Diets & Weight Loss","Exercise & Fitness","General","Meditation","Men\'s Health","Mental Health","Nutrition","Remedies","Sleep and Dreams","Spiritual Health","Strength Training","Women\'s Health","Yoga"],["Animal Care & Pets","Crafts & Hobbies","Entertaining","Gardening & Horticulture","General","Homebuying","How-to & Home Improvements","Interior Design","Sewing","Weddings"],["Arabic","Chinese","English","French","German","Hebrew","Hindi","Italian","Japanese","Other","Russian","Sign Language","Spanish","Thai"],["Apps","Developer Tools","General","Ringtones","Security","Video"],["Divorce","Education","Genealogy","General","Marriage","Parenting","Pregnancy & Childbirth","Special Needs"],["General"],["Automotive","Catalogs & Directories","Consumer Guides","Education","Etiquette","Gay / Lesbian","General","Law & Legal Issues","The Sciences","Writing"],["Abuse","Dating Guides","Eating Disorders","General","Marriage & Relationships","Motivational / Transformational","Personal Finance","Public Speaking","Self Defense","Self-Esteem","Stress Management","Success","Survival","Time Management"],["Anti Adware / Spyware","Background Investigations","Communications","Developer Tools","Digital Photos","Drivers","Education","Email","Foreign Exchange Investing","General","Graphic Design","Hosting","Internet Tools","MP3 & Audio","Networking","Operating Systems","Other Investment Software","Personal Finance","Productivity","Registry Cleaners","Reverse Phone Lookup","Screensavers & Wallpaper","Security","System Optimization","Utilities","Video","Web Design","3D Printing"],["Astrology","General","Hypnosis","Magic","Numerology","Paranormal","Psychics","Religion","Tarot","Witchcraft"],["Automotive","Baseball","Basketball","Coaching","Cycling","Extreme Sports","Football","General","Golf","Hockey","Individual Sports","Martial Arts","Mountaineering","Other Team Sports","Outdoors & Nature","Racket Sports","Running","Soccer","Softball","Training","Volleyball","Water Sports","Winter Sports"],["Africa","Asia","Canada","Caribbean","Europe","General","Latin America","Middle East","Specialty Travel","United States"]]';
+					
+					$categories_main_json = json_decode($categories_main);
+					$categories_sub_json   = json_decode($categories_sub);
+					
+	 					 $c = 0; 
+						foreach($categories_main_json as $cat){
+							 
+							echo '<option   value="'.$cat.'"';
+							wp_automatic_opt_selected($cat ,$camp_cb_category );
+							echo '>'.$cat.'</option>';
 						
-						foreach($res as $cat){
-							
-							if(in_array($cat->cat_id, $printedCBCats)) continue;
-							
-							$printedCBCats[] = $cat->cat_id;
-							
-							  echo '<option id="field1-1" value="mainCategoryId='.$cat->cat_id.'"';
-							wp_automatic_opt_selected('mainCategoryId='.$cat->cat_id ,$camp_cb_category );
-							  echo '>'.$cat->cat_name.'</option>';
-							  
-							$query="select * from {$prefix}automatic_categories where cat_parent='$cat->cat_id'";
-							$ret=$wpdb->get_results($query);
-							foreach($ret as $sub){
-								
-								if(in_array($sub->cat_id, $printedCBCats)) continue;
-									
-								$printedCBCats[] = $sub->cat_id;
-								
-								   echo '<option id="field1-1" value="mainCategoryId='.$cat->cat_id.'&subCategoryId='.$sub->cat_id.'" ';
-								 @wp_automatic_opt_selected('mainCategoryId='.$cat->cat_id.'&subCategoryId='.$sub->cat_id ,$camp_cb_category );
-								   echo ' >-- '.$sub->cat_name.'</option>';
+							 
+							foreach($categories_sub_json[$c] as $sub){
+								 
+								   echo '<option   value="' . $cat . ',' . $sub .'" ';
+								 @wp_automatic_opt_selected($cat.','.$sub ,$camp_cb_category );
+								   echo ' >-- ' . $sub . '</option>';
 							}
+						
+						$c++;
 						}
 						
 					 ?>
@@ -6064,6 +6270,10 @@ if (count($res) > 0 ){
                     Specific products language :
                </label>
                <select name="cg_cb_lang">
+                    
+                    <option value="ALL" <?php @wp_automatic_opt_selected('ALL',$camp_general['cg_cb_lang']) ?> >
+                         ALL
+                    </option>
                     
                     <option value="EN" <?php @wp_automatic_opt_selected('EN',$camp_general['cg_cb_lang']) ?> >
                          English
@@ -6095,7 +6305,7 @@ if (count($res) > 0 ){
           
           <div id="field1zz-container" class="field f_100">
                <label for="field1zz">
-                    Search Order By :
+                    Search order:
                </label>
                <select name="camp_search_order" id="field1zz">
                
@@ -6108,9 +6318,21 @@ if (count($res) > 0 ){
                     <option id="field1-2" value="POPULARITY"  <?php @wp_automatic_opt_selected('POPULARITY',$camp_search_order) ?>  >
                          Popularity
                     </option>
+                   
                     <option id="field1-3" value="AVERAGE_EARNINGS_PER_SALE"  <?php @wp_automatic_opt_selected('AVERAGE_EARNINGS_PER_SALE',$camp_search_order) ?>  >
                          Average Earning / Sale
+                    </option> 
+                    
+                    
+                    <option id="field1-2" value="initial_earnings_per_sale"  <?php @wp_automatic_opt_selected('initial_earnings_per_sale',$camp_search_order) ?>  >
+                         Initial earnings per sale
                     </option>
+                      
+                    <option id="field1-2" value="total_rebill_amt"  <?php @wp_automatic_opt_selected('total_rebill_amt',$camp_search_order) ?>  >
+                         Total rebill amount
+                    </option> 
+                     
+                   
                </select>
           </div>
           
@@ -6289,7 +6511,7 @@ Price: <span style="color:#b12704">[price_with_discount]</span><br><i><small>(as
 <br><a href="[item_link]">View Reddit</a> by [item_author_link] -  <a href="[item_url]">View Source</a></div>
 
 <!-- Careerjet part -->
-<div class="tempCareerjet">[ad_1]
+<div class="tempCareerjet">[item_logo_html]
 <b>Job title:</b> [item_title]
 <br><b>Company:</b> [item_company]
 <br><b>Job description</b>: [item_description]
@@ -6318,6 +6540,14 @@ Price: <span style="color:#b12704">[price_with_discount]</span><br><i><small>(as
 <p>[item_map]</p>
 <a href="[item_link]">Check more...</a>
 </div>
+
+<!-- craigslist part -->
+		<div class="tempAliexpress">[item_imgs_html]
+Price: <span style="color:#b12704">[price_with_discount]</span>
+
+<a href="[item_affiliate_url]"><img src="https://i.imgur.com/ISRHEWs.png"></a> 
+
+[item_description]</div>
 	
 	<!-- SoundCloud part -->
 	<div class="tempSoundCloud" >[ad_1]

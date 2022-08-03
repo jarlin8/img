@@ -1200,6 +1200,7 @@ ALTER TABLE `{$prefix}automatic_amazon_links` ADD INDEX(`link_keyword`);
 ALTER TABLE `{$prefix}automatic_articles_links` ADD INDEX(`keyword`);
 ALTER TABLE `{$prefix}automatic_clickbank_links` ADD INDEX(`link_keyword`);
 ALTER TABLE `{$prefix}automatic_youtube_links` ADD INDEX(`link_keyword`);
+ALTER TABLE `{$prefix}automatic_log` ADD INDEX( `action`);
 
 ";
 		

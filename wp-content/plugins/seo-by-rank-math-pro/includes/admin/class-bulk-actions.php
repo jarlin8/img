@@ -73,10 +73,13 @@ class Bulk_Actions {
 
 		if ( Helper::is_module_active( 'rich-snippet' ) && Helper::has_cap( 'onpage_snippet' ) ) {
 			$new_actions['rank_math_bulk_schema_none'] = __( 'Set Schema: None', 'rank-math-pro' );
-			$post_type                             = get_post_type();
-			$post_type_default                     = Helper::get_settings( 'titles.pt_' . $post_type . '_default_rich_snippet' );
-			// Translators: placeholder is the default Schema type setting.
-			$new_actions['rank_math_bulk_schema_default'] = sprintf( __( 'Set Schema: Default (%s)', 'rank-math-pro' ), $post_type_default );
+			$post_type                                 = Param::get( 'post_type', get_post_type() );
+			$post_type_default                         = Helper::get_settings( 'titles.pt_' . $post_type . '_default_rich_snippet' );
+
+			if ( $post_type_default ) {
+				// Translators: placeholder is the default Schema type setting.
+				$new_actions['rank_math_bulk_schema_default'] = sprintf( __( 'Set Schema: Default (%s)', 'rank-math-pro' ), $post_type_default );
+			}
 		}
 
 		if ( count( $new_actions ) > 1 ) {

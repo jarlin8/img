@@ -51,6 +51,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					// getting links from the db for that keyword
 					$res = $this->db->get_results ( $query );
 				}
+				 
 				
 				// delete already posted items from other campaigns
 				// deleting duplicated items
@@ -60,6 +61,8 @@ class WpAutomaticAmazon extends wp_automatic {
 					$t_row = $res [$i];
 					
 					$t_link_url = $t_row->link_url;
+					
+				 
 					
 					// get amazon item by ASIN if not complete info
 					$was_an_asin = false; // to skip duplicate check again as asin get already duplicate checked
@@ -71,6 +74,8 @@ class WpAutomaticAmazon extends wp_automatic {
 						$asin = $t_link_url;
 						
 						echo '<br>Found ASIN:' . $asin;
+						
+					 
 						
 						// check if duplicate or excluded before getting detailed information
 						$t_link_url = $linkUrl = 'https://amazon.' . $camp->camp_amazon_region . '/dp/' . $asin;
@@ -99,29 +104,37 @@ class WpAutomaticAmazon extends wp_automatic {
 						$amazonSecret = get_option ( 'wp_amazonpin_apvtk', '' );
 						
 						$obj = new wp_automatic_AmazonProductAPI ( trim ( $amazonPublic ), trim ( $amazonSecret ), trim ( $amazonAid ), $camp->camp_amazon_region );
+						$obj->ch = $this->ch;
 						
 						try {
 							
 							$result = $obj->getItemByAsin ( $asin );
+							
+							 
+							
 							$Item = $result->Items->Item;
+							$Item = $result[0]; 
+							
 						} catch ( Exception $e ) {
 							echo '<br>Amazon error:' . $e->getMessage ();
 						}
+						 
 						
 						if (isset ( $Item->ASIN ) && isset ( $Item->DetailPageURL )) {
 							
-							echo " Link : <a href=\"{$Item->DetailPageURL}\">{$Item->ItemAttributes->Title}</a> <br>";
+							echo " Link : <a href=\"{$Item->DetailPageURL}\">{$Item->ItemInfo->Title->DisplayValue}</a> <br>";
 							
 							$desc = '';
-							@$desc = $Item->EditorialReviews->EditorialReview->Content;
 							
 							// Features existence
-							if (isset ( $Item->ItemAttributes->Feature )) {
+							if (isset ( $Item->ItemInfo->Features )) {
 								echo '-- Features found appending to the description';
-								$desc .= implode ( '<br>', ( array ) $Item->ItemAttributes->Feature );
+								$desc .= implode ( '<br>', $Item->ItemInfo->Features->DisplayValues );
 							}
 							
-							$title = ( string ) $Item->ItemAttributes->Title;
+							$desc = addslashes ( $desc );
+							$title = addslashes ( $Item->ItemInfo->Title->DisplayValue );
+							
 							
 							// Author if exists, inject it to title
 							if (isset ( $Item->ItemAttributes->Author )) {
@@ -151,87 +164,68 @@ class WpAutomaticAmazon extends wp_automatic {
 								$title .= '** ';
 							}
 							
+							// current price
 							$price = '';
-							
-							$price = @$Item->Offers->Offer->OfferListing->SalePrice->FormattedPrice;
-							
-							if (trim ( $price ) == '') {
-								$price = @$Item->Offers->Offer->OfferListing->Price->FormattedPrice;
-							}
-							if (trim ( $price ) == '') {
-								@$price = $Item->ItemAttributes->ListPrice->FormattedPrice;
-							}
-							
-							if (trim ( $price ) == '') {
-								@$price = $Item->OfferSummary->LowestNewPrice->FormattedPrice;
-							}
-							
-							if (trim ( $price ) == '') {
-								@$price = $Item->OfferSummary->LowestCollectiblePrice->FormattedPrice;
-							}
-							
-							if (trim ( $price ) == '') {
-								@$price = $Item->OfferSummary->LowestUsedPrice->FormattedPrice;
-							}
-							
-							if (trim ( $price ) == '') {
-								@$price = $Item->VariationSummary->LowestPrice->FormattedPrice;
-							}
+							$price = $Item->Offers->Listings[0]->Price->DisplayAmount;
+							$price = trim (preg_replace( '{\(.*?\)}' , '' , $price ) );
+							$price_numeric = $Item->Offers->Listings[0]->Price->Amount;
+							$last_price = $price_numeric * 100;
 							
 							// list price
-							$ListPrice = $Item->ItemAttributes->ListPrice->FormattedPrice;
+							$ListPrice = '';
+							
+							if(isset( $Item->Offers->Listings[0]->Price->Savings )){
+								$ListPrice = $Item->Offers->Listings[0]->Price->Savings->Amount + $price_numeric;
+								$ListPrice = str_replace( $price_numeric , $ListPrice , $price );
+								
+							}
 							
 							if (trim ( $ListPrice ) == '') {
 								$ListPrice = $price;
 							}
 							
-							// final saved price price,listprice
+							// final saved price price-listprice
 							$price = $price . '-' . $ListPrice;
 							
+							echo '<br>Price:'.$price;
+							
+							// Product Image
 							$imgurl = '';
-							$imgurl = $Item->LargeImage->URL;
-							
-							if (trim ( $imgurl ) == '') {
-								// get it from the sets
-								@$imgurl = $Item->ImageSets->ImageSet [0]->LargeImage->URL;
-							}
-							
-							if (trim ( $imgurl ) == '') {
-								// get it from the sets
-								@$imgurl = $Item->Variations->Item [0]->LargeImage->URL;
-							}
+							$imgurl = $Item->Images->Primary->Large->URL;
 							
 							// Checking for an image set
+							
 							if (trim ( $imgurl ) != '') {
-								$imgSets = array ();
-								$img2url = '';
-								$imgs = array ();
-								@$img2url = $Item->ImageSets->ImageSet [1]->LargeImage->URL;
 								
-								if (trim ( $img2url ) != '') {
-									// found an image set
-									$imgSets = $Item->ImageSets->ImageSet;
-									foreach ( $imgSets as $imgSet ) {
-										$imgs [] = $imgSet->LargeImage->URL;
+								$imgs = array();
+								
+								if (isset ( $Item->Images->Variants )) {
+									
+									foreach ( $Item->Images->Variants as $imgSet ) {
+										$imgs [] = $imgSet->Large->URL;
 									}
 									
 									if (count ( $imgs ) > 0) {
 										$imgs = implode ( ',', $imgs );
-										$imgurl = $imgs;
+										$imgurl =     $imgs . ',' . $imgurl ;
 									}
 								}
 							}
 							
+							
 							// review url
-							$review = $Item->CustomerReviews->IFrameURL;
+							$review = "https://www.amazon.{$camp->camp_amazon_region}/reviews/iframe?akid=AKIAJDYHK6WW2AYDNYJA&alinkCode=xm2&asin={$Item->ASIN}&atag={$amazonAid}&exp=2030-07-19T16%3A07%3A21Z&v=2&sig=ofoCKfF6T0LDaPzBPX%252BB2tnjuzE3gCl%252BstWxTFdnCJQ%253D";
+							
 							
 							// building the item
 							$t_row->link_url = $linkUrl;
-							$t_row->link_title = $title;
+							$t_row->link_title = $title; 
 							$t_row->link_desc = ( string ) $desc;
 							$t_row->link_price = ( string ) $price;
 							$t_row->link_img = ( string ) $imgurl;
 							$t_row->link_review = ( string ) $review;
+							
+							 
 							
 							$res [$i] = $t_row;
 						} else { // valid returned item
@@ -243,6 +237,8 @@ class WpAutomaticAmazon extends wp_automatic {
 							unset ( $res [$i] );
 						}
 					} // ASIN product
+					
+					 
 					
 					if (! $was_an_asin && $this->is_duplicate ( $t_link_url )) {
 						
@@ -260,6 +256,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					}
 				}
 				
+				 				
 				// check again if valid links found for that keyword otherwise skip it
 				if (count ( $res ) > 0) {
 					
@@ -458,7 +455,13 @@ class WpAutomaticAmazon extends wp_automatic {
 					}
 					
 					// imgs html
-					$cg_am_full_img_t = @$camp_general ['cg_am_full_img_t'];
+					if(in_array('OPT_AM_FULL_IMG' , $this->camp_opt)){
+						$cg_am_full_img_t = stripslashes(@$camp_general ['cg_am_full_img_t']);
+					}else{
+						$cg_am_full_img_t = '' ;
+					}
+					
+					
 					
 					if (trim ( $cg_am_full_img_t ) == '') {
 						$cg_am_full_img_t = '<img src="[img_src]" class="wp_automatic_gallery" />';

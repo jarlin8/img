@@ -9,13 +9,13 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Rank Math SEO
- * Version:           1.0.93.1
+ * Version:           1.0.94
  * Plugin URI:        https://s.rankmath.com/home
  * Description:       Rank Math is a revolutionary SEO product that combines the features of many SEO tools and lets you multiply your traffic in the easiest way possible.
  * Secret Key:        83a5bb0e2ad5164690bc7a42ae592cf5
  * Author:            Rank Math
  * Author URI:        https://s.rankmath.com/home
- * License:           GPL v3
+ * License:           GPL-3.0+
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.txt
  * Text Domain:       rank-math
  * Domain Path:       /languages
@@ -35,7 +35,7 @@ final class RankMath {
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.93.1';
+	public $version = '1.0.94';
 
 	/**
 	 * Rank Math database version.

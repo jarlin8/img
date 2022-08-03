@@ -15,7 +15,7 @@ if(trim($licenseactive) != ''){
 	$wp_automatic_UpdateChecker->addResultFilter('wp_automatic_addResultFilter');
 	function wp_automatic_addResultFilter($info){
 		
-		$wp_automatic_license = get_option('wp_automatic_license','');
+		$wp_automatic_license = trim(get_option('wp_automatic_license',''));
 		
 		if(isset($info->download_url)){
 			$info->download_url = $info->download_url . '&key='.$wp_automatic_license;

@@ -32,6 +32,9 @@ class wp_automatic_amazon_api_less {
 	public $next_request_qid = null;
 	public $update_agent_required = false;
 	public $slugs = array ();
+	public $session_id = '';
+	public $session_ubid = '';
+	
 	function __construct(&$ch, $region) {
 		$this->ch = $ch;
 		$this->region = $region;
@@ -159,6 +162,10 @@ class wp_automatic_amazon_api_less {
 		// fix for eur getiting defected for amazon.it
 		$exec = str_replace ( 'iso-8859-1', 'utf-8', $exec );
 		
+		// report location
+		preg_match('!id="glow-ingress-line2">(.*?)</span>!s' , $exec , $loc_match );
+		if(isset($loc_match[1])) echo '<br>Found location value:' . $loc_match[1];
+		
 		// dom
 		$doc = new DOMDocument ();
 		@$doc->loadHTML ( $exec );
@@ -260,7 +267,41 @@ class wp_automatic_amazon_api_less {
 		}
 		
 		$ret ['item_features'] = $item_features;
+
+		// product details //*[@id="prodDetails"]/div
 		
+		$elements_details = $xpath->query ( '//*[@id="prodDetails"]/div' );
+		
+		$item_details = '';
+		if ($elements_details->length > 0) {
+			foreach ( $elements_details as $element ) {
+				$item_details = trim ( $doc->saveHTML($element) );
+			}
+			 
+		}
+		
+		//remove feedback div
+		$item_details = preg_replace('{<div id="pricingFeedbackDiv.*?div>}s' , '' ,  $item_details );
+		$item_details = preg_replace('{<table id="productDetails_feedback_sections.*?/table>}s' , '' ,  $item_details );
+		 
+		
+		$item_details = str_replace('<h1 class="a-size-medium a-spacing-small secHeader"> Feedback </h1>' , '' , $item_details );
+		
+		$ret ['item_details'] = $item_details;
+		 
+		//manufacture description //*[@id="aplus"]/div
+		$elements_details = $xpath->query ( '//*[@id="aplus"]/div' );
+		
+		$item_details = '';
+		if ($elements_details->length > 0) {
+			foreach ( $elements_details as $element ) {
+				$item_details = trim ( $doc->saveHTML($element) );
+			}
+			
+		}
+		
+		$ret ['item_manufacture_description'] = $item_details;
+		 
 		// images large":"
 		preg_match_all ( '{colorImages\': \{.*?large":".*?".*?script>}s', $exec, $imgs_matches );
 		
@@ -298,9 +339,7 @@ class wp_automatic_amazon_api_less {
 			} else {
 				$poassible_book_imgs = '';
 			}
-			
 			 
-			
 			if (trim ( $poassible_book_imgs ) != '') {
 				preg_match_all ( '{https://.*?\.jpg}s', $poassible_book_imgs, $possible_book_img_srcs );
 				$possible_book_img_srcs = $possible_book_img_srcs [0];
@@ -327,9 +366,7 @@ class wp_automatic_amazon_api_less {
 		
 		// prices priceblock_ourprice
 		unset ( $elements );
-		
-		
- 		
+		 
 		if (stristr ( $exec, 'id="priceblock_dealprice' ) || stristr ( $exec, 'id=priceblock_dealprice' )) {
 			$elements = $xpath->query ( '//*[@id="priceblock_dealprice"]' );
 			
@@ -448,6 +485,21 @@ class wp_automatic_amazon_api_less {
 		$ret ['item_link'] = 'https://amazon.' . $this->region . '/dp/' . $asin_code;
 		$ret ['item_reviews'] = 'https://www.amazon.' . $this->region . '/reviews/iframe?akid=AKIAJDYHK6WW2AYDNYJA&alinkCode=xm2&asin=' . $asin_code . '&atag=iatefpro&exp=2035-07-19T16%3A07%3A21Z&v=2&sig=ofoCKfF6T0LDaPzBPX%252BB2tnjuzE3gCl%252BstWxTFdnCJQ%253D';
 		
+		// item rating <div id="averageCustomerReviews" ..... a-star-4">
+		preg_match( '{<div id="averageCustomerReviews" .*?a-star-(\d[-\d]*)}s' , $exec , $rating_matches  );
+		
+		$item_rating = '';
+		if( isset($rating_matches[1]) && trim($rating_matches[1]) !='' ){
+			$rating_matches[1] = str_replace('-' , '.' , $rating_matches[1] );
+			if(is_numeric($rating_matches[1])){
+				$item_rating = $rating_matches[1];
+				$ret ['item_rating'] = $item_rating;
+				echo '<br>Item rating found:' . $item_rating;
+			}
+		}
+		
+		 
+ 		
 		return $ret;
 	}
 	
@@ -546,8 +598,7 @@ class wp_automatic_amazon_api_less {
 		 * curl_setopt($this->ch, CURLOPT_VERBOSE , 1);
 		 * curl_setopt($this->ch, CURLOPT_STDERR,$verbose);
 		 */
-		
-		
+		 
 		$headers = array ();
 		$headers [] = "Authority: www.amazon.{$this->region}";
 		$headers [] = "Upgrade-Insecure-Requests: 1";
@@ -558,12 +609,25 @@ class wp_automatic_amazon_api_less {
 		$headers [] = "Sec-Fetch-Dest: document";
 		$headers [] = "Accept-Language: en-US,en;q=0.9";
 		
+		//simulate location
+		if($this->session_ubid != ''){
+		 
+			$headers[] = "Cookie: session-id={$this->session_id};  ubid-main={$this->session_ubid}; ";
+			echo '<br>Custom location is requested.. setting session-id and ubid....';
+			
+		}
+		
+		
+		
 		curl_setopt ( $this->ch, CURLOPT_HTTPHEADER, $headers );
 		// curl_setopt($this->ch, CURLOPT_ENCODING , "");
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
 		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
 		
 		$exec = curl_exec ( $this->ch );
+		
+		
+	
 		
 		$x = curl_error ( $this->ch );
 		$cuinfo = curl_getinfo ( $this->ch );
@@ -579,8 +643,13 @@ class wp_automatic_amazon_api_less {
 				$exec = $gzdec;
 		}
 		
-		 
-		
+		//current location report id="glow-ingress-line2">
+		//New York 10001&zwnj;
+		//</span>
+		preg_match('!id="glow-ingress-line2">(.*?)</span>!s' , $exec , $loc_match );
+		if(isset($loc_match[1]))
+		echo '<br>Found location value:' . $loc_match[1];
+		  
 		// Capacha check
 		if (  stristr ( $exec, '/captcha/' ) || $cuinfo ['http_code'] == 503) {
 			echo '<br>Amazon asked for Capacha..  Trying auto-proxy....';

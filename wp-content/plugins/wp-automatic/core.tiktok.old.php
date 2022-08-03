@@ -60,13 +60,25 @@ class WpAutomatictiktok extends wp_automatic {
 					
 					$t_data = unserialize ( base64_decode ( $t_row->item_data ) );
 					
-					 
-					
 					$t_link_url = $t_data ['item_url'];
 					
-					echo '<br>Link:' . $t_link_url ;
+					echo '<br>Link:' . $t_link_url . '<-published:' . $t_data ['item_created_date'];
 					
-					 
+					// check if older than a specific date
+					
+					// check if older than minimum date
+					if (in_array ( 'OPT_YT_DATE', $camp_opt )) {
+						
+						if ($this->is_link_old ( $camp->camp_id, strtotime ( $t_data ['item_created_date'] ) )) {
+							unset ( $res [$i] );
+							echo '<--old post execluding...';
+							
+							$query = "delete from {$this->wp_prefix}automatic_general where id={$t_row->id}";
+							$this->db->query ( $query );
+							
+							continue;
+						}
+					}
 					
 					// check if link is duplicated
 					if ($this->is_duplicate ( $t_link_url )) {
@@ -93,45 +105,9 @@ class WpAutomatictiktok extends wp_automatic {
 					
 					$temp = unserialize ( base64_decode ( $ret->item_data ) );
 					
-					//get the item info for this video 
-					$current_vid_url = $temp['item_url'];
-					
-					//embed url 
-					$oembed_url = "https://www.tiktok.com/oembed?url=" . $current_vid_url ;
-					
-					echo '<br>Embed URL:' . $oembed_url;
-					 
-					
-					//curl get
-					$x='error';
-					 
-					curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-					curl_setopt($this->ch, CURLOPT_URL, trim($oembed_url));
-					$exec=curl_exec($this->ch);
-					$x=curl_error($this->ch);
-					
-					//validating reply, i.e condition: contains {"version
-					if( ! stristr($exec, '{"version')){
-						echo '<br><-- Could not get a valid reply ' . $exec;
-						return false;
-					}
-					
-					//json decode 
-					$reply_json = json_decode($exec);
-					
-					//build item details 
-					$temp['item_title'] = $reply_json->title;
-					$temp['item_user_username'] = $temp['item_user_name']  = $reply_json->author_name;
-					$temp['item_user_link']= $reply_json->author_url;
-					$temp['item_img']= $reply_json->thumbnail_url;
-					$temp['item_img_width']= $reply_json->thumbnail_width;
-					$temp['item_img_height']= $reply_json->thumbnail_height;
-					$temp['item_description'] = $this->get_description_from_embed ($reply_json->html);
-					
-					 
 					
 					// generating title
-					if ( true || @trim ( $temp ['item_title'] ) == '') {
+					if (@trim ( $temp ['item_title'] ) == '') {
 						
 						if (in_array ( 'OPT_IT_AUTO_TITLE', $camp_opt )) {
 							
@@ -142,7 +118,7 @@ class WpAutomatictiktok extends wp_automatic {
 								$cg_it_title_count = 80;
 								
 								// Clean content from tags , emoji and more
-								$contentClean = $this->removeEmoji ( strip_tags ( strip_shortcodes (  ( $temp ['item_description'] ) ) ) );
+								$contentClean = $this->removeEmoji ( strip_tags ( strip_shortcodes ( $this->strip_urls ( $temp ['item_description'] ) ) ) );
 								
 								// remove hashtags
 								if (in_array ( 'OPT_TT_NO_TTL_TAG', $camp_opt )) {
@@ -168,7 +144,7 @@ class WpAutomatictiktok extends wp_automatic {
 					}
 					
 					// report link
-					echo '<br>Found Link:' . $temp ['item_url'];
+					echo '<br>Found Link:' . $temp ['item_url'] . ' <-published:' . $t_data ['item_created_date'];
 					
 					// update the link status to 1
 					$query = "delete from {$this->wp_prefix}automatic_general where id={$ret->id}";
@@ -188,19 +164,58 @@ class WpAutomatictiktok extends wp_automatic {
 					}
 					
 					$temp['item_embed'] = '<blockquote class="tiktok-embed" cite="'. $temp['item_url'] .'" data-video-id="' . $temp['item_id'] . '" style="max-width: 605px;min-width: 325px;" ><section> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>';
-
-					//item_tags extract hashtags as tags
-					$temp ['item_tags'] =  $this->get_hash_tags($temp ['item_description']);
 					
+
+				
 					
 					// remove hashtags
 					if (in_array ( 'OPT_TT_NO_CNT_TAG', $camp_opt )) {
 						$temp ['item_description'] = preg_replace ( '{#\S*}', '', $temp ['item_description'] );
 					}
+					
+					// fix date
+					$temp ['item_created_date'] = get_date_from_gmt ( $temp ['item_created_date'] );
+					
+			 
+					
+					if(in_array('OPT_IT_CACHE', $camp_opt)){
+						echo '<br>Cache enabled, lets retrive fresh images...';
+						
+						//curl get
+						$x='error';
+						curl_setopt( $this->ch, CURLOPT_HTTPGET, 1);
+						curl_setopt( $this->ch, CURLOPT_URL,  $temp['item_url'] );
+						$exec=curl_exec( $this->ch );
+						$x=curl_error($this->ch);
 					 
+						//"originCover":"https:/
+						preg_match ( '!"originCover":"(.*?)"!' ,  $exec , $matches);
+						
+						if(isset($matches[1]) && trim($matches[1]) != '' ){
+							echo '<-- found cover pic';
+							$temp ['item_img'] = wp_automatic_fix_json_part( $matches[1] );
+						}else{
+							echo '<-- cover pic not found';
+						}
+						
+						//"avatarThumb"
+						preg_match ( '!"avatarThumb":"(.*?)"!' ,  $exec , $matches);
+						
+						if(isset($matches[1]) && trim($matches[1]) != '' ){
+							echo '<-- found profile pic';
+							$temp ['item_user_profile_pic'] = wp_automatic_fix_json_part( $matches[1] );
+						}else{
+							echo '<-- profile pic not found';
+						}
+						
+						
+						
+					}
+					
 					// item images ini
 					$temp ['item_images'] = '<img src="' . $temp ['item_img'] . '" />';
-					  
+					 
+					
 					return $temp;
 				} else {
 					echo '<br>No links found for this keyword';
@@ -297,80 +312,119 @@ class WpAutomatictiktok extends wp_automatic {
 					
 					$cg_tt_user = trim ( $camp_general ['cg_tt_user'] );
 					echo '<br>Specific user:' . $cg_tt_user;
- 
-					$tiktok_url = 'https://www.tiktok.com/@' . trim($cg_tt_user);
+					$qkeyword_md5 = '__' . md5($cg_tt_user);
+					
+					// prepare keyword
+					  
+					$challenge_id = get_post_meta( $camp->camp_id ,  $qkeyword_md5 , true );
+					
+					//get challenge if empty
+					if(trim($challenge_id) == '' ){
+						//get the challenge
+						echo '<br>Getting the challenge ID for the user.... ' ;
+						
+						//curl get
+						$x='error';
+						$url='https://www.tiktok.com/@' .$cg_tt_user ;
+						curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
+						curl_setopt($this->ch, CURLOPT_URL, trim($url));
+						$exec=curl_exec($this->ch);
+						  
+						//tiktok-verify-page
+						if( true || stristr($exec, 'tiktok-verify-page') ){
+							echo '<br>Found TikTok capacha page... using auto proxy...';
+							
+							$new_exec = $this->wp_automatic_auto_proxy($url, 'secUid');
+							
+							if( strpos($new_exec,  'secUid' ) ){
+								$exec = $new_exec;
+							}
+							
+						}
+						
+						//"secUid":"MS4wLjABAAAAb6sufevCrDdNOnNRH7uwM_esGiD5sfScJxGfEQBsDyW6K10YJcwlvGR-lzqMBidP"
+						preg_match('!"secUid":"(.*?)"!' , $exec , $challenges_found);
+						
+						if(isset($challenges_found[1]) && trim($challenges_found[1]) != ''){
+							add_post_meta( $camp->camp_id ,  $qkeyword_md5 , $challenges_found[1] );
+							$challenge_id = $challenges_found[1];
+							echo '<-- Found:' . $challenge_id;
+							
+						}else{
+							echo '<-- Not Found';
+							
+							echo $exec;
+							
+						}
+					}
+					
+					//get by user
+					$random_agent_enc = urlencode($random_agent);
+					echo '<br>Random agent:'.$random_agent;
+					$tik_url = "https://m.tiktok.com/api/post/item_list/?aid=1988&app_name=tiktok_web&device_platform=web&referer=&root_referer=https:%2F%2Fwww.google.com%2F&user_agent=Mozilla%2F5.0+(Macintosh%3B+Intel+Mac+OS+X+10_14_6)+AppleWebKit%2F537.36+(KHTML,+like+Gecko)+Chrome%2F88.0.4324.96+Safari%2F537.36&cookie_enabled=true&screen_width=1280&screen_height=800&browser_language=en-US&browser_platform=MacIntel&browser_name=Mozilla&browser_version=5.0+(Macintosh%3B+Intel+Mac+OS+X+10_14_6)+AppleWebKit%2F537.36+(KHTML,+like+Gecko)+Chrome%2F88.0.4324.96+Safari%2F537.36&browser_online=true&ac=3g&timezone_name=Africa%2FCairo&page_referer=https:%2F%2Fwww.tiktok.com%2Ftag%2Fforyoupage%3Flang%3Den&priority_region=&verifyFp=verify_kkdzsf0j_twyzymaf_rj0P_4sMu_A03Z_PyrC1RBW8ssF&appId=1233&region=EG&appType=m&isAndroid=false&isMobile=false&isIOS=false&OS=mac&did=6873144183268607493&count=30&cursor=$wp_tiktok_next_max_id&secUid=$challenge_id&language=en&_signature=_02B4Z6wo00d014helegAAIDBhMNkfYr8pPuIXpFAAIJ642" ;
+					$tik_url = "https://m.tiktok.com/api/post/item_list/?aid=1988&app_name=tiktok_web&device_platform=web&referer=&root_referer=https:%2F%2Fwww.google.com%2F&user_agent=$random_agent_enc&cookie_enabled=true&screen_width=1280&screen_height=800&browser_language=en-US&browser_platform=MacIntel&browser_name=Mozilla&browser_version=5.0+(Macintosh%3B+Intel+Mac+OS+X+10_14_6)+AppleWebKit%2F537.36+(KHTML,+like+Gecko)+Chrome%2F88.0.4324.96+Safari%2F537.36&browser_online=true&ac=3g&timezone_name=Africa%2FCairo&page_referer=https:%2F%2Fwww.tiktok.com%2Ftag%2Fforyoupage%3Flang%3Den&priority_region=&verifyFp=verify_kkdzsf0j_twyzymaf_rj0P_4sMu_A03Z_PyrC1RBW8ssF&appId=1233&region=EG&appType=m&isAndroid=false&isMobile=false&isIOS=false&OS=mac&did=6873144183268607493&count=30&cursor=$wp_tiktok_next_max_id&secUid=$challenge_id&language=en&_signature=_02B4Z6wo00d014helegAAIDBhMNkfYr8pPuIXpFAAIJ642" ;
+					
 					
 				} else {
 					
 					// prepare keyword
 					$qkeyword = trim(str_replace ( ' ', '', $keyword ));
 					$qkeyword = str_replace ( '#', '', $qkeyword );
-					$tiktok_url = 'https://www.tiktok.com/tag/' . $qkeyword ;
+					$qkeyword_md5 = '__' . md5($qkeyword);
+					
+					$challenge_id = get_post_meta( $camp->camp_id ,  $qkeyword_md5 , true );
+					 
+					//get challenge if empty 
+					if(trim($challenge_id) == '' ){
+						//get the challenge
+						
+						echo '<br>Getting the challenge ID for the term.... ' ;
+						
+						//curl get
+						$x='error';
+						$url='https://www.tiktok.com/tag/' .$qkeyword ;
+						curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
+						curl_setopt($this->ch, CURLOPT_URL, trim($url));
+						$exec=curl_exec($this->ch);
+						 
+						preg_match('!challenge/detail/(\d*)!' , $exec , $challenges_found);
+
+						if(isset($challenges_found[1]) && is_numeric($challenges_found[1])){
+							add_post_meta( $camp->camp_id ,  $qkeyword_md5 , $challenges_found[1] );
+							$challenge_id = $challenges_found[1];
+							echo '<-- Found:' . $challenge_id;
+						}
+					}
+			 		
+					//get by keyword
+					$tik_url = "https://m.tiktok.com/api/challenge/item_list/?aid=1988&app_name=tiktok_web&device_platform=web&referer=&root_referer=https:%2F%2Fwww.google.com%2F&user_agent=Mozilla%2F5.0+(Macintosh%3B+Intel+Mac+OS+X+10_14_6)+AppleWebKit%2F537.36+(KHTML,+like+Gecko)+Chrome%2F88.0.4324.96+Safari%2F537.36&cookie_enabled=true&screen_width=1280&screen_height=800&browser_language=en-US&browser_platform=MacIntel&browser_name=Mozilla&browser_version=5.0+(Macintosh%3B+Intel+Mac+OS+X+10_14_6)+AppleWebKit%2F537.36+(KHTML,+like+Gecko)+Chrome%2F88.0.4324.96+Safari%2F537.36&browser_online=true&ac=3g&timezone_name=Africa%2FCairo&page_referer=https:%2F%2Fwww.tiktok.com%2F%3Flang%3Den&priority_region=&verifyFp=verify_kkdzsf0j_twyzymaf_rj0P_4sMu_A03Z_PyrC1RBW8ssF&appId=1233&region=EG&appType=m&isAndroid=false&isMobile=false&isIOS=false&OS=mac&did=6873144183268607493&challengeID=$challenge_id&count=30&cursor=$wp_tiktok_next_max_id&_signature=_02B4Z6wo00901oZG7CQAAIDAitsds2tULt6GR-iAAMGN65" ;
 					
 				}
 	 
-				//infite or load directly
-				if(in_array('OPT_TT_INFINITE' , $camp_opt)){
-					
-					echo '<br>Loading the videos from the added HTML...';
-					$exec = $camp_general['cg_tt_html'];
 				
-				}else{
-					
-					echo '<br>Loading:' . $tiktok_url;
-					$x='error';
-					curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-					curl_setopt($this->ch, CURLOPT_URL, trim($tiktok_url));
-					$exec=curl_exec($this->ch);
-					$x=curl_error($this->ch);
-					$info = curl_getinfo($this->ch);
-					
-				}
+				//get 
+				//curl get
+				echo '<br>Loading:' . $tik_url;
+				$x='error';
+				curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
+				curl_setopt($this->ch, CURLOPT_URL, trim($tik_url));
+				$exec=curl_exec($this->ch);
+				$x=curl_error($this->ch);
 				
-				if($info['http_code'] == 403 || stristr($info['url'], 'login')){
-					echo '<br>Tried to load the items page and TikTok returned 403 error, tring auto-proxy ';
-					
-					require_once 'inc/proxy.GoogleTranslate.php';
-					
-					try {
-						
-						$GoogleTranslateProxy = new GoogleTranslateProxy ( $this->ch );
-						$exec = $GoogleTranslateProxy->fetch ( $tiktok_url );
-						  
-						
-						//capcha check return don't deactivate keyword
-						if(stristr($exec, '/video/')){
-							
-							echo '<-- nice, auto-proxy returned results...';
-							$exec = str_replace('https://www-tiktok-com.translate.goog/' , 'https://www.tiktok.com/' , $exec);
-							
-						}else{
-							echo '<-- Returned auto-translate proxy did not contain videos either.';
-						}
-						
-					} catch ( Exception $e ) {
-						
-						echo '<br>ProxyViaGoogleException:' . $e->getMessage ();
-					}
-					
-					
-				}
+			 
+				$items = array();
 				
+				
+				
+				if( strpos($exec, 'itemList') ){
+					$json_arr = json_decode($exec);
+					$items = $json_arr->itemList;
 				 
-				
-				if( strpos($exec, '/video/') ){
 					
-					//extract video links 
-					preg_match_all('{https://www.tiktok.com/@[\w\d_]*?/video/(\d*)}s', $exec, $found_vids_matches);
-					  
-					$items = $found_vids_matches[0];
-					$items_ids = $found_vids_matches[1];
-				  
 					// reverse
 					if (in_array ( 'OPT_TT_REVERSE', $camp_opt )) {
 						echo '<br>Reversing order';
 						$items = array_reverse ( $items );
-						$items_ids = array_reverse ( $items_id );
 					}
 					
 					echo '<ol>';
@@ -379,22 +433,82 @@ class WpAutomatictiktok extends wp_automatic {
 					$i = 0;
 					foreach ( $items as $item ) {
 						
-					 
+						//echo '<pre>';
+						//print_r($item);
 						
 						// clean itm
 						unset ( $itm );
 						
-					 
+						// report https://www.tiktok.com/@kelly_bove/video/6855066585514659077
+						
 						
 						// build item
-						$itm ['item_id'] = $items_ids[$i];
-						$itm ['item_url'] =$item;
+						$itm ['item_id'] = $item->id;
+						$itm ['item_url'] = 'https://www.tiktok.com/@' . $item->author->uniqueId . '/video/' . $item->id;
+						
+						echo '<li>' . $itm ['item_url'];
+						
+						
+						$itm ['item_description'] = $item->desc;
+						$itm ['video_view_count'] = $item->stats->playCount;
+						$itm ['item_img'] = $item->video->originCover;
+						$itm ['item_img_width'] = $item->video->width;
+						$itm ['item_img_height'] = $item->video->height;
+						$itm ['item_user_id'] = $item->author->id;
+						$itm ['item_created_time'] = $item->createTime;
+						
+						// item date
+						$itm ['item_created_date'] = date ( 'Y-m-d H:i:s', $item->createTime );
+						$itm ['item_likes_count'] = $item->stats->diggCount;
+						$itm ['item_user_username'] = $item->author->uniqueId;
+						$itm ['item_user_link'] = 'https://www.tiktok.com/@' .$item->author->uniqueId;
+						
+						// full name
+						$itm ['item_user_name'] = $item->author->nickname;;
+						$itm ['item_user_profile_pic'] = $item->author->avatarThumb;
+						
+						//item_tags
+						$all_tags = array();
+						
+						if(isset($item->challenges)){
+							foreach($item->challenges as $new_tag){
+								$all_tags[] = $new_tag->title;
+							}
+						}
+						$itm ['item_tags'] = implode(',', $all_tags); 
+						 
+						
+						// comments postponed
+						/*
+						$commentsArray = array ();
+						$itm ['item_comments'] = $commentsArray;
+						*/
+					 
 						 
 						$data = base64_encode ( serialize ( $itm ) );
 						
 						$i ++;
 						
-						echo '<li>' . $itm ['item_url'] . '</li>';
+						if ($this->is_execluded ( $camp->camp_id, $itm ['item_url'] )) {
+							echo '<-- Execluded';
+							continue;
+						}
+						
+						// check if old
+						$was_there_old_items = false;
+						
+						if (in_array ( 'OPT_YT_DATE', $camp_opt )) {
+							
+							if ($this->is_link_old ( $camp->camp_id, strtotime ( $itm ['item_created_date'] ) )) {
+								
+								unset ( $items [$i] );
+								echo '<--old post execluding...';
+								
+								$was_there_old_items = true;
+								
+								continue;
+							}
+						}
 						
 						if (! $this->is_duplicate ( $itm ['item_url'] )) {
 							$query = "INSERT INTO {$this->wp_prefix}automatic_general ( item_id , item_status , item_data ,item_type) values (    '{$itm['item_id']}', '0', '$data' ,'tt_{$camp->camp_id}_$keyword')  ";
@@ -455,23 +569,4 @@ class WpAutomatictiktok extends wp_automatic {
 					echo '<br>No Valid reply for tiktok search <br>' . $exec;
 				}
 	}
-	
-	function get_description_from_embed($ebmed_code){
-		$description = preg_replace('!<blockquote.*?>(.*?)</blockquote>.*!' , "$1" , $ebmed_code );
-		$description = str_replace(array('<section>' , '</section>') , '' , $description );
-		return trim($description); 
-	}
-
-	
-	function get_hash_tags($text){
-		
-		//href="https://www.tiktok.com/tag/fruit">#fruit</a>
-		 preg_match_all( '{>(#.*?)</a>\s}' , $text , $hashtags_matches );
-		
-		 $hashtags_founds = $hashtags_matches[1];
-		 $hashtags_founds = str_replace('#' , '' , $hashtags_founds ) ;
-		 $hashtags_founds = implode(','  , $hashtags_founds );
-		 return $hashtags_founds;
-	}
-
 }

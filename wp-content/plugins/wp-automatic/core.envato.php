@@ -470,6 +470,8 @@ function Envato_get_post($camp) {
 					  echo '<br>Visit the plugin settings page and add your Envato ID for affiliate integration';
 				}
 				   
+	
+				
 				return $temp;
 				
 			} else {

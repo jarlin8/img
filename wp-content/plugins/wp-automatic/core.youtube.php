@@ -165,7 +165,7 @@ class WpAutomaticYoutube extends wp_automatic {
 			
 		 
 			// playlistify it to decrease used quote as normal search quote is 100 but playlist is 2 or
-			if ( ! in_array ( 'OPT_YT_LIVE', $camp_opt ) && ! in_array ( 'OPT_YT_PLAYLIST', $camp_opt ) && ($search_url == $naked_search_url || $search_url == $naked_search_url . '&order=date')) {
+			if (  ! in_array ( 'OPT_YT_LIVE_ONLY', $camp_opt ) && ! in_array ( 'OPT_YT_LIVE_SKIP', $camp_opt ) && ! in_array ( 'OPT_YT_PLAYLIST', $camp_opt ) && ($search_url == $naked_search_url || $search_url == $naked_search_url . '&order=date')) {
 				// lets playlistify
 				
 				echo '<br>Playlistifying....';
@@ -276,6 +276,7 @@ class WpAutomaticYoutube extends wp_automatic {
 		
 		$json_exec = json_decode ( $exec );
 		
+
 		// check nextpage token
 		if (isset ( $json_exec->nextPageToken ) && trim ( $json_exec->nextPageToken ) != '') {
 			$newnextPageToken = $json_exec->nextPageToken;
@@ -363,6 +364,12 @@ class WpAutomaticYoutube extends wp_automatic {
 			
 			// Skip premiere
 			if (isset ( $itm->snippet->liveBroadcastContent ) && $itm->snippet->liveBroadcastContent == 'upcoming') {
+				continue;
+			}
+			
+			// Skip premiere
+			if ( in_array( 'OPT_YT_LIVE_SKIP' , $camp_opt ) && isset ( $itm->snippet->liveBroadcastContent ) && $itm->snippet->liveBroadcastContent == 'live') {
+				echo '<li>' . $link_title . '<-- Live video, skipping...' . '</li>';
 				continue;
 			}
 			

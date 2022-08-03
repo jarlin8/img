@@ -55,6 +55,11 @@ class ValvePress_APIFY {
 			throw new Exception( 'No content returned from APIFY '  );
 		}
 	 	
+		//hotfix for feed encoded html entities &lt;?xml 
+		if(stristr( $json[0]->pageContent , '&lt;?xml ')){
+			$json[0]->pageContent = html_entity_decode($json[0]->pageContent);
+		}
+		
 		return $json[0]->pageContent;
 		 
 	}

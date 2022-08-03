@@ -95,7 +95,13 @@ function ebay_fetch_items($keyword, $camp) {
 	} 
 	
 	//affiliate tag 
-	$headers_arr[] = 'X-EBAY-C-ENDUSERCTX: affiliateCampaignId='.trim($campaignid);
+	$affiliate_tag = 'X-EBAY-C-ENDUSERCTX: affiliateCampaignId='.trim($campaignid);
+	
+	//wp_automatic_ebay_refid ,affiliateReferenceId=referenceId
+	$wp_automatic_ebay_refid = trim(get_option('wp_automatic_ebay_refid' , ''));
+	if($wp_automatic_ebay_refid != '') $affiliate_tag.= ',affiliateReferenceId=' . $wp_automatic_ebay_refid  ;
+	
+	$headers_arr[] = $affiliate_tag;
 	
 	//startpage offset
 	if($start != 0 )
@@ -404,12 +410,13 @@ function ebay_fetch_items($keyword, $camp) {
 			$itm ['item_end_date'] = trim(str_replace ( '.000', '', $itm ['item_end_date'] ));
 		}
 		
+		 
+		
 		$itm['item_seller_username'] = $item_new->seller->username;
 		$itm['item_seller_feedback'] = $item_new->seller->feedbackPercentage;
 		$itm['item_seller_score'] = $item_new->seller->feedbackScore;
 		$itm['item_condition'] = $item_new->condition;
-		 
- 		
+  		
 		$data = base64_encode(serialize ( $itm ));
 			
 			
@@ -773,67 +780,43 @@ function ebay_get_post($camp) {
 				$data['item_bin'] = number_format($data['item_bin'],2);
 			 
 				//seller
-				$seller_arr = $wpAutomaticDom->getContentByClass('mbg-nw' );
+				$data['item_seller_url'] = "http://www.$ext/usr/" . $data['item_seller_username'];
 				
-				$data['item_seller_username'] = '' ;
-				$data['item_seller_url'] = '' ; 
-				
-				if(isset( $seller_arr[0] ) && trim( $seller_arr[0]) != ''){
-					$data['item_seller_username'] =  $seller_arr[0];
-					$data['item_seller_url'] = "http://www.$ext/usr/$seller_arr[0]";
-				}
-				
+ 				
 				//item location
-				$data['item_location'] = '';
+				//<span class="ux-textspans ux-textspans--BOLD ux-textspans--SECONDARY"><!--F#f_7[0]-->Alicante, Spain<!--F/--><
+				preg_match('{ux-textspans ux-textspans--BOLD ux-textspans--SECONDARY"><!--.*?-->(.*?)<!--}', $exec,$loc_matches);
 				
-				$location_arr = $wpAutomaticDom->getContentByXPath( "//*[@itemprop='availableAtOrFrom']" );
-				
-				if(isset( $location_arr[0] ) && trim( $location_arr[0]) != ''){
-					$data['item_location'] = $location_arr[0];
+				if(isset( $loc_matches[1] ) && trim( $loc_matches[1]) != ''){
+					$data['item_location'] = $loc_matches[1];
 				}
 				
 
-				//areaServed ships to sh-gspShipsTo
+				//ships to text":"Ships to:","styles":["SECONDARY"]},{"_type":"TextSpan","text":" "}]}],"values":[{"_type":"TextualDisplay","textSpans":[{"_type":"TextSpan","text":"Worldwide","styles":["SECONDARY"]}]}]}
 				$data['item_ships_to'] = '';
+				preg_match('{text":"Ships to:".*?,"values".*?,"text":"(.*?)"}', $exec,$to_matches);
 				
-				$ships_to_arr = $wpAutomaticDom->getContentByXPath( "//*[@itemprop='areaServed']" );
-				
+				if(isset( $to_matches[1] ) && trim( $to_matches[1]) != ''){
+					$data['item_ships_to'] = $to_matches[1];
+				}
+ 				
 				if(isset( $ships_to_arr[0] ) && trim( $ships_to_arr[0]) != ''){
 					$data['item_ships_to'] = trim(preg_replace( '{<span.*}s' , '' ,  $ships_to_arr[0] ) );
 				}
-				
-				if(trim($data['item_ships_to']) == ''){
-					
-					//sh-gspShipsTo
-					$ships_to_arr = $wpAutomaticDom->getContentByXPath( "//*[@class='sh-gspShipsTo']" );
-					
-					if(isset( $ships_to_arr[0] ) && trim( $ships_to_arr[0]) != ''){
-						$data['item_ships_to'] = trim(preg_replace( '{<.*}s' , '' ,  $ships_to_arr[0] ) );
-					}
-				}
+				 
 				
 				$data['item_ships_to'] = trim(str_replace('|' , ' ' , $data['item_ships_to'] ) ) ;
 				
-				//item condition itemCondition
-				$data['item_condition'] = '';
-				
-				$arr = array();
-				$arr = $wpAutomaticDom->getContentByXPath( "//*[@itemprop='itemCondition']" );
-				
-				if(isset( $arr[0] ) && trim( $arr[0]) != ''){
-					$data['item_condition'] = $arr[0];
-				}
-				
-				//return policy vi-ret-accrd-txt
+ 				
+				//return policy "text":"Returns:"}]}],"values":[{"_type":"TextualDisplay","textSpans":[{"_type":"TextSpan","text":"30 days refund"}
 				$data['item_return_policy'] = '';
+				preg_match('{text":"Returns:".*?,"text":"(.*?)"}', $exec,$re_matches);
+				 
 				
-				$arr = array();
-				$arr = $wpAutomaticDom->getContentByID( "vi-ret-accrd-txt" );
-				
-				if(isset( $arr[0] ) && trim( $arr[0]) != ''){
-					$data['item_return_policy'] = $arr[0];
+				if(isset( $re_matches[1] ) && trim( $re_matches[1]) != ''){
+					$data['item_return_policy'] = $re_matches[1];
 				}
-				
+			 	
 				//delivery after payment sh-DlvryDtl class
 				$data['item_shipping_start'] = '';
 				
@@ -851,7 +834,16 @@ function ebay_get_post($camp) {
 					$data['item_listing_type'] = 'buy it now	';
 				}
 				
- 				
+				// condition description	conditionDetail
+				$data['item_condition_desc'] = '' ;
+				preg_match('{conditionDetail":"(.*?)","}', $exec,$re_matches);
+				
+				if(isset( $re_matches[1] ) && trim( $re_matches[1]) != ''){
+					$data['item_condition_desc'] =wp_automatic_fix_json_part($re_matches[1]);
+				}
+				
+				 
+				
 				return $data;
 				
 			

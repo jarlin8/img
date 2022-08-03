@@ -376,6 +376,11 @@ class CampaignProcessor{
 			require_once 'core.careerjet.php';
 			$WpAutomatic = new WpAutomaticCareerjet();
 			
+		}elseif($camp_type == 'Aliexpress'){
+			
+			require_once 'core.aliexpress.php';
+			$WpAutomatic = new WpAutomaticaliexpress();
+			
 		}elseif( $camp_type == 'Multi' ){
 			
 			require_once 'core.multi.php';

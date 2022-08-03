@@ -633,6 +633,7 @@ class WpAutomaticFeeds extends wp_automatic {
 				  
 					echo ' <--' . strlen ( $original_cont ) . ' chars returned in ' . timer_stop () . ' seconds';
 					 
+			
 					 
 					// converting encoding
 					if (in_array ( 'OPT_FEED_CONVERT_ENC', $camp_opt )) {
@@ -678,14 +679,40 @@ class WpAutomaticFeeds extends wp_automatic {
 				  
 				// date if not existing
 				if (  (in_array ( 'OPT_ORIGINAL_TIME', $camp_opt ) || in_array( 'OPT_YT_DATE' , $camp_opt) ) && ! isset ( $res ['wpdate'] )  ) {
+					
+					$found_date = ''; // ini
+					
 					echo '<br>Finding original date... ';
 					
 					preg_match ( "!20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?.\d{2}:\d{2}!s", $original_cont, $date_matches );
 					
+					//timestamp instead  data-time="1649495312">A
 					if (isset ( $date_matches [0] ) && trim ( $date_matches [0] ) != '') {
-						echo '<-- Found:' . $date_matches [0];
+						// nice found
+						$found_date = $date_matches [0];
+						echo ' match found:'. $found_date;
+					}else{
+						//not found lets find timestamp 
+						preg_match('!"(1\d{9})"!' , $original_cont , $timestamp_matches );
 						
-						$res ['wpdate'] = $wpdate =  date ( "Y-m-d H:i:s", strtotime ( $date_matches [0] ) );
+						if(isset($timestamp_matches[1]) && trim($timestamp_matches[1]) != ''){
+							echo ' Found possible timestamp:'.$timestamp_matches[1];
+						
+							$possible_date = date ( "Y-m-d H:i:s", $timestamp_matches[1] );
+							if(preg_match('!20\d{2}-!' , $possible_date) ){
+								echo ' approving:' . $possible_date;
+								$found_date = $possible_date;
+							}
+						}
+						 
+						
+					}
+					
+					
+					if ( $found_date != '') {
+						echo '<-- Found:' . $found_date;
+						
+						$res ['wpdate'] = $wpdate =  date ( "Y-m-d H:i:s", strtotime ( $found_date ) );
 						
 						// gmt date
 						$publish_date = get_date_from_gmt ( $res ['wpdate'] );
@@ -919,15 +946,15 @@ class WpAutomaticFeeds extends wp_automatic {
 					echo '<br>Extracting content using REGEX ';
 					$cg_feed_custom_regex = $camp_general ['cg_feed_custom_regex'];
 					
-					$finalmatch = '';
-					
+					$finalmatch = ''; //all content found using REGEX
+					$x=0;
 					foreach ( $cg_feed_custom_regex as $cg_feed_custom_regex_single ) {
 						
 						$cg_feed_custom_regex_single = html_entity_decode ( $cg_feed_custom_regex_single );
 						
 						if (trim ( $cg_feed_custom_regex_single ) != '') {
 							
-							$finalmatch2 = '';
+							$finalmatch2 = ''; // all content found using this REGEX rule
 							
 							// we have a regex
 							echo '<br>Regex :' . htmlspecialchars ( $cg_feed_custom_regex_single );
@@ -940,25 +967,40 @@ class WpAutomaticFeeds extends wp_automatic {
 									
 									foreach ( $matchregex [$i] as $newmatch ) {
 										
-										if (trim ( $newmatch ) != '') {
+										if (trim ( $newmatch ) != '') { //good we have a new extraction
+											
+											// update the final match for all found extraction from all rules
+											if (trim ( $finalmatch2 ) != '') {
+												$finalmatch2 .= '<br>' . $newmatch;
+												
+											} else {
+												$finalmatch2 .= $newmatch;
+												 
+											}
+											
 											if (trim ( $finalmatch ) != '') {
 												$finalmatch .= '<br>' . $newmatch;
-												$finalmatch2 .= '<br>' . $newmatch;
+												
 											} else {
 												$finalmatch .= $newmatch;
-												$finalmatch2 .= $newmatch;
+												
 											}
 										}
 									}
 								}
 								
-						 
+								$rule_num = $x + 1;
+								$res ['rule_' . $rule_num] = $finalmatch2;
+								$res ['rule_' . $rule_num . '_plain'] = strip_tags ( $finalmatch2 );
 								
 								echo '<-- ' . strlen ( $finalmatch2 ) . ' chars found';
 							} else {
 								echo '<br>Can not load original content.';
 							}
 						} // rule not empty
+						
+						$x++;
+						
 					} // foreach rule
 					
 					if (trim ( $finalmatch ) != '') {
@@ -971,6 +1013,12 @@ class WpAutomaticFeeds extends wp_automatic {
 					}
 				}
 				
+				//Issue fix no title but URL instead of the title when title is set to auto-detect
+				if($camp_general ['cg_ml_ttl_method']  == 'auto' && stristr($title, 'http')){
+					echo '<br>Extracting a good title....';
+					$res['title'] = $title = $this->extract_title_auto($title,$original_cont);
+					
+				}
 			 
 				
 				// redirect_url tag finding
@@ -1287,6 +1335,31 @@ class WpAutomaticFeeds extends wp_automatic {
 								
 								$cats_founds = $cats_matches [1];
 								$cat_founds = array_map ( 'strip_tags', $cats_founds );
+								
+								if(in_array('OPT_ORIGINAL_CATS_REPLACE' , $camp_opt)){
+									$post_cat_replace = trim($camp_general['cg_cat_replace']);
+									$post_cat_replace_arr =  array_filter( explode("\n" , $post_cat_replace ) );
+									
+									foreach($post_cat_replace_arr as $post_cat_replace_arr_single){
+										if(stristr( $post_cat_replace_arr_single , '|')){
+											$post_cat_replace_arr_single = trim($post_cat_replace_arr_single);
+											$post_cat_replace_arr_single_arr = explode('|' , $post_cat_replace_arr_single);
+											echo '<br>Replacing ' . $post_cat_replace_arr_single_arr[0] . ' with ' . $post_cat_replace_arr_single_arr[1] . ' in found categories...';
+											 
+											foreach($cat_founds as $key => $val){
+												
+												if(trim($val) == trim($post_cat_replace_arr_single_arr[0])){
+													$cat_founds[$key] = $post_cat_replace_arr_single_arr[1];
+													echo '<-- found';
+												}
+											 
+											}
+											
+										}
+									}
+									
+								}
+								
 								$cats_str = implode ( ',', $cat_founds );
 								
 								echo ' found cats:' . $cats_str;
@@ -1466,9 +1539,22 @@ class WpAutomaticFeeds extends wp_automatic {
 						// Parse rule
 						$rule_parts = explode ( '|', $cg_part_to_field_part );
 						
-						$rule_method = trim ( $rule_parts [0] );
-						$rule_value = trim ( $rule_parts [1] );
-						$rule_field = trim ( $rule_parts [2] );
+						//case regex with | used as alternatives
+						if(count($rule_parts) > 3 && $rule_parts [0] == 'regex'   ){
+							$rule_method = trim ( $rule_parts [0] );
+							$rule_field = trim(end($rule_parts));
+							$rule_value_parts = array();
+							for($i = 1; $i < count($rule_parts) -1  ; $i++){
+								$rule_value_parts[] = $rule_parts[$i];
+							}
+							 
+							$rule_value = implode('|' , $rule_value_parts  );
+							
+						}else{
+							$rule_method = trim ( $rule_parts [0] );
+							$rule_value = trim ( $rule_parts [1] );
+							$rule_field = trim ( $rule_parts [2] );
+						}
 						
 						$rule_single = 0;
 						@$rule_single = $rule_parts [3];
@@ -1552,11 +1638,13 @@ class WpAutomaticFeeds extends wp_automatic {
 							// Regex extract
 							$matchregex = array ();
 							$finalmatch = '';
-							 
+							
+						 	
 							// Match
 							preg_match_all ( '{' . trim ( $rule_value ) . '}is', $original_cont, $matchregex );
-							
-							$matchregex_vals = $matchregex [1];
+						 
+							 
+							$matchregex_vals = isset($matchregex [1])? $matchregex [1] : array() ;
 							
 							if (isset ( $matchregex [2] ))
 								$matchregex_vals = array_merge ( $matchregex_vals, $matchregex [2] );
@@ -1861,9 +1949,9 @@ class WpAutomaticFeeds extends wp_automatic {
 								$i = 0;
 								foreach ( $cg_ml_regex as $cg_ml_regex_s ) {
 									
-									echo '<br>Extracting content by REGEX : ' . htmlentities ( stripslashes ( $cg_ml_regex_s ) );
+									echo '<br>Extracting content by REGEX : ' . htmlspecialchars ( html_entity_decode  ( $cg_ml_regex_s ) );
 									
-									$content = $wpAutomaticDom->getContentByRegex ( stripslashes ( $cg_ml_regex_s ) );
+									$content = $wpAutomaticDom->getContentByRegex ( html_entity_decode ( $cg_ml_regex_s ) );
 									
 									$content = implode ( $content );
 									
@@ -1895,7 +1983,9 @@ class WpAutomaticFeeds extends wp_automatic {
 						}
 						
 					}
-					  
+					
+		 
+ 					
  					return $res;
 				}
 			} else {
@@ -1922,4 +2012,47 @@ class WpAutomaticFeeds extends wp_automatic {
 			update_post_meta ( $camp->camp_id, $feedMd5 . '_isItemsEndReached', 'yes' );
 		}
 	} // end function
+	
+	function extract_title_auto($title, $cont){
+		
+		//<h1>
+		if( substr_count($cont, '<h1') == 1 ){
+			//get h1 title 
+			
+			preg_match('!<h1.*?>(.*?)</h1>!', $cont, $title_matchs);
+			
+			if( trim($title_matchs[1]) != ''){
+				$title = $title_matchs[1];
+				echo 'H1:'. $title;
+				return $title;
+			}
+		
+		} 
+		
+		//<title>
+		if(stristr($cont, '<title>')){
+			preg_match('!<title>(.*?)</title>!', $cont, $title_matchs);
+		
+			if( trim($title_matchs[1]) != ''){
+				$title = $title_matchs[1];
+				echo 'title tag:'. $title;
+				return $title;
+			}
+		}
+		
+		//"og:title" content="Stripe and Plaid suit up for battle &#8211; TechCrunch"
+		
+		if(stristr($cont, 'og:title')){
+			preg_match('!og:title" content="(.*?)"!', $cont, $title_matchs);
+			
+			if( trim($title_matchs[1]) != ''){
+				$title = $title_matchs[1];
+				
+				echo 'og:title:'. $title;
+				return $title;
+			}
+		}
+		
+	}
+	
 }

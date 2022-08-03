@@ -392,6 +392,9 @@ function pinterest_fetch_items($keyword,$camp){
 		//loop pins
 		$i = 0;
 		foreach ($pins as $pin){
+			
+			 //skip not pins
+			if( $pin->type != 'pin' ) continue;
 
 		 
 			$itm['pin_url'] =  'https://'.$pin_host.'/pin/'.$pin->id;
@@ -419,9 +422,8 @@ function pinterest_fetch_items($keyword,$camp){
 			$itm['pin_pinner_username'] = $pin->pinner->username;
 			$itm['pin_pinner_full_name'] = $pin->pinner->full_name;
 			$itm['pin_pinner_id'] = $pin->pinner->id;
-			$itm['pin_title'] = $pin->title;
-			
-			
+			$itm['pin_title'] = is_string( $pin->title) ?  $pin->title : '' ;
+			 
 			if( trim( $itm['pin_title'] ) == '' ){
 				
 				if( isset($pin->grid_title) && trim($pin->grid_title) != '' ){

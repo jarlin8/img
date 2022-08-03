@@ -135,11 +135,24 @@ class WpAutomaticInstagram extends wp_automatic {
 								$contentClean = preg_replace ( '{@\S*}', '', $contentClean );
 							}
 							
+							$contentClean  = trim($contentClean);
+							
 							if (function_exists ( 'mb_substr' )) {
 								$newTitle = (mb_substr ( $contentClean, 0, $cg_it_title_count ));
 							} else {
 								$newTitle = (substr ( $contentClean, 0, $cg_it_title_count ));
 							}
+							
+							if (in_array ( 'OPT_IT_STOP_LINE_BREAK', $camp_opt ) && stristr ( $newTitle, "\n" )) {
+								
+								$suggestedTitle = preg_replace ( "{\n.*}", '', $newTitle );
+								
+								if( trim($suggestedTitle) != '' ){
+									$newTitle = $suggestedTitle;
+								}
+								
+							}
+							
 							
 							$temp ['item_title'] = in_array ( 'OPT_GENERATE_TW_DOT', $camp_opt ) ? ($newTitle) : ($newTitle) . '...';
 						} else {
@@ -188,6 +201,8 @@ class WpAutomaticInstagram extends wp_automatic {
 						$isDetailedItemInfoRequired = true;
 					}
 					
+					
+					
 					// get more details if needed
 					if ($isDetailedItemInfoRequired) {
 						
@@ -198,7 +213,7 @@ class WpAutomaticInstagram extends wp_automatic {
 						$instaScrape = new InstaScrape ( $this->ch, $wp_automatic_ig_sess, true );
 						
 						try {
-							$fullItemDetails = $instaScrape->getItemByID ( $t_data ['item_id'] );
+							$fullItemDetails = $instaScrape->getItemByID ( $t_data ['item_id_numeric'] );
 						} catch ( Exception $e ) {
 							
 							echo 'Failed:' . $e->getMessage ();
@@ -690,7 +705,7 @@ class WpAutomaticInstagram extends wp_automatic {
 		}
 		 
 		// validating reply
-		if (isset ( $jsonArr->status ) || isset($jsonArr->graphql) || isset($jsonArr->data->name) ) {
+		if (isset ( $jsonArr->status ) || isset($jsonArr->graphql) || isset($jsonArr->data) ) {
 			
 		
 			if (in_array ( 'OPT_IT_USER', $camp_opt )) {
@@ -718,6 +733,13 @@ class WpAutomaticInstagram extends wp_automatic {
 				if(isset($jsonArr->graphql)){
 					$items = $jsonArr->graphql->hashtag->edge_hashtag_to_media->edges;
 					$page_info = $jsonArr->graphql->hashtag->edge_hashtag_to_media->page_info;
+				
+				}elseif( isset($jsonArr->data->hashtag->edge_hashtag_to_media) ){
+				
+					//hastag graphql endpoint
+					$items = $jsonArr->data->hashtag->edge_hashtag_to_media->edges;
+					$page_info = $jsonArr->data->hashtag->edge_hashtag_to_media->page_info;
+					
 				}else{
 					
 					$items = array();
@@ -754,12 +776,13 @@ class WpAutomaticInstagram extends wp_automatic {
 					echo 'graphql';
 					
 					$item = $item->node;
-					 
+					
 					// report
 					echo '<li>http://instagram.com/p/' . $item->shortcode;
 					
 					// build item
 					$itm ['item_id'] = $item->shortcode;
+					$itm ['item_id_numeric'] = $item->id;
 					$itm ['item_url'] = 'http://instagram.com/p/' . $item->shortcode;
 					$itm ['item_description'] = @$item->edge_media_to_caption->edges [0]->node->text;
 					$itm ['video_view_count'] = 0;
@@ -796,6 +819,8 @@ class WpAutomaticInstagram extends wp_automatic {
 					// item date
 					$itm ['item_created_date'] = date ( 'Y-m-d H:i:s', $item->taken_at_timestamp );
 					$itm ['item_likes_count'] = $item->edge_liked_by->count;
+					$itm ['item_comments_count'] = $item->edge_media_to_comment->count;
+					
 					
 					// not availabe with tag calls
 					$itm ['item_user_username'] = @$item->owner->username;
@@ -872,6 +897,8 @@ class WpAutomaticInstagram extends wp_automatic {
 					// item date
 					$itm ['item_created_date'] = date ( 'Y-m-d H:i:s', $item->taken_at );
 					$itm ['item_likes_count'] = $item->like_count;
+					$itm ['item_comments_count'] = $item->comment_count;
+					
 					$itm ['item_user_username'] = $item->user->username;
 					
 					// full name

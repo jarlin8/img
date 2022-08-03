@@ -145,6 +145,7 @@ Class WpAutomaticCareerjet extends wp_automatic{
 			$allItms = $jsonReply->jobs;
 		}
 		
+		 
 		
 		// Check returned items count
 		if ( count($allItms) > 0 ) {
@@ -308,6 +309,8 @@ Class WpAutomaticCareerjet extends wp_automatic{
 					echo '<br>Found Link:'.$temp['item_url'];
 					
 					$temp['item_source_site'] = '';
+					$temp['item_logo'] = ''; //ini
+					$temp['item_logo_html'] = '';
 					if(in_array('OPT_CJ_FULL', $camp_opt)){
 						$item_url = $temp['item_url'];
 						
@@ -344,6 +347,21 @@ Class WpAutomaticCareerjet extends wp_automatic{
 							if( isset($des_matches[1]) && trim($des_matches[1]) != ''){
 								echo '<-- Found full description';
 								$temp['item_description'] = trim($des_matches[1]);
+								
+								//logo img
+								//class="lazy logo"
+										//src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAGAQMAAADEy024AAAAA1BMVEX///+nxBvIAAAAAXRSTlMAQObYZgAAAAtJREFUeNpjYEAAAAAMAAHv6DMlAAAAAElFTkSuQmCC"
+												//data-src="https://logoimg.careerjet.net/b057820192f85571bd41fd087275a7e9_mobile.png"
+									
+								preg_match('{class="lazy logo".*?data-src="(.*?)"}s' , $exec , $logo_matches );
+								
+								if(isset($logo_matches[1]) && stristr($logo_matches[1], 'https')  ){
+									echo '<br>Found logo image:' .$logo_matches[1];
+									$temp['item_logo'] = $logo_matches[1];
+									$temp['item_logo_html'] = '<img src="'. $logo_matches[1] .'"/>';
+								}
+								
+								 
 							
 							}elseif(trim($exec) == ''){
 								echo '<-- Did not get anything from CJ, maybe proxies are needed ' . $x;

@@ -91,6 +91,7 @@ class wp_automatic {
 		curl_setopt ( $this->ch, CURLOPT_MAXREDIRS, 20 ); // Good leeway for redirections.
 		@curl_setopt ( $this->ch, CURLOPT_FOLLOWLOCATION, 1 ); // Many login forms redirect at least once.
 		
+		//cooke jar to save cookies, without a cookie jar, cURL will not remember any cookie set and will never send a cookie saved
 		$cjname = $this->cookieJarName ();
 		
 		@curl_setopt ( $this->ch, CURLOPT_COOKIEJAR, str_replace ( 'core.php', $cjname, __FILE__ ) );
@@ -99,11 +100,11 @@ class wp_automatic {
 		curl_setopt ( $this->ch, CURLOPT_SSL_VERIFYPEER, false );
 		
 		// verbose
-		
+		/*
 		  $verbose = fopen ( str_replace ( 'core.php', 'verbose.txt', __FILE__ ), 'w' );
 		   curl_setopt ( $this->ch, CURLOPT_VERBOSE, 1 );
 		   curl_setopt ( $this->ch, CURLOPT_STDERR, $verbose );
-		   /*  */
+		            */
 		 
 		
 		// spintax
@@ -604,11 +605,24 @@ class wp_automatic {
 			$original_title = $img ['item_title'];
 			$title = $img ['item_title'];
 			$source_link = $img ['item_url'];
-		
+	
+		} elseif ($camp_type == 'Aliexpress') {
+			
+			$img = $this->aliexpress_get_post ( $camp );
+			
+			$title = '';
+			if(isset($img ['item_title'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_url'];
+			}
+		 
+			
 		} elseif ($camp_type == 'TikTok') {
 			
 			$img = $this->tiktok_get_post ( $camp );
-			
+			 
 			$title = '';
 			if(isset($img ['item_description'])){
 				$abcont = $img ['item_description'];
@@ -899,6 +913,8 @@ class wp_automatic {
 				exit ();
 			}
 			
+		 
+			
 			// strip links
 			if (in_array ( 'OPT_STRIP', $camp_opt )) {
 				
@@ -959,15 +975,22 @@ class wp_automatic {
 					
 					echo '<br>Stripping inline links';
 					$abcont_no_html = preg_replace ( '{<.*?>}s', '', $abcont );
-					
+					$abcont_no_html = preg_replace ( '{<.*?>}s', '', $abcont );
+					$abcont_no_html = strip_shortcodes($abcont_no_html);
+
 					//find links
 					preg_match_all('/https?:\/\/[^<\s]+/s' , $abcont_no_html , $inline_matches );
 					
 					$inline_matches = $inline_matches[0];
 					
 					foreach( $inline_matches as $inline_matches_link ){
-						echo '<br>Removing link:'.$inline_matches_link;
-						$abcont = str_replace( $inline_matches_link , '' , $abcont );
+						
+						if( ! stristr($inline_matches_link, '[') ){
+							 
+							echo '<br>Removing link:'.$inline_matches_link;
+							$abcont = str_replace( $inline_matches_link , '' , $abcont );
+						
+						}
 					}
 					
 					
@@ -1239,9 +1262,18 @@ class wp_automatic {
 					$post_content = str_replace ( '[item_imgs_html]', '', $post_content );
 				}
 				
+			}elseif($camp_type == 'Aliexpress'){
+			
+				// remove built-in gallery for amazon products when a woo gallery is used
+				if ($camp->camp_post_type == 'product' && in_array ( 'OPT_AE_GALLERY', $camp_opt )) {
+					$post_content = str_replace ( '[item_imgs_html]', '', $post_content );
+				}
+				
+				$post_content = str_replace ( '[item_description]', $abcont, $post_content );
+				
 			} elseif ($camp_type == 'Facebook' || $camp_type == 'Single') {
 				$post_content = str_replace ( '[matched_content]', $abcont, $post_content );
-			} elseif ($camp_type == 'SoundCloud' || $camp_type == 'Craigslist' || $camp_type == 'Itunes' || $camp_type == 'Envato' || $camp_type == 'DailyMotion' || $camp_type == 'Reddit' || $camp_type == 'Walmart' || $camp_type == 'Careerjet') {
+			} elseif ($camp_type == 'SoundCloud' || $camp_type == 'Craigslist' || $camp_type == 'Itunes' || $camp_type == 'Envato' || $camp_type == 'DailyMotion' || $camp_type == 'Reddit' || $camp_type == 'Walmart' || $camp_type == 'Careerjet'   ) {
 				$post_content = str_replace ( '[item_description]', $abcont, $post_content );
 			} else {
 				$post_content .= "<br>$abcont";
@@ -1340,10 +1372,10 @@ class wp_automatic {
 						
 						$cg_keywords_replace_rule_kewyrod_arr = explode( ',' , $cg_keywords_replace_rule_kewyrod);
 						
+						
 						foreach($cg_keywords_replace_rule_kewyrod_arr as $cg_keywords_replace_rule_kewyrod_arr_single ){
-							
-							echo '<br>Hyperlinking the keyword:' . $cg_keywords_replace_rule_kewyrod_arr_single . ' with this link:' . $cg_keywords_replace_rule_link ;
-							$post_content = preg_replace ( '/\b' . preg_quote ( $cg_keywords_replace_rule_kewyrod_arr_single, '/' ) . '\b/i', '<a href="' . $cg_keywords_replace_rule_link . '">' . $cg_keywords_replace_rule_kewyrod_arr_single . '</a>', $post_content );
+							$cg_keywords_replace_all[] = $cg_keywords_replace_rule_kewyrod_arr_single;
+							$cg_keywords_replace_all_vals[md5($cg_keywords_replace_rule_kewyrod_arr_single)] =  $cg_keywords_replace_rule_link;
 							
 						}
 						
@@ -1351,6 +1383,24 @@ class wp_automatic {
 					}//valid rule if
 				
 				}
+				
+				//sort by length 
+				usort ( ($cg_keywords_replace_all), 'wp_automatic_sort' );
+				
+				//replace found keywords with {number}
+				$i = 0;
+				foreach ($cg_keywords_replace_all as  $cg_keywords_replace_all_single){
+					$post_content = preg_replace ( '/\b' . preg_quote ( $cg_keywords_replace_all_single, '/' ) . '\b/i', '{'. $i .'}' , $post_content );
+					$i++;
+				}
+	
+				//replace found {number} with correct link
+				foreach ($cg_keywords_replace_all as  $key => $cg_keywords_replace_all_single){
+					$replace_link = $cg_keywords_replace_all_vals[ md5($cg_keywords_replace_all_single) ];
+					echo '<br>Hyperlinking the keyword:' . $cg_keywords_replace_all_single . ' with this link:' . $replace_link; 
+					$post_content = str_replace( '{' . $key .  '}' , '<a href="' . $replace_link  . '">' . $cg_keywords_replace_all_single . '</a>' ,$post_content );
+				}
+				  
 			}
 			
 			// replacing patterns
@@ -1609,8 +1659,9 @@ class wp_automatic {
 						
 						$contentType = curl_getinfo ( $this->ch, CURLINFO_CONTENT_TYPE );
 						
-						if (! stristr ( $contentType, 'image' )) {
+						if (! stristr ( $contentType, 'image' ) && ! stristr($image_data, 'WEBP') ) {
 							echo '<-- can not verify if the content returned is an image skipping returned ' .$contentType;
+							   
 							continue;
 						}
 						
@@ -1875,11 +1926,30 @@ class wp_automatic {
 						
 						foreach ( $cg_keyword_cat_rule_keywords as $cg_keyword_cat_rule_keyword_single ) {
 							
-							if (! preg_match ( '{\b' . preg_quote ( $cg_keyword_cat_rule_keyword_single ) . '\b}siu', $content_to_check ) || (stristr ( $cg_keyword_cat_rule_keyword_single, '#' ) && stristr ( $content_to_check, trim ( $cg_keyword_cat_rule_keyword_single ) ))) {
+							if(in_array('OPT_KEYWORD_EXACT_NO' , $camp_opt)){
 								
-								$was_found = false;
-								break;
+								//exact match
+								
+								if ( stristr ( $content_to_check, trim ( $cg_keyword_cat_rule_keyword_single ) ) ) {
+									
+									$was_found = false;
+									break;
+								}
+								
+							}else{
+								
+								//word match
+								if (! preg_match ( '{\b' . preg_quote ( $cg_keyword_cat_rule_keyword_single ) . '\b}siu', $content_to_check ) || (stristr ( $cg_keyword_cat_rule_keyword_single, '#' ) && stristr ( $content_to_check, trim ( $cg_keyword_cat_rule_keyword_single ) ))) {
+									
+									$was_found = false;
+									break;
+								}
 							}
+							
+							
+							
+							
+							
 						}
 						
 						if ($was_found) {
@@ -2243,8 +2313,16 @@ class wp_automatic {
 				
 				$id = bbp_insert_topic ( $my_post, $topicMeta );
 			} else {
-				
-				$id = wp_insert_post ( $my_post );
+				 
+				if(isset($my_post['ID'])){
+					//update exising post
+					$id = wp_update_post($my_post);
+				}else{
+					$id = wp_insert_post ( $my_post );
+					
+				}
+			
+			
 			}
 			
 			
@@ -2462,7 +2540,9 @@ class wp_automatic {
 					if ($taxonomy == 'category') {
 						// get uncategorized slug by term id
 						$uncatObject = get_term ( 1 );
-						wp_remove_object_terms ( $id, $uncatObject->slug, $taxonomy );
+						$the_uncategorized_slug = isset( $uncatObject->slug ) ? $uncatObject->slug : 'uncategorized';
+						wp_remove_object_terms ( $id, $the_uncategorized_slug, $taxonomy );
+ 					
 					}
 				}
 			}
@@ -2500,6 +2580,8 @@ class wp_automatic {
 							
 							wp_set_post_terms ( $id, $customFieldSet [1], str_replace ( 'taxonomy_', '', $customFieldSet [0] ), true );
 						} else {
+							
+							if( ! isset( $my_post['ID']) )
 							add_post_meta ( $id, $customFieldSet [0], $customFieldSet [1] );
 						}
 					} // foreach field
@@ -2508,17 +2590,40 @@ class wp_automatic {
 			
 			$post_id = $id;
 			
+ 
+			if( ! isset( $my_post['ID'] ) )
 			add_post_meta ( $id, 'wp_automatic_camp', $camp->camp_id );
 			
 			if (isset ( $source_link )) {
 				
+				 
+				if( ! isset( $my_post['ID']) )
 				$addedLink = add_post_meta ( $id, md5 ( $source_link ), $post_title );
 				
-				if ($addedLink === false) {
+				if (! isset($addedLink) || $addedLink === false) {
+					
+					if( ! isset( $my_post['ID']) )
 					add_post_meta ( $id, md5 ( $source_link ), md5 ( $source_link ) );
 				}
 				
-				add_post_meta ( $id, 'original_link', $source_link );
+				if( ! isset( $my_post['ID']) ){
+					
+					if($camp_type == 'Amazon'  && in_array('OPT_LINK_SOURSE' , $camp_opt)){
+						add_post_meta ( $id, 'original_link', $img['product_link'] );
+					
+					}elseif($camp_type == 'Aliexpress'  && in_array('OPT_LINK_SOURSE' , $camp_opt)){
+							add_post_meta ( $id, 'original_link', $img['item_affiliate_url'] );
+							
+					}elseif($camp_type == 'eBay'  && in_array('OPT_LINK_SOURSE' , $camp_opt)){
+						add_post_meta ( $id, 'original_link', $img['item_link'] );
+					
+					}else{
+						add_post_meta ( $id, 'original_link', $source_link );
+					}
+					
+				}
+			
+			
 			}
 			
 			// Record link if posted before
@@ -2530,6 +2635,8 @@ class wp_automatic {
 			
 			// if link to source set flag
 			if (in_array ( 'OPT_LINK_SOURSE', $camp_opt )) {
+				
+				if( ! isset( $my_post['ID']) )
 				add_post_meta ( $id, '_link_to_source', 'yes' );
 			}
 			
@@ -2537,8 +2644,10 @@ class wp_automatic {
 			if (in_array ( 'OPT_LINK_CANONICAL', $camp_opt )) {
 				
 				if (defined ( 'WPSEO_VERSION' )) {
+					if( ! isset( $my_post['ID']) )
 					add_post_meta ( $id, '_yoast_wpseo_canonical', $source_link );
 				} else {
+					if( ! isset( $my_post['ID']) )
 					add_post_meta ( $id, 'canonical_url', $source_link );
 				}
 			}
@@ -2554,8 +2663,6 @@ class wp_automatic {
 					}
 				}
 			}
-			
-		 
 			
 			// Featured image
 			if (in_array ( 'OPT_THUMB', $camp_opt )) {
@@ -2620,7 +2727,7 @@ class wp_automatic {
 							$img ['item_image'] 
 					);
 				
-				} elseif ($camp_type == 'TikTok'  || $camp_type == 'Craigslist' ) {
+				} elseif ($camp_type == 'TikTok'  || $camp_type == 'Craigslist'  || $camp_type == 'Aliexpress' ) {
 
 					$srcs = array (
 							$img ['item_img']
@@ -2639,10 +2746,17 @@ class wp_automatic {
 				} elseif (isset ( $srcs ) && count ( $srcs ) > 0) {
 				} else {
 					
+				 
+					
+					$post_content_to_check_for_src_imgs = $post_content;
+					$post_content_to_check_for_src_imgs = preg_replace( '!src="data:image.*?"!' , '' , $post_content_to_check_for_src_imgs );
+					 
+					
 					// extract first image
-					preg_match_all ( '/<img [^>]*src[\s]*=[\s]*"(.*?)".*?>/i', stripslashes ( $post_content ), $matches );
+					preg_match_all ( '/<img [^>]*src[\s]*=[\s]*"(.*?)".*?>/i', stripslashes ( $post_content_to_check_for_src_imgs ), $matches );
 					$srcs = $matches [1];
 					$srcs_html = $matches [0];
+					
 					
 					foreach ( $srcs_html as $src_html ) {
 						
@@ -3108,6 +3222,7 @@ class wp_automatic {
 							
 							$img ['featured_img_source'] = $image_url;
 							$img ['featured_img_local_source'] = $guid;
+							$img ['featured_img_id'] = $attach_id;
 							
 							set_post_thumbnail ( $post_id, $attach_id );
 							echo ' <-- thumbnail set successfully attachement:' . $attach_id;
@@ -3910,6 +4025,8 @@ class wp_automatic {
 				}
 			}
 			
+			 
+			
 			// After ebay
 			if (in_array ( 'OPT_EB_REDIRECT_END', $camp_opt )) {
 				echo '<br>Setting expiry date: ' . $img ['item_end_date'];
@@ -3972,6 +4089,7 @@ class wp_automatic {
 			if (in_array ( 'OPT_TITLE_TAG', $camp_opt )) {
 				
 				$validTitleWords = $this->wp_automatic_generate_tags ( $post_title );
+				
 				$post_tags = array_merge ( $post_tags, $validTitleWords );
 			}
 			
@@ -4225,6 +4343,73 @@ class wp_automatic {
 					) );
 					
 					wp_set_object_terms ( $id, 'external', 'product_type' );
+					
+			}elseif( $camp_type == 'Aliexpress' && $camp->camp_post_type == 'product' ){
+				
+				//imgs array 
+				
+				$imgs_arr = explode(',' , $img ['item_images'] );
+				
+				// product gallery
+				if (isset ( $img ['item_images'] ) && is_array($imgs_arr)  && count ( $imgs_arr  ) > 1 && in_array ( 'OPT_AE_GALLERY', $camp_opt )) {
+					
+					echo '<br>Multiple images found setting a gallery for Woo';
+					$attachmentsIDs = array ();
+					
+					$product_imgs = $imgs_arr;
+					
+					// first image already attached
+					if (isset ( $attach_id )) {
+						
+						// $attachmentsIDs[] = $attach_id;
+						unset ( $product_imgs [0] );
+					}
+					
+					// set rest images as attachments
+					foreach ( $product_imgs as $product_img ) {
+						echo '<br>Attaching:' . $product_img;
+						$newAttach = $this->attach_image ( $product_img, $camp_opt, $post_id );
+						
+						if (is_numeric ( $newAttach ) && $newAttach > 0) {
+							$attachmentsIDs [] = $newAttach;
+						}
+					}
+					
+					if (count ( $attachmentsIDs ) > 0) {
+						
+						$attachmentsIDsStr = implode ( ',', $attachmentsIDs );
+						add_post_meta ( $id, '_product_image_gallery', $attachmentsIDsStr );
+					}
+				}
+				
+				$camp_post_custom_k = array_merge ( $camp_post_custom_k, array (
+						'_regular_price',
+						'_sale_price',
+						'_price',
+						'product_list_price',
+						'product_price',
+						'_visibility',
+						'_product_url',
+						'_button_text',
+						'_product_type'
+				) );
+				$wp_automatic_woo_buy = get_option ( 'wp_automatic_woo_buy2', 'Buy Now' );
+				if (trim ( $wp_automatic_woo_buy ) == '')
+					$wp_automatic_woo_buy = 'Buy Now';
+					
+					$camp_post_custom_v = array_merge ( $camp_post_custom_v, array (
+							'[item_price_original_numeric]',
+							'[item_price_numeric] ',
+							'[item_price_numeric] ',
+							'[item_price_original_numeric]' , 
+							'[item_price_numeric] ',
+							'visible',
+							'[item_url]',
+							$wp_automatic_woo_buy,
+							'external'
+					) );
+					
+					wp_set_object_terms ( $id, 'external', 'product_type' );
 			
 			} elseif ($camp_type == 'Amazon' && $camp->camp_post_type != 'product') {
 				
@@ -4240,6 +4425,22 @@ class wp_automatic {
 						'[product_price]',
 						'[product_list_price]' 
 				), $camp_post_custom_v );
+			
+			} elseif ($camp_type == 'Aliexpress' && $camp->camp_post_type != 'product') {
+				
+				$camp_post_custom_k = array_merge ( array (
+						'product_price_updated',
+					 
+						'product_price',
+						'product_list_price'
+				), $camp_post_custom_k );
+				$camp_post_custom_v = array_merge ( array (
+						$now,
+					 
+						'[item_price_numeric]',
+						'[item_price_original_numeric]'
+				), $camp_post_custom_v );
+			
 			} elseif ($camp_type == 'Walmart' && $camp->camp_post_type != 'product') {
 				
 				$camp_post_custom_k = array_merge ( array (
@@ -4254,6 +4455,8 @@ class wp_automatic {
 						'$[item_price]',
 						'$[item_list_price]' 
 				), $camp_post_custom_v );
+				
+				
 			} elseif ($camp_type == 'Walmart' && $camp->camp_post_type == 'product') {
 				
 				// affiliate item_link
@@ -4382,6 +4585,8 @@ class wp_automatic {
 				wp_set_object_terms ( $id, 'external', 'product_type' );
 			}
 			
+		
+			
 			// Not external option
 			if (in_array ( 'OPT_SIMPLE', $camp_opt )) {
 				
@@ -4452,6 +4657,8 @@ class wp_automatic {
 					}
 				}
 			}
+			
+	 
 			
 			// truemag dailymotion integration
 			if ($camp_type == 'DailyMotion') {
@@ -5361,6 +5568,11 @@ class wp_automatic {
 		// Report Translate
 		echo '<br>Translating from ' . $from . ' to ' . $to . ' using ' . $translationMethod;
 		
+		/*
+		$title = 'welcome to Egypt';
+		$content= 'it is a good place';
+		*/
+		
 		// Concat title and content in one text
 		$text = $title . $titleSeparator . $content;
 		
@@ -5368,6 +5580,9 @@ class wp_automatic {
 		
 		// decode html for chars like &euro; removed for images containing html encoded tags a-image-description="<p>How to Style 8 Stitch Fix Rom
 		//$text = html_entity_decode ( $text );
+		
+		//$text = file_get_contents( dirname(__FILE__) . '/test.txt');
+		//$text = 'welcome to egypt';
 		
 		if ($this->debug == true)
 			echo "\n\n--- Translation text-------\n" . $text;
@@ -5619,8 +5834,20 @@ class wp_automatic {
 				// Google Translator Class
 				require_once 'inc/translator.Google.php';
 				
+				//curl ini
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_HEADER,0);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+				curl_setopt($ch, CURLOPT_TIMEOUT,20);
+				curl_setopt($ch, CURLOPT_REFERER, 'http://www.bing.com/');
+				curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.8) Gecko/2009032609 Firefox/3.0.8');
+				curl_setopt($ch, CURLOPT_MAXREDIRS, 5); // Good leeway for redirections.
+				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // Many login forms redirect at least once.
+				curl_setopt($ch, CURLOPT_COOKIEJAR , "cookie.txt");
+				
 				// Google Translator Object
-				$GoogleTranslator = new GoogleTranslator ( $this->ch );
+				$GoogleTranslator = new GoogleTranslator ( $ch );
 				
 				// Translate Method
 				$translated = $GoogleTranslator->translateText ( $text, $from, $to );
@@ -6419,6 +6646,36 @@ class wp_automatic {
 			
 			return true;
 		} else {
+			
+			//check if title contains spechial chars 
+			if(stristr($title, '&')){
+				
+				$encoded_title = htmlspecialchars_decode( $title , ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
+				
+				if($tilte != $encoded_title){
+						//check again, this title may contain special chars
+					
+					if (get_page_by_title ( $encoded_title, 'OBJECT', $post_type )) {
+						
+						return true;
+					}else{
+						
+						//hmm, encoded title also was not found, sometimes apstrophe &#039; turns to &#x27 on the DB
+					 
+						if(stristr($title , '&#039;')){
+							$title_hex_app = str_replace('&#039;' , '&#x27;' , $title ); 
+							if( get_page_by_title ( $title_hex_app, 'OBJECT', $post_type )){
+								return true;
+							}
+						}
+					}
+					
+				 
+					
+				}
+				
+			}
+			
 			return false;
 		}
 	}
@@ -7731,6 +7988,23 @@ class wp_automatic {
 		}
 	}
 	
+	//return the path of the cookie
+	function cookie_path($cookie_name){
+		
+		$dir = $this->wp_automatic_upload_dir ();
+		return $dir . '/wp_automatic_' . $cookie_name . '_cookie';
+	}
+	
+	//delete the cookie jar file 
+	function cookie_delete($cookie_name){
+		  unlink($this->cookie_path($cookie_name));
+	}
+	
+	//
+	function cookie_content($cookie_name){
+		return file_get_contents($this->cookie_path($cookie_name));
+	}
+	
 	// create uploads/wp_automatic
 	function wp_automatic_upload_dir() {
 		$dir = wp_upload_dir ();
@@ -7771,7 +8045,9 @@ class wp_automatic {
 		
 		foreach ( $titleWords as $titleWord ) {
 			
-			$titleWord = preg_replace ( '#[^\p{L}\p{N}]+#u', '', $titleWord );
+			$titleWord = preg_replace ( '#[^\p{L}\p{N}\._]+#u', '', $titleWord ); //remove all chars expect a letter, number, dot or underscore
+			$titleWord = preg_replace ('#\.$#' , '' , trim($titleWord) ); // remove trailing dots only and keep other dots mo.salah
+		 
 			
 			if (! in_array ( strtolower ( $titleWord ), $stopWords )) {
 				

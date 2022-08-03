@@ -168,10 +168,10 @@ function twitter_fetch_items($keyword,$camp ){
 	curl_setopt($this->ch, CURLOPT_URL, trim($url));
 	$exec=curl_exec($this->ch);
 	$x=curl_error($this->ch);
-
+ 
 	
 	//validating reply
-	if(stristr($exec, 'search_metadata')   || (stristr($keyword, 'from:') && stristr($exec, '{')  ) ){
+	if(stristr($exec, 'search_metadata')   || (stristr($keyword, 'from:') && stristr($exec, '{') && !stristr($exec,'"errors"')  )  ){
 		//valid reply
 
 		//handle pins
@@ -354,9 +354,11 @@ function twitter_fetch_items($keyword,$camp ){
 			}
 			
 			//check if old
+			$old_post_found = false;
 			if( in_array('OPT_YT_DATE', $camp_opt)     ){
 				if($this->is_link_old($camp->camp_id,  strtotime(  $item->created_at  ) )){
 					  echo '<--old post execluding...';
+					  $old_post_found = true;
 					continue;
 				}else{
 					  echo ' <- created:'. $item->created_at ;
@@ -401,6 +403,11 @@ function twitter_fetch_items($keyword,$camp ){
 			if($max_id != 0){
 				echo '<br>Updating max ID '.$max_id_str;
 				update_post_meta($camp->camp_id, 'wp_twitter_next_max_id'.md5($keyword), $max_id_str ) ;
+				
+				//reset pagination when posting from  a specific user
+				if( $old_post_found && stristr($keyword , 'from:') ){
+					delete_post_meta($camp->camp_id, 'wp_twitter_next_max_id'.md5($keyword));
+				}
 					
 			}else{
 					

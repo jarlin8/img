@@ -544,7 +544,7 @@ jQuery(document).ready(function()
 		   
 		   
 		   // additional custom fields tags
-		   supportedText2 = supportedText + ' , <abbr title="Random number between two values. e.g, [rand_1_3] will be replaced by either 1,2 or 3" >[rand_num1_num2]</abbr> , <abbr title="src url of the chosen image at the source to be a featured image" >[featured_img_source]</abbr> , <abbr title="src url of the featured image after setting it" >[featured_img_local_source]</abbr>' ;
+		   supportedText2 = supportedText + ' , <abbr title="Random number between two values. e.g, [rand_1_3] will be replaced by either 1,2 or 3" >[rand_num1_num2]</abbr> , <abbr title="src url of the chosen image at the source to be a featured image" >[featured_img_source]</abbr> , <abbr title="src url of the featured image after setting it" >[featured_img_local_source]</abbr>, <abbr title="ID the featured image after setting it" >[featured_img_id]</abbr>' ;
 		   
 		   // fixed tags for all campaigns content only
 		   supportedText = supportedText + ', <abbr title="Retruns the title words as hashtags. e.g: if the title is hello world, it will return #hello #world" >[title_words_as_hashtags]</abbr>';

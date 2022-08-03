@@ -52,8 +52,16 @@ class GoogleTranslator {
 		
 		echo '<br>Translated text char count: ' . $article_size;
 		
-		if ($article_size > 13000) {
-			throw new Exception ( 'Translated article is very long, it exceeds the limit of 13000 chars' );
+		$wp_automatic_gtranslate_limit = trim( get_option('wp_automatic_gtranslate_limit' , 13000));
+		
+		if( is_numeric( $wp_automatic_gtranslate_limit) && $wp_automatic_gtranslate_limit >13000 ){
+			//correct
+		}else{
+			$wp_automatic_gtranslate_limit = 13000;
+		}
+		
+		if ($article_size > $wp_automatic_gtranslate_limit) {
+			throw new Exception ( 'Translated article is very long, it exceeds the limit of  ' . $wp_automatic_gtranslate_limit . ' chars' );
 		}
 		
 		timer_start ();
@@ -63,7 +71,7 @@ class GoogleTranslator {
 		
 		// fix auto from language
 		if ($fromLanguage == 'auto')
-			$fromLanguage = '';
+			$fromLanguage = 'auto';
 		
 		$args = [ 
 				'anno' => 3,
@@ -94,9 +102,13 @@ class GoogleTranslator {
 		$exec = curl_exec ( $this->ch );
 		$x = curl_error ( $this->ch );
 		
+		 
+		
 		if (trim ( $exec ) == '') {
 			throw new Exception ( 'empty response from gtranslate ' . $x );
 		}
+		
+		
 		
 		// Error 403
 		if (strpos ( $exec, 'Error 403' )) {
@@ -108,9 +120,26 @@ class GoogleTranslator {
 		
 		$json_result = json_decode ( $exec );
 		
+		
+		
 		if (! isset ( $json_result [0] )) {
 			throw new Exception ( 'Can not get JSON from returned response' );
 		}
+		
+		
+		//Fix auto-detect returns array instead of text with text + detected lang
+		$json_result_new= array();
+		foreach($json_result as $json_array){
+		
+			if(is_array($json_array)){
+				$json_result_new[] = $json_array[0];
+			}else{
+				$json_result_new[] = $json_array;
+			}
+			
+		}
+		
+		$json_result = $json_result_new;
 		
 		$returned_text_plain = implode ( '(*)', $json_result );
 		$returned_text_plain = preg_replace ( '{<i>.*?</i>}s', '', $returned_text_plain );

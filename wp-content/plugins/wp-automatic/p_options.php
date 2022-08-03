@@ -56,8 +56,9 @@ function gm_setting() {
 		$x=curl_error($ch);
 		$resback=$exec;
 		 
+		 
 		
-		if(trim($exec) == ''){
+		if(trim($exec) == '' || ! stristr( $exec , '{' ) ){
 			
 			$url='http://deandev-proxy.appspot.com/license/index.php?itm=1904470&domain='.$_SERVER['HTTP_HOST'].'&purchase='.trim($_POST['wp_automatic_license']).$append;
 			
@@ -70,6 +71,8 @@ function gm_setting() {
 		}
 		
 		$resarr=json_decode($resback);
+		
+	
 		
 		if(isset($resarr->message)){
 			$wp_automatic_active_message=$resarr->message;
@@ -135,6 +138,7 @@ function gm_setting() {
 			}
 		}
 	}
+	  
 	?>
  
 <script type="text/javascript" src="<?php   echo $dir; ?>js/jquery.tools.js"></script>
@@ -145,6 +149,10 @@ function gm_setting() {
 <link href='<?php   echo $dir; ?>css/uniform.css' rel='stylesheet' type='text/css'>
 
 <style>
+
+.wp_automatic_hide_noactive{
+	<?php if($licenseactive != 'active') echo  'display:none'; ?>;
+}
 
 .wp_automatic_box_icon{
 	width:30px;
@@ -187,15 +195,15 @@ h2 span{
 		<div dir="ltr" id="dashboard-widgets-wrap">
 
 			<form method="post" novalidate="novalidate">
-				<div class="metabox-holder columns-2" id="dashboard-widgets">
+				<div class="metabox-holder columns-2 " id="dashboard-widgets">
 
 
 
 					<!-- General post box -->
-					<div class="postbox-container">
+					<div class="postbox-container wp_automatic_hide_noactive">
 						<div style="min-height: 1px;" class="meta-box-sortables ui-sortable" id="normal-sortables">
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/amazon.png',__FILE__)?>" /> <span>Amazon settings</span>
 								</h2>
@@ -257,7 +265,7 @@ h2 span{
 							</div>
 							<!-- post box -->
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/clickbank.png',__FILE__)?>"><span> Clickbank settings</span>
 								</h2>
@@ -277,8 +285,33 @@ h2 span{
 								</div>
 							</div>
 
+								<!-- post box -->
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
+								<h2 class="hndle">
+									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/aliexpress.ico',__FILE__)?>"><span> AliExpress settings</span>
+								</h2>
+								<div class="inside TTWForm main" style="padding-bottom: 14px">
+									<!--start container-->
+									<div  class="field f_100 ">
+										<label> AliExpress xman_t cookie value</label> <input value="<?php   echo get_option( 'wp_automatic_ali_cookie' ) ?>" name="wp_automatic_ali_cookie"  type="text">
+										<div class="description">
+											This cookie is used by the plugin to generate the affiliate link, check <a href="https://valvepress.com/how-to-get-xman_t-aliexpress-cookie-for-wp-automatic-affiliate-link-genaration/" target="_blank">this tutorial</a> on how to get it 
+										</div>
+									</div>
+									 
+
+									<div id="form-submit" class="field f_100 clearfix submit" style>
+										<input style="margin-left: 0" value="Save Changes" type="submit">
+									</div>
+
+									<!--start container-->
+									<div style="clear: both"></div>
+								</div>
+							</div>
+
+
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/ez.jpg',__FILE__)?>"><span> Ezinearticles settings</span>
 								</h2>
@@ -307,7 +340,7 @@ h2 span{
 							</div>
 							
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/write.png',__FILE__)?>"><span> The Best Spinner settings</span>
 								</h2>
@@ -347,7 +380,7 @@ h2 span{
 								</div>
 							</div>
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/flicker.png',__FILE__)?>"><span> Flicker settings</span>
 								</h2>
@@ -368,7 +401,7 @@ h2 span{
 								</div>
 							</div>
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/ebay.png',__FILE__)?>"><span> eBay settings</span>
 								</h2>
@@ -388,6 +421,10 @@ h2 span{
 									<div class="field f_100 ">
 										<label> Campaign ID (Used for affiliate link generation)</label> <input value="<?php   echo get_option( 'wp_automatic_ebay_camp' ) ?>" name="wp_automatic_ebay_camp" type="text">
 										<div class="description">Check <a target="_blank" href="http://valvepress.com/how-to-get-ebay-campaign-id-for-affiliate-earnings-from-ebay/">this tutorial</a> on how to get it</div>
+									</div>
+									
+									<div class="field f_100 ">
+										<label> affiliate Reference Id (Optional) (Used to track sales)</label> <input value="<?php   echo get_option( 'wp_automatic_ebay_refid' ) ?>" name="wp_automatic_ebay_refid" type="text">
 									</div>
 									
 									<div class="field f_100 ">
@@ -412,7 +449,7 @@ h2 span{
 							</div>
 							
 							
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/ig.png',__FILE__)?>"><span> Instagram settings</span>
 								</h2>
@@ -436,7 +473,7 @@ h2 span{
 							</div>
 							
 
-							<div class="postbox " >
+							<div class="postbox wp_automatic_hide_noactive" >
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/yt.png',__FILE__)?>"><span> Youtube settings</span>
 								</h2>
@@ -460,7 +497,7 @@ h2 span{
 							</div>
 							
 							 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/vimeo.png',__FILE__)?>"><span> Vimeo settings</span>
 								</h2>
@@ -483,7 +520,7 @@ h2 span{
 							
 							
 							
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/itunes.png',__FILE__)?>"><span> Itunes settings</span>
 								</h2>
@@ -505,7 +542,7 @@ h2 span{
 								</div>
 							</div>
 							
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/envato.png',__FILE__)?>"><span>Envato settings</span>
 								</h2>
@@ -532,7 +569,7 @@ h2 span{
 							</div>
 							
 							
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/fb.png',__FILE__)?>"><span> Facebook settings</span>
 								</h2>
@@ -551,10 +588,7 @@ h2 span{
 									</div>
 
 									 
-									<div class="field f_100 ">
-										<label>If session cookie expired, send an email notification to this email address</label> <input value="<?php   echo get_option( 'wp_automatic_fb_email' ) ?>" name="wp_automatic_fb_email" type="text">
-										<div class="description">You can insert your email address here for the plugin to send an email notification if the session expires or get invalid</div>
-									</div>
+									
 									
 									<div class="field f_100 ">
 										<label>"Watch" text in your language?</label> <input value="<?php   echo get_option( 'wp_automatic_fb_w' ) ?>" name="wp_automatic_fb_w" type="text">
@@ -576,7 +610,7 @@ h2 span{
 								</div>
 							</div>
 							
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/tw.png',__FILE__)?>"><span> Twitter settings</span>
 								</h2>
@@ -584,13 +618,13 @@ h2 span{
 									<!--start container-->
 
 									<div class="field f_100 ">
-										<label>Consumer Key (API Key)</label> <input value="<?php   echo get_option( 'wp_automatic_tw_consumer' ) ?>" name="wp_automatic_tw_consumer" type="text">
+										<label>API Key</label> <input value="<?php   echo get_option( 'wp_automatic_tw_consumer' ) ?>" name="wp_automatic_tw_consumer" type="text">
 										<div class="description">Check <a href="http://valvepress.com/how-to-post-from-twitter-to-wordpress-using-wordpress-automatic/" target="_blank">this tutorial</a> on how to get your Key and secret </div>
 									</div>
 									
 									
 									<div class="field f_100 ">
-										<label>Consumer Secret (API Secret)</label> <input value="<?php   echo get_option( 'wp_automatic_tw_secret' ) ?>" name="wp_automatic_tw_secret" type="text">
+										<label>API Key Secret</label> <input value="<?php   echo get_option( 'wp_automatic_tw_secret' ) ?>" name="wp_automatic_tw_secret" type="text">
 										
 									</div>
 									
@@ -615,7 +649,7 @@ h2 span{
 								</div>
 							</div>
 							
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									 <img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/walmart.png',__FILE__)?>"><span> Walmart Settings</span>
 								</h2>
@@ -644,7 +678,7 @@ h2 span{
 								</div>
 							</div>
 
-						<div class="postbox " id="dashboard_right_now">
+						<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									 <img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/cj.png',__FILE__)?>"><span>Careerjet Settings</span>
 								</h2>
@@ -668,7 +702,7 @@ h2 span{
 
 
 							
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									 <img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/translator.microsoft.png',__FILE__)?>"><span> Microsoft Translator Settings</span>
 								</h2>
@@ -696,7 +730,7 @@ h2 span{
 							</div>
 
 						
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									 <img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/yandex.png',__FILE__)?>"><span> Yandex Translator Settings</span>
 								</h2>
@@ -720,7 +754,7 @@ h2 span{
 							</div>
 							
 							
-					<div class="postbox " id="dashboard_right_now">
+					<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									 <img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/deepl.svg',__FILE__)?>"><span> Deepl PRO API Settings</span>
 								</h2>
@@ -756,7 +790,7 @@ h2 span{
 								</div>
 							</div>
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									 <img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/apify.svg',__FILE__)?>"><span> APIFY API Settings</span>
 								</h2>
@@ -789,7 +823,7 @@ h2 span{
 					<div class="postbox-container">
 						<div style="min-height: 1px;" class="meta-box-sortables ui-sortable" id="normal-sortables">
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/search.png',__FILE__)?>"><span> Search and Replace</span>
 								</h2>
@@ -833,7 +867,7 @@ h2 span{
 								</div>
 							</div>
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/money.png',__FILE__)?>"`><span>Ads settings</span>
 								</h2>
@@ -859,7 +893,7 @@ h2 span{
 								</div>
 							</div>
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/proxy.png',__FILE__)?>"><span> Proxy settings</span>
 								</h2>
@@ -893,12 +927,17 @@ h2 span{
 								</div>
 							</div>
 
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/settings.png',__FILE__)?>"><span> General settings</span>
 								</h2>
 								<div class="inside main TTWForm" style="padding-bottom: 14px">
 									<!--start container-->
+
+									<div class="field f_100 ">
+										<label>Notifications to this email address</label> <input value="<?php   echo get_option( 'wp_automatic_fb_email' ) ?>" name="wp_automatic_fb_email" type="text">
+										<div class="description">You can insert your email address here for the plugin to send an email notifications when required</div>
+									</div>
 
 									<div class="field f_100">
 										<label> Title to tags/hashtags stop words  <i>(in lower case)(one/line)(optional)</i></label>
@@ -917,7 +956,10 @@ h2 span{
 										<div class="description">keywords list get protected when the translation option is active in the campaign page</div>
 									</div>
 									
-									 
+									 <div class="field f_100 ">
+										<label> Google translate char limit</label> <input value="<?php   echo get_option( 'wp_automatic_gtranslate_limit' ) ?>" name="wp_automatic_gtranslate_limit" type="text">
+										<div class="description">Default: 13000, set to higher if needed and at your own peril, higher limit may cause performance and server load issues (NOT RECOMMENDED)(DANGER)</div>
+									</div>
 									
 									<div class="field f_100 ">
 										<label> Woo-Commerce Amazon product buy now text (optional)</label> <input value="<?php   echo get_option( 'wp_automatic_woo_buy' ) ?>" name="wp_automatic_woo_buy" type="text">
@@ -955,7 +997,7 @@ h2 span{
 							</div>
 							
 							
-							<div class="postbox " id="dashboard_right_now">
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
 								<h2 class="hndle">
 									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/cron.png',__FILE__)?>"><span> Cron settings</span>
 								</h2>

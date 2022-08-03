@@ -1,6 +1,65 @@
-*   Trying 157.240.195.174:443...
+*   Trying ::1:80...
 * TCP_NODELAY set
-* Connected to www.instagram.com (157.240.195.174) port 443 (#0)
+* Connected to localhost (::1) port 80 (#0)
+> GET /wordpress/?wp_automatic=download&link=httpz://sweetheatm.CRYPTOSIGX.hop.clickbank.net HTTP/1.1
+Host: localhost
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
+Accept: */*
+Referer: http://www.bing.com/
+
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 500 Internal Server Error
+< Date: Sat, 16 Jul 2022 20:44:09 GMT
+< Server: Apache/2.4.46 (Unix) OpenSSL/1.0.2u PHP/8.0.0 mod_wsgi/3.5 Python/2.7.13 mod_fastcgi/mod_fastcgi-SNAP-0910052141 mod_perl/2.0.11 Perl/v5.30.1
+< X-Powered-By: PHP/8.0.0
+< Expires: Wed, 11 Jan 1984 05:00:00 GMT
+< Cache-Control: no-cache, must-revalidate, max-age=0
+< Content-Length: 6373
+< Connection: close
+< Content-Type: text/html; charset=UTF-8
+< 
+* Closing connection 0
+*   Trying 163.182.174.254:443...
+* TCP_NODELAY set
+* Connected to www.cbtrends.com (163.182.174.254) port 443 (#1)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
+* successfully set certificate verify locations:
+*   CAfile: /Applications/MAMP/Library/OpenSSL/cert.pem
+  CApath: none
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384
+* ALPN, server did not agree to a protocol
+* Server certificate:
+*  subject: CN=www.cbtrends.com
+*  start date: Dec 10 00:00:00 2021 GMT
+*  expire date: Dec 20 23:59:59 2022 GMT
+*  subjectAltName: host "www.cbtrends.com" matched cert's "www.cbtrends.com"
+*  issuer: C=GB; ST=Greater Manchester; L=Salford; O=Sectigo Limited; CN=Sectigo RSA Domain Validation Secure Server CA
+*  SSL certificate verify ok.
+> GET /images/vendor-pages/cryptosigx-x400-thumb.jpg HTTP/1.1
+Host: www.cbtrends.com
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
+Accept: */*
+Referer: http://www.cbtrends.com
+
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Date: Sat, 16 Jul 2022 20:44:14 GMT
+< Server: Apache/2.4.6 (CentOS) OpenSSL/1.0.2k-fips PHP/7.4.30
+< Last-Modified: Fri, 27 Sep 2019 13:59:07 GMT
+< ETag: "103ec-593894a269c89"
+< Accept-Ranges: bytes
+< Content-Length: 66540
+< Vary: Accept-Encoding,User-Agent
+< Connection: keep-alive
+< Cache-Control: max-age=290304000, public
+< Content-Type: image/jpeg
+< 
+* Connection #1 to host www.cbtrends.com left intact
+*   Trying 151.101.240.193:443...
+* TCP_NODELAY set
+* Connected to i.imgur.com (151.101.240.193) port 443 (#2)
 * ALPN, offering h2
 * ALPN, offering http/1.1
 * Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
@@ -10,175 +69,133 @@
 * SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
 * ALPN, server accepted to use h2
 * Server certificate:
-*  subject: C=US; ST=California; L=Menlo Park; O=Facebook, Inc.; CN=*.www.instagram.com
-*  start date: Nov 17 00:00:00 2021 GMT
-*  expire date: Feb 15 23:59:59 2022 GMT
-*  subjectAltName: host "www.instagram.com" matched cert's "www.instagram.com"
-*  issuer: C=US; O=DigiCert Inc; OU=www.digicert.com; CN=DigiCert SHA2 High Assurance Server CA
+*  subject: C=US; ST=California; L=San Francisco; O=Imgur, Inc.; CN=*.imgur.com
+*  start date: Mar  8 00:00:00 2022 GMT
+*  expire date: Mar 16 23:59:59 2023 GMT
+*  subjectAltName: host "i.imgur.com" matched cert's "*.imgur.com"
+*  issuer: C=US; O=DigiCert Inc; CN=DigiCert TLS RSA SHA256 2020 CA1
 *  SSL certificate verify ok.
 * Using HTTP2, server supports multi-use
 * Connection state changed (HTTP/2 confirmed)
 * Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
-* Using Stream ID: 1 (easy handle 0x7fe8f8998c00)
-> GET /explore/tags/sunny/?__a=1 HTTP/2
-Host: www.instagram.com
+* Using Stream ID: 1 (easy handle 0x7fe166118200)
+> GET /RBVKrWl.jpg HTTP/2
+Host: i.imgur.com
 user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
 accept: */*
-referer: http://www.bing.com/
-cookie: sessionid=704439941%3AyEbnUQlAQofnNh%3A7; csrftoken=eqYUPd3nV0gDSWw43IYZjydziMndrn4l;
+referer: http://i.imgur.com
 
 * Connection state changed (MAX_CONCURRENT_STREAMS == 100)!
 < HTTP/2 200 
-< content-type: application/json; charset=utf-8
-< x-robots-tag: noindex
-< vary: Accept-Language, Cookie, Accept-Encoding
-< content-language: en
-< date: Mon, 07 Feb 2022 20:50:38 GMT
-< strict-transport-security: max-age=31536000
-< cache-control: private, no-cache, no-store, must-revalidate
-< pragma: no-cache
-< expires: Sat, 01 Jan 2000 00:00:00 GMT
-< x-frame-options: SAMEORIGIN
-< content-security-policy: report-uri https://www.instagram.com/security/csp_report/; default-src 'self' https://www.instagram.com; img-src data: blob: https://*.fbcdn.net https://*.instagram.com https://*.cdninstagram.com https://*.facebook.com https://*.fbsbx.com https://*.giphy.com; font-src data: https://*.fbcdn.net https://*.instagram.com https://*.cdninstagram.com; media-src 'self' blob: https://www.instagram.com https://*.cdninstagram.com https://*.fbcdn.net; manifest-src 'self' https://www.instagram.com; script-src 'self' https://instagram.com https://www.instagram.com https://*.www.instagram.com https://*.cdninstagram.com wss://www.instagram.com https://*.facebook.com https://*.fbcdn.net https://*.facebook.net 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' https://*.www.instagram.com https://www.instagram.com 'unsafe-inline'; connect-src 'self' https://instagram.com https://www.instagram.com https://*.www.instagram.com https://graph.instagram.com https://*.graph.instagram.com https://i.instagram.com/graphql_www https://graphql.instagram.com https://*.cdninstagram.com https://api.instagram.com https://i.instagram.com https://*.i.instagram.com wss://www.instagram.com wss://edge-chat.instagram.com https://*.facebook.com https://*.fbcdn.net https://*.facebook.net chrome-extension://boadgeojelhgndaghljhdicfkmllpafd blob:; worker-src 'self' blob: https://www.instagram.com; frame-src 'self' https://instagram.com https://www.instagram.com https://*.instagram.com https://staticxx.facebook.com https://www.facebook.com https://web.facebook.com https://connect.facebook.net https://m.facebook.com; object-src 'none'; upgrade-insecure-requests
-< origin-trial: AuqWincgAuXeuu3KypEMnrrFEJHySaesyJS3EaIH40zvafzrU0Irhb7+5QwZpOqMZrPTjgvFl7Z5jJgy1dNAcQMAAAB6eyJvcmlnaW4iOiJodHRwczovL2luc3RhZ3JhbS5jb206NDQzIiwiZmVhdHVyZSI6IkNyb3NzT3JpZ2luT3BlbmVyUG9saWN5UmVwb3J0aW5nIiwiZXhwaXJ5IjoxNjEzNDExNjYyLCJpc1N1YmRvbWFpbiI6dHJ1ZX0=
-< report-to: {"group": "coop", "max_age": 86400, "endpoints": [{"url": "/security/coop_report/"}]}
-< cross-origin-opener-policy: same-origin-allow-popups;report-to="coop"
-< x-content-type-options: nosniff
-< x-xss-protection: 0
-< x-ig-push-state: c2
-< x-aed: 48
-< access-control-expose-headers: X-IG-Set-WWW-Claim
-< x-ig-request-elapsed-time-ms: 2670
-* Added cookie csrftoken="eqYUPd3nV0gDSWw43IYZjydziMndrn4l" for domain instagram.com, path /, expire 1675716638
-< set-cookie: csrftoken=eqYUPd3nV0gDSWw43IYZjydziMndrn4l; Domain=.instagram.com; expires=Mon, 06-Feb-2023 20:50:38 GMT; Max-Age=31449600; Path=/; Secure
-* Added cookie shbid=""12186\054704439941\0541675803038:01f7ae88d551d582830453f82d85ac7bbd6c938e80640e36193cea58fd72f9cb7f3be11a"" for domain instagram.com, path /, expire 1644871838
-< set-cookie: shbid="12186\054704439941\0541675803038:01f7ae88d551d582830453f82d85ac7bbd6c938e80640e36193cea58fd72f9cb7f3be11a"; Domain=.instagram.com; expires=Mon, 14-Feb-2022 20:50:38 GMT; HttpOnly; Max-Age=604800; Path=/; Secure
-* Added cookie shbts=""1644267038\054704439941\0541675803038:01f7fcef56ac3c9897b8518a025775d3deb9157e8d2ee92c100cba590f6a14903a6d14c3"" for domain instagram.com, path /, expire 1644871838
-< set-cookie: shbts="1644267038\054704439941\0541675803038:01f7fcef56ac3c9897b8518a025775d3deb9157e8d2ee92c100cba590f6a14903a6d14c3"; Domain=.instagram.com; expires=Mon, 14-Feb-2022 20:50:38 GMT; HttpOnly; Max-Age=604800; Path=/; Secure
-* Added cookie rur=""NAO\054704439941\0541675803038:01f76928a3c2ade10a27280e2a46138c1f737fcf522bb108eaac691bdce40a411cc12c35"" for domain instagram.com, path /, expire 0
-< set-cookie: rur="NAO\054704439941\0541675803038:01f76928a3c2ade10a27280e2a46138c1f737fcf522bb108eaac691bdce40a411cc12c35"; Domain=.instagram.com; HttpOnly; Path=/; Secure
-* Added cookie mid="YgGGGwAEAAFzXGBCRV6X_jv0cc7B" for domain instagram.com, path /, expire 1707339038
-< set-cookie: mid=YgGGGwAEAAFzXGBCRV6X_jv0cc7B; Domain=.instagram.com; expires=Wed, 07-Feb-2024 20:50:38 GMT; Max-Age=63072000; Path=/; Secure
-* Added cookie ds_user_id="704439941" for domain instagram.com, path /, expire 1652043038
-< set-cookie: ds_user_id=704439941; Domain=.instagram.com; expires=Sun, 08-May-2022 20:50:38 GMT; Max-Age=7776000; Path=/; Secure
-* Added cookie ig_did="DE7D9F2C-ABF2-4B24-8C43-3D5768F3CF2F" for domain instagram.com, path /, expire 1707339038
-< set-cookie: ig_did=DE7D9F2C-ABF2-4B24-8C43-3D5768F3CF2F; Domain=.instagram.com; expires=Wed, 07-Feb-2024 20:50:38 GMT; HttpOnly; Max-Age=63072000; Path=/; Secure
-< content-length: 646703
-< x-ig-origin-region: nao
-< x-fb-trip-id: 1679558926
-< alt-svc: h3=":443"; ma=3600,h3-29=":443"; ma=3600
-< 
-* Connection #0 to host www.instagram.com left intact
-* Found bundle for host www.instagram.com: 0x7fe8fa41dd70 [can multiplex]
-* Re-using existing connection! (#0) with host www.instagram.com
-* Connected to www.instagram.com (157.240.195.174) port 443 (#0)
-* Using Stream ID: 3 (easy handle 0x7fe8f8998c00)
-> GET /p/CZsKkrmIJcS/?__a=1 HTTP/2
-Host: www.instagram.com
-user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
-accept: */*
-referer: https://www.instagram.com/p/CZsKkrmIJcS
-cookie: ds_user_id=704439941; csrftoken=eqYUPd3nV0gDSWw43IYZjydziMndrn4l; ig_did=DE7D9F2C-ABF2-4B24-8C43-3D5768F3CF2F; shbts="1644267038\054704439941\0541675803038:01f7fcef56ac3c9897b8518a025775d3deb9157e8d2ee92c100cba590f6a14903a6d14c3"; shbid="12186\054704439941\0541675803038:01f7ae88d551d582830453f82d85ac7bbd6c938e80640e36193cea58fd72f9cb7f3be11a"; mid=YgGGGwAEAAFzXGBCRV6X_jv0cc7B; rur="NAO\054704439941\0541675803038:01f76928a3c2ade10a27280e2a46138c1f737fcf522bb108eaac691bdce40a411cc12c35"; sessionid=704439941%3AyEbnUQlAQofnNh%3A7; csrftoken=eqYUPd3nV0gDSWw43IYZjydziMndrn4l;
-
-< HTTP/2 200 
-< content-type: application/json; charset=utf-8
-< x-robots-tag: noindex
-< vary: Accept-Language, Cookie, Accept-Encoding
-< content-language: en
-< date: Mon, 07 Feb 2022 20:50:39 GMT
-< strict-transport-security: max-age=31536000
-< cache-control: private, no-cache, no-store, must-revalidate
-< pragma: no-cache
-< expires: Sat, 01 Jan 2000 00:00:00 GMT
-< x-frame-options: SAMEORIGIN
-< content-security-policy: report-uri https://www.instagram.com/security/csp_report/; default-src 'self' https://www.instagram.com; img-src data: blob: https://*.fbcdn.net https://*.instagram.com https://*.cdninstagram.com https://*.facebook.com https://*.fbsbx.com https://*.giphy.com; font-src data: https://*.fbcdn.net https://*.instagram.com https://*.cdninstagram.com; media-src 'self' blob: https://www.instagram.com https://*.cdninstagram.com https://*.fbcdn.net; manifest-src 'self' https://www.instagram.com; script-src 'self' https://instagram.com https://www.instagram.com https://*.www.instagram.com https://*.cdninstagram.com wss://www.instagram.com https://*.facebook.com https://*.fbcdn.net https://*.facebook.net 'unsafe-inline' 'unsafe-eval' blob:; style-src 'self' https://*.www.instagram.com https://www.instagram.com 'unsafe-inline'; connect-src 'self' https://instagram.com https://www.instagram.com https://*.www.instagram.com https://graph.instagram.com https://*.graph.instagram.com https://i.instagram.com/graphql_www https://graphql.instagram.com https://*.cdninstagram.com https://api.instagram.com https://i.instagram.com https://*.i.instagram.com wss://www.instagram.com wss://edge-chat.instagram.com https://*.facebook.com https://*.fbcdn.net https://*.facebook.net chrome-extension://boadgeojelhgndaghljhdicfkmllpafd blob:; worker-src 'self' blob: https://www.instagram.com; frame-src 'self' https://instagram.com https://www.instagram.com https://*.instagram.com https://staticxx.facebook.com https://www.facebook.com https://web.facebook.com https://connect.facebook.net https://m.facebook.com; object-src 'none'; upgrade-insecure-requests
-< origin-trial: AuqWincgAuXeuu3KypEMnrrFEJHySaesyJS3EaIH40zvafzrU0Irhb7+5QwZpOqMZrPTjgvFl7Z5jJgy1dNAcQMAAAB6eyJvcmlnaW4iOiJodHRwczovL2luc3RhZ3JhbS5jb206NDQzIiwiZmVhdHVyZSI6IkNyb3NzT3JpZ2luT3BlbmVyUG9saWN5UmVwb3J0aW5nIiwiZXhwaXJ5IjoxNjEzNDExNjYyLCJpc1N1YmRvbWFpbiI6dHJ1ZX0=
-< report-to: {"group": "coop", "max_age": 86400, "endpoints": [{"url": "/security/coop_report/"}]}
-< cross-origin-opener-policy: same-origin-allow-popups;report-to="coop"
-< x-content-type-options: nosniff
-< x-xss-protection: 0
-< x-ig-push-state: c2
-< x-aed: 48
-< access-control-expose-headers: X-IG-Set-WWW-Claim
-< x-ig-request-elapsed-time-ms: 299
-* Replaced cookie csrftoken="eqYUPd3nV0gDSWw43IYZjydziMndrn4l" for domain instagram.com, path /, expire 1675716639
-< set-cookie: csrftoken=eqYUPd3nV0gDSWw43IYZjydziMndrn4l; Domain=.instagram.com; expires=Mon, 06-Feb-2023 20:50:39 GMT; Max-Age=31449600; Path=/; Secure
-* Replaced cookie rur=""NAO\054704439941\0541675803039:01f713ebb3076768e6057f99540db054c57f6e2f5355032a41425886dc4521ae96bd9648"" for domain instagram.com, path /, expire 0
-< set-cookie: rur="NAO\054704439941\0541675803039:01f713ebb3076768e6057f99540db054c57f6e2f5355032a41425886dc4521ae96bd9648"; Domain=.instagram.com; HttpOnly; Path=/; Secure
-* Replaced cookie ds_user_id="704439941" for domain instagram.com, path /, expire 1652043039
-< set-cookie: ds_user_id=704439941; Domain=.instagram.com; expires=Sun, 08-May-2022 20:50:39 GMT; Max-Age=7776000; Path=/; Secure
-< content-length: 7085
-< x-ig-origin-region: nao
-< x-fb-trip-id: 1679558926
-< alt-svc: h3=":443"; ma=3600,h3-29=":443"; ma=3600
-< 
-* Connection #0 to host www.instagram.com left intact
-*   Trying 2c0f:fc88:36:0:face:b00c:3333:a3f:443...
-* TCP_NODELAY set
-* Immediate connect fail for 2c0f:fc88:36:0:face:b00c:3333:a3f: No route to host
-*   Trying 197.199.233.33:443...
-* TCP_NODELAY set
-* Connected to instagram.faly1-2.fna.fbcdn.net (197.199.233.33) port 443 (#1)
-* ALPN, offering h2
-* ALPN, offering http/1.1
-* Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
-* successfully set certificate verify locations:
-*   CAfile: /Applications/MAMP/Library/OpenSSL/cert.pem
-  CApath: none
-* SSL connection using TLSv1.2 / ECDHE-ECDSA-AES128-GCM-SHA256
-* ALPN, server accepted to use h2
-* Server certificate:
-*  subject: C=US; ST=California; L=Menlo Park; O=Facebook, Inc.; CN=*.faly1-2.fna.fbcdn.net
-*  start date: Dec 12 00:00:00 2021 GMT
-*  expire date: Mar 12 23:59:59 2022 GMT
-*  subjectAltName: host "instagram.faly1-2.fna.fbcdn.net" matched cert's "*.faly1-2.fna.fbcdn.net"
-*  issuer: C=US; O=DigiCert Inc; OU=www.digicert.com; CN=DigiCert SHA2 High Assurance Server CA
-*  SSL certificate verify ok.
-* Using HTTP2, server supports multi-use
-* Connection state changed (HTTP/2 confirmed)
-* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
-* Using Stream ID: 1 (easy handle 0x7fe8f8998c00)
-> GET /v/t51.2885-15/e35/273431020_7277773135581199_6350776774547315046_n.jpg?_nc_ht=instagram.faly1-2.fna.fbcdn.net&_nc_cat=107&_nc_ohc=x05fHqeIuW8AX9YZOHu&edm=ABZsPhsBAAAA&ccb=7-4&ig_cache_key=Mjc2ODYzNDM3MjEwMjg1NDQxOA%3D%3D.2-ccb7-4&oh=00_AT-k7dgFSZl_DwN3iZCt5FynHh_3Y6Hy2i3BNLscL6eL7g&oe=62079182&_nc_sid=4efc9f HTTP/2
-Host: instagram.faly1-2.fna.fbcdn.net
-user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
-accept: */*
-referer: http://instagram.faly1-2.fna.fbcdn.net
-cookie: sessionid=704439941%3AyEbnUQlAQofnNh%3A7; csrftoken=eqYUPd3nV0gDSWw43IYZjydziMndrn4l;
-
-* Connection state changed (MAX_CONCURRENT_STREAMS == 100)!
-< HTTP/2 200 
-< last-modified: Mon, 07 Feb 2022 20:47:27 GMT
-< x-haystack-needlechecksum: 1787555372
-< x-needle-checksum: 3815071504
+< last-modified: Sat, 03 Dec 2016 21:09:50 GMT
+< etag: "c29ee9c803a1e43739c0a78c58af47de"
 < content-type: image/jpeg
-< content-length: 299851
-< content-digest: adler32=3314654037
-< timing-allow-origin: *
-< cache-control: max-age=1209600, no-transform
-< alt-svc: h3=":443"; ma=3600,h3-29=":443"; ma=3600
-< date: Mon, 07 Feb 2022 20:50:39 GMT
-< cross-origin-resource-policy: same-origin
-< x-frame-options: DENY
+< cache-control: public, max-age=31536000
+< accept-ranges: bytes
+< date: Sat, 16 Jul 2022 20:44:14 GMT
+< age: 1506031
+< x-served-by: cache-iad-kcgs7200082-IAD, cache-mxp6948-MXP
+< x-cache: HIT, HIT
+< x-cache-hits: 1, 1
+< x-timer: S1658004255.970317,VS0,VE2
+< strict-transport-security: max-age=300
+< access-control-allow-methods: GET, OPTIONS
+< access-control-allow-origin: *
+< server: cat factory 1.0
+< x-content-type-options: nosniff
+< content-length: 8457
 < 
-* Connection #1 to host instagram.faly1-2.fna.fbcdn.net left intact
+* Connection #2 to host i.imgur.com left intact
+* Hostname localhost was found in DNS cache
 *   Trying ::1:80...
 * TCP_NODELAY set
-* Connected to localhost (::1) port 80 (#2)
-> GET /wordpress/wp-content/uploads/2022/02/273431020_7277773135581199_6350776774547315046_n.jpg HTTP/1.1
+* Connected to localhost (::1) port 80 (#3)
+> GET /wordpress/wp-content/uploads/2020/06/RBVKrWl.jpg HTTP/1.1
+Host: localhost
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
+Accept: */*
+Referer: http://i.imgur.com
+
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Date: Sat, 16 Jul 2022 20:44:15 GMT
+< Server: Apache/2.4.46 (Unix) OpenSSL/1.0.2u PHP/8.0.0 mod_wsgi/3.5 Python/2.7.13 mod_fastcgi/mod_fastcgi-SNAP-0910052141 mod_perl/2.0.11 Perl/v5.30.1
+< Last-Modified: Tue, 09 Jun 2020 22:25:34 GMT
+< ETag: "2109-5a7ae34b55380"
+< Accept-Ranges: bytes
+< Content-Length: 8457
+< Content-Type: image/jpeg
+< 
+* Connection #3 to host localhost left intact
+* Found bundle for host i.imgur.com: 0x7fe16573ad40 [can multiplex]
+* Re-using existing connection! (#2) with host i.imgur.com
+* Connected to i.imgur.com (151.101.240.193) port 443 (#2)
+* Using Stream ID: 3 (easy handle 0x7fe166118200)
+> GET /YgpMeUW.png HTTP/2
+Host: i.imgur.com
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
+accept: */*
+referer: http://i.imgur.com
+
+< HTTP/2 200 
+< last-modified: Sat, 03 Dec 2016 21:22:25 GMT
+< etag: "36d88af1b34cea95093a74ed477645d3"
+< content-type: image/png
+< cache-control: public, max-age=31536000
+< accept-ranges: bytes
+< date: Sat, 16 Jul 2022 20:44:15 GMT
+< age: 1590962
+< x-served-by: cache-iad-kcgs7200044-IAD, cache-mxp6948-MXP
+< x-cache: HIT, HIT
+< x-cache-hits: 1, 1
+< x-timer: S1658004255.050202,VS0,VE1
+< strict-transport-security: max-age=300
+< access-control-allow-methods: GET, OPTIONS
+< access-control-allow-origin: *
+< server: cat factory 1.0
+< x-content-type-options: nosniff
+< content-length: 35837
+< 
+* Connection #2 to host i.imgur.com left intact
+* Found bundle for host localhost: 0x7fe167b5af20 [serially]
+* Can not multiplex, even if we wanted to!
+* Re-using existing connection! (#3) with host localhost
+* Connected to localhost (::1) port 80 (#3)
+> GET /wordpress/wp-content/uploads/2020/06/YgpMeUW.png HTTP/1.1
+Host: localhost
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
+Accept: */*
+Referer: http://i.imgur.com
+
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Date: Sat, 16 Jul 2022 20:44:15 GMT
+< Server: Apache/2.4.46 (Unix) OpenSSL/1.0.2u PHP/8.0.0 mod_wsgi/3.5 Python/2.7.13 mod_fastcgi/mod_fastcgi-SNAP-0910052141 mod_perl/2.0.11 Perl/v5.30.1
+< Last-Modified: Tue, 09 Jun 2020 22:25:34 GMT
+< ETag: "8bfd-5a7ae34b55380"
+< Accept-Ranges: bytes
+< Content-Length: 35837
+< Content-Type: image/png
+< 
+* Connection #3 to host localhost left intact
+* Found bundle for host localhost: 0x7fe167b5af20 [serially]
+* Can not multiplex, even if we wanted to!
+* Re-using existing connection! (#3) with host localhost
+* Connected to localhost (::1) port 80 (#3)
+> GET /wordpress/wp-content/uploads/2022/07/cryptosigx-x400-thumb.jpg HTTP/1.1
 Host: localhost
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
 Accept: */*
 Referer: http://localhost
-Cookie: sessionid=704439941%3AyEbnUQlAQofnNh%3A7; csrftoken=eqYUPd3nV0gDSWw43IYZjydziMndrn4l;
 
 * Mark bundle as not supporting multiuse
 < HTTP/1.1 200 OK
-< Date: Mon, 07 Feb 2022 20:50:40 GMT
+< Date: Sat, 16 Jul 2022 20:44:15 GMT
 < Server: Apache/2.4.46 (Unix) OpenSSL/1.0.2u PHP/8.0.0 mod_wsgi/3.5 Python/2.7.13 mod_fastcgi/mod_fastcgi-SNAP-0910052141 mod_perl/2.0.11 Perl/v5.30.1
-< Last-Modified: Mon, 07 Feb 2022 20:50:39 GMT
-< ETag: "4934b-5d773c0c685c0"
+< Last-Modified: Sat, 16 Jul 2022 20:44:14 GMT
+< ETag: "103ec-5e3f232988380"
 < Accept-Ranges: bytes
-< Content-Length: 299851
+< Content-Length: 66540
 < Content-Type: image/jpeg
 < 
-* Connection #2 to host localhost left intact
+* Connection #3 to host localhost left intact

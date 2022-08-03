@@ -171,6 +171,7 @@ class WpAutomaticReddit extends wp_automatic {
 		echo '<ol>';
 		
 		foreach ( $allItms as $itemTxt ) {
+
 			
 			$item = array ();
 			
@@ -260,12 +261,31 @@ class WpAutomaticReddit extends wp_automatic {
 				
 				// gifs
 				if (trim ( $item ['item_mp4'] ) != '' || isset ( $item ['item_embed'] )) {
+				
+				 
 					
-					// video
-					if (! in_array ( 'OPT_RD_POST_VID', $camp_opt )) {
-						echo '<-- Gif/Vid skipping...';
-						continue;
+					if( in_array ( 'OPT_RD_POST_VIDS', $camp_opt ) && isset( $itemTxt->data->is_video ) && $itemTxt->data->is_video == 1  ){
+						
+						echo '<-- Video ...';
+						
+					}elseif( in_array ( 'OPT_RD_POST_GIFS', $camp_opt ) && isset( $itemTxt->data->is_video ) && $itemTxt->data->is_video == ''  ){
+						echo '<-- GIF ...';
+					
+					// video & gif
+					}elseif ( !  in_array ( 'OPT_RD_POST_VID', $camp_opt )   ) {
+							
+							//backward compitablity
+							echo '<-- Gif/Vid skipping...';
+							continue;
+						 
+					
 					}
+					
+					
+				
+					
+					
+					
 				} elseif (trim ( $post_hint ) == '' || $post_hint == 'self') {
 					
 					// text

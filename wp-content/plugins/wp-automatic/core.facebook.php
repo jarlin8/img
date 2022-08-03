@@ -121,15 +121,18 @@ class WpAutomaticFacebook extends wp_automatic {
 			if (trim ( $cg_fb_from ) != 'events')
 				$cg_fb_from = 'posts';
 			
+			curl_setopt ( $this->ch, CURLOPT_REFERER, 'https://m.facebook.com/' );
 			//https://m.facebook.com/page_content_list_view/more/?page_id=5550296508&start_cursor=21&num_to_fetch=4&surface_type=timeline
 			$cg_fb_page_feed2 = $cg_fb_page_feed = "https://m.facebook.com/page_content_list_view/more/?page_id=" . $cg_fb_page_id . "&start_cursor=27&num_to_fetch=4&surface_type=timeline";
 			
 			// personal profiles
 			if ($cg_fb_source == 'profile') {
 				// https://m.facebook.com/profile/timeline/stream/?profile_id=837764889&replace_id=u_0_16
+				//curl_setopt ( $this->ch, CURLOPT_REFERER, 'https://m.facebook.com/' );
 				$cg_fb_page_feed2 = $cg_fb_page_feed = 'https://m.facebook.com/profile/timeline/stream/?profile_id=' . $cg_fb_page_id . '&replace_id=u_0_16';
 			} elseif ($cg_fb_source == 'group') {
 				// https://m.facebook.com/groups/1432743533609453?&multi_permalinks
+				//curl_setopt ( $this->ch, CURLOPT_REFERER, 'https://m.facebook.com/' );
 				$cg_fb_page_feed2 = $cg_fb_page_feed = 'https://m.facebook.com/groups/' . $cg_fb_page_id . '?&multi_permalinks';
 				
 				//https://mbasic.facebook.com/groups/212611592563841
@@ -202,6 +205,7 @@ class WpAutomaticFacebook extends wp_automatic {
 					
 					$exec = $this->curl_exec_follow ( $this->ch );
 					
+					
 				 
 				}
 			} else {
@@ -215,8 +219,7 @@ class WpAutomaticFacebook extends wp_automatic {
 				 
 			}
  
-			 
-			 
+			  
 			
 			$x = curl_error ( $this->ch );
 			

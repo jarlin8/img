@@ -112,6 +112,14 @@ foreach ( $post_types as $post_type ) {
 		                    </div>
 		                    
 		                    <div class="option clearfix">
+			                    <input   name="camp_options[]"  value="OPT_KEYWORD_EXACT_NO" type="checkbox">
+			                    <span class="option-title">
+										Exact term match (By default, the plugin looks for a word, enable this to check anywhere not required to be a word)  
+			                    </span>
+			                    <br>
+		                    </div>
+		                    
+		                    <div class="option clearfix">
 			                    <input   name="camp_options[]"  value="OPT_KEYWORD_CAT_FORGET" type="checkbox">
 			                    <span class="option-title">
 										If matches found, ignore fixed chosen categories above 

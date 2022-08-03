@@ -33,7 +33,9 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		 echo '<br>Building a feed from a fixed list';
 		 
 		 
-		 $found_links = $found_titles = array_filter(explode("\n" , $camp_general['cg_multi_posts_list'] ));
+		 $found_links = $found_titles = array_values( array_filter( array_map('trim', explode("\n" , $camp_general['cg_multi_posts_list'] )  )     )  );
+		 
+		  
 		
 	} else {
 		
@@ -248,10 +250,15 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			echo '<-- ' . strlen($exec) . ' Chars returned';
 		}
 		
+	 
+		
 		// base URL
 		preg_match ( '{<base href="(.*?)"}', $exec, $base_matches );
 		$base_url = (isset ( $base_matches [1] ) && trim ( $base_matches [1] ) != '') ? trim ( $base_matches [1] ) : '';
 		
+		//relative path fix 
+		$exec = wp_automatic_fix_relative_paths ( $exec, $cg_ml_source );
+	  
 		// loading the dom
 		require_once 'inc/class.dom.php';
 		$wpAutomaticDom = new wpAutomaticDom ( $exec );
@@ -338,27 +345,32 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			$finalContent = '';
 			$i = 0;
 			foreach ( $cg_ml_lnk_regex as $cg_ml_lnk_regex_s ) {
+				 
+				echo '<br>Extracting content by REGEX : ' . htmlentities (  ( $cg_ml_lnk_regex_s ) );
 				
-				echo '<br>Extracting content by REGEX : ' . htmlentities ( stripslashes ( $cg_ml_lnk_regex_s ) );
-				
-				$content = $wpAutomaticDom->getContentByRegex ( stripslashes ( $cg_ml_lnk_regex_s ) );
+				$content = $wpAutomaticDom->getContentByRegex (  ( $cg_ml_lnk_regex_s ) );
 				
 				$content = implode ( "\n", $content );
 				
 				echo '<-- ' . strlen ( $content ) . ' chars';
 				
 				
+				
 				if (trim ( $content ) != '') {
 					$finalContent .= $content . "\n";
 				}
+				
+
 				
 				$i ++;
 			}
 		}
 		
+		
+		
 		if ($cg_ml_lnk_method == 'css' || $cg_ml_lnk_method == 'regex') {
 			
-			// get links
+			// Get links from html <a href="https://example.com"></a>
 			preg_match_all ( '{href\s*?=\s*?["|\'](.*?)["|\'].*?>(.*?)</a>}s', $finalContent, $link_matches );
 			
 			if (count ( $link_matches [1] ) == 0) {
@@ -511,6 +523,8 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 					$finalContent .= $content . "\n";
 				}
 				
+				
+				
 				$i ++;
 			}
 		} elseif ($cg_ml_cnt_method == 'fixed') {
@@ -597,7 +611,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			echo '<br>No pagination info';
 			delete_post_meta ( $campaign->camp_id, 'wp_automatic_nextpage' );
 		}
-		
+ 
 		// good we have links, let us build a feed
 		echo '<br>Approved found links: ' . count ( $found_links );
 		

@@ -76,7 +76,10 @@ class wpAutomaticDom {
 		
 		try {
 			$internalErrors = libxml_use_internal_errors(true);
+			
+			if($html == '') $html = '<html></html>';
 			@$this->doc->loadHTML($html);
+			
 			libxml_use_internal_errors($internalErrors);
 			 
 		} catch (Exception $e) {

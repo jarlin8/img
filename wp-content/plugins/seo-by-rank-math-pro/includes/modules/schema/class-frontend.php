@@ -40,6 +40,7 @@ class Frontend {
 		$this->filter( 'rank_math/schema/valid_types', 'valid_types' );
 		$this->filter( 'rank_math/snippet/rich_snippet_product_entity', 'add_manufacturer_property' );
 		$this->filter( 'rank_math/snippet/rich_snippet_videoobject_entity', 'convert_familyfriendly_property' );
+		$this->filter( 'rank_math/snippet/rich_snippet_podcastepisode_entity', 'convert_familyfriendly_property' );
 
 		new Display_Conditions();
 		new Snippet_Pro_Shortcode();
