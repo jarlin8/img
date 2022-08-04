@@ -9,14 +9,15 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\ObjectCaches\Concerns;
 
-use Exception;
+use Throwable;
+use LogicException;
 
 use RedisCachePro\Configuration\Configuration;
 
@@ -56,7 +57,7 @@ trait FlushesNetworks
      * will default to `flush_network` configuration option.
      *
      * @param  int  $siteId
-     * @param  string  $flush_network
+     * @param  string|null  $flush_network
      *
      * @return bool
      */
@@ -70,6 +71,10 @@ trait FlushesNetworks
             return $this->flush();
         }
 
+        if ($this->config->cluster) {
+            throw new LogicException('`flushBlog()` is not supported when using Redis clusters');
+        }
+
         $originalBlogId = $this->blogId;
         $this->blogId = $siteId;
 
@@ -78,7 +83,7 @@ trait FlushesNetworks
         $command = $this->config->async_flush ? 'UNLINK' : 'DEL';
 
         $patterns = [
-            str_replace('cafebabe:', '', $this->id('*', dechex(3405691582))),
+            str_replace(':cafebabe', '', $this->id('*', dechex(3405691582))),
         ];
 
         if ($flush_network === Configuration::NETWORK_FLUSH_GLOBAL) {
@@ -91,7 +96,7 @@ trait FlushesNetworks
 
         try {
             $this->connection->eval($script, array_merge($patterns, [$command]), count($patterns));
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $this->error($exception);
 
             return false;

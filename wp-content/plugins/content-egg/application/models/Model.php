@@ -322,6 +322,7 @@ abstract class Model {
                 $query .= $this->getDb()->prepare($placeholder, $items[$j]) . ', ';
             }
             $query = rtrim($query, " ,") . ';';
+
             $this->getDb()->query($query);
         }
     }

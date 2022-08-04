@@ -3,16 +3,14 @@
  * Plugin Name: Object Cache Pro (MU)
  * Plugin URI: https://objectcache.pro
  * Description: A business class Redis object cache backend for WordPress.
- * Version: 1.14.3
- * Author: Rhubarb Group
- * Author URI: https://rhubarb.group
+ * Version: 1.15.2
+ * Author: 三文雨公园破解
+ * Author URI: https://tyubar.com/1191.html
  * License: Proprietary
- * Requires PHP: 7.0
+ * Requires PHP: 7.2
  */
 
-if (! defined('ABSPATH')) {
-    exit;
-}
+defined('ABSPATH') || exit;
 
 define('RedisCachePro\Basename', basename(__FILE__));
 
@@ -32,8 +30,8 @@ foreach ([
     }
 }
 
-error_log('objectcache.critical: Failed to locate and load Object Cache Pro plugin.');
+error_log('objectcache.critical: Failed to locate and load Object Cache Pro plugin');
 
 if (defined('WP_DEBUG') && WP_DEBUG) {
-    throw new RuntimeException('Failed to locate and load Object Cache Pro plugin.');
+    throw new RuntimeException('Failed to locate and load Object Cache Pro plugin');
 }

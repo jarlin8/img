@@ -192,6 +192,21 @@ abstract class ParserModule extends Module {
 
     public function doMultipleRequests($keyword, $query_params = array(), $is_autoupdate = false)
     {
+        $groups = array();
+
+        if (!\apply_filters('cegg_disable_group_matching', false))
+        {
+            $parts = explode('->', $keyword);
+            if (count($parts) == 2)
+            {
+                $groups = explode(',', $parts[1]);
+                $groups = array_map('trim', $groups);
+                $groups = array_map('sanitize_text_field', $groups);
+
+                $keyword = trim($parts[0]);
+            }
+        }
+
         if (!\apply_filters('cegg_disable_multiple_keywords', false))
         {
             $keywords = explode(',', $keyword, 10);
@@ -210,7 +225,23 @@ abstract class ParserModule extends Module {
                 sleep(1);
             }
 
-            $results = array_merge($results, $this->doRequest($keyword, $query_params, $is_autoupdate));
+            try
+            {
+                $data = $this->doRequest($keyword, $query_params, $is_autoupdate);
+            } catch (\Exception $e)
+            {
+                continue;
+            }
+
+            if (!empty($groups[$i]))
+            {
+                foreach ($data as $key => $d)
+                {
+                    $data[$key]->group = $groups[$i];
+                }
+            }
+
+            $results = array_merge($results, $data);
         }
 
         $results = self::filterDuplicateItems($results);

@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -21,6 +21,13 @@ use RedisCachePro\Configuration\Configuration;
 
 class RelayObjectCache extends PhpRedisObjectCache
 {
+    /**
+     * The client name.
+     *
+     * @var string
+     */
+    const Client = 'Relay';
+
     /**
      * Whether Relay is using waiting for invalidation events.
      *
@@ -39,7 +46,7 @@ class RelayObjectCache extends PhpRedisObjectCache
         $this->config = $config;
         $this->connection = $connection;
         $this->log = $this->config->logger;
-        $this->shouldInvalidate = $this->config->relay_listeners;
+        $this->shouldInvalidate = $this->config->relay->listeners;
 
         if ($this->shouldInvalidate) {
             $this->connection->onInvalidated(
@@ -56,13 +63,13 @@ class RelayObjectCache extends PhpRedisObjectCache
     /**
      * Adds data to the cache, if the cache key doesn't already exist.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  mixed  $data
      * @param  string  $group
      * @param  int  $expire
      * @return bool
      */
-    public function add(string $key, $data, string $group = 'default', int $expire = 0): bool
+    public function add($key, $data, string $group = 'default', int $expire = 0): bool
     {
         $this->shouldInvalidate
             && $this->connection->dispatchEvents();
@@ -73,12 +80,12 @@ class RelayObjectCache extends PhpRedisObjectCache
     /**
      * Decrements numeric cache item's value.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  int  $offset
      * @param  string  $group
-     * @return false|int
+     * @return int|false
      */
-    public function decr(string $key, int $offset = 1, string $group = 'default')
+    public function decr($key, int $offset = 1, string $group = 'default')
     {
         $this->shouldInvalidate
             && $this->connection->dispatchEvents();
@@ -89,11 +96,11 @@ class RelayObjectCache extends PhpRedisObjectCache
     /**
      * Removes the cache contents matching key and group.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
      * @return bool
      */
-    public function delete(string $key, string $group = 'default'): bool
+    public function delete($key, string $group = 'default'): bool
     {
         $this->shouldInvalidate
             && $this->connection->dispatchEvents();
@@ -104,13 +111,13 @@ class RelayObjectCache extends PhpRedisObjectCache
     /**
      * Retrieves the cache contents from the cache by key and group.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
      * @param  bool  $force
      * @param  bool  &$found
-     * @return bool|mixed
+     * @return mixed|false
      */
-    public function get(string $key, string $group = 'default', bool $force = false, &$found = null)
+    public function get($key, string $group = 'default', bool $force = false, &$found = null)
     {
         $this->shouldInvalidate
             && $this->connection->dispatchEvents();
@@ -137,11 +144,11 @@ class RelayObjectCache extends PhpRedisObjectCache
     /**
      * Whether the key exists in the cache.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
      * @return bool
      */
-    public function has(string $key, string $group = 'default'): bool
+    public function has($key, string $group = 'default'): bool
     {
         $this->shouldInvalidate
             && $this->connection->dispatchEvents();
@@ -152,12 +159,12 @@ class RelayObjectCache extends PhpRedisObjectCache
     /**
      * Increment numeric cache item's value.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  int  $offset
      * @param  string  $group
-     * @return false|int
+     * @return int|false
      */
-    public function incr(string $key, int $offset = 1, string $group = 'default')
+    public function incr($key, int $offset = 1, string $group = 'default')
     {
         $this->shouldInvalidate
             && $this->connection->dispatchEvents();
@@ -168,13 +175,13 @@ class RelayObjectCache extends PhpRedisObjectCache
     /**
      * Replaces the contents of the cache with new data.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  mixed  $data
      * @param  string  $group
      * @param  int  $expire
      * @return bool
      */
-    public function replace(string $key, $data, string $group = 'default', int $expire = 0): bool
+    public function replace($key, $data, string $group = 'default', int $expire = 0): bool
     {
         $this->shouldInvalidate
             && $this->connection->dispatchEvents();
@@ -185,13 +192,13 @@ class RelayObjectCache extends PhpRedisObjectCache
     /**
      * Saves the data to the cache.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  mixed  $data
      * @param  string  $group
      * @param  int  $expire
      * @return bool
      */
-    public function set(string $key, $data, string $group = 'default', int $expire = 0): bool
+    public function set($key, $data, string $group = 'default', int $expire = 0): bool
     {
         $this->shouldInvalidate
             && $this->connection->dispatchEvents();
@@ -216,7 +223,7 @@ class RelayObjectCache extends PhpRedisObjectCache
      */
     public function flushed()
     {
-        $this->flushMemory();
+        $this->flushRuntime();
     }
 
     /**

@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -78,7 +78,7 @@ class Diagnostic
      * Instantiates a new diagnostic instance for given `$name`.
      *
      * @param  string  $name
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public static function name($name)
     {
@@ -92,7 +92,7 @@ class Diagnostic
      * Add comment to diagnostic.
      *
      * @param  string  $comment
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function comment($comment)
     {
@@ -104,7 +104,7 @@ class Diagnostic
     /**
      * Turn on comment.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function withComment()
     {
@@ -127,7 +127,7 @@ class Diagnostic
      * Set diagnostic's value.
      *
      * @param  mixed  $value
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function value($value)
     {
@@ -140,7 +140,7 @@ class Diagnostic
      * Set diagnostic's values.
      *
      * @param  array  $values
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function values($values)
     {
@@ -157,7 +157,7 @@ class Diagnostic
      * Set diagnostic's value as success.
      *
      * @param  mixed  $value
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function success($value)
     {
@@ -181,7 +181,7 @@ class Diagnostic
      * Set diagnostic's value as warning.
      *
      * @param  mixed  $value
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function warning($value)
     {
@@ -205,7 +205,7 @@ class Diagnostic
      * Set diagnostic's value as error.
      *
      * @param  mixed  $value
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function error($value)
     {
@@ -240,7 +240,7 @@ class Diagnostic
      * Set diagnostic's value as JSON.
      *
      * @param  mixed  $json
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function json($json)
     {
@@ -253,7 +253,7 @@ class Diagnostic
      * Set diagnostic's value as formatted JSON.
      *
      * @param  mixed  $json
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function prettyJson($json)
     {

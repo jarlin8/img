@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -18,12 +18,14 @@ namespace RedisCachePro\Connectors;
 
 use Redis;
 use RedisCluster;
+use LogicException;
 
 use RedisCachePro\Configuration\Configuration;
 
 use RedisCachePro\Connections\PhpRedisConnection;
 use RedisCachePro\Connections\ConnectionInterface;
 use RedisCachePro\Connections\PhpRedisClusterConnection;
+use RedisCachePro\Connections\PhpRedisSentinelsConnection;
 use RedisCachePro\Connections\PhpRedisReplicatedConnection;
 
 use RedisCachePro\Exceptions\PhpRedisMissingException;
@@ -32,15 +34,24 @@ use RedisCachePro\Exceptions\PhpRedisOutdatedException;
 class PhpRedisConnector implements Connector
 {
     /**
-     * Ensure PhpRedis v3.1.1 or newer loaded.
+     * The minimum required PhpRedis version.
+     *
+     * @var string
      */
-    public static function boot(): void
+    const RequiredVersion = '3.1.1';
+
+    /**
+     * Ensure PhpRedis v3.1.1 or newer loaded.
+     *
+     * @return void
+     */
+    public static function boot(): void // phpcs:ignore PHPCompatibility
     {
         if (! extension_loaded('redis')) {
             throw new PhpRedisMissingException;
         }
 
-        if (version_compare(phpversion('redis'), '3.1.1', '<')) {
+        if (version_compare(phpversion('redis'), self::RequiredVersion, '<')) {
             throw new PhpRedisOutdatedException;
         }
     }
@@ -57,12 +68,19 @@ class PhpRedisConnector implements Connector
                 return \defined('\Redis::SERIALIZER_PHP');
             case Configuration::SERIALIZER_IGBINARY:
                 return \defined('\Redis::SERIALIZER_IGBINARY');
+            case Configuration::COMPRESSION_NONE:
+                return true;
             case Configuration::COMPRESSION_LZF:
                 return \defined('\Redis::COMPRESSION_LZF');
             case Configuration::COMPRESSION_LZ4:
                 return \defined('\Redis::COMPRESSION_LZ4');
             case Configuration::COMPRESSION_ZSTD:
                 return \defined('\Redis::COMPRESSION_ZSTD');
+            case 'retries':
+            case 'backoff':
+                return \version_compare(\phpversion('redis'), '5.3.5', '>=');
+            case 'tls':
+                return \version_compare(\phpversion('redis'), '5.3.2', '>=');
         }
 
         return false;
@@ -78,6 +96,10 @@ class PhpRedisConnector implements Connector
     {
         if ($config->cluster) {
             return static::connectToCluster($config);
+        }
+
+        if ($config->sentinels) {
+            return static::connectToSentinels($config);
         }
 
         if ($config->servers) {
@@ -187,6 +209,21 @@ class PhpRedisConnector implements Connector
         }
 
         return new PhpRedisClusterConnection($client, $config);
+    }
+
+    /**
+     * Create a new PhpRedis Sentinel connection.
+     *
+     * @param  \RedisCachePro\Configuration\Configuration  $config
+     * @return \RedisCachePro\Connections\PhpRedisSentinelsConnection
+     */
+    public static function connectToSentinels(Configuration $config): ConnectionInterface
+    {
+        if (version_compare(phpversion('redis'), '5.3.2', '<')) {
+            throw new LogicException('Redis Sentinel requires PhpRedis v5.3.2 or newer');
+        }
+
+        return new PhpRedisSentinelsConnection($config);
     }
 
     /**

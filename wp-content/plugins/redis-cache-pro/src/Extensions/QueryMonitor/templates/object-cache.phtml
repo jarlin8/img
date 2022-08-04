@@ -27,22 +27,24 @@
         </p>
     </section>
 
-    <section>
-        <h3>Timing</h3>
-        <p>
-            Request: <?php echo esc_html($data['ms_total']); ?> ms
-            <?php if (isset($data['ms_cache'])) : ?>
-                <br>
-                Cache: <?php echo esc_html($data['ms_cache']); ?> ms
-                <br>
-                <span class="qm-info">
-                    <?php echo esc_html($data['ms_cache_ratio']); ?>% of request
+    <?php if (isset($data['ms_total'])) : ?>
+        <section>
+            <h3>Timing</h3>
+            <p>
+                Request: <?php echo esc_html($data['ms_total']); ?> ms
+                <?php if (isset($data['ms_cache'])) : ?>
                     <br>
-                    <?php echo esc_html($data['ms_cache_median']); ?> ms median
-                </span>
-            <?php endif; ?>
-        </p>
-    </section>
+                    Cache: <?php echo esc_html($data['ms_cache']); ?> ms
+                    <br>
+                    <span class="qm-info">
+                        <?php echo esc_html($data['ms_cache_ratio']); ?>% of request
+                        <br>
+                        <?php echo esc_html($data['ms_cache_median']); ?> ms median
+                    </span>
+                <?php endif; ?>
+            </p>
+        </section>
+    <?php endif; ?>
 
     <section>
         <h3>Memory</h3>
@@ -78,7 +80,7 @@
     <div class="qm-boxed qm-boxed-wrap">
 
         <section>
-            <h3 style="color: #7c5018;">Errors</h3>
+            <h3 style="color: #ceea79;">Errors</h3>
 
             <table>
                 <tbody>
@@ -101,7 +103,7 @@
     <div class="qm-boxed qm-boxed-wrap">
 
         <section>
-            <h3 style="color: #7c5018;">License</h3>
+            <h3 style="color: #ceea79;">License</h3>
 
             <table>
                 <tbody>

@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -17,13 +17,19 @@ declare(strict_types=1);
 namespace RedisCachePro\Diagnostics;
 
 use ArrayAccess;
-use RuntimeException;
+use LogicException;
 
+use Redis;
 use WP_Error;
+use Relay\Relay;
 
 use RedisCachePro\License;
+use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Configuration\Configuration;
 use RedisCachePro\ObjectCaches\ObjectCacheInterface;
+
+use RedisCachePro\Connectors\RelayConnector;
+use RedisCachePro\Connectors\PhpRedisConnector;
 
 use const RedisCachePro\Basename;
 
@@ -138,6 +144,10 @@ class Diagnostics implements ArrayAccess
 
         $this->data[self::GENERAL]['license'] = $this->license();
 
+        if (extension_loaded('relay')) {
+            $this->data[self::GENERAL]['relay-license'] = $this->relayLicense();
+        }
+
         if ($evictionPolicy = $this->evictionPolicy()) {
             $this->data[self::GENERAL]['eviction-policy'] = $evictionPolicy;
         }
@@ -164,8 +174,6 @@ class Diagnostics implements ArrayAccess
             );
         }
 
-        $this->data[self::GENERAL]['compressions'] = $this->compressions();
-
         if ($this->isDisabledUsingEnvVar()) {
             $this->data[self::GENERAL]['disabled'] = Diagnostic::name('Disabled')
                 ->error('Using WP_REDIS_DISABLED environment variable');
@@ -176,17 +184,21 @@ class Diagnostics implements ArrayAccess
                 ->error('Using WP_REDIS_DISABLED constant');
         }
 
+        $this->data[self::GENERAL]['basename'] = Diagnostic::name('Basename')->value(Basename);
+
         $this->data[self::GENERAL]['mu'] = Diagnostic::name('Must-use')->value(
-            $this->isMustUse() ? 'Yes' : 'No'
+            self::isMustUse() ? 'Yes' : 'No'
         );
 
         $this->data[self::GENERAL]['vcs'] = Diagnostic::name('VCS')->value(
-            $this->usingVCS() ? 'Yes' : 'No'
+            self::usingVCS() ? 'Yes' : 'No'
         );
 
         $this->data[self::GENERAL]['host'] = Diagnostic::name('Hosting Provider')->value(
             self::host()
         );
+
+        $this->data[self::GENERAL]['compressions'] = $this->compressions();
     }
 
     /**
@@ -268,11 +280,6 @@ class Diagnostics implements ArrayAccess
     {
         $stats = $this->connection->memoize('stats');
 
-        $instance = array_search(
-            $this->connection->socketKey(),
-            array_column($stats['instances'], 'key')
-        );
-
         $this->data[self::STATISTICS]['relay-memory'] = Diagnostic::name('Relay Memory')
             ->value(sprintf(
                 '%s of %s',
@@ -280,7 +287,9 @@ class Diagnostics implements ArrayAccess
                 size_format($stats['memory']['total'])
             ));
 
-        $keys = $stats['instances'][$instance]['keys'] ?? null;
+        $keys = array_sum(array_map(function ($connection) {
+            return $connection['keys'][$this->config->database] ?? 0;
+        }, $stats['endpoints'][$this->connection->endpointId()]['connections'] ?? [])) ?: null;
 
         $this->data[self::STATISTICS]['relay-keys'] = Diagnostic::name('Relay Keys')
             ->value($keys);
@@ -387,7 +396,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Return the license status.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function license()
     {
@@ -404,16 +413,44 @@ class Diagnostics implements ArrayAccess
         }
 
         if ($license->isValid()) {
-            return $diagnostic->value(ucwords($license->state()));
+            return $diagnostic->value(ucwords((string) $license->state()));
         }
 
-        return $diagnostic->error(ucwords($license->state()));
+        return $diagnostic->error(ucwords((string) $license->state()));
+    }
+
+    /**
+     * Return Relay license status.
+     *
+     * @return \RedisCachePro\Diagnostics\Diagnostic
+     */
+    protected function relayLicense()
+    {
+        $diagnostic = Diagnostic::name('Relay License');
+
+        $license = Relay::license();
+
+        if (! empty($license['reason'])) {
+            $diagnostic->comment($license['reason']);
+        }
+
+        switch ($license['state']) {
+            case 'licensed':
+                return $diagnostic->success(ucwords((string) $license['state']));
+            case 'unlicensed':
+            case 'unknown':
+                return $diagnostic->warning(ucwords((string) $license['state']));
+            case 'suspended':
+                return $diagnostic->error(ucwords((string) $license['state']));
+            default:
+                return $diagnostic->value(ucwords((string) $license['state']));
+        }
     }
 
     /**
      * Return the object cache drop-in status.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function dropin()
     {
@@ -437,7 +474,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Returns the drop-in version, if present.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function dropinVersion()
     {
@@ -460,7 +497,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Returns Redis' eviction policy, if a connection is established.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function evictionPolicy()
     {
@@ -507,7 +544,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Returns details about the igbinary extension.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function igbinary()
     {
@@ -519,7 +556,7 @@ class Diagnostics implements ArrayAccess
 
         $version = phpversion('igbinary');
 
-        if (! defined('\Redis::SERIALIZER_IGBINARY')) {
+        if (! defined('Redis::SERIALIZER_IGBINARY')) {
             return $diagnostic->value($version)->comment('No PhpRedis support');
         }
 
@@ -529,7 +566,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Returns details about the PhpRedis extension.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function phpredis()
     {
@@ -541,8 +578,12 @@ class Diagnostics implements ArrayAccess
 
         $version = phpversion('redis');
 
-        if (version_compare($version, '3.1.1', '<')) {
+        if (version_compare($version, PhpRedisConnector::RequiredVersion, '<')) {
             return $diagnostic->error($version)->comment('Unsupported');
+        }
+
+        if (version_compare($version, '5.3.5', '<')) {
+            return $diagnostic->warning($version)->comment('Outdated');
         }
 
         return $diagnostic->value($version);
@@ -551,7 +592,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Returns details about the Relay extension.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function relay()
     {
@@ -563,6 +604,10 @@ class Diagnostics implements ArrayAccess
 
         $version = phpversion('relay');
 
+        if (version_compare($version, RelayConnector::RequiredVersion, '<')) {
+            return $diagnostic->error($version)->comment('Unsupported');
+        }
+
         return $diagnostic->value($version);
     }
 
@@ -572,7 +617,7 @@ class Diagnostics implements ArrayAccess
      * Outdated comment is based on:
      * https://www.php.net/supported-versions.php
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function phpVersion()
     {
@@ -612,7 +657,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Returns the status of the Redis connection.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function status()
     {
@@ -630,14 +675,18 @@ class Diagnostics implements ArrayAccess
     /**
      * Returns a list of supported compression algorithms.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function compressions()
     {
+        $client = $this->usingRelay()
+            ? Relay::class
+            : Redis::class;
+
         $algorithms = array_filter([
-            defined('\Redis::COMPRESSION_LZF') ? 'LZF' : null,
-            defined('\Redis::COMPRESSION_LZ4') ? 'LZ4' : null,
-            defined('\Redis::COMPRESSION_ZSTD') ? 'ZSTD' : null,
+            defined("{$client}::COMPRESSION_LZF") ? 'LZF' : null,
+            defined("{$client}::COMPRESSION_LZ4") ? 'LZ4' : null,
+            defined("{$client}::COMPRESSION_ZSTD") ? 'ZSTD' : null,
         ]);
 
         $diagnostic = Diagnostic::name('Supported compressions');
@@ -650,7 +699,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Returns the plugin version, if installed.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     protected function pluginVersion()
     {
@@ -664,7 +713,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Returns the Redis server version, if a connection is established.
      *
-     * @return \RedisCachePro\Diagnostic
+     * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function redisVersion()
     {
@@ -701,7 +750,7 @@ class Diagnostics implements ArrayAccess
     public function usingRelay()
     {
         if ($this->connection) {
-            return $this->connection instanceof \RedisCachePro\Connections\RelayConnection;
+            return $this->connection instanceof RelayConnection;
         }
 
         return false;
@@ -725,7 +774,7 @@ class Diagnostics implements ArrayAccess
      */
     public function isDisabledUsingConstant()
     {
-        return defined('\WP_REDIS_DISABLED') && \WP_REDIS_DISABLED;
+        return defined('WP_REDIS_DISABLED') && WP_REDIS_DISABLED;
     }
 
     /**
@@ -743,7 +792,7 @@ class Diagnostics implements ArrayAccess
      *
      * @return bool
      */
-    public function isMustUse()
+    public static function isMustUse()
     {
         static $mustuse;
 
@@ -759,7 +808,7 @@ class Diagnostics implements ArrayAccess
      *
      * @return bool
      */
-    public function usingVCS()
+    public static function usingVCS()
     {
         static $vcs;
 
@@ -777,13 +826,7 @@ class Diagnostics implements ArrayAccess
      */
     public function dropinExists()
     {
-        global $wp_filesystem;
-
-        if (! \WP_Filesystem()) {
-            return file_exists(WP_CONTENT_DIR . '/object-cache.php');
-        }
-
-        return $wp_filesystem->exists(WP_CONTENT_DIR . '/object-cache.php');
+        return file_exists(WP_CONTENT_DIR . '/object-cache.php');
     }
 
     /**
@@ -798,7 +841,7 @@ class Diagnostics implements ArrayAccess
 
         $isValid = $dropin['PluginURI'] === $plugin['PluginURI'];
 
-        $isValid = \apply_filters_deprecated(
+        $isValid = (bool) apply_filters_deprecated(
             'rediscache_validate_dropin',
             [$isValid, $dropin, $plugin],
             '1.14.0',
@@ -812,7 +855,7 @@ class Diagnostics implements ArrayAccess
          * @param  array  $dropin  The drop-in metadata.
          * @param  array  $plugin  The plugin metadata.
          */
-        return \apply_filters(
+        return (bool) apply_filters(
             'objectcache_validate_dropin',
             $isValid,
             $dropin,
@@ -832,7 +875,7 @@ class Diagnostics implements ArrayAccess
 
         $upToDate = version_compare($dropin['Version'], $plugin['Version'], '>=');
 
-        $upToDate = \apply_filters_deprecated(
+        $upToDate = (bool) apply_filters_deprecated(
             'rediscache_validate_dropin_version',
             [$upToDate, $dropin, $plugin],
             '1.14.0',
@@ -846,7 +889,7 @@ class Diagnostics implements ArrayAccess
          * @param  array  $dropin  The drop-in metadata.
          * @param  array  $plugin  The plugin metadata.
          */
-        return \apply_filters(
+        return (bool) apply_filters(
             'objectcache_validate_dropin_version',
             $upToDate,
             $dropin,
@@ -864,7 +907,7 @@ class Diagnostics implements ArrayAccess
         global $wp_filesystem;
 
         if (! WP_Filesystem()) {
-            return new WP_Error('fs', 'Failed to obtain filesystem access.');
+            return new WP_Error('fs', 'Failed to obtain filesystem write access.');
         }
 
         $stub = realpath(__DIR__ . '/../../stubs/object-cache.php');
@@ -919,7 +962,7 @@ class Diagnostics implements ArrayAccess
         }
 
         if (defined('WP_ENV')) {
-            return \WP_ENV;
+            return WP_ENV;
         }
     }
 
@@ -1066,13 +1109,11 @@ class Diagnostics implements ArrayAccess
      *
      * @param  mixed  $offset
      * @param  mixed  $value
-     *
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void // phpcs:ignore PHPCompatibility
     {
-        throw new RuntimeException('Diagnostics cannot be set.');
+        throw new LogicException('Diagnostics cannot be set');
     }
 
     /**
@@ -1081,9 +1122,8 @@ class Diagnostics implements ArrayAccess
      * @param  mixed  $offset
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void // phpcs:ignore PHPCompatibility
     {
-        throw new RuntimeException('Diagnostics cannot be unset.');
+        throw new LogicException('Diagnostics cannot be unset');
     }
 }

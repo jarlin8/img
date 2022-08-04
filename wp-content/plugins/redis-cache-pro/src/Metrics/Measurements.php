@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -32,6 +32,13 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
     protected $items = [];
 
     /**
+     * The cached results of extracted metric values.
+     *
+     * @var array
+     */
+    protected $cache = [];
+
+    /**
      * Get all of the items in the collection.
      *
      * @return array
@@ -49,6 +56,30 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
     public function count(): int
     {
         return count($this->items);
+    }
+
+    /**
+     * Returns an array of metric values.
+     *
+     * @param  string  $metric
+     * @return array
+     */
+    public function metricValues(string $metric)
+    {
+        if (isset($this->cache[$metric])) {
+            return $this->cache[$metric];
+        }
+
+        $this->cache[$metric] = array_filter(
+            array_map(function ($item) use ($metric) {
+                return $item->{$metric};
+            }, $this->items),
+            function ($value) {
+                return ! is_null($value);
+            }
+        );
+
+        return $this->cache[$metric];
     }
 
     /**
@@ -112,18 +143,27 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
      * @param  string  $metric
      * @return mixed
      */
+    public function max(string $metric)
+    {
+        $values = $this->metricValues($metric);
+
+        if (count($values)) {
+            return max($values);
+        }
+    }
+
+    /**
+     * Get the average value of a given metric.
+     *
+     * @param  string  $metric
+     * @return mixed
+     */
     public function mean(string $metric)
     {
-        $items = array_map(function ($item) use ($metric) {
-            return $item->{$metric};
-        }, $this->items);
+        $values = $this->metricValues($metric);
 
-        $items = array_filter($items, function ($value) {
-            return ! is_null($value);
-        });
-
-        if ($count = count($items)) {
-            return array_sum($items) / $count;
+        if ($count = count($values)) {
+            return array_sum($values) / $count;
         }
     }
 
@@ -135,13 +175,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
      */
     public function median(string $metric)
     {
-        $values = array_map(function ($item) use ($metric) {
-            return $item->{$metric};
-        }, $this->items);
-
-        $values = array_filter($values, function ($value) {
-            return ! is_null($value);
-        });
+        $values = $this->metricValues($metric);
 
         $count = count($values);
 
@@ -161,6 +195,94 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
+     * Get the given percentile of a given metric.
+     *
+     * @param  string  $metric
+     * @param  int  $percentile
+     * @return mixed
+     */
+    public function percentile(string $metric, int $percentile)
+    {
+        $values = $this->metricValues($metric);
+
+        $count = count($values);
+
+        if ($count === 0) {
+            return;
+        }
+
+        sort($values);
+
+        $index = ($percentile / 100) * ($count - 1);
+
+        if (floor($index) == $index) {
+            return $values[$index];
+        }
+
+        return ($values[floor($index)] + $values[ceil($index)]) / 2;
+    }
+
+    /**
+     * Get the 90th percentile of a given metric.
+     *
+     * @param  string  $metric
+     * @return mixed
+     */
+    public function p90(string $metric)
+    {
+        return $this->percentile($metric, 90);
+    }
+
+    /**
+     * Get the 95th percentile of a given metric.
+     *
+     * @param  string  $metric
+     * @return mixed
+     */
+    public function p95(string $metric)
+    {
+        return $this->percentile($metric, 95);
+    }
+
+    /**
+     * Get the 99th percentile of a given metric.
+     *
+     * @param  string  $metric
+     * @return mixed
+     */
+    public function p99(string $metric)
+    {
+        return $this->percentile($metric, 99);
+    }
+
+    /**
+     * Split the measurements into the time-based intervals.
+     *
+     * @param  int  $interval
+     * @return array
+     */
+    public function intervals(int $interval)
+    {
+        $intervals = [];
+        $iterator = $this->getIterator();
+
+        while ($iterator->valid()) {
+            $item = $iterator->current();
+            $timestamp = (int) $item->timestamp - (int) $item->timestamp % $interval;
+
+            if (! isset($intervals[$timestamp])) {
+                $intervals[$timestamp] = new self;
+            }
+
+            $intervals[$timestamp]->push($item);
+
+            $iterator->next();
+        }
+
+        return $intervals;
+    }
+
+    /**
      * Get the values of a given key.
      *
      * @param  string  $metric
@@ -176,7 +298,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
     /**
      * Push one or more items onto the end of the collection.
      *
-     * @param Measurement[]  $metrics
+     * @param  Measurement[]  $metrics
      * @return self
      */
     public function push(Measurement ...$metrics): self
@@ -216,8 +338,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
      * @param  mixed  $value
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void // phpcs:ignore PHPCompatibility
     {
         if (is_null($key)) {
             $this->items[] = $value;
@@ -232,8 +353,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
      * @param  string  $key
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($key)
+    public function offsetUnset($key): void // phpcs:ignore PHPCompatibility
     {
         unset($this->items[$key]);
     }

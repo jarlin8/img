@@ -12,7 +12,7 @@ class PhpRedisMissingException extends ObjectCacheException
             $sapi = PHP_SAPI;
 
             $message = implode(' ', [
-                'Object Cache Pro requires the PHP extension PhpRedis 3.1.1 or newer.',
+                'Object Cache Pro requires the `redis` PHP extension.',
                 "The PhpRedis extension is not loaded in this environment ({$sapi}).",
                 'If it was installed, be sure to load the extension in your php.ini and to restart your PHP and web server processes.',
             ]);

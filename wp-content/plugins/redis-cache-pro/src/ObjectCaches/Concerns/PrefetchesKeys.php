@@ -9,14 +9,14 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\ObjectCaches\Concerns;
 
-use Exception;
+use Throwable;
 use __PHP_Incomplete_Class;
 
 /**
@@ -164,10 +164,13 @@ trait PrefetchesKeys
 
         $script = file_get_contents(__DIR__ . '/../scripts/chunked-scan.lua');
         $command = $this->config->async_flush ? 'UNLINK' : 'DEL';
+        $pattern = is_null($this->config->cluster)
+            ? '*prefetches:*'
+            : '*{prefetches}:*';
 
         try {
-            $this->connection->eval($script, ['*prefetches:*', $command], 1);
-        } catch (Exception $exception) {
+            $this->connection->eval($script, [$pattern, $command], 1);
+        } catch (Throwable $exception) {
             $this->error($exception);
 
             return false;

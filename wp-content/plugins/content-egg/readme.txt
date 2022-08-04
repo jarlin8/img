@@ -17,6 +17,9 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+= 10.5.0 =
+* Improvement: Group matching by keyword search: keyword -> group name.
+
 = 10.4.0 =
 * Improvement: Bolcom module: New API authentication method.
 

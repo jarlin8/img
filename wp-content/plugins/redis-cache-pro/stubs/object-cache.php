@@ -3,15 +3,17 @@
  * Plugin Name: Object Cache Pro (Drop-in)
  * Plugin URI: https://objectcache.pro
  * Description: A business class Redis object cache backend for WordPress.
- * Version: 1.14.3
- * Author: Rhubarb Group
- * Author URI: https://rhubarb.group
+ * Version: 1.15.2
+ * Author: 三文雨公园破解
+ * Author URI: https://tyubar.com/1191.html
  * License: Proprietary
- * Requires PHP: 7.0
+ * Requires PHP: 7.2
  */
 
-if (! defined('ABSPATH')) {
-    exit;
+defined('ABSPATH') || exit;
+
+if (version_compare(PHP_VERSION, '7.2', '<')) {
+    return require_once ABSPATH . WPINC . '/cache.php';
 }
 
 if (defined('WP_REDIS_DISABLED') && WP_REDIS_DISABLED) {
@@ -46,8 +48,10 @@ foreach ([
     }
 }
 
-error_log('objectcache.critical: Failed to locate and load object cache API.');
+error_log('objectcache.critical: Failed to locate and load object cache API');
+
+$GLOBALS['wp_object_cache_errors'] = ['Failed to locate and load object cache API'];
 
 if (defined('WP_DEBUG') && WP_DEBUG) {
-    throw new RuntimeException('Failed to locate and load object cache API.');
+    throw new RuntimeException('Failed to locate and load object cache API');
 }

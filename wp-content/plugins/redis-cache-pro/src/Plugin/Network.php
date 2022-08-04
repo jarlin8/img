@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -58,6 +58,10 @@ trait Network
     {
         global $wp_object_cache;
 
+        if ($this->config->cluster) {
+            return;
+        }
+
         if (! $this->blogFlushingEnabled()) {
             return;
         }
@@ -81,7 +85,7 @@ trait Network
         $result = $wp_object_cache->flushBlog($blog_id);
         $url = add_query_arg(['updated' => $result ? 'blog-flushed' : 'blog-not-flushed'], wp_get_referer());
 
-        wp_safe_redirect($url);
+        wp_safe_redirect($url, 302, 'Object Cache Pro');
         exit;
     }
 

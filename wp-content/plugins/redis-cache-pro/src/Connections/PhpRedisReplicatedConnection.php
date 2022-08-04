@@ -9,12 +9,14 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Connections;
+
+use Redis;
 
 use RedisCachePro\Configuration\Configuration;
 use RedisCachePro\Connectors\PhpRedisConnector;
@@ -27,8 +29,9 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
         'KEYS', 'SCAN',
         'SUBSTR', 'STRLEN', 'GETRANGE', 'GETBIT', 'RANDOMKEY',
         'LLEN', 'LRANGE', 'LINDEX',
-        'SCARD', 'SISMEMBER', 'SINTER', 'SUNION', 'SDIFF', 'SMEMBERS', 'SSCAN', 'SRANDMEMBER',
-        'ZRANGE', 'ZREVRANGE', 'ZRANGEBYSCORE', 'ZREVRANGEBYSCORE', 'ZCARD', 'ZSCORE', 'ZCOUNT', 'ZRANK', 'ZREVRANK', 'ZSCAN', 'ZLEXCOUNT', 'ZRANGEBYLEX', 'ZREVRANGEBYLEX',
+        'SCARD', 'SISMEMBER', 'SMISMEMBER', 'SINTER', 'SUNION', 'SDIFF', 'SMEMBERS', 'SSCAN', 'SRANDMEMBER',
+        'ZRANGE', 'ZREVRANGE', 'ZRANGEBYSCORE', 'ZREVRANGEBYSCORE', 'ZRANGEBYLEX', 'ZREVRANGEBYLEX',
+        'ZCARD', 'ZSCORE', 'ZCOUNT', 'ZRANK', 'ZREVRANK', 'ZSCAN', 'ZLEXCOUNT', 'ZMSCORE', 'ZDIFF', 'ZINTER', 'ZUNION',
         'HGET', 'HMGET', 'HEXISTS', 'HLEN', 'HKEYS', 'HVALS', 'HGETALL', 'HSCAN', 'HSTRLEN',
         'PING', 'AUTH', 'SELECT', 'ECHO', 'QUIT',
         'OBJECT', 'TIME', 'PFCOUNT',
@@ -76,6 +79,46 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
             $this->discoverReplicas();
         }
 
+        $this->setPool();
+    }
+
+    /**
+     * Discovers and connects to the replicas from the master's configuration.
+     *
+     * @return void
+     */
+    protected function discoverReplicas()
+    {
+        $info = $this->master->info('replication');
+
+        if ($info['role'] !== 'master') {
+            throw new ConnectionException("Replicated master is a {$info['role']}");
+        }
+
+        foreach ($info as $key => $value) {
+            if (strpos((string) $key, 'slave') !== 0) {
+                continue;
+            }
+
+            $replica = null;
+
+            if (preg_match('/ip=(?P<host>.*),port=(?P<port>\d+)/', $value, $replica)) {
+                $config = clone $this->config;
+                $config->setHost($replica['host']);
+                $config->setPort($replica['port']);
+
+                $this->replicas[] = PhpRedisConnector::connectToInstance($config);
+            }
+        }
+    }
+
+    /**
+     * Set the pool based on the config's `replication_strategy`.
+     *
+     * @return void
+     */
+    protected function setPool()
+    {
         $strategy = $this->config->replication_strategy;
 
         if ($strategy === 'distribute') {
@@ -86,7 +129,7 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
 
         if (empty($this->replicas)) {
             throw new ConnectionException(
-                "No replicas configured/discovered for `{$strategy}` replication strategy."
+                "No replicas configured/discovered for `{$strategy}` replication strategy"
             );
         }
 
@@ -97,6 +140,26 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
         if ($strategy === 'concentrate') {
             $this->pool = [$this->replicas[array_rand($this->replicas)]];
         }
+    }
+
+    /**
+     * Returns the master's node information.
+     *
+     * @return \RedisCachePro\Connections\PhpRedisConnection
+     */
+    public function master()
+    {
+        return $this->master;
+    }
+
+    /**
+     * Returns the replica nodes information.
+     *
+     * @return \RedisCachePro\Connections\PhpRedisConnection[]
+     */
+    public function replicas()
+    {
+        return $this->replicas;
     }
 
     /**
@@ -111,9 +174,8 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
         $isReading = \in_array(\strtoupper($name), self::READ_COMMANDS);
 
         // send `alloptions` hash read requests to the master
-        if ($name === 'hgetall' && $this->config->split_alloptions) {
-            $isReading = \is_string($parameters[0] ?? null)
-                && \strpos($parameters[0], 'options:alloptions:hash') === false;
+        if ($isReading && $this->config->split_alloptions && \is_string($parameters[0] ?? null)) {
+            $isReading = \strpos($parameters[0], 'options:alloptions:') === false;
         }
 
         return $isReading
@@ -122,33 +184,37 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
     }
 
     /**
-     * Discovers and connects to the replicas from the master's configuration.
+     * Execute all `pipeline()` calls on master.
      *
-     * @return void
+     * @return object
      */
-    protected function discoverReplicas()
+    public function pipeline()
     {
-        $info = $this->master->info('replication');
+        return new Transaction(Redis::PIPELINE, $this->master);
+    }
 
-        if ($info['role'] !== 'master') {
-            throw new ConnectionException("Replicated master is a {$info['role']}.");
-        }
+    /**
+     * Execute all `multi()` calls on master.
+     *
+     * @param  int  $type
+     * @return object
+     */
+    public function multi(int $type = Redis::MULTI)
+    {
+        return new Transaction($type, $this->master);
+    }
 
-        foreach ($info as $key => $value) {
-            if (\strpos((string) $key, 'slave') !== 0) {
-                continue;
-            }
-
-            $replica = null;
-
-            if (\preg_match('/ip=(?P<host>.*),port=(?P<port>\d+)/', $value, $replica)) {
-                $config = clone $this->config;
-                $config->setHost($replica['host']);
-                $config->setPort($replica['port']);
-
-                $this->replicas[] = PhpRedisConnector::connectToInstance($config);
-            }
-        }
+    /**
+     * Send `scan()` calls to random node from pool.
+     *
+     * @param  int|null  $iterator
+     * @param  string|null  $pattern
+     * @param  int  $count
+     * @return array|false
+     */
+    public function scan(?int &$iterator, ?string $pattern = null, int $count = 0) // phpcs:ignore PHPCompatibility
+    {
+        return $this->pool[array_rand($this->pool)]->scan($iterator, $pattern, $count);
     }
 
     /**

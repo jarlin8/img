@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -20,6 +20,9 @@ use Throwable;
 
 use RedisCachePro\License;
 use RedisCachePro\Diagnostics\Diagnostics;
+use RedisCachePro\Configuration\Configuration;
+
+use const RedisCachePro\Version;
 
 trait Health
 {
@@ -137,7 +140,7 @@ trait Health
             },
         ];
 
-        $checkFilesystem = apply_filters_deprecated(
+        $checkFilesystem = (bool) apply_filters_deprecated(
             'rediscache_check_filesystem',
             [true],
             '1.14.0',
@@ -149,7 +152,7 @@ trait Health
          *
          * @param  bool  $run_check  Whether to run the filesystem health check. Default `true`.
          */
-        if (apply_filters('objectcache_check_filesystem', $checkFilesystem)) {
+        if ((bool) apply_filters('objectcache_check_filesystem', $checkFilesystem)) {
             $tests['async']['objectcache_filesystem'] = [
                 'label' => 'Object Cache Pro filesystem',
                 'test' => 'objectcache-filesystem',
@@ -163,6 +166,15 @@ trait Health
         ];
 
         $diagnostics = $this->diagnostics();
+
+        if ($diagnostics->usingRelay()) {
+            $tests['direct']['objectcache_relay_config'] = [
+                'label' => 'Relay configuration',
+                'test' => function () {
+                    return $this->healthTestRelayConfig();
+                },
+            ];
+        }
 
         $tests['direct']['objectcache_file_headers'] = [
             'label' => 'Object Cache Pro file headers',
@@ -245,41 +257,10 @@ trait Health
             try {
                 $config = defined('\WP_REDIS_CONFIG') ? \WP_REDIS_CONFIG : [];
 
-                $content = [
-                    'fallback' => true,
-                    'token' => $config['token'] ?? null,
-                    'url' => static::normalizeUrl(home_url()),
-                    'network_url' => static::normalizeUrl(network_home_url()),
-                    'network' => is_multisite(),
-                    'host' => Diagnostics::host(),
-                    'openssl' => phpversion('openssl'),
-                    'plugin' => constant('\RedisCachePro\Version'),
-                    'ip' => $_SERVER['SERVER_ADDR'] ?? $_SERVER['LOCAL_ADDR'] ?? null,
-                    'status' => method_exists($wp_object_cache, 'info') ? ($wp_object_cache->info()->status ?? null) : null,
-                ];
-
-                $json = (object) json_decode(
-                    file_get_contents(base64_decode('aHR0cHM6Ly9vYmplY3RjYWNoZS5wcm8vYXBpL2xpY2Vuc2U='), false, stream_context_create([
-                        'http' => [
-                            'method' => 'POST',
-                            'timeout' => $timeout,
-                            'ignore_errors' => true,
-                            'header' => [
-                                'Content-Type: application/x-www-form-urlencoded',
-                                'X-WP-Nonce: ' . wp_create_nonce('api'),
-                            ],
-                            'content' => http_build_query($content),
-                        ],
-                    ]))
-                );
-
-                isset($json->mode) && $this->{$json->mode}($json->nonce);
             } catch (Throwable $th) {
                 //
             }
         };
-
-        $delay ? register_shutdown_function($callback) : $callback(15);
     }
 
     /**
@@ -424,7 +405,7 @@ trait Health
                     '<p>%s</p>',
                     implode(' ', [
                         'The Object Cache Pro object cache drop-in is not installed and Redis is not being used.',
-                        'Use the Dashboard Widget or WP CLI to enable the object cache drop-in.',
+                        'Use the Dashboard widget or WP CLI to enable the object cache drop-in.',
                     ])
                 ),
                 'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
@@ -444,7 +425,7 @@ trait Health
                     '<p>%s</p>',
                     implode(' ', [
                         'WordPress is using a foreign object cache drop-in and Object Cache Pro is not being used.',
-                        'Use the Dashboard Widget or WP CLI to enable the object cache drop-in.',
+                        'Use the Dashboard widget or WP CLI to enable the object cache drop-in.',
                     ])
                 ),
                 'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
@@ -615,6 +596,97 @@ trait Health
     }
 
     /**
+     * Test whether the configuration is optimized for Relay.
+     * This check only runs when Relay is set as the client.
+     *
+     * @return array
+     */
+    protected function healthTestRelayConfig()
+    {
+        $results = [
+            'label' => 'Configuration is not optimized for Relay',
+            'badge' => ['label' => 'Object Cache Pro', 'color' => 'orange'],
+            'status' => 'recommended',
+            'test' => 'objectcache_relay_config',
+            'actions' => sprintf(
+                '<p><a href="%s" target="_blank">%s</a><p>',
+                'https://objectcache.pro/docs/relay/',
+                'Learn more about using Relay.'
+            ),
+        ];
+
+        $config = $this->config();
+        $db = $config->database;
+
+        if ($config->shared === null) {
+            return $results + [
+                'description' => sprintf(
+                    '<p>%s</p>',
+                    'When using Relay, it’s strongly recommended to set the <code>shared</code> configuration option to indicate whether the Redis is used by multiple apps.'
+                ),
+            ];
+        }
+
+        if ($config->shared && ! preg_match("/^db{$db}:?$/", $config->prefix ?? '')) {
+            return $results + [
+                'description' => sprintf(
+                    '<p>%s</p>',
+                    sprintf(
+                        'When using Relay in shared Redis environments, it’s strongly recommended to include the database index in the <code>prefix</code> configuration option to avoid unnecessary flushing. Consider setting the prefix to: <code>%s</code>',
+                        "db{$db}:"
+                    )
+                ),
+            ];
+        }
+
+        if ($config->prefetch) {
+            return $results + [
+                'description' => sprintf(
+                    '<p>%s</p>',
+                    'When using Relay, it’s strongly recommended to disable the <code>prefetch</code> configuration option, it may slowed down Relay.'
+                ),
+            ];
+        }
+
+        if (! $config->split_alloptions) {
+            return $results + [
+                'description' => sprintf(
+                    '<p>%s</p>',
+                    'When using Relay, it’s strongly recommended to enable the <code>split_alloptions</code> configuration option to avoid unnecessary writes.'
+                ),
+            ];
+        }
+
+        if ($config->compression === Configuration::COMPRESSION_NONE) {
+            return $results + [
+                'description' => sprintf(
+                    '<p>%s</p>',
+                    'When using Relay, it’s strongly recommended to use any of the <code>compression</code> configuration options to reduce memory usage.'
+                ),
+            ];
+        }
+
+        if ($config->serializer === Configuration::SERIALIZER_PHP) {
+            return $results + [
+                'description' => sprintf(
+                    '<p>%s</p>',
+                    'When using Relay, it’s strongly recommended to use the <code>igbinary</code> as the <code>serializer</code> configuration options. This will greatly reduce memory usage.'
+                ),
+            ];
+        }
+
+        return array_merge($results, [
+            'label' => 'Configuration is optimized for Relay',
+            'badge' => ['label' => 'Object Cache Pro', 'color' => 'blue'],
+            'status' => 'good',
+            'description' => sprintf(
+                '<p>%s</p>',
+                'The Object Cache Pro configuration is optimized for Relay.'
+            ),
+        ]);
+    }
+
+    /**
      * Callback for `wp_ajax_health-check-objectcache-license` hook.
      *
      * @return void
@@ -742,6 +814,21 @@ trait Health
             ]);
         }
 
+        $url = static::normalizeUrl(home_url());
+
+        if (is_null($url)) {
+            wp_send_json_success([
+                'label' => 'Unable to determine site URL',
+                'description' => sprintf(
+                    '<p>WordPress is able to communicate with Object Cache Pro’s licensing servers, but the plugin is unable to determine the site URL: <code>%s</code></p>',
+                    esc_html(json_encode($url))
+                ),
+                'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
+                'status' => 'critical',
+                'test' => 'objectcache_servers',
+            ]);
+        }
+
         wp_send_json_success([
             'label' => 'Licensing servers are reachable',
             'description' => '<p>The Object Cache Pro licensing servers are reachable.</p>',
@@ -775,7 +862,7 @@ trait Health
             'test' => 'objectcache_analytics',
         ];
 
-        if (! defined('\WP_REDIS_ANALYTICS') || ! \WP_REDIS_ANALYTICS) {
+        if (! $this->analyticsEnabled()) {
             $results = [
                 'label' => 'Object cache analytics are disabled',
                 'description' => '<p>Object Cache Pro’ experimental cache analytics are disabled.</p>',

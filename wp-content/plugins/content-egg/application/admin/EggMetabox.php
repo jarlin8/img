@@ -26,8 +26,8 @@ class EggMetabox {
 
     public function __construct()
     {
-       // if (Plugin::isActivated() && LManager::isNulled())
-      //   return;
+        if (Plugin::isActivated() && LManager::isNulled())
+            return;
 
         \add_action('add_meta_boxes', array($this, 'addMetabox'));
         \add_action('save_post', array($this, 'saveMeta'));

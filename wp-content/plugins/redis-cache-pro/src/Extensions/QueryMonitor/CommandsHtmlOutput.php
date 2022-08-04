@@ -45,22 +45,23 @@ class CommandsHtmlOutput extends QM_Output_Html
 
         if (! isset($data['commands'])) {
             $this->before_non_tabular_output();
-            echo $this->build_notice('The current object cache drop-in does not support listing commands.');
+
+            echo $this->build_notice(
+                'The current object cache drop-in does not support listing commands.'
+            );
+
             $this->after_non_tabular_output();
 
             return;
         }
 
         if (empty($data['commands'])) {
-            $notice = '
-                The current object cache drop-in did not log any commands, be sure to enable logging,
-                by setting <code>SAVEQUERIES</code> or <code>WP_DEBUG</code> to <code>true</code>.<br />
-                Alternatively you can set <code>debug</code> or <code>save_command</code> to
-                <code>true</code> in your `WP_REDIS_CONFIG</code>.
-            ';
-
             $this->before_non_tabular_output();
-            echo $this->build_notice($notice);
+
+            echo $this->build_notice(
+                file_get_contents(__DIR__ . '/templates/no-log.phtml')
+            );
+
             $this->after_non_tabular_output();
 
             return;

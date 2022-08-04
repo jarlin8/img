@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace RedisCachePro\Connectors;
 
 use Relay\Relay;
-use RuntimeException;
+use LogicException;
 
 use RedisCachePro\Configuration\Configuration;
 
@@ -30,15 +30,24 @@ use RedisCachePro\Exceptions\RelayOutdatedException;
 class RelayConnector implements Connector
 {
     /**
-     * Ensure Relay v0.2.2 or newer loaded.
+     * The minimum required Relay version.
+     *
+     * @var string
      */
-    public static function boot(): void
+    const RequiredVersion = '0.4.0-dev';
+
+    /**
+     * Ensure the minimum required Relay version is loaded.
+     *
+     * @return void
+     */
+    public static function boot(): void // phpcs:ignore PHPCompatibility
     {
         if (! extension_loaded('relay')) {
             throw new RelayMissingException;
         }
 
-        if (version_compare(phpversion('redis'), '0.2.2', '<')) {
+        if (version_compare(phpversion('relay'), self::RequiredVersion, '<')) {
             throw new RelayOutdatedException;
         }
     }
@@ -55,12 +64,18 @@ class RelayConnector implements Connector
                 return \defined('\Relay\Relay::SERIALIZER_PHP');
             case Configuration::SERIALIZER_IGBINARY:
                 return \defined('\Relay\Relay::SERIALIZER_IGBINARY');
+            case Configuration::COMPRESSION_NONE:
+                return true;
             case Configuration::COMPRESSION_LZF:
                 return \defined('\Relay\Relay::COMPRESSION_LZF');
             case Configuration::COMPRESSION_LZ4:
                 return \defined('\Relay\Relay::COMPRESSION_LZ4');
             case Configuration::COMPRESSION_ZSTD:
                 return \defined('\Relay\Relay::COMPRESSION_ZSTD');
+            case 'tls':
+            case 'retries':
+            case 'backoff':
+                return true;
         }
 
         return false;
@@ -76,6 +91,10 @@ class RelayConnector implements Connector
     {
         if ($config->cluster) {
             return static::connectToCluster($config);
+        }
+
+        if ($config->sentinels) {
+            return static::connectToSentinels($config);
         }
 
         if ($config->servers) {
@@ -141,11 +160,23 @@ class RelayConnector implements Connector
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
      *
-     * @throws \RuntimeException
+     * @throws \LogicException
      */
     public static function connectToCluster(Configuration $config): ConnectionInterface
     {
-        throw new RuntimeException('Relay does not support clusters.');
+        throw new LogicException('Relay does not support clusters');
+    }
+
+    /**
+     * Create a new Relay Sentinel connection.
+     *
+     * @param  \RedisCachePro\Configuration\Configuration  $config
+     *
+     * @throws \LogicException
+     */
+    public static function connectToSentinels(Configuration $config): ConnectionInterface
+    {
+        throw new LogicException('Relay does not support sentinels');
     }
 
     /**
@@ -153,10 +184,10 @@ class RelayConnector implements Connector
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
      *
-     * @throws \RuntimeException
+     * @throws \LogicException
      */
     public static function connectToReplicatedServers(Configuration $config): ConnectionInterface
     {
-        throw new RuntimeException('Relay does not support replicated connections.');
+        throw new LogicException('Relay does not support replicated connections');
     }
 }

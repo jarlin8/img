@@ -9,14 +9,16 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Console;
 
-use Exception;
+use Throwable;
+
+use WP_REST_Request;
 
 use cli\Shell;
 
@@ -30,6 +32,8 @@ use function WP_CLI\Utils\proc_open_compat;
 use RedisCachePro\Diagnostics\Diagnostics;
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Configuration\Configuration;
+
+use RedisCachePro\Plugin\Api\Analytics;
 
 use RedisCachePro\Console\Watchers\LogWatcher;
 use RedisCachePro\Console\Watchers\DigestWatcher;
@@ -73,8 +77,12 @@ class Commands extends WP_CLI_Command
 
         if (! \WP_Filesystem()) {
             WP_CLI::error('Could not gain filesystem access.');
+        }
 
-            return;
+        if (! defined('\WP_REDIS_CONFIG')) {
+            WP_CLI::error(WP_CLI::colorize(
+                'To enable the object cache, set up the %yWP_REDIS_CONFIG%n constant.'
+            ));
         }
 
         $force = isset($options['force']);
@@ -86,14 +94,10 @@ class Commands extends WP_CLI_Command
             WP_CLI::error(WP_CLI::colorize(
                 'A object cache drop-in already exists. Run `%ywp redis enable --force%n` to overwrite it.'
             ));
-
-            return;
         }
 
         if (! $wp_filesystem->copy($stub, $dropin, $force, \FS_CHMOD_FILE)) {
             WP_CLI::error('Object cache could not be enabled.');
-
-            return;
         }
 
         if (function_exists('wp_opcache_invalidate')) {
@@ -141,8 +145,6 @@ class Commands extends WP_CLI_Command
 
         if (! \WP_Filesystem()) {
             WP_CLI::error('Could not gain filesystem access.');
-
-            return;
         }
 
         $dropin = \WP_CONTENT_DIR . '/object-cache.php';
@@ -155,8 +157,6 @@ class Commands extends WP_CLI_Command
 
         if (! $wp_filesystem->delete($dropin)) {
             WP_CLI::error('Object cache could not be disabled.');
-
-            return;
         }
 
         if (function_exists('wp_opcache_invalidate')) {
@@ -198,6 +198,10 @@ class Commands extends WP_CLI_Command
             ));
 
             foreach ($group as $key => $diagnostic) {
+                if (in_array($key, ['relay-memory', 'relay-keys'])) {
+                    continue;
+                }
+
                 if ($groupName === Diagnostics::ERRORS) {
                     WP_CLI::log(WP_CLI::colorize("%r{$diagnostic}%n"));
                 } else {
@@ -255,16 +259,12 @@ class Commands extends WP_CLI_Command
             WP_CLI::error(WP_CLI::colorize(
                 'No object cache drop-in found. Run `%ywp redis enable%n` to enable the object cache.'
             ));
-
-            return;
         }
 
         if (! $diagnostics->dropinIsValid()) {
             WP_CLI::error(WP_CLI::colorize(
                 'The object cache drop-in is invalid. Run `%ywp redis enable --force%n` to enable the object cache.'
             ));
-
-            return;
         }
 
         // unset site ids when environment is not a multisite
@@ -279,26 +279,37 @@ class Commands extends WP_CLI_Command
 
         if (empty($arguments)) {
             try {
+                $GLOBALS['ObjectCachePro']->logFlush();
+
                 $result = $wp_object_cache->connection()->flushdb(isset($options['async']));
-            } catch (Exception $exception) {
+            } catch (Throwable $exception) {
                 $result = false;
             }
 
-            $result
-                ? WP_CLI::success('Object cache flushed.')
-                : WP_CLI::error('Object cache could not be flushed.');
-        } else {
-            foreach ($arguments as $siteId) {
-                $url = get_site_url($siteId);
-                $result = $wp_object_cache->flushBlog($siteId);
+            if (! $result) {
+                WP_CLI::error('Object cache could not be flushed.');
+            }
 
-                $result
-                    ? WP_CLI::success(WP_CLI::colorize(
-                        "Object cache of the site at '%y{$url}%n' was flushed."
-                    ))
-                    : WP_CLI::error(WP_CLI::colorize(
-                        "Object cache of the site at '%y{$url}%n' could not be flushed."
-                    ));
+            WP_CLI::success('Object cache flushed.');
+
+            return;
+        }
+
+        foreach ($arguments as $siteId) {
+            try {
+                $result = $wp_object_cache->flushBlog((int) $siteId);
+            } catch (Throwable $exception) {
+                WP_CLI::error($exception->getMessage());
+            }
+
+            if ($result) {
+                WP_CLI::success(WP_CLI::colorize(
+                    "Object cache of the site [%y{$siteId}%n] was flushed."
+                ));
+            } else {
+                WP_CLI::error(WP_CLI::colorize(
+                    "Object cache of the site [%y{$siteId}%n] could not be flushed."
+                ), false);
             }
         }
     }
@@ -317,13 +328,7 @@ class Commands extends WP_CLI_Command
      */
     public function cli()
     {
-        if (! defined('\WP_REDIS_CONFIG')) {
-            WP_CLI::error(WP_CLI::colorize(
-                'The %yWP_REDIS_CONFIG%n constant has not been defined.'
-            ));
-
-            return;
-        }
+        $this->abortIfNotConfigured();
 
         $cliVersion = shell_exec('redis-cli -v');
 
@@ -349,7 +354,7 @@ class Commands extends WP_CLI_Command
             'auth' => 'no password',
         ];
 
-        $command = 'redis-cli -n %d';
+        $command = 'redis-cli -n %s';
         $arguments = [$database];
 
         if ($config->cluster) {
@@ -362,6 +367,14 @@ class Commands extends WP_CLI_Command
             if (strtolower($master['scheme']) === 'tls') {
                 $command .= ' --tls';
             }
+        }
+
+        if ($config->sentinels) {
+            WP_CLI::error('This command does not support Redis Sentinel.');
+        }
+
+        if ($config->servers) {
+            WP_CLI::error('This command does not support Redis replication.');
         }
 
         $arguments[] = $host;
@@ -464,6 +477,8 @@ class Commands extends WP_CLI_Command
      * * redis-keys
      * * relay-hits
      * * relay-misses
+     * * relay-hit-ratio
+     * * relay-ops-per-sec
      * * relay-keys
      * * relay-memory-active
      * * relay-memory-total
@@ -485,10 +500,12 @@ class Commands extends WP_CLI_Command
     {
         global $wp_object_cache;
 
-        if (! defined('\WP_REDIS_ANALYTICS') || ! \WP_REDIS_ANALYTICS) {
-            WP_CLI::error('Object cache metrics are disabled');
+        $this->abortIfNotConfigured();
 
-            return;
+        $config = Configuration::from(\WP_REDIS_CONFIG);
+
+        if (! $config->analytics->enabled) {
+            WP_CLI::error('Object cache analytics are disabled.');
         }
 
         $options = array_merge([
@@ -539,6 +556,150 @@ class Commands extends WP_CLI_Command
 
             $monitor->prepare();
             $monitor->tick();
+        }
+    }
+
+    /**
+     * Returns the analytic values.
+     *
+     * ## OPTIONS
+     *
+     * [--interval=<number>]
+     * : The interval in seconds.
+     * ---
+     * default: 60
+     * ---
+     *
+     * [--per_page=<number>]
+     * : Maximum number of items to be returned in result set.
+     * ---
+     * default: 30
+     * ---
+     *
+     * [--page=<number>]
+     * : Current page of the collection.
+     * ---
+     * default: 1
+     * ---
+     *
+     * [--fields=<metrics>]
+     * : Limit the output to specific metrics and computations.
+     *
+     * [--pretty]
+     * : Whether to pretty print the result.
+     * ---
+     * default: false
+     * ---
+     *
+     * ## AVAILABLE METRICS
+     *
+     * These metrics are available:
+     *
+     * * hits
+     * * misses
+     * * hit-ratio
+     * * bytes
+     * * prefetches
+     * * store-reads
+     * * store-writes
+     * * store-hits
+     * * store-misses
+     * * ms-total
+     * * ms-cache
+     * * ms-cache-median
+     * * ms-cache-ratio
+     * * redis-hits
+     * * redis-misses
+     * * redis-hit-ratio
+     * * redis-ops-per-sec
+     * * redis-evicted-keys
+     * * redis-used-memory
+     * * redis-used-memory-rss
+     * * redis-memory-ratio
+     * * redis-memory-fragmentation-ratio
+     * * redis-connected-clients
+     * * redis-tracking-clients
+     * * redis-rejected-connections
+     * * redis-keys
+     * * relay-hits
+     * * relay-misses
+     * * relay-hit-ratio
+     * * relay-ops-per-sec
+     * * relay-keys
+     * * relay-memory-active
+     * * relay-memory-total
+     * * relay-memory-human
+     * * relay-memory-ratio
+     *
+     * ## EXAMPLES
+     *
+     *     # Compute analytics for the last 30 minutes in 60 second intervals
+     *     $ wp redis analytics
+     *
+     *     # Raw measurements for the last 30 minutes in 60 second intervals
+     *     $ wp redis analytics --context=raw
+     *
+     *     # Compute hits and misses for the last hour
+     *     $ wp redis analytics --interval=3600 --per_page=1 --fields=hits,misses --pretty
+     *
+     *     # Compute hit ratio median for the last hour in 10 minute intervals
+     *     $ wp redis analytics --interval=600 --per_page=6 --fields=hits.median,count,date_gmt
+     */
+    public function analytics($arguments, $options)
+    {
+        $this->abortIfNotConfigured();
+
+        $analytics = new Analytics;
+
+        $defaults = array_map(function ($param) {
+            return $param['default'];
+        }, $analytics->get_collection_params());
+
+        $options = array_merge([
+            'pretty' => false,
+            'context' => $defaults['context'],
+            'interval' => $defaults['interval'],
+            'page' => $defaults['page'],
+            'per_page' => $defaults['per_page'],
+        ], $options);
+
+        $pretty = $options['pretty'] ? JSON_PRETTY_PRINT : 0;
+
+        $request = new WP_REST_Request;
+        $request->set_param('context', (string) $options['context']);
+        $request->set_param('interval', (int) $options['interval']);
+        $request->set_param('page', (int) $options['page']);
+        $request->set_param('per_page', (int) $options['per_page']);
+
+        $fields = empty($options['fields']) ? $analytics->get_fields_for_response($request) : explode(',', $options['fields']);
+        $request->set_param('_fields', $fields);
+
+        $response = $analytics->get_items($request);
+
+        if (is_wp_error($response)) {
+            WP_CLI::line(json_encode([
+                'code' => $response->get_error_code(),
+                'message' => $response->get_error_message(),
+                'data' => $response->get_error_data(),
+            ], $pretty));
+
+            return;
+        }
+
+        WP_CLI::line(json_encode($response->get_data(), $pretty));
+    }
+
+    /**
+     * Abort if plugin wasn't configured.
+     *
+     * @return void
+     */
+    protected function abortIfNotConfigured()
+    {
+        if (! defined('\WP_REDIS_CONFIG')) {
+            WP_CLI::error(WP_CLI::colorize(
+                'The %yWP_REDIS_CONFIG%n constant has not been defined.'
+            ));
         }
     }
 }

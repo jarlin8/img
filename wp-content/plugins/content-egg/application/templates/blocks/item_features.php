@@ -9,6 +9,7 @@ if ($disable_features)
 {
     return;
 }
+
 ?>
 
 <?php if (!empty($item['extra']['specificationList'])): ?>

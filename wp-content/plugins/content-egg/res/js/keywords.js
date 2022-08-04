@@ -264,7 +264,7 @@ function keywords_uniq() {
     var arr = jQuery("#keywords").val().split("\n");
     var arrDistinct = new Array();
     jQuery(arr).each(function (index, item) {
-        if (jQuery.inArray(item, arrDistinct) == -1)
+        if (jQuery.inArray(item, arrDistinct) == -1 && jQuery.inArray('[' + item + ']', arrDistinct) == -1)
             arrDistinct.push(item);
     });
     jQuery("#keywords").val(arrDistinct.join("\n"));

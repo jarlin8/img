@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -17,15 +17,23 @@ declare(strict_types=1);
 namespace RedisCachePro\ObjectCaches;
 
 use Closure;
-use Exception;
+use Throwable;
 use ReflectionClass;
 
 use RedisCachePro\Loggers\LoggerInterface;
 use RedisCachePro\Configuration\Configuration;
 use RedisCachePro\Exceptions\ObjectCacheException;
+use RedisCachePro\Connections\ConnectionInterface;
 
 abstract class ObjectCache
 {
+    /**
+     * The client name fallback.
+     *
+     * @var string
+     */
+    const Client = 'Unknown';
+
     /**
      * The configuration instance.
      *
@@ -36,7 +44,7 @@ abstract class ObjectCache
     /**
      * The connection instance.
      *
-     * @var \RedisCachePro\Connections\Connection
+     * @var \RedisCachePro\Connections\Connection|null
      */
     protected $connection;
 
@@ -81,6 +89,24 @@ abstract class ObjectCache
      * @var bool
      */
     protected $isMultisite = false;
+
+    /**
+     * Holds an internal cache copy of whether the connection is a cluster.
+     *
+     * @see self::id()
+     *
+     * @var bool
+     */
+    private $isCluster;
+
+    /**
+     * Holds an internal cache copy of the configured prefix.
+     *
+     * @see self::id()
+     *
+     * @var string
+     */
+    private $prefix;
 
     /**
      * The list of global cache groups that are not
@@ -177,11 +203,21 @@ abstract class ObjectCache
     }
 
     /**
+     * Returns the client name the object cache is using.
+     *
+     * @return \RedisCachePro\Configuration\Configuration
+     */
+    public function clientName()
+    {
+        return static::Client;
+    }
+
+    /**
      * Returns the connection instance.
      *
-     * @return \RedisCachePro\Connections\ConnectionInterface
+     * @return \RedisCachePro\Connections\ConnectionInterface|null
      */
-    public function connection()
+    public function connection(): ?ConnectionInterface // phpcs:ignore PHPCompatibility.FunctionDeclarations.NewNullableTypes.returnTypeFound
     {
         return $this->connection;
     }
@@ -212,22 +248,23 @@ abstract class ObjectCache
      * When WP_DEBUG is enabled, the exception will be re-thrown,
      * otherwise a critical log entry is emitted.
      *
-     * @param  \Exception  $exception
+     * @param  \Throwable  $error
      * @param  array  $context
+     * @return void
      */
-    protected function error(Exception $exception, array $context = []): void
+    protected function error(Throwable $error, array $context = []): void // phpcs:ignore PHPCompatibility
     {
         global $wp_object_cache_errors;
 
-        $wp_object_cache_errors[] = $exception->getMessage();
+        $wp_object_cache_errors[] = $error->getMessage();
 
         $this->log->error(
-            $exception->getMessage(),
-            \array_merge(['exception' => $exception], $context)
+            $error->getMessage(),
+            \array_merge(['exception' => $error], $context)
         );
 
         if ($this->config->debug) {
-            throw ObjectCacheException::from($exception);
+            throw ObjectCacheException::from($error);
         }
     }
 
@@ -252,16 +289,27 @@ abstract class ObjectCache
     }
 
     /**
+     * Returns an array of all non-persistent groups.
+     *
+     * @return array
+     */
+    public function nonPersistentGroups(): array
+    {
+        return $this->nonPersistentGroups;
+    }
+
+    /**
      * Build cache identifier for given key and group.
      *
-     * The configured prefix is added to all identifiers.
-     * In network environments the `blog_id` is added to the group.
+     * 1. The configured prefix is added to all identifiers
+     * 2. In network environments the `blog_id` is added to the group
+     * 3. On clusters the group is used as the hash slot
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
-     * @return string
+     * @return string|false
      */
-    protected function id(string $key, string $group): string
+    protected function id($key, string $group)
     {
         static $cache = [];
 
@@ -271,15 +319,32 @@ abstract class ObjectCache
             return $cache[$cacheKey];
         }
 
-        $key = \str_replace(':', '-', $key);
-        $group = \str_replace(':', '-', $group);
-        $prefix = $this->config->prefix ?: '';
+        if (! \is_string($key) && ! \is_int($key) || \trim((string) $key) === '') {
+            error_log('objectcache.warning: Cache key must be integer or non-empty string, ' . gettype($key) . ' given');
 
-        if ($this->isMultisite && ! $this->isGlobalGroup($group)) {
-            $group = "{$this->blogId}:{$group}";
+            return false;
         }
 
-        $id = "{$prefix}:{$group}:{$key}";
+        if (\is_null($this->prefix)) {
+            $this->prefix = $this->config->prefix ?: '';
+        }
+
+        if (\is_null($this->isCluster)) {
+            $this->isCluster = (bool) $this->config->cluster;
+        }
+
+        $blogId = '';
+
+        if ($this->isMultisite && ! \in_array($group, $this->globalGroups)) {
+            $blogId = "{$this->blogId}:";
+        }
+
+        $key = \str_replace(':', '-', (string) $key);
+        $group = \str_replace(':', '-', $group);
+
+        $group = $this->isCluster ? "{{$group}}" : $group;
+
+        $id = "{$this->prefix}:{$blogId}{$group}:{$key}";
         $id = \str_replace(' ', '-', $id);
         $id = \trim($id, ':');
         $id = \strtolower($id);
@@ -413,16 +478,6 @@ abstract class ObjectCache
     }
 
     /**
-     * Returns an array of all non-persistent groups.
-     *
-     * @return array
-     */
-    public function nonPersistentGroups(): array
-    {
-        return $this->nonPersistentGroups;
-    }
-
-    /**
      * Returns various information about the object cache.
      *
      * @return object
@@ -552,13 +607,15 @@ abstract class ObjectCache
     /**
      * Removes the cache contents matching key and group from the runtime memory cache.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
      * @return bool
      */
-    public function deleteFromMemory(string $key, string $group)
+    public function deleteFromMemory($key, string $group)
     {
-        $id = $this->id($key, $group);
+        if (! $id = $this->id($key, $group)) {
+            return false;
+        }
 
         if (! $this->hasInMemory($id, $group)) {
             return false;
@@ -571,11 +628,27 @@ abstract class ObjectCache
     }
 
     /**
-     * Flushes the runtime cache.
+     * Flushes the in-memory runtime cache.
+     *
+     * @deprecated  1.15.0  Use `ObjectCache::flushMemory()` instead
      *
      * @return bool
      */
     public function flushMemory(): bool
+    {
+        if (function_exists('_deprecated_function')) {
+            \_deprecated_function(__METHOD__, '1.15.0', __CLASS__ . '::flushRuntime()');
+        }
+
+        return $this->flushRuntime();
+    }
+
+    /**
+     * Flushes the in-memory runtime cache.
+     *
+     * @return bool
+     */
+    public function flushRuntime(): bool
     {
         $this->cache = [];
 
@@ -592,10 +665,20 @@ abstract class ObjectCache
     public function flushRuntimeCache(): bool
     {
         if (function_exists('_deprecated_function')) {
-            \_deprecated_function(__METHOD__, '1.12.0', __CLASS__ . '::flushMemory()');
+            \_deprecated_function(__METHOD__, '1.12.0', __CLASS__ . '::flushRuntime()');
         }
 
-        return $this->flushMemory();
+        return $this->flushRuntime();
+    }
+
+    /**
+     * Alias for WordPress' snake_case function, just for consistency.
+     *
+     * @return bool
+     */
+    public function flush_runtime(): bool
+    {
+        return $this->flushRuntime();
     }
 
     /**
@@ -617,7 +700,7 @@ abstract class ObjectCache
         }
 
         if (! $this->isMultisite || $flush_network === Configuration::NETWORK_FLUSH_ALL) {
-            return $this->flushMemory();
+            return $this->flushRuntime();
         }
 
         $originalBlogId = $this->blogId;
@@ -629,7 +712,8 @@ abstract class ObjectCache
             }
         }
 
-        $prefix = trim(str_replace('cafebabe:', '', $this->id('*', dechex(3405691582))), '*');
+        $id = $this->id('*', dechex(3405691582));
+        $prefix = trim(preg_replace('/:{?cafebabe}?/', '', $id), '*');
         $prefixLength = strlen($prefix);
 
         foreach ($this->cache as $group => $keys) {
@@ -673,6 +757,10 @@ abstract class ObjectCache
 
         if ($name === 'cache_misses') {
             return $this->misses;
+        }
+
+        if ($name === 'no_remote_groups') {
+            return $this->nonPersistentGroups;
         }
 
         trigger_error(

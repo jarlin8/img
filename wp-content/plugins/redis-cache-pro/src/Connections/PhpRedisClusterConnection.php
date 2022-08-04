@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -20,6 +20,9 @@ use RedisCluster;
 
 use RedisCachePro\Configuration\Configuration;
 
+/**
+ * @mixin \RedisCluster
+ */
 class PhpRedisClusterConnection extends PhpRedisConnection implements ConnectionInterface
 {
     /**
@@ -38,6 +41,30 @@ class PhpRedisClusterConnection extends PhpRedisConnection implements Connection
         $this->setBackoff();
         $this->setSerializer();
         $this->setCompression();
+    }
+
+    /**
+     * Execute pipelines as atomic `MULTI` transactions.
+     *
+     * @return object
+     */
+    public function pipeline()
+    {
+        return $this->multi();
+    }
+
+    /**
+     * Send `scan()` calls directly to the client.
+     *
+     * @param  int  $iterator
+     * @param  mixed  $node
+     * @param  string  $pattern
+     * @param  int  $count
+     * @return array|false
+     */
+    public function scanNode(?int &$iterator, mixed $node, ?string $pattern = null, int $count = 0) // phpcs:ignore PHPCompatibility
+    {
+        return $this->client->scan($iterator, $node, $pattern, $count);
     }
 
     /**
@@ -74,6 +101,24 @@ class PhpRedisClusterConnection extends PhpRedisConnection implements Connection
         }
 
         return $this->command('info', [$parameter]);
+    }
+
+    /**
+     * Return all redis cluster nodes.
+     *
+     * @return array
+     */
+    public function nodes()
+    {
+        $nodes = $this->rawCommand(
+            $this->client->_masters()[0],
+            'CLUSTER',
+            'NODES'
+        );
+
+        preg_match_all('/[\w{1,}.\-]+:\d{1,}@\d{1,}/', $nodes, $matches);
+
+        return $matches[0];
     }
 
     /**

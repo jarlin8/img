@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -39,6 +39,7 @@ use RedisCachePro\ObjectCaches\ObjectCacheInterface;
 class Configuration
 {
     use Concerns\Cluster,
+        Concerns\Sentinel,
         Concerns\Replication;
 
     /**
@@ -63,21 +64,21 @@ class Configuration
     const COMPRESSION_NONE = 'none';
 
     /**
-     * Compress data using the LZF compression format.
+     * Compress data using the LZF compression algorithm.
      *
      * @var string
      */
     const COMPRESSION_LZF = 'lzf';
 
     /**
-     * Compress data using the LZ4 compression format.
+     * Compress data using the LZ4 compression algorithm.
      *
      * @var string
      */
     const COMPRESSION_LZ4 = 'lz4';
 
     /**
-     * Compress data using the Zstandard compression format.
+     * Compress data using the Zstandard compression algorithm.
      *
      * @var string
      */
@@ -197,14 +198,14 @@ class Configuration
     protected $database = 0;
 
     /**
-     * The instance/cluster username (Redis 6+).
+     * The connection's username (Redis 6+).
      *
      * @var string
      */
     protected $username;
 
     /**
-     * The instance/cluster password.
+     * The connection's password.
      *
      * @var string
      */
@@ -246,14 +247,14 @@ class Configuration
     protected $retry_interval = 100;
 
     /**
-     * Retries.
+     * The amount of retries.
      *
      * @var int
      */
     protected $retries = 5;
 
     /**
-     * Backoff Algorithm.
+     * The backoff algorithm.
      *
      * @var string
      */
@@ -271,9 +272,9 @@ class Configuration
      *
      * This affects how memory and key counts are displayed.
      *
-     * @var bool
+     * @var bool|null
      */
-    protected $shared = false;
+    protected $shared = null;
 
     /**
      * Whether flushing is asynchronous.
@@ -339,18 +340,48 @@ class Configuration
     protected $prefetch = false;
 
     /**
+     * Whether to enable plugin updates.
+     *
+     * @var bool
+     */
+    protected $updates = true;
+
+    /**
+     * The analytics configuration.
+     *
+     * - `enabled`: (bool) Whether to collect and display analytics
+     * - `persist`: (bool) Whether to restore analytics data after cache flushes
+     * - `retention`: (int) The number of seconds to keep analytics before purging them
+     * - `footnote`: (bool) Whether to print a HTML comment with non-sensitive metrics
+     *
+     * @var object
+     */
+    protected $analytics = [
+        'enabled' => true,
+        'persist' => true,
+        'retention' => 60 * 60 * 2,
+        'footnote' => true,
+    ];
+
+    /**
+     * The Relay configuration options.
+     *
+     * - `listeners`: (bool) Whether to register Relay event listeners
+     * - `invalidations`: (bool) Whether to enable client-side invalidation
+     *
+     * @var object
+     */
+    protected $relay = [
+        'listeners' => false,
+        'invalidations' => true,
+    ];
+
+    /**
      * Whether the `alloptions` key should be split into individual keys and stored in a hash.
      *
      * @var bool
      */
     protected $split_alloptions = false;
-
-    /**
-     * Whether to register Relay event listeners.
-     *
-     * @var bool
-     */
-    protected $relay_listeners = false;
 
     /**
      * The cache flushing strategy in multisite network environments.
@@ -379,9 +410,14 @@ class Configuration
 
     /**
      * Initialize a new configuration instance.
+     *
+     * @return self
      */
     public function init()
     {
+        $this->relay = (object) $this->relay;
+        $this->analytics = (object) $this->analytics;
+
         if (! $this->logger) {
             if ($this->debug || $this->save_commands) {
                 $this->setLogger(ArrayLogger::class);
@@ -399,6 +435,8 @@ class Configuration
 
     /**
      * Validate the configuration.
+     *
+     * @return self
      */
     public function validate()
     {
@@ -409,8 +447,9 @@ class Configuration
         $isSocket = $hasHost && $this->host[0] === '/';
         $isCluster = ! empty($this->cluster);
         $isReplicated = ! empty($this->servers);
+        $isSentinel = ! empty($this->sentinels) && ! empty($this->service);
 
-        if (! $isInstance && ! $isSocket && ! $isCluster && ! $isReplicated) {
+        if (! $isInstance && ! $isSocket && ! $isCluster && ! $isReplicated && ! $isSentinel) {
             throw new ConnectionDetailsMissingException;
         }
 
@@ -445,8 +484,11 @@ class Configuration
     {
         try {
             return static::from($config);
-        } catch (Exception $exception) {
-            $instance = static::from([]);
+        } catch (Throwable $exception) {
+            $instance = static::from([
+                'client' => false,
+            ])->init();
+
             $instance->initException = $exception;
 
             return $instance;
@@ -459,7 +501,7 @@ class Configuration
      * @param  array  $config
      * @return self
      */
-    public static function fromArray(array $array): self
+    protected static function fromArray(array $array): self
     {
         $config = new static;
         $client = $array['client'] ?? 'phpredis';
@@ -491,7 +533,7 @@ class Configuration
         }
 
         if (! \is_string($token) || strlen($token) !== 60) {
-            throw new ConfigurationInvalidException('License token must be a 60 characters long string.');
+            throw new ConfigurationInvalidException('License `token` must be a 60 characters long string');
         }
 
         $this->token = (string) $token;
@@ -500,12 +542,16 @@ class Configuration
     /**
      * Set the connector and cache using client name.
      *
-     * @param  string  $client
+     * @param  string|false  $client
      */
     public function setClient($client)
     {
+        if ($client === false) {
+            return;
+        }
+
         if (! \is_string($client) || empty($client)) {
-            throw new ConfigurationInvalidException('Client must be a string.');
+            throw new ConfigurationInvalidException('`client` must be a string');
         }
 
         $client = \str_replace(
@@ -515,7 +561,7 @@ class Configuration
         );
 
         if (! \in_array($client, ['PhpRedis', 'Relay'])) {
-            throw new ConfigurationInvalidException("Client `{$client}` is not supported.");
+            throw new ConfigurationInvalidException("Client `{$client}` is not supported");
         }
 
         $this->connector = "RedisCachePro\Connectors\\{$client}Connector";
@@ -533,7 +579,7 @@ class Configuration
     public function setConnector($connector)
     {
         if (! \is_string($connector) || empty($connector)) {
-            throw new ConfigurationInvalidException('Connector must be a fully qualified class name.');
+            throw new ConfigurationInvalidException('Connector must be a fully qualified class name');
         }
 
         if (\strtolower($connector) === 'twemproxy') {
@@ -541,12 +587,12 @@ class Configuration
         }
 
         if (! \class_exists($connector)) {
-            throw new ConfigurationInvalidException("Connector class `{$connector}` was not found.");
+            throw new ConfigurationInvalidException("Connector class `{$connector}` was not found");
         }
 
         if (! \in_array(Connector::class, (array) \class_implements($connector))) {
             throw new ConfigurationInvalidException(
-                \sprintf('Connector must be implementation of %s.', Connector::class)
+                \sprintf('Connector must be implementation of %s', Connector::class)
             );
         }
 
@@ -561,16 +607,16 @@ class Configuration
     public function setCache($cache)
     {
         if (! \is_string($cache) || empty($cache)) {
-            throw new ConfigurationInvalidException('Cache must be a fully qualified class name.');
+            throw new ConfigurationInvalidException('Cache must be a fully qualified class name');
         }
 
         if (! \class_exists($cache)) {
-            throw new ConfigurationInvalidException("Cache class `{$cache}` was not found.");
+            throw new ConfigurationInvalidException("Cache class `{$cache}` was not found");
         }
 
         if (! \in_array(ObjectCacheInterface::class, (array) \class_implements($cache))) {
             throw new ConfigurationInvalidException(
-                \sprintf('Cache must be implementation of %s.', ObjectCacheInterface::class)
+                \sprintf('Cache must be implementation of %s', ObjectCacheInterface::class)
             );
         }
 
@@ -585,13 +631,13 @@ class Configuration
     public function setLogger($logger)
     {
         if (! \is_string($logger) || empty($logger)) {
-            throw new ConfigurationInvalidException('Logger must be a fully qualified class name.');
+            throw new ConfigurationInvalidException('Logger must be a fully qualified class name');
         }
 
         $isFunction = \function_exists($logger);
 
         if (! $isFunction && ! \class_exists($logger)) {
-            throw new ConfigurationInvalidException("Logger class `{$logger}` was not found.");
+            throw new ConfigurationInvalidException("Logger class `{$logger}` was not found");
         }
 
         try {
@@ -606,7 +652,7 @@ class Configuration
 
         if (! \in_array(LoggerInterface::class, (array) \class_implements($instance))) {
             throw new ConfigurationInvalidException(
-                \sprintf('Logger must be implementation of %s.', LoggerInterface::class)
+                \sprintf('Logger must be implementation of %s', LoggerInterface::class)
             );
         }
 
@@ -628,19 +674,19 @@ class Configuration
 
         if (! \is_array($levels)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Log levels must be an array. %s given.', \ucfirst(\gettype($levels)))
+                \sprintf('`log_levels` must be an array, %s given', \gettype($levels))
             );
         }
 
         $levels = \array_filter($levels);
 
         if (empty($levels)) {
-            throw new ConfigurationInvalidException('Log levels must be a non-empty array.');
+            throw new ConfigurationInvalidException('`log_levels` must be a non-empty array');
         }
 
         foreach ($levels as $level) {
             if (! \defined(\sprintf('%s::%s', Logger::class, \strtoupper($level)))) {
-                throw new ConfigurationInvalidException("Invalid log level: {$level}.");
+                throw new ConfigurationInvalidException("Invalid log level: {$level}");
             }
         }
 
@@ -657,21 +703,24 @@ class Configuration
         $components = static::parseUrl($url);
 
         $this->setHost($components['host']);
-        $this->setDatabase($components['database']);
 
-        if (isset($components['scheme'])) {
+        if ($components['database']) {
+            $this->setDatabase($components['database']);
+        }
+
+        if ($components['scheme']) {
             $this->setScheme($components['scheme']);
         }
 
-        if (isset($components['port'])) {
+        if ($components['port']) {
             $this->setPort($components['port']);
         }
 
-        if (isset($components['username'])) {
+        if ($components['username']) {
             $this->setUsername($components['username']);
         }
 
-        if (isset($components['password'])) {
+        if ($components['password']) {
             $this->setPassword($components['password']);
         }
     }
@@ -684,7 +733,7 @@ class Configuration
     public function setScheme($scheme)
     {
         if (! \is_string($scheme)) {
-            throw new ConfigurationInvalidException('Scheme must be a string.');
+            throw new ConfigurationInvalidException('`scheme` must be a string');
         }
 
         $scheme = \str_replace(
@@ -694,7 +743,7 @@ class Configuration
         );
 
         if (! \in_array($scheme, ['tcp', 'tls', 'unix'], true)) {
-            throw new ConfigurationInvalidException("Scheme `{$scheme}` is not supported.");
+            throw new ConfigurationInvalidException("Scheme `{$scheme}` is not supported");
         }
 
         $this->scheme = $scheme;
@@ -708,7 +757,7 @@ class Configuration
     public function setHost($host)
     {
         if (! \is_string($host) || empty($host)) {
-            throw new ConfigurationInvalidException('Host must be a non-empty string.');
+            throw new ConfigurationInvalidException('`host` must be a non-empty string');
         }
 
         $host = \strtolower((string) $host);
@@ -738,7 +787,7 @@ class Configuration
 
         if (! \is_int($port)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Port must be an integer. %s given.', \ucfirst(\gettype($port)))
+                \sprintf('`port` must be an integer, %s given', \gettype($port))
             );
         }
 
@@ -758,7 +807,7 @@ class Configuration
 
         if (! \is_int($database)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Database must be an integer. %s given.', \ucfirst(\gettype($database)))
+                \sprintf('`database` must be an integer, %s given', \gettype($database))
             );
         }
 
@@ -779,7 +828,7 @@ class Configuration
         }
 
         if (empty($username)) {
-            throw new ConfigurationInvalidException('Username must be a non-empty string.');
+            throw new ConfigurationInvalidException('`username` must be a non-empty string');
         }
 
         $this->username = (string) $username;
@@ -799,7 +848,7 @@ class Configuration
         }
 
         if (empty($password)) {
-            throw new ConfigurationInvalidException('Password must be a non-empty string.');
+            throw new ConfigurationInvalidException('`password` must be a non-empty string');
         }
 
         $this->password = (string) $password;
@@ -815,7 +864,7 @@ class Configuration
         $prefix = (string) $prefix;
 
         if (\strlen($prefix) > 32) {
-            throw new ConfigurationInvalidException('Prefix must be 32 characters or less and should be human-readable, not WordPress salts.');
+            throw new ConfigurationInvalidException('`prefix` must be 32 characters or less and should be human-readable, not WordPress salts');
         }
 
         $prefix = \preg_replace('/[^\w-]/i', '', $prefix);
@@ -838,12 +887,12 @@ class Configuration
 
         if (! \is_int($seconds)) {
             throw new ConfigurationInvalidException(
-                \sprintf('MaxTTL must be an integer. %s given.', \ucfirst(\gettype($seconds)))
+                \sprintf('`maxttl` must be an integer, %s given', \gettype($seconds))
             );
         }
 
         if ($seconds < 0) {
-            throw new ConfigurationInvalidException('MaxTTL must be `0` (forever) or a positive integer (seconds).');
+            throw new ConfigurationInvalidException('`maxttl` must be `0` (forever) or a positive integer (seconds)');
         }
 
         $this->maxttl = $seconds;
@@ -866,12 +915,12 @@ class Configuration
 
         if (! is_float($seconds)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Timeout must be a float. %s given.', \ucfirst(\gettype($seconds)))
+                \sprintf('`timeout` must be a float, %s given', \gettype($seconds))
             );
         }
 
         if ($seconds < 0) {
-            throw new ConfigurationInvalidException('Timeout must be `0.0` (infinite) or a positive float (seconds).');
+            throw new ConfigurationInvalidException('`timeout` must be `0.0` (infinite) or a positive float (seconds)');
         }
 
         $this->timeout = (float) $seconds;
@@ -894,13 +943,13 @@ class Configuration
 
         if (! \is_float($seconds)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Read timeout must be a float. %s given.', \ucfirst(\gettype($seconds)))
+                \sprintf('`read_timeout` must be a float, %s given', \gettype($seconds))
             );
         }
 
         if ($seconds < 0) {
             throw new ConfigurationInvalidException(
-                'Read timeout must be `0.0` (infinite) or a positive float (seconds).'
+                '`read_timeout` must be `0.0` (infinite) or a positive float (seconds).'
             );
         }
 
@@ -920,13 +969,13 @@ class Configuration
 
         if (! \is_int($milliseconds)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Retry interval must be an integer. %s given.', \ucfirst(\gettype($milliseconds)))
+                \sprintf('`retry_interval` must be an integer, %s given', \gettype($milliseconds))
             );
         }
 
         if ($milliseconds < 0) {
             throw new ConfigurationInvalidException(
-                'Retry interval must be `0` (instant) or a positive float (milliseconds).'
+                '`retry_interval` must be `0` (instant) or a positive float (milliseconds).'
             );
         }
 
@@ -942,7 +991,7 @@ class Configuration
     {
         if (! \is_bool($is_persistent)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Persistent must be a boolean. %s given.', \ucfirst(\gettype($is_persistent)))
+                \sprintf('`persistent` must be a boolean, %s given', \gettype($is_persistent))
             );
         }
 
@@ -958,7 +1007,7 @@ class Configuration
     {
         if (! \is_bool($shared)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Shared must be a boolean. %s given.', \ucfirst(\gettype($shared)))
+                \sprintf('`shared` must be a boolean, %s given', \gettype($shared))
             );
         }
 
@@ -974,7 +1023,7 @@ class Configuration
     {
         if (! \is_bool($async)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Async flush must be a boolean. %s given.', \ucfirst(\gettype($async)))
+                \sprintf('`async_flush` must be a boolean, %s given', \gettype($async))
             );
         }
 
@@ -1001,7 +1050,7 @@ class Configuration
         }
 
         if (! \defined("\\{$constant}")) {
-            throw new ConfigurationInvalidException("Serializer `{$serializer}` is not supported.");
+            throw new ConfigurationInvalidException("Serializer `{$serializer}` is not supported");
         }
 
         $this->serializer = $serializer;
@@ -1025,19 +1074,19 @@ class Configuration
         $linkToDocs = 'For more information about enabling compressions see: https://objectcache.pro/docs/data-encoding/';
 
         if ($compression === self::COMPRESSION_LZF && ! $this->connector::supports($compression)) {
-            throw new ConfigurationInvalidException("{$this->clientName} was not compiled with LZF compression support. {$linkToDocs}");
+            throw new ConfigurationInvalidException("{$this->clientName} was not compiled with LZF compression support, see {$linkToDocs}");
         }
 
         if ($compression === self::COMPRESSION_LZ4 && ! $this->connector::supports($compression)) {
-            throw new ConfigurationInvalidException("{$this->clientName} was not compiled with LZ4 compression support. {$linkToDocs}");
+            throw new ConfigurationInvalidException("{$this->clientName} was not compiled with LZ4 compression support, see {$linkToDocs}");
         }
 
         if ($compression === self::COMPRESSION_ZSTD && ! $this->connector::supports($compression)) {
-            throw new ConfigurationInvalidException("{$this->clientName} was not compiled with Zstandard compression support. {$linkToDocs}");
+            throw new ConfigurationInvalidException("{$this->clientName} was not compiled with Zstandard compression support, see {$linkToDocs}");
         }
 
         if (! \defined("\\{$constant}")) {
-            throw new ConfigurationInvalidException("Compression format `{$compression}` is not supported. {$linkToDocs}");
+            throw new ConfigurationInvalidException("Compression format `{$compression}` is not supported, see {$linkToDocs}");
         }
 
         $this->compression = $compression;
@@ -1052,7 +1101,7 @@ class Configuration
     {
         if (! \is_array($groups)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Global groups must be an array. %s given.', \ucfirst(\gettype($groups)))
+                \sprintf('`global_groups` must be an array, %s given', \gettype($groups))
             );
         }
 
@@ -1068,7 +1117,7 @@ class Configuration
     {
         if (! \is_array($groups)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Non-persistent groups must be an array. %s given.', \ucfirst(\gettype($groups)))
+                \sprintf('`non_persistent_groups` must be an array, %s given', \gettype($groups))
             );
         }
 
@@ -1084,7 +1133,7 @@ class Configuration
     {
         if (! \is_array($groups)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Non-prefetchable groups must be an array. %s given.', \ucfirst(\gettype($groups)))
+                \sprintf('`non_prefetchable_groups` must be an array, %s given', \gettype($groups))
             );
         }
 
@@ -1108,7 +1157,7 @@ class Configuration
 
         if (! \is_bool($debug)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Debug must be a boolean. %s given.', \ucfirst(\gettype($debug)))
+                \sprintf('`debug` must be a boolean, %s given', \gettype($debug))
             );
         }
 
@@ -1132,11 +1181,120 @@ class Configuration
 
         if (! \is_bool($prefetch)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Prefetch must be a boolean. %s given.', \ucfirst(\gettype($prefetch)))
+                \sprintf('`prefetch` must be a boolean, %s given', \gettype($prefetch))
             );
         }
 
         $this->prefetch = (bool) $prefetch;
+    }
+
+    /**
+     * Set whether to enable plugin updates.
+     *
+     * @param  bool  $updates
+     */
+    public function setUpdates($updates)
+    {
+        if (\in_array($updates, ['true', 'on', '1', 1, true], true)) {
+            $updates = true;
+        }
+
+        if (\in_array($updates, ['false', 'off', '0', 0, false], true)) {
+            $prefupdatesetch = false;
+        }
+
+        if (! \is_bool($updates)) {
+            throw new ConfigurationInvalidException(
+                \sprintf('`updates` must be a boolean, %s given', \gettype($updates))
+            );
+        }
+
+        $this->updates = (bool) $updates;
+    }
+
+    /**
+     * Set the analytics configuration.
+     *
+     * @param  array|bool  $analytics
+     */
+    public function setAnalytics($analytics)
+    {
+        if (\in_array($analytics, ['true', 'on', '1', 1, true], true)) {
+            $analytics = true;
+        }
+
+        if (\in_array($analytics, ['false', 'off', '0', 0, false], true)) {
+            $analytics = false;
+        }
+
+        if (\is_bool($analytics)) {
+            $this->analytics['enabled'] = $analytics;
+
+            return;
+        }
+
+        if (! \is_array($analytics)) {
+            throw new ConfigurationInvalidException(
+                \sprintf('`analytics` must be an array, %s given', \gettype($analytics))
+            );
+        }
+
+        foreach (array_keys((array) $this->analytics) as $option) {
+            if (isset($analytics[$option])) {
+                switch ($option) {
+                    case 'retention':
+                        $this->analytics[$option] = (int) $analytics[$option]; break;
+                    default:
+                        $this->analytics[$option] = (bool) $analytics[$option]; break;
+                }
+            }
+        }
+
+        $this->analytics = (object) $this->analytics;
+    }
+
+    /**
+     * Set the Relay configuration.
+     *
+     * @param  array  $relay
+     */
+    public function setRelay($relay)
+    {
+        if (! \is_array($relay)) {
+            throw new ConfigurationInvalidException(
+                \sprintf('`relay` must be an array, %s given', \gettype($relay))
+            );
+        }
+
+        $invalid = array_diff_key($relay, (array) $this->relay);
+
+        if (! empty($invalid)) {
+            throw new ConfigurationInvalidException(
+                \sprintf('`relay.%s` is not a valid configuration option', key(array_slice($invalid, 0, 1)))
+            );
+        }
+
+        $this->relay = (object) $this->relay;
+
+        foreach (array_keys((array) $this->relay) as $option) {
+            if (isset($relay[$option])) {
+                if (\in_array($relay[$option], ['true', 'on', '1', 1, true], true)) {
+                    $relay[$option] = true;
+                }
+
+                if (\in_array($relay[$option], ['false', 'off', '0', 0, false], true)) {
+                    $relay[$option] = false;
+                }
+
+                if (! \is_bool($relay[$option])) {
+                    throw new ConfigurationInvalidException(
+                        \sprintf('`relay.%s` must be a boolean, %s given', $option, \gettype($relay[$option]))
+                    );
+                }
+
+                $this->relay->{$option} = $relay[$option];
+            }
+        }
     }
 
     /**
@@ -1156,7 +1314,7 @@ class Configuration
 
         if (! \is_bool($save_commands)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Save commands must be a boolean. %s given.', \ucfirst(\gettype($save_commands)))
+                \sprintf('`save_commands` must be a boolean, %s given', \gettype($save_commands))
             );
         }
 
@@ -1179,38 +1337,12 @@ class Configuration
         }
 
         if (! \is_bool($split_alloptions)) {
-            throw new ConfigurationInvalidException(\sprintf(
-                'Split alloptions must be a boolean. %s given.',
-                \ucfirst(\gettype($split_alloptions))
-            ));
+            throw new ConfigurationInvalidException(
+                \sprintf('`split_alloptions` must be a boolean, %s given', \gettype($split_alloptions))
+            );
         }
 
         $this->split_alloptions = (bool) $split_alloptions;
-    }
-
-    /**
-     * Set whether to register Relay event listeners.
-     *
-     * @param  bool  $listeners
-     */
-    public function setRelayListeners($listeners)
-    {
-        if (\in_array($listeners, ['true', 'on', '1', 1, true], true)) {
-            $listeners = true;
-        }
-
-        if (\in_array($listeners, ['false', 'off', '0', 0, false], true)) {
-            $listeners = false;
-        }
-
-        if (! \is_bool($listeners)) {
-            throw new ConfigurationInvalidException(\sprintf(
-                'Relay listeners must be a boolean. %s given.',
-                \ucfirst(\gettype($listeners))
-            ));
-        }
-
-        $this->relay_listeners = (bool) $listeners;
     }
 
     /**
@@ -1221,10 +1353,9 @@ class Configuration
     public function setFlushNetwork($strategy)
     {
         if (! \is_string($strategy)) {
-            throw new ConfigurationInvalidException(\sprintf(
-                'Network flushing strategy must be a string. %s given.',
-                \ucfirst(\gettype($strategy))
-            ));
+            throw new ConfigurationInvalidException(
+                \sprintf('`flush_network` strategy must be a string, %s given', \gettype($strategy))
+            );
         }
 
         $constant = \sprintf(
@@ -1236,7 +1367,7 @@ class Configuration
         $strategy = \strtolower((string) $strategy);
 
         if (! \defined($constant)) {
-            throw new ConfigurationInvalidException("Network flushing strategy `{$strategy}` is not supported.");
+            throw new ConfigurationInvalidException("`flush_network` strategy `{$strategy}` is not supported");
         }
 
         $this->flush_network = $strategy;
@@ -1252,15 +1383,14 @@ class Configuration
     public function setTlsOptions($options)
     {
         if (! \is_array($options)) {
-            throw new ConfigurationInvalidException(\sprintf(
-                'TLS context options must be an array. %s given.',
-                \ucfirst(\gettype($options))
-            ));
+            throw new ConfigurationInvalidException(
+                \sprintf('`tls_options` context must be an array, %s given', \gettype($options))
+            );
         }
 
         if (empty($options)) {
             throw new ConfigurationInvalidException(
-                'TLS context options must be a non-empty array.'
+                '`tls_options` context must be a non-empty array'
             );
         }
 
@@ -1276,7 +1406,7 @@ class Configuration
     {
         if (! \is_int($retries)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Retries must be an integer. %s given.', \ucfirst(\gettype($retries)))
+                \sprintf('`retries` must be an integer, %s given', \gettype($retries))
             );
         }
 
@@ -1292,13 +1422,13 @@ class Configuration
     {
         if (! \is_string($backoff)) {
             throw new ConfigurationInvalidException(
-                \sprintf('Backoff must be a string. %s given.', \ucfirst(\gettype($backoff)))
+                \sprintf('`backoff` must be a string, %s given', \gettype($backoff))
             );
         }
 
         if (! \in_array($backoff, [self::BACKOFF_NONE, self::BACKOFF_DEFAULT])) {
             throw new ConfigurationInvalidException(
-                \sprintf('Backoff `%s` is not supported.', $backoff)
+                \sprintf('Backoff `%s` is not supported', $backoff)
             );
         }
 
@@ -1316,7 +1446,7 @@ class Configuration
         $components = \parse_url((string) $url);
 
         if (! \is_array($components)) {
-            throw new ConfigurationInvalidException("URL is malformed and could not be parsed: `{$url}`.");
+            throw new ConfigurationInvalidException("`url` is malformed and could not be parsed: `{$url}`");
         }
 
         if (! isset($components['host'])) {
@@ -1325,7 +1455,7 @@ class Configuration
         }
 
         if (empty($components['host'])) {
-            throw new ConfigurationInvalidException("URL is malformed and could not be parsed: `{$url}`.");
+            throw new ConfigurationInvalidException("`url` is malformed and could not be parsed: `{$url}`");
         }
 
         $components = \array_map('rawurldecode', $components);
@@ -1362,7 +1492,7 @@ class Configuration
             'port' => isset($components['port']) ? (int) $components['port'] : null,
             'username' => $components['user'] ?? null,
             'password' => $components['pass'] ?? null,
-            'database' => (int) ($components['database'] ?? 0),
+            'database' => (int) ($components['database'] ?? null),
             'role' => $components['role'] ?? null,
         ];
     }
@@ -1387,16 +1517,16 @@ class Configuration
     public function __call(string $method, array $arguments)
     {
         if (\strpos($method, 'set') === 0 && \strlen($method) > 3) {
-            $method = strtolower(
-                preg_replace('/(?<!^)[A-Z]/', '_$0', substr($method, 3))
+            $method = \strtolower(
+                \preg_replace('/(?<!^)[A-Z]/', '_$0', \substr($method, 3))
             );
 
-            \error_log("objectcache.warning: `{$method}` is not a valid config option.");
+            \error_log("objectcache.warning: `{$method}` is not a valid config option");
 
             return;
         }
 
-        throw new BadMethodCallException("Call to undefined method `Configuration::{$method}`.");
+        throw new BadMethodCallException("Call to undefined method `Configuration::{$method}`");
     }
 
     /**
@@ -1423,13 +1553,17 @@ class Configuration
             'timeout' => $this->timeout,
             'read_timeout' => $this->read_timeout,
             'retry_interval' => $this->retry_interval,
+            'retries' => $this->retries,
+            'backoff' => $this->backoff,
             'persistent' => $this->persistent,
             'shared' => $this->shared,
             'async_flush' => $this->async_flush,
             'cluster' => $this->cluster,
-            'servers' => $this->servers,
             'cluster_failover' => $this->cluster_failover,
+            'servers' => $this->servers,
             'replication_strategy' => $this->replication_strategy,
+            'sentinels' => $this->sentinels,
+            'service' => $this->service,
             'serializer' => $this->serializer,
             'compression' => $this->compression,
             'global_groups' => $this->global_groups,
@@ -1437,11 +1571,13 @@ class Configuration
             'non_prefetchable_groups' => $this->non_prefetchable_groups,
             'prefetch' => $this->prefetch,
             'split_alloptions' => $this->split_alloptions,
-            'relay_listeners' => $this->relay_listeners,
             'flush_network' => $this->flush_network,
+            'analytics' => $this->analytics,
+            'relay' => $this->relay,
             'tls_options' => $this->tls_options,
-            'save_commands' => $this->save_commands,
+            'updates' => $this->updates,
             'debug' => $this->debug,
+            'save_commands' => $this->save_commands,
         ];
     }
 
@@ -1459,7 +1595,7 @@ class Configuration
         };
 
         $formatter = function ($name, $value) use ($encodeJson) {
-            if (in_array($name, ['cluster', 'tls_options'])) {
+            if (in_array($name, ['cluster', 'analytics', 'relay', 'tls_options'])) {
                 return [$name, $encodeJson($value)];
             }
 

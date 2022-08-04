@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -68,7 +68,7 @@ class LogWatcher extends Notify
     /**
      * Prints the metrics to the screen.
      *
-     * @param bool  $finish
+     * @param  bool  $finish
      * @return void
      */
     public function display($finish = false)

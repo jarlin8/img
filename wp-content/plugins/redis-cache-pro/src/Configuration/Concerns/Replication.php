@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -61,7 +61,7 @@ trait Replication
     public function setServers($servers)
     {
         if (! \is_array($servers)) {
-            throw new ConfigurationException('Servers must an array of Redis servers.');
+            throw new ConfigurationException('`servers` must an array of Redis servers');
         }
 
         $masters = \array_filter($servers, function ($server) {
@@ -69,7 +69,7 @@ trait Replication
         });
 
         if (\count($masters) !== 1) {
-            throw new ConfigurationException('Servers must contain exactly one master.');
+            throw new ConfigurationException('`servers` must contain exactly one master');
         }
 
         $this->servers = $servers;
@@ -85,7 +85,7 @@ trait Replication
         $strategy = \strtolower((string) $strategy);
 
         if (! \in_array($strategy, $this->replicationStrategies())) {
-            throw new ConfigurationException("Replication strategy `{$strategy}` is not supported.");
+            throw new ConfigurationException("Replication strategy `{$strategy}` is not supported");
         }
 
         $this->replication_strategy = $strategy;

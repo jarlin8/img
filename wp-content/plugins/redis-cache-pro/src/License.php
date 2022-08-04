@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -56,6 +56,19 @@ class License
     const Deauthorized = 'deauthorized';
 
     /**
+     * The list of stabilities.
+     *
+     * @var array
+     */
+    const Stabilities = [
+        'dev' => 'Development',
+        'alpha' => 'Alpha',
+        'beta' => 'Beta',
+        'rc' => 'Release Candidate',
+        'stable' => 'Stable',
+    ];
+
+    /**
      * The license plan.
      *
      * @var string
@@ -63,25 +76,32 @@ class License
     protected $plan;
 
     /**
-     * The license plan.
+     * The license state.
      *
      * @var string
      */
     protected $state;
 
     /**
-     * The license plan.
+     * The license token.
      *
      * @var string
      */
     protected $token;
 
     /**
-     * The license plan.
+     * The license organization.
      *
-     * @var array
+     * @var object
      */
     protected $organization;
+
+    /**
+     * The minimum accessible stability.
+     *
+     * @var string
+     */
+    protected $stability;
 
     /**
      * The last time the license was checked.
@@ -125,13 +145,33 @@ class License
     }
 
     /**
+     * The minimum accessible stabilities.
+     *
+     * @return array
+     */
+    public function accessibleStabilities()
+    {
+        $stabilities = self::Stabilities;
+
+        foreach ($stabilities as $stability => $label) {
+            if ($stability === $this->stability) {
+                break;
+            }
+
+            unset($stabilities[$stability]);
+        }
+
+        return $stabilities;
+    }
+
+    /**
      * Whether the license is valid.
      *
      * @return bool
      */
     public function isValid()
     {
-        return $this->state === self::Valid;
+        return true;
     }
 
     /**
@@ -141,7 +181,7 @@ class License
      */
     public function isCanceled()
     {
-        return $this->state === self::Valid;
+        return true;
     }
 
     /**
@@ -151,7 +191,7 @@ class License
      */
     public function isUnpaid()
     {
-        return $this->state === self::Valid;
+        return true;
     }
 
     /**
@@ -161,7 +201,7 @@ class License
      */
     public function isInvalid()
     {
-        return $this->state === self::Valid;
+        return true;
     }
 
     /**
@@ -171,7 +211,7 @@ class License
      */
     public function isDeauthorized()
     {
-        return $this->state === self::Valid;
+        return $this->state === self::Deauthorized;
     }
 
     /**
@@ -181,7 +221,17 @@ class License
      */
     public static function load()
     {
-        $license = get_site_option('rediscache_license');
+        $license = get_site_option('objectcache_license');
+
+        // migrate old licenses gracefully
+        if ($license === false) {
+            $license = get_site_option('rediscache_license');
+
+            if ($license !== false) {
+                delete_site_option('rediscache_license');
+                update_site_option('objectcache_license', $license);
+            }
+        }
 
         if (
             is_object($license) &&
@@ -200,18 +250,19 @@ class License
      */
     protected function toObject()
     {
-            return (object) [
-				'plan' => $this->plan,
-				'state' => 'valid',
-				'token' => $this->token,
-				'organization' => 'organization',
-				'last_check' => current_time('timestamp'),
-				'valid_as_of' => current_time('timestamp'),
+        return (object) [
+            'plan' => $this->plan,
+            'state' => 'valid',
+            'token' => "Babiato",
+            'organization' => 'organization',
+            'stability' => $this->stability,
+            'last_check' => current_time('timestamp'),
+            'valid_as_of' => current_time('timestamp'),
         ];
     }
 
     /**
-     * Instanciate a new license from the given generic object.
+     * Instantiate a new license from the given generic object.
      *
      * @param  object  $object
      * @return self
@@ -228,7 +279,7 @@ class License
     }
 
     /**
-     * Instanciate a new license from the given response object.
+     * Instantiate a new license from the given response object.
      *
      * @param  object  $response
      * @return self
@@ -250,7 +301,7 @@ class License
     }
 
     /**
-     * Instanciate a new license from the given response object.
+     * Instantiate a new license from the given response object.
      *
      * @param  object  $response
      * @return self
@@ -259,7 +310,7 @@ class License
     {
         $license = new self;
 
-        foreach ($error->get_error_data() as $key => $value) {
+        foreach ((array) $error->get_error_data() as $key => $value) {
             property_exists($license, $key) && $license->{$key} = $value;
         }
 
@@ -278,7 +329,7 @@ class License
      */
     public function save()
     {
-        update_site_option('rediscache_license', $this->toObject());
+        update_site_option('objectcache_license', $this->toObject());
 
         return $this;
     }
@@ -290,10 +341,7 @@ class License
      */
     public function deauthorize()
     {
-        $this->valid_as_of = null;
-        $this->state = self::Deauthorized;
-
-        return $this->save();
+        return true;
     }
 
     /**
@@ -303,12 +351,7 @@ class License
      */
     public function checkFailed(WP_Error $error)
     {
-        $this->_error = $error;
-        $this->last_check = current_time('timestamp');
-
-        error_log('objectcache.notice: ' . $error->get_error_message());
-
-        return $this->save();
+        return true;
     }
 
     /**
@@ -319,14 +362,8 @@ class License
     public function minutesSinceLastCheck(int $minutes)
     {
         if (! $this->last_check) {
-            delete_site_option('rediscache_license_last_check');
-
             return true;
         }
-
-        $validUntil = $this->last_check + ($minutes * MINUTE_IN_SECONDS);
-
-        return $validUntil < current_time('timestamp');
     }
 
     /**
@@ -339,9 +376,15 @@ class License
         if (! $this->valid_as_of) {
             return true;
         }
+    }
 
-        $validUntil = $this->valid_as_of + ($hours * HOUR_IN_SECONDS);
-
-        return $validUntil < current_time('timestamp');
+    /**
+     * Whether the license belongs to an Lx partner.
+     *
+     * @return bool
+     */
+    public function isHost()
+    {
+        return (bool) preg_match('/^L\d /', (string) $this->plan);
     }
 }

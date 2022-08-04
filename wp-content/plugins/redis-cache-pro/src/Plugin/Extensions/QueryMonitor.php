@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -18,6 +18,7 @@ namespace RedisCachePro\Plugin\Extensions;
 
 use QM_Collectors;
 
+use RedisCachePro\Diagnostics\Diagnostics;
 use RedisCachePro\Extensions\QueryMonitor\CommandsCollector;
 use RedisCachePro\Extensions\QueryMonitor\CommandsHtmlOutput;
 use RedisCachePro\Extensions\QueryMonitor\ObjectCacheCollector;
@@ -38,8 +39,14 @@ trait QueryMonitor
 
         add_filter('init', [$this, 'registerQmCollectors']);
         add_filter('qm/outputter/html', [$this, 'registerQmOutputters']);
-        add_filter('qm/component_name/unknown', [$this, 'fixUnknownQmComponentName'], 10, 2);
-        add_filter('qm/component_context/unknown', [$this, 'fixUnknownQmComponentContext'], 10, 2);
+
+        add_filter('qm/component_type/unknown', [$this, 'fixUnknownQmComponentType'], 10, 2);
+
+        add_filter('qm/component_name/plugin', [$this, 'fixUnknownQmComponentName'], 10, 2);
+        add_filter('qm/component_name/mu-plugin', [$this, 'fixUnknownQmComponentName'], 10, 2);
+
+        add_filter('qm/component_context/plugin', [$this, 'fixUnknownQmComponentContext'], 10, 2);
+        add_filter('qm/component_context/mu-plugin', [$this, 'fixUnknownQmComponentContext'], 10, 2);
     }
 
     /**
@@ -92,6 +99,22 @@ trait QueryMonitor
     }
 
     /**
+     * Fix unknown Query Monitor component type.
+     *
+     * @param  string  $type
+     * @param  string  $file
+     * @return string
+     */
+    public function fixUnknownQmComponentType($type, $file)
+    {
+        if (strpos($file, $this->directory) !== false) {
+            return Diagnostics::isMustUse() ? 'mu-plugin' : 'plugin';
+        }
+
+        return $type;
+    }
+
+    /**
      * Fix unknown Query Monitor component name.
      *
      * @param  string  $name
@@ -104,7 +127,7 @@ trait QueryMonitor
             return $name;
         }
 
-        if ($this->diagnostics()->isMustUse()) {
+        if (Diagnostics::isMustUse()) {
             return sprintf(__('MU Plugin: %s', 'query-monitor'), $this->slug());
         }
 
@@ -122,10 +145,6 @@ trait QueryMonitor
     {
         if (strpos($file, $this->directory) === false) {
             return $context;
-        }
-
-        if ($this->diagnostics()->isMustUse()) {
-            return $this->slug();
         }
 
         return $this->slug();

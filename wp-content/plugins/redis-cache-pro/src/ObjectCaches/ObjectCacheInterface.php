@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -17,19 +17,30 @@ declare(strict_types=1);
 namespace RedisCachePro\ObjectCaches;
 
 use RedisCachePro\Configuration\Configuration;
+use RedisCachePro\Connections\ConnectionInterface;
 
 interface ObjectCacheInterface
 {
     /**
      * Adds data to the cache, if the cache key doesn't already exist.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  mixed  $data
      * @param  string  $group
      * @param  int  $expire
      * @return bool
      */
-    public function add(string $key, $data, string $group = 'default', int $expire = 0): bool;
+    public function add($key, $data, string $group = 'default', int $expire = 0): bool;
+
+    /**
+     * Adds multiple values to the cache in one call, if the cache keys doesn't already exist.
+     *
+     * @param  array  $data
+     * @param  string  $group
+     * @param  int  $expire
+     * @return bool[]
+     */
+    public function add_multiple(array $data, string $group = 'default', int $expire = 0): array;
 
     /**
      * Set given groups as global.
@@ -76,28 +87,37 @@ interface ObjectCacheInterface
     /**
      * Returns the connection instance.
      *
-     * @return \RedisCachePro\Connections\ConnectionInterface
+     * @return \RedisCachePro\Connections\ConnectionInterface|null
      */
-    public function connection();
+    public function connection(): ?ConnectionInterface; // phpcs:ignore PHPCompatibility.FunctionDeclarations.NewNullableTypes.returnTypeFound
 
     /**
      * Decrements numeric cache item's value.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  int  $offset
      * @param  string  $group
-     * @return false|int
+     * @return int|false
      */
-    public function decr(string $key, int $offset = 1, string $group = 'default');
+    public function decr($key, int $offset = 1, string $group = 'default');
 
     /**
      * Removes the cache contents matching key and group.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
      * @return bool
      */
-    public function delete(string $key, string $group = 'default'): bool;
+    public function delete($key, string $group = 'default'): bool;
+
+    /**
+     * Deletes multiple values from the cache in one call.
+     *
+     * @param  array  $keys
+     * @param  string  $group
+     * @return bool[]
+     */
+    public function delete_multiple(array $keys, string $group = 'default'): array;
 
     /**
      * Removes all cache items.
@@ -107,15 +127,22 @@ interface ObjectCacheInterface
     public function flush(): bool;
 
     /**
+     * Removes all cache items from the in-memory runtime cache.
+     *
+     * @return bool
+     */
+    public function flush_runtime(): bool;
+
+    /**
      * Retrieves the cache contents from the cache by key and group.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
      * @param  bool  $force
      * @param  bool  &$found
-     * @return bool|mixed
+     * @return mixed|false
      */
-    public function get(string $key, string $group = 'default', bool $force = false, &$found = null);
+    public function get($key, string $group = 'default', bool $force = false, &$found = null);
 
     /**
      * Retrieves multiple values from the cache in one call.
@@ -130,43 +157,53 @@ interface ObjectCacheInterface
     /**
      * Whether the key exists in the cache.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
      * @return bool
      */
-    public function has(string $key, string $group = 'default'): bool;
+    public function has($key, string $group = 'default'): bool;
 
     /**
      * Increment numeric cache item's value.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  int  $offset
      * @param  string  $group
-     * @return false|int
+     * @return int|false
      */
-    public function incr(string $key, int $offset = 1, string $group = 'default');
+    public function incr($key, int $offset = 1, string $group = 'default');
 
     /**
      * Replaces the contents of the cache with new data.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  mixed  $data
      * @param  string  $group
      * @param  int  $expire
      * @return bool
      */
-    public function replace(string $key, $data, string $group = 'default', int $expire = 0): bool;
+    public function replace($key, $data, string $group = 'default', int $expire = 0): bool;
 
     /**
      * Saves the data to the cache.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  mixed  $data
      * @param  string  $group
      * @param  int  $expire
      * @return bool
      */
-    public function set(string $key, $data, string $group = 'default', int $expire = 0): bool;
+    public function set($key, $data, string $group = 'default', int $expire = 0): bool;
+
+    /**
+     * Sets multiple values to the cache in one call.
+     *
+     * @param  array  $data
+     * @param  string  $group
+     * @param  int  $expire
+     * @return bool[]
+     */
+    public function set_multiple(array $data, string $group = 'default', int $expire = 0): array;
 
     /**
      * Switches the internal blog ID.

@@ -99,7 +99,7 @@ class ObjectCacheHtmlOutput extends QM_Output_Html
 
             echo $this->build_notice(implode(' ', [
                 'The Object Cache Pro object cache drop-in is not installed.',
-                'Use the Dashboard Widget or WP CLI to enable the object cache drop-in.',
+                'Use the Dashboard widget or WP CLI to enable the object cache drop-in.',
             ]));
 
             $this->after_non_tabular_output();
@@ -112,7 +112,7 @@ class ObjectCacheHtmlOutput extends QM_Output_Html
 
             echo $this->build_notice(implode(' ', [
                 'WordPress is using a foreign object cache drop-in and Object Cache Pro is not being used.',
-                'Use the Dashboard Widget or WP CLI to enable the object cache drop-in.',
+                'Use the Dashboard widget or WP CLI to enable the object cache drop-in.',
             ]));
 
             $this->after_non_tabular_output();

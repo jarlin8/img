@@ -54,7 +54,10 @@ class ObjectCacheCollector extends QM_Collector
 
         $this->data['status'] = $diagnostics['general']['status']->html;
 
-        if (! method_exists($wp_object_cache, 'info')) {
+        if (
+            ! method_exists($wp_object_cache, 'info') ||
+            ! method_exists($wp_object_cache, 'connection')
+        ) {
             return;
         }
 
@@ -63,10 +66,6 @@ class ObjectCacheCollector extends QM_Collector
         $this->data['hits'] = number_format($info->hits);
         $this->data['misses'] = number_format($info->misses);
         $this->data['ratio'] = $info->ratio;
-
-        if (isset($info->prefetches)) {
-            $this->data['prefetches'] = $info->prefetches;
-        }
 
         if (isset($info->prefetches)) {
             $this->data['prefetches'] = $info->prefetches;

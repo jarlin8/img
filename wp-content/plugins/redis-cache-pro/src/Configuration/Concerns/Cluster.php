@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace RedisCachePro\Configuration\Concerns;
 
 use RedisCachePro\Exceptions\ConfigurationException;
+use RedisCachePro\Exceptions\ConfigurationInvalidException;
 
 trait Cluster
 {
@@ -63,10 +64,18 @@ trait Cluster
      */
     public function setCluster($cluster)
     {
+        if (is_null($cluster)) {
+            return;
+        }
+
         if (! \is_string($cluster) && ! \is_array($cluster)) {
             throw new ConfigurationException(
-                'Cluster must be a configuration name (string) or an array of cluster nodes.'
+                '`cluster` must be a configuration name (string) or an array of cluster nodes'
             );
+        }
+
+        if (empty($cluster)) {
+            throw new ConfigurationInvalidException('`cluster` must be a non-empty string or array');
         }
 
         $this->cluster = $cluster;
@@ -83,7 +92,7 @@ trait Cluster
         $failover = \str_replace('distribute_slaves', 'distribute_replicas', $failover);
 
         if (! \in_array($failover, $this->clusterFailovers())) {
-            throw new ConfigurationException("Replica failover `{$failover}` is not supported.");
+            throw new ConfigurationException("Cluster failover `{$failover}` is not supported");
         }
 
         $this->cluster_failover = $failover;

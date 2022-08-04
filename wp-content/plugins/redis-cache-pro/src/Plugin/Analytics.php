@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -27,11 +27,13 @@ trait Analytics
     {
         global $wp_object_cache;
 
-        if (! defined('\WP_REDIS_ANALYTICS') || ! \WP_REDIS_ANALYTICS) {
+        add_action('rest_api_init', [new Api\Analytics, 'register_routes']);
+
+        if (! $this->analyticsEnabled()) {
             return;
         }
 
-        if (! method_exists($wp_object_cache, 'measurements')) {
+        if ($wp_object_cache && ! method_exists($wp_object_cache, 'measurements')) {
             return;
         }
 
@@ -48,6 +50,16 @@ trait Analytics
         if (wp_doing_cron() && ! wp_next_scheduled('objectcache_prune_analytics')) {
             wp_schedule_event(time(), 'hourly', 'objectcache_prune_analytics');
         }
+    }
+
+    /**
+     * Whether analytics are enabled.
+     *
+     * @return bool
+     */
+    public function analyticsEnabled()
+    {
+        return $this->config->analytics->enabled;
     }
 
     /**
@@ -87,11 +99,11 @@ trait Analytics
     {
         global $wp_object_cache;
 
-        $option = defined('WP_REDIS_ANALYTICS_HTML')
-            ? \WP_REDIS_ANALYTICS_HTML
-            : true;
-
-        if (! $option && ! \WP_DEBUG && ! $this->config->debug) {
+        if (
+            ! \WP_DEBUG
+            && ! $this->config->debug
+            && ! $this->config->analytics->footnote
+        ) {
             return;
         }
 
@@ -116,6 +128,15 @@ trait Analytics
             return;
         }
 
-        echo "<!-- plugin=object-cache-pro {$wp_object_cache->measureWordPress()} -->\n";
+        if (! $measurement = $wp_object_cache->requestMeasurement()) {
+            return;
+        }
+
+        printf(
+            "<!-- plugin=%s client=%s %s -->\n",
+            'object-cache-pro',
+            strtolower($wp_object_cache->clientName()),
+            (string) $measurement
+        );
     }
 }

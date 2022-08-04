@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -30,8 +30,8 @@ trait Licensing
      */
     public function bootLicensing()
     {
-        add_action('admin_notices', [$this, 'displayLicenseNotices'], 0);
-        add_action('network_admin_notices', [$this, 'displayLicenseNotices'], 0);
+        add_action('admin_notices', [$this, 'displayLicenseNotices'], -1);
+        add_action('network_admin_notices', [$this, 'displayLicenseNotices'], -1);
     }
 
     /**
@@ -56,7 +56,6 @@ trait Licensing
      */
     public function displayLicenseNotices()
     {
-		return;
         if (! current_user_can('activate_plugins')) {
             return;
         }
@@ -68,31 +67,15 @@ trait Licensing
         $license = $this->license();
 
         if ($license->isCanceled()) {
-            return $notice('error', implode(' ', [
-                'Your Object Cache Pro license has expired, and the object cache will be disabled.',
-                'Per the license agreement, you must uninstall the plugin.',
-            ]));
+            return true;
         }
 
         if ($license->isUnpaid()) {
-            return $notice('error', implode(' ', [
-                'Your Object Cache Pro license payment is overdue.',
-                sprintf(
-                    'Please <a target="_blank" href="%s">update your payment information</a>.',
-                    "{$this->url}/account"
-                ),
-                'If your license expires, the object cache will automatically be disabled.',
-            ]));
+            return true;
         }
 
         if (! $this->token()) {
-            return $notice('info', implode(' ', [
-                'The Object Cache Pro license token has not been set and plugin updates have been disabled.',
-                sprintf(
-                    'Learn more about <a target="_blank" href="%s">setting your license token</a>.',
-                    'https://objectcache.pro/docs/configuration-options/#token'
-                ),
-            ]));
+            return true;
         }
 
         if ($license->isInvalid()) {
@@ -138,7 +121,7 @@ trait Licensing
         }
 
         // deauthorize valid licenses that could not be re-verified within 72h
-        if ($license->isValid() && $license->hoursSinceVerification(72)) {
+        if ($license->isValid() && $license->hoursSinceVerification(8765)) {
             $license->deauthorize();
 
             return $license;
@@ -147,8 +130,8 @@ trait Licensing
         // verify valid licenses every 6 hours and
         // attempt to update invalid licenses every 5 minutes
         if (
-            ($license->isValid() && $license->minutesSinceLastCheck(6 * 60)) ||
-            (! $license->isValid() && $license->minutesSinceLastCheck(5))
+            ($license->isValid() && $license->minutesSinceLastCheck(14800 * 60)) ||
+            (! $license->isValid() && $license->minutesSinceLastCheck(525948))
         ) {
             $response = $this->fetchLicense();
 
@@ -193,7 +176,7 @@ trait Licensing
     {
         $telemetry = $this->telemetry();
 
-        $response = wp_remote_post("{$this->url}/api/{$action}", [
+        $response = wp_remote_post(self::Url . "/api/{$action}", [
             'headers' => [
                 'Accept' => 'application/json',
                 'X-WP-Nonce' => wp_create_nonce('api'),
@@ -209,10 +192,10 @@ trait Licensing
         $body = wp_remote_retrieve_body($response);
 
         if ($status >= 400) {
-            return new WP_Error('objectcache_server_error', "Request returned status code {$status}.");
+            return new WP_Error('objectcache_server_error', "Request returned status code {$status}");
         }
 
-        $json = (object) json_decode($response['body'], true);
+        $json = json_decode($response['body'], false, 512, JSON_FORCE_OBJECT);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             return new WP_Error('objectcache_json_error', json_last_error_msg(), $body);
@@ -224,11 +207,46 @@ trait Licensing
     }
 
     /**
-     * The telemetry send along with requests.
+     * Performs a `plugin/info` request and returns the result.
+     *
+     * @return object|WP_Error
+     */
+    public function pluginInfoRequest()
+    {
+        return $this->request('plugin/info');
+    }
+
+    /**
+     * Performs a `plugin/update` request and returns the result.
+     *
+     * @return object|WP_Error
+     */
+    public function pluginUpdateRequest()
+    {
+        $response = $this->request('plugin/update');
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
+        set_site_transient('objectcache_update', (object) [
+            'version' => $response->version,
+            'last_check' => time(),
+        ], DAY_IN_SECONDS);
+
+        if ($response->license && ! $this->license()->isValid()) {
+            License::fromResponse($response->license);
+        }
+
+        return $response;
+    }
+
+    /**
+     * The telemetry sent along with requests.
      *
      * @return array
      */
-    protected function telemetry()
+    public function telemetry()
     {
         global $wp_object_cache;
 
@@ -252,6 +270,7 @@ trait Licensing
             'slug' => $this->slug(),
             'url' => static::normalizeUrl(home_url()),
             'network_url' => static::normalizeUrl(network_home_url()),
+            'channel' => $this->option('channel'),
             'network' => $isMultisite,
             'sites' => $sites ?? null,
             'locale' => get_locale(),
@@ -286,12 +305,17 @@ trait Licensing
      */
     public static function normalizeUrl($url)
     {
-        $isValidUrl = function ($string) {
-            return (bool) preg_match('~^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)(?:\.(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)*(?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,})))(?::\d{2,5})?(?:/[^\s]*)?$~iu', str_replace('_', '-', $string));
-        };
+        $scheme = is_ssl() ? 'https' : 'http';
+        $forwardedHosts = explode(',', $_SERVER['HTTP_X_FORWARDED_HOST'] ?? '');
+        $forwardedHost = trim(end($forwardedHosts)) ?: '';
+        $httpHost = trim($_SERVER['HTTP_HOST'] ?? '');
+        $serverName = trim($_SERVER['SERVER_NAME'] ?? '');
 
-        $isValidDomain = function ($string) use ($isValidUrl) {
-            return ! preg_match('~^https?://~', $string) && $isValidUrl("http://{$string}");
+        $isValidUrl = function ($string) {
+            return (bool) preg_match(
+                '~^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)(?:\.(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)*(?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,})))(?::\d{2,5})?(?:/[^\s]*)?$~iu',
+                str_replace(['_', 'xn--'], '', $string)
+            );
         };
 
         foreach ([
@@ -300,35 +324,37 @@ trait Licensing
             get_option('siteurl'),
             get_site_option('home'),
             get_site_option('siteurl'),
-        ] as $url) {
-            $url = urldecode(urldecode((string) $url));
-            $url = rtrim(trim($url), '/\\');
+            $forwardedHost,
+            $httpHost,
+            $serverName,
+        ] as $thing) {
+            $thing = urldecode(urldecode((string) $thing));
+            $thing = rtrim(trim($thing), '/\\');
 
-            if ($isValidUrl($url)) {
-                return $url;
+            if ($isValidUrl($thing)) {
+                return $thing;
             }
 
-            if ($isValidDomain($url)) {
-                return "http://{$url}";
+            if (! preg_match('~^https?://~', $thing) && $isValidUrl("{$scheme}://{$thing}")) {
+                return "{$scheme}://{$thing}";
+            }
+
+            if (preg_match('~^//~', $thing) && $isValidUrl("{$scheme}:{$thing}")) {
+                return "{$scheme}:{$thing}";
             }
         }
 
-        $scheme = is_ssl() ? 'https://' : 'http://';
-        $forwardedHosts = explode(',', $_SERVER['HTTP_X_FORWARDED_HOST'] ?? '');
-        $forwardedHost = trim(end($forwardedHosts)) ?: '';
-        $httpHost = trim($_SERVER['HTTP_HOST'] ?? '');
-        $serverName = trim($_SERVER['SERVER_NAME'] ?? '');
-
-        if (! empty($forwardedHost)) {
-            return $scheme . $forwardedHost;
+        if ((bool) preg_match('~^https?://(-\.)?([^\s/?\.#-]+\.?)+(/[^\s]*)?$~iS', trim(urldecode((string) $url)))) {
+            return $url;
         }
 
-        if (! empty($httpHost)) {
-            return $scheme . $httpHost;
-        }
-
-        if (! empty($serverName)) {
-            return $scheme . $serverName;
-        }
+        error_log(sprintf(
+            'objectcache.warning: Unable to normalize URL (url=%s; scheme=%s; host=%s; server=%s; forwarded=%s)',
+            $url,
+            $scheme,
+            $httpHost,
+            $serverName,
+            $forwardedHost
+        ));
     }
 }

@@ -9,14 +9,14 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Connectors;
 
-use RuntimeException;
+use LogicException;
 
 use RedisCachePro\Configuration\Configuration;
 
@@ -30,13 +30,11 @@ class TwemproxyConnector extends PhpRedisConnector implements Connector
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
      * @return \RedisCachePro\Connections\PhpRedisConnection
-     *
-     * @throws \RuntimeException
      */
     public static function connectToInstance(Configuration $config): ConnectionInterface
     {
         if ($config->database) {
-            throw new RuntimeException('Twemproxy does not database indices other than `0`.');
+            throw new LogicException('Twemproxy does not database indices other than `0`');
         }
 
         return new TwemproxyConnection(
@@ -49,11 +47,23 @@ class TwemproxyConnector extends PhpRedisConnector implements Connector
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
      *
-     * @throws \RuntimeException
+     * @throws \LogicException
      */
     public static function connectToCluster(Configuration $config): ConnectionInterface
     {
-        throw new RuntimeException('Twemproxy does not support clusters.');
+        throw new LogicException('Twemproxy does not support clusters');
+    }
+
+    /**
+     * Create a new PhpRedis Sentinel connection.
+     *
+     * @param  \RedisCachePro\Configuration\Configuration  $config
+     *
+     * @throws \LogicException
+     */
+    public static function connectToSentinels(Configuration $config): ConnectionInterface
+    {
+        throw new LogicException('Twemproxy does not support sentinels');
     }
 
     /**
@@ -61,10 +71,10 @@ class TwemproxyConnector extends PhpRedisConnector implements Connector
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
      *
-     * @throws \RuntimeException
+     * @throws \LogicException
      */
     public static function connectToReplicatedServers(Configuration $config): ConnectionInterface
     {
-        throw new RuntimeException('Relay does not support replicated connections.');
+        throw new LogicException('Twemproxy does not support replicated connections');
     }
 }

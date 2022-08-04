@@ -9,13 +9,14 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Console\Watchers;
 
+use WP_CLI;
 use cli\Notify;
 use cli\Streams;
 
@@ -83,13 +84,13 @@ class AggregateWatcher extends Notify
     /**
      * Prints the metrics to the screen.
      *
-     * @param bool  $finish
+     * @param  bool  $finish
      * @return void
      */
     public function display($finish = false)
     {
         if ($this->_current === 1) {
-            Streams::line(\WP_CLI::colorize($this->_message));
+            Streams::line(WP_CLI::colorize($this->_message));
         }
 
         if (! $this->measurements || ! $this->measurements->count()) {
@@ -108,7 +109,7 @@ class AggregateWatcher extends Notify
             $method = 'get' . str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $metric)));
 
             if (! method_exists($this, $method)) {
-                \WP_CLI::error("Invalid metric name: {$metric}.");
+                WP_CLI::error("Invalid metric name: {$metric}.");
             }
 
             $data[] = $this->format($metric, $this->{$method}());
@@ -252,7 +253,7 @@ class AggregateWatcher extends Notify
      */
     protected function getMsTotal()
     {
-        $msTotalMedian = $this->measurements->median('wp->totalMs');
+        $msTotalMedian = $this->measurements->median('wp->msTotal');
 
         return is_null($msTotalMedian) ? null : number_format($msTotalMedian, 2, '.', '');
     }
@@ -262,7 +263,7 @@ class AggregateWatcher extends Notify
      */
     protected function getMsCache()
     {
-        $msCacheMedian = $this->measurements->median('wp->cacheMs');
+        $msCacheMedian = $this->measurements->median('wp->msCache');
 
         return is_null($msCacheMedian) ? null : number_format($msCacheMedian, 2, '.', '');
     }
@@ -272,7 +273,7 @@ class AggregateWatcher extends Notify
      */
     protected function getMsCacheRatio()
     {
-        $msCacheRatioMedian = $this->measurements->median('wp->cacheRatioMs');
+        $msCacheRatioMedian = $this->measurements->median('wp->msCacheRatio');
 
         return is_null($msCacheRatioMedian) ? null : number_format($msCacheRatioMedian, 2, '.', '');
     }

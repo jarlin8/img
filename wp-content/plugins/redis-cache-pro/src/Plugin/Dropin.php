@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -57,7 +57,7 @@ trait Dropin
          *
          * @param  bool  $autoflush  Whether to auto-flush the object cache. Default true.
          */
-        if (apply_filters('objectcache_autoflush', true)) {
+        if ((bool) apply_filters('objectcache_autoflush', true)) {
             $this->flush();
         }
 
@@ -94,7 +94,7 @@ trait Dropin
          *
          * @param  bool  $autoflush  Whether to auto-flush the object cache. Default true.
          */
-        if (apply_filters('objectcache_autoflush', true)) {
+        if ((bool) apply_filters('objectcache_autoflush', true)) {
             $this->flush();
         }
 

@@ -18,7 +18,7 @@ use ContentEgg\application\components\AggregateOffer;
  */
 class Plugin {
 
-    const version = '10.4.0';
+    const version = '10.5.1';
     const db_version = 55;
     const wp_requires = '4.6.1';
     const slug = 'content-egg';
@@ -68,7 +68,7 @@ class Plugin {
             AggregateOffer::initAction();
             if (!self::isFree())
                 DataRestController::getInstance()->init();
-                
+
             new ProductSearchWidget;
             new PriceMoversWidget;
         }
@@ -80,6 +80,7 @@ class Plugin {
         \wp_register_script('bootstrap', \ContentEgg\PLUGIN_RES . '/bootstrap/js/bootstrap.min.js', array('jquery'), null, false);
         \wp_register_script('bootstrap-tab', \ContentEgg\PLUGIN_RES . '/bootstrap/js/tab.js', array('jquery'), null, false);
         \wp_register_script('bootstrap-tooltip', \ContentEgg\PLUGIN_RES . '/bootstrap/js/tooltip.js', array('jquery'), null, false);
+        //\wp_register_script('bootstrap-modal', \ContentEgg\PLUGIN_RES . '/bootstrap/js/modal.js', array('jquery'), null, false);
         \wp_register_script('bootstrap-popover', \ContentEgg\PLUGIN_RES . '/bootstrap/js/popover.js', array('bootstrap-tooltip'), null, false);
         \wp_register_style('egg-products', \ContentEgg\PLUGIN_RES . '/css/products.css', array(), '' . Plugin::version());
         \wp_register_script('raphaeljs', \ContentEgg\PLUGIN_RES . '/js/morrisjs/raphael.min.js', array('jquery'));

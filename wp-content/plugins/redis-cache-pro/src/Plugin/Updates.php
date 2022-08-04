@@ -9,12 +9,16 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Plugin;
+
+use WP_Error;
+
+use RedisCachePro\Diagnostics\Diagnostics;
 
 trait Updates
 {
@@ -26,6 +30,8 @@ trait Updates
     public function bootUpdates()
     {
         add_filter('pre_set_site_transient_update_plugins', [$this, 'appendUpdatePluginsTransient']);
+        add_filter('upgrader_pre_install', [$this, 'preventDangerousUpgrades'], -1, 2);
+        add_filter('auto_update_plugin', [$this, 'preventDangerousAutoUpdates'], 1000, 2);
         add_action("in_plugin_update_message-{$this->basename}", [$this, 'updateTokenNotice']);
 
         add_action('after_plugin_row', [$this, 'afterPluginRow'], 10, 3);
@@ -37,12 +43,70 @@ trait Updates
     }
 
     /**
-     * Inject plugin update information into the `update_plugins`
-     * transient to seamlessly integrate updates into WordPress.
+     * Whether plugin updates have been disabled.
+     *
+     * @return bool
+     */
+    public function updatesEnabled()
+    {
+        return $this->config->updates;
+    }
+
+    /**
+     * Prevent plugin upgrades when using version control.
+     *
+     * Auto-updates for VCS checkouts are already blocked by WordPress.
+     *
+     * @param  bool|\WP_Error  $response
+     * @param  array  $hook_extra
+     * @return bool
+     */
+    public function preventDangerousUpgrades($response, $hook_extra)
+    {
+        if ($this->basename !== ($hook_extra['plugin'] ?? null)) {
+            return $response;
+        }
+
+        if (Diagnostics::usingVCS()) {
+            return new WP_Error('vcs_upgrade', 'This plugin appears to be under version control. Upgrade was blocked.');
+        }
+
+        return $response;
+    }
+
+    /**
+     * Prevent auto-updating the plugin for non-stable
+     * update channels and major versions.
+     *
+     * @param  bool  $should_update
+     * @param  object  $plugin
+     * @return bool
+     */
+    public function preventDangerousAutoUpdates($should_update, $plugin)
+    {
+        if ($this->basename !== ($plugin->plugin ?? null)) {
+            return $should_update;
+        }
+
+        if ($this->option('channel') !== 'stable') {
+            return false;
+        }
+
+        if ((int) ($plugin->new_version ?? 1) > (int) $this->version) {
+            return false;
+        }
+
+        return $should_update;
+    }
+
+    /**
+     * Inject plugin into `update_plugins` transient.
      *
      * To disable the transient injection and avoid misleading
      * update indicators, set the `WP_REDIS_UPDATES_DISABLED`
      * constant or environment variable to a truthy value.
+     *
+     * @see updatesEnabled()
      *
      * @param  object  $transient
      * @return object|WP_Error
@@ -55,16 +119,12 @@ trait Updates
             return $transient;
         }
 
-        if (defined('\WP_REDIS_UPDATES_DISABLED') && \WP_REDIS_UPDATES_DISABLED) {
-            return $transient;
-        }
-
-        if (! empty(getenv('WP_REDIS_UPDATES_DISABLED'))) {
+        if (! $this->updatesEnabled()) {
             return $transient;
         }
 
         if (! $update) {
-            $update = $this->request('plugin/update');
+            $update = $this->pluginUpdateRequest();
         }
 
         if (is_wp_error($update)) {
@@ -80,17 +140,17 @@ trait Updates
         $transient->{$group}[$this->basename] = (object) [
             'slug' => $this->slug(),
             'plugin' => $this->basename,
-            'url' => $this->url,
+            'url' => self::Url,
             'new_version' => $update->version,
             'package' => $update->package,
             'tested' => $update->wp,
             'requires_php' => $update->php,
             'icons' => [
-                'default' => "{$this->url}/assets/icon.png?v={$this->version}",
+                'default' => "https://objectcache.pro/assets/icon.png?v={$this->version}",
             ],
             'banners' => [
-                'low' => "{$this->url}/assets/banner.png?v={$this->version}",
-                'high' => "{$this->url}/assets/banner.png?v={$this->version}",
+                'low' => "https://objectcache.pro/assets/banner.png?v={$this->version}",
+                'high' => "https://objectcache.pro/assets/banner.png?v={$this->version}",
             ],
         ];
 

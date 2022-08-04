@@ -9,21 +9,24 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro;
 
-use Exception;
+use Throwable;
 
 use RedisCachePro\Diagnostics\Diagnostics;
 use RedisCachePro\Configuration\Configuration;
 
 class Plugin
 {
-    use Plugin\Analytics,
+    use Plugin\Extensions\Debugbar,
+        Plugin\Extensions\QueryMonitor,
+        Plugin\Analytics,
+        Plugin\Assets,
         Plugin\Authorization,
         Plugin\Dropin,
         Plugin\Health,
@@ -31,10 +34,9 @@ class Plugin
         Plugin\Lifecycle,
         Plugin\Meta,
         Plugin\Network,
+        Plugin\Settings,
         Plugin\Updates,
-        Plugin\Widget,
-        Plugin\Extensions\Debugbar,
-        Plugin\Extensions\QueryMonitor;
+        Plugin\Widget;
 
     /**
      * The configuration instance.
@@ -65,11 +67,18 @@ class Plugin
     protected $directory;
 
     /**
+     * Holds the plugin filename.
+     *
+     * @var string
+     */
+    protected $filename;
+
+    /**
      * Holds the plugin website.
      *
      * @var string
      */
-    protected $url = 'https://objectcache.pro';
+    const Url = 'https://objectcache.pro';
 
     /**
      * The capability required to manage this plugin.
@@ -90,6 +99,7 @@ class Plugin
         $instance = new static;
         $instance->version = Version;
         $instance->basename = Basename;
+        $instance->filename = Filename;
         $instance->directory = realpath(__DIR__ . '/..');
 
         if ($wp_object_cache && method_exists($wp_object_cache, 'config')) {
@@ -124,11 +134,21 @@ class Plugin
      *
      * @return string
      */
-    protected function slug()
+    public function slug()
     {
         return strpos($this->basename, '/') === false
             ? $this->basename
             : dirname($this->basename);
+    }
+
+    /**
+     * Returns the configuration instance.
+     *
+     * @return \RedisCachePro\Configuration\Configuration
+     */
+    public function config()
+    {
+        return $this->config;
     }
 
     /**
@@ -157,15 +177,16 @@ class Plugin
      */
     public function flush()
     {
-        $result = false;
-
         try {
             $connection = $this->config->connector::connect($this->config);
-            $result = $connection->flushdb($this->config->async_flush);
-        } catch (Exception $exception) {
+
+            $this->logFlush();
+
+            return $connection->flushdb($this->config->async_flush);
+        } catch (Throwable $exception) {
             //
         }
 
-        return $result;
+        return false;
     }
 }

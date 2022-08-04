@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -20,10 +20,13 @@ use Relay\Relay;
 
 use RedisCachePro\Configuration\Configuration;
 
-class RelayConnection extends Connection implements ConnectionInterface
+/**
+ * @mixin \Relay\Relay
+ */
+class RelayConnection extends PhpRedisConnection implements ConnectionInterface
 {
     /**
-     * The Redis client/cluster.
+     * The Relay client.
      *
      * @var \Relay\Relay
      */
@@ -44,62 +47,10 @@ class RelayConnection extends Connection implements ConnectionInterface
 
         $this->setSerializer();
         $this->setCompression();
-    }
 
-    /**
-     * Set the connection's serializer.
-     */
-    protected function setSerializer()
-    {
-        if ($this->config->serializer === Configuration::SERIALIZER_PHP) {
-            $this->client->setOption(Relay::OPT_SERIALIZER, (string) Relay::SERIALIZER_PHP);
+        if ($this->config->relay->invalidations === false) {
+            $this->client->setOption(Relay::OPT_CLIENT_INVALIDATIONS, false);
         }
-
-        if ($this->config->serializer === Configuration::SERIALIZER_IGBINARY) {
-            $this->client->setOption(Relay::OPT_SERIALIZER, (string) Relay::SERIALIZER_IGBINARY);
-        }
-    }
-
-    /**
-     * Set the connection's compression algorithm.
-     */
-    protected function setCompression()
-    {
-        if ($this->config->compression === Configuration::COMPRESSION_NONE) {
-            $this->client->setOption(Relay::OPT_COMPRESSION, (string) Relay::COMPRESSION_NONE);
-        }
-
-        if ($this->config->compression === Configuration::COMPRESSION_LZF) {
-            $this->client->setOption(Relay::OPT_COMPRESSION, (string) Relay::COMPRESSION_LZF);
-        }
-
-        if ($this->config->compression === Configuration::COMPRESSION_ZSTD) {
-            $this->client->setOption(Relay::OPT_COMPRESSION, (string) Relay::COMPRESSION_ZSTD);
-        }
-
-        if ($this->config->compression === Configuration::COMPRESSION_LZ4) {
-            $this->client->setOption(Relay::OPT_COMPRESSION, (string) Relay::COMPRESSION_LZ4);
-        }
-    }
-
-    /**
-     * Execute the callback without data mutations on the connection,
-     * such as serialization and compression algorithms.
-     *
-     * @param  callable  $callback
-     * @return mixed
-     */
-    public function withoutMutations(callable $callback)
-    {
-        $this->client->setOption(Relay::OPT_SERIALIZER, (string) Relay::SERIALIZER_NONE);
-        $this->client->setOption(Relay::OPT_COMPRESSION, (string) Relay::COMPRESSION_NONE);
-
-        $result = $callback($this);
-
-        $this->setSerializer();
-        $this->setCompression();
-
-        return $result;
     }
 
     /**
@@ -164,6 +115,30 @@ class RelayConnection extends Connection implements ConnectionInterface
     public function stats()
     {
         return $this->client->stats();
+    }
+
+    /**
+     * Returns information about the Relay license.
+     *
+     * Bypasses the `command()` method to avoid log spam.
+     *
+     * @return array
+     */
+    public function license()
+    {
+        return $this->client->license();
+    }
+
+    /**
+     * Returns the connections endpoint identifier.
+     *
+     * Bypasses the `command()` method to avoid log spam.
+     *
+     * @return int|false
+     */
+    public function endpointId()
+    {
+        return $this->client->endpointId();
     }
 
     /**

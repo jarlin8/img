@@ -12,12 +12,11 @@ class ErrorLogLogger extends Logger
      * @param  mixed  $level
      * @param  string  $message
      * @param  array  $context
-     *
      * @return void
      */
     public function log($level, $message, array $context = [])
     {
-        if ($this->levels && ! in_array($level, $this->levels)) {
+        if ($this->levels && ! \in_array($level, $this->levels)) {
             return;
         }
 

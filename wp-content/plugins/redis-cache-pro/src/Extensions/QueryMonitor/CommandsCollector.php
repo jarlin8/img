@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace RedisCachePro\Extensions\QueryMonitor;
 
-use QueryMonitor;
 use QM_Backtrace;
 use QM_Collector;
 
 use RedisCachePro\Connections\Connection;
+use RedisCachePro\Connections\Transaction;
+use RedisCachePro\Connections\RelayConnection;
+use RedisCachePro\Connections\PhpRedisConnection;
+use RedisCachePro\Connections\TwemproxyConnection;
+
 use RedisCachePro\ObjectCaches\RelayObjectCache;
 use RedisCachePro\ObjectCaches\PhpRedisObjectCache;
 
@@ -28,7 +32,9 @@ class CommandsCollector extends QM_Collector
      */
     const IgnoredMethods = [
         'add' => true,
+        'add_multiple' => true,
         'set' => true,
+        'set_multiple' => true,
         'get' => true,
         'get_multiple' => true,
         'decr' => true,
@@ -36,7 +42,9 @@ class CommandsCollector extends QM_Collector
         'info' => true,
         'flush' => true,
         'write' => true,
+        'multiwrite' => true,
         'delete' => true,
+        'delete_multiple' => true,
         'replace' => true,
         'getAllOptions' => true,
         'syncAllOptions' => true,
@@ -50,14 +58,17 @@ class CommandsCollector extends QM_Collector
      */
     const IgnoredFunctions = [
         'wp_cache_add' => true,
+        'wp_cache_add_multiple' => true,
         'wp_cache_get' => true,
         'wp_cache_get_multiple' => true,
         'wp_cache_set' => true,
+        'wp_cache_set_multiple' => true,
         'wp_cache_decr' => true,
         'wp_cache_incr' => true,
         'wp_cache_sear' => true,
         'wp_cache_flush' => true,
         'wp_cache_delete' => true,
+        'wp_cache_delete_multiple' => true,
         'wp_cache_replace' => true,
         'wp_cache_remember' => true,
         'wp_cache_switch_to_blog' => true,
@@ -92,55 +103,25 @@ class CommandsCollector extends QM_Collector
     {
         global $wp_object_cache;
 
-        if (! method_exists($wp_object_cache, 'logger')) {
+        if (
+            ! method_exists($wp_object_cache, 'logger') ||
+            ! method_exists($wp_object_cache, 'connection')
+        ) {
             return;
         }
 
         $logger = $wp_object_cache->logger();
 
         if (! method_exists($logger, 'messages')) {
+            $this->data['commands'] = [];
+
             return;
         }
 
-        $backtraceArgs = [
-            'ignore_class' => [
-                Connection::class => true,
-            ],
-            'ignore_method' => [
-                RelayObjectCache::class => self::IgnoredMethods,
-                PhpRedisObjectCache::class => self::IgnoredMethods,
-                get_class($wp_object_cache) => self::IgnoredMethods,
-            ],
-            'ignore_func' => self::IgnoredFunctions,
-        ];
+        $legacyBacktraces = defined('\QM_VERSION')
+            && version_compare(\QM_VERSION, '3.8.1', '<');
 
-        $useQmBacktraces = false;
-        $qm = QueryMonitor::init();
-
-        if (isset($qm->file) && is_readable($qm->file)) {
-            $qm = get_plugin_data($qm->file, false, false);
-            $useQmBacktraces = version_compare($qm['Version'], '3.8.0', '>=');
-        }
-
-        $backtrace = function ($message) use ($backtraceArgs, $useQmBacktraces) {
-            if (! $useQmBacktraces) {
-                return $this->formatBacktrace($message['context']['backtrace_summary']);
-            }
-
-            return new QM_Backtrace($backtraceArgs, $message['context']['backtrace']);
-        };
-
-        $this->data['commands'] = array_map(function ($message) use ($backtrace) {
-            return [
-                'level' => $message['level'],
-                'time' => $message['context']['time'],
-                'command' => $message['context']['command'],
-                'parameters' => $this->formatParameters(
-                    $message['context']['parameters']
-                ),
-                'backtrace' => $backtrace($message),
-            ];
-        }, $logger->messages());
+        $this->data['commands'] = $this->buildCommands($logger, $legacyBacktraces);
 
         $types = array_unique(array_column($this->data['commands'], 'command'));
         $types = array_map('strtoupper', $types);
@@ -149,7 +130,7 @@ class CommandsCollector extends QM_Collector
 
         $this->data['types'] = $types;
 
-        if ($useQmBacktraces) {
+        if (! $legacyBacktraces) {
             $components = array_map(function ($command) {
                 return $command['backtrace']->get_component()->name;
             }, $this->data['commands']);
@@ -159,9 +140,76 @@ class CommandsCollector extends QM_Collector
     }
 
     /**
+     * Builds the array of Redis commands.
+     *
+     * @param  \RedisCachePro\Loggers\Logger  $logger
+     * @param  bool  $legacyBacktraces
+     * @return array
+     */
+    protected function buildCommands($logger, bool $legacyBacktraces)
+    {
+        $commands = [];
+        $backtraceArgs = $this->buildBacktraceArgs();
+
+        foreach ($logger->messages() as $message) {
+            $command = $message['context']['command'];
+
+            if ($command === 'RAWCOMMAND') {
+                $command = array_shift($message['context']['parameters']);
+            }
+
+            $commands[] = [
+                'level' => $message['level'],
+                'time' => $message['context']['time'] ?? 0,
+                'bytes' => strlen(serialize($message['context']['result'] ?? null)),
+                'command' => $command,
+                'parameters' => $this->formatParameters(
+                    $message['context']['parameters']
+                ),
+                'backtrace' => $legacyBacktraces
+                    ? $this->formatLegacyBacktrace($message['context']['backtrace_summary'])
+                    : new QM_Backtrace($backtraceArgs, $message['context']['backtrace']),
+            ];
+        }
+
+        return $commands;
+    }
+
+    /**
+     * Builds the backtrace arguments for `QM_Backtrace`.
+     *
+     * @return array
+     */
+    protected function buildBacktraceArgs()
+    {
+        global $wp_object_cache;
+
+        $connection = $wp_object_cache->connection()
+            ? get_class($wp_object_cache->connection())
+            : null;
+
+        return [
+            'ignore_class' => array_filter([
+                Connection::class => true,
+                Transaction::class => true,
+                RelayConnection::class => true,
+                PhpRedisConnection::class => true,
+                TwemproxyConnection::class => true,
+                $connection => true,
+            ]),
+            'ignore_method' => [
+                RelayObjectCache::class => self::IgnoredMethods,
+                PhpRedisObjectCache::class => self::IgnoredMethods,
+                get_class($wp_object_cache) => self::IgnoredMethods,
+            ],
+            'ignore_func' => self::IgnoredFunctions,
+        ];
+    }
+
+    /**
      * Converts all parameter values to JSON and trims them down to 200 characters or less.
      *
-     * @param  string  $backtrace
+     * @param  array  $parameters
      * @return array
      */
     protected function formatParameters($parameters)
@@ -178,8 +226,8 @@ class CommandsCollector extends QM_Collector
                 ? get_class($parameter) . $format($parameter)
                 : $format($parameter);
 
-            $value = preg_replace('/\s+/', ' ', $value);
-            $value = trim((string) $value, '"');
+            $value = preg_replace('/\s+/', ' ', (string) $value);
+            $value = trim($value, '"');
 
             if (strlen($value) > 400) {
                 return substr($value, 0, 400) . '...';
@@ -195,7 +243,7 @@ class CommandsCollector extends QM_Collector
      * @param  string  $backtrace
      * @return array
      */
-    protected function formatBacktrace($backtrace)
+    protected function formatLegacyBacktrace($backtrace)
     {
         $backtrace = str_replace('RedisCachePro\ObjectCaches\\', '', $backtrace);
         $backtrace = array_reverse(explode(', ', $backtrace));

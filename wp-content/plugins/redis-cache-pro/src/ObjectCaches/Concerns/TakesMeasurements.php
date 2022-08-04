@@ -9,14 +9,14 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\ObjectCaches\Concerns;
 
-use Exception;
+use Throwable;
 
 use RedisCachePro\Metrics\Measurement;
 use RedisCachePro\Metrics\Measurements;
@@ -26,9 +26,17 @@ use RedisCachePro\Metrics\WordPressMetrics;
 
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Configuration\Configuration;
+use RedisCachePro\ObjectCaches\PhpRedisObjectCache;
 
 trait TakesMeasurements
 {
+    /**
+     * The gathered metrics for the current request.
+     *
+     * @var \RedisCachePro\Metrics\Measurement|null
+     */
+    protected $requestMeasurement;
+
     /**
      * Retrieve measurements of the given type and range.
      *
@@ -52,16 +60,32 @@ trait TakesMeasurements
             $measurements->push(
                 ...$this->connection->zRevRangeByScore(
                     $this->id('measurements', 'analytics'),
-                    strval($max),
-                    strval($min),
+                    (string) $max,
+                    (string) $min,
                     $options ?? []
                 )
             );
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $this->error($exception);
         }
 
         return $measurements;
+    }
+
+    /**
+     * Return number of metrics stored.
+     *
+     * @param  string  $min
+     * @param  string  $max
+     * @return int
+     */
+    public function countMeasurements($min = '-inf', $max = '+inf')
+    {
+        return $this->connection->zcount(
+            $this->id('measurements', 'analytics'),
+            (string) $min,
+            (string) $max
+        );
     }
 
     /**
@@ -71,7 +95,7 @@ trait TakesMeasurements
      */
     protected function storeMeasurements()
     {
-        if (! defined('\WP_REDIS_ANALYTICS') || ! \WP_REDIS_ANALYTICS) {
+        if (! $this->config->analytics->enabled) {
             return;
         }
 
@@ -79,17 +103,17 @@ trait TakesMeasurements
         $id = $this->id('measurements', 'analytics');
 
         $measurement = Measurement::make();
-        $measurement->wp = $this->measureWordPress();
+        $measurement->wp = new WordPressMetrics($this);
 
         try {
             $lastSample = $this->connection->get("{$id}:sample");
             $this->storeReads++;
 
             if ($lastSample < $now - 3) {
-                $measurement->redis = $this->measureRedis();
+                $measurement->redis = new RedisMetrics($this);
 
                 if ($this->connection instanceof RelayConnection) {
-                    $measurement->relay = $this->measureRelay();
+                    $measurement->relay = new RelayMetrics($this->connection, $this->config);
                 }
 
                 $this->connection->set("{$id}:sample", $now);
@@ -98,64 +122,112 @@ trait TakesMeasurements
 
             $this->connection->zadd($id, $measurement->timestamp, $measurement);
             $this->storeWrites++;
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $this->error($exception);
         }
+
+        $this->requestMeasurement = $measurement;
     }
 
     /**
-     * Discard measurements older than an hour.
+     * Discards old measurements.
      *
      * @return void
      */
     public function pruneMeasurements()
     {
+        /**
+         * Filters the analytics retention time.
+         *
+         * @param  int  $duration The retention duration
+         */
+        $retention = (int) apply_filters('objectcache_analytics_retention', $this->config->analytics->retention);
+
         try {
             $this->storeWrites++;
 
             $this->connection->zRemRangeByScore(
                 $this->id('measurements', 'analytics'),
-                strval(0),
-                strval(microtime(true) - \HOUR_IN_SECONDS)
+                '-inf',
+                (string) (microtime(true) - $retention)
             );
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $this->error($exception);
         }
     }
 
     /**
-     * Gather and return WordPress related metrics for the current request.
+     * Flush the database and restore the analytics afterwards.
      *
-     * @return \RedisCachePro\Metrics\WordPressMetrics
+     * @return bool
      */
-    public function measureWordPress()
+    protected function flushWithoutAnalytics()
     {
-        static $metrics;
+        $measurements = $this->dumpMeasurements();
 
-        if (! $metrics) {
-            $metrics = new WordPressMetrics($this);
+        try {
+            $flush = $this->connection->flushdb();
+        } catch (Throwable $exception) {
+            $this->error($exception);
+
+            return false;
         }
 
-        return $metrics;
+        if ($measurements) {
+            $this->restoreMeasurements($measurements);
+        }
+
+        return $flush;
     }
 
     /**
-     * Gather and return Redis metrics.
+     * Returns a dump of the measurements.
      *
-     * @return \RedisCachePro\Metrics\RedisMetrics
+     * @return string|false
      */
-    public function measureRedis()
+    protected function dumpMeasurements()
     {
-        return new RedisMetrics($this);
+        if (
+            $this::Client === PhpRedisObjectCache::Client &&
+            $this->config->compression === Configuration::COMPRESSION_ZSTD &&
+            version_compare(phpversion('redis'), '5.3.5', '<')
+        ) {
+            error_log('objectcache.notice: Unable to restore analytics when using Zstandard compression, please update to PhpRedis 5.3.5 or newer');
+
+            return false;
+        }
+
+        try {
+            return $this->connection->dump($this->id('measurements', 'analytics'));
+        } catch (Throwable $exception) {
+            error_log(sprintf('objectcache.notice: Failed to dump analytics (%s)', $exception));
+        }
+
+        return false;
     }
 
     /**
-     * Gather and return Relay metrics.
+     * Restores the given measurements dump.
      *
-     * @return \RedisCachePro\Metrics\RelayMetrics
+     * @param  mixed  $measurements
+     * @return bool
      */
-    public function measureRelay()
+    protected function restoreMeasurements($measurements)
     {
-        return new RelayMetrics($this->connection);
+        try {
+            return $this->connection->restore($this->id('measurements', 'analytics'), 0, $measurements);
+        } catch (Throwable $exception) {
+            error_log(sprintf('objectcache.notice: Failed to restore analytics (%s)', $exception));
+        }
+    }
+
+    /**
+     * Return the gathered metrics for the current request.
+     *
+     * @return \RedisCachePro\Metrics\Measurement|null
+     */
+    public function requestMeasurement()
+    {
+        return $this->requestMeasurement;
     }
 }

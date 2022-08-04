@@ -2,6 +2,123 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.15.2 - 2022-06-30
+### Added
+Added SQL queries metric
+Fixed
+Don't require ext-redis when running Relay transactions
+Only hide upgrade notice in must-use setups
+Tweak widget latency warning color
+Fixed rare error of get_num_queries() not being available
+
+
+## 1.15.1 - 2022-06-19
+### Added
+- Show basename in diagnostics
+
+### Changed
+- Add Redis and Relay samples to analytics footnote
+- Narrow type hint to `Transaction` in `PhpRedisConnection::executeMulti()`
+
+### Fixed
+- Handle PHP 7.0/7.1 environments gracefully
+- Show error when using bad plugin slug
+- Don't render analytics when not connected
+- Avoid rare undefined index when not connected in Query Monitor
+- Catch all `Throwable` errors in `ObjectCache::error()`, not only exceptions
+
+## 1.15.0 - 2022-06-10
+
+This releases introduces a settings page to keep an eye on cache analytics, manage plugin updates and use diagnostic tools.
+
+### Added
+- Added analytics charts under _Settings \> Object Cache_
+- Added plugin updates under _Settings \> Object Cache -\> Updates_
+- Added various tools under _Settings \> Object Cache -\> Tools_
+- Added WordPress 6.0's `wp_cache_*_multiple()` and `wp_cache_flush_runtime()` functions
+- Added support for Redis Sentinel
+- Hijack all transactions to allow command logging
+- Added `X-Redirect-By` for all redirects
+- Added `analytics`, `sentinels`, `service` and `relay.invalidations` configuration options
+- Added REST API endpoint for analytics, cache groups and latency
+- Added `master()` and `replicas()` to `PhpRedisReplicatedConnection`
+- Added `nodes()` to `PhpRedisClusterConnection`
+- Added `updates` configuration option
+- Added `wp redis analytics` CLI command that mimics REST API endpoint
+
+### Changed
+- ⚠️ Require PHP 7.2+
+- ⚠️ Require Relay v0.4.0
+- ⚠️ Added `flush_runtime()` to `ObjectCacheInterface`
+- ⚠️ Added `add_multiple()`, `set_multiple()` and `delete_multiple()` to `ObjectCacheInterface`
+- ⚠️ Added `connectToSentinels()` and `connectToReplicatedServers()` `ConnectionInterface`
+- Use group name as hash slot on cluster connections
+- Deprecated `flushMemory()` in favor of `flushRuntime()` for naming consistency
+- Redirect to settings after activation
+- Allow analytics to be restored after cache flushes
+- Only accept integers and non-empty strings as key names
+- Dropped `string` type for `$key` in several `ObjectCacheInterface` methods
+- Hide misleading Relay statistics in `wp redis info`
+- Reverted: Store `alloptions` as individual keys when using Relay
+- Increased Batcache compatibility
+- Disabled `flush_network` option when using Redis cluster
+- Marked PhpRedis v5.3.4 and older as outdated
+- Catch `Throwable` everywhere, not `Exception`
+- Use a single `window.objectcache` object
+- Highlight expensive commands in Query Monitor
+- Be more helpful about missing command logs in Query Monitor
+
+### Fixed
+- Fixed rare error when enabling drop-in
+- Block `wp redis enable` when `WP_REDIS_CONFIG` is not set
+- Fixed instantiating configuration without valid client extension present
+- Avoid fatal error in `CommandsCollector` when no connection is established
+- Show `rawCommand()` calls as actual commands in Query Monitor
+- Various other bug fixes small additions and improvements
+- Fixed selecting non-zero databases in `wp redis cli`
+- Fixed rare rendering issue with `wp redis watch digest`
+- Fixed normalization of IDNs
+- Don't request filesystem write access to check for drop-in existence
+- Fixed rare bug when flushing specific site via `wp redis flush 1337`
+
+### Security
+- Prevent risky plugin auto-updates
+- Prevent plugin upgrades when using version control
+
+## 1.14.5 - 2022-03-22
+### Added
+- Store `alloptions` as individual keys when using Relay
+- Added health check for Relay configuration
+- Added `Plugin::config()` helper method
+
+### Changed
+- Bump Relay requirement to v0.3.0
+- Sped up `ObjectCache::id()` lookups by caching prefix
+- Sped up `alloptions` hash deletion when using `async_flush`
+- ⚠️ Renamed `SplitsAllOptions` trait to `SplitsAllOptionsIntoHash`
+
+### Fixed
+- Fixed support of older Query Monitor versions
+- Added missing `retries` and `backoff` to diagnostics
+- Avoid rare error in `Connection::ioWait()`
+- Avoid rare `TypeError` in `Diagnostics`
+- Avoid rare error in Query Monitor when no connection is present
+
+## 1.14.4 - 2022-02-03
+### Added
+- Introduced `ObjectCache::Client` and `ObjectCache::clientName()`
+
+### Changed
+- Use `QM_VERSION` to detect Query Monitor version
+- Convert logged commands names to uppercase
+- Avoid log spam when calling Relay's `socketId()`, `socketKey()` or `license()`
+- Make `isMustUse()` and `usingVCS()` helpers static
+- Ignore all connection methods in Query Monitor backtraces
+- Use new `qm/component_type/unknown` filter to set component type
+
+### Fixed
+- Avoid warnings when displaying rare commands in Query Monitor
+
 ## 1.14.3 - 2021-12-30
 ### Added
 - Added file header health checks
@@ -120,7 +237,7 @@ All notable changes to this project will be documented in this file.
 - Support passing function names to `logger` configuration option
 
 ### Changed
-- Improved [Relay](https://relaycache.com) integration and support
+- Improved [Relay][1] integration and support
 - Improved unsupported `compression` and `serializer` error messages
 - Renamed more things to "Object Cache Pro"
 
@@ -154,7 +271,7 @@ All notable changes to this project will be documented in this file.
 
 ## v1.13.0 - 2021-04-12
 ### Added
-- Added support for [Relay](https://relaycache.com)
+- Added support for [Relay][2]
 - Added `client` configuration option
 - Added `tls_options` configuration option
 - Added `ObjectCache::withoutMutations()` helper
@@ -322,7 +439,7 @@ All notable changes to this project will be documented in this file.
 - Added `cache` configuration option to set a custom object cache class
 - Added `connector` configuration option to set a custom connector class
 - Added `flush_network` configuration option (defaults to `all`)
-- Support flushing individual sites via _Network Admin > Sites_
+- Support flushing individual sites via _Network Admin \> Sites_
 - Added `--skip-flush-notice` option to `wp redis enable` command
 - Added health check to ensure asynchronous flushing is supported
 - Added health check to ensure drop-in can be managed
@@ -414,7 +531,7 @@ All notable changes to this project will be documented in this file.
 - Always inline widget styles (1015 bytes)
 - Always inject plugin details into `update_plugins` transient
 - Improved obfuscation of sensitive values
-- Hide health link from plugin actions in WP <5.2 and multisite networks
+- Hide health link from plugin actions in WP \<5.2 and multisite networks
 - Prevent widget color clashing with color scheme
 
 ### Fixed
@@ -486,7 +603,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Added dashboard widget
 - Added support for automatic WordPress updates
-- Added diagnostic tests and information to _Tools > Site Health_
+- Added diagnostic tests and information to _Tools \> Site Health_
 - Added `token` configuration option to set license token
 
 ### Changed
@@ -515,3 +632,6 @@ All notable changes to this project will be documented in this file.
 ## v1.0.0 - 2019-11-01
 ### Added
 - Initial stable release
+
+[1]:	https://relaycache.com
+[2]:	https://relaycache.com

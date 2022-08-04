@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace RedisCachePro\Metrics;
 
 use RedisCachePro\Connections\RelayConnection;
+use RedisCachePro\Configuration\Configuration;
 
 class RelayMetrics
 {
@@ -33,6 +34,20 @@ class RelayMetrics
      * @var int
      */
     public $misses;
+
+    /**
+     * The hits-to-misses ratio.
+     *
+     * @var float
+     */
+    public $hitRatio;
+
+    /**
+     * Number of commands processed per second.
+     *
+     * @var int
+     */
+    public $opsPerSec;
 
     /**
      * The number of keys in Relay for the current database.
@@ -56,23 +71,34 @@ class RelayMetrics
     public $memoryTotal;
 
     /**
+     * The ratio of total memory allocated by Relay compared to
+     * the amount of memory actually pointing to live objects.
+     *
+     * @var int
+     */
+    public $memoryRatio;
+
+    /**
      * Creates a new instance from given connection.
      *
-     * @param  \RedisCachePro\Connections\RelayConnection  $cache
+     * @param  \RedisCachePro\Connections\RelayConnection  $connection
+     * @param  \RedisCachePro\Configuration\Configuration  $config
      * @return void
      */
-    public function __construct(RelayConnection $connection)
+    public function __construct(RelayConnection $connection, Configuration $config)
     {
         $stats = $connection->memoize('stats');
+        $total = $stats['stats']['hits'] + $stats['stats']['misses'];
 
-        $instance = array_search(
-            $connection->socketKey(),
-            array_column($stats['instances'], 'key')
-        );
+        $keys = array_sum(array_map(function ($connection) use ($config) {
+            return $connection['keys'][$config->database] ?? 0;
+        }, $stats['endpoints'][$connection->endpointId()]['connections'] ?? [])) ?: null;
 
         $this->hits = $stats['stats']['hits'];
         $this->misses = $stats['stats']['misses'];
-        $this->keys = $stats['instances'][$instance]['keys'];
+        $this->hitRatio = $total > 0 ? round($this->hits / ($total / 100), 2) : 100;
+        $this->opsPerSec = $stats['stats']['ops_per_sec'];
+        $this->keys = $keys;
         $this->memoryTotal = $stats['memory']['total'];
         $this->memoryActive = $stats['memory']['active'];
 
@@ -89,6 +115,8 @@ class RelayMetrics
         return [
             'hits' => $this->hits,
             'misses' => $this->misses,
+            'hit-ratio' => $this->hitRatio,
+            'ops-per-sec' => $this->opsPerSec,
             'keys' => $this->keys,
             'memory-active' => $this->memoryActive,
             'memory-total' => $this->memoryTotal,
@@ -106,7 +134,62 @@ class RelayMetrics
         $metrics = $this->toArray();
 
         return implode(' ', array_map(function ($metric, $value) {
-            return sprintf("sample#${metric}", $value);
+            return "sample#relay-{$metric}={$value}";
         }, array_keys($metrics), $metrics));
+    }
+
+    /**
+     * Returns the schema for the Relay metrics.
+     *
+     * @return array
+     */
+    public static function schema()
+    {
+        return array_map(function ($metric) {
+            $metric['group'] = 'relay';
+
+            return $metric;
+        }, [
+            'relay-hits' => [
+                'title' => 'Hits',
+                'description' => 'Number of successful key lookups.',
+                'type' => 'integer',
+            ],
+            'relay-misses' => [
+                'title' => 'Misses',
+                'description' => 'Number of failed key lookups.',
+                'type' => 'integer',
+            ],
+            'relay-hit-ratio' => [
+                'title' => 'Hit ratio',
+                'description' => 'The hits-to-misses ratio.',
+                'type' => 'ratio',
+            ],
+            'relay-ops-per-sec' => [
+                'title' => 'Throughput',
+                'description' => 'Number of commands processed per second.',
+                'type' => 'integer',
+            ],
+            'relay-keys' => [
+                'title' => 'Keys',
+                'description' => 'The number of keys in Relay for the current database.',
+                'type' => 'integer',
+            ],
+            'relay-memory-active' => [
+                'title' => 'Active memory',
+                'description' => 'The total amount of memory mapped into the allocator.',
+                'type' => 'bytes',
+            ],
+            'relay-memory-total' => [
+                'title' => 'Total memory',
+                'description' => 'The total bytes of allocated memory by Relay.',
+                'type' => 'bytes',
+            ],
+            'relay-memory-ratio' => [
+                'title' => 'Memory ratio',
+                'description' => 'The ratio of bytes of allocated memory by Relay compared to the total amount of memory mapped into the allocator.',
+                'type' => 'ratio',
+            ],
+        ]);
     }
 }

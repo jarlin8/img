@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -94,7 +94,7 @@ class DigestWatcher extends Notify
     /**
      * Prints the metrics table to the screen.
      *
-     * @param bool  $finish
+     * @param  bool  $finish
      * @return void
      */
     public function display($finish = false)
@@ -102,19 +102,22 @@ class DigestWatcher extends Notify
         $idx = $this->iteration++ % 4;
         $lines = 4 + count($this->items);
 
-        $arguments = [
-            'format' => 'table',
-        ];
+        $arguments = ['format' => 'table'];
+        $fields = ['Metric', 'Median'];
 
-        $formatter = new Formatter($arguments, ['Metric', 'Median']);
+        ob_start();
+
+        $formatter = new Formatter($arguments, $fields);
         $formatter->display_items($this->items, true);
+
+        Streams::out(ob_get_clean());
 
         Streams::out(WP_CLI::colorize('{:msg} %g{:char}%n'), [
             'msg' => WP_CLI::colorize($this->_message),
             'char' => $this->chars[$idx],
         ]);
 
-        Streams::out("\e[${lines}A");
+        Streams::out("\e[{$lines}A");
         Streams::out("\e[0G");
     }
 
@@ -139,11 +142,11 @@ class DigestWatcher extends Notify
             $method = 'get' . str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $metric)));
 
             if (! method_exists($this, $method)) {
-                \WP_CLI::error("Invalid metric name: {$metric}.");
+                WP_CLI::error("Invalid metric name: {$metric}.");
             }
 
             $item = $this->{$method}($measurements);
-            $item->Median = str_pad(strval($item->Median), 20, ' ', STR_PAD_LEFT);
+            $item->Median = str_pad((string) $item->Median, 20, ' ', STR_PAD_LEFT);
 
             $this->items[] = $item;
         }
@@ -281,7 +284,7 @@ class DigestWatcher extends Notify
      */
     protected function getMsTotal(Measurements $measurements)
     {
-        $msTotalMedian = $measurements->median('wp->totalMs');
+        $msTotalMedian = $measurements->median('wp->msTotal');
 
         return (object) [
             'Metric' => WP_CLI::colorize('%cTime%n: Request'),
@@ -295,7 +298,7 @@ class DigestWatcher extends Notify
      */
     protected function getMsCache(Measurements $measurements)
     {
-        $msCacheMedian = $measurements->median('wp->cacheMs');
+        $msCacheMedian = $measurements->median('wp->msCache');
 
         return (object) [
             'Metric' => WP_CLI::colorize('%cTime%n: Cache'),
@@ -309,7 +312,7 @@ class DigestWatcher extends Notify
      */
     protected function getMsCacheRatio(Measurements $measurements)
     {
-        $msCacheRatioMedian = $measurements->median('wp->cacheRatioMs');
+        $msCacheRatioMedian = $measurements->median('wp->msCacheRatio');
 
         return (object) [
             'Metric' => WP_CLI::colorize('%cTime%n: Cache ratio'),

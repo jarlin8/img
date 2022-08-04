@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -66,7 +66,7 @@ trait Widget
      */
     public function registerWidget(WP_Screen $screen)
     {
-        if (! in_array($screen->id, ['dashboard', 'dashboard-network'])) {
+        if (! in_array($screen->id, ['dashboard', 'dashboard-network', $this->screenId])) {
             return;
         }
 
@@ -74,18 +74,22 @@ trait Widget
             return;
         }
 
+        $pageHook = str_replace('-network', '', $this->screenId);
+
         add_action('load-index.php', [$this, 'handleWidgetActions']);
-        add_action('admin_enqueue_scripts', [$this, 'addWidgetStyles']);
+        add_action("load-{$pageHook}", [$this, 'handleWidgetActions']);
 
         add_action('admin_notices', [$this, 'displayWidgetNotice'], 0);
         add_action('network_admin_notices', [$this, 'displayWidgetNotice'], 0);
+
+        add_action('admin_enqueue_scripts', [$this, 'addWidgetStyles']);
 
         /**
          * Filters whether to add the dashboard widget.
          *
          * @param  bool  $add_widget  Whether to add the dashboard widget. Default `true`.
          */
-        if (apply_filters('objectcache_dashboard_widget', true)) {
+        if ((bool) apply_filters('objectcache_dashboard_widget', true)) {
             add_action('wp_dashboard_setup', function () {
                 wp_add_dashboard_widget(
                     'dashboard_objectcache',
@@ -102,7 +106,7 @@ trait Widget
          *
          * @param  bool  $add_widget  Whether to add the network dashboard widget. Default `true`.
          */
-        if (apply_filters('objectcache_network_dashboard_widget', true)) {
+        if ((bool) apply_filters('objectcache_network_dashboard_widget', true)) {
             add_action('wp_network_dashboard_setup', function () {
                 wp_add_dashboard_widget(
                     'dashboard_objectcache',
@@ -124,7 +128,7 @@ trait Widget
     {
         global $wp_object_cache_errors;
 
-        require __DIR__ . '/templates/widget.phtml';
+        require __DIR__ . '/templates/widgets/overview.phtml';
     }
 
     /**
@@ -134,17 +138,18 @@ trait Widget
      */
     public function handleWidgetActions()
     {
-        if (! isset($_GET['objectcache-action'], $_GET['_wpnonce'])) {
+        $nonce = $_GET['_wpnonce'] ?? false;
+        $action = $_GET['action'] ?? $_GET['objectcache-action'] ?? false;
+
+        if (! $action || ! $nonce) {
             return;
         }
-
-        $action = $_GET['objectcache-action'];
 
         if (! in_array($action, $this->widgetActions)) {
             wp_die('Invalid action.', 400);
         }
 
-        if (! \wp_verify_nonce($_GET['_wpnonce'], $action)) {
+        if (! \wp_verify_nonce($nonce, $action)) {
             wp_die("Invalid nonce for {$action} action.", 400);
         }
 
@@ -167,9 +172,13 @@ trait Widget
                 break;
         }
 
-        $url = is_network_admin() ? network_admin_url() : admin_url();
+        if (get_current_screen()->id === $this->screenId) {
+            $url = add_query_arg('status', $status, $this->baseurl);
+        } else {
+            $url = add_query_arg('objectcache-status', $status, is_network_admin() ? network_admin_url() : admin_url());
+        }
 
-        wp_safe_redirect(add_query_arg('objectcache-status', $status, $url));
+        wp_safe_redirect($url, 302, 'Object Cache Pro');
         exit;
     }
 
@@ -180,14 +189,7 @@ trait Widget
      */
     public function addWidgetStyles()
     {
-        $styles = (string) file_get_contents(
-            "{$this->directory}/resources/css/widget.css"
-        );
-
-        $styles = preg_replace('/(\v|\s{2,})/', ' ', $styles);
-        $styles = preg_replace('/\s+/', ' ', $styles);
-
-        wp_add_inline_style('dashboard', trim($styles));
+        wp_add_inline_style('dashboard', $this->inlineAsset('css/widget.css'));
     }
 
     /**
@@ -197,11 +199,9 @@ trait Widget
      */
     public function displayWidgetNotice()
     {
-        if (! isset($_GET['objectcache-status'])) {
-            return;
-        }
+        $status = $_GET['status'] ?? $_GET['objectcache-status'] ?? false;
 
-        if (! in_array($_GET['objectcache-status'], $this->widgetActionStatuses)) {
+        if (! $status || ! in_array($status, $this->widgetActionStatuses)) {
             return;
         }
 
@@ -209,7 +209,7 @@ trait Widget
             return sprintf('<div class="notice notice-%s"><p>%s</p></div>', $type, $text);
         };
 
-        switch ($_GET['objectcache-status']) {
+        switch ($status) {
             case 'cache-flushed':
                 echo $notice('success', 'The object cache was flushed.');
                 break;

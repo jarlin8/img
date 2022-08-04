@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -70,6 +70,14 @@ class RedisMetrics
     public $usedMemoryRss;
 
     /**
+     * The ratio of memory allocated by Redis compared to
+     * the maximum amount of memory allocatable by Redis.
+     *
+     * @var int
+     */
+    public $memoryRatio;
+
+    /**
      * The ratio of memory used by the OS compared to
      * the amount of memory allocated by Redis.
      *
@@ -114,10 +122,10 @@ class RedisMetrics
     public function __construct(ObjectCacheInterface $cache)
     {
         $info = $cache->connection()->memoize('info');
+        $total = $info['keyspace_hits'] + $info['keyspace_misses'];
 
         $this->hits = $info['keyspace_hits'];
         $this->misses = $info['keyspace_misses'];
-        $total = $this->hits + $this->misses;
         $this->hitRatio = $total > 0 ? round($this->hits / ($total / 100), 2) : 100;
         $this->opsPerSec = $info['instantaneous_ops_per_sec'];
         $this->evictedKeys = $info['evicted_keys'];
@@ -173,7 +181,87 @@ class RedisMetrics
         $metrics = $this->toArray();
 
         return implode(' ', array_map(function ($metric, $value) {
-            return sprintf("sample#${metric}", $value);
+            return "sample#redis-{$metric}={$value}";
         }, array_keys($metrics), $metrics));
+    }
+
+    /**
+     * Returns the schema for the Redis metrics.
+     *
+     * @return array
+     */
+    public static function schema()
+    {
+        return array_map(function ($metric) {
+            $metric['group'] = 'redis';
+
+            return $metric;
+        }, [
+            'redis-hits' => [
+                'title' => 'Hits',
+                'description' => 'Number of successful key lookups.',
+                'type' => 'integer',
+            ],
+            'redis-misses' => [
+                'title' => 'Misses',
+                'description' => 'Number of failed key lookups.',
+                'type' => 'integer',
+            ],
+            'redis-hit-ratio' => [
+                'title' => 'Hit ratio',
+                'description' => 'The hits-to-misses ratio.',
+                'type' => 'ratio',
+            ],
+            'redis-ops-per-sec' => [
+                'title' => 'Throughput',
+                'description' => 'Number of commands processed per second.',
+                'type' => 'integer',
+            ],
+            'redis-evicted-keys' => [
+                'title' => 'Evicted keys',
+                'description' => 'Number of evicted keys due to `maxmemory` limit.',
+                'type' => 'integer',
+            ],
+            'redis-used-memory' => [
+                'title' => 'Used memory',
+                'description' => 'Total number of bytes allocated by Redis using its allocator.',
+                'type' => 'bytes',
+            ],
+            'redis-used-memory-rss' => [
+                'title' => 'Used-memory-rss',
+                'description' => 'Number of bytes that Redis allocated as seen by the operating system.',
+                'type' => 'bytes',
+            ],
+            'redis-memory-ratio' => [
+                'title' => 'Memory ratio',
+                'description' => 'The ratio of memory allocated by Redis compared to the maximum amount of memory allocatable by Redis.',
+                'type' => 'ratio',
+            ],
+            'redis-memory-fragmentation-ratio' => [
+                'title' => 'Memory fragmentation ratio',
+                'description' => 'The ratio of memory used by the OS compared to the amount of memory allocated by Redis.',
+                'type' => 'ratio',
+            ],
+            'redis-connected-clients' => [
+                'title' => 'Connected clients',
+                'description' => 'Number of client connections (excluding connections from replicas).',
+                'type' => 'integer',
+            ],
+            'redis-tracking-clients' => [
+                'title' => 'Tracking clients',
+                'description' => 'Number of clients being tracked.',
+                'type' => 'integer',
+            ],
+            'redis-rejected-connections' => [
+                'title' => 'Rejected connections',
+                'description' => 'Number of connections rejected because of `maxclients` limit.',
+                'type' => 'integer',
+            ],
+            'redis-keys' => [
+                'title' => 'Keys',
+                'description' => 'The number of keys in the keyspace (database).',
+                'type' => 'integer',
+            ],
+        ]);
     }
 }

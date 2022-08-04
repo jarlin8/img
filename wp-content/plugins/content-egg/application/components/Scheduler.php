@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\components;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 /**
  * Scheduler class file
@@ -13,24 +13,30 @@ defined( '\ABSPATH' ) || exit;
  */
 abstract class Scheduler implements iScheduler {
 
-	public static function initAction() {
-		\add_action( static::getCronTag(), array( get_called_class(), 'run' ) );
-	}
+    public static function initAction()
+    {
+        \add_action(static::getCronTag(), array(get_called_class(), 'run'));
+    }
 
-	public static function addScheduleEvent( $recurrence = 'hourly', $timestamp = null ) {
-		if ( ! \wp_next_scheduled( static::getCronTag() ) ) {
-			if ( ! $timestamp ) {
-				$timestamp = time();
-			}
+    public static function addScheduleEvent($recurrence = 'hourly', $timestamp = null)
+    {
+        if (!\wp_next_scheduled(static::getCronTag()))
+        {
+            if (!$timestamp)
+            {
+                $timestamp = time();
+            }
 
-			\wp_schedule_event( $timestamp, $recurrence, static::getCronTag() );
-		}
-	}
+            \wp_schedule_event($timestamp, $recurrence, static::getCronTag());
+        }
+    }
 
-	public static function clearScheduleEvent() {
-		if ( \wp_next_scheduled( static::getCronTag() ) ) {
-			\wp_clear_scheduled_hook( static::getCronTag() );
-		}
-	}
+    public static function clearScheduleEvent()
+    {
+        if (\wp_next_scheduled(static::getCronTag()))
+        {
+            \wp_clear_scheduled_hook(static::getCronTag());
+        }
+    }
 
 }

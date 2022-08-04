@@ -9,12 +9,14 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Plugin;
+
+use RedisCachePro\Diagnostics\Diagnostics;
 
 trait Meta
 {
@@ -58,10 +60,6 @@ trait Meta
         $append = [];
 
         if ($file === 'object-cache.php' || $status === 'mustuse') {
-            $links = array_filter($links, function ($link) {
-                return ! strpos($link, "href=\"{$this->url}");
-            });
-
             $append[] = sprintf(
                 '<a href="%s" class="thickbox open-plugin-details-modal">View details</a>',
                 self_admin_url('plugin-install.php?' . http_build_query([
@@ -96,6 +94,12 @@ trait Meta
             ], $links);
         }
 
+        if (current_user_can(self::Capability)) {
+            $links = array_merge([
+                sprintf('<a href="%s">Settings</a>', network_admin_url($this->baseurl)),
+            ], $links);
+        }
+
         return $links;
     }
 
@@ -108,6 +112,10 @@ trait Meta
      */
     public function siteActionLinks($actions, $blog_id)
     {
+        if (! $this->config->cluster) {
+            return $actions;
+        }
+
         if (! $this->blogFlushingEnabled()) {
             return $actions;
         }
@@ -145,15 +153,19 @@ trait Meta
     public function pluginInformation($result, $action = null, $args = null)
     {
         if ($action === 'plugin_information' && $args->slug === $this->slug()) {
-            $info = $this->request('plugin/info');
+            $info = $this->pluginInfoRequest();
 
             if (is_wp_error($info)) {
                 return false;
             }
 
-            if ($this->isMustUse()) {
+            if (Diagnostics::isMustUse()) {
                 $info->download_link = null;
             }
+
+            $info->icons = (array) $info->icons;
+            $info->banners = (array) $info->banners;
+            $info->sections = (array) $info->sections;
 
             return $info;
         }

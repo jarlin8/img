@@ -1,3 +1,14 @@
+<?php
+
+if (! defined('QM_OBJECTCACHE_EXPENSIVE')) {
+    define('QM_OBJECTCACHE_EXPENSIVE', 0.005);
+}
+
+if (! defined('QM_OBJECTCACHE_HEAVY')) {
+    define('QM_OBJECTCACHE_HEAVY', MB_IN_BYTES);
+}
+
+?>
 
 <?php echo $this->before_tabular_output(); ?>
 
@@ -18,6 +29,9 @@
                 </th>
             <?php endif; ?>
             <th scope="col" class="qm-num qm-sortable-column" role="columnheader" aria-sort="none">
+                <?php echo $this->build_sorter('Bytes'); ?>
+            </th>
+            <th scope="col" class="qm-num qm-sortable-column" role="columnheader" aria-sort="none">
                 <?php echo $this->build_sorter('Time (ms)'); ?>
             </th>
         </tr>
@@ -28,7 +42,7 @@
         <?php foreach ($data['commands'] as $no => $command) : ?>
             <tr
                 data-qm-type="<?php echo esc_attr(strtoupper($command['command'])); ?>"
-                data-qm-component="<?php echo esc_attr($command['backtrace']->get_component()->name); ?>"
+                data-qm-component="<?php echo is_array($command['backtrace']) ? '' : esc_attr($command['backtrace']->get_component()->name); ?>"
                 data-qm-time="<?php echo esc_attr($command['time']); ?>"
             >
                 <th scope="row" class="qm-row-num qm-num">
@@ -55,7 +69,7 @@
                         <?php echo self::build_toggler(); ?>
 
                         <?php $caller = $command['backtrace']->get_caller(); ?>
-                        <?php $trace = $command['backtrace']->get_display_trace(); ?>
+                        <?php $trace = $command['backtrace']->get_filtered_trace(); ?>
                         <?php array_shift($trace); ?>
 
                         <ol>
@@ -65,7 +79,7 @@
                             <div class="qm-toggled">
                                 <?php foreach ($trace as $item) : ?>
                                     <li>
-                                        <?php echo self::output_filename($item['display'], $item['calling_file'], $item['calling_line']); ?>
+                                        <?php echo self::output_filename($item['display'] ?? "{$item['function']}()", $item['calling_file'], $item['calling_line']); ?>
                                     </li>
                                 <?php endforeach; ?>
                             </div>
@@ -79,7 +93,22 @@
                     </td>
                 <?php endif; ?>
 
-                <td class="qm-num qm-row-time" data-qm-sort-weight="<?php echo $command['time']; ?>">
+                <?php $heavy = $command['bytes'] >= QM_OBJECTCACHE_HEAVY; ?>
+
+                <td class="qm-num qm-row-bytes <?php if ($heavy) : ?>qm-warn<?php endif; ?>" data-qm-sort-weight="<?php echo $command['bytes']; ?>">
+                    <?php if ($heavy) : ?>
+                        <span class="dashicons dashicons-warning" aria-hidden="true"></span>
+                    <?php endif; ?>
+
+                    <code><?php echo size_format($command['bytes'], $command['bytes'] > 1024 ? 2 : 0); ?></code>
+                </td>
+
+                <?php $expensive = $command['time'] >= (QM_OBJECTCACHE_EXPENSIVE * 1000); ?>
+
+                <td class="qm-num qm-row-time <?php if ($expensive) : ?>qm-warn<?php endif; ?>" data-qm-sort-weight="<?php echo $command['time']; ?>">
+                    <?php if ($expensive) : ?>
+                        <span class="dashicons dashicons-warning" aria-hidden="true"></span>
+                    <?php endif; ?>
                     <code><?php echo number_format($command['time'], 4, '.', ''); ?></code>
                 </td>
             </tr>
@@ -90,7 +119,7 @@
     <tfoot>
 
         <tr>
-            <td colspan="<?php echo isset($data['components']) ? 4 : 3; ?>">
+            <td colspan="<?php echo isset($data['components']) ? 5 : 4; ?>">
                 Total:
                 <span class="qm-items-number">
                     <?php echo count($data['commands']); ?>

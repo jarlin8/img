@@ -12,7 +12,7 @@ class RelayMissingException extends ObjectCacheException
             $sapi = PHP_SAPI;
 
             $message = implode(' ', [
-                "The Relay extension for PHP is not loaded in this environment ({$sapi}).",
+                "Object Cache Pro was configured to use Relay, but the Relay extension for PHP is not loaded in this environment ({$sapi}).",
                 'If it was installed, be sure to load the extension in your php.ini and to restart your PHP and web server processes.',
             ]);
         }

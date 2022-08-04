@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -49,60 +49,60 @@ class WordPressMetrics
     public $bytes;
 
     /**
-     * The amount of valid, prefetched keys.
+     * The number of valid, prefetched keys.
      *
      * @var int
      */
     public $prefetches;
 
     /**
-     * Amount of times the cache read from the external cache.
+     * The number of times the cache read from the external cache.
      *
      * @var int
      */
     public $storeReads;
 
     /**
-     * Amount of times the cache wrote to the external cache.
+     * The number of times the cache wrote to the external cache.
      *
      * @var int
      */
     public $storeWrites;
 
     /**
-     * The amount of times the external cache had the object already cached.
+     * The number of times the external cache had the object already cached.
      *
      * @var int
      */
     public $storeHits;
 
     /**
-     * Amount of times the external cache did not have the object.
+     * The Number of times the external cache did not have the object.
      *
      * @var int
      */
     public $storeMisses;
 
     /**
-     * The amount of time (μs) WordPress took to render the request.
+     * The amount of time (ms) WordPress took to render the request.
      *
      * @var float
      */
-    public $totalMs;
+    public $msTotal;
 
     /**
-     * The amount of time (μs) waited for the external cache to respond.
+     * The total amount of time (ms) waited for the external cache to respond.
      *
      * @var float
      */
-    public $cacheMs;
+    public $msCache;
 
     /**
-     * The median amount of time (μs) waited for the external cache to respond.
+     * The median amount of time (ms) waited for the external cache to respond.
      *
      * @var float
      */
-    public $cacheMedianMs;
+    public $msCacheMedian;
 
     /**
      * The percentage of time waited for the external cache to respond,
@@ -110,7 +110,7 @@ class WordPressMetrics
      *
      * @var int
      */
-    public $cacheRatioMs;
+    public $msCacheRatio;
 
     /**
      * Creates a new instance from given object cache.
@@ -133,14 +133,14 @@ class WordPressMetrics
         $this->storeWrites = $info->storeWrites;
         $this->storeHits = $info->storeHits;
         $this->storeMisses = $info->storeMisses;
-        $this->cacheMs = round($cache->connection()->ioWait('sum') * 1000, 2);
-        $this->cacheMedianMs = round($cache->connection()->ioWait('median') * 1000, 2);
+        $this->msCache = round($cache->connection()->ioWait('sum') * 1000, 2);
+        $this->msCacheMedian = round($cache->connection()->ioWait('median') * 1000, 2);
 
         $requestStart = $_SERVER['REQUEST_TIME_FLOAT'] ?? $timestart;
 
         if ($requestStart) {
-            $this->totalMs = round((microtime(true) - $requestStart) * 1000, 2);
-            $this->cacheRatioMs = round($this->cacheMs / (($this->cacheMs + $this->totalMs) / 100), 2);
+            $this->msTotal = round((microtime(true) - $requestStart) * 1000, 2);
+            $this->msCacheRatio = round($this->msCache / (($this->msCache + $this->msTotal) / 100), 2);
         }
 
         $this->dbQueries = get_num_queries();
@@ -163,10 +163,10 @@ class WordPressMetrics
             'store-writes' => $this->storeWrites,
             'store-hits' => $this->storeHits,
             'store-misses' => $this->storeMisses,
-            'ms-total' => sprintf('%.2f', $this->totalMs),
-            'ms-cache' => sprintf('%.2f', $this->cacheMs),
-            'ms-cache-median' => sprintf('%.2f', $this->cacheMedianMs),
-            'ms-cache-ratio' => number_format($this->cacheRatioMs, 1),
+            'ms-total' => sprintf('%.2f', $this->msTotal),
+            'ms-cache' => sprintf('%.2f', $this->msCache),
+            'ms-cache-median' => sprintf('%.2f', $this->msCacheMedian),
+            'ms-cache-ratio' => number_format($this->msCacheRatio, 1),
         ];
     }
 
@@ -180,7 +180,87 @@ class WordPressMetrics
         $metrics = $this->toArray();
 
         return implode(' ', array_map(function ($metric, $value) {
-            return "metric#${metric}={$value}";
+            return "metric#{$metric}={$value}";
         }, array_keys($metrics), $metrics));
+    }
+
+    /**
+     * Returns the schema for the WordPress metrics.
+     *
+     * @return array
+     */
+    public static function schema()
+    {
+        return array_map(function ($metric) {
+            $metric['group'] = 'wp';
+
+            return $metric;
+        }, [
+            'hits' => [
+                'title' => 'Hits',
+                'description' => 'The amount of times the cache data was already cached in memory.',
+                'type' => 'integer',
+            ],
+            'misses' => [
+                'title' => 'Misses',
+                'description' => 'The amount of times the cache did not have the object in memory.',
+                'type' => 'integer',
+            ],
+            'hit-ratio' => [
+                'title' => 'Hit Ratio',
+                'description' => 'The in-memory hits-to-misses ratio.',
+                'type' => 'ratio',
+            ],
+            'bytes' => [
+                'title' => 'Bytes',
+                'description' => "The in-memory cache's size in bytes.",
+                'type' => 'bytes',
+            ],
+            'prefetches' => [
+                'title' => 'Prefetches',
+                'description' => 'The number of valid, prefetched keys.',
+                'type' => 'integer',
+            ],
+            'store-reads' => [
+                'title' => 'Store Reads',
+                'description' => 'The number of times the cache read from the external cache.',
+                'type' => 'integer',
+            ],
+            'store-writes' => [
+                'title' => 'Store Writes',
+                'description' => 'The number of times the cache wrote to the external cache.',
+                'type' => 'integer',
+            ],
+            'store-hits' => [
+                'title' => 'Store Hits',
+                'description' => 'The number of times the external cache did have the object.',
+                'type' => 'integer',
+            ],
+            'store-misses' => [
+                'title' => 'Store Misses',
+                'description' => 'The number of times the external cache did not have the object.',
+                'type' => 'integer',
+            ],
+            'ms-total' => [
+                'title' => 'Response Time',
+                'description' => 'The amount of time (ms) WordPress took to render the request.',
+                'type' => 'time',
+            ],
+            'ms-cache' => [
+                'title' => 'Store Response Time',
+                'description' => 'The total amount of time (ms) waited for the external cache (Redis) to respond.',
+                'type' => 'time',
+            ],
+            'ms-cache-median' => [
+                'title' => 'Store Command Time',
+                'description' => 'The median amount of time (ms) waited for the external cache (Redis) to respond.',
+                'type' => 'time',
+            ],
+            'ms-cache-ratio' => [
+                'title' => 'Store Time Ratio',
+                'description' => 'The percentage of time waited for the external cache to respond, relative to the amount of time WordPress took to render the request.',
+                'type' => 'ratio',
+            ],
+        ]);
     }
 }

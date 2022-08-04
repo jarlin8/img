@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -76,7 +76,7 @@ class Measurement
     {
         $self = new self;
 
-        $self->id = substr(md5(uniqid(strval(mt_rand()), true)), 12);
+        $self->id = substr(md5(uniqid((string) mt_rand(), true)), 12);
         $self->timestamp = microtime(true);
         $self->hostname = gethostname();
         $self->path = $_SERVER['REQUEST_URI'] ?? null;
@@ -92,7 +92,7 @@ class Measurement
     {
         return substr_replace(
             date('c', intval($this->timestamp)),
-            substr(strval(fmod($this->timestamp, 1)), 1, 7),
+            substr((string) fmod($this->timestamp, 1), 1, 7),
             19,
             0
         );
@@ -123,6 +123,20 @@ class Measurement
     }
 
     /**
+     * Returns the request metrics in string format.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return implode(' ', array_filter([
+            $this->wp,
+            $this->redis ? (string) $this->redis : null,
+            $this->relay ? (string) $this->relay : null,
+        ]));
+    }
+
+    /**
      * Helper method to access metrics.
      *
      * @param  string  $name
@@ -132,6 +146,10 @@ class Measurement
     {
         if (strpos($name, '->') !== false) {
             list($type, $metric) = explode('->', $name);
+
+            if (strpos($metric, '-') !== false) {
+                $metric = lcfirst(str_replace('-', '', ucwords($metric, '-')));
+            }
 
             if (property_exists($this, $type)) {
                 return $this->{$type}->{$metric} ?? null;

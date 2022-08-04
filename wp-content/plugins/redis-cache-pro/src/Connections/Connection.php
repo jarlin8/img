@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -52,13 +52,16 @@ abstract class Connection
      */
     public function command(string $name, array $parameters = [])
     {
+        $method = strtolower($name);
+        $command = strtoupper($name);
+
         $context = [
-            'command' => $name,
+            'command' => $command,
             'parameters' => $parameters,
         ];
 
         if ($this->config->debug || $this->config->save_commands) {
-            $context['backtrace'] = \debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            $context['backtrace'] = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS);
 
             if (\function_exists('wp_debug_backtrace_summary')) {
                 $context['backtrace_summary'] = \wp_debug_backtrace_summary(__CLASS__);
@@ -68,12 +71,12 @@ abstract class Connection
         try {
             $start = $this->now();
 
-            $result = $this->client->{$name}(...$parameters);
+            $result = $this->client->{$method}(...$parameters);
 
             $time = $this->now() - $start;
             $this->ioWait[] = $time;
         } catch (Throwable $exception) {
-            $this->log->error("Failed to execute Redis `{$name}` command", $context + [
+            $this->log->error("Failed to execute `{$command}` command", $context + [
                 'exception' => $exception,
             ]);
 
@@ -81,10 +84,10 @@ abstract class Connection
         }
 
         $arguments = \implode(' ', \array_map('json_encode', $parameters));
-        $command = \trim("{$name} {$arguments}");
+        $commandWithArgs = \trim("{$command} {$arguments}");
         $ms = \round($time * 1000, 4);
 
-        $this->log->info("Executed Redis command `{$command}` in {$ms}ms", $context + [
+        $this->log->info("Executed command `{$commandWithArgs}` in {$ms}ms", $context + [
             'result' => $result,
             'time' => $ms,
         ]);
@@ -118,7 +121,9 @@ abstract class Connection
             $supportsHRTime = \function_exists('hrtime');
         }
 
-        return $supportsHRTime ? \hrtime(true) * 1e-9 : \microtime(true);
+        return $supportsHRTime
+            ? \hrtime(true) * 1e-9 // phpcs:ignore PHPCompatibility.FunctionUse.NewFunctions.hrtimeFound
+            : \microtime(true);
     }
 
     /**
@@ -141,6 +146,10 @@ abstract class Connection
                 $count = count($this->ioWait);
                 $middle = floor(($count - 1) / 2);
 
+                if ($count === 0) {
+                    return 0;
+                }
+
                 if ($count % 2) {
                     return $this->ioWait[$middle];
                 }
@@ -154,8 +163,7 @@ abstract class Connection
     /**
      * Returns the memoized result from the given command.
      *
-     * @param string  $command
-     *
+     * @param  string  $command
      * @return mixed
      */
     public function memoize($command)

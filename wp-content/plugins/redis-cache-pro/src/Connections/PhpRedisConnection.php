@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -17,10 +17,14 @@ declare(strict_types=1);
 namespace RedisCachePro\Connections;
 
 use Redis;
-use Exception;
+use Throwable;
 
 use RedisCachePro\Configuration\Configuration;
+use RedisCachePro\Exceptions\ConnectionException;
 
+/**
+ * @mixin \Redis
+ */
 class PhpRedisConnection extends Connection implements ConnectionInterface
 {
     /**
@@ -76,11 +80,11 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     protected function setSerializer()
     {
         if ($this->config->serializer === Configuration::SERIALIZER_PHP) {
-            $this->client->setOption(Redis::OPT_SERIALIZER, (string) Redis::SERIALIZER_PHP);
+            $this->client->setOption($this->client::OPT_SERIALIZER, (string) $this->client::SERIALIZER_PHP);
         }
 
         if ($this->config->serializer === Configuration::SERIALIZER_IGBINARY) {
-            $this->client->setOption(Redis::OPT_SERIALIZER, (string) Redis::SERIALIZER_IGBINARY);
+            $this->client->setOption($this->client::OPT_SERIALIZER, (string) $this->client::SERIALIZER_IGBINARY);
         }
     }
 
@@ -90,19 +94,19 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     protected function setCompression()
     {
         if ($this->config->compression === Configuration::COMPRESSION_NONE) {
-            $this->client->setOption(Redis::OPT_COMPRESSION, (string) Redis::COMPRESSION_NONE);
+            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_NONE);
         }
 
         if ($this->config->compression === Configuration::COMPRESSION_LZF) {
-            $this->client->setOption(Redis::OPT_COMPRESSION, (string) Redis::COMPRESSION_LZF);
+            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_LZF);
         }
 
         if ($this->config->compression === Configuration::COMPRESSION_ZSTD) {
-            $this->client->setOption(Redis::OPT_COMPRESSION, (string) Redis::COMPRESSION_ZSTD);
+            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_ZSTD);
         }
 
         if ($this->config->compression === Configuration::COMPRESSION_LZ4) {
-            $this->client->setOption(Redis::OPT_COMPRESSION, (string) Redis::COMPRESSION_LZ4);
+            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_LZ4);
         }
     }
 
@@ -115,8 +119,8 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      */
     public function withoutMutations(callable $callback)
     {
-        $this->client->setOption(Redis::OPT_SERIALIZER, (string) Redis::SERIALIZER_NONE);
-        $this->client->setOption(Redis::OPT_COMPRESSION, (string) Redis::COMPRESSION_NONE);
+        $this->client->setOption($this->client::OPT_SERIALIZER, (string) $this->client::SERIALIZER_NONE);
+        $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_NONE);
 
         $result = $callback($this);
 
@@ -149,7 +153,7 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
             $useAsync
                 ? $this->command('flushdb', [true])
                 : $this->command('flushdb');
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             throw $exception;
         } finally {
             if ($readTimeout && ! $useAsync) {
@@ -158,5 +162,118 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
         }
 
         return true;
+    }
+
+    /**
+     * Hijack `pipeline()` calls to allow command logging.
+     *
+     * @return object
+     */
+    public function pipeline()
+    {
+        return new Transaction(Redis::PIPELINE, $this);
+    }
+
+    /**
+     * Hijack `multi()` calls to allow command logging.
+     *
+     * @param  int  $type
+     * @return object
+     */
+    public function multi(int $type = Redis::MULTI)
+    {
+        return new Transaction($type, $this);
+    }
+
+    /**
+     * Send `scan()` calls directly to the client.
+     *
+     * @param  int  $iterator
+     * @param  string  $pattern
+     * @param  int  $count
+     * @return array|false
+     */
+    public function scan(?int &$iterator, ?string $pattern = null, int $count = 0) // phpcs:ignore PHPCompatibility
+    {
+        return $this->client->scan($iterator, $pattern, $count);
+    }
+
+    /**
+     * Hijack `restore()` calls due to a bug in modern PhpRedis versions
+     * when data mutations like compression are used.
+     *
+     * @param  string  $key
+     * @param  int  $timeout
+     * @param  string  $value
+     * @return bool
+     */
+    public function restore(string $key, int $timeout, string $value)
+    {
+        return $this->command('rawCommand', ['RESTORE', $key, $timeout, $value]);
+    }
+
+    /**
+     * Execute hijacked MULTI transaction/pipeline.
+     *
+     * This mimics `Connection::command()`.
+     *
+     * @param  int  $type
+     * @param  \RedisCachePro\Connections\Transaction  $tx
+     * @return array
+     */
+    public function executeMulti(int $type, Transaction $tx)
+    {
+        $method = \str_replace([
+            Redis::MULTI,
+            Redis::PIPELINE,
+        ], [
+            'multi',
+            'pipeline',
+        ], (string) $type);
+
+        $context = [
+            'command' => \strtoupper($method),
+            'parameters' => [],
+        ];
+
+        if ($this->config->debug || $this->config->save_commands) {
+            $context['backtrace'] = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS);
+
+            if (\function_exists('wp_debug_backtrace_summary')) {
+                $context['backtrace_summary'] = \wp_debug_backtrace_summary(__CLASS__);
+            }
+        }
+
+        try {
+            $start = $this->now();
+
+            $pipe = $this->client->{$method}();
+
+            foreach ($tx->commands as $command) {
+                $pipe->{$command[0]}(...$command[1]);
+
+                $context['parameters'][] = \array_merge([\strtoupper($command[0])], $command[1]);
+            }
+
+            $results = $pipe->exec();
+
+            $time = $this->now() - $start;
+            $this->ioWait[] = $time;
+        } catch (Throwable $exception) {
+            $this->log->error('Failed to execute transaction', $context + [
+                'exception' => $exception,
+            ]);
+
+            throw ConnectionException::from($exception);
+        }
+
+        $ms = \round($time * 1000, 4);
+
+        $this->log->info("Executed transaction in {$ms}ms", $context + [
+            'result' => $results,
+            'time' => $ms,
+        ]);
+
+        return $results;
     }
 }

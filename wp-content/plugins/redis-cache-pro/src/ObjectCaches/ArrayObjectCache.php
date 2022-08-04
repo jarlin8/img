@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * https://tyubar.com
  */
 
 declare(strict_types=1);
@@ -20,6 +20,13 @@ use RedisCachePro\Configuration\Configuration;
 
 class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
 {
+    /**
+     * The client name.
+     *
+     * @var string
+     */
+    const Client = 'Array';
+
     /**
      * Create new array object cache instance.
      *
@@ -34,13 +41,13 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Adds data to the cache, if the cache key doesn't already exist.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  mixed  $data
      * @param  string  $group
      * @param  int  $expire
      * @return bool
      */
-    public function add(string $key, $data, string $group = 'default', int $expire = 0): bool
+    public function add($key, $data, string $group = 'default', int $expire = 0): bool
     {
         if (function_exists('wp_suspend_cache_addition') && \wp_suspend_cache_addition()) {
             return false;
@@ -51,6 +58,25 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
         }
 
         return $this->set($key, $data, $group, $expire);
+    }
+
+    /**
+     * Adds multiple values to the cache in one call, if the cache keys doesn't already exist.
+     *
+     * @param  array  $data
+     * @param  string  $group
+     * @param  int  $expire
+     * @return bool[]
+     */
+    public function add_multiple(array $data, string $group = 'default', int $expire = 0): array
+    {
+        $results = [];
+
+        foreach ($data as $key => $value) {
+            $results[$key] = $this->add($key, $value, $group);
+        }
+
+        return $results;
     }
 
     /**
@@ -76,12 +102,12 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Decrements numeric cache item's value.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  int  $offset
      * @param  string  $group
-     * @return false|int
+     * @return int|false
      */
-    public function decr(string $key, int $offset = 1, string $group = 'default')
+    public function decr($key, int $offset = 1, string $group = 'default')
     {
         if (! $this->has($key, $group)) {
             return false;
@@ -100,11 +126,11 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Removes the cache contents matching key and group.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
      * @return bool
      */
-    public function delete(string $key, string $group = 'default'): bool
+    public function delete($key, string $group = 'default'): bool
     {
         if (! $this->has($key, $group)) {
             return false;
@@ -115,6 +141,24 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
         unset($this->cache[$group][$id]);
 
         return true;
+    }
+
+    /**
+     * Deletes multiple values from the cache in one call.
+     *
+     * @param  array  $keys
+     * @param  string  $group
+     * @return bool[]
+     */
+    public function delete_multiple(array $keys, string $group = 'default'): array
+    {
+        $results = [];
+
+        foreach ($keys as $key) {
+            $results[$key] = $this->delete($key, $group);
+        }
+
+        return $results;
     }
 
     /**
@@ -132,13 +176,13 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Retrieves the cache contents from the cache by key and group.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
      * @param  bool  $force
      * @param  bool  &$found
      * @return bool|mixed
      */
-    public function get(string $key, string $group = 'default', bool $force = false, &$found = null)
+    public function get($key, string $group = 'default', bool $force = false, &$found = null)
     {
         if (! $this->has($key, $group)) {
             $found = false;
@@ -172,7 +216,7 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
         $values = [];
 
         foreach ($keys as $key) {
-            $values[$key] = $this->get((string) $key, $group, $force);
+            $values[$key] = $this->get($key, $group, $force);
         }
 
         return $values;
@@ -181,11 +225,11 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Whether the key exists in the cache.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  string  $group
      * @return bool
      */
-    public function has(string $key, string $group = 'default'): bool
+    public function has($key, string $group = 'default'): bool
     {
         $id = $this->id($key, $group);
 
@@ -195,12 +239,12 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Increment numeric cache item's value.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  int  $offset
      * @param  string  $group
-     * @return false|int
+     * @return int|false
      */
-    public function incr(string $key, int $offset = 1, string $group = 'default')
+    public function incr($key, int $offset = 1, string $group = 'default')
     {
         if (! $this->has($key, $group)) {
             return false;
@@ -219,16 +263,14 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Replaces the contents of the cache with new data.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  mixed  $data
      * @param  string  $group
      * @param  int  $expire
      * @return bool
      */
-    public function replace(string $key, $data, string $group = 'default', int $expire = 0): bool
+    public function replace($key, $data, string $group = 'default', int $expire = 0): bool
     {
-        $id = $this->id($key, $group);
-
         if (! $this->has($key, $group)) {
             return false;
         }
@@ -239,13 +281,13 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Saves the data to the cache.
      *
-     * @param  string  $key
+     * @param  int|string  $key
      * @param  mixed  $data
      * @param  string  $group
      * @param  int  $expire
      * @return bool
      */
-    public function set(string $key, $data, string $group = 'default', int $expire = 0): bool
+    public function set($key, $data, string $group = 'default', int $expire = 0): bool
     {
         if (\is_object($data)) {
             $data = clone $data;
@@ -256,6 +298,25 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
         $this->cache[$group][$id] = $data;
 
         return true;
+    }
+
+    /**
+     * Sets multiple values to the cache in one call.
+     *
+     * @param  array  $data
+     * @param  string  $group
+     * @param  int  $expire
+     * @return bool[]
+     */
+    public function set_multiple(array $data, string $group = 'default', int $expire = 0): array
+    {
+        $results = [];
+
+        foreach ($data as $key => $value) {
+            $results[$key] = $this->set($key, $value, $group);
+        }
+
+        return $results;
     }
 
     /**
