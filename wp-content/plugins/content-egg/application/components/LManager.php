@@ -370,7 +370,7 @@ class LManager {
 
     public static function isNulled()
     {
-        return false;
+    return false;
     }
 
     public static function isValidLicFormat($value)

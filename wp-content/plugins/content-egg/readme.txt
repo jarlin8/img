@@ -17,6 +17,10 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+= 10.6.0 =
+* New: Block template: Button with price comparison popup.
+* New: Block template: Product card with price comparison popup.
+
 = 10.5.0 =
 * Improvement: Group matching by keyword search: keyword -> group name.
 

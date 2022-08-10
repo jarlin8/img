@@ -19,7 +19,7 @@ use ContentEgg\application\Translator;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  *
  */
 class TemplateHelper {
@@ -1677,6 +1677,32 @@ class TemplateHelper {
         {
             return array();
         }
+    }
+
+    public static function t($s)
+    {
+        return Translator::__($s);
+    }
+
+    public static function selectItemByDescription(array $items)
+    {
+        $min_len = 999999;
+        $selected = null;
+        foreach ($items as $item)
+        {
+            if (!$item['description'])
+                continue;
+
+            if (mb_strlen($item['description'], 'UTF-8') < $min_len)
+            {
+                $min_len = mb_strlen($item['description'], 'UTF-8');
+                $selected = $item;
+            }
+        }
+        if (!$selected)
+            return reset($items);
+
+        return $selected;
     }
 
 }

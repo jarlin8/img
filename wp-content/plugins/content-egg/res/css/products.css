@@ -86,7 +86,7 @@ span.rating_small{white-space:nowrap}
 .cegg-price-tracker-item .cegg-price{font-size: 22px; font-weight: bold;}
 .egg-list-coupons .btn{font-size: 16px; font-weight: bold; display: block;}
 .cegg-listlogo-title{ line-height: 18px; font-size: 15px }
-.egg-listcontainer .cegg-price, .cegg-list-withlogos .cegg-price{font-weight: bold; font-size: 1.1em;}
+.egg-listcontainer .cegg-price, .cegg-list-withlogos .cegg-price, .egg-item-popup .cegg-price{font-weight: bold; font-size: 1.1em;}
 .egg-container .cegg-list-withlogos .btn{font-weight: bold; font-size: 15px; padding: 8px 16px}
 .cegg-price-row strike{font-size: 16px;font-weight: normal; }
 .egg-listcontainer .cegg-list-logo-title a{text-decoration: none; box-shadow: none; color: #111;}

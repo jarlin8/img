@@ -197,7 +197,7 @@ class EggMetabox {
         \wp_enqueue_script('contentegg-metabox-service', \ContentEgg\PLUGIN_RES . '/app/ModuleService.js', array('contentegg-metabox-app'), Plugin::version());
 
         // Bootstrap
-        \wp_enqueue_style('egg-bootstrap', \ContentEgg\PLUGIN_RES . '/bootstrap/css/egg-bootstrap.min.css', array(), Plugin::version());
+        \wp_enqueue_style('egg-bootstrap', \ContentEgg\PLUGIN_RES . '/bootstrap/css/egg-bootstrap.min.css', array(), Plugin::version() . 'd11');
         \wp_enqueue_style('egg-glyphicons', \ContentEgg\PLUGIN_RES . '/bootstrap/css/glyphicons.css', array(), Plugin::version());
         \wp_enqueue_script('bootstrap', \ContentEgg\PLUGIN_RES . '/bootstrap/js/bootstrap.min.js', array('jquery'), Plugin::version());
 

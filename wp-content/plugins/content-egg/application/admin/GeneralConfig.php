@@ -77,6 +77,8 @@ class GeneralConfig extends Config {
             'today' => __('today', 'content-egg-tpl'),
             '%d day ago' => __('%d day ago', 'content-egg-tpl'),
             '%d days ago' => __('%d days ago', 'content-egg-tpl'),
+            'Shop %d Offers' => __('Shop %d Offers', 'content-egg-tpl'),
+            'from' => __('from', 'content-egg-tpl'),
         );
     }
 

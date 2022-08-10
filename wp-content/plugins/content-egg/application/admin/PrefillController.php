@@ -16,7 +16,7 @@ use ContentEgg\application\models\AutoblogModel;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class PrefillController {
 
@@ -96,8 +96,7 @@ class PrefillController {
         $minus_words = isset($_POST['minus_words']) ? TextHelper::commaList(sanitize_text_field(wp_unslash($_POST['minus_words']))) : '';
         $custom_field_names = isset($_POST['custom_field_names']) ? array_map('sanitize_text_field', wp_unslash($_POST['custom_field_names'])) : array();
         $custom_field_values = isset($_POST['custom_field_values']) ? array_map('sanitize_text_field', wp_unslash($_POST['custom_field_values'])) : array();
-        $custom_field = isset($_POST['custom_field']) ? sanitize_key(wp_unslash($_POST['custom_field'])) : '';
-
+        $custom_field = isset($_POST['custom_field']) ? sanitize_text_field(wp_unslash($_POST['custom_field'])) : '';
 
         $parser = ModuleManager::getInstance()->parserFactory($module_id);
         if (!$parser->isActive())
@@ -144,7 +143,7 @@ class PrefillController {
 
         try
         {
-            $data = $parser->doRequest($keyword, array(), true);
+            $data = $parser->doMultipleRequests($keyword, array(), true);
         } catch (\Exception $e)
         {
             // error
@@ -216,7 +215,7 @@ class PrefillController {
         {
             if (!$meta_name)
                 return '';
-            $keyword = \get_post_meta($post_id, $meta_name, true);
+            return \get_post_meta($post_id, $meta_name, true);
         } elseif (substr($keyword_source, 0, 9) == '_keyword_')
         {
             $module_id = substr($keyword_source, 9);

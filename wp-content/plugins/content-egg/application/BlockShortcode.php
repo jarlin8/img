@@ -14,7 +14,7 @@ use ContentEgg\application\helpers\TemplateHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link http://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class BlockShortcode {
 
@@ -55,6 +55,7 @@ class BlockShortcode {
             'hide' => '',
             'show' => '',
             'btn_text' => '',
+            'btn_class' => '',
             'locale' => '',
             'add_query_arg' => '',
         );
@@ -73,6 +74,7 @@ class BlockShortcode {
         $a['hide'] = TemplateHelper::hideParamPrepare($a['hide']);
         $a['show'] = strtolower(TextHelper::clear($a['show']));
         $a['btn_text'] = \wp_strip_all_tags($a['btn_text'], true);
+        $a['btn_class'] = \sanitize_text_field($a['btn_class']);
         $a['add_query_arg'] = \sanitize_text_field(\wp_strip_all_tags($a['add_query_arg'], true));
         $a['locale'] = TextHelper::clear($a['locale']);
 

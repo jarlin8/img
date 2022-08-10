@@ -2,7 +2,7 @@
  * Modified version of Bootstrap CSS
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  *
  * Original work Copyright
  * Bootstrap (http://getbootstrap.com)
@@ -11,7 +11,6 @@
  */
 
 .egg-container {
-    /* font-family: sans-serif; */
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
 }
@@ -4306,6 +4305,138 @@ button.egg-container .close {
     border-left-color: #ffffff;
     border-right-width: 0;
 }
+
+
+.modal-open {
+  overflow: hidden;
+}
+.egg-container .modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  display: none;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+}
+.egg-container .modal.fade .modal-dialog {
+  -webkit-transform: translate(0, -25%);
+  -ms-transform: translate(0, -25%);
+  -o-transform: translate(0, -25%);
+  transform: translate(0, -25%);
+  -webkit-transition: -webkit-transform 0.3s ease-out;
+  -o-transition: -o-transform 0.3s ease-out;
+  transition: -webkit-transform 0.3s ease-out;
+  transition: transform 0.3s ease-out;
+  transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out, -o-transform 0.3s ease-out;
+}
+.egg-container .modal.in .modal-dialog {
+  -webkit-transform: translate(0, 0);
+  -ms-transform: translate(0, 0);
+  -o-transform: translate(0, 0);
+  transform: translate(0, 0);
+}
+.modal-open .modal {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.egg-container .modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 10px;
+}
+.egg-container .modal-content {
+  position: relative;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  outline: 0;
+}
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+}
+.modal-backdrop.fade {
+  filter: alpha(opacity=0);
+  opacity: 0;
+}
+.modal-backdrop.in {
+  filter: alpha(opacity=50);
+  opacity: 0.5;
+}
+.egg-container .modal-header {
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.egg-container .modal-header .close {
+  margin-top: -2px;
+}
+.egg-container .modal-title {
+  margin: 0;
+  line-height: 1.42857143;
+}
+.egg-container .modal-body {
+  position: relative;
+  padding: 15px;
+}
+.egg-container .modal-footer {
+  padding: 15px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
+}
+.egg-container .modal-footer .btn + .btn {
+  margin-bottom: 0;
+  margin-left: 5px;
+}
+.egg-container .modal-footer .btn-group .btn + .btn {
+  margin-left: -1px;
+}
+.egg-container .modal-footer .btn-block + .btn-block {
+  margin-left: 0;
+}
+.egg-container .modal-scrollbar-measure {
+  position: absolute;
+  top: -9999px;
+  width: 50px;
+  height: 50px;
+  overflow: scroll;
+}
+@media (min-width: 768px) {
+  .egg-container .modal-dialog {
+    width: 600px;
+    margin: 30px auto;
+  }
+  .egg-container .modal-content {
+    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  }
+  .egg-container .modal-sm {
+    width: 300px;
+  }
+}
+@media (min-width: 992px) {
+  .egg-container .modal-lg {
+    width: 900px;
+  }
+}
+
+
+
+
+
+
 .egg-container .clearfix:before,
 .egg-container .clearfix:after,
 .egg-container .dl-horizontal dd:before,
@@ -4397,6 +4528,19 @@ button.egg-container .close {
 .egg-container .visible-lg-inline-block {
     display: none !important;
 }
+.egg-container .fade-scale {
+    transform: scale(0);
+    opacity: 0;
+    -webkit-transition: all .15s linear;
+    -o-transition: all .15s linear;
+    transition: all .15s linear;
+}
+
+.egg-container .fade-scale.in {
+    opacity: 1;
+    transform: scale(1);
+}
+
 @media (max-width: 767px) {
     .egg-container .visible-xs {
         display: block !important;
@@ -4487,6 +4631,7 @@ button.egg-container .close {
         display: inline-block !important;
     }
 }
+
 @media (min-width: 1200px) {
     .egg-container .visible-lg {
         display: block !important;

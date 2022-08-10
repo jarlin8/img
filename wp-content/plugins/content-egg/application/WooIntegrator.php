@@ -123,7 +123,7 @@ class WooIntegrator {
     {
         if (!$product = \wc_get_product($post_id))
             return false;
-        
+
         $item = \apply_filters('cegg_before_woo_sync', $item, $module_id, $post_id);
 
         // set price
@@ -147,8 +147,8 @@ class WooIntegrator {
                 } else
                 {
                     if (!\apply_filters('cegg_dont_touch_retail_price', false))
-                        $product->set_regular_price($item['priceOld'] * $currency_rate);    
-                    
+                        $product->set_regular_price($item['priceOld'] * $currency_rate);
+
                     if (!\apply_filters('cegg_dont_touch_sale_price', false))
                         $product->set_sale_price($item['price'] * $currency_rate);
                 }
@@ -544,8 +544,8 @@ class WooIntegrator {
             $date = TemplateHelper::dateFormatFromGmt($item['last_update'], true);
 
             echo '<span class="price_updated">';
-			echo esc_html(sprintf(Translator::__('Last updated on %s'), $date));
-			echo '</span>';
+            echo esc_html(sprintf(Translator::__('Last updated on %s'), $date));
+            echo '</span>';
         }
     }
 
@@ -565,8 +565,8 @@ class WooIntegrator {
                 return;
 
             echo '<div class="cegg_price_per_unit">';
-			echo esc_html(sprintf(Translator::__('Price per unit: %s'), $item['extra']['pricePerUnitDisplay']));
-			echo '</div>';
+            echo esc_html(sprintf(Translator::__('Price per unit: %s'), $item['extra']['pricePerUnitDisplay']));
+            echo '</div>';
         }
     }
 
