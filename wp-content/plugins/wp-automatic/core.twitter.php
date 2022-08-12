@@ -133,7 +133,16 @@ function twitter_fetch_items($keyword,$camp ){
 		}
 	}
 
+	
+	//type mixed or popular 
+	$cg_tw_type = $camp_general['cg_tw_type'];
+	
+	if($cg_tw_type == 'recent' || $cg_tw_type == 'popular' ){
 		
+		if(stristr($url , 'tweets.json'))
+		$url.='&result_type='.$cg_tw_type;
+	}
+	
 	//pagination
 	// get requrest url from the zero index
 	if( $start == 1 ){

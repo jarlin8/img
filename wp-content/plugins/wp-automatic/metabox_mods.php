@@ -190,7 +190,13 @@ global $camp_replace_link;
                </div>
 		 </div>      
 		 
-          
+          <div class="field f_100" >
+		               <input name="camp_options[]"    value="OPT_REMOVE_EMOJI" type="checkbox">
+		                    <span class="option-title">
+							 	Delete emojis from the post content (if your wp_posts table is not utf8mp4 encoded, emojis cause post insertion failure) 
+		                    </span>
+		            	
+		   </div>
 		
 		<div class="clear"></div>
 	</div>

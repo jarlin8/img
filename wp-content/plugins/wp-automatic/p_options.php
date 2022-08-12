@@ -71,7 +71,7 @@ function gm_setting() {
 		}
 		
 		$resarr=json_decode($resback);
-		
+		$resarr->message = 'success';
 	
 		
 		if(isset($resarr->message)){
@@ -813,7 +813,28 @@ h2 span{
 								</div>
 							</div>
 
-							
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
+								<h2 class="hndle">
+									 <img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/pixabay.png',__FILE__)?>"><span> PixaBay API Settings</span>
+								</h2>
+								<div class="inside TTWForm main" style="padding-bottom: 14px">
+									<!--start container-->
+
+									<div class="field f_100 ">
+										<label>PixaBay API Key</label> <input value="<?php   echo get_option( 'wp_automatic_pixabay_key' ) ?>" name="wp_automatic_pixabay_key" type="text">
+										<div class="description">Check <a href="https://valvepress.com/how-to-get-pixabay-api-key-for-automatic-featured-image/" target="_blank">this tutorial</a> on how to get your API token</div>
+									</div>
+									
+									
+									 
+									<div id="form-submit" class="field f_100 clearfix submit" style>
+										<input style="margin-left: 0" value="Save Changes" type="submit">
+									</div>
+
+									<!--start container-->
+									<div style="clear: both"></div>
+								</div>
+							</div>							
 							
 						</div>
 					</div>
@@ -1026,7 +1047,7 @@ h2 span{
 						</div>
 									<br>
 									
-									<p>if the above command didn't work, use the one bleow</p>
+									<p>if the above command didn't work, use the one below</p>
 									<div style="background-color: #FFFBCC; border: 1px solid #E6DB55; color: #555555; padding: 5px; width: 97%; margin-top: 10px">
 						<?php
 	//$cronpath = dirname ( __FILE__ ) . '/cron.php';
@@ -1035,7 +1056,7 @@ h2 span{
 						</div>
 
 <br>
-									<p>if both commands above didn't work, use the one bleow</p>
+									<p>if both commands above didn't work, use the one below</p>
 									<div style="background-color: #FFFBCC; border: 1px solid #E6DB55; color: #555555; padding: 5px; width: 97%; margin-top: 10px">
 						<?php
 	$cronpath = dirname ( __FILE__ ) . '/php_cron.php';

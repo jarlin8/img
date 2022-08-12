@@ -156,6 +156,31 @@ global $camp_post_category;
 		                    </span>
 	                    </div>
 	
+						<div class="option clearfix">
+							
+						 	 <input data-controls="wp_automatic_pixabay_keyword" name="camp_options[]"  value="OPT_PIXABAY" type="checkbox">
+			                    <span class="option-title">
+										Set a featured image from PixaBay for a specific keyword
+			                    </span>
+			                    
+			                    <br>
+			                    
+					            <div id="wp_automatic_pixabay_keyword" class="field f_100">
+					               <label for="field6">
+					                    Keyword for the search 
+					               </label>
+					               
+					            	 <input value="<?php   echo @$camp_general['cg_pixabay_keyword']  ?>" name="cg_pixabay_keyword"   type="text">
+					            	
+					            	<div class="option clearfix"> 
+						            	 <input  name="camp_options[]"  value="OPT_PIXABAY_FORCE" type="checkbox">
+					                 <span class="option-title">
+												Force using PixaBay images and ignore source found images (By default, PixaBay image if no image found to set)   
+					                 </span>
+					            	  </div>
+					            </div>
+							
+						</div>
 	                    
                     </div>
                     
@@ -190,7 +215,7 @@ global $camp_post_category;
 			             </div>
 			             
 			             <div class="option clearfix">
-			                    <input name="camp_options[]" data-controls="wp_automatic_media_div"   value="OPT_FEED_MEDIA" type="checkbox">
+			                    <input  name="camp_options[]" data-controls="wp_automatic_media_div"   value="OPT_FEED_MEDIA" type="checkbox">
 			                    <span class="option-title">
 										Add the images to the media library as well (Not recommended)
 			                    </span>
@@ -219,6 +244,46 @@ global $camp_post_category;
                		</div>
                		
                		
+                    
+               </div>
+		 </div>
+		 
+		 
+		 <div   class="field f_100">
+               <div class="option clearfix">
+                    <input data-controls="wp_automatic_gallery_create" name="camp_options[]"   value="OPT_GALLERY_ALL" type="checkbox">
+                    <span class="option-title">
+							Make all images from extracted content as a WordPress Gallery (Images will be downloaded)   
+                    </span>
+                    <br>
+                    
+                    <div  id="wp_automatic_gallery_create" class="field f_100 ">
+                    	
+                    		<div  class="option clearfix">
+				                    	
+				                    	 <input  name="camp_options[]"  value="OPT_FEED_GALLERY_DELETE" type="checkbox">
+						                    <span class="option-title">
+													Remove the images from the post content after adding the gallery
+						                    </span>
+						                    <br>
+				                    	
+				          </div>
+				          
+				          <div  class="option clearfix">
+				                    	
+				                    	 <input  name="camp_options[]"  value="OPT_FEED_GALLERY_LIMIT" type="checkbox">
+						                    <span class="option-title">
+													Add the gallery even if there is only one image available
+						                    </span>
+						                    <br>
+				                    	
+				          </div>
+				          
+				          <div class="description">
+				          	*By default, the gallery will be added to the top of the post content and if you want to change the location, add the tag [the_gallery] anywhere in the "Post text template" above.
+				          </div>
+                    
+                    </div>
                     
                </div>
 		 </div>

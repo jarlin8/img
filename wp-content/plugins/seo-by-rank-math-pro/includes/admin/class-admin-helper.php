@@ -98,7 +98,17 @@ class Admin_Helper {
 	 * @return boolean
 	 */
 	public static function is_business_plan() {
+		return in_array( self::get_plan(), [ 'business', 'agency' ], true );
+	}
+
+	/**
+	 * Get current plan.
+	 *
+	 * @return string
+	 */
+	public static function get_plan() {
 		$registered = Free_Admin_Helper::get_registration_data();
-		return ( isset( $registered['plan'] ) && in_array( $registered['plan'], [ 'business', 'agency' ], true ) );
+
+		return isset( $registered['plan'] ) ? $registered['plan'] : 'pro';
 	}
 }

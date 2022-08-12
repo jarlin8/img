@@ -669,7 +669,7 @@ class WpAutomaticInstagram extends wp_automatic {
 			$qkeyword = str_replace ( '#', '', $qkeyword );
 			
 			try {
-				
+				 
 				$jsonArr = $instaScrape->getItemsByHashtag ( $qkeyword, 50, $wp_instagram_next_max_id );
 			} catch ( Exception $e ) {
 				
@@ -713,16 +713,14 @@ class WpAutomaticInstagram extends wp_automatic {
 				$page_info = $jsonArr->data->user->edge_owner_to_timeline_media->page_info;
 			} elseif (in_array ( 'OPT_IT_POPULAR', $camp_opt )) {
 				
+				
 				if(isset($jsonArr->graphql)){
 					$items = $jsonArr->graphql->hashtag->edge_hashtag_to_top_posts->edges;
 					$page_info = $jsonArr->graphql->hashtag->edge_hashtag_to_top_posts->page_info;
 				}else{
 					
-					$items = array();
-					
-					foreach( $jsonArr->data->top->sections as $single_section){
-						$items = array_merge($items , $single_section->layout_content->medias );
-					}
+					$items = $jsonArr->data->hashtag->edge_hashtag_to_top_posts->edges;
+					$page_info = $jsonArr->data->hashtag->edge_hashtag_to_media->page_info;
 					
 				}
 				

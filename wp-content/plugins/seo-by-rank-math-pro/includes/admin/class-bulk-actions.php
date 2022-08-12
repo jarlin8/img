@@ -339,7 +339,11 @@ class Bulk_Actions {
 				$redirect = Helper::get_admin_url( 'redirections' );
 				$i        = 0;
 				foreach ( $object_ids as $term_id ) {
-					$term_url = get_term_link( $term_id );
+					$term_url = get_term_link( (int) $term_id );
+					if ( is_wp_error( $term_url ) ) {
+						continue;
+					}
+
 					$redirect = add_query_arg( "urls[{$i}]", $term_url, $redirect );
 					$i++;
 				}

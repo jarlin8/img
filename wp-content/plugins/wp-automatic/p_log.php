@@ -25,6 +25,7 @@ function gm_log(){
 
 
 	// action type posted , Approved
+	$action='';
 	if( isset( $_POST['action_type']) ){
 		$act=$_POST['action_type'];
 		if ($act == 'posted' ){

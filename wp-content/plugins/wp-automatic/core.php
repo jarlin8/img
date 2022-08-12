@@ -1530,6 +1530,12 @@ class wp_automatic {
 				}
 			}
 			
+			//gallery will download images ini cache and add to media 
+			if(in_array('OPT_GALLERY_ALL', $camp_opt)){
+				$camp_opt[] =  'OPT_CACHE';
+				$camp_opt[]  = 'OPT_FEED_MEDIA';
+			}
+			
 			// cache images locally ?
 			$attachements_to_attach = array ();
 			if (in_array ( 'OPT_CACHE', $camp_opt ) || $camp_type == 'Instagram' || $camp_type == 'Clickbank') {
@@ -1776,6 +1782,41 @@ class wp_automatic {
 				$post_content = preg_replace ( '{<img class="delete.*?>}', '', $post_content );
 			}
 			
+			//attaching media 
+			$attach_ids = array();
+			if (isset ( $attachements_to_attach ) && count ( $attachements_to_attach ) > 0) {
+				
+				require_once (ABSPATH . 'wp-admin/includes/image.php');
+				
+				foreach ( $attachements_to_attach as $attachements_to_attach_single ) {
+					
+					$file = $attachements_to_attach_single [0];
+					$attachment = $attachements_to_attach_single [1];
+					//$post_id = $id;
+					
+					if (! function_exists ( 'wp_automatic_filter_image_sizes' )) {
+						function wp_automatic_filter_image_sizes($sizes) {
+							$sizes = array ();
+							return $sizes;
+						}
+					}
+					
+					if (! in_array ( 'OPT_FEED_MEDIA_ALL', $camp_opt )) {
+						add_filter ( 'intermediate_image_sizes_advanced', 'wp_automatic_filter_image_sizes' );
+					}
+					
+					$attach_id = wp_insert_attachment ( $attachment, $file  );
+					$attach_data = wp_generate_attachment_metadata ( $attach_id, $file );
+					wp_update_attachment_metadata ( $attach_id, $attach_data );
+					
+					$attach_ids[] = $attach_id; //add attach ID for gallery option OPT_GALLERY_ALL
+					
+				}
+				
+				// remove sizes filter
+				remove_filter ( 'intermediate_image_sizes_advanced', 'wp_automatic_filter_image_sizes' );
+			}
+			
 			// replacing words that should be replaced
 			$sets = stripslashes ( get_option ( 'wp_automatic_replace', '' ) );
 			
@@ -1983,6 +2024,28 @@ class wp_automatic {
 			} else {
 				
 				$postStatus = $camp->camp_post_status;
+			}
+			
+			// Gallery from found images, delete images and add gallery 
+			if(  ( in_array('OPT_GALLERY_ALL', $camp_opt) && count($attach_ids) >0 ) && !(  count($attach_ids) == 1 && ! in_array( 'OPT_FEED_GALLERY_LIMIT' , $camp_opt) )   ){
+				echo '<br>Found '. count($attach_ids) . ' images to attach as a gallery, creating the gallery';
+				$gallery_content = '[gallery ids="' . implode(',' , $attach_ids ) .   '"]';
+				
+				if(stristr($post_content, '[the_gallery]' )){
+					$post_content = str_replace( '[the_gallery]' , $gallery_content  ,  $post_content);
+				}else{
+					$post_content = $gallery_content . $post_content;
+				}
+				
+				
+				
+				//remove content images?
+				if( in_array('OPT_FEED_GALLERY_DELETE', $camp_opt) ){
+					$post_content = preg_replace('!<img .*?>!s' , '' , $post_content );
+				}
+				
+			}elseif(stristr($post_content, '[the_gallery]')){
+				$post_content = str_replace('[the_gallery]' , '' , $post_content);
 			}
 			
 			// building post
@@ -2298,6 +2361,13 @@ class wp_automatic {
 				if(stristr($my_post['post_content'], "\\")) $my_post['post_content'] = wp_slash($my_post['post_content']);
 			}
 			
+			//remove emojis option 
+			if(in_array('OPT_REMOVE_EMOJI', $camp_opt)){
+				$my_post['post_content'] = $this->removeEmoji($my_post['post_content']);
+				$my_post['post_title'] = $this->removeEmoji($my_post['post_title']);
+			}
+			 
+			
 			
 			// Insert the post into the database
 			if ($my_post ['post_type'] == 'topic' && function_exists ( 'bbp_insert_topic' )) {
@@ -2328,7 +2398,10 @@ class wp_automatic {
 			
 			if ($id == 0) {
 				echo '<br>Error:Post Insertion failure';
-				// print_r($my_post);
+				
+				//maybe contains emojis
+				
+				
 			} else {
 				
 				$args ['post_id'] = $id;
@@ -2337,7 +2410,9 @@ class wp_automatic {
 				do_action ( 'wp_automatic_post_added', $args );
 			}
 			
-			// attachements to attach from cached files
+			// attachements to attach from cached files old location
+			/*
+			$attach_ids = array();
 			if (isset ( $attachements_to_attach ) && count ( $attachements_to_attach ) > 0) {
 				
 				require_once (ABSPATH . 'wp-admin/includes/image.php');
@@ -2362,11 +2437,16 @@ class wp_automatic {
 					$attach_id = wp_insert_attachment ( $attachment, $file, $post_id );
 					$attach_data = wp_generate_attachment_metadata ( $attach_id, $file );
 					wp_update_attachment_metadata ( $attach_id, $attach_data );
+					 
+					$attach_ids[] = $attach_id; //add attach ID for gallery option OPT_GALLERY_ALL
+ 					
 				}
 				
 				// remove sizes filter
 				remove_filter ( 'intermediate_image_sizes_advanced', 'wp_automatic_filter_image_sizes' );
 			}
+			
+			*/
 			
 			// wpml internal cron patch
 			if (! stristr ( $_SERVER ['REQUEST_URI'], 'wp_automatic' ) && function_exists ( 'icl_object_id' )) {
@@ -2579,6 +2659,9 @@ class wp_automatic {
 						} elseif (stristr ( $customFieldSet [0], 'taxonomy_' )) {
 							
 							wp_set_post_terms ( $id, $customFieldSet [1], str_replace ( 'taxonomy_', '', $customFieldSet [0] ), true );
+							print_r($customFieldSet [0]);
+							print_r($customFieldSet [1]);
+							 
 						} else {
 							
 							if( ! isset( $my_post['ID']) )
@@ -2849,6 +2932,22 @@ class wp_automatic {
 								$cg_rand_img 
 						);
 					}
+				}
+				
+				//pixabay condition 1 force condition 2 no images found
+				if (  (in_array ( 'OPT_PIXABAY', $camp_opt ) && in_array ( 'OPT_PIXABAY_FORCE', $camp_opt )) || ( in_array ( 'OPT_PIXABAY', $camp_opt ) && count($srcs) == 0  ) ) {
+					
+					$cg_pixabay_keyword = $camp_general['cg_pixabay_keyword'];
+					$possible_image = $this->get_pixabay_image($cg_pixabay_keyword);
+					
+					
+					if( stristr($possible_image, 'pixabay') ){
+						echo '<br>Final PixaBay image found to use:' . $possible_image;
+						$srcs = array (
+								$possible_image
+						);
+					}
+					
 				}
 				
 				// check srcs size to skip small images
@@ -4050,7 +4149,20 @@ class wp_automatic {
 			
 			if (in_array ( 'OPT_ADD_TAGS', $camp_opt )) {
 				
-				$post_tags = array_filter ( explode ( "\n", $camp_general ['cg_post_tags'] ) );
+				//replace fields
+				$cg_post_tags = $camp_general ['cg_post_tags'];
+				if(stristr($camp_general ['cg_post_tags'], '[')){
+					
+					foreach ( $img as $key => $val ) {
+						if (! is_array ( $val )) {
+							$cg_post_tags = str_replace ( '[' . $key . ']', trim($val), $cg_post_tags );
+						}
+					}
+					
+				}
+				
+				
+				$post_tags = array_filter ( explode ( "\n", $cg_post_tags ) );
 				
 				$max = $camp_general ['cg_tags_limit'];
 				if (! is_numeric ( $max ))
@@ -4776,6 +4888,8 @@ class wp_automatic {
 			}
 			
 			// adding custom filds
+	 
+			
 			$in = 0;
 			if (count ( $camp_post_custom_k ) > 0) {
 				
@@ -4832,6 +4946,8 @@ class wp_automatic {
 							wp_update_post ( $my_post );
 							
 						} elseif (stristr ( $key, 'taxonomy_' )) {
+							
+						
 							
 							wp_set_post_terms ( $id, $key_val, str_replace ( 'taxonomy_', '', $key ), true );
 							
@@ -8135,6 +8251,117 @@ class wp_automatic {
 		$link_parts = array_filter(explode('/' , $link));
 		$link_last_part = end($link_parts) ;
 		return trim($link_last_part);		
+	}
+	
+	/**
+	 * function to get an image from bixaBay cached image, if not fetch new and get image
+	 */
+	function get_pixabay_image($keyword){
+		
+		$keyword=trim($keyword);
+		
+		//call images from db
+		$query_main = "select * from {$this->wp_prefix}automatic_general where item_type=  'pb_$keyword' and item_status = '0' limit 1";
+		$res = $this->db->get_results ( $query_main );
+		
+		//if no images found, grab new images
+		if(count($res) == 0){
+			
+			//page index for the call ?
+			$query = "select * from {$this->wp_prefix}automatic_keywords where keyword_name='{$keyword}' and keyword_camp=0 limit 1";
+			$res = $this->db->get_results ( $query );
+			
+			//first time ?
+			if(count($res) == 0){
+				$query =   "INSERT INTO {$this->wp_prefix}automatic_keywords ( keyword_name , keyword_camp , keyword_start  ) values (   '{$keyword}' , '0' , '1' )   ";
+				$kewyord_id= $q_result = $this->db->query ( $query );
+				$page = 1;
+				echo '<br>PixaBay keyword registered? <-- First time';
+			}else{
+				$page = $res[0]->keyword_start +1;
+				$kewyord_id = $res[0]->keyword_id;
+				//update the start for the next call
+				$query = "update {$this->wp_prefix}automatic_keywords set keyword_start = $page where keyword_id={$res[0]->keyword_id} ";
+				$this->db->query ( $query );
+				
+				echo '<br>PixaBay keyword registered? <-- Yes';
+				
+			}
+			
+			$this->pixabay_image_fetch($keyword , $page);
+			$res = $this->db->get_results ( $query_main ); //repeat after getting the images
+		}
+		
+		if(count($res) > 0){
+			
+			//change status to 1 and return the image
+			$item = $res[0];
+			$query = "update {$this->wp_prefix}automatic_general set item_status = 1 where id={$item->id} ";
+			$this->db->query ( $query );
+			
+		}else{
+			//update the start for the next call
+			$query = "update {$this->wp_prefix}automatic_keywords set keyword_start = 0 where keyword_id={$kewyord_id} ";
+			$this->db->query ( $query );
+		}
+		
+		
+		 
+		$image_url = $item->item_data;
+		$image_url = str_replace('_150' , '_960_720' , $image_url );
+		return $image_url;
+	}
+	 
+	/**
+	 * Function to fetch new items from PixaBay and cache them 
+	 */
+	function pixabay_image_fetch($keyword , $page){
+		
+		echo '<br>Calling PixaBay for new images for keyword:'.$keyword. '...page:'.$page;
+		
+		//api key 
+		$wp_automatic_pixabay_key = trim(get_option('wp_automatic_pixabay_key' , ''));
+		
+		if($wp_automatic_pixabay_key == ''){
+			echo '<br><span style="color:red">ERROR: PixaBay API key is required, please visit the plugin settings page and add it.</span>';
+			return false;
+		}
+		
+		//nice, we have a key, lets call
+		require_once('inc/class.pixabay.php');
+		
+		$pixabay = new pixabay($this->ch, $wp_automatic_pixabay_key );
+		$items = $pixabay->get_images( $keyword , $page );
+		
+		$success = 0 ;
+		if(is_array($items) && count($items) != 0){
+			echo '<br>Found   ' . count($items) . ' PixaBay items to cache';
+			
+			foreach($items as $item){
+				
+				//check duplicate
+				$query = "SELECT * FROM {$this->wp_prefix}automatic_general WHERE item_id = '{$item->id}' limit 1 ";
+				$res = $this->db->get_results ( $query );
+				
+				
+				 //insert 
+				if(count($res) == 0){
+					$query =   "INSERT INTO {$this->wp_prefix}automatic_general ( item_id , item_status , item_data ,item_type) values (    '{$item->id}', '0', '{$item->previewURL}' ,'pb_$keyword')   ";
+					$q_result = $this->db->query ( $query );
+					$success++;
+				}
+				 
+				
+			}
+			
+			echo '<-- Saved ' . $success . ' unique... ';
+			
+		}else{
+			echo '<-- Got nothing from PixaBay...';
+			
+		}
+		
+		
 	}
 	
 } // End

@@ -2,15 +2,13 @@
 /*
  Plugin Name: Wordpress Automatic Plugin
  Plugin URI: http://codecanyon.net/item/wordpress-automatic-plugin/1904470?ref=ValvePress
- Description: WordPress Automatic posts quality articles, Amazon products, Clickbank products, Youtube videos, eBay items, Flicker images, RSS feeds posts on auto-pilot and much more.
- Version: 3.56.2
+ Description: WordPress Automatic posts quality articles, Amazon products, Clickbank products, Youtube videos, eBay items, Flickr images, RSS feeds posts on auto-pilot and much more.
+ Version: 3.57.0
  Author: ValvePress
  Author URI: http://codecanyon.net/user/ValvePress/portfolio?ref=ValvePress
  */
 
 /*  Copyright 2012-2022  Wordpress Automatic  (email : sweetheatmn@gmail.com) */
-update_option( 'wp_automatic_license', 'wp-automatic-license' );
-update_option( 'wp_automatic_license_active', 'active' );
 
 global $wpAutomaticTemp; //temp var used for displaying columns of campsigns 
 global $wpAutomaticDemo;

@@ -161,8 +161,60 @@ function wp_automatic_columns_display($wp_automatic_columns){
 			
 			}elseif( $ret->camp_type == 'Multi'){
 				$camp_general = unserialize (base64_decode( $ret->camp_general) );
-				echo $camp_general['cg_ml_source'] ;
 				
+				if(trim( $camp_general['cg_ml_source'] ) == '' ){
+					
+					echo $camp_general['cg_multi_posts_list'];
+					
+				}else{
+				
+					if(strlen($camp_general['cg_ml_source'] ) > 100){
+						echo substr($camp_general['cg_ml_source'] , 0 , 100) . '...' ;
+					}else{
+						echo  ($camp_general['cg_ml_source']  )   ;
+					}
+				}
+				
+			}elseif( $ret->camp_type == 'Instagram' && $ret->camp_keywords == '*' ){
+				$camp_general = unserialize (base64_decode( $ret->camp_general) );
+				echo $camp_general['cg_it_user'] ;
+			
+			}elseif( $ret->camp_type == 'Vimeo' && $ret->camp_keywords == '*' ){
+				$camp_general = unserialize (base64_decode( $ret->camp_general) );
+				echo $camp_general['cg_vm_user'] ;
+				
+			}elseif( $ret->camp_type == 'Flicker' && $ret->camp_keywords == '*' ){
+				$camp_general = unserialize (base64_decode( $ret->camp_general) );
+				echo $camp_general['cg_fl_user'] ;
+			
+			}elseif( $ret->camp_type == 'eBay' && $ret->camp_keywords == '*' ){
+				$camp_general = unserialize (base64_decode( $ret->camp_general) );
+				echo $camp_general['cg_eb_user'] ;
+			
+			}elseif( $ret->camp_type == 'Pinterest' && $ret->camp_keywords == '*' ){
+				$camp_general = unserialize (base64_decode( $ret->camp_general) );
+				echo $camp_general['cg_pt_user'] ;
+				
+			}elseif( $ret->camp_type == 'TikTok' && $ret->camp_keywords == '*' ){
+				$camp_general = unserialize (base64_decode( $ret->camp_general) );
+				echo $camp_general['cg_tt_user'] ;
+				
+			}elseif( $ret->camp_type == 'SoundCloud' && $ret->camp_keywords == '*' ){
+				$camp_general = unserialize (base64_decode( $ret->camp_general) );
+				echo $camp_general['cg_sc_user'] ;
+				
+			}elseif( $ret->camp_type == 'Envato' && $ret->camp_keywords == '*' ){
+				$camp_general = unserialize (base64_decode( $ret->camp_general) );
+				echo  $camp_general['cg_ev_author'] . $camp_general['cg_ev_tags'] . $camp_general['cg_ev_cat']    ;
+			
+			}elseif( $ret->camp_type == 'DailyMotion' && $ret->camp_keywords == '*' ){
+				$camp_general = unserialize (base64_decode( $ret->camp_general) );
+				echo $camp_general['cg_dm_user'] ;
+				
+			}elseif( $ret->camp_type == 'Youtube' && $ret->camp_keywords == '*' ){
+			 
+				echo $ret->camp_yt_user;
+			
 			}else{
 				
 				if(strlen($ret->camp_keywords) > 100){

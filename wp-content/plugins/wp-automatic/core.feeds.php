@@ -1611,7 +1611,7 @@ class WpAutomaticFeeds extends wp_automatic {
 							
 							foreach ( $xpathMatches as $xpathMatch ) {
 								
-								if ($rule_field == 'tags' || $rule_field == 'categories') {
+								if ($rule_field == 'tags' || $rule_field == 'categories' || stristr($rule_field, 'taxonomy_')) {
 									$rule_result .= ',' . $xpathMatch->nodeValue;
 								} else {
 									$rule_result .= $xpathMatch->nodeValue;
@@ -1665,7 +1665,7 @@ class WpAutomaticFeeds extends wp_automatic {
 										$finalmatch .= '' . $newmatch;
 									} else {
 										
-										if ($rule_field == 'tags' || $rule_field == 'categories') {
+										if ($rule_field == 'tags' || $rule_field == 'categories' || stristr($rule_field, 'taxonomy_') ) {
 											
 											$finalmatch .= ',' . $newmatch;
 										} else {

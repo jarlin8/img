@@ -1,5 +1,6 @@
 <?php
 function wp_automatic_license_notice() {
+	return true;
 	 
 	$purchase=get_option('wp_automatic_license','');
 	

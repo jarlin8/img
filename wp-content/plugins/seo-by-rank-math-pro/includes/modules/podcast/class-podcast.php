@@ -30,7 +30,6 @@ class Podcast {
 		$this->filter( 'rank_math/settings/general', 'add_settings' );
 		$this->action( 'init', 'init' );
 		$this->action( 'rank_math/vars/register_extra_replacements', 'register_replacements' );
-		$this->action( 'rank_math/module_changed', 'flush_rewrite_rules', 10, 2 );
 	}
 
 	/**
@@ -49,8 +48,8 @@ class Podcast {
 		rank_math_register_var_replacement(
 			'podcast_image',
 			[
-				'name'        => esc_html__( 'Random Word', 'rank-math-pro' ),
-				'description' => esc_html__( 'Persistent random word chosen from a list', 'rank-math-pro' ),
+				'name'        => esc_html__( 'Podcast Image', 'rank-math-pro' ),
+				'description' => esc_html__( 'Podcast channel image configured in the Rank Math Settings.', 'rank-math-pro' ),
 				'variable'    => 'podcast_image',
 				'example'     => '',
 			],
@@ -100,17 +99,5 @@ class Podcast {
 	 */
 	public function podcast_feed() {
 		require dirname( __FILE__ ) . '/views/feed-rss2.php';
-	}
-
-	/**
-	 * Function to run when Module is enabled/disabled.
-	 *
-	 * @param string $module Module.
-	 * @param string $state  Module state.
-	 */
-	public function flush_rewrite_rules( $module, $state ) {
-		if ( 'podcast' === $module ) {
-			flush_rewrite_rules();
-		}
 	}
 }

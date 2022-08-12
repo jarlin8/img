@@ -2548,7 +2548,7 @@ if (count($res) > 0 ){
 	          	<div class="option clearfix">
 	                    <input name="camp_options[]"  value="OPT_AE_CACHE" type="checkbox">
 	                    <span class="option-title">
-								Cache items for faster posting (Disable if you want to focus on latest products only) (pagination will not work if enabled)
+								Cache items for faster posting (Disable if you want to focus on latest products only) (pagination will not work if disabled)
 	                    </span>
 	                    <br>
 	                     
@@ -2886,7 +2886,7 @@ if (count($res) > 0 ){
 
 					 	<label>
 					 		Media Type :
-					 	</label>
+					 	</label><br>
 
 					 	<select id="cg_iu_media" class="templateChanger" data-filters = "#cg_iu_attribute" name="cg_iu_media">
 
@@ -3203,23 +3203,25 @@ if (count($res) > 0 ){
                </label>
                
                <select name="cg_fb_source" >
-                    
+                   
                     <option  value="page"  <?php @wp_automatic_opt_selected('page',$camp_general['cg_fb_source']) ?> >
-                         Page with a like button
+                         Page with a legacy like button (old page Layout)
                     </option>
- 
- 					<option  value="profile"  <?php @wp_automatic_opt_selected('profile',$camp_general['cg_fb_source']) ?>  >
-                         Profile or page with a follow button
+                    
+                    <option  value="profile"  <?php @wp_automatic_opt_selected('profile',$camp_general['cg_fb_source']) ?>  >
+                         Profile or a page with the new page experience
                     </option>
- 
+                    
+                   
+  
                     <option  value="group"  <?php @wp_automatic_opt_selected('group',$camp_general['cg_fb_source']) ?>  >
                           Group
                     </option> 
                     
-                    
-                    
+                     
                 </select>
-		 
+		 		
+		 		
 		 
 			 <label>
 			                    Facebook Page/Public Group url or Numeric ID 
@@ -3814,7 +3816,7 @@ if (count($res) > 0 ){
                     
                     <input name="camp_options[]"   data-controls="amazon_custom_url" value="OPT_AMAZON_CUSTOM" type="checkbox">
                     <span class="option-title">
-							Custom amazon search URL (Amazon link containing a list of products ) 
+							Custom amazon search URL/Best sellers (Amazon link containing a list of products ) 
                     </span>
                     <br>
                     
@@ -3823,7 +3825,7 @@ if (count($res) > 0 ){
 		                    Amazon Search URL 
 		               </label>
 		               <input type="text" name="cg_am_custom_urls" value="<?php   echo @$camp_general['cg_am_custom_urls']  ?>">
-		            	<div class="description">Use [keyword] inside the URL if needed<br>ex: https://www.amazon.com/s?k=[keyword]&s=price-desc-rank</div>
+		            	<div class="description">Use [keyword] inside the URL if needed<br>ex1: https://www.amazon.com/s?k=[keyword]&s=price-desc-rank<br><br>ex2:https://www.amazon.com/Best-Sellers-Appliances/zgbs/appliances/</div>
 		            	
 		            	<div class="field f_100">
 		            	<input  data-controls-r='' name="camp_options[]"   value="OPT_AM_NO_KEYS" type="checkbox">
@@ -4064,13 +4066,14 @@ if (count($res) > 0 ){
 							Post from specific vimeo user/channel/album 
                     </span>
                     <br>
+                   
                     
 		            <div id="vm_user_c" class="field f_100">
 		               
 		               	<label>
 					 		User or Channel or Album ? :
 					 	</label>
-					 	
+					 	 <br>
 					 	<select id="cg_vm_user_channel" name="cg_vm_user_channel" >
 					 		<option  value="users"  <?php @wp_automatic_opt_selected('users',$camp_general['cg_vm_user_channel']) ?> >User</option>
 					 		<option  value="channels"  <?php @wp_automatic_opt_selected('channels',$camp_general['cg_vm_user_channel']) ?> >Channel</option>
@@ -4715,7 +4718,32 @@ if (count($res) > 0 ){
 		 </div>
 		 
 		 <!--  Twitter Part -->
-		 <div  class="typepart Twitter"  >
+		 <div  class="typepart Twitter"  > 
+		 
+		 
+			 	 <div class="field f_100 ">
+	               
+	               <label>
+	                   Recent or Popular posts?
+	               </label>
+	               <select name="cg_tw_type">
+	                    
+	                    <option value="mixed" <?php @wp_automatic_opt_selected('mixed',$camp_general['cg_tw_type']) ?> >
+	                         Mixed
+	                    </option>
+	                    
+	                    <option value="recent" <?php @wp_automatic_opt_selected('recent',$camp_general['cg_tw_type']) ?> >
+	                         Recent
+	                    </option>
+	                    
+	                    <option value="popular" <?php @wp_automatic_opt_selected('popular',$camp_general['cg_tw_type']) ?> >
+	                         Popular
+	                    </option>
+	                    
+	                    
+	                    
+	               </select>
+	          </div>
 		 	 
 		 	 <div  class="field f_100">
 		 	 	

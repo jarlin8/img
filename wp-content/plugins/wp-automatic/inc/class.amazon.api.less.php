@@ -674,42 +674,55 @@ class wp_automatic_amazon_api_less {
 			}
 		}
 		
-	 
+		//best selling pages pter/dp/B08L5M9BTJ/re
+		$asins = array();
+		if( ! stristr( $exec, 'data-asin' ) && stristr($exec, '/dp/')  ){
+			echo '<br>No data-asin search but there are products, lets grab them...';
+			preg_match_all('!/dp/(.{10})/!', $exec , $asins_matches);
+			
+			$asins =   (array_values(array_unique($asins_matches[1])));
+			  
+		}
 		
 		// validate products found
-		if (! stristr ( $exec, 'data-asin' )) {
+		if (! stristr ( $exec, 'data-asin' ) && (! isset($asins) || count($asins) == 0  ) ) {
 			// throw new Exception('No items found') ;
-			echo '<br>No items found';
+			echo '<br>No items found for search results';
 			
 			echo $exec;
 			
 			return array ();
-		}
+		} 
 		
-		// dom data-index
-		// dom
-		$doc = new DOMDocument ();
-		@$doc->loadHTML ( $exec );
-		
-		$xpath = new DOMXpath ( $doc );
-		
-		// title
-		$elements = $xpath->query ( '//*[@data-index]' );
-		
-		$all_valid_items_html = '';
-		
-		foreach ( $elements as $single_asin_element ) {
+		//extract from search results
+		if(count($asins ) == 0){
 			
-			$item_html = $doc->saveHtml ( $single_asin_element );
+			 
+			// dom data-index
+			// dom
+			$doc = new DOMDocument ();
+			@$doc->loadHTML ( $exec );
 			
-			if (! stristr ( $item_html, 'a-row a-spacing-micro' ) && stristr ( $item_html, 'a-price-whole' )) {
-				$all_valid_items_html .= $item_html;
+			$xpath = new DOMXpath ( $doc );
+			
+			// title
+			$elements = $xpath->query ( '//*[@data-index]' );
+			
+			$all_valid_items_html = '';
+			
+			foreach ( $elements as $single_asin_element ) {
+				
+				$item_html = $doc->saveHtml ( $single_asin_element );
+				
+				if (! stristr ( $item_html, 'a-row a-spacing-micro' ) && stristr ( $item_html, 'a-price-whole' )) {
+					$all_valid_items_html .= $item_html;
+				}
 			}
+			
+			// extract products
+			preg_match_all ( '{data-asin="(.*?)"}', $all_valid_items_html, $productMatchs );
+			$asins = array_values ( array_filter ( $productMatchs [1] ) );
 		}
-		
-		// extract products
-		preg_match_all ( '{data-asin="(.*?)"}', $all_valid_items_html, $productMatchs );
-		$asins = array_values ( array_filter ( $productMatchs [1] ) );
 		
 		if (stristr ( $exec, 'proceedWarning' )) {
 			echo '<br>Reached end page of items';

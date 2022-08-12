@@ -88,7 +88,7 @@ function clickbank_fetch_links($keyword, $camp) {
 	
 	$cg_cb_lang = strtolower($cg_cb_lang);
 	
-	if($cg_cb_lang != 'ALL')
+	if($cg_cb_lang != 'all')
 	$offset_part.=  ',"productLanguages":["'.$cg_cb_lang.'"]' ;
 
 	//$clickbank = "https://accounts.clickbank.com/mkplSearchResult.htm?dores=true&includeKeywords=seo";
