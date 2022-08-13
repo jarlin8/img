@@ -9,7 +9,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Rank Math SEO PRO
- * Version:           3.0.18
+ * Version:           3.0.18.1
  * Plugin URI:        https://rankmath.com/wordpress/plugin/seo-suite/
  * Secret Key:        83a5bb0e2ad5164690bc7a42ae592cf5
  * Description:       Super-charge your website's SEO with the Rank Math PRO options like Site Analytics, SEO Performance, Custom Schema Templates, News/Video Sitemaps, etc.
@@ -79,7 +79,7 @@ final class RankMathPro {
 	 *
 	 * @var string
 	 */
-	public $version = '3.0.18';
+	public $version = '3.0.18.1';
 
 	/**
 	 * Minimum version of Rank Math SEO.
