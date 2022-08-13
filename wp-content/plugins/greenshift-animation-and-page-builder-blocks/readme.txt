@@ -8,7 +8,7 @@ Requires at least: 5.9
 Tested up to: 6.0
 Requires PHP: 7.0
 License: GPLv2 or later
-Stable tag: 3.0.1
+Stable tag: 3.2.3
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 More than 20 special blocks for Gutenberg to build complex pages and animations with highest possible web vitals score.
@@ -105,6 +105,22 @@ Yes, we guarantee that Greenshift is built on top of google recommendations and 
 7. **Sliding panels, popups.** Build custom sliding panels, add any block, use for mega menus
 
 == Changelog ==
+
+= 3.2.2 =
+* Added Mix blend option (in Background section)
+
+= 3.2 =
+* Removed extra spacing in blocks for Classic themes which have no 100% support for Gutenberg
+
+= 3.1.1 =
+* Added new premium chat addon and some fixes
+
+= 3.1 =
+* Added Advanced Text block
+* Added FlexBox variation for container
+* Added padding top option for smart scroll
+* Added Option for Close Intent for popup/slide block
+* Added Css transformation can have separate transition time for each transition option
 
 = 3.0 =
 * Local font option is added

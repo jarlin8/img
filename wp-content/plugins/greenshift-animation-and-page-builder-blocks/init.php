@@ -18,8 +18,10 @@ function gspb_get_breakpoints()
 		'desktop' =>  992
 	);
 
-	if (get_option('gspb_global_settings')) {
-		$gsbp_custom_breakpoints = get_option('gspb_global_settings')['breakpoints'];
+	$gs_settings = get_option('gspb_global_settings');
+
+	if (!empty($gs_settings)) {
+		$gsbp_custom_breakpoints = (!empty($gs_settings['breakpoints'])) ? $gs_settings['breakpoints'] : '';
 
 		if (!empty($gsbp_custom_breakpoints['mobile'])) {
 			$gsbp_breakpoints['mobile'] = trim($gsbp_custom_breakpoints['mobile']);
@@ -32,6 +34,7 @@ function gspb_get_breakpoints()
 		if (!empty($gsbp_custom_breakpoints['desktop'])) {
 			$gsbp_breakpoints['desktop'] = trim($gsbp_custom_breakpoints['desktop']);
 		}
+
 	}
 
 	return array(
@@ -51,16 +54,22 @@ function gspb_get_final_css($gspb_css_content)
 	if($get_breakpoints['mobile'] != 576){
 		$gspb_css_content = str_replace('@media (max-width: 575.98px)', '@media (max-width: '.$get_breakpoints["mobile_down"] .'px)', $gspb_css_content);
 		$gspb_css_content = str_replace('@media (min-width: 576px)', '@media (min-width: '.$get_breakpoints["mobile"] .'px)', $gspb_css_content);
+		$gspb_css_content = str_replace('@media (max-width:575.98px)', '@media (max-width: '.$get_breakpoints["mobile_down"] .'px)', $gspb_css_content);
+		$gspb_css_content = str_replace('@media (min-width:576px)', '@media (min-width: '.$get_breakpoints["mobile"] .'px)', $gspb_css_content);
 	}
 
 	if($get_breakpoints['tablet'] != 768){
 		$gspb_css_content = str_replace('and (max-width: 767.98px)', 'and (max-width: '.$get_breakpoints["tablet_down"] .'px)', $gspb_css_content);
 		$gspb_css_content = str_replace('@media (min-width: 768px)', '@media (min-width: '.$get_breakpoints["tablet"] .'px)', $gspb_css_content);
+		$gspb_css_content = str_replace('and (max-width:767.98px)', 'and (max-width: '.$get_breakpoints["tablet_down"] .'px)', $gspb_css_content);
+		$gspb_css_content = str_replace('@media (min-width:768px)', '@media (min-width: '.$get_breakpoints["tablet"] .'px)', $gspb_css_content);
 	}
 
 	if($get_breakpoints['desktop'] != 992){
 		$gspb_css_content = str_replace('and (max-width: 991.98px)', 'and (max-width: '.$get_breakpoints["desktop_down"] .'px)', $gspb_css_content);
+		$gspb_css_content = str_replace('and (max-width:991.98px)', 'and (max-width: '.$get_breakpoints["desktop_down"] .'px)', $gspb_css_content);
 		$gspb_css_content = str_replace('@media (min-width: 992px)', '@media (min-width: '.$get_breakpoints["desktop"] .'px)', $gspb_css_content);
+		$gspb_css_content = str_replace('@media (min-width:992px)', '@media (min-width: '.$get_breakpoints["desktop"] .'px)', $gspb_css_content);
 	}
 
 	return $gspb_css_content;
@@ -193,6 +202,14 @@ function gspb_greenShift_register_scripts_blocks()
 		true
 	);
 
+	wp_register_script(
+		'gsvimeo',
+		GREENSHIFT_DIR_URL . 'libs/video/vimeo.js',
+		array(),
+		'1.5',
+		true
+	);
+
 	// lightbox
 	wp_register_script(
 		'gslightbox',
@@ -235,7 +252,7 @@ function gspb_greenShift_register_scripts_blocks()
 		'gsslidingpanel',
 		GREENSHIFT_DIR_URL . 'libs/slidingpanel/index.js',
 		array(),
-		'1.3',
+		'1.4',
 		true
 	);
 
@@ -499,10 +516,10 @@ function gspb_greenShift_block_script_assets($html, $block)
 
 		//looking for video
 		if( $block['blockName'] === 'greenshift-blocks/video' ){
-			wp_enqueue_script('gsvideo');
 			if( !empty($block['attrs']['provider']) && $block['attrs']['provider'] === "vimeo" ){
-				wp_enqueue_script( 'vimeo-player', 'https://player.vimeo.com/api/player.js', array(), true, '1.0' );
+				wp_enqueue_script('gsvimeo');
 			}
+			wp_enqueue_script('gsvideo');
 			if( isset($block['attrs']['overlayLightbox']) && $block['attrs']['overlayLightbox'] ){
 				wp_enqueue_style( 'gslightbox');
 				wp_enqueue_script( 'gslightbox' );
