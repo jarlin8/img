@@ -89,6 +89,67 @@ if (!class_exists("ASP_Helpers")) {
      */
     class ASP_Helpers {
 
+		public static function hebrewUnvocalize( $str ) {
+			if ( is_array($str) ) {
+				foreach ($str as $k => &$v) {
+					$v = self::hebrewUnvocalize($v);
+				}
+				return $str;
+			}
+			if ( preg_match("/[\x{0591}-\x{05F4}]/u", $str) ) {
+				$hebrew_common_ligatures = array(
+					'ײַ' => 'ײ',
+					'ﬠ' => 'ע',
+					'ﬡ' => 'א',
+					'ﬢ' => 'ד',
+					'ﬣ' => 'ה',
+					'ﬤ' => 'כ',
+					'ﬥ' => 'ל',
+					'ﬦ' => 'ם',
+					'ﬧ' => 'ר',
+					'ﬨ' => 'ת',
+					'שׁ' => 'ש',
+					'שׂ' => 'ש',
+					'שּׁ' => 'ש',
+					'שּׂ' => 'ש',
+					'אַ' => 'א',
+					'אָ' => 'א',
+					'אּ' => 'א',
+					'בּ' => 'ב',
+					'גּ' => 'ג',
+					'דּ' => 'ד',
+					'הּ' => 'ה',
+					'וּ' => 'ו',
+					'זּ' => 'ז',
+					'טּ' => 'ט',
+					'יּ' => 'י',
+					'ךּ' => 'ך',
+					'כּ' => 'כ',
+					'לּ' => 'ל',
+					'מּ' => 'מ',
+					'נּ' => 'נ',
+					'סּ' => 'ס',
+					'ףּ' => 'ף',
+					'פּ' => 'פ',
+					'צּ' => 'צ',
+					'קּ' => 'ק',
+					'רּ' => 'ר',
+					'שּ' => 'ש',
+					'תּ' => 'ת',
+					'וֹ' => 'ו',
+					'בֿ' => 'ב',
+					'כֿ' => 'כ',
+					'פֿ' => 'פ',
+					'ﭏ' => 'אל'
+				);
+				$str = trim(preg_replace('/\p{Mn}/u', '', $str));
+				foreach ($hebrew_common_ligatures as $word1 => $word2) {
+					$str = trim(str_replace($word1, $word2, $str));
+				}
+			}
+			return $str;
+		}
+
         /**
          * Version comparator for previous plugin versions, based on PHP version_check
          *
@@ -131,7 +192,7 @@ if (!class_exists("ASP_Helpers")) {
             }
         }
 
-		public static function addInlineScript($handle, $object_name, $data, $position = 'before', $safe_mode = false) {
+		public static function objectToInlineScript($handle, $object_name, $data, $position = 'before', $safe_mode = false) {
 			// Taken from WP_Srcripts -> localize
 			foreach ( (array) $data as $key => $value ) {
 				if ( is_string($value) ) {
@@ -140,24 +201,26 @@ if (!class_exists("ASP_Helpers")) {
 			}
 			if ( $safe_mode ) {
 				// If the inline script was merged or moved by a minify, the object may already exist, so keep the properties
-				$script = "window.$object_name = typeof window.$object_name !== 'undefined' ? window.$object_name : {};";
+				$script = "if ( typeof window.$object_name == 'undefined') { window.$object_name = {";
+				$atts = array();
 				foreach ( (array) $data as $key => $value ) {
 					if ( is_numeric($value) ) {
-						$script .= " window.$object_name.$key = $value;";
+						$atts[] = "$key: $value";
 					} else if ( is_bool($value) ) {
 						if ( $value ) {
-							$script .= " window.$object_name.$key = true;";
+							$atts[] = "$key: true";
 						} else {
-							$script .= " window.$object_name.$key = false;";
+							$atts[] = "$key: false";
 						}
 					} else {
-						$script .= " window.$object_name.$key = " . wp_json_encode($value) . ";";
+						$atts[] = "$key: " . wp_json_encode($value);
 					}
 				}
+				$script .= implode(', ', $atts);
+				$script .= "}};";
 			} else {
-				$script = "var $object_name = " . wp_json_encode( $data ) . ';';
+				$script = "window.$object_name = " . wp_json_encode( $data ) . ';';
 			}
-
 			wp_add_inline_script($handle, $script, $position);
 		}
 
@@ -480,6 +543,152 @@ if (!class_exists("ASP_Helpers")) {
             return $content;
         }
 
+		/**
+		 * Fetches an image from the image sources
+		 *
+		 * @param $post StdClass post object
+		 * @param $args array
+		 * @return string image URL
+		 */
+		public static function parseCPTImage( $post, $args ) {
+			$args = wp_parse_args($args, array(
+				'get_content' => true,
+				'get_excerpt' => true,
+				'image_sources' => array('featured'),
+				'image_source_size' => 'full',
+				'image_default' => '',
+				'image_number' => 1,
+				'image_custom_field' => '',
+				'exclude_filenames' => '',
+				'image_width' => 70,
+				'image_height' => 70,
+				'apply_the_content' => true,
+				'image_cropping' => false,
+				'image_transparency' => true,
+				'image_bg_color' => "rgba(255, 255, 255, 1)"
+			));
+			if ( method_exists($post, 'get_id') ) {
+				$id = $post->get_id();
+			} else {
+				$id = isset( $post->ID ) ? $post->ID : (isset($post->id) ? $post->id : false);
+			}
+			if ( empty($id) ) {
+				return '';
+			}
+			$excerpt = isset( $post->excerpt ) ? $post->excerpt : (isset($post->post_excerpt) ? $post->post_excerpt : '');
+			$content = isset( $post->content ) ? $post->content : (isset($post->post_content) ? $post->post_content : '');
+			if ( !isset( $post->image ) || $post->image == null ) {
+				$im = "";
+				foreach ( $args['image_sources'] as $source ) {
+					switch ( $source ) {
+						case "featured":
+							if ( $post->post_type == 'attachment' && strpos($post->post_mime_type, 'image/') !== false ) {
+								$imx = wp_get_attachment_image_src($id, $args['image_source_size'], false);
+							}
+							if ( isset($imx, $imx[0]) && !is_wp_error($imx) && $imx !== false ) {
+								$im = $imx[0];
+							} else {
+								$imx = wp_get_attachment_image_src(
+									get_post_thumbnail_id($id), $args['image_source_size'], false
+								);
+								if ( !is_wp_error($imx) && $imx !== false && isset($imx[0]) ) {
+									$im = $imx[0];
+								}
+							}
+							break;
+						case "content":
+							$content = $args['get_content'] ? get_post_field('post_content', $id) : $content;
+							if ( $args['apply_the_content'] ) {
+								$content = apply_filters('the_content', $content);
+							}
+							$im = asp_get_image_from_content( $content, $args['image_number'], $args['exclude_filenames'] );
+							break;
+						case "excerpt":
+							$excerpt = $args['get_excerpt'] ? get_post_field('post_excerpt', $id) : $excerpt;
+
+							$im = asp_get_image_from_content( $excerpt, $args['image_number'], $args['exclude_filenames'] );
+							break;
+						case "screenshot":
+							$im = 'https://s.wordpress.com/mshots/v1/' . urlencode( get_permalink( $post->id ) ) .
+								'?w=' . $args['image_width'] . '&h=' . $args['image_height'];
+							break;
+						case "post_format":
+							$format = get_post_format( $post->id );
+
+							switch ($format) {
+								case "audio":
+									$im = ASP_URL_NP . "img/post_format/audio.png";
+									break;
+								case "video":
+									$im = ASP_URL_NP . "img/post_format/video.png";
+									break;
+								case "quote":
+									$im = ASP_URL_NP . "img/post_format/quote.png";
+									break;
+								case "image":
+									$im = ASP_URL_NP . "img/post_format/image.png";
+									break;
+								case "gallery":
+									$im = ASP_URL_NP . "img/post_format/gallery.png";
+									break;
+								case "link":
+									$im = ASP_URL_NP . "img/post_format/link.png";
+									break;
+								default:
+									$im = ASP_URL_NP . "img/post_format/default.png";
+									break;
+							}
+							break;
+						case "custom":
+							if ( $args['image_custom_field'] != "" ) {
+								$val = get_post_meta( $post->id, $args['image_custom_field'], true );
+								if ( is_array($val) && !empty($val) ) {
+									$val = reset($val);
+								}
+								if ( $val != null && $val != "" ) {
+									if ( is_numeric($val) ) {
+										$im = wp_get_attachment_image_url( $val, $args['image_source_size'] );
+									} else {
+										$im = $val;
+									}
+								}
+							}
+							break;
+						case "default":
+							if ( $args['image_default'] != "" ) {
+								$im = $args['image_default'];
+							}
+							break;
+						default:
+							$im = "";
+							break;
+					}
+					if ( $im != null && $im != '' ) {
+						break;
+					}
+				}
+				if ( !is_wp_error($im) ) {
+					if ( $args['image_cropping'] ) {
+						if ( strpos( $im, "mshots/v1" ) === false && strpos( $im, ".gif" ) === false ) {
+							$bfi_params = array( 'width'  => $args['image_width'],
+								'height' => $args['image_height'],
+								'crop'   => true
+							);
+							if ( !$args['image_transparency'] ) {
+								$bfi_params['color'] = wpdreams_rgb2hex($args['image_bg_color']);
+							}
+
+							$im = bfi_thumb( $im, $bfi_params );
+						}
+					}
+					return ASP_Helpers::fixSSLURLs($im);
+				}
+				return '';
+			} else {
+				return ASP_Helpers::fixSSLURLs($post->image);
+			}
+		}
+
 		public static function getCFValues($field, $type = 'post', $args = array()) {
 			if ( is_string($args) ) {
 				$args = shortcode_parse_atts(trim($args, '[]{}'));
@@ -793,26 +1002,30 @@ if (!class_exists("ASP_Helpers")) {
 		public static function getEarliestPostDate( $args = array( 'post_type' => 'post' ) ) {
 			$args = wp_parse_args($args, array(
 				'orderby'          => 'date',
-				'order'            => 'ASC'
+				'order'            => 'ASC',
+				'posts_per_page'   => 1,
+				'post_status'	   => array('inherit', 'publish')
 			));
 			$posts = get_posts($args);
 			if ( !is_wp_error($posts) && isset($posts[0], $posts[0]->post_date) ) {
 				return $posts[0]->post_date;
 			} else {
-				return "4y 0m 0d";
+				return "-4y 0m 0d";
 			}
 		}
 
 		public static function getLatestPostDate( $args = array( 'post_type' => 'post' ) ) {
 			$args = wp_parse_args($args, array(
 				'orderby'          => 'date',
-				'order'            => 'DESC'
+				'order'            => 'DESC',
+				'posts_per_page'   => 1,
+				'post_status'	   => array('inherit', 'publish')
 			));
 			$posts = get_posts($args);
 			if ( !is_wp_error($posts) && isset($posts[0], $posts[0]->post_date) ) {
 				return $posts[0]->post_date;
 			} else {
-				return "4y 0m 0d";
+				return "0y 0m 0d";
 			}
 		}
 
@@ -875,6 +1088,16 @@ if (!class_exists("ASP_Helpers")) {
             else
                 return ASP_INCLUDES_PATH . 'views/' . $file;
         }
+
+		public static function aspGetTemplateFileContents($file, $results, $s_options, $id ) {
+			$html = '';
+			if ( file_exists( self::aspTemplateFilePath($file) ) ) {
+				ob_start();
+				include( self::aspTemplateFilePath($file) );
+				$html .= ob_get_clean();
+			}
+			return $html;
+		}
 
         /**
          * Converts the results array to HTML code
@@ -1385,7 +1608,7 @@ if (!class_exists("ASP_Helpers")) {
                 $args['search_type'][] = "attachments";
             /*-------------------- Allowed mime types -----------------------*/
             if ( $sd['attachment_mime_types'] != "") {
-                $args['attachment_mime_types'] = explode(",", base64_decode($sd['attachment_mime_types']));
+                $args['attachment_mime_types'] = wpd_comma_separated_to_array($sd['attachment_mime_types']);
                 foreach ($args['attachment_mime_types'] as $k => $v) {
                     $args['attachment_mime_types'][$k] = trim($v);
                 }
@@ -1769,13 +1992,7 @@ if (!class_exists("ASP_Helpers")) {
                         }
                     }
                     // Check if the term filters are visible for the user?
-                    if ( $sd['showsearchintaxonomies'] == 0 || ( count( $sd['show_terms']['terms'] ) == 0 && count($api_terms) == 0 ) )
-                        $term_filters_visible = false;
-                    else
-                        $term_filters_visible =
-                            $sd['box_sett_hide_box'] == 1 ||
-                            $sd['show_frontend_search_settings'] == 1 ||
-                            $sd['frontend_search_settings_visible'] == 1;
+					$term_filters_visible = count( $sd['show_terms']['terms'] ) > 0 || count($api_terms) > 0;
 
                     // If the term settings are invisible,
                     // ..or nothing is chosen, but filters are active
@@ -2011,6 +2228,10 @@ if (!class_exists("ASP_Helpers")) {
                     }
 
                     $posted = self::escape( $o['aspf'][ $unique_field ] );
+					// Select2 script issue - empty item will not show up in select2, so this fake value is used
+					if ( $posted == "__any__" ) {
+						$posted = "";
+					}
 
                     // NULL (empty) values accept
                     if ( $posted == "" && $filter->type() != 'hidden' ) continue;

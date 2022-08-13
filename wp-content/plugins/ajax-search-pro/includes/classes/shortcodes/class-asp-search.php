@@ -135,7 +135,7 @@ if (!class_exists("WD_ASP_Search_Shortcode")) {
 
             // Triggered by URL
             if ( isset($_GET['asp_s']) ) {
-                if ( empty($_GET['asp_id']) || (!empty($_GET['asp_id']) && $_GET['asp_id']==$id) ) {
+                if ( empty($_GET['p_asid']) || (!empty($_GET['p_asid']) && $_GET['p_asid']==$id) ) {
                     $style['auto_populate'] = "phrase";
                     $style['auto_populate_phrase'] = $_GET['asp_s'];
                 }

@@ -40,7 +40,7 @@ defined('ABSPATH') or die("You can't access this file directly.");
 
     <?php do_action('asp_res_isotopic_after_image'); ?>
 
-    <div class='asp_content'>
+    <div class='asp_content<?php echo $s_options['i_hide_content'] ? ' asp_content_hide_on_overlay' : ''; ?>'>
 
         <h3><a class="asp_res_url" href='<?php echo $r->link; ?>'<?php echo ($s_options['results_click_blank'])?" target='_blank'":""; ?>>
                 <?php echo $r->title; ?>

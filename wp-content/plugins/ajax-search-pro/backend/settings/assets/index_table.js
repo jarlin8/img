@@ -266,6 +266,8 @@ jQuery(function ($) {
                 stats();
                 hideTimer("#it_timer");
 
+                $('.wd_MSLicenseActivator').trigger('refresh');
+
                 $success.removeClass('hiddend').html( sprintf(msg('msg_skw'), keywords_found) );
                 if ( typeof WPD_Modal != 'undefined' && ASP_IT.first_index == 1 ) {
                     var $it_first_modal = $('#it_first_modal').detach();
@@ -413,8 +415,39 @@ jQuery(function ($) {
         val = val.join(',');
         if ( val.indexOf('attachment') > -1 ) {
             $('#it_file_indexing').removeClass('disabled-opacity');
+            $('#it_media_service').removeClass('hiddend');
+            if (
+                typeof WPD_Modal != 'undefined' &&
+                readCookie('_asp_media_service_modal') == null &&
+                $('input[name=ms_license_active]').val() != 1
+            ) {
+                WPD_Modal.options({
+                    'type': 'info',
+                    'content': $('#it_media_service_modal').detach(),
+                    'header': msg('mod_h2'),
+                    'buttons': {
+                        'okay': {
+                            'text': msg('mod_ms2'),
+                            'type': 'okay',
+                            'click': function(e, button){
+                                createCookie('_asp_media_service_modal', 1, 9999);
+                                $('#asp_media_service_link').get(0).click();
+                            }
+                        },
+                        'cancel': {
+                            'text': msg('mod_ms3'),
+                            'type': 'cancel',
+                            'click': function(e, button){
+                                createCookie('_asp_media_service_modal', 1, 9999);
+                            }
+                        }
+                    }
+                });
+                WPD_Modal.show();
+            }
         } else {
             $('#it_file_indexing').addClass('disabled-opacity');
+            $('#it_media_service').addClass('hiddend');
         }
     });
     $("ul.connectedSortable", $('input[name=it_post_types]').parent()).trigger("sortupdate");
@@ -432,6 +465,9 @@ jQuery(function ($) {
         });
     };
     var mimes = {
+        'pdf': [
+            'application/pdf'
+        ],
         'text' : [
             'text/plain',
             'text/csv',
@@ -476,57 +512,41 @@ jQuery(function ($) {
             'application/vnd.ms-powerpoint.slide.macroEnabled.12',
             'application/vnd.oasis.opendocument.presentation',
             'application/vnd.oasis.opendocument.graphics'
+        ],
+        'image': [
+            'image/jpeg',
+            'image/gif',
+            'image/png',
+            'image/bmp',
+            'image/tiff',
+            'image/x-icon'
+        ],
+        'video': [
+            'video/x-ms-asf',
+            'video/x-ms-wmv',
+            'video/x-ms-wmx',
+            'video/x-ms-wm',
+            'video/avi',
+            'video/divx',
+            'video/x-flv',
+            'video/quicktime',
+            'video/mpeg',
+            'video/mp4',
+            'video/ogg',
+            'video/webm',
+            'video/x-matroska'
+        ],
+        'audio': [
+            'audio/mpeg',
+            'audio/x-realaudio',
+            'audio/wav',
+            'audio/ogg',
+            'audio/midi',
+            'audio/x-ms-wma',
+            'audio/x-ms-wax',
+            'audio/x-matroska'
         ]
     };
-    $('textarea[name=it_attachment_mime_types]').on('click keyup change cut paste', function(){
-        var val = $(this).val().toLowerCase().replace(' ', '');
-        var vals_arr = val.split(',');
-
-        if ( vals_arr.length > 0 ) {
-            $.each(vals_arr, function(i, v){
-                vals_arr[i] = v.trim();
-            });
-            $.each(mimes, function(i, v){
-                $.each(v, function(ii, vv){
-                    mimes[i][ii] = vv.toLowerCase();
-                });
-            });
-            if ( findOne(mimes.text, vals_arr) ) {
-                $('input[name=it_index_text_content]').closest('.item').removeClass('disabled');
-            } else {
-                $('input[name=it_index_text_content]').closest('.item').addClass('disabled');
-            }
-            if ( findOne(mimes.richtext, vals_arr) ) {
-                $('input[name=it_index_richtext_content]').closest('.item').removeClass('disabled');
-            } else {
-                $('input[name=it_index_richtext_content]').closest('.item').addClass('disabled');
-            }
-            if ( findOne(mimes.mso_word, vals_arr) ) {
-                $('input[name=it_index_msword_content]').closest('.item').removeClass('disabled');
-            } else {
-                $('input[name=it_index_msword_content]').closest('.item').addClass('disabled');
-            }
-            if ( findOne(mimes.mso_excel, vals_arr) ) {
-                $('input[name=it_index_msexcel_content]').closest('.item').removeClass('disabled');
-            } else {
-                $('input[name=it_index_msexcel_content]').closest('.item').addClass('disabled');
-            }
-            if ( findOne(mimes.mso_powerpoint, vals_arr) ) {
-                $('input[name=it_index_msppt_content]').closest('.item').removeClass('disabled');
-            } else {
-                $('input[name=it_index_msppt_content]').closest('.item').addClass('disabled');
-            }
-        }
-
-        if ( $(this).val().toLowerCase().indexOf('application/pdf') > -1 ) {
-           $('select[name=it_index_pdf_method]').closest('.item').removeClass('disabled');
-        } else {
-           $('select[name=it_index_pdf_method]').closest('.item').addClass('disabled');
-        }
-
-
-    });
-    $('textarea[name=it_attachment_mime_types]').trigger('click');
 
 
     $("input[name=it_pool_size_auto]").on('change', function(){
@@ -537,6 +557,8 @@ jQuery(function ($) {
        }
     });
     $("input[name=it_pool_size_auto]").trigger('change');
+
+    WPD.Conditionals.init('#it_file_indexing');
 
     // ------------------------------------------- ETC -----------------------------------------------------------------
     function msg(k) {

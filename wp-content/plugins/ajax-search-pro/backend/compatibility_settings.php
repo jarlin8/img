@@ -13,16 +13,7 @@ $_comp_errors = $_comp->get_errors();
 <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/options_search.css?v='.ASP_CURR_VER; ?>" />
 <div id='wpdreams' class='asp-be wpdreams wrap<?php echo isset($_COOKIE['asp-accessibility']) ? ' wd-accessible' : ''; ?>'>
 
-	<?php if ( wd_asp()->updates->needsUpdate() ): ?>
-        <p class='infoMsgBox'>
-            <?php echo sprintf( __('Version <strong>%s</strong> is available.', 'ajax-search-pro'),
-                wd_asp()->updates->getVersionString() ); ?>
-            <?php echo __('Download the new version from Codecanyon.', 'ajax-search-pro'); ?>
-            <a target="_blank" href="https://documentation.ajaxsearchpro.com/update_notes.html">
-                <?php echo __('How to update?', 'ajax-search-pro'); ?>
-            </a>
-        </p>
-	<?php endif; ?>
+	<?php if ( wd_asp()->updates->needsUpdate() ) { wd_asp()->updates->printUpdateMessage(); } ?>
 
     <div class="wpdreams-box" style="float:left; width: 690px;">
 
@@ -71,7 +62,6 @@ $_comp_errors = $_comp->get_errors();
                 "js_source" => $_POST['js_source'],
                 "load_in_footer" => $_POST['load_in_footer'],
                 "detect_ajax" => $_POST['detect_ajax'],
-                'js_retain_popstate' => $_POST['js_retain_popstate'],
                 "css_compatibility_level" => $_POST['css_compatibility_level'],
                 'css_minify' => $_POST['css_minify'],
                 "forceinlinestyles" => $_POST['forceinlinestyles'],
@@ -82,6 +72,7 @@ $_comp_errors = $_comp->get_errors();
                 "script_loading_method" => $_POST['script_loading_method'],
                 "load_lazy_js" => $_POST['load_lazy_js'],
                 "load_mcustom_js" => $_POST['load_mcustom_js'],
+                "init_instances_inviewport_only" => $_POST['init_instances_inviewport_only'],
                 'selective_enabled' => $_POST['selective_enabled'],
                 'selective_front' => $_POST['selective_front'],
                 'selective_archive' => $_POST['selective_archive'],
@@ -94,6 +85,7 @@ $_comp_errors = $_comp->get_errors();
                 'db_force_unicode' => $_POST['db_force_unicode'],
                 'db_force_utf8_like' => $_POST['db_force_utf8_like'],
                 // Other options
+                'rest_api_enabled' => $_POST['rest_api_enabled'],
                 'meta_box_post_types' => $_POST['meta_box_post_types']
             );
             update_option('asp_compatibility', $values);

@@ -111,9 +111,7 @@ if (!class_exists("WD_ASP_StyleSheets_Action")) {
 		 * and very basic FOUC prevention one liners when applicable.
          */
         public function inlineCSS() {
-        	?>
-			<link rel="preload" href="<?php echo str_replace('http:',"",plugins_url()); ?>/ajax-search-pro/css/fonts/icons/icons2.woff2" as="font" crossorigin="anonymous" />
-            <?php if ( self::$inline_css != '' ): ?>
+			if ( self::$inline_css != '' ): ?>
 			<style>
                 <?php echo self::$inline_css; ?>
             </style>
@@ -162,11 +160,36 @@ if (!class_exists("WD_ASP_StyleSheets_Action")) {
 				}
 			}
 			if ( count($fonts) > 0 ) {
-				?>
-				<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-				<link rel="preload" as="style" href="//fonts.googleapis.com/css?family=<?php echo implode('|', $fonts); ?>&display=swap" />
-				<link rel="stylesheet" href="//fonts.googleapis.com/css?family=<?php echo implode('|', $fonts); ?>&display=swap" media="all" />
-				<?php
+				$stored_fonts = get_site_option('asp_fonts', array());
+				$key = md5(implode('|', $fonts));
+				$fonts_css = '';
+				if ( isset($stored_fonts[$key]) ) {
+					$fonts_css = $stored_fonts[$key];
+				} else {
+					$fonts_request = wp_safe_remote_get( 'https://fonts.googleapis.com/css?family=' . implode('|', $fonts) . "&display=swap");
+					if ( !is_wp_error($fonts_request) ) {
+						$fonts_css = wp_remote_retrieve_body($fonts_request);
+						if ( $fonts_css != '' ) {
+							$stored_fonts[$key] = $fonts_css;
+							update_site_option('asp_fonts', $stored_fonts);
+						}
+					}
+				}
+				if ( !is_wp_error($fonts_css) && $fonts_css != '' ) {
+					// Do NOT preload the fonts - it will give worst PagesPeed score. Preconnect is sufficient.
+					?>
+					<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+					<style>
+						<?php echo $fonts_css; ?>
+					</style>
+					<?php
+				} else {
+					?>
+					<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+					<link rel="preload" as="style" href="//fonts.googleapis.com/css?family=<?php echo implode('|', $fonts); ?>&display=swap" />
+					<link rel="stylesheet" href="//fonts.googleapis.com/css?family=<?php echo implode('|', $fonts); ?>&display=swap" media="all" />
+					<?php
+				}
 			}
 		}
 

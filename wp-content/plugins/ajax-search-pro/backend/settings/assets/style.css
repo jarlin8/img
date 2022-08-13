@@ -388,7 +388,7 @@ div#wpdreams .wpd-text-right {
 }
 
 #wpdreams input,
-#wpdreams textarea,
+#wpdreams textarea:not(.select2-search__field),
 #wpdreams select {
     border: 1px solid #E5E5E5;
     box-shadow: none;
@@ -677,7 +677,7 @@ div#wpdreams .wpd-text-right {
     background:0;
     width:92px;
 }
-#wpdreams textarea {
+#wpdreams textarea:not(.select2-search__field) {
     width:334px;
     height:150px;
     line-height:100%;
@@ -2035,6 +2035,7 @@ div.wd_cpt_search span.wp_cpt_search_selected:hover .fa {
     margin: 8px 0;
 }
 
+#wpdreams button.wd_button,
 #wpdreams .one-item button {
     margin: 7px 5px 0;
     line-height: 12px;
@@ -2050,13 +2051,14 @@ div.wd_cpt_search span.wp_cpt_search_selected:hover .fa {
     cursor: pointer;
 }
 
-
+#wpdreams button.wd_button:active,
 #wpdreams .one-item button:active {
     box-shadow: 0px 1px 0px 0px #1D6D92, 0px 1px 0px 0px #228EC2 inset;
     background: #2485B4;
     outline-width: 0;
 }
 
+#wpdreams button.wd_button.wd_button_red,
 #wpdreams .one-item button[name='reset'],
 #wpdreams .one-item button[name='back'] {
     box-shadow: 0px 1px 0px 0px #923C1D, 0px 1px 0px 0px #C24D22 inset;
@@ -2064,12 +2066,7 @@ div.wd_cpt_search span.wp_cpt_search_selected:hover .fa {
     text-shadow: 1px 1px 0px #9B523D;
 }
 
-#wpdreams .one-item button:active {
-    box-shadow: 0px 1px 0px 0px #1D6D92, 0px 1px 0px 0px #228EC2 inset;
-    background: #2485B4;
-    outline-width: 0;
-}
-
+#wpdreams button.wd_button.wd_button_red:active,
 #wpdreams .one-item button[name='reset']:active,
 #wpdreams .one-item button[name='back']:active {
     box-shadow: 0px 1px 0px 0px #923C1D, 0px 1px 0px 0px #C24D22 inset;

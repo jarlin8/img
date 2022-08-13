@@ -317,6 +317,11 @@ class WD_ASP_Scripts {
 					$required = true;
 				}
 				break;
+			case 'wd-asp-ajaxsearchpro-ga':
+				if ( asp_is_asset_required('ga') ) {
+					$required = true;
+				}
+				break;
 			case 'wd-asp-ajaxsearchpro-autocomplete':
 				if ( asp_is_asset_required('autocomplete') ) {
 					$required = true;

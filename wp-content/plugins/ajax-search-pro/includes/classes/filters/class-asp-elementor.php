@@ -96,7 +96,10 @@ if (!class_exists("WD_ASP_Elementor_Filter")) {
                         "_ajax_search" => false,
                         "post_type" => array('product'),
                         "search_type" => array('cpt'),
-                        'posts_per_page' =>9999
+						// Do not recommend going over that, as the post__in argument will generate a
+						// too long query to complete, as well as Elementor processes all of these
+						// results, yielding a terrible loading time.
+                        'posts_per_page' =>500
                     );
                     $search_args = WD_ASP_SearchOverride_Filter::getAdditionalArgs($search_args);
 

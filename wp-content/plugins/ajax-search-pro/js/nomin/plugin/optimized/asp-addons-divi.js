@@ -16,6 +16,9 @@
                     return typeof jQuery !== "undefined" ? jQuery : false;
                 });
             }
+
+            // Need to return the first argument, as this is a FILTER hook with OBJECT reference argument, and will override with the return value
+            return $this;
         };
     }
     window.WPD.ajaxsearchpro.addons.add(new addon());

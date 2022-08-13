@@ -26,16 +26,6 @@ class asp_updates {
 
 	private $last_updated = "2020-10-01";
 
-	private $knowledge_base = "";
-
-	private $support = "";
-
-	private $change_log = array();
-
-	private $update_notes = array();
-
-	private $important_notes = "";
-
 	// -------------------------------------------- Auto Updater Stuff here---------------------------------------------
 	public $title = "Ajax Search Pro";
 
@@ -103,46 +93,8 @@ class asp_updates {
 		$this->downloaded_count = isset($m[1]) ? trim($m[1]) : $this->downloaded_count;
 
 		// Last updated date
-		preg_match("/LAST_UPDATED:(.*?)[\r\n]/s", $this->data, $m);
+		preg_match("/LAST_UPDATED:(.*?)$/s", $this->data, $m);
 		$this->last_updated = isset($m[1]) ? trim($m[1]) : $this->last_updated;
-
-		// Support
-		preg_match("/===SUPPORT===(.*?)(?:===|\Z)/s", $this->data, $m);
-		$this->support = isset($m[1]) ? trim($m[1]) : $this->support;
-
-		// Update notice message, changed in 4.9.1
-		preg_match("/===UPDATE_NOTES_PER_VERSION===(.*?)(?:===|\Z)/s", $this->data, $m);
-		$update_notes = isset($m[1]) ? trim($m[1]) : false;
-		if ($update_notes !== false) {
-			preg_match_all( "/==(.*?)==[\r\n](.*?)==/s", $update_notes, $mm );
-			if (isset($mm[1]) && isset($mm[2]))
-				foreach ($mm[1] as $k => $v) {
-					// x[version] = version_changelog
-					$this->update_notes[$v] = $mm[2][$k];
-				}
-		}
-
-		// Important notice message
-		preg_match("/===IMPORTANT_NOTES===(.*?)(?:===|\Z)/s", $this->data, $m);
-		$this->important_notes = isset($m[1]) ? trim($m[1]) : $this->important_notes;
-
-		// Knowledge Base
-		preg_match("/===KNOWLEDGE_BASE===(.*?)(?:===|\Z)/s", $this->data, $m);
-		$this->knowledge_base = isset($m[1]) ? trim($m[1]) : $this->knowledge_base;
-		$this->knowledge_base = preg_replace("/\[(.+?)\]\((.+?)\)/sm", "<li><a href='$2' target='_blank'>$1</a></li>", $this->knowledge_base);
-
-		// ChangeLog
-		preg_match("/===CHANGELOG===(.*?)(?:===|\Z)/sm", $this->data, $m);
-		$changelog = isset($m[1]) ? trim($m[1]) : false;
-
-		if ($changelog !== false) {
-			preg_match_all( "/==(.*?)==[\r\n](.*?)==/s", $changelog, $mm );
-			if (isset($mm[1]) && isset($mm[2]))
-				foreach ($mm[1] as $k => $v) {
-					// x[version] = version_changelog
-					$this->change_log[$v] = $mm[2][$k];
-				}
-		}
 
 		return true;
 	}
@@ -171,6 +123,18 @@ class asp_updates {
 		return false;
 	}
 
+	public function printUpdateMessage() {
+		?>
+		<p class='infoMsgBox'>
+			<?php echo sprintf( __('Ajax Search Pro version <strong>%s</strong> is available.', 'ajax-search-pro'),
+				$this->getVersionString() ); ?>
+			<a target="_blank" href="https://documentation.ajaxsearchpro.com/plugin-updates">
+				<?php echo __('How to update?', 'ajax-search-pro'); ?>
+			</a>
+		</p>
+		<?php
+	}
+
 	public function getRequiresVersion() {
 		return $this->requires_version;
 	}
@@ -185,51 +149,6 @@ class asp_updates {
 
 	public function getLastUpdated() {
 		return $this->last_updated;
-	}
-
-	public function getLastChangelog() {
-		foreach ($this->change_log as $ver => $log) {
-			return $log;
-		}
-		return "";
-	}
-
-	public function getKnowledgeBase() {
-		if ($this->knowledge_base != "")
-			return "<ul>" . $this->knowledge_base . "</ul>";
-		return $this->knowledge_base;
-	}
-
-	public function getUpdateNotes( $vn = 0 ) {
-		if ( isset($this->update_notes[$vn]) && $this->update_notes[$vn] !="" ) {
-			$url = add_query_arg(array(
-				"asp_notice_clear_ru" => "1"
-			));
-			return str_replace(
-				"{hide_button}",
-				'<a class="button button-secondary" href="'.$url.'">Hide this message</a>',
-				$this->update_notes[$vn]
-			);
-		}
-	}
-
-	public function getImportantNotes() {
-		$url = add_query_arg(array(
-			"asp_notice_clear_im" => "1"
-		));
-		return str_replace(
-			"{hide_button}",
-			'<a class="button button-secondary" href="'.$url.'">Hide this message</a>',
-			$this->important_notes
-		);
-	}
-
-	public function getChangeLog() {
-		return $this->change_log;
-	}
-
-	public function getSupport() {
-		return $this->support;
 	}
 
 	/**

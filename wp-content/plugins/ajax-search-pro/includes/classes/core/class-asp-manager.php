@@ -293,6 +293,12 @@ if (!class_exists("WD_ASP_Manager")) {
             // Lifting some weight off from ajax requests
             if ( $this->context != "ajax") {
                 require_once(ASP_CLASSES_PATH . "actions/actions.inc.php");
+
+				if ( wd_asp()->o['asp_compatibility']['rest_api_enabled'] ) {
+					require_once(ASP_CLASSES_PATH . "api/api.inc.php");
+					wd_asp()->rest_api = WPDRMS\ASP\API\REST0\Rest::getInstance();
+				}
+
                 require_once(ASP_CLASSES_PATH . "etc/updates.class.php");
                 require_once(ASP_CLASSES_PATH . "etc/updates_manager.class.php");
                 require_once(ASP_CLASSES_PATH . "etc/class-mobiledetect.php");
@@ -344,14 +350,6 @@ if (!class_exists("WD_ASP_Manager")) {
                 update_option("asp_recreate_index", 0);
 
             //  -------------------- Handle notices here ----------------------
-            // Update related notes
-            if ( get_option("asp_recently_updated", 0) == 1 && wd_asp()->updates->getUpdateNotes(ASP_CURR_VER) != "" ) {
-                 echo '<div class="notice notice-error asp-notice-nohide">'.wd_asp()->updates->getUpdateNotes(ASP_CURR_VER).'</div>';
-            }
-            // Important notes
-            if ( wd_asp()->updates->getVersion() > ASP_CURR_VER && wd_asp()->updates->getImportantNotes() != "" ) {
-                echo '<div class="notice notice-error asp-notice-nohide">'.wd_asp()->updates->getImportantNotes().'</div>';
-            }
             // Index table re-creation note
             if ( $this->context == "backend" && get_option("asp_recreate_index", 0) == 1 ) {
                 ?>
@@ -389,6 +387,10 @@ if (!class_exists("WD_ASP_Manager")) {
                     WD_ASP_Actions::register("admin_init", "Compatibility");
 
                 WD_ASP_Actions::registerAll();
+
+				if ( wd_asp()->o['asp_compatibility']['rest_api_enabled'] ) {
+					wd_asp()->rest_api->init();
+				}
             }
 
             WD_ASP_Filters::registerAll();

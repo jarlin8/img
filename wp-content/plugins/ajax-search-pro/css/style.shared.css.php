@@ -70,12 +70,16 @@ defined('ABSPATH') or die("You can't access this file directly.");
     clear: both;
 }
 
+.asp_w_container_<?php echo $id; ?> {
+	width: <?php echo w_isset_def($style['box_width'], '100%'); ?>;
+}
+
 <?php if ($use_compatibility == true): ?>
     <?php echo $asp_div_ids1; ?>,
     <?php echo $asp_div_ids2; ?>,
 <?php endif; ?>
 <?php echo $asp_div_ids; ?> {
-  width: <?php echo w_isset_def($style['box_width'], '100%'); ?>;
+  width: 100%;
   height: auto;
   max-height: none;
   border-radius: 5px;
@@ -98,44 +102,22 @@ defined('ABSPATH') or die("You can't access this file directly.");
 
 <?php if ( $style['box_width'] != $style['box_width_tablet'] ): ?>
 @media only screen and (min-width: 641px) and (max-width: 1024px) {
-    <?php if ($use_compatibility == true): ?>
-        <?php echo $asp_div_ids1; ?>,
-        <?php echo $asp_div_ids2; ?>,
-    <?php endif; ?>
-    <?php echo $asp_div_ids; ?> {
-        width: <?php echo w_isset_def($style['box_width_tablet'], '100%'); ?>;
-    }
+	.asp_w_container_<?php echo $id; ?> {
+		width: <?php echo w_isset_def($style['box_width_tablet'], '100%'); ?>;
+	}
     div.asp_main_container.asp_w+[id*=asp-try-<?php echo $id; ?>] {
         width: <?php echo w_isset_def($style['box_width_tablet'], '100%'); ?>;
-    }
-    <?php if ($use_compatibility == true): ?>
-        <?php echo $asp_res_ids1; ?>,
-        <?php echo $asp_res_ids2; ?>,
-    <?php endif; ?>
-    <?php echo $asp_res_ids; ?> {
-        width: <?php echo $style['results_width_tablet']; ?>;
     }
 }
 <?php endif; ?>
 
 <?php if ( $style['box_width'] != $style['box_width_phone'] ): ?>
 @media only screen and (max-width: 640px) {
-    <?php if ($use_compatibility == true): ?>
-        <?php echo $asp_div_ids1; ?>,
-        <?php echo $asp_div_ids2; ?>,
-    <?php endif; ?>
-    <?php echo $asp_div_ids; ?> {
-        width: <?php echo w_isset_def($style['box_width_phone'], '100%'); ?>;
-    }
+	.asp_w_container_<?php echo $id; ?> {
+		width: <?php echo w_isset_def($style['box_width_phone'], '100%'); ?>;
+	}
     div.asp_main_container.asp_w+[id*=asp-try-<?php echo $id; ?>] {
         width: <?php echo w_isset_def($style['box_width_phone'], '100%'); ?>;
-    }
-    <?php if ($use_compatibility == true): ?>
-        <?php echo $asp_res_ids1; ?>,
-        <?php echo $asp_res_ids2; ?>,
-    <?php endif; ?>
-    <?php echo $asp_res_ids; ?> {
-        width: <?php echo $style['results_width_phone']; ?>;
     }
 }
 <?php endif; ?>
@@ -588,6 +570,28 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
     width: <?php echo $style['results_width']; ?>;
     margin: <?php echo $style['results_margin']; ?>;
 }
+<?php if ( $style['results_width'] != $style['results_width_tablet'] ): ?>
+@media only screen and (min-width: 641px) and (max-width: 1024px) {
+    <?php if ($use_compatibility == true): ?>
+        <?php echo $asp_res_ids1; ?>,
+        <?php echo $asp_res_ids2; ?>,
+    <?php endif; ?>
+    <?php echo $asp_res_ids; ?> {
+        width: <?php echo $style['results_width_tablet']; ?>;
+    }
+}
+<?php endif; ?>
+<?php if ( $style['results_width'] != $style['results_width_phone'] ): ?>
+@media only screen and (max-width: 640px) {
+    <?php if ($use_compatibility == true): ?>
+        <?php echo $asp_res_ids1; ?>,
+        <?php echo $asp_res_ids2; ?>,
+    <?php endif; ?>
+    <?php echo $asp_res_ids; ?> {
+        width: <?php echo $style['results_width_phone']; ?>;
+    }
+}
+<?php endif; ?>
 
 <?php if ($use_compatibility == true): ?>
     <?php echo $asp_res_ids1; ?> .results .asp_nores .asp_keyword,
@@ -939,6 +943,46 @@ else
     text-decoration: none;
     text-shadow: none;
 }
+
+<?php echo $asp_bset_ids; ?>.searchsettings .asp_sett_scroll,
+<?php echo $asp_set_ids; ?>.searchsettings .asp_sett_scroll {
+	scrollbar-width: thin;
+	scrollbar-color: <?php echo wpd_gradient_get_color_only($style['settings_overflow_color']); ?> transparent;
+}
+
+<?php echo $asp_bset_ids; ?>.searchsettings .asp_sett_scroll::-webkit-scrollbar,
+<?php echo $asp_set_ids; ?>.searchsettings .asp_sett_scroll::-webkit-scrollbar {
+	width: 7px;
+}
+
+<?php echo $asp_bset_ids; ?>.searchsettings .asp_sett_scroll::-webkit-scrollbar-track,
+<?php echo $asp_set_ids; ?>.searchsettings .asp_sett_scroll::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+<?php echo $asp_bset_ids; ?>.searchsettings .asp_sett_scroll::-webkit-scrollbar-thumb,
+<?php echo $asp_set_ids; ?>.searchsettings .asp_sett_scroll::-webkit-scrollbar-thumb {
+	<?php if ($style['settings_overflow_autohide']): ?>
+	background: transparent;
+	<?php else: ?>
+	background: <?php echo wpd_gradient_get_color_only($style['settings_overflow_color']); ?>;
+	<?php endif; ?>
+	border-radius: 5px;
+	border: none;
+}
+
+<?php if ($style['settings_overflow_autohide']): ?>
+	<?php echo $asp_bset_ids; ?>.searchsettings:hover .asp_sett_scroll::-webkit-scrollbar-thumb,
+	<?php echo $asp_set_ids; ?>.searchsettings:hover .asp_sett_scroll::-webkit-scrollbar-thumb {
+		background: <?php echo wpd_gradient_get_color_only($style['settings_overflow_color']); ?>;
+	}
+	@media (hover: none), (max-width: 500px) {
+		<?php echo $asp_bset_ids; ?>.searchsettings .asp_sett_scroll::-webkit-scrollbar-thumb,
+		<?php echo $asp_set_ids; ?>.searchsettings .asp_sett_scroll::-webkit-scrollbar-thumb {
+			background: <?php echo wpd_gradient_get_color_only($style['settings_overflow_color']); ?>;
+		}
+	}
+<?php endif; ?>
 
 <?php if ($use_compatibility == true): ?>
     <?php echo $asp_set_ids1; ?>.searchsettings .asp_sett_scroll,

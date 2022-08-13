@@ -475,7 +475,7 @@ if (!class_exists('ASP_Search_TERMS')) {
                         $_content = $_ex_content;
                     }
                 } else if ( $_content != '' && (  ASP_mb::strlen( $_content ) > $_descriptionlength ) ) {
-                    $_content = wd_substr_at_word($_content, $_descriptionlength) . "...";
+                    $_content = wd_substr_at_word($_content, $_descriptionlength);
                 }
                 $_content   = wd_closetags( $_content );
                 $term_res[$k]->content = $_content;

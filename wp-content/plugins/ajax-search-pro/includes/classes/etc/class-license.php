@@ -83,7 +83,7 @@ if (!class_exists("WD_ASP_License")) {
             return $data;
         }
 
-        static function isActivated( $remote_check = false ) {
+        static function isActivated( $remote_check = false, $auto_local_deactivate = false ) {
             $data = get_option("asp_update_data");
 
             if ( $data === false || !isset($data['host']) || !isset($data['key']) ) return false;
@@ -101,6 +101,12 @@ if (!class_exists("WD_ASP_License")) {
                 }
 
                 $rdata = json_decode( $response['body'], true );
+
+				$ret = $rdata['status'] == 1 ? $data['key'] : false;
+
+				if ( $auto_local_deactivate && $ret == false ) {
+					self::deactivate( false );
+				}
 
                 return $rdata['status'] == 1 ? $data['key'] : false;
             }

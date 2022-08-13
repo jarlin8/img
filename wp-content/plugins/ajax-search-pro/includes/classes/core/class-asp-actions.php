@@ -66,6 +66,12 @@ if ( !class_exists("WD_ASP_Actions") ) {
                 "priority"    => 999999998,
                 "args"  => 3
             ),
+			array(
+				"action" => "add_attachment",
+				"handler" => array("IndexTable", "update"),
+				"priority"    => 999999998,
+				"args"  => 3
+			),
             array(
                 "action" => "save_post",
                 "handler" => array("IndexTable", "update"),

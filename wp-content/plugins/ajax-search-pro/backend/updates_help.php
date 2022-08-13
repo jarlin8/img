@@ -11,46 +11,30 @@ if (ASP_DEMO) $_POST = null;
             <h3><?php echo __('Version status', 'ajax-search-pro'); ?></h3>
             <div class="item">
                 <?php if (wd_asp()->updates->needsUpdate(true)): ?>
-                    <?php echo sprintf( __('Version <strong>%s</strong> is available.', 'ajax-search-pro'),
-                        wd_asp()->updates->getVersionString() ); ?>
-                    <?php echo __('Download the new version from Codecanyon.', 'ajax-search-pro'); ?>
-                    <a target="_blank" href="https://documentation.ajaxsearchpro.com/update_notes.html">
-                        <?php echo __('How to update?', 'ajax-search-pro'); ?>
-                    </a>
+					<?php wd_asp()->updates->printUpdateMessage(); ?>
                 <?php else: ?>
                     <p><?php echo __('You have the latest version installed:', 'ajax-search-pro'); ?> <strong><?php echo ASP_CURR_VER_STRING; ?></strong></p>
                 <?php endif; ?>
             </div>
-            <?php if (wd_asp()->updates->getUpdateNotes(ASP_CURR_VER) != ""): ?>
-                <h3><?php echo __('Recent update notes', 'ajax-search-pro'); ?></h3>
-                <div class="item asp_update_notes">
-                    <?php echo wd_asp()->updates->getUpdateNotes(ASP_CURR_VER); ?>
-                </div>
-            <?php endif; ?>
             <h3><?php echo __('Support', 'ajax-search-pro'); ?></h3>
             <div class="item">
-                <?php if (wd_asp()->updates->getSupport() != ""): ?>
-                    <p class="errorMsg">IMPORTANT:<br><?php echo wd_asp()->updates->getSupport(); ?></p>
-                <?php endif; ?>
                 <?php echo sprintf( __('If you can\'t find the answer in the documentation or knowledge base, or if you are having other issues,
                 feel free to <a href="%s" target="_blank">open a support ticket</a>.', 'ajax-search-pro'), 'https://wp-dreams.com/open-support-ticket-step-1/' ); ?>
             </div>
-			<h3><?php echo __('Documentation', 'ajax-search-pro'); ?></h3>
+			<h3><?php echo __('Useful Resources', 'ajax-search-pro'); ?></h3>
 			<div class="item">
 				<ul>
-					<li><a target="_blank" href="https://documentation.ajaxsearchpro.com/" title="HTML documentation"><?php echo __('Onlie Documentation', 'ajax-search-pro'); ?></a></li>
-					<li><a target="_blank" href="https://wp-dreams.com/knowledgebase/" title="Knowledge Base"><?php echo __('Knowledge base', 'ajax-search-pro'); ?></a></li>
+					<li><a target="_blank" href="https://documentation.ajaxsearchpro.com/" title="Documentation"><?php echo __('Onlie Documentation', 'ajax-search-pro'); ?></a></li>
+					<li><a target="_blank" href="https://knowledgebase.ajaxsearchpro.com/" title="Knowledge Base"><?php echo __('Knowledge base', 'ajax-search-pro'); ?></a></li>
+					<li><a target="_blank" href="https://knowledgebase.ajaxsearchpro.com/other/changelog" title="Changelog"><?php echo __('Changelog', 'ajax-search-pro'); ?></a></li>
+					<li><a target="_blank" href="https://documentation.ajaxsearchpro.com/plugin-updates/manual-updates"><?php echo __('How to manual update?', 'ajax-search-pro'); ?></a></li>
 				</ul>
-			</div>
-			<h3><?php echo __('Knowledge Base', 'ajax-search-pro'); ?></h3>
-			<div class="item">
-				<?php echo wd_asp()->updates->getKnowledgeBase(); ?>
 			</div>
 		</div>
 		<div class="wpd-half-last">
             <?php if (ASP_DEMO == 0): ?>
 			<h3><?php echo __('Automatic Updates', 'ajax-search-pro'); ?></h3>
-            <div class="item<?php echo WD_ASP_License::isActivated() === false ? "" : " hiddend"; ?>">
+            <div class="item<?php echo WD_ASP_License::isActivated( true, true ) === false ? "" : " hiddend"; ?>">
                 <div class="asp_auto_update">
                     <p><?php echo __('To activate Automatic Updates, please activate your purchase code with this site.', 'ajax-search-pro'); ?></p>
                     <label><?php echo __('Purchase code', 'ajax-search-pro'); ?></label>
@@ -80,20 +64,7 @@ if (ASP_DEMO) $_POST = null;
                 <span class="small-loading" style="display:none; vertical-align: middle;"></span>
                 <p class="descMsg" style="text-align: left;margin-top: 10px;"><?php echo __('<b>NOTICE:</b> After deactivation there is a <b>30 minute</b> wait time until you can re-activate the same purchase code to prevent malicious activity.', 'ajax-search-pro'); ?></p>
             </div>
-            <h3><?php echo __('Manual Updates', 'ajax-search-pro'); ?></h3>
-            <div class="item">
-                <a target="_blank" href="https://documentation.ajaxsearchpro.com/update_notes.html"><?php echo __('How to manual update?', 'ajax-search-pro'); ?></a>
-            </div>
-            <?php endif; ?>
-			<h3><?php echo __('Changelog', 'ajax-search-pro'); ?></h3>
-			<div class="item">
-				<dl>
-					<?php foreach (wd_asp()->updates->getChangeLog() as $version => $log): ?>
-						<dt class="changelog_title">v<?php echo $version; ?> - <a href="#"><?php echo __('view changelog', 'ajax-search-pro'); ?></a></dt>
-						<dd class="hiddend"><pre><?php echo $log; ?></pre></dd>
-					<?php endforeach; ?>
-				</dl>
-			</div>
+			<?php endif; ?>
 		</div>
         <div class="clear"></div>
 	</div>

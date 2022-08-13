@@ -39,6 +39,8 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 		 */
 		private $posts_to_ignore = array();
 
+		private $start_time;
+
 		/**
 		 * @var string unique random string for special replacements
 		 */
@@ -49,6 +51,8 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 		private $the_post = false;
 
 		private $lang = '';
+
+		private $temporary_shortcode_tags = array();
 
 		/**
 		 * Static instance storage. This is not a singleton, but used in static method to access object only functions
@@ -79,6 +83,7 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 				'index_msword_content'    => 0,
 				'index_msexcel_content'   => 0,
 				'index_msppt_content'     => 0,
+				'media_service_send_file'     => 1,
 				'index_excerpt'       => 1,
 				'index_tags'          => 0,
 				'index_categories'    => 0,
@@ -96,6 +101,7 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 				'min_word_length'     => 3,
 				'post_types'          => array('post', 'page'),
 				'post_statuses'       => 'publish',
+				'extract_gutenberg_blocks'  => 1,
 				'extract_shortcodes'  => 1,
 				'exclude_shortcodes'  => '',
 				'extract_iframes'	  => 0,
@@ -115,6 +121,8 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 			$this->initIngoreList();
 
 			require_once(ASP_CLASSES_PATH . 'etc/synonyms.class.php');
+
+			do_action('asp_index_init');
 		}
 
 		/**
@@ -153,7 +161,7 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 					customfield smallint(9) UNSIGNED NOT NULL DEFAULT '0',
 					post_type varchar(50) NOT NULL DEFAULT 'post',
 					lang varchar(20) NOT NULL DEFAULT '0',
-			    UNIQUE KEY doctermitem (doc, term, blogid)) $charset_collate";
+			    PRIMARY KEY doctermitem (doc, term, blogid)) $charset_collate";
 
 			dbDelta( $query );
 
@@ -251,6 +259,9 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 		 * @return array (posts to index, posts indexed)
 		 */
 		function extendIndex( $switching_blog = false ) {
+
+			do_action('asp_index_start');
+			$this->start_time = microtime(true);
 
 			// this respects the limit, no need to count again
 			$posts = $this->getPostIdsToIndex();
@@ -356,9 +367,11 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 			remove_filter('the_title', 'convert_chars');
 
 			$the_post = get_post( $post_id );
+			// Return false to skip the post from the index
+			$the_post = apply_filters('asp_index_post', $the_post, $args);
 			$this->the_post = $the_post;
 
-			if ( $the_post == null ) {
+			if ( $this->the_post == null ) {
 				return false;
 			}
 
@@ -382,6 +395,11 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 				if ( !in_array($the_post->post_mime_type, $mimes_arr) ) {
 					return false;
 				}
+			}
+
+			// Password protected excluded
+			if ( $args['post_password_protected'] == 0 && post_password_required($the_post) ) {
+				return false;
 			}
 
 			// --- GET THE LANGUAGE INFORMATION, IF ANY ---
@@ -564,14 +582,16 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 				$content = $this->executeShortcodes( $content, $the_post );
 			}
 
-			if ( $args['extract_iframes'] == 1 )
+			if ( $args['extract_gutenberg_blocks'] ) {
+				$content = do_blocks( $content );
+			}
+
+			if ( $args['extract_iframes'] == 1 ) {
 				$content .= ' ' . $this->extractIframeContent($content);
+			}
 
 			// Strip the remaining shortcodes
 			$content = strip_shortcodes( $content );
-
-			$content = preg_replace( '/<[a-zA-Z\/][^>]*>/', ' ', $content );
-			$content = strip_tags( $content );
 
 			$filtered_content = apply_filters( 'asp_post_content_before_tokenize', $content, $the_post );
 
@@ -639,13 +659,9 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 			// No-reverse exact title
 			$single_title = $this->tokenizeSimple($title);
 			if ( $single_title != '' ) {
-				if (function_exists('mb_strpos') && function_exists('mb_substr')) {
-					$single_title = mb_substr($single_title, 0, 45);
-					$pos = mb_strpos($single_title, ' ');
-				} else {
-					$single_title = substr($single_title, 0, 45);
-					$pos = strpos($single_title, ' ');
-				}
+				$single_title = ASP_mb::substr($single_title, 0, 45);
+				$pos = ASP_mb::strpos($single_title, ' ');
+
 				/*
 				 * The index table unique key is (doc, term, item) - so if this word already exists, then it will be ignored
 				 * by the database. To make sure it is added, append a unique string at the end, that is not searched.
@@ -679,37 +695,44 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 		private function tokenizeMedia( $the_post, &$tokens ) {
 			$args = $this->args;
 
-			$filename = get_attached_file( $the_post->ID );
-			if ( is_wp_error($filename) || empty($filename) || !file_exists($filename) )
-				return 0;
-
-			include_once(ASP_CLASSES_PATH . 'etc/class-asp-media-parser.php');
-
-			$p = new ASP_Media_Parser(array(
-				'pdf_parser' => $args['index_pdf_method']
+			include_once(ASP_CLASSES_PATH . 'media/media.inc.php');
+			$p = new ASP_Media_Parser($the_post, array(
+				'pdf_parser' => $args['index_pdf_method'],
+				'text_content' => $args['index_text_content'],
+				'richtext_content' => $args['index_richtext_content'],
+				'pdf_content' => $args['index_pdf_content'],
+				'msword_content' => $args['index_msword_content'],
+				'msexcel_content' => $args['index_msexcel_content'],
+				'msppt_content' => $args['index_msppt_content'],
+				'media_service_send_file' => $args['media_service_send_file'],
 			));
-			$mime = $the_post->post_mime_type;
 
 			$this->abort = true; // Preemptively set the abort flag, so no other document content is indexed
+			$contents = apply_filters( 'asp_index_file_custom_parse', '', $the_post );
 
-			if ( $p->isThis('text', $mime) && $args['index_text_content'] ) {
-				$contents = $p->parseTXT($filename, $mime);
-				// CSV files often store the values in quotes. We don't need those in this case.
-				if ( $mime == 'text/csv' )
-					$contents = str_replace(array('"', "'"), ' ', $contents);
-			} else if ( $p->isThis('richtext', $mime) && $args['index_richtext_content'] ) {
-				$contents = $p->parseRTF($filename, $mime);
-			} else if ( $p->isThis('pdf', $mime) && $args['index_pdf_content'] ) {
-				$contents = $p->parsePDF($filename, $mime);
-			} else if ( $p->isThis('mso_word', $mime) && $args['index_msword_content'] ) {
-				$contents = $p->parseMSOWord($filename, $mime);
-			} else if ( $p->isThis('mso_excel', $mime) && $args['index_msexcel_content'] ) {
-				$contents = $p->parseMSOExcel($filename, $mime);
-			} else if ( $p->isThis('mso_powerpoint', $mime) && $args['index_msppt_content'] ) {
-				$contents = $p->parseMSOPpt($filename, $mime);
-			} else {
-				$contents = '';
-				$this->abort = false; // Reset the abort flag, as no document was processed
+			if ( $contents == '' ) {
+
+				$time_elapsed_during_remote = microtime(true);
+				$contents = $p->parse();
+				$time_elapsed_during_remote = microtime(true) - $time_elapsed_during_remote;
+
+				if ( is_wp_error($contents) ) {
+					if ( $contents->get_error_code() == 10 ) {
+						ASP_Media_Service_License::getInstance()->deactivate();
+					}
+					$contents = '';
+				}
+
+				// Attempt local parse, but only if the remote did not take too long
+				if ( $contents == '' && $time_elapsed_during_remote < 20 ) {
+					$contents = $p->parse( false );
+				}
+
+				$time_elapsed_from_start = microtime(true) - $this->start_time;
+				// Only abort if the whole indexing process took over 5 seconds so far
+				if ( $time_elapsed_from_start < 5 ) {
+					$this->abort = false;
+				}
 			}
 
 			$contents = apply_filters( 'asp_file_contents_before_tokenize', $contents, $the_post );
@@ -854,7 +877,15 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 				if ( empty($values) )
 					$values = get_post_meta( $the_post->ID, $field, false );
 				$values = is_array($values) ? $values : array($values);
-				$values = apply_filters( 'asp_post_custom_field_before_tokenize', $values, $the_post, $field );
+				$values = apply_filters( 'asp_post_custom_field_before_tokenize', $values, $the_post, $field, $tokens );
+
+				/**
+				 * For ACF fields, we also need to index the labels if present (checkbox, radio etc..)
+				 */
+				$acf_labels = array();
+				if ( function_exists( 'get_field_object') ) {
+					$acf_labels = asp_acf_get_field_choices($field);
+				}
 
 				foreach ( $values as $value ) {
 					if ( is_string($value) && ASP_Helpers::isJson($value) ) {
@@ -863,11 +894,46 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 					if ( is_array( $value ) ) {
 						$value = $this->arrayToString( $value );
 					}
-					$cf_content .= " " . $value;
 
-					// Without spaces for short values (for example product SKUs)
-					if ( $fn_strlen($value) <= 50 )
-						$cf_content .= " " . str_replace(' ', '', $value);
+					if ( $value != '' ) {
+						if ( isset($acf_labels[$value]) && $value != $acf_labels[$value] ) {
+							$value .= ' ' . $acf_labels[$value];
+						}
+						$cf_content .= " " . $value;
+
+						// Without spaces for short values (for example product SKUs)
+						if ( $fn_strlen($value) <= 50 ) {
+							$spaceless_value = str_replace(' ', '', $value);
+							if ( $spaceless_value != $value ) {
+								$orginal_value = $cf_content;
+								$cf_content .= " " . $spaceless_value;
+							}
+						}
+					}
+				}
+
+				if ( count($values) == 1 ) {
+					foreach ( $values as $value ) {
+						// No-reverse exact field
+						$single_cf_content = $this->tokenizeSimple($value);
+						if ( $single_cf_content != '' ) {
+							$single_cf_content = ASP_mb::substr($single_cf_content, 0, 45);
+							$pos = ASP_mb::strpos($single_cf_content, ' ');
+
+							/*
+							 * The index table unique key is (doc, term, item) - so if this word already exists, then it will be ignored
+							 * by the database. To make sure it is added, append a unique string at the end, that is not searched.
+							 */
+							if ( $pos === false )
+								$single_cf_content .= '___';
+							$this->insertToken($tokens, $single_cf_content, 1, 'customfield', true);
+
+							$single_cf_content_al = str_replace(self::$apostrophes, '', $single_cf_content);
+							if ( $single_cf_content_al !== $single_cf_content ) {
+								$this->insertToken($tokens, $single_cf_content_al, 1, 'customfield', true);
+							}
+						}
+					}
 				}
 			}
 
@@ -1050,6 +1116,8 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 			$str = str_replace( 'İ', 'i', $str );
 			$str = ASP_mb::strtolower( $str );
 
+			$str = ASP_Helpers::hebrewUnvocalize($str);
+
 			$stop_words = $this->getStopWords();
 			foreach ( $stop_words as $stop_word ) {
 				// If there is a stopword within, this case is over
@@ -1107,9 +1175,9 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 				"®", "¯", "°", "±", "¹", "²", "³", "¶", "·", "º", "»", "¼", "½", "¾", "¿", "÷", "•", "…", "←",
 				"←", "↑", "→", "↓", "↔", "↵", "⇐", "⇑", "⇒", "⇓", "⇔", "√", "∝", "∞", "∠", "∧", "∨", "∂", "∃", "∅",
 				"∗", "∩", "∪", "∫", "∴", "∼", "≅", "≈", "≠", "≡", "≤", "≥", "⊂", "⊃", "⊄", "⊆", "⊇", "⊕", "⊗", "⊥",
-				"◊", "♠", "♣", "♥", "♦", "◊", "〈", "〉", "⌊", "⌋", "⌈", "⌉", "⋅",
+				"◊", "♠", "♣", "♥", "♦", "🔴", "​", "◊", "〈", "〉", "⌊", "⌋", "⌈", "⌉", "⋅",
 				"Ă‹â€ˇ", "Ă‚Â°", "~", "Ă‹â€ş", "Ă‹ĹĄ", "Ă‚Â¸", "Ă‚Â§", "Ă‚Â¨", "â€™", "â€", "â€ť",
-				"â€ś", "â€ž", "Â´", "â€”", "â€“", "Ă—", '&#8217;', "&nbsp;", "\n", "\r",
+				"â€ś", "â€ž", "Â´", "â€”", "â€“", "Ă—", '&#8217;', "&#128308;", "&nbsp;", "\n", "\r",
 				"& ", "\\", "^", "?", "!", ";",
 				chr( 194 ) . chr( 160 )
 			), " ", $str );
@@ -1128,6 +1196,8 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 			$str = preg_replace( '/[[:space:]]+/', ' ', $str );
 
 			$str = ASP_mb::strtolower($str);
+
+			$str = ASP_Helpers::hebrewUnvocalize($str);
 
 			//$str = preg_replace('/[^\p{L}0-9 ]/', ' ', $str);
 			$str = str_replace( "\xEF\xBB\xBF", '', $str );
@@ -1318,10 +1388,7 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 			}
 			// TablePress support
 			if ( defined( 'TABLEPRESS_ABSPATH' ) && class_exists('TablePress') ) {
-				TablePress::$model_options = TablePress::load_model( 'options' );
-				TablePress::$model_table = TablePress::load_model( 'table' );
-				TablePress::$controller = TablePress::load_controller( 'frontend' );
-				TablePress::$controller->init_shortcodes();
+				$content .= ' ' . $this->parseTablePressShortcodes($content);
 			}
 
 			// Remove user defined shortcodes
@@ -1340,8 +1407,9 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 					);
 				}
 				// Then remove the shortcode completely
-				remove_shortcode( trim( $shortcode ) );
-				add_shortcode( trim( $shortcode ), array( $this, 'return_empty_string' ) );
+				/*remove_shortcode( trim( $shortcode ) );
+				add_shortcode( trim( $shortcode ), array( $this, 'return_empty_string' ) );*/
+				$this->temporaryDisableShortcode($shortcode);
 			}
 
 			// Try extracting the content of these shortcodes, but do not execute
@@ -1355,8 +1423,9 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 					' $1 ',
 					$content
 				);
-				remove_shortcode( $shortcode );
-				add_shortcode( $shortcode, array( $this, 'return_empty_string' ) );
+				/*remove_shortcode( $shortcode );
+				add_shortcode( $shortcode, array( $this, 'return_empty_string' ) );*/
+				$this->temporaryDisableShortcode($shortcode);
 			}
 
 			// These shortcodes are completely ignored, and removed with content
@@ -1377,9 +1446,14 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 				'ourteam', 'embedyt', 'gallery', 'bsf-info-box', 'tweet', 'blog', 'portfolio',
 				'peepso_activity', 'peepso_profile', 'peepso_group'
 			);
+			if ( defined( 'TABLEPRESS_ABSPATH' ) && class_exists('TablePress') ) {
+				$ignore_shortcodes[] = 'table';
+			}
+
 			foreach ( $ignore_shortcodes as $shortcode ) {
-				remove_shortcode( $shortcode );
-				add_shortcode( $shortcode, array( $this, 'return_empty_string' ) );
+				/*remove_shortcode( $shortcode );
+				add_shortcode( $shortcode, array( $this, 'return_empty_string' ) );*/
+				$this->temporaryDisableShortcode($shortcode);
 			}
 
 			$content = do_shortcode( $content );
@@ -1397,7 +1471,24 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 				unset( $wpt_reloaded );
 			}
 
+			$this->enableDisabledShortcodes();
+
 			return apply_filters( 'asp_index_after_shortcode_execution', $content, $post );
+		}
+
+		private function temporaryDisableShortcode($tag) {
+			global $shortcode_tags;
+			if ( array_key_exists( $tag, $shortcode_tags ) ) {
+				$this->temporary_shortcode_tags[$tag] = $shortcode_tags[$tag];
+				$shortcode_tags[ $tag ] = array( $this, 'return_empty_string' );
+			}
+		}
+
+		private function enableDisabledShortcodes() {
+			global $shortcode_tags;
+			foreach ($this->temporary_shortcode_tags as $tag => $callback) {
+				$shortcode_tags[$tag] = $callback;
+			}
 		}
 
 		/**
@@ -1410,11 +1501,11 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 		private function html2txt( $document ) {
 			$search = array(
 				'@<script[^>]*?>.*?</script>@si', // Strip out javascript
-				'@<[\/\!]*?[^<>]*?>@si', // Strip out HTML tags
 				'@<style[^>]*?>.*?</style>@siU', // Strip style tags properly
-				'@<![\s\S]*?--[ \t\n\r]*>@' // Strip multi-line comments including CDATA
+				'@<![\s\S]*?--[ \t\n\r]*>@', // Strip multi-line comments including CDATA
+				'@<[\/\!]*?[^<>]*?>@si' // Strip out HTML tags
 			);
-			$text   = preg_replace( $search, '', $document );
+			$text   = preg_replace( $search, ' ', $document );
 
 			return $text;
 		}
@@ -1444,6 +1535,23 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 				return $query_exec->language_code;
 
 			return "";
+		}
+
+		private function parseTablePressShortcodes( $content ) {
+			$regex = '/\[table[^\]]*id\=[\'"]{0,1}([0-9]+)[\'"]{0,1}?[^\]]*\]/';
+			$tables = json_decode(get_option('tablepress_tables'), true);
+			if ( !is_null($tables) && isset($tables['table_post']) && preg_match_all($regex, $content, $matches) > 0) {
+				$return = array();
+				foreach ( $matches[1] as $table_id ) {
+					$data = json_decode( get_post_field('post_content', $tables['table_post'][$table_id]), true );
+					if ( $data !== null ) {
+						$return[] = wd_array_to_string($data);
+					}
+				}
+				return implode(' ', $return);
+			}
+
+			return '';
 		}
 
 		/**

@@ -195,8 +195,8 @@ if ( !class_exists('aspFilter') ) {
                                     }
                                 } else {
                                     $value->selected = $value->{$key} == $posted;
-                                    if ( $this->display_mode == 'datepicker' && isset($o[$path][$unique_field_name . '_real']) ) {
-                                        $value->value = $o[$path][$unique_field_name . '_real'];
+                                    if ( $this->display_mode == 'datepicker' && isset($o[$path][$unique_field_name]) ) {
+                                        $value->value = $o[$path][$unique_field_name];
                                     } else if ( in_array($this->display_mode, array('hidden', 'text', 'slider')) ) {
                                         $value->value = $posted;
                                     }

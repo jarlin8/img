@@ -154,19 +154,10 @@ $sd = &$search['data'];
         </p>
     <?php endif; ?>
 
-	<?php if ( wd_asp()->updates->needsUpdate() ): ?>
-        <p class='infoMsgBox'>
-            <?php echo sprintf( __('Version <strong>%s</strong> is available.', 'ajax-search-pro'),
-                wd_asp()->updates->getVersionString() ); ?>
-            <?php echo __('Download the new version from Codecanyon.', 'ajax-search-pro'); ?>
-            <a target="_blank" href="https://documentation.ajaxsearchpro.com/update_notes.html">
-                <?php echo __('How to update?', 'ajax-search-pro'); ?>
-            </a>
-        </p>
-	<?php endif; ?>
+	<?php if ( wd_asp()->updates->needsUpdate() ) { wd_asp()->updates->printUpdateMessage(); } ?>
 
     <a class='back'
-       href='<?php echo get_admin_url() . "admin.php?page=asp_settings"; ?>'><?php echo __('Back to the search list', 'ajax-search-pro'); ?></a>
+       href='<?php echo get_admin_url() . "admin.php?page=asp_main_settings"; ?>'><?php echo __('Back to the search list', 'ajax-search-pro'); ?></a>
     <a class='statistics'
        href='<?php echo get_admin_url() . "admin.php?page=asp_statistics"; ?>'><?php echo __('Search Statistics', 'ajax-search-pro'); ?></a>
     <a class='error'

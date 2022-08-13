@@ -42,7 +42,7 @@ if (!class_exists("WD_ASP_Menu")) {
             if ( count(self::$submenu_items) == 0 ) {
                 $main_menu = array(
                     "title" => __('Ajax Search Pro', 'ajax-search-pro'),
-                    "slug" => "asp_settings",
+                    "slug" => "asp_main_settings",
                     "file" => "/backend/settings.php",
                     "position" => "207.9",
                     "icon_url" => "icon.png"

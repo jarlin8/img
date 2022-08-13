@@ -24,14 +24,14 @@ if ( !class_exists("WD_ASP_Filters") ) {
 		 */
 		private static $filters = array(
 			array(
-				"filter" => "posts_results",
-				"handler" => array("SearchOverride", "override"),
+				"filter" => "posts_request",
+				"handler" => array("SearchOverride", "maybeCancelWPQuery"),
 				"priority" => 999999999,
 				"args" => 2
 			),
 			array(
-				"filter" => "posts_request",
-				"handler" => array("SearchOverride", "maybeCancelWPQuery"),
+				"filter" => "posts_results",
+				"handler" => array("SearchOverride", "override"),
 				"priority" => 999999999,
 				"args" => 2
 			),
@@ -150,6 +150,30 @@ if ( !class_exists("WD_ASP_Filters") ) {
 				"handler" => array("EtcFixes", "http_request_args"),
 				"priority" => 9999,
 				"args" => 2
+			),
+            array(
+                "filter" => "asp_post_content_before_tokenize_clear",
+                "handler" => array("EtcFixes", "diviInitModules"),
+                "priority" => 9999,
+                "args" => 1
+            ),
+			array(
+				"filter" => "attachment_fields_to_edit",
+				"handler" => "MediaScreen",
+				"priority" => 9999,
+				"args" => 2
+			),
+            array(
+                "filter" => "et_builder_load_actions",
+                "handler" => array("EtcFixes", "diviInitModulesOnAjax"),
+                "priority" => 9999,
+                "args" => 1
+            ),
+			array(
+				"filter" => "et_builder_ready",
+				"handler" => array("EtcFixes", "diviBuilderReady"),
+				"priority" => 9999,
+				"args" => 0
 			)
 		);
 

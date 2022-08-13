@@ -18,7 +18,7 @@
             return selector;
         };
         this.start = function(url, obj, selector, widget) {
-            let isNewSearch = ($('form', obj.n.searchsettings).serialize() + obj.n.text.val().trim()) != obj.lastSuccesfulSearch;
+            let isNewSearch = ($('form', obj.n('searchsettings')).serialize() + obj.n('text').val().trim()) != obj.lastSuccesfulSearch;
             if ( !isNewSearch && $(widget).find('.e-load-more-spinner').length > 0 ) {
                 $(widget).css('opacity', 1);
             }
@@ -38,8 +38,16 @@
                 // Fix Elementor Pagination
                 this.fixElementorPostPagination(obj, url);
 
+                this.scrollToResultsIfNeeded($el);
+
                 // Elementor results action
-                obj.n.s.trigger("asp_elementor_results", [obj.o.id, obj.o.iid, $el.parent().get(0)], true, true);
+                obj.n('s').trigger("asp_elementor_results", [obj.o.id, obj.o.iid, $el.parent().get(0)], true, true);
+            }
+        };
+        this.scrollToResultsIfNeeded = function($el) {
+            let $first = $el.find('.elementor-post, .product').first();
+            if ( !$first.inViewPort(40) ) {
+                $first.get(0).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
             }
         };
         this.fixElementorPostPagination = function(obj, url) {
@@ -52,7 +60,7 @@
                     let queryString = url.substring(i+1);
                     if ( queryString ) {
                         queryString = queryString.replace(/&asp_force_reset_pagination=1/gmi, '');
-                        if ( $es.find('.e-load-more-anchor').length > 0 && $es.find('.elementor-pagination').length == 0 ) {
+                        if ( $es.find('.e-load-more-anchor').length > 0 && $es.find('.elementor-pagination a').length == 0 ) {
                             let handler = function(e){
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -93,6 +101,9 @@
                     }
                 }
             }
+
+            // Need to return the first argument, as this is a FILTER hook with OBJECT reference argument, and will override with the return value
+            return $this;
         };
         this.fixElementorLoadMoreResults = function(replacementNode, obj, originalNode, data) {
             let settings = $(originalNode).closest('div[data-settings]').data('settings'),
@@ -121,7 +132,7 @@
                 }
                 if ( $(replacementNode).find('.e-load-more-spinner').length > 0 ) {
                     $(originalNode).removeClass('e-load-more-pagination-loading');
-                    let isNewSearch = ($('form', obj.n.searchsettings).serialize() + obj.n.text.val().trim()) != obj.lastSuccesfulSearch,
+                    let isNewSearch = ($('form', obj.n('searchsettings')).serialize() + obj.n('text').val().trim()) != obj.lastSuccesfulSearch,
                         $loadMoreButton = $(originalNode).find('.e-load-more-anchor').next('.elementor-button-wrapper'),
                         $loadMoreMessage = $(originalNode).find('.e-load-more-message');
                     if ( $(replacementNode).find('article').length > 0 ) {

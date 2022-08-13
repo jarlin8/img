@@ -61,7 +61,7 @@ if (!class_exists('wpd_termsKeywordSuggest')) {
                     $q = ASP_mb::strtolower($q);
                     if (
                         $t != $q &&
-                        ('' != $str = wd_substr_at_word($t, $this->maxCharsPerWord))
+                        ('' != $str = wd_substr_at_word($t, $this->maxCharsPerWord, ''))
                     ) {
                         if ( ASP_mb::strpos($t, $q) === 0 )
                             $res[] = $str;

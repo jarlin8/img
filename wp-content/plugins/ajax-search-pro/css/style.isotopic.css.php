@@ -68,6 +68,25 @@ defined('ABSPATH') or die("You can't access this file directly.");
     background: <?php echo $style['i_res_item_content_background']; ?>;
 }
 
+/* Isopopic mouse overlay */
+<?php if ($use_compatibility == true): ?>
+<?php echo $asp_res_ids1; ?>.isotopic .results .item:hover .asp_image~.asp_content_hide_on_overlay,
+<?php echo $asp_res_ids2; ?>.isotopic .results .item:hover .asp_image~.asp_content_hide_on_overlay,
+<?php endif; ?>
+<?php echo $asp_res_ids; ?>.isotopic .results .item:hover .asp_image~.asp_content_hide_on_overlay {
+	bottom: -100%;
+}
+<?php if ($use_compatibility == true): ?>
+<?php echo $asp_res_ids1; ?>.isotopic .results .item:hover .asp_item_overlay,
+<?php echo $asp_res_ids2; ?>.isotopic .results .item:hover .asp_item_overlay,
+<?php echo $asp_res_ids1; ?>.isotopic .results .item:hover .asp_item_overlay_img,
+<?php echo $asp_res_ids2; ?>.isotopic .results .item:hover .asp_item_overlay_img,
+<?php endif; ?>
+<?php echo $asp_res_ids; ?>.isotopic .results .item:hover .asp_item_overlay,
+<?php echo $asp_res_ids; ?>.isotopic .results .item:hover .asp_item_overlay_img {
+	opacity: 1;
+}
+
 /* Isotopic navigation */
 <?php if ($use_compatibility == true): ?>
     <?php echo $asp_res_ids1; ?>.isotopic>nav,

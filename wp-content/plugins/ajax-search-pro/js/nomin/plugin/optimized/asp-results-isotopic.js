@@ -16,13 +16,13 @@
             $this.preProcessIsotopicResults();
             $this.showResultsBox();
 
-            if ($this.n.items.length > 0) {
-                $this.n.results.css({
+            if ($this.n('items').length > 0) {
+                $this.n('results').css({
                     height: "auto"
                 });
                 if ($this.o.highlight == 1) {
                     // noinspection JSUnresolvedVariable
-                    $("div.item", $this.n.resultsDiv).highlight($this.n.text.val().split(" "), {
+                    $("div.item", $this.n('resultsDiv')).highlight($this.n('text').val().split(" "), {
                         element: 'span', className: 'highlighted', wordsOnly: $this.o.highlightWholewords
                     });
                 }
@@ -34,14 +34,14 @@
             $this.showPagination();
             $this.isotopicPagerScroll();
 
-            if ($this.n.items.length == 0) {
-                $this.n.results.css({
+            if ($this.n('items').length == 0) {
+                $this.n('results').css({
                     height: '11110px'
                 });
-                $this.n.results.css({
+                $this.n('results').css({
                     height: 'auto'
                 });
-                $this.n.resdrg.css({
+                $this.n('resdrg').css({
                     height: 'auto'
                 });
             } else {
@@ -69,7 +69,6 @@
                 }
             }
             $this.addAnimation();
-            $this.initOverlayEvent();
             $this.initIsotopicClick();
             $this.searching = false;
         },
@@ -77,7 +76,7 @@
             let $this = this;
             $this.eh.isotopicClickhandle = $this.eh.isotopicClickhandle || function(e) {
                 if ( !$this.dragging ) {
-                    let $a = $(this).find('.asp_content a');
+                    let $a = $(this).find('.asp_content a.asp_res_url');
                     let url = $a.attr('href');
                     if (url !== '') {
                         e.preventDefault();
@@ -89,7 +88,7 @@
                     }
                 }
             }
-            $this.n.resultsDiv.find('.asp_isotopic_item').on('click', $this.eh.isotopicClickhandle);
+            $this.n('resultsDiv').find('.asp_isotopic_item').on('click', $this.eh.isotopicClickhandle);
         },
         preProcessIsotopicResults: function() {
             let $this = this,
@@ -97,10 +96,10 @@
                 overlay = "";
 
             // In some cases the hidden data is not present for some reason..
-            if ($this.o.isotopic.showOverlay && $this.n.aspItemOverlay.length > 0)
-                overlay = $this.n.aspItemOverlay.get(0).outerHTML;
+            if ($this.o.isotopic.showOverlay && $this.n('aspItemOverlay').length > 0)
+                overlay = $this.n('aspItemOverlay').get(0).outerHTML;
 
-            $this.n.items.forEach(function (el) {
+            $this.n('items').forEach(function (el) {
 
                 let image = "",
                     overlayImage = "",
@@ -138,42 +137,42 @@
         isotopicPagerScroll: function () {
             let $this = this;
 
-            if ( $('nav>ul li.asp_active', $this.n.resultsDiv).length <= 0 )
+            if ( $('nav>ul li.asp_active', $this.n('resultsDiv')).length <= 0 )
                 return false;
 
-            let $activeLeft = $('nav>ul li.asp_active', $this.n.resultsDiv).offset().left,
-                $activeWidth = $('nav>ul li.asp_active', $this.n.resultsDiv).outerWidth(true),
-                $nextLeft = $('nav>a.asp_next', $this.n.resultsDiv).offset().left,
-                $prevLeft = $('nav>a.asp_prev', $this.n.resultsDiv).offset().left;
+            let $activeLeft = $('nav>ul li.asp_active', $this.n('resultsDiv')).offset().left,
+                $activeWidth = $('nav>ul li.asp_active', $this.n('resultsDiv')).outerWidth(true),
+                $nextLeft = $('nav>a.asp_next', $this.n('resultsDiv')).offset().left,
+                $prevLeft = $('nav>a.asp_prev', $this.n('resultsDiv')).offset().left;
 
             if ( $activeWidth <= 0) return;
 
             let toTheLeft = Math.ceil( ( $prevLeft - $activeLeft + 2 * $activeWidth ) / $activeWidth );
             if (toTheLeft > 0) {
                 // If the active is the first, go to the beginning
-                if ( $('nav>ul li.asp_active', $this.n.resultsDiv).prev().length == 0) {
-                    $('nav>ul', $this.n.resultsDiv).css({
+                if ( $('nav>ul li.asp_active', $this.n('resultsDiv')).prev().length == 0) {
+                    $('nav>ul', $this.n('resultsDiv')).css({
                         "left": $activeWidth + "px"
                     });
                     return;
                 }
 
                 // Otherwise go left
-                $('nav>ul', $this.n.resultsDiv).css({
-                    "left": $('nav>ul', $this.n.resultsDiv).position().left  +( $activeWidth * toTheLeft) + "px"
+                $('nav>ul', $this.n('resultsDiv')).css({
+                    "left": $('nav>ul', $this.n('resultsDiv')).position().left  +( $activeWidth * toTheLeft) + "px"
                 });
             } else {
                 let toTheRight;
                 // One step if it is the last element, 2 steps for any other
-                if ( $('nav>ul li.asp_active', $this.n.resultsDiv).next().length == 0 ) {
+                if ( $('nav>ul li.asp_active', $this.n('resultsDiv')).next().length == 0 ) {
                     toTheRight = Math.ceil(($activeLeft - $nextLeft + $activeWidth) / $activeWidth);
                 } else {
                     toTheRight = Math.ceil(($activeLeft - $nextLeft + 2 * $activeWidth) / $activeWidth);
                 }
 
                 if (toTheRight > 0) {
-                    $('nav>ul', $this.n.resultsDiv).css({
-                        "left": $('nav>ul', $this.n.resultsDiv).position().left -( $activeWidth * toTheRight) + "px"
+                    $('nav>ul', $this.n('resultsDiv')).css({
+                        "left": $('nav>ul', $this.n('resultsDiv')).position().left -( $activeWidth * toTheRight) + "px"
                     });
                 }
             }
@@ -193,18 +192,18 @@
             }
 
             if ( $this.call_num < 1 || force_refresh)
-                $('nav.asp_navigation ul li', $this.n.resultsDiv).remove();
-            $('nav.asp_navigation', $this.n.resultsDiv).css('display', 'none');
+                $('nav.asp_navigation ul li', $this.n('resultsDiv')).remove();
+            $('nav.asp_navigation', $this.n('resultsDiv')).css('display', 'none');
 
-            //$('nav.asp_navigation ul', $this.n.resultsDiv).removeAttr("style");
+            //$('nav.asp_navigation ul', $this.n('resultsDiv')).removeAttr("style");
 
-            if ($this.n.items.length > 0) {
+            if ($this.n('items').length > 0) {
                 let start = 1;
                 if ($this.call_num > 0 && !force_refresh) {
                     // Because the nav can be both top and bottom, make sure to get only 1 to calculate, not both
-                    start = $this.n.resultsDiv.find('nav.asp_navigation ul li').length + 1;
+                    start = $this.n('resultsDiv').find('nav.asp_navigation ul').first().find('li').length + 1;
                 }
-                let pages = Math.ceil($this.n.items.length / $this.il.itemsPerPage);
+                let pages = Math.ceil($this.n('items').length / $this.il.itemsPerPage);
                 if (pages > 1) {
 
                     // Calculate which page to activate, after a possible orientation change
@@ -213,20 +212,20 @@
 
                     for (let i = start; i <= pages; i++) {
                         if (i == newPage)
-                            $('nav.asp_navigation ul', $this.n.resultsDiv).append("<li class='asp_active'><span>" + i + "</span></li>");
+                            $('nav.asp_navigation ul', $this.n('resultsDiv')).append("<li class='asp_active'><span>" + i + "</span></li>");
                         else
-                            $('nav.asp_navigation ul', $this.n.resultsDiv).append("<li><span>" + i + "</span></li>");
+                            $('nav.asp_navigation ul', $this.n('resultsDiv')).append("<li><span>" + i + "</span></li>");
                     }
-                    $('nav.asp_navigation', $this.n.resultsDiv).css('display', 'block');
+                    $('nav.asp_navigation', $this.n('resultsDiv')).css('display', 'block');
 
                     /**
                      * Always trigger the pagination!
                      * This will make sure that the isotope.arrange method is triggered in this case as well.
                      */
                     if ( force_refresh )
-                        $('nav.asp_navigation ul li.asp_active', $this.n.resultsDiv).trigger('click_trigger');
+                        $('nav.asp_navigation ul li.asp_active', $this.n('resultsDiv')).trigger('click_trigger');
                     else
-                        $('nav.asp_navigation ul li.asp_active', $this.n.resultsDiv).trigger('click');
+                        $('nav.asp_navigation ul li.asp_active', $this.n('resultsDiv')).trigger('click');
 
                 } else {
                     // No pagination, but the pagination is enabled
@@ -242,18 +241,18 @@
 
         hidePagination: function () {
             let $this = this;
-            $('nav.asp_navigation', $this.n.resultsDiv).css('display', 'none');
+            $('nav.asp_navigation', $this.n('resultsDiv')).css('display', 'none');
         },
 
         visiblePagination: function() {
             let $this = this;
-            return $('nav.asp_navigation', $this.n.resultsDiv).css('display') != 'none';
+            return $('nav.asp_navigation', $this.n('resultsDiv')).css('display') != 'none';
         },
 
         calculateIsotopeRows: function () {
             let $this = this,
                 itemWidth, itemHeight,
-                containerWidth = parseFloat($this.n.results.width());
+                containerWidth = parseFloat($this.n('results').width());
 
             if ( helpers.deviceType() === 'desktop' ) {
                 // noinspection JSUnresolvedVariable
@@ -287,9 +286,8 @@
 
             $this.il.columns = floorColumnCount;
             $this.il.itemsPerPage = floorColumnCount * $this.il.rows;
-            //$this.il.lastVisibleItem = $this.n.results.find('.asp_isotopic_item:visible').first().index() + 1;
             $this.il.lastVisibleItem = 0;
-            $this.n.results.find('.asp_isotopic_item').forEach(function(el, index){
+            $this.n('results').find('.asp_isotopic_item').forEach(function(el, index){
                 if ( $(el).css('display') != 'none' ) {
                     $this.il.lastVisibleItem = index;
                 }
@@ -297,13 +295,13 @@
 
             // This data needs do be written to the DOM, because the isotope arrange can't see the changes
             if ( !isNaN($this.il.columns) && !isNaN($this.il.itemsPerPage) ) {
-                $this.n.resultsDiv.data("colums", $this.il.columns);
-                $this.n.resultsDiv.data("itemsperpage", $this.il.itemsPerPage);
+                $this.n('resultsDiv').data("colums", $this.il.columns);
+                $this.n('resultsDiv').data("itemsperpage", $this.il.itemsPerPage);
             }
 
             $this.currentPage = 1;
 
-            $this.n.items.css({
+            $this.n('items').css({
                 width: Math.floor(newItemW) + 'px',
                 height: Math.floor(newItemH) + 'px'
             });
@@ -316,7 +314,7 @@
     let functions = {
         initIsotopicPagination: function () {
             let $this = this;
-            $this.n.resultsDiv.on($this.clickTouchend + ' click_trigger', 'nav>a', function (e) {
+            $this.n('resultsDiv').on($this.clickTouchend + ' click_trigger', 'nav>a', function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 let $li = $(this).closest('nav').find('li.asp_active');
@@ -335,20 +333,20 @@
                     }
                 }
             });
-            $this.n.resultsDiv.on($this.clickTouchend + ' click_trigger', 'nav>ul li', function (e) {
+            $this.n('resultsDiv').on($this.clickTouchend + ' click_trigger', 'nav>ul li', function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 let etype = e.type,
                     _this = this,
                     timeout = 1;
                 if ( helpers.isMobile() ) {
-                    $this.n.text.trigger('blur');
+                    $this.n('text').trigger('blur');
                     timeout = 300;
                 }
                 setTimeout( function() {
                     $this.currentPage = parseInt($(_this).find('span').html(), 10);
-                    $('nav>ul li', $this.n.resultsDiv).removeClass('asp_active');
-                    $('nav', $this.n.resultsDiv).each(function (el) {
+                    $('nav>ul li', $this.n('resultsDiv')).removeClass('asp_active');
+                    $('nav', $this.n('resultsDiv')).each(function (el) {
                         $($(el).find('ul li').get($this.currentPage - 1)).addClass('asp_active');
                     });
                     if ( etype === 'click_trigger' ) {
@@ -370,58 +368,9 @@
                         document.dispatchEvent(new Event('wpd-lazy-trigger'));
                     }
 
-                    $this.n.resultsDiv.trigger('nav_switch');
+                    $this.n('resultsDiv').trigger('nav_switch');
                 }, timeout);
             });
-        },
-        initOverlayEvent: function () {
-            let $this = this;
-            // noinspection JSUnresolvedVariable
-            if ($this.o.resultstype == "isotopic") {
-                if ($this.o.isotopic.showOverlay) {
-                    // IOS does not trigget mouseup after mouseenter, so the user has to tap again to redirect
-                    if ( !helpers.detectIOS() ) {
-                        //let enterOverlay, leaveOverlay, enterAnimate, leaveAnimate;
-                        $this.eh.enterOverlay = $this.eh.enterOverlay || function () {
-                            $(this).find('.asp_item_overlay').css("opacity", 1);
-                            if ($(this).find(".asp_image").length > 0) {
-                                // noinspection JSUnresolvedVariable
-                                if ($this.o.isotopic.blurOverlay) {
-                                    $(this).find('.asp_item_overlay_img').css("opacity", 1);
-                                }
-                                // noinspection JSUnresolvedVariable
-                                if ($this.o.isotopic.hideContent) {
-                                    $(this).find('.asp_content').css("bottom", -($(this).find('.asp_content').outerHeight()) + 'px');
-                                }
-                            }
-                        };
-                        $this.eh.leaveOverlay = $this.eh.leaveOverlay || function () {
-                            $(this).find('.asp_item_overlay').css("opacity", 0);
-                            if ($(this).find(".asp_image").length > 0) {
-                                // noinspection JSUnresolvedVariable
-                                if ($this.o.isotopic.blurOverlay) {
-                                    $(this).find('.asp_item_overlay_img').css("opacity", 0);
-                                }
-                                // noinspection JSUnresolvedVariable
-                                if ($this.o.isotopic.hideContent) {
-                                    $(this).find('.asp_content').css("bottom", "0px");
-                                }
-                            }
-                        };
-                        $this.eh.enterAnimate = $this.eh.enterAnimate || function () {
-                            $(this).addClass('animated pulse');
-                        };
-                        $this.eh.leaveAnimate = $this.eh.leaveAnimate || function () {
-                            $(this).removeClass('animated pulse');
-                        };
-                        $this.n.resultsDiv.find('div.item').on('mouseenter', $this.eh.enterOverlay);
-                        $this.n.resultsDiv.find('div.item').on('mouseleave', $this.eh.leaveOverlay);
-                        $this.n.resultsDiv.find('div.asp_item_inner').on('mouseenter', $this.eh.enterAnimate);
-                        $this.n.resultsDiv.find('div.asp_item_inner').on('mouseleave', $this.eh.leaveAnimate);
-                    }
-                }
-            }
-
         }
     }
     $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
@@ -435,25 +384,25 @@
                 let keycode =  e.keyCode || e.which;
                 // noinspection JSUnresolvedVariable
                 if (
-                    $('.item', $this.n.resultsDiv).length > 0 && $this.n.resultsDiv.css('display') != 'none' &&
+                    $('.item', $this.n('resultsDiv')).length > 0 && $this.n('resultsDiv').css('display') != 'none' &&
                     $this.o.resultstype == "vertical"
                 ) {
                     if ( keycode == 40 || keycode == 38 ) {
-                        let $hovered = $this.n.resultsDiv.find('.item.hovered');
-                        $this.n.text.trigger('blur');
+                        let $hovered = $this.n('resultsDiv').find('.item.hovered');
+                        $this.n('text').trigger('blur');
                         if ( $hovered.length == 0 ) {
-                            $this.n.resultsDiv.find('.item').first().addClass('hovered');
+                            $this.n('resultsDiv').find('.item').first().addClass('hovered');
                         } else {
                             if (keycode == 40) {
                                 if ( $hovered.next('.item').length == 0 ) {
-                                    $this.n.resultsDiv.find('.item').removeClass('hovered').first().addClass('hovered');
+                                    $this.n('resultsDiv').find('.item').removeClass('hovered').first().addClass('hovered');
                                 } else {
                                     $hovered.removeClass('hovered').next('.item').addClass('hovered');
                                 }
                             }
                             if (keycode == 38) {
                                 if ( $hovered.prev('.item').length == 0 ) {
-                                    $this.n.resultsDiv.find('.item').removeClass('hovered').last().addClass('hovered');
+                                    $this.n('resultsDiv').find('.item').removeClass('hovered').last().addClass('hovered');
                                 } else {
                                     $hovered.removeClass('hovered').prev('.item').addClass('hovered');
                                 }
@@ -461,8 +410,8 @@
                         }
                         e.stopPropagation();
                         e.preventDefault();
-                        if ( !$this.n.resultsDiv.find('.resdrg .item.hovered').inViewPort(50, $this.n.resultsDiv.get(0)) ) {
-                            let n = $this.n.resultsDiv.find('.resdrg .item.hovered').get(0);
+                        if ( !$this.n('resultsDiv').find('.resdrg .item.hovered').inViewPort(50, $this.n('resultsDiv').get(0)) ) {
+                            let n = $this.n('resultsDiv').find('.resdrg .item.hovered').get(0);
                             if ( n != null && typeof n.scrollIntoView != "undefined" ) {
                                 n.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
                             }
@@ -470,10 +419,10 @@
                     }
 
                     // Trigger click on return key
-                    if ( keycode == 13 && $('.item.hovered', $this.n.resultsDiv).length > 0 ) {
+                    if ( keycode == 13 && $('.item.hovered', $this.n('resultsDiv')).length > 0 ) {
                         e.stopPropagation();
                         e.preventDefault();
-                        $('.item.hovered a.asp_res_url', $this.n.resultsDiv).get(0).click();
+                        $('.item.hovered a.asp_res_url', $this.n('resultsDiv')).get(0).click();
                     }
 
                 }

@@ -25,17 +25,23 @@
                 if ( _gtag !== false ) {
                     if ( tracking_id !== false ) {
                         // noinspection JSUnresolvedVariable
-                        _gtag('config', tracking_id, {'page_path': url + ASP.analytics.string.replace("{asp_term}", term)});
+                        tracking_id.forEach(function(id) {
+                            _gtag('config', id, {'page_path': url + ASP.analytics.string.replace("{asp_term}", term)});
+                        });
                     }
                 } else if ( _ga !== false ) {
-                    if ( tracking_id !== false ) {
-                        _ga('create', tracking_id, 'auto');
-                    }
-                    // noinspection JSUnresolvedVariable
-                    _ga('send', 'pageview', {
+                    let params = {
                         'page': url + ASP.analytics.string.replace("{asp_term}", term),
                         'title': 'Ajax Search'
-                    });
+                    };
+                    if ( tracking_id !== false ) {
+                        tracking_id.forEach(function(id) {
+                            _ga('create', id, 'auto');
+                            _ga('send', 'pageview', params);
+                        });
+                    } else {
+                        _ga('send', 'pageview', params);
+                    }
                 }
             }
         },
@@ -63,8 +69,8 @@
             ) {
                 let def_data = {
                     "search_id": $this.o.id,
-                    "search_name": $this.o.name,
-                    "phrase": $this.n.text.val(),
+                    "search_name": $this.n('search').data('name'),
+                    "phrase": $this.n('text').val(),
                     "option_name": '',
                     "option_value": '',
                     "result_title": '',
@@ -145,21 +151,6 @@
             }
 
             return ret;
-        },
-
-        stat_addKeyword: function(id, keyword) {
-            let data = {
-                action: 'ajaxsearchpro_addkeyword',
-                id: id,
-                keyword: keyword
-            };
-            // noinspection JSUnresolvedVariable
-            $.fn.ajax({
-                'url': ASP.ajaxurl,
-                'method': 'POST',
-                'data': data,
-                'success': function (response) {}
-            })
         }
     }
     $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);

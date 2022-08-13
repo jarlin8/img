@@ -2,37 +2,28 @@
     "use strict";
     let helpers = window.WPD.ajaxsearchpro.helpers;
     let functions = {
-        liveLoad: function(selector, url, updateLocation, forceAjax) {
+        liveLoad: function(origSelector, url, updateLocation, forceAjax, cache) {
+            let selector = origSelector;
             if ( selector == 'body' || selector == 'html' ) {
                 console.log('Ajax Search Pro: Do not use html or body as the live loader selector.');
                 return false;
             }
 
-            // Store the current page HTML for the live loaders
-            // It needs to be requested here as the dom does store the processed HTML, and it is no good.
-            if ( ASP.pageHTML == "" ) {
-                if ( typeof ASP._ajax_page_html === 'undefined' ) {
-                    ASP._ajax_page_html = true;
-                    $.fn.ajax({
-                        url: location.href,
-                        method: 'GET',
-                        success: function(data){
-                            ASP.pageHTML = data;
-                        },
-                        dataType: 'html'
-                    });
-                }
+            let $this = this;
+
+            if ( ASP.pageHTML != "" ) {
+                $this.setLiveLoadCache(ASP.pageHTML, origSelector);
             }
 
-            function process(data) {
-                data = helpers.Hooks.applyFilters('asp/live_load/raw_data', data, $this);
+            function process(html) {
+                let data = helpers.Hooks.applyFilters('asp/live_load/raw_data', html, $this);
                 let parser = new DOMParser;
                 let dataNode = parser.parseFromString(data, "text/html");
                 let $dataNode = $(dataNode);
 
                 // noinspection JSUnresolvedVariable
                 if ( $this.o.statistics ) {
-                    $this.stat_addKeyword($this.o.id, $this.n.text.val());
+                    $this.stat_addKeyword($this.o.id, $this.n('text').val());
                 }
                 if ( data != '' && $dataNode.length > 0 && $dataNode.find(selector).length > 0 ) {
                     data = data.replace(/&asp_force_reset_pagination=1/gmi, '');
@@ -63,7 +54,7 @@
                     }
 
                     // WooCommerce ordering fix
-                    $(selector).first().find(".woocommerce-ordering").on("change","select.orderby", function(){
+                    $(selector).first().find(".woocommerce-ordering select.orderby").on("change", function(){
                         $(this).closest("form").trigger('submit');
                     });
 
@@ -72,9 +63,9 @@
                     if ( $this.o.singleHighlight == 1 ) {
                         $(selector).find('a').on('click', function(){
                             localStorage.removeItem('asp_phrase_highlight');
-                            if ( helpers.unqoutePhrase( $this.n.text.val() ) != '' )
+                            if ( helpers.unqoutePhrase( $this.n('text').val() ) != '' )
                                 localStorage.setItem('asp_phrase_highlight', JSON.stringify({
-                                    'phrase': helpers.unqoutePhrase( $this.n.text.val() ),
+                                    'phrase': helpers.unqoutePhrase( $this.n('text').val() ),
                                     'id': $this.o.id
                                 }));
                         });
@@ -84,17 +75,19 @@
 
                     // noinspection JSUnresolvedVariable
                     ASP.initialize();
-                    $this.lastSuccesfulSearch = $('form', $this.n.searchsettings).serialize() + $this.n.text.val().trim();
+                    $this.lastSuccesfulSearch = $('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim();
                     $this.lastSearchData = data;
+
+                    $this.setLiveLoadCache(html, origSelector);
                 }
-                $this.n.s.trigger("asp_search_end", [$this.o.id, $this.o.iid, $this.n.text.val(), data], true, true);
-                $this.gaEvent('search_end', {'results_count': 'unknown'});
-                $this.gaPageview($this.n.text.val());
+                $this.n('s').trigger("asp_search_end", [$this.o.id, $this.o.iid, $this.n('text').val(), data], true, true);
+                $this.gaEvent?.('search_end', {'results_count': 'unknown'});
+                $this.gaPageview?.($this.n('text').val());
                 $this.hideLoader();
                 $el.css('opacity', 1);
                 $this.searching = false;
-                if ( $this.n.text.val() != '' ) {
-                    $this.n.proclose.css({
+                if ( $this.n('text').val() != '' ) {
+                    $this.n('proclose').css({
                         display: "block"
                     });
                 }
@@ -114,7 +107,7 @@
                 altSel.unshift('#main');
 
             if ( $(selector).length < 1 ) {
-                altSel.forEach(function(i, s){
+                altSel.forEach(function(s, i){
                     if ( $(s).length > 0 ) {
                         selector = s;
                         return false;
@@ -128,8 +121,7 @@
 
             selector = helpers.Hooks.applyFilters('asp/live_load/selector', selector, this);
 
-            let $el = $(selector).first(),
-                $this = this;
+            let $el = $(selector).first();
 
             $this.searchAbort();
             $el.css('opacity', 0.4);
@@ -138,8 +130,8 @@
 
             if (
                 !forceAjax &&
-                $this.n.searchsettings.find('input[name=filters_initial]').val() == 1 &&
-                $this.n.text.val() == ''
+                $this.n('searchsettings').find('input[name=filters_initial]').val() == 1 &&
+                $this.n('text').val() == ''
             ) {
                 window.WPD.intervalUntilExecute(function(){
                     process(ASP.pageHTML);
@@ -147,32 +139,36 @@
                     return ASP.pageHTML != ''
                 });
             } else {
-                $this.searching = true;
-                $this.post = $.fn.ajax({
-                    url: url,
-                    method: 'GET',
-                    success: function(data){
-                        process(data);
-                    },
-                    dataType: 'html',
-                    fail: function(jqXHR){
-                        $el.css('opacity', 1);
-                        if ( jqXHR.aborted ) {
-                            return;
+                if ( typeof cache != 'undefined' ) {
+                    process(cache.html);
+                } else {
+                    $this.searching = true;
+                    $this.post = $.fn.ajax({
+                        url: url,
+                        method: 'GET',
+                        success: function(data){
+                            process(data);
+                        },
+                        dataType: 'html',
+                        fail: function(jqXHR){
+                            $el.css('opacity', 1);
+                            if ( jqXHR.aborted ) {
+                                return;
+                            }
+                            $el.html("This request has failed. Please check your connection.");
+                            $this.hideLoader();
+                            $this.searching = false;
+                            $this.n('proclose').css({
+                                display: "block"
+                            });
                         }
-                        $el.html("This request has failed. Please check your connection.");
-                        $this.hideLoader();
-                        $this.searching = false;
-                        $this.n.proclose.css({
-                            display: "block"
-                        });
-                    }
-                });
+                    });
+                }
             }
         },
         getCurrentLiveURL: function() {
             let $this = this;
-            let url = 'asp_ls=' + helpers.nicePhrase( $this.n.text.val() ),
+            let url = 'asp_ls=' + helpers.nicePhrase( $this.n('text').val() ),
                 start = '&',
                 location = window.location.href;
 
@@ -189,11 +185,63 @@
             }
 
             let final = location + start + url + "&asp_active=1&asp_force_reset_pagination=1&p_asid=" +
-                $this.o.id + "&p_asp_data=1&" + $('form', $this.n.searchsettings).serialize();
+                $this.o.id + "&p_asp_data=1&" + $('form', $this.n('searchsettings')).serialize();
             // Possible issue when the URL ends with '?' and the start is '&'
             final = final.replace('?&', '?');
 
             return final;
+        },
+        initLiveLoaderPopState: function() {
+            let $this = this;
+            $this.liveLoadCache = [];
+            window.addEventListener('popstate', (event) => {
+                let data = $this.getLiveLoadCache();
+                if ( data !== false ) {
+                    $this.n('text').val(data.phrase);
+                    helpers.formData( $('form', $this.n('searchsettings')), data.settings );
+                    $this.resetNoUISliderFilters();
+                    $this.liveLoad(data.selector, document.location.href, false, false, data);
+                }
+            });
+
+            // Store the current page HTML for the live loaders
+            // It needs to be requested here as the dom does store the processed HTML, and it is no good.
+            if ( ASP.pageHTML == "" ) {
+                if ( typeof ASP._ajax_page_html === 'undefined' ) {
+                    ASP._ajax_page_html = true;
+                    $.fn.ajax({
+                        url: $this.currentPageURL,
+                        method: 'GET',
+                        success: function(data){
+                            ASP.pageHTML = data;
+                        },
+                        dataType: 'html'
+                    });
+                }
+            }
+        },
+
+        setLiveLoadCache: function( html, selector ) {
+            let $this = this;
+            if ( $this.liveLoadCache.filter((item)=>{
+                return item.href ==  document.location.href;
+            }).length == 0 ) {
+                $this.liveLoadCache.push({
+                    'href':  html == ASP.pageHTML ? $this.currentPageURL : document.location.href,
+                    'phrase': html == ASP.pageHTML ? '' : $this.n('text').val(),
+                    'selector': selector,
+                    'html': html,
+                    'settings': html == ASP.pageHTML ? $this.originalFormData : helpers.formData($('form', $this.n('searchsettings')))
+                });
+            }
+        },
+
+        getLiveLoadCache: function() {
+            let $this = this;
+            let res = $this.liveLoadCache.filter((item)=>{
+                return item.href == document.location.href;
+            });
+            return res.length > 0 ? res[0] : false;
         }
     }
     $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);

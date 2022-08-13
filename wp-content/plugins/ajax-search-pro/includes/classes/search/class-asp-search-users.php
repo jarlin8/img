@@ -786,7 +786,7 @@ if (!class_exists('ASP_Search_USERS')) {
                         $_content = $_ex_content;
                     }
                 } else if ( $_content != '' && (  ASP_mb::strlen( $_content ) > $sd['user_res_descriptionlength'] ) ) {
-                    $_content = wd_substr_at_word($_content, $sd['user_res_descriptionlength']) . "...";
+                    $_content = wd_substr_at_word($_content, $sd['user_res_descriptionlength']);
                 }
                 $r->content   = wd_closetags( $_content );
 

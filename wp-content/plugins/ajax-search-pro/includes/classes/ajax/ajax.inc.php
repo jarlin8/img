@@ -13,3 +13,4 @@ require_once(ASP_CLASSES_PATH . "ajax/class-asp-indextable.php");
 require_once(ASP_CLASSES_PATH . "ajax/class-asp-maintenance.php");
 require_once(ASP_CLASSES_PATH . "ajax/class-asp-license.php");
 require_once(ASP_CLASSES_PATH . "ajax/class-asp-synonyms.php");
+require_once(ASP_CLASSES_PATH . "ajax/class-asp-media-service.php");

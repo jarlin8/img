@@ -38,9 +38,13 @@ if (!class_exists('ASP_Search_ATTACHMENTS')) {
                 // Reset a few options;
                 $args['_no_post_process'] = 1;
                 $args['post_type'] = array('attachment');
+                $args['posts_limit'] = $args['attachments_limit'];
+                $args['posts_limit_override'] = $args['attachments_limit_override'];
+                $args['post_not_in2'] = $args['attachment_exclude'];
 
                 $att_ind = new ASP_Search_INDEX($args);
                 $this->results = $att_ind->search($args['s']);
+                $this->results_count = $att_ind->results_count;
                 $this->return_count = count($this->results);
                 return $this->results;
             }
@@ -558,63 +562,30 @@ if (!class_exists('ASP_Search_ATTACHMENTS')) {
                 $r->content = ASP_Helpers::fixSSLURLs($r->content);
 
                 if ($args['attachment_use_image'] == 1 && $r->guid != "") {
-                    $r->image = '';
                     $image_settings = $sd['image_options'];
-                    if ( strpos($r->post_mime_type, 'image/') !== false ) {
-
-                        if ( $image_settings['image_source_featured'] == "original" ) {
-                            $r->image = wp_get_attachment_url($r->id);
-                        } else {
-                            $imx = wp_get_attachment_image_src(
-                                $r->id, $image_settings['image_source_featured'], false
-                            );
-                            if ( $imx !== false && isset($imx[0]) )
-                                $r->image = $imx[0];
-                        }
-
-                        if ($image_settings['image_cropping'] == 1) {
-                            if (strpos($r->image, "mshots/v1") === false) {
-                                $bfi_params = array('width'  => $image_settings['image_width'],
-                                                    'height' => $image_settings['image_height'],
-                                                    'crop'   => true
-                                );
-                                if (w_isset_def($image_settings['image_transparency'], 1) != 1)
-                                    $bfi_params['color'] = wpdreams_rgb2hex($image_settings['image_bg_color']);
-
-                                $r->image = bfi_thumb($r->image, $bfi_params);
-                            }
-                        }
-                    }
-
-                    if ( $r->image == '' && '' !== ($im = $this->getBFIimage( $r, false, false )) ) {
-                        if ( $image_settings['image_cropping'] == 0 ) {
-                            $r->image = $im;
-                        } else {
-                            if ( strpos( $im, "mshots/v1" ) === false && strpos( $im, ".gif" ) === false ) {
-                                $bfi_params = array( 'width'  => $image_settings['image_width'],
-                                                     'height' => $image_settings['image_height'],
-                                                     'crop'   => true
-                                );
-                                if ( w_isset_def( $image_settings['image_transparency'], 1 ) != 1 )
-                                    $bfi_params['color'] = wpdreams_rgb2hex( $image_settings['image_bg_color'] );
-
-                                $r->image = bfi_thumb( $im, $bfi_params );
-                            } else {
-                                $r->image = $im;
-                            }
-                        }
-                    }
-
-                    // Default, if defined and available
-                    if ( $r->image == '' && $image_settings['image_default'] != "" ) {
-                        for ( $i = 1; $i < 6; $i ++ ) {
-                            if ($image_settings['image_source' . $i] == 'default')
-                                $r->image = $image_settings['image_default'];
-                        }
-                    }
-                    if ( $r->image != '' ) {
-                        $r->image = ASP_Helpers::fixSSLURLs($r->image);
-                    }
+					$image_args = array(
+						'get_content' => false,
+						'get_excerpt' => false,
+						'image_sources' => array(
+							$image_settings['image_source1'],
+							$image_settings['image_source2'],
+							$image_settings['image_source3'],
+							$image_settings['image_source4'],
+							$image_settings['image_source5']
+						),
+						'image_source_size' => $image_settings['image_source_featured'] == "original" ? 'full' : $image_settings['image_source_featured'],
+						'image_default' => $image_settings['image_default'],
+						'image_number' => $sd['image_parser_image_number'],
+						'image_custom_field' => $image_settings['image_custom_field'],
+						'exclude_filenames' => $sd['image_parser_exclude_filenames'],
+						'image_width' => $image_settings['image_width'],
+						'image_height' => $image_settings['image_height'],
+						'apply_the_content' => $image_settings['apply_content_filter'],
+						'image_cropping' => $image_settings['image_cropping'],
+						'image_transparency' => $image_settings['image_transparency'],
+						'image_bg_color' => $image_settings['image_bg_color']
+					);
+					$r->image = ASP_Helpers::parseCPTImage($r, $image_args);
                 }
 
                 /* Remove the results in polaroid mode */

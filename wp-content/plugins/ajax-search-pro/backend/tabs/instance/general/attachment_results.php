@@ -1,13 +1,13 @@
 <div class="item">
 	<?php
-	$o = new wpdreamsYesNo("return_attachments", __('Return attachments as results?', 'ajax-search-pro'),
+	$o = new wpdreamsYesNo("return_attachments", __('Return media files as results?', 'ajax-search-pro'),
 		$sd['return_attachments']);
 	$params[$o->getName()] = $o->getData();
 	?>
 </div>
 <div wd-disable-on="return_attachments:0">
 <div class="item"><?php
-	$o = new wpdreamsCustomSelect("attachments_use_index", __('Search engine for attachments', 'ajax-search-pro'),
+	$o = new wpdreamsCustomSelect("attachments_use_index", __('Search engine for media', 'ajax-search-pro'),
 		array(
 			'selects' => array(
 				array('option' => 'Regular engine', 'value' => 'regular'),
@@ -67,13 +67,13 @@
 	</div>
 	<div class="item hide_on_att_index">
 		<?php
-		$o = new wd_Textarea_B64("attachment_mime_types", __('Allowed mime types', 'ajax-search-pro'),
+		$o = new wd_MimeTypeSelect("attachment_mime_types", __('Allowed mime types', 'ajax-search-pro'),
 			$sd['attachment_mime_types']);
 		$params[$o->getName()] = $o->getData();
 		?>
 		<p class="descMsg">
 			<?php echo sprintf( __('<strong>Comma separated list</strong> of allowed mime types. List of <a href="%s"
-	target="_blank">default allowed mime types</a> in WordPress.', 'ajax-search-pro'), 'https://codex.wordpress.org/Function_Reference/get_allowed_mime_types' ); ?>
+	target="_blank">default allowed mime types</a> in WordPress.', 'ajax-search-pro'), 'https://documentation.ajaxsearchpro.com/general-settings/search-in-attachments/mime-types-table' ); ?>
 		</p>
 	</div>
 </div>

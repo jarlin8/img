@@ -64,6 +64,13 @@ class WD_ASP_Globals {
     public $db;
 
     /**
+     * Instance of the REST API manager
+     *
+     * @var WD_ASP_Rest_Api
+     */
+    public $rest_api;
+
+    /**
      * Instance of the manager
      *
      * @var WD_ASP_Manager

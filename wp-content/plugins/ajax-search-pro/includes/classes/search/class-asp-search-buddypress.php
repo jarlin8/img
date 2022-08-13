@@ -268,7 +268,7 @@ if (!class_exists('ASP_Search_BUDDYPRESS')) {
                                 continue;
                             }
                             if ($groupresults[$k]->content != '')
-                                $groupresults[$k]->content = wd_substr_at_word(strip_tags($groupresults[$k]->content), $sd['descriptionlength']) . "...";
+                                $groupresults[$k]->content = wd_substr_at_word(strip_tags($groupresults[$k]->content), $sd['descriptionlength']);
 
                             // --------------------------------- DATE -----------------------------------
                             if ($sd["showdate"] == 1) {

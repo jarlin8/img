@@ -134,7 +134,7 @@ jQuery(function($){
                 this.initModuleEditor(_n);
 
                 // Coditional rules via attributes
-                WD_Helpers.Conditionals.init(_n.module);
+                WPD.Conditionals.init(_n.module);
             },
 
             initColumns: function(_n) {

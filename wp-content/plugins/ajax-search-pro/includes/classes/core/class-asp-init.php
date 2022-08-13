@@ -87,16 +87,26 @@ class WD_ASP_Init {
 	 * Fix known backwards incompatibilities, only running at plugin activation
 	 */
 	public function activation_only_backwards_compatibility_fixes() {
-		// 4.21 - Legacy scripts allowed on old installations
+		// Turn off the jquery script versions
 		$comp = wd_asp()->o['asp_compatibility'];
-		// Is this a not a new install, but the compatibility settings were never changed?
-		if (
-			!self::$new_install &&
-			ASP_Helpers::previousVersion('4.21', '<') &&
-			get_option('asp_compatibility', false) === false &&
-			$comp['js_source'] == 'jqueryless-min'
-		) {
-			wd_asp()->o['asp_compatibility']['js_source'] = 'min';
+		if ( !self::$new_install ) {
+			if ( $comp['js_source'] == 'min' || $comp['js_source'] == 'min-scoped' ) {
+				wd_asp()->o['asp_compatibility']['js_source'] = 'jqueryless-min';
+			} else if ( $comp['js_source'] == 'nomin' || $comp['js_source'] == 'nomin-scoped' ) {
+				wd_asp()->o['asp_compatibility']['js_source'] = 'jqueryless-nomin';
+			}
+			asp_save_option('asp_compatibility');
+		}
+		// Old way of reatining the browser back button to new one
+		if ( isset($comp['js_retain_popstate']) && $comp['js_retain_popstate'] == 1 ) {
+			foreach (wd_asp()->instances->get() as $si) {
+				$id = $si['id'];
+				$sd = $si['data'];
+				$sd['trigger_update_href'] = 1;
+				wd_asp()->instances->update($id, $sd);
+			}
+			unset($comp['js_retain_popstate']);
+			wd_asp()->o['asp_compatibility'] = $comp;
 			asp_save_option('asp_compatibility');
 		}
 	}
@@ -387,15 +397,7 @@ class WD_ASP_Init {
 	/**
 	 * Extra styles if needed..
 	 */
-	public function styles() {
-		// Fallback on IE<=8
-		if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT']) ) {
-			$comp_options = wd_asp()->o['asp_compatibility'];
-			if ( $comp_options['old_browser_compatibility'] == 1 ) {
-				return;
-			}
-		}
-	}
+	public function styles() {}
 
 	/**
 	 * Prints the scripts
@@ -455,8 +457,13 @@ class WD_ASP_Init {
 		}
 
 		$ajax_url = admin_url('admin-ajax.php');
-		if ( $comp_settings['usecustomajaxhandler'] == 1) {
-			$ajax_url = ASP_URL . 'ajax_search.php';
+		if ( !is_admin() ) {
+			if (  $comp_settings['usecustomajaxhandler'] == 1) {
+				$ajax_url = ASP_URL . 'ajax_search.php';
+			}
+			if ( wd_asp()->o['asp_caching']['caching'] == 1 && wd_asp()->o['asp_caching']['caching_method'] == 'sc_file' ) {
+				$ajax_url = ASP_URL . 'sc-ajax.php';
+			}
 		}
 
 		if (ASP_DEBUG < 1 && strpos($comp_settings['js_source'], "scoped") !== false) {
@@ -518,7 +525,7 @@ class WD_ASP_Init {
 		}
 
 		// The new variable is ASP
-		ASP_Helpers::addInlineScript($handle, 'ASP', array(
+		ASP_Helpers::objectToInlineScript($handle, 'ASP', array(
 			'wp_rocket_exception' => 'DOMContentLoaded',	// WP Rocket hack to prevent the wrapping of the inline script: https://docs.wp-rocket.me/article/1265-load-javascript-deferred
 			'ajaxurl' => $ajax_url,
 			'backend_ajaxurl' => admin_url('admin-ajax.php'),
@@ -532,9 +539,10 @@ class WD_ASP_Init {
 			'pageHTML' => '',
 			'additional_scripts' => $additional_scripts,
 			'script_async_load' => $js_async_load,
+			'font_url' =>  asp_is_asset_required('asppsicons2') ? str_replace('http:', "", plugins_url()). '/ajax-search-pro/css/fonts/icons/icons2.woff2' : false,
+			'init_only_in_viewport' => $comp_settings['init_instances_inviewport_only'] == 1,
 			'scrollbar' => $comp_settings['load_mcustom_js'] == "yes" && asp_is_asset_required('simplebar'),
 			'css_async' => $css_async_load,
-			'js_retain_popstate' => w_isset_def($comp_settings['js_retain_popstate'], 1),
 			'highlight' => array(
 				'enabled' => $single_highlight,
 				'data' => $single_highlight_arr
@@ -605,6 +613,17 @@ class WD_ASP_Init {
 				)
 			)
 		), 'before',true);
+
+		add_action('wp_print_footer_scripts', function() use($handle){
+			$script_data = wd_asp()->instances->get_script_data();
+			if ( count($script_data) > 0 ) {
+				$script = "window.ASP_INSTANCES = [];";
+				foreach ( $script_data as $id => $data ) {
+					$script .= "window.ASP_INSTANCES[$id] = $data;";
+				}
+				wp_add_inline_script($handle, $script, 'before');
+			}
+		}, 0);
 	}
 
 	/**
@@ -670,6 +689,7 @@ class WD_ASP_Init {
 			'asp_media_query',
 			'asp_performance_stats',
 			'asp_recently_updated',
+			'asp_fonts',
 			'_asp_tables',
 			'_asp_priority_groups',
 			'_asp_it_pool_sizes'

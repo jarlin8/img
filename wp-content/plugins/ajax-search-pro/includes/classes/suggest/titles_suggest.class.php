@@ -209,7 +209,7 @@ if (!class_exists('wpd_titlesKeywordSuggest')) {
                     if (
                         $q != $t  &&
                         !in_array($t, $this->res) &&
-                        ('' != $str = wd_substr_at_word($t, $this->maxCharsPerWord))
+                        ('' != $str = wd_substr_at_word($t, $this->maxCharsPerWord, ''))
                     ) {
 	                    if ($this->matchStart && ASP_mb::strpos($t, $q) === 0)
 		                    $this->res[] = $str;

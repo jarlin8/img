@@ -55,8 +55,10 @@ if (!class_exists("asp_statistics")) {
                     $where = " WHERE keyword NOT LIKE '[no keyword]' ";
             }
 
-            return $wpdb->get_results(
-                "SELECT $fields FROM " . wd_asp()->db->table('stats') . " " . $where . " $group_by ORDER BY num DESC LIMIT ".($count + 0)
+            return $wpdb->get_results($wpdb->prepare(
+                "SELECT $fields FROM " . wd_asp()->db->table('stats') . " " . $where . " $group_by ORDER BY num DESC LIMIT %d",
+				$count
+				)
                 ,ARRAY_A
             );
         }
@@ -79,8 +81,10 @@ if (!class_exists("asp_statistics")) {
                     $where = " WHERE keyword NOT LIKE '[no keyword]' ";
             }
 
-            return $wpdb->get_results(
-                "SELECT $fields FROM " . wd_asp()->db->table('stats') . " " . $where . " $group_by ORDER BY last_date DESC LIMIT ".($count + 0)
+            return $wpdb->get_results($wpdb->prepare(
+                "SELECT $fields FROM " . wd_asp()->db->table('stats') . " " . $where . " $group_by ORDER BY last_date DESC LIMIT %d",
+					$count
+				)
                 ,ARRAY_A
             );
         }

@@ -50,8 +50,7 @@ if (!class_exists("WD_ASP_Search_Handler")) {
             $sd = &$instance['data'];
 
             if (
-                wd_asp()->o['asp_caching']['caching'] == 1 &&
-                !($sd['showmoreresults'] == 1 && $sd['more_results_action'] == 'ajax')
+                wd_asp()->o['asp_caching']['caching'] == 1
             ) {
                 $this->printCache($options, $s, $id);
             }
@@ -114,13 +113,16 @@ if (!class_exists("WD_ASP_Search_Handler")) {
         }
 
         private function printCache($options, $s, $id) {
+			$o = $options;
             $this->cache = new wpd_TextCache(wd_asp()->upload_path, "xasp", wd_asp()->o['asp_caching']['cachinginterval'] * 60);
+			$call_num = $_POST['asp_call_num'] ?? 0;
 
-            $file_name = md5(json_encode($options) . $s . $id);
+			unset($o['filters_initial'], $o['filters_changed']);
+            $file_name = md5(json_encode($o) . $call_num . $s . $id);
 
-            if ( wd_asp()->o['asp_caching']['caching_method'] == 'file' ) {
-                $cache_content = $this->cache->getCache($file_name);
-            } else {
+            if ( wd_asp()->o['asp_caching']['caching_method'] == 'file' || wd_asp()->o['asp_caching']['caching_method'] == 'sc_file' ) {
+				$cache_content = $this->cache->getCache($file_name);
+			} else {
                 $cache_content = $this->cache->getDBCache($file_name);
             }
             if ( $cache_content !== false ) {
@@ -134,7 +136,10 @@ if (!class_exists("WD_ASP_Search_Handler")) {
 
         private function setCache($content) {
             if ( isset($this->cache) ) {
-                if ( wd_asp()->o['asp_caching']['caching_method'] == 'file' ) {
+                if (
+					wd_asp()->o['asp_caching']['caching_method'] == 'file' ||
+					wd_asp()->o['asp_caching']['caching_method'] == 'sc_file'
+				) {
                     return $this->cache->setCache('!!ASPSTART!!' . $content . "!!ASPEND!!");
                 } else {
                     return $this->cache->setDBCache('!!ASPSTART!!' . $content . "!!ASPEND!!");

@@ -8,6 +8,12 @@
     </p>
 </div>
 <div class="item">
+	<?php
+	$o = new wpdreamsYesNo("focus_on_pageload", __('Focus the search input when the page is loaded? (desktop devices only)', 'ajax-search-pro'), $sd['box_sett_hide_box']);
+	$params[$o->getName()] = $o->getData();
+	?>
+</div>
+<div class="item">
     <?php
     $o = new wpdreamsCustomSelect("box_alignment", __('Search box alignment', 'ajax-search-pro'),
         array(

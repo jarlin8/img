@@ -169,6 +169,14 @@ if (!class_exists('ASP_Search')) {
                     unset($this->_sr[$k]);
                 }
             }
+
+			/**
+			 * Reindex the arrays, in case there are missing keys from the previous removals
+			 */
+			if ( count($this->_s) > 0 ) {
+				$this->_s = array_values($this->_s);
+				$this->_sr = array_values($this->_sr);
+			}
         }
 
         /**
@@ -349,12 +357,12 @@ if (!class_exists('ASP_Search')) {
             $haystack = remove_accents(' '.trim($str).' ');
 
             // To prevent memory overflow, we need to limit the hay to relatively low count
-            $haystack = wd_substr_at_word(ASP_mb::strtolower($haystack), $str_length_limit);
+            $haystack = wd_substr_at_word(ASP_mb::strtolower($haystack), $str_length_limit, '');
             $needle = remove_accents(ASP_mb::strtolower($needle));
 
             if ( $needle == "" ) {
                 if ( ASP_mb::strlen($str) > $maxlength) {
-                    return wd_substr_at_word($str, $maxlength) . "...";
+                    return wd_substr_at_word($str, $maxlength);
                 } else {
                     return $str;
                 }
@@ -405,19 +413,19 @@ if (!class_exists('ASP_Search')) {
 
                 // Somewhere inbetween..
                 if ( $start != 0 && $end < $hay_length )
-                    return "..." . $result . "...";
+                    return "... " . $result . " ...";
 
                 // Beginning
                 if ( $start == 0 && $end < $hay_length )
-                    return $result . "...";
+                    return $result . " ...";
 
                 // End
                 if ( $start != 0 && $end == $hay_length )
-                    return "..." . $result;
+                    return "... " . $result;
 
                 // If it is too long, strip it
                 if ( ASP_mb::strlen($result) > $maxlength)
-                    return wd_substr_at_word( $result, $maxlength ) . "...";
+                    return wd_substr_at_word( $result, $maxlength );
 
                 // Else, it is the whole
                 return $result;
@@ -428,7 +436,7 @@ if (!class_exists('ASP_Search')) {
 
                 // If it is too long, strip it
                 if ( ASP_mb::strlen($str) > $maxlength)
-                    return wd_substr_at_word( $str, $maxlength ) . "...";
+                    return wd_substr_at_word( $str, $maxlength );
 
                 return $str;
             }

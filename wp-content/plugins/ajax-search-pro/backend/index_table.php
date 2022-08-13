@@ -1,6 +1,7 @@
 <?php
 /* Prevent direct access */
 defined('ABSPATH') or die("You can't access this file directly.");
+include_once(ASP_CLASSES_PATH . 'media/media.inc.php');
 
 $it_options = wd_asp()->o['asp_it_options'];
 $_args = array();
@@ -46,21 +47,13 @@ $_comp = wpdreamsCompatibility::Instance();
     </div>
     <?php return; ?>
 <?php endif; ?>
+	<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css'>
     <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/options_search.css?v='.ASP_CURR_VER; ?>" />
     <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/jquery-tagging/tag-basic-style.css?v='.ASP_CURR_VER; ?>" />
     <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/index-table/index_table.css?v='.ASP_CURR_VER; ?>" />
     <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/index-table/synonyms.css?v='.ASP_CURR_VER; ?>" />
     <div id='wpdreams' class='asp-be wpdreams wrap<?php echo isset($_COOKIE['asp-accessibility']) ? ' wd-accessible' : ''; ?>'>
-	<?php if ( wd_asp()->updates->needsUpdate() ): ?>
-        <p class='infoMsgBox'>
-            <?php echo sprintf( __('Version <strong>%s</strong> is available.', 'ajax-search-pro'),
-                wd_asp()->updates->getVersionString() ); ?>
-            <?php echo __('Download the new version from Codecanyon.', 'ajax-search-pro'); ?>
-            <a target="_blank" href="https://documentation.ajaxsearchpro.com/update_notes.html">
-                <?php echo __('How to update?', 'ajax-search-pro'); ?>
-            </a>
-        </p>
-	<?php endif; ?>
+		<?php if ( wd_asp()->updates->needsUpdate() ) { wd_asp()->updates->printUpdateMessage(); } ?>
 
         <?php if ( $_comp->has_errors() ): ?>
             <div class="wpdreams-box errorbox">
@@ -105,17 +98,47 @@ $_comp = wpdreamsCompatibility::Instance();
                         ));
                     ?>
                 </div>
+				<fieldset id="it_media_service">
+					<legend>
+						<?php echo __('Media Service - External File indexing feature (optional)', 'ajax-search-pro'); ?>
+						<span class="asp_legend_docs">
+						<a target="_blank" href="#"><span class="fa fa-book"></span>What is this?</a>
+						<a target="_blank" href="https://documentation.ajaxsearchpro.com/index-table/media-parser-subscription-feature"><span class="fa fa-book"></span>Documentation</a>
+					</span>
+					</legend>
+					<div class="item">
+						<?php new wd_MSLicenseActivator('', '', array()); ?>
+						<p class="descMsg">
+							<?php echo __('The <strong>Media Service</strong> is an external feature to handle very accurate file content indexing.', 'ajax-search-pro'); ?>
+							<?php echo sprintf( __('For more details, check the <a href="%s" target="_blank">addon page</a>.<br>There is a <strong>FREE</strong> version available as well.', 'ajax-search-pro'),
+								'https://ajaxsearchpro.com/media-service-subscription-addon/?ref=asp_backend' ); ?>
+							<?php echo sprintf( __('The documentation on how to activate, can be found <a href="%s" target="_blank">here</a>.', 'ajax-search-pro'),
+								'https://documentation.ajaxsearchpro.com/index-table/media-parser-subscription-feature' ); ?>
+						</p>
+					</div>
+					<div class="item">
+						<?php $o = new wpdreamsCustomSelect("it_media_service_send_file", "Media Service File Access Method",
+							array(
+								'selects' => array(
+									array("option" => esc_attr__('Send the file to the server (recommended)', 'ajax-search-pro'), "value" => 1),
+									array("option" => esc_attr__('Send only the URL to download the file', 'ajax-search-pro'), "value" => 0),
+								),
+								'value' => $it_options['it_media_service_send_file']
+							)
+						); ?>
+					</div>
+				</fieldset>
                 <fieldset id="it_file_indexing">
                     <legend><?php echo __('File indexing options', 'ajax-search-pro'); ?></legend>
                     <div class="item">
-                        <?php $o = new wd_TextareaExpandable("it_attachment_mime_types", __('Attachment mime types to index', 'ajax-search-pro'),
-                            $it_options['it_attachment_mime_types']
-                        ); ?>
-                        <p class="descMsg">
-                            <?php echo __('<strong>Comma separated list</strong> of allowed mime types.', 'ajax-search-pro'); ?>
-                            <?php echo sprintf( __('List of <a href="%s" target="_blank">default allowed mime types</a> in WordPress.', 'ajax-search-pro'),
-                                'https://codex.wordpress.org/Function_Reference/get_allowed_mime_types' ); ?>
-                        </p>
+						<?php $o = new wd_MimeTypeSelect("it_attachment_mime_types", __('Media mime types to index', 'ajax-search-pro'),
+							$it_options['it_attachment_mime_types']
+						); ?>
+						<p class="descMsg">
+							<?php echo __('<strong>Comma separated list</strong> of allowed mime types.', 'ajax-search-pro'); ?>
+							<?php echo sprintf( __('List of <a href="%s" target="_blank">default allowed mime types</a> in WordPress.', 'ajax-search-pro'),
+								'https://documentation.ajaxsearchpro.com/general-settings/search-in-attachments/mime-types-table' ); ?>
+						</p>
                     </div>
                     <div class="item">
                         <div class="descMsg">
@@ -123,7 +146,8 @@ $_comp = wpdreamsCompatibility::Instance();
                             <?php echo __('The plugin uses external libraries as well as internal methods to get the best results, however it is still possible that some information might not be extracted properly.', 'ajax-search-pro'); ?>
                         </div>
                     </div>
-                    <div class="item item-flex-nogrow  item-flex-wrap item-conditional">
+
+                    <div class="item item-flex-nogrow  item-flex-wrap item-conditional"  wd-show-on="multi_attachment_mime_types_5:pdf">
                         <?php $o = new wpdreamsYesNo("it_index_pdf_content", __('Index PDF file contents?', 'ajax-search-pro'),
                             $it_options['it_index_pdf_content']
                         );
@@ -142,12 +166,12 @@ $_comp = wpdreamsCompatibility::Instance();
                             <?php echo __('When set to \'Auto\', the plugin will try both methods if possible.', 'ajax-search-pro'); ?>
                         </div>
                     </div>
-                    <div class="item">
+                    <div class="item" wd-show-on="multi_attachment_mime_types_7:text">
                         <?php $o = new wpdreamsYesNo("it_index_text_content", __('Index Text file contents?', 'ajax-search-pro'),
                             $it_options['it_index_text_content']
                         ); ?>
                     </div>
-                    <div class="item">
+                    <div class="item" wd-show-on="multi_attachment_mime_types_7:richtext">
                         <?php $o = new wpdreamsYesNo("it_index_richtext_content", __('Index RichText file contents?', 'ajax-search-pro'),
                             $it_options['it_index_richtext_content']
                         ); ?>
@@ -158,17 +182,17 @@ $_comp = wpdreamsCompatibility::Instance();
                     <?php if( !class_exists('DOMDocument') ): ?>
                         <div class="errorMsg">NOTICE: The <a href="https://www.google.com/search?q=enable%20DOMDocument%20php" target="_blank">DOMDocument</a> module is not enabled on your server. The Office document parsers will not work without it!</div>
                     <?php endif; ?>
-                    <div class="item">
+                    <div class="item" wd-show-on="multi_attachment_mime_types_7:mso_word">
                         <?php $o = new wpdreamsYesNo("it_index_msword_content", __('Index Office Word document contents?', 'ajax-search-pro'),
                             $it_options['it_index_msword_content']
                         ); ?>
                     </div>
-                    <div class="item">
+                    <div class="item" wd-show-on="multi_attachment_mime_types_7:mso_excel">
                         <?php $o = new wpdreamsYesNo("it_index_msexcel_content", __('Index Office Excel document contents?', 'ajax-search-pro'),
                             $it_options['it_index_msexcel_content']
                         ); ?>
                     </div>
-                    <div class="item">
+                    <div class="item" wd-show-on="multi_attachment_mime_types_7:mso_powerpoint">
                         <?php $o = new wpdreamsYesNo("it_index_msppt_content", __('Index Office PowerPoint document contents?', 'ajax-search-pro'),
                             $it_options['it_index_msppt_content']
                         ); ?>
@@ -265,6 +289,12 @@ $_comp = wpdreamsCompatibility::Instance();
                         $it_options['it_extract_iframes']
                     ); ?>
                     <p class="descMsg"><?php echo __('Will try parsing IFRAME sources and extracting them. This <strong>may not work</strong> in some cases.', 'ajax-search-pro'); ?></p>
+                </div>
+                <div class="item">
+                    <?php $o = new wpdreamsYesNo("it_extract_gutenberg_blocks", __('Execute Gutenberg Editor Blocks?', 'ajax-search-pro'),
+                        $it_options['it_extract_gutenberg_blocks']
+                    ); ?>
+                    <p class="descMsg"><?php echo __('Will execute and parse contents of Gutenberg Editor Blocks.', 'ajax-search-pro'); ?></p>
                 </div>
                 <div class="item">
                     <?php $o = new wpdreamsYesNo("it_extract_shortcodes", __('Execute shortcodes?', 'ajax-search-pro'),
@@ -417,6 +447,7 @@ $_comp = wpdreamsCompatibility::Instance();
                     'it_index_msword_content' => $_POST['it_index_msword_content'],
                     'it_index_msexcel_content' => $_POST['it_index_msexcel_content'],
                     'it_index_msppt_content' => $_POST['it_index_msppt_content'],
+                    'it_media_service_send_file' => $_POST['it_media_service_send_file'],
 
                     'it_index_customfields' => $_POST['it_index_customfields'],
                     'it_post_statuses' => $_POST['it_post_statuses'],
@@ -429,6 +460,7 @@ $_comp = wpdreamsCompatibility::Instance();
                     'it_stopwords' => $_POST['it_stopwords'],
                     'it_min_word_length' => $_POST['it_min_word_length'],
                     'it_extract_iframes' => $_POST['it_extract_iframes'],
+                    'it_extract_gutenberg_blocks' => $_POST['it_extract_gutenberg_blocks'],
                     'it_extract_shortcodes' => $_POST['it_extract_shortcodes'],
                     'it_exclude_shortcodes' => $_POST['it_exclude_shortcodes'],
                     'it_index_on_save' => $_POST['it_index_on_save'],
@@ -572,6 +604,13 @@ $_comp = wpdreamsCompatibility::Instance();
             </ul>
         </p>
     </div>
+	<div id="it_media_service_modal">
+		<p><?php echo __("It looks like you are planning on indexing media file contents.", 'ajax-search-pro'); ?></p>
+		<p><?php echo __("There is a <strong>Media Service</strong> feature to handle more accurate file indexing, and there is a <strong>FREE</strong> version available as well! (no credit card required!)", 'ajax-search-pro'); ?></p>
+		<p><?php echo __("Click", 'ajax-search-pro'); ?>&nbsp;
+			<a href="https://ajaxsearchpro.com/media-service-subscription-addon/?ref=asp_backend_popup" id="asp_media_service_link" target="_blank"><?php echo __("this link", 'ajax-search-pro'); ?></a>&nbsp;<?php echo __("or the blue button below to find out more.", 'ajax-search-pro'); ?>&nbsp;</p>
+		</p>
+	</div>
 </div>
 <?php
 $media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_option("asp_media_query", "defn");
@@ -599,13 +638,16 @@ wp_localize_script('asp-backend-synonyms', 'ASP_SYN_MSG', array(
 wp_enqueue_script('asp-backend-index-table', plugin_dir_url(__FILE__) . 'settings/assets/index_table.js', array(
     'jquery', 'wpdreams-tabs'
 ), $media_query, true);
-ASP_Helpers::addInlineScript('asp-backend-index-table', 'ASP_IT', array(
+ASP_Helpers::objectToInlineScript('asp-backend-index-table', 'ASP_IT', array(
     "current_blog_id" => array(get_current_blog_id()),
     "first_index" => $index_obj->isEmpty() && !isset($_COOKIE['_asp_first_index']) ? 1 : 0
 ));
 wp_localize_script('asp-backend-index-table', 'ASP_IT_MSG', array(
     "mod_ms1" => __('Okay!', 'ajax-search-pro'),
+	"mod_ms2" => __('Yes, take me there!', 'ajax-search-pro'),
+	"mod_ms3" => __('Maybe later', 'ajax-search-pro'),
     "mod_h1" => __('Congratulations, but wait!', 'ajax-search-pro'),
+    "mod_h2" => __('Did you know?', 'ajax-search-pro'),
     "msg_pro" => __('Progress:', 'ajax-search-pro'),
     "msg_kwf" => __('Keywords found so far:', 'ajax-search-pro'),
     "msg_blo" => __('Processing blog no.', 'ajax-search-pro'),

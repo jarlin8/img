@@ -64,7 +64,7 @@ if (!class_exists('wpd_google_placesKeywordSuggest')) {
                     $t = ASP_mb::strtolower($keyword['description']);
                     if (
                         $t != $q &&
-                        ('' != $str = wd_substr_at_word($keyword['description'], $this->maxCharsPerWord))
+                        ('' != $str = wd_substr_at_word($keyword['description'], $this->maxCharsPerWord, ''))
                     ) {
                         if ($this->matchStart && strpos($t, ASP_mb::strtolower($q)) === 0)
                             $res[] = $str;

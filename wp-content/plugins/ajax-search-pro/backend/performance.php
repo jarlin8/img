@@ -13,16 +13,7 @@ $_comp = wpdreamsCompatibility::Instance();
 
 <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/options_search.css?v='.ASP_CURR_VER; ?>" />
 <div id='wpdreams' class='asp-be wpdreams asp_performance wrap<?php echo isset($_COOKIE['asp-accessibility']) ? ' wd-accessible' : ''; ?>'>
-	<?php if ( wd_asp()->updates->needsUpdate() ): ?>
-        <p class='infoMsgBox'>
-            <?php echo sprintf( __('Version <strong>%s</strong> is available.', 'ajax-search-pro'),
-                wd_asp()->updates->getVersionString() ); ?>
-            <?php echo __('Download the new version from Codecanyon.', 'ajax-search-pro'); ?>
-            <a target="_blank" href="https://documentation.ajaxsearchpro.com/update_notes.html">
-                <?php echo __('How to update?', 'ajax-search-pro'); ?>
-            </a>
-        </p>
-	<?php endif; ?>
+	<?php if ( wd_asp()->updates->needsUpdate() ) { wd_asp()->updates->printUpdateMessage(); } ?>
 
     <?php if ( $_comp->has_errors() ): ?>
         <div class="wpdreams-box errorbox">

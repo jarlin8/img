@@ -89,8 +89,8 @@
             },
             "missing_response": {
                 "msg": "The response data is missing from the ajax request!\n" +
-                "This could mean a server related issue.\n\n" +
-                "Check your .htaccess configuration and try disabling all other plugins to see if the problem persists.",
+                    "This could mean a server related issue.\n\n" +
+                    "Check your .htaccess configuration and try disabling all other plugins to see if the problem persists.",
                 "raised": false,
                 "repeat": true,
                 "force": false
@@ -237,11 +237,11 @@
 
             // Results information box original texts
             $this.resInfoBoxTxt =
-                $this.n.resultsDiv.find('.asp_results_top p.asp_rt_phrase').length > 0 ?
-                    $this.n.resultsDiv.find('.asp_results_top p.asp_rt_phrase').html() : '';
+                $this.n.resultsDiv.find('.asp_results_top .asp_rt_phrase').length > 0 ?
+                    $this.n.resultsDiv.find('.asp_results_top .asp_rt_phrase').html() : '';
             $this.resInfoBoxTxtNoPhrase =
-                $this.n.resultsDiv.find('.asp_results_top p.asp_rt_nophrase').length > 0 ?
-                    $this.n.resultsDiv.find('.asp_results_top p.asp_rt_nophrase').html() : '';
+                $this.n.resultsDiv.find('.asp_results_top .asp_rt_nophrase').length > 0 ?
+                    $this.n.resultsDiv.find('.asp_results_top .asp_rt_nophrase').html() : '';
 
             // Repetitive call related
             $this.call_num = 0;
@@ -301,8 +301,7 @@
             $this.disableMobileScroll = false;
 
             // Browser back button detection and
-            if ( ASP.js_retain_popstate == 1 )
-                $this.initPrevState();
+            $this.initPrevState();
 
             // Fixes the fixed layout mode if compact mode is active and touch device fixes
             $this.initCompact();
@@ -515,51 +514,6 @@
             }
         },
 
-        _initSettingsBox: function() {
-            var $this = this;
-
-            if ( isMobile() && $this.o.mobile.force_sett_hover == 1) {
-                $this.n.searchsettings.attr(
-                    "id",
-                    $this.n.searchsettings.attr("id").replace('probsettings', 'prosettings')
-                );
-                $this.n.searchsettings.removeClass('asp_sb asp_sb_' + $this.o.id + ' asp_sb_' + $this.o.rid);
-                $this.n.searchsettings.addClass('asp_s asp_s_' + $this.o.id + ' asp_s_' + $this.o.rid);
-                $this.n.searchsettings.detach().appendTo("body");
-                $this.n.searchsettings.css({
-                    'position': 'absolute'
-                });
-                $this.o.blocking = false;
-                $this.detectAndFixFixedPositioning();
-                return true;
-            }
-
-            if ($this.n.settingsAppend.length > 0) {
-                /*
-                 When the search settings is set to hovering, but the settings
-                 shortcode is used, we need to force the blocking behavior,
-                 since the user expects it.
-                 */
-
-                // There is already a results box there
-                if ( $this.n.settingsAppend.find('.asp_w').length > 0 ) {
-                    $this.n.searchsettings = $this.n.settingsAppend.find('.asp_w');
-                } else {
-                    if ( $this.o.blocking == false ) {
-                        $this.n.searchsettings.attr(
-                            "id",
-                            $this.n.searchsettings.attr("id").replace('prosettings', 'probsettings')
-                        );
-                        $this.o.blocking = true;
-                    }
-                    $this.n.searchsettings.detach().appendTo($this.n.settingsAppend);
-                }
-
-            } else if ($this.o.blocking == false) {
-                $this.n.searchsettings.detach().appendTo("body");
-            }
-        },
-
         initSettingsBox: function() {
             var $this = this;
             var appendSettingsTo = function($el) {
@@ -613,8 +567,13 @@
             } else {
                 if ( $this.n.settingsAppend.length > 0 ) {
                     // There is already a results box there
-                    if ( $this.n.settingsAppend.find('.asp_w').length > 0 ) {
-                        $this.n.searchsettings = $this.n.settingsAppend.find('.asp_w');
+                    if ( $this.n.settingsAppend.find('.asp_ss_' + $this.o.id).length > 0 ) {
+                        $this.n.searchsettings = $this.n.settingsAppend.find('.asp_ss_' + $this.o.id);
+                        if ( typeof $this.n.searchsettings.get(0).referenced !== 'undefined' ) {
+                            ++$this.n.searchsettings.get(0).referenced;
+                        } else {
+                            $this.n.searchsettings.get(0).referenced = 1;
+                        }
                     } else {
                         if ( $this.o.blocking == false ) {
                             makeSetingsBlock();
@@ -628,43 +587,6 @@
             }
 
             $this.n.searchsettings.get(0).id = $this.n.searchsettings.get(0).id.replace('__original__', '');
-        },
-
-        _initResultsBox: function() {
-            var $this = this;
-
-            if ( isMobile() && $this.o.mobile.force_res_hover == 1) {
-                $this.o.resultsposition = 'hover';
-                $this.n.resultsDiv.detach().appendTo("body");
-                $this.n.resultsDiv.css({
-                    'position': 'absolute'
-                });
-                $this.detectAndFixFixedPositioning();
-            } else {
-                // Move the results div to the correct position
-                if ($this.o.resultsposition == 'hover' && $this.n.resultsAppend.length <= 0) {
-                    $this.n.resultsDiv.detach().appendTo("body");
-                } else  {
-                    $this.o.resultsposition = 'block';
-                    $this.n.resultsDiv.css({
-                        'position': 'static'
-                    });
-                    if ( $this.n.resultsAppend.length > 0  ) {
-                        if ( $this.n.resultsAppend.find('.asp_w').length > 0 ) {
-                            $this.n.resultsDiv = $this.n.resultsAppend.find('.asp_w');
-                            $this.n.showmore = $('.showmore', $this.n.resultsDiv);
-                            $this.n.items = $('.item', $this.n.resultsDiv).length > 0 ? $('.item', $this.n.resultsDiv) : $('.photostack-flip', $this.n.resultsDiv);
-                            $this.n.results = $('.results', $this.n.resultsDiv);
-                            $this.n.resdrg = $('.resdrg', $this.n.resultsDiv);
-                        } else {
-                            $this.n.resultsDiv.detach().appendTo($this.n.resultsAppend);
-                        }
-                    } else {
-                        $this.n.resultsDiv.detach().insertAfter($this.n.search);
-                    }
-
-                }
-            }
         },
 
         initResultsBox: function() {
@@ -690,8 +612,13 @@
                         'position': 'static'
                     });
                     if ( $this.n.resultsAppend.length > 0  ) {
-                        if ( $this.n.resultsAppend.find('.asp_w').length > 0 ) {
-                            $this.n.resultsDiv = $this.n.resultsAppend.find('.asp_w');
+                        if ( $this.n.resultsAppend.find('.asp_r_' + $this.o.id).length > 0 ) {
+                            $this.n.resultsDiv = $this.n.resultsAppend.find('.asp_r_' + $this.o.id);
+                            if ( typeof $this.n.resultsDiv.get(0).referenced !== 'undefined' ) {
+                                ++$this.n.resultsDiv.get(0).referenced;
+                            } else {
+                                $this.n.resultsDiv.get(0).referenced = 1;
+                            }
                             $this.n.showmore = $('.showmore', $this.n.resultsDiv);
                             $this.n.items = $('.item', $this.n.resultsDiv).length > 0 ? $('.item', $this.n.resultsDiv) : $('.photostack-flip', $this.n.resultsDiv);
                             $this.n.results = $('.results', $this.n.resultsDiv);
@@ -970,6 +897,9 @@
             var x = setInterval(function(){
                 if ( !window.ASP.css_async || typeof window.ASP.css_loaded != 'undefined' ) {
                     $this.isAutoP = true;
+                    if ( $this.o.compact.enabled == 1 ) {
+                        $this.openCompact();
+                    }
                     if ($this.o.autop.state == "phrase") {
                         $this.n.text.val($this.o.autop.phrase);
                         $this.search(count);
@@ -1049,8 +979,8 @@
             // GTAG on results click
             $this.n.resultsDiv.on('click', '.results .item', function() {
                 $this.gaEvent('result_click', {
-                   'result_title': $(this).find('a.asp_res_url').text(),
-                   'result_url': $(this).find('a.asp_res_url').attr('href')
+                    'result_title': $(this).find('a.asp_res_url').text(),
+                    'result_url': $(this).find('a.asp_res_url').attr('href')
                 });
 
                 // Results highlight on results page
@@ -2080,34 +2010,6 @@
             var $this = this;
             if ($this.o.resultstype == "isotopic") {
                 if ($this.o.isotopic.showOverlay) {
-                    // IOS does not trigget mouseup after mouseenter, so the user has to tap again to redirect
-                    if ( !detectIOS() ) {
-                        $this.n.resultsDiv.on('mouseenter', 'div.item', function () {
-                            $('.asp_item_overlay', this).stop().fadeIn();
-                            if ($(".asp_image", this).length > 0) {
-                                if ($this.o.isotopic.blurOverlay)
-                                    $('.asp_item_overlay_img', this).stop().fadeIn();
-                                if ($this.o.isotopic.hideContent)
-                                    $('.asp_content', this).stop().slideUp(100);
-                            }
-                        });
-                        $this.n.resultsDiv.on('mouseleave', 'div.item', function () {
-                            $('.asp_item_overlay', this).stop().fadeOut();
-                            if ($(".asp_image", this).length > 0) {
-                                if ($this.o.isotopic.blurOverlay)
-                                    $('.asp_item_overlay_img', this).stop().fadeOut();
-                                if ($this.o.isotopic.hideContent && $(".asp_image", this).length > 0)
-                                    $('.asp_content', this).stop().slideDown(100);
-                            }
-                        });
-                        $this.n.resultsDiv.on('mouseenter', 'div.asp_item_inner', function () {
-                            $(this).addClass('animated pulse');
-                        });
-                        $this.n.resultsDiv.on('mouseleave', 'div.asp_item_inner', function () {
-                            $(this).removeClass('animated pulse');
-                        });
-                    }
-
                     $this.n.resultsDiv.on('click', '.asp_isotopic_item', function(e){
                         // Method to preserve _blank, jQuery click() method only triggers event handlers
                         if ( !$this.dragging ) {
@@ -2121,7 +2023,6 @@
                     });
                 }
             }
-
         },
 
         initNoUIEvents: function () {
@@ -2314,10 +2215,10 @@
                             theme: 'flat',
                             allowClear: $(this).find('option[value=""]').length > 0,
                             "language": {
-                                   "noResults": function(){
-                                       return $this.o.select2.nores;
-                                   }
-                               }
+                                "noResults": function(){
+                                    return $this.o.select2.nores;
+                                }
+                            }
                         });
                         $(this).find('option[value="____temp_empty____"]').val('');
                     });
@@ -2510,8 +2411,8 @@
             if ( $b.find('.asp_arrow_box').length === 0 ) {
                 $b.append( "<div class='asp_arrow_box'></div>" );
                 $b.find('.asp_arrow_box').on('mouseout', function(){
-                     $this.hideArrowBox();
-                 });
+                    $this.hideArrowBox();
+                });
             }
             var $box = $b.find('.asp_arrow_box');
             // getBoundingClientRect() is not giving correct values, use different method
@@ -2586,8 +2487,22 @@
             Object.keys($this.n).forEach(function(k){
                 $this.n[k].off();
             });
-            $this.n.searchsettings.remove();
-            $this.n.resultsDiv.remove();
+            if ( typeof $this.n.searchsettings.get(0).referenced !== 'undefined' ) {
+                --$this.n.searchsettings.get(0).referenced;
+                if ( $this.n.searchsettings.get(0).referenced < 0 ) {
+                    $this.n.searchsettings.remove();
+                }
+            } else {
+                $this.n.searchsettings.remove();
+            }
+            if ( typeof $this.n.resultsDiv.get(0).referenced !== 'undefined' ) {
+                --$this.n.resultsDiv.get(0).referenced;
+                if ( $this.n.resultsDiv.get(0).referenced < 0 ) {
+                    $this.n.resultsDiv.remove();
+                }
+            } else {
+                $this.n.resultsDiv.remove();
+            }
             $this.n.trythis.remove();
             $this.n.search.remove();
             $this.n.container.remove();
@@ -3236,6 +3151,7 @@
 
             if (
                 !$this.resultsOpened ||
+                $this.call_num > 1 ||
                 $this.o.scrollToResults.enabled !=1 ||
                 this.$elem.parent().hasClass("asp_preview_data") ||
                 this.o.compact.enabled == 1 ||
@@ -4319,10 +4235,10 @@
 
             if ( $(selector).length < 1 ) {
                 $.each(altSel, function(i, s){
-                   if ( $(s).length > 0 ) {
-                       selector = s;
-                       return false;
-                   }
+                    if ( $(s).length > 0 ) {
+                        selector = s;
+                        return false;
+                    }
                 });
                 if ( $(selector).length < 1 ) {
                     console.log('Ajax Search Pro: The live search selector does not exist on the page.');

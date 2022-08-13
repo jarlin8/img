@@ -37,6 +37,14 @@
 		<div class="clear"></div>
 		</p>
 	</div>
+	<div class="item">
+		<?php $o = new wpdreamsYesNo("init_instances_inviewport_only", __('Initialize search instances only when they get visible on the viewport?', 'ajax-search-pro'),
+			$com_options['init_instances_inviewport_only']
+		); ?>
+		<p class='descMsg'>
+			<?php echo __('Lazy loader for the search initializer script. It can reduce the initial javascript thread work and increase the google lighthouse score.', 'ajax-search-pro'); ?>
+		</p>
+	</div>
     <div class="item">
         <?php
         $o = new wpdreamsCustomSelect("load_mcustom_js", __('Load the scrollbar script?', 'ajax-search-pro'), array(

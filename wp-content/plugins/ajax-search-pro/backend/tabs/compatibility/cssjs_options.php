@@ -7,17 +7,6 @@
     </p>
 </div>
 <div class="item">
-    <p class='infoMsg'>
-        <?php echo __('You can turn some of these off, if you are not using them.', 'ajax-search-pro'); ?>
-    </p>
-    <?php $o = new wpdreamsYesNo("js_retain_popstate", __('Remember search phrase and options when using the Browser Back button?', 'ajax-search-pro'),
-        $com_options['js_retain_popstate']
-    ); ?>
-    <p class='descMsg'>
-        <?php echo __('Whenever the user clicks on a live search result, and decides to navigate back, the search will re-trigger and reset the previous options.', 'ajax-search-pro'); ?>
-    </p>
-</div>
-<div class="item">
     <?php $o = new wpdreamsYesNo("detect_ajax", __('Try to re-initialize if the page was loaded via ajax?', 'ajax-search-pro'),
         $com_options['detect_ajax']
     ); ?>

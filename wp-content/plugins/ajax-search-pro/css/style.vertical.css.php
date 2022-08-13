@@ -152,6 +152,61 @@ defined('ABSPATH') or die("You can't access this file directly.");
     <?php echo ASP_Helpers::font($style['groupbytextfont']); ?>
 }
 
+<?php if ($use_compatibility == true): ?>
+<?php echo $asp_res_ids1; ?>.vertical .results,
+<?php echo $asp_res_ids2; ?>.vertical .results,
+<?php endif; ?>
+<?php echo $asp_res_ids; ?>.vertical .results {
+	scrollbar-width: thin;
+	scrollbar-color: <?php echo wpd_gradient_get_color_only($style['h_res_overflow_color']); ?> <?php echo $style['resultscontainerbackground']; ?>;
+}
+<?php if ($use_compatibility == true): ?>
+<?php echo $asp_res_ids1; ?>.vertical .results::-webkit-scrollbar,
+<?php echo $asp_res_ids2; ?>.vertical .results::-webkit-scrollbar,
+<?php endif; ?>
+<?php echo $asp_res_ids; ?>.vertical .results::-webkit-scrollbar {
+	width: 7px;
+}
+
+<?php if ($use_compatibility == true): ?>
+<?php echo $asp_res_ids1; ?>.vertical .results::-webkit-scrollbar-track,
+<?php echo $asp_res_ids2; ?>.vertical .results::-webkit-scrollbar-track,
+<?php endif; ?>
+<?php echo $asp_res_ids; ?>.vertical .results::-webkit-scrollbar-track {
+	background: <?php echo $style['resultscontainerbackground']; ?>;
+}
+<?php if ($use_compatibility == true): ?>
+<?php echo $asp_res_ids1; ?>.vertical .results::-webkit-scrollbar-thumb,
+<?php echo $asp_res_ids2; ?>.vertical .results::-webkit-scrollbar-thumb,
+<?php endif; ?>
+<?php echo $asp_res_ids; ?>.vertical .results::-webkit-scrollbar-thumb {
+	<?php if ($style['v_res_overflow_autohide']): ?>
+	background: transparent;
+	<?php else: ?>
+	background: <?php echo wpd_gradient_get_color_only($style['v_res_overflow_color']); ?>;
+	<?php endif; ?>
+	border-radius: 5px;
+	border: none;
+}
+<?php if ($style['v_res_overflow_autohide']): ?>
+	<?php if ($use_compatibility == true): ?>
+	<?php echo $asp_res_ids1; ?>.vertical:hover .results::-webkit-scrollbar-thumb,
+	<?php echo $asp_res_ids2; ?>.vertical:hover .results::-webkit-scrollbar-thumb,
+	<?php endif; ?>
+	<?php echo $asp_res_ids; ?>.vertical:hover .results::-webkit-scrollbar-thumb {
+		background: <?php echo wpd_gradient_get_color_only($style['v_res_overflow_color']); ?>;
+	}
+	@media (hover: none), (max-width: 500px) {
+		<?php if ($use_compatibility == true): ?>
+		<?php echo $asp_res_ids1; ?>.vertical .results::-webkit-scrollbar-thumb,
+		<?php echo $asp_res_ids2; ?>.vertical .results::-webkit-scrollbar-thumb,
+		<?php endif; ?>
+		<?php echo $asp_res_ids; ?>.vertical .results::-webkit-scrollbar-thumb {
+			background: <?php echo wpd_gradient_get_color_only($style['v_res_overflow_color']); ?>;
+		}
+	}
+<?php endif; ?>
+
 
 <?php
 // ----------------------------------------- TABLET SPECIFIC STYLES ----------------------------------------------------

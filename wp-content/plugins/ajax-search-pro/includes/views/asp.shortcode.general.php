@@ -34,16 +34,12 @@ foreach ( wd_asp()->front_filters->get('position', 'generic') as $filter ) {
                 break;
         }
         ?>
-        <div class="asp_option hiddend" aria-hidden="true">
-            <div class="asp_option_inner">
-                <input type="checkbox" value="<?php echo esc_attr($fe_field); ?>" id="set_<?php echo esc_attr($fe_field).$id; ?>"
-                       <?php echo $_chkd !='' ? 'data-origvalue="1"' : ''; ?>
-                       name="asp_gen[]" <?php echo $_chkd; ?>/>
-                <label for="set_<?php echo esc_attr($fe_field).$id; ?>">
-                    <?php echo asp_icl_t('Hidden label (' . $id . ')', 'Hidden label'); ?>
-                </label>
-            </div>
-        </div>
+
+		<input type="checkbox" value="<?php echo esc_attr($fe_field); ?>"
+			   id="set_<?php echo esc_attr($fe_field).$id; ?>"
+			   style="display:none;"
+			   <?php echo $_chkd !='' ? 'data-origvalue="1"' : ''; ?>
+			   name="asp_gen[]" <?php echo $_chkd; ?>/>
     <?php }
 
     include(ASP_Helpers::aspTemplateFilePath('filters/generic/asp-generic-footer.php'));

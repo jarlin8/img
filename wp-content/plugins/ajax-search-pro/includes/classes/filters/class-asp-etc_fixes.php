@@ -21,6 +21,9 @@ if (!class_exists("WD_ASP_EtcFixes_Filter")) {
          */
         protected static $_instance;
 
+		protected static $diviElementsLoaded = false;
+
+
         /**
          * Fix for the Download Monitor plugin download urls
          *
@@ -155,6 +158,34 @@ if (!class_exists("WD_ASP_EtcFixes_Filter")) {
 			}
 
 			return $args;
+		}
+
+		public function diviBuilderReady() {
+			WD_ASP_EtcFixes_Filter::$diviElementsLoaded = true;
+		}
+
+		/**
+		 * Init DIVI builder modules for index table save process on the front-end divi editor screen
+		 */
+		function diviInitModules( $content ) {
+			if ( !self::$diviElementsLoaded && function_exists('et_builder_add_main_elements') ) {
+				if (
+					( isset($_POST['action']) && $_POST['action'] == 'et_fb_ajax_save' )
+				) {
+					self::$diviElementsLoaded = true;
+					et_builder_add_main_elements();
+				}
+			}
+
+			return $content;
+		}
+
+		/**
+		 * Init DIVI builder modules for index table ajax process
+		 */
+		function diviInitModulesOnAjax( $actions ) {
+			$actions[] = 'asp_indextable_admin_ajax';
+			return $actions;
 		}
 
         // ------------------------------------------------------------

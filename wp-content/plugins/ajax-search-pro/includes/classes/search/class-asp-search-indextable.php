@@ -53,17 +53,7 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 				return array();
 
 			$aspdb = wd_asp()->tables;
-			if ( isset($args["_sd"]) )
-				$sd = &$args["_sd"];
-			else
-				$sd = array();
-
-			// General variables
-			$parts = array();
-			$relevance_parts = array();
-			$types = array();
-			$post_types = "(1)";
-			$term_query = "(1)";
+			$sd = $args["_sd"] ?? array();
 
 			$kw_logic = $args['keyword_logic'];
 			$q_config['language'] = $args['_qtranslate_lang'];
@@ -123,15 +113,10 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 			$post_fields_query = '';
 			$exc_fields = array_diff(array('title', 'content', 'excerpt'), $args['post_fields']);
 			if ( count($exc_fields) > 0 ) {
-				$post_fields_arr = array();
-				foreach ($args['post_fields'] as $pfield) {
-					if ( !in_array($pfield, array('title', 'content', 'excerpt')) )
-						continue;
-					$post_fields_arr[] = "asp_index.$pfield > 0";
-				}
-				if ( count($post_fields_arr) > 0 ) {
-					$post_fields_query = 'AND (' . implode(' OR ', $post_fields_arr) . ')';
-				}
+				$post_fields_arr = array_map(function($field){
+					return "asp_index.$field = 0";
+				}, $exc_fields);
+				$post_fields_query = 'AND (' . implode(' AND ', $post_fields_arr) . ') ';
 			}
 
 			// ------------------------ Categories/tags/taxonomies ----------------------
@@ -450,7 +435,7 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 			}
 			/*---------------------------------------------------------------*/
 
-			/*----------------------- Improved title query ------------------*/
+			/*----------------------- Improved title and custom field search query ------------------*/
 			if ( in_array('title', $args['post_fields']) && (ASP_mb::strlen($s) > 2 || count($_s) == 0) ) {
 				$rmod = 1000;
 
@@ -500,6 +485,7 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 
 			}
 			/*---------------------------------------------------------------*/
+
 			if ( count($queries) > 0 ) {
 				foreach ($queries as $k => $query) {
 					$query = apply_filters('asp_query_indextable', $query, $args, $args['_id'], $args['_ajax_search']);
@@ -513,12 +499,12 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 			// We need to save this array with keys, will need the values later.
 			$this->raw_results = $results_arr;
 
-			// First of all sort by post type priority
-			usort($results_arr, array($this, 'compare_by_ptype_priority'));
-
 			// Do primary ordering here, because the results will sliced, and we need the correct ones on the top
-			// compare_by_pr is NOT giving the correct sub-set
-			usort($results_arr, array($this, 'compare_by_primary'));
+			self::order_by($results_arr, array(
+				'primary_ordering' => $args['post_primary_order'],
+				'primary_ordering_metatype' => $args['post_primary_order_metatype'],
+				'secondary_ordering' => $args['post_primary_order']	// PRIMARY ORDER ON PURPOSE!! -> Secondary does not apply when primary == secondary
+			));
 
 			// Re-calculate the limit to slice the results to the real size
 			if ( $args['_limit'] > 0 ) {
@@ -546,9 +532,9 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 			$this->pre_process_results();
 
 			// Were there items removed in the pre-process? In that case we need to lower the number of reported results.
-			if ( count($this->results) < count($results_arr) ) {
+			/*if ( count($this->results) < count($results_arr) ) {
 				$this->results_count = $this->results_count - count($results_arr) + count($this->results);
-			}
+			}*/
 
 			$this->return_count = count($this->results);
 
@@ -566,16 +552,16 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 		 * @return array results array
 		 */
 		protected function merge_raw_results($results_arr, $kw_logic = "or") {
-			// Store the title results array temporarily
+			// Store the improved title and cf results array temporarily
 			// We want these items to be the part of results, no matter what
-			$title_results = array();
-			$exact_title_results = array();
+			$start_with_results = array();
+			$exact_results = array();
 			if ( isset($results_arr[99999]) ) {
-				$title_results = $results_arr[99999];
+				$start_with_results = $results_arr[99999];
 				unset($results_arr[99999]);
 			}
 			if ( isset($results_arr[99998]) ) {
-				$exact_title_results = $results_arr[99998];
+				$exact_results = $results_arr[99998];
 				unset($results_arr[99998]);
 			}
 
@@ -614,7 +600,7 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 				}
 			}
 
-			foreach ($title_results as $k => $r) {
+			foreach ($start_with_results as $k => $r) {
 				if ( isset($final_results[$r->blogid . "x" . $r->id]) ) {
 					$final_results[$r->blogid . "x" . $r->id]->relevance += $r->relevance;
 				} else {
@@ -622,7 +608,7 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 				}
 			}
 
-			foreach ($exact_title_results as $k => $r) {
+			foreach ($exact_results as $k => $r) {
 				if ( isset($final_results[$r->blogid . "x" . $r->id]) ) {
 					$final_results[$r->blogid . "x" . $r->id]->relevance += $r->relevance;
 				} else {
@@ -641,7 +627,7 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 				 *     To make sure that the elements of $title_results are indeed used, merge it with the actual $results
 				 *     array. The $final_results at the end will contain all items from $title_results at all times.
 				 */
-				$final_results = array_uintersect($final_results, array_merge($results, $title_results, $exact_title_results), array($this, 'compare_results'));
+				$final_results = array_uintersect($final_results, array_merge($results, $start_with_results, $exact_results), array($this, 'compare_results'));
 			}
 
 			return $final_results;
@@ -666,10 +652,6 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 			$pool_size = $pool_size < 100 ? 100 : $pool_size;
 
 			return $pool_size;
-		}
-
-		public function compare_by_ptype_priority($a, $b) {
-			return $a->p_type_priority - $b->p_type_priority;
 		}
 
 
@@ -699,41 +681,54 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 			return $obj_a->id - $obj_b->id;
 		}
 
-		/**
-		 * usort() custom function, sort by priority > relevance
-		 *
-		 * @param $a
-		 * @param $b
-		 * @return int
-		 */
-		protected function compare_by_pr($a, $b) {
-			if ( $a->priority === $b->priority )
-				return $b->relevance - $a->relevance;
-			return $b->priority - $a->priority;
-		}
-
 		private function pre_process_results() {
 			// No results, save some resources
 			if ( count($this->results) == 0 )
 				return array();
 
 			$pageposts = array();
-			//$options = $this->options;
-			//$searchId = $this->searchId;
-			//$searchData = $this->searchData;
 			$post_ids = array();
 			$the_posts = array();
 
 			$args = $this->args;
-			if ( isset($args["_sd"]) )
-				$sd = &$args["_sd"];
-			else
-				$sd = array();
+			$sd = $args["_sd"] ?? array();
+
+
+			if ( $args['_ajax_search'] ) {
+				$start = 0;
+				$end = count($this->results);
+			} else {
+				/**
+				 * Offset =>
+				 *  Positive -> Number of Index Table results displayed up until the current page
+				 *  Negative -> (abs) Number of other result types displayed up until (and including) the current page
+				 */
+				$offset = ( ( $args['page'] - 1 ) * $args['posts_per_page'] ) - $args['global_found_posts'];
+				$start = $offset < 0 ? 0 : $offset;
+				$end = $start + $args['posts_per_page'] + ($offset < 0 ? $offset : 0);
+				$end = $end > count($this->results) ? count($this->results) : $end;
+			}
+
+			$this->start_offset = $start;
+
+			/**
+			 * Do not use a for loop here, as the $this->results does not have numeric keys
+			 */
+			$k = 0;
+			foreach ( $this->results as $r ) {
+				if ( $k >= $start && $k < $end ) {
+					$post_ids[$r->blogid][] = $r->id;
+				}
+				if ( $k >= $end ) {
+					break;
+				}
+				$k++;
+			}
 
 			// Get the post IDs
-			foreach ($this->results as $k => $v) {
-				$post_ids[$v->blogid][] = $v->id;
-			}
+			/*for ( $k=$start; $k<$end; $k++ ) {
+				$post_ids[$this->results[$k]->blogid][] = $this->results[$k]->id;
+			}*/
 
 			foreach ($post_ids as $blogid => $the_ids) {
 				if ( isset($args['_switch_on_preprocess']) && is_multisite() )
@@ -816,23 +811,12 @@ if ( !class_exists('ASP_Search_INDEX') ) {
 				$pageposts[] = $new_result;
 			}
 
-			// Order them once again
-			if ( count($pageposts) > 0 ) {
-				usort($pageposts, array($this, 'compare_by_primary'));
-				/**
-				 * Let us save some time. There is going to be a user selecting the same sorting
-				 * for both primary and secondary. Only do secondary if it is different from the primary.
-				 */
-				if ( $this->ordering['primary'] != $this->ordering['secondary'] ) {
-					$i = 0;
-					foreach ($pageposts as $pk => $pp) {
-						$pageposts[$pk]->primary_order = $i;
-						$i++;
-					}
-
-					usort($pageposts, array($this, 'compare_by_secondary'));
-				}
-			}
+			self::order_by($pageposts, array(
+				'primary_ordering' => $args['post_primary_order'],
+				'primary_ordering_metatype' => $args['post_primary_order_metatype'],
+				'secondary_ordering' => $args['post_secondary_order'],
+				'secondary_ordering_metatype' => $args['post_secondary_order_metatype']
+			));
 
 			$this->results = $pageposts;
 		}

@@ -397,7 +397,7 @@ if ( !class_exists("wd_frontFilters") ) {
                     'data' => $module->getData(array(), true)
                 );
             }
-            ASP_Helpers::addInlineScript('wd-ff-main-module', 'WD_FrontFilters', array(
+            ASP_Helpers::objectToInlineScript('wd-ff-main-module', 'WD_FrontFilters', array(
                 'modulesDefault' => $modules_default
             ));
         }

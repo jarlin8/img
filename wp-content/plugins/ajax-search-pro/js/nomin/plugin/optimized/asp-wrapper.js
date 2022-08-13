@@ -85,71 +85,93 @@ window._ASP_load = function () {
     };
 
     window.ASP.initialized = false;
-    window.ASP.initializeById = function (id, ignoreViewport) {
-        let selector = ".asp_init_data";
-        ignoreViewport = typeof ignoreViewport == 'undefined' ? false : ignoreViewport;
-        if (typeof id !== 'undefined' && typeof id != 'object')
-            selector = "div[id*=asp_init_id_" + id + "]";
-
-        /**
-         * Getting around inline script declarations with this solution.
-         * So these new, invisible divs contains a JSON object with the parameters.
-         * Parse all of them and do the declaration.
-         */
+    window.ASP.initializeSearchByID = function (id) {
+        let instances = ASP.getInstances();
+        if (typeof id !== 'undefined' && typeof id != 'object' ) {
+            if ( typeof instances[id] !== 'undefined' ) {
+                let ni = [];
+                ni[id] = instances[id];
+                instances = ni;
+            } else {
+                return false;
+            }
+        }
         let initialized = 0;
-        $(selector).forEach(function (el) {
+        instances.forEach(function (data, i) {
             // noinspection JSUnusedAssignment
-            let $asp = $(el).closest('.asp_w_container').find('.asp_m');
-            // $asp.length == 0 -> when fixed compact layout mode is enabled
-            if ( $asp.length == 0 || typeof $asp.get(0).hasAsp != 'undefined') {
+            $('.asp_m_' + i).forEach(function(el){
+                let $el = $(el);
+                if ( typeof $el.get(0).hasAsp != 'undefined') {
+                    ++initialized;
+                    return true;
+                }
+                el.hasAsp = true;
                 ++initialized;
-                return true;
-            }
-
-            if (!ignoreViewport && !$asp.inViewPort(-100)) {
-                return true;
-            }
-
-            let jsonData = $(el).data("aspdata");
-            if (typeof jsonData === "undefined") return true;   // Do not return false, it breaks the loop!
-
-            jsonData = WPD.Base64.decode(jsonData);
-            if (typeof jsonData === "undefined" || jsonData == "") return true; // Do not return false, it breaks the loop!
-
-            let args = JSON.parse(jsonData);
-            $asp.get(0).hasAsp = true;
-            ++initialized;
-            return $asp.ajaxsearchpro(args);
+                return $el.ajaxsearchpro(data);
+            });
         });
+    }
 
-        if ($(selector).length == initialized) {
-            document.removeEventListener('scroll', ASP.initializeById);
-            document.removeEventListener('resize', ASP.initializeById);
+    window.ASP.getInstances = function() {
+        if ( typeof window.ASP_INSTANCES !== 'undefined' ) {
+            return window.ASP_INSTANCES;
+        } else {
+            let instances = [];
+            $('.asp_init_data').forEach(function (el) {
+                if (typeof el.dataset['aspdata'] === "undefined") return true;   // Do not return false, it breaks the loop!
+                let data = WPD.Base64.decode(el.dataset['aspdata']);
+                if (typeof data === "undefined" || data == "") return true;
+
+                instances[el.dataset['aspId']] = JSON.parse(data);
+            });
+            return instances;
         }
     }
 
 // Call this function if you need to initialize an instance that is printed after an AJAX call
 // Calling without an argument initializes all instances found.
     window.ASP.initialize = function (id) {
-        // this here is either window.ASP or window._ASP
-        let _this = this;
-
         // Some weird ajax loader problem prevention
-        if (typeof _this.version == 'undefined')
+        if (typeof ASP.version == 'undefined')
             return false;
 
-        // noinspection JSUnresolvedVariable
-        if ( ASP.script_async_load ) {
-            document.addEventListener('scroll', ASP.initializeById, {passive: true});
-            document.addEventListener('resize', ASP.initializeById, {passive: true});
-            ASP.initializeById(id);
-            setTimeout(function () {
-                ASP.initializeById(id, true);
-            }, 4000);
+        if( !!window.IntersectionObserver ){
+            if ( ASP.script_async_load || ASP.init_only_in_viewport ) {
+                let searches = document.querySelectorAll('.asp_w_container');
+                if ( searches.length ) {
+                    let observer = new IntersectionObserver(function(entries){
+                        entries.forEach(function(entry){
+                            if ( entry.isIntersecting ) {
+                                ASP.initializeSearchByID(entry.target.dataset.id);
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    });
+                    searches.forEach(function(search){
+                        observer.observe(search);
+                    });
+                }
+                ASP.getInstances().forEach(function(inst, id){
+                    if ( inst.compact.enabled == 1 && inst.compact.position == 'fixed' ) {
+                        ASP.initializeSearchByID(id);
+                    }
+                });
+            } else {
+                ASP.initializeSearchByID(id);
+            }
         } else {
-            ASP.initializeById(id, true);
+            ASP.initializeSearchByID(id);
         }
 
+        ASP.initializeMutateDetector();
+        ASP.initializeHighlight();
+        ASP.initializeOtherEvents();
+
+        ASP.initialized = true;
+    };
+
+    window.ASP.initializeHighlight = function() {
+        let _this = this;
         if (_this.highlight.enabled) {
             let data = localStorage.getItem('asp_phrase_highlight');
             localStorage.removeItem('asp_phrase_highlight');
@@ -186,46 +208,10 @@ window._ASP_load = function () {
                 });
             }
         }
-
-        _this.initialized = true;
     };
 
-    window.ASP.ready = function () {
-        let _this = this,
-            $body = $('body'),
-            t, tt, ttt, ts;
-
-        _this.initialize();
-
-        // DOM tree modification detection to re-initialize automatically if enabled
-        // noinspection JSUnresolvedVariable
-        if (typeof ASP.detect_ajax != "undefined" && ASP.detect_ajax == 1) {
-            let observer = new MutationObserver(function() {
-                clearTimeout(t);
-                t = setTimeout(function () {
-                    _this.initialize();
-                }, 500);
-            });
-            function addObserverIfDesiredNodeAvailable() {
-                let db = document.querySelector("body");
-                if( !db ) {
-                    //The node we need does not exist yet.
-                    //Wait 500ms and try again
-                    window.setTimeout(addObserverIfDesiredNodeAvailable,500);
-                    return;
-                }
-                observer.observe(db, {subtree: true, childList: true});
-            }
-            addObserverIfDesiredNodeAvailable();
-        }
-
-        $(window).on('resize', function () {
-            clearTimeout(tt);
-            tt = setTimeout(function () {
-                _this.initializeById();
-            }, 200);
-        });
-
+    window.ASP.initializeOtherEvents = function() {
+        let ttt, ts, $body = $('body'), _this = this;
         // Known slide-out and other type of menus to initialize on click
         ts = '#menu-item-search, .fa-search, .fa, .fas';
         // Avada theme
@@ -254,7 +240,7 @@ window._ASP_load = function () {
         $body.on('click touchend', ts, function () {
             clearTimeout(ttt);
             ttt = setTimeout(function () {
-                _this.initializeById({}, true);
+                _this.initializeSearchByID();
             }, 300);
         });
 
@@ -262,9 +248,33 @@ window._ASP_load = function () {
         if ( typeof jQuery != 'undefined' ) {
             jQuery(document).on('elementor/popup/show', function(){
                 setTimeout(function () {
-                    _this.initializeById({}, true);
+                    _this.initializeSearchByID();
                 }, 10);
             });
+        }
+    };
+
+    window.ASP.initializeMutateDetector = function() {
+        let t;
+        if ( typeof ASP.detect_ajax != "undefined" && ASP.detect_ajax == 1 ) {
+            let o = new MutationObserver(function() {
+                clearTimeout(t);
+                t = setTimeout(function () {
+                    ASP.initializeSearchByID();
+                }, 500);
+            });
+            o.observe(document.querySelector("body"), {subtree: true, childList: true});
+        }
+    };
+
+    window.ASP.ready = function () {
+        let _this = this;
+
+        if (document.readyState === "complete" || document.readyState === "loaded"  || document.readyState === "interactive") {
+            // document is already ready to go
+            _this.initialize();
+        } else {
+            $(document).on('DOMContentLoaded', _this.initialize);
         }
     };
 
@@ -296,15 +306,10 @@ window._ASP_load = function () {
         }
     };
 
-    // noinspection JSUnresolvedVariable
-    if (
-        !window.ASP.css_async ||
-        typeof window.ASP.css_loaded != 'undefined' // CSS loader finished, but this script was not ready yet
-    ) {
-        window.WPD.intervalUntilExecute(window.ASP.init, function() {
-            return typeof window.ASP.version != 'undefined' && $.fn.ajaxsearchpro != 'undefined'
-        });
-    }
+
+    window.WPD.intervalUntilExecute(window.ASP.init, function() {
+        return typeof window.ASP.version != 'undefined' && $.fn.ajaxsearchpro != 'undefined'
+    });
 };
 // Run on document ready
 (function() {

@@ -142,6 +142,7 @@ if (!class_exists("WD_ASP_SearchOverride_Filter")) {
 					}, $asp_query->all_results)
 				)
 			);
+			$wp_query->query_vars['orderby'] = 'post__in';
 
             // Elementor override fix
             if ( defined('ELEMENTOR_VERSION') && isset($wp_query->posts) )
@@ -344,6 +345,11 @@ if (!class_exists("WD_ASP_SearchOverride_Filter")) {
             if ( isset($wp_query->query_vars) && $wp_query->query_vars['post_type'] === 'asp_override' ) {
                 $is_search = true;
             }
+
+			// Forced non-override
+			if ( isset($wp_query->query_vars) && isset($wp_query->query_vars['asp_override']) && $wp_query->query_vars['asp_override'] == false ) {
+				$is_search = false;
+			}
 
             // Is this the admin area?
             if ( $is_search && is_admin() )

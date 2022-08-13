@@ -10,8 +10,8 @@ $_pagination_arrow = file_get_contents(WP_PLUGIN_DIR . '/' . $style['i_paginatio
 
     <?php if ( $style['results_top_box'] == 1 && $style['results_top_box_text'] != '' ): ?>
     <div class="asp_results_top" style="display:none;">
-        <p class="asp_rt_phrase"><?php echo  stripslashes( asp_icl_t("Results header information box text, whith search phrase" . " ($id)", $style['results_top_box_text'] ) ); ?></p>
-        <p class="asp_rt_nophrase"><?php echo  stripslashes( asp_icl_t("Results header information box text, without search phrase" . " ($id)", $style['results_top_box_text_nophrase'] ) ); ?></p>
+        <div class="asp_rt_phrase"><?php echo  stripslashes( asp_icl_t("Results header information box text, whith search phrase" . " ($id)", $style['results_top_box_text'] ) ); ?></div>
+        <div class="asp_rt_nophrase"><?php echo  stripslashes( asp_icl_t("Results header information box text, without search phrase" . " ($id)", $style['results_top_box_text_nophrase'] ) ); ?></div>
     </div>
     <?php endif; ?>
 

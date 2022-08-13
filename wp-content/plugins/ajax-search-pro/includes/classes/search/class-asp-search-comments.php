@@ -233,7 +233,7 @@ if (!class_exists('ASP_Search_COMMENTS')) {
                     $r[$k]->author = get_comment_author($v->id);
 
                     if ( ASP_mb::strlen($v->content) > 40 ) {
-                        $r[$k]->title = wd_substr_at_word($v->content, 40) . "...";
+                        $r[$k]->title = wd_substr_at_word($v->content, 40);
                     } else {
                         $r[$k]->title = $r[$k]->content;
                     }
@@ -269,7 +269,7 @@ if (!class_exists('ASP_Search_COMMENTS')) {
                                 $_content = $_ex_content;
                             }
                         } else if ($_content != '' && (ASP_mb::strlen($_content) > $sd['descriptionlength'])) {
-                            $_content = wd_substr_at_word($_content, $sd['descriptionlength']) . "...";
+                            $_content = wd_substr_at_word($_content, $sd['descriptionlength']);
                         }
                         $v->content = ASP_Helpers::fixSSLURLs( wd_closetags($_content) );
                     } else {

@@ -348,15 +348,40 @@ if ( ! class_exists( 'ASP_Synonyms' ) ) {
 
             $att = attachment_url_to_postid($path);
             if ( $att != 0 ) {
-                $att = get_attached_file($att);
+				$att = get_attached_file($att);
                 $contents = wpd_get_file($att);
             } else {
                 $contents = wpd_get_file($path);
             }
 
             if ( !empty($contents) ) {
-                $contents = str_replace(array("\r", "\n"), '', trim($contents));
-                $contents = json_decode($contents, true);
+				$type = wp_check_filetype($path);
+				if ( $type['ext'] == 'csv' ) {
+					if ( is_string($att) && $att != '' ) {
+						$fp = fopen($att, "r");
+						$csv = array();
+						$contents = array();
+						while (($data = fgetcsv($fp)) !== FALSE) {
+							$csv[] = $data;
+						}
+						fclose($fp);
+						foreach ($csv as $row) {
+							$new = array();
+							$new['keyword'] = $row[0];
+							$new['synonyms'] = array_slice($row, 1);
+							$new['synonyms'] = array_filter($new['synonyms'], 'strlen');
+							$new['language'] = '';
+							if ( !empty($new['synonyms']) ) {
+								$new['synonyms'] = implode(',', $new['synonyms']);
+								$contents[] = $new;
+							}
+						}
+					}
+				} else {
+					$contents = str_replace(array("\r", "\n"), '', trim($contents));
+					$contents = json_decode($contents, true);
+				}
+
                 if ( is_array($contents) ) {
                     $inserted = 0;
                     $values = array();

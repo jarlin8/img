@@ -29,6 +29,11 @@ if ( ! class_exists( 'ASP_Search_CPT' ) ) {
 			"primary_field" => "relevance"
 		);
 
+		// How many results were ignored from the start during search due to pagination
+		// This is needed to calculate the correct page in class-asp-query.php
+		// Used only with index table
+		public $start_offset = 0;
+
 		/**
 		 * Gets the related taxonomy term count based on input post IDs and taxonomies and terms
 		 *
@@ -429,11 +434,6 @@ if ( ! class_exists( 'ASP_Search_CPT' ) ) {
 			 * The ttid field is a bit tricky as the term_taxonomy_id doesn't always equal term_id,
 			 * so we need the LEFT JOINS :(
 			 */
-			$this->ordering['primary'] = $args['post_primary_order'];
-			$this->ordering['secondary'] = $args['post_secondary_order'];
-
-			$_primary_field = explode(" ", $this->ordering['primary']);
-			$this->ordering['primary_field'] = $_primary_field[0];
 
 			$orderby_primary    = str_replace( "post_", $wpdb->posts . ".post_",  $args['post_primary_order'] );
 			$orderby_secondary  = str_replace( "post_", $wpdb->posts . ".post_",  $args['post_secondary_order'] );
@@ -718,32 +718,6 @@ if ( ! class_exists( 'ASP_Search_CPT' ) ) {
 				$this->results_count = $this->remaining_limit;
 			}
 
-			/**
-			 * Order them again:
-			 *  - The custom field ordering always uses alphanumerical comparision, which is not ok
-			 */
-			if (
-				count($all_pageposts) > 0 &&
-				(
-					strpos($args['post_primary_order'], 'customfp') !== false ||
-					strpos($args['post_secondary_order'], 'customfs') !== false
-				)
-			) {
-				usort( $all_pageposts, array( $this, 'compare_by_primary' ) );
-				/**
-				 * Let us save some time. There is going to be a user selecting the same sorting
-				 * for both primary and secondary. Only do secondary if it is different from the primary.
-				 */
-				if ( $this->ordering['primary'] != $this->ordering['secondary'] ) {
-					$i = 0;
-					foreach ($all_pageposts as $pk => $pp) {
-						$all_pageposts[$pk]->primary_order = $i;
-						$i++;
-					}
-
-					usort( $all_pageposts, array( $this, 'compare_by_secondary' ) );
-				}
-			}
 			// Slice the needed ones only
 			$all_pageposts = array_slice($all_pageposts, $args['_call_num'] * $this->remaining_limit, $this->remaining_limit);
 
@@ -1210,247 +1184,130 @@ if ( ! class_exists( 'ASP_Search_CPT' ) ) {
 			return $date_query_parts;
 		}
 
+		public static function order_by(&$posts, $args = array()) {
+			$args = wp_parse_args($args, array(
+				'primary_ordering' => 'relevance DESC',
+				'primary_ordering_metatype' => 'numeric',
+				'secondary_ordering' => 'relevance DESC',
+				'secondary_ordering_metatype' => 'numeric'
+			));
+			$primary_field = explode(" ", $args['primary_ordering'])[0];
+			$primary_field = $primary_field == 'RAND()' ? 'primary_order' : $primary_field;
+			$secondary_field = explode(" ", $args['secondary_ordering'])[0];
 
-		/**
-		 * usort() custom function, sort by primary
-		 *
-		 * @param $a
-		 * @param $b
-		 *
-		 * @return int
-		 */
-		protected function compare_by_primary( $a, $b ) {
-			// Only compare objects with the same post type priority, so the groups dont get messed up
-			if ( $a->p_type_priority === $b->p_type_priority ) {
+			for ( $i = 0; $i < 2; $i++ ) {
+				$is_secondary = $i>0;
 
-				if ($a->group_priority === $b->group_priority) {
-
-					if ($a->priority === $b->priority) {
-
-						switch ($this->ordering['primary']) {
-							case "average_rating DESC":
-								// ceil() is very important here!! as this expects 1, 0, -1 but no values inbetween
-								return ceil((float)$b->average_rating - (float)$a->average_rating);
-							case "relevance DESC":
-								return $b->relevance - $a->relevance;
-							case "post_date DESC":
-								$date_diff = strtotime($b->date) - strtotime($a->date);
-								if ($date_diff == 0)
-									return $b->id - $a->id;
-
-								return $date_diff;
-								break;
-							case "post_date ASC":
-								$date_diff = strtotime($a->date) - strtotime($b->date);
-								if ($date_diff == 0)
-									return $a->id - $b->id;
-
-								return $date_diff;
-							case "post_title DESC":
-								return strcasecmp($b->title, $a->title);
-							case "post_title ASC":
-								return strcasecmp($a->title, $b->title);
-							case "menu_order DESC":
-								return $b->menu_order - $a->menu_order;
-							case "menu_order ASC":
-								return $a->menu_order - $b->menu_order;
-							case "customfp DESC":
-								if ($this->args['post_primary_order_metatype'] == 'numeric')
-									return floatval($b->customfp) - floatval($a->customfp);
-								else
-									return strcasecmp($b->customfp, $a->customfp);
-							case "customfp ASC":
-								if ($this->args['post_primary_order_metatype'] == 'numeric')
-									return floatval($a->customfp) - floatval($b->customfp);
-								else
-									return strcasecmp($a->customfp, $b->customfp);
-							case "RAND()":
-								return rand(-1,1);
-							default:
-								return $b->relevance - $a->relevance;
-						}
-
-					}
-
-					return $b->priority - $a->priority;
+				if ( $is_secondary && $primary_field == $secondary_field ) {
+					break;
 				}
 
-				return $b->group_priority - $a->group_priority;
-			}
+				if ( $i == 0 ) {
+					$order = $args['primary_ordering'];
+					$order_metatype = $args['primary_ordering_metatype'];
+				} else {
+					$ii = 0;
+					foreach ($posts as $pk => $pp) {
+						$posts[$pk]->primary_order = $ii;
+						$ii++;
+					}
+					$order = $args['secondary_ordering'];
+					$order_metatype = $args['secondary_ordering_metatype'];
+				}
+				usort($posts, function($a, $b) use ($order, $order_metatype, $is_secondary, $primary_field, $args) {
+					// Only compare objects with the same post type priority, so the groups dont get messed up
+					if ( $a->p_type_priority === $b->p_type_priority ) {
 
-			// Post type priority is not equivalent, results should be treated as equals, no change
-			return $a->p_type_priority - $b->p_type_priority;
-		}
+						if ($a->group_priority === $b->group_priority) {
 
-		/**
-		 * usort() custom function, sort by secondary
-		 *
-		 * @param $a
-		 * @param $b
-		 *
-		 * @return int
-		 */
-		protected function compare_by_secondary( $a, $b ) {
-			if ( $a->p_type_priority === $b->p_type_priority ) {
+							if ($a->priority === $b->priority) {
 
-				if ($a->group_priority === $b->group_priority) {
+								if ( !$is_secondary || $a->$primary_field == $b->$primary_field ) {
+									switch ($order) {
+										case "average_rating DESC":
+											// ceil() is very important here!! as this expects 1, 0, -1 but no values inbetween
+											return ceil((float)$b->average_rating - (float)$a->average_rating);
+										case "relevance DESC":
+											return $b->relevance - $a->relevance;
+										case "post_date DESC":
+											$date_diff = strtotime($b->date) - strtotime($a->date);
+											if ($date_diff == 0)
+												return $b->id - $a->id;
 
-					if ($a->priority === $b->priority) {
+											return $date_diff;
+											break;
+										case "post_date ASC":
+											$date_diff = strtotime($a->date) - strtotime($b->date);
+											if ($date_diff == 0)
+												return $a->id - $b->id;
 
-						$field = $this->ordering['primary_field'];
-
-						if ($a->$field == $b->$field) {
-
-							switch ($this->ordering['secondary']) {
-								case "relevance DESC":
-									return $b->relevance - $a->relevance;
-								case "post_date DESC":
-									$date_diff = strtotime($b->date) - strtotime($a->date);
-									if ($date_diff == 0)
-										return $b->id - $a->id;
-
-									return $date_diff;
-								case "post_date ASC":
-									$date_diff = strtotime($a->date) - strtotime($b->date);
-									if ($date_diff == 0)
-										return $a->id - $b->id;
-
-									return $date_diff;
-								case "post_title DESC":
-									return strcasecmp($b->title, $a->title);
-								case "post_title ASC":
-									return strcasecmp($a->title, $b->title);
-								case "menu_order DESC":
-									return $b->menu_order - $a->menu_order;
-								case "menu_order ASC":
-									return $a->menu_order - $b->menu_order;
-								case "customfs DESC":
-									if ($this->args['post_secondary_order_metatype'] == 'numeric')
-										return $b->customfs - $a->customfs;
-									else
-										return strcasecmp($b->customfs, $a->customfs);
-								case "customfs ASC":
-									if ($this->args['post_secondary_order_metatype'] == 'numeric')
-										return $a->customfs - $b->customfs;
-									else
-										return strcasecmp($a->customfs, $b->customfs);
-								case "RAND()":
-									return rand(-1,1);
-								default:
-									return $b->relevance - $a->relevance;
+											return $date_diff;
+										case "post_title DESC":
+											return ASP_mb::strcasecmp($b->title, $a->title);
+										case "post_title ASC":
+											return ASP_mb::strcasecmp($a->title, $b->title);
+										case "menu_order DESC":
+											return $b->menu_order - $a->menu_order;
+										case "menu_order ASC":
+											return $a->menu_order - $b->menu_order;
+										case "customfp DESC":
+											if ($order_metatype == 'numeric') {
+												$diff = floatval($b->customfp) - floatval($a->customfp);
+												return $diff < 0 ? floor($diff) : ceil($diff);
+											} else {
+												return ASP_mb::strcasecmp($b->customfp, $a->customfp);
+											}
+										case "customfp ASC":
+											if ($order_metatype == 'numeric') {
+												$diff = floatval($a->customfp) - floatval($b->customfp);
+												return $diff < 0 ? floor($diff) : ceil($diff);
+											} else {
+												return ASP_mb::strcasecmp($a->customfp, $b->customfp);
+											}
+										case "customfs DESC":
+											if ($order_metatype == 'numeric') {
+												$diff = floatval($b->customfs) - floatval($a->customfs);
+												return $diff < 0 ? floor($diff) : ceil($diff);
+											} else {
+												return ASP_mb::strcasecmp($b->customfs, $a->customfs);
+											}
+										case "customfs ASC":
+											if ($order_metatype == 'numeric') {
+												$diff = floatval($a->customfs) - floatval($b->customfs);
+												return $diff < 0 ? floor($diff) : ceil($diff);
+											} else {
+												return ASP_mb::strcasecmp($a->customfs, $b->customfs);
+											}
+										case "RAND()":
+											return rand(-1,1);
+										default:
+											return $b->relevance - $a->relevance;
+									}
+								}
+								/**
+								 * If the primary fields are not equal, then leave it as it is.
+								 * The primary sorting already sorted the items out so return 0 - as equals
+								 */
+								if ( isset($a->primary_order, $b->primary_order) ) {
+									return $a->primary_order - $b->primary_order;
+								} else {
+									return 0;
+								}
 							}
 
+							return $b->priority - $a->priority;
 						}
 
-						/**
-						 * If the primary fields are not equal, then leave it as it is.
-						 * The primary sorting already sorted the items out so return 0 - as equals
-						 */
-						return $a->primary_order - $b->primary_order;
-
+						return $b->group_priority - $a->group_priority;
 					}
 
-					return $b->priority - $a->priority;
-				}
-
-				return $b->group_priority - $a->group_priority;
+					// Post type priority is not equivalent, results should be treated as equals, no change
+					return $a->p_type_priority - $b->p_type_priority;
+				});
 			}
 
-			return $a->p_type_priority - $b->p_type_priority;
+			return $posts;
 		}
-
-		/**
-		 * usort() custom function, sort by ID
-		 *
-		 * @param $obj_a
-		 * @param $obj_b
-		 *
-		 * @return mixed
-		 */
-		protected function compare_posts( $obj_a, $obj_b ) {
-			return $obj_a->id - $obj_b->id;
-		}
-
-		/**
-		 * usort() custom function, sort by priority > relevance > date > title
-		 *
-		 * @param $a
-		 * @param $b
-		 *
-		 * @return int
-		 */
-		protected function compare_by_rp( $a, $b ) {
-			if ( $a->priority === $b->priority ) {
-				if ( $a->relevance === $b->relevance ) {
-					if ( $a->date != null && $a->date != "" ) {
-						return strtotime( $b->date ) - strtotime( $a->date );
-					} else {
-						return strcasecmp( $a->title, $b->title );
-					}
-				} else {
-					return $b->relevance - $a->relevance;
-				}
-			}
-
-			return $b->priority - $a->priority;
-		}
-
-		/**
-		 * usort() custom function, sort by priority > date ascending
-		 *
-		 * @param $a
-		 * @param $b
-		 *
-		 * @return int
-		 */
-		protected function compare_by_rd_asc( $a, $b ) {
-			if ( $a->priority === $b->priority ) {
-				return strtotime( $a->date ) - strtotime( $b->date );
-			}
-
-			return $b->priority - $a->priority;
-		}
-
-		/**
-		 * usort() custom function, sort by priority > date descending
-		 *
-		 * @param $a
-		 * @param $b
-		 *
-		 * @return int
-		 */
-		protected function compare_by_rd_desc( $a, $b ) {
-			if ( $a->priority === $b->priority ) {
-				return strtotime( $b->date ) - strtotime( $a->date );
-			}
-
-			return $b->priority - $a->priority;
-		}
-
-		/**
-		 * usort() custom function, sort by title descending
-		 *
-		 * @param $a
-		 * @param $b
-		 *
-		 * @return int
-		 */
-		protected function compare_by_title_desc( $a, $b ) {
-			return strcasecmp( $b->title, $a->title );
-		}
-
-		/**
-		 * usort() custom function, sort by title ascending
-		 *
-		 * @param $a
-		 * @param $b
-		 *
-		 * @return int
-		 */
-		protected function compare_by_title_asc( $a, $b ) {
-			return strcasecmp( $a->title, $b->title );
-		}
-
 
 		/**
 		 * Builds the query from the parts
@@ -1560,9 +1417,23 @@ if ( ! class_exists( 'ASP_Search_CPT' ) ) {
 				$sd['primary_descriptionfield'] == 1 ||
 				$sd['secondary_descriptionfield'] == 1
 			);
-
 			$image_settings = $sd['image_options'];
-			foreach ( $pageposts as $k => &$r ) {
+
+			if ( $args['_ajax_search'] ) {
+				$start = 0;
+				$end = count($pageposts);
+			} else {
+				$start = $args['posts_per_page'] * ($args['page'] - 1);
+				$end = $start + $args['posts_per_page'];
+				$end = $end > count($pageposts) ? count($pageposts) : $end;
+				if ( ($end - $start) <= 0 ) {
+					$this->results = $pageposts;
+					return $pageposts;
+				}
+			}
+
+			for ( $k=$start; $k<$end; $k++ ) {
+				$r = &$pageposts[$k];
 				// Attachment post-process uses this section, but it has a separate image parser, so skip that
 				if ( $r->post_type == 'attachment' )
 					continue;
@@ -1571,24 +1442,33 @@ if ( ! class_exists( 'ASP_Search_CPT' ) ) {
 					switch_to_blog( $r->blogid );
 				}
 
-				if ( $image_settings['show_images'] != 0 &&
-					'' !== ($im = $this->getBFIimage( $r, $get_content, $get_excerpt ))
-				) {
-					if ( $image_settings['image_cropping'] == 0 ) {
-						$r->image = $im;
-					} else {
-						if ( strpos( $im, "mshots/v1" ) === false && strpos( $im, ".gif" ) === false ) {
-							$bfi_params = array( 'width'  => $image_settings['image_width'],
-								'height' => $image_settings['image_height'],
-								'crop'   => true
-							);
-							if ( w_isset_def( $image_settings['image_transparency'], 1 ) != 1 )
-								$bfi_params['color'] = wpdreams_rgb2hex( $image_settings['image_bg_color'] );
-
-							$r->image = bfi_thumb( $im, $bfi_params );
-						} else {
-							$r->image = $im;
-						}
+				if ( $image_settings['show_images'] != 0 ) {
+					$image_args = array(
+						'get_content' => $get_content,
+						'get_excerpt' => $get_excerpt,
+						'image_sources' => array(
+							$image_settings['image_source1'],
+							$image_settings['image_source2'],
+							$image_settings['image_source3'],
+							$image_settings['image_source4'],
+							$image_settings['image_source5']
+						),
+						'image_source_size' => $image_settings['image_source_featured'] == "original" ? 'full' : $image_settings['image_source_featured'],
+						'image_default' => $image_settings['image_default'],
+						'image_number' => $sd['image_parser_image_number'],
+						'image_custom_field' => $image_settings['image_custom_field'],
+						'exclude_filenames' => $sd['image_parser_exclude_filenames'],
+						'image_width' => $image_settings['image_width'],
+						'image_height' => $image_settings['image_height'],
+						'apply_the_content' => $image_settings['apply_content_filter'],
+						'image_cropping' => $image_settings['image_cropping'],
+						'image_transparency' => $image_settings['image_transparency'],
+						'image_bg_color' => $image_settings['image_bg_color']
+					);
+					$r->image = ASP_Helpers::parseCPTImage($r, $image_args);
+					if ( $r->image == '' && $r->post_type == 'product_variation' ) {
+						$wc_prod_var_o = wc_get_product( $r->id );
+						$r->image = ASP_Helpers::parseCPTImage(wc_get_product( $wc_prod_var_o->get_parent_id() ), $image_args);
 					}
 				}
 			}
@@ -1611,7 +1491,8 @@ if ( ! class_exists( 'ASP_Search_CPT' ) ) {
 			global $sitepress;
 
 			/* Images, title, desc */
-			foreach ( $pageposts as $k => &$r ) {
+			for ( $k=$start; $k<$end; $k++ ) {
+				$r = &$pageposts[$k];
 
 				if ( isset( $args['_switch_on_preprocess'] ) && is_multisite() ) {
 					switch_to_blog( $r->blogid );
@@ -1795,7 +1676,7 @@ if ( ! class_exists( 'ASP_Search_CPT' ) ) {
 						$_content = $_ex_content;
 					}
 				} else if ( $_content != '' && (  ASP_mb::strlen( $_content ) > $sd['descriptionlength'] ) ) {
-					$_content = wd_substr_at_word($_content, $sd['descriptionlength']) . "...";
+					$_content = wd_substr_at_word($_content, $sd['descriptionlength']);
 				}
 
 				$_content   = wd_closetags( $_content );
@@ -1834,120 +1715,6 @@ if ( ! class_exists( 'ASP_Search_CPT' ) ) {
 
 			return $pageposts;
 
-		}
-
-		/**
-		 * Fetches an image for BFI class
-		 *
-		 * @param $post StdClass post object
-		 * @param $get_content bool to request the post content
-		 * @param $get_excerpt bool to request the post excerpt
-		 * @return string image URL
-		 */
-		protected function getBFIimage( $post, $get_content = false, $get_excerpt = false ) {
-			if ( ! isset( $post->image ) || $post->image == null ) {
-				$args = $this->args;
-				if ( !isset($args['_sd']['image_options']) )
-					return "";
-				$sd = $args['_sd'];
-				$image_settings = $args['_sd']['image_options'];
-				$size = $image_settings['image_source_featured'] == "original" ? 'full' : $image_settings['image_source_featured'];
-
-				if ( ! isset( $post->id ) ) {
-					return "";
-				}
-				$im = "";
-				for ( $i = 1; $i < 6; $i ++ ) {
-					switch ( $image_settings[ 'image_source' . $i ] ) {
-						case "featured":
-							if ( $post->post_type == 'attachment' ) {
-								$imx = wp_get_attachment_image_src($post->id, $size, false);
-							} else {
-								$imx = wp_get_attachment_image_src(
-									get_post_thumbnail_id($post->id), $size, false
-								);
-							}
-							if ( !is_wp_error($imx) && $imx !== false && isset($imx[0]) )
-								$im = $imx[0];
-							break;
-						case "content":
-							$content = $get_content ? get_post_field('post_content', $post->id) : $post->content;
-
-							if ( $image_settings['apply_content_filter'] == 1 )
-								$content = apply_filters('the_content', $content);
-
-							$im = asp_get_image_from_content( $content, $sd['image_parser_image_number'], $sd['image_parser_exclude_filenames'] );
-							break;
-						case "excerpt":
-							$excerpt = $get_excerpt ? get_post_field('post_excerpt', $post->id) : $post->excerpt;
-
-							$im = asp_get_image_from_content( $excerpt, $sd['image_parser_image_number'], $sd['image_parser_exclude_filenames'] );
-							break;
-						case "screenshot":
-							$im = 'https://s.wordpress.com/mshots/v1/' . urlencode( get_permalink( $post->id ) ) .
-								'?w=' . $image_settings['image_width'] . '&h=' . $image_settings['image_height'];
-							break;
-						case "post_format":
-							$format = get_post_format( $post->id );
-
-							switch ($format) {
-								case "audio":
-									$im = ASP_URL_NP . "img/post_format/audio.png";
-									break;
-								case "video":
-									$im = ASP_URL_NP . "img/post_format/video.png";
-									break;
-								case "quote":
-									$im = ASP_URL_NP . "img/post_format/quote.png";
-									break;
-								case "image":
-									$im = ASP_URL_NP . "img/post_format/image.png";
-									break;
-								case "gallery":
-									$im = ASP_URL_NP . "img/post_format/gallery.png";
-									break;
-								case "link":
-									$im = ASP_URL_NP . "img/post_format/link.png";
-									break;
-								default:
-									$im = ASP_URL_NP . "img/post_format/default.png";
-									break;
-							}
-							break;
-						case "custom":
-							if ( $image_settings['image_custom_field'] != "" ) {
-								$val = get_post_meta( $post->id, $image_settings['image_custom_field'], true );
-								if ( is_array($val) && !empty($val) ) {
-									$val = reset($val);
-								}
-								if ( $val != null && $val != "" ) {
-									if ( is_numeric($val) ) {
-										$im = wp_get_attachment_image_url( $val, $size );
-									} else {
-										$im = $val;
-									}
-								}
-							}
-							break;
-						case "default":
-							if ( $image_settings['image_default'] != "" ) {
-								$im = $image_settings['image_default'];
-							}
-							break;
-						default:
-							$im = "";
-							break;
-					}
-					if ( $im != null && $im != '' ) {
-						break;
-					}
-				}
-				if ( !is_wp_error($im) )
-					return ASP_Helpers::fixSSLURLs($im);
-				return '';
-			} else {
-				return ASP_Helpers::fixSSLURLs($post->image);
-			}
 		}
 
 

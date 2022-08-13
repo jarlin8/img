@@ -25,16 +25,16 @@ CONTENTS:
 	    4.4 ISOTOPIC RESULT STYLES
 	    4.5 POLAROID RESULT STYLES
 	5. SETTINGS STYLES
-	6. COLUMN STYLES
-	7. CUSTOM FIELD FIELDSETS
-	8. NO-UI DRAGGER STYLES
-	9. SUGGESTED KEYWORDS
-    10. SCROLLBAR STYLES
-    11. JQUERY UI STYLES
-    12. AUTOCOMPLETE STYLES
-    13. RTL SPECIFIC STYLES AND CHANGES
-    14. SELECT2 SCRIPT STYLES
-    15. ARROW BOX
+	6. CUSTOM FIELD FIELDSETS
+	7. ARROW BOX
+	8. COLUMN STYLES
+	9. NO-UI DRAGGER STYLES
+	10. SUGGESTED KEYWORDS
+    11. SCROLLBAR STYLES
+    12. JQUERY UI STYLES
+    13. AUTOCOMPLETE STYLES
+    14. RTL SPECIFIC STYLES AND CHANGES
+    15. SELECT2 SCRIPT STYLES
     16. MISC
 
 
@@ -52,15 +52,6 @@ SHORTHAND CLASSES
 /*  *******************************************************************************************************************\
     0. ANIMATIONS AND TRANSITIONS & FONTS
 \**********************************************************************************************************************/
-
-@font-face {
-	font-family: 'asppsicons2';
-	src: url('<?php echo str_replace('http:',"",plugins_url()); ?>/ajax-search-pro/css/fonts/icons/icons2.woff2') format('woff2');
-	font-weight: normal;
-	font-style: normal;
-	font-display: swap;
-}
-
 @keyframes aspAnFadeIn {
     0%   {opacity: 0;}
     50%  {opacity: 0.6;}
@@ -204,7 +195,7 @@ div.asp_w.ajaxsearchpro input[type="search"]::-webkit-search-results-decoration 
 
 div.asp_w.ajaxsearchpro input[type="search"] {
 	appearance: auto !important;
-    -webkit-appearance: searchfield !important;
+	-webkit-appearance: none !important;
 }
 
 .clear {
@@ -1200,7 +1191,7 @@ div.asp_w.asp_r .photostack-perspective figure.photostack-flip {
 /*  *******************************************************************************************************************\
     5. SETTINGS STYLES
 \**********************************************************************************************************************/
-
+/*[settings]*/
 div.asp_w.asp_s.searchsettings {
     width: auto;
     height: auto;
@@ -1220,6 +1211,12 @@ div.asp_w.asp_sb.searchsettings {
     overflow: visible;
     position: relative;
     z-index: 1;
+}
+
+div.asp_w.asp_sb.searchsettings .asp_sett_scroll::-webkit-scrollbar-thumb {
+	background: transparent;
+	border-radius: 5px;
+	border: none;
 }
 
 div.asp_w.asp_s.searchsettings form,
@@ -1512,7 +1509,75 @@ div.asp_w.asp_sb select:not([multiple]) {
 }
 
 /*  *******************************************************************************************************************\
-    6. COLUMN STYLES
+    6. CUSTOM FIELD FIELDSETS
+\**********************************************************************************************************************/
+
+div.ajaxsearchpro.searchsettings  fieldset.asp_custom_f {
+	margin-top: 9px;
+}
+
+/* Give the legend elements some margin... */
+div.ajaxsearchpro.searchsettings  fieldset legend {
+	margin-bottom: 8px !important;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/* .. but exclude some cases where checkboxes are presented */
+div.ajaxsearchpro.searchsettings  fieldset legend + div.asp_option_inner {
+	margin-top: 0px !important;
+}
+div.ajaxsearchpro.searchsettings .asp_sett_scroll > .asp_option_cat:first-child > .asp_option_inner {
+	margin-top: 0px !important;
+}
+
+div.ajaxsearchpro.searchsettings  fieldset .asp_select_single,
+div.ajaxsearchpro.searchsettings  fieldset .asp_select_multiple {
+	padding: 0 10px;
+}
+
+/*  *******************************************************************************************************************\
+    7. ARROW BOX
+\**********************************************************************************************************************/
+.asp_arrow_box {
+	position: absolute;
+	background: #444;
+	padding: 12px;
+	color: white;
+	border-radius: 4px;
+	font-size: 14px;
+	max-width: 240px;
+	display: none;
+	z-index: 99999999999999999;
+}
+.asp_arrow_box:after {
+	top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: transparent;
+	border-top-color: #444;
+	border-width: 6px;
+	margin-left: -6px;
+}
+
+.asp_arrow_box.asp_arrow_box_bottom:after {
+	bottom: 100%;
+	top: unset;
+	border-bottom-color: #444;
+	border-top-color: transparent;
+}
+/*[settings]*/
+
+/*  *******************************************************************************************************************\
+    8. COLUMN STYLES
 \**********************************************************************************************************************/
 
 .asp_two_column {
@@ -1552,41 +1617,8 @@ div.asp_w.asp_sb select:not([multiple]) {
     box-sizing: border-box;
 }
 
-
 /*  *******************************************************************************************************************\
-    7. CUSTOM FIELD FIELDSETS
-\**********************************************************************************************************************/
-
-div.ajaxsearchpro.searchsettings  fieldset.asp_custom_f {
-    margin-top: 9px;
-}
-
-/* Give the legend elements some margin... */
-div.ajaxsearchpro.searchsettings  fieldset legend {
-    margin-bottom: 8px !important;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-/* .. but exclude some cases where checkboxes are presented */
-div.ajaxsearchpro.searchsettings  fieldset legend + div.asp_option_inner {
-    margin-top: 0px !important;
-}
-div.ajaxsearchpro.searchsettings .asp_sett_scroll > .asp_option_cat:first-child > .asp_option_inner {
-    margin-top: 0px !important;
-}
-
-div.ajaxsearchpro.searchsettings  fieldset .asp_select_single,
-div.ajaxsearchpro.searchsettings  fieldset .asp_select_multiple {
-    padding: 0 10px;
-}
-
-
-/*  *******************************************************************************************************************\
-    8. NO-UI DRAGGER STYLES
+    9. NO-UI DRAGGER STYLES
 \**********************************************************************************************************************/
 /*[noui]*/
 /* OLD STYLES BELOW */
@@ -1767,7 +1799,7 @@ div.ajaxsearchpro.searchsettings .noUi-vertical .noUi-handle:after {
 /*[noui]*/
 
 /*  *******************************************************************************************************************\
-    9. SUGGESTED KEYWORDS
+    10. SUGGESTED KEYWORDS
 \**********************************************************************************************************************/
 
 p.asp-try {
@@ -1787,7 +1819,7 @@ p.asp-try a {
 }
 
 /*  *******************************************************************************************************************\
-    10. SCROLLBAR STYLES
+    11. SCROLLBAR STYLES
 \**********************************************************************************************************************/
 /*[simplebar]*/
 /* NEW SIMPLEBAR SCROLLBAR */
@@ -2005,8 +2037,9 @@ p.asp-try a {
     scrollbar-width: none;
 }
 /*[simplebar]*/
+
 /*  *******************************************************************************************************************\
-    11. DATEPICKER STYLES
+    12. DATEPICKER STYLES
 \**********************************************************************************************************************/
 /*[datepicker]*/
 .asp-ui,
@@ -2407,7 +2440,7 @@ div.ajaxsearchpro.searchsettings fieldset .asp_post_date_from {
 /*[datepicker]*/
 
 /*  *******************************************************************************************************************\
-    12. AUTOCOMPLETE STYLES
+    13. AUTOCOMPLETE STYLES
 \**********************************************************************************************************************/
 /*[autocomplete]*/
 .asp_ac_autocomplete,
@@ -2912,42 +2945,6 @@ div.asp_w .asp_select2-container--flat .asp_select2-selection--single {
   float: right;
 }
 /*[select2]*/
-
-/*  *******************************************************************************************************************\
-    15. ARROW BOX
-\**********************************************************************************************************************/
-.asp_arrow_box {
-    position: absolute;
-    background: #444;
-    padding: 12px;
-    color: white;
-    border-radius: 4px;
-    font-size: 14px;
-    max-width: 240px;
-    display: none;
-    z-index: 99999999999999999;
-}
-.asp_arrow_box:after {
-    top: 100%;
-    left: 50%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border-color: transparent;
-    border-top-color: #444;
-    border-width: 6px;
-    margin-left: -6px;
-}
-
-.asp_arrow_box.asp_arrow_box_bottom:after {
-    bottom: 100%;
-    top: unset;
-    border-bottom-color: #444;
-    border-top-color: transparent;
-}
 
 /*  *******************************************************************************************************************\
     16. Misc

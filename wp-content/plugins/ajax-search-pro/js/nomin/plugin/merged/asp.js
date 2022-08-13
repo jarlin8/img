@@ -5,11 +5,8 @@
 
     window.WPD = typeof window.WPD !== 'undefined' ? window.WPD : {};
 
-    // Newer version added?
     if ( typeof WPD.dom != "undefined" ) {
-        if ( WPD.dom.version > version ) {
-            return false;	// Terminate
-        }
+        return false;	// Terminate
     }
 
     WPD.dom = function() {
@@ -30,12 +27,12 @@
                 $: function (s, $node) {
                     let _this = this.copy(this, true);
                     if ( typeof $node != "undefined" ) {
-                        _this.a = $node.find(s).get();
+                        _this.a = $node !== null ? $node.find(s).get() : [];
                     } else {
                         if (typeof s == "string") {
                             _this.a = _this._(s);
                         } else {
-                            _this.a = [s];
+                            _this.a = s!== null ? [s] : [];
                         }
                     }
                     _this.length = _this.a.length;
@@ -164,17 +161,19 @@
                     return _this;
                 },
                 add: function( el ) {
-                    if ( typeof el.nodeType !== "undefined" ) {
-                        if ( this.a.indexOf(el) == -1 ) {
-                            this.a.push(el);
-                        }
-                    } else if ( typeof el.n !== "undefined" ) {
-                        let _this = this;
-                        el.n.forEach(function(el){
-                            if ( _this.a.indexOf(el) == -1 ) {
-                                _this.a.push(el);
+                    if ( typeof el !== "undefined" ) {
+                        if (typeof el.nodeType !== "undefined") {
+                            if (this.a.indexOf(el) == -1) {
+                                this.a.push(el);
                             }
-                        });
+                        } else if (typeof el.a !== "undefined") {
+                            let _this = this;
+                            el.a.forEach(function (el) {
+                                if (_this.a.indexOf(el) == -1) {
+                                    _this.a.push(el);
+                                }
+                            });
+                        }
                     }
                     return this;
                 },
@@ -203,23 +202,41 @@
                     return el != null ? el.classList.contains(c) : false;
                 },
                 addClass: function (c) {
-                    let args = arguments;
-                    if ( args.length == 1 ) {
+                    let args = c;
+                    if (typeof c == 'string') {
                         args = c.split(' ');
                     }
-                    this.forEach(function (el) {
-                        el.classList.add.apply(el.classList, args);
+                    args = args.filter(function (i) {
+                        return i.trim() !== ''
                     });
+                    if (args.length > 0) {
+                        this.forEach(function (el) {
+                            el.classList.add.apply(el.classList, args);
+                        });
+                    }
                     return this;
                 },
                 removeClass: function (c) {
-                    let args = arguments;
-                    if ( args.length == 1 ) {
-                        args = c.split(' ');
+                    if ( typeof c != 'undefined' ) {
+                        let args = c;
+                        if (typeof c == 'string') {
+                            args = c.split(' ');
+                        }
+                        args = args.filter(function (i) {
+                            return i.trim() !== ''
+                        });
+                        if (args.length > 0) {
+                            this.forEach(function (el) {
+                                el.classList.remove.apply(el.classList, args);
+                            });
+                        }
+                    } else {
+                        this.forEach(function (el) {
+                            if ( el.classList.length > 0 ) {
+                                el.classList.remove.apply(el.classList, el.classList);
+                            }
+                        });
                     }
-                    this.forEach(function (el) {
-                        el.classList.remove.apply(el.classList, args);
-                    });
                     return this;
                 },
                 is: function(s){
@@ -237,11 +254,7 @@
                                 v = typeof v === 'string' ? v.split(',') : v;
                                 for ( let i = 0, l = el.options.length, o; i < l; i++ ) {
                                     o = el.options[i];
-                                    if ( v.indexOf( o.value ) != -1 ) {
-                                        o.selected = true;
-                                    } else {
-                                        o.selected = false;
-                                    }
+                                    o.selected = v.indexOf(o.value) != -1;
                                 }
                             } else {
                                 el.value = v;
@@ -255,6 +268,22 @@
                         }
                     }
                     return this;
+                },
+                isVisible: function() {
+                    let el = this.get(0), visible = true, style;
+                    while (el !== null) {
+                        style = window.getComputedStyle(el);
+                        if (
+                            style['display'] == 'none' ||
+                            style['visibility'] == 'hidden' ||
+                            style['opacity'] == 0
+                        ) {
+                            visible = false;
+                            break;
+                        }
+                        el = el.parentElement;
+                    }
+                    return visible;
                 },
                 attr: function (a, v) {
                     let ret, args = arguments, _this = this;
@@ -401,7 +430,7 @@
                 },
                 on: function() {
                     let args = arguments,
-                        func1 = function(args, e) {
+                        func = function(args, e) {
                             let $el;
                             if ( e.type == 'mouseenter' || e.type == 'mouseleave' || e.type == 'hover' ) {
                                 let el = document.elementFromPoint(e.clientX, e.clientY);
@@ -428,16 +457,6 @@
                                 }
                                 args[2].apply($el.get(0), argd);
                             }
-                        },
-                        func2 = function(args, e) {
-                            let argd = [];
-                            argd.push(e);
-                            if ( typeof args[3] != 'undefined' ) {
-                                for (let i=3; i<args.length; i++) {
-                                    argd.push(args[i]);
-                                }
-                            }
-                            args[1].apply(this, argd);
                         };
                     let events = args[0].split(' ');
                     for (let i=0;i<events.length;i++) {
@@ -445,7 +464,7 @@
                         if ( typeof args[1] == "string" ) {
                             this.forEach(function(el){
                                 if ( !WPD.dom._fn.hasEventListener(el, type, args[2]) ) {
-                                    let f = func1.bind(el, args);
+                                    let f = func.bind(el, args);
                                     el.addEventListener(type, f, args[3]);
                                     // Store the trigger in the selected elements, not the parent node
                                     el._wpd_el = typeof el._wpd_el == "undefined" ? [] : el._wpd_el;
@@ -459,19 +478,21 @@
                                 }
                             });
                         } else {
-                            this.forEach(function (el) {
-                                if ( !WPD.dom._fn.hasEventListener(el, type, args[1]) ) {
-                                    let f = func2.bind(el, args);
-                                    el.addEventListener(type, f, args[2]);
-                                    el._wpd_el = typeof el._wpd_el == "undefined" ? [] : el._wpd_el;
-                                    el._wpd_el.push({
-                                        'type': type,
-                                        'func': f,
-                                        'trigger': args[1],
-                                        'args': args[2]
-                                    });
-                                }
-                            });
+                            for (let i=0;i<events.length;i++) {
+                                let type = events[i];
+                                this.forEach(function (el) {
+                                    if ( !WPD.dom._fn.hasEventListener(el, type, args[1]) ) {
+                                        el.addEventListener(type, args[1], args[2]);
+                                        el._wpd_el = typeof el._wpd_el == "undefined" ? [] : el._wpd_el;
+                                        el._wpd_el.push({
+                                            'type': type,
+                                            'func': args[1],
+                                            'trigger': args[1],
+                                            'args': args[2]
+                                        });
+                                    }
+                                });
+                            }
                         }
                     }
                     return this;
@@ -495,7 +516,7 @@
                                         el._wpd_el = [];
                                     } else {
                                         let remains = [];
-                                        el._wpd_el.forEach(function(cb, i){
+                                        el._wpd_el.forEach(function(cb){
                                             if ( cb.type == type && cb.trigger == callback ) {
                                                 el.removeEventListener(type, cb.func, cb.args);
                                             } else {
@@ -523,12 +544,20 @@
                     native = native || false;
                     jquery = jquery || false;
                     this.forEach(function(el){
-
+                        let triggered = false;
                         // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                        if ( jquery && typeof jQuery != "undefined" ) {
+                        if (
+                            jquery &&
+                            typeof jQuery != "undefined" &&
+                            typeof jQuery._data != 'undefined' &&
+                            typeof jQuery._data(el, 'events') != 'undefined' &&
+                            typeof jQuery._data(el, 'events')[type] != 'undefined'
+                        ) {
                             // noinspection JSUnresolvedVariable,JSUnresolvedFunction
                             jQuery(el).trigger(type, args);
-                        } else if ( native ) {
+                            triggered = true;
+                        }
+                        if ( !triggered && native ) {
                             // Native event handler
                             let event = new Event(type);
                             event.detail = args;
@@ -644,7 +673,7 @@
                                         el.appendChild(ap);
                                     });
                                 } else {
-                                    el.appendChild(app);
+                                    el.appendChild(app.cloneNode(true));
                                 }
                             }
                         });
@@ -659,7 +688,37 @@
                 }
             }
             WPD.dom._fn = {
+                bodyTransform: function() {
+                    let x = 0, y = 0;
+                    if ( typeof WebKitCSSMatrix !== 'undefined' ) {
+                        let style = window.getComputedStyle(document.body);
+                        if ( typeof style.transform != 'undefined' ) {
+                            let matrix = new WebKitCSSMatrix(style.transform);
+                            if ( matrix.m41 != 'undefined' ) {
+                                x = matrix.m41;
+                            }
+                            if ( matrix.m42 != 'undefined' ) {
+                                y = matrix.m42;
+                            }
+                        }
+                    }
+
+                    return {x: x, y: y};
+                },
+                bodyTransformY: function() {
+                    return this.bodyTransform().y;
+                },
+                bodyTransformX: function() {
+                    return this.bodyTransform().x;
+                },
                 hasFixedParent: function(el) {
+                    /**
+                     * When CSS transform is present, then Fixed element are no longer fixed
+                     * even if the CSS declaration says.
+                     */
+                    if ( WPD.dom._fn.bodyTransformY() != 0 ) {
+                        return false;
+                    }
                     do {
                         if ( window.getComputedStyle(el)['position'] == 'fixed' ) {
                             return true;
@@ -667,6 +726,7 @@
                     } while( el = el.parentElement );
                     return false;
                 },
+
                 hasEventListener: function(el, type, trigger) {
                     if (typeof el._wpd_el == "undefined") {
                         return false;
@@ -696,24 +756,21 @@
 
                 createElementsFromHTML: function(htmlString) {
                     let template = document.createElement('template');
-                    template.innerHTML = htmlString;
+                    template.innerHTML = htmlString.replace(/(\r\n|\n|\r)/gm, "");
                     return Array.prototype.slice.call(template.content.childNodes);
                 },
 
                 absolutePosition: function(el) {
-                    let bodyRect = document.body.getBoundingClientRect(),
-                        elemRect = el.getBoundingClientRect(),
-                        bodyPos = window.getComputedStyle(document.body)['position'],
-                        _y = document.documentElement.offsetTop,
-                        _x = document.documentElement.offsetLeft;
-                    if ( bodyPos == 'relative' || bodyPos == 'absolute' ) {
-                        _y = 0;
-                        _x = 0;
+                    if ( !el.getClientRects().length ) {
+                        return { top: 0, left: 0 };
                     }
-                    return {
-                        'top': elemRect.top - bodyRect.top + _y,
-                        'left': elemRect.left - bodyRect.left + _x
-                    }
+
+                    let rect = el.getBoundingClientRect();
+                    let win = el.ownerDocument.defaultView;
+                    return ({
+                        top: rect.top + win.pageYOffset,
+                        left: rect.left + win.pageXOffset
+                    });
                 },
 
                 // Create a plugin based on a defined object
@@ -743,6 +800,10 @@
     WPD.dom();
     document.dispatchEvent(new Event('wpd-dom-core-loaded'));
 }());(function() {
+    // Prevent duplicate loading
+    if ( typeof WPD.dom.fn.animate != "undefined" ) {
+        return false;	// Terminate
+    }
     WPD.dom.fn._animate = {
         "easing": {
             "linear": function(x) { return x; },
@@ -813,7 +874,7 @@
     };
     document.dispatchEvent(new Event('wpd-dom-animate-loaded'));
 }());/*
- * jQuery Highlight plugin
+ * WPD.dom Highlight plugin
  *
  * Based on highlight v3 by Johann Burkard
  * http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html
@@ -824,6 +885,11 @@
  */
 (function() {
     let $ = WPD.dom;
+
+    // Prevent duplicate loading
+    if ( typeof WPD.dom.fn.unhighlight != "undefined" ) {
+        return false;	// Terminate
+    }
 
     WPD.dom.fn.unhighlight = function (options) {
         let settings = {className: 'highlight', element: 'span'};
@@ -853,7 +919,7 @@
             return el != '';
         });
         words.forEach(function(w, i, o){
-            o[i].replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            o[i] = w.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         });
 
         if (words.length == 0) {
@@ -903,6 +969,10 @@
         });
     };
 }());(function() {
+    // Prevent duplicate loading
+    if ( typeof WPD.dom.fn.serialize != "undefined" ) {
+        return false;	// Terminate
+    }
     WPD.dom.fn.serialize = function() {
         let form = this.get(0);
         if ( !form || form.nodeName !== "FORM" ) {
@@ -980,6 +1050,10 @@
     };
     document.dispatchEvent(new Event('wpd-dom-serialize-loaded'));
 }());(function() {
+    // Prevent duplicate loading
+    if ( typeof WPD.dom.fn.inViewPort != "undefined" ) {
+        return false;	// Terminate
+    }
     WPD.dom.fn.inViewPort = function (tolerance, viewport) {
         "use strict";
         let element = this.get(0), vw, vh;
@@ -1025,6 +1099,10 @@
     };
     document.dispatchEvent(new Event('wpd-dom-viewport-loaded'));
 }());(function() {
+    // Prevent duplicate loading
+    if ( typeof WPD.dom.fn.ajax != "undefined" ) {
+        return false;	// Terminate
+    }
     WPD.dom.fn.ajax = function(args) {
         let defaults = {
             'url': '',
@@ -1204,12 +1282,27 @@ window.WPD.Base64 = {
     WPD.Hooks = WPD.Hooks || {};
     let Hooks = WPD.Hooks;
     Hooks.filters = Hooks.filters || {};
+    /**
+     * Adds a callback function to a specific programmatically triggered tag (hook)
+     *
+     * @param tag - the hook name
+     * @param callback - the callback function variable name
+     * @param priority - (optional) default=10
+     * @param scope - (optional) function scope. When a function is executed within an object scope, the object variable should be passed.
+     */
     Hooks.addFilter = function( tag, callback, priority, scope ) {
         priority = typeof priority === "undefined" ? 10 : priority;
         scope = typeof scope === "undefined" ? null : scope;
         Hooks.filters[ tag ] = Hooks.filters[ tag ] || [];
         Hooks.filters[ tag ].push( { priority: priority, scope: scope, callback: callback } );
     }
+
+    /**
+     * Removes a callback function from a hook
+     *
+     * @param tag - the hook name
+     * @param callback - the callback function variable
+     */
     Hooks.removeFilter = function( tag, callback ) {
         if ( typeof Hooks.filters[ tag ] != 'undefined' ) {
             if ( typeof callback == "undefined" ) {
@@ -1238,6 +1331,18 @@ window.WPD.Base64 = {
             args.splice(0, 2);
             filters.forEach( function( hooks ) {
                 hooks.forEach( function( obj ) {
+                    /**
+                     * WARNING!
+                     * If, this function is called with a referanced parameter like OBJECT or ARRAY argument
+                     * as the first argument - then the callback function MUST return that value, otherwise
+                     * it is overwritten with NULL!
+                     * Ex.:
+                     * Hooks.applyFilters('my_filter', object);
+                     * Hooks.addFilter('my_filter', function(obj){
+                     *     do things..
+                     *     return obj; <--- IMPORTANT IN EVERY CASE
+                     * });
+                     */
                     value = obj.callback.apply( obj.scope, [value].concat(args) );
                 } );
             } );
@@ -1436,7 +1541,6 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
     window.WPD = typeof window.WPD !== 'undefined' ? window.WPD : {};
     window.WPD.ajaxsearchpro = new function (){
-        this.prevState = null;
         this.firstIteration = true;
         this.helpers = {};
         this.plugin = {};
@@ -1463,2715 +1567,6 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
         }
     };
 })();WPD.dom._fn.plugin('ajaxsearchpro', window.WPD.ajaxsearchpro.plugin);(function($){
-    "use strict";
-    let functions = {
-        addAnimation: function () {
-            let $this = this,
-                i = 0,
-                j = 1,
-                delay = 25,
-                checkViewport = true;
-
-            // No animation for the new elements via more results link
-            if ( $this.call_num > 0 || $this._no_animations ) {
-                $this.n.results.find('.item, .asp_group_header').removeClass("opacityZero").removeClass("asp_an_" + $this.animOptions.items);
-                return false;
-            }
-
-            $this.n.results.find('.item, .asp_group_header').each(function () {
-                let x = this;
-                // The first item must be in the viewport, if not, then we won't use this at all
-                if ( j === 1) {
-                    checkViewport = $(x).inViewPort(0);
-                }
-
-                // No need to animate everything
-                if (
-                    ( j > 1 && checkViewport && !$(x).inViewPort(0) ) ||
-                    j > 80
-                ) {
-                    $(x).removeClass("opacityZero");
-                    return true;
-                }
-
-                // noinspection JSUnresolvedVariable
-                if ($this.o.resultstype == 'isotopic' && j>$this.il.itemsPerPage) {
-                    // Remove this from the ones not affected by the animation
-                    $(x).removeClass("opacityZero");
-                    return;
-                }
-
-                setTimeout(function () {
-                    $(x).addClass("asp_an_" + $this.animOptions.items);
-                    /**
-                     * The opacityZero class must be removed just a little bit after
-                     * the animation starts. This way the opacity is not reset to 1 yet,
-                     * and not causing flashing effect on the results.
-                     *
-                     * If the opacityZero is not removed, the after the removeAnimation()
-                     * call the opacity flashes back to 0 - window rezise or pagination events
-                     */
-                    $(x).removeClass("opacityZero");
-                }, (i + delay));
-                i = i + 45;
-                j++;
-            });
-
-        },
-
-        removeAnimation: function () {
-            let $this = this;
-            this.n.items.each(function () {
-                $(this).removeClass("asp_an_" + $this.animOptions.items);
-            });
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
-        autocomplete: function () {
-            let $this = this,
-                val = $this.n.text.val();
-
-            if ($this.n.text.val() == '') {
-                $this.n.textAutocomplete.val('');
-                return;
-            }
-            let autocompleteVal = $this.n.textAutocomplete.val();
-
-            if (autocompleteVal != '' && autocompleteVal.indexOf(val) == 0) {
-                return;
-            } else {
-                $this.n.textAutocomplete.val('');
-            }
-            // noinspection JSUnresolvedVariable
-            if ( $this.n.text.val().length >= $this.o.autocomplete.trigger_charcount ) {
-                let data = {
-                    action: 'ajaxsearchpro_autocomplete',
-                    asid: $this.o.id,
-                    sauto: $this.n.text.val(),
-                    asp_inst_id: $this.o.rid,
-                    options: $('form', $this.n.searchsettings).serialize()
-                };
-                // noinspection JSUnresolvedVariable
-                $this.postAuto = $.fn.ajax({
-                    'url': ASP.ajaxurl,
-                    'method': 'POST',
-                    'data': data,
-                    'success': function (response) {
-                        if (response.length > 0) {
-                            response = $('<textarea />').html(response).text();
-                            response = response.replace(/^\s*[\r\n]/gm, "");
-                            response = val + response.substr(val.length);
-                        }
-                        $this.n.textAutocomplete.val(response);
-                        $this.fixAutocompleteScrollLeft();
-                    }
-                });
-            }
-        },
-
-        // If only google source is used, this is much faster..
-        autocompleteGoogleOnly: function () {
-            let $this = this,
-                val = $this.n.text.val();
-            if ($this.n.text.val() == '') {
-                $this.n.textAutocomplete.val('');
-                return;
-            }
-            let autocompleteVal = $this.n.textAutocomplete.val();
-            if (autocompleteVal != '' && autocompleteVal.indexOf(val) == 0) {
-                return;
-            } else {
-                $this.n.textAutocomplete.val('');
-            }
-
-            let lang = $this.o.autocomplete.lang;
-            ['wpml_lang', 'polylang_lang', 'qtranslate_lang'].forEach( function(v){
-                if (
-                    $('input[name="'+v+'"]', $this.n.searchsettings).length > 0 &&
-                    $('input[name="'+v+'"]', $this.n.searchsettings).val().length > 1
-                ) {
-                    lang = $('input[name="' + v + '"]', $this.n.searchsettings).val();
-                }
-            });
-            // noinspection JSUnresolvedVariable
-            if ( $this.n.text.val().length >= $this.o.autocomplete.trigger_charcount ) {
-                $.fn.ajax({
-                    url: 'https://clients1.google.com/complete/search',
-                    cors: 'no-cors',
-                    data: {
-                        q: val,
-                        hl: lang,
-                        nolabels: 't',
-                        client: 'hp',
-                        ds: ''
-                    },
-                    success: function (data) {
-                        if (data[1].length > 0) {
-                            let response = data[1][0][0].replace(/(<([^>]+)>)/ig, "");
-                            response = $('<textarea />').html(response).text();
-                            response = response.substr(val.length);
-                            $this.n.textAutocomplete.val(val + response);
-                            $this.fixAutocompleteScrollLeft();
-                        }
-                    }
-                });
-            }
-        },
-
-        fixAutocompleteScrollLeft: function() {
-            this.n.textAutocomplete.get(0).scrollLeft = this.n.text.get(0).scrollLeft;
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = WPD.ajaxsearchpro.helpers;
-    let functions = {
-        openCompact: function() {
-            let $this = this;
-
-            if ( !$this.n.search.is("[asp-compact-w]") ) {
-                $this.n.probox.attr('asp-compact-w', $this.n.probox.width());
-                $this.n.search.attr('asp-compact-w', $this.n.search.width());
-            }
-
-            $this.n.search.css({
-                "width": $this.n.search.width() + 'px'
-            });
-
-            $this.n.probox.css({width: "auto"});
-
-            // halftime delay on showing the input, etc.. for smoother animation
-            setTimeout(function(){
-                $this.n.search.find('.probox>div:not(.promagnifier)').removeClass('hiddend');
-            }, 80);
-
-            // Clear this timeout first, in case of fast clicking..
-            clearTimeout($this.timeouts.compactBeforeOpen);
-            $this.timeouts.compactBeforeOpen = setTimeout(function(){
-                let width;
-                if ( helpers.deviceType() == 'phone' ) {
-                    // noinspection JSUnresolvedVariable
-                    width = $this.o.compact.width_phone;
-                } else if ( helpers.deviceType() == 'tablet' ) {
-                    // noinspection JSUnresolvedVariable
-                    width = $this.o.compact.width_tablet;
-                } else {
-                    width = $this.o.compact.width;
-                }
-
-                width = helpers.Hooks.applyFilters('asp_compact_width', width, $this.o.id, $this.o.iid);
-                width = helpers.wp_hooks_apply_filters('asp_compact_width', width, $this.o.id, $this.o.iid);
-
-                width = !isNaN(width) ? width + 'px' : width;
-                $this.n.search.css({
-                    "max-width": width,
-                    "width": width
-                });
-
-                if ($this.o.compact.overlay == 1) {
-                    $this.n.search.css('z-index', 999999);
-                    $this.n.searchsettings.css('z-index', 999999);
-                    $this.n.resultsDiv.css('z-index', 999999);
-                    $this.n.trythis.css('z-index', 999998);
-                    $('#asp_absolute_overlay').css({
-                        'opacity': 1,
-                        'width': "100%",
-                        "height": "100%",
-                        "z-index": 999990
-                    });
-                }
-
-                $this.n.search.attr('asp-compact', 'open');
-            }, 50);
-
-            // Clear this timeout first, in case of fast clicking..
-            clearTimeout($this.timeouts.compactAfterOpen);
-            $this.timeouts.compactAfterOpen = setTimeout(function(){
-                $this.resize();
-                $this.n.trythis.css({
-                    display: 'block'
-                });
-                if ($this.o.compact.enabled == 1 && $this.o.compact.position != 'static') {
-                    $this.n.trythis.css({
-                        top: ( $this.n.search.offset().top + $this.n.search.outerHeight(true) ) + 'px',
-                        left: $this.n.search.offset().left + 'px'
-                    });
-                }
-                if ( $this.o.compact.focus ) {
-                    $this.n.text.get(0).focus();
-                }
-                $this.n.text.trigger('focus');
-                $this.scrolling();
-            }, 500);
-        },
-
-        closeCompact: function() {
-            let $this = this;
-
-            /**
-             * Clear every timeout from the opening script to prevent issues
-             */
-            clearTimeout($this.timeouts.compactBeforeOpen);
-            clearTimeout($this.timeouts.compactAfterOpen);
-
-            $this.timeouts.compactBeforeOpen = setTimeout(function(){
-                $this.n.search.attr('asp-compact', 'closed');
-            }, 50);
-
-            $this.n.search.find('.probox>div:not(.promagnifier)').addClass('hiddend');
-
-            $this.n.search.css({width: "auto"});
-            $this.n.probox.css({width: $this.n.probox.attr('asp-compact-w')});
-            //$this.n.search.velocity({width: $this.n.search.attr('asp-compact-w')}, 300);
-
-            $this.n.trythis.css({
-                left: $this.n.search.position().left,
-                display: "none"
-            });
-
-
-            if ($this.o.compact.overlay == 1) {
-                $this.n.search.css('z-index', '');
-                $this.n.searchsettings.css('z-index', '');
-                $this.n.resultsDiv.css('z-index', '');
-                $this.n.trythis.css('z-index', '');
-                $('#asp_absolute_overlay').css({
-                    'opacity': 0,
-                    'width': 0,
-                    "height": 0,
-                    "z-index": 0
-                });
-            }
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        setFilterStateInput: function( timeout ) {
-            let $this = this;
-            if ( typeof timeout == 'undefined' ) {
-                timeout = 65;
-            }
-            let process = function(){
-                if ( JSON.stringify($this.originalFormData) != JSON.stringify(helpers.formData($('form', $this.n.searchsettings)) ) )
-                    $this.n.searchsettings.find('input[name=filters_initial]').val(0);
-                else
-                    $this.n.searchsettings.find('input[name=filters_initial]').val(1);
-            };
-            if ( timeout == 0 ) {
-                process();
-            } else {
-                // Need a timeout > 50, as some checkboxes are delayed (parent-child selection)
-                setTimeout(function () {
-                    process();
-                }, timeout);
-            }
-        },
-
-        resetSearchFilters: function() {
-            let $this = this;
-
-            helpers.formData($('form', $this.n.searchsettings), $this.originalFormData);
-            // Reset the sliders first
-            if ( $this.noUiSliders.length > 0 ) {
-                $this.noUiSliders.forEach(function (slider){
-                    if ( typeof slider.noUiSlider != 'undefined') {
-                        let vals = [];
-                        $(slider).parent().find('.asp_slider_hidden').forEach(function(el){
-                            vals.push($(el).val());
-                        });
-                        if ( vals.length > 0 ) {
-                            slider.noUiSlider.set(vals);
-                        }
-                    }
-                });
-            }
-
-            if ( typeof $this.select2jQuery != "undefined" ) {
-                $this.select2jQuery($this.n.searchsettings.get(0)).find('.asp_gochosen,.asp_goselect2').trigger("change.asp_select2");
-            }
-            $this.n.text.val('');
-            $this.n.proloading.css('display', 'none');
-            $this.hideLoader();
-            $this.searchAbort();
-            $this.setFilterStateInput(0);
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
-        gaPageview: function(term) {
-            let $this = this;
-            let tracking_id = $this.gaGetTrackingID();
-            // noinspection JSUnresolvedVariable
-            if ( typeof ASP.analytics == 'undefined' || ASP.analytics.method != 'pageview' )
-                return false;
-            // noinspection JSUnresolvedVariable
-            if ( ASP.analytics.string != '' ) {
-                // YOAST uses __gaTracker, if not defined check for ga, if nothing go null, FUN EH??
-                // noinspection JSUnresolvedVariable
-                let _ga = typeof __gaTracker == "function" ? __gaTracker : (typeof ga == "function" ? ga : false);
-                let _gtag = typeof gtag == "function" ? gtag : false;
-
-                if (!window.location.origin) {
-                    window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
-                }
-                // Multisite Subdirectory (if exists)
-                // noinspection JSUnresolvedVariable
-                let url = $this.o.homeurl.replace(window.location.origin, '');
-
-                // GTAG bypass pageview tracking method
-                if ( _gtag !== false ) {
-                    if ( tracking_id !== false ) {
-                        // noinspection JSUnresolvedVariable
-                        _gtag('config', tracking_id, {'page_path': url + ASP.analytics.string.replace("{asp_term}", term)});
-                    }
-                } else if ( _ga !== false ) {
-                    if ( tracking_id !== false ) {
-                        _ga('create', tracking_id, 'auto');
-                    }
-                    // noinspection JSUnresolvedVariable
-                    _ga('send', 'pageview', {
-                        'page': url + ASP.analytics.string.replace("{asp_term}", term),
-                        'title': 'Ajax Search'
-                    });
-                }
-            }
-        },
-
-        gaEvent: function(which, data) {
-            let $this = this;
-            let tracking_id = $this.gaGetTrackingID();
-            // noinspection JSUnresolvedVariable
-            if ( typeof ASP.analytics == 'undefined' || ASP.analytics.method != 'event' )
-                return false;
-
-            // Get the scope
-            let _gtag = typeof gtag == "function" ? gtag : false;
-            // noinspection JSUnresolvedVariable
-            let _ga = typeof window.__gaTracker == "function" ? window.__gaTracker :
-                (typeof window.ga == "function" ? window.ga : false);
-
-            if ( _gtag === false && _ga === false )
-                return false;
-
-            // noinspection JSUnresolvedVariable
-            if (
-                typeof (ASP.analytics.event[which]) != 'undefined' &&
-                ASP.analytics.event[which].active == 1
-            ) {
-                let def_data = {
-                    "search_id": $this.o.id,
-                    "search_name": $this.o.name,
-                    "phrase": $this.n.text.val(),
-                    "option_name": '',
-                    "option_value": '',
-                    "result_title": '',
-                    "result_url": '',
-                    "results_count": ''
-                };
-                // noinspection JSUnresolvedVariable
-                let event = {
-                    'event_category': ASP.analytics.event[which].category,
-                    'event_label': ASP.analytics.event[which].label,
-                    'value': ASP.analytics.event[which].value
-                };
-                data = $.fn.extend(def_data, data);
-                Object.keys(data).forEach(function (k) {
-                    let v = data[k];
-                    v = String(v).replace(/[\s\n\r]+/g, " ").trim();
-                    Object.keys(event).forEach(function (kk) {
-                        let regex = new RegExp('\{' + k + '\}', 'gmi');
-                        event[kk] = event[kk].replace(regex, v);
-                    });
-                });
-                if ( _gtag === false ) {
-                    if ( tracking_id !== false ) {
-                        tracking_id.forEach(function(id){
-                            _ga('create', id, 'auto');
-                            // noinspection JSUnresolvedVariable
-                            _ga('send', 'event',
-                                event.event_category,
-                                ASP.analytics.event[which].action,
-                                event.event_label,
-                                event.value
-                            );
-                        });
-                    } else {
-                        // noinspection JSUnresolvedVariable
-                        _ga('send', 'event',
-                            event.event_category,
-                            ASP.analytics.event[which].action,
-                            event.event_label,
-                            event.value
-                        );
-                    }
-                } else {
-                    if ( tracking_id !== false ) {
-                        tracking_id.forEach(function(id){
-                            event.send_to = id;
-                            // noinspection JSUnresolvedVariable
-                            _gtag('event', ASP.analytics.event[which].action, event);
-                        });
-                    } else {
-                        // noinspection JSUnresolvedVariable
-                        _gtag('event', ASP.analytics.event[which].action, event);
-                    }
-                }
-            }
-        },
-
-        gaGetTrackingID: function() {
-            let ret = false;
-            // noinspection JSUnresolvedVariable
-            if ( typeof ASP.analytics == 'undefined' )
-                return ret;
-
-            // noinspection JSUnresolvedVariable
-            if ( typeof ASP.analytics.tracking_id != 'undefined' && ASP.analytics.tracking_id != '' ) {
-                // noinspection JSUnresolvedVariable
-                return [ASP.analytics.tracking_id];
-            } else {
-                // GTAG bypass pageview tracking method
-                let _gtag = typeof window.gtag == "function" ? window.gtag : false;
-                if ( _gtag === false && typeof window.ga != 'undefined' && typeof window.ga.getAll != 'undefined' ) {
-                    let id = [];
-                    window.ga.getAll().forEach( function(tracker) {
-                        id.push( tracker.get('trackingId') );
-                    });
-                    return id.length > 0 ? id : false;
-                }
-            }
-
-            return ret;
-        },
-
-        stat_addKeyword: function(id, keyword) {
-            let data = {
-                action: 'ajaxsearchpro_addkeyword',
-                id: id,
-                keyword: keyword
-            };
-            // noinspection JSUnresolvedVariable
-            $.fn.ajax({
-                'url': ASP.ajaxurl,
-                'method': 'POST',
-                'data': data,
-                'success': function (response) {}
-            })
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        liveLoad: function(selector, url, updateLocation, forceAjax) {
-            if ( selector == 'body' || selector == 'html' ) {
-                console.log('Ajax Search Pro: Do not use html or body as the live loader selector.');
-                return false;
-            }
-
-            // Store the current page HTML for the live loaders
-            // It needs to be requested here as the dom does store the processed HTML, and it is no good.
-            if ( ASP.pageHTML == "" ) {
-                if ( typeof ASP._ajax_page_html === 'undefined' ) {
-                    ASP._ajax_page_html = true;
-                    $.fn.ajax({
-                        url: location.href,
-                        method: 'GET',
-                        success: function(data){
-                            ASP.pageHTML = data;
-                        },
-                        dataType: 'html'
-                    });
-                }
-            }
-
-            function process(data) {
-                data = helpers.Hooks.applyFilters('asp/live_load/raw_data', data, $this);
-                let parser = new DOMParser;
-                let dataNode = parser.parseFromString(data, "text/html");
-                let $dataNode = $(dataNode);
-
-                // noinspection JSUnresolvedVariable
-                if ( $this.o.statistics ) {
-                    $this.stat_addKeyword($this.o.id, $this.n.text.val());
-                }
-                if ( data != '' && $dataNode.length > 0 && $dataNode.find(selector).length > 0 ) {
-                    data = data.replace(/&asp_force_reset_pagination=1/gmi, '');
-                    data = data.replace(/%26asp_force_reset_pagination%3D1/gmi, '');
-                    data = data.replace(/&#038;asp_force_reset_pagination=1/gmi, '');
-
-                    // Safari having issues with srcset when ajax loading
-                    if ( helpers.isSafari() ) {
-                        data = data.replace(/srcset/gmi, 'nosrcset');
-                    }
-
-                    data = helpers.Hooks.applyFilters('asp_live_load_html', data, $this.o.id, $this.o.iid);
-                    data = helpers.wp_hooks_apply_filters('asp_live_load_html', data, $this.o.id, $this.o.iid);
-                    $dataNode = $(parser.parseFromString(data, "text/html"));
-
-                    //$el.replaceWith($dataNode.find(selector).first());
-                    let replacementNode = $dataNode.find(selector).get(0);
-                    replacementNode = helpers.Hooks.applyFilters('asp/live_load/replacement_node', replacementNode, $this, $el.get(0), data);
-                    if ( replacementNode != null ) {
-                        $el.get(0).parentNode.replaceChild(replacementNode, $el.get(0));
-                    }
-
-                    // get the element again, as it no longer exists
-                    $el = $(selector).first();
-                    if ( updateLocation ) {
-                        document.title = dataNode.title;
-                        history.pushState({}, null, url);
-                    }
-
-                    // WooCommerce ordering fix
-                    $(selector).first().find(".woocommerce-ordering").on("change","select.orderby", function(){
-                        $(this).closest("form").trigger('submit');
-                    });
-
-                    // Single highlight on live results
-                    // noinspection JSUnresolvedVariable
-                    if ( $this.o.singleHighlight == 1 ) {
-                        $(selector).find('a').on('click', function(){
-                            localStorage.removeItem('asp_phrase_highlight');
-                            if ( helpers.unqoutePhrase( $this.n.text.val() ) != '' )
-                                localStorage.setItem('asp_phrase_highlight', JSON.stringify({
-                                    'phrase': helpers.unqoutePhrase( $this.n.text.val() ),
-                                    'id': $this.o.id
-                                }));
-                        });
-                    }
-
-                    helpers.Hooks.applyFilters('asp/live_load/finished', url, $this, selector, $el.get(0));
-
-                    // noinspection JSUnresolvedVariable
-                    ASP.initialize();
-                    $this.lastSuccesfulSearch = $('form', $this.n.searchsettings).serialize() + $this.n.text.val().trim();
-                    $this.lastSearchData = data;
-                }
-                $this.n.s.trigger("asp_search_end", [$this.o.id, $this.o.iid, $this.n.text.val(), data], true, true);
-                $this.gaEvent('search_end', {'results_count': 'unknown'});
-                $this.gaPageview($this.n.text.val());
-                $this.hideLoader();
-                $el.css('opacity', 1);
-                $this.searching = false;
-                if ( $this.n.text.val() != '' ) {
-                    $this.n.proclose.css({
-                        display: "block"
-                    });
-                }
-            }
-
-            updateLocation = typeof updateLocation == 'undefined' ? true : updateLocation;
-            forceAjax = typeof forceAjax == 'undefined' ? false : forceAjax;
-
-            // Alternative possible selectors from famous themes
-            let altSel = [
-                '.search-content',
-                '#content', '#Content', 'div[role=main]',
-                'main[role=main]', 'div.theme-content', 'div.td-ss-main-content',
-                'main.l-content', '#primary'
-            ];
-            if ( selector != '#main' )
-                altSel.unshift('#main');
-
-            if ( $(selector).length < 1 ) {
-                altSel.forEach(function(i, s){
-                    if ( $(s).length > 0 ) {
-                        selector = s;
-                        return false;
-                    }
-                });
-                if ( $(selector).length < 1 ) {
-                    console.log('Ajax Search Pro: The live search selector does not exist on the page.');
-                    return false;
-                }
-            }
-
-            selector = helpers.Hooks.applyFilters('asp/live_load/selector', selector, this);
-
-            let $el = $(selector).first(),
-                $this = this;
-
-            $this.searchAbort();
-            $el.css('opacity', 0.4);
-
-            helpers.Hooks.applyFilters('asp/live_load/start', url, $this, selector, $el.get(0));
-
-            if (
-                !forceAjax &&
-                $this.n.searchsettings.find('input[name=filters_initial]').val() == 1 &&
-                $this.n.text.val() == ''
-            ) {
-                window.WPD.intervalUntilExecute(function(){
-                    process(ASP.pageHTML);
-                }, function(){
-                    return ASP.pageHTML != ''
-                });
-            } else {
-                $this.searching = true;
-                $this.post = $.fn.ajax({
-                    url: url,
-                    method: 'GET',
-                    success: function(data){
-                        process(data);
-                    },
-                    dataType: 'html',
-                    fail: function(jqXHR){
-                        $el.css('opacity', 1);
-                        if ( jqXHR.aborted ) {
-                            return;
-                        }
-                        $el.html("This request has failed. Please check your connection.");
-                        $this.hideLoader();
-                        $this.searching = false;
-                        $this.n.proclose.css({
-                            display: "block"
-                        });
-                    }
-                });
-            }
-        },
-        getCurrentLiveURL: function() {
-            let $this = this;
-            let url = 'asp_ls=' + helpers.nicePhrase( $this.n.text.val() ),
-                start = '&',
-                location = window.location.href;
-
-            // Correct previous query arguments (in case of paginated results)
-            location = location.indexOf('asp_ls=') > -1 ? location.slice(0, location.indexOf('asp_ls=')) : location;
-            location = location.indexOf('asp_ls&') > -1 ? location.slice(0, location.indexOf('asp_ls&')) : location;
-
-            // Was asp_ls missing but there are ASP related arguments? (ex. when using ASP.api('getStateURL'))
-            location = location.indexOf('p_asid=') > -1 ? location.slice(0, location.indexOf('p_asid=')) : location;
-            location = location.indexOf('asp_') > -1 ? location.slice(0, location.indexOf('asp_')) : location;
-
-            if ( location.indexOf('?') === -1 ) {
-                start = '?';
-            }
-
-            let final = location + start + url + "&asp_active=1&asp_force_reset_pagination=1&p_asid=" +
-                $this.o.id + "&p_asp_data=1&" + $('form', $this.n.searchsettings).serialize();
-            // Possible issue when the URL ends with '?' and the start is '&'
-            final = final.replace('?&', '?');
-
-            return final;
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
-        showMoreResLoader: function( ) {
-            let $this = this;
-            $this.n.resultsDiv.addClass('asp_more_res_loading');
-        },
-
-        showLoader: function( recall ) {
-            let $this = this;
-            recall = typeof recall !== 'undefined' ? recall : false;
-
-            // noinspection JSUnresolvedVariable
-            if ( $this.o.loaderLocation == "none" ) return;
-
-            // noinspection JSUnresolvedVariable
-            if ( !$this.n.search.hasClass("hiddend")  && ( $this.o.loaderLocation != "results" )  ) {
-                $this.n.proloading.css({
-                    display: "block"
-                });
-            }
-
-            // stop at this point, if this is a 'load more' call
-            if ( recall !== false ) {
-                return false;
-            }
-
-            // noinspection JSUnresolvedVariable
-            if ( ( $this.n.search.hasClass("hiddend") && $this.o.loaderLocation != "search" ) ||
-                ( !$this.n.search.hasClass("hiddend") && ( $this.o.loaderLocation == "both" || $this.o.loaderLocation == "results" ) )
-            ) {
-                if ( !$this.usingLiveLoader ) {
-                    if ( $this.n.resultsDiv.find('.asp_results_top').length > 0 )
-                        $this.n.resultsDiv.find('.asp_results_top').css('display', 'none');
-                    $this.showResultsBox();
-                    $(".asp_res_loader", $this.n.resultsDiv).removeClass("hiddend");
-                    $this.n.results.css("display", "none");
-                    $this.n.showmore.css("display", "none");
-                    $this.hidePagination();
-                }
-            }
-        },
-
-        hideLoader: function( ) {
-            let $this = this;
-
-            $this.n.proloading.css({
-                display: "none"
-            });
-            $(".asp_res_loader", $this.n.resultsDiv).addClass("hiddend");
-            $this.n.results.css("display", "");
-            $this.n.resultsDiv.removeClass('asp_more_res_loading');
-        },
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
-        /**
-         * Checks if an element with the same ID and Instance was already registered
-         */
-        fixClonedSelf: function() {
-            let $this = this,
-                oldInstanceId = $this.o.iid,
-                oldRID = $this.o.rid;
-            while ( !ASP.instances.set($this) ) {
-                ++$this.o.iid;
-                if ($this.o.iid > 50) {
-                    break;
-                }
-            }
-            // oof, this was cloned
-            if ( oldInstanceId != $this.o.iid ) {
-                $this.o.rid = $this.o.id + '_' + $this.o.iid;
-                $this.n.search.get(0).id = "ajaxsearchpro" + $this.o.rid;
-                $this.n.search.removeClass('asp_m_' + oldRID).addClass('asp_m_' + $this.o.rid);
-                $this.n.searchsettings.get(0).id = $this.n.searchsettings.get(0).id.replace('settings'+ oldRID, 'settings' + $this.o.rid);
-                if ( $this.n.searchsettings.hasClass('asp_s_' + oldRID) ) {
-                    $this.n.searchsettings.removeClass('asp_s_' + oldRID)
-                        .addClass('asp_s_' + $this.o.rid).data('instance', $this.o.iid);
-                } else {
-                    $this.n.searchsettings.removeClass('asp_sb_' + oldRID)
-                        .addClass('asp_sb_' + $this.o.rid).data('instance', $this.o.iid);
-                }
-                $this.n.resultsDiv.get(0).id = $this.n.resultsDiv.get(0).id.replace('prores'+ oldRID, 'prores' + $this.o.rid);
-                $this.n.resultsDiv.removeClass('asp_r_' + oldRID)
-                    .addClass('asp_r_' + $this.o.rid).data('instance', $this.o.iid);
-                $this.n.container.find('.asp_init_data').data('instance', $this.o.iid);
-                $this.n.container.find('.asp_init_data').get(0).id =
-                    $this.n.container.find('.asp_init_data').get(0).id.replace('asp_init_id_'+ oldRID, 'asp_init_id_' + $this.o.rid);
-
-                $this.n.prosettings.data('opened', 0);
-            }
-        },
-        destroy: function () {
-            let $this = this;
-            Object.keys($this.n).forEach(function(k){
-               $this.n[k].off();
-            });
-            $this.n.searchsettings.remove();
-            $this.n.resultsDiv.remove();
-            $this.n.trythis.remove();
-            $this.n.search.remove();
-            $this.n.container.remove();
-            $this.documentEventHandlers.forEach(function(h){
-                $(h.node).off(h.event, h.handler);
-            });
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);// noinspection HttpUrlsUsage,JSUnresolvedVariable
-
-(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        isRedirectToFirstResult: function() {
-            let $this = this;
-            // noinspection JSUnresolvedVariable
-            return (
-                    $('.asp_res_url', $this.n.resultsDiv).length > 0 ||
-                    $('.asp_es_' + $this.o.id + ' a').length > 0 ||
-                    ( $this.o.resPage.useAjax && $($this.o.resPage.selector + 'a').length > 0)
-                ) &&
-                (
-                    ($this.o.redirectOnClick == 1 && $this.ktype == 'click' && $this.o.trigger.click == 'first_result') ||
-                    ($this.o.redirectOnEnter == 1 && ($this.ktype == 'input' || $this.ktype == 'keyup') && $this.keycode == 13 && $this.o.trigger.return == 'first_result') ||
-                    ($this.ktype == 'button' && $this.o.sb.redirect_action == 'first_result')
-                );
-        },
-
-        doRedirectToFirstResult: function() {
-            let $this = this,
-                _loc, url;
-
-            if ( $this.ktype == 'click' ) {
-                _loc = $this.o.trigger.click_location;
-            } else if ( $this.ktype == 'button' ) {
-                // noinspection JSUnresolvedVariable
-                _loc = $this.o.sb.redirect_location;
-            } else {
-                _loc = $this.o.trigger.return_location;
-            }
-
-            if ( $('.asp_res_url', $this.n.resultsDiv).length > 0 ) {
-                url =  $( $('.asp_res_url', $this.n.resultsDiv).get(0) ).attr('href');
-            } else if ( $('.asp_es_' + $this.o.id + ' a').length > 0 ) {
-                url =  $( $('.asp_es_' + $this.o.id + ' a').get(0) ).attr('href');
-            } else if ( $this.o.resPage.useAjax && $($this.o.resPage.selector + 'a').length > 0 ) {
-                url =  $( $($this.o.resPage.selector + 'a').get(0) ).attr('href');
-            }
-
-            if ( url != '' ) {
-                if (_loc == 'same') {
-                    location.href = url;
-                } else {
-                    helpers.openInNewTab(url);
-                }
-
-                $this.hideLoader();
-                $this.hideResults();
-            }
-            return false;
-        },
-
-        doRedirectToResults: function( ktype ) {
-            let $this = this,
-                _loc;
-
-            if ( !$this.reportSettingsValidity() ) {
-                $this.showNextInvalidFacetMessage();
-                return false;
-            }
-
-            if ( ktype == 'click' ) {
-                _loc = $this.o.trigger.click_location;
-            } else if ( ktype == 'button' ) {
-                // noinspection JSUnresolvedVariable
-                _loc = $this.o.sb.redirect_location;
-            } else {
-                _loc = $this.o.trigger.return_location;
-            }
-            let url = $this.getRedirectURL(ktype);
-
-            // noinspection JSUnresolvedVariable
-            if ($this.o.overridewpdefault) {
-                // noinspection JSUnresolvedVariable
-                if ( $this.o.resPage.useAjax == 1 ) {
-                    $this.hideResults();
-                    // noinspection JSUnresolvedVariable
-                    $this.liveLoad(url, $this.o.resPage.selector);
-                    $this.showLoader();
-                    if ($this.o.blocking == false) {
-                        $this.hideSettings();
-                    }
-                    return false;
-                }
-                // noinspection JSUnresolvedVariable
-                if ( $this.o.override_method == "post") {
-                    helpers.submitToUrl(url, 'post', {
-                        asp_active: 1,
-                        p_asid: $this.o.id,
-                        p_asp_data: $('form', $this.n.searchsettings).serialize()
-                    }, _loc);
-                } else {
-                    if ( _loc == 'same' ) {
-                        location.href = url;
-                    } else {
-                        helpers.openInNewTab(url);
-                    }
-                }
-            } else {
-                // The method is not important, just send the data to memorize settings
-                helpers.submitToUrl(url, 'post', {
-                    np_asid: $this.o.id,
-                    np_asp_data: $('form', $this.n.searchsettings).serialize()
-                }, _loc);
-            }
-
-            $this.n.proloading.css('display', 'none');
-            $this.hideLoader();
-            if ($this.o.blocking == false) $this.hideSettings();
-            $this.hideResults();
-            $this.searchAbort();
-        },
-        getRedirectURL: function(ktype) {
-            let $this = this,
-                url, source, final, base_url;
-            ktype = typeof ktype !== 'undefined' ? ktype : 'enter';
-
-            if ( ktype == 'click' ) {
-                source = $this.o.trigger.click;
-            } else if ( ktype == 'button' ) {
-                source = $this.o.sb.redirect_action;
-            } else {
-                source = $this.o.trigger.return;
-            }
-
-            if ( source == 'results_page' ) {
-                url = '?s=' + helpers.nicePhrase( $this.n.text.val() );
-            } else if ( source == 'woo_results_page' ) {
-                url = '?post_type=product&s=' + helpers.nicePhrase( $this.n.text.val() );
-            } else {
-                if ( ktype == 'button' ) {
-                    base_url = source == 'elementor_page' ? $this.o.sb.elementor_url : $this.o.sb.redirect_url;
-                    url = $this.parseCustomRedirectURL(base_url, $this.n.text.val());
-                } else {
-                    base_url = source == 'elementor_page' ? $this.o.trigger.elementor_url : $this.o.trigger.redirect_url;
-                    url = $this.parseCustomRedirectURL(base_url, $this.n.text.val());
-                }
-            }
-            // Is this an URL like xy.com/?x=y
-            if ( $this.o.homeurl.indexOf('?') > 1 && url.indexOf('?') === 0 ) {
-                url = url.replace('?', '&');
-            }
-
-            if ( $this.o.overridewpdefault && $this.o.override_method != 'post' ) {
-                // We are about to add a query string to the URL, so it has to contain the '?' character somewhere.
-                // ..if not, it has to be added
-                let start = '&';
-                if ( ( $this.o.homeurl.indexOf('?') === -1 || source == 'elementor_page' ) && url.indexOf('?') === -1 ) {
-                    start = '?';
-                }
-                let addUrl = url + start + "asp_active=1&p_asid=" + $this.o.id + "&p_asp_data=1&" + $('form', $this.n.searchsettings).serialize();
-                if ( source == 'elementor_page' ) {
-                    final = addUrl;
-                } else {
-                    final = $this.o.homeurl + addUrl;
-                }
-            } else {
-                if ( source == 'elementor_page' ) {
-                    final = url;
-                } else {
-                    final = $this.o.homeurl + url;
-                }
-            }
-
-            // Double backslashes - negative lookbehind (?<!:) is not supported in all browsers yet, ECMA2018
-            // This section should be only: final.replace(//(?<!:)\/\//g, '/');
-            // Bypass solution, but it works at least everywhere
-            final = final.replace('https://', 'https:///');
-            final = final.replace('http://', 'http:///');
-            final = final.replace(/\/\//g, '/');
-
-            final = helpers.Hooks.applyFilters('asp_redirect_url', final, $this.o.id, $this.o.iid);
-            final = helpers.wp_hooks_apply_filters('asp_redirect_url', final, $this.o.id, $this.o.iid);
-
-            return final;
-        },
-        parseCustomRedirectURL: function(url ,phrase) {
-            let $this = this,
-                u = url.replace(/{phrase}/g, helpers.nicePhrase(phrase)),
-                items = u.match(/{(.*?)}/g);
-            if ( items !== null ) {
-                items.forEach(function(v){
-                    v = v.replace(/[{}]/g, '');
-                    let node = $('input[type=radio][name*="aspf\[' +  v + '_"]:checked', $this.n.searchsettings);
-                    if ( node.length == 0 )
-                        node =  $('input[type=text][name*="aspf\[' +  v + '_"]', $this.n.searchsettings);
-                    if ( node.length == 0 )
-                        node =  $('input[type=hidden][name*="aspf\[' +  v + '_"]', $this.n.searchsettings);
-                    if ( node.length == 0 )
-                        node =  $('select[name*="aspf\[' +  v + '_"]:not([multiple])', $this.n.searchsettings);
-                    if ( node.length == 0 )
-                        node =  $('input[type=radio][name*="termset\[' +  v + '"]:checked', $this.n.searchsettings);
-                    if ( node.length == 0 )
-                        node =  $('input[type=text][name*="termset\[' +  v + '"]', $this.n.searchsettings);
-                    if ( node.length == 0 )
-                        node =  $('input[type=hidden][name*="termset\[' +  v + '"]', $this.n.searchsettings);
-                    if ( node.length == 0 )
-                        node =  $('select[name*="termset\[' +  v + '"]:not([multiple])', $this.n.searchsettings);
-                    if ( node.length == 0 )
-                        return true; // Continue
-
-                    let val = node.val();
-                    val = "" + val; // Convert anything to string, okay-ish method
-                    u = u.replace('{' + v + '}', val);
-                });
-            }
-            return u;
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        showResults: function( ) {
-            let $this = this;
-
-            // Create the scrollbars if needed
-            // noinspection JSUnresolvedVariable
-            if ($this.o.resultstype == 'horizontal') {
-                $this.createHorizontalScroll();
-            } else {
-                // noinspection JSUnresolvedVariable
-                if ($this.o.resultstype == 'vertical') {
-                    $this.createVerticalScroll();
-                }
-            }
-
-            // noinspection JSUnresolvedVariable
-            switch ($this.o.resultstype) {
-                case 'horizontal':
-                    $this.showHorizontalResults();
-                    break;
-                case 'vertical':
-                    $this.showVerticalResults();
-                    break;
-                case 'polaroid':
-                    $this.showPolaroidResults();
-                    //$this.disableMobileScroll = true;
-                    break;
-                case 'isotopic':
-                    $this.showIsotopicResults();
-                    break;
-                default:
-                    $this.showHorizontalResults();
-                    break;
-            }
-
-            $this.showAnimatedImages();
-            $this.hideLoader();
-
-            $this.n.proclose.css({
-                display: "block"
-            });
-
-            // When opening the results box only
-            // noinspection JSUnresolvedVariable
-            if ( helpers.isMobile() && $this.o.mobile.hide_keyboard && !$this.resultsOpened )
-                document.activeElement.blur();
-
-            // noinspection JSUnresolvedVariable
-            if ( $this.o.settingsHideOnRes && $this.o.blocking == false )
-                $this.hideSettings();
-
-            if ( typeof WPD.lazy != 'undefined' ) {
-                setTimeout(function(){
-                    // noinspection JSUnresolvedVariable
-                    WPD.lazy('.asp_lazy');
-                }, 100)
-            }
-
-            if ( $this.is_scroll && typeof $this.scroll.recalculate !== 'undefined' ) {
-                setTimeout(function(){
-                    $this.scroll.recalculate();
-                }, 500);
-            }
-
-            $this.eh.resulsDivHoverMouseEnter = $this.eh.resulsDivHoverMouseEnter || function () {
-                $('.item', $this.n.resultsDiv).removeClass('hovered');
-                $(this).addClass('hovered');
-            };
-            $this.eh.resulsDivHoverMouseLeave = $this.eh.resulsDivHoverMouseLeave || function () {
-                $('.item', $this.n.resultsDiv).removeClass('hovered');
-            };
-            $this.n.resultsDiv.find('.item').on('mouseenter', $this.eh.resulsDivHoverMouseEnter);
-            $this.n.resultsDiv.find('.item').on('mouseleave', $this.eh.resulsDivHoverMouseLeave);
-
-            $this.fixAccessibility();
-            $this.resultsOpened = true;
-        },
-
-        hideResults: function( blur ) {
-            let $this = this;
-            blur = typeof blur == 'undefined' ? true : blur;
-
-            if ( !$this.resultsOpened ) return false;
-
-            $this.n.resultsDiv.removeClass($this.resAnim.showClass).addClass($this.resAnim.hideClass);
-            setTimeout(function(){
-                $this.n.resultsDiv.css($this.resAnim.hideCSS);
-            }, $this.resAnim.duration);
-
-            $this.n.proclose.css({
-                display: "none"
-            });
-
-            if ( helpers.isMobile() && blur )
-                document.activeElement.blur();
-
-            $this.resultsOpened = false;
-            // Re-enable mobile scrolling, in case it was disabled
-            //$this.disableMobileScroll = false;
-
-            if ( typeof $this.ptstack != "undefined" )
-                delete $this.ptstack;
-
-            $this.hideArrowBox();
-
-            $this.n.s.trigger("asp_results_hide", [$this.o.id, $this.o.iid], true, true);
-        },
-
-        updateResults: function( html ) {
-            let $this = this;
-            if (
-                html.replace(/^\s*[\r\n]/gm, "") === "" ||
-                $(html).hasClass('asp_nores') ||
-                $(html).find('.asp_nores').length > 0
-            ) {
-                // Something went wrong, as the no-results container was returned
-                $this.n.showmore.css("display", "none");
-                $('span', $this.n.showmore).html("");
-            } else {
-                // noinspection JSUnresolvedVariable
-                if (
-                    $this.o.resultstype == 'isotopic' &&
-                    $this.call_num > 0 &&
-                    $this.isotopic != null &&
-                    typeof $this.isotopic.appended != 'undefined' &&
-                    $this.n.items.length > 0
-                ) {
-                    let $items = $(html),
-                        $last = $this.n.items.last(),
-                        last = parseInt( $this.n.items.last().attr('data-itemnum') );
-                    $items.get().forEach( function(el){
-                        $(el).attr('data-itemnum', ++last).css({
-                            'width': $last.css('width'),
-                            'height': $last.css('height')
-                        })
-                    });
-                    $this.n.resdrg.append( $items );
-
-                    $this.isotopic.appended( $items.get() );
-                    $this.n.items = $('.item', $this.n.resultsDiv).length > 0 ? $('.item', $this.n.resultsDiv) : $('.photostack-flip', $this.n.resultsDiv);
-                } else {
-                    // noinspection JSUnresolvedVariable
-                    if ( $this.call_num > 0 && $this.o.resultstype == 'vertical' ) {
-                        $this.n.resdrg.html($this.n.resdrg.html() + '<div class="asp_v_spacer"></div>' + html);
-                    } else {
-                        $this.n.resdrg.html($this.n.resdrg.html() + html);
-                    }
-                }
-            }
-        },
-
-        showResultsBox: function() {
-            let $this = this;
-
-            $this.n.s.trigger("asp_results_show", [$this.o.id, $this.o.iid], true, true);
-
-            $this.n.resultsDiv.css({
-                display: 'block',
-                height: 'auto'
-            });
-            $this.n.results.find('.item, .asp_group_header').addClass($this.animationOpacity);
-
-            $this.n.resultsDiv.css($this.resAnim.showCSS);
-            $this.n.resultsDiv.removeClass($this.resAnim.hideClass).addClass($this.resAnim.showClass);
-
-            $this.fixResultsPosition(true);
-        },
-
-        scrollToResults: function( ) {
-            let $this = this,
-                tolerance = Math.floor( window.innerHeight * 0.1 ),
-                stop;
-
-            if (
-                !$this.resultsOpened ||
-                $this.o.scrollToResults.enabled !=1 ||
-                $this.search.closest(".asp_preview_data").length > 0 ||
-                $this.o.compact.enabled == 1 ||
-                $this.n.resultsDiv.inViewPort(tolerance)
-            ) return;
-
-            if ($this.o.resultsposition == "hover") {
-                stop = $this.n.probox.offset().top - 20;
-            } else {
-                stop = $this.n.resultsDiv.offset().top - 20;
-            }
-            stop = stop + $this.o.scrollToResults.offset;
-
-            let $adminbar = $("#wpadminbar");
-            if ($adminbar.length > 0)
-                stop -= $adminbar.height();
-            stop = stop < 0 ? 0 : stop;
-            window.scrollTo({top: stop, behavior:"smooth"});
-        },
-
-        showAnimatedImages: function() {
-            let $this = this;
-            $this.n.items.each(function () {
-                let $image = $(this).find('.asp_image[data-src]'),
-                    src = $image.data('src');
-                if (typeof src != 'undefined' && src != null && src !== '' && src.indexOf('.gif') > -1) {
-                    if ($image.find('canvas').length == 0) {
-                        $image.prepend($('<div class="asp_item_canvas"><canvas></canvas></div>').get(0));
-                        let c = $(this).find('canvas').get(0),
-                            $cc = $(this).find('.asp_item_canvas'),
-                            ctx = c.getContext("2d"),
-                            img = new Image;
-                        img.crossOrigin = "anonymous";
-                        img.onload = function () {
-                            $(c).attr({
-                                "width": img.width,
-                                "height": img.height
-                            });
-                            ctx.drawImage(img, 0, 0, img.width, img.height); // Or at whatever offset you like
-                            $cc.css({
-                                "background-image": 'url(' + c.toDataURL() + ')'
-                            });
-                        };
-                        img.src = src;
-                    }
-                }
-            });
-        },
-
-        updateInfoHeader: function( totalCount ) {
-            let $this = this,
-                content,
-                $rt = $this.n.resultsDiv.find('.asp_results_top'),
-                phrase = $this.n.text.val().trim();
-
-            if ( $rt.length > 0 ) {
-                if ( $this.n.items.length <= 0 ) {
-                    $rt.css('display', 'none');
-                } else {
-                    if ( phrase !== '' && $this.resInfoBoxTxt !== '' ) {
-                        content = $this.resInfoBoxTxt;
-                    } else if ( phrase === '' && $this.resInfoBoxTxtNoPhrase !== '') {
-                        content = $this.resInfoBoxTxtNoPhrase;
-                    }
-                    if ( content !== '' ) {
-                        content = content.replace('{phrase}', $this.n.text.val());
-                        content = content.replace('{results_count}', $this.n.items.length);
-                        content = content.replace('{results_count_total}', totalCount);
-                        $rt.html(content);
-                        $rt.css('display', 'block');
-                    } else {
-                        $rt.css('display', 'none');
-                    }
-                }
-            }
-        }
-
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        showHorizontalResults: function () {
-            let $this = this;
-
-            $this.n.resultsDiv.css('display', 'block');
-            $this.fixResultsPosition(true);
-
-            $this.n.items.css("opacity", $this.animationOpacity);
-
-            if ($this.o.resultsposition == 'hover') {
-                $this.n.resultsDiv.css(
-                    'width',
-                    //($this.n.search.width() - ($this.n.resultsDiv.outerWidth(true) - $this.n.resultsDiv.innerWidth())) + 'px'
-                    ($this.n.search.width() - ($this.n.resultsDiv.outerWidth(true) - $this.n.resultsDiv.width())) + 'px'
-                );
-            }
-
-            // noinspection JSUnresolvedVariable
-            if ($this.n.items.length > 0 && $this.o.scrollBar.horizontal.enabled ) {
-                let el_m = parseInt($this.n.items.css("marginLeft")),
-                    el_w = $this.n.items.outerWidth() + el_m * 2;
-                $this.n.results.css("overflowX", "auto");
-                $this.n.resdrg.css("width", $this.n.items.length * el_w + el_m * 2 + "px");
-            } else {
-                $this.n.results.css("overflowX", "hidden");
-                $this.n.resdrg.css("width", "auto");
-            }
-
-            if ($this.o.highlight == 1) {
-                // noinspection JSUnresolvedVariable
-                $("div.item", $this.n.resultsDiv).highlight(
-                    $this.n.text.val().split(" "),
-                    { element: 'span', className: 'highlighted', wordsOnly: $this.o.highlightWholewords == 1 }
-                );
-            }
-
-            if ( $this.call_num < 1 ) {
-                // Scroll to the beginning
-                let $container = $this.is_scroll && typeof $this.scroll.recalculate !== 'undefined' ?
-                    $($this.scroll.getScrollElement()) : $this.n.results;
-                $container.get(0).scrollLeft = 0;
-
-                // noinspection JSUnresolvedVariable
-                if ( $this.o.scrollBar.horizontal.enabled ) {
-                    let prevDelta = 0,
-                        prevTime = Date.now();
-                    $container.off('mousewheel');
-                    $container.on('mousewheel', function (e) {
-                        let deltaFactor = typeof e.deltaFactor != 'undefined' ? e.deltaFactor : 65,
-                            delta = e.deltaY > 0 ? 1 : -1,
-                            diff = Date.now() - prevTime,
-                            speed = diff > 100 ? 1 : 3 - (2 * diff / 100);
-                        if (prevDelta != e.deltaY)
-                            speed = 1;
-                        $(this).animate(false).animate({
-                            "scrollLeft": this.scrollLeft + (delta * deltaFactor * 2 * speed)
-                        }, 250, "easeOutQuad");
-                        prevDelta = e.deltaY;
-                        prevTime = Date.now();
-                        if (
-                            !(
-                                (helpers.isScrolledToRight($container.get(0)) && delta == 1) ||
-                                (helpers.isScrolledToLeft($container.get(0)) && delta == -1)
-                            )
-                        )
-                            e.preventDefault();
-                    });
-                }
-            }
-
-            $this.showResultsBox();
-            $this.addAnimation();
-            $this.searching = false;
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        showIsotopicResults: function () {
-            let $this = this;
-
-            // When re-opening existing results, just stop here
-            if ( $this._no_animations == true ) {
-                $this.showResultsBox();
-                $this.addAnimation();
-                $this.searching = false;
-                return true;
-            }
-
-            $this.preProcessIsotopicResults();
-            $this.showResultsBox();
-
-            if ($this.n.items.length > 0) {
-                $this.n.results.css({
-                    height: "auto"
-                });
-                if ($this.o.highlight == 1) {
-                    // noinspection JSUnresolvedVariable
-                    $("div.item", $this.n.resultsDiv).highlight($this.n.text.val().split(" "), {
-                        element: 'span', className: 'highlighted', wordsOnly: $this.o.highlightWholewords
-                    });
-                }
-            }
-
-            if ( $this.call_num == 0 )
-                $this.calculateIsotopeRows();
-
-            $this.showPagination();
-            $this.isotopicPagerScroll();
-
-            if ($this.n.items.length == 0) {
-                $this.n.results.css({
-                    height: '11110px'
-                });
-                $this.n.results.css({
-                    height: 'auto'
-                });
-                $this.n.resdrg.css({
-                    height: 'auto'
-                });
-            } else {
-                // Initialize the main
-                if (typeof rpp_isotope !== 'undefined') {
-                    if ( $this.isotopic != null && typeof $this.isotopic.destroy != 'undefined' && $this.call_num == 0 )
-                        $this.isotopic.destroy();
-
-                    if ( $this.call_num == 0 || $this.isotopic == null ) {
-                        // noinspection JSPotentiallyInvalidConstructorUsage
-                        $this.isotopic = new rpp_isotope('#ajaxsearchprores' + $this.o.rid + " .resdrg", {
-                            // options
-                            isOriginLeft: !$('body').hasClass('rtl'),
-                            itemSelector: 'div.item',
-                            layoutMode: 'masonry',
-                            filter: $this.filterFns['number'],
-                            masonry: {
-                                "gutter": $this.o.isotopic.gutter
-                            }
-                        });
-                    }
-                } else {
-                    // Isotope is not included within the scripts, alert the user!
-                    return false;
-                }
-            }
-            $this.addAnimation();
-            $this.initOverlayEvent();
-            $this.initIsotopicClick();
-            $this.searching = false;
-        },
-        initIsotopicClick: function(){
-            let $this = this;
-            $this.eh.isotopicClickhandle = $this.eh.isotopicClickhandle || function(e) {
-                if ( !$this.dragging ) {
-                    let $a = $(this).find('.asp_content a');
-                    let url = $a.attr('href');
-                    if (url !== '') {
-                        e.preventDefault();
-                        if ( e.which == 2 || $a.attr('target') == '_blank' ) {
-                            helpers.openInNewTab(url);
-                        } else {
-                            location.href = url;
-                        }
-                    }
-                }
-            }
-            $this.n.resultsDiv.find('.asp_isotopic_item').on('click', $this.eh.isotopicClickhandle);
-        },
-        preProcessIsotopicResults: function() {
-            let $this = this,
-                j = 0,
-                overlay = "";
-
-            // In some cases the hidden data is not present for some reason..
-            if ($this.o.isotopic.showOverlay && $this.n.aspItemOverlay.length > 0)
-                overlay = $this.n.aspItemOverlay.get(0).outerHTML;
-
-            $this.n.items.forEach(function (el) {
-
-                let image = "",
-                    overlayImage = "",
-                    hasImage = $(el).find('.asp_image').length > 0,
-                    $img = $(el).find('.asp_image');
-
-                if (hasImage) {
-                    // noinspection JSUnresolvedVariable
-                    let src = $img.data('src'),
-                        filter = $this.o.isotopic.blurOverlay && !helpers.isMobile() ? "aspblur" : "no_aspblur";
-
-                    overlayImage = $("<div data-src='"+src+"' ></div>");
-                    if ( typeof WPD.lazy == 'undefined' ) {
-                        overlayImage.css({
-                            "background-image": "url(" + src + ")"
-                        });
-                    }
-                    overlayImage.css({
-                        "filter": "url(#" + filter + ")",
-                        "-webkit-filter": "url(#" + filter + ")",
-                        "-moz-filter": "url(#" + filter + ")",
-                        "-o-filter": "url(#" + filter + ")",
-                        "-ms-filter": "url(#" + filter + ")"
-                    }).addClass('asp_item_overlay_img asp_lazy');
-                    overlayImage = overlayImage.get(0).outerHTML;
-                }
-
-                $(el).prepend(overlayImage + overlay + image);
-                $(el).attr('data-itemnum', j);
-
-                j++;
-            });
-
-        },
-        isotopicPagerScroll: function () {
-            let $this = this;
-
-            if ( $('nav>ul li.asp_active', $this.n.resultsDiv).length <= 0 )
-                return false;
-
-            let $activeLeft = $('nav>ul li.asp_active', $this.n.resultsDiv).offset().left,
-                $activeWidth = $('nav>ul li.asp_active', $this.n.resultsDiv).outerWidth(true),
-                $nextLeft = $('nav>a.asp_next', $this.n.resultsDiv).offset().left,
-                $prevLeft = $('nav>a.asp_prev', $this.n.resultsDiv).offset().left;
-
-            if ( $activeWidth <= 0) return;
-
-            let toTheLeft = Math.ceil( ( $prevLeft - $activeLeft + 2 * $activeWidth ) / $activeWidth );
-            if (toTheLeft > 0) {
-                // If the active is the first, go to the beginning
-                if ( $('nav>ul li.asp_active', $this.n.resultsDiv).prev().length == 0) {
-                    $('nav>ul', $this.n.resultsDiv).css({
-                        "left": $activeWidth + "px"
-                    });
-                    return;
-                }
-
-                // Otherwise go left
-                $('nav>ul', $this.n.resultsDiv).css({
-                    "left": $('nav>ul', $this.n.resultsDiv).position().left  +( $activeWidth * toTheLeft) + "px"
-                });
-            } else {
-                let toTheRight;
-                // One step if it is the last element, 2 steps for any other
-                if ( $('nav>ul li.asp_active', $this.n.resultsDiv).next().length == 0 ) {
-                    toTheRight = Math.ceil(($activeLeft - $nextLeft + $activeWidth) / $activeWidth);
-                } else {
-                    toTheRight = Math.ceil(($activeLeft - $nextLeft + 2 * $activeWidth) / $activeWidth);
-                }
-
-                if (toTheRight > 0) {
-                    $('nav>ul', $this.n.resultsDiv).css({
-                        "left": $('nav>ul', $this.n.resultsDiv).position().left -( $activeWidth * toTheRight) + "px"
-                    });
-                }
-            }
-        },
-        showPagination: function ( force_refresh ) {
-            let $this = this;
-            force_refresh = typeof force_refresh !== 'undefined' ? force_refresh : false;
-
-            if ( !$this.o.isotopic.pagination ) {
-                // On window resize event, simply rearrange without transition
-                if ( $this.isotopic != null && force_refresh )
-                    $this.isotopic.arrange({
-                        transitionDuration: 0,
-                        filter: $this.filterFns['number']
-                    });
-                return false;
-            }
-
-            if ( $this.call_num < 1 || force_refresh)
-                $('nav.asp_navigation ul li', $this.n.resultsDiv).remove();
-            $('nav.asp_navigation', $this.n.resultsDiv).css('display', 'none');
-
-            //$('nav.asp_navigation ul', $this.n.resultsDiv).removeAttr("style");
-
-            if ($this.n.items.length > 0) {
-                let start = 1;
-                if ($this.call_num > 0 && !force_refresh) {
-                    // Because the nav can be both top and bottom, make sure to get only 1 to calculate, not both
-                    start = $this.n.resultsDiv.find('nav.asp_navigation ul li').length + 1;
-                }
-                let pages = Math.ceil($this.n.items.length / $this.il.itemsPerPage);
-                if (pages > 1) {
-
-                    // Calculate which page to activate, after a possible orientation change
-                    let newPage = force_refresh && $this.il.lastVisibleItem > 0 ? Math.ceil($this.il.lastVisibleItem/$this.il.itemsPerPage) : 1;
-                    newPage = newPage <= 0 ? 1 : newPage;
-
-                    for (let i = start; i <= pages; i++) {
-                        if (i == newPage)
-                            $('nav.asp_navigation ul', $this.n.resultsDiv).append("<li class='asp_active'><span>" + i + "</span></li>");
-                        else
-                            $('nav.asp_navigation ul', $this.n.resultsDiv).append("<li><span>" + i + "</span></li>");
-                    }
-                    $('nav.asp_navigation', $this.n.resultsDiv).css('display', 'block');
-
-                    /**
-                     * Always trigger the pagination!
-                     * This will make sure that the isotope.arrange method is triggered in this case as well.
-                     */
-                    if ( force_refresh )
-                        $('nav.asp_navigation ul li.asp_active', $this.n.resultsDiv).trigger('click_trigger');
-                    else
-                        $('nav.asp_navigation ul li.asp_active', $this.n.resultsDiv).trigger('click');
-
-                } else {
-                    // No pagination, but the pagination is enabled
-                    // On window resize event, simply rearrange without transition
-                    if ( $this.isotopic != null && force_refresh )
-                        $this.isotopic.arrange({
-                            transitionDuration: 0,
-                            filter: $this.filterFns['number']
-                        });
-                }
-            }
-        },
-
-        hidePagination: function () {
-            let $this = this;
-            $('nav.asp_navigation', $this.n.resultsDiv).css('display', 'none');
-        },
-
-        visiblePagination: function() {
-            let $this = this;
-            return $('nav.asp_navigation', $this.n.resultsDiv).css('display') != 'none';
-        },
-
-        calculateIsotopeRows: function () {
-            let $this = this,
-                itemWidth, itemHeight,
-                containerWidth = parseFloat($this.n.results.width());
-
-            if ( helpers.deviceType() === 'desktop' ) {
-                // noinspection JSUnresolvedVariable
-                itemWidth = helpers.getWidthFromCSSValue($this.o.isotopic.itemWidth, containerWidth);
-                // noinspection JSUnresolvedVariable
-                itemHeight = helpers.getWidthFromCSSValue($this.o.isotopic.itemHeight, containerWidth);
-            } else if ( helpers.deviceType() === 'tablet' ) {
-                // noinspection JSUnresolvedVariable
-                itemWidth = helpers.getWidthFromCSSValue($this.o.isotopic.itemWidthTablet, containerWidth);
-                // noinspection JSUnresolvedVariable
-                itemHeight = helpers.getWidthFromCSSValue($this.o.isotopic.itemHeightTablet, containerWidth);
-            } else {
-                // noinspection JSUnresolvedVariable
-                itemWidth = helpers.getWidthFromCSSValue($this.o.isotopic.itemWidthPhone, containerWidth);
-                // noinspection JSUnresolvedVariable
-                itemHeight = helpers.getWidthFromCSSValue($this.o.isotopic.itemHeightPhone, containerWidth);
-            }
-            let realColumnCount = containerWidth / itemWidth,
-                gutterWidth = $this.o.isotopic.gutter,
-                floorColumnCount = Math.floor(realColumnCount);
-            if (floorColumnCount <= 0)
-                floorColumnCount = 1;
-
-            if (Math.abs(containerWidth / floorColumnCount - itemWidth) >
-                Math.abs(containerWidth / (floorColumnCount + 1) - itemWidth)) {
-                floorColumnCount++;
-            }
-
-            let newItemW = containerWidth / floorColumnCount - ( (floorColumnCount-1) * gutterWidth  / floorColumnCount ),
-                newItemH = (newItemW / itemWidth) * itemHeight;
-
-            $this.il.columns = floorColumnCount;
-            $this.il.itemsPerPage = floorColumnCount * $this.il.rows;
-            //$this.il.lastVisibleItem = $this.n.results.find('.asp_isotopic_item:visible').first().index() + 1;
-            $this.il.lastVisibleItem = 0;
-            $this.n.results.find('.asp_isotopic_item').forEach(function(el, index){
-                if ( $(el).css('display') != 'none' ) {
-                    $this.il.lastVisibleItem = index;
-                }
-            });
-
-            // This data needs do be written to the DOM, because the isotope arrange can't see the changes
-            if ( !isNaN($this.il.columns) && !isNaN($this.il.itemsPerPage) ) {
-                $this.n.resultsDiv.data("colums", $this.il.columns);
-                $this.n.resultsDiv.data("itemsperpage", $this.il.itemsPerPage);
-            }
-
-            $this.currentPage = 1;
-
-            $this.n.items.css({
-                width: Math.floor(newItemW) + 'px',
-                height: Math.floor(newItemH) + 'px'
-            });
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
-        showPolaroidResults: function () {
-            let $this = this;
-
-            $('.photostack>nav', $this.n.resultsDiv).remove();
-            let figures = $('figure', $this.n.resultsDiv);
-            $this.n.resultsDiv.css({
-                display: 'block',
-                height: 'auto'
-            });
-
-            $this.showResultsBox();
-
-            if (figures.length > 0) {
-                // noinspection JSUnresolvedVariable
-                $this.n.results.css({
-                    height: $this.o.prescontainerheight
-                });
-
-                if ($this.o.highlight == 1) {
-                    // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                    $("figcaption", $this.n.resultsDiv).highlight($this.n.text.val().split(" "), {
-                        element: 'span', className: 'highlighted', wordsOnly: $this.o.highlightWholewords
-                    });
-                }
-
-                // Initialize the main
-                // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                if (typeof Photostack !== 'undefined') {
-                    // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                    $this.ptstack = new Photostack($this.n.results.get(0), {
-                        callback: function (item) {
-                        }
-                    });
-                } else {
-                    // PhotoStack is not included within the scripts, alert the user!;
-                    return false;
-                }
-            }
-            if (figures.length == 0) {
-                $this.n.results.css({
-                    height: '11110px'
-                });
-                $this.n.results.css({
-                    height: "auto"
-                });
-            }
-            $this.addAnimation();
-            $this.fixResultsPosition(true);
-            $this.searching = false;
-            $this.initPolaroidEvents(figures);
-        },
-
-        initPolaroidEvents: function (figures) {
-            let $this = this,
-                i = 1,
-                span = '.photostack>nav span';
-            figures.each(function () {
-                if (i > 1)
-                    $(this).removeClass('photostack-current');
-                $(this).attr('idx', i);
-                i++;
-            });
-
-            figures.on('click', function (e) {
-                if ($(this).hasClass("photostack-current")) return;
-                e.preventDefault();
-                let idx = $(this).attr('idx');
-                $('.photostack>nav span:nth-child(' + idx + ')', $this.n.resultsDiv).trigger('click', [], true);
-            });
-
-            figures.on('mousewheel', function (e) {
-                e.preventDefault();
-                let delta = e.deltaY > 0 ? 1 : -1
-                if (delta >= 1) {
-                    if ($(span + '.current', $this.n.resultsDiv).next().length > 0) {
-                        $(span + '.current', $this.n.resultsDiv).next().trigger('click', [], true);
-                    } else {
-                        $(span + ':nth-child(1)', $this.n.resultsDiv).trigger('click', [], true);
-                    }
-                } else {
-                    if ($(span + '.current', $this.n.resultsDiv).prev().length > 0) {
-                        $(span + '.current', $this.n.resultsDiv).prev().trigger('click', [], true);
-                    } else {
-                        $(span + ':nth-last-child(1)', $this.n.resultsDiv).trigger('click', [], true);
-                    }
-                }
-            });
-
-            $this.n.resultsDiv.on("swiped-left", function() {
-                if ($(span + '.current', $this.n.resultsDiv).next().length > 0) {
-                    $(span + '.current', $this.n.resultsDiv).next().trigger('click', [], true);
-                } else {
-                    $(span + ':nth-child(1)', $this.n.resultsDiv).trigger('click', [], true);
-                }
-            });
-            $this.n.resultsDiv.on("swiped-right", function() {
-                if ($(span + '.current', $this.n.resultsDiv).prev().length > 0) {
-                    $(span + '.current', $this.n.resultsDiv).prev().trigger('click', [], true);
-                } else {
-                    $(span + ':nth-last-child(1)', $this.n.resultsDiv).trigger('click', [], true);
-                }
-            });
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
-        showVerticalResults: function () {
-            let $this = this;
-
-            $this.showResultsBox();
-
-            if ($this.n.items.length > 0) {
-                // noinspection JSUnresolvedVariable
-                let count = (($this.n.items.length < $this.o.itemscount) ? $this.n.items.length : $this.o.itemscount);
-                count = count <= 0 ? 9999 : count;
-                let groups = $('.asp_group_header', $this.n.resultsDiv);
-
-                // So if the result list is short, we dont even need to do the match
-                // noinspection JSUnresolvedVariable
-                if ($this.o.itemscount == 0 || $this.n.items.length <= $this.o.itemscount) {
-                    $this.n.results.css({
-                        height: 'auto'
-                    });
-                } else {
-
-                    // Set the height to a fictive value to refresh the scrollbar
-                    // .. otherwise the height is not calculated correctly, because of the scrollbar width.
-                    if ( $this.call_num < 1 )
-                        $this.n.results.css({
-                            height: "30px"
-                        });
-
-                    if ( $this.call_num < 1 ) {
-                        // Here now we have the correct item height values with the scrollbar enabled
-                        let i = 0,
-                            h = 0,
-                            final_h = 0,
-                            highest = 0;
-
-                        $this.n.items.each(function () {
-                            h += $(this).outerHeight(true);
-                            if ($(this).outerHeight(true) > highest)
-                                highest = $(this).outerHeight(true);
-                            i++;
-                        });
-
-                        // Get an initial height based on the highest item x viewport
-                        final_h = highest * count;
-                        // Reduce the final height to the overall height if exceeds it
-                        if (final_h > h)
-                            final_h = h;
-
-                        // Count the average height * viewport size
-                        i = i < 1 ? 1 : i;
-                        h = h / i * count;
-
-                        /*
-                         Groups need a bit more calculation
-                         - determine group position by index and occurence
-                         - one group consists of group header, items + item spacers per item
-                         - only groups within the viewport are calculated
-                         */
-                        if (groups.length > 0) {
-                            groups.each(function (el, index) {
-                                let position = Array.prototype.slice.call(el.parentNode.children).indexOf(el),
-                                    group_position = position - index - Math.floor(position / 3);
-                                if (group_position < count) {
-                                    final_h += $(this).outerHeight(true);
-                                }
-                            });
-                        }
-                        $this.n.results.css({
-                            height: final_h + 'px'
-                        });
-
-                    }
-                }
-
-                // Mark the last item
-                $this.n.items.last().addClass('asp_last_item');
-                // Before groups as well
-                $this.n.results.find('.asp_group_header').prev('.item').addClass('asp_last_item');
-                if ($this.o.highlight == 1) {
-                    // noinspection JSUnresolvedVariable
-                    $("div.item", $this.n.resultsDiv).highlight($this.n.text.val().split(" "), {
-                        element: 'span', className: 'highlighted', wordsOnly: $this.o.highlightWholewords
-                    });
-                }
-
-
-            }
-            $this.resize();
-            if ($this.n.items.length == 0) {
-                $this.n.results.css({
-                    height: 'auto'
-                });
-            }
-            $this.n.results.css({
-                'overflowY': 'auto'
-            });
-
-            if ( $this.call_num < 1 ) {
-                // Scroll to top
-                let $container = $this.is_scroll && typeof $this.scroll.recalculate !== 'undefined' ?
-                    $($this.scroll.getScrollElement()) : $this.n.results;
-                $container.get(0).scrollTop = 0;
-            }
-
-            // Preventing body touch scroll
-            // noinspection JSUnresolvedVariable
-            if ( $this.o.preventBodyScroll ) {
-                let t,
-                    $body = $('body'),
-                    bodyOverflow = $body.css('overflow'),
-                    bodyHadNoStyle = typeof $body.attr('style') === 'undefined';
-                $this.n.results.off("touchstart");
-                $this.n.results.off("touchend");
-                $this.n.results.on("touchstart", function () {
-                    clearTimeout(t);
-                    $('body').css('overflow', 'hidden');
-                }).on('touchend', function () {
-                    clearTimeout(t);
-                    t = setTimeout(function () {
-                        if (bodyHadNoStyle) {
-                            $('body').removeAttr('style');
-                        } else {
-                            $('body').css('overflow', bodyOverflow);
-                        }
-                    }, 300);
-                });
-            }
-
-            $this.addAnimation();
-            $this.fixResultsPosition(true);
-            $this.searching = false;
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        createResultsScroll: function(type) {
-            let $this = this,
-                t, $resScroll = $this.n.results;
-            type = typeof type == 'undefined' ? 'vertical' : type;
-            // noinspection JSUnresolvedVariable
-            if ($this.o.itemscount > 0 && $this.is_scroll && typeof $this.scroll.recalculate === 'undefined') {
-                // noinspection JSPotentiallyInvalidConstructorUsage,JSUnresolvedFunction,JSUnresolvedVariable
-                $this.scroll = new asp_SimpleBar($this.n.results.get(0), {
-                    direction: $('body').hasClass('rtl') ? 'rtl' : 'ltr',
-                    autoHide: $this.o.scrollBar.vertical.autoHide
-                });
-                $resScroll = $resScroll.add($this.scroll.getScrollElement());
-            }
-            $resScroll.on('scroll', function() {
-                document.dispatchEvent(new Event('wpd-lazy-trigger'));
-                // noinspection JSUnresolvedVariable
-                if ( $this.o.show_more.infinite ) {
-                    clearTimeout(t);
-                    t = setTimeout(function () {
-                        $this.checkAndTriggerInfiniteScroll(type);
-                    }, 60);
-                }
-            });
-        },
-
-        createVerticalScroll: function () {
-            this.createResultsScroll('vertical')
-        },
-
-        createHorizontalScroll: function () {
-            this.createResultsScroll('horizontal')
-        },
-
-        checkAndTriggerInfiniteScroll: function( caller ) {
-            let $this = this,
-                $r = $('.item', $this.n.resultsDiv);
-            caller = typeof caller == 'undefined' ? 'window' : caller;
-
-            // Show more might not even visible
-            if ($this.n.showmore.length == 0 || $this.n.showmore.css('display') == 'none') {
-                return false;
-            }
-
-            if ( caller == 'window' || caller == 'horizontal' ) {
-                // Isotopic pagination present? Abort.
-                // noinspection JSUnresolvedVariable
-                if (
-                    $this.o.resultstype == 'isotopic' &&
-                    $('nav.asp_navigation', $this.n.resultsDiv).css('display') != 'none'
-                ) {
-                    return false;
-                }
-
-                let onViewPort = $r.last().inViewPort(0, $this.n.resultsDiv.get(0)),
-                    onScreen = $r.last().inViewPort(0);
-                if (
-                    !$this.searching &&
-                    $r.length > 0 &&
-                    onViewPort && onScreen
-                ) {
-                    $this.n.showmore.find('a.asp_showmore').trigger('click');
-                }
-            } else if ( caller == 'vertical' ) {
-                let $scrollable = $this.n.resultsDiv.find('.asp_simplebar-content-wrapper').length > 0 ?
-                    $this.n.resultsDiv.find('.asp_simplebar-content-wrapper') : $this.n.results;
-                if ( helpers.isScrolledToBottom($scrollable.get(0), 20) ) {
-                    $this.n.showmore.find('a.asp_showmore').trigger('click');
-                }
-            } else if ( caller == 'isotopic' ) {
-                if (
-                    !$this.searching &&
-                    $r.length > 0 &&
-                    $this.n.resultsDiv.find('nav.asp_navigation ul li').last().hasClass('asp_active')
-                ) {
-                    $this.n.showmore.find('a.asp_showmore').trigger('click');
-                }
-            }
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);// noinspection JSUnresolvedVariable
-
-(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        isDuplicateSearchTriggered: function() {
-            let $this = this;
-            for (let i=0;i<25;i++) {
-                let id = $this.o.id + '_' + i;
-                if ( id != $this.o.rid ) {
-                    if ( ASP.instances.get($this.o.id, i) !== false ) {
-                        return ASP.instances.get($this.o.id, i).searching;
-                    }
-                }
-            }
-            return false;
-        },
-
-        searchAbort: function() {
-            let $this = this;
-            if ( $this.post != null ) {
-                $this.post.abort();
-            }
-        },
-
-        searchWithCheck: function( timeout ) {
-            let $this = this;
-            if ( typeof timeout == 'undefined' )
-                timeout = 50;
-
-            if ($this.n.text.val().length < $this.o.charcount) return;
-            $this.searchAbort();
-
-            clearTimeout($this.timeouts.searchWithCheck);
-            $this.timeouts.searchWithCheck = setTimeout(function() {
-                $this.search();
-            }, timeout);
-        },
-
-        search: function ( count, order, recall, apiCall, supressInvalidMsg ) {
-            let $this = this,
-                abort = false;
-
-            if ( $this.isDuplicateSearchTriggered() )
-                return false;
-
-            recall = typeof recall == "undefined" ? false : recall;
-            apiCall = typeof apiCall == "undefined" ? false : apiCall;
-            supressInvalidMsg = typeof supressInvalidMsg == "undefined" ? false : supressInvalidMsg;
-
-            let data = {
-                action: 'ajaxsearchpro_search',
-                aspp: $this.n.text.val(),
-                asid: $this.o.id,
-                asp_inst_id: $this.o.rid,
-                options: $('form', $this.n.searchsettings).serialize()
-            };
-
-            data = helpers.Hooks.applyFilters('asp_search_data', data, $this.o.id, $this.o.iid);
-            data = helpers.wp_hooks_apply_filters('asp_search_data', data, $this.o.id, $this.o.iid);
-
-            $this.hideArrowBox();
-            if ( !$this.isAutoP && !$this.reportSettingsValidity() ) {
-                if ( !supressInvalidMsg ) {
-                    $this.showNextInvalidFacetMessage();
-                    $this.scrollToNextInvalidFacetMessage();
-                }
-                abort = true;
-            }
-
-            if ( $this.isAutoP ) {
-                data.autop = 1;
-                $this.isAutoP = false;
-            }
-
-
-            if ( !recall && !apiCall && (JSON.stringify(data) === JSON.stringify($this.lastSearchData)) ) {
-                if ( !$this.resultsOpened && !$this.usingLiveLoader ) {
-                    $this.showResults();
-                }
-                if ( $this.isRedirectToFirstResult() ) {
-                    $this.doRedirectToFirstResult();
-                    return false;
-                }
-                abort = true;
-            }
-
-            if ( abort ) {
-                $this.hideLoader();
-                $this.searchAbort();
-                return false;
-            }
-
-            $this.n.s.trigger("asp_search_start", [$this.o.id, $this.o.iid, $this.n.text.val()], true, true);
-
-            $this.searching = true;
-
-            $this.n.proclose.css({
-                display: "none"
-            });
-
-            $this.showLoader( recall );
-
-            // If blocking, or hover but facetChange activated, dont hide the settings for better UI
-            if ( $this.o.blocking == false && $this.o.trigger.facet == 0 ) $this.hideSettings();
-
-            if ( recall ) {
-                $this.call_num++;
-                data.asp_call_num = $this.call_num;
-                /**
-                 * The original search started with an auto populate, so set the call number correctly
-                 */
-                if ( $this.autopStartedTheSearch ) {
-                    data.options += '&' + $.fn.serializeForAjax( $this.autopData );
-                    --data.asp_call_num;
-                }
-            } else {
-                $this.call_num = 0;
-                /**
-                 * Mark the non search phrase type of auto populate.
-                 * In that case, we need to pass the post IDs to exclude, as well as the next
-                 * "load more" query has to act as the first call (call_num=0)
-                 */
-                $this.autopStartedTheSearch = !!data.autop;
-            }
-
-            let $form = $('form[name="asp_data"]');
-            if ( $form.length > 0 ) {
-                data.asp_preview_options = $form.serialize();
-            }
-
-            if ( typeof count != "undefined" && count !== false ) {
-                data.options += "&force_count=" + parseInt(count);
-            }
-            if ( typeof order != "undefined" && order !== false ) {
-                data.options += "&force_order=" + parseInt(order);
-            }
-
-            $this.gaEvent('search_start');
-
-            if ( $('.asp_es_' + $this.o.id).length > 0 ) {
-                $this.liveLoad('.asp_es_' + $this.o.id, $this.getCurrentLiveURL(), false);
-            } else if ( $this.o.resPage.useAjax ) {
-                $this.liveLoad($this.o.resPage.selector, $this.getRedirectURL());
-            } else {
-                $this.post = $.fn.ajax({
-                    'url': ASP.ajaxurl,
-                    'method': 'POST',
-                    'data': data,
-                    'success': function (response) {
-                        $this.gaPageview($this.n.text.val());
-
-                        $this.searching = false;
-                        response = response.replace(/^\s*[\r\n]/gm, "");
-                        let html_response = response.match(/!!ASPSTART_HTML!!(.*[\s\S]*)!!ASPEND_HTML!!/),
-                            data_response = response.match(/!!ASPSTART_DATA!!(.*[\s\S]*)!!ASPEND_DATA!!/);
-
-                        if (html_response == null || typeof (html_response) != "object" || typeof (html_response[1]) == "undefined") {
-                            $this.hideLoader();
-                            alert('Ajax Search Pro Error:\r\n\r\nPlease look up "The response data is missing" from the documentation at\r\n\r\n documentation.ajaxsearchpro.com');
-                            return false;
-                        } else {
-                            html_response = html_response[1];
-                            html_response = helpers.Hooks.applyFilters('asp_search_html', html_response, $this.o.id, $this.o.iid);
-                            html_response = helpers.wp_hooks_apply_filters('asp_search_html', html_response, $this.o.id, $this.o.iid);
-                        }
-                        data_response = JSON.parse(data_response[1]);
-                        $this.n.s.trigger("asp_search_end", [$this.o.id, $this.o.iid, $this.n.text.val(), data_response], true, true);
-
-                        if ( $this.autopStartedTheSearch ) {
-                            // This is an auto populate query (first on page load only)
-                            if ( typeof data.autop != 'undefined' ) {
-                                $this.autopData['not_in'] = {};
-                                $this.autopData['not_in_count'] = 0;
-                                if ( Array.isArray( data_response.results ) ) {
-                                    data_response.results.forEach(function (r) {
-                                        if (typeof $this.autopData['not_in'][r['content_type']] == 'undefined') {
-                                            $this.autopData['not_in'][r['content_type']] = [];
-                                        }
-                                        $this.autopData['not_in'][r['content_type']].push(r['id']);
-                                        ++$this.autopData['not_in_count'];
-                                    });
-                                }
-                            } else {
-                                // In subsequent queries adjust, because this is goint to be deducted in the query
-                                data_response.full_results_count += $this.autopData['not_in_count'];
-                            }
-                        }
-
-                        if (!recall) {
-                            $this.n.resdrg.html("");
-                            $this.n.resdrg.html(html_response);
-                            $this.results_num = data_response.results_count;
-                            if ($this.o.statistics)
-                                $this.stat_addKeyword($this.o.id, $this.n.text.val());
-                        } else {
-                            $this.updateResults(html_response);
-                            $this.results_num += data_response.results_count;
-                        }
-                        $(".asp_keyword", $this.n.resdrg).on('click', function () {
-                            $this.n.text.val(helpers.decodeHTMLEntities($(this).text()));
-                            $this.n.textAutocomplete.val('');
-                            // Is any ajax trigger enabled?
-                            if ($this.o.redirectOnClick == 0 ||
-                                $this.o.redirectOnEnter == 0 ||
-                                $this.o.trigger.type == 1) {
-                                $this.search();
-                            }
-                        });
-                        $this.n.items = $('.item', $this.n.resultsDiv).length > 0 ? $('.item', $this.n.resultsDiv) : $('.photostack-flip', $this.n.resultsDiv);
-
-                        $this.gaEvent('search_end', {'results_count': $this.n.items.length});
-
-                        if ($this.isRedirectToFirstResult()) {
-                            $this.doRedirectToFirstResult();
-                            return false;
-                        }
-                        $this.hideLoader();
-                        $this.showResults();
-                        $this.scrollToResults();
-                        $this.lastSuccesfulSearch = $('form', $this.n.searchsettings).serialize() + $this.n.text.val().trim();
-                        $this.lastSearchData = data;
-
-                        $this.updateInfoHeader(data_response.full_results_count);
-
-                        if ($this.n.showmore.length > 0) {
-                            if (
-                                $('span', $this.n.showmore).length > 0 &&
-                                data_response.results_count > 0 &&
-                                (data_response.full_results_count - $this.results_num) > 0
-                            ) {
-                                $this.n.showmore.css("display", "block");
-                                $('span', $this.n.showmore).html("(" + (data_response.full_results_count - $this.results_num) + ")");
-
-                                $('a', $this.n.showmore).attr('href', "");
-                                $('a', $this.n.showmore).off();
-                                $('a', $this.n.showmore).on($this.clickTouchend, function (e) {
-                                    e.preventDefault();
-                                    e.stopImmediatePropagation();   // Stopping either click or touchend
-
-                                    if ($this.o.show_more.action == "ajax") {
-                                        // Prevent duplicate triggering, don't use .off, as re-opening the results box this will fail
-                                        if ($this.searching)
-                                            return false;
-                                        $this.showMoreResLoader();
-                                        $this.search(false, false, true);
-                                    } else {
-                                        let url, base_url;
-                                        // Prevent duplicate triggering
-                                        $(this).off();
-                                        if ($this.o.show_more.action == 'results_page') {
-                                            url = '?s=' + helpers.nicePhrase($this.n.text.val());
-                                        } else if ($this.o.show_more.action == 'woo_results_page') {
-                                            url = '?post_type=product&s=' + helpers.nicePhrase($this.n.text.val());
-                                        } else {
-                                            if ($this.o.show_more.action == 'elementor_page') {
-                                                url = $this.parseCustomRedirectURL($this.o.show_more.elementor_url, $this.n.text.val());
-                                            } else {
-                                                url = $this.parseCustomRedirectURL($this.o.show_more.url, $this.n.text.val());
-                                            }
-                                            url = $('<textarea />').html(url).text();
-                                        }
-
-                                        // Is this an URL like xy.com/?x=y
-                                        if ($this.o.show_more.action != 'elementor_page' && $this.o.homeurl.indexOf('?') > 1 && url.indexOf('?') == 0) {
-                                            url = url.replace('?', '&');
-                                        }
-
-                                        base_url = $this.o.show_more.action == 'elementor_page' ? url : $this.o.homeurl + url;
-                                        if ($this.o.overridewpdefault) {
-                                            if ($this.o.override_method == "post") {
-                                                helpers.submitToUrl(base_url, 'post', {
-                                                    asp_active: 1,
-                                                    p_asid: $this.o.id,
-                                                    p_asp_data: $('form', $this.n.searchsettings).serialize()
-                                                }, $this.o.show_more.location);
-                                            } else {
-                                                let final = base_url + "&asp_active=1&p_asid=" + $this.o.id + "&p_asp_data=1&" + $('form', $this.n.searchsettings).serialize();
-                                                if ($this.o.show_more.location == 'same') {
-                                                    location.href = final;
-                                                } else {
-                                                    helpers.openInNewTab(final);
-                                                }
-                                            }
-                                        } else {
-                                            // The method is not important, just send the data to memorize settings
-                                            helpers.submitToUrl(base_url, 'post', {
-                                                np_asid: $this.o.id,
-                                                np_asp_data: $('form', $this.n.searchsettings).serialize()
-                                            }, $this.o.show_more.location);
-                                        }
-                                    }
-                                });
-                            } else {
-                                $this.n.showmore.css("display", "none");
-                                $('span', $this.n.showmore).html("");
-                            }
-                        }
-                    },
-                    'fail': function(jqXHR){
-                        if ( jqXHR.aborted )
-                            return;
-                        $this.n.resdrg.html("");
-                        $this.n.resdrg.html('<div class="asp_nores">The request failed. Please check your connection! Status: ' + jqXHR.status + '</div>');
-                        $this.n.items = $('.item', $this.n.resultsDiv).length > 0 ? $('.item', $this.n.resultsDiv) : $('.photostack-flip', $this.n.resultsDiv);
-                        $this.results_num = 0;
-                        $this.searching = false;
-                        $this.hideLoader();
-                        $this.showResults();
-                        $this.scrollToResults();
-                    }
-                });
-            }
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        showSettings: function ( animations ) {
-            let $this = this;
-            animations =  typeof  animations == 'undefined' ? true :  animations;
-            $this.n.s.trigger("asp_settings_show", [$this.o.id, $this.o.iid], true, true);
-
-            if ( !animations ) {
-                $this.n.searchsettings.css({
-                    'display': 'block',
-                    'visibility': 'visible',
-                    'opacity': 1
-                });
-            } else {
-                $this.n.searchsettings.css($this.settAnim.showCSS);
-                $this.n.searchsettings.removeClass($this.settAnim.hideClass).addClass($this.settAnim.showClass);
-            }
-
-            if ($this.settScroll == null && $this.is_scroll ) {
-                $this.settScroll = [];
-                $('.asp_sett_scroll', $this.n.searchsettings).each(function(o,i){
-                    let _this = this;
-                    // Small delay to fix a rendering issue
-                    setTimeout(function(){
-                        // noinspection JSUnresolvedFunction,JSUnresolvedVariable
-                        $this.settScroll[i] = new asp_SimpleBar($(_this).get(0), {
-                            direction: $('body').hasClass('rtl') ? 'rtl' : 'ltr',
-                            autoHide: $this.o.scrollBar.settings.autoHide
-                        });
-                    }, 15);
-                });
-            }
-
-            // noinspection JSUnresolvedVariable
-            if ( $this.o.fss_layout == "masonry" && $this.sIsotope == null && !(helpers.isMobile() && helpers.detectIOS()) ) {
-                if (typeof rpp_isotope !== 'undefined') {
-                    setTimeout(function () {
-                        let id = $this.n.searchsettings.attr('id');
-                        $this.n.searchsettings.css("width", "100%");
-                        // noinspection JSPotentiallyInvalidConstructorUsage
-                        $this.sIsotope = new rpp_isotope("#" + id + " form", {
-                            isOriginLeft: !$('body').hasClass('rtl'),
-                            itemSelector: 'fieldset',
-                            layoutMode: 'masonry',
-                            transitionDuration: 0,
-                            masonry: {
-                                columnWidth: $this.n.searchsettings.find('fieldset:not(.hiddend)').outerWidth()
-                            }
-                        });
-                    }, 20);
-                } else {
-                    // Isotope is not included within the scripts, alert the user!
-                    return false;
-                }
-            }
-
-            if (typeof $this.select2jQuery != 'undefined') {
-                $this.select2jQuery($this.n.searchsettings.get(0)).find('.asp_gochosen,.asp_goselect2').trigger("change.asp_select2");
-            }
-
-            $this.n.prosettings.data('opened', 1);
-
-            $this.fixSettingsPosition(true);
-            $this.fixAccessibility();
-        },
-        hideSettings: function () {
-            let $this = this;
-
-            $this.n.s.trigger("asp_settings_hide", [$this.o.id, $this.o.iid], true, true);
-
-            $this.n.searchsettings.removeClass($this.settAnim.showClass).addClass($this.settAnim.hideClass);
-            setTimeout(function(){
-                $this.n.searchsettings.css($this.settAnim.hideCSS);
-            }, $this.settAnim.duration);
-
-            $this.n.prosettings.data('opened', 0);
-
-            if ( $this.sIsotope != null ) {
-                setTimeout(function () {
-                    $this.sIsotope.destroy();
-                    $this.sIsotope = null;
-                }, $this.settAnim.duration);
-            }
-
-            if (typeof $this.select2jQuery != 'undefined' && typeof $this.select2jQuery.fn.asp_select2 != 'undefined') {
-                $this.select2jQuery($this.n.searchsettings.get(0)).find('.asp_gochosen,.asp_goselect2').asp_select2('close');
-            }
-
-            $this.hideArrowBox();
-        },
-        reportSettingsValidity: function() {
-            let $this = this,
-                valid = true;
-
-            // Automatically valid, when settings can be closed, or are hidden
-            if ( $this.n.searchsettings.css('visibility') == 'hidden' )
-                return true;
-
-            $this.n.searchsettings.find('fieldset.asp_required').each(function(){
-                let $_this = $(this),
-                    fieldset_valid = true;
-                // Text input
-                $_this.find('input[type=text]:not(.asp_select2-search__field)').each(function(){
-                    if ( $(this).val() == '' ) {
-                        fieldset_valid = false;
-                    }
-                });
-                // Select drop downs
-                $_this.find('select').each(function(){
-                    if (
-                        $(this).val() == null || $(this).val() == '' ||
-                        ( $(this).closest('fieldset').is('.asp_filter_tax, .asp_filter_content_type') && $(this).val() == '-1')
-                    ) {
-                        fieldset_valid = false;
-                    }
-                });
-                // Check for checkboxes
-                if ( $_this.find('input[type=checkbox]').length > 0 ) {
-                    // Check if all of them are checked
-                    if ( $_this.find('input[type=checkbox]:checked').length === 0 ) {
-                        fieldset_valid = false;
-                    } else if (
-                        $_this.find('input[type=checkbox]:checked').length === 1 &&
-                        $_this.find('input[type=checkbox]:checked').val() === ''
-                    ) {
-                        // Select all checkbox
-                        fieldset_valid = false;
-                    }
-                }
-                // Check for checkboxes
-                if ( $_this.find('input[type=radio]').length > 0 ) {
-                    // Check if all of them are checked
-                    if ( $_this.find('input[type=radio]:checked').length === 0 ) {
-                        fieldset_valid = false;
-                    }
-                    if ( fieldset_valid ) {
-                        $_this.find('input[type=radio]').each(function () {
-                            if (
-                                $(this).prop('checked') &&
-                                (
-                                    $(this).val() == '' ||
-                                    (
-                                        $(this).closest('fieldset').is('.asp_filter_tax, .asp_filter_content_type') &&
-                                        $(this).val() == '-1')
-                                    )
-                            ) {
-                                fieldset_valid = false;
-                            }
-                        });
-                    }
-                }
-
-                if ( !fieldset_valid ) {
-                    $_this.addClass('asp-invalid');
-                    valid = false;
-                } else {
-                    $_this.removeClass('asp-invalid');
-                }
-            });
-
-            if ( !valid ) {
-                $this.n.searchsettings.find('button.asp_s_btn').prop('disabled', true);
-            } {
-                $this.n.searchsettings.find('button.asp_s_btn').prop('disabled', false);
-            }
-
-            return valid;
-        },
-
-        showArrowBox: function(element, text) {
-            let $this = this,
-                offsetTop, left,
-                $body = $('body'),
-                $box = $body.find('.asp_arrow_box');
-            if ( $box.length === 0 ) {
-                $body.append( "<div class='asp_arrow_box'></div>" );
-                $box = $body.find('.asp_arrow_box');
-                $box.on('mouseout', function(){
-                    $this.hideArrowBox();
-                });
-            }
-
-            // getBoundingClientRect() is not giving correct values, use different method
-            let space = $(element).offset().top - window.scrollY,
-                fixedp = false,
-                n = element;
-
-            while (n) {
-                n = n.parentElement;
-                if ( n != null && window.getComputedStyle(n).position == 'fixed' ) {
-                    fixedp = true;
-                    break;
-                }
-            }
-
-            if ( fixedp ) {
-                $box.css('position', 'fixed');
-                offsetTop = 0;
-            } else {
-                $box.css('position', 'absolute');
-                offsetTop = window.scrollY;
-            }
-            $box.html(text);
-            $box.css('display', 'block');
-
-            // Count after text is added
-            left = (element.getBoundingClientRect().left + ($(element).outerWidth() / 2) - ($box.outerWidth() / 2) ) + 'px';
-
-            if ( space > 100 ) {
-                $box.removeClass('asp_arrow_box_bottom');
-                $box.css({
-                    top: offsetTop + element.getBoundingClientRect().top - $box.outerHeight() - 4 + 'px',
-                    left: left
-                });
-            } else {
-                $box.addClass('asp_arrow_box_bottom');
-                $box.css({
-                    top: offsetTop + element.getBoundingClientRect().bottom + 4 + 'px',
-                    left: left
-                });
-            }
-        },
-
-        hideArrowBox: function() {
-            $('body').find('.asp_arrow_box').css('display', 'none');
-        },
-
-        showNextInvalidFacetMessage: function() {
-            let $this = this;
-            if ( $this.n.searchsettings.find('.asp-invalid').length > 0 ) {
-                $this.showArrowBox(
-                    $this.n.searchsettings.find('.asp-invalid').first().get(0),
-                    $this.n.searchsettings.find('.asp-invalid').first().data('asp_invalid_msg')
-                );
-            }
-        },
-
-        scrollToNextInvalidFacetMessage: function() {
-            let $this = this;
-            if ( $this.n.searchsettings.find('.asp-invalid').length > 0 ) {
-                let $n = $this.n.searchsettings.find('.asp-invalid').first();
-                if ( !$n.inViewPort(0) ) {
-                    if ( typeof $n.get(0).scrollIntoView != "undefined" ) {
-                        $n.get(0).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
-                    } else {
-                        let stop = $n.offset().top - 20,
-                            $adminbar = $("#wpadminbar");
-                        // noinspection JSJQueryEfficiency
-                        if ( $adminbar.length > 0 )
-                            stop -= $adminbar.height();
-                        stop = stop < 0 ? 0 : stop;
-                        window.scrollTo({top: stop, behavior:"smooth"});
-                    }
-                }
-            }
-        },
-
-        settingsCheckboxToggle: function( $node, checkState ) {
-            let $this = this;
-            checkState = typeof checkState == 'undefined' ? true : checkState;
-            let $parent = $node,
-                $checkbox = $node.find('input[type="checkbox"]'),
-                lvl = parseInt($node.data("lvl")) + 1,
-                i = 0;
-            while (true) {
-                $parent = $parent.next();
-                if ( $parent.length > 0 &&
-                    typeof $parent.data("lvl") != "undefined" &&
-                    parseInt($parent.data("lvl")) >= lvl
-                ) {
-                    if ( checkState )
-                        $parent.find('input[type="checkbox"]').prop("checked", $checkbox.prop("checked"));
-                    // noinspection JSUnresolvedVariable
-                    if ( $this.o.settings.hideChildren ) {
-                        if ( $checkbox.prop("checked") ) {
-                            $parent.removeClass("hiddend");
-                        } else {
-                            $parent.addClass("hiddend");
-                        }
-                    }
-                }
-                else
-                    break;
-                i++;
-                if ( i > 400 ) break; // safety first
-            }
-        },
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        searchFor: function( phrase ) {
-            this.n.text.val(phrase);
-            this.n.textAutocomplete.val('');
-            this.search(false, false, false, true);
-        },
-
-        searchRedirect: function( phrase ) {
-            let url = this.parseCustomRedirectURL(this.o.trigger.redirect_url, phrase);
-
-            // Is this an URL like xy.com/?x=y
-            // noinspection JSUnresolvedVariable
-            if ( this.o.homeurl.indexOf('?') > 1 && url.indexOf('?') == 0 ) {
-                url = url.replace('?', '&');
-            }
-
-            // noinspection JSUnresolvedVariable
-            if (this.o.overridewpdefault) {
-                // noinspection JSUnresolvedVariable
-                if ( this.o.override_method == "post") {
-                    // noinspection JSUnresolvedVariable
-                    helpers.submitToUrl(this.o.homeurl + url, 'post', {
-                        asp_active: 1,
-                        p_asid: this.o.id,
-                        p_asp_data: $('form', this.n.searchsettings).serialize()
-                    });
-                } else {
-                    // noinspection JSUnresolvedVariable
-                    location.href = this.o.homeurl + url + "&asp_active=1&p_asid=" + this.o.id + "&p_asp_data=1&" + $('form', this.n.searchsettings).serialize();
-                }
-            } else {
-                // The method is not important, just send the data to memorize settings
-                // noinspection JSUnresolvedVariable
-                helpers.submitToUrl(this.o.homeurl + url, 'post', {
-                    np_asid: this.o.id,
-                    np_asp_data: $('form', this.n.searchsettings).serialize()
-                });
-            }
-        },
-
-        toggleSettings: function( state ) {
-            // state explicitly given, force behavior
-            if (typeof state != 'undefined') {
-                if ( state == "show") {
-                    this.showSettings();
-                } else {
-                    this.hideSettings();
-                }
-            } else {
-                if ( this.n.prosettings.data('opened') == 1 ) {
-                    this.hideSettings();
-                } else {
-                    this.showSettings();
-                }
-            }
-        },
-
-        closeResults: function( clear ) {
-            if (typeof(clear) != 'undefined' && clear) {
-                this.n.text.val("");
-                this.n.textAutocomplete.val("");
-            }
-            this.hideResults();
-            this.n.proloading.css('display', 'none');
-            this.hideLoader();
-            this.searchAbort();
-        },
-
-        getStateURL: function() {
-            let url = location.href,
-                sep;
-            url = url.split('p_asid');
-            url = url[0];
-            url = url.replace('&asp_active=1', '');
-            url = url.replace('?asp_active=1', '');
-            url = url.slice(-1) == '?' ? url.slice(0, -1) : url;
-            url = url.slice(-1) == '&' ? url.slice(0, -1) : url;
-            sep = url.indexOf('?') > 1 ? '&' :'?';
-            return url + sep + "p_asid=" + this.o.id + "&p_asp_data=1&" + $('form', this.n.searchsettings).serialize();
-        },
-
-        resetSearch: function() {
-            this.resetSearchFilters();
-        },
-
-        filtersInitial: function() {
-            return this.n.searchsettings.find('input[name=filters_initial]').val() == 1;
-        },
-
-        filtersChanged: function() {
-            return this.n.searchsettings.find('input[name=filters_changed]').val() == 1;
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
     "use strict";
     let functions = {
         Hooks: window.WPD.Hooks,
@@ -4311,9 +1706,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                                     }, function(){
                                         return $this.whichjQuery('asp_select2');
                                     }, 50, 3);
-                                }
-
-                                if ( $(el).hasClass('hasDatepicker') ) {
+                                } else if ( $(el).hasClass('hasDatepicker') ) {
                                     WPD.intervalUntilExecute(function(_$){
                                         let value = names[0],
                                             format = _$(_this.get(0)).datepicker("option", 'dateFormat' );
@@ -4333,6 +1726,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         }
                     }
                 });
+
                 return form;
             }
         },
@@ -4427,16 +1821,2569 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
         }
     }
     $.fn.extend(window.WPD.ajaxsearchpro.helpers, functions);
-})(WPD.dom);// noinspection JSUnresolvedVariable
-
-(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        detectAndFixFixedPositioning: function() {
+})(WPD.dom);(function($){
+						"use strict";
+						let helpers = window.WPD.ajaxsearchpro.helpers;
+						let functions = {
+							
+        addAnimation: function () {
             let $this = this,
+                i = 0,
+                j = 1,
+                delay = 25,
+                checkViewport = true;
+
+            // No animation for the new elements via more results link
+            if ( $this.call_num > 0 || $this._no_animations ) {
+                $this.n('results').find('.item, .asp_group_header').removeClass("opacityZero").removeClass("asp_an_" + $this.animOptions.items);
+                return false;
+            }
+
+            $this.n('results').find('.item, .asp_group_header').each(function () {
+                let x = this;
+                // The first item must be in the viewport, if not, then we won't use this at all
+                if ( j === 1) {
+                    checkViewport = $(x).inViewPort(0);
+                }
+
+                // No need to animate everything
+                if (
+                    ( j > 1 && checkViewport && !$(x).inViewPort(0) ) ||
+                    j > 80
+                ) {
+                    $(x).removeClass("opacityZero");
+                    return true;
+                }
+
+                // noinspection JSUnresolvedVariable
+                if ($this.o.resultstype == 'isotopic' && j>$this.il.itemsPerPage) {
+                    // Remove this from the ones not affected by the animation
+                    $(x).removeClass("opacityZero");
+                    return;
+                }
+
+                setTimeout(function () {
+                    $(x).addClass("asp_an_" + $this.animOptions.items);
+                    /**
+                     * The opacityZero class must be removed just a little bit after
+                     * the animation starts. This way the opacity is not reset to 1 yet,
+                     * and not causing flashing effect on the results.
+                     *
+                     * If the opacityZero is not removed, the after the removeAnimation()
+                     * call the opacity flashes back to 0 - window rezise or pagination events
+                     */
+                    $(x).removeClass("opacityZero");
+                }, (i + delay));
+                i = i + 45;
+                j++;
+            });
+
+        },
+
+        removeAnimation: function () {
+            let $this = this;
+            this.n('items').each(function () {
+                $(this).removeClass("asp_an_" + $this.animOptions.items);
+            });
+        }
+    , 
+        autocomplete: function () {
+            let $this = this,
+                val = $this.n('text').val();
+
+            if ($this.n('text').val() == '') {
+                $this.n('textAutocomplete').val('');
+                return;
+            }
+            let autocompleteVal = $this.n('textAutocomplete').val();
+
+            if (autocompleteVal != '' && autocompleteVal.indexOf(val) == 0) {
+                return;
+            } else {
+                $this.n('textAutocomplete').val('');
+            }
+            // noinspection JSUnresolvedVariable
+            if ( $this.n('text').val().length >= $this.o.autocomplete.trigger_charcount ) {
+                let data = {
+                    action: 'ajaxsearchpro_autocomplete',
+                    asid: $this.o.id,
+                    sauto: $this.n('text').val(),
+                    asp_inst_id: $this.o.rid,
+                    options: $('form', $this.n('searchsettings')).serialize()
+                };
+                // noinspection JSUnresolvedVariable
+                $this.postAuto = $.fn.ajax({
+                    'url': ASP.ajaxurl,
+                    'method': 'POST',
+                    'data': data,
+                    'success': function (response) {
+                        if (response.length > 0) {
+                            response = $('<textarea />').html(response).text();
+                            response = response.replace(/^\s*[\r\n]/gm, "");
+                            response = val + response.substr(val.length);
+                        }
+                        $this.n('textAutocomplete').val(response);
+                        $this.fixAutocompleteScrollLeft();
+                    }
+                });
+            }
+        },
+
+        // If only google source is used, this is much faster..
+        autocompleteGoogleOnly: function () {
+            let $this = this,
+                val = $this.n('text').val();
+            if ($this.n('text').val() == '') {
+                $this.n('textAutocomplete').val('');
+                return;
+            }
+            let autocompleteVal = $this.n('textAutocomplete').val();
+            if (autocompleteVal != '' && autocompleteVal.indexOf(val) == 0) {
+                return;
+            } else {
+                $this.n('textAutocomplete').val('');
+            }
+
+            let lang = $this.o.autocomplete.lang;
+            ['wpml_lang', 'polylang_lang', 'qtranslate_lang'].forEach( function(v){
+                if (
+                    $('input[name="'+v+'"]', $this.n('searchsettings')).length > 0 &&
+                    $('input[name="'+v+'"]', $this.n('searchsettings')).val().length > 1
+                ) {
+                    lang = $('input[name="' + v + '"]', $this.n('searchsettings')).val();
+                }
+            });
+            // noinspection JSUnresolvedVariable
+            if ( $this.n('text').val().length >= $this.o.autocomplete.trigger_charcount ) {
+                $.fn.ajax({
+                    url: 'https://clients1.google.com/complete/search',
+                    cors: 'no-cors',
+                    data: {
+                        q: val,
+                        hl: lang,
+                        nolabels: 't',
+                        client: 'hp',
+                        ds: ''
+                    },
+                    success: function (data) {
+                        if (data[1].length > 0) {
+                            let response = data[1][0][0].replace(/(<([^>]+)>)/ig, "");
+                            response = $('<textarea />').html(response).text();
+                            response = response.substr(val.length);
+                            $this.n('textAutocomplete').val(val + response);
+                            $this.fixAutocompleteScrollLeft();
+                        }
+                    }
+                });
+            }
+        },
+
+        fixAutocompleteScrollLeft: function() {
+            this.n('textAutocomplete').get(0).scrollLeft = this.n('text').get(0).scrollLeft;
+        }
+    , 
+        openCompact: function() {
+            let $this = this;
+
+            if ( !$this.n('search').is("[asp-compact-w]") ) {
+                $this.n('probox').attr('asp-compact-w', $this.n('probox').width());
+                $this.n('search').attr('asp-compact-w', $this.n('search').width());
+            }
+
+            $this.n('search').css({
+                "width": $this.n('search').width() + 'px'
+            });
+
+            $this.n('probox').css({width: "auto"});
+
+            // halftime delay on showing the input, etc.. for smoother animation
+            setTimeout(function(){
+                $this.n('search').find('.probox>div:not(.promagnifier)').removeClass('hiddend');
+            }, 80);
+
+            // Clear this timeout first, in case of fast clicking..
+            clearTimeout($this.timeouts.compactBeforeOpen);
+            $this.timeouts.compactBeforeOpen = setTimeout(function(){
+                let width;
+                if ( helpers.deviceType() == 'phone' ) {
+                    // noinspection JSUnresolvedVariable
+                    width = $this.o.compact.width_phone;
+                } else if ( helpers.deviceType() == 'tablet' ) {
+                    // noinspection JSUnresolvedVariable
+                    width = $this.o.compact.width_tablet;
+                } else {
+                    width = $this.o.compact.width;
+                }
+
+                width = helpers.Hooks.applyFilters('asp_compact_width', width, $this.o.id, $this.o.iid);
+                width = helpers.wp_hooks_apply_filters('asp_compact_width', width, $this.o.id, $this.o.iid);
+
+                width = !isNaN(width) ? width + 'px' : width;
+                $this.n('search').css({
+                    "max-width": width,
+                    "width": width
+                });
+
+                if ($this.o.compact.overlay == 1) {
+                    $this.n('search').css('z-index', 999999);
+                    $this.n('searchsettings').css('z-index', 999999);
+                    $this.n('resultsDiv').css('z-index', 999999);
+                    $this.n('trythis').css('z-index', 999998);
+                    $('#asp_absolute_overlay').css({
+                        'opacity': 1,
+                        'width': "100%",
+                        "height": "100%",
+                        "z-index": 999990
+                    });
+                }
+
+                $this.n('search').attr('asp-compact', 'open');
+            }, 50);
+
+            // Clear this timeout first, in case of fast clicking..
+            clearTimeout($this.timeouts.compactAfterOpen);
+            $this.timeouts.compactAfterOpen = setTimeout(function(){
+                $this.resize();
+                $this.n('trythis').css({
+                    display: 'block'
+                });
+                if ($this.o.compact.enabled == 1 && $this.o.compact.position != 'static') {
+                    $this.n('trythis').css({
+                        top: ( $this.n('search').offset().top + $this.n('search').outerHeight(true) ) + 'px',
+                        left: $this.n('search').offset().left + 'px'
+                    });
+                }
+                if ( $this.o.compact.focus ) {
+                    $this.n('text').get(0).focus();
+                }
+                $this.n('text').trigger('focus');
+                $this.scrolling();
+            }, 500);
+        },
+
+        closeCompact: function() {
+            let $this = this;
+
+            /**
+             * Clear every timeout from the opening script to prevent issues
+             */
+            clearTimeout($this.timeouts.compactBeforeOpen);
+            clearTimeout($this.timeouts.compactAfterOpen);
+
+            $this.timeouts.compactBeforeOpen = setTimeout(function(){
+                $this.n('search').attr('asp-compact', 'closed');
+            }, 50);
+
+            $this.n('search').find('.probox>div:not(.promagnifier)').addClass('hiddend');
+
+            $this.n('search').css({width: "auto"});
+            $this.n('probox').css({width: $this.n('probox').attr('asp-compact-w') + 'px'});
+
+            $this.n('trythis').css({
+                left: $this.n('search').position().left,
+                display: "none"
+            });
+
+
+            if ($this.o.compact.overlay == 1) {
+                $this.n('search').css('z-index', '');
+                $this.n('searchsettings').css('z-index', '');
+                $this.n('resultsDiv').css('z-index', '');
+                $this.n('trythis').css('z-index', '');
+                $('#asp_absolute_overlay').css({
+                    'opacity': 0,
+                    'width': 0,
+                    "height": 0,
+                    "z-index": 0
+                });
+            }
+        }
+    , 
+        setFilterStateInput: function( timeout ) {
+            let $this = this;
+            if ( typeof timeout == 'undefined' ) {
+                timeout = 65;
+            }
+            let process = function(){
+                if ( JSON.stringify($this.originalFormData) != JSON.stringify(helpers.formData($('form', $this.n('searchsettings')))) )
+                    $this.n('searchsettings').find('input[name=filters_initial]').val(0);
+                else
+                    $this.n('searchsettings').find('input[name=filters_initial]').val(1);
+            };
+            if ( timeout == 0 ) {
+                process();
+            } else {
+                // Need a timeout > 50, as some checkboxes are delayed (parent-child selection)
+                setTimeout(function () {
+                    process();
+                }, timeout);
+            }
+        },
+
+        resetSearchFilters: function() {
+            let $this = this;
+            helpers.formData($('form', $this.n('searchsettings')), $this.originalFormData);
+            // Reset the sliders first
+            $this.resetNoUISliderFilters();
+
+            if ( typeof $this.select2jQuery != "undefined" ) {
+                $this.select2jQuery($this.n('searchsettings').get(0)).find('.asp_gochosen,.asp_goselect2').trigger("change.asp_select2");
+            }
+            $this.n('text').val('');
+            $this.n('proloading').css('display', 'none');
+            $this.hideLoader();
+            $this.searchAbort();
+            $this.setFilterStateInput(0);
+        },
+
+        resetNoUISliderFilters: function() {
+            if ( this.noUiSliders.length > 0 ) {
+                this.noUiSliders.forEach(function (slider){
+                    if ( typeof slider.noUiSlider != 'undefined') {
+                        let vals = [];
+                        $(slider).parent().find('.asp_slider_hidden').forEach(function(el){
+                            vals.push($(el).val());
+                        });
+                        if ( vals.length > 0 ) {
+                            slider.noUiSlider.set(vals);
+                        }
+                    }
+                });
+            }
+        }
+    , 
+        gaPageview: function(term) {
+            let $this = this;
+            let tracking_id = $this.gaGetTrackingID();
+            // noinspection JSUnresolvedVariable
+            if ( typeof ASP.analytics == 'undefined' || ASP.analytics.method != 'pageview' )
+                return false;
+            // noinspection JSUnresolvedVariable
+            if ( ASP.analytics.string != '' ) {
+                // YOAST uses __gaTracker, if not defined check for ga, if nothing go null, FUN EH??
+                // noinspection JSUnresolvedVariable
+                let _ga = typeof __gaTracker == "function" ? __gaTracker : (typeof ga == "function" ? ga : false);
+                let _gtag = typeof gtag == "function" ? gtag : false;
+
+                if (!window.location.origin) {
+                    window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+                }
+                // Multisite Subdirectory (if exists)
+                // noinspection JSUnresolvedVariable
+                let url = $this.o.homeurl.replace(window.location.origin, '');
+
+                // GTAG bypass pageview tracking method
+                if ( _gtag !== false ) {
+                    if ( tracking_id !== false ) {
+                        // noinspection JSUnresolvedVariable
+                        tracking_id.forEach(function(id) {
+                            _gtag('config', id, {'page_path': url + ASP.analytics.string.replace("{asp_term}", term)});
+                        });
+                    }
+                } else if ( _ga !== false ) {
+                    let params = {
+                        'page': url + ASP.analytics.string.replace("{asp_term}", term),
+                        'title': 'Ajax Search'
+                    };
+                    if ( tracking_id !== false ) {
+                        tracking_id.forEach(function(id) {
+                            _ga('create', id, 'auto');
+                            _ga('send', 'pageview', params);
+                        });
+                    } else {
+                        _ga('send', 'pageview', params);
+                    }
+                }
+            }
+        },
+
+        gaEvent: function(which, data) {
+            let $this = this;
+            let tracking_id = $this.gaGetTrackingID();
+            // noinspection JSUnresolvedVariable
+            if ( typeof ASP.analytics == 'undefined' || ASP.analytics.method != 'event' )
+                return false;
+
+            // Get the scope
+            let _gtag = typeof gtag == "function" ? gtag : false;
+            // noinspection JSUnresolvedVariable
+            let _ga = typeof window.__gaTracker == "function" ? window.__gaTracker :
+                (typeof window.ga == "function" ? window.ga : false);
+
+            if ( _gtag === false && _ga === false )
+                return false;
+
+            // noinspection JSUnresolvedVariable
+            if (
+                typeof (ASP.analytics.event[which]) != 'undefined' &&
+                ASP.analytics.event[which].active == 1
+            ) {
+                let def_data = {
+                    "search_id": $this.o.id,
+                    "search_name": $this.n('search').data('name'),
+                    "phrase": $this.n('text').val(),
+                    "option_name": '',
+                    "option_value": '',
+                    "result_title": '',
+                    "result_url": '',
+                    "results_count": ''
+                };
+                // noinspection JSUnresolvedVariable
+                let event = {
+                    'event_category': ASP.analytics.event[which].category,
+                    'event_label': ASP.analytics.event[which].label,
+                    'value': ASP.analytics.event[which].value
+                };
+                data = $.fn.extend(def_data, data);
+                Object.keys(data).forEach(function (k) {
+                    let v = data[k];
+                    v = String(v).replace(/[\s\n\r]+/g, " ").trim();
+                    Object.keys(event).forEach(function (kk) {
+                        let regex = new RegExp('\{' + k + '\}', 'gmi');
+                        event[kk] = event[kk].replace(regex, v);
+                    });
+                });
+                if ( _gtag === false ) {
+                    if ( tracking_id !== false ) {
+                        tracking_id.forEach(function(id){
+                            _ga('create', id, 'auto');
+                            // noinspection JSUnresolvedVariable
+                            _ga('send', 'event',
+                                event.event_category,
+                                ASP.analytics.event[which].action,
+                                event.event_label,
+                                event.value
+                            );
+                        });
+                    } else {
+                        // noinspection JSUnresolvedVariable
+                        _ga('send', 'event',
+                            event.event_category,
+                            ASP.analytics.event[which].action,
+                            event.event_label,
+                            event.value
+                        );
+                    }
+                } else {
+                    if ( tracking_id !== false ) {
+                        tracking_id.forEach(function(id){
+                            event.send_to = id;
+                            // noinspection JSUnresolvedVariable
+                            _gtag('event', ASP.analytics.event[which].action, event);
+                        });
+                    } else {
+                        // noinspection JSUnresolvedVariable
+                        _gtag('event', ASP.analytics.event[which].action, event);
+                    }
+                }
+            }
+        },
+
+        gaGetTrackingID: function() {
+            let ret = false;
+            // noinspection JSUnresolvedVariable
+            if ( typeof ASP.analytics == 'undefined' )
+                return ret;
+
+            // noinspection JSUnresolvedVariable
+            if ( typeof ASP.analytics.tracking_id != 'undefined' && ASP.analytics.tracking_id != '' ) {
+                // noinspection JSUnresolvedVariable
+                return [ASP.analytics.tracking_id];
+            } else {
+                // GTAG bypass pageview tracking method
+                let _gtag = typeof window.gtag == "function" ? window.gtag : false;
+                if ( _gtag === false && typeof window.ga != 'undefined' && typeof window.ga.getAll != 'undefined' ) {
+                    let id = [];
+                    window.ga.getAll().forEach( function(tracker) {
+                        id.push( tracker.get('trackingId') );
+                    });
+                    return id.length > 0 ? id : false;
+                }
+            }
+
+            return ret;
+        }
+    , 
+        liveLoad: function(origSelector, url, updateLocation, forceAjax, cache) {
+            let selector = origSelector;
+            if ( selector == 'body' || selector == 'html' ) {
+                console.log('Ajax Search Pro: Do not use html or body as the live loader selector.');
+                return false;
+            }
+
+            let $this = this;
+
+            if ( ASP.pageHTML != "" ) {
+                $this.setLiveLoadCache(ASP.pageHTML, origSelector);
+            }
+
+            function process(html) {
+                let data = helpers.Hooks.applyFilters('asp/live_load/raw_data', html, $this);
+                let parser = new DOMParser;
+                let dataNode = parser.parseFromString(data, "text/html");
+                let $dataNode = $(dataNode);
+
+                // noinspection JSUnresolvedVariable
+                if ( $this.o.statistics ) {
+                    $this.stat_addKeyword($this.o.id, $this.n('text').val());
+                }
+                if ( data != '' && $dataNode.length > 0 && $dataNode.find(selector).length > 0 ) {
+                    data = data.replace(/&asp_force_reset_pagination=1/gmi, '');
+                    data = data.replace(/%26asp_force_reset_pagination%3D1/gmi, '');
+                    data = data.replace(/&#038;asp_force_reset_pagination=1/gmi, '');
+
+                    // Safari having issues with srcset when ajax loading
+                    if ( helpers.isSafari() ) {
+                        data = data.replace(/srcset/gmi, 'nosrcset');
+                    }
+
+                    data = helpers.Hooks.applyFilters('asp_live_load_html', data, $this.o.id, $this.o.iid);
+                    data = helpers.wp_hooks_apply_filters('asp_live_load_html', data, $this.o.id, $this.o.iid);
+                    $dataNode = $(parser.parseFromString(data, "text/html"));
+
+                    //$el.replaceWith($dataNode.find(selector).first());
+                    let replacementNode = $dataNode.find(selector).get(0);
+                    replacementNode = helpers.Hooks.applyFilters('asp/live_load/replacement_node', replacementNode, $this, $el.get(0), data);
+                    if ( replacementNode != null ) {
+                        $el.get(0).parentNode.replaceChild(replacementNode, $el.get(0));
+                    }
+
+                    // get the element again, as it no longer exists
+                    $el = $(selector).first();
+                    if ( updateLocation ) {
+                        document.title = dataNode.title;
+                        history.pushState({}, null, url);
+                    }
+
+                    // WooCommerce ordering fix
+                    $(selector).first().find(".woocommerce-ordering select.orderby").on("change", function(){
+                        $(this).closest("form").trigger('submit');
+                    });
+
+                    // Single highlight on live results
+                    // noinspection JSUnresolvedVariable
+                    if ( $this.o.singleHighlight == 1 ) {
+                        $(selector).find('a').on('click', function(){
+                            localStorage.removeItem('asp_phrase_highlight');
+                            if ( helpers.unqoutePhrase( $this.n('text').val() ) != '' )
+                                localStorage.setItem('asp_phrase_highlight', JSON.stringify({
+                                    'phrase': helpers.unqoutePhrase( $this.n('text').val() ),
+                                    'id': $this.o.id
+                                }));
+                        });
+                    }
+
+                    helpers.Hooks.applyFilters('asp/live_load/finished', url, $this, selector, $el.get(0));
+
+                    // noinspection JSUnresolvedVariable
+                    ASP.initialize();
+                    $this.lastSuccesfulSearch = $('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim();
+                    $this.lastSearchData = data;
+
+                    $this.setLiveLoadCache(html, origSelector);
+                }
+                $this.n('s').trigger("asp_search_end", [$this.o.id, $this.o.iid, $this.n('text').val(), data], true, true);
+                $this.gaEvent?.('search_end', {'results_count': 'unknown'});
+                $this.gaPageview?.($this.n('text').val());
+                $this.hideLoader();
+                $el.css('opacity', 1);
+                $this.searching = false;
+                if ( $this.n('text').val() != '' ) {
+                    $this.n('proclose').css({
+                        display: "block"
+                    });
+                }
+            }
+
+            updateLocation = typeof updateLocation == 'undefined' ? true : updateLocation;
+            forceAjax = typeof forceAjax == 'undefined' ? false : forceAjax;
+
+            // Alternative possible selectors from famous themes
+            let altSel = [
+                '.search-content',
+                '#content', '#Content', 'div[role=main]',
+                'main[role=main]', 'div.theme-content', 'div.td-ss-main-content',
+                'main.l-content', '#primary'
+            ];
+            if ( selector != '#main' )
+                altSel.unshift('#main');
+
+            if ( $(selector).length < 1 ) {
+                altSel.forEach(function(s, i){
+                    if ( $(s).length > 0 ) {
+                        selector = s;
+                        return false;
+                    }
+                });
+                if ( $(selector).length < 1 ) {
+                    console.log('Ajax Search Pro: The live search selector does not exist on the page.');
+                    return false;
+                }
+            }
+
+            selector = helpers.Hooks.applyFilters('asp/live_load/selector', selector, this);
+
+            let $el = $(selector).first();
+
+            $this.searchAbort();
+            $el.css('opacity', 0.4);
+
+            helpers.Hooks.applyFilters('asp/live_load/start', url, $this, selector, $el.get(0));
+
+            if (
+                !forceAjax &&
+                $this.n('searchsettings').find('input[name=filters_initial]').val() == 1 &&
+                $this.n('text').val() == ''
+            ) {
+                window.WPD.intervalUntilExecute(function(){
+                    process(ASP.pageHTML);
+                }, function(){
+                    return ASP.pageHTML != ''
+                });
+            } else {
+                if ( typeof cache != 'undefined' ) {
+                    process(cache.html);
+                } else {
+                    $this.searching = true;
+                    $this.post = $.fn.ajax({
+                        url: url,
+                        method: 'GET',
+                        success: function(data){
+                            process(data);
+                        },
+                        dataType: 'html',
+                        fail: function(jqXHR){
+                            $el.css('opacity', 1);
+                            if ( jqXHR.aborted ) {
+                                return;
+                            }
+                            $el.html("This request has failed. Please check your connection.");
+                            $this.hideLoader();
+                            $this.searching = false;
+                            $this.n('proclose').css({
+                                display: "block"
+                            });
+                        }
+                    });
+                }
+            }
+        },
+        getCurrentLiveURL: function() {
+            let $this = this;
+            let url = 'asp_ls=' + helpers.nicePhrase( $this.n('text').val() ),
+                start = '&',
+                location = window.location.href;
+
+            // Correct previous query arguments (in case of paginated results)
+            location = location.indexOf('asp_ls=') > -1 ? location.slice(0, location.indexOf('asp_ls=')) : location;
+            location = location.indexOf('asp_ls&') > -1 ? location.slice(0, location.indexOf('asp_ls&')) : location;
+
+            // Was asp_ls missing but there are ASP related arguments? (ex. when using ASP.api('getStateURL'))
+            location = location.indexOf('p_asid=') > -1 ? location.slice(0, location.indexOf('p_asid=')) : location;
+            location = location.indexOf('asp_') > -1 ? location.slice(0, location.indexOf('asp_')) : location;
+
+            if ( location.indexOf('?') === -1 ) {
+                start = '?';
+            }
+
+            let final = location + start + url + "&asp_active=1&asp_force_reset_pagination=1&p_asid=" +
+                $this.o.id + "&p_asp_data=1&" + $('form', $this.n('searchsettings')).serialize();
+            // Possible issue when the URL ends with '?' and the start is '&'
+            final = final.replace('?&', '?');
+
+            return final;
+        },
+        initLiveLoaderPopState: function() {
+            let $this = this;
+            $this.liveLoadCache = [];
+            window.addEventListener('popstate', (event) => {
+                let data = $this.getLiveLoadCache();
+                if ( data !== false ) {
+                    $this.n('text').val(data.phrase);
+                    helpers.formData( $('form', $this.n('searchsettings')), data.settings );
+                    $this.resetNoUISliderFilters();
+                    $this.liveLoad(data.selector, document.location.href, false, false, data);
+                }
+            });
+
+            // Store the current page HTML for the live loaders
+            // It needs to be requested here as the dom does store the processed HTML, and it is no good.
+            if ( ASP.pageHTML == "" ) {
+                if ( typeof ASP._ajax_page_html === 'undefined' ) {
+                    ASP._ajax_page_html = true;
+                    $.fn.ajax({
+                        url: $this.currentPageURL,
+                        method: 'GET',
+                        success: function(data){
+                            ASP.pageHTML = data;
+                        },
+                        dataType: 'html'
+                    });
+                }
+            }
+        },
+
+        setLiveLoadCache: function( html, selector ) {
+            let $this = this;
+            if ( $this.liveLoadCache.filter((item)=>{
+                return item.href ==  document.location.href;
+            }).length == 0 ) {
+                $this.liveLoadCache.push({
+                    'href':  html == ASP.pageHTML ? $this.currentPageURL : document.location.href,
+                    'phrase': html == ASP.pageHTML ? '' : $this.n('text').val(),
+                    'selector': selector,
+                    'html': html,
+                    'settings': html == ASP.pageHTML ? $this.originalFormData : helpers.formData($('form', $this.n('searchsettings')))
+                });
+            }
+        },
+
+        getLiveLoadCache: function() {
+            let $this = this;
+            let res = $this.liveLoadCache.filter((item)=>{
+                return item.href == document.location.href;
+            });
+            return res.length > 0 ? res[0] : false;
+        }
+    , 
+        showMoreResLoader: function( ) {
+            let $this = this;
+            $this.n('resultsDiv').addClass('asp_more_res_loading');
+        },
+
+        showLoader: function( recall ) {
+            let $this = this;
+            recall = typeof recall !== 'undefined' ? recall : false;
+
+            // noinspection JSUnresolvedVariable
+            if ( $this.o.loaderLocation == "none" ) return;
+
+            // noinspection JSUnresolvedVariable
+            if ( !$this.n('search').hasClass("hiddend")  && ( $this.o.loaderLocation != "results" )  ) {
+                $this.n('proloading').css({
+                    display: "block"
+                });
+            }
+
+            // stop at this point, if this is a 'load more' call
+            if ( recall !== false ) {
+                return false;
+            }
+
+            // noinspection JSUnresolvedVariable
+            if ( ( $this.n('search').hasClass("hiddend") && $this.o.loaderLocation != "search" ) ||
+                ( !$this.n('search').hasClass("hiddend") && ( $this.o.loaderLocation == "both" || $this.o.loaderLocation == "results" ) )
+            ) {
+                if ( !$this.usingLiveLoader ) {
+                    if ( $this.n('resultsDiv').find('.asp_results_top').length > 0 )
+                        $this.n('resultsDiv').find('.asp_results_top').css('display', 'none');
+                    $this.showResultsBox();
+                    $(".asp_res_loader", $this.n('resultsDiv')).removeClass("hiddend");
+                    $this.n('results').css("display", "none");
+                    $this.n('showmore').css("display", "none");
+                    if ( typeof $this.hidePagination !== 'undefined' ) {
+                        $this.hidePagination();
+                    }
+                }
+            }
+        },
+
+        hideLoader: function( ) {
+            let $this = this;
+            $this.n('proloading').css({
+                display: "none"
+            });
+            $(".asp_res_loader", $this.n('resultsDiv')).addClass("hiddend");
+            $this.n('results').css("display", "");
+            $this.n('resultsDiv').removeClass('asp_more_res_loading');
+        }
+    , 
+        loadASPFonts: function() {
+            if ( ASP.font_url!== false  ) {
+                this.fontsLoaded = true;
+                let font = new FontFace(
+                    'asppsicons2',
+                    'url(' + ASP.font_url + ')',
+                    { style: 'normal', weight: 'normal', 'font-display': 'swap' }
+                );
+                font.load().then(function(loaded_face) {
+                    document.fonts.add(loaded_face);
+                }).catch(function(er) {});
+                ASP.font_url = false;
+            }
+        },
+
+        /**
+         * Updates the document address bar with the ajax live search attributes, without push state
+         */
+        updateHref: function( ) {
+            if ( this.o.trigger.update_href && !this.usingLiveLoader ) {
+                if (!window.location.origin) {
+                    window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+                }
+                let url = this.getStateURL() + (this.resultsOpened ? '&asp_s=' : '&asp_ls=') + this.n('text').val();
+                history.replaceState('', '', url.replace(location.origin, ''));
+            }
+        },
+
+        stat_addKeyword: function(id, keyword) {
+            let data = {
+                action: 'ajaxsearchpro_addkeyword',
+                id: id,
+                keyword: keyword
+            };
+            // noinspection JSUnresolvedVariable
+            $.fn.ajax({
+                'url': ASP.ajaxurl,
+                'method': 'POST',
+                'data': data,
+                'success': function (response) {}
+            })
+        },
+        /**
+         * Checks if an element with the same ID and Instance was already registered
+         */
+        fixClonedSelf: function() {
+            let $this = this,
+                oldInstanceId = $this.o.iid,
+                oldRID = $this.o.rid;
+            while ( !ASP.instances.set($this) ) {
+                ++$this.o.iid;
+                if ($this.o.iid > 50) {
+                    break;
+                }
+            }
+            // oof, this was cloned
+            if ( oldInstanceId != $this.o.iid ) {
+                $this.o.rid = $this.o.id + '_' + $this.o.iid;
+                $this.n('search').get(0).id = "ajaxsearchpro" + $this.o.rid;
+                $this.n('search').removeClass('asp_m_' + oldRID).addClass('asp_m_' + $this.o.rid).data('instance', $this.o.iid);
+                $this.n('searchsettings').get(0).id = $this.n('searchsettings').get(0).id.replace('settings'+ oldRID, 'settings' + $this.o.rid);
+                if ( $this.n('searchsettings').hasClass('asp_s_' + oldRID) ) {
+                    $this.n('searchsettings').removeClass('asp_s_' + oldRID)
+                        .addClass('asp_s_' + $this.o.rid).data('instance', $this.o.iid);
+                } else {
+                    $this.n('searchsettings').removeClass('asp_sb_' + oldRID)
+                        .addClass('asp_sb_' + $this.o.rid).data('instance', $this.o.iid);
+                }
+                $this.n('resultsDiv').get(0).id = $this.n('resultsDiv').get(0).id.replace('prores'+ oldRID, 'prores' + $this.o.rid);
+                $this.n('resultsDiv').removeClass('asp_r_' + oldRID)
+                    .addClass('asp_r_' + $this.o.rid).data('instance', $this.o.iid);
+                $this.n('container').find('.asp_init_data').data('instance', $this.o.iid);
+                $this.n('container').find('.asp_init_data').get(0).id =
+                    $this.n('container').find('.asp_init_data').get(0).id.replace('asp_init_id_'+ oldRID, 'asp_init_id_' + $this.o.rid);
+
+                $this.n('prosettings').data('opened', 0);
+            }
+        },
+        destroy: function () {
+            let $this = this;
+            Object.keys($this.n).forEach(function(k){
+               $this.n[k].off();
+            });
+            if ( typeof $this.n('searchsettings').get(0).referenced !== 'undefined' ) {
+                --$this.n('searchsettings').get(0).referenced;
+                if ( $this.n('searchsettings').get(0).referenced < 0 ) {
+                    $this.nodes.searchsettings.remove();
+                }
+            } else {
+                $this.nodes.searchsettings.remove();
+            }
+            if ( typeof $this.n('resultsDiv').get(0).referenced !== 'undefined' ) {
+                --$this.n('resultsDiv').get(0).referenced;
+                if ( $this.n('resultsDiv').get(0).referenced < 0 ) {
+                    $this.nodes.resultsDiv.remove();
+                }
+            } else {
+                $this.nodes.resultsDiv.remove();
+            }
+            $this.nodes.trythis.remove();
+            $this.nodes.search.remove();
+            $this.nodes.container.remove();
+            $this.documentEventHandlers.forEach(function(h){
+                $(h.node).off(h.event, h.handler);
+            });
+        }
+    , 
+        isRedirectToFirstResult: function() {
+            let $this = this;
+            // noinspection JSUnresolvedVariable
+            return (
+                    $('.asp_res_url', $this.n('resultsDiv')).length > 0 ||
+                    $('.asp_es_' + $this.o.id + ' a').length > 0 ||
+                    ( $this.o.resPage.useAjax && $($this.o.resPage.selector + 'a').length > 0)
+                ) &&
+                (
+                    ($this.o.redirectOnClick == 1 && $this.ktype == 'click' && $this.o.trigger.click == 'first_result') ||
+                    ($this.o.redirectOnEnter == 1 && ($this.ktype == 'input' || $this.ktype == 'keyup') && $this.keycode == 13 && $this.o.trigger.return == 'first_result') ||
+                    ($this.ktype == 'button' && $this.o.sb.redirect_action == 'first_result')
+                );
+        },
+
+        doRedirectToFirstResult: function() {
+            let $this = this,
+                _loc, url;
+
+            if ( $this.ktype == 'click' ) {
+                _loc = $this.o.trigger.click_location;
+            } else if ( $this.ktype == 'button' ) {
+                // noinspection JSUnresolvedVariable
+                _loc = $this.o.sb.redirect_location;
+            } else {
+                _loc = $this.o.trigger.return_location;
+            }
+
+            if ( $('.asp_res_url', $this.n('resultsDiv')).length > 0 ) {
+                url =  $( $('.asp_res_url', $this.n('resultsDiv')).get(0) ).attr('href');
+            } else if ( $('.asp_es_' + $this.o.id + ' a').length > 0 ) {
+                url =  $( $('.asp_es_' + $this.o.id + ' a').get(0) ).attr('href');
+            } else if ( $this.o.resPage.useAjax && $($this.o.resPage.selector + 'a').length > 0 ) {
+                url =  $( $($this.o.resPage.selector + 'a').get(0) ).attr('href');
+            }
+
+            if ( url != '' ) {
+                if (_loc == 'same') {
+                    location.href = url;
+                } else {
+                    helpers.openInNewTab(url);
+                }
+
+                $this.hideLoader();
+                $this.hideResults();
+            }
+            return false;
+        },
+
+        doRedirectToResults: function( ktype ) {
+            let $this = this,
+                _loc;
+
+            if ( !$this.reportSettingsValidity() ) {
+                $this.showNextInvalidFacetMessage();
+                return false;
+            }
+
+            if ( ktype == 'click' ) {
+                _loc = $this.o.trigger.click_location;
+            } else if ( ktype == 'button' ) {
+                // noinspection JSUnresolvedVariable
+                _loc = $this.o.sb.redirect_location;
+            } else {
+                _loc = $this.o.trigger.return_location;
+            }
+            let url = $this.getRedirectURL(ktype);
+
+            // noinspection JSUnresolvedVariable
+            if ($this.o.overridewpdefault) {
+                // noinspection JSUnresolvedVariable
+                if ( $this.o.resPage.useAjax == 1 ) {
+                    $this.hideResults();
+                    // noinspection JSUnresolvedVariable
+                    $this.liveLoad($this.o.resPage.selector, url);
+                    $this.showLoader();
+                    if ($this.att('blocking') == false) {
+                        $this.hideSettings();
+                    }
+                    return false;
+                }
+                // noinspection JSUnresolvedVariable
+                if ( $this.o.override_method == "post") {
+                    helpers.submitToUrl(url, 'post', {
+                        asp_active: 1,
+                        p_asid: $this.o.id,
+                        p_asp_data: $('form', $this.n('searchsettings')).serialize()
+                    }, _loc);
+                } else {
+                    if ( _loc == 'same' ) {
+                        location.href = url;
+                    } else {
+                        helpers.openInNewTab(url);
+                    }
+                }
+            } else {
+                // The method is not important, just send the data to memorize settings
+                helpers.submitToUrl(url, 'post', {
+                    np_asid: $this.o.id,
+                    np_asp_data: $('form', $this.n('searchsettings')).serialize()
+                }, _loc);
+            }
+
+            $this.n('proloading').css('display', 'none');
+            $this.hideLoader();
+            if ($this.att('blocking') == false) $this.hideSettings();
+            $this.hideResults();
+            $this.searchAbort();
+        },
+        getRedirectURL: function(ktype) {
+            let $this = this,
+                url, source, final, base_url;
+            ktype = typeof ktype !== 'undefined' ? ktype : 'enter';
+
+            if ( ktype == 'click' ) {
+                source = $this.o.trigger.click;
+            } else if ( ktype == 'button' ) {
+                source = $this.o.sb.redirect_action;
+            } else {
+                source = $this.o.trigger.return;
+            }
+
+            if ( source == 'results_page' ) {
+                url = '?s=' + helpers.nicePhrase( $this.n('text').val() );
+            } else if ( source == 'woo_results_page' ) {
+                url = '?post_type=product&s=' + helpers.nicePhrase( $this.n('text').val() );
+            } else {
+                if ( ktype == 'button' ) {
+                    base_url = source == 'elementor_page' ? $this.o.sb.elementor_url : $this.o.sb.redirect_url;
+                    // This function is heavy, do not do it on init
+                    base_url = helpers.decodeHTMLEntities(base_url);
+                    url = $this.parseCustomRedirectURL(base_url, $this.n('text').val());
+                } else {
+                    base_url = source == 'elementor_page' ? $this.o.trigger.elementor_url : $this.o.trigger.redirect_url;
+                    // This function is heavy, do not do it on init
+                    base_url = helpers.decodeHTMLEntities(base_url);
+                    url = $this.parseCustomRedirectURL(base_url, $this.n('text').val());
+                }
+            }
+            // Is this an URL like xy.com/?x=y
+            if ( $this.o.homeurl.indexOf('?') > 1 && url.indexOf('?') === 0 ) {
+                url = url.replace('?', '&');
+            }
+
+            if ( $this.o.overridewpdefault && $this.o.override_method != 'post' ) {
+                // We are about to add a query string to the URL, so it has to contain the '?' character somewhere.
+                // ..if not, it has to be added
+                let start = '&';
+                if ( ( $this.o.homeurl.indexOf('?') === -1 || source == 'elementor_page' ) && url.indexOf('?') === -1 ) {
+                    start = '?';
+                }
+                let addUrl = url + start + "asp_active=1&p_asid=" + $this.o.id + "&p_asp_data=1&" + $('form', $this.n('searchsettings')).serialize();
+                if ( source == 'elementor_page' ) {
+                    final = addUrl;
+                } else {
+                    final = $this.o.homeurl + addUrl;
+                }
+            } else {
+                if ( source == 'elementor_page' ) {
+                    final = url;
+                } else {
+                    final = $this.o.homeurl + url;
+                }
+            }
+
+            // Double backslashes - negative lookbehind (?<!:) is not supported in all browsers yet, ECMA2018
+            // This section should be only: final.replace(//(?<!:)\/\//g, '/');
+            // Bypass solution, but it works at least everywhere
+            final = final.replace('https://', 'https:///');
+            final = final.replace('http://', 'http:///');
+            final = final.replace(/\/\//g, '/');
+
+            final = helpers.Hooks.applyFilters('asp_redirect_url', final, $this.o.id, $this.o.iid);
+            final = helpers.wp_hooks_apply_filters('asp_redirect_url', final, $this.o.id, $this.o.iid);
+
+            return final;
+        },
+        parseCustomRedirectURL: function(url ,phrase) {
+            let $this = this,
+                u = helpers.decodeHTMLEntities(url).replace(/{phrase}/g, helpers.nicePhrase(phrase)),
+                items = u.match(/{(.*?)}/g);
+            if ( items !== null ) {
+                items.forEach(function(v){
+                    v = v.replace(/[{}]/g, '');
+                    let node = $('input[type=radio][name*="aspf\[' +  v + '_"]:checked', $this.n('searchsettings'));
+                    if ( node.length == 0 )
+                        node =  $('input[type=text][name*="aspf\[' +  v + '_"]', $this.n('searchsettings'));
+                    if ( node.length == 0 )
+                        node =  $('input[type=hidden][name*="aspf\[' +  v + '_"]', $this.n('searchsettings'));
+                    if ( node.length == 0 )
+                        node =  $('select[name*="aspf\[' +  v + '_"]:not([multiple])', $this.n('searchsettings'));
+                    if ( node.length == 0 )
+                        node =  $('input[type=radio][name*="termset\[' +  v + '"]:checked', $this.n('searchsettings'));
+                    if ( node.length == 0 )
+                        node =  $('input[type=text][name*="termset\[' +  v + '"]', $this.n('searchsettings'));
+                    if ( node.length == 0 )
+                        node =  $('input[type=hidden][name*="termset\[' +  v + '"]', $this.n('searchsettings'));
+                    if ( node.length == 0 )
+                        node =  $('select[name*="termset\[' +  v + '"]:not([multiple])', $this.n('searchsettings'));
+                    if ( node.length == 0 )
+                        return true; // Continue
+
+                    let val = node.val();
+                    val = "" + val; // Convert anything to string, okay-ish method
+                    u = u.replace('{' + v + '}', val);
+                });
+            }
+            return u;
+        }
+    , 
+        showResults: function( ) {
+            let $this = this;
+
+            helpers.Hooks.applyFilters('asp/results/show/start', $this);
+
+            $this.initResults();
+
+            // Create the scrollbars if needed
+            // noinspection JSUnresolvedVariable
+            if ($this.o.resultstype == 'horizontal') {
+                $this.createHorizontalScroll();
+            } else {
+                // noinspection JSUnresolvedVariable
+                if ($this.o.resultstype == 'vertical') {
+                    $this.createVerticalScroll();
+                }
+            }
+
+            // noinspection JSUnresolvedVariable
+            switch ($this.o.resultstype) {
+                case 'horizontal':
+                    $this.showHorizontalResults();
+                    break;
+                case 'vertical':
+                    $this.showVerticalResults();
+                    break;
+                case 'polaroid':
+                    $this.showPolaroidResults();
+                    //$this.disableMobileScroll = true;
+                    break;
+                case 'isotopic':
+                    $this.showIsotopicResults();
+                    break;
+                default:
+                    $this.showHorizontalResults();
+                    break;
+            }
+
+            $this.showAnimatedImages();
+            $this.hideLoader();
+
+            $this.n('proclose').css({
+                display: "block"
+            });
+
+            // When opening the results box only
+            // noinspection JSUnresolvedVariable
+            if ( helpers.isMobile() && $this.o.mobile.hide_keyboard && !$this.resultsOpened )
+                document.activeElement.blur();
+
+            // noinspection JSUnresolvedVariable
+            if ( $this.o.settingsHideOnRes && $this.att('blocking') == false )
+                $this.hideSettings();
+
+            if ( typeof WPD.lazy != 'undefined' ) {
+                setTimeout(function(){
+                    // noinspection JSUnresolvedVariable
+                    WPD.lazy('.asp_lazy');
+                }, 100)
+            }
+
+            if ( $this.is_scroll && typeof $this.scroll.recalculate !== 'undefined' ) {
+                setTimeout(function(){
+                    $this.scroll.recalculate();
+                }, 500);
+            }
+
+            $this.eh.resulsDivHoverMouseEnter = $this.eh.resulsDivHoverMouseEnter || function () {
+                $('.item', $this.n('resultsDiv')).removeClass('hovered');
+                $(this).addClass('hovered');
+            };
+            $this.eh.resulsDivHoverMouseLeave = $this.eh.resulsDivHoverMouseLeave || function () {
+                $('.item', $this.n('resultsDiv')).removeClass('hovered');
+            };
+            $this.n('resultsDiv').find('.item').on('mouseenter', $this.eh.resulsDivHoverMouseEnter);
+            $this.n('resultsDiv').find('.item').on('mouseleave', $this.eh.resulsDivHoverMouseLeave);
+
+            $this.fixSettingsAccessibility();
+            $this.resultsOpened = true;
+
+            helpers.Hooks.addFilter('asp/results/show/end', $this);
+        },
+
+        hideResults: function( blur ) {
+            let $this = this;
+            blur = typeof blur == 'undefined' ? true : blur;
+
+            $this.initResults();
+
+            if ( !$this.resultsOpened ) return false;
+
+            $this.n('resultsDiv').removeClass($this.resAnim.showClass).addClass($this.resAnim.hideClass);
+            setTimeout(function(){
+                $this.n('resultsDiv').css($this.resAnim.hideCSS);
+            }, $this.resAnim.duration);
+
+            $this.n('proclose').css({
+                display: "none"
+            });
+
+            if ( helpers.isMobile() && blur )
+                document.activeElement.blur();
+
+            $this.resultsOpened = false;
+            // Re-enable mobile scrolling, in case it was disabled
+            //$this.disableMobileScroll = false;
+
+            if ( typeof $this.ptstack != "undefined" )
+                delete $this.ptstack;
+
+            $this.hideArrowBox();
+
+            $this.n('s').trigger("asp_results_hide", [$this.o.id, $this.o.iid], true, true);
+        },
+
+        updateResults: function( html ) {
+            let $this = this;
+            if (
+                html.replace(/^\s*[\r\n]/gm, "") === "" ||
+                $(html).hasClass('asp_nores') ||
+                $(html).find('.asp_nores').length > 0
+            ) {
+                // Something went wrong, as the no-results container was returned
+                $this.n('showmore').css("display", "none");
+                $('span', $this.n('showmore')).html("");
+            } else {
+                // noinspection JSUnresolvedVariable
+                if (
+                    $this.o.resultstype == 'isotopic' &&
+                    $this.call_num > 0 &&
+                    $this.isotopic != null &&
+                    typeof $this.isotopic.appended != 'undefined' &&
+                    $this.n('items').length > 0
+                ) {
+                    let $items = $(html),
+                        $last = $this.n('items').last(),
+                        last = parseInt( $this.n('items').last().attr('data-itemnum') );
+                    $items.get().forEach( function(el){
+                        $(el).attr('data-itemnum', ++last).css({
+                            'width': $last.css('width'),
+                            'height': $last.css('height')
+                        })
+                    });
+                    $this.n('resdrg').append( $items );
+
+                    $this.isotopic.appended( $items.get() );
+                    $this.nodes.items = $('.item', $this.n('resultsDiv')).length > 0 ? $('.item', $this.n('resultsDiv')) : $('.photostack-flip', $this.n('resultsDiv'));
+                } else {
+                    // noinspection JSUnresolvedVariable
+                    if ( $this.call_num > 0 && $this.o.resultstype == 'vertical' ) {
+                        $this.n('resdrg').html($this.n('resdrg').html() + '<div class="asp_v_spacer"></div>' + html);
+                    } else {
+                        $this.n('resdrg').html($this.n('resdrg').html() + html);
+                    }
+                }
+            }
+        },
+
+        showResultsBox: function() {
+            let $this = this;
+
+            $this.initResults();
+
+            $this.n('s').trigger("asp_results_show", [$this.o.id, $this.o.iid], true, true);
+
+            $this.n('resultsDiv').css({
+                display: 'block',
+                height: 'auto'
+            });
+            $this.n('results').find('.item, .asp_group_header').addClass($this.animationOpacity);
+
+            $this.n('resultsDiv').css($this.resAnim.showCSS);
+            $this.n('resultsDiv').removeClass($this.resAnim.hideClass).addClass($this.resAnim.showClass);
+
+            $this.fixResultsPosition(true);
+        },
+
+        scrollToResults: function( ) {
+            let $this = this,
+                tolerance = Math.floor( window.innerHeight * 0.1 ),
+                stop;
+
+            if (
+                !$this.resultsOpened ||
+                $this.call_num > 0 ||
+                $this.o.scrollToResults.enabled !=1 ||
+                $this.n('search').closest(".asp_preview_data").length > 0 ||
+                $this.o.compact.enabled == 1 ||
+                $this.n('resultsDiv').inViewPort(tolerance)
+            ) return;
+
+            if ($this.o.resultsposition == "hover") {
+                stop = $this.n('probox').offset().top - 20;
+            } else {
+                stop = $this.n('resultsDiv').offset().top - 20;
+            }
+            stop = stop + $this.o.scrollToResults.offset;
+
+            let $adminbar = $("#wpadminbar");
+            if ($adminbar.length > 0)
+                stop -= $adminbar.height();
+            stop = stop < 0 ? 0 : stop;
+            window.scrollTo({top: stop, behavior:"smooth"});
+        },
+
+        showAnimatedImages: function() {
+            let $this = this;
+            $this.n('items').each(function () {
+                let $image = $(this).find('.asp_image[data-src]'),
+                    src = $image.data('src');
+                if (typeof src != 'undefined' && src != null && src !== '' && src.indexOf('.gif') > -1) {
+                    if ($image.find('canvas').length == 0) {
+                        $image.prepend($('<div class="asp_item_canvas"><canvas></canvas></div>').get(0));
+                        let c = $(this).find('canvas').get(0),
+                            $cc = $(this).find('.asp_item_canvas'),
+                            ctx = c.getContext("2d"),
+                            img = new Image;
+                        img.crossOrigin = "anonymous";
+                        img.onload = function () {
+                            $(c).attr({
+                                "width": img.width,
+                                "height": img.height
+                            });
+                            ctx.drawImage(img, 0, 0, img.width, img.height); // Or at whatever offset you like
+                            $cc.css({
+                                "background-image": 'url(' + c.toDataURL() + ')'
+                            });
+                        };
+                        img.src = src;
+                    }
+                }
+            });
+        },
+
+        updateInfoHeader: function( totalCount ) {
+            let $this = this,
+                content,
+                $rt = $this.n('resultsDiv').find('.asp_results_top'),
+                phrase = $this.n('text').val().trim();
+
+            if ( $rt.length > 0 ) {
+                if ( $this.n('items').length <= 0 ) {
+                    $rt.css('display', 'none');
+                } else {
+                    // Results information box original texts
+                    if ( typeof $this.resInfoBoxTxt == 'undefined' ) {
+                        $this.resInfoBoxTxt =
+                            $this.n('resultsDiv').find('.asp_results_top .asp_rt_phrase').length > 0 ?
+                                $this.n('resultsDiv').find('.asp_results_top .asp_rt_phrase').html() : '';
+                        $this.resInfoBoxTxtNoPhrase =
+                            $this.n('resultsDiv').find('.asp_results_top .asp_rt_nophrase').length > 0 ?
+                                $this.n('resultsDiv').find('.asp_results_top .asp_rt_nophrase').html() : '';
+                    }
+
+                    if ( phrase !== '' && $this.resInfoBoxTxt !== '' ) {
+                        content = $this.resInfoBoxTxt;
+                    } else if ( phrase === '' && $this.resInfoBoxTxtNoPhrase !== '') {
+                        content = $this.resInfoBoxTxtNoPhrase;
+                    }
+                    if ( content !== '' ) {
+                        content = content.replaceAll('{phrase}', $this.n('text').val());
+                        content = content.replaceAll('{results_count}', $this.n('items').length);
+                        content = content.replaceAll('{results_count_total}', totalCount);
+                        $rt.html(content);
+                        $rt.css('display', 'block');
+                    } else {
+                        $rt.css('display', 'none');
+                    }
+                }
+            }
+        }
+
+    , 
+        showHorizontalResults: function () {
+            let $this = this;
+
+            $this.n('resultsDiv').css('display', 'block');
+            $this.fixResultsPosition(true);
+
+            $this.n('items').css("opacity", $this.animationOpacity);
+
+            if ($this.o.resultsposition == 'hover') {
+                $this.n('resultsDiv').css(
+                    'width',
+                    //($this.n('search').width() - ($this.n('resultsDiv').outerWidth(true) - $this.n('resultsDiv').innerWidth())) + 'px'
+                    ($this.n('search').width() - ($this.n('resultsDiv').outerWidth(true) - $this.n('resultsDiv').width())) + 'px'
+                );
+            }
+
+            // noinspection JSUnresolvedVariable
+            if ($this.n('items').length > 0 && $this.o.scrollBar.horizontal.enabled ) {
+                let el_m = parseInt($this.n('items').css("marginLeft")),
+                    el_w = $this.n('items').outerWidth() + el_m * 2;
+                $this.n('results').css("overflowX", "auto");
+                $this.n('resdrg').css("width", $this.n('items').length * el_w + el_m * 2 + "px");
+            } else {
+                $this.n('results').css("overflowX", "hidden");
+                $this.n('resdrg').css("width", "auto");
+            }
+
+            if ($this.o.highlight == 1) {
+                // noinspection JSUnresolvedVariable
+                $("div.item", $this.n('resultsDiv')).highlight(
+                    $this.n('text').val().split(" "),
+                    { element: 'span', className: 'highlighted', wordsOnly: $this.o.highlightWholewords == 1 }
+                );
+            }
+
+            if ( $this.call_num < 1 ) {
+                // Scroll to the beginning
+                let $container = $this.is_scroll && typeof $this.scroll.recalculate !== 'undefined' ?
+                    $($this.scroll.getScrollElement()) : $this.n('results');
+                $container.get(0).scrollLeft = 0;
+
+                // noinspection JSUnresolvedVariable
+                if ( $this.o.scrollBar.horizontal.enabled ) {
+                    let prevDelta = 0,
+                        prevTime = Date.now();
+                    $container.off('mousewheel');
+                    $container.on('mousewheel', function (e) {
+                        let deltaFactor = typeof e.deltaFactor != 'undefined' ? e.deltaFactor : 65,
+                            delta = e.deltaY > 0 ? 1 : -1,
+                            diff = Date.now() - prevTime,
+                            speed = diff > 100 ? 1 : 3 - (2 * diff / 100);
+                        if (prevDelta != e.deltaY)
+                            speed = 1;
+                        $(this).animate(false).animate({
+                            "scrollLeft": this.scrollLeft + (delta * deltaFactor * 2 * speed)
+                        }, 250, "easeOutQuad");
+                        prevDelta = e.deltaY;
+                        prevTime = Date.now();
+                        if (
+                            !(
+                                (helpers.isScrolledToRight($container.get(0)) && delta == 1) ||
+                                (helpers.isScrolledToLeft($container.get(0)) && delta == -1)
+                            )
+                        )
+                            e.preventDefault();
+                    });
+                }
+            }
+
+            $this.showResultsBox();
+            $this.addAnimation();
+            $this.searching = false;
+        }
+    , 
+        showIsotopicResults: function () {
+            let $this = this;
+
+            // When re-opening existing results, just stop here
+            if ( $this._no_animations == true ) {
+                $this.showResultsBox();
+                $this.addAnimation();
+                $this.searching = false;
+                return true;
+            }
+
+            $this.preProcessIsotopicResults();
+            $this.showResultsBox();
+
+            if ($this.n('items').length > 0) {
+                $this.n('results').css({
+                    height: "auto"
+                });
+                if ($this.o.highlight == 1) {
+                    // noinspection JSUnresolvedVariable
+                    $("div.item", $this.n('resultsDiv')).highlight($this.n('text').val().split(" "), {
+                        element: 'span', className: 'highlighted', wordsOnly: $this.o.highlightWholewords
+                    });
+                }
+            }
+
+            if ( $this.call_num == 0 )
+                $this.calculateIsotopeRows();
+
+            $this.showPagination();
+            $this.isotopicPagerScroll();
+
+            if ($this.n('items').length == 0) {
+                $this.n('results').css({
+                    height: '11110px'
+                });
+                $this.n('results').css({
+                    height: 'auto'
+                });
+                $this.n('resdrg').css({
+                    height: 'auto'
+                });
+            } else {
+                // Initialize the main
+                if (typeof rpp_isotope !== 'undefined') {
+                    if ( $this.isotopic != null && typeof $this.isotopic.destroy != 'undefined' && $this.call_num == 0 )
+                        $this.isotopic.destroy();
+
+                    if ( $this.call_num == 0 || $this.isotopic == null ) {
+                        // noinspection JSPotentiallyInvalidConstructorUsage
+                        $this.isotopic = new rpp_isotope('#ajaxsearchprores' + $this.o.rid + " .resdrg", {
+                            // options
+                            isOriginLeft: !$('body').hasClass('rtl'),
+                            itemSelector: 'div.item',
+                            layoutMode: 'masonry',
+                            filter: $this.filterFns['number'],
+                            masonry: {
+                                "gutter": $this.o.isotopic.gutter
+                            }
+                        });
+                    }
+                } else {
+                    // Isotope is not included within the scripts, alert the user!
+                    return false;
+                }
+            }
+            $this.addAnimation();
+            $this.initIsotopicClick();
+            $this.searching = false;
+        },
+        initIsotopicClick: function(){
+            let $this = this;
+            $this.eh.isotopicClickhandle = $this.eh.isotopicClickhandle || function(e) {
+                if ( !$this.dragging ) {
+                    let $a = $(this).find('.asp_content a.asp_res_url');
+                    let url = $a.attr('href');
+                    if (url !== '') {
+                        e.preventDefault();
+                        if ( e.which == 2 || $a.attr('target') == '_blank' ) {
+                            helpers.openInNewTab(url);
+                        } else {
+                            location.href = url;
+                        }
+                    }
+                }
+            }
+            $this.n('resultsDiv').find('.asp_isotopic_item').on('click', $this.eh.isotopicClickhandle);
+        },
+        preProcessIsotopicResults: function() {
+            let $this = this,
+                j = 0,
+                overlay = "";
+
+            // In some cases the hidden data is not present for some reason..
+            if ($this.o.isotopic.showOverlay && $this.n('aspItemOverlay').length > 0)
+                overlay = $this.n('aspItemOverlay').get(0).outerHTML;
+
+            $this.n('items').forEach(function (el) {
+
+                let image = "",
+                    overlayImage = "",
+                    hasImage = $(el).find('.asp_image').length > 0,
+                    $img = $(el).find('.asp_image');
+
+                if (hasImage) {
+                    // noinspection JSUnresolvedVariable
+                    let src = $img.data('src'),
+                        filter = $this.o.isotopic.blurOverlay && !helpers.isMobile() ? "aspblur" : "no_aspblur";
+
+                    overlayImage = $("<div data-src='"+src+"' ></div>");
+                    if ( typeof WPD.lazy == 'undefined' ) {
+                        overlayImage.css({
+                            "background-image": "url(" + src + ")"
+                        });
+                    }
+                    overlayImage.css({
+                        "filter": "url(#" + filter + ")",
+                        "-webkit-filter": "url(#" + filter + ")",
+                        "-moz-filter": "url(#" + filter + ")",
+                        "-o-filter": "url(#" + filter + ")",
+                        "-ms-filter": "url(#" + filter + ")"
+                    }).addClass('asp_item_overlay_img asp_lazy');
+                    overlayImage = overlayImage.get(0).outerHTML;
+                }
+
+                $(el).prepend(overlayImage + overlay + image);
+                $(el).attr('data-itemnum', j);
+
+                j++;
+            });
+
+        },
+        isotopicPagerScroll: function () {
+            let $this = this;
+
+            if ( $('nav>ul li.asp_active', $this.n('resultsDiv')).length <= 0 )
+                return false;
+
+            let $activeLeft = $('nav>ul li.asp_active', $this.n('resultsDiv')).offset().left,
+                $activeWidth = $('nav>ul li.asp_active', $this.n('resultsDiv')).outerWidth(true),
+                $nextLeft = $('nav>a.asp_next', $this.n('resultsDiv')).offset().left,
+                $prevLeft = $('nav>a.asp_prev', $this.n('resultsDiv')).offset().left;
+
+            if ( $activeWidth <= 0) return;
+
+            let toTheLeft = Math.ceil( ( $prevLeft - $activeLeft + 2 * $activeWidth ) / $activeWidth );
+            if (toTheLeft > 0) {
+                // If the active is the first, go to the beginning
+                if ( $('nav>ul li.asp_active', $this.n('resultsDiv')).prev().length == 0) {
+                    $('nav>ul', $this.n('resultsDiv')).css({
+                        "left": $activeWidth + "px"
+                    });
+                    return;
+                }
+
+                // Otherwise go left
+                $('nav>ul', $this.n('resultsDiv')).css({
+                    "left": $('nav>ul', $this.n('resultsDiv')).position().left  +( $activeWidth * toTheLeft) + "px"
+                });
+            } else {
+                let toTheRight;
+                // One step if it is the last element, 2 steps for any other
+                if ( $('nav>ul li.asp_active', $this.n('resultsDiv')).next().length == 0 ) {
+                    toTheRight = Math.ceil(($activeLeft - $nextLeft + $activeWidth) / $activeWidth);
+                } else {
+                    toTheRight = Math.ceil(($activeLeft - $nextLeft + 2 * $activeWidth) / $activeWidth);
+                }
+
+                if (toTheRight > 0) {
+                    $('nav>ul', $this.n('resultsDiv')).css({
+                        "left": $('nav>ul', $this.n('resultsDiv')).position().left -( $activeWidth * toTheRight) + "px"
+                    });
+                }
+            }
+        },
+        showPagination: function ( force_refresh ) {
+            let $this = this;
+            force_refresh = typeof force_refresh !== 'undefined' ? force_refresh : false;
+
+            if ( !$this.o.isotopic.pagination ) {
+                // On window resize event, simply rearrange without transition
+                if ( $this.isotopic != null && force_refresh )
+                    $this.isotopic.arrange({
+                        transitionDuration: 0,
+                        filter: $this.filterFns['number']
+                    });
+                return false;
+            }
+
+            if ( $this.call_num < 1 || force_refresh)
+                $('nav.asp_navigation ul li', $this.n('resultsDiv')).remove();
+            $('nav.asp_navigation', $this.n('resultsDiv')).css('display', 'none');
+
+            //$('nav.asp_navigation ul', $this.n('resultsDiv')).removeAttr("style");
+
+            if ($this.n('items').length > 0) {
+                let start = 1;
+                if ($this.call_num > 0 && !force_refresh) {
+                    // Because the nav can be both top and bottom, make sure to get only 1 to calculate, not both
+                    start = $this.n('resultsDiv').find('nav.asp_navigation ul').first().find('li').length + 1;
+                }
+                let pages = Math.ceil($this.n('items').length / $this.il.itemsPerPage);
+                if (pages > 1) {
+
+                    // Calculate which page to activate, after a possible orientation change
+                    let newPage = force_refresh && $this.il.lastVisibleItem > 0 ? Math.ceil($this.il.lastVisibleItem/$this.il.itemsPerPage) : 1;
+                    newPage = newPage <= 0 ? 1 : newPage;
+
+                    for (let i = start; i <= pages; i++) {
+                        if (i == newPage)
+                            $('nav.asp_navigation ul', $this.n('resultsDiv')).append("<li class='asp_active'><span>" + i + "</span></li>");
+                        else
+                            $('nav.asp_navigation ul', $this.n('resultsDiv')).append("<li><span>" + i + "</span></li>");
+                    }
+                    $('nav.asp_navigation', $this.n('resultsDiv')).css('display', 'block');
+
+                    /**
+                     * Always trigger the pagination!
+                     * This will make sure that the isotope.arrange method is triggered in this case as well.
+                     */
+                    if ( force_refresh )
+                        $('nav.asp_navigation ul li.asp_active', $this.n('resultsDiv')).trigger('click_trigger');
+                    else
+                        $('nav.asp_navigation ul li.asp_active', $this.n('resultsDiv')).trigger('click');
+
+                } else {
+                    // No pagination, but the pagination is enabled
+                    // On window resize event, simply rearrange without transition
+                    if ( $this.isotopic != null && force_refresh )
+                        $this.isotopic.arrange({
+                            transitionDuration: 0,
+                            filter: $this.filterFns['number']
+                        });
+                }
+            }
+        },
+
+        hidePagination: function () {
+            let $this = this;
+            $('nav.asp_navigation', $this.n('resultsDiv')).css('display', 'none');
+        },
+
+        visiblePagination: function() {
+            let $this = this;
+            return $('nav.asp_navigation', $this.n('resultsDiv')).css('display') != 'none';
+        },
+
+        calculateIsotopeRows: function () {
+            let $this = this,
+                itemWidth, itemHeight,
+                containerWidth = parseFloat($this.n('results').width());
+
+            if ( helpers.deviceType() === 'desktop' ) {
+                // noinspection JSUnresolvedVariable
+                itemWidth = helpers.getWidthFromCSSValue($this.o.isotopic.itemWidth, containerWidth);
+                // noinspection JSUnresolvedVariable
+                itemHeight = helpers.getWidthFromCSSValue($this.o.isotopic.itemHeight, containerWidth);
+            } else if ( helpers.deviceType() === 'tablet' ) {
+                // noinspection JSUnresolvedVariable
+                itemWidth = helpers.getWidthFromCSSValue($this.o.isotopic.itemWidthTablet, containerWidth);
+                // noinspection JSUnresolvedVariable
+                itemHeight = helpers.getWidthFromCSSValue($this.o.isotopic.itemHeightTablet, containerWidth);
+            } else {
+                // noinspection JSUnresolvedVariable
+                itemWidth = helpers.getWidthFromCSSValue($this.o.isotopic.itemWidthPhone, containerWidth);
+                // noinspection JSUnresolvedVariable
+                itemHeight = helpers.getWidthFromCSSValue($this.o.isotopic.itemHeightPhone, containerWidth);
+            }
+            let realColumnCount = containerWidth / itemWidth,
+                gutterWidth = $this.o.isotopic.gutter,
+                floorColumnCount = Math.floor(realColumnCount);
+            if (floorColumnCount <= 0)
+                floorColumnCount = 1;
+
+            if (Math.abs(containerWidth / floorColumnCount - itemWidth) >
+                Math.abs(containerWidth / (floorColumnCount + 1) - itemWidth)) {
+                floorColumnCount++;
+            }
+
+            let newItemW = containerWidth / floorColumnCount - ( (floorColumnCount-1) * gutterWidth  / floorColumnCount ),
+                newItemH = (newItemW / itemWidth) * itemHeight;
+
+            $this.il.columns = floorColumnCount;
+            $this.il.itemsPerPage = floorColumnCount * $this.il.rows;
+            $this.il.lastVisibleItem = 0;
+            $this.n('results').find('.asp_isotopic_item').forEach(function(el, index){
+                if ( $(el).css('display') != 'none' ) {
+                    $this.il.lastVisibleItem = index;
+                }
+            });
+
+            // This data needs do be written to the DOM, because the isotope arrange can't see the changes
+            if ( !isNaN($this.il.columns) && !isNaN($this.il.itemsPerPage) ) {
+                $this.n('resultsDiv').data("colums", $this.il.columns);
+                $this.n('resultsDiv').data("itemsperpage", $this.il.itemsPerPage);
+            }
+
+            $this.currentPage = 1;
+
+            $this.n('items').css({
+                width: Math.floor(newItemW) + 'px',
+                height: Math.floor(newItemH) + 'px'
+            });
+        }
+    , 
+        showPolaroidResults: function () {
+            let $this = this;
+
+            $this.n('results').addClass('photostack');
+
+            $('.photostack>nav', $this.n('resultsDiv')).remove();
+            let figures = $('figure', $this.n('resultsDiv'));
+            $this.n('resultsDiv').css({
+                display: 'block',
+                height: 'auto'
+            });
+
+            $this.showResultsBox();
+
+            if (figures.length > 0) {
+                // noinspection JSUnresolvedVariable
+                $this.n('results').css({
+                    height: $this.o.prescontainerheight
+                });
+
+                if ($this.o.highlight == 1) {
+                    // noinspection JSUnresolvedVariable,JSUnresolvedFunction
+                    $("figcaption", $this.n('resultsDiv')).highlight($this.n('text').val().split(" "), {
+                        element: 'span', className: 'highlighted', wordsOnly: $this.o.highlightWholewords
+                    });
+                }
+
+                // Initialize the main
+                // noinspection JSUnresolvedVariable,JSUnresolvedFunction
+                if (typeof Photostack !== 'undefined') {
+                    // noinspection JSUnresolvedVariable,JSUnresolvedFunction
+                    $this.ptstack = new Photostack($this.n('results').get(0), {
+                        callback: function (item) {
+                        }
+                    });
+                } else {
+                    // PhotoStack is not included within the scripts, alert the user!;
+                    return false;
+                }
+            }
+            if (figures.length == 0) {
+                $this.n('results').css({
+                    height: '11110px'
+                });
+                $this.n('results').css({
+                    height: "auto"
+                });
+            }
+            $this.addAnimation();
+            $this.fixResultsPosition(true);
+            $this.searching = false;
+            $this.initPolaroidEvents(figures);
+        },
+
+        initPolaroidEvents: function (figures) {
+            let $this = this,
+                i = 1,
+                span = '.photostack>nav span';
+            figures.each(function () {
+                if (i > 1)
+                    $(this).removeClass('photostack-current');
+                $(this).attr('idx', i);
+                i++;
+            });
+
+            figures.on('click', function (e) {
+                if ($(this).hasClass("photostack-current")) return;
+                e.preventDefault();
+                let idx = $(this).attr('idx');
+                $('.photostack>nav span:nth-child(' + idx + ')', $this.n('resultsDiv')).trigger('click', [], true);
+            });
+
+            figures.on('mousewheel', function (e) {
+                e.preventDefault();
+                let delta = e.deltaY > 0 ? 1 : -1
+                if (delta >= 1) {
+                    if ($(span + '.current', $this.n('resultsDiv')).next().length > 0) {
+                        $(span + '.current', $this.n('resultsDiv')).next().trigger('click', [], true);
+                    } else {
+                        $(span + ':nth-child(1)', $this.n('resultsDiv')).trigger('click', [], true);
+                    }
+                } else {
+                    if ($(span + '.current', $this.n('resultsDiv')).prev().length > 0) {
+                        $(span + '.current', $this.n('resultsDiv')).prev().trigger('click', [], true);
+                    } else {
+                        $(span + ':nth-last-child(1)', $this.n('resultsDiv')).trigger('click', [], true);
+                    }
+                }
+            });
+
+            $this.n('resultsDiv').on("swiped-left", function() {
+                if ($(span + '.current', $this.n('resultsDiv')).next().length > 0) {
+                    $(span + '.current', $this.n('resultsDiv')).next().trigger('click', [], true);
+                } else {
+                    $(span + ':nth-child(1)', $this.n('resultsDiv')).trigger('click', [], true);
+                }
+            });
+            $this.n('resultsDiv').on("swiped-right", function() {
+                if ($(span + '.current', $this.n('resultsDiv')).prev().length > 0) {
+                    $(span + '.current', $this.n('resultsDiv')).prev().trigger('click', [], true);
+                } else {
+                    $(span + ':nth-last-child(1)', $this.n('resultsDiv')).trigger('click', [], true);
+                }
+            });
+        }
+    , 
+        showVerticalResults: function () {
+            let $this = this;
+
+            $this.showResultsBox();
+
+            if ($this.n('items').length > 0) {
+                // noinspection JSUnresolvedVariable
+                let count = (($this.n('items').length < $this.o.itemscount) ? $this.n('items').length : $this.o.itemscount);
+                count = count <= 0 ? 9999 : count;
+                let groups = $('.asp_group_header', $this.n('resultsDiv'));
+
+                // So if the result list is short, we dont even need to do the match
+                // noinspection JSUnresolvedVariable
+                if ($this.o.itemscount == 0 || $this.n('items').length <= $this.o.itemscount) {
+                    $this.n('results').css({
+                        height: 'auto'
+                    });
+                } else {
+
+                    // Set the height to a fictive value to refresh the scrollbar
+                    // .. otherwise the height is not calculated correctly, because of the scrollbar width.
+                    if ( $this.call_num < 1 )
+                        $this.n('results').css({
+                            height: "30px"
+                        });
+
+                    if ( $this.call_num < 1 ) {
+                        // Here now we have the correct item height values with the scrollbar enabled
+                        let i = 0,
+                            h = 0,
+                            final_h = 0,
+                            highest = 0;
+
+                        $this.n('items').each(function () {
+                            h += $(this).outerHeight(true);
+                            if ($(this).outerHeight(true) > highest)
+                                highest = $(this).outerHeight(true);
+                            i++;
+                        });
+
+                        // Get an initial height based on the highest item x viewport
+                        final_h = highest * count;
+                        // Reduce the final height to the overall height if exceeds it
+                        if (final_h > h)
+                            final_h = h;
+
+                        // Count the average height * viewport size
+                        i = i < 1 ? 1 : i;
+                        h = h / i * count;
+
+                        /*
+                         Groups need a bit more calculation
+                         - determine group position by index and occurence
+                         - one group consists of group header, items + item spacers per item
+                         - only groups within the viewport are calculated
+                         */
+                        if (groups.length > 0) {
+                            groups.each(function (el, index) {
+                                let position = Array.prototype.slice.call(el.parentNode.children).indexOf(el),
+                                    group_position = position - index - Math.floor(position / 3);
+                                if (group_position < count) {
+                                    final_h += $(this).outerHeight(true);
+                                }
+                            });
+                        }
+                        $this.n('results').css({
+                            height: final_h + 'px'
+                        });
+
+                    }
+                }
+
+                // Mark the last item
+                $this.n('items').last().addClass('asp_last_item');
+                // Before groups as well
+                $this.n('results').find('.asp_group_header').prev('.item').addClass('asp_last_item');
+                if ($this.o.highlight == 1) {
+                    // noinspection JSUnresolvedVariable
+                    $("div.item", $this.n('resultsDiv')).highlight($this.n('text').val().split(" "), {
+                        element: 'span', className: 'highlighted', wordsOnly: $this.o.highlightWholewords
+                    });
+                }
+
+
+            }
+            $this.resize();
+            if ($this.n('items').length == 0) {
+                $this.n('results').css({
+                    height: 'auto'
+                });
+            }
+            $this.n('results').css({
+                'overflowY': 'auto'
+            });
+
+            if ( $this.call_num < 1 ) {
+                // Scroll to top
+                let $container = $this.is_scroll && typeof $this.scroll.recalculate !== 'undefined' ?
+                    $($this.scroll.getScrollElement()) : $this.n('results');
+                $container.get(0).scrollTop = 0;
+            }
+
+            // Preventing body touch scroll
+            // noinspection JSUnresolvedVariable
+            if ( $this.o.preventBodyScroll ) {
+                let t,
+                    $body = $('body'),
+                    bodyOverflow = $body.css('overflow'),
+                    bodyHadNoStyle = typeof $body.attr('style') === 'undefined';
+                $this.n('results').off("touchstart");
+                $this.n('results').off("touchend");
+                $this.n('results').on("touchstart", function () {
+                    clearTimeout(t);
+                    $('body').css('overflow', 'hidden');
+                }).on('touchend', function () {
+                    clearTimeout(t);
+                    t = setTimeout(function () {
+                        if (bodyHadNoStyle) {
+                            $('body').removeAttr('style');
+                        } else {
+                            $('body').css('overflow', bodyOverflow);
+                        }
+                    }, 300);
+                });
+            }
+
+            $this.addAnimation();
+            $this.fixResultsPosition(true);
+            $this.searching = false;
+        }
+    , 
+        createResultsScroll: function(type) {
+            let $this = this,
+                t, $resScroll = $this.nodes.results;
+            type = typeof type == 'undefined' ? 'vertical' : type;
+            // noinspection JSUnresolvedVariable
+            if ($this.o.itemscount > 0 && $this.is_scroll && typeof $this.scroll.recalculate === 'undefined') {
+                // noinspection JSPotentiallyInvalidConstructorUsage,JSUnresolvedFunction,JSUnresolvedVariable
+                $this.scroll = new asp_SimpleBar($this.n('results').get(0), {
+                    direction: $('body').hasClass('rtl') ? 'rtl' : 'ltr',
+                    autoHide: $this.o.scrollBar.vertical.autoHide
+                });
+                $resScroll = $resScroll.add($this.scroll.getScrollElement());
+            }
+            $resScroll.on('scroll', function() {
+                document.dispatchEvent(new Event('wpd-lazy-trigger'));
+                // noinspection JSUnresolvedVariable
+                if ( $this.o.show_more.infinite ) {
+                    clearTimeout(t);
+                    t = setTimeout(function () {
+                        $this.checkAndTriggerInfiniteScroll(type);
+                    }, 60);
+                }
+            });
+        },
+
+        createVerticalScroll: function () {
+            this.createResultsScroll('vertical')
+        },
+
+        createHorizontalScroll: function () {
+            this.createResultsScroll('horizontal')
+        },
+
+        checkAndTriggerInfiniteScroll: function( caller ) {
+            let $this = this,
+                $r = $('.item', $this.n('resultsDiv'));
+            caller = typeof caller == 'undefined' ? 'window' : caller;
+
+            // Show more might not even visible
+            if ($this.n('showmore').length == 0 || $this.n('showmore').css('display') == 'none') {
+                return false;
+            }
+
+            if ( caller == 'window' || caller == 'horizontal' ) {
+                // Isotopic pagination present? Abort.
+                // noinspection JSUnresolvedVariable
+                if (
+                    $this.o.resultstype == 'isotopic' &&
+                    $('nav.asp_navigation', $this.n('resultsDiv')).css('display') != 'none'
+                ) {
+                    return false;
+                }
+
+                let onViewPort = $r.last().inViewPort(0, $this.n('resultsDiv').get(0)),
+                    onScreen = $r.last().inViewPort(0);
+                if (
+                    !$this.searching &&
+                    $r.length > 0 &&
+                    onViewPort && onScreen
+                ) {
+                    $this.n('showmore').find('a.asp_showmore').trigger('click');
+                }
+            } else if ( caller == 'vertical' ) {
+                let $scrollable = $this.n('resultsDiv').find('.asp_simplebar-content-wrapper').length > 0 ?
+                    $this.n('resultsDiv').find('.asp_simplebar-content-wrapper') : $this.n('results');
+                if ( helpers.isScrolledToBottom($scrollable.get(0), 20) ) {
+                    $this.n('showmore').find('a.asp_showmore').trigger('click');
+                }
+            } else if ( caller == 'isotopic' ) {
+                if (
+                    !$this.searching &&
+                    $r.length > 0 &&
+                    $this.n('resultsDiv').find('nav.asp_navigation ul li').last().hasClass('asp_active')
+                ) {
+                    $this.n('showmore').find('a.asp_showmore').trigger('click');
+                }
+            }
+        }
+    , 
+        isDuplicateSearchTriggered: function() {
+            let $this = this;
+            for (let i=0;i<25;i++) {
+                let id = $this.o.id + '_' + i;
+                if ( id != $this.o.rid ) {
+                    if ( ASP.instances.get($this.o.id, i) !== false ) {
+                        return ASP.instances.get($this.o.id, i).searching;
+                    }
+                }
+            }
+            return false;
+        },
+
+        searchAbort: function() {
+            let $this = this;
+            if ( $this.post != null ) {
+                $this.post.abort();
+            }
+        },
+
+        searchWithCheck: function( timeout ) {
+            let $this = this;
+            if ( typeof timeout == 'undefined' )
+                timeout = 50;
+            if ($this.n('text').val().length < $this.o.charcount) return;
+            $this.searchAbort();
+
+            clearTimeout($this.timeouts.searchWithCheck);
+            $this.timeouts.searchWithCheck = setTimeout(function() {
+                $this.search();
+            }, timeout);
+        },
+
+        search: function ( count, order, recall, apiCall, supressInvalidMsg ) {
+            let $this = this,
+                abort = false;
+            if ( $this.isDuplicateSearchTriggered() )
+                return false;
+
+            recall = typeof recall == "undefined" ? false : recall;
+            apiCall = typeof apiCall == "undefined" ? false : apiCall;
+            supressInvalidMsg = typeof supressInvalidMsg == "undefined" ? false : supressInvalidMsg;
+
+            let data = {
+                action: 'ajaxsearchpro_search',
+                aspp: $this.n('text').val(),
+                asid: $this.o.id,
+                asp_inst_id: $this.o.rid,
+                options: $('form', $this.n('searchsettings')).serialize()
+            };
+
+            data = helpers.Hooks.applyFilters('asp_search_data', data, $this.o.id, $this.o.iid);
+            data = helpers.wp_hooks_apply_filters('asp_search_data', data, $this.o.id, $this.o.iid);
+
+            $this.hideArrowBox();
+            if ( !$this.isAutoP && !$this.reportSettingsValidity() ) {
+                if ( !supressInvalidMsg ) {
+                    $this.showNextInvalidFacetMessage();
+                    $this.scrollToNextInvalidFacetMessage();
+                }
+                abort = true;
+            }
+
+            if ( $this.isAutoP ) {
+                data.autop = 1;
+                $this.isAutoP = false;
+            }
+
+
+            if ( !recall && !apiCall && (JSON.stringify(data) === JSON.stringify($this.lastSearchData)) ) {
+                if ( !$this.resultsOpened && !$this.usingLiveLoader ) {
+                    $this.showResults();
+                }
+                if ( $this.isRedirectToFirstResult() ) {
+                    $this.doRedirectToFirstResult();
+                    return false;
+                }
+                abort = true;
+            }
+
+            if ( abort ) {
+                $this.hideLoader();
+                $this.searchAbort();
+                return false;
+            }
+
+            $this.n('s').trigger("asp_search_start", [$this.o.id, $this.o.iid, $this.n('text').val()], true, true);
+
+            $this.searching = true;
+
+            $this.n('proclose').css({
+                display: "none"
+            });
+
+            $this.showLoader( recall );
+
+            // If blocking, or hover but facetChange activated, dont hide the settings for better UI
+            if ( $this.att('blocking') == false && $this.o.trigger.facet == 0 ) $this.hideSettings();
+
+            if ( recall ) {
+                $this.call_num++;
+                data.asp_call_num = $this.call_num;
+                /**
+                 * The original search started with an auto populate, so set the call number correctly
+                 */
+                if ( $this.autopStartedTheSearch ) {
+                    data.options += '&' + $.fn.serializeForAjax( $this.autopData );
+                    --data.asp_call_num;
+                }
+            } else {
+                $this.call_num = 0;
+                /**
+                 * Mark the non search phrase type of auto populate.
+                 * In that case, we need to pass the post IDs to exclude, as well as the next
+                 * "load more" query has to act as the first call (call_num=0)
+                 */
+                $this.autopStartedTheSearch = !!data.autop;
+            }
+
+            let $form = $('form[name="asp_data"]');
+            if ( $form.length > 0 ) {
+                data.asp_preview_options = $form.serialize();
+            }
+
+            if ( typeof count != "undefined" && count !== false ) {
+                data.options += "&force_count=" + parseInt(count);
+            }
+            if ( typeof order != "undefined" && order !== false ) {
+                data.options += "&force_order=" + parseInt(order);
+            }
+
+            $this.gaEvent?.('search_start');
+
+            if ( $('.asp_es_' + $this.o.id).length > 0 ) {
+                $this.liveLoad('.asp_es_' + $this.o.id, $this.getCurrentLiveURL());
+            } else if ( $this.o.resPage.useAjax ) {
+                $this.liveLoad($this.o.resPage.selector, $this.getRedirectURL());
+            } else {
+                $this.post = $.fn.ajax({
+                    'url': ASP.ajaxurl,
+                    'method': 'POST',
+                    'data': data,
+                    'success': function (response) {
+                        $this.gaPageview?.($this.n('text').val());
+
+                        $this.searching = false;
+                        response = response.replace(/^\s*[\r\n]/gm, "");
+                        let html_response = response.match(/!!ASPSTART_HTML!!(.*[\s\S]*)!!ASPEND_HTML!!/),
+                            data_response = response.match(/!!ASPSTART_DATA!!(.*[\s\S]*)!!ASPEND_DATA!!/);
+
+                        if (html_response == null || typeof (html_response) != "object" || typeof (html_response[1]) == "undefined") {
+                            $this.hideLoader();
+                            alert('Ajax Search Pro Error:\r\n\r\nPlease look up "The response data is missing" from the documentation at\r\n\r\n documentation.ajaxsearchpro.com');
+                            return false;
+                        } else {
+                            html_response = html_response[1];
+                            html_response = helpers.Hooks.applyFilters('asp_search_html', html_response, $this.o.id, $this.o.iid);
+                            html_response = helpers.wp_hooks_apply_filters('asp_search_html', html_response, $this.o.id, $this.o.iid);
+                        }
+                        data_response = JSON.parse(data_response[1]);
+                        $this.n('s').trigger("asp_search_end", [$this.o.id, $this.o.iid, $this.n('text').val(), data_response], true, true);
+
+                        if ( $this.autopStartedTheSearch ) {
+                            // This is an auto populate query (first on page load only)
+                            if ( typeof data.autop != 'undefined' ) {
+                                $this.autopData['not_in'] = {};
+                                $this.autopData['not_in_count'] = 0;
+                                if ( Array.isArray( data_response.results ) ) {
+                                    data_response.results.forEach(function (r) {
+                                        if (typeof $this.autopData['not_in'][r['content_type']] == 'undefined') {
+                                            $this.autopData['not_in'][r['content_type']] = [];
+                                        }
+                                        $this.autopData['not_in'][r['content_type']].push(r['id']);
+                                        ++$this.autopData['not_in_count'];
+                                    });
+                                }
+                            } else {
+                                // In subsequent queries adjust, because this is goint to be deducted in the query
+                                data_response.full_results_count += $this.autopData['not_in_count'];
+                            }
+                        }
+
+                        if (!recall) {
+                            $this.n('resdrg').html("");
+                            $this.n('resdrg').html(html_response);
+                            $this.results_num = data_response.results_count;
+                            if ($this.o.statistics)
+                                $this.stat_addKeyword($this.o.id, $this.n('text').val());
+                        } else {
+                            $this.updateResults(html_response);
+                            $this.results_num += data_response.results_count;
+                        }
+
+                        $this.nodes.items = $('.item', $this.n('resultsDiv')).length > 0 ? $('.item', $this.n('resultsDiv')) : $('.photostack-flip', $this.n('resultsDiv'));
+
+                        $this.gaEvent?.('search_end', {'results_count': $this.n('items').length});
+
+                        if ($this.isRedirectToFirstResult()) {
+                            $this.doRedirectToFirstResult();
+                            return false;
+                        }
+                        $this.hideLoader();
+                        $this.showResults();
+                        $this.scrollToResults();
+                        $this.lastSuccesfulSearch = $('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim();
+                        $this.lastSearchData = data;
+
+                        $this.updateInfoHeader(data_response.full_results_count);
+
+                        $this.updateHref();
+
+                        $(".asp_keyword", $this.n('resdrg')).on('click', function () {
+                            $this.n('text').val(helpers.decodeHTMLEntities($(this).text()));
+                            $this.n('textAutocomplete').val('');
+                            // Is any ajax trigger enabled?
+                            if ($this.o.redirectOnClick == 0 ||
+                                $this.o.redirectOnEnter == 0 ||
+                                $this.o.trigger.type == 1) {
+                                $this.search();
+                            }
+                        });
+
+                        if ($this.n('showmore').length > 0) {
+                            if (
+                                $('span', $this.n('showmore')).length > 0 &&
+                                data_response.results_count > 0 &&
+                                (data_response.full_results_count - $this.results_num) > 0
+                            ) {
+                                $this.n('showmore').css("display", "block");
+                                $('span', $this.n('showmore')).html("(" + (data_response.full_results_count - $this.results_num) + ")");
+
+                                $('a', $this.n('showmore')).attr('href', "");
+                                $('a', $this.n('showmore')).off();
+                                $('a', $this.n('showmore')).on($this.clickTouchend, function (e) {
+                                    e.preventDefault();
+                                    e.stopImmediatePropagation();   // Stopping either click or touchend
+
+                                    if ($this.o.show_more.action == "ajax") {
+                                        // Prevent duplicate triggering, don't use .off, as re-opening the results box this will fail
+                                        if ($this.searching)
+                                            return false;
+                                        $this.showMoreResLoader();
+                                        $this.search(false, false, true);
+                                    } else {
+                                        let url, base_url;
+                                        // Prevent duplicate triggering
+                                        $(this).off();
+                                        if ($this.o.show_more.action == 'results_page') {
+                                            url = '?s=' + helpers.nicePhrase($this.n('text').val());
+                                        } else if ($this.o.show_more.action == 'woo_results_page') {
+                                            url = '?post_type=product&s=' + helpers.nicePhrase($this.n('text').val());
+                                        } else {
+                                            if ($this.o.show_more.action == 'elementor_page') {
+                                                url = $this.parseCustomRedirectURL($this.o.show_more.elementor_url, $this.n('text').val());
+                                            } else {
+                                                url = $this.parseCustomRedirectURL($this.o.show_more.url, $this.n('text').val());
+                                            }
+                                            url = $('<textarea />').html(url).text();
+                                        }
+
+                                        // Is this an URL like xy.com/?x=y
+                                        if ($this.o.show_more.action != 'elementor_page' && $this.o.homeurl.indexOf('?') > 1 && url.indexOf('?') == 0) {
+                                            url = url.replace('?', '&');
+                                        }
+
+                                        base_url = $this.o.show_more.action == 'elementor_page' ? url : $this.o.homeurl + url;
+                                        if ($this.o.overridewpdefault) {
+                                            if ($this.o.override_method == "post") {
+                                                helpers.submitToUrl(base_url, 'post', {
+                                                    asp_active: 1,
+                                                    p_asid: $this.o.id,
+                                                    p_asp_data: $('form', $this.n('searchsettings')).serialize()
+                                                }, $this.o.show_more.location);
+                                            } else {
+                                                let final = base_url + "&asp_active=1&p_asid=" + $this.o.id + "&p_asp_data=1&" + $('form', $this.n('searchsettings')).serialize();
+                                                if ($this.o.show_more.location == 'same') {
+                                                    location.href = final;
+                                                } else {
+                                                    helpers.openInNewTab(final);
+                                                }
+                                            }
+                                        } else {
+                                            // The method is not important, just send the data to memorize settings
+                                            helpers.submitToUrl(base_url, 'post', {
+                                                np_asid: $this.o.id,
+                                                np_asp_data: $('form', $this.n('searchsettings')).serialize()
+                                            }, $this.o.show_more.location);
+                                        }
+                                    }
+                                });
+                            } else {
+                                $this.n('showmore').css("display", "none");
+                                $('span', $this.n('showmore')).html("");
+                            }
+                        }
+                    },
+                    'fail': function(jqXHR){
+                        if ( jqXHR.aborted )
+                            return;
+                        $this.n('resdrg').html("");
+                        $this.n('resdrg').html('<div class="asp_nores">The request failed. Please check your connection! Status: ' + jqXHR.status + '</div>');
+                        $this.nodes.item = $('.item', $this.n('resultsDiv')).length > 0 ? $('.item', $this.n('resultsDiv')) : $('.photostack-flip', $this.n('resultsDiv'));
+                        $this.results_num = 0;
+                        $this.searching = false;
+                        $this.hideLoader();
+                        $this.showResults();
+                        $this.scrollToResults();
+                    }
+                });
+            }
+        }
+    , 
+        showSettings: function ( animations ) {
+            let $this = this;
+
+            $this.initSettings?.();
+
+            animations =  typeof  animations == 'undefined' ? true :  animations;
+            $this.n('s').trigger("asp_settings_show", [$this.o.id, $this.o.iid], true, true);
+
+            if ( !animations ) {
+                $this.n('searchsettings').css({
+                    'display': 'block',
+                    'visibility': 'visible',
+                    'opacity': 1
+                });
+            } else {
+                $this.n('searchsettings').css($this.settAnim.showCSS);
+                $this.n('searchsettings').removeClass($this.settAnim.hideClass).addClass($this.settAnim.showClass);
+            }
+
+            if ($this.settScroll == null && $this.is_scroll ) {
+                $this.settScroll = [];
+                $('.asp_sett_scroll', $this.n('searchsettings')).each(function(o,i){
+                    let _this = this;
+                    // Small delay to fix a rendering issue
+                    setTimeout(function(){
+                        // noinspection JSUnresolvedFunction,JSUnresolvedVariable,JSPotentiallyInvalidConstructorUsage
+                        $this.settScroll[i] = new asp_SimpleBar($(_this).get(0), {
+                            direction: $('body').hasClass('rtl') ? 'rtl' : 'ltr',
+                            autoHide: $this.o.scrollBar.settings.autoHide
+                        });
+                    }, 15);
+                });
+            }
+
+            // noinspection JSUnresolvedVariable
+            if ( $this.o.fss_layout == "masonry" && $this.sIsotope == null && !(helpers.isMobile() && helpers.detectIOS()) ) {
+                if (typeof rpp_isotope !== 'undefined') {
+                    setTimeout(function () {
+                        let id = $this.n('searchsettings').attr('id');
+                        $this.n('searchsettings').css("width", "100%");
+                        // noinspection JSPotentiallyInvalidConstructorUsage
+                        $this.sIsotope = new rpp_isotope("#" + id + " form", {
+                            isOriginLeft: !$('body').hasClass('rtl'),
+                            itemSelector: 'fieldset',
+                            layoutMode: 'masonry',
+                            transitionDuration: 0,
+                            masonry: {
+                                columnWidth: $this.n('searchsettings').find('fieldset:not(.hiddend)').outerWidth()
+                            }
+                        });
+                    }, 20);
+                } else {
+                    // Isotope is not included within the scripts, alert the user!
+                    return false;
+                }
+            }
+
+            if (typeof $this.select2jQuery != 'undefined') {
+                $this.select2jQuery($this.n('searchsettings').get(0)).find('.asp_gochosen,.asp_goselect2').trigger("change.asp_select2");
+            }
+
+            $this.n('prosettings').data('opened', 1);
+
+            $this.fixSettingsPosition(true);
+            $this.fixSettingsAccessibility();
+        },
+        hideSettings: function () {
+            let $this = this;
+
+            $this.initSettings?.();
+
+            $this.n('s').trigger("asp_settings_hide", [$this.o.id, $this.o.iid], true, true);
+
+            $this.n('searchsettings').removeClass($this.settAnim.showClass).addClass($this.settAnim.hideClass);
+            setTimeout(function(){
+                $this.n('searchsettings').css($this.settAnim.hideCSS);
+            }, $this.settAnim.duration);
+
+            $this.n('prosettings').data('opened', 0);
+
+            if ( $this.sIsotope != null ) {
+                setTimeout(function () {
+                    $this.sIsotope.destroy();
+                    $this.sIsotope = null;
+                }, $this.settAnim.duration);
+            }
+
+            if (typeof $this.select2jQuery != 'undefined' && typeof $this.select2jQuery.fn.asp_select2 != 'undefined') {
+                $this.select2jQuery($this.n('searchsettings').get(0)).find('.asp_gochosen,.asp_goselect2').asp_select2('close');
+            }
+
+            $this.hideArrowBox();
+        },
+        reportSettingsValidity: function() {
+            let $this = this,
+                valid = true;
+
+            // Automatically valid, when settings can be closed, or are hidden
+            if ( $this.n('searchsettings').css('visibility') == 'hidden' )
+                return true;
+
+            $this.n('searchsettings').find('fieldset.asp_required').each(function(){
+                let $_this = $(this),
+                    fieldset_valid = true;
+                // Text input
+                $_this.find('input[type=text]:not(.asp_select2-search__field)').each(function(){
+                    if ( $(this).val() == '' ) {
+                        fieldset_valid = false;
+                    }
+                });
+                // Select drop downs
+                $_this.find('select').each(function(){
+                    if (
+                        $(this).val() == null || $(this).val() == '' ||
+                        ( $(this).closest('fieldset').is('.asp_filter_tax, .asp_filter_content_type') && $(this).val() == '-1')
+                    ) {
+                        fieldset_valid = false;
+                    }
+                });
+                // Check for checkboxes
+                if ( $_this.find('input[type=checkbox]').length > 0 ) {
+                    // Check if all of them are checked
+                    if ( $_this.find('input[type=checkbox]:checked').length === 0 ) {
+                        fieldset_valid = false;
+                    } else if (
+                        $_this.find('input[type=checkbox]:checked').length === 1 &&
+                        $_this.find('input[type=checkbox]:checked').val() === ''
+                    ) {
+                        // Select all checkbox
+                        fieldset_valid = false;
+                    }
+                }
+                // Check for checkboxes
+                if ( $_this.find('input[type=radio]').length > 0 ) {
+                    // Check if all of them are checked
+                    if ( $_this.find('input[type=radio]:checked').length === 0 ) {
+                        fieldset_valid = false;
+                    }
+                    if ( fieldset_valid ) {
+                        $_this.find('input[type=radio]').each(function () {
+                            if (
+                                $(this).prop('checked') &&
+                                (
+                                    $(this).val() == '' ||
+                                    (
+                                        $(this).closest('fieldset').is('.asp_filter_tax, .asp_filter_content_type') &&
+                                        $(this).val() == '-1')
+                                    )
+                            ) {
+                                fieldset_valid = false;
+                            }
+                        });
+                    }
+                }
+
+                if ( !fieldset_valid ) {
+                    $_this.addClass('asp-invalid');
+                    valid = false;
+                } else {
+                    $_this.removeClass('asp-invalid');
+                }
+            });
+
+            if ( !valid ) {
+                $this.n('searchsettings').find('button.asp_s_btn').prop('disabled', true);
+            } {
+                $this.n('searchsettings').find('button.asp_s_btn').prop('disabled', false);
+            }
+
+            return valid;
+        },
+
+        showArrowBox: function(element, text) {
+            let $this = this,
+                offsetTop, left,
+                $body = $('body'),
+                $box = $body.find('.asp_arrow_box');
+            if ( $box.length === 0 ) {
+                $body.append( "<div class='asp_arrow_box'></div>" );
+                $box = $body.find('.asp_arrow_box');
+                $box.on('mouseout', function(){
+                    $this.hideArrowBox();
+                });
+            }
+
+            // getBoundingClientRect() is not giving correct values, use different method
+            let space = $(element).offset().top - window.scrollY,
                 fixedp = false,
-                n = $this.n.search.get(0);
+                n = element;
 
             while (n) {
                 n = n.parentElement;
@@ -4446,46 +4393,315 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 }
             }
 
-            if ( fixedp || $this.n.search.css('position') == 'fixed' ) {
-                if ( $this.n.resultsDiv.css('position') == 'absolute' )
-                    $this.n.resultsDiv.css('position', 'fixed');
-                if ( !$this.o.blocking )
-                    $this.n.searchsettings.css('position', 'fixed');
+            if ( fixedp ) {
+                $box.css('position', 'fixed');
+                offsetTop = 0;
             } else {
-                if ( $this.n.resultsDiv.css('position') == 'fixed' )
-                    $this.n.resultsDiv.css('position', 'absolute');
-                if ( !$this.o.blocking )
-                    $this.n.searchsettings.css('position', 'absolute');
+                $box.css('position', 'absolute');
+                offsetTop = window.scrollY;
+            }
+            $box.html(text);
+            $box.css('display', 'block');
+
+            // Count after text is added
+            left = (element.getBoundingClientRect().left + ($(element).outerWidth() / 2) - ($box.outerWidth() / 2) ) + 'px';
+
+            if ( space > 100 ) {
+                $box.removeClass('asp_arrow_box_bottom');
+                $box.css({
+                    top: offsetTop + element.getBoundingClientRect().top - $box.outerHeight() - 4 + 'px',
+                    left: left
+                });
+            } else {
+                $box.addClass('asp_arrow_box_bottom');
+                $box.css({
+                    top: offsetTop + element.getBoundingClientRect().bottom + 4 + 'px',
+                    left: left
+                });
             }
         },
-        fixAccessibility: function() {
+
+        hideArrowBox: function() {
+            $('body').find('.asp_arrow_box').css('display', 'none');
+        },
+
+        showNextInvalidFacetMessage: function() {
+            let $this = this;
+            if ( $this.n('searchsettings').find('.asp-invalid').length > 0 ) {
+                $this.showArrowBox(
+                    $this.n('searchsettings').find('.asp-invalid').first().get(0),
+                    $this.n('searchsettings').find('.asp-invalid').first().data('asp_invalid_msg')
+                );
+            }
+        },
+
+        scrollToNextInvalidFacetMessage: function() {
+            let $this = this;
+            if ( $this.n('searchsettings').find('.asp-invalid').length > 0 ) {
+                let $n = $this.n('searchsettings').find('.asp-invalid').first();
+                if ( !$n.inViewPort(0) ) {
+                    if ( typeof $n.get(0).scrollIntoView != "undefined" ) {
+                        $n.get(0).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+                    } else {
+                        let stop = $n.offset().top - 20,
+                            $adminbar = $("#wpadminbar");
+                        // noinspection JSJQueryEfficiency
+                        if ( $adminbar.length > 0 )
+                            stop -= $adminbar.height();
+                        stop = stop < 0 ? 0 : stop;
+                        window.scrollTo({top: stop, behavior:"smooth"});
+                    }
+                }
+            }
+        },
+
+        settingsCheckboxToggle: function( $node, checkState ) {
+            let $this = this;
+            checkState = typeof checkState == 'undefined' ? true : checkState;
+            let $parent = $node,
+                $checkbox = $node.find('input[type="checkbox"]'),
+                lvl = parseInt($node.data("lvl")) + 1,
+                i = 0;
+            while (true) {
+                $parent = $parent.next();
+                if ( $parent.length > 0 &&
+                    typeof $parent.data("lvl") != "undefined" &&
+                    parseInt($parent.data("lvl")) >= lvl
+                ) {
+                    if ( checkState )
+                        $parent.find('input[type="checkbox"]').prop("checked", $checkbox.prop("checked"));
+                    // noinspection JSUnresolvedVariable
+                    if ( $this.o.settings.hideChildren ) {
+                        if ( $checkbox.prop("checked") ) {
+                            $parent.removeClass("hiddend");
+                        } else {
+                            $parent.addClass("hiddend");
+                        }
+                    }
+                }
+                else
+                    break;
+                i++;
+                if ( i > 400 ) break; // safety first
+            }
+        }
+    , 
+        searchFor: function( phrase ) {
+            if ( typeof phrase != 'undefined' ) {
+                this.n('text').val(phrase);
+            }
+            this.n('textAutocomplete').val('');
+            this.search(false, false, false, true);
+        },
+
+        searchRedirect: function( phrase ) {
+            let url = this.parseCustomRedirectURL(this.o.trigger.redirect_url, phrase);
+
+            // Is this an URL like xy.com/?x=y
+            // noinspection JSUnresolvedVariable
+            if ( this.o.homeurl.indexOf('?') > 1 && url.indexOf('?') == 0 ) {
+                url = url.replace('?', '&');
+            }
+
+            // noinspection JSUnresolvedVariable
+            if (this.o.overridewpdefault) {
+                // noinspection JSUnresolvedVariable
+                if ( this.o.override_method == "post") {
+                    // noinspection JSUnresolvedVariable
+                    helpers.submitToUrl(this.o.homeurl + url, 'post', {
+                        asp_active: 1,
+                        p_asid: this.o.id,
+                        p_asp_data: $('form', this.n('searchsettings')).serialize()
+                    });
+                } else {
+                    // noinspection JSUnresolvedVariable
+                    location.href = this.o.homeurl + url + "&asp_active=1&p_asid=" + this.o.id + "&p_asp_data=1&" + $('form', this.n('searchsettings')).serialize();
+                }
+            } else {
+                // The method is not important, just send the data to memorize settings
+                // noinspection JSUnresolvedVariable
+                helpers.submitToUrl(this.o.homeurl + url, 'post', {
+                    np_asid: this.o.id,
+                    np_asp_data: $('form', this.n('searchsettings')).serialize()
+                });
+            }
+        },
+
+        toggleSettings: function( state ) {
+            // state explicitly given, force behavior
+            if (typeof state != 'undefined') {
+                if ( state == "show") {
+                    this.showSettings();
+                } else {
+                    this.hideSettings();
+                }
+            } else {
+                if ( this.n('prosettings').data('opened') == 1 ) {
+                    this.hideSettings();
+                } else {
+                    this.showSettings();
+                }
+            }
+        },
+
+        closeResults: function( clear ) {
+            if (typeof(clear) != 'undefined' && clear) {
+                this.n('text').val("");
+                this.n('textAutocomplete').val("");
+            }
+            this.hideResults();
+            this.n('proloading').css('display', 'none');
+            this.hideLoader();
+            this.searchAbort();
+        },
+
+        getStateURL: function() {
+            let url = location.href,
+                sep;
+            url = url.split('p_asid');
+            url = url[0];
+            url = url.replace('&asp_active=1', '');
+            url = url.replace('?asp_active=1', '');
+            url = url.slice(-1) == '?' ? url.slice(0, -1) : url;
+            url = url.slice(-1) == '&' ? url.slice(0, -1) : url;
+            sep = url.indexOf('?') > 1 ? '&' :'?';
+            return url + sep + "p_asid=" + this.o.id + "&p_asp_data=1&" + $('form', this.n('searchsettings')).serialize();
+        },
+
+        resetSearch: function() {
+            this.resetSearchFilters();
+        },
+
+        filtersInitial: function() {
+            return this.n('searchsettings').find('input[name=filters_initial]').val() == 1;
+        },
+
+        filtersChanged: function() {
+            return this.n('searchsettings').find('input[name=filters_changed]').val() == 1;
+        }
+    
+						};
+						$.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
+					})(WPD.dom);// noinspection HttpUrlsUsage,JSUnresolvedVariable
+
+// noinspection JSUnresolvedVariable
+
+(function($){
+    "use strict";
+    // Top and latest searches widget
+    $(".ajaxsearchprotop").each(function () {
+        let params = JSON.parse( $(this).data("aspdata") ),
+            id = params.id;
+
+        if (params.action == 0) {
+            $('a', $(this)).on('click', function (e) {
+                e.preventDefault();
+            });
+        } else if (params.action == 2) {
+            $('a', $(this)).on('click', function (e) {
+                e.preventDefault();
+                ASP.api(id, 'searchFor', $(this).html());
+                $('html').animate({
+                        scrollTop: $('div[id*=ajaxsearchpro' + id + '_]').first().offset().top - 40
+                }, 500);
+            });
+        } else if (params.action == 1) {
+            $('a', $(this)).on('click', function (e) {
+                if ( ASP.api(id, 'exists') ) {
+                    e.preventDefault();
+                    return ASP.api(id, 'searchRedirect', $(this).html());
+                }
+            });
+        }
+    });
+})(WPD.dom);// noinspection JSUnresolvedVariable
+
+(function($){
+						"use strict";
+						let helpers = window.WPD.ajaxsearchpro.helpers; let _static = window.WPD.ajaxsearchpro;
+						let functions = {
+							
+        detectAndFixFixedPositioning: function() {
+            let $this = this,
+                fixedp = false,
+                n = $this.n('search').get(0);
+
+            while (n) {
+                n = n.parentElement;
+                if ( n != null && window.getComputedStyle(n).position == 'fixed' ) {
+                    fixedp = true;
+                    break;
+                }
+            }
+
+            if ( fixedp || $this.n('search').css('position') == 'fixed' ) {
+                if ( $this.n('resultsDiv').css('position') == 'absolute' ) {
+                    $this.n('resultsDiv').css({
+                        'position':'fixed',
+                        'z-index': 2147483647
+                    });
+                }
+                if ( !$this.att('blocking') )
+                    $this.n('searchsettings').css('position', 'fixed');
+            } else {
+                if ( $this.n('resultsDiv').css('position') == 'fixed' )
+                    $this.n('resultsDiv').css('position', 'absolute');
+                if ( !$this.att('blocking') )
+                    $this.n('searchsettings').css('position', 'absolute');
+            }
+        },
+        fixSettingsAccessibility: function() {
             let $this = this;
             /**
              * These are not translated on purpose!!
              * These are invisible to any user. The only purpose is to bypass false-positive WAVE tool errors.
              */
-            $this.n.searchsettings.find('input.asp_select2-search__field').attr('aria-label', 'Select2 search');
+            $this.n('searchsettings').find('input.asp_select2-search__field').attr('aria-label', 'Select2 search');
         },
 
         fixTryThisPosition: function() {
             let $this = this;
-            $this.n.trythis.css({
-                left: $this.n.search.position().left
+            $this.n('trythis').css({
+                left: $this.n('search').position().left
             });
         },
 
         fixResultsPosition: function(ignoreVisibility) {
             ignoreVisibility = typeof ignoreVisibility == 'undefined' ? false : ignoreVisibility;
             let $this = this,
-                rpos = $this.n.resultsDiv.css('position');
+                $body = $('body'),
+                bodyTop = 0,
+                rpos = $this.n('resultsDiv').css('position');
+
+            if ( $._fn.bodyTransformY() != 0 || $body.css("position") != "static" ) {
+                bodyTop = $body.offset().top;
+            }
+
+            /**
+             * When CSS transform is present, then Fixed element are no longer fixed
+             * even if the CSS declaration says. It is better to change them to absolute then.
+             */
+            if ( $._fn.bodyTransformY() != 0 && rpos == 'fixed' ) {
+                rpos = 'absolute';
+                $this.n('resultsDiv').css('position', 'absolute');
+            }
+
+            // If still fixed, no need to remove the body position
+            if ( rpos == 'fixed' ) {
+                bodyTop = 0;
+            }
 
             if ( rpos != 'fixed' && rpos != 'absolute' ) {
                 return;
             }
 
-            if (ignoreVisibility == true || $this.n.resultsDiv.css('visibility') == 'visible') {
-                let _rposition = $this.n.search.offset(),
-                    bodyTop = 0;
+            if (ignoreVisibility == true || $this.n('resultsDiv').css('visibility') == 'visible') {
+                let _rposition = $this.n('search').offset(),
+                    bodyLeft = 0;
+
+                if ( $._fn.bodyTransformX() != 0 || $body.css("position") != "static" ) {
+                    bodyLeft = $body.offset().left;
+                }
 
                 if ( typeof _rposition != 'undefined' ) {
                     let vwidth, adjust = 0;
@@ -4497,18 +4713,18 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         vwidth = $this.o.results.width;
                     }
                     if ( vwidth == 'auto') {
-                        vwidth = $this.n.search.outerWidth() < 240 ? 240 : $this.n.search.outerWidth();
+                        vwidth = $this.n('search').outerWidth() < 240 ? 240 : $this.n('search').outerWidth();
                     }
-                    $this.n.resultsDiv.css('width', !isNaN(vwidth) ? vwidth + 'px' : vwidth);
+                    $this.n('resultsDiv').css('width', !isNaN(vwidth) ? vwidth + 'px' : vwidth);
                     if ( $this.o.resultsSnapTo == 'right' ) {
-                        adjust = $this.n.resultsDiv.outerWidth() - $this.n.search.outerWidth();
+                        adjust = $this.n('resultsDiv').outerWidth() - $this.n('search').outerWidth();
                     } else if (( $this.o.resultsSnapTo == 'center' )) {
-                        adjust = Math.floor( ($this.n.resultsDiv.outerWidth() - parseInt($this.n.search.outerWidth())) / 2 );
+                        adjust = Math.floor( ($this.n('resultsDiv').outerWidth() - parseInt($this.n('search').outerWidth())) / 2 );
                     }
 
-                    $this.n.resultsDiv.css({
-                        top: (_rposition.top + $this.n.search.outerHeight(true) - bodyTop) + 'px',
-                        left: (_rposition.left - adjust) + 'px'
+                    $this.n('resultsDiv').css({
+                        top: (_rposition.top + $this.n('search').outerHeight(true) - bodyTop) + 'px',
+                        left: (_rposition.left - adjust - bodyLeft) + 'px'
                     });
                 }
             }
@@ -4516,25 +4732,52 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
         fixSettingsPosition: function(ignoreVisibility) {
             ignoreVisibility = typeof ignoreVisibility == 'undefined' ? false : ignoreVisibility;
-            let $this = this;
+            let $this = this,
+                $body = $('body'),
+                bodyTop = 0,
+                settPos = $this.n('searchsettings').css('position');
 
-            if ( ( ignoreVisibility == true || $this.n.prosettings.data('opened') != 0 ) && $this.o.blocking != true ) {
-                let $n, sPosition, top, left, bodyTop = 0, settPos = $this.n.searchsettings.css('position');
+            if ( $._fn.bodyTransformY() != 0 || $body.css("position") != "static" ) {
+                bodyTop = $body.offset().top;
+            }
+
+            /**
+             * When CSS transform is present, then Fixed element are no longer fixed
+             * even if the CSS declaration says. It is better to change them to absolute then.
+             */
+            if ( $._fn.bodyTransformY() != 0 && settPos == 'fixed' ) {
+                settPos = 'absolute';
+                $this.n('searchsettings').css('position', 'absolute');
+            }
+
+            // If still fixed, no need to remove the body position
+            if ( settPos == 'fixed' ) {
+                bodyTop = 0;
+            }
+
+            if ( ( ignoreVisibility == true || $this.n('prosettings').data('opened') != 0 ) && $this.att('blocking') != true ) {
+                let $n, sPosition, top, left,
+                    bodyLeft = 0;
+
+                if ( $._fn.bodyTransformX() != 0 || $body.css("position") != "static" ) {
+                    bodyLeft = $body.offset().left;
+                }
                 $this.fixSettingsWidth();
 
-                if ( $this.n.prosettings.css('display') != 'none' ) {
-                    $n = $this.n.prosettings;
+                if ( $this.n('prosettings').css('display') != 'none' ) {
+                    $n = $this.n('prosettings');
                 } else {
-                    $n = $this.n.promagnifier;
+                    $n = $this.n('promagnifier');
                 }
 
                 sPosition = $n.offset();
 
                 top = (sPosition.top + $n.height() - 2 - bodyTop) + 'px';
                 left = ($this.o.settingsimagepos == 'left' ?
-                    sPosition.left : (sPosition.left + $n.width() - $this.n.searchsettings.width()) ) + 'px';
+                    sPosition.left : (sPosition.left + $n.width() - $this.n('searchsettings').width()) );
+                left = left - bodyLeft + 'px';
 
-                $this.n.searchsettings.css({
+                $this.n('searchsettings').css({
                     display: "block",
                     top: top,
                     left: left
@@ -4545,13 +4788,13 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
         fixSettingsWidth: function () {
             let $this = this;
 
-            if ( $this.o.blocking || $this.o.fss_layout == 'masonry') return;
-            $this.n.searchsettings.css({"width": "100%"});
-            if ( ($this.n.searchsettings.width() % $("fieldset", $this.n.searchsettings).outerWidth(true)) > 10 ) {
-                let newColumnCount = Math.floor( $this.n.searchsettings.width() / $("fieldset", $this.n.searchsettings).outerWidth(true) );
+            if ( $this.att('blocking') || $this.o.fss_layout == 'masonry') return;
+            $this.n('searchsettings').css({"width": "100%"});
+            if ( ($this.n('searchsettings').width() % $("fieldset", $this.n('searchsettings')).outerWidth(true)) > 10 ) {
+                let newColumnCount = Math.floor( $this.n('searchsettings').width() / $("fieldset", $this.n('searchsettings')).outerWidth(true) );
                 newColumnCount = newColumnCount <= 0 ? 1 : newColumnCount;
-                $this.n.searchsettings.css({
-                    "width": ( newColumnCount * $("fieldset", $this.n.searchsettings).outerWidth(true) + 8 ) + 'px'
+                $this.n('searchsettings').css({
+                    "width": ( newColumnCount * $("fieldset", $this.n('searchsettings')).outerWidth(true) + 8 ) + 'px'
                 });
             }
         },
@@ -4561,20 +4804,14 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             if (
                 $this.o.detectVisibility == 1 &&
                 $this.o.compact.enabled == 0 &&
-                !$this.n.search.hasClass('hiddend') &&
-                ($this.n.search.is(':hidden') || !$this.n.search.is(':visible'))
+                !$this.n('search').hasClass('hiddend') &&
+                !$this.n('search').isVisible()
             ) {
                 $this.hideSettings();
                 $this.hideResults();
             }
-        },
-    }
-
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
+        }
+    , 
         initAutocompleteEvent: function () {
             let $this = this,
                 tt;
@@ -4582,7 +4819,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 ($this.o.autocomplete.enabled == 1 && !helpers.isMobile()) ||
                 ($this.o.autocomplete.mobile == 1 && helpers.isMobile())
             ) {
-                $this.n.text.on('keyup', function (e) {
+                $this.n('text').on('keyup', function (e) {
                     $this.keycode =  e.keyCode || e.which;
                     $this.ktype = e.type;
 
@@ -4590,9 +4827,9 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                     // Lets change the keykode if the direction is rtl
                     if ($('body').hasClass('rtl'))
                         thekey = 37;
-                    if ($this.keycode == thekey && $this.n.textAutocomplete.val() != "") {
+                    if ($this.keycode == thekey && $this.n('textAutocomplete').val() != "") {
                         e.preventDefault();
-                        $this.n.text.val($this.n.textAutocomplete.val());
+                        $this.n('text').val($this.n('textAutocomplete').val());
                         if ( $this.o.trigger.type != 0 ) {
                             $this.searchAbort();
                             $this.search();
@@ -4614,21 +4851,16 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         }
                     }
                 });
-                $this.n.text.on('keyup mouseup input blur select', function(){
+                $this.n('text').on('keyup mouseup input blur select', function(){
                    $this.fixAutocompleteScrollLeft();
                 });
             }
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
+    , 
         initMagnifierEvents: function() {
             let $this = this, t;
-            $this.n.promagnifier.on('click', function (e) {
-                let compact = $this.n.search.attr('asp-compact')  || 'closed';
+            $this.n('promagnifier').on('click', function (e) {
+                let compact = $this.n('search').attr('asp-compact')  || 'closed';
                 $this.keycode = e.keyCode || e.which;
                 $this.ktype = e.type;
 
@@ -4643,12 +4875,12 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                     }
                 }
 
-                $this.gaEvent('magnifier');
+                $this.gaEvent?.('magnifier');
 
                 // If redirection is set to the results page, or custom URL
                 // noinspection JSUnresolvedVariable
                 if (
-                    $this.n.text.val().length >= $this.o.charcount &&
+                    $this.n('text').val().length >= $this.o.charcount &&
                     $this.o.redirectOnClick == 1 &&
                     $this.o.trigger.click != 'first_result'
                 ) {
@@ -4663,32 +4895,34 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
                 $this.searchAbort();
                 clearTimeout($this.timeouts.search);
-                $this.n.proloading.css('display', 'none');
+                $this.n('proloading').css('display', 'none');
 
-                $this.timeouts.search = setTimeout(function () {
-                    // If the user types and deletes, while the last results are open
-                    if (
-                        ($('form', $this.n.searchsettings).serialize() + $this.n.text.val().trim()) != $this.lastSuccesfulSearch ||
-                        (!$this.resultsOpened && !$this.usingLiveLoader)
-                    ) {
-                        $this.search();
-                    } else {
-                        if ( $this.isRedirectToFirstResult() )
-                            $this.doRedirectToFirstResult();
-                        else
-                            $this.n.proclose.css('display', 'block');
-                    }
-                }, $this.o.trigger.delay);
+                if ( $this.n('text').val().length >= $this.o.charcount ) {
+                    $this.timeouts.search = setTimeout(function () {
+                        // If the user types and deletes, while the last results are open
+                        if (
+                            ($('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim()) != $this.lastSuccesfulSearch ||
+                            (!$this.resultsOpened && !$this.usingLiveLoader)
+                        ) {
+                            $this.search();
+                        } else {
+                            if ($this.isRedirectToFirstResult())
+                                $this.doRedirectToFirstResult();
+                            else
+                                $this.n('proclose').css('display', 'block');
+                        }
+                    }, $this.o.trigger.delay);
+                }
             });
         },
         initButtonEvents: function() {
             let $this = this;
 
-            $this.n.searchsettings.find('button.asp_s_btn').on('click', function(e){
+            $this.n('searchsettings').find('button.asp_s_btn').on('click', function(e){
                 $this.ktype = 'button';
                 e.preventDefault();
                 // noinspection JSUnresolvedVariable
-                if ( $this.n.text.val().length >= $this.o.charcount ) {
+                if ( $this.n('text').val().length >= $this.o.charcount ) {
                     // noinspection JSUnresolvedVariable
                     if ( $this.o.sb.redirect_action != 'ajax_search' ) {
                         // noinspection JSUnresolvedVariable
@@ -4703,7 +4937,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         }
                     } else {
                         if (
-                            ($('form', $this.n.searchsettings).serialize() + $this.n.text.val().trim()) != $this.lastSuccesfulSearch ||
+                            ($('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim()) != $this.lastSuccesfulSearch ||
                             !$this.resultsOpened
                         ) {
                             $this.search();
@@ -4713,15 +4947,16 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 }
             });
 
-            $this.n.searchsettings.find('button.asp_r_btn').on('click', function(e){
-                let currentFormData = helpers.formData($('form', $this.n.searchsettings)),
-                    lastPhrase = $this.n.text.val();
+            $this.n('searchsettings').find('button.asp_r_btn').on('click', function(e){
+                let currentFormData = helpers.formData($('form', $this.n('searchsettings'))),
+                    lastPhrase = $this.n('text').val();
+
                 e.preventDefault();
                 $this.resetSearchFilters();
                 // noinspection JSUnresolvedVariable
                 if ( $this.o.rb.action == 'live' &&
                     (
-                        JSON.stringify(currentFormData) != JSON.stringify(helpers.formData($('form', $this.n.searchsettings))) ||
+                        JSON.stringify(currentFormData) != JSON.stringify(helpers.formData($('form', $this.n('searchsettings')))) ||
                         lastPhrase != ''
                     )
                 ) {
@@ -4733,17 +4968,13 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 }
             });
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
+    , 
         initCompactEvents: function () {
             let $this = this,
                 scrollTopx = 0;
 
-            $this.n.promagnifier.on('click', function(){
-                let compact = $this.n.search.attr('asp-compact')  || 'closed';
+            $this.n('promagnifier').on('click', function(){
+                let compact = $this.n('search').attr('asp-compact')  || 'closed';
 
                 scrollTopx = window.scrollY;
                 $this.hideSettings();
@@ -4751,23 +4982,18 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
                 if (compact == 'closed') {
                     $this.openCompact();
-                    $this.n.text.trigger('focus');
+                    $this.n('text').trigger('focus');
                 } else {
                     // noinspection JSUnresolvedVariable
                     if ($this.o.compact.closeOnMagnifier != 1) return;
                     $this.closeCompact();
                     $this.searchAbort();
-                    $this.n.proloading.css('display', 'none');
+                    $this.n('proloading').css('display', 'none');
                 }
             });
 
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
+    , 
         initDatePicker: function() {
             let $this = this;
             WPD.intervalUntilExecute(function(_$){
@@ -4801,7 +5027,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         $(obj.get(0)).trigger('change');
                 }
 
-                _$(".asp_datepicker, .asp_datepicker_field", $this.n.searchsettings.get(0)).each(function(){
+                _$(".asp_datepicker, .asp_datepicker_field", $this.n('searchsettings').get(0)).each(function(){
                     let format = _$(".asp_datepicker_format", _$(this).parent()).val(),
                         _this = this,
                         origValue = _$(this).val();
@@ -4822,7 +5048,6 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         _$(this).datepicker("setDate", origValue);
                     }
                     _$(this).datepicker( "option", "dateFormat", format );
-
                     // Call the select event to refresh the date pick value
                     onSelectEvent(null, null, _this, true);
 
@@ -4844,7 +5069,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                     _$(window).on('pageshow', function (e) {
                         if (e.originalEvent.persisted) {
                             setTimeout(function () {
-                                _$(".asp_datepicker, .asp_datepicker_field", $this.n.searchsettings.get(0)).each(function () {
+                                _$(".asp_datepicker, .asp_datepicker_field", $this.n('searchsettings').get(0)).each(function () {
                                     let format = _$(this).datepicker("option", 'dateFormat' );
                                     _$(this).datepicker("option", 'dateFormat', 'yy-mm-dd');
                                     _$(this).datepicker("setDate", _$(this).next('.asp_datepicker_hidden').val() );
@@ -4858,16 +5083,12 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 return helpers.whichjQuery('datepicker');
             });
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
+    , 
         initFacetEvents: function() {
             let $this = this,
                 gtagTimer = null;
 
-            $('.asp_custom_f input[type=text]:not(.asp_select2-search__field):not(.asp_datepicker_field):not(.asp_datepicker)', $this.n.searchsettings).on('keydown', function(e) {
+            $('.asp_custom_f input[type=text]:not(.asp_select2-search__field):not(.asp_datepicker_field):not(.asp_datepicker)', $this.n('searchsettings')).on('keydown', function(e) {
                 let code = e.keyCode || e.which,
                     _this = this;
                 $this.ktype = e.type;
@@ -4877,12 +5098,12 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 }
                 clearTimeout(gtagTimer);
                 gtagTimer = setTimeout(function(){
-                    $this.gaEvent('facet_change', {
+                    $this.gaEvent?.('facet_change', {
                         'option_label': $(_this).closest('fieldset').find('legend').text(),
                         'option_value': $(_this).val()
                     });
                 }, 1400);
-                $this.n.searchsettings.find('input[name=filters_changed]').val(1);
+                $this.n('searchsettings').find('input[name=filters_changed]').val(1);
                 $this.setFilterStateInput(65);
                 if ( $this.o.trigger.facet != 0 )
                     $this.searchWithCheck(240);
@@ -4892,10 +5113,10 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             if ($this.o.trigger.facet == 0) return;
 
             // Dropdown
-            $('select', $this.n.searchsettings).on('change slidechange', function(e){
+            $('select', $this.n('searchsettings')).on('change slidechange', function(e){
                 $this.ktype = e.type;
-                $this.n.searchsettings.find('input[name=filters_changed]').val(1);
-                $this.gaEvent('facet_change', {
+                $this.n('searchsettings').find('input[name=filters_changed]').val(1);
+                $this.gaEvent?.('facet_change', {
                     'option_label': $(this).closest('fieldset').find('legend').text(),
                     'option_value': $(this).find('option:checked').get().map(function(item){return item.text;}).join()
                 });
@@ -4907,11 +5128,11 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             });
 
             // Any other
-            //$('input[type!=checkbox][type!=text][type!=radio]', $this.n.searchsettings).on('change slidechange', function(){
-            $('input:not([type=checkbox]):not([type=text]):not([type=radio])', $this.n.searchsettings).on('change slidechange', function(e){
+            //$('input[type!=checkbox][type!=text][type!=radio]', $this.n('searchsettings')).on('change slidechange', function(){
+            $('input:not([type=checkbox]):not([type=text]):not([type=radio])', $this.n('searchsettings')).on('change slidechange', function(e){
                 $this.ktype = e.type;
-                $this.n.searchsettings.find('input[name=filters_changed]').val(1);
-                $this.gaEvent('facet_change', {
+                $this.n('searchsettings').find('input[name=filters_changed]').val(1);
+                $this.gaEvent?.('facet_change', {
                     'option_label': $(this).closest('fieldset').find('legend').text(),
                     'option_value': $(this).val()
                 });
@@ -4920,10 +5141,10 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             });
 
             // Radio
-            $('input[type=radio]', $this.n.searchsettings).on('change slidechange', function(e){
+            $('input[type=radio]', $this.n('searchsettings')).on('change slidechange', function(e){
                 $this.ktype = e.type;
-                $this.n.searchsettings.find('input[name=filters_changed]').val(1);
-                $this.gaEvent('facet_change', {
+                $this.n('searchsettings').find('input[name=filters_changed]').val(1);
+                $this.gaEvent?.('facet_change', {
                     'option_label': $(this).closest('fieldset').find('legend').text(),
                     'option_value': $(this).closest('label').text()
                 });
@@ -4931,36 +5152,36 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 $this.searchWithCheck(80);
             });
 
-            $('input[type=checkbox]', $this.n.searchsettings).on('asp_chbx_change', function(e){
+            $('input[type=checkbox]', $this.n('searchsettings')).on('asp_chbx_change', function(e){
                 $this.ktype = e.type;
-                $this.n.searchsettings.find('input[name=filters_changed]').val(1);
-                $this.gaEvent('facet_change', {
+                $this.n('searchsettings').find('input[name=filters_changed]').val(1);
+                $this.gaEvent?.('facet_change', {
                     'option_label': $(this).closest('fieldset').find('legend').text(),
                     'option_value': $(this).closest('.asp_option').find('.asp_option_label').text() + ($(this).prop('checked') ? '(checked)' : '(unchecked)')
                 });
                 $this.setFilterStateInput(65);
                 $this.searchWithCheck(80);
             });
-            $('input.asp_datepicker, input.asp_datepicker_field', $this.n.searchsettings).on('change', function(e){
+            $('input.asp_datepicker, input.asp_datepicker_field', $this.n('searchsettings')).on('change', function(e){
                 $this.ktype = e.type;
-                $this.n.searchsettings.find('input[name=filters_changed]').val(1);
-                $this.gaEvent('facet_change', {
+                $this.n('searchsettings').find('input[name=filters_changed]').val(1);
+                $this.gaEvent?.('facet_change', {
                     'option_label': $(this).closest('fieldset').find('legend').text(),
                     'option_value': $(this).val()
                 });
                 $this.setFilterStateInput(65);
                 $this.searchWithCheck(80);
             });
-            $('div[id*="-handles"]', $this.n.searchsettings).each(function(e){
+            $('div[id*="-handles"]', $this.n('searchsettings')).each(function(e){
                 $this.ktype = e.type;
                 if ( typeof this.noUiSlider != 'undefined') {
                     this.noUiSlider.on('change', function(values) {
                         let target = typeof this.target != 'undefined' ? this.target : this;
-                        $this.gaEvent('facet_change', {
+                        $this.gaEvent?.('facet_change', {
                             'option_label': $(target).closest('fieldset').find('legend').text(),
                             'option_value': values
                         });
-                        $this.n.searchsettings.find('input[name=filters_changed]').val(1);
+                        $this.n('searchsettings').find('input[name=filters_changed]').val(1);
                         // Gtag analytics is handled on the update event, not here
                         $this.setFilterStateInput(65);
                         $this.searchWithCheck(80);
@@ -4968,26 +5189,28 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 }
             });
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
+    , 
         initInputEvents: function() {
-            this._initFocusInput();
-            if ( this.o.trigger.type ) {
-                this._initSearchInput();
-            }
-            this._initEnterEvent();
-            this._initFormEvent();
+            let $this = this, initialized = false;
+            let initTriggers = function() {
+                $this.n('text').off('mousedown touchstart keydown', initTriggers);
+                if ( !initialized ) {
+                    $this._initFocusInput();
+                    $this._initSearchInput();
+                    $this._initEnterEvent();
+                    $this._initFormEvent();
+                    $this.initAutocompleteEvent?.();
+                    initialized = true;
+                }
+            };
+            $this.n('text').on('mousedown touchstart keydown', initTriggers, {passive: true});
         },
 
         _initFocusInput: function() {
             let $this = this;
 
             // Some kind of crazy rev-slider fix
-            $this.n.text.on('click', function(e){
+            $this.n('text').on('click', function(e){
                 /**
                  * In some menus the input is wrapped in an <a> tag, which has an event listener attached.
                  * When clicked, the input is blurred. This prevents that.
@@ -4996,11 +5219,11 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 e.stopImmediatePropagation();
 
                 $(this).trigger('focus');
-                $this.gaEvent('focus');
+                $this.gaEvent?.('focus');
 
                 // Show the results if the query does not change
                 if (
-                    ($('form', $this.n.searchsettings).serialize() + $this.n.text.val().trim()) == $this.lastSuccesfulSearch
+                    ($('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim()) == $this.lastSuccesfulSearch
                 ) {
                     if ( !$this.resultsOpened && !$this.usingLiveLoader ) {
                         $this._no_animations = true;
@@ -5010,14 +5233,14 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                     return false;
                 }
             });
-            $this.n.text.on('focus input', function(e){
+            $this.n('text').on('focus input', function(){
                 if ( $this.searching ) {
                     return;
                 }
                 if ( $(this).val() != '' ) {
-                    $this.n.proclose.css('display', 'block');
+                    $this.n('proclose').css('display', 'block');
                 } else {
-                    $this.n.proclose.css({
+                    $this.n('proclose').css({
                         display: "none"
                     });
                 }
@@ -5026,26 +5249,36 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
         _initSearchInput: function() {
             let $this = this,
-                previousInputValue = $this.n.text.val();
+                previousInputValue = $this.n('text').val();
 
-            $this.n.text.on('input', function(e){
+            $this.n('text').on('input', function(e){
                 $this.keycode =  e.keyCode || e.which;
                 $this.ktype = e.type;
                 if ( helpers.detectIE() ) {
-                    if ( previousInputValue == $this.n.text.val() ) {
+                    if ( previousInputValue == $this.n('text').val() ) {
                         return false;
                     } else {
-                        previousInputValue = $this.n.text.val();
+                        previousInputValue = $this.n('text').val();
                     }
+                }
+
+                $this.updateHref();
+
+                // Trigger on redirection/magnifier
+                if ( !$this.o.trigger.type ) {
+                    $this.searchAbort();
+                    clearTimeout($this.timeouts.search);
+                    $this.hideLoader();
+                    return false;
                 }
 
                 $this.hideArrowBox();
 
                 // Is the character count sufficient?
                 // noinspection JSUnresolvedVariable
-                if ( $this.n.text.val().length < $this.o.charcount ) {
-                    $this.n.proloading.css('display', 'none');
-                    if ($this.o.blocking == false) $this.hideSettings();
+                if ( $this.n('text').val().length < $this.o.charcount ) {
+                    $this.n('proloading').css('display', 'none');
+                    if ($this.att('blocking') == false) $this.hideSettings();
                     $this.hideResults(false);
                     $this.searchAbort();
                     clearTimeout($this.timeouts.search);
@@ -5054,12 +5287,12 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
                 $this.searchAbort();
                 clearTimeout($this.timeouts.search);
-                $this.n.proloading.css('display', 'none');
+                $this.n('proloading').css('display', 'none');
 
                 $this.timeouts.search = setTimeout(function () {
                     // If the user types and deletes, while the last results are open
                     if (
-                        ($('form', $this.n.searchsettings).serialize() + $this.n.text.val().trim()) != $this.lastSuccesfulSearch ||
+                        ($('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim()) != $this.lastSuccesfulSearch ||
                         (!$this.resultsOpened && !$this.usingLiveLoader)
                     ) {
                         $this.search();
@@ -5067,7 +5300,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         if ( $this.isRedirectToFirstResult() )
                             $this.doRedirectToFirstResult();
                         else
-                            $this.n.proclose.css('display', 'block');
+                            $this.n('proclose').css('display', 'block');
                     }
                 }, $this.o.trigger.delay);
             });
@@ -5077,7 +5310,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             let $this = this,
                 rt, enterRecentlyPressed = false;
             // The return event has to be dealt with on a keyup event, as it does not trigger the input event
-            $this.n.text.on('keyup', function(e) {
+            $this.n('text').on('keyup', function(e) {
                 $this.keycode =  e.keyCode || e.which;
                 $this.ktype = e.type;
 
@@ -5097,9 +5330,8 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 let isInput = $(this).hasClass("orig");
 
                 // noinspection JSUnresolvedVariable
-                if ( $this.n.text.val().length >= $this.o.charcount && isInput && $this.keycode == 13 ) {
-                    $this.gaEvent('return');
-
+                if ( $this.n('text').val().length >= $this.o.charcount && isInput && $this.keycode == 13 ) {
+                    $this.gaEvent?.('return');
                     if ( $this.o.redirectOnEnter == 1 ) {
                         if ($this.o.trigger.return != 'first_result') {
                             $this.doRedirectToResults($this.ktype);
@@ -5108,7 +5340,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         }
                     } else if ( $this.o.trigger.return == 'ajax_search' ) {
                         if (
-                            ($('form', $this.n.searchsettings).serialize() + $this.n.text.val().trim()) != $this.lastSuccesfulSearch ||
+                            ($('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim()) != $this.lastSuccesfulSearch ||
                             !$this.resultsOpened
                         ) {
                             $this.search();
@@ -5122,14 +5354,14 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
         _initFormEvent: function(){
             let $this = this;
             // Handle the submit/mobile search button event
-            $($this.n.text.closest('form').get(0)).on('submit', function (e, args) {
+            $($this.n('text').closest('form').get(0)).on('submit', function (e, args) {
                 e.preventDefault();
                 // Mobile keyboard search icon and search button
                 if ( helpers.isMobile() ) {
                     if ( $this.o.redirectOnEnter ) {
                         let event = new Event("keyup");
                         event.keyCode = event.which = 13;
-                        this.n.text.get(0).dispatchEvent(event);
+                        this.n('text').get(0).dispatchEvent(event);
                     } else {
                         $this.search();
                         document.activeElement.blur();
@@ -5139,15 +5371,10 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 }
             });
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
+    , 
         initIsotopicPagination: function () {
             let $this = this;
-            $this.n.resultsDiv.on($this.clickTouchend + ' click_trigger', 'nav>a', function (e) {
+            $this.n('resultsDiv').on($this.clickTouchend + ' click_trigger', 'nav>a', function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 let $li = $(this).closest('nav').find('li.asp_active');
@@ -5166,20 +5393,20 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                     }
                 }
             });
-            $this.n.resultsDiv.on($this.clickTouchend + ' click_trigger', 'nav>ul li', function (e) {
+            $this.n('resultsDiv').on($this.clickTouchend + ' click_trigger', 'nav>ul li', function (e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 let etype = e.type,
                     _this = this,
                     timeout = 1;
                 if ( helpers.isMobile() ) {
-                    $this.n.text.trigger('blur');
+                    $this.n('text').trigger('blur');
                     timeout = 300;
                 }
                 setTimeout( function() {
                     $this.currentPage = parseInt($(_this).find('span').html(), 10);
-                    $('nav>ul li', $this.n.resultsDiv).removeClass('asp_active');
-                    $('nav', $this.n.resultsDiv).each(function (el) {
+                    $('nav>ul li', $this.n('resultsDiv')).removeClass('asp_active');
+                    $('nav', $this.n('resultsDiv')).each(function (el) {
                         $($(el).find('ul li').get($this.currentPage - 1)).addClass('asp_active');
                     });
                     if ( etype === 'click_trigger' ) {
@@ -5201,64 +5428,11 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         document.dispatchEvent(new Event('wpd-lazy-trigger'));
                     }
 
-                    $this.n.resultsDiv.trigger('nav_switch');
+                    $this.n('resultsDiv').trigger('nav_switch');
                 }, timeout);
             });
-        },
-        initOverlayEvent: function () {
-            let $this = this;
-            // noinspection JSUnresolvedVariable
-            if ($this.o.resultstype == "isotopic") {
-                if ($this.o.isotopic.showOverlay) {
-                    // IOS does not trigget mouseup after mouseenter, so the user has to tap again to redirect
-                    if ( !helpers.detectIOS() ) {
-                        //let enterOverlay, leaveOverlay, enterAnimate, leaveAnimate;
-                        $this.eh.enterOverlay = $this.eh.enterOverlay || function () {
-                            $(this).find('.asp_item_overlay').css("opacity", 1);
-                            if ($(this).find(".asp_image").length > 0) {
-                                // noinspection JSUnresolvedVariable
-                                if ($this.o.isotopic.blurOverlay) {
-                                    $(this).find('.asp_item_overlay_img').css("opacity", 1);
-                                }
-                                // noinspection JSUnresolvedVariable
-                                if ($this.o.isotopic.hideContent) {
-                                    $(this).find('.asp_content').css("bottom", -($(this).find('.asp_content').outerHeight()) + 'px');
-                                }
-                            }
-                        };
-                        $this.eh.leaveOverlay = $this.eh.leaveOverlay || function () {
-                            $(this).find('.asp_item_overlay').css("opacity", 0);
-                            if ($(this).find(".asp_image").length > 0) {
-                                // noinspection JSUnresolvedVariable
-                                if ($this.o.isotopic.blurOverlay) {
-                                    $(this).find('.asp_item_overlay_img').css("opacity", 0);
-                                }
-                                // noinspection JSUnresolvedVariable
-                                if ($this.o.isotopic.hideContent) {
-                                    $(this).find('.asp_content').css("bottom", "0px");
-                                }
-                            }
-                        };
-                        $this.eh.enterAnimate = $this.eh.enterAnimate || function () {
-                            $(this).addClass('animated pulse');
-                        };
-                        $this.eh.leaveAnimate = $this.eh.leaveAnimate || function () {
-                            $(this).removeClass('animated pulse');
-                        };
-                        $this.n.resultsDiv.find('div.item').on('mouseenter', $this.eh.enterOverlay);
-                        $this.n.resultsDiv.find('div.item').on('mouseleave', $this.eh.leaveOverlay);
-                        $this.n.resultsDiv.find('div.asp_item_inner').on('mouseenter', $this.eh.enterAnimate);
-                        $this.n.resultsDiv.find('div.asp_item_inner').on('mouseleave', $this.eh.leaveAnimate);
-                    }
-                }
-            }
-
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
+    , 
         initNavigationEvents: function () {
             let $this = this;
 
@@ -5266,25 +5440,25 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 let keycode =  e.keyCode || e.which;
                 // noinspection JSUnresolvedVariable
                 if (
-                    $('.item', $this.n.resultsDiv).length > 0 && $this.n.resultsDiv.css('display') != 'none' &&
+                    $('.item', $this.n('resultsDiv')).length > 0 && $this.n('resultsDiv').css('display') != 'none' &&
                     $this.o.resultstype == "vertical"
                 ) {
                     if ( keycode == 40 || keycode == 38 ) {
-                        let $hovered = $this.n.resultsDiv.find('.item.hovered');
-                        $this.n.text.trigger('blur');
+                        let $hovered = $this.n('resultsDiv').find('.item.hovered');
+                        $this.n('text').trigger('blur');
                         if ( $hovered.length == 0 ) {
-                            $this.n.resultsDiv.find('.item').first().addClass('hovered');
+                            $this.n('resultsDiv').find('.item').first().addClass('hovered');
                         } else {
                             if (keycode == 40) {
                                 if ( $hovered.next('.item').length == 0 ) {
-                                    $this.n.resultsDiv.find('.item').removeClass('hovered').first().addClass('hovered');
+                                    $this.n('resultsDiv').find('.item').removeClass('hovered').first().addClass('hovered');
                                 } else {
                                     $hovered.removeClass('hovered').next('.item').addClass('hovered');
                                 }
                             }
                             if (keycode == 38) {
                                 if ( $hovered.prev('.item').length == 0 ) {
-                                    $this.n.resultsDiv.find('.item').removeClass('hovered').last().addClass('hovered');
+                                    $this.n('resultsDiv').find('.item').removeClass('hovered').last().addClass('hovered');
                                 } else {
                                     $hovered.removeClass('hovered').prev('.item').addClass('hovered');
                                 }
@@ -5292,8 +5466,8 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         }
                         e.stopPropagation();
                         e.preventDefault();
-                        if ( !$this.n.resultsDiv.find('.resdrg .item.hovered').inViewPort(50, $this.n.resultsDiv.get(0)) ) {
-                            let n = $this.n.resultsDiv.find('.resdrg .item.hovered').get(0);
+                        if ( !$this.n('resultsDiv').find('.resdrg .item.hovered').inViewPort(50, $this.n('resultsDiv').get(0)) ) {
+                            let n = $this.n('resultsDiv').find('.resdrg .item.hovered').get(0);
                             if ( n != null && typeof n.scrollIntoView != "undefined" ) {
                                 n.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
                             }
@@ -5301,10 +5475,10 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                     }
 
                     // Trigger click on return key
-                    if ( keycode == 13 && $('.item.hovered', $this.n.resultsDiv).length > 0 ) {
+                    if ( keycode == 13 && $('.item.hovered', $this.n('resultsDiv')).length > 0 ) {
                         e.stopPropagation();
                         e.preventDefault();
-                        $('.item.hovered a.asp_res_url', $this.n.resultsDiv).get(0).click();
+                        $('.item.hovered a.asp_res_url', $this.n('resultsDiv')).get(0).click();
                     }
 
                 }
@@ -5316,14 +5490,10 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             });
             $(document).on('keydown', handler);
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
+    , 
         initNoUIEvents: function () {
             let $this = this,
-                $sett = $this.n.searchsettings,
+                $sett = $this.nodes.searchsettings,
                 slider;
 
             $sett.find("div[class*=noui-slider-json]").each(function(el, index){
@@ -5396,13 +5566,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             });
 
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let _static = window.WPD.ajaxsearchpro;
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
+    , 
         initOtherEvents: function() {
             let $this = this, handler, handler2;
 
@@ -5411,34 +5575,40 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                  * Memorize the scroll top when the input is focused on IOS
                  * as fixed elements scroll freely, resulting in incorrect scroll value
                  */
-                $this.n.text.on('touchstart', function () {
+                $this.n('text').on('touchstart', function () {
                     $this.savedScrollTop = window.scrollY;
-                    $this.savedContainerTop = $this.n.search.offset().top;
+                    $this.savedContainerTop = $this.n('search').offset().top;
                 });
             }
 
-            $this.n.proclose.on($this.clickTouchend, function (e) {
+            if ( $this.o.focusOnPageload ) {
+                $(window).on('load', function(){
+                    $this.n('text').get(0).focus();
+                }, {'options': {'once': true}});
+            }
+
+            $this.n('proclose').on($this.clickTouchend, function (e) {
                 //if ($this.resultsOpened == false) return;
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                $this.n.text.val("");
-                $this.n.textAutocomplete.val("");
+                $this.n('text').val("");
+                $this.n('textAutocomplete').val("");
                 $this.hideResults();
-                $this.n.text.trigger('focus');
+                $this.n('text').trigger('focus');
 
-                $this.n.proloading.css('display', 'none');
+                $this.n('proloading').css('display', 'none');
                 $this.hideLoader();
                 $this.searchAbort();
 
                 if ( $('.asp_es_' + $this.o.id).length > 0 ) {
                     $this.showLoader();
-                    $this.liveLoad('.asp_es_' + $this.o.id, $this.getCurrentLiveURL(), false);
+                    $this.liveLoad('.asp_es_' + $this.o.id, $this.getCurrentLiveURL());
                 } else if ( $this.o.resPage.useAjax ) {
                     $this.showLoader();
                     $this.liveLoad($this.o.resPage.selector, $this.getRedirectURL());
                 }
 
-                $this.n.text.get(0).focus();
+                $this.n('text').get(0).focus();
             });
 
             if ( helpers.isMobile() ) {
@@ -5487,8 +5657,8 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         let $input = $(_this).find('input.orig');
                         $input = $input.length == 0 ? $(_this).next().find('input.orig') : $input;
                         $input = $input.length == 0 ? $(_this).parent().find('input.orig') : $input;
-                        $input = $input.length == 0 ? $this.n.text : $input;
-                        if ( $this.n.search.is(':visible') ) {
+                        $input = $input.length == 0 ? $this.n('text') : $input;
+                        if ( $this.n('search').inViewPort() ) {
                             $input.get(0).focus();
                         }
                     }, 300);
@@ -5497,9 +5667,9 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
             // Prevent zoom on IOS
             if ( helpers.detectIOS() && helpers.isMobile() && helpers.isTouchDevice() ) {
-                if ( parseInt($this.n.text.css('font-size')) < 16 ) {
-                    $this.n.text.data('fontSize', $this.n.text.css('font-size')).css('font-size', '16px');
-                    $this.n.textAutocomplete.css('font-size', '16px');
+                if ( parseInt($this.n('text').css('font-size')) < 16 ) {
+                    $this.n('text').data('fontSize', $this.n('text').css('font-size')).css('font-size', '16px');
+                    $this.n('textAutocomplete').css('font-size', '16px');
                     $('body').append('<style>#ajaxsearchpro'+$this.o.rid+' input.orig::-webkit-input-placeholder{font-size: 16px !important;}</style>');
                 }
             }
@@ -5512,7 +5682,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             $this.fixResultsPosition();
             $this.fixTryThisPosition();
 
-            if ( $this.o.resultstype == "isotopic" && $this.n.resultsDiv.css('visibility') == 'visible' ) {
+            if ( $this.o.resultstype == "isotopic" && $this.n('resultsDiv').css('visibility') == 'visible' ) {
                 $this.calculateIsotopeRows();
                 $this.showPagination(true);
                 $this.removeAnimation();
@@ -5527,7 +5697,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             $this.fixTryThisPosition();
             $this.hideArrowBox();
 
-            if ( $this.o.resultstype == "isotopic" && $this.n.resultsDiv.css('visibility') == 'visible' ) {
+            if ( $this.o.resultstype == "isotopic" && $this.n('resultsDiv').css('visibility') == 'visible' ) {
                 $this.calculateIsotopeRows();
                 $this.showPagination(true);
                 $this.removeAnimation();
@@ -5545,91 +5715,28 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
         initTryThisEvents: function() {
             let $this = this;
             // Try these search button events
-            $this.n.trythis.find('a').on('click touchend', function(e){
-                e.preventDefault();
-                e.stopImmediatePropagation();
+            if ( $this.n('trythis').find('a').length > 0 ) {
+                $this.n('trythis').find('a').on('click touchend', function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
 
-                if ( $this.o.compact.enabled ) {
-                    let state = $this.n.search.attr('asp-compact')  || 'closed';
-                    if ( state == 'closed' )
-                        $this.n.promagnifier.trigger('click');
-                }
-                document.activeElement.blur();
-                $this.n.textAutocomplete.val('');
-                $this.n.text.val($(this).html());
-                $this.gaEvent('try_this');
-                setTimeout(function(){
-                    $this.n.text.trigger('input');
-                }, 50);
-            });
-        },
+                    if ($this.o.compact.enabled) {
+                        let state = $this.n('search').attr('asp-compact') || 'closed';
+                        if (state == 'closed')
+                            $this.n('promagnifier').trigger('click');
+                    }
+                    document.activeElement.blur();
+                    $this.n('textAutocomplete').val('');
+                    $this.n('text').val($(this).html());
+                    $this.gaEvent?.('try_this');
+                    $this.searchWithCheck(80);
+                });
 
-        initPrevState: function() {
-            let $this = this;
-
-            // Browser back button check first, only on first init iteration
-            if ( _static.firstIteration && _static.prevState == null ) {
-                _static.prevState = localStorage.getItem('asp-' + WPD.Base64.encode(location.href));
-                if ( _static.prevState != null ) {
-                    _static.prevState = JSON.parse(_static.prevState);
-                    _static.prevState.settings = WPD.Base64.decode(_static.prevState.settings);
-                }
+                // Make the try-these keywords visible, this makes sure that the styling occurs before visibility
+                $this.n('trythis').css({
+                    visibility: "visible"
+                });
             }
-            if ( _static.prevState != null && typeof _static.prevState.id != 'undefined' ) {
-                if ( _static.prevState.trigger && _static.prevState.id == $this.o.id && _static.prevState.instance == $this.o.iid ) {
-                    if (_static.prevState.phrase != '') {
-                        $this.triggerPrevState = true;
-                        $this.n.text.val(_static.prevState.phrase);
-                    }
-                    if ( helpers.formData($('form', $this.n.searchsettings)) != _static.prevState.settings ) {
-                        $this.triggerPrevState = true;
-                        $this.settingsChanged = true;
-                        helpers.formData( $('form', $this.n.searchsettings), _static.prevState.settings );
-                    }
-                    if ( _static.prevState.settingsOriginal !== null ) {
-                        $this.originalFormData = WPD.Base64.decode(_static.prevState.settingsOriginal);
-                        $this.setFilterStateInput(0);
-                    }
-                }
-                // Scroll to the last clicked result on results block mode
-                if ( $this.o.resultsposition == 'block' ) {
-                    let run = true, handler = function(){
-                        if ( run ) {
-                            run = false;
-                            setTimeout(function(){
-                                let scrollTo = $(_static.prevState.scrollTo).length > 0 ? $(_static.prevState.scrollTo).offset().top : $this.n.resultsDiv.find('.item').last().offset().top;
-                                window.scrollTo({top: scrollTo, behavior:"instant"});
-                            }, 500);
-                        }
-                    };
-                    $this.n.search.on('asp_results_show', handler);
-                }
-            }
-
-            // Reset storage
-            localStorage.removeItem('asp-' + WPD.Base64.encode(location.href));
-
-            let handler = function() {
-                let phrase = $this.n.text.val();
-                let stateObj = {
-                    'id': $this.o.id,
-                    'trigger': phrase != '' || $this.settingsChanged,
-                    'instance': $this.o.iid,
-                    'phrase': phrase,
-                    'settingsOriginal': typeof $this.originalFormData === 'undefined' ? null :  WPD.Base64.encode( $this.originalFormData ),
-                    'settings': WPD.Base64.encode( helpers.formData($('form', $this.n.searchsettings)) )
-                };
-                localStorage.setItem('asp-' + WPD.Base64.encode(location.href), JSON.stringify(stateObj));
-            };
-            // Set the event
-            $('.asp_es_' + $this.o.id).on('click', 'a', handler);
-            $this.n.resultsDiv.on('click', '.results .item', handler);
-            $this.documentEventHandlers.push({
-                'node': document.body,
-                'event': 'asp_memorize_state_' + $this.o.id,
-                'handler': handler
-            });
-            $('body').on('asp_memorize_state_' + $this.o.id, handler);
         },
 
         initSelect2: function() {
@@ -5637,9 +5744,9 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             window.WPD.intervalUntilExecute(function(jq){
                 if ( typeof jq.fn.asp_select2 !== 'undefined' ) {
                     $this.select2jQuery = jq;
-                    $('select.asp_gochosen, select.asp_goselect2', $this.n.searchsettings).each(function () {
+                    $('select.asp_gochosen, select.asp_goselect2', $this.n('searchsettings')).each(function () {
                         $(this).removeAttr('data-asp_select2-id'); // Duplicate init protection
-                        $(this).find('option[value=""]').val('____temp_empty____');
+                        $(this).find('option[value=""]').val('__any__');
                         $this.select2jQuery(this).asp_select2({
                             width: '100%',
                             theme: 'flat',
@@ -5654,22 +5761,17 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         $this.select2jQuery(this).on('change', function () {
                             $(this).trigger('change');
                         });
-                        $(this).find('option[value="____temp_empty____"]').val('');
                     });
                 }
             }, function(){
                 return helpers.whichjQuery('asp_select2');
             });
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
+    , 
         initResultsEvents: function() {
             let $this = this;
 
-            $this.n.resultsDiv.css({
+            $this.n('resultsDiv').css({
                 opacity: "0"
             });
             let handler = function (e) {
@@ -5678,7 +5780,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
                 if ( $(e.target).closest('.asp_w').length == 0 ) {
                     if (
-                        $this.o.blocking == false &&
+                        $this.att('blocking') == false &&
                         !$this.dragging &&
                         $(e.target).closest('.ui-datepicker').length == 0 &&
                         $(e.target).closest('.noUi-handle').length == 0 &&
@@ -5696,7 +5798,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                     // If not right click
                     if( ktype != 'click' || ktype != 'touchend' || keycode != 3 ) {
                         if ($this.o.compact.enabled) {
-                            let compact = $this.n.search.attr('asp-compact') || 'closed';
+                            let compact = $this.n('search').attr('asp-compact') || 'closed';
                             // noinspection JSUnresolvedVariable
                             if ($this.o.compact.closeOnDocument == 1 && compact == 'open' && !$this.resultsOpened) {
                                 $this.closeCompact();
@@ -5723,49 +5825,45 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             });
             $(document).on($this.clickTouchend, handler);
 
-            // Isotope results swipe event
-            // noinspection JSUnresolvedVariable
-            if ( $this.o.resultstype == "isotopic" ) {
-                $this.n.resultsDiv.on("swiped-left", function(){
-                    if ( $this.visiblePagination() )
-                        $this.n.resultsDiv.find("a.asp_next").trigger('click');
-                });
-                $this.n.resultsDiv.on("swiped-right", function(){
-                    if ( $this.visiblePagination() )
-                        $this.n.resultsDiv.find("a.asp_prev").trigger('click');
-                });
-            }
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        initSettingsEvents: function() {
-            let $this = this;
 
-            // Note if the settings have changed
-            $this.n.searchsettings.on('click', function(){
-                $this.settingsChanged = true;
-            });
+            // GTAG on results click
+            $this.n('resultsDiv').on('click', '.results .item', function() {
+                $this.gaEvent?.('result_click', {
+                    'result_title': $(this).find('a.asp_res_url').text(),
+                    'result_url': $(this).find('a.asp_res_url').attr('href')
+                });
 
-            $this.n.searchsettings.on($this.clickTouchend, function (e) {
-                /**
-                 * Stop propagation on settings clicks, except the noUiSlider handler event.
-                 * If noUiSlider event propagation is stopped, then the: set, end, change events does not fire properly.
-                 */
-                if ( typeof e.target != 'undefined' && !$(e.target).hasClass('noUi-handle') ) {
-                    e.stopImmediatePropagation();
-                } else {
-                    // For noUI case, still cancel if this is a click (desktop device)
-                    if ( e.type == 'click' )
-                        e.stopImmediatePropagation();
+                // Results highlight on results page
+                // noinspection JSUnresolvedVariable
+                if ( $this.o.singleHighlight == 1 ) {
+                    localStorage.removeItem('asp_phrase_highlight');
+                    if (  $this.n('text').val().replace(/["']/g, '')  != '' ) {
+                        localStorage.setItem('asp_phrase_highlight', JSON.stringify({
+                            'phrase': $this.n('text').val().replace(/["']/g, ''),
+                            'id': $this.o.id
+                        }));
+                    }
                 }
             });
 
-            $this.n.prosettings.on("click", function () {
-                if ($this.n.prosettings.data('opened') == 0) {
+            // Isotope results swipe event
+            // noinspection JSUnresolvedVariable
+            if ( $this.o.resultstype == "isotopic" ) {
+                $this.n('resultsDiv').on("swiped-left", function(){
+                    if ( $this.visiblePagination() )
+                        $this.n('resultsDiv').find("a.asp_next").trigger('click');
+                });
+                $this.n('resultsDiv').on("swiped-right", function(){
+                    if ( $this.visiblePagination() )
+                        $this.n('resultsDiv').find("a.asp_prev").trigger('click');
+                });
+            }
+        }
+    , 
+        initSettingsSwitchEvents: function() {
+            let $this = this;
+            $this.n('prosettings').on("click", function () {
+                if ($this.n('prosettings').data('opened') == 0) {
                     $this.showSettings();
                 } else {
                     $this.hideSettings();
@@ -5787,123 +5885,55 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                     $this.showSettings(false);
                 }
             }
+        },
+
+        initSettingsEvents: function() {
+            let $this = this, t;
+            let formDataHandler = function(){
+                // Let everything initialize (datepicker etc..), then get the form data
+                if ( typeof $this.originalFormData === 'undefined' ) {
+                    $this.originalFormData = helpers.formData($('form', $this.n('searchsettings')));
+                }
+                $this.n('searchsettings').off('mousedown touchstart mouseover', formDataHandler);
+            };
+
+            $this.n('searchsettings').on('mousedown touchstart mouseover', formDataHandler);
+
+            // Note if the settings have changed
+            $this.n('searchsettings').on('click', function(){
+                $this.settingsChanged = true;
+            });
+
+            $this.n('searchsettings').on($this.clickTouchend, function (e) {
+                if ( $this.o.trigger.update_href ) {
+                    $this.updateHref();
+                }
+                /**
+                 * Stop propagation on settings clicks, except the noUiSlider handler event.
+                 * If noUiSlider event propagation is stopped, then the: set, end, change events does not fire properly.
+                 */
+                if ( typeof e.target != 'undefined' && !$(e.target).hasClass('noUi-handle') ) {
+                    e.stopImmediatePropagation();
+                } else {
+                    // For noUI case, still cancel if this is a click (desktop device)
+                    if ( e.type == 'click' )
+                        e.stopImmediatePropagation();
+                }
+            });
 
             // Category level automatic checking and hiding
-            $('.asp_option_cat input[type="checkbox"]', $this.n.searchsettings).on('asp_chbx_change', function(){
+            $('.asp_option_cat input[type="checkbox"]', $this.n('searchsettings')).on('asp_chbx_change', function(){
                 $this.settingsCheckboxToggle( $(this).closest('.asp_option_cat') );
             });
             // Init the hide settings
-            $('.asp_option_cat', $this.n.searchsettings).each(function(el){
+            $('.asp_option_cat', $this.n('searchsettings')).each(function(el){
                 $this.settingsCheckboxToggle( $(el), false );
             });
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
-        monitorTouchMove: function() {
-            let $this = this;
-            $this.dragging = false;
-            $("body").on("touchmove", function(){
-                $this.dragging = true;
-            }).on("touchstart", function(){
-                $this.dragging = false;
-            });
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let _static = window.WPD.ajaxsearchpro;
-    let functions = {
-        initAutop: function () {
-            let $this = this;
-            // Trigger the prevState here, as it is kind of auto-populate
-            if ( _static.prevState != null && !$this.o.compact.enabled && $this.triggerPrevState ) {
-                $this.searchWithCheck(800);
-                _static.prevState = null;
-                return false; // Terminate at this point, to prevent auto-populate
-            }
-            // -------------------------------0
 
-            if ( $this.o.autop.state == "disabled" ) return false;
-
-            let location = window.location.href;
-            // Correct previous query arguments (in case of paginated results)
-            let stop = location.indexOf('asp_ls=') > -1 || location.indexOf('asp_ls&') > -1;
-
-            if ( stop ) {
-                return false;
-            }
-
-            // noinspection JSUnresolvedVariable
-            let count = $this.o.show_more.enabled && $this.o.show_more.action == 'ajax' ? false : $this.o.autop.count;
-            window.WPD.intervalUntilExecute(function(){
-                    $this.isAutoP = true;
-                    if ($this.o.autop.state == "phrase") {
-                        $this.n.text.val($this.o.autop.phrase);
-                        $this.search(count);
-                    } else if ($this.o.autop.state == "latest") {
-                        $this.search(count, 1);
-                    } else {
-                        $this.search(count, 2);
-                    }
-                },
-                function() { return (!window.ASP.css_async || typeof window.ASP.css_loaded != 'undefined') }
-            );
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let functions = {
-        initCompact: function() {
-            let $this = this;
-
-            // Reset the overlay no matter what, if the is not fixed
-            if ( $this.o.compact.enabled == 1 && $this.o.compact.position != 'fixed' )
-                $this.o.compact.overlay = 0;
-
-            if ( $this.o.compact.enabled == 1 )
-                $this.n.trythis.css({
-                    display: "none"
-                });
-
-            if ( $this.o.compact.enabled == 1 && $this.o.compact.position == 'fixed' ) {
-
-                /**
-                 * If the conditional CSS loader is enabled, the required
-                 * search CSS file is not present when this code is executed.
-                 */
-                window.WPD.intervalUntilExecute(function(){
-                    $('body').append( $this.n.search.detach() );
-                    $('body').append( $this.n.trythis.detach() );
-                    // Fix the container position to a px value, even if it is set to % value initially, for better compatibility
-                    $this.n.search.css({
-                        top: ( $this.n.search.position().top ) + 'px'
-                    });
-                },  $this.n.search.css('position') == "fixed");
-            }
-        }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
-        initEtc: function() {
-            let $this = this,
-                t = null;
-
-            // Make the try-these keywords visible, this makes sure that the styling occurs before visibility
-            $this.n.trythis.css({
-                visibility: "visible"
-            });
 
             // Emulate click on checkbox on the whole option
-            //$('div.asp_option', $this.n.searchsettings).on('mouseup touchend', function(e){
-            $('div.asp_option', $this.n.searchsettings).on($this.mouseupTouchend, function(e){
+            //$('div.asp_option', $this.nodes.searchsettings).on('mouseup touchend', function(e){
+            $('div.asp_option', $this.n('searchsettings')).on($this.mouseupTouchend, function(e){
                 e.preventDefault(); // Stop firing twice on mouseup and touchend on mobile devices
                 e.stopImmediatePropagation();
 
@@ -5921,12 +5951,12 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
             });
 
-            $('div.asp_option label', $this.n.searchsettings).on('click', function(e){
+            $('div.asp_option label', $this.n('searchsettings')).on('click', function(e){
                 e.preventDefault(); // Let the previous handler handle the events, disable this
             });
 
             // Change the state of the choose any option if all of them are de-selected
-            $('fieldset.asp_checkboxes_filter_box', $this.n.searchsettings).each(function(){
+            $('fieldset.asp_checkboxes_filter_box', $this.n('searchsettings')).each(function(){
                 let all_unchecked = true;
                 $(this).find('.asp_option:not(.asp_option_selectall) input[type="checkbox"]').each(function(){
                     if ($(this).prop('checked') == true) {
@@ -5940,36 +5970,98 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             });
 
             // Mark last visible options
-            $('fieldset' ,$this.n.searchsettings).each(function(){
+            $('fieldset' ,$this.n('searchsettings')).each(function(){
                 $(this).find('.asp_option:not(.hiddend)').last().addClass("asp-o-last");
             });
 
             // Select all checkboxes
-            $('.asp_option_cat input[type="checkbox"], .asp_option_cff input[type="checkbox"]', $this.n.searchsettings).on('asp_chbx_change', function(){
+            $('.asp_option_cat input[type="checkbox"], .asp_option_cff input[type="checkbox"]', $this.n('searchsettings')).on('asp_chbx_change', function(){
                 let className = $(this).data("targetclass");
                 if ( typeof className == 'string' && className != '')
-                    $("input." + className, $this.n.searchsettings).prop("checked", $(this).prop("checked"));
+                    $("input." + className, $this.n('searchsettings')).prop("checked", $(this).prop("checked"));
             });
+        }
+    , 
+        monitorTouchMove: function() {
+            let $this = this;
+            $this.dragging = false;
+            $("body").on("touchmove", function(){
+                $this.dragging = true;
+            }).on("touchstart", function(){
+                $this.dragging = false;
+            });
+        }
+    , 
+        initAutop: function () {
+            let $this = this;
 
-            // GTAG on results click
-            $this.n.resultsDiv.on('click', '.results .item', function() {
-                $this.gaEvent('result_click', {
-                    'result_title': $(this).find('a.asp_res_url').text(),
-                    'result_url': $(this).find('a.asp_res_url').attr('href')
+            if ( $this.o.autop.state == "disabled" ) return false;
+
+            let location = window.location.href;
+            // Correct previous query arguments (in case of paginated results)
+            let stop = location.indexOf('asp_ls=') > -1 || location.indexOf('asp_ls&') > -1;
+
+            if ( stop ) {
+                return false;
+            }
+            // noinspection JSUnresolvedVariable
+            let count = $this.o.show_more.enabled && $this.o.show_more.action == 'ajax' ? false : $this.o.autop.count;
+            window.WPD.intervalUntilExecute(function(){
+                    $this.isAutoP = true;
+                    if ( $this.o.compact.enabled == 1 ) {
+                        $this.openCompact();
+                    }
+                    if ($this.o.autop.state == "phrase") {
+                        if ( !$this.o.is_results_page ) {
+                            $this.n('text').val($this.o.autop.phrase);
+                        }
+                        $this.search(count);
+                    } else if ($this.o.autop.state == "latest") {
+                        $this.search(count, 1);
+                    } else {
+                        $this.search(count, 2);
+                    }
+                },
+                function() { return (!window.ASP.css_async || typeof window.ASP.css_loaded != 'undefined') }
+            );
+        }
+    , 
+        initCompact: function() {
+            let $this = this;
+
+            // Reset the overlay no matter what, if the is not fixed
+            if ( $this.o.compact.enabled == 1 && $this.o.compact.position != 'fixed' )
+                $this.o.compact.overlay = 0;
+
+            if ( $this.o.compact.enabled == 1 )
+                $this.n('trythis').css({
+                    display: "none"
                 });
 
-                // Results highlight on results page
-                // noinspection JSUnresolvedVariable
-                if ( $this.o.singleHighlight == 1 ) {
-                    localStorage.removeItem('asp_phrase_highlight');
-                    if (  $this.n.text.val().replace(/["']/g, '')  != '' ) {
-                        localStorage.setItem('asp_phrase_highlight', JSON.stringify({
-                            'phrase': $this.n.text.val().replace(/["']/g, ''),
-                            'id': $this.o.id
-                        }));
-                    }
-                }
-            });
+            if ( $this.o.compact.enabled == 1 && $this.o.compact.position == 'fixed' ) {
+
+                /**
+                 * If the conditional CSS loader is enabled, the required
+                 * search CSS file is not present when this code is executed.
+                 */
+                window.WPD.intervalUntilExecute(function(){
+                    let $body = $('body');
+                    // Save the container element, otherwise it will get lost
+                    $this.nodes['container'] = $this.n('search').closest('.asp_w_container');
+                    $body.append( $this.n('search').detach() );
+                    $body.append( $this.n('trythis').detach() );
+                    // Fix the container position to a px value, even if it is set to % value initially, for better compatibility
+                    $this.n('search').css({
+                        top: ( $this.n('search').position().top ) + 'px'
+                    });
+                },  function() {
+                    return $this.n('search').css('position') == "fixed"
+                });
+            }
+        }
+    , 
+        initEtc: function() {
+            let $this = this;
 
             // Isotopic Layout variables
             $this.il = {
@@ -6000,7 +6092,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 }
             };
 
-            helpers.Hooks.addFilter('asp/init/etc', $this);
+            helpers.Hooks.applyFilters('asp/init/etc', $this);
         },
 
         initInfiniteScroll: function() {
@@ -6024,10 +6116,10 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                     'handler': handler
                 });
                 $(window).on('scroll', handler);
-                $this.n.results.on('scroll', handler);
+                $this.n('results').on('scroll', handler);
 
                 let tt;
-                $this.n.resultsDiv.on('nav_switch', function () {
+                $this.n('resultsDiv').on('nav_switch', function () {
                     // Delay this a bit, in case the user quick-switches
                     clearTimeout(tt);
                     tt = setTimeout(function(){
@@ -6041,7 +6133,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             let $this = this;
 
             // After elementor results get printed
-            $this.n.s.on('asp_elementor_results', function(e, id){
+            $this.n('s').on('asp_elementor_results', function(e, id){
                 if ( $this.o.id == id ) {
                     // Lazy load for jetpack
                     // noinspection JSUnresolvedVariable
@@ -6054,15 +6146,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 }
             });
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);// noinspection JSUnresolvedVariable
-
-(function($){
-    "use strict";
-    let _static = window.WPD.ajaxsearchpro;
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
+    , 
         init: function (options, elem) {
             let $this = this;
 
@@ -6073,8 +6157,11 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             $this.autopStartedTheSearch = false;
             $this.autopData = {};
 
+            $this.settingsInitialized = false;
+            $this.resultsInitialized = false;
             $this.settingsChanged = false;
             $this.resultsOpened = false;
+            $this.fontsLoaded = false;
             $this.post = null;
             $this.postAuto = null;
             $this.scroll = {};
@@ -6110,6 +6197,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
             $this.settScroll = null;
             $this.currentPage = 1;
+            $this.currentPageURL = location.href;
             $this.isotopic = null;
             $this.sIsotope = null;
             $this.lastSuccesfulSearch = ''; // Holding the last phrase that returned results
@@ -6122,9 +6210,19 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             // this.n and this.o available afterwards
             // also, it corrects the clones and fixes the node varialbes
             $this.o = $.fn.extend({}, options);
-            $this.n = {};
-            $this.n.search = $(elem);
+            $this.dynamicAtts = {};
+            $this.nodes = {};
+            $this.nodes.search = $(elem);
+
+
+            // Make parsing the animation settings easier
+            if ( helpers.isMobile() )
+                $this.animOptions = $this.o.animations.mob;
+            else
+                $this.animOptions = $this.o.animations.pc;
+
             // Fill up the this.n and correct the cloned notes as well
+
             $this.initNodeVariables();
 
             // Force noscroll on minified version
@@ -6132,25 +6230,11 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 $this.is_scroll = false;
             if ($this.o.resultstype == 'horizontal' && $this.o.scrollBar.horizontal.enabled == 0)
                 $this.is_scroll = false;
-
-            // Make parsing the animation settings easier
-            if ( helpers.isMobile() )
-                $this.animOptions = $this.o.animations.mob;
-            else
-                $this.animOptions = $this.o.animations.pc;
             /**
              * Default animation opacity. 0 for IN types, 1 for all the other ones. This ensures the fluid
              * animation. Wrong opacity causes flashes.
              */
             $this.animationOpacity = $this.animOptions.items.indexOf("In") < 0 ? "opacityOne" : "opacityZero";
-
-            // Results information box original texts
-            $this.resInfoBoxTxt =
-                $this.n.resultsDiv.find('.asp_results_top p.asp_rt_phrase').length > 0 ?
-                    $this.n.resultsDiv.find('.asp_results_top p.asp_rt_phrase').html() : '';
-            $this.resInfoBoxTxtNoPhrase =
-                $this.n.resultsDiv.find('.asp_results_top p.asp_rt_nophrase').length > 0 ?
-                    $this.n.resultsDiv.find('.asp_results_top p.asp_rt_nophrase').html() : '';
 
             // Result page live loader disabled for compact layout modes
             $this.o.resPage.useAjax = $this.o.compact.enabled ? 0 : $this.o.resPage.useAjax;
@@ -6177,25 +6261,19 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
 
                 if ($this.o.resPage.trigger_return) {
                     $this.o.redirectOnEnter = 0;
-                    $this.o.trigger.click = 'ajax_search';
+                    $this.o.trigger.return = 'ajax_search';
                 }
             }
 
-            // A weird way of fixing HTML entity decoding from the parameter
-            $this.o.trigger.redirect_url = helpers.decodeHTMLEntities($this.o.trigger.redirect_url);
-            $this.o.trigger.elementor_url = helpers.decodeHTMLEntities($this.o.trigger.elementor_url);
-
             // Reset autocomplete
-            $this.n.textAutocomplete.val('');
+            //$this.nodes.textAutocomplete.val('');
 
             if ($this.o.compact.overlay == 1 && $("#asp_absolute_overlay").length == 0) {
                 $('body').append("<div id='asp_absolute_overlay'></div>");
             }
-
-            // Browser back button detection and
-            // noinspection JSUnresolvedVariable
-            if (ASP.js_retain_popstate == 1) {
-                $this.initPrevState();
+            
+            if ( $this.usingLiveLoader ) {
+                $this.initLiveLoaderPopState?.();
             }
 
             // Fixes the fixed layout mode if compact mode is active and touch device fixes
@@ -6204,16 +6282,10 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             }
 
             // Try detecting a parent fixed position, and change the results and settings position accordingly
-            $this.detectAndFixFixedPositioning();
+            // $this.detectAndFixFixedPositioning();
 
             // Sets $this.dragging to true if the user is dragging on a touch device
             $this.monitorTouchMove();
-
-            // Calculates the settings animation attributes
-            $this.initSettingsAnimations();
-
-            // Calculates the results animation attributes
-            $this.initResultsAnimations();
 
             // Rest of the events
             $this.initEvents();
@@ -6224,152 +6296,197 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             // Etc stuff..
             $this.initEtc();
 
-            // Init infinite scroll
-            $this.initInfiniteScroll();
-
-            // Fix any initial Accessibility issues
-            $this.fixAccessibility();
-
             // Custom hooks
             $this.hooks();
 
             // After the first execution, this stays false
             _static.firstIteration = false;
 
-            // Let everything initialize (datepicker etc..), then get the form data
-            if ( typeof $this.originalFormData === 'undefined' ) {
-                $this.originalFormData = helpers.formData($('form', $this.n.searchsettings));
-            }
-
             // Init complete event trigger
-            $this.n.s.trigger("asp_init_search_bar", [$this.o.id, $this.o.iid], true, true);
+            $this.n('s').trigger("asp_init_search_bar", [$this.o.id, $this.o.iid], true, true);
 
             return this;
+        },
+
+        n: function(k){
+            if ( typeof this.nodes[k] !== 'undefined' ) {
+                return this.nodes[k];
+            } else {
+                switch( k ) {
+                    case 's':
+                        this.nodes[k] = this.nodes.search;
+                        break;
+                    case 'container':
+                        this.nodes[k] = this.nodes.search.closest('.asp_w_container');
+                        break;
+                    case 'searchsettings':
+                        this.nodes[k] = $('.asp_ss', this.n('container'));
+                        break;
+                    case 'resultsDiv':
+                        this.nodes[k] = $('.asp_r', this.n('container'));
+                        break;
+                    case 'probox':
+                        this.nodes[k] = $('.probox', this.nodes.search);
+                        break;
+                    case 'proinput':
+                        this.nodes[k] = $('.proinput', this.nodes.search);
+                        break;
+                    case 'text':
+                        this.nodes[k] = $('.proinput input.orig', this.nodes.search);
+                        break;
+                    case 'textAutocomplete':
+                        this.nodes[k] = $('.proinput input.autocomplete', this.nodes.search);
+                        break;
+                    case 'proloading':
+                        this.nodes[k] = $('.proloading', this.nodes.search);
+                        break;
+                    case 'proclose':
+                        this.nodes[k] = $('.proclose', this.nodes.search);
+                        break;
+                    case 'promagnifier':
+                        this.nodes[k] = $('.promagnifier', this.nodes.search);
+                        break;
+                    case 'prosettings':
+                        this.nodes[k] = $('.prosettings', this.nodes.search);
+                        break;
+                    case 'settingsAppend':
+                        this.nodes[k] = $('#wpdreams_asp_settings_' + this.o.id);
+                        break;
+                    case 'resultsAppend':
+                        this.nodes[k] = $('#wpdreams_asp_results_' + this.o.id);
+                        break;
+                    case 'trythis':
+                        this.nodes[k] = $("#asp-try-" + this.o.rid);
+                        break;
+                    case 'hiddenContainer':
+                        this.nodes[k] = $('.asp_hidden_data', this.n('container'));
+                        break;
+                    case 'aspItemOverlay':
+                        this.nodes[k] = $('.asp_item_overlay', this.n('hiddenContainer'));
+                        break;
+                    case 'showmore':
+                        this.nodes[k] = $('.showmore', this.n('resultsDiv'));
+                        break;
+                    case 'items':
+                        this.nodes[k] = $('.item', this.n('resultsDiv')).length > 0 ? $('.item', this.n('resultsDiv')) : $('.photostack-flip', this.n('resultsDiv'));
+                        break;
+                    case 'results':
+                        this.nodes[k] = $('.results', this.n('resultsDiv'));
+                        break;
+                    case 'resdrg':
+                        this.nodes[k] = $('.resdrg', this.n('resultsDiv'));
+                        break;
+                }
+                return this.nodes[k];
+            }
+        },
+
+        att: function( k ) {
+            if ( typeof this.dynamicAtts[k] !== 'undefined' ) {
+                return this.dynamicAtts[k];
+            } else {
+                switch (k) {
+                    case 'blocking':
+                        this.dynamicAtts[k] = this.n('searchsettings').hasClass('asp_sb');
+                }
+            }
+            return this.dynamicAtts[k];
         },
 
         initNodeVariables: function(){
             let $this = this;
 
-            $this.n.s = $this.n.search;
-            $this.n.container = $this.n.search.closest('.asp_w_container');
-            $this.o.id = $this.n.search.data('id');
-            $this.o.iid = $this.n.search.data('instance');
+            $this.o.id = $this.nodes.search.data('id');
+            $this.o.iid = $this.nodes.search.data('instance');
             $this.o.rid = $this.o.id + "_" + $this.o.iid;
-            $this.o.name = $this.n.search.data('name');
-            $this.n.searchsettings = $('.asp_ss', $this.n.container);
-            $this.n.resultsDiv = $('.asp_r', $this.n.container);
-            $this.n.probox = $('.probox', $this.n.search);
-            $this.n.proinput = $('.proinput', $this.n.search);
-            $this.n.text = $('.proinput input.orig', $this.n.search);
-            $this.n.textAutocomplete = $('.proinput input.autocomplete', $this.n.search);
-            $this.n.loading = $('.proinput .loading', $this.n.search);
-            $this.n.proloading = $('.proloading', $this.n.search);
-            $this.n.proclose = $('.proclose', $this.n.search);
-            $this.n.promagnifier = $('.promagnifier', $this.n.search);
-            $this.n.prosettings = $('.prosettings', $this.n.search);
             // Fix any potential clones and adjust the variables
             $this.fixClonedSelf();
-
-            $this.n.settingsAppend = $('#wpdreams_asp_settings_' + $this.o.id);
-            $this.o.blocking = $this.n.searchsettings.hasClass('asp_sb');
-            if ( typeof $this.initSettingsBox !== "undefined" ) {
-                $this.initSettingsBox();
-            }
-            $this.n.trythis = $("#asp-try-" + $this.o.rid);
-            $this.n.resultsAppend = $('#wpdreams_asp_results_' + $this.o.id);
-            $this.initResultsBox();
-
-            $this.n.hiddenContainer = $('.asp_hidden_data', $this.n.container);
-            $this.n.aspItemOverlay = $('.asp_item_overlay', $this.n.hiddenContainer);
-
-            $this.n.showmore = $('.showmore', $this.n.resultsDiv);
-            $this.n.items = $('.item', $this.n.resultsDiv).length > 0 ? $('.item', $this.n.resultsDiv) : $('.photostack-flip', $this.n.resultsDiv);
-            $this.n.results = $('.results', $this.n.resultsDiv);
-            if ($this.o.resultstype == 'polaroid') {
-                $this.n.results.addClass('photostack');
-            }
-            $this.n.resdrg = $('.resdrg', $this.n.resultsDiv);
         },
 
         initEvents: function () {
-            if ( typeof this.initSettingsEvents !== "undefined" ) {
-                this.initSettingsEvents();
-            }
-            this.initResultsEvents();
+            this.initSettingsSwitchEvents?.();
             this.initOtherEvents();
             this.initTryThisEvents();
-
-            this.initButtonEvents();
             this.initMagnifierEvents();
             this.initInputEvents();
             if (this.o.compact.enabled == 1) {
                 this.initCompactEvents();
             }
-            if ( typeof this.initAutocompleteEvent !== "undefined" ) {
-                this.initAutocompleteEvent();
-            }
-            if ( typeof this.initNavigationEvents !== "undefined" ) {
-                this.initNavigationEvents();
-                this.initIsotopicPagination();
-            }
-            if ( typeof this.initNoUIEvents !== "undefined" ) {
-                this.initNoUIEvents();
-                this.initDatePicker();
-                this.initSelect2();
-                this.initFacetEvents();
-            }
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
+    , 
+        /**
+         * This function should be called on-demand to init the results events and all. Do not call on init, only when needed.
+         */
+        initResults: function() {
+            if ( !this.resultsInitialized ) {
+                this.initResultsBox();
+                this.initResultsEvents();
+                if ( this.o.resultstype == "vertical" ) {
+                    this.initNavigationEvents?.();
+                }
+                if ( this.o.resultstype == "isotopic" ) {
+                    this.initIsotopicPagination?.();
+                }
+            }
+        },
         initResultsBox: function() {
             let $this = this;
 
+            // Calculates the results animation attributes
+            $this.initResultsAnimations();
+
             if ( helpers.isMobile() && $this.o.mobile.force_res_hover == 1) {
                 $this.o.resultsposition = 'hover';
-                //$('body').append($this.n.resultsDiv.detach());
-                $this.n.resultsDiv = $this.n.resultsDiv.clone();
-                $('body').append($this.n.resultsDiv);
-                $this.n.resultsDiv.css({
+                //$('body').append($this.n('resultsDiv').detach());
+                $this.nodes.resultsDiv = $this.n('resultsDiv').clone();
+                $('body').append($this.nodes.resultsDiv);
+                $this.n('resultsDiv').css({
                     'position': 'absolute'
                 });
-                $this.detectAndFixFixedPositioning();
             } else {
                 // Move the results div to the correct position
-                if ($this.o.resultsposition == 'hover' && $this.n.resultsAppend.length <= 0) {
-                    $this.n.resultsDiv = $this.n.resultsDiv.clone();
-                    $('body').append($this.n.resultsDiv);
+                if ($this.o.resultsposition == 'hover' && $this.n('resultsAppend').length <= 0) {
+                    $this.nodes.resultsDiv = $this.n('resultsDiv').clone();
+                    $('body').append($this.nodes.resultsDiv);
                 } else  {
                     $this.o.resultsposition = 'block';
-                    $this.n.resultsDiv.css({
+                    $this.n('resultsDiv').css({
                         'position': 'static'
                     });
-                    if ( $this.n.resultsAppend.length > 0  ) {
-                        if ( $this.n.resultsAppend.find('.asp_w').length > 0 ) {
-                            $this.n.resultsDiv = $this.n.resultsAppend.find('.asp_w');
-                            $this.n.showmore = $('.showmore', $this.n.resultsDiv);
-                            $this.n.items = $('.item', $this.n.resultsDiv).length > 0 ? $('.item', $this.n.resultsDiv) : $('.photostack-flip', $this.n.resultsDiv);
-                            $this.n.results = $('.results', $this.n.resultsDiv);
-                            $this.n.resdrg = $('.resdrg', $this.n.resultsDiv);
+                    if ( $this.n('resultsAppend').length > 0  ) {
+                        if ( $this.n('resultsAppend').find('.asp_r_' + $this.o.id).length > 0 ) {
+                            $this.nodes.resultsDiv = $this.n('resultsAppend').find('.asp_r_' + $this.o.id);
+                            if ( typeof $this.nodes.resultsDiv.get(0).referenced !== 'undefined' ) {
+                                ++$this.nodes.resultsDiv.get(0).referenced;
+                            } else {
+                                $this.nodes.resultsDiv.get(0).referenced = 1;
+                            }
                         } else {
-                            $this.n.resultsDiv = $this.n.resultsDiv.clone();
-                            $this.n.resultsAppend.append($this.n.resultsDiv);
+                            $this.nodes.resultsDiv = $this.nodes.resultsDiv.clone();
+                            $this.nodes.resultsAppend.append($this.nodes.resultsDiv);
                         }
                     }
                 }
             }
 
-            $this.n.resultsDiv.get(0).id = $this.n.resultsDiv.get(0).id.replace('__original__', '');
+            $this.nodes.showmore = $('.showmore', $this.nodes.resultsDiv);
+            $this.nodes.items = $('.item', $this.n('resultsDiv')).length > 0 ? $('.item', $this.nodes.resultsDiv) : $('.photostack-flip', $this.nodes.resultsDiv);
+            $this.nodes.results = $('.results', $this.nodes.resultsDiv);
+            $this.nodes.resdrg = $('.resdrg', $this.nodes.resultsDiv);
+
+            $this.nodes.resultsDiv.get(0).id = $this.nodes.resultsDiv.get(0).id.replace('__original__', '');
+            $this.detectAndFixFixedPositioning();
+
+            // Init infinite scroll
+            $this.initInfiniteScroll();
+
+            $this.resultsInitialized = true;
         },
 
         initResultsAnimations: function() {
             let $this = this,
-                rpos = $this.n.resultsDiv.css('position'),
+                rpos = $this.n('resultsDiv').css('position'),
                 blocking = rpos != 'fixed' && rpos != 'absolute';
-
             $this.resAnim = {
                 "showClass": "",
                 "showCSS": {
@@ -6402,23 +6519,33 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 $this.resAnim.hideClass = "asp_an_fadeOut";
             }
 
-            $this.n.resultsDiv.css({
-                "-webkit-animation-duration": $this.settAnim.duration + "ms",
-                "animation-duration": $this.settAnim.duration + "ms"
+            $this.n('resultsDiv').css({
+                "-webkit-animation-duration": $this.resAnim.duration + "ms",
+                "animation-duration": $this.resAnim.duration + "ms"
             });
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    let helpers = window.WPD.ajaxsearchpro.helpers;
-    let functions = {
+    , 
+        /**
+         * This function should be called on-demand to init the settings. Do not call on init, only when needed.
+         */
+        initSettings: function() {
+            if ( !this.settingsInitialized ) {
+                this.loadASPFonts?.();
+                this.initSettingsBox?.();
+                this.initSettingsEvents?.();
+                this.initButtonEvents?.();
+                this.initNoUIEvents?.();
+                this.initDatePicker?.();
+                this.initSelect2?.();
+                this.initFacetEvents?.();
+            }
+        },
         initSettingsBox: function() {
             let $this = this;
             let appendSettingsTo = function($el) {
-                let old = $this.n.searchsettings.get(0);
-                $this.n.searchsettings = $this.n.searchsettings.clone();
-                $el.append($this.n.searchsettings);
+                let old = $this.n('searchsettings').get(0);
+                $this.nodes.searchsettings = $this.nodes.searchsettings.clone();
+                $el.append($this.nodes.searchsettings);
 
 
                 $(old).find('*[id]').forEach(function(el){
@@ -6426,30 +6553,34 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         el.id = '__original__' + el.id;
                     }
                 });
-                $this.n.searchsettings.find('*[id]').forEach(function(el){
+                $this.n('searchsettings').find('*[id]').forEach(function(el){
                     if ( el.id.indexOf('__original__') > -1 ) {
                         el.id =  el.id.replace('__original__', '');
                     }
                 });
             }
             let makeSetingsBlock = function() {
-                $this.n.searchsettings.attr(
+                $this.n('searchsettings').attr(
                     "id",
-                    $this.n.searchsettings.attr("id").replace('prosettings', 'probsettings')
+                    $this.n('searchsettings').attr("id").replace('prosettings', 'probsettings')
                 );
-                $this.n.searchsettings.removeClass('asp_s asp_s_' + $this.o.id + ' asp_s_' + $this.o.rid)
+                $this.n('searchsettings').removeClass('asp_s asp_s_' + $this.o.id + ' asp_s_' + $this.o.rid)
                     .addClass('asp_sb asp_sb_' + $this.o.id + ' asp_sb_' + $this.o.rid);
-                $this.o.blocking = true;
+                $this.dynamicAtts['blocking'] = true;
             }
             let makeSetingsHover = function() {
-                $this.n.searchsettings.attr(
+                $this.n('searchsettings').attr(
                     "id",
-                    $this.n.searchsettings.attr("id").replace('probsettings', 'prosettings')
+                    $this.n('searchsettings').attr("id").replace('probsettings', 'prosettings')
                 );
-                $this.n.searchsettings.removeClass('asp_sb asp_sb_' + $this.o.id + ' asp_sb_' + $this.o.rid)
+                $this.n('searchsettings').removeClass('asp_sb asp_sb_' + $this.o.id + ' asp_sb_' + $this.o.rid)
                     .addClass('asp_s asp_s_' + $this.o.id + ' asp_s_' + $this.o.rid);
-                $this.o.blocking = false;
+                $this.dynamicAtts['blocking'] = false;
             }
+
+
+            // Calculates the settings animation attributes
+            $this.initSettingsAnimations?.();
 
             // noinspection JSUnresolvedVariable
             if (
@@ -6459,28 +6590,35 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 makeSetingsHover();
                 appendSettingsTo($('body'));
 
-                $this.n.searchsettings.css({
+                $this.n('searchsettings').css({
                     'position': 'absolute'
                 });
-                $this.o.blocking = false;
-                $this.detectAndFixFixedPositioning();
+                $this.dynamicAtts['blocking'] = false;
             } else {
-                if ( $this.n.settingsAppend.length > 0 ) {
+                if ( $this.n('settingsAppend').length > 0 ) {
                     // There is already a results box there
-                    if ( $this.n.settingsAppend.find('.asp_w').length > 0 ) {
-                        $this.n.searchsettings = $this.n.settingsAppend.find('.asp_w');
+                    if ( $this.n('settingsAppend').find('.asp_ss_' + $this.o.id).length > 0 ) {
+                        $this.nodes.searchsettings = $this.nodes.settingsAppend.find('.asp_ss_' + $this.o.id);
+                        if ( typeof $this.nodes.searchsettings.get(0).referenced !== 'undefined' ) {
+                            ++$this.nodes.searchsettings.get(0).referenced;
+                        } else {
+                            $this.nodes.searchsettings.get(0).referenced = 1;
+                        }
                     } else {
-                        if ( $this.o.blocking == false ) {
+                        if ( $this.att('blocking') == false ) {
                             makeSetingsBlock();
                         }
-                        appendSettingsTo($this.n.settingsAppend);
+                        appendSettingsTo($this.nodes.settingsAppend);
                     }
 
-                } else if ($this.o.blocking == false) {
+                } else if ($this.att('blocking') == false) {
                     appendSettingsTo($('body'));
                 }
             }
-            $this.n.searchsettings.get(0).id = $this.n.searchsettings.get(0).id.replace('__original__', '');
+            $this.n('searchsettings').get(0).id = $this.n('searchsettings').get(0).id.replace('__original__', '');
+            $this.detectAndFixFixedPositioning();
+
+            $this.settingsInitialized = true;
         },
         initSettingsAnimations: function() {
             let $this = this;
@@ -6507,7 +6645,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             }
 
             if ($this.animOptions.settings.anim == "fadedrop" &&
-                !$this.o.blocking ) {
+                !$this.att('blocking') ) {
                 $this.settAnim.showClass = "asp_an_fadeInDrop";
                 $this.settAnim.hideClass = "asp_an_fadeOutDrop";
             } else if ( $this.animOptions.settings.anim == "fadedrop" ) {
@@ -6517,42 +6655,17 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 $this.settAnim.hideClass = "asp_an_fadeOut";
             }
 
-            $this.n.searchsettings.css({
+            $this.n('searchsettings').css({
                 "-webkit-animation-duration": $this.settAnim.duration + "ms",
                 "animation-duration": $this.settAnim.duration + "ms"
             });
         }
-    }
-    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
-})(WPD.dom);(function($){
-    "use strict";
-    // Top and latest searches widget
-    $(".ajaxsearchprotop").each(function () {
-        let params = $(this).data("aspdata"),
-            id = params.id;
+    
+						};
+						$.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
+					})(WPD.dom);// noinspection JSUnresolvedVariable
 
-        if (params.action == 0) {
-            $('a', this).on('click', function (e) {
-                e.preventDefault();
-            });
-        } else if (params.action == 2) {
-            $('a', this).on('click', function (e) {
-                e.preventDefault();
-                ASP.api(id, 'searchFor', $(this).html());
-                $('html').animate({
-                        scrollTop: $('div[id*=ajaxsearchpro' + id + '_]').first().offset().top - 40
-                }, 500);
-            });
-        } else if (params.action == 1) {
-            $('a', this).on('click', function (e) {
-                if ( ASP.api(id, 'exists') ) {
-                    e.preventDefault();
-                    return ASP.api(id, 'searchRedirect', $(this).html());
-                }
-            });
-        }
-    });
-})(WPD.dom);window.ASP = typeof window.ASP !== 'undefined' ? window.ASP : {};
+window.ASP = typeof window.ASP !== 'undefined' ? window.ASP : {};
 window.ASP.api = (function() {
     "use strict";
     let a4 = function(id, instance, func, args) {
@@ -6684,71 +6797,93 @@ window.ASP.api = (function() {
     };
 
     window.ASP.initialized = false;
-    window.ASP.initializeById = function (id, ignoreViewport) {
-        let selector = ".asp_init_data";
-        ignoreViewport = typeof ignoreViewport == 'undefined' ? false : ignoreViewport;
-        if (typeof id !== 'undefined' && typeof id != 'object')
-            selector = "div[id*=asp_init_id_" + id + "]";
-
-        /**
-         * Getting around inline script declarations with this solution.
-         * So these new, invisible divs contains a JSON object with the parameters.
-         * Parse all of them and do the declaration.
-         */
+    window.ASP.initializeSearchByID = function (id) {
+        let instances = ASP.getInstances();
+        if (typeof id !== 'undefined' && typeof id != 'object' ) {
+            if ( typeof instances[id] !== 'undefined' ) {
+                let ni = [];
+                ni[id] = instances[id];
+                instances = ni;
+            } else {
+                return false;
+            }
+        }
         let initialized = 0;
-        $(selector).forEach(function (el) {
+        instances.forEach(function (data, i) {
             // noinspection JSUnusedAssignment
-            let $asp = $(el).closest('.asp_w_container').find('.asp_m');
-            // $asp.length == 0 -> when fixed compact layout mode is enabled
-            if ( $asp.length == 0 || typeof $asp.get(0).hasAsp != 'undefined') {
+            $('.asp_m_' + i).forEach(function(el){
+                let $el = $(el);
+                if ( typeof $el.get(0).hasAsp != 'undefined') {
+                    ++initialized;
+                    return true;
+                }
+                el.hasAsp = true;
                 ++initialized;
-                return true;
-            }
-
-            if (!ignoreViewport && !$asp.inViewPort(-100)) {
-                return true;
-            }
-
-            let jsonData = $(el).data("aspdata");
-            if (typeof jsonData === "undefined") return true;   // Do not return false, it breaks the loop!
-
-            jsonData = WPD.Base64.decode(jsonData);
-            if (typeof jsonData === "undefined" || jsonData == "") return true; // Do not return false, it breaks the loop!
-
-            let args = JSON.parse(jsonData);
-            $asp.get(0).hasAsp = true;
-            ++initialized;
-            return $asp.ajaxsearchpro(args);
+                return $el.ajaxsearchpro(data);
+            });
         });
+    }
 
-        if ($(selector).length == initialized) {
-            document.removeEventListener('scroll', ASP.initializeById);
-            document.removeEventListener('resize', ASP.initializeById);
+    window.ASP.getInstances = function() {
+        if ( typeof window.ASP_INSTANCES !== 'undefined' ) {
+            return window.ASP_INSTANCES;
+        } else {
+            let instances = [];
+            $('.asp_init_data').forEach(function (el) {
+                if (typeof el.dataset['aspdata'] === "undefined") return true;   // Do not return false, it breaks the loop!
+                let data = WPD.Base64.decode(el.dataset['aspdata']);
+                if (typeof data === "undefined" || data == "") return true;
+
+                instances[el.dataset['aspId']] = JSON.parse(data);
+            });
+            return instances;
         }
     }
 
 // Call this function if you need to initialize an instance that is printed after an AJAX call
 // Calling without an argument initializes all instances found.
     window.ASP.initialize = function (id) {
-        // this here is either window.ASP or window._ASP
-        let _this = this;
-
         // Some weird ajax loader problem prevention
-        if (typeof _this.version == 'undefined')
+        if (typeof ASP.version == 'undefined')
             return false;
 
-        // noinspection JSUnresolvedVariable
-        if ( ASP.script_async_load ) {
-            document.addEventListener('scroll', ASP.initializeById, {passive: true});
-            document.addEventListener('resize', ASP.initializeById, {passive: true});
-            ASP.initializeById(id);
-            setTimeout(function () {
-                ASP.initializeById(id, true);
-            }, 4000);
+        if( !!window.IntersectionObserver ){
+            if ( ASP.script_async_load || ASP.init_only_in_viewport ) {
+                let searches = document.querySelectorAll('.asp_w_container');
+                if ( searches.length ) {
+                    let observer = new IntersectionObserver(function(entries){
+                        entries.forEach(function(entry){
+                            if ( entry.isIntersecting ) {
+                                ASP.initializeSearchByID(entry.target.dataset.id);
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    });
+                    searches.forEach(function(search){
+                        observer.observe(search);
+                    });
+                }
+                ASP.getInstances().forEach(function(inst, id){
+                    if ( inst.compact.enabled == 1 && inst.compact.position == 'fixed' ) {
+                        ASP.initializeSearchByID(id);
+                    }
+                });
+            } else {
+                ASP.initializeSearchByID(id);
+            }
         } else {
-            ASP.initializeById(id, true);
+            ASP.initializeSearchByID(id);
         }
 
+        ASP.initializeMutateDetector();
+        ASP.initializeHighlight();
+        ASP.initializeOtherEvents();
+
+        ASP.initialized = true;
+    };
+
+    window.ASP.initializeHighlight = function() {
+        let _this = this;
         if (_this.highlight.enabled) {
             let data = localStorage.getItem('asp_phrase_highlight');
             localStorage.removeItem('asp_phrase_highlight');
@@ -6785,46 +6920,10 @@ window.ASP.api = (function() {
                 });
             }
         }
-
-        _this.initialized = true;
     };
 
-    window.ASP.ready = function () {
-        let _this = this,
-            $body = $('body'),
-            t, tt, ttt, ts;
-
-        _this.initialize();
-
-        // DOM tree modification detection to re-initialize automatically if enabled
-        // noinspection JSUnresolvedVariable
-        if (typeof ASP.detect_ajax != "undefined" && ASP.detect_ajax == 1) {
-            let observer = new MutationObserver(function() {
-                clearTimeout(t);
-                t = setTimeout(function () {
-                    _this.initialize();
-                }, 500);
-            });
-            function addObserverIfDesiredNodeAvailable() {
-                let db = document.querySelector("body");
-                if( !db ) {
-                    //The node we need does not exist yet.
-                    //Wait 500ms and try again
-                    window.setTimeout(addObserverIfDesiredNodeAvailable,500);
-                    return;
-                }
-                observer.observe(db, {subtree: true, childList: true});
-            }
-            addObserverIfDesiredNodeAvailable();
-        }
-
-        $(window).on('resize', function () {
-            clearTimeout(tt);
-            tt = setTimeout(function () {
-                _this.initializeById();
-            }, 200);
-        });
-
+    window.ASP.initializeOtherEvents = function() {
+        let ttt, ts, $body = $('body'), _this = this;
         // Known slide-out and other type of menus to initialize on click
         ts = '#menu-item-search, .fa-search, .fa, .fas';
         // Avada theme
@@ -6853,7 +6952,7 @@ window.ASP.api = (function() {
         $body.on('click touchend', ts, function () {
             clearTimeout(ttt);
             ttt = setTimeout(function () {
-                _this.initializeById({}, true);
+                _this.initializeSearchByID();
             }, 300);
         });
 
@@ -6861,9 +6960,33 @@ window.ASP.api = (function() {
         if ( typeof jQuery != 'undefined' ) {
             jQuery(document).on('elementor/popup/show', function(){
                 setTimeout(function () {
-                    _this.initializeById({}, true);
+                    _this.initializeSearchByID();
                 }, 10);
             });
+        }
+    };
+
+    window.ASP.initializeMutateDetector = function() {
+        let t;
+        if ( typeof ASP.detect_ajax != "undefined" && ASP.detect_ajax == 1 ) {
+            let o = new MutationObserver(function() {
+                clearTimeout(t);
+                t = setTimeout(function () {
+                    ASP.initializeSearchByID();
+                }, 500);
+            });
+            o.observe(document.querySelector("body"), {subtree: true, childList: true});
+        }
+    };
+
+    window.ASP.ready = function () {
+        let _this = this;
+
+        if (document.readyState === "complete" || document.readyState === "loaded"  || document.readyState === "interactive") {
+            // document is already ready to go
+            _this.initialize();
+        } else {
+            $(document).on('DOMContentLoaded', _this.initialize);
         }
     };
 
@@ -6895,15 +7018,10 @@ window.ASP.api = (function() {
         }
     };
 
-    // noinspection JSUnresolvedVariable
-    if (
-        !window.ASP.css_async ||
-        typeof window.ASP.css_loaded != 'undefined' // CSS loader finished, but this script was not ready yet
-    ) {
-        window.WPD.intervalUntilExecute(window.ASP.init, function() {
-            return typeof window.ASP.version != 'undefined' && $.fn.ajaxsearchpro != 'undefined'
-        });
-    }
+
+    window.WPD.intervalUntilExecute(window.ASP.init, function() {
+        return typeof window.ASP.version != 'undefined' && $.fn.ajaxsearchpro != 'undefined'
+    });
 };
 // Run on document ready
 (function() {
@@ -6931,6 +7049,9 @@ window.ASP.api = (function() {
                     return typeof jQuery !== "undefined" ? jQuery : false;
                 });
             }
+
+            // Need to return the first argument, as this is a FILTER hook with OBJECT reference argument, and will override with the return value
+            return $this;
         };
     }
     window.WPD.ajaxsearchpro.addons.add(new addon());
@@ -6954,7 +7075,7 @@ window.ASP.api = (function() {
             return selector;
         };
         this.start = function(url, obj, selector, widget) {
-            let isNewSearch = ($('form', obj.n.searchsettings).serialize() + obj.n.text.val().trim()) != obj.lastSuccesfulSearch;
+            let isNewSearch = ($('form', obj.n('searchsettings')).serialize() + obj.n('text').val().trim()) != obj.lastSuccesfulSearch;
             if ( !isNewSearch && $(widget).find('.e-load-more-spinner').length > 0 ) {
                 $(widget).css('opacity', 1);
             }
@@ -6974,8 +7095,16 @@ window.ASP.api = (function() {
                 // Fix Elementor Pagination
                 this.fixElementorPostPagination(obj, url);
 
+                this.scrollToResultsIfNeeded($el);
+
                 // Elementor results action
-                obj.n.s.trigger("asp_elementor_results", [obj.o.id, obj.o.iid, $el.parent().get(0)], true, true);
+                obj.n('s').trigger("asp_elementor_results", [obj.o.id, obj.o.iid, $el.parent().get(0)], true, true);
+            }
+        };
+        this.scrollToResultsIfNeeded = function($el) {
+            let $first = $el.find('.elementor-post, .product').first();
+            if ( !$first.inViewPort(40) ) {
+                $first.get(0).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
             }
         };
         this.fixElementorPostPagination = function(obj, url) {
@@ -6988,7 +7117,7 @@ window.ASP.api = (function() {
                     let queryString = url.substring(i+1);
                     if ( queryString ) {
                         queryString = queryString.replace(/&asp_force_reset_pagination=1/gmi, '');
-                        if ( $es.find('.e-load-more-anchor').length > 0 && $es.find('.elementor-pagination').length == 0 ) {
+                        if ( $es.find('.e-load-more-anchor').length > 0 && $es.find('.elementor-pagination a').length == 0 ) {
                             let handler = function(e){
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -7029,6 +7158,9 @@ window.ASP.api = (function() {
                     }
                 }
             }
+
+            // Need to return the first argument, as this is a FILTER hook with OBJECT reference argument, and will override with the return value
+            return $this;
         };
         this.fixElementorLoadMoreResults = function(replacementNode, obj, originalNode, data) {
             let settings = $(originalNode).closest('div[data-settings]').data('settings'),
@@ -7057,7 +7189,7 @@ window.ASP.api = (function() {
                 }
                 if ( $(replacementNode).find('.e-load-more-spinner').length > 0 ) {
                     $(originalNode).removeClass('e-load-more-pagination-loading');
-                    let isNewSearch = ($('form', obj.n.searchsettings).serialize() + obj.n.text.val().trim()) != obj.lastSuccesfulSearch,
+                    let isNewSearch = ($('form', obj.n('searchsettings')).serialize() + obj.n('text').val().trim()) != obj.lastSuccesfulSearch,
                         $loadMoreButton = $(originalNode).find('.e-load-more-anchor').next('.elementor-button-wrapper'),
                         $loadMoreMessage = $(originalNode).find('.e-load-more-message');
                     if ( $(replacementNode).find('article').length > 0 ) {

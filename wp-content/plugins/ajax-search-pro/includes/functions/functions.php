@@ -214,10 +214,11 @@ if (!function_exists("wd_substr_at_word")) {
      *
      * @param $text
      * @param $length
+	 * @param $suffix
      * @param $tolerance
      * @return string
      */
-    function wd_substr_at_word($text, $length, $tolerance = 8) {
+    function wd_substr_at_word($text, $length, $suffix = ' ...', $tolerance = 8) {
 
         if ( function_exists("mb_strlen") &&
              function_exists("mb_strrpos") &&
@@ -238,8 +239,13 @@ if (!function_exists("wd_substr_at_word")) {
         $s = $fn_substr($s, 0, $fn_strrpos($s, ' '));
 
         // In case of a long mash-up, it will not let overflow the length
-        if ( $fn_strlen($s) > ($length + $tolerance) )
-            return $fn_substr($s, 0, ($length + $tolerance));
+        if ( $fn_strlen($s) > ($length + $tolerance) ) {
+			$s = $fn_substr($s, 0, ($length + $tolerance));
+		}
+
+		if ( $suffix != '' && $fn_strlen($s) != $fn_strlen($text) ) {
+			$s .= $suffix;
+		}
 
         return $s;
   }
@@ -1065,6 +1071,17 @@ if (!function_exists("wpdreams_box_shadow_css")) {
 }
 
 if (!function_exists("wpdreams_gradient_css")) {
+	function wpd_gradient_get_color_only( $data ) {
+		preg_match('/.*\-(.*?)$/', $data, $matches);
+		if ( isset($matches[1]) ) {
+			return wpdreams_admin_hex2rgb($matches[1]);
+		} else {
+			return 'transparent';
+		}
+	}
+}
+
+if (!function_exists("wpdreams_gradient_css")) {
     function wpdreams_gradient_css($data, $print=true) {
 
         $data = str_replace("\n", "", $data);
@@ -1126,7 +1143,7 @@ if (!function_exists("wpdreams_border_width")) {
         $css = str_replace("\n", "", $css);
         preg_match("/border:(.*?)px (.*?) (.*?);/", $css, $matches);
 
-        return $matches[1];
+        return intval($matches[1]);
     }
 }
 
@@ -1135,7 +1152,7 @@ if (!function_exists("wpdreams_width_from_px")) {
         $css = str_replace("\n", "", $css);
         preg_match("/(.*?)px/", $css, $matches);
 
-        return $matches[1];
+        return intval($matches[1]);
     }
 }
 
@@ -1388,6 +1405,23 @@ if ( !function_exists("the_asp_result_field") ) {
 //----------------------------------------------------------------------------------------------------------------------
 // 6. FRONT-END
 //----------------------------------------------------------------------------------------------------------------------
+if ( !function_exists("asp_acf_get_post_object_field_values") ) {
+	function asp_acf_get_post_object_field_values( $field_object ) {
+		$return = array();
+		$_return = array();
+		foreach ( $field_object['post_type'] as $post_type ) {
+			$posts = get_posts( array('post_type' => $post_type, 'posts_per_page' => -1, 'post_status' => 'publish') );
+			if ( !is_wp_error($posts) && count($posts) > 0 ) {
+				$_return = array_merge($_return, $posts);
+			}
+		}
+		foreach ( $_return as $r ) {
+			$return[$r->ID] = $r->post_title;
+		}
+		return $return;
+	}
+}
+
 if ( !function_exists("asp_acf_get_field_choices") ) {
     function asp_acf_get_field_choices($field_name, $multi = false) {
         $results = array();
@@ -1412,15 +1446,25 @@ if ( !function_exists("asp_acf_get_field_choices") ) {
          * Method 2: This should be tried first, as Method 3 seems to miss some of the fields (reported via support)
          * Reference: https://wp-dreams.com/forums/topic/get_value-filter-not-updating
          */
-        if ( empty($results) ) {
-            $fkey = asp_acf_get_field_key($field_name);
-            if ( !empty($fkey) ) {
-                $field = get_field_object($fkey);
-                if ( !empty($field['choices']) ) {
-                    return $field['choices'];
-                }
-            }
-        }
+		if ( empty($results) ) {
+			$fkeys = asp_acf_get_field_keys($field_name);
+			if ( !empty($fkeys) ) {
+				foreach ($fkeys as $fkey ) {
+					$field = get_field_object($fkey);
+					if ( $field['type'] == 'post_object' ) {
+						$results = asp_acf_get_post_object_field_values($field);
+					} else {
+						if ( !empty($field['choices']) ) {
+							/**
+							 * The + operator is needed here instead of array_merge
+							 * array_merge reindexes numeric array keys, but we need to perserve the array keys
+							 */
+							$results = $results + $field['choices'];
+						}
+					}
+				}
+			}
+		}
 
         // Method 3: Let us try going through the ACF registered post types
         if ( empty($results) ) {
@@ -1468,15 +1512,16 @@ if ( !function_exists("asp_acf_get_field_type") ) {
          * Method 2: This should be tried first, as Method 3 seems to miss some of the fields (reported via support)
          * Reference: https://wp-dreams.com/forums/topic/get_value-filter-not-updating
          */
-        if ( $type === false ) {
-            $fkey = asp_acf_get_field_key($field_name);
-            if ( !empty($fkey) ) {
-                $field = get_field_object($fkey);
-                if ( !empty($field['type']) ) {
-                    $type = $field['type'];
-                }
-            }
-        }
+		if ( $type === false ) {
+			$fkeys = asp_acf_get_field_keys($field_name);
+			if ( !empty($fkeys) ) {
+				$fkey = end($fkeys);
+				$field = get_field_object($fkey);
+				if ( !empty($field['type']) ) {
+					$type = $field['type'];
+				}
+			}
+		}
 
         // Method 3: Let us try going through the ACF registered post types
         if ( $type === false ) {
@@ -1503,8 +1548,8 @@ if ( !function_exists("asp_acf_get_field_type") ) {
     }
 }
 
-if ( !function_exists("asp_acf_get_field_key") ) {
-	function asp_acf_get_field_key( $field_name ) {
+if ( !function_exists("asp_acf_get_field_keys") ) {
+	function asp_acf_get_field_keys( $field_name ) {
 		global $wpdb;
 		$acf_fields = $wpdb->get_results( $wpdb->prepare( "SELECT ID,post_parent,post_name FROM $wpdb->posts WHERE post_excerpt=%s AND post_type=%s" , $field_name , 'acf-field' ) );
 		// get all fields with that name.
@@ -1512,33 +1557,10 @@ if ( !function_exists("asp_acf_get_field_key") ) {
 			case 0: // no such field
 				return false;
 			case 1: // just one result.
-				return $acf_fields[0]->post_name;
-            default:
-                $last = end($acf_fields);
-                return isset($last->post_name) ? $last->post_name : false;
-
+				return array($acf_fields[0]->post_name);
+			default:
+				return array_map(function($field_post){ return $field_post->post_name; }, $acf_fields);
 		}
-		return false;
-		// ASP note: The code does not ever get below, as the Post ID is never known
-
-        // Rest of the code for possible future use
-        $post_id = 0; // // ASP note: This was passed as the function argument
-		// result is ambiguous
-		// get IDs of all field groups for this post
-		$field_groups_ids = array();
-		$field_groups = acf_get_field_groups( array(
-			'post_id' => $post_id,
-		) );
-		foreach ( $field_groups as $field_group )
-			$field_groups_ids[] = $field_group['ID'];
-
-		// Check if field is part of one of the field groups
-		// Return the first one.
-		foreach ( $acf_fields as $acf_field ) {
-			if ( in_array($acf_field->post_parent,$field_groups_ids) )
-				return $acf_field->post_name;
-		}
-		return false;
 	}
 }
 
@@ -1998,12 +2020,12 @@ if ( !function_exists("asp_parse_custom_field_filters") ) {
                         $default = $bfield->asp_f_datepicker_from_months . "m " . $bfield->asp_f_datepicker_from_days . "d";
                         break;
                     default:
-                        $default = $bfield->asp_f_datepicker_value;
+						$default = implode('-', array_reverse(explode('/', $bfield->asp_f_datepicker_value)));
                         break;
                 }
 
-                if ( isset($o['_fo']) && isset($o['_fo']['aspf'][$unique_field_name."_real"]) ) {
-                    $value = sanitize_text_field($o['_fo']['aspf'][$unique_field_name."_real"]);
+                if ( isset($o['_fo']) && isset($o['_fo']['aspf'][$unique_field_name]) ) {
+                    $value = sanitize_text_field($o['_fo']['aspf'][$unique_field_name]);
                 } else {
                     $value = $default;
                 }
@@ -2056,7 +2078,6 @@ if ( !function_exists('asp_parse_tax_term_filters') ) {
          * }, ...]
          */
         //$filters = array();
-        $have_selected = false;
         $term_ordering = w_isset_def($o['selected-frontend_term_order'], array('name', 'ASC'));
         $hide_empty = w_isset_def($o['frontend_terms_hide_empty'], 0);
 
@@ -2220,7 +2241,6 @@ if ( !function_exists('asp_parse_tax_term_filters') ) {
 
                     $len = count($needed_terms_flat);
                     $i = 0;
-                    $selected = false;
                     $have_selected = false;
 
                     foreach ($needed_terms_flat as $k => $term) {
@@ -2256,7 +2276,7 @@ if ( !function_exists('asp_parse_tax_term_filters') ) {
                         if ( isset($o['_fo']) ) {
                             if ( !$have_selected ) {
                                 $filter['selected'] = in_array($term->term_id, $o['_fo']['termset'][$taxonomy]);
-                                if ( $selected && $display_mode['type'] != 'multisearch' )
+                                if ( $filter['selected'] && $display_mode['type'] != 'multisearch' )
                                     $have_selected = true;
                             } else {
                                  $filter['selected'] = false;
@@ -2284,7 +2304,6 @@ if ( !function_exists('asp_parse_tax_term_filters') ) {
 
                     $len = count($needed_terms_flat);
                     $i = 0;
-                    $selected = false;
                     $have_selected = false;
 
                     foreach ($needed_terms_flat as $k => $term) {
@@ -2308,19 +2327,15 @@ if ( !function_exists('asp_parse_tax_term_filters') ) {
                             $filter['default'] = false;
                         }
 
-                        if ( isset($o['_fo']) ) {
-                            if ( !$have_selected ) {
-                                $filter['selected'] = in_array($term->term_id, $o['_fo']['termset'][$taxonomy]);
-                                if ( $selected )
-                                    $have_selected = true;
-                            } else {
-                                $filter['selected'] = false;
-                            }
+                        if ( isset($o['_fo'], $o['_fo']['termset'], $o['_fo']['termset'][$taxonomy]) ) {
+							$filter['selected'] = in_array($term->term_id, $o['_fo']['termset'][$taxonomy]);
+							if ( $filter['selected'] )
+								$have_selected = true;
                         } else {
                              $filter['selected'] = $filter['default'];
                         }
-
                         $current_filter->add($filter);
+						$i++;
                     }
                 }
 
@@ -2669,18 +2684,22 @@ if ( !function_exists('asp_parse_date_filters') ) {
         $filter->is_api = false;
 
         if ( $_dff['state'] != 'disabled' ) {
+			$post_types = $o['customtypes'];
+			if ( $o['return_attachments'] ) {
+				$post_types[] = 'attachment';
+			}
 			switch ($_dff['state']) {
 				case "rel_date":
 					$_def_dff_v = "-" . $_dff["rel_date"][0] . "y -" . $_dff["rel_date"][1] . "m -" . $_dff["rel_date"][2] . "d";
 					break;
 				case "earliest_date":
 					$_def_dff_v = ASP_Helpers::getEarliestPostDate(array(
-						'post_type' => $o['customtypes']
+						'post_type' => $post_types
 					));
 					break;
 				case "latest_date":
 					$_def_dff_v = ASP_Helpers::getLatestPostDate(array(
-						'post_type' => $o['customtypes']
+						'post_type' => $post_types
 					));
 					break;
 				case "date":
@@ -2701,18 +2720,22 @@ if ( !function_exists('asp_parse_date_filters') ) {
             ));
         }
         if ( $_dft['state'] != 'disabled' ) {
+			$post_types = $o['customtypes'];
+			if ( $o['return_attachments'] ) {
+				$post_types[] = 'attachment';
+			}
 			switch ($_dft['state']) {
 				case "rel_date":
 					$_def_dft_v = "-" . $_dft["rel_date"][0] . "y -" . $_dft["rel_date"][1] . "m -" . $_dft["rel_date"][2] . "d";
 					break;
 				case "earliest_date":
 					$_def_dft_v = ASP_Helpers::getEarliestPostDate(array(
-						'post_type' => $o['customtypes']
+						'post_type' => $post_types
 					));
 					break;
 				case "latest_date":
 					$_def_dft_v = ASP_Helpers::getLatestPostDate(array(
-						'post_type' => $o['customtypes']
+						'post_type' => $post_types
 					));
 					break;
 				case "date":
@@ -2789,20 +2812,21 @@ if ( !function_exists("asp_get_unused_assets") ) {
     function asp_get_unused_assets( $return_stored = false ) {
         $dependencies = array(
             'vertical', 'horizontal', 'isotopic', 'polaroid', 'noui', 'datepicker', 'autocomplete',
-			'settings', 'compact', 'autopopulate', 'ga'
+			'settings', 'compact', 'autopopulate', 'ga', 'asppsicons2'
         );
         $external_dependencies = array(
             'select2', 'isotope', 'simplebar'
         );
         $filters_may_require_simplebar = false;
+        $filters_may_require_asppsicons2 = false;
         if ( $return_stored !== false ) {
-            return get_option('asp_unused_assets', array(
+            return get_site_option('asp_unused_assets', array(
                 'internal' => $dependencies,
                 'external' => $external_dependencies
             ));
         }
 
-		// --- Auto populate
+		// --- Analytics
 		if ( wd_asp()->o['asp_analytics']['analytics'] != 0 ) {
 			$dependencies = array_diff($dependencies, array('ga'));
 		}
@@ -2870,6 +2894,17 @@ if ( !function_exists("asp_get_unused_assets") ) {
                 }
                 // --- Autocomplete (not used yet)
 
+				// --- Fonts
+				foreach (wd_asp()->front_filters->get() as $filter) {
+					if ( isset($filter->data['visible']) && $filter->data['visible'] == 0 ) {
+						continue;
+					}
+					if ( $filter->display_mode == 'checkboxes' ) {
+						$filters_may_require_asppsicons2 = true;
+						break;
+					}
+				}
+
                 // --- Select2
                 foreach (wd_asp()->front_filters->get() as $filter) {
                     if ($filter->display_mode == 'dropdownsearch' || $filter->display_mode == 'multisearch') {
@@ -2885,6 +2920,10 @@ if ( !function_exists("asp_get_unused_assets") ) {
             }
         }
 
+		if ( $filters_may_require_asppsicons2 || !in_array('polaroid', $dependencies) ) {
+			$dependencies = array_diff($dependencies, array('asppsicons2'));
+		}
+
         // No vertical or horizontal results results, and no filters that may trigger the scroll script
         if (
             $filters_may_require_simplebar ||
@@ -2895,11 +2934,10 @@ if ( !function_exists("asp_get_unused_assets") ) {
         }
 
         // Store for the init script
-        update_option('asp_unused_assets', array(
+        update_site_option('asp_unused_assets', array(
             'internal' => $dependencies,
             'external' => $external_dependencies
         ));
-
         return array(
             'internal' => $dependencies,
             'external' => $external_dependencies

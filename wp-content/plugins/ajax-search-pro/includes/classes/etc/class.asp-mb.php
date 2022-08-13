@@ -84,5 +84,15 @@ if ( !class_exists("ASP_mb") ) {
 			$charlist = str_replace ('/', '\/', preg_quote($charlist));
 			return preg_replace ("/(^[$charlist]+)|([$charlist]+$)/us", '', $string);
 		}
+
+		public static function strcasecmp($str1, $str2, $encoding = null) {
+			if (null === $encoding) {
+				$encoding = mb_internal_encoding();
+			}
+			return strcmp(
+				mb_strtoupper(remove_accents($str1), $encoding),
+				mb_strtoupper(remove_accents($str2), $encoding)
+			);
+		}
 	}
 }

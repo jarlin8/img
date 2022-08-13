@@ -105,6 +105,16 @@ if (!class_exists('wpd_TextCache')) {
             }
         }
 
+		public static function generateSCFiles() {
+			$content = wpd_get_file(ASP_PATH . "sc-config.php");
+			if ( $content !== '' ) {
+				$content = preg_replace('/ASP_SC_CACHE_INTERVAL = (.*?);/', 'ASP_SC_CACHE_INTERVAL = ' . wd_asp()->o['asp_caching']['cachinginterval'] . ';', $content);
+				$content = preg_replace('/ASP_SC_CACHE_PATH = (.*?);/', "ASP_SC_CACHE_PATH = '" . wd_asp()->upload_path . "';", $content);
+				$content = preg_replace('/ASP_SC_ADMIN_AJAX_PATH = (.*?);/', "ASP_SC_ADMIN_AJAX_PATH = '" . ABSPATH . 'wp-admin/admin-ajax.php' . "';", $content);
+				wpd_put_file(ASP_PATH . "sc-config.php", $content);
+			}
+		}
+
         public static function clearDBCache() {
             global $wpdb;
             $query = $wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE '%s'", self::$unique_db_prefix . '%');

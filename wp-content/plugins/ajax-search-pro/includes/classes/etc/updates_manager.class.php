@@ -61,7 +61,8 @@ if (!class_exists('asp_updates_manager')) {
 			// If a newer version is available, add the update
 			if ( $this->udpates_o->needsUpdate( true ) ) {
 				$download_url = '';
-				$license_key = WD_ASP_License::isActivated( true );
+				// No need to check the remote, as the ->getDownLoadURL will do it later
+				$license_key = WD_ASP_License::isActivated();
 				if ( $license_key !== false ) {
 					if ( get_site_transient('_asp_update_dl_url') === false ) {
 						$response = $this->getDownloadUrl( $license_key );
@@ -142,7 +143,9 @@ if (!class_exists('asp_updates_manager')) {
 				$information->downloaded    = $this->udpates_o->getDownloadedCount();
 				$information->last_updated  = $this->udpates_o->getLastUpdated();
 				$information->sections      = array(
-					'changelog' => "<h2>Version ".$this->udpates_o->getVersionString()."</h2><pre stlye='white-space: pre-line;overflow:hidden;'>" . $this->udpates_o->getLastChangelog() . "</pre>"
+					'changelog' => "<h4>Version ".$this->udpates_o->getVersionString()."</h4><p>
+						For the changelog please visit <a target='_blank' href='https://knowledgebase.ajaxsearchpro.com/other/changelog'>the knowledge base.</a>
+					</p>"
 				);
 				$information->banners = [
 					'high' => 'https://ajaxsearchpro.com/assets/banner-1544x500-min.png',
@@ -162,7 +165,7 @@ if (!class_exists('asp_updates_manager')) {
 		public function addUpgradeMessageLink() {
 			echo '<style type="text/css" media="all">tr#ajax-search-pro + tr.plugin-update-tr a.thickbox + em { display: none; }</style>';
 			if ( WD_ASP_License::isActivated() === false )
-				echo ' <a target="_blank" href="http://codecanyon.net/downloads/">' . __( 'Download new version from CodeCanyon.', 'ajax-search-pro' ) . '</a>';
+				echo ' <a href="'.get_admin_url() .'admin.php?page=asp_updates_help">' . __( 'Activate your license', 'ajax-search-pro') . '</a> ' . __( 'for automatic updates or', 'ajax-search-pro') . ' <a target="_blank" href="http://codecanyon.net/downloads/">' . __( 'download new version from CodeCanyon.', 'ajax-search-pro' ) . '</a>';
 			else
 				echo ' or <a href="' . wp_nonce_url( admin_url( 'update.php?action=upgrade-plugin&plugin=' . ASP_PLUGIN_NAME ), 'upgrade-plugin_' . ASP_PLUGIN_NAME ) . '">' . __( 'Update Ajax Search Pro now.', 'ajax-search-pro' ) . '</a>';
 		}

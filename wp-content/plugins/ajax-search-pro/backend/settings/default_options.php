@@ -36,6 +36,7 @@ function asp_do_init_options() {
         'it_index_msword_content'    => 0,
         'it_index_msexcel_content'    => 0,
         'it_index_msppt_content'    => 0,
+        'it_media_service_send_file'   => 1,
 
         'it_synonyms_as_keywords' => 0,
 
@@ -51,6 +52,7 @@ function asp_do_init_options() {
         'it_stopwords' => @file_get_contents(ASP_PATH . '/stopwords.txt'),
         'it_min_word_length' => 1,
         'it_extract_iframes' => 0,
+        'it_extract_gutenberg_blocks' => 1,
         'it_extract_shortcodes' => 1,
         'it_exclude_shortcodes' => 'wpdreams_rpl, wpdreams_rpp',
         'it_index_on_save' => 1,
@@ -124,7 +126,7 @@ function asp_do_init_options() {
     /* Default caching options */
     $options['asp_caching_def'] = array(
         'caching' => 0,
-        'caching_method' => 'file', // file or db
+        'caching_method' => 'file', // sc_file, file or db
         'image_cropping' => 0,
         'cachinginterval' => 43200
     );
@@ -145,9 +147,8 @@ function asp_do_init_options() {
             array('option' => 'Legacy Minified scoped', 'value' => 'min-scoped')
         ),
         'load_in_footer' => 1,
-        'detect_ajax' => 0,
+        'detect_ajax' => 1,
         'js_prevent_body_scroll' => 0,
-        'js_retain_popstate' => 0,
         'css_compatibility_level' => "medium",
         'forceinlinestyles' => 0,
         'css_async_load' => 0,
@@ -158,7 +159,8 @@ function asp_do_init_options() {
         // JS and CSS load
         'load_google_fonts' => 1,
         'script_loading_method' => 'optimized',
-        'load_mcustom_js' => 'yes',
+        'init_instances_inviewport_only' => 1,
+        'load_mcustom_js' => 'no',
         'load_lazy_js' => 0,
         'selective_enabled' => 0,
         'selective_front' => 1,
@@ -179,6 +181,7 @@ function asp_do_init_options() {
         'db_force_utf8_like' => 0,
 
         // Other options
+        'rest_api_enabled' => 0,
         'meta_box_post_types' => 'post|page|product'
     );
 
@@ -214,6 +217,7 @@ function asp_do_init_options() {
         'search_engine' => 'regular',
         'trigger_on_facet' => 1,
         'triggerontype' => 1,
+        'trigger_update_href' => 0,
         'charcount' => 0,
         'trigger_delay' => 300,              // invisible
         'autocomplete_trigger_delay' => 310, // invisible
@@ -572,6 +576,7 @@ function asp_do_init_options() {
         /* Layout Options */
         // Search box
         'defaultsearchtext' => 'Search here...',
+        'focus_on_pageload' => 0,
         'box_alignment' => 'inherit',
         'box_sett_hide_box' => 0,
         'auto_populate' => 'disabled',

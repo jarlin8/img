@@ -5,11 +5,8 @@
 
     window.WPD = typeof window.WPD !== 'undefined' ? window.WPD : {};
 
-    // Newer version added?
     if ( typeof WPD.dom != "undefined" ) {
-        if ( WPD.dom.version > version ) {
-            return false;	// Terminate
-        }
+        return false;	// Terminate
     }
 
     WPD.dom = function() {
@@ -30,12 +27,12 @@
                 $: function (s, $node) {
                     let _this = this.copy(this, true);
                     if ( typeof $node != "undefined" ) {
-                        _this.a = $node.find(s).get();
+                        _this.a = $node !== null ? $node.find(s).get() : [];
                     } else {
                         if (typeof s == "string") {
                             _this.a = _this._(s);
                         } else {
-                            _this.a = [s];
+                            _this.a = s!== null ? [s] : [];
                         }
                     }
                     _this.length = _this.a.length;
@@ -164,17 +161,19 @@
                     return _this;
                 },
                 add: function( el ) {
-                    if ( typeof el.nodeType !== "undefined" ) {
-                        if ( this.a.indexOf(el) == -1 ) {
-                            this.a.push(el);
-                        }
-                    } else if ( typeof el.n !== "undefined" ) {
-                        let _this = this;
-                        el.n.forEach(function(el){
-                            if ( _this.a.indexOf(el) == -1 ) {
-                                _this.a.push(el);
+                    if ( typeof el !== "undefined" ) {
+                        if (typeof el.nodeType !== "undefined") {
+                            if (this.a.indexOf(el) == -1) {
+                                this.a.push(el);
                             }
-                        });
+                        } else if (typeof el.a !== "undefined") {
+                            let _this = this;
+                            el.a.forEach(function (el) {
+                                if (_this.a.indexOf(el) == -1) {
+                                    _this.a.push(el);
+                                }
+                            });
+                        }
                     }
                     return this;
                 },
@@ -203,23 +202,41 @@
                     return el != null ? el.classList.contains(c) : false;
                 },
                 addClass: function (c) {
-                    let args = arguments;
-                    if ( args.length == 1 ) {
+                    let args = c;
+                    if (typeof c == 'string') {
                         args = c.split(' ');
                     }
-                    this.forEach(function (el) {
-                        el.classList.add.apply(el.classList, args);
+                    args = args.filter(function (i) {
+                        return i.trim() !== ''
                     });
+                    if (args.length > 0) {
+                        this.forEach(function (el) {
+                            el.classList.add.apply(el.classList, args);
+                        });
+                    }
                     return this;
                 },
                 removeClass: function (c) {
-                    let args = arguments;
-                    if ( args.length == 1 ) {
-                        args = c.split(' ');
+                    if ( typeof c != 'undefined' ) {
+                        let args = c;
+                        if (typeof c == 'string') {
+                            args = c.split(' ');
+                        }
+                        args = args.filter(function (i) {
+                            return i.trim() !== ''
+                        });
+                        if (args.length > 0) {
+                            this.forEach(function (el) {
+                                el.classList.remove.apply(el.classList, args);
+                            });
+                        }
+                    } else {
+                        this.forEach(function (el) {
+                            if ( el.classList.length > 0 ) {
+                                el.classList.remove.apply(el.classList, el.classList);
+                            }
+                        });
                     }
-                    this.forEach(function (el) {
-                        el.classList.remove.apply(el.classList, args);
-                    });
                     return this;
                 },
                 is: function(s){
@@ -237,11 +254,7 @@
                                 v = typeof v === 'string' ? v.split(',') : v;
                                 for ( let i = 0, l = el.options.length, o; i < l; i++ ) {
                                     o = el.options[i];
-                                    if ( v.indexOf( o.value ) != -1 ) {
-                                        o.selected = true;
-                                    } else {
-                                        o.selected = false;
-                                    }
+                                    o.selected = v.indexOf(o.value) != -1;
                                 }
                             } else {
                                 el.value = v;
@@ -255,6 +268,22 @@
                         }
                     }
                     return this;
+                },
+                isVisible: function() {
+                    let el = this.get(0), visible = true, style;
+                    while (el !== null) {
+                        style = window.getComputedStyle(el);
+                        if (
+                            style['display'] == 'none' ||
+                            style['visibility'] == 'hidden' ||
+                            style['opacity'] == 0
+                        ) {
+                            visible = false;
+                            break;
+                        }
+                        el = el.parentElement;
+                    }
+                    return visible;
                 },
                 attr: function (a, v) {
                     let ret, args = arguments, _this = this;
@@ -401,7 +430,7 @@
                 },
                 on: function() {
                     let args = arguments,
-                        func1 = function(args, e) {
+                        func = function(args, e) {
                             let $el;
                             if ( e.type == 'mouseenter' || e.type == 'mouseleave' || e.type == 'hover' ) {
                                 let el = document.elementFromPoint(e.clientX, e.clientY);
@@ -428,16 +457,6 @@
                                 }
                                 args[2].apply($el.get(0), argd);
                             }
-                        },
-                        func2 = function(args, e) {
-                            let argd = [];
-                            argd.push(e);
-                            if ( typeof args[3] != 'undefined' ) {
-                                for (let i=3; i<args.length; i++) {
-                                    argd.push(args[i]);
-                                }
-                            }
-                            args[1].apply(this, argd);
                         };
                     let events = args[0].split(' ');
                     for (let i=0;i<events.length;i++) {
@@ -445,7 +464,7 @@
                         if ( typeof args[1] == "string" ) {
                             this.forEach(function(el){
                                 if ( !WPD.dom._fn.hasEventListener(el, type, args[2]) ) {
-                                    let f = func1.bind(el, args);
+                                    let f = func.bind(el, args);
                                     el.addEventListener(type, f, args[3]);
                                     // Store the trigger in the selected elements, not the parent node
                                     el._wpd_el = typeof el._wpd_el == "undefined" ? [] : el._wpd_el;
@@ -459,19 +478,21 @@
                                 }
                             });
                         } else {
-                            this.forEach(function (el) {
-                                if ( !WPD.dom._fn.hasEventListener(el, type, args[1]) ) {
-                                    let f = func2.bind(el, args);
-                                    el.addEventListener(type, f, args[2]);
-                                    el._wpd_el = typeof el._wpd_el == "undefined" ? [] : el._wpd_el;
-                                    el._wpd_el.push({
-                                        'type': type,
-                                        'func': f,
-                                        'trigger': args[1],
-                                        'args': args[2]
-                                    });
-                                }
-                            });
+                            for (let i=0;i<events.length;i++) {
+                                let type = events[i];
+                                this.forEach(function (el) {
+                                    if ( !WPD.dom._fn.hasEventListener(el, type, args[1]) ) {
+                                        el.addEventListener(type, args[1], args[2]);
+                                        el._wpd_el = typeof el._wpd_el == "undefined" ? [] : el._wpd_el;
+                                        el._wpd_el.push({
+                                            'type': type,
+                                            'func': args[1],
+                                            'trigger': args[1],
+                                            'args': args[2]
+                                        });
+                                    }
+                                });
+                            }
                         }
                     }
                     return this;
@@ -495,7 +516,7 @@
                                         el._wpd_el = [];
                                     } else {
                                         let remains = [];
-                                        el._wpd_el.forEach(function(cb, i){
+                                        el._wpd_el.forEach(function(cb){
                                             if ( cb.type == type && cb.trigger == callback ) {
                                                 el.removeEventListener(type, cb.func, cb.args);
                                             } else {
@@ -523,12 +544,20 @@
                     native = native || false;
                     jquery = jquery || false;
                     this.forEach(function(el){
-
+                        let triggered = false;
                         // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                        if ( jquery && typeof jQuery != "undefined" ) {
+                        if (
+                            jquery &&
+                            typeof jQuery != "undefined" &&
+                            typeof jQuery._data != 'undefined' &&
+                            typeof jQuery._data(el, 'events') != 'undefined' &&
+                            typeof jQuery._data(el, 'events')[type] != 'undefined'
+                        ) {
                             // noinspection JSUnresolvedVariable,JSUnresolvedFunction
                             jQuery(el).trigger(type, args);
-                        } else if ( native ) {
+                            triggered = true;
+                        }
+                        if ( !triggered && native ) {
                             // Native event handler
                             let event = new Event(type);
                             event.detail = args;
@@ -644,7 +673,7 @@
                                         el.appendChild(ap);
                                     });
                                 } else {
-                                    el.appendChild(app);
+                                    el.appendChild(app.cloneNode(true));
                                 }
                             }
                         });
@@ -659,7 +688,37 @@
                 }
             }
             WPD.dom._fn = {
+                bodyTransform: function() {
+                    let x = 0, y = 0;
+                    if ( typeof WebKitCSSMatrix !== 'undefined' ) {
+                        let style = window.getComputedStyle(document.body);
+                        if ( typeof style.transform != 'undefined' ) {
+                            let matrix = new WebKitCSSMatrix(style.transform);
+                            if ( matrix.m41 != 'undefined' ) {
+                                x = matrix.m41;
+                            }
+                            if ( matrix.m42 != 'undefined' ) {
+                                y = matrix.m42;
+                            }
+                        }
+                    }
+
+                    return {x: x, y: y};
+                },
+                bodyTransformY: function() {
+                    return this.bodyTransform().y;
+                },
+                bodyTransformX: function() {
+                    return this.bodyTransform().x;
+                },
                 hasFixedParent: function(el) {
+                    /**
+                     * When CSS transform is present, then Fixed element are no longer fixed
+                     * even if the CSS declaration says.
+                     */
+                    if ( WPD.dom._fn.bodyTransformY() != 0 ) {
+                        return false;
+                    }
                     do {
                         if ( window.getComputedStyle(el)['position'] == 'fixed' ) {
                             return true;
@@ -667,6 +726,7 @@
                     } while( el = el.parentElement );
                     return false;
                 },
+
                 hasEventListener: function(el, type, trigger) {
                     if (typeof el._wpd_el == "undefined") {
                         return false;
@@ -696,24 +756,21 @@
 
                 createElementsFromHTML: function(htmlString) {
                     let template = document.createElement('template');
-                    template.innerHTML = htmlString;
+                    template.innerHTML = htmlString.replace(/(\r\n|\n|\r)/gm, "");
                     return Array.prototype.slice.call(template.content.childNodes);
                 },
 
                 absolutePosition: function(el) {
-                    let bodyRect = document.body.getBoundingClientRect(),
-                        elemRect = el.getBoundingClientRect(),
-                        bodyPos = window.getComputedStyle(document.body)['position'],
-                        _y = document.documentElement.offsetTop,
-                        _x = document.documentElement.offsetLeft;
-                    if ( bodyPos == 'relative' || bodyPos == 'absolute' ) {
-                        _y = 0;
-                        _x = 0;
+                    if ( !el.getClientRects().length ) {
+                        return { top: 0, left: 0 };
                     }
-                    return {
-                        'top': elemRect.top - bodyRect.top + _y,
-                        'left': elemRect.left - bodyRect.left + _x
-                    }
+
+                    let rect = el.getBoundingClientRect();
+                    let win = el.ownerDocument.defaultView;
+                    return ({
+                        top: rect.top + win.pageYOffset,
+                        left: rect.left + win.pageXOffset
+                    });
                 },
 
                 // Create a plugin based on a defined object
@@ -743,6 +800,10 @@
     WPD.dom();
     document.dispatchEvent(new Event('wpd-dom-core-loaded'));
 }());(function() {
+    // Prevent duplicate loading
+    if ( typeof WPD.dom.fn.animate != "undefined" ) {
+        return false;	// Terminate
+    }
     WPD.dom.fn._animate = {
         "easing": {
             "linear": function(x) { return x; },
@@ -813,7 +874,7 @@
     };
     document.dispatchEvent(new Event('wpd-dom-animate-loaded'));
 }());/*
- * jQuery Highlight plugin
+ * WPD.dom Highlight plugin
  *
  * Based on highlight v3 by Johann Burkard
  * http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html
@@ -824,6 +885,11 @@
  */
 (function() {
     let $ = WPD.dom;
+
+    // Prevent duplicate loading
+    if ( typeof WPD.dom.fn.unhighlight != "undefined" ) {
+        return false;	// Terminate
+    }
 
     WPD.dom.fn.unhighlight = function (options) {
         let settings = {className: 'highlight', element: 'span'};
@@ -853,7 +919,7 @@
             return el != '';
         });
         words.forEach(function(w, i, o){
-            o[i].replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            o[i] = w.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         });
 
         if (words.length == 0) {
@@ -903,6 +969,10 @@
         });
     };
 }());(function() {
+    // Prevent duplicate loading
+    if ( typeof WPD.dom.fn.serialize != "undefined" ) {
+        return false;	// Terminate
+    }
     WPD.dom.fn.serialize = function() {
         let form = this.get(0);
         if ( !form || form.nodeName !== "FORM" ) {
@@ -980,6 +1050,10 @@
     };
     document.dispatchEvent(new Event('wpd-dom-serialize-loaded'));
 }());(function() {
+    // Prevent duplicate loading
+    if ( typeof WPD.dom.fn.inViewPort != "undefined" ) {
+        return false;	// Terminate
+    }
     WPD.dom.fn.inViewPort = function (tolerance, viewport) {
         "use strict";
         let element = this.get(0), vw, vh;
@@ -1025,6 +1099,10 @@
     };
     document.dispatchEvent(new Event('wpd-dom-viewport-loaded'));
 }());(function() {
+    // Prevent duplicate loading
+    if ( typeof WPD.dom.fn.ajax != "undefined" ) {
+        return false;	// Terminate
+    }
     WPD.dom.fn.ajax = function(args) {
         let defaults = {
             'url': '',
@@ -1204,12 +1282,27 @@ window.WPD.Base64 = {
     WPD.Hooks = WPD.Hooks || {};
     let Hooks = WPD.Hooks;
     Hooks.filters = Hooks.filters || {};
+    /**
+     * Adds a callback function to a specific programmatically triggered tag (hook)
+     *
+     * @param tag - the hook name
+     * @param callback - the callback function variable name
+     * @param priority - (optional) default=10
+     * @param scope - (optional) function scope. When a function is executed within an object scope, the object variable should be passed.
+     */
     Hooks.addFilter = function( tag, callback, priority, scope ) {
         priority = typeof priority === "undefined" ? 10 : priority;
         scope = typeof scope === "undefined" ? null : scope;
         Hooks.filters[ tag ] = Hooks.filters[ tag ] || [];
         Hooks.filters[ tag ].push( { priority: priority, scope: scope, callback: callback } );
     }
+
+    /**
+     * Removes a callback function from a hook
+     *
+     * @param tag - the hook name
+     * @param callback - the callback function variable
+     */
     Hooks.removeFilter = function( tag, callback ) {
         if ( typeof Hooks.filters[ tag ] != 'undefined' ) {
             if ( typeof callback == "undefined" ) {
@@ -1238,6 +1331,18 @@ window.WPD.Base64 = {
             args.splice(0, 2);
             filters.forEach( function( hooks ) {
                 hooks.forEach( function( obj ) {
+                    /**
+                     * WARNING!
+                     * If, this function is called with a referanced parameter like OBJECT or ARRAY argument
+                     * as the first argument - then the callback function MUST return that value, otherwise
+                     * it is overwritten with NULL!
+                     * Ex.:
+                     * Hooks.applyFilters('my_filter', object);
+                     * Hooks.addFilter('my_filter', function(obj){
+                     *     do things..
+                     *     return obj; <--- IMPORTANT IN EVERY CASE
+                     * });
+                     */
                     value = obj.callback.apply( obj.scope, [value].concat(args) );
                 } );
             } );
@@ -1518,71 +1623,93 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
     };
 
     window.ASP.initialized = false;
-    window.ASP.initializeById = function (id, ignoreViewport) {
-        let selector = ".asp_init_data";
-        ignoreViewport = typeof ignoreViewport == 'undefined' ? false : ignoreViewport;
-        if (typeof id !== 'undefined' && typeof id != 'object')
-            selector = "div[id*=asp_init_id_" + id + "]";
-
-        /**
-         * Getting around inline script declarations with this solution.
-         * So these new, invisible divs contains a JSON object with the parameters.
-         * Parse all of them and do the declaration.
-         */
+    window.ASP.initializeSearchByID = function (id) {
+        let instances = ASP.getInstances();
+        if (typeof id !== 'undefined' && typeof id != 'object' ) {
+            if ( typeof instances[id] !== 'undefined' ) {
+                let ni = [];
+                ni[id] = instances[id];
+                instances = ni;
+            } else {
+                return false;
+            }
+        }
         let initialized = 0;
-        $(selector).forEach(function (el) {
+        instances.forEach(function (data, i) {
             // noinspection JSUnusedAssignment
-            let $asp = $(el).closest('.asp_w_container').find('.asp_m');
-            // $asp.length == 0 -> when fixed compact layout mode is enabled
-            if ( $asp.length == 0 || typeof $asp.get(0).hasAsp != 'undefined') {
+            $('.asp_m_' + i).forEach(function(el){
+                let $el = $(el);
+                if ( typeof $el.get(0).hasAsp != 'undefined') {
+                    ++initialized;
+                    return true;
+                }
+                el.hasAsp = true;
                 ++initialized;
-                return true;
-            }
-
-            if (!ignoreViewport && !$asp.inViewPort(-100)) {
-                return true;
-            }
-
-            let jsonData = $(el).data("aspdata");
-            if (typeof jsonData === "undefined") return true;   // Do not return false, it breaks the loop!
-
-            jsonData = WPD.Base64.decode(jsonData);
-            if (typeof jsonData === "undefined" || jsonData == "") return true; // Do not return false, it breaks the loop!
-
-            let args = JSON.parse(jsonData);
-            $asp.get(0).hasAsp = true;
-            ++initialized;
-            return $asp.ajaxsearchpro(args);
+                return $el.ajaxsearchpro(data);
+            });
         });
+    }
 
-        if ($(selector).length == initialized) {
-            document.removeEventListener('scroll', ASP.initializeById);
-            document.removeEventListener('resize', ASP.initializeById);
+    window.ASP.getInstances = function() {
+        if ( typeof window.ASP_INSTANCES !== 'undefined' ) {
+            return window.ASP_INSTANCES;
+        } else {
+            let instances = [];
+            $('.asp_init_data').forEach(function (el) {
+                if (typeof el.dataset['aspdata'] === "undefined") return true;   // Do not return false, it breaks the loop!
+                let data = WPD.Base64.decode(el.dataset['aspdata']);
+                if (typeof data === "undefined" || data == "") return true;
+
+                instances[el.dataset['aspId']] = JSON.parse(data);
+            });
+            return instances;
         }
     }
 
 // Call this function if you need to initialize an instance that is printed after an AJAX call
 // Calling without an argument initializes all instances found.
     window.ASP.initialize = function (id) {
-        // this here is either window.ASP or window._ASP
-        let _this = this;
-
         // Some weird ajax loader problem prevention
-        if (typeof _this.version == 'undefined')
+        if (typeof ASP.version == 'undefined')
             return false;
 
-        // noinspection JSUnresolvedVariable
-        if ( ASP.script_async_load ) {
-            document.addEventListener('scroll', ASP.initializeById, {passive: true});
-            document.addEventListener('resize', ASP.initializeById, {passive: true});
-            ASP.initializeById(id);
-            setTimeout(function () {
-                ASP.initializeById(id, true);
-            }, 4000);
+        if( !!window.IntersectionObserver ){
+            if ( ASP.script_async_load || ASP.init_only_in_viewport ) {
+                let searches = document.querySelectorAll('.asp_w_container');
+                if ( searches.length ) {
+                    let observer = new IntersectionObserver(function(entries){
+                        entries.forEach(function(entry){
+                            if ( entry.isIntersecting ) {
+                                ASP.initializeSearchByID(entry.target.dataset.id);
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    });
+                    searches.forEach(function(search){
+                        observer.observe(search);
+                    });
+                }
+                ASP.getInstances().forEach(function(inst, id){
+                    if ( inst.compact.enabled == 1 && inst.compact.position == 'fixed' ) {
+                        ASP.initializeSearchByID(id);
+                    }
+                });
+            } else {
+                ASP.initializeSearchByID(id);
+            }
         } else {
-            ASP.initializeById(id, true);
+            ASP.initializeSearchByID(id);
         }
 
+        ASP.initializeMutateDetector();
+        ASP.initializeHighlight();
+        ASP.initializeOtherEvents();
+
+        ASP.initialized = true;
+    };
+
+    window.ASP.initializeHighlight = function() {
+        let _this = this;
         if (_this.highlight.enabled) {
             let data = localStorage.getItem('asp_phrase_highlight');
             localStorage.removeItem('asp_phrase_highlight');
@@ -1619,46 +1746,10 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 });
             }
         }
-
-        _this.initialized = true;
     };
 
-    window.ASP.ready = function () {
-        let _this = this,
-            $body = $('body'),
-            t, tt, ttt, ts;
-
-        _this.initialize();
-
-        // DOM tree modification detection to re-initialize automatically if enabled
-        // noinspection JSUnresolvedVariable
-        if (typeof ASP.detect_ajax != "undefined" && ASP.detect_ajax == 1) {
-            let observer = new MutationObserver(function() {
-                clearTimeout(t);
-                t = setTimeout(function () {
-                    _this.initialize();
-                }, 500);
-            });
-            function addObserverIfDesiredNodeAvailable() {
-                let db = document.querySelector("body");
-                if( !db ) {
-                    //The node we need does not exist yet.
-                    //Wait 500ms and try again
-                    window.setTimeout(addObserverIfDesiredNodeAvailable,500);
-                    return;
-                }
-                observer.observe(db, {subtree: true, childList: true});
-            }
-            addObserverIfDesiredNodeAvailable();
-        }
-
-        $(window).on('resize', function () {
-            clearTimeout(tt);
-            tt = setTimeout(function () {
-                _this.initializeById();
-            }, 200);
-        });
-
+    window.ASP.initializeOtherEvents = function() {
+        let ttt, ts, $body = $('body'), _this = this;
         // Known slide-out and other type of menus to initialize on click
         ts = '#menu-item-search, .fa-search, .fa, .fas';
         // Avada theme
@@ -1687,7 +1778,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
         $body.on('click touchend', ts, function () {
             clearTimeout(ttt);
             ttt = setTimeout(function () {
-                _this.initializeById({}, true);
+                _this.initializeSearchByID();
             }, 300);
         });
 
@@ -1695,9 +1786,33 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
         if ( typeof jQuery != 'undefined' ) {
             jQuery(document).on('elementor/popup/show', function(){
                 setTimeout(function () {
-                    _this.initializeById({}, true);
+                    _this.initializeSearchByID();
                 }, 10);
             });
+        }
+    };
+
+    window.ASP.initializeMutateDetector = function() {
+        let t;
+        if ( typeof ASP.detect_ajax != "undefined" && ASP.detect_ajax == 1 ) {
+            let o = new MutationObserver(function() {
+                clearTimeout(t);
+                t = setTimeout(function () {
+                    ASP.initializeSearchByID();
+                }, 500);
+            });
+            o.observe(document.querySelector("body"), {subtree: true, childList: true});
+        }
+    };
+
+    window.ASP.ready = function () {
+        let _this = this;
+
+        if (document.readyState === "complete" || document.readyState === "loaded"  || document.readyState === "interactive") {
+            // document is already ready to go
+            _this.initialize();
+        } else {
+            $(document).on('DOMContentLoaded', _this.initialize);
         }
     };
 
@@ -1729,15 +1844,10 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
         }
     };
 
-    // noinspection JSUnresolvedVariable
-    if (
-        !window.ASP.css_async ||
-        typeof window.ASP.css_loaded != 'undefined' // CSS loader finished, but this script was not ready yet
-    ) {
-        window.WPD.intervalUntilExecute(window.ASP.init, function() {
-            return typeof window.ASP.version != 'undefined' && $.fn.ajaxsearchpro != 'undefined'
-        });
-    }
+
+    window.WPD.intervalUntilExecute(window.ASP.init, function() {
+        return typeof window.ASP.version != 'undefined' && $.fn.ajaxsearchpro != 'undefined'
+    });
 };
 // Run on document ready
 (function() {

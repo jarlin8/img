@@ -61,6 +61,8 @@ include('class/wd_cf_search_callback.class.php');
 include('class/wd_cpt_select.class.php');
 include('class/wd_draggable_fields.class.php');
 include('class/wd_image_radio.class.php');
+include('class/wd_mime_select.class.php');
+include('class/wd_ms_license_activator.class.php');
 include('class/wd_post_type_sortable.class.php');
 include('class/wd_taxterm_search_callback.class.php');
 include('class/wd_user_select.class.php');
@@ -108,8 +110,12 @@ if (!function_exists("admin_scriptsV05")) {
         wp_enqueue_script('jquery-ui-draggable', false, array('jquery-ui-core'), false, true);
         wp_enqueue_script('jquery-ui-datepicker', false, array('jquery-ui-core'), false, true);
 
-		wp_register_script('wd-conditionals', ASP_URL_NP . 'backend/settings/assets/wd_core/js/conditionals.js', array('jquery'), $media_query, true);
+		wp_register_script('wd-conditionals', ASP_URL_NP . 'backend/settings/assets/wd_core/js/jquery.conditionals.js', array('jquery'), $media_query, true);
 		wp_enqueue_script('wd-conditionals');
+
+		wp_enqueue_script('asp-backend-jquery-select2', ASP_URL_NP . 'backend/settings/assets/select2/js/select2.min.js', array(
+			'jquery'
+		), $media_query, true);
 
         wp_register_script('wpdreams-types', ASP_URL_NP . 'backend/settings/assets/types.js',
             array('jquery', 'jquery-ui-sortable', 'farbtastic', 'jquery-ui-datepicker', 'wd-conditionals'), $media_query, true
@@ -150,6 +156,8 @@ if (!function_exists("admin_stylesV05")) {
     function admin_stylesV05() {
         $media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_option("asp_media_query", "defn");
 
+		wp_register_style('asp-backend-jquery-select2', ASP_URL_NP . 'backend/settings/assets/select2/css/select2.min.css', false, $media_query);
+		wp_enqueue_style('asp-backend-jquery-select2');
         wp_register_style('wpdreams-style', ASP_URL_NP . 'backend/settings/assets/style.css', array('wpdreams-tabs'), $media_query);
         wp_enqueue_style('wpdreams-style');
         wp_register_style('wpdreams-style-hc', ASP_URL_NP . 'backend/settings/assets/style-hc.css', array('wpdreams-tabs'), $media_query);

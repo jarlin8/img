@@ -77,6 +77,7 @@ if (isset($_POST, $_POST['asp_analytics'], $_POST['submit'], $_POST['asp_analyti
         );
         update_option('asp_analytics', $values);
         asp_parse_options();
+		asp_generate_the_css();
         $action_msg = "<div class='infoMsg'><strong>" . __('Analytics settings saved!', 'ajax-search-pro') . '</strong> (' . date("Y-m-d H:i:s") . ")</div>";
     } else {
         $action_msg = "<div class='errorMsg'><strong>".  __('<strong>ERROR Saving:</strong> Invalid NONCE, please try again!', 'ajax-search-pro') . '</strong> (' . date("Y-m-d H:i:s") . ")</div>";
@@ -89,16 +90,7 @@ $ana_options = wd_asp()->o['asp_analytics'];
 
 <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/options_search.css?v='.ASP_CURR_VER; ?>" />
 <div id='wpdreams' class='asp-be asp-be-analytics wpdreams wrap<?php echo isset($_COOKIE['asp-accessibility']) ? ' wd-accessible' : ''; ?>'>
-	<?php if ( wd_asp()->updates->needsUpdate() ): ?>
-        <p class='infoMsgBox'>
-            <?php echo sprintf( __('Version <strong>%s</strong> is available.', 'ajax-search-pro'),
-                wd_asp()->updates->getVersionString() ); ?>
-            <?php echo __('Download the new version from Codecanyon.', 'ajax-search-pro'); ?>
-            <a target="_blank" href="https://documentation.ajaxsearchpro.com/update_notes.html">
-                <?php echo __('How to update?', 'ajax-search-pro'); ?>
-            </a>
-        </p>
-	<?php endif; ?>
+	<?php if ( wd_asp()->updates->needsUpdate() ) { wd_asp()->updates->printUpdateMessage(); } ?>
 
     <?php if ( $_comp->has_errors() ): ?>
         <div class="wpdreams-box errorbox">

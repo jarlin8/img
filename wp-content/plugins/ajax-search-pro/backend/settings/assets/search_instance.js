@@ -21,12 +21,12 @@ jQuery(function($){
     }
 
     // Coditional rules via attributes
-    WD_Helpers.Conditionals.init('div[tabid=101]');
-    WD_Helpers.Conditionals.init('div[tabid=105]');
-    WD_Helpers.Conditionals.init('div[tabid=109]');
-    WD_Helpers.Conditionals.init('div[tabid=108]');
-    WD_Helpers.Conditionals.init('div[tabid=102]');
-    WD_Helpers.Conditionals.init('div[tabid=404]');
+    WPD.Conditionals.init('div[tabid=101]');
+    WPD.Conditionals.init('div[tabid=105]');
+    WPD.Conditionals.init('div[tabid=109]');
+    WPD.Conditionals.init('div[tabid=108]');
+    WPD.Conditionals.init('div[tabid=102]');
+    WPD.Conditionals.init('div[tabid=404]');
 
     // --- Safety check on max_input_vars
     if ( $('#asp_options_serialized').length > 0 ) {

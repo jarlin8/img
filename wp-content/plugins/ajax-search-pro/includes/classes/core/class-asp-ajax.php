@@ -78,6 +78,11 @@ if ( !class_exists("WD_ASP_Ajax") ) {
                 "priv"    => true,
                 "nopriv"  => false
             ),
+			"asp_media_service" => array(
+				"handler" => "MediaService",
+				"priv"    => true,
+				"nopriv"  => false
+			),
             'asp_maintenance_admin_ajax' => array(
                 "handler" => 'Maintenance',
                 "priv"    => true,

@@ -16,7 +16,7 @@
     display: none;
     min-width: 350px;
     min-height: 100px;
-    max-width: 480px;
+    max-width: 540px;
     background: white;
     position: fixed;
     left: 50%;
@@ -27,6 +27,7 @@
     transition: opacity 0.15s linear;
     border-radius: 2px;
     box-shadow: 0 2px 44px rgba(0, 0, 0, 0.46);
+    font-size: 15px;
 }
 
 #wpd_modal, #wpd_modal>div {
@@ -101,7 +102,7 @@
     background: rgba(0, 0, 0, 0) linear-gradient(rgb(27, 150, 208) 5%, rgb(21, 148, 188) 100%) repeat scroll 0% 0% / auto padding-box border-box;
     border: 0px none rgb(255, 255, 255);
     border-radius: 3px;
-    font: normal normal normal normal 13px / 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font: normal normal normal normal 15px / 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     margin: 0 0 0 24px;
     outline: rgb(255, 255, 255) none 0px;
     padding: 12px 20px;

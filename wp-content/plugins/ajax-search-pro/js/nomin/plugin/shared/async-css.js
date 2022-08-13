@@ -105,15 +105,6 @@
             }
             last.onload = function () {
                 document.head.insertAdjacentHTML("beforeend", '<style>body .wpdreams_asp_sc{display: block; max-height: none; overflow: visible;}</style>');
-                if (typeof window.ASP.init != 'undefined') {
-                    window.WPD.intervalUntilExecute(window.ASP.init,
-                        function() {
-                            return typeof window.ASP.version != 'undefined' &&
-                            typeof WPD.dom != 'undefined' &&
-                            WPD.dom.fn.ajaxsearchpro != 'undefined'
-                        }
-                    );
-                }
                 window.ASP.css_loaded = true;
             };
         }

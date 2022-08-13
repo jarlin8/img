@@ -77,6 +77,7 @@ if (!class_exists("WD_ASP_IndexTable_Handler")) {
                 'index_msword_content' => $options['it_index_msword_content'],
                 'index_msexcel_content' => $options['it_index_msexcel_content'],
                 'index_msppt_content' => $options['it_index_msppt_content'],
+                'media_service_send_file' => $options['it_media_service_send_file'],
 
                 'post_statuses' => $options['it_post_statuses'],
                 'post_password_protected' => $options['it_post_password_protected'],
@@ -91,6 +92,7 @@ if (!class_exists("WD_ASP_IndexTable_Handler")) {
                 'use_stopwords' => $options['it_use_stopwords'],
                 'stopwords' => $options['it_stopwords'],
                 'min_word_length' => $options['it_min_word_length'],
+                'extract_gutenberg_blocks' => $options['it_extract_gutenberg_blocks'],
                 'extract_shortcodes' => $options['it_extract_shortcodes'],
                 'exclude_shortcodes' => $options['it_exclude_shortcodes'],
                 'synonyms_as_keywords' => $options['it_synonyms_as_keywords']

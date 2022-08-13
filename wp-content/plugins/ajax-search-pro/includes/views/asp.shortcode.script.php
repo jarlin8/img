@@ -44,6 +44,7 @@ defined('ABSPATH') or die("You can't access this file directly.");
     "trigger": {
         "delay": <?php echo $style['trigger_delay']; ?>,
         "autocomplete_delay": <?php echo $style['autocomplete_trigger_delay']; ?>,
+        "update_href": <?php echo $style['trigger_update_href']; ?>,
         "facet": <?php echo $style['trigger_on_facet']; ?>,
         "type": <?php echo $style['triggerontype'] == 1 ? 1 : 0; ?>,
         "click": "<?php echo $style['click_action']; ?>",
@@ -63,6 +64,7 @@ defined('ABSPATH') or die("You can't access this file directly.");
     "settingsHideOnRes": <?php echo $style['fss_hide_on_results']; ?>,
     "prescontainerheight": "<?php echo $style['prescontainerheight']; ?>",
     "closeOnDocClick": <?php echo $style['close_on_document_click']; ?>,
+    "focusOnPageload": <?php echo $style['focus_on_pageload']; ?>,
     "isotopic": {
         "itemWidth": "<?php echo is_numeric($style['i_item_width']) ? $style['i_item_width'].'px' : $style['i_item_width']; ?>",
         "itemWidthTablet": "<?php echo is_numeric($style['i_item_width_tablet']) ? $style['i_item_width_tablet'].'px' : $style['i_item_width_tablet']; ?>",
@@ -180,7 +182,10 @@ defined('ABSPATH') or die("You can't access this file directly.");
     "preventBodyScroll": <?php echo wd_asp()->o['asp_compatibility']['js_prevent_body_scroll']; ?>,
     "statistics": <?php echo get_option('asp_stat', 0) == 0 ? 0 : 1; ?>
 }
-<?php $_asp_script_out = ob_get_clean(); ?>
+<?php
+$_asp_script_out = ob_get_clean();
+wd_asp()->instances->add_script_data($real_id, json_encode(json_decode($_asp_script_out)));
+?>
 <div class="asp_init_data"
 	 style="display:none !important;"
 	 id="asp_init_id_<?php echo $id; ?>"
