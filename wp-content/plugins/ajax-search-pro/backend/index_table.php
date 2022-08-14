@@ -313,7 +313,7 @@ $_comp = wpdreamsCompatibility::Instance();
             </div>
             <div tabid="4">
                 <fieldset>
-                    <legend>Pool sizes</legend>
+                    <legend><?php echo __('Pool sizes', 'ajax-search-pro'); ?></legend>
                     <div class="errorMsg">
                         <?php echo __('The pool size greatly affects the search performance in bigger databases (50k+ keywords). While high pool values may give more accurate results, lower values cause much better performance.', 'ajax-search-pro'); ?>
                     </div>
@@ -326,7 +326,7 @@ $_comp = wpdreamsCompatibility::Instance();
                         </p>
                     </div>
                     <div class="item it_pool_size">
-                        <?php $o = new wpdreamsTextSmall("it_pool_size_one", "Pool size for keywords of one character long (recommended: <strong>".$pool_sizes['one']."</strong>)",
+                        <?php $o = new wpdreamsTextSmall("it_pool_size_one", __("Pool size for keywords of one character long (recommended:", 'ajax-search-pro') . "<strong>".$pool_sizes['one']."</strong>)",
                             $it_options['it_pool_size_one']
                         ); ?>
                         <p class="descMsg">
@@ -334,7 +334,7 @@ $_comp = wpdreamsCompatibility::Instance();
                         </p>
                     </div>
                     <div class="item it_pool_size">
-                        <?php $o = new wpdreamsTextSmall("it_pool_size_two", "Pool size for keywords of two characters long (recommended: <strong>".$pool_sizes['two']."</strong>)",
+                        <?php $o = new wpdreamsTextSmall("it_pool_size_two", __("Pool size for keywords of two characters long (recommended:", 'ajax-search-pro') . " <strong>".$pool_sizes['two']."</strong>)",
                             $it_options['it_pool_size_two']
                         ); ?>
                         <p class="descMsg">
@@ -342,7 +342,7 @@ $_comp = wpdreamsCompatibility::Instance();
                         </p>
                     </div>
                     <div class="item it_pool_size">
-                        <?php $o = new wpdreamsTextSmall("it_pool_size_three", "Pool size for keywords of three characters long (recommended: <strong>".$pool_sizes['three']."</strong>)",
+                        <?php $o = new wpdreamsTextSmall("it_pool_size_three", __("Pool size for keywords of three characters long (recommended:", 'ajax-search-pro') . " <strong>".$pool_sizes['three']."</strong>)",
                             $it_options['it_pool_size_three']
                         ); ?>
                         <p class="descMsg">
@@ -350,7 +350,7 @@ $_comp = wpdreamsCompatibility::Instance();
                         </p>
                     </div>
                     <div class="item it_pool_size">
-                        <?php $o = new wpdreamsTextSmall("it_pool_size_rest", "Pool size for keywords of four and more characters long (recommended: <strong>".$pool_sizes['rest']."</strong>)",
+                        <?php $o = new wpdreamsTextSmall("it_pool_size_rest", __("Pool size for keywords of four and more characters long (recommended:", 'ajax-search-pro') . " <strong>".$pool_sizes['rest']."</strong>)",
                             $it_options['it_pool_size_rest']
                         ); ?>
                         <p class="descMsg">
@@ -361,7 +361,7 @@ $_comp = wpdreamsCompatibility::Instance();
             </div>
             <div tabid="3">
                 <div class="item">
-                    <?php $o = new wpdreamsYesNo("it_index_on_save", "Index new posts upon creation?",
+                    <?php $o = new wpdreamsYesNo("it_index_on_save", __("Index new posts upon creation?", 'ajax-search-pro'),
                         $it_options['it_index_on_save']
                     ); ?>
                     <p class="descMsg">
@@ -369,7 +369,7 @@ $_comp = wpdreamsCompatibility::Instance();
                     </p>
                 </div>
 				<div class="item">
-                    <?php $o = new wpdreamsYesNo("it_index_on_update_post_meta", "Refresh the index, whenever post meta (custom fields) are added or updated?",
+                    <?php $o = new wpdreamsYesNo("it_index_on_update_post_meta", __("Refresh the index, whenever post meta (custom fields) are added or updated?", 'ajax-search-pro'),
                         $it_options['it_index_on_update_post_meta']
                     ); ?>
                     <p class="descMsg">
@@ -377,7 +377,7 @@ $_comp = wpdreamsCompatibility::Instance();
                     </p>
                 </div>
                 <div class="item">
-                    <?php $o = new wpdreamsYesNo("it_cron_enable", "Use wp_cron() to extend the index table automatically?",
+                    <?php $o = new wpdreamsYesNo("it_cron_enable", __("Use wp_cron() to extend the index table automatically?", 'ajax-search-pro'),
                         $it_options['it_cron_enable']
                     ); ?>
                     <p class="descMsg">
@@ -406,7 +406,7 @@ $_comp = wpdreamsCompatibility::Instance();
                 </div>
                 <div class="item">
                     <fieldset class="asp-last-execution-info">
-                        <legend>Last execution info</legend>
+                        <legend><?php echo __('Last execution info', 'ajax-search-pro'); ?></legend>
                         <ul style="float:right;text-align:left;width:50%;">
                             <li>
                                 <b><?php echo __('Last exeuction time:', 'ajax-search-pro'); ?> </b><?php echo $asp_cron_data['last_run'] != "" ? date("H:i:s, F j. Y", $asp_cron_data['last_run']) : "No information."; ?>
@@ -523,7 +523,7 @@ $_comp = wpdreamsCompatibility::Instance();
 
                         <p class="descMsg">
                             <?php echo sprintf( __('To read more about the index table, please read the <a href="%s">documentation chapter about Index table</a> usage.', 'ajax-search-pro'),
-                                'https://documentation.ajaxsearchpro.com/index_table.html' ); ?>
+                                'https://documentation.ajaxsearchpro.com/index-table' ); ?>
                         </p>
                         <?php if (is_multisite()): ?>
                             <p class="descMsg" style="color:#666; ">
@@ -578,7 +578,7 @@ $_comp = wpdreamsCompatibility::Instance();
         </div>
 
         <div id="asp-options-search">
-            <a class="wd-accessible-switch" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
+            <a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
                     __('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
                     __('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a>
         </div>

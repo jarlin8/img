@@ -1476,12 +1476,19 @@ if (!class_exists("ASP_Helpers")) {
                     if ( count($sd['exclude_cpt']['parent_ids']) > 0 )
                         $args['_exclude_page_parent_child'] = implode(',', $sd['exclude_cpt']['parent_ids']);
                 }
-                if ( isset( $sd['customtypes'] ) && is_array($sd['customtypes']) && count( $sd['customtypes'] ) > 0 )
-                    $args['post_type'] = array_merge( $args['post_type'], $sd['customtypes'] );
+                if ( isset( $sd['customtypes'] ) && is_array($sd['customtypes']) && count( $sd['customtypes'] ) > 0 ) {
+					$args['post_type'] = array_merge($args['post_type'], $sd['customtypes']);
+				}
             } else {
                 if ( isset( $o['customset'] ) && is_array($o['customset']) && count( $o['customset'] ) > 0 ) {
                     $o['customset'] = self::escape( $o['customset'], true, ' ;:.,(){}@[]!?&|#^=' );
-                    $args['post_type'] = array_merge($args['post_type'], $o['customset']);
+					if ( in_array(-1, $o['customset']) ) {
+						if ( isset( $sd['customtypes'] ) && is_array($sd['customtypes']) && count( $sd['customtypes'] ) > 0 ) {
+							$args['post_type'] = $sd['customtypes'];
+						}
+					} else {
+						$args['post_type'] = array_merge($args['post_type'], $o['customset']);
+					}
                 }
                 foreach ( $args['post_type'] as $kk => $vv) {
                     if ( $vv == "page" && count($sd['exclude_cpt']['parent_ids']) > 0 ) {
@@ -1491,7 +1498,6 @@ if (!class_exists("ASP_Helpers")) {
                     }
                 }
             }
-
             /*--------------------- OTHER FILTER RELATED --------------------*/
             $args['filters_changed'] = isset($o['filters_changed']) ? $o['filters_changed'] == 1 : $args['filters_changed'];
             $args['filters_initial'] = isset($o['filters_initial']) ? $o['filters_initial'] == 1 : $args['filters_initial'];

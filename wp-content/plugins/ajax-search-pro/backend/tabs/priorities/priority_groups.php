@@ -61,7 +61,7 @@ if ( isset($_POST['priority_groups']) ) {
                     <?php echo __('Apply to', 'ajax-search-pro'); ?>
                 </label>
                 <select name="pg_instance" id="pg_instance">
-                    <option value="0">Every search instance</option>
+                    <option value="0"><?php _e('Every search instance', 'ajax-search-pro'); ?></option>
                     <?php foreach( wd_asp()->instances->getWithoutData() as $search_instance ): ?>
                         <option value="<?php echo $search_instance['id']; ?>"><?php echo esc_html($search_instance['name']); ?></option>
                     <?php endforeach; ?>

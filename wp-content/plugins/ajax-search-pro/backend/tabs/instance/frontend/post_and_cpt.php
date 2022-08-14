@@ -16,17 +16,19 @@
     <?php
     $o = new wpdreamsCustomSelect("cpt_display_mode", __('Filter display mode', 'ajax-search-pro'), array(
         "selects" => array(
-            array("value" => "checkboxes", "option" => "Checkboxes"),
-            array("value" => "dropdown", "option" => "Drop-down"),
-            array("value" => "radio", "option" => "Radio buttons")
+            array("value" => "checkboxes", "option" => __("Checkboxes", 'ajax-search-pro')),
+            array("value" => "dropdown", "option" => __("Drop-down", 'ajax-search-pro')),
+            array("value" => "radio", "option" => __("Radio buttons", 'ajax-search-pro'))
         ),
         "value" => $sd['cpt_display_mode']));
     $params[$o->getName()] = $o->getData();
     $o = new wpdreamsCustomSelect("cpt_filter_default", __('default selected', 'ajax-search-pro'), array(
-        "selects" => get_post_types(array(
-            "public" => true,
-            "_builtin" => false
-        ), "names", "OR"),
+        "selects" => array_merge( array( array("value" => '-1', "option" => 'Select All/Any Option') ), array_values(array_map(function($_pt){
+				return array("value" => $_pt, "option" => $_pt);
+			}, get_post_types(array(
+				"public" => true,
+				"_builtin" => false
+			), "names", "OR")))),
         "value" => $sd['cpt_filter_default']));
     $params[$o->getName()] = $o->getData();
     ?>

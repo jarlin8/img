@@ -290,28 +290,28 @@
         },
         destroy: function () {
             let $this = this;
-            Object.keys($this.n).forEach(function(k){
-               $this.n[k].off();
+            Object.keys($this.nodes).forEach(function(k){
+                $this.nodes[k].off?.();
             });
             if ( typeof $this.n('searchsettings').get(0).referenced !== 'undefined' ) {
                 --$this.n('searchsettings').get(0).referenced;
                 if ( $this.n('searchsettings').get(0).referenced < 0 ) {
-                    $this.nodes.searchsettings.remove();
+                    $this.n('searchsettings').remove();
                 }
             } else {
-                $this.nodes.searchsettings.remove();
+                $this.n('searchsettings').remove();
             }
             if ( typeof $this.n('resultsDiv').get(0).referenced !== 'undefined' ) {
                 --$this.n('resultsDiv').get(0).referenced;
                 if ( $this.n('resultsDiv').get(0).referenced < 0 ) {
-                    $this.nodes.resultsDiv.remove();
+                    $this.n('resultsDiv').remove?.();
                 }
             } else {
-                $this.nodes.resultsDiv.remove();
+                $this.n('resultsDiv').remove?.();
             }
-            $this.nodes.trythis.remove();
-            $this.nodes.search.remove();
-            $this.nodes.container.remove();
+            $this.n('trythis').remove?.();
+            $this.n('search').remove?.();
+            $this.n('container').remove?.();
             $this.documentEventHandlers.forEach(function(h){
                 $(h.node).off(h.event, h.handler);
             });
@@ -1596,8 +1596,12 @@
                         'z-index': 2147483647
                     });
                 }
-                if ( !$this.att('blocking') )
-                    $this.n('searchsettings').css('position', 'fixed');
+                if ( !$this.att('blocking') ) {
+                    $this.n('searchsettings').css({
+                        'position':'fixed',
+                        'z-index': 2147483647
+                    });
+                }
             } else {
                 if ( $this.n('resultsDiv').css('position') == 'fixed' )
                     $this.n('resultsDiv').css('position', 'absolute');
@@ -1896,7 +1900,9 @@
                 $this.n('text').off('mousedown touchstart keydown', initTriggers);
                 if ( !initialized ) {
                     $this._initFocusInput();
-                    $this._initSearchInput();
+                    if ( $this.o.trigger.type ) {
+                        $this._initSearchInput();
+                    }
                     $this._initEnterEvent();
                     $this._initFormEvent();
                     $this.initAutocompleteEvent?.();
@@ -2070,6 +2076,68 @@
                     $this.search();
                 }
             });
+        }
+    }
+    $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
+})(WPD.dom);(function($){
+    "use strict";
+    let functions = {
+        initNavigationEvents: function () {
+            let $this = this;
+
+            let handler = function (e) {
+                let keycode =  e.keyCode || e.which;
+                // noinspection JSUnresolvedVariable
+                if (
+                    $('.item', $this.n('resultsDiv')).length > 0 && $this.n('resultsDiv').css('display') != 'none' &&
+                    $this.o.resultstype == "vertical"
+                ) {
+                    if ( keycode == 40 || keycode == 38 ) {
+                        let $hovered = $this.n('resultsDiv').find('.item.hovered');
+                        $this.n('text').trigger('blur');
+                        if ( $hovered.length == 0 ) {
+                            $this.n('resultsDiv').find('.item').first().addClass('hovered');
+                        } else {
+                            if (keycode == 40) {
+                                if ( $hovered.next('.item').length == 0 ) {
+                                    $this.n('resultsDiv').find('.item').removeClass('hovered').first().addClass('hovered');
+                                } else {
+                                    $hovered.removeClass('hovered').next('.item').addClass('hovered');
+                                }
+                            }
+                            if (keycode == 38) {
+                                if ( $hovered.prev('.item').length == 0 ) {
+                                    $this.n('resultsDiv').find('.item').removeClass('hovered').last().addClass('hovered');
+                                } else {
+                                    $hovered.removeClass('hovered').prev('.item').addClass('hovered');
+                                }
+                            }
+                        }
+                        e.stopPropagation();
+                        e.preventDefault();
+                        if ( !$this.n('resultsDiv').find('.resdrg .item.hovered').inViewPort(50, $this.n('resultsDiv').get(0)) ) {
+                            let n = $this.n('resultsDiv').find('.resdrg .item.hovered').get(0);
+                            if ( n != null && typeof n.scrollIntoView != "undefined" ) {
+                                n.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+                            }
+                        }
+                    }
+
+                    // Trigger click on return key
+                    if ( keycode == 13 && $('.item.hovered', $this.n('resultsDiv')).length > 0 ) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        $('.item.hovered a.asp_res_url', $this.n('resultsDiv')).get(0).click();
+                    }
+
+                }
+            };
+            $this.documentEventHandlers.push({
+                'node': document,
+                'event': 'keydown',
+                'handler': handler
+            });
+            $(document).on('keydown', handler);
         }
     }
     $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
@@ -2294,17 +2362,6 @@
                     ktype = e.type;
 
                 if ( $(e.target).closest('.asp_w').length == 0 ) {
-                    if (
-                        $this.att('blocking') == false &&
-                        !$this.dragging &&
-                        $(e.target).closest('.ui-datepicker').length == 0 &&
-                        $(e.target).closest('.noUi-handle').length == 0 &&
-                        $(e.target).closest('.asp_select2').length == 0 &&
-                        $(e.target).closest('.asp_select2-container').length == 0
-                    ) {
-                        $this.hideSettings();
-                    }
-
                     $this.hideOnInvisibleBox();
 
                     // Any hints

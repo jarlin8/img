@@ -296,13 +296,13 @@
     margin-top: 4px;
 }
 
-#wpdreams.wd-accessible .wpdreamsTextSmall .wpd-txt-small-icon.wpd-txt-small-icon-desktop {
+#wpdreams.wd-accessible .wpd-txt-small-icon.wpd-txt-small-icon-desktop {
     background: url(icons/icon-desktop-white.png) no-repeat center;
 }
-#wpdreams.wd-accessible .wpdreamsTextSmall .wpd-txt-small-icon.wpd-txt-small-icon-tablet {
+#wpdreams.wd-accessible .wpd-txt-small-icon.wpd-txt-small-icon-tablet {
    background: url(icons/icon-tablet-white.png) no-repeat center;
 }
-#wpdreams.wd-accessible .wpdreamsTextSmall .wpd-txt-small-icon.wpd-txt-small-icon-phone {
+#wpdreams.wd-accessible .wpd-txt-small-icon.wpd-txt-small-icon-phone {
     background: url(icons/icon-phone-white.png) no-repeat center;
 }
 

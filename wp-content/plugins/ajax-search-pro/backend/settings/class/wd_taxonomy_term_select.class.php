@@ -178,7 +178,16 @@ if (!class_exists("wd_TaxonomyTermSelect")) {
                         <ul id="sortable<?php echo self::$_instancenumber; ?>" class="connectedSortable wd_csortable<?php echo self::$_instancenumber; ?>">
                         </ul>
                     </div>
-                    <div class="sortablecontainer"><p><?php echo __('Drag here the terms you want to', 'ajax-search-pro'); ?> <span style="font-weight: bold;" class="tts_type"><?php echo $this->e_data['op_type']; ?></span>!</p>
+                    <div class="sortablecontainer">
+						<p>
+							<?php _e('Drag here the terms you want to', 'ajax-search-pro'); ?><span style="font-weight: bold;" class="tts_type">
+							<?php if ( $this->e_data['op_type'] == 'include' ): ?>
+								<?php echo __('include', 'ajax-search-pro'); ?>
+							<?php else: ?>
+								<?php echo __('exclude', 'ajax-search-pro'); ?>
+							<?php endif; ?>
+							</span>!
+						</p>
                         <ul id="sortable_conn<?php echo self::$_instancenumber; ?>" class="connectedSortable wd_csortable<?php echo self::$_instancenumber; ?>">
                             <?php $this->printSelectedTerms(); ?>
                         </ul>
@@ -236,8 +245,8 @@ if (!class_exists("wd_TaxonomyTermSelect")) {
                             if (is_wp_error($this->term_data))
                                 $this->term_data = array();
                         }
-                        $showmore = ($this->args['show_more_options']) ? "<br><a class='wd_tts_showmore'>+ Show more options</a>" : "";
-                        echo '<li class="ui-state-default termlevel-0"  term_id="-1" taxonomy="' . $t['taxonomy'] . '">Use all from <b>' . $t['taxonomy'] . '</b><a class="deleteIcon"></a>' . $showmore . '</li>';
+                        $showmore = ($this->args['show_more_options']) ? "<br><a class='wd_tts_showmore'>+ " . __('Show more options', 'ajax-search-pro') . "</a>" : "";
+                        echo '<li class="ui-state-default termlevel-0"  term_id="-1" taxonomy="' . $t['taxonomy'] . '">' . __('Use all from', 'ajax-search-pro')  . ' <b>' . $t['taxonomy'] . '</b><a class="deleteIcon"></a>' . $showmore . '</li>';
                     }
                 } else if ( $t['id'] == -200 && $t['taxonomy'] == 'post_format' ) {
                     $term = new stdClass();
@@ -348,7 +357,7 @@ if (!class_exists("wd_TaxonomyTermSelect")) {
             $showmore = ( $data['show_more_options'] ) ? "<br><a class='wd_tts_showmore'>+ Show more options</a>" : "";
             if ( $data['show_taxonomy_all'] )
                 echo '
-                    <li class="ui-state-default termlevel-0"  term_id="-1" taxonomy="' . $taxonomy . '">Use all from <b>'.$taxonomy.'</b><a class="deleteIcon"></a>'.$showmore.'</li>
+                    <li class="ui-state-default termlevel-0"  term_id="-1" taxonomy="' . $taxonomy . '">' . __('Use all from', 'ajax-search-pro')  . ' <b>'.$taxonomy.'</b><a class="deleteIcon"></a>'.$showmore.'</li>
                     ..or select terms..
                 ';
             if (!empty($terms) && is_array($terms)) {

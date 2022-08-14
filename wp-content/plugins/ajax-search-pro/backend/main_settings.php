@@ -58,7 +58,7 @@ $_comp = wpdreamsCompatibility::Instance();
                 <?php
                 $new_slider = new wpdreamsText("addsearch", __('Search form name:', 'ajax-search-pro'), "", array(array("func" => "wd_isEmpty", "op" => "eq", "val" => false)), "Please enter a valid form name!");
                 ?>
-                <input name="submit" type="submit" value="Add"/>
+                <input name="submit" type="submit" value="<?php esc_attr_e("Add", 'ajax-search-pro' ); ?>"/>
                 <?php if ( count( (array)get_option('asl_options', array()) ) > 0 && get_option('asl_version', 0) > 4732 ): ?>
                 <input name="import" type="submit" value="<?php echo __('Import from Ajax Search Lite', 'ajax-search-pro'); ?>">
                 <?php endif; ?>
@@ -193,15 +193,17 @@ $_comp = wpdreamsCompatibility::Instance();
                             vertical-align: middle;
                             color: #167DB9;' class="dashicons dashicons-info">
             <a href="#" style="display:block; width:24px; height: 24px; margin-top: -24px;"
-                class="tooltip-bottom" data-tooltip="<?php echo esc_attr__('This might not work with all themes. If the default theme search bar is still visible after selection, then the only way is to replace the search within the theme code.', 'ajax-search-pro'); ?>"></a>
+                class="tooltip-bottom" data-tooltip="<?php esc_attr_e('This might not work with all themes. If the default theme search bar is still visible after selection, then the only way is to replace the search within the theme code.', 'ajax-search-pro'); ?>"></a>
             </span>
-            <input name="submit" type="submit" value="Save"/>
+            <input name="submit" type="submit" value="<?php esc_attr_e("Save", 'ajax-search-pro' ); ?>"/>
         </fieldset>
         </form>
         <?php endif; ?>
     </div>
     <div id="asp-options-search">
-        <a class="wd-accessible-switch" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ? 'DISABLE ACCESSIBILITY' : 'ENABLE ACCESSIBILITY'; ?></a>
+		<a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
+				__('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
+				__('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a>
     </div>
     <div class="clear"></div>
 
@@ -223,7 +225,7 @@ $_comp = wpdreamsCompatibility::Instance();
             <div class="wpdreams-box <?php echo $extra_classes; ?>" tabindex="<?php echo $i; ?>">
                 <div class="slider-info">
                     <a href='<?php echo get_admin_url() . "admin.php?page=asp_main_settings"; ?>&asp_sid=<?php echo $search['id']; ?>'><img
-                                title="<?php esc_attr__('Click on this icon for search settings!', 'ajax-search-pro'); ?>"
+                                title="<?php esc_attr_e('Click on this icon for search settings!', 'ajax-search-pro'); ?>"
                                 src="<?php echo plugins_url('/settings/assets/icons/settings.png', __FILE__) ?>"
                                 class="settings" searchid="<?php echo $search['id']; ?>"/></a>
                     <img title="Click here if you want to delete this search!"
@@ -247,7 +249,7 @@ $_comp = wpdreamsCompatibility::Instance();
                         <input type="text" class="instance_new_name" name="instance_new_name"
                                value="<?php echo esc_attr( $search['name'] ); ?>">
                         <input type="hidden" name="instance_id" value="<?php echo $search['id']; ?>"/>
-                        <img title="<?php esc_attr__('Click here to rename this form!', 'ajax-search-pro'); ?>"
+                        <img title="<?php esc_attr_e('Click here to rename this form!', 'ajax-search-pro'); ?>"
                              src="<?php echo plugins_url('/settings/assets/icons/edit24x24.png', __FILE__) ?>"
                              class="wpd_instance_edit_icon"/>
                         <input type="hidden"
@@ -258,7 +260,7 @@ $_comp = wpdreamsCompatibility::Instance();
                     <form style="display: inline" name="instance_copy_form" class="instance_copy_form"
                           method="post">
                         <input type="hidden" name="instance_copy_id" value="<?php echo $search['id']; ?>"/>
-                        <img title="<?php esc_attr__('Click here to duplicate this form!', 'ajax-search-pro'); ?>"
+                        <img title="<?php esc_attr_e('Click here to duplicate this form!', 'ajax-search-pro'); ?>"
                              src="<?php echo plugins_url('/settings/assets/icons/duplicate18x18.png', __FILE__) ?>"
                              class="wpd_instance_edit_icon"/>
                     </form>
@@ -282,7 +284,7 @@ $_comp = wpdreamsCompatibility::Instance();
                                    id="asp_owner_nonce<?php echo '_'.$search['id']; ?>"
                                    value="<?php echo wp_create_nonce( "asp_owner_nonce" . '_' . $search['id']  ); ?>">
 
-                        <img title="<?php esc_attr__('Click here to change the owner of this form!', 'ajax-search-pro'); ?>"
+                        <img title="<?php esc_attr_e('Click here to change the owner of this form!', 'ajax-search-pro'); ?>"
                              src="<?php echo plugins_url('/settings/assets/icons/edit24x24.png', __FILE__) ?>"
                              class="wpd_owner_edit_icon"/>
                     </form>

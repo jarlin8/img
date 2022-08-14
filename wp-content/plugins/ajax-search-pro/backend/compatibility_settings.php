@@ -133,7 +133,9 @@ $_comp_errors = $_comp->get_errors();
 
     <?php if ($_comp->has_errors()): ?>
         <div class="wpdreams-box errorbox" style="float:left;width: 270px;">
-            <a class="wd-accessible-switch" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ? 'DISABLE ACCESSIBILITY' : 'ENABLE ACCESSIBILITY'; ?></a><br>
+			<a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
+					__('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
+					__('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a><br>
             <h1><?php echo __('Possible compatibility errors:', 'ajax-search-pro'); ?> <?php echo count($_comp_errors['errors']); ?></h1>
             <?php foreach($_comp_errors['errors'] as $k=>$err): ?>
                 <div>
@@ -146,7 +148,7 @@ $_comp_errors = $_comp->get_errors();
         </div>
     <?php else: ?>
         <div class="wpdreams-box errorbox" style="float:left; width: auto;">
-            <a class="wd-accessible-switch" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
+            <a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
                     __('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
                     __('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a><br>
             <p class='tick'><?php echo __('No compatibility errors found!', 'ajax-search-pro'); ?></p>

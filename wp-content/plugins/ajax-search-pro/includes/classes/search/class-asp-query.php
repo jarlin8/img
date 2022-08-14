@@ -1039,7 +1039,7 @@ if (!class_exists('ASP_Query')) {
 
 			$rca = count($ra['allpageposts']);
 			$ra['allpageposts'] = apply_filters('asp_pagepost_results', $ra['allpageposts'], $args["_id"], $args);
-			$ra['allpageposts'] = apply_filters('asp_cpt_results', $ra['allpageposts'], $args["_id"], $this);
+			$ra['allpageposts'] = apply_filters('asp_cpt_results', $ra['allpageposts'], $args["_id"], $args);
 			$rca -= count($ra['allpageposts']);
 			$results_count_adjust += $rca;
 

@@ -932,7 +932,6 @@
             pattern = "(?:,|^|\\s)" + pattern + "(?:,|$|\\s)";
         }
         let re = new RegExp(pattern, flag);
-
         function highlight(node, re, nodeName, className, excludeParents) {
             excludeParents = excludeParents == '' ? '.exhghttt' : excludeParents;
             if (node.nodeType === 3) {
@@ -2428,6 +2427,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             $this.searchAbort();
             $el.css('opacity', 0.4);
 
+            url = helpers.Hooks.applyFilters('asp/live_load/url', url, $this, selector, $el.get(0));
             helpers.Hooks.applyFilters('asp/live_load/start', url, $this, selector, $el.get(0));
 
             if (
@@ -2678,28 +2678,28 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
         },
         destroy: function () {
             let $this = this;
-            Object.keys($this.n).forEach(function(k){
-               $this.n[k].off();
+            Object.keys($this.nodes).forEach(function(k){
+                $this.nodes[k].off?.();
             });
             if ( typeof $this.n('searchsettings').get(0).referenced !== 'undefined' ) {
                 --$this.n('searchsettings').get(0).referenced;
                 if ( $this.n('searchsettings').get(0).referenced < 0 ) {
-                    $this.nodes.searchsettings.remove();
+                    $this.n('searchsettings').remove();
                 }
             } else {
-                $this.nodes.searchsettings.remove();
+                $this.n('searchsettings').remove();
             }
             if ( typeof $this.n('resultsDiv').get(0).referenced !== 'undefined' ) {
                 --$this.n('resultsDiv').get(0).referenced;
                 if ( $this.n('resultsDiv').get(0).referenced < 0 ) {
-                    $this.nodes.resultsDiv.remove();
+                    $this.n('resultsDiv').remove?.();
                 }
             } else {
-                $this.nodes.resultsDiv.remove();
+                $this.n('resultsDiv').remove?.();
             }
-            $this.nodes.trythis.remove();
-            $this.nodes.search.remove();
-            $this.nodes.container.remove();
+            $this.n('trythis').remove?.();
+            $this.n('search').remove?.();
+            $this.n('container').remove?.();
             $this.documentEventHandlers.forEach(function(h){
                 $(h.node).off(h.event, h.handler);
             });
@@ -3569,6 +3569,8 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
     , 
         showPolaroidResults: function () {
             let $this = this;
+
+            this.loadASPFonts?.();
 
             $this.n('results').addClass('photostack');
 
@@ -4641,8 +4643,12 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                         'z-index': 2147483647
                     });
                 }
-                if ( !$this.att('blocking') )
-                    $this.n('searchsettings').css('position', 'fixed');
+                if ( !$this.att('blocking') ) {
+                    $this.n('searchsettings').css({
+                        'position':'fixed',
+                        'z-index': 2147483647
+                    });
+                }
             } else {
                 if ( $this.n('resultsDiv').css('position') == 'fixed' )
                     $this.n('resultsDiv').css('position', 'absolute');
@@ -5196,7 +5202,9 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 $this.n('text').off('mousedown touchstart keydown', initTriggers);
                 if ( !initialized ) {
                     $this._initFocusInput();
-                    $this._initSearchInput();
+                    if ( $this.o.trigger.type ) {
+                        $this._initSearchInput();
+                    }
                     $this._initEnterEvent();
                     $this._initFormEvent();
                     $this.initAutocompleteEvent?.();
@@ -5779,17 +5787,6 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                     ktype = e.type;
 
                 if ( $(e.target).closest('.asp_w').length == 0 ) {
-                    if (
-                        $this.att('blocking') == false &&
-                        !$this.dragging &&
-                        $(e.target).closest('.ui-datepicker').length == 0 &&
-                        $(e.target).closest('.noUi-handle').length == 0 &&
-                        $(e.target).closest('.asp_select2').length == 0 &&
-                        $(e.target).closest('.asp_select2-container').length == 0
-                    ) {
-                        $this.hideSettings();
-                    }
-
                     $this.hideOnInvisibleBox();
 
                     // Any hints
@@ -5896,8 +5893,28 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                 }
                 $this.n('searchsettings').off('mousedown touchstart mouseover', formDataHandler);
             };
-
             $this.n('searchsettings').on('mousedown touchstart mouseover', formDataHandler);
+
+            let handler = function (e) {
+                if ( $(e.target).closest('.asp_w').length == 0 ) {
+                    if (
+                        $this.att('blocking') == false &&
+                        !$this.dragging &&
+                        $(e.target).closest('.ui-datepicker').length == 0 &&
+                        $(e.target).closest('.noUi-handle').length == 0 &&
+                        $(e.target).closest('.asp_select2').length == 0 &&
+                        $(e.target).closest('.asp_select2-container').length == 0
+                    ) {
+                        $this.hideSettings();
+                    }
+                }
+            };
+            $this.documentEventHandlers.push({
+                'node': document,
+                'event': $this.clickTouchend,
+                'handler': handler
+            });
+            $(document).on($this.clickTouchend, handler);
 
             // Note if the settings have changed
             $this.n('searchsettings').on('click', function(){
@@ -5905,9 +5922,8 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
             });
 
             $this.n('searchsettings').on($this.clickTouchend, function (e) {
-                if ( $this.o.trigger.update_href ) {
-                    $this.updateHref();
-                }
+                $this.updateHref();
+
                 /**
                  * Stop propagation on settings clicks, except the noUiSlider handler event.
                  * If noUiSlider event propagation is stopped, then the: set, end, change events does not fire properly.
@@ -6896,7 +6912,7 @@ window.ASP.api = (function() {
                             $highlighted;
                         selector = $(selector).length > 0 ? selector : 'body';
                         // noinspection JSUnresolvedVariable
-                        $(selector).highlight(data.phrase, {
+                        $(selector).highlight(data.phrase.split(' '), {
                             element: 'span',
                             className: 'asp_single_highlighted_' + data.id,
                             wordsOnly: o.whole,
@@ -7064,6 +7080,7 @@ window.ASP.api = (function() {
             helpers.Hooks.addFilter('asp/init/etc', this.fixElementorPostPagination, 10, this);
 
             helpers.Hooks.addFilter('asp/live_load/selector', this.fixSelector, 10, this);
+            helpers.Hooks.addFilter('asp/live_load/url', this.url, 10, this);
             helpers.Hooks.addFilter('asp/live_load/start', this.start, 10, this);
             helpers.Hooks.addFilter('asp/live_load/replacement_node', this.fixElementorLoadMoreResults, 10, this);
             helpers.Hooks.addFilter('asp/live_load/finished', this.finished, 10, this);
@@ -7073,6 +7090,13 @@ window.ASP.api = (function() {
                 selector += ' .elementor-widget-container';
             }
             return selector;
+        };
+        this.url = function(url, obj, selector, widget) {
+            // Remove initial pagination query argument on new search
+            if ( url.indexOf('asp_force_reset_pagination=1') >= 0 ) {
+                url = url.replace(/\?product\-page\=[0-9]+\&/, '?');
+            }
+            return url;
         };
         this.start = function(url, obj, selector, widget) {
             let isNewSearch = ($('form', obj.n('searchsettings')).serialize() + obj.n('text').val().trim()) != obj.lastSuccesfulSearch;

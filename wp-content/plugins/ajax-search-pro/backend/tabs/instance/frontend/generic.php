@@ -22,10 +22,10 @@
             "show_display_mode" => 1,
             "show_labels" => 1,
             'fields' => array(
-                'exact'     => 'Exact matches only',
-                'title'     => 'Search in title',
-                'content'   => 'Search in content',
-                'excerpt'   => 'Search in excerpt',
+                'exact'     => __('Exact matches only', 'ajax-search-pro'),
+                'title'     => __('Search in title', 'ajax-search-pro'),
+                'content'   => __('Search in content', 'ajax-search-pro'),
+                'excerpt'   => __('Search in excerpt', 'ajax-search-pro')
             ),
             'checked' => array('title', 'content', 'excerpt')
         )

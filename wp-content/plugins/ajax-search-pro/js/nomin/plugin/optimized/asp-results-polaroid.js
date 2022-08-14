@@ -4,6 +4,8 @@
         showPolaroidResults: function () {
             let $this = this;
 
+            this.loadASPFonts?.();
+
             $this.n('results').addClass('photostack');
 
             $('.photostack>nav', $this.n('resultsDiv')).remove();

@@ -165,7 +165,7 @@ defined('ABSPATH') or die("You can't access this file directly.");
 <?php echo $asp_res_ids2; ?>.vertical .results::-webkit-scrollbar,
 <?php endif; ?>
 <?php echo $asp_res_ids; ?>.vertical .results::-webkit-scrollbar {
-	width: 7px;
+	width: 10px;
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -174,19 +174,29 @@ defined('ABSPATH') or die("You can't access this file directly.");
 <?php endif; ?>
 <?php echo $asp_res_ids; ?>.vertical .results::-webkit-scrollbar-track {
 	background: <?php echo $style['resultscontainerbackground']; ?>;
+	box-shadow: inset 0 0 12px 12px transparent;
+	border: none;
 }
 <?php if ($use_compatibility == true): ?>
 <?php echo $asp_res_ids1; ?>.vertical .results::-webkit-scrollbar-thumb,
 <?php echo $asp_res_ids2; ?>.vertical .results::-webkit-scrollbar-thumb,
 <?php endif; ?>
 <?php echo $asp_res_ids; ?>.vertical .results::-webkit-scrollbar-thumb {
-	<?php if ($style['v_res_overflow_autohide']): ?>
+	/*<?php if ($style['v_res_overflow_autohide']): ?>
 	background: transparent;
 	<?php else: ?>
 	background: <?php echo wpd_gradient_get_color_only($style['v_res_overflow_color']); ?>;
 	<?php endif; ?>
 	border-radius: 5px;
-	border: none;
+	border: none;*/
+	background: transparent;
+	<?php if ($style['v_res_overflow_autohide']): ?>
+	box-shadow: inset 0 0 12px 12px rgba(0, 0, 0, 0);
+	<?php else: ?>
+	box-shadow: inset 0 0 12px 12px <?php echo wpd_gradient_get_color_only($style['v_res_overflow_color']); ?>;
+	<?php endif; ?>
+	border: solid 2px transparent;
+	border-radius: 12px;
 }
 <?php if ($style['v_res_overflow_autohide']): ?>
 	<?php if ($use_compatibility == true): ?>
@@ -194,7 +204,8 @@ defined('ABSPATH') or die("You can't access this file directly.");
 	<?php echo $asp_res_ids2; ?>.vertical:hover .results::-webkit-scrollbar-thumb,
 	<?php endif; ?>
 	<?php echo $asp_res_ids; ?>.vertical:hover .results::-webkit-scrollbar-thumb {
-		background: <?php echo wpd_gradient_get_color_only($style['v_res_overflow_color']); ?>;
+		/*background: <?php echo wpd_gradient_get_color_only($style['v_res_overflow_color']); ?>;*/
+		box-shadow: inset 0 0 12px 12px <?php echo wpd_gradient_get_color_only($style['v_res_overflow_color']); ?>;
 	}
 	@media (hover: none), (max-width: 500px) {
 		<?php if ($use_compatibility == true): ?>
@@ -202,7 +213,7 @@ defined('ABSPATH') or die("You can't access this file directly.");
 		<?php echo $asp_res_ids2; ?>.vertical .results::-webkit-scrollbar-thumb,
 		<?php endif; ?>
 		<?php echo $asp_res_ids; ?>.vertical .results::-webkit-scrollbar-thumb {
-			background: <?php echo wpd_gradient_get_color_only($style['v_res_overflow_color']); ?>;
+			box-shadow: inset 0 0 12px 12px <?php echo wpd_gradient_get_color_only($style['v_res_overflow_color']); ?>;
 		}
 	}
 <?php endif; ?>

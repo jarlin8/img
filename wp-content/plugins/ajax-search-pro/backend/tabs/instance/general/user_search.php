@@ -161,6 +161,8 @@
     ?>
 </div>
 <div class="item">
-    <p>To change the user result URL or Title, Content fields, please go to <a class="asp_to_tab" href="#701" tabid="701">Advanced Options -> Content</a> panel.</p>
+	<p>
+	<?php echo sprintf( __('To change the user result URL or Title, Content fields, please go to <a class="asp_to_tab" href="%s" tabid="%s">Advanced Options -> Content</a> panel.', 'ajax-search-pro'), '#701', '701' ); ?>
+    </p>
 </div>
 </div>

@@ -166,7 +166,7 @@
     </div>
     <div class="item">
         <?php
-        $o = new wpdreamsUpload('tax_image_default', 'Default taxonomy image',
+        $o = new wpdreamsUpload('tax_image_default', __('Default taxonomy image', 'ajax-search-pro'),
             $sd['tax_image_default']);
         $params[$o->getName()] = $o->getData();
         ?>
@@ -182,8 +182,8 @@
         $o = new wpdreamsCustomSelect("user_search_image_source", __('Image source', 'ajax-search-pro'),
             array(
                 'selects' => array(
-                    array('option' => 'Default', 'value' => 'default'),
-                    array('option' => 'BuddyPress avatar', 'value' => 'buddypress')
+                    array('option' => __('Default', 'ajax-search-pro'), 'value' => 'default'),
+                    array('option' => __('BuddyPress avatar', 'ajax-search-pro'), 'value' => 'buddypress')
                 ),
                 'value' => $sd['user_search_image_source']
             ));
@@ -192,7 +192,7 @@
     </div>
     <div class="item">
         <?php
-        $o = new wpdreamsUpload('user_image_default', 'Default user image',
+        $o = new wpdreamsUpload('user_image_default', __('Default user image', 'ajax-search-pro'),
             $sd['user_image_default']);
         $params[$o->getName()] = $o->getData();
         ?>
@@ -210,7 +210,7 @@
     <div class="descMsg"><?php echo __('If the image parser finds multiple images, then the image from this position is returned', 'ajax-search-pro') ?></div>
     <div class="item">
         <?php
-        $o = new wpdreamsTextarea('image_parser_exclude_filenames', 'Exclude images by file names (comma separated)',
+        $o = new wpdreamsTextarea('image_parser_exclude_filenames', __('Exclude images by file names (comma separated)', 'ajax-search-pro'),
             $sd['image_parser_exclude_filenames']);
         $params[$o->getName()] = $o->getData();
         ?>

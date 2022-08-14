@@ -354,16 +354,15 @@ function asp_do_init_options() {
         'image_height' => 70,
         'image_display_mode' => 'cover',
         'image_apply_content_filter' => 0,
-
         'image_sources' => array(
-            array('option' => 'Featured image', 'value' => 'featured'),
-            array('option' => 'Post Content', 'value' => 'content'),
-            array('option' => 'Post Excerpt', 'value' => 'excerpt'),
-            array('option' => 'Custom field', 'value' => 'custom'),
-            array('option' => 'Page Screenshot', 'value' => 'screenshot'),
-            array('option' => 'Default image', 'value' => 'default'),
-            array('option' => 'Post format icon', 'value' => 'post_format'),
-            array('option' => 'Disabled', 'value' => 'disabled')
+            array('option' => __('Featured image', 'ajax-search-pro'), 'value' => 'featured'),
+            array('option' => __('Post Content', 'ajax-search-pro'), 'value' => 'content'),
+            array('option' => __('Post Excerpt', 'ajax-search-pro'), 'value' => 'excerpt'),
+            array('option' => __('Custom field', 'ajax-search-pro'), 'value' => 'custom'),
+            array('option' => __('Page Screenshot', 'ajax-search-pro'), 'value' => 'screenshot'),
+            array('option' => __('Default image', 'ajax-search-pro'), 'value' => 'default'),
+            array('option' => __('Post format icon', 'ajax-search-pro'), 'value' => 'post_format'),
+            array('option' => __('Disabled', 'ajax-search-pro'), 'value' => 'disabled')
         ),
 
         'image_source1' => 'featured',
@@ -641,6 +640,9 @@ function asp_do_init_options() {
 
         /* Layout Options / Compact Search Layout */
         'box_compact_layout' => 0,
+        'box_compact_layout_desktop' => 1,
+        'box_compact_layout_tablet' => 1,
+        'box_compact_layout_mobile' => 1,
         'box_compact_layout_focus_on_open' => 1,
         'box_compact_close_on_magn' => 1,
         'box_compact_close_on_document' => 0,

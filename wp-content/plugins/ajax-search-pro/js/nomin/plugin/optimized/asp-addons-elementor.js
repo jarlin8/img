@@ -7,6 +7,7 @@
             helpers.Hooks.addFilter('asp/init/etc', this.fixElementorPostPagination, 10, this);
 
             helpers.Hooks.addFilter('asp/live_load/selector', this.fixSelector, 10, this);
+            helpers.Hooks.addFilter('asp/live_load/url', this.url, 10, this);
             helpers.Hooks.addFilter('asp/live_load/start', this.start, 10, this);
             helpers.Hooks.addFilter('asp/live_load/replacement_node', this.fixElementorLoadMoreResults, 10, this);
             helpers.Hooks.addFilter('asp/live_load/finished', this.finished, 10, this);
@@ -16,6 +17,13 @@
                 selector += ' .elementor-widget-container';
             }
             return selector;
+        };
+        this.url = function(url, obj, selector, widget) {
+            // Remove initial pagination query argument on new search
+            if ( url.indexOf('asp_force_reset_pagination=1') >= 0 ) {
+                url = url.replace(/\?product\-page\=[0-9]+\&/, '?');
+            }
+            return url;
         };
         this.start = function(url, obj, selector, widget) {
             let isNewSearch = ($('form', obj.n('searchsettings')).serialize() + obj.n('text').val().trim()) != obj.lastSuccesfulSearch;

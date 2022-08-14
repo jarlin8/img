@@ -116,16 +116,10 @@
 </fieldset>
 <div class="item item-flex-nogrow">
     <?php
-    $option_name = "image_width";
-    $option_desc = "Image width (px)";
-    $o = new wpdreamsTextSmall($option_name, $option_desc,
-        $sd[$option_name]);
+    $o = new wpdreamsTextSmall("image_width", __("Image width (px)", 'ajax-search-pro'), $sd["image_width"]);
     $params[$o->getName()] = $o->getData();
 
-    $option_name = "image_height";
-    $option_desc = "Image height (px)";
-    $o = new wpdreamsTextSmall($option_name, $option_desc,
-        $sd[$option_name]);
+    $o = new wpdreamsTextSmall("image_height", __("Image height (px)", 'ajax-search-pro'), $sd["image_height"]);
     $params[$o->getName()] = $o->getData();
     ?>
 </div>

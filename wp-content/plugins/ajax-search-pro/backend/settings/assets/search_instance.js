@@ -1,4 +1,11 @@
 jQuery(function($){
+    if (typeof wp != 'undefined' && typeof wp.i18n != 'undefined') {
+        var {__, _x, _n, _nx} = wp.i18n;
+    } else {
+        var __ = _x = _n = _nx = function (s) {
+            return s;
+        };
+    }
 
     function submit_mimic(action, method, input) {
         'use strict';
@@ -179,7 +186,7 @@ jQuery(function($){
         location.hash = $(this).attr('tabid');
     });
 
-    $('select[name="cpt_display_mode"]').on('change', function(){
+    /*$('select[name="cpt_display_mode"]').on('change', function(){
         if ($(this).val() == "checkboxes") {
             $('input[name=cpt_cbx_show_select_all]')
                 .closest('div').removeClass('disabled');
@@ -190,7 +197,7 @@ jQuery(function($){
             $('select[name="cpt_filter_default"]').removeAttr('disabled');
         }
     });
-    $('select[name="cpt_display_mode"]').trigger('change');
+    $('select[name="cpt_display_mode"]').trigger('change');*/
 
     $('input[name=cpt_cbx_show_select_all]').on('change', function(){
         if ($(this).val() == 0) {
@@ -1121,13 +1128,13 @@ jQuery(function($){
         'type'   : 'warning', // warning, info
         'header' : 'Load more results',
         'headerIcons': true,
-        'content': 'Please note, that "Load more results via ajax" feature is automatically disabled with the current search configuration.' +
-        '<br><br>You are seeing this notice, because: ' +
-        '<br> - The more results action is set to <a href="#405" data-tabid="405" data-optname="more_results_action">Load more ajax results</a>' +
-        '<br> - ..and the {{loadmore_option}}',
+        'content': __('Please note, that "Load more results via ajax" feature is automatically disabled with the current search configuration.', 'ajax-search-pro') +
+        '<br><br>' + __('You are seeing this notice, because:', 'ajax-search-pro') + ' ' +
+        '<br> - ' + __('The more results action is set to', 'ajax-search-pro') + ' <a href="#405" data-tabid="405" data-optname="more_results_action">' + __('Load more ajax results', 'ajax-search-pro') + '</a>' +
+        '<br> - ' + __('..and the {{loadmore_option}}', 'ajax-search-pro'),
         'buttons': {
             'okay': {
-                'text': 'Okay',
+                'text': __('Okay', 'ajax-search-pro'),
                 'type': 'okay',
                 'click': function(e, button){}
             }
@@ -1137,17 +1144,17 @@ jQuery(function($){
         {
             'args': {
                 'type'   : 'warning', // warning, info
-                'header' : 'Are you sure?',
+                'header' : __('Are you sure?', 'ajax-search-pro'),
                 'headerIcons': true,
-                'content': 'Using exact matches and the index table engine at the same time will automatically ignore the Index table engine, are you sure?',
+                'content': __('Using exact matches and the index table engine at the same time will automatically ignore the Index table engine, are you sure?', 'ajax-search-pro'),
                 'buttons': {
                     'cancel': {
-                        'text': 'No, please revert this option',
+                        'text': __('No, please revert this option', 'ajax-search-pro'),
                         'type': 'cancel',
                         'click': function(e, button){}
                     },
                     'okay': {
-                        'text': 'Yes, I am sure',
+                        'text': __('Yes, I am sure', 'ajax-search-pro'),
                         'type': 'okay',
                         'click': function(e, button){}
                     }
@@ -1161,14 +1168,14 @@ jQuery(function($){
         {
             'args': {
                 'type'   : 'warning', // warning, info
-                'header' : 'Notice',
+                'header' : __('Notice', 'ajax-search-pro'),
                 'headerIcons': true,
-                'content': 'Using <strong>Compact box layout</strong> mode and the <strong>Live Results Page Loader</strong> at the same time is not possible, this option will be reverted.' +
-                '<br><br>Compact box layout option: <strong>Layout Options -> Compact box Layout</strong>' +
-                '<br>The Live Results Page Loader option: <strong>General Options -> Logic & Behavior</strong>',
+                'content': __('Using <strong>Compact box layout</strong> mode and the <strong>Live Results Page Loader</strong> at the same time is not possible, this option will be reverted.', 'ajax-search-pro') +
+                '<br><br>' +  __('Compact box layout option: <strong>Layout Options -> Compact box Layout</strong>', 'ajax-search-pro') +
+                '<br>' + __('The Live Results Page Loader option: <strong>General Options -> Logic & Behavior</strong>', 'ajax-search-pro'),
                 'buttons': {
                     'cancel': {
-                        'text': 'Okay',
+                        'text': __('Okay', 'ajax-search-pro'),
                         'type': 'cancel',
                         'click': function(e, button){}
                     }
@@ -1182,15 +1189,15 @@ jQuery(function($){
         {
             'args': {
                 'type'   : 'info', // warning, info
-                'header' : 'GDPR & Cookie Notice',
+                'header' : __('GDPR & Cookie Notice', 'ajax-search-pro'),
                 'headerIcons': true,
-                'content': 'When using this option cookies might be set during the search redirection, to store the search filter status and the phrase for pagination.' +
-                ' These cookies are <strong>functional</strong> only, they are not used for marketing nor any other purposes.' +
-                '<br><br>The cookie names are: <i>asp_data, asp_id, asp_phrase</i>' +
-                '<br><br>For more information you can read the <a target="_blank" href="https://documentation.ajaxsearchpro.com/gdpr-and-cookie-policy">GDPR and Cookie policy documentation</a>.',
+                'content': __('When using this option cookies might be set during the search redirection, to store the search filter status and the phrase for pagination.', 'ajax-search-pro') +
+                    __(' These cookies are <strong>functional</strong> only, they are not used for marketing nor any other purposes.', 'ajax-search-pro') +
+                '<br><br>' + __('The cookie names are: <i>asp_data, asp_id, asp_phrase</i>', 'ajax-search-pro') +
+                '<br><br>' + __('For more information you can read the <a target="_blank" href="https://documentation.ajaxsearchpro.com/gdpr-and-cookie-policy">GDPR and Cookie policy documentation</a>.', 'ajax-search-pro'),
                 'buttons': {
                     'okay': {
-                        'text': 'Okay',
+                        'text': __('Okay', 'ajax-search-pro'),
                         'type': 'okay',
                         'click': function(e, button){}
                     }

@@ -539,7 +539,7 @@ class WD_ASP_Init {
 			'pageHTML' => '',
 			'additional_scripts' => $additional_scripts,
 			'script_async_load' => $js_async_load,
-			'font_url' =>  asp_is_asset_required('asppsicons2') ? str_replace('http:', "", plugins_url()). '/ajax-search-pro/css/fonts/icons/icons2.woff2' : false,
+			'font_url' => str_replace('http:', "", plugins_url()). '/ajax-search-pro/css/fonts/icons/icons2.woff2',
 			'init_only_in_viewport' => $comp_settings['init_instances_inviewport_only'] == 1,
 			'scrollbar' => $comp_settings['load_mcustom_js'] == "yes" && asp_is_asset_required('simplebar'),
 			'css_async' => $css_async_load,

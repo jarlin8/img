@@ -2620,15 +2620,15 @@ if ( !function_exists('asp_parse_post_type_filters') ) {
             );
             $filter->is_api = false;
 
-            if ( $o['cpt_display_mode'] == 'checkboxes' && $o['cpt_cbx_show_select_all'] == 1 ) {
-                $filter->add(array(
-                    "value" => -1,
-                    "default" => true,
-                    "label" => asp_icl_t('Select all checkbox for post types (' .$id. ')', $o['cpt_cbx_show_select_all_text']),
-                    "selected" => true,
-                    "field" => 'select_all'
-                ));
-            }
+			if ( $o['cpt_cbx_show_select_all'] == 1 ) {
+				$filter->add(array(
+					"value" => -1,
+					"default" => true,
+					"label" => asp_icl_t('Select all checkbox for post types (' .$id. ')', $o['cpt_cbx_show_select_all_text']),
+					"selected" => true,
+					"field" => 'select_all'
+				));
+			}
 
             foreach ( $o['selected-showcustomtypes'] as $k => $item ) {
 
@@ -2812,13 +2812,12 @@ if ( !function_exists("asp_get_unused_assets") ) {
     function asp_get_unused_assets( $return_stored = false ) {
         $dependencies = array(
             'vertical', 'horizontal', 'isotopic', 'polaroid', 'noui', 'datepicker', 'autocomplete',
-			'settings', 'compact', 'autopopulate', 'ga', 'asppsicons2'
+			'settings', 'compact', 'autopopulate', 'ga'
         );
         $external_dependencies = array(
             'select2', 'isotope', 'simplebar'
         );
         $filters_may_require_simplebar = false;
-        $filters_may_require_asppsicons2 = false;
         if ( $return_stored !== false ) {
             return get_site_option('asp_unused_assets', array(
                 'internal' => $dependencies,
@@ -2894,17 +2893,6 @@ if ( !function_exists("asp_get_unused_assets") ) {
                 }
                 // --- Autocomplete (not used yet)
 
-				// --- Fonts
-				foreach (wd_asp()->front_filters->get() as $filter) {
-					if ( isset($filter->data['visible']) && $filter->data['visible'] == 0 ) {
-						continue;
-					}
-					if ( $filter->display_mode == 'checkboxes' ) {
-						$filters_may_require_asppsicons2 = true;
-						break;
-					}
-				}
-
                 // --- Select2
                 foreach (wd_asp()->front_filters->get() as $filter) {
                     if ($filter->display_mode == 'dropdownsearch' || $filter->display_mode == 'multisearch') {
@@ -2919,10 +2907,6 @@ if ( !function_exists("asp_get_unused_assets") ) {
                 }
             }
         }
-
-		if ( $filters_may_require_asppsicons2 || !in_array('polaroid', $dependencies) ) {
-			$dependencies = array_diff($dependencies, array('asppsicons2'));
-		}
 
         // No vertical or horizontal results results, and no filters that may trigger the scroll script
         if (

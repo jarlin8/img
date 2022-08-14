@@ -932,7 +932,6 @@
             pattern = "(?:,|^|\\s)" + pattern + "(?:,|$|\\s)";
         }
         let re = new RegExp(pattern, flag);
-
         function highlight(node, re, nodeName, className, excludeParents) {
             excludeParents = excludeParents == '' ? '.exhghttt' : excludeParents;
             if (node.nodeType === 3) {
@@ -1722,7 +1721,7 @@ window.WPD.intervalUntilExecute = function(f, criteria, interval, maxTries) {
                             $highlighted;
                         selector = $(selector).length > 0 ? selector : 'body';
                         // noinspection JSUnresolvedVariable
-                        $(selector).highlight(data.phrase, {
+                        $(selector).highlight(data.phrase.split(' '), {
                             element: 'span',
                             className: 'asp_single_highlighted_' + data.id,
                             wordsOnly: o.whole,

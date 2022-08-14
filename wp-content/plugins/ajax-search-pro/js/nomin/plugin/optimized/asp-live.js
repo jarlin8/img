@@ -126,6 +126,7 @@
             $this.searchAbort();
             $el.css('opacity', 0.4);
 
+            url = helpers.Hooks.applyFilters('asp/live_load/url', url, $this, selector, $el.get(0));
             helpers.Hooks.applyFilters('asp/live_load/start', url, $this, selector, $el.get(0));
 
             if (

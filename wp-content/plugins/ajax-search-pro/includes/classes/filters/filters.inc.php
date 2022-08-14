@@ -8,3 +8,4 @@ require_once(ASP_CLASSES_PATH . "filters/class-asp-formoverride.php");
 require_once(ASP_CLASSES_PATH . "filters/class-asp-wooformoverride.php");
 require_once(ASP_CLASSES_PATH . "filters/class-asp-etc_fixes.php");
 require_once(ASP_CLASSES_PATH . "filters/class-asp-media-screen.php");
+require_once(ASP_CLASSES_PATH . "filters/class-asp-icl-translations.php");

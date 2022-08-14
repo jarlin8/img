@@ -27,7 +27,7 @@ $langs = wpd_get_languages_array();
                 </select>
             </label>
             <input type="text" name="wpd-search-synonyms" id="wpd-search-synonyms" value="" placeholder="<?php echo __('Search synonims here..', 'ajax-search-pro'); ?>">
-            or <input type="button" id="asp_syn_add" class="asp_syn_add submit wd_button_blue" value="<?php echo __('+Add new', 'ajax-search-pro'); ?>"/>
+            <?php _e('or', 'ajax-search-pro'); ?> <input type="button" id="asp_syn_add" class="asp_syn_add submit wd_button_blue" value="<?php echo __('+Add new', 'ajax-search-pro'); ?>"/>
         </div>
         <div class="wpd-sr-search-right">
             <input type="button" id="asp-syn-import" class="asp_syn_add submit wd_button_syn" value="<?php echo __('Import', 'ajax-search-pro'); ?>"/>

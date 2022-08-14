@@ -60,9 +60,9 @@ if (!class_exists("wpdreamsFontComplete")) {
                             <?php new wpdreamsColorPickerDummy("", "", (isset($this->color) ? $this->color : "#000000")); ?>
                             <label>
                                 <select class="wd_fonts_select">
-                                    <option value="inherit"<?php echo $inherit ? ' selected="selected"' : ''; ?>>inherit</option>
-                                    <option value="custom"<?php echo $custom_font == '' ? '' : ' selected="selected"'; ?>>Custom Font</option>
-                                    <option disabled="disabled">----------- Classic Fonts ---------</option>
+                                    <option value="inherit"<?php echo $inherit ? ' selected="selected"' : ''; ?>><?php _e('inherit', 'ajax-search-pro'); ?></option>
+                                    <option value="custom"<?php echo $custom_font == '' ? '' : ' selected="selected"'; ?>><?php _e('Custom Font', 'ajax-search-pro'); ?></option>
+                                    <option disabled="disabled">----------- <?php _e('Classic Fonts', 'ajax-search-pro'); ?> ---------</option>
                                     <?php foreach($this->fonts['classic'] as $font): ?>
                                         <option value="<?php echo $font; ?>"
                                             <?php echo $this->font == $font ? ' selected="selected"' : ''; ?>
@@ -70,7 +70,7 @@ if (!class_exists("wpdreamsFontComplete")) {
                                             <?php echo $font; ?>
                                         </option>
                                     <?php endforeach; ?>
-                                    <option disabled="disabled">----------- Google Fonts ---------</option>
+                                    <option disabled="disabled">----------- <?php _e('Google Fonts', 'ajax-search-pro'); ?> ---------</option>
                                     <?php foreach($this->fonts['google'] as $font): ?>
                                         <option value="<?php echo $font; ?>"
                                             <?php echo $this->font == $font ? ' selected="selected"' : ''; ?>
@@ -85,27 +85,27 @@ if (!class_exists("wpdreamsFontComplete")) {
                                 <option value="bold"<?php echo $this->weight == 'bold' ? ' selected="selected"' : ''; ?>>Bold</option>
                             </select>
                             <label class="wd_fonts_custom hiddend">
-                                Custom font name:
+								<?php _e('Custom font name:', 'ajax-search-pro'); ?>
                                 <input type='text' class="wd_fonts_custom" value="<?php echo $custom_font; ?>">
                             </label>
                             <div class="wd_fonts_dimensions">
                                 <label>
-                                    Size
+									<?php _e('Size', 'ajax-search-pro'); ?>
                                     <input type='text' class="wd_fonts_size twodigit" value="<?php echo $this->size; ?>">
                                 </label>
                                 <label>
-                                    Line height
+									<?php _e('Line height', 'ajax-search-pro'); ?>
                                     <input type='text' class="wd_fonts_line twodigit" value="<?php echo $this->lineheight; ?>">
                                 </label>
-                                <div class="descMsg">With dimensions, ex.: 10em, 10px or 110%</div>
+                                <div class="descMsg"><?php _e('With dimensions, ex.:', 'ajax-search-pro'); ?> 10em, 10px or 110%</div>
                             </div>
                         </div>
                         <fieldset class="wpd_font_shadow">
-                            <legend>Font shadow</legend>
-                            <label>Vertical offset<input type='text' class='twodigit _xx_hlength_xx_' value="<?php echo $this->hlength; ?>"/>px</label>
-                            <label>Horizontal offset<input type='text' class='twodigit _xx_vlength_xx_' value="<?php echo $this->vlength; ?>"/>px</label><br>
-                            <label>Blur radius<input type='text' class='twodigit _xx_blurradius_xx_' value="<?php echo $this->blurradius; ?>"/>px</label>
-                            <?php new wpdreamsColorPickerDummy('', 'Shadow color', (isset($this->tsColor) ? $this->tsColor : "#000000")); ?>
+                            <legend><?php _e('Font shadow', 'ajax-search-pro'); ?></legend>
+                            <label><?php _e('Vertical offset', 'ajax-search-pro'); ?><input type='text' class='twodigit _xx_hlength_xx_' value="<?php echo $this->hlength; ?>"/>px</label>
+                            <label><?php _e('Horizontal offset', 'ajax-search-pro'); ?><input type='text' class='twodigit _xx_vlength_xx_' value="<?php echo $this->vlength; ?>"/>px</label><br>
+                            <label><?php _e('Blur radius', 'ajax-search-pro'); ?><input type='text' class='twodigit _xx_blurradius_xx_' value="<?php echo $this->blurradius; ?>"/>px</label>
+                            <?php new wpdreamsColorPickerDummy('', __('Shadow color', 'ajax-search-pro'), (isset($this->tsColor) ? $this->tsColor : "#000000")); ?>
                         </fieldset>
                     </div>
                 </fieldset>

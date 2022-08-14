@@ -10,8 +10,8 @@
 	$o = new wpdreamsCustomSelect("attachments_use_index", __('Search engine for media', 'ajax-search-pro'),
 		array(
 			'selects' => array(
-				array('option' => 'Regular engine', 'value' => 'regular'),
-				array('option' => 'Index table engine', 'value' => 'index')
+				array('option' => __('Regular engine', 'ajax-search-pro'), 'value' => 'regular'),
+				array('option' => __('Index table engine', 'ajax-search-pro'), 'value' => 'index')
 			),
 			'value' => $sd['attachments_use_index']
 		));

@@ -353,10 +353,10 @@ $sd = &$search['data'];
     </div>
 
     <div id="asp-options-search">
-        <a class="wd-accessible-switch" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
+        <a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
         __('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
         __('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a><br>
-        <label>Can't find an option?</label>
+        <label><?php _e("Can't find an option?", 'ajax-search-pro' ); ?></label>
         <input type="text" value="" id="asp-os-input" placeholder="<?php echo esc_attr__('Search in options', 'ajax-search-pro'); ?>">
         <div id="asp-os-results"></div>
         <div class="asp-back-help">
@@ -394,6 +394,7 @@ wp_enqueue_script('wpd-backend-instance', plugin_dir_url(__FILE__) . 'settings/a
 wp_enqueue_script('wpd-backend-instance', plugin_dir_url(__FILE__) . 'settings/assets/search_instance.js', array(
     'jquery'
 ), $media_query, true);
+wp_set_script_translations( 'wpd-backend-instance', 'ajax-search-pro' );
 wp_enqueue_script('wpd-backend-options-search', plugin_dir_url(__FILE__) . 'settings/assets/option_search.js', array(
-    'jquery'
+    'jquery', 'wp-i18n'
 ), $media_query, true);

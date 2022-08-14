@@ -8,6 +8,37 @@
     </p>
 </div>
 <div wd-disable-on="box_compact_layout:0">
+	<div class="item item-flex-nogrow item-flex-wrap">
+		<?php
+		$o = new wpdreamsCustomSelect("box_compact_layout_desktop", __('Compact mode on Devices: ', 'ajax-search-pro'), array(
+				'selects'=>array(
+					array('option'=>'Enabled', 'value'=>'1'),
+					array('option'=>'Disabled', 'value'=>'0')
+				),
+				'icon'=>'desktop',
+				'value'=>$sd['box_compact_layout_desktop']
+			)
+		);
+		$o = new wpdreamsCustomSelect("box_compact_layout_tablet", __('', 'ajax-search-pro'), array(
+				'selects'=>array(
+					array('option'=>'Enabled', 'value'=>'1'),
+					array('option'=>'Disabled', 'value'=>'0')
+				),
+				'icon'=>'tablet',
+				'value'=>$sd['box_compact_layout_tablet']
+			)
+		);
+		$o = new wpdreamsCustomSelect("box_compact_layout_mobile", __('', 'ajax-search-pro'), array(
+				'selects'=>array(
+					array('option'=>'Enabled', 'value'=>'1'),
+					array('option'=>'Disabled', 'value'=>'0')
+				),
+				'icon'=>'phone',
+				'value'=>$sd['box_compact_layout_mobile']
+			)
+		);
+		?>
+	</div>
 	<div class="item">
 		<?php
 		$o = new wpdreamsYesNo("box_compact_layout_focus_on_open", __('Auto focus the input field, after the compact box opens', 'ajax-search-pro'), $sd['box_compact_layout_focus_on_open']);
@@ -76,9 +107,9 @@
 		$o = new wpdreamsCustomSelect("box_compact_float", __('Compact layout alignment', 'ajax-search-pro'),
 			array(
 				'selects' => array(
-					array('option' => 'No floating', 'value' => 'none'),
-					array('option' => 'Left', 'value' => 'left'),
-					array('option' => 'Right', 'value' => 'right')
+					array('option' => __('No floating', 'ajax-search-pro'), 'value' => 'none'),
+					array('option' => __('Left', 'ajax-search-pro'), 'value' => 'left'),
+					array('option' => __('Right', 'ajax-search-pro'), 'value' => 'right')
 				),
 				'value' => $sd['box_compact_float']
 			));
@@ -92,9 +123,9 @@
 		$o = new wpdreamsCustomSelect("box_compact_position", __('Compact search box position', 'ajax-search-pro'),
 			array(
 				'selects' => array(
-					array('option' => 'Static (default)', 'value' => 'static'),
-					array('option' => 'Fixed', 'value' => 'fixed'),
-					array('option' => 'Absolute', 'value' => 'absolute')
+					array('option' => __('Static (default)', 'ajax-search-pro'), 'value' => 'static'),
+					array('option' => __('Fixed', 'ajax-search-pro'), 'value' => 'fixed'),
+					array('option' => __('Absolute', 'ajax-search-pro'), 'value' => 'absolute')
 				),
 				'value' => $sd['box_compact_position']
 			));

@@ -932,7 +932,6 @@
             pattern = "(?:,|^|\\s)" + pattern + "(?:,|$|\\s)";
         }
         let re = new RegExp(pattern, flag);
-
         function highlight(node, re, nodeName, className, excludeParents) {
             excludeParents = excludeParents == '' ? '.exhghttt' : excludeParents;
             if (node.nodeType === 3) {

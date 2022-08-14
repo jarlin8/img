@@ -28,17 +28,17 @@
         <?php
         $o = new wpdreamsCustomSelect("resultsposition", __('Results layout position', 'ajax-search-pro'), array(
             'selects'=>array(
-                array('option' => 'Hover - over content', 'value' => 'hover'),
-                array('option' => 'Block - pushes content', 'value' => 'block')
+                array('option' => __('Hover - over content', 'ajax-search-pro'), 'value' => 'hover'),
+                array('option' => __('Block - pushes content', 'ajax-search-pro'), 'value' => 'block')
             ),
             'value'=>$sd['resultsposition']
         ));
         $params[$o->getName()] = $o->getData();
         $o = new wpdreamsCustomSelect("results_snap_to", __(' and snap the results to the ', 'ajax-search-pro'), array(
             'selects'=>array(
-                array('option' => 'left side of the search', 'value' => 'left'),
-                array('option' => 'right side of the search', 'value' => 'right'),
-                array('option' => 'the center', 'value' => 'center')
+                array('option' => __('left side of the search', 'ajax-search-pro'), 'value' => 'left'),
+                array('option' => __('right side of the search', 'ajax-search-pro'), 'value' => 'right'),
+                array('option' => __('the center', 'ajax-search-pro'), 'value' => 'center')
             ),
             'value'=>$sd['results_snap_to']
         ));

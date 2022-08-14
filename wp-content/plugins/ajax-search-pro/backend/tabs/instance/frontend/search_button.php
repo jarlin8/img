@@ -9,7 +9,7 @@
     ?>
 </div>
 <fieldset id="fe_sb_functionality">
-    <legend>Functionality</legend>
+    <legend><?php _e('Functionality', 'ajax-search-pro'); ?></legend>
     <div class="item item-flex-nogrow item-flex-wrap">
         <?php
         foreach ($_red_opts as $rok => $rov)
@@ -56,7 +56,7 @@
     </div>
 </fieldset>
 <fieldset id="fe_search_button">
-    <legend>Visual</legend>
+    <legend><?php _e('Visual', 'ajax-search-pro'); ?></legend>
     <div class="item">
         <?php
         $o = new wpdreamsText("fe_sb_text", __('Button text', 'ajax-search-pro'), $sd['fe_sb_text']);

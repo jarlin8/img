@@ -19,14 +19,14 @@
             "show_labels" => 1,
             "show_required" => 1,
             'fields' => array(
-                'any'           => 'Choose One/Select all',
-                'cpt'           => 'Custom post types',
-                'comments'      => 'Comments',
-                'taxonomies'    => 'Taxonomy terms',
-                'users'         => 'Users',
-                'blogs'         => 'Multisite blogs',
-                'buddypress'    => 'BuddyPress content',
-                'attachments'   => 'Attachments'
+                'any'           => __('Choose One/Select all', 'ajax-search-pro'),
+                'cpt'           => __('Custom post types', 'ajax-search-pro'),
+                'comments'      => __('Comments', 'ajax-search-pro'),
+                'taxonomies'    => __('Taxonomy terms', 'ajax-search-pro'),
+                'users'         => __('Users', 'ajax-search-pro'),
+                'blogs'         => __('Multisite blogs', 'ajax-search-pro'),
+                'buddypress'    => __('BuddyPress content', 'ajax-search-pro'),
+                'attachments'   => __('Attachments', 'ajax-search-pro')
             ),
             'checked' => array()
         )

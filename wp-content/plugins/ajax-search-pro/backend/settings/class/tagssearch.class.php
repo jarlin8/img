@@ -29,7 +29,7 @@ if (!class_exists("wpdreamsSearchTags")) {
                             <polygon id="x-mark-icon" points="438.393,374.595 319.757,255.977 438.378,137.348 374.595,73.607 255.995,192.225 137.375,73.622 73.607,137.352 192.246,255.983 73.622,374.625 137.352,438.393 256.002,319.734 374.652,438.378 "></polygon>
                         </svg>
                     </div>
-                    <input type="text" value="" placeholder="Search for tags" class="wd_tagSelectSearch">
+                    <input type="text" value="" placeholder="<?php esc_attr_e('Search for tags', 'ajax-search-pro'); ?>" class="wd_tagSelectSearch">
                     <div class="wd_tagSearchResults"></div>
                 </div>
 
@@ -74,7 +74,7 @@ if (!class_exists("wpdreamsSearchTags")) {
 
         static function searchTag() {
             $phrase = $_POST["wd_tag_phrase"];
-            $tags = get_terms(array("post_tag"), array('search' => $phrase, 'number' => 10));
+            $tags = get_terms(array("post_tag"), array('search' => $phrase, 'number' => 50));
             $ret = "";
             if ( count($tags) > 0 )
                 foreach ($tags as $tag) {

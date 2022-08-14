@@ -14,7 +14,6 @@ if (!class_exists("wd_CFSearchCallBack")) {
     class wd_CFSearchCallBack extends wpdreamsType {
         private $args = array(
             'callback' => '',       // javacsript function name in the windows scope | if empty, shows results
-            'placeholder' => 'Search custom fields..',
             'search_values' => 0,
             'limit' => 15,
             'delimiter' => '!!!CFRES!!!',
@@ -34,7 +33,7 @@ if (!class_exists("wd_CFSearchCallBack")) {
                 <?php echo $this->label; ?> <input type="search" name="<?php echo $this->name; ?>"
                                                    class="wd_cf_search"
                                                    value="<?php echo (is_array($this->data) && isset($this->data['value'])) ? $this->data['value'] : $this->data; ?>"
-                                                   placeholder="<?php echo $this->args['placeholder']; ?>"/>
+                                                   placeholder="<?php esc_attr_e('Search custom fields..', 'ajax-search-pro'); ?>"/>
                 <input type='hidden' value="<?php echo base64_encode(json_encode($this->args)); ?>" class="wd_args">
                 <?php if ($this->args['controls_position'] != 'left') $this->printControls(); ?>
                 <div class="wd_cf_search_res"></div>

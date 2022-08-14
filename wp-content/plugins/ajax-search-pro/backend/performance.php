@@ -111,7 +111,9 @@ $_comp = wpdreamsCompatibility::Instance();
         </div>
     </div>
     <div id="asp-options-search">
-        <a class="wd-accessible-switch" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ? 'DISABLE ACCESSIBILITY' : 'ENABLE ACCESSIBILITY'; ?></a>
+		<a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
+				__('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
+				__('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a>
     </div>
     <div class="clear"></div>
     <script>

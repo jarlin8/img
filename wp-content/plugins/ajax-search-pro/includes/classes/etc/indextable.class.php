@@ -1501,7 +1501,7 @@ if ( ! class_exists( 'asp_indexTable' ) ) {
 		private function html2txt( $document ) {
 			$search = array(
 				'@<script[^>]*?>.*?</script>@si', // Strip out javascript
-				'@<style[^>]*?>.*?</style>@siU', // Strip style tags properly
+				'@<style[^>]*?>.*?</style>@si', // Strip style tags properly
 				'@<![\s\S]*?--[ \t\n\r]*>@', // Strip multi-line comments including CDATA
 				'@<[\/\!]*?[^<>]*?>@si' // Strip out HTML tags
 			);

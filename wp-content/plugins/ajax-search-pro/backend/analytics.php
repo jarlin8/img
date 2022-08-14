@@ -106,7 +106,7 @@ $ana_options = wd_asp()->o['asp_analytics'];
     <div class="wpdreams-box" style="float:left;">
         <?php ob_start(); ?>
         <div class="item">
-          <?php $o = new wpdreamsCustomSelect("analytics", "Google analytics integration method",
+          <?php $o = new wpdreamsCustomSelect("analytics", __("Google analytics integration method", 'ajax-search-pro'),
                 array(
                     'selects' => array(
                         array("option" => esc_attr__('Disabled', 'ajax-search-pro'), "value" => "0"),
@@ -355,7 +355,7 @@ $ana_options = wd_asp()->o['asp_analytics'];
             <input name="reset"
                    class="asp_submit asp_submit_transparent asp_submit_reset"
                    type="submit" value="<?php echo esc_attr__('Restore defaults', 'ajax-search-pro'); ?>">
-            <input type='submit' name="submit" class='submit' value='<?php echo esc_attr__('Save options', 'ajax-search-pro'); ?>'/>
+            <input type='submit' name="submit" class='submit' value='<?php esc_attr_e('Save options', 'ajax-search-pro'); ?>'/>
         </div>
         <?php $_r = ob_get_clean(); ?>
 
@@ -377,7 +377,7 @@ $ana_options = wd_asp()->o['asp_analytics'];
         </div>
     </div>
     <div id="asp-options-search">
-        <a class="wd-accessible-switch" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
+        <a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
                 __('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
                 __('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a>
     </div>

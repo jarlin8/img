@@ -22,7 +22,7 @@
 <div class="item item-flex-nogrow item-flex-wrap">
     <?php
     $_red_opts = array_merge(
-        array(array('option'=>'Same as on desktop', 'value'=>'same')),
+        array(array('option'=> __('Same as on desktop', 'ajax-search-pro'), 'value'=>'same')),
         $_red_opts
     );
     $o = new wpdreamsCustomSelect("mob_click_action", __('Action when tapping <strong>the magnifier</strong> icon', 'ajax-search-pro'),
@@ -34,8 +34,8 @@
     $o = new wpdreamsCustomSelect("mob_click_action_location", __(' location: ', 'ajax-search-pro'),
         array(
             'selects' => array(
-                array('option' => 'Use same tab', 'value' => 'same'),
-                array('option' => 'Open new tab', 'value' => 'new')
+                array('option' => __('Use same tab', 'ajax-search-pro'), 'value' => 'same'),
+                array('option' => __('Open new tab', 'ajax-search-pro'), 'value' => 'new')
             ),
             'value' => $sd['mob_click_action_location']
         ));
@@ -53,8 +53,8 @@
     $o = new wpdreamsCustomSelect("mob_return_action_location", __(' location: ', 'ajax-search-pro'),
         array(
             'selects' => array(
-                array('option' => 'Use same tab', 'value' => 'same'),
-                array('option' => 'Open new tab', 'value' => 'new')
+				array('option' => __('Use same tab', 'ajax-search-pro'), 'value' => 'same'),
+				array('option' => __('Open new tab', 'ajax-search-pro'), 'value' => 'new')
             ),
             'value' => $sd['mob_return_action_location']
         ));
@@ -125,9 +125,9 @@
 	<?php
 	$o = new wpdreamsCustomSelect("mob_force_sett_state", __('Force search settings state', 'ajax-search-pro'), array(
 		'selects' => array(
-			array("option" => "Same as desktop", "value" => "none"),
-			array("option" => "Hidden settings", "value" => "closed"),
-			array("option" => "Visible settings", "value" => "open")
+			array("option" => __("Same as desktop", 'ajax-search-pro'), "value" => "none"),
+			array("option" => __("Hidden settings", 'ajax-search-pro'), "value" => "closed"),
+			array("option" => __("Visible settings", 'ajax-search-pro'), "value" => "open")
 		),
 		"value" => $sd['mob_force_sett_state']
 	));

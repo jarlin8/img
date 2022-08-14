@@ -620,8 +620,28 @@
                 }
                 $this.n('searchsettings').off('mousedown touchstart mouseover', formDataHandler);
             };
-
             $this.n('searchsettings').on('mousedown touchstart mouseover', formDataHandler);
+
+            let handler = function (e) {
+                if ( $(e.target).closest('.asp_w').length == 0 ) {
+                    if (
+                        $this.att('blocking') == false &&
+                        !$this.dragging &&
+                        $(e.target).closest('.ui-datepicker').length == 0 &&
+                        $(e.target).closest('.noUi-handle').length == 0 &&
+                        $(e.target).closest('.asp_select2').length == 0 &&
+                        $(e.target).closest('.asp_select2-container').length == 0
+                    ) {
+                        $this.hideSettings();
+                    }
+                }
+            };
+            $this.documentEventHandlers.push({
+                'node': document,
+                'event': $this.clickTouchend,
+                'handler': handler
+            });
+            $(document).on($this.clickTouchend, handler);
 
             // Note if the settings have changed
             $this.n('searchsettings').on('click', function(){
@@ -629,9 +649,8 @@
             });
 
             $this.n('searchsettings').on($this.clickTouchend, function (e) {
-                if ( $this.o.trigger.update_href ) {
-                    $this.updateHref();
-                }
+                $this.updateHref();
+
                 /**
                  * Stop propagation on settings clicks, except the noUiSlider handler event.
                  * If noUiSlider event propagation is stopped, then the: set, end, change events does not fire properly.

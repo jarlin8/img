@@ -115,7 +115,7 @@
     ?>
 </div>
 <div class="item"><?php
-    $o = new wpdreamsColorPicker("settingsdroptickcolor","Settings drop-down checkbox tick color", $sd['settingsdroptickcolor']);
+    $o = new wpdreamsColorPicker("settingsdroptickcolor",__("Settings drop-down checkbox tick color", 'ajax-search-pro'), $sd['settingsdroptickcolor']);
     $params[$o->getName()] = $o->getData();
     ?></div>
 <div class="item"><?php

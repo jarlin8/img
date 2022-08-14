@@ -53,9 +53,9 @@
         <?php
         $o = new wpdreamsCustomSelect("primary_titlefield", __('Primary Title Field for Posts/Pages/CPT', 'ajax-search-pro'),  array(
             'selects'=>array(
-                array('option' => 'Post Title', 'value' => 0),
-                array('option' => 'Post Excerpt', 'value' => 1),
-                array('option' => 'Custom Field', 'value' => 'c__f')
+                array('option' => __('Post Title', 'ajax-search-pro'), 'value' => 0),
+                array('option' => __('Post Excerpt', 'ajax-search-pro'), 'value' => 1),
+                array('option' => __('Custom Field', 'ajax-search-pro'), 'value' => 'c__f')
             ),
             'value'=>$sd['primary_titlefield']
         ));
@@ -74,10 +74,10 @@
         <?php
         $o = new wpdreamsCustomSelect("secondary_titlefield", __('Secondary Title Field for Posts/Pages/CPT', 'ajax-search-pro'),  array(
             'selects'=>array(
-                array('option' => 'Disabled', 'value' => -1),
-                array('option' => 'Post Title', 'value' => 0),
-                array('option' => 'Post Excerpt', 'value' => 1),
-                array('option' => 'Custom Field', 'value' => 'c__f')
+                array('option' => __('Disabled', 'ajax-search-pro'), 'value' => -1),
+                array('option' => __('Post Title', 'ajax-search-pro'), 'value' => 0),
+                array('option' => __('Post Excerpt', 'ajax-search-pro'), 'value' => 1),
+                array('option' => __('Custom Field', 'ajax-search-pro'), 'value' => 'c__f')
             ),
             'value'=>$sd['secondary_titlefield']
         ));
@@ -96,10 +96,10 @@
         <?php
         $o = new wpdreamsCustomSelect("primary_descriptionfield", __('Primary Description Field for Posts/Pages/CPT', 'ajax-search-pro'),  array(
             'selects'=>array(
-                array('option' => 'Post Content', 'value' => 0),
-                array('option' => 'Post Excerpt', 'value' => 1),
-                array('option' => 'Post Title', 'value' => 2),
-                array('option' => 'Custom Field', 'value' => 'c__f')
+                array('option' => __('Post Content', 'ajax-search-pro'), 'value' => 0),
+                array('option' => __('Post Excerpt', 'ajax-search-pro'), 'value' => 1),
+                array('option' => __('Post Title', 'ajax-search-pro'), 'value' => 2),
+                array('option' => __('Custom Field', 'ajax-search-pro'), 'value' => 'c__f')
             ),
             'value'=>$sd['primary_descriptionfield']
         ));
@@ -118,11 +118,11 @@
         <?php
         $o = new wpdreamsCustomSelect("secondary_descriptionfield", __('Secondary Description Field for Posts/Pages/CPT', 'ajax-search-pro'),  array(
             'selects'=>array(
-                array('option' => 'Disabled', 'value' => -1),
-                array('option' => 'Post Content', 'value' => 0),
-                array('option' => 'Post Excerpt', 'value' => 1),
-                array('option' => 'Post Title', 'value' => 2),
-                array('option' => 'Custom Field', 'value' => 'c__f')
+                array('option' => __('Disabled', 'ajax-search-pro'), 'value' => -1),
+                array('option' => __('Post Content', 'ajax-search-pro'), 'value' => 0),
+                array('option' => __('Post Excerpt', 'ajax-search-pro'), 'value' => 1),
+                array('option' => __('Post Title', 'ajax-search-pro'), 'value' => 2),
+                array('option' => __('Custom Field', 'ajax-search-pro'), 'value' => 'c__f')
             ),
             'value'=>$sd['secondary_descriptionfield']
         ));
@@ -175,8 +175,8 @@
         $o = new wpdreamsCustomSelect("user_search_title_field", __('Title field for <strong>User</strong> results', 'ajax-search-pro'),
             array(
                 'selects' => array(
-                    array('option' => 'Login Name', 'value' => 'login'),
-                    array('option' => 'Display Name', 'value' => 'display_name')
+                    array('option' => __('Login Name', 'ajax-search-pro'), 'value' => 'login'),
+                    array('option' => __('Display Name', 'ajax-search-pro'), 'value' => 'display_name')
                 ),
                 'value' => $sd['user_search_title_field']
             ));
@@ -188,9 +188,9 @@
         $o = new wpdreamsCustomSelect("user_search_description_field", __('Description field for <strong>User</strong> results', 'ajax-search-pro'),
             array(
                 'selects' => array(
-                    array('option' => 'Biography', 'value' => 'bio'),
-                    array('option' => 'BuddyPress Last Activity', 'value' => 'buddypress_last_activity'),
-                    array('option' => 'Nothing', 'value' => 'nothing')
+                    array('option' => __('Biography', 'ajax-search-pro'), 'value' => 'bio'),
+                    array('option' => __('BuddyPress Last Activity', 'ajax-search-pro'), 'value' => 'buddypress_last_activity'),
+                    array('option' => __('Nothing', 'ajax-search-pro'), 'value' => 'nothing')
                 ),
                 'value' => $sd['user_search_description_field']
             ));
@@ -224,9 +224,9 @@
         $o = new wpdreamsCustomSelect("user_search_url_source", __('<strong>User</strong> results url source', 'ajax-search-pro'),
             array(
                 'selects' => array(
-                    array('option' => 'Default', 'value' => 'default'),
-                    array('option' => 'BuddyPress profile', 'value' => 'bp_profile'),
-                    array('option' => 'Custom scheme', 'value' => 'custom')
+                    array('option' => __('Default', 'ajax-search-pro'), 'value' => 'default'),
+                    array('option' => __('BuddyPress profile', 'ajax-search-pro'), 'value' => 'bp_profile'),
+                    array('option' => __('Custom scheme', 'ajax-search-pro'), 'value' => 'custom')
                 ),
                 'value' => $sd['user_search_url_source']
             ));

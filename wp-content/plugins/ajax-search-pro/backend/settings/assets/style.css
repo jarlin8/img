@@ -416,20 +416,20 @@ div#wpdreams .wpd-text-right {
     width: 16px;
 }
 
-#wpdreams .wpdreamsTextSmall .wpd-txt-small-icon {
+#wpdreams .wpd-txt-small-icon {
     width: 24px;
     height: 24px;
     display: inline-block;
     vertical-align: top;
 }
 
-#wpdreams .wpdreamsTextSmall .wpd-txt-small-icon.wpd-txt-small-icon-desktop {
+#wpdreams .wpd-txt-small-icon.wpd-txt-small-icon-desktop {
     background: url(icons/icon-desktop.png) no-repeat center;
 }
-#wpdreams .wpdreamsTextSmall .wpd-txt-small-icon.wpd-txt-small-icon-tablet {
+#wpdreams .wpd-txt-small-icon.wpd-txt-small-icon-tablet {
     background: url(icons/icon-tablet.png) no-repeat 3px 0;
 }
-#wpdreams .wpdreamsTextSmall .wpd-txt-small-icon.wpd-txt-small-icon-phone {
+#wpdreams .wpd-txt-small-icon.wpd-txt-small-icon-phone {
     background: url(icons/icon-phone.png) no-repeat 5px 0;
 }
 

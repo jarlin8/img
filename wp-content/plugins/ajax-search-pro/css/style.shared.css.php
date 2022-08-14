@@ -145,18 +145,18 @@ defined('ABSPATH') or die("You can't access this file directly.");
     }
 
     <?php if ($use_compatibility == true): ?>
-        <?php echo $asp_div_ids1; ?> .probox,
-        <?php echo $asp_div_ids2; ?> .probox,
+        <?php echo $asp_div_ids1; ?>.asp_compact .probox,
+        <?php echo $asp_div_ids2; ?>.asp_compact .probox,
     <?php endif; ?>
-    <?php echo $asp_div_ids; ?> .probox {
+    <?php echo $asp_div_ids; ?>.asp_compact .probox {
         width: <?php echo wpdreams_width_from_px($style['boxheight']); ?>px;
     }
 
     <?php if ($use_compatibility == true): ?>
-        <?php echo $asp_div_ids1; ?>,
-        <?php echo $asp_div_ids2; ?>,
+        <?php echo $asp_div_ids1; ?>.asp_compact,
+        <?php echo $asp_div_ids2; ?>.asp_compact,
     <?php endif; ?>
-    <?php echo $asp_div_ids; ?> {
+    <?php echo $asp_div_ids; ?>.asp_compact {
         width: auto;
         display: inline-block;
         float: <?php echo w_isset_def($style['box_compact_float'], 'inherit'); ?>;
@@ -173,7 +173,7 @@ defined('ABSPATH') or die("You can't access this file directly.");
     }
 
     <?php if ($_box_pos != 'static') {
-        echo "p[id*=asp-try-".$id."] {
+        echo "p.asp_compact[id*=asp-try-".$id."] {
             display: none;
             position: ".$_box_pos.";
             top: ".$screen_pos['top'].";

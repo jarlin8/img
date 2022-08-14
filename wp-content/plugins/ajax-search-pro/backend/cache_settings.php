@@ -59,7 +59,7 @@ if (ASP_DEMO) $_POST = null;
                 $cache_options["cachinginterval"] ); ?>
 		</div>
 		<div class="item">
-			<input type='submit' class='submit' value='Save options'/>
+			<input type='submit' class='submit' value='<?php esc_attr_e('Save options', 'ajax-search-pro'); ?>'/>
 		</div>
 		<?php $_r = ob_get_clean(); ?>
 
@@ -168,7 +168,7 @@ if (ASP_DEMO) $_POST = null;
 
 	</div>
     <div id="asp-options-search">
-        <a class="wd-accessible-switch" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
+        <a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
                 __('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
                 __('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a>
     </div>

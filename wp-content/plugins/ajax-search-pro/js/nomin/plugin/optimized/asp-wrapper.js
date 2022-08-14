@@ -184,7 +184,7 @@ window._ASP_load = function () {
                             $highlighted;
                         selector = $(selector).length > 0 ? selector : 'body';
                         // noinspection JSUnresolvedVariable
-                        $(selector).highlight(data.phrase, {
+                        $(selector).highlight(data.phrase.split(' '), {
                             element: 'span',
                             className: 'asp_single_highlighted_' + data.id,
                             wordsOnly: o.whole,

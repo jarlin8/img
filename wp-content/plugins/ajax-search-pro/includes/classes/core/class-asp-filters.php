@@ -122,6 +122,12 @@ if ( !class_exists("WD_ASP_Filters") ) {
 				"args" => 1
 			),
 			array(
+				"filter" => "asp_query_args",
+				"handler" => array("IclTranslations", "aspQueryArgsTranslations"),
+				"priority" => 999,
+				"args" => 2
+			),
+			array(
 				"filter" => "asp_load_js",
 				"handler" => array("EtcFixes", "fixOxygenEditorJS"),
 				"priority" => 999,

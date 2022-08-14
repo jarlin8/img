@@ -121,6 +121,26 @@ if (!class_exists("WD_ASP_Search_Shortcode")) {
                 }
             }
 
+			if ( $style['box_compact_layout'] ) {
+				/**
+				 * Do the tablet check first, as some tablets are also returned as mobiles
+				 */
+				if ( $mdetectObj->isTablet() ) {
+					if ( !$style['box_compact_layout_tablet'] ) {
+						$style['box_compact_layout'] = 0;
+					}
+				} else if ( $mdetectObj->isMobile() && !$mdetectObj->isTablet() ) {
+					// Check excplicitly if this is not a tablet, as some tablets are also mobiles
+					if ( !$style['box_compact_layout_mobile'] ) {
+						$style['box_compact_layout'] = 0;
+					}
+				} else {
+					if ( !$style['box_compact_layout_desktop'] ) {
+						$style['box_compact_layout'] = 0;
+					}
+				}
+			}
+
             // Disabled compact layout if the box is hidden anyways
             if ( $style['box_sett_hide_box'] == 1 ) {
                 $style['box_compact_layout'] = 0;

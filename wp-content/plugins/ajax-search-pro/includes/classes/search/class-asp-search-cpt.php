@@ -1731,7 +1731,7 @@ if ( ! class_exists( 'ASP_Search_CPT' ) ) {
 		 *
 		 * @return string Final post title
 		 */
-		protected function adv_field( $f_args, $use_acf = false, $empty_on_missing = false ) {
+		protected function adv_field( $f_args, $use_acf = false, $empty_on_missing = false  ) {
 			$args = &$this->args;
 
 			$specials = array(

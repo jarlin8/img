@@ -12,5 +12,9 @@ if (w_isset_def($style['frontend_show_suggestions'], 0) == 1) {
 	$s_phrases = implode('</a><a href="#">', $sugg_keywords_arr);
 
 	?>
-	<p id="asp-try-<?php echo $id; ?>" class="asp-try asp-try-<?php echo $real_id; ?>"><?php echo asp_icl_t('Keyword suggestions text', $style['frontend_suggestions_text']).' <a href="#">'.$s_phrases.'</a>'; ?></p><?php
+	<p id="asp-try-<?php echo $id; ?>"
+	   class="asp-try asp-try-<?php echo $real_id; ?><?php echo $style['box_compact_layout'] == 1 ? ' asp_compact' : ' asp_non_compact'; ?>"
+	>
+	<?php echo asp_icl_t('Keyword suggestions text', $style['frontend_suggestions_text']).' <a href="#">'.$s_phrases.'</a>'; ?>
+	</p><?php
 }

@@ -3163,13 +3163,13 @@ jQuery(function($){
             $('#wpdreams').removeClass('wd-accessible');
             $('#wpd_shortcode_modal').removeClass('wd-accessible');
             eraseCookie('asp-accessibility');
-            $(this).html('ENABLE ACCESSIBILITY');
+            $(this).html($(this).data('aenable'));
         } else {
             $('#wpcontent').addClass('wd-accessible');
             $('#wpdreams').addClass('wd-accessible');
             $('#wpd_shortcode_modal').addClass('wd-accessible');
             createCookie('asp-accessibility', 1, 365);
-            $(this).html('DISABLE ACCESSIBILITY');
+            $(this).html($(this).data('adisable'));
         }
     });
 

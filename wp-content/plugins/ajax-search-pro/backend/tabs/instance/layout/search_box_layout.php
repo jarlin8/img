@@ -18,10 +18,10 @@
     $o = new wpdreamsCustomSelect("box_alignment", __('Search box alignment', 'ajax-search-pro'),
         array(
             'selects' => array(
-                array('option' => 'Inherit', 'value' => 'inherit'),
-                array('option' => 'Center', 'value' => 'center'),
-                array('option' => 'Left', 'value' => 'left'),
-                array('option' => 'Right', 'value' => 'right')
+                array('option' => __('Inherit', 'ajax-search-pro'), 'value' => 'inherit'),
+                array('option' => __('Center', 'ajax-search-pro'), 'value' => 'center'),
+                array('option' => __('Left', 'ajax-search-pro'), 'value' => 'left'),
+                array('option' => __('Right', 'ajax-search-pro'), 'value' => 'right')
             ),
             'value' => $sd['box_alignment']
         ));

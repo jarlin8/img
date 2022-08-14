@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 if (!class_exists("wpdreamsTextSmall")) {
     /**
      * Class wpdreamsTextSmall
@@ -28,7 +28,7 @@ if (!class_exists("wpdreamsTextSmall")) {
             if ( $this->icon != 'none' ) {
                 ?>
                 <span
-                    title="<?php echo isset($this->iconMsg[$this->icon]) ? $this->iconMsg[$this->icon] : ''; ?>"
+                    title="<?php echo $this->iconMsg[$this->icon] ?? ''; ?>"
                     class="wpd-txt-small-icon wpd-txt-small-icon-<?php echo $this->icon ?>">
                 </span>
                 <?php
@@ -48,9 +48,9 @@ if (!class_exists("wpdreamsTextSmall")) {
             );
 
             if ( is_array($this->data) ) {
-                $this->icon = isset($this->data['icon']) ? $this->data['icon'] : $this->icon;
-                $this->suffix = isset($this->data['suffix']) ? $this->data['suffix'] : $this->suffix;
-                $this->inputClasses = isset($this->data['inputClasses']) ? $this->data['inputClasses'] : $this->inputClasses;
+                $this->icon = $this->data['icon'] ?? $this->icon;
+                $this->suffix = $this->data['suffix'] ?? $this->suffix;
+                $this->inputClasses = $this->data['inputClasses'] ?? $this->inputClasses;
             }
         }
     }
