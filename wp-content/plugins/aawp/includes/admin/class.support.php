@@ -450,7 +450,7 @@ if (!class_exists('AAWP_Support')) {
             <div id="poststuff">
                 <h1>
                     <img class="aawp-icon-settings"
-                         src="<?php echo AAWP_PLUGIN_URL . 'assets/img/icon-settings.png'; ?>"/>
+                         src="<?php echo AAWP_PLUGIN_URL . 'assets/img/icon.svg'; ?>"/>
                     <?php _e( 'Support', 'aawp' ); ?>
                 </h1>
 

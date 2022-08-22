@@ -92,7 +92,7 @@ if ( !class_exists( 'AAWP_Core' ) ) {
             $str = ob_get_clean();
 
             // Return
-            return $str;
+            return apply_filters( 'aawp_shortcode_content', $str );
         }
 
         /**

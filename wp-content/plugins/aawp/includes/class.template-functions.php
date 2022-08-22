@@ -398,8 +398,14 @@ if ( ! class_exists( 'AAWP_Template_Functions') ) {
 
             $url = $this->item->get_url( $type );
 
-            // Get tracking id
-            $tracking_id = ( ! empty( $this->atts['tracking_id'] ) ) ? trim( $this->atts['tracking_id'] ) : aawp_get_default_tracking_id();
+            // Get tracking id.
+            if ( ! empty( $this->atts['tracking_id'] ) ) {
+                $tracking_id = trim( $this->atts['tracking_id'] );
+            } elseif ( ! empty( get_post_meta( get_the_ID(), 'aawp_tracking_id', true ) ) ) {
+                $tracking_id = trim( get_post_meta( get_the_ID(), 'aawp_tracking_id', true ) );
+            } else {
+                $tracking_id = aawp_get_default_tracking_id();
+            }
 
             // Replace placeholder tracking id
             $url = aawp_replace_url_tracking_id_placeholder( $url, $tracking_id, false );

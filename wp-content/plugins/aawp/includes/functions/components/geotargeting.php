@@ -94,8 +94,9 @@ add_action( 'aawp_settings_functions_link_render', 'aawp_settings_geotargeting_r
 function aawp_geotargeting_maybe_extend_product_container_attributes( $attributes ) {
 
     $options_functions = aawp_get_options( 'functions' );
+    $affiliate_links   = aawp_get_option( 'affiliate_links', 'general' );
 
-    $geotargeting = ( isset ( $options_functions['geotargeting'] ) && $options_functions['geotargeting'] == '1' ) ? 1 : 0;
+    $geotargeting = isset( $options_functions['geotargeting'] ) &&  $options_functions['geotargeting'] === '1' && 'shortened' !== $affiliate_links ? 1 : 0;
 
     if ( $geotargeting )
         $attributes['geotargeting'] = 'true';
@@ -146,7 +147,9 @@ function aawp_embed_geotargeting_script_data() {
     //$default_store = 'ca';
 
     $options_functions = aawp_get_options( 'functions' );
-    $geotargeting = ( isset ( $options_functions['geotargeting'] ) && $options_functions['geotargeting'] == '1' ) ? 1 : 0;
+    $affiliate_links   = aawp_get_option( 'affiliate_links', 'general' );
+
+    $geotargeting = isset( $options_functions['geotargeting'] ) &&  $options_functions['geotargeting'] === '1' && 'shortened' !== $affiliate_links ? 1 : 0;
 
     if ( ! $geotargeting )
         return;

@@ -96,7 +96,9 @@ class AAWP_Review_Crawler {
                     $context = stream_context_create($opts);
                     @$page = file_get_contents($url, false, $context);
 
-                    $rating = $this->extract_data_from_html( $page );
+                    if ( ! empty( $page ) ) {
+                        $rating = $this->extract_data_from_html( $page );
+                    }
 
                     /*
                     echo 'allow_url_fopen try >> Result:<br>';

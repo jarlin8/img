@@ -37,7 +37,7 @@ add_action( 'admin_menu', function() {
         $menu_cap,
         $aawp_menu_slug,
         'aawp_admin_render_settings_page',
-        AAWP_PLUGIN_URL . '/assets/img/icon-menu.png',
+        AAWP_PLUGIN_URL . '/assets/img/icon.svg',
         30
     );
 

@@ -131,7 +131,13 @@ add_action('manage_aawp_table_posts_custom_column', function( $column_name, $pos
 
         $shortcode = aawp_get_shortcode();
         ?>
-        <input type='text' onClick="this.select();" value='[<?php echo $shortcode; ?> table="<?php echo $post_id; ?>"]'readonly='readonly' />
+        <span class="shortcode aawp-shortcode-field">
+            <input type='text' onClick="this.select();" value='[<?php echo $shortcode; ?> table="<?php echo $post_id; ?>"]'readonly='readonly' />
+            <button class="button aawp-copy-shortcode-button" type="button" href="#" >
+                <span class="dashicons dashicons-clipboard aawp-copy-shortcode"></span>
+                <span class="aawp-tooltiptext"><?php echo esc_html__( 'Copy Shortcode', 'aawp');?></span>
+            </button>
+        </span>
         <?php
     }
 
@@ -199,14 +205,7 @@ function aawp_admin_table_add_meta_boxes() {
         'high'
     );
 
-    add_meta_box(
-        'aawp-table-shortcode-metabox',
-        '<span class="aawp-brand-icon"></span>' . __( 'Shortcode', 'aawp' ),
-        'aawp_admin_table_shortcode_meta_box_render',
-        'aawp_table',
-        'side',
-        'high'
-    );
+    add_action( 'aawp_sidebar_metabox_init', 'aawp_admin_table_shortcode_meta_box_render' );
 }
 
 /**
@@ -580,11 +579,23 @@ function aawp_admin_table_products_meta_box_render( $post ) {
  */
 function aawp_admin_table_shortcode_meta_box_render( $post ) {
 
+    if( empty( $post->post_type ) || 'aawp_table' !== $post->post_type ) {
+        return;
+    }
+
     $table_id = $post->ID;
 
     $shortcode = aawp_get_shortcode();
     ?>
-    <input type='text' onClick="this.select();" value='[<?php echo $shortcode; ?> table="<?php echo $table_id; ?>"]'readonly='readonly' />
+    <p><?php echo esc_html__( 'Shortcode', 'aawp' ); ?></p>
+    <span class="shortcode aawp-shortcode-field">
+        <input type='text' onClick="this.select();" value='[<?php echo $shortcode; ?> table="<?php echo $table_id; ?>"]'readonly='readonly' style="width:100%" />
+        <button class="button aawp-copy-shortcode-button help_tip" type="button" href="#" >
+            <span class="dashicons dashicons-clipboard aawp-copy-shortcode"></span>
+            <span class="aawp-tooltiptext"><?php echo esc_html__( 'Copy Shortcode', 'aawp');?></span>
+        </button>
+    </span>
+
     <?php
 }
 

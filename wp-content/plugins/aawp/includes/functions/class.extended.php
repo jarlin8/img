@@ -328,7 +328,7 @@ if ( !class_exists( 'AAWP_Extended_Functions' ) ) {
 
             ?>
             <h4><?php _e('Click Tracking', 'aawp'); ?></h4>
-            <p><?php _e('AAWP can track clicks on affiliate links coming through the plugin by creating events via your favorite tracking tool. Currently supported:', 'aawp'); ?> Google Analytics & Piwik.</p>
+            <p><?php _e('AAWP can track clicks on affiliate links coming through the plugin by creating events via your favorite tracking tool. Currently supported:', 'aawp'); ?> Google Analytics & Matomo.</p>
             <p>
                 <select id="aawp_click_tracking" name="aawp_general[click_tracking]">
                     <?php foreach ( $click_tracking_options as $key => $label ) { ?>
@@ -612,7 +612,14 @@ function aawp_get_prime_check_logo( $atts = array() ) {
     $prime_logo = '<span class="' . $classes . '"></span>';
 
     // Handle reflink & tracking id
-    $tracking_id = ( ! empty( $atts['tracking_id'] ) ) ? trim( $atts['tracking_id'] ) : aawp_get_default_tracking_id();
+    if ( ! empty( $atts['tracking_id'] ) ) {
+        $tracking_id = trim( $atts['tracking_id'] );
+    } elseif ( ! empty( get_post_meta( get_the_ID(), 'aawp_tracking_id', true ) ) ) {
+        $tracking_id = trim( get_post_meta( get_the_ID(), 'aawp_tracking_id', true ) );
+    } else {
+        $tracking_id = aawp_get_default_tracking_id();
+    }
+
     $ref_link = aawp_get_amazon_prime_url( $country, $tracking_id );
 
     if ( !empty ( $ref_link ) && 'linked' === $check_prime )

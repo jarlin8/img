@@ -3,7 +3,7 @@
  * Plugin Name:     AAWP
  * Plugin URI:      https://getaawp.com
  * Description:     The best WordPress plugin for Amazon Affiliates.
- * Version:         3.17.2
+ * Version:         3.18.2
  * Author:          AAWP
  * Author URI:      https://getaawp.com
  * Text Domain:     aawp
@@ -42,7 +42,7 @@ if ( ! class_exists( 'AAWP' ) ) {
          * @since  3.9.0
          * @var    string
          */
-        private $version = '3.17.2';
+        private $version = '3.18.2';
 
         /**
          * The settings instance variable.
@@ -285,6 +285,7 @@ if ( ! class_exists( 'AAWP' ) ) {
             // License & Updates
             require_once AAWP_PLUGIN_DIR . 'includes/libraries/class.license-handler.php';
             require_once AAWP_PLUGIN_DIR . 'includes/libraries/class.plugin-updater.php';
+            require_once AAWP_PLUGIN_DIR . 'src/Loader.php';
 
             // Admin files
             if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
@@ -340,6 +341,9 @@ if ( ! class_exists( 'AAWP' ) ) {
             if ( is_admin() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
                 self::$instance->settings = new AAWP_Settings();
             }
+
+            $instance = \AAWP\Loader::get_instance();
+            $instance->init();
         }
 
         /**
@@ -459,7 +463,8 @@ function aawp_activation() {
     // Installation
     require_once plugin_dir_path( __FILE__ ) . '/includes/install.php';
 
-    if ( function_exists( 'aawp_run_install' ) )
+    if ( function_exists( 'aawp_run_install' ) ) {
         aawp_run_install();
+    }
 }
 register_activation_hook( __FILE__, 'aawp_activation' );

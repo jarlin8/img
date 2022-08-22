@@ -416,7 +416,9 @@ function aawp_filter_items( $items, $type, $atts ) {
                 // Offers only
                 if ( in_array( 'offer', $filter ) ) {
 
-                    if ( 0 == $AAWP_Product->get_price_savings_percentage() ) {
+                    $exclude = 'exclude' === $filter_type ? true : false;
+
+                    if ( $exclude == $AAWP_Product->get_price_savings_percentage() ) {
                         $unset = true;
                     }
                 }

@@ -93,7 +93,11 @@ add_filter( 'aawp_func_product_url_type', 'aawp_update_link_types', 10, 3 );
 function aawp_maybe_return_super_url( $url, $type, $atts ) {
 
     if ( ! empty( $atts['keywords'] ) ) {
-        return $url . '&keywords=' . rawurlencode( $atts['keywords'] );
+
+        $aawp_functions = new AAWP_Functions();
+        $keywords       = $aawp_functions->prepare_list_keywords( $atts['keywords'] );
+
+        return $url . '&keywords=' . rawurlencode( $keywords );
         //return add_query_arg( 'keywords', $atts['keywords'], $url ); // this destroys the url and replaces . with _
     }
 

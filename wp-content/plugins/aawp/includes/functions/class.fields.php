@@ -245,7 +245,7 @@ if ( !class_exists( 'AAWP_Fields_Functions' ) ) {
                         break;
                     case ('price'):
                         $result = ( in_array( 'amount', $format ) ) ? $template_handler->get_product_price( 'display', 'amount' ) : $template_handler->get_product_price();
-                        $result = ( empty( $result ) ) ? __('Price not available', 'aawp') : $result;
+                        $result = ( empty( $result ) ) && empty( $this->pricing_advertised_price_hide_unavailability ) ? __('Price not available', 'aawp') : $result;
                         break;
                     case ('list_price'):
                         $result = ( in_array( 'amount', $format ) ) ? $template_handler->get_product_price( 'list', 'amount' ) : $template_handler->get_product_price('list');

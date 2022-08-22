@@ -138,7 +138,7 @@ if ( !class_exists( 'AAWP_Settings_Output' ) ) {
 
         public function settings_output_callback( $input ) {
 
-            if ( $this->options['output']['star_rating_size'] == '0' && $this->options['output']['show_reviews'] && ( $input['star_rating_size'] != '0' || $input['show_reviews'] != '0' ) ) {
+            if ( empty( $this->options['output']['star_rating_size'] ) && ! empty( $this->options['output']['show_reviews'] ) && ( $input['star_rating_size'] != '0' || $input['show_reviews'] != '0' ) ) {
                 aawp_renew_cache();
             }
 
@@ -406,6 +406,13 @@ if ( !class_exists( 'AAWP_Settings_Output' ) ) {
             );
 
             ?>
+
+            <h4 class="first"><?php echo esc_html__('General', 'aawp'); ?></h4>
+            <p>
+                <input type="checkbox" id="aawp_pricing_hide_price_decimal" name="aawp_output[pricing_hide_price_decimal]" value="1" <?php echo( ! empty( $this->options['output']['pricing_hide_price_decimal'] ) ? 'checked' : ''); ?>>
+                <label for="aawp_pricing_hide_price_decimal"><?php echo esc_html__("Hide decimal places for prices", 'aawp'); ?></label>
+            </p><br/>
+
             <!-- Advertised price -->
             <h4 class="first"><?php _e('Advertised price', 'aawp'); ?></h4>
             <select id="aawp_pricing_display" name="aawp_output[pricing_advertised_price]">

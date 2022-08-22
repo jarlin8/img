@@ -148,7 +148,7 @@ function aawp_load_admin_scripts() {
     // Settings and Widgets page only
     $screen = get_current_screen();
 
-    if ( ( isset( $screen->id ) && strpos( $screen->id, 'aawp' ) !== false ) || ( isset( $screen->base ) && $screen->base == 'widgets' ) ) {
+    if ( ( isset( $screen->id ) && strpos( $screen->id, 'aawp' ) !== false ) || ( isset( $screen->base ) && $screen->base == 'widgets' || $screen->base === 'post' ) ) {
         do_action( 'aawp_load_admin_scripts' );
     }
 }

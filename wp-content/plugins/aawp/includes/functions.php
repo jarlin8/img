@@ -378,6 +378,9 @@ function aawp_get_page_url( $slug ) {
         case 'docs:database_garbage_collection':
             $url = ( $lang_de ) ? 'https://aawp.de/docs/article/datenbank-garbage-collection/' : 'https://getaawp.com/docs/article/database-garbage-collection/';
             break;
+        case 'docs:shortened_links':
+            $url = ( $lang_de ) ? 'https://aawp.de/docs/article/gekuerzte-links/' : 'https://getaawp.com/docs/article/shortened-links/';
+            break;
     }
 
     return $url;
@@ -755,6 +758,12 @@ function aawp_format_price_currency( $price ) {
         $number_dec = 0;
     }
 
+    // Hide decimal.
+    if ( ! empty ( $options['output']['pricing_hide_price_decimal'] ) ) {
+        $price      = absint( $price );
+        $number_dec = 0;
+    }
+
     // Add separator
     $price = ( $number_format ) ? number_format( $price, $number_dec, $number_sep_dec, $number_sep_th ) : $price; // Previously ( $price / 100 )
 
@@ -1041,4 +1050,23 @@ function aawp_execute_database_garbage_collection() {
             $deleted = aawp()->products->delete( $product->id );
         }
     }
+}
+
+/**
+ * Get comparison tables on the array( 'ID' => 'Title') format.
+ *
+ * @since 3.18
+ * 
+ * @return array
+ */
+function aawp_get_comparison_tables() {
+
+    $tables = get_posts(
+        array(
+            'post_type'      => 'aawp_table',
+            'posts_per_page' => -1,
+        )
+    );
+
+    return (array) wp_list_pluck( $tables, 'post_title', 'ID' );
 }

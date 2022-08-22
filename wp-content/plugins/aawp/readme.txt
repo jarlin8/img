@@ -1,15 +1,70 @@
-=== Amazon Affiliate for WordPress ===
+=== AAWP ===
 Contributors: flowdee
 Donate link: https://donate.flowdee.de
 Tags: amazon, affiliate
 Requires at least: 5.0.0
 Requires PHP: 5.6.0
-Tested up to: 5.7.0
-Stable tag: 3.15.1
+Tested up to: 6.0.1
+Stable tag: 3.18.2
 
 The best WordPress plugin for Amazon Affiliates.
 
 == Changelog ==
+
+= Version 3.18.2 (14th July 2022) =
+* Fix: TinyMCE issue when using page builders like Elementor and Thrive Architect
+* Fix: PHP notice `WP_Block_Type_Registry::register was called incorrectly`
+* Fix: Updated translations
+* Info: WordPress v6.0.1 compatibility
+
+= Version 3.18.1 (11th July 2022) =
+* Fix: Performance issues when using multiple ASINs in a single shortcode
+* Fix: Comparison table's confirm selection no longer worked
+
+= Version 3.18.0 (6th July 2022) =
+* New: Introducing Gutenberg Block incl. product search
+* New: Classic editor now comes along with a button for generating shortcodes
+* New: Affiliate links can be shortened to `amzn.to`
+* New: Comparison tables can now be duplicated with one click
+* New: Tracking ID can now be replaced by post/page
+* Tweak: Decimal places in the price information can now be hidden via settings
+* Tweak: Shortcodes for comparison tables can now be copied to the clipboard faster
+* Tweak: The plugin is now 100% translated into the following languages: Spanish, French, Italian
+* Fix: The hiding of the price information in the case of missing price information, did not work properly
+* Fix: Filter type `exclude` didn't work when showing offers only
+* Info: Updated translation files
+* Info: Updated plugin updater to version 1.9.2
+* Info: WordPress v6.0 compatibility
+
+= Version 3.17.3 (27th January 2022) =
+* Info: WordPress v5.9 compatibility
+
+= Version 3.17.2 (18th January 2022) =
+* Fix: `Uncaught TypeError: method_exists` which sometimes occurred in the context of the `list-helper-functions.php` file
+* Info: Updated plugin updater to version 1.9.1
+
+= Version 3.17.1 (7th January 2022) =
+* Fix: Improved escaping on settings page to address XSS concerns
+* Info: WordPress v5.8.3 compatibility
+
+= Version 3.17 (17th November 2021) =
+* New: Included "max_input_vars" in debug information
+* Tweak: Using new endpoint for license & update server requests
+* Info: Updated plugin updater to version 1.8
+* Info: Updated translation files
+* Info: WordPress v5.8.2 compatibility
+
+= Version 3.16 (10th August 2021) =
+* New: Added `rel="sponsored"` to all outgoing Amazon affiliate links
+* New: Added `rel="noopener"` to all outgoing links with `target="_blank"`
+* Fix: Currency symbol/format for Amazon.se was incorrect
+* Info: Updated all template files
+* Info: WordPress v5.8 compatibility
+
+= Version 3.15.2 (22th April 2021) =
+* Tweak: Moved away from "spacer images" in templates
+* Info: Updated template files `vertical.php`, `list.php`, `widget-small.php`
+* Info: WordPress v5.7.1 compatibility
 
 = Version 3.15.1 (18th March 2021) =
 * New: Added support for Amazon Poland

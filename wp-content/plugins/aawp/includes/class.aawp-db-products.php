@@ -394,7 +394,6 @@ class AAWP_DB_Products extends AAWP_DB {
             } else {
                 $where .= "WHERE `id` IN( {$ids} ) ";
             }
-
         }
 
         // Status
@@ -410,7 +409,6 @@ class AAWP_DB_Products extends AAWP_DB {
             } else {
                 $where .= "WHERE `status` IN( '{$statuss}' ) ";
             }
-
         }
 
         // ASIN
@@ -424,12 +422,16 @@ class AAWP_DB_Products extends AAWP_DB {
                 $asins = $args['asin'];
             }
 
-            if( ! empty( $where ) ) {
-                $where .= "AND `asin` IN( '{$asins}' ) ";
-            } else {
-                $where .= "WHERE `asin` IN( '{$asins}' ) ";
-            }
+            $valid_asins = preg_match( '/^[a-zA-Z0-9,\' ]*$/', $asins );
 
+            if ( $valid_asins ) {
+
+                if( ! empty( $where ) ) {
+                    $where .= "AND `asin` IN( '{$asins}' ) ";
+                } else {
+                    $where .= "WHERE `asin` IN( '{$asins}' ) ";
+                }
+            }
         }
 
         // Images missing
@@ -440,7 +442,6 @@ class AAWP_DB_Products extends AAWP_DB {
             } else {
                 $where .= "WHERE `image_ids` = '' ";
             }
-
         }
 
         // Outdated only

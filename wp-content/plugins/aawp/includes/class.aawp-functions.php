@@ -351,6 +351,8 @@ if ( !class_exists( 'AAWP_Functions' ) ) {
 
                 foreach ( $asins as $asin ) {
 
+                    $asin = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $asin );
+
                     if ( ! empty( $items[$asin] ) )
                         $items_reordered[] = $items[$asin];
                 }
@@ -584,12 +586,12 @@ if ( !class_exists( 'AAWP_Functions' ) ) {
         }
 
         /**
-         * Pare list keywords (sanitizing, placeholders, lowercase)
+         * Prepare list keywords (sanitizing, placeholders, lowercase)
          *
          * @param $keywords
          * @return mixed|string
          */
-        private function prepare_list_keywords( $keywords ) {
+        public function prepare_list_keywords( $keywords ) {
 
             //aawp_debug_log( 'prepare_list_keywords >> before: ' . $keywords );
 

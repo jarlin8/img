@@ -77,7 +77,7 @@ if (!class_exists('AAWP_Settings')) {
             ?>
             <div class="wrap aawp-wrap">
                 <h2>
-                    <img class="aawp-icon-settings" src="<?php echo AAWP_PLUGIN_URL . 'assets/img/icon-settings.png'; ?>" />
+                    <img class="aawp-icon-settings" src="<?php echo AAWP_PLUGIN_URL . 'assets/img/icon.svg'; ?>" />
                     <?php _e( 'Settings', 'aawp' ); ?>
                 </h2>
 
