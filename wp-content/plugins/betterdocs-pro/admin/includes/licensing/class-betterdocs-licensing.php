@@ -90,7 +90,7 @@ class BetterDocs_Licensing {
 		}		   
 		if ( $status === 'expired' ) {
 			$msg = __( 'Your license has been expired. Please %1$srenew your license%2$s key to enable updates for %3$s.',	$this->text_domain );
-			$msg = sprintf( $msg, '<a rel="nofollow" href="https://wpdeveloper.net/account">', '</a>', '<strong>' . $this->product_name . '</strong>' );
+			$msg = sprintf( $msg, '<a rel="nofollow" href="https://wpdeveloper.com/account">', '</a>', '<strong>' . $this->product_name . '</strong>' );
 			?>
 			<div class="notice notice-error">
 				<p><?php echo $msg; ?></p>
@@ -151,7 +151,7 @@ class BetterDocs_Licensing {
 	                    <p><?php printf( __( 'Visit the <a rel="nofollow" href="%s" target="_blank">Validation Guide</a> for help.', $this->text_domain ), 'https://betterdocs.co/docs/betterdocs-license/' ); ?></p>
 
 	                    <ol>
-	                        <li><?php printf( __( 'Log in to <a rel="nofollow" href="%s" target="_blank">your account</a> to get your license key.', $this->text_domain ), 'https://wpdeveloper.net/account/' ); ?></li>
+	                        <li><?php printf( __( 'Log in to <a rel="nofollow" href="%s" target="_blank">your account</a> to get your license key.', $this->text_domain ), 'https://wpdeveloper.com/account/' ); ?></li>
 	                        <li><?php printf( __( 'If you don\'t yet have a license key, get <a rel="nofollow" href="%s" target="_blank">BetterDocs Pro now</a>.', $this->text_domain ), 'https://betterdocs.co/upgrade' ); ?></li>
 	                        <li><?php _e( __( 'Copy the license key from your account and paste it below.', $this->text_domain ) ); ?></li>
 	                        <li><?php _e( __( 'Click on <strong>"Activate License"</strong> button.', $this->text_domain ) ); ?></li>

@@ -4,6 +4,8 @@
  */
 class BetterDocs_Pro_IA {
 
+    use BetterDocs_Content_Restrictions;
+
     const DEV_MODE = false;
 
     /**
@@ -34,12 +36,18 @@ class BetterDocs_Pro_IA {
             $this->screen = get_current_screen();
         }
 
-        add_action( 'rest_api_init', array( $this, 'register_api_endpoint' ) );
-        add_action('wp_enqueue_scripts', array( $this, 'scripts' ) );
-        add_action('admin_enqueue_scripts', array( $this, 'scripts' ) );
-        add_filter( 'betterdocs_settings_tab', array( $this, 'settings' ) );
-        add_action( 'wp_footer', array( $this, 'add_ia_icon' ) );
-        add_action( 'admin_footer', array( $this, 'add_admin_ia_icon' ) );
+        add_action('rest_api_init', array($this, 'register_api_endpoint'));
+        add_action('wp_enqueue_scripts', array($this, 'scripts'));
+        add_action('admin_enqueue_scripts', array($this, 'scripts'));
+        add_filter('betterdocs_settings_tab', array($this, 'settings'));
+        $ia = BetterDocs_DB::get_settings('enable_disable');
+        $ia_preview = BetterDocs_DB::get_settings('ia_enable_preview');
+        if($ia == 1) {
+            add_action('wp_footer', array($this, 'add_ia_icon'));
+        }
+        if($ia_preview == 1) {
+            add_action('admin_footer', array($this, 'add_admin_ia_icon'));
+        }
     }
 
     public function scripts( $hook ) {
@@ -52,7 +60,6 @@ class BetterDocs_Pro_IA {
                 return;
             }
         }
-
 
         if( ( isset( $this->bdocs_settings['enable_disable'] ) && $this->bdocs_settings['enable_disable'] == 1 ) || ! isset( $this->bdocs_settings['enable_disable'] ) ) {
             if( is_admin() ) {
@@ -67,7 +74,7 @@ class BetterDocs_Pro_IA {
                 }
             }
             if( ! self::DEV_MODE ) {
-                wp_enqueue_style( 
+                wp_enqueue_style(
                     'betterdocs-instant-answer', 
                     BETTERDOCS_PRO_PUBLIC_URL . 'modules/instant-answer.css', 
                     array(),  BETTERDOCS_PRO_VERSION, 'all'
@@ -76,7 +83,7 @@ class BetterDocs_Pro_IA {
 
             wp_add_inline_style( 'betterdocs-instant-answer', $this->inline_style() );
 
-            wp_enqueue_script( 
+            wp_enqueue_script(
                 'betterdocs-instant-answer', 
                 self::DEV_MODE ? BETTERDOCS_PRO_PUBLIC_URL . 'instant-answer/lib/bundle.js' : BETTERDOCS_PRO_PUBLIC_URL . 'modules/instant-answer.js',
                 array('wp-i18n', 'wp-element', 'wp-hooks', 'wp-util', 'wp-components'), BETTERDOCS_PRO_VERSION, true 
@@ -115,7 +122,7 @@ class BetterDocs_Pro_IA {
         }
         
         if( $this->setNempty( 'ia_luncher_bg_hover', $settings ) ) {
-            $css .= '.betterdocs-launcher[type=button]:hover {background-color:' . $settings['ia_luncher_bg_hover'] . '}';
+            $css .= '.betterdocs-widget-container .betterdocs-launcher[type=button]:hover {background-color:' . $settings['ia_luncher_bg_hover'] . ' !important}';
         }
 
         if( $this->setNempty( 'ia_heading_color', $settings ) ) {
@@ -123,7 +130,7 @@ class BetterDocs_Pro_IA {
         }
 
         if( $this->setNempty( 'ia_heading_font_size', $settings ) ) {
-            $css .= '.betterdocs-header-wrapper .betterdocs-sub-header.betterdocs-ans-header > h3, .betterdocs-header-wrapper .betterdocs-sub-header.betterdocs-ask-header > h3{font-size:' . $settings['ia_heading_font_size'] . 'px}';
+            $css .= '.betterdocs-header-wrapper .betterdocs-sub-header.betterdocs-ans-header > h3.bd-ia-subtitle, .betterdocs-header-wrapper .betterdocs-sub-header.betterdocs-ask-header > h3.bd-ia-subtitle {font-size:' . $settings['ia_heading_font_size'] . 'px}';
         }
 
         if( $this->setNempty( 'ia_sub_heading_color', $settings ) ) {
@@ -135,15 +142,17 @@ class BetterDocs_Pro_IA {
         }
 
         if( $this->setNempty( 'ia_searchbox_bg', $settings ) ) {
-            $css .= '.betterdocs-search-wrap.MuiPaper-root, .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-container input{background-color:' . $settings['ia_searchbox_bg'] . '}';
+            $css .= '.betterdocs-tab-content-wrapper .bdc-search-box,
+            .betterdocs-tab-content-wrapper .bdc-search-box .search-button,
+            .betterdocs-tab-content-wrapper .bdc-search-box input{background-color:' . $settings['ia_searchbox_bg'] . '}';
         }
 
         if( $this->setNempty( 'ia_searchbox_text', $settings ) ) {
-            $css .= '.betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-container input{color:' . $settings['ia_searchbox_text'] . '}';
+            $css .= '.betterdocs-tab-content-wrapper .bdc-search-box input{color:' . $settings['ia_searchbox_text'] . '}';
         }
 
         if( $this->setNempty( 'ia_searchbox_icon_color', $settings ) ) {
-            $css .= '.betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-icon {fill:' . $settings['ia_searchbox_icon_color'] . '}';
+            $css .= '.betterdocs-tab-content-wrapper .bdc-search-box .search-button svg {fill:' . $settings['ia_searchbox_icon_color'] . '}';
         }
 
         if( $this->setNempty( 'iac_article_bg', $settings ) ) {
@@ -219,6 +228,36 @@ class BetterDocs_Pro_IA {
             $css .= '.betterdocs-tab-ask .betterdocs-ask-wrapper .betterdocs-ask-submit.betterdocs-disable-submit:hover { background-color: '.  $settings['ia_ask_send_disable_button_hover_bg'] .'}';
         }
 
+        if( $this->setNempty( 'iac_article_content_h1', $settings ) ) {
+            $css .= '.betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h1 { font-size: '.  $settings['iac_article_content_h1'] .'px}';
+        }
+
+        if( $this->setNempty( 'iac_article_content_h2', $settings ) ) {
+            $css .= '.betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h2 { font-size: '.  $settings['iac_article_content_h2'] .'px}';
+        }
+
+        if( $this->setNempty( 'iac_article_content_h3', $settings ) ) {
+            $css .= '.betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h3 { font-size: '.  $settings['iac_article_content_h3'] .'px}';
+        }
+
+        if( $this->setNempty( 'iac_article_content_h4', $settings ) ) {
+            $css .= '.betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h4 { font-size: '.  $settings['iac_article_content_h4'] .'px}';
+        }
+
+        if( $this->setNempty( 'iac_article_content_h5', $settings ) ) {
+            $css .= '.betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h5 { font-size: '.  $settings['iac_article_content_h5'] .'px}';
+        }
+
+        if( $this->setNempty( 'iac_article_content_h6', $settings ) ) {
+            $css .= '.betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h6 { font-size: '.  $settings['iac_article_content_h6'] .'px}';
+        }
+
+        if( $this->setNempty( 'iac_article_content_p', $settings ) ) {
+            $css .= '.betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content,
+            .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content p,
+            .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content strong { font-size: '.  $settings['iac_article_content_h6'] .'px}';
+        }
+
         if( $this->setNempty( 'ia_ask_input_foreground', $settings ) ) {
             $css .= '.betterdocs-ask-wrapper input:not([type="submit"]), .betterdocs-ask-wrapper textarea, .betterdocs-ask-wrapper .betterdocs-attach-button { color: '.  $settings['ia_ask_input_foreground'] .'}';
             $css .= '.betterdocs-ask-wrapper .betterdocs-attach-button { fill: '.  $settings['ia_ask_input_foreground'] .'}';
@@ -226,7 +265,7 @@ class BetterDocs_Pro_IA {
             $css .= '.betterdocs-ask-wrapper input:not([type="submit"])::placeholder, .betterdocs-ask-wrapper textarea::placeholder { color: '.  $settings['ia_ask_input_foreground'] .'}';
             $css .= '.betterdocs-ask-wrapper input:not([type="submit"]), .betterdocs-ask-wrapper textarea { color: '.  $settings['ia_ask_input_foreground'] .' !important;}';
         }
-        
+
 
         return $css;
     }
@@ -238,7 +277,6 @@ class BetterDocs_Pro_IA {
      */
     public function jsObject( $settings ) {
         $url = $this->make_url( $settings );
-        
 
         $search_settings = $answer_settings = $chat_settings = $launcher_settings = $thanks_settings = $branding_settings = $response_settings = array();
 
@@ -272,16 +310,15 @@ class BetterDocs_Pro_IA {
             $search_settings['show'] = false;
         }
 
-        $search_url = $this->make_url( $settings, 'true' );
+        $search_url = $this->make_url( $settings, '', true );
         $search_settings['SEARCH_URL'] = $search_url;
 
         $search_placeholder = $this->setNempty( 'search_placeholder_text', $settings ) ? $settings['search_placeholder_text'] : __( 'Search...', 'betterdocs-pro' );
         $search_settings['SEARCH_PLACEHOLDER'] = $search_placeholder;
 
-        $search_settings['OOPS'] = __( 'Opps...', 'betterdocs-pro' );
-        $search_settings['NOT_FOUND'] = __( 'We couldn’t find any articles that match your search. Try searching for a
-        new term.', 'betterdocs-pro' );
-        
+        $search_settings['OOPS'] = $this->setNempty( 'search_not_found_1', $settings ) ? $settings['search_not_found_1'] : __( 'Oops...', 'betterdocs-pro' );
+        $search_settings['NOT_FOUND'] = $this->setNempty( 'search_not_found_2', $settings ) ? $settings['search_not_found_2'] : __( 'We couldn’t find any articles that match your search. Try searching for a new term.', 'betterdocs-pro' );
+
         $answer_tab_switch = $this->setNempty( 'answer_tab_visibility_switch', $settings ) ? $settings['answer_tab_visibility_switch'] : [];
         if( ! empty( $answer_tab_switch ) && $answer_tab_switch === '1' ) {
             $answer_settings['show'] = false;
@@ -318,11 +355,11 @@ class BetterDocs_Pro_IA {
         if( ! empty( $disable_response_icon ) && $disable_response_icon === '1' ) {
             $response_settings['icon']['show'] = false;
         }
-        
+
 
         $answer_settings['label'] = $answer_tab_title;
         $answer_settings['subtitle'] = $answer_tab_subtitle;
-        
+
         $chat_settings['label'] = $chat_tab_title;
         $chat_settings['subtitle'] = $chat_subtitle_one;
         $chat_settings['subtitle_two'] = $chat_subtitle_two;
@@ -330,7 +367,24 @@ class BetterDocs_Pro_IA {
         $disable_reaction = $this->setNempty( 'disable_reaction', $settings ) ? $this->bdocs_settings['disable_reaction'] : '';
         $reaction = $disable_reaction == 1 ? false : true;
         $reaction_title = $this->setNempty( 'reaction_title', $settings ) ? $this->bdocs_settings['reaction_title'] : esc_html__('How did you feel?','betterdocs-pro');
-
+        //remove the slash from the Instant Answer search text placeholder
+        $search_settings['SEARCH_PLACEHOLDER'] = stripslashes($search_settings['SEARCH_PLACEHOLDER']);
+        //remove slash from Instant Answer Tab Title
+        $answer_settings['label'] = stripslashes($answer_settings['label']);
+        //remove slash from Instant Answer Tab Title
+        $answer_settings['subtitle'] = stripslashes($answer_settings['subtitle']);
+        //remove slash from Chat Tab Subtitle One
+        $chat_settings['subtitle'] = stripslashes($chat_settings['subtitle']);
+        //remove slash from Chat Tab Subtitle Two
+        $chat_settings['subtitle_two'] = stripslashes($chat_settings['subtitle_two']);
+        //remove slash from Reaction Title
+        $reaction_title = stripslashes($reaction_title);
+        //remove slash from response title
+        $response_settings['title'] = stripslashes($response_settings['title']);
+        //remove slash from docs not found oops
+        $search_settings['OOPS'] = stripslashes( $search_settings['OOPS'] );
+        //remove slash from docs not found message
+        $search_settings['NOT_FOUND'] = stripslashes($search_settings['NOT_FOUND']);
         $instant_answer = array(
             'CHAT' => $chat_settings,
             'ANSWER' => $answer_settings,
@@ -340,21 +394,21 @@ class BetterDocs_Pro_IA {
                 'DISPLAY' => $reaction,
                 'SUCCESS' => esc_html__('Thanks for your feedback','betterdocs-pro'),
                 'TEXT'    => $reaction_title,
-                'URL'     => home_url() . '?rest_route=/betterdocs/feedback',
+                'URL'     => home_url() . '/?rest_route=/betterdocs/feedback',
             ),
             'RESPONSE'  => $response_settings,
             'ASKFORM' => array(
                 'NAME'     => esc_html__('Name','betterdocs-pro'),
                 'EMAIL'    => esc_html__('Email Address','betterdocs-pro'),
-                'SUBJECT'     => esc_html__('Subject','betterdocs-pro'),
+                'SUBJECT'  => esc_html__('Subject','betterdocs-pro'),
                 'TEXTAREA' => esc_html__('How can we help?','betterdocs-pro'),
                 'ATTACHMENT' => esc_html__('Only supports .jpg, .png, .jpeg, .gif files','betterdocs-pro'),
                 'SENDING' => esc_html__('Sending','betterdocs-pro'),
                 'SEND' => esc_html__('Send','betterdocs-pro'),
             ),
-            'ASK_URL' => home_url() . '?rest_route=/betterdocs/ask',
+            'ASK_URL' => home_url() . '/?rest_route=/betterdocs/ask',
         );
-
+        
         if( ! empty( $launcher_settings ) ) {
             $instant_answer = array_merge( $instant_answer, array( 'LAUNCHER' => $launcher_settings ) );
         }
@@ -395,43 +449,85 @@ class BetterDocs_Pro_IA {
 		return "$scheme$user$pass$host$port$path$query$fragment";
 	}
 
-    public static function make_url( $settings, $base = false ) {
-        $site_url = get_bloginfo('url');
-        $base_url = $site_url . '?rest_route=/wp/v2/docs';
+    public function make_url( $settings, $base = false, $search = false ) {
+        $sub_string_arr_include = [];
+        $query_string_as_array = [];
+        $sub_string_url = '';
+        $site_url = get_rest_url();
+        $base_url = $site_url . 'wp/v2/docs';
 
         if( $base == true ) {
             return $base_url;
         }
-        
-        if( isset( $settings['content_type'] ) && ! empty( $settings['content_type'] ) && $settings['content_type'] === 'docs_categories' ) {
-            $base_url = $site_url . '?rest_route=/wp/v2/doc_category';
+
+        if( isset( $settings['content_type'] ) && ! empty( $settings['content_type'] ) && $settings['content_type'] === 'docs_categories' && $search == false ) {
+            $base_url = $site_url . 'wp/v2/doc_category';
+        }
+
+        if ( has_filter('wpml_current_language') ) { // get wpml language
+            $lang = apply_filters( 'wpml_current_language', NULL );
+            if ($lang) {
+                $sub_string_arr_include[] = 'lang=' . $lang;
+            }
         }
 
         $url = $base_url . '&per_page=10';
-        $query_string_as_array = [];
-        $sub_string_url = '';
 
         $parsed_url = parse_url( $base_url );
-        $query_string_as_array = isset( $parsed_url['query'] ) ? explode( '&', $parsed_url['query'] ) : '';
+        $query_string_as_array = isset( $parsed_url['path'] ) ? explode( '&', $parsed_url['path'] ) : '';
+
         if( isset( $settings['content_type'] ) && ! empty( $settings['content_type'] ) ) {
             switch( $settings['content_type'] ) {
-                case 'docs' : 
+                case 'docs' :
                     $sub_string_url = is_array( $settings['docs_list'] ) ? implode( ',', $settings['docs_list'] ) : '';
                     if( ! empty( $sub_string_url ) ) {
-                        $query_string_as_array[] = 'include=' . $sub_string_url;
+                        $sub_string_arr = explode(",", $sub_string_url);
+                        foreach ($sub_string_arr as $value) {
+                            $sub_string_arr_include[] = 'include[]='.$value;
+                        }
+                        $query_string_as_array[] = implode("&", $sub_string_arr_include);
+                    }
+                    if ($this->content_restriction() == 1) {
+                        if ($this->content_visibility_by_role() == false && !empty($this->get_restricted_category())) {
+                            $query_string_as_array[] = 'doc_category_exclude=' . implode(',', $this->get_restricted_category());
+                        }
+                        if ($this->content_visibility_by_role() == false && !empty($this->get_restricted_kb())) {
+                            $query_string_as_array[] = 'knowledge_base_exclude=' . implode( ',', $this->get_restricted_kb());
+                        }
                     }
                     break;
-                case 'docs_categories' : 
+                case 'docs_categories' :
                     $sub_string_url = is_array( $settings['doc_category_list'] ) ? implode( ',', $settings['doc_category_list'] ) : '';
-                    if( ! empty( $sub_string_url ) ) {
+                    if ( $search == true && ! empty( $sub_string_url )) {
+                        $query_string_as_array[] = 'doc_category=' . $sub_string_url;
+                    } else if( ! empty( $sub_string_url ) ) {
                         $query_string_as_array[] = 'include=' . $sub_string_url;
+                    }
+
+                    $doc_category_ids = get_terms([
+                        'taxonomy' => 'doc_category',
+                        'fields' => 'ids',
+                    ]);
+
+                    if( $search == true && empty( $sub_string_url ) && $this->content_restriction() == 1 && $this->content_visibility_by_role() == false && !empty($this->get_restricted_category())) {
+                        $query_string_as_array[] = 'doc_category=' . implode(',', array_diff($doc_category_ids, $this->get_restricted_category()));
+                    } else if ( empty( $sub_string_url ) && $this->content_restriction() == 1 && $this->content_visibility_by_role() == false && !empty($this->get_restricted_category())) {
+                        $query_string_as_array[] = 'include=' . implode(',', array_diff($doc_category_ids, $this->get_restricted_category()));
                     }
                     break;
             }
-            
-            $query_string_as_array = implode( '&', $query_string_as_array );
+
+            $firstKey = reset($query_string_as_array);
+            $othersKey = array_slice($query_string_as_array, 1);
+            if ( $othersKey ) {
+                $query_string_as_array = $firstKey . '?' . implode( '&', $othersKey );
+            } else {
+                $query_string_as_array = $firstKey;
+            }
+
+
             if( ! empty( $query_string_as_array ) ) {
-                $parsed_url['query'] = $query_string_as_array;
+                $parsed_url['path'] = $query_string_as_array;
             }
             $url = self::unparse_url( $parsed_url );
         }
@@ -454,12 +550,12 @@ class BetterDocs_Pro_IA {
                             'label'       => __('Enable/Disable Instant Answer' , 'betterdocs-pro'),
                             'priority'    => 0,
                         ),
-                        'ia_description' => array( 
+                        'ia_description' => array(
                             'type' => 'html',
                             'priority' => 1,
                             'html' => __( 'Display a list of articles or categories in a chat-like widget to give your visitors a chance of self-learning about your website.', 'betterdocs-pro' )
                         ),
-                        'enable_disable' => array( 
+                        'enable_disable' => array(
                             'type' => 'checkbox',
                             'priority' => 2,
                             'label'    => __( 'Enable/Disable', 'betterdocs-pro' ),
@@ -491,40 +587,40 @@ class BetterDocs_Pro_IA {
                                     'label'       => __('Initial Content Settings' , 'betterdocs-pro'),
                                     'priority'    => 0,
                                 ),
-                                'content_type' => array( 
+                                'content_type' => array(
                                     'label'    => __( 'Content Type', 'betterdocs-pro' ),
                                     'type'     => 'select',
                                     'priority' => 1,
                                     'default'  => 'docs',
-                                    'options'  => array( 
+                                    'options'  => array(
                                         'docs'       => __('Docs', 'betterdocs-pro'),
                                         'docs_categories' => __('Docs Categories', 'betterdocs-pro'),
                                     ),
-                                    'dependency'  => array( 
-                                        'docs' => array( 
+                                    'dependency'  => array(
+                                        'docs' => array(
                                             'fields' => [ 'docs_list' ]
                                         ),
-                                        'docs_categories' => array( 
+                                        'docs_categories' => array(
                                             'fields' => [ 'doc_category_list' ]
                                         ),
                                     ),
-                                    'hide'  => array( 
-                                        'docs_categories' => array( 
+                                    'hide'  => array(
+                                        'docs_categories' => array(
                                             'fields' => [ 'docs_list' ]
                                         ),
-                                        'docs' => array( 
+                                        'docs' => array(
                                             'fields' => [ 'doc_category_list' ]
                                         ),
                                     )
                                 ),
-                                'docs_list' => array( 
+                                'docs_list' => array(
                                     'label' => __( 'Select Docs', 'betterdocs-pro' ),
                                     'type'     => 'select',
                                     'priority' => 2,
                                     'multiple' => true,
                                     'options'  => $this->docs(),
                                 ),
-                                'doc_category_list' => array( 
+                                'doc_category_list' => array(
                                     'label' => __( 'Select Docs Categories', 'betterdocs-pro' ),
                                     'type'     => 'select',
                                     'priority' => 3,
@@ -569,7 +665,7 @@ class BetterDocs_Pro_IA {
                                 ),
                             )
                         ),
-                        'betterdocs_chat_settings' => array( 
+                        'betterdocs_chat_settings' => array(
                             'title'    => __('Chat Settings' , 'betterdocs-pro'),
                             'priority' => 2,
                             'fields'   => array(
@@ -605,7 +701,7 @@ class BetterDocs_Pro_IA {
                                 ),
                             )
                         ),
-                        'betterdocs_appearance_settings' => array( 
+                        'betterdocs_appearance_settings' => array(
                             'title'    => __('Appearance Settings' , 'betterdocs-pro'),
                             'priority' => 3,
                             'fields'   => array(
@@ -837,10 +933,22 @@ class BetterDocs_Pro_IA {
                                     'priority' => 14,
                                     'default'  => 9999
                                 ),
+                                'search_not_found_1' => array(
+                                    'type'     => 'text',
+                                    'label'    => __('Docs not Found' , 'betterdocs-pro'),
+                                    'priority' => 11,
+                                    'default'  => __( 'Oops...', 'betterdocs-pro' )
+                                ),
+                                'search_not_found_2' => array(
+                                    'type'     => 'text',
+                                    'label'    => __('Docs not Found' , 'betterdocs-pro'),
+                                    'priority' => 11,
+                                    'default'  => __( 'We couldn’t find any articles that match your search. Try searching for a new term.', 'betterdocs-pro' )
+                                ),
                             )
                         ),
-                        'betterdocs_color_settings' => array( 
-                            'title'    => __('Color Settings' , 'betterdocs-pro'),
+                        'betterdocs_color_settings' => array(
+                            'title'    => __('Style Settings' , 'betterdocs-pro'),
                             'priority' => 4,
                             'fields'   => array(
                                 'ia_luncher_bg' => array(
@@ -998,6 +1106,59 @@ class BetterDocs_Pro_IA {
                                     'label'       => __('Ask Send Button Hover Background' , 'betterdocs-pro'),
                                     'priority'    => 5
                                 ),
+                                'content_heading_tag' => array(
+                                    'type'        => 'title',
+                                    'label'       => __('Content Area Settings' , 'betterdocs-pro'),
+                                    'priority'    => 6,
+                                ),
+                                'iac_docs_title_font_size' => array(
+                                    'type'        => 'number',
+                                    'label'       => __('Docs Title Font Size' , 'betterdocs-pro'),
+                                    'default'     => 20,
+                                    'priority'    => 6,
+                                ),
+                                'iac_article_content_h1' => array(
+                                    'type'        => 'number',
+                                    'label'       => __('H1 Font Size' , 'betterdocs-pro'),
+                                    'default'     => 26,
+                                    'priority'    => 6,
+                                ),
+                                'iac_article_content_h2' => array(
+                                    'type'        => 'number',
+                                    'label'       => __('H2 Font Size' , 'betterdocs-pro'),
+                                    'default'     => 24,
+                                    'priority'    => 6,
+                                ),
+                                'iac_article_content_h3' => array(
+                                    'type'        => 'number',
+                                    'label'       => __('H3 Font Size' , 'betterdocs-pro'),
+                                    'default'     => 22,
+                                    'priority'    => 6,
+                                ),
+                                'iac_article_content_h4' => array(
+                                    'type'        => 'number',
+                                    'label'       => __('H4 Font Size' , 'betterdocs-pro'),
+                                    'default'     => 20,
+                                    'priority'    => 6,
+                                ),
+                                'iac_article_content_h5' => array(
+                                    'type'        => 'number',
+                                    'label'       => __('H5 Font Size' , 'betterdocs-pro'),
+                                    'default'     => 18,
+                                    'priority'    => 6,
+                                ),
+                                'iac_article_content_h6' => array(
+                                    'type'        => 'number',
+                                    'label'       => __('H6 Font Size' , 'betterdocs-pro'),
+                                    'default'     => 16,
+                                    'priority'    => 6,
+                                ),
+                                'iac_article_content_p' => array(
+                                    'type'        => 'number',
+                                    'label'       => __('Content Font Size' , 'betterdocs-pro'),
+                                    'default'     => 14,
+                                    'priority'    => 6,
+                                ),
                             )
                         ),
                         'betterdocs_cross_domain_settings' => array( 
@@ -1025,6 +1186,7 @@ class BetterDocs_Pro_IA {
 
         return $settings;
     }
+
     /**
      * Get all docs
      */
@@ -1038,7 +1200,7 @@ class BetterDocs_Pro_IA {
 
         if( ! empty( $_docs ) ) {
             foreach( $_docs as $doc ) {
-                $docs[ $doc->ID ] = $doc->post_title;
+                $docs[ $doc->ID ] = esc_html($doc->post_title);
             }
         }
 
@@ -1070,7 +1232,7 @@ class BetterDocs_Pro_IA {
         if($allpages ) {
             $page_list[ 'all' ] = 'All';
             foreach( $allpages as $page ) {
-                $page_list[ $page->ID ] = $page->post_title;
+                $page_list[ $page->ID ] = esc_html($page->post_title);
             }
         }
         return $page_list;
@@ -1107,9 +1269,8 @@ class BetterDocs_Pro_IA {
     public function get_all_registered_texonomy() {
         $args = array(
             'public'   => true,
-            '_builtin' => false
-             
-          ); 
+            '_builtin' => false     
+        ); 
         $taxonomies = get_taxonomies( $args, 'objects' );
         $post_list = [];
         if($taxonomies ) {
@@ -1123,35 +1284,86 @@ class BetterDocs_Pro_IA {
         return $post_list;
     }
 
-    public function ia_conditions() {
+    public function ia_conditions()
+    {
         $display_ia_pages = BetterDocs_DB::get_settings('display_ia_pages');
         $display_ia_archives = BetterDocs_DB::get_settings('display_ia_archives');
         $display_ia_texonomy = BetterDocs_DB::get_settings('display_ia_texonomy');
         $display_ia_single = BetterDocs_DB::get_settings('display_ia_single');
         $query_object = get_queried_object();
-        if(is_page() && $display_ia_pages != 'off' && in_array("all", $display_ia_pages) || is_page($display_ia_pages)) {
+
+        if (
+            is_page()
+            && $display_ia_pages != 'off'
+            && (in_array("all", $display_ia_pages) || is_page($display_ia_pages))
+        ) {
             return true;
-        } elseif((is_tax() || is_category() || is_tag()) && $display_ia_texonomy != 'off' && in_array("all", $display_ia_texonomy)) {
+        } elseif (
+            (is_tax() || is_category() || is_tag())
+            && $display_ia_texonomy != 'off'
+            && in_array("all", $display_ia_texonomy)
+        ) {
             return true;
-        } elseif((is_tax() || is_category() || is_tag()) && $display_ia_texonomy != 'off' && in_array($query_object->taxonomy, $display_ia_texonomy)) {
+        } elseif (
+            (is_tax() || is_category() || is_tag())
+            && $display_ia_texonomy != 'off'
+            && in_array($query_object->taxonomy, $display_ia_texonomy)
+        ) {
             return true;
-        } elseif(is_archive() && !is_tax() && !is_category() && !is_tag() && $display_ia_archives != 'off' && in_array("all", $display_ia_archives)) {
+        } elseif (
+            is_archive()
+            && !is_tax()
+            && !is_category()
+            && !is_tag()
+            && $display_ia_archives != 'off'
+            && in_array("all", $display_ia_archives)
+        ) {
             return true;
-        } elseif(is_archive() && !is_tax() && !is_category() && !is_tag() && $display_ia_archives != 'off' && in_array("all", $display_ia_archives) || $display_ia_archives != 'off' && is_post_type_archive($display_ia_archives)) {
+        } elseif (
+            is_archive()
+            && !is_tax()
+            && !is_category()
+            && !is_tag()
+            && $display_ia_archives != 'off'
+            && in_array("all", $display_ia_archives)
+            || $display_ia_archives != 'off'
+            && is_post_type_archive($display_ia_archives)
+        ) {
             return true;
-        } elseif (is_home() && ($display_ia_archives != 'off' && in_array("all", $display_ia_archives) || $display_ia_archives != 'off' && in_array("post", $display_ia_archives))) {
+        } elseif (
+            is_home()
+            && ($display_ia_archives != 'off'
+                && in_array("all", $display_ia_archives)
+                || $display_ia_archives != 'off'
+                && in_array("post", $display_ia_archives))
+        ) {
             return true;
-        } elseif (is_archive() && ($display_ia_archives != 'off' && in_array("post", $display_ia_archives) && is_date() || is_author() || is_day())) {
+        } elseif (
+            is_archive()
+            && ($display_ia_archives != 'off'
+                && in_array("post", $display_ia_archives)
+                && is_date()
+                || is_author()
+                || is_day())
+        ) {
             return true;
-        } elseif((is_archive() && $display_ia_archives != 'off' && in_array("product", $display_ia_archives) && get_taxonomy( $query_object->taxonomy )->object_type[0] === 'product')) {
+        } elseif (
+            is_archive()
+            && $display_ia_archives != 'off'
+            && in_array("product", $display_ia_archives)
+            && get_taxonomy($query_object->taxonomy)->object_type[0] === 'product'
+        ) {
             return true;
-        } elseif (is_singular() && $display_ia_single != 'off' && in_array("all", $display_ia_single) || is_singular($display_ia_single)) {
+        } elseif (
+            !is_page()
+            && is_singular()
+            && $display_ia_single != 'off'
+            && (in_array("all", $display_ia_single) || is_singular($display_ia_single))
+        ) {
             return true;
         } else {
             return false;
         }
-
-        
     }
 
     public function add_ia_icon() {
@@ -1209,41 +1421,63 @@ class BetterDocs_Pro_IA {
             ),
         ));
     }
+
+
+
     /**
      * Save Feedback for individual Docs
      * @param WP_REST_Request $request
      * @return void
      */
     public function save_response( WP_REST_Request $request ){
+        global $wpdb;
         $docs_id = isset( $request['id'] ) ? intval( $request['id'] ) : null;
-        if( $docs_id !== null ) {
-            $feelings = isset( $request['feelings'] ) ? $request['feelings'] : 'happy';
-            $feedback = get_post_meta( $docs_id, '_betterdocs_feelings', true );
-            $feedback_per_day = get_post_meta( $docs_id, '_betterdocs_meta_impression_per_day', true );
-            $todays_date = date( 'd-m-Y', time() );
+        $feelings = isset( $request['feelings'] ) ? $request['feelings'] : 'happy';
+        if( $docs_id !== null && get_option('betterdocs_pro_db_version') == true ) {
+            $post_id = $wpdb->get_results(
+                $wpdb->prepare(
+                    "SELECT *
+                    FROM {$wpdb->prefix}betterdocs_analytics
+                    WHERE created_at = %s AND post_id = %d",
+                    date('Y-m-d'),
+                    $docs_id
+                )
+            );
 
-            if( empty( $feedback_per_day )  ) {
-                $feedback_per_day = [];
-                $feedback_per_day[ $todays_date ][ $feelings ] = 1;
-                add_post_meta( $docs_id, '_betterdocs_meta_impression_per_day', $feedback_per_day );
+            if (!empty($post_id)) {
+                $feelings_increment = $post_id[0]->{$feelings} + 1;
+                $insert = $wpdb->query(
+                    $wpdb->prepare(
+                        "UPDATE {$wpdb->prefix}betterdocs_analytics 
+                    SET ".$feelings." = ". $feelings_increment ."
+                    WHERE created_at = %s AND post_id = %d",
+                        array(
+                            date('Y-m-d'),
+                            $docs_id
+                        )
+                    )
+                );
             } else {
-                if( isset( $feedback_per_day[ $todays_date ] ) ) {
-                    $impressions_data = isset( $impressions[ $todays_date ][ $feelings ] ) ? ++$impressions[ $todays_date ][ $feelings ] : 1;
-                    $feedback_per_day[ $todays_date ][ $feelings ] = $impressions_data;
-                } else {
-                    $feedback_per_day[ $todays_date ][ $feelings ] = 1;
-                }
-                update_post_meta( $docs_id, '_betterdocs_meta_impression_per_day', $feedback_per_day );
+                $insert = $wpdb->query(
+                    $wpdb->prepare(
+                        "INSERT INTO {$wpdb->prefix}betterdocs_analytics 
+                        ( post_id, ".$request['feelings'].", created_at )
+                        VALUES ( %d, %d, %s )",
+                        array(
+                            $docs_id,
+                            1,
+                            date('Y-m-d')
+                        )
+                    )
+                );
             }
 
-            $feedback = empty( $feedback ) ? array() : $feedback;
-            $feedback[ $feelings ] = ( isset( $feedback[ $feelings ] ) ? intval( $feedback[ $feelings ] ) : 0 ) + 1;
-            if( update_post_meta( $docs_id, '_betterdocs_feelings', $feedback ) ) {
-                return true;
-            }
+            if( $insert == true ) return true;
+
         }
         return false;
     }
+
     /**
      * Save Global Feedback
      * @param WP_REST_Request $request
@@ -1258,6 +1492,8 @@ class BetterDocs_Pro_IA {
         }
         return false;
     }
+
+
 
     public function send_asked_mail( WP_REST_Request $request ){
         $sanitized_data = $this->sanitize( $_POST );
@@ -1346,15 +1582,15 @@ class BetterDocs_Pro_IA {
                 if( $key === 'email' ) {
                     $sanitized_data[ $key ] = sanitize_email( $data );
                 } else {
-                    $sanitized_data[ $key ] = sanitize_text_field( $data );
+                    $sanitized_data[ $key ] = esc_html( stripslashes($data) );
                 }
             }
-
+            
             return $sanitized_data;
         }
         return array();
     }
-    public function ready_subject( $sanitized_data = array(), $ask_subject ) {
+    public function ready_subject( $sanitized_data, $ask_subject ) {
         $ask_subject = ! empty( $ask_subject ) ? $ask_subject : '[ia_subject]';
         $subject = isset( $sanitized_data[ 'subject' ] ) ? str_replace( '[ia_subject]', $sanitized_data[ 'subject' ], $ask_subject ) : str_replace( '[ia_subject]', '', $ask_subject );
         $subject = isset( $sanitized_data[ 'email' ] ) ? str_replace( '[ia_email]', $sanitized_data[ 'email' ], $subject ) : str_replace( '[ia_email]', '', $subject );

@@ -105,61 +105,11 @@
       font-size: 12px;
       margin: 0; }
 
-.betterdocs-search-bar {
-  background-color: #ffffff;
-  z-index: 999;
-  border-radius: 10px 10px 0 0;
-  padding: 15px 0 0; }
-  .betterdocs-search-bar .betterdocs-search-wrap {
-    -webkit-box-shadow: 0 3px 7px 0 rgba(100, 105, 155, 0.08);
-            box-shadow: 0 3px 7px 0 rgba(100, 105, 155, 0.08);
-    border: 1px solid #f2f2f2;
-    margin-left: 10px;
-    width: calc(100% - 20px); }
-    .betterdocs-search-bar .betterdocs-search-wrap.bd-search-box-focused {
-      border-color: #19ca9e; }
-    .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-container {
-      width: calc(100% - 48px);
-      margin: auto; }
-      .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-container input {
-        border: none;
-        font-size: 15px;
-        background-color: transparent;
-        padding-left: 15px;
-        outline: none; }
-        .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-container input::-webkit-input-placeholder {
-          color: #9eaab6;
-          font-size: 15px; }
-        .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-container input::-moz-placeholder {
-          color: #9eaab6;
-          font-size: 15px; }
-        .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-container input::-ms-input-placeholder {
-          color: #9eaab6;
-          font-size: 15px; }
-        .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-container input::placeholder {
-          color: #9eaab6;
-          font-size: 15px; }
-    .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-icon-button,
-    .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-button {
-      padding: 0;
-      width: 48px;
-      margin-right: 0px;
-      right: 0px;
-      -webkit-transform: scale(1);
-          -ms-transform: scale(1);
-              transform: scale(1);
-      display: inline-block;
-      background-color: transparent; }
-      .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-icon-button:hover,
-      .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-button:hover {
-        background-color: transparent; }
-    .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-button-hidden {
-      display: none; }
-      .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-button-hidden.betterdocs-search-icon-button {
-        display: none; }
-    .betterdocs-search-bar .betterdocs-search-wrap .betterdocs-search-icon {
-      fill: #727380;
-      opacity: 1; }
+@media only screen and (max-height: 420px) {
+  .betterdocs-header-wrapper .betterdocs-header {
+    padding-top: 5px; }
+  .betterdocs-header-wrapper .betterdocs-sub-header {
+    padding: 5px 10px; } }
 
 .betterdocs-brand-wrapper {
   padding-bottom: 15px;
@@ -170,17 +120,16 @@
   font-size: 13px;
   -ms-flex-pack: center;
       justify-content: center;
-  -ms-flex-item-align: end;
-      align-self: flex-end; }
+  margin-top: auto; }
   .betterdocs-brand-wrapper a {
     display: -ms-flexbox;
     display: flex;
     -ms-flex-align: center;
         align-items: center;
     color: #3f5876;
-    -webkit-transition: all .3s;
-    -o-transition: all .3s;
-    transition: all .3s; }
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s; }
     .betterdocs-brand-wrapper a:hover {
       color: #19ca9e; }
   .betterdocs-brand-wrapper .betterdocs-brand-logo {
@@ -193,7 +142,7 @@
       align-self: center; }
 
 .betterdocs-messages-container .betterdocs-brand-wrapper {
-  padding: 15px; }
+  padding: 0 10px 10px 10px; }
   @media screen and (max-width: 800px) {
     .betterdocs-messages-container .betterdocs-brand-wrapper {
       padding: 5px 0px 15px; } }
@@ -203,7 +152,11 @@
   border-radius: 0px 0px 10px 10px;
   -webkit-transition: all 0.3s ease 0s;
   -o-transition: all 0.3s ease 0s;
-  transition: all 0.3s ease 0s; }
+  transition: all 0.3s ease 0s;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column; }
   .betterdocs-messages-container .betterdocs-not-found {
     padding: 50px;
     text-align: center;
@@ -277,27 +230,33 @@
       background-color: #d7d8d8; }
     .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container {
       height: 100%;
-      line-height: 1.3; }
+      line-height: 1.3;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: column;
+          flex-direction: column;
+      -ms-flex-pack: justify;
+          justify-content: space-between; }
       .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-toc {
         display: none; }
-      .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-content {
+      .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content {
         margin-top: 20px;
-        height: 100%;
+        height: auto;
         word-break: break-word; }
-        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-content h1 {
+        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h1 {
           font-size: 26px; }
-        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-content h2 {
+        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h2 {
           font-size: 24px; }
-        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-content h3 {
+        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h3 {
           font-size: 22px;
           text-align: left; }
-        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-content h4 {
+        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h4 {
           font-size: 20px; }
-        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-content h5 {
+        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h5 {
           font-size: 18px; }
-        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-content h6 {
+        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content h6 {
           font-size: 16px; }
-        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-content p {
+        .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container .betterdocs-ia-content p {
           line-height: 1.5; }
       .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container h1,
       .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container h2,
@@ -305,7 +264,8 @@
       .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container h4,
       .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container h5,
       .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container h6 {
-        line-height: 1.3; }
+        line-height: 1.3;
+        margin-bottom: 0.5em; }
         .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container h1 .anchor,
         .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container h2 .anchor,
         .betterdocs-messages-container .betterdocs-modal-wrapper .betterdocs-modal-content-container h3 .anchor,
@@ -324,6 +284,7 @@
     .betterdocs-messages-container .betterdocs-modal-wrapper.betterdocs-modal-open {
       opacity: 1; }
     .betterdocs-messages-container .betterdocs-modal-wrapper .popup-overlay {
+      width: auto;
       overflow-y: scroll;
       top: 0.3rem !important;
       right: 0.3rem !important;
@@ -492,7 +453,8 @@
   .betterdocs-tab-ask .betterdocs-ask-wrapper input {
     height: 40px; }
   .betterdocs-tab-ask .betterdocs-ask-wrapper textarea {
-    height: 134px;
+    margin-bottom: 5px;
+    height: 100px;
     resize: none; }
   .betterdocs-tab-ask .betterdocs-ask-wrapper .betterdocs-invalid-input {
     -webkit-box-shadow: 0px 0px 4px #ff4d4d;
@@ -542,7 +504,8 @@
       .betterdocs-tab-ask .betterdocs-ask-wrapper .betterdocs-ask-submit button .send-loader {
         margin-right: 15px; }
   .betterdocs-tab-ask .betterdocs-ask-wrapper .betterdocs-ask-help {
-    position: relative; }
+    position: relative;
+    line-height: 0; }
   .betterdocs-tab-ask .betterdocs-ask-wrapper .betterdocs-ask-files {
     margin: 0;
     padding: 0;
@@ -557,13 +520,12 @@
   .betterdocs-tab-ask .betterdocs-ask-wrapper .betterdocs-attach-button {
     height: 20px;
     width: 100%;
-    left: 15px;
-    bottom: 30px;
+    margin-left: 5px;
+    margin-bottom: 10px;
     border: none;
     padding: 0;
     fill: #939eaa;
     font-size: 9px;
-    position: absolute;
     display: -ms-flexbox;
     display: flex;
     -ms-flex-align: center;
@@ -618,7 +580,14 @@
     max-height: none; } }
 
 .betterdocs-footer-wrapper {
-  padding: 15px; }
+  position: absolute !important;
+  display: block;
+  bottom: 0;
+  padding: 15px;
+  left: 0;
+  right: 0;
+  border-radius: 0;
+  background-color: #19ca9e; }
   .betterdocs-footer-wrapper .bd-ia-feedback-wrap,
   .betterdocs-footer-wrapper .bd-ia-feedback-response {
     display: -ms-flexbox;
@@ -641,7 +610,9 @@
     .betterdocs-footer-wrapper .bd-ia-feedback-response .feedback-success-title {
       font-size: 13px;
       color: #fff;
-      font-weight: 600; }
+      font-weight: 600;
+      margin: 0;
+      padding: 0; }
   .betterdocs-footer-wrapper .betterdocs-footer-label {
     color: white;
     font-weight: 500; }
@@ -685,17 +656,24 @@
 @media screen and (max-width: 800px) {
   .betterdocs-footer-wrapper {
     position: absolute !important;
+    display: block;
     bottom: 0;
     padding: 20px;
     width: 100%;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-pack: space-evenly;
-        justify-content: space-evenly;
     border-radius: 0;
     background-color: #19ca9e; } }
 
-@-webkit-keyframes rotation-lr {
+@media screen and (max-height: 420px) {
+  .betterdocs-footer-wrapper {
+    position: absolute !important;
+    display: block;
+    bottom: 0;
+    padding: 10px;
+    width: 100%;
+    border-radius: 0;
+    background-color: #19ca9e; } }
+
+@-webkit-keyframes betterdocs-ia-rotation-lr {
   from {
     -webkit-transform: rotate(-90deg);
             transform: rotate(-90deg); }
@@ -703,7 +681,7 @@
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@keyframes rotation-lr {
+@keyframes betterdocs-ia-rotation-lr {
   from {
     -webkit-transform: rotate(-90deg);
             transform: rotate(-90deg); }
@@ -711,7 +689,7 @@
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@-webkit-keyframes rotation-rl {
+@-webkit-keyframes betterdocs-ia-rotation-rl {
   from {
     -webkit-transform: rotate(90deg);
             transform: rotate(90deg); }
@@ -719,7 +697,7 @@
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@keyframes rotation-rl {
+@keyframes betterdocs-ia-rotation-rl {
   from {
     -webkit-transform: rotate(90deg);
             transform: rotate(90deg); }
@@ -727,7 +705,7 @@
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@-webkit-keyframes slide-in {
+@-webkit-keyframes betterdocs-ia-slide-in {
   from {
     opacity: 0;
     -webkit-transform: translateY(10px);
@@ -737,7 +715,7 @@
     -webkit-transform: translateY(0);
             transform: translateY(0); } }
 
-@keyframes slide-in {
+@keyframes betterdocs-ia-slide-in {
   from {
     opacity: 0;
     -webkit-transform: translateY(10px);
@@ -747,7 +725,7 @@
     -webkit-transform: translateY(0);
             transform: translateY(0); } }
 
-@-webkit-keyframes slide-out {
+@-webkit-keyframes betterdocs-ia-slide-out {
   from {
     opacity: 1;
     -webkit-transform: translateY(0);
@@ -757,7 +735,7 @@
     -webkit-transform: translateY(10px);
             transform: translateY(10px); } }
 
-@keyframes slide-out {
+@keyframes betterdocs-ia-slide-out {
   from {
     opacity: 1;
     -webkit-transform: translateY(0);
@@ -767,13 +745,14 @@
     -webkit-transform: translateY(10px);
             transform: translateY(10px); } }
 
-input[type="email"],
-input[type="number"],
-input[type="password"],
-input[type="text"],
-select:focus,
-textarea {
-  font-size: 16px; }
+.betterdocs-ask-wrapper input[type="email"],
+.betterdocs-ask-wrapper input[type="number"],
+.betterdocs-ask-wrapper input[type="password"],
+.betterdocs-ask-wrapper input[type="text"],
+.betterdocs-ask-wrapper select:focus,
+.betterdocs-ask-wrapper textarea {
+  font-size: 16px;
+  line-height: 1.5; }
 
 .betterdocs-tab-content-wrapper {
   border-radius: 10px;
@@ -804,17 +783,17 @@ textarea {
 .betterdocs-conversation-container {
   -webkit-animation-delay: 0;
   -webkit-animation-duration: 0.5s;
-  -webkit-animation-name: slide-in;
+  -webkit-animation-name: betterdocs-ia-slide-in;
   -webkit-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   -moz-animation-delay: 0;
   -moz-animation-duration: 0.5s;
-  -moz-animation-name: slide-in;
+  -moz-animation-name: betterdocs-ia-slide-in;
   -moz-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   animation-delay: 0;
   animation-duration: 0.5s;
-  animation-name: slide-in;
+  animation-name: betterdocs-ia-slide-in;
   animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   border-radius: 10px;
@@ -822,22 +801,43 @@ textarea {
           box-shadow: 0px 22px 30px 0px rgba(28, 26, 58, 0.2);
   background-color: #19ca9e;
   min-height: 250px;
-  height: calc(100% - 95px); }
+  height: 100%;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+      flex-direction: column; }
 
-.betterdocs-slide-out {
+.betterdocs-header-wrapper {
   -webkit-animation-delay: 0;
   -webkit-animation-duration: 0.5s;
-  -webkit-animation-name: slide-out;
+  -webkit-animation-name: betterdocs-ia-slide-in;
   -webkit-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   -moz-animation-delay: 0;
   -moz-animation-duration: 0.5s;
-  -moz-animation-name: slide-out;
+  -moz-animation-name: betterdocs-ia-slide-in;
   -moz-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   animation-delay: 0;
   animation-duration: 0.5s;
-  animation-name: slide-out;
+  animation-name: betterdocs-ia-slide-in;
+  animation-fill-mode: forwards;
+  /* this prevents the animation from restarting! */ }
+
+.betterdocs-betterdocs-ia-slide-out {
+  -webkit-animation-delay: 0;
+  -webkit-animation-duration: 0.5s;
+  -webkit-animation-name: betterdocs-ia-slide-out;
+  -webkit-animation-fill-mode: forwards;
+  /* this prevents the animation from restarting! */
+  -moz-animation-delay: 0;
+  -moz-animation-duration: 0.5s;
+  -moz-animation-name: betterdocs-ia-slide-out;
+  -moz-animation-fill-mode: forwards;
+  /* this prevents the animation from restarting! */
+  animation-delay: 0;
+  animation-duration: 0.5s;
+  animation-name: betterdocs-ia-slide-out;
   animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */ }
 
@@ -858,6 +858,16 @@ textarea {
     height: 100%; }
   .betterdocs-tab-content-wrapper {
     height: calc(100% - 180px) !important; } }
+
+@media screen and (max-height: 420px) {
+  .betterdocs-conversation-container {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+        flex-direction: column;
+    height: 100%; }
+  .betterdocs-tab-content-wrapper {
+    height: calc(100% - 127px) !important; } }
 
 .betterdocs-conversation-container .betterdocs-header {
   border-radius: 10px 10px 0 0;
@@ -923,7 +933,75 @@ textarea {
     width: 20px;
     height: 20px; } }
 
-@-webkit-keyframes rotation-lr {
+.bdc-search-box {
+  margin: 10px;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: white;
+  -webkit-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  font-family: Roboto, sans-serif;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  height: 48px;
+  border-radius: 3px;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+  width: calc(100% - 20px);
+  max-width: 800px; }
+  .bdc-search-box .search-input {
+    -webkit-appearance: textfield;
+       -moz-appearance: textfield;
+            appearance: textfield;
+    border-radius: 3px;
+    padding: 0 20px;
+    width: 100%;
+    border: none;
+    outline: none;
+    cursor: inherit;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    height: 100%;
+    font-family: Roboto, sans-serif;
+    font-size: 16px;
+    -webkit-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+    -o-transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+    transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms; }
+    .bdc-search-box .search-input::-webkit-input-placeholder {
+      color: #aaa; }
+    .bdc-search-box .search-input::-moz-placeholder {
+      color: #aaa; }
+    .bdc-search-box .search-input::-ms-input-placeholder {
+      color: #aaa; }
+    .bdc-search-box .search-input::placeholder {
+      color: #aaa; }
+    .bdc-search-box .search-input:focus {
+      outline: none; }
+  .bdc-search-box .search-button {
+    border: none;
+    outline: none;
+    margin: 0px;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+    font-size: 1.5rem;
+    text-decoration: none;
+    cursor: pointer;
+    background: transparent;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -ms-flex-pack: center;
+        justify-content: center;
+    -ms-flex-align: center;
+        align-items: center;
+    width: auto;
+    height: 100%;
+    color: #ccc;
+    border-radius: 3px; }
+
+@-webkit-keyframes betterdocs-ia-rotation-lr {
   from {
     -webkit-transform: rotate(-90deg);
             transform: rotate(-90deg); }
@@ -931,7 +1009,7 @@ textarea {
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@keyframes rotation-lr {
+@keyframes betterdocs-ia-rotation-lr {
   from {
     -webkit-transform: rotate(-90deg);
             transform: rotate(-90deg); }
@@ -939,7 +1017,7 @@ textarea {
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@-webkit-keyframes rotation-rl {
+@-webkit-keyframes betterdocs-ia-rotation-rl {
   from {
     -webkit-transform: rotate(90deg);
             transform: rotate(90deg); }
@@ -947,7 +1025,7 @@ textarea {
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@keyframes rotation-rl {
+@keyframes betterdocs-ia-rotation-rl {
   from {
     -webkit-transform: rotate(90deg);
             transform: rotate(90deg); }
@@ -955,7 +1033,7 @@ textarea {
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@-webkit-keyframes slide-in {
+@-webkit-keyframes betterdocs-ia-slide-in {
   from {
     opacity: 0;
     -webkit-transform: translateY(10px);
@@ -965,7 +1043,7 @@ textarea {
     -webkit-transform: translateY(0);
             transform: translateY(0); } }
 
-@keyframes slide-in {
+@keyframes betterdocs-ia-slide-in {
   from {
     opacity: 0;
     -webkit-transform: translateY(10px);
@@ -975,7 +1053,7 @@ textarea {
     -webkit-transform: translateY(0);
             transform: translateY(0); } }
 
-@-webkit-keyframes slide-out {
+@-webkit-keyframes betterdocs-ia-slide-out {
   from {
     opacity: 1;
     -webkit-transform: translateY(0);
@@ -985,7 +1063,7 @@ textarea {
     -webkit-transform: translateY(10px);
             transform: translateY(10px); } }
 
-@keyframes slide-out {
+@keyframes betterdocs-ia-slide-out {
   from {
     opacity: 1;
     -webkit-transform: translateY(0);
@@ -999,20 +1077,20 @@ textarea {
   -ms-flex-item-align: start;
       align-self: flex-start; }
 
-.betterdocs-launcher[type=button] {
+.betterdocs-launcher[type="button"] {
   -webkit-animation-delay: 0;
   -webkit-animation-duration: 0.5s;
-  -webkit-animation-name: slide-in;
+  -webkit-animation-name: betterdocs-ia-slide-in;
   -webkit-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   -moz-animation-delay: 0;
   -moz-animation-duration: 0.5s;
-  -moz-animation-name: slide-in;
+  -moz-animation-name: betterdocs-ia-slide-in;
   -moz-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   animation-delay: 0;
   animation-duration: 0.5s;
-  animation-name: slide-in;
+  animation-name: betterdocs-ia-slide-in;
   animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   -ms-flex-item-align: end;
@@ -1032,25 +1110,26 @@ textarea {
       align-items: center;
   -ms-flex-pack: center;
       justify-content: center;
-  padding: 10px; }
-  .betterdocs-launcher[type=button]:focus, .betterdocs-launcher[type=button]:hover {
+  padding: 10px;
+  cursor: pointer; }
+  .betterdocs-launcher[type="button"]:focus, .betterdocs-launcher[type="button"]:hover {
     outline: none;
     background-color: #19ca9e; }
 
 .betterdocs-open-launcher {
   -webkit-animation-delay: 0;
   -webkit-animation-duration: 0.5s;
-  -webkit-animation-name: rotation-rl;
+  -webkit-animation-name: betterdocs-ia-rotation-rl;
   -webkit-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   -moz-animation-delay: 0;
   -moz-animation-duration: 0.5s;
-  -moz-animation-name: rotation-rl;
+  -moz-animation-name: betterdocs-ia-rotation-rl;
   -moz-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   animation-delay: 0;
   animation-duration: 0.5s;
-  animation-name: rotation-rl;
+  animation-name: betterdocs-ia-rotation-rl;
   animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */ }
 
@@ -1058,47 +1137,67 @@ textarea {
   width: 20px;
   -webkit-animation-delay: 0;
   -webkit-animation-duration: 0.5s;
-  -webkit-animation-name: rotation-lr;
+  -webkit-animation-name: betterdocs-ia-rotation-lr;
   -webkit-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   -moz-animation-delay: 0;
   -moz-animation-duration: 0.5s;
-  -moz-animation-name: rotation-lr;
+  -moz-animation-name: betterdocs-ia-rotation-lr;
   -moz-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   animation-delay: 0;
   animation-duration: 0.5s;
-  animation-name: rotation-lr;
+  animation-name: betterdocs-ia-rotation-lr;
   animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */ }
 
 @media screen and (max-width: 800px) {
-  .betterdocs-launcher[type=button].betterdocs-launcher {
+  .betterdocs-launcher[type="button"].betterdocs-launcher {
     position: fixed;
     right: 0;
     bottom: 0;
-    margin: 0 20px 10px; } }
+    margin: 0 20px 10px; }
+    .betterdocs-launcher[type="button"].betterdocs-launcher.device-iphone {
+      margin: 0 10px 10px;
+      width: 40px;
+      height: 40px; }
+    .betterdocs-launcher[type="button"].betterdocs-launcher .betterdocs-launch-icon,
+    .betterdocs-launcher[type="button"].betterdocs-launcher .betterdocs-close-launcher {
+      width: 15px; } }
 
-.betterdocs-launcher[type=button] .betterdocs-launch-icon {
+@media screen and (max-height: 420px) {
+  .betterdocs-launcher[type="button"].betterdocs-launcher {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 0 10px 10px; }
+    .betterdocs-launcher[type="button"].betterdocs-launcher.device-iphone {
+      width: 40px;
+      height: 40px; }
+    .betterdocs-launcher[type="button"].betterdocs-launcher .betterdocs-launch-icon,
+    .betterdocs-launcher[type="button"].betterdocs-launcher .betterdocs-close-launcher {
+      width: 15px; } }
+
+.betterdocs-launcher[type="button"] .betterdocs-launch-icon {
   width: 20px;
   fill: white;
   -webkit-animation-delay: 0;
   -webkit-animation-duration: 0.5s;
-  -webkit-animation-name: rotation-rl;
+  -webkit-animation-name: betterdocs-ia-rotation-rl;
   -webkit-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   -moz-animation-delay: 0;
   -moz-animation-duration: 0.5s;
-  -moz-animation-name: rotation-rl;
+  -moz-animation-name: betterdocs-ia-rotation-rl;
   -moz-animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */
   animation-delay: 0;
   animation-duration: 0.5s;
-  animation-name: rotation-rl;
+  animation-name: betterdocs-ia-rotation-rl;
   animation-fill-mode: forwards;
   /* this prevents the animation from restarting! */ }
 
-@-webkit-keyframes rotation-lr {
+@-webkit-keyframes betterdocs-ia-rotation-lr {
   from {
     -webkit-transform: rotate(-90deg);
             transform: rotate(-90deg); }
@@ -1106,7 +1205,7 @@ textarea {
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@keyframes rotation-lr {
+@keyframes betterdocs-ia-rotation-lr {
   from {
     -webkit-transform: rotate(-90deg);
             transform: rotate(-90deg); }
@@ -1114,7 +1213,7 @@ textarea {
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@-webkit-keyframes rotation-rl {
+@-webkit-keyframes betterdocs-ia-rotation-rl {
   from {
     -webkit-transform: rotate(90deg);
             transform: rotate(90deg); }
@@ -1122,7 +1221,7 @@ textarea {
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@keyframes rotation-rl {
+@keyframes betterdocs-ia-rotation-rl {
   from {
     -webkit-transform: rotate(90deg);
             transform: rotate(90deg); }
@@ -1130,7 +1229,7 @@ textarea {
     -webkit-transform: rotate(0);
             transform: rotate(0); } }
 
-@-webkit-keyframes slide-in {
+@-webkit-keyframes betterdocs-ia-slide-in {
   from {
     opacity: 0;
     -webkit-transform: translateY(10px);
@@ -1140,7 +1239,7 @@ textarea {
     -webkit-transform: translateY(0);
             transform: translateY(0); } }
 
-@keyframes slide-in {
+@keyframes betterdocs-ia-slide-in {
   from {
     opacity: 0;
     -webkit-transform: translateY(10px);
@@ -1150,7 +1249,7 @@ textarea {
     -webkit-transform: translateY(0);
             transform: translateY(0); } }
 
-@-webkit-keyframes slide-out {
+@-webkit-keyframes betterdocs-ia-slide-out {
   from {
     opacity: 1;
     -webkit-transform: translateY(0);
@@ -1160,7 +1259,7 @@ textarea {
     -webkit-transform: translateY(10px);
             transform: translateY(10px); } }
 
-@keyframes slide-out {
+@keyframes betterdocs-ia-slide-out {
   from {
     opacity: 1;
     -webkit-transform: translateY(0);
@@ -1173,6 +1272,8 @@ textarea {
 .betterdocs-left .betterdocs-widget-container {
   left: 20px;
   right: auto; }
+  .betterdocs-left .betterdocs-widget-container .betterdocs-launcher {
+    margin-right: auto; }
 
 .betterdocs-widget-container {
   display: -ms-flexbox;
@@ -1183,7 +1284,11 @@ textarea {
   bottom: 20px;
   max-width: 370px;
   position: fixed;
-  z-index: 9999; }
+  z-index: 9999999;
+  cursor: pointer; }
+  .betterdocs-widget-container.betterdocs-opened {
+    height: calc(100vh - 50px);
+    max-height: 650px; }
   .betterdocs-widget-container .betterdocs-launcher {
     width: 60px;
     height: 60px; }
@@ -1199,7 +1304,7 @@ textarea {
     width: 100%;
     height: 100%; }
 
-@media screen and (max-width: 800px) {
+@media only screen and (max-width: 800px) {
   .betterdocs-widget-container {
     margin: 0;
     max-width: none;
@@ -1209,6 +1314,41 @@ textarea {
     bottom: 80px; }
     .betterdocs-widget-container.betterdocs-opened {
       height: calc(100vh - 80px); }
+    .betterdocs-widget-container.betterdocs-opened.device-iphone {
+      height: calc(100vh - 168px);
+      bottom: 55px; }
+      .betterdocs-widget-container.betterdocs-opened.device-iphone.xmax-xr {
+        height: calc(100vh - 168px); }
+      .betterdocs-widget-container.betterdocs-opened.device-iphone.x-xs {
+        height: calc(100vh - 168px); }
+      .betterdocs-widget-container.betterdocs-opened.device-iphone.ifour {
+        height: calc(100vh - 130px); }
+      .betterdocs-widget-container.betterdocs-opened.device-iphone.isix {
+        height: calc(100vh - 130px); }
+      .betterdocs-widget-container.betterdocs-opened.device-iphone.isix-plus {
+        height: calc(100vh - 130px); }
+      .betterdocs-widget-container.betterdocs-opened.device-iphone.ifive {
+        height: calc(100vh - 130px); }
+      .betterdocs-widget-container.betterdocs-opened.device-iphone.ithree {
+        height: calc(100vh - 130px); }
+  .betterdocs-left .betterdocs-widget-container {
+    left: 0; }
+  .betterdocs-left .betterdocs-launcher {
+    left: 0;
+    right: auto; } }
+
+@media (max-height: 420px) and (max-width: 400px) {
+  .betterdocs-widget-container {
+    margin: 0;
+    max-width: none;
+    width: 100%;
+    height: 100%;
+    width: 90%;
+    right: 70px;
+    bottom: 0 !important; }
+    .betterdocs-widget-container.betterdocs-opened.device-iphone {
+      right: 54px;
+      height: calc(100% - 45px) !important; }
   .betterdocs-left .betterdocs-widget-container {
     left: 0; }
   .betterdocs-left .betterdocs-launcher {
