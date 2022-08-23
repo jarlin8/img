@@ -18,7 +18,7 @@ use ContentEgg\application\components\AggregateOffer;
  */
 class Plugin {
 
-    const version = '10.6.2';
+    const version = '10.6.3';
     const db_version = 55;
     const wp_requires = '4.6.1';
     const slug = 'content-egg';

@@ -293,7 +293,7 @@ class TextHelper {
 
     public static function clearId($str)
     {
-        return preg_replace('/[^a-zA-Z0-9_\-~\.@]/', '', $str);
+        return preg_replace('/[^a-zA-Z0-9_\-~\.@\|]/', '', $str);
     }
 
     public static function clear_utf8($str)

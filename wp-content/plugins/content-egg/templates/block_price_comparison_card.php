@@ -41,6 +41,7 @@ if (!$title)
 
                     <?php foreach ($all_items as $key => $item): ?>    
                         <a<?php TemplateHelper::printRel(); ?> class="list-group-item" target="_blank" href="<?php echo esc_url_raw($item['url']); ?>">
+						<img src="https://laowei8.com/favicon/get.php?url=https://<?php echo \esc_html(TemplateHelper::getMerhantName($item)); ?>" height="16" width="16">
                             <?php echo \esc_html(TemplateHelper::getMerhantName($item)); ?>
                             <?php if ($item['price']): ?>
                                 <span<?php if ($item['stock_status'] != -1) echo ' style="background-color: ' . esc_attr(TemplateHelper::getPriceColor()) . '"'; ?> class="cegg-price-badge"><?php echo esc_html(TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode'])); ?></span>

@@ -5,6 +5,7 @@ use ContentEgg\application\helpers\TemplateHelper;
 ?>
 
 <div class="cegg-list-logo-title cegg-mt5 cegg-mb15 visible-xs text-center">
+	<img src="https://laowei8.com/favicon/get.php?url=https://<?php echo \esc_html(TemplateHelper::getMerhantName($item)); ?>" height="16" width="16">
     <a<?php TemplateHelper::printRel(); ?> target="_blank"
                                            href="<?php echo esc_url_raw($item['url']); ?>"><?php echo esc_html(TemplateHelper::truncate($item['title'], 100)); ?></a>
 </div>
@@ -18,7 +19,8 @@ use ContentEgg\application\helpers\TemplateHelper;
     </div>
     <div class="col-md-5 col-sm-5 col-xs-12 cegg-desc-cell hidden-xs">
         <div class="cegg-no-top-margin cegg-list-logo-title">
-            <a<?php TemplateHelper::printRel(); ?> target="_blank"
+            <img src="https://laowei8.com/favicon/get.php?url=https://<?php echo \esc_html(TemplateHelper::getMerhantName($item)); ?>" height="16" width="16">
+			<a<?php TemplateHelper::printRel(); ?> target="_blank"
                                                    href="<?php echo esc_url_raw($item['url']); ?>"><?php echo esc_html(TemplateHelper::truncate($item['title'], 100)); ?></a>
         </div>
 

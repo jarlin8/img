@@ -230,7 +230,10 @@ abstract class ParserModule extends Module {
                 $data = $this->doRequest($keyword, $query_params, $is_autoupdate);
             } catch (\Exception $e)
             {
-                continue;
+                if (count($keywords) == 1)
+                    throw new \Exception($e->getMessage(), $e->getCode());
+                else
+                    continue;
             }
 
             if (!empty($groups[$i]))
