@@ -372,6 +372,29 @@ class LManager {
 
     public static function isNulled()
     {
+        return;
+        if (!Plugin::isPro())
+        {
+            return false;
+        }
+
+        $l = LicConfig::getInstance()->option('license_key', false);
+
+        if (!$l && Plugin::isEnvato())
+        {
+            return false;
+        }
+
+        if (!LManager::isValidLicFormat($l))
+        {
+            return true;
+        }
+
+        if (in_array(md5($l), LManager::getNulledLics()))
+        {
+            return true;
+        }
+
         return false;
     }
 
