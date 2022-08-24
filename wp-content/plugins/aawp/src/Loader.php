@@ -59,6 +59,8 @@ class Loader {
 			'ShortenLinks/Process',
 			'ShortenLinks/DB',
 			'ShortenLinks/BitlyAPI',
+
+			'Elementor/Elementor',
 		];
 
 		foreach ( $classes as $class ) {

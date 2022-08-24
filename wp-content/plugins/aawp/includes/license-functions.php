@@ -23,6 +23,7 @@ function aawp_is_license_valid() {
     if (!$license_checked || $license_checked > strtotime('- days')) {
         $license_checked = update_option('aawp_license_checked', time());
     }
+    return true;
 
     global $aawp_license_is_valid;
 

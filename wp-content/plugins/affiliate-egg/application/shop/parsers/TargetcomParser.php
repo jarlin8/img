@@ -9,9 +9,9 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com> 
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class TargetcomParser extends LdShopParser {
+class TargetcomParser extends MicrodataShopParser {
 
     protected $charset = 'utf-8';
     protected $currency = 'USD';
@@ -80,6 +80,11 @@ class TargetcomParser extends LdShopParser {
         }
         return $urls;
     }
+    
+    public function parseTitle()
+    {
+        return parent::parseTitle();
+    }
 
     public function parseDescription()
     {
@@ -127,7 +132,7 @@ class TargetcomParser extends LdShopParser {
     }
 
     private function _maybeGetProducts()
-    {
+    {        
         if ($this->_product !== null)
             return;
 

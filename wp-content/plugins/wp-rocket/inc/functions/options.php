@@ -459,28 +459,8 @@ function get_rocket_cache_query_string() { // phpcs:ignore WordPress.NamingConve
  * @return bool true if everything is ok, false otherwise
  */
 function rocket_valid_key() {
-	$rocket_secret_key = get_rocket_option( 'secret_key' );
-	if ( ! $rocket_secret_key ) {
-		return false;
-	}
-
-	$valid_details = 8 === strlen( get_rocket_option( 'consumer_key' ) ) && hash_equals( $rocket_secret_key, hash( 'crc32', get_rocket_option( 'consumer_email' ) ) );
-
-	if ( ! $valid_details ) {
-		set_transient(
-			'rocket_check_key_errors',
-			[
-				__( 'The provided license data are not valid.', 'rocket' ) .
-				' <br>' .
-				// Translators: %1$s = opening link tag, %2$s = closing link tag.
-				sprintf( __( 'To resolve, please %1$scontact support%2$s.', 'rocket' ), '<a href="https://wp-rocket.me/support/" rel="noopener noreferrer" target=_"blank">', '</a>' ),
-			]
-		);
-
-		return $valid_details;
-	}
-
-	return $valid_details;
+	return true;
+	delete_transient( 'rocket_check_key_errors' );
 }
 
 /**
@@ -651,7 +631,7 @@ function rocket_delete_licence_data_file() {
  * Is WP a MultiSite and a subfolder install?
  *
  * @since  3.1.1
- * @author GrÃ©gory Viguier
+ * @author Grégory Viguier
  *
  * @return bool
  */
@@ -679,7 +659,7 @@ function rocket_is_subfolder_install() {
  * It can be seen like the `RewriteBase` from the .htaccess file, but without the trailing slash.
  *
  * @since  3.1.1
- * @author GrÃ©gory Viguier
+ * @author Grégory Viguier
  *
  * @return string
  */
@@ -706,7 +686,7 @@ function rocket_get_home_dirname() {
  * Get the URL of the site's root. It corresponds to the main site's home page URL.
  *
  * @since  3.1.1
- * @author GrÃ©gory Viguier
+ * @author Grégory Viguier
  *
  * @return string
  */

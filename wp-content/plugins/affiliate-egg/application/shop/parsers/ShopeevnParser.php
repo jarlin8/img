@@ -51,30 +51,37 @@ class ShopeevnParser extends ShopParser {
             if ($page > 1)
                 $url = \add_query_arg('newest', $page * 50, $url);
         }
-        
-        $result = $this->getRemoteJson($url);
+
+        $headers = array('User-Agent' => reset($this->user_agent));
+        $result = $this->getRemoteJson($url, $headers);
         if (!$result || !isset($result['items']))
             return false;
         $urls = array();
 
         foreach ($result['items'] as $item)
         {
-            $urls[] = $this->canonical_domain . '/' . str_replace(' ', '-', $item['item_basic']['name']) . '-i.' . $item['shopid'] . '.' . $item['itemid'];
+            $urls[] = $this->canonical_domain . '/' . str_replace(' ', '-', html_entity_decode($item['item_basic']['name'])) . '-i.' . $item['shopid'] . '.' . $item['itemid'];
         }
+
         return $urls;
     }
 
     public function parseTitle()
     {
-        $this->_getProduct();
+        if (!$this->_getProduct())
+            return;
+
         if (!$this->_product)
             return;
+
         if (isset($this->_product['name']))
-            return $this->_product['name']; 
+            return $this->_product['name'];
     }
 
     public function _getProduct()
     {
+        $this->_product = array();
+        
         $item_id = 0;
         $shop_id = 0;
 
@@ -93,12 +100,13 @@ class ShopeevnParser extends ShopParser {
         }
 
         if (!$item_id || !$shop_id)
-            return; 
-
-        $result = $this->getRemoteJson($this->canonical_domain . '/api/v4/item/get?itemid=' . urlencode($item_id) . '&shopid=' . urlencode($shop_id));
-        
-        if (!$result || !isset($result['data']))
             return;
+
+        $headers = array('User-Agent' => reset($this->user_agent));
+        $result = $this->getRemoteJson($this->canonical_domain . '/api/v4/item/get?itemid=' . urlencode($item_id) . '&shopid=' . urlencode($shop_id), $headers);
+
+        if (!$result || !isset($result['data']))
+            return false;
 
         $this->_product = $result['data'];
         return $this->_product;

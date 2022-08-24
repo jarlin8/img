@@ -19,7 +19,6 @@ class Block {
 		}
 
 		add_action( 'init', [ $this, 'register_block' ] );
-		add_action( 'init', [ $this, 'script_translations' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'print_scripts' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'block_assets' ] );
 	}
@@ -38,6 +37,8 @@ class Block {
 		$string  = [ 'type' => 'string' ];
 		$bool    = [ 'type' => 'boolean' ];
 		$integer = [ 'type' => 'integer' ];
+
+		$this->register_assets();
 
 		register_block_type(
 			'aawp/aawp-block',
@@ -128,22 +129,38 @@ class Block {
 					'table'                => $string,
 				],
 				'render_callback' => [ $this, 'block_content' ],
+				'style' => 'aawp-editor-style',
+				'editor_style' => 'aawp-aawp-block-editor-style',
+				'editor_script' => 'aawp-aawp-block-editor-script'
 			]
 		);
 	}
 
 	/**
-	 * Set script translations.
+	 * Register assets required in the block and front-end. Enqueue later wherever required.
 	 *
-	 * @see https://developer.wordpress.org/block-editor/how-to-guides/internationalization/
-	 *
-	 * @since 3.18
-	 *
-	 * @return void.
+	 * @since 3.18.3
 	 */
-	public function script_translations() {
+	public function register_assets() {
 
-		wp_set_script_translations( 'aawp-aawp-block-editor-script', 'aawp', plugins_url( 'languages', AAWP_PLUGIN_FILE ) );
+		if( ! is_admin() ) {
+			return;
+		}
+
+		wp_register_style(
+			'aawp-aawp-block-editor-style',
+			plugins_url( 'assets/block/dist/index.css', AAWP_PLUGIN_FILE ),
+			[],
+			AAWP_VERSION,
+			false
+		);
+
+		wp_register_style(
+			'aawp-editor-style',
+			plugins_url( 'assets/dist/css/main.css', AAWP_PLUGIN_FILE ),
+			[ 'wp-edit-blocks', 'aawp-aawp-block-editor-style' ],
+			AAWP_VERSION
+		);
 	}
 
 	/**
@@ -217,25 +234,19 @@ class Block {
 		wp_enqueue_script( 
 			'aawp-aawp-block-editor-script',
 			plugins_url( 'assets/block/dist/index.js', AAWP_PLUGIN_FILE ),
-			[],
+			[ 'wp-i18n' ],
 			AAWP_VERSION,
 			true
 		);
 
-		wp_enqueue_style(
-			'aawp-aawp-block-editor-style',
-			plugins_url( 'assets/block/dist/index.css', AAWP_PLUGIN_FILE ),
-			[],
-			AAWP_VERSION,
-			false
-		);
+		wp_enqueue_style( 'aawp-aawp-block-editor-style' );
 
-		wp_enqueue_style(
-			'aawp-editor-style',
-			plugins_url( 'assets/dist/css/main.css', AAWP_PLUGIN_FILE ),
-			[],
-			AAWP_VERSION
-		);
+		/**
+		 * Set script translations.
+		 *
+		 * @see https://developer.wordpress.org/block-editor/how-to-guides/internationalization/
+		 */
+		wp_set_script_translations( 'aawp-aawp-block-editor-script', 'aawp', AAWP_PLUGIN_DIR . 'languages' );
 	}
 
 	/**

@@ -2,10 +2,11 @@
 /**
  * Plugin Name: WP Rocket
  * Plugin URI: https://wp-rocket.me
+ * Secret Key: 83a5bb0e2ad5164690bc7a42ae592cf5
  * Description: The best WordPress performance plugin.
- * Version: 3.11.5
- * Requires at least: 5.5
- * Requires PHP: 7.1
+ * Version: 3.12.0.1
+ * Requires at least: 5.6
+ * Requires PHP: 7.2
  * Code Name: Iego
  * Author: WP Media
  * Author URI: https://wp-media.me
@@ -28,7 +29,7 @@ update_option( 'wp_rocket_settings', array_merge( get_option( 'wp_rocket_setting
 add_filter( 'pre_http_request', function( $pre, $parsed_args, $url ) {
 	if ( strpos( $url, 'https://wp-rocket.me/valid_key.php' ) !== false ) {
 		return [
-			'response' => [ 'code' => 200, 'message' => 'ОК' ],
+			'response' => [ 'code' => 200, 'message' => '??' ],
 			'body'     => json_encode( [ 
 				'success' => true,
 				'data'    => $consumer_data,
@@ -36,7 +37,7 @@ add_filter( 'pre_http_request', function( $pre, $parsed_args, $url ) {
 		];
 	} elseif ( strpos( $url, 'https://wp-rocket.me/stat/1.0/wp-rocket/user.php' ) !== false ) {
 		return [
-			'response' => [ 'code' => 200, 'message' => 'ОК' ],
+			'response' => [ 'code' => 200, 'message' => '??' ],
 			'body'     => json_encode( [
 				'licence_account'    => '-1',
 				'licence_expiration' => 1893456000,
@@ -50,11 +51,11 @@ add_filter( 'pre_http_request', function( $pre, $parsed_args, $url ) {
 defined( 'ABSPATH' ) || exit;
 
 // Rocket defines.
-define( 'WP_ROCKET_VERSION',               '3.11.5' );
-define( 'WP_ROCKET_WP_VERSION',            '5.5' );
+define( 'WP_ROCKET_VERSION',               '3.12.0.1' );
+define( 'WP_ROCKET_WP_VERSION',            '5.6' );
 define( 'WP_ROCKET_WP_VERSION_TESTED',     '5.9' );
-define( 'WP_ROCKET_PHP_VERSION',           '7.1' );
-
+define( 'WP_ROCKET_PHP_VERSION',           '7.2' );
+define( 'WP_ROCKET_PRIVATE_KEY',           'ef0e6b913bc47aaefa88582615758ea9');
 define( 'WP_ROCKET_SLUG',                  'wp_rocket_settings' );
 define( 'WP_ROCKET_WEB_MAIN',              'https://wp-rocket.me/' );
 define( 'WP_ROCKET_WEB_API',               WP_ROCKET_WEB_MAIN . 'api/wp-rocket/' );
@@ -110,7 +111,7 @@ if ( ! defined( 'CHMOD_WP_ROCKET_CACHE_DIRS' ) ) {
 	define( 'CHMOD_WP_ROCKET_CACHE_DIRS', 0755 ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 }
 if ( ! defined( 'WP_ROCKET_LASTVERSION' ) ) {
-	define( 'WP_ROCKET_LASTVERSION', '3.10.9' );
+	define( 'WP_ROCKET_LASTVERSION', '3.11.5' );
 }
 
 /**
@@ -161,3 +162,5 @@ if ( $wp_rocket_requirement_checks->check() ) {
 }
 
 unset( $wp_rocket_requirement_checks );
+/* Anti-Leecher Identifier */
+/* Credited By BABIATO-FORUM */

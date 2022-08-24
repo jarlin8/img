@@ -648,11 +648,19 @@ export default function Edit( props ) {
         help = { __( 'Replacing the PHP template which will be used for the output.', 'aawp' ) }
     />;
 
-    let gridInput = <TextControl
+    let gridSelect = <SelectControl
         label = {__( 'Grid', 'aawp') }
-        key="aawp-grid-range-control"
+        key="aawp-grid-select-control"
         value={ grid }
         onChange= { (value) => setAttributes( { grid: value } ) }
+        options={[
+            { value: '0', label: __( 'Default', 'aawp' ) },
+            { value: '2', label: __( '2 Columns', 'aawp' ) },
+            { value: '3', label: __( '3 Columns', 'aawp' ) },
+            { value: '4', label: __( '4 Columns', 'aawp' ) },
+            { value: '5', label: __( '5 Columns', 'aawp' ) },
+            { value: '6', label: __( '6 Columns', 'aawp' ) },
+        ]}
         help = { __( 'Displaying product boxes side by side.', 'aawp' ) }
     />;
 
@@ -696,11 +704,11 @@ export default function Edit( props ) {
         break;
 
         case 'fields':
-            itemsRange = orderSelect = orderbySelect = orderItemsRange = filterbySelect = filterInput = filterItemsRange = filterTypeSelect = filterCompareSelect = ribbonSelect = ribbonTextInput = linkIconSelect = linkClassInput = buttonToggle =  saleRibbonTextInput = starRatingToggle = reviewsToggle = gridInput = numberingToggle = classInput = [];
+            itemsRange = orderSelect = orderbySelect = orderItemsRange = filterbySelect = filterInput = filterItemsRange = filterTypeSelect = filterCompareSelect = ribbonSelect = ribbonTextInput = linkIconSelect = linkClassInput = buttonToggle =  saleRibbonTextInput = starRatingToggle = reviewsToggle = gridSelect = numberingToggle = classInput = [];
         break;
 
         case 'link':
-            itemsRange = orderSelect = orderbySelect = orderItemsRange = filterbySelect = filterInput = filterItemsRange = filterTypeSelect = filterCompareSelect = ribbonSelect = ribbonTextInput = ratingInput = starRatingToggle = reviewsToggle = gridInput = numberingToggle = classInput = [];
+            itemsRange = orderSelect = orderbySelect = orderItemsRange = filterbySelect = filterInput = filterItemsRange = filterTypeSelect = filterCompareSelect = ribbonSelect = ribbonTextInput = ratingInput = starRatingToggle = reviewsToggle = gridSelect = numberingToggle = classInput = [];
         break;
         
         default:
@@ -843,7 +851,7 @@ export default function Edit( props ) {
         panel = [ ...panel,
                     <PanelBody key="templates-and-styles" title={__('Templates & Styles', 'aawp')} initialOpen={ false }>
                         {templateSelect}
-                        { asin.includes( ',' ) ? gridInput : ''}
+                        {asin.includes( ',' ) || 'bestseller' === look || 'new' === look ? gridSelect : ''}
                         {template === 'table' ? numberingToggle : '' }
                         {classInput}
                     </PanelBody>
@@ -869,12 +877,12 @@ export default function Edit( props ) {
                         value= { look }
                         options={[
                             { value: '', label: __( '-- Select A Display Type --', 'aawp' ) },
-                            { value: 'box', label: 'Product Boxes' },
-                            { value: 'bestseller', label: 'Bestseller (Lists)' },
-                            { value: 'new', label: 'New Releases (Lists)' },
-                            { value: 'fields', label: 'Fields (Single product data)' },
-                            { value: 'link', label: 'Text Links' },
-                            { value: 'table', label: 'Comparison  Table' }
+                            { value: 'box', label: __( 'Product Boxes', 'aawp' ) },
+                            { value: 'bestseller', label: __( 'Bestseller (Lists)', 'aawp' ) },
+                            { value: 'new', label: __( 'New Releases (Lists)', 'aawp' ) },
+                            { value: 'fields', label: __( 'Fields (Single product data)', 'aawp' ) },
+                            { value: 'link', label: __( 'Text Links', 'aawp' ) },
+                            { value: 'table', label: __( 'Comparison  Table', 'aawp' ) }
                         ]}   
                         onChange= { (value) => setAttributes( { look: value } ) }
                     />
@@ -909,12 +917,12 @@ export default function Edit( props ) {
                         className="aawp-look-selector-radio-control"
                         selected={ look }
                         options={[
-                            { value: 'box', label: [ <img key="aawp-look-selector-box-image" src={aawp_data.icons.box} alt="Product Boxes"/>, <p key="aawp-look-selector-box-label"> Product Boxes </p> ] },
-                            { value: 'bestseller', label: [ <img src={aawp_data.icons.bestseller} key="aawp-look-selector-bestseller-image" alt="Bestseller (Lists)" /> , <p key="aawp-look-selector-bestseller-label"> Bestseller Lists </p> ] },
-                            { value: 'new', label: [ <img src={aawp_data.icons.new} key="aawp-look-selector-new-image" alt="New Releases (Lists)" />, <p key="aawp-look-selector-new-label"> New Releases </p> ] },
-                            { value: 'fields', label: [ <img src={aawp_data.icons.fields} key="aawp-look-selector-fields-image" alt="Fields (Single product data)" />, <p key="aawp-look-selector-fields-label"> Data Fields </p> ] },
-                            { value: 'link', label: [ <img src={aawp_data.icons.link} key="aawp-look-selector-links-image" alt="Text Links" />, <p key="aawp-look-selector-links-label"> Text Links </p> ] },
-                            { value: 'table', label: [ <img src={aawp_data.icons.table} key="aawp-look-selector-table-image" alt="Table" />, <p key="aawp-look-selector-table-label"> Comparison Tables </p> ] }
+                            { value: 'box', label: [ <img key="aawp-look-selector-box-image" src={aawp_data.icons.box} alt="Product Boxes"/>, <p key="aawp-look-selector-box-label"> { __( 'Product Boxes', 'aawp' ) } </p> ] },
+                            { value: 'bestseller', label: [ <img src={aawp_data.icons.bestseller} key="aawp-look-selector-bestseller-image" alt="Bestseller (Lists)" /> , <p key="aawp-look-selector-bestseller-label"> { __( 'Bestseller Lists', 'aawp' ) } </p> ] },
+                            { value: 'new', label: [ <img src={aawp_data.icons.new} key="aawp-look-selector-new-image" alt="New Releases (Lists)" />, <p key="aawp-look-selector-new-label"> { __( 'New Releases', 'aawp' ) } </p> ] },
+                            { value: 'fields', label: [ <img src={aawp_data.icons.fields} key="aawp-look-selector-fields-image" alt="Fields (Single product data)" />, <p key="aawp-look-selector-fields-label"> { __( 'Data Fields', 'aawp' ) } </p> ] },
+                            { value: 'link', label: [ <img src={aawp_data.icons.link} key="aawp-look-selector-links-image" alt="Text Links" />, <p key="aawp-look-selector-links-label"> { __( 'Text Links', 'aawp' ) } </p> ] },
+                            { value: 'table', label: [ <img src={aawp_data.icons.table} key="aawp-look-selector-table-image" alt="Table" />, <p key="aawp-look-selector-table-label"> { __( 'Comparison Tables', 'aawp' ) } </p> ] }
                         ]}
                         onChange= { (value) => setAttributes( { look: value } ) }
                     />

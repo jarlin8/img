@@ -18,8 +18,13 @@ class GeekbuyingcomParser extends LdShopParser {
 
     public function parseCatalog($max)
     {
-        return $this->xpathArray(array("//div[@class='name']/a/@href", ".//div[@class='width fix']//dl/dt/a/@href"));
-    }
+        $path = array(
+            ".//div[@class='img pruImage']/a/@href",
+            ".//div[@class='name']/a/@href",
+            ".//div[@class='width fix']//dl/dt/a/@href",
+        );
+
+        return $this->xpathArray($path);    }
 
     public function parseImg()
     {

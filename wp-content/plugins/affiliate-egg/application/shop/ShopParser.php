@@ -271,7 +271,8 @@ abstract class ShopParser {
         $url = \apply_filters('affegg_create_from_url', $url);
         
         $response = \wp_remote_request($url, $args);
-
+        
+        
         if (\is_wp_error($response))
         {
             if ($is_proxy)
@@ -397,8 +398,16 @@ abstract class ShopParser {
         return $this->currency;
     }
 
-    public function getRemoteJson($uri)
+    public function getRemoteJson($uri, array $headers = array())
     {
+        $this->headers = array(
+            'Accept' => 'application/json, text/plain, */*',
+            'Accept-Language' => 'en-us,en;q=0.5',
+            'Cache-Control' => 'no-cache',
+        );
+        
+        $this->headers = array_merge($this->headers, $headers);        
+        
         try
         {
             $result = $this->requestGet($uri);
@@ -406,7 +415,8 @@ abstract class ShopParser {
         {
             return false;
         }
-
+        
+        $this->headers = array();
         $result = str_replace('<?xml encoding="UTF-8">', '', $result);
 
         if (!$result = json_decode($result, true))

@@ -28,6 +28,7 @@ class EggManager {
 
     public function updateUrls(array $urls, $egg_id, $total_limit)
     {
+        @set_time_limit(900);
         $num = 0;
         $catalog_saved_ids = array();
         $product_saved_ids = array();

@@ -209,6 +209,9 @@ class AmazoncomParser extends ShopParser {
             ".//span[@class='slot-price']//span[@class='a-size-base a-color-price a-color-price']",
             ".//span[@class='a-button-inner']//span[contains(@class, 'a-color-price')]",
             ".//div[@id='booksHeaderSection']//span[@id='price']",
+            ".//table[@class='a-lineitem a-align-top']//span[@class='a-offscreen']",            
+            ".//span[contains(@class, 'a-price')]//span[@class='a-offscreen']",             
+            
         );
 
         $price = $this->xpathScalar($paths);

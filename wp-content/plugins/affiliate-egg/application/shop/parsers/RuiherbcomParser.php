@@ -8,31 +8,37 @@ defined('\ABSPATH') || exit;
  * RuiherbcomParser class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2014 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class RuiherbcomParser extends MicrodataShopParser {
 
     protected $charset = 'utf-8';
     protected $currency = 'USD';
-
+    protected $headers = array(
+        'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language' => 'en-us,en;q=0.5',
+        'Cache-Control' => 'no-cache',
+        
+    );
+    
+    
     public function parseCatalog($max)
     {
-        $urls = array_slice($this->xpathArray(".//*[contains(@class, 'product-inner')]/a[1]/@href"), 0, $max);
-        if (!$urls)
-            $urls = array_slice($this->xpathArray(".//div[@class='panel']//a[@class='image-link']/@href"), 0, $max);
-        if (!$urls)
-            $urls = array_slice($this->xpathArray(".//div[@id='display-results-content']//a[@class='image-link']/@href"), 0, $max);
-        if (!$urls)
-            $urls = array_slice($this->xpathArray(".//div[@class='panel']/article/a[@class='image-link']/@href"), 0, $max);
-        if (!$urls)
-            $urls = array_slice($this->xpathArray(".//div[@class='panel']//bdi//a[@class='product-image']/@href"), 0, $max);
-        if (!$urls)
-            $urls = array_slice($this->xpathArray(".//*[@class='absolute-link-wrapper']/a/@href"), 0, $max);
-        if (!$urls)
-            $urls = array_slice($this->xpathArray(".//*[contains(@class, 'product-link')]/a/@href"), 0, $max);
-        
-        return $urls;
+
+        $xpath = array(
+            ".//div[@itemtype='http://schema.org/Product']//a[contains(@href, '/pr/')]/@href",
+            ".//div[contains(@class, 'products')]//div[@class='absolute-link-wrapper']/a/@href",
+            ".//*[contains(@class, 'product-inner')]/a[1]/@href",
+            ".//div[@class='panel']//a[@class='image-link']/@href",
+            ".//div[@id='display-results-content']//a[@class='image-link']/@href",
+            ".//div[@class='panel']/article/a[@class='image-link']/@href",
+            ".//div[@class='panel']//bdi//a[@class='product-image']/@href",
+            ".//*[@class='absolute-link-wrapper']/a/@href",
+            ".//*[contains(@class, 'product-link')]/a/@href",
+        );
+
+        return $this->xpathArray($xpath);
     }
 
     public function parseTitle()

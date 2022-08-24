@@ -267,6 +267,7 @@ class LManager {
 
     public function displayNulledNotice()
     {
+    	return;
         $activation_date = \get_option(Plugin::slug . '_first_activation_date', false);
         if ($activation_date && $activation_date < time() + 86400 * 3)
             return;

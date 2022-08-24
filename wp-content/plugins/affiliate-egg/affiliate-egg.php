@@ -6,7 +6,7 @@ namespace Keywordrush\AffiliateEgg;
   Plugin Name: Affiliate Egg Pro
   Plugin URI: http://www.keywordrush.com/en/affiliateegg
   Description: Parse, add, update products from affiliate shops. Let you to earn money from affiliate networks.
-  Version: 10.4.0
+  Version: 10.4.1
   Author: keywordrush.com
   Author URI: http://www.keywordrush.com
   Text Domain: affegg

@@ -77,14 +77,14 @@ class LicConfig extends Config {
     {
         return true;
     }
-	public function activatingLicense($value)
+
+    public function activatingLicense($value)
     {
         return true;
     }
 
     private function resetLicense()
     {
-
         if ($GLOBALS['pagenow'] != 'admin.php' || empty($_GET['page']) || $_GET['page'] != 'affiliate-egg-lic')
             return;
 

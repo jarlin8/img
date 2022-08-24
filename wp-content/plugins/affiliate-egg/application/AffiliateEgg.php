@@ -14,7 +14,7 @@ defined('\ABSPATH') || exit;
 class AffiliateEgg {
 
     const db_version = 52;
-    const version = '10.4.0';
+    const version = '10.4.1';
     const wp_requires = '4.2.0';
     const slug = 'affiliate-egg';
     const short_slug = 'affegg';

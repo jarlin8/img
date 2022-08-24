@@ -118,14 +118,17 @@ if ( !class_exists( 'AAWP_Core' ) ) {
             $aawp_content = false;
 
             // Check shortcodes
-            if ( $this->shortcodes_used )
+            if ( $this->shortcodes_used ) {
                 $aawp_content = true;
+            }
 
             //$aawp_content = ( has_shortcode( $content, AAWP_SHORTCODE) ) ? true : false;
             $aawp_content = apply_filters( 'aawp_content', $aawp_content );
 
-            if ( $aawp_content ) {
+            static $loaded = false;
+            if ( $aawp_content && ! $loaded ) {
 
+                $loaded = true;
                 // Hook for functions
                 $content = apply_filters( 'aawp_the_content', $content );
             }

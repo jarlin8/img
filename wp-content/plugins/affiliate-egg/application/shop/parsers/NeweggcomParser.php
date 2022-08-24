@@ -29,19 +29,6 @@ class NeweggcomParser extends LdShopParser {
         return str_replace('- Newegg.com', '', $this->xpathScalar(".//title"));
     }
 
-    public function parsePrice()
-    {
-        /*
-          if (preg_match('/"OriginalUnitPrice":(.+?),/', $this->dom->saveHTML(), $matches))
-          return $matches[1] * 270;
-         */
-
-        if ($p = parent::parsePrice())
-            return $p;
-        else
-            return $this->xpathScalar(".//li[@class='price-current']");
-    }
-
     public function parseOldPrice()
     {
         return $this->xpathScalar(".//ul[@class='price']//span[@class='price-was-data']");
@@ -51,7 +38,7 @@ class NeweggcomParser extends LdShopParser {
     {
         if ($p = $this->xpathScalar(".//img[@class='product-view-img-original']/@src"))
             return $p;
-        
+
         if ($img = $this->xpathScalar(".//meta[@property='og:image']/@content"))
             return $img;
 
@@ -81,7 +68,7 @@ class NeweggcomParser extends LdShopParser {
 
     public function isInStock()
     {
-        if (!$this->parsePrice())
+        if (trim($this->xpathScalar(".//div[@class='flags-body has-icon-left fa-exclamation-triangle']/span")) == 'OUT OF STOCK')
             return false;
         else
             return true;

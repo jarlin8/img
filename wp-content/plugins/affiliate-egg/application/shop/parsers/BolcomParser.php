@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2020 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class BolcomParser extends LdShopParser {
 
@@ -33,7 +33,7 @@ class BolcomParser extends LdShopParser {
         if (isset($this->ld_json['workExample']['potentialAction']['expectsAcceptanceOf']['price']))
             return $this->ld_json['workExample']['potentialAction']['expectsAcceptanceOf']['price'];
     }
-    
+
     public function parseOldPrice()
     {
         $paths = array(
@@ -41,7 +41,7 @@ class BolcomParser extends LdShopParser {
         );
 
         return $this->xpathScalar($paths);
-    }    
+    }
 
     public function parseImg()
     {
@@ -71,6 +71,13 @@ class BolcomParser extends LdShopParser {
             $feature['name'] = \sanitize_text_field($names[$i]);
             $feature['value'] = \sanitize_text_field($values[$i]);
             $extra['features'][] = $feature;
+        }
+
+        if ($r = $this->xpathScalar(".//div[@class='pdp-header__rating']//div[@class='u-pl--xxs']"))
+        {
+            $r = explode('(', $r);
+            if (count($r) == 2)
+                $extra['ratingCount'] = (int) $r[1];
         }
 
         return $extra;
