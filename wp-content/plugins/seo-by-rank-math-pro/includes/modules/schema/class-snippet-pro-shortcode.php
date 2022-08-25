@@ -99,26 +99,30 @@ class Snippet_Pro_Shortcode extends Snippet_Shortcode {
 	 * @since 3.0.18
 	 */
 	public function show_review_notes( $shortcode ) {
-		$positive_notes = $shortcode->get_field_value( 'positiveNotes' );
+		$positive_notes = ! empty( $shortcode->get_field_value( 'positiveNotes' ) ) ? $shortcode->get_field_value( 'positiveNotes' ) : $shortcode->get_field_value( 'review.positiveNotes' );
 		if ( ! empty( $positive_notes['itemListElement'] ) ) {
 			?>
-			<div class="rank-math-review-notes">
+			<div class="rank-math-review-notes rank-math-review-pros">
 				<h4><?php echo esc_html__( 'Pros', 'rank-math' ); ?></h4>
-				<?php foreach ( $positive_notes['itemListElement'] as $positive_note ) { ?>
-					<li><?php echo esc_html( $positive_note['name'] ); ?></li>
-				<?php } ?>
+				<ul>
+					<?php foreach ( $positive_notes['itemListElement'] as $positive_note ) { ?>
+						<li><?php echo esc_html( $positive_note['name'] ); ?></li>
+					<?php } ?>
+				</ul>
 			</div>
 			<?php
 		}
 
-		$negative_notes = $shortcode->get_field_value( 'negativeNotes' );
+		$negative_notes = ! empty( $shortcode->get_field_value( 'negativeNotes' ) ) ? $shortcode->get_field_value( 'negativeNotes' ) : $shortcode->get_field_value( 'review.negativeNotes' );
 		if ( ! empty( $negative_notes['itemListElement'] ) ) {
 			?>
-			<div class="rank-math-review-notes">
+			<div class="rank-math-review-notes rank-math-review-cons">
 				<h4><?php echo esc_html__( 'Cons', 'rank-math' ); ?></h4>
-				<?php foreach ( $negative_notes['itemListElement'] as $negative_note ) { ?>
-					<li><?php echo esc_html( $negative_note['name'] ); ?></li>
-				<?php } ?>
+				<ul>
+					<?php foreach ( $negative_notes['itemListElement'] as $negative_note ) { ?>
+						<li><?php echo esc_html( $negative_note['name'] ); ?></li>
+					<?php } ?>
+				</ul>
 			</div>
 			<?php
 		}
