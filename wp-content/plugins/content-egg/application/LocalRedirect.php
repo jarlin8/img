@@ -47,9 +47,10 @@ class LocalRedirect {
         {
             global $wp;
             if (preg_match("/" . self::getPrefix() . "\/(.+?)$/", $wp->request, $match))
-                $goce = $match[1];
+                $goce = sanitize_text_field(urldecode($match[1]));
             else
                 $goce = '';
+            
         } elseif (isset($_GET[self::getPrefix()]))
         {
             $goce = sanitize_text_field(wp_unslash($_GET[self::getPrefix()]));

@@ -51,7 +51,7 @@ $ratings = TemplateHelper::generateStaticRatings(count($all_items));
                     <?php endif; ?>
 
                     <div class="cegg-no-top-margin cegg-list-logo-title">
-						<img src="https://laowei8.com/favicon/get.php?url=<?php echo esc_attr( $item['domain']); ?>" height="16" width="16">
+						<img src="https://fastly.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr( $item['domain']); ?>.svg" height="18" width="18">
                         <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>"><?php echo \esc_html(TemplateHelper::truncate($item['title'], 100)); ?></a>
                     </div>
                     <div class="text-center cegg-mt10 visible-xs">

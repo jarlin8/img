@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  *
  * Ebay Browse API
  * @link: https://developer.ebay.com/api-docs/buy/browse/overview.html
@@ -74,6 +74,32 @@ class EbayBrowse extends RestClient {
 
         return $this->_decodeResponse($response);
     }
+    
+    /**
+     * @link: https://developer.ebay.com/api-docs/buy/browse/resources/item/methods/getItemByLegacyId
+     */
+    public function getItemByLegacyId($id, $options, $headers = array())
+    {
+        $options['legacy_item_id'] = $id;
+        
+        $this->setCustomHeaders($headers);
+        $response = $this->restGet('/item/get_item_by_legacy_id', $options);
+
+        return $this->_decodeResponse($response);
+    }    
+    
+    /**
+     * @link: https://developer.ebay.com/api-docs/buy/browse/resources/item/methods/getItemsByItemGroup
+     */
+    public function getItemsByItemGroup($id, $options, $headers = array())
+    {
+        $options['item_group_id'] = $id;
+        
+        $this->setCustomHeaders($headers);
+        $response = $this->restGet('/item/get_items_by_item_group', $options);
+
+        return $this->_decodeResponse($response);
+    }     
 
     public function requestAccessToken()
     {

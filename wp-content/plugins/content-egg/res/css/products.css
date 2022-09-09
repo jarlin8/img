@@ -1,5 +1,5 @@
 .egg-container img { max-width: 100%; height: auto; }
-.egg-container .rating > span {display: inline-block;position: relative;font-size: 30px;color: #4285F4;}
+.egg-container .rating >row-products span {display: inline-block;position: relative;font-size: 30px;color: #4285F4;}
 .egg-container .rating_small > span {display: inline-block;position: relative;font-size: 16px;color: #4285F4;}     
 .egg-container .rating_default > span {display: inline-block;position: relative;font-size: 22px;color: #4285F4;}          
 span.rating_small{white-space:nowrap}
@@ -81,7 +81,7 @@ span.rating_small{white-space:nowrap}
 .egg-container .title-case:first-letter {text-transform: capitalize;}
 .cegg-couponcode{text-align: center; background: #efffda;padding: 5px;display: block;text-decoration: none;border: 2px dashed #5cb85c; margin-bottom: 10px; margin-right: 10px}
 .cegg-bordered-box{border: 2px solid #ededed; padding: 25px}
-.cegg-price-tracker-panel .col-md-5{text-align: right;}
+.cegg-price-tracker-panel .col-md-5{texrow-productst-align: right;}
 .cegg-price-tracker-panel .panel-body {padding-bottom: 0px;}
 .cegg-price-tracker-item .cegg-price{font-size: 22px; font-weight: bold;}
 .egg-list-coupons .btn{font-size: 16px; font-weight: bold; display: block;}

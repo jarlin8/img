@@ -82,47 +82,10 @@ class LicConfig extends Config {
 
 	public function licFormat( $value ) {
 		return true;
-		if ( preg_match( '/[^0-9a-zA-Z_~\-]/', $value ) ) {
-			return false;
-		}
-		if ( strlen( $value ) !== 32 && ! preg_match( '/^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$/', $value ) ) {
-			return false;
-		}
-
-		return true;
 	}
 
 	public function activatingLicense( $value ) {
 		return true;
-		$response = Plugin::apiRequest( array(
-			'method'      => 'POST',
-			'timeout'     => 15,
-			'httpversion' => '1.0',
-			'blocking'    => true,
-			'headers'     => array(),
-			'body'        => array(
-				'cmd' => 'activate',
-				'key' => $value,
-				'd'   => parse_url( site_url(), PHP_URL_HOST ),
-				'p'   => Plugin::product_id,
-				'v'   => Plugin::version()
-			),
-			'cookies'     => array()
-		) );
-		if ( ! $response ) {
-			return false;
-		}
-		$result = json_decode( \wp_remote_retrieve_body( $response ), true );
-
-		if ( $result && ! empty( $result['status'] ) && $result['status'] == 'valid' ) {
-			return true;
-		} elseif ( $result && ! empty( $result['status'] ) && $result['status'] == 'error' ) {
-			\add_settings_error( 'license_key', 'license_key', $result['message'] );
-
-			return false;
-		}
-
-		return false;
 	}
 
 	private function resetLicense() {

@@ -20,7 +20,8 @@ use ContentEgg\application\helpers\TemplateHelper;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class Ebay2Module extends AffiliateParserModule {
+class Ebay2Module extends AffiliateParserModule
+{
 
     private $api_client_browse = null;
 
@@ -48,6 +49,11 @@ class Ebay2Module extends AffiliateParserModule {
     }
 
     public function isItemsUpdateAvailable()
+    {
+        return true;
+    }
+
+    public function isUrlSearchAllowed()
     {
         return true;
     }
@@ -191,14 +197,52 @@ class Ebay2Module extends AffiliateParserModule {
         $client = $this->getEbayClientBrowse();
         $client->setAccessToken($this->getAccessToken());
 
-        $results = $client->search($keyword, $options, $this->getHeaders($query_params));
+        $results = array();
+
+        // search by product ID
+        if ($item = $this->searchById($keyword, $query_params))
+            $results['itemSummaries'] = array($item);
+        else
+            $results = $client->search($keyword, $options, $this->getHeaders($query_params));
 
         if (!is_array($results) || !isset($results['itemSummaries']))
-        {
             return array();
-        }
 
         return $this->prepareResults($results['itemSummaries'], $locale);
+    }
+
+    private function searchById($keyword, $query_params)
+    {
+        if ($pid = self::parsePidFromUrl($keyword))
+            $keyword = $pid;
+
+        if (!preg_match('~\d{11,13}~', $keyword))
+            return false;
+
+        $client = $this->getEbayClientBrowse();
+        $client->setAccessToken($this->getAccessToken());
+        $item = null;
+
+        try
+        {
+            $item = $client->getItemByLegacyId($keyword, array(), $this->getHeaders($query_params));
+        } catch (\Exception $e)
+        {
+            // parent product
+            if (strstr($e->getMessage(), 'get_items_by_item_group'))
+            {
+                $items = $client->getItemsByItemGroup($keyword, array(), $this->getHeaders($query_params));
+                if ($items && isset($items['items']))
+                    $keyword = $items['items'][0]['itemId'];
+
+                $item = $client->getItem($keyword, array(), $this->getHeaders($query_params));
+            }
+        }
+
+        if ($item)
+            return $item;
+        else
+            return false;
     }
 
     private function getHeaders($query_params)
@@ -539,6 +583,18 @@ class Ebay2Module extends AffiliateParserModule {
     public function renderUpdatePanel()
     {
         $this->render('update_panel', array('module_id' => $this->getId()));
+    }
+
+    public static function parsePidFromUrl($url)
+    {
+        if (!filter_var($url, FILTER_VALIDATE_URL))
+            return false;
+
+        $regex = '~itm\/(\d{11,13})~';
+        if (preg_match($regex, $url, $matches))
+            return $matches[1];
+        else
+            return false;
     }
 
 }

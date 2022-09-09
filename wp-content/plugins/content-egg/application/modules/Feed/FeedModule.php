@@ -18,7 +18,8 @@ use ContentEgg\application\components\LinkHandler;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class FeedModule extends AffiliateFeedParserModule {
+class FeedModule extends AffiliateFeedParserModule
+{
 
     public function info()
     {
@@ -106,7 +107,7 @@ class FeedModule extends AffiliateFeedParserModule {
         $missed = array();
         if (empty($mapped_data['description']))
             $mapped_data['description'] = '';
-        
+
         foreach (array_keys(FeedConfig::mappingFields()) as $field)
         {
             if (FeedConfig::isMappingFieldRequared($field) && !isset($mapped_data[$field]))
@@ -114,7 +115,7 @@ class FeedModule extends AffiliateFeedParserModule {
                 $missed[] = $field;
             }
         }
-        
+
         if ($missed)
         {
             throw new \Exception(sprintf('Required mapping fields are missing in the feed: %s.', join(', ', $missed)));
@@ -123,7 +124,7 @@ class FeedModule extends AffiliateFeedParserModule {
         $product = array();
         $product['id'] = sanitize_text_field($mapped_data['id']);
         $product['title'] = \sanitize_text_field($mapped_data['title']);
-        
+
         if (!$product['id'] || !$product['title'])
         {
             return false;
@@ -179,7 +180,7 @@ class FeedModule extends AffiliateFeedParserModule {
             $product['orig_url'] = $mapped_data['affiliate link'];
         }
         $product['product'] = serialize($data);
-        
+
         return $product;
     }
 
@@ -351,7 +352,7 @@ class FeedModule extends AffiliateFeedParserModule {
             if (isset($r['image ​​link']) && filter_var($r['image ​​link'], FILTER_VALIDATE_URL))
             {
                 $content->img = $r['image ​​link'];
-            }   
+            }
 
             $content->orig_url = $product['orig_url'];
             $content->stock_status = $product['stock_status'];
