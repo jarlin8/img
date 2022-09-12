@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace RedisCachePro\Plugin\Pages;
 
 use RedisCachePro\Plugin;
+use const RedisCachePro\Version;
 
 abstract class Page
 {
@@ -52,7 +53,7 @@ abstract class Page
      */
     public function slug()
     {
-        return strtolower(substr(strrchr(get_called_class(), '\\'), 1));
+        return strtolower(substr((string) strrchr(get_called_class(), '\\'), 1));
     }
 
     /**
@@ -77,7 +78,7 @@ abstract class Page
      *
      * @return void
      */
-    public function enqueueSettingsScript()
+    public function enqueueScript()
     {
         \wp_register_script('objectcache', false);
         \wp_enqueue_script('objectcache');
@@ -91,18 +92,35 @@ abstract class Page
                     'url'  => \rest_url(),
                 ],
                 'gmt_offset' => \get_option('gmt_offset'),
-            ], $this->enqueueSettingsScriptExtra())
+            ], $this->enqueueScriptExtra())
         );
     }
 
     /**
      * Returns extra data to be attached to `window.objectcache`.
      *
-     * @return array
+     * @return array<mixed>
      */
-    protected function enqueueSettingsScriptExtra()
+    protected function enqueueScriptExtra()
     {
         return [];
+    }
+
+    /**
+     * Enqueues the form script.
+     *
+     * @return void
+     */
+    protected function enqueueOptionsScript()
+    {
+        $script = $this->plugin->asset('js/options.js');
+
+        \wp_register_script('objectcache-options', $script, ['jquery', 'wp-util', 'objectcache'], Version);
+        \wp_enqueue_script('objectcache-options');
+
+        if (! $script) {
+            \wp_add_inline_script('objectcache-options', $this->plugin->inlineAsset('js/options.js'));
+        }
     }
 
     /**

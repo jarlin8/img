@@ -9,13 +9,16 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Plugin;
 
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Lifecycle
 {
     /**
@@ -69,7 +72,7 @@ trait Lifecycle
     public function uninstall()
     {
         wp_unschedule_event(
-            wp_next_scheduled('objectcache_prune_analytics'),
+            (int) wp_next_scheduled('objectcache_prune_analytics'),
             'objectcache_prune_analytics'
         );
     }
@@ -96,6 +99,7 @@ trait Lifecycle
      */
     public function logFlush()
     {
+        /** @var string $traceSummary */
         $traceSummary = wp_debug_backtrace_summary(null, 1);
 
         if ($this->config->debug || (WP_DEBUG && WP_DEBUG_LOG)) {

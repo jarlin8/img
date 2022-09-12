@@ -9,7 +9,7 @@ class ArrayLogger extends ErrorLogLogger
     /**
      * Holds all logged messages.
      *
-     * @var array
+     * @var array<int, array<string, mixed>>
      */
     protected $messages = [];
 
@@ -18,7 +18,7 @@ class ArrayLogger extends ErrorLogLogger
      *
      * @param  mixed  $level
      * @param  string  $message
-     * @param  array  $context
+     * @param  array<mixed>  $context
      * @return void
      */
     public function log($level, $message, array $context = [])
@@ -35,7 +35,7 @@ class ArrayLogger extends ErrorLogLogger
     /**
      * Return all logged messages as array.
      *
-     * @return array
+     * @return array<int, array<string, mixed>>
      */
     public function messages(): array
     {

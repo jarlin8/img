@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -23,8 +23,15 @@ use RedisCachePro\Configuration\Configuration;
 /**
  * @mixin \RedisCluster
  */
-class PhpRedisClusterConnection extends PhpRedisConnection implements ConnectionInterface
+class PhpRedisClusterConnection extends PhpRedisConnection
 {
+    /**
+     * The Redis cluster instance.
+     *
+     * @var \RedisCluster
+     */
+    protected $client;
+
     /**
      * Create a new PhpRedis cluster connection.
      *
@@ -54,15 +61,26 @@ class PhpRedisClusterConnection extends PhpRedisConnection implements Connection
     }
 
     /**
+     * Hijack `multi()` calls to allow command logging.
+     *
+     * @param  int  $type
+     * @return object
+     */
+    public function multi(int $type = null)
+    {
+        return Transaction::multi($this);
+    }
+
+    /**
      * Send `scan()` calls directly to the client.
      *
      * @param  int  $iterator
      * @param  mixed  $node
      * @param  string  $pattern
      * @param  int  $count
-     * @return array|false
+     * @return array<string>|false
      */
-    public function scanNode(?int &$iterator, mixed $node, ?string $pattern = null, int $count = 0) // phpcs:ignore PHPCompatibility
+    public function scanNode(?int &$iterator, $node, ?string $pattern = null, int $count = 0)
     {
         return $this->client->scan($iterator, $node, $pattern, $count);
     }
@@ -72,7 +90,7 @@ class PhpRedisClusterConnection extends PhpRedisConnection implements Connection
      *
      * To ping a specific node, pass name of key as a string, or a hostname and port as array.
      *
-     * @param  string|array  $parameter
+     * @param  string|array<mixed>  $parameter
      * @return bool
      */
     public function ping($parameter = null)
@@ -90,7 +108,7 @@ class PhpRedisClusterConnection extends PhpRedisConnection implements Connection
      *
      * To fetch information from a specific node, pass name of key as a string, or a hostname and port as array.
      *
-     * @param  string|array  $parameter
+     * @param  string|array<mixed>  $parameter
      * @return bool
      */
     public function info($parameter = null)
@@ -106,7 +124,7 @@ class PhpRedisClusterConnection extends PhpRedisConnection implements Connection
     /**
      * Return all redis cluster nodes.
      *
-     * @return array
+     * @return array<string>
      */
     public function nodes()
     {
@@ -133,7 +151,7 @@ class PhpRedisClusterConnection extends PhpRedisConnection implements Connection
 
         foreach ($this->client->_masters() as $master) {
             $useAsync
-                ? $this->command('rawCommand', [$master, 'flushdb', 'async'])
+                ? $this->rawCommand($master, 'flushdb', 'async')
                 : $this->command('flushdb', [$master]);
         }
 

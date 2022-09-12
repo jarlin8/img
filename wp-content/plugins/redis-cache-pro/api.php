@@ -21,6 +21,7 @@ require_once __DIR__ . '/bootstrap.php';
  *
  * @global array $wp_object_cache_errors
  * @global \RedisCachePro\ObjectCaches\ObjectCacheInterface $wp_object_cache
+ * @return void
  */
 function wp_cache_init()
 {
@@ -29,26 +30,27 @@ function wp_cache_init()
     $wp_object_cache_errors = [];
 
     try {
-        if (! defined('WP_REDIS_CONFIG')) {
+        if (! defined('\WP_REDIS_CONFIG')) {
             throw new \RedisCachePro\Exceptions\ConfigurationMissingException;
         }
 
-        $config = WP_REDIS_CONFIG;
+        $config = \WP_REDIS_CONFIG;
 
         // set `debug` config value to `WP_DEBUG`, if not present already
-        if (! isset($config['debug']) && defined('WP_DEBUG')) {
-            $config['debug'] = (bool) WP_DEBUG;
+        if (! isset($config['debug']) && defined('\WP_DEBUG')) {
+            $config['debug'] = (bool) \WP_DEBUG;
         }
 
         // set `save_commands` config value to `SAVEQUERIES`, if not present already
-        if (! isset($config['save_commands']) && defined('SAVEQUERIES')) {
-            $config['save_commands'] = (bool) SAVEQUERIES;
+        if (! isset($config['save_commands']) && defined('\SAVEQUERIES')) {
+            $config['save_commands'] = (bool) \SAVEQUERIES;
         }
 
         $config = \RedisCachePro\Configuration\Configuration::from($config)->validate();
 
         $connection = $config->connector::connect($config);
 
+        /** @var \RedisCachePro\ObjectCaches\ObjectCacheInterface $objectCache */
         $objectCache = new $config->cache($connection, $config);
 
         // register additional global groups
@@ -118,8 +120,6 @@ function wp_cache_init()
 /**
  * Adds data to the cache, if the cache key doesn't already exist.
  *
- * @since 2.0.0
- *
  * @param int|string $key    The cache key to use for retrieval later.
  * @param mixed      $data   The data to add to the cache.
  * @param string     $group  Optional. The group to add the cache to. Enables the same key
@@ -138,10 +138,10 @@ function wp_cache_add($key, $data, $group = '', $expire = 0)
 /**
  * Adds multiple values to the cache in one call.
  *
- * @param array  $data   Array of keys and values to be set.
- * @param string $group  Optional. Where the cache contents are grouped. Default empty.
- * @param int    $expire Optional. When to expire the cache contents, in seconds.
- *                       Default 0 (no expiration).
+ * @param array<mixed> $data   Array of keys and values to be set.
+ * @param string       $group  Optional. Where the cache contents are grouped. Default empty.
+ * @param int          $expire Optional. When to expire the cache contents, in seconds.
+ *                             Default 0 (no expiration).
  * @return bool[] Array of return values, grouped by key. Each value is either
  *                true on success, or false if cache key and group already exist.
  */
@@ -201,8 +201,8 @@ function wp_cache_delete($key, $group = '')
 /**
  * Deletes multiple values from the cache in one call.
  *
- * @param array  $keys  Array of keys under which the cache to deleted.
- * @param string $group Optional. Where the cache contents are grouped. Default empty.
+ * @param array<string>  $keys  Array of keys under which the cache to delete.
+ * @param string         $group Optional. Where the cache contents are grouped. Default empty.
  * @return bool[] Array of return values, grouped by key. Each value is either
  *                true on success, or false if the contents were not deleted.
  */
@@ -256,6 +256,29 @@ function wp_cache_flush_runtime()
 }
 
 /**
+ * Removes all cache items in a group.
+ *
+ * @param string $group Name of group to remove from cache.
+ * @return bool True if group was flushed, false otherwise.
+ */
+function wp_cache_flush_group($group = '')
+{
+    global $wp_object_cache;
+
+    return $wp_object_cache->flush_group(\trim((string) $group) ?: 'default');
+}
+
+/**
+ * Determines whether the object cache implementation supports flushing individual cache groups.
+ *
+ * @return bool True if group flushing is supported, false otherwise.
+ */
+function wp_cache_supports_group_flush()
+{
+    return true;
+}
+
+/**
  * Retrieves the cache contents from the cache by key and group.
  *
  * @param int|string $key   The key under which the cache contents are stored.
@@ -276,12 +299,12 @@ function wp_cache_get($key, $group = '', $force = false, &$found = null)
 /**
  * Retrieves multiple values from the cache in one call.
  *
- * @param array  $keys  Array of keys under which the cache contents are stored.
- * @param string $group Optional. Where the cache contents are grouped. Default empty.
- * @param bool   $force Optional. Whether to force an update of the local cache
- *                      from the persistent cache. Default false.
- * @return array Array of return values, grouped by key. Each value is either
- *               the cache contents on success, or false on failure.
+ * @param array<string>  $keys  Array of keys under which the cache contents are stored.
+ * @param string         $group Optional. Where the cache contents are grouped. Default empty.
+ * @param bool           $force Optional. Whether to force an update of the local cache
+ *                              from the persistent cache. Default false.
+ * @return array<mixed> Array of return values, grouped by key. Each value is either
+ *                      the cache contents on success, or false on failure.
  */
 function wp_cache_get_multiple($keys, $group = '', $force = false)
 {
@@ -347,10 +370,10 @@ function wp_cache_set($key, $data, $group = '', $expire = 0)
 /**
  * Sets multiple values to the cache in one call.
  *
- * @param array  $data   Array of keys and values to be set.
- * @param string $group  Optional. Where the cache contents are grouped. Default empty.
- * @param int    $expire Optional. When to expire the cache contents, in seconds.
- *                       Default 0 (no expiration).
+ * @param array<mixed> $data   Array of keys and values to be set.
+ * @param string       $group  Optional. Where the cache contents are grouped. Default empty.
+ * @param int          $expire Optional. When to expire the cache contents, in seconds.
+ *                             Default 0 (no expiration).
  * @return bool[] Array of return values, grouped by key. Each value is either
  *                true on success, or false on failure.
  */
@@ -367,6 +390,7 @@ function wp_cache_set_multiple(array $data, $group = '', $expire = 0)
  * This changes the blog id used to create keys in blog specific groups.
  *
  * @param int $blog_id Site ID.
+ * @return void
  */
 function wp_cache_switch_to_blog($blog_id)
 {
@@ -379,6 +403,7 @@ function wp_cache_switch_to_blog($blog_id)
  * Adds a group or set of groups to the list of global groups.
  *
  * @param string|string[] $groups A group or an array of groups to add.
+ * @return void
  */
 function wp_cache_add_global_groups($groups)
 {
@@ -391,6 +416,7 @@ function wp_cache_add_global_groups($groups)
  * Adds a group or set of groups to the list of non-persistent groups.
  *
  * @param string|string[] $groups A group or an array of groups to add.
+ * @return void
  */
 function wp_cache_add_non_persistent_groups($groups)
 {
@@ -412,6 +438,7 @@ function wp_cache_add_non_persistent_groups($groups)
  * recommended outside of unit tests as the performance penalty for using it is high.
  *
  * @deprecated Use wp_cache_switch_to_blog()
+ * @return void
  */
 function wp_cache_reset()
 {
@@ -424,9 +451,8 @@ function wp_cache_reset()
  * This is a non-standard function that does not ship with WordPress,
  * be sure to copy it when uninstalling Object Cache Pro.
  *
- * @since 2.6.0
- *
- * @param string|array $groups A group or an array of groups to add.
+ * @param string|array<string> $groups A group or an array of groups to add.
+ * @return void
  */
 function wp_cache_add_non_prefetchable_groups($groups)
 {

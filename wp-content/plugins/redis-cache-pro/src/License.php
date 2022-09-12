@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -58,14 +58,14 @@ class License
     /**
      * The list of stabilities.
      *
-     * @var array
+     * @var array<string, string>
      */
     const Stabilities = [
-        'dev' => 'Development',
-        'alpha' => 'Alpha',
-        'beta' => 'Beta',
-        'rc' => 'Release Candidate',
         'stable' => 'Stable',
+        'rc' => 'Release Candidate',
+        'beta' => 'Beta',
+        'alpha' => 'Alpha',
+        'dev' => 'Development',
     ];
 
     /**
@@ -78,7 +78,7 @@ class License
     /**
      * The license state.
      *
-     * @var string
+     * @var string|null
      */
     protected $state;
 
@@ -113,7 +113,7 @@ class License
     /**
      * The last time the license was verified.
      *
-     * @var int
+     * @var int|null
      */
     protected $valid_as_of;
 
@@ -127,7 +127,7 @@ class License
     /**
      * The license token.
      *
-     * @return bool
+     * @return string
      */
     public function token()
     {
@@ -137,7 +137,7 @@ class License
     /**
      * The license state.
      *
-     * @return string
+     * @return string|null
      */
     public function state()
     {
@@ -147,7 +147,7 @@ class License
     /**
      * The minimum accessible stabilities.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function accessibleStabilities()
     {
@@ -181,7 +181,7 @@ class License
      */
     public function isCanceled()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -191,7 +191,7 @@ class License
      */
     public function isUnpaid()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -201,7 +201,7 @@ class License
      */
     public function isInvalid()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -217,7 +217,7 @@ class License
     /**
      * Load the plugin's license from the database.
      *
-     * @return self|null
+     * @return self|void
      */
     public static function load()
     {
@@ -253,7 +253,7 @@ class License
         return (object) [
             'plan' => $this->plan,
             'state' => 'valid',
-            'token' => "Babiato",
+            'token' => "e279430effe043b8c17d3f3c751c4c0846bc70c97f0eaaea766b4079001c",
             'organization' => 'organization',
             'stability' => $this->stability,
             'last_check' => current_time('timestamp'),
@@ -303,7 +303,7 @@ class License
     /**
      * Instantiate a new license from the given response object.
      *
-     * @param  object  $response
+     * @param  WP_Error  $error
      * @return self
      */
     public static function fromError(WP_Error $error)

@@ -9,14 +9,14 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Metrics;
 
-use RedisCachePro\ObjectCaches\ObjectCacheInterface;
+use RedisCachePro\ObjectCaches\ObjectCache;
 
 class WordPressMetrics
 {
@@ -44,7 +44,7 @@ class WordPressMetrics
     /**
      * The in-memory cache's size in bytes.
      *
-     * @var int
+     * @var int|float
      */
     public $bytes;
 
@@ -84,6 +84,13 @@ class WordPressMetrics
     public $storeMisses;
 
     /**
+     * The number of executed SQL queries.
+     *
+     * @var int|null
+     */
+    public $sqlQueries;
+
+    /**
      * The amount of time (ms) WordPress took to render the request.
      *
      * @var float
@@ -108,33 +115,38 @@ class WordPressMetrics
      * The percentage of time waited for the external cache to respond,
      * relative to the amount of time WordPress took to render the request.
      *
-     * @var int
+     * @var float
      */
     public $msCacheRatio;
 
     /**
      * Creates a new instance from given object cache.
      *
-     * @param  \RedisCachePro\ObjectCaches\ObjectCacheInterface  $cache
+     * @param  \RedisCachePro\ObjectCaches\ObjectCache  $cache
      * @return void
      */
-    public function __construct(ObjectCacheInterface $cache)
+    public function __construct(ObjectCache $cache)
     {
         global $timestart;
 
-        $info = $cache->metrics();
+        /** @var \RedisCachePro\Support\PhpRedisObjectCacheMetrics $metrics */
+        $metrics = $cache->metrics(true);
 
-        $this->hits = $info->hits;
-        $this->misses = $info->misses;
-        $this->hitRatio = $info->ratio;
-        $this->bytes = $info->bytes;
-        $this->prefetches = $info->prefetches;
-        $this->storeReads = $info->storeReads;
-        $this->storeWrites = $info->storeWrites;
-        $this->storeHits = $info->storeHits;
-        $this->storeMisses = $info->storeMisses;
-        $this->msCache = round($cache->connection()->ioWait('sum') * 1000, 2);
-        $this->msCacheMedian = round($cache->connection()->ioWait('median') * 1000, 2);
+        $ioWait = $cache->connection()->ioWait();
+        $ioWaitTotal = array_sum($ioWait);
+        $ioWaitMedian = ObjectCache::array_median($ioWait);
+
+        $this->hits = $metrics->hits;
+        $this->misses = $metrics->misses;
+        $this->hitRatio = $metrics->ratio;
+        $this->bytes = $metrics->bytes;
+        $this->prefetches = $metrics->prefetches;
+        $this->storeReads = $metrics->storeReads;
+        $this->storeWrites = $metrics->storeWrites;
+        $this->storeHits = $metrics->storeHits;
+        $this->storeMisses = $metrics->storeMisses;
+        $this->msCache = round($ioWaitTotal * 1000, 2);
+        $this->msCacheMedian = round($ioWaitMedian * 1000, 2);
 
         $requestStart = $_SERVER['REQUEST_TIME_FLOAT'] ?? $timestart;
 
@@ -143,13 +155,15 @@ class WordPressMetrics
             $this->msCacheRatio = round($this->msCache / (($this->msCache + $this->msTotal) / 100), 2);
         }
 
-        $this->dbQueries = get_num_queries();
+        $this->sqlQueries = function_exists('\get_num_queries')
+            ? \get_num_queries()
+            : null;
     }
 
     /**
      * Returns the request metrics as array.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray()
     {
@@ -163,6 +177,7 @@ class WordPressMetrics
             'store-writes' => $this->storeWrites,
             'store-hits' => $this->storeHits,
             'store-misses' => $this->storeMisses,
+            'sql-queries' => $this->sqlQueries,
             'ms-total' => sprintf('%.2f', $this->msTotal),
             'ms-cache' => sprintf('%.2f', $this->msCache),
             'ms-cache-median' => sprintf('%.2f', $this->msCacheMedian),
@@ -187,15 +202,11 @@ class WordPressMetrics
     /**
      * Returns the schema for the WordPress metrics.
      *
-     * @return array
+     * @return array<string, array<string, string>>
      */
     public static function schema()
     {
-        return array_map(function ($metric) {
-            $metric['group'] = 'wp';
-
-            return $metric;
-        }, [
+        $metrics = [
             'hits' => [
                 'title' => 'Hits',
                 'description' => 'The amount of times the cache data was already cached in memory.',
@@ -241,6 +252,11 @@ class WordPressMetrics
                 'description' => 'The number of times the external cache did not have the object.',
                 'type' => 'integer',
             ],
+            'sql-queries' => [
+                'title' => 'SQL Queries',
+                'description' => 'The number of SQL queries executed.',
+                'type' => 'integer',
+            ],
             'ms-total' => [
                 'title' => 'Response Time',
                 'description' => 'The amount of time (ms) WordPress took to render the request.',
@@ -261,6 +277,12 @@ class WordPressMetrics
                 'description' => 'The percentage of time waited for the external cache to respond, relative to the amount of time WordPress took to render the request.',
                 'type' => 'ratio',
             ],
-        ]);
+        ];
+
+        return array_map(function ($metric) {
+            $metric['group'] = 'wp';
+
+            return $metric;
+        }, $metrics);
     }
 }

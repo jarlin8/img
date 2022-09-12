@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -24,7 +24,7 @@ trait Cluster
     /**
      * The cluster configuration name as string, or an array of cluster nodes.
      *
-     * @var string|array
+     * @var string|array<string>|null
      */
     protected $cluster;
 
@@ -38,7 +38,7 @@ trait Cluster
     /**
      * The available cluster failover strategies.
      *
-     * @return array
+     * @return array<string>
      */
     protected function clusterFailovers()
     {
@@ -60,7 +60,8 @@ trait Cluster
     /**
      * Set the cluster configuration name or an array of cluster nodes.
      *
-     * @param  string|array  $cluster
+     * @param  string|array<string>  $cluster
+     * @return void
      */
     public function setCluster($cluster)
     {
@@ -85,6 +86,7 @@ trait Cluster
      * Set the automatic replica failover / distribution.
      *
      * @param  string  $failover
+     * @return void
      */
     public function setClusterFailover($failover)
     {
@@ -102,6 +104,7 @@ trait Cluster
      * Legacy method to set the automatic replica failover / distribution.
      *
      * @param  string  $failover
+     * @return void
      */
     public function setSlaveFailover($failover)
     {

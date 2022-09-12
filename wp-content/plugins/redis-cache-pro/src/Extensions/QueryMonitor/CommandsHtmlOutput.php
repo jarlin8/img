@@ -11,9 +11,9 @@ class CommandsHtmlOutput extends QM_Output_Html
     /**
      * Creates a new instance.
      *
-     * @param  ObjectCacheCollector  $collector
+     * @param  \QM_Collector  $collector
      */
-    public function __construct(CommandsCollector $collector)
+    public function __construct($collector)
     {
         parent::__construct($collector);
 

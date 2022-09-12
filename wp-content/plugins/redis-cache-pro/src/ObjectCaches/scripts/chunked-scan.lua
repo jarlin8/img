@@ -1,6 +1,10 @@
 
 local results, cursor, total, command = {}, 0, 0, ARGV[1]
 
+if redis.REDIS_VERSION == nil then
+    redis.replicate_commands()
+end
+
 for i, pattern in ipairs(KEYS) do
     repeat
         results = redis.call('SCAN', cursor, 'MATCH', pattern, 'COUNT', 100)

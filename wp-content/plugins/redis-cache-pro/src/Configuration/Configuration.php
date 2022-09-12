@@ -9,14 +9,13 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Configuration;
 
-use Exception;
 use Throwable;
 use BadMethodCallException;
 
@@ -36,7 +35,51 @@ use RedisCachePro\Connectors\TwemproxyConnector;
 use RedisCachePro\ObjectCaches\PhpRedisObjectCache;
 use RedisCachePro\ObjectCaches\ObjectCacheInterface;
 
-class Configuration
+/**
+ * @property-read string|null $token
+ * @property-read class-string<\RedisCachePro\Connectors\Connector> $connector
+ * @property-read class-string<\RedisCachePro\ObjectCaches\ObjectCacheInterface> $cache
+ * @property-read \RedisCachePro\Loggers\LoggerInterface $logger
+ * @property-read array|null $log_levels
+ * @property-read string $scheme
+ * @property-read string $host
+ * @property-read int $port
+ * @property-read int $database
+ * @property-read string|null $username
+ * @property-read string|null $password
+ * @property-read string $prefix
+ * @property-read int $maxttl
+ * @property-read float $timeout
+ * @property-read float $read_timeout
+ * @property-read int $retry_interval
+ * @property-read int $retries
+ * @property-read string $backoff
+ * @property-read bool $persistent
+ * @property-read bool|null $shared
+ * @property-read bool $async_flush
+ * @property-read string|array|null $cluster
+ * @property-read string $cluster_failover
+ * @property-read array $servers
+ * @property-read string $replication_strategy
+ * @property-read array $sentinels
+ * @property-read string $service
+ * @property-read string $serializer
+ * @property-read string $compression
+ * @property-read array $global_groups
+ * @property-read array $non_persistent_groups
+ * @property-read array $non_prefetchable_groups
+ * @property-read bool $prefetch
+ * @property-read bool $split_alloptions
+ * @property-read string $flush_network
+ * @property-read \RedisCachePro\Support\AnalyticsConfiguration $analytics
+ * @property-read \RedisCachePro\Support\RelayConfiguration $relay
+ * @property-read array $tls_options
+ * @property-read bool $updates
+ * @property-read bool $debug
+ * @property-read bool $save_commands
+ * @property-read \Throwable|null $initException
+ */
+final class Configuration
 {
     use Concerns\Cluster,
         Concerns\Sentinel,
@@ -111,7 +154,7 @@ class Configuration
      *
      * @var string
      */
-    const BACKOFF_DEFAULT = 'default';
+    const BACKOFF_SMART = 'smart';
 
     /**
      * No backoff.
@@ -123,21 +166,21 @@ class Configuration
     /**
      * The Object Cache Pro license token.
      *
-     * @var string
+     * @var string|null
      */
     protected $token;
 
     /**
      * The connector class name.
      *
-     * @var \RedisCachePro\Connectors\Connector
+     * @var class-string
      */
     protected $connector = PhpRedisConnector::class;
 
     /**
      * The object cache class name.
      *
-     * @var \RedisCachePro\ObjectCaches\ObjectCacheInterface
+     * @var class-string
      */
     protected $cache = PhpRedisObjectCache::class;
 
@@ -153,14 +196,14 @@ class Configuration
     /**
      * The logger class name.
      *
-     * @var \RedisCachePro\Loggers\LoggerInterface
+     * @var \RedisCachePro\Loggers\LoggerInterface|null
      */
     protected $logger;
 
     /**
      * The log levels.
      *
-     * @var array
+     * @var array<string>|null
      */
     protected $log_levels = [
         Logger::EMERGENCY,
@@ -200,21 +243,21 @@ class Configuration
     /**
      * The connection's username (Redis 6+).
      *
-     * @var string
+     * @var string|null
      */
     protected $username;
 
     /**
      * The connection's password.
      *
-     * @var string
+     * @var string|null
      */
     protected $password;
 
     /**
      * The key prefix.
      *
-     * @var string
+     * @var string|null
      */
     protected $prefix;
 
@@ -230,21 +273,21 @@ class Configuration
      *
      * @var float
      */
-    protected $timeout = 5.0;
+    protected $timeout = 2.5;
 
     /**
      * Read timeout in seconds.
      *
      * @var float
      */
-    protected $read_timeout = 5.0;
+    protected $read_timeout = 2.5;
 
     /**
      * Retry interval in milliseconds.
      *
      * @var int
      */
-    protected $retry_interval = 100;
+    protected $retry_interval = 25;
 
     /**
      * The amount of retries.
@@ -258,7 +301,7 @@ class Configuration
      *
      * @var string
      */
-    protected $backoff = self::BACKOFF_DEFAULT;
+    protected $backoff = self::BACKOFF_SMART;
 
     /**
      * Whether the connection is persistent.
@@ -300,21 +343,21 @@ class Configuration
     /**
      * The list of global cache groups that are not blog-specific in a network environment.
      *
-     * @var array
+     * @var array<string>
      */
     protected $global_groups;
 
     /**
      * The non-persistent groups that will only be cached for the duration of a request.
      *
-     * @var array
+     * @var array<string>
      */
     protected $non_persistent_groups;
 
     /**
      * The non-prefetchable groups that will not be prefetched.
      *
-     * @var array
+     * @var array<string>
      */
     protected $non_prefetchable_groups;
 
@@ -354,7 +397,7 @@ class Configuration
      * - `retention`: (int) The number of seconds to keep analytics before purging them
      * - `footnote`: (bool) Whether to print a HTML comment with non-sensitive metrics
      *
-     * @var object
+     * @var \RedisCachePro\Support\AnalyticsConfiguration
      */
     protected $analytics = [
         'enabled' => true,
@@ -369,7 +412,7 @@ class Configuration
      * - `listeners`: (bool) Whether to register Relay event listeners
      * - `invalidations`: (bool) Whether to enable client-side invalidation
      *
-     * @var object
+     * @var \RedisCachePro\Support\RelayConfiguration
      */
     protected $relay = [
         'listeners' => false,
@@ -395,7 +438,7 @@ class Configuration
      *
      * @link https://www.php.net/manual/context.ssl.php
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $tls_options;
 
@@ -404,7 +447,7 @@ class Configuration
      *
      * @see \RedisCachePro\Configuration\Configuration::safelyFrom()
      *
-     * @var \Exception
+     * @var \Throwable|null
      */
     private $initException;
 
@@ -498,7 +541,7 @@ class Configuration
     /**
      * Create a new configuration instance from an array.
      *
-     * @param  array  $config
+     * @param  array<mixed>  $array
      * @return self
      */
     protected static function fromArray(array $array): self
@@ -523,6 +566,7 @@ class Configuration
      * Set the license token.
      *
      * @param  string  $token
+     * @return void
      */
     public function setToken($token)
     {
@@ -543,6 +587,7 @@ class Configuration
      * Set the connector and cache using client name.
      *
      * @param  string|false  $client
+     * @return void
      */
     public function setClient($client)
     {
@@ -564,17 +609,25 @@ class Configuration
             throw new ConfigurationInvalidException("Client `{$client}` is not supported");
         }
 
-        $this->connector = "RedisCachePro\Connectors\\{$client}Connector";
-        $this->cache = "RedisCachePro\ObjectCaches\\{$client}ObjectCache";
+        $cache = "RedisCachePro\ObjectCaches\\{$client}ObjectCache";
+        $connector = "RedisCachePro\Connectors\\{$client}Connector";
+
+        if (! \class_exists($cache) || ! \class_exists($connector)) {
+            throw new ConfigurationInvalidException("Class {$cache}|{$connector} does not exist");
+        }
+
+        $this->cache = $cache;
+        $this->connector = $connector;
 
         $this->connector::boot();
         $this->clientName = $client;
     }
 
     /**
-     * Set the connector instance.
+     * Set the connector instance. Accepts `twemproxy` shorthand.
      *
-     * @param  \RedisCachePro\Connectors\Connector  $connector
+     * @param  class-string<\RedisCachePro\Connectors\Connector>|string  $connector
+     * @return void
      */
     public function setConnector($connector)
     {
@@ -602,7 +655,8 @@ class Configuration
     /**
      * Set the object cache instance.
      *
-     * @param  \RedisCachePro\Connectors\ObjectCacheInterface  $cache
+     * @param  class-string<\RedisCachePro\ObjectCaches\ObjectCacheInterface>  $cache
+     * @return void
      */
     public function setCache($cache)
     {
@@ -626,27 +680,24 @@ class Configuration
     /**
      * Set the logger instance.
      *
-     * @param  \RedisCachePro\Loggers\LoggerInterface  $logger
+     * @param  callable|class-string<\RedisCachePro\Loggers\LoggerInterface>  $logger
+     * @return void
      */
     public function setLogger($logger)
     {
-        if (! \is_string($logger) || empty($logger)) {
-            throw new ConfigurationInvalidException('Logger must be a fully qualified class name');
-        }
-
-        $isFunction = \function_exists($logger);
-
-        if (! $isFunction && ! \class_exists($logger)) {
-            throw new ConfigurationInvalidException("Logger class `{$logger}` was not found");
+        if (! \is_callable($logger) && (\is_string($logger) && ! \class_exists($logger))) {
+            throw new ConfigurationInvalidException(
+                \sprintf('`logger` must be a FQCN or `callable`, %s given', \gettype($logger))
+            );
         }
 
         try {
-            $instance = $isFunction
+            $instance = \is_callable($logger)
                 ? new CallbackLogger($logger)
                 : new $logger;
         } catch (Throwable $exception) {
             throw new ConfigurationInvalidException(
-                \sprintf('Could not instantiate logger %s: %s', $logger, $exception->getMessage())
+                \sprintf('Could not instantiate logger: %s', $exception->getMessage())
             );
         }
 
@@ -662,7 +713,8 @@ class Configuration
     /**
      * Set the log levels.
      *
-     * @param  array  $levels
+     * @param  array<string>  $levels
+     * @return void
      */
     public function setLogLevels($levels)
     {
@@ -697,6 +749,7 @@ class Configuration
      * Set the instance scheme, host, port, username, password and database using URL.
      *
      * @param  string  $url
+     * @return void
      */
     public function setUrl($url)
     {
@@ -729,6 +782,7 @@ class Configuration
      * Set the connection protocol.
      *
      * @param  string  $scheme
+     * @return void
      */
     public function setScheme($scheme)
     {
@@ -753,6 +807,7 @@ class Configuration
      * Set the instance host (and scheme if specified).
      *
      * @param  string  $host
+     * @return void
      */
     public function setHost($host)
     {
@@ -763,8 +818,8 @@ class Configuration
         $host = \strtolower((string) $host);
 
         if (strpos($host, '://') !== false) {
-            $this->setScheme(strstr($host, '://', true));
-            $host = substr(strstr($host, '://'), 3);
+            $this->setScheme((string) strstr($host, '://', true));
+            $host = substr((string) strstr($host, '://'), 3);
         }
 
         if ($host[0] === '/') {
@@ -778,6 +833,7 @@ class Configuration
      * Set the instance port.
      *
      * @param  int  $port
+     * @return void
      */
     public function setPort($port)
     {
@@ -798,6 +854,7 @@ class Configuration
      * Set the database number.
      *
      * @param  int  $database
+     * @return void
      */
     public function setDatabase($database)
     {
@@ -818,6 +875,7 @@ class Configuration
      * Set the instance/cluster username (Redis 6+).
      *
      * @param  string  $username
+     * @return void
      */
     public function setUsername($username)
     {
@@ -838,6 +896,7 @@ class Configuration
      * Set the instance/cluster password.
      *
      * @param  string  $password
+     * @return void
      */
     public function setPassword($password)
     {
@@ -858,6 +917,7 @@ class Configuration
      * Set the prefix for all keys.
      *
      * @param  string  $prefix
+     * @return void
      */
     public function setPrefix($prefix)
     {
@@ -877,7 +937,8 @@ class Configuration
     /**
      * Set the  maximum time-to-live in seconds.
      *
-     * @param  int  $maxttl
+     * @param  int  $seconds
+     * @return void
      */
     public function setMaxttl($seconds)
     {
@@ -901,7 +962,8 @@ class Configuration
     /**
      * Set the connection timeout in seconds.
      *
-     * @param  float  $seconds
+     * @param  float|int  $seconds
+     * @return void
      */
     public function setTimeout($seconds)
     {
@@ -929,7 +991,8 @@ class Configuration
     /**
      * Set the read timeout in seconds.
      *
-     * @param  float  $seconds
+     * @param  float|int  $seconds
+     * @return void
      */
     public function setReadTimeout($seconds)
     {
@@ -960,6 +1023,7 @@ class Configuration
      * Set the retry interval in milliseconds.
      *
      * @param  int  $milliseconds
+     * @return void
      */
     public function setRetryInterval($milliseconds)
     {
@@ -986,6 +1050,7 @@ class Configuration
      * Set whether the connection is persistent.
      *
      * @param  bool  $is_persistent
+     * @return void
      */
     public function setPersistent($is_persistent)
     {
@@ -1002,6 +1067,7 @@ class Configuration
      * Set whether the Redis server/cluster is shared or dedicated.
      *
      * @param  bool  $shared
+     * @return void
      */
     public function setShared($shared)
     {
@@ -1018,6 +1084,7 @@ class Configuration
      * Set whether flushing is asynchronous.
      *
      * @param  bool  $async
+     * @return void
      */
     public function setAsyncFlush($async)
     {
@@ -1034,6 +1101,7 @@ class Configuration
      * Set the data serializer.
      *
      * @param  string  $serializer
+     * @return void
      */
     public function setSerializer($serializer)
     {
@@ -1060,6 +1128,7 @@ class Configuration
      * Set the data compression format.
      *
      * @param  string  $compression
+     * @return void
      */
     public function setCompression($compression)
     {
@@ -1095,7 +1164,8 @@ class Configuration
     /**
      * The list of global cache groups that are not blog-specific in a network environment.
      *
-     * @param  array  $groups
+     * @param  array<string>  $groups
+     * @return void
      */
     public function setGlobalGroups($groups)
     {
@@ -1111,7 +1181,8 @@ class Configuration
     /**
      * Set the non-persistent groups that will only be cached for the duration of a request.
      *
-     * @param  array  $groups
+     * @param  array<string>  $groups
+     * @return void
      */
     public function setNonPersistentGroups($groups)
     {
@@ -1127,7 +1198,8 @@ class Configuration
     /**
      * Set the non-prefetchable groups that will not be prefetched.
      *
-     * @param  array  $groups
+     * @param  array<string>  $groups
+     * @return void
      */
     public function setNonPrefetchableGroups($groups)
     {
@@ -1144,6 +1216,7 @@ class Configuration
      * Set whether debug mode is enabled.
      *
      * @param  bool  $debug
+     * @return void
      */
     public function setDebug($debug)
     {
@@ -1168,6 +1241,7 @@ class Configuration
      * Set whether to prefetch keys for requests.
      *
      * @param  bool  $prefetch
+     * @return void
      */
     public function setPrefetch($prefetch)
     {
@@ -1192,6 +1266,7 @@ class Configuration
      * Set whether to enable plugin updates.
      *
      * @param  bool  $updates
+     * @return void
      */
     public function setUpdates($updates)
     {
@@ -1215,7 +1290,8 @@ class Configuration
     /**
      * Set the analytics configuration.
      *
-     * @param  array|bool  $analytics
+     * @param  array<mixed>|bool  $analytics
+     * @return void
      */
     public function setAnalytics($analytics)
     {
@@ -1243,9 +1319,11 @@ class Configuration
             if (isset($analytics[$option])) {
                 switch ($option) {
                     case 'retention':
-                        $this->analytics[$option] = (int) $analytics[$option]; break;
+                        $this->analytics[$option] = (int) $analytics[$option];
+                        break;
                     default:
-                        $this->analytics[$option] = (bool) $analytics[$option]; break;
+                        $this->analytics[$option] = (bool) $analytics[$option];
+                        break;
                 }
             }
         }
@@ -1256,7 +1334,8 @@ class Configuration
     /**
      * Set the Relay configuration.
      *
-     * @param  array  $relay
+     * @param  array<string, bool>  $relay
+     * @return void
      */
     public function setRelay($relay)
     {
@@ -1301,6 +1380,7 @@ class Configuration
      * Set whether all executed commands should be logged.
      *
      * @param  bool  $save_commands
+     * @return void
      */
     public function setSaveCommands($save_commands)
     {
@@ -1325,6 +1405,7 @@ class Configuration
      * Set whether to store the `alloptions` key in a hash.
      *
      * @param  bool  $split_alloptions
+     * @return void
      */
     public function setSplitAlloptions($split_alloptions)
     {
@@ -1349,6 +1430,7 @@ class Configuration
      * Set the multisite network environment cache flushing strategy.
      *
      * @param  string  $strategy
+     * @return void
      */
     public function setFlushNetwork($strategy)
     {
@@ -1378,7 +1460,8 @@ class Configuration
      *
      * @link https://www.php.net/manual/context.ssl.php
      *
-     * @param  array  $options
+     * @param  array<mixed>  $options
+     * @return void
      */
     public function setTlsOptions($options)
     {
@@ -1401,6 +1484,7 @@ class Configuration
      * Set the retries option.
      *
      * @param  int  $retries
+     * @return void
      */
     public function setRetries($retries)
     {
@@ -1417,6 +1501,7 @@ class Configuration
      * Set the backoff algorithm.
      *
      * @param  string  $backoff
+     * @return void
      */
     public function setBackoff($backoff)
     {
@@ -1426,7 +1511,7 @@ class Configuration
             );
         }
 
-        if (! \in_array($backoff, [self::BACKOFF_NONE, self::BACKOFF_DEFAULT])) {
+        if (! \in_array($backoff, [self::BACKOFF_NONE, self::BACKOFF_SMART])) {
             throw new ConfigurationInvalidException(
                 \sprintf('Backoff `%s` is not supported', $backoff)
             );
@@ -1440,6 +1525,7 @@ class Configuration
      *
      * @param  string  $url
      * @return array
+     * @return array<mixed>
      */
     public static function parseUrl($url)
     {
@@ -1449,7 +1535,7 @@ class Configuration
             throw new ConfigurationInvalidException("`url` is malformed and could not be parsed: `{$url}`");
         }
 
-        if (! isset($components['host'])) {
+        if (! isset($components['host']) && isset($components['path'])) {
             $components['host'] = $components['path'];
             unset($components['path']);
         }
@@ -1458,7 +1544,7 @@ class Configuration
             throw new ConfigurationInvalidException("`url` is malformed and could not be parsed: `{$url}`");
         }
 
-        $components = \array_map('rawurldecode', $components);
+        $components = \array_map('rawurldecode', $components); // @phpstan-ignore-line
 
         if (! empty($components['scheme'])) {
             $components['scheme'] = \str_replace(['rediss', 'redis'], ['tls', 'tcp'], $components['scheme']);
@@ -1503,16 +1589,17 @@ class Configuration
      * @param  string  $name
      * @return mixed
      */
-    public function __get($option)
+    public function __get($name)
     {
-        return $this->{$option};
+        return $this->{$name};
     }
 
     /**
      * Handle calls to invalid configuration options.
      *
      * @param  string  $method
-     * @param  array  $arguments
+     * @param  array<mixed>  $arguments
+     * @return void
      */
     public function __call(string $method, array $arguments)
     {
@@ -1532,7 +1619,7 @@ class Configuration
     /**
      * Return the configuration as array.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray()
     {
@@ -1584,7 +1671,7 @@ class Configuration
     /**
      * Return the configuration as array for diagnostics.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function diagnostics()
     {
@@ -1628,6 +1715,6 @@ class Configuration
             return [$name, $encodeJson($value)];
         };
 
-        return array_column(array_map($formatter, array_keys($config), $config), 1, 0);
+        return array_column(array_map($formatter, array_keys($config), $config), 1, 0); // @phpstan-ignore-line
     }
 }

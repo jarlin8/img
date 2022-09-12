@@ -11,9 +11,9 @@ class ObjectCacheHtmlOutput extends QM_Output_Html
     /**
      * Creates a new instance.
      *
-     * @param  ObjectCacheCollector  $collector
+     * @param  \QM_Collector  $collector
      */
-    public function __construct(ObjectCacheCollector $collector)
+    public function __construct($collector)
     {
         parent::__construct($collector);
 
@@ -34,8 +34,8 @@ class ObjectCacheHtmlOutput extends QM_Output_Html
     /**
      * Registers the Admin Bar menu item.
      *
-     * @param  array  $menu
-     * @return array
+     * @param  array<string, mixed>  $menu
+     * @return array<string, mixed>
      */
     public function admin_menu(array $menu)
     {
@@ -65,8 +65,8 @@ class ObjectCacheHtmlOutput extends QM_Output_Html
     /**
      * Injects the panel right before QM's "Request" menu item.
      *
-     * @param  array  $menu
-     * @return array
+     * @param  array<string, mixed>  $menu
+     * @return array<string, mixed>
      */
     public function panel_menu(array $menu)
     {

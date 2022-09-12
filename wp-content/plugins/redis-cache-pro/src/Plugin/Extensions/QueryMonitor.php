@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -70,8 +70,8 @@ trait QueryMonitor
     /**
      * Registers all object cache related Query Monitor HTML outputters.
      *
-     * @param  array  $output
-     * @return array
+     * @param  array<string, mixed>  $output
+     * @return array<string, mixed>|void
      */
     public function registerQmOutputters(array $output)
     {

@@ -9,15 +9,17 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Connectors;
 
-use Relay\Relay;
 use LogicException;
+
+use Relay\Relay;
+use Relay\Exception as RelayException;
 
 use RedisCachePro\Configuration\Configuration;
 
@@ -43,11 +45,11 @@ class RelayConnector implements Connector
      */
     public static function boot(): void // phpcs:ignore PHPCompatibility
     {
-        if (! extension_loaded('relay')) {
+        if (! \extension_loaded('relay')) {
             throw new RelayMissingException;
         }
 
-        if (version_compare(phpversion('relay'), self::RequiredVersion, '<')) {
+        if (\version_compare((string) \phpversion('relay'), self::RequiredVersion, '<')) {
             throw new RelayOutdatedException;
         }
     }
@@ -72,9 +74,10 @@ class RelayConnector implements Connector
                 return \defined('\Relay\Relay::COMPRESSION_LZ4');
             case Configuration::COMPRESSION_ZSTD:
                 return \defined('\Relay\Relay::COMPRESSION_ZSTD');
-            case 'tls':
             case 'retries':
             case 'backoff':
+                return \defined('\Relay\Relay::BACKOFF_ALGORITHM_DECORRELATED_JITTER');
+            case 'tls':
                 return true;
         }
 
@@ -115,7 +118,7 @@ class RelayConnector implements Connector
         $client = new Relay;
 
         $persistent = $config->persistent;
-        $persistentId = \is_string($persistent) ? $persistent : '';
+        $persistentId = '';
 
         $host = $config->host;
 
@@ -124,6 +127,8 @@ class RelayConnector implements Connector
         }
 
         $host = \str_replace('unix://', '', $host);
+
+        $method = $persistent ? 'pconnect' : 'connect';
 
         $parameters = [
             $host,
@@ -138,9 +143,22 @@ class RelayConnector implements Connector
             $parameters[] = ['stream' => $config->tls_options];
         }
 
-        $method = $persistent ? 'pconnect' : 'connect';
+        $retries = 0;
 
-        $client->{$method}(...$parameters);
+        CONNECTION_RETRY: {
+            $delay = PhpRedisConnector::nextDelay($config, $retries);
+
+            try {
+                $client->{$method}(...$parameters);
+            } catch (RelayException $exception) {
+                if (++$retries >= $config->retries) {
+                    throw $exception;
+                }
+
+                \usleep($delay * 1000);
+                goto CONNECTION_RETRY;
+            }
+        }
 
         if ($config->username && $config->password) {
             $client->auth([$config->username, $config->password]);
@@ -164,7 +182,7 @@ class RelayConnector implements Connector
      */
     public static function connectToCluster(Configuration $config): ConnectionInterface
     {
-        throw new LogicException('Relay does not support clusters');
+        throw new LogicException('Relay does not yet support Redis Cluster');
     }
 
     /**
@@ -176,7 +194,7 @@ class RelayConnector implements Connector
      */
     public static function connectToSentinels(Configuration $config): ConnectionInterface
     {
-        throw new LogicException('Relay does not support sentinels');
+        throw new LogicException('Relay does not yet support Redis Sentinel');
     }
 
     /**
@@ -188,6 +206,6 @@ class RelayConnector implements Connector
      */
     public static function connectToReplicatedServers(Configuration $config): ConnectionInterface
     {
-        throw new LogicException('Relay does not support replicated connections');
+        throw new LogicException('Relay does not yet support replicated connections');
     }
 }

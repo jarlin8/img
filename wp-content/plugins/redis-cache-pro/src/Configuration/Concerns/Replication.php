@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -23,7 +23,7 @@ trait Replication
     /**
      * The array of replicated Redis servers.
      *
-     * @var array
+     * @var array<string>
      */
     protected $servers;
 
@@ -37,7 +37,7 @@ trait Replication
     /**
      * The available replication strategies.
      *
-     * @return array
+     * @return array<string>
      */
     protected function replicationStrategies()
     {
@@ -56,7 +56,8 @@ trait Replication
     /**
      * Set the array of replicated Redis servers.
      *
-     * @param  array  $servers
+     * @param  array<string>  $servers
+     * @return void
      */
     public function setServers($servers)
     {
@@ -79,6 +80,7 @@ trait Replication
      * Set the replication strategy.
      *
      * @param  string  $strategy
+     * @return void
      */
     public function setReplicationStrategy($strategy)
     {

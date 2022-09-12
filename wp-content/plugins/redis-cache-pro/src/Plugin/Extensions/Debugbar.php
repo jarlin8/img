@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace RedisCachePro\Plugin\Extensions;
 
 use RedisCachePro_DebugBar_Insights;
+use RedisCachePro\ObjectCaches\ObjectCache;
 
 trait Debugbar
 {
@@ -42,19 +43,20 @@ trait Debugbar
      * Register the default diagnostics debug bar panel, as well as
      * other panels provided by the object cache.
      *
-     * @param  array  $panels
-     * @return array
+     * @param  array<mixed>  $panels
+     * @return array<mixed>
      */
     public function panels($panels)
     {
         global $wp_object_cache;
 
-        if (! method_exists($wp_object_cache, 'info')) {
+        if (! $wp_object_cache instanceof ObjectCache) {
             return $panels;
         }
 
         $panels[] = new RedisCachePro_DebugBar_Insights(
-            $wp_object_cache->info()
+            $wp_object_cache->info(),
+            $wp_object_cache->metrics(true)
         );
 
         return $panels;
@@ -63,8 +65,8 @@ trait Debugbar
     /**
      * Add the Redis version to the debug bar statuses.
      *
-     * @param  array  $statuses
-     * @return array
+     * @param  array<string, mixed>  $statuses
+     * @return array<string, mixed>
      */
     public function statuses($statuses)
     {

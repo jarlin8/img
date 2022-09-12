@@ -10,7 +10,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -25,10 +25,17 @@ use WP_REST_Controller;
 
 use RedisCachePro\Plugin;
 use RedisCachePro\Configuration\Configuration;
-use RedisCachePro\Connectors\PhpRedisConnector;
+use RedisCachePro\ObjectCaches\ObjectCacheInterface;
 
 class Latency extends WP_REST_Controller
 {
+    /**
+     * The resource name of this controller's route.
+     *
+     * @var string
+     */
+    protected $resource_name;
+
     /**
      * Create a new instance.
      *
@@ -79,7 +86,7 @@ class Latency extends WP_REST_Controller
         return new WP_Error(
             'rest_forbidden',
             'Sorry, you are not allowed to do that.',
-            ['status' => is_user_logged_in() ? 403 : 401]
+            ['status' => rest_authorization_required_code()]
         );
     }
 
@@ -87,27 +94,24 @@ class Latency extends WP_REST_Controller
      * Returns the REST API response for the request.
      *
      * @param  \WP_REST_Request  $request
-     * @return \WP_REST_Response
+     * @return \WP_REST_Response|\WP_Error
      */
     public function get_items($request)
     {
         global $wp_object_cache;
 
-        if (
-            ! method_exists($wp_object_cache, 'connection') ||
-            is_null($wp_object_cache->connection())
-        ) {
+        if (! $wp_object_cache instanceof ObjectCacheInterface) {
             return new WP_Error(
-                'objectcache_connection_not_found',
-                'The object cache is not connected.',
+                'objectcache_not_supported',
+                'The object cache is not supported.',
                 ['status' => 400]
             );
         }
 
-        if (! method_exists($wp_object_cache, 'config')) {
+        if (! $wp_object_cache->connection()) {
             return new WP_Error(
-                'objectcache_config_not_found',
-                'The object cache is not configured yet.',
+                'objectcache_not_connected',
+                'The object cache is not connected.',
                 ['status' => 400]
             );
         }
@@ -115,15 +119,15 @@ class Latency extends WP_REST_Controller
         $config = $wp_object_cache->config();
 
         if ($config->cluster) {
-            return $this->pingCluster();
+            return rest_ensure_response($this->pingCluster());
         }
 
         if ($config->sentinels) {
-            return $this->pingSentinelServers();
+            return rest_ensure_response($this->pingSentinelServers());
         }
 
         if ($config->servers) {
-            return $this->pingReplicatedServers();
+            return rest_ensure_response($this->pingReplicatedServers());
         }
 
         return rest_ensure_response([$this->ping($config)]);
@@ -133,7 +137,7 @@ class Latency extends WP_REST_Controller
      * Returns the latency in microseconds of a single Redis node.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
-     * @return array
+     * @return array<string, mixed>
      */
     protected function ping(Configuration $config)
     {
@@ -164,7 +168,7 @@ class Latency extends WP_REST_Controller
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
      * @param  \RedisSentinel  $sentinel
-     * @return array
+     * @return array<string, mixed>
      */
     protected function pingSentinel(Configuration $config, $sentinel)
     {
@@ -190,7 +194,7 @@ class Latency extends WP_REST_Controller
     /**
      * Measure the latency of cluster connection.
      *
-     * @return \WP_REST_Response
+     * @return array<mixed>
      */
     protected function pingCluster()
     {
@@ -224,13 +228,13 @@ class Latency extends WP_REST_Controller
             $results[] = $this->ping($config);
         }
 
-        return rest_ensure_response($results);
+        return $results;
     }
 
     /**
      * Measure the node latency of Sentinel connection.
      *
-     * @return \WP_REST_Response
+     * @return array<mixed>
      */
     protected function pingSentinelServers()
     {
@@ -243,18 +247,16 @@ class Latency extends WP_REST_Controller
 
         $sentinel = $this->pingSentinel($config, $connection->sentinel());
 
-        $servers = array_merge(
+        return array_merge(
             [$sentinel],
             $this->pingReplicatedServers()
         );
-
-        return rest_ensure_response($servers);
     }
 
     /**
      * Measure the node latency of replicated connection.
      *
-     * @return \WP_REST_Response
+     * @return array<mixed>
      */
     protected function pingReplicatedServers()
     {
@@ -277,7 +279,7 @@ class Latency extends WP_REST_Controller
             $results[] = $this->ping($config);
         }
 
-        return rest_ensure_response($results);
+        return $results;
     }
 
     /**
@@ -318,7 +320,7 @@ class Latency extends WP_REST_Controller
     /**
      * Retrieves the endpoint's schema, conforming to JSON Schema.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function get_item_schema()
     {

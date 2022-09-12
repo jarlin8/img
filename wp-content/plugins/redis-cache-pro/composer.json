@@ -14,23 +14,29 @@
         "fabpot/goutte": "^v4.0",
         "friendsofphp/php-cs-fixer": "^v3.1",
         "mockery/mockery": "^1.2",
-        "phpcompatibility/php-compatibility": "^9.3",
+        "phpcompatibility/php-compatibility": "dev-develop",
         "phpunit/phpunit": "^7.0 || ^8.0 || ^9.0",
         "squizlabs/php_codesniffer": "^3.7",
         "szepeviktor/phpstan-wordpress": "^1.0",
         "wp-cli/wp-cli-bundle": "^2.6"
     },
-    "autoload-dev": {
+    "autoload": {
         "psr-4": {
-            "RedisCachePro\\": "src/",
-            "Tests\\": "tests/"
+            "RedisCachePro\\": "src/"
         },
         "classmap": [
+            "src/Support/Types.php",
             "src/Extensions/Debugbar/Panel.php",
             "src/Extensions/Debugbar/Insights.php"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "suggest": {
+        "ext-redis": "Required to use PhpRedis as the object cache backend.",
         "ext-relay": "Required to use Relay as the object cache backend."
     },
     "config": {
@@ -38,22 +44,22 @@
         "preferred-install": "dist",
         "optimize-autoloader": true,
         "allow-plugins": {
-            "composer/installers": true
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "test": "vendor/bin/phpunit --testdox",
-        "test:unit": "vendor/bin/phpunit --testdox --testsuite Unit",
-        "test:http": "vendor/bin/phpunit --testdox --testsuite Feature",
-        "coverage:unit": "vendor/bin/phpunit --testsuite Unit --coverage-clover=coverage.xml",
-        "coverage:http": "vendor/bin/phpunit --testsuite Feature --coverage-clover=coverage.xml",
-        "style": "vendor/bin/php-cs-fixer fix --verbose --dry-run",
-        "style:fix": "vendor/bin/php-cs-fixer fix --verbose",
-        "lint": "vendor/bin/phpcs --no-cache --ignore=vendor --extensions=php --standard=PSR12 .",
-        "analyze": "vendor/bin/phpstan analyze",
-        "compatibility:setup": "php ./vendor/bin/phpcs --config-set installed_paths $(pwd)/vendor/phpcompatibility/php-compatibility/PHPCompatibility",
-        "compatibility:test": "php ./vendor/bin/phpcs --no-cache -p --standard=PHPCompatibility -d memory_limit=1G --ignore=vendor,tests ."
+        "test": "phpunit --testdox",
+        "test:unit": "phpunit --testdox --testsuite Unit",
+        "test:http": "phpunit --testdox --testsuite Feature",
+        "coverage:unit": "phpunit --testsuite Unit --coverage-clover=coverage.xml",
+        "coverage:http": "phpunit --testsuite Feature --coverage-clover=coverage.xml",
+        "style": "php-cs-fixer fix --verbose --dry-run --diff",
+        "style:fix": "php-cs-fixer fix --verbose",
+        "lint": "phpcs --no-cache --ignore=vendor --extensions=php --standard=PSR12 .",
+        "compatibility": "phpcs --no-cache -p --standard=PHPCompatibility --ignore=vendor,tests .",
+        "analyze": "phpstan analyze"
     }
 }

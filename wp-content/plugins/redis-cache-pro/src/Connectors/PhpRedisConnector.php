@@ -9,16 +9,19 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Connectors;
 
+use LogicException;
+
 use Redis;
 use RedisCluster;
-use LogicException;
+use RedisException;
+use RedisClusterException;
 
 use RedisCachePro\Configuration\Configuration;
 
@@ -47,11 +50,11 @@ class PhpRedisConnector implements Connector
      */
     public static function boot(): void // phpcs:ignore PHPCompatibility
     {
-        if (! extension_loaded('redis')) {
+        if (! \extension_loaded('redis')) {
             throw new PhpRedisMissingException;
         }
 
-        if (version_compare(phpversion('redis'), self::RequiredVersion, '<')) {
+        if (\version_compare((string) \phpversion('redis'), self::RequiredVersion, '<')) {
             throw new PhpRedisOutdatedException;
         }
     }
@@ -78,9 +81,9 @@ class PhpRedisConnector implements Connector
                 return \defined('\Redis::COMPRESSION_ZSTD');
             case 'retries':
             case 'backoff':
-                return \version_compare(\phpversion('redis'), '5.3.5', '>=');
+                return \defined('\Redis::BACKOFF_ALGORITHM_DECORRELATED_JITTER');
             case 'tls':
-                return \version_compare(\phpversion('redis'), '5.3.2', '>=');
+                return \version_compare((string) \phpversion('redis'), '5.3.2', '>=');
         }
 
         return false;
@@ -118,10 +121,10 @@ class PhpRedisConnector implements Connector
     public static function connectToInstance(Configuration $config): ConnectionInterface
     {
         $client = new Redis;
-        $version = \phpversion('redis');
+        $version = (string) \phpversion('redis');
 
         $persistent = $config->persistent;
-        $persistentId = \is_string($persistent) ? $persistent : '';
+        $persistentId = '';
 
         $host = $config->host;
 
@@ -130,6 +133,8 @@ class PhpRedisConnector implements Connector
         }
 
         $host = \str_replace('unix://', '', $host);
+
+        $method = $persistent ? 'pconnect' : 'connect';
 
         $parameters = [
             $host,
@@ -149,9 +154,22 @@ class PhpRedisConnector implements Connector
             $parameters[] = ['stream' => $tlsContext];
         }
 
-        $method = $persistent ? 'pconnect' : 'connect';
+        $retries = 0;
 
-        $client->{$method}(...$parameters);
+        CONNECTION_RETRY: {
+            $delay = self::nextDelay($config, $retries);
+
+            try {
+                $client->{$method}(...$parameters);
+            } catch (RedisException $exception) {
+                if (++$retries >= $config->retries) {
+                    throw $exception;
+                }
+
+                \usleep($delay * 1000);
+                goto CONNECTION_RETRY;
+            }
+        }
 
         if ($config->username && $config->password) {
             $client->auth([$config->username, $config->password]);
@@ -179,7 +197,7 @@ class PhpRedisConnector implements Connector
     public static function connectToCluster(Configuration $config): ConnectionInterface
     {
         if (\is_string($config->cluster)) {
-            $client = new RedisCluster($config->cluster);
+            $parameters = [$config->cluster];
         } else {
             $parameters = [
                 null,
@@ -189,7 +207,7 @@ class PhpRedisConnector implements Connector
                 $config->persistent,
             ];
 
-            $version = \phpversion('redis');
+            $version = (string) \phpversion('redis');
 
             if (\version_compare($version, '4.3.0', '>=')) {
                 $parameters[] = $config->password ?? '';
@@ -200,8 +218,24 @@ class PhpRedisConnector implements Connector
             if ($tlsContext && \version_compare($version, '5.3.2', '>=')) {
                 $parameters[] = $tlsContext;
             }
+        }
 
-            $client = new RedisCluster(...$parameters);
+        $client = null;
+        $retries = 0;
+
+        CLUSTER_RETRY: {
+            $delay = self::nextDelay($config, $retries);
+
+            try {
+                $client = new RedisCluster(...$parameters);
+            } catch (RedisClusterException $exception) {
+                if (++$retries >= $config->retries) {
+                    throw $exception;
+                }
+
+                \usleep($delay * 1000);
+                goto CLUSTER_RETRY;
+            }
         }
 
         if ($config->cluster_failover) {
@@ -219,7 +253,7 @@ class PhpRedisConnector implements Connector
      */
     public static function connectToSentinels(Configuration $config): ConnectionInterface
     {
-        if (version_compare(phpversion('redis'), '5.3.2', '<')) {
+        if (version_compare((string) phpversion('redis'), '5.3.2', '<')) {
             throw new LogicException('Redis Sentinel requires PhpRedis v5.3.2 or newer');
         }
 
@@ -247,6 +281,10 @@ class PhpRedisConnector implements Connector
             }
         }
 
+        if (! isset($master)) {
+            throw new LogicException('No replication master node found');
+        }
+
         return new PhpRedisReplicatedConnection($master, $replicas, $config);
     }
 
@@ -254,7 +292,7 @@ class PhpRedisConnector implements Connector
      * Returns the TLS context options for the transport.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
-     * @return array
+     * @return array<mixed>
      */
     protected static function tlsOptions(Configuration $config)
     {
@@ -270,5 +308,27 @@ class PhpRedisConnector implements Connector
         }
 
         return $config->tls_options;
+    }
+
+    /**
+     * Returns the next delay for the given retry.
+     *
+     * @param  \RedisCachePro\Configuration\Configuration  $config
+     * @param  int  $retries
+     * @return int
+     */
+    public static function nextDelay(Configuration $config, int $retries)
+    {
+        if ($config->backoff === Configuration::BACKOFF_NONE) {
+            return $retries ** 2;
+        }
+
+        $retryInterval = $config->retry_interval;
+        $jitter = $retryInterval * 0.1;
+
+        return $retries * \mt_rand(
+            (int) \floor($retryInterval - $jitter),
+            (int) \ceil($retryInterval + $jitter)
+        );
     }
 }

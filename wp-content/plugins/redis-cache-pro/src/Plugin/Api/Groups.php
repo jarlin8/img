@@ -10,7 +10,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -22,9 +22,17 @@ use WP_REST_Server;
 use WP_REST_Controller;
 
 use RedisCachePro\Plugin;
+use RedisCachePro\ObjectCaches\ObjectCacheInterface;
 
 class Groups extends WP_REST_Controller
 {
+    /**
+     * The resource name of this controller's route.
+     *
+     * @var string
+     */
+    protected $resource_name;
+
     /**
      * Create a new instance.
      *
@@ -75,7 +83,7 @@ class Groups extends WP_REST_Controller
         return new WP_Error(
             'rest_forbidden',
             'Sorry, you are not allowed to do that.',
-            ['status' => is_user_logged_in() ? 403 : 401]
+            ['status' => rest_authorization_required_code()]
         );
     }
 
@@ -89,21 +97,18 @@ class Groups extends WP_REST_Controller
     {
         global $wp_object_cache;
 
-        if (
-            ! method_exists($wp_object_cache, 'connection') ||
-            is_null($wp_object_cache->connection())
-        ) {
+        if (! $wp_object_cache instanceof ObjectCacheInterface) {
             return new WP_Error(
-                'objectcache_connection_not_found',
-                'The object cache is not connected.',
+                'objectcache_not_supported',
+                'The object cache is not supported.',
                 ['status' => 400]
             );
         }
 
-        if (! method_exists($wp_object_cache, 'config')) {
+        if (! $wp_object_cache->connection()) {
             return new WP_Error(
-                'objectcache_config_not_found',
-                'The object cache is not configured yet.',
+                'objectcache_not_connected',
+                'The object cache is not connected.',
                 ['status' => 400]
             );
         }
@@ -112,14 +117,17 @@ class Groups extends WP_REST_Controller
         $connection = $wp_object_cache->connection();
 
         if ($config->cluster) {
+            /** @var \RedisCachePro\Connections\PhpRedisClusterConnection $connection */
             return $this->clusterCacheGroups($connection);
         }
 
         if ($config->sentinels) {
+            /** @var \RedisCachePro\Connections\PhpRedisSentinelsConnection $connection */
             return $this->instanceCacheGroups($connection);
         }
 
         if ($config->servers) {
+            /** @var \RedisCachePro\Connections\PhpRedisReplicatedConnection $connection */
             return $this->instanceCacheGroups($connection);
         }
 
@@ -129,8 +137,8 @@ class Groups extends WP_REST_Controller
     /**
      * Returns all the keys and their count from an instance.
      *
-     * @param  \RedisCachePro\Connections\Connection  $connection
-     * @return \WP_REST_Response
+     * @param  \RedisCachePro\Connections\ConnectionInterface  $connection
+     * @return \WP_REST_Response|\WP_Error
      */
     protected function instanceCacheGroups($connection)
     {
@@ -143,7 +151,7 @@ class Groups extends WP_REST_Controller
      * Returns all the keys and their count from the cluster.
      *
      * @param  \RedisCachePro\Connections\PhpRedisClusterConnection  $connection
-     * @return \WP_REST_Response
+     * @return \WP_REST_Response|\WP_Error
      */
     protected function clusterCacheGroups($connection)
     {
@@ -161,9 +169,9 @@ class Groups extends WP_REST_Controller
     /**
      * Run the scan command and iterate over to get all the keys.
      *
-     * @param  \RedisCachePro\Connections\Connection  $connection
-     * @param  array|null  $node
-     * @return array
+     * @param  \RedisCachePro\Connections\ConnectionInterface  $connection
+     * @param  array<mixed>|null  $node
+     * @return array<string, mixed>
      */
     protected function iterate($connection, $node = null)
     {
@@ -174,12 +182,18 @@ class Groups extends WP_REST_Controller
 
         $groups = [];
         $count = 100;
+
+        /** @var ?int $iterator */
         $iterator = null;
 
         do {
-            $scan = is_null($node)
-                ? $connection->scan($iterator, $pattern, $count)
-                : $connection->scanNode($iterator, $node, $pattern, $count);
+            $scan = false;
+
+            if ($node && method_exists($connection, 'scanNode')) {
+                $scan = $connection->scanNode($iterator, $node, $pattern, $count);
+            } elseif (method_exists($connection, 'scan')) {
+                $scan = $connection->scan($iterator, $pattern, $count);
+            }
 
             if ($scan === false) {
                 continue;
@@ -197,7 +211,7 @@ class Groups extends WP_REST_Controller
      * Returns the key's group name.
      *
      * @param  string  $id
-     * @return array
+     * @return string
      */
     protected function parseGroup(string $id)
     {
@@ -210,8 +224,8 @@ class Groups extends WP_REST_Controller
     /**
      * Transform the groups into the response format.
      *
-     * @param  array  $groups
-     * @return \WP_REST_Response
+     * @param  array<mixed>  $groups
+     * @return \WP_REST_Response|\WP_Error
      */
     protected function prepareGroupsForResponse(array $groups)
     {
@@ -234,7 +248,7 @@ class Groups extends WP_REST_Controller
     /**
      * Retrieves the endpoint's schema, conforming to JSON Schema.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function get_item_schema()
     {

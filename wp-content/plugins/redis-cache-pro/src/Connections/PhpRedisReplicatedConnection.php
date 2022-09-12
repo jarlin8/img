@@ -9,14 +9,12 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Connections;
-
-use Redis;
 
 use RedisCachePro\Configuration\Configuration;
 use RedisCachePro\Connectors\PhpRedisConnector;
@@ -25,18 +23,16 @@ use RedisCachePro\Exceptions\ConnectionException;
 class PhpRedisReplicatedConnection extends PhpRedisConnection implements ConnectionInterface
 {
     const READ_COMMANDS = [
-        'EXISTS', 'TYPE', 'TTL', 'GET', 'MGET',
-        'KEYS', 'SCAN',
-        'SUBSTR', 'STRLEN', 'GETRANGE', 'GETBIT', 'RANDOMKEY',
+        'EXISTS', 'TYPE', 'TTL', 'GET', 'GETEX', 'MGET', 'RANDOMKEY',
+        'KEYS', 'SCAN', 'SUBSTR', 'STRLEN', 'GETRANGE', 'OBJECT', 'TIME', 'PFCOUNT', 'SORT_RO', 'EVAL_RO', 'EVALSHA_RO',
         'LLEN', 'LRANGE', 'LINDEX',
-        'SCARD', 'SISMEMBER', 'SMISMEMBER', 'SINTER', 'SUNION', 'SDIFF', 'SMEMBERS', 'SSCAN', 'SRANDMEMBER',
+        'SCARD', 'SISMEMBER', 'SMISMEMBER', 'SINTER', 'SINTERCARD', 'SUNION', 'SDIFF', 'SMEMBERS', 'SRANDMEMBER', 'SSCAN',
         'ZRANGE', 'ZREVRANGE', 'ZRANGEBYSCORE', 'ZREVRANGEBYSCORE', 'ZRANGEBYLEX', 'ZREVRANGEBYLEX',
-        'ZCARD', 'ZSCORE', 'ZCOUNT', 'ZRANK', 'ZREVRANK', 'ZSCAN', 'ZLEXCOUNT', 'ZMSCORE', 'ZDIFF', 'ZINTER', 'ZUNION',
-        'HGET', 'HMGET', 'HEXISTS', 'HLEN', 'HKEYS', 'HVALS', 'HGETALL', 'HSCAN', 'HSTRLEN',
+        'ZCARD', 'ZSCORE', 'ZCOUNT', 'ZRANK', 'ZREVRANK', 'ZSCAN', 'ZLEXCOUNT', 'ZMSCORE', 'ZDIFF', 'ZINTER', 'ZINTERCARD', 'ZUNION', 'ZRANDMEMBER',
+        'HGET', 'HMGET', 'HEXISTS', 'HLEN', 'HKEYS', 'HVALS', 'HGETALL', 'HSCAN', 'HSTRLEN', 'HRANDFIELD',
         'PING', 'AUTH', 'SELECT', 'ECHO', 'QUIT',
-        'OBJECT', 'TIME', 'PFCOUNT',
-        'BITCOUNT', 'BITPOS', 'BITFIELD',
-        'GEOHASH', 'GEOPOS', 'GEODIST', 'GEORADIUS', 'GEORADIUSBYMEMBER',
+        'BITCOUNT', 'BITPOS', 'BITFIELD', 'GETBIT',
+        'GEOHASH', 'GEOPOS', 'GEODIST', 'GEORADIUS', 'GEORADIUSBYMEMBER', 'GEOSEARCH',
     ];
 
     /**
@@ -165,8 +161,8 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
     /**
      * Run a command against Redis.
      *
-     * @param  string  $command
-     * @param  array  $parameters
+     * @param  string  $name
+     * @param  array<mixed>  $parameters
      * @return mixed
      */
     public function command(string $name, array $parameters = [])
@@ -190,18 +186,21 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
      */
     public function pipeline()
     {
-        return new Transaction(Redis::PIPELINE, $this->master);
+        return Transaction::pipeline($this->master);
     }
 
     /**
-     * Execute all `multi()` calls on master.
+     * Hijack `multi()` calls to allow command logging.
      *
      * @param  int  $type
      * @return object
      */
-    public function multi(int $type = Redis::MULTI)
+    public function multi(int $type = null)
     {
-        return new Transaction($type, $this->master);
+        $tx = parent::multi($type);
+        $tx->connection = $this->master;
+
+        return $tx;
     }
 
     /**
@@ -210,7 +209,7 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
      * @param  int|null  $iterator
      * @param  string|null  $pattern
      * @param  int  $count
-     * @return array|false
+     * @return array<string>|false
      */
     public function scan(?int &$iterator, ?string $pattern = null, int $count = 0) // phpcs:ignore PHPCompatibility
     {
@@ -223,11 +222,13 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
      * Set the connections client to the master and calls `PhpRedisConnection::flushdb()`.
      *
      * @param  bool|null  $async
-     * @return true
+     * @return bool
      */
     public function flushdb($async = null)
     {
-        $this->client = $this->master;
+        $this->client = \Closure::bind(function () {
+            return $this->client;
+        }, $this->master, $this->master)();
 
         return parent::flushdb($async);
     }

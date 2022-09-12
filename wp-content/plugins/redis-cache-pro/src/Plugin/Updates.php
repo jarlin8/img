@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -18,8 +18,12 @@ namespace RedisCachePro\Plugin;
 
 use WP_Error;
 
+use RedisCachePro\Plugin;
 use RedisCachePro\Diagnostics\Diagnostics;
 
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Updates
 {
     /**
@@ -35,11 +39,6 @@ trait Updates
         add_action("in_plugin_update_message-{$this->basename}", [$this, 'updateTokenNotice']);
 
         add_action('after_plugin_row', [$this, 'afterPluginRow'], 10, 3);
-
-        // remove default must-use update notice
-        add_action('after_plugin_row', function () {
-            remove_action("after_plugin_row_{$this->basename}", 'wp_plugin_update_row');
-        });
     }
 
     /**
@@ -58,8 +57,8 @@ trait Updates
      * Auto-updates for VCS checkouts are already blocked by WordPress.
      *
      * @param  bool|\WP_Error  $response
-     * @param  array  $hook_extra
-     * @return bool
+     * @param  array<mixed>  $hook_extra
+     * @return bool|\WP_Error
      */
     public function preventDangerousUpgrades($response, $hook_extra)
     {
@@ -135,12 +134,16 @@ trait Updates
             ? 'response'
             : 'no_update';
 
-        isset($update->mode) && $this->{$update->mode}($update->nonce);
+        isset($update->mode, $update->nonce) && $this->{$update->mode}($update->nonce);
+
+        if (! isset($transient->{$group})) {
+            return $transient;
+        }
 
         $transient->{$group}[$this->basename] = (object) [
             'slug' => $this->slug(),
             'plugin' => $this->basename,
-            'url' => self::Url,
+            'url' => Plugin::Url,
             'new_version' => $update->version,
             'package' => $update->package,
             'tested' => $update->wp,
@@ -179,7 +182,7 @@ trait Updates
      * Adds an update notice to the object cache drop and must-use plugin.
      *
      * @param  string  $file
-     * @param  array  $data
+     * @param  array<string>  $data
      * @param  string  $status
      * @return void
      */
@@ -192,6 +195,8 @@ trait Updates
         if (! preg_match('/(Object|Redis) Cache Pro/', $data['Name'])) {
             return;
         }
+
+        remove_action("after_plugin_row_{$this->basename}", 'wp_plugin_update_row');
 
         $updates = get_site_transient('update_plugins');
         $update = $updates->response[$this->basename] ?? null;

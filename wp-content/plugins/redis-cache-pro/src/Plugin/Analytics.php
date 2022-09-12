@@ -9,13 +9,18 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Plugin;
 
+use RedisCachePro\ObjectCaches\MeasuredObjectCacheInterface;
+
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Analytics
 {
     /**
@@ -33,7 +38,7 @@ trait Analytics
             return;
         }
 
-        if ($wp_object_cache && ! method_exists($wp_object_cache, 'measurements')) {
+        if (! $wp_object_cache instanceof MeasuredObjectCacheInterface) {
             return;
         }
 
@@ -77,11 +82,20 @@ trait Analytics
     /**
      * Print the request's metrics as HTML comment.
      *
-     * @return bool|null
+     * @return bool|void
      */
     public function shouldPrintMetricsComment()
     {
         static $shouldPrint;
+
+        /**
+         * Filters whether the analytics footnote is printed.
+         *
+         * @param  bool  $omit  Whether to omit printing the analytics footnote.
+         */
+        if ((bool) apply_filters('objectcache_omit_analytics_footnote', false)) {
+            return;
+        }
 
         if (doing_action('shutdown')) {
             return $shouldPrint;
@@ -116,12 +130,12 @@ trait Analytics
         }
 
         if (
-            (defined('\WP_CLI') && \WP_CLI) ||
-            (defined('\REST_REQUEST') && \REST_REQUEST) ||
-            (defined('\XMLRPC_REQUEST') && \XMLRPC_REQUEST) ||
-            (defined('\DOING_AJAX') && \DOING_AJAX) ||
-            (defined('\DOING_CRON') && \DOING_CRON) ||
-            (defined('\DOING_AUTOSAVE') && \DOING_AUTOSAVE) ||
+            (defined('\WP_CLI') && constant('\WP_CLI')) ||
+            (defined('\REST_REQUEST') && constant('\REST_REQUEST')) ||
+            (defined('\XMLRPC_REQUEST') && constant('\XMLRPC_REQUEST')) ||
+            (defined('\DOING_AJAX') && constant('\DOING_AJAX')) ||
+            (defined('\DOING_CRON') && constant('\DOING_CRON')) ||
+            (defined('\DOING_AUTOSAVE') && constant('\DOING_AUTOSAVE')) ||
             (function_exists('wp_is_json_request') && wp_is_json_request()) ||
             (function_exists('wp_is_jsonp_request') && wp_is_jsonp_request())
         ) {
@@ -133,7 +147,7 @@ trait Analytics
         }
 
         printf(
-            "<!-- plugin=%s client=%s %s -->\n",
+            "\n<!-- plugin=%s client=%s %s -->\n",
             'object-cache-pro',
             strtolower($wp_object_cache->clientName()),
             (string) $measurement

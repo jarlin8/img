@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -22,12 +22,15 @@ use IteratorAggregate;
 
 use RedisCachePro\Plugin;
 
+/**
+ * @implements \IteratorAggregate<\RedisCachePro\Plugin\Pages\Page>
+ */
 class Pages implements IteratorAggregate
 {
     /**
      * The page instances.
      *
-     * @var array
+     * @var array<\RedisCachePro\Plugin\Pages\Page>
      */
     protected $pages;
 
@@ -57,7 +60,7 @@ class Pages implements IteratorAggregate
     /**
      * Get an iterator for the items.
      *
-     * @return \ArrayIterator
+     * @return \ArrayIterator<int, \RedisCachePro\Plugin\Pages\Page>
      */
     public function getIterator(): Traversable
     {
@@ -67,7 +70,7 @@ class Pages implements IteratorAggregate
     /**
      * Returns the current page, if available.
      *
-     * @return \RedisCachePro\Plugin\Pages\Page|null
+     * @return \RedisCachePro\Plugin\Pages\Page|false
      */
     public function current()
     {

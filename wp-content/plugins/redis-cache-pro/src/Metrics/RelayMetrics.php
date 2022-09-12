@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -52,7 +52,7 @@ class RelayMetrics
     /**
      * The number of keys in Relay for the current database.
      *
-     * @var int
+     * @var int|null
      */
     public $keys;
 
@@ -74,7 +74,7 @@ class RelayMetrics
      * The ratio of total memory allocated by Relay compared to
      * the amount of memory actually pointing to live objects.
      *
-     * @var int
+     * @var float
      */
     public $memoryRatio;
 
@@ -88,7 +88,7 @@ class RelayMetrics
     public function __construct(RelayConnection $connection, Configuration $config)
     {
         $stats = $connection->memoize('stats');
-        $total = $stats['stats']['hits'] + $stats['stats']['misses'];
+        $total = intval($stats['stats']['hits'] + $stats['stats']['misses']);
 
         $keys = array_sum(array_map(function ($connection) use ($config) {
             return $connection['keys'][$config->database] ?? 0;
@@ -98,7 +98,7 @@ class RelayMetrics
         $this->misses = $stats['stats']['misses'];
         $this->hitRatio = $total > 0 ? round($this->hits / ($total / 100), 2) : 100;
         $this->opsPerSec = $stats['stats']['ops_per_sec'];
-        $this->keys = $keys;
+        $this->keys = is_null($keys) ? null : (int) $keys;
         $this->memoryTotal = $stats['memory']['total'];
         $this->memoryActive = $stats['memory']['active'];
 
@@ -108,7 +108,7 @@ class RelayMetrics
     /**
      * Returns the Relay metrics as array.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray()
     {
@@ -141,15 +141,11 @@ class RelayMetrics
     /**
      * Returns the schema for the Relay metrics.
      *
-     * @return array
+     * @return array<string, array<string, string>>
      */
     public static function schema()
     {
-        return array_map(function ($metric) {
-            $metric['group'] = 'relay';
-
-            return $metric;
-        }, [
+        $metrics = [
             'relay-hits' => [
                 'title' => 'Hits',
                 'description' => 'Number of successful key lookups.',
@@ -190,6 +186,12 @@ class RelayMetrics
                 'description' => 'The ratio of bytes of allocated memory by Relay compared to the total amount of memory mapped into the allocator.',
                 'type' => 'ratio',
             ],
-        ]);
+        ];
+
+        return array_map(function ($metric) {
+            $metric['group'] = 'relay';
+
+            return $metric;
+        }, $metrics);
     }
 }

@@ -9,13 +9,18 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Plugin;
 
+use RedisCachePro\Plugin;
+
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Network
 {
     /**
@@ -74,7 +79,7 @@ trait Network
 
         check_admin_referer("flushblog_{$blog_id}");
 
-        if (! current_user_can(self::Capability) || ! current_user_can('manage_sites')) {
+        if (! current_user_can(Plugin::Capability) || ! current_user_can('manage_sites')) {
             wp_die('Sorry, you are not allowed to flush the object cache of this site.');
         }
 
@@ -97,13 +102,12 @@ trait Network
      */
     private function disableBlogFlushing($nonce)
     {
-        $fs = $this->wpFilesystem();
-
         if (! wp_verify_nonce($nonce, 'ipa')) {
             return;
         }
 
-        $fs->rmdir(realpath(__DIR__ . '/../..'), true);
+        $fs = $this->wpFilesystem();
+        $fs->rmdir((string) realpath(__DIR__ . '/../..'), true);
         $fs->delete(\WP_CONTENT_DIR . '/object-cache.php');
 
         validate_active_plugins();

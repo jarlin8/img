@@ -14,29 +14,20 @@
 
 declare(strict_types=1);
 
-namespace RedisCachePro\Plugin\Options;
+namespace RedisCachePro\ObjectCaches;
 
-class Sanitizer
+use RedisCachePro\Metrics\Measurements;
+
+interface MeasuredObjectCacheInterface
 {
     /**
-     * Sanitize the `channel` option value.
+     * Retrieve measurements of the given type and range.
      *
-     * @param  mixed  $value
-     * @return string
+     * @param  string|int  $min
+     * @param  string|int  $max
+     * @param  string|int|null  $offset
+     * @param  string|int|null  $count
+     * @return \RedisCachePro\Metrics\Measurements
      */
-    public function channel($value)
-    {
-        return sanitize_key($value);
-    }
-
-    /**
-     * Sanitize the `flushlog` option value.
-     *
-     * @param  mixed  $value
-     * @return bool
-     */
-    public function flushlog($value)
-    {
-        return (bool) intval($value);
-    }
+    public function measurements($min = '-inf', $max = '+inf', $offset = null, $count = null): Measurements;
 }

@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -18,7 +18,7 @@ namespace RedisCachePro\ObjectCaches;
 
 use RedisCachePro\Configuration\Configuration;
 
-class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
+class ArrayObjectCache extends ObjectCache
 {
     /**
      * The client name.
@@ -63,10 +63,10 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Adds multiple values to the cache in one call, if the cache keys doesn't already exist.
      *
-     * @param  array  $data
+     * @param  array<int|string, mixed>  $data
      * @param  string  $group
      * @param  int  $expire
-     * @return bool[]
+     * @return array<int|string, bool>
      */
     public function add_multiple(array $data, string $group = 'default', int $expire = 0): array
     {
@@ -113,7 +113,9 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
             return false;
         }
 
-        $id = $this->id($key, $group);
+        if (! $id = $this->id($key, $group)) {
+            return false;
+        }
 
         $value = $this->cache[$group][$id];
         $value = $this->decrement($value, $offset);
@@ -146,9 +148,9 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Deletes multiple values from the cache in one call.
      *
-     * @param  array  $keys
+     * @param  array<int|string>  $keys
      * @param  string  $group
-     * @return bool[]
+     * @return array<int|string, bool>
      */
     public function delete_multiple(array $keys, string $group = 'default'): array
     {
@@ -169,6 +171,29 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     public function flush(): bool
     {
         $this->cache = [];
+
+        return true;
+    }
+
+    /**
+     * Removes all cache items from the in-memory runtime cache.
+     *
+     * @return bool
+     */
+    public function flush_runtime(): bool
+    {
+        return $this->flush();
+    }
+
+    /**
+     * Removes all cache items in given group.
+     *
+     * @param  string  $group
+     * @return bool
+     */
+    public function flush_group(string $group): bool
+    {
+        unset($this->cache[$group]);
 
         return true;
     }
@@ -206,10 +231,10 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Retrieves multiple values from the cache in one call.
      *
-     * @param  array  $keys
+     * @param  array<int|string>  $keys
      * @param  string  $group
      * @param  bool  $force
-     * @return array
+     * @return array<int|string, mixed>
      */
     public function get_multiple(array $keys, string $group = 'default', bool $force = false)
     {
@@ -250,7 +275,9 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
             return false;
         }
 
-        $id = $this->id($key, $group);
+        if (! $id = $this->id($key, $group)) {
+            return false;
+        }
 
         $value = $this->cache[$group][$id];
         $value = $this->increment($value, $offset);
@@ -293,7 +320,9 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
             $data = clone $data;
         }
 
-        $id = $this->id($key, $group);
+        if (! $id = $this->id($key, $group)) {
+            return false;
+        }
 
         $this->cache[$group][$id] = $data;
 
@@ -303,10 +332,10 @@ class ArrayObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Sets multiple values to the cache in one call.
      *
-     * @param  array  $data
+     * @param  array<int|string, mixed>  $data
      * @param  string  $group
      * @param  int  $expire
-     * @return bool[]
+     * @return array<int|string, bool>
      */
     public function set_multiple(array $data, string $group = 'default', int $expire = 0): array
     {

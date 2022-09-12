@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -43,7 +43,7 @@ trait SplitsAllOptionsIntoHash
      * Returns a single `alloptions` array from the Redis hash.
      *
      * @param  string  $id
-     * @return array|false
+     * @return array<mixed>|false
      */
     protected function getAllOptions(string $id)
     {

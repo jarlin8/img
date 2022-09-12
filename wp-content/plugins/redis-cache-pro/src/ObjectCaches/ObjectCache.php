@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -24,8 +24,9 @@ use RedisCachePro\Loggers\LoggerInterface;
 use RedisCachePro\Configuration\Configuration;
 use RedisCachePro\Exceptions\ObjectCacheException;
 use RedisCachePro\Connections\ConnectionInterface;
+use RedisCachePro\Exceptions\InvalidCacheKeyTypeException;
 
-abstract class ObjectCache
+abstract class ObjectCache implements ObjectCacheInterface
 {
     /**
      * The client name fallback.
@@ -44,7 +45,7 @@ abstract class ObjectCache
     /**
      * The connection instance.
      *
-     * @var \RedisCachePro\Connections\Connection|null
+     * @var \RedisCachePro\Connections\ConnectionInterface|null
      */
     protected $connection;
 
@@ -58,7 +59,7 @@ abstract class ObjectCache
     /**
      * Holds the objects cached in runtime memory.
      *
-     * @var array
+     * @var array<string, array<int|string, mixed>>
      */
     protected $cache = [];
 
@@ -79,7 +80,7 @@ abstract class ObjectCache
     /**
      * The blog id used as prefix in network environments.
      *
-     * @var string
+     * @var int
      */
     protected $blogId;
 
@@ -95,7 +96,7 @@ abstract class ObjectCache
      *
      * @see self::id()
      *
-     * @var bool
+     * @var bool|null
      */
     private $isCluster;
 
@@ -104,7 +105,7 @@ abstract class ObjectCache
      *
      * @see self::id()
      *
-     * @var string
+     * @var string|null
      */
     private $prefix;
 
@@ -112,42 +113,83 @@ abstract class ObjectCache
      * The list of global cache groups that are not
      * blog specific in a network environment.
      *
-     * @var array
+     * @var array<string>
      */
     protected $globalGroups = [];
 
     /**
      * The list of non-persistent groups.
      *
-     * @var array
+     * @var array<string>
      */
     protected $nonPersistentGroups = [];
 
     /**
      * The list of non-persistent group matches for fast lookups.
      *
-     * @var array
+     * @var array<string, bool>
      */
     protected $nonPersistentGroupMatches = [];
 
     /**
      * The list of non-prefetchable groups.
      *
-     * @var array
+     * @var array<string>
      */
     protected $nonPrefetchableGroups = [];
 
     /**
      * The list of non-prefetchable group matches for fast lookups.
      *
-     * @var array
+     * @var array<string, bool>
      */
     protected $nonPrefetchableGroupMatches = [];
 
     /**
+     * Returns the client name the object cache is using.
+     *
+     * @return string
+     */
+    public function clientName()
+    {
+        return static::Client;
+    }
+
+    /**
+     * Returns the configuration instance.
+     *
+     * @return \RedisCachePro\Configuration\Configuration
+     */
+    public function config(): Configuration
+    {
+        return $this->config;
+    }
+
+    /**
+     * Returns the connection instance.
+     *
+     * @return \RedisCachePro\Connections\ConnectionInterface|null
+     */
+    public function connection(): ?ConnectionInterface // phpcs:ignore PHPCompatibility.FunctionDeclarations.NewNullableTypes.returnTypeFound
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Returns the logger instance.
+     *
+     * @return \RedisCachePro\Loggers\LoggerInterface
+     */
+    public function logger(): LoggerInterface
+    {
+        return $this->log;
+    }
+
+    /**
      * Set given groups as global.
      *
-     * @param  array  $groups
+     * @param  array<string>  $groups
+     * @return void
      */
     public function add_global_groups(array $groups)
     {
@@ -159,7 +201,8 @@ abstract class ObjectCache
     /**
      * Set given groups as non-persistent.
      *
-     * @param  array  $groups
+     * @param  array<string>  $groups
+     * @return void
      */
     public function add_non_persistent_groups(array $groups)
     {
@@ -183,7 +226,8 @@ abstract class ObjectCache
     /**
      * Set given groups as non-prefetchable.
      *
-     * @param  array  $groups
+     * @param  array<string>  $groups
+     * @return void
      */
     public function add_non_prefetchable_groups(array $groups)
     {
@@ -193,41 +237,11 @@ abstract class ObjectCache
     }
 
     /**
-     * Returns the configuration instance.
-     *
-     * @return \RedisCachePro\Configuration\Configuration
-     */
-    public function config(): Configuration
-    {
-        return $this->config;
-    }
-
-    /**
-     * Returns the client name the object cache is using.
-     *
-     * @return \RedisCachePro\Configuration\Configuration
-     */
-    public function clientName()
-    {
-        return static::Client;
-    }
-
-    /**
-     * Returns the connection instance.
-     *
-     * @return \RedisCachePro\Connections\ConnectionInterface|null
-     */
-    public function connection(): ?ConnectionInterface // phpcs:ignore PHPCompatibility.FunctionDeclarations.NewNullableTypes.returnTypeFound
-    {
-        return $this->connection;
-    }
-
-    /**
      * Decrement given value by given offset.
      *
      * Forces value to be a signed integer.
      *
-     * @param  int  $value
+     * @param  int|string  $value
      * @param  int  $offset
      * @return int
      */
@@ -243,35 +257,9 @@ abstract class ObjectCache
     }
 
     /**
-     * Handles connection errors.
-     *
-     * When WP_DEBUG is enabled, the exception will be re-thrown,
-     * otherwise a critical log entry is emitted.
-     *
-     * @param  \Throwable  $error
-     * @param  array  $context
-     * @return void
-     */
-    protected function error(Throwable $error, array $context = []): void // phpcs:ignore PHPCompatibility
-    {
-        global $wp_object_cache_errors;
-
-        $wp_object_cache_errors[] = $error->getMessage();
-
-        $this->log->error(
-            $error->getMessage(),
-            \array_merge(['exception' => $error], $context)
-        );
-
-        if ($this->config->debug) {
-            throw ObjectCacheException::from($error);
-        }
-    }
-
-    /**
      * Returns an array of all global groups.
      *
-     * @return array
+     * @return array<string>
      */
     public function globalGroups(): array
     {
@@ -281,7 +269,7 @@ abstract class ObjectCache
     /**
      * Returns an array of all non-prefetchable groups.
      *
-     * @return array
+     * @return array<string>
      */
     public function nonPrefetchableGroups(): array
     {
@@ -291,7 +279,7 @@ abstract class ObjectCache
     /**
      * Returns an array of all non-persistent groups.
      *
-     * @return array
+     * @return array<string>
      */
     public function nonPersistentGroups(): array
     {
@@ -299,65 +287,11 @@ abstract class ObjectCache
     }
 
     /**
-     * Build cache identifier for given key and group.
-     *
-     * 1. The configured prefix is added to all identifiers
-     * 2. In network environments the `blog_id` is added to the group
-     * 3. On clusters the group is used as the hash slot
-     *
-     * @param  int|string  $key
-     * @param  string  $group
-     * @return string|false
-     */
-    protected function id($key, string $group)
-    {
-        static $cache = [];
-
-        $cacheKey = $this->isMultisite ? "{$this->blogId}:{$group}:{$key}" : "{$group}:{$key}";
-
-        if (isset($cache[$cacheKey])) {
-            return $cache[$cacheKey];
-        }
-
-        if (! \is_string($key) && ! \is_int($key) || \trim((string) $key) === '') {
-            error_log('objectcache.warning: Cache key must be integer or non-empty string, ' . gettype($key) . ' given');
-
-            return false;
-        }
-
-        if (\is_null($this->prefix)) {
-            $this->prefix = $this->config->prefix ?: '';
-        }
-
-        if (\is_null($this->isCluster)) {
-            $this->isCluster = (bool) $this->config->cluster;
-        }
-
-        $blogId = '';
-
-        if ($this->isMultisite && ! \in_array($group, $this->globalGroups)) {
-            $blogId = "{$this->blogId}:";
-        }
-
-        $key = \str_replace(':', '-', (string) $key);
-        $group = \str_replace(':', '-', $group);
-
-        $group = $this->isCluster ? "{{$group}}" : $group;
-
-        $id = "{$this->prefix}:{$blogId}{$group}:{$key}";
-        $id = \str_replace(' ', '-', $id);
-        $id = \trim($id, ':');
-        $id = \strtolower($id);
-
-        return $cache[$cacheKey] = $id;
-    }
-
-    /**
      * Increment given value by given offset.
      *
      * Forces value to be a signed integer.
      *
-     * @param  int  $value
+     * @param  int|string  $value
      * @param  int  $offset
      * @return int
      */
@@ -480,7 +414,7 @@ abstract class ObjectCache
     /**
      * Returns various information about the object cache.
      *
-     * @return object
+     * @return \RedisCachePro\Support\ObjectCacheInfo
      */
     public function info()
     {
@@ -488,14 +422,13 @@ abstract class ObjectCache
 
         $metrics = self::metrics();
 
-        return (object) [
+        /** @var \RedisCachePro\Support\ObjectCacheInfo $info */
+        $info = (object) [
             'status' => false,
             'hits' => $metrics->hits,
             'misses' => $metrics->misses,
             'ratio' => $metrics->ratio,
-            'bytes' => $metrics->bytes,
             'groups' => (object) [
-                'cache' => $metrics->groups,
                 'global' => $this->globalGroups(),
                 'non_persistent' => $this->nonPersistentGroups(),
                 'non_prefetchable' => $this->nonPrefetchableGroups(),
@@ -506,47 +439,46 @@ abstract class ObjectCache
                 'Logger' => (new ReflectionClass($this->log))->getShortName(),
             ]),
         ];
+
+        return $info;
     }
 
     /**
      * Returns metrics about the object cache.
      *
-     * @return object
+     * @param  bool  $extended
+     * @return \RedisCachePro\Support\ObjectCacheMetrics
      */
-    public function metrics()
+    public function metrics($extended = false)
     {
         $total = $this->hits + $this->misses;
 
-        $groups = array_map(function ($keys) {
-            return [
-                'keys' => count($keys),
-                'bytes' => strlen(serialize($keys)),
-            ];
-        }, $this->cache);
-
-        return (object) [
+        /** @var \RedisCachePro\Support\ObjectCacheMetrics $metrics */
+        $metrics = (object) [
             'hits' => $this->hits,
             'misses' => $this->misses,
             'ratio' => $total > 0 ? round($this->hits / ($total / 100), 2) : 100,
-            'bytes' => array_sum(array_column($groups, 'bytes')),
-            'groups' => $groups,
         ];
-    }
 
-    /**
-     * Returns the logger instance.
-     *
-     * @return \RedisCachePro\Loggers\LoggerInterface
-     */
-    public function logger(): LoggerInterface
-    {
-        return $this->log;
+        if ($extended) {
+            $metrics->groups = array_map(function ($keys) {
+                return [
+                    'keys' => count($keys),
+                    'bytes' => array_sum(array_map([$this, 'get_bytes'], $keys)),
+                ];
+            }, $this->cache);
+
+            $metrics->bytes = array_sum(array_column($metrics->groups, 'bytes'));
+        }
+
+        return $metrics;
     }
 
     /**
      * Set the blog id.
      *
      * @param  int  $blogId
+     * @return void
      */
     public function setBlogId(int $blogId)
     {
@@ -557,6 +489,7 @@ abstract class ObjectCache
      * Set whether the environment is a network.
      *
      * @param  bool  $isMultisite
+     * @return void
      */
     public function setMultisite(bool $isMultisite)
     {
@@ -570,7 +503,7 @@ abstract class ObjectCache
      * @param  string  $group
      * @return bool
      */
-    protected function hasInMemory(string $id, string $group)
+    protected function hasInMemory(string $id, string $group = 'default')
     {
         return isset($this->cache[$group][$id]);
     }
@@ -582,7 +515,7 @@ abstract class ObjectCache
      * @param  string  $group
      * @return mixed
      */
-    protected function getFromMemory(string $id, string $group)
+    protected function getFromMemory(string $id, string $group = 'default')
     {
         if (\is_object($this->cache[$group][$id])) {
             return clone $this->cache[$group][$id];
@@ -599,7 +532,7 @@ abstract class ObjectCache
      * @param  string  $group
      * @return void
      */
-    protected function storeInMemory(string $id, $data, string $group)
+    protected function storeInMemory(string $id, $data, string $group = 'default')
     {
         $this->cache[$group][$id] = \is_object($data) ? clone $data : $data;
     }
@@ -611,7 +544,7 @@ abstract class ObjectCache
      * @param  string  $group
      * @return bool
      */
-    public function deleteFromMemory($key, string $group)
+    public function deleteFromMemory($key, string $group = 'default')
     {
         if (! $id = $this->id($key, $group)) {
             return false;
@@ -622,62 +555,33 @@ abstract class ObjectCache
         }
 
         unset($this->cache[$group][$id]);
-        unset($this->prefetch[$group][$key]);
 
         return true;
     }
 
     /**
-     * Flushes the in-memory runtime cache.
-     *
-     * @deprecated  1.15.0  Use `ObjectCache::flushMemory()` instead
-     *
-     * @return bool
-     */
-    public function flushMemory(): bool
-    {
-        if (function_exists('_deprecated_function')) {
-            \_deprecated_function(__METHOD__, '1.15.0', __CLASS__ . '::flushRuntime()');
-        }
-
-        return $this->flushRuntime();
-    }
-
-    /**
-     * Flushes the in-memory runtime cache.
+     * Alias to flush the in-memory runtime cache.
      *
      * @return bool
      */
     public function flushRuntime(): bool
     {
-        $this->cache = [];
-
-        return true;
+        return $this->flush_runtime();
     }
 
     /**
-     * Flushes the runtime cache.
+     * Flushes the in-memory runtime cache.
      *
-     * @deprecated  1.12.0  Use `ObjectCache::flushMemory()` instead
+     * @deprecated  1.15.0  Use `ObjectCache::flushRuntime()` instead
      *
      * @return bool
      */
-    public function flushRuntimeCache(): bool
+    public function flushMemory(): bool
     {
-        if (function_exists('_deprecated_function')) {
-            \_deprecated_function(__METHOD__, '1.12.0', __CLASS__ . '::flushRuntime()');
+        if (function_exists('\_deprecated_function')) {
+            \_deprecated_function(__METHOD__, '1.15.0', __CLASS__ . '::flushRuntime()');
         }
 
-        return $this->flushRuntime();
-    }
-
-    /**
-     * Alias for WordPress' snake_case function, just for consistency.
-     *
-     * @return bool
-     */
-    public function flush_runtime(): bool
-    {
         return $this->flushRuntime();
     }
 
@@ -713,12 +617,12 @@ abstract class ObjectCache
         }
 
         $id = $this->id('*', dechex(3405691582));
-        $prefix = trim(preg_replace('/:{?cafebabe}?/', '', $id), '*');
+        $prefix = trim(preg_replace('/:{?cafebabe}?/', '', (string) $id), '*');
         $prefixLength = strlen($prefix);
 
         foreach ($this->cache as $group => $keys) {
             foreach (array_keys($keys) as $key) {
-                if (substr_compare($key, $prefix, 0, $prefixLength) === 0) {
+                if (substr_compare((string) $key, $prefix, 0, $prefixLength) === 0) {
                     unset($this->cache[$group][$key]);
                 }
             }
@@ -741,6 +645,136 @@ abstract class ObjectCache
         return $this->connection->withoutMutations(
             Closure::bind($callback, $this, $this)
         );
+    }
+
+    /**
+     * Build cache identifier for given key and group.
+     *
+     * 1. The configured prefix is added to all identifiers
+     * 2. In network environments the `blog_id` is added to the group
+     * 3. On clusters the group is used as the hash slot
+     *
+     * @param  int|string  $key
+     * @param  string  $group
+     * @return string|false
+     */
+    protected function id($key, string $group)
+    {
+        static $cache = [];
+
+        if (\is_null($this->prefix)) {
+            $this->prefix = $this->config->prefix ?: '';
+        }
+
+        $cacheKey = $this->isMultisite
+            ? "{$this->prefix}:{$this->blogId}:{$group}:{$key}"
+            : "{$this->prefix}:{$group}:{$key}";
+
+        if (isset($cache[$cacheKey])) {
+            return $cache[$cacheKey];
+        }
+
+        if (! \is_string($key) && ! \is_int($key) || \trim((string) $key) === '') {
+            error_log('objectcache.warning: ' . InvalidCacheKeyTypeException::forKey($key)->getMessage());
+
+            return false;
+        }
+
+        if (\is_null($this->isCluster)) {
+            $this->isCluster = (bool) $this->config->cluster;
+        }
+
+        $blogId = '';
+
+        if ($this->isMultisite && ! \in_array($group, $this->globalGroups)) {
+            $blogId = "{$this->blogId}:";
+        }
+
+        $key = \str_replace(':', '-', (string) $key);
+        $group = \str_replace(':', '-', $group);
+
+        $group = $this->isCluster ? "{{$group}}" : $group;
+
+        $id = "{$this->prefix}:{$blogId}{$group}:{$key}";
+        $id = \str_replace(' ', '-', $id);
+        $id = \trim($id, ':');
+        $id = \strtolower($id);
+
+        return $cache[$cacheKey] = $id;
+    }
+
+    /**
+     * Handles connection errors.
+     *
+     * When WP_DEBUG is enabled, the exception will be re-thrown,
+     * otherwise a critical log entry is emitted.
+     *
+     * @param  \Throwable  $error
+     * @param  array<mixed>  $context
+     * @return void
+     */
+    protected function error(Throwable $error, array $context = []): void // phpcs:ignore PHPCompatibility
+    {
+        global $wp_object_cache_errors;
+
+        $wp_object_cache_errors[] = $error->getMessage();
+
+        $this->log->error(
+            $error->getMessage(),
+            \array_merge(['exception' => $error], $context)
+        );
+
+        if ($this->config->debug) {
+            throw ObjectCacheException::from($error);
+        }
+    }
+
+    /**
+     * @internal
+     *
+     * @param  mixed  $var
+     * @return int
+     */
+    public static function get_bytes($var)
+    {
+        switch (gettype($var)) {
+            case 'integer':
+                return PHP_INT_SIZE;
+            case 'double':
+            case 'float':
+                return 8;
+            case 'boolean':
+            case 'NULL':
+                return 1;
+            case 'string':
+                return strlen($var);
+            default:
+                return strlen(serialize($var));
+        }
+    }
+
+    /**
+     * @internal
+     *
+     * @param  int[]|float[]  $values
+     * @return int|float
+     */
+    public static function array_median(array $values)
+    {
+        sort($values);
+
+        $count = count($values);
+        $middle = floor(($count - 1) / 2);
+
+        if ($count === 0) {
+            return 0;
+        }
+
+        if ($count % 2) {
+            return $values[$middle];
+        }
+
+        return ($values[$middle] + $values[$middle + 1]) / 2;
     }
 
     /**

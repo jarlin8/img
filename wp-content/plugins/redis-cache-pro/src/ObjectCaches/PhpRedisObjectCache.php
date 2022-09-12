@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -23,7 +23,7 @@ use RedisCachePro\Configuration\Configuration;
 use RedisCachePro\Connections\PhpRedisConnection;
 use RedisCachePro\Exceptions\ObjectCacheException;
 
-class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
+class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInterface
 {
     use Concerns\PrefetchesKeys,
         Concerns\FlushesNetworks,
@@ -36,6 +36,13 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
      * @var string
      */
     const Client = 'PhpRedis';
+
+    /**
+     * The connection instance.
+     *
+     * @var \RedisCachePro\Connections\PhpRedisConnection
+     */
+    protected $connection;
 
     /**
      * The amount of times Redis had the object already cached.
@@ -68,7 +75,7 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Create new PhpRedis object cache instance.
      *
-     * @param  \RedisCachePro\Connections\ConnectionInterface  $connection
+     * @param  \RedisCachePro\Connections\PhpRedisConnection  $connection
      * @param  \RedisCachePro\Configuration\Configuration  $config
      */
     public function __construct(PhpRedisConnection $connection, Configuration $config)
@@ -125,10 +132,10 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Adds multiple values to the cache in one call, if the cache keys doesn't already exist.
      *
-     * @param  array  $data
+     * @param  array<int|string, mixed>  $data
      * @param  string  $group
      * @param  int  $expire
-     * @return bool[]
+     * @return array<int|string, bool>
      */
     public function add_multiple(array $data, string $group = 'default', int $expire = 0): array
     {
@@ -141,10 +148,11 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
         if ($this->isNonPersistentGroup($group)) {
             foreach ($data as $key => $value) {
                 $id = $this->id($key, $group);
-                $results[$key] = $id && ! $this->hasInMemory($id, $group);
+
+                $results[$key] = \is_string($id) && ! $this->hasInMemory($id, $group);
 
                 if ($results[$key]) {
-                    $this->storeInMemory($id, $value, $group);
+                    $this->storeInMemory((string) $id, $value, $group);
                 }
             }
 
@@ -173,11 +181,11 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
         }
 
         foreach ($response as $key => $result) {
-            if ($result->response) {
-                $this->storeInMemory($result->id, $data[$key], $group);
+            if ($result['id'] && $result['response']) {
+                $this->storeInMemory($result['id'], $data[$key], $group);
             }
 
-            $results[$key] = $result->response;
+            $results[$key] = $result['response'];
         }
 
         $order = array_flip(array_keys($data));
@@ -266,6 +274,22 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
     }
 
     /**
+     * Removes the cache contents matching key and group from the runtime memory cache.
+     *
+     * @param  int|string  $key
+     * @param  string  $group
+     * @return bool
+     */
+    public function deleteFromMemory($key, string $group = 'default')
+    {
+        if ($deleted = parent::deleteFromMemory($key, $group)) {
+            unset($this->prefetch[$group][$key]);
+        }
+
+        return $deleted;
+    }
+
+    /**
      * Removes the cache contents matching key and group.
      *
      * @param  int|string  $key
@@ -278,12 +302,11 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
             return false;
         }
 
-        if ($this->isNonPersistentGroup($group)) {
-            return $this->deleteFromMemory($key, $group);
-        }
+        $deletedFromMemory = $this->deleteFromMemory($key, $group);
 
-        unset($this->cache[$group][$id]);
-        unset($this->prefetch[$group][$key]);
+        if ($this->isNonPersistentGroup($group)) {
+            return $deletedFromMemory;
+        }
 
         try {
             if ($this->isAllOptionsId($id)) {
@@ -303,9 +326,9 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Deletes multiple values from the cache in one call.
      *
-     * @param  array  $keys
+     * @param  array<int|string>  $keys
      * @param  string  $group
-     * @return bool[]
+     * @return array<int|string, bool>
      */
     public function delete_multiple(array $keys, string $group = 'default'): array
     {
@@ -371,8 +394,7 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
      */
     public function flush(): bool
     {
-        $this->cache = [];
-        $this->prefetch = [];
+        $this->flush_runtime();
 
         if ($this->isMultisite && $this->handleBlogFlush()) {
             return $this->flushBlog(get_current_blog_id());
@@ -392,15 +414,52 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
     }
 
     /**
-     * Flushes the runtime cache and gathered prefetches.
+     * Removes all cache items from the in-memory runtime cache.
      *
      * @return bool
      */
-    public function flushRuntime(): bool
+    public function flush_runtime(): bool
     {
+        $this->cache = [];
         $this->prefetch = [];
 
-        return parent::flushRuntime();
+        return true;
+    }
+
+    /**
+     * Removes all cache items in given group.
+     *
+     * @param  string  $group
+     * @return bool
+     */
+    public function flush_group(string $group): bool
+    {
+        unset($this->cache[$group]);
+        unset($this->prefetch[$group]);
+
+        if ($this->isNonPersistentGroup($group)) {
+            return true;
+        }
+
+        $pattern = $this->id('*', $group);
+
+        if ($pattern === false) {
+            return false;
+        }
+
+        if ($this->isMultisite && ! $this->isGlobalGroup($group)) {
+            $pattern = str_replace("{$this->blogId}:", '*:', (string) $pattern);
+        }
+
+        try {
+            $this->deleteByPattern($pattern);
+        } catch (Throwable $exception) {
+            $this->error($exception);
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -481,10 +540,10 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Retrieves multiple values from the cache in one call.
      *
-     * @param  array  $keys
+     * @param  array<int|string>  $keys
      * @param  string  $group
      * @param  bool  $force
-     * @return array
+     * @return array<int|string, mixed>
      */
     public function get_multiple(array $keys, string $group = 'default', bool $force = false)
     {
@@ -532,7 +591,7 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
         }
 
         $ids = array_map(function ($key) use ($group) {
-            return $this->id($key, $group);
+            return (string) $this->id($key, $group);
         }, $remainingKeys);
 
         try {
@@ -727,10 +786,10 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Sets multiple values to the cache in one call.
      *
-     * @param  array  $data
+     * @param  array<int|string, mixed>  $data
      * @param  string  $group
      * @param  int  $expire
-     * @return bool[]
+     * @return array<int|string, bool>
      */
     public function set_multiple(array $data, string $group = 'default', int $expire = 0): array
     {
@@ -739,9 +798,10 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
 
             foreach ($data as $key => $value) {
                 $id = $this->id($key, $group);
+                $results[$key] = \is_string($id);
 
-                if ($results[$key] = (bool) $id) {
-                    $this->storeInMemory($id, $value, $group);
+                if ($results[$key]) {
+                    $this->storeInMemory((string) $id, $value, $group);
                 }
             }
 
@@ -757,11 +817,11 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
         }
 
         foreach ($results as $key => $result) {
-            if ($result->response) {
-                $this->storeInMemory($result->id, $data[$key], $group);
+            if ($result['id'] && $result['response']) {
+                $this->storeInMemory($result['id'], $data[$key], $group);
             }
 
-            $results[$key] = $result->response;
+            $results[$key] = $result['response'];
         }
 
         return $results;
@@ -829,10 +889,10 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Writes the given keys to Redis and enforces the `maxttl` configuration option.
      *
-     * @param  array  $data
+     * @param  array<int|string, mixed>  $data
      * @param  int  $expire
      * @param  string  $option
-     * @return object[]
+     * @return array<int|string, array{id: string|false, response: mixed}>
      */
     protected function multiwrite(array $data, string $group, int $expire = 0, $option = null): array
     {
@@ -852,7 +912,7 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
 
         foreach ($data as $key => $value) {
             if (! $id = $this->id($key, $group)) {
-                $results[$key] = (object) ['id' => false, 'response' => false];
+                $results[$key] = ['id' => false, 'response' => false];
                 continue;
             }
 
@@ -860,7 +920,7 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
                 throw new ObjectCacheException('Unable to multi-write `alloptions` key');
             }
 
-            $results[$key] = (object) ['id' => $id];
+            $results[$key] = ['id' => $id, 'response' => false];
 
             if ($expire && $option) {
                 $pipe->set($id, $value, [$option, 'EX' => $expire]);
@@ -885,7 +945,7 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
         $this->storeWrites++;
 
         foreach ($pipe->exec() as $i => $result) {
-            $results[$keys[$i]]->response = $result;
+            $results[$keys[$i]]['response'] = $result;
         }
 
         return $results;
@@ -894,13 +954,15 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Returns various information about the object cache.
      *
-     * @return object
+     * @return \RedisCachePro\Support\PhpRedisObjectCacheInfo
      */
     public function info()
     {
         $server = $this->connection->memoize('info');
 
+        /** @var \RedisCachePro\Support\PhpRedisObjectCacheInfo $info */
         $info = parent::info();
+
         $info->status = (bool) $this->connection->memoize('ping');
         $info->prefetches = $this->config->prefetch ? $this->prefetches : null;
         $info->storeReads = $this->storeReads;
@@ -924,11 +986,14 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
     /**
      * Returns metrics about the object cache.
      *
-     * @return object
+     * @param  bool  $extended
+     * @return \RedisCachePro\Support\PhpRedisObjectCacheMetrics
      */
-    public function metrics()
+    public function metrics($extended = false)
     {
-        $metrics = parent::metrics();
+        /** @var \RedisCachePro\Support\PhpRedisObjectCacheMetrics $metrics */
+        $metrics = parent::metrics($extended);
+
         $metrics->prefetches = $this->config->prefetch ? $this->prefetches : null;
         $metrics->storeReads = $this->storeReads;
         $metrics->storeWrites = $this->storeWrites;
@@ -936,5 +1001,32 @@ class PhpRedisObjectCache extends ObjectCache implements ObjectCacheInterface
         $metrics->storeMisses = $this->storeMisses;
 
         return $metrics;
+    }
+
+    /**
+     * Delete keys by patterns in chunks.
+     *
+     * @internal
+     * @param  string|string[]  $patterns
+     * @return void
+     */
+    protected function deleteByPattern($patterns)
+    {
+        $command = $this->config->async_flush ? 'UNLINK' : 'DEL';
+        $script = file_get_contents(__DIR__ . '/scripts/chunked-scan.lua');
+
+        if (! is_array($patterns)) {
+            $patterns = [$patterns];
+        }
+
+        $this->connection->withoutTimeout(function ($connection) use ($script, $patterns, $command) {
+            $connection->eval(
+                $script,
+                array_merge($patterns, [$command]),
+                count($patterns)
+            );
+        });
+
+        $this->storeWrites++;
     }
 }

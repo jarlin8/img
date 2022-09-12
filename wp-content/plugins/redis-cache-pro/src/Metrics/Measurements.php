@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -22,26 +22,30 @@ use ArrayAccess;
 use ArrayIterator;
 use IteratorAggregate;
 
+/**
+ * @implements \ArrayAccess<int, \RedisCachePro\Metrics\Measurement>
+ * @implements \IteratorAggregate<\RedisCachePro\Metrics\Measurement>
+ */
 class Measurements implements ArrayAccess, Countable, IteratorAggregate
 {
     /**
      * The measurements contained in the collection.
      *
-     * @var Measurement[]
+     * @var \RedisCachePro\Metrics\Measurement[]
      */
     protected $items = [];
 
     /**
      * The cached results of extracted metric values.
      *
-     * @var array
+     * @var array<mixed>
      */
     protected $cache = [];
 
     /**
      * Get all of the items in the collection.
      *
-     * @return array
+     * @return \RedisCachePro\Metrics\Measurement[]
      */
     public function all()
     {
@@ -62,7 +66,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
      * Returns an array of metric values.
      *
      * @param  string  $metric
-     * @return array
+     * @return array<mixed>
      */
     public function metricValues(string $metric)
     {
@@ -110,16 +114,6 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
         $this->items = array_filter($this->items, $callback);
 
         return $this;
-    }
-
-    /**
-     * Get an iterator for the items.
-     *
-     * @return \ArrayIterator
-     */
-    public function getIterator(): Traversable
-    {
-        return new ArrayIterator($this->items);
     }
 
     /**
@@ -259,7 +253,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
      * Split the measurements into the time-based intervals.
      *
      * @param  int  $interval
-     * @return array
+     * @return array<int, mixed>
      */
     public function intervals(int $interval)
     {
@@ -286,7 +280,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
      * Get the values of a given key.
      *
      * @param  string  $metric
-     * @return array
+     * @return array<mixed>
      */
     public function pluck(string $metric)
     {
@@ -298,7 +292,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
     /**
      * Push one or more items onto the end of the collection.
      *
-     * @param  Measurement[]  $metrics
+     * @param  \RedisCachePro\Metrics\Measurement  ...$metrics
      * @return self
      */
     public function push(Measurement ...$metrics): self
@@ -309,9 +303,19 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
+     * Get an iterator for the items.
+     *
+     * @return \ArrayIterator<int, \RedisCachePro\Metrics\Measurement>
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->items);
+    }
+
+    /**
      * Determine if an item exists at an offset.
      *
-     * @param  mixed  $key
+     * @param  int  $key
      * @return bool
      */
     public function offsetExists($key): bool
@@ -322,8 +326,8 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
     /**
      * Get an item at a given offset.
      *
-     * @param  mixed  $key
-     * @return mixed
+     * @param  int  $key
+     * @return \RedisCachePro\Metrics\Measurement
      */
     #[\ReturnTypeWillChange]
     public function offsetGet($key)
@@ -334,8 +338,8 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
     /**
      * Set the item at a given offset.
      *
-     * @param  mixed  $key
-     * @param  mixed  $value
+     * @param  int  $key
+     * @param  \RedisCachePro\Metrics\Measurement  $value
      * @return void
      */
     public function offsetSet($key, $value): void // phpcs:ignore PHPCompatibility
@@ -350,7 +354,7 @@ class Measurements implements ArrayAccess, Countable, IteratorAggregate
     /**
      * Unset the item at a given offset.
      *
-     * @param  string  $key
+     * @param  int  $key
      * @return void
      */
     public function offsetUnset($key): void // phpcs:ignore PHPCompatibility

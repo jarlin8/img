@@ -1,6 +1,7 @@
 window.addEventListener('load', function () {
-    window.objectcache.latency.init();
     window.objectcache.groups.init();
+    window.objectcache.latency.init();
+    window.objectcache.flushlog.init();
 });
 
 jQuery.extend(window.objectcache, {
@@ -80,29 +81,27 @@ jQuery.extend(window.objectcache, {
         },
 
         fetchData: function () {
+            var widget = document.querySelector('.objectcache\\:groups-widget');
+
+            var button = widget.querySelector('.button');
+            button.blur();
+            button.classList.add('disabled');
+            button.textContent = button.dataset.loading;
+
+            var container = widget.querySelector('.table-container');
+            container && widget.removeChild(container);
+
+            var error = widget.querySelector('.error');
+            error && widget.removeChild(error);
+
             jQuery
                 .ajax({
                     url: objectcache.rest.url + 'objectcache/v1/groups',
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader('X-WP-Nonce', objectcache.rest.nonce);
-
-                        var widget = document.querySelector('.objectcache\\:groups-widget');
-
-                        var button = widget.querySelector('.button');
-                        button.blur();
-                        button.classList.add('disabled');
-                        button.textContent = button.dataset.loading;
-
-                        var container = widget.querySelector('.table-container');
-                        container && widget.removeChild(container);
-
-                        var error = widget.querySelector('.error');
-                        error && widget.removeChild(error);
                     },
                 })
                 .done(function (data) {
-                    var widget = document.querySelector('.objectcache\\:groups-widget');
-
                     var info = widget.querySelector('p:first-child');
                     info && widget.removeChild(info);
 
@@ -133,7 +132,6 @@ jQuery.extend(window.objectcache, {
                     table.innerHTML = content;
                 })
                 .error(function (error) {
-                    var widget = document.querySelector('.objectcache\\:groups-widget');
                     var container = widget.querySelector('.error');
 
                     if (! container) {
@@ -150,9 +148,45 @@ jQuery.extend(window.objectcache, {
                     }
                 })
                 .always(function () {
-                    var button = document.querySelector('.objectcache\\:groups-widget .button');
+                    var button = widget.querySelector('.objectcache\\:groups-widget .button');
                     button.textContent = button.dataset.text;
                     button.classList.remove('disabled');
+                });
+        },
+    },
+
+    flushlog: {
+        init: function () {
+            var input = document.querySelector('.objectcache\\:flushlog-widget input');
+
+            if (input) {
+                input.addEventListener('click', window.objectcache.flushlog.save);
+            }
+        },
+
+        save: function (event) {
+            event.target.disabled = true;
+
+            jQuery
+                .ajax({
+                    type: 'POST',
+                    url: objectcache.rest.url + 'objectcache/v1/options',
+                    data: {
+                        flushlog: event.target.checked ? 1 : 0,
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', objectcache.rest.nonce);
+                    },
+                })
+                .error(function (error) {
+                    if (error.responseJSON && error.responseJSON.message) {
+                        window.alert(error.responseJSON.message);
+                    } else {
+                        window.alert('Request failed (' + error.status + ').');
+                    }
+                })
+                .always(function () {
+                    event.target.disabled = false;
                 });
         },
     },

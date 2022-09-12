@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -40,11 +40,36 @@ class Validator
     }
 
     /**
+     * Validates all given options.
+     *
+     * @param  array<string, mixed>  $options
+     * @return true|\WP_Error
+     */
+    public function validate(array $options)
+    {
+        $errors = new WP_Error();
+
+        foreach ($options as $name => $value) {
+            if (is_wp_error($error = $this->{$name}($value))) {
+                $errors->merge_from($error);
+            }
+        }
+
+        if ($errors->has_errors()) {
+            $errors->add_data(['status' => 422]);
+
+            return $errors;
+        }
+
+        return true;
+    }
+
+    /**
      * Returns a `WP_Error` instance for the given code and message.
      *
      * @param  string  $code
      * @param  string  $message
-     * @return WP_Error
+     * @return \WP_Error
      */
     protected function error($code, $message)
     {
@@ -55,7 +80,7 @@ class Validator
      * Validate the `channel` option value.
      *
      * @param  string  $value
-     * @return void|WP_Error
+     * @return void|\WP_Error
      */
     public function channel($value)
     {
@@ -65,7 +90,7 @@ class Validator
         $accessibleStabilities = $license->accessibleStabilities();
 
         if (! in_array($value, array_keys($stabilities), true)) {
-            return $this->error('invalid-channel', sprintf('"%s" is not a valid channel.', $value));
+            return $this->error('invalid-channel', sprintf('The channel "%s" is not valid.', $value));
         }
 
         if (! in_array($value, array_keys($accessibleStabilities), true)) {
@@ -77,7 +102,7 @@ class Validator
      * Validate the `flushlog` option value.
      *
      * @param  bool  $value
-     * @return void|WP_Error
+     * @return void|\WP_Error
      */
     public function flushlog($value)
     {

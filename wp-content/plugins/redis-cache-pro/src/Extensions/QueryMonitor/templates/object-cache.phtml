@@ -80,7 +80,7 @@
     <div class="qm-boxed qm-boxed-wrap">
 
         <section>
-            <h3 style="color: #ceea79;">Errors</h3>
+            <h3 style="color: #14ceea;">Errors</h3>
 
             <table>
                 <tbody>
@@ -103,7 +103,7 @@
     <div class="qm-boxed qm-boxed-wrap">
 
         <section>
-            <h3 style="color: #ceea79;">License</h3>
+            <h3 style="color: #14ceea;">License</h3>
 
             <table>
                 <tbody>
@@ -157,14 +157,14 @@
 
     <?php endif; ?>
 
-    <?php if (! empty($data['groups']->cache)) : ?>
+    <?php if (! empty($data['cache'])) : ?>
 
         <section>
             <h3>Groups</h3>
 
             <table>
                 <tbody>
-                    <?php foreach ($data['groups']->cache as $group => $values) : ?>
+                    <?php foreach ($data['cache'] as $group => $values) : ?>
                         <tr>
                             <th scope="row"><?php echo esc_html($group); ?></th>
                             <td class="qm-ltr qm-wrap">

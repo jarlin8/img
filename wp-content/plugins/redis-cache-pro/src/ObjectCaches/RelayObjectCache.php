@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -29,6 +29,13 @@ class RelayObjectCache extends PhpRedisObjectCache
     const Client = 'Relay';
 
     /**
+     * The connection instance.
+     *
+     * @var \RedisCachePro\Connections\RelayConnection
+     */
+    protected $connection;
+
+    /**
      * Whether Relay is using waiting for invalidation events.
      *
      * @var bool
@@ -38,7 +45,7 @@ class RelayObjectCache extends PhpRedisObjectCache
     /**
      * Create new Relay object cache instance.
      *
-     * @param  \RedisCachePro\Connections\ConnectionInterface  $connection
+     * @param  \RedisCachePro\Connections\RelayConnection  $connection
      * @param  \RedisCachePro\Configuration\Configuration  $config
      */
     public function __construct(RelayConnection $connection, Configuration $config)
@@ -78,6 +85,22 @@ class RelayObjectCache extends PhpRedisObjectCache
     }
 
     /**
+     * Adds multiple values to the cache in one call, if the cache keys doesn't already exist.
+     *
+     * @param  array<int|string, mixed>  $data
+     * @param  string  $group
+     * @param  int  $expire
+     * @return array<int|string, bool>
+     */
+    public function add_multiple(array $data, string $group = 'default', int $expire = 0): array
+    {
+        $this->shouldInvalidate
+            && $this->connection->dispatchEvents();
+
+        return parent::add_multiple($data, $group, $expire);
+    }
+
+    /**
      * Decrements numeric cache item's value.
      *
      * @param  int|string  $key
@@ -109,6 +132,21 @@ class RelayObjectCache extends PhpRedisObjectCache
     }
 
     /**
+     * Deletes multiple values from the cache in one call.
+     *
+     * @param  array<int|string>  $keys
+     * @param  string  $group
+     * @return array<int|string, bool>
+     */
+    public function delete_multiple(array $keys, string $group = 'default'): array
+    {
+        $this->shouldInvalidate
+            && $this->connection->dispatchEvents();
+
+        return parent::delete_multiple($keys, $group);
+    }
+
+    /**
      * Retrieves the cache contents from the cache by key and group.
      *
      * @param  int|string  $key
@@ -128,10 +166,10 @@ class RelayObjectCache extends PhpRedisObjectCache
     /**
      * Retrieves multiple values from the cache in one call.
      *
-     * @param  array  $keys
+     * @param  array<int|string>  $keys
      * @param  string  $group
      * @param  bool  $force
-     * @return array
+     * @return array<int|string, mixed>
      */
     public function get_multiple(array $keys, string $group = 'default', bool $force = false)
     {
@@ -207,9 +245,26 @@ class RelayObjectCache extends PhpRedisObjectCache
     }
 
     /**
+     * Sets multiple values to the cache in one call.
+     *
+     * @param  array<int|string, mixed>  $data
+     * @param  string  $group
+     * @param  int  $expire
+     * @return array<int|string, bool>
+     */
+    public function set_multiple(array $data, string $group = 'default', int $expire = 0): array
+    {
+        $this->shouldInvalidate
+            && $this->connection->dispatchEvents();
+
+        return parent::set_multiple($data, $group, $expire);
+    }
+
+    /**
      * Callback for the `invalidated` event to keep the in-memory cache in sync.
      *
      * @param  \Relay\Event  $event
+     * @return void
      */
     public function invalidated($event)
     {
@@ -220,10 +275,12 @@ class RelayObjectCache extends PhpRedisObjectCache
 
     /**
      * Callback for the `flushed` event to keep the in-memory cache fresh.
+     *
+     * @return void
      */
     public function flushed()
     {
-        $this->flushRuntime();
+        $this->flush_runtime();
     }
 
     /**
@@ -242,7 +299,7 @@ class RelayObjectCache extends PhpRedisObjectCache
                 size_format($stats['memory']['active'], 2),
                 size_format($stats['memory']['total'], 2)
             ),
-            'Relay Eviction' => ini_get('relay.eviction_policy'),
+            'Relay Eviction' => (string) ini_get('relay.eviction_policy'),
         ] + $info->meta;
 
         return $info;

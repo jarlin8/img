@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -20,6 +20,7 @@ use Redis;
 use Throwable;
 
 use RedisCachePro\Configuration\Configuration;
+use RedisCachePro\Connectors\PhpRedisConnector;
 use RedisCachePro\Exceptions\ConnectionException;
 
 /**
@@ -28,9 +29,9 @@ use RedisCachePro\Exceptions\ConnectionException;
 class PhpRedisConnection extends Connection implements ConnectionInterface
 {
     /**
-     * The Redis client/cluster.
+     * The Redis instance.
      *
-     * @var \Redis|\RedisCluster
+     * @var \Redis|\RedisCluster|\Relay\Relay
      */
     protected $client;
 
@@ -47,35 +48,37 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
 
         $this->log = $this->config->logger;
 
-        $this->setBackoff();
         $this->setSerializer();
         $this->setCompression();
+
+        if (PhpRedisConnector::supports('backoff')) {
+            $this->setBackoff();
+        }
     }
 
     /**
      * Set the connection's retries and backoff algorithm.
      *
      * @see https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+     * @return void
      */
     protected function setBackoff()
     {
-        if (version_compare(phpversion('redis'), '5.3.5', '<')) {
-            return;
-        }
-
         if ($this->config->retries) {
-            $this->client->setOption(Redis::OPT_MAX_RETRIES, $this->config->retries);
+            $this->client->setOption($this->client::OPT_MAX_RETRIES, $this->config->retries);
         }
 
-        if ($this->config->backoff === Configuration::BACKOFF_DEFAULT) {
-            $this->client->setOption(Redis::OPT_BACKOFF_ALGORITHM, Redis::BACKOFF_ALGORITHM_DECORRELATED_JITTER);
-            $this->client->setOption(Redis::OPT_BACKOFF_BASE, 500);
-            $this->client->setOption(Redis::OPT_BACKOFF_CAP, 750);
+        if ($this->config->backoff === Configuration::BACKOFF_SMART) {
+            $this->client->setOption($this->client::OPT_BACKOFF_ALGORITHM, $this->client::BACKOFF_ALGORITHM_DECORRELATED_JITTER);
+            $this->client->setOption($this->client::OPT_BACKOFF_BASE, $this->config->retry_interval);
+            $this->client->setOption($this->client::OPT_BACKOFF_CAP, \intval($this->config->read_timeout * 1000));
         }
     }
 
     /**
      * Set the connection's serializer.
+     *
+     * @return void
      */
     protected function setSerializer()
     {
@@ -90,6 +93,8 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
 
     /**
      * Set the connection's compression algorithm.
+     *
+     * @return void
      */
     protected function setCompression()
     {
@@ -122,12 +127,45 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
         $this->client->setOption($this->client::OPT_SERIALIZER, (string) $this->client::SERIALIZER_NONE);
         $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_NONE);
 
-        $result = $callback($this);
+        try {
+            return $callback($this);
+        } catch (Throwable $exception) {
+            throw $exception;
+        } finally {
+            $this->setSerializer();
+            $this->setCompression();
+        }
+    }
 
-        $this->setSerializer();
-        $this->setCompression();
+    /**
+     * Execute callback without read timeout.
+     *
+     * @param  callable  $callback
+     * @return mixed
+     */
+    public function withoutTimeout(callable $callback)
+    {
+        return $this->withTimeout($callback, -1);
+    }
 
-        return $result;
+    /**
+     * Execute callback with custom read timeout.
+     *
+     * @param  callable  $callback
+     * @param  mixed  $timeout
+     * @return mixed
+     */
+    public function withTimeout(callable $callback, $timeout)
+    {
+        $this->client->setOption($this->client::OPT_READ_TIMEOUT, (string) $timeout);
+
+        try {
+            return $callback($this);
+        } catch (Throwable $exception) {
+            throw $exception;
+        } finally {
+            $this->client->setOption($this->client::OPT_READ_TIMEOUT, (string) $this->config->read_timeout);
+        }
     }
 
     /**
@@ -138,51 +176,40 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      * even in the event of an exception.
      *
      * @param  bool|null  $async
-     * @return true
+     * @return bool
      */
     public function flushdb($async = null)
     {
-        $useAsync = $async ?? $this->config->async_flush;
-        $readTimeout = $this->config->read_timeout;
-
-        if ($readTimeout && ! $useAsync) {
-            $this->client->setOption(Redis::OPT_READ_TIMEOUT, (string) -1);
+        if ($async ?? $this->config->async_flush) {
+            return $this->command('flushdb', [true]);
         }
 
-        try {
-            $useAsync
-                ? $this->command('flushdb', [true])
-                : $this->command('flushdb');
-        } catch (Throwable $exception) {
-            throw $exception;
-        } finally {
-            if ($readTimeout && ! $useAsync) {
-                $this->client->setOption(Redis::OPT_READ_TIMEOUT, (string) $readTimeout);
-            }
-        }
-
-        return true;
+        return $this->withoutTimeout(function () {
+            return $this->command('flushdb');
+        });
     }
 
     /**
      * Hijack `pipeline()` calls to allow command logging.
      *
-     * @return object
+     * @return \RedisCachePro\Connections\Transaction
      */
     public function pipeline()
     {
-        return new Transaction(Redis::PIPELINE, $this);
+        return Transaction::pipeline($this);
     }
 
     /**
      * Hijack `multi()` calls to allow command logging.
      *
      * @param  int  $type
-     * @return object
+     * @return \RedisCachePro\Connections\Transaction
      */
-    public function multi(int $type = Redis::MULTI)
+    public function multi(int $type = null)
     {
-        return new Transaction($type, $this);
+        return $type === $this->client::PIPELINE
+            ? Transaction::multi($this)
+            : Transaction::pipeline($this);
     }
 
     /**
@@ -191,7 +218,7 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      * @param  int  $iterator
      * @param  string  $pattern
      * @param  int  $count
-     * @return array|false
+     * @return array<string>|false
      */
     public function scan(?int &$iterator, ?string $pattern = null, int $count = 0) // phpcs:ignore PHPCompatibility
     {
@@ -209,7 +236,7 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      */
     public function restore(string $key, int $timeout, string $value)
     {
-        return $this->command('rawCommand', ['RESTORE', $key, $timeout, $value]);
+        return $this->rawCommand('RESTORE', $key, $timeout, $value, 'REPLACE');
     }
 
     /**
@@ -217,19 +244,12 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      *
      * This mimics `Connection::command()`.
      *
-     * @param  int  $type
      * @param  \RedisCachePro\Connections\Transaction  $tx
-     * @return array
+     * @return array<mixed>
      */
-    public function executeMulti(int $type, Transaction $tx)
+    public function commands(Transaction $tx)
     {
-        $method = \str_replace([
-            Redis::MULTI,
-            Redis::PIPELINE,
-        ], [
-            'multi',
-            'pipeline',
-        ], (string) $type);
+        $method = $tx->type;
 
         $context = [
             'command' => \strtoupper($method),

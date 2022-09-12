@@ -37,11 +37,9 @@ if ($auto_updates_enabled) {
 
 <div class="wrap">
 
-	<h1>Updates</h1>
+    <h1>Updates</h1>
 
-    <?php is_multisite() && settings_errors(); ?>
-
-	<div>
+    <div>
 
         <p style="margin-top: 0;">
             <?php printf('Last checked on %1$s at %2$s.', date_i18n('F j, Y', $last_check), date_i18n('g:i a', $last_check)); ?>
@@ -114,8 +112,7 @@ if ($auto_updates_enabled) {
 
     <div style="margin-top: 4em;">
 
-        <form method="post" action="<?php echo is_multisite() ? 'edit.php?action=objectcache-update' : 'options.php'; ?>">
-            <?php settings_fields('objectcache'); ?>
+        <form id="objectcache:options" method="post" action="<?php echo esc_url($this->url()); ?>">
             <?php do_settings_sections('objectcache'); ?>
             <?php submit_button(); ?>
         </form>
@@ -125,3 +122,7 @@ if ($auto_updates_enabled) {
 </div>
 
 <?php add_thickbox(); wp_enqueue_script('plugin-install'); ?>
+
+<script id="tmpl-objectcache-options-notice" type="text/html">
+    <div <# if (data.id) { #>id="{{ data.id }}"<# } #> class="notice {{ data.className }}"><p>{{{ data.message }}}</p></div>
+</script>

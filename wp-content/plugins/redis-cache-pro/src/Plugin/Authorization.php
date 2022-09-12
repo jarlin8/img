@@ -9,13 +9,18 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Plugin;
 
+use RedisCachePro\Plugin;
+
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Authorization
 {
     /**
@@ -29,6 +34,10 @@ trait Authorization
 
         if (function_exists('\members_plugin')) {
             $this->registerMembersIntegration();
+        }
+
+        if (class_exists('\WP_User_Manager')) {
+            $this->registerUserManagerIntegration();
         }
 
         if (class_exists('\User_Role_Editor')) {
@@ -47,27 +56,27 @@ trait Authorization
      *
      * @param  bool[]  $allcaps
      * @param  string[]  $caps
-     * @param  array  $args
-     * @return array
+     * @param  array<mixed>  $args
+     * @return array<string, bool>
      */
     public function userHasCapability($allcaps, $caps, $args)
     {
         if ($args[0] === 'rediscache_manage') {
-            $args[0] = self::Capability;
+            $args[0] = Plugin::Capability;
 
-            _deprecated_hook('rediscache_manage', '1.14.0', self::Capability);
+            _deprecated_hook('rediscache_manage', '1.14.0', Plugin::Capability);
         }
 
-        if ($args[0] !== self::Capability) {
+        if ($args[0] !== Plugin::Capability) {
             return $allcaps;
         }
 
-        if (array_key_exists(self::Capability, $allcaps)) {
+        if (array_key_exists(Plugin::Capability, $allcaps)) {
             return $allcaps;
         }
 
         if (! empty($allcaps['install_plugins'])) {
-            $allcaps[self::Capability] = true;
+            $allcaps[Plugin::Capability] = true;
         }
 
         return $allcaps;
@@ -82,17 +91,59 @@ trait Authorization
      */
     protected function registerMembersIntegration()
     {
+        if (! function_exists('\members_register_caps')) {
+            return;
+        }
+
         add_action('members_register_caps', function () {
-            members_register_cap(self::Capability, [
+            members_register_cap(Plugin::Capability, [
                 'label' => 'Manage Object Cache',
                 'group' => 'objectcache',
             ]);
         });
 
+        if (! function_exists('\members_register_cap_groups')) {
+            return;
+        }
+
         add_action('members_register_cap_groups', function () {
             members_register_cap_group('objectcache', [
                 'label' => 'Object Cache Pro',
-                'caps' => [self::Capability],
+                'caps' => [Plugin::Capability],
+                'icon' => 'dashicons-database',
+                'priority' => 30,
+            ]);
+        });
+    }
+
+    /**
+     * Register capabilities and groups with the Members plugin.
+     *
+     * @link https://wordpress.org/plugins/wp-user-manager/
+     *
+     * @return void
+     */
+    protected function registerUserManagerIntegration()
+    {
+        if (! function_exists('\wpum_register_cap')) {
+            return;
+        }
+
+        add_action('wpum_register_caps', function () {
+            wpum_register_cap(Plugin::Capability, [
+                'label' => 'Manage Object Cache',
+                'group' => 'objectcache',
+            ]);
+        });
+
+        if (! function_exists('\wpum_register_cap_group')) {
+            return;
+        }
+
+        add_action('wpum_register_cap_groups', function () {
+            wpum_register_cap_group('objectcache', [
+                'label' => 'Object Cache Pro',
+                'caps' => [Plugin::Capability],
                 'icon' => 'dashicons-database',
                 'priority' => 30,
             ]);
@@ -117,7 +168,7 @@ trait Authorization
         });
 
         add_filter('ure_custom_capability_groups', function ($groups, $cap_id) {
-            if ($cap_id === self::Capability) {
+            if ($cap_id === Plugin::Capability) {
                 $groups[] = 'objectcache';
             }
 
@@ -125,9 +176,9 @@ trait Authorization
         }, 10, 2);
 
         add_filter('ure_full_capabilites', function ($caps) { // that typo ¯\_(ツ)_/¯
-            if (! array_key_exists(self::Capability, $caps)) {
-                $caps[self::Capability] = [
-                    'inner' => self::Capability,
+            if (! array_key_exists(Plugin::Capability, $caps)) {
+                $caps[Plugin::Capability] = [
+                    'inner' => Plugin::Capability,
                     'human' => 'Manage Object Cache',
                     'wp_core' => false,
                 ];
@@ -148,7 +199,7 @@ trait Authorization
     {
         add_filter('cme_plugin_capabilities', function ($plugin_caps) {
             return array_merge($plugin_caps, [
-                'Object Cache Pro' => [self::Capability],
+                'Object Cache Pro' => [Plugin::Capability],
             ]);
         });
     }

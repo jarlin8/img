@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -32,6 +32,7 @@ use function WP_CLI\Utils\proc_open_compat;
 use RedisCachePro\Diagnostics\Diagnostics;
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Configuration\Configuration;
+use RedisCachePro\ObjectCaches\MeasuredObjectCacheInterface;
 
 use RedisCachePro\Plugin\Api\Analytics;
 
@@ -47,7 +48,7 @@ class Commands extends WP_CLI_Command
     /**
      * Enables the object cache.
      *
-     * Copies the the object cache drop-in into the content directory.
+     * Copies the object cache drop-in into the content directory.
      * Will not overwrite existing files, unless the --force option is used.
      *
      * ## OPTIONS
@@ -70,6 +71,10 @@ class Commands extends WP_CLI_Command
      *     $ wp redis enable --force
      *
      * @alias activate
+     *
+     * @param  array<int, string>  $arguments
+     * @param  array<mixed>  $options
+     * @return void
      */
     public function enable($arguments, $options)
     {
@@ -138,6 +143,10 @@ class Commands extends WP_CLI_Command
      *     $ wp redis disable --skip-flush
      *
      * @alias deactivate
+     *
+     * @param  array<int, string>  $arguments
+     * @param  array<mixed>  $options
+     * @return void
      */
     public function disable($arguments, $options)
     {
@@ -180,7 +189,10 @@ class Commands extends WP_CLI_Command
      *     # Show object cache information.
      *     $ wp redis info
      *
+     * @alias about
      * @alias status
+     *
+     * @return void
      */
     public function info()
     {
@@ -248,24 +260,16 @@ class Commands extends WP_CLI_Command
      *     Success: The object cache of the site at 'https://example.org' was flushed.
      *
      * @alias clear
+     *
+     * @param  array<int, string>  $arguments
+     * @param  array<mixed>  $options
+     * @return void
      */
     public function flush($arguments, $options)
     {
         global $wp_object_cache;
 
-        $diagnostics = new Diagnostics($wp_object_cache);
-
-        if (! $diagnostics->dropinExists()) {
-            WP_CLI::error(WP_CLI::colorize(
-                'No object cache drop-in found. Run `%ywp redis enable%n` to enable the object cache.'
-            ));
-        }
-
-        if (! $diagnostics->dropinIsValid()) {
-            WP_CLI::error(WP_CLI::colorize(
-                'The object cache drop-in is invalid. Run `%ywp redis enable --force%n` to enable the object cache.'
-            ));
-        }
+        $this->abortIfNotConnected();
 
         // unset site ids when environment is not a multisite
         if (! is_multisite()) {
@@ -302,7 +306,7 @@ class Commands extends WP_CLI_Command
                 WP_CLI::error($exception->getMessage());
             }
 
-            if ($result) {
+            if ($result) { // @phpstan-ignore-line
                 WP_CLI::success(WP_CLI::colorize(
                     "Object cache of the site [%y{$siteId}%n] was flushed."
                 ));
@@ -325,6 +329,8 @@ class Commands extends WP_CLI_Command
      *     PONG
      *
      * @alias shell
+     *
+     * @return void
      */
     public function cli()
     {
@@ -357,14 +363,14 @@ class Commands extends WP_CLI_Command
         $command = 'redis-cli -n %s';
         $arguments = [$database];
 
-        if ($config->cluster) {
+        if (is_array($config->cluster)) {
             $command .= ' -c';
 
             $master = parse_url(reset($config->cluster));
-            $host = $master['host'];
-            $port = $master['port'];
+            $host = $master['host']; // @phpstan-ignore-line
+            $port = $master['port']; // @phpstan-ignore-line
 
-            if (strtolower($master['scheme']) === 'tls') {
+            if (strtolower($master['scheme']) === 'tls') { // @phpstan-ignore-line
                 $command .= ' --tls';
             }
         }
@@ -458,6 +464,7 @@ class Commands extends WP_CLI_Command
      * * store-writes
      * * store-hits
      * * store-misses
+     * * sql-queries
      * * ms-total
      * * ms-cache
      * * ms-cache-median
@@ -495,12 +502,21 @@ class Commands extends WP_CLI_Command
      *
      *     # Aggregate analytics
      *     $ wp redis watch aggregate --seconds=2
+     *
+     * @param  array<int, string>  $arguments
+     * @param  array<mixed>  $options
+     * @return WP_CLI\NoOp
      */
     public function watch($arguments, $options)
     {
         global $wp_object_cache;
 
         $this->abortIfNotConfigured();
+        $this->abortIfNotConnected();
+
+        if (! $wp_object_cache instanceof MeasuredObjectCacheInterface) {
+            WP_CLI::error('Object cache does not support analytics.');
+        }
 
         $config = Configuration::from(\WP_REDIS_CONFIG);
 
@@ -519,6 +535,7 @@ class Commands extends WP_CLI_Command
         }
 
         switch ($arguments[0]) {
+            default:
             case 'digest':
                 if (Shell::isPiped()) {
                     return new NoOp;
@@ -542,7 +559,7 @@ class Commands extends WP_CLI_Command
 
         $nextTime = 0;
 
-        while (true) {
+        while (true) { // @phpstan-ignore-line
             if ($nextTime) {
                 usleep(50000);
             }
@@ -604,6 +621,7 @@ class Commands extends WP_CLI_Command
      * * store-writes
      * * store-hits
      * * store-misses
+     * * sql-queries
      * * ms-total
      * * ms-cache
      * * ms-cache-median
@@ -644,6 +662,10 @@ class Commands extends WP_CLI_Command
      *
      *     # Compute hit ratio median for the last hour in 10 minute intervals
      *     $ wp redis analytics --interval=600 --per_page=6 --fields=hits.median,count,date_gmt
+     *
+     * @param  array<int, string>  $arguments
+     * @param  array<mixed>  $options
+     * @return void
      */
     public function analytics($arguments, $options)
     {
@@ -663,7 +685,7 @@ class Commands extends WP_CLI_Command
             'per_page' => $defaults['per_page'],
         ], $options);
 
-        $pretty = $options['pretty'] ? JSON_PRETTY_PRINT : 0;
+        $pretty = $options['pretty'] ? \JSON_PRETTY_PRINT : 0;
 
         $request = new WP_REST_Request;
         $request->set_param('context', (string) $options['context']);
@@ -677,16 +699,16 @@ class Commands extends WP_CLI_Command
         $response = $analytics->get_items($request);
 
         if (is_wp_error($response)) {
-            WP_CLI::line(json_encode([
+            WP_CLI::line((string) json_encode([
                 'code' => $response->get_error_code(),
                 'message' => $response->get_error_message(),
                 'data' => $response->get_error_data(),
-            ], $pretty));
+            ], JSON_PRETTY_PRINT));
 
             return;
         }
 
-        WP_CLI::line(json_encode($response->get_data(), $pretty));
+        WP_CLI::line((string) json_encode($response->get_data(), $pretty));
     }
 
     /**
@@ -699,6 +721,30 @@ class Commands extends WP_CLI_Command
         if (! defined('\WP_REDIS_CONFIG')) {
             WP_CLI::error(WP_CLI::colorize(
                 'The %yWP_REDIS_CONFIG%n constant has not been defined.'
+            ));
+        }
+    }
+
+    /**
+     * Abort if object cache isn't connected.
+     *
+     * @return void
+     */
+    protected function abortIfNotConnected()
+    {
+        global $wp_object_cache;
+
+        $diagnostics = new Diagnostics($wp_object_cache);
+
+        if (! $diagnostics->dropinExists()) {
+            WP_CLI::error(WP_CLI::colorize(
+                'No object cache drop-in found. Run `%ywp redis enable%n` to enable the object cache.'
+            ));
+        }
+
+        if (! $diagnostics->dropinIsValid()) {
+            WP_CLI::error(WP_CLI::colorize(
+                'The object cache drop-in is invalid. Run `%ywp redis enable --force%n` to enable the object cache.'
             ));
         }
     }

@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -23,13 +23,6 @@ use RedisCachePro\Exceptions\ConnectionException;
 abstract class Connection
 {
     /**
-     * The amounts of time (μs) waited for the external cache to respond.
-     *
-     * @var float[]
-     */
-    protected $ioWait = [];
-
-    /**
      * The configuration instance.
      *
      * @var \RedisCachePro\Configuration\Configuration
@@ -39,15 +32,29 @@ abstract class Connection
     /**
      * The logger instance.
      *
-     * @var \RedisCachePro\Loggers\Logger
+     * @var \RedisCachePro\Loggers\LoggerInterface
      */
     protected $log;
 
     /**
+     * The client instance.
+     *
+     * @var mixed
+     */
+    protected $client;
+
+    /**
+     * The amounts of time (μs) waited for the external cache to respond.
+     *
+     * @var float[]
+     */
+    protected $ioWait = [];
+
+    /**
      * Run a command against Redis.
      *
-     * @param  string  $command
-     * @param  array  $parameters
+     * @param  string  $name
+     * @param  array<mixed>  $parameters
      * @return mixed
      */
     public function command(string $name, array $parameters = [])
@@ -127,37 +134,13 @@ abstract class Connection
     }
 
     /**
-     * Returns the amounts of microseconds (μs) waited for the external cache to respond.
+     * Returns an array of microseconds (μs) waited for the external cache to respond.
      *
-     * Supports passing `sum` and `median` to get calculated results.
-     *
-     * @param  $format
-     * @return float
+     * @return float[]
      */
-    public function ioWait($format = null)
+    public function ioWait()
     {
-        switch ($format) {
-            case 'sum':
-            case 'total':
-                return array_sum($this->ioWait);
-            case 'median':
-                sort($this->ioWait);
-
-                $count = count($this->ioWait);
-                $middle = floor(($count - 1) / 2);
-
-                if ($count === 0) {
-                    return 0;
-                }
-
-                if ($count % 2) {
-                    return $this->ioWait[$middle];
-                }
-
-                return ($this->ioWait[$middle] + $this->ioWait[$middle + 1]) / 2;
-            default:
-                return $this->ioWait;
-        }
+        return $this->ioWait;
     }
 
     /**
@@ -185,7 +168,7 @@ abstract class Connection
      * Pass other method calls down to the underlying client.
      *
      * @param  string  $method
-     * @param  array  $parameters
+     * @param  array<mixed>  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)

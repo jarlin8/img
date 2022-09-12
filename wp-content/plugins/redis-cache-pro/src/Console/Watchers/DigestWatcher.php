@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -29,14 +29,14 @@ class DigestWatcher extends Notify
     /**
      * Holds the command options.
      *
-     * @var array
+     * @var array<mixed>
      */
     public $options;
 
     /**
      * The object cache instance.
      *
-     * @var \RedisCachePro\ObjectCaches\ObjectCacheInterface;
+     * @var \RedisCachePro\ObjectCaches\MeasuredObjectCacheInterface
      */
     public $cache;
 
@@ -50,7 +50,7 @@ class DigestWatcher extends Notify
     /**
      * The calculated metric items.
      *
-     * @var array
+     * @var array<mixed>|null
      */
     protected $items;
 
@@ -71,7 +71,7 @@ class DigestWatcher extends Notify
     /**
      * Holds the default metrics.
      *
-     * @var array
+     * @var array<string>
      */
     protected $defaultMetrics = [
         'ms-total',
@@ -82,6 +82,7 @@ class DigestWatcher extends Notify
         'hit-ratio',
         'store-reads',
         'store-writes',
+        'sql-queries',
         'redis-hit-ratio',
         'redis-ops-per-sec',
         'redis-keys',
@@ -110,7 +111,7 @@ class DigestWatcher extends Notify
         $formatter = new Formatter($arguments, $fields);
         $formatter->display_items($this->items, true);
 
-        Streams::out(ob_get_clean());
+        Streams::out((string) ob_get_clean());
 
         Streams::out(WP_CLI::colorize('{:msg} %g{:char}%n'), [
             'msg' => WP_CLI::colorize($this->_message),
@@ -135,7 +136,7 @@ class DigestWatcher extends Notify
             : $this->options['metrics'];
 
         $measurements = $this->cache->measurements(
-            microtime(true) - $this->options['seconds']
+            strval(microtime(true) - $this->options['seconds'])
         );
 
         foreach ($metrics as $metric) {
@@ -275,6 +276,20 @@ class DigestWatcher extends Notify
         return (object) [
             'Metric' => WP_CLI::colorize('%bCache%n: Misses'),
             'Median' => is_null($storeMissesMedian) ? '' : number_format($storeMissesMedian),
+        ];
+    }
+
+    /**
+     * @param  \RedisCachePro\Metrics\Measurements  $measurements
+     * @return object
+     */
+    protected function getSqlQueries(Measurements $measurements)
+    {
+        $sqlQueriesMedian = $measurements->median('wp->sqlQueries');
+
+        return (object) [
+            'Metric' => WP_CLI::colorize('%ySQL%n: Queries'),
+            'Median' => is_null($sqlQueriesMedian) ? '' : number_format($sqlQueriesMedian),
         ];
     }
 

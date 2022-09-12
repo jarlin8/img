@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -22,60 +22,11 @@ use RedisCachePro\Connections\ConnectionInterface;
 interface ObjectCacheInterface
 {
     /**
-     * Adds data to the cache, if the cache key doesn't already exist.
-     *
-     * @param  int|string  $key
-     * @param  mixed  $data
-     * @param  string  $group
-     * @param  int  $expire
-     * @return bool
-     */
-    public function add($key, $data, string $group = 'default', int $expire = 0): bool;
-
-    /**
-     * Adds multiple values to the cache in one call, if the cache keys doesn't already exist.
-     *
-     * @param  array  $data
-     * @param  string  $group
-     * @param  int  $expire
-     * @return bool[]
-     */
-    public function add_multiple(array $data, string $group = 'default', int $expire = 0): array;
-
-    /**
-     * Set given groups as global.
-     *
-     * @param  array  $groups
-     */
-    public function add_global_groups(array $groups);
-
-    /**
-     * Set given groups as non-persistent.
-     *
-     * @param  array  $groups
-     */
-    public function add_non_persistent_groups(array $groups);
-
-    /**
-     * Set given groups as non-prefetchable.
-     *
-     * @param  array  $groups
-     */
-    public function add_non_prefetchable_groups(array $groups);
-
-    /**
      * Boots the cache.
      *
      * @return bool
      */
     public function boot(): bool;
-
-    /**
-     * Closes the cache.
-     *
-     * @return bool
-     */
-    public function close(): bool;
 
     /**
      * Returns the configuration instance.
@@ -90,6 +41,58 @@ interface ObjectCacheInterface
      * @return \RedisCachePro\Connections\ConnectionInterface|null
      */
     public function connection(): ?ConnectionInterface; // phpcs:ignore PHPCompatibility.FunctionDeclarations.NewNullableTypes.returnTypeFound
+
+    /**
+     * Adds data to the cache, if the cache key doesn't already exist.
+     *
+     * @param  int|string  $key
+     * @param  mixed  $data
+     * @param  string  $group
+     * @param  int  $expire
+     * @return bool
+     */
+    public function add($key, $data, string $group = 'default', int $expire = 0): bool;
+
+    /**
+     * Adds multiple values to the cache in one call, if the cache keys doesn't already exist.
+     *
+     * @param  array<int|string, mixed>  $data
+     * @param  string  $group
+     * @param  int  $expire
+     * @return array<int|string, bool>
+     */
+    public function add_multiple(array $data, string $group = 'default', int $expire = 0): array;
+
+    /**
+     * Set given groups as global.
+     *
+     * @param  array<string>  $groups
+     * @return void
+     */
+    public function add_global_groups(array $groups);
+
+    /**
+     * Set given groups as non-persistent.
+     *
+     * @param  array<string>  $groups
+     * @return void
+     */
+    public function add_non_persistent_groups(array $groups);
+
+    /**
+     * Set given groups as non-prefetchable.
+     *
+     * @param  array<string>  $groups
+     * @return void
+     */
+    public function add_non_prefetchable_groups(array $groups);
+
+    /**
+     * Closes the cache.
+     *
+     * @return bool
+     */
+    public function close(): bool;
 
     /**
      * Decrements numeric cache item's value.
@@ -113,9 +116,9 @@ interface ObjectCacheInterface
     /**
      * Deletes multiple values from the cache in one call.
      *
-     * @param  array  $keys
+     * @param  array<int|string>  $keys
      * @param  string  $group
-     * @return bool[]
+     * @return array<int|string, bool>
      */
     public function delete_multiple(array $keys, string $group = 'default'): array;
 
@@ -134,6 +137,14 @@ interface ObjectCacheInterface
     public function flush_runtime(): bool;
 
     /**
+     * Removes all cache items given group.
+     *
+     * @param  string  $group
+     * @return bool
+     */
+    public function flush_group(string $group): bool;
+
+    /**
      * Retrieves the cache contents from the cache by key and group.
      *
      * @param  int|string  $key
@@ -147,10 +158,10 @@ interface ObjectCacheInterface
     /**
      * Retrieves multiple values from the cache in one call.
      *
-     * @param  array  $keys
+     * @param  array<int|string>  $keys
      * @param  string  $group
      * @param  bool  $force
-     * @return array
+     * @return array<int|string, mixed>
      */
     public function get_multiple(array $keys, string $group = 'default', bool $force = false);
 
@@ -198,10 +209,10 @@ interface ObjectCacheInterface
     /**
      * Sets multiple values to the cache in one call.
      *
-     * @param  array  $data
+     * @param  array<int|string, mixed>  $data
      * @param  string  $group
      * @param  int  $expire
-     * @return bool[]
+     * @return array<int|string, bool>
      */
     public function set_multiple(array $data, string $group = 'default', int $expire = 0): array;
 

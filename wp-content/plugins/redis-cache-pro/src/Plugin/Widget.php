@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -17,13 +17,17 @@ declare(strict_types=1);
 namespace RedisCachePro\Plugin;
 
 use WP_Screen;
+use RedisCachePro\Plugin;
 
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Widget
 {
     /**
      * Whitelist of widget actions.
      *
-     * @var array
+     * @var array<string>
      */
     protected $widgetActions = [
         'flush-cache',
@@ -35,7 +39,7 @@ trait Widget
     /**
      * Whitelist of widget action statuses.
      *
-     * @var array
+     * @var array<string>
      */
     protected $widgetActionStatuses = [
         'cache-flushed',
@@ -70,7 +74,7 @@ trait Widget
             return;
         }
 
-        if (! current_user_can(self::Capability)) {
+        if (! current_user_can(Plugin::Capability)) {
             return;
         }
 
@@ -91,13 +95,7 @@ trait Widget
          */
         if ((bool) apply_filters('objectcache_dashboard_widget', true)) {
             add_action('wp_dashboard_setup', function () {
-                wp_add_dashboard_widget(
-                    'dashboard_objectcache',
-                    'Object Cache Pro',
-                    [$this, 'renderWidget'],
-                    'normal',
-                    'high'
-                );
+                wp_add_dashboard_widget('dashboard_objectcache', 'Object Cache Pro', [$this, 'renderWidget'], null, null, 'normal', 'high');
             });
         }
 
@@ -108,13 +106,7 @@ trait Widget
          */
         if ((bool) apply_filters('objectcache_network_dashboard_widget', true)) {
             add_action('wp_network_dashboard_setup', function () {
-                wp_add_dashboard_widget(
-                    'dashboard_objectcache',
-                    'Object Cache Pro',
-                    [$this, 'renderWidget'],
-                    'normal',
-                    'high'
-                );
+                wp_add_dashboard_widget('dashboard_objectcache', 'Object Cache Pro', [$this, 'renderWidget'], null, null, 'normal', 'high');
             });
         }
     }
@@ -138,8 +130,11 @@ trait Widget
      */
     public function handleWidgetActions()
     {
+        $screenId = get_current_screen()->id ?? null;
+        $actionParameter = $screenId === $this->screenId ? 'action' : 'objectcache-action';
+
         $nonce = $_GET['_wpnonce'] ?? false;
-        $action = $_GET['action'] ?? $_GET['objectcache-action'] ?? false;
+        $action = $_GET[$actionParameter] ?? false;
 
         if (! $action || ! $nonce) {
             return;
@@ -157,6 +152,8 @@ trait Widget
             wp_die("Sorry, you are not allowed to perform the {$action} action.", 403);
         }
 
+        $status = null;
+
         switch ($action) {
             case 'flush-cache':
                 $status = wp_cache_flush() ? 'cache-flushed' : 'cache-not-flushed';
@@ -172,7 +169,7 @@ trait Widget
                 break;
         }
 
-        if (get_current_screen()->id === $this->screenId) {
+        if ($screenId === $this->screenId) {
             $url = add_query_arg('status', $status, $this->baseurl);
         } else {
             $url = add_query_arg('objectcache-status', $status, is_network_admin() ? network_admin_url() : admin_url());

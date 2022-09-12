@@ -6,6 +6,14 @@ namespace RedisCachePro\Exceptions;
 
 class ConfigurationMissingException extends ObjectCacheException
 {
+    /**
+     * Creates a new exception.
+     *
+     * @param  string  $message
+     * @param  int  $code
+     * @param  \Throwable|null  $previous
+     * @return void
+     */
     public function __construct($message = '', $code = 0, $previous = null)
     {
         if (empty($message)) {

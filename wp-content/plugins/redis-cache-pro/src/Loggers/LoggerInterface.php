@@ -25,7 +25,7 @@ interface LoggerInterface
      * System is unusable.
      *
      * @param  string  $message
-     * @param  array  $context
+     * @param  array<string>  $context
      * @return void
      */
     public function emergency($message, array $context = []);
@@ -37,7 +37,7 @@ interface LoggerInterface
      * trigger the SMS alerts and wake you up.
      *
      * @param  string  $message
-     * @param  array  $context
+     * @param  array<mixed>  $context
      * @return void
      */
     public function alert($message, array $context = []);
@@ -48,7 +48,7 @@ interface LoggerInterface
      * Example: Application component unavailable, unexpected exception.
      *
      * @param  string  $message
-     * @param  array  $context
+     * @param  array<mixed>  $context
      * @return void
      */
     public function critical($message, array $context = []);
@@ -58,7 +58,7 @@ interface LoggerInterface
      * be logged and monitored.
      *
      * @param  string  $message
-     * @param  array  $context
+     * @param  array<mixed>  $context
      * @return void
      */
     public function error($message, array $context = []);
@@ -70,7 +70,7 @@ interface LoggerInterface
      * that are not necessarily wrong.
      *
      * @param  string  $message
-     * @param  array  $context
+     * @param  array<mixed>  $context
      * @return void
      */
     public function warning($message, array $context = []);
@@ -79,7 +79,7 @@ interface LoggerInterface
      * Normal but significant events.
      *
      * @param  string  $message
-     * @param  array  $context
+     * @param  array<mixed>  $context
      * @return void
      */
     public function notice($message, array $context = []);
@@ -90,7 +90,7 @@ interface LoggerInterface
      * Example: User logs in, SQL logs.
      *
      * @param  string  $message
-     * @param  array  $context
+     * @param  array<mixed>  $context
      * @return void
      */
     public function info($message, array $context = []);
@@ -99,7 +99,7 @@ interface LoggerInterface
      * Detailed debug information.
      *
      * @param  string  $message
-     * @param  array  $context
+     * @param  array<mixed>  $context
      * @return void
      */
     public function debug($message, array $context = []);
@@ -109,7 +109,7 @@ interface LoggerInterface
      *
      * @param  mixed  $level
      * @param  string  $message
-     * @param  array  $context
+     * @param  array<mixed>  $context
      * @return void
      */
     public function log($level, $message, array $context = []);

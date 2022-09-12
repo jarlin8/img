@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use RedisCachePro\Loggers\LoggerInterface;
-
 class RedisCachePro_DebugBar_Insights extends RedisCachePro_DebugBar_Panel
 {
     /**
@@ -14,19 +12,28 @@ class RedisCachePro_DebugBar_Insights extends RedisCachePro_DebugBar_Panel
     protected $info;
 
     /**
+     * Holds the object cache metrics object.
+     *
+     * @var object
+     */
+    protected $metrics;
+
+    /**
      * Create a new insights panel instance.
      *
      * @param  object  $info
+     * @param  object  $metrics
      */
-    public function __construct($info)
+    public function __construct($info, $metrics)
     {
         $this->info = $info;
+        $this->metrics = $metrics;
     }
 
     /**
      * The title of the panel.
      *
-     * @return  string
+     * @return string
      */
     public function title()
     {
@@ -36,7 +43,7 @@ class RedisCachePro_DebugBar_Insights extends RedisCachePro_DebugBar_Panel
     /**
      * Whether the panel is visible.
      *
-     * @return  bool
+     * @return bool
      */
     public function is_visible()
     {
@@ -46,7 +53,7 @@ class RedisCachePro_DebugBar_Insights extends RedisCachePro_DebugBar_Panel
     /**
      * Render the panel.
      *
-     * @var void
+     * @return void
      */
     public function render()
     {

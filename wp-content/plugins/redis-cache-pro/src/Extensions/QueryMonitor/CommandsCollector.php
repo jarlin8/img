@@ -7,12 +7,15 @@ namespace RedisCachePro\Extensions\QueryMonitor;
 use QM_Backtrace;
 use QM_Collector;
 
+use RedisCachePro\Loggers\ArrayLogger;
+
 use RedisCachePro\Connections\Connection;
 use RedisCachePro\Connections\Transaction;
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Connections\PhpRedisConnection;
 use RedisCachePro\Connections\TwemproxyConnection;
 
+use RedisCachePro\ObjectCaches\ObjectCache;
 use RedisCachePro\ObjectCaches\RelayObjectCache;
 use RedisCachePro\ObjectCaches\PhpRedisObjectCache;
 
@@ -28,7 +31,7 @@ class CommandsCollector extends QM_Collector
     /**
      * Ignored methods in all object cache classes.
      *
-     * @var array
+     * @var array<string, bool>
      */
     const IgnoredMethods = [
         'add' => true,
@@ -54,7 +57,7 @@ class CommandsCollector extends QM_Collector
     /**
      * Ignored functions.
      *
-     * @var array
+     * @var array<string, bool>
      */
     const IgnoredFunctions = [
         'wp_cache_add' => true,
@@ -103,23 +106,20 @@ class CommandsCollector extends QM_Collector
     {
         global $wp_object_cache;
 
-        if (
-            ! method_exists($wp_object_cache, 'logger') ||
-            ! method_exists($wp_object_cache, 'connection')
-        ) {
+        if (! $wp_object_cache instanceof ObjectCache) {
             return;
         }
 
         $logger = $wp_object_cache->logger();
 
-        if (! method_exists($logger, 'messages')) {
+        if (! $logger instanceof ArrayLogger) {
             $this->data['commands'] = [];
 
             return;
         }
 
         $legacyBacktraces = defined('\QM_VERSION')
-            && version_compare(\QM_VERSION, '3.8.1', '<');
+            && version_compare(constant('\QM_VERSION'), '3.8.1', '<');
 
         $this->data['commands'] = $this->buildCommands($logger, $legacyBacktraces);
 
@@ -142,17 +142,17 @@ class CommandsCollector extends QM_Collector
     /**
      * Builds the array of Redis commands.
      *
-     * @param  \RedisCachePro\Loggers\Logger  $logger
+     * @param  \RedisCachePro\Loggers\ArrayLogger  $logger
      * @param  bool  $legacyBacktraces
-     * @return array
+     * @return array<int, array<string, mixed>>
      */
-    protected function buildCommands($logger, bool $legacyBacktraces)
+    protected function buildCommands(ArrayLogger $logger, bool $legacyBacktraces)
     {
         $commands = [];
         $backtraceArgs = $this->buildBacktraceArgs();
 
         foreach ($logger->messages() as $message) {
-            $command = $message['context']['command'];
+            $command = $message['context']['command'] ?? 'UNKNOWN';
 
             if ($command === 'RAWCOMMAND') {
                 $command = array_shift($message['context']['parameters']);
@@ -164,7 +164,7 @@ class CommandsCollector extends QM_Collector
                 'bytes' => strlen(serialize($message['context']['result'] ?? null)),
                 'command' => $command,
                 'parameters' => $this->formatParameters(
-                    $message['context']['parameters']
+                    $message['context']['parameters'] ?? []
                 ),
                 'backtrace' => $legacyBacktraces
                     ? $this->formatLegacyBacktrace($message['context']['backtrace_summary'])
@@ -178,7 +178,7 @@ class CommandsCollector extends QM_Collector
     /**
      * Builds the backtrace arguments for `QM_Backtrace`.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     protected function buildBacktraceArgs()
     {
@@ -189,7 +189,7 @@ class CommandsCollector extends QM_Collector
             : null;
 
         return [
-            'ignore_class' => array_filter([
+            'ignore_class' => array_filter([ // @phpstan-ignore-line
                 Connection::class => true,
                 Transaction::class => true,
                 RelayConnection::class => true,
@@ -209,8 +209,8 @@ class CommandsCollector extends QM_Collector
     /**
      * Converts all parameter values to JSON and trims them down to 200 characters or less.
      *
-     * @param  array  $parameters
-     * @return array
+     * @param  array<mixed>  $parameters
+     * @return array<mixed>
      */
     protected function formatParameters($parameters)
     {
@@ -241,7 +241,7 @@ class CommandsCollector extends QM_Collector
      * Converts the `wp_debug_backtrace_summary()` backtrace into human readable array for display.
      *
      * @param  string  $backtrace
-     * @return array
+     * @return array<int, string>
      */
     protected function formatLegacyBacktrace($backtrace)
     {

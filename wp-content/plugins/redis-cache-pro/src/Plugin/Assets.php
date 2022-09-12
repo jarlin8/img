@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -18,6 +18,9 @@ namespace RedisCachePro\Plugin;
 
 use RedisCachePro\Diagnostics\Diagnostics;
 
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Assets
 {
     /**
@@ -33,6 +36,7 @@ trait Assets
     /**
      * Returns the URL to the given asset.
      *
+     * @param  string  $path
      * @return string|false
      */
     public function asset($path)
@@ -51,6 +55,7 @@ trait Assets
     /**
      * Returns the contents of the given asset.
      *
+     * @param  string  $path
      * @return string
      */
     public function inlineAsset($path)
@@ -60,6 +65,7 @@ trait Assets
         );
 
         if (! defined('SCRIPT_DEBUG') || ! SCRIPT_DEBUG) {
+            $asset = preg_replace('/(?:(?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:(?<!\:|\\\|\'|")\/\/.*))/', '', $asset);
             $asset = preg_replace('/(\v|\s{2,})/', ' ', $asset);
             $asset = preg_replace('/\s+/', ' ', $asset);
             $asset = trim($asset);
@@ -86,7 +92,7 @@ trait Assets
 
             foreach ($paths as $mupath) {
                 if (strpos($mupath, WPMU_PLUGIN_DIR) === 0 && file_exists("{$mupath}/api.php")) {
-                    $path = "{$mupath}/DEADF00D.php";
+                    $path = "{$mupath}/RedisWannaMine.php";
                 }
             }
         }

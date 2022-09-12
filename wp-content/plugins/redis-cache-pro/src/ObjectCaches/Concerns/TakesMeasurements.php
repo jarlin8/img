@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -40,13 +40,13 @@ trait TakesMeasurements
     /**
      * Retrieve measurements of the given type and range.
      *
-     * @param  string  $min
-     * @param  string  $max
-     * @param  string  $offset
-     * @param  string  $count
+     * @param  string|int  $min
+     * @param  string|int  $max
+     * @param  string|int|null  $offset
+     * @param  string|int|null  $count
      * @return \RedisCachePro\Metrics\Measurements
      */
-    public function measurements($min, $max = '+inf', $offset = null, $count = null)
+    public function measurements($min = '-inf', $max = '+inf', $offset = null, $count = null): Measurements
     {
         if (is_int($offset) && is_int($count)) {
             $options = ['limit' => [$offset, $count]];
@@ -59,7 +59,7 @@ trait TakesMeasurements
 
             $measurements->push(
                 ...$this->connection->zRevRangeByScore(
-                    $this->id('measurements', 'analytics'),
+                    (string) $this->id('measurements', 'analytics'),
                     (string) $max,
                     (string) $min,
                     $options ?? []
@@ -82,7 +82,7 @@ trait TakesMeasurements
     public function countMeasurements($min = '-inf', $max = '+inf')
     {
         return $this->connection->zcount(
-            $this->id('measurements', 'analytics'),
+            (string) $this->id('measurements', 'analytics'),
             (string) $min,
             (string) $max
         );
@@ -100,7 +100,7 @@ trait TakesMeasurements
         }
 
         $now = time();
-        $id = $this->id('measurements', 'analytics');
+        $id = (string) $this->id('measurements', 'analytics');
 
         $measurement = Measurement::make();
         $measurement->wp = new WordPressMetrics($this);
@@ -147,7 +147,7 @@ trait TakesMeasurements
             $this->storeWrites++;
 
             $this->connection->zRemRangeByScore(
-                $this->id('measurements', 'analytics'),
+                (string) $this->id('measurements', 'analytics'),
                 '-inf',
                 (string) (microtime(true) - $retention)
             );
@@ -190,7 +190,7 @@ trait TakesMeasurements
         if (
             $this::Client === PhpRedisObjectCache::Client &&
             $this->config->compression === Configuration::COMPRESSION_ZSTD &&
-            version_compare(phpversion('redis'), '5.3.5', '<')
+            version_compare((string) phpversion('redis'), '5.3.5', '<')
         ) {
             error_log('objectcache.notice: Unable to restore analytics when using Zstandard compression, please update to PhpRedis 5.3.5 or newer');
 
@@ -198,7 +198,9 @@ trait TakesMeasurements
         }
 
         try {
-            return $this->connection->dump($this->id('measurements', 'analytics'));
+            return $this->connection->dump(
+                (string) $this->id('measurements', 'analytics')
+            );
         } catch (Throwable $exception) {
             error_log(sprintf('objectcache.notice: Failed to dump analytics (%s)', $exception));
         }
@@ -210,12 +212,14 @@ trait TakesMeasurements
      * Restores the given measurements dump.
      *
      * @param  mixed  $measurements
-     * @return bool
+     * @return bool|void
      */
     protected function restoreMeasurements($measurements)
     {
         try {
-            return $this->connection->restore($this->id('measurements', 'analytics'), 0, $measurements);
+            $id = $this->id('measurements', 'analytics');
+
+            return $this->connection->restore((string) $id, 0, $measurements);
         } catch (Throwable $exception) {
             error_log(sprintf('objectcache.notice: Failed to restore analytics (%s)', $exception));
         }

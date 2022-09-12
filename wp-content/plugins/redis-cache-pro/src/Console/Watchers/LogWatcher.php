@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -22,30 +22,44 @@ use cli\Streams;
 class LogWatcher extends Notify
 {
     /**
+     * Holds the command options.
+     *
+     * @var array<mixed>
+     */
+    public $options;
+
+    /**
      * The object cache instance.
      *
-     * @var \RedisCachePro\ObjectCaches\ObjectCacheInterface;
+     * @var \RedisCachePro\ObjectCaches\MeasuredObjectCacheInterface
      */
     public $cache;
 
     /**
+     * Whether Relay is being used.
+     *
+     * @var bool
+     */
+    public $usingRelay;
+
+    /**
      * Holds the last 1000 measurement IDs.
      *
-     * @var array
+     * @var array<int>
      */
     protected $ids = [];
 
     /**
      * The measurements to display.
      *
-     * @var \RedisCachePro\Metrics\Measurements
+     * @var \RedisCachePro\Metrics\Measurements|null
      */
     protected $measurements;
 
     /**
      * Holds the default metrics.
      *
-     * @var array
+     * @var array<string>
      */
     protected $defaultMetrics = [
         'ms-total',
@@ -56,6 +70,7 @@ class LogWatcher extends Notify
         'hit-ratio',
         'store-reads',
         'store-writes',
+        'sql-queries',
         'redis-hit-ratio',
         'redis-ops-per-sec',
         'redis-keys',
@@ -115,7 +130,7 @@ class LogWatcher extends Notify
         }
 
         $this->measurements = $this->cache->measurements(
-            microtime(true) - 2
+            strval(microtime(true) - 2)
         )->filter(function ($measurement) {
             return ! in_array($measurement->id, $this->ids);
         });
@@ -128,8 +143,8 @@ class LogWatcher extends Notify
     /**
      * Format the given measurement in log format.
      *
-     * @param  array  $measurement
-     * @param  array  $metrics
+     * @param  array<mixed>  $measurement
+     * @param  array<string>  $metrics
      * @return string
      */
     protected function formatMeasurement(array $measurement, array $metrics)
@@ -149,6 +164,8 @@ class LogWatcher extends Notify
                         return sprintf($format, 'sample', 35, $metric, $measurement[$metric]);
                     case 'ms':
                         return sprintf($format, 'metric', 36, $metric, $measurement[$metric]);
+                    case 'sql':
+                        return sprintf($format, 'metric', 33, $metric, $measurement[$metric]);
                     default:
                         return sprintf($format, 'metric', 34, $metric, $measurement[$metric]);
                 }

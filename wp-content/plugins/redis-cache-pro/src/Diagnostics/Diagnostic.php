@@ -9,13 +9,20 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Diagnostics;
 
+/**
+ * @property-read string $name
+ * @property-read mixed $value
+ * @property-read string $text
+ * @property-read string $cli
+ * @property-read string $html
+ */
 class Diagnostic
 {
     /**
@@ -139,7 +146,7 @@ class Diagnostic
     /**
      * Set diagnostic's values.
      *
-     * @param  array  $values
+     * @param  array<mixed>  $values
      * @return \RedisCachePro\Diagnostics\Diagnostic
      */
     public function values($values)
@@ -291,7 +298,10 @@ class Diagnostic
             case 'token':
                 return sprintf('••••••••%s', substr($value, -4));
             case 'url':
-                return str_replace(parse_url($value, PHP_URL_PASS) ?? '', '••••••••', $value);
+                /** @var string|null $password */
+                $password = parse_url($value, PHP_URL_PASS);
+
+                return str_replace((string) $password, '••••••••', $value);
         }
     }
 
@@ -339,7 +349,7 @@ class Diagnostic
      * Helper method to return diagnostic properties.
      *
      * @param  string  $name
-     * @return string
+     * @return string|void
      */
     public function __get($name)
     {

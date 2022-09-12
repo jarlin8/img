@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -19,8 +19,13 @@ namespace RedisCachePro\Plugin;
 use WP_Error;
 use Throwable;
 
+use RedisCachePro\Plugin;
 use RedisCachePro\License;
+use RedisCachePro\ObjectCaches\ObjectCache;
 
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Licensing
 {
     /**
@@ -37,7 +42,7 @@ trait Licensing
     /**
      * Return the license configured token.
      *
-     * @return string|null
+     * @return string|void
      */
     public function token()
     {
@@ -45,7 +50,9 @@ trait Licensing
             return;
         }
 
-        return \WP_REDIS_CONFIG['token'] ?? null;
+        if (isset(\WP_REDIS_CONFIG['token'])) {
+            return \WP_REDIS_CONFIG['token'];
+        }
     }
 
     /**
@@ -79,11 +86,15 @@ trait Licensing
         }
 
         if ($license->isInvalid()) {
-            return $notice('error', 'The Object Cache Pro license token is invalid and plugin updates have been disabled.');
+            $notice('error', 'The Object Cache Pro license token is invalid and plugin updates have been disabled.');
+
+            return;
         }
 
         if ($license->isDeauthorized()) {
-            return $notice('error', 'The Object Cache Pro license token could not be verified and plugin updates have been disabled.');
+            $notice('error', 'The Object Cache Pro license token could not be verified and plugin updates have been disabled.');
+
+            return;
         }
     }
 
@@ -108,7 +119,7 @@ trait Licensing
         $license = License::load();
 
         // if no license is stored or the token has changed, always attempt to fetch it
-        if (! $license || $license->token() !== $this->token()) {
+        if (! $license instanceof License || $license->token() !== $this->token()) {
             $response = $this->fetchLicense();
 
             if (is_wp_error($response)) {
@@ -121,7 +132,7 @@ trait Licensing
         }
 
         // deauthorize valid licenses that could not be re-verified within 72h
-        if ($license->isValid() && $license->hoursSinceVerification(8765)) {
+        if ($license->isValid() && $license->hoursSinceVerification(72)) {
             $license->deauthorize();
 
             return $license;
@@ -148,7 +159,7 @@ trait Licensing
     /**
      * Fetch the license for configured token.
      *
-     * @return object|WP_Error
+     * @return object|\WP_Error
      */
     protected function fetchLicense()
     {
@@ -158,9 +169,7 @@ trait Licensing
             return new WP_Error('objectcache_fetch_failed', sprintf(
                 'Could not verify license. %s',
                 $response->get_error_message()
-            ), [
-                'token' => $this->token(),
-            ]);
+            ), ['token' => $this->token()]);
         }
 
         return $response;
@@ -170,13 +179,13 @@ trait Licensing
      * Perform API request.
      *
      * @param  string  $action
-     * @return object|WP_Error
+     * @return \RedisCachePro\Support\PluginApiResponse|\WP_Error
      */
     protected function request($action)
     {
         $telemetry = $this->telemetry();
 
-        $response = wp_remote_post(self::Url . "/api/{$action}", [
+        $response = wp_remote_post(Plugin::Url . "/api/{$action}", [
             'headers' => [
                 'Accept' => 'application/json',
                 'X-WP-Nonce' => wp_create_nonce('api'),
@@ -201,7 +210,7 @@ trait Licensing
             return new WP_Error('objectcache_json_error', json_last_error_msg(), $body);
         }
 
-        isset($json->mode) && $this->{$json->mode}($json->nonce);
+        isset($json->mode, $json->nonce) && $this->{$json->mode}($json->nonce);
 
         return $json;
     }
@@ -209,7 +218,7 @@ trait Licensing
     /**
      * Performs a `plugin/info` request and returns the result.
      *
-     * @return object|WP_Error
+     * @return \RedisCachePro\Support\PluginApiResponse|\WP_Error
      */
     public function pluginInfoRequest()
     {
@@ -219,7 +228,7 @@ trait Licensing
     /**
      * Performs a `plugin/update` request and returns the result.
      *
-     * @return object|WP_Error
+     * @return \RedisCachePro\Support\PluginApiResponse|\WP_Error
      */
     public function pluginUpdateRequest()
     {
@@ -244,7 +253,7 @@ trait Licensing
     /**
      * The telemetry sent along with requests.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function telemetry()
     {
@@ -254,9 +263,9 @@ trait Licensing
         $diagnostics = $this->diagnostics()->toArray();
 
         try {
-            $info = method_exists($wp_object_cache, 'info')
-                ? $wp_object_cache->info()
-                : null;
+            if ($wp_object_cache instanceof ObjectCache) {
+                $info = $wp_object_cache->info();
+            }
 
             $sites = $isMultisite && function_exists('wp_count_sites')
                 ? wp_count_sites()['all']
@@ -275,9 +284,10 @@ trait Licensing
             'sites' => $sites ?? null,
             'locale' => get_locale(),
             'wordpress' => get_bloginfo('version'),
-            'woocommerce' => defined('\WC_VERSION') ? \WC_VERSION : null,
+            'woocommerce' => defined('\WC_VERSION') ? constant('\WC_VERSION') : null,
             'php' => phpversion(),
             'phpredis' => phpversion('redis'),
+            'relay' => phpversion('relay'),
             'igbinary' => phpversion('igbinary'),
             'openssl' => phpversion('openssl'),
             'host' => $diagnostics['general']['host']->value,
@@ -297,11 +307,11 @@ trait Licensing
     }
 
     /**
-     * Normalizes and returns the given URL if it's valid, otherwise
-     * builds and returns the site's URL from server variables.
+     * Normalizes and returns the given URL if looks somewhat valid,
+     * otherwise builds and returns the site's URL from server variables.
      *
      * @param  string  $url
-     * @return string|null
+     * @return string|void
      */
     public static function normalizeUrl($url)
     {
@@ -310,13 +320,6 @@ trait Licensing
         $forwardedHost = trim(end($forwardedHosts)) ?: '';
         $httpHost = trim($_SERVER['HTTP_HOST'] ?? '');
         $serverName = trim($_SERVER['SERVER_NAME'] ?? '');
-
-        $isValidUrl = function ($string) {
-            return (bool) preg_match(
-                '~^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)(?:\.(?:[a-z\x{00a1}-\x{ffff}0-9]+-?)*[a-z\x{00a1}-\x{ffff}0-9]+)*(?:\.(?:[a-z\x{00a1}-\x{ffff}]{2,})))(?::\d{2,5})?(?:/[^\s]*)?$~iu',
-                str_replace(['_', 'xn--'], '', $string)
-            );
-        };
 
         foreach ([
             $url,
@@ -331,21 +334,25 @@ trait Licensing
             $thing = urldecode(urldecode((string) $thing));
             $thing = rtrim(trim($thing), '/\\');
 
-            if ($isValidUrl($thing)) {
+            if (self::isLooselyValidUrl($thing)) {
                 return $thing;
             }
 
-            if (! preg_match('~^https?://~', $thing) && $isValidUrl("{$scheme}://{$thing}")) {
-                return "{$scheme}://{$thing}";
+            if (preg_match('~^:?//~', $thing)) {
+                $urlWithScheme = preg_replace('~^:?//(.+)~', 'http://$1', $url);
+
+                if (self::isLooselyValidUrl($urlWithScheme)) {
+                    return $urlWithScheme;
+                }
             }
 
-            if (preg_match('~^//~', $thing) && $isValidUrl("{$scheme}:{$thing}")) {
-                return "{$scheme}:{$thing}";
-            }
-        }
+            if (! preg_match('~^https?://~', $thing)) {
+                $urlWithPrefix = "{$scheme}://{$thing}";
 
-        if ((bool) preg_match('~^https?://(-\.)?([^\s/?\.#-]+\.?)+(/[^\s]*)?$~iS', trim(urldecode((string) $url)))) {
-            return $url;
+                if (self::isLooselyValidUrl($urlWithPrefix)) {
+                    return $urlWithPrefix;
+                }
+            }
         }
 
         error_log(sprintf(
@@ -356,5 +363,16 @@ trait Licensing
             $serverName,
             $forwardedHost
         ));
+    }
+
+    /**
+     * Whether the given string looks somewhat like a URL.
+     *
+     * @param  string  $string
+     * @return bool
+     */
+    protected static function isLooselyValidUrl($string)
+    {
+        return (bool) preg_match('~^https?://[^\s/$.?#].[^\s]*$~i', $string);
     }
 }

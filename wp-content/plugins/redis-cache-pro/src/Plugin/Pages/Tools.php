@@ -9,12 +9,14 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Plugin\Pages;
+
+use RedisCachePro\ObjectCaches\ObjectCache;
 
 use const RedisCachePro\Version;
 
@@ -49,7 +51,7 @@ class Tools extends Page
     {
         global $wp_object_cache;
 
-        return method_exists($wp_object_cache, 'connection');
+        return $wp_object_cache instanceof ObjectCache;
     }
 
     /**
@@ -69,7 +71,7 @@ class Tools extends Page
         $this->addGroupsWidget();
         $this->addFlushLogWidget();
 
-        $this->enqueueSettingsScript();
+        $this->enqueueScript();
         $this->enqueueAssets();
     }
 
@@ -172,7 +174,7 @@ class Tools extends Page
          */
         $caller = (string) apply_filters(
             'objectcache_flushlog_caller',
-            strstr($backtrace, ',', true),
+            (string) strstr($backtrace, ',', true),
             $backtrace
         );
 

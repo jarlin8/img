@@ -14,7 +14,7 @@ abstract class RedisCachePro_DebugBar_Panel
     /**
      * Render the panel.
      *
-     * @var void
+     * @return void
      */
     abstract public function render();
 

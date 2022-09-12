@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -24,54 +24,64 @@ use WP_Error;
 use Relay\Relay;
 
 use RedisCachePro\License;
+use RedisCachePro\ObjectCaches\ObjectCache;
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Configuration\Configuration;
-use RedisCachePro\ObjectCaches\ObjectCacheInterface;
 
 use RedisCachePro\Connectors\RelayConnector;
 use RedisCachePro\Connectors\PhpRedisConnector;
 
 use const RedisCachePro\Basename;
 
+/**
+ * @implements \ArrayAccess<string, array<string, mixed>>
+ */
 class Diagnostics implements ArrayAccess
 {
     /**
-     * Diagnose group: Configuration values.
+     * Group: Configuration values.
      *
      * @var string
      */
     const CONFIG = 'config';
 
     /**
-     * Diagnose group: Constants.
+     * Group: Constants.
      *
      * @var string
      */
     const CONSTANTS = 'constants';
 
     /**
-     * Diagnose group: Errors.
+     * Group: Environment Variables.
+     *
+     * @var string
+     */
+    const ENV = 'environment';
+
+    /**
+     * Group: Errors.
      *
      * @var string
      */
     const ERRORS = 'errors';
 
     /**
-     * Diagnose group: General information.
+     * Group: General information.
      *
      * @var string
      */
     const GENERAL = 'general';
 
     /**
-     * Diagnose group: Version numbers.
+     * Group: Version numbers.
      *
      * @var string
      */
     const VERSIONS = 'versions';
 
     /**
-     * Diagnose group: Statistics.
+     * Group: Statistics.
      *
      * @var string
      */
@@ -80,39 +90,39 @@ class Diagnostics implements ArrayAccess
     /**
      * The object cache instance.
      *
-     * @var \RedisCachePro\ObjectCaches\ObjectCacheInterface
+     * @var \RedisCachePro\ObjectCaches\ObjectCache|null
      */
     protected $cache;
 
     /**
      * The configuration instance.
      *
-     * @var \RedisCachePro\Configuration\Configuration
+     * @var \RedisCachePro\Configuration\Configuration|null
      */
     protected $config;
 
     /**
      * The connection instance.
      *
-     * @var \RedisCachePro\Connections\ConnectionInterface
+     * @var \RedisCachePro\Connections\ConnectionInterface|null
      */
     protected $connection;
 
     /**
      * Holds the diagnostics groups and their data.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $data = [];
 
     /**
      * Create a new diagnostics instance.
      *
-     * @param  \RedisCachePro\ObjectCaches\ObjectCacheInterface  $cache
+     * @param  mixed  $cache
      */
     public function __construct($cache)
     {
-        if (is_object($cache) && in_array(ObjectCacheInterface::class, (array) class_implements($cache))) {
+        if ($cache instanceof ObjectCache) {
             $this->cache = $cache;
             $this->config = $this->cache->config();
             $this->connection = $this->cache->connection();
@@ -126,6 +136,7 @@ class Diagnostics implements ArrayAccess
         $this->gatherVersions();
         $this->gatherStatistics();
         $this->gatherConfiguration();
+        $this->gatherEnvironmentVariables();
         $this->gatherConstants();
         $this->gatherErrors();
     }
@@ -148,9 +159,7 @@ class Diagnostics implements ArrayAccess
             $this->data[self::GENERAL]['relay-license'] = $this->relayLicense();
         }
 
-        if ($evictionPolicy = $this->evictionPolicy()) {
-            $this->data[self::GENERAL]['eviction-policy'] = $evictionPolicy;
-        }
+        $this->data[self::GENERAL]['eviction-policy'] = $this->evictionPolicy();
 
         $this->data[self::GENERAL]['env'] = Diagnostic::name('Environment')->value(
             self::environment()
@@ -212,18 +221,9 @@ class Diagnostics implements ArrayAccess
         $this->data[self::VERSIONS]['igbinary'] = $this->igbinary();
         $this->data[self::VERSIONS]['phpredis'] = $this->phpredis();
         $this->data[self::VERSIONS]['relay'] = $this->relay();
-
-        if ($redisVersion = $this->redisVersion()) {
-            $this->data[self::VERSIONS]['redis'] = $redisVersion;
-        }
-
-        if ($pluginVersion = $this->pluginVersion()) {
-            $this->data[self::VERSIONS]['plugin'] = $pluginVersion;
-        }
-
-        if ($dropinVersion = $this->dropinVersion()) {
-            $this->data[self::VERSIONS]['dropin'] = $dropinVersion;
-        }
+        $this->data[self::VERSIONS]['redis'] = $this->redisVersion();
+        $this->data[self::VERSIONS]['plugin'] = $this->pluginVersion();
+        $this->data[self::VERSIONS]['dropin'] = $this->dropinVersion();
     }
 
     /**
@@ -278,7 +278,11 @@ class Diagnostics implements ArrayAccess
      */
     protected function gatherRelayStatistics()
     {
-        $stats = $this->connection->memoize('stats');
+        /** @var \RedisCachePro\Connections\RelayConnection $connection */
+        $connection = $this->connection;
+
+        $stats = $connection->memoize('stats');
+        $endpointId = $connection->endpointId();
 
         $this->data[self::STATISTICS]['relay-memory'] = Diagnostic::name('Relay Memory')
             ->value(sprintf(
@@ -289,7 +293,7 @@ class Diagnostics implements ArrayAccess
 
         $keys = array_sum(array_map(function ($connection) {
             return $connection['keys'][$this->config->database] ?? 0;
-        }, $stats['endpoints'][$this->connection->endpointId()]['connections'] ?? [])) ?: null;
+        }, $stats['endpoints'][$endpointId]['connections'] ?? [])) ?: null;
 
         $this->data[self::STATISTICS]['relay-keys'] = Diagnostic::name('Relay Keys')
             ->value($keys);
@@ -304,8 +308,7 @@ class Diagnostics implements ArrayAccess
     {
         if ($this->config) {
             foreach ($this->config->diagnostics() as $option => $value) {
-                $name = ucwords(str_replace('_', ' ', $option));
-                $this->data[self::CONFIG][$option] = Diagnostic::name($name)->value($value);
+                $this->data[self::CONFIG][$option] = Diagnostic::name($option)->value($value);
             }
         }
     }
@@ -343,6 +346,36 @@ class Diagnostics implements ArrayAccess
             }
 
             $this->data[self::CONSTANTS][$constant] = $diagnostic;
+        }
+    }
+
+    /**
+     * Gathers relevant environment variables.
+     *
+     * @return void
+     */
+    protected function gatherEnvironmentVariables()
+    {
+        $variables = [
+            'WP_REDIS_DISABLED',
+            'OBJECTCACHE_CONFIG',
+        ];
+
+        foreach ($variables as $variable) {
+            $diagnostic = Diagnostic::name($variable);
+            $value = getenv($variable);
+
+            if ($value !== false) {
+                if (strpos($value, '{') === 0) {
+                    $diagnostic->prettyJson(json_decode($value, true, 3));
+                } else {
+                    $diagnostic->value($value);
+                }
+            } else {
+                $diagnostic->value('undefined');
+            }
+
+            $this->data[self::ENV][$variable] = $diagnostic;
         }
     }
 
@@ -408,7 +441,7 @@ class Diagnostics implements ArrayAccess
 
         $license = License::load();
 
-        if (! $license) {
+        if (! $license instanceof License) {
             return $diagnostic;
         }
 
@@ -518,7 +551,7 @@ class Diagnostics implements ArrayAccess
      */
     public function usedMemory()
     {
-        return $this->redisInfo('used_memory');
+        return $this->redisInfoKey('used_memory');
     }
 
     /**
@@ -528,7 +561,7 @@ class Diagnostics implements ArrayAccess
      */
     public function maxMemory()
     {
-        return $this->redisInfo('maxmemory');
+        return $this->redisInfoKey('maxmemory');
     }
 
     /**
@@ -538,7 +571,7 @@ class Diagnostics implements ArrayAccess
      */
     public function maxMemoryPolicy()
     {
-        return $this->redisInfo('maxmemory_policy');
+        return $this->redisInfoKey('maxmemory_policy');
     }
 
     /**
@@ -576,7 +609,7 @@ class Diagnostics implements ArrayAccess
             return $diagnostic->error('Not installed');
         }
 
-        $version = phpversion('redis');
+        $version = (string) phpversion('redis');
 
         if (version_compare($version, PhpRedisConnector::RequiredVersion, '<')) {
             return $diagnostic->error($version)->comment('Unsupported');
@@ -602,7 +635,7 @@ class Diagnostics implements ArrayAccess
             return $diagnostic->error('Not installed');
         }
 
-        $version = phpversion('relay');
+        $version = (string) phpversion('relay');
 
         if (version_compare($version, RelayConnector::RequiredVersion, '<')) {
             return $diagnostic->error($version)->comment('Unsupported');
@@ -718,16 +751,16 @@ class Diagnostics implements ArrayAccess
     public function redisVersion()
     {
         return Diagnostic::name('Redis')->value(
-            $this->redisInfo('redis_version')
+            $this->redisInfoKey('redis_version')
         );
     }
 
     /**
      * Returns information and statistics about the Redis server.
      *
-     * @return array|null
+     * @return array<mixed>|null
      */
-    protected function redisInfo($name = null)
+    protected function redisInfo()
     {
         $info = null;
 
@@ -735,11 +768,20 @@ class Diagnostics implements ArrayAccess
             $info = $this->connection->memoize('info');
         }
 
-        if ($name && $info) {
-            return $info[$name] ?? null;
-        }
-
         return $info;
+    }
+
+    /**
+     * Returns specific key from Redis `INFO` call.
+     *
+     * @param  string  $name
+     * @return string|null
+     */
+    protected function redisInfoKey($name)
+    {
+        $info = $this->redisInfo();
+
+        return $info[$name] ?? null;
     }
 
     /**
@@ -953,7 +995,7 @@ class Diagnostics implements ArrayAccess
     /**
      * May return the environment type.
      *
-     * @return string|null
+     * @return string|void
      */
     public static function environment()
     {
@@ -969,7 +1011,7 @@ class Diagnostics implements ArrayAccess
     /**
      * May return the name of the hosting provider.
      *
-     * @return string|null
+     * @return string|void
      */
     public static function host()
     {
@@ -1026,13 +1068,13 @@ class Diagnostics implements ArrayAccess
      * Parses the given file header once to retrieve plugin metadata.
      *
      * @param  string  $file
-     * @return array
+     * @return array<string, string>
      */
     protected function fileMetadata($file)
     {
         static $cache = [];
 
-        $file = realpath($file);
+        $file = (string) realpath($file);
 
         if (! isset($cache[$file])) {
             $cache[$file] = \get_plugin_data($file, false, false);
@@ -1044,20 +1086,20 @@ class Diagnostics implements ArrayAccess
     /**
      * Parses the plugin file's metadata once.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function pluginMetadata()
     {
         $file = realpath(__DIR__ . '/../../object-cache-pro.php')
             ?: realpath(__DIR__ . '/../../redis-cache-pro.php');
 
-        return $this->fileMetadata($file);
+        return $this->fileMetadata((string) $file);
     }
 
     /**
      * Parses the drop-in file's metadata once.
      *
-     * @return array
+     * @return array<string, string>
      */
     public function dropinMetadata()
     {
@@ -1067,7 +1109,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Returns the diagnostic information.
      *
-     * @return array
+     * @return array<string, array<string, mixed>>
      */
     public function toArray()
     {
@@ -1077,6 +1119,7 @@ class Diagnostics implements ArrayAccess
             self::VERSIONS => $this->data[self::VERSIONS] ?? null,
             self::STATISTICS => $this->data[self::STATISTICS] ?? null,
             self::CONFIG => $this->data[self::CONFIG] ?? null,
+            self::ENV => $this->data[self::ENV] ?? null,
             self::CONSTANTS => $this->data[self::CONSTANTS] ?? null,
         ];
     }
@@ -1084,7 +1127,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Interface method to provide accessing diagnostics as array.
      *
-     * @param  mixed  $group
+     * @param  string  $group
      * @return bool
      */
     public function offsetExists($group): bool
@@ -1095,8 +1138,8 @@ class Diagnostics implements ArrayAccess
     /**
      * Interface method to provide accessing diagnostics as array.
      *
-     * @param  mixed  $group
-     * @return mixed
+     * @param  string  $group
+     * @return array<string, mixed>|null
      */
     #[\ReturnTypeWillChange]
     public function offsetGet($group)
@@ -1107,7 +1150,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Interface method to provide accessing diagnostics as array.
      *
-     * @param  mixed  $offset
+     * @param  string  $offset
      * @param  mixed  $value
      * @return void
      */
@@ -1119,7 +1162,7 @@ class Diagnostics implements ArrayAccess
     /**
      * Interface method to provide accessing diagnostics as array.
      *
-     * @param  mixed  $offset
+     * @param  string  $offset
      * @return void
      */
     public function offsetUnset($offset): void // phpcs:ignore PHPCompatibility

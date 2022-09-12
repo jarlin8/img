@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -17,13 +17,14 @@ declare(strict_types=1);
 namespace RedisCachePro\Configuration\Concerns;
 
 use RedisCachePro\Exceptions\ConfigurationException;
+use RedisCachePro\Exceptions\ConfigurationInvalidException;
 
 trait Sentinel
 {
     /**
      * The array of Redis Sentinels.
      *
-     * @var array
+     * @var array<string>
      */
     protected $sentinels;
 
@@ -37,7 +38,8 @@ trait Sentinel
     /**
      * Set the array of Redis Sentinels.
      *
-     * @param  array  $sentinels
+     * @param  array<string>  $sentinels
+     * @return void
      */
     public function setSentinels($sentinels)
     {
@@ -55,7 +57,8 @@ trait Sentinel
     /**
      * Set the connection protocol.
      *
-     * @param  string  $scheme
+     * @param  string  $service
+     * @return void
      */
     public function setService($service)
     {

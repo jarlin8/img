@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -43,7 +43,7 @@ class Dashboard extends Page
     /**
      * The intervals.
      *
-     * @var array
+     * @var array<int, int>
      */
     protected $intervals;
 
@@ -87,7 +87,7 @@ class Dashboard extends Page
         $this->setUpScreenOptions();
         $this->setUpWidgets();
 
-        $this->enqueueSettingsScript();
+        $this->enqueueScript();
         $this->enqueueAssets();
     }
 
@@ -192,9 +192,9 @@ class Dashboard extends Page
     /**
      * Returns extra data to be attached to `window.objectcache`.
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    protected function enqueueSettingsScriptExtra()
+    protected function enqueueScriptExtra()
     {
         $comboMetrics = $this->comboMetrics();
 
@@ -263,6 +263,7 @@ class Dashboard extends Page
     /**
      * Render the screen settings.
      *
+     * @param  string  $screen_settings
      * @return string
      */
     public function renderScreenSettings($screen_settings)
@@ -277,8 +278,8 @@ class Dashboard extends Page
     /**
      * Hide some metrics by default.
      *
-     * @param  array  $hidden
-     * @return array
+     * @param  array<string>  $hidden
+     * @return array<string>
      */
     public function defaultHiddenMetrics($hidden)
     {
@@ -291,6 +292,7 @@ class Dashboard extends Page
             'objectcache_metric_store_writes',
             'objectcache_metric_store_hits',
             'objectcache_metric_store_misses',
+            'objectcache_metric_sql_queries',
             'objectcache_metric_ms_total',
             'objectcache_metric_ms_cache',
             'objectcache_metric_ms_cache_median',
@@ -409,7 +411,7 @@ class Dashboard extends Page
             add_meta_box(
                 sprintf('objectcache_metric_%s', str_replace('-', '_', $id)),
                 $title,
-                function () use ($id, $metric) {
+                function () use ($id, $metric) { // @phpstan-ignore-line
                     require __DIR__ . '/../templates/widgets/metric.phtml';
                 },
                 $this->plugin->screenId(),
@@ -422,8 +424,8 @@ class Dashboard extends Page
     /**
      * Removes forbidden metrics and sorts them by priority.
      *
-     * @param  array  $metrics
-     * @return array
+     * @param  array<string>  $metrics
+     * @return array<mixed>
      */
     protected function filterMetrics(array $metrics)
     {
@@ -485,7 +487,7 @@ class Dashboard extends Page
     /**
      * Adds placeholder for the new combined charts.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     protected function comboMetrics()
     {

@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -18,6 +18,9 @@ namespace RedisCachePro\Plugin;
 
 use Throwable;
 
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Dropin
 {
     /**
@@ -104,9 +107,9 @@ trait Dropin
     /**
      * Update the object cache drop-in, if it's outdated.
      *
-     * @param  WP_Upgrader  $upgrader
-     * @param  array  $options
-     * @return bool
+     * @param  \WP_Upgrader  $upgrader
+     * @param  array<string, mixed>  $options
+     * @return bool|void
      */
     public function maybeUpdateDropin($upgrader, $options)
     {
@@ -152,7 +155,7 @@ trait Dropin
     /**
      * Initializes and connects the WordPress Filesystem Abstraction classes.
      *
-     * @return void
+     * @return \WP_Filesystem_Base
      */
     protected function wpFilesystem()
     {

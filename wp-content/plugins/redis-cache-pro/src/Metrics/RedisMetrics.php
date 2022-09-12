@@ -9,14 +9,14 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Metrics;
 
-use RedisCachePro\ObjectCaches\ObjectCacheInterface;
+use RedisCachePro\ObjectCaches\ObjectCache;
 
 class RedisMetrics
 {
@@ -116,13 +116,13 @@ class RedisMetrics
     /**
      * Creates a new instance from given object cache.
      *
-     * @param  \RedisCachePro\ObjectCaches\ObjectCacheInterface  $cache
+     * @param  \RedisCachePro\ObjectCaches\ObjectCache  $cache
      * @return void
      */
-    public function __construct(ObjectCacheInterface $cache)
+    public function __construct(ObjectCache $cache)
     {
         $info = $cache->connection()->memoize('info');
-        $total = $info['keyspace_hits'] + $info['keyspace_misses'];
+        $total = intval($info['keyspace_hits'] + $info['keyspace_misses']);
 
         $this->hits = $info['keyspace_hits'];
         $this->misses = $info['keyspace_misses'];
@@ -132,7 +132,7 @@ class RedisMetrics
         $this->usedMemory = $info['used_memory'];
         $this->usedMemoryRss = $info['used_memory_rss'];
         $this->memoryRatio = empty($info['maxmemory']) ? 0 : ($info['used_memory'] / $info['maxmemory']) * 100;
-        $this->memoryFragmentationRatio = $info['mem_fragmentation_ratio'];
+        $this->memoryFragmentationRatio = $info['mem_fragmentation_ratio'] ?? 0;
         $this->connectedClients = $info['connected_clients'];
         $this->trackingClients = $info['tracking_clients'] ?? 0;
         $this->rejectedConnections = $info['rejected_connections'];
@@ -151,7 +151,7 @@ class RedisMetrics
     /**
      * Returns the Redis metrics as array.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray()
     {
@@ -188,15 +188,11 @@ class RedisMetrics
     /**
      * Returns the schema for the Redis metrics.
      *
-     * @return array
+     * @return array<string, array<string, string>>
      */
     public static function schema()
     {
-        return array_map(function ($metric) {
-            $metric['group'] = 'redis';
-
-            return $metric;
-        }, [
+        $metrics = [
             'redis-hits' => [
                 'title' => 'Hits',
                 'description' => 'Number of successful key lookups.',
@@ -262,6 +258,12 @@ class RedisMetrics
                 'description' => 'The number of keys in the keyspace (database).',
                 'type' => 'integer',
             ],
-        ]);
+        ];
+
+        return array_map(function ($metric) {
+            $metric['group'] = 'redis';
+
+            return $metric;
+        }, $metrics);
     }
 }

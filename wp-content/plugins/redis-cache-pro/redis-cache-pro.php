@@ -3,9 +3,9 @@
  * Plugin Name: Object Cache Pro
  * Plugin URI: https://objectcache.pro
  * Description: A business class Redis object cache backend for WordPress.
- * Version: 1.15.2
- * Author: 盛龙科技
- * Author URI: https://www.slongw.net
+ * Version: 1.16.1
+ * Author: Rhubarb Group
+ * Author URI: https://rhubarb.group
  * License: Proprietary
  * Update URI: false
  * Network: true
@@ -15,9 +15,23 @@
 defined('ABSPATH') || exit;
 
 /**
+ * Abort plugin boot on unsupported PHP versions.
+ */
+if (version_compare(PHP_VERSION, '7.2', '<')) {
+    return;
+}
+
+/**
+ * Avoid loading plugin more than once.
+ */
+if (defined('RedisCachePro\Version')) {
+    return error_log('objectcache.notice: Object Cache Pro is being loaded more than once');
+}
+
+/**
  * The plugin version number.
  */
-define('RedisCachePro\Version', '1.15.2');
+define('RedisCachePro\Version', '1.16.1');
 
 /**
  * The absolute path to the plugin file.
@@ -29,13 +43,6 @@ define('RedisCachePro\Filename', __FILE__);
  */
 require_once ABSPATH . 'wp-admin/includes/file.php';
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
-
-/**
- * Abort plugin boot on unsupported PHP versions.
- */
-if (version_compare(PHP_VERSION, '7.2', '<')) {
-    return;
-}
 
 require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/src/License.php';

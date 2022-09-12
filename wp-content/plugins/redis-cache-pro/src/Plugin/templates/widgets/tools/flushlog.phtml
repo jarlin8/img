@@ -56,21 +56,9 @@ $log = get_site_option('objectcache_flushlog', []);
 
     <?php if (! WP_DEBUG && ! $this->plugin->config()->debug) : ?>
         <label class="inset">
-            <input type="checkbox" name="objectcache_options[flushlog]" value="1" <?php checked($this->plugin->option('flushlog')); ?>>
+            <input type="checkbox" name="flushlog" value="1" <?php checked($this->plugin->option('flushlog')); ?>>
             Keep a log of cache flushes
         </label>
-
-        <script>
-            document.querySelector(
-                '.objectcache\\:widget input'
-            ).addEventListener('change', function (event) {
-                jQuery.post(ajaxurl, {
-                    action: 'objectcache-options',
-                    flushlog: event.target.checked ? 1 : 0,
-                    nonce: '<?php echo \wp_create_nonce('objectcache-options'); ?>',
-                });
-            });
-        </script>
     <?php endif; ?>
 
 </div>

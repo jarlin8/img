@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -25,14 +25,14 @@ class AggregateWatcher extends Notify
     /**
      * Holds the command options.
      *
-     * @var array
+     * @var array<mixed>
      */
     public $options;
 
     /**
      * The object cache instance.
      *
-     * @var \RedisCachePro\ObjectCaches\ObjectCacheInterface;
+     * @var \RedisCachePro\ObjectCaches\MeasuredObjectCacheInterface
      */
     public $cache;
 
@@ -53,14 +53,14 @@ class AggregateWatcher extends Notify
     /**
      * The measurements to display.
      *
-     * @var \RedisCachePro\Metrics\Measurements
+     * @var \RedisCachePro\Metrics\Measurements|null
      */
     protected $measurements;
 
     /**
      * Holds the default metrics.
      *
-     * @var array
+     * @var array<string>
      */
     protected $defaultMetrics = [
         'ms-total',
@@ -73,6 +73,7 @@ class AggregateWatcher extends Notify
         'store-writes',
         'store-hits',
         'store-misses',
+        'sql-queries',
         'redis-hit-ratio',
         'redis-ops-per-sec',
         'redis-memory-ratio',
@@ -115,7 +116,10 @@ class AggregateWatcher extends Notify
             $data[] = $this->format($metric, $this->{$method}());
         }
 
-        Streams::line(implode(' ', array_filter($data)));
+        /** @var array<string> $data */
+        $data = array_filter($data);
+
+        Streams::line(implode(' ', $data));
 
         $this->measurements = null;
     }
@@ -142,6 +146,7 @@ class AggregateWatcher extends Notify
 
         $max = $now - 2;
         $min = $max - $window;
+
         $this->measurements = $this->cache->measurements($min, "({$max}");
     }
 
@@ -150,7 +155,7 @@ class AggregateWatcher extends Notify
      *
      * @param  string  $metric
      * @param  mixed  $value
-     * @return string
+     * @return string|void
      */
     protected function format(string $metric, $value)
     {
@@ -167,6 +172,8 @@ class AggregateWatcher extends Notify
                 return sprintf($format, 35, $metric, $value);
             case 'ms':
                 return sprintf($format, 36, $metric, $value);
+            case 'sql':
+                return sprintf($format, 33, $metric, $value);
             case 'measurements':
                 return sprintf($format, 32, $metric, $value);
             default:
@@ -179,7 +186,7 @@ class AggregateWatcher extends Notify
      */
     protected function getHits()
     {
-        return round($this->measurements->median('wp->hits'));
+        return (int) round($this->measurements->median('wp->hits'));
     }
 
     /**
@@ -187,11 +194,11 @@ class AggregateWatcher extends Notify
      */
     protected function getMisses()
     {
-        return round($this->measurements->median('wp->misses'));
+        return (int) round($this->measurements->median('wp->misses'));
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     protected function getHitRatio()
     {
@@ -205,7 +212,7 @@ class AggregateWatcher extends Notify
      */
     protected function getBytes()
     {
-        return round($this->measurements->median('wp->bytes'));
+        return (int) round($this->measurements->median('wp->bytes'));
     }
 
     /**
@@ -213,7 +220,7 @@ class AggregateWatcher extends Notify
      */
     protected function getPrefetches()
     {
-        return round($this->measurements->median('wp->prefetches'));
+        return (int) round($this->measurements->median('wp->prefetches'));
     }
 
     /**
@@ -221,7 +228,7 @@ class AggregateWatcher extends Notify
      */
     protected function getStoreReads()
     {
-        return round($this->measurements->median('wp->storeReads'));
+        return (int) round($this->measurements->median('wp->storeReads'));
     }
 
     /**
@@ -229,7 +236,7 @@ class AggregateWatcher extends Notify
      */
     protected function getStoreWrites()
     {
-        return round($this->measurements->median('wp->storeWrites'));
+        return (int) round($this->measurements->median('wp->storeWrites'));
     }
 
     /**
@@ -237,7 +244,7 @@ class AggregateWatcher extends Notify
      */
     protected function getStoreHits()
     {
-        return round($this->measurements->median('wp->storeHits'));
+        return (int) round($this->measurements->median('wp->storeHits'));
     }
 
     /**
@@ -245,11 +252,19 @@ class AggregateWatcher extends Notify
      */
     protected function getStoreMisses()
     {
-        return round($this->measurements->median('wp->storeMisses'));
+        return (int) round($this->measurements->median('wp->storeMisses'));
     }
 
     /**
-     * @return string
+     * @return int
+     */
+    protected function getSqlQueries()
+    {
+        return (int) round($this->measurements->median('wp->sqlQueries'));
+    }
+
+    /**
+     * @return string|null
      */
     protected function getMsTotal()
     {
@@ -259,7 +274,7 @@ class AggregateWatcher extends Notify
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     protected function getMsCache()
     {
@@ -269,7 +284,7 @@ class AggregateWatcher extends Notify
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     protected function getMsCacheRatio()
     {
@@ -283,7 +298,7 @@ class AggregateWatcher extends Notify
      */
     protected function getRedisHits()
     {
-        return round($this->measurements->median('redis->hits'));
+        return (int) round($this->measurements->median('redis->hits'));
     }
 
     /**
@@ -291,11 +306,11 @@ class AggregateWatcher extends Notify
      */
     protected function getRedisMisses()
     {
-        return round($this->measurements->median('redis->misses'));
+        return (int) round($this->measurements->median('redis->misses'));
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     protected function getRedisHitRatio()
     {
@@ -305,47 +320,47 @@ class AggregateWatcher extends Notify
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     protected function getRedisOpsPerSec()
     {
         $opsPerSec = $this->measurements->latest('redis->opsPerSec');
 
-        return is_null($opsPerSec) ? null : round($opsPerSec);
+        return is_null($opsPerSec) ? null : (int) round($opsPerSec);
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     protected function getRedisEvictedKeys()
     {
         $evictedKeys = $this->measurements->latest('redis->evictedKeys');
 
-        return is_null($evictedKeys) ? null : round($evictedKeys);
+        return is_null($evictedKeys) ? null : (int) round($evictedKeys);
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     protected function getRedisUsedMemory()
     {
         $usedMemory = $this->measurements->latest('redis->usedMemory');
 
-        return is_null($usedMemory) ? null : round($usedMemory);
+        return is_null($usedMemory) ? null : (int) round($usedMemory);
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     protected function getRedisUsedMemoryRss()
     {
         $usedMemoryRss = $this->measurements->latest('redis->usedMemoryRss');
 
-        return is_null($usedMemoryRss) ? null : round($usedMemoryRss);
+        return is_null($usedMemoryRss) ? null : (int) round($usedMemoryRss);
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     protected function getRedisMemoryRatio()
     {
@@ -355,7 +370,7 @@ class AggregateWatcher extends Notify
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     protected function getRedisMemoryFragmentationRatio()
     {
@@ -365,95 +380,95 @@ class AggregateWatcher extends Notify
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     protected function getRedisConnectedClients()
     {
         $connectedClients = $this->measurements->latest('redis->connectedClients');
 
-        return is_null($connectedClients) ? null : round($connectedClients);
+        return is_null($connectedClients) ? null : (int) round($connectedClients);
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     protected function getRedisTrackingClients()
     {
         $trackingClients = $this->measurements->latest('redis->trackingClients');
 
-        return is_null($trackingClients) ? null : round($trackingClients);
+        return is_null($trackingClients) ? null : (int) round($trackingClients);
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     protected function getRedisRejectedConnections()
     {
         $rejectedConnections = $this->measurements->latest('redis->rejectedConnections');
 
-        return is_null($rejectedConnections) ? null : round($rejectedConnections);
+        return is_null($rejectedConnections) ? null : (int) round($rejectedConnections);
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     protected function getRedisKeys()
     {
         $keys = $this->measurements->latest('redis->keys');
 
-        return is_null($keys) ? null : round($keys);
+        return is_null($keys) ? null : (int) round($keys);
     }
 
     /**
-     * @return int
+     * @return int|void
      */
     protected function getRelayHits()
     {
         if ($this->usingRelay) {
             $hits = $this->measurements->latest('relay->hits');
 
-            return is_null($hits) ? null : round($hits);
+            return is_null($hits) ? null : (int) round($hits);
         }
     }
 
     /**
-     * @return int
+     * @return int|void
      */
     protected function getRelayMisses()
     {
         if ($this->usingRelay) {
             $misses = $this->measurements->latest('relay->misses');
 
-            return is_null($misses) ? null : round($misses);
+            return is_null($misses) ? null : (int) round($misses);
         }
     }
 
     /**
-     * @return int
+     * @return int|void
      */
     protected function getRelayMemoryActive()
     {
         if ($this->usingRelay) {
             $memoryActive = $this->measurements->latest('relay->memoryActive');
 
-            return is_null($memoryActive) ? null : round($memoryActive);
+            return is_null($memoryActive) ? null : (int) round($memoryActive);
         }
     }
 
     /**
-     * @return int
+     * @return int|void
      */
     protected function getRelayMemoryTotal()
     {
         if ($this->usingRelay) {
             $memoryTotal = $this->measurements->latest('relay->memoryTotal');
 
-            return is_null($memoryTotal) ? null : round($memoryTotal);
+            return is_null($memoryTotal) ? null : (int) round($memoryTotal);
         }
     }
 
     /**
-     * @return string
+     * @return string|void
      */
     protected function getRelayMemoryRatio()
     {

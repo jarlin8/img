@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -20,8 +20,9 @@ use Throwable;
 
 use RedisCachePro\Diagnostics\Diagnostics;
 use RedisCachePro\Configuration\Configuration;
+use RedisCachePro\ObjectCaches\ObjectCacheInterface;
 
-class Plugin
+final class Plugin
 {
     use Plugin\Extensions\Debugbar,
         Plugin\Extensions\QueryMonitor,
@@ -100,9 +101,9 @@ class Plugin
         $instance->version = Version;
         $instance->basename = Basename;
         $instance->filename = Filename;
-        $instance->directory = realpath(__DIR__ . '/..');
+        $instance->directory = (string) realpath(__DIR__ . '/..');
 
-        if ($wp_object_cache && method_exists($wp_object_cache, 'config')) {
+        if ($wp_object_cache instanceof ObjectCacheInterface) {
             $instance->config = $wp_object_cache->config();
         } else {
             $instance->config = Configuration::safelyFrom(
@@ -110,8 +111,8 @@ class Plugin
             );
         }
 
-        foreach (class_uses($instance) as $class) {
-            $name = substr($class, strrpos($class, '\\') + 1);
+        foreach ((array) class_uses($instance) as $class) {
+            $name = substr((string) $class, strrpos((string) $class, '\\') + 1);
 
             $instance->{"boot{$name}"}();
         }

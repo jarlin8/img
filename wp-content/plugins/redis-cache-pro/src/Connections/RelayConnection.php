@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -18,6 +18,7 @@ namespace RedisCachePro\Connections;
 
 use Relay\Relay;
 
+use RedisCachePro\Connectors\RelayConnector;
 use RedisCachePro\Configuration\Configuration;
 
 /**
@@ -47,6 +48,10 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
 
         $this->setSerializer();
         $this->setCompression();
+
+        if (RelayConnector::supports('backoff')) {
+            $this->setBackoff();
+        }
 
         if ($this->config->relay->invalidations === false) {
             $this->client->setOption(Relay::OPT_CLIENT_INVALIDATIONS, false);
@@ -110,7 +115,7 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
      *
      * Bypasses the `command()` method to avoid log spam.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function stats()
     {
@@ -122,7 +127,7 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
      *
      * Bypasses the `command()` method to avoid log spam.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function license()
     {
@@ -134,7 +139,7 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
      *
      * Bypasses the `command()` method to avoid log spam.
      *
-     * @return int|false
+     * @return string|false
      */
     public function endpointId()
     {
@@ -148,13 +153,11 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
      * the `async_flush` configuration option or `$async` parameter.
      *
      * @param  bool|null  $async
-     * @return true
+     * @return bool
      */
     public function flushdb($async = null)
     {
-        $this->command('flushdb', [true]);
-
-        return true;
+        return $this->command('flushdb', [true]);
     }
 
     /**
@@ -166,9 +169,10 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
     public function memoize($command)
     {
         if ($command === 'ping') {
-            return $this->client->idleTime() > 1000
-                ? $this->client->ping()
-                : true;
+            /** @var int|false $idleTime */
+            $idleTime = $this->client->idleTime();
+
+            return $idleTime > 1000 ? $this->client->ping() : true;
         }
 
         return parent::memoize($command);

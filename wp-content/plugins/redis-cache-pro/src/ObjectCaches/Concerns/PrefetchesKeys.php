@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ trait PrefetchesKeys
     /**
      * Holds the prefetchable keys.
      *
-     * @var array
+     * @var array<string, array<int|string, bool>>
      */
     protected $prefetch = [];
 
@@ -50,6 +50,8 @@ trait PrefetchesKeys
      * If prefetching is enabled and the current HTTP request is prefetchable,
      * retrieve prefetchable keys in batch of cache groups and register
      * a shutdown handler to keep the prefetches current.
+     *
+     * @return void
      */
     public function prefetch()
     {
@@ -80,8 +82,9 @@ trait PrefetchesKeys
     /**
      * Ensure the prefetched items are not incomplete PHP classes.
      *
-     * @param  array  $items
+     * @param  array<mixed>  $items
      * @param  string  $group
+     * @return void
      */
     protected function ensurePrefetchability($items, $group)
     {
@@ -107,6 +110,7 @@ trait PrefetchesKeys
      *
      * @param  string  $key
      * @param  string  $group
+     * @return void
      */
     protected function undoPrefetch(string $key, string $group)
     {
@@ -124,6 +128,8 @@ trait PrefetchesKeys
 
     /**
      * Store the prefetches for the current HTTP request.
+     *
+     * @return void
      */
     protected function storePrefetches()
     {
@@ -142,7 +148,7 @@ trait PrefetchesKeys
         // don't prefetch `alloptions` when using hashes
         if ($this->config->split_alloptions) {
             foreach ($prefetch['options'] ?? [] as $i => $key) {
-                if (\strpos($key, 'alloptions') !== false) {
+                if (\strpos((string) $key, 'alloptions') !== false) {
                     unset($prefetch['options'][$i]);
                 }
             }
@@ -162,14 +168,12 @@ trait PrefetchesKeys
     {
         $this->prefetch = [];
 
-        $script = file_get_contents(__DIR__ . '/../scripts/chunked-scan.lua');
-        $command = $this->config->async_flush ? 'UNLINK' : 'DEL';
         $pattern = is_null($this->config->cluster)
             ? '*prefetches:*'
             : '*{prefetches}:*';
 
         try {
-            $this->connection->eval($script, [$pattern, $command], 1);
+            $this->deleteByPattern($pattern);
         } catch (Throwable $exception) {
             $this->error($exception);
 
@@ -198,9 +202,9 @@ trait PrefetchesKeys
     protected function requestIsPrefetchable(): bool
     {
         if (
-            (defined('\WP_CLI') && \WP_CLI) ||
-            (defined('\REST_REQUEST') && \REST_REQUEST) ||
-            (defined('\XMLRPC_REQUEST') && \XMLRPC_REQUEST)
+            (defined('\WP_CLI') && constant('\WP_CLI')) ||
+            (defined('\REST_REQUEST') && constant('\REST_REQUEST')) ||
+            (defined('\XMLRPC_REQUEST') && constant('\XMLRPC_REQUEST'))
         ) {
             return false;
         }

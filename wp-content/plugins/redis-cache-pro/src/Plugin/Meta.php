@@ -9,15 +9,19 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Plugin;
 
+use RedisCachePro\Plugin;
 use RedisCachePro\Diagnostics\Diagnostics;
 
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Meta
 {
     /**
@@ -41,11 +45,11 @@ trait Meta
     /**
      * Adds useful links to the meta row of the plugin, must-use plugin and drop-in.
      *
-     * @param  array  $links
+     * @param  array<string>  $links
      * @param  string  $file
-     * @param  array  $data
+     * @param  array<string, string>  $data
      * @param  string  $status
-     * @return array
+     * @return array<string>
      */
     public function pluginRowMeta($links, $file, $data, $status)
     {
@@ -81,8 +85,8 @@ trait Meta
     /**
      * Adds useful links to the plugin action link list.
      *
-     * @param  array  $links
-     * @return array
+     * @param  array<string>  $links
+     * @return array<string>
      */
     public function actionLinks($links)
     {
@@ -94,7 +98,7 @@ trait Meta
             ], $links);
         }
 
-        if (current_user_can(self::Capability)) {
+        if (current_user_can(Plugin::Capability)) {
             $links = array_merge([
                 sprintf('<a href="%s">Settings</a>', network_admin_url($this->baseurl)),
             ], $links);
@@ -106,9 +110,9 @@ trait Meta
     /**
      * Adds a "Flush" link to sites in "Network Admin -> Sites".
      *
-     * @param  array  $actions
+     * @param  array<string>  $actions
      * @param  int  $blog_id
-     * @return array
+     * @return array<string>
      */
     public function siteActionLinks($actions, $blog_id)
     {
@@ -120,7 +124,7 @@ trait Meta
             return $actions;
         }
 
-        if (! current_user_can(self::Capability) || ! current_user_can('manage_sites')) {
+        if (! current_user_can(Plugin::Capability) || ! current_user_can('manage_sites')) {
             return $actions;
         }
 
@@ -144,15 +148,18 @@ trait Meta
     /**
      * Fetch plugin information for update modal.
      *
-     * @param  false|object|array  $result
+     * @param  object|array<mixed>|false  $result
      * @param  string  $action
      * @param  object  $args
-     *
-     * @return object|array|WP_Error
+     * @return object|array<mixed>|false
      */
     public function pluginInformation($result, $action = null, $args = null)
     {
-        if ($action === 'plugin_information' && $args->slug === $this->slug()) {
+        if ($action !== 'plugin_information') {
+            return $result;
+        }
+
+        if ($this->slug() === ($args->slug ?? null)) {
             $info = $this->pluginInfoRequest();
 
             if (is_wp_error($info)) {
@@ -166,6 +173,10 @@ trait Meta
             $info->icons = (array) $info->icons;
             $info->banners = (array) $info->banners;
             $info->sections = (array) $info->sections;
+
+            if (isset($info->contributors)) {
+                $info->contributors = array_map('get_object_vars', get_object_vars($info->contributors));
+            }
 
             return $info;
         }

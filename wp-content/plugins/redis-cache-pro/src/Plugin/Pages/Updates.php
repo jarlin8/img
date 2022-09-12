@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -62,6 +62,9 @@ class Updates extends Page
 
         $this->setUpSettings();
 
+        $this->enqueueScript();
+        $this->enqueueOptionsScript();
+
         $forceCheck = ! empty($_GET['force-check']);
 
         $this->info = $this->setUpPluginInfo($forceCheck);
@@ -111,18 +114,20 @@ class Updates extends Page
      * clear the WordPress plugin updates cache.
      *
      * @param  bool  $force
-     * @return void
+     * @return object|\WP_Error
      */
     protected function setUpPluginInfo($force)
     {
         $info = $this->pluginInfo($force);
 
         if (is_wp_error($info)) {
-            return add_settings_error('objectcache', $info->get_error_code(), sprintf(
+            add_settings_error('objectcache', (string) $info->get_error_code(), sprintf(
                 'Unable to retrieve update information: %s [%s]',
                 $info->get_error_message(),
                 $info->get_error_code()
             ));
+
+            return $info;
         }
 
         $updates = get_site_transient('update_plugins');

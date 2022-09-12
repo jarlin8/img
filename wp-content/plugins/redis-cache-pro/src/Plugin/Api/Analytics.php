@@ -10,7 +10,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -25,12 +25,22 @@ use WP_REST_Controller;
 
 use RedisCachePro\Plugin;
 
+use RedisCachePro\ObjectCaches\ObjectCacheInterface;
+use RedisCachePro\ObjectCaches\MeasuredObjectCacheInterface;
+
 use RedisCachePro\Metrics\RedisMetrics;
 use RedisCachePro\Metrics\RelayMetrics;
 use RedisCachePro\Metrics\WordPressMetrics;
 
 class Analytics extends WP_REST_Controller
 {
+    /**
+     * The resource name of this controller's route.
+     *
+     * @var string
+     */
+    protected $resource_name;
+
     /**
      * The default interval, in seconds.
      *
@@ -44,7 +54,7 @@ class Analytics extends WP_REST_Controller
      * The keys represent the resolution in seconds
      * and the values are the number of intervals.
      *
-     * @var array
+     * @var array<int, int>
      */
     protected static $intervals = [
         10 => 30,
@@ -81,7 +91,7 @@ class Analytics extends WP_REST_Controller
     /**
      * Returns the supported intervals.
      *
-     * @return array
+     * @return array<int, int>
      */
     public static function intervals()
     {
@@ -136,14 +146,14 @@ class Analytics extends WP_REST_Controller
         return new WP_Error(
             'rest_forbidden',
             'Sorry, you are not allowed to do that.',
-            ['status' => is_user_logged_in() ? 403 : 401]
+            ['status' => rest_authorization_required_code()]
         );
     }
 
     /**
      * Retrieves the query params for the posts collection.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function get_collection_params()
     {
@@ -174,7 +184,15 @@ class Analytics extends WP_REST_Controller
     {
         global $wp_object_cache;
 
-        if (! method_exists($wp_object_cache, 'measurements')) {
+        if (! $wp_object_cache instanceof ObjectCacheInterface) {
+            return new WP_Error(
+                'objectcache_not_supported',
+                'The object cache is not supported.',
+                ['status' => 400]
+            );
+        }
+
+        if (! $wp_object_cache instanceof MeasuredObjectCacheInterface) {
             return new WP_Error(
                 'objectcache_analytics_unsupported',
                 'The object cache does not support analytics.',
@@ -182,10 +200,10 @@ class Analytics extends WP_REST_Controller
             );
         }
 
-        if (! method_exists($wp_object_cache, 'config')) {
+        if (! $wp_object_cache->connection()) {
             return new WP_Error(
-                'objectcache_config_not_found',
-                'The object cache is not configured yet.',
+                'objectcache_not_connected',
+                'The object cache is not connected.',
                 ['status' => 400]
             );
         }
@@ -209,7 +227,7 @@ class Analytics extends WP_REST_Controller
 
         $max = (int) $now - ($interval * $per_page * ($page - 1));
 
-        $intervals = $wp_object_cache->measurements($min, $max)
+        $intervals = $wp_object_cache->measurements((string) $min, (string) $max)
             ->intervals($interval);
 
         $range = array_slice(array_reverse(range($min, $max, $interval)), 0, 30, true);
@@ -228,10 +246,10 @@ class Analytics extends WP_REST_Controller
      * Prepares a single interval output for response.
      *
      * @param  array  $item
-     * @param  WP_REST_Request  $request
-     * @return WP_REST_Response
+     * @param  \WP_REST_Request  $request
+     * @return array
      */
-    public function prepare_item_for_response($item, $request)
+    public function prepare_item_for_response($item, $request) // @phpstan-ignore-line
     {
         $fields = $this->get_fields_for_response($request);
 
@@ -292,10 +310,16 @@ class Analytics extends WP_REST_Controller
     /**
      * Returns the metrics for each group and their supported computations.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     protected function get_metrics()
     {
+        $metrics = array_merge(
+            WordPressMetrics::schema(),
+            RedisMetrics::schema(),
+            RelayMetrics::schema()
+        );
+
         return array_map(function ($metric) {
             $metric['computations'] = [
                 'max',
@@ -307,17 +331,13 @@ class Analytics extends WP_REST_Controller
             ];
 
             return $metric;
-        }, array_merge(
-            WordPressMetrics::schema(),
-            RedisMetrics::schema(),
-            RelayMetrics::schema()
-        ));
+        }, $metrics);
     }
 
     /**
      * Retrieves the endpoint's schema, conforming to JSON Schema.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function get_item_schema()
     {

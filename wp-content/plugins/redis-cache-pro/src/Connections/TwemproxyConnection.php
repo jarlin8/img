@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -40,8 +40,8 @@ class TwemproxyConnection extends PhpRedisConnection implements ConnectionInterf
     /**
      * Run a command against Redis.
      *
-     * @param  string  $command
-     * @param  array  $parameters
+     * @param  string  $name
+     * @param  array<mixed>  $parameters
      * @return mixed
      */
     public function command(string $name, array $parameters = [])

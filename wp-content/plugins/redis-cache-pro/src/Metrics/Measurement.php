@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -33,9 +33,9 @@ class Measurement
     public $timestamp;
 
     /**
-     * The timestamp of the measurement.
+     * The hostname on which the measurement was taken.
      *
-     * @var int
+     * @var string|null
      */
     public $hostname;
 
@@ -56,14 +56,14 @@ class Measurement
     /**
      * The Redis measurement.
      *
-     * @var \RedisCachePro\Metrics\RedisMetrics
+     * @var \RedisCachePro\Metrics\RedisMetrics|null
      */
     public $redis;
 
     /**
      * The Relay measurement.
      *
-     * @var \RedisCachePro\Metrics\RelayMetrics
+     * @var \RedisCachePro\Metrics\RelayMetrics|null
      */
     public $relay;
 
@@ -78,7 +78,8 @@ class Measurement
 
         $self->id = substr(md5(uniqid((string) mt_rand(), true)), 12);
         $self->timestamp = microtime(true);
-        $self->hostname = gethostname();
+        $self->hostname = gethostname() ?: null;
+
         $self->path = $_SERVER['REQUEST_URI'] ?? null;
 
         if (isset($_ENV['DYNO'])) {
@@ -88,6 +89,11 @@ class Measurement
         return $self;
     }
 
+    /**
+     * Returns an rfc3339 compatible timestamp.
+     *
+     * @return string
+     */
     public function rfc3339()
     {
         return substr_replace(
@@ -101,7 +107,7 @@ class Measurement
     /**
      * Returns the measurement as array.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function toArray()
     {

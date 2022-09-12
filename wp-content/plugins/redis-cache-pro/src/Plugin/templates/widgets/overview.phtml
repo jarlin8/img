@@ -70,7 +70,7 @@ $admin_nonce_url = function ($action) {
 
         <?php if ($evictionPolicy->hasValue() && $evictionPolicy->hasIssue()) : ?>
             <li>
-                <span class="dashicons dashicons-screenoptions"></span>
+                <span class="dashicons dashicons-admin-generic"></span>
                 Eviction: <?php echo $evictionPolicy->html; ?>
             </li>
         <?php endif; ?>
@@ -91,13 +91,13 @@ $admin_nonce_url = function ($action) {
         <?php if ($usingRelay) : ?>
             <?php if ($this->config->shared && $relayKeys->hasValue()) : ?>
                 <li>
-                    <span class="dashicons dashicons-database-import"></span>
+                    <span class="dashicons dashicons-database-add"></span>
                     Relay: <?php echo number_format($relayKeys->value); ?>
                     <?php echo _n('object', 'objects', $relayKeys->value) ?>
                 </li>
             <?php elseif ($relayMemory->hasValue()): ?>
                 <li>
-                    <span class="dashicons dashicons-database-import"></span>
+                    <span class="dashicons dashicons-database-add"></span>
                     Relay: <?php echo $relayMemory->html; ?>
                 </li>
             <?php endif; ?>

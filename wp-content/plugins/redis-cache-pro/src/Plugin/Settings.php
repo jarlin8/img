@@ -9,13 +9,18 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
 
 namespace RedisCachePro\Plugin;
 
+use RedisCachePro\Plugin;
+
+/**
+ * @mixin \RedisCachePro\Plugin
+ */
 trait Settings
 {
     /**
@@ -48,8 +53,9 @@ trait Settings
     {
         add_action('init', [$this, 'registerOptionsSetting']);
 
-        add_action('rest_api_init', [new Api\Latency, 'register_routes']);
         add_action('rest_api_init', [new Api\Groups, 'register_routes']);
+        add_action('rest_api_init', [new Api\Latency, 'register_routes']);
+        add_action('rest_api_init', [new Api\Options($this), 'register_routes']);
 
         add_action('admin_init', [$this, 'maybeRedirectToSettings']);
         add_action('current_screen', [$this, 'setUpSettingsScreen']);
@@ -61,8 +67,6 @@ trait Settings
 
         if (is_multisite()) {
             add_action('network_admin_menu', [$this, 'registerMenu']);
-            add_action('network_admin_edit_objectcache-update', [$this, 'saveNetworkSettings']);
-
             add_action('current_screen', [$this, 'maybeRedirectToNetworkSettings'], -1);
 
             $this->baseurl = 'settings.php?page=objectcache';
@@ -73,8 +77,6 @@ trait Settings
             $this->baseurl = 'options-general.php?page=objectcache';
             $this->screenId = 'settings_page_objectcache';
         }
-
-        add_action('wp_ajax_objectcache-options', [$this, 'ajax_options']);
     }
 
     /**
@@ -104,13 +106,13 @@ trait Settings
      */
     public function screenCapability()
     {
-        return self::Capability;
+        return Plugin::Capability;
     }
 
     /**
      * Set up the settings page, if the current screen matches.
      *
-     * @param  WP_Screen  $screen
+     * @param  \WP_Screen  $screen
      * @return void
      */
     public function setUpSettingsScreen($screen)
@@ -121,7 +123,7 @@ trait Settings
 
         add_action('in_admin_header', [$this, 'renderNavbar']);
         add_action('in_admin_header', [$this, 'removeForeignNotices'], PHP_INT_MAX);
-        add_action('admin_enqueue_scripts', [$this, 'enqueueAdminAssets']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
 
         add_filter('update_footer', [$this, 'settingsFooterUpdate'], PHP_INT_MAX);
         add_filter('admin_footer_text', [$this, 'settingsFooterText'], PHP_INT_MAX);
@@ -157,7 +159,7 @@ trait Settings
                 'Object Cache %s',
                 $updateAvailable ? '<span class="update-plugins count-1"><span class="update-count">1</span></span>' : ''
             ),
-            $isMultisite ? 'manage_network_options' : self::Capability,
+            $isMultisite ? 'manage_network_options' : Plugin::Capability,
             'objectcache',
             function () {
                 $this->pages->current()->render();
@@ -172,7 +174,7 @@ trait Settings
     }
 
     /**
-     * Register the plugin settings.
+     * Register the plugin `objectcache_options` setting.
      *
      * @return void
      */
@@ -199,8 +201,8 @@ trait Settings
     /**
      * Called when the `objectcache_options` option has been changed.
      *
-     * @param  array  $new
-     * @param  array  $old
+     * @param  array<string, mixed>  $new
+     * @param  array<string, mixed>  $old
      * @return void
      */
     protected function optionsUpdated($new, $old)
@@ -215,9 +217,9 @@ trait Settings
     }
 
     /**
-     * Returns all options or their default values.
+     * Returns all options and their values or default values.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function options()
     {
@@ -232,7 +234,7 @@ trait Settings
     }
 
     /**
-     * Returns the option value or its default value.
+     * Returns the option's value or its default value.
      *
      * @param  string  $name
      * @return mixed
@@ -245,7 +247,7 @@ trait Settings
     /**
      * Returns the default options.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function defaultOptions()
     {
@@ -271,34 +273,23 @@ trait Settings
     }
 
     /**
-     * Sanitize and validate options.
+     * Sanitize the `objectcache_options` option values.
+     * This will provide some safety when options are changed using WP CLI.
      *
-     * @see registerOptionsSetting()
-     *
-     * @param  array  $input
-     * @return void
+     * @param  array<string, mixed>  $input
+     * @return array<string, mixed>
      */
     public function sanitizeOptions($input)
     {
-        $options = $this->options();
         $defaults = $this->defaultOptions();
-
         $sanitizer = new Options\Sanitizer;
-        $validator = new Options\Validator($this);
 
         $input = array_filter((array) $input, function ($name) use ($defaults) {
             return array_key_exists($name, $defaults);
         }, ARRAY_FILTER_USE_KEY);
 
-        array_walk($input, function (&$value, $name) use ($sanitizer, $validator, $options) {
+        array_walk($input, function (&$value, $name) use ($sanitizer) {
             $value = $sanitizer->{$name}($value);
-            $error = $validator->{$name}($value);
-
-            if (is_wp_error($error)) {
-                $value = $options[$name];
-
-                add_settings_error('objectcache_options', $error->get_error_code(), $error->get_error_message());
-            }
         });
 
         return $input;
@@ -311,14 +302,14 @@ trait Settings
      *
      * @param  false  $screen_option
      * @param  string  $option
-     * @param  array  $value
-     * @return void
+     * @param  array<string, mixed>  $value
+     * @return array<string, mixed>
      */
     public function sanitizeScreenOptions($screen_option, $option, $value)
     {
         return [
-            'interval' => (int) $value['analytics_interval'] ?? 0,
-            'refresh' => (bool) $value['analytics_refresh'] ?? false,
+            'interval' => (int) ($value['analytics_interval'] ?? 0),
+            'refresh' => (bool) ($value['analytics_refresh'] ?? false),
         ];
     }
 
@@ -339,7 +330,7 @@ trait Settings
             return;
         }
 
-        if (! \current_user_can(self::Capability)) {
+        if (! \current_user_can(Plugin::Capability)) {
             return;
         }
 
@@ -352,7 +343,7 @@ trait Settings
     /**
      * In multisite environments redirect setting pages to the Network Admin.
      *
-     * @param  WP_Screen  $screen
+     * @param  \WP_Screen  $screen
      * @return void
      */
     public function maybeRedirectToNetworkSettings($screen)
@@ -366,45 +357,15 @@ trait Settings
     }
 
     /**
-     * Shim for WP's missing Settings API handling in multisite environments.
-     *
-     * @see bootSettings()
-     *
-     * @return void
-     */
-    public function saveNetworkSettings()
-    {
-        check_admin_referer('objectcache-options');
-
-        if (! current_user_can('manage_network_options')) {
-            wp_die('Sorry, you are not allowed to manage options for this site.');
-        }
-
-        if (! empty($_POST['objectcache_options'])) {
-            update_site_option('objectcache_options', wp_unslash($_POST['objectcache_options']));
-        }
-
-        if (! count(get_settings_errors())) {
-            add_settings_error('general', 'settings_updated', 'Settings saved.', 'success');
-        }
-
-        set_transient('settings_errors', get_settings_errors(), 30);
-
-        wp_redirect(add_query_arg('settings-updated', 'true', wp_get_referer()));
-        exit;
-    }
-
-    /**
      * Enqueue the settings page stylesheet.
      *
      * @see setUpSettingsScreen()
      *
      * @return void
      */
-    public function enqueueAdminAssets()
+    public function enqueueAdminStyles()
     {
         $styles = $this->asset('css/settings.css');
-        $styles = false;
 
         if ($styles) {
             wp_enqueue_style('objectcache-settings', $styles, [], $this->version);
@@ -438,7 +399,7 @@ trait Settings
 
         require __DIR__ . '/templates/footer.phtml';
 
-        return ob_get_clean();
+        return (string) ob_get_clean();
     }
 
     /**
@@ -454,40 +415,6 @@ trait Settings
     }
 
     /**
-     * Callback for `objectcache-options` AJAX request.
-     *
-     * @see Settings::bootSettings()
-     *
-     * @return void
-     */
-    public function ajax_options()
-    {
-        check_ajax_referer('objectcache-options', 'nonce');
-
-        if (! current_user_can(self::Capability)) {
-            wp_die('Sorry, you are not allowed to manage options for this site.');
-        }
-
-        $options = $this->options();
-
-        $sanitizer = new Options\Sanitizer;
-        $validator = new Options\Validator($this);
-
-        foreach (array_keys($options) as $name) {
-            if (isset($_POST[$name])) {
-                $value = $sanitizer->{$name}(wp_unslash($_POST[$name]));
-
-                if (! is_wp_error($validator->{$name}($value))) {
-                    $options[$name] = $value;
-                }
-            }
-        }
-
-        update_site_option('objectcache_options', $options);
-        wp_die(1);
-    }
-
-    /**
      * Maybe enqueue pointer.
      *
      * @param  string  $hook_suffix
@@ -495,7 +422,7 @@ trait Settings
      */
     public function maybeEnqueuePointer($hook_suffix)
     {
-        if (! current_user_can(self::Capability)) {
+        if (! current_user_can(Plugin::Capability)) {
             return;
         }
 
@@ -514,7 +441,7 @@ trait Settings
             return;
         }
 
-        wp_register_script('objectcache-pointer', null, ['jquery', 'wp-pointer']);
+        wp_register_script('objectcache-pointer', false, ['jquery', 'wp-pointer']);
         wp_enqueue_script('objectcache-pointer');
 
         $content = sprintf(

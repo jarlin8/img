@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -58,7 +58,6 @@ trait FlushesNetworks
      *
      * @param  int  $siteId
      * @param  string|null  $flush_network
-     *
      * @return bool
      */
     public function flushBlog(int $siteId, string $flush_network = null): bool
@@ -72,18 +71,14 @@ trait FlushesNetworks
         }
 
         if ($this->config->cluster) {
-            throw new LogicException('`flushBlog()` is not supported when using Redis clusters');
+            throw new LogicException('Redis Cluster does not support blog flushing');
         }
 
         $originalBlogId = $this->blogId;
         $this->blogId = $siteId;
 
-        $script = file_get_contents(__DIR__ . '/../scripts/chunked-scan.lua');
-
-        $command = $this->config->async_flush ? 'UNLINK' : 'DEL';
-
         $patterns = [
-            str_replace(':cafebabe', '', $this->id('*', dechex(3405691582))),
+            str_replace(':deadf00d', '', (string) $this->id('*', dechex(3735941133))),
         ];
 
         if ($flush_network === Configuration::NETWORK_FLUSH_GLOBAL) {
@@ -95,7 +90,7 @@ trait FlushesNetworks
         $this->blogId = $originalBlogId;
 
         try {
-            $this->connection->eval($script, array_merge($patterns, [$command]), count($patterns));
+            $this->deleteByPattern(array_filter($patterns));
         } catch (Throwable $exception) {
             $this->error($exception);
 

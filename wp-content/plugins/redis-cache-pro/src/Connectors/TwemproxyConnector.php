@@ -9,7 +9,7 @@
  * Rhubarb Tech Incorporated.
  *
  * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://tyubar.com
+ * https://objectcache.pro/license.txt
  */
 
 declare(strict_types=1);
@@ -34,7 +34,7 @@ class TwemproxyConnector extends PhpRedisConnector implements Connector
     public static function connectToInstance(Configuration $config): ConnectionInterface
     {
         if ($config->database) {
-            throw new LogicException('Twemproxy does not database indices other than `0`');
+            throw new LogicException('Twemproxy does not support database other than `0`');
         }
 
         return new TwemproxyConnection(
@@ -51,7 +51,7 @@ class TwemproxyConnector extends PhpRedisConnector implements Connector
      */
     public static function connectToCluster(Configuration $config): ConnectionInterface
     {
-        throw new LogicException('Twemproxy does not support clusters');
+        throw new LogicException('Twemproxy does not support Redis Cluster');
     }
 
     /**
@@ -63,7 +63,7 @@ class TwemproxyConnector extends PhpRedisConnector implements Connector
      */
     public static function connectToSentinels(Configuration $config): ConnectionInterface
     {
-        throw new LogicException('Twemproxy does not support sentinels');
+        throw new LogicException('Twemproxy does not support Redis Sentinel');
     }
 
     /**
