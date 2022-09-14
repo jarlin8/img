@@ -174,7 +174,7 @@ function ux_pages($atts) {
 
       ?><div class="<?php echo implode(' ', $classes_col); ?>" <?php echo $animate;?>>
           <div class="col-inner" <?php echo get_shortcode_inline_css($css_col); ?>>
-          <a class="plain" href="<?php echo get_the_permalink($page->ID); ?>" title="<?php echo $page->post_title; ?>" target="<?php echo $target; ?>">
+          <a class="block plain" href="<?php echo get_the_permalink($page->ID); ?>" title="<?php echo $page->post_title; ?>" target="<?php echo $target; ?>">
             <div class="<?php echo implode(' ', $classes_box); ?>">
                   <div class="box-image" <?php echo get_shortcode_inline_css($css_args_img); ?>>
                       <div class="<?php echo implode(' ', $classes_image); ?>" <?php echo get_shortcode_inline_css($css_image_height); ?>>

@@ -2,9 +2,10 @@
 /**
  * Single Product tabs
  *
- * @author 		WooThemes
- * @package 	WooCommerce/Templates
- * @version     2.0.0
+ * @author           WooThemes
+ * @package          WooCommerce/Templates
+ * @version          2.0.0
+ * @flatsome-version 3.16.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,16 +21,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $product_tabs = apply_filters( 'woocommerce_product_tabs', array() );
 
+$product_display = get_theme_mod( 'product_display', 'tabs' );
+
 if ( ! empty( $product_tabs ) ) : ?>
 <div class="product-page-accordian">
-	<div class="accordion" rel="<?php echo get_theme_mod( 'product_display', 'tabs' ) === 'accordian-collapsed' ? 0 : 1; ?>">
+	<div class="accordion">
 		<?php foreach ( $product_tabs as $key => $product_tab ) : ?>
-		<div class="accordion-item">
-			<a class="accordion-title plain" href="javascript:void();">
+		<?php $is_open = $key === array_key_first( $product_tabs ) && $product_display !== 'accordian-collapsed'; ?>
+		<div id="accordion-<?php echo esc_attr( $key ) ?>" class="accordion-item">
+			<a id="accordion-<?php echo esc_attr( $key ) ?>-label" class="accordion-title plain<?php echo $is_open ? ' active' : ''; ?>" aria-expanded="<?php echo $is_open ? 'true' : 'false'; ?>" aria-controls="accordion-<?php echo esc_attr( $key ) ?>-content" href="javascript:void();">
 				<button class="toggle" aria-label="<?php echo esc_attr__( 'Toggle', 'flatsome' ); ?>"><i class="icon-angle-down"></i></button>
 				<?php echo apply_filters( 'woocommerce_product_' . $key . '_tab_title', $product_tab['title'], $key ); ?>
 			</a>
-			<div class="accordion-inner">
+			<div id="accordion-<?php echo esc_attr( $key ) ?>-content" class="accordion-inner"<?php echo $is_open ? ' style="display: block;"' : ''; ?> aria-labelledby="accordion-<?php echo esc_attr( $key ) ?>-label">
 				<?php
 				if ( isset( $product_tab['callback'] ) ) {
 					call_user_func( $product_tab['callback'], $key, $product_tab );

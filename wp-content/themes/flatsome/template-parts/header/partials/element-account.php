@@ -1,4 +1,13 @@
-<?php $icon_style = get_theme_mod('account_icon_style'); ?>
+<?php
+/**
+ * Account element.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+$icon_style = get_theme_mod('account_icon_style');
+?>
 <?php if(is_woocommerce_activated()){ ?>
 <li class="account-item has-icon
   <?php if(is_account_page()) echo ' active'; ?>

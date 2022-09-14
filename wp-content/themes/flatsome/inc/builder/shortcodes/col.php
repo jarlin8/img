@@ -127,6 +127,7 @@ add_ux_builder_shortcode( 'col', array(
         'max_width' => array(
             'type' => 'scrubfield',
             'heading' => 'Max Width',
+            'responsive' => true,
             'default' => '',
             'min' => '0'
         ),

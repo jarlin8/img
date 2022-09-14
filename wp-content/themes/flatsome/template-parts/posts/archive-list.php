@@ -1,4 +1,12 @@
-<?php if ( have_posts() ) : ?>
+<?php
+/**
+ * Posts archive list.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+if ( have_posts() ) : ?>
 
 <?php
 	// Create IDS

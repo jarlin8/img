@@ -158,6 +158,27 @@ function flatsome_customizer_shop_product_page_options() {
 	) );
 
 	Flatsome_Option::add_field( 'option', array(
+		'type'            => 'radio-image',
+		'settings'        => 'product_gallery_grid_layout',
+		'label'           => __( 'Grid layout', 'flatsome-admin' ),
+		'section'         => 'product-page',
+		'default'         => '',
+		'active_callback' => array(
+			array(
+				'setting'  => 'product_layout',
+				'operator' => '===',
+				'value'    => 'stacked-right',
+			),
+		),
+		'choices'         => array(
+			''      => flatsome_customizer_images_uri() . '/product-gallery-grid-1.svg',
+			'1-2'   => flatsome_customizer_images_uri() . '/product-gallery-grid-1-2.svg',
+			'2'     => flatsome_customizer_images_uri() . '/product-gallery-grid-2.svg',
+			'3-1-2' => flatsome_customizer_images_uri() . '/product-gallery-grid-3-1-2.svg',
+		),
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
 		'type'            => 'select',
 		'settings'        => 'product_lightbox',
 		'active_callback' => function() {
@@ -263,6 +284,7 @@ function flatsome_customizer_shop_product_page_options() {
 		'type'            => 'checkbox',
 		'settings'        => 'product_sticky_cart',
 		'label'           => __( 'Sticky add to cart', 'flatsome-admin' ),
+		'description'     => __( 'For all product layouts except Stacked Layout.', 'flatsome-admin' ),
 		'section'         => 'product-page',
 		'default'         => 0,
 	) );
@@ -350,6 +372,15 @@ function flatsome_customizer_shop_product_page_options() {
 			'description' => __( 'Show a tooltip with the term or term description.', 'flatsome' ),
 			'section'     => 'product-page',
 			'default'     => 1,
+		) );
+
+		Flatsome_Option::add_field( 'option', array(
+			'type'        => 'checkbox',
+			'settings'    => 'swatches_out_of_stock_inactive',
+			'label'       => __( 'Inactive out of stock', 'flatsome' ),
+			'description' => __( 'Show out of stock items as inactive.', 'flatsome' ),
+			'section'     => 'product-page',
+			'default'     => 0,
 		) );
 
 		Flatsome_Option::add_field( 'option', array(

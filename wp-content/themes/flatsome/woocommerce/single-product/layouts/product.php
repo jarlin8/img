@@ -1,3 +1,12 @@
+<?php
+/**
+ * Product.
+ *
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
 <div class="product-container">
 
 <div class="product-main">

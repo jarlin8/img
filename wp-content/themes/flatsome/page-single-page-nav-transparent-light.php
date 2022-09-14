@@ -1,7 +1,11 @@
 <?php
-/*
-Template name: Page - Single Page Nav - Transparent Header - Light Text
-*/
+/**
+ * Template name: Page - Single Page Nav - Transparent Header - Light Text
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
 get_header(); ?>
 
 <?php do_action( 'flatsome_before_page' ); ?>

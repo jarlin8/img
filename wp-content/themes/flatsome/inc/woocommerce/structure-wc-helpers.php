@@ -27,15 +27,19 @@ function ux_list_products( $args ) {
 			$order = 'asc';
 		}
 
-		$tags = '';
+		$tags = array();
 		if ( isset( $options['tags'] ) ) {
-			if ( is_numeric( $options['tags'] ) ) {
-				$term = get_term( $options['tags'] );
-				if ( $term instanceof WP_Term ) {
-					$options['tags'] = $term->slug;
+			$_tags = array_filter( array_map( 'trim', explode( ',', $options['tags'] ) ) );
+			$tags  = array_map( function ( $tag ) {
+				if ( is_numeric( $tag ) ) {
+					$term = get_term( $tag );
+					if ( $term instanceof WP_Term ) {
+						return $term->slug;
+					}
 				}
-			}
-			$tags = $options['tags'];
+
+				return $tag;
+			}, $_tags );
 		}
 
 		$offset = '';

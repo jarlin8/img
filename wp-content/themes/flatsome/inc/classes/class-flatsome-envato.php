@@ -31,7 +31,7 @@ final class Flatsome_Envato {
 	/**
 	 * Setup instance properties.
 	 */
-	public function __construct() {
+	private function __construct() {
 		$api = new UxThemes_API();
 
 		if ( get_option( 'flatsome_envato' ) ) {

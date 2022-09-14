@@ -49,8 +49,8 @@ function button_shortcode( $atts, $content = null ) {
 	}
 
 	$attributes = array();
-	$icon_left  = $icon && $icon_pos == 'left' ? get_flatsome_icon( $icon ) : '';
-	$icon_right = $icon && $icon_pos !== 'left' ? get_flatsome_icon( $icon ) : '';
+	$icon_left  = $icon && $icon_pos == 'left' ? get_flatsome_icon( $icon, null, array( 'aria-hidden' => 'true' ) ) : '';
+	$icon_right = $icon && $icon_pos !== 'left' ? get_flatsome_icon( $icon, null, array( 'aria-hidden' => 'true' ) ) : '';
 
 	// Add Button Classes.
 	$classes   = array();

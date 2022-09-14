@@ -168,7 +168,6 @@ if ( is_woocommerce_activated() ) {
   require get_template_directory() . '/inc/woocommerce/structure-wc-cart.php';
   require get_template_directory() . '/inc/woocommerce/structure-wc-product-page.php';
   require get_template_directory() . '/inc/woocommerce/structure-wc-product-page-header.php';
-  require get_template_directory() . '/inc/woocommerce/structure-wc-single-product.php';
   require get_template_directory() . '/inc/woocommerce/structure-wc-single-product-custom.php';
   if ( get_theme_mod( 'catalog_mode' ) ) require get_template_directory() . '/inc/woocommerce/structure-wc-catalog-mode.php';
 }
@@ -202,6 +201,16 @@ require get_template_directory() . '/inc/integrations/integrations.php';
  * Theme Extenstions
  */
 require get_template_directory() . '/inc/extensions/extensions.php';
+
+/**
+ * Include Kirki.
+ *
+ * options-type.php - Needs to be reachable on the frontend to generate local Font CSS
+ * on the kirki-inline-styles <style> element.
+ */
+require get_template_directory() . '/inc/admin/kirki/kirki.php';
+require get_template_directory() . '/inc/admin/kirki-config.php';
+require get_template_directory() . '/inc/admin/options/styles/options-type.php';
 
 /**
  * Theme Admin

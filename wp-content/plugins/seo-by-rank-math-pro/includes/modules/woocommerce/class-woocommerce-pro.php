@@ -299,10 +299,6 @@ class WooCommerce {
 	 * @param array $entity       Offer entity.
 	 */
 	private function add_variable_gtin( $variation_id, &$entity ) {
-		if ( ! Helper::get_settings( 'general.show_gtin' ) ) {
-			return;
-		}
-
 		$gtin_key = Helper::get_settings( 'general.gtin', 'gtin8' );
 		$gtin     = get_post_meta( $variation_id, '_rank_math_gtin_code', true );
 		if ( ! $gtin || 'isbn' === $gtin_key ) {

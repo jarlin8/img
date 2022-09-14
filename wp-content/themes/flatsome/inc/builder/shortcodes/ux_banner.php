@@ -9,6 +9,7 @@ add_ux_builder_shortcode( 'ux_banner', array(
   'template' => flatsome_ux_builder_template( 'ux_banner.html' ),
   'wrap' => false,
   'info' => '{{ label }}',
+  'resize' => array( 'bottom' ),
   'allow' => array( 'text_box', 'ux_image' ),
   'add_buttons' => array( 'bottom-right' ),
   'addable_spots' => array( 'top', 'bottom' ),

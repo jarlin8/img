@@ -84,7 +84,7 @@ function flatsome_customizer_header_nav_vertical_options() {
 	Flatsome_Option::add_field( 'option', array(
 		'type'      => 'radio-image',
 		'settings'  => 'header_nav_vertical_text_color',
-		'label'     => __( 'Text color', 'flatsome' ),
+		'label'     => __( 'Text base color', 'flatsome' ),
 		'section'   => 'header_nav_vertical',
 		'default'   => 'dark',
 		'transport' => flatsome_customizer_transport(),
@@ -92,6 +92,16 @@ function flatsome_customizer_header_nav_vertical_options() {
 			'dark'  => flatsome_customizer_images_uri() . '/text-light.svg',
 			'light' => flatsome_customizer_images_uri() . '/text-dark.svg',
 		),
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
+		'type'      => 'color-alpha',
+		'alpha'     => true,
+		'settings'  => 'header_nav_vertical_color',
+		'label'     => __( 'Color', 'flatsome' ),
+		'section'   => 'header_nav_vertical',
+		'transport' => flatsome_customizer_transport(),
+		'default'   => '',
 	) );
 
 	Flatsome_Option::add_field( 'option', array(
@@ -131,9 +141,64 @@ function flatsome_customizer_header_nav_vertical_options() {
 	) );
 
 	Flatsome_Option::add_field( 'option', array(
+		'type'      => 'slider',
+		'settings'  => 'header_nav_vertical_fly_out_width',
+		'label'     => __( 'Width', 'flatsome' ),
+		'section'   => 'header_nav_vertical',
+		'transport' => flatsome_customizer_transport(),
+		'default'   => '250',
+		'choices'   => array(
+			'min'  => '10',
+			'max'  => '500',
+			'step' => '1',
+		),
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
+		'type'      => 'color-alpha',
+		'alpha'     => true,
+		'settings'  => 'header_nav_vertical_fly_out_bg_color',
+		'label'     => __( 'Background color', 'flatsome' ),
+		'section'   => 'header_nav_vertical',
+		'transport' => flatsome_customizer_transport(),
+		'default'   => '',
+	) );
+
+	Flatsome_Option::add_field( '', array(
+		'type'     => 'custom',
+		'settings' => 'custom_title_header_nav_vertical_fly_out_navigation',
+		'label'    => '',
+		'section'  => 'header_nav_vertical',
+		'default'  => '<div class="options-title-divider">Fly out navigation</div>',
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
+		'type'      => 'checkbox',
+		'settings'  => 'header_nav_vertical_fly_out_nav_divider',
+		'label'     => __( 'Divider', 'flatsome' ),
+		'section'   => 'header_nav_vertical',
+		'transport' => flatsome_customizer_transport(),
+		'default'   => 1,
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
+		'type'      => 'slider',
+		'settings'  => 'header_nav_vertical_fly_out_nav_height',
+		'label'     => __( 'Nav height', 'flatsome' ),
+		'section'   => 'header_nav_vertical',
+		'transport' => flatsome_customizer_transport(),
+		'default'   => 0,
+		'choices'   => array(
+			'min'  => 0,
+			'max'  => 200,
+			'step' => 1,
+		),
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
 		'type'      => 'radio-image',
 		'settings'  => 'header_nav_vertical_fly_out_text_color',
-		'label'     => __( 'Text color', 'flatsome' ),
+		'label'     => __( 'Text base color', 'flatsome' ),
 		'section'   => 'header_nav_vertical',
 		'default'   => 'light',
 		'transport' => flatsome_customizer_transport(),
@@ -146,8 +211,28 @@ function flatsome_customizer_header_nav_vertical_options() {
 	Flatsome_Option::add_field( 'option', array(
 		'type'      => 'color-alpha',
 		'alpha'     => true,
-		'settings'  => 'header_nav_vertical_fly_out_bg_color',
-		'label'     => __( 'Background color', 'flatsome' ),
+		'settings'  => 'header_nav_vertical_fly_out_nav_color',
+		'label'     => __( 'Nav color', 'flatsome' ),
+		'section'   => 'header_nav_vertical',
+		'transport' => flatsome_customizer_transport(),
+		'default'   => '',
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
+		'type'      => 'color-alpha',
+		'alpha'     => true,
+		'settings'  => 'header_nav_vertical_fly_out_nav_color_hover',
+		'label'     => __( 'Nav color :hover', 'flatsome' ),
+		'section'   => 'header_nav_vertical',
+		'transport' => flatsome_customizer_transport(),
+		'default'   => '',
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
+		'type'      => 'color-alpha',
+		'alpha'     => true,
+		'settings'  => 'header_nav_vertical_fly_out_nav_bg_color_hover',
+		'label'     => __( 'Nav background color :hover', 'flatsome' ),
 		'section'   => 'header_nav_vertical',
 		'transport' => flatsome_customizer_transport(),
 		'default'   => '',
@@ -182,8 +267,14 @@ function flatsome_refresh_header_nav_vertical_partials( WP_Customize_Manager $wp
 	$wp_customize->selective_refresh->add_partial( 'header-vertical-menu-refresh-css', array(
 		'selector'        => 'head > style#custom-css',
 		'settings'        => array(
+			'header_nav_vertical_color',
 			'header_nav_vertical_bg_color',
 			'header_nav_vertical_fly_out_bg_color',
+			'header_nav_vertical_fly_out_nav_divider',
+			'header_nav_vertical_fly_out_nav_height',
+			'header_nav_vertical_fly_out_nav_color',
+			'header_nav_vertical_fly_out_nav_color_hover',
+			'header_nav_vertical_fly_out_nav_bg_color_hover',
 		),
 		'render_callback' => function () {
 			flatsome_custom_css();

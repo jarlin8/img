@@ -460,6 +460,15 @@ Flatsome_Option::add_field( 'option', array(
 
 Flatsome_Option::add_field( 'option', array(
 	'type'      => 'checkbox',
+	'settings'  => 'product_box_review_count',
+	'transport' => $transport,
+	'label'     => __( 'Show review count', 'flatsome-admin' ),
+	'section'   => 'woocommerce_product_catalog',
+	'default'   => 0,
+) );
+
+Flatsome_Option::add_field( 'option', array(
+	'type'      => 'checkbox',
 	'settings'  => 'short_description_in_grid',
 	'transport' => $transport,
 	'label'     => __( 'Show Short Description', 'flatsome-admin' ),
@@ -500,12 +509,28 @@ Flatsome_Option::add_field( 'option', array(
 ) );
 
 Flatsome_Option::add_field( 'option', array(
+	'type'        => 'checkbox',
+	'settings'    => 'sale_bubble',
+	'transport'   => $transport,
+	'label'       => __( 'Show sale bubble', 'flatsome-admin' ),
+	'section'     => 'woocommerce_product_catalog',
+	'default'     => 1,
+) );
+
+Flatsome_Option::add_field( 'option', array(
 	'type'              => 'text',
 	'settings'          => 'sale_bubble_text',
 	'transport'         => $transport,
-	'label'             => __( 'Custom Sale Bubble Text', 'flatsome-admin' ),
+	'label'             => __( 'Custom sale bubble text', 'flatsome-admin' ),
 	'section'           => 'woocommerce_product_catalog',
 	'sanitize_callback' => 'wp_kses_post',
+	'active_callback' => array(
+		array(
+			'setting'  => 'sale_bubble',
+			'operator' => '!=',
+			'value'    => false,
+		),
+	),
 	'default'           => '',
 ) );
 
@@ -514,6 +539,13 @@ Flatsome_Option::add_field( 'option', array(
 	'settings' => 'sale_bubble_percentage',
 	'label'    => __( 'Enable % instead of "Sale!"', 'flatsome-admin' ),
 	'section'  => 'woocommerce_product_catalog',
+	'active_callback' => array(
+		array(
+			'setting'  => 'sale_bubble',
+			'operator' => '!=',
+			'value'    => false,
+		),
+	),
 	'default'  => '0',
 ) );
 
@@ -521,7 +553,7 @@ Flatsome_Option::add_field( 'option', array(
 	'type'              => 'text',
 	'settings'          => 'sale_bubble_percentage_formatting',
 	'transport'         => $transport,
-	'label'             => __( 'Sale Bubble % Formatting', 'flatsome-admin' ),
+	'label'             => __( 'Sale bubble % formatting', 'flatsome-admin' ),
 	'description'       => __( 'How the discount should be displayed. e.g. -{value}%', 'flatsome-admin' ),
 	'section'           => 'woocommerce_product_catalog',
 	'sanitize_callback' => 'wp_kses_post',
@@ -530,6 +562,11 @@ Flatsome_Option::add_field( 'option', array(
 			'setting'  => 'sale_bubble_percentage',
 			'operator' => '==',
 			'value'    => true,
+		),
+		array(
+			'setting'  => 'sale_bubble',
+			'operator' => '!=',
+			'value'    => false,
 		),
 	),
 	'default'           => '-{value}%',

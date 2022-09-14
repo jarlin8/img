@@ -1,4 +1,10 @@
 <?php
+/**
+ * Product gallery thumbnails.
+ *
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
+ */
 
 global $post, $product;
 
@@ -7,9 +13,10 @@ $post_thumbnail = has_post_thumbnail();
 $thumb_count    = count( $attachment_ids );
 
 if ( $post_thumbnail ) $thumb_count++;
+$render_without_attachments = apply_filters( 'flatsome_single_product_thumbnails_render_without_attachments', false, $product, array( 'thumb_count' => $thumb_count ) );
 
 // Disable thumbnails if there is only one extra image.
-if ( $post_thumbnail && $thumb_count == 1 ) {
+if ( $post_thumbnail && $thumb_count == 1 && ! $render_without_attachments ) {
 	return;
 }
 
@@ -21,7 +28,7 @@ if ( is_rtl() ) {
 	$thumb_cell_align = 'right';
 }
 
-if ( $attachment_ids ) {
+if ( $attachment_ids || $render_without_attachments ) {
 	$loop          = 0;
 	$image_size    = 'thumbnail';
 	$gallery_class = array( 'product-thumbnails', 'thumbnails' );
@@ -39,6 +46,7 @@ if ( $attachment_ids ) {
 	}
 
 	$gallery_class[] = 'slider row row-small row-slider slider-nav-small small-columns-4';
+	$gallery_class   = apply_filters( 'flatsome_single_product_thumbnails_classes', $gallery_class );
 	?>
 	<div class="<?php echo implode( ' ', $gallery_class ); ?>"
 		data-flickity-options='{

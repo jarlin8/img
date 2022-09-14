@@ -1,3 +1,12 @@
+<?php
+/**
+ * Posts content.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
 <div class="entry-content">
 	<?php if ( flatsome_option('blog_show_excerpt') || is_search())  { ?>
 	<div class="entry-summary">

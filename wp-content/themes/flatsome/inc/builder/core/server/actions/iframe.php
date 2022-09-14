@@ -64,15 +64,15 @@ add_filter( 'get_post_metadata', function ( $value, $object_id, $meta_key, $sing
  * Change post content to prevent shortcodes
  * beeing rendered before the builder content.
  *
- * @param  array $posts
- * @return array
+ * @param  WP_Post[] $posts
+ * @param  WP_Query  $query
+ * @return WP_Post[]
  */
-add_action( 'the_posts', function ( $posts ) {
-  static $is_replaced;
-  // Do nothing if another post is beeing edited or is replaced already.
-  if ( array_key_exists( 'edit_post_id', $_GET ) || $is_replaced ) return $posts;
-  // do nothing if «the_post» action has already been called.
-  // if ( did_action('the_post') ) return $posts;
+add_action( 'the_posts', function ( $posts, $query ) {
+  // Do nothing if another post is beeing edited or is not the main query.
+  if ( array_key_exists( 'edit_post_id', $_GET ) || ! $query->is_main_query() ) {
+    return $posts;
+  }
   // Get current post if no posts are found. Happens when editing a draft.
   if ( empty ( $posts ) && ( array_key_exists( 'page_id', $_GET ) || array_key_exists( 'p', $_GET ) ) ) {
     $posts[] = get_post( isset( $_GET['page_id'] ) ? $_GET['page_id'] : $_GET['p'] );
@@ -83,10 +83,9 @@ add_action( 'the_posts', function ( $posts ) {
     $posts[0]->post_content = '<post-wrapper></post-wrapper>';
     // Wrap post excerpt to let the excerpt option change its content when changed.
     $posts[0]->post_excerpt = '<div class="uxb-post-excerpt">' . $posts[0]->post_excerpt . '</div>';
-    $is_replaced = true;
   }
   return $posts;
-} );
+}, 10, 2 );
 
 /**
  * Add assets to the iframe.

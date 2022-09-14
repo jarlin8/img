@@ -10,9 +10,10 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see     https://docs.woocommerce.com/document/template-structure/
- * @package WooCommerce/Templates
- * @version 3.5.1
+ * @see              https://docs.woocommerce.com/document/template-structure/
+ * @package          WooCommerce/Templates
+ * @version          3.5.1
+ * @flatsome-version 3.16.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -95,6 +96,7 @@ if(get_theme_mod('product_zoom', 0)){
 
   $attachment_ids = $product->get_gallery_image_ids();
   $thumb_count = count($attachment_ids)+1;
+  $render_without_attachments = apply_filters( 'flatsome_single_product_thumbnails_render_without_attachments', false, $product, array( 'thumb_count' => $thumb_count ) );
 
   $rtl = 'false';
 
@@ -102,7 +104,7 @@ if(get_theme_mod('product_zoom', 0)){
 
   $thumb_cell_align = "left";
 
-  if ( $attachment_ids ) {
+  if ( $attachment_ids || $render_without_attachments ) {
 	  $loop              = 0;
 	  $image_size        = 'gallery_thumbnail';
 	  $gallery_class     = array( 'product-thumbnails', 'thumbnails' );
@@ -113,6 +115,7 @@ if(get_theme_mod('product_zoom', 0)){
     }
 
     $gallery_class[] = 'slider row row-small row-slider slider-nav-small small-columns-4';
+	$gallery_class   = apply_filters( 'flatsome_single_product_thumbnails_classes', $gallery_class );
 
     ?>
     <div class="col large-2 large-col-first vertical-thumbnails pb-0">

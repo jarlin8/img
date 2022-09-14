@@ -39,7 +39,7 @@ final class Swatches {
 	/**
 	 * Swatches constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
 		$this->types = array(
 			'ux_color' => esc_html__( 'UX Color', 'flatsome' ),
 			'ux_image' => esc_html__( 'UX Image', 'flatsome' ),

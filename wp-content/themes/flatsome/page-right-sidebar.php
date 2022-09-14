@@ -1,7 +1,11 @@
 <?php
-/*
-Template name: Page - Right Sidebar
-*/
+/**
+ * Template name: Page - Right Sidebar
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
 get_header(); ?>
 
 <?php do_action( 'flatsome_before_page' ); ?>

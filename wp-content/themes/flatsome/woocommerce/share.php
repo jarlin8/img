@@ -2,9 +2,10 @@
 /**
  * Share template
  *
- * @author  Your Inspiration Themes
- * @package YITH WooCommerce Wishlist
- * @version 3.0.0
+ * @author           Your Inspiration Themes
+ * @package          YITH WooCommerce Wishlist
+ * @version          3.0.0
+ * @flatsome-version 3.16.0
  */
 
 /**

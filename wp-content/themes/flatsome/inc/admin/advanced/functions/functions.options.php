@@ -385,9 +385,16 @@ if ( ! function_exists( 'of_options' ) ) {
 			);
 
 			$of_options[] = array(
-				'name' => 'Variation swatches',
+				'name' => 'Product variations',
 				'id'   => 'swatches',
 				'desc' => 'Enable variation swatches.',
+				'std'  => 0,
+				'type' => 'checkbox',
+			);
+
+			$of_options[] = array(
+				'id'   => 'additional_variation_images',
+				'desc' => 'Enable additional variation images (Flatsome gallery).',
 				'std'  => 0,
 				'type' => 'checkbox',
 			);
@@ -401,9 +408,9 @@ if ( ! function_exists( 'of_options' ) ) {
 			);
 
 			$of_options[] = array(
-				'name' => 'Enable default WooCommerce product gallery',
+				'name' => 'WooCommerce product gallery',
 				'id'   => 'product_gallery_woocommerce',
-				'desc' => 'Use the default WooCommerce gallery slider for plugin compatibility, such as "Additional Variation Images".',
+				'desc' => 'Use the default WooCommerce gallery slider for plugin compatibility. <br>(This disables the Flatsome product gallery and multiple options for it)',
 				'std'  => 0,
 				'type' => 'checkbox',
 			);
@@ -665,6 +672,28 @@ if ( ! function_exists( 'of_options' ) ) {
 			);
 		}
 
+		// All in one SEO options.
+		if ( class_exists( 'AIOSEO\Plugin\AIOSEO' ) ) {
+			$of_options[] = array(
+				'name' => 'AIOSEO Breadcrumbs',
+				'id'   => 'aioseo_breadcrumb',
+				'desc' => 'Use on product category pages, single product pages and elements.',
+				'std'  => 0,
+				'type' => 'checkbox',
+			);
+		}
+
+		// SEOPress options.
+		if ( defined( 'SEOPRESS_VERSION' ) ) {
+			$of_options[] = array(
+				'name' => defined( 'SEOPRESS_PRO_VERSION' ) ? 'SEOPress Breadcrumbs' : 'SEOPress Breadcrumbs (Requires SeoPress PRO)',
+				'id'   => 'wpseopress_breadcrumb',
+				'desc' => 'Use on product category pages, single product pages and elements.',
+				'std'  => 0,
+				'type' => 'checkbox',
+			);
+		}
+
 		// Updates.
 		$of_options[] = array(
 			'name' => 'Updates',
@@ -699,7 +728,7 @@ if ( ! function_exists( 'of_options' ) ) {
 			'id'   => 'of_backup',
 			'std'  => '',
 			'type' => 'backup',
-			'desc' => 'You can use the two buttons below to backup your current options, and then restore it back at a later time. This is useful if you want to experiment on the options but would like to keep the old settings in case you need it back.',
+			'desc' => 'You can use the buttons above to backup your current options, and then restore it back at a later time. This is useful if you want to experiment on the options but would like to keep the old settings in case you need it back.',
 		);
 
 		$of_options[] = array(

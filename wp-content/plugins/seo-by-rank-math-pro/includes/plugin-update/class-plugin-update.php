@@ -506,6 +506,20 @@ class Plugin_Update {
 	}
 
 	/**
+	 * Check if version check endpoint's response contains new beta verison.
+	 *
+	 * @param array $data Latest versions.
+	 * @return boolean
+	 */
+	private function new_beta_version_available( $data ) {
+		return (
+			Helper::get_settings( 'general.beta_optin' )
+			&& version_compare( $data['beta_version'], $data['new_version'], '>' )
+			&& version_compare( $data['beta_version'], RANK_MATH_PRO_VERSION, '>' )
+		);
+	}
+
+	/**
 	 * Merge default plugin data with fetched data.
 	 *
 	 * @param bool   $force_check Disregard cached data & always re-fetch.
@@ -587,8 +601,43 @@ class Plugin_Update {
 	 *                     Otherwise returns false.
 	 */
 	public function fetch_latest_version( $force_check = false ) {
+
+		$stored_versions = get_site_transient( 'rank_math_pro_versions' );
+		if ( empty( $stored_versions ) || $force_check ) {
+			// Check the latest versions.
+			$versions_response = wp_remote_get(
+				$this->api_url . '/versionCheck/',
+				[
+					'timeout' => defined( 'DOING_CRON' ) && DOING_CRON ? 30 : 10,
+					'body'    => [
+						'product_slug' => $this->slug,
+					],
+				]
+			);
+
+			if ( is_wp_error( $versions_response ) ) {
+				return false;
+			}
+
+			$versions_response_body = wp_remote_retrieve_body( $versions_response );
+			$versions_result        = json_decode( $versions_response_body, true );
+			if ( ! is_array( $versions_result ) || ! isset( $versions_result['new_version'] ) ) {
+				return false;
+			}
+
+			$stored_versions = $versions_result;
+
+			set_site_transient( 'rank_math_pro_versions', $versions_result, 3600 );
+			update_site_option( 'rank_math_pro_google_updates', $versions_result['g_updates'] );
+		}
+
 		$stored = get_site_transient( 'rank_math_pro_updates' );
-		if ( ! $force_check && ! empty( $stored ) ) {
+		if (
+			! $force_check
+			&& ! empty( $stored )
+			&& version_compare( $stored_versions['new_version'], RANK_MATH_PRO_VERSION, '<=' )
+			&& ! $this->new_beta_version_available( $stored_versions )
+		) {
 			return $stored;
 		}
 
@@ -599,6 +648,7 @@ class Plugin_Update {
 		$params = [
 			'site_url'     => is_multisite() ? network_site_url() : home_url(),
 			'product_slug' => $this->slug,
+			'new_api'      => 1,
 		];
 
 		$this->maybe_add_auth_params( $params );
@@ -624,8 +674,8 @@ class Plugin_Update {
 			return false;
 		}
 
-		set_site_transient( 'rank_math_pro_updates', $result, 3600 );
-		update_site_option( 'rank_math_pro_google_updates', $result['g_updates'] );
+		set_site_transient( 'rank_math_pro_updates', $result, 3600 * 12 );
+
 		return $result;
 	}
 

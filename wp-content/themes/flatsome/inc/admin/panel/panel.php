@@ -62,6 +62,7 @@ class Flatsome_Admin {
 		add_menu_page( 'Welcome to Flatsome', 'Flatsome', 'manage_options', 'flatsome-panel', array( $this, 'flatsome_panel_welcome' ), get_template_directory_uri() . '/assets/img/logo-icon.svg', '2' );
 		add_submenu_page( 'flatsome-panel', 'Theme Registration', 'Theme Registration', 'manage_options', 'admin.php?page=flatsome-panel' );
 		add_submenu_page( 'flatsome-panel', 'Help & Guides', 'Help & Guides', 'manage_options', 'flatsome-panel-support', array( $this, 'flatsome_panel_support' ) );
+		add_submenu_page( 'flatsome-panel', 'Status', 'Status', 'manage_options', 'flatsome-panel-status', array( $this, 'flatsome_panel_status' ) );
 		add_submenu_page( 'flatsome-panel', 'Change log', 'Change log', 'manage_options', 'flatsome-panel-changelog', array( $this, 'flatsome_panel_changelog' ) );
 		add_submenu_page( 'flatsome-panel', '', 'Theme Options', 'manage_options', 'customize.php' );
 	}
@@ -109,6 +110,17 @@ class Flatsome_Admin {
 			<div class="wrap about-wrap">
 				<?php require get_template_directory() . '/inc/admin/panel/sections/top.php'; ?>
 				<?php require get_template_directory() . '/inc/admin/panel/sections/tab-support.php'; ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	public function flatsome_panel_status() {
+		?>
+		<div class="flatsome-panel">
+			<div class="wrap about-wrap">
+				<?php require get_template_directory() . '/inc/admin/panel/sections/top.php'; ?>
+				<?php require get_template_directory() . '/inc/admin/panel/sections/tab-status.php'; ?>
 			</div>
 		</div>
 		<?php

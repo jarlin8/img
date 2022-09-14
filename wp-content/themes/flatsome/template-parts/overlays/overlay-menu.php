@@ -2,7 +2,8 @@
 /**
  * The overlay menu.
  *
- * @package flatsome
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
  */
 
 $flatsome_mobile_overlay         = get_theme_mod( 'mobile_overlay' );

@@ -2,8 +2,9 @@
 /**
  * Checkout terms and conditions area.
  *
- * @package WooCommerce/Templates
- * @version 3.4.0
+ * @package          WooCommerce/Templates
+ * @version          3.4.0
+ * @flatsome-version 3.16.0
  */
 
 defined( 'ABSPATH' ) || exit;

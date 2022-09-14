@@ -1,9 +1,27 @@
 <?php
 
-function get_flatsome_icon( $name, $size = null ) {
-	if ( $size ) $size = 'style="font-size:' . $size . ';"';
+/**
+ * Get theme icon by classname.
+ *
+ * @param string $name The icon name.
+ * @param string $size Optional size corresponding to font size.
+ * @param array  $atts Optional element attributes.
+ *
+ * @return string Icon markup.
+ */
+function get_flatsome_icon( $name, $size = null, $atts = null ) {
+	$default_atts = array(
+		'class' => $name,
+	);
 
-	return '<i class="' . $name . '" ' . $size . '></i>';
+	if ( $size ) {
+		$default_atts['style'] = 'font-size:' . $size . ';';
+	}
+
+	$atts      = wp_parse_args( $atts, $default_atts );
+	$icon_html = '<i ' . flatsome_html_atts( $atts ) . '></i>';
+
+	return apply_filters( 'flatsome_icon', $icon_html, $name, $size, $atts );
 }
 
 function flatsome_add_icons_css() {

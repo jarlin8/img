@@ -28,7 +28,7 @@ class Rank_Math {
 	/**
 	 * Rank_Math constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
 		add_action( 'wp', [ $this, 'integrate' ] );
 	}
 

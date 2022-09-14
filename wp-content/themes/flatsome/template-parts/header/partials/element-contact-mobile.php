@@ -1,3 +1,12 @@
+<?php
+/**
+ * Mobile contact element.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
 <li class="header-contact-wrapper">
 	<?php
 		$class = 'has-icon';
@@ -14,10 +23,10 @@
 			$class .= ' icon-top';
 		}
 	?>
-	
+
 	<div class="header-button"><a href="#"
-		data-open="#header-contact" 
-		data-visible-after="true"  data-class="text-center" data-pos="center" 
+		data-open="#header-contact"
+		data-visible-after="true"  data-class="text-center" data-pos="center"
 		class="icon show-for-medium"><?php echo get_flatsome_icon('icon-envelop',$icon_size); ?></a>
 	</div>
 

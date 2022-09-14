@@ -1,4 +1,12 @@
-<?php if ( $args['form'] ) : ?>
+<?php
+/**
+ * Register form.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+if ( $args['form'] ) : ?>
 <form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="POST" autocomplete="off" onsubmit="return onFlatsomeRegisterForm(this);">
 <?php endif; ?>
 

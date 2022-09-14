@@ -1,3 +1,13 @@
+<?php
+/**
+ * Account links.
+ *
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
+
 <?php if ( has_nav_menu( 'my_account' ) ) { ?>
 
   <?php

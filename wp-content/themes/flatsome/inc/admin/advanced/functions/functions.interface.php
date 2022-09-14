@@ -209,6 +209,12 @@ function of_ajax_callback()
 
 		die('1');
 	}
+	elseif($save_type == 'delete_backup_options')
+	{
+		remove_theme_mod( BACKUPS );
+
+		die('1');
+	}
 	elseif($save_type == 'restore_options')
 	{
 

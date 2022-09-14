@@ -39,7 +39,7 @@ class Swatches_Admin {
 	/**
 	 * Swatches_Admin constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
 		add_action( 'admin_init', array( $this, 'includes' ) );
 		add_action( 'admin_init', array( $this, 'init_attribute_hooks' ) );
 		add_action( 'admin_print_scripts', array( $this, 'enqueue_scripts' ) );

@@ -6,8 +6,8 @@
  * and the comment form.
  *
  * @link https://codex.wordpress.org/Template_Hierarchy
- *
- * @package flatsome
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
  */
 
 /*

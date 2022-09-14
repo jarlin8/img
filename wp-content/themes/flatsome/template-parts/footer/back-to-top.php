@@ -1,4 +1,11 @@
 <?php
+/**
+ * Back to top.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
 $classes   = array( 'back-to-top', 'button', 'icon', 'invert', 'plain', 'fixed', 'bottom', 'z-1', 'is-outline', 'round' );
 $classes[] = get_theme_mod( 'back_to_top_position' ) === 'left' ? 'left' : '';
 $classes[] = get_theme_mod( 'back_to_top_mobile' ) ? '' : 'hide-for-medium';

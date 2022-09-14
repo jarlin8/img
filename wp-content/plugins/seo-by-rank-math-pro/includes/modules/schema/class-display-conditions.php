@@ -40,13 +40,8 @@ class Display_Conditions {
 	 * @return array
 	 */
 	public static function get_schema_templates( $data = [], $jsonld = [] ) {
-		$templates = get_posts(
-			[
-				'post_type'   => 'rank_math_schema',
-				'numberposts' => -1,
-				'fields'      => 'ids',
-			]
-		);
+		global $wpdb;
+		$templates = $wpdb->get_col( "SELECT ID FROM {$wpdb->prefix}posts WHERE post_type='rank_math_schema' AND post_status='publish'" );
 
 		if ( empty( $templates ) ) {
 			return;

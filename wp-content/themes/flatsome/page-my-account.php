@@ -2,9 +2,10 @@
 /**
  * Template name: WooCommerce - My Account
  *
- * This templates add My account to the sidebar.
+ * This template adds My account to the sidebar.
  *
- * @package Flatsome
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
  */
 
 get_header(); ?>

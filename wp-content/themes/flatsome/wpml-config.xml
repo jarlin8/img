@@ -96,6 +96,12 @@
 			</attributes>
 		</shortcode>
 		<shortcode>
+			<tag>blog_posts</tag>
+			<attributes>
+				<attribute>readmore</attribute>
+			</attributes>
+		</shortcode>
+		<shortcode>
 			<tag>button</tag>
 			<attributes>
 				<attribute>text</attribute>

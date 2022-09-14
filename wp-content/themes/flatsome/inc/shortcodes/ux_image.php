@@ -1,37 +1,38 @@
 <?php
 function ux_image( $atts, $content = null ) {
 	extract( shortcode_atts( array(
-		'_id'             => 'image_' . rand(),
-		'class'						=> '',
-		'visibility'			=> '',
-		'id'              => '',
-		'org_img'         => '',
-		'caption'         => '',
-		'animate'         => '',
-		'animate_delay'   => '',
-		'lightbox'        => '',
+		'_id'                 => 'image_' . rand(),
+		'class'               => '',
+		'visibility'          => '',
+		'id'                  => '',
+		'org_img'             => '',
+		'caption'             => '',
+		'animate'             => '',
+		'animate_delay'       => '',
+		'lightbox'            => '',
 		'lightbox_image_size' => 'large',
 		'lightbox_caption'    => '',
-		'height'          => '',
-		'image_overlay'   => '',
-		'image_hover'     => '',
-		'image_hover_alt' => '',
-		'image_size'      => 'large',
-		'icon'            => '',
-		'width'           => '',
-		'margin'          => '',
-		'position_x'      => '',
-		'position_x__sm'  => '',
-		'position_x__md'  => '',
-		'position_y'      => '',
-		'position_y__sm'  => '',
-		'position_y__md'  => '',
-		'depth'           => '',
-		'parallax'        => '',
-		'depth_hover'     => '',
-		'link'            => '',
-		'target'          => '_self',
-		'rel'             => '',
+		'image_title'         => '',
+		'height'              => '',
+		'image_overlay'       => '',
+		'image_hover'         => '',
+		'image_hover_alt'     => '',
+		'image_size'          => 'large',
+		'icon'                => '',
+		'width'               => '',
+		'margin'              => '',
+		'position_x'          => '',
+		'position_x__sm'      => '',
+		'position_x__md'      => '',
+		'position_y'          => '',
+		'position_y__sm'      => '',
+		'position_y__md'      => '',
+		'depth'               => '',
+		'parallax'            => '',
+		'depth_hover'         => '',
+		'link'                => '',
+		'target'              => '_self',
+		'rel'                 => '',
 	), $atts ) );
 
 	if ( empty( $id ) ) {
@@ -46,11 +47,11 @@ function ux_image( $atts, $content = null ) {
 
 	$classes = array();
 	if ( $class ) $classes[] = $class;
-  if ( $visibility ) $classes[] = $visibility;
+	if ( $visibility ) $classes[] = $visibility;
 
 	$classes_inner = array( 'img-inner' );
-	$classes_img   = array();
 	$image_meta    = wp_prepare_attachment_for_js( $id );
+	$image_title   = filter_var( $image_title, FILTER_VALIDATE_BOOLEAN );
 	$link_atts     = array(
 		'target' => $target,
 		'rel'    => array( $rel ),
@@ -129,7 +130,6 @@ function ux_image( $atts, $content = null ) {
 
 	$classes       = implode( " ", $classes );
 	$classes_inner = implode( " ", $classes_inner );
-	$classes_img   = implode( " ", $classes_img );
 
 	ob_start();
 	?>
@@ -138,7 +138,7 @@ function ux_image( $atts, $content = null ) {
 		<?php if ( $parallax ) echo '<div ' . $parallax . '>'; ?>
 		<?php if ( $animate ) echo '<div data-animate="' . $animate . '">'; ?>
 		<div class="<?php echo $classes_inner; ?> dark" <?php echo get_shortcode_inline_css( $css_image_height ); ?>>
-			<?php echo flatsome_get_image( $id, $image_size, $caption ); ?>
+			<?php echo flatsome_get_image( $id, $image_size, $caption, false, $image_title ); ?>
 			<?php if ( $image_overlay ) { ?>
 				<div class="overlay" style="background-color: <?php echo $image_overlay; ?>"></div>
 			<?php } ?>

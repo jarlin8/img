@@ -1,4 +1,10 @@
 <?php
+/**
+ * Mobile wishlist element.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
 
 // Exit if class does not exist.
 if ( ! class_exists( 'YITH_WCWL' ) ) {

@@ -1,5 +1,13 @@
-<?php iframe_header(); ?>
+<?php
+/**
+ * Version info.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
 
+iframe_header();
+?>
 <div id="wpwrap" class="flatsome-panel" style="text-align:center;">
 	<a href="https://themeforest.net/item/flatsome-multipurpose-responsive-woocommerce-theme/5484319#item-description__change-log" style="display:inline-block;" target="_blank" rel="noopener noreferrer">
 		<div class="wp-badge fl-badge">

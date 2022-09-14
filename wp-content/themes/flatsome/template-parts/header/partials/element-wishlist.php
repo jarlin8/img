@@ -1,10 +1,16 @@
-<?php 
+<?php
+/**
+ * Wishlist element.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
 
 // Exit if class does not exist.
 if(!class_exists( 'YITH_WCWL' )) return;
 
 $icon = flatsome_option('wishlist_icon');
-$icon_style = flatsome_option('wishlist_icon_style'); 
+$icon_style = flatsome_option('wishlist_icon_style');
 
 ?>
 <li class="header-wishlist-icon">

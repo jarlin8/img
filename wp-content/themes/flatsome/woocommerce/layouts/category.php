@@ -1,3 +1,12 @@
+<?php
+/**
+ * Category layout with left sidebar.
+ *
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
 <div class="row category-page-row">
 
 		<div class="col large-3 hide-for-medium <?php flatsome_sidebar_classes(); ?>">

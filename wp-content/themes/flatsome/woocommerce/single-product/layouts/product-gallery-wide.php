@@ -1,3 +1,12 @@
+<?php
+/**
+ * Product gallery wide.
+ *
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
 <div class="product-container">
 
 	<div class="product-gallery product-gallery-wide">
@@ -10,7 +19,7 @@
 		do_action( 'woocommerce_before_single_product_summary' );
 	?>
 	</div>
-	
+
 	<div class="row">
 		<div class="col large-12">
 			<div class="product-info">

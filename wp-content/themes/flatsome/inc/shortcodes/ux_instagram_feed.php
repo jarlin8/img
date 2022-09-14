@@ -381,6 +381,11 @@ function flatsome_instagram_scrape_html( $username, $hashtag ) {
 	}
 
 	$shards      = explode( 'window._sharedData = ', $remote['body'] );
+
+	if ( ! isset( $shards[1] ) ) {
+		return new WP_Error( 'invalid_response', esc_html__( 'Could not scrape from Instagram (scraping is a deprecated method to retrieve images).', 'flatsome-admin' ) );
+	}
+
 	$insta_json  = explode( ';</script>', $shards[1] );
 	$insta_array = json_decode( $insta_json[0], true );
 

@@ -1,8 +1,9 @@
 <?php
 /**
- * Quick View
+ * Quick View.
  *
- * @package Flatsome
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
  */
 
 defined( 'ABSPATH' ) || exit;

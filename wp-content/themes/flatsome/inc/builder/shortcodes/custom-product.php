@@ -20,7 +20,7 @@ add_ux_builder_shortcode( 'ux_product_gallery', array(
 	'wrap'      => true,
 	'priority'  => 9999,
 	'options'   => array(
-		'style' => array(
+		'style'                 => array(
 			'type'    => 'select',
 			'heading' => 'Style',
 			'default' => 'normal',
@@ -29,6 +29,19 @@ add_ux_builder_shortcode( 'ux_product_gallery', array(
 				'vertical'   => __( 'Vertical', 'flatsome-admin' ),
 				'full-width' => __( 'Full Width', 'flatsome-admin' ),
 				'stacked'    => __( 'Stacked', 'flatsome-admin' ),
+			),
+		),
+		'grid_layout' => array(
+			'type'       => 'select',
+			'heading'    => 'Grid layout',
+			'full_width' => true,
+			'conditions' => 'style == "stacked"',
+			'default'    => '',
+			'options' => array(
+				''      => __( '1 column', 'flatsome-admin' ),
+				'2'     => __( '2 columns', 'flatsome-admin' ),
+				'1-2'   => __( 'Featured - 2 columns', 'flatsome-admin' ),
+				'3-1-2' => __( '3 columns - featured - 2 columns', 'flatsome-admin' ),
 			),
 		),
 	),

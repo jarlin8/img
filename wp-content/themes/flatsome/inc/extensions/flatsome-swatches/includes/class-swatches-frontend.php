@@ -39,7 +39,7 @@ class Swatches_Frontend {
 	/**
 	 * Swatches_Frontend constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		add_action( 'wp_head', array( $this, 'add_css' ), 110 );
@@ -60,6 +60,8 @@ class Swatches_Frontend {
 		add_filter( 'pre_set_theme_mod_swatches_box_attribute', array( $this, 'cache_clear_all' ), 10, 2 );
 		add_filter( 'pre_update_option_woocommerce_thumbnail_image_width', array( $this, 'cache_clear_all' ), 10, 2 );
 		add_filter( 'pre_update_option_woocommerce_thumbnail_cropping', array( $this, 'cache_clear_all' ), 10, 2 );
+
+		add_filter( 'woocommerce_variation_is_active', array( $this, 'variation_is_active' ), 10, 2 );
 	}
 
 	/**
@@ -146,18 +148,19 @@ class Swatches_Frontend {
 			return $html;
 		}
 
-		$swatches         = '';
-		$options          = $args['options'];
-		$product          = $args['product'];
-		$attribute        = $args['attribute'];
-		$classes          = array( 'ux-swatches', "ux-swatches-attribute-{$attr->attribute_type}" );
-		$selector_classes = array( 'variation-selector', "variation-select-{$attr->attribute_type}" );
-		$args['tooltip']  = get_theme_mod( 'swatches_tooltip', 1 );
+		$swatches             = '';
+		$options              = $args['options'];
+		$product              = $args['product'];
+		$attribute            = $args['attribute'];
+		$classes              = array( 'ux-swatches', "ux-swatches-attribute-{$attr->attribute_type}" );
+		$selector_classes     = array( 'variation-selector', "variation-select-{$attr->attribute_type}" );
+		$args['tooltip']      = get_theme_mod( 'swatches_tooltip', 1 );
+		$attr_options         = flatsome_swatches()->get_attribute_option_by_name( $args['attribute'] );
+		$use_variation_images = $this->use_variation_images( $attr_options );
+		$variations           = $use_variation_images ? array_map( array( $this, 'get_variation' ), $product->get_children() ) : $product->get_available_variations();
 
-		$attr_options                            = flatsome_swatches()->get_attribute_option_by_name( $args['attribute'] );
-		$available_variations                    = $product->get_available_variations();
-		$args['swatches']                        = $this->get_swatches( $attribute, $options, $available_variations, $this->use_variation_images( $attr_options ) );
-		$args['swatches']['use_variation_image'] = $this->use_variation_images( $attr_options );
+		$args['swatches']                        = $this->get_swatches( $attribute, $options, $variations, $use_variation_images );
+		$args['swatches']['use_variation_image'] = $use_variation_images;
 
 		if ( isset( $attr_options['swatch_size'] ) && ! empty( $attr_options['swatch_size'] ) ) {
 			$classes[] = 'ux-swatches--' . $attr_options['swatch_size'];
@@ -172,23 +175,21 @@ class Swatches_Frontend {
 			$options    = $attributes[ $attribute ];
 		}
 
-		if ( array_key_exists( $attr->attribute_type, $swatch_types ) ) {
-			if ( ! empty( $options ) && $product && taxonomy_exists( $attribute ) ) {
-				$terms = wc_get_product_terms( $product->get_id(), $attribute, array( 'fields' => 'all' ) );
+		if ( ! empty( $options ) && taxonomy_exists( $attribute ) ) {
+			$terms = wc_get_product_terms( $product->get_id(), $attribute, array( 'fields' => 'all' ) );
 
-				foreach ( $terms as $term ) {
-					if ( ! in_array( $term->slug, $options, true ) ) {
-						continue;
-					}
-					$swatches .= apply_filters( 'flatsome_swatch_html', '', $term, $attr->attribute_type, $args );
+			foreach ( $terms as $term ) {
+				if ( ! in_array( $term->slug, $options, true ) ) {
+					continue;
 				}
+				$swatches .= apply_filters( 'flatsome_swatch_html', '', $term, $attr->attribute_type, $args );
 			}
+		}
 
-			if ( ! empty( $swatches ) ) {
-				$selector_classes[] = 'hidden';
-				$swatches           = '<div class="' . esc_attr( implode( ' ', $classes ) ) . '" data-attribute_name="attribute_' . esc_attr( $attribute ) . '">' . $swatches . '</div>';
-				$html               = '<div class="' . esc_attr( implode( ' ', $selector_classes ) ) . '">' . $html . '</div>' . $swatches;
-			}
+		if ( ! empty( $swatches ) ) {
+			$selector_classes[] = 'hidden';
+			$swatches           = '<div class="' . esc_attr( implode( ' ', $classes ) ) . '" data-attribute_name="attribute_' . esc_attr( $attribute ) . '">' . $swatches . '</div>';
+			$html               = '<div class="' . esc_attr( implode( ' ', $selector_classes ) ) . '">' . $html . '</div>' . $swatches;
 		}
 
 		return $html;
@@ -467,7 +468,7 @@ class Swatches_Frontend {
 				}
 			}
 
-			$data['data-attribute_name'] = 'attribute_' . $attribute_name;
+			$data['data-attribute_name'] = 'attribute_' . sanitize_title( $attribute_name );
 			$data['data-value']          = $term->slug;
 
 			if ( $swatch_layout === 'limit' && $swatch_count > $swatch_limit ) {
@@ -508,11 +509,36 @@ class Swatches_Frontend {
 	}
 
 	/**
+	 * Returns an array of data for a variation.
+	 * (see \WC_Product_Variable->get_available_variation())
+	 *
+	 * @param \WC_Product $variation Variation product object or ID.
+	 *
+	 * @return array|bool
+	 */
+	public function get_variation( $variation ) {
+		if ( is_numeric( $variation ) ) {
+			$variation = wc_get_product( $variation );
+		}
+		if ( ! $variation instanceof \WC_Product_Variation ) {
+			return false;
+		}
+
+		return array(
+			'attributes'   => $variation->get_variation_attributes(),
+			'image'        => wc_get_product_attachment_props( $variation->get_image_id() ),
+			'image_id'     => $variation->get_image_id(),
+			'is_in_stock'  => $variation->is_in_stock(),
+			'variation_id' => $variation->get_id(),
+		);
+	}
+
+	/**
 	 * Get custom variation option data.
 	 *
 	 * @param string $attribute_name       Attribute name.
 	 * @param array  $available_variations The available variation.
-	 * @param mixed  $option               Whether or not to get only one variation by attribute option value.
+	 * @param mixed  $option               Whether to get only one variation by attribute option value.
 	 *
 	 * @return array|null
 	 */
@@ -521,7 +547,7 @@ class Swatches_Frontend {
 
 		foreach ( $available_variations as $key => $variation ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 			$option_variation = array();
-			$attr_key         = 'attribute_' . $attribute_name;
+			$attr_key         = 'attribute_' . sanitize_title( $attribute_name );
 			if ( ! isset( $variation['attributes'][ $attr_key ] ) ) {
 				return null;
 			}
@@ -601,7 +627,7 @@ class Swatches_Frontend {
 	 * @param string $attr_name            Attribute name.
 	 * @param array  $options              Attribute options.
 	 * @param array  $available_variations Available variations.
-	 * @param bool   $use_variation_images Whether or not to search and collect the variation image. Default false.
+	 * @param bool   $use_variation_images Whether to search and collect the variation image. Default false.
 	 *
 	 * @return array
 	 */
@@ -638,7 +664,7 @@ class Swatches_Frontend {
 	 *
 	 * @param array $options The attribute options array.
 	 *
-	 * @return bool Whether or not to us variation images.
+	 * @return bool Whether to us variation images.
 	 */
 	private function use_variation_images( $options ) {
 		if ( ! $options ) {
@@ -758,5 +784,24 @@ class Swatches_Frontend {
 		}
 
 		return $new_value;
+	}
+
+	/**
+	 * Whether this particular variation will appear greyed-out (inactive) or not (active).
+	 * Makes a variation inactive if out of stock.
+	 *
+	 * @param bool                  $active    The state.
+	 * @param \WC_Product_variation $variation The variation.
+	 *
+	 * @return bool
+	 */
+	public function variation_is_active( $active, $variation ) {
+		if ( ! get_theme_mod( 'swatches_out_of_stock_inactive', 0 ) ) return $active;
+
+		if ( ! $variation->is_in_stock() ) {
+			return false;
+		}
+
+		return $active;
 	}
 }

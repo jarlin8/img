@@ -46,17 +46,17 @@ function ux_tabgroup( $params, $content = null, $tag = '' ) {
 	if( is_array( $GLOBALS['tabs'] )){
 
 		foreach( $GLOBALS['tabs'] as $key => $tab ){
-			if($tab['title']) $id = flatsome_to_dashed($tab['title']);
+			$id = $tab['title'] ? flatsome_to_dashed( $tab['title'] ) : wp_rand();
 			$active = $key == 0 ? ' active' : ''; // Set first tab active by default.
-			$tabs[] = '<li class="tab'.$active.' has-icon"><a href="#tab_'.$id.'"><span>'.$tab['title'].'</span></a></li>';
-			$panes[] = '<div class="panel'.$active.' entry-content" id="tab_'.$id.'">'.do_shortcode( $tab['content'] ).'</div>';
+			$tabs[] = '<li id="tab-'.$id.'" class="tab'.$active.' has-icon" role="presentation"><a href="#tab_'.$id.'"'.($key != 0 ? ' tabindex="-1"' : '').' role="tab" aria-selected="'.($key == 0 ? 'true' : 'false').'" aria-controls="tab_'.$id.'"><span>'.$tab['title'].'</span></a></li>';
+			$panes[] = '<div id="tab_'.$id.'" class="panel'.$active.' entry-content" role="tabpanel" aria-labelledby="tab-'.$id.'">'.do_shortcode( $tab['content'] ).'</div>';
 			$i++;
 		}
 			if($title) $title = '<h4 class="uppercase text-'.$align.'">'.$title.'</h4>';
 			$return = '
 		<div class="'.implode(' ', $wrapper_class).'">
 			'.$title.'
-			<ul class="'.$classes.'">'.implode( "\n", $tabs ).'</ul><div class="tab-panels">'.implode( "\n", $panes ).'</div></div>';
+			<ul class="'.$classes.'" role="tablist">'.implode( "\n", $tabs ).'</ul><div class="tab-panels">'.implode( "\n", $panes ).'</div></div>';
 	}
 
 

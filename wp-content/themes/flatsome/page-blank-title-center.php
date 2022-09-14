@@ -1,7 +1,11 @@
 <?php
-/*
-Template name: Page - Container - Center Title
-*/
+/**
+ * Template name: Page - Container - Center Title
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
 get_header();
 ?>
 

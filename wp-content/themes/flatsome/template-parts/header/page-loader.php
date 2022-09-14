@@ -1,4 +1,11 @@
 <?php
+/**
+ * Page loader.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
 $color = get_theme_mod('site_loader_color');
 $bg_color = get_theme_mod('site_loader_bg');
 

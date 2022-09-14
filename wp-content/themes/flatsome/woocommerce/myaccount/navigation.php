@@ -10,10 +10,11 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see     http://docs.woothemes.com/document/template-structure/
- * @author  WooThemes
- * @package WooCommerce/Templates
- * @version 3.0.0
+ * @see              http://docs.woothemes.com/document/template-structure/
+ * @author           WooThemes
+ * @package          WooCommerce/Templates
+ * @version          3.0.0
+ * @flatsome-version 3.16.0
  */
 
 ?>

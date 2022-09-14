@@ -1,4 +1,10 @@
 <?php
+/**
+ * Logo element.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
 
 $site_logo_id        = flatsome_option( 'site_logo' );
 $site_logo_sticky_id = flatsome_option( 'site_logo_sticky' );

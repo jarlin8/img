@@ -1,5 +1,12 @@
-<?php if ( is_woocommerce_activated() && flatsome_is_wc_cart_available() ) { ?>
 <?php
+/**
+ * Mobile cart element.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+if ( is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
   // Get Cart replacement for catalog_mode
   if(flatsome_option('catalog_mode')) { get_template_part('template-parts/header/partials/element','cart-replace'); return;}
   $cart_style = flatsome_option('header_cart_style');

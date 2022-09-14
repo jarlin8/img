@@ -1,3 +1,12 @@
+<?php
+/**
+ * Posts content single.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
 <div class="entry-content single-page">
 
 	<?php the_content(); ?>

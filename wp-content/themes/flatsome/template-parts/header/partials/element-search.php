@@ -1,4 +1,13 @@
-<?php $icon_style = get_theme_mod('search_icon_style'); ?>
+<?php
+/**
+ * Search element.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+$icon_style = get_theme_mod('search_icon_style');
+?>
 <?php if(get_theme_mod('header_search_style') !== 'lightbox') { ?>
 <li class="header-search header-search-dropdown has-icon has-dropdown menu-item-has-children">
 	<?php if($icon_style) { ?><div class="header-button"><?php } ?>
@@ -16,7 +25,7 @@
 		<?php echo get_flatsome_icon('icon-search', '16px'); ?></a>
 		<?php if($icon_style) { ?></div>
 	<?php } ?>
-	
+
 	<div id="search-lightbox" class="mfp-hide dark text-center">
 		<?php echo do_shortcode('[search size="large" style="'.get_theme_mod('header_search_form_style').'"]'); ?>
 	</div>

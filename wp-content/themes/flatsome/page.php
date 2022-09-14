@@ -2,12 +2,12 @@
 /**
  * The template for displaying all pages.
  *
- * @package flatsome
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
  */
 
-
 if(flatsome_option('pages_template') != 'default') {
-	
+
 	// Get default template from theme options.
 	get_template_part('page', flatsome_option('pages_template'));
 	return;
@@ -20,7 +20,7 @@ do_action( 'flatsome_before_page' ); ?>
 	<div class="row row-main">
 		<div class="large-12 col">
 			<div class="col-inner">
-				
+
 				<?php if(get_theme_mod('default_title', 0)){ ?>
 				<header class="entry-header">
 					<h1 class="entry-title mb uppercase"><?php the_title(); ?></h1>
@@ -29,7 +29,7 @@ do_action( 'flatsome_before_page' ); ?>
 
 				<?php while ( have_posts() ) : the_post(); ?>
 					<?php do_action( 'flatsome_before_page_content' ); ?>
-					
+
 						<?php the_content(); ?>
 
 						<?php if ( comments_open() || '0' != get_comments_number() ){

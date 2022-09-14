@@ -245,7 +245,11 @@ add_filter( 'woocommerce_output_related_products_args', 'flatsome_related_produc
 function flatsome_sticky_add_to_cart_before() {
 	global $product;
 
-	if ( ! is_product() || ! get_theme_mod( 'product_sticky_cart', 0 ) || ! apply_filters( 'flatsome_sticky_add_to_cart_enabled', true, $product ) ) {
+	if (
+		! is_product()
+		|| ! get_theme_mod( 'product_sticky_cart', 0 )
+		|| ! apply_filters( 'flatsome_sticky_add_to_cart_enabled', true, $product )
+		|| get_theme_mod( 'product_layout' ) === 'stacked-right' ) {
 		return;
 	}
 
@@ -272,7 +276,11 @@ add_action( 'woocommerce_before_add_to_cart_button', 'flatsome_sticky_add_to_car
 function flatsome_sticky_add_to_cart_after() {
 	global $product;
 
-	if ( ! is_product() || ! get_theme_mod( 'product_sticky_cart', 0 ) || ! apply_filters( 'flatsome_sticky_add_to_cart_enabled', true, $product ) ) {
+	if (
+		! is_product()
+		|| ! get_theme_mod( 'product_sticky_cart', 0 )
+		|| ! apply_filters( 'flatsome_sticky_add_to_cart_enabled', true, $product )
+		|| get_theme_mod( 'product_layout' ) === 'stacked-right' ) {
 		return;
 	}
 

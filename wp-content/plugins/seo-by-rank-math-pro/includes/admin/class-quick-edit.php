@@ -438,7 +438,7 @@ class Quick_Edit {
 	 * @return mixed
 	 */
 	public function save_post( $post_id ) {
-		if ( ! wp_verify_nonce( Param::post( 'rank_math_quick_edit_nonce' ), 'rank-math-quick-edit' ) ) {
+		if ( wp_is_post_revision( $post_id ) || ! wp_verify_nonce( Param::post( 'rank_math_quick_edit_nonce' ), 'rank-math-quick-edit' ) ) {
 			return;
 		}
 

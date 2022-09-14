@@ -19,18 +19,18 @@ function flatsome_facebook_login_button_html() {
   $url = flatsome_facebook_oauth_url();
   ob_start(); ?>
 
-  <hr />
   <p><?php _e('Login with Facebook to connect an Instagram Business account:')  ?></p>
   <a class="button" style="padding: 5px 15px; height: auto; background-color: #4267b2; border-color: #4267b2; color: #ffffff;" href="<?php echo $url ?>">
     <span class="dashicons dashicons-facebook-alt" style="vertical-align: middle; margin-top: -2px;"></span>
     <?php _e( 'Login with Facebook', 'flatsome-admin' ) ?>
   </a>
-  <p>
-    <button class="button" name="flatsome_instagram_clear_cache">
-      <?php _e( 'Clear Instagram cache', 'flatsome-admin' ) ?>
-    </button>
-  </p>
-  <p>
+  <h3 class="heading"><?php _e( 'Cache' ) ?></h3>
+  <p style="margin-top: 0;"><?php _e('Clear the cache to fetch fresh data from the Instagram API:')  ?></p>
+  <button class="button" name="flatsome_instagram_clear_cache">
+    <?php _e( 'Clear Instagram cache', 'flatsome-admin' ) ?>
+  </button>
+  <h3 class="heading"><?php _e( 'Documentation' ) ?></h3>
+  <p style="margin-top: 0;">
     <a href="https://docs.uxthemes.com/article/379-how-to-connect-to-instagram-api" target="_blank" rel="noopener noreferrer">
       <?php _e( 'How to setup an Instagram Business account', 'flatsome-admin' ) ?>
     </a>
@@ -45,40 +45,40 @@ function flatsome_facebook_accounts_html() {
 
   <input type="hidden" value="0" name="facebook_accounts[]">
 
-  <div class="flatsome-instagram-accounts theme-browser">
-    <div class="themes wp-clearfix">
-      <?php if ( empty( $accounts ) ) : ?>
-        <div class="notice notice-info inline">
-          <p><?php _e('No accounts connected yet...')  ?></p>
-        </div>
-      <?php else: ?>
-      <?php foreach ( $accounts as $username => $account ) : ?>
-      <div class="theme instagram-account instagram-account--<?php echo esc_attr( $username ) ?>" style="width: 46%">
-        <input type="hidden" value="<?php echo esc_attr( $account['id'] ) ?>" name="facebook_accounts[<?php echo esc_attr( $username ) ?>]">
-        <div class="theme-screenshot">
-          <?php if ( ! empty( $account['profile_picture'] ) ) : ?>
-          <img src="<?php echo esc_attr( $account['profile_picture'] ) ?>" alt="<?php echo esc_attr( $username ) ?>">
-          <?php else : ?>
-          <img src="<?php echo get_template_directory_uri() ?>/inc/admin/advanced/assets/images/instagram-profile.png" alt="<?php echo esc_attr( $username ) ?>">
-          <?php endif ?>
-        </div>
-        <!-- <div class="notice inline notice-alt"><p></p></div> -->
-        <div class="theme-id-container">
-          <h2 class="theme-name">
+  <div class="flatsome-instagram-accounts">
+    <?php if ( empty( $accounts ) ) : ?>
+    <div class="notice notice-info inline">
+      <p><?php _e('No accounts connected yet...')  ?></p>
+    </div>
+    <?php else: ?>
+    <table class="widefat striped">
+      <thead>
+        <th><?php _e( 'Username' ); ?></th>
+        <th><?php _e( 'Actions' ); ?></th>
+      </thead>
+      <tbody>
+        <?php foreach ( $accounts as $username => $account ) : ?>
+        <tr class="instagram-account instagram-account--<?php echo esc_attr( $username ) ?>">
+          <td>
+            <?php foreach ( $account as $key => $value ) : ?>
+              <?php if ( is_string( $value ) || is_numeric( $value ) ) : ?>
+              <input type="hidden" name="facebook_accounts[<?php echo esc_attr( $username ) ?>][<?php echo esc_attr( $key ) ?>]" value="<?php echo esc_attr( $value ) ?>">
+              <?php endif ?>
+            <?php endforeach ?>
             <a target="_blank" href="https://www.instagram.com/<?php echo esc_attr( $username ) ?>/">
               <?php echo esc_html( $username ) ?>
             </a>
-          </h2>
-          <div class="theme-actions">
+          </td>
+          <td>
             <button type="button" class="button button-small" onclick="jQuery(this).closest('.instagram-account').remove()">
-              Disconnect
+              <?php _e( 'Remove' ); ?>
             </button>
-          </div>
-        </div>
-      </div>
-      <?php endforeach; ?>
-      <?php endif; ?>
-    </div>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      <tbody>
+    </table>
+    <?php endif; ?>
   </div>
 
   <?php return ob_get_clean();
@@ -239,21 +239,6 @@ function flatsome_facebook_connect_accounts() {
   wp_safe_redirect( admin_url( 'admin.php?page=optionsframework&tab=of-option-instagram' ) );
 }
 add_action( 'admin_post_flatsome_instagram_connect', 'flatsome_facebook_connect_accounts' );
-
-function flatsome_facebook_set_theme_mod( $values, $old_values ) {
-  $result = array();
-
-  foreach ( $values as $username => $id ) {
-    if ( is_array( $old_values ) && array_key_exists( $username, $old_values ) ) {
-      $result[ $username ] = $old_values[ $username ];
-    } else {
-      $result[ $username ] = $id;
-    }
-  }
-
-  return $result;
-}
-add_filter( 'pre_set_theme_mod_facebook_accounts', 'flatsome_facebook_set_theme_mod', 10, 2 );
 
 /**
  * Deletes the Instagram oEmbed cache and transients.

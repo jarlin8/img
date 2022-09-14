@@ -1,7 +1,11 @@
 <?php
-/*
-Template name: Portfolio
-*/
+/**
+ * Template name: Portfolio
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
 get_header(); ?>
 
 <div class="portfolio-page-wrapper portfolio-archive page-featured-item">
@@ -11,7 +15,7 @@ get_header(); ?>
 		<div class="container">
 			<?php the_content(); ?>
 		</div>
-	<?php endwhile; // end of the loop. ?>		
+	<?php endwhile; // end of the loop. ?>
 </div>
 
 <?php get_footer(); ?>

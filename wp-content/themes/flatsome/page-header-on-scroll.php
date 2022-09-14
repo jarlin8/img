@@ -1,8 +1,11 @@
 <?php
-/*
-Template name: Page - Full Width - Header on Scroll
+/**
+ * Template name: Page - Full Width - Header on Scroll
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
 
-*/
 get_header(); ?>
 
 <?php do_action( 'flatsome_before_page' ); ?>

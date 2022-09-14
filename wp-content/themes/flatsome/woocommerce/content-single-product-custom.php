@@ -4,9 +4,10 @@
  *
  * Override this template by copying it to yourtheme/woocommerce/content-single-product.php
  *
- * @author        WooThemes
- * @package       WooCommerce/Templates
- * @version       3.0.0
+ * @author           WooThemes
+ * @package          WooCommerce/Templates
+ * @version          3.0.0
+ * @flatsome-version 3.16.0
  */
 
 defined( 'ABSPATH' ) || exit;

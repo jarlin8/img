@@ -255,12 +255,21 @@ function flatsome_get_image_url($id, $size = 'large'){
     }
 }
 
-function flatsome_get_image($id, $size = 'large', $alt = 'bg_image', $inline = false){
+function flatsome_get_image( $id, $size = 'large', $alt = 'bg_image', $inline = false, $image_title = false ) {
 
     if(!$id) return '<img src="'.get_template_directory_uri().'/assets/img/missing.jpg'.'" />';
 
+	$attr       = array();
+	$title_html = '';
+
+	if ( $image_title ) {
+		$the_title     = get_the_title( $id );
+		$attr['title'] = $the_title;
+		$title_html    = ' title="' . esc_attr( $the_title ) . '" ';
+	}
+
     if (!is_numeric($id)) {
-        return '<img src="'.$id.'" alt="'.$alt.'" />';
+        return '<img src="' . $id . '" alt="' . $alt . '"' . $title_html . '/>';
     } else {
         $meta = get_post_mime_type($id);
 
@@ -275,7 +284,7 @@ function flatsome_get_image($id, $size = 'large', $alt = 'bg_image', $inline = f
           }
         }
 
-        return wp_get_attachment_image( $id, $size );
+        return wp_get_attachment_image( $id, $size, false, $attr );
     }
 }
 

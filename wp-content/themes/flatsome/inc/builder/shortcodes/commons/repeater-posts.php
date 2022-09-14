@@ -79,5 +79,21 @@ return array(
 		     'DESC' => 'DESC',
 	     ),
      ),
-  )
+
+    'tags' => array(
+	    'type'       => 'select',
+	    'heading'    => 'Tag',
+	    'conditions' => 'ids == ""',
+	    'default'    => '',
+	    'config'     => array(
+		    'multiple'    => true,
+		    'placeholder' => 'Select...',
+		    'termSelect'  => array(
+			    'post_type'  => $repeater_post_type,
+			    'taxonomies' => 'post_tag',
+		    ),
+	    ),
+    ),
+
+)
 );

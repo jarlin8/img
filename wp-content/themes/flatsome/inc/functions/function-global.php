@@ -159,7 +159,7 @@ function flatsome_facebook_accounts() {
   $theme_mod = get_theme_mod( 'facebook_accounts', array() );
 
   return array_filter( $theme_mod, function ( $account ) {
-    return ! empty( $account );
+    return ! empty( $account ) && is_array( $account );
   } );
 }
 
@@ -171,7 +171,7 @@ function flatsome_facebook_accounts() {
  * @return string
  */
 function flatsome_facebook_api_version() {
-  return 'v8.0';
+  return 'v14.0';
 }
 
 // Get block id by ID or slug.

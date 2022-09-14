@@ -20,7 +20,12 @@ add_filter( 'kirki_config', 'flatsome_kirki_update_url' );
  * @return array Filtered list of modules.
  */
 function flatsome_kirki_modules( $modules ) {
-	unset( $modules['css'] );
+
+	// If Google CDN is enabled we don't load the css module to prevent Kirki generating css and download fonts.
+	if ( get_theme_mod( 'google_fonts_cdn' ) ) {
+		unset( $modules['css'] );
+	}
+
 	unset( $modules['css-vars'] );
 	unset( $modules['icons'] );
 	unset( $modules['loading'] );
@@ -42,5 +47,5 @@ function flatsome_custom_sanitize( $content ) {
 Flatsome_Option::add_config( 'option', array(
 	'option_type'    => 'theme_mod',
 	'capability'     => 'edit_theme_options',
-	'disable_output' => true,
+	'disable_output' => false,
 ) );

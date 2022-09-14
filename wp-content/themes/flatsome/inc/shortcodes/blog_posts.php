@@ -39,6 +39,7 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 		'offset' => '',
 		'orderby' => 'date',
 		'order' => 'DESC',
+		'tags' => '',
 
 		// Read more
 		'readmore' => '',
@@ -170,6 +171,7 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 		'post_type' => 'post',
 		'offset' => $offset,
 		'cat' => $cat,
+		'tag__in' => $tags ? array_filter( array_map( 'trim', explode( ',', $tags ) ) ) : '',
 		'posts_per_page' => $posts,
 		'ignore_sticky_posts' => true,
 		'orderby'             => $orderby,

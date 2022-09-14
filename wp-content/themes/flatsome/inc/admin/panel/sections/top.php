@@ -22,6 +22,8 @@
 
     <a href="<?php echo $url.'-support'; ?>" class="nav-tab <?php if($_GET['page'] == 'flatsome-panel-support') echo 'nav-tab-active'; ?>"><?php _e( 'Help & Guides', 'flatsome-admin' ); ?></a>
 
+	<a href="<?php echo $url.'-status'; ?>" class="nav-tab <?php if($_GET['page'] == 'flatsome-panel-status') echo 'nav-tab-active'; ?>"><?php _e( 'Status', 'flatsome-admin' ); ?></a>
+
     <a href="<?php echo $url.'-changelog'; ?>" class="nav-tab <?php if($_GET['page'] == 'flatsome-panel-changelog') echo 'nav-tab-active'; ?>"><?php _e( 'Change log', 'flatsome-admin' ); ?></a>
 </h2>
 

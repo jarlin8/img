@@ -1,9 +1,16 @@
-<?php do_action( 'get_header', null, array() ); ?>
+<?php
+/**
+ * Checkout focused layout.
+ *
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
+ */
+
+do_action( 'get_header', null, array() );
+?>
+
 <!DOCTYPE html>
-<!--[if lte IE 9 ]>
-<html <?php language_attributes(); ?> class="ie lt-ie9 <?php flatsome_html_classes(); ?>"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!-->
-<html <?php language_attributes(); ?> class="<?php flatsome_html_classes(); ?>"> <!--<![endif]-->
+<html <?php language_attributes(); ?> class="<?php flatsome_html_classes(); ?>">
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>"/>
 	<link rel="profile" href="http://gmpg.org/xfn/11"/>

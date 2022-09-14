@@ -72,6 +72,17 @@ if ( class_exists( 'RankMath' ) ) {
 	require $integrations_url . '/rank-math/class-rank-math.php';
 }
 
+// All in one SEO Integration.
+if ( class_exists( 'AIOSEO\Plugin\AIOSEO' ) ) {
+	require $integrations_url . '/all-in-one-seo/class-aioseo.php';
+}
+
+// SEOPress Integration.
+if ( defined( 'SEOPRESS_VERSION' ) ) {
+	require $integrations_url . '/wp-seopress/class-wp-seopress.php';
+}
+
+
 // WooCommerce Integrations.
 if ( is_woocommerce_activated() ) {
 

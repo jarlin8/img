@@ -1,4 +1,12 @@
-<?php if(is_woocommerce_activated()){ ?>
+<?php
+/**
+ * Account sidebar element.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+if(is_woocommerce_activated()){ ?>
 <li class="account-item has-icon menu-item">
 <?php if ( is_user_logged_in() ) { ?>
 

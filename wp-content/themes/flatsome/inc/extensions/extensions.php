@@ -37,4 +37,8 @@ if(is_woocommerce_activated()){
 	if ( get_theme_mod( 'swatches' ) ) {
 		require $extensions_url . '/flatsome-swatches/index.php';
 	}
+
+	if ( get_theme_mod( 'additional_variation_images' ) && ! get_theme_mod( 'product_gallery_woocommerce' ) ) {
+		require $extensions_url . '/flatsome-variation-images/index.php';
+	}
 }

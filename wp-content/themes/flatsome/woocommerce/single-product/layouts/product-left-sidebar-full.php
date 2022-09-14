@@ -1,3 +1,12 @@
+<?php
+/**
+ * Product with left full sidebar.
+ *
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
 <div class="product-main">
  <div class="row content-row row-divided row-large">
 
@@ -65,7 +74,7 @@
 					do_action( 'woocommerce_after_single_product_summary' );
 				?>
 			</div>
-	
+
     </div>
 
 </div>

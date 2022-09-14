@@ -1,3 +1,12 @@
+<?php
+/**
+ * Product with right full sidebar.
+ *
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
 <div class="row content-row row-divided row-large row-reverse">
 	<div id="product-sidebar" class="col large-3 hide-for-medium shop-sidebar <?php flatsome_sidebar_classes(); ?>">
 		<?php

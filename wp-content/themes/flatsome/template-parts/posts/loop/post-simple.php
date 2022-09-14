@@ -1,3 +1,12 @@
+<?php
+/**
+ * Post loop post simple.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
 <div class="box">
 	<a href="<?php the_permalink() ?>" class="plain">
 		<div class="box-image rectangle">

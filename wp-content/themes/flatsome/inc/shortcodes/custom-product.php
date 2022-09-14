@@ -2,7 +2,8 @@
 
 add_shortcode( 'ux_product_gallery', function ( $atts ) {
 	extract( shortcode_atts( array(
-		'style' => 'normal',
+		'style'       => 'normal',
+		'grid_layout' => '',
 	), $atts ) );
 
 	if ( ! is_product() ) {
@@ -13,7 +14,6 @@ add_shortcode( 'ux_product_gallery', function ( $atts ) {
 		return $style;
 	} );
 
-
 	add_filter( 'theme_mod_product_layout', function () use ( $style ) {
 		$layout = '';
 
@@ -21,6 +21,10 @@ add_shortcode( 'ux_product_gallery', function ( $atts ) {
 		if ( $style === 'stacked' ) $layout = 'stacked-right';
 
 		return $layout;
+	} );
+
+	add_filter( 'theme_mod_product_gallery_grid_layout', function () use ( $grid_layout ) {
+		return $grid_layout;
 	} );
 
 	ob_start();

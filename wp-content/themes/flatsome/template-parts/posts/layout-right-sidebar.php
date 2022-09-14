@@ -1,5 +1,12 @@
 <?php
-	do_action('flatsome_before_blog');
+/**
+ * Posts layout right sidebar.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
+
+do_action('flatsome_before_blog');
 ?>
 
 <?php if(!is_single() && flatsome_option('blog_featured') == 'top'){ get_template_part('template-parts/posts/featured-posts'); } ?>

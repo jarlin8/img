@@ -1,5 +1,13 @@
-<?php get_template_part('template-parts/portfolio/portfolio-title', flatsome_option('portfolio_title')); ?>
+<?php
+/**
+ * Portfolio single top.
+ *
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
+ */
 
+get_template_part('template-parts/portfolio/portfolio-title', flatsome_option('portfolio_title'));
+?>
 <div class="portfolio-top">
 	<div class="row page-wrapper">
 

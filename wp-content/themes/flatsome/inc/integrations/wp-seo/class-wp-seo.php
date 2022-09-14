@@ -28,7 +28,7 @@ class WP_Seo {
 	/**
 	 * WP_Seo constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
 		add_action( 'wp', [ $this, 'integrate' ] );
 	}
 

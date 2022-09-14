@@ -1,6 +1,16 @@
+<?php
+/**
+ * Dashboard links
+ *
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
+ */
+
+?>
+
 <ul class="dashboard-links">
 <?php if ( has_nav_menu( 'my_account' ) ) { ?>
-  <?php  
+  <?php
     wp_nav_menu(array(
       'theme_location' => 'my_account',
       'container'      => false,

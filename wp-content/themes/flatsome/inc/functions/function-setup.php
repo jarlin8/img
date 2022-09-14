@@ -315,18 +315,23 @@ add_action( 'wp_print_styles', 'flatsome_deregister_block_styles', 100 );
 /**
  * Prefetch lazy-loaded chunks.
  */
-function flatsome_prefetch_scripts() {
+function flatsome_prefetch_scripts( $urls, $type ) {
+	if ( $type !== 'prefetch' ) return $urls;
+
 	$manifest_path = get_template_directory() . '/assets/js/manifest.json';
 	$template_uri  = get_template_directory_uri();
+	$theme         = wp_get_theme( get_template() );
+	$version       = $theme->get( 'Version' );
 
-	if ( ! file_exists( $manifest_path ) ) return;
+	if ( ! file_exists( $manifest_path ) ) return $urls;
 
 	$json     = file_get_contents( $manifest_path );
 	$manifest = json_decode( $json, true );
 
 	foreach ( $manifest as $path ) {
-		$href = esc_attr( "$template_uri/assets/js/$path" );
-		echo "<link rel=\"prefetch\" href=\"$href\" />\n";
+		$urls[] = "$template_uri/assets/js/$path?ver=$version";
 	}
+
+	return $urls;
 }
-add_action( 'wp_head', 'flatsome_prefetch_scripts', 5 );
+add_filter( 'wp_resource_hints', 'flatsome_prefetch_scripts', 10, 2 );

@@ -285,6 +285,25 @@ function flatsome_pages_in_search_results(){
 }
 add_action('woocommerce_after_main_content','flatsome_pages_in_search_results', 10);
 
+/**
+ * Filters the WooCommerce sale flash.
+ *
+ * @param string     $html    The HTML string.
+ * @param WP_Post    $post    Post object.
+ * @param WC_Product $product Product object.
+ *
+ * @return false|mixed
+ */
+function flatsome_woocommerce_sale_flash( $html, $post, $product ) {
+	if ( ! get_theme_mod( 'sale_bubble', 1 ) ) {
+		return '';
+	}
+
+	return $html;
+}
+
+add_filter( 'woocommerce_sale_flash', 'flatsome_woocommerce_sale_flash', 10, 3 );
+
 function flatsome_new_flash( $html, $post, $product, $badge_style ) {
 	if ( ! get_theme_mod( 'new_bubble_auto' ) ) {
 		return $html;
@@ -420,8 +439,10 @@ function flatsome_account_login_lightbox(){
     ?>
     <div id="login-form-popup" class="lightbox-content mfp-hide">
       <?php if(get_theme_mod('social_login_pos','top') == 'top' && ($is_facebook_login || $is_google_login)) wc_get_template('myaccount/header.php'); ?>
-      <?php wc_get_template_part('myaccount/form-login', $layout ); ?>
-      <?php if(get_theme_mod('social_login_pos','top') == 'bottom' && ($is_facebook_login || $is_google_login)) wc_get_template('myaccount/header.php'); ?>
+      	<div class="woocommerce">
+      		<?php wc_get_template_part('myaccount/form-login', $layout ); ?>
+		</div>
+      	<?php if(get_theme_mod('social_login_pos','top') == 'bottom' && ($is_facebook_login || $is_google_login)) wc_get_template('myaccount/header.php'); ?>
     </div>
   <?php }
 }
@@ -635,3 +656,58 @@ if ( flatsome_is_mini_cart_reveal() ) {
 		return $message;
 	});
 }
+
+/**
+ * Get HTML for ratings.
+ *
+ * @see wc_get_rating_html()
+ */
+function flatsome_get_rating_html( $rating, $count = 0 ) {
+	global $product;
+	$review_count = $product->get_review_count();
+	$label        = sprintf( __( 'Rated %s out of 5', 'woocommerce' ), $rating ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+	$html         = '';
+
+	if ( $rating > 0 ) {
+		if ( is_single() ) {
+			$style = get_theme_mod( 'product_info_review_count_style', 'inline' );
+			// Default to 'simple' when review count visibility is disabled.
+			$style = get_theme_mod( 'product_info_review_count' ) ? $style : 'simple';
+
+			switch ( $style ) {
+				case 'tooltip':
+					$title = sprintf( _n( '%s customer review', '%s customer reviews', $review_count, 'woocommerce' ), $review_count ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
+					$html  = '<a href="#reviews" class="woocommerce-review-link" rel="nofollow">';
+					$html .= '<div class="star-rating tooltip" role="img" aria-label="' . esc_attr( $label ) . '" title="' . esc_attr( $title ) . '">';
+					$html .= wc_get_star_rating_html( $rating, $count );
+					$html .= '</div>';
+					$html .= '</a>';
+					break;
+				case 'inline':
+					$html  = '<div class="star-rating star-rating--inline" role="img" aria-label="' . esc_attr( $label ) . '">';
+					$html .= wc_get_star_rating_html( $rating, $count );
+					$html .= '</div>';
+					break;
+				case 'stacked':
+					$html  = '<div class="star-rating" role="img" aria-label="' . esc_attr( $label ) . '">';
+					$html .= wc_get_star_rating_html( $rating, $count );
+					$html .= '</div>';
+					break;
+				case 'simple':
+					$html  = '<a href="#reviews" class="woocommerce-review-link" rel="nofollow">';
+					$html .= '<div class="star-rating" role="img" aria-label="' . esc_attr( $label ) . '">';
+					$html .= wc_get_star_rating_html( $rating, $count );
+					$html .= '</div>';
+					$html .= '</a>';
+					break;
+			}
+		} else {
+			$html  = '<div class="star-rating star-rating--inline" role="img" aria-label="' . esc_attr( $label ) . '">';
+			$html .= wc_get_star_rating_html( $rating, $count );
+			$html .= '</div>';
+		}
+	}
+
+	return apply_filters( 'woocommerce_product_get_rating_html', $html, $rating, $count );
+}
+

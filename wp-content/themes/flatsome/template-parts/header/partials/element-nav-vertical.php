@@ -2,7 +2,8 @@
 /**
  * Header vertical menu template.
  *
- * @package Flatsome
+ * @package          Flatsome\Templates
+ * @flatsome-version 3.16.0
  */
 
 $classes_opener  = array( 'header-vertical-menu__opener' );

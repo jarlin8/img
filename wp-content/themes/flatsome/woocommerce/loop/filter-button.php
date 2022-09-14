@@ -2,7 +2,8 @@
 /**
  * Shop category filter button template
  *
- * @package flatsome
+ * @package          Flatsome/WooCommerce/Templates
+ * @flatsome-version 3.16.0
  */
 
 $layout = get_theme_mod( 'category_sidebar', 'left-sidebar' );
@@ -26,6 +27,6 @@ $filter_text        = $custom_filter_text ? $custom_filter_text : __( 'Filter', 
 		<strong><?php echo esc_html( $filter_text ); ?></strong>
 	</a>
 	<div class="inline-block">
-		<?php the_widget( 'WC_Widget_Layered_Nav_Filters' ); ?>
+		<?php the_widget( 'WC_Widget_Layered_Nav_Filters', array( 'title' => '' ) ); ?>
 	</div>
 </div>

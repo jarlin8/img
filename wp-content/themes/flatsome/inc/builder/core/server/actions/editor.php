@@ -110,6 +110,7 @@ function ux_builder_editor_data() {
   }
 
   $data = apply_filters( 'ux_builder_data', array(
+    'currentPath' => '/',
     'loading' => true,
     'initialized' => false,
     'nonce' => wp_create_nonce( 'ux-builder-' . $editing_post->post()->ID ),
