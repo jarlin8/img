@@ -8,7 +8,7 @@ Requires at least: 5.9
 Tested up to: 6.0
 Requires PHP: 7.0
 License: GPLv2 or later
-Stable tag: 3.2.3
+Stable tag: 3.9.1
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 More than 20 special blocks for Gutenberg to build complex pages and animations with highest possible web vitals score.
@@ -105,6 +105,76 @@ Yes, we guarantee that Greenshift is built on top of google recommendations and 
 7. **Sliding panels, popups.** Build custom sliding panels, add any block, use for mega menus
 
 == Changelog ==
+
+= 3.9 =
+* New block - SVG Path Text
+* Ability to change size by simple drag in toolbar
+* Css styling compatibility with theme's custom elements and content hooks (for Kadence Pro)
+
+= 3.8.5 =
+* Option to set decimal points for Advanced slider option "number per row" 
+
+= 3.8.4 =
+* Added [Smooth scroll option for anchors in button block](https://greenshiftwp.com/how-to-add-smooth-scroll-to-anchor-on-wordpress/)
+* Added Background filters
+* Added support for Page templates editor
+
+= 3.8.3 =
+* Option to convert Container with inner containers to Slider and back. 
+* Drag position fix
+
+= 3.8 =
+* Container width and height can be oversized
+* Better scroller for sticky panel TOC
+* Icon spacing for info and title boxes
+* New workflow to add position, spacing, transformations to blocks from toolbar
+
+= 3.7.4 =
+* Gradient Animate for text, overlay. [Gradient Fluid effects](https://greenshiftwp.com/how-to-animate-gradient-for-text-and-background/)
+* Fix for Advanced slider script
+
+= 3.7.3 =
+* New video for animation addon. [Pin Scroll effects](https://youtu.be/wfVdOGd9U8s)
+* Added option to make custom prev, next buttons for Advanced slider
+
+= 3.7.1 =
+* New video for animation addon. [SVG and vector animations](https://www.youtube.com/watch?v=Pd28u8K4Fe4)
+* Added ESC button close popups and sliding panels
+
+= 3.7 =
+* Added Cookie saving option for Button block. [Example how to use for collapsible panels](https://greenshiftwp.com/how-to-make-cross-site-collapsible-panels-with-saved-user-choice/) or [Example how to use button for making night mode](https://greenshiftwp.com/how-to-add-night-mode-in-blockpress-theme-with-button-and-cookie-option/)
+
+= 3.6 =
+* Added Telegram share button
+* Added Popup/Sliding panel is closed by clicking on background and some fixes
+
+= 3.5 =
+* Clip path ID for images
+* New features for overlay hover effects for containers, buttons (circle clip, delays, custom hover classes). [Explanation](https://greenshiftwp.com/understanding-overlay-hover-effects-and-custom-hover-class/)
+* Video block has updates with Background options, cover options, Mix blend features
+* Animation addon has new series of video tutorials. Added in Get Started section
+* Support for Blocksy theme Content block ecosystem
+* Global styles for presets are loading inline for better web vitals
+
+= 3.4.2 =
+* More options for video block - object fit, background, mix blend
+* Margins can have decimal values
+
+= 3.4.1 =
+* Fix for wrong styles on mobile preview for heading
+* Added option for toggle hotspot in SEO addon + ability to rewrite affiliate links in SEO addon
+
+= 3.4 =
+* Added Typography styling compatibility with Astra, Kadence themes
+* Added Row variation - Section
+* Added text decoration parameters for Additional letter options
+* Added indicators for hidden parameters (overlay, text shadow, letter options)
+* Added new Experimental category to Ready library where we will add interesting complex layouts
+
+= 3.3 =
+* Added sub headings to TOC
+* Added text border option to Advanced Letter options for typography
+* Added Mask text effects and skew options for Animation addon
 
 = 3.2.2 =
 * Added Mix blend option (in Background section)

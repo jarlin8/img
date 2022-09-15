@@ -5,7 +5,7 @@
  * Author: Wpsoul
  * Author URI: https://greenshiftwp.com
  * Plugin URI: https://greenshiftwp.com
- * Version: 3.2.3
+ * Version: 3.9.1
  * License: GPL2+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -68,25 +68,15 @@ class gspb_PageTemplater {
 
 		$this->templates = array();
 
-		// Add a filter to the attributes metabox to inject template into the cache.
-		if ( version_compare( floatval( get_bloginfo( 'version' ) ), '4.7', '<' ) ) {
 
-			// 4.6 and older
-			add_filter(
-				'page_attributes_dropdown_pages_args',
-				array( $this, 'register_project_templates' )
-			);
-
-		} else {
-
-			// Add a filter to the wp 4.7 version attributes metabox
-			$post_types = get_post_types();
-			if ( ! empty( $post_types ) ) {
-				foreach ( $post_types as $post_type ) {
-					add_filter( "theme_{$post_type}_templates", array( $this, 'gspb_add_new_template' ) );
-				}
+		// Add a filter to the wp 4.7 version attributes metabox
+		$post_types = get_post_types();
+		if ( ! empty( $post_types ) ) {
+			foreach ( $post_types as $post_type ) {
+				add_filter( "theme_{$post_type}_templates", array( $this, 'gspb_add_new_template' ) );
 			}
 		}
+		
 
 		// Add a filter to the save post to inject out template into the page cache
 		add_filter(
@@ -101,12 +91,17 @@ class gspb_PageTemplater {
 			array( $this, 'view_project_template' )
 		);
 
-		// Add your templates to this array.
-		$this->templates = array(
+		$templatearray = array(
 			'page-templates/full-width.php' => 'GreenShift Full Width',
-			'page-templates/canvas.php'      => 'GreenShift Clean Canvas',
-
+			'page-templates/canvas.php'      => 'GreenShift Clean Canvas',			
 		);
+
+		if(defined('GREENSHIFTGSAP_DIR_URL')){
+			$templatearray['page-templates/canvas-scroll.php'] = 'Scroll Smooth Clean Canvas';
+		}
+
+		// Add your templates to this array.
+		$this->templates = $templatearray;
 
 	}
 
