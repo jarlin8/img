@@ -6,7 +6,6 @@ if (isset($_GET) && isset($_GET['asp_sid'])) {
     include('search.php');
     return;
 }
-$_comp = wpdreamsCompatibility::Instance();
 ?>
 <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/options_search.css?v='.ASP_CURR_VER; ?>" />
 <div id='wpdreams' class='asp-be wpdreams wrap<?php echo isset($_COOKIE['asp-accessibility']) ? ' wd-accessible' : ''; ?>'>
@@ -15,17 +14,6 @@ $_comp = wpdreamsCompatibility::Instance();
         <p class="errorMsg">
             <?php echo __('Warning: Please deactivate the Ajax Search Lite to assure every PRO feature works properly.', 'ajax-search-pro'); ?>
         </p>
-    <?php endif; ?>
-
-    <?php if ( $_comp->has_errors() ): ?>
-        <div class="wpdreams-box errorbox">
-            <p class='errors'>
-            <?php echo sprintf( __('Possible incompatibility! Please go to the
-                 <a href="%s">error check</a> page to see the details and solutions!', 'ajax-search-pro'),
-                get_admin_url() . 'admin.php?page=asp_compatibility_settings'
-            ); ?>
-            </p>
-        </div>
     <?php endif; ?>
 
 	<?php if ( wd_asp()->updates->needsUpdate() ) { wd_asp()->updates->printUpdateMessage(); } ?>
@@ -78,7 +66,7 @@ $_comp = wpdreamsCompatibility::Instance();
                         }
 
                         if ($id !== false) {
-                            asp_generate_the_css();
+                            wd_asp()->css_manager->generator->generate();
                             echo "<div class='successMsg'>" . __('Search Form Successfuly added!', 'ajax-search-pro') . "</div>";
                         } else {
                             echo "<div class='errorMsg'>" . __('The search form was not created. Please contact support.', 'ajax-search-pro') . "</div>";
@@ -106,7 +94,7 @@ $_comp = wpdreamsCompatibility::Instance();
                 if ( isset($_POST['instance_copy_id']) ) {
                     if ($_POST['instance_copy_id'] != '') {
                         if ( wd_asp()->instances->duplicate($_POST['instance_copy_id']) !== false ) {
-                            asp_generate_the_css();
+                            wd_asp()->css_manager->generator->generate();
                             echo "<div class='infoMsg'>" . __('Form duplicated!', 'ajax-search-pro') . "</div>";
                         } else {
                             echo "<div class='errorMsg'>" . __('Failure. Search form could not be duplicated.', 'ajax-search-pro') . "</div>";
@@ -126,7 +114,7 @@ $_comp = wpdreamsCompatibility::Instance();
             $_POST['delete'] = $_POST['delete'] + 0;
             wd_asp()->instances->delete( $_POST['delete'] );
             asp_del_file("search" . $_POST['delete'] . ".css");
-            asp_generate_the_css();
+            wd_asp()->css_manager->generator->generate();
         }
         if ( isset($_POST['asp_st_override']) ) {
             update_option("asp_st_override", $_POST['asp_st_override']);

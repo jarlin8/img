@@ -28,17 +28,13 @@ jQuery(function($){
     }
 
     // Coditional rules via attributes
-    WPD.Conditionals.init('div[tabid=101]');
-    WPD.Conditionals.init('div[tabid=105]');
-    WPD.Conditionals.init('div[tabid=109]');
-    WPD.Conditionals.init('div[tabid=108]');
-    WPD.Conditionals.init('div[tabid=102]');
+    WPD.Conditionals.init('div[tabid=1]');
     WPD.Conditionals.init('div[tabid=404]');
 
     // --- Safety check on max_input_vars
     if ( $('#asp_options_serialized').length > 0 ) {
         $('form[name="asp_data"]').submit(function(e){
-            if ( typeof(Base64) != "undefined" ) {
+            if ( typeof(WD_Helpers.Base64) != "undefined" ) {
                 // Send the back-up form instead, with 1 variable only
                 e.preventDefault();
                 $('#asp_options_serialized').val( WD_Helpers.Base64.encode($('form[name="asp_data"]').serialize()) );
@@ -164,6 +160,9 @@ jQuery(function($){
     });
     $('.tabs a[tabid=1]').on('click', function() {
         $('.tabs a[tabid=101]').trigger('click');
+    });
+    $('.tabs a[tabid=2]').on('click', function() {
+        $('.tabs a[tabid=201]').trigger('click');
     });
     $('.tabs a[tabid=4]').on('click', function() {
         $('.tabs a[tabid=401]').trigger('click');

@@ -1,30 +1,21 @@
 <?php
 /* Prevent direct access */
+
+use WPDRMS\ASP\Misc\Performance;
+
 defined('ABSPATH') or die("You can't access this file directly.");
 
 $perf_options = wd_asp()->o['asp_performance'];
 
 if (ASP_DEMO) $_POST = null;
 
-$pstats = new wpd_Performance('asp_performance_stats');
+$pstats = new Performance('asp_performance_stats');
 $asp_performance = $pstats->get_data();
-$_comp = wpdreamsCompatibility::Instance();
 ?>
 
 <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/options_search.css?v='.ASP_CURR_VER; ?>" />
 <div id='wpdreams' class='asp-be wpdreams asp_performance wrap<?php echo isset($_COOKIE['asp-accessibility']) ? ' wd-accessible' : ''; ?>'>
 	<?php if ( wd_asp()->updates->needsUpdate() ) { wd_asp()->updates->printUpdateMessage(); } ?>
-
-    <?php if ( $_comp->has_errors() ): ?>
-        <div class="wpdreams-box errorbox">
-            <p class='errors'>
-            <?php echo sprintf( __('Possible incompatibility! Please go to the
-                 <a href="%s">error check</a> page to see the details and solutions!', 'ajax-search-pro'),
-                get_admin_url() . 'admin.php?page=asp_compatibility_settings'
-            ); ?>
-            </p>
-        </div>
-    <?php endif; ?>
 
     <div class="wpdreams-box" style="float:left;">
         <?php ob_start(); ?>
@@ -46,7 +37,7 @@ $_comp = wpdreamsCompatibility::Instance();
             $updated = true;
         }
         if (isset($_POST) && isset($_POST['asp_perf_clear'])) {
-            $pstats = new wpd_Performance('asp_performance_stats');
+            $pstats = new Performance('asp_performance_stats');
             $pstats->reset();
         }
         ?>

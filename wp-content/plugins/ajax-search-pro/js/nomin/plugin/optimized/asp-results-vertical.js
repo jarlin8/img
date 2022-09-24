@@ -98,9 +98,7 @@
 
             if ( $this.call_num < 1 ) {
                 // Scroll to top
-                let $container = $this.is_scroll && typeof $this.scroll.recalculate !== 'undefined' ?
-                    $($this.scroll.getScrollElement()) : $this.n('results');
-                $container.get(0).scrollTop = 0;
+                $this.n('results').get(0).scrollTop = 0;
             }
 
             // Preventing body touch scroll

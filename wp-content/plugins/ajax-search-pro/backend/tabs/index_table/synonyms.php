@@ -1,9 +1,11 @@
 <?php
 /* Prevent direct access */
+
+use WPDRMS\ASP\Synonyms as Synonyms;
+
 defined('ABSPATH') or die("You can't access this file directly.");
 
-require_once(ASP_CLASSES_PATH . 'etc/synonyms.class.php');
-$syn = ASP_Synonyms::getInstance();
+$syn = Synonyms\Manager::getInstance();
 $langs = wpd_get_languages_array();
 ?>
 

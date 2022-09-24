@@ -1,5 +1,12 @@
 <fieldset>
-    <legend><?php echo __('Grouping', 'ajax-search-pro'); ?></legend>
+	<legend>
+		<?php echo __('Grouping', 'ajax-search-pro'); ?>
+		<span class="asp_legend_docs">
+            <a target="_blank" href="https://documentation.ajaxsearchpro.com/general-settings/grouping-title-duplicates"><span class="fa fa-book"></span>
+                <?php echo __('Documentation', 'ajax-search-pro'); ?>
+            </a>
+        </span>
+	</legend>
     <div class="errorMsg">
         <?php echo __(
             'Grouping by <strong>title</strong> means, that duplicate results matching titles are removed, and only the first match is left. This option should be used where multiple items are reffering to the same post and are not needed, such as with some <strong>Event calendar</strong> plugins, or similar.', 'ajax-search-pro'); ?>

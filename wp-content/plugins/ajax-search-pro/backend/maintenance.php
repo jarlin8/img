@@ -102,7 +102,7 @@ if (ASP_DEMO) $_POST = null;
 </div>
 <?php
 if (!ASP_DEMO) {
-    $media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_option("asp_media_query", "defn");
+    $media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_site_option("asp_media_query", "defn");
     wp_enqueue_script('asp-backend-maintenance', plugin_dir_url(__FILE__) . 'settings/assets/maintenance.js', array(
         'jquery'
     ), $media_query, true);

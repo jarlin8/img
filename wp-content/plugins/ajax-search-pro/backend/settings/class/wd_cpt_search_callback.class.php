@@ -1,4 +1,8 @@
 <?php
+
+use WPDRMS\ASP\Query\SearchQuery;
+use WPDRMS\ASP\Utils\Ajax;
+
 if (!class_exists("wd_CPTSearchCallBack")) {
     /**
      * Class wd_CPTSearchCallBack
@@ -79,7 +83,7 @@ if (!class_exists("wd_CPTSearchCallBack")) {
 
             $ptypes = array_diff($ptypes, $exclude);
 
-            $asp_query = new ASP_Query(array(
+            $asp_query = new SearchQuery(array(
                 "s" => $phrase,
                 "_ajax_search" => false,
                 'keyword_logic' => 'AND',
@@ -93,7 +97,7 @@ if (!class_exists("wd_CPTSearchCallBack")) {
             ));
 
             $results = $asp_query->posts;
-			ASP_Helpers::prepareAjaxHeaders();
+			Ajax::prepareHeaders();
             print_r($data['delimiter'] . json_encode($results) . $data['delimiter']);
             die();
         }

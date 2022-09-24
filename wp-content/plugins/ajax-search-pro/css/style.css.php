@@ -11,23 +11,6 @@
 
 defined('ABSPATH') or die("You can't access this file directly.");
 
-$asp_div_ids = 'div.asp_m.asp_m_'.$id;
-$asp_res_ids = 'div.asp_r.asp_r_'.$id;
-$asp_set_ids = 'div.asp_s.asp_s_'.$id;
-$asp_bset_ids = 'div.asp_sb.asp_sb_'.$id;
-
-$asp_div_ids1 = '#ajaxsearchpro'.$id.'_1';
-$asp_div_ids2 = '#ajaxsearchpro'.$id.'_2';
-
-$asp_res_ids1 = '#ajaxsearchprores'.$id.'_1';
-$asp_res_ids2 = '#ajaxsearchprores'.$id.'_2';
-
-$asp_set_ids1 = '#ajaxsearchprosettings'.$id.'_1';
-$asp_set_ids2 = '#ajaxsearchprosettings'.$id.'_2';
-
-$asp_bset_ids1 = '#ajaxsearchprobsettings'.$id.'_1';
-$asp_bset_ids2 = '#ajaxsearchprobsettings'.$id.'_2';
-
 $use_compatibility = true;
 $use_strong_compatibility = true;
 $base_css = "";
@@ -45,6 +28,26 @@ if ($comp_level == "medium") {
     $use_compatibility = false;
     $use_strong_compatibility = false;
 }
+
+$asp_container_class = '.asp_w_container.asp_w_container_'.$id;
+
+$asp_div_ids1 = '#ajaxsearchpro'.$id.'_1';
+$asp_div_ids2 = '#ajaxsearchpro'.$id.'_2';
+
+$asp_res_ids1 = '#ajaxsearchprores'.$id.'_1';
+$asp_res_ids2 = '#ajaxsearchprores'.$id.'_2';
+
+$asp_set_ids1 = '#ajaxsearchprosettings'.$id.'_1';
+$asp_set_ids2 = '#ajaxsearchprosettings'.$id.'_2';
+
+$asp_bset_ids1 = '#ajaxsearchprobsettings'.$id.'_1';
+$asp_bset_ids2 = '#ajaxsearchprobsettings'.$id.'_2';
+
+$asp_div_ids = 'div.asp_m.asp_m_'.$id;
+$asp_res_ids = 'div.asp_r.asp_r_'.$id;
+$asp_set_ids = 'div.asp_s.asp_s_'.$id;
+$asp_bset_ids = 'div.asp_sb.asp_sb_'.$id;
+
 
 if (!class_exists('aspCSSCompatibilityReplace')) {
     class aspCSSCompatibilityReplace {
@@ -167,4 +170,15 @@ echo $asp_loader_css;
 echo $asp_anim_css;
 include(ASP_PATH . "/css/style.shared.css.php");
 include(ASP_PATH . "/css/style.".$style['resultstype'].".css.php");
+// Custom CSS
+foreach ( array('custom_css', 'custom_css_h') as $_css_key ) {
+	if ( $style[$_css_key] != '' ) {
+		if ( base64_decode($style[$_css_key], true) == true ) {
+			$asp_c_css = stripcslashes( base64_decode($style[$_css_key]) );
+		} else {
+			$asp_c_css = stripcslashes( $style[$_css_key] );
+		}
+		echo str_replace( "_aspid", $id, $asp_c_css );
+	}
+}
 echo "/* Generated at: ".date("Y-m-d H:i:s", time())." */";

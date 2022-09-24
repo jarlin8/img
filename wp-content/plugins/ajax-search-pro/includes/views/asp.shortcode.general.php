@@ -1,19 +1,22 @@
 <?php
 /* Prevent direct access */
+
+use WPDRMS\ASP\Utils\Plugin;
+
 defined('ABSPATH') or die("You can't access this file directly.");
 
 foreach ( wd_asp()->front_filters->get('position', 'generic') as $filter ) {
-    include( ASP_Helpers::aspTemplateFilePath('filters/generic/asp-generic-header.php') );
+    include( Plugin::templateFilePath('filters/generic/asp-generic-header.php') );
 
     switch ($filter->display_mode) {
         case 'checkboxes':
-            include(ASP_Helpers::aspTemplateFilePath('filters/generic/asp-generic-checkboxes.php'));
+            include(Plugin::templateFilePath('filters/generic/asp-generic-checkboxes.php'));
             break;
         case 'radio':
-            include(ASP_Helpers::aspTemplateFilePath('filters/generic/asp-generic-radio.php'));
+            include(Plugin::templateFilePath('filters/generic/asp-generic-radio.php'));
             break;
         default:
-            include(ASP_Helpers::aspTemplateFilePath('filters/generic/asp-generic-dropdown.php'));
+            include(Plugin::templateFilePath('filters/generic/asp-generic-dropdown.php'));
             break;
     }
 
@@ -42,5 +45,5 @@ foreach ( wd_asp()->front_filters->get('position', 'generic') as $filter ) {
 			   name="asp_gen[]" <?php echo $_chkd; ?>/>
     <?php }
 
-    include(ASP_Helpers::aspTemplateFilePath('filters/generic/asp-generic-footer.php'));
+    include(Plugin::templateFilePath('filters/generic/asp-generic-footer.php'));
 }

@@ -84,7 +84,8 @@ $asp_loaders = array(
             <input type='text' class='autocomplete' name='phrase' value=''
                    aria-label="<?php echo __('Search autocomplete, ignore please', 'ajax-search-pro'); ?>"
                    aria-hidden="true"
-                   autocomplete="off" disabled/>
+				   tabindex="-1"
+				   autocomplete="off" disabled/>
             <input type='submit'
                    aria-hidden="true"
                    aria-label="<?php echo esc_html(asp_icl_t('Hidden button', 'Hidden button')); ?>"

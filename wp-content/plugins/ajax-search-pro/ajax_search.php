@@ -1,6 +1,8 @@
 <?php
 // -- AJAX_SEARCH.PHP --
 //mimic the actual admin-ajax
+use WPDRMS\ASP\Hooks\AjaxManager;
+
 define('DOING_AJAX', true);
 
 if (!isset($_POST['action']))
@@ -31,8 +33,8 @@ global $wd_asp;
 $action = esc_attr(trim($_POST['action']));
 
 //A bit of security
-$allowed_actions = WD_ASP_Ajax::getAll();
-WD_ASP_Ajax::registerAll(true);
+$allowed_actions = AjaxManager::getAll();
+AjaxManager::registerAll(true);
 
 if (in_array($action, $allowed_actions)) {
     if (is_user_logged_in())
