@@ -1,15 +1,18 @@
 <?php
 /* Prevent direct access */
+
+use WPDRMS\ASP\Index\Manager;
+use WPDRMS\ASP\Utils\Script;
+
 defined('ABSPATH') or die("You can't access this file directly.");
-include_once(ASP_CLASSES_PATH . 'media/media.inc.php');
 
 $it_options = wd_asp()->o['asp_it_options'];
 $_args = array();
 foreach ($it_options as $_k => $_opt) {
     $_args[str_replace('it_', '', $_k)] = $_opt;
 }
-$index_obj = new asp_indexTable($_args);
-$pool_sizes = asp_indexTable::suggestPoolSizes(true);
+$index_obj = new Manager($_args);
+$pool_sizes = Manager::suggestPoolSizes();
 
 if (ASP_DEMO) {
     $_POST = null;
@@ -24,7 +27,6 @@ $asp_cron_data = get_option("asp_it_cron", array(
     "result" => array()
 ));
 
-$_comp = wpdreamsCompatibility::Instance();
 ?>
 <?php if ( !wd_asp()->db->exists('index', true) ): ?>
     <div id='wpdreams' class='asp-be wpdreams wrap'>
@@ -54,17 +56,6 @@ $_comp = wpdreamsCompatibility::Instance();
     <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/index-table/synonyms.css?v='.ASP_CURR_VER; ?>" />
     <div id='wpdreams' class='asp-be wpdreams wrap<?php echo isset($_COOKIE['asp-accessibility']) ? ' wd-accessible' : ''; ?>'>
 		<?php if ( wd_asp()->updates->needsUpdate() ) { wd_asp()->updates->printUpdateMessage(); } ?>
-
-        <?php if ( $_comp->has_errors() ): ?>
-            <div class="wpdreams-box errorbox">
-                <p class='errors'>
-                <?php echo sprintf( __('Possible incompatibility! Please go to the
-                     <a href="%s">error check</a> page to see the details and solutions!', 'ajax-search-pro'),
-                    get_admin_url() . 'admin.php?page=asp_compatibility_settings'
-                ); ?>
-                </p>
-            </div>
-        <?php endif; ?>
 
         <div class="wpdreams-box" style="float:left;">
 
@@ -613,7 +604,7 @@ $_comp = wpdreamsCompatibility::Instance();
 	</div>
 </div>
 <?php
-$media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_option("asp_media_query", "defn");
+$media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_site_option("asp_media_query", "defn");
 wp_enqueue_script('asp-backend-synonyms', plugin_dir_url(__FILE__) . 'settings/assets/index-table/synonyms.js', array(
     'jquery'
 ), $media_query, true);
@@ -638,7 +629,7 @@ wp_localize_script('asp-backend-synonyms', 'ASP_SYN_MSG', array(
 wp_enqueue_script('asp-backend-index-table', plugin_dir_url(__FILE__) . 'settings/assets/index_table.js', array(
     'jquery', 'wpdreams-tabs'
 ), $media_query, true);
-ASP_Helpers::objectToInlineScript('asp-backend-index-table', 'ASP_IT', array(
+Script::objectToInlineScript('asp-backend-index-table', 'ASP_IT', array(
     "current_blog_id" => array(get_current_blog_id()),
     "first_index" => $index_obj->isEmpty() && !isset($_COOKIE['_asp_first_index']) ? 1 : 0
 ));

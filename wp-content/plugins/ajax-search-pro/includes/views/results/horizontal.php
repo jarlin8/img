@@ -70,7 +70,7 @@ defined('ABSPATH') or die("You can't access this file directly.");
         </div>
 
         <?php if ($show_description == 1): ?>
-            <?php if (!empty($r->image) && $s_options['hhidedesc'] == 0): ?>
+			<?php if ( empty($r->image) || $s_options['hhidedesc'] == 0 ): ?>
             <div class="asp_res_text">
             <?php echo $r->content; ?>
             </div>

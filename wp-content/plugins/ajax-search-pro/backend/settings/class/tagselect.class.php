@@ -1,4 +1,7 @@
 <?php
+
+use WPDRMS\ASP\Utils\Ajax;
+
 if (!class_exists("wpdreamsSelectTags")) {
     /**
      * Class wpdreamsSelectTags
@@ -229,7 +232,7 @@ if (!class_exists("wpdreamsSelectTags")) {
                 }
             else
                 $ret = "No tags found for this phrase";
-			ASP_Helpers::prepareAjaxHeaders();
+			Ajax::prepareHeaders();
             print "!!WDSTART!!" . $ret . "!!WDEND!!";
             die();
         }

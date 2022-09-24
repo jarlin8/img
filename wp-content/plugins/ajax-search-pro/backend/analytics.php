@@ -2,8 +2,6 @@
 /* Prevent direct access */
 defined('ABSPATH') or die("You can't access this file directly.");
 
-$_comp = wpdreamsCompatibility::Instance();
-
 if (ASP_DEMO) $_POST = null;
 
 $action_msg = '';
@@ -77,7 +75,7 @@ if (isset($_POST, $_POST['asp_analytics'], $_POST['submit'], $_POST['asp_analyti
         );
         update_option('asp_analytics', $values);
         asp_parse_options();
-		asp_generate_the_css();
+		wd_asp()->css_manager->generator->generate();
         $action_msg = "<div class='infoMsg'><strong>" . __('Analytics settings saved!', 'ajax-search-pro') . '</strong> (' . date("Y-m-d H:i:s") . ")</div>";
     } else {
         $action_msg = "<div class='errorMsg'><strong>".  __('<strong>ERROR Saving:</strong> Invalid NONCE, please try again!', 'ajax-search-pro') . '</strong> (' . date("Y-m-d H:i:s") . ")</div>";
@@ -92,16 +90,6 @@ $ana_options = wd_asp()->o['asp_analytics'];
 <div id='wpdreams' class='asp-be asp-be-analytics wpdreams wrap<?php echo isset($_COOKIE['asp-accessibility']) ? ' wd-accessible' : ''; ?>'>
 	<?php if ( wd_asp()->updates->needsUpdate() ) { wd_asp()->updates->printUpdateMessage(); } ?>
 
-    <?php if ( $_comp->has_errors() ): ?>
-        <div class="wpdreams-box errorbox">
-            <p class='errors'>
-            <?php echo sprintf( __('Possible incompatibility! Please go to the
-                 <a href="%s">error check</a> page to see the details and solutions!', 'ajax-search-pro'),
-                get_admin_url() . 'admin.php?page=asp_compatibility_settings'
-            ); ?>
-            </p>
-        </div>
-    <?php endif; ?>
 
     <div class="wpdreams-box" style="float:left;">
         <?php ob_start(); ?>
@@ -147,7 +135,7 @@ $ana_options = wd_asp()->o['asp_analytics'];
             <p class='infoMsg'>
                 <?php echo __('After some time you should be able to see the hits on your analytics board.', 'ajax-search-pro'); ?>
             </p>
-            <img src="http://i.imgur.com/s7BXiPV.png">
+            <img src="<?php echo ASP_URL . "img/analytics/pageview.png"; ?>">
         </div>
         <div class="asp_al_event hiddend">
             <fieldset>
@@ -384,7 +372,7 @@ $ana_options = wd_asp()->o['asp_analytics'];
     <div class="clear"></div>
 </div>
 <?php
-$media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_option("asp_media_query", "defn");
+$media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_site_option("asp_media_query", "defn");
 wp_enqueue_script('asp-backend-analytics', plugin_dir_url(__FILE__) . 'settings/assets/analytics.js', array(
     'jquery', 'wpdreams-tabs'
 ), $media_query, true);

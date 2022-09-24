@@ -1,22 +1,25 @@
 <?php
 /* Prevent direct access */
+
+use WPDRMS\ASP\Utils\Plugin;
+
 defined('ABSPATH') or die("You can't access this file directly.");
 
 $hidden_types = array();
 $displayed_custom_types = array();
 
 foreach ( wd_asp()->front_filters->get('position', 'post_type') as $filter ) {
-    include( ASP_Helpers::aspTemplateFilePath('filters/post_type/asp-post-type-header.php') );
+    include( Plugin::templateFilePath('filters/post_type/asp-post-type-header.php') );
 
     switch ( $filter->display_mode ) {
         case 'checkboxes':
-            include(ASP_Helpers::aspTemplateFilePath('filters/post_type/asp-post-type-checkboxes.php'));
+            include(Plugin::templateFilePath('filters/post_type/asp-post-type-checkboxes.php'));
             break;
         case 'radio':
-            include(ASP_Helpers::aspTemplateFilePath('filters/post_type/asp-post-type-radio.php'));
+            include(Plugin::templateFilePath('filters/post_type/asp-post-type-radio.php'));
             break;
         default:
-            include(ASP_Helpers::aspTemplateFilePath('filters/post_type/asp-post-type-dropdown.php'));
+            include(Plugin::templateFilePath('filters/post_type/asp-post-type-dropdown.php'));
             break;
     }
 
@@ -24,7 +27,7 @@ foreach ( wd_asp()->front_filters->get('position', 'post_type') as $filter ) {
         $displayed_custom_types[] = $item->value;
     }
 
-    include(ASP_Helpers::aspTemplateFilePath('filters/post_type/asp-post-type-footer.php'));
+    include(Plugin::templateFilePath('filters/post_type/asp-post-type-footer.php'));
 }
 
 $hidden_types = array_diff($style['customtypes'], $displayed_custom_types);

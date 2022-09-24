@@ -15,14 +15,6 @@
     </p>
 </div>
 <div class="item">
-    <?php $o = new wpdreamsYesNo("load_in_footer", __('Load scripts in footer?', 'ajax-search-pro'),
-        $com_options['load_in_footer']
-    ); ?>
-    <p class='descMsg'>
-        <?php echo __('Will load the scripts in the footer for better performance.', 'ajax-search-pro'); ?>
-    </p>
-</div>
-<div class="item">
     <?php
     $o = new wpdreamsCustomSelect("css_compatibility_level", __('CSS compatibility level', 'ajax-search-pro'), array(
             'selects'=>array(
@@ -50,25 +42,6 @@
     ); ?>
     <p class='descMsg'>
         <?php echo __('When enabled, the generated stylesheet files will be minified before saving. Can save ~10% CSS file size.', 'ajax-search-pro'); ?>
-    </p>
-</div>
-<div class="item">
-    <p class='infoMsg'>
-        <?php echo __('Set to yes if you are experiencing issues with the <b>search styling</b>, or if the styles are <b>not saving</b>!', 'ajax-search-pro'); ?>
-    </p>
-    <?php $o = new wpdreamsYesNo("forceinlinestyles", __('Force inline styles?', 'ajax-search-pro'),
-        $com_options['forceinlinestyles']
-    ); ?>
-</div>
-<div class="item">
-    <?php $o = new wpdreamsYesNo("css_async_load", __('Load CSS files conditionally? (asnychronous, <b>experimental!</b>)', 'ajax-search-pro'),
-        $com_options['css_async_load']
-    ); ?>
-    <p class='descMsg'>
-        <?php echo __('Will save every search instance CSS file separately and load them with Javascript on the document load event.', 'ajax-search-pro'); ?>
-        <?php echo __('Only loads them if it finds the search instance on the page. Huge performance saver, however it might not work so test it seriously!', 'ajax-search-pro'); ?>
-        <?php echo sprintf( __('Check the <a target="_blank" href="%s">Visual Performance</a> section of the documentation for more info.'),
-            'https://documentation.ajaxsearchpro.com/performance-tuning/visual-performance' ); ?>
     </p>
 </div>
 <div class="item">

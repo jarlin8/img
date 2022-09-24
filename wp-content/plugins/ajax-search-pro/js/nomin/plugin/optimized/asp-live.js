@@ -55,7 +55,9 @@
 
                     // WooCommerce ordering fix
                     $(selector).first().find(".woocommerce-ordering select.orderby").on("change", function(){
-                        $(this).closest("form").trigger('submit');
+                        if ( $(this).closest("form").length > 0 ) {
+                            $(this).closest("form").get(0).submit();
+                        }
                     });
 
                     // Single highlight on live results
@@ -149,6 +151,7 @@
                         method: 'GET',
                         success: function(data){
                             process(data);
+                            $this.isAutoP = false;
                         },
                         dataType: 'html',
                         fail: function(jqXHR){
@@ -162,10 +165,39 @@
                             $this.n('proclose').css({
                                 display: "block"
                             });
+                            $this.isAutoP = false;
                         }
                     });
                 }
             }
+        },
+        usingLiveLoader: function() {
+            let $this = this;
+            $this._usingLiveLoader = typeof $this._usingLiveLoader == 'undefined' ?
+                (
+                    $('.asp_es_' + $this.o.id).length > 0 ||
+                    ( $this.o.resPage.useAjax  && $($this.o.resPage.selector).length > 0 ) ||
+                    ( $this.o.wooShop.useAjax  && $($this.o.wooShop.selector).length > 0 ) ||
+                    ( $this.o.taxArchive.useAjax  && $($this.o.taxArchive.selector).length > 0 )
+                ) : $this._usingLiveLoader;
+            return $this._usingLiveLoader;
+        },
+        getLiveURLbyBaseLocation( location ) {
+            let $this = this,
+                url = 'asp_ls=' + helpers.nicePhrase( $this.n('text').val() ),
+                start = '&';
+
+            if ( location.indexOf('?') === -1 ) {
+                start = '?';
+            }
+
+            let final = location + start + url + "&asp_active=1&asp_force_reset_pagination=1&p_asid=" +
+                $this.o.id + "&p_asp_data=1&" + $('form', $this.n('searchsettings')).serialize();
+            // Possible issue when the URL ends with '?' and the start is '&'
+            final = final.replace('?&', '?');
+            final = final.replace('&&', '&');
+
+            return final;
         },
         getCurrentLiveURL: function() {
             let $this = this;
@@ -189,6 +221,7 @@
                 $this.o.id + "&p_asp_data=1&" + $('form', $this.n('searchsettings')).serialize();
             // Possible issue when the URL ends with '?' and the start is '&'
             final = final.replace('?&', '?');
+            final = final.replace('&&', '&');
 
             return final;
         },

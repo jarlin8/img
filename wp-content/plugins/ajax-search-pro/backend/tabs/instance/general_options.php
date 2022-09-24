@@ -11,12 +11,10 @@ $_red_opts = array(
 if ( !class_exists("WooCommerce") ) unset($_red_opts[3]);
 ?>
 <ul id="subtabs"  class='tabs'>
-    <li><a tabid="101" class='subtheme current'><?php echo __('Sources', 'ajax-search-pro'); ?></a></li>
-    <li><a tabid="105" class='subtheme'><?php echo __('Sources 2', 'ajax-search-pro'); ?></a></li>
+    <li><a tabid="101" class='subtheme current'><?php echo __('Post Type Search', 'ajax-search-pro'); ?></a></li>
+    <li><a tabid="105" class='subtheme'><?php echo __('Taxonomy Terms Search', 'ajax-search-pro'); ?></a></li>
 	<li><a tabid="109" class='subtheme'><?php echo __('Media Files Search', 'ajax-search-pro'); ?></a></li>
 	<li><a tabid="108" class='subtheme'><?php echo __('User Search', 'ajax-search-pro'); ?></a></li>
-    <li><a tabid="102" class='subtheme'><?php echo __('Logic & Behavior', 'ajax-search-pro'); ?></a></li>
-    <li><a tabid="110" class='subtheme'><?php echo __('Mobile Behavior', 'ajax-search-pro'); ?></a></li>
     <li><a tabid="103" class='subtheme'><?php echo __('Image Options', 'ajax-search-pro'); ?></a></li>
     <?php if ( function_exists('bp_core_get_user_domain') ): ?>
     <li><a tabid="104" class='subtheme'><?php echo __('BuddyPress', 'ajax-search-pro'); ?></a></li>
@@ -27,12 +25,13 @@ if ( !class_exists("WooCommerce") ) unset($_red_opts[3]);
     <li><a tabid="111" class='subtheme'><?php echo __('Limits', 'ajax-search-pro'); ?></a></li>
     <li><a tabid="107" class='subtheme'><?php echo __('Ordering', 'ajax-search-pro'); ?></a></li>
     <li><a tabid="113" class='subtheme'><?php echo __('Grouping & Other', 'ajax-search-pro'); ?></a></li>
+	<li><a tabid="114" class='subtheme'><?php echo __('Relevance Options', 'ajax-search-pro'); ?></a></li>
 </ul>
 <div class='tabscontent'>
     <div tabid="101">
         <fieldset>
             <legend>
-                <?php echo __('Sources', 'ajax-search-pro'); ?>
+                <?php echo __('Post Type Search', 'ajax-search-pro'); ?>
                 <span class="asp_legend_docs">
                     <a target="_blank" href="https://documentation.ajaxsearchpro.com/general-settings/search-in-posts-and-pages"><span class="fa fa-book"></span>
                         <?php echo __('Post Types', 'ajax-search-pro'); ?>
@@ -51,18 +50,16 @@ if ( !class_exists("WooCommerce") ) unset($_red_opts[3]);
             <?php include( ASP_PATH . 'backend/tabs/instance/general/sources.php'); ?>
         </fieldset>
     </div>
-    <div tabid="102">
-            <?php include(ASP_PATH."backend/tabs/instance/general/behaviour.php"); ?>
-    </div>
-    <div tabid="110">
-        <fieldset>
-            <legend><?php echo __('Behavior on Mobile devices', 'ajax-search-pro'); ?></legend>
-            <?php include(ASP_PATH."backend/tabs/instance/general/mobile_behavior.php"); ?>
-        </fieldset>
-    </div>
     <div tabid="103">
         <fieldset>
-            <legend><?php echo __('Image Options', 'ajax-search-pro'); ?></legend>
+			<legend>
+				<?php echo __('Image Options', 'ajax-search-pro'); ?>
+				<span class="asp_legend_docs">
+					<a target="_blank" href="https://documentation.ajaxsearchpro.com/general-settings/image-options"><span class="fa fa-book"></span>
+						<?php echo __('Documentation', 'ajax-search-pro'); ?>
+					</a>
+				</span>
+			</legend>
             <?php include(ASP_PATH."backend/tabs/instance/general/image_options.php"); ?>
         </fieldset>
     </div>
@@ -88,7 +85,7 @@ if ( !class_exists("WooCommerce") ) unset($_red_opts[3]);
     <div tabid="105">
         <fieldset>
             <legend>
-                <?php echo __('Sources 2', 'ajax-search-pro'); ?>
+                <?php echo __('Searching Taxonomy Terms and returning them as Results', 'ajax-search-pro'); ?>
                 <span class="asp_legend_docs">
                     <a target="_blank" href="https://documentation.ajaxsearchpro.com/general-settings/categories-and-terms-as-results"><span class="fa fa-book"></span>
                         <?php echo __('Taxonomy Terms as results', 'ajax-search-pro'); ?>
@@ -127,6 +124,9 @@ if ( !class_exists("WooCommerce") ) unset($_red_opts[3]);
             </legend>
 			<?php include(ASP_PATH."backend/tabs/instance/general/attachment_results.php"); ?>
 		</fieldset>
+	</div>
+	<div tabid="114">
+		<?php include(ASP_PATH."backend/tabs/instance/general/relevance.php"); ?>
 	</div>
 </div>
 <div class="item">

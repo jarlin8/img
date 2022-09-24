@@ -422,6 +422,14 @@
                             parseInt( this.css('marginBottom') )
                         );
                 },
+                innerWidth: function() {
+                    let el = this.get(0);
+                    if ( el != null ) {
+                        let cs = window.getComputedStyle(el);
+                        return this.outerWidth() - parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth);
+                    }
+                    return 0;
+                },
                 width: function() {
                     return this.outerWidth();
                 },

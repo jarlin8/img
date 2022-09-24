@@ -6,9 +6,6 @@ $com_options = wd_asp()->o['asp_compatibility'];
 
 if (ASP_DEMO) $_POST = null;
 
-/* Error Checking*/
-$_comp = wpdreamsCompatibility::Instance();
-$_comp_errors = $_comp->get_errors();
 ?>
 <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/options_search.css?v='.ASP_CURR_VER; ?>" />
 <div id='wpdreams' class='asp-be wpdreams wrap<?php echo isset($_COOKIE['asp-accessibility']) ? ' wd-accessible' : ''; ?>'>
@@ -59,20 +56,18 @@ $_comp_errors = $_comp->get_errors();
         if (isset($_POST) && isset($_POST['asp_compatibility']) && (wpdreamsType::getErrorNum() == 0)) {
             $values = array(
                 // CSS and JS
+                "js_prevent_body_scroll" => $_POST['js_prevent_body_scroll'],
                 "js_source" => $_POST['js_source'],
-                "load_in_footer" => $_POST['load_in_footer'],
                 "detect_ajax" => $_POST['detect_ajax'],
                 "css_compatibility_level" => $_POST['css_compatibility_level'],
                 'css_minify' => $_POST['css_minify'],
-                "forceinlinestyles" => $_POST['forceinlinestyles'],
                 "load_google_fonts" => $_POST['load_google_fonts'],
-                "css_async_load" => $_POST['css_async_load'],
                 "usecustomajaxhandler" => $_POST['usecustomajaxhandler'],
                 // Loading
                 "script_loading_method" => $_POST['script_loading_method'],
                 "load_lazy_js" => $_POST['load_lazy_js'],
-                "load_mcustom_js" => $_POST['load_mcustom_js'],
                 "init_instances_inviewport_only" => $_POST['init_instances_inviewport_only'],
+                "css_loading_method" => $_POST['css_loading_method'],
                 'selective_enabled' => $_POST['selective_enabled'],
                 'selective_front' => $_POST['selective_front'],
                 'selective_archive' => $_POST['selective_archive'],
@@ -92,7 +87,7 @@ $_comp_errors = $_comp->get_errors();
             asp_parse_options();
             $updated = true;
             wd_asp()->init->create_chmod(); // Make sure to check if the upload folder exists.
-            asp_generate_the_css();
+            wd_asp()->css_manager->generator->generate();
         }
         ?>
         <div class='wpdreams-slider'>
@@ -131,29 +126,12 @@ $_comp_errors = $_comp->get_errors();
         </div>
     </div>
 
-    <?php if ($_comp->has_errors()): ?>
-        <div class="wpdreams-box errorbox" style="float:left;width: 270px;">
-			<a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
-					__('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
-					__('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a><br>
-            <h1><?php echo __('Possible compatibility errors:', 'ajax-search-pro'); ?> <?php echo count($_comp_errors['errors']); ?></h1>
-            <?php foreach($_comp_errors['errors'] as $k=>$err): ?>
-                <div>
-                    <h3><?php echo __('Error', 'ajax-search-pro'); ?> #<?php echo ($k+1); ?></h3><p class='err'><?php echo $err; ?></p>
-                    <h3><?php echo __('Possible Consequences', 'ajax-search-pro'); ?></h3><p class='cons'><?php echo $_comp_errors['cons'][$k]; ?></p>
-                    <h3><?php echo __('Solutions', 'ajax-search-pro'); ?></h3><p class='sol'><?php echo $_comp_errors['solutions'][$k]; ?></p>
-                </div>
-            <?php endforeach; ?>
-            <?php echo __('Please note, that these errors may not be accurate!', 'ajax-search-pro'); ?>
-        </div>
-    <?php else: ?>
-        <div class="wpdreams-box errorbox" style="float:left; width: auto;">
-            <a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
-                    __('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
-                    __('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a><br>
-            <p class='tick'><?php echo __('No compatibility errors found!', 'ajax-search-pro'); ?></p>
-        </div>
-    <?php endif; ?>
+	<div class="wpdreams-box errorbox" style="float:left; width: auto;">
+		<a class="wd-accessible-switch" data-aenable="<?php esc_attr_e('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" data-adisable="<?php esc_attr_e('DISABLE ACCESSIBILITY', 'ajax-search-pro'); ?>" href="#"><?php echo isset($_COOKIE['asp-accessibility']) ?
+				__('DISABLE ACCESSIBILITY', 'ajax-search-pro') :
+				__('ENABLE ACCESSIBILITY', 'ajax-search-pro'); ?></a><br>
+		<p class='tick'><?php echo __('No compatibility errors found!', 'ajax-search-pro'); ?></p>
+	</div>
 </div>
 <?php
 wp_enqueue_script('wpd-backend-compatibility', plugin_dir_url(__FILE__) . 'settings/assets/compatibility_settings.js', array(

@@ -1,4 +1,7 @@
 <?php
+
+use WPDRMS\ASP\Utils\Ajax;
+
 if (!class_exists("wd_TaxonomyTermSelect")) {
     /**
      * Class wd_TaxonomyTermSelect
@@ -301,7 +304,7 @@ if (!class_exists("wd_TaxonomyTermSelect")) {
                 'search' => trim($_POST['wd_s']),
                 'number' => 15
             ));
-			ASP_Helpers::prepareAjaxHeaders();
+			Ajax::prepareHeaders();
             if ( !is_wp_error($terms) && count($terms) > 0) {
                 foreach ($terms as $k => $term)
                     print "<span term_id='".$k."'>".$term."</span><br>";
@@ -353,7 +356,7 @@ if (!class_exists("wd_TaxonomyTermSelect")) {
                 $std_term = apply_filters('asp_post_format_standard', $std_term);
                 array_unshift($terms, $std_term);
             }
-			ASP_Helpers::prepareAjaxHeaders();
+			Ajax::prepareHeaders();
             $showmore = ( $data['show_more_options'] ) ? "<br><a class='wd_tts_showmore'>+ Show more options</a>" : "";
             if ( $data['show_taxonomy_all'] )
                 echo '

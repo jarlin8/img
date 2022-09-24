@@ -26,5 +26,5 @@ defined('ABSPATH') or die("You can't access this file directly.");
  */
 ?>
 <div class="elementor-posts-nothing-found asp_elementor_nores">
-        <?php echo  stripslashes( ASP_Helpers::resolveBracketSyntax( asp_icl_t("No results text" . " ($id)", $s_options['noresultstext'] ), array('phrase' => $phrase ) ) ); ?>
+        <?php echo  stripslashes( \WPDRMS\ASP\Utils\Str::resolveBracketSyntax( asp_icl_t("No results text" . " ($id)", $s_options['noresultstext'] ), array('phrase' => $phrase ) ) ); ?>
 </div>

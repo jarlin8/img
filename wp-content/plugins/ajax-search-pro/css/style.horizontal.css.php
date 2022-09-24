@@ -150,12 +150,3 @@ defined('ABSPATH') or die("You can't access this file directly.");
 	height: 100%;
 	<?php echo $style['hresultimageshadow']; ?>
 }
-
-<?php if ($use_compatibility == true): ?>
-    <?php echo $asp_res_ids1; ?>.horizontal .asp_simplebar-scrollbar::before,
-    <?php echo $asp_res_ids2; ?>.horizontal .asp_simplebar-scrollbar::before,
-<?php endif; ?>
-<?php echo $asp_res_ids; ?>.horizontal .asp_simplebar-scrollbar::before {
-    background: transparent;
-    <?php wpdreams_gradient_css($style['h_res_overflow_color']); ?>
-}

@@ -1,5 +1,13 @@
 <?php
 /* Prevent direct access */
+
+use WPDRMS\ASP\Frontend\FiltersManager;
+use WPDRMS\ASP\Utils\FrontendFilters;
+use WPDRMS\ASP\Utils\MB;
+use WPDRMS\ASP\Utils\Polylang\StringTranslations as PolylangStringTranslations;
+use WPDRMS\ASP\Utils\Post;
+use WPDRMS\ASP\Utils\Str;
+
 defined('ABSPATH') or die("You can't access this file directly.");
 
 /**
@@ -45,6 +53,13 @@ if (!function_exists('wpd_get_terms')) {
         }
     }
 }
+
+if ( ! function_exists( 'asp_bfi_thumb' ) ) {
+	function asp_bfi_thumb( $url, $params = array(), $single = true ) {
+		return call_user_func( array( '\\WPDRMS\\ASP\\Cache\\BFI_Thumb_1_3', 'thumb' ), $url, $params, $single );
+	}
+}
+
 
 if (!function_exists('wpd_get_languages_array')) {
     /* Get WPML or Polylang languages list in array */
@@ -323,32 +338,6 @@ if ( !function_exists('wd_array_super_unique') ) {
     }
 }
 
-if (!function_exists("wd_array_to_string")) {
-    /**
-     * Converts a multi-depth array elements into one string, elements separated by space.
-     *
-     * @param $arr
-     * @param int $level
-     *
-     * @return string
-     */
-    function wd_array_to_string($arr, $level = 0) {
-        $str = "";
-        if (is_array($arr)) {
-            foreach ($arr as $sub_arr) {
-                $str .= wd_array_to_string($sub_arr, $level + 1);
-            }
-        } else {
-            $str = " " . $arr;
-        }
-        if ($level == 0) {
-            $str = trim($str);
-        }
-
-        return $str;
-    }
-}
-
 if (!function_exists("wd_explode")) {
 	/**
 	 * Explode with a trim function
@@ -457,7 +446,7 @@ if (!function_exists("asp_get_image_from_content")) {
      * @return bool|string
      */
     function asp_get_image_from_content($content, $number = 0, $exclude = array()) {
-        if ($content == "" || !class_exists('domDocument'))
+        if ($content == "" || !class_exists('\\domDocument'))
             return false;
 
         // The arguments expects 1 as the first image, while it is the 0th
@@ -483,7 +472,7 @@ if (!function_exists("asp_get_image_from_content")) {
 		$im = false;
 
 		foreach ( $elements as $element ) {
-			$dom = new domDocument();
+			$dom = new \domDocument();
 			if ( function_exists('mb_convert_encoding') )
 				@$dom->loadHTML(mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8'));
 			else
@@ -1567,7 +1556,7 @@ if ( !function_exists("asp_acf_get_field_keys") ) {
 if ( !function_exists('asp_parse_filters') ) {
     function asp_parse_filters( $id, $o, $clear = false, $to_display = true ) {
         if ( !isset(wd_asp()->front_filters) || is_object(wd_asp()->front_filters) )
-            wd_asp()->front_filters = WD_ASP_FrontFilters::getInstance();
+            wd_asp()->front_filters = FiltersManager::getInstance();
         wd_asp()->front_filters->setSearchId($id);
         $o['_id'] = $id;
         // Only call this once per intance
@@ -1720,7 +1709,7 @@ if ( !function_exists("asp_parse_custom_field_filters") ) {
                 foreach ($lines as $kk => $val) {
                     $add_arr = array();
                     if ( strpos(trim($val), '{get_values') === 0 ) {
-						foreach (ASP_Helpers::getCFValues($bfield->asp_f_field, $type, $val) as $k => $item) {
+						foreach (FrontendFilters::getCFValues($bfield->asp_f_field, $type, $val) as $k => $item) {
 							$add_arr[] = array(
 								'label' => $item['label'] . (strpos(trim($val), 'checked') !== false && $k == 0 ? '**' : ''),
 								'value' => $item['value']
@@ -1786,7 +1775,7 @@ if ( !function_exists("asp_parse_custom_field_filters") ) {
                     $add_arr = array();
 
                     if ( strpos(trim($val), '{get_values') === 0 ) {
-						foreach (ASP_Helpers::getCFValues($bfield->asp_f_field, $type, $val) as $k => $item) {
+						foreach (FrontendFilters::getCFValues($bfield->asp_f_field, $type, $val) as $k => $item) {
 							if ( $filter->data['multiple'] ) {
 								$add_arr[] = array(
 									'label' => $item['label'] . (strpos(trim($val), 'checked') !== false ? '**' : ''),
@@ -1799,7 +1788,7 @@ if ( !function_exists("asp_parse_custom_field_filters") ) {
 								);
 							}
 						}
-                    } else if ( ASP_mb::strpos($val, '||') !== false ) {    // Individual value
+                    } else if ( MB::strpos($val, '||') !== false ) {    // Individual value
                         preg_match('/^(.*?)\|\|(.*)/', $val, $m);
                         if (!isset($m[1], $m[2])) {
                             $add_arr[] = array(
@@ -1858,7 +1847,7 @@ if ( !function_exists("asp_parse_custom_field_filters") ) {
                 foreach ($lines as $kk => $val) {
                     $add_arr = array();
                     if ( strpos(trim($val), '{get_values') === 0 ) {
-						foreach (ASP_Helpers::getCFValues($bfield->asp_f_field, $type, $val) as $k => $item) {
+						foreach (FrontendFilters::getCFValues($bfield->asp_f_field, $type, $val) as $k => $item) {
 							$add_arr[] = array(
 								'label' => $item['label'] . (strpos(trim($val), 'checked') !== false ? '**' : ''),
 								'value' => $item['value']
@@ -1936,7 +1925,7 @@ if ( !function_exists("asp_parse_custom_field_filters") ) {
 
                 $default = $bfield->asp_f_slider_default == '' ? $bfield->asp_f_slider_from : $bfield->asp_f_slider_default;
                 if ( isset($o['_fo']) && isset($o['_fo']['aspf'][$unique_field_name]) )
-                    $value = ASP_Helpers::force_numeric($o['_fo']['aspf'][$unique_field_name]);
+                    $value = Str::forceNumeric($o['_fo']['aspf'][$unique_field_name]);
                 else
                     $value = $default;
                 //$bfield->asp_f_slider_default = $bfield->asp_f_slider_default == '' ? $bfield->asp_f_slider_from : $bfield->asp_f_slider_default;
@@ -1982,8 +1971,8 @@ if ( !function_exists("asp_parse_custom_field_filters") ) {
 
                 if ( isset($o['_fo']) && isset($o['_fo']['aspf'][$unique_field_name]['lower']) ) {
                     $value = array(
-                        ASP_Helpers::force_numeric($o['_fo']['aspf'][$unique_field_name]['lower']),
-                        ASP_Helpers::force_numeric($o['_fo']['aspf'][$unique_field_name]['upper'])
+                        Str::forceNumeric($o['_fo']['aspf'][$unique_field_name]['lower']),
+                        Str::forceNumeric($o['_fo']['aspf'][$unique_field_name]['upper'])
                     );
                 } else {
                     $value = $default;
@@ -2693,12 +2682,12 @@ if ( !function_exists('asp_parse_date_filters') ) {
 					$_def_dff_v = "-" . $_dff["rel_date"][0] . "y -" . $_dff["rel_date"][1] . "m -" . $_dff["rel_date"][2] . "d";
 					break;
 				case "earliest_date":
-					$_def_dff_v = ASP_Helpers::getEarliestPostDate(array(
+					$_def_dff_v = Post::getEarliestPostDate(array(
 						'post_type' => $post_types
 					));
 					break;
 				case "latest_date":
-					$_def_dff_v = ASP_Helpers::getLatestPostDate(array(
+					$_def_dff_v = Post::getLatestPostDate(array(
 						'post_type' => $post_types
 					));
 					break;
@@ -2729,12 +2718,12 @@ if ( !function_exists('asp_parse_date_filters') ) {
 					$_def_dft_v = "-" . $_dft["rel_date"][0] . "y -" . $_dft["rel_date"][1] . "m -" . $_dft["rel_date"][2] . "d";
 					break;
 				case "earliest_date":
-					$_def_dft_v = ASP_Helpers::getEarliestPostDate(array(
+					$_def_dft_v = Post::getEarliestPostDate(array(
 						'post_type' => $post_types
 					));
 					break;
 				case "latest_date":
-					$_def_dft_v = ASP_Helpers::getLatestPostDate(array(
+					$_def_dft_v = Post::getLatestPostDate(array(
 						'post_type' => $post_types
 					));
 					break;
@@ -2769,7 +2758,7 @@ if ( !function_exists('asp_icl_t') ) {
         $ret = apply_filters('asp_icl_t', $value, $name, $esc_html);
 
         if (function_exists('pll_register_string') && function_exists('pll__')) {
-            WD_ASP_PLL_Strings::add($name, $value);
+			PolylangStringTranslations::add($name, $value);
             $ret = pll__($value);
         } else if (function_exists('icl_register_string') && function_exists('icl_t')) {
             @icl_register_string('ajax-search-pro', $name, $value);
@@ -2815,9 +2804,8 @@ if ( !function_exists("asp_get_unused_assets") ) {
 			'settings', 'compact', 'autopopulate', 'ga'
         );
         $external_dependencies = array(
-            'select2', 'isotope', 'simplebar'
+            'select2', 'isotope'
         );
-        $filters_may_require_simplebar = false;
         if ( $return_stored !== false ) {
             return get_site_option('asp_unused_assets', array(
                 'internal' => $dependencies,
@@ -2887,7 +2875,6 @@ if ( !function_exists("asp_get_unused_assets") ) {
                         continue;
                     }
                     if ($filter->display_mode == 'checkboxes' || $filter->display_mode == 'radio') {
-                        $filters_may_require_simplebar = true;
                         break;
                     }
                 }
@@ -2908,15 +2895,6 @@ if ( !function_exists("asp_get_unused_assets") ) {
             }
         }
 
-        // No vertical or horizontal results results, and no filters that may trigger the scroll script
-        if (
-            $filters_may_require_simplebar ||
-            !in_array('vertical', $dependencies) ||
-            !in_array('horizontal', $dependencies)
-        ) {
-            $external_dependencies = array_diff($external_dependencies, array('simplebar'));
-        }
-
         // Store for the init script
         update_site_option('asp_unused_assets', array(
             'internal' => $dependencies,
@@ -2926,162 +2904,6 @@ if ( !function_exists("asp_get_unused_assets") ) {
             'internal' => $dependencies,
             'external' => $external_dependencies
         );
-    }
-}
-
-if ( !function_exists("asp_get_css_url") ) {
-    function asp_get_css_url( $handle ) {
-        $externals = array(
-            /*'select2' => ASP_URL . 'css/select2/select2.css',
-            'wpdreams-asp-chosen' => ASP_URL . 'css/select2/select2.css'*/
-        );
-        if ( isset($externals[$handle]) ) {
-            return $externals[$handle];
-        } else {
-            if ( '' != $file = asp_get_css_filename($handle) ) {
-                return wd_asp()->upload_url . $file;
-            } else {
-                return '';
-            }
-        }
-    }
-}
-
-if ( !function_exists("asp_get_css_filename") ) {
-    function asp_get_css_filename( $handle ) {
-        $media_flags = get_option('asp_css_flags', array(
-            'basic' => ''
-        ));
-        $files = array(
-            'basic' => 'style.basic'.$media_flags['basic'].'.css',
-            'wpdreams-asp-basics' => 'style.basic'.$media_flags['basic'].'.css',
-            'instances' => 'style.instances'.$media_flags['basic'].'.css',
-            'wpdreams-ajaxsearchpro-instances' => 'style.instances'.$media_flags['basic'].'.css'
-        );
-        if ( isset($files[$handle]) ) {
-            return $files[$handle];
-        } else {
-            return '';
-        }
-    }
-}
-
-if (!function_exists("asp_generate_the_css")) {
-    /**
-     * Generates all Ajax Search Pro CSS code
-     */
-    function asp_generate_the_css( $remake_media_query = true ) {
-        $css_arr = array();
-        $comp_settings = wd_asp()->o['asp_compatibility'];
-        $async_load = w_isset_def($comp_settings['css_async_load'], false);
-        $basic_flags_string = '';
-
-        $search = wd_asp()->instances->get();
-        if (is_array($search) && count($search)>0) {
-            // Basic CSS
-            ob_start();
-            include(ASP_PATH . "/css/style.basic.css.php");
-            $basic_css = ob_get_clean();
-            $unused_assets = asp_get_unused_assets();
-            foreach ( $unused_assets['internal'] as $flag ) {
-                // Remove unneccessary CSS
-                $basic_css = asp_get_outer_substring($basic_css, '/*[' . $flag . ']*/');
-                $basic_flags_string .= '-' . substr($flag, 0, 2);
-            }
-            foreach ( $unused_assets['external'] as $flag ) {
-                // Remove unneccessary CSS
-                $basic_css = asp_get_outer_substring($basic_css, '/*[' . $flag . ']*/');
-                $basic_flags_string .= '-' . substr($flag, 0, 2);
-            }
-
-            // Instances CSS
-            foreach ($search as $s) {
-                // $style and $id needed in the include
-                $style = &$s['data'];
-                $id = $s['id'];
-                ob_start();
-                include(ASP_PATH . "/css/style.css.php");
-                $out = ob_get_contents();
-                $css_arr[$id] = $out;
-                ob_end_clean();
-            }
-
-            // Too big, disabled...
-            $css = implode(" ", $css_arr);
-
-            if ( $async_load == 1 ) {
-                foreach ($css_arr as $sid => $c) {
-                    if ( $comp_settings['css_minify'] == 1 )
-                        $c = asp_css_minify($c);
-                    asp_put_file("search".$sid.".css", $c);
-                }
-            }
-            // Save the style instances file nevertheless, even if async enabled
-            if ( $comp_settings['css_minify'] == 1 ) {
-                $css = asp_css_minify($css);
-                $basic_css = asp_css_minify($basic_css);
-            }
-
-            asp_put_file("style.instances.css", $basic_css . $css);
-            asp_put_file("style.basic.css", $basic_css);
-            if ( $basic_flags_string != '' ) {
-                asp_put_file("style.basic" . $basic_flags_string . ".css", $basic_css);
-                asp_put_file("style.instances" . $basic_flags_string . ".css", $basic_css . $css);
-            }
-
-            update_option('asp_css_flags', array(
-                'basic' => $basic_flags_string
-            ));
-
-            if ( $remake_media_query )
-                update_option( "asp_media_query", asp_gen_rnd_str() );
-
-            return $basic_css . $css;
-        }
-    }
-}
-
-if (!function_exists("asp_css_minify")) {
-    /**
-     * Very simple CSS minification, with some additional logic, basic support for CSS3
-     *
-     * @param string $css CSS to minify
-     * @return string Minified CSS
-     */
-    function asp_css_minify($css) {
-        // Normalize whitespace
-        $css = preg_replace( '/\s+/', ' ', $css );
-        // Remove spaces before and after comment
-        $css = preg_replace( '/(\s+)(\/\*(.*?)\*\/)(\s+)/', '$2', $css );
-        // Remove comment blocks, everything between /* and */, unless
-        // preserved with /*! ... */ or /** ... */
-        $css = preg_replace( '~/\*(?![\!|\*])(.*?)\*/~', '', $css );
-        // Remove space after , : ; { } */ >
-        $css = preg_replace( '/(,|:|;|\{|}|\*\/|>) /', '$1', $css );
-        // Remove space before , ; { } ( ) >
-        $css = preg_replace( '/ (,|;|\{|}|\(|\)|>)/', '$1', $css );
-        // Add back the space for media queries operator
-        $css = preg_replace( '/and\(/', 'and (', $css );
-        // Strips leading 0 on decimal values (converts 0.5px into .5px)
-        $css = preg_replace( '/(:| )0\.([0-9]+)(%|em|ex|px|in|cm|mm|pt|pc)/i', '${1}.${2}${3}', $css );
-        // Strips units if value is 0 (converts 0px to 0)
-        $css = preg_replace( '/(:| )(\.?)0(%|em|ex|px|in|cm|mm|pt|pc)/i', '${1}0', $css );
-        // Converts all zeros value into short-hand
-        $css = preg_replace( '/0 0 0 0;/', '0;', $css );
-        $css = preg_replace( '/0 0 0 0\}/', '0}', $css );
-        // Invisible inset box shadow
-        $css = preg_replace( '/box-shadow:0 0 0(?: 0)? [a-fA-F0-9()#,rgb]+(?: inset)?([};])/i', 'box-shadow:none${1}', $css );
-        // Transparent box shadow
-        $css = preg_replace( '/box-shadow:[0-9px ]+ (transparent inset|transparent)([};])/i', 'box-shadow:none${2}', $css );
-        // Invisible text shadow
-        $css = preg_replace( '/text-shadow:0 0(?: 0)? [a-fA-F0-9()#,rgb]+([};])/i', 'text-shadow:none${1}', $css );
-        // Transparent text shadow
-        $css = preg_replace( '/text-shadow:[0-9px ]+ transparent([};])/i', 'text-shadow:none${1}', $css );
-        // Shorten 6-character hex color codes to 3-character where possible
-        $css = preg_replace( '/#([a-f0-9])\\1([a-f0-9])\\2([a-f0-9])\\3/i', '#\1\2\3', $css );
-        // Remove ; before }
-        $css = preg_replace( '/;(?=\s*})/', '', $css );
-        return trim( $css );
     }
 }
 

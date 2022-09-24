@@ -182,7 +182,7 @@
             if ( ( $this.n('search').hasClass("hiddend") && $this.o.loaderLocation != "search" ) ||
                 ( !$this.n('search').hasClass("hiddend") && ( $this.o.loaderLocation == "both" || $this.o.loaderLocation == "results" ) )
             ) {
-                if ( !$this.usingLiveLoader ) {
+                if ( !$this.usingLiveLoader() ) {
                     if ( $this.n('resultsDiv').find('.asp_results_top').length > 0 )
                         $this.n('resultsDiv').find('.asp_results_top').css('display', 'none');
                     $this.showResultsBox();
@@ -229,7 +229,7 @@
          * Updates the document address bar with the ajax live search attributes, without push state
          */
         updateHref: function( ) {
-            if ( this.o.trigger.update_href && !this.usingLiveLoader ) {
+            if ( this.o.trigger.update_href && !this.usingLiveLoader() ) {
                 if (!window.location.origin) {
                     window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
                 }
@@ -600,12 +600,6 @@
                 }, 100)
             }
 
-            if ( $this.is_scroll && typeof $this.scroll.recalculate !== 'undefined' ) {
-                setTimeout(function(){
-                    $this.scroll.recalculate();
-                }, 500);
-            }
-
             $this.eh.resulsDivHoverMouseEnter = $this.eh.resulsDivHoverMouseEnter || function () {
                 $('.item', $this.n('resultsDiv')).removeClass('hovered');
                 $(this).addClass('hovered');
@@ -799,7 +793,7 @@
                         content = $this.resInfoBoxTxtNoPhrase;
                     }
                     if ( content !== '' ) {
-                        content = content.replaceAll('{phrase}', $this.n('text').val());
+                        content = content.replaceAll('{phrase}', helpers.escapeHtml($this.n('text').val()));
                         content = content.replaceAll('{results_count}', $this.n('items').length);
                         content = content.replaceAll('{results_count_total}', totalCount);
                         $rt.html(content);
@@ -819,17 +813,10 @@
     let functions = {
         createResultsScroll: function(type) {
             let $this = this,
-                t, $resScroll = $this.nodes.results;
+                t, $resScroll = $this.n('results');
             type = typeof type == 'undefined' ? 'vertical' : type;
             // noinspection JSUnresolvedVariable
-            if ($this.o.itemscount > 0 && $this.is_scroll && typeof $this.scroll.recalculate === 'undefined') {
-                // noinspection JSPotentiallyInvalidConstructorUsage,JSUnresolvedFunction,JSUnresolvedVariable
-                $this.scroll = new asp_SimpleBar($this.n('results').get(0), {
-                    direction: $('body').hasClass('rtl') ? 'rtl' : 'ltr',
-                    autoHide: $this.o.scrollBar.vertical.autoHide
-                });
-                $resScroll = $resScroll.add($this.scroll.getScrollElement());
-            }
+
             $resScroll.on('scroll', function() {
                 document.dispatchEvent(new Event('wpd-lazy-trigger'));
                 // noinspection JSUnresolvedVariable
@@ -880,8 +867,7 @@
                     $this.n('showmore').find('a.asp_showmore').trigger('click');
                 }
             } else if ( caller == 'vertical' ) {
-                let $scrollable = $this.n('resultsDiv').find('.asp_simplebar-content-wrapper').length > 0 ?
-                    $this.n('resultsDiv').find('.asp_simplebar-content-wrapper') : $this.n('results');
+                let $scrollable = $this.n('results');
                 if ( helpers.isScrolledToBottom($scrollable.get(0), 20) ) {
                     $this.n('showmore').find('a.asp_showmore').trigger('click');
                 }
@@ -920,6 +906,7 @@
             let $this = this;
             if ( $this.post != null ) {
                 $this.post.abort();
+                $this.isAutoP = false;
             }
         },
 
@@ -968,12 +955,11 @@
 
             if ( $this.isAutoP ) {
                 data.autop = 1;
-                $this.isAutoP = false;
             }
 
 
             if ( !recall && !apiCall && (JSON.stringify(data) === JSON.stringify($this.lastSearchData)) ) {
-                if ( !$this.resultsOpened && !$this.usingLiveLoader ) {
+                if ( !$this.resultsOpened && !$this.usingLiveLoader() ) {
                     $this.showResults();
                 }
                 if ( $this.isRedirectToFirstResult() ) {
@@ -1037,9 +1023,13 @@
             $this.gaEvent?.('search_start');
 
             if ( $('.asp_es_' + $this.o.id).length > 0 ) {
-                $this.liveLoad('.asp_es_' + $this.o.id, $this.getCurrentLiveURL());
+                $this.liveLoad('.asp_es_' + $this.o.id, $this.getCurrentLiveURL(), $this.o.trigger.update_href);
             } else if ( $this.o.resPage.useAjax ) {
                 $this.liveLoad($this.o.resPage.selector, $this.getRedirectURL());
+            } else if ( $this.o.wooShop.useAjax ) {
+                $this.liveLoad($this.o.wooShop.selector, $this.getLiveURLbyBaseLocation($this.o.wooShop.url));
+            } else if ( $this.o.taxArchive.useAjax ) {
+                $this.liveLoad($this.o.taxArchive.selector, $this.getLiveURLbyBaseLocation($this.o.taxArchive.url));
             } else {
                 $this.post = $.fn.ajax({
                     'url': ASP.ajaxurl,
@@ -1050,8 +1040,8 @@
 
                         $this.searching = false;
                         response = response.replace(/^\s*[\r\n]/gm, "");
-                        let html_response = response.match(/!!ASPSTART_HTML!!(.*[\s\S]*)!!ASPEND_HTML!!/),
-                            data_response = response.match(/!!ASPSTART_DATA!!(.*[\s\S]*)!!ASPEND_DATA!!/);
+                        let html_response = response.match(/___ASPSTART_HTML___(.*[\s\S]*)___ASPEND_HTML___/),
+                            data_response = response.match(/___ASPSTART_DATA___(.*[\s\S]*)___ASPEND_DATA___/);
 
                         if (html_response == null || typeof (html_response) != "object" || typeof (html_response[1]) == "undefined") {
                             $this.hideLoader();
@@ -1131,12 +1121,17 @@
                                 data_response.results_count > 0 &&
                                 (data_response.full_results_count - $this.results_num) > 0
                             ) {
+                                if ( $this.n('showmore').data('text') == '' ) {
+                                    $this.n('showmore').data('text', $this.n('showmore').html());
+                                }
+                                $this.n('showmore').html($this.n('showmore').data('text').replaceAll('{phrase}', helpers.escapeHtml($this.n('text').val())));
                                 $this.n('showmore').css("display", "block");
                                 $('span', $this.n('showmore')).html("(" + (data_response.full_results_count - $this.results_num) + ")");
 
-                                $('a', $this.n('showmore')).attr('href', "");
-                                $('a', $this.n('showmore')).off();
-                                $('a', $this.n('showmore')).on($this.clickTouchend, function (e) {
+                                let $a = $('a', $this.n('showmore'));
+                                $a.attr('href', "");
+                                $a.off();
+                                $a.on($this.clickTouchend, function (e) {
                                     e.preventDefault();
                                     e.stopImmediatePropagation();   // Stopping either click or touchend
 
@@ -1198,6 +1193,7 @@
                                 $('span', $this.n('showmore')).html("");
                             }
                         }
+                        $this.isAutoP = false;
                     },
                     'fail': function(jqXHR){
                         if ( jqXHR.aborted )
@@ -1210,6 +1206,7 @@
                         $this.hideLoader();
                         $this.showResults();
                         $this.scrollToResults();
+                        $this.isAutoP = false;
                     }
                 });
             }
@@ -1367,6 +1364,10 @@
 
         isSafari: function() {
             return (/^((?!chrome|android).)*safari/i).test(navigator.userAgent);
+        },
+
+        escapeHtml: function(unsafe) {
+            return unsafe.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
         },
 
         /**
@@ -1822,7 +1823,7 @@
                         // If the user types and deletes, while the last results are open
                         if (
                             ($('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim()) != $this.lastSuccesfulSearch ||
-                            (!$this.resultsOpened && !$this.usingLiveLoader)
+                            (!$this.resultsOpened && !$this.usingLiveLoader())
                         ) {
                             $this.search();
                         } else {
@@ -1931,7 +1932,7 @@
                 if (
                     ($('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim()) == $this.lastSuccesfulSearch
                 ) {
-                    if ( !$this.resultsOpened && !$this.usingLiveLoader ) {
+                    if ( !$this.resultsOpened && !$this.usingLiveLoader() ) {
                         $this._no_animations = true;
                         $this.showResults();
                         $this._no_animations = false;
@@ -1999,7 +2000,7 @@
                     // If the user types and deletes, while the last results are open
                     if (
                         ($('form', $this.n('searchsettings')).serialize() + $this.n('text').val().trim()) != $this.lastSuccesfulSearch ||
-                        (!$this.resultsOpened && !$this.usingLiveLoader)
+                        (!$this.resultsOpened && !$this.usingLiveLoader())
                     ) {
                         $this.search();
                     } else {
@@ -2179,12 +2180,19 @@
                 $this.hideLoader();
                 $this.searchAbort();
 
+
                 if ( $('.asp_es_' + $this.o.id).length > 0 ) {
                     $this.showLoader();
-                    $this.liveLoad('.asp_es_' + $this.o.id, $this.getCurrentLiveURL());
-                } else if ( $this.o.resPage.useAjax ) {
-                    $this.showLoader();
-                    $this.liveLoad($this.o.resPage.selector, $this.getRedirectURL());
+                    $this.liveLoad('.asp_es_' + $this.o.id, $this.getCurrentLiveURL(), $this.o.trigger.update_href);
+                } else {
+                    const array = ['resPage', 'wooShop', 'taxArchive'];
+                    for (let i = 0; i < array.length; i++) {
+                        if ( $this.o[array[i]].useAjax ) {
+                            $this.showLoader();
+                            $this.liveLoad($this.o[array[i]].selector, $this.getCurrentLiveURL());
+                            break;
+                        }
+                    }
                 }
 
                 $this.n('text').get(0).focus();
@@ -2453,36 +2461,30 @@
     let functions = {
         initAutop: function () {
             let $this = this;
-
             if ( $this.o.autop.state == "disabled" ) return false;
 
             let location = window.location.href;
             // Correct previous query arguments (in case of paginated results)
             let stop = location.indexOf('asp_ls=') > -1 || location.indexOf('asp_ls&') > -1;
-
             if ( stop ) {
                 return false;
             }
             // noinspection JSUnresolvedVariable
             let count = $this.o.show_more.enabled && $this.o.show_more.action == 'ajax' ? false : $this.o.autop.count;
-            window.WPD.intervalUntilExecute(function(){
-                    $this.isAutoP = true;
-                    if ( $this.o.compact.enabled == 1 ) {
-                        $this.openCompact();
-                    }
-                    if ($this.o.autop.state == "phrase") {
-                        if ( !$this.o.is_results_page ) {
-                            $this.n('text').val($this.o.autop.phrase);
-                        }
-                        $this.search(count);
-                    } else if ($this.o.autop.state == "latest") {
-                        $this.search(count, 1);
-                    } else {
-                        $this.search(count, 2);
-                    }
-                },
-                function() { return (!window.ASP.css_async || typeof window.ASP.css_loaded != 'undefined') }
-            );
+            $this.isAutoP = true;
+            if ( $this.o.compact.enabled == 1 ) {
+                $this.openCompact();
+            }
+            if ($this.o.autop.state == "phrase") {
+                if ( !$this.o.is_results_page ) {
+                    $this.n('text').val($this.o.autop.phrase);
+                }
+                $this.search(count);
+            } else if ($this.o.autop.state == "latest") {
+                $this.search(count, 1);
+            } else {
+                $this.search(count, 2);
+            }
         }
     }
     $.fn.extend(window.WPD.ajaxsearchpro.plugin, functions);
@@ -2602,10 +2604,8 @@
             $this.fontsLoaded = false;
             $this.post = null;
             $this.postAuto = null;
-            $this.scroll = {};
             $this.savedScrollTop = 0;   // Save the window scroll on IOS devices
             $this.savedContainerTop = 0;
-            $this.is_scroll = typeof asp_SimpleBar != "undefined";
             $this.disableMobileScroll = false;
             /**
              * on IOS touch (iPhone, iPad etc..) the 'click' event does not fire, when not bound to a clickable element
@@ -2633,7 +2633,6 @@
                  */
             ];
 
-            $this.settScroll = null;
             $this.currentPage = 1;
             $this.currentPageURL = location.href;
             $this.isotopic = null;
@@ -2662,12 +2661,6 @@
             // Fill up the this.n and correct the cloned notes as well
 
             $this.initNodeVariables();
-
-            // Force noscroll on minified version
-            if (typeof ASP.scrollbar != "undefined" && ASP.scrollbar == 0)
-                $this.is_scroll = false;
-            if ($this.o.resultstype == 'horizontal' && $this.o.scrollBar.horizontal.enabled == 0)
-                $this.is_scroll = false;
             /**
              * Default animation opacity. 0 for IN types, 1 for all the other ones. This ensures the fluid
              * animation. Wrong opacity causes flashes.
@@ -2688,8 +2681,7 @@
             }
             $this.o.redirectOnClick = $this.o.trigger.click != 'ajax_search' && $this.o.trigger.click != 'nothing';
             $this.o.redirectOnEnter = $this.o.trigger.return != 'ajax_search' && $this.o.trigger.return != 'nothing';
-            $this.usingLiveLoader = ($this.o.resPage.useAjax && $($this.o.resPage.selector).length > 0) || $('.asp_es_' + $this.o.id).length > 0;
-            if ($this.usingLiveLoader) {
+            if ( $this.usingLiveLoader() ) {
                 $this.o.trigger.type = $this.o.resPage.trigger_type;
                 $this.o.trigger.facet = $this.o.resPage.trigger_facet;
                 if ($this.o.resPage.trigger_magnifier) {
@@ -2710,7 +2702,7 @@
                 $('body').append("<div id='asp_absolute_overlay'></div>");
             }
             
-            if ( $this.usingLiveLoader ) {
+            if ( $this.usingLiveLoader() ) {
                 $this.initLiveLoaderPopState?.();
             }
 

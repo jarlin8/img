@@ -1,4 +1,7 @@
 <?php
+
+use WPDRMS\ASP\Utils\Ajax;
+
 if (!class_exists("wd_CFSearchCallBack")) {
     /**
      * Class wd_CFSearchCallBack
@@ -103,7 +106,7 @@ if (!class_exists("wd_CFSearchCallBack")) {
             else
                 $pods_fields = array();
 
-			ASP_Helpers::prepareAjaxHeaders();
+			Ajax::prepareHeaders();
             print_r($data['delimiter'] . json_encode(array_merge($pods_fields, $cf_results)) . $data['delimiter']);
             die();
         }

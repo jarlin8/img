@@ -46,7 +46,9 @@
                 // Fix Elementor Pagination
                 this.fixElementorPostPagination(obj, url);
 
-                this.scrollToResultsIfNeeded($el);
+                if ( obj.o.scrollToResults.enabled ) {
+                    this.scrollToResultsIfNeeded($el);
+                }
 
                 // Elementor results action
                 obj.n('s').trigger("asp_elementor_results", [obj.o.id, obj.o.iid, $el.parent().get(0)], true, true);
@@ -54,7 +56,7 @@
         };
         this.scrollToResultsIfNeeded = function($el) {
             let $first = $el.find('.elementor-post, .product').first();
-            if ( !$first.inViewPort(40) ) {
+            if ( $first.length && !$first.inViewPort(40) ) {
                 $first.get(0).scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
             }
         };

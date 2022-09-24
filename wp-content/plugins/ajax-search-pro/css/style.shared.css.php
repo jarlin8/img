@@ -6,7 +6,7 @@
  */
 
 /* Prevent direct access */
-defined('ABSPATH') or die("You can't access this file directly.");
+use WPDRMS\ASP\Utils\Css;defined('ABSPATH') or die("You can't access this file directly.");
 ?>
 <?php if ($use_strong_compatibility == true): ?>
     <?php echo $asp_div_ids1; ?>,
@@ -152,25 +152,54 @@ defined('ABSPATH') or die("You can't access this file directly.");
         width: <?php echo wpdreams_width_from_px($style['boxheight']); ?>px;
     }
 
-    <?php if ($use_compatibility == true): ?>
-        <?php echo $asp_div_ids1; ?>.asp_compact,
-        <?php echo $asp_div_ids2; ?>.asp_compact,
-    <?php endif; ?>
-    <?php echo $asp_div_ids; ?>.asp_compact {
-        width: auto;
-        display: inline-block;
-        float: <?php echo w_isset_def($style['box_compact_float'], 'inherit'); ?>;
-        position: <?php echo $_box_pos; ?>;
-        <?php if ($_box_pos) {
-            $screen_pos = wpdreams_four_to_array(w_isset_def($style['box_compact_screen_position'], '||20%||auto||0px||auto||'));
-            echo "
-            top: ".$screen_pos['top'].";
-            bottom: ".$screen_pos['bottom'].";
-            right: ".$screen_pos['right'].";
-            left: ".$screen_pos['left'].";";
-        }?>
-        z-index: <?php echo w_isset_def($style['box_compact_position_z'], '1000'); ?>;
-    }
+	<?php if ($_box_pos != 'static'): ?>
+		<?php echo $asp_container_class; ?>.asp_compact {
+			width: auto;
+		}
+		<?php if ($use_compatibility == true): ?>
+			<?php echo $asp_div_ids1; ?>.asp_compact,
+			<?php echo $asp_div_ids2; ?>.asp_compact,
+		<?php endif; ?>
+		<?php echo $asp_div_ids; ?>.asp_compact {
+			width: auto;
+			display: inline-block;
+			float: <?php echo w_isset_def($style['box_compact_float'], 'inherit'); ?>;
+			position: <?php echo $_box_pos; ?>;
+			<?php if ($_box_pos) {
+				$screen_pos = wpdreams_four_to_array(w_isset_def($style['box_compact_screen_position'], '||20%||auto||0px||auto||'));
+				echo "
+				top: ".$screen_pos['top'].";
+				bottom: ".$screen_pos['bottom'].";
+				right: ".$screen_pos['right'].";
+				left: ".$screen_pos['left'].";";
+			}?>
+			z-index: <?php echo w_isset_def($style['box_compact_position_z'], '1000'); ?>;
+		}
+	<?php else: ?>
+		<?php if ($use_compatibility == true): ?>
+			<?php echo $asp_div_ids1; ?>.asp_compact,
+			<?php echo $asp_div_ids2; ?>.asp_compact,
+		<?php endif; ?>
+		<?php echo $asp_div_ids; ?>.asp_compact {
+			width: auto;
+			float: <?php echo w_isset_def($style['box_compact_float'], 'inherit'); ?>;
+		}
+		<?php echo $asp_container_class; ?>.asp_compact {
+			width: auto;
+			display: inline-block;
+			float: <?php echo w_isset_def($style['box_compact_float'], 'inherit'); ?>;
+			position: <?php echo $_box_pos; ?>;
+			<?php if ($_box_pos) {
+				$screen_pos = wpdreams_four_to_array(w_isset_def($style['box_compact_screen_position'], '||20%||auto||0px||auto||'));
+				echo "
+				top: ".$screen_pos['top'].";
+				bottom: ".$screen_pos['bottom'].";
+				right: ".$screen_pos['right'].";
+				left: ".$screen_pos['left'].";";
+			}?>
+			z-index: <?php echo w_isset_def($style['box_compact_position_z'], '1000'); ?>;
+		}
+	<?php endif; ?>
 
     <?php if ($_box_pos != 'static') {
         echo "p.asp_compact[id*=asp-try-".$id."] {
@@ -221,7 +250,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
     <?php echo $asp_div_ids2; ?> .probox .proinput,
 <?php endif; ?>
 <?php echo $asp_div_ids; ?> .probox .proinput {
-  <?php echo ASP_Helpers::font($style['inputfont']); ?>
+  <?php echo Css::font($style['inputfont']); ?>
     line-height: normal;
   flex-grow: 1;
   order: 5;
@@ -235,7 +264,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
     <?php echo $asp_div_ids2; ?> .probox .proinput input.orig,
 <?php endif; ?>
 <?php echo $asp_div_ids; ?> .probox .proinput input.orig {
-    <?php echo ASP_Helpers::font($style['inputfont']); ?>
+    <?php echo Css::font($style['inputfont']); ?>
     line-height: normal;
     border: 0;
     box-shadow: none;
@@ -254,7 +283,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
     <?php echo $asp_div_ids2; ?> .probox .proinput input.autocomplete,
 <?php endif; ?>
 <?php echo $asp_div_ids; ?> .probox .proinput input.autocomplete {
-    <?php echo ASP_Helpers::font($style['inputfont']); ?>
+    <?php echo Css::font($style['inputfont']); ?>
     line-height: normal;
     opacity: 0.25;
     height: <?php echo wpdreams_width_from_px($style['boxheight']); ?>px;
@@ -281,7 +310,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
 <?php endif; ?>
 .rtl <?php echo $asp_div_ids; ?> .probox .proinput input.orig,
 .rtl <?php echo $asp_div_ids; ?> .probox .proinput input.autocomplete {
-    <?php echo ASP_Helpers::font($style['inputfont']); ?>
+    <?php echo Css::font($style['inputfont']); ?>
     line-height: normal;
     direction: rtl;
     text-align: right;
@@ -309,19 +338,19 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
 
 
 <?php echo $asp_div_ids; ?> .probox .proinput input.orig::-webkit-input-placeholder {
-    <?php echo preg_replace( "/(line-height\:.*?)\;/", '', ASP_Helpers::font($style['inputfont']) ); ?>
+    <?php echo preg_replace( "/(line-height\:.*?)\;/", '', Css::font($style['inputfont']) ); ?>
     opacity: 0.85;
 }
 <?php echo $asp_div_ids; ?> .probox .proinput input.orig::-moz-placeholder {
-    <?php echo preg_replace( "/(line-height\:.*?)\;/", '', ASP_Helpers::font($style['inputfont']) ); ?>
+    <?php echo preg_replace( "/(line-height\:.*?)\;/", '', Css::font($style['inputfont']) ); ?>
     opacity: 0.85;
 }
 <?php echo $asp_div_ids; ?> .probox .proinput input.orig:-ms-input-placeholder {
-    <?php echo preg_replace( "/(line-height\:.*?)\;/", '', ASP_Helpers::font($style['inputfont']) ); ?>
+    <?php echo preg_replace( "/(line-height\:.*?)\;/", '', Css::font($style['inputfont']) ); ?>
     opacity: 0.85;
 }
 <?php echo $asp_div_ids; ?> .probox .proinput input.orig:-moz-placeholder {
-    <?php echo preg_replace( "/(line-height\:.*?)\;/", '', ASP_Helpers::font($style['inputfont']) ); ?>
+    <?php echo preg_replace( "/(line-height\:.*?)\;/", '', Css::font($style['inputfont']) ); ?>
     opacity: 0.85;
     line-height: normal !important;
 }
@@ -331,7 +360,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
     <?php echo $asp_div_ids2; ?> .probox .proinput input.autocomplete,
 <?php endif; ?>
 <?php echo $asp_div_ids; ?> .probox .proinput input.autocomplete {
-    <?php echo ASP_Helpers::font($style['inputfont']); ?>
+    <?php echo Css::font($style['inputfont']); ?>
     line-height: normal;
     border: 0;
     box-shadow: none;
@@ -446,7 +475,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
 		padding: 0 2px 0 10px;
 	<?php endif; ?>
 <?php endif; ?>
-    <?php echo ASP_Helpers::font($style['search_text_font']); ?>
+    <?php echo Css::font($style['search_text_font']); ?>
     /* to center the text, this must be identical with the height */
     line-height: <?php echo wpdreams_width_from_px($style['boxheight']); ?>px;
 }
@@ -600,7 +629,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
 <?php echo $asp_res_ids; ?> .results .asp_nores .asp_keyword {
     padding: 0 6px;
     cursor: pointer;
-    <?php echo ASP_Helpers::font($style['descfont']); ?>
+    <?php echo Css::font($style['descfont']); ?>
     font-weight: bold;
 }
 
@@ -614,7 +643,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
     padding: <?php echo $style['ritb_padding']; ?>;
     margin: <?php echo $style['ritb_margin']; ?>;
     text-align: center;
-    <?php echo ASP_Helpers::font($style['ritb_font']); ?>
+    <?php echo Css::font($style['ritb_font']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -677,7 +706,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
   padding: 0;
   display: inline-block;
   line-height: inherit;
-  <?php echo ASP_Helpers::font($style['titlefont']); ?>
+  <?php echo Css::font($style['titlefont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -689,7 +718,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
   padding: 0;
   line-height: inherit;
   display: block;
-  <?php echo ASP_Helpers::font($style['titlefont']); ?>
+  <?php echo Css::font($style['titlefont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -697,7 +726,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
     <?php echo $asp_res_ids2; ?> .results .item .asp_content h3 a:hover,
 <?php endif; ?>
 <?php echo $asp_res_ids; ?> .results .item .asp_content h3 a:hover {
-  <?php echo ASP_Helpers::font($style['titlefont']); ?>
+  <?php echo Css::font($style['titlefont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -717,7 +746,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
 <?php endif; ?>
 <?php echo $asp_res_ids; ?> .results .item .etc .asp_author {
   padding: 0;
-  <?php echo ASP_Helpers::font($style['authorfont']); ?>
+  <?php echo Css::font($style['authorfont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -727,7 +756,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
 <?php echo $asp_res_ids; ?> .results .item .etc .asp_date {
   margin: 0 0 0 10px;
   padding: 0;
-  <?php echo ASP_Helpers::font($style['datefont']); ?>
+  <?php echo Css::font($style['datefont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -737,7 +766,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
 <?php echo $asp_res_ids; ?> .results .item div.asp_content {
     margin: 0;
     padding: 0;
-    <?php echo ASP_Helpers::font($style['descfont']); ?>
+    <?php echo Css::font($style['descfont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -757,7 +786,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
 <?php echo $asp_res_ids; ?> p.showmore {
   text-align: center;
   margin: 5px 0 0;
-  <?php echo ASP_Helpers::font($style['showmorefont']); ?>
+  <?php echo Css::font($style['showmorefont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -765,7 +794,7 @@ p[id*=asp-try-<?php echo $id; ?>] a:last-child:after {
     <?php echo $asp_res_ids2; ?> p.showmore a,
 <?php endif; ?>
 <?php echo $asp_res_ids; ?> p.showmore a {
-    <?php echo ASP_Helpers::font($style['showmorefont']); ?>
+    <?php echo Css::font($style['showmorefont']); ?>
     padding: 10px 5px;
     margin: 0 auto;
     background: <?php echo $style['showmorefont_bg']; ?>;
@@ -908,7 +937,7 @@ else
 <?php endif; ?>
 <?php echo $asp_set_ids; ?>.searchsettings div.asp_option_label,
 <?php echo $asp_set_ids; ?>.searchsettings .asp_label {
-  <?php echo ASP_Helpers::font($style['settingsdropfont']); ?>
+  <?php echo Css::font($style['settingsdropfont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -1030,7 +1059,7 @@ else
   padding: 0 0 0 10px;
   margin: 0;
   background: transparent;
-  <?php echo ASP_Helpers::font($style['exsearchincategoriestextfont']); ?>
+  <?php echo Css::font($style['exsearchincategoriestextfont']); ?>
 }
 
 <?php if ($style['fe_search_button'] == 1 || $style['fe_reset_button'] == 1): ?>
@@ -1153,21 +1182,3 @@ else
        transform: translateY(1px);
     }
 <?php endif; ?>
-
-<?php if ($use_compatibility == true): ?>
-    <?php echo $asp_set_ids1; ?>.searchsettings .asp_simplebar-scrollbar::before,
-    <?php echo $asp_set_ids2; ?>.searchsettings .asp_simplebar-scrollbar::before,
-<?php endif; ?>
-<?php echo $asp_set_ids; ?>.searchsettings .asp_simplebar-scrollbar::before {
-    background: transparent;
-    <?php wpdreams_gradient_css($style['settings_overflow_color']); ?>
-}
-
-<?php if ($use_compatibility == true): ?>
-    <?php echo $asp_bset_ids1; ?>.searchsettings .asp_simplebar-scrollbar::before,
-    <?php echo $asp_bset_ids2; ?>.searchsettings .asp_simplebar-scrollbar::before,
-<?php endif; ?>
-<?php echo $asp_bset_ids; ?>.searchsettings .asp_simplebar-scrollbar::before {
-    background: transparent;
-    <?php wpdreams_gradient_css($style['settings_overflow_color']); ?>
-}
