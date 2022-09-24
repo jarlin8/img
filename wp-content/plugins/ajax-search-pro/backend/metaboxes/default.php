@@ -226,7 +226,7 @@ class WD_ASP_DefaultMetaBox {
                     </div>
                     <p class="descMsg">
                         <?php echo __('These are the tags displaying under the search bar as suggestions if enabled.', 'ajax-search-pro'); ?>
-                        <br><img src="<?php echo ASP_URL . "img/editor/kw_suggestions.png"; ?>">
+                        <br><img src="https://i.imgur.com/PYFmm6Q.png">
                     </p>
                 </div>
             </div>

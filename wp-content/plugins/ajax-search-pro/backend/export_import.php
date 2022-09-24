@@ -50,7 +50,7 @@ if ( isset($_POST['asp_import_textarea_sett'], $_POST['asp_import_nonce2']) ) {
 $search_instances = wd_asp()->instances->get(-1, true);
 
 if ( $import_count > 0 || $sett_import_count > 0) {
-    wd_asp()->css_manager->generator->generate();
+    asp_generate_the_css();
 }
 ?>
 

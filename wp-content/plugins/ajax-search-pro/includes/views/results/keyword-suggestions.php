@@ -30,7 +30,7 @@ defined('ABSPATH') or die("You can't access this file directly.");
 
     <span class="asp_nores_header">
         <?php
-        echo stripslashes( \WPDRMS\ASP\Utils\Str::resolveBracketSyntax( asp_icl_t("No results text" . " ($id)", $s_options['noresultstext']), array('phrase' => $phrase) ) .
+        echo stripslashes( ASP_Helpers::resolveBracketSyntax( asp_icl_t("No results text" . " ($id)", $s_options['noresultstext']), array('phrase' => $phrase) ) .
             " " . asp_icl_t("Did you mean? text" . " ($id)", $s_options['didyoumeantext']) );
         ?>
     </span>

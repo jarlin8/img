@@ -1,7 +1,6 @@
 <?php
 
-use WPDRMS\ASP\Utils\Script;
-
+/* Prevent direct access */
 defined('ABSPATH') or die("You can't access this file directly.");
 
 if ( !class_exists("wd_frontFilters") ) {
@@ -398,7 +397,7 @@ if ( !class_exists("wd_frontFilters") ) {
                     'data' => $module->getData(array(), true)
                 );
             }
-            Script::objectToInlineScript('wd-ff-main-module', 'WD_FrontFilters', array(
+            ASP_Helpers::objectToInlineScript('wd-ff-main-module', 'WD_FrontFilters', array(
                 'modulesDefault' => $modules_default
             ));
         }

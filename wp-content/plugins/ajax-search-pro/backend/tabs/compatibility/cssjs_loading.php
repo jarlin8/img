@@ -46,6 +46,24 @@
 		</p>
 	</div>
     <div class="item">
+        <?php
+        $o = new wpdreamsCustomSelect("load_mcustom_js", __('Load the scrollbar script?', 'ajax-search-pro'), array(
+                'selects'=>array(
+                    array('option'=>__('Yes', 'ajax-search-pro'), 'value'=>'yes'),
+                    array('option'=>__('No', 'ajax-search-pro'), 'value'=>'no')
+                ),
+                'value'=>$com_options['load_mcustom_js']
+            )
+        );
+        $params[$o->getName()] = $o->getData();
+        ?>
+        <p class='descMsg'>
+        <ul>
+            <li><?php echo __('When set to <strong>No</strong>, the custom scrollbar will <strong>not be used at all</strong>.', 'ajax-search-pro'); ?></li>
+        </ul>
+        </p>
+    </div>
+    <div class="item">
         <?php $o = new wpdreamsYesNo("load_lazy_js", __('Use the Lazy Loader jQuery script to load the images?', 'ajax-search-pro'),
             $com_options['load_lazy_js']
         ); ?>
@@ -53,28 +71,6 @@
             <?php echo sprintf( __('Will load an use a modified version of <a href="%s" target="_blank">Lazy Load</a> script to load the images of results.', 'ajax-search-pro'), 'http://jquery.eisbehr.de/lazy/' ); ?>
         </p>
     </div>
-	<div class="item">
-		<?php
-		$o = new wpdreamsCustomSelect("css_loading_method", __('Style (CSS) loading method', 'ajax-search-pro'), array(
-				'selects'=>array(
-					array('option'=>__('Optimized (recommended)', 'ajax-search-pro'), 'value'=>'optimized'),
-					array('option'=>__('Inline', 'ajax-search-pro'), 'value'=>'inline'),
-					array('option'=>__('File', 'ajax-search-pro'), 'value'=>'file')
-				),
-				'value'=>$com_options['css_loading_method']
-			)
-		);
-		$params[$o->getName()] = $o->getData();
-		?>
-		<p class="descMsg">
-		<ul style="float:right;text-align:left;width:70%;">
-			<li><?php echo __('<b>Optimized</b> - The basic CSS file is enqueued, then the customized styles are printed inline on-demand', 'ajax-search-pro'); ?></li>
-			<li><?php echo __('<b>Inline</b> - Everything is printed inline', 'ajax-search-pro'); ?></li>
-			<li><?php echo __('<b>File</b> - Everything is enqueued as CSS file', 'ajax-search-pro'); ?></li>
-		</ul>
-		<div class="clear"></div>
-		</p>
-	</div>
 </fieldset>
 <fieldset>
     <legend><?php _e('Selective loading options', 'ajax-search-pro'); ?></legend>

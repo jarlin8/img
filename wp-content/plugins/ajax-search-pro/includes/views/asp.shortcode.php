@@ -1,9 +1,5 @@
 <?php
-
 /* Prevent direct access */
-
-use WPDRMS\ASP\Hooks\AjaxManager;
-
 defined('ABSPATH') or die("You can't access this file directly.");
 
 $real_id = $id;
@@ -18,21 +14,11 @@ if (ASP_DEBUG < 1 && strpos(w_isset_def($comp_options['js_source'], 'min-scoped'
     $scope = "jQuery";
 }
 
-$extra_container_class = $style['box_compact_layout'] == 1 ? ' asp_compact' : '';
 $extra_class .= $style['box_compact_layout'] == 1 ? ' asp_compact' : ' asp_non_compact';
 $extra_class .= $style['box_sett_hide_box'] == 1 ? ' hiddend' : '';
 $extra_attrs = $style['box_compact_layout'] == 1 ? ' asp-compact="closed"' : '';
 ?>
-<div class="asp_w_container asp_w_container_<?php echo $real_id; ?> asp_w_container_<?php echo $id; ?><?php echo $extra_container_class; ?>" data-id="<?php echo $real_id; ?>">
-	<?php
-	if (
-		!AjaxManager::doingAjax("ajaxsearchpro_preview") &&
-		!apply_filters('asp_load_css_js', false) &&
-		!apply_filters('asp_load_css', false)
-	) {
-		\WPDRMS\ASP\Asset\Css\Manager::getInstance()->queueInlineIfNeeded($real_id);
-	}
-	?>
+<div class="asp_w_container asp_w_container_<?php echo $real_id; ?> asp_w_container_<?php echo $id; ?>" data-id="<?php echo $real_id; ?>">
 	<div class='asp_w asp_m asp_m_<?php echo $real_id; ?> asp_m_<?php echo $id; ?> wpdreams_asp_sc wpdreams_asp_sc-<?php echo $real_id; ?> ajaxsearchpro asp_main_container <?php echo $extra_class; ?>'
 		 data-id="<?php echo $real_id; ?>"
 		 data-name="<?php echo esc_attr($search['name']); ?>"
@@ -85,5 +71,37 @@ $extra_attrs = $style['box_compact_layout'] == 1 ? ' asp-compact="closed"' : '';
 	if (w_isset_def($style['box_compact_float'], 'none') != 'none') {
 		echo '<div class="wpdreams_clear"></div>';
 	}
+
+	/**************** USER CUSTOM CSS ECHO ****************/
+	if (w_isset_def($style['custom_css'], "") != ""): ?>
+		<?php
+		if ( base64_decode($style['custom_css'], true) == true )
+			$asp_c_css = stripcslashes( base64_decode($style['custom_css']) );
+		else
+			$asp_c_css = stripcslashes( $style['custom_css'] );
+		$asp_c_css = str_replace( "_aspid", $id, $asp_c_css );
+		?>
+		<style type="text/css">
+			/* User defined Ajax Search Pro Custom CSS */
+			<?php echo $asp_c_css; ?>
+		</style>
+		<?php
+	endif;
+
+	/************* THEME CUSTOM CSS ECHO ******************/
+	if (w_isset_def($style['custom_css_h'], "") != ""): ?>
+		<?php
+		if ( base64_decode($style['custom_css_h'], true) == true )
+			$asp_c_css = stripcslashes( base64_decode($style['custom_css_h']) );
+		else
+			$asp_c_css = stripcslashes( $style['custom_css_h'] );
+		$asp_c_css = str_replace( "_aspid", $id, $asp_c_css );
+		?>
+		<style type="text/css">
+			/* Theme defined Ajax Search Pro Custom CSS */
+			<?php echo $asp_c_css; ?>
+		</style>
+		<?php
+	endif;
 	?>
 </div>

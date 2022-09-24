@@ -1,9 +1,5 @@
 <?php
 /* Prevent direct access */
-
-use WPDRMS\ASP\Hooks\Ajax\DeleteCache;
-use WPDRMS\ASP\Misc\Themes;
-
 defined('ABSPATH') or die("You can't access this file directly.");
 
 $action_msg = '';
@@ -13,7 +9,7 @@ $action_msg = '';
  */
 if ( isset($_POST['asp_options_serialized'], $_GET['asp_sid'] ) ) {
     // To bypass parse_str max_input_vars limitation
-    \WPDRMS\ASP\Utils\ParseStr::parse(base64_decode($_POST['asp_options_serialized']), $_POST);
+    ASP_ParseStr::parse(base64_decode($_POST['asp_options_serialized']), $_POST);
     $_POST['submit_' . intval($_GET['asp_sid'])] = 1;
 }
 
@@ -23,8 +19,9 @@ if (
 ) {
     if ( wp_verify_nonce( $_POST['asp_sett_nonce'], 'asp_sett_nonce' ) ) {
         wd_asp()->instances->reset( intval($_GET['asp_sid']) );
-        wd_asp()->css_manager->generator->generate();
-		DeleteCache::getInstance()->handle(false);
+        asp_generate_the_css();
+        $ch = new WD_ASP_Deletecache_Handler();
+        $ch->handle(false);
         $action_msg = "<div class='infoMsg'><strong>" . __('Search settings were reset to defaults!', 'ajax-search-pro') . '</strong> (' . date("Y-m-d H:i:s") . ")</div>";
     } else {
         $action_msg = "<div class='errorMsg'><strong>".  __('<strong>ERROR Saving:</strong> Invalid NONCE, please try again!', 'ajax-search-pro') . '</strong> (' . date("Y-m-d H:i:s") . ")</div>";
@@ -41,10 +38,11 @@ if ( isset($_GET['asp_sid'], $_POST['submit_' . intval($_GET['asp_sid'])]) ) {
         $style = $params;
         $id = intval(intval($_GET['asp_sid']));
 
-        wd_asp()->css_manager->generator->generate();
+        asp_generate_the_css();
 
         // Clear all the cache just in case
-		DeleteCache::getInstance()->handle(false);
+        $ch = new WD_ASP_Deletecache_Handler();
+        $ch->handle(false);
 
         // Do not clear cookies here, it might cause an error
         // WD_ASP_Cookies_Action::forceUnsetCookies();
@@ -58,8 +56,8 @@ if ( isset($_GET['asp_sid'], $_POST['submit_' . intval($_GET['asp_sid'])]) ) {
 }
 
 $params = array();
-$_themes = Themes::get('search');
-$_sb_themes = Themes::get('search_buttons');
+$_themes = WD_ASP_Themes::get('search');
+$_sb_themes = WD_ASP_Themes::get('search_buttons');
 
 if ( is_multisite() ) {
     $search = wd_asp()->instances->get($_GET['asp_sid'] + 0, false, true);
@@ -259,7 +257,7 @@ $sd = &$search['data'];
 
     <div class="wpdreams-box" style="float:left;">
         <?php echo $action_msg; ?>
-        <?php if ( ini_get('max_input_vars') < 1000 ): ?>
+        <?php if ( ini_get('max_input_vars') < 100000 ): ?>
         <form action='' style="display:none;" method='POST' name='asp_data_serialized'>
             <input type="hidden" id='asp_options_serialized' name='asp_options_serialized' value = "">
             <input type="submit"
@@ -271,29 +269,29 @@ $sd = &$search['data'];
 
         <form action='' method='POST' name='asp_data' autocomplete="off">
             <ul id="tabs" class='tabs'>
-                <li><a tabid="1" class='current general'><?php echo __('Search Sources', 'ajax-search-pro'); ?></a></li>
-				<li><a tabid="2" class='search_options'><?php echo __('Search Behavior', 'ajax-search-pro'); ?></a></li>
+                <li><a tabid="1" class='current general'><?php echo __('General Options', 'ajax-search-pro'); ?></a></li>
+                <li><a tabid="2" class='multisite<?php echo is_multisite() || ASP_DEMO ? '' : ' tab_disabled'; ?>'><?php echo __('Multisite Options', 'ajax-search-pro'); ?></a></li>
                 <li><a tabid="3" class='frontend'><?php echo __('Frontend Search Settings', 'ajax-search-pro'); ?></a></li>
                 <li><a tabid="4" class='layout'><?php echo __('Layout options', 'ajax-search-pro'); ?></a></li>
                 <li><a tabid="5" class='autocomplete'><?php echo __('Autocomplete & Suggestions', 'ajax-search-pro'); ?></a></li>
                 <li><a tabid="6" class='theme'><?php echo __('Theme & Styling', 'ajax-search-pro'); ?></a></li>
-				<li><a tabid="8" class='multisite<?php echo is_multisite() || ASP_DEMO ? '' : ' tab_disabled'; ?>'><?php echo __('Multisite Options', 'ajax-search-pro'); ?></a></li>
+                <li><a tabid="8" class='advanced'><?php echo __('Relevance options', 'ajax-search-pro'); ?></a></li>
                 <li><a tabid="7" class='advanced'><?php echo __('Advanced options', 'ajax-search-pro'); ?></a></li>
             </ul>
             <div class='tabscontent'>
                 <div tabid="1">
                     <fieldset>
-                        <legend><?php echo __('Search Sources', 'ajax-search-pro'); ?></legend>
+                        <legend><?php echo __('General Options', 'ajax-search-pro'); ?></legend>
 
                         <?php include(ASP_PATH . "backend/tabs/instance/general_options.php"); ?>
 
                     </fieldset>
                 </div>
-				<div tabid="2">
+                <div tabid="2">
                     <fieldset>
-                        <legend><?php echo __('Search Behavior Options', 'ajax-search-pro'); ?></legend>
+                        <legend><?php echo __('Multisite Options', 'ajax-search-pro'); ?></legend>
 
-                        <?php include(ASP_PATH . "backend/tabs/instance/search_options.php"); ?>
+                        <?php include(ASP_PATH . "backend/tabs/instance/multisite_options.php"); ?>
 
                     </fieldset>
                 </div>
@@ -329,14 +327,14 @@ $sd = &$search['data'];
 
                     </fieldset>
                 </div>
-				<div tabid="8">
-					<fieldset>
-						<legend><?php echo __('Multisite Options', 'ajax-search-pro'); ?></legend>
+                <div tabid="8">
+                    <fieldset>
+                        <legend><?php echo __('Relevance Options', 'ajax-search-pro'); ?></legend>
 
-						<?php include(ASP_PATH . "backend/tabs/instance/multisite_options.php"); ?>
+                        <?php include(ASP_PATH . "backend/tabs/instance/relevance_options.php"); ?>
 
-					</fieldset>
-				</div>
+                    </fieldset>
+                </div>
                 <div tabid="7">
                     <fieldset>
                         <legend><?php echo __('Advanced Options', 'ajax-search-pro'); ?></legend>
@@ -382,7 +380,7 @@ $sd = &$search['data'];
 </div>
 
 <?php
-$media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_site_option("asp_media_query", "defn");
+$media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_option("asp_media_query", "defn");
 // This needs to be enqueued first, so the node actions are attached, otherwise they will not work
 // @TODO 4.10.5
 /*wp_enqueue_script('wpd-backend-instant', plugin_dir_url(__FILE__) . 'settings/assets/instant_actions.js', array(

@@ -1,7 +1,4 @@
 <?php
-
-use WPDRMS\ASP\Utils\Ajax;
-
 if (!class_exists("wpdreamsSearchTags")) {
     /**
      * Class wpdreamsSearchTags
@@ -85,7 +82,7 @@ if (!class_exists("wpdreamsSearchTags")) {
                 }
             else
                 $ret = __('No tags found for this phrase', 'ajax-search-pro');
-			Ajax::prepareHeaders();
+			ASP_Helpers::prepareAjaxHeaders();
             print "!!WDSTART!!" . $ret . "!!WDEND!!";
             die();
         }

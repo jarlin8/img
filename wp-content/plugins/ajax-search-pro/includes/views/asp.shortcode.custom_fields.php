@@ -1,8 +1,5 @@
 <?php
 /* Prevent direct access */
-
-use WPDRMS\ASP\Utils\Plugin;
-
 defined('ABSPATH') or die("You can't access this file directly.");
 
 foreach ( wd_asp()->front_filters->get('position', 'custom_field') as $k => $filter ) {
@@ -24,43 +21,43 @@ foreach ( wd_asp()->front_filters->get('position', 'custom_field') as $k => $fil
     // Field name without white space
     $field_name_nws = preg_replace('/\s+/', '', $field_name);
 
-    include(Plugin::templateFilePath('filters/custom_field/asp-cf-header.php'));
+    include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-header.php'));
 
     switch ($filter->display_mode) {
         case 'checkboxes':
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-checkboxes.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-checkboxes.php'));
             break;
         case 'dropdown':
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-dropdown.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-dropdown.php'));
             break;
         case 'dropdownsearch':
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-dropdownsearch.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-dropdownsearch.php'));
             break;
         case 'multisearch':
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-multisearch.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-multisearch.php'));
             break;
         case 'radio':
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-radio.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-radio.php'));
             break;
         case 'slider':
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-slider.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-slider.php'));
             break;
         case 'range':
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-range.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-range.php'));
             break;
         case 'datepicker':
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-datepicker.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-datepicker.php'));
             break;
         case 'text':
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-text.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-text.php'));
             break;
         case 'hidden':
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-hidden.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-hidden.php'));
             break;
         default:
-            include(Plugin::templateFilePath('filters/custom_field/asp-cf-checkboxes.php'));
+            include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-checkboxes.php'));
             break;
     }
 
-    include(Plugin::templateFilePath('filters/custom_field/asp-cf-footer.php'));
+    include(ASP_Helpers::aspTemplateFilePath('filters/custom_field/asp-cf-footer.php'));
 }

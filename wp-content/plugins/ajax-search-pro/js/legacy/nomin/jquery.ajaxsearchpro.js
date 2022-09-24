@@ -892,18 +892,28 @@
             }
 
             var count = $this.o.show_more.enabled && $this.o.show_more.action == 'ajax' ? false : $this.o.autop.count;
-            $this.isAutoP = true;
-            if ( $this.o.compact.enabled == 1 ) {
-                $this.openCompact();
-            }
-            if ($this.o.autop.state == "phrase") {
-                $this.n.text.val($this.o.autop.phrase);
-                $this.search(count);
-            } else if ($this.o.autop.state == "latest") {
-                $this.search(count, 1);
-            } else {
-                $this.search(count, 2);
-            }
+            var i = 0;
+            var x = setInterval(function(){
+                if ( !window.ASP.css_async || typeof window.ASP.css_loaded != 'undefined' ) {
+                    $this.isAutoP = true;
+                    if ( $this.o.compact.enabled == 1 ) {
+                        $this.openCompact();
+                    }
+                    if ($this.o.autop.state == "phrase") {
+                        $this.n.text.val($this.o.autop.phrase);
+                        $this.search(count);
+                    } else if ($this.o.autop.state == "latest") {
+                        $this.search(count, 1);
+                    } else {
+                        $this.search(count, 2);
+                    }
+                    clearInterval(x);
+                }
+
+                i++;
+                if ( i > 6 )
+                    clearInterval(x);
+            }, 500);
         },
 
         initEtc: function() {
@@ -1710,8 +1720,8 @@
             var $this = this;
 
             if ( !$this.n.search.is("[asp-compact-w]") ) {
-                $this.n.probox.attr('asp-compact-w', $this.n.probox.innerWidth());
-                $this.n.search.attr('asp-compact-w', $this.n.search.innerWidth());
+                $this.n.probox.attr('asp-compact-w', $this.n.probox.width());
+                $this.n.search.attr('asp-compact-w', $this.n.search.width());
             }
 
             if ($this.o.compact.enabled == 1 && $this.o.compact.position != 'static') {
@@ -2735,8 +2745,8 @@
 
                     $this.searching = false;
                     response = response.replace(/^\s*[\r\n]/gm, "");
-                    var html_response = response.match(/___ASPSTART_HTML___(.*[\s\S]*)___ASPEND_HTML___/);
-                    var data_response = response.match(/___ASPSTART_DATA___(.*[\s\S]*)___ASPEND_DATA___/);
+                    var html_response = response.match(/!!ASPSTART_HTML!!(.*[\s\S]*)!!ASPEND_HTML!!/);
+                    var data_response = response.match(/!!ASPSTART_DATA!!(.*[\s\S]*)!!ASPEND_DATA!!/);
 
                     if (html_response == null || typeof(html_response) != "object" || typeof(html_response[1]) == "undefined") {
                         $this.hideLoader();

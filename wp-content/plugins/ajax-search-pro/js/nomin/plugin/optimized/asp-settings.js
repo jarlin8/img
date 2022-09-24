@@ -21,6 +21,21 @@
                 $this.n('searchsettings').removeClass($this.settAnim.hideClass).addClass($this.settAnim.showClass);
             }
 
+            if ($this.settScroll == null && $this.is_scroll ) {
+                $this.settScroll = [];
+                $('.asp_sett_scroll', $this.n('searchsettings')).each(function(o,i){
+                    let _this = this;
+                    // Small delay to fix a rendering issue
+                    setTimeout(function(){
+                        // noinspection JSUnresolvedFunction,JSUnresolvedVariable,JSPotentiallyInvalidConstructorUsage
+                        $this.settScroll[i] = new asp_SimpleBar($(_this).get(0), {
+                            direction: $('body').hasClass('rtl') ? 'rtl' : 'ltr',
+                            autoHide: $this.o.scrollBar.settings.autoHide
+                        });
+                    }, 15);
+                });
+            }
+
             // noinspection JSUnresolvedVariable
             if ( $this.o.fss_layout == "masonry" && $this.sIsotope == null && !(helpers.isMobile() && helpers.detectIOS()) ) {
                 if (typeof rpp_isotope !== 'undefined') {
@@ -634,9 +649,7 @@
             });
 
             $this.n('searchsettings').on($this.clickTouchend, function (e) {
-                if ( !$this.dragging ) {
-                    $this.updateHref();
-                }
+                $this.updateHref();
 
                 /**
                  * Stop propagation on settings clicks, except the noUiSlider handler event.

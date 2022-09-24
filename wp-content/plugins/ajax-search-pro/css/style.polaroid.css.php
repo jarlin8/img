@@ -6,7 +6,7 @@
  */
 
 /* Prevent direct access */
-use WPDRMS\ASP\Utils\Css;defined('ABSPATH') or die("You can't access this file directly.");
+defined('ABSPATH') or die("You can't access this file directly.");
 ?>
 
 <?php if ($use_compatibility == true): ?>
@@ -39,7 +39,7 @@ use WPDRMS\ASP\Utils\Css;defined('ABSPATH') or die("You can't access this file d
 <?php endif; ?>
 <?php echo $asp_res_ids; ?> .photostack figcaption h2 {
 	margin: 20px 0 0 0;
-    <?php echo Css::font($style['prestitlefont']); ?>
+    <?php echo ASP_Helpers::font($style['prestitlefont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -47,7 +47,7 @@ use WPDRMS\ASP\Utils\Css;defined('ABSPATH') or die("You can't access this file d
     <?php echo $asp_res_ids2; ?> .photostack figcaption h2 a,
 <?php endif; ?>
 <?php echo $asp_res_ids; ?> .photostack figcaption h2 a {
-    <?php echo Css::font($style['prestitlefont']); ?>
+    <?php echo ASP_Helpers::font($style['prestitlefont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -55,7 +55,7 @@ use WPDRMS\ASP\Utils\Css;defined('ABSPATH') or die("You can't access this file d
     <?php echo $asp_res_ids2; ?> .photostack .etc,
 <?php endif; ?>
 <?php echo $asp_res_ids; ?> .photostack .etc {
-    <?php echo Css::font($style['pressubtitlefont']); ?>
+    <?php echo ASP_Helpers::font($style['pressubtitlefont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -65,7 +65,7 @@ use WPDRMS\ASP\Utils\Css;defined('ABSPATH') or die("You can't access this file d
 <?php echo $asp_res_ids; ?> .asp_image {
 	width: <?php echo (wpdreams_width_from_px($style['preswidth'])- 2*wpdreams_width_from_px($style['prespadding'])); ?>px;
 	height: <?php echo (wpdreams_width_from_px($style['preswidth'])- 2*wpdreams_width_from_px($style['prespadding'])); ?>px;
-    <?php echo Css::font($style['pressubtitlefont']); ?>
+    <?php echo ASP_Helpers::font($style['pressubtitlefont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>
@@ -73,7 +73,7 @@ use WPDRMS\ASP\Utils\Css;defined('ABSPATH') or die("You can't access this file d
     <?php echo $asp_res_ids2; ?> .photostack-back,
 <?php endif; ?>
 <?php echo $asp_res_ids; ?> .photostack-back {
-    <?php echo Css::font($style['presdescfont']); ?>
+    <?php echo ASP_Helpers::font($style['presdescfont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>

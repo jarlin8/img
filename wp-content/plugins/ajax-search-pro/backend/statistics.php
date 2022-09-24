@@ -1,8 +1,5 @@
 <?php
 /* Prevent direct access */
-
-use WPDRMS\ASP\Misc\Statistics;
-
 defined('ABSPATH') or die("You can't access this file directly.");
 wp_enqueue_script('jquery-migrate-old', 'https://code.jquery.com/jquery-migrate-1.4.1.min.js', array('jquery'));
 wp_register_script('wpdreams-jqPlot', ASP_URL_NP . 'backend/settings/assets/js/jqPlot/jquery.jqplot.min.js', array(
@@ -45,11 +42,11 @@ if ( isset($_POST['searchform']) ) {
     $where = " WHERE search_id=" . ( $_POST['searchform'] + 0);
 }
 if (isset($_POST['clearstatistics']))
-    Statistics::clearAll();
+    asp_statistics::clearAll();
 
-$top20 = isset($_POST['searchform']) ? Statistics::getTop(20, $_POST['searchform']) : Statistics::getTop(20);
-$last20 = isset($_POST['searchform']) ? Statistics::getLast(20, $_POST['searchform']) : Statistics::getLast(20);
-$top500 = isset($_POST['searchform']) ? Statistics::getTop(500, $_POST['searchform']) : Statistics::getTop(500);
+$top20 = isset($_POST['searchform']) ? asp_statistics::getTop(20, $_POST['searchform']) : asp_statistics::getTop(20);
+$last20 = isset($_POST['searchform']) ? asp_statistics::getLast(20, $_POST['searchform']) : asp_statistics::getLast(20);
+$top500 = isset($_POST['searchform']) ? asp_statistics::getTop(500, $_POST['searchform']) : asp_statistics::getTop(500);
 
 if (isset($_POST['searchform']))
     $current_search = wd_asp()->instances->get($_POST['searchform'] + 0);

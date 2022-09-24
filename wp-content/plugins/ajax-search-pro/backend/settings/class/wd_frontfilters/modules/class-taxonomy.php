@@ -1,7 +1,4 @@
 <?php
-
-use WPDRMS\ASP\Utils\Ajax;
-
 defined( 'ABSPATH' ) or die( "You can't access this file directly." );
 
 class WD_FrontFilters_Module_Taxonomy extends WD_FrontFilters_Module_Abstract {
@@ -197,7 +194,7 @@ class WD_FrontFilters_Module_Taxonomy extends WD_FrontFilters_Module_Abstract {
             $std_term = apply_filters('asp_post_format_standard', $std_term);
             array_unshift($terms, $std_term);
         }
-		Ajax::prepareHeaders();
+        ASP_Helpers::prepareAjaxHeaders();
 
         if ( !empty($terms) && is_array($terms) ) {
             $termsHierarchical = array();

@@ -1,7 +1,4 @@
 <?php
-
-use WPDRMS\ASP\Media\RemoteService\License;
-
 if (!class_exists("wd_MSLicenseActivator")) {
 
 	class wd_MSLicenseActivator extends wpdreamsType {
@@ -50,7 +47,7 @@ if (!class_exists("wd_MSLicenseActivator")) {
 		}
 
 		public function processData() {
-			$this->data = License::getInstance()->getData();
+			$this->data = ASP_Media_Service_License::getInstance()->getData();
 			$this->stats = $this->data['stats'];
 		}
 	}

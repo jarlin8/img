@@ -39,7 +39,8 @@
 
             if ( $this.call_num < 1 ) {
                 // Scroll to the beginning
-                let $container = $this.n('results');
+                let $container = $this.is_scroll && typeof $this.scroll.recalculate !== 'undefined' ?
+                    $($this.scroll.getScrollElement()) : $this.n('results');
                 $container.get(0).scrollLeft = 0;
 
                 // noinspection JSUnresolvedVariable

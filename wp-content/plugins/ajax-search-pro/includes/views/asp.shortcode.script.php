@@ -1,6 +1,5 @@
 <?php
 /* Prevent direct access */
-
 defined('ABSPATH') or die("You can't access this file directly.");
 
 /**
@@ -156,18 +155,8 @@ defined('ABSPATH') or die("You can't access this file directly.");
         "phrase": "<?php echo $style['auto_populate_phrase']; ?>",
         "count": <?php echo $style['auto_populate_count']; ?>
     },
-	"wooShop": {
-		"useAjax": <?php echo ( \WPDRMS\ASP\Utils\WooCommerce::isShop() && $style['woo_shop_live_search']) ? 1 : 0; ?>,
-		"selector": "<?php echo $style['woo_shop_live_selector']; ?>",
-		"url": "<?php echo ( \WPDRMS\ASP\Utils\WooCommerce::isShop() && $style['woo_shop_live_search']) ? get_permalink( wc_get_page_id( 'shop' ) ) : ''; ?>"
-	},
-	"taxArchive": {
-		"useAjax": <?php echo ( \WPDRMS\ASP\Utils\Taxonomy::isTaxonomyArchive() && $style['taxonomy_archive_live_search']) ? 1 : 0; ?>,
-		"selector": "<?php echo $style['taxonomy_archive_live_selector']; ?>",
-		"url": "<?php echo \WPDRMS\ASP\Utils\Taxonomy::getCurrentArchiveURL(); ?>"
-	},
     "resPage": {
-        "useAjax": <?php echo (is_search() && $style['res_live_search']) ? 1 : 0; ?>,
+        "useAjax": <?php echo is_search() && $style['res_live_search'] ? 1 : 0; ?>,
         "selector": "<?php echo $style['res_live_selector']; ?>",
         "trigger_type": <?php echo $style['res_live_trigger_type'] ?>,
         "trigger_facet": <?php echo $style['res_live_trigger_facet'] ?>,
@@ -176,8 +165,15 @@ defined('ABSPATH') or die("You can't access this file directly.");
     },
     "fss_layout": "<?php echo $style['fss_column_layout']; ?>",
     "scrollBar": {
+        "vertical": {
+            "autoHide": <?php echo $style['v_res_overflow_autohide']; ?>
+        },
         "horizontal": {
-            "enabled": <?php echo $style['h_res_show_scrollbar']; ?>
+            "enabled": <?php echo $style['h_res_show_scrollbar']; ?>,
+            "autoHide": <?php echo $style['h_res_overflow_autohide']; ?>
+        },
+        "settings": {
+            "autoHide": <?php echo $style['settings_overflow_autohide']; ?>
         }
     },
 	"divi": {
@@ -187,7 +183,6 @@ defined('ABSPATH') or die("You can't access this file directly.");
     "statistics": <?php echo get_option('asp_stat', 0) == 0 ? 0 : 1; ?>
 }
 <?php
-
 $_asp_script_out = ob_get_clean();
 wd_asp()->instances->add_script_data($real_id, json_encode(json_decode($_asp_script_out)));
 ?>

@@ -336,16 +336,40 @@ window.ASP.ready = function() {
     var iv = null;
     var ivc = 0;
 
-
-    scope(function(){
-        _this.initialize();
-    });
-    scope(document).on('load', function () {
-        if (!_this.initialized) {
+    // noinspection JSUnresolvedVariable
+    if ( _this.css_async ) {
+        if ( _this.css_loaded == 1 ) {
             _this.initialize();
-            console.log("ASP initialized via window.load");
+        } else {
+            iv = setInterval(function () {
+                ivc++;
+                if (_this.css_loaded == 1 || ivc > 80) {
+                    scope(function () {
+                        _this.initialize();
+                    });
+
+                    // Redundancy for safety
+                    scope(document).on('load', function () {
+                        // It should be initialized at this point, but you never know..
+                        if (!_this.initialized) {
+                            _this.initialize();
+                        }
+                    });
+                    clearInterval(iv);
+                }
+            }, 50);
         }
-    });
+    } else {
+        scope(function(){
+            _this.initialize();
+        });
+        scope(document).on('load', function () {
+            if (!_this.initialized) {
+                _this.initialize();
+                console.log("ASP initialized via window.load");
+            }
+        });
+    }
 
     // DOM tree modification detection to re-initialize automatically if enabled
     // noinspection JSUnresolvedVariable

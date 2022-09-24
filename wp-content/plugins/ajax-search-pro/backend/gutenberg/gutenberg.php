@@ -1,6 +1,5 @@
 <?php
-use WPDRMS\ASP\Utils\Script;
-
+/* Prevent direct access */
 defined('ABSPATH') or die("You can't access this file directly.");
 
 add_action('admin_init', array('asp_Gutenberg', 'init'));
@@ -18,7 +17,7 @@ if ( !class_exists('asp_Gutenberg') ) {
                 if (count($instances) > 0) {
                     $ids = array_keys($instances);
                     if (self::$media_query == '')
-                        self::$media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_site_option("asp_media_query", "defn");
+                        self::$media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_option("asp_media_query", "defn");
                     wp_register_script(
                         'wd-asp-gutenberg',
                         ASP_URL_NP . 'backend/gutenberg/gutenberg.js',
@@ -26,7 +25,7 @@ if ( !class_exists('asp_Gutenberg') ) {
                         self::$media_query,
                         true
                     );
-                    Script::objectToInlineScript('wd-asp-gutenberg', 'ASP_GUTENBERG', array(
+                    ASP_Helpers::objectToInlineScript('wd-asp-gutenberg', 'ASP_GUTENBERG', array(
                         'ids' => $ids,
                         'instances' => $instances
                     ));

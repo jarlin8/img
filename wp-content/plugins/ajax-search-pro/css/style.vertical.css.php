@@ -6,7 +6,7 @@
  */
 
 /* Prevent direct access */
-use WPDRMS\ASP\Utils\Css;defined('ABSPATH') or die("You can't access this file directly.");
+defined('ABSPATH') or die("You can't access this file directly.");
 ?>
 
 <?php if ($use_compatibility == true): ?>
@@ -149,7 +149,7 @@ use WPDRMS\ASP\Utils\Css;defined('ABSPATH') or die("You can't access this file d
     z-index: 1000;
     min-width: 90%;
     flex-grow: 1;
-    <?php echo Css::font($style['groupbytextfont']); ?>
+    <?php echo ASP_Helpers::font($style['groupbytextfont']); ?>
 }
 
 <?php if ($use_compatibility == true): ?>

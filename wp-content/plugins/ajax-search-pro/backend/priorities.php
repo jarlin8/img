@@ -1,8 +1,5 @@
 <?php
 /* Prevent direct access */
-
-use WPDRMS\ASP\Misc\PriorityGroups;
-
 defined('ABSPATH') or die("You can't access this file directly.");
 
 if (ASP_DEMO) $_POST = null;
@@ -21,13 +18,25 @@ $blogs = array();
 if (function_exists('get_sites'))
     $blogs = get_sites();
 
-wd_asp()->priority_groups = PriorityGroups::getInstance();
+wd_asp()->priority_groups = WD_ASP_Priority_Groups::getInstance();
+$_comp = wpdreamsCompatibility::Instance();
 ?>
 <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/options_search.css?v='.ASP_CURR_VER; ?>" />
 <link rel="stylesheet" href="<?php echo plugin_dir_url(__FILE__) . 'settings/assets/priorities.css?v='.ASP_CURR_VER; ?>" />
 <div id='wpdreams' class='asp-be wpdreams wrap<?php echo isset($_COOKIE['asp-accessibility']) ? ' wd-accessible' : ''; ?>'>
 
 	<?php if ( wd_asp()->updates->needsUpdate() ) { wd_asp()->updates->printUpdateMessage(); } ?>
+
+    <?php if ( $_comp->has_errors() ): ?>
+        <div class="wpdreams-box errorbox">
+            <p class='errors'>
+            <?php echo sprintf( __('Possible incompatibility! Please go to the
+                 <a href="%s">error check</a> page to see the details and solutions!', 'ajax-search-pro'),
+                get_admin_url() . 'admin.php?page=asp_compatibility_settings'
+            ); ?>
+            </p>
+        </div>
+    <?php endif; ?>
 
     <div class="wpdreams-box" style="position: relative; float:left;">
         <ul id="tabs" class='tabs'>
@@ -64,7 +73,7 @@ wd_asp()->priority_groups = PriorityGroups::getInstance();
 </div>
 
 <?php
-$media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_site_option("asp_media_query", "defn");
+$media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_option("asp_media_query", "defn");
 wp_enqueue_script('asp-backend-priorities', plugin_dir_url(__FILE__) . 'settings/assets/priorities.js', array(
     'jquery'
 ), $media_query, true);

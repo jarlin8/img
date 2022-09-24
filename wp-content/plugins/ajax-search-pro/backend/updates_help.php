@@ -1,8 +1,5 @@
 <?php
 /* Prevent direct access */
-
-use WPDRMS\ASP\Misc\EnvatoLicense;
-
 defined('ABSPATH') or die("You can't access this file directly.");
 
 if (ASP_DEMO) $_POST = null;
@@ -29,7 +26,7 @@ if (ASP_DEMO) $_POST = null;
 				<ul>
 					<li><a target="_blank" href="https://documentation.ajaxsearchpro.com/" title="Documentation"><?php echo __('Onlie Documentation', 'ajax-search-pro'); ?></a></li>
 					<li><a target="_blank" href="https://knowledgebase.ajaxsearchpro.com/" title="Knowledge Base"><?php echo __('Knowledge base', 'ajax-search-pro'); ?></a></li>
-					<li><a target="_blank" href="https://changelog.ajaxsearchpro.com/" title="Changelog"><?php echo __('Changelog', 'ajax-search-pro'); ?></a></li>
+					<li><a target="_blank" href="https://knowledgebase.ajaxsearchpro.com/other/changelog" title="Changelog"><?php echo __('Changelog', 'ajax-search-pro'); ?></a></li>
 					<li><a target="_blank" href="https://documentation.ajaxsearchpro.com/plugin-updates/manual-updates"><?php echo __('How to manual update?', 'ajax-search-pro'); ?></a></li>
 				</ul>
 			</div>
@@ -37,7 +34,7 @@ if (ASP_DEMO) $_POST = null;
 		<div class="wpd-half-last">
             <?php if (ASP_DEMO == 0): ?>
 			<h3><?php echo __('Automatic Updates', 'ajax-search-pro'); ?></h3>
-            <div class="item<?php echo EnvatoLicense::isActivated( true, true ) === false ? "" : " hiddend"; ?>">
+            <div class="item<?php echo WD_ASP_License::isActivated( true, true ) === false ? "" : " hiddend"; ?>">
                 <div class="asp_auto_update">
                     <p><?php echo __('To activate Automatic Updates, please activate your purchase code with this site.', 'ajax-search-pro'); ?></p>
                     <label><?php echo __('Purchase code', 'ajax-search-pro'); ?></label>
@@ -60,8 +57,8 @@ if (ASP_DEMO) $_POST = null;
                     <p class="descMsg" style="text-align: left;margin-top: 10px;"><?php echo __('<b>NOTICE:</b> After deactivation there is a <b>30 minute</b> wait time until you can re-activate the same purchase code to prevent malicious activity.', 'ajax-search-pro'); ?></p>
                 </div>
             </div>
-            <div class="item<?php echo EnvatoLicense::isActivated() === false ? " hiddend" : ""; ?> asp_auto_update">
-                <p><?php echo __('Auto updates are activated for this site with purchase code:', 'ajax-search-pro'); ?> <br><b><?php echo EnvatoLicense::isActivated(); ?></b></p>
+            <div class="item<?php echo WD_ASP_License::isActivated() === false ? " hiddend" : ""; ?> asp_auto_update">
+                <p><?php echo __('Auto updates are activated for this site with purchase code:', 'ajax-search-pro'); ?> <br><b><?php echo WD_ASP_License::isActivated(); ?></b></p>
                 <div class="errorMsg" style="display:none;"></div>
                 <input type="button" class="submit wd_button_blue" id="asp_deactivate" name="asp_deactivate" value="<?php echo esc_attr__('Deactivate', 'ajax-search-pro'); ?>">
                 <span class="small-loading" style="display:none; vertical-align: middle;"></span>

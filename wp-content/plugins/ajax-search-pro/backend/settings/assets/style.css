@@ -499,7 +499,6 @@ div#wpdreams .wpd-text-right {
 #wpdreams a.autocomplete,
 #wpdreams a.theme,
 #wpdreams a.subtheme,
-#wpdreams a.search_options,
 #wpdreams a.advanced {
     border-bottom-color: #3D3D3D;
     border-radius: 3px;
@@ -590,7 +589,6 @@ div#wpdreams .wpd-text-right {
     background: url("icons/b-layout.png") no-repeat scroll 5px 5px #4095B6;
 }
 
-#wpdreams a.search_options,
 #wpdreams a.autocomplete {
     background: url("icons/b-bulb.png") no-repeat scroll 5px 5px #4095B6;
 }

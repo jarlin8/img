@@ -1,8 +1,4 @@
 <?php
-
-use WPDRMS\ASP\Query\SearchQuery;
-use WPDRMS\ASP\Utils\Ajax;
-
 if (!class_exists("wd_CPTSelect")) {
     /**
      * Class wd_CPTSelect
@@ -107,7 +103,7 @@ if (!class_exists("wd_CPTSelect")) {
 
             $ptypes = array_diff($ptypes, $exclude);
 
-            $asp_query = new SearchQuery(array(
+            $asp_query = new ASP_Query(array(
                 "s" => $phrase,
                 "_ajax_search" => false,
                 'keyword_logic' => 'AND',
@@ -121,7 +117,7 @@ if (!class_exists("wd_CPTSelect")) {
             ));
 
             $results = $asp_query->posts;
-			Ajax::prepareHeaders();
+			ASP_Helpers::prepareAjaxHeaders();
             if ( ! empty( $results ) ) {
                 echo "Results (".count($results)."): ";
                 foreach ( $results as $p ) {

@@ -83,7 +83,7 @@ add_action('admin_enqueue_scripts', 'admin_scriptsV05');
 
 if (!function_exists("admin_scriptsV05")) {
     function admin_scriptsV05() {
-        $media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_site_option("asp_media_query", "defn");
+        $media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_option("asp_media_query", "defn");
 
         // ------------ Dequeue some scripts causing issues on the back-end --------------
         wp_dequeue_script( 'otw-admin-colorpicker' );
@@ -154,7 +154,7 @@ if (!function_exists("admin_scriptsV05")) {
 
 if (!function_exists("admin_stylesV05")) {
     function admin_stylesV05() {
-        $media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_site_option("asp_media_query", "defn");
+        $media_query = ASP_DEBUG == 1 ? asp_gen_rnd_str() : get_option("asp_media_query", "defn");
 
 		wp_register_style('asp-backend-jquery-select2', ASP_URL_NP . 'backend/settings/assets/select2/css/select2.min.css', false, $media_query);
 		wp_enqueue_style('asp-backend-jquery-select2');

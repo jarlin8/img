@@ -1,7 +1,4 @@
 <?php
-
-use WPDRMS\ASP\Utils\Ajax;
-
 if (!class_exists("wd_TaxTermSearchCallBack")) {
     /**
      * Class wd_TaxTermSearchCallBack
@@ -106,7 +103,7 @@ if (!class_exists("wd_TaxTermSearchCallBack")) {
                 'search' => trim($_POST['wd_phrase']),
                 'number' => $data['limit']
             ));
-			Ajax::prepareHeaders();
+			ASP_Helpers::prepareAjaxHeaders();
             if ( !is_wp_error($terms) ) {
                 print_r($data['delimiter'] . json_encode($terms) . $data['delimiter']);;
             } else {

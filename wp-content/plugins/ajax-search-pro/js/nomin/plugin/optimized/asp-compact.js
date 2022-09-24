@@ -6,8 +6,8 @@
             let $this = this;
 
             if ( !$this.n('search').is("[asp-compact-w]") ) {
-                $this.n('probox').attr('asp-compact-w', $this.n('probox').innerWidth());
-                $this.n('search').attr('asp-compact-w', $this.n('search').innerWidth());
+                $this.n('probox').attr('asp-compact-w', $this.n('probox').width());
+                $this.n('search').attr('asp-compact-w', $this.n('search').width());
             }
 
             $this.n('search').css({
@@ -39,21 +39,10 @@
                 width = helpers.wp_hooks_apply_filters('asp_compact_width', width, $this.o.id, $this.o.iid);
 
                 width = !isNaN(width) ? width + 'px' : width;
-                if ( $this.o.compact.position != 'static' ) {
-                    $this.n('search').css({
-                        "max-width": width,
-                        "width": width
-                    });
-                } else {
-                    $this.n('container').css({
-                        "max-width": width,
-                        "width": width
-                    });
-                    $this.n('search').css({
-                        "max-width": '100%',
-                        "width": '100%'
-                    });
-                }
+                $this.n('search').css({
+                    "max-width": width,
+                    "width": width
+                });
 
                 if ($this.o.compact.overlay == 1) {
                     $this.n('search').css('z-index', 999999);
@@ -107,17 +96,7 @@
 
             $this.n('search').find('.probox>div:not(.promagnifier)').addClass('hiddend');
 
-            //$this.n('search').css({width: "auto"});
-             if ( $this.o.compact.position != 'static' ) {
-                $this.n('search').css({width: "auto"});
-            } else {
-                $this.n('container').css({width: "auto"});
-                $this.n('search').css({
-                    "max-width": 'unset',
-                    "width": 'auto'
-                });
-            }
-
+            $this.n('search').css({width: "auto"});
             $this.n('probox').css({width: $this.n('probox').attr('asp-compact-w') + 'px'});
 
             $this.n('trythis').css({
