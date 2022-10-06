@@ -26,8 +26,12 @@ class StyleSheets extends AbstractAction {
 		return true;
 	}
 
+	public function handleHeader() {
+		\WPDRMS\ASP\Asset\Css\Manager::getInstance()->headerStartBuffer();
+	}
+
 	public function handleFooter() {
-		\WPDRMS\ASP\Asset\Css\Manager::getInstance()->printInline();
+		\WPDRMS\ASP\Asset\Css\Manager::getInstance()->print();
 	}
 
 	public function fonts() {

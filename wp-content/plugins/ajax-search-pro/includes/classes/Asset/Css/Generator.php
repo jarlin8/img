@@ -48,7 +48,7 @@ if ( !class_exists(__NAMESPACE__ . '\Generator') ) {
 				'instances' => 'style.instances'.$flag.'.css',
 				'wpdreams-ajaxsearchpro-instances' => 'style.instances'.$flag.'.css'
 			);
-			return $files[$handle] ?? '';
+			return $files[$handle] ?? 'search' . $handle . '.css';
 		}
 
 		private function generateBasic() {

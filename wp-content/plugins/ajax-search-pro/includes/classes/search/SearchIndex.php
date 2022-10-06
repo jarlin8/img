@@ -107,12 +107,14 @@ class SearchIndex extends SearchPostTypes {
 		/*---------------------------------------------------------------*/
 
 		$post_fields_query = '';
-		$exc_fields = array_diff(array('title', 'content', 'excerpt'), $args['post_fields']);
-		if ( count($exc_fields) > 0 ) {
-			$post_fields_arr = array_map(function($field){
-				return "asp_index.$field = 0";
-			}, $exc_fields);
-			$post_fields_query = 'AND (' . implode(' AND ', $post_fields_arr) . ') ';
+		if ( !in_array('attachment', $args['post_type']) ) {
+			$exc_fields = array_diff(array('title', 'content', 'excerpt'), $args['post_fields']);
+			if ( count($exc_fields) > 0 ) {
+				$post_fields_arr = array_map(function ($field) {
+					return "asp_index.$field = 0";
+				}, $exc_fields);
+				$post_fields_query = 'AND (' . implode(' AND ', $post_fields_arr) . ') ';
+			}
 		}
 
 		// ------------------------ Categories/tags/taxonomies ----------------------

@@ -15,6 +15,22 @@ if ( !class_exists(__NAMESPACE__ . '\Html') ) {
 			return preg_replace( $search, ' ', $document );
 		}
 
+		public static function inject( $html, &$source, $injection_points = array() ): bool {
+			if ( $html !== '' && $source != '' ) {
+				$injection_points = empty($injection_points) ? array(
+					"</head>", "<meta", "<link rel=\"stylesheet\"", "<script", "<style", "<link"
+				) : $injection_points;
+				foreach ( $injection_points as $injection_point ) {
+					$pos = strpos($source, $injection_point);
+					if ( $pos !== false ) {
+						$source = substr_replace($source, $html, $pos, 0);
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
 		/** @noinspection HtmlRequiredLangAttribute */
 		public static function extractIframeContent(string $str ): string {
 			/** @noinspection All */

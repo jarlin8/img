@@ -2005,18 +2005,6 @@ function upvote_shuoshuo(){
 add_action('wp_ajax_upvote_shuoshuo' , 'upvote_shuoshuo');
 add_action('wp_ajax_nopriv_upvote_shuoshuo' , 'upvote_shuoshuo');
 //检测页面底部版权是否被修改
-function alert_footer_copyright_changed(){ ?>
-	<div class='notice notice-warning is-dismissible'>
-		<p><?php _e("警告：你可能修改了 Argon 主题页脚的版权声明，Argon 主题要求你至少保留主题的 Github 链接或主题的发布文章链接。", 'argon');?></p>
-	</div>
-<?php }
-function check_footer_copyright(){
-	$footer = file_get_contents(get_theme_root() . "/" . wp_get_theme() -> template . "/footer.php");
-	if ((strpos($footer, "github.com/solstice23/argon-theme") === false) && (strpos($footer, "solstice23.top") === false)){
-		add_action('admin_notices', 'alert_footer_copyright_changed');
-	}
-}
-check_footer_copyright();
 //颜色计算
 function rgb2hsl($R,$G,$B){
 	$r = $R / 255;

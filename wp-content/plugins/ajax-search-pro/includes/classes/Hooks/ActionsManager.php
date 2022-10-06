@@ -30,15 +30,21 @@ class ActionsManager {
 			"args"  => 0
 		),
 		array(
+			"action" => "wp_head",
+			"handler" => array("StyleSheets", 'handleHeader'),
+			"priority"    => 10,
+			"args"  => 0
+		),
+		array(
 			'action' => 'asp_load_css_js',
 			'handler' => array('StyleSheets', 'shouldLoadAssets'),
 			'priority'    => 10,
 			'args'  => 0
 		),
 		array(
-			"action" => "wp_footer",
+			"action" => "wp_print_footer_scripts",
 			"handler" => array('StyleSheets', 'handleFooter'),
-			"priority"    => 0,
+			"priority"    => 999999,
 			"args"  => 0
 		),
 		array(

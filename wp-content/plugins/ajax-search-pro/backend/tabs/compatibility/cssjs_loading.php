@@ -68,9 +68,9 @@
 		?>
 		<p class="descMsg">
 		<ul style="float:right;text-align:left;width:70%;">
-			<li><?php echo __('<b>Optimized</b> - The basic CSS file is enqueued, then the customized styles are printed inline on-demand', 'ajax-search-pro'); ?></li>
-			<li><?php echo __('<b>Inline</b> - Everything is printed inline', 'ajax-search-pro'); ?></li>
-			<li><?php echo __('<b>File</b> - Everything is enqueued as CSS file', 'ajax-search-pro'); ?></li>
+			<li><?php echo __('<b>Optimized</b> - The basic CSS file is enqueued on-demand, then the customized styles are printed inline on-demand', 'ajax-search-pro'); ?></li>
+			<li><?php echo __('<b>Inline</b> - Everything is printed inline on-demand', 'ajax-search-pro'); ?></li>
+			<li><?php echo __('<b>File (classic)</b> - Everything is enqueued as a single CSS file', 'ajax-search-pro'); ?></li>
 		</ul>
 		<div class="clear"></div>
 		</p>
