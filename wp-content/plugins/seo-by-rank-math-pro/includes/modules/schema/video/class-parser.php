@@ -94,7 +94,7 @@ class Parser {
 					'title'                   => 'Video',
 					'type'                    => 'template',
 					'shortcode'               => uniqid( 's-' ),
-					'isPrimary'               => empty( $schemas ),
+					'isPrimary'               => empty( DB::get_schemas( $this->post->ID ) ),
 					'reviewLocationShortcode' => '[rank_math_rich_snippet]',
 					'category'                => '%categories%',
 					'tags'                    => '%tags%',

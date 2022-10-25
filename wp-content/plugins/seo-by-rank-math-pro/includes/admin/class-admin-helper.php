@@ -50,7 +50,7 @@ class Admin_Helper {
 	public static function get_current_post_type( $post_id = null ) {
 		if ( ! $post_id && function_exists( 'get_current_screen' ) ) {
 			$screen = get_current_screen();
-			return $screen->post_type;
+			return isset( $screen->post_type ) ? $screen->post_type : '';
 		}
 
 		return get_post_type( $post_id );
