@@ -1603,6 +1603,10 @@ div[aria-describedby="sm_inline_dialog"] {
 	font-weight: 700 !important;
 }
 
+#sm_nav_bar > .select2-container {
+	top: 4.1em !important;
+}
+
 .select2-container--default .select2-selection--single .select2-selection__rendered{
 	color: #4b5563 !important;
 }
@@ -1689,4 +1693,8 @@ div[aria-describedby="sm_inline_dialog"] {
 }
 #sm_beta_json_editor div.jsoneditor-contextmenu ul.jsoneditor-menu li ul.jsoneditor-menu{
     height: auto!important;
+}
+
+.sm_beta_dashboard_select li{
+	margin-bottom: 0px !important;
 }

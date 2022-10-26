@@ -333,8 +333,8 @@ class Smart_Manager_Pricing {
 					</style>
 					<div class="sa_offer">
 						<div class="sa_offer_content">
-							<a href="https://www.storeapps.org/woocommerce-plugins/?utm_source=in_app_pricing&utm_medium=sm_banner&utm_campaign=sa_bfcm_2021" target="_blank">
-								<img src="<?php echo esc_url( plugins_url( 'sa-includes/images/bfcm-2021.png', (dirname( SM_PLUGIN_FILE )) . '/classes/sa-includes/' ) ); ?>" />
+							<a href="https://www.storeapps.org/woocommerce-plugins/?utm_source=in_app_pricing&utm_medium=sm_banner&utm_campaign=sa_halloween_2022" target="_blank">
+								<img src="<?php echo esc_url( plugins_url( 'sa-includes/images/halloween-2022.png', (dirname( SM_PLUGIN_FILE )) . '/classes/sa-includes/' ) ); ?>" />
 							</a>
 						</div>
 					</div>
@@ -353,7 +353,7 @@ class Smart_Manager_Pricing {
 						<span class="sm_plan"><h4 class="clr-a center"><?php echo __( '1 site (Annual)', 'smart-manager-for-wp-e-commerce' ); ?></h4></span>
 						<span class="sm_price">
 							<p><del class="center"><?php echo __( '$149', 'smart-manager-for-wp-e-commerce' ); ?></del></p>
-							<h2><?php echo ( defined('SA_OFFER_VISIBLE') && true === SA_OFFER_VISIBLE ) ? __( '$75', 'smart-manager-for-wp-e-commerce' ) : __( '$112', 'smart-manager-for-wp-e-commerce' ); ?></h2>
+							<h2><?php echo ( defined('SA_OFFER_VISIBLE') && true === SA_OFFER_VISIBLE ) ? __( '$119', 'smart-manager-for-wp-e-commerce' ) : __( '$112', 'smart-manager-for-wp-e-commerce' ); ?></h2>
 						</span>
 
 						<div class="center">
@@ -365,7 +365,7 @@ class Smart_Manager_Pricing {
 						<span class="sm_plan"><h4 class="clr-a center"><?php echo __( '5 sites (Annual)', 'smart-manager-for-wp-e-commerce' ); ?></h4></span>
 						<span class="sm_price">
 							<p><del class="center"><?php echo __( '$179', 'smart-manager-for-wp-e-commerce' ); ?></del></p>
-							<h2><?php echo ( defined('SA_OFFER_VISIBLE') && true === SA_OFFER_VISIBLE ) ? __( '$90', 'smart-manager-for-wp-e-commerce' ) : __( '$135', 'smart-manager-for-wp-e-commerce' ); ?></h2>
+							<h2><?php echo ( defined('SA_OFFER_VISIBLE') && true === SA_OFFER_VISIBLE ) ? __( '$143', 'smart-manager-for-wp-e-commerce' ) : __( '$135', 'smart-manager-for-wp-e-commerce' ); ?></h2>
 						</span>
 
 						<div class="center">
@@ -376,7 +376,7 @@ class Smart_Manager_Pricing {
 						<span class="sm_plan"><h4 class="clr-a center"><?php echo __( '1 site (Lifetime)', 'smart-manager-for-wp-e-commerce' ); ?></h4></span>
 						<span class="sm_price">
 							<p><del class="center"><?php echo __( '$479', 'smart-manager-for-wp-e-commerce' ); ?></del></p>
-							<h2><?php echo __( '$360', 'smart-manager-for-wp-e-commerce' ); ?></h2>
+							<h2><?php echo ( defined('SA_OFFER_VISIBLE') && true === SA_OFFER_VISIBLE ) ? __( '$383', 'smart-manager-for-wp-e-commerce' ) : __( '$360', 'smart-manager-for-wp-e-commerce' ); ?></h2>
 						</span>
 
 						<div class="center">
@@ -387,7 +387,7 @@ class Smart_Manager_Pricing {
 						<span class="sm_plan"><h4 class="clr-a center"><?php echo __( '5 sites (Lifetime)', 'smart-manager-for-wp-e-commerce' ); ?></h4></span>
 						<span class="sm_price">
 							<p><del class="center"><?php echo __( '$499', 'smart-manager-for-wp-e-commerce' ); ?></del></p>
-							<h2><?php echo __( '$375', 'smart-manager-for-wp-e-commerce' ); ?></h2>
+							<h2><?php echo ( defined('SA_OFFER_VISIBLE') && true === SA_OFFER_VISIBLE ) ? __( '$399', 'smart-manager-for-wp-e-commerce' ) : __( '$375', 'smart-manager-for-wp-e-commerce' ); ?></h2>
 						</span>
 
 						<div class="center">

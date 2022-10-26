@@ -27,8 +27,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 			add_filter( 'sm_default_dashboard_model',array(&$this,'default_user_dashboard_model') );
 			add_filter( 'sm_beta_load_default_data_model',array(&$this,'load_default_data_model') );
-			add_filter( 'sm_beta_default_inline_update',array(&$this,'default_inline_update') );
-			add_filter( 'sm_inline_update_post',array(&$this,'user_inline_update'), 10, 2 );
+			add_filter( 'sm_beta_default_inline_update', function() { return false; } );
+			add_action( 'sm_inline_update_post',array(&$this,'user_inline_update'), 10, 2 );
 			add_filter( 'sm_data_model',array(&$this,'generate_data_model'), 10, 2 );
 			add_filter( 'sm_deleter', array( &$this, 'user_deleter' ), 10, 2 );
 			add_filter( 'sm_beta_delete_records_ids', array( $this, 'users_delete_record_ids' ), 10, 2 );
@@ -453,9 +453,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 			}
 
-			$dashboard_model[$this->dashboard_key]['columns'] = $col_model;
+			$dashboard_model['columns'] = $col_model;
 
-			return $dashboard_model;			
+			return $dashboard_model;
 		}
 
 		//function to avoid generation of the default data model
@@ -1176,11 +1176,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 			return $data_model;
 
-		}
-
-		//function to avoid default inline update
-		public function default_inline_update ($flag) {
-			return false;
 		}
 
 		//function for modifying edited data before updating

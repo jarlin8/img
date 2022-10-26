@@ -28,7 +28,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			add_filter( 'sm_default_dashboard_model_postmeta_cols', array( &$this, 'pro_custom_postmeta_cols' ), 11, 1 );
 
 			// Code for handling of `starts with/ends with` advanced search operators
-			$advanced_search_filter_tables = array( 'posts', 'postmeta', 'terms' );
+			$advanced_search_filter_tables = array_merge( ( ( ! empty( $this->advanced_search_table_types ) && ! empty( $this->advanced_search_table_types['flat'] ) && ! empty( $this->advanced_search_table_types['meta'] ) ) ? array_merge( array_keys( $this->advanced_search_table_types['flat'] ), array_keys( $this->advanced_search_table_types['meta'] ) ) : array( 'posts', 'postmeta' ) ), array( 'terms' ) );
 			foreach( $advanced_search_filter_tables as $table ){
 				add_filter( 'sm_search_format_query_'. $table .'_col_value', array( &$this, 'format_search_value' ), 11, 2 );
 			}
@@ -536,7 +536,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 										'entire_store' => $entire_store, 
 										'dashboard_key' => $this->dashboard_key,
 										'SM_IS_WOO30' => $this->req_params['SM_IS_WOO30'] );
-
 
 				$params = ( !empty( $params ) ) ? array_merge( $default_params, $params ) : $default_params;
 				update_option( $identifier.'_params', $params, 'no' );
@@ -1228,7 +1227,15 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			}
 
 			$force_delete = ( !empty($params['delete_permanently']) ) ? true : false;
-			$result = ( $force_delete ) ? wp_delete_post( $deleting_id, $force_delete ) : wp_trash_post( $deleting_id );
+			
+			$default_process = apply_filters( 'sm_default_process_delete_records', true );
+			$result = false;
+			if( ! empty( $default_process ) ){
+				$result = ( $force_delete ) ? wp_delete_post( $deleting_id, $force_delete ) : wp_trash_post( $deleting_id );	
+			}
+			$params[$force_delete] = $force_delete;
+			$result = apply_filters( 'sm_default_process_delete_records_result', $result, $deleting_id, $params );
+
 			do_action( 'sm_beta_post_process_delete_records', array( 'deleting_id' => $deleting_id, 'source' => __CLASS__ ) );
 			
 			if( empty( $result ) ) {

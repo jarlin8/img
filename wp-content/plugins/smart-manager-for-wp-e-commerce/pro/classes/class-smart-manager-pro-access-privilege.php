@@ -18,6 +18,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 
 		function __construct() {
 			add_filter( 'sm_active_dashboards', array( $this, 'sm_beta_get_accessible_dashboards' ) );
+			add_filter( 'sm_active_taxonomy_dashboards', array( $this, 'sm_beta_get_accessible_dashboards' ) );
 			add_action( 'wp_ajax_smart_manager_save_settings', array( $this, 'save_settings' ) );
 		}
 
@@ -228,6 +229,18 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 										if( !empty( $all_dashboards ) ) {
 											$dashboard_select_options .= '<optgroup label="All post types">';
 											foreach( $all_dashboards as $dashboard => $title ) {
+												$dashboard_select_options .= '<option value="'. $dashboard .'">'. $title .'</option>';
+											}
+											$dashboard_select_options .= '</optgroup>';
+										}
+									}
+
+									if ( defined( 'SM_ALL_TAXONOMY_DASHBOARDS' ) ) {
+										$all_taxonomy_dashboards = json_decode(SM_ALL_TAXONOMY_DASHBOARDS, true);
+
+										if( !empty( $all_taxonomy_dashboards ) ) {
+											$dashboard_select_options .= '<optgroup label="All taxonomies">';
+											foreach( $all_taxonomy_dashboards as $dashboard => $title ) {
 												$dashboard_select_options .= '<option value="'. $dashboard .'">'. $title .'</option>';
 											}
 											$dashboard_select_options .= '</optgroup>';

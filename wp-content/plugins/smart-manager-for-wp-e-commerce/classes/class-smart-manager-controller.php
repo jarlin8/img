@@ -127,6 +127,7 @@ if ( ! class_exists( 'Smart_Manager_Controller' ) ) {
 			include_once $this->plugin_path . '/class-smart-manager-base.php';
 
 			$this->dashboard_key = $_REQUEST['active_module'];
+			$is_taxonomy_dashboard = ( ! empty( $_REQUEST['is_taxonomy'] ) ) ? true : false;
 			$llms_file = $plugin_path . '/'. 'class-smart-manager-'.$pro_flag_class_path.'llms-base.php';
 
 			if( defined('SMPRO') && SMPRO === true ) {
@@ -142,6 +143,12 @@ if ( ! class_exists( 'Smart_Manager_Controller' ) ) {
 					}
 				}
 
+				// Code to include the base class for taxonomy dashboards
+				if( ! empty( $is_taxonomy_dashboard ) ){
+					$sm_pro_class_nm = 'class-smart-manager-'.$pro_flag_class_path.'taxonomy-base.php';
+					include_once $plugin_path . '/'. $sm_pro_class_nm;
+				}
+
 				if( is_plugin_active( 'lifterlms/lifterlms.php' ) && file_exists( $llms_file ) ){
 					include_once $llms_file;
 				}
@@ -149,8 +156,9 @@ if ( ! class_exists( 'Smart_Manager_Controller' ) ) {
 			
 			//Code for initializing the specific dashboard class
 
-			$file_nm = str_replace('_', '-', $this->dashboard_key);
+			$file_nm = ( ( ! empty( $is_taxonomy_dashboard ) ) ? 'taxonomy-' : '' ) . str_replace('_', '-', $this->dashboard_key);
 			$class_name = '';
+			$pro_flag_class_nm .= ( ( ! empty( $is_taxonomy_dashboard ) ) ? 'Taxonomy_' : '' );
 
 			if (file_exists($plugin_path . '/class-smart-manager-'.$pro_flag_class_path.''.$file_nm.'.php')) {
 

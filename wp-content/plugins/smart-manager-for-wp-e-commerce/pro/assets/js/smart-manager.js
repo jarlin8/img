@@ -416,15 +416,15 @@ var sm_beta_hide_dialog = function(IDs, gID) {
 Smart_Manager.prototype.generateCsvExport = function() {
 
     let params = {
-                              cmd: 'get_export_csv',
-                              active_module: window.smart_manager.dashboard_key,
-                              security: window.smart_manager.sm_nonce,
-                              pro: true,
-                              SM_IS_WOO30: window.smart_manager.sm_is_woo30,
-                              sort_params: (window.smart_manager.currentDashboardModel.hasOwnProperty('sort_params') ) ? window.smart_manager.currentDashboardModel.sort_params : '',
-                              table_model: (window.smart_manager.currentDashboardModel.hasOwnProperty('tables') ) ? window.smart_manager.currentDashboardModel.tables : '',
-                              search_text: window.smart_manager.simpleSearchText,
-                              advanced_search_query: JSON.stringify(window.smart_manager.advancedSearchQuery)
+                            cmd: 'get_export_csv',
+                            active_module: window.smart_manager.dashboard_key,
+                            security: window.smart_manager.sm_nonce,
+                            pro: true,
+                            SM_IS_WOO30: window.smart_manager.sm_is_woo30,
+                            sort_params: (window.smart_manager.currentDashboardModel.hasOwnProperty('sort_params') ) ? window.smart_manager.currentDashboardModel.sort_params : '',
+                            table_model: (window.smart_manager.currentDashboardModel.hasOwnProperty('tables') ) ? window.smart_manager.currentDashboardModel.tables : '',
+                            search_text: window.smart_manager.simpleSearchText,
+                            advanced_search_query: JSON.stringify(window.smart_manager.advancedSearchQuery)
                           };
     //Code for handling views
     let viewSlug = window.smart_manager.getViewSlug(window.smart_manager.dashboardName);
@@ -435,7 +435,7 @@ Smart_Manager.prototype.generateCsvExport = function() {
         params['active_module'] = (window.smart_manager.viewPostTypes.hasOwnProperty(viewSlug)) ? window.smart_manager.viewPostTypes[viewSlug] : window.smart_manager.dashboard_key;
     }
 
-    let export_url = window.smart_manager.sm_ajax_url + '&cmd='+ params['cmd'] +'&active_module='+ params['active_module'] +'&security='+ params['security'] +'&pro='+ params['pro'] +'&SM_IS_WOO30='+ params['SM_IS_WOO30'] +'&SM_IS_WOO30='+ params['SM_IS_WOO30'] +'&sort_params='+ encodeURIComponent(JSON.stringify(params['sort_params'])) +'&table_model='+ encodeURIComponent(JSON.stringify(params['table_model'])) +'&advanced_search_query='+ encodeURIComponent(JSON.stringify(window.smart_manager.advancedSearchQuery))+'&search_text='+ params['search_text'];
+    let export_url = window.smart_manager.sm_ajax_url + '&cmd='+ params['cmd'] +'&active_module='+ params['active_module'] +'&security='+ params['security'] +'&pro='+ params['pro'] +'&SM_IS_WOO30='+ params['SM_IS_WOO30'] +'&is_taxonomy='+ params['is_taxonomy'] +'&sort_params='+ encodeURIComponent(JSON.stringify(params['sort_params'])) +'&table_model='+ encodeURIComponent(JSON.stringify(params['table_model'])) +'&advanced_search_query='+ encodeURIComponent(JSON.stringify(window.smart_manager.advancedSearchQuery))+'&search_text='+ params['search_text'];
     export_url += ( window.smart_manager.date_params.hasOwnProperty('date_filter_params') ) ? '&date_filter_params='+ window.smart_manager.date_params['date_filter_params'] : '';
     export_url += ( window.smart_manager.date_params.hasOwnProperty('date_filter_query') ) ? '&date_filter_query='+ window.smart_manager.date_params['date_filter_query'] : '';
     
@@ -698,7 +698,7 @@ Smart_Manager.prototype.deleteView = function() {
                         module: 'custom_views',
                         cmd: 'delete',
                         security: window.smart_manager.sm_nonce,
-                        active_module: viewSlug,
+                        active_module: viewSlug
                     };
     window.smart_manager.send_request(params, function(response){
         let ack = (response.hasOwnProperty('ACK')) ? response.ACK : ''
@@ -1144,7 +1144,8 @@ Smart_Manager.prototype.createBatchUpdateDialog = function() {
                                 search_term     : params.term,
                                 cmd             :'get_batch_update_copy_from_record_ids',
                                 active_module   : window.smart_manager.dashboard_key,
-                                security        : window.smart_manager.sm_nonce
+                                security        : window.smart_manager.sm_nonce,
+                                is_taxonomy     : window.smart_manager.isTaxonomyDashboard()
                             };
                         },
                         processResults: function( data ) {

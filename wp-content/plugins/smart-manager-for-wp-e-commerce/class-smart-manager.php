@@ -20,7 +20,8 @@ class Smart_Manager {
 			$sm_owned_views = array(),
 			$sm_public_views = array(),
 			$sm_view_post_types = array(),
-			$all_views = array();
+			$all_views = array(),
+			$taxonomy_dashboards = array();
 
 	protected static $_instance = null;
 
@@ -129,7 +130,7 @@ class Smart_Manager {
 		$this->plugin_path  = untrailingslashit( plugin_dir_path( SM_PLUGIN_FILE ) );
 		$this->plugin_url   = untrailingslashit( plugins_url( '/', SM_PLUGIN_FILE ) );
 		$this->update_msg   = 'editing';
-		
+
 		define( 'SM_PLUGIN_DIR', dirname( $plugin ) );
 		define( 'SM_PLUGIN_BASE_NM', $plugin );
 		define( 'SM_TEXT_DOMAIN', 'smart-manager-for-wp-e-commerce' );
@@ -182,8 +183,8 @@ class Smart_Manager {
 			self::get_version();
 		}
 		
-		$this->updater = rand(3.0,3.9);
-		$this->dupdater = rand(25.0,25.9);
+		$this->updater = rand(3,3);
+		$this->dupdater = rand(25,25);
 		$this->upgrade = (defined('SM_UPGRADE')) ? SM_UPGRADE : 3;
 		$this->dupgrade = (defined('SM_DUPGRADE')) ? SM_DUPGRADE : 25;
 		$this->success_msg   = (defined('SM_UPDATE')) ? SM_UPDATE : '';
@@ -239,7 +240,7 @@ class Smart_Manager {
 		if( class_exists( 'Smart_Manager_Pro_Views' ) ) {
 			$view_obj = Smart_Manager_Pro_Views::get_instance();
 			if( is_callable( array( $view_obj, 'get_all_accessible_views' ) ) ){
-				$views = $view_obj->get_all_accessible_views($this->sm_dashboards_final);
+				$views = $view_obj->get_all_accessible_views( array_merge( $this->sm_dashboards_final, $this->taxonomy_dashboards ) );
 				if( ! empty( $views ) ) {
 					$this->sm_accessible_views = ( ! empty( $views['accessible_views'] ) ) ? $views['accessible_views'] : array();
 					$this->sm_owned_views = ( ! empty( $views['owned_views'] ) ) ? $views['owned_views'] : array();
@@ -250,10 +251,24 @@ class Smart_Manager {
 			}
 		}
 
-		$this->sm_accessible_views = apply_filters('sm_accessible_views', $this->sm_accessible_views);
+		$this->sm_accessible_views = apply_filters( 'sm_accessible_views', $this->sm_accessible_views );
 	} 
 
+	//Function for defining taxonomies dashboards
+	public function get_taxonomies() {
+		$taxonomies = get_taxonomies( array( 'public' => 1 ), 'objects' ); //TODO: later we can add compat for hidden taxonomies as well
+		if( ! empty( $taxonomies ) ){
+			foreach( $taxonomies as $slug => $obj ){
+				$this->taxonomy_dashboards[ $slug ] = ( ! empty( $obj->label ) ) ? $obj->label : $slug;
+			}
 
+			if ( ! defined( 'SM_ALL_TAXONOMY_DASHBOARDS' ) ) {
+				define( 'SM_ALL_TAXONOMY_DASHBOARDS', json_encode( $this->taxonomy_dashboards ) );
+			}
+
+			$this->taxonomy_dashboards = apply_filters( 'sm_active_taxonomy_dashboards', $this->taxonomy_dashboards );
+		}
+	}
 
 	// Function to include necessary files for SM
 	public function includes() {
@@ -286,10 +301,6 @@ class Smart_Manager {
 
 			if( !class_exists( 'Smart_Manager_Pro_Access_Privilege' ) && file_exists( (dirname( SM_PLUGIN_FILE )) . '/pro/classes/class-smart-manager-pro-access-privilege.php' ) ) {
 				include_once 'pro/classes/class-smart-manager-pro-access-privilege.php';
-			}
-	
-			if ( !class_exists( 'StoreApps_Upgrade_3_9' ) ) {
-				require_once 'pro/sa-includes/class-storeapps-upgrade-3-9.php';
 			}
 
 			if ( !class_exists( 'Smart_Manager_Pro_Views' ) && file_exists( (dirname( SM_PLUGIN_FILE )) . '/pro/classes/class-smart-manager-pro-views.php' ) ) {
@@ -332,6 +343,7 @@ class Smart_Manager {
 		register_activation_hook( SM_PLUGIN_FILE, array( 'Smart_Manager_Install', 'install' ) );
 		register_deactivation_hook( SM_PLUGIN_FILE, array( 'Smart_Manager_Install', 'deactivate' ) );
 		add_action( 'plugins_loaded', array( &$this, 'on_plugins_loaded' ) );
+		add_action( 'wp_loaded', array( &$this, 'on_wp_loaded' ) );
 
 		//filters for handling quick_help_widget
 		add_filter( 'sa_active_plugins_for_quick_help', array( &$this, 'quick_help_widget' ), 10, 2 );
@@ -404,6 +416,10 @@ class Smart_Manager {
 	public function on_plugins_loaded() {
 		global $current_user;
 
+		if ( ( defined('SMPRO') && SMPRO === true ) && ! class_exists( 'StoreApps_Upgrade_3_9' ) && file_exists( ( dirname( SM_PLUGIN_FILE ) ) . '/pro/sa-includes/class-storeapps-upgrade-3-9.php' ) ) {
+			require_once 'pro/sa-includes/class-storeapps-upgrade-3-9.php';
+		}
+
 		$this->show_pricing_page = apply_filters( 'sm_show_pricing_page', false );
 
 		//define woo constants
@@ -422,10 +438,10 @@ class Smart_Manager {
 			$args = array(
 				'file'           => (dirname( SM_PLUGIN_FILE )) . '/classes/sa-includes/',
 				'prefix'         => 'sm',				// prefix/slug of your plugin
-				'option_name'    => 'sa_sm_offer_bfcm_2021',
-				'campaign'       => 'sa_bfcm_2021',
-				'start'          => '2021-11-23 06:30:00',
-				'end'            => '2021-12-02 06:30:00',
+				'option_name'    => 'sa_sm_offer_halloween_2022',
+				'campaign'       => 'sa_halloween_2022',
+				'start'          => '2022-10-28 13:30:00',
+				'end'            => '2022-11-03 06:00:00',
 				'is_plugin_page' => ( !empty($_GET['page']) && in_array( $_GET['page'], array( 'smart-manager', 'sm-storeapps-plugins' ) ) ) ? true : false,	// page where you want to show offer, do not send this if no plugin page is there and want to show offer on Products page
 			);
 			$sa_offer = SA_In_App_Offer::get_instance( $args );
@@ -456,7 +472,10 @@ class Smart_Manager {
 			
 			exit;
 		}
+	}
 
+	//Function for actions to be done on 'wp_loaded' event
+	public function on_wp_loaded() {
 		if ( defined('SMPRO') && SMPRO === true ) {
 			$latest_upgrade_class = $this->get_latest_upgrade_class();
 
@@ -739,6 +758,7 @@ class Smart_Manager {
 		global $wp_version,$wpdb;
 
 		$this->get_dashboards();
+		$this->get_taxonomies();
 		$this->get_views();
 
 		$plugin = plugin_basename( SM_PLUGIN_FILE );
@@ -1074,6 +1094,7 @@ class Smart_Manager {
 		}
 
 		$recent_dashboard_type = get_user_meta( get_current_user_id(), 'sa_sm_recent_dashboard_type', true );
+		$recent_dashboard_type = ( empty( $recent_dashboards ) && 'post_type' === $recent_dashboard_type ) ? '' : $recent_dashboard_type;
 
 		$recent_views = get_option('sm_wp_dashboard_view_'.get_current_user_id(), false);
 		
@@ -1093,10 +1114,32 @@ class Smart_Manager {
 		$recent_views = ( ! empty( $recent_views ) && ! empty( $this->all_views ) ) ? array_values( array_intersect( $recent_views, $this->all_views ) ) : array();
 		$recent_views = ( empty( $recent_views ) && empty( $recent_dashboards ) && ! empty( $this->all_views ) && is_array( $this->all_views ) ) ? array( $this->all_views[0] ) : $recent_views;
 
+		$recent_dashboard_type = ( empty( $recent_views ) && 'view' === $recent_dashboard_type ) ? '' : $recent_dashboard_type;
 		$recent_dashboard_type = ( empty( $recent_dashboard_type ) && ! empty( $recent_views ) && empty( $recent_dashboards ) ) ? 'view' : $recent_dashboard_type;
 
+		//code for handling recent taxonomy dashboards
+		$recent_taxonomy_dashboards = get_user_meta( get_current_user_id(), 'sa_sm_recent_taxonomies', true );
+		if( ! empty( $recent_taxonomy_dashboards ) && ! is_array( $recent_taxonomy_dashboards ) ){
+			$recent_taxonomy_dashboards = array( $recent_taxonomy_dashboards );
+		}
+
+		$recent_taxonomy_dashboards = ( ! empty( $recent_taxonomy_dashboards ) && ! empty( $this->taxonomy_dashboards ) ) ? array_values( array_intersect( $recent_taxonomy_dashboards, array_keys( $this->taxonomy_dashboards ) ) ) : array();
+		$recent_taxonomy_dashboards = ( empty( $recent_taxonomy_dashboards ) && empty( $recent_views ) && empty( $recent_dashboards ) && ! empty( $this->taxonomy_dashboards ) && is_array( $this->taxonomy_dashboards ) ) ? array( array_keys( $this->taxonomy_dashboards )[0] ) : $recent_taxonomy_dashboards;
+
+		$recent_dashboard_type = ( empty( $recent_taxonomy_dashboards ) && 'taxonomy' === $recent_dashboard_type ) ? '' : $recent_dashboard_type;
+		$recent_dashboard_type = ( empty( $recent_dashboard_type ) && ! empty( $recent_taxonomy_dashboards )  && empty( $recent_views ) && empty( $recent_dashboards ) ) ? 'taxonomy' : $recent_dashboard_type;
+
+		if( empty( $recent_dashboard_type ) ){
+			$recent_dashboard_type = 'post_type';
+			if( ! empty( $recent_taxonomy_dashboards ) ){
+				$recent_dashboard_type = 'taxonomy';
+			} else if( ! empty( $recent_views ) ){
+				$recent_dashboard_type = 'view';
+			}
+		}
+
 		//Updating The Files Recieved in SM Beta
-		$deleted_sucessfull = ( ($this->dupdater * $this->dupgrade)/$this->dupdater ) * 2;
+		$deleted_successful = ( ($this->dupdater * $this->dupgrade)/$this->dupdater ) * 2;
 
 		$this->sm_dashboards_final ['sm_nonce'] = wp_create_nonce( 'smart-manager-security' );
 
@@ -1140,6 +1183,9 @@ class Smart_Manager {
 							'recent_views' => json_encode( $recent_views ),
 							'recent_dashboard_type' => $recent_dashboard_type,
 							'sm_dashboards_public' => json_encode($this->sm_public_dashboards),
+							'taxonomy_dashboards' => wp_json_encode( $this->taxonomy_dashboards ),
+							'all_taxonomy_dashboards' => SM_ALL_TAXONOMY_DASHBOARDS,
+							'recent_taxonomy_dashboards' => json_encode( $recent_taxonomy_dashboards ),
 							'SM_IS_WOO36' => self::$sm_is_woo36,
 							'SM_IS_WOO30' => self::$sm_is_woo30,
 							'SM_IS_WOO22' => self::$sm_is_woo22,
@@ -1150,8 +1196,8 @@ class Smart_Manager {
 							'sm_admin_email' => get_option('admin_email'),
 							'batch_background_process' => $batch_background_process,
 							'background_process_name' => $background_process_name,
-							'updated_sucessfull' => $successful,
-							'deleted_sucessfull' => $deleted_sucessfull,
+							'updated_successful' => $successful,
+							'deleted_successful' => $deleted_successful,
 							'updated_msg' => $this->update_msg.' more',
 							'success_msg' => $this->success_msg,
 							'lite_dashboards' => json_encode($lite_dashboards),

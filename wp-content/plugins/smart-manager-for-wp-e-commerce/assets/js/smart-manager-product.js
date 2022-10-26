@@ -290,10 +290,10 @@ jQuery(document).on('sm_dashboard_change', '#sm_editor_grid', function() {
 	attrChkboxList += '<input type="hidden" name="attribute_taxonomy['+window.smart_manager.prodAttrDisplayIndex+']" value="'+isTaxonomy+'"> </td> </tr>';
 
 	if (isTaxonomy == 1) {
-
 		newAttribute += '<tr> <td> <label style="font-weight: bold;">'+window.smart_manager.prodAttributeActualValues[taxonomySelected].lbl+':</label> </td>';
-
-		if(attrType == "select") {
+		if( "text" === attrType ) {
+			newAttribute += '<td rowspan="4"> <input type="text" id="'+attrLabel+'" name="attribute_values['+window.smart_manager.prodAttrDisplayIndex+']" value="'+attrValue+'" placeholder="'+_x('Pipe (|) separate terms', 'placeholder', 'smart-manager-for-wp-e-commerce')+'" /> </ td>';
+		} else {
 			newAttribute += '<td rowspan="4"> <select multiple="multiple" data-placeholder="'+_x('Select terms', 'placeholder', 'smart-manager-for-wp-e-commerce')+'" name="attribute_values['+window.smart_manager.prodAttrDisplayIndex+'][]" class="multiselect" style="width:100% !important">';
 
 			if( attrVal != '' ) {
@@ -301,18 +301,11 @@ jQuery(document).on('sm_dashboard_change', '#sm_editor_grid', function() {
 					newAttribute += '<option value="'+ key +'">'+ value +'</option>';
 				});
 			}
-
 			newAttribute += '</select> <br />';
 			newAttribute += '<button class="button select_all_attributes" style="margin-right: 1em;">'+_x('Select all', 'button for selecting WooCommerce product attribute', 'smart-manager-for-wp-e-commerce')+'</button> ';
 			newAttribute += '<button class="button select_no_attributes">'+_x('Select none', 'button for selecting WooCommerce product attribute', 'smart-manager-for-wp-e-commerce')+'</button> </td>';
-	
-			
-		} else if(attrType == "text") {
-			newAttribute += '<td rowspan="4"> <input type="text" name="attribute_values['+window.smart_manager.prodAttrDisplayIndex+']" value="" placeholder="'+_x('Pipe (|) separate terms', 'placeholder', 'smart-manager-for-wp-e-commerce')+'" /> </td>';
 		}
-
 		newAttribute += '<td> <input type="hidden" name="attribute_names['+window.smart_manager.prodAttrDisplayIndex+']" index="'+window.smart_manager.prodAttrDisplayIndex+'" value="'+ taxonomySelected +'"/></td>';
-
 	} else if (isTaxonomy == 0) {
 		newAttribute += '<tr> <td> <input type="text" name="attribute_names['+window.smart_manager.prodAttrDisplayIndex+']" index="'+window.smart_manager.prodAttrDisplayIndex+'" placeholder="'+_x('Name', 'placeholder', 'smart-manager-for-wp-e-commerce')+'"> </td>';
 		newAttribute += '<td rowspan="4"> <input type="text" name="attribute_values['+window.smart_manager.prodAttrDisplayIndex+']" value="" placeholder="'+_x('Pipe (|) separate terms', 'placeholder', 'smart-manager-for-wp-e-commerce')+'" /> </td>';

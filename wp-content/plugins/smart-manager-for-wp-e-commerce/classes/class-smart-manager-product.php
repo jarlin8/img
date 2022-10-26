@@ -504,7 +504,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 			global $wpdb;
 
-			if( strpos( $search_params['cond_posts'],'post_status' ) !== FALSE && strpos( $search_params['cond_posts'],'publish' ) === FALSE && strpos( $search_params['cond_posts'],'private' ) === FALSE ) { //Added 'publish' & 'private' conditions for enabling searching of 'enabled' & 'disabled' product variations
+			if( ! empty( $search_params['cond'] ) && strpos( $search_params['cond'],'post_status' ) !== FALSE && strpos( $search_params['cond'],'publish' ) === FALSE && strpos( $search_params['cond'],'private' ) === FALSE ) { //Added 'publish' & 'private' conditions for enabling searching of 'enabled' & 'disabled' product variations
 	            $posts_advanced_search_where .= " AND ".$wpdb->prefix."posts.post_parent = 0 ";
 	        }
 
@@ -993,7 +993,6 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 						// Code for handling color codes for 'stock' field
 						if ($src == '_stock') {
-							
 							$wc_low_stock_threshold = absint( get_option( 'woocommerce_notify_low_stock_amount', 2 ) );
 
 							$color_codes = array( 'green' => array( 'min' => ( $wc_low_stock_threshold + 1 ) ),
@@ -1002,8 +1001,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 												);
 
 							$column['colorCodes'] = apply_filters( 'sm_'.$this->dashboard_key.''.$src.'_color_codes', $color_codes );
-
-						}						
+						}
 					}
 				}
 			}

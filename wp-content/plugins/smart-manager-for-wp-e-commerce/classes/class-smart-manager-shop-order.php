@@ -40,12 +40,15 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 		//Function to generate the column model fr orders custom columns
 		public static function generate_orders_custom_column_model( $column_model ) {
 
+			global $wpdb;
+
 			$custom_columns = array( 'shipping_method', 'coupons_used', 'line_items', 'details', 'order_sub_total' );
+			$order_items_table_searchable_cols = array( 'shipping_method', 'coupons_used' );
 			$index = sizeof($column_model);
 
 			foreach( $custom_columns as $col ) {
 
-				$src = 'custom/'.$col;
+				$src = ( in_array( $col, $order_items_table_searchable_cols ) ? 'woocommerce_order_items/' : 'custom/' ). $col;
 
 				$col_index = sm_multidimesional_array_search ($src, 'src', $column_model);
 
@@ -64,10 +67,15 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 					$column_model [$index]['resizable']	= true;
 					$column_model [$index]['allow_showhide'] = true;
 					$column_model [$index]['exportable']	= true;
-					$column_model [$index]['searchable']	= false;
+					$column_model [$index]['searchable']	= in_array( $col, $order_items_table_searchable_cols ) ? true : false;
 					$column_model [$index]['save_state'] = true;
 					$column_model [$index]['values'] = array();
 					$column_model [$index]['search_values'] = array();
+
+					if( in_array( $col, $order_items_table_searchable_cols ) ) {
+						$column_model [$index]['table_name'] = $wpdb->prefix.'woocommerce_order_items';
+						$column_model [$index]['col_name'] = $col;
+					}
 					$index++;
 				}
 			}
@@ -456,8 +464,8 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 
             		}
 
-                    $data_model['items'][$key]['custom_coupons_used'] = ( !empty( $order_coupons[$order_id] ) ) ? $order_coupons[$order_id] : "";
-                    $data_model['items'][$key]['custom_shipping_method'] = ( !empty( $order_shipping_method[$order_id] ) ) ? $order_shipping_method[$order_id] : "";
+                    $data_model['items'][$key]['woocommerce_order_items_coupons_used'] = ( !empty( $order_coupons[$order_id] ) ) ? $order_coupons[$order_id] : "";
+                    $data_model['items'][$key]['woocommerce_order_items_shipping_method'] = ( !empty( $order_shipping_method[$order_id] ) ) ? $order_shipping_method[$order_id] : "";
             	}
             }
 
