@@ -1004,10 +1004,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 						$row_each_field = !empty($row[$each_field[$i]]) ? $row[$each_field[$i]] : '';
 					}
 					$array_temp = str_replace(array("\n", "\n\r", "\r\n", "\r"), "\t", $row_each_field);
-					
 					$array = str_replace("<br>", "\n", $array_temp);
 					$array = str_replace('"', '""', $array);
-					$array = str_getcsv ( $array , ",", "\"" , "\\");
+					$array = ( ! is_array( $array ) ) ? str_getcsv ( $array , ",", "\"" , "\\") : $array;
 					$str = ( $array && is_array( $array ) ) ? implode( ', ', $array ) : '';
 					$fields .= '"'. $str . '",'; 
 

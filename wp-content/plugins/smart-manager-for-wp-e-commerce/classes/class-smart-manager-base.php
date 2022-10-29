@@ -2115,8 +2115,10 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 									$image_ids = ( ! is_array( $meta_value ) ) ? explode( ",", $meta_value ) : array();
 									if( !empty( $image_ids ) ) {
 										$meta_value = array();
+										$img_url = '';
 										foreach( $image_ids as $image_id ) {
-											$meta_value[]= array( 'id' => $image_id, 'val' => wp_get_attachment_image_url( $image_id, 'full' ) );
+											$img_url = wp_get_attachment_image_url( $image_id, 'full' );
+											$meta_value[] = ( !empty( $this->req_params['cmd'] ) && $this->req_params['cmd'] == 'get_export_csv' ) ? $img_url : array( 'id' => $image_id, 'val' => $img_url );
 										}
 									}
 								}

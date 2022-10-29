@@ -2,14 +2,14 @@
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: Smart Manager - WooCommerce Advanced Bulk Edit, Inventory Management & more... 7.0.1\n"
+"Project-Id-Version: Smart Manager - WooCommerce Advanced Bulk Edit, Inventory Management & more... 7.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/smart-manager-for-wp-e-commerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-10-21T11:40:54+05:30\n"
+"POT-Creation-Date: 2022-10-27T15:43:46+05:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: smart-manager-for-wp-e-commerce\n"
@@ -380,12 +380,12 @@ msgstr ""
 msgid "Trash"
 msgstr ""
 
-#: classes/class-smart-manager-base.php:2930
-#: classes/class-smart-manager-base.php:2934
+#: classes/class-smart-manager-base.php:2932
+#: classes/class-smart-manager-base.php:2936
 msgid "%d record%s updated successfully!"
 msgstr ""
 
-#: classes/class-smart-manager-base.php:3109
+#: classes/class-smart-manager-base.php:3111
 msgid "%d record%s deleted successfully!"
 msgstr ""
 
@@ -1553,11 +1553,11 @@ msgstr ""
 msgid "Nickname"
 msgstr ""
 
-#: pro/classes/class-smart-manager-pro-user.php:1245
+#: pro/classes/class-smart-manager-pro-user.php:1247
 msgid "Email cannot be empty"
 msgstr ""
 
-#: pro/classes/class-smart-manager-pro-user.php:1251
+#: pro/classes/class-smart-manager-pro-user.php:1253
 msgid "Email already exists. Please enter another email."
 msgstr ""
 
@@ -1708,13 +1708,13 @@ msgid "Enter value"
 msgstr ""
 
 #: assets/js/admin.js:1
-#: pro/assets/js/smart-manager.js:1136
+#: pro/assets/js/smart-manager.js:1137
 msgctxt "placeholder"
 msgid "Select %s"
 msgstr ""
 
 #: assets/js/admin.js:1
-#: pro/assets/js/smart-manager.js:1172
+#: pro/assets/js/smart-manager.js:1173
 msgctxt "placeholder"
 msgid "Search for..."
 msgstr ""
@@ -1725,7 +1725,7 @@ msgid "Enter attribute name..."
 msgstr ""
 
 #: assets/js/admin.js:1
-#: pro/assets/js/smart-manager.js:1173
+#: pro/assets/js/smart-manager.js:1174
 msgctxt "placeholder"
 msgid "Replace with..."
 msgstr ""
@@ -1835,13 +1835,13 @@ msgid "condition groups pass"
 msgstr ""
 
 #: assets/js/admin.js:1
-#: pro/assets/js/smart-manager.js:885
+#: pro/assets/js/smart-manager.js:886
 msgctxt "bulk edit option"
 msgid "All Items In Search Results"
 msgstr ""
 
 #: assets/js/admin.js:1
-#: pro/assets/js/smart-manager.js:885
+#: pro/assets/js/smart-manager.js:886
 msgctxt "bulk edit option"
 msgid "All Items In Store"
 msgstr ""
@@ -1862,7 +1862,7 @@ msgid "Clear"
 msgstr ""
 
 #: assets/js/admin.js:1
-#: pro/assets/js/smart-manager.js:888
+#: pro/assets/js/smart-manager.js:889
 msgctxt "bulk edit option"
 msgid "Selected Items"
 msgstr ""
@@ -2626,7 +2626,7 @@ msgid "For more than one values, use pipe (|) as delimiter"
 msgstr ""
 
 #: pro/assets/js/smart-manager.js:25
-#: pro/assets/js/smart-manager.js:907
+#: pro/assets/js/smart-manager.js:908
 msgctxt "bulk edit default action"
 msgid "Select Action"
 msgstr ""
@@ -2718,8 +2718,8 @@ msgid "search & replace"
 msgstr ""
 
 #: pro/assets/js/smart-manager.js:47
-#: pro/assets/js/smart-manager.js:908
-#: pro/assets/js/smart-manager.js:1044
+#: pro/assets/js/smart-manager.js:909
+#: pro/assets/js/smart-manager.js:1045
 msgctxt "bulk edit action"
 msgid "set to"
 msgstr ""
@@ -2749,87 +2749,87 @@ msgctxt "select options - operator for 'text' data type fields"
 msgid "not ends with"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:501
+#: pro/assets/js/smart-manager.js:502
 msgctxt "progressbar modal title"
 msgid "Duplicate Records"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:579
+#: pro/assets/js/smart-manager.js:580
 msgctxt "notification"
 msgid "View %sd successfully!"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:606
+#: pro/assets/js/smart-manager.js:607
 msgctxt "modal title"
 msgid "Custom Views"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:609
+#: pro/assets/js/smart-manager.js:610
 msgctxt "modal content"
 msgid "Create a custom view to save selected columns from a dashboard. Use it for saved searches, giving specific columns access to other users, etc."
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:610
+#: pro/assets/js/smart-manager.js:611
 msgctxt "placeholder"
 msgid "Give a name to this view"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:615
+#: pro/assets/js/smart-manager.js:616
 msgctxt "checkbox for custom view access"
 msgid "Public"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:617
+#: pro/assets/js/smart-manager.js:618
 msgctxt "description"
 msgid "Marking this view public will make it available to all users having access to the Smart Manager."
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:674
+#: pro/assets/js/smart-manager.js:675
 msgctxt "notification"
 msgid "View already exists. Please try another name"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:706
+#: pro/assets/js/smart-manager.js:707
 msgctxt "notification"
 msgid "View deleted successfully!"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:735
+#: pro/assets/js/smart-manager.js:736
 msgctxt "progressbar modal title"
 msgid "Bulk Edit"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:870
-#: pro/assets/js/smart-manager.js:874
-#: pro/assets/js/smart-manager.js:960
-#: pro/assets/js/smart-manager.js:1071
-#: pro/assets/js/smart-manager.js:1092
-#: pro/assets/js/smart-manager.js:1111
+#: pro/assets/js/smart-manager.js:871
+#: pro/assets/js/smart-manager.js:875
+#: pro/assets/js/smart-manager.js:961
+#: pro/assets/js/smart-manager.js:1072
+#: pro/assets/js/smart-manager.js:1093
+#: pro/assets/js/smart-manager.js:1112
 msgctxt "placeholder"
 msgid "Enter a value..."
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:891
+#: pro/assets/js/smart-manager.js:892
 msgctxt "bulk edit field"
 msgid "Select Field"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:980
+#: pro/assets/js/smart-manager.js:981
 msgctxt "button"
 msgid "Update"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:985
+#: pro/assets/js/smart-manager.js:986
 msgctxt "button"
 msgid "Reset"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:990
+#: pro/assets/js/smart-manager.js:991
 msgctxt "modal title"
 msgid "Bulk Edit"
 msgstr ""
 
-#: pro/assets/js/smart-manager.js:1291
+#: pro/assets/js/smart-manager.js:1292
 msgctxt "progressbar modal title"
 msgid "Delete Records"
 msgstr ""

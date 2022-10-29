@@ -125,9 +125,9 @@ if ( ! class_exists( 'Smart_Manager_Controller' ) ) {
 			}
 
 			include_once $this->plugin_path . '/class-smart-manager-base.php';
-
 			$this->dashboard_key = $_REQUEST['active_module'];
-			$is_taxonomy_dashboard = ( ! empty( $_REQUEST['is_taxonomy'] ) ) ? true : false;
+			$is_taxonomy_dashboard = ( ! empty( $_REQUEST['is_taxonomy'] ) && ! empty( intval( $_REQUEST['is_taxonomy'] ) ) ) ? true : false;
+
 			$llms_file = $plugin_path . '/'. 'class-smart-manager-'.$pro_flag_class_path.'llms-base.php';
 
 			if( defined('SMPRO') && SMPRO === true ) {

@@ -389,6 +389,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 
 			$args = array( 'hide_empty' 	=> false,
 							'orderby'		=> 'term_id',
+							'order'			=> 'DESC',
 						);
 
 			if( 0 < $data_col_params['limit'] ){
@@ -443,16 +444,27 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 			
 			$total_count = 0;
 
-			if( ! empty( $terms ) ){
+			if( ! empty( $terms ) && ! is_wp_error( $terms ) ){
 
 				$total_pages = 1;
+
+				//Code for saving the post_ids in case of search
+				if( ( defined( 'SMPRO' ) && true === SMPRO ) && ! empty( $this->req_params['search_text'] ) || ( ! empty( $this->req_params['advanced_search_query'] ) && '[]' !== $this->req_params['advanced_search_query'] ) ) {
+					$all_term_ids = get_terms( $this->dashboard_key, array(
+						'hide_empty' 	=> false,
+						'fields'		=> 'ids'
+					) );
+					if( ! empty( $all_term_ids ) && ! is_wp_error( $all_term_ids ) ){
+						set_transient( 'sa_sm_search_post_ids', implode( ",", $all_term_ids ) , WEEK_IN_SECONDS );
+					}	
+				}
 
 				$total_count = get_terms( $this->dashboard_key, array(
 					'hide_empty' 	=> false,
 					'fields'		=> 'count'
 				) );
 
-				if ( $total_count > $data_col_params['limit'] ) {
+				if ( ! is_wp_error( $terms ) && $total_count > $data_col_params['limit'] ) {
 					$total_pages = ceil( $total_count/$data_col_params['limit'] );
 				}
 			}

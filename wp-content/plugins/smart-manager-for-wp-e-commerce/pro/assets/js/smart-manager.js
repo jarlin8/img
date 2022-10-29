@@ -424,7 +424,8 @@ Smart_Manager.prototype.generateCsvExport = function() {
                             sort_params: (window.smart_manager.currentDashboardModel.hasOwnProperty('sort_params') ) ? window.smart_manager.currentDashboardModel.sort_params : '',
                             table_model: (window.smart_manager.currentDashboardModel.hasOwnProperty('tables') ) ? window.smart_manager.currentDashboardModel.tables : '',
                             search_text: window.smart_manager.simpleSearchText,
-                            advanced_search_query: JSON.stringify(window.smart_manager.advancedSearchQuery)
+                            advanced_search_query: JSON.stringify(window.smart_manager.advancedSearchQuery),
+                            is_taxonomy : window.smart_manager.isTaxonomyDashboard() || 0
                           };
     //Code for handling views
     let viewSlug = window.smart_manager.getViewSlug(window.smart_manager.dashboardName);

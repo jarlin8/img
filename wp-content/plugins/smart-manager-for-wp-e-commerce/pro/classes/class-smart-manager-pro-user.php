@@ -888,6 +888,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 						if (empty($col_exploded)) continue;
 
+						$type = ( !empty( $col['type'] ) ) ? $col['type'] : '';
+
 						if ( sizeof($col_exploded) > 2) {
 							$col_meta = explode("=",$col_exploded[1]);
 							$col_nm = $col_meta[1];
