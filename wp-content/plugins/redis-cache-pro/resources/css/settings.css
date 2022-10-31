@@ -192,8 +192,8 @@ body.js .is-unix-socket .hide-if-unix-socket {
     overflow-y: auto;
 }
 
-.objectcache\:groups-widget .table-container + button {
-    margin-top: 10px !important;
+.objectcache\:groups-widget .table-container + .actions {
+    margin-top: 1em !important;
 }
 
 #objectcache_groups .inside {

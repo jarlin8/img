@@ -79,6 +79,8 @@ class RelayConnector implements Connector
                 return \defined('\Relay\Relay::BACKOFF_ALGORITHM_DECORRELATED_JITTER');
             case 'tls':
                 return true;
+            case 'allow-patterns':
+                return \defined('\Relay\Relay::OPT_ALLOW_PATTERNS');
         }
 
         return false;
@@ -130,6 +132,16 @@ class RelayConnector implements Connector
 
         $method = $persistent ? 'pconnect' : 'connect';
 
+        $context = [];
+
+        if ($config->tls_options) {
+            $context['stream'] = $config->tls_options;
+        }
+
+        if (! $config->relay->cache) {
+            $context['use-cache'] = false;
+        }
+
         $parameters = [
             $host,
             $config->port ?? 0,
@@ -137,11 +149,8 @@ class RelayConnector implements Connector
             $persistentId,
             $config->retry_interval,
             $config->read_timeout,
+            $context,
         ];
-
-        if ($config->tls_options) {
-            $parameters[] = ['stream' => $config->tls_options];
-        }
 
         $retries = 0;
 

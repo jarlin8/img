@@ -112,7 +112,7 @@ trait TakesMeasurements
             if ($lastSample < $now - 3) {
                 $measurement->redis = new RedisMetrics($this);
 
-                if ($this->connection instanceof RelayConnection) {
+                if ($this->connection instanceof RelayConnection && $this->connection->hasInMemoryCache()) {
                     $measurement->relay = new RelayMetrics($this->connection, $this->config);
                 }
 

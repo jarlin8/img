@@ -179,7 +179,7 @@ trait Updates
     }
 
     /**
-     * Adds an update notice to the object cache drop and must-use plugin.
+     * Adds an update/outdated notices to the `object-cache.php` drop-in and must-use plugin row.
      *
      * @param  string  $file
      * @param  array<string>  $data
@@ -193,6 +193,10 @@ trait Updates
         }
 
         if (! preg_match('/(Object|Redis) Cache Pro/', $data['Name'])) {
+            return;
+        }
+
+        if (! $this->config->updates) {
             return;
         }
 

@@ -39,10 +39,19 @@ class AnalyticsConfiguration
 class RelayConfiguration
 {
     /** @var bool */
+    public $cache;
+
+    /** @var bool */
     public $listeners;
 
     /** @var bool */
     public $invalidations;
+
+    /** @var ?array<string> */
+    public $allowed;
+
+    /** @var ?array<string> */
+    public $ignored;
 }
 
 class ObjectCacheInfo

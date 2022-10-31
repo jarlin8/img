@@ -36,6 +36,13 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     protected $client;
 
     /**
+     * The client's FQCN.
+     *
+     * @var string
+     */
+    protected $class = Redis::class;
+
+    /**
      * Create a new PhpRedis instance connection.
      *
      * @param  \Redis  $client
@@ -65,13 +72,13 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     protected function setBackoff()
     {
         if ($this->config->retries) {
-            $this->client->setOption($this->client::OPT_MAX_RETRIES, $this->config->retries);
+            $this->client->setOption($this->class::OPT_MAX_RETRIES, $this->config->retries);
         }
 
         if ($this->config->backoff === Configuration::BACKOFF_SMART) {
-            $this->client->setOption($this->client::OPT_BACKOFF_ALGORITHM, $this->client::BACKOFF_ALGORITHM_DECORRELATED_JITTER);
-            $this->client->setOption($this->client::OPT_BACKOFF_BASE, $this->config->retry_interval);
-            $this->client->setOption($this->client::OPT_BACKOFF_CAP, \intval($this->config->read_timeout * 1000));
+            $this->client->setOption($this->class::OPT_BACKOFF_ALGORITHM, $this->class::BACKOFF_ALGORITHM_DECORRELATED_JITTER);
+            $this->client->setOption($this->class::OPT_BACKOFF_BASE, $this->config->retry_interval);
+            $this->client->setOption($this->class::OPT_BACKOFF_CAP, \intval($this->config->read_timeout * 1000));
         }
     }
 
@@ -83,11 +90,11 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     protected function setSerializer()
     {
         if ($this->config->serializer === Configuration::SERIALIZER_PHP) {
-            $this->client->setOption($this->client::OPT_SERIALIZER, (string) $this->client::SERIALIZER_PHP);
+            $this->client->setOption($this->class::OPT_SERIALIZER, (string) $this->class::SERIALIZER_PHP);
         }
 
         if ($this->config->serializer === Configuration::SERIALIZER_IGBINARY) {
-            $this->client->setOption($this->client::OPT_SERIALIZER, (string) $this->client::SERIALIZER_IGBINARY);
+            $this->client->setOption($this->class::OPT_SERIALIZER, (string) $this->class::SERIALIZER_IGBINARY);
         }
     }
 
@@ -99,19 +106,19 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     protected function setCompression()
     {
         if ($this->config->compression === Configuration::COMPRESSION_NONE) {
-            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_NONE);
+            $this->client->setOption($this->class::OPT_COMPRESSION, (string) $this->class::COMPRESSION_NONE);
         }
 
         if ($this->config->compression === Configuration::COMPRESSION_LZF) {
-            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_LZF);
+            $this->client->setOption($this->class::OPT_COMPRESSION, (string) $this->class::COMPRESSION_LZF);
         }
 
         if ($this->config->compression === Configuration::COMPRESSION_ZSTD) {
-            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_ZSTD);
+            $this->client->setOption($this->class::OPT_COMPRESSION, (string) $this->class::COMPRESSION_ZSTD);
         }
 
         if ($this->config->compression === Configuration::COMPRESSION_LZ4) {
-            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_LZ4);
+            $this->client->setOption($this->class::OPT_COMPRESSION, (string) $this->class::COMPRESSION_LZ4);
         }
     }
 
@@ -124,8 +131,8 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      */
     public function withoutMutations(callable $callback)
     {
-        $this->client->setOption($this->client::OPT_SERIALIZER, (string) $this->client::SERIALIZER_NONE);
-        $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_NONE);
+        $this->client->setOption($this->class::OPT_SERIALIZER, (string) $this->class::SERIALIZER_NONE);
+        $this->client->setOption($this->class::OPT_COMPRESSION, (string) $this->class::COMPRESSION_NONE);
 
         try {
             return $callback($this);
@@ -157,14 +164,14 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      */
     public function withTimeout(callable $callback, $timeout)
     {
-        $this->client->setOption($this->client::OPT_READ_TIMEOUT, (string) $timeout);
+        $this->client->setOption($this->class::OPT_READ_TIMEOUT, (string) $timeout);
 
         try {
             return $callback($this);
         } catch (Throwable $exception) {
             throw $exception;
         } finally {
-            $this->client->setOption($this->client::OPT_READ_TIMEOUT, (string) $this->config->read_timeout);
+            $this->client->setOption($this->class::OPT_READ_TIMEOUT, (string) $this->config->read_timeout);
         }
     }
 
@@ -207,7 +214,7 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      */
     public function multi(int $type = null)
     {
-        return $type === $this->client::PIPELINE
+        return $type === $this->class::PIPELINE
             ? Transaction::multi($this)
             : Transaction::pipeline($this);
     }
@@ -285,6 +292,19 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
             ]);
 
             throw ConnectionException::from($exception);
+        }
+
+        if (! is_array($results)) {
+            $type = gettype($results);
+
+            throw new ConnectionException("Transaction returned an unexpected type ({$type})");
+        }
+
+        $resultsCount = count($results);
+        $commandCount = count($tx->commands);
+
+        if ($resultsCount !== $commandCount) {
+            throw new ConnectionException("Transaction returned {$resultsCount} results but unexpected {$commandCount}");
         }
 
         $ms = \round($time * 1000, 4);

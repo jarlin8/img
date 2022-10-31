@@ -101,7 +101,6 @@ class RelayMetrics
         $this->keys = is_null($keys) ? null : (int) $keys;
         $this->memoryTotal = $stats['memory']['total'];
         $this->memoryActive = $stats['memory']['active'];
-
         $this->memoryRatio = round(($this->memoryActive / $this->memoryTotal) * 100, 2);
     }
 

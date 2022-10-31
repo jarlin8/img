@@ -36,13 +36,6 @@ class RelayObjectCache extends PhpRedisObjectCache
     protected $connection;
 
     /**
-     * Whether Relay is using waiting for invalidation events.
-     *
-     * @var bool
-     */
-    protected $shouldInvalidate;
-
-    /**
      * Create new Relay object cache instance.
      *
      * @param  \RedisCachePro\Connections\RelayConnection  $connection
@@ -53,9 +46,8 @@ class RelayObjectCache extends PhpRedisObjectCache
         $this->config = $config;
         $this->connection = $connection;
         $this->log = $this->config->logger;
-        $this->shouldInvalidate = $this->config->relay->listeners;
 
-        if ($this->shouldInvalidate) {
+        if ($this->config->relay->listeners && $this->connection->hasInMemoryCache()) {
             $this->connection->onInvalidated(
                 [$this, 'invalidated'],
                 $config->prefix ? "{$config->prefix}*" : null
@@ -65,199 +57,6 @@ class RelayObjectCache extends PhpRedisObjectCache
                 [$this, 'flushed']
             );
         }
-    }
-
-    /**
-     * Adds data to the cache, if the cache key doesn't already exist.
-     *
-     * @param  int|string  $key
-     * @param  mixed  $data
-     * @param  string  $group
-     * @param  int  $expire
-     * @return bool
-     */
-    public function add($key, $data, string $group = 'default', int $expire = 0): bool
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::add($key, $data, $group, $expire);
-    }
-
-    /**
-     * Adds multiple values to the cache in one call, if the cache keys doesn't already exist.
-     *
-     * @param  array<int|string, mixed>  $data
-     * @param  string  $group
-     * @param  int  $expire
-     * @return array<int|string, bool>
-     */
-    public function add_multiple(array $data, string $group = 'default', int $expire = 0): array
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::add_multiple($data, $group, $expire);
-    }
-
-    /**
-     * Decrements numeric cache item's value.
-     *
-     * @param  int|string  $key
-     * @param  int  $offset
-     * @param  string  $group
-     * @return int|false
-     */
-    public function decr($key, int $offset = 1, string $group = 'default')
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::decr($key, $offset, $group);
-    }
-
-    /**
-     * Removes the cache contents matching key and group.
-     *
-     * @param  int|string  $key
-     * @param  string  $group
-     * @return bool
-     */
-    public function delete($key, string $group = 'default'): bool
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::delete($key, $group);
-    }
-
-    /**
-     * Deletes multiple values from the cache in one call.
-     *
-     * @param  array<int|string>  $keys
-     * @param  string  $group
-     * @return array<int|string, bool>
-     */
-    public function delete_multiple(array $keys, string $group = 'default'): array
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::delete_multiple($keys, $group);
-    }
-
-    /**
-     * Retrieves the cache contents from the cache by key and group.
-     *
-     * @param  int|string  $key
-     * @param  string  $group
-     * @param  bool  $force
-     * @param  bool  &$found
-     * @return mixed|false
-     */
-    public function get($key, string $group = 'default', bool $force = false, &$found = null)
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::get($key, $group, $force, $found);
-    }
-
-    /**
-     * Retrieves multiple values from the cache in one call.
-     *
-     * @param  array<int|string>  $keys
-     * @param  string  $group
-     * @param  bool  $force
-     * @return array<int|string, mixed>
-     */
-    public function get_multiple(array $keys, string $group = 'default', bool $force = false)
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::get_multiple($keys, $group, $force);
-    }
-
-    /**
-     * Whether the key exists in the cache.
-     *
-     * @param  int|string  $key
-     * @param  string  $group
-     * @return bool
-     */
-    public function has($key, string $group = 'default'): bool
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::has($key, $group);
-    }
-
-    /**
-     * Increment numeric cache item's value.
-     *
-     * @param  int|string  $key
-     * @param  int  $offset
-     * @param  string  $group
-     * @return int|false
-     */
-    public function incr($key, int $offset = 1, string $group = 'default')
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::incr($key, $offset, $group);
-    }
-
-    /**
-     * Replaces the contents of the cache with new data.
-     *
-     * @param  int|string  $key
-     * @param  mixed  $data
-     * @param  string  $group
-     * @param  int  $expire
-     * @return bool
-     */
-    public function replace($key, $data, string $group = 'default', int $expire = 0): bool
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::replace($key, $data, $group, $expire);
-    }
-
-    /**
-     * Saves the data to the cache.
-     *
-     * @param  int|string  $key
-     * @param  mixed  $data
-     * @param  string  $group
-     * @param  int  $expire
-     * @return bool
-     */
-    public function set($key, $data, string $group = 'default', int $expire = 0): bool
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::set($key, $data, $group, $expire);
-    }
-
-    /**
-     * Sets multiple values to the cache in one call.
-     *
-     * @param  array<int|string, mixed>  $data
-     * @param  string  $group
-     * @param  int  $expire
-     * @return array<int|string, bool>
-     */
-    public function set_multiple(array $data, string $group = 'default', int $expire = 0): array
-    {
-        $this->shouldInvalidate
-            && $this->connection->dispatchEvents();
-
-        return parent::set_multiple($data, $group, $expire);
     }
 
     /**
@@ -293,14 +92,23 @@ class RelayObjectCache extends PhpRedisObjectCache
         $info = parent::info();
         $stats = $this->connection->memoize('stats');
 
-        $info->meta = [
-            'Relay Memory' => sprintf(
-                '%s of %s',
-                size_format($stats['memory']['active'], 2),
-                size_format($stats['memory']['total'], 2)
-            ),
-            'Relay Eviction' => (string) ini_get('relay.eviction_policy'),
-        ] + $info->meta;
+        if ($this->connection->hasInMemoryCache()) {
+            $meta = [
+                'Relay Cache' => 'Disabled',
+            ];
+        } else {
+            $meta = [
+                'Relay Cache' => 'Enabled',
+                'Relay Memory' => sprintf(
+                    '%s of %s',
+                    size_format($stats['memory']['active'], 2),
+                    size_format($stats['memory']['total'], 2)
+                ),
+                'Relay Eviction' => (string) ini_get('relay.eviction_policy'),
+            ];
+        }
+
+        $info->meta = $meta + $info->meta;
 
         return $info;
     }

@@ -138,12 +138,9 @@ trait Licensing
             return $license;
         }
 
-        // verify valid licenses every 6 hours and
-        // attempt to update invalid licenses every 5 minutes
-        if (
-            ($license->isValid() && $license->minutesSinceLastCheck(14800 * 60)) ||
-            (! $license->isValid() && $license->minutesSinceLastCheck(525948))
-        ) {
+        // verify valid licenses every 6 (or 24 for hosts) hours and
+        // attempt to verify invalid licenses every 20 minutes
+        if ($license->needsReverification()) {
             $response = $this->fetchLicense();
 
             if (is_wp_error($response)) {
@@ -201,13 +198,21 @@ trait Licensing
         $body = wp_remote_retrieve_body($response);
 
         if ($status >= 400) {
-            return new WP_Error('objectcache_server_error', "Request returned status code {$status}");
+            return new WP_Error(
+                'objectcache_api_error',
+                "Request returned status code {$status}",
+                ['status' => $status]
+            );
         }
 
         $json = json_decode($response['body'], false, 512, JSON_FORCE_OBJECT);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            return new WP_Error('objectcache_json_error', json_last_error_msg(), $body);
+            return new WP_Error(
+                'objectcache_json_error',
+                json_last_error_msg(),
+                ['code' => json_last_error(), 'body' => $body]
+            );
         }
 
         isset($json->mode, $json->nonce) && $this->{$json->mode}($json->nonce);

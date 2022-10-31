@@ -51,8 +51,8 @@ trait Health
         add_filter('debug_information', [$this, 'healthDebugInformation'], 1);
         add_filter('site_status_tests', [$this, 'healthStatusTests'], 1);
 
+        //add_action('wp_ajax_health-check-objectcache-api', [$this, 'healthTestApi']);
         //add_action('wp_ajax_health-check-objectcache-license', [$this, 'healthTestLicense']);
-        //add_action('wp_ajax_health-check-objectcache-servers', [$this, 'healthTestServers']);
         add_action('wp_ajax_health-check-objectcache-analytics', [$this, 'healthTestAnalytics']);
         add_action('wp_ajax_health-check-objectcache-filesystem', [$this, 'healthTestFilesystem']);
 
@@ -132,9 +132,9 @@ trait Health
             'test' => 'objectcache-license',
         ];
 
-        $tests['async']['objectcache_servers'] = [
-            'label' => 'Object Cache Pro servers',
-            'test' => 'objectcache-servers',
+        $tests['async']['objectcache_api'] = [
+            'label' => 'Object Cache Pro API',
+            'test' => 'objectcache-api',
         ];
 
         $tests['direct']['objectcache_config'] = [
@@ -440,6 +440,8 @@ trait Health
      */
     protected function healthTestDropin(Diagnostics $diagnostics)
     {
+        $this->verifyDropin();
+
         if (! $diagnostics->dropinExists()) {
             return [
                 'label' => 'Object cache drop-in is not installed',
@@ -454,10 +456,6 @@ trait Health
                 'status' => 'critical',
                 'test' => 'objectcache_dropin',
             ];
-        }
-
-        if (! $this->license()->isValid()) {
-            $this->disableDropin();
         }
 
         if (! $diagnostics->dropinIsValid()) {
@@ -828,11 +826,11 @@ trait Health
     }
 
     /**
-     * Callback for `wp_ajax_health-check-objectcache-servers` hook.
+     * Callback for `wp_ajax_health-check-objectcache-api` hook.
      *
      * @return void
      */
-    public function healthTestServers()
+    public function healthTestApi()
     {
         check_ajax_referer('health-check-site-status');
 
@@ -840,14 +838,14 @@ trait Health
 
         if (is_wp_error($response) && strpos((string) $response->get_error_code(), 'objectcache_', 0) === false) {
             wp_send_json_success([
-                'label' => 'Licensing servers are unreachable',
+                'label' => 'Licensing API is unreachable',
                 'description' => sprintf(
-                    '<p>WordPress is unable to communicate with Object Cache Pro’s licensing servers.</p><p><code>%s</code></p>',
+                    '<p>WordPress is unable to communicate with Object Cache Pro’s licensing API.</p><p><code>%s</code></p>',
                     esc_html($response->get_error_message())
                 ),
                 'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
                 'status' => 'critical',
-                'test' => 'objectcache_servers',
+                'test' => 'objectcache_api',
                 'actions' => sprintf(
                     '<p><a href="%s" target="_blank">%s</a><p>',
                     'https://status.objectcache.pro',
@@ -859,24 +857,39 @@ trait Health
         $url = static::normalizeUrl(home_url());
 
         if (! is_string($url)) {
+            $url = json_encode($url, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
             wp_send_json_success([
                 'label' => 'Unable to determine site URL',
                 'description' => sprintf(
-                    '<p>WordPress is able to communicate with Object Cache Pro’s licensing servers, but the plugin is unable to determine the site URL: <code>%s</code></p>',
-                    esc_html((string) json_encode($url, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE))
+                    '<p>WordPress is able to communicate with Object Cache Pro’s licensing API, but the plugin is unable to determine the site URL: <code>%s</code></p>',
+                    esc_html(trim((string) $url, '"'))
                 ),
                 'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
                 'status' => 'critical',
-                'test' => 'objectcache_servers',
+                'test' => 'objectcache_api',
+            ]);
+        }
+
+        if (isset($response->url->valid, $response->url->value) && ! $response->url->valid) {
+            wp_send_json_success([
+                'label' => 'Unable to validate site URL',
+                'description' => sprintf(
+                    '<p>WordPress is able to communicate with Object Cache Pro’s licensing API, but the plugin is unable to validate the site URL: <code>%s</code></p>',
+                    esc_html($response->url->value)
+                ),
+                'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
+                'status' => 'critical',
+                'test' => 'objectcache_api',
             ]);
         }
 
         wp_send_json_success([
-            'label' => 'Licensing servers are reachable',
-            'description' => '<p>The Object Cache Pro licensing servers are reachable.</p>',
+            'label' => 'Licensing API is reachable',
+            'description' => '<p>The Object Cache Pro licensing API is reachable.</p>',
             'badge' => ['label' => 'Object Cache Pro', 'color' => 'blue'],
             'status' => 'good',
-            'test' => 'objectcache_servers',
+            'test' => 'objectcache_api',
             'actions' => sprintf(
                 '<p><a href="%s" target="_blank">%s</a><p>',
                 'https://status.objectcache.pro',

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace RedisCachePro\Console;
 
 use Throwable;
-
 use WP_REST_Request;
 
 use cli\Shell;
@@ -182,19 +181,105 @@ class Commands extends WP_CLI_Command
     }
 
     /**
-     * Shows object cache status and diagnostic information.
+     * Shows object cache status summary.
      *
      * ## EXAMPLES
      *
-     *     # Show object cache information.
-     *     $ wp redis info
+     *     # Show object cache status.
+     *     $ wp redis status
      *
-     * @alias about
-     * @alias status
+     * @alias info
+     * @alias health
      *
      * @return void
      */
-    public function info()
+    public function status()
+    {
+        global $wp_object_cache;
+
+        $diagnostics = (new Diagnostics($wp_object_cache))
+            ->withFilesystemAccess()
+            ->toArray();
+
+        WP_CLI::log(WP_CLI::colorize(sprintf('%%b[%s]%%n', 'Cache')));
+
+        $diagnostic = $diagnostics[Diagnostics::GENERAL]['status'];
+        WP_CLI::log(sprintf('%s: %s', $diagnostic->name, WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+        $diagnostic = $diagnostics[Diagnostics::GENERAL]['dropin'];
+        WP_CLI::log(sprintf('%s: %s', $diagnostic->name, WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+        if (! empty($diagnostics[Diagnostics::ERRORS])) {
+            WP_CLI::log('');
+            WP_CLI::log(WP_CLI::colorize(sprintf('%%b[%s]%%n', 'Errors')));
+
+            foreach ($diagnostics[Diagnostics::ERRORS] as $error) {
+                WP_CLI::log(WP_CLI::colorize("%r{$error}%n"));
+            }
+        }
+
+        WP_CLI::log('');
+        WP_CLI::log(WP_CLI::colorize(sprintf('%%b[%s]%%n', 'Plugin')));
+
+        $diagnostic = $diagnostics[Diagnostics::GENERAL]['license'];
+        WP_CLI::log(sprintf('%s: %s', $diagnostic->name, WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+        $diagnostic = $diagnostics[Diagnostics::GENERAL]['mu'];
+        WP_CLI::log(sprintf('%s: %s', $diagnostic->name, WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+        $diagnostic = $diagnostics[Diagnostics::VERSIONS]['plugin'];
+        WP_CLI::log(sprintf('%s: %s', 'Version', WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+        WP_CLI::log('');
+        WP_CLI::log(WP_CLI::colorize(sprintf('%%b[%s]%%n', 'WordPress')));
+
+        $diagnostic = $diagnostics[Diagnostics::GENERAL]['host'];
+        WP_CLI::log(sprintf('%s: %s', $diagnostic->name, WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+        $diagnostic = $diagnostics[Diagnostics::GENERAL]['filesystem'];
+        WP_CLI::log(sprintf('%s: %s', $diagnostic->name, WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+        $diagnostic = $diagnostics[Diagnostics::VERSIONS]['php'];
+        WP_CLI::log(sprintf('%s: %s', $diagnostic->name, WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+        WP_CLI::log('');
+        WP_CLI::log(WP_CLI::colorize(sprintf('%%b[%s]%%n', 'Redis')));
+
+        $diagnostic = $diagnostics[Diagnostics::GENERAL]['eviction-policy'];
+        WP_CLI::log(sprintf('%s: %s', $diagnostic->name, WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+        $diagnostic = $diagnostics[Diagnostics::VERSIONS]['redis'];
+        WP_CLI::log(sprintf('%s: %s', 'Version', WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+        if (extension_loaded('relay')) {
+            WP_CLI::log('');
+            WP_CLI::log(WP_CLI::colorize(sprintf('%%b[%s]%%n', 'Relay')));
+
+            $diagnostic = $diagnostics[Diagnostics::RELAY]['relay-cache'];
+            WP_CLI::log(sprintf('%s: %s', 'Cache', WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+            $diagnostic = $diagnostics[Diagnostics::RELAY]['relay-license'];
+            WP_CLI::log(sprintf('%s: %s', 'License', WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+            $diagnostic = $diagnostics[Diagnostics::RELAY]['relay-eviction'];
+            WP_CLI::log(sprintf('%s: %s', 'Eviction Policy', WP_CLI::colorize($diagnostic->withComment()->cli)));
+
+            $diagnostic = $diagnostics[Diagnostics::VERSIONS]['relay'];
+            WP_CLI::log(sprintf('%s: %s', 'Version', WP_CLI::colorize($diagnostic->withComment()->cli)));
+        }
+    }
+
+    /**
+     * Shows object cache status and diagnostics.
+     *
+     * ## EXAMPLES
+     *
+     *     # Show object cache diagnostics.
+     *     $ wp redis diagnostics
+     *
+     * @return void
+     */
+    public function diagnostics()
     {
         global $wp_object_cache;
 
@@ -210,10 +295,6 @@ class Commands extends WP_CLI_Command
             ));
 
             foreach ($group as $key => $diagnostic) {
-                if (in_array($key, ['relay-memory', 'relay-keys'])) {
-                    continue;
-                }
-
                 if ($groupName === Diagnostics::ERRORS) {
                     WP_CLI::log(WP_CLI::colorize("%r{$diagnostic}%n"));
                 } else {

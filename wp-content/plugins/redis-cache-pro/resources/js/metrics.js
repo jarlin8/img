@@ -35,7 +35,7 @@ jQuery.extend(window.objectcache, {
                 opacity: 0.1,
             },
             noData: {
-                text: 'No data available',
+                text: 'Loading cache analytics...',
                 align: 'center',
                 verticalAlign: 'middle',
             },
@@ -63,7 +63,6 @@ jQuery.extend(window.objectcache, {
         init: function () {
             this.moveMetrics();
             this.renderCharts();
-
             this.fetchData();
 
             jQuery(document).on('postbox-toggled', function (event, postbox) {
@@ -115,6 +114,12 @@ jQuery.extend(window.objectcache, {
 
                 this.charts[name].render();
             }.bind(this));
+        },
+
+        updateChartsMessage: function (message) {
+            for (var chart in this.charts) {
+                this.charts[chart].updateOptions({ noData: { text: message } }, false, false, false);
+            }
         },
 
         setUpChart: function (el, id, type) {
@@ -278,6 +283,16 @@ jQuery.extend(window.objectcache, {
                     });
                 });
 
+                var measurements = series[0].data.filter(function (measurement) {
+                    return measurement.y !== null;
+                }).length;
+
+                if (measurements < 2) {
+                    this.charts[chart].updateOptions({ noData: { text: 'Waiting for more data...' } }, false, false, false);
+
+                    continue;
+                }
+
                 this.charts[chart]
                     .updateSeries(series)
                     .then(function (chart) {
@@ -321,6 +336,16 @@ jQuery.extend(window.objectcache, {
                         });
                     });
                 });
+
+                var measurements = series[0].data.filter(function (measurement) {
+                    return measurement.y !== null;
+                }).length;
+
+                if (measurements < 2) {
+                    this.comboCharts[chart].chart.updateOptions({ noData: { text: 'Waiting for more data...' } }, false, false, false);
+
+                    continue;
+                }
 
                 this.charts[chart]
                     .updateSeries(series)
@@ -382,6 +407,8 @@ jQuery.extend(window.objectcache, {
                 )
                 .error(function (error) {
                     console.log(error);
+
+                    objectcache.analytics.updateChartsMessage('Unable to load cache analytics');
                 });
         },
 

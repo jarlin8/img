@@ -152,7 +152,7 @@ class WordPressMetrics
 
         if ($requestStart) {
             $this->msTotal = round((microtime(true) - $requestStart) * 1000, 2);
-            $this->msCacheRatio = round($this->msCache / (($this->msCache + $this->msTotal) / 100), 2);
+            $this->msCacheRatio = round(($this->msCache / $this->msTotal) * 100, 2);
         }
 
         $this->sqlQueries = function_exists('\get_num_queries')

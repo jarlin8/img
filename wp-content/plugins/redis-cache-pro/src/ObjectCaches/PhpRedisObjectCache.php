@@ -139,6 +139,10 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
      */
     public function add_multiple(array $data, string $group = 'default', int $expire = 0): array
     {
+        if (empty($data)) {
+            return [];
+        }
+
         if (function_exists('wp_suspend_cache_addition') && \wp_suspend_cache_addition()) {
             return array_combine(array_keys($data), array_fill(0, count($data), false));
         }
@@ -167,13 +171,14 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
             }
         }
 
+        $remainingData = array_diff_key($data, $results);
+
+        if (empty($remainingData)) {
+            return $results;
+        }
+
         try {
-            $response = $this->multiwrite(
-                array_diff_key($data, $results),
-                $group,
-                $expire,
-                'NX'
-            );
+            $response = $this->multiwrite($remainingData, $group, $expire, 'NX');
         } catch (Throwable $exception) {
             $this->error($exception);
 
@@ -332,6 +337,10 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
      */
     public function delete_multiple(array $keys, string $group = 'default'): array
     {
+        if (empty($keys)) {
+            return [];
+        }
+
         $results = [];
 
         if ($this->isNonPersistentGroup($group)) {
@@ -547,6 +556,10 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
      */
     public function get_multiple(array $keys, string $group = 'default', bool $force = false)
     {
+        if (empty($keys)) {
+            return [];
+        }
+
         $values = [];
 
         if ($this->isNonPersistentGroup($group)) {
@@ -793,6 +806,10 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
      */
     public function set_multiple(array $data, string $group = 'default', int $expire = 0): array
     {
+        if (empty($data)) {
+            return [];
+        }
+
         if ($this->isNonPersistentGroup($group)) {
             $results = [];
 

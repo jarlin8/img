@@ -86,7 +86,7 @@ class Tools extends Page
 
         wp_enqueue_script('postbox');
 
-        wp_register_script('objectcache-tools', $script, ['jquery'], Version);
+        wp_register_script('objectcache-tools', $script, ['jquery', 'clipboard'], Version);
         wp_enqueue_script('objectcache-tools');
 
         if (! $script) {

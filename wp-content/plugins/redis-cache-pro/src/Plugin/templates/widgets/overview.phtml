@@ -4,6 +4,7 @@ $license = $this->license();
 $diagnostics = $this->diagnostics();
 
 $usingRelay = $diagnostics->usingRelay();
+$relayHasCache = $diagnostics->relayHasCache();
 
 $status = $diagnostics['general']['status']->html;
 $dropin = $diagnostics['general']['dropin']->html;
@@ -45,7 +46,7 @@ $admin_nonce_url = function ($action) {
 
     <ul>
         <li>
-            <span class="dashicons dashicons-cloud"></span>
+            <span class="dashicons dashicons-performance"></span>
             Status: <?php echo $status; ?>
         </li>
 
@@ -70,7 +71,7 @@ $admin_nonce_url = function ($action) {
 
         <?php if ($evictionPolicy->hasValue() && $evictionPolicy->hasIssue()) : ?>
             <li>
-                <span class="dashicons dashicons-admin-generic"></span>
+                <span class="dashicons dashicons-admin-settings"></span>
                 Eviction: <?php echo $evictionPolicy->html; ?>
             </li>
         <?php endif; ?>
@@ -78,25 +79,23 @@ $admin_nonce_url = function ($action) {
         <?php if ($this->config->shared && $redisKeys->hasValue()) : ?>
             <li>
                 <span class="dashicons dashicons-database"></span>
-                Cache: <?php echo number_format($redisKeys->value); ?>
-                <?php echo _n('object', 'objects', $redisKeys->value) ?>
+                Cache: <?php printf(_n('%s object', '%s objects', $redisKeys->value), number_format($redisKeys->value)); ?>
             </li>
         <?php elseif ($redisMemory->hasValue()): ?>
-            <li>
+            <li title="<?php if ($redisKeys->hasValue()) : printf(_n('%s object', '%s objects', $redisKeys->value), number_format($redisKeys->value)); endif; ?>">
                 <span class="dashicons dashicons-database"></span>
                 Cache: <?php echo $redisMemory->html; ?>
             </li>
         <?php endif; ?>
 
-        <?php if ($usingRelay) : ?>
+        <?php if ($usingRelay && $relayHasCache) : ?>
             <?php if ($this->config->shared && $relayKeys->hasValue()) : ?>
                 <li>
                     <span class="dashicons dashicons-database-add"></span>
-                    Relay: <?php echo number_format($relayKeys->value); ?>
-                    <?php echo _n('object', 'objects', $relayKeys->value) ?>
+                    Relay: <?php printf(_n('%s object', '%s objects', $relayKeys->value), number_format($relayKeys->value)); ?>
                 </li>
             <?php elseif ($relayMemory->hasValue()): ?>
-                <li>
+                <li title="<?php if ($relayKeys->hasValue()) : printf(_n('%s object', '%s objects', $relayKeys->value), number_format($relayKeys->value)); endif; ?>">
                     <span class="dashicons dashicons-database-add"></span>
                     Relay: <?php echo $relayMemory->html; ?>
                 </li>

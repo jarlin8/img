@@ -68,6 +68,13 @@ class Diagnostic
     protected $value;
 
     /**
+     * The value labels of the diagnostic.
+     *
+     * @var array<mixed>
+     */
+    protected $labels = [];
+
+    /**
      * A human readable comment (addendum) related to the diagnostic.
      *
      * @var string|null
@@ -93,6 +100,19 @@ class Diagnostic
         $instance->name = $name;
 
         return $instance;
+    }
+
+    /**
+     * Add value labels to diagnostic.
+     *
+     * @param  array<mixed>  $labels
+     * @return \RedisCachePro\Diagnostics\Diagnostic
+     */
+    public function labels(array $labels)
+    {
+        $this->labels = $labels;
+
+        return $this;
     }
 
     /**
@@ -264,8 +284,14 @@ class Diagnostic
      */
     public function prettyJson($json)
     {
-        foreach ($json as $key => $value) {
-            $json[$key] = $this->obfuscate($key, $value);
+        if (is_object($json)) {
+            $json = get_object_vars($json);
+        }
+
+        if (is_array($json)) {
+            foreach ($json as $key => $value) {
+                $json[$key] = $this->obfuscate($key, $value);
+            }
         }
 
         $this->value = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -375,6 +401,10 @@ class Diagnostic
     public function __toString()
     {
         $value = $this->value;
+
+        if (is_scalar($value) && isset($this->labels[$value])) {
+            $value = $this->labels[$value];
+        }
 
         if (is_array($value)) {
             $value = implode(', ', $value);

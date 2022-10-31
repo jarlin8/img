@@ -33,6 +33,13 @@ class PhpRedisClusterConnection extends PhpRedisConnection
     protected $client;
 
     /**
+     * The client's FQCN.
+     *
+     * @var string
+     */
+    protected $class = RedisCluster::class;
+
+    /**
      * Create a new PhpRedis cluster connection.
      *
      * @param  \RedisCluster  $client

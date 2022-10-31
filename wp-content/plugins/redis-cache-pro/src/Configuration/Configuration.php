@@ -47,6 +47,12 @@ use RedisCachePro\ObjectCaches\ObjectCacheInterface;
  * @property-read int $database
  * @property-read string|null $username
  * @property-read string|null $password
+ * @property-read string|array|null $cluster
+ * @property-read string $cluster_failover
+ * @property-read array $servers
+ * @property-read string $replication_strategy
+ * @property-read array $sentinels
+ * @property-read string $service
  * @property-read string $prefix
  * @property-read int $maxttl
  * @property-read float $timeout
@@ -57,26 +63,20 @@ use RedisCachePro\ObjectCaches\ObjectCacheInterface;
  * @property-read bool $persistent
  * @property-read bool|null $shared
  * @property-read bool $async_flush
- * @property-read string|array|null $cluster
- * @property-read string $cluster_failover
- * @property-read array $servers
- * @property-read string $replication_strategy
- * @property-read array $sentinels
- * @property-read string $service
+ * @property-read bool $prefetch
+ * @property-read bool $split_alloptions
+ * @property-read string $flush_network
  * @property-read string $serializer
  * @property-read string $compression
  * @property-read array $global_groups
  * @property-read array $non_persistent_groups
  * @property-read array $non_prefetchable_groups
- * @property-read bool $prefetch
- * @property-read bool $split_alloptions
- * @property-read string $flush_network
+ * @property-read array $tls_options
  * @property-read \RedisCachePro\Support\AnalyticsConfiguration $analytics
  * @property-read \RedisCachePro\Support\RelayConfiguration $relay
- * @property-read array $tls_options
  * @property-read bool $updates
- * @property-read bool $debug
  * @property-read bool $save_commands
+ * @property-read bool $debug
  * @property-read \Throwable|null $initException
  */
 final class Configuration
@@ -409,14 +409,20 @@ final class Configuration
     /**
      * The Relay configuration options.
      *
+     * - `cache`: (bool) Whether to use Relay's in-memory cache
      * - `listeners`: (bool) Whether to register Relay event listeners
      * - `invalidations`: (bool) Whether to enable client-side invalidation
+     * - `allowed`: (array) When set, only keys matching these patterns will be cached in Relay's in-memory cache, unless they match `relay.ignored`.
+     * - `ignored`: (array) Keys matching these patterns will not be cached in Relay's in-memory cache.
      *
      * @var \RedisCachePro\Support\RelayConfiguration
      */
     protected $relay = [
+        'cache' => true,
         'listeners' => false,
         'invalidations' => true,
+        'allowed' => null,
+        'ignored' => ['*:analytics:*'],
     ];
 
     /**
@@ -1315,16 +1321,18 @@ final class Configuration
             );
         }
 
-        foreach (array_keys((array) $this->analytics) as $option) {
-            if (isset($analytics[$option])) {
-                switch ($option) {
-                    case 'retention':
-                        $this->analytics[$option] = (int) $analytics[$option];
-                        break;
-                    default:
-                        $this->analytics[$option] = (bool) $analytics[$option];
-                        break;
-                }
+        foreach (\array_keys((array) $this->analytics) as $option) {
+            if (! \array_key_exists($option, $analytics)) {
+                continue;
+            }
+
+            switch ($option) {
+                case 'retention':
+                    $this->analytics[$option] = (int) $analytics[$option];
+                    break;
+                default:
+                    $this->analytics[$option] = (bool) $analytics[$option];
+                    break;
             }
         }
 
@@ -1334,7 +1342,7 @@ final class Configuration
     /**
      * Set the Relay configuration.
      *
-     * @param  array<string, bool>  $relay
+     * @param  array<string, mixed>  $relay
      * @return void
      */
     public function setRelay($relay)
@@ -1345,7 +1353,7 @@ final class Configuration
             );
         }
 
-        $invalid = array_diff_key($relay, (array) $this->relay);
+        $invalid = \array_diff_key($relay, (array) $this->relay);
 
         if (! empty($invalid)) {
             throw new ConfigurationInvalidException(
@@ -1355,8 +1363,12 @@ final class Configuration
 
         $this->relay = (object) $this->relay;
 
-        foreach (array_keys((array) $this->relay) as $option) {
-            if (isset($relay[$option])) {
+        foreach (\array_keys((array) $this->relay) as $option) {
+            if (! \array_key_exists($option, $relay)) {
+                continue;
+            }
+
+            if (\in_array($option, ['cache', 'listeners', 'invalidations'], true)) {
                 if (\in_array($relay[$option], ['true', 'on', '1', 1, true], true)) {
                     $relay[$option] = true;
                 }
@@ -1372,6 +1384,18 @@ final class Configuration
                 }
 
                 $this->relay->{$option} = $relay[$option];
+                continue;
+            }
+
+            if (\in_array($option, ['allowed', 'ignored'], true)) {
+                if (! \is_null($relay[$option]) && ! \is_array($relay[$option])) {
+                    throw new ConfigurationInvalidException(
+                        \sprintf('`relay.%s` must be a array, %s given', $option, \gettype($relay[$option]))
+                    );
+                }
+
+                $this->relay->{$option} = $relay[$option];
+                continue;
             }
         }
     }

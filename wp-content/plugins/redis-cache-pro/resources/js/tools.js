@@ -78,6 +78,29 @@ jQuery.extend(window.objectcache, {
         init: function () {
             document.querySelector('.objectcache\\:groups-widget button')
                 .addEventListener('click', window.objectcache.groups.fetchData);
+
+            if (! ClipboardJS.isSupported()) {
+                return;
+            }
+
+            var widget = document.querySelector('.objectcache\\:groups-widget');
+            var copyButton = widget.querySelector('.button[data-clipboard-target]');
+            var clipboard = new ClipboardJS(copyButton);
+
+            clipboard.on('success', function (event) {
+                event.clearSelection();
+                copyButton.textContent = copyButton.dataset.copied;
+
+                setTimeout(function () {
+                    copyButton.textContent = copyButton.dataset.text;
+                }, 3000);
+            });
+
+            clipboard.on('error', function (event) {
+                event.clearSelection();
+
+                window.alert('Sorry, something went wrong.');
+            });
         },
 
         fetchData: function () {
@@ -87,6 +110,9 @@ jQuery.extend(window.objectcache, {
             button.blur();
             button.classList.add('disabled');
             button.textContent = button.dataset.loading;
+
+            var copy = widget.querySelector('.button[data-clipboard-target]');
+            copy.classList.add('hidden');
 
             var container = widget.querySelector('.table-container');
             container && widget.removeChild(container);
@@ -116,13 +142,15 @@ jQuery.extend(window.objectcache, {
 
                     if (data.length) {
                         data.forEach(function (item) {
-                            content += '<tr>';
+                            content += '<tr title="' + item.count + ' objects found in `' + item.group + '` group">';
                             content += '  <td>' + item.group + '</td>';
                             content += '  <td>';
                             content += '    <strong>' + item.count + '</strong>';
                             content += '  </td>';
                             content += '</tr>';
                         });
+
+                        ClipboardJS.isSupported() && copy.classList.remove('hidden');
                     } else {
                         content += '<tr>';
                         content += '  <td colspan="2">No cache groups found.</td>';

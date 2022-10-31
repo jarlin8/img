@@ -30,7 +30,29 @@ trait Dropin
      */
     public function bootDropin()
     {
+        add_action('file_mod_allowed', [$this, 'applyFileModFilters'], 10, 2);
         add_action('upgrader_process_complete', [$this, 'maybeUpdateDropin'], 10, 2);
+    }
+
+    /**
+     * Adds shortcut filters to core's `file_mod_allowed` filter.
+     *
+     * @param  bool  $file_mod_allowed
+     * @param  string  $context
+     * @return bool
+     */
+    public function applyFileModFilters($file_mod_allowed, $context)
+    {
+        if ($context === 'object_cache_dropin') {
+            /**
+             * Filters whether drop-in file modifications are allowed.
+             *
+             * @param  bool  $dropin_mod_allowed  Whether drop-in modifications are allowed.
+             */
+            return (bool) apply_filters('objectcache_allow_dropin_mod', true);
+        }
+
+        return $file_mod_allowed;
     }
 
     /**

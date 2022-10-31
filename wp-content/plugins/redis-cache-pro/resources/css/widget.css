@@ -36,23 +36,38 @@
     line-height: 20px;
 }
 
-.objectcache\:overview-widget .actions {
-    display: flex;
-    flex-wrap: wrap;
-}
-
 .objectcache\:overview-widget .actions .button {
     margin-right: 8px;
     margin-bottom: 12px;
 }
 
-.objectcache\:overview-widget .actions .button[disabled] {
-    cursor: not-allowed;
-}
-
 .objectcache\:overview-widget .actions .button-ml-auto {
     margin-left: auto;
     margin-right: 0;
+}
+
+.objectcache\:widget .actions {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.objectcache\:widget .actions .button[disabled] {
+    cursor: not-allowed;
+}
+
+.objectcache\:widget .button-tertiary {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.objectcache\:widget .button-tertiary:active,
+.objectcache\:widget .button-tertiary:focus,
+.objectcache\:widget .button-tertiary:hover {
+    outline: none;
+    border-color: transparent;
+    background-color: transparent;
+    text-decoration: underline;
+    box-shadow: none;
 }
 
 .objectcache\:widget .error {

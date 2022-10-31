@@ -59,7 +59,7 @@ class CommandsHtmlOutput extends QM_Output_Html
             $this->before_non_tabular_output();
 
             echo $this->build_notice(
-                file_get_contents(__DIR__ . '/templates/no-log.phtml')
+                (string) file_get_contents(__DIR__ . '/templates/no-log.phtml')
             );
 
             $this->after_non_tabular_output();

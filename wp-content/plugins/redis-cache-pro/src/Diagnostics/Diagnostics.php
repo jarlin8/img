@@ -74,6 +74,20 @@ class Diagnostics implements ArrayAccess
     const GENERAL = 'general';
 
     /**
+     * Group: Cache group information.
+     *
+     * @var string
+     */
+    const GROUPS = 'groups';
+
+    /**
+     * Group: Relay information.
+     *
+     * @var string
+     */
+    const RELAY = 'relay';
+
+    /**
      * Group: Version numbers.
      *
      * @var string
@@ -133,8 +147,10 @@ class Diagnostics implements ArrayAccess
         }
 
         $this->gatherGeneral();
+        $this->gatherRelay();
         $this->gatherVersions();
         $this->gatherStatistics();
+        $this->gatherGroups();
         $this->gatherConfiguration();
         $this->gatherEnvironmentVariables();
         $this->gatherConstants();
@@ -150,37 +166,14 @@ class Diagnostics implements ArrayAccess
     protected function gatherGeneral()
     {
         $this->data[self::GENERAL]['status'] = $this->status();
-
         $this->data[self::GENERAL]['dropin'] = $this->dropin();
-
         $this->data[self::GENERAL]['license'] = $this->license();
 
-        if (extension_loaded('relay')) {
-            $this->data[self::GENERAL]['relay-license'] = $this->relayLicense();
-        }
-
         $this->data[self::GENERAL]['eviction-policy'] = $this->evictionPolicy();
-
-        $this->data[self::GENERAL]['env'] = Diagnostic::name('Environment')->value(
-            self::environment()
-        );
+        $this->data[self::GENERAL]['env'] = Diagnostic::name('Environment')->value(self::environment());
 
         if ($this->cache) {
-            $this->data[self::GENERAL]['multisite'] = Diagnostic::name('Multisite')->value(
-                $this->cache->isMultisite() ? 'Yes' : 'No'
-            );
-
-            $this->data[self::GENERAL]['global-groups'] = Diagnostic::name('Global Groups')->values(
-                $this->cache->globalGroups()
-            );
-
-            $this->data[self::GENERAL]['non-persistent-groups'] = Diagnostic::name('Non-persistent Groups')->values(
-                $this->cache->nonPersistentGroups()
-            );
-
-            $this->data[self::GENERAL]['non-prefetchable-groups'] = Diagnostic::name('Non-prefetchable Groups')->values(
-                $this->cache->nonPrefetchableGroups()
-            );
+            $this->data[self::GENERAL]['multisite'] = Diagnostic::name('Multisite')->value($this->cache->isMultisite() ? 'Yes' : 'No');
         }
 
         if ($this->isDisabledUsingEnvVar()) {
@@ -194,20 +187,30 @@ class Diagnostics implements ArrayAccess
         }
 
         $this->data[self::GENERAL]['basename'] = Diagnostic::name('Basename')->value(Basename);
-
-        $this->data[self::GENERAL]['mu'] = Diagnostic::name('Must-use')->value(
-            self::isMustUse() ? 'Yes' : 'No'
-        );
-
-        $this->data[self::GENERAL]['vcs'] = Diagnostic::name('VCS')->value(
-            self::usingVCS() ? 'Yes' : 'No'
-        );
-
-        $this->data[self::GENERAL]['host'] = Diagnostic::name('Hosting Provider')->value(
-            self::host()
-        );
-
+        $this->data[self::GENERAL]['mu'] = Diagnostic::name('Must-use')->value(self::isMustUse() ? 'Yes' : 'No');
+        $this->data[self::GENERAL]['vcs'] = Diagnostic::name('VCS')->value(self::usingVCS() ? 'Yes' : 'No');
+        $this->data[self::GENERAL]['host'] = Diagnostic::name('Hosting')->value(self::host());
         $this->data[self::GENERAL]['compressions'] = $this->compressions();
+    }
+
+    /**
+     * ...
+     *
+     * @return void
+     */
+    protected function gatherRelay()
+    {
+        if (! extension_loaded('relay')) {
+            return;
+        }
+
+        if ($this->usingRelay()) {
+            $this->gatherRelayStatistics();
+        }
+
+        $this->data[self::RELAY]['relay-cache'] = $this->relayCache();
+        $this->data[self::RELAY]['relay-eviction'] = $this->relayEvictionPolicy();
+        $this->data[self::RELAY]['relay-license'] = $this->relayLicense();
     }
 
     /**
@@ -234,10 +237,23 @@ class Diagnostics implements ArrayAccess
     protected function gatherStatistics()
     {
         $this->gatherRedisStatistics();
+    }
 
-        if ($this->usingRelay()) {
-            $this->gatherRelayStatistics();
-        }
+    /**
+     * Gathers cache group information.
+     *
+     * @return void
+     */
+    protected function gatherGroups()
+    {
+        $this->data[self::GROUPS]['global'] = Diagnostic::name('Global')
+            ->prettyJson($this->cache ? $this->cache->globalGroups() : null);
+
+        $this->data[self::GROUPS]['non-persistent'] = Diagnostic::name('Non-persistent')
+            ->prettyJson($this->cache ? $this->cache->nonPersistentGroups() : null);
+
+        $this->data[self::GROUPS]['non-prefetchable'] = Diagnostic::name('Non-prefetchable')
+            ->prettyJson($this->cache ? $this->cache->nonPrefetchableGroups() : null);
     }
 
     /**
@@ -459,9 +475,8 @@ class Diagnostics implements ArrayAccess
      */
     protected function relayLicense()
     {
-        $diagnostic = Diagnostic::name('Relay License');
-
         $license = Relay::license();
+        $diagnostic = Diagnostic::name('Relay License');
 
         if (! empty($license['reason'])) {
             $diagnostic->comment($license['reason']);
@@ -478,6 +493,39 @@ class Diagnostics implements ArrayAccess
             default:
                 return $diagnostic->value(ucwords((string) $license['state']));
         }
+    }
+
+    /**
+     * Returns Relay's cache mode.
+     *
+     * @return \RedisCachePro\Diagnostics\Diagnostic
+     */
+    protected function relayCache()
+    {
+        $hasInMemoryCache = $this->usingRelayCache();
+
+        $diagnostic = Diagnostic::name('Relay Cache');
+
+        return $hasInMemoryCache
+            ? $diagnostic->value('Disabled')->comment('client only')
+            : $diagnostic->value('Enabled');
+    }
+
+    /**
+     * Returns Relay's eviction policy, if a connection is established.
+     *
+     * @return \RedisCachePro\Diagnostics\Diagnostic
+     */
+    protected function relayEvictionPolicy()
+    {
+        $policy = ini_get('relay.eviction_policy');
+        $diagnostic = Diagnostic::name('Relay Eviction');
+
+        if ($policy === 'noeviction') {
+            return $diagnostic->error($policy);
+        }
+
+        return $diagnostic->value($policy);
     }
 
     /**
@@ -694,15 +742,19 @@ class Diagnostics implements ArrayAccess
      */
     protected function status()
     {
-        $diagnostic = Diagnostic::name('Status');
+        $diagnostic = Diagnostic::name('Status')->labels([
+            -1 => 'Disabled',
+            0 => 'Not connected',
+            1 => 'Connected',
+        ]);
 
         if ($this->isDisabled()) {
-            return $diagnostic->warning('Disabled');
+            return $diagnostic->warning(-1);
         }
 
         return $this->ping()
-            ? $diagnostic->success('Connected')
-            : $diagnostic->error('Not connected');
+            ? $diagnostic->success(1)
+            : $diagnostic->error(0);
     }
 
     /**
@@ -722,7 +774,7 @@ class Diagnostics implements ArrayAccess
             defined("{$client}::COMPRESSION_ZSTD") ? 'ZSTD' : null,
         ]);
 
-        $diagnostic = Diagnostic::name('Supported compressions');
+        $diagnostic = Diagnostic::name('Compressions');
 
         return empty($algorithms)
             ? $diagnostic->value('None')
@@ -785,7 +837,7 @@ class Diagnostics implements ArrayAccess
     }
 
     /**
-     * Whether the object cache is using Relay.
+     * Whether the object cache is powered by Relay.
      *
      * @return bool
      */
@@ -796,6 +848,32 @@ class Diagnostics implements ArrayAccess
         }
 
         return false;
+    }
+
+    /**
+     * Whether the object cache is using Relay's in-memory cache.
+     *
+     * @return bool
+     */
+    public function usingRelayCache()
+    {
+        return $this->usingRelay()
+            && $this->relayHasCache();
+    }
+
+    /**
+     * Whether Relay as memory allocated to it, or is client-only.
+     *
+     * @return bool
+     */
+    public function relayHasCache()
+    {
+        if (! method_exists(Relay::class, 'memory')) {
+            return true;
+        }
+
+        return Relay::memory() > 0
+            && $this->config->relay->cache;
     }
 
     /**
@@ -1015,36 +1093,52 @@ class Diagnostics implements ArrayAccess
      */
     public static function host()
     {
-        if (isset($_ENV['PANTHEON_ENVIRONMENT']) || defined('PANTHEON_ENVIRONMENT')) {
-            return 'pantheon';
-        }
-
-        if (isset($_SERVER['cw_allowed_ip'])) {
+        if (isset($_SERVER['cw_allowed_ip']) || isset($_SERVER['CW_ALLOWED_IP'])) {
             return 'cloudways';
-        }
-
-        if (defined('KINSTAMU_VERSION')) {
-            return 'kinsta';
         }
 
         if (defined('PAGELYBIN') && constant('PAGELYBIN')) {
             return 'pagely';
         }
 
-        if (defined('IS_PRESSABLE') && constant('IS_PRESSABLE')) {
-            return 'pressable';
+        if (! empty($_SERVER['WPAAS_SITE_ID']) || (class_exists('\WPaaS\Plugin') && \WPaaS\Plugin::is_wpaas())) {
+            return 'godaddy';
         }
 
-        if (defined('CONVESIO_VER')) {
+        if (defined('CONVESIO_VER') || strpos($_SERVER['DOCUMENT_ROOT'] ?? '', 'convesio')) {
             return 'convesio';
         }
 
-        if (defined('FLYWHEEL_PLUGIN_DIR')) {
-            return 'flywheel';
+        if (defined('NEXCESS_MAPPS_SITE') || defined('NEXCESS_MAPPS_TOKEN')) {
+            return 'nexcess';
+        }
+
+        if (strpos((string) gethostname(), '.onrocket.com')) {
+            return 'rocket';
+        }
+
+        if (defined('GRIDPANE') && constant('GRIDPANE')) {
+            return 'gridpane';
         }
 
         if (getenv('SPINUPWP_CACHE_PATH')) {
             return 'spinupwp';
+        }
+
+        if (isset($_ENV['PANTHEON_ENVIRONMENT']) || defined('PANTHEON_ENVIRONMENT')) {
+            return 'pantheon';
+        }
+
+        if (defined('IS_PRESSABLE') && constant('IS_PRESSABLE')) {
+            return 'pressable';
+        }
+
+        if (defined('KINSTAMU_VERSION')) {
+            return 'kinsta';
+        }
+
+        if (defined('FLYWHEEL_PLUGIN_DIR')) {
+            return 'flywheel';
         }
 
         if (class_exists('WpeCommon') || getenv('IS_WPE')) {
@@ -1053,10 +1147,6 @@ class Diagnostics implements ArrayAccess
 
         if (defined('WPCOMSH_VERSION') && constant('WPCOMSH_VERSION')) {
             return 'wpcom';
-        }
-
-        if (class_exists('\WPaas\Plugin')) {
-            return 'godaddy';
         }
 
         if (isset($_SERVER['DH_USER'])) {
@@ -1116,8 +1206,10 @@ class Diagnostics implements ArrayAccess
         return [
             self::GENERAL => $this->data[self::GENERAL] ?? null,
             self::ERRORS => $this->data[self::ERRORS] ?? null,
+            self::RELAY => $this->data[self::RELAY] ?? null,
             self::VERSIONS => $this->data[self::VERSIONS] ?? null,
             self::STATISTICS => $this->data[self::STATISTICS] ?? null,
+            self::GROUPS => $this->data[self::GROUPS] ?? null,
             self::CONFIG => $this->data[self::CONFIG] ?? null,
             self::ENV => $this->data[self::ENV] ?? null,
             self::CONSTANTS => $this->data[self::CONSTANTS] ?? null,

@@ -161,8 +161,6 @@ class Dashboard extends Page
      */
     protected function enqueueAssets()
     {
-        \wp_add_inline_style('dashboard', $this->plugin->inlineAsset('css/widget.css'));
-
         \wp_enqueue_script('postbox');
 
         if ($this->renderAnalytics) {
@@ -283,7 +281,7 @@ class Dashboard extends Page
      */
     public function defaultHiddenMetrics($hidden)
     {
-        return array_merge($hidden, array_filter([
+        return array_merge($hidden, [
             'objectcache_metric_hit_ratio',
             'objectcache_metric_hits',
             'objectcache_metric_misses',
@@ -301,9 +299,7 @@ class Dashboard extends Page
             'objectcache_metric_redis_misses',
             'objectcache_metric_redis_hit_ratio',
             'objectcache_metric_redis_keys',
-            $this->plugin->config()->prefetch
-                ? null
-                : 'objectcache_metric_prefetches',
+            'objectcache_metric_prefetches',
             'objectcache_metric_redis_used_memory',
             'objectcache_metric_redis_used_memory_rss',
             'objectcache_metric_redis_memory_ratio',
@@ -319,7 +315,7 @@ class Dashboard extends Page
             'objectcache_metric_relay_memory_total',
             'objectcache_metric_relay_memory_active',
             'objectcache_metric_relay_memory_ratio',
-        ]));
+        ]);
     }
 
     /**
@@ -387,12 +383,12 @@ class Dashboard extends Page
             'relay' => 'column4',
         ];
 
+        $usingRelay = $this->plugin->diagnostics()->usingRelayCache();
+
         $metrics = array_merge(
             WordPressMetrics::schema(),
             RedisMetrics::schema(),
-            $this->plugin->diagnostics()->usingRelay()
-                ? RelayMetrics::schema()
-                : [],
+            $usingRelay ? RelayMetrics::schema() : [],
             $this->comboMetrics()
         );
 
@@ -439,7 +435,7 @@ class Dashboard extends Page
             'redis-ops-per-sec',
         ];
 
-        if ($this->plugin->diagnostics()->usingRelay()) {
+        if ($this->plugin->diagnostics()->usingRelayCache()) {
             array_push($order, ...[
                 'relay-requests',
                 'relay-memory',
@@ -571,7 +567,7 @@ class Dashboard extends Page
             unset($metrics['redis-memory']['type']['redis-memory-ratio']);
         }
 
-        if ($this->plugin->diagnostics()->usingRelay()) {
+        if ($this->plugin->diagnostics()->usingRelayCache()) {
             $metrics['relay-requests'] = [
                 'title' => 'Requests',
                 'description' => 'Number of successful and failed key lookups and the hits-to-misses ratio.',

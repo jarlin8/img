@@ -151,7 +151,7 @@ class License
      */
     public function accessibleStabilities()
     {
-        $stabilities = self::Stabilities;
+        $stabilities = array_reverse(self::Stabilities);
 
         foreach ($stabilities as $stability => $label) {
             if ($stability === $this->stability) {
@@ -246,7 +246,7 @@ class License
     /**
      * Transform the license into a generic object.
      *
-     * @return object
+     * @return \stdClass
      */
     protected function toObject()
     {
@@ -347,6 +347,7 @@ class License
     /**
      * Bump the `last_check` timestamp on the license.
      *
+     * @param  \WP_Error  $error
      * @return self
      */
     public function checkFailed(WP_Error $error)
@@ -357,18 +358,29 @@ class License
     /**
      * Whether it's been given minutes since the last check.
      *
+     * @param  int  $minutes
      * @return bool
      */
     public function minutesSinceLastCheck(int $minutes)
     {
-        if (! $this->last_check) {
-            return true;
-        }
+        return true;
+    }
+
+    /**
+     * Whether it's been given hours since the last check.
+     *
+     * @param  int  $hours
+     * @return bool
+     */
+    public function hoursSinceLastCheck(int $hours)
+    {
+        return $this->minutesSinceLastCheck($hours * 60);
     }
 
     /**
      * Whether it's been given hours since the license was successfully verified.
      *
+     * @param  int  $hours
      * @return bool
      */
     public function hoursSinceVerification(int $hours)
@@ -379,11 +391,22 @@ class License
     }
 
     /**
+     * Whether the license needs to be verified again.
+     *
+     * @see \RedisCachePro\Plugin\Licensing::license()
+     * @return bool
+     */
+    public function needsReverification()
+    {
+        return false;
+    }
+
+    /**
      * Whether the license belongs to an Lx partner.
      *
      * @return bool
      */
-    public function isHost()
+    public function hostingLicense()
     {
         return (bool) preg_match('/^L\d /', (string) $this->plan);
     }

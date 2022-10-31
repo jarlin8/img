@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace RedisCachePro\Extensions\QueryMonitor;
 
+use QM_Data;
 use QM_Collector;
+use QM_Data_Cache;
 
 use RedisCachePro\Loggers\ArrayLogger;
 use RedisCachePro\ObjectCaches\ObjectCache;
@@ -19,6 +21,11 @@ class ObjectCacheCollector extends QM_Collector
     public $id = 'cache';
 
     /**
+     * @var array<string, mixed>|\QM_Data_Cache
+     */
+    protected $data;
+
+    /**
      * Returns the collector name.
      *
      * Obsolete since Query Monitor 3.5.0.
@@ -28,6 +35,16 @@ class ObjectCacheCollector extends QM_Collector
     public function name()
     {
         return 'Object Cache';
+    }
+
+    /**
+     * Use correct QM storage class.
+     *
+     * @return QM_Data_Cache
+     */
+    public function get_storage()
+    {
+        return new QM_Data_Cache;
     }
 
     /**
@@ -97,24 +114,31 @@ class ObjectCacheCollector extends QM_Collector
         $this->data['cache'] = $metrics->groups;
 
         $requestStart = $_SERVER['REQUEST_TIME_FLOAT'] ?? $timestart;
+        $requestTotal = (microtime(true) - $requestStart);
 
-        $this->data['ms_total'] = round((microtime(true) - $requestStart) * 1000, 2);
-
-        $ioWait = $wp_object_cache->connection()->ioWait();
-        $ioWaitTotal = array_sum($ioWait);
-        $ioWaitMedian = ObjectCache::array_median($ioWait);
-        $ioWaitRatio = $ioWaitTotal / (($ioWaitTotal + $this->data['ms_total']) / 100);
+        $this->data['ms_total'] = round($requestTotal * 1000, 2);
 
         if ($wp_object_cache->connection()) {
+            $ioWait = $wp_object_cache->connection()->ioWait();
+            $ioWaitTotal = array_sum($ioWait);
+            $ioWaitMedian = ObjectCache::array_median($ioWait);
+            $ioWaitRatio = ($ioWaitTotal / $requestTotal) * 100;
+
             $this->data['ms_cache'] = round($ioWaitTotal * 1000, 2);
             $this->data['ms_cache_median'] = round($ioWaitMedian * 1000, 2);
             $this->data['ms_cache_ratio'] = round($ioWaitRatio, $ioWaitRatio < 1 ? 3 : 1);
         }
 
         // Used by QM itself
-        $this->data['stats']['cache_hits'] = $info->hits;
-        $this->data['stats']['cache_misses'] = $info->misses;
         $this->data['cache_hit_percentage'] = $info->ratio;
+
+        if ($this->data instanceof QM_Data_Cache) {
+            $this->data->stats['cache_hits'] = $info->hits;
+            $this->data->stats['cache_misses'] = $info->misses;
+        } else {
+            $this->data['stats']['cache_hits'] = $info->hits;
+            $this->data['stats']['cache_misses'] = $info->misses;
+        }
 
         $logger = $wp_object_cache->logger();
 

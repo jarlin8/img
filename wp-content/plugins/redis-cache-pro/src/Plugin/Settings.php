@@ -422,6 +422,15 @@ trait Settings
      */
     public function maybeEnqueuePointer($hook_suffix)
     {
+        /**
+         * Filters whether the settings page pointer is shown.
+         *
+         * @param  bool  $omit  Whether to omit showing the settings page pointer.
+         */
+        if ((bool) apply_filters('objectcache_omit_settings_pointer', false)) {
+            return;
+        }
+
         if (! current_user_can(Plugin::Capability)) {
             return;
         }

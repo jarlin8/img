@@ -34,6 +34,13 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
     protected $client;
 
     /**
+     * The client's FQCN.
+     *
+     * @var string
+     */
+    protected $class = Relay::class;
+
+    /**
      * Create a new Relay instance connection.
      *
      * @param  \Relay\Relay  $client
@@ -53,9 +60,43 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
             $this->setBackoff();
         }
 
+        $this->setRelayOptions();
+    }
+
+    /**
+     * Set the connection's Relay specific options.
+     *
+     * @return void
+     */
+    protected function setRelayOptions()
+    {
         if ($this->config->relay->invalidations === false) {
-            $this->client->setOption(Relay::OPT_CLIENT_INVALIDATIONS, false);
+            $this->client->setOption($this->class::OPT_CLIENT_INVALIDATIONS, false);
         }
+
+        if (is_array($this->config->relay->allowed) && RelayConnector::supports('allow-patterns')) {
+            $this->client->setOption($this->class::OPT_ALLOW_PATTERNS, $this->config->relay->allowed);
+        }
+
+        if (is_array($this->config->relay->ignored)) {
+            $this->client->setOption($this->class::OPT_IGNORE_PATTERNS, $this->config->relay->ignored);
+        }
+    }
+
+    /**
+     * Whether the Relay connection uses in-memory caching, or is only a client.
+     *
+     * @return bool
+     */
+    public function hasInMemoryCache()
+    {
+        static $cache = null;
+
+        if (is_null($cache)) {
+            $cache = $this->memory() > 0 && $this->config->relay->cache;
+        }
+
+        return $cache;
     }
 
     /**
@@ -108,6 +149,22 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
     public function onInvalidated(callable $callback, string $pattern = null)
     {
         return $this->client->onInvalidated($callback, $pattern);
+    }
+
+    /**
+     * Returns the number of bytes allocated, or `0` in client-only mode.
+     *
+     * Bypasses the `command()` method to avoid log spam.
+     *
+     * @return int
+     */
+    public function memory()
+    {
+        if (! method_exists($this->class, 'memory')) {
+            return (int) ini_get('relay.maxmemory');
+        }
+
+        return $this->client->memory();
     }
 
     /**
