@@ -16,6 +16,21 @@ if ( empty( $schema['associatedMedia'] ) || empty( $schema['associatedMedia']['c
 }
 
 $post_title    = get_the_title( $post->ID );
+$episode_title = $schema['name'];
+if ( $schema['name'] === $post_title && $post->ID === get_the_ID() ) {
+	$episode_title = '';
+}
+
+/**
+ * Filter: 'rank_math/schema/podcast_episode_title' - Allow changing the title of the podcast episode. Pass false to disable.
+ *
+ * @var string $post_title The title of the podcast episode.
+ *
+ * @param WP_Post $post   The post object.
+ * @param array   $schema The schema array.
+ */
+$episode_title = apply_filters( 'rank_math/schema/podcast_episode_title', $episode_title, $post, $schema );
+
 $season        = ! empty( $schema['partOfSeason'] ) ? $schema['partOfSeason'] : [];
 $time_required = [];
 if ( isset( $schema['timeRequired'] ) && WordPress::get_formatted_duration( $schema['timeRequired'] ) ) {
@@ -66,10 +81,10 @@ ob_start();
 		</p>
 		<!-- /wp:paragraph -->
 
-		<?php if ( $schema['name'] !== $post_title || $post->ID !== get_the_ID() ) { ?>
+		<?php if ( $episode_title ) { ?>
 			<!-- wp:heading -->
 				<h2>
-					<?php echo esc_html( $schema['name'] ); ?>
+					<?php echo esc_html( $episode_title ); ?>
 				</h2>
 			<!-- /wp:heading -->
 		<?php } ?>
