@@ -98,7 +98,7 @@ if ( ! class_exists( 'BFI_Class_Factory' ) ) {
 /*
  * Change the default image editors
  */
-add_filter( 'wp_image_editors', 'bfi_wp_image_editor' );
+//add_filter( 'wp_image_editors', 'bfi_wp_image_editor' );
 
 // Instead of using the default image editors, use our extended ones
 if ( ! function_exists( 'bfi_wp_image_editor' ) ) {

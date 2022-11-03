@@ -66,7 +66,9 @@ if(function_exists('mycred_display_users_total_balance') && function_exists('myc
                 <div class="lineheight25 margincenter mb10 profile-stats">
                     <div class="pt5 pb5 pl10 pr10"><i class="rhicon rhi-user mr5 rtlml5"></i> <?php esc_html_e( 'Registration', 'rehub-theme' );  echo ': ' .date_i18n( get_option( "date_format" ), strtotime( $curauth->user_registered )); ?></div>
                     <div class="pt5 pb5 pl10 pr10"><i class="rhicon rhi-comment mr5 rtlml5"></i><?php esc_html_e( 'Comments', 'rehub-theme' ); echo ': ' . $count_comments; ?></div>
+                    <?php if(!rehub_option('hotmeter_disable')):?>
                     <div class="pt5 pb5 pl10 pr10"><i class="rhicon rhi-heartbeat mr5 rtlml5"></i><?php esc_html_e( 'Votes', 'rehub-theme' ); echo ': ' . $count_p_votes; ?></div>
+                    <?php endif;?>
                     <div class="pt5 pb5 pl10 pr10"><i class="rhicon rhi-briefcase mr5 rtlml5"></i><?php esc_html_e( 'Total submitted', 'rehub-theme' ); echo ': ' . $totalsubmitted; ?></div>
                     <?php if (!empty($mycredpoint)) :?><div class="rh_mycred_point_bal pt5 pb5 pl10 pr10"><i class="rhicon rhi-chart-bar mr5 rtlml5"></i><?php echo esc_html($mycredlabel);?>: <?php echo ''.$mycredpoint;?></div><?php endif;?>                               
                 </div>

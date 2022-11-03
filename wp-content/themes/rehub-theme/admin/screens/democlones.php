@@ -93,7 +93,11 @@ if($registeredlicense){
 		"demo19"=> array(
 			"link"=>"https://reviewit.wpsoul.net/",
 			"name"=>"ReLearn"
-		)					
+		),
+		"demo20"=> array(
+			"link"=>"https://remart.lookmetrics.co/",
+			"name"=>"ReMart"
+		),						
 	);
 }
 ?>

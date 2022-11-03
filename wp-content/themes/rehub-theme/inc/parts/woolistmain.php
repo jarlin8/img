@@ -49,7 +49,7 @@
     <?php if ($badge !='' && $badge !='0') :?> 
         <?php echo re_badge_create('ribbonleft'); ?>
     <?php elseif ( $product->is_featured() ) : ?>
-        <?php echo apply_filters( 'woocommerce_featured_flash', '<span class="re-ribbon-badge badge_2"><span>' . esc_html__( 'Featured!', 'rehub-theme' ) . '</span></span>', $post, $product ); ?>
+        <?php echo apply_filters( 'woocommerce_featured_flash', '<span class="re-ribbon-badge badge_2 left-badge"><span>' . esc_html__( 'Featured!', 'rehub-theme' ) . '</span></span>', $post, $product ); ?>
     <?php endif; ?> 
     <div class="button_action">
         <div class="floatleft mr5">

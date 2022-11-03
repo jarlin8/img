@@ -235,7 +235,7 @@ $widget_args = array( 'before_widget' => '<div class="rh-cartbox widget"><div>',
 								<?php if ( isset( $store_info['social'][ $key ] ) && !empty( $store_info['social'][ $key ] ) ) { ?>
 									<?php $iconcode = $field['icon']; ?>
 
-									  <a href="<?php echo esc_url( $store_info['social'][ $key ] ); ?>" class="author-social <?php echo esc_attr( $key ) ?>" title="<?php echo esc_attr($field['title']); ?>" target="_blank"><i class="fa fa-<?php echo esc_attr($iconcode); ?>"></i></a>
+									  <a href="<?php echo esc_url( $store_info['social'][ $key ] ); ?>" class="author-social <?php echo esc_attr( $key ) ?>" title="<?php echo esc_attr($field['title']); ?>" target="_blank"><i class="fab fa-<?php echo esc_attr($iconcode); ?>"></i></a>
 								<?php } ?>
 							<?php } ?>
 						</div>

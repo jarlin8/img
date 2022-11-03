@@ -128,7 +128,7 @@ form.cart div.quantity .screen-reader-text{display: none;}
 .woocommerce div.product .woocommerce-variation-price .price {font-size: 1.2em;}
 .woocommerce div.product .single_add_to_cart_button, .woocommerce div.product .woo-button-area .masked_coupon {display: inline-block; vertical-align: middle; cursor: pointer; font-weight: 700; font-size: 17px; line-height: 17px; text-align: center; transition: all 0.4s ease 0s !important; padding: 15px 20px; border: none !important; text-transform: uppercase; position: relative; text-shadow: none!important; width: 100%;  }
 .woocommerce div.product .summary .single_add_to_cart_button, .woocommerce div.product .woo-button-area .masked_coupon, .woocommerce div.product .summary form.cart .button{box-shadow: 0 28px 38px 0 rgba(0,0,0,0.06),0 30px 80px 0 rgba(0,0,0,0.12) !important;}
-.woocommerce form.cart .single_add_to_cart_button{max-width: 185px;}
+.woocommerce form.cart:not(.external-cart) .single_add_to_cart_button{max-width: 185px;}
 .woocommerce div.product form.cart .group_table{ border-top: 1px solid #E6E6E6; margin-bottom:25px; clear:both}
 .woocommerce div.product form.cart .group_table td{ vertical-align: middle;padding: 15px 12px;border-bottom: 1px solid #E6E6E6;line-height: 18px;font-size: 15px; }
 .woocommerce div.product form.cart .group_table td:last-child{padding-right:0}

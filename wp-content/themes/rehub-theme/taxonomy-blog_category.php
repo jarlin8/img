@@ -56,6 +56,15 @@
             <?php if (rehub_option('blog_archive_layout') == 'grid_blog' || rehub_option('blog_archive_layout') == 'gridfull_blog' || rehub_option('blog_archive_layout') == 'cardblog' || rehub_option('blog_archive_layout') == 'cardblogfull') : ?></div><?php endif ;?>
             <div class="clearfix"></div>
             <?php rehub_pagination(); ?>
+
+            <?php $catID = get_queried_object()->term_id; ?>
+            <?php $cat_seo_description = get_term_meta( $catID, 'brand_second_description', true );?>
+            <?php if($cat_seo_description):?>
+                <div class="mt30"></div>
+                <article class="cat_seo_description mt30 pt30 post"><?php echo wpautop( wptexturize(do_shortcode($cat_seo_description)));?></article>
+            <?php endif;?>
+
+
         </div>	
         <!-- /Main Side -->
         <?php if (rehub_option('blog_archive_layout') != 'gridfull_blog' && rehub_option('blog_archive_layout') != 'cardblogfull') : ?>

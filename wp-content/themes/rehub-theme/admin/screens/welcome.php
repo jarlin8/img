@@ -13,6 +13,8 @@ $tf_support_date = '';
 	$tf_username = isset( $rehub_options[ 'tf_username' ] ) ? $rehub_options[ 'tf_username' ] : '';
 	$tf_purchase_code = isset( $rehub_options[ 'tf_purchase_code' ] ) ? $rehub_options[ 'tf_purchase_code' ] : '';
 
+	
+
 	require_once ( 'lhelper.php');
 	// Create a new LicenseBoxAPI helper class.
 	$lbapi = new LicenseBoxAPI();
@@ -151,15 +153,15 @@ $tf_support_date = '';
 							<div style="border:1px solid #eee; padding:15px;flex-grow:1;">
 								<a href="https://1.envato.market/n1LqK7" target="_blank" style="color:#444; text-decoration:none">
 								<div style="float: left;font-size: 40px;margin-bottom: 5px;margin-right: 20px;color: #ff9800;"><i class="rhicon rhi-gift"></i></div>
-								<div style="font-size:18px;font-weight:bold">Buy 2 licenses</div>
-								<div style="font-size:15px; margin-top:8px;">and Get <strong style="color:#8234e4">4</strong> allowed sites</div>
+								<div style="font-size:18px;font-weight:bold">Buy 3 licenses</div>
+								<div style="font-size:15px; margin-top:8px;">and Get <strong style="color:#8234e4">10</strong> allowed sites</div>
 								</a>
 							</div>
 							<div style="border:1px solid #eee; padding:15px;flex-grow:1;margin:0 15px">
 								<a href="https://1.envato.market/n1LqK7" target="_blank" style="color:#444; text-decoration:none">
 								<div style="float: left;font-size: 40px;margin-bottom: 5px;margin-right: 20px;color: #ff9800;"><i class="rhicon rhi-trophy-alt"></i></div>
-								<div style="font-size:18px;font-weight:bold">Buy 3 licenses</div>
-								<div style="font-size:15px; margin-top:8px">and Get <strong style="color:#8234e4">10</strong> allowed sites</div>
+								<div style="font-size:18px;font-weight:bold">Buy 5 licenses</div>
+								<div style="font-size:15px; margin-top:8px">and Get <strong style="color:#8234e4">20</strong> allowed sites</div>
 								</a>
 							</div>
 							<div style="border:1px solid #eee; padding:15px;flex-grow:1">
@@ -211,15 +213,15 @@ $tf_support_date = '';
 					<div style="border:1px solid #eee; padding:15px;flex-grow:1;">
 						<a href="https://1.envato.market/n1LqK7" target="_blank" style="color:#444; text-decoration:none">
 						<div style="float: left;font-size: 40px;margin-bottom: 5px;margin-right: 20px;color: #ff9800;"><i class="rhicon rhi-gift"></i></div>
-						<div style="font-size:18px;font-weight:bold">Buy 2 licenses</div>
-						<div style="font-size:15px; margin-top:8px;">and Get <strong style="color:#8234e4">4</strong> allowed sites</div>
+						<div style="font-size:18px;font-weight:bold">Buy 3 licenses</div>
+						<div style="font-size:15px; margin-top:8px;">and Get <strong style="color:#8234e4">10</strong> allowed sites</div>
 						</a>
 					</div>
 					<div style="border:1px solid #eee; padding:15px;flex-grow:1;margin:0 15px">
 						<a href="https://1.envato.market/n1LqK7" target="_blank" style="color:#444; text-decoration:none">
 						<div style="float: left;font-size: 40px;margin-bottom: 5px;margin-right: 20px;color: #ff9800;"><i class="rhicon rhi-trophy-alt"></i></div>
-						<div style="font-size:18px;font-weight:bold">Buy 3 licenses</div>
-						<div style="font-size:15px; margin-top:8px">and Get <strong style="color:#8234e4">10</strong> allowed sites</div>
+						<div style="font-size:18px;font-weight:bold">Buy 5 licenses</div>
+						<div style="font-size:15px; margin-top:8px">and Get <strong style="color:#8234e4">20</strong> allowed sites</div>
 						</a>
 					</div>
 					<div style="border:1px solid #eee; padding:15px;flex-grow:1">

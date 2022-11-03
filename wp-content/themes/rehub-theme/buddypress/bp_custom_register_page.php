@@ -56,7 +56,7 @@ wp_enqueue_script('rehubuserlogin');
 								</div>
 								<div class="re-form-group mb20">
 									<label for="rehub_user_pass"><?php esc_html_e('Password', 'rehub-theme')?></label>
-									<input class="re-form-input required" name="rehub_user_pass" id="rehub_user_pass" type="password"/>
+									<input class="re-form-input required" name="rehub_user_pass" id="rehub_user_pass" type="password" autocomplete="on" />
 									<span class="alignright"><a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="color_link bp_resset_link_login"><?php esc_html_e('Lost Password?', 'rehub-theme');  ?></a></span>							
 								</div>
 								<div class="re-form-group mb20">
@@ -75,28 +75,6 @@ wp_enqueue_script('rehubuserlogin');
 							</div>
 						</div>
 			        </div>   
-			    <?php elseif($islogin == 'resetpass'):?>
-			    	<div id="buddypress">
-						<!-- Lost Password form -->
-						<div id="rehub-reset-popup">
-					 	<div class="rehub-reset-popup re-user-popup-wrap">
-							<div class="re_title_inmodal"><?php esc_html_e('Reset Password', 'rehub-theme'); ?></div>
-							<form id="rehub_reset_password_form_modal" action="<?php echo home_url( '/' ); ?>" method="post">
-								<div class="re-form-group mb20">
-									<label for="rehub_user_or_email"><?php esc_html_e('Username or E-mail', 'rehub-theme') ?></label>
-									<input class="re-form-input required" name="rehub_user_or_email" id="rehub_user_or_email" type="text"/>
-								</div>
-								<div class="re-form-group mb20">
-									<input type="hidden" name="action" value="rehub_reset_password_popup_function"/>
-									<button class="wpsm-button rehub_main_btn" type="submit"><?php esc_html_e('Get new password', 'rehub-theme'); ?></button>
-								</div>
-								<?php wp_nonce_field( 'ajax-login-nonce', 'password-security' ); ?>
-							</form>
-							<div class="rehub-errors"></div>
-							<div class="rehub-login-popup-footer"><?php esc_html_e('Already have an account?', 'rehub-theme'); ?> <a href="<?php echo esc_url(bp_get_signup_page()); ?>?type=login<?php echo ''.$membertypelink;?>" class="color_link bp_log_link_login"><?php esc_html_e('Login', 'rehub-theme'); ?></a></div>
-						</div>
-						</div>
-					</div>
 			    <?php else:?>
 			        <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 			            <?php the_content(); ?>

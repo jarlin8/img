@@ -645,11 +645,14 @@ function rh_woo_rating_icons_wrapper_zero($rating, $count){
 add_filter( 'woocommerce_structured_data_product', 'rh_woo_editor_schema', 10, 2 );
 function rh_woo_editor_schema($markup, $product){
 	global $post;
-	$editor_rating = get_post_meta($product->get_id(), 'rehub_review_overall_score', true);
+	$productid = $product->get_id();
+	$editor_rating = get_post_meta($productid, 'rehub_review_overall_score', true);
 
 	if($editor_rating){
-		$heading = get_post_meta($product->get_id(), '_review_heading', true);
-		$summary = get_post_meta($product->get_id(), '_review_post_summary_text', true);
+		$heading = get_post_meta($productid, '_review_heading', true);
+		$summary = get_post_meta($productid, '_review_post_summary_text', true);
+		$prosvalues = get_post_meta($productid, '_review_post_pros_text', true);
+		$consvalues = get_post_meta($productid, '_review_post_cons_text', true);
 		$author_data = get_userdata($post->post_author);
 		$markup['review'] = array(
 			'@type'       => 'Review',
@@ -664,6 +667,38 @@ function rh_woo_editor_schema($markup, $product){
 		      "name" => $author_data->display_name,
 		    ),								
 		);
+		if(!empty($prosvalues)){
+			$prosvalues = explode(PHP_EOL, $prosvalues);
+			$prosarray = array();
+			$i = 1;
+			foreach ($prosvalues as $prosvalue) {
+				$prosarray[] = array(
+					'@type'       => 'ItemList',
+					'position' => $i,
+					'name' => $prosvalue
+				);
+			}
+			$markup['review']['positiveNotes'] = array(
+				'@type'       => 'ItemList',
+				'itemListElement' => $prosarray					
+			);
+		}
+		if(!empty($consvalues)){
+			$consvalues = explode(PHP_EOL, $consvalues);
+			$consarray = array();
+			$i = 1;
+			foreach ($consvalues as $consvalue) {
+				$consarray[] = array(
+					'@type'       => 'ItemList',
+					'position' => $i,
+					'name' => $consvalue
+				);
+			}
+			$markup['review']['negativeNotes'] = array(
+				'@type'       => 'ItemList',
+				'itemListElement' => $consarray					
+			);
+		}
 		if($summary){
 			$markup['review']['reviewBody'] = $summary;
 		}	
@@ -680,7 +715,7 @@ function rh_woo_editor_schema($markup, $product){
 			);				
 		}			
 	}
-    $term_ids =  wc_get_product_terms($post->ID, 'store', array("fields" => "ids")); 
+    $term_ids =  wc_get_product_terms($productid, 'store', array("fields" => "ids")); 
 	if (!empty($term_ids) && ! is_wp_error($term_ids)) {
 		$term_id = $term_ids[0];
     	$tagobj = get_term_by('id', $term_id, 'store');
@@ -2105,10 +2140,6 @@ if(defined( 'WCFMmp_TOKEN' )){
 		$args['wcfmmp_button_active_text_color']['element'] = '#wcfmmp-store .add_review button:hover, #wcfmmp-stores-wrap a.wcfmmp-visit-store:hover, #wcfmmp-store .bd_icon_box .wcfm_store_enquiry:hover, #wcfmmp-store .bd_icon_box .wcfm_store_enquiry:hover span';
 
 		return $args;
-	}
-	
-	if(class_exists('WCFMmp_Frontend')){
-		add_action( 'rehub_vendor_show_action', array('WCFMmp_Frontend', 'wcfmmp_sold_by_product'), 50);
 	}
 	
 

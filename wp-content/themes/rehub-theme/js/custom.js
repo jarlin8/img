@@ -84,7 +84,7 @@ var revMenuStyle = function() {
         e.preventDefault();
         e.stopPropagation();        
         jQuery('#wpadminbar').css('z-index', '999');
-        document.querySelector('.rh-outer-wrap').classList.add('rh-outer-wrap-move');
+        //document.querySelector('.rh-outer-wrap').classList.add('rh-outer-wrap-move');
         navMenu.fadeIn(100);
         menuList.addClass('off-canvas-active');
         jQuery(this).addClass('toggle-active');                
@@ -106,7 +106,7 @@ var revMenuStyle = function() {
         //event.preventDefault();
         event.stopPropagation();        
         setTimeout(function(){ 
-            document.querySelector('.rh-outer-wrap').classList.remove('rh-outer-wrap-move');
+            //document.querySelector('.rh-outer-wrap').classList.remove('rh-outer-wrap-move');
             menuList.removeClass('off-canvas-active');
             openMenu.removeClass('toggle-active');
             jQuery('.sub-menu').removeClass('sub-menu-active'); 
@@ -415,30 +415,22 @@ jQuery(function($){
       }
     });
 
-   $(document).on('inview', '.review_visible_circle, .top_table_block, .top_chart', function(event, visible) {
-      if (visible) {
-        $('.radial-progress').each(function(){
-          $(this).find('.circle .mask.full, .circle .fill:not(.fix)').animate({  borderSpacing: $(this).attr('data-rating')*18 }, {
-              step: function(now,fx) {
-                $(this).css('-webkit-transform','rotate('+now+'deg)'); 
-                $(this).css('-moz-transform','rotate('+now+'deg)');
-                $(this).css('transform','rotate('+now+'deg)');
-              },
-              duration:'slow'
-          },'linear');
+    $('.radial-progress').each(function(){
+        $(this).find('.circle .mask.full, .circle .fill:not(.fix)').animate({  borderSpacing: $(this).attr('data-rating')*18 }, {
+            step: function(now,fx) {
+              $(this).css('transform','rotate('+now+'deg)');
+            },
+            duration:'slow'
+        },'linear');
 
-          $(this).find('.circle .fill.fix').animate({  borderSpacing: $(this).attr('data-rating')*36 }, {
-              step: function(now,fx) {
-                $(this).css('-webkit-transform','rotate('+now+'deg)'); 
-                $(this).css('-moz-transform','rotate('+now+'deg)');
-                $(this).css('transform','rotate('+now+'deg)');
-              },
-              duration:'slow'
-          },'linear');                   
-  
-        });
-      }
-   }); 
+        $(this).find('.circle .fill.fix').animate({  borderSpacing: $(this).attr('data-rating')*36 }, {
+            step: function(now,fx) {
+              $(this).css('transform','rotate('+now+'deg)');
+            },
+            duration:'slow'
+        },'linear');                   
+
+      });
 
   });
 });  

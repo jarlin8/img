@@ -26,7 +26,7 @@
     <div class="rh-content-wrap clearfix">
         <div class="rh-mini-sidebar-content-area tabletblockdisplay floatright">
             <div class="woo-tax-name">
-                <h1 class="mt0 mb15 font150"><?php echo rehub_kses($heading);?></h1>
+                <h1 class="mt0 mb15 font150"><?php echo do_shortcode($heading);?></h1>
                 <?php
                     $description = term_description();
                     if ( $description && !is_paged() ) {

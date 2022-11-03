@@ -1796,6 +1796,7 @@ function wpsm_toprating_shortcode( $atts, $content = null ) {
 		                    $showimg->use_thumb = true; 
 		                    $showimg->no_thumb = get_template_directory_uri() . '/images/default/noimage_200_140.png' ;
 		                    $showimg->height = '126';  
+		                    $showimg->width = '200'; 
 		                    $showimg->lazy = false;                  
 		                    ?>        
 		                    <?php $showimg->show_resized_image(); ?> 
@@ -3692,7 +3693,7 @@ function wpsm_get_custom_value($atts, $content = null){
 	    'posttextclass' => '',
 	    'showtoggle' => '',
 	    'symbollimit' => '',
-		'spanvalue'=> '',
+		'spanvalue'=> '1',
 		'imageMapper' => '',
 
 	), $atts));
@@ -4518,7 +4519,7 @@ function wpsm_catbox_shortcode( $atts, $content = null ) {
 			$title = ( $title && $title !='' ) ? $title : $term->name;
 			$output .= '<div class="rh-transition-box position-relative flowhidden full_cover_link">';					
 				if ( !$disablelink && is_numeric( $term->term_id )) {
-					$output .= '<a href="'. get_term_link( $term->term_id ) .'" rel="nofollow">';
+					$output .= '<a href="'. get_term_link( $term->term_id ) .'">';
 				}
 				
 				if ( !$disablelink ) {

@@ -106,7 +106,7 @@ function rehub_login_register_modal() {
 						</div>
 						<div class="re-form-group mb20">
 							<label for="rehub_user_pass"><?php esc_html_e('Password', 'rehub-theme')?></label>
-							<input class="re-form-input required" name="rehub_user_pass" id="rehub_user_pass" type="password"/>
+							<input class="re-form-input required" name="rehub_user_pass" id="rehub_user_pass" type="password" autocomplete="on" />
 							<?php if(class_exists('Woocommerce')) :?>
 								<a href="<?php echo wc_lostpassword_url(); ?>" class="alignright"><?php esc_html_e('Lost Password?', 'rehub-theme'); ?></a>
 							<?php else: ?>
@@ -134,25 +134,6 @@ function rehub_login_register_modal() {
 				</div>
 				</div>
 
-				<!-- Lost Password form -->
-				<div id="rehub-reset-popup">
-			 	<div class="rehub-reset-popup">
-					<div class="re_title_inmodal"><?php esc_html_e('Reset Password', 'rehub-theme'); ?></div>
-					<form id="rehub_reset_password_form_modal" action="<?php echo home_url( '/' ); ?>" method="post">
-						<div class="re-form-group mb20">
-							<label for="rehub_user_or_email"><?php esc_html_e('Username or E-mail', 'rehub-theme') ?></label>
-							<input class="re-form-input required" name="rehub_user_or_email" id="rehub_user_or_email" type="text"/>
-						</div>
-						<div class="re-form-group mb20">
-							<input type="hidden" name="action" value="rehub_reset_password_popup_function"/>
-							<button class="wpsm-button rehub_main_btn" type="submit"><?php esc_html_e('Get new password', 'rehub-theme'); ?></button>
-						</div>
-						<?php wp_nonce_field( 'ajax-login-nonce', 'password-security' ); ?>
-					</form>
-					<div class="rehub-errors"></div>
-					<div class="rehub-login-popup-footer"><?php esc_html_e('Already have an account?', 'rehub-theme'); ?> <span class="act-rehub-login-popup color_link" data-type="login"><?php esc_html_e('Login', 'rehub-theme'); ?></span></div>
-				</div>
-				</div>
 			</div>
 			<?php
 
@@ -412,118 +393,3 @@ function rehub_register_member_popup_function(){
 }
 add_action('wp_ajax_nopriv_rehub_register_member_popup_function', 'rehub_register_member_popup_function');
 }
-
-
-// RESET PASSWORD
-if( !function_exists('rehub_reset_password_popup_function') ) {
-function rehub_reset_password_popup_function(){
-	// Get variables
-	$username_or_email = sanitize_text_field($_POST['rehub_user_or_email']);
-
-	// Check CSRF token
-	if( !check_ajax_referer( 'ajax-login-nonce', 'password-security', false) ){
-		echo json_encode(array('error' => true, 'message'=> '<div class="wpsm_box warning_type mb30">'.__('Session has expired, please reload the page and try again', 'rehub-theme').'</div>'));
-	}		
-
- 	// Check if input variables are empty
- 	elseif(empty($username_or_email)){
-		echo json_encode(array('error' => true, 'message'=> '<div class="wpsm_box warning_type mb30">'.__('Please fill all form fields', 'rehub-theme').'</div>'));
- 	}
-
- 	else{
-		$username = is_email($username_or_email) ? sanitize_email($username_or_email) : sanitize_user($username_or_email);
-		$user_forgotten = rehub_lostPassword_retrieve($username);	
-		if(is_wp_error($user_forgotten)){	
-			$lostpass_error_messages = $user_forgotten->errors;
-			$display_errors = '<div class="wpsm_box warning_type mb0">';
-			foreach($lostpass_error_messages as $error){
-				$display_errors .= '<p>'.$error[0].'</p>';
-			}
-			$display_errors .= '</div>';		
-			echo json_encode(array('error' => true, 'message' => $display_errors));
-		}else{
-			echo json_encode(array('error' => false, 'message' => '<div class="wpsm_box green_type mb30">'.__('Password was reset. Please check your email. Reloading page...', 'rehub-theme').'</div>'));
-		}
- 	}
- 	wp_die();
-}	
-add_action('wp_ajax_nopriv_rehub_reset_password_popup_function', 'rehub_reset_password_popup_function');
-}
-
-function rehub_lostPassword_retrieve( $user_data ) {
-	
-	global $wpdb, $current_site, $wp_hasher;
-	$errors = new WP_Error();
-
-	if(empty($user_data)){
-		$errors->add( 'empty_username', esc_html__( 'Please enter a username or e-mail address.', 'rehub-theme' ) );
-	}elseif(strpos($user_data, '@')){
-		$user_data = get_user_by( 'email', trim( $user_data ) );
-		if(empty($user_data)){
-			$errors->add( 'invalid_email', esc_html__( 'There is no user registered with that email address.', 'rehub-theme'  ) );
-		}
-	}else{
-		$login = trim( $user_data );
-		$user_data = get_user_by('login', $login);
-	}
-	if($errors->get_error_code()){
-		return $errors;
-	}
-	if(!$user_data){
-		$errors->add('invalidcombo', esc_html__('Invalid username or e-mail.', 'rehub-theme'));
-		return $errors;
-	}
-	
-	$user_login = $user_data->user_login;
-	$user_email = $user_data->user_email;
-	do_action('retrieve_password', $user_login);
-	$allow = apply_filters('allow_password_reset', true, $user_data->ID);
-	if(!$allow){
-		return new WP_Error( 'no_password_reset', esc_html__( 'Password reset is not allowed for this user', 'rehub-theme' ) );
-	}
-	elseif(is_wp_error($allow)){
-		return $allow;
-	}
-	$key = wp_generate_password(20, false);
-	do_action('retrieve_password_key', $user_login, $key);
-	if(empty($wp_hasher)){
-		require_once ABSPATH.'wp-includes/class-phpass.php';
-		$wp_hasher = new PasswordHash(8, true);
-	}
-	$hashed = $wp_hasher->HashPassword($key);
-	$wpdb->update($wpdb->users, array('user_activation_key' => $hashed), array('user_login' => $user_login));
-	$message = esc_html__('Someone requested password reset for the following account:', 'rehub-theme' ) . "\r\n\r\n";
-	$message .= network_home_url( '/' ) . "\r\n\r\n";
-	$message .= sprintf( esc_html__( 'Username: %s', 'rehub-theme' ), $user_login ) . "\r\n\r\n";
-	$message .= esc_html__('If this was a mistake, just ignore this email and nothing will happen.', 'rehub-theme' ) . "\r\n\r\n";
-	$message .= esc_html__('To reset your password, visit the following address:', 'rehub-theme' ) . "\r\n\r\n";
-	$message .= '<' . network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' ) . ">\r\n\r\n";
-	
-	if ( is_multisite() ) {
-		$blogname = wp_specialchars_decode( get_option( 'site_name' ), ENT_QUOTES );
-	} else {
-		$blogname = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-	}
-	$from_name = $blogname == '' ? 'WordPress' : $blogname;
-	$title   = sprintf( esc_html__( '[%s] Password Reset', 'rehub-theme' ), $from_name );
-	$title   = apply_filters( 'retrieve_password_title', $title );
-	$message = apply_filters( 'retrieve_password_message', $message, $key, $user_login, $user_data );
-	
-	$admin_email = get_site_option( 'admin_email' );
-	if ( $admin_email == '' )
-		$admin_email = 'support@site.com';
-	$message_headers = "From: \"{$from_name}\" <{$admin_email}>\n" . "Content-Type: text/plain; charset=\"" . get_option('blog_charset') . "\"\n";
-	
-	if ( $message) {
-		$sendmessage = '';
-		if(class_exists('REHub_Framework')){
-			$sendmessage = rh_send_message_eml( $user_email, $title, $message, $message_headers );
-		}
-		if(!$sendmessage){
-			$errors->add( 'noemail', esc_html__( 'The e-mail could not be sent. Possible reason: your host may have disabled the mail function or RH Framework is not installed.', 'rehub-theme' ) );
-			return $errors;
-			wp_die();
-		}
-	}
-	return true;
-}	

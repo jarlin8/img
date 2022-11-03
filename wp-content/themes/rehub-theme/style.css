@@ -4,11 +4,10 @@
 	Description: A Hybrid magazine/shop/review/news Wordpress Theme
 	Author: Wpsoul
 	Author URI: https://wpsoul.com/
-	Secret Key: 83a5bb0e2ad5164690bc7a42ae592cf5
-	Version: 18.0
+	Version: 18.5
 	Tags: two-columns, fluid-layout, custom-background, threaded-comments, translation-ready, custom-menu
-	License: Babiato
-	License URI: Babiato.co
+	License: 
+	License URI:
 	Text Domain: rehub-theme
 ***************************************/
 
@@ -57,7 +56,6 @@ img {max-width: 100%;height: auto;vertical-align: top; border: 0;}
 .clearfix:before, .clearfix:after { content: ""; display: table; }
 .clearfix:after { clear: both; }
 .clearbox{ clear: both;}.clearboxleft{ clear: left;}.clearboxright{ clear: right;}
-mark{background-color: #fed700; color: #000}
 
 /* ICONS */
 a.ajax_add_to_cart.loading:after, .wpsm_pretty_list ul li:before, .loading .re-icon-compare:before, .loading.table_view_charts:before, .post_carousel_block.loading:before, .woo_carousel_block.loading:before, .cons_comment_item:before, .pros_comment_item:before, span.date_meta:before, span.cat_link_meta:before, span.comm_count_meta:before, span.postview_meta:before, span.admin_meta:before, .wpsm_cons ul li:before, .wpsm_pros ul li:before, #buddypress .standard-form div.radio ul li:before, .re_carousel .controls:after, .media_owl_carousel .gp-overlay a:before, .rh_category_tab ul.cat_widget_custom li a:before, .widget.top_offers .title:before, .widget.cegg_widget_products .title:before, .rehub_chimp:before, .def_btn.active_ajax_pagination:before, .top_chart_controls .controls.next:after, .top_chart_controls .controls.prev:after, .postNavigation .postnavprev:before, .commentlist ul.children .commbox:before, .comment-reply-link:before, .comment-reply-login:before, .comment-respond .usr_re:after, .comment-respond .email_re:after, .comment-respond .site_re:after, .re_loadingafter:after, .re_loadingbefore:before, .togglegreedybtn:before, .rh-heading-icon:before, .thumbminus:before, .thumbplus:before, .heartplus:before, .post_thumbs_comm span:before, .thumbminus.loading:before, .thumbplus.loading:before, .heartplus.loading:before, .hotminus:before, .hotplus:before, .hoticonfireclass:before, .cold_temp .gradus_icon:before, .categorytable li a:before, .categorytable p a:before, span.stars-rate, .rh-star-ajax .stars-rate-ajax-type, .btn_act_for_grid .thumbscount:before, .comm_number_for_grid:before, .more-from-store-a a:before, div.sortingloading:after, .re_filter_instore ul.re_filter_ul li span:before, .re_filter_panel .re_tax_dropdown.activeul li.label:after, .userstar-rating, .re-user-popup-wrap .wpsm-button.loading:after, .user-ava-intop:after, .printthecoupon:before, #rh-category-search .tt-suggestion:before, .rh_videothumb_link:before, .re-compare-icon-toggle:before, .wpsm_box.standart_type i, .wpsm_box.info_type i, .wpsm_box.warning_type i, .wpsm_box.error_type i, .wpsm_box.download_type i, .wpsm_box.note_type i, .icon-search-onclick:before, nav.top_menu ul li.menu-item-has-children ul li.menu-item-has-children > a:before, .rh-menu-label:after, .wpsm_score_box .priced_block .btn_offer_block:not(.rehub_offer_coupon):before, .rh_post_layout_compare_autocontent .pros-list li:before, .re-user-popup-wrap .wpsm-button.loading:after, nav.top_menu ul.menu:not(.off-canvas) > li.menu-item-has-children > a:before, .header-top .top-nav > ul > li.menu-item-has-children > a:before, .toggle-this-table:after{font-family: rhicons;}
@@ -956,8 +954,8 @@ ul.hidden-links li{float: left;}.zind2{z-index: 2;}.zind1{z-index: 1;}
 
 /* BADGES*/
 .re-line-badge {color: #fff; padding: 5px 10px; background: #77B21D; text-shadow: 0 1px 0 #999; font-weight:bold; font-size: 10px; line-height:14px; position: relative; text-transform: uppercase; display: inline-block; z-index: 9}
-.re-line-badge span:before{content: "?"; margin-right: 4px; font-size: 95%}
-.re-line-badge span:after{content: "?"; margin-left: 4px; font-size: 95%}
+.re-line-badge span:before{content: "★"; margin-right: 4px; font-size: 95%}
+.re-line-badge span:after{content: "★"; margin-left: 4px; font-size: 95%}
 .re-line-badge.re-line-badge--default{font-size:11px;line-height:1;text-shadow:none}.re-line-badge.re-line-badge--default span:after,.re-line-badge.re-line-badge--default span:before{display:none}
 .re-line-badge.re-line-table-badge span:before { width: 0; height: 0; border-style: solid; border-width: 0 8px 8px 0; border-color: transparent #333 transparent transparent; position: absolute; left: 0; top: 100%; content: ""; margin: 0 }
 .re-line-badge.re-line-table-badge:before {width: 0;height: 0;border-style: solid;border-width: 14px 15px 0 0;border-color: #77B21D transparent transparent transparent;position: absolute;left: 100%;top: 0;content: "";}
@@ -1031,7 +1029,7 @@ ul.hidden-links li{float: left;}.zind2{z-index: 2;}.zind1{z-index: 1;}
 .dealScoreWrap .thumbplus, .dealScoreWrap .thumbminus{height: 32px; width: 32px; line-height: 32px; background-color: #fff}
 .coupon_code_in_modal .table_cell_thumbs{display: inline-block; float: none;}
 .hoticonfireclass:before{ content: "\f06d"; margin-right: 5px; color: #CA212A; }
-.gradus_icon:before{vertical-align:top; content: "�"; margin: 0 2px; }
+.gradus_icon:before{vertical-align:top; content: "°"; margin: 0 2px; }
 .cold_temp .gradus_icon:before{content: "\f2dc";font-size: 80%}
 .favorshop_like i{margin: 0 !important; padding: 0 !important;}
 .favorrightside .heart_thumb_wrap{position: absolute; top: 5px; right: 3px;}
@@ -1101,8 +1099,8 @@ span.stars-rate{font-size: 17px;height: 21px !important;line-height: 21px;overfl
 span.stars-rate:before {content: '\e9d7\e9d7\e9d7\e9d7\e9d7';color: #ccc; font-weight: 300}
 span.stars-rate span {overflow: hidden;float: left;top: 0;left: 0;position: absolute;padding-top: 1.5em;background: none transparent !important}
 span.stars-rate span:before {content: "\e9d9\e9d9\e9d9\e9d9\e9d9";top: 0;position: absolute;left: 0;color: #F6A123;}
-span.stars-rate.unix-star:before {content: '?????';}
-span.stars-rate.unix-star span:before {content: "?????";}
+span.stars-rate.unix-star:before {content: '★★★★★';}
+span.stars-rate.unix-star span:before {content: "★★★★★";}
 span.stars-rate.blue-star span:before{color: #ff9800}
 .user-rate { float: right; width: 105px;overflow: hidden; }
 .rh-star-ajax .stars-rate-ajax-type{font-size: 17px;height: 21px !important;line-height: 21px;width: 105px;overflow: hidden;font-weight: normal;text-align: left; background: none transparent !important;text-rendering: auto;-webkit-font-smoothing: antialiased; white-space: nowrap;}
@@ -1507,5 +1505,3 @@ body .wpsm-table.wpsm-table-grey table tr th, .table-condensed tr th, .wp-block-
 	.post .rehub_woo_tabs_menu li{ border:1px solid #cecece; margin-bottom: 4px;}
 	.post .rehub_woo_tabs_menu li.current{ border-bottom:1px solid #cecece; background-color:#111; color:#fff;}
 }
-/* Anti-Leecher Indentifier */
-/* Credited By BABIATO-FORUM */

@@ -384,13 +384,13 @@ function myplugin_comment_column( $column, $comment_ID )
 	$userCriteria = get_comment_meta($comment_ID, 'user_criteria', true);	
 	$pros_review = get_comment_meta($comment_ID, 'pros_review', true);
 	$cons_review = get_comment_meta($comment_ID, 'cons_review', true);
-	if(is_array($userCriteria) && !empty($userCriteria)) {
-		if(isset($pros_review) && $pros_review != '') {
-			echo ''.__('+ PROS:', 'rehub-theme').' '.$pros_review.'<br />';
-		};
-		if(isset($cons_review) && $cons_review != '') {
-			echo ''.__('- CONS:', 'rehub-theme').' '.$cons_review.'<br /><br />';
-		};		
+	if(isset($pros_review) && $pros_review != '') {
+		echo ''.__('+ PROS:', 'rehub-theme').' '.$pros_review.'<br />';
+	};
+	if(isset($cons_review) && $cons_review != '') {
+		echo ''.__('- CONS:', 'rehub-theme').' '.$cons_review.'<br /><br />';
+	};	
+	if(is_array($userCriteria) && !empty($userCriteria)) {	
 		for($i = 0; $i < count($userCriteria); $i++) {		
 			echo ''.$userCriteria[$i]['name'].': <strong class="rating">'.$userCriteria[$i]['value'].'</strong><br />';
 		};		
@@ -421,10 +421,18 @@ function rehub_admin_update_comment( $data, $comment ) {
         update_comment_meta( $comment_id, 'user_criteria', (array) $data['user_criteria'] );
     }
 
-    // Run update Post rating
-    if( $data['comment_approved'] ) {
-        rh_update_post_rating( $comment_id );
-    }
+	if( isset( $data['removerating'] ) ) {
+		remove_comment_rates($comment_id);
+		rehub_rewrite_user_review($comment_id);
+		delete_comment_meta( $comment_id, 'user_criteria');
+		delete_comment_meta( $comment_id, 'cons_review' );
+		delete_comment_meta( $comment_id, 'pros_review' );
+    }else{
+		// Run update Post rating
+		if( $data['comment_approved'] ) {
+			rh_update_post_rating( $comment_id );
+		}
+	}
 
     // Return regular value after updating
     return $data;
@@ -472,7 +480,8 @@ if( !function_exists('rh_review_inner_custom_box') ) {
 						'<tbody>',
 							$prosconsRow,
 							$criteriaRow,
-						'</tbody></table><br>',
+						'</tbody></table><br><input style="margin-left:10px" type="checkbox" id="removerating" name="removerating" value="yes">
+						<label style="margin-right:10px" for="removerating">Remove user review</label><br>',
 					'</fieldset>';	
 			}	
 		}

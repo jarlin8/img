@@ -581,11 +581,11 @@ function rehub_get_review(){
 			<?php 	
 				$prosvalues = get_post_meta($post->ID, '_review_post_pros_text', true);
 				if(empty($prosvalues)){
-					$prosvalues = $review_post['review_post_pros_text'];
+					$prosvalues = (!empty($review_post['review_post_pros_text'])) ? $review_post['review_post_pros_text'] : '';
 				}
 				$consvalues = get_post_meta($post->ID, '_review_post_cons_text', true);
 				if(empty($consvalues)){
-					$consvalues = $review_post['review_post_cons_text'];
+					$consvalues = (!empty($review_post['review_post_cons_text'])) ? $review_post['review_post_cons_text'] : '';
 				}
 			?> 
 			<?php $pros_cons_wrap = (!empty($prosvalues) || !empty($consvalues) ) ? ' class="pros_cons_values_in_rev flowhidden"' : ' class="flowhidden"'?>
