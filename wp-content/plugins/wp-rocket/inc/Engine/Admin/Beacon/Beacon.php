@@ -377,6 +377,16 @@ class Beacon extends Abstract_Render implements Subscriber_Interface {
 					'url' => 'https://docs.wp-rocket.me/article/39-excluding-external-js-from-concatenation/?utm_source=wp_plugin&utm_medium=wp_rocket',
 				],
 			],
+			'exclude_css'                => [
+				'en' => [
+					'id'  => '5bf339b12c7d3a31944e2111',
+					'url' => 'https://docs.wp-rocket.me/article/1131-resolving-issues-with-css-minify-combine?utm_source=wp_plugin&utm_medium=wp_rocket',
+				],
+				'fr' => [
+					'id'  => '5bf3bece04286304a71c6d35',
+					'url' => 'https://fr.docs.wp-rocket.me/article/1132-resoudre-problemes-minification-combinaison-css?utm_source=wp_plugin&utm_medium=wp_rocket',
+				],
+			],
 			'defer_js'                   => [
 				'en' => [
 					'id'  => '5d52138d2c7d3a68825e8faa',
@@ -436,6 +446,16 @@ class Beacon extends Abstract_Render implements Subscriber_Interface {
 			'preload_bot'                => [
 				'en' => '541780fde4b005ed2d11784c,55b282ede4b0b0593824f852,559113eae4b027e1978eba11',
 				'fr' => '5693d582c69791436155d645,569433d1c69791436155d99c',
+			],
+			'preload_exclusions'         => [
+				'en' => [
+					'id'  => '6349682bde258f5018eb456d',
+					'url' => 'https://docs.wp-rocket.me/article/1721-exclude-urls-from-being-preloaded?utm_source=wp_plugin&utm_medium=wp_rocket',
+				],
+				'fr' => [
+					'id'  => '63496d5b8a552811521e52d2',
+					'url' => 'https://fr.docs.wp-rocket.me/article/1722-exclure-url-du-prechargement?utm_source=wp_plugin&utm_medium=wp_rocket',
+				],
 			],
 			'bot'                        => [
 				'en' => [
@@ -647,6 +667,16 @@ class Beacon extends Abstract_Render implements Subscriber_Interface {
 				'fr' => [
 					'id'  => '5e970f512c7d3a7e9aeaf9fb',
 					'url' => 'https://fr.docs.wp-rocket.me/article/1314-optimiser-les-google-fonts/?utm_source=wp_plugin&utm_medium=wp_rocket',
+				],
+			],
+			'dynamic_lists'              => [
+				'en' => [
+					'id'  => '63234712b0f178684ee3b04a',
+					'url' => 'https://docs.wp-rocket.me/article/1716-dynamic-exclusions-and-inclusions/?utm_source=wp_plugin&utm_medium=wp_rocket',
+				],
+				'fr' => [
+					'id'  => '6323604341e1a47267b8d0e3',
+					'url' => 'https://fr.docs.wp-rocket.me/article/1717-inclusions-et-exclusions-dynamiques/?utm_source=wp_plugin&utm_medium=wp_rocket',
 				],
 			],
 			'image_dimensions'           => [
