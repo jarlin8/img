@@ -189,8 +189,9 @@ class Variation_Images_Frontend {
 
 		wp_send_json( array(
 			'data' => array(
-				'images' => $images,
-				'thumbs' => $thumbs,
+				'uniqueMainImage' => (bool) $variation->get_image_id( 'edit ' ),
+				'images'          => $images,
+				'thumbs'          => $thumbs,
 			),
 		) );
 	}

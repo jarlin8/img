@@ -254,110 +254,114 @@ if($alert_color && $alert_color !== Flatsome_Default::COLOR_ALERT){ ?>
 <?php } ?>
 
 <?php
+	if(get_theme_mod('color_texts')){
+		echo 'body{color: '.get_theme_mod('color_texts').'}';
+	}
+
+	if(get_theme_mod('type_headings_color')){
+	  echo 'h1,h2,h3,h4,h5,h6,.heading-font{color: '.get_theme_mod('type_headings_color').';}';
+	}
+?>
+
+<?php
 // Get Type options.
-$type_nav      = \Kirki_Field_Typography::sanitize( get_theme_mod( 'type_nav', array( 'font-family' => 'Lato', 'variant' => '700' ) ) );
-$type_texts    = \Kirki_Field_Typography::sanitize( get_theme_mod( 'type_texts', array( 'font-family' => 'Lato', 'variant' => 'regular' ) ) );
-$type_headings = \Kirki_Field_Typography::sanitize( get_theme_mod( 'type_headings', array( 'font-family' => 'Lato', 'variant' => '700' ) ) );
-$type_alt      = \Kirki_Field_Typography::sanitize( get_theme_mod( 'type_alt', array( 'font-family' => 'Dancing Script', 'variant' => 'regular' ) ) );
+if ( ! get_theme_mod( 'disable_fonts', 0 ) ) :
+	$type_nav      = \Kirki_Field_Typography::sanitize( get_theme_mod( 'type_nav', array( 'font-family' => 'Lato', 'variant' => '700' ) ) );
+	$type_texts    = \Kirki_Field_Typography::sanitize( get_theme_mod( 'type_texts', array( 'font-family' => 'Lato', 'variant' => 'regular' ) ) );
+	$type_headings = \Kirki_Field_Typography::sanitize( get_theme_mod( 'type_headings', array( 'font-family' => 'Lato', 'variant' => '700' ) ) );
+	$type_alt      = \Kirki_Field_Typography::sanitize( get_theme_mod( 'type_alt', array( 'font-family' => 'Dancing Script', 'variant' => 'regular' ) ) );
 
-// Type sizes
-if(get_theme_mod('type_size', 100) !== 100){
-   echo 'body{font-size: '.get_theme_mod('type_size').'%;}';
-}
-if(get_theme_mod('type_size_mobile', 100) !== 100){
-   echo '@media screen and (max-width: ' . $small_screen_max . '){body{font-size: '.get_theme_mod('type_size_mobile').'%;}}';
-}
+	// Type sizes
+	if(get_theme_mod('type_size', 100) !== 100){
+	   echo 'body{font-size: '.get_theme_mod('type_size').'%;}';
+	}
+	if(get_theme_mod('type_size_mobile', 100) !== 100){
+	   echo '@media screen and (max-width: ' . $small_screen_max . '){body{font-size: '.get_theme_mod('type_size_mobile').'%;}}';
+	}
 
-// Fix old
-if(!is_array($type_nav)) {
-  $type_nav = array('font-family' => $type_nav, 'variant' => '700');
-}
-if(!is_array($type_texts)) {
-  $type_texts = array('font-family' => $type_texts, 'variant' => 'regular');
-}
-if(!is_array($type_alt)) {
-  $type_alt = array('font-family' => $type_alt, 'variant' => 'regular');
-}
-if(!is_array($type_headings)) {
-  $type_headings = array('font-family' => $type_headings, 'variant' => '700');
-}
+	// Fix old
+	if(!is_array($type_nav)) {
+	  $type_nav = array('font-family' => $type_nav, 'variant' => '700');
+	}
+	if(!is_array($type_texts)) {
+	  $type_texts = array('font-family' => $type_texts, 'variant' => 'regular');
+	}
+	if(!is_array($type_alt)) {
+	  $type_alt = array('font-family' => $type_alt, 'variant' => 'regular');
+	}
+	if(!is_array($type_headings)) {
+	  $type_headings = array('font-family' => $type_headings, 'variant' => '700');
+	}
 
-// Type Base
-if(!empty($type_texts['font-family'])) {
-	echo 'body{font-family:  "'.$type_texts['font-family'].'", sans-serif}';
-}
+	// Type Base
+	if(!empty($type_texts['font-family'])) {
+		echo 'body{font-family: '. flatsome_parse_font_family( $type_texts['font-family'] ).';}';
+	}
 
-if ( ! empty( $type_texts['font-weight'] ) ) { ?>
-body {
-	font-weight: <?php echo intval( $type_texts['font-weight'] ); ?>;
-	font-style: <?php echo $type_texts['font-style']; ?>;
-}
-<?php }
+	if ( ! empty( $type_texts['font-weight'] ) ) { ?>
+	body {
+		font-weight: <?php echo intval( $type_texts['font-weight'] ); ?>;
+		font-style: <?php echo $type_texts['font-style']; ?>;
+	}
+	<?php }
 
-if(get_theme_mod('color_texts')){
-	echo 'body{color: '.get_theme_mod('color_texts').'}';
-}
+	// Type Navigations
+	if(!empty($type_nav['font-family'])) {
+		echo '.nav > li > a {font-family: '. flatsome_parse_font_family( $type_nav['font-family'] ).';}';
+		echo '.mobile-sidebar-levels-2 .nav > li > ul > li > a {font-family: '. flatsome_parse_font_family( $type_nav['font-family'] ).';}';
+	}
 
-// Type Navigations
-if(!empty($type_nav['font-family'])) {
-	echo '.nav > li > a {font-family:  "'.$type_nav['font-family'].'", sans-serif;}';
-	echo '.mobile-sidebar-levels-2 .nav > li > ul > li > a {font-family:  "'.$type_nav['font-family'].'", sans-serif;}';
-}
+	if ( ! empty( $type_nav['font-weight'] ) ) { ?>
+	.nav > li > a,
+	.mobile-sidebar-levels-2 .nav > li > ul > li > a {
+		font-weight: <?php echo intval( $type_nav['font-weight'] ); ?>;
+		font-style: <?php echo $type_nav['font-style']; ?>;
+	}
+	<?php }
 
-if ( ! empty( $type_nav['font-weight'] ) ) { ?>
-.nav > li > a,
-.mobile-sidebar-levels-2 .nav > li > ul > li > a {
-	font-weight: <?php echo intval( $type_nav['font-weight'] ); ?>;
-	font-style: <?php echo $type_nav['font-style']; ?>;
-}
-<?php }
+	// Type Headings
+	if(!empty($type_headings['font-family'])) {
+	echo 'h1,h2,h3,h4,h5,h6,.heading-font, .off-canvas-center .nav-sidebar.nav-vertical > li > a{font-family: '. flatsome_parse_font_family( $type_headings['font-family'] ).';}';
+	}
 
-// Type Headings
-if(!empty($type_headings['font-family'])) {
-echo 'h1,h2,h3,h4,h5,h6,.heading-font, .off-canvas-center .nav-sidebar.nav-vertical > li > a{font-family: "'.$type_headings['font-family'].'", sans-serif;}';
-}
+	if ( ! empty( $type_headings['font-weight'] ) ) { ?>
+	h1,h2,h3,h4,h5,h6,.heading-font,.banner h1,.banner h2 {
+		font-weight: <?php echo intval( $type_headings['font-weight'] ); ?>;
+		font-style: <?php echo $type_headings['font-style']; ?>;
+	}
+	<?php }
 
-if ( ! empty( $type_headings['font-weight'] ) ) { ?>
-h1,h2,h3,h4,h5,h6,.heading-font,.banner h1,.banner h2 {
-	font-weight: <?php echo intval( $type_headings['font-weight'] ); ?>;
-	font-style: <?php echo $type_headings['font-style']; ?>;
-}
-<?php }
+	// Alt Type
+	if(!empty($type_alt ['font-family'])) {
+	echo '.alt-font{font-family: '. flatsome_parse_font_family( $type_alt['font-family'] ).';}';
+	}
 
-if(get_theme_mod('type_headings_color')){
-  echo 'h1,h2,h3,h4,h5,h6,.heading-font{color: '.get_theme_mod('type_headings_color').';}';
-}
+	if ( ! empty( $type_alt['font-weight'] ) ) { ?>
+	.alt-font {
+		font-weight: <?php echo intval( $type_alt['font-weight'] ); ?>!important;
+		font-style: <?php echo $type_alt['font-style']; ?>!important;
+	}
+	<?php } ?>
+<?php endif;
 
 // Text Transforms
 if(get_theme_mod('text_transform_breadcrumbs')){
-  echo '.breadcrumbs{text-transform: '.get_theme_mod('text_transform_breadcrumbs').';}';
+	echo '.breadcrumbs{text-transform: '.get_theme_mod('text_transform_breadcrumbs').';}';
 }
 if(get_theme_mod('text_transform_buttons')){
-  echo 'button,.button{text-transform: '.get_theme_mod('text_transform_buttons').';}';
+	echo 'button,.button{text-transform: '.get_theme_mod('text_transform_buttons').';}';
 }
 if(get_theme_mod('text_transform_navigation')){
-  echo '.nav > li > a, .links > li > a{text-transform: '.get_theme_mod('text_transform_navigation').';}';
+	echo '.nav > li > a, .links > li > a{text-transform: '.get_theme_mod('text_transform_navigation').';}';
 }
 if(get_theme_mod('text_transform_section_titles')){
-  echo '.section-title span{text-transform: '.get_theme_mod('text_transform_section_titles').';}';
+	echo '.section-title span{text-transform: '.get_theme_mod('text_transform_section_titles').';}';
 }
 if(get_theme_mod('text_transform_widget_titles')){
-  echo 'h3.widget-title,span.widget-title{text-transform: '.get_theme_mod('text_transform_widget_titles').';}';
+	echo 'h3.widget-title,span.widget-title{text-transform: '.get_theme_mod('text_transform_widget_titles').';}';
 }
 
-// Alt Type
-if(!empty($type_alt ['font-family'])) {
-echo '.alt-font{font-family: "'.$type_alt['font-family'].'", sans-serif;}';
-}
-
-if ( ! empty( $type_alt['font-weight'] ) ) { ?>
-.alt-font {
-	font-weight: <?php echo intval( $type_alt['font-weight'] ); ?>!important;
-	font-style: <?php echo $type_alt['font-style']; ?>!important;
-}
-<?php } ?>
-
-<?php if(get_theme_mod('type_nav_top_color')){ ?>
+if(get_theme_mod('type_nav_top_color')){ ?>
 .header:not(.transparent) .top-bar-nav > li > a {
 color: <?php echo get_theme_mod('type_nav_top_color'); ?>;
 }

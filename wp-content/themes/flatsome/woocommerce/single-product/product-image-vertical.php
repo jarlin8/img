@@ -13,7 +13,7 @@
  * @see              https://docs.woocommerce.com/document/template-structure/
  * @package          WooCommerce/Templates
  * @version          3.5.1
- * @flatsome-version 3.16.0
+ * @flatsome-version 3.16.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -156,6 +156,11 @@ if(get_theme_mod('product_zoom', 0)){
         $classes = array( '' );
         $image_class = esc_attr( implode( ' ', $classes ) );
         $image =  wp_get_attachment_image_src( $attachment_id, apply_filters( 'woocommerce_gallery_thumbnail_size', 'woocommerce_'.$image_size ));
+
+		  if ( empty( $image ) ) {
+			  continue;
+		  }
+
         $image_alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
         $image = '<img src="'.$image[0].'" alt="'.$image_alt.'" width="'.$gallery_thumbnail['width'].'" height="'.$gallery_thumbnail['height'].'"  class="attachment-woocommerce_thumbnail" />';
 

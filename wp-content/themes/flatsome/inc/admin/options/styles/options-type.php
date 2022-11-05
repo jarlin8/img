@@ -11,7 +11,7 @@ Flatsome_Option::add_field( 'option',
 	array(
 		'type'     => 'checkbox',
 		'settings' => 'disable_fonts',
-		'label'    => __( 'Disable Google Fonts. No fonts will be loaded from Google.', 'flatsome-admin' ),
+		'label'    => __( 'Disable fonts', 'flatsome-admin' ),
 		'section'  => 'type',
 		'default'  => 0,
 	)

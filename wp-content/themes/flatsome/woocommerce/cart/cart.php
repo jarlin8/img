@@ -11,9 +11,9 @@
  * the readme will list any important changes.
  *
  * @see              https://docs.woocommerce.com/document/template-structure/
- * @package          WooCommerce/Templates
- * @version          3.8.0
- * @flatsome-version 3.16.0
+ * @package          WooCommerce\Templates
+ * @version          7.0.1
+ * @flatsome-version 3.16.2
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -171,7 +171,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 
 					<?php do_action( 'woocommerce_cart_actions' ); ?>
 
-					<button type="submit" class="button primary mt-0 pull-left small" name="update_cart" value="<?php esc_attr_e( 'Update cart', 'woocommerce' ); ?>"><?php esc_html_e( 'Update cart', 'woocommerce' ); ?></button>
+					<button type="submit" class="button primary mt-0 pull-left small<?php if ( fl_woocommerce_version_check( '7.0.1' ) ) { echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); } ?>" name="update_cart" value="<?php esc_attr_e( 'Update cart', 'woocommerce' ); ?>"><?php esc_html_e( 'Update cart', 'woocommerce' ); ?></button>
 
 					<?php wp_nonce_field( 'woocommerce-cart', 'woocommerce-cart-nonce' ); ?>
 				</td>
@@ -203,7 +203,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 		<?php if ( wc_coupons_enabled() ) { ?>
 		<form class="checkout_coupon mb-0" method="post">
 			<div class="coupon">
-				<h3 class="widget-title"><?php echo get_flatsome_icon( 'icon-tag' ); ?> <?php esc_html_e( 'Coupon', 'woocommerce' ); ?></h3><input type="text" name="coupon_code" class="input-text" id="coupon_code" value="" placeholder="<?php esc_attr_e( 'Coupon code', 'woocommerce' ); ?>" /> <input type="submit" class="is-form expand" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?>" />
+				<h3 class="widget-title"><?php echo get_flatsome_icon( 'icon-tag' ); ?> <?php esc_html_e( 'Coupon', 'woocommerce' ); ?></h3><input type="text" name="coupon_code" class="input-text" id="coupon_code" value="" placeholder="<?php esc_attr_e( 'Coupon code', 'woocommerce' ); ?>" /> <button type="submit" class="is-form expand button<?php if ( fl_woocommerce_version_check( '7.0.1' ) ) { echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); } ?>" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?>"><?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?></button>
 				<?php do_action( 'woocommerce_cart_coupon' ); ?>
 			</div>
 		</form>

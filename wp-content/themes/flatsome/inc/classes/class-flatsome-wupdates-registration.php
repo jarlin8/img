@@ -9,12 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-update_option( 'flatsome_wup_purchase_code', 'GWrxBEss-VqSg-cJbs-dVvg-QzLEDfLzzExZ' );
-update_option( 'flatsome_wup_supported_until', '14.06.2027' );
-update_option( 'flatsome_wup_buyer', 'Licensed' );
-update_option( 'flatsome_wup_sold_at', time() );
-delete_option( 'flatsome_wup_errors', '' );
-delete_option( 'flatsome_wupdates', '');
 /**
  * The Flatsome registration.
  */
@@ -137,7 +131,7 @@ final class Flatsome_WUpdates_Registration extends Flatsome_Base_Registration {
 	 * @return boolean
 	 */
 	public function is_registered() {
-		return true;
+		return $this->get_code() !== '';
 	}
 
 	/**
@@ -171,7 +165,7 @@ final class Flatsome_WUpdates_Registration extends Flatsome_Base_Registration {
 	 * @return boolean
 	 */
 	public function get_code() {
-		return 'GWrxBEss-VqSg-cJbs-dVvg-QzLEDfLzzExZ';
+		return get_option( flatsome_theme_key() . '_wup_purchase_code', '' );
 	}
 
 	/**
@@ -180,7 +174,10 @@ final class Flatsome_WUpdates_Registration extends Flatsome_Base_Registration {
 	public function migrate_registration() {
 		$code = $this->get_code();
 
-		
+		if ( empty( $code ) ) {
+			return;
+		}
+
 		$license = $this->api->send_request( "/v1/license/$code", 'wupdates' );
 
 		if ( is_wp_error( $license ) ) {

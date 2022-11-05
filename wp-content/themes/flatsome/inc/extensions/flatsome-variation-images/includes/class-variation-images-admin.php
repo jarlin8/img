@@ -173,11 +173,11 @@ class Variation_Images_Admin {
 		$ids = array_map( 'sanitize_text_field', $ids );
 
 		if ( count( $ids ) > 0 ) {
-			foreach ( $ids as $parent_id => $attachment_ids ) {
+			foreach ( $ids as $variation_id => $attachment_ids ) {
 				if ( ! empty( $attachment_ids ) ) {
-					update_post_meta( $parent_id, '_ux_additional_variation_images', $attachment_ids );
+					update_post_meta( $variation_id, '_ux_additional_variation_images', $attachment_ids );
 				} else {
-					delete_post_meta( $parent_id, '_ux_additional_variation_images' );
+					delete_post_meta( $variation_id, '_ux_additional_variation_images' );
 				}
 			}
 		}

@@ -11,9 +11,9 @@
  * the readme will list any important changes.
  *
  * @see              https://docs.woocommerce.com/document/template-structure/
- * @package          WooCommerce/Templates
- * @version          3.4.4
- * @flatsome-version 3.16.0
+ * @package          WooCommerce\Templates
+ * @version          7.0.1
+ * @flatsome-version 3.16.2
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -37,7 +37,7 @@ if ( ! wc_coupons_enabled() ) { // @codingStandardsIgnoreLine.
 				<input type="text" name="coupon_code" class="input-text" placeholder="<?php esc_attr_e( 'Coupon code', 'woocommerce' ); ?>" id="coupon_code" value="" />
 			</div>
 			<div class="flex-col">
-				<button type="submit" class="button expand" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?>"><?php esc_html_e( 'Apply coupon', 'woocommerce' ); ?></button>
+				<button type="submit" class="button expand<?php if ( fl_woocommerce_version_check( '7.0.1' ) ) { echo esc_attr( wc_wp_theme_get_element_class_name( 'button' ) ? ' ' . wc_wp_theme_get_element_class_name( 'button' ) : '' ); } ?>" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?>"><?php esc_html_e( 'Apply coupon', 'woocommerce' ); ?></button>
 			</div>
 		</div>
 	</div>
