@@ -101,10 +101,6 @@ trait Updates
     /**
      * Inject plugin into `update_plugins` transient.
      *
-     * To disable the transient injection and avoid misleading
-     * update indicators, set the `WP_REDIS_UPDATES_DISABLED`
-     * constant or environment variable to a truthy value.
-     *
      * @see updatesEnabled()
      *
      * @param  object  $transient

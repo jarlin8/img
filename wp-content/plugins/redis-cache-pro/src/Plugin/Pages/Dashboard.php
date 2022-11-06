@@ -505,20 +505,20 @@ class Dashboard extends Page
             ],
             'commands' => [
                 'title' => 'Commands',
-                'description' => 'The number of times the cache read from and wrote to the external cache.',
+                'description' => 'The number of times the cache read from and wrote to the datastore.',
                 'group' => 'wp',
                 'type' => [
                     'store-reads' => 'integer',
                     'store-writes' => 'integer',
                 ],
                 'labels' => [
-                    'store-reads' => 'Store reads',
-                    'store-writes' => 'Store writes',
+                    'store-reads' => 'Datastore reads',
+                    'store-writes' => 'Datastore writes',
                 ],
             ],
             'response-times' => [
                 'title' => 'Response Times',
-                'description' => 'The amount of time (ms) WordPress took to render the request and waited for the external cache (Redis) to respond.',
+                'description' => 'The amount of time (ms) WordPress took to render the request and waited for the datastore to respond.',
                 'group' => 'wp',
                 'type' => [
                     'ms-total' => 'time',

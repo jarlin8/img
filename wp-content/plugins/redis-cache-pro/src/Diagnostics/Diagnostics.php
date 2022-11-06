@@ -502,13 +502,11 @@ class Diagnostics implements ArrayAccess
      */
     protected function relayCache()
     {
-        $hasInMemoryCache = $this->usingRelayCache();
-
         $diagnostic = Diagnostic::name('Relay Cache');
 
-        return $hasInMemoryCache
-            ? $diagnostic->value('Disabled')->comment('client only')
-            : $diagnostic->value('Enabled');
+        return $this->usingRelayCache()
+            ? $diagnostic->value('Enabled')
+            : $diagnostic->value('Disabled')->comment('client only');
     }
 
     /**

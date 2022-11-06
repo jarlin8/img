@@ -44,7 +44,7 @@ abstract class Connection
     protected $client;
 
     /**
-     * The amounts of time (μs) waited for the external cache to respond.
+     * The amounts of time (μs) waited for the datastore to respond.
      *
      * @var float[]
      */
@@ -134,7 +134,7 @@ abstract class Connection
     }
 
     /**
-     * Returns an array of microseconds (μs) waited for the external cache to respond.
+     * Returns an array of microseconds (μs) waited for the datastore to respond.
      *
      * @return float[]
      */

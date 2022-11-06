@@ -81,7 +81,8 @@ class PhpRedisConnector implements Connector
                 return \defined('\Redis::COMPRESSION_ZSTD');
             case 'retries':
             case 'backoff':
-                return \defined('\Redis::BACKOFF_ALGORITHM_DECORRELATED_JITTER');
+                return \defined('\Redis::OPT_MAX_RETRIES')
+                    && \defined('\Redis::BACKOFF_ALGORITHM_DECORRELATED_JITTER');
             case 'tls':
                 return \version_compare((string) \phpversion('redis'), '5.3.2', '>=');
         }

@@ -76,7 +76,8 @@ class RelayConnector implements Connector
                 return \defined('\Relay\Relay::COMPRESSION_ZSTD');
             case 'retries':
             case 'backoff':
-                return \defined('\Relay\Relay::BACKOFF_ALGORITHM_DECORRELATED_JITTER');
+                return \defined('\Relay\Relay::OPT_MAX_RETRIES')
+                    && \defined('\Relay\Relay::BACKOFF_ALGORITHM_DECORRELATED_JITTER');
             case 'tls':
                 return true;
             case 'allow-patterns':

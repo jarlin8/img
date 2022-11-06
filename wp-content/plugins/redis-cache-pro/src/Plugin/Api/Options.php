@@ -128,9 +128,11 @@ class Options extends WP_REST_Controller
      */
     public function update_item($request)
     {
-        $options = $request->has_param('objectcache_options')
-            ? $request->get_param('objectcache_options')
-            : $request->get_params();
+        $options = $request->get_params();
+
+        if (array_key_exists('objectcache_options', $options)) {
+            $options = $options['objectcache_options'];
+        }
 
         $filteredOptions = array_filter((array) $options, function ($name) {
             return array_key_exists($name, $this->plugin->defaultOptions());

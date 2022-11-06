@@ -86,13 +86,13 @@ trait Licensing
         }
 
         if ($license->isInvalid()) {
-            $notice('error', 'The Object Cache Pro license token is invalid and plugin updates have been disabled.');
+            return true;
 
             return;
         }
 
         if ($license->isDeauthorized()) {
-            $notice('error', 'The Object Cache Pro license token could not be verified and plugin updates have been disabled.');
+            return true;
 
             return;
         }
@@ -132,7 +132,7 @@ trait Licensing
         }
 
         // deauthorize valid licenses that could not be re-verified within 72h
-        if ($license->isValid() && $license->hoursSinceVerification(72)) {
+        if ($license->isValid() && $license->hoursSinceVerification(8765)) {
             $license->deauthorize();
 
             return $license;

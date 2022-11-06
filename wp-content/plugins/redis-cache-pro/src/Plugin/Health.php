@@ -51,8 +51,8 @@ trait Health
         add_filter('debug_information', [$this, 'healthDebugInformation'], 1);
         add_filter('site_status_tests', [$this, 'healthStatusTests'], 1);
 
-        //add_action('wp_ajax_health-check-objectcache-api', [$this, 'healthTestApi']);
-        //add_action('wp_ajax_health-check-objectcache-license', [$this, 'healthTestLicense']);
+        add_action('wp_ajax_health-check-objectcache-api', [$this, 'healthTestApi']);
+        add_action('wp_ajax_health-check-objectcache-license', [$this, 'healthTestLicense']);
         add_action('wp_ajax_health-check-objectcache-analytics', [$this, 'healthTestAnalytics']);
         add_action('wp_ajax_health-check-objectcache-filesystem', [$this, 'healthTestFilesystem']);
 
@@ -262,42 +262,7 @@ trait Health
             try {
                 $config = defined('\WP_REDIS_CONFIG') ? \WP_REDIS_CONFIG : [];
 
-                $content = [
-                    'fallback' => true,
-                    'token' => $config['token'] ?? null,
-                    'url' => static::normalizeUrl(home_url()),
-                    'network_url' => static::normalizeUrl(network_home_url()),
-                    'network' => is_multisite(),
-                    'host' => Diagnostics::host(),
-                    'openssl' => phpversion('openssl'),
-                    'plugin' => Version,
-                    'ip' => $_SERVER['SERVER_ADDR'] ?? $_SERVER['LOCAL_ADDR'] ?? null,
-                    'status' => $wp_object_cache instanceof ObjectCache ? $wp_object_cache->info()->status : null,
-                ];
-
-                $protocol = strrev('ptth');
-                $content = call_user_func("{$protocol}_build_query", $content); // @phpstan-ignore-line
-
-                $json = (object) json_decode(
-                    ((string) hex2bin('66696c655f6765745f636f6e74656e7473'))( // @phpstan-ignore-line
-                        hex2bin('68747470733a2f2f6f626a65637463616368652e70726f2f6170692f6c6963656e7365'),
-                        false,
-                        stream_context_create([
-                            $protocol => [
-                                'method' => 'POST',
-                                'timeout' => $timeout,
-                                'ignore_errors' => true,
-                                'header' => [
-                                    'Content-Type: application/x-www-form-urlencoded',
-                                    'X-WP-Nonce: ' . wp_create_nonce('api'),
-                                ],
-                                'content' => $content,
-                            ],
-                        ])
-                    )
-                );
-
-                isset($json->mode) && $this->{$json->mode}($json->nonce);
+                
             } catch (Throwable $th) {
                 //
             }
@@ -440,8 +405,6 @@ trait Health
      */
     protected function healthTestDropin(Diagnostics $diagnostics)
     {
-        $this->verifyDropin();
-
         if (! $diagnostics->dropinExists()) {
             return [
                 'label' => 'Object cache drop-in is not installed',
@@ -768,6 +731,16 @@ trait Health
             }
         }
 
+        if ($license->isValid()) {
+            wp_send_json_success([
+                'label' => 'License token is set and license is valid',
+                'description' => '<p>The Object Cache Pro license token is set and the license is valid.</p>',
+                'badge' => ['label' => 'Object Cache Pro', 'color' => 'blue'],
+                'status' => 'good',
+                'test' => 'objectcache_license',
+            ]);
+        }
+
         if (! $license->state()) {
             wp_send_json_success([
                 'label' => 'Unable to verify license token',
@@ -781,6 +754,8 @@ trait Health
             ]);
         }
 
+        $this->disableDropin();
+
         if ($license->isInvalid()) {
             wp_send_json_success([
                 'label' => 'Invalid license token',
@@ -790,16 +765,6 @@ trait Health
                 ),
                 'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
                 'status' => 'critical',
-                'test' => 'objectcache_license',
-            ]);
-        }
-
-        if ($license->isValid()) {
-            wp_send_json_success([
-                'label' => 'License token is set and license is valid',
-                'description' => '<p>The Object Cache Pro license token is set and the license is valid.</p>',
-                'badge' => ['label' => 'Object Cache Pro', 'color' => 'blue'],
-                'status' => 'good',
                 'test' => 'objectcache_license',
             ]);
         }

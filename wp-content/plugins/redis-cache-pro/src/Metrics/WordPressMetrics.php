@@ -56,28 +56,28 @@ class WordPressMetrics
     public $prefetches;
 
     /**
-     * The number of times the cache read from the external cache.
+     * The number of times the cache read from the datastore.
      *
      * @var int
      */
     public $storeReads;
 
     /**
-     * The number of times the cache wrote to the external cache.
+     * The number of times the cache wrote to the datastore.
      *
      * @var int
      */
     public $storeWrites;
 
     /**
-     * The number of times the external cache had the object already cached.
+     * The number of times the datastore had the object already cached.
      *
      * @var int
      */
     public $storeHits;
 
     /**
-     * The Number of times the external cache did not have the object.
+     * The Number of times the datastore did not have the object.
      *
      * @var int
      */
@@ -98,21 +98,21 @@ class WordPressMetrics
     public $msTotal;
 
     /**
-     * The total amount of time (ms) waited for the external cache to respond.
+     * The total amount of time (ms) waited for the datastore to respond.
      *
      * @var float
      */
     public $msCache;
 
     /**
-     * The median amount of time (ms) waited for the external cache to respond.
+     * The median amount of time (ms) waited for the datastore to respond.
      *
      * @var float
      */
     public $msCacheMedian;
 
     /**
-     * The percentage of time waited for the external cache to respond,
+     * The percentage of time waited for the datastore to respond,
      * relative to the amount of time WordPress took to render the request.
      *
      * @var float
@@ -233,23 +233,23 @@ class WordPressMetrics
                 'type' => 'integer',
             ],
             'store-reads' => [
-                'title' => 'Store Reads',
-                'description' => 'The number of times the cache read from the external cache.',
+                'title' => 'Datastore Reads',
+                'description' => 'The number of times the cache read from the datastore.',
                 'type' => 'integer',
             ],
             'store-writes' => [
-                'title' => 'Store Writes',
-                'description' => 'The number of times the cache wrote to the external cache.',
+                'title' => 'Datastore Writes',
+                'description' => 'The number of times the cache wrote to the datastore.',
                 'type' => 'integer',
             ],
             'store-hits' => [
-                'title' => 'Store Hits',
-                'description' => 'The number of times the external cache did have the object.',
+                'title' => 'Datastore Hits',
+                'description' => 'The number of times the datastore did have the object.',
                 'type' => 'integer',
             ],
             'store-misses' => [
-                'title' => 'Store Misses',
-                'description' => 'The number of times the external cache did not have the object.',
+                'title' => 'Datastore Misses',
+                'description' => 'The number of times the datastore did not have the object.',
                 'type' => 'integer',
             ],
             'sql-queries' => [
@@ -263,18 +263,18 @@ class WordPressMetrics
                 'type' => 'time',
             ],
             'ms-cache' => [
-                'title' => 'Store Response Time',
-                'description' => 'The total amount of time (ms) waited for the external cache (Redis) to respond.',
+                'title' => 'Datastore Response Time',
+                'description' => 'The total amount of time (ms) waited for the datastore to respond.',
                 'type' => 'time',
             ],
             'ms-cache-median' => [
-                'title' => 'Store Command Time',
-                'description' => 'The median amount of time (ms) waited for the external cache (Redis) to respond.',
+                'title' => 'Datastore Command Time',
+                'description' => 'The median amount of time (ms) waited for the datastore to respond.',
                 'type' => 'time',
             ],
             'ms-cache-ratio' => [
-                'title' => 'Store Time Ratio',
-                'description' => 'The percentage of time waited for the external cache to respond, relative to the amount of time WordPress took to render the request.',
+                'title' => 'Datastore Time Ratio',
+                'description' => 'The percentage of time waited for the datastore to respond, relative to the amount of time WordPress took to render the request.',
                 'type' => 'ratio',
             ],
         ];

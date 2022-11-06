@@ -56,7 +56,7 @@ interface ConnectionInterface
     public function withoutMutations(callable $callback);
 
     /**
-     * Returns an array of microseconds (μs) waited for the external cache to respond.
+     * Returns an array of microseconds (μs) waited for the datastore to respond.
      *
      * @return float[]
      */

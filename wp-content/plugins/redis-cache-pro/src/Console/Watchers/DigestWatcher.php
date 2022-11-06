@@ -232,7 +232,7 @@ class DigestWatcher extends Notify
         $storeReadsMedian = $measurements->median('wp->storeReads');
 
         return (object) [
-            'Metric' => WP_CLI::colorize('%bCache%n: Reads'),
+            'Metric' => WP_CLI::colorize('%bDatastore%n: Reads'),
             'Median' => is_null($storeReadsMedian) ? '' : number_format($storeReadsMedian),
         ];
     }
@@ -246,7 +246,7 @@ class DigestWatcher extends Notify
         $storeWritesMedian = $measurements->median('wp->storeWrites');
 
         return (object) [
-            'Metric' => WP_CLI::colorize('%bCache%n: Writes'),
+            'Metric' => WP_CLI::colorize('%bDatastore%n: Writes'),
             'Median' => is_null($storeWritesMedian) ? '' : number_format($storeWritesMedian),
         ];
     }
@@ -260,7 +260,7 @@ class DigestWatcher extends Notify
         $storeHitsMedian = $measurements->median('wp->storeHits');
 
         return (object) [
-            'Metric' => WP_CLI::colorize('%bCache%n: Hits'),
+            'Metric' => WP_CLI::colorize('%bDatastore%n: Hits'),
             'Median' => is_null($storeHitsMedian) ? '' : number_format($storeHitsMedian),
         ];
     }
@@ -274,7 +274,7 @@ class DigestWatcher extends Notify
         $storeMissesMedian = $measurements->median('wp->storeMisses');
 
         return (object) [
-            'Metric' => WP_CLI::colorize('%bCache%n: Misses'),
+            'Metric' => WP_CLI::colorize('%bDatastore%n: Misses'),
             'Median' => is_null($storeMissesMedian) ? '' : number_format($storeMissesMedian),
         ];
     }

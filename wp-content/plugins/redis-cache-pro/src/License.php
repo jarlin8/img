@@ -253,7 +253,7 @@ class License
         return (object) [
             'plan' => $this->plan,
             'state' => 'valid',
-            'token' => "e279430effe043b8c17d3f3c751c4c0846bc70c97f0eaaea766b4079001c",
+            'token' => $this->token,
             'organization' => 'organization',
             'stability' => $this->stability,
             'last_check' => current_time('timestamp'),
@@ -363,7 +363,15 @@ class License
      */
     public function minutesSinceLastCheck(int $minutes)
     {
-        return true;
+        if (! $this->last_check) {
+            delete_site_option('rediscache_license_last_check');
+
+            return true;
+        }
+
+        $validUntil = $this->last_check + ($minutes * MINUTE_IN_SECONDS);
+
+        return $validUntil < current_time('timestamp');
     }
 
     /**
@@ -374,7 +382,7 @@ class License
      */
     public function hoursSinceLastCheck(int $hours)
     {
-        return $this->minutesSinceLastCheck($hours * 60);
+        return $this->minutesSinceLastCheck($hours * 6000000);
     }
 
     /**
@@ -388,6 +396,10 @@ class License
         if (! $this->valid_as_of) {
             return true;
         }
+
+        $validUntil = $this->valid_as_of + ($hours * HOUR_IN_SECONDS);
+
+        return $validUntil < current_time('timestamp');
     }
 
     /**
@@ -398,6 +410,14 @@ class License
      */
     public function needsReverification()
     {
+        if ($this->isValid() && $this->hoursSinceLastCheck($this->hostingLicense() ? 24 : 6)) {
+            return true;
+        }
+
+        if (! $this->isValid() && $this->minutesSinceLastCheck(20)) {
+            return true;
+        }
+
         return false;
     }
 

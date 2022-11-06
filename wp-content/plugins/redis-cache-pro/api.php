@@ -17,6 +17,32 @@ defined('ABSPATH') || exit;
 require_once __DIR__ . '/bootstrap.php';
 
 /**
+ * Determines whether the object cache implementation supports a particular feature.
+ *
+ * Possible values include:
+ *  - `add_multiple`, `set_multiple`, `get_multiple` and `delete_multiple`
+ *  - `flush_runtime` and `flush_group`
+ *
+ * @param string $feature Name of the feature to check for.
+ * @return bool True if the feature is supported, false otherwise.
+ */
+function wp_cache_supports($feature)
+{
+    switch ($feature) {
+        case 'add_multiple':
+        case 'set_multiple':
+        case 'get_multiple':
+        case 'delete_multiple':
+        case 'flush_runtime':
+        case 'flush_group':
+            return true;
+
+        default:
+            return false;
+    }
+}
+
+/**
  * Set up the global `$wp_object_cache`.
  *
  * @global array $wp_object_cache_errors
