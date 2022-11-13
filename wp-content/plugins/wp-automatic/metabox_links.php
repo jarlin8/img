@@ -76,6 +76,15 @@ global $camp_post_category;
 
 				</div>
 			</div>
+			
+			<div class="field f_100">
+				<div class="option clearfix">
+					<input   name="camp_options[]" value="OPT_LINK_NOCACHE" type="checkbox"> <span class="option-title">  Do not remember already imported source links and check every run <br>(by default, the plugin cache imported links not to import them again) 
+					</span> <br>
+
+
+				</div>
+			</div>
 
 
 			<div class="field f_100">

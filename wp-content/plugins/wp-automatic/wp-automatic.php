@@ -1,9 +1,9 @@
 <?php
 /*
- Plugin Name: Wordpress Automatic Plugin
+ Plugin Name: WordPress Automatic Plugin
  Plugin URI: http://codecanyon.net/item/wordpress-automatic-plugin/1904470?ref=ValvePress
- Description: WordPress Automatic posts quality articles, Amazon products, Clickbank products, Youtube videos, eBay items, Flickr images, RSS feeds posts on auto-pilot and much more.
- Version: 3.57.0
+ Description: WordPress Automatic posts quality articles, Amazon products, Clickbank products, Youtube videos, eBay items, Flicker images, RSS feeds posts on auto-pilot and much more.
+ Version: 3.58.1
  Author: ValvePress
  Author URI: http://codecanyon.net/user/ValvePress/portfolio?ref=ValvePress
  */
@@ -316,20 +316,29 @@ function wp_automatic_fix_relative_link ($found_link,$host,$http_prefix,$the_pat
 	
 }
 
+/**
+ * Fix relative paths used in multi-page scraper before extracting links
+ * @param string $content the content of the items list page containging the links
+ * @param String $url the source URL of the items list page
+ * @return mixed the content after fixingig realtive links
+ */
 function wp_automatic_fix_relative_paths($content, $url) {
 	
-	// fix images
-	$pars = parse_url ( $url );
+	 
 	
+	// URL params, http, domain and path 
+	$pars = parse_url ( $url );
 	$host = $pars ['host'];
 	$scheme = $pars ['scheme'];
+
 	if ($scheme != 'https')
 		$scheme = 'http';
 		
-		// $url with last slash
+		// $url with last slash, remove ending slashes 
 		$path = $pars ['path'];
 		$path_parts = explode ( '/', $path );
 		array_pop ( $path_parts );
+		
 		
 		$url_with_last_slash = $scheme . '://' . $host . implode ( '/', $path_parts );
 		
@@ -339,7 +348,17 @@ function wp_automatic_fix_relative_paths($content, $url) {
 		//remove trailing slash from base URL if found
 		if(isset ( $base_matches [1] ) && trim ( $base_matches [1] ) != '') $base_matches [1] = preg_replace('!/$!', '',$base_matches [1]);
 		
+		//real base url from the source 
+		if(isset ( $base_matches [1] ) && trim ( $base_matches [1] ) != ''  ){
+			$base_for_reltoabs_fn = $base_matches [1];
+		}else{
+			$base_for_reltoabs_fn = $url;
+		}
+		
 		$base_url = (isset ( $base_matches [1] ) && trim ( $base_matches [1] ) != '') ? trim ( $base_matches [1] ) : $url_with_last_slash;
+		
+		
+	 
 		
 		/* preg_match_all('{<img.*?src[\s]*=[\s]*["|\'](.*?)["|\'].*?>}is', $res['cont'] , $matches); */
 		
@@ -354,10 +373,7 @@ function wp_automatic_fix_relative_paths($content, $url) {
 			
 			$original_src = $img_src;
 			
-			// ../ remove
-			if (stristr ( $img_src, '../' )) {
-				$img_src = str_replace ( '../', '', $img_src );
-			}
+		 
 			
 			if (stristr ( $img_src, 'http:' ) || stristr ( $img_src, 'www.' ) || stristr ( $img_src, 'https:' ) || stristr ( $img_src, 'data:image' ) || stristr ( $img_src, '#' ) ) {
 				// valid image
@@ -370,14 +386,22 @@ function wp_automatic_fix_relative_paths($content, $url) {
 				} elseif (preg_match ( '{^/}', $img_src )) {
 					$img_src = $scheme . '://' . $host . $img_src;
 				} else {
-					$img_src = $base_url . '/' . $img_src;
+					
+					if( stristr($img_src , '../') ){
+						$img_src = wp_automatic_rel2abs($img_src, $base_for_reltoabs_fn);
+					}else{
+						$img_src = $base_url . '/' . $img_src;
+					}
 				}
+				
+			 
 				
 				$reg_img = '{["|\'][\s]*' . preg_quote ( $original_src, '{' ) . '[\s]*["|\']}s';
 				$content = preg_replace ( $reg_img, '"' . $img_src . '"', $content );
 			}
 		}
 		
+	  
 		// Fix Srcset
 		preg_match_all ( '{srcset[\s]*=[\s]*["|\'](.*?)["|\']}s', $content, $srcset_matches );
 		
@@ -514,6 +538,52 @@ function wp_automatic_fix_json_part($json_part){
 	
 }
 
+//convert a relative url to a complete 
+function wp_automatic_rel2abs($rel, $base)
+{
+	 
+	/* return if already absolute URL */
+	if (parse_url($rel, PHP_URL_SCHEME) != '') return $rel;
+	
+	/* queries and anchors */
+	if ($rel[0]=='#' || $rel[0]=='?') return $base.$rel;
+	
+	/* parse base URL and convert to local variables:
+	 $scheme, $host, $path */
+	extract(parse_url($base));
+	
+	/* remove non-directory element from path */
+	$path = preg_replace('#/[^/]*$#', '', $path);
+	
+	/* destroy path if relative url points to root */
+	if ($rel[0] == '/') $path = '';
+	
+	/* dirty absolute URL */
+	$abs = "$host$path/$rel";
+	
+	/* replace '//' or '/./' or '/foo/../' with '/' */
+	$re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+	for($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
+	
+	/* absolute URL is ready! */
+	return $scheme.'://'.$abs;
+}
+
+/**
+ * a new log record from outside the core 
+ * @param unknown $type
+ * @param unknown $data
+ */
+function wp_automatic_log_new($type, $data){
+	
+	global $wpdb;
+	$now = date ( 'Y-m-d H:i:s' );
+	$data = @addslashes ( $data );
+	
+	$query = "INSERT INTO {$wpdb->prefix}automatic_log (action,date,data) values('$type','$now','$data')";
+	$wpdb->query ( $query );
+	
+}
 
 function remove_taxonomies_metaboxes() {
 	remove_meta_box( 'td_post_theme_settings_metabox', 'wp_automatic', 'normal' );

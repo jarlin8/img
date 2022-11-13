@@ -201,7 +201,7 @@ function gm_log(){
 				
 				}
 				
-				echo'<tr class="'.$rec->action.'"><td class="column-date">'.$i.'</td><td  class="column-response" style="padding:5px">'. get_date_from_gmt( $rec->date ).'</td><td  class="column-response" style="padding:5px">'. $action.'</td><td  style="padding:5px">'.$displayTitle.' </td></tr>';
+				echo'<tr class="'.strip_tags( $rec->action ) .'"><td class="column-date">'.$i.'</td><td  class="column-response" style="padding:5px">'. get_date_from_gmt( $rec->date ).'</td><td  class="column-response" style="padding:5px">'. $action.'</td><td  style="padding:5px">'.$displayTitle.' </td></tr>';
 				$i++;
 			}
 

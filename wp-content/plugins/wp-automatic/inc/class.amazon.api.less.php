@@ -91,7 +91,7 @@ class wp_automatic_amazon_api_less {
 		// $exec = file_get_contents('test.txt');
 		$x = curl_error ( $this->ch );
 		$cuinfo = curl_getinfo ( $this->ch );
-		
+		$http_code = $cuinfo ['http_code'];
 		// validate returned content
 		if (trim ( $exec ) == '' || trim ( $x ) != '') {
 			throw new Exception ( 'No valid reply returned from Amazon with a possible cURL err ' . $x );
@@ -149,7 +149,12 @@ class wp_automatic_amazon_api_less {
 			}
 		}
 		
+		 //404 not found
+		if($http_code == 404){
+			throw new Exception ( '404 Not founnd from Amazon when tried to load this product' );
+		}
 		 
+		
 		
 		// validate returned result
 		if (! stristr ( $exec, $asin_code )) {
@@ -452,6 +457,9 @@ class wp_automatic_amazon_api_less {
 		}
 		
 		
+		
+		
+		
 		// translation extra space removal
 		$item_price = str_replace ( '$ ', '$', $item_price );
 		
@@ -498,8 +506,28 @@ class wp_automatic_amazon_api_less {
 			}
 		}
 		
+		//out of stock yes or no <div id="outOfStock
+		//example https://www.amazon.es/dp/B01LVXGKSQ
+		$ret ['item_out_of_stock'] = '' ;
+		
+		if( trim($ret ['item_price']) == ''  && stristr($exec, '<div id="outOfStock') ){
+			$ret['item_out_of_stock'] = 'yes';
+		}
+		
+		//categories <ul class="a-unordered-list a-horizontal a-size-small">
+		$ret['item_cats'] =  '';
+		preg_match('!<ul class="a-unordered-list a-horizontal a-size-small">(.*?)</ul>!s' ,  $exec , $whole_cat_matches );
+		
+		if(isset($whole_cat_matches[1]) && trim($whole_cat_matches[1]) != '' ){
+
+			//cats found 
+			preg_match_all('!<a.*?>(.*?)</a>!s' , $whole_cat_matches[1] , $cats_matches );
+				
+				if(isset($cats_matches[1]) && is_array($cats_matches[1]) ){
+					$ret['item_cats']  = implode( ' > ' , array_map('trim',$cats_matches[1]));
+				}
+		}
 		 
- 		
 		return $ret;
 	}
 	

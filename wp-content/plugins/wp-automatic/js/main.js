@@ -127,7 +127,11 @@ jQuery(document).ready(function()
         {
 			// if visible slideup
 			jQuery(slide ).slideUp();
-			jQuery('#field111').val('*');
+			
+			//reset keywords box keyword to *
+			if(slide == '#field111-container'){
+				jQuery('#field111').val('*'); 
+			}
         }
         else
         {
@@ -625,7 +629,7 @@ jQuery(document).ready(function()
     	    	
     	     	jQuery('#campaign_run').addClass('run').removeClass('run_load');
 
-	    	    	jQuery('#welcome-panel').remove();
+	    	    	jQuery('#wp-automatic-welcome-panel').remove();
 	    	    	jQuery('#status-meta-boxes .inside').append('<div style="display:none;margin-top:0;padding-top:10px;" dir="ltr" class="wp-automatic-welcome-panel" id="wp-automatic-welcome-panel"> '+  two + ' ' +  three + ' ' + four +  ' <a dir="rtl" style="right:10px !important" href="#" class="wp-automatic-welcome-panel-close">Dismiss</a></div>');
 	    	    	jQuery('#wp-automatic-welcome-panel').slideDown('slow',function(){
 	    	    		

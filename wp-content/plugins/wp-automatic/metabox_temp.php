@@ -25,7 +25,7 @@ global $camp_post_content;
 			<div id="field11-container" class="field f_100">
 				<label for="field11"> Post text template <i>(spintax enabled, like {awesome|amazing|Great})</i>
 				</label>
-				<textarea required="required" rows="5" cols="20" name="camp_post_content" id="field11"><?php   echo $camp_post_content ?></textarea>
+				<textarea required="required" rows="5" cols="20" name="camp_post_content" id="field11"><?php echo htmlentities($camp_post_content ,ENT_COMPAT, 'UTF-8')     ?></textarea>
 				<div class="supportedTags description "></div>
 			</div>
 			

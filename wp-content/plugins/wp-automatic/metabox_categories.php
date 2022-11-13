@@ -43,6 +43,8 @@ foreach ( $post_types as $post_type ) {
 			// If category list it's items
 			if (is_taxonomy_hierarchical ( $tax )) {
 				
+				$hierarchical_tax = $tax; // for default tax
+				
 				$args = array (
 						'hide_empty' => 0,
 						'taxonomy' => $tax,
@@ -78,8 +80,19 @@ foreach ( $post_types as $post_type ) {
 	}
 } // foreach post type
 
+//default tax if no tax is already saved
+if( ! isset($camp_general['cg_camp_tax']) || trim($camp_general['cg_camp_tax']) == '' ){
+	
+	if(isset($hierarchical_tax) && trim($hierarchical_tax) != '')
+		$camp_general['cg_camp_tax'] = $hierarchical_tax;
+}
+
 ?>
-                </select> <input id="cg_camp_tax" type="hidden" value="<?php   echo @$camp_general['cg_camp_tax'] ?>" name="cg_camp_tax" />
+                </select> 
+                
+               
+                
+                <input id="cg_camp_tax" type="hidden" value="<?php   echo @$camp_general['cg_camp_tax'] ?>" name="cg_camp_tax" />
 
 					<p>Press CTRL + category to multiselect</p>
 

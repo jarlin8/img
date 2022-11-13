@@ -305,7 +305,7 @@ class WpAutomatictiktok extends wp_automatic {
 					// prepare keyword
 					$qkeyword = trim(str_replace ( ' ', '', $keyword ));
 					$qkeyword = str_replace ( '#', '', $qkeyword );
-					$tiktok_url = 'https://www.tiktok.com/tag/' . $qkeyword ;
+					$tiktok_url = 'https://www.tiktok.com/tag/' . urlencode($qkeyword) ;
 					
 				}
 	 
@@ -325,6 +325,7 @@ class WpAutomatictiktok extends wp_automatic {
 					$x=curl_error($this->ch);
 					$info = curl_getinfo($this->ch);
 					
+					 
 				}
 				
 				if($info['http_code'] == 403 || stristr($info['url'], 'login')){

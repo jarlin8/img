@@ -16,6 +16,8 @@ class WpAutomaticFeeds extends wp_automatic {
 		$msg = "Processing " . count ( $feeds ) . " Feeds for this campaign " . get_the_title ( $camp->camp_id );
 		echo '<br>' . $msg;
 		
+		 
+		
 		if (count ( $feeds ) > 0) {
 			$this->log ( 'Process Feeds', $msg );
 		}
@@ -293,7 +295,12 @@ class WpAutomaticFeeds extends wp_automatic {
 		
 		// Fetch feed content
 		if (trim ( $localFeed ) == '') {
+		
+			timer_start ();
 			$rss = fetch_feed ( stripslashes ( $feed ) );
+			echo '<br>Time taken to load the feed from the source:' . timer_stop ();
+		 
+		
 		} else {
 			echo '<br>Loaded locally';
 			$rss = fetch_feed ( $localFeed );
@@ -314,7 +321,8 @@ class WpAutomaticFeeds extends wp_automatic {
 			$maxitems = @$rss->get_item_quantity ();
 			
 			echo '<br>Feed contains ' . $maxitems . ' posts';
-			
+			 
+			 
 			// Build an array of all the items, starting with element 0 (first element).
 			$rss_items = $rss->get_items ( 0, $maxitems );
 			
@@ -568,6 +576,23 @@ class WpAutomaticFeeds extends wp_automatic {
 				 
 				$og_title_enabled = in_array ( 'OPT_FEED_OG_TTL', $camp_opt ) || (isset ( $camp_general ['cg_ml_ttl_method'] ) && trim ( $camp_general ['cg_ml_ttl_method'] ) != 'auto');
 				
+				// original meta description, add the regex extraction rule and activate the specific part to custom field method if not enabled 
+				if(in_array('OPT_ORIGINAL_META', $camp_opt)){
+					
+					//add specific part to custom field extraction if not enabled 
+					if( ! in_array( 'OPT_FEED_PTF' , $camp_opt) ){
+						$camp_opt[] = 'OPT_FEED_PTF';
+						
+						if( ! isset( $camp_general ['cg_part_to_field'] ) )  $camp_general ['cg_part_to_field'] = '';
+						
+					}
+					
+					$seo_field_name =  class_exists('WPSEO_Options') ?   '_yoast_wpseo_metadesc' : '_yoast_wpseo_metadesc' ;
+					
+					$camp_general ['cg_part_to_field'] .= "\n" . 'regex|<meta name="description" content="(.*?)"|' . $seo_field_name ; 
+					
+				}
+				
 				// original post content
 				if (in_array ( 'OPT_FULL_FEED', $camp_opt ) || in_array ( 'OPT_FEED_CUSTOM', $camp_opt ) || in_array ( 'OPT_FEED_CUSTOM_R', $camp_opt ) || in_array ( 'OPT_ORIGINAL_META', $camp_opt ) || in_array ( 'OPT_ORIGINAL_CATS', $camp_opt ) || in_array ( 'OPT_ORIGINAL_TAGS', $camp_opt ) || in_array ( 'OPT_ORIGINAL_AUTHOR', $camp_opt ) || in_array ( 'OPT_FEED_PTF', $camp_opt ) || in_array ( 'OPT_FEEDS_OG_IMG', $camp_opt ) || $og_title_enabled) {
 					
@@ -586,6 +611,8 @@ class WpAutomaticFeeds extends wp_automatic {
 					
 					// cookie
 					$cg_sn_cookie = $camp_general ['cg_ml_cookie'];
+					
+					
 					
 					if (trim ( $cg_sn_cookie ) != '') {
 						$headers [] = "Cookie: $cg_sn_cookie ";
@@ -633,14 +660,14 @@ class WpAutomaticFeeds extends wp_automatic {
 				  
 					echo ' <--' . strlen ( $original_cont ) . ' chars returned in ' . timer_stop () . ' seconds';
 					 
-			
+				
 					 
 					// converting encoding
 					if (in_array ( 'OPT_FEED_CONVERT_ENC', $camp_opt )) {
 						echo '<br>Converting encoding from ' . $camp_general ['cg_feed_encoding'] . ' to utf-8';
 						$original_cont = iconv ( trim ( $camp_general ['cg_feed_encoding'] ) . '//IGNORE', "UTF-8//IGNORE", $original_cont );
 					}
-					
+				 
 					// fix single quote used instead of regular quote
 					$original_cont = $this->convert_single_quotes ( $original_cont );
 					 
@@ -825,7 +852,7 @@ class WpAutomaticFeeds extends wp_automatic {
 								
 								if (! in_array ( $title_word, $nocompare ) && preg_match ( '/\b' . preg_quote ( trim ( $title_word ), '/' ) . '\b/ui', $content )) {
 									echo '<br>Title word ' . $title_word . ' exists on the content, approving.';
-									
+								 
 									// echo $content;
 									$valid = 'yeah';
 									break;
@@ -1181,7 +1208,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					$res ['matched_content'] = strip_tags ( $res ['matched_content'], $cg_allowed_tags );
 					$res ['cont'] = strip_tags ( $res ['cont'], $cg_allowed_tags );
 				}
-				
+				 
 				// validate content size
 				
 				// MUST CONTENT
@@ -1538,11 +1565,22 @@ class WpAutomaticFeeds extends wp_automatic {
 						
 						// Parse rule
 						$rule_parts = explode ( '|', $cg_part_to_field_part );
+						$rule_single = 0; //ini
 						
 						//case regex with | used as alternatives
 						if(count($rule_parts) > 3 && $rule_parts [0] == 'regex'   ){
-							$rule_method = trim ( $rule_parts [0] );
+							$rule_method = trim ( $rule_parts [0] ); //first thing
+							
 							$rule_field = trim(end($rule_parts));
+							
+							// case |1 for the single value instead of many
+							if(trim($rule_field) == 1){
+								$rule_single = 1;
+								array_pop($rule_parts); // remove the 1 from the array
+								$rule_field = trim(end($rule_parts)); // field name is now the last child
+							}
+							
+							
 							$rule_value_parts = array();
 							for($i = 1; $i < count($rule_parts) -1  ; $i++){
 								$rule_value_parts[] = $rule_parts[$i];
@@ -1554,10 +1592,14 @@ class WpAutomaticFeeds extends wp_automatic {
 							$rule_method = trim ( $rule_parts [0] );
 							$rule_value = trim ( $rule_parts [1] );
 							$rule_field = trim ( $rule_parts [2] );
+						
+							//set single or all
+							if(isset($rule_parts [3]) && trim($rule_parts [3]) == 1)  $rule_single = 1;
+							
 						}
 						
-						$rule_single = 0;
-						@$rule_single = $rule_parts [3];
+					 
+						
 						
 						// Validate rule
 						if (trim ( $rule_method ) == '' || trim ( $rule_value ) == '' || trim ( $rule_field ) == '') {
@@ -1597,7 +1639,7 @@ class WpAutomaticFeeds extends wp_automatic {
 								$xpathMatches = $xpath->query ( "$rule_value" );
 							}
 							
-							
+							echo '<-- ' . count($xpathMatches) . ' matches found';
 							
 							// Single item ?
 							if ($rule_single) {
@@ -1639,16 +1681,20 @@ class WpAutomaticFeeds extends wp_automatic {
 							$matchregex = array ();
 							$finalmatch = '';
 							
+							//echo ' the rule value ' . $rule_value;
+							 
 						 	
 							// Match
 							preg_match_all ( '{' . trim ( $rule_value ) . '}is', $original_cont, $matchregex );
 						 
+							echo '<-- ' . count($matchregex[1]) . ' matches ';
 							 
 							$matchregex_vals = isset($matchregex [1])? $matchregex [1] : array() ;
 							
 							if (isset ( $matchregex [2] ))
 								$matchregex_vals = array_merge ( $matchregex_vals, $matchregex [2] );
-							
+							 
+								
 							// single match
 							if ($rule_single && count ( $matchregex_vals ) > 1) {
 								$matchregex_vals = array (
@@ -1983,9 +2029,7 @@ class WpAutomaticFeeds extends wp_automatic {
 						}
 						
 					}
-					
-		 
- 					
+					 
  					return $res;
 				}
 			} else {
@@ -1993,6 +2037,8 @@ class WpAutomaticFeeds extends wp_automatic {
 				// duplicated link
 				echo ' <-- duplicate in post <a href="' . admin_url ( 'post.php?post=' . $this->duplicate_id . '&action=edit' ) . '">#' . $this->duplicate_id . '</a>';
 			}
+			
+			 
 		
 		//top post only 
 		if(in_array('OPT_FEED_TOP' , $camp_opt)) break;

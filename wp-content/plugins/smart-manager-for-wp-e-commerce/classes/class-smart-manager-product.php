@@ -602,11 +602,11 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 			if( !empty( $sort_params['column'] ) ) {
 				$col_exploded = explode( "/", $sort_params['column'] );
-				$sort_params['column_nm'] = ( !empty( $col_exploded[1] ) ) ? $col_exploded[1] : '';
+				$sort_params['column_nm'] = ( ! empty( $col_exploded[1] ) ) ? $col_exploded[1] : '';
+			}
 
-				if( !empty( $sort_params['column_nm'] ) && $sort_params['column_nm'] == 'product_visibility_featured' ) {
-					$join_condition = " AND ( ". $wpdb->prefix ."term_taxonomy.taxonomy LIKE 'product_visibility' AND ". $wpdb->prefix ."terms.slug = 'featured' ) ";
-				}
+			if( ! empty( $sort_params['column_nm'] ) && 'product_visibility_featured' === $sort_params['column_nm'] ) {
+				return " AND ( ". $wpdb->prefix ."term_taxonomy.taxonomy LIKE 'product_visibility' AND ". $wpdb->prefix ."terms.slug = 'featured' ) ";
 			}
 
 			return $join_condition;
@@ -1852,10 +1852,15 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 						if (!empty($col_values)) {
 							foreach ($col_values as $key => $col_value) {
-								$attr_values [$col_value['lbl']] = array();
-								$attr_values [$col_value['lbl']] ['taxonomy_nm'] = $key;
-								$attr_values [$col_value['lbl']] ['val'] = $col_value['val'];
-								$attr_values [$col_value['lbl']] ['type'] = $col_value['type'];
+								if ( empty( $key ) || empty( $col_value ) || ( false === is_array( $col_value ) ) || ( false === array_key_exists( 'val', $col_value ) ) || ( false === array_key_exists( 'type', $col_value ) ) || empty( $col_value['type'] ) ) continue;
+								$attribute_name = ( false !== strpos( $key, 'pa_' ) ) ? substr( $key, 3 ) : '';
+								if ( ! empty( $attribute_name ) ) {
+									$attr_values[ $attribute_name ] = array(
+																		'taxonomy_nm' => $key,
+																		'val' => $col_value['val'],
+																		'type' => $col_value['type']
+																	);
+								}
 							}
 						}
 					}

@@ -324,6 +324,7 @@ class WpAutomaticaliexpress extends wp_automatic {
 					$temp['item_affiliate_url'] = $temp['item_url']; // ini
 					
 					$wp_automatic_ali_cookie = trim(get_option( 'wp_automatic_ali_cookie' , '' ));
+					$wp_automatic_ali_tracking_id = get_option('wp_automatic_ali_tracking_id' , '');
 					
 					//verify if cookie is added
 					if( $wp_automatic_ali_cookie  == ''){
@@ -338,7 +339,7 @@ class WpAutomaticaliexpress extends wp_automatic {
 						
 						//curl post
 						$curlurl="https://portals.aliexpress.com/tools/promoLinkGenerate.htm";
-						$curlpost="_csrf_token_=1ecz8x17lpv2i&action=GenerateUrlAction&targetUrl=" . urlencode($temp['item_url'])  . "&trackId=default&eventSubmitDoGenerateUrl=Get%2BTracking%2BLink"; // q=urlencode(data)
+						$curlpost="_csrf_token_=1ecz8x17lpv2i&action=GenerateUrlAction&targetUrl=" . urlencode($temp['item_url'])  . "&trackId=" .  urlencode($wp_automatic_ali_tracking_id) .  "&eventSubmitDoGenerateUrl=Get%2BTracking%2BLink"; // q=urlencode(data)
 						curl_setopt($this->ch, CURLOPT_URL, $curlurl);
 						curl_setopt($this->ch, CURLOPT_POST, true);
 						curl_setopt($this->ch, CURLOPT_POSTFIELDS, $curlpost);
@@ -379,11 +380,31 @@ class WpAutomaticaliexpress extends wp_automatic {
 							//login page? fm-login-id
 							if(stristr($exec,'fm-login-id')){
 								echo '<-- Got a login page instead, your cookie is expired/not correct for sure';
+								
+								$this->notify_the_admin('wp_automatic_ali_cookie' , 'Last call to AliExpress promote link page did not work, AliExpress cookie needs to be updated');
+								
 							}
 							
 						}else{
 							echo '<-- nice, got the link generation page already';
 						}
+						
+						//tracking ID
+						
+						
+						if(trim($wp_automatic_ali_tracking_id) == ''){
+							echo '<br>You did not add a tracking ID on the plugin settings page, let us find it for you';
+							
+							//<option value="sweetheatmn" selected="selected">sweetheatmn</option>
+							preg_match('!<option value="(.*?)" selected="selected"!' , $exec, $tracking_matches);
+							
+							if(isset($tracking_matches[1]) && trim($tracking_matches[1]) != '' ){
+								echo ' Found tracking id:' . $tracking_matches[1];
+								update_option('wp_automatic_ali_tracking_id' , $tracking_matches[1] );
+							}
+						
+						}
+						
 						
 						 
 						/*<div class="generate-result-box">

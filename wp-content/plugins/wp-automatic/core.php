@@ -100,11 +100,11 @@ class wp_automatic {
 		curl_setopt ( $this->ch, CURLOPT_SSL_VERIFYPEER, false );
 		
 		// verbose
-		/*
+		  
 		  $verbose = fopen ( str_replace ( 'core.php', 'verbose.txt', __FILE__ ), 'w' );
-		   curl_setopt ( $this->ch, CURLOPT_VERBOSE, 1 );
-		   curl_setopt ( $this->ch, CURLOPT_STDERR, $verbose );
-		            */
+		    curl_setopt ( $this->ch, CURLOPT_VERBOSE, 1 );
+		    curl_setopt ( $this->ch, CURLOPT_STDERR, $verbose );
+		 
 		 
 		
 		// spintax
@@ -393,14 +393,14 @@ class wp_automatic {
 		// Rotate feeds
 		if (in_array ( 'OPT_ROTATE_FEEDS', $camp_opt )) {
 			echo '<br>Rotating feeds Enabled';
-			
+			 
 			// last used feed
 			$last_feed = get_post_meta ( $camp->camp_id, 'last_feed', 1 );
 			
 			if (! trim ( $last_feed ) == '') {
 				// found last feed usage let's split
 				echo '<br>Last feed: ' . $last_feed;
-				
+				 
 				// add all feeds after the last feed
 				$add = false;
 				$feeds = explode ( "\n", $camp->feeds );
@@ -440,7 +440,7 @@ class wp_automatic {
 		
 		// ini content
 		$abcont = '';
-		$title = '';
+		$title = ''; //ini
 		
 		if ($camp_type == 'Articles') {
 			
@@ -465,6 +465,7 @@ class wp_automatic {
 		} elseif ($camp_type == 'Feeds') {
 			// feeds posting
 			echo '<br>Should get content from feeds';
+			 
 			$article = $this->feeds_get_post ( $camp );
 			
 			if (isset ( $article ['title'] )) {
@@ -513,11 +514,14 @@ class wp_automatic {
 			$img = $vid = $this->youtube_get_post ( $camp );
 			
 			 
-			
-			$abcont = $vid ['vid_desc'];
-			$original_title = $vid ['vid_title'];
-			$title = $vid ['vid_title'];
-			$source_link = $vid ['vid_url'];
+			if(isset($img['vid_title'])){
+				$abcont = $vid ['vid_desc'];
+				$original_title = $vid ['vid_title'];
+				$title = $vid ['vid_title'];
+				$source_link = $vid ['vid_url'];
+			}
+		
+		
 		} elseif ($camp_type == 'Vimeo') {
 			
 			echo '<br>Vimeo campaign let\'s get vimeo vid';
@@ -525,19 +529,24 @@ class wp_automatic {
 			$img = $vid = $this->vimeo_get_post ( $camp );
 			
 			// set player width and hieght
+			if(isset($vid ['vid_title'])){
+				$abcont = $vid ['vid_description'];
+				$original_title = $vid ['vid_title'];
+				$title = $vid ['vid_title'];
+				$source_link = $vid ['vid_url'];
+			}
 			
-			$abcont = $vid ['vid_description'];
-			$original_title = $vid ['vid_title'];
-			$title = $vid ['vid_title'];
-			$source_link = $vid ['vid_url'];
 		} elseif ($camp_type == 'Flicker') {
 			echo '<br>Flicker image is required';
 			$img = $this->flicker_get_post ( $camp );
 			
-			$abcont = $img ['img_description'];
-			$original_title = $img ['img_title'];
-			$title = $img ['img_title'];
-			$source_link = $img ['img_link'];
+			if(isset($img ['img_title'])){
+				$abcont = $img ['img_description'];
+				$original_title = $img ['img_title'];
+				$title = $img ['img_title'];
+				$source_link = $img ['img_link'];
+			}
+			
 		} elseif ($camp_type == 'eBay') {
 			echo '<br>eBay item is required';
 			$img = $this->ebay_get_post ( $camp );
@@ -585,27 +594,36 @@ class wp_automatic {
 			
 			$img = $this->fb_get_post ( $camp );
 			
-			$abcont = @$img ['matched_content'];
-			$original_title = @$img ['original_title'];
-			$title = @$img ['original_title'];
-			$source_link = @$img ['original_link'];
+			if(isset($img ['original_title'])){
+				$abcont = @$img ['matched_content'];
+				$original_title = @$img ['original_title'];
+				$title = @$img ['original_title'];
+				$source_link = @$img ['original_link'];
+			}
+			
+			
 		} elseif ($camp_type == 'Pinterest') {
 			
 			$img = $this->pinterest_get_post ( $camp );
 			
-			$abcont = $img ['pin_description'];
-			$original_title = $img ['pin_title'];
-			$title = $img ['pin_title'];
-			$source_link = $img ['pin_url'];
+			if(isset($img ['pin_title'])){
+				$abcont = $img ['pin_description'];
+				$original_title = $img ['pin_title'];
+				$title = $img ['pin_title'];
+				$source_link = $img ['pin_url'];
+			}
+			
 		} elseif ($camp_type == 'Instagram') {
 			
 			$img = $this->instagram_get_post ( $camp );
 			
-			$abcont = $img ['item_description'];
-			$original_title = $img ['item_title'];
-			$title = $img ['item_title'];
-			$source_link = $img ['item_url'];
-	
+			if(isset($img ['item_title'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_url'];
+			}
+			
 		} elseif ($camp_type == 'Aliexpress') {
 			
 			$img = $this->aliexpress_get_post ( $camp );
@@ -634,79 +652,111 @@ class wp_automatic {
 			
 			$img = $this->twitter_get_post ( $camp );
 			
-			$abcont = $img ['item_description'];
-			$original_title = $img ['item_title'];
-			$title = $img ['item_title'];
-			$source_link = $img ['item_url'];
+			if(isset($img ['item_description'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_url'];
+			}
+			
 		} elseif ($camp_type == 'SoundCloud') {
 			
 			$img = $this->sound_get_post ( $camp );
 			
-			$abcont = $img ['item_description'];
-			$original_title = $img ['item_title'];
-			$title = $img ['item_title'];
-			$source_link = $img ['item_url'];
+			if(isset($img ['item_description'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_url'];
+			}
+			
 		} elseif ($camp_type == 'Craigslist') {
 			
 			$img = $this->craigslist_get_post ( $camp );
 			
-			$abcont = $img ['item_description'];
-			$original_title = $img ['item_title'];
-			$title = $img ['item_title'];
-			$source_link = $img ['item_link'];
+			if(isset($img ['item_description'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_link'];
+			}
+			
 		} elseif ($camp_type == 'Reddit') {
 			
 			$img = $this->reddit_get_post ( $camp );
 			
-			$abcont = $img ['item_description'];
-			$original_title = $img ['item_title'];
-			$title = $img ['item_title'];
-			$source_link = $img ['item_url'];
+			if(isset($img ['item_description'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_url'];
+			}
+			
 		} elseif ($camp_type == 'Careerjet') {
 			
 			$img = $this->careerjet_get_post ( $camp );
 			
-			$abcont = $img ['item_description'];
-			$original_title = $img ['item_title'];
-			$title = $img ['item_title'];
-			$source_link = $img ['item_url'];
+			if(isset($img ['item_description'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_url'];
+			}
+			
 		} elseif ($camp_type == 'Itunes') {
 			$img = $this->itunes_get_post ( $camp );
-			$abcont = $img ['item_description'];
-			$original_title = $img ['item_title'];
-			$title = $img ['item_title'];
-			$source_link = $img ['item_link'];
+			
+			if(isset($img ['item_description'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_link'];
+			}
+		
 		} elseif ($camp_type == 'Envato') {
 			
 			$img = $this->envato_get_post ( $camp );
-			$abcont = $img ['item_description'];
-			$original_title = $img ['item_title'];
-			$title = $img ['item_title'];
-			$source_link = $img ['item_link'];
+			
+			if(isset($img ['item_description'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_link'];
+			}
+		
 		} elseif ($camp_type == 'DailyMotion') {
 			
 			$img = $this->DailyMotion_get_post ( $camp );
 			
-			$abcont = $img ['item_description'];
-			$original_title = $img ['item_title'];
-			$title = $img ['item_title'];
-			$source_link = $img ['item_link'];
+			if(isset($img ['item_description'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_link'];
+			}
+			
 		} elseif ($camp_type == 'Walmart') {
 			
 			$img = $this->walmart_get_post ( $camp );
 			
-			$abcont = $img ['item_description'];
-			$original_title = $img ['item_title'];
-			$title = $img ['item_title'];
-			$source_link = $img ['item_link'];
+			if(isset($img ['item_description'])){
+				$abcont = $img ['item_description'];
+				$original_title = $img ['item_title'];
+				$title = $img ['item_title'];
+				$source_link = $img ['item_link'];
+			}
+			
 		} elseif ($camp_type == 'Single') {
 			
 			$img = $this->single_get_post ( $camp );
 			
-			$abcont = $img ['matched_content'];
-			$original_title = $img ['original_title'];
-			$title = $img ['original_title'];
-			$source_link = $img ['source_link'];
+			if(isset($img ['original_title'])){
+				$abcont = $img ['matched_content'];
+				$original_title = $img ['original_title'];
+				$title = $img ['original_title'];
+				$source_link = $img ['source_link'];
+			}
+			
 		}
 		
 		//default tags fill
@@ -886,6 +936,16 @@ class wp_automatic {
 			
 			//Before filling the template, check banned and must exist words and length
 			$valid = $this->validate_exacts ( $abcont, $title, $camp_opt, $camp, false, $camp_general );
+			
+			//If valid validate criteria 
+			if($valid && in_array('OPT_CRITERIA' , $camp_opt)){
+				$valid = $this->validate_criterias ( $img, $camp_opt, $camp,  $camp_general );
+			}
+			
+			//If valid validate must exact criteria
+			if($valid && in_array('OPT_CRITERIA_MUST' , $camp_opt)){
+				$valid = $this->validate_criterias_must ( $img, $camp_opt, $camp,  $camp_general );
+			}
 			
 			// duplicate title check
 			if ($valid == true) {
@@ -1474,15 +1534,17 @@ class wp_automatic {
 							
 							echo '<br>*Replacing ' . htmlentities ( $regex_pattern_search ) . ' with ' . htmlentities ( $regex_pattern_replace );
 							
+							$replacements_count = 0;
+							
 							// echo $post_content;
 							// exit;
 							
 							if ( (! $isTitleOnly) || $isContentOnly  ) {
 								if (! in_array ( 'OPT_RGX_REPLACE_WORD', $camp_opt )) {
-									
+									 
 									// replacing in content
-									$post_content = preg_replace ( '{' . $regex_pattern_search . '}su', $regex_pattern_replace, $post_content );
-									
+									$post_content = preg_replace ( '{' . $regex_pattern_search . '}su', $regex_pattern_replace, $post_content , -1 , $replacements_count );
+									  
 									// replacing in rules
 									$i = 1;
 									while ( isset ( $img ["rule_$i"] ) ) {
@@ -1492,7 +1554,7 @@ class wp_automatic {
 										$i ++;
 									}
 								} else {
-									$post_content = preg_replace ( '{\b' . preg_quote ( $regex_pattern_search ) . '\b}su', $regex_pattern_replace, $post_content );
+									$post_content = preg_replace ( '{\b' . preg_quote ( $regex_pattern_search ) . '\b}su', $regex_pattern_replace, $post_content , -1 , $replacements_count );
 									
 									// replacing in rules
 									$i = 1;
@@ -1502,21 +1564,31 @@ class wp_automatic {
 										$i ++;
 									}
 								}
+								
+								echo '<-- ' . $replacements_count . ' replacements done in content ... ';
+								
+								
 							} else {
 								echo ' on titles only';
+								
 							}
 							
 							if (  (in_array ( 'OPT_RGX_REPLACE_TTL', $camp_opt ) || $isTitleOnly) && ! $isContentOnly ) {
 								
 								if (! in_array ( 'OPT_RGX_REPLACE_WORD', $camp_opt )) {
-									$post_title = preg_replace ( '{' . $regex_pattern_search . '}su', $regex_pattern_replace, $post_title );
+									$post_title = preg_replace ( '{' . $regex_pattern_search . '}su', $regex_pattern_replace, $post_title , -1 , $replacements_count );
 								} else {
-									$post_title = preg_replace ( '{\b' . preg_quote ( $regex_pattern_search ) . '\b}su', $regex_pattern_replace, $post_title );
+									$post_title = preg_replace ( '{\b' . preg_quote ( $regex_pattern_search ) . '\b}su', $regex_pattern_replace, $post_title , -1 , $replacements_count);
 								}
+								
+								echo ' & ' . $replacements_count . ' replacements in title ... ';
+								
 							}
 						}
 					}
 				}
+				
+			 
 				
 				// restore protected tags
 				if (isset ( $htmlfounds ) and count ( $htmlfounds ) > 0) {
@@ -1530,6 +1602,8 @@ class wp_automatic {
 				}
 			}
 			
+		 
+			
 			//gallery will download images ini cache and add to media 
 			if(in_array('OPT_GALLERY_ALL', $camp_opt)){
 				$camp_opt[] =  'OPT_CACHE';
@@ -1538,6 +1612,7 @@ class wp_automatic {
 			
 			// cache images locally ?
 			$attachements_to_attach = array ();
+			$already_cached_imgs = array();
 			if (in_array ( 'OPT_CACHE', $camp_opt ) || $camp_type == 'Instagram' || $camp_type == 'Clickbank') {
 				
 				// strip srcset srcset=
@@ -1678,10 +1753,13 @@ class wp_automatic {
 						
 						// check if already cached before
 						$is_cached = $this->is_cached ( $image_url, $image_data_md5 );
-						
+						 
 						if ($is_cached != false) {
-							echo '<--already cached';
+							echo '<--already cached *';
 							$post_content = str_replace ( $image_url_original, $is_cached, $post_content );
+							
+							$already_cached_imgs[] = $is_cached;
+							 
 							continue;
 						}
 						
@@ -1752,6 +1830,9 @@ class wp_automatic {
 									}
 									
 									// Title handling
+									
+									
+									
 									$imgTitle = sanitize_file_name ( $filename );
 									if (in_array ( 'OPT_THUMB_ALT', $camp_opt )) {
 										$imgTitle = wp_trim_words ( $post_title, 10, '' );
@@ -1782,6 +1863,8 @@ class wp_automatic {
 				$post_content = preg_replace ( '{<img class="delete.*?>}', '', $post_content );
 			}
 			
+			
+			
 			//attaching media 
 			$attach_ids = array();
 			if (isset ( $attachements_to_attach ) && count ( $attachements_to_attach ) > 0) {
@@ -1791,6 +1874,8 @@ class wp_automatic {
 				foreach ( $attachements_to_attach as $attachements_to_attach_single ) {
 					
 					$file = $attachements_to_attach_single [0];
+					 
+					
 					$attachment = $attachements_to_attach_single [1];
 					//$post_id = $id;
 					
@@ -1971,7 +2056,7 @@ class wp_automatic {
 								
 								//exact match
 								
-								if ( stristr ( $content_to_check, trim ( $cg_keyword_cat_rule_keyword_single ) ) ) {
+								if (  ! stristr ( $content_to_check, trim ( $cg_keyword_cat_rule_keyword_single ) ) ) {
 									
 									$was_found = false;
 									break;
@@ -1980,7 +2065,7 @@ class wp_automatic {
 							}else{
 								
 								//word match
-								if (! preg_match ( '{\b' . preg_quote ( $cg_keyword_cat_rule_keyword_single ) . '\b}siu', $content_to_check ) || (stristr ( $cg_keyword_cat_rule_keyword_single, '#' ) && stristr ( $content_to_check, trim ( $cg_keyword_cat_rule_keyword_single ) ))) {
+								if ( ! ( preg_match ( '{\b' . preg_quote ( $cg_keyword_cat_rule_keyword_single ) . '\b}siu', $content_to_check ) || (stristr ( $cg_keyword_cat_rule_keyword_single, '#' ) && stristr ( $content_to_check, trim ( $cg_keyword_cat_rule_keyword_single ) )))) {
 									
 									$was_found = false;
 									break;
@@ -2027,9 +2112,59 @@ class wp_automatic {
 			}
 			
 			// Gallery from found images, delete images and add gallery 
-			if(  ( in_array('OPT_GALLERY_ALL', $camp_opt) && count($attach_ids) >0 ) && !(  count($attach_ids) == 1 && ! in_array( 'OPT_FEED_GALLERY_LIMIT' , $camp_opt) )   ){
-				echo '<br>Found '. count($attach_ids) . ' images to attach as a gallery, creating the gallery';
-				$gallery_content = '[gallery ids="' . implode(',' , $attach_ids ) .   '"]';
+
+			
+			// prepare gallery attachments
+			if(in_array('OPT_GALLERY_ALL' , $camp_opt)){
+				$gallery_attach_ids = array();
+				
+				if(count($attach_ids) > 0) $gallery_attach_ids = $attach_ids; // add already attached this run
+				
+				if( isset($already_cached_imgs) && count($already_cached_imgs) > 0 ){
+					echo '<br>Found ' . count($already_cached_imgs) . ' cached images, finding ids for gallery attachments';
+					
+					foreach ($already_cached_imgs as $already_cached_img){
+						echo '<br> -- finding id for '. $already_cached_img . ' ';  
+						$query =  "select * from {$this->wp_prefix}posts where guid = '$already_cached_img' limit 1";
+						$pres = $this->db->get_row( $query );
+						 
+						if(isset($pres->ID)){
+							echo ' <-- found ' . $pres->ID;
+							$gallery_attach_ids[] = $pres->ID;
+						}else{
+							echo '<-- not found';
+						}
+						
+					}
+				
+				}
+								
+			}
+			
+			if(  ( in_array('OPT_GALLERY_ALL', $camp_opt) && count($gallery_attach_ids) >0 ) && !(  count($gallery_attach_ids) == 1 && ! in_array( 'OPT_FEED_GALLERY_LIMIT' , $camp_opt) )   ){
+				
+				echo '<br>Found '. count($gallery_attach_ids) . ' images to attach as a gallery, creating the gallery';
+				 
+				
+				$gallery_content = '<!-- wp:gallery {"linkTo":"none"} -->
+<figure class="wp-block-gallery has-nested-images columns-default is-cropped">';
+				
+				foreach($gallery_attach_ids as $attach_ids_single){
+					$gallery_content.= '<!-- wp:image {"id":'. $attach_ids_single . ',"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="' . wp_get_attachment_image_url($attach_ids_single) .  '" alt="" class="wp-image-'. $attach_ids_single .'"/></figure>
+<!-- /wp:image -->';
+				}
+				
+				
+				
+				$gallery_content.= '</figure>
+<!-- /wp:gallery -->';
+				
+				
+				//remove content images?
+				if( in_array('OPT_FEED_GALLERY_DELETE', $camp_opt) ){
+					$post_content = preg_replace('!<img .*?>!s' , '' , $post_content );
+				}
 				
 				if(stristr($post_content, '[the_gallery]' )){
 					$post_content = str_replace( '[the_gallery]' , $gallery_content  ,  $post_content);
@@ -2039,10 +2174,7 @@ class wp_automatic {
 				
 				
 				
-				//remove content images?
-				if( in_array('OPT_FEED_GALLERY_DELETE', $camp_opt) ){
-					$post_content = preg_replace('!<img .*?>!s' , '' , $post_content );
-				}
+				
 				
 			}elseif(stristr($post_content, '[the_gallery]')){
 				$post_content = str_replace('[the_gallery]' , '' , $post_content);
@@ -2367,7 +2499,7 @@ class wp_automatic {
 				$my_post['post_title'] = $this->removeEmoji($my_post['post_title']);
 			}
 			 
-			
+		 
 			
 			// Insert the post into the database
 			if ($my_post ['post_type'] == 'topic' && function_exists ( 'bbp_insert_topic' )) {
@@ -2388,6 +2520,8 @@ class wp_automatic {
 					//update exising post
 					$id = wp_update_post($my_post);
 				}else{
+					
+					
 					$id = wp_insert_post ( $my_post );
 					
 				}
@@ -2557,43 +2691,65 @@ class wp_automatic {
 			} else {
 			}
 			
-			// feeds category
-			if ($camp_type == 'Feeds' && trim ( $img ['cats'] != '' )) {
+			// Original Categories
+			
+			//hack to add any categories to categories_to_set so they get set on the fly
+			if( isset($img['categories_to_set']) && trim($img['categories_to_set']) != '' && ! isset($img ['cats'])  )
+				$img ['cats'] = $img['categories_to_set'];
+			
+			if (  ($camp_type == 'Feeds' && in_array( 'OPT_ORIGINAL_CATS' ,  $camp_opt) && trim ( $img ['cats'] != '' )  ) ||  ( isset($img['categories_to_set']) && trim($img['categories_to_set']) != '' )   ) {
+				
+			 
 				
 				// Removed @v3.24.0
 				// add_post_meta ( $id, 'original_cats', $img['cats'] );
 				
-				if (in_array ( 'OPT_ORIGINAL_CATS', $camp_opt )) {
+				if (  ! in_array('OPT_ORIGINAL_CATS_TAGS' , $camp_opt)) {
 					
 					echo '<br>Setting Categories to :' . $img ['cats'];
 					
-					$cats = array_filter ( explode ( ',', $img ['cats'] ) );
 					
+					//parent format? Electronics > Car & Vehicle Electronics
+					$is_parent_format = false; 
+					if(stristr( $img ['cats'] , ' > ' )){
+						$cats = array_filter ( explode ( ' > ', $img ['cats'] ) );
+						$is_parent_format = true;
+					}else{
+						$cats = array_filter ( explode ( ',', $img ['cats'] ) );
+					}
+					
+					//taxonomy name
 					if ($camp->camp_post_type == 'post') {
 						$taxonomy = 'category';
 					} else {
 						$taxonomy = $camp_general ['cg_camp_tax'];
 					}
 					
+					echo ' Taxonomy:' .$taxonomy;
+					
 					$new_cats = array ();
 					
 					// convert cats to ids
 					foreach ( $cats as $cat_name ) {
+						
+						echo '<br>Processing cat:' . $cat_name;
 						
 						$cat = get_term_by ( 'name', $cat_name, $taxonomy );
 						
 						// check existence
 						if ($cat == false) {
 							
+							echo '<-- cat does not already exist... creating...';
+							
 							//parent 
 							$args = array();
 							
-							if (in_array ( 'OPT_ORIGINAL_CATS_PARENT', $camp_opt ) && is_numeric( trim( $camp_general['cg_parent_cat'] )) ) {
-								
+							if($is_parent_format && isset($cat_id)){
+								$args=array('parent' => $cat_id); //set the last cat created as the parent
+								echo '<br>Setting parent to ' . $cat_id . ' for cat '. $cat_name;
+							}elseif (in_array ( 'OPT_ORIGINAL_CATS_PARENT', $camp_opt ) && is_numeric( trim( $camp_general['cg_parent_cat'] )) ) {
 								$cg_parent_cat = $camp_general['cg_parent_cat'];
-								
 								$args=array('parent' => trim($cg_parent_cat));
-								
 							}
 							
 							// cateogry not exist create it
@@ -2602,6 +2758,9 @@ class wp_automatic {
 							if (! is_wp_error ( $cat )) {
 								// category id of inserted cat
 								$cat_id = $cat ['term_id'];
+								
+								echo '<-- Created with ID: ' .$cat_id;
+								
 								$new_cats [] = $cat_id;
 							}
 						} else {
@@ -2609,6 +2768,8 @@ class wp_automatic {
 							// category already exists let's get it's id
 							$cat_id = $cat->term_id;
 							$new_cats [] = $cat_id;
+							
+							echo '<-- Cat exists with ID: ' . $cat_id;
 						}
 					}
 					
@@ -2624,8 +2785,20 @@ class wp_automatic {
 						wp_remove_object_terms ( $id, $the_uncategorized_slug, $taxonomy );
  					
 					}
+				}elseif( in_array ( 'OPT_ORIGINAL_CATS', $camp_opt ) ){
+					//as tags instead 
+					$camp_opt[] = 'OPT_ORIGINAL_TAGS'; //simulate tags option activated
+					
+					//merge tags 
+					$post_tags = array();
+					$new_tags = explode ( ',', $img ['cats'] );
+					
+					if (count ( $new_tags ) > 0) {
+						$post_tags = array_merge ( $post_tags, $new_tags );
+					}
+					
 				}
-			}
+			}//end set original categories option
 			
 			// If post type== product, set the tags taxonomy to product_tags
 			if ($camp->camp_post_type == 'product' && ! in_array ( 'OPT_TAXONOMY_TAG', $camp_opt )) {
@@ -2937,8 +3110,34 @@ class wp_automatic {
 				//pixabay condition 1 force condition 2 no images found
 				if (  (in_array ( 'OPT_PIXABAY', $camp_opt ) && in_array ( 'OPT_PIXABAY_FORCE', $camp_opt )) || ( in_array ( 'OPT_PIXABAY', $camp_opt ) && count($srcs) == 0  ) ) {
 					
-					$cg_pixabay_keyword = $camp_general['cg_pixabay_keyword'];
-					$possible_image = $this->get_pixabay_image($cg_pixabay_keyword);
+					$possible_image = '' ; //ini
+					
+					if( in_array ( 'OPT_PIXABAY_TITLE', $camp_opt ) ){
+						//get keywords from post title 
+						echo '<br>Getting keywords for PixaBay from post title ' . $post_title;
+						
+						$validTitleWords = $this->wp_automatic_generate_tags ( $post_title );
+						
+						foreach($validTitleWords as $validTitleWord){
+							
+							echo '<br>Keyword from  the title : ' . $validTitleWord;
+							$possible_image = $this->get_pixabay_image($validTitleWord);
+							
+							if(trim($possible_image) != ''){
+								echo '<-- Found an image for this keyword';
+								break; //found for this keyword, nice
+							} 
+							
+						}
+						
+						
+						
+					}else{
+						$cg_pixabay_keyword = $camp_general['cg_pixabay_keyword'];
+						$possible_image = $this->get_pixabay_image($cg_pixabay_keyword);
+					}
+					
+					
 					
 					
 					if( stristr($possible_image, 'pixabay') ){
@@ -3031,7 +3230,7 @@ class wp_automatic {
 					
 					$this->log ( 'Featured image', '<a href="' . $image_url . '">' . $image_url . '</a>' );
 					echo '<br>Featured image src: ' . $image_url;
-					
+				
 					// set thumbnail
 					$upload_dir = wp_upload_dir ();
 					
@@ -3105,6 +3304,7 @@ class wp_automatic {
 					if (in_array ( 'OPT_THUMB_CLEAN', $camp_opt )) {
 						
 						$clean_name = $this->file_name_from_title ( $post_title );
+						
 						
 						if (trim ( $clean_name ) != "") {
 							
@@ -3283,10 +3483,15 @@ class wp_automatic {
 								}
 								
 								// Title handling
+								
+								
 								$imgTitle = sanitize_file_name ( $filename );
+								 
+								
 								if (in_array ( 'OPT_THUMB_ALT', $camp_opt )) {
 									$imgTitle = wp_trim_words ( $post_title, 10, '' );
 								}
+								
 								
 								$attachment = array (
 										'guid' => $guid,
@@ -3589,6 +3794,21 @@ class wp_automatic {
 						}
 					}
 				}
+			}
+			
+			// Generic tags_to_set , if found set as tags
+			if ( isset($img['tags_to_set']) && trim($img['tags_to_set']) != ''  ) {
+				
+				echo '<br>Tags to be set: ' . $img['tags_to_set'];
+				
+				// tags
+			  
+						if (in_array ( 'OPT_TAXONOMY_TAG', $camp_opt )) {
+							wp_set_post_terms ( $id, $img['tags_to_set'], trim ( $camp_general ['cg_tag_tax'] ), true );
+						} else {
+							wp_set_post_tags ( $id, $img['tags_to_set'], true );
+						}
+					  
 			}
 			
 			// AFTER POST SPECIFIC
@@ -4145,7 +4365,7 @@ class wp_automatic {
 			}
 			
 			// setting post tags
-			$post_tags = array ();
+			if(!  isset($post_tags)) $post_tags = array ();
 			
 			if (in_array ( 'OPT_ADD_TAGS', $camp_opt )) {
 				
@@ -5072,7 +5292,7 @@ class wp_automatic {
 			add_filter ( 'content_save_pre', 'wp_filter_post_kses' );
 			
 			// duplicate cache update
-			if ($this->campDuplicateLinksUpdate == true) {
+			if ($this->campDuplicateLinksUpdate == true && ! in_array('OPT_LINK_NOCACHE', $camp_opt) ) {
 				
 				$this->campNewDuplicateLinks [$id] = $source_link;
 				update_post_meta ( $camp->camp_id, 'wp_automatic_duplicate_cache', $this->campNewDuplicateLinks );
@@ -5317,6 +5537,201 @@ class wp_automatic {
 		
 		return $valid;
 	}
+	
+	
+	/**
+	 * Function to validate if criterias applies to the fields or not 
+	 */
+	function validate_criterias( $img, $camp_opt, $camp,  $camp_general ){
+		
+		//ini 
+		$valid = true; // true because false will mark the whole post as invalid, we want it invalid if any criteria applies only
+		
+		// required field values
+		$cg_criteria_skip_fields= @$camp_general['cg_criteria_skip_fields'];
+		$cg_criteria_skip_criterias= @$camp_general['cg_criteria_skip_criterias'];
+		$cg_criteria_skip_values = @$camp_general['cg_criteria_skip_values'];
+		
+		$i=0;
+		foreach($cg_criteria_skip_fields as $cg_criteria_skip_field){
+			
+			$cg_criteria_skip_field = trim( str_replace(array('[', ']'), '', $cg_criteria_skip_field) );
+			
+			echo '<br>Checking Field:' . $cg_criteria_skip_field . ' if  '  . $cg_criteria_skip_criterias[$i] . ' '    ;
+			 
+			if( isset($img[$cg_criteria_skip_field]) ){
+				
+				//validating the field 
+				$single_criteria_valid = $this->validate_criteria_single(  $cg_criteria_skip_criterias[$i] , $cg_criteria_skip_values[$i] ,  $img[$cg_criteria_skip_field] );
+				
+				if($single_criteria_valid){
+					echo '<-- Criteria applies, skipping marking the post as not valid';
+					return false;
+				}else{
+					echo '<-- Set exclusion criteria did not match';
+				}
+				
+			}else{
+				echo '<-- Field not found withen returned values...';
+			}
+			
+			$i++;
+		}
+		
+		return $valid;
+		
+	}
+	
+	
+	/**
+	 * Function to validate if criterias applies to the fields or not and must one criteria at least apply otherwise return false
+	 */
+	function validate_criterias_must( $img, $camp_opt, $camp,  $camp_general ){
+		
+		//ini
+		$valid = true; // start with the post valid, if any criteria did not apply, it will be invaid
+		
+		// required field values
+		$cg_criteria_skip_fields= @$camp_general['cg_criteria_skip_fields_must'];
+		$cg_criteria_skip_criterias= @$camp_general['cg_criteria_skip_criterias_must'];
+		$cg_criteria_skip_values = @$camp_general['cg_criteria_skip_values_must'];
+		
+		$i=0;
+		foreach($cg_criteria_skip_fields as $cg_criteria_skip_field){
+			
+			$cg_criteria_skip_field = trim( str_replace(array('[', ']'), '', $cg_criteria_skip_field) );
+			
+			echo '<br>Checking Field:' . $cg_criteria_skip_field . ' if  '  . $cg_criteria_skip_criterias[$i] . ' '    ;
+			
+			if( isset($img[$cg_criteria_skip_field]) ){
+				
+				//validating the field
+				$single_criteria_valid = $this->validate_criteria_single(  $cg_criteria_skip_criterias[$i] , $cg_criteria_skip_values[$i] ,  $img[$cg_criteria_skip_field] );
+				
+				if($single_criteria_valid){
+					echo '<-- Criteria applies, nice';
+				}else{
+					echo '<-- Set exclusion criteria did not match.. skipping the post';
+					return false;
+				}
+				
+			}else{
+				echo '<-- Field not found withen returned values...';
+			}
+			
+			$i++;
+		}
+		
+		return $valid;
+		
+	}
+	
+	/**
+	 * Checks a single field value for a specific criteia, return true if applies and false if not
+	 * @param unknown $cg_criteria_skip_criteria
+	 * @param unknown $cg_criteria_skip_value
+	 * @param unknown $cnt
+	 */
+	function validate_criteria_single( $cg_criteria_skip_criteria , $cg_criteria_skip_value , $cnt  ){
+		
+		$criteria_applies = false; //ini
+		$first_print = true;
+		
+		$cg_criteria_skip_value_parts =  explode("\n", $cg_criteria_skip_value);
+		$cg_criteria_skip_value_parts = array_filter($cg_criteria_skip_value_parts);
+		
+		
+		foreach($cg_criteria_skip_value_parts as $cg_criteria_skip_value_part){
+		
+			if(!$first_print){
+				
+				echo ',';
+			}else{
+				$first_print = false;
+			}
+			
+			echo ' ' . $cg_criteria_skip_value_part . ' ';
+			
+			if($cg_criteria_skip_criteria == '=='){
+				
+				//equation
+				if( trim($cnt) == trim($cg_criteria_skip_value_part) ){
+					$criteria_applies = true;
+				}
+				 
+			}elseif( $cg_criteria_skip_criteria == 'contains' ){
+					
+				if( stristr($cnt, $cg_criteria_skip_value_part ) ){
+					$criteria_applies = true;
+				}
+				
+			}elseif(  $cg_criteria_skip_criteria == 'greater' ){
+				
+				if(is_numeric(trim($cnt)) && is_numeric(trim($cg_criteria_skip_value_part))){
+					
+					if ( trim($cnt) >  trim($cg_criteria_skip_value_part) ){
+						$criteria_applies = true;
+					}else{
+						echo '<-- not greater';
+					}
+					
+				}else{
+					echo ' (Not valid to compare, not numeric values)';
+				}
+				
+			}elseif(  $cg_criteria_skip_criteria == 'less' ){
+				
+				if(is_numeric(trim($cnt)) && is_numeric(trim($cg_criteria_skip_value_part))){
+					
+					if ( trim($cnt) <  trim($cg_criteria_skip_value_part) ){
+						$criteria_applies = true;
+					}else{
+						echo '<-- not less';
+					}
+					
+				}else{
+					echo ' (Not valid to compare, not numeric values)';
+				}
+				
+			}elseif( $cg_criteria_skip_criteria == 'length_greater'){
+				
+				 //numeric check 
+				if( is_numeric(trim($cg_criteria_skip_value_part)) ){
+					$length = strlen($cnt);
+					if($length > trim($cg_criteria_skip_value_part) ){
+						$criteria_applies = true;
+					}else{
+						echo '<-- length('.$length.') is not greater';
+					}
+					
+				}else{
+					echo ' (Compare value is not a valid number )';
+				}
+				
+			}elseif( $cg_criteria_skip_criteria == 'length_less'){
+				
+				//numeric check
+				if( is_numeric(trim($cg_criteria_skip_value_part)) ){
+					$length = strlen($cnt);
+					if($length < trim($cg_criteria_skip_value_part) ){
+						$criteria_applies = true;
+					}else{
+						echo '<-- length('.$length.') is not less';
+					}
+					
+				}else{
+					echo ' (Compare value is not a valid number )';
+				}
+				
+			}
+			
+		}
+		
+		return $criteria_applies;
+		
+	}
+	
+	
 	function fire_proxy() {
 		echo '<br>Proxy Check Fired';
 		
@@ -8362,6 +8777,41 @@ class wp_automatic {
 		}
 		
 		
+	}
+	
+	/**
+	 * send an email notification if a required session/api key got invalid and need renewal
+	 * @param unknown $expired_field
+	 * @param string $message
+	 */
+	function notify_the_admin($expired_field   , $message = ''){
+		
+		//notification enabled for this field or not 
+		$wp_automatic_options = get_option('wp_automatic_options',array());
+		if(! in_array('OPT_' . $expired_field ,  $wp_automatic_options  ))return;
+		
+		//check if already mailed if so return
+		$expired_value = get_option($expired_field , '');
+		$latest_notification_expire_value = get_option( 'wp_automatic_field_expire_' . $expired_field    ,   ''  );
+		
+		if($latest_notification_expire_value == $expired_value){
+			//already notified, lets return
+			return;
+		}else{
+			//update last notification expire value
+			update_option( 'wp_automatic_field_expire_' . $expired_field , $expired_value );
+		}
+		
+		
+		//get mail 
+		$wp_automatic_fb_email = trim(get_option('wp_automatic_fb_email' , ''));
+		
+		// if not found email, return
+		if(! stristr( $wp_automatic_fb_email , '@')) return;
+		
+		//sending mail
+		wp_mail( $wp_automatic_fb_email, 'WP Automatic settings field expired, please update ' , $message . ' on site '. get_site_url());
+		echo '<br>Notification email sent to update the value';
 	}
 	
 } // End

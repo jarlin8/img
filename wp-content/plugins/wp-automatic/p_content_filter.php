@@ -302,10 +302,12 @@ function wp_automatic_custom_comment_url($return){
 		if( isset($return_parts[1]) && trim($return_parts[1]) != '' ){
 			return 'https://www.youtube.com/channel/' . $return_parts[1] ;
 		}else{
-			return '';
+			return $return;
 		}
 		
 	}
+	
+	return $return;
 	
 }
 

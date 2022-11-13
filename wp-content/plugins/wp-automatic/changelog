@@ -1,3 +1,46 @@
+@10 October 2022 v3.58.1
+Fix: Apify back to work after recent changes that triggered an error Field input.proxyConfiguration is required
+Fix: Facebook group posts full text extraction now back to work
+Improved: Youtube posting from a channel can now accept channel URL instead of ID
+
+@6 October 2022 v3.58.0
+NEW: Feeds/Multi-scraper option to extract original meta description and set as SEO meta description
+NEW: Twitter option to auto embed direct video URL instead of Twitter embed code
+NEW: Twitter new tag [item_video_url_direct] to get direct video URL for embed
+NEW: Reddit option to set flairs as tags/categories and a new tag [item_flairs] to return them
+NEW: option to not remember imported posts urls 
+Fix: Facbook events import back to work for new page experience pages
+Fix: eBay now reset the keyword search index after reaching 10k results which is eBay limit
+Fix: Feeds/Multi-scraper relative links fix algorithm imporved 
+
+@19 September 2022 v3.57.4
+NEW: Option to filter returned posts by fields equal to a specific value, contains a specific value, greater than a specific value and more
+Fix:Feeds/Multi scraper specific part to custom field regex extraction single value tag now work
+Fix: Keyword to category check option now works correctly
+Fix: Twitter format from:user filter:videos now works
+
+@6 September 2022 v3.57.3
+Fix: The previous version created categories even if the option was not enabled, now sorted
+
+
+4 September 2022 v3.57.2
+NEW: option to search PixaBay from title keywords and get a featured image
+NEW: AliExpress option to send an email notification if the cookie expired and needs renewal
+NEW: Amazon option to set the imported product categories as WordPress categories 
+Fix: AliExpress link generation back to work after recent changes from AliExpress
+Fix: Now reviews work for latest WooCommerce version  6.8.2
+
+24 August 2022 v3.57.1
+NEW: Amazon option to delete no more available products on amazon
+NEW: Amazon option to set out of stock products to pending and publish them when back to stock
+NEW: Facebook/Instagram session expire email notification option added
+NEW: Feeds/Multi-page scraper original categories can now be set as tags
+NEW: Reddit now support importing gallery reddits
+Fix: Facebook now imports events from new experience FB pages 
+Fix: add all content image as gallery now use the block format instead of legacy
+Fix: Cron improved to bypass cloudflare and siteground cache 
+Fix: TikTok now works for non-latin keywords like Japanese 
+
 @11 August 2022 v3.57.0
 NEW: Option to set featured image from pixabay.com 
 NEW: Option to create a gallery from found post images

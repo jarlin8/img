@@ -2,12 +2,42 @@
 /**
  * Cron file process all or single campaign
  */
-$wp_automatic_options = get_option ( 'wp_automatic_options' , array() );
 
-//performance report
+//set main timer for cron start and end
+global $wp_automatic_timer;
+$wp_automatic_timer = microtime(true);
+
+// no cache
+if ( ! headers_sent() ) {
+	header( 'Expires: Wed, 11 Jan 1984 05:00:00 GMT' );
+	header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
+}
+
+// Verify valid ID
+if (isset ( $_GET ['id'] )) {
+	
+	// Integer value from id , this is a specific campaign
+	$id = intval ( $_GET ['id'] );
+	if (! is_int ( $id ))
+		exit ();
+} else {
+	
+	$id = false;
+	echo '<strong>Welcome</strong> to WordPress Automatic cron job, current system time is:' . time() .  '...<br>';
+	wp_automatic_log_new('Cron job triggered', 'Cron job just started now..... ');
+}
+
+//options for fatal handler function
+$wp_automatic_options = get_option ( 'wp_automatic_options' , array() );
+ 
+//performance report function & prices update after price update
 if(! in_array('OPT_NO_FATAL',$wp_automatic_options))
 register_shutdown_function ( "wp_automatic_fatal_handler" );
+
 function wp_automatic_fatal_handler() {
+	
+	global $wp_automatic_timer;
+	$time_used = microtime( true ) - $wp_automatic_timer;
 	
 	/*
 	 */
@@ -26,9 +56,7 @@ function wp_automatic_fatal_handler() {
 	$wp_automatic_options = get_option ( 'wp_automatic_options', array () );
 	
 	if (in_array ( 'OPT_AMAZON_PRICE', $wp_automatic_options ) && ! isset ( $_GET ['id'] )) {
-		
-		
-		
+		 
 		if ( in_array('OPT_AMAZON_NOAPI', $wp_automatic_options) || trim( get_option ( 'wp_amazonpin_apvtk', '' ) ) == '' ){
 				// no API price updates
 			wp_automatic_amazon_prices_update ( false );
@@ -41,21 +69,13 @@ function wp_automatic_fatal_handler() {
 		
 	}
 	
-	echo '<br><i><small>Plugin complteted running.. peak ram used was: ' . number_format ( memory_get_peak_usage () / (1024 * 1024), 2 ) . ' MB, current:' . number_format ( memory_get_usage () / (1024 * 1024), 2 ) . ', DB queries count:' . get_num_queries () . ', Time used: ' . timer_stop () . ' seconds</small></i>';
+	wp_automatic_log_new('The end', 'Plugin completed its work in (' . $time_used.  ') seconds and reached the end successfully, time to die' );
+	
+	//report performance 
+	echo '<br><i><small>Plugin complteted running.. peak ram used was: ' . number_format ( memory_get_peak_usage () / (1024 * 1024), 2 ) . ' MB, current:' . number_format ( memory_get_usage () / (1024 * 1024), 2 ) . ', DB queries count:' . get_num_queries () . ', Time used: ' . $time_used . ' seconds</small></i>';
 }
 
-// Verify valid ID
-if (isset ( $_GET ['id'] )) {
-	
-	// Integer value from id
-	$id = intval ( $_GET ['id'] );
-	if (! is_int ( $id ))
-		exit ();
-} else {
-	
-	$id = false;
-	echo '<strong>Welcome</strong> to WordPress Automatic cron job ...<br>';
-}
+
 
 // table version
 $wp_automatic_version = get_option ( 'wp_automatic_version', 199 );

@@ -16,6 +16,8 @@ class WpAutomaticAmazon extends wp_automatic {
 		
 		$this->load_cookie ( 'wp_automatic_amazon' );
 		
+		$camp_opt = unserialize ( $camp->camp_options );
+		
 		if (stristr ( $camp->camp_general, 'a:' ))
 			$camp->camp_general = base64_encode ( $camp->camp_general );
 		$camp_general = unserialize ( base64_decode ( $camp->camp_general ) );
@@ -306,6 +308,8 @@ class WpAutomaticAmazon extends wp_automatic {
 					$temp ['price_numeric'] = '00.00';
 					$temp ['price_currency'] = '$';
 					
+					if(isset($item['item_cats'])) $temp['item_cats'] = $item['item_cats'];
+					
 					// increasing expiration date of the review
 					$ret->link_review = preg_replace ( '{exp\=20\d\d}', 'exp=2030', $ret->link_review );
 					$ret->link_review = str_replace ( 'http://', '//', $ret->link_review );
@@ -457,6 +461,11 @@ class WpAutomaticAmazon extends wp_automatic {
 					$temp['item_rating'] = '';
 					if(isset($item['item_rating'])) $temp['item_rating'] = $item['item_rating'];
  					
+					//original categories to set 
+					if(in_array( 'OPT_AMAZON_CATS' ,  $camp_opt) && isset( $temp['item_cats'] )  && trim($temp['item_cats']) != '' ){
+						echo '<br>Original categories to be set: ' . $temp['item_cats'];
+						$temp['cats'] = $temp['categories_to_set'] = str_replace(',' , ' -' , $temp['item_cats']) ;
+					}
 					 
 					return $temp;
 				} else {

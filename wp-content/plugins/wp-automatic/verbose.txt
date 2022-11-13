@@ -1,65 +1,51 @@
-*   Trying ::1:80...
+*   Trying 172.217.19.138:443...
 * TCP_NODELAY set
-* Connected to localhost (::1) port 80 (#0)
-> GET /wordpress/?wp_automatic=download&link=httpz://sweetheatm.CRYPTOSIGX.hop.clickbank.net HTTP/1.1
-Host: localhost
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
-Accept: */*
-Referer: http://www.bing.com/
-
-* Mark bundle as not supporting multiuse
-< HTTP/1.1 500 Internal Server Error
-< Date: Sat, 16 Jul 2022 20:44:09 GMT
-< Server: Apache/2.4.46 (Unix) OpenSSL/1.0.2u PHP/8.0.0 mod_wsgi/3.5 Python/2.7.13 mod_fastcgi/mod_fastcgi-SNAP-0910052141 mod_perl/2.0.11 Perl/v5.30.1
-< X-Powered-By: PHP/8.0.0
-< Expires: Wed, 11 Jan 1984 05:00:00 GMT
-< Cache-Control: no-cache, must-revalidate, max-age=0
-< Content-Length: 6373
-< Connection: close
-< Content-Type: text/html; charset=UTF-8
-< 
-* Closing connection 0
-*   Trying 163.182.174.254:443...
-* TCP_NODELAY set
-* Connected to www.cbtrends.com (163.182.174.254) port 443 (#1)
+* Connected to www.googleapis.com (172.217.19.138) port 443 (#0)
 * ALPN, offering h2
 * ALPN, offering http/1.1
 * Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
 * successfully set certificate verify locations:
 *   CAfile: /Applications/MAMP/Library/OpenSSL/cert.pem
   CApath: none
-* SSL connection using TLSv1.2 / ECDHE-RSA-AES256-GCM-SHA384
-* ALPN, server did not agree to a protocol
+* SSL connection using TLSv1.2 / ECDHE-ECDSA-AES128-GCM-SHA256
+* ALPN, server accepted to use h2
 * Server certificate:
-*  subject: CN=www.cbtrends.com
-*  start date: Dec 10 00:00:00 2021 GMT
-*  expire date: Dec 20 23:59:59 2022 GMT
-*  subjectAltName: host "www.cbtrends.com" matched cert's "www.cbtrends.com"
-*  issuer: C=GB; ST=Greater Manchester; L=Salford; O=Sectigo Limited; CN=Sectigo RSA Domain Validation Secure Server CA
+*  subject: CN=upload.video.google.com
+*  start date: Sep 12 08:19:04 2022 GMT
+*  expire date: Dec  5 08:19:03 2022 GMT
+*  subjectAltName: host "www.googleapis.com" matched cert's "*.googleapis.com"
+*  issuer: C=US; O=Google Trust Services LLC; CN=GTS CA 1C3
 *  SSL certificate verify ok.
-> GET /images/vendor-pages/cryptosigx-x400-thumb.jpg HTTP/1.1
-Host: www.cbtrends.com
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
-Accept: */*
-Referer: http://www.cbtrends.com
+* Using HTTP2, server supports multi-use
+* Connection state changed (HTTP/2 confirmed)
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* Using Stream ID: 1 (easy handle 0x7f92080c8c00)
+> GET /youtube/v3/search?part=snippet&type=video&key=AIzaSyDDI-dpI7BCZj9OPaUw9pWwLriijrRYIo0&maxResults=50&q=pubg&order=viewCount HTTP/2
+Host: www.googleapis.com
+user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
+accept: */*
+referer: http://localhost
 
-* Mark bundle as not supporting multiuse
-< HTTP/1.1 200 OK
-< Date: Sat, 16 Jul 2022 20:44:14 GMT
-< Server: Apache/2.4.6 (CentOS) OpenSSL/1.0.2k-fips PHP/7.4.30
-< Last-Modified: Fri, 27 Sep 2019 13:59:07 GMT
-< ETag: "103ec-593894a269c89"
-< Accept-Ranges: bytes
-< Content-Length: 66540
-< Vary: Accept-Encoding,User-Agent
-< Connection: keep-alive
-< Cache-Control: max-age=290304000, public
-< Content-Type: image/jpeg
+* Connection state changed (MAX_CONCURRENT_STREAMS == 100)!
+< HTTP/2 200 
+< content-type: application/json; charset=UTF-8
+< vary: X-Origin
+< vary: Referer
+< vary: Origin,Accept-Encoding
+< date: Tue, 18 Oct 2022 13:28:22 GMT
+< server: scaffolding on HTTPServer2
+< cache-control: private
+< x-xss-protection: 0
+< x-frame-options: SAMEORIGIN
+< x-content-type-options: nosniff
+< accept-ranges: none
+< alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"
 < 
-* Connection #1 to host www.cbtrends.com left intact
-*   Trying 151.101.240.193:443...
+* Connection #0 to host www.googleapis.com left intact
+* 17 bytes stray data read before trying h2 connection
+*   Trying 142.251.37.54:443...
 * TCP_NODELAY set
-* Connected to i.imgur.com (151.101.240.193) port 443 (#2)
+* Connected to i.ytimg.com (142.251.37.54) port 443 (#1)
 * ALPN, offering h2
 * ALPN, offering http/1.1
 * Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
@@ -69,133 +55,65 @@ Referer: http://www.cbtrends.com
 * SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
 * ALPN, server accepted to use h2
 * Server certificate:
-*  subject: C=US; ST=California; L=San Francisco; O=Imgur, Inc.; CN=*.imgur.com
-*  start date: Mar  8 00:00:00 2022 GMT
-*  expire date: Mar 16 23:59:59 2023 GMT
-*  subjectAltName: host "i.imgur.com" matched cert's "*.imgur.com"
-*  issuer: C=US; O=DigiCert Inc; CN=DigiCert TLS RSA SHA256 2020 CA1
+*  subject: CN=edgestatic.com
+*  start date: Sep 12 08:16:13 2022 GMT
+*  expire date: Dec  5 08:16:12 2022 GMT
+*  subjectAltName: host "i.ytimg.com" matched cert's "i.ytimg.com"
+*  issuer: C=US; O=Google Trust Services LLC; CN=GTS CA 1C3
 *  SSL certificate verify ok.
 * Using HTTP2, server supports multi-use
 * Connection state changed (HTTP/2 confirmed)
 * Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
-* Using Stream ID: 1 (easy handle 0x7fe166118200)
-> GET /RBVKrWl.jpg HTTP/2
-Host: i.imgur.com
+* Using Stream ID: 1 (easy handle 0x7f92080c8c00)
+> GET /vi/BWagTK6uK14/maxresdefault.jpg HTTP/2
+Host: i.ytimg.com
 user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
 accept: */*
-referer: http://i.imgur.com
+referer: http://i.ytimg.com
 
 * Connection state changed (MAX_CONCURRENT_STREAMS == 100)!
 < HTTP/2 200 
-< last-modified: Sat, 03 Dec 2016 21:09:50 GMT
-< etag: "c29ee9c803a1e43739c0a78c58af47de"
-< content-type: image/jpeg
-< cache-control: public, max-age=31536000
 < accept-ranges: bytes
-< date: Sat, 16 Jul 2022 20:44:14 GMT
-< age: 1506031
-< x-served-by: cache-iad-kcgs7200082-IAD, cache-mxp6948-MXP
-< x-cache: HIT, HIT
-< x-cache-hits: 1, 1
-< x-timer: S1658004255.970317,VS0,VE2
-< strict-transport-security: max-age=300
-< access-control-allow-methods: GET, OPTIONS
-< access-control-allow-origin: *
-< server: cat factory 1.0
+< content-type: image/jpeg
+< vary: Origin
+< cross-origin-resource-policy: cross-origin
+< cross-origin-opener-policy-report-only: same-origin; report-to="youtube"
+< report-to: {"group":"youtube","max_age":2592000,"endpoints":[{"url":"https://csp.withgoogle.com/csp/report-to/youtube"}]}
+< timing-allow-origin: *
+< content-length: 210821
+< date: Tue, 18 Oct 2022 13:28:24 GMT
+< expires: Tue, 18 Oct 2022 15:28:24 GMT
+< cache-control: public, max-age=7200
+< etag: "1630029671"
 < x-content-type-options: nosniff
-< content-length: 8457
+< server: sffe
+< x-xss-protection: 0
+< alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"
 < 
-* Connection #2 to host i.imgur.com left intact
-* Hostname localhost was found in DNS cache
-*   Trying ::1:80...
-* TCP_NODELAY set
-* Connected to localhost (::1) port 80 (#3)
-> GET /wordpress/wp-content/uploads/2020/06/RBVKrWl.jpg HTTP/1.1
-Host: localhost
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
-Accept: */*
-Referer: http://i.imgur.com
-
-* Mark bundle as not supporting multiuse
-< HTTP/1.1 200 OK
-< Date: Sat, 16 Jul 2022 20:44:15 GMT
-< Server: Apache/2.4.46 (Unix) OpenSSL/1.0.2u PHP/8.0.0 mod_wsgi/3.5 Python/2.7.13 mod_fastcgi/mod_fastcgi-SNAP-0910052141 mod_perl/2.0.11 Perl/v5.30.1
-< Last-Modified: Tue, 09 Jun 2020 22:25:34 GMT
-< ETag: "2109-5a7ae34b55380"
-< Accept-Ranges: bytes
-< Content-Length: 8457
-< Content-Type: image/jpeg
-< 
-* Connection #3 to host localhost left intact
-* Found bundle for host i.imgur.com: 0x7fe16573ad40 [can multiplex]
-* Re-using existing connection! (#2) with host i.imgur.com
-* Connected to i.imgur.com (151.101.240.193) port 443 (#2)
-* Using Stream ID: 3 (easy handle 0x7fe166118200)
-> GET /YgpMeUW.png HTTP/2
-Host: i.imgur.com
+* Connection #1 to host i.ytimg.com left intact
+* 17 bytes stray data read before trying h2 connection
+* Found bundle for host www.googleapis.com: 0x7f9207d377a0 [can multiplex]
+* Re-using existing connection! (#0) with host www.googleapis.com
+* Connected to www.googleapis.com (172.217.19.138) port 443 (#0)
+* Using Stream ID: 3 (easy handle 0x7f92080c8c00)
+> GET /youtube/v3/commentThreads?maxResults=27&part=snippet&videoId=BWagTK6uK14&key=AIzaSyDvj4PFpn6ci5wCS1Iy2ieuBVf2D5GCqDU HTTP/2
+Host: www.googleapis.com
 user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
 accept: */*
-referer: http://i.imgur.com
+referer: http://i.ytimg.com
 
 < HTTP/2 200 
-< last-modified: Sat, 03 Dec 2016 21:22:25 GMT
-< etag: "36d88af1b34cea95093a74ed477645d3"
-< content-type: image/png
-< cache-control: public, max-age=31536000
-< accept-ranges: bytes
-< date: Sat, 16 Jul 2022 20:44:15 GMT
-< age: 1590962
-< x-served-by: cache-iad-kcgs7200044-IAD, cache-mxp6948-MXP
-< x-cache: HIT, HIT
-< x-cache-hits: 1, 1
-< x-timer: S1658004255.050202,VS0,VE1
-< strict-transport-security: max-age=300
-< access-control-allow-methods: GET, OPTIONS
-< access-control-allow-origin: *
-< server: cat factory 1.0
+< content-type: application/json; charset=UTF-8
+< vary: X-Origin
+< vary: Referer
+< vary: Origin,Accept-Encoding
+< date: Tue, 18 Oct 2022 13:28:25 GMT
+< server: scaffolding on HTTPServer2
+< cache-control: private
+< x-xss-protection: 0
+< x-frame-options: SAMEORIGIN
 < x-content-type-options: nosniff
-< content-length: 35837
+< accept-ranges: none
+< alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"
 < 
-* Connection #2 to host i.imgur.com left intact
-* Found bundle for host localhost: 0x7fe167b5af20 [serially]
-* Can not multiplex, even if we wanted to!
-* Re-using existing connection! (#3) with host localhost
-* Connected to localhost (::1) port 80 (#3)
-> GET /wordpress/wp-content/uploads/2020/06/YgpMeUW.png HTTP/1.1
-Host: localhost
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
-Accept: */*
-Referer: http://i.imgur.com
-
-* Mark bundle as not supporting multiuse
-< HTTP/1.1 200 OK
-< Date: Sat, 16 Jul 2022 20:44:15 GMT
-< Server: Apache/2.4.46 (Unix) OpenSSL/1.0.2u PHP/8.0.0 mod_wsgi/3.5 Python/2.7.13 mod_fastcgi/mod_fastcgi-SNAP-0910052141 mod_perl/2.0.11 Perl/v5.30.1
-< Last-Modified: Tue, 09 Jun 2020 22:25:34 GMT
-< ETag: "8bfd-5a7ae34b55380"
-< Accept-Ranges: bytes
-< Content-Length: 35837
-< Content-Type: image/png
-< 
-* Connection #3 to host localhost left intact
-* Found bundle for host localhost: 0x7fe167b5af20 [serially]
-* Can not multiplex, even if we wanted to!
-* Re-using existing connection! (#3) with host localhost
-* Connected to localhost (::1) port 80 (#3)
-> GET /wordpress/wp-content/uploads/2022/07/cryptosigx-x400-thumb.jpg HTTP/1.1
-Host: localhost
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36
-Accept: */*
-Referer: http://localhost
-
-* Mark bundle as not supporting multiuse
-< HTTP/1.1 200 OK
-< Date: Sat, 16 Jul 2022 20:44:15 GMT
-< Server: Apache/2.4.46 (Unix) OpenSSL/1.0.2u PHP/8.0.0 mod_wsgi/3.5 Python/2.7.13 mod_fastcgi/mod_fastcgi-SNAP-0910052141 mod_perl/2.0.11 Perl/v5.30.1
-< Last-Modified: Sat, 16 Jul 2022 20:44:14 GMT
-< ETag: "103ec-5e3f232988380"
-< Accept-Ranges: bytes
-< Content-Length: 66540
-< Content-Type: image/jpeg
-< 
-* Connection #3 to host localhost left intact
+* Connection #0 to host www.googleapis.com left intact

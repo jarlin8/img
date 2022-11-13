@@ -27,13 +27,13 @@ class WpAutomaticReddit extends wp_automatic {
 			return false;
 		}
 		
-		//https://www.reddit.com/r/Jokes/top/?t=month
-		$additional_query = ''; //ini
+		// https://www.reddit.com/r/Jokes/top/?t=month
+		$additional_query = ''; // ini
 		
-		if(stristr($cg_rd_page, '?')){
-			$url_pts = explode('?',$cg_rd_page);
-			$additional_query = '?' . $url_pts[1];
-			$cg_rd_page = $url_pts[0];
+		if (stristr ( $cg_rd_page, '?' )) {
+			$url_pts = explode ( '?', $cg_rd_page );
+			$additional_query = '?' . $url_pts [1];
+			$cg_rd_page = $url_pts [0];
 		}
 		
 		// .json
@@ -91,16 +91,13 @@ class WpAutomaticReddit extends wp_automatic {
 				
 				if ($after_md == $cg_rd_page_md) {
 					
-					$cg_rd_page .= stristr($cg_rd_page, '?') ? '&' : '?' ;
+					$cg_rd_page .= stristr ( $cg_rd_page, '?' ) ? '&' : '?';
 					$cg_rd_page .= 'after=' . $after_tag;
-				
-				
 				}
 			}
 		}
 		
 		echo '<br>Reddit items url:' . $cg_rd_page;
-		
 		
 		echo ' index:' . $start;
 		
@@ -132,8 +129,6 @@ class WpAutomaticReddit extends wp_automatic {
 		
 		// decode json
 		$jsonReply = json_decode ( $exec );
-		
-	 
 		
 		$allItms = array ();
 		if (isset ( $jsonReply->data->children )) {
@@ -171,7 +166,6 @@ class WpAutomaticReddit extends wp_automatic {
 		echo '<ol>';
 		
 		foreach ( $allItms as $itemTxt ) {
-
 			
 			$item = array ();
 			
@@ -181,11 +175,21 @@ class WpAutomaticReddit extends wp_automatic {
 			if (isset ( $itemTxt->data->title ))
 				$item ['item_title'] = $itemTxt->data->title;
 			
+			if (trim ( $item ['item_title'] ) == '' && isset ( $itemTxt->data->link_title )) {
+				$item ['item_title'] = $itemTxt->data->link_title;
+			}
+			
 			// match description
 			$item ['item_description'] = $itemTxt->data->selftext;
 			
 			// match link
 			$item_link = $item ['item_url'] = $itemTxt->data->url;
+			
+			if (trim ( $item ['item_url'] ) == '' && isset ( $itemTxt->data->link_url )) {
+				$item_link = $item ['item_url'] = $itemTxt->data->link_url;
+			}
+			
+			// permalink
 			$item ['item_link'] = $itemTxt->data->permalink;
 			
 			// match date
@@ -194,6 +198,11 @@ class WpAutomaticReddit extends wp_automatic {
 			// match img
 			$item ['item_img'] = '';
 			$item ['item_img'] = @$itemTxt->data->preview->images [0]->source->url;
+			
+			// link_url contains https://i.redd.it/vfzv4pwyi9j91.jpg
+			if ($item ['item_img'] == '' && isset ( $itemTxt->data->link_url ) && stristr ( $itemTxt->data->link_url, '.jpg' )) {
+				$item ['item_img'] = $itemTxt->data->link_url;
+			}
 			
 			$id = $item ['item_id'] = $itemTxt->data->id;
 			$item ['item_domain'] = $itemTxt->data->domain;
@@ -234,12 +243,50 @@ class WpAutomaticReddit extends wp_automatic {
 				}
 			}
 			
-			//nsfw
-			$item['item_nsfw'] = 'no';
-			if($itemTxt->data->over_18 == 1){
-				$item['item_nsfw'] = 'yes';
+			// nsfw
+			$item ['item_nsfw'] = 'no';
+			if ($itemTxt->data->over_18 == 1) {
+				$item ['item_nsfw'] = 'yes';
 			}
-			 
+			
+			// gallery sample https://pastebin.com/HEmG45dG
+			$gallery_imgs = array ();
+			if (isset ( $itemTxt->data->gallery_data->items )) {
+				
+				echo ' <-- this is a gallery';
+				
+				foreach ( $itemTxt->data->gallery_data->items as $gallery_item ) {
+					
+					$media_id = $gallery_item->media_id;
+					$gallery_img_url = end ( $itemTxt->data->media_metadata->{"$media_id"}->p );
+					$gallery_img_url = $gallery_img_url->u;
+					
+					$gallery_imgs [] = $gallery_img_url;
+				}
+				
+				$item ['item_gallery_imgs'] = implode ( ',', $gallery_imgs );
+				
+				// when no featured image, pick the first from the gallery
+				if ($item ['item_img'] == '' && count ( $gallery_imgs ) > 0) {
+					$item ['item_img'] = $gallery_imgs [0];
+				}
+			}
+			
+			// link_flair_richtext flairs
+			$item_flairs = '';
+			$item_flairs_arr = array ();
+			if (isset ( $itemTxt->data->link_flair_richtext )) {
+				
+				$link_flair_richtext = is_array ( $itemTxt->data->link_flair_richtext ) ? $itemTxt->data->link_flair_richtext : array ();
+				
+				foreach ( $link_flair_richtext as $link_flair_richtext_s ) {
+					$item_flairs_arr [] = $link_flair_richtext_s->t;
+				}
+				
+				$item_flairs = implode ( ',', $item_flairs_arr );
+			}
+			
+			$item ['item_flairs'] = $item_flairs;
 			
 			$data = (base64_encode ( serialize ( $item ) ));
 			
@@ -255,37 +302,25 @@ class WpAutomaticReddit extends wp_automatic {
 				continue;
 			}
 			
-		
 			// Filter type
 			if (in_array ( 'OPT_RD_POST_FILTER', $camp_opt )) {
 				
 				// gifs
 				if (trim ( $item ['item_mp4'] ) != '' || isset ( $item ['item_embed'] )) {
-				
-				 
 					
-					if( in_array ( 'OPT_RD_POST_VIDS', $camp_opt ) && isset( $itemTxt->data->is_video ) && $itemTxt->data->is_video == 1  ){
+					if (in_array ( 'OPT_RD_POST_VIDS', $camp_opt ) && isset ( $itemTxt->data->is_video ) && $itemTxt->data->is_video == 1) {
 						
 						echo '<-- Video ...';
-						
-					}elseif( in_array ( 'OPT_RD_POST_GIFS', $camp_opt ) && isset( $itemTxt->data->is_video ) && $itemTxt->data->is_video == ''  ){
+					} elseif (in_array ( 'OPT_RD_POST_GIFS', $camp_opt ) && isset ( $itemTxt->data->is_video ) && $itemTxt->data->is_video == '') {
 						echo '<-- GIF ...';
-					
-					// video & gif
-					}elseif ( !  in_array ( 'OPT_RD_POST_VID', $camp_opt )   ) {
-							
-							//backward compitablity
-							echo '<-- Gif/Vid skipping...';
-							continue;
-						 
-					
+						
+						// video & gif
+					} elseif (! in_array ( 'OPT_RD_POST_VID', $camp_opt )) {
+						
+						// backward compitablity
+						echo '<-- Gif/Vid skipping...';
+						continue;
 					}
-					
-					
-				
-					
-					
-					
 				} elseif (trim ( $post_hint ) == '' || $post_hint == 'self') {
 					
 					// text
@@ -333,6 +368,12 @@ class WpAutomaticReddit extends wp_automatic {
 		
 		// Campaign options
 		$camp_opt = unserialize ( $camp->camp_options );
+		
+		if (stristr ( $camp->camp_general, 'a:' ))
+			$camp->camp_general = base64_encode ( $camp->camp_general );
+		$camp_general = unserialize ( base64_decode ( $camp->camp_general ) );
+		$camp_general = array_map ( 'wp_automatic_stripslashes', $camp_general );
+		
 		$keywords = array (
 				'*' 
 		);
@@ -408,7 +449,24 @@ class WpAutomaticReddit extends wp_automatic {
 						$temp ['item_description'] = $temp ['item_title'];
 					
 					// Item img html
-					if (trim ( $temp ['item_img'] ) != '') {
+					if (isset ( $temp ['item_gallery_imgs'] ) && in_array ( 'OPT_RD_SLIDER', $camp_opt )) {
+						echo '<br>Slider images exist...';
+						
+						// template for img html
+						$cg_rd_full_img_t = $camp_general ['cg_rd_full_img_t'];
+						if (trim ( $cg_rd_full_img_t ) == '')
+							$cg_rd_full_img_t = '<img src="[img_src]" />';
+						
+						// build the html
+						$item_gallery_imgs = explode ( ',', $temp ['item_gallery_imgs'] );
+						
+						$gallery_html = '';
+						foreach ( $item_gallery_imgs as $single_img_src ) {
+							$gallery_html .= str_replace ( '[img_src]', $single_img_src, $cg_rd_full_img_t );
+						}
+						
+						$temp ['item_img_html'] = $gallery_html;
+					} elseif (trim ( $temp ['item_img'] ) != '') {
 						$temp ['item_img_html'] = '<img src="' . $temp ['item_img'] . '" />';
 					} else {
 						$temp ['item_img_html'] = '';
@@ -437,15 +495,12 @@ class WpAutomaticReddit extends wp_automatic {
 						$autoPlay = (in_array ( 'OPT_RD_AUTO', $camp_opt )) ? ' autoplay="on" ' : '';
 						
 						$temp ['item_embed'] = $temp ['item_mp4_embed'] = '<video ' . $loop . ' ' . $autoPlay . '    controls="controls"><source src="' . $temp ['item_mp4'] . '" type="video/mp4"></video>';
-					
-						//official embed 
-						if(in_array('OPT_RD_OFFICIAL_EMBED', $camp_opt)){
-							$temp ['item_embed'] =   '[embed]https://reddit.com' . $temp ['item_link'] . '[/embed]';
+						
+						// official embed
+						if (in_array ( 'OPT_RD_OFFICIAL_EMBED', $camp_opt )) {
+							$temp ['item_embed'] = '[embed]https://reddit.com' . $temp ['item_link'] . '[/embed]';
 						}
-					
 					}
-					
-					
 					
 					// author link
 					$temp ['item_author_link'] = '<a href="' . $temp ['item_author'] . '">' . $temp ['item_author'] . '</a>';
@@ -470,6 +525,14 @@ class WpAutomaticReddit extends wp_automatic {
 					
 					// item_date timestamp to date
 					$temp ['item_date_formated'] = get_date_from_gmt ( gmdate ( 'Y-m-d H:i:s', ($temp ['item_date']) ) );
+					
+					// categories to set if enabled
+					if (in_array ( 'OPT_RD_CAT', $camp_opt ) && trim ( $temp ['item_flairs'] ) != '')
+						$temp ['categories_to_set'] = $temp ['item_flairs'];
+					
+					// tags to set if enabled
+					if (in_array ( 'OPT_RD_TAG', $camp_opt ) && trim ( $temp ['item_flairs'] ) != '')
+						$temp ['tags_to_set'] = $temp ['item_flairs'];
 					
 					return $temp;
 				} else {

@@ -115,7 +115,8 @@ function twitter_fetch_items($keyword,$camp ){
 	//building the twitter url
 	$url='https://api.twitter.com/1.1/search/tweets.json?tweet_mode=extended&q='.urlencode(trim($keyword));
 
-	if(stristr($keyword, 'from:')){
+	//specific user from:beINSPORTS but not from:beINSPORTS filter:videos
+	if(stristr($keyword, 'from:') && ! stristr(trim($keyword), ' ')){
 		
 		$userKey = str_replace('from:', '', $keyword);
 		
@@ -167,6 +168,8 @@ function twitter_fetch_items($keyword,$camp ){
 
 	//report url
 	 echo '<br>Twitter url:'.$url;
+	 
+	 
 		
 	//skip ssl
 	curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -178,15 +181,18 @@ function twitter_fetch_items($keyword,$camp ){
 	$exec=curl_exec($this->ch);
 	$x=curl_error($this->ch);
  
+	 
 	
 	//validating reply
-	if(stristr($exec, 'search_metadata')   || (stristr($keyword, 'from:') && stristr($exec, '{') && !stristr($exec,'"errors"')  )  ){
+	if( stristr($exec, 'search_metadata')   || (  stristr($keyword, 'from:') && stristr($exec, '{') && ! stristr($exec,'"errors"')  )  ){
 		//valid reply
 
 		//handle pins
 		$arr = json_decode($exec);
 	 
-		if(stristr($keyword, 'from:')){
+	 
+		
+		if(stristr($keyword, 'from:')  && ! stristr(trim($keyword), ' ') ){
 			$items = $arr;			
 		}else{
 			$items = $arr->statuses;
@@ -319,6 +325,44 @@ function twitter_fetch_items($keyword,$camp ){
 					if(isset($item->extended_entities->media[0]->type) && ($item->extended_entities->media[0]->type == 'video' || $item->extended_entities->media[0]->type == 'animated_gif'  )  ){
 						$vidURL =  'https://twitter.com/'.$itm['item_author_screen_name'].'/status/'.$itm['item_id'];
 						$itm['item_video_url'] = $vidURL;
+					}
+				}
+			}
+			
+			$itm['item_video_url_direct'] = '';
+			//direct video URL ex https://video.twimg.com/amplify_video/1575414620113846273/vid/720x1280/2B2ZElQrA8U_nM3I.mp4?tag=14
+			if(isset($item->extended_entities)){
+				if(isset($item->extended_entities->media)){
+					if(isset($item->extended_entities->media[0]->type) && ($item->extended_entities->media[0]->type == 'video'   )  ){
+						
+						$variants = array();
+						$variants = ($item->extended_entities->media[0]->video_info->variants);
+						
+						
+						if(count($variants) > 0 ){
+							
+							$bitrate = 0;
+							$direct_video_url = '' ;
+							foreach($variants as $varient){
+								if( stristr($varient->content_type , 'video/' ) && $varient->bitrate > $bitrate ){
+									$direct_video_url = $varient->url ;
+									$bitrate = $varient->bitrate;
+								}
+							}
+							
+							 
+							
+						}
+						
+						if(trim($direct_video_url) != ''){
+							
+							if(stristr($direct_video_url, '?tag')){
+								$direct_video_url_parts = explode('?tag' , $direct_video_url );
+								$direct_video_url = $direct_video_url_parts[0];
+							}
+							
+							$itm['item_video_url_direct'] = $direct_video_url;
+						}
 					}
 				}
 			}
@@ -529,7 +573,10 @@ function twitter_get_post($camp){
 						$cleanContent = preg_replace('{<a .*?a>}' , '' , $temp['item_description'] );
 						$cleanContent = $this->removeEmoji( $this->strip_urls( strip_tags($cleanContent) ));
 						
-						 
+						// remove hashtags
+						if (in_array ( 'OPT_TW_NO_TTL_TAG', $camp_opt )) {
+							$cleanContent = preg_replace ( '{#\S*}', '', $cleanContent );
+						}
 						
 						if(function_exists('mb_substr')){
 							$newTitle = ( mb_substr($cleanContent , 0,$cg_it_title_count));
@@ -542,6 +589,8 @@ function twitter_get_post($camp){
 							  echo '<br>Cleaning RT';
 							$newTitle = preg_replace('{RT @.*?: }', '', $newTitle);
 						}
+						
+						
 							
 						if(in_array('OPT_GENERATE_TW_DOT', $camp_opt)){
 							$temp['item_title'] = ($newTitle);
@@ -633,13 +682,22 @@ function twitter_get_post($camp){
 					
 				//Auto embed video 
 				$temp['item_video_embed'] = '';
-				if(in_array('OPT_TW_VID_EMBED', $camp_opt) && ! stristr(($camp->camp_post_content), 'item_video_url') && trim($temp['item_video_url']) != ''  ){
-					 
-					$vidEmbed = '<blockquote class="twitter-video"><a href="'.$temp['item_video_url'].'"></a></blockquote>
-<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-				';
+				if(in_array('OPT_TW_VID_EMBED', $camp_opt) && ! stristr(($camp->camp_post_content), 'item_video_url')   ){
 					
+					$vidEmbed = '' ; //ini
+					
+					if(in_array('OPT_TW_VID_EMBED_DIRECT', $camp_opt )  &&   trim($temp['item_video_url_direct']) != '' ){
+						$vidEmbed = "[embed]{$temp['item_video_url_direct']}[/embed]";
+					}elseif( trim($temp['item_video_url']) != '')  {
+						
+						$vidEmbed = '<blockquote class="twitter-video"><a href="'.$temp['item_video_url'].'"></a></blockquote>
+	<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+					';
+						
+					}
+										
 					$temp['item_video_embed'] = $vidEmbed;
+					
 					
 					$temp['item_description'] = $temp['item_description'] . $vidEmbed; 
 				}

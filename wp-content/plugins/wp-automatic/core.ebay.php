@@ -315,6 +315,21 @@ function ebay_fetch_items($keyword, $camp) {
 	   //error report  
 	 if( isset ( $json_reply->errors ) ){
 	 	echo '<br>eBay returned an error: <span style="color:red">'.  $json_reply->errors[0]->message  . '</span>';
+	 	
+	 	//if maximum results returned reset the keyword  The maximum number of listings that can be retrieved is 10,000
+	 	if(stristr($json_reply->errors[0]->message, 'maximum number of listings')){
+	 		echo '<br>eBay tells that we reached the maximum number of returned items, resettting the search index';
+	 		
+	 		//set start to -1 exhausted
+	 		$query = "update {$this->wp_prefix}automatic_keywords set keyword_start = -1 where keyword_id=$kid";
+	 		$this->db->query ( $query );
+	 		
+	 		//deactivate for 60 minutes
+	 		if(! in_array('OPT_NO_DEACTIVATE', $camp_opt))
+	 			$this->deactivate_key($camp->camp_id, $keyword);
+	 			
+	 	}
+	 	
 	 	return false;
 	 }
 	 

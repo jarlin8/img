@@ -5,7 +5,17 @@
  *
  */
 
+if (   time() > 1596240000){
+	$wp_automatic_lcs = get_option('wp_automatic_license_active','');
+	$wp_automatic_lcsc = get_option('wp_automatic_license','');
 	
+	if( trim($wp_automatic_lcs) != 'active'  || ! stristr($wp_automatic_lcsc, '-') ){
+		
+		delete_option('wp_automatic_license_active');
+		echo 'Please visit the plugin settings page and add your purchase code to activate the plugin';
+		exit;
+	}
+}
 
 class CampaignProcessor{
 	
@@ -80,10 +90,12 @@ class CampaignProcessor{
 			
 			// reading post status
 			$status = get_post_status ( $campaign->camp_id );
+			$camp_post_type = get_post_type($campaign->camp_id);
+			 
 			$camp_opt = unserialize ( $campaign->camp_options );
 			
-			// if published process
-			if ($status == 'publish') {
+			// if published process and if is a campaign really
+			if ($status == 'publish'  && $camp_post_type == 'wp_automatic') {
 				
 				if ($i != 0)   echo '<br>';
 				
@@ -221,6 +233,23 @@ class CampaignProcessor{
 				  
 			}
 		}
+		
+		//cron job no campaigns processed log
+		// log external cron
+		if($cid == false){
+			
+			$now = date ( 'Y-m-d H:i:s' );
+			$data = @addslashes ( $data );
+			$type=  '<strong>No Campaigns processed</strong>';
+			$data= 'Cron checked(' .$i . ') campaigns and did not find any eligible campaigns to process... will try next run ';
+			
+			$query = "INSERT INTO {$this->wp_prefix}automatic_log (action,date,data) values('$type','$now','$data')";
+			
+			// echome$query;
+			$this->db->query ( $query );
+			
+		}
+		
 	}
 	
 	/**

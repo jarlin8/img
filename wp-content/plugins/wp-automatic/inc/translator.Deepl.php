@@ -34,6 +34,9 @@ class DeeplTranslator{
 	
 	function translateText($sourceText , $fromLanguage ,$toLanguage){
 		
+		
+ 
+		
 		//translating
 		$x='error';
 		
@@ -44,6 +47,9 @@ class DeeplTranslator{
 			$curlurl = 'https://api.deepl.com/v2/translate?auth_key='.$this->key.'&target_lang='.$toLanguage;
 		}
 		
+		echo '<br>cURL: ' . $curlurl;
+		
+		
 		//formality
 		if( trim($this->fomality) != '' && $this->fomality != 'default'){
 			$curlurl .= '&formality=' . $this->fomality;
@@ -52,16 +58,22 @@ class DeeplTranslator{
 		
 		if($fromLanguage != 'auto') $curlurl.= '&source_lang=' . $fromLanguage ;
 		
-	 	$curlpost= "text=" . urlencode($sourceText)  ;
-	 	 
+	 
+		
+	 	//$curlpost= "text=" . urlencode($sourceText)  ;
+	 	
+	 	
+	 	
 	 	curl_setopt($this->ch, CURLOPT_URL, $curlurl);
 		curl_setopt($this->ch, CURLOPT_POST, true);
-		curl_setopt($this->ch, CURLOPT_POSTFIELDS, $curlpost); 
+		curl_setopt($this->ch, CURLOPT_POSTFIELDS,  array('text' => $sourceText ,'target_lang' => $toLanguage) ); 
 		$x='error';
 		$exec=curl_exec($this->ch);
 		$x=curl_error($this->ch);
 		$cuinfo = curl_getinfo($this->ch);
     		
+		 
+		
 		// Empty response check
 		if(trim($exec) == ''){
 			
@@ -86,6 +98,8 @@ class DeeplTranslator{
 			throw new Exception('No Translation was returned, unexpected reply from Deepl' . $exec);
 		}
 	 
+ 	
+		echo '<-- nice, Got the translation';
 		
 		//translation valid, return
 		return $json_reply->translations[0]->text;

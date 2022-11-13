@@ -5,9 +5,9 @@ Author URI: https://www.storeapps.org/woocommerce-plugins/
 Plugin URI: https://www.storeapps.org/product/smart-manager/?utm_source=wprepo&utm_medium=web&utm_campaign=smwp_readme
 Tags: woocommerce advanced bulk edit, wordpress bulk edit, woocommerce inventory management, woocommerce stock manager, woocommerce product manager, woocommerce order management, wp sheet editor, bulk stock management, wordpress inventory manager, woocommerce bulk edit, bulk edit, stock management, products editor, woocommerce, woocommerce bulk price change, woocommerce manage stock, woocommerce bulk edit products, woocommerce, store manager, bulk update, inline edit, manage variations, bulk edit, coupons, shop manager, batch update, wp ecommerce, productivity, products, variations, orders, customers, manager, pro, manager pro, pro manager, extension, premium, free, woocommerce customer management, inventory management
 Requires at least: 4.8
-Tested up to: 6.0.3
+Tested up to: 6.1.0
 Requires PHP: 5.6
-Stable tag: 7.0.1
+Stable tag: 7.2.0
 License: GPLv3 
 
 The #1 tool for WordPress and WooCommerce advanced bulk edit, inventory management, stock management, export, delete, duplicate...using an Excel-like sheet editor.
@@ -68,8 +68,8 @@ https://www.youtube.com/watch?v=20iodFpP5ow
 - Know the lifetime value (LTV) of all your customers along with their total purchases to date and last order details.
 - Manage **WordPress user roles** – change user role, change password, etc.
 - Give dashboard-specific access to non-admin users including any custom user role.
+- Manage and edit **WordPress custom taxonomies**.
 - **Import** products, orders, coupons and any other post type (coming soon).
-- Manage and edit **WordPress custom taxonomies** (coming soon).
 - Manage, view, filter and edit custom fields of top WooCommerce & WordPress plugins. Smart Manager is compatible with these plugins. It automatically recognizes all custom fields added by other plugins.
 -- [Advanced Custom Fields (ACF)](https://wordpress.org/plugins/advanced-custom-fields/)
 -- [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/?aff=5475)
@@ -264,6 +264,25 @@ It also gives the warm feeling of supporting further development of the plugin.
 2. Bulk edit / Batch update (only in Pro version)
 
 == Changelog ==
+= 7.2.0 (10.11.2022) =
+* New: WordPress 6.1.0 compatible
+* Fix: Images not getting attached to post type like WooCommerce Products, Posts, Pages, etc. when setting new uploaded images in Featured or Gallery images
+* Fix: Delete image functionality not working for newly uploaded images in WooCommerce Products Gallery Images
+* Fix: Inline edit for WooCommerce Product Attributes not working in some cases
+* Fix: Search controls not getting reset on dashboard switch
+* Fix: Sorting not working properly for WooCommerce Products Featured column
+* Update: Pricing page related changes
+* Update: POT file
+
+= 7.1.0 (27.10.2022) =
+* Fix: Export CSV functionality not working after v7.0.0
+* Fix: Product Gallery Images data not getting exported when using Export CSV for WooCommerce Products dashboard (Pro)
+* Fix: Bulk Edit not working for all items in search result for taxonomy dashboards (Pro)
+* Fix: Sorting not giving proper results when sorting using numeric columns in Users dashboard (Pro)
+* Fix: PHP warnings on taxonomy dashboard load in some cases
+* Update: By default sorting records in descending order for taxonomy dashboards (Pro)
+* Update: POT file
+
 = 7.0.1 (21.10.2022) =
 * Fix: Advanced search for some of the taxonomy columns not working properly after last update
 * Fix: Sorting for 'Product type' in WooCommerce Products dashboard not working after last update
@@ -711,6 +730,13 @@ It also gives the warm feeling of supporting further development of the plugin.
 [See changelog for all versions](https://www.storeapps.org/docs/sm-changelog/?utm_source=wprepo&utm_medium=web&utm_campaign=smwp_readme).
 
 == Upgrade Notice ==
+
+= 7.2.0 =
+WordPress 6.1.0 compatible, Fixes related to Images not getting attached to post type like WooCommerce Products, Posts, Pages, etc. when setting new uploaded images in Featured or Gallery images, Delete image functionality not working for newly uploaded images in WooCommerce Products Gallery Images, Inline edit for WooCommerce Product Attributes not working in some cases along with other important fixes and updates. Recommended upgrade.
+
+= 7.1.0 =
+Fixes related to Export CSV functionality not working after v7.0.0, Product Gallery Images data not getting exported when using Export CSV for WooCommerce Products dashboard (Pro), Bulk Edit not working for all items in search result for taxonomy dashboards (Pro), Sorting not giving proper results when sorting using numeric columns in Users dashboard (Pro), PHP warnings on taxonomy dashboard load in some cases along with other important fixes and updates. Recommended upgrade.
+
 = 7.0.1 =
 Fixes related to Advanced search for some of the taxonomy columns not working properly after last update, Sorting for 'Product type' in WooCommerce Products dashboard not working after last update, Users dashboard not showing data after last update (Pro). Recommended upgrade.
 

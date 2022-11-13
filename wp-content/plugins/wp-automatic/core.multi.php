@@ -258,6 +258,8 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		
 		//relative path fix 
 		$exec = wp_automatic_fix_relative_paths ( $exec, $cg_ml_source );
+		
+	 
 	  
 		// loading the dom
 		require_once 'inc/class.dom.php';

@@ -64,7 +64,8 @@ class InstaScrape {
 		$x = curl_error ( $this->ch );
 		$cuinfo = curl_getinfo ( $this->ch );
 		
-		if (isset ( $cuinfo ['url'] ) && stristr ( $cuinfo ['url'], 'accounts/login' )) {
+ 		
+		if (isset ( $cuinfo ['url'] ) &&  $this->is_not_logged_in($cuinfo ) ) {
 			throw new Exception ( '<br><span style="color:red">Added session is not correct or expired. Please visit the plugin settings page and add a fresh session. Also make sure not to logout of your account for the session to stay alive.</span>' );
 		}
 		
@@ -81,6 +82,7 @@ class InstaScrape {
 			
 			throw new Exception ( 'Unexpected page content from instagram' . $x . $exec );
 		}
+		
 		
 		$jsonArr = json_decode ( $exec );
 		
@@ -127,10 +129,10 @@ class InstaScrape {
 		$cuinfo = curl_getinfo ( $this->ch );
 		$x = curl_error ( $this->ch );
 	
-		 
-		
+
+	 
 		// Curl error check
-		if (isset ( $cuinfo ['url'] ) && stristr ( $cuinfo ['url'], 'accounts/login' )) {
+		if (isset ( $cuinfo ['url'] ) &&  $this->is_not_logged_in($cuinfo ) ) {
 			throw new Exception ( '<br><span style="color:red">Added session is not correct or expired. Please visit the plugin settings page and add a fresh session. Also make sure not to logout of your account for the session to stay alive.</span>' );
 		}
 		
@@ -208,9 +210,11 @@ class InstaScrape {
 		$http_code = $cuinfo ['http_code'];
 		$x = curl_error ( $this->ch );
 		
+		 
+		
 		// Curl error check
 		
-		if (isset ( $cuinfo ['url'] ) && stristr ( $cuinfo ['url'], 'accounts/login' )) {
+		if (isset ( $cuinfo ['url'] ) &&    $this->is_not_logged_in($cuinfo )   ) {
 			throw new Exception ( '<br><span style="color:red">Added session is not correct or expired. Please visit the plugin settings page and add a fresh session. Also make sure not to logout of your account for the session to stay alive.</span>' );
 		}
 		
@@ -292,9 +296,10 @@ class InstaScrape {
 		$exec = curl_exec ( $this->ch );
 		$x = curl_error ( $this->ch );
 		$cuinfo = curl_getinfo ( $this->ch );
+		
 		 
 		
-		if (isset ( $cuinfo ['url'] ) && stristr ( $cuinfo ['url'], 'accounts/login' )) {
+		if (isset ( $cuinfo ['url'] ) &&  $this->is_not_logged_in($cuinfo ) ) {
 			throw new Exception ( '<br><span style="color:red">Added session is not correct or expired. Please visit the plugin settings page and add a fresh session. Also make sure not to logout of your account for the session to stay alive.</span>' );
 		}
 		
@@ -314,6 +319,20 @@ class InstaScrape {
 		//workaround for IG returing error when loading items page, which adds new cookies , this one reset cookis
 		curl_setopt( $this->ch, CURLOPT_COOKIELIST	 , 'ALL'); //erases all previous cookies held in memory including ds_user_id which causes the issue
 		curl_setopt ( $this->ch, CURLOPT_COOKIE, 'sessionid=' . $this->sess . '; csrftoken=eqYUPd3nV0gDSWw43IYZjydziMndrn4l; ds_user_id=123;' );
+		
+	}
+	
+	
+	function is_not_logged_in($cuinfo){
+		
+		$url = $cuinfo['url'];
+		$code = $cuinfo['http_code'];
+		
+		if(stristr($url , 'login') || stristr($url, 'privacy/checks' ) || $code == 401 ){
+			return true;
+		}else{
+			return false;
+		}
 		
 	}
 

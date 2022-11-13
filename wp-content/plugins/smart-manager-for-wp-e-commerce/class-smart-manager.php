@@ -433,18 +433,18 @@ class Smart_Manager {
 		self::$sm_is_woo21 = (defined('SM_IS_WOO21')) ? SM_IS_WOO21 : '';
 
 		//Code for handling the in app offer
-		if ( ! class_exists( 'SA_In_App_Offer' ) && file_exists( (dirname( SM_PLUGIN_FILE )) . '/classes/sa-includes/class-sa-in-app-offer.php' ) ) {
-			include_once 'classes/sa-includes/class-sa-in-app-offer.php';
+		if ( ! class_exists( 'SA_SM_In_App_Offer' ) && file_exists( (dirname( SM_PLUGIN_FILE )) . '/classes/sa-includes/class-sa-sm-in-app-offer.php' ) ) {
+			include_once 'classes/sa-includes/class-sa-sm-in-app-offer.php';
 			$args = array(
 				'file'           => (dirname( SM_PLUGIN_FILE )) . '/classes/sa-includes/',
 				'prefix'         => 'sm',				// prefix/slug of your plugin
-				'option_name'    => 'sa_sm_offer_halloween_2022',
-				'campaign'       => 'sa_halloween_2022',
-				'start'          => '2022-10-28 13:30:00',
-				'end'            => '2022-11-03 06:00:00',
+				'option_name'    => 'sa_sm_offer_bfcm_2022',
+				'campaign'       => 'sa_bfcm_2022',
+				'start'          => '2022-11-22 06:31:00',
+				'end'            => '2022-12-01 07:30:00',
 				'is_plugin_page' => ( !empty($_GET['page']) && in_array( $_GET['page'], array( 'smart-manager', 'sm-storeapps-plugins' ) ) ) ? true : false,	// page where you want to show offer, do not send this if no plugin page is there and want to show offer on Products page
 			);
-			$sa_offer = SA_In_App_Offer::get_instance( $args );
+			$sa_offer = SA_SM_In_App_Offer::get_instance( $args );
 			if ( ! defined( 'SA_OFFER_VISIBLE' ) ) {
 
 				$show = false;

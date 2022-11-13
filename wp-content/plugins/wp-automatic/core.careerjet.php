@@ -323,6 +323,7 @@ Class WpAutomaticCareerjet extends wp_automatic{
 						$exec=$this->curl_exec_follow($this->ch);
 						$x=curl_error($this->ch);
 						
+					  
 						if(trim($exec) == '' || stristr($exec, 'Too many requests') ){
 							echo '<br>Failed to load the page directly, trying another method...';
 							
@@ -420,6 +421,11 @@ Class WpAutomaticCareerjet extends wp_automatic{
 		$country_parts = explode ('-' , $jobtrack_link_parts[3] ) ;
 		
 		$final_link = "https://www.careerjet.com/jobad/" . $country_parts[1] .  $id_parts[0];
+		
+		//saudi arabia link is almehan.com
+		if($country_parts[1] == 'sa'){
+			$final_link = str_replace('careerjet.com' , 'almehan.com' , $final_link);
+		}
 		
 		return $final_link;		
 		

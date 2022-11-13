@@ -201,6 +201,8 @@ Smart_Manager.prototype.init = function() {
 
 	this.body_font_size = jQuery("body").css('font-size');
 	this.body_font_family = jQuery("body").css('font-family');
+	this.editedAttribueSlugs = '';
+	this.excludeFieldKeys = [];
 
 	//Function to set all the states on unload
 	window.onbeforeunload = function (evt) { 
@@ -1406,6 +1408,12 @@ Smart_Manager.prototype.handleMediaUpdate = function( params ) {
 
 	let allowMultiple = ( params.hasOwnProperty('allowMultiple') ) ? params.allowMultiple : false;
 	
+	// Code for attaching media to the posts
+	wp.media.model.settings.post.id = 0
+	if('posts_id' === window.smart_manager.getKeyID() && params.hasOwnProperty('row_data_id')){
+		wp.media.model.settings.post.id = params.row_data_id
+	}
+
 	// Create the media frame.
 	file_frame = wp.media.frames.file_frame = wp.media({
 	  title: ( params.hasOwnProperty('uploaderTitle') ) ? params.uploaderTitle : jQuery( this ).data( 'uploader_title' ),
@@ -1648,7 +1656,6 @@ Smart_Manager.prototype.loadGrid = function() {
 				colTypesDisabledHiglight = new Array('sm.image');
 
 			changes.forEach(([row, prop, oldValue, newValue]) => {
-
 				if( ( row < 0 && prop == 0 ) || (oldValue == newValue && String(oldValue).length == String(newValue).length) ) {
 					return;
 				}
@@ -1698,8 +1705,7 @@ Smart_Manager.prototype.loadGrid = function() {
 								});
 							}
 						}
-
-						window.smart_manager.editedData[id][col.src] = newValue;
+						window.smart_manager.editedData[id][col.src] = (window.smart_manager.editedAttribueSlugs && (false === (window.smart_manager.excludedEditedFieldKeys).includes(col.src))) ? window.smart_manager.editedAttribueSlugs : newValue;
 						window.smart_manager.editedCellIds.push({'row': row, 'col':colIndex});
 					}
 
@@ -1725,7 +1731,7 @@ Smart_Manager.prototype.loadGrid = function() {
 		},
 
 		afterOnCellMouseUp: function (e, coords, td) {
-
+			window.smart_manager.editedAttribueSlugs = '';
 			window.smart_manager.selectAll = false
 			
 			//Code for having checkbox column selection
@@ -1808,7 +1814,8 @@ Smart_Manager.prototype.loadGrid = function() {
 								let params = {	
 												UploaderText: _x('Add images to product gallery', 'button', 'smart-manager-for-wp-e-commerce'),
 												UploaderButtonText: _x('Add to gallery', 'button', 'smart-manager-for-wp-e-commerce'),
-												allowMultiple: true
+												allowMultiple: true,
+												row_data_id: row_data_id
 											};
 
 								
@@ -1820,7 +1827,7 @@ Smart_Manager.prototype.loadGrid = function() {
 											return;
 										}
 
-										let imageGalleryHtml = '',
+										let imageGalleryHtml = `<div class="sm_gallery_image_parent" data-id="${row_data_id}" data-col="${col.src || ''}">`,
 											modifiedGalleryImages = [],
 											imageIds = new Set();
 
@@ -1841,8 +1848,10 @@ Smart_Manager.prototype.loadGrid = function() {
 										});
 
 										if ( typeof (window.smart_manager.generateImageGalleryDlgHtml) !== "undefined" && typeof (window.smart_manager.generateImageGalleryDlgHtml) === "function" ) {
-											imageGalleryHtml = window.smart_manager.generateImageGalleryDlgHtml( modifiedGalleryImages );
+											imageGalleryHtml += window.smart_manager.generateImageGalleryDlgHtml( modifiedGalleryImages );
 										}
+
+										imageGalleryHtml += '</div>';
 
 										jQuery('div.modal-body').html(imageGalleryHtml);
 
@@ -1863,7 +1872,7 @@ Smart_Manager.prototype.loadGrid = function() {
 
 				if ( typeof (window.smart_manager.handleMediaUpdate) !== "undefined" && typeof (window.smart_manager.handleMediaUpdate) === "function" ) {
 
-					let params = {};
+					let params = {row_data_id: row_data_id};
 
 					// When an image is selected, run a callback.
 					params.callback = function( attachment ) {
@@ -2232,8 +2241,11 @@ Smart_Manager.prototype.event_handler = function() {
 		
 			window.smart_manager.setDashboardDisplayName();
 
-			content = ( window.smart_manager.searchType == 'simple' ) ? window.smart_manager.simpleSearchContent : window.smart_manager.advancedSearchContent;
-			jQuery('#sm_nav_bar_search #search_content').html(content);
+			if( window.smart_manager.searchType === 'advanced' ){
+				jQuery('#search_switch').prop('checked', false).trigger('change'); //Code to re-draw the search content based on search type
+			} else {
+				jQuery('#sm_simple_search_box').val('');
+			}
 
 			if ( typeof (window.smart_manager.initialize_advanced_search) !== "undefined" && typeof (window.smart_manager.initialize_advanced_search) === "function" && window.smart_manager.searchType != 'simple' ) {
 				window.smart_manager.initialize_advanced_search();

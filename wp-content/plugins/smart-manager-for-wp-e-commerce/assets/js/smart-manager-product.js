@@ -47,7 +47,7 @@ jQuery(document).on('sm_dashboard_change', '#sm_editor_grid', function() {
 
 .on('smart_manager_post_load_grid','#sm_editor_grid', function() {
 	if( window.smart_manager.dashboard_key == 'product' ) {
-
+		window.smart_manager.excludedEditedFieldKeys = ['postmeta/meta_key=_product_attributes/meta_value=_product_attributes'];
 		//Call to function for 'show variations' checkbox
 		window.smart_manager.showVariationsHtml();
 
@@ -322,10 +322,12 @@ jQuery(document).on('sm_dashboard_change', '#sm_editor_grid', function() {
 
 //Function to handle Product Attribute Inline Edit
 Smart_Manager.prototype.prodAttributeInlineEdit = function(params){
-
+	if('undefined' === typeof(window.smart_manager.editedAttribueSlugs)){
+		return;
+	}
 	let attributesEditedText = '',
 		productAttributesPostmeta = {};
-
+	window.smart_manager.editedAttribueSlugs = '';
 	jQuery('#edit_product_attributes input[name^="attribute_names"]').each( function(){
 		let index = jQuery(this).attr('index'),
 			attrNm = jQuery(this).val(),
@@ -334,11 +336,10 @@ Smart_Manager.prototype.prodAttributeInlineEdit = function(params){
 			editedText = '',
 			selectedText = '',
 			selectedVal = '';
-
-		if( attributesEditedText.length > 0 ) {
+		if( attributesEditedText.length > 0 && (window.smart_manager.editedAttribueSlugs).length > 0) {
 			attributesEditedText += ', <br>';
+			window.smart_manager.editedAttribueSlugs += ', <br>';
 		}
-
 		if( jQuery( "input[name='attribute_values["+index+"]']" ).attr('type') !== undefined && jQuery( "input[name='attribute_values["+index+"]']" ).attr('type') == "text" ) {
 			editedValue = jQuery( "input[name='attribute_values["+index+"]']" ).val();
 
@@ -352,9 +353,11 @@ Smart_Manager.prototype.prodAttributeInlineEdit = function(params){
 
 			if (isTaxonomy == 1) {
 				attributesEditedText += attributesEditedText[attrNm] + ': [' + editedText + ']';
+				window.smart_manager.editedAttribueSlugs += window.smart_manager.editedAttribueSlugs[attrNm] + ': [' + editedText + ']';
 				editedValue = editedText;
 			} else if (isTaxonomy == 0) {
 				attributesEditedText += attrNm + ': [' + editedValue + ']';
+				window.smart_manager.editedAttribueSlugs += attrNm + ': [' + editedValue + ']';
 				attrNm = attrNm.replace(/( )/g,"-").replace(/([^a-z A-Z 0-9][^\w\s])/gi,'').toLowerCase();
 			}
 
@@ -379,10 +382,10 @@ Smart_Manager.prototype.prodAttributeInlineEdit = function(params){
 					editedValue[index] = window.smart_manager.prodAttributeActualValues[attrNm].val[index];
 				});
 			}
-
+			let attributeName = (attrNm) ? attrNm.substr(3) : '';
+			window.smart_manager.editedAttribueSlugs += ((attributeName) ? attributeName : '') + ': [' + selectedText + ']';
 			attributesEditedText += ( ( window.smart_manager.prodAttributeActualValues.hasOwnProperty(attrNm) && window.smart_manager.prodAttributeActualValues[attrNm].hasOwnProperty('lbl') ) ? window.smart_manager.prodAttributeActualValues[attrNm].lbl : '' ) + ': [' + selectedText + ']';
 		}
-
 		productAttributesPostmeta [attrNm] = {};
 		productAttributesPostmeta [attrNm]['name'] = attrNm;
 		productAttributesPostmeta [attrNm]['value'] = editedValue;

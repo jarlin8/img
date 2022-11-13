@@ -221,10 +221,54 @@
 	 
 				  
 				
-				$x = curl_error ( $this->ch );
 				
-				echo '<-- Number of chars returned:' . strlen ( $exec ) . ' ' . $x;
+				$x = curl_error ( $this->ch );
+				$cu_info = curl_getinfo($this->ch);
+				
+ 				
+				//events new page layout mbasic endpoint does not work, get from FB directly
+				// condition 1: events condition 2:  ba  exists, this is a class for the error displayed <div class="y z ba bb bc"><span class="bd">The page you requested was not found
+				if($cg_fb_from == 'events' &&   (    $cu_info['http_code'] == 404 )         ){
+					echo '<br>Events page returned "The page you requested was not found", trying FB directly method';
+					
+					//https://www.facebook.com/lekfequoiconcerts/events
+					//curl get
+					$x='error';
+					$url='https://www.facebook.com/'. $cg_fb_page_id .'/events';
+					echo '<br>Loading:' . $url;
+					curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
+					curl_setopt($this->ch, CURLOPT_URL, trim($url));
+					
+					$headers = array();
+					$headers[] = "Authority: www.facebook.com";
+					$headers[] = "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+					$headers[] = "Accept-Language: en-US,en;q=0.9,ar;q=0.8";
+					$headers[] = "Cache-Control: max-age=0";
+					//$headers[] = "Cookie: datr=j1k3YjGZr1UeaE6DR1w0frfC; sb=HZcsYsSTgh49UrBt48fuI9lM; c_user=1475120237; xs=36%3ASCJptGEZtIu7rg%3A2%3A1652194583%3A-1%3A6570%3A%3AAcUfB-Bt4DtoMXeyMeWLdkFjzBDU_hfdP_p6ePzPNbTn; fr=0IOf23dAzJzXmIFRf.AWUw5YkyFL1Me-b-i_Sp_oLRzho.Bi-K7Y.p5.AAA.0.0.Bi-MGA.AWWPG8Qa0hc; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1660469644128%2C%22v%22%3A1%7D; m_pixel_ratio=1; x-referer=eyJyIjoiL2xla2ZlcXVvaWNvbmNlcnRzIiwiaCI6Ii9sZWtmZXF1b2ljb25jZXJ0cz9fcmRyIiwicyI6Im0ifQ%3D%3D; wd=1265x647";
+					$headers[] = "Sec-Ch-Prefers-Color-Scheme: light";
+					$headers[] = "Sec-Ch-Ua: \"Chromium\";v=\"104\", \" Not A;Brand\";v=\"99\", \"Google Chrome\";v=\"104\"";
+					$headers[] = "Sec-Ch-Ua-Mobile: ?0";
+					$headers[] = "Sec-Ch-Ua-Platform: \"macOS\"";
+					$headers[] = "Sec-Fetch-Dest: document";
+					$headers[] = "Sec-Fetch-Mode: navigate";
+					$headers[] = "Sec-Fetch-Site: same-origin";
+					$headers[] = "Sec-Fetch-User: ?1";
+					$headers[] = "Upgrade-Insecure-Requests: 1";
+					$headers[] = "Viewport-Width: 1280";
+					curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
+					
+					$exec=$this->curl_exec_follow($this->ch);
+					$x=curl_error($this->ch);
+					$cuinfo = curl_getinfo($this->ch);
+					
+					
+					echo '<-- Number of chars returned:' . strlen ( $exec ) . ' ' . $x;
+					
+				}
+				
 				 
+				
+				
 				// restore redirection
 				@curl_setopt ( $this->ch, CURLOPT_FOLLOWLOCATION, 0 );
 				
@@ -249,6 +293,7 @@
 					
 					if(stristr($exec, 'facebook'))
 					echo '<br><span style="color:orange">Warning: Not logged in which means the current session cookie is not correct or got expired. The plugin will not be able to paginate or access content that requires authentication (Add a new session if you have any issues)</span> ';
+					$this->notify_the_admin('wp_automatic_fb_xs' , 'Last call to FB did not work, Facebook session needs to be updated');
 	
 				}
 				
@@ -292,13 +337,15 @@
 						$wpAutomaticDom = new wpAutomaticDom ( '<html><head></head><body>' . $exec . '</body>' );
 						$items = $wpAutomaticDom->getContentByXPath ( '//article', false );
 						
-						 
+					
 						
 						// Loop through each feed item and display each item as a hyperlink.
 						
 						// delete embeded articles
 						$i = 0;
 						foreach ( $items as $item ) {
+							
+						 
 							
 							if (stristr ( $item, 'og_action_id' )) {
 								// remove feeling action "og_action_id":"1872937199467035",
@@ -312,8 +359,17 @@
 							$i ++;
 						}
 					} else {
+						
+						
+						
 						// extract events
 						preg_match_all ( '{<a href="/events/(\d+)}', $exec, $events_matches );
+						
+						//new page layout matchs {"__typename":"Event","id":"1193519151422171","name":"ONDA YA"
+						if(count($events_matches [1]) == 0){
+							preg_match_all ( '{typename":"Event","id":"(.*?)"}', $exec, $events_matches );
+							
+						}
 						
 						if (isset ( $events_matches [1] )) {
 							$items = $events_matches [1];
@@ -538,6 +594,7 @@
 							
 							echo '<br>Case#1 content';
 							
+						   
 							// possible sell post
 							preg_match_all ( '!(<p>.*?</p>)!s', $item, $contMatches );
 							
@@ -683,12 +740,14 @@
 						//must login block FB+Login+Page+Visit
 						if(  stristr ( $exec2 , 'FB+Login+Page+Visit' ) || stristr($exec2, 'You must log in to continue.') ){
 							echo '<br><br><span style="color:red"><b><u>ERROR !!!</u></b>: Not logged in which means the current session cookie is <b>not correct or got expired</b>. The plugin will not be able to <b>function</b> or access the content   (<b><u> ADD A NEW SESSION COOKIE TO THE PLUGIN SETTINGS PAGE</u></b>).</span> <br>';
+							$this->notify_the_admin('wp_automatic_fb_xs' , 'Last call to FB did not work, Facebook session needs to be updated');
 							exit;
 						}
 						
 						//verify valid session 
 						if( ! stristr ( $exec2 , '"ACCOUNT_ID":"'. trim($wp_automatic_fb_cuser) .'"' ) && strlen($exec2) != 0 ){
 							echo '<br><br><span style="color:orange"><b><u>WARNING !!!</u></b>: Not logged in which means the current session cookie is <b>not correct or got expired</b> or you have the classic FB UI. The plugin will not be able to <b>fully function</b> or access content that requires authentication (<b><u> ADD A NEW SESSION COOKIE TO THE PLUGIN SETTINGS PAGE</u></b> if you have any issues).</span> <br>';
+							$this->notify_the_admin('wp_automatic_fb_xs' , 'Last call to FB did not work, Facebook session needs to be updated');
 						}
 						 
 					
@@ -818,10 +877,11 @@
 							
 							echo '<br>Finding full textual content?';
 							
-							
+						 
 							
 							preg_match ( '! class="_5pbx.*?>(.*?)</div><div class="_3x-2" data-ft!s', str_replace ( '&amp;', '&', $exec2 ), $full_text_matches );
 							
+						 
 							
 							if (stristr ( $exec2, 'ReCaptchav2Captcha' )) {
 								
@@ -838,7 +898,7 @@
 								if (! in_array ( 'OPT_FB_TXT_SKIP', $camp_opt ))
 									$content = $full_text_matches [1];
 							
-							}elseif(  ( stristr ( $txtContent, 'story.php' ) || stristr(  $txtContent, '/permalink/'   )   )  &&  (stristr($exec2, 'story":{"message":{"text') || preg_match('!"story":.*?"message".*?"text"!' , $exec2) )   ){
+							}elseif(  ( stristr ( $txtContent, 'story.php' ) || stristr(  $txtContent, '/permalink/'   ) || stristr($txtContent , '...')   )  &&  (stristr($exec2, 'story":{"message":{"text') || preg_match('!"story":.*?"message".*?"text"!' , $exec2) )   ){
 	
 								//NEW UI full content
 								//story":{"message":{"text":" ============ this part exist on new UI for pages & some groups
@@ -885,7 +945,8 @@
 								
 							
 							} else {
-								  
+								
+ 								
 								// data-ft="&#123;&quot;tn&quot;:&quot;K&quot;&#125;">
 								preg_match ( '!data-ft="&#123;&quot;tn&quot;:&quot;K&quot;&#125;">(.*?)</div>!s', str_replace ( '&amp;', '&', $exec2 ), $full_text_matches );
 								
@@ -2023,7 +2084,7 @@
 						// Setting next page url
 						$nextPageUrl = '';
 						
-						 
+						if(! isset($list_exec_raw)) $list_exec_raw = '';
 						 
 						if ( stristr (   $list_exec_raw , '"see_more_cards_id\",\"href\"' ) || stristr ( $list_exec_raw, 'm_more_item\",\"href' ) || stristr ( $list_exec_raw, 'profile\\\\\\/timeline\\\\\\/stream' ) || (stristr ( $exec, 'serialized_cursor' ) && $cg_fb_from == 'events') || ($cg_fb_source == 'group' && stristr($list_exec_raw , "/groups/$cg_fb_page_id?bac" ) ) ) {
 						

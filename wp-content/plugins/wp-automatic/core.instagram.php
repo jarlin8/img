@@ -216,6 +216,12 @@ class WpAutomaticInstagram extends wp_automatic {
 							$fullItemDetails = $instaScrape->getItemByID ( $t_data ['item_id_numeric'] );
 						} catch ( Exception $e ) {
 							
+							if (stristr ( $e->getMessage (), 'is not correct or expired' )) {
+								
+								$this->notify_the_admin('wp_automatic_ig_sess' , 'Last call to Instagram did not work, Instagram session needs to be updated');
+								
+							}
+							
 							echo 'Failed:' . $e->getMessage ();
 							return;
 						}
@@ -629,6 +635,12 @@ class WpAutomaticInstagram extends wp_automatic {
 					}
 				} catch ( Exception $e ) {
 					
+					if (stristr ( $e->getMessage (), 'is not correct or expired' )) {
+						
+						$this->notify_the_admin('wp_automatic_ig_sess' , 'Last call to Instagram did not work, Instagram session needs to be updated');
+						
+					}
+					
 					echo 'Failed:' . $e->getMessage ();
 					return;
 				}
@@ -654,7 +666,11 @@ class WpAutomaticInstagram extends wp_automatic {
 						delete_post_meta ( $camp->camp_id, 'wp_instagram_next_max_id' . md5 ( $keyword ) );
 					}
 					
-		
+					if (stristr ( $e->getMessage (), 'is not correct or expired' )) {
+						
+						$this->notify_the_admin('wp_automatic_ig_sess' , 'Last call to Instagram did not work, Instagram session needs to be updated');
+						
+					}
 					
 					return;
 				}
@@ -686,6 +702,13 @@ class WpAutomaticInstagram extends wp_automatic {
 					
 					$this->deactivate_key ( $camp->camp_id, $keyword  , 0);
 				}
+				
+				if (stristr ( $e->getMessage (), 'is not correct or expired' ) || stristr( $e->getMessage (), 'wait a few minutes before you try again' )  || stristr( $e->getMessage () , '"status":"fail"') ) {
+					
+					$this->notify_the_admin('wp_automatic_ig_sess' , 'Last call to Instagram did not work, Instagram session needs to be updated');
+					 
+				}
+				 
 				
 				echo '<br>Exception:' . $e->getMessage ();
 				return;

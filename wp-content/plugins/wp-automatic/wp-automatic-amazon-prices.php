@@ -22,6 +22,8 @@ function wp_automatic_amazon_prices_update($using_api = true) {
 			$pid = $row->post_id;
 			
 			echo '<br>Updating an amazon product price at post:' . $pid;
+			
+			wp_automatic_log_new('Amazon Price update', 'Updating an amazon product price at post:' . $pid);
 			wp_automatic_amazon_price_update ( $pid, $using_api );
 		}
 	}
@@ -79,7 +81,6 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 	if ($using_api) {
 		
 		// API method
-		
 		$amazonPublic = get_option ( 'wp_amazonpin_abk', '' );
 		$amazonSecret = get_option ( 'wp_amazonpin_apvtk', '' );
 		$amazonAid = get_option ( 'wp_amazonpin_aaid', '' );
@@ -90,17 +91,28 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 			$obj->ch = $ch;
 			
 			$result = $obj->getItemByAsin ( $product_asin );
+			
 		} catch ( Exception $e ) {
 			echo '<br>Exception:' . $e->getMessage ();
-			return;
+			
+			// not found InvalidParameterValue:The ItemId B01BJ5G33C provided in the request is invalid.
+			if(stristr( $e->getMessage () , 'InvalidParameterValue:The ItemId' )   ){
+				$not_found_product = true;
+			}
+			
+			//when TooManyRequests , the api did not really work, just return 
+			if(stristr( $e->getMessage () , 'TooManyRequests' )  ){
+				echo '<br>API did not work, got TooManyRequests message';
+				return;
+			}
 		}
 		
-		if (count ( $result ) > 0) {
+		if ( is_array($result) && count ( $result ) > 0) {
 			$Item = $result [0];
-			
+			 
 			if (! isset ( $Item->Offers->Listings [0]->Price )) {
 				echo '<-- no price found';
-				return;
+				 
 			}
 			
 			// current price
@@ -120,11 +132,17 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 			if (trim ( $ListPrice ) == '') {
 				$ListPrice = $price;
 			}
-		}
+			
+			//out of stock?
+			if(trim($price) == ''){
+				echo '<br>We got the product but not the price, obviousely out of stock';
+				$out_of_stock = true;
+			}
+			
+		} 
 	} else {
 		
 		// no API method
-		
 		$amazonAid = get_option ( 'wp_amazonpin_aaid', '' );
 		
 		require_once (dirname ( __FILE__ ) . '/inc/class.amazon.api.less.php');
@@ -136,6 +154,7 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 			curl_setopt ( $ch, CURLOPT_USERAGENT, $agent );
 			
 			$item = $obj->getItemByAsin ( $product_asin );
+			 
 			
 			if( isset($item['item_price']) ){
 				
@@ -143,18 +162,45 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 				$ListPrice = $item['item_pre_price'];
 			}
 			
+			//out of stock
+			if(isset($item['item_out_of_stock']) && $item['item_out_of_stock'] == 'yes' ){
+				$out_of_stock = true;
+			}
+			
 		 
 		} catch ( Exception $e ) {
 			echo '<br>Amazon error:' . $e->getMessage ();
+			
+			if(stristr( $e->getMessage () , '404 Not founnd' )){
+				$not_found_product = true;
+				 
+			}
+			
 		}
 	}
 	
 	
 	// update price
 	if (trim ( $price ) != '') {
+		
+		//nice, we got a price from amazon which means this product is online and is in stock already, if it was out of stock, return it to stock 
+		
+		$wp_automatic_out_of_stock = get_post_meta($pid , 'wp_automatic_out_of_stock' , true);
+		
+		if($wp_automatic_out_of_stock == 1){
+			echo '<br>This product was out of stock and now returned in stock, lets get it back published';
+			
+			//delete the out of stock custom field 
+			delete_post_meta($pid, 'wp_automatic_out_of_stock' );		
+			
+			//publish the post
+			wp_publish_post($pid);
+			
+		}
+		
 		if ($price != $product_price || $ListPrice != $product_list_price) {
 			
-			echo '<-- Price changed. updating...';
+			echo '<-- Price changed from '  . $product_price . ' to ' .  $price   .  ' updating...';
 			
 			update_post_meta ( $pid, 'product_price', ( string ) $price );
 			update_post_meta ( $pid, 'product_list_price', ( string ) $ListPrice );
@@ -190,7 +236,62 @@ function wp_automatic_amazon_price_update($pid, $using_api) {
 			
 			echo '<-- Price is up-to-date';
 		}
+	}else{
+		echo '<-- Did not get a price';
+		
+		//deleted product action
+		
+		if( isset($not_found_product) && $not_found_product ){
+			
+			echo '<-- not a valid item no more, should be removed...';
+			
+			//delete if OPT_AMAZON_DELETE is enabled, otherwise, delete the price updated so we no more check it for price updates
+			
+			if( ! isset($wp_automatic_options) ) $wp_automatic_options = get_option ( 'wp_automatic_options' , array() );
+			
+			if(in_array('OPT_AMAZON_DELETE' , $wp_automatic_options  )){
+				
+				//completely delete
+				echo '<br>Deleting this post (' .  $pid  . ') now.... ';
+				wp_delete_post($pid , true);
+				
+			}else{
+				
+				// remove update meta tag
+				delete_post_meta($pid, 'product_price_updated');
+				echo '<br>Deleting 404 products option is not enabled, marking this product as deleted so we do not check it again';
+			}
+		}
+		
+		
+		//out of stock action
+		if( isset($out_of_stock) && $out_of_stock ){
+			echo '<br>This item is out of stock already ....';
+		 
+			//set as pending
+			if( ! isset($wp_automatic_options) ) $wp_automatic_options = get_option ( 'wp_automatic_options' , array() );
+			
+			if( in_array('OPT_AMAZON_PENDING', $wp_automatic_options) ){
+				
+				echo '<-- setting the post status to pending...';
+				
+				//1 set the post status to pending
+				wp_update_post(array(
+						'ID'    =>  $pid,
+						'post_status'   =>  'pending'
+				));
+				
+				//2 set the custom field wp_automatic_out_of_stock to 1
+			 	update_post_meta($pid, 'wp_automatic_out_of_stock' , '1');
+				
+			}
+		
+		}
+		
+		
+		
 	}
 	
+	if(! isset($not_found_product))
 	update_post_meta ( $pid, 'product_price_updated', time () );
 }

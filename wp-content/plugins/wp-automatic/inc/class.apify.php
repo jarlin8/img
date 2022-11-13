@@ -12,6 +12,7 @@ class ValvePress_APIFY {
 		$this->token = $token;
 		$this->link = $link;
 		$this->ch = $ch;
+		curl_setopt ( $this->ch, CURLOPT_TIMEOUT, 90 );
 		
 	}
 	
