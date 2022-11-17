@@ -36,11 +36,13 @@ global $wpdb;
 $wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->prefix . "aawp_products" );
 $wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->prefix . "aawp_lists" );
 $wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->prefix . "aawp_bitly_links" );
+$wpdb->query( "DROP TABLE IF EXISTS " . $wpdb->prefix . "aawp_logs" );
 
 delete_option( $wpdb->prefix . "aawp_products_db_version" );
 delete_option( $wpdb->prefix . "aawp_lists_db_version" );
 delete_option( $wpdb->prefix . "aawp_bitly_links_db_version" );
 delete_option( $wpdb->prefix . "aawp_bitly_link_creation_failed_msg" );
+delete_option( $wpdb->prefix . "aawp_logs_settings" );
 
 /*
  * Delete transients

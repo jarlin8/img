@@ -24,7 +24,8 @@ function aawp_admin_scripts() {
 
     // Prepare ajax.
     wp_localize_script( 'aawp-admin', 'aawp_post', array(
-        'ajax_url' => admin_url( 'admin-ajax.php' )
+        'ajax_url' => admin_url( 'admin-ajax.php' ),
+        'admin_nonce' => wp_create_nonce( 'aawp-admin-nonce' )
     ));
 }
 add_action( 'aawp_load_admin_scripts', 'aawp_admin_scripts' );

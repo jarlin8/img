@@ -398,6 +398,8 @@ class AAWP_API {
 
         //echo 'Result: Products fetched ' . sizeof( $products_fetched ) . '<br>';
 
+
+
         return ( sizeof( $products_fetched ) > 0 ) ? $products_fetched : null;
     }
 

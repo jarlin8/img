@@ -118,6 +118,7 @@ function aawp_get_amazon_stores() {
     $stores = array(
         'ca'     => __( 'Canada', 'aawp' ),
 	    'com.au' => __( 'Australia', 'aawp' ),
+        'com.be' => __( 'Belgium', 'aawp' ),
         'com.br' => __( 'Brazil', 'aawp' ),
         'cn'     => __( 'China', 'aawp' ),
         'de'     => __( 'Germany', 'aawp' ),
@@ -165,6 +166,7 @@ function aawp_get_amazon_associates_links() {
         'sg' => 'https://affiliate-program.amazon.sg/',
         'nl' => 'https://partnernet.amazon.nl/',
         'pl' => 'https://affiliate-program.amazon.pl/',
+        'com.be' => 'https://affiliate-program.amazon.com.be/',
         'sa' => 'https://affiliate-program.amazon.sa/',
         'se' => 'https://affiliate-program.amazon.se/',
     );
@@ -369,6 +371,9 @@ function aawp_get_page_url( $slug ) {
         case 'docs:bestseller':
             $url = ( $lang_de ) ? 'https://aawp.de/docs/article/bestseller-listen/' : 'https://getaawp.com/docs/article/bestseller-lists/';
             break;
+        case 'docs:comparison_tables':
+            $url = ( $lang_de ) ? 'https://aawp.de/docs/article/vergleichstabellen/' : 'https://getaawp.com/docs/article/comparison-tables/';
+            break;
         case 'docs:shortcodes':
             $url = ( $lang_de ) ? 'https://aawp.de/docs/article/shortcodes/' : 'https://getaawp.com/docs/article/shortcodes/';
             break;
@@ -380,6 +385,21 @@ function aawp_get_page_url( $slug ) {
             break;
         case 'docs:shortened_links':
             $url = ( $lang_de ) ? 'https://aawp.de/docs/article/gekuerzte-links/' : 'https://getaawp.com/docs/article/shortened-links/';
+            break;
+        case 'need-help':
+            $url = ( $lang_de ) ? 'https://aawp.de/docs/?utm_source=customers&utm_medium=textlink&utm_campaign=docs&utm_term=admin+pages&utm_content=need+help+link' : 'https://getaawp.com/docs/?utm_source=customers&utm_medium=textlink&utm_campaign=docs&utm_term=admin+pages&utm_content=need+help+link';
+            break;
+        case 'get-started':
+
+            if ( aawp_is_license_valid() ) {
+                $url = ( $lang_de ) ? 'https://aawp.de/docs/article/guide/?utm_source=customers&utm_medium=textlink&utm_campaign=docs&utm_term=admin+pages&utm_content=get+started+link' : 'https://getaawp.com/docs/article/guide/?utm_source=customers&utm_medium=textlink&utm_campaign=docs&utm_term=admin+pages&utm_content=get+started+link';
+            } else {
+                $url = 'https://getaawp.com/pricing/?utm_source=customers&utm_medium=textlink&utm_campaign=purchase&utm_term=admin+pages&utm_content=get+started+link';
+            }
+
+            break;
+        case 'flyout-contact':
+            $url = ( $lang_de ) ? 'https://aawp.de/kontakt/?utm_source=customers&utm_medium=textlink&utm_campaign=contact+support&utm_term=admin+pages&utm_content=flyout+link' : 'https://getaawp.com/contact/?utm_source=customers&utm_medium=textlink&utm_campaign=contact+support&utm_term=admin+pages&utm_content=flyout+link';
             break;
     }
 
@@ -997,7 +1017,7 @@ function aawp_delete_product_images_cache() {
 		$file->isDir() ? rmdir( $file ) : unlink( $file );
 	}
 
-	aawp_add_log( '*** DOWNLOADED IMAGES DELETED ***' );
+	aawp_log( 'Product', '*** DOWNLOADED IMAGES DELETED ***' );
 
 	return true;
 }
@@ -1069,4 +1089,29 @@ function aawp_get_comparison_tables() {
     );
 
     return (array) wp_list_pluck( $tables, 'post_title', 'ID' );
+}
+
+/**
+ * Log AAWP Activity in Logs menu.
+ *
+ * @since 3.19
+ */
+function aawp_log( $source, $message, $context = '', $level = 0 ) {
+
+	$current_user    = function_exists( 'wp_get_current_user' ) ? wp_get_current_user() : null;
+	$current_user_id = $current_user ? $current_user->ID : 0;
+
+	$log_db = new \AAWP\ActivityLogs\DB();
+
+    if ( ! $log_db->is_logging_enabled() || ! method_exists( $log_db, 'add' ) ) {
+        return;
+    }
+
+	$log_db->add(
+		$level = 0,
+		$current_user_id,
+		$source,
+		$message,
+		$context
+	);
 }

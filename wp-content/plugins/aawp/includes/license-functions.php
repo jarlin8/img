@@ -91,6 +91,8 @@ function aawp_test_license_server_connection( $server_url ) {
 
     $license_check = $AAWP_License_Handler->check( 'test' );
 
+    aawp_log( 'Licensing', sprintf( 'License Key Test Result: <br/><pre><code>%s</code></pre>', var_export( $license_check, true ) ) );
+
     if ( is_string( $license_check ) ) {
         return $license_check;
     } elseif ( ! empty ( $license_check['data']->checksum ) ) {

@@ -87,12 +87,13 @@
 .aawp-look-selector-radio-control div {
 	display: flex;
 	flex-wrap: wrap;
+	flex-direction: row;
 	justify-content: center;
 	align-items: center;
 
 	div {
 		padding: 10px;
-		flex-basis: 33.333333%;
+		flex-basis: 49%;
 	}
 }
 
@@ -117,6 +118,10 @@
 
 	.aawp-products-search-container {
 		padding-top: 5px;
+	}
+
+	.aawp-fields-value-input-control {
+		padding-top: 15px;
 	}
 
 	.aawp-table-add-products-search.components-button:focus:not(:disabled) {

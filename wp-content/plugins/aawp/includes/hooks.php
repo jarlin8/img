@@ -125,18 +125,6 @@ function aawp_scheduled_daily_events() {
 add_action('aawp_wp_scheduled_daily_events', 'aawp_scheduled_daily_events');
 
 /**
- * Handle scheduled weekly events
- *
- * @since       3.3.3
- */
-function aawp_scheduled_weekly_events() {
-
-    // Cleanup log
-    aawp_delete_log();
-}
-add_action('aawp_wp_scheduled_weekly_events', 'aawp_scheduled_weekly_events');
-
-/**
  * Admin scripts loader
  *
  * Only on plugin settings and widgets page
@@ -532,7 +520,7 @@ function aawp_api_response_validation_error( $error ) {
         aawp_update_options( 'api', $api_options );
 
         // Add Log
-        aawp_add_log( sprintf( esc_html__( 'Disconnected from Amazon API: %s', 'aawp' ), aawp_get_api_error_message( $error['Code'] ) . ' ( Code: ' . $error['Code'] . ')' ) );
+        aawp_log( 'Amazon API', sprintf( __( 'Disconnected from Amazon API: <code>%s</code>', 'aawp' ), aawp_get_api_error_message( $error['Code'] ) . ' ( Code: ' . $error['Code'] . ')' ) );
 
         // Try re-verifying later
         wp_schedule_single_event( time() + 3600, 'aawp_wp_scheduled_single_verify_api_credentials_event' );

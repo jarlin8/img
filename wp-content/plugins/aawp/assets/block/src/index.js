@@ -5,7 +5,7 @@
  */
 import { registerBlockType } from '@wordpress/blocks';
 
-import aawpIcon from '../../img/icon.svg';
+import aawpIcon from '../../img/block-icon.svg';
 
 /**
  * Internal dependencies

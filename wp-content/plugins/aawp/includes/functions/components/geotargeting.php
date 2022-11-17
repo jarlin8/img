@@ -190,6 +190,10 @@ function aawp_embed_geotargeting_script_data() {
         $localized_stores['nz'] = 'com.au'; // New Zealand
 	}
 
+    if ( ! empty( $tracking_ids['com.be'] ) && 'com.be' !== $default_store ) {
+        $localized_stores['be'] = 'com.be'; // Belgium
+    }
+
     if ( ! empty( $tracking_ids['com.br'] ) && 'com.br' !== $default_store ) {
         $localized_stores['br'] = 'com.br'; // Brazil
     }

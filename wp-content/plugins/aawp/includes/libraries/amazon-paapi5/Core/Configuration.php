@@ -90,6 +90,11 @@ class Configuration {
                 $host = 'webservices.amazon.com.au';
                 $region = 'us-west-2';
                 break;
+	        // Belgium
+	        case ( 'com.be' ):
+		        $host = 'webservices.amazon.com.be';
+		        $region = 'eu-west-1';
+		        break;
             // Brazil
             case ( 'com.br' ):
                 $host = 'webservices.amazon.com.br';

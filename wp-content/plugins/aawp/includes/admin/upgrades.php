@@ -72,10 +72,15 @@ function aawp_admin_plugin_upgrades() {
         if ( version_compare( $aawp_version_installed, '3.14.3', '<' ) ) {
             aawp_admin_plugin_update_pre_3_14_3_action();
         }
+
+        // 3.19.0
+        if ( version_compare( $aawp_version_installed, '3.19.0', '<' ) ) {
+            aawp_admin_plugin_update_pre_3_19_0_action();
+        }
     }
     /* ---------------------------------------------------------- */
 
-    aawp_add_log( 'Plugin v' . AAWP_VERSION . ' upgrade routine completed.' );
+    aawp_log( 'Update', 'Plugin v' . AAWP_VERSION . ' upgrade routine completed.' );
 
     // General tasks
     aawp_delete_transients();
@@ -85,6 +90,20 @@ function aawp_admin_plugin_upgrades() {
     update_option( 'aawp_version', AAWP_VERSION );
 }
 add_action( 'admin_init', 'aawp_admin_plugin_upgrades' );
+
+/**
+ * Migrate all new old logs to new logs.
+ */
+function aawp_admin_plugin_update_pre_3_19_0_action() {
+
+    $option = get_option( 'aawp_log' );
+
+    if ( ! empty( $option ) ) {
+        aawp_log( 'Logs Migration', '<pre><code>' . var_export( $option, true ) . '</code></pre>' );
+    }
+
+    delete_option( 'aawp_log');
+}
 
 /**
  * Pre v3.14.3 upgrade handler

@@ -84,7 +84,7 @@ add_action( 'aawp_support_infoboxes', 'aawp_settings_infobox_support', 20 );
 function aawp_get_settings_infobox_support_header() {
 
     $header = array(
-        'img' => aawp_get_assets_url() . 'img/banner-service.png',
+        'img' => aawp_get_assets_url() . 'img/banner-service.svg',
         'url' => ( aawp_is_lang_de() ) ? 'https://aawp.de/' : 'https://getaawp.com/'
     );
 

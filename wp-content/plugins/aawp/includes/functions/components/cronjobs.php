@@ -59,3 +59,15 @@ function aawp_support_cronjobs() {
     <?php
 }
 add_action( 'aawp_support_cache_table_rows', 'aawp_support_cronjobs' );
+
+/**
+ * AAWP Clear Logs Cron Job. For some reason, it's not running from within the class.
+ *
+ * @TODO:: Investigate why it's not running from within the class.
+ *
+ * @since 3.19
+ */
+add_action( 'aawp_clear_logs', function() {
+	$log_db = new \AAWP\ActivityLogs\DB;
+	$log_db->process_clear_logs();
+} );

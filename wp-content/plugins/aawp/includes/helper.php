@@ -78,39 +78,6 @@ function aawp_get_default_highlight_color() {
     return '#fff';
 }
 
-/**
- * Output data to a log for debugging reasons
- **/
-function aawp_add_log( $string ) {
-
-    $support_options = aawp_get_options( 'support' );
-
-    $debug_log = ( isset ( $support_options['debug_log'] ) && $support_options['debug_log'] == '1' ) ? true : false;
-
-    if ( $debug_log ) {
-
-        $datetime = get_date_from_gmt( date( 'Y-m-d H:i:s', time() ), 'd.m.Y H:i:s' );
-        $string = $datetime . " >>> " . $string . "\n";
-        //$string = date( 'd.m.Y H:i:s' ) . " >>> " . $string . "\n";
-
-        $log = aawp_get_log();
-        $log .= $string;
-        aawp_update_log( $log );
-    }
-}
-
-function aawp_get_log() {
-    return get_option( 'aawp_log', '' );
-}
-
-function aawp_update_log( $log ) {
-    update_option( 'aawp_log', $log );
-}
-
-function aawp_delete_log() {
-    delete_option( 'aawp_log' );
-}
-
 /*
  * Check lang
  */

@@ -303,6 +303,9 @@ if ( !class_exists( 'AAWP_Functions' ) ) {
                 $asins = ( is_string( $keys ) ) ? explode( ',', str_replace( ' ', '', $keys ) ) : $keys;
             }
 
+            // Strip non-printable characters.
+            $asins = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $asins );
+
             if ( empty ( $asins ) )
                 return null;
 
@@ -350,8 +353,6 @@ if ( !class_exists( 'AAWP_Functions' ) ) {
                 $items_reordered = array();
 
                 foreach ( $asins as $asin ) {
-
-                    $asin = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $asin );
 
                     if ( ! empty( $items[$asin] ) )
                         $items_reordered[] = $items[$asin];
@@ -581,6 +582,8 @@ if ( !class_exists( 'AAWP_Functions' ) ) {
                     }
                 }
             }
+
+            aawp_log( 'Product', sprintf( wp_kses( _n( 'Fetched product with ASIN <code>%s</code> from the API.', 'Fetched products with ASIN <code>%s</code> from the API.', count( $asins ),  'aawp' ), [ 'code' => [] ] ), implode( ',', $asins ) )  );
 
             return $products;
         }
@@ -816,7 +819,7 @@ if ( !class_exists( 'AAWP_Functions' ) ) {
          *
          * @return null|string
          */
-        function get_ribbon_text( $default ) {
+        public function get_ribbon_text( $default ) {
 
             // Hide ribbon
             if ( isset( $this->atts['ribbon'] ) && 'none' === $this->atts['ribbon'] )
@@ -991,7 +994,7 @@ if ( !class_exists( 'AAWP_Functions' ) ) {
         /*
          * Helper
          */
-        function replace_last_update_placeholder( $string, $last_update ) {
+        public function replace_last_update_placeholder( $string, $last_update ) {
             return aawp_replace_last_update_placeholder( $string, $last_update );
         }
 

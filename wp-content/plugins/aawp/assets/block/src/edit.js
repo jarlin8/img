@@ -20,7 +20,7 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 /**
  * Get required utilities from @wordpress/components
  */
-import { SelectControl, PanelBody, Placeholder, TextControl, RadioControl, ToggleControl, RangeControl, Button } from '@wordpress/components';
+import { SelectControl, PanelBody, Placeholder, TextControl, TextareaControl, RadioControl, ToggleControl, RangeControl, Button } from '@wordpress/components';
 
 /**
  * ServerSideRender is a component used for server-side rendering a preview of dynamic blocks to display in the editor. 
@@ -175,6 +175,7 @@ export default function Edit( props ) {
         if ( 'fields' === look ) {
             valueSelect = <SelectControl
                     key="aawp-fields-value-input-control"
+                    className="aawp-fields-value-input-control"
                     label={ __( 'Value', 'aawp') }
                     value= {value_attr}
                     options={[
@@ -412,7 +413,7 @@ export default function Edit( props ) {
 
     /** Description fields start */
 
-    let descriptionInput = <TextControl
+    let descriptionInput = <TextareaControl
         label = {__( 'Custom Description', 'aawp')}
         key="aawp-description-text-control"
         value={ description }
@@ -772,7 +773,7 @@ export default function Edit( props ) {
                     />
                 : '' }
 
-                { ( true === apply_link || ['button', 'thumb'].includes( value_attr ) ) ? [ linkTitleInput, linkTypeSelect] : '' }
+                { ( true === apply_link || ['button', 'thumb'].includes( value_attr ) ) ? [ linkTitleInput, linkOverwriteInput, linkTypeSelect] : '' }
 
                 </PanelBody>
             ]

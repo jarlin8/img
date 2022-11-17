@@ -396,6 +396,17 @@ class AAWP_DB_Products extends AAWP_DB {
             }
         }
 
+        // Title LIKE.
+        if( ! empty( $args['title'] ) ) {
+
+            $title = sanitize_text_field( $args['title'] );
+            if( ! empty( $where ) ) {
+                $where .= "AND `title` LIKE( '%{$title}%' ) ";
+            } else {
+                $where .= "WHERE `title` LIKE( '%{$title}%' ) ";
+            }
+        }
+
         // Status
         if( ! empty( $args['status'] ) ) {
 
@@ -422,15 +433,16 @@ class AAWP_DB_Products extends AAWP_DB {
                 $asins = $args['asin'];
             }
 
-            $valid_asins = preg_match( '/^[a-zA-Z0-9,\' ]*$/', $asins );
+            $is_valid = preg_match( '/^[a-zA-Z0-9,\' ]*$/', $asins );
 
-            if ( $valid_asins ) {
+            if ( ! $is_valid ) {
+                return null;
+            }
 
-                if( ! empty( $where ) ) {
-                    $where .= "AND `asin` IN( '{$asins}' ) ";
-                } else {
-                    $where .= "WHERE `asin` IN( '{$asins}' ) ";
-                }
+            if( ! empty( $where ) ) {
+                $where .= "AND `asin` IN( '{$asins}' ) ";
+            } else {
+                $where .= "WHERE `asin` IN( '{$asins}' ) ";
             }
         }
 
@@ -512,6 +524,7 @@ class AAWP_DB_Products extends AAWP_DB {
             'id',
             'status',
             'asin',
+            'title',
             'reviews_updated',
             'date_created',
             'date_updated'
@@ -631,7 +644,7 @@ class AAWP_DB_Products extends AAWP_DB {
      *
      * @return array
      */
-    function format_product_results( $products ) {
+    public function format_product_results( $products ) {
 
         if ( ! $products )
             return $products;

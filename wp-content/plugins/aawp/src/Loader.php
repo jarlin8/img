@@ -8,83 +8,101 @@ namespace AAWP;
 class Loader {
 
 	/**
-	 * Instance of this class.
-	 *
-	 * @var object
-	 */
-	protected static $instance = null;
-
-	/**
-	 * Return an instance of this class.
-	 *
-	 * @return object A single instance of this class.
-	 */
-	public static function get_instance() {
-
-		// If the single instance hasn't been set, set it now.
-		if ( is_null( self::$instance ) ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
-	}
-
-	/**
-	 * Initialize.
+	 * Initialize. All the classes that should be initiated loads from here on.
 	 *
 	 * @return void.
 	 */
 	public function init() {
 
-		add_action( 'plugins_loaded', [ $this, 'load_classes' ] );
+		$this->prepare_classes();
 	}
 
 	/**
-	 * Load Classes.
+	 * Prepare Classes to load. Ideally the classes should run from respective modules. Example: ActivityLogs/init.
+	 * All other classes for ActivityLogs are loaded from inside the ActivityLogs module.
 	 *
 	 * @return void.
 	 */
-	public function load_classes() {
+	public function prepare_classes() {
 
 		$classes = [
 
-			// Block & Stuffs.
+			// Block.
 			'Block',
-			'ClassicEditor',
-			'MetaBox',
-			'DuplicateTable',
 
 			// Shortener.
-			'ShortenLinks/Settings',
-			'ShortenLinks/Process',
-			'ShortenLinks/DB',
-			'ShortenLinks/BitlyAPI',
+			'ShortenLinks\\Process',
+			'ShortenLinks\\DB',
+			'ShortenLinks\\BitlyAPI',
 
-			'Elementor/Elementor',
+			// ActivityLogs.
+			'ActivityLogs\\Init',
+			'Admin\\ComparisonTable\\ShortcodeHandler',
+
+			// Advanced Ads.
+			'Admin\\AdvancedAds\\Init',
+			'Elementor\\Elementor'
 		];
 
+		if ( is_admin() ) {
+
+			$admin_classes = [
+				'Admin\\ClassicEditor',
+				'Admin\\MetaBox',
+
+				// Admin Pages.
+				'Admin\\Menu',
+				'Admin\\Support',
+
+				// Comparison Table.
+				'Admin\\ComparisonTable\\Table',
+				'Admin\\ComparisonTable\\DuplicateTable',
+				'Admin\\ComparisonTable\\Settings',
+
+				// Shortener Settings.
+				'ShortenLinks\\Settings',
+
+				// Admin Settings.
+				'Admin\\Settings\\API',
+				'Admin\\Settings\\Functions',
+				'Admin\\Settings\\General',
+				'Admin\\Settings\\License',
+				'Admin\\Settings\\Output',
+
+				// Welcome.
+				'Admin\\Welcome',
+
+				// ProductsTable.
+				'Admin\\ProductsTable\\Init',
+
+				// Flyout.
+				'Admin\\Flyout',
+			];
+
+			$classes = array_merge( $classes, $admin_classes );
+		}//end if
+
+		$this->load_classes( $classes );
+	}
+
+	/**
+	 * Now load the classes from their init() method if exists.
+	 *
+	 * @param array $classes An array of classes to load.
+	 *
+	 * @since 3.18
+	 */
+	public function load_classes( $classes ) {
+
 		foreach ( $classes as $class ) {
-
-			$check_slash = explode( '/', $class );
-
-			if ( ! isset( $check_slash[1] ) ) {
-				include_once AAWP_PLUGIN_DIR . 'src/' . $class . '.php';
-			} else {
-				include_once AAWP_PLUGIN_DIR . 'src/' . $check_slash[0] . '/' . $check_slash[1] . '.php';
-			}
-
-			if ( ( ! isset( $check_slash[1] ) ) && \class_exists( __NAMESPACE__ . '\\' . $class ) ) {
+			if ( \class_exists( __NAMESPACE__ . '\\' . $class ) ) {
 				$class = __NAMESPACE__ . '\\' . $class;
+				$obj   = new $class();
 
-				$obj = new $class();
-				$obj->init();
-
-			} elseif ( isset( $check_slash[1] ) && \class_exists( __NAMESPACE__ . '\\' . $check_slash[0] . '\\' . $check_slash[1] ) ) {
-				$class = __NAMESPACE__ . '\\' . $check_slash[0] . '\\' . $check_slash[1];
-
-				$obj = new $class();
-				$obj->init();
+				if ( method_exists( $obj, 'init' ) ) {
+					$obj->init();
+				}
 			}
-		}//end foreach
+		}
 	}
 }

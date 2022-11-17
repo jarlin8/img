@@ -200,24 +200,27 @@ class Block {
 
 	/**
 	 * Script for product search Modal.
-	 * 
+	 *
 	 * @since 3.19.
 	 */
 	public function add_inline_script_for_product_search() {
 
 		// Load modal box for product(s) search.
-		add_action( 'admin_footer', function() {
-	
-			ob_start();
+		add_action(
+			'admin_footer',
+			function() {
 
-			\aawp_admin_the_table_product_search_modal();
+				ob_start();
 
-			?>
+				\aawp_admin_the_table_product_search_modal();
+
+				?>
 				<input type="hidden" id="aawp-ajax-search-items-selected" value="" />
-			<?php
+				<?php
 
-			echo ob_get_clean();
-		});
+				echo ob_get_clean(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
+		);
 	}
 
 	/**
@@ -230,8 +233,8 @@ class Block {
 	public function block_assets() {
 
 		$this->add_inline_script_for_product_search();
-		
-		wp_enqueue_script( 
+
+		wp_enqueue_script(
 			'aawp-aawp-block-editor-script',
 			plugins_url( 'assets/block/dist/index.js', AAWP_PLUGIN_FILE ),
 			[ 'wp-i18n' ],
@@ -308,6 +311,10 @@ class Block {
 			$params = [
 				'table' => absint( $atts['table'] ),
 			];
+
+			if ( isset( $atts['tracking_id'] ) ) {
+				$params['tracking_id'] = $atts['tracking_id'];
+			}
 		}//end if
 
 		$core = new \AAWP_Core();

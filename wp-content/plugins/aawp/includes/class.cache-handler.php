@@ -121,12 +121,9 @@ if ( ! class_exists( 'AAWP_Cache_Handler') ) {
 
             $debug_start_time = microtime( true );
 
-            aawp_add_log( '*** START => RENEWING CACHE (CRON) ***' );
-
             try {
 
                 if ( ! $this->args['outdated'] )
-                    aawp_add_log( '*** EXECUTED MANUALLY ***' );
 
                 // Update lists
                 $this->renew_lists();
@@ -135,12 +132,10 @@ if ( ! class_exists( 'AAWP_Cache_Handler') ) {
                 $this->renew_products();
 
             } catch (Exception $e) {
-                aawp_add_log( '*** ERROR EXCEPTION: ' . $e->getMessage() . ' ***' );
+                aawp_log( 'Product (Renew)', sprintf( '*** ERROR EXCEPTION: <code>%s</code> ***', $e->getMessage() ) );
             }
 
             $debug_execution_time = microtime(true) - $debug_start_time;
-
-            aawp_add_log( '*** END => RENEWING CACHE (CRON) *** EXECUTION TIME: ' . $debug_execution_time . ' SECONDS ***' );
         }
 
         /**
@@ -203,7 +198,6 @@ if ( ! class_exists( 'AAWP_Cache_Handler') ) {
             if ( ! is_array( $this->lists ) || sizeof( $this->lists ) == 0 )
                 return;
 
-            aawp_add_log( 'START - BULK RENEW ' . sizeof( $this->lists ) .  ' LISTS' );
             aawp_debug_display( sizeof( $this->lists ), 'lists BEFORE update' );
 
             $i = 0;
@@ -215,10 +209,6 @@ if ( ! class_exists( 'AAWP_Cache_Handler') ) {
                 if ( $renewed )
                     $i++;
             }
-
-            //echo 'Lists renewed: ' . $i . '<br>';
-
-            aawp_add_log( 'END - BULK RENEWED ' . $i . ' LISTS' );
         }
 
         /**
@@ -229,7 +219,6 @@ if ( ! class_exists( 'AAWP_Cache_Handler') ) {
             if ( ! is_array( $this->products ) || sizeof( $this->products ) == 0 )
                 return;
 
-            aawp_add_log( 'START - BULK RENEW ' . sizeof( $this->products ) .  ' PRODUCTS ' );
             aawp_debug_display( sizeof( $this->products ), 'products BEFORE update' );
 
             $renew_products_args = array(
@@ -240,8 +229,9 @@ if ( ! class_exists( 'AAWP_Cache_Handler') ) {
 
             //echo 'Products renewed: ' . $renewed . '<br>';
 
-            aawp_add_log( 'END - BULK RENEWED ' . $renewed . ' PRODUCTS' );
-
+            if ( $renewed > 0 ) {
+                aawp_log( 'Product (Renew)', sprintf( wp_kses( _n( '<code>%d</code> cached product renewed via API.', '<code>%d</code> cached products renewed via API.', absint( $renewed ), 'aawp' ), [ 'code' => [] ] ), absint( $renewed ) ) );
+            }
         }
 
         /**
@@ -321,24 +311,18 @@ if ( ! class_exists( 'AAWP_Cache_Handler') ) {
 
             $debug_start_time = microtime( true );
 
-            aawp_add_log( '*** START => RENEWING RATING CACHE ***' );
-
             try {
 
                 if ( ! $this->args['outdated'] )
-                    aawp_add_log( '*** EXECUTED MANUALLY ***' );
 
                 // Update products
                 $this->renew_product_ratings();
 
             } catch (Exception $e) {
-                aawp_add_log( '*** ERROR EXCEPTION: ' . $e->getMessage() . ' ***' );
+                aawp_log( 'Product (Rating)', sprintf( '*** ERROR EXCEPTION: <code>%s</code> ***', $e->getMessage() ) );
             }
 
             $debug_execution_time = microtime(true) - $debug_start_time;
-
-            aawp_add_log( '*** END => RENEWING RATING CACHE *** EXECUTION TIME: ' . $debug_execution_time . ' SECONDS ***' );
-
         }
 
         /**
@@ -349,12 +333,7 @@ if ( ! class_exists( 'AAWP_Cache_Handler') ) {
             if ( ! is_array( $this->products ) || sizeof( $this->products ) == 0 )
                 return;
 
-            aawp_add_log( 'START - BULK UPDATING PRODUCT RATINGS' );
-
             $renewed = aawp_renew_product_reviews( $this->products );
-
-            aawp_add_log( 'END - BULK CRAWLED ' . sizeof( $this->products ) . ' PRODUCTS AND UPDATED ' . $renewed . ' RATINGS' );
-
         }
     }
 }

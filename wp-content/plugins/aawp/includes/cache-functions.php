@@ -37,7 +37,6 @@ function aawp_get_cache_last_update() {
  * Renew cache
  */
 function aawp_renew_cache() {
-    aawp_add_log( '*** INITIATED CACHE RENEWAL ***' );
     wp_schedule_single_event( time() + 5, 'aawp_wp_scheduled_single_renew_cache_event' );
 }
 

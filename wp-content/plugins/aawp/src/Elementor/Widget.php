@@ -324,8 +324,6 @@ class Widget extends Widget_Base {
 	 */
 	public function render_shortcode() {
 
-		return sprintf(
-			sanitize_textarea_field( $this->get_settings_for_display( 'generated_shortcode' ) ),
-		);
+		return sanitize_textarea_field( $this->get_settings_for_display( 'generated_shortcode' ) );
 	}
 }

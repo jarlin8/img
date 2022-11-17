@@ -84,7 +84,6 @@ class BitlyAPI {
 			'redirection' => 5,
 			'blocking'    => true,
 			'httpversion' => '1.0',
-			'sslverify'   => false,
 			'data_format' => 'body',
 		];
 

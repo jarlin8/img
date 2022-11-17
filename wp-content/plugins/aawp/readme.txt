@@ -1,15 +1,47 @@
 === AAWP ===
 Contributors: flowdee
-Donate link: https://donate.flowdee.de
 Tags: amazon, affiliate
 Requires at least: 5.0.0
 Requires PHP: 5.6.0
-Tested up to: 6.0.1
-Stable tag: 3.18.2
+Tested up to: 6.1
+Stable tag: 3.19.2
 
 The best WordPress plugin for Amazon Affiliates.
 
 == Changelog ==
+
+= Version 3.19.2 (14th November 2022) =
+* Fix: Plugin update issue with v3.19
+* Fix: Database errors on activity logs when logs isn't enabled
+* Fix: Typo on 'Database Garbase Collection'
+* Info: New (RU & UK) & updated translations
+
+= Version 3.19.1 (9th November 2022) =
+* Fix: Syntax error on PHP 7.2 or lower due to trailing comma in function call
+
+= Version 3.19.0 (7th November 2022) =
+* New: Amazon Belgium is available as selectable store now
+* New: "Welcome Page" in admin area
+* New: "Products Overview" in admin area
+* New: "Activity Logs" in admin area
+* New: Advanced Ads Integration
+* New: Added "Link Overwrite" field for fields variant in Gutenberg block settings
+* Tweak: Use Textrea instead of text field for custom description in block settings
+* Tweak: Verify SSL when connecting to Bitly's API
+* Fix: Non-printable characters in ASIN lead to incorrect DB results
+* Fix: `PHP 8 Deprecated: required parameter $table_row_id follows optional parameter $default_class`
+* Fix: Tracking ID per block wasn't working for comparison tables
+* Fix: Syntax error on PHP 7.2 or lower with Elementor
+* Info: Updated & Improved translations
+* Info: WordPress 6.1 compatibility
+
+= Version 3.18.3 (21st August 2022) =
+* New: Elementor widget
+* New: Gutenberg block now allows you to define grid layout options
+* Fix: Using the Gutenberg block, disclaimer wasn't displayed as expected
+* Fix: Optimized several incorrect translations
+* Fix: Assets didn't load properly when using the Full Site Editor
+* Info: Updated translation files
 
 = Version 3.18.2 (14th July 2022) =
 * Fix: TinyMCE issue when using page builders like Elementor and Thrive Architect

@@ -9,7 +9,7 @@
  * Twitter: https://twitter.com/flowdee
  * GitHub: https://github.com/flowdee
  *
- * @version: 1.1.2
+ * @version: 1.1.3
  */
 namespace Flowdee\AmazonPAAPI5WP;
 

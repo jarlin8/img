@@ -174,6 +174,9 @@ function aawp_order_items( $items, $type, $atts ) {
 
         uasort( $order_items, function($a, $b) use ( $order, $orderby) {
 
+            $a = absint( $a );
+            $b = absint( $b );
+
             // Return according to order
             if ( 'ASC' === $order ) {
                 return $a - $b;
