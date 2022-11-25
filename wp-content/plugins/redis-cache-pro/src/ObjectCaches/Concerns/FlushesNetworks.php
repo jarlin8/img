@@ -17,71 +17,66 @@ declare(strict_types=1);
 namespace RedisCachePro\ObjectCaches\Concerns;
 
 use Throwable;
-use LogicException;
 
 use RedisCachePro\Configuration\Configuration;
 
 /**
- * In non-multisite environments and when the `flush_network` configuration option is set to `all`,
+ * In non-multisite environments and when the `network_flush` configuration option is set to `all`,
  * the `FLUSHDB` command is executed when `wp_cache_flush()` is called.
  *
- * When `flush_network` is set to `site`, only the current blog's cache is cleared using a Lua script.
+ * When `network_flush` is set to `site`, only the current blog's cache is cleared using a Lua script.
  *
- * When `flush_network` is set to `global`, in addition to the
+ * When `network_flush` is set to `global`, in addition to the
  * current blog's cache all global groups are flushed as well.
  */
 trait FlushesNetworks
 {
     /**
-     * Returns `true` when the current blog is not the network's main site.
+     * Returns `true` when `flushBlog()` should be called over `flush()`.
      *
      * @return bool
      */
-    protected function handleBlogFlush(): bool
+    protected function shouldFlushBlog(): bool
     {
-        if (! in_array($this->config->flush_network, [
-            Configuration::NETWORK_FLUSH_SITE,
-            Configuration::NETWORK_FLUSH_GLOBAL,
-        ])) {
-            return false;
-        }
-
-        return ! \is_main_site();
+        return in_array($this->config->network_flush, [
+            $this->config::NETWORK_FLUSH_SITE,
+            $this->config::NETWORK_FLUSH_GLOBAL,
+        ]);
     }
 
     /**
      * Removes all cache items for a single blog in multisite environments,
      * otherwise defaults to flushing the entire database.
      *
-     * Unless the `$flush_network` parameter is given this method
-     * will default to `flush_network` configuration option.
+     * Unless the `$network_flush` parameter is given this method
+     * will default to `network_flush` configuration option.
      *
-     * @param  int  $siteId
-     * @param  string|null  $flush_network
+     * @param  int|null  $siteId
+     * @param  string|null  $network_flush
      * @return bool
      */
-    public function flushBlog(int $siteId, string $flush_network = null): bool
+    public function flushBlog(int $siteId = null, string $network_flush = null): bool
     {
-        if (is_null($flush_network)) {
-            $flush_network = $this->config->flush_network;
+        if (is_null($siteId)) {
+            $siteId = $this->blogId;
         }
 
-        if (! $this->isMultisite || $flush_network === Configuration::NETWORK_FLUSH_ALL) {
+        if (is_null($network_flush)) {
+            $network_flush = $this->config->network_flush;
+        }
+
+        if (! $this->isMultisite || $network_flush === Configuration::NETWORK_FLUSH_ALL) {
             return $this->flush();
-        }
-
-        if ($this->config->cluster) {
-            throw new LogicException('Redis Cluster does not support blog flushing');
         }
 
         $originalBlogId = $this->blogId;
         $this->blogId = $siteId;
 
         $patterns = [
-            str_replace(':deadf00d', '', (string) $this->id('*', dechex(3735941133))),
+            preg_replace('/:{?deadf00d}?/', '', (string) $this->id('*', dechex(3735941133))),
         ];
 
-        if ($flush_network === Configuration::NETWORK_FLUSH_GLOBAL) {
+        if ($network_flush === Configuration::NETWORK_FLUSH_GLOBAL) {
             array_push($patterns, ...array_map(function ($group) {
                 return $this->id('*', $group);
             }, $this->globalGroups()));
@@ -97,6 +92,6 @@ trait FlushesNetworks
             return false;
         }
 
-        return parent::flushBlog($siteId, $flush_network);
+        return parent::flushBlog($siteId, $network_flush);
     }
 }

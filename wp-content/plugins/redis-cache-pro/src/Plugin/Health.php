@@ -234,14 +234,12 @@ trait Health
             },
         ];
 
-        if ($this->config->async_flush) {
-            $tests['direct']['objectcache_async_support'] = [
-                'label' => 'Asynchronous Redis commands',
-                'test' => function () use ($diagnostics) {
-                    return $this->healthTestAsyncSupport($diagnostics);
-                },
-            ];
-        }
+        $tests['direct']['objectcache_redis_version'] = [
+            'label' => 'Redis version',
+            'test' => function () use ($diagnostics) {
+                return $this->healthTestRedisVersion($diagnostics);
+            },
+        ];
 
         return $tests;
     }
@@ -558,43 +556,59 @@ trait Health
     }
 
     /**
-     * Test whether Redis supports asynchronous commands.
+     * Test whether Redis supports Relay and asynchronous commands.
      *
      * @param  \RedisCachePro\Diagnostics\Diagnostics  $diagnostics
      * @return array<string, mixed>
      */
-    protected function healthTestAsyncSupport(Diagnostics $diagnostics)
+    protected function healthTestRedisVersion(Diagnostics $diagnostics)
     {
         $redisVersion = (string) $diagnostics->redisVersion()->value;
 
-        if (version_compare($redisVersion, '4.0', '>=')) {
+        if ($diagnostics->usingRelayCache() && version_compare($redisVersion, '6.2.7', '<')) {
             return [
-                'label' => 'Redis supports asynchronous commands',
-                'description' => '<p>The Redis connection supports asynchronous commands.</p>',
-                'badge' => ['label' => 'Object Cache Pro', 'color' => 'blue'],
-                'status' => 'good',
-                'test' => 'objectcache_async_support',
+                'label' => 'Relay requires 6.2.7 or newer',
+                'description' => sprintf(
+                    '<p>%s</p>',
+                    implode(' ', [
+                        "Object Cache Pro is using Relay, but the connected Redis Server ({$redisVersion}) is too old and the object cache may go stale.",
+                        'Upgrade Redis to version 6.2.7 or newer.',
+                    ])
+                ),
+                'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
+                'status' => 'critical',
+                'test' => 'objectcache_redis_version',
+            ];
+        }
+
+        if ($this->config->async_flush && version_compare($redisVersion, '4.0', '<')) {
+            return [
+                'label' => 'Redis does not support asynchronous commands',
+                'description' => sprintf(
+                    '<p>%s</p>',
+                    implode(' ', [
+                        'Object Cache Pro is configured to use asynchronous commands,',
+                        "but the connected Redis Server ({$redisVersion}) is too old and does not support them.",
+                        'Upgrade Redis to version 4.0 or newer, or disable asynchronous flushing.',
+                    ])
+                ),
+                'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
+                'status' => 'critical',
+                'test' => 'objectcache_redis_version',
+                'actions' => sprintf(
+                    '<p><a href="%s" target="_blank">%s</a></p>',
+                    'https://objectcache.pro/docs/configuration-options/#asynchronous-flushing',
+                    'Learn more.'
+                ),
             ];
         }
 
         return [
-            'label' => 'Redis does not support asynchronous commands',
-            'description' => sprintf(
-                '<p>%s</p>',
-                implode(' ', [
-                    'Object Cache Pro is configured to use asynchronous commands,',
-                    "but the connected Redis server ({$redisVersion}) is too old and does not support them.",
-                    'Upgrade Redis to version 4.0 or newer, or disable asynchronous flushing.',
-                ])
-            ),
-            'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
-            'status' => 'critical',
-            'test' => 'objectcache_async_support',
-            'actions' => sprintf(
-                '<p><a href="%s" target="_blank">%s</a></p>',
-                'https://objectcache.pro/docs/configuration-options/#asynchronous-flushing',
-                'Learn more.'
-            ),
+            'label' => 'Redis version supported',
+            'description' => '<p>The Redis Server version is supported.</p>',
+            'badge' => ['label' => 'Object Cache Pro', 'color' => 'blue'],
+            'status' => 'good',
+            'test' => 'objectcache_redis_version',
         ];
     }
 
@@ -625,7 +639,7 @@ trait Health
             return $results + [
                 'description' => sprintf(
                     '<p>%s</p>',
-                    'When using Relay, it’s strongly recommended to set the <code>shared</code> configuration option to indicate whether the Redis is used by multiple apps.'
+                    'When using Relay, it’s strongly recommended to set the <code>shared</code> configuration option to indicate whether the Redis is used by multiple apps, or not.'
                 ),
             ];
         }

@@ -18,6 +18,7 @@ namespace RedisCachePro\Connections;
 
 use Throwable;
 
+use RedisCachePro\Clients\ClientInterface;
 use RedisCachePro\Exceptions\ConnectionException;
 
 abstract class Connection
@@ -39,7 +40,7 @@ abstract class Connection
     /**
      * The client instance.
      *
-     * @var mixed
+     * @var \RedisCachePro\Clients\ClientInterface
      */
     protected $client;
 
@@ -49,6 +50,16 @@ abstract class Connection
      * @var float[]
      */
     protected $ioWait = [];
+
+    /**
+     * Returns the connection's client.
+     *
+     * @return \RedisCachePro\Clients\ClientInterface
+     */
+    public function client(): ClientInterface
+    {
+        return $this->client;
+    }
 
     /**
      * Run a command against Redis.

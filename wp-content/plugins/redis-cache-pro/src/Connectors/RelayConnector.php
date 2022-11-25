@@ -18,19 +18,26 @@ namespace RedisCachePro\Connectors;
 
 use LogicException;
 
-use Relay\Relay;
+use Relay\Relay as RelayClient;
 use Relay\Exception as RelayException;
+
+use RedisCachePro\Clients\Relay;
 
 use RedisCachePro\Configuration\Configuration;
 
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Connections\ConnectionInterface;
+use RedisCachePro\Connections\RelaySentinelsConnection;
+use RedisCachePro\Connections\RelayReplicatedConnection;
 
 use RedisCachePro\Exceptions\RelayMissingException;
 use RedisCachePro\Exceptions\RelayOutdatedException;
+use RedisCachePro\Exceptions\ConfigurationInvalidException;
 
-class RelayConnector implements Connector
+class RelayConnector implements ConnectorInterface
 {
+    use Concerns\HandlesBackoff;
+
     /**
      * The minimum required Relay version.
      *
@@ -111,14 +118,16 @@ class RelayConnector implements Connector
     }
 
     /**
-     * Create a new PhpRedis connection to an instance.
+     * Create a new Relay connection to an instance.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
-     * @return \RedisCachePro\Connections\PhpRedisConnection
+     * @return \RedisCachePro\Connections\RelayConnection
      */
     public static function connectToInstance(Configuration $config): ConnectionInterface
     {
-        $client = new Relay;
+        $client = new Relay(function () {
+            return new RelayClient;
+        }, $config->tracer);
 
         $persistent = $config->persistent;
         $persistentId = '';
@@ -143,7 +152,7 @@ class RelayConnector implements Connector
             $context['use-cache'] = false;
         }
 
-        $parameters = [
+        $arguments = [
             $host,
             $config->port ?? 0,
             $config->timeout,
@@ -156,10 +165,10 @@ class RelayConnector implements Connector
         $retries = 0;
 
         CONNECTION_RETRY: {
-            $delay = PhpRedisConnector::nextDelay($config, $retries);
+            $delay = self::nextDelay($config, $retries);
 
             try {
-                $client->{$method}(...$parameters);
+                $client->{$method}(...$arguments);
             } catch (RelayException $exception) {
                 if (++$retries >= $config->retries) {
                     throw $exception;
@@ -196,26 +205,50 @@ class RelayConnector implements Connector
     }
 
     /**
-     * Create a new Relay Sentinel connection.
+     * Create a new Relay Sentinels connection.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
-     *
-     * @throws \LogicException
+     * @return \RedisCachePro\Connections\RelaySentinelsConnection
      */
     public static function connectToSentinels(Configuration $config): ConnectionInterface
     {
-        throw new LogicException('Relay does not yet support Redis Sentinel');
+        if (version_compare((string) phpversion('relay'), '0.5.0-dev', '<')) {
+            throw new LogicException('Relay Sentinel requires Relay v0.5.0 or newer');
+        }
+
+        if (! $config->service) {
+            throw new ConfigurationInvalidException('Missing `service` configuration option');
+        }
+
+        return new RelaySentinelsConnection($config);
     }
 
     /**
      * Create a new replicated Relay connection.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
-     *
-     * @throws \LogicException
+     * @return \RedisCachePro\Connections\RelayReplicatedConnection
      */
     public static function connectToReplicatedServers(Configuration $config): ConnectionInterface
     {
-        throw new LogicException('Relay does not yet support replicated connections');
+        $replicas = [];
+
+        foreach ($config->servers as $server) {
+            $serverConfig = clone $config;
+            $serverConfig->setUrl($server);
+            $role = Configuration::parseUrl($server)['role'];
+
+            if (in_array($role, ['primary', 'master'])) {
+                $primary = static::connectToInstance($serverConfig);
+            } else {
+                $replicas[] = static::connectToInstance($serverConfig);
+            }
+        }
+
+        if (! isset($primary)) {
+            throw new LogicException('No primary replication node found');
+        }
+
+        return new RelayReplicatedConnection($primary, $replicas, $config);
     }
 }

@@ -31,6 +31,8 @@ trait Widget
      */
     protected $widgetActions = [
         'flush-cache',
+        'flush-site-cache',
+        'flush-network-cache',
         'enable-dropin',
         'update-dropin',
         'disable-dropin',
@@ -44,6 +46,10 @@ trait Widget
     protected $widgetActionStatuses = [
         'cache-flushed',
         'cache-not-flushed',
+        'site-cache-flushed',
+        'site-cache-not-flushed',
+        'network-cache-flushed',
+        'network-cache-not-flushed',
         'dropin-enabled',
         'dropin-not-enabled',
         'dropin-updated',
@@ -130,6 +136,8 @@ trait Widget
      */
     public function handleWidgetActions()
     {
+        global $wp_object_cache;
+
         $screenId = get_current_screen()->id ?? null;
         $actionParameter = $screenId === $this->screenId ? 'action' : 'objectcache-action';
 
@@ -148,7 +156,7 @@ trait Widget
             wp_die("Invalid nonce for {$action} action.", 400);
         }
 
-        if (is_multisite() && ! is_network_admin() && ! in_array($action, ['flush-cache'])) {
+        if (is_multisite() && ! is_network_admin() && ! in_array($action, ['flush-cache', 'flush-site-cache'])) {
             wp_die("Sorry, you are not allowed to perform the {$action} action.", 403);
         }
 
@@ -157,6 +165,13 @@ trait Widget
         switch ($action) {
             case 'flush-cache':
                 $status = wp_cache_flush() ? 'cache-flushed' : 'cache-not-flushed';
+                break;
+            case 'flush-site-cache':
+                $status = $wp_object_cache->flushBlog() ? 'site-cache-flushed' : 'site-cache-not-flushed';
+                break;
+            case 'flush-network-cache':
+                $this->logFlush();
+                $status = $wp_object_cache->connection()->flushdb() ? 'network-cache-flushed' : 'network-cache-not-flushed';
                 break;
             case 'enable-dropin':
                 $status = $this->enableDropin() ? 'dropin-enabled' : 'dropin-not-enabled';
@@ -212,6 +227,18 @@ trait Widget
                 break;
             case 'cache-not-flushed':
                 echo $notice('error', 'The object cache could not be flushed.');
+                break;
+            case 'site-cache-flushed':
+                echo $notice('success', 'This site’s object cache was flushed.');
+                break;
+            case 'site-cache-not-flushed':
+                echo $notice('error', 'This site’s object cache could not be flushed.');
+                break;
+            case 'network-cache-flushed':
+                echo $notice('success', 'The network’s object cache was flushed.');
+                break;
+            case 'network-cache-not-flushed':
+                echo $notice('error', 'The network’s object cache could not be flushed.');
                 break;
             case 'dropin-enabled':
                 echo $notice('success', 'The object cache drop-in was enabled.');

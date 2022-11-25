@@ -149,7 +149,7 @@ trait Analytics
         printf(
             "\n<!-- plugin=%s client=%s %s -->\n",
             'object-cache-pro',
-            strtolower($wp_object_cache->clientName()),
+            $wp_object_cache->clientName(),
             (string) $measurement
         );
     }

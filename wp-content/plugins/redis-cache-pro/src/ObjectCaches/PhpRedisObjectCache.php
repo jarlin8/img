@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace RedisCachePro\ObjectCaches;
 
 use Throwable;
+use LogicException;
 use ReflectionClass;
 
 use RedisCachePro\Configuration\Configuration;
@@ -29,13 +30,6 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
         Concerns\FlushesNetworks,
         Concerns\TakesMeasurements,
         Concerns\SplitsAllOptionsIntoHash;
-
-    /**
-     * The client name.
-     *
-     * @var string
-     */
-    const Client = 'PhpRedis';
 
     /**
      * The connection instance.
@@ -405,8 +399,8 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
     {
         $this->flush_runtime();
 
-        if ($this->isMultisite && $this->handleBlogFlush()) {
-            return $this->flushBlog(get_current_blog_id());
+        if ($this->isMultisite && $this->shouldFlushBlog()) {
+            return $this->flushBlog();
         }
 
         if ($this->config->analytics->enabled && $this->config->analytics->persist) {
@@ -992,6 +986,7 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
             'Redis Memory' => size_format($server['used_memory'], 2),
             'Redis Eviction' => $server['maxmemory_policy'] ?? null,
             'Cache' => (new ReflectionClass($this))->getShortName(),
+            'Client' => (new ReflectionClass($this->client()))->getShortName(),
             'Connector' => (new ReflectionClass($this->config->connector))->getShortName(),
             'Connection' => (new ReflectionClass($this->connection))->getShortName(),
             'Logger' => (new ReflectionClass($this->log))->getShortName(),
@@ -1021,7 +1016,7 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
     }
 
     /**
-     * Delete keys by patterns in chunks.
+     * Deletes keys matching given patterns atomically.
      *
      * @internal
      * @param  string|string[]  $patterns
@@ -1029,21 +1024,50 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
      */
     protected function deleteByPattern($patterns)
     {
-        $command = $this->config->async_flush ? 'UNLINK' : 'DEL';
-        $script = file_get_contents(__DIR__ . '/scripts/chunked-scan.lua');
+        if ($this->config->group_flush === Configuration::GROUP_FLUSH_INCREMENTAL) {
+            $this->deleteIncrementallyByPattern($patterns);
+
+            return;
+        }
 
         if (! is_array($patterns)) {
             $patterns = [$patterns];
         }
 
-        $this->connection->withoutTimeout(function ($connection) use ($script, $patterns, $command) {
-            $connection->eval(
-                $script,
-                array_merge($patterns, [$command]),
-                count($patterns)
-            );
+        $command = $this->config->async_flush ? 'UNLINK' : 'DEL';
+        $script = file_get_contents(__DIR__ . "/scripts/{$this->config->group_flush}.lua");
+
+        $results = $this->connection->withoutTimeout(function ($connection) use ($script, $patterns, $command) {
+            return $connection->eval($script, array_merge($patterns, [$command]), count($patterns));
         });
 
-        $this->storeWrites++;
+        $writes = array_sum(array_map(function ($result) {
+            return is_array($result) ? array_sum($result) : $result;
+        }, is_array($results) ? $results : [$results]));
+
+        $this->storeWrites += (int) $writes;
+    }
+
+    /**
+     * Deletes keys matching given patterns non-atomically.
+     *
+     * @internal
+     * @param  string|string[]  $patterns
+     * @return void
+     */
+    protected function deleteIncrementallyByPattern($patterns)
+    {
+        if (! is_array($patterns)) {
+            $patterns = [$patterns];
+        }
+
+        $command = $this->config->async_flush ? 'unlink' : 'del';
+
+        foreach ($patterns as $pattern) {
+            foreach ($this->connection->listKeys($pattern) as $keys) {
+                $this->connection->{$command}($keys);
+                $this->storeWrites++;
+            }
+        }
     }
 }

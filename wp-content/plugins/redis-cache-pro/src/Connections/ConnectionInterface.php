@@ -16,11 +16,20 @@ declare(strict_types=1);
 
 namespace RedisCachePro\Connections;
 
+use RedisCachePro\Clients\ClientInterface;
+
 /**
  * @mixin \Redis
  */
 interface ConnectionInterface
 {
+    /**
+     * Returns the connection's client.
+     *
+     * @return \RedisCachePro\Clients\ClientInterface
+     */
+    public function client(): ClientInterface;
+
     /**
      * Run a command against Redis.
      *

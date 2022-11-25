@@ -24,6 +24,7 @@ use RedisCachePro\Metrics\RedisMetrics;
 use RedisCachePro\Metrics\RelayMetrics;
 use RedisCachePro\Metrics\WordPressMetrics;
 
+use RedisCachePro\Clients\PhpRedis;
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Configuration\Configuration;
 use RedisCachePro\ObjectCaches\PhpRedisObjectCache;
@@ -112,7 +113,10 @@ trait TakesMeasurements
             if ($lastSample < $now - 3) {
                 $measurement->redis = new RedisMetrics($this);
 
-                if ($this->connection instanceof RelayConnection && $this->connection->hasInMemoryCache()) {
+                if (
+                    $this->connection instanceof RelayConnection &&
+                    $this->connection->hasInMemoryCache()
+                ) {
                     $measurement->relay = new RelayMetrics($this->connection, $this->config);
                 }
 
@@ -188,7 +192,7 @@ trait TakesMeasurements
     protected function dumpMeasurements()
     {
         if (
-            $this::Client === PhpRedisObjectCache::Client &&
+            $this->client() instanceof PhpRedis &&
             $this->config->compression === Configuration::COMPRESSION_ZSTD &&
             version_compare((string) phpversion('redis'), '5.3.5', '<')
         ) {

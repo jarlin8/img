@@ -129,7 +129,7 @@ function wp_cache_init()
             throw $exception;
         }
 
-        error_log('objectcache.info: Failing over to in-memory object cache');
+        error_log('objectcache.warning: Failing over to in-memory object cache');
 
         $wp_object_cache = new \RedisCachePro\ObjectCaches\ArrayObjectCache($config);
     }

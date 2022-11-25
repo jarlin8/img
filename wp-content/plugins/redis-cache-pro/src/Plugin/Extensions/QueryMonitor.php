@@ -37,7 +37,7 @@ trait QueryMonitor
             return;
         }
 
-        add_filter('init', [$this, 'registerQmCollectors']);
+        add_action('init', [$this, 'registerQmCollectors']);
         add_filter('qm/outputter/html', [$this, 'registerQmOutputters']);
 
         add_filter('qm/component_type/unknown', [$this, 'fixUnknownQmComponentType'], 10, 2);

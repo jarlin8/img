@@ -16,18 +16,17 @@ declare(strict_types=1);
 
 namespace RedisCachePro\Diagnostics;
 
+use Redis;
+use WP_Error;
 use ArrayAccess;
 use LogicException;
 
-use Redis;
-use WP_Error;
 use Relay\Relay;
 
 use RedisCachePro\License;
 use RedisCachePro\ObjectCaches\ObjectCache;
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Configuration\Configuration;
-
 use RedisCachePro\Connectors\RelayConnector;
 use RedisCachePro\Connectors\PhpRedisConnector;
 
@@ -116,6 +115,13 @@ class Diagnostics implements ArrayAccess
     protected $config;
 
     /**
+     * The connection's client instance.
+     *
+     * @var \RedisCachePro\Clients\ClientInterface|null
+     */
+    protected $client;
+
+    /**
      * The connection instance.
      *
      * @var \RedisCachePro\Connections\ConnectionInterface|null
@@ -138,6 +144,7 @@ class Diagnostics implements ArrayAccess
     {
         if ($cache instanceof ObjectCache) {
             $this->cache = $cache;
+            $this->client = $this->cache->client();
             $this->config = $this->cache->config();
             $this->connection = $this->cache->connection();
         }
@@ -169,7 +176,6 @@ class Diagnostics implements ArrayAccess
         $this->data[self::GENERAL]['dropin'] = $this->dropin();
         $this->data[self::GENERAL]['license'] = $this->license();
 
-        $this->data[self::GENERAL]['eviction-policy'] = $this->evictionPolicy();
         $this->data[self::GENERAL]['env'] = Diagnostic::name('Environment')->value(self::environment());
 
         if ($this->cache) {
@@ -186,11 +192,16 @@ class Diagnostics implements ArrayAccess
                 ->error('Using WP_REDIS_DISABLED constant');
         }
 
-        $this->data[self::GENERAL]['basename'] = Diagnostic::name('Basename')->value(Basename);
         $this->data[self::GENERAL]['mu'] = Diagnostic::name('Must-use')->value(self::isMustUse() ? 'Yes' : 'No');
         $this->data[self::GENERAL]['vcs'] = Diagnostic::name('VCS')->value(self::usingVCS() ? 'Yes' : 'No');
         $this->data[self::GENERAL]['host'] = Diagnostic::name('Hosting')->value(self::host());
+        $this->data[self::GENERAL]['eviction-policy'] = $this->evictionPolicy();
         $this->data[self::GENERAL]['compressions'] = $this->compressions();
+        $this->data[self::GENERAL]['basename'] = Diagnostic::name('Basename')->value(Basename);
+
+        if ($this->client) {
+            $this->data[self::GENERAL]['client'] = Diagnostic::name('Client')->value(get_class($this->client));
+        }
     }
 
     /**
@@ -704,15 +715,18 @@ class Diagnostics implements ArrayAccess
 
         $version = phpversion();
 
-        if (version_compare($version, '7.4', '<')) {
+        // 7.4 security support until 26 Nov 2023
+        if (version_compare($version, '8.0', '<')) {
             return $diagnostic->warning($version)->comment('Outdated');
         }
 
-        if (version_compare($version, '8.0', '<') && date('Y') > 2021) {
+        // 8.0 (security support until 26 Nov 2023)
+        if (version_compare($version, '8.1', '<') && date('Y') >= 2024) {
             return $diagnostic->warning($version)->comment('Outdated');
         }
 
-        if (version_compare($version, '8.1', '<') && date('Y') > 2022) {
+        // 8.1 (security support until 25 Nov 2024)
+        if (version_compare($version, '8.2', '<') && date('Y') >= 2025) {
             return $diagnostic->warning($version)->comment('Outdated');
         }
 
@@ -800,9 +814,23 @@ class Diagnostics implements ArrayAccess
      */
     public function redisVersion()
     {
-        return Diagnostic::name('Redis')->value(
-            $this->redisInfoKey('redis_version')
-        );
+        $diagnostic = Diagnostic::name('Redis');
+
+        $version = $this->redisInfoKey('redis_version');
+
+        if (! $version) {
+            return $diagnostic->value($version);
+        }
+
+        if (version_compare($version, '4.0', '<')) {
+            return $diagnostic->warning($version)->comment('Outdated');
+        }
+
+        if ($this->usingRelayCache() && version_compare($version, '6.2.8', '<')) {
+            return $diagnostic->error($version)->comment('Unsupported');
+        }
+
+        return $diagnostic->value($version);
     }
 
     /**
@@ -866,12 +894,17 @@ class Diagnostics implements ArrayAccess
      */
     public function relayHasCache()
     {
-        if (! method_exists(Relay::class, 'memory')) {
-            return true;
+        $enabled = $this->config->relay->cache;
+
+        if (method_exists(Relay::class, 'maxMemory')) {
+            return $enabled && Relay::maxMemory() > 0;
         }
 
-        return Relay::memory() > 0
-            && $this->config->relay->cache;
+        if (method_exists(Relay::class, 'memory')) {
+            return $enabled && Relay::memory() > 0;
+        }
+
+        return true;
     }
 
     /**
@@ -915,7 +948,8 @@ class Diagnostics implements ArrayAccess
         static $mustuse;
 
         if (! $mustuse) {
-            $mustuse = array_key_exists(Basename, get_mu_plugins());
+            $mustuse = Basename === 'mu-plugin.php'
+                ?: array_key_exists(Basename, get_mu_plugins());
         }
 
         return $mustuse;

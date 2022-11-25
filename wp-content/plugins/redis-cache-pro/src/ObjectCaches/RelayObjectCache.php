@@ -22,13 +22,6 @@ use RedisCachePro\Configuration\Configuration;
 class RelayObjectCache extends PhpRedisObjectCache
 {
     /**
-     * The client name.
-     *
-     * @var string
-     */
-    const Client = 'Relay';
-
-    /**
      * The connection instance.
      *
      * @var \RedisCachePro\Connections\RelayConnection
@@ -92,11 +85,11 @@ class RelayObjectCache extends PhpRedisObjectCache
         $info = parent::info();
         $stats = $this->connection->memoize('stats');
 
+        $meta = [
+            'Relay Cache' => 'Disabled',
+        ];
+
         if ($this->connection->hasInMemoryCache()) {
-            $meta = [
-                'Relay Cache' => 'Disabled',
-            ];
-        } else {
             $meta = [
                 'Relay Cache' => 'Enabled',
                 'Relay Memory' => sprintf(

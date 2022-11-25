@@ -13,7 +13,6 @@ use RedisCachePro\Connections\Connection;
 use RedisCachePro\Connections\Transaction;
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Connections\PhpRedisConnection;
-use RedisCachePro\Connections\TwemproxyConnection;
 
 use RedisCachePro\ObjectCaches\ObjectCache;
 use RedisCachePro\ObjectCaches\RelayObjectCache;
@@ -158,12 +157,18 @@ class CommandsCollector extends QM_Collector
 
             if ($command === 'RAWCOMMAND') {
                 $command = array_shift($message['context']['parameters']);
+
+                if (is_array($command)) {
+                    $node = $command;
+                    $command = array_shift($message['context']['parameters']);
+                    array_unshift($message['context']['parameters'], $node);
+                }
             }
 
             $commands[] = [
                 'level' => $message['level'],
                 'time' => $message['context']['time'] ?? 0,
-                'bytes' => strlen(serialize($message['context']['result'] ?? null)),
+                'bytes' => $this->calculateBytes($message['context']),
                 'command' => $command,
                 'parameters' => $this->formatParameters(
                     $message['context']['parameters'] ?? []
@@ -196,7 +201,6 @@ class CommandsCollector extends QM_Collector
                 Transaction::class => true,
                 RelayConnection::class => true,
                 PhpRedisConnection::class => true,
-                TwemproxyConnection::class => true,
                 $connection => true,
             ]),
             'ignore_method' => [
@@ -217,10 +221,10 @@ class CommandsCollector extends QM_Collector
     protected function formatParameters($parameters)
     {
         $format = function ($value) {
-            return json_encode(
+            return stripslashes((string) json_encode(
                 $value,
                 JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT
-            );
+            ));
         };
 
         return array_map(function ($parameter) use ($format) {
@@ -264,5 +268,19 @@ class CommandsCollector extends QM_Collector
                 "require('index.php')",
             ]);
         });
+    }
+
+    /**
+     * Returns an approximation of sent + received bytes.
+     *
+     * @param  array<mixed>  $context
+     * @return int
+     */
+    public function calculateBytes($context)
+    {
+        return (int) array_sum([
+            strlen(serialize($context['parameters'] ?? null)),
+            strlen(serialize($context['result'] ?? null)),
+        ]);
     }
 }

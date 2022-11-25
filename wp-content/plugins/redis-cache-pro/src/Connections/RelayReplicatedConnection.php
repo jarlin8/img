@@ -16,14 +16,11 @@ declare(strict_types=1);
 
 namespace RedisCachePro\Connections;
 
-use Generator;
-use Throwable;
-
+use RedisCachePro\Connectors\RelayConnector;
 use RedisCachePro\Configuration\Configuration;
-use RedisCachePro\Connectors\PhpRedisConnector;
 use RedisCachePro\Exceptions\ConnectionException;
 
-class PhpRedisReplicatedConnection extends PhpRedisConnection implements ConnectionInterface
+class RelayReplicatedConnection extends RelayConnection implements ConnectionInterface
 {
     use Concerns\RedisCommands,
         Concerns\ReplicatedConnection;
@@ -31,34 +28,36 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
     /**
      * The primary connection.
      *
-     * @var \RedisCachePro\Connections\PhpRedisConnection
+     * @var \RedisCachePro\Connections\RelayConnection
      */
     protected $primary;
 
     /**
      * An array of replica connections.
      *
-     * @var \RedisCachePro\Connections\PhpRedisConnection[]
+     * @var \RedisCachePro\Connections\RelayConnection[]
      */
     protected $replicas;
 
     /**
      * The pool of connections for read commands.
      *
-     * @var \RedisCachePro\Connections\PhpRedisConnection[]
+     * @var \RedisCachePro\Connections\RelayConnection[]
      */
     protected $pool;
 
     /**
-     * Create a new replicated PhpRedis connection.
+     * Create a new replicated Relay connection.
      *
-     * @param  \RedisCachePro\Connections\PhpRedisConnection  $primary
-     * @param  \RedisCachePro\Connections\PhpRedisConnection[]  $replicas
+     * @param  \RedisCachePro\Connections\RelayConnection  $primary
+     * @param  \RedisCachePro\Connections\RelayConnection[]  $replicas
      * @param  \RedisCachePro\Configuration\Configuration  $config
      */
-    public function __construct(PhpRedisConnection $primary, array $replicas, Configuration $config)
+    public function __construct(RelayConnection $primary, array $replicas, Configuration $config)
     {
         $this->primary = $primary;
+        $this->client = $primary->client();
+
         $this->replicas = $replicas;
         $this->config = $config;
 
@@ -100,7 +99,7 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
                 $config->setHost($replica['host']);
                 $config->setPort((int) $replica['port']);
 
-                $this->replicas[] = PhpRedisConnector::connectToInstance($config);
+                $this->replicas[] = RelayConnector::connectToInstance($config);
             }
         }
     }
@@ -108,7 +107,7 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
     /**
      * Returns the primary's node information.
      *
-     * @return \RedisCachePro\Connections\PhpRedisConnection
+     * @return \RedisCachePro\Connections\RelayConnection
      */
     public function primary()
     {
@@ -118,9 +117,9 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
     /**
      * Returns the primary's node information.
      *
-     * @deprecated  1.17.0  Use `PhpRedisReplicatedConnection::primary()` instead
+     * @deprecated  1.17.0  Use `RelayReplicatedConnection::primary()` instead
      *
-     * @return \RedisCachePro\Connections\PhpRedisConnection
+     * @return \RedisCachePro\Connections\RelayConnection
      */
     public function master()
     {
@@ -130,28 +129,10 @@ class PhpRedisReplicatedConnection extends PhpRedisConnection implements Connect
     /**
      * Returns the replica nodes information.
      *
-     * @return \RedisCachePro\Connections\PhpRedisConnection[]
+     * @return \RedisCachePro\Connections\RelayConnection[]
      */
     public function replicas()
     {
         return $this->replicas;
-    }
-
-    /**
-     * Flush the selected Redis database.
-     *
-     * Set the connections client to the primary node and calls `PhpRedisConnection::flushdb()`.
-     *
-     * @param  bool|null  $async
-     * @return bool
-     */
-    public function flushdb($async = null)
-    {
-        /** @var \RedisCachePro\Clients\PhpRedis $client */
-        $client = $this->primary->client();
-
-        $this->client = $client;
-
-        return parent::flushdb($async);
     }
 }

@@ -16,15 +16,14 @@ declare(strict_types=1);
 
 namespace RedisCachePro\Connections;
 
-use RedisSentinel;
+use Relay\Sentinel;
 
-use RedisCachePro\Clients\PhpRedisSentinel;
-
+use RedisCachePro\Clients\RelaySentinel;
+use RedisCachePro\Connectors\RelayConnector;
 use RedisCachePro\Configuration\Configuration;
-use RedisCachePro\Connectors\PhpRedisConnector;
 use RedisCachePro\Exceptions\ConnectionException;
 
-class PhpRedisSentinelsConnection extends PhpRedisReplicatedConnection implements ConnectionInterface
+class RelaySentinelsConnection extends RelayReplicatedConnection implements ConnectionInterface
 {
     use Concerns\SentinelsConnection;
 
@@ -90,8 +89,8 @@ class PhpRedisSentinelsConnection extends PhpRedisReplicatedConnection implement
                 : $config->password;
         }
 
-        $this->sentinels[$url] = new PhpRedisSentinel(function () use ($arguments) {
-            return new RedisSentinel(...$arguments);
+        $this->sentinels[$url] = new RelaySentinel(function () use ($arguments) {
+            return new Sentinel(...$arguments);
         }, $config->tracer);
 
         $this->discoverPrimary();
@@ -115,7 +114,7 @@ class PhpRedisSentinelsConnection extends PhpRedisReplicatedConnection implement
         $config->setHost($primary[0]);
         $config->setPort($primary[1]);
 
-        $connection = PhpRedisConnector::connectToInstance($config);
+        $connection = RelayConnector::connectToInstance($config);
 
         /** @var array<int, mixed> $role */
         $role = $connection->role();
@@ -125,6 +124,7 @@ class PhpRedisSentinelsConnection extends PhpRedisReplicatedConnection implement
         }
 
         $this->primary = $connection;
+        $this->client = $connection->client();
     }
 
     /**
@@ -149,14 +149,14 @@ class PhpRedisSentinelsConnection extends PhpRedisReplicatedConnection implement
             $config->setHost($replica['ip']);
             $config->setPort($replica['port']);
 
-            $this->replicas[$replica['name']] = PhpRedisConnector::connectToInstance($config);
+            $this->replicas[$replica['name']] = RelayConnector::connectToInstance($config);
         }
     }
 
     /**
      * Returns the current Sentinel connection.
      *
-     * @return \RedisCachePro\Clients\PhpRedisSentinel
+     * @return \RedisCachePro\Clients\RelaySentinel
      */
     public function sentinel()
     {

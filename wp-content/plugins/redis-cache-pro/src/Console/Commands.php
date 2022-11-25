@@ -333,12 +333,12 @@ class Commands extends WP_CLI_Command
      *
      *     # Flush multiple sites (networks only).
      *     $ wp redis flush 42 1337
-     *     Success: The object cache of the site at 'https://example.org' was flushed.
-     *     Success: The object cache of the site at 'https://help.example.org' was flushed.
+     *     Success: The object cache of site at 'https://example.org' was flushed.
+     *     Success: The object cache of site at 'https://help.example.org' was flushed.
      *
      *     # Flush site by URL (networks only).
      *     $ wp redis flush --url="https://example.org"
-     *     Success: The object cache of the site at 'https://example.org' was flushed.
+     *     Success: The object cache of site at 'https://example.org' was flushed.
      *
      * @alias clear
      *
@@ -358,7 +358,7 @@ class Commands extends WP_CLI_Command
         }
 
         // flush cache of site set via `--url` option
-        if (is_multisite() && empty($arguments) && get_current_blog_id() !== get_main_site_id()) {
+        if (is_multisite() && empty($arguments) && WP_CLI::get_config('url')) {
             $arguments = [get_current_blog_id()];
         }
 
@@ -389,11 +389,11 @@ class Commands extends WP_CLI_Command
 
             if ($result) { // @phpstan-ignore-line
                 WP_CLI::success(WP_CLI::colorize(
-                    "Object cache of the site [%y{$siteId}%n] was flushed."
+                    "Object cache of site [%y{$siteId}%n] was flushed."
                 ));
             } else {
                 WP_CLI::error(WP_CLI::colorize(
-                    "Object cache of the site [%y{$siteId}%n] could not be flushed."
+                    "Object cache of site [%y{$siteId}%n] could not be flushed."
                 ), false);
             }
         }
@@ -447,11 +447,11 @@ class Commands extends WP_CLI_Command
         if (is_array($config->cluster)) {
             $command .= ' -c';
 
-            $master = parse_url(reset($config->cluster));
-            $host = $master['host']; // @phpstan-ignore-line
-            $port = $master['port']; // @phpstan-ignore-line
+            $primary = parse_url(reset($config->cluster));
+            $host = $primary['host']; // @phpstan-ignore-line
+            $port = $primary['port']; // @phpstan-ignore-line
 
-            if (strtolower($master['scheme']) === 'tls') { // @phpstan-ignore-line
+            if (strtolower($primary['scheme']) === 'tls') { // @phpstan-ignore-line
                 $command .= ' --tls';
             }
         }

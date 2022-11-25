@@ -16,39 +16,33 @@ declare(strict_types=1);
 
 namespace RedisCachePro\Connections;
 
-use Redis;
+use Generator;
 use Throwable;
 
+use RedisCachePro\Clients\PhpRedis;
 use RedisCachePro\Configuration\Configuration;
 use RedisCachePro\Connectors\PhpRedisConnector;
 use RedisCachePro\Exceptions\ConnectionException;
 
 /**
- * @mixin \Redis
+ * @mixin \RedisCachePro\Clients\PhpRedis
  */
 class PhpRedisConnection extends Connection implements ConnectionInterface
 {
     /**
      * The Redis instance.
      *
-     * @var \Redis|\RedisCluster|\Relay\Relay
+     * @var \RedisCachePro\Clients\PhpRedis
      */
     protected $client;
 
     /**
-     * The client's FQCN.
-     *
-     * @var string
-     */
-    protected $class = Redis::class;
-
-    /**
      * Create a new PhpRedis instance connection.
      *
-     * @param  \Redis  $client
+     * @param  \RedisCachePro\Clients\PhpRedis  $client
      * @param  \RedisCachePro\Configuration\Configuration  $config
      */
-    public function __construct(Redis $client, Configuration $config)
+    public function __construct(PhpRedis $client, Configuration $config)
     {
         $this->client = $client;
         $this->config = $config;
@@ -64,6 +58,17 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     }
 
     /**
+     * Set the connection's timeout.
+     *
+     * @param  mixed  $timeout
+     * @return void
+     */
+    protected function setTimeout($timeout)
+    {
+        $this->client->setOption($this->client::OPT_READ_TIMEOUT, (string) $timeout);
+    }
+
+    /**
      * Set the connection's retries and backoff algorithm.
      *
      * @see https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
@@ -72,13 +77,13 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     protected function setBackoff()
     {
         if ($this->config->retries) {
-            $this->client->setOption($this->class::OPT_MAX_RETRIES, $this->config->retries);
+            $this->client->setOption($this->client::OPT_MAX_RETRIES, $this->config->retries);
         }
 
         if ($this->config->backoff === Configuration::BACKOFF_SMART) {
-            $this->client->setOption($this->class::OPT_BACKOFF_ALGORITHM, $this->class::BACKOFF_ALGORITHM_DECORRELATED_JITTER);
-            $this->client->setOption($this->class::OPT_BACKOFF_BASE, $this->config->retry_interval);
-            $this->client->setOption($this->class::OPT_BACKOFF_CAP, \intval($this->config->read_timeout * 1000));
+            $this->client->setOption($this->client::OPT_BACKOFF_ALGORITHM, $this->client::BACKOFF_ALGORITHM_DECORRELATED_JITTER);
+            $this->client->setOption($this->client::OPT_BACKOFF_BASE, $this->config->retry_interval);
+            $this->client->setOption($this->client::OPT_BACKOFF_CAP, \intval($this->config->read_timeout * 1000));
         }
     }
 
@@ -90,12 +95,22 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     protected function setSerializer()
     {
         if ($this->config->serializer === Configuration::SERIALIZER_PHP) {
-            $this->client->setOption($this->class::OPT_SERIALIZER, (string) $this->class::SERIALIZER_PHP);
+            $this->client->setOption($this->client::OPT_SERIALIZER, (string) $this->client::SERIALIZER_PHP);
         }
 
         if ($this->config->serializer === Configuration::SERIALIZER_IGBINARY) {
-            $this->client->setOption($this->class::OPT_SERIALIZER, (string) $this->class::SERIALIZER_IGBINARY);
+            $this->client->setOption($this->client::OPT_SERIALIZER, (string) $this->client::SERIALIZER_IGBINARY);
         }
+    }
+
+    /**
+     * Unset the connection's serializer.
+     *
+     * @return void
+     */
+    protected function unsetSerializer()
+    {
+        $this->client->setOption($this->client::OPT_SERIALIZER, (string) $this->client::SERIALIZER_NONE);
     }
 
     /**
@@ -106,20 +121,30 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
     protected function setCompression()
     {
         if ($this->config->compression === Configuration::COMPRESSION_NONE) {
-            $this->client->setOption($this->class::OPT_COMPRESSION, (string) $this->class::COMPRESSION_NONE);
+            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_NONE);
         }
 
         if ($this->config->compression === Configuration::COMPRESSION_LZF) {
-            $this->client->setOption($this->class::OPT_COMPRESSION, (string) $this->class::COMPRESSION_LZF);
+            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_LZF);
         }
 
         if ($this->config->compression === Configuration::COMPRESSION_ZSTD) {
-            $this->client->setOption($this->class::OPT_COMPRESSION, (string) $this->class::COMPRESSION_ZSTD);
+            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_ZSTD);
         }
 
         if ($this->config->compression === Configuration::COMPRESSION_LZ4) {
-            $this->client->setOption($this->class::OPT_COMPRESSION, (string) $this->class::COMPRESSION_LZ4);
+            $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_LZ4);
         }
+    }
+
+    /**
+     * Set the connection's compression algorithm.
+     *
+     * @return void
+     */
+    protected function unsetCompression()
+    {
+        $this->client->setOption($this->client::OPT_COMPRESSION, (string) $this->client::COMPRESSION_NONE);
     }
 
     /**
@@ -131,8 +156,8 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      */
     public function withoutMutations(callable $callback)
     {
-        $this->client->setOption($this->class::OPT_SERIALIZER, (string) $this->class::SERIALIZER_NONE);
-        $this->client->setOption($this->class::OPT_COMPRESSION, (string) $this->class::COMPRESSION_NONE);
+        $this->unsetSerializer();
+        $this->unsetCompression();
 
         try {
             return $callback($this);
@@ -164,14 +189,14 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      */
     public function withTimeout(callable $callback, $timeout)
     {
-        $this->client->setOption($this->class::OPT_READ_TIMEOUT, (string) $timeout);
+        $this->setTimeout((string) $timeout);
 
         try {
             return $callback($this);
         } catch (Throwable $exception) {
             throw $exception;
         } finally {
-            $this->client->setOption($this->class::OPT_READ_TIMEOUT, (string) $this->config->read_timeout);
+            $this->setTimeout((string) $this->config->read_timeout);
         }
     }
 
@@ -214,36 +239,83 @@ class PhpRedisConnection extends Connection implements ConnectionInterface
      */
     public function multi(int $type = null)
     {
-        return $type === $this->class::PIPELINE
+        return $type === $this->client::PIPELINE
             ? Transaction::multi($this)
             : Transaction::pipeline($this);
     }
 
     /**
-     * Send `scan()` calls directly to the client.
+     * Send `scan()` calls directly to the client to make passed-by-reference iterator work.
      *
-     * @param  int  $iterator
-     * @param  string  $pattern
+     * @param  mixed  $iterator
+     * @param  mixed  $match
      * @param  int  $count
      * @return array<string>|false
      */
-    public function scan(?int &$iterator, ?string $pattern = null, int $count = 0) // phpcs:ignore PHPCompatibility
+    public function scan(&$iterator, $match = null, $count = 0)
     {
-        return $this->client->scan($iterator, $pattern, $count);
+        return $this->client->scan($iterator, $match, $count);
     }
 
     /**
-     * Hijack `restore()` calls due to a bug in modern PhpRedis versions
-     * when data mutations like compression are used.
+     * Send `hscan()` calls directly to the client to make passed-by-reference iterator work.
      *
-     * @param  string  $key
-     * @param  int  $timeout
-     * @param  string  $value
-     * @return bool
+     * @param  mixed  $key
+     * @param  mixed  $iterator
+     * @param  mixed  $match
+     * @param  int  $count
+     * @return array<string>|false
      */
-    public function restore(string $key, int $timeout, string $value)
+    public function hscan($key, &$iterator, $match = null, int $count = 0)
     {
-        return $this->rawCommand('RESTORE', $key, $timeout, $value, 'REPLACE');
+        return $this->client->hscan($key, $iterator, $match, $count);
+    }
+
+    /**
+     * Send `sscan()` calls directly to the client to make passed-by-reference iterator work.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $iterator
+     * @param  mixed  $match
+     * @param  int  $count
+     * @return array<string>|false
+     */
+    public function sscan($key, &$iterator, $match = null, int $count = 0)
+    {
+        return $this->client->sscan($key, $iterator, $match, $count);
+    }
+
+    /**
+     * Send `zscan()` calls directly to the client to make passed-by-reference iterator work.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $iterator
+     * @param  mixed  $match
+     * @param  int  $count
+     * @return array<string>|false
+     */
+    public function zscan($key, &$iterator, $match = null, int $count = 0)
+    {
+        return $this->client->zscan($key, $iterator, $match, $count);
+    }
+
+    /**
+     * Yields all keys matching the given pattern.
+     *
+     * @param  string|null  $pattern
+     * @return \Generator<array<int, mixed>>
+     */
+    public function listKeys(?string $pattern = null): Generator
+    {
+        $iterator = null;
+
+        do {
+            $keys = $this->client->scan($iterator, $pattern, 500);
+
+            if (! empty($keys)) {
+                yield $keys;
+            }
+        } while ($iterator > 0);
     }
 
     /**

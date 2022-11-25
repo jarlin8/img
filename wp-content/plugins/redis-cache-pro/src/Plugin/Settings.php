@@ -150,7 +150,7 @@ trait Settings
         $update = get_site_transient('objectcache_update');
         $updateAvailable = version_compare($update->version ?? '', '12.0', '>');
 
-        $parameters = [
+        $arguments = [
             $isMultisite && $inNetworkAdmin
                 ? 'settings.php'
                 : 'options-general.php',
@@ -167,10 +167,10 @@ trait Settings
         ];
 
         if (version_compare($wp_version, '5.3', '>=')) {
-            $parameters[] = 7;
+            $arguments[] = 7;
         }
 
-        add_submenu_page(...$parameters);
+        add_submenu_page(...$arguments);
     }
 
     /**

@@ -105,7 +105,10 @@ class Groups extends WP_REST_Controller
             );
         }
 
-        if (! $wp_object_cache->connection()) {
+        $config = $wp_object_cache->config();
+        $connection = $wp_object_cache->connection();
+
+        if (! $connection) {
             return new WP_Error(
                 'objectcache_not_connected',
                 'The object cache is not connected.',
@@ -113,98 +116,28 @@ class Groups extends WP_REST_Controller
             );
         }
 
-        $config = $wp_object_cache->config();
-        $connection = $wp_object_cache->connection();
-
-        if ($config->cluster) {
-            /** @var \RedisCachePro\Connections\PhpRedisClusterConnection $connection */
-            return $this->clusterCacheGroups($connection);
+        if (! method_exists($connection, 'listKeys')) {
+            return new WP_Error(
+                'objectcache_not_supported',
+                'The object cache connection is unsupported.',
+                ['status' => 400]
+            );
         }
 
-        if ($config->sentinels) {
-            /** @var \RedisCachePro\Connections\PhpRedisSentinelsConnection $connection */
-            return $this->instanceCacheGroups($connection);
-        }
+        $prefix = $config->prefix;
+        $pattern = is_null($prefix) ? null : "{$prefix}:*";
 
-        if ($config->servers) {
-            /** @var \RedisCachePro\Connections\PhpRedisReplicatedConnection $connection */
-            return $this->instanceCacheGroups($connection);
-        }
-
-        return $this->instanceCacheGroups($connection);
-    }
-
-    /**
-     * Returns all the keys and their count from an instance.
-     *
-     * @param  \RedisCachePro\Connections\ConnectionInterface  $connection
-     * @return \WP_REST_Response|\WP_Error
-     */
-    protected function instanceCacheGroups($connection)
-    {
-        $groups = array_map('count', $this->iterate($connection));
-
-        return $this->prepareGroupsForResponse($groups);
-    }
-
-    /**
-     * Returns all the keys and their count from the cluster.
-     *
-     * @param  \RedisCachePro\Connections\PhpRedisClusterConnection  $connection
-     * @return \WP_REST_Response|\WP_Error
-     */
-    protected function clusterCacheGroups($connection)
-    {
         $groups = [];
 
-        foreach ($connection->_masters() as $node) {
-            $groups[] = $this->iterate($connection, $node);
-        }
-
-        $groups = array_map('count', array_merge_recursive([], ...$groups));
-
-        return $this->prepareGroupsForResponse($groups);
-    }
-
-    /**
-     * Run the scan command and iterate over to get all the keys.
-     *
-     * @param  \RedisCachePro\Connections\ConnectionInterface  $connection
-     * @param  array<mixed>|null  $node
-     * @return array<string, mixed>
-     */
-    protected function iterate($connection, $node = null)
-    {
-        global $wp_object_cache;
-
-        $prefix = $wp_object_cache->config()->prefix;
-        $pattern = is_null($prefix) ? '*' : "{$prefix}:*";
-
-        $groups = [];
-        $count = 100;
-
-        /** @var ?int $iterator */
-        $iterator = null;
-
-        do {
-            $scan = false;
-
-            if ($node && method_exists($connection, 'scanNode')) {
-                $scan = $connection->scanNode($iterator, $node, $pattern, $count);
-            } elseif (method_exists($connection, 'scan')) {
-                $scan = $connection->scan($iterator, $pattern, $count);
-            }
-
-            if ($scan === false) {
-                continue;
-            }
-
-            foreach ($scan as $key) {
+        foreach ($connection->listKeys($pattern) as $keys) {
+            foreach ($keys as $key) {
                 $groups[$this->parseGroup($key)][] = $key;
             }
-        } while ($iterator > 0);
+        }
 
-        return $groups;
+        return $this->prepareGroupsForResponse(
+            array_map('count', $groups)
+        );
     }
 
     /**

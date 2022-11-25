@@ -19,9 +19,13 @@ namespace RedisCachePro\Connectors;
 use LogicException;
 
 use Redis;
-use RedisCluster;
 use RedisException;
+
+use RedisCluster;
 use RedisClusterException;
+
+use RedisCachePro\Clients\PhpRedis;
+use RedisCachePro\Clients\PhpRedisCluster;
 
 use RedisCachePro\Configuration\Configuration;
 
@@ -33,9 +37,12 @@ use RedisCachePro\Connections\PhpRedisReplicatedConnection;
 
 use RedisCachePro\Exceptions\PhpRedisMissingException;
 use RedisCachePro\Exceptions\PhpRedisOutdatedException;
+use RedisCachePro\Exceptions\ConfigurationInvalidException;
 
-class PhpRedisConnector implements Connector
+class PhpRedisConnector implements ConnectorInterface
 {
+    use Concerns\HandlesBackoff;
+
     /**
      * The minimum required PhpRedis version.
      *
@@ -121,7 +128,10 @@ class PhpRedisConnector implements Connector
      */
     public static function connectToInstance(Configuration $config): ConnectionInterface
     {
-        $client = new Redis;
+        $client = new PhpRedis(function () {
+            return new Redis;
+        }, $config->tracer);
+
         $version = (string) \phpversion('redis');
 
         $persistent = $config->persistent;
@@ -137,7 +147,7 @@ class PhpRedisConnector implements Connector
 
         $method = $persistent ? 'pconnect' : 'connect';
 
-        $parameters = [
+        $arguments = [
             $host,
             $config->port ?? 0,
             $config->timeout,
@@ -146,13 +156,11 @@ class PhpRedisConnector implements Connector
         ];
 
         if (\version_compare($version, '3.1.3', '>=')) {
-            $parameters[] = $config->read_timeout;
+            $arguments[] = $config->read_timeout;
         }
 
-        $tlsContext = static::tlsOptions($config);
-
-        if ($tlsContext && \version_compare($version, '5.3.0', '>=')) {
-            $parameters[] = ['stream' => $tlsContext];
+        if ($config->tls_options && \version_compare($version, '5.3.0', '>=')) {
+            $arguments[] = ['stream' => $config->tls_options];
         }
 
         $retries = 0;
@@ -161,7 +169,7 @@ class PhpRedisConnector implements Connector
             $delay = self::nextDelay($config, $retries);
 
             try {
-                $client->{$method}(...$parameters);
+                $client->{$method}(...$arguments);
             } catch (RedisException $exception) {
                 if (++$retries >= $config->retries) {
                     throw $exception;
@@ -183,7 +191,7 @@ class PhpRedisConnector implements Connector
         }
 
         if ($config->read_timeout) {
-            $client->setOption(Redis::OPT_READ_TIMEOUT, (string) $config->read_timeout);
+            $client->setOption($client::OPT_READ_TIMEOUT, (string) $config->read_timeout);
         }
 
         return new PhpRedisConnection($client, $config);
@@ -198,9 +206,9 @@ class PhpRedisConnector implements Connector
     public static function connectToCluster(Configuration $config): ConnectionInterface
     {
         if (\is_string($config->cluster)) {
-            $parameters = [$config->cluster];
+            $arguments = [$config->cluster];
         } else {
-            $parameters = [
+            $arguments = [
                 null,
                 \array_values($config->cluster),
                 $config->timeout,
@@ -211,13 +219,11 @@ class PhpRedisConnector implements Connector
             $version = (string) \phpversion('redis');
 
             if (\version_compare($version, '4.3.0', '>=')) {
-                $parameters[] = $config->password ?? '';
+                $arguments[] = $config->password ?? '';
             }
 
-            $tlsContext = static::tlsOptions($config);
-
-            if ($tlsContext && \version_compare($version, '5.3.2', '>=')) {
-                $parameters[] = $tlsContext;
+            if ($config->tls_options && \version_compare($version, '5.3.2', '>=')) {
+                $arguments[] = $config->tls_options;
             }
         }
 
@@ -228,7 +234,9 @@ class PhpRedisConnector implements Connector
             $delay = self::nextDelay($config, $retries);
 
             try {
-                $client = new RedisCluster(...$parameters);
+                $client = new PhpRedisCluster(function () use ($arguments) {
+                    return new RedisCluster(...$arguments);
+                }, $config->tracer);
             } catch (RedisClusterException $exception) {
                 if (++$retries >= $config->retries) {
                     throw $exception;
@@ -240,14 +248,14 @@ class PhpRedisConnector implements Connector
         }
 
         if ($config->cluster_failover) {
-            $client->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $config->getClusterFailover());
+            $client->setOption($client::OPT_SLAVE_FAILOVER, $config->getClusterFailover());
         }
 
         return new PhpRedisClusterConnection($client, $config);
     }
 
     /**
-     * Create a new PhpRedis Sentinel connection.
+     * Create a new PhpRedis Sentinels connection.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
      * @return \RedisCachePro\Connections\PhpRedisSentinelsConnection
@@ -256,6 +264,10 @@ class PhpRedisConnector implements Connector
     {
         if (version_compare((string) phpversion('redis'), '5.3.2', '<')) {
             throw new LogicException('Redis Sentinel requires PhpRedis v5.3.2 or newer');
+        }
+
+        if (! $config->service) {
+            throw new ConfigurationInvalidException('Missing `service` configuration option');
         }
 
         return new PhpRedisSentinelsConnection($config);
@@ -274,62 +286,19 @@ class PhpRedisConnector implements Connector
         foreach ($config->servers as $server) {
             $serverConfig = clone $config;
             $serverConfig->setUrl($server);
+            $role = Configuration::parseUrl($server)['role'];
 
-            if (Configuration::parseUrl($server)['role'] === 'master') {
-                $master = static::connectToInstance($serverConfig);
+            if (in_array($role, ['primary', 'master'])) {
+                $primary = static::connectToInstance($serverConfig);
             } else {
                 $replicas[] = static::connectToInstance($serverConfig);
             }
         }
 
-        if (! isset($master)) {
-            throw new LogicException('No replication master node found');
+        if (! isset($primary)) {
+            throw new LogicException('No primary replication node found');
         }
 
-        return new PhpRedisReplicatedConnection($master, $replicas, $config);
-    }
-
-    /**
-     * Returns the TLS context options for the transport.
-     *
-     * @param  \RedisCachePro\Configuration\Configuration  $config
-     * @return array<mixed>
-     */
-    protected static function tlsOptions(Configuration $config)
-    {
-        if (\defined('\WP_REDIS_PHPREDIS_OPTIONS')) {
-            if (function_exists('_doing_it_wrong')) {
-                $message = 'The `WP_REDIS_PHPREDIS_OPTIONS` constant is deprecated, use the `tls_options` configuration option instead. ';
-                $message .= 'https://objectcache.pro/docs/configuration-options/#tls-options';
-
-                \_doing_it_wrong(__METHOD__, $message, '1.12.1');
-            }
-
-            return \WP_REDIS_PHPREDIS_OPTIONS;
-        }
-
-        return $config->tls_options;
-    }
-
-    /**
-     * Returns the next delay for the given retry.
-     *
-     * @param  \RedisCachePro\Configuration\Configuration  $config
-     * @param  int  $retries
-     * @return int
-     */
-    public static function nextDelay(Configuration $config, int $retries)
-    {
-        if ($config->backoff === Configuration::BACKOFF_NONE) {
-            return $retries ** 2;
-        }
-
-        $retryInterval = $config->retry_interval;
-        $jitter = $retryInterval * 0.1;
-
-        return $retries * \mt_rand(
-            (int) \floor($retryInterval - $jitter),
-            (int) \ceil($retryInterval + $jitter)
-        );
+        return new PhpRedisReplicatedConnection($primary, $replicas, $config);
     }
 }

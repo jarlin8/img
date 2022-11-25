@@ -48,7 +48,7 @@ trait Network
      */
     protected function blogFlushingEnabled()
     {
-        return in_array($this->config->flush_network, [
+        return in_array($this->config->network_flush, [
             $this->config::NETWORK_FLUSH_SITE,
             $this->config::NETWORK_FLUSH_GLOBAL,
         ]);

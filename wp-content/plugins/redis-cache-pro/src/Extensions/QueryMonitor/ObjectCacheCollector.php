@@ -42,7 +42,7 @@ class ObjectCacheCollector extends QM_Collector
      *
      * @return QM_Data_Cache
      */
-    public function get_storage()
+    public function get_storage(): QM_Data
     {
         return new QM_Data_Cache;
     }

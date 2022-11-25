@@ -28,17 +28,17 @@ use RedisCachePro\Loggers\LoggerInterface;
 use RedisCachePro\Exceptions\ConfigurationInvalidException;
 use RedisCachePro\Exceptions\ConnectionDetailsMissingException;
 
-use RedisCachePro\Connectors\Connector;
 use RedisCachePro\Connectors\PhpRedisConnector;
-use RedisCachePro\Connectors\TwemproxyConnector;
+use RedisCachePro\Connectors\ConnectorInterface;
 
 use RedisCachePro\ObjectCaches\PhpRedisObjectCache;
 use RedisCachePro\ObjectCaches\ObjectCacheInterface;
 
 /**
  * @property-read string|null $token
- * @property-read class-string<\RedisCachePro\Connectors\Connector> $connector
+ * @property-read class-string<\RedisCachePro\Connectors\ConnectorInterface> $connector
  * @property-read class-string<\RedisCachePro\ObjectCaches\ObjectCacheInterface> $cache
+ * @property-read string|callable|null $tracer
  * @property-read \RedisCachePro\Loggers\LoggerInterface $logger
  * @property-read array|null $log_levels
  * @property-read string $scheme
@@ -63,9 +63,10 @@ use RedisCachePro\ObjectCaches\ObjectCacheInterface;
  * @property-read bool $persistent
  * @property-read bool|null $shared
  * @property-read bool $async_flush
+ * @property-read string $group_flush
+ * @property-read string $network_flush
  * @property-read bool $prefetch
  * @property-read bool $split_alloptions
- * @property-read string $flush_network
  * @property-read string $serializer
  * @property-read string $compression
  * @property-read array $global_groups
@@ -149,6 +150,28 @@ final class Configuration
     const NETWORK_FLUSH_ALL = 'all';
 
     /**
+     * Flush groups/patterns atomically using a Lua script that uses `SCAN` and deletes in chunks.
+     *
+     * @var string
+     */
+    const GROUP_FLUSH_SCAN = 'scan';
+
+    /**
+     * Flush groups/patterns atomically using a Lua script that uses `KEYS` and deletes in chunks.
+     *
+     * @var string
+     */
+    const GROUP_FLUSH_KEYS = 'keys';
+
+    /**
+     * Flush groups/patterns non-atomically using PHP that calls `SCAN` and deletes in chunks.
+     * Useful for massive datasets that complain about slow Lua scripts.
+     *
+     * @var string
+     */
+    const GROUP_FLUSH_INCREMENTAL = 'incremental';
+
+    /**
      * Default backoff algorithm which uses decorrelated jitter and a
      * 500ms base for backoff computation and 750ms backoff time cap.
      *
@@ -162,6 +185,27 @@ final class Configuration
      * @var string
      */
     const BACKOFF_NONE = 'none';
+
+    /**
+     * New Relic tracer.
+     *
+     * @var string
+     */
+    const TRACER_NEWRELIC = 'newrelic';
+
+    /**
+     * New Relic tracer.
+     *
+     * @var string
+     */
+    const TRACER_OPENTELEMETRY = 'opentelemetry';
+
+    /**
+     * No tracer.
+     *
+     * @var string
+     */
+    const TRACER_NONE = 'none';
 
     /**
      * The Object Cache Pro license token.
@@ -188,7 +232,6 @@ final class Configuration
      * The client name.
      *
      * Used only internally, not a configuration option.
-     *
      * @var string
      */
     protected $clientName;
@@ -327,6 +370,27 @@ final class Configuration
     protected $async_flush = false;
 
     /**
+     * Method of flushing groups and patterns.
+     *
+     * @var string
+     */
+    protected $group_flush = self::GROUP_FLUSH_KEYS;
+
+    /**
+     * The cache flushing strategy in multisite network environments.
+     *
+     * @var string
+     */
+    protected $network_flush = self::NETWORK_FLUSH_ALL;
+
+    /**
+     * The tracer name.
+     *
+     * @var string|callable|null
+     */
+    protected $tracer;
+
+    /**
      * The data serializer.
      *
      * @var string
@@ -433,13 +497,6 @@ final class Configuration
     protected $split_alloptions = false;
 
     /**
-     * The cache flushing strategy in multisite network environments.
-     *
-     * @var string
-     */
-    protected $flush_network = self::NETWORK_FLUSH_ALL;
-
-    /**
      * The TLS context options, such as `verify_peer` and `ciphers`.
      *
      * @link https://www.php.net/manual/context.ssl.php
@@ -477,6 +534,13 @@ final class Configuration
 
         if ($this->log_levels && method_exists($this->logger, 'setLevels')) {
             $this->logger->setLevels($this->log_levels);
+        }
+
+        if (! $this->tracer) {
+            $useNewRelic = \function_exists('\newrelic_record_datastore_segment')
+                && \ini_get('newrelic.enabled');
+
+            $this->setTracer($useNewRelic ? self::TRACER_NEWRELIC : self::TRACER_NONE);
         }
 
         return $this;
@@ -630,28 +694,24 @@ final class Configuration
     }
 
     /**
-     * Set the connector instance. Accepts `twemproxy` shorthand.
+     * Set the connector instance.
      *
-     * @param  class-string<\RedisCachePro\Connectors\Connector>|string  $connector
+     * @param  class-string<\RedisCachePro\Connectors\ConnectorInterface>|string  $connector
      * @return void
      */
     public function setConnector($connector)
     {
         if (! \is_string($connector) || empty($connector)) {
-            throw new ConfigurationInvalidException('Connector must be a fully qualified class name');
-        }
-
-        if (\strtolower($connector) === 'twemproxy') {
-            $connector = TwemproxyConnector::class;
+            throw new ConfigurationInvalidException('`connector` must be a fully qualified class name');
         }
 
         if (! \class_exists($connector)) {
-            throw new ConfigurationInvalidException("Connector class `{$connector}` was not found");
+            throw new ConfigurationInvalidException("`connector` class `{$connector}` was not found");
         }
 
-        if (! \in_array(Connector::class, (array) \class_implements($connector))) {
+        if (! \in_array(ConnectorInterface::class, (array) \class_implements($connector))) {
             throw new ConfigurationInvalidException(
-                \sprintf('Connector must be implementation of %s', Connector::class)
+                \sprintf('`connector` must be implementation of %s', ConnectorInterface::class)
             );
         }
 
@@ -667,20 +727,58 @@ final class Configuration
     public function setCache($cache)
     {
         if (! \is_string($cache) || empty($cache)) {
-            throw new ConfigurationInvalidException('Cache must be a fully qualified class name');
+            throw new ConfigurationInvalidException('`cache` must be a fully qualified class name');
         }
 
         if (! \class_exists($cache)) {
-            throw new ConfigurationInvalidException("Cache class `{$cache}` was not found");
+            throw new ConfigurationInvalidException("`cache` class `{$cache}` was not found");
         }
 
         if (! \in_array(ObjectCacheInterface::class, (array) \class_implements($cache))) {
             throw new ConfigurationInvalidException(
-                \sprintf('Cache must be implementation of %s', ObjectCacheInterface::class)
+                \sprintf('`cache` must be implementation of %s', ObjectCacheInterface::class)
             );
         }
 
         $this->cache = $cache;
+    }
+
+    /**
+     * Set the tracer.
+     *
+     * @param  string|callable|null  $tracer
+     * @return void
+     */
+    public function setTracer($tracer)
+    {
+        if (is_callable($tracer)) {
+            $this->tracer = $tracer;
+
+            return;
+        }
+
+        if (! \is_string($tracer) || empty($tracer)) {
+            throw new ConfigurationInvalidException('`tracer` must be a callable or non-empty-string');
+        }
+
+        $tracer = \str_replace('new-relic', self::TRACER_NEWRELIC, \strtolower($tracer));
+        $tracer = \str_replace(['open-telemetry', 'otel'], self::TRACER_OPENTELEMETRY, $tracer);
+
+        $tracers = [
+            self::TRACER_NONE,
+            self::TRACER_NEWRELIC,
+            self::TRACER_OPENTELEMETRY,
+        ];
+
+        if (! \in_array($tracer, $tracers, true)) {
+            throw new ConfigurationInvalidException("Tracer `{$tracer}` is not supported");
+        }
+
+        if ($tracer === self::TRACER_NEWRELIC && ! \function_exists('\newrelic_record_datastore_segment')) {
+            throw new ConfigurationInvalidException('The `newrelic` tracer requires New Relic’s PHP extension');
+        }
+
+        $this->tracer = $tracer;
     }
 
     /**
@@ -1104,6 +1202,75 @@ final class Configuration
     }
 
     /**
+     * Set how groups and patterns should be flushed.
+     *
+     * @param  string  $method
+     * @return void
+     */
+    public function setGroupFlush($method)
+    {
+        if (! \is_string($method)) {
+            throw new ConfigurationInvalidException(
+                \sprintf('`group_flush` method must be a string, %s given', \gettype($method))
+            );
+        }
+
+        $constant = \sprintf(
+            '%s::GROUP_FLUSH_%s',
+            self::class,
+            \strtoupper((string) $method)
+        );
+
+        $method = \strtolower((string) $method);
+
+        if (! \defined($constant)) {
+            throw new ConfigurationInvalidException("`group_flush` method `{$method}` is not supported");
+        }
+
+        $this->group_flush = $method;
+    }
+
+    /**
+     * Set the multisite network environment cache flushing strategy.
+     *
+     * @param  string  $strategy
+     * @return void
+     */
+    public function setNetworkFlush($strategy)
+    {
+        if (! \is_string($strategy)) {
+            throw new ConfigurationInvalidException(
+                \sprintf('`network_flush` strategy must be a string, %s given', \gettype($strategy))
+            );
+        }
+
+        $constant = \sprintf(
+            '%s::NETWORK_FLUSH_%s',
+            self::class,
+            \strtoupper((string) $strategy)
+        );
+
+        $strategy = \strtolower((string) $strategy);
+
+        if (! \defined($constant)) {
+            throw new ConfigurationInvalidException("`network_flush` strategy `{$strategy}` is not supported");
+        }
+
+        $this->network_flush = $strategy;
+    }
+
+    /**
+     * Shim to support deprecated `flush_network` option.
+     *
+     * @param  string  $strategy
+     * @return void
+     */
+    public function setFlushNetwork($strategy)
+    {
+        $this->setNetworkFlush($strategy);
+    }
+
+    /**
      * Set the data serializer.
      *
      * @param  string  $serializer
@@ -1281,7 +1448,7 @@ final class Configuration
         }
 
         if (\in_array($updates, ['false', 'off', '0', 0, false], true)) {
-            $prefupdatesetch = false;
+            $updates = false;
         }
 
         if (! \is_bool($updates)) {
@@ -1451,35 +1618,6 @@ final class Configuration
     }
 
     /**
-     * Set the multisite network environment cache flushing strategy.
-     *
-     * @param  string  $strategy
-     * @return void
-     */
-    public function setFlushNetwork($strategy)
-    {
-        if (! \is_string($strategy)) {
-            throw new ConfigurationInvalidException(
-                \sprintf('`flush_network` strategy must be a string, %s given', \gettype($strategy))
-            );
-        }
-
-        $constant = \sprintf(
-            '%s::NETWORK_FLUSH_%s',
-            self::class,
-            \strtoupper((string) $strategy)
-        );
-
-        $strategy = \strtolower((string) $strategy);
-
-        if (! \defined($constant)) {
-            throw new ConfigurationInvalidException("`flush_network` strategy `{$strategy}` is not supported");
-        }
-
-        $this->flush_network = $strategy;
-    }
-
-    /**
      * Set the TLS context options, such as `verify_peer` and `ciphers`.
      *
      * @link https://www.php.net/manual/context.ssl.php
@@ -1588,6 +1726,7 @@ final class Configuration
         \parse_str($components['query'] ?? '', $query);
         unset($components['query']);
 
+        /** @var array{database?: string, role?: string} $query */
         if (! empty($query['database'])) {
             $components['database'] = $query['database'];
         }
@@ -1669,12 +1808,15 @@ final class Configuration
             'persistent' => $this->persistent,
             'shared' => $this->shared,
             'async_flush' => $this->async_flush,
+            'group_flush' => $this->group_flush,
+            'network_flush' => $this->network_flush,
             'cluster' => $this->cluster,
             'cluster_failover' => $this->cluster_failover,
             'servers' => $this->servers,
             'replication_strategy' => $this->replication_strategy,
             'sentinels' => $this->sentinels,
             'service' => $this->service,
+            'tracer' => $this->tracer,
             'serializer' => $this->serializer,
             'compression' => $this->compression,
             'global_groups' => $this->global_groups,
@@ -1682,7 +1824,6 @@ final class Configuration
             'non_prefetchable_groups' => $this->non_prefetchable_groups,
             'prefetch' => $this->prefetch,
             'split_alloptions' => $this->split_alloptions,
-            'flush_network' => $this->flush_network,
             'analytics' => $this->analytics,
             'relay' => $this->relay,
             'tls_options' => $this->tls_options,

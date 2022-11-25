@@ -16,34 +16,28 @@ declare(strict_types=1);
 
 namespace RedisCachePro\Connections;
 
-use Relay\Relay;
+use RedisCachePro\Clients\Relay;
+use RedisCachePro\Clients\ClientInterface;
 
 use RedisCachePro\Connectors\RelayConnector;
 use RedisCachePro\Configuration\Configuration;
 
 /**
- * @mixin \Relay\Relay
+ * @mixin \RedisCachePro\Clients\Relay
  */
 class RelayConnection extends PhpRedisConnection implements ConnectionInterface
 {
     /**
      * The Relay client.
      *
-     * @var \Relay\Relay
+     * @var \RedisCachePro\Clients\Relay
      */
     protected $client;
 
     /**
-     * The client's FQCN.
-     *
-     * @var string
-     */
-    protected $class = Relay::class;
-
-    /**
      * Create a new Relay instance connection.
      *
-     * @param  \Relay\Relay  $client
+     * @param  \RedisCachePro\Clients\Relay  $client
      * @param  \RedisCachePro\Configuration\Configuration  $config
      */
     public function __construct(Relay $client, Configuration $config)
@@ -71,32 +65,26 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
     protected function setRelayOptions()
     {
         if ($this->config->relay->invalidations === false) {
-            $this->client->setOption($this->class::OPT_CLIENT_INVALIDATIONS, false);
+            $this->client->setOption($this->client::OPT_CLIENT_INVALIDATIONS, false);
         }
 
         if (is_array($this->config->relay->allowed) && RelayConnector::supports('allow-patterns')) {
-            $this->client->setOption($this->class::OPT_ALLOW_PATTERNS, $this->config->relay->allowed);
+            $this->client->setOption($this->client::OPT_ALLOW_PATTERNS, $this->config->relay->allowed);
         }
 
         if (is_array($this->config->relay->ignored)) {
-            $this->client->setOption($this->class::OPT_IGNORE_PATTERNS, $this->config->relay->ignored);
+            $this->client->setOption($this->client::OPT_IGNORE_PATTERNS, $this->config->relay->ignored);
         }
     }
 
     /**
-     * Whether the Relay connection uses in-memory caching, or is only a client.
+     * Returns the connection's client.
      *
-     * @return bool
+     * @return \RedisCachePro\Clients\Relay
      */
-    public function hasInMemoryCache()
+    public function client(): ClientInterface
     {
-        static $cache = null;
-
-        if (is_null($cache)) {
-            $cache = $this->memory() > 0 && $this->config->relay->cache;
-        }
-
-        return $cache;
+        return $this->client;
     }
 
     /**
@@ -158,13 +146,9 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
      *
      * @return int
      */
-    public function memory()
+    public function maxMemory()
     {
-        if (! method_exists($this->class, 'memory')) {
-            return (int) ini_get('relay.maxmemory');
-        }
-
-        return $this->client->memory();
+        return $this->client->maxMemory();
     }
 
     /**
@@ -233,5 +217,21 @@ class RelayConnection extends PhpRedisConnection implements ConnectionInterface
         }
 
         return parent::memoize($command);
+    }
+
+    /**
+     * Whether the Relay connection uses in-memory caching, or is only a client.
+     *
+     * @return bool
+     */
+    public function hasInMemoryCache()
+    {
+        static $cache = null;
+
+        if (is_null($cache)) {
+            $cache = $this->config->relay->cache && $this->maxMemory() > 0;
+        }
+
+        return $cache;
     }
 }

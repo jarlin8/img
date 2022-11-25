@@ -105,12 +105,12 @@ final class Transaction
      * Memorize all method calls for later execution.
      *
      * @param  string  $method
-     * @param  array<mixed>  $parameters
+     * @param  array<mixed>  $arguments
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call($method, $arguments)
     {
-        $this->commands[] = [$method, $parameters];
+        $this->commands[] = [$method, $arguments];
 
         return $this;
     }

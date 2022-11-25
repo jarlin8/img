@@ -42,7 +42,7 @@ trait Replication
     protected function replicationStrategies()
     {
         return [
-            // Distribute readonly commands between master and replicas, at random
+            // Distribute readonly commands between primary and replicas, at random
             'distribute',
 
             // Distribute readonly commands to the replicas, at random
@@ -65,12 +65,12 @@ trait Replication
             throw new ConfigurationException('`servers` must an array of Redis servers');
         }
 
-        $masters = \array_filter($servers, function ($server) {
-            return static::parseUrl($server)['role'] === 'master';
+        $primaries = \array_filter($servers, function ($server) {
+            return in_array(static::parseUrl($server)['role'], ['primary', 'master']);
         });
 
-        if (\count($masters) !== 1) {
-            throw new ConfigurationException('`servers` must contain exactly one master');
+        if (\count($primaries) !== 1) {
+            throw new ConfigurationException('`servers` must contain exactly one primary');
         }
 
         $this->servers = $servers;

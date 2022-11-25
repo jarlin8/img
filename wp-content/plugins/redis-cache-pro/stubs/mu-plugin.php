@@ -3,7 +3,7 @@
  * Plugin Name: Object Cache Pro (MU)
  * Plugin URI: https://objectcache.pro
  * Description: A business class Redis object cache backend for WordPress.
- * Version: 1.16.4
+ * Version: 1.17.0
  * Author: Rhubarb Group
  * Author URI: https://rhubarb.group
  * License: Proprietary

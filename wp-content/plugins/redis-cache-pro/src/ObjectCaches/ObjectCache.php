@@ -20,6 +20,7 @@ use Closure;
 use Throwable;
 use ReflectionClass;
 
+use RedisCachePro\Clients\ClientInterface;
 use RedisCachePro\Loggers\LoggerInterface;
 use RedisCachePro\Configuration\Configuration;
 use RedisCachePro\Exceptions\ObjectCacheException;
@@ -28,13 +29,6 @@ use RedisCachePro\Exceptions\InvalidCacheKeyTypeException;
 
 abstract class ObjectCache implements ObjectCacheInterface
 {
-    /**
-     * The client name fallback.
-     *
-     * @var string
-     */
-    const Client = 'Unknown';
-
     /**
      * The configuration instance.
      *
@@ -146,16 +140,6 @@ abstract class ObjectCache implements ObjectCacheInterface
     protected $nonPrefetchableGroupMatches = [];
 
     /**
-     * Returns the client name the object cache is using.
-     *
-     * @return string
-     */
-    public function clientName()
-    {
-        return static::Client;
-    }
-
-    /**
      * Returns the configuration instance.
      *
      * @return \RedisCachePro\Configuration\Configuration
@@ -173,6 +157,35 @@ abstract class ObjectCache implements ObjectCacheInterface
     public function connection(): ?ConnectionInterface // phpcs:ignore PHPCompatibility.FunctionDeclarations.NewNullableTypes.returnTypeFound
     {
         return $this->connection;
+    }
+
+    /**
+     * Returns the connection's client.
+     *
+     * @internal
+     * @return \RedisCachePro\Clients\ClientInterface|null
+     */
+    public function client(): ?ClientInterface // phpcs:ignore PHPCompatibility.FunctionDeclarations.NewNullableTypes.returnTypeFound
+    {
+        return $this->connection
+            ? $this->connection->client()
+            : null;
+    }
+
+    /**
+     * Returns the client name the object cache is using.
+     *
+     * @return string
+     */
+    public function clientName()
+    {
+        $client = $this->client();
+
+        if (! $client) {
+            return 'Unknown';
+        }
+
+        return (new ReflectionClass($client))->getShortName();
     }
 
     /**
@@ -589,28 +602,28 @@ abstract class ObjectCache implements ObjectCacheInterface
      * Removes all in-memory cache items for a single blog in multisite environments,
      * otherwise defaults to flushing the entire in-memory cache.
      *
-     * Unless the `$flush_network` parameter is given this method
-     * will default to `flush_network` configuration option.
+     * Unless the `$network_flush` parameter is given this method
+     * will default to `network_flush` configuration option.
      *
      * @param  int  $siteId
-     * @param  string  $flush_network
+     * @param  string  $network_flush
      *
      * @return bool
      */
-    public function flushBlog(int $siteId, string $flush_network = null): bool
+    public function flushBlog(int $siteId, string $network_flush = null): bool
     {
-        if (is_null($flush_network)) {
-            $flush_network = $this->config->flush_network;
+        if (is_null($network_flush)) {
+            $network_flush = $this->config->network_flush;
         }
 
-        if (! $this->isMultisite || $flush_network === Configuration::NETWORK_FLUSH_ALL) {
+        if (! $this->isMultisite || $network_flush === Configuration::NETWORK_FLUSH_ALL) {
             return $this->flushRuntime();
         }
 
         $originalBlogId = $this->blogId;
         $this->blogId = $siteId;
 
-        if ($flush_network === Configuration::NETWORK_FLUSH_GLOBAL) {
+        if ($network_flush === Configuration::NETWORK_FLUSH_GLOBAL) {
             foreach ($this->globalGroups() as $group) {
                 unset($this->cache[$group]);
             }

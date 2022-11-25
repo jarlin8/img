@@ -265,7 +265,7 @@ class Latency extends WP_REST_Controller
         $connection = $wp_object_cache->connection();
 
         $nodes = array_merge(
-            [$connection->master()],
+            [$connection->primary()],
             $connection->replicas()
         );
 

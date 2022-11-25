@@ -43,13 +43,13 @@ trait Cluster
     protected function clusterFailovers()
     {
         return [
-            // Only send commands to master nodes
+            // Only send commands to primary nodes
             'none',
 
-            // If a master can't be reached, and it has replicas, failover for read commands
+            // If a primary can't be reached, and it has replicas, failover for read commands
             'error',
 
-            // Always distribute readonly commands between masters and replicas, at random
+            // Always distribute readonly commands between primaries and replicas, at random
             'distribute',
 
             // Always distribute readonly commands to the replicas, at random

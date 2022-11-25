@@ -21,13 +21,6 @@ use RedisCachePro\Configuration\Configuration;
 class ArrayObjectCache extends ObjectCache
 {
     /**
-     * The client name.
-     *
-     * @var string
-     */
-    const Client = 'Array';
-
-    /**
      * Create new array object cache instance.
      *
      * @param  \RedisCachePro\Configuration\Configuration  $config
