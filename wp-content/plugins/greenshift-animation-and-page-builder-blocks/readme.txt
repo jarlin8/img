@@ -4,11 +4,11 @@ Tags: gutenberg, block, page-builder, animation, gsap, gutenberg addons
 Author: Wpsoul
 Author URI: https://greenshiftwp.com
 Plugin URI: https://greenshiftwp.com
-Requires at least: 5.9
-Tested up to: 6.0
+Requires at least: 6.0
+Tested up to: 6.2
 Requires PHP: 7.0
 License: GPLv2 or later
-Stable tag: 3.9.1
+Stable tag: 4.8.1
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 More than 20 special blocks for Gutenberg to build complex pages and animations with highest possible web vitals score.
@@ -105,6 +105,85 @@ Yes, we guarantee that Greenshift is built on top of google recommendations and 
 7. **Sliding panels, popups.** Build custom sliding panels, add any block, use for mega menus
 
 == Changelog ==
+
+= 4.8.1 =
+* Added: Better Astra theme integration (row width fix, UI fixes, button color inheritance)
+* Added: Copy style option for countdown block
+
+= 4.8 =
+* Added: Custom font style option for typography panel
+* Added: Clean color option for icon picker (this will allow to use reusable styles for icon colors)
+* Added: Image scale (object fit and focal point) to image block
+* Added: Image block has Dynamic fields. But if you use Query loop builder, please, use Dynamic Post Image instead
+
+= 4.7 =
+* Added: Padding option for sliding panel and better mobile closing button point
+* Added: Support for reusable style option to columns
+* Added: Default button styles and icon colors are inherited from Blocksy theme (if you use it)
+* Added: Fix for Animated shape dividers
+* Added: Custom cursor option for typography panel
+
+= 4.6 =
+* Added: New Reusable styles system [Please, check demo](https://www.facebook.com/groups/greenshiftwp/posts/853701682735772)
+* Added: Alt for Svg images
+* Added: More options for Accordion block
+* Added: Content background for Tab block
+* Added: Fix for Animated headings with loader type
+* Added: Transformation from core list to Advanced list
+* Added: AOS animation library was replaced by extra light Intersection Observer library
+* Added: Exit intent popup has option to show it only once
+
+= 4.5 =
+* Added: Figma Css to Attribute Converter (Find it in Toolbar - Style icon - Convert css to attributes)
+* Added: Separate Row and Column Gap for Flexbox
+* Added: More units to line height
+* Added: Lazy load for heading and text Image mask
+* Added: Option to disable background image on separate resolutions
+
+= 4.3.1 =
+* Added: Addons page and some slider improvements
+
+= 4.3 =
+* Added: Localization files + improvements for margin, gap in Flexbox
+* Added: Background Lazy Load option for Containers, Rows and Columns
+* Added: parent hover class for icon picker, border, sub title in heading, improved detection of parent container class
+* Updated: Freemius framework is removed. [Please, check important message about addon update](https://www.facebook.com/groups/greenshiftwp/posts/842042560568351)
+* Fix: responsive options of Shape divider
+
+
+= 4.2.2 =
+* Added: Breakpoint option for smart scroll in container
+* Added: Removing default color from Icon will set currentColor value which allows to inherit color from parent container
+
+= 4.2 =
+* Added: Dynamic Link option to Container Link
+* Added: Parent Hover class option to shadow
+
+= 4.0.9 =
+* Column order option for CSS grid and some fixes
+
+= 4.0 =
+* Added distributed gap option for custom column gap
+* Cleaning repeated body tag from styles
+* Added Reset button for Panels
+* Added option to select ul li tags for advanced lists
+* Added name options for links in Container and Video Iframe for screen readers
+* Dynamic fields for Text, Heading, Button, Video and Background options (Required to have Query addon)
+* Improved Meta getter block and Query Loop Builder (Required to have Query addon)
+* Slider Query block (Required to have Query addon)
+* Counter block starts to count only when element is in view
+* Lazy load option for Overlay image and Video Overlay
+* Option to disable lazy load for image block
+* Option for sliding panels and popup to place panel block in footer to fix z-index problems
+
+= 3.9.3 =
+* Added stretch option to tabs
+* Added button for quick parent class detector for hover transitions
+* Mobile options shows details of desktop options in scenarios when they are empty
+
+= 3.9.2 =
+* Added variable width option for Content width in Row
+* Added auto inheritance for Content Width of Row from themes (Blocksy, Kadence, Astra). GeneratePress, Rehub, BlockPress have the same default width as Row so they don't need inheritance
 
 = 3.9 =
 * New block - SVG Path Text

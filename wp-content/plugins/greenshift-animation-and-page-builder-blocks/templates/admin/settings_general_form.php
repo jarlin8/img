@@ -1,4 +1,12 @@
 <?php
+
+// Exit if accessed directly.
+if (!defined('ABSPATH')) {
+	exit;
+}
+
+?>
+<?php
 $global_settings = get_option('gspb_global_settings');
 $current_localfonts = !empty($global_settings['localfont']) ? json_decode($global_settings['localfont'], true) : [];
 $count = !empty($current_localfonts) ? count($current_localfonts) : 1;
@@ -21,13 +29,13 @@ $count = !empty($current_localfonts) ? count($current_localfonts) : 1;
 
   <div class="actions-wrap">
     <button class="button-primary add-new-font">
-      <?php esc_html_e('Add Font', 'greenshift')?>
+      <?php esc_html_e('Add Font', 'greenshift-animation-and-page-builder-blocks')?>
     </button>
     <button class="button-primary remove-last-font" style="background: transparent;border-color: #cc1818;color: #cc1818;">
-      <?php esc_html_e('Remove Font', 'greenshift')?>
+      <?php esc_html_e('Remove Font', 'greenshift-animation-and-page-builder-blocks')?>
     </button>
   </div>
 
   <input type="hidden" name="fonts_count" value="<?php echo (int)$count?>">
-  <input type="submit" name="gspb_save_settings_general" value="<?php esc_html_e('Save', 'greenshift')?>" class="button button-primary button-large">
+  <input type="submit" name="gspb_save_settings_general" value="<?php esc_html_e('Save', 'greenshift-animation-and-page-builder-blocks')?>" class="button button-primary button-large">
 </form>

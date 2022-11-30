@@ -63,6 +63,8 @@ function gspb_get_final_css($gspb_css_content)
 		$gspb_css_content = str_replace('@media (min-width: 768px)', '@media (min-width: '.$get_breakpoints["tablet"] .'px)', $gspb_css_content);
 		$gspb_css_content = str_replace('and (max-width:767.98px)', 'and (max-width: '.$get_breakpoints["tablet_down"] .'px)', $gspb_css_content);
 		$gspb_css_content = str_replace('@media (min-width:768px)', '@media (min-width: '.$get_breakpoints["tablet"] .'px)', $gspb_css_content);
+		$gspb_css_content = str_replace('@media (max-width:767.98px)', '@media (max-width: '.$get_breakpoints["tablet_down"] .'px)', $gspb_css_content);
+		$gspb_css_content = str_replace('@media (max-width: 767.98px)', '@media (max-width: '.$get_breakpoints["tablet_down"] .'px)', $gspb_css_content);
 	}
 
 	if($get_breakpoints['desktop'] != 992){
@@ -70,6 +72,8 @@ function gspb_get_final_css($gspb_css_content)
 		$gspb_css_content = str_replace('and (max-width:991.98px)', 'and (max-width: '.$get_breakpoints["desktop_down"] .'px)', $gspb_css_content);
 		$gspb_css_content = str_replace('@media (min-width: 992px)', '@media (min-width: '.$get_breakpoints["desktop"] .'px)', $gspb_css_content);
 		$gspb_css_content = str_replace('@media (min-width:992px)', '@media (min-width: '.$get_breakpoints["desktop"] .'px)', $gspb_css_content);
+		$gspb_css_content = str_replace('@media (max-width:991.98px)', '@media (max-width: '.$get_breakpoints["desktop_down"] .'px)', $gspb_css_content);
+		$gspb_css_content = str_replace('@media (max-width: 991.98px)', '@media (max-width: '.$get_breakpoints["desktop_down"] .'px)', $gspb_css_content);
 	}
 
 	return $gspb_css_content;
@@ -112,9 +116,17 @@ function gspb_greenShift_register_scripts_blocks()
 	// aos script
 	wp_register_script(
 		'greenShift-aos-lib',
+		GREENSHIFT_DIR_URL . 'libs/aos/aoslight.js',
+		array(),
+		'3.2',
+		true
+	);
+
+	wp_register_script(
+		'greenShift-aos-lib-full',
 		GREENSHIFT_DIR_URL . 'libs/aos/aos.js',
 		array(),
-		'2.3.2',
+		'3.1',
 		true
 	);
 
@@ -156,7 +168,7 @@ function gspb_greenShift_register_scripts_blocks()
 		'gs-swiper-init',
 		GREENSHIFT_DIR_URL . 'libs/swiper/init.js',
 		array(),
-		'8.1.3',
+		'8.1.4',
 		true
 	);
 	wp_register_script(
@@ -233,7 +245,7 @@ function gspb_greenShift_register_scripts_blocks()
 		'gscounter',
 		GREENSHIFT_DIR_URL . 'libs/counter/index.js',
 		array(),
-		'1.0',
+		'1.4',
 		true
 	);
 
@@ -276,7 +288,7 @@ function gspb_greenShift_register_scripts_blocks()
 		'gsslidingpanel',
 		GREENSHIFT_DIR_URL . 'libs/slidingpanel/index.js',
 		array(),
-		'1.7',
+		'2.0',
 		true
 	);
 
@@ -298,12 +310,19 @@ function gspb_greenShift_register_scripts_blocks()
 		true
 	);
 
-	//animated text
+	//Inview
 	wp_register_script(
 		'greenshift-inview',
 		GREENSHIFT_DIR_URL . 'libs/inview/index.js',
 		array(),
 		'1.1',
+		true
+	);
+	wp_register_script(
+		'greenshift-inview-bg',
+		GREENSHIFT_DIR_URL . 'libs/inview/bg.js',
+		array(),
+		'1.0',
 		true
 	);
 
@@ -350,6 +369,13 @@ function gspb_greenShift_register_scripts_blocks()
 		array(
 			'pluginURL' => GREENSHIFT_DIR_URL
 		)
+	);
+
+	wp_register_style(
+		'gssmoothscrollto',
+		GREENSHIFT_DIR_URL . 'libs/scrollto/index.css',
+		array(),
+		'1.0'
 	);
 	
 
@@ -441,12 +467,6 @@ function gspb_greenShift_block_script_assets($html, $block)
 	if(!is_admin()){
 
 		$blockname = $block['blockName'];
-
-		// aos script
-		if (!empty($block['attrs']['animation']['type']) && empty($block['attrs']['animation']['usegsap'])) {
-			wp_enqueue_script('greenShift-aos-lib');
-			// init aos library
-		}
 	
 		// looking lazy load
 		if ($blockname === 'greenshift-blocks/image') {
@@ -457,6 +477,9 @@ function gspb_greenShift_block_script_assets($html, $block)
 			if (!empty($block['attrs']['lightbox'])) {
 				wp_enqueue_script('gsslightboxfront');
 				wp_enqueue_style('gsslightboxfront');
+			}
+			if(function_exists('GSPB_make_dynamic_image') && !empty($block['attrs']['dynamicimage']['dynamicEnable'])){
+				$html = GSPB_make_dynamic_image($html, $block['attrs'], $block, $block['attrs']['dynamicimage'], $block['attrs']['mediaurl']);
 			}
 		}
 	
@@ -482,6 +505,9 @@ function gspb_greenShift_block_script_assets($html, $block)
 
 		// looking for sliding panel
 		else if ($blockname === 'greenshift-blocks/button') {
+			if(!empty( $block['attrs']['overlay']['inview'])){
+				wp_enqueue_script( 'greenshift-inview' );
+			}
 			if (!empty( $block['attrs']['cookname'])) {
 				wp_enqueue_script('gspbcookbtn');
 			}
@@ -490,18 +516,33 @@ function gspb_greenShift_block_script_assets($html, $block)
 			}
 			if (!empty( $block['attrs']['slidingPanel'])) {
 				wp_enqueue_script('gsslidingpanel');
-				$html = str_replace('id="gspb_button-id-'.$block['attrs']['id'], 'data-paneltype="'.$block['attrs']['slidePosition'].'" id="gspb_button-id-'.$block['attrs']['id'], $html);
+				$position = !empty($block['attrs']['slidePosition']) ? $block['attrs']['slidePosition'] : '';
+				$html = str_replace('id="gspb_button-id-'.$block['attrs']['id'], 'data-paneltype="'.$position.'" id="gspb_button-id-'.$block['attrs']['id'], $html);
+				$html = str_replace('class="gspb_slidingPanel"', 'data-panelid="gspb_button-id-'.$block['attrs']['id'].'" class="gspb_slidingPanel"', $html);
 			}
 			if(!empty($block['attrs']['buttonLink'])){
 				$link = $block['attrs']['buttonLink'];
+				if(strpos($link, "#") !== false){
+					wp_enqueue_style('gssmoothscrollto');
+				}
 				$linknew = apply_filters('greenshiftseo_url_filter', $link);
 				$linknew = apply_filters('rh_post_offer_url_filter', $linknew);
 				$html = str_replace($link, $linknew, $html);
+			}
+			if(function_exists('GSPB_make_dynamic_link') && !empty($block['attrs']['dynamicEnable'])){
+				$attribute = !empty($block['attrs']['dynamicField']) ? $block['attrs']['dynamicField'] : '';
+				$html = GSPB_make_dynamic_link($html, $block['attrs'], $block, $attribute, $block['attrs']['buttonLink']);
 			}
 		}
 
 		// looking for container
 		else if ($blockname === 'greenshift-blocks/container') {
+			if(!empty( $block['attrs']['overlay']['inview'])){
+				wp_enqueue_script( 'greenshift-inview' );
+			}
+			if(!empty( $block['attrs']['background']['lazy'])){
+				wp_enqueue_script( 'greenshift-inview-bg' );
+			}
 			if(!empty( $block['attrs']['flipbox'])){
 				wp_enqueue_script('gsflipboxpanel');
 			}
@@ -515,19 +556,37 @@ function gspb_greenShift_block_script_assets($html, $block)
 				wp_enqueue_script('greenShift-scrollable-init');
 			}
 			if ( !empty($block['attrs']['shapeDivider']['topShape']['animate']) || !empty($block['attrs']['shapeDivider']['bottomShape']['animate'])) {
-				wp_enqueue_script('greenShift-aos-lib');
+				wp_enqueue_script('greenShift-aos-lib-full');
 				// init aos library
+			}
+			if(function_exists('GSPB_make_dynamic_link') && !empty($block['attrs']['dynamicEnable'])){
+				$html = GSPB_make_dynamic_link($html, $block['attrs'], $block, $block['attrs']['dynamicField'], $block['attrs']['containerLink']);
 			}
 		}
 
 		// looking for row
 		else if ($blockname === 'greenshift-blocks/row') {
+			if(!empty( $block['attrs']['overlay']['inview'])){
+				wp_enqueue_script( 'greenshift-inview' );
+			}
+			if(!empty( $block['attrs']['background']['lazy'])){
+				wp_enqueue_script( 'greenshift-inview-bg' );
+			}
 			if(!empty( $block['attrs']['mobileSmartScroll']) && !empty( $block['attrs']['carouselScroll'])){
 				wp_enqueue_script('greenShift-scrollable-init');
 			}
 			if ( !empty($block['attrs']['shapeDivider']['topShape']['animate']) || !empty($block['attrs']['shapeDivider']['bottomShape']['animate'])) {
-				wp_enqueue_script('greenShift-aos-lib');
+				wp_enqueue_script('greenShift-aos-lib-full');
 				// init aos library
+			}
+		}
+
+		else if ($blockname === 'greenshift-blocks/row-column') {
+			if(!empty( $block['attrs']['overlay']['inview'])){
+				wp_enqueue_script( 'greenshift-inview' );
+			}
+			if(!empty( $block['attrs']['background']['lazy'])){
+				wp_enqueue_script( 'greenshift-inview-bg' );
 			}
 		}
 
@@ -565,8 +624,27 @@ function gspb_greenShift_block_script_assets($html, $block)
 			if(!empty( $block['attrs']['enableanimate'])){
 				wp_enqueue_script('gstextanimate');
 			}
+			if(!empty( $block['attrs']['background']['lazy'])){
+				wp_enqueue_script( 'greenshift-inview-bg' );
+			}
 			if(!empty( $block['attrs']['className'])){
 				$html = str_replace('class="gspb_heading', 'class="'.$block['attrs']['className'].' gspb_heading', $html);
+			}
+			if(function_exists('GSPB_make_dynamic_text') && !empty($block['attrs']['dynamictext']['dynamicEnable'])){
+				if(!empty($block['attrs']['enableanimate'])){
+					$html = GSPB_make_dynamic_text($html, $block['attrs'], $block, $block['attrs']['dynamictext'], $block['attrs']['textbefore']);
+				}else{
+					$html = GSPB_make_dynamic_text($html, $block['attrs'], $block, $block['attrs']['dynamictext'], $block['attrs']['headingContent']);
+				}
+			}
+		}
+
+		else if ($blockname === 'greenshift-blocks/text') {
+			if(!empty( $block['attrs']['background']['lazy'])){
+				wp_enqueue_script( 'greenshift-inview-bg' );
+			}
+			if(function_exists('GSPB_make_dynamic_text') && !empty($block['attrs']['dynamictext']['dynamicEnable'])){
+				$html = GSPB_make_dynamic_text($html, $block['attrs'], $block, $block['attrs']['dynamictext'], $block['attrs']['textContent']);
 			}
 		}
 
@@ -589,6 +667,9 @@ function gspb_greenShift_block_script_assets($html, $block)
 				wp_enqueue_style( 'gslightbox');
 				wp_enqueue_script( 'gslightbox' );
 			}
+			if(function_exists('GSPB_make_dynamic_video') && !empty($block['attrs']['dynamicEnable'])){
+				$html = GSPB_make_dynamic_video($html, $block['attrs'], $block, $block['attrs']['dynamicField'], $block['attrs']['src']);
+			}
 		}
 		// looking for toggler
 		else if ($blockname === 'greenshift-blocks/svgshape' && !empty( $block['attrs']['customshape'])) {
@@ -597,11 +678,32 @@ function gspb_greenShift_block_script_assets($html, $block)
 			$html = str_replace('stopcolor', 'stop-color', $html);
 		}
 
+		// aos script
+		if (!empty($block['attrs']['animation']['type']) && empty($block['attrs']['animation']['usegsap'])) {
+			wp_enqueue_script('greenShift-aos-lib');
+			// init aos library
+		}
+
+		if(!empty($block['attrs']['dynamicGClass'])){
+			$gs_settings = get_option('gspb_global_settings');
+			$class = $block['attrs']['dynamicGClass'];
+			if(!empty($gs_settings['reusablestyles'][$class]['style'])){
+				$reusable_style = '<style scoped>' . wp_kses_post($gs_settings['reusablestyles'][$class]['style']) . '</style>';
+				$reusable_style = gspb_get_final_css($reusable_style);
+				$reusable_style = gspb_quick_minify_css($reusable_style);
+				$reusable_style = htmlspecialchars_decode($reusable_style);
+				$html = $html.$reusable_style;
+			}
+		}
+
 		if(!empty( $block['attrs']['inlineCssStyles'])){
 			$dynamic_style = '<style scoped>' . wp_kses_post($block['attrs']['inlineCssStyles']) . '</style>';
 			$dynamic_style = gspb_get_final_css($dynamic_style);
 			$dynamic_style = gspb_quick_minify_css($dynamic_style);
 			$dynamic_style = htmlspecialchars_decode($dynamic_style);
+			if(function_exists('GSPB_make_dynamic_image') && !empty($block['attrs']['background']['dynamicEnable'])){
+				$dynamic_style = GSPB_make_dynamic_image($dynamic_style, $block['attrs'], $block, $block['attrs']['background'], $block['attrs']['background']['image']);
+			}
 			$html = $html.$dynamic_style;
 		}
 	}
@@ -632,6 +734,7 @@ function gspb_greenShift_editor_assets()
 		$library_asset_file['version'],
 		false
 	);
+	wp_set_script_translations( 'greenShift-library-script', 'greenshift-animation-and-page-builder-blocks' );
 
 	// Custom Editor JavaScript
 	wp_register_script(
@@ -641,23 +744,30 @@ function gspb_greenShift_editor_assets()
 		$index_asset_file['version'],
 		true
 	);
+	wp_set_script_translations( 'greenShift-editor-js', 'greenshift-animation-and-page-builder-blocks' );
 
 	$gspb_css_save = get_option('gspb_css_save');
 	$sitesettings = get_option('gspb_global_settings');
 	$row = (!empty($sitesettings['breakpoints']['row'])) ? (int)$sitesettings['breakpoints']['row'] : 1200;
 	$localfont = (!empty($sitesettings['localfont'])) ? $sitesettings['localfont'] : array();
-	$addonlink = admin_url('admin.php?page=greenshift_dashboard-addons');
-	$updatelink = 'https://greenshiftwp.com/pricing/';
+	$addonlink = admin_url('admin.php?page=greenshift_upgrade');
+	$updatelink = $addonlink;
+	$theme = wp_get_theme();
+	if($theme->parent_theme) {
+		$template_dir =  basename(get_template_directory());
+		$theme = wp_get_theme($template_dir);
+	}
+	$themename = $theme->get( 'TextDomain' );
 	//$updatelink = str_replace('greenshift_dashboard-addons', 'greenshift_dashboard-pricing', $addonlink);
 	wp_localize_script(
-		'greenShift-editor-js',
+		'greenShift-library-script',
 		'greenShift_params',
 		array(
 			'ajaxUrl' => admin_url('admin-ajax.php'),
 			'pluginURL' => GREENSHIFT_DIR_URL,
-			'isQueryPRO' => defined('GREENSHIFTQUERY_DIR_URL'),
 			'rowDefault' => $row,
-			'isRehub' => defined('REHUB_ADMIN_DIR'),
+			'theme' => $themename,
+			'isRehub' => ($themename == 'rehub-theme'),
 			'isSaveInline' => (!empty($gspb_css_save) && $gspb_css_save == 'inlineblock') ? '1' : '',
 			'addonLink' => $addonlink,
 			'updateLink' => $updatelink,
@@ -666,13 +776,15 @@ function gspb_greenShift_editor_assets()
 	);
 
 	// Blocks Assets Scripts
-	wp_enqueue_script(
+	wp_register_script(
 		'greenShift-block-js', // Handle.
 		GREENSHIFT_DIR_URL . 'build/index.js',
 		array('greenShift-editor-js', 'greenShift-library-script', 'wp-block-editor', 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'wp-data'),
 		$index_asset_file['version'],
 		true
 	);
+	wp_set_script_translations( 'greenShift-block-js', 'greenshift-animation-and-page-builder-blocks' );
+	wp_enqueue_script('greenShift-block-js');
 	
 
 	// Styles.
@@ -757,7 +869,7 @@ function gspb_enqueue_page_style()
 	$gspb_css_filename = 'style-' . $gspb_post_id . '.css';
 
 	if (!$wp_filesystem->put_contents($dir . $gspb_css_filename, $final_css)) {
-		throw new Exception(__('CSS not saved due the permission!!!', 'greenshift'));
+		throw new Exception(__('CSS not saved due the permission!!!', 'greenshift-animation-and-page-builder-blocks'));
 	}
 
 	wp_register_style('gspb_single_style', $upload_dir['baseurl'] . '/GreenShift/style-' . $gspb_post_id . '.css?v=' . time(), array(), '1.0.0', 'all');
@@ -793,6 +905,9 @@ function gspb_global_variables() {
 	if(!empty($options['globalcss'])){
 		$gs_global_css = $options['globalcss'];
 		$gs_global_css = str_replace('!important', '', $gs_global_css);
+	}
+	if(!empty($options['localfontcss'])){
+		$gs_global_css = $gs_global_css.$options['localfontcss'];
 	}
 	
 	if($gs_global_css){
@@ -892,26 +1007,33 @@ function gspb_update_global_settings($request)
 		}
 
 		$gs_global_css = (!empty($settings['globalcss'])) ? $settings['globalcss'] : '';
-		$upload_dir = wp_upload_dir();
+		$gs_global_css = str_replace('!important', '', $gs_global_css);
 
+		$gs_reusable_css = (!empty($settings['reusablestyles'])) ? $settings['reusablestyles'] : '';
+		if(!empty($gs_reusable_css)){
+			foreach($gs_reusable_css as $key=>$value){
+				$gs_global_css .= $value['style'];
+			}
+		}
+
+		if(!empty($settings['localfontcss'])){
+			$gs_global_css = $gs_global_css.$settings['localfontcss'];
+		}
+
+		$upload_dir = wp_upload_dir();
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		global $wp_filesystem;
 		$dir = trailingslashit($upload_dir['basedir']) . 'GreenShift/'; // Set storage directory path
-	
 		WP_Filesystem(); // WP file system
-	
 		if (!$wp_filesystem->is_dir($dir)) {
 			$wp_filesystem->mkdir($dir);
 		}
 	
 		$gspb_css_filename = 'globalstyle.css';
-
-		$gs_global_css = str_replace('!important', '', $gs_global_css);
 	
 		if (!$wp_filesystem->put_contents($dir . $gspb_css_filename, $gs_global_css)) {
-			throw new Exception(__('CSS not saved due the permission!!!', 'greenshift'));
+			throw new Exception(__('CSS not saved due the permission!!!', 'greenshift-animation-and-page-builder-blocks'));
 		}
-		
 		
 		return json_encode(array(
 			'success' => true,
@@ -932,7 +1054,6 @@ function gspb_update_css_settings($request)
 		$css = sanitize_text_field($request->get_param('css'));
 		$id = sanitize_text_field($request->get_param('id'));
 		if($css){
-
 			update_post_meta($id, '_gspb_post_css', $css);
 		}
 		
@@ -1052,429 +1173,4 @@ function gspb_get_saved_block() {
 		'admin' => admin_url()
 	);
 	wp_send_json_success( $response );
-}
-
-if(!function_exists('gspb_AnimationRenderProps')){
-	function gspb_AnimationRenderProps ($animation=''){
-		if($animation){
-			$animeprops = array();
-
-			if (!empty($animation['usegsap'])) {
-
-				$animeprops['data-gsapinit'] = 1;
-				$animeprops['data-from'] = "yes";
-
-				if (!empty($animation['delay'])) {
-					$animeprops['data-delay'] = floatval($animation['delay']) / 1000;
-				}
-				if (!empty($animation['duration'])) {
-					$animeprops['data-duration'] = floatval($animation['duration']) / 1000;
-				}
-				if (!empty($animation['ease'])) {
-					$animeprops['data-ease'] = $animation['ease'];
-				}
-				if (!empty($animation['x'])) {
-					$animeprops['data-x'] = $animation['x'];
-				}
-				if (!empty($animation['y'])) {
-					$animeprops['data-y'] = $animation['y'];
-				}
-				if (!empty($animation['z'])) {
-					$animeprops['data-z'] = $animation['z'];
-				}
-				if (!empty($animation['rx'])) {
-					$animeprops['data-rx'] = $animation['rx'];
-				}
-				if (!empty($animation['ry'])) {
-					$animeprops['data-ry'] = $animation['ry'];
-				}
-				if (!empty($animation['r'])) {
-					$animeprops['data-r'] = $animation['r'];
-				}
-				if (!empty($animation['s'])) {
-					$animeprops['data-s'] = $animation['s'];
-				}
-				if (!empty($animation['o'])) {
-					$animeprops['data-o'] = $animation['o'];
-				}
-				if (!empty($animation['origin'])) {
-					$animeprops['data-origin'] = $animation['origin'];
-				}
-				if (!empty($animation['text'])) {
-					if (!empty($animation['texttype'])) {
-						$animeprops['data-text'] = $animation['texttype'];
-					} else {
-						$animeprops['data-text'] = 'words';
-					}
-					if (!empty($animation['textdelay'])) {
-						$animeprops['data-stdelay'] = $animation['textdelay'];
-					}
-					if (!empty($animation['textrandom'])) {
-						$animeprops['data-strandom'] = "yes";
-					}
-				} else if (!empty($animation['stagger'])) {
-					if (!empty($animation['staggerdelay'])) {
-						$animeprops['data-stdelay'] = $animation['staggerdelay'];
-					}
-					if (!empty($animation['staggerrandom'])) {
-						$animeprops['data-strandom'] = "yes";
-					}
-					$animeprops['data-stchild'] = "yes";
-				}
-				if (!empty($animation['o']) && ($animation['o'] == 1 || $animation['o'] == 0)) {
-					$animeprops['data-prehidden'] = 1;
-				}
-				if (!empty($animation['onload'])) {
-					$animeprops['data-triggertype'] = "load";
-				}
-				
-			}
-			else if (!empty($animation['type'])) {
-
-				$animeprops['data-aos'] = $animation['type'];
-
-				if (!empty($animation['delay'])) {
-					$animeprops['data-aos-delay'] = $animation['delay'];
-				}
-				if (!empty($animation['easing'])) {
-					$animeprops['data-aos-easing'] = $animation['easing'];
-				}
-				if (!empty($animation['duration'])) {
-					$animeprops['data-aos-duration'] = $animation['duration'];
-				}
-				if (!empty($animation['anchor'])) {
-					$anchor = str_replace(' ', '-', $animation['anchor']);
-					$animeprops['data-aos-anchor-placement'] = $anchor;
-				}
-				if (!empty($animation['onlyonce'])) {
-					$animeprops['data-aos-once'] = true;
-				}
-			}
-			else {
-				return false;
-			}
-			$out = '';
-			foreach($animeprops as $key=>$value){
-				$out .=' '.$key.'="'.$value.'"';
-			}
-			return $out;
-
-
-		}
-		return false;
-	}
-}
-
-//////////////////////////////////////////////////////////////////
-// Get custom value shortcode
-//////////////////////////////////////////////////////////////////
-if( !function_exists('gspb_query_get_custom_value') ) {
-	function gspb_query_get_custom_value($atts, $content = null){
-		extract(shortcode_atts(array(
-			'post_id' => NULL,
-			'field' => NULL,
-			'subfield' => NULL,
-			'subsubfield' => NULL,
-			'attrfield' => '',
-			'type' => 'custom',
-			'show_empty' => '',
-			'prefix' => '',
-			'postfix' => '',
-			'icon' => '',
-			'list' => '',
-			'showtoggle' => '',
-			'imageMapper' => '',
-			'post_type' => '',
-			'repeaternumber'=> '',
-			'acfrepeattype'=>''
-	
-		), $atts));
-		  if(!$field && !$attrfield) return;
-		$field = trim($field);  
-		$attrfield = trim($attrfield);	
-		$result = $out = '';
-		$field = esc_attr($field);
-		$attrfield = esc_attr($attrfield);
-
-		if(!$post_id){
-			global $post;
-			if(is_object($post)){
-				$post_id = $post->ID;
-			}
-		}
-
-		$post_id = (int)$post_id;
-
-		if ($type=='custom'){
-			$result = get_post_meta($post_id, $field, true);
-		}else if(($type=='attribute' || $type=='local') && function_exists('wc_get_product')){
-			if($post_id){
-				$post_id = trim($post_id);
-				$post_id = (int)$post_id;
-				$product = wc_get_product( $post_id );
-				if(!$product) return;
-			}else{
-				global $product;
-				if ( ! is_object( $product)) $product = wc_get_product( get_the_ID() );
-				if(!$product) return;
-			}
-			if($attrfield) $field = $attrfield;
-			if(!empty($product)){
-				$woo_attr = $product->get_attribute(esc_html($field));
-				if(!is_wp_error($woo_attr)){
-					$result = $woo_attr;
-				}
-			}    	
-		}
-		else if($type=='checkattribute' && function_exists('wc_get_product')){
-			if($post_id){
-				$post_id = trim($post_id);
-				$post_id = (int)$post_id;
-				$product = wc_get_product( $post_id );
-				if(!$product) return;
-			}else{
-				global $product;
-				if ( ! is_object( $product)) $product = wc_get_product( get_the_ID() );
-				if(!$product) return;
-			}
-			if($attrfield) $field = $attrfield;
-			if(!empty($product)){
-				$woo_attr = $product->get_attribute(esc_html($field));
-				if(!is_wp_error($woo_attr)){
-					$result = $woo_attr;
-				}
-			} 
-			if (!empty($result)){
-				$content = do_shortcode($content);
-				$content = preg_replace( '%<p>&nbsp;\s*</p>%', '', $content ); 
-				$content = preg_replace('/^(?:<br\s*\/?>\s*)+/', '', $content);
-				return $content;
-			} 
-			return false;
-		}  
-		else if($type=='vendor'){
-			$vendor_id = get_query_var( 'author' );
-			if(!empty($vendor_id)){
-				$result = get_user_meta($vendor_id, $field, true);		
-			}	
-		}  
-		else if($type=='taxonomy'){
-			$terms = get_the_terms($post_id, esc_html($field));
-			if ($terms && ! is_wp_error($terms)){
-				$term_slugs_arr = array();
-				foreach ($terms as $term) {
-					$term_slugs_arr[] = ''.$term->name.'';
-				}
-				$terms_slug_str = join(", ", $term_slugs_arr);
-				$result = $terms_slug_str;
-			}
-		}
-		else if($type=='taxonomylink'){
-			$term_list = get_the_term_list($post_id, esc_html($field), '', ', ', '' );
-			if(!is_wp_error($term_list)){
-				$result = $term_list;
-			}
-		}
-		else if($type=='author'){
-			$author_id=$post->post_author;
-			if(!empty($author_id)){
-				$result = get_user_meta($author_id, $field, true);
-			}	
-		}   
-		else if($type=='date'){
-			if($field == 'year'){
-				return date_i18n("Y");
-			}else if($field == 'month'){
-				return date_i18n("F");
-			}	
-		}     
-		else if($type=='attributelink'){
-			if($attrfield) $field = $attrfield;
-			if(function_exists('wc_get_product_terms')) {
-				$attribute_values = wc_get_product_terms( $post->ID, $field, array( 'fields' => 'all' ) );
-				$values = array();
-				foreach ( $attribute_values as $attribute_value ) {
-					$value_name = esc_html( $attribute_value->name );
-					$values[] = '<a href="' . esc_url( get_term_link( $attribute_value->term_id, $field ) ) . '" rel="tag">' . $value_name . '</a>';
-				}
-				$result = implode (',', $values); 
-			}  	
-		}
-		else if($type=='checkmeta'){
-			$result = get_post_meta($post_id, $field, true);
-			if (!empty($result)){
-				$content = do_shortcode($content);
-				$content = preg_replace( '%<p>&nbsp;\s*</p>%', '', $content ); 
-				$content = preg_replace('/^(?:<br\s*\/?>\s*)+/', '', $content);
-				return $content;
-			} 
-			return false;
-		}
-		else if($type=='acfmulti' && function_exists('get_field')){
-			$result = get_field($field, $post_id);
-			if (!empty($result)){
-				$result = implode(', ', $result);
-			} 
-		}
-		else if($type=='acfimage' && function_exists('get_field')){
-			$result = get_field($field, $post_id);
-			if (!empty($result) && is_array($result)){
-				$id = $result['id'];
-			} else{
-				$id = $result;
-			}
-			if(is_numeric($id)){
-				$result = wp_get_attachment_image($id, 'full' );
-			}else{
-				$result = '<img src='.$id.' />';
-			}
-			return $result;
-		}
-		else if($type=='acfrepeater' && function_exists('get_field')){
-			$result = get_field($field, $post_id);
-			if (!empty($result) && !empty($subfield) && is_array($result)){
-				$rownumber = $repeaternumber ? intval($repeaternumber-1) : 0;
-				$result = $result[$rownumber][$subfield];
-				if(!empty($subsubfield)){
-					$result = $result[$rownumber][$subfield][$subsubfield];
-				}
-				if (!empty($result) && $acfrepeattype=='multi'){
-					$result = implode(', ', $result);
-				} 
-				else if (!empty($result) && $acfrepeattype=='image'){
-					if (!empty($result) && is_array($result)){
-						$id = $result['id'];
-					} else{
-						$id = $result;
-					}
-					if(is_numeric($id)){
-						$result = wp_get_attachment_image($id, 'full' );
-					}else{
-						$result = '<img src='.$id.' />';
-					}
-				} 
-				else if(is_array($result)){
-					$result = $result[0];
-				}
-			} 
-			return $result;
-		}
-		else if($type=='acfrepeatertable' && function_exists('get_field')){
-			$getrepeatable = get_field($field, $post_id);
-			if (!empty($getrepeatable) && is_array($getrepeatable)){
-				$firstrow = $getrepeatable[0];
-				$titlearray = array();
-				$rowcount = 0;
-				while( have_rows($field, $post_id) ): the_row();
-					$rowcount++;
-					if($rowcount == 1){
-						foreach ($firstrow as $rowkey=>$rowvalue){
-							$current = get_sub_field_object($rowkey);
-							$titlearray[] = $current['label'];
-						}
-					}
-				endwhile;
-				$result = '<table>';
-					$result .= '<tr>';
-					foreach($titlearray as $title){
-						$result .= '<th>'.$title.'</th>';
-					}
-					$result .= '</tr>';
-					foreach($getrepeatable as $item=>$value){
-						$result .= '<tr>';
-						foreach($value as $field){
-							$result .= '<td>';
-								if(is_array($field)){
-									if(!empty($field['id'])){
-										$result .= wp_get_attachment_image($field['id'], 'full' );
-									}else{
-										$result .= implode(', ', $field);
-									}
-								}else{
-									$result .= $field;
-								}
-							$result .= '</td>';
-						}
-						$result .= '</tr>';
-					}
-				$result .= '</table>';
-			} 
-			return $result;
-		}
-		else{
-			$result = get_post_meta($post_id, $field, true);
-		}
-		if($type !='acfmulti' && $type !='acfimage' && $type != 'acfrepeater' && $type != 'acfrepeatertable'){
-			if(!empty($subfield) && !empty($subsubfield) && is_array($result)){
-				$result = $result[$subfield][$subsubfield];
-			}
-			else if(!empty($subfield) && is_array($result)){
-				$result = $result[$subfield];
-			} 
-			else if( is_array($result)){
-				$result = $result[0];
-			} 
-		}
-		if($result){  	
-			if ($icon){
-				$out .= '<i class="gspb_meta_prefix_icon '.esc_attr($icon).'"></i> ';
-			}     	
-			if ($prefix){
-				$out .= '<span class="gspb_meta_prefix">'.esc_attr($prefix).'</span> ';
-			}  
-			if($showtoggle){
-				$out .= '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="30" height="30" fill="green"><path d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"/></svg>';
-			}else{
-				$out .= '<span class="gspb_meta_value">';
-				$key = '';
-				if(!empty($imageMapper)){
-					$key = array_search($result, $imageMapper);
-					if($key){
-						$out .= wp_get_attachment_image( (int)$key, 'full');
-					}
-				}
-				if(!$key){
-					$out .= $result;
-				}
-				$out .='</span>';
-			}
-			
-			if ($postfix){
-				$out .= '<span class="gspb_meta_postfix">'.esc_attr($postfix).'</span> ';
-			} 	    	
-		} 
-		else{
-			if($show_empty){   		
-				if ($icon){
-					$out .= '<i class="gspb_meta_prefix_icon '.esc_attr($icon).'"></i> ';
-				}     		
-				if ($prefix){
-					$out .= '<span class="gspb_meta_prefix">'.esc_attr($prefix).'</span> ';
-				}
-				if($showtoggle){
-					$out .= '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 512 512" fill="red"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm101.8-262.2L295.6 256l62.2 62.2c4.7 4.7 4.7 12.3 0 17l-22.6 22.6c-4.7 4.7-12.3 4.7-17 0L256 295.6l-62.2 62.2c-4.7 4.7-12.3 4.7-17 0l-22.6-22.6c-4.7-4.7-4.7-12.3 0-17l62.2-62.2-62.2-62.2c-4.7-4.7-4.7-12.3 0-17l22.6-22.6c4.7-4.7 12.3-4.7 17 0l62.2 62.2 62.2-62.2c4.7-4.7 12.3-4.7 17 0l22.6 22.6c4.7 4.7 4.7 12.3 0 17z"/></svg>';
-				}else{
-					$out .= '-';
-				}	    	    	   		
-			}
-		}   
-		return $out; 
-	
-	}
-}
-
-//////////////////////////////////////////////////////////////////
-// Smooth Mouse
-//////////////////////////////////////////////////////////////////
-
-add_action('wp_footer', 'greenshift_additional__footer_elements');
-function greenshift_additional__footer_elements (){
-	if(defined('GREENSHIFTGSAP_DIR_URL')){
-		$sitesettings = get_option('gspb_global_settings');
-		if (!empty($sitesettings['sitesettings']['mousefollow'])) {
-			$color = !empty($sitesettings['sitesettings']['mousecolor']) ? $sitesettings['sitesettings']['mousecolor'] : '#2184f9';
-			echo '<div class="gsmouseball"></div><div class="gsmouseballsmall"></div><style scoped>.gsmouseball{width:33px;height:33px;position:fixed;top:0;left:0;z-index:99999;border:1px solid '.esc_attr($color).';border-radius:50%;pointer-events:none;opacity:0}.gsmouseballsmall{width:4px;height:4px;position:fixed;top:0;left:0;background:'.esc_attr($color).';border-radius:50%;pointer-events:none;opacity:0; z-index:99999}</style>';
-			wp_enqueue_script('gsap-mousefollow-init');
-		}
-	}
 }

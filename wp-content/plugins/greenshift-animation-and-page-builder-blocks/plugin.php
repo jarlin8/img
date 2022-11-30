@@ -5,7 +5,8 @@
  * Author: Wpsoul
  * Author URI: https://greenshiftwp.com
  * Plugin URI: https://greenshiftwp.com
- * Version: 3.9.1
+ * Version: 4.8.1
+ * Text Domain: greenshift-animation-and-page-builder-blocks
  * License: GPL2+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -205,50 +206,18 @@ add_filter(
 	}
 );
 
-if ( ! function_exists( 'gspb_freemius' ) ) {
-    // Create a helper function for easy SDK access.
-    function gspb_freemius() {
-        global $gspb_freemius;
-
-        if ( ! isset( $gspb_freemius ) ) {
-            // Include Freemius SDK.
-            require_once dirname(__FILE__) . '/fs/start.php';
-
-            $gspb_freemius = fs_dynamic_init( array(
-                'id'                  => '9740',
-                'slug'                => 'greenshift-animation-and-page-builder-blocks',
-                'type'                => 'plugin',
-                'public_key'          => 'pk_672fcb7f9a407e0858ba7792d43cb',
-                'is_premium'          => false,
-                'has_addons'          => true,
-                'has_paid_plans'      => false,
-                'menu'                => array(
-                    'slug'           => 'greenshift_dashboard',
-                    'first-path'     => 'admin.php?page=greenshift_dashboard',
-                    'support'        => false,
-                ),
-				'bundle_id' => '10154',
-				'bundle_public_key' => 'pk_251f9b54e04d103409463b9a17065',
-				'bundle_license_auto_activation' => true
-            ) );
-        }
-
-        return $gspb_freemius;
-    }
-
-    // Init Freemius.
-    gspb_freemius();
-    // Signal that SDK was initiated.
-    do_action( 'gspb_freemius_loaded' );
-}
-
 require_once GREENSHIFT_DIR_PATH . 'init.php';
+require_once GREENSHIFT_DIR_PATH . 'helper.php';
 require_once GREENSHIFT_DIR_PATH . 'settings.php';
 require_once GREENSHIFT_DIR_PATH . 'patterns.php';
 
-add_action( 'plugins_loaded', 'gspb_GreenShift_Settings_init' );
-
-function gspb_GreenShift_Settings_init() {
+require_once GREENSHIFT_DIR_PATH . '/edd/edd_start.php';
+add_action( 'plugins_loaded', 'gspb_GreenShift_plugin_init' );
+function gspb_GreenShift_plugin_init() {
+	load_plugin_textdomain( 'greenshift-animation-and-page-builder-blocks', false, GREENSHIFT_DIR_PATH. 'lang' ); //translation files
+  	if ( class_exists( 'EddLicensePage' ) ) {
+    	new EddLicensePage();
+  	}
 	if ( class_exists( 'GSPB_GreenShift_Settings' ) ) {
 		new GSPB_GreenShift_Settings();
 	}
@@ -260,3 +229,32 @@ function gspb_activation_redirect( $plugin ) {
     }
 }
 add_action( 'activated_plugin', 'gspb_activation_redirect' );
+
+register_deactivation_hook( __FILE__, 'greenshift_deactivation_hook_function' ); 
+function greenshift_deactivation_hook_function() {
+    $timestamp = wp_next_scheduled( 'greenshift_check_cron_hook' );
+    wp_unschedule_event( $timestamp, 'greenshift_check_cron_hook' );
+}
+
+function greenshift_admin_error_notice() {
+	//$page = (isset($_GET['page'])) ? $_GET['page'] : '';
+	global $current_user;
+    $user_id = $current_user->ID;	
+    if ( ! get_user_meta($user_id, 'ignore_notices_greenshift149') ) {
+		//if ($page=='greenshift' || $page=='greenshift-support' || $page=='greenshift-plugins' || $page=='greenshift-demos' || $page=='vpt_option' ) {
+			$class = "error";
+			$message = 'This is major update of plugin with removal of Freemius. Please, read how to migrate licenses in <a href="https://www.facebook.com/groups/greenshiftwp/posts/842042560568351" target="_blank">Facebook group news</a>' ;
+	    	echo"<div class=\"$class\" style=\"display:block\"> <p>$message <a href=\"?greenshift_nag_ignore=0\">Hide Notice</a></p></div>";
+	    //} 
+	}
+}
+add_action( 'admin_notices', 'greenshift_admin_error_notice' );	
+
+add_action('admin_init', 'greenshift_nag_ignore');
+function greenshift_nag_ignore() {
+	global $current_user;
+    $user_id = $current_user->ID;
+    if ( isset($_GET['greenshift_nag_ignore']) && '0' == $_GET['greenshift_nag_ignore'] ) {
+        add_user_meta($user_id, 'ignore_notices_greenshift149', 'true', true);           
+	}
+}
