@@ -54,7 +54,7 @@ class Keywords {
 	}
 
 	/**
-	 * Get accessible post type lists for auto add focus keywords.
+	 * Get accessible post type lists to auto add the focus keywords.
 	 */
 	public function get_post_type_list() {
 		if ( 'rank-math-analytics' !== Param::get( 'page' ) ) {
@@ -72,7 +72,7 @@ class Keywords {
 	}
 
 	/**
-	 * Get keyword position graph data.
+	 * Get keywords position data to show it in the graph.
 	 *
 	 * @param  array $rows Rows.
 	 * @return array
@@ -85,7 +85,7 @@ class Keywords {
 	}
 
 	/**
-	 * Get winning and losing data.
+	 * Get winning and losing keywords data.
 	 *
 	 * @param  array $data Data.
 	 * @return array
@@ -104,27 +104,27 @@ class Keywords {
 	}
 
 	/**
-	 * Extract addable track keywords.
+	 * Extract keywords that can be added by removing the empty and the duplicate keywords.
 	 *
 	 * @param string $keywords Comma Separated Keyword List.
 	 *
-	 * @return array Track keywords which can be added.
+	 * @return array Keywords that can be added.
 	 */
 	public function extract_addable_track_keyword( $keywords ) {
 		global $wpdb;
 
 		// Split keywords.
-		$keywords_to_add   = \array_map( 'trim', \explode( ',', $keywords ) );
-		$keywords_to_check = \array_map( 'mb_strtolower', \explode( ',', $keywords ) );
+		$keywords_to_add   = array_filter( array_map( 'trim', explode( ',', $keywords ) ) );
+		$keywords_to_check = array_filter( array_map( 'mb_strtolower', explode( ',', $keywords ) ) );
 
-		// Check if keywords are already exists.
-		$keywords_joined = "'" . join( "', '", \array_map( 'esc_sql', $keywords_to_add ) ) . "'";
+		// Check if keywords already exists.
+		$keywords_joined = "'" . join( "', '", array_map( 'esc_sql', $keywords_to_add ) ) . "'";
 		$query           = "SELECT keyword FROM {$wpdb->prefix}rank_math_analytics_keyword_manager as km WHERE km.keyword IN ( $keywords_joined )";
 		$data            = $wpdb->get_results( $query ); // phpcs:ignore
 
-		// Only filter out non-existing keywords.
+		// Filter out non-existing keywords.
 		foreach ( $data as $row ) {
-			$key = \array_search( mb_strtolower( $row->keyword ), $keywords_to_check, true );
+			$key = array_search( mb_strtolower( $row->keyword ), $keywords_to_check, true );
 			if ( false !== $key ) {
 				unset( $keywords_to_add[ $key ] );
 			}
@@ -134,7 +134,7 @@ class Keywords {
 	}
 
 	/**
-	 * Add track keyword.
+	 * Add keyword to Rank Tracker.
 	 *
 	 * @param array $keywords Keyword List.
 	 */
@@ -154,7 +154,7 @@ class Keywords {
 	}
 
 	/**
-	 * Remove tack keyword.
+	 * Remove a keyword from Rank Tracker.
 	 *
 	 * @param string $keyword Keyword to remove.
 	 */
@@ -166,14 +166,14 @@ class Keywords {
 	}
 
 	/**
-	 * Delete all the manually tracked keywords.
+	 * Delete all tracked keywords.
 	 */
 	public function delete_all_tracked_keywords() {
 		DB::keywords()->delete();
 		delete_transient( Stats::get()->get_cache_key( 'tracked_keywords_summary', Stats::get()->days . 'days' ) );
 	}
 	/**
-	 * Get track keywords count.
+	 * Get tracked keywords count.
 	 *
 	 * @return int Total keywords count
 	 */
@@ -204,7 +204,7 @@ class Keywords {
 	}
 
 	/**
-	 * Get keywords summary.
+	 * Get tracked keywords summary.
 	 *
 	 * @return array Keywords usage info.
 	 */
@@ -338,7 +338,7 @@ class Keywords {
 	}
 
 	/**
-	 * Sort array for track keyword by order and orderby
+	 * Sort tracked keywords by order & orderby.
 	 *
 	 * @param  array    $arr array.
 	 *
@@ -346,7 +346,7 @@ class Keywords {
 	 *
 	 * @param  Variable $arr_orderby is key for sort.
 	 *
-	 * @return $arr sorted array
+	 * @return $arr Sorted keywords.
 	 */
 	public function track_keywords_array_sort( $arr, $arr_order, $arr_orderby ) {
 
@@ -752,7 +752,7 @@ class Keywords {
 	}
 
 	/**
-	 * Save post.
+	 * Add focus keywords to Rank Tracker.
 	 *
 	 * @param  int $post_id Post ID.
 	 * @return mixed

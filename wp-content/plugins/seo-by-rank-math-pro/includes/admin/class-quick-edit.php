@@ -337,8 +337,8 @@ class Quick_Edit {
 									<input type="text" name="rank_math_canonical_url" id="rank_math_canonical_url" value="">
 								</div>
 							</label>
-						</fieldset>
-					</div>
+						</div>
+					</fieldset>
 				</div>
 				<?php
 				break;

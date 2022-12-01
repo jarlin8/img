@@ -318,10 +318,13 @@ class Rest extends WP_REST_Controller {
 		$total_keywords = Keywords::get()->get_tracked_keywords_count();
 		$new_keywords   = Keywords::get()->extract_addable_track_keyword( $keywords );
 		$keywords_count = count( $new_keywords );
-		$summary        = Keywords::get()->get_tracked_keywords_quota();
-		$remain         = $summary['available'] - $total_keywords - $keywords_count;
+		if ( $keywords_count <= 0 ) {
+			return false;
+		}
 
-		if ( $remain < 0 ) {
+		$summary = Keywords::get()->get_tracked_keywords_quota();
+		$remain  = $summary['available'] - $total_keywords;
+		if ( $remain <= 0 ) {
 			return false;
 		}
 
