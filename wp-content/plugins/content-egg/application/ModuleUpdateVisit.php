@@ -12,8 +12,8 @@ use ContentEgg\application\admin\GeneralConfig;
  * ModuleUpdateVisit class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class ModuleUpdateVisit {
 
@@ -63,6 +63,9 @@ class ModuleUpdateVisit {
     private function updateByKeyword()
     {
         global $post;
+        
+        if (empty($post))
+            return;
 
         foreach (ModuleManager::getInstance()->getAffiliateParsers(true) as $module)
         {
@@ -93,6 +96,10 @@ class ModuleUpdateVisit {
     private function updateItems()
     {
         global $post;
+        
+        if (empty($post))
+            return;
+        
         foreach (ModuleManager::getInstance()->getAffiliateParsers(true) as $module)
         {
             if (!in_array($module->config('update_mode'), array('visit', 'visit_cron')))

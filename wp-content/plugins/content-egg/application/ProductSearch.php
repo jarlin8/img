@@ -86,6 +86,7 @@ class ProductSearch extends VirtualPage {
     {
         $post_id = -1;
         $module_ids = GeneralConfig::getInstance()->option('search_modules');
+        $module_ids = apply_filters('cegg_frontend_search_module_ids', $module_ids);        
         $total = 0;
         foreach ($module_ids as $module_id)
         {
@@ -93,9 +94,11 @@ class ProductSearch extends VirtualPage {
             if (!$parser->isActive())
                 continue;
 
+            $query_params = apply_filters('cegg_frontend_search_module_query_params', array(), $module_id);
+            
             try
             {
-                $data = $parser->doRequest($this->keyword, array(), true);
+                $data = $parser->doRequest($this->keyword, $query_params, true);
             } catch (\Exception $e)
             {
                 // error

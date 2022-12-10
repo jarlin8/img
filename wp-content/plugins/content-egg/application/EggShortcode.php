@@ -17,7 +17,8 @@ use ContentEgg\application\helpers\TemplateHelper;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2021 keywordrush.com
  */
-class EggShortcode {
+class EggShortcode
+{
 
     const shortcode = 'content-egg';
 
@@ -57,11 +58,11 @@ class EggShortcode {
             'product' => '',
             'hide' => '',
             'btn_text' => '',
-            'add_query_arg' => '',   
+            'add_query_arg' => '',
             'sort' => '',
-            'order' => '',            
+            'order' => '',
         );
-        
+
         $allowed_atts = \apply_filters('cegg_module_shortcode_atts', $allowed_atts);
         $a = \shortcode_atts($allowed_atts, $atts);
 
@@ -100,11 +101,12 @@ class EggShortcode {
             $a['order'] = '';
         if ($a['sort'] == 'discount' && !$a['order'])
             $a['order'] = 'desc';
-        
+
         if ($a['template'] && $a['module'])
         {
             $a['template'] = ModuleTemplateManager::getInstance($a['module'])->prepareShortcodeTempate($a['template']);
-        } else
+        }
+        else
             $a['template'] = '';
         return $a;
     }
@@ -120,7 +122,8 @@ class EggShortcode {
         {
             global $post;
             $post_id = $post->ID;
-        } else
+        }
+        else
             $post_id = $a['post_id'];
 
         $module_id = $a['module'];
@@ -141,5 +144,4 @@ class EggShortcode {
 
         array_multisort($sort_col, $dir, $arr);
     }
-
 }

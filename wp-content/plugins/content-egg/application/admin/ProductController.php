@@ -39,7 +39,7 @@ class ProductController {
 
     public function add_admin_menu()
     {
-        \add_submenu_page(Plugin::slug, __('Products', 'content-egg') . ' &lsaquo; Content Egg', __('Products', 'content-egg'), 'manage_options', self::slug, array($this, 'actionIndex'));
+        \add_submenu_page(Plugin::slug, __('Products', 'content-egg') . ' &lsaquo; Content Egg', __('Products', 'content-egg'), 'publish_posts', self::slug, array($this, 'actionIndex'));
     }
 
     public function actionIndex()

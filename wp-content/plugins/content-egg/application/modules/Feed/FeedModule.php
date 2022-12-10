@@ -213,6 +213,8 @@ class FeedModule extends AffiliateFeedParserModule
             {
                 $options['price_max'] = (float) $query_params['price_max'];
             }
+            
+            $options['search_type'] = $this->config('search_type');
 
             $results = $this->product_model->searchByKeyword($keyword, $limit, $options);
         }
@@ -259,17 +261,16 @@ class FeedModule extends AffiliateFeedParserModule
             }
 
             $items[$key]['stock_status'] = $product['stock_status'];
-
             if (!empty($r['sale price']))
             {
-                $items[$key]['price'] = (float) $r['sale price'];
-                if (isset($r['price']) && (float) $r['price'] > $items[$key]['price'])
+                $items[$key]['price'] = (float) TextHelper::parsePriceAmount($r['sale price']);
+                if (isset($r['price']) && (float) TextHelper::parsePriceAmount($r['price']) > $items[$key]['price'])
                 {
-                    $items[$key]['priceOld'] = (float) $r['price'];
+                    $items[$key]['priceOld'] = (float) TextHelper::parsePriceAmount($r['price']);
                 }
             } else
             {
-                $items[$key]['price'] = (float) $r['price'];
+                $items[$key]['price'] = (float) TextHelper::parsePriceAmount($r['price']);
                 $items[$key]['priceOld'] = 0;
             }
 
@@ -301,17 +302,17 @@ class FeedModule extends AffiliateFeedParserModule
             $content->unique_id = $r['id'];
             $content->title = $r['title'];
             $content->url = $r['affiliate link'];
-
+            
             if (!empty($r['sale price']))
             {
-                $content->price = (float) $r['sale price'];
-                if (isset($r['price']) && (float) $r['price'] > $content->price)
+                $content->price = (float) TextHelper::parsePriceAmount($r['sale price']);
+                if (isset($r['price']) && (float) TextHelper::parsePriceAmount($r['price']) > $content->price)
                 {
-                    $content->priceOld = (float) $r['price'];
+                    $content->priceOld = (float) TextHelper::parsePriceAmount($r['price']);
                 }
             } else
             {
-                $content->price = (float) $r['price'];
+                $content->price = (float) TextHelper::parsePriceAmount($r['price']);
             }
 
             if ($content->price)

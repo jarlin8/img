@@ -38,7 +38,7 @@ if ($table->current_action() == 'run')
             <?php esc_html_e('Autoblogging', 'content-egg'); ?>
             <a class="add-new-h2" href="<?php echo esc_url_raw(get_admin_url(get_current_blog_id(), 'admin.php?page=content-egg-autoblog-edit')); ?>"><?php esc_html_e('Add autoblogging', 'content-egg'); ?></a>
         </h2>
-        <?php echo wp_kses_post($message); ?>
+        <?php echo \wp_kses_post($message); ?>
 
         <div id="poststuff">    
             <p>

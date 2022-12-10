@@ -34,14 +34,6 @@ class ProductTable extends MyListTable {
         );
     }
 
-    /*
-      function default_orderby()
-      {
-      return 'status';
-      }
-     * 
-     */
-
     function column_img($item)
     {
         echo '<a href="' . \esc_url(\get_edit_post_link($item['post_id'])) . '"><img class="attachment-thumbnail size-thumbnail wp-post-image" src="' . \esc_url($item['img']) . '" /></a>';

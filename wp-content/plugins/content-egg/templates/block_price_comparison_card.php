@@ -41,13 +41,13 @@ if (!$title)
 
                     <?php foreach ($all_items as $key => $item): ?>    
                         <a<?php TemplateHelper::printRel(); ?> class="list-group-item" target="_blank" href="<?php echo esc_url_raw($item['url']); ?>">
-						<img src="https://fastly.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr( $item['domain']); ?>.svg" height="18" width="18">
+						<img src="https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr( $item['domain']); ?>.svg" height="18" width="18">
                             <?php echo esc_attr( $item['domain']); ?>
                             <?php if ($item['price']): ?>
                                 <span<?php if ($item['stock_status'] != -1) echo ' style="background-color: ' . esc_attr(TemplateHelper::getPriceColor()) . '"'; ?> class="cegg-price-badge"><?php echo esc_html(TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode'])); ?></span>
                             <?php endif; ?>
                         </a>
-                    <?php endforeach; ?>            
+                    <?php endforeach; ?>        
 
                 </div>   
 

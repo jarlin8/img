@@ -163,6 +163,7 @@ if( !function_exists('gspb_query_get_custom_value') ) {
 		$post_id = (int)$post_id;
 
 		if ($type=='custom'){
+			if(!$field) return;
 			$result = get_post_meta($post_id, $field, true);
 		}else if(($type=='attribute' || $type=='local') && function_exists('wc_get_product')){
 			if($post_id){
@@ -260,6 +261,9 @@ if( !function_exists('gspb_query_get_custom_value') ) {
 		}   
 		else if($type=='post_date'){
 			$result = get_the_date('', $post_id);
+		}		
+		else if($type=='comment_count'){
+			$result = get_post_field('comment_count', $post_id);
 		}
 		else if($type=='post_modified'){
 			$result = get_the_modified_date('', $post_id);
@@ -422,6 +426,14 @@ if( !function_exists('gspb_query_get_custom_value') ) {
 				if(!$key){
 					if($postprocessor == 'textformat'){
 						$out .= wpautop(wptexturize($result));
+					}else if($postprocessor == 'ymd'){
+						$date = DateTime::createFromFormat('Ymd', $result);
+						$out .= $date ? wp_date( get_option( 'date_format' ), $date->format('U') ) : $result;
+					}else if($postprocessor == 'ytmd'){
+						$date = DateTime::createFromFormat('Y-m-d', $result);
+						$out .= $date ? wp_date( get_option( 'date_format' ), $date->format('U') ) : $result;
+					}else if($postprocessor == 'mailto'){
+						$out .= '<a href="mailto:'.esc_url($result).'">'.$result.'</a>';
 					}else{
 						$out .= $result;
 					}

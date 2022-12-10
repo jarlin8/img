@@ -22,7 +22,8 @@ use ContentEgg\application\Translator;
  * @copyright Copyright &copy; 2022 keywordrush.com
  *
  */
-class TemplateHelper {
+class TemplateHelper
+{
 
     const MERHANT_LOGO_DIR = 'ce-logos';
     const IMG_SMALL = 'small';
@@ -783,7 +784,7 @@ class TemplateHelper {
         {
             $order = 'asc';
         }
-
+        
         if (!in_array($field, array('price', 'discount')))
         {
             $field = 'price';
@@ -876,7 +877,8 @@ class TemplateHelper {
         }
 
         // sort by price and priority
-        usort($data, function ($a, $b) use ($modules_priority) {
+        usort($data, function ($a, $b) use ($modules_priority)
+        {
 
             if (!$a['price'] && !$b['price'])
             {
@@ -1178,7 +1180,8 @@ class TemplateHelper {
         $res = array();
         foreach ($data as $plugin_id => $d)
         {
-            $r = array_filter($d, function ($data) use ($group) {
+            $r = array_filter($d, function ($data) use ($group)
+            {
                 return isset($data) && $data['group'] == $group;
             });
             if ($r)
@@ -1428,11 +1431,13 @@ class TemplateHelper {
 
         $params['src'] = self::getOptimizedImage($item, $max_width, $max_height);
 
-        if (isset($item['title']))
+        if (!empty($item['title']))
         {
             $params['alt'] = $item['title'];
+        } elseif (!empty($item['_alt']))
+        {
+            $params['alt'] = $item['_alt'];
         }
-
         if ($sizes = self::getImageSizesRatio($item, $max_width, $max_height))
         {
             $params = array_merge($params, $sizes);

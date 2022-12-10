@@ -11,7 +11,7 @@ use ContentEgg\application\models\AutoblogModel;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class AutoblogTable extends MyListTable {
 
@@ -35,27 +35,22 @@ class AutoblogTable extends MyListTable {
         return $columns;
     }
 
-    /*
-      function default_orderby()
-      {
-      return 'status';
-      }
-     * 
-     */
-
     function column_name($item)
     {
         if (!trim($item['name']))
             $item['name'] = __('(no title)', 'content-egg');
 
         $edit_url = '?page=content-egg-autoblog-edit&id=%d';
-        $dublicate_url = '?page=content-egg-autoblog-edit&dublicate_id=%d';
+        $duplicate_url = '?page=content-egg-autoblog-edit&duplicate_id=%d&_wpnonce=%s';
+        $duplicate_nonce = \wp_create_nonce('cegg_autoblog_duplicate');
+        $delete_nonce = \wp_create_nonce('bulk-content-egg-all-tables');
+        $run_nonce = \wp_create_nonce('cegg_autoblog_run');
 
         $actions = array(
             'edit' => sprintf('<a href="' . $edit_url . '">%s</a>', $item['id'], __('Edit', 'content-egg')),
-            'run' => sprintf('<a class="run_avtoblogging" href="?page=content-egg-autoblog&action=run&id=%d">%s</a>', $item['id'], __('Run now', 'content-egg')),
-            'dublicate' => sprintf('<a href="' . $dublicate_url . '">%s</a>', $item['id'], __('Duplicate ', 'content-egg')),
-            'delete' => sprintf('<a class="content-egg-delete" href="?page=content-egg-autoblog&action=delete&id=%d">%s</a>', $item['id'], __('Delete', 'content-egg')),
+            'run' => sprintf('<a class="run_avtoblogging" href="?page=content-egg-autoblog&action=run&id=%d&_wpnonce=%s">%s</a>', $item['id'], $run_nonce, __('Run now', 'content-egg')),
+            'duplicate' => sprintf('<a href="' . $duplicate_url . '">%s</a>', $item['id'], $duplicate_nonce, __('Duplicate ', 'content-egg')),
+            'delete' => sprintf('<a class="content-egg-delete" href="?page=content-egg-autoblog&action=delete&id=%d&_wpnonce=%s">%s</a>', $item['id'], $delete_nonce, __('Delete', 'content-egg')),
         );
         $row_text = sprintf('<strong><a title="' . __('Edit', 'content-egg') . '" class="row-title" href="' . $edit_url . '">' . esc_html($item['name']) . '</a></strong>', $item['id']);
         return sprintf('%s %s', $row_text, $this->row_actions($actions));

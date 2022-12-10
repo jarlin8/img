@@ -69,6 +69,7 @@ class ImpactradiusApi extends RestClient {
     {
         $query['IrVersion'] = self::_API_VERSION; // force API version
         $path = '/' . $this->AccountSid . $path;
+        
         $this->setCustomHeaders(array(
             'Authorization' => 'Basic ' . base64_encode($this->AccountSid . ':' . $this->AuthToken),
             'Accept' => 'application/json'

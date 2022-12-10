@@ -18,7 +18,7 @@ use ContentEgg\application\libs\amazon\AmazonLocales;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class AmazonModule extends AffiliateParserModule {
 
@@ -447,6 +447,7 @@ class AmazonModule extends AffiliateParserModule {
         {
             $content->category = $r['ItemInfo']['Classifications']['Binding']['DisplayValue'];
         }
+
         if (isset($r['ItemInfo']['ExternalIds']['EANs']))
         {
             $content->ean = $r['ItemInfo']['ExternalIds']['EANs']['DisplayValues'][0];

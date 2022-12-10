@@ -560,7 +560,8 @@ function gspb_greenShift_block_script_assets($html, $block)
 				// init aos library
 			}
 			if(function_exists('GSPB_make_dynamic_link') && !empty($block['attrs']['dynamicEnable'])){
-				$html = GSPB_make_dynamic_link($html, $block['attrs'], $block, $block['attrs']['dynamicField'], $block['attrs']['containerLink']);
+				$field = !empty($block['attrs']['dynamicField']) ? $block['attrs']['dynamicField'] : '';
+				$html = GSPB_make_dynamic_link($html, $block['attrs'], $block, $field, $block['attrs']['containerLink']);
 			}
 		}
 
@@ -680,8 +681,12 @@ function gspb_greenShift_block_script_assets($html, $block)
 
 		// aos script
 		if (!empty($block['attrs']['animation']['type']) && empty($block['attrs']['animation']['usegsap'])) {
-			wp_enqueue_script('greenShift-aos-lib');
-			// init aos library
+			$animationtype = $block['attrs']['animation']['type'];
+			if($animationtype == 'slide-up' || $animationtype == 'slide-down' || $animationtype == 'slide-right' || $animationtype == 'slide-left'){
+				wp_enqueue_script('greenShift-aos-lib-full');
+			}else{
+				wp_enqueue_script('greenShift-aos-lib');
+			}
 		}
 
 		if(!empty($block['attrs']['dynamicGClass'])){
@@ -765,13 +770,13 @@ function gspb_greenShift_editor_assets()
 		array(
 			'ajaxUrl' => admin_url('admin-ajax.php'),
 			'pluginURL' => GREENSHIFT_DIR_URL,
-			'rowDefault' => $row,
+			'rowDefault' => apply_filters('gspb_default_row_width_px', $row),
 			'theme' => $themename,
 			'isRehub' => ($themename == 'rehub-theme'),
 			'isSaveInline' => (!empty($gspb_css_save) && $gspb_css_save == 'inlineblock') ? '1' : '',
 			'addonLink' => $addonlink,
 			'updateLink' => $updatelink,
-			'localfont' => $localfont
+			'localfont' => apply_filters('gspb_local_font_array', $localfont)
 		)
 	);
 
@@ -938,7 +943,7 @@ function gspb_register_route()
 				'methods'             => 'GET',
 				'callback'            => 'gspb_get_global_settings',
 				'permission_callback' => function () {
-					return current_user_can('edit_plugins');
+					return current_user_can('manage_options');
 				},
 				'args'                => array(),
 			),
@@ -946,7 +951,7 @@ function gspb_register_route()
 				'methods'             => 'POST',
 				'callback'            => 'gspb_update_global_settings',
 				'permission_callback' => function () {
-					return current_user_can('edit_plugins');
+					return current_user_can('manage_options');
 				},
 				'args'                => array(),
 			),

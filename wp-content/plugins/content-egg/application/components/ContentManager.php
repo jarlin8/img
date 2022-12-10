@@ -20,7 +20,8 @@ use ContentEgg\application\helpers\TextHelper;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2021 keywordrush.com
  */
-class ContentManager {
+class ContentManager
+{
 
     const META_PREFIX_DATA = '_cegg_data_';
     const META_PREFIX_LAST_ITEMS_UPDATE = '_cegg_last_update_';
@@ -184,7 +185,7 @@ class ContentManager {
             }
         } elseif ($key === 'description')
         {
-            $data = TextHelper::sanitizeHtml($data);
+            $data = TextHelper::sanitizeHtml($data);            
         } elseif ($key === 'linkHtml')
         {
             $data = wp_kses_post($data);
@@ -241,13 +242,16 @@ class ContentManager {
         if (!isset(self::$_view_data[$data_id]))
         {
             $data = self::getData($post_id, $module_id);
+            
+            if (!is_array($data))
+                $data = array();
+            
             $data = self::dataPreviewPrepare($data, $module_id, $post_id, $params);
 
             self::$_view_data[$data_id] = $data;
         }
 
         $data = self::$_view_data[$data_id];
-
 
         foreach ($data as $key => $d)
         {
@@ -357,9 +361,14 @@ class ContentManager {
     public static function dataPreviewPrepare(array $data, $module_id, $post_id, $params = array())
     {
         $is_ssl = \is_ssl();
-        //$http_home_url = str_replace('https://', 'http://', \home_url('/'));
         foreach ($data as $key => $d)
         {
+            if (!empty($data[$key]['title']))
+            {
+                // replace non-breaking space 
+                $data[$key]['title'] = str_replace("\xc2\xa0", ' ', $data[$key]['title']);
+            }
+
             if (empty($data[$key]['extra']) || !is_array($data[$key]['extra']))
             {
                 $data[$key]['extra'] = array();

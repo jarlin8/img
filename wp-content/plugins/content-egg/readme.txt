@@ -17,6 +17,16 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+= 10.9.0 =
+* Improvement: Block shortcodes: Sorting is applied before limit/ is applied.
+
+= 10.8.2 =
+* Improvement: Extra product data for for autoblogging tags.
+
+= 10.8.0 =
+* New: Amazon module: Amazon.com.be support.
+* New: Feed module: Exact phrase search.
+
 = 10.7.0 =
 * New: Ebay module: Search by URL/product ID.
 * Fix: Ebay module: local redirects.

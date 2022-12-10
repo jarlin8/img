@@ -8,10 +8,11 @@ defined('\ABSPATH') || exit;
  * AdminNotice class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class AdminNotice {
+class AdminNotice
+{
 
     const GET_NOTICE_PARAM = 'egg-notice';
     const GET_LEVEL_PARAM = 'egg-notice-level';
@@ -22,7 +23,7 @@ class AdminNotice {
     public function getMassages()
     {
         return array(
-            'autoblog_saved' => __('Task for autoblogging is saved.', 'content-egg') . ' <a href="?page=content-egg-autoblog&action=run&id=%%ID%%">' . __('Run now', 'content-egg') . '</a>',
+            'autoblog_saved' => __('Task for autoblogging is saved.', 'content-egg') . ' <a href="?page=content-egg-autoblog&action=run&id=%%ID%%&_wpnonce=' . \wp_create_nonce('cegg_autoblog_run') . '">' . __('Run now', 'content-egg') . '</a>',
             'autoblog_create_error' => __('While saving task error was occurred.', 'content-egg'),
             'autoblog_csv_file_error' => __('Error while handling file with keywords.', 'content-egg'),
             'autoblog_batch_created' => __('Tasks for autoblogging are saved.', 'content-egg') . ' %%ID%%.',

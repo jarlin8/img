@@ -13,7 +13,8 @@ use ContentEgg\application\helpers\TextHelper;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2021 keywordrush.com
  */
-abstract class FeedProductModel extends Model {
+abstract class FeedProductModel extends Model
+{
 
     public function getDump()
     {
@@ -81,7 +82,10 @@ abstract class FeedProductModel extends Model {
             $where = ' AND ' . $where;
         }
 
-        $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE MATCH (title) AGAINST (%s)' . $where . ' LIMIT %d', $keyword, $limit);
+        if (isset($options['search_type']) && $options['search_type'] == 'exact')
+            $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE title COLLATE utf8mb4_unicode_520_ci LIKE %s' . $where . ' LIMIT %d', '%' . $keyword . '%', $limit);
+        else
+            $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE MATCH (title) AGAINST (%s)' . $where . ' LIMIT %d', $keyword, $limit);
 
         return $this->getDb()->get_results($sql, \ARRAY_A);
     }

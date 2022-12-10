@@ -12,6 +12,10 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
+
+msgid "Czech koruna"
+msgstr ""
+
 #: application/PriceAlert.php:92
 msgid "All fields are required."
 msgstr ""

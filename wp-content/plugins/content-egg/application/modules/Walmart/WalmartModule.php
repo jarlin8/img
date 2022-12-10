@@ -122,8 +122,8 @@ class WalmartModule extends AffiliateParserModule
 
         if (TextHelper::isEan($keyword))
         {
-            $results = $this->getApiClient()->searchUpc($keyword);
-        } // EAN search
+            $results = $this->getApiClient()->searchUpc(ltrim($keyword, '0'));
+        } 
         elseif ($product_id = $this->getProductId($keyword))
         {
             $results = $this->getApiClient()->products($product_id, $options);
@@ -180,7 +180,7 @@ class WalmartModule extends AffiliateParserModule
             return array();
         }
 
-        return $this->prepareResults($results['items']);
+        return $this->prepareResults(array_slice($results['items'], 0, $limit));
     }
 
     private function prepareResults($results)
@@ -213,10 +213,13 @@ class WalmartModule extends AffiliateParserModule
             }
             if (!empty($r['upc']) && TextHelper::isEan($r['upc']))
             {
-                $content->ean = $r['upc'];
+                $content->ean = TextHelper::fixEan($r['upc']);
             }
 
             $content->categoryPath = explode('/', $r['categoryPath']);
+            if (isset($content->categoryPath[0]) && $content->categoryPath[0] == 'Home Page')
+                array_shift($content->categoryPath);
+
             $content->category = current($content->categoryPath);
             if (!empty($r['brandName']))
             {
@@ -252,9 +255,17 @@ class WalmartModule extends AffiliateParserModule
             {
                 $content->price = $r['salePrice'];
             }
+
             if (!empty($r['msrp']))
             {
                 $content->priceOld = $r['msrp'];
+            }
+
+            if ($content->priceOld)
+            {
+                $pdisc = 100 - $content->price * 100 / $content->priceOld;
+                if ($pdisc > 85)
+                    $content->priceOld = 0;
             }
 
             $content->currencyCode = 'USD';
@@ -400,10 +411,13 @@ class WalmartModule extends AffiliateParserModule
             return LinkHandler::createAffUrl($url, $deeplink);
         }
 
-        if (!empty($r['productTrackingUrl']))
-        {
-            return $r['productTrackingUrl'];
-        }
+        /*
+          if (!empty($r['productTrackingUrl']))
+          {
+          return $r['productTrackingUrl'];
+          }
+         * 
+         */
 
         return 'https://goto.walmart.com/c/' . urlencode($this->config('publisherId')) . '/568844/9383?veh=aff&sourceid=imp_000011112222333344&u=' . urlencode($url);
     }

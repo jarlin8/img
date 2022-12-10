@@ -5,6 +5,7 @@ namespace ContentEgg\application\modules\Bolcom;
 defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModuleConfig;
+use ContentEgg\application\Plugin;
 
 /**
  * BolcomConfig class file
@@ -13,7 +14,8 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class BolcomConfig extends AffiliateParserModuleConfig {
+class BolcomConfig extends AffiliateParserModuleConfig
+{
 
     public function options()
     {
@@ -211,9 +213,20 @@ class BolcomConfig extends AffiliateParserModuleConfig {
         );
 
         $parent = parent::options();
+        $parent['update_mode']['validator'][] = array(
+            'call' => array($this, 'deleteToken'),
+        );
         $options = array_merge($parent, $options);
 
         return self::moveRequiredUp($options);
+    }
+
+    public function deleteToken()
+    {
+        $id = 'Bolcom';
+        $transient_name = Plugin::slug() . '-' . $id . '-access_token';
+        \delete_transient($transient_name);
+        return true;
     }
 
 }

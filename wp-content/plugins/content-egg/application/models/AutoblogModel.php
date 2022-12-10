@@ -18,7 +18,8 @@ use ContentEgg\application\admin\GeneralConfig;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class AutoblogModel extends Model {
+class AutoblogModel extends Model
+{
 
     const INACTIVATE_AFTER_ERR_COUNT = 5;
 
@@ -516,6 +517,7 @@ class AutoblogModel extends Model {
         }
 
         $replace = array();
+
         foreach ($matches[0] as $pattern)
         {
             // random
@@ -538,7 +540,6 @@ class AutoblogModel extends Model {
                 $replace[$pattern] = $keyword;
                 continue;
             }
-
 
             // module keyword
             if (stristr($pattern, '%KEYWORD.'))
@@ -565,45 +566,74 @@ class AutoblogModel extends Model {
                     continue;
                 }
 
-                $pattern_parts = explode('.', $pattern);
+                $extra = false;
+                if (strstr($pattern, '.extra.'))
+                {
+                    $tpattern = str_replace('.extra.', '.', $pattern);
+                    $extra = true;
+                } else
+                    $tpattern = $pattern;
+
+                $pattern_parts = explode('.', $tpattern);
                 $var_name = $pattern_parts[1];
                 $var_name = rtrim($var_name, '%');
 
-                if (isset($main_product[$var_name]))
-                {
+                if (!$extra && isset($main_product[$var_name]))
                     $replace[$pattern] = $main_product[$var_name];
-                } else
-                {
-                    $replace[$pattern] = '';
-                }
-                continue;
+                elseif ($extra && isset($main_product['extra'][$var_name]))
+                    $replace[$pattern] = $main_product['extra'][$var_name];
+                elseif ($extra && isset($main_product['extra']['data'][$var_name]))
+                    $replace[$pattern] = $main_product['extra']['data'][$var_name];
             }
 
             // module data
-            $pattern_parts = explode('.', $pattern);
-            if (count($pattern_parts) == 3)
+            if (!stristr($pattern, '%PRODUCT.'))
             {
-                $index = (int) $pattern_parts[1]; // Amazon.0.title
-                $var_name = $pattern_parts[2];
-            } elseif (count($pattern_parts) == 2)
-            {
-                $index = 0; // Amazon.title
-                $var_name = $pattern_parts[1];
-            } else
-            {
-                $replace[$pattern] = '';
-                continue;
-            }
-            $module_id = ltrim($pattern_parts[0], '%');
-            $var_name = rtrim($var_name, '%');
+                $extra = false;
+                if (strstr($pattern, '.extra.'))
+                {
+                    $tpattern = str_replace('.extra.', '.', $pattern);
+                    $extra = true;
+                } else
+                    $tpattern = $pattern;
 
-            if (array_key_exists($module_id, $modules_data) && isset($modules_data[$module_id][$index]) && property_exists($modules_data[$module_id][$index], $var_name))
-            {
-                $replace[$pattern] = $modules_data[$module_id][$index]->$var_name;
-            } else
-            {
-                $replace[$pattern] = '';
+                $pattern_parts = explode('.', $tpattern);
+
+                if (count($pattern_parts) == 3 && is_numeric($pattern_parts[1]))
+                {
+                    $index = (int) $pattern_parts[1]; // Amazon.0.title
+                    $var_name = $pattern_parts[2];
+                } elseif (count($pattern_parts) == 2)
+                {
+                    $index = 0; // Amazon.title
+                    $var_name = $pattern_parts[1];
+                } else
+                {
+                    $replace[$pattern] = '';
+                    continue;
+                }
+                $module_id = ltrim($pattern_parts[0], '%');
+                $var_name = rtrim($var_name, '%');
+
+                if (array_key_exists($module_id, $modules_data) && isset($modules_data[$module_id][$index]))
+                {
+                    if (!$extra && property_exists($modules_data[$module_id][$index], $var_name))
+                        $replace[$pattern] = $modules_data[$module_id][$index]->$var_name;
+                    elseif ($extra && property_exists($modules_data[$module_id][$index]->extra, $var_name))
+                        $replace[$pattern] = $modules_data[$module_id][$index]->extra->$var_name;
+                    elseif ($extra && isset($modules_data[$module_id][$index]->extra->data[$var_name]))
+                        $replace[$pattern] = $modules_data[$module_id][$index]->extra->data[$var_name];
+                }
             }
+
+            if (!isset($replace[$pattern]))
+                $replace[$pattern] = '';
+
+            if (!is_scalar($replace[$pattern]))
+                $replace[$pattern] = '';
+
+            if ($replace[$pattern] === null)
+                $replace[$pattern] = '';
         }
 
         return str_ireplace(array_keys($replace), array_values($replace), $template);

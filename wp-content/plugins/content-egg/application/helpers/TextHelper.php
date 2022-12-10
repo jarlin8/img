@@ -11,7 +11,8 @@ defined('\ABSPATH') || exit;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2021 keywordrush.com
  */
-class TextHelper {
+class TextHelper
+{
 
     public static function truncate($string, $length = 80, $etc = '...', $charset = 'UTF-8', $break_words = false, $middle = false)
     {
@@ -316,11 +317,12 @@ class TextHelper {
     {
 //$new_str = preg_replace_callback('/\{([^{}]*)\}/uim', array('TextHelper', 'get_random'), $str);
         $new_str = preg_replace_callback(
-                '/\{([^{}]*)\}/uim', function ($matches) {
-            $rand = array_rand($split = explode("|", $matches[1]));
+                '/\{([^{}]*)\}/uim', function ($matches)
+                {
+                    $rand = array_rand($split = explode("|", $matches[1]));
 
-            return $split[$rand];
-        }
+                    return $split[$rand];
+                }
                 , $str);
         if ($new_str !== $str)
         {
@@ -436,14 +438,11 @@ class TextHelper {
         {
             case 'allow_all':
                 return $html;
-            // Безопасный HTML
             case 'safe_html':
                 return \wp_kses_post($html);
-            // Разрешенные HTML теги
             case 'allowed_tags':
                 return \wp_kses($html, $allowed);
             default:
-                // @todo: add safe strip_tags
                 return strip_tags($html);
         }
     }
@@ -476,9 +475,8 @@ class TextHelper {
     public static function parsePriceAmount($money)
     {
         if (is_float($money) || is_int($money))
-        {
             return $money;
-        }
+
         $cleanString = preg_replace('/([^0-9\.,])/i', '', $money);
         $onlyNumbersString = preg_replace('/([^0-9])/i', '', $money);
 
@@ -487,7 +485,12 @@ class TextHelper {
         $stringWithCommaOrDot = preg_replace('/([,\.])/', '', $cleanString, $separatorsCountToBeErased);
         $removedThousendSeparator = preg_replace('/(\.|,)(?=[0-9]{3,}$)/', '', $stringWithCommaOrDot);
 
-        return (float) str_replace(',', '.', $removedThousendSeparator);
+        $p = (float) str_replace(',', '.', $removedThousendSeparator);
+
+        if ($p >= 1000000000000)
+            return (float) $money;
+
+        return $p;
     }
 
     public static function parseCurrencyCode($money)
@@ -1311,6 +1314,7 @@ class TextHelper {
             'th' => array(),
             'span' => array('class' => array()),
             'mark' => array(),
+            'a' => array('href' => array(), 'rel' => array()),
         );
 
         return \wp_kses($string, $allowed_html);

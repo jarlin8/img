@@ -17,7 +17,8 @@ use ContentEgg\application\helpers\TextHelper;
  * @link http://www.keywordrush.com/
  * @copyright Copyright &copy; 2015 keywordrush.com
  */
-class LinkshareModule extends AffiliateParserModule {
+class LinkshareModule extends AffiliateParserModule
+{
 
     private $api_client = null;
 

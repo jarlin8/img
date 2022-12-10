@@ -37,7 +37,7 @@ class AEModule extends AffiliateParserModule {
         $name = \Keywordrush\AffiliateEgg\ShopManager::getInstance()->getShopName($this->getMyShortId());
         $uri = $this->getShopHost();
         $shop = \Keywordrush\AffiliateEgg\ShopManager::getInstance()->getItem($this->getMyShortId());
-        if (method_exists($shop, 'isDeprecated') && $shop->isDeprecated())
+        if ($shop && method_exists($shop, 'isDeprecated') && $shop->isDeprecated())
         {
             $name .= ' (deprecated)';
         }

@@ -23,6 +23,7 @@ $isAffiliateParser = $module->isAffiliateParser();
                     <small ng-show="data.price">
                         <b>{{data.currencyCode}} {{data.price| number}}</b>
                     </small>
+
                 </div>
                 <div ng-class="data.img ? 'col-md-9' : 'col-md-10'">
 
@@ -32,15 +33,18 @@ $isAffiliateParser = $module->isAffiliateParser();
                         <input type="text" placeholder="<?php esc_html_e('Domain', 'content-egg'); ?>" ng-model="data.domain" class="col-md-3" style="margin-bottom: 5px;">
                         <input type="text" placeholder="<?php esc_html_e('Price', 'content-egg'); ?>" ng-model="data.price" class="col-md-1" style="margin-bottom: 5px;">
                     <?php endif; ?>
+                        
                     <textarea type="text" placeholder="<?php esc_html_e('Description', 'content-egg'); ?>" rows="1" ng-model="data.description" class="col-sm-12"></textarea>
-
-                    <?php if ($is_woo && $isAffiliateParser): ?>
-                        <label><input ng-true-value="'true'" type="checkbox" ng-model="data.woo_sync" name="woo_sync" ng-change="wooRadioChange(data.unique_id, 'woo_sync')"> <?php esc_html_e('Woo synchronization', 'content-egg'); ?></label>
-                        &nbsp;&nbsp;&nbsp;
-                        <label ng-show="data.features.length"><input ng-true-value="'true'" type="checkbox" ng-model="data.woo_attr" name="woo_attr" ng-change="wooRadioChange(data.unique_id, 'woo_attr')"> <?php esc_html_e('Woo attributes', 'content-egg'); ?> ({{data.features.length}})</label>
-                    <?php elseif ($isAffiliateParser): ?>
-                        <small class="text-muted" ng-show="data.features.length"><?php esc_html_e('Attributes:', 'content-egg'); ?> {{data.features.length}}</small>
+                    <?php if ($isAffiliateParser): ?>
+                            <?php if ($is_woo): ?>
+                                <label><input ng-true-value="'true'" type="checkbox" ng-model="data.woo_sync" name="woo_sync" ng-change="wooRadioChange(data.unique_id, 'woo_sync')"> <?php esc_html_e('Woo synchronization', 'content-egg'); ?></label>
+                                &nbsp;&nbsp;&nbsp;
+                                <label ng-show="data.features.length"><input ng-true-value="'true'" type="checkbox" ng-model="data.woo_attr" name="woo_attr" ng-change="wooRadioChange(data.unique_id, 'woo_attr')"> <?php esc_html_e('Woo attributes', 'content-egg'); ?> ({{data.features.length}})</label>
+                            <?php else: ?>
+                                <small class="text-muted" ng-show="data.features.length"><?php esc_html_e('Attributes:', 'content-egg'); ?> {{data.features.length}}</small>
+                            <?php endif; ?>
                     <?php endif; ?>
+
 
                     <a ng-show="data.features.length" ng-init="isFeaturesCollapsed = true" ng-click="isFeaturesCollapsed = !isFeaturesCollapsed" aria-label="Edit">
                         <span class="glyphicon glyphicon-edit"></span>
@@ -79,11 +83,15 @@ $isAffiliateParser = $module->isAffiliateParser();
                                 <i class="glyphicon glyphicon-share"></i>
                             </a>
                         </div>
+
                         <div style="padding:4px 0 8px 0;margin:0;">
                             <span class="text-muted">
                                 <span ng-show="data.last_update"><i class="glyphicon glyphicon-time"></i> <abbr title="<?php esc_html_e('Last updated:', 'content-egg'); ?> {{data.last_update * 1000| date:'medium'}}">{{data.last_update * 1000| date:'shortDate'}}</abbr></span>
                                 <mark ng-show="data.stock_status == - 1 || data.stock_status == 1" ng-class="{'outofstock': data.stock_status == - 1, 'instock': data.stock_status == 1}">{{data.stock_status| stockStatus}}</mark>
                             </span>
+
+
+
                         </div>
                     <?php endif; ?>
                     <div style="padding:0;margin:0;"><a style="color:#D03300;" ng-click="delete(data, '<?php echo esc_attr($module_id); ?>')"><i class="glyphicon glyphicon-remove"></i> <?php esc_html_e('Remove', 'content-egg'); ?></a></div>

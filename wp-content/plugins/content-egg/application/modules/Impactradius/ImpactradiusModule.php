@@ -18,7 +18,8 @@ use ContentEgg\application\modules\Impactradius\ExtraDataImpactradius;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class ImpactradiusModule extends AffiliateParserModule {
+class ImpactradiusModule extends AffiliateParserModule
+{
 
     private $api_client = null;
 
@@ -100,6 +101,10 @@ class ImpactradiusModule extends AffiliateParserModule {
         }
 
         $options['Query'] = $query;
+
+        if (TextHelper::isEan($keyword))
+            $keyword = ltrim($keyword, '0');
+
         $results = $this->getApiClient()->search($keyword, $options);
 
         if (!isset($results['Items']) || !is_array($results['Items']))
@@ -152,6 +157,7 @@ class ImpactradiusModule extends AffiliateParserModule {
 
             $content->merchant = $r['CampaignName'];
             $content->category = $r['OriginalFormatCategory'];
+
             switch ($r['GtinType'])
             {
                 case 'EAN':
@@ -164,6 +170,9 @@ class ImpactradiusModule extends AffiliateParserModule {
                     $content->isbn = $r['Gtin'];
                     break;
             }
+
+            if (!$content->ean && $r['Gtin'])
+                $content->ean = TextHelper::fixEan($r['Gtin']);
 
             $content->extra = new ExtraDataImpactradius;
             ExtraDataImpactradius::fillAttributes($content->extra, $r);
@@ -183,6 +192,7 @@ class ImpactradiusModule extends AffiliateParserModule {
             }
 
             $result = $this->getApiClient()->product($item['extra']['CatalogId'], $item['unique_id']);
+
             if (!is_array($result) || !isset($result['Id']))
             {
                 throw new \Exception('doRequestItems request error.');

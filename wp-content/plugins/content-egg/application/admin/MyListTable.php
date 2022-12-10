@@ -7,21 +7,21 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\Plugin;
 use ContentEgg\application\models\Model;
 use ContentEgg\application\helpers\TemplateHelper;
-use function ContentEgg\prnx;
 
 /**
  * MyListTable class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 if (!class_exists('\WP_List_Table'))
 {
     require_once( \ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-class MyListTable extends \WP_List_Table {
+class MyListTable extends \WP_List_Table
+{
 
     const per_page = 15;
 
@@ -33,8 +33,8 @@ class MyListTable extends \WP_List_Table {
 
         $this->model = $model;
         parent::__construct(array(
-            'singular' => Plugin::slug . '-table',
-            'plural' => Plugin::slug . '-all-tables',
+            'singular' => Plugin::getSlug() . '-table',
+            'plural' => Plugin::getSlug() . '-all-tables',
             'screen' => get_current_screen()
         ));
     }
@@ -148,8 +148,12 @@ class MyListTable extends \WP_List_Table {
     function process_bulk_action()
     {
         if ($this->current_action() === 'delete' && !empty($_REQUEST['id']))
-        {
-            $ids = array_map('intval', (array)$_REQUEST['id']);
+        {            
+            if (!isset($_REQUEST['_wpnonce']) || !\wp_verify_nonce(sanitize_key($_REQUEST['_wpnonce']), 'bulk-' . $this->_args['plural']))
+                die('Invalid nonce');
+
+            $ids = array_map('absint', (array) $_REQUEST['id']);
+            
             foreach ($ids as $id)
             {
                 $id = (int) $id;

@@ -5,7 +5,7 @@
  * Author: Wpsoul
  * Author URI: https://greenshiftwp.com
  * Plugin URI: https://greenshiftwp.com
- * Version: 4.8.1
+ * Version: 4.8.3
  * Text Domain: greenshift-animation-and-page-builder-blocks
  * License: GPL2+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
@@ -234,27 +234,4 @@ register_deactivation_hook( __FILE__, 'greenshift_deactivation_hook_function' );
 function greenshift_deactivation_hook_function() {
     $timestamp = wp_next_scheduled( 'greenshift_check_cron_hook' );
     wp_unschedule_event( $timestamp, 'greenshift_check_cron_hook' );
-}
-
-function greenshift_admin_error_notice() {
-	//$page = (isset($_GET['page'])) ? $_GET['page'] : '';
-	global $current_user;
-    $user_id = $current_user->ID;	
-    if ( ! get_user_meta($user_id, 'ignore_notices_greenshift149') ) {
-		//if ($page=='greenshift' || $page=='greenshift-support' || $page=='greenshift-plugins' || $page=='greenshift-demos' || $page=='vpt_option' ) {
-			$class = "error";
-			$message = 'This is major update of plugin with removal of Freemius. Please, read how to migrate licenses in <a href="https://www.facebook.com/groups/greenshiftwp/posts/842042560568351" target="_blank">Facebook group news</a>' ;
-	    	echo"<div class=\"$class\" style=\"display:block\"> <p>$message <a href=\"?greenshift_nag_ignore=0\">Hide Notice</a></p></div>";
-	    //} 
-	}
-}
-add_action( 'admin_notices', 'greenshift_admin_error_notice' );	
-
-add_action('admin_init', 'greenshift_nag_ignore');
-function greenshift_nag_ignore() {
-	global $current_user;
-    $user_id = $current_user->ID;
-    if ( isset($_GET['greenshift_nag_ignore']) && '0' == $_GET['greenshift_nag_ignore'] ) {
-        add_user_meta($user_id, 'ignore_notices_greenshift149', 'true', true);           
-	}
 }

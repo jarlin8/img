@@ -69,6 +69,7 @@ class LManager {
 
     public function remoteRetrieve()
     {
+
         if (!$response = Plugin::apiRequest(array(
                     'method' => 'POST',
                     'timeout' => 10,
@@ -370,7 +371,7 @@ class LManager {
 
     public static function isNulled()
     {
-		return false;
+        return false;
     }
 
     public static function isValidLicFormat($value)

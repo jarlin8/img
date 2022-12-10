@@ -16,7 +16,8 @@ use ContentEgg\application\AutoblogScheduler;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class AutoblogController {
+class AutoblogController
+{
 
     const slug = 'content-egg-autoblog';
 
@@ -65,7 +66,6 @@ class AutoblogController {
         if ($GLOBALS['pagenow'] == 'admin.php' && !empty($_GET['page']) && $_GET['page'] == 'content-egg-autoblog-edit')
         {
             \wp_enqueue_script('contentegg-keywords', \ContentEgg\PLUGIN_RES . '/js/keywords.js', array('jquery'), '' . Plugin::version());
-            // tabs
             \wp_enqueue_script('jquery-ui-tabs');
             \wp_enqueue_script('jquery-ui-button');
             \wp_enqueue_style('contentegg-admin-ui-css', \ContentEgg\PLUGIN_RES . '/css/jquery-ui.min.css', false, Plugin::version());
@@ -83,6 +83,9 @@ class AutoblogController {
     {
         if (!empty($_GET['action']) && $_GET['action'] == 'run' && !empty($_GET['id']))
         {
+            if (!isset($_GET['_wpnonce']) || !\wp_verify_nonce(sanitize_key($_GET['_wpnonce']), 'cegg_autoblog_run'))
+                die('Invalid nonce');
+
             @set_time_limit(180);
             AutoblogModel::model()->run((int) $_GET['id']);
         }
@@ -170,7 +173,6 @@ class AutoblogController {
                     $redirect_url = AdminNotice::add2Url($redirect_url, 'autoblog_batch_created', 'success', $created_count);
             } else
             {
-                // single create mode
                 $item['id'] = $this->createAutoblog($item);
 
                 if ($item['id'])
@@ -179,22 +181,24 @@ class AutoblogController {
                     $redirect_url = AdminNotice::add2Url($redirect_url, 'autoblog_create_error', 'error');
             }
 
-            // redirect to table list
             \wp_safe_redirect($redirect_url);
             exit;
         } else
         {
             // view page
-            if (isset($_GET['dublicate_id']))
+            if (isset($_GET['duplicate_id']))
             {
-                $dublicate = AutoblogModel::model()->findByPk((int) $_GET['dublicate_id']);
-                if ($dublicate)
+                if (!isset($_GET['_wpnonce']) || !\wp_verify_nonce(sanitize_key($_GET['_wpnonce']), 'cegg_autoblog_duplicate'))
+                    die('Invalid nonce');
+
+                $duplicate = AutoblogModel::model()->findByPk((int) $_GET['duplicate_id']);
+                if ($duplicate)
                 {
                     foreach ($default as $key => $val)
                     {
-                        if (!isset($dublicate))
+                        if (!isset($duplicate[$key]))
                             continue;
-                        $item[$key] = $dublicate[$key];
+                        $item[$key] = $duplicate[$key];
                         if (is_array($val))
                             $item[$key] = unserialize($item[$key]);
                     }
@@ -203,6 +207,7 @@ class AutoblogController {
                     $item = $default;
             } else
                 $item = $default;
+
             if (isset($_GET['id']))
             {
                 $item = AutoblogModel::model()->findByPk((int) $_GET['id']);
@@ -241,11 +246,8 @@ class AutoblogController {
     private function createAutoblog($item)
     {
         $item['keywords'] = TextHelper::prepareKeywords($item['keywords']);
-
-        // save
         $item['id'] = AutoblogModel::model()->save($item);
 
-        // add sheduler
         if ($item['status'])
         {
             AutoblogScheduler::addScheduleEvent('hourly', time() + 900);
@@ -263,7 +265,6 @@ class AutoblogController {
 
         $file_name = sanitize_text_field(wp_unslash($_FILES['item']['name']['keywords_file']));
 
-        // Get the file type of the upload        
         $supported_types = array('text/csv', 'text/plain');
         $arr_file_type = \wp_check_filetype(basename($file_name));
         $uploaded_type = $arr_file_type['type'];
@@ -271,7 +272,7 @@ class AutoblogController {
         if (!in_array($uploaded_type, $supported_types))
             return false;
 
-        $handle = fopen($file_path, "r");
+        $handle = fopen($_FILES['item']['tmp_name']['keywords_file'], "r");
         if (!$handle)
             return false;
 
@@ -284,14 +285,11 @@ class AutoblogController {
         {
             $num = count($data);
 
-            // first line
             if ($i == 0)
             {
-                // remove UTF-8 BOM
                 if (substr($data[0], 0, 3) == pack("CCC", 0xef, 0xbb, 0xbf))
                     $data[0] = substr($data[0], 3);
 
-                // only keywords list
                 if ($num == 1 && $item['category'] == -1)
                 {
                     $item['category'] = \get_option('default_category');
@@ -330,10 +328,8 @@ class AutoblogController {
                 $c_name = \sanitize_text_field($c_name);
                 $new_item = $item;
 
-                // need create category
                 if ($item['category'] == -1)
                 {
-                    // If the category already exists, it is not duplicated.The ID of the original existing category is returned without error. 
                     $c_id = \wp_create_category($c_name);
                     if (!$c_id)
                         continue;
@@ -353,9 +349,6 @@ class AutoblogController {
         return $created_count;
     }
 
-    /**
-     * This function renders our custom meta box
-     */
     public function metaboxAutoblogCreateHandler($item)
     {
         if (!isset($item['batch']))

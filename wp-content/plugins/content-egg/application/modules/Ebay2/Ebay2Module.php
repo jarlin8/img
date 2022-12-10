@@ -494,6 +494,12 @@ class Ebay2Module extends AffiliateParserModule
         {
             $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
         }
+        
+        if (isset($r['categoryPath']))
+        {
+            $content->categoryPath = explode('|', $r['categoryPath']);
+            $content->category = end($content->categoryPath);
+        }     
 
         $extra = new ExtraDataEbay2;
         $extra->locale = $locale;

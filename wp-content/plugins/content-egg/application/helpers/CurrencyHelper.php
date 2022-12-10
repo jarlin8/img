@@ -571,6 +571,14 @@ class CurrencyHelper {
                 'num_decimals' => 2,
                 'name' => 'South African Rand',
             ),
+            'UMO' => array(
+                'currency_symbol' => '$%PRICE% / ' . __('mo', 'content-egg-tpl'),
+                'currency_pos' => 'pattern',
+                'thousand_sep' => ',',
+                'decimal_sep' => '.',
+                'num_decimals' => 2,
+                'name' => 'USD/month',
+            ),            
         );
     }
 
@@ -634,6 +642,8 @@ class CurrencyHelper {
                 return $amount . ' ' . $symbol;
             case 'right':
                 return $amount . $symbol;
+            case 'pattern':
+                return str_replace('%PRICE%', $amount, $symbol);                
             default:
                 return $symbol . ' ' . $amount;
         }

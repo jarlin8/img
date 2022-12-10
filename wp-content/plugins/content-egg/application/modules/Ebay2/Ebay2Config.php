@@ -5,13 +5,14 @@ namespace ContentEgg\application\modules\Ebay2;
 defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModuleConfig;
+use ContentEgg\application\Plugin;
 
 /**
  * Ebay2Config class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
 class Ebay2Config extends AffiliateParserModuleConfig {
 
@@ -322,6 +323,9 @@ class Ebay2Config extends AffiliateParserModuleConfig {
         $parent = parent::options();
         $parent['ttl']['default'] = 28800;
         $parent['update_mode']['default'] = 'cron';
+        $parent['update_mode']['validator'][] = array(
+            'call' => array($this, 'deleteToken'),
+        );  
         $options = array_merge($parent, $options);
 
         return self::moveRequiredUp($options);
@@ -382,6 +386,14 @@ class Ebay2Config extends AffiliateParserModuleConfig {
     public static function getDefaultLocale()
     {
         return 'EBAY_US';
+    }
+    
+    public function deleteToken()
+    {
+        $id = 'Ebay2';
+        $transient_name = Plugin::slug() . '-' . $id . '-access_token';
+        \delete_transient($transient_name);   
+        return true;
     }
 
 }

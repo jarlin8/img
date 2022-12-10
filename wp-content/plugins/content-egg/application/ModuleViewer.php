@@ -19,10 +19,10 @@ use ContentEgg\application\helpers\TemplateHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link http://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class ModuleViewer {
-
+class ModuleViewer
+{
     private static $instance = null;
     private $module_data_pointer = array();
     private $block_data_pointer = array();
@@ -38,7 +38,6 @@ class ModuleViewer {
 
     private function __construct()
     {
-        
     }
 
     public function init()
@@ -160,16 +159,20 @@ class ModuleViewer {
                 foreach ($params['hide'] as $hide)
                 {
                     if (isset($d[$hide]))
+                    {
+                        if ($hide == 'title')
+                            $data[$key]['_alt'] = $data[$key][$hide];
                         $data[$key][$hide] = '';
+                    }
                 }
             }
         }
-        
+
         // sort
         if (!empty($params['sort']))
         {
             if ($params['sort'] == 'reverse')
-                $data = array_reverse ($data);
+                $data = array_reverse($data);
             elseif ($params['sort'] == 'price' || $params['sort'] == 'discount')
                 $data = TemplateHelper::sortByPrice($data, $params['order'], $params['sort']);
         }
@@ -183,6 +186,7 @@ class ModuleViewer {
         // next param
         if (!empty($params['next']))
         {
+            prn($this->module_data_pointer);
             if (!isset($this->module_data_pointer[$post_id][$module_id]))
                 $this->module_data_pointer[$post_id][$module_id] = 0;
 
@@ -191,7 +195,8 @@ class ModuleViewer {
                 $params['next'] = count($data);
 
             $this->module_data_pointer[$post_id][$module_id] += $params['next'];
-        } elseif (!empty($params['limit']))
+        }
+        elseif (!empty($params['limit']))
         {
             if (!isset($params['offset']))
                 $params['offset'] = 0;
@@ -286,8 +291,7 @@ class ModuleViewer {
             if (!isset($params['shortcoded']) || (bool) $params['shortcoded'])
                 Shortcoded::getInstance($post_id)->setShortcodedModule($module_id);
         }
-        
-        
+
         if (!$data)
             return;
 
@@ -300,24 +304,29 @@ class ModuleViewer {
         // next, limit, offset
         if (!isset($this->block_data_pointer[$post_id]))
             $this->block_data_pointer[$post_id] = array();
+
         if (!empty($params['next']))
         {
             if (!isset($this->block_data_pointer[$post_id][$template]))
                 $this->block_data_pointer[$post_id][$template] = 0;
 
-            $data = $this->spliceBlockData($data, $this->block_data_pointer[$post_id][$template], $params['next']);
+            $data = $this->spliceBlockData($data, $this->block_data_pointer[$post_id][$template], $params['next'], $params['order'], $params['sort']);
             $count = $this->countBlockData($data);
             if ($count < $params['next'])
                 $params['next'] = $count;
             $this->block_data_pointer[$post_id][$template] += $params['next'];
-        } elseif (!empty($params['limit']))
+        }
+        elseif (!empty($params['limit']))
         {
             if (!isset($params['offset']))
                 $params['offset'] = 0;
 
-            $data = $this->spliceBlockData($data, $params['offset'], $params['limit']);
+            $data = $this->spliceBlockData($data, $params['offset'], $params['limit'], $params['order'], $params['sort']);
             $this->block_data_pointer[$post_id][$module_id] = $params['offset'] + $params['limit'];
         }
+        elseif (!empty($params['order']) || !empty($params['sort']))
+            $this->spliceBlockData($data, 0, 999999, $params['order'], $params['sort']);
+
         if (!$data)
             return;
 
@@ -334,8 +343,20 @@ class ModuleViewer {
         return $tpl_manager->render($params['template'], array('data' => $data, 'post_id' => $post_id, 'params' => $params, 'title' => $title, 'cols' => $cols, 'sort' => $params['sort'], 'order' => $params['order'], 'groups' => $params['groups'], 'btn_text' => $params['btn_text'], 'atts' => $params, 'content' => $content));
     }
 
-    private function spliceBlockData($data, $offset, $length)
+    private function spliceBlockData($data, $offset, $length, $order = null, $sort = null)
     {
+        if ($order || $sort)
+        {
+            if (!$sort)
+                $sort = 'price';
+
+            if (!$order)
+                $order = 'ask';
+
+            if ($sort == 'price' || $sort == 'discount')
+                return $this->spliceBlockDataSorted($data, $offset, $length, $order, $sort);
+        }
+
         $results = array();
         $count = 0;
         $results_count = 0;
@@ -353,10 +374,28 @@ class ModuleViewer {
                 $results[$module_id][$key] = $data;
                 $count++;
                 $results_count++;
+
                 if ($results_count >= $length)
                     return $results;
             }
         }
+        return $results;
+    }
+
+    private function spliceBlockDataSorted($data, $offset, $length, $order = 'ask', $sort = 'price')
+    {
+        $all_items = TemplateHelper::sortAllByPrice($data, $order, $sort);
+        $all_items = array_splice($all_items, $offset, $length);
+
+        $results = array();
+        foreach ($all_items as $item)
+        {
+            if (!isset($results[$item['module_id']]))
+                $results[$item['module_id']] = array();
+
+            $results[$item['module_id']][$item['unique_id']] = $item;
+        }
+
         return $results;
     }
 
@@ -369,5 +408,4 @@ class ModuleViewer {
         }
         return $count;
     }
-
 }

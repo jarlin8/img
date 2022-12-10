@@ -16,7 +16,8 @@ use ContentEgg\application\helpers\TemplateHelper;
  * @link http://www.keywordrush.com
  * @copyright Copyright &copy; 2022 keywordrush.com
  */
-class BlockShortcode {
+class BlockShortcode
+{
 
     const shortcode = 'content-egg-block';
 
@@ -129,6 +130,9 @@ class BlockShortcode {
         if (empty($a['post_id']))
         {
             global $post;
+            if (empty($post))
+                return '';
+
             $post_id = $post->ID;
         } else
             $post_id = $a['post_id'];

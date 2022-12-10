@@ -17,7 +17,8 @@ use ContentEgg\application\Plugin;
  * @link https://www.keywordrush.com
  * @copyright Copyright &copy; 2022 keywordrush.com
  */
-abstract class ParserModule extends Module {
+abstract class ParserModule extends Module
+{
 
     const PARSER_TYPE_CONTENT = 'CONTENT';
     const PARSER_TYPE_PRODUCT = 'PRODUCT';
@@ -164,6 +165,7 @@ abstract class ParserModule extends Module {
     {
         $transient_name = Plugin::slug() . '-' . $this->getId() . '-access_token';
         $token = \get_transient($transient_name);
+
         if (!$token || $force)
         {
             try
