@@ -18,7 +18,7 @@ This section describes how to install the plugin and get it working.
 == Changelog ==
 
 = 10.9.0 =
-* Improvement: Block shortcodes: Sorting is applied before limit/ is applied.
+* Improvement: Block shortcodes: Sorting is applied before limit/offset.
 
 = 10.8.2 =
 * Improvement: Extra product data for for autoblogging tags.

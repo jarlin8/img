@@ -186,7 +186,6 @@ class ModuleViewer
         // next param
         if (!empty($params['next']))
         {
-            prn($this->module_data_pointer);
             if (!isset($this->module_data_pointer[$post_id][$module_id]))
                 $this->module_data_pointer[$post_id][$module_id] = 0;
 
