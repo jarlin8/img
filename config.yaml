@@ -1,6 +1,2 @@
 chatGPTAccountPool:
-  - email: email
-    password: password
     session_token: session_token
-chatPrivateTiggerKeyword: ""
-openAIProxy: ""
