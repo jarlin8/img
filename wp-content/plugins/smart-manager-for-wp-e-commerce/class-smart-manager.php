@@ -902,9 +902,11 @@ class Smart_Manager {
 	// Function to dequeue unwanted scripts on Smart Manager page.
 	public function sa_sm_dequeue_scripts() {
 		global $wp_scripts;
-		
-		if ( is_admin() && !empty( $_GET['page'] ) && ( 'smart-manager' === $_GET['page'] || 'smart-manager-settings' === $_GET['page'] ) ) {
+		if (  is_admin() && !empty( $_GET['page'] ) && ( 'smart-manager' === $_GET['page'] || 'smart-manager-settings' === $_GET['page'] ) ) {
 			$dequeue_handles = array( 'wpml-tm-progressbar', 'wpml-tm-scripts', 'toolset-utils' );
+			if ( is_plugin_active( 'addify-product-labels-and-stickers/class-af_wcbm_main.php' ) && ( is_array( $dequeue_handles ) ) ) { // Compat for 'Product Labels and Stickers' plugin.
+				array_push( $dequeue_handles, 'cpt_badge_managment_select_js' );
+			}
 			foreach( $wp_scripts->registered as $script ) {
 				$handle = $script->handle;
 				if( false !== stripos($handle, 'select2') || false !== in_array( $handle, $dequeue_handles ) ){

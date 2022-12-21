@@ -449,7 +449,9 @@ function sa_sm_generate_column_state( $store_model = array() ) {
 	}
 
 	$column_model_transient['sort_params'] = ( !empty( $store_model['sort_params'] ) ) ? $store_model['sort_params'] : array();
-
+	if ( ! empty( $store_model['search_params'] ) ) {
+		$column_model_transient['search_params'] = $store_model['search_params'];
+	}
 	if( isset( $store_model['treegrid'] ) ) {
 		$column_model_transient['treegrid'] = $store_model['treegrid'];
 	}

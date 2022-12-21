@@ -234,59 +234,59 @@ class Smart_Manager_Pricing {
 						transform: rotate(360deg); 
 					} 
 			}
-			table.sm_feature_table {
+			table.sm_table {
 				width: 70%;
 				margin-left: 15%;
 				margin-right: 15%;
 			}
-			table.sm_feature_table th,
-			table.sm_feature_table tr,
-			table.sm_feature_table td,
-			table.sm_feature_table td span {
+			table.sm_table th,
+			table.sm_table tr,
+			table.sm_table td,
+			table.sm_table td span {
 				padding: 0.5em;
 				text-align: center !important;
 				background-color: transparent !important;
 				vertical-align: middle !important;
 			}
-			table.sm_feature_table,
-			table.sm_feature_table th,
-			table.sm_feature_table tr,
-			table.sm_feature_table td {
+			table.sm_table,
+			table.sm_table th,
+			table.sm_table tr,
+			table.sm_table td {
 				border: 1px solid #eaeaea;
 			}
-			table.sm_feature_table.widefat th,
-			table.sm_feature_table.widefat td {
+			table.sm_table.widefat th,
+			table.sm_table.widefat td {
 				color: #515151;
 			}
-			table.sm_feature_table th {
+			table.sm_table th {
 				font-weight: bolder !important;
-				font-size: 1.3em;
+				font-size: 1.1em;
 			}
-			table.sm_feature_table tr td {
+			table.sm_table tr td {
 				font-size: 15px;
 			}
-			table.sm_feature_table th.sm_features {
+			table.sm_table th.sm_table_headers_gray {
 				background-color: #F4F4F4 !important;
 				color: #A1A1A1 !important;
 			}
-			table.sm_feature_table th.sm_free_features {
+			table.sm_table th.sm_free_features {
 				background-color: #F7E9C8 !important;
 				color: #D39E22 !important;
 			}
-			table.sm_feature_table th.sm_pro_features {
+			table.sm_table th.sm_pro_features {
 				background-color: #DCDDFC !important;
 				color: #6875F5 !important;
 			}
-			table.sm_feature_table td{
+			table.sm_table td{
 				padding: 0.5em;
 			}
-			table.sm_feature_table td.sm_feature_name {
+			table.sm_table td.sm_feature_name {
 				text-transform: capitalize;
 			}
-			table.sm_feature_table td.sm_free_feature_name {
+			table.sm_table td.sm_free_feature_name {
 				background-color: #FCF7EC !important;
 			}
-			table.sm_feature_table td.sm_pro_feature_name {
+			table.sm_table td.sm_pro_feature_name {
 				background-color: #F4F5FD !important;
 			}
 			#sm_product_page_link {
@@ -307,10 +307,7 @@ class Smart_Manager_Pricing {
 			#wpcontent {
 				padding-left: 0!important;
 			}
-			#sm-testimonial-others{
-				margin-top: 4em;
-			}
-			#sm_comparison_table{
+			#sm-testimonial-others, #sm_comparison_table, #sm_activity{
 				margin-top: 4em;
 			}
 
@@ -410,10 +407,10 @@ class Smart_Manager_Pricing {
 			</div>
 			<div class="sm_row" id="sm_comparison_table">
 				<div class="sm_sub_headline"><span class="dashicons dashicons-awards"></span><?php echo __( ' More powerful features with Smart Manager Pro!', 'smart-manager-for-wp-e-commerce' ); ?></div>
-				<table class="sm_feature_table wp-list-table widefat fixed">
+				<table class="sm_table wp-list-table widefat fixed">
 					<thead>
 						<tr>
-							<th class="sm_features">
+							<th class="sm_table_headers_gray">
 								<?php echo esc_html__( 'Features', 'smart-manager-for-wp-e-commerce' ); ?>
 							</th>
 							<th class="sm_free_features">
@@ -502,7 +499,7 @@ class Smart_Manager_Pricing {
 								<?php echo __( 'Advanced Search using “OR” filter', 'smart-manager-for-wp-e-commerce' ); ?>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -513,7 +510,7 @@ class Smart_Manager_Pricing {
 								<strong><?php echo __( 'Bulk Edit / Batch Update', 'smart-manager-for-wp-e-commerce' ); ?></strong>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span><br>
@@ -525,7 +522,7 @@ class Smart_Manager_Pricing {
 								<?php echo __( 'Export all / Filtered records as CSV', 'smart-manager-for-wp-e-commerce' ); ?>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -536,7 +533,7 @@ class Smart_Manager_Pricing {
 								<?php echo __( 'Duplicate single / multiple records', 'smart-manager-for-wp-e-commerce' ); ?>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -547,7 +544,7 @@ class Smart_Manager_Pricing {
 								<?php echo __( 'Duplicate all records in a single click', 'smart-manager-for-wp-e-commerce' ); ?>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -558,7 +555,7 @@ class Smart_Manager_Pricing {
 								<strong><?php echo __( 'Create Column Sets / Custom Views', 'smart-manager-for-wp-e-commerce' ); ?></strong>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -569,7 +566,7 @@ class Smart_Manager_Pricing {
 								<?php echo __( 'Print PDF invoices', 'smart-manager-for-wp-e-commerce' ); ?>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -580,7 +577,7 @@ class Smart_Manager_Pricing {
 								<?php echo __( 'Manage WordPress User roles', 'smart-manager-for-wp-e-commerce' ); ?>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -591,7 +588,7 @@ class Smart_Manager_Pricing {
 								<?php echo __( 'Print packing slips for WooCommerce orders in bulk', 'smart-manager-for-wp-e-commerce' ); ?>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -602,7 +599,7 @@ class Smart_Manager_Pricing {
 								<?php echo __( 'View Customer Lifetime Value (LTV)', 'smart-manager-for-wp-e-commerce' ); ?>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -613,7 +610,7 @@ class Smart_Manager_Pricing {
 								<strong><?php echo __( 'Manage Custom Taxonomies', 'smart-manager-for-wp-e-commerce' ); ?></strong>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<span class='dashicons dashicons-yes'></span>
@@ -624,7 +621,7 @@ class Smart_Manager_Pricing {
 								<?php echo __( 'Import', 'smart-manager-for-wp-e-commerce' ); ?>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<?php echo __( 'Coming soon', 'smart-manager-for-wp-e-commerce' ); ?>
@@ -648,7 +645,7 @@ class Smart_Manager_Pricing {
 								<?php echo __( 'Pricing', 'smart-manager-for-wp-e-commerce' ); ?>
 							</td>
 							<td class="sm_free_feature_name">
-								<span class='dashicons dashicons-no-alt'></span>
+								-
 							</td>
 							<td class="sm_pro_feature_name">
 								<div class="center">
@@ -683,9 +680,84 @@ class Smart_Manager_Pricing {
 					</div>
 				</div>
 			</div>
-			<div class="sm_row" id="sm_product_page_link">
-				<?php echo sprintf( __( 'You can either spend hours of work in store management or use %s to accomplish the same within minutes.', 'smart-manager-for-wp-e-commerce' ), '<a style="color: #00848D;" target="_blank" href="https://www.storeapps.org/product/smart-manager/?utm_source=sm&utm_medium='. $utm_medium .'&utm_campaign=sm_know">' . __( 'Smart Manager Pro', 'smart-manager-for-wp-e-commerce' ) . '</a>' ); ?><br>
-				<?php echo __( 'Massive time-savings and 10x productivity boost. Choice is yours!', 'smart-manager-for-wp-e-commerce' ); ?>
+			<div class="sm_row" id="sm_activity" style="width: 70%; margin: 0 auto; margin-top: 4em;">
+				<div class="sm_sub_headline"> <?php echo esc_html__( 'Still hesitant to buy?', 'smart-manager-for-wp-e-commerce' ); ?> </div>
+				<p> <?php echo esc_html__( 'Opening a product, editing it for the price, stock, description involves a significant amount of time. The same goes for orders, coupons, blog posts, users, any WordPress post type. For thousands of such records, the time spent, frustration, stress, calculation errors keep piling up.', 'smart-manager-for-wp-e-commerce' ); ?> </p>
+				<table class="sm_table wp-list-table widefat fixed" style="width:100% !important; margin:0 !important;">
+					<thead>
+						<tr>
+							<th class="sm_table_headers_gray">
+								<?php echo esc_html__( 'Current Activity', 'smart-manager-for-wp-e-commerce' ); ?>
+							</th>
+							<th class="sm_table_headers_gray">
+								<?php echo esc_html__( 'Average time spent without Smart Manager', 'smart-manager-for-wp-e-commerce' ); ?>
+							</th>
+							<th class="sm_table_headers_gray">
+								<?php echo esc_html__( 'Average time spent using Smart Manager', 'smart-manager-for-wp-e-commerce' ); ?>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<?php echo __( 'Add a new product / order / coupon or any post type record / OR open a record to edit price, stock, other fields', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+							<td >
+								<?php echo __( '3 mins', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+							<td>
+								<?php echo __( '30 seconds (Inline edit)', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<?php echo __( 'Open 100s and 1000s of records to make edits for the price, status, stock, etc.', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+							<td >
+								<?php echo __( '3 hours - 30 hours', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+							<td>
+								<?php echo __( 'Around 2 mins (Bulk edit)', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<?php echo __( 'Search for any record and make edits', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+							<td >
+								<?php echo __( '3 mins', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+							<td>
+								<?php echo __( '1 min (Advanced search and Inline edit)', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<?php echo __( 'Create duplicates for 100s and 1000s of records', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+							<td >
+								<?php echo __( '3 hours - 30 hours', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+							<td>
+								<?php echo __( 'Around 2 mins (Duplicate)', 'smart-manager-for-wp-e-commerce' ); ?>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<strong><?php echo __( 'Total', 'smart-manager-for-wp-e-commerce' ); ?></strong>
+							</td>
+							<td >
+								<strong><?php echo __( '> 6 hours - 60 hours', 'smart-manager-for-wp-e-commerce' ); ?></strong>
+							</td>
+							<td>
+								<strong><?php echo __( 'Around 6 mins', 'smart-manager-for-wp-e-commerce' ); ?></strong>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<p> <?php echo esc_html__( 'This is just one situation. Imagine the time you’ll spend doing the same for thousands of records every month for other post types as well.', 'smart-manager-for-wp-e-commerce' ); ?> </p>
+				<p> <?php echo esc_html__( 'So if you want to save your valuable time, it’s high time you switch to Smart Manager. Massive time-savings and 10x productivity boost.' ); ?> </p>
+				<div style="text-align: center;"><a class="sm_button small green center" href="#sm_price_column_container" style="text-transform: none;"><?php _e( 'Select a plan now', 'smart-manager-for-wp-e-commerce' ); ?></a></div>
 			</div>
 		</div>
 		<?php

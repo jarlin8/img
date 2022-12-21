@@ -124,7 +124,7 @@ class SA_SM_In_App_Offer {
 	public function is_show() {
 
 		$timezone_format = _x( 'Y-m-d H:i:s', 'timezone date format', 'smart-manager-for-wp-e-commerce' );
-		$current_date    = strtotime( date_i18n( $timezone_format ) );
+		$current_date    = strtotime( date_i18n( $timezone_format, false, true ) );
 		$start           = strtotime( $this->start );
 		$end             = strtotime( $this->end );
 		if ( ( $current_date >= $start ) && ( $current_date <= $end ) ) {

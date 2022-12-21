@@ -23,7 +23,8 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 			$advanced_search_table_types = array(
 												'flat' => array( 'posts' => 'ID' ),
 												'meta' => array( 'postmeta' => 'post_id' )
-										);
+			),
+			$previous_cond_has_results = false;
 
 		// include_once $this->plugin_path . '/class-smart-manager-utils.php';
 
@@ -1568,9 +1569,8 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 		            $index_search_string = 1; // index to keep a track of flags in the advanced search temp 
 		            $search_params = array();
-
 		            foreach( $advanced_search_query as &$advanced_search_query_string ) {
-
+		            	$this->previous_cond_has_results = true;
 						foreach( $advanced_search_query_string as $key => $value ){
 
 							if( empty( $value ) ){
@@ -1592,7 +1592,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 									'table_nm'				=> $key,
 									'meta_key_col'			=> $this->advanced_search_table_types['meta'][$key]
 								) ) );
-							} else if ( !in_array( $table_name, array_keys( $this->advanced_search_table_types['flat'] ) ) && 'terms' === $key ) {
+							} else if ( !in_array( $key, array_keys( $this->advanced_search_table_types['flat'] ) ) && 'terms' === $key ) {
 								$this->process_terms_table_search_query( array_merge( $params, array( 
 									'search_query' 			=> $advanced_search_query_string,
 									'search_query_index' 	=> $index_search_string
@@ -1808,7 +1808,6 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 									);
 
 			if( $load_default_data_model ) { //condition to skip the default data model
-				
 				$this->req_params['table_model'] = ( empty( $this->req_params['table_model'] ) && ! empty( $store_model_transient['tables'] ) ) ? $store_model_transient['tables'] : $this->req_params['table_model'];
 
 				$post_cond = (!empty($this->req_params['table_model']['posts']['where'])) ? $this->req_params['table_model']['posts']['where'] : array('post_type' => $this->dashboard_key, 'post_status' => 'any' );
@@ -3410,25 +3409,25 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					$count_temp_previous_cond = $wpdb->query("UPDATE {$wpdb->base_prefix}sm_advanced_search_temp 
 																SET flag = 0
 																WHERE flag = ". $params['search_query_index']);
-
+					if ( ! empty( $this->previous_cond_has_results ) ) {	
 					//Code to handle condition if the ids of previous cond are present in temp table
-					if (($index == 0 && $count_temp_previous_cond > 0) || (!empty($result_terms_search))) {
-						$terms_advanced_search_from .= " JOIN ".$wpdb->base_prefix."sm_advanced_search_temp
-															ON (".$wpdb->base_prefix."sm_advanced_search_temp.product_id = ".$wpdb->prefix."posts.id)";
+						if ( ( 0 === $index && $count_temp_previous_cond > 0 ) || ( ! empty( $result_terms_search ) ) || $index > 0 ) {
+							$terms_advanced_search_from .= " JOIN ".$wpdb->base_prefix."sm_advanced_search_temp
+																ON (".$wpdb->base_prefix."sm_advanced_search_temp.product_id = ".$wpdb->prefix."posts.id)";
 
-						$terms_advanced_search_where .= "AND ".$wpdb->base_prefix."sm_advanced_search_temp.flag = 0";
+							$terms_advanced_search_where .= "AND ".$wpdb->base_prefix."sm_advanced_search_temp.flag = 0";
+						}
+
+						$result_terms_search = array();
+
+						if (!empty($terms_advanced_search_select ) && !empty($terms_advanced_search_from ) && !empty($terms_advanced_search_where )) {
+							$query_terms_search = "REPLACE INTO {$wpdb->base_prefix}sm_advanced_search_temp
+														(".$terms_advanced_search_select . " " .
+															$terms_advanced_search_from . " " .
+															$terms_advanced_search_where . " " .")";
+							$result_terms_search = $wpdb->query ( $query_terms_search );
+						}
 					}
-
-					$result_terms_search = array();
-
-					if (!empty($terms_advanced_search_select ) && !empty($terms_advanced_search_from ) && !empty($terms_advanced_search_where )) {
-						$query_terms_search = "REPLACE INTO {$wpdb->base_prefix}sm_advanced_search_temp
-													(".$terms_advanced_search_select . " " .
-														$terms_advanced_search_from . " " .
-														$terms_advanced_search_where . " " .")";
-						$result_terms_search = $wpdb->query ( $query_terms_search );
-					}
-
 					do_action('sm_search_terms_condition_complete',$result_terms_search,$search_params);
 				}
 
@@ -3437,7 +3436,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 				$index++;
 			}
-
+			$this->previous_cond_has_results = ( ! empty( $result_terms_search ) ) ? true : false;
 			do_action('sm_search_terms_conditions_array_complete',$search_params);
 
 			//Query to reset the cat_flag
@@ -3496,20 +3495,22 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 															WHERE flag = ". $params['search_query_index']);
 
 				//Code to handle condition if the ids of previous cond are present in temp table
-				if (($index == 0 && $count_temp_previous_cond > 0) || (!empty($results))) {
-					$from .= apply_filters( 'sm_search_query_'. $meta_table .'_join', " JOIN ".$wpdb->base_prefix."sm_advanced_search_temp
-																						ON (".$wpdb->base_prefix."sm_advanced_search_temp.product_id = {$wpdb->prefix}". $meta_table .".". $params['meta_key_col'] .")", $search_params );
-					$where .= " AND ".$wpdb->base_prefix."sm_advanced_search_temp.flag = 0";
-				}
+				if ( ! empty( $this->previous_cond_has_results ) ) {
+					if ( ( 0 === $index && $count_temp_previous_cond > 0 ) || ( ! empty( $results ) ) || $index > 0 ) {
+						$from .= apply_filters( 'sm_search_query_'. $meta_table .'_join', " JOIN ".$wpdb->base_prefix."sm_advanced_search_temp
+																							ON (".$wpdb->base_prefix."sm_advanced_search_temp.product_id = {$wpdb->prefix}". $meta_table .".". $params['meta_key_col'] .")", $search_params );
+						$where .= " AND ".$wpdb->base_prefix."sm_advanced_search_temp.flag = 0";
+					}
 
-				$results = array();
+					$results = array();
 
-				if (!empty($select ) && !empty($from ) && !empty($where )) {
-					$results = $wpdb->query ( "REPLACE INTO {$wpdb->base_prefix}sm_advanced_search_temp
-												(". $select ."
-												". $from ."
-												".$where.")" 
-											);
+					if (!empty($select ) && !empty($from ) && !empty($where )) {
+						$results = $wpdb->query ( "REPLACE INTO {$wpdb->base_prefix}sm_advanced_search_temp
+													(". $select ."
+													". $from ."
+													".$where.")" 
+												);
+					}
 				}
 
 				do_action('sm_search_'. $meta_table .'_condition_complete',$results,$search_params, array(
@@ -3523,7 +3524,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 				$index++;
 			}
-
+			$this->previous_cond_has_results = ( ! empty( $results ) ) ? true : false;
 			do_action('sm_search_'. $meta_table .'_conditions_array_complete',$search_params);
 		}
 
@@ -3575,24 +3576,24 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 															SET flag = 0
 															WHERE flag = ". $params['search_query_index']);
 
+				if ( ! empty( $this->previous_cond_has_results ) ) {					
+					//Code to handle condition if the ids of previous cond are present in temp table
+					if ( ( 0 === $index && $count_temp_previous_cond > 0 ) || ( ! empty( $results ) ) || $index > 0 ) {
+						$from .= " JOIN ".$wpdb->base_prefix."sm_advanced_search_temp
+															ON (".$wpdb->base_prefix."sm_advanced_search_temp.product_id = {$wpdb->prefix}". $table_nm .".". $params['key_col'] .") ";
+						$where .= " AND ".$wpdb->base_prefix."sm_advanced_search_temp.flag = 0 ";
+					}
 
-				//Code to handle condition if the ids of previous cond are present in temp table
-				if ( ($index == 0 && $count_temp_previous_cond > 0) || (!empty($results)) || $index > 0 ) {
-					$from .= " JOIN ".$wpdb->base_prefix."sm_advanced_search_temp
-														ON (".$wpdb->base_prefix."sm_advanced_search_temp.product_id = {$wpdb->prefix}". $table_nm .".". $params['key_col'] .") ";
-					$where .= " AND ".$wpdb->base_prefix."sm_advanced_search_temp.flag = 0 ";
+					$results = array();
+
+					if (!empty($select ) && !empty($from ) && !empty($where )) {
+						$query_posts_search = "REPLACE INTO {$wpdb->base_prefix}sm_advanced_search_temp
+														( ". $select ."
+														". $from ."
+														". $where .")";
+						$results = $wpdb->query ( $query_posts_search );
+					}
 				}
-
-				$results = array();
-
-				if (!empty($select ) && !empty($from ) && !empty($where )) {
-					$query_posts_search = "REPLACE INTO {$wpdb->base_prefix}sm_advanced_search_temp
-													( ". $select ."
-													". $from ."
-													". $where .")";
-					$results = $wpdb->query ( $query_posts_search );
-				}
-			 
 				//Query to delete the unwanted post_ids
 				$wpdb->query("DELETE FROM {$wpdb->base_prefix}sm_advanced_search_temp WHERE flag = 0");
 
@@ -3600,7 +3601,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 				$index++;
 			}
-
+			$this->previous_cond_has_results = ( ! empty( $results ) ) ? true : false;
 			do_action('sm_search_'. $table_nm .'_conditions_array_complete',$search_params);
 		}
 

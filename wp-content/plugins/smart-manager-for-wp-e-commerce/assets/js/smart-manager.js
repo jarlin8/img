@@ -795,7 +795,6 @@ Smart_Manager.prototype.format_dashboard_column_model = function( column_model )
 }
 
 Smart_Manager.prototype.setDashboardModel = function (response) {
-
 	if( typeof response != 'undefined' && response != '' ) {
 		window.smart_manager.sm_store_table_model = response.tables;
 		window.smart_manager.currentColModel = response.columns;
@@ -2669,7 +2668,7 @@ Smart_Manager.prototype.event_handler = function() {
 					}
 
 					content = '<div>'+
-									'<div style="height:20rem;"><iframe width="100%" height="100%" src="https://www.youtube.com/embed/'+ ( ( id == 'batch_update_sm_editor_grid' ) ? 'COXCuX2rFrk' : 'GMgysSQw7_g' ) +'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>'+
+									'<div style="height:17rem;"><iframe width="100%" height="100%" src="https://www.youtube.com/embed/'+ ( ( id == 'batch_update_sm_editor_grid' ) ? 'COXCuX2rFrk' : 'GMgysSQw7_g' ) +'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>'+
 									'<p style="font-size:1.2em;margin:1em;">'+description+'</p>'+
 								'</div>'
 
@@ -2678,6 +2677,7 @@ Smart_Manager.prototype.event_handler = function() {
 					window.smart_manager.modal = {
 						title: title,
 						content: content,
+						width: 'w-2/6',
 						autoHide: false,
 						cta: {
 							title: _x('Get Pro at 25% off', 'button', 'smart-manager-for-wp-e-commerce'),
@@ -3241,8 +3241,15 @@ Smart_Manager.prototype.getCurrentDashboardState = function() {
 			tempDashModel.columns.push(colObj);
 		}
 	});
-
-	return JSON.stringify({'columns': tempDashModel.columns, 'sort_params': tempDashModel.sort_params});
+	let dashboardState = {'columns': tempDashModel.columns, 'sort_params': tempDashModel.sort_params};
+	let viewSlug = window.smart_manager.getViewSlug(window.smart_manager.dashboardName);
+	if(viewSlug){
+		dashboardState['search_params'] = {
+			'isAdvanceSearch': ((window.smart_manager.advancedSearchQuery.length > 0) ? 'true' : 'false'),
+			'params': ((window.smart_manager.advancedSearchQuery.length > 0) ? window.smart_manager.advancedSearchQuery : window.smart_manager.simpleSearchText)
+		}
+	}
+	return JSON.stringify(dashboardState);
 }
 
 Smart_Manager.prototype.refreshDashboardStates = function() {

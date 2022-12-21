@@ -379,18 +379,21 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		public static function products_post_batch_update_db_updates($update_flag = false, $args = array()) {
 
 			//code for handling updation of price & sales pice in woocommerce
-			if( !empty($args['table_nm']) && $args['table_nm'] == 'postmeta' && ( (!empty($args['col_nm']) && $args['col_nm'] == '_regular_price') || (!empty($args['col_nm']) && $args['col_nm'] == '_sale_price') || (!empty($args['col_nm']) && $args['col_nm'] == '_sale_price_dates_from') || (!empty($args['col_nm']) && $args['col_nm'] == '_sale_price_dates_to') )) {
-				
-				// Code to handle setting of 'regular_price' & 'sale_price' in proper way
-				if( empty( $args['operator'] ) || ( !empty( $args['operator'] ) && $args['operator'] != 'set_to_regular_price' && $args['operator'] != 'set_to_sale_price' ) ){
-					$regular_price = (!empty($args['col_nm']) && $args['col_nm'] == '_regular_price') ? $args['value'] : get_post_meta( $args['id'], '_regular_price', true );
-					$sale_price = (!empty($args['col_nm']) && $args['col_nm'] == '_sale_price') ? $args['value'] : get_post_meta( $args['id'], '_sale_price', true );
-					
-					if( $sale_price >= $regular_price ){
-						update_post_meta( $args['id'], '_sale_price', '' );
-					}
+			$price_columns = array( '_regular_price', '_sale_price', '_sale_price_dates_from', '_sale_price_dates_to');
+			if ( ! empty( $args['table_nm'] ) && ( 'postmeta' === $args['table_nm'] ) && ( ( ! empty( $args['col_nm'] ) ) && ( true === in_array( $args['col_nm'], $price_columns ) ) ) ) {
+				switch ( $args['col_nm'] ) {
+					case '_sale_price_dates_to':
+						update_post_meta( $args['id'], '_sale_price_dates_to', strtotime( $args['value'].' 23:59:59' ) );
+						break;
+					// Code to handle setting of 'regular_price' & 'sale_price' in proper way
+					case ( empty( $args['operator'] ) || ( ! empty( $args['operator'] ) && 'set_to_regular_price' !== $args['operator'] && 'set_to_sale_price' !== $args['operator'] ) ):
+						$regular_price = ( '_regular_price' === $args['col_nm'] ) ? $args['value'] : get_post_meta( $args['id'], '_regular_price', true );
+						$sale_price = ( '_sale_price' === $args['col_nm'] ) ? $args['value'] : get_post_meta( $args['id'], '_sale_price', true );	
+						if ( $sale_price >= $regular_price ) {
+							update_post_meta( $args['id'], '_sale_price', '' );
+						}
+						break;
 				}
-				
 				sm_update_price_meta(array($args['id']));
 				//Code For updating the parent price of the product
 				sm_variable_parent_sync_price(array($args['id']));

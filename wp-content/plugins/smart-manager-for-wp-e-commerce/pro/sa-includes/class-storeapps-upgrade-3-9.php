@@ -1016,11 +1016,11 @@ if ( ! class_exists( 'StoreApps_Upgrade_3_9' ) ) {
 					$plugin_meta[] = '<span class="dashicons dashicons-book ' . esc_attr( $this->prefix ) . '-meta"></span><a href="' . esc_url( $documentation_link ) . '" target="storeapps_docs" title="' . __( 'Documentation', $this->text_domain ) . '">' . __( 'Docs', $this->text_domain ) . '</a>'; // phpcs:ignore
 				}
 				if ( ! ( is_multisite() && is_network_admin() ) ) {
-//					if ( ! empty( $access_token ) && ! empty( $token_expiry ) && time() <= $token_expiry ) {
+					if ( ! empty( $access_token ) && ! empty( $token_expiry ) && time() <= $token_expiry ) {
 						$plugin_meta[] = '<span class="dashicons dashicons-editor-unlink ' . esc_attr( $this->prefix ) . '-meta"></span><a id="' . esc_attr( $this->prefix ) . '_disconnect_storeapps" title="' . __( 'Disconnect from StoreApps.org', $this->text_domain ) . '">' . __( 'Disconnect from StoreApps.org', $this->text_domain ) . '</a>'; // phpcs:ignore
-//					} else {
-//						$plugin_meta[] = '<span class="dashicons dashicons-admin-links ' . esc_attr( $this->prefix ) . '-meta"></span><a href="' . esc_url( add_query_arg( array( 'page' => 'storeapps', 'tab' => 'onboard' ), admin_url( 'admin.php' ) ) ) . '" id="' . esc_attr( $this->prefix ) . '_connect_storeapps" title="' . __( 'Connect to StoreApps.org', $this->text_domain ) . '">' . __( 'Connect StoreApps.org', $this->text_domain ) . '</a>'; // phpcs:ignore
-//					}
+					} else {
+						$plugin_meta[] = '<span class="dashicons dashicons-admin-links ' . esc_attr( $this->prefix ) . '-meta"></span><a href="' . esc_url( add_query_arg( array( 'page' => 'storeapps', 'tab' => 'onboard' ), admin_url( 'admin.php' ) ) ) . '" id="' . esc_attr( $this->prefix ) . '_connect_storeapps" title="' . __( 'Connect to StoreApps.org', $this->text_domain ) . '">' . __( 'Connect StoreApps.org', $this->text_domain ) . '</a>'; // phpcs:ignore
+					}
 				}
 			}
 

@@ -1701,7 +1701,6 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 			$prod_title_ids = array();
 
 			foreach ($edited_data as $key => $edited_row) {
-
 				if( empty( $key ) ) {
 					continue;
 				}
@@ -1726,6 +1725,9 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 						}
 					}
 
+				} elseif ( ( ! empty( $edited_data[$key]['postmeta/meta_key=_sale_price_dates_to/meta_value=_sale_price_dates_to'] ) ) && ( ! empty( $edited_row['postmeta/meta_key=_sale_price_dates_to/meta_value=_sale_price_dates_to'] ) ) ) {
+					update_post_meta( $key, '_sale_price_dates_to', strtotime( $edited_row['postmeta/meta_key=_sale_price_dates_to/meta_value=_sale_price_dates_to'].' 23:59:59' ) );
+					unset( $edited_data[$key]['postmeta/meta_key=_sale_price_dates_to/meta_value=_sale_price_dates_to'] );
 				}
 
 				if( false !== strpos($key, 'sm_temp_') ) {

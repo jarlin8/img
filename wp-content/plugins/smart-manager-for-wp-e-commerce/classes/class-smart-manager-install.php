@@ -64,8 +64,8 @@ class Smart_Manager_Install {
 		global $wpdb;
 
 		$table_name = $wpdb->prefix.'sm_advanced_search_temp';
-		if( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) ) {
-			$wpdb->query( "DROP TABLE $table_name" );
+		if ( $table_name === $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) ) {
+			$wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 		}
 		
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}options WHERE option_name LIKE '_transient_sa_sm_%' OR option_name LIKE '_transient_timeout_sa_sm_%'"); //for deleting post type transients
