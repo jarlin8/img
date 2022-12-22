@@ -46,11 +46,26 @@ ob_start();
 <!-- wp:columns -->
 <div class="wp-block-columns" style="gap: 2em;">
 	<!-- wp:column -->
-	<?php if ( ! empty( $schema['thumbnailUrl'] ) ) { ?>
+	<?php if ( ! empty( $schema['thumbnailUrl'] ) ) {
+		$image_id = attachment_url_to_postid( $schema['thumbnailUrl'] );
+		$srcset   = '';
+		$alt      = '';
+		if ( $image_id ) {
+			$srcset = wp_get_attachment_image_srcset( $image_id );
+			$alt    = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+		}
+		if ( ! $alt && $episode_title ) {
+			$alt = $episode_title;
+		}
+		?>
 		<div class="wp-block-column" style="flex: 0 0 25%;">
 			<!-- wp:image -->
 				<figure class="wp-block-image size-large is-resized">
-					<img src="<?php echo esc_url( $schema['thumbnailUrl'] ); ?>" />
+					<img
+						src="<?php echo esc_url( $schema['thumbnailUrl'] ); ?>"
+						<?php if ( $alt ) : ?>alt="<?php echo esc_attr( $alt ); ?>"<?php endif; ?>
+						<?php if ( $srcset ) : ?>srcset="<?php echo esc_attr( $srcset ); ?>"<?php endif; ?>
+					/>
 				</figure>
 			<!-- /wp:image -->
 		</div>
@@ -70,7 +85,11 @@ ob_start();
 				<?php if ( ! empty( $season['seasonNumber'] ) ) { ?>
 					<?php echo esc_html__( 'Season', 'rank-math-pro' ); ?> <?php echo esc_html( $season['seasonNumber'] ); ?>
 					<?php if ( ! empty( $season['name'] ) ) { ?>
-						: <a href="<?php echo esc_url( $season['url'] ); ?>"><?php echo esc_html( $season['name'] ); ?></a>
+						: <?php if ( ! empty( $season['url'] ) ) { ?>
+							<a href="<?php echo esc_url( $season['url'] ); ?>"><?php echo esc_html( $season['name'] ); ?></a>
+						<?php } else { ?>
+							<?php echo esc_html( $season['name'] ); ?>
+						<?php } ?>
 					<?php } ?> &#183;
 				<?php } ?>
 

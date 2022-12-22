@@ -146,7 +146,14 @@ class Video_Sitemap {
 						continue;
 					}
 
-					$output .= $renderer->newline( "<video:{$prop}>" . esc_url( $video[ $prop ] ) . "</video:{$prop}>", 3 );
+					/**
+					 * Filter the video content and thumbnail location:
+					 * - rank_math/sitemap/video/thumbnail_loc
+					 * - rank_math/sitemap/video/content_loc
+					 */
+					$value = $this->do_filter( "sitemap/video/{$prop}", $video[ $prop ] );
+
+					$output .= $renderer->newline( "<video:{$prop}>" . esc_url( $value ) . "</video:{$prop}>", 3 );
 				}
 
 				if ( ! empty( $video['tags'] ) ) {

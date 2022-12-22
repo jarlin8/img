@@ -5,7 +5,7 @@ Tags: seo, sitemap, google search console, schema, redirection, WordPress SEO
 Tested up to: 6.1
 Requires at least: 5.6
 Requires PHP: 7.4
-Stable tag: 1.0.101
+Stable tag: 1.0.104.1
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -583,17 +583,12 @@ Please drop us an email at support@rankmath.com and we would be more than happy 
 
 == Changelog ==
 
-= 1.0.101[Nov 02, 2022] =
-* Added: [NEW!] New fields in the [Local SEO](https://rankmath.com/kb/local-seo/#local-seo-module-general-settings) Tab for the Website Name and Alternative Name to support Google's newly introduced [Site Name](https://developers.google.com/search/docs/appearance/site-names) feature
-* Added: New filter to allow CDN path in the [Social Overlay Image](https://rankmath.com/kb/meta-box-social-tab/#add-icon-overlay-to-thumbnails)
-* Added: Notification alert when the "Discourage search engines from indexing this site" option is enabled
-* Added: Property/View ID in the Analytics Module's [Properties setting](https://rankmath.com/kb/analytics/#settings-in-the-rank-math-analytics) to easily identify the Properties with the same name
-* Fixed: Self-linking in post content was counted as an [incoming link](https://rankmath.com/kb/link-counter/#rank-maths-link-counter)
-* Fixed: [Overall Content length](https://rankmath.com/kb/score-100-in-tests/#overall-content-length) test was not working well when encoded space `&nbsp;` was used in the content
-* Fixed: PHP warning on some setups when primary taxonomy is deleted
-* Fixed: PHP Undefined function error on sites that were overwriting the WooCommerce functions
-* Fixed: PHP warning on some setups when [Backup data](https://rankmath.com/kb/import-export-settings/#performing-and-restoring-backups) is not available
-* Fixed: PHP error on some setups when [filter](https://rankmath.com/kb/filters-hooks-api-developer/#change-opengraph-image) was used to change the Opengraph image
+= 1.0.104 [Dec 19, 2022] =
+* Added: [HUGE!] Introducing [Table of Contents block](https://rankmath.com/kb/table-of-contents-block/) to automatically generate Table of Contents from the headings added to the page  
+* Fixed: PHP Warnings related to Analytics Widget on the Dashboard page
+* Fixed: [SEO Analysis](https://rankmath.com/kb/seo-analysis/) was not working on some sites where the `INPUT_SERVER` was not available
 
+= 1.0.104.1 [Dec 20, 2022] =
+* Fixed: Nested object properties added in the [Schema](https://rankmath.com/kb/schema-generator/) were not working well on some setups
 
 Full changelog can be found here - **[Rank Math changelog](https://rankmath.com/changelog/?utm_source=Plugin&utm_medium=Changelog&utm_campaign=WP)**
