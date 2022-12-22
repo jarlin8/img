@@ -139,11 +139,12 @@ function flatsome_team_member($atts, $content = null){
           </div>
     </div>
 
-    <?php if($style  == 'overlay' || $style  == 'shade') echo '<div class="team-member-content pt-half text-'.$text_align.'">'.$content.'</div>'; ?>
+	<?php if ( $style == 'overlay' || $style == 'shade' ) echo '<div class="team-member-content pt-half text-' . $text_align . '">' . do_shortcode( $content ) . '</div>'; ?>
 
     <?php
     $content = ob_get_contents();
     ob_end_clean();
     return $content;
-};
+}
+
 add_shortcode('team_member','flatsome_team_member');

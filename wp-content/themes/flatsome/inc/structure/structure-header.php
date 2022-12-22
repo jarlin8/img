@@ -14,7 +14,7 @@
  * @return void
  */
 function flatsome_viewport_meta() {
-	echo apply_filters( 'flatsome_viewport_meta', '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo apply_filters( 'flatsome_viewport_meta', '<meta name="viewport" content="width=device-width, initial-scale=1" />' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 add_action( 'wp_head', 'flatsome_viewport_meta', 1 );

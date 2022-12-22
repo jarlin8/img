@@ -70,7 +70,7 @@ function flatsome_customizer_header_content_options() {
 		'type'        => 'textarea',
 		'settings'    => 'nav_position_text_top',
 		'transport'   => flatsome_customizer_transport(),
-		'label'       => __( 'HMTL 4', 'flatsome-admin' ),
+		'label'       => __( 'HTML 4', 'flatsome-admin' ),
 		'description' => __( 'Add Any HTML or Shortcode here...', 'flatsome-admin' ),
 		'section'     => 'header_content',
 		'sanitize_callback' => 'flatsome_custom_sanitize',

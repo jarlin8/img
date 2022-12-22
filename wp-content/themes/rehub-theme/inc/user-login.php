@@ -14,10 +14,8 @@ function rehub_login_register_modal() {
 		$show_terms_page = rehub_option('userlogin_term_page');
 		$show_policy_page = rehub_option('userlogin_policy_page');
 		?>
-						
-		<?php if(get_option('users_can_register')){ ?>
 			<div id="rehub-login-popup-block" class="rhhidden">
-				<?php if (rehub_option('custom_register_link') ==''):?>
+				<?php if (rehub_option('custom_register_link') =='' && get_option('users_can_register')):?>
 					<!-- Register form -->
 					<div id="rehub-register-popup">
 					<div class="rehub-register-popup">	 
@@ -124,23 +122,19 @@ function rehub_login_register_modal() {
 						<?php wp_nonce_field( 'ajax-login-nonce', 'loginsecurity' ); ?>
 					</form>
 					<div class="rehub-errors"></div>
-					<div class="rehub-login-popup-footer"><?php esc_html_e('Don\'t have an account?', 'rehub-theme'); ?> 
-					<?php if (rehub_option('custom_register_link') !=''):?>
-						<span class="act-rehub-login-popup color_link" data-type="url" data-customurl="<?php echo esc_html(rehub_option('custom_register_link'));?>"><?php esc_html_e('Sign Up', 'rehub-theme'); ?></span>						
-					<?php else:?>
-						<span class="act-rehub-login-popup color_link" data-type="register"><?php esc_html_e('Sign Up', 'rehub-theme'); ?></span>
+					<?php if (get_option('users_can_register')):?>
+						<div class="rehub-login-popup-footer"><?php esc_html_e('Don\'t have an account?', 'rehub-theme'); ?> 
+							<?php if (rehub_option('custom_register_link') !=''):?>
+								<span class="act-rehub-login-popup color_link" data-type="url" data-customurl="<?php echo esc_html(rehub_option('custom_register_link'));?>"><?php esc_html_e('Sign Up', 'rehub-theme'); ?></span>						
+							<?php else:?>
+								<span class="act-rehub-login-popup color_link" data-type="register"><?php esc_html_e('Sign Up', 'rehub-theme'); ?></span>
+							<?php endif;?>
+						</div>
 					<?php endif;?>
-					</div>
 				</div>
 				</div>
 
 			</div>
-			<?php
-
-		}else{
-			echo '<div id="rehub-restrict-login-popup" class="rhhidden"><div class="rehub-restrict-login-popup">'.__('Enable registration in settings - general', 'rehub-theme').'</div></div>';
-		} ?>
-
 		<?php
 	}else{
 		if (rehub_option('custom_login_url') !=''){

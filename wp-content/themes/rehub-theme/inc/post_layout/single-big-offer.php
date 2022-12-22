@@ -79,8 +79,7 @@
                                 <?php $coupon_mask_enabled = (!empty($offer_coupon) && ($offer_coupon_mask == '1' || $offer_coupon_mask == 'on') && $expired != '1') ? '1' : ''; ?>
                                 <?php $reveal_enabled = ($coupon_mask_enabled == '1') ? ' reveal_enabled' : ''; ?>
                                 <?php $outsidelinkpart = ($coupon_mask_enabled == '1') ? 'data-codeid="' . $post->ID . '" data-dest="' . $offer_url . '" data-clipboard-text="' . $offer_coupon . '" class="re_track_btn masked_coupon"' : 'class="re_track_btn"'; ?>
-                                <div class="border-grey-bottom flowhidden mb25 pb20 <?php echo '' . $reveal_enabled;
-                                                                                    echo '' . $coupon_style; ?>">
+                                <div class="border-grey-bottom flowhidden mb25 pb20 <?php echo '' . $reveal_enabled;echo '' . $coupon_style; ?>">
                                     <?php $disableimage = get_post_meta($post->ID, 'show_featured_image', true); ?>
                                     <?php if (!$disableimage) : ?>
                                         <div class="featured_compare_left wpsm-one-half">
@@ -206,9 +205,7 @@
                                                 <div class="priced_block mb5 showonsmobile clearfix">
                                                     <?php if ($coupon_mask_enabled == '1') : ?>
                                                         <?php wp_enqueue_script('zeroclipboard'); ?>
-                                                        <a class="coupon_btn showonsmobile re_track_btn btn_offer_block rehub_offer_coupon masked_coupon <?php if (!empty($offer_coupon_date)) {
-                                                                                                                                                                echo '' . $coupon_style;
-                                                                                                                                                            } ?>" <?php echo '' . $outsidelinkpart; ?>>
+                                                        <a class="coupon_btn showonsmobile re_track_btn btn_offer_block rehub_offer_coupon masked_coupon <?php if (!empty($offer_coupon_date)) {echo '' . $coupon_style;} ?>" <?php echo '' . $outsidelinkpart; ?>>
                                                             <?php if ($offer_btn_text != '') : ?>
                                                                 <?php echo esc_html($offer_btn_text); ?>
                                                             <?php elseif (rehub_option('rehub_mask_text') != '') : ?>

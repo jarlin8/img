@@ -1,18 +1,18 @@
 <?php
 
 // Do not allow directly accessing this file.
-update_option( 'Rehub_Key', [
-	'tf_username'      => 'gpl-user',
-	'tf_purchase_code' => 'pur*****-****',
-	'tf_support_date'  => '01.01.2030',
-] );
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'Direct script access denied.' );
 }
 
+update_option( 'Rehub_Key', [
+'tf_username' => 'lovegpl',
+'tf_purchase_code' => 'activated-activated',
+'tf_support_date' => '01.01.2030',
+] );
+
 if ( !defined( 'RH_MAIN_THEME_VERSION' ) ) {
-	define('RH_MAIN_THEME_VERSION', '18.5.1');
+	define('RH_MAIN_THEME_VERSION', '18.7');
 }
 if(!defined('REHUB_NAME_ACTIVE_THEME')){
 	define('REHUB_NAME_ACTIVE_THEME', 'REHUB');
@@ -29,7 +29,7 @@ function rehub_framework_register_scripts() {
 	wp_register_style('rhwoosingle', get_template_directory_uri() . '/css/woosingle.css', array('rehub-woocommerce'), RH_MAIN_THEME_VERSION);
 	wp_register_style('rhwoocomments', get_template_directory_uri() . '/css/woocomments.css', array('rhstyle'), '1.0');
 	wp_register_style('rhquantity', get_template_directory_uri() . '/css/quantity.css', array('rehub-woocommerce'), '1.5');
-	wp_register_style('bbpress_css', get_template_directory_uri() . '/css/bbpresscustom.css', array(), RH_MAIN_THEME_VERSION);	
+	wp_register_style('bbpress_css', get_template_directory_uri() . '/css/bbpresscustom.css', array(), RH_MAIN_THEME_VERSION);
 	wp_register_style('jquery.nouislider', get_template_directory_uri() . '/css/jquery.nouislider.css');
 	wp_register_style('tabletoggle', get_template_directory_uri() . '/css/tabletoggle.css', array(), '5.0.9');
 	wp_register_style('eggrehub', get_template_directory_uri() . '/css/eggrehub.css', array(), RH_MAIN_THEME_VERSION);
@@ -71,7 +71,7 @@ function rehub_framework_register_scripts() {
 	wp_register_style('rhniceselect', get_template_directory_uri() . '/css/niceselect.css', array(), '1.1');
 	wp_register_style('rhmodelview', get_template_directory_uri() . '/css/modelviewer.css', array(), '1.0');
 	wp_register_style('rhelementor', get_template_directory_uri() . '/css/elementor.css', array(), '1.0');
-	
+
 	//Scripts
 	wp_register_script('rhinview', get_template_directory_uri() . '/js/inview.js', array('jquery'), '1.1', true);
 	wp_register_script('rhpgwmodal', get_template_directory_uri() . '/js/pgwmodal.js', array('jquery'), '2.0', true);
@@ -98,13 +98,13 @@ function rehub_framework_register_scripts() {
 	wp_register_script('carouFredSel', get_template_directory_uri() . '/js/jquery.carouFredSel-6.2.1-packed.js', array('jquery'), '6.2.2', true);
 	wp_register_script('rhsticky', get_template_directory_uri() . '/js/jquery.sticky.js', array('jquery'), '1.0.6', true);
 	wp_register_script('custom_scroll', get_template_directory_uri() . '/js/custom_scroll.js', array('jquery', 'rehub'), '1.4', true);
-	wp_register_script('rh_elparallax', get_template_directory_uri() . '/js/elparallax.js', array('jquery'), '1.0', true);	
+	wp_register_script('rh_elparallax', get_template_directory_uri() . '/js/elparallax.js', array('jquery'), '1.0', true);
 	wp_register_script('jquery.nouislider', get_template_directory_uri() . '/js/jquery.nouislider.full.min.js', array('jquery'), '7.0.0', true);
 	wp_register_script('wpsm_googlemap',  get_template_directory_uri() . '/shortcodes/js/wpsm_googlemap.js', array('jquery'), '', true);
-	wp_register_script('tipsy', get_template_directory_uri() . '/shortcodes/js/jquery.tipsy.js', array('jquery'), '1.2.0'); 		
+	wp_register_script('tipsy', get_template_directory_uri() . '/shortcodes/js/jquery.tipsy.js', array('jquery'), '1.2.0');
 	wp_register_script('tablesorter', get_template_directory_uri() . '/js/jquery.tablesorter.min.js', array('jquery'), '2.0.2');
-	wp_register_script('touchswipe', get_template_directory_uri() . '/js/jquery.touchSwipe.min.js', array('jquery'), '2.0.6'); 
-	wp_register_script('affegg_coupons', get_template_directory_uri() . '/js/affegg_coupons.js', array('jquery'), '1.1.0', true); 
+	wp_register_script('touchswipe', get_template_directory_uri() . '/js/jquery.touchSwipe.min.js', array('jquery'), '2.0.6');
+	wp_register_script('affegg_coupons', get_template_directory_uri() . '/js/affegg_coupons.js', array('jquery'), '1.1.0', true);
 	wp_register_script('owlcarousel', get_template_directory_uri() . '/js/owl.carousel.min.js', array('jquery'), '2.3.1', true);
 	wp_register_script('owlinit', get_template_directory_uri() . '/js/owlinit.js', array('jquery', 'owlcarousel'), '1.2', true);
 	wp_register_script('video_playlist', get_template_directory_uri() . '/js/video_playlist.js', array('jquery'), '1.1.0', true);
@@ -113,16 +113,16 @@ function rehub_framework_register_scripts() {
 	wp_register_script('typehead', get_template_directory_uri() . '/js/typehead.js', array('jquery'), '0.10.7', true);
 	wp_register_script( 'rehubtablechart', get_template_directory_uri() . '/js/tablechart.js', array('jquery'), '1.7', true );
 	wp_register_script( 'rehubcompare', get_template_directory_uri() . '/js/comparechart.js', array('jquery', 'rehubtablechart'), '1.8', true );
-	wp_register_script( 'rehubwaypoints', get_template_directory_uri() . '/js/jquery.waypoints.min.js', array('jquery'), '4.0.2', true );	
+	wp_register_script( 'rehubwaypoints', get_template_directory_uri() . '/js/jquery.waypoints.min.js', array('jquery'), '4.0.2', true );
 	wp_register_script( 'justifygallery', get_template_directory_uri() . '/js/jquery.justifiedGallery.min.js', array('jquery'), '3.8.2', true );
 	wp_register_script( 'customfloatpanel', get_template_directory_uri() . '/js/custom_floatpanel.js', array('jquery', 'rehub'), '1.4', true );
-	wp_register_script( 'modulobox', get_template_directory_uri() . '/js/modulobox.min.js', array('jquery'), '1.0.6', true );	
-	wp_register_script( 'rh_elparticle', get_template_directory_uri() . '/js/particles.min.js', array('jquery'), '2.2', true );	
+	wp_register_script( 'modulobox', get_template_directory_uri() . '/js/modulobox.min.js', array('jquery'), '1.0.6', true );
+	wp_register_script( 'rh_elparticle', get_template_directory_uri() . '/js/particles.min.js', array('jquery'), '2.2', true );
 	wp_register_script( 'gsap', get_template_directory_uri() . '/js/gsap.min.js', array('jquery'), '3.4.2', true );
 	wp_register_script( 'scrolltrigger', get_template_directory_uri() . '/js/ScrollTrigger.min.js', array('jquery','gsap'), '3.4.2', true );
 	wp_register_script( 'gsapinit', get_template_directory_uri() . '/js/gsap-init.js', array('jquery','gsap'), '2.1', true );
 	wp_register_script( 'gsapsplittext', get_template_directory_uri() . '/js/SplitText.min.js', array('jquery','gsap'), '3.4.2', true );
-	wp_register_script( 'gsapsvgdraw', get_template_directory_uri() . '/js/DrawSVGPlugin.min.js', array('jquery','gsap'), '3.4.2', true );	
+	wp_register_script( 'gsapsvgdraw', get_template_directory_uri() . '/js/DrawSVGPlugin.min.js', array('jquery','gsap'), '3.4.2', true );
 	wp_register_script( 'gsapsvgpath', get_template_directory_uri() . '/js/MotionPathPlugin.min.js', array('jquery','gsap'), '3.4.2', true );
 	wp_register_script( 'gsapsvgpathhelper', get_template_directory_uri() . '/js/MotionPathHelper.min.js', array('jquery','gsap', 'gsapsvgpath'), '3.4.2', true );
 	wp_register_script( 'rhvideocanvas', get_template_directory_uri() . '/js/videocanvas.js', array('jquery', 'rhinview'), '1.0.0', true );
@@ -158,8 +158,8 @@ function rehub_enqueue_scripts() {
 	wp_enqueue_script('rhhoverintent');
 	wp_enqueue_script('rhcountdown');
 	wp_enqueue_script('rehub');
-	$scriptvars = array( 
-		'back' => esc_html__( 'back', 'rehub-theme' ), 
+	$scriptvars = array(
+		'back' => esc_html__( 'back', 'rehub-theme' ),
 		'ajax_url' => admin_url( 'admin-ajax.php', 'relative' ),
 		'fin' => esc_html__( 'That\'s all', 'rehub-theme' ),
 		'noresults' => esc_html__( 'No results found', 'rehub-theme' ),
@@ -170,29 +170,29 @@ function rehub_enqueue_scripts() {
 		'wishnonce' => wp_create_nonce('wishnonce'),
 		'searchnonce' => wp_create_nonce('search-nonce'),
 		'filternonce' => wp_create_nonce('filter-nonce'),
-		'rating_tabs_id'   => wp_create_nonce('rating_tabs_nonce'),	  
+		'rating_tabs_id'   => wp_create_nonce('rating_tabs_nonce'),
 		'max_temp' => REHUB_MAX_TEMP,
 		'min_temp' => REHUB_MIN_TEMP,
-		'helpnotnonce' => wp_create_nonce('commre-nonce'),		
+		'helpnotnonce' => wp_create_nonce('commre-nonce'),
 	);
 	wp_localize_script( 'rehub', 'rhscriptvars', $scriptvars );
-    if (class_exists('bbPress' )) {wp_enqueue_style('bbpress_css');}	
+    if (class_exists('bbPress' )) {wp_enqueue_style('bbpress_css');}
 	if (rehub_option('rehub_sticky_nav')) {wp_enqueue_script( 'rhsticky' );}
 	if (rehub_option('rehub_ajax_search')) {wp_enqueue_script( 'rehubajaxsearch' );wp_enqueue_style( 'rhajaxsearch' );}
 	if(rehub_option('enable_regular_fontawesome')){wp_enqueue_style('rehubfontawesome');}
 	if(defined('ELEMENTOR_VERSION')){wp_enqueue_style('rhelementor');}
 
-	$affcoupons_array = array( 
-		'coupontextready' => esc_html__( 'Here is your coupon code', 'rehub-theme' ), 
+	$affcoupons_array = array(
+		'coupontextready' => esc_html__( 'Here is your coupon code', 'rehub-theme' ),
 		'coupontextcopied' => esc_html__( 'Code is copied', 'rehub-theme' ),
-		'coupongotowebsite' => esc_html__( 'Go to Website', 'rehub-theme' ),	
-		'couponorcheck' => esc_html__( 'Or check your new window for opened website', 'rehub-theme' ),						  
-	);		
+		'coupongotowebsite' => esc_html__( 'Go to Website', 'rehub-theme' ),
+		'couponorcheck' => esc_html__( 'Or check your new window for opened website', 'rehub-theme' ),
+	);
 	wp_localize_script( 'affegg_coupons', 'coupvars', $affcoupons_array );
-	
-	$modelviewer_array = array( 
-		'url' => get_template_directory_uri(), 					  
-	);		
+
+	$modelviewer_array = array(
+		'url' => get_template_directory_uri(),
+	);
 	wp_localize_script( 'rh-modelviewer-init', 'modelvars', $modelviewer_array );
 
 	if(is_singular()){
@@ -218,13 +218,13 @@ if(defined( 'WCFMmp_TOKEN' )){
 	if(!is_admin()) add_action('wp_enqueue_scripts', 'rh_custom_styles_wcfm_store',99);
 	function rh_custom_styles_wcfm_store(){
 		wp_enqueue_style('rhwcfmstore');
-	}	
+	}
 }
 
-if(!is_admin()) add_action( 'wp_enqueue_scripts', 'rh_optimized_media_styles', 99 ); 
+if(!is_admin()) add_action( 'wp_enqueue_scripts', 'rh_optimized_media_styles', 99 );
 function rh_optimized_media_styles() {
 	wp_dequeue_script( 'vc_woocommerce-add-to-cart-js' );
-	
+
 	if (rehub_option('disable_woo_scripts')) {
 		if ( function_exists( 'is_woocommerce' ) ) {
 			if ( ! is_woocommerce() && ! is_cart() && ! is_checkout() ) {
@@ -256,9 +256,9 @@ add_action( 'wp_head', 'rehub_custom_css' );
 // Add specific CSS class by filter
 add_filter('body_class','rehub_body_classes');
 function rehub_body_classes($classes) {
-if (rehub_option('rehub_body_block')) $classes[] = 'rh-boxed-container';	
+if (rehub_option('rehub_body_block')) $classes[] = 'rh-boxed-container';
 if (rehub_option('dark_theme')) $classes[] = 'dark_body';
-if (rehub_option('rehub_content_shadow') !='' ){ 
+if (rehub_option('rehub_content_shadow') !='' ){
 	$classes[] = 'noinnerpadding';
 }
 	// return the $classes array
@@ -269,11 +269,11 @@ if (rehub_option('rehub_content_shadow') !='' ){
 if ( ! isset( $content_width ) ){
 	$content_width = 840;
 }
-	
+
 add_theme_support( 'automatic-feed-links' );
 add_theme_support( 'woocommerce');
 add_theme_support( 'html5', array( 'search-form' ) );
-add_post_type_support( 'page', 'excerpt' ); 
+add_post_type_support( 'page', 'excerpt' );
 //add_filter( 'should_load_separate_core_block_assets', '__return_true' ); we need to deactivate this because it makes CLS
 add_theme_support( 'custom-logo', array(
 	'height'               => 50,
@@ -296,7 +296,7 @@ if( !function_exists('rehub_theme_after_setup') ) {
 		add_theme_support( 'align-wide' );
 		add_theme_support( 'responsive-embeds' );
 		remove_theme_support( 'widgets-block-editor' );
-		
+
 		add_editor_style( 'css/style-editor.css' );
 
 		// Translation
@@ -313,7 +313,7 @@ if( !function_exists('rehub_theme_after_setup') ) {
 
 		// Post Thumbnail
 		add_theme_support( 'post-thumbnails' );
-		add_image_size( 'smallgrid', 9999, 150 ); 
+		add_image_size( 'smallgrid', 9999, 150 );
 		add_image_size( 'minithumb', 100, 9999 );
 		add_image_size( 'mediumgrid', 336, 220, true );
 		add_image_size( 'large_inner', 9999, 350 );
@@ -332,8 +332,8 @@ add_filter( 'term_description', 'do_shortcode' );
 add_filter('widget_text', 'do_shortcode');
 
 //We disable photon extension as theme has own resizer
-if ( class_exists( 'Jetpack_Photon' ) && Jetpack::is_module_active( 'photon' ) ) { 
-	Jetpack::deactivate_module( 'photon' ); 
+if ( class_exists( 'Jetpack_Photon' ) && Jetpack::is_module_active( 'photon' ) ) {
+	Jetpack::deactivate_module( 'photon' );
 }
 add_filter( 'lazyload_is_enabled', '__return_false', 99 );
 
@@ -351,7 +351,7 @@ if(rehub_option('disable_google_fonts') != true){
 			$font_face_nav_weight = rehub_option('rehub_nav_font_weight');
 			$font_face_nav_style  = rehub_option('rehub_nav_font_style');
 			$font_face_nav_subset  = rehub_option('rehub_nav_font_subset');
-			VP_Site_GoogleWebFont::instance()->add($font_face_nav, $font_face_nav_weight, $font_face_nav_style, $font_face_nav_subset);	
+			VP_Site_GoogleWebFont::instance()->add($font_face_nav, $font_face_nav_weight, $font_face_nav_style, $font_face_nav_subset);
 		}
 
 		$font_face_headings = rehub_option('rehub_headings_font');
@@ -359,7 +359,7 @@ if(rehub_option('disable_google_fonts') != true){
 			$font_face_headings_weight = rehub_option('rehub_headings_font_weight');
 			$font_face_headings_style  = rehub_option('rehub_headings_font_style');
 			$font_face_headings_subset  = rehub_option('rehub_headings_font_subset');
-			VP_Site_GoogleWebFont::instance()->add($font_face_headings, $font_face_headings_weight, $font_face_headings_style, $font_face_headings_subset);			
+			VP_Site_GoogleWebFont::instance()->add($font_face_headings, $font_face_headings_weight, $font_face_headings_style, $font_face_headings_subset);
 		}
 
 		$font_face_button      = rehub_option('rehub_btn_font');
@@ -367,7 +367,7 @@ if(rehub_option('disable_google_fonts') != true){
 			$font_face_button_weight = rehub_option('rehub_btn_font_weight');
 			$font_face_button_style  = rehub_option('rehub_btn_font_style');
 			$font_face_button_subset  = rehub_option('rehub_btn_font_subset');
-			VP_Site_GoogleWebFont::instance()->add($font_face_button, $font_face_button_weight, $font_face_button_style, $font_face_button_subset);	
+			VP_Site_GoogleWebFont::instance()->add($font_face_button, $font_face_button_weight, $font_face_button_style, $font_face_button_subset);
 		}
 
 		$font_face_body   = rehub_option('rehub_body_font');
@@ -375,7 +375,7 @@ if(rehub_option('disable_google_fonts') != true){
 			$font_face_body_weight = rehub_option('rehub_body_font_weight');
 			$font_face_body_style  = rehub_option('rehub_body_font_style');
 			$font_face_body_subset  = rehub_option('rehub_body_font_subset');
-			VP_Site_GoogleWebFont::instance()->add($font_face_body, $font_face_body_weight, $font_face_body_style, $font_face_body_subset);	
+			VP_Site_GoogleWebFont::instance()->add($font_face_body, $font_face_body_weight, $font_face_body_style, $font_face_body_subset);
 		}
 	}
 }
@@ -410,7 +410,7 @@ add_filter( 'wp_resource_hints', 'rehub_resource_hints', 10, 2 );
 
 
 class Rehub_Walker extends Walker_Nav_Menu
-{	
+{
 	function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
 		global $wp_query;
 		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
@@ -447,7 +447,7 @@ class Rehub_Walker extends Walker_Nav_Menu
 		$item_output .= $args->after;
 
 		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args);
-	}	
+	}
 }
 //Add elements to Sliding Mobile Panel
 if( ! function_exists( 'rh_custom_sliding_elements' ) ) {
@@ -456,7 +456,7 @@ if( ! function_exists( 'rh_custom_sliding_elements' ) ) {
 		$slidingtext = rehub_option('text_mobilesliding');
 		$output = $bgcolor = '';
 		if($slidingtext || $slidinglogo){
-			$slidingcolor = rehub_option('color_mobilesliding');			
+			$slidingcolor = rehub_option('color_mobilesliding');
 			if($slidingcolor){
 				$bgcolor = 'background-color: '.$slidingcolor.';';
 			}
@@ -465,7 +465,7 @@ if( ! function_exists( 'rh_custom_sliding_elements' ) ) {
 			}
 			else{
 				$bgcolor = 'background-color: #f1f1f1;';
-			}				
+			}
 		}else{
 			$slidinglogo = rehub_option("rehub_logo");
 			$slidingcolor = rehub_option("rehub_header_color_background");
@@ -488,7 +488,7 @@ if( ! function_exists( 'rh_custom_sliding_elements' ) ) {
 //Add elements to footer
 function rehub_add_elem_to_footer(){
 	?>
-    <?php 
+    <?php
         $logoimageurl = '';
         if(rehub_option('rehub_logo_inmenu_url')){
             $logoimageurl = rehub_option("rehub_logo_inmenu_url");
@@ -496,12 +496,12 @@ function rehub_add_elem_to_footer(){
         	$logoimageurl = rehub_option("rehub_logo");
         }
         if ($logoimageurl) {
-            echo '<div id="logo_mobile_wrapper"><a href="'.get_home_url().'" class="logo_image_mobile"><img src="'.$logoimageurl.'" alt="'.get_bloginfo( "name" ).'" width="160" height="50" /></a></div>'; 
-        }                            
-    ?>   
+            echo '<div id="logo_mobile_wrapper"><a href="'.get_home_url().'" class="logo_image_mobile"><img src="'.$logoimageurl.'" alt="'.get_bloginfo( "name" ).'" width="160" height="50" /></a></div>';
+        }
+    ?>
 
     <?php if( rehub_option( 'rehub_logo_retina' ) != '' && rehub_option( 'rehub_logo_retina_width' ) != '' && rehub_option( 'rehub_logo_retina_height' ) !=''): ?>
-        <?php 
+        <?php
         	$menuscript = '
             jQuery(document).ready(function($) {
             	var retina = window.devicePixelRatio > 1 ? true : false;
@@ -511,29 +511,29 @@ function rehub_add_elem_to_footer(){
             });';
             wp_add_inline_script('rehub', $menuscript);
         ?>
-    <?php endif; ?> 
+    <?php endif; ?>
 
     <?php echo rh_custom_sliding_elements();?>
     <?php echo coupon_get_code();?>
 
-    <?php 
+    <?php
         if (rehub_option('rehub_analytics')) {
-            echo rehub_option('rehub_analytics');   
-        }             
-    ?> 
+            echo rehub_option('rehub_analytics');
+        }
+    ?>
 	<div id="rhslidingMenu">
 		<div id="slide-menu-mobile"></div>
 	</div>
 	<div id="rhSplashSearch">
 		<div class="search-header-contents">
 			<div id="close-src-splash" class="rh-close-btn rh-hovered-scale position-relative text-center cursorpointer rh-circular-hover abdposright rtlposleft mt15 mr20 ml30" style="z-index:999"><span><i class="rhicon rhi-times whitebg roundborder50p rh-shadow4" aria-hidden="true"></i></span></div>
-			<?php 
+			<?php
 				$posttypes = rehub_option("rehub_search_ptypes");
-                if( class_exists( 'Woocommerce' ) && empty($posttypes)): get_product_search_form(); 
-                else: 
-                    get_search_form(); 
-                endif;  
-            ?>  
+                if( class_exists( 'Woocommerce' ) && empty($posttypes)): get_product_search_form();
+                else:
+                    get_search_form();
+                endif;
+            ?>
 		</div>
 	</div>
 
@@ -558,7 +558,7 @@ function rh_shortcode_in_menu( $item_output, $item ) {
 		if(!empty( $item->description)){
 			$item_output = do_shortcode( $item->description );
 		}
-	}  
+	}
 	return $item_output;
 }
 
@@ -602,18 +602,18 @@ class WPSM_image_resizer{
 			if(!rehub_option('rh_image_resize')){
 				$image_url = bfi_thumb( $image_url, $params );
 			}
-			$image_url = apply_filters('rh_thumb_resized_url', $image_url );			
+			$image_url = apply_filters('rh_thumb_resized_url', $image_url );
 		}
 		else {
 			if(!rehub_option('rh_image_resize')){
 				$image_url = bfi_thumb( $image_url, $params );
-			}			
+			}
 			$image_url = apply_filters('rh_src_resized_url', $image_url );
 		}
 		if (empty($image_url)) {
-			$image_url = $this->no_thumb();			
+			$image_url = $this->no_thumb();
 		}
-		return $image_url;		
+		return $image_url;
 	}
 
 	public function get_not_resized_url(){ //Show not resized url of image
@@ -623,7 +623,7 @@ class WPSM_image_resizer{
 			$image_url = $this->get_mypost_thumb_url();
 		}
 		if (empty($image_url)) {
-			$image_url = $this->no_thumb();			
+			$image_url = $this->no_thumb();
 		}
 		return apply_filters('rh_thumb_notresized_url', $image_url );
 	}
@@ -635,16 +635,16 @@ class WPSM_image_resizer{
 			$image_nelio_url = get_post_meta( $post->ID, _nelioefi_url(), true );
 			if (!empty($image_nelio_url)){
 				return apply_filters('rh_thumb_url', $image_nelio_url );
-			}			
+			}
 		}
 		if ( has_post_thumbnail($post->ID) ){
-			$image_id = get_post_thumbnail_id($post->ID);  
-			$image_url = wp_get_attachment_image_src($image_id, $this->size);  
+			$image_id = get_post_thumbnail_id($post->ID);
+			$image_url = wp_get_attachment_image_src($image_id, $this->size);
 			$image_url = (!empty($image_url)) ? $image_url[0] : '';
-			
+
 			return apply_filters('rh_thumb_url', $image_url );
-		}	
-		return apply_filters('rh_thumb_url', $image_url );	
+		}
+		return apply_filters('rh_thumb_url', $image_url );
 	}
 
 	public static function get_post_thumb_static($size = 'full'){
@@ -654,23 +654,23 @@ class WPSM_image_resizer{
 			$image_nelio_url = get_post_meta( $post->ID, _nelioefi_url(), true );
 			if (!empty($image_nelio_url)){
 				return apply_filters('rh_thumb_url', $image_nelio_url );
-			}			
-		}		
+			}
+		}
 		if ( has_post_thumbnail($post->ID) ){
-			$image_id = get_post_thumbnail_id($post->ID);  
-			$image_url = wp_get_attachment_image_src($image_id,$size);  
+			$image_id = get_post_thumbnail_id($post->ID);
+			$image_url = wp_get_attachment_image_src($image_id,$size);
 			$image_url = (!empty($image_url)) ? $image_url[0] : '';
 			return apply_filters('rh_thumb_url', $image_url );
 		}
-		return apply_filters('rh_thumb_url', $image_url );	
-	}	
+		return apply_filters('rh_thumb_url', $image_url );
+	}
 
 	public function no_thumb(){ //Set blank image when no image url found
 		if(rehub_option('featured_fallback_img')){$image_url = esc_url(rehub_option('featured_fallback_img'));}
 		else if(!empty($this->no_thumb)){$image_url = $this->no_thumb;}
 		else {$image_url = get_template_directory_uri() . '/images/default/blank.gif';}
 		return apply_filters('rh_no_thumb_url', $image_url);
-	}	
+	}
 
 	public function show_resized_image() {
 		$width_param = (!empty($this->width)) ? ' width="'.$this->width.'"': '';
@@ -679,7 +679,7 @@ class WPSM_image_resizer{
 		if ($this->lazy == true){
 			if(function_exists('is_amp_endpoint') && is_amp_endpoint()){
 				echo '<img class="lazyload" data-skip-lazy="" data-src="'.$this->get_resized_url().'"'.$width_param.$height_param.' alt="'.wp_strip_all_tags($alt).'" src="'.$this->get_resized_url().'" />';
-			}else{			
+			}else{
 				echo '<img class="lazyload" data-skip-lazy="" data-src="'.$this->get_resized_url().'"'.$width_param.$height_param.' alt="'.wp_strip_all_tags($alt).'" src="'.$this->no_thumb().'" />';
 			}
 		}
@@ -691,12 +691,12 @@ class WPSM_image_resizer{
 	public function show_not_resized_image() {
 		$width_param = (!empty($this->width)) ? ' width="'.$this->width.'"': '';
 		$height_param = (!empty($this->height)) ? ' height="'.$this->height.'"': '';
-		$alt = (!empty($this->title)) ? $this->title : the_title_attribute (array('echo' => 0) );		
+		$alt = (!empty($this->title)) ? $this->title : the_title_attribute (array('echo' => 0) );
 		if ($this->lazy == true){
 			if(function_exists('is_amp_endpoint') && is_amp_endpoint()){
 				echo '<img class="lazyload" data-skip-lazy="" data-src="'.$this->get_not_resized_url().'"'.$width_param.$height_param.' alt="'.wp_strip_all_tags($alt).'" src="'.$this->get_not_resized_url().'" />';
 			}else{
-				echo '<img class="lazyload" data-skip-lazy="" data-src="'.$this->get_not_resized_url().'"'.$width_param.$height_param.' alt="'.wp_strip_all_tags($alt).'" src="'.$this->no_thumb().'" />';				
+				echo '<img class="lazyload" data-skip-lazy="" data-src="'.$this->get_not_resized_url().'"'.$width_param.$height_param.' alt="'.wp_strip_all_tags($alt).'" src="'.$this->no_thumb().'" />';
 			}
 
 		}
@@ -706,12 +706,12 @@ class WPSM_image_resizer{
 	}
 
 	public static function show_static_resized_image($params = array()) {
-		
+
 		$src = $width = $height = $title = $no_thumb_url = $no_thumb_fallback = '';
 		$crop = $lazy = $thumb = false;
 		if (rehub_option('enable_lazy_images') == '1'){
 			$lazy = true;
-		}		
+		}
 		@extract ($params);
 
 		$params = array( 'width' => $width, 'height' => $height, 'crop' => $crop);
@@ -724,19 +724,19 @@ class WPSM_image_resizer{
 			if(!rehub_option('rh_image_resize')){
 				$image_url = bfi_thumb( $image_url, $params );
 			}
-			$image_url = apply_filters('rh_static_resized_url', $image_url);		
-		}	
+			$image_url = apply_filters('rh_static_resized_url', $image_url);
+		}
 		elseif (empty($image_url) && $thumb == true) {
 			$image_url = self::get_post_thumb_static();
 			if(!rehub_option('rh_image_resize')){
 				$image_url = bfi_thumb( $image_url, $params );
 			}
 			$image_url = apply_filters('rh_thumb_resized_url', $image_url );
-		}	
+		}
 		if (empty($image_url)) {
 			if (!empty($no_thumb_fallback)) return $no_thumb_fallback;
-			$image_url = $no_thumb;	
-			$image_url = apply_filters('rh_no_thumb_url', $image_url);	
+			$image_url = $no_thumb;
+			$image_url = apply_filters('rh_no_thumb_url', $image_url);
 		}
 		$width_param = (!empty($width)) ? ' width="'.$width.'"': '';
 		$height_param = (!empty($height)) ? ' height="'.$height.'"': '';
@@ -758,17 +758,17 @@ class WPSM_image_resizer{
 		$lazy = apply_filters('rh_lazy_load', $lazy, $attachment_id);
 		if (!rehub_option('enable_lazy_images') || !empty($attributes['lazydisable'])){
 			$lazy = false;
-		}	
+		}
 		if(rehub_option('rh_image_resize')){
 			$image_size='full';
-		}		
+		}
 		if(!empty($attributes['emptyimage'])){
 			$transparent = esc_url($attributes['emptyimage']);
 		}else{
 			$transparent = get_template_directory_uri() . '/images/default/blank.gif';
 		}
-		$image_id = ($attachment_id) ? (int)$attachment_id : get_post_thumbnail_id($post->ID);  
-		$image = wp_get_attachment_image_src($image_id,$image_size); 
+		$image_id = ($attachment_id) ? (int)$attachment_id : get_post_thumbnail_id($post->ID);
+		$image = wp_get_attachment_image_src($image_id,$image_size);
 
 		$image_url = (!empty($image[0])) ? $image[0] : '';
 		$image_url = apply_filters('rh_thumb_url', $image_url );
@@ -776,7 +776,7 @@ class WPSM_image_resizer{
 
 		$nofeatured = (!empty($attributes['nofeatured'])) ? true : false;
 
-		$imagewidth = (!empty($image[1])) ? esc_attr( $image[1] ) : '';	
+		$imagewidth = (!empty($image[1])) ? esc_attr( $image[1] ) : '';
 		$imageheight = (!empty($image[2])) ? esc_attr( $image[2] ) : '';
 		if($imagewidth == 1) $imagewidth = '';
 
@@ -786,7 +786,7 @@ class WPSM_image_resizer{
 			$alt = apply_filters('wp_get_attachment_alt_attribute', $alt);
 			if (empty($alt)) {
 				$alt = the_title_attribute (array('echo' => 0) );
-			}			
+			}
 			if ( $nofeatured || has_post_thumbnail($post->ID)){
 				if ( !empty($attributes )) {
 					if(!empty($attributes['max_height'])){
@@ -840,7 +840,7 @@ class WPSM_image_resizer{
 				else {
 					$nothumb_url = get_template_directory_uri() . '/images/default/noimage_500_500.png';
 				}
-				$nothumb_url = apply_filters('rh_no_thumb_url', $nothumb_url);			
+				$nothumb_url = apply_filters('rh_no_thumb_url', $nothumb_url);
 				$output = sprintf(
 					'<img src="%s" data-src="%s" alt="%s" data-skip-lazy="" class="lazyload %s" width="%s" height="%s">',
 					esc_url( $transparent ),
@@ -866,19 +866,19 @@ class WPSM_image_resizer{
 					$nothumb_url = get_template_directory_uri() . '/images/default/noimage_500_500.png';
 				}
 				$nothumb_url = apply_filters('rh_no_thumb_url', $nothumb_url);
-				$alt = the_title_attribute (array('echo' => 0) );			
+				$alt = the_title_attribute (array('echo' => 0) );
 				$output = sprintf(
 					'<img src="%s" alt="%s" class="%s">',
 					esc_url( $nothumb_url),
 					esc_attr( $alt ),
 					esc_attr( $css_class )
-				);				
+				);
 			}
 		}
-		
+
 		$output = apply_filters('rh_thumb_output', $output, $image_size);
-		return $output;		
-	}		
+		return $output;
+	}
 
 }}
 
@@ -887,7 +887,7 @@ class WPSM_image_resizer{
 //////////////////////////////////////////////////////////////////
 if( !function_exists('wpsm_thumb') ) {
 function wpsm_thumb( $size = 'smallgrid', $maxheight='', $id=''){
-	$attributes = array();	
+	$attributes = array();
 	if($maxheight && is_numeric($maxheight)){
 		$attributes['max_height'] = (int)$maxheight.'px';
 	}
@@ -910,7 +910,7 @@ function wpsm_thumb( $size = 'smallgrid', $maxheight='', $id=''){
 
 	echo WPSM_image_resizer::show_wp_image($size, $id, $attributes);
 
-}	
+}
 }
 
 //Siteground fix for lazy load
@@ -930,18 +930,18 @@ function rehub_price_clean($price) {
 	$cur_clean = array('8377', 'Rs.', 'руб.', 'RS.' );
 	$price = str_replace($cur_clean, '', $price);
 	if (rehub_option('price_pattern') == 'us') {
-		$price = (float) preg_replace("/[^0-9\.]/","", $price);			
+		$price = (float) preg_replace("/[^0-9\.]/","", $price);
 	}
 	elseif (rehub_option('price_pattern') == 'eu') {
 		$price = preg_replace("/[^0-9,]/","", $price);
-		$price = (float) str_replace(',', '.', $price);			
+		$price = (float) str_replace(',', '.', $price);
 	}
 	elseif (rehub_option('price_pattern') == 'in') {
-		$price = (float) preg_replace("/[^0-9\.]/","", $price);			
+		$price = (float) preg_replace("/[^0-9\.]/","", $price);
 	}
 	else {
 		$price = (float) preg_replace("/[^0-9\.]/","", $price);
-	}	
+	}
 	if (!is_numeric($price) || $price =='0')	{
 		return;
 	}
@@ -955,10 +955,10 @@ function rehub_formats_icons($editor='no')
 {
 	global $post;
 	$offer_price_old = get_post_meta($post->ID, 'rehub_offer_product_price_old', true );
-	$offer_price_old = apply_filters('rehub_create_btn_price_old', $offer_price_old);	
+	$offer_price_old = apply_filters('rehub_create_btn_price_old', $offer_price_old);
 	if(!empty($offer_price_old)) {
 		$offer_price = get_post_meta( $post->ID, 'rehub_offer_product_price', true );
-		$offer_price = apply_filters('rehub_create_btn_price', $offer_price);		
+		$offer_price = apply_filters('rehub_create_btn_price', $offer_price);
 		if ( !empty($offer_price)) {
 			$offer_pricesale = rehub_price_clean($offer_price); //Clean price from currence symbols
 			$offer_priceold = rehub_price_clean($offer_price_old); //Clean price from currence symbols
@@ -967,14 +967,14 @@ function rehub_formats_icons($editor='no')
 				$off_proc = round($off_proc);
 				echo '<span class="overlay_post_formats sale_format"><i class="rhicon rhi-tag"></i> <span>'.$off_proc.'%</span></span>';
 			}
-		}			
-	}	
+		}
+	}
 }
 }
 
 if( !function_exists('rehub_format_score') ) {
 function rehub_format_score($size = 'small', $type = 'star' )
-{	
+{
 	global $post;
 	$reviewscore = get_post_meta($post->ID, 'rehub_review_overall_score', true);
 	if($reviewscore && $reviewscore>0) {
@@ -986,8 +986,8 @@ function rehub_format_score($size = 'small', $type = 'star' )
 			}
 			elseif ($type == 'square') {
 				echo '<span class="overlay_post_formats review_formats_score">'.$overall_score_icon.'</span>';
-			}			
-		}	
+			}
+		}
 	}
 }
 }
@@ -1003,7 +1003,7 @@ function meta_all ($time_exist, $cats_exist, $admin_exist, $cats_post = false ){
 				<?php echo esc_attr($name); ?>
 			</a>
 		</span>
-	<?php }   
+	<?php }
 	if(rehub_option('exclude_date_meta') != 1 && ($time_exist != false)){ ?>
  		<span class="date_meta">
  			<?php if(rehub_option('date_publish')):?>
@@ -1011,13 +1011,13 @@ function meta_all ($time_exist, $cats_exist, $admin_exist, $cats_post = false ){
  			<?php else:?>
  				 <?php the_modified_time(get_option( 'date_format' )); ?>
  			<?php endif;?>
- 		</span>	
+ 		</span>
 	<?php }
 	if(rehub_option('exclude_cat_meta') != 1 && ($cats_exist != false) && (!empty($cats_exis))){ ?>
 		<?php $cat_name = get_cat_name($cats_exist); ?>
 		<span class="cat_link_meta"><a class="cat" href="<?php echo get_category_link( $cats_exist); ?>"><?php echo ''.$cat_name ?></a></span>
-	<?php }   
-	if(rehub_option('exclude_cat_meta') != 1 && ($cats_post != false)){ 
+	<?php }
+	if(rehub_option('exclude_cat_meta') != 1 && ($cats_post != false)){
 		$postidforcat = $post->ID;
 		if ('post' == $post->post_type) {
 			$categories = get_the_category($postidforcat);
@@ -1038,7 +1038,7 @@ function meta_all ($time_exist, $cats_exist, $admin_exist, $cats_post = false ){
                 echo ''.$term_list;
             }
 		}
-	}		 	
+	}
 }
 }
 
@@ -1050,11 +1050,11 @@ function rh_post_header_meta ($admin_exist = true, $time_exist = true, $view_exi
 		<span class="admin_meta">
 			<a class="admin" href="<?php echo get_author_posts_url( $author_id ) ?>">
 				<?php if ($admin_exist === 'full') :?><?php echo get_avatar( $author_id, '22', '', $name ); ?><?php endif;?>
-				<?php if ($admin_exist === 'fullbig') :?><?php echo get_avatar( $author_id, '40', '', $name  ); ?><?php endif;?>				
-				<?php echo esc_attr($name); ?>			
+				<?php if ($admin_exist === 'fullbig') :?><?php echo get_avatar( $author_id, '40', '', $name  ); ?><?php endif;?>
+				<?php echo esc_attr($name); ?>
 			</a>
 		</span>
-	<?php }   
+	<?php }
 	if(rehub_option('exclude_date_meta') != 1 && ($time_exist != false)){ ?>
  		<span class="date_meta">
   			<?php if(rehub_option('date_publish')):?>
@@ -1062,13 +1062,13 @@ function rh_post_header_meta ($admin_exist = true, $time_exist = true, $view_exi
  			<?php else:?>
  				 <?php the_modified_time(get_option( 'date_format' )); ?>
  			<?php endif;?>
- 		</span>	
-	<?php }   
+ 		</span>
+	<?php }
 	if(rehub_option('post_view_disable') != 1 && ($view_exist != false) && function_exists('RH_get_post_views')){ ?>
 		<?php $rehub_views = RH_get_post_views($post->ID); if ($rehub_views !='') :?>
 			<span class="postview_meta"><?php echo (int)$rehub_views; ?> </span>
-		<?php endif ;?>	
-	<?php }	
+		<?php endif ;?>
+	<?php }
 	if(rehub_option('exclude_comments_meta') != 1 && ($comment_exist != false)){ ?>
 		<?php if($comment_exist=='compact'):?>
 			<span class="comm_count_meta"><?php comments_popup_link( esc_html__('0','rehub-theme'), esc_html__('1','rehub-theme'), esc_html__('%','rehub-theme'), 'comm_meta', ''); ?></span>
@@ -1079,8 +1079,8 @@ function rh_post_header_meta ($admin_exist = true, $time_exist = true, $view_exi
 		<?php else:?>
 			<span class="comm_count_meta"><?php comments_popup_link( esc_html__('no comments','rehub-theme'), esc_html__('1 comment','rehub-theme'), esc_html__('% comments','rehub-theme'), 'comm_meta', ''); ?></span>
 		<?php endif;?>
-	<?php }	
-	if(rehub_option('exclude_cat_meta') != 1 && ($cats_post != false)){ 
+	<?php }
+	if(rehub_option('exclude_cat_meta') != 1 && ($cats_post != false)){
 		$postidforcat = $post->ID;
 		if ('post' == $post->post_type) {
 			$categories = get_the_category($postidforcat);
@@ -1106,8 +1106,8 @@ function rh_post_header_meta ($admin_exist = true, $time_exist = true, $view_exi
             if(!is_wp_error($term_list)){
                 echo ''.$term_list;
             }
-		}		
-	}			 	
+		}
+	}
 }
 }
 
@@ -1121,13 +1121,13 @@ function rh_post_header_meta_big ($style='1'){
 					<?php if(rehub_option('exclude_author_meta') != 1):?>
 						<?php $author_id=$post->post_author; $name = get_the_author_meta( 'display_name', $author_id ); ?>
 						<a href="<?php echo get_author_posts_url( $author_id ) ?>" class="floatleft mr10 rtlml10">
-							<?php echo get_avatar( $author_id, '40', '', $name, array('class'=>'roundborder50p') ); ?>					
-						</a>	
+							<?php echo get_avatar( $author_id, '40', '', $name, array('class'=>'roundborder50p') ); ?>
+						</a>
 					<?php endif;?>
 					<span class="floatleft authortimemeta lineheight20 fontbold">
 						<?php if(rehub_option('exclude_author_meta') != 1):?>
-							<a href="<?php echo get_author_posts_url( $author_id ) ?>">				
-								<?php the_author_meta( 'display_name', $author_id ); ?>			
+							<a href="<?php echo get_author_posts_url( $author_id ) ?>">
+								<?php the_author_meta( 'display_name', $author_id ); ?>
 							</a>
 						<?php endif;?>
 						<?php if(rehub_option('exclude_date_meta') != 1):?>
@@ -1139,22 +1139,22 @@ function rh_post_header_meta_big ($style='1'){
 					 			<?php endif;?>
 							</div>
 						<?php endif;?>
-					</span>	
-				</div>					
+					</span>
+				</div>
 				<div class="border-right mobileinline disablemobileborder disablemobilepadding mb0 mobmb10 mr25 pr25 post-meta-big pt15 wpsm-one-third">
 					<div class="postviewcomm lineheight25">
 						<?php if(rehub_option('post_view_disable') != 1 && function_exists('RH_get_post_views')):?>
 							<?php $rehub_views = RH_get_post_views($post->ID);?>
 							<span class="postview_meta mr15"><strong><?php echo (int)$rehub_views; ?></strong> <?php echo _n('View', 'Views', (int)$rehub_views, 'rehub-theme');?></span>
-						<?php endif;?>	
-						<?php if(rehub_option('exclude_comments_meta') != 1):?>			
-							<span class="comm_count_meta"><strong><?php comments_popup_link('0', '1', '%', 'comm_meta', ''); ?></strong></span>	
-						<?php endif;?>													
+						<?php endif;?>
+						<?php if(rehub_option('exclude_comments_meta') != 1):?>
+							<span class="comm_count_meta"><strong><?php comments_popup_link('0', '1', '%', 'comm_meta', ''); ?></strong></span>
+						<?php endif;?>
 					</div>
 				</div>
 				<?php if(rehub_option('exclude_cat_meta') != 1):?>
 					<div class="cat_link_meta mobileinline disablemobileborder disablemobilepadding pt15 pr25 wpsm-last-column wpsm-one-third mb0 mobmb10">
-						<?php  
+						<?php
 							$postidforcat = $post->ID;
 							if ('post' == $post->post_type) {
 								$categories = get_the_category($postidforcat);
@@ -1180,7 +1180,7 @@ function rh_post_header_meta_big ($style='1'){
 					            if(!is_wp_error($term_list)){
 					                echo ''.$term_list;
 					            }
-							}		
+							}
 						?>
 					</div>
 				<?php endif;?>
@@ -1190,13 +1190,13 @@ function rh_post_header_meta_big ($style='1'){
 				<?php if(rehub_option('exclude_author_meta') != 1):?>
 					<?php $author_id=$post->post_author; $name = get_the_author_meta( 'display_name', $author_id );?>
 					<a href="<?php echo get_author_posts_url( $author_id ) ?>" class="floatleft mr10 rtlml10">
-						<?php echo get_avatar( $author_id, '40', '', $name, array('class'=>'roundborder50p') ); ?>					
-					</a>	
+						<?php echo get_avatar( $author_id, '40', '', $name, array('class'=>'roundborder50p') ); ?>
+					</a>
 				<?php endif;?>
 				<span class="floatleft authortimemeta lineheight20 fontbold">
 					<?php if(rehub_option('exclude_author_meta') != 1):?>
-						<a href="<?php echo get_author_posts_url( $author_id ) ?>">				
-							<?php the_author_meta( 'display_name', $author_id ); ?>			
+						<a href="<?php echo get_author_posts_url( $author_id ) ?>">
+							<?php the_author_meta( 'display_name', $author_id ); ?>
 						</a>
 					<?php endif;?>
 					<?php if(rehub_option('exclude_date_meta') != 1):?>
@@ -1208,19 +1208,19 @@ function rh_post_header_meta_big ($style='1'){
 				 			<?php endif;?>
 						</div>
 					<?php endif;?>
-				</span>	
+				</span>
 			</div>
 			<div class="floatright ml15 postviewcomm font15px lineheight25 mt5">
 				<?php if(rehub_option('post_view_disable') != 1 && function_exists('RH_get_post_views')):?>
 					<?php $rehub_views = RH_get_post_views($post->ID);?>
 					<span class="postview_meta mr15 ml15"><strong><?php echo (int)$rehub_views; ?></strong> <?php echo _n('View', 'Views', (int)$rehub_views, 'rehub-theme');?></span>
-				<?php endif;?>	
-				<?php if(rehub_option('exclude_comments_meta') != 1):?>			
-					<span class="comm_count_meta"><strong><?php comments_popup_link( esc_html__('0','rehub-theme'), esc_html__('1 comment','rehub-theme'), esc_html__('% comments','rehub-theme'), 'comm_meta', ''); ?></strong></span>	
-				<?php endif;?>			
+				<?php endif;?>
+				<?php if(rehub_option('exclude_comments_meta') != 1):?>
+					<span class="comm_count_meta"><strong><?php comments_popup_link( esc_html__('0','rehub-theme'), esc_html__('1 comment','rehub-theme'), esc_html__('% comments','rehub-theme'), 'comm_meta', ''); ?></strong></span>
+				<?php endif;?>
 			</div>
-		<?php endif;?>	
-	<?php				 	
+		<?php endif;?>
+	<?php
 }
 }
 
@@ -1228,12 +1228,12 @@ if( !function_exists('rh_post_header_cat') ) { //post meta
 function rh_post_header_cat($post_type='post', $dealstore = false, $postid = ''){
 	if($postid){
 		$post_id = $postid;
-	} 
+	}
 	else{
 		global $post;
 		$post_id = $post->ID;
 	}
-	if(rehub_option('exclude_cat_meta') != 1){ 
+	if(rehub_option('exclude_cat_meta') != 1){
 		echo '<div class="rh-cat-list-title">';
 		if ($post_type=='post' && 'post' == get_post_type($post_id)) {
 			$categories = get_the_category($post_id);
@@ -1245,14 +1245,14 @@ function rh_post_header_cat($post_type='post', $dealstore = false, $postid = '')
 			    }
 			    echo trim( $output, $separator );
 			}
-			if(rehub_option('enable_brand_taxonomy') == 1 && $dealstore == true){ 
-				$dealcats = wp_get_post_terms($post_id, 'dealstore', array("fields" => "all"));	
+			if(rehub_option('enable_brand_taxonomy') == 1 && $dealstore == true){
+				$dealcats = wp_get_post_terms($post_id, 'dealstore', array("fields" => "all"));
 				if( ! empty( $dealcats ) && ! is_wp_error( $dealcats ) ) {
 					foreach( $dealcats as $dealcat ) {
-				        echo '<a class="rh-cat-label-title rh-dealstore-cat rh-cat-'.$dealcat->term_id.'" href="' . esc_url( get_term_link( $dealcat->term_id ) ) . '" title="' . esc_attr( sprintf( esc_html__( 'View all posts in %s', 'rehub-theme' ), $dealcat->name ) ) . '">' . esc_html( $dealcat->name ) . '</a>' . $separator;						
+				        echo '<a class="rh-cat-label-title rh-dealstore-cat rh-cat-'.$dealcat->term_id.'" href="' . esc_url( get_term_link( $dealcat->term_id ) ) . '" title="' . esc_attr( sprintf( esc_html__( 'View all posts in %s', 'rehub-theme' ), $dealcat->name ) ) . '">' . esc_html( $dealcat->name ) . '</a>' . $separator;
 					}
-				}								
-			}		
+				}
+			}
 		}
 		elseif ('blog' == get_post_type($post_id)) {
 	    	$term_list = get_the_term_list( $post_id, 'blog_category', '<span class="rh-cat-label-title">', '', '</span>' );
@@ -1261,13 +1261,13 @@ function rh_post_header_cat($post_type='post', $dealstore = false, $postid = '')
             }
 		}
 		echo '</div>';
-	}			 	
+	}
 }
 }
 
 if( !function_exists('meta_small') ) { //another post meta function
 function meta_small ($time_exist, $cats_exist, $comment_exist, $post_views = false ){
-	global $post;     
+	global $post;
 	if(rehub_option('exclude_date_meta') != 1 && ($time_exist != false)){ ?>
  		<span class="date_meta">
   			<?php if(rehub_option('date_publish')):?>
@@ -1275,7 +1275,7 @@ function meta_small ($time_exist, $cats_exist, $comment_exist, $post_views = fal
  			<?php else:?>
  				 <?php the_modified_time(get_option( 'date_format' )); ?>
  			<?php endif;?>
- 		</span> 	
+ 		</span>
 	<?php }
 	if(rehub_option('exclude_cat_meta') != 1 && ($cats_exist != false)){ ?>
 		<?php $cat_name = get_cat_name($cats_exist); ?>
@@ -1291,20 +1291,20 @@ function meta_small ($time_exist, $cats_exist, $comment_exist, $post_views = fal
 		<?php else:?>
 			<span class="comm_count_meta"><?php comments_popup_link( esc_html__('no comments','rehub-theme'), esc_html__('1 comment','rehub-theme'), esc_html__('% comments','rehub-theme'), 'comm_meta', ''); ?></span>
 		<?php endif;?>
-	<?php } 
+	<?php }
 	if($post_views != false && rehub_option('post_view_disable') != 1 && function_exists('RH_get_post_views')){ ?>
 		<?php $rehub_views = RH_get_post_views($post->ID); if ($rehub_views !='') :?>
 			<span class="postview_meta"><?php echo (int)$rehub_views; ?> </span>
 		<?php endif ;?>
-	<?php }     	   	
+	<?php }
 }
 }
 
 if( !function_exists('re_badge_create') ) { //CREATING BADGES
-function re_badge_create ($type = 'label', $postid = '' ){ 
+function re_badge_create ($type = 'label', $postid = '' ){
 	if($postid){
 		$post_id = $postid;
-	} 
+	}
 	else{
 		global $post;
 		$post_id = $post->ID;
@@ -1312,34 +1312,34 @@ function re_badge_create ($type = 'label', $postid = '' ){
 	$badge = get_post_meta($post_id, 'is_editor_choice', true);
 	if ($badge !='' && $badge !='0' && $badge !='no') {
 		$output = '';
-		$label = rehub_option('badge_label_'.$badge.'');   
-		if($type =='tablelabel'){ 
+		$label = rehub_option('badge_label_'.$badge.'');
+		if($type =='tablelabel'){
 			$output .= '<span class="re-line-badge re-line-table-badge badge_'.$badge.'"><span>'.$label.'</span></span>';
 		}
-		elseif($type =='ribbon'){ 
+		elseif($type =='ribbon'){
 			$output .= '<span class="re-ribbon-badge badge_'.$badge.'"><span>'.$label.'</span></span>';
 		}
-		elseif($type =='ribbonleft'){ 
+		elseif($type =='ribbonleft'){
 			$output .= '<span class="re-ribbon-badge left-badge badge_'.$badge.'"><span>'.$label.'</span></span>';
-		}				
-		elseif($type =='class'){ 
+		}
+		elseif($type =='class'){
 			$output .= 'ed_choice_col badge_'.$badge.'';
 		}
-		elseif($type =='labelbig'){ 
+		elseif($type =='labelbig'){
 			$output .= '<span class="re-line-badge re-line-big-label badge_'.$badge.'"><span>'.$label.'</span></span>';
 		}
-		elseif($type =='labelsmall'){ 
+		elseif($type =='labelsmall'){
 			$output .= '<span class="re-line-badge re-line-small-label badge_'.$badge.'"><span>'.$label.'</span></span>';
 		}
-		else{ 
+		else{
 			$output .= '<span class="re-line-badge badge_'.$badge.'"><span>'.$label.'</span></span>';
-		}  
-		return $output;		
+		}
+		return $output;
 	}
 	else {
 		return;
 	}
-   	   	
+
 }
 }
 
@@ -1402,17 +1402,17 @@ if ( class_exists( 'BuddyPress' ) ) {
 
 if( !function_exists('rehub_framework_comments') ) {
 function rehub_framework_comments($comment, $args, $depth) {
-	$GLOBALS['comment'] = $comment;		
+	$GLOBALS['comment'] = $comment;
 	?>
 	<li <?php comment_class(); ?> id="comment-<?php comment_ID() ?>">
 		<div class="commbox">
 			<div class="comment-author position-relative pt15 pb15 pl20 pr20 border-grey-bottom vcard clearfix">
             	<?php edit_comment_link(__('Edit', 'rehub-theme')); ?>
-				<?php comment_reply_link(array_merge( $args, array('reply_text' => esc_html__(' Reply', 'rehub-theme'), 'depth' => $depth, 'max_depth' => $args['max_depth'])), $comment->comment_ID); ?>                    
+				<?php comment_reply_link(array_merge( $args, array('reply_text' => esc_html__(' Reply', 'rehub-theme'), 'depth' => $depth, 'max_depth' => $args['max_depth'])), $comment->comment_ID); ?>
 				<?php echo get_avatar($comment,$args['avatar_size']); ?>
 				<div class="comm_meta_wrap">
 					<?php if (rehub_option('rh_enable_mycred_comment') == 1):?>
-						<?php 
+						<?php
 							$author_id = $comment->user_id;
 							if(function_exists('mycred_get_users_rank') && $author_id !=0){
 								if(rehub_option('rh_mycred_custom_points')){
@@ -1420,7 +1420,7 @@ function rehub_framework_comments($comment, $args, $depth) {
 									$mycredrank = mycred_get_users_rank($author_id, $custompoint );
 								}
 								else{
-									$mycredrank = mycred_get_users_rank($author_id);		
+									$mycredrank = mycred_get_users_rank($author_id);
 								}
 							}
 							if(function_exists('mycred_render_shortcode_my_balance')){
@@ -1429,9 +1429,9 @@ function rehub_framework_comments($comment, $args, $depth) {
 							        $mycredpoint = mycred_render_shortcode_my_balance(array('type'=>$custompoint, 'user_id'=>$author_id, 'wrapper'=>'', 'balance_el' => '') );
 							    }
 							    else{
-							        $mycredpoint = mycred_render_shortcode_my_balance(array('user_id'=>$author_id, 'wrapper'=>'', 'balance_el' => '') );           
+							        $mycredpoint = mycred_render_shortcode_my_balance(array('user_id'=>$author_id, 'wrapper'=>'', 'balance_el' => '') );
 							    }
-							}							
+							}
 
 							?>
 
@@ -1441,12 +1441,12 @@ function rehub_framework_comments($comment, $args, $depth) {
 								<?php rh_mycred_display_users_badges( $author_id ) ?>
 							<?php endif; ?>
 					    	<?php if (!empty($mycredpoint)) :?><div><i class="rhicon rhi-star-empty"></i> <?php echo ''.$mycredpoint; ?></div><?php endif;?>
-					    </div> 
+					    </div>
 					<?php else:?>
 						<span class="fn"><?php echo get_comment_author_link(); ?>
-						<?php 	
-							if (function_exists('bp_get_member_type')){	
-								$author_id = $comment->user_id;		
+						<?php
+							if (function_exists('bp_get_member_type')){
+								$author_id = $comment->user_id;
 								$membertype = bp_get_member_type($author_id);
 								$membertype_object = bp_get_member_type_object($membertype);
 								$membertype_label = (!empty($membertype_object) && is_object($membertype_object)) ? $membertype_object->labels['singular_name'] : '';
@@ -1454,28 +1454,28 @@ function rehub_framework_comments($comment, $args, $depth) {
 									echo '<span class="rh-user-rank-mc rh-user-rank-'.$membertype.'">'.$membertype_label.'</span>';
 								}
 							}
-						?>		
+						?>
 						</span>
-					<?php endif;?>				
+					<?php endif;?>
 					<span class="time"><a href="#comment-<?php comment_ID() ?>"><?php printf(__('%1$s at %2$s', 'rehub-theme'), get_comment_date(),  get_comment_time()) ?></a></span>
-	                <?php if ($comment->comment_approved == '0') : ?><div class="ap_waiting"><em><?php esc_html_e('Comment awaiting for approval', 'rehub-theme'); ?></em></div><?php endif; ?>	
-                </div>				
+	                <?php if ($comment->comment_approved == '0') : ?><div class="ap_waiting"><em><?php esc_html_e('Comment awaiting for approval', 'rehub-theme'); ?></em></div><?php endif; ?>
+                </div>
 			</div>
-			<?php if (rehub_option('type_user_review') == 'full_review' || rehub_option('type_user_review') == 'user') :?>               
-	          	<?php 
+			<?php if (rehub_option('type_user_review') == 'full_review' || rehub_option('type_user_review') == 'user') :?>
+	          	<?php
 					$userCriteria = get_comment_meta(get_comment_ID(), 'user_criteria', true);
-				if(is_array($userCriteria) && !empty($userCriteria)) :?> 
+				if(is_array($userCriteria) && !empty($userCriteria)) :?>
 	              <div class="comment-content-withreview">
 	                   <?php attach_comment_criteria_raitings () ;?>
-	              </div>   
+	              </div>
 	     		<?php else :?>
 	               <div class="comment-content"><?php comment_text(); ?></div>
 				<?php endif; ?>
 	     	<?php else :?>
 	            <div class="comment-content"><?php comment_text(); ?></div>
-			<?php endif; ?>			 
+			<?php endif; ?>
 		</div>
-	<?php 
+	<?php
 }
 }
 
@@ -1495,20 +1495,20 @@ if ($commentauthor_ID ==0) {
 }
 else {
 	$author = get_userdata($commentauthor_ID);
-    /* Registered Commenter */ 
+    /* Registered Commenter */
     if ( !empty($author) ){
 		$authorid = $author->ID;
-		$authorName = $author->display_name; 
+		$authorName = $author->display_name;
 		if (class_exists( 'BuddyPress' )) {
-			return '<span class="int-source" data-dest="'.bp_core_get_user_domain($authorid).'">'.$authorName.'</span>'; 
+			return '<span class="int-source" data-dest="'.bp_core_get_user_domain($authorid).'">'.$authorName.'</span>';
 		}
-	    elseif (count_user_posts($authorid) > 0 && !empty($author)) {  	
+	    elseif (count_user_posts($authorid) > 0 && !empty($author)) {
 			return '<span class="int-source" data-dest="'.get_author_posts_url($authorid).'">'.$authorName.'</span>';
-	    } 	
+	    }
 	    else {
 			$author = get_comment_author($comment->comment_ID);
 		    $return = $author;
-	    }			
+	    }
     }
  	else {
 		$author = get_comment_author($comment->comment_ID);
@@ -1573,15 +1573,15 @@ function my_theme_register_required_plugins() {
 			'required' => false,
 			'image_url' => get_template_directory_uri() . '/admin/screens/images/gs.jpg',
 			'description' => 'Page builder for Gutenberg',
-		), 
+		),
 		array(
 			'name'     				=> 'Greenshift Animation addon', // The plugin name
 			'slug'     				=> 'greenshiftgsap', // The plugin slug (typically the folder name)
-			'source'   				=> get_template_directory() . '/plugins/greenshiftgsap.zip', 
+			'source'   				=> get_template_directory() . '/plugins/greenshiftgsap.zip',
 			'required' 				=> false,
-			'version' 				=> '3.2.1',
-			'force_activation' 		=> false, 
-			'force_deactivation' 	=> false, 
+			'version' 				=> '3.2.3',
+			'force_activation' 		=> false,
+			'force_deactivation' 	=> false,
 			'external_url' 			=> '',
 			'image_url'          	=> get_template_directory_uri() . '/admin/screens/images/gs.jpg',
 			'description'			=> 'Animation addon',
@@ -1592,7 +1592,7 @@ function my_theme_register_required_plugins() {
 			'required' => false,
 			'image_url' => get_template_directory_uri() . '/admin/screens/images/ocdi.jpg',
 			'description' => 'Import demo content and settings',
-		),    	
+		),
 		array(
 			'name'     				=> 'Envato Market', // The plugin name
 			'slug'     				=> 'envato-market', // The plugin slug (typically the folder name)
@@ -1602,28 +1602,28 @@ function my_theme_register_required_plugins() {
 			'force_activation' 		=> false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch
 			'force_deactivation' 	=> false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins
 			'external_url' 			=> '', // If set, overrides default API URL and points to an external URL
-			'image_url'          	=> get_template_directory_uri() . '/admin/screens/images/envato.jpg',			
+			'image_url'          	=> get_template_directory_uri() . '/admin/screens/images/envato.jpg',
 			'description'			=> 'Auto update of theme',
-		),		
+		),
 		array(
 			'name'      => 'Content EGG',
 			'slug'      => 'content-egg',
 			'required'  => false,
 			'image_url'          => get_template_directory_uri() . '/admin/screens/images/contentegg.png',
-			'description'			=> 'All in one for moneymaking',			
-		),	
+			'description'			=> 'All in one for moneymaking',
+		),
 		array(
 			'name'     				=> 'Rehub Framework', // The plugin name
 			'slug'     				=> 'rehub-framework', // The plugin slug (typically the folder name)
-			'source'   				=> get_template_directory() . '/plugins/rehub-framework.zip', 
+			'source'   				=> get_template_directory() . '/plugins/rehub-framework.zip',
 			'required' 				=> true,
-			'version' 				=> '18.5',
-			'force_activation' 		=> false, 
-			'force_deactivation' 	=> false, 
+			'version' 				=> '18.7',
+			'force_activation' 		=> false,
+			'force_deactivation' 	=> false,
 			'external_url' 			=> '',
 			'image_url'          	=> get_template_directory_uri() . '/admin/screens/images/framework.png',
 			'description'			=> 'Rehub Theme framework',
-		),										
+		),
 
     );
 	$plugins[] = array(
@@ -1631,8 +1631,8 @@ function my_theme_register_required_plugins() {
 		'slug'      => 'elementor',
 		'required'  => false,
 		'image_url'          => get_template_directory_uri() . '/admin/screens/images/elementor.jpg',
-		'description'			=> 'Elementor Page Builder',			
-	);          
+		'description'			=> 'Elementor Page Builder',
+	);
 
     /**
      * Array of configuration settings. Amend each line as needed.
@@ -1684,23 +1684,23 @@ function re_add_openschema() {
 	$jsonload = $jsonloadsale = array();
 	if(rehub_option('type_schema_review') != 'none'){
 		if (is_single() && !is_singular('product')) {
-			global $post;						
+			global $post;
 			$overal_score = rehub_get_overall_score();
 			if($overal_score){
 				$author_data = get_userdata($post->post_author);
 				$jsonload["@context"] = "http://schema.org/";
-				$reviewtext = get_post_meta((int)$post->ID, '_review_post_summary_text', true);		
+				$reviewtext = get_post_meta((int)$post->ID, '_review_post_summary_text', true);
 				if(!$reviewtext){
 					$review_post = rehub_get_review_data();
-					$reviewtext = (!empty($review_post['review_post_summary_text'])) ? $review_post['review_post_summary_text'] : '';	
+					$reviewtext = (!empty($review_post['review_post_summary_text'])) ? $review_post['review_post_summary_text'] : '';
 				}
 				$review_body = ($reviewtext) ? $reviewtext : $post->post_excerpt;
-				$reviewhead = get_post_meta((int)$post->ID, '_review_heading', true);		
+				$reviewhead = get_post_meta((int)$post->ID, '_review_heading', true);
 				if(!$reviewhead){
 					if(!isset($review_post)){
 						$review_post = rehub_get_review_data();
 					}
-					$reviewhead = (!empty($review_post['review_post_heading'])) ? $review_post['review_post_heading'] : '';	
+					$reviewhead = (!empty($review_post['review_post_heading'])) ? $review_post['review_post_heading'] : '';
 				}
 				$review_name = ($reviewhead) ? $reviewhead : $post->post_title;
 				$usercount = '';
@@ -1717,7 +1717,7 @@ function re_add_openschema() {
 				$jsonload["@type"] = "Review";
 				$jsonload["name"] = $review_name;
 				$jsonload["datePublished"] = $post->post_date;
-				$jsonload["dateModified"] = $post->post_modified;					
+				$jsonload["dateModified"] = $post->post_modified;
 				$jsonload["reviewBody"] = $review_body;
 				$jsonload["reviewRating"] = array(
 					"@type" => "Rating",
@@ -1728,19 +1728,19 @@ function re_add_openschema() {
 				$jsonload["author"] = array(
 					"@type" => "Person",
 					"name" => $author_data->display_name,
-				); 	
+				);
 				$jsonload["itemReviewed"] = array(
 					"@type" => "Product",
 					"name" => $post->post_title,
 					"aggregateRating" => array(
 						"@type" => "AggregateRating",
 						"worstRating" => "1",
-						"bestRating" => "10",					
+						"bestRating" => "10",
 						"ratingValue" => round($overal_score, 1),
 						"reviewCount" => $usercount,
-					)			      
-				); 
-	
+					)
+				);
+
 				$organization = rehub_option('rehub_org_name_review');
 				$logo = rehub_option('rehub_logo');
 				$logo_width = rehub_option('rehub_logo_retina_width');
@@ -1750,19 +1750,19 @@ function re_add_openschema() {
 						"@type" => "Organization",
 						"name" => esc_html($organization),
 					);
-				
+
 					if ($logo_width && $logo_height && $logo){
 						$jsonload["publisher"]["logo"] = array(
 							"@type" => "ImageObject",
 							"url" => esc_url($logo),
 							"height" => esc_html($logo_height),
-							"width" => esc_html($logo_width),			
+							"width" => esc_html($logo_width),
 						);
 					}
 				}
-			}					
+			}
 		}else if(is_tax('dealstore')){
-			$tagid = get_queried_object()->term_id; 
+			$tagid = get_queried_object()->term_id;
 			$rate = get_term_meta( $tagid , 'rehub_user_rate', true );
 			$count = get_term_meta( $tagid , 'rehub_users_num', true );
 			$brandimage = get_term_meta( $tagid, 'brandimage', true );
@@ -1772,20 +1772,20 @@ function re_add_openschema() {
 
 				$jsonload["@context"] = "http://schema.org/";
 				$jsonload["@type"] = "WebPage";
-				$jsonload["url"] = get_permalink();				
+				$jsonload["url"] = get_term_link($tagid);
 				$jsonload["aggregateRating"] = array(
 					"worstRating" => "1",
 					"bestRating" => "5",
-					"name"=> $tagobj->name,					
+					"name"=> $tagobj->name,
 					"ratingValue" => round($rate/$count,2),
 					"reviewCount" => $count,
 					"itemReviewed" => array(
-						"name"=> $tagobj->name,	
+						"name"=> $tagobj->name,
 						"@type" => "Store",
 						"image" => $brandimage
 					)
 				);
-			}			
+			}
 		}
 		if(function_exists('bp_get_profile_field_data')){
 			if(bp_is_user()){
@@ -1793,23 +1793,23 @@ function re_add_openschema() {
 				$bpuserid = $bp->displayed_user->id;
 				$seo_user_description = '';
 				$profile_description = rehub_option('rh_bp_seo_description');
-				$profile_phone = rehub_option('rh_bp_phone');			
+				$profile_phone = rehub_option('rh_bp_phone');
 				$bpuserrating = get_user_meta( $bpuserid, 'rh_bp_user_rating', true);
 				$bpuserratingcount = get_user_meta( $bpuserid, 'rh_total_bp_user_rating_num', true);
-				$image = bp_attachments_get_attachment('url', array('object_dir' => 'members','item_id' => $bpuserid) );			
+				$image = bp_attachments_get_attachment('url', array('object_dir' => 'members','item_id' => $bpuserid) );
 				if ($profile_description){
 					$seo_user_description = bp_get_profile_field_data('field='.$profile_description.'&user_id='.$bpuserid);
 				}
 				if ($profile_phone){
 					$phone = bp_get_profile_field_data('field='.$profile_phone.'&user_id='.$bpuserid);
-				}			
+				}
 				if(!$seo_user_description){
 					$seo_user_description = get_bloginfo('description');
 				}
 				$seo_user_description = apply_filters('rh_bp_user_seo_description', $seo_user_description);
-				echo '<meta name="description" content="'.kama_excerpt('maxchar=220&echo=false&text='.$seo_user_description).'" />';			
+				echo '<meta name="description" content="'.kama_excerpt('maxchar=220&echo=false&text='.$seo_user_description).'" />';
 			}
-		}	
+		}
 	}
 
 	if(!empty($jsonload)){
@@ -1834,9 +1834,9 @@ if (class_exists('WPBakeryVisualComposerAbstract')) {
 	    vc_set_as_theme();
 	}
 
-	add_action( 'vc_before_init', 'rhVCSetAsTheme' );		
+	add_action( 'vc_before_init', 'rhVCSetAsTheme' );
 	add_action('init','add_rehub_to_vc', 5);
-	add_action('admin_enqueue_scripts', 'rehub_vc_styles'); 
+	add_action('admin_enqueue_scripts', 'rehub_vc_styles');
 }
 
 //Elementor Init
@@ -1845,26 +1845,27 @@ if ( did_action( 'elementor/loaded' ) ) {
 require_once ('functions/el_functions.php');
 require_once ('rehub-elementor/templates/remote.php');
 }
+
 /*
 function rehub_admin_error_notice() {
 	$page = (isset($_GET['page'])) ? $_GET['page'] : '';
 	global $current_user ;
-    $user_id = $current_user->ID;	
+    $user_id = $current_user->ID;
     if ( ! get_user_meta($user_id, 'ignore_notices_rehub149') ) {
 		//if ($page=='rehub' || $page=='rehub-support' || $page=='rehub-plugins' || $page=='rehub-demos' || $page=='vpt_option' ) {
 			$class = "error";
 			$message = 'This is major update of theme affected post formats. Check our documentation in <a href="https://rehubdocs.wpsoul.com/docs/rehub-theme/for-developers/changes-in-15-version/" target="_blank">Rehub 15.0 notice</a>' ;
 	    	echo"<div class=\"$class\" style=\"display:block !important\"> <p>$message <a href=\"?rehub_nag_ignore=0\">Hide Notice</a></p></div>";
-	    //} 
+	    //}
 	}
 }
-add_action( 'admin_notices', 'rehub_admin_error_notice' );	
+add_action( 'admin_notices', 'rehub_admin_error_notice' );
 
 add_action('admin_init', 'rehub_nag_ignore');
 function rehub_nag_ignore() {
 	global $current_user;
     $user_id = $current_user->ID;
     if ( isset($_GET['rehub_nag_ignore']) && '0' == $_GET['rehub_nag_ignore'] ) {
-        add_user_meta($user_id, 'ignore_notices_rehub149', 'true', true);           
+        add_user_meta($user_id, 'ignore_notices_rehub149', 'true', true);
 	}
 }*/

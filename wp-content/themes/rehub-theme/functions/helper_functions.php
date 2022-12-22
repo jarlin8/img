@@ -1705,7 +1705,7 @@ if(!function_exists('rh_generate_incss')) {
         }
         else if($type === 'offergrid'){
             $output .= '
-              .offer_grid .sale_tag_inwoolist h5{font-size: 33px;line-height:33px}.offer_grid .sale_tag_inwoolist{width: 130px}
+              .offer_grid .sale_tag_inwoolist .sale_letter{font-size: 33px;line-height:33px}.offer_grid .sale_tag_inwoolist{width: 130px}
               .offer_grid figure {position: relative; text-align: center; margin: 0 auto 15px auto; overflow: hidden;  vertical-align: middle; }
               .offer_grid.coupon_grid figure img {height: 80px;}
               .offer_grid figure img{width: auto;display: inline-block;transition: all ease-in-out .2s;}

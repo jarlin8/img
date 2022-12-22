@@ -90,7 +90,7 @@ function rehub_before_import_setup( $current_import ){
 		exit();		
 	}	
 	$curimp = $current_import['import_file_name'];
-	if( 'RePick' === $curimp || 'ReMag' === $curimp || 'ReCash' === $curimp || 'ReDeal' === $curimp || 'ReViewit' === $curimp || 'ReCart' === $curimp || 'ReCompare' === $curimp || 'ReMart' === $curimp || 'ReWise' === $curimp || 'ReGame' === $curimp) {
+	if( 'RePick' === $curimp || 'ReMag' === $curimp || 'ReCash' === $curimp || 'ReDeal' === $curimp || 'ReViewit' === $curimp || 'ReCart' === $curimp || 'ReCompare' === $curimp || 'ReMart' === $curimp || 'ReWise' === $curimp || 'ReGame' === $curimp || 'ReLearn' === $curimp) {
 		if($registeredlicense && empty($lb_verify_res['data']['themes'])){
 			echo '<p style="color:red;font-size:180%" class="notofficialtheme">You have no access to demo import, because you are using nulled or not official theme version. Please, purchase theme on <a href="https://themeforest.net/item/rehub-directory-multi-vendor-shop-coupon-affiliate-theme/7646339">Themeforest</a>, otherwise, your site can be blocked.</p>';		
 			exit();			
@@ -506,7 +506,7 @@ function rehub_import_files() {
 					'import_widget_file_url' => esc_url($lb_verify_res["data"]["themes"]["ReLearn"]["widgets"]),				
 					'local_import_theme_file' => get_template_directory() . '/admin/demo/relearn-theme.json',
 					'import_preview_image_url'   => get_template_directory_uri() .'/admin/screens/images/demo19_preview.jpg',
-					'import_notice' => $shopnoticeclean,
+					'import_notice' => $remartnotice,
 					'preview_url' => 'https://relearn.lookmetrics.co/',
 				),		
 				array(
@@ -701,7 +701,7 @@ function rehub_after_import_setup( $current_import ) {
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'ReLearn':
-			$front_page = get_page_by_title( 'Light version without 3d' );
+			$front_page = get_page_by_title( 'Relearn Homepage Greenshift' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'ReWise':

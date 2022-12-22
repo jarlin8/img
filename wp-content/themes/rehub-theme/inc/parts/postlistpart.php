@@ -89,7 +89,7 @@ else {
             <div class="favorrightside wishonimage"><?php echo RH_get_wishlist($postid);?></div>      
             <a href="<?php echo ''.$link;?>" <?php echo ''.$target;?> <?php echo ''.$outsidelinkpart; ?>>
             <?php if ($discountpercentage) :?>
-                <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><h5 class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo esc_html($discountpercentage);?></h5></span>
+                <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><div class="font150 sale_letter fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo esc_html($discountpercentage);?></div></span>
             <?php elseif (!has_post_thumbnail() && !empty($offer_price_old) && !empty($offer_price)) :?>
                 <?php           
                     $offer_pricesale = (float)rehub_price_clean($offer_price); //Clean price from currence symbols
@@ -97,7 +97,7 @@ else {
                     if ($offer_priceold !='0' && is_numeric($offer_priceold) && $offer_priceold > $offer_pricesale) {
                         $off_proc = 0 -(100 - ($offer_pricesale / $offer_priceold) * 100);
                         $off_proc = round($off_proc);
-                        echo '<span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><h5 class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><h5 class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0">'.$off_proc.'%</h5></span>';
+                        echo '<span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><h5 class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><div class="sale_letter font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0">'.$off_proc.'%</div></span>';
                     }
                 ?>
             <?php else :?>              

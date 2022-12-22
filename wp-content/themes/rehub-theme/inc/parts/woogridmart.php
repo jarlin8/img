@@ -111,7 +111,7 @@ if ($product->is_on_sale()) : ?>
         <?php endif; ?>
         <?php if (get_option('woocommerce_enable_review_rating') !== 'no') : ?>
             <?php
-            $rating = $product->get_rating_count();
+            $rating = number_format( $product->get_average_rating(), 2 );
             $count = $product->get_review_count();
             echo rh_woo_rating_icons_wrapper_zero($rating, $count);
             ?>

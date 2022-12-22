@@ -24,8 +24,10 @@ $type = (isset($type)) ? $type : '';
 						$title = explode(" ", $title, 3);
 						if (!empty($title[2])) {
 							echo '<span class="rehub-main-color">' . $title[0] . ' ' . $title[1] . '</span> ' . $title[2];
-						} else {
-							echo '' . $title;
+						}else if (!empty($title[1])) {
+							echo '<span class="rehub-main-color">' . $title[0] . ' ' . '</span> ' . $title[1];
+						}else {
+							echo '' . $title[0];
 						}
 						?>
 					</a>
