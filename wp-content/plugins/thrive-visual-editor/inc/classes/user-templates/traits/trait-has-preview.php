@@ -78,8 +78,8 @@ trait Has_Preview {
 		return [
 			'url' => static::get_placeholder_url(),
 			/* hardcoded sizes taken from 'no-template-preview.jpg' */
-			'h'   => '248',
-			'w'   => '520',
+			'h'   => '120',
+			'w'   => '250',
 		];
 	}
 

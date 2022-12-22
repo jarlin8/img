@@ -49,6 +49,7 @@ class Main {
 		require_once __DIR__ . '/class-js-module.php';
 		require_once __DIR__ . '/class-gutenberg.php';
 		require_once __DIR__ . '/class-woocommerce.php';
+		require_once __DIR__ . '/class-emoji.php';
 	}
 
 	public static function is_enabled() {
@@ -265,6 +266,8 @@ class Main {
 			'tvo_capture',
 			'tvo_display',
 			'tcb_content_template',
+			'shortcodesultimate', /* 'Shortcodes Ultimate' plugin */
+			'tm_global_cp', /* 'Extra Checkout Options for WooCommerce TM Extra Product Options' plugin */
 		] );
 	}
 

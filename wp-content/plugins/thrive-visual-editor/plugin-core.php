@@ -75,7 +75,7 @@ $tve_thrive_shortcodes = array(
 /**
  * If a file called .flag-staging-templates exists, turn off caching of cloud templates
  */
-if ( file_exists( plugin_dir_path( __FILE__ ) . '.flag-staging-templates' ) && ! defined( 'TCB_CLOUD_API_LOCAL' ) ) {
+if ( file_exists( plugin_dir_path( __FILE__ ) . ' . flag - staging - templates' ) && ! defined( 'TCB_CLOUD_API_LOCAL' ) ) {
 	define( 'TVE_STAGING_TEMPLATES', true );
 	define( 'TCB_CLOUD_API_LOCAL', 'https://staging.landingpages.thrivethemes.com/cloud-api/index-api.php' );
 	defined( 'TCB_TEMPLATE_DEBUG' ) || define( 'TCB_TEMPLATE_DEBUG', true );
@@ -121,6 +121,7 @@ require_once TVE_TCB_ROOT_PATH . 'inc/classes/post-list/pagination/class-tcb-pag
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/post-list/pagination/class-tcb-pagination-none.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/post-list/pagination/class-tcb-pagination-numeric.php';
 require_once TVE_TCB_ROOT_PATH . 'inc/classes/logo/class-tcb-logo.php';
+require_once TVE_TCB_ROOT_PATH . 'inc/classes/post-list-filter/class-tcb-post-list-filter.php';
 
 require_once TVE_TCB_ROOT_PATH . 'inc/woocommerce/classes/class-main.php';
 
@@ -162,6 +163,8 @@ add_action( 'wp_ajax_tve_cf_submit', 'tve_submit_contact_form' );
 add_action( 'wp_ajax_nopriv_tve_cf_submit', 'tve_submit_contact_form' );
 add_action( 'admin_action_tve_new_post', 'tve_new_post' );
 
+add_filter( 'wp_img_tag_add_loading_attr', 'tve_image_lazy_load', 10, 3 );
+
 /**
  * AJAX call to return the TCB-added content for a post
  */
@@ -186,6 +189,9 @@ function tve_get_seo_content() {
 	 */
 	global $post;
 	$post = get_post( $id );
+
+	global $wp_query;
+	$wp_query->query( [ 'p' => $id ] );
 
 	/* Make sure Architect content is parsed */
 	add_filter( 'the_content', 'tve_clean_wp_editor_content', - 100 );
@@ -312,6 +318,7 @@ function tcb_rest_api_init() {
 
 	TCB_Post_List::rest_api_init();
 	TCB_Logo::rest_api_init();
+	TCB_Post_List_Filter::rest_api_init();
 
 	if ( ! empty( $_POST['tar_editor_page'] ) && TCB_Product::has_external_access() ) {
 		TCB_Utils::restore_post_waf_content();
@@ -462,7 +469,7 @@ function tve_minify_css( $css = '' ) {
 	$css = preg_replace( '/\s{2,}/m', '', $css );
 
 	/* remove spaces before and after , : and ; */
-	$css = preg_replace_callback( '/\s*([,;:{}])\s*/m', static function ( $match ) {
+	$css = preg_replace_callback( '/\s*([,;:{}])(?!:)\s*/m', static function ( $match ) {
 		return $match[1];
 	}, $css );
 

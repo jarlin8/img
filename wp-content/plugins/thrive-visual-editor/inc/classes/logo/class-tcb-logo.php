@@ -80,8 +80,8 @@ class TCB_Logo {
 			/* only localize the active logos */
 			'sources'             => array_values( $active_logos ),
 			'deleted_placeholder' => tve_editor_url( static::DELETED_PLACEHOLDER_SRC ),
-			'is_ttb_active'       => wp_get_theme()->get_stylesheet() === 'thrive-theme',
-			'is_ta_active'        => is_plugin_active( 'thrive-apprentice/thrive-apprentice.php' ),
+			'is_ttb_active'       => tve_dash_is_ttb_active(),
+			'is_ta_active'        => tve_dash_is_plugin_active( 'thrive-apprentice' ),
 		);
 
 		return $data;
@@ -118,6 +118,16 @@ class TCB_Logo {
 			'alt'    => $attr['data-alt'],
 			'style'  => ! empty( $attr['data-img-style'] ) ? $attr['data-img-style'] : '',
 		);
+
+		/**
+		 * Handle logo image loading
+		 */
+		if ( isset( $attr['loading'] ) ) {
+			$img_attr['loading'] = $attr['loading'];
+			unset( $attr['loading'] );
+		} else {
+			$img_attr['class'] = 'tve-not-lazy-loaded';
+		}
 
 		/* GIFs aren't compatible with srcset, so we use the fallback version */
 		if ( ! empty( $img_attr['src'] ) && substr( $img_attr['src'], - 4 ) === '.gif' ) {

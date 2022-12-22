@@ -24,14 +24,14 @@ class Woo_Products_Field extends Action_Field {
 	 * Field description
 	 */
 	public static function get_description() {
-		return 'Select products to add them to the order';
+		return static::get_placeholder();
 	}
 
 	/**
 	 * Field input placeholder
 	 */
 	public static function get_placeholder() {
-		return '';
+		return __( 'Select products to add them to the order', 'thrive-dash' );
 	}
 
 	/**

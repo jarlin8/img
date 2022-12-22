@@ -173,7 +173,7 @@ class Thrive_Dash_Api_ConvertKit {
 	 */
 	public function addTagsToContact( $email_address, $tags ) {
 		if ( ! $email_address || ! $tags ) {
-			throw new Thrive_Dash_Api_ConvertKit_Exception( __( 'Missing required parameters for adding tags to ConvertKit contact', TVE_DASH_TRANSLATE_DOMAIN ) );
+			throw new Thrive_Dash_Api_ConvertKit_Exception( __( 'Missing required parameters for adding tags to ConvertKit contact', 'thrive-dash' ) );
 
 			return false;
 		}

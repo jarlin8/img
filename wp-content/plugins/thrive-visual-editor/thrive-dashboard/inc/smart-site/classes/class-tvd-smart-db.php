@@ -453,9 +453,9 @@ class TVD_Smart_DB {
 			if ( empty( $args['hide-tooltip'] ) ) {
 				$unavailable .= '<span class="thrive-tooltip-wrapper">' .
 				                '<span class="thrive-shortcode-tooltip">' .
-				                __( 'This global variable hasn\'t been set.  Define your global variables in the', TVE_DASH_TRANSLATE_DOMAIN ) .
+				                __( 'This global variable hasn\'t been set.  Define your global variables in the', 'thrive-dash' ) .
 				                '<br>' .
-				                '<a><span onClick=window.open("' . add_query_arg( 'page', 'tve_dash_smart_site', admin_url( 'admin.php' ) ) . '","_blank") >' . ' ' . __( ' Global Fields dashboard', TVE_DASH_TRANSLATE_DOMAIN ) . '</span></a>' .
+				                '<a><span onClick=window.open("' . add_query_arg( 'page', 'tve_dash_smart_site', admin_url( 'admin.php' ) ) . '","_blank") >' . ' ' . __( ' Global Fields dashboard', 'thrive-dash' ) . '</span></a>' .
 				                '</span>' .
 				                '</span>';
 			}
@@ -503,7 +503,7 @@ class TVD_Smart_DB {
 			case TVD_Smart_DB::$types['location']:
 				$url = 'https://maps.google.com/maps?q=' . urlencode( empty( $field_data['location'] ) ? 'New York' : $field_data['location'] ) . '&t=m&z=10&output=embed&iwloc=near';
 
-				$data = '<iframe frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="' . $url . '"></iframe>';
+				$data = '<iframe frameborder="0" marginheight="0" marginwidth="0" src="' . $url . '"></iframe>';
 				break;
 		}
 

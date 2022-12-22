@@ -59,6 +59,7 @@ class TCB_Image_Carousel_Dots_Element extends TCB_Icon_Element {
 		);
 		$components['scroll']                      = array( 'hidden' => true );
 		$components['animation']                   = array( 'hidden' => false );
+		$components['styles-templates']            = array( 'hidden' => true );
 
 		$components['image_carousel_dots']                              = $components['icon'];
 		$components['image_carousel_dots']['config']['HorizontalSpace'] = array(

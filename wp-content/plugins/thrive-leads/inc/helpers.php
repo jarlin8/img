@@ -1092,7 +1092,7 @@ function tve_leads_position_nice_name( $variation ) {
 function tve_leads_animation_nice_name( $variation ) {
 	$animation = TVE_Leads_Animation_Abstract::factory( $variation['display_animation'] );
 
-	return $animation == null ? $variation['display_animation'] : $animation->get_title();
+	return $animation == null ? $variation['display_animation'] : $animation->get_translatable_title();
 }
 
 /**

@@ -7,6 +7,10 @@
 
 namespace TVE\Dashboard\Design_Packs;
 
+use function preg_replace;
+use function str_ireplace;
+use function strpos;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -25,10 +29,20 @@ class Main {
 	const CFG_NAME            = 'tve-design-pack-config.json';
 
 	public static function init() {
-		if ( PHP_VERSION_ID >= 70000 && class_exists( 'ZipArchive' ) && static::has_access() ) {
-			static::require_extra_files( __DIR__ );
-			static::add_hooks();
-			static::ensure_folders();
+		$has_ttb = \tve_dash_is_ttb_active();
+		$has_tar = defined( 'TVE_PLUGIN_FILE' );
+
+		if ( PHP_VERSION_ID >= 70000 && class_exists( 'ZipArchive' ) && ( $has_ttb || $has_tar ) && static::has_access() ) {
+			try {
+				static::ensure_folders();
+
+				static::require_extra_files( __DIR__ );
+				static::add_hooks();
+			} catch ( \Exception $e ) {
+				add_action( 'admin_notices', static function () use ( $e ) {
+					echo sprintf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', esc_html( $e->getMessage() ) );
+				} );
+			}
 		}
 	}
 
@@ -126,9 +140,9 @@ class Main {
 		$features[ static::SLUG ] = array(
 			'icon'        => 'tvd-thrive-design-packs',
 			'title'       => static::TITLE,
-			'description' => __( 'All of your Thrive Suite designs (Theme Templates, Landing Pages, Page/Post Content) gathered in one place, available for you to quickly export or import.', TVE_DASH_TRANSLATE_DOMAIN ),
+			'description' => __( 'All of your Thrive Suite designs (Theme Templates, Landing Pages, Page/Post Content) gathered in one place, available for you to quickly export or import.', 'thrive-dash' ),
 			'btn_link'    => add_query_arg( 'page', static::SLUG, admin_url( 'admin.php' ) ),
-			'btn_text'    => __( 'Manage Design Packs', TVE_DASH_TRANSLATE_DOMAIN ),
+			'btn_text'    => __( 'Manage Design Packs', 'thrive-dash' ),
 		);
 
 		return $features;
@@ -156,16 +170,16 @@ class Main {
 	}
 
 	public static function localize_data() {
-		$has_ttb = \tve_dash_is_ttb_active();
+		$has_ttb = tve_dash_is_ttb_active();
 		$types   = [
 			[
 				'type'                 => 'skin',
 				'name'                 => 'Thrive Theme Builder Themes',
 				'accessible'           => $has_ttb,
 				'error_export_message' => sprintf(
-					__( 'In order to use this feature, please <a href="%s" target="_blank" class="error-export-message-link">Activate Thrive Theme Builder</a>', TVE_DASH_TRANSLATE_DOMAIN ),
+					__( 'In order to use this feature, please <a href="%s" target="_blank" class="error-export-message-link">Activate Thrive Theme Builder</a>', 'thrive-dash' ),
 					admin_url( 'admin.php?page=thrive_product_manager' ) ),
-				'error_import_message' => __( 'This Thrive Design Pack contains some themes. In order for themes to be imported Thrive Theme Builder needs to be active.', TVE_DASH_TRANSLATE_DOMAIN ),
+				'error_import_message' => __( 'This Thrive Design Pack contains some themes. In order for themes to be imported Thrive Theme Builder needs to be active.', 'thrive-dash' ),
 				'displayedName'        => 'theme',
 				'redirect_message'     => 'Go to Thrive Theme Builder',
 				'redirect_link'        => admin_url( 'admin.php?page=thrive-theme-dashboard&tab=other#skins' ),
@@ -208,7 +222,7 @@ class Main {
 			'routes'            => get_rest_url( get_current_blog_id(), Rest::REST_NAMESPACE ),
 			'wp_routes'         => get_rest_url( get_current_blog_id(), 'wp/v2' ),
 			'has_ttb'           => $has_ttb,
-			'has_tar'           => is_plugin_active( 'thrive-visual-editor/thrive-visual-editor.php' ),
+			'has_tar'           => tve_dash_is_plugin_active( 'thrive-visual-editor' ),
 			'page_limit'        => static::PER_PAGE_LIMIT,
 			'export_types'      => $types,
 			'placeholder_image' => TVE_DASH_URL . '/inc/design-packs/assets/img/lp-placeholder.png',
@@ -235,7 +249,7 @@ class Main {
 	/**
 	 * Ensure the folders in which we will save the archive exists
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public static function ensure_folders() {
 		/**
@@ -243,19 +257,19 @@ class Main {
 		 */
 		$upload = wp_upload_dir();
 		if ( ! empty( $upload['error'] ) ) {
-			throw new Exception( $upload['error'] );
+			throw new \Exception( $upload['error'] );
 		}
 
 		$base = trailingslashit( $upload['basedir'] ) . static::DESIGN_PACKS_FOLDER . '/imported';
 
 		if ( ! is_dir( $base ) && ! mkdir( $base, 0777, true ) && ! is_dir( $base ) ) {
-			throw new RuntimeException( sprintf( 'Directory "%s" was not created', $base ) );
+			throw new \RuntimeException( sprintf( 'Directory "%s" was not created', $base ) );
 		}
 
 		$base = trailingslashit( $upload['basedir'] ) . static::DESIGN_PACKS_FOLDER . '/exported';
 
 		if ( ! is_dir( $base ) && ! mkdir( $base, 0777, true ) && ! is_dir( $base ) ) {
-			throw new RuntimeException( sprintf( 'Directory "%s" was not created', $base ) );
+			throw new \RuntimeException( sprintf( 'Directory "%s" was not created', $base ) );
 		}
 	}
 
@@ -273,18 +287,5 @@ class Main {
 		}
 
 		return $name;
-	}
-
-	/**
-	 * Fix encoded post title
-	 *
-	 * @param $title
-	 *
-	 * @return array|false|string
-	 */
-	public static function decode_post_title( $title ) {
-		$title = htmlspecialchars_decode( $title );
-
-		return mb_convert_encoding( $title, 'UTF-8', 'HTML-ENTITIES' );
 	}
 }

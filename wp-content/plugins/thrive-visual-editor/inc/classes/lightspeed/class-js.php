@@ -272,6 +272,9 @@ class JS {
 				'identifier'   => '.tcb-post-list, .tva-course-list',
 				'dependencies' => [ 'post-grid-compat', 'dropdown' ],
 			],
+			'post-list-filter'             => [
+				'identifier'   => '.tcb-post-list-filter',
+			],
 			'pricing-table'         => [
 				'identifier' => '.thrv-pricing-table',
 			],

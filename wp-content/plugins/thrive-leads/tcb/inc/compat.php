@@ -98,6 +98,7 @@ function tve_hooked_in_template_redirect() {
 		'ultimate-member/index.php',
 		'woocommerce/woocommerce.php',
 		'maintenance/maintenance.php',
+		'simply-schedule-appointments/simply-schedule-appointments.php',
 	);
 
 	foreach ( $hooked_in_template_redirect as $plugin ) {
@@ -796,6 +797,17 @@ add_filter( 'rank_math/researches/toc_plugins', function ( $toc_plugins ) {
 	$toc_plugins['thrive-visual-editor/thrive-visual-editor.php'] = 'Thrive Architect';
 
 	return $toc_plugins;
+} );
+
+/**
+ * Don't load metrics files on the editor page
+ */
+add_filter( 'tve_dash_metrics_should_enqueue', function ( $should_enqueue ) {
+	if ( is_editor_page_raw( true ) || TCB_Editor()->is_main_frame() ) {
+		$should_enqueue = false;
+	}
+
+	return $should_enqueue;
 } );
 
 /**

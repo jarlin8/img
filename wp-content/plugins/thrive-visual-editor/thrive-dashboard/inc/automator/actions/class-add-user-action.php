@@ -123,10 +123,11 @@ class Add_User extends Action {
 
 		$apis = Thrive_Dash_List_Manager::get_available_apis( true );
 
-		$api = $apis[ $this->autoresponder ];
-		if ( empty( $api ) ) {
+		if ( empty( $apis[ $this->autoresponder ] ) ) {
 			return false;
 		}
+
+		$api = $apis[ $this->autoresponder ];
 
 		if ( ! empty( $this->additional['tag_input'] ) && $api->has_tags() ) {
 			$tags = $this->additional['tag_input'];

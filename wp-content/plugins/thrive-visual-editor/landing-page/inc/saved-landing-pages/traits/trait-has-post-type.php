@@ -7,8 +7,6 @@
 
 namespace TCB\SavedLandingPages;
 
-use TCB\UserTemplates\Has_Preview;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Silence is golden!
 }
@@ -69,6 +67,10 @@ trait Has_Post_Type {
 	 * @return array
 	 */
 	public function get_post_data() {
+		if ( empty( get_post( $this->ID ) ) ) {
+			return [];
+		}
+
 		$keys = array_merge( static::get_meta_keys(), static::get_content_keys() );
 
 		$data = [
@@ -101,7 +103,7 @@ trait Has_Post_Type {
 		}
 
 		if ( empty( $data['preview_image']['url'] ) && empty( $data['thumbnail'] ) ) {
-			$data['preview_image'] = Has_Preview::get_placeholder_data();
+			$data['preview_image'] = \TCB_Utils::get_placeholder_data();
 		}
 
 		return $data;

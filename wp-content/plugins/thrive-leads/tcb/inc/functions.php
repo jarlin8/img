@@ -286,8 +286,12 @@ function tve_remove_conflicting_scripts() {
  * @return mixed
  */
 function thrive_page_row_buttons( $actions, $page_object ) {
-	// don't add url to blacklisted content types
-	if ( ! tve_is_post_type_editable( $page_object->post_type ) || ! TCB_Product::has_post_access( $page_object->ID ) ) {
+
+	if (
+		! tve_is_post_type_editable( $page_object->post_type ) || // don't add url to blacklisted content types
+		! TCB_Product::has_post_access( $page_object->ID ) ||
+		$page_object->post_status === 'trash'
+	) {
 		return $actions;
 	}
 
@@ -1703,9 +1707,9 @@ function tve_get_style_families() {
  */
 function tve_print_footer_events() {
 	if ( ! empty( $GLOBALS['tve_event_manager_callbacks'] ) ) {
-		echo '<script type="text/javascript">var TVE_Event_Manager_Registered_Callbacks = TVE_Event_Manager_Registered_Callbacks || {};';
+		echo '<script type="text/javascript">window.TVE_Event_Manager_Registered_Callbacks = window.TVE_Event_Manager_Registered_Callbacks || {};';
 		foreach ( $GLOBALS['tve_event_manager_callbacks'] as $key => $js_function ) {
-			echo 'TVE_Event_Manager_Registered_Callbacks.' . $key . ' = ' . $js_function . ';'; //phpcs:ignore
+			echo 'window.TVE_Event_Manager_Registered_Callbacks.' . $key . ' = ' . $js_function . ';'; //phpcs:ignore
 		}
 		echo '</script>';
 	}
@@ -1787,7 +1791,7 @@ function tve_add_custom_font( $font_data ) {
  * @return array
  */
 function tve_update_image_size( $image_path, $template, $image_source ) {
-	if ( is_file( $image_path ) ) {
+	if ( is_file( $image_path ) && ini_get( 'allow_url_fopen' ) ) {
 		list( $width, $height ) = getimagesize( $image_path );
 	} else {
 		$width  = 0;
@@ -2118,6 +2122,7 @@ function tve_enqueue_editor_scripts() {
 					'ajaxurl'          => admin_url( 'admin-ajax.php' ),
 					'social_fb_app_id' => tve_get_social_fb_app_id(),
 					'is_single'        => (string) ( (int) is_singular() ),
+					'nonce'            => TCB_Utils::create_nonce(),
 				);
 
 				/**
@@ -2147,6 +2152,9 @@ function tve_get_regular_post_types() {
 		'attachment',
 		'tcb_lightbox',
 		'tcb_symbol',
+		'mailpoet_page',
+		TCB\UserTemplates\Template::get_post_type_name(),
+		TCB\SavedLandingPages\Saved_Lp::get_post_type_name(),
 		TCB\Notifications\Post_Type::NAME,
 		TCB\ConditionalDisplay\PostTypes\Global_Conditional_Set::NAME,
 		TCB\ConditionalDisplay\PostTypes\Conditional_Display_Group::NAME,
@@ -2370,8 +2378,8 @@ function tve_get_shared_styles( $post_content = '', $for_media = '', $editor_aja
 	$output          = str_replace( $global_selector, $selector, $output );
 
 	if ( ! empty( $output ) || $is_editor_page ) {
-		$output = TCB\Lightspeed\Fonts::parse_google_fonts( $output );
-		$output = sprintf( '<style type="text/css" class="tve_global_style">%s</style>', tve_prepare_global_variables_for_front( stripslashes( $output ) ) );
+		$output = TCB\Lightspeed\Fonts::parse_google_fonts( stripslashes( $output ) );
+		$output = sprintf( '<style type="text/css" class="tve_global_style">%s</style>', tve_prepare_global_variables_for_front( $output ) );
 	}
 
 	return $output;
@@ -2788,11 +2796,11 @@ function tve_do_leads_shortcode( $attrs ) {
 		$content             = ! empty( $content['html'] ) ? $content['html'] : '';
 	} else {
 		$content = tve_leads_shortcode_render( $attrs );
+		if ( empty( $content ) ) {
+			return '';
+		}
 	}
 
-	if ( empty( $content ) ) {
-		return $error_content;
-	}
 
 	return '<div class="thrive-shortcode-html">' . str_replace( 'tve_editor_main_content', '', $content ) . '</div>';
 }
@@ -3997,23 +4005,25 @@ function tve_api_form_submit( $output = true ) {
 	}
 
 	if ( ! empty( $data['_use_captcha'] ) ) {
-		$captcha_url = 'https://www.google.com/recaptcha/api/siteverify';
 		$captcha_api = Thrive_Dash_List_Manager::credentials( 'recaptcha' );
+		if ( ! empty( $captcha_api['secret_key'] ) ) {
+			$captcha_url = 'https://www.google.com/recaptcha/api/siteverify';
 
-		$_capthca_params = array(
-			'response' => $data['g-recaptcha-response'],
-			'secret'   => empty( $captcha_api['secret_key'] ) ? '' : $captcha_api['secret_key'],
-			'remoteip' => ! empty( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '',
-		);
+			$_capthca_params = array(
+				'response' => $data['g-recaptcha-response'],
+				'secret'   => empty( $captcha_api['secret_key'] ) ? '' : $captcha_api['secret_key'],
+				'remoteip' => ! empty( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '',
+			);
 
-		$request  = tve_dash_api_remote_post( $captcha_url, array( 'body' => $_capthca_params ) );
-		$response = json_decode( wp_remote_retrieve_body( $request ) );
+			$request  = tve_dash_api_remote_post( $captcha_url, array( 'body' => $_capthca_params ) );
+			$response = json_decode( wp_remote_retrieve_body( $request ) );
 
-		if ( empty( $response ) || $response->success === false || ( ! empty( $captcha_api['connection'] ) && $captcha_api['connection']['version'] === 'v3' && $response->score <= $captcha_api['connection']['threshold'] ) ) {
-			return TCB_Utils::maybe_send_json( array(
-				'field' => 'captcha',
-				'error' => __( 'We are detecting suspicious activity from your device. Please try in another browser or contact the website administrator.', 'thrive-cb' ),
-			), $output );
+			if ( empty( $response ) || $response->success === false || ( ! empty( $captcha_api['connection'] ) && $captcha_api['connection']['version'] === 'v3' && $response->score <= $captcha_api['connection']['threshold'] ) ) {
+				return TCB_Utils::maybe_send_json( array(
+					'field' => 'captcha',
+					'error' => __( 'We are detecting suspicious activity from your device. Please try in another browser or contact the website administrator.', 'thrive-cb' ),
+				), $output );
+			}
 		}
 	}
 
@@ -4735,7 +4745,11 @@ if ( ! function_exists( 'tve_frontend_enqueue_scripts' ) ) {
 				tve_page_events( $events );
 			}
 		}
-
+		/* if emoji are disabled remove the action from the scripts*/
+		if ( \TCB\Lightspeed\Emoji::is_emoji_disabled() ) {
+			remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+			remove_action( 'wp_print_styles', 'print_emoji_styles' );
+		}
 		/* params for the frontend script */
 		$frontend_options = array(
 			'ajaxurl'                         => admin_url( 'admin-ajax.php' ),
@@ -4800,6 +4814,7 @@ if ( ! function_exists( 'tve_frontend_enqueue_scripts' ) ) {
 			wp_dequeue_style( 'wp-block-library' ); // WordPress core
 			wp_dequeue_style( 'wp-block-library-theme' ); // WordPress core
 		}
+
 
 	}
 }
@@ -5323,7 +5338,7 @@ function tcb_should_print_unified_styles() {
 	/**
 	 * Filter allows printing default styles in various scenarios
 	 *
-	 * @param bool $value whether or not to print styles
+	 * @param bool $value whether to print styles
 	 */
 	return apply_filters( 'tcb_should_print_unified_styles', ! is_editor_page_raw() && ( ! is_singular() || ! tcb_post()->is_landing_page() || ! tcb_landing_page( get_the_ID() )->should_strip_head_css() ) );
 }
@@ -5510,6 +5525,7 @@ function tve_get_intercom_article_url( $key = '' ) {
 		'styled_box'          => 'https://api.intercom.io/articles/4425825',
 		'carousel_options'    => 'https://api.intercom.io/articles/5126221',
 		'number_counter'      => 'https://api.intercom.io/articles/5579404',
+		'post_list_filter'    => 'https://api.intercom.io/articles/6533678',
 	);
 
 	$articles = apply_filters( 'thrive_kb_articles', $articles );
@@ -5588,6 +5604,23 @@ function tve_score_password( $passwd ) {
 	}
 
 	return $score;
+}
+
+/**
+ * Prevent WP to add loading attribute for images where the user disabled lazy loading
+ *
+ * @param $lazy_load_value
+ * @param $image
+ * @param $context
+ *
+ * @return false|mixed
+ */
+function tve_image_lazy_load( $lazy_load_value, $image, $context ) {
+	if ( strpos( $image, 'tve-not-lazy-loaded' ) !== false ) {
+		$lazy_load_value = false;
+	}
+
+	return $lazy_load_value;
 }
 
 /**

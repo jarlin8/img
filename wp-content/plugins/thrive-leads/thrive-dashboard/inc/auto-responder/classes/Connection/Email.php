@@ -80,7 +80,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 	public function add_subscriber( $list_identifier, $arguments ) {
 
 		if ( ! is_array( $list_identifier ) ) {
-			return __( 'Failed to send email', TVE_DASH_TRANSLATE_DOMAIN );
+			return __( 'Failed to send email', 'thrive-dash' );
 		}
 
 		$response = array();
@@ -352,7 +352,7 @@ class Thrive_Dash_List_Connection_Email extends Thrive_Dash_List_Connection_Abst
 		$html = '';
 
 		foreach ( $this->_get_custom_fields( $args ) as $field ) {
-			$label = ! empty( $labels[ $field ] ) ? sanitize_text_field( $labels[ $field ] ) : __( 'Extra Data', TVE_DASH_TRANSLATE_DOMAIN );
+			$label = ! empty( $labels[ $field ] ) ? sanitize_text_field( $labels[ $field ] ) : __( 'Extra Data', 'thrive-dash' );
 
 			if ( strpos( $field, 'textarea' ) !== false ) { /* preserve textarea formatting */
 				$value = ! empty( $args[ $field ] ) ? sanitize_textarea_field( $args[ $field ] ) : '';

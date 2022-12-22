@@ -224,10 +224,13 @@ class TCB_REST_Symbols_Controller extends WP_REST_Posts_Controller {
 	 */
 	public function check_duplicate_title( $request ) {
 		$post_title = $this->get_post_title_from_request( $request );
-		$post       = get_page_by_title( $post_title, OBJECT, TCB_Symbols_Post_Type::SYMBOL_POST_TYPE );
 
-		if ( $post && $post->post_status !== 'trash' ) {
-			return new WP_Error( 'rest_cannot_create_post', __( 'Sorry, you are not allowed to create global elements with the same title', 'thrive-cb' ), array( 'status' => 409 ) );
+		if ( $post_title ) {
+			$post = get_page_by_title( $post_title, OBJECT, TCB_Symbols_Post_Type::SYMBOL_POST_TYPE );
+
+			if ( $post && $post->post_status !== 'trash' ) {
+				return new WP_Error( 'rest_cannot_create_post', __( 'Sorry, you are not allowed to create global elements with the same title', 'thrive-cb' ), array( 'status' => 409 ) );
+			}
 		}
 
 		return true;
@@ -270,7 +273,7 @@ class TCB_REST_Symbols_Controller extends WP_REST_Posts_Controller {
 		}
 
 		/* add the thumbnail data */
-		$default_thumb_data      = TCB\UserTemplates\Template::get_placeholder_data();
+		$default_thumb_data      = TCB_Utils::get_placeholder_data();
 		$response->data['thumb'] = TCB_Utils::get_thumb_data( $post->ID, TCB_Symbols_Post_Type::SYMBOL_THUMBS_FOLDER, $default_thumb_data );
 
 		$response->data['edit_url'] = tcb_get_editor_url( $post->ID );
@@ -357,7 +360,7 @@ class TCB_REST_Symbols_Controller extends WP_REST_Posts_Controller {
 		/* add the new thumbnail data to the post meta */
 		TCB_Utils::save_thumbnail_data( $post_id, $thumb );
 
-		return copy( $path, $new_path );
+		return @copy( $path, $new_path );
 	}
 
 	/**

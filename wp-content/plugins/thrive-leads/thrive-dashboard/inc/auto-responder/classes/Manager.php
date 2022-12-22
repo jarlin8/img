@@ -28,6 +28,7 @@ class Thrive_Dash_List_Manager {
 		'integrations'  => 'Integration Services',
 		'email'         => 'Email Delivery',
 		'storage'       => 'File Storage',
+		'collaboration' => 'Collaboration',
 	];
 
 	/**
@@ -92,6 +93,10 @@ class Thrive_Dash_List_Manager {
 		/* File Storage */
 		'google_drive'         => 'Thrive_Dash_List_Connection_FileUpload_GoogleDrive',
 		'dropbox'              => 'Thrive_Dash_List_Connection_FileUpload_Dropbox',
+
+		/* Collaboration */
+		'slack'                => 'Thrive_Dash_List_Connection_Slack',
+//		'facebookpixel'        => 'Thrive_Dash_List_Connection_FacebookPixel',
 	];
 
 	private static $_available      = [];
@@ -115,7 +120,7 @@ class Thrive_Dash_List_Manager {
 
 		return method_exists( __CLASS__, $camel_case_method_name ) ? call_user_func_array( [
 			static::class,
-			$camel_case_method_name
+			$camel_case_method_name,
 		], $arguments ) : null;
 	}
 
@@ -229,6 +234,7 @@ class Thrive_Dash_List_Manager {
 	/**
 	 * Build custom fields for all available connections
 	 * Can be renamed to get_available_custom_fields in 2-3 releases
+	 *
 	 * @return array
 	 */
 	public static function getAvailableCustomFields() {
@@ -289,11 +295,11 @@ class Thrive_Dash_List_Manager {
 		}
 		$lists = array();
 
-		$credentials = self::credentials();
+		$credentials = static::credentials();
 
-		foreach ( self::available() as $key => $api ) {
+		foreach ( static::available() as $key => $api ) {
 			/** @var Thrive_Dash_List_Connection_Abstract $instance */
-			$instance = self::connectionInstance( $key, isset( $credentials[ $key ] ) ? $credentials[ $key ] : array() );
+			$instance = static::connectionInstance( $key, isset( $credentials[ $key ] ) ? $credentials[ $key ] : array() );
 			if ( ( $onlyConnected && empty( $credentials[ $key ] ) ) || ! in_array( $instance::get_type(), $include_types, true ) ) {
 				continue;
 			}
@@ -414,7 +420,7 @@ class Thrive_Dash_List_Manager {
 	 */
 	public static function message( $type, $message ) {
 		if ( $type === 'error' ) {
-			self::$ADMIN_HAS_ERROR = true;
+			static::$ADMIN_HAS_ERROR = true;
 		}
 		$messages          = get_option( 'tve_api_admin_notices', [] );
 		$messages[ $type ] = $message;

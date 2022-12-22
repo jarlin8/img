@@ -68,12 +68,12 @@ class Hooks {
 			'id'     => 'coming-soon',
 			'parent' => 'top-secondary',
 			'group'  => null,
-			'title'  => '<span style="width:18px;height:12px;display:inline-block;background-image:url(' . TVE_DASH_URL . '/css/images/thrive-leaf.png);margin-right:5px !important;" class="thrive-adminbar-icon"></span>' . __( 'Coming Soon Mode Active', TVE_DASH_TRANSLATE_DOMAIN ),
+			'title'  => '<span style="width:18px;height:12px;display:inline-block;background-image:url(' . TVE_DASH_URL . '/css/images/thrive-leaf.png);margin-right:5px !important;" class="thrive-adminbar-icon"></span>' . __( 'Coming Soon Mode Active', 'thrive-dash' ),
 			'href'   => admin_url( 'admin.php?page=tve_dash_coming_soon' ),
 			'meta'   => array(
 				'class' => 'thrive-coming-soon',
 				'html'  => '<style>#wpadminbar .thrive-coming-soon {background: orange; display:' . $item_visibility . '}</style>',
-				'title' => __( 'Go to Coming Soon Dashboard', TVE_DASH_TRANSLATE_DOMAIN ),
+				'title' => __( 'Go to Coming Soon Dashboard', 'thrive-dash' ),
 			),
 		) );
 	}
@@ -134,6 +134,11 @@ class Hooks {
 				'is_empty_page'          => Main::is_empty_page(),
 				'is_ttb_active'          => tve_dash_is_ttb_active(),
 				'is_admin_page'          => $screen === 'admin_page_tve_dash_coming_soon',
+                't'                      => array(
+                    'search_page'        => __( 'Search an existing page', 'thrive-dash' ),
+                    'add_page_title'     => __( 'Please add the page title!', 'thrive-dash' ),
+                    'saved_successfully' => __( 'Changes saved successfully', 'thrive-dash' ),
+                ),
 			) );
 		}
 	}
@@ -193,9 +198,9 @@ class Hooks {
 		$features['coming-soon'] = array(
 			'icon'        => 'tvd-coming-soon',
 			'title'       => Main::title(),
-			'description' => __( 'Display a "Coming Soon" page to let visitors know that you are currently working on your website.', TVE_DASH_TRANSLATE_DOMAIN ),
+			'description' => __( 'Display a "Coming Soon" page to let visitors know that you are currently working on your website.', 'thrive-dash' ),
 			'btn_link'    => add_query_arg( 'page', Main::MENU_SLUG, admin_url( 'admin.php' ) ),
-			'btn_text'    => __( 'Coming Soon Mode', TVE_DASH_TRANSLATE_DOMAIN ),
+			'btn_text'    => __( 'Coming Soon Mode', 'thrive-dash' ),
 		);
 
 		return $features;

@@ -126,7 +126,17 @@ class TCB_Post_List {
 			$post_query['offset'] = 0;
 		}
 
+		$post_query = TCB_Post_List_Filter::filter( $post_query );
+
 		$query = new WP_Query( $post_query );
+
+		if ( ! empty( $post_query['dynamic_filter'] ) ) {
+			$this->attr['dynamic_filter'] = json_encode( $post_query['dynamic_filter'] );
+
+			unset( $post_query['dynamic_filter'] );
+		} else {
+			unset( $this->attr['dynamic_filter'] );
+		}
 
 		if ( $number_of_sticky_posts === $posts_per_page ) {
 			//do nothing
@@ -162,14 +172,13 @@ class TCB_Post_List {
 
 			/* hide everything inside */
 			$class .= ' empty-list';
-
-			/* text to display for no posts */
-			$this->attr['no_posts_text'] = isset( $this->query['no_posts_text'] ) ? $this->query['no_posts_text'] : '';
 		} else {
 			foreach ( $all_posts as $post ) {
 				$content .= $this->article_content();
 			}
 		}
+		/* text to display for no posts */
+		$this->attr['no_posts_text'] = isset( $this->query['no_posts_text'] ) ? $this->query['no_posts_text'] : '';
 
 		$post = $current_post;
 
@@ -269,10 +278,7 @@ class TCB_Post_List {
 
 		$post_id = get_the_ID();
 
-		if ( $this->in_editor_render ) {
-			/* in edit mode, add the post id to each article */
-			$article_attr['data-id'] = $post_id;
-		}
+		$article_attr['data-id'] = $post_id;
 
 		$content = empty( $this->article ) ? tcb_template( 'elements/post-list-article.php', null, true ) : $this->article;
 
@@ -461,15 +467,19 @@ class TCB_Post_List {
 				//phpcs:enable
 			}
 
-			/* remove the post content before localizing the posts */
-			$posts_localize = array_map(
-				function ( $item ) {
-					unset( $item['content'] );
+			$posts_localize = [];
 
-					return $item;
-				}, $GLOBALS[ TCB_POST_LIST_LOCALIZE ] );
+			if ( ! empty( $GLOBALS[ TCB_POST_LIST_LOCALIZE ] ) ) {
+				/* remove the post content before localizing the posts */
+				$posts_localize = array_map(
+					function ( $item ) {
+						unset( $item['content'] );
 
-			echo TCB_Utils::wrap_content( "var tcb_post_lists=JSON.parse('" . addslashes( json_encode( $posts_localize ) ) . "');", 'script', '', '', array( 'type' => 'text/javascript' ) ); // phpcs:ignore
+						return $item;
+					}, $GLOBALS[ TCB_POST_LIST_LOCALIZE ] );
+			}
+
+			echo TCB_Utils::wrap_content( "var tcb_current_post_lists=JSON.parse('" . addslashes( json_encode( $posts_localize ) ) . "'); var tcb_post_lists=tcb_post_lists?[...tcb_post_lists,...tcb_current_post_lists]:tcb_current_post_lists;", 'script', '', '', array( 'type' => 'text/javascript' ) ); // phpcs:ignore
 		}
 	}
 
@@ -507,6 +517,8 @@ class TCB_Post_List {
 			'author_name'          => '',
 			'category_name'        => '',
 			'exclude_current_post' => '',
+			'dynamic_filter'       => '',
+			'post__not_in'         => '',
 		) );
 
 		/* nothing for now */
@@ -621,7 +633,7 @@ class TCB_Post_List {
 			$query_args['post__in']       = array();
 
 			/* we always want to exclude sticky posts */
-			$query_args['post__not_in'] = get_option( 'sticky_posts', array() );
+			$query_args['post__not_in'] = array_merge( get_option( 'sticky_posts', array() ), isset( $query_args['post__not_in'] ) ? $query_args['post__not_in'] : [] );
 
 			foreach ( $args['rules'] as $rule ) {
 
@@ -802,6 +814,7 @@ class TCB_Post_List {
 			'tcb-elem-type'      => 'post_list',
 			'pagination-type'    => 'none',
 			'pages_near_current' => '2',
+			'dynamic_filter'     => str_replace( '"', '\'', json_encode( static::get_default_filters() ) ),
 		);
 	}
 
@@ -822,7 +835,22 @@ class TCB_Post_List {
 			'no_posts_text'        => 'There are no posts to display.',
 			'exclude_current_post' => array( '1' ),
 			'rules'                => array(),
+			'dynamic_filter'       => static::get_default_filters(),
 		);
+	}
+
+	/**
+	 * Get the default filters for the Post List, used with Post List Filter element
+	 *
+	 * @return string[]
+	 */
+	public static function get_default_filters() {
+		return [
+			'category' => 'category',
+			'tag'      => 'tag',
+			'author'   => 'author',
+			'search'   => 'search',
+		];
 	}
 
 	/**
@@ -1109,6 +1137,7 @@ class TCB_Post_List {
 		'featured-list',
 		'template-id',
 		'styled-scrollbar',
+		'dynamic_filter',
 	);
 
 	/**

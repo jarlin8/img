@@ -88,7 +88,7 @@ class Woo_Product_Purchase extends Trigger {
 	public function process_params( $params = array() ) {
 		$data = array();
 
-		if ( ! empty( $params[1] ) ) {
+		if ( ! empty( $params[0] ) ) {
 
 			$data_object_classes = Data_Object::get();
 

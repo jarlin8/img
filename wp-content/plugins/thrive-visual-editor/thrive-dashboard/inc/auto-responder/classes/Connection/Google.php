@@ -57,7 +57,7 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 		$client_secret = ! empty( $_POST['client_secret'] ) ? sanitize_text_field( $_POST['client_secret'] ) : '';
 
 		if ( empty( $client_id ) || empty( $client_secret ) ) {
-			return $this->error( __( 'Both Client ID and Client Secret fields are required', TVE_DASH_TRANSLATE_DOMAIN ) );
+			return $this->error( __( 'Both Client ID and Client Secret fields are required', 'thrive-dash' ) );
 		}
 
 		$this->set_credentials( array( 'client_id' => $client_id, 'client_secret' => $client_secret ) );
@@ -65,7 +65,7 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 		$result = $this->test_connection();
 
 		if ( $result !== true ) {
-			return $this->error( sprintf( __( 'Incorrect Client ID.', TVE_DASH_TRANSLATE_DOMAIN ), $result ) );
+			return $this->error( sprintf( __( 'Incorrect Client ID.', 'thrive-dash' ), $result ) );
 		}
 
 		/**
@@ -73,7 +73,7 @@ class Thrive_Dash_List_Connection_Google extends Thrive_Dash_List_Connection_Abs
 		 */
 		$this->save();
 
-		return $this->success( __( 'Google connected successfully!', TVE_DASH_TRANSLATE_DOMAIN ) );
+		return $this->success( __( 'Google connected successfully!', 'thrive-dash' ) );
 	}
 
 	/**

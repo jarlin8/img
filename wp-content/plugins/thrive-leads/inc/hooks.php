@@ -3388,3 +3388,15 @@ add_filter( 'thrive_kb_articles', static function ( $articles ) {
 
 	return $articles;
 } );
+
+/**
+ * Don't display metrics ribbon if we don't have any license
+ */
+add_filter( 'tve_dash_metrics_should_enqueue', static function ( $should_enqueue ) {
+	$screen = tve_get_current_screen_key();
+	if ( $screen === 'thrive-dashboard_page_thrive_leads_dashboard' && ! tve_leads_license_activated() ) {
+		$should_enqueue = false;
+	}
+
+	return $should_enqueue;
+}, 10, 1 );

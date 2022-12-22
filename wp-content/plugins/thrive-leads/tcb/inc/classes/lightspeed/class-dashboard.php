@@ -100,11 +100,17 @@ class Dashboard {
 					Fonts::DISABLE_GOOGLE_FONTS      => Fonts::is_blocking_google_fonts(),
 					Gutenberg::DISABLE_GUTENBERG     => Gutenberg::is_gutenberg_disabled(),
 					Gutenberg::DISABLE_GUTENBERG_LP  => Gutenberg::is_gutenberg_disabled( true ),
+					Emoji::DISABLE_EMOJI     => Emoji::is_emoji_disabled()
 				],
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 				'route'   => get_rest_url( get_current_blog_id(), 'tcb/v1/lightspeed' ),
 				/* if a user needs a bigger timeout, he can set the constant in wp config */
 				'timeout' => defined( 'LIGHTSPEED_TIMEOUT' ) ? LIGHTSPEED_TIMEOUT : 10,
+				't' => array(
+					'assets'   => __( 'Asset Optimization', 'thrive-cb' ),
+					'fonts'    => __( 'Font Settings', 'thrive-cb' ),
+					'advanced' => __( 'Advanced Settings', 'thrive-cb' ),
+				)
 			];
 
 			if ( \TCB\Integrations\WooCommerce\Main::active() ) {

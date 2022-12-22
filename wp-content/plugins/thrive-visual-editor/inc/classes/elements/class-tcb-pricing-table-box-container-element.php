@@ -94,7 +94,7 @@ class TCB_Pricing_Table_Box_Container_Element extends TCB_Element_Abstract {
 				),
 				array(
 					'value'    => 'all_pricing_boxes_buttons',
-					'selector' => '.tcb-col .thrv-button',
+					'selector' => '.tcb-col > .thrv-button, .tcb-col > .thrv-content-box > .tve-cb > .thrv-button',
 					'name'     => __( 'Grouped Pricing Boxes Buttons', 'thrive-cb' ),
 					'singular' => __( '-- Button %s', 'thrive-cb' ),
 				),

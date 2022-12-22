@@ -93,7 +93,7 @@ class TCB_Custom_Fields_Shortcode {
 
 	private $video_regex = array(
 		'/https?:\/\/(.+)\.(cdn\.(vooplayer|spotlightr)\.com)\/(publish|watch)\/(.+)/'                                                          => 'vooplayer',
-		'/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/'                => 'youtube',
+		'/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|shorts\/|\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/'                => 'youtube',
 		'/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|list\/|playlist\?list=|playlist\?.+&list=))((\w|-){18})(?:\S+)?$/' => 'youtube',
 		'/(http|https)?:\/\/(www\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|)(\d+)(?:|\/\?)\/?([a-zA-Z0-9]+)?/'           => 'vimeo',
 		'/https?:\/\/(.+)?(wistia.com|wi.st)\/(?:medias|embed)\/(.+)/'                                                                          => 'wistia',
@@ -351,6 +351,16 @@ class TCB_Custom_Fields_Shortcode {
 			if ( method_exists( $this, $method_name ) ) {
 				return $this->$method_name( $args );
 			}
+
+			/**
+			 * Allow other custom fields to have callbacks here
+			 * Dynamic hook depending on the type
+			 * Used in ThriveApprentice for the Verification Page custom field callback
+			 *
+			 * @param string $return
+			 * @param array  $args
+			 */
+			return apply_filters( 'tcb_custom_fields_render_' . $args['type'], '', $args );
 		}
 	}
 
@@ -368,6 +378,7 @@ class TCB_Custom_Fields_Shortcode {
 		$args['title']        = ! empty( $args['title'] ) ? $args['title'] : $post_title;
 		$args['data-classes'] = ! empty( $args['data-classes'] ) ? $args['data-classes'] : 'tve_image';
 		$args['data-css']     = ! empty( $args['data-css'] ) ? $args['data-css'] : '';
+		$args['loading']      = ! empty( $args['loading'] ) ? $args['loading'] : '';
 
 		/**
 		 * Allow vendors to filter author dynamic field
@@ -375,7 +386,8 @@ class TCB_Custom_Fields_Shortcode {
 		 */
 		return get_avatar( apply_filters( 'tcb_dynamic_field_author', $post_author ), 256, '', $args['alt'], array(
 			'class'      => $args['data-classes'],
-			'extra_attr' => 'loading="lazy" data-d-f="author" title="' . $args['title'] . '" width="500" height="500" data-css="' . $args['data-css'] . '"',
+			'extra_attr' => ' data-d-f="author" title="' . $args['title'] . '" width="500" height="500" data-css="' . $args['data-css'] . '"',
+			'loading'    => $args['loading'],
 		) );
 	}
 
@@ -387,7 +399,7 @@ class TCB_Custom_Fields_Shortcode {
 	 * @return string
 	 */
 	private function render_dynamic_field_user( $args = [] ) {
-		$user_id = get_current_user_id();
+		$user_id = tve_get_current_user_id();
 
 		if ( ! $user_id ) {
 			return '';
@@ -432,6 +444,10 @@ class TCB_Custom_Fields_Shortcode {
 				'data-css' => $args['data-css'],
 			) );
 		}
+		$loading = '';
+		if ( ! empty( $args['loading'] ) ) {
+			$loading = 'loading="lazy"';
+		}
 		$args['data-classes'] = ! empty( $args['data-classes'] ) ? $args['data-classes'] : 'tve_image';
 
 		/**
@@ -440,7 +456,7 @@ class TCB_Custom_Fields_Shortcode {
 		 */
 		$featured_image_url = apply_filters( 'tcb_dynamic_field_featured', $featured_image_url );
 
-		return '<img loading="lazy" class="' . $args['data-classes'] . '" alt="' . $args['alt'] . '" data-id="' . 0 . '" data-d-f="featured" width="500" height="500" title="' . $args['title'] . '" src="' . $featured_image_url . '" data-css="' . $args['data-css'] . '">';
+		return '<img ' . $loading . ' class="' . $args['data-classes'] . '" alt="' . $args['alt'] . '" data-id="' . 0 . '" data-d-f="featured" width="500" height="500" title="' . $args['title'] . '" src="' . $featured_image_url . '" data-css="' . $args['data-css'] . '">';
 	}
 
 	/**
@@ -1243,30 +1259,31 @@ class TCB_Custom_Fields_Shortcode {
 	}
 
 	private function verify_video_url( $url, $get_regex = false ) {
+		if ( is_string( $url ) ) {
+			foreach ( $this->video_regex as $reg => $provider ) {
+				if ( preg_match( $reg, $url, $aux ) ) {
+					return $get_regex ? $aux : array(
+						'value'     => $aux[0],
+						'video_src' => $provider,
+					);
+				}
+			}
 
-		foreach ( $this->video_regex as $reg => $provider ) {
-			if ( preg_match( $reg, $url, $aux ) ) {
+			if ( preg_match( '/.+\.(wmv|avi|mov|mpg|mp4|m4v|ogv|3gp|3g2|webm)$/', $url, $aux ) ) {
+				//Exception for mov file types
+				if ( $aux[1] == 'mov' ) {
+					$aux[1] = 'mp4';
+				}
+
 				return $get_regex ? $aux : array(
-					'value'     => $aux[0],
-					'video_src' => $provider,
+					'value'     => $url,
+					'video_src' => 'external',
+					'url'       => $url,
+					'title'     => 'External Video',
+					'id'        => 0,
+					'mime_type' => 'video/' . $aux[1],
 				);
 			}
-		}
-
-		if ( preg_match( '/.+\.(wmv|avi|mov|mpg|mp4|m4v|ogv|3gp|3g2|webm)$/', $url, $aux ) ) {
-			//Exception for mov file types
-			if ( $aux[1] == 'mov' ) {
-				$aux[1] = 'mp4';
-			}
-
-			return $get_regex ? $aux : array(
-				'value'     => $url,
-				'video_src' => 'external',
-				'url'       => $url,
-				'title'     => 'External Video',
-				'id'        => 0,
-				'mime_type' => 'video/' . $aux[1],
-			);
 		}
 
 		return false;
@@ -1329,7 +1346,7 @@ class TCB_Custom_Fields_Shortcode {
 						case 'link':
 							$field = array( 'value' => $formatted_value );
 							if ( in_array( $value['type'], array( 'file', 'image' ) ) ) {
-								$field['value'] = $attachment['url'];
+								$field['value'] = $attachment === false ? '' : $attachment['url'];
 							} else {
 								$field['value'] = $value['type'] === 'page_link' ? get_permalink( $value['value'] )
 									: ( $value['type'] === 'link' ? $value['value']['url'] : $field['value'] );
@@ -1348,7 +1365,7 @@ class TCB_Custom_Fields_Shortcode {
 						case 'audio':
 						case 'image':
 							//TODO Filter types in case of video/audio (ex: .flv is not working)
-							if ( ! empty( $attachment ) && $attachment['type'] === $k ) {
+							if ( ! empty( $attachment ) && $attachment !== false && $attachment['type'] === $k ) {
 								$field              = array_merge( $attachment, array(
 									'name' => $acf_key,
 									'mime' => $attachment['mime_type'],

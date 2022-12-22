@@ -128,9 +128,9 @@ class TD_NM_Admin {
 		$features['notification_manager'] = array(
 			'icon'        => 'tvd-icon-notification',
 			'title'       => 'Notification Manager',
-			'description' => __( 'Receive notifications when certain events occur on your site', TVE_DASH_TRANSLATE_DOMAIN ),
+			'description' => __( 'Receive notifications when certain events occur on your site', 'thrive-dash' ),
 			'btn_link'    => add_query_arg( 'page', $this->_dashboard_page, admin_url( 'admin.php' ) ),
-			'btn_text'    => __( "Manage Notifications", TVE_DASH_TRANSLATE_DOMAIN ),
+			'btn_text'    => __( "Manage Notifications", 'thrive-dash' ),
 		);
 
 		return $features;
@@ -140,7 +140,7 @@ class TD_NM_Admin {
 	 * Add page to admin menu so the page could be accessed
 	 */
 	public function admin_menu() {
-		add_submenu_page( null, __( 'Notification Manager', TVE_DASH_TRANSLATE_DOMAIN ), __( 'Notification Manager', TVE_DASH_TRANSLATE_DOMAIN ), TVE_DASH_CAPABILITY, $this->_dashboard_page, array(
+		add_submenu_page( null, __( 'Notification Manager', 'thrive-dash' ), __( 'Notification Manager', 'thrive-dash' ), TVE_DASH_CAPABILITY, $this->_dashboard_page, array(
 			$this,
 			'admin_dashboard',
 		) );
@@ -315,7 +315,7 @@ class TD_NM_Admin {
 				'title'     => $instance->get_title(),
 				'connected' => in_array( $key, $connected_keys ),
 				'active'    => $key === $active_connection,
-				'status'    => in_array( $key, $connected_keys ) ? __( 'connected', TVE_DASH_TRANSLATE_DOMAIN ) : __( 'Unset', TVE_DASH_TRANSLATE_DOMAIN ),
+				'status'    => in_array( $key, $connected_keys ) ? __( 'connected', 'thrive-dash' ) : __( 'Unset', 'thrive-dash' ),
 			);
 
 			$items[] = $item;

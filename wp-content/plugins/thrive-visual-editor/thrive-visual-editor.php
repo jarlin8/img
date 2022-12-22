@@ -3,7 +3,7 @@
 /*
 Plugin Name: Thrive Architect
 Plugin URI: http://www.thrivethemes.com
-Version: 3.11
+Version: 3.16.2
 Author: <a href="http://www.thrivethemes.com">Thrive Themes</a>
 Description: Live front end editor for your WordPress content
 Text domain: thrive-cb
@@ -476,9 +476,10 @@ function tar_enable_dashboard_features( $features ) {
 	 */
 	if ( TCB_Product::has_access() ) {
 		$features['script_manager']      = true;
-		$features['coming-soon']         = true;
 		$features['thrive_design_packs'] = true;
 	}
+
+	$features['coming-soon'] = true;
 
 	return $features;
 }

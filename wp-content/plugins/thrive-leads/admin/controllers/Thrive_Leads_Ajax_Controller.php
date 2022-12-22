@@ -6,6 +6,8 @@
  * Time: 10:15
  */
 
+use TCB\inc\helpers\FormSettings;
+
 /**
  * should handle all AJAX requests coming from BackboneJS
  *
@@ -527,6 +529,17 @@ class Thrive_Leads_Ajax_Controller extends Thrive_Leads_Request_Handler {
 					$copy_of             = __( 'Copy of', 'thrive-leads' );
 					$model['post_title'] = ( strpos( $model['post_title'], $copy_of ) === false ? $copy_of . ' ' : '' ) . $model['post_title'];
 
+					/* We need to save the form settings from the clone */
+					if ( method_exists(  FormSettings::class,'save_form_settings_from_duplicated_content' ) ) {
+						$model['content'] = FormSettings::save_form_settings_from_duplicated_content( $model['content'], $model['post_parent'] );
+					}
+
+					/* We also need to save settings from child states */
+					if ( ! empty( $model['form_child_states'] ) && method_exists( FormSettings::class,'save_form_settings_from_duplicated_content' ) ) {
+						foreach ( $model['form_child_states'] as $key => $state ) {
+							$model['form_child_states'][ $key ]['content'] =  FormSettings::save_form_settings_from_duplicated_content( $state['content'], $state['post_parent'] );
+						}
+					}
 				} else {
 					if ( empty( $model['key'] ) ) {
 						unset( $model['display_frequency'] );

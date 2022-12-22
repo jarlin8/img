@@ -86,14 +86,14 @@ class TVD_SM_Admin {
 	}
 
 	public function change_title( $title ) {
-		return __( 'Script Manager', TVE_DASH_TRANSLATE_DOMAIN ) . $title;
+		return __( 'Script Manager', 'thrive-dash' ) . $title;
 	}
 
 	/**
 	 * Add page to admin menu so the page could be accessed
 	 */
 	public function admin_menu() {
-		add_submenu_page( null, __( 'Landing Pages Analytics & Scripts', TVE_DASH_TRANSLATE_DOMAIN ), __( 'Landing Pages Analytics & Scripts', TVE_DASH_TRANSLATE_DOMAIN ), 'manage_options', 'tve_dash_script_manager', array(
+		add_submenu_page( null, __( 'Landing Pages Analytics & Scripts', 'thrive-dash' ), __( 'Landing Pages Analytics & Scripts', 'thrive-dash' ), 'manage_options', 'tve_dash_script_manager', array(
 			$this,
 			'admin_dashboard',
 		) );

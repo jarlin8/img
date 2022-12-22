@@ -496,7 +496,7 @@ class TCB_Utils {
 
 		/* if the post meta is empty, look inside the file and get the data directly from the it */
 		if ( empty( $thumb_data['url'] ) ) {
-			if ( file_exists( $thumb_path ) ) {
+			if ( file_exists( $thumb_path ) && ini_get( 'allow_url_fopen' ) ) {
 				list( $width, $height ) = getimagesize( $thumb_path );
 
 				$thumb_data = array(
@@ -674,6 +674,13 @@ class TCB_Utils {
 				$data['family'] = $family;
 				/* hold weights as keys, so it's less expensive to get unique weights */
 				$data['weights'] = array_flip( array_filter( explode( ',', $weights ), function ( $weight ) {
+					/**
+					 * Preserve italic weights
+					 */
+					if ( substr( $weight, - 1 ) === 'i' ) {
+						$weight = substr( $weight, 0, - 1 );
+					}
+
 					return filter_var( $weight, FILTER_VALIDATE_INT );
 				} ) );
 				$data['query']   = $query;
@@ -868,5 +875,26 @@ class TCB_Utils {
 		 * @param array $qo associative array the should have at least an `ID` key
 		 */
 		return apply_filters( 'tcb_frontend_queried_object', $qo );
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function get_placeholder_url() {
+		return tve_editor_url( 'admin/assets/images/no-template-preview.jpg' );
+	}
+
+	/**
+	 * Get placeholder information for the template preview
+	 *
+	 * @return array
+	 */
+	public static function get_placeholder_data() {
+		return [
+			'url' => static::get_placeholder_url(),
+			/* hardcoded sizes taken from 'no-template-preview.jpg' */
+			'h'   => '120',
+			'w'   => '250',
+		];
 	}
 }

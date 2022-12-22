@@ -47,26 +47,9 @@ if ( ! class_exists( 'TVD_Smart_Site' ) ) :
 		 */
 		public function __construct() {
 			$this->db = new TVD_Smart_DB();
-			$this->do_db_migrations();
 			$this->action_filters();
 			$this->shortcodes        = new TVD_Smart_Shortcodes();
 			$this->global_shortcodes = new TVD_Global_Shortcodes();
-		}
-
-		/**
-		 * Prepare Migrations
-		 *
-		 * @throws Exception
-		 */
-		private function do_db_migrations() {
-			TD_DB_Manager::add_manager(
-				TVE_DASH_PATH . '/inc/smart-site/migrations',
-				'tve_td_db_version',
-				TVE_DASH_DB_VERSION,
-				'Thrive Dashboard',
-				'td_',
-				'tve_dash_reset'
-			);
 		}
 
 		/**
@@ -132,9 +115,9 @@ if ( ! class_exists( 'TVD_Smart_Site' ) ) :
 			$features['smart_site'] = array(
 				'icon'        => 'tvd-smart-site',
 				'title'       => 'Smart Site',
-				'description' => __( 'Define variables and values sitewide to use when building content', TVE_DASH_TRANSLATE_DOMAIN ),
+				'description' => __( 'Define variables and values sitewide to use when building content', 'thrive-dash' ),
 				'btn_link'    => add_query_arg( 'page', $this->_dashboard_page, admin_url( 'admin.php' ) ),
-				'btn_text'    => __( 'Smart Settings', TVE_DASH_TRANSLATE_DOMAIN ),
+				'btn_text'    => __( 'Smart Settings', 'thrive-dash' ),
 			);
 
 			return $features;
@@ -144,7 +127,7 @@ if ( ! class_exists( 'TVD_Smart_Site' ) ) :
 		 * Add to admin menu
 		 */
 		public function admin_menu() {
-			add_submenu_page( null, __( 'Smart Site', TVE_DASH_TRANSLATE_DOMAIN ), __( 'Smart Site', TVE_DASH_TRANSLATE_DOMAIN ), TVE_DASH_CAPABILITY, $this->_dashboard_page, array(
+			add_submenu_page( null, __( 'Smart Site', 'thrive-dash' ), __( 'Smart Site', 'thrive-dash' ), TVE_DASH_CAPABILITY, $this->_dashboard_page, array(
 				$this,
 				'admin_dashboard',
 			) );
@@ -357,13 +340,13 @@ if ( ! class_exists( 'TVD_Smart_Site' ) ) :
 							'input'       => array(
 								'id' => array(
 									'type'          => 'select',
-									'label'         => __( 'Field', TVE_DASH_TRANSLATE_DOMAIN ),
+									'label'         => __( 'Field', 'thrive-dash' ),
 									'value'         => array(),
 									'extra_options' => array(
 										'multiline' => array(
 											'available_for' => array( TVD_Smart_DB::$types['address'] ),
 											'type'          => 'checkbox',
-											'label'         => __( 'Include line breaks', TVE_DASH_TRANSLATE_DOMAIN ),
+											'label'         => __( 'Include line breaks', 'thrive-dash' ),
 											'value'         => false,
 										),
 									),

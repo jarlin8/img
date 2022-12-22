@@ -86,7 +86,13 @@ class TCB_Admin_Ajax {
 
 		switch ( $method ) {
 			case 'GET':
-				$templates = TCB\UserTemplates\Template::get_all();
+				$templates = TCB\UserTemplates\Template::localize();
+				$templates = array_map( static function ( $template ) {
+					$template['name'] = $template['label'];
+					unset( $template['label'] );
+
+					return $template;
+				}, $templates );
 				$templates = array_reverse( $templates );
 
 				if ( $search = $this->param( 'search' ) ) {
@@ -324,8 +330,16 @@ class TCB_Admin_Ajax {
 
 				$response = $template_instance->get();
 
+				if ( empty( $response['thumb'] ) ) {
+					$response['thumb'] = [
+						'url' => '',
+						'w'   => '',
+						'h'   => '',
+					];
+				}
+
 				if ( empty( $response['thumb']['url'] ) ) {
-					$response['thumb']['url'] = TCB\UserTemplates\Template::get_placeholder_url();
+					$response['thumb']['url'] = TCB_Utils::get_placeholder_url();
 				}
 				break;
 			default:

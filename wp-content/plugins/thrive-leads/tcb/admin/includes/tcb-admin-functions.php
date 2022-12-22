@@ -46,7 +46,7 @@ function tcb_admin_get_localization() {
  */
 function tcb_admin_get_category_templates( $templates = [] ) {
 	$template_categories = [];
-	$no_preview_img      = TCB\UserTemplates\Template::get_placeholder_url();
+	$no_preview_img      = TCB_Utils::get_placeholder_url();
 
 	foreach ( $templates as $template ) {
 		if ( empty( $template['image_url'] ) ) {

@@ -72,7 +72,11 @@ class TVE_Leads_Blocks {
 	}
 
 	public static function render_block( $attributes ) {
-		if ( isset( $attributes['selectedBlock'] ) && ! is_admin() ) {
+		/**
+		 * Prevent showing the block if there is conversion already set
+		 *
+		 */
+		if ( isset( $attributes['selectedBlock'] ) && ! is_admin() && ! tve_leads_check_conversion_cookie( $attributes['selectedBlock'] ) ) {
 
 			$data = array(
 				'id' => $attributes['selectedBlock'],

@@ -178,7 +178,7 @@ class TCB_Post_List_REST {
 
 		$all = get_posts( $args );
 
-		$all = apply_filters( 'tcb_filter_rest_products', $all, $request);
+		$all = apply_filters( 'tcb_filter_rest_products', $all, $request );
 
 		$posts = array_map( function ( $item ) {
 			return array(
@@ -300,6 +300,8 @@ class TCB_Post_List_REST {
 			empty( $args ) ? [] : $args
 		);
 
+		$total_posts = ! empty( $args['query']['posts_per_page'] ) ? $args['query']['posts_per_page'] : 10;
+
 		/* if the 'get_initial_posts' flag is not active, get the posts normally */
 		if ( empty( $args['query']['get_initial_posts'] ) ) {
 
@@ -335,9 +337,14 @@ class TCB_Post_List_REST {
 			if ( $posts_per_page !== $number_of_sticky_posts ) {
 				$query_args = TCB_Post_List::prepare_wp_query_args( $args['query'] );
 
-				$query = new WP_Query( $query_args );
-				$posts = $query->posts;
-				$posts = array_merge( $sticky_posts, $posts );
+				$filters = ! empty( $args['filters'] ) ? $args['filters'] : [];
+
+				$query_args = TCB_Post_List_Filter::filter( $query_args, $filters );
+
+				$query       = new WP_Query( $query_args );
+				$posts       = $query->posts;
+				$total_posts = $query->found_posts;
+				$posts       = array_merge( $sticky_posts, $posts );
 			} else {
 				$posts = $sticky_posts;
 			}
@@ -367,8 +374,9 @@ class TCB_Post_List_REST {
 		TCB_Post_List::exit_post_list_render();
 
 		return new WP_REST_Response( array(
-			'posts' => $results,
-			'count' => count( $results ),
+			'total_post_count' => $total_posts,
+			'posts'            => $results,
+			'count'            => count( $results ),
 		) );
 	}
 

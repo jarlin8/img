@@ -206,7 +206,7 @@ abstract class TCB_Symbol_Element_Abstract extends TCB_Cloud_Template_Element_Ab
 				'id'          => $symbol->ID,
 				'post_title'  => $symbol->post_title,
 				'config'      => $this->_get_symbol_config( $symbol ),
-				'thumb'       => TCB_Utils::get_thumb_data( $symbol->ID, TCB_Symbols_Post_Type::SYMBOL_THUMBS_FOLDER, TCB\UserTemplates\Template::get_placeholder_data() ),
+				'thumb'       => TCB_Utils::get_thumb_data( $symbol->ID, TCB_Symbols_Post_Type::SYMBOL_THUMBS_FOLDER, TCB_Utils::get_placeholder_data() ),
 				'tve_globals' => $globals,
 			];
 
@@ -365,7 +365,8 @@ abstract class TCB_Symbol_Element_Abstract extends TCB_Cloud_Template_Element_Ab
 		/**
 		 * update CSS text to reflect new symbol id ( replace cloud id placeholder with local id in css text)
 		 */
-		$symbol_data['css'] = str_replace( '|TEMPLATE_ID|', $post_id, $symbol_data['css'] );
+
+		$symbol_data['css'] = isset( $symbol_data['css'] ) ? str_replace( '|TEMPLATE_ID|', $post_id, $symbol_data['css'] ) : '';
 
 		$upload_dir = wp_upload_dir();
 

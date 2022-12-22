@@ -135,6 +135,7 @@ class Rest extends \WP_REST_Controller {
 		 * @param $pagination - page number
 		 * @param $limit      - query limit
 		 */
+		header( 'Content-type: text/html' );
 		$pagination = $request->get_param( 'pag' ) ?: 0;
 		$limit      = $request->get_param( 'limit' ) ?: null;
 		$search     = $request->get_param( 'search' ) ?: '';
@@ -153,6 +154,7 @@ class Rest extends \WP_REST_Controller {
 		 * @param $pagination - page number
 		 * @param $limit      - query limit
 		 */
+		header( 'Content-type: text/html' );
 		$pagination = $request->get_param( 'pag' ) ?: 0;
 		$limit      = $request->get_param( 'limit' ) ?: null;
 		$search     = $request->get_param( 'search' ) ?: '';
@@ -173,6 +175,7 @@ class Rest extends \WP_REST_Controller {
 		 * @param $tags       - tags which a post should have
 		 * @param $limit      - query limit
 		 */
+		header( 'Content-type: text/html' );
 		$pagination = $request->get_param( 'pag' ) ?: 0;
 		$categories = $request->get_param( 'cat' ) ?: [];
 		$tags       = $request->get_param( 'tags' ) ?: [];

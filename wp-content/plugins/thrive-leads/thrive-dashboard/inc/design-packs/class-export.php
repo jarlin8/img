@@ -163,7 +163,7 @@ class Export {
 			$_REQUEST['id']      = $id;
 			$_POST['id']         = $id;
 			$_GET['id']          = $id;
-			$this->item_name     = $this->get_item_export_name( Main::decode_post_title( get_the_title( $id ) ) );
+			$this->item_name     = $this->get_item_export_name( htmlspecialchars_decode( get_the_title( $id ) ) );
 		}
 	}
 

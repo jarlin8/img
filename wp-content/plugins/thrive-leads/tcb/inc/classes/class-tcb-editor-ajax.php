@@ -1268,6 +1268,9 @@ if ( ! class_exists( 'TCB_Editor_Ajax' ) ) {
 
 			$data['custom_icons'] = TCB_Icon_Manager::get_custom_icons( $post_id );
 
+			/* Although this does not save request time, it caused issues on some servers if loaded during the main request in the editor, if there are <script> tags inside */
+			$data['tve_global_scripts'] = tcb_editor()->post_global_scripts();
+
 			$data = apply_filters( 'tcb_lazy_load_data', $data, $post_id, $this );
 
 			$this->json( $data );

@@ -53,7 +53,7 @@ class Data {
 		foreach ( $posts as $post_id ) {
 			$data[] = [
 				'id'   => $post_id,
-				'name' => Main::decode_post_title( get_the_title( $post_id ) ),
+				'name' => htmlspecialchars_decode( get_the_title( $post_id ) ),
 			];
 		}
 

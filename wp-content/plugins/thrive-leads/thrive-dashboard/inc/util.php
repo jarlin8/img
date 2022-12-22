@@ -472,9 +472,9 @@ function tve_dash_show_activation_error( $error_type, $_ = null ) {
 
 			$link = admin_url( 'update-core.php' );
 			if ( ! $is_cli ) {
-				$link = '<a target="_top" href="' . $link . '">' . __( 'updates', TVE_DASH_TRANSLATE_DOMAIN ) . '</a>';
+				$link = '<a target="_top" href="' . $link . '">' . __( 'updates', 'thrive-dash' ) . '</a>';
 			}
-			$message = sprintf( __( '%s requires at least WordPress version %s. Your WordPress version is %s. Update WordPress by visiting the %s page', TVE_DASH_TRANSLATE_DOMAIN ), $product, $min_wp_version, get_bloginfo( 'version' ), $link );
+			$message = sprintf( __( '%s requires at least WordPress version %s. Your WordPress version is %s. Update WordPress by visiting the %s page', 'thrive-dash' ), $product, $min_wp_version, get_bloginfo( 'version' ), $link );
 			break;
 
 		default:
@@ -600,7 +600,7 @@ function tve_sync_form_data( $trigger_data ) {
 		$not_custom                                     = [ 'email', 'phone', 'name', 'password', 'confirm_password' ];
 		foreach ( $form->inputs as $input ) {
 			if ( ! empty( $input['id'] ) && ! in_array( $input['id'], $not_custom, true ) ) {
-				$custom_fields[ $input['id'] ]            = [
+				$custom_fields[ $input['id'] ] = [
 					'id'            => $input['id'],
 					'validators'    => [],
 					'name'          => $input['label'],
@@ -648,11 +648,32 @@ function tve_dash_to_camel_case( $string ) {
 	return lcfirst( $string );
 }
 
+/**
+ * Check if a plugin with the same name for file and folder is active
+ *
+ * @param $plugin_name
+ *
+ * @return boolean
+ */
+function tve_dash_is_plugin_active( $plugin_name ) {
+	if ( ! function_exists( 'is_plugin_active' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	}
+	if ( substr( $plugin_name, - 4 ) !== '.php' ) {
+		$slug = $plugin_name . '/' . $plugin_name . '.php';
+	} else {
+		$slug = str_replace( '.php', '', $plugin_name ) . '/' . $plugin_name;
+	}
+
+	return is_plugin_active( $slug );
+}
+
 function tve_dash_is_ttb_active() {
 	/**
 	 * Allows template builder website or landing page preview website to hook here and modify this functionality
 	 *
 	 * @returns boolean
 	 */
-	return apply_filters( 'tve_dash_is_ttb_active', wp_get_theme()->name === 'Thrive Theme Builder' );
+
+	return apply_filters( 'tve_dash_is_ttb_active', wp_get_theme()->get_template() === 'thrive-theme' );
 }

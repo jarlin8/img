@@ -112,8 +112,6 @@ class Tag_User extends Action {
 		} elseif ( ! empty( $this->additional['tag_select'] ) ) {
 			$this->tags = $this->additional['tag_select'];
 		}
-
-
 	}
 
 	public function do_action( $data ) {

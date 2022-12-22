@@ -474,7 +474,7 @@ class TCB_Editor {
 		/* build api connections localization */
 		$api_connections      = array();
 		$api_connections_data = array();
-		foreach ( Thrive_Dash_List_Manager::get_available_apis( true, [ 'exclude_types' => [ 'email', 'social', 'storage' ] ] ) as $key => $connection_instance ) {
+		foreach ( Thrive_Dash_List_Manager::get_available_apis( true, [ 'exclude_types' => [ 'email', 'social', 'storage', 'collaboration' ] ] ) as $key => $connection_instance ) {
 			$api_connections[ $key ]      = $connection_instance->get_title();
 			$api_connections_data[ $key ] = $connection_instance->get_data_for_setup();
 		}
@@ -495,7 +495,6 @@ class TCB_Editor {
 			'options'                       => $this->elements->component_options(),
 			'fonts'                         => $fm->all_fonts(),
 			'landing_page'                  => $is_landing_page,
-			'tve_global_scripts'            => $this->post_global_scripts( $post ),
 			'templates_path'                => TVE_LANDING_PAGE_TEMPLATE,
 			'dash_url'                      => TVE_DASH_URL,
 			'pinned_category'               => $this->elements->pinned_category,
@@ -615,6 +614,7 @@ class TCB_Editor {
 			'lg_email_shortcodes'           => $this->get_lg_email_shortcodes(),
 			'dismissed_tooltips'            => (array) get_user_meta( wp_get_current_user()->ID, 'tcb_dismissed_tooltips', true ),
 			'post_parent'                   => empty( $post->post->post_parent ) ? '' : get_post( $post->post->post_parent ),
+			'categories'                    => TCB_Post_List_Filter::localize_filter_categories(),
 		);
 
 		/** Do not localize anything that's not necessary */
@@ -643,7 +643,7 @@ class TCB_Editor {
 				$lp_palettes_instance = $landing_page->get_palette_instance();
 				if ( $lp_palettes_instance ) {
 					$data['template_palettes'] = $lp_palettes_instance->get_smart_lp_palettes_v2();
-					$data['skin_colors'] = array(
+					$data['skin_colors']       = array(
 						'skin_palettes'      => $lp_palettes_instance->get_smart_lp_palettes_v2(),
 						'skin_main_variable' => '--tcb-theme-main-master',
 						'palette_colors'     => $lp_palettes_instance->tcb_get_palettes_from_config(),
@@ -1163,11 +1163,14 @@ class TCB_Editor {
 	/**
 	 * Prepare the global scripts ( head, body ) for a (possible) landing page
 	 *
-	 * @param TCB_Post $post
+	 * @param null|TCB_Post $post
 	 *
 	 * @return array
 	 */
-	public function post_global_scripts( $post ) {
+	public function post_global_scripts( $post = null ) {
+		if ( ! $post ) {
+			$post = tcb_post();
+		}
 		/* landing page template - we need to allow the user to setup head and footer scripts */
 		$tve_global_scripts = $post->meta( 'tve_global_scripts' );
 		if ( empty( $tve_global_scripts ) || ! $post->is_landing_page() ) {
@@ -1198,7 +1201,7 @@ class TCB_Editor {
 	 * @return boolean
 	 */
 	public function has_save_template_button() {
-		return $this->post->post_type === 'post' || ( $this->is_page() && ! $this->is_landing_page() );
+		return apply_filters( 'tcb_has_save_template_button', $this->post->post_type === 'post' || ( $this->is_page() && ! $this->is_landing_page() ) );
 	}
 
 

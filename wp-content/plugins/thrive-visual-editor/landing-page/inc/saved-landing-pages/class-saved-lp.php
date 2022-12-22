@@ -47,7 +47,7 @@ class Saved_Lp {
 			$saved_lps = static::get_new_saved_lps();
 		} else {
 			if ( $can_migrate ) {
-				$migrator_instance->migrate_x_items( 1 );
+				$migrator_instance->migrate_x_items( static::MIGRATED_ITEM_AMOUNT );
 			}
 
 			/* because it's used only for displaying in modal we can only get the metas without the content */

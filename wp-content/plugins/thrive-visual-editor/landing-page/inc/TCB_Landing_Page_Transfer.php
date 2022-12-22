@@ -780,6 +780,10 @@ class TCB_Landing_Page_Transfer {
 				], '{{img=' . $replacement . '}}', $content );
 			}
 		}
+
+		/* return the current image map so the function can be used as a standalone function without the export one */
+
+		return $this->image_map;
 	}
 
 	/**

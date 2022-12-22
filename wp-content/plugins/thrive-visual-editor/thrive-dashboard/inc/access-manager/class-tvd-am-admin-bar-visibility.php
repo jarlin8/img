@@ -15,7 +15,7 @@ class Admin_Bar_Visibility extends Functionality {
 	}
 
 	public static function get_name() {
-		return __( 'Admin Bar Visibility', TVE_DASH_TRANSLATE_DOMAIN );
+		return __( 'Admin Bar Visibility', 'thrive-dash' );
 	}
 
 	public static function get_tag() {
@@ -67,7 +67,7 @@ class Admin_Bar_Visibility extends Functionality {
 				case 'hidden':
 					$show_admin_bar = false;
 					break;
-				case 'inherit':
+				default:
 					break;
 			}
 		}
