@@ -349,7 +349,7 @@ class Smart_Manager {
 		add_filter( 'sa_active_plugins_for_quick_help', array( &$this, 'quick_help_widget' ), 10, 2 );
 		add_filter( 'sa_is_page_for_notifications', array( &$this, 'is_page_for_notifications' ), 10, 2 );
 
-		add_action ( 'admin_head', array(&$this,'remove_help_tab') ); // For removing the help tab
+		add_action ( 'admin_head', array(&$this,'remove_help_tab_and_hiding_admin_notices') ); // For removing the help tab and hiding admin notices
 		
 		add_filter( 'site_transient_update_plugins', array( &$this, 'overwrite_site_transient' ), 11, 1 );
 		add_filter( 'pre_set_site_transient_update_plugins', array( &$this, 'overwrite_site_transient' ), 11, 1 );
@@ -395,7 +395,7 @@ class Smart_Manager {
 		$available_upgrade_classes = array_filter( $available_classes, function ( $class_name ) {
 																								return strpos( $class_name, 'StoreApps_Upgrade_' ) === 0;
 																							} );
-		$latest_class = 'StoreApps_Upgrade_3_9';
+		$latest_class = 'StoreApps_Upgrade_4_0';
 		$latest_version = 0;
 		foreach ( $available_upgrade_classes as $class ) {
 			$exploded = explode( '_', $class );
@@ -416,8 +416,8 @@ class Smart_Manager {
 	public function on_plugins_loaded() {
 		global $current_user;
 
-		if ( ( defined('SMPRO') && SMPRO === true ) && ! class_exists( 'StoreApps_Upgrade_3_9' ) && file_exists( ( dirname( SM_PLUGIN_FILE ) ) . '/pro/sa-includes/class-storeapps-upgrade-3-9.php' ) ) {
-			require_once 'pro/sa-includes/class-storeapps-upgrade-3-9.php';
+		if ( ( defined('SMPRO') && SMPRO === true ) && ! class_exists( 'StoreApps_Upgrade_4_0' ) && file_exists( ( dirname( SM_PLUGIN_FILE ) ) . '/pro/sa-includes/class-storeapps-upgrade-4-0.php' ) ) {
+			require_once 'pro/sa-includes/class-storeapps-upgrade-4-0.php';
 		}
 
 		$this->show_pricing_page = apply_filters( 'sm_show_pricing_page', false );
@@ -891,7 +891,7 @@ class Smart_Manager {
 					<div class="sm_design_notice">
 						<div class="sm_container">
 							<div class="sm_main_headline"><span class="dashicons dashicons-awards"></span><span>'. sprintf( __( 'Hey %1s, you just unlocked %2s on Smart Manager Pro!', 'smart-manager-for-wp-e-commerce' ), $sm_current_user_display_name, '<span style="font-weight: bold;font-size: 2rem;color: rgb(20 184 166);color: #508991;color: rgb(55 65 81);">'. __( "25% off", "smart-manager-for-wp-e-commerce" ) .'</span>' ) .'</span></div>
-							<div class="sm_sub_headline">' . sprintf( __( '%s to check Smart Manager Pro features and claim your discount.', 'smart-manager-for-wp-e-commerce' ), '<a style="color: rgb(55 65 81);" href="'. admin_url( 'admin.php?page=smart-manager-pricing' ) .'" target="_blank">' . __( 'Click here', 'smart-manager-for-wp-e-commerce' ) . '</a>' ) .'</div>
+							<div class="sm_sub_headline">' . sprintf( __( '%s to check Smart Manager Pro features/benefits and claim your discount.', 'smart-manager-for-wp-e-commerce' ), '<a style="color: rgb(55 65 81);" href="'. admin_url( 'admin.php?page=smart-manager-pricing' ) .'" target="_blank">' . __( 'Click here', 'smart-manager-for-wp-e-commerce' ) . '</a>' ) .'</div>
 						</div>
 					</div>';
 
@@ -1319,15 +1319,25 @@ class Smart_Manager {
 		return version_compare( $user_version, $latest_version, '>=' );
 	}
 
-	// function for removing the Help Tab
-	function remove_help_tab(){
-		//condition to remove the help tab only from SM pages
-		if( !empty($_GET['page']) && 'smart-manager' === $_GET['page'] ) {
+	// function for removing the Help Tab and hiding admin notices except SM admin notices.
+	function remove_help_tab_and_hiding_admin_notices(){
+		// condition to remove the help tab only from SM pages.
+		if ( ! empty( $_GET['page'] ) && 'smart-manager' === $_GET['page'] ) {
 			$screen = get_current_screen();
 			$screen->remove_help_tabs();
+			// hiding admin notices except SM admin notices.
+			?>
+				<style type="text/css">
+					.notice {
+						display: none !important;
+					}
+					.<?php echo esc_html( self::$sku . '-notice' ); ?> {
+						display: block !important;
+					}
+				</style>
+			<?php
 		}
-
-		if( ( defined( 'SMPRO' ) && true === SMPRO ) && ! empty( $this->show_pricing_page ) ){
+		if ( ( defined( 'SMPRO' ) && true === SMPRO ) && ! empty( $this->show_pricing_page ) ) {
 			?>
 				<style type="text/css">
 					.toplevel_page_smart-manager > .wp-submenu > li:nth-child(3){

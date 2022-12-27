@@ -2661,15 +2661,15 @@ Smart_Manager.prototype.event_handler = function() {
 
 				if( id != 'sm_beta_dup_entire_store' && id != 'sm_beta_dup_selected' ) {
 					
-					let description = _x('You can change / update multiple fields of the entire store OR for selected items by selecting multiple records and then click on Bulk Edit.', 'modal description', 'smart-manager-for-wp-e-commerce');
+					let description = sprintf(_x('You can change/update multiple fields of the entire store OR for selected items using the Bulk Edit feature. Refer to this doc on %s or watch the video below.', 'modal description', 'smart-manager-for-wp-e-commerce'), '<a href="https://www.storeapps.org/docs/sm-how-to-use-batch-update/?utm_source=sm&utm_medium=in_app&utm_campaign=view_docs" target="_blank">'+_x('how to do bulk edit', 'modal description', 'smart-manager-for-wp-e-commerce')+'</a>');
 
 					if( id == 'export_csv_sm_editor_grid' ) {
 						description = _x('You can export all the records OR filtered records (using Simple Search or Advanced Search) by simply clicking on the Export CSV button at the bottom right of the grid.', 'modal description', 'smart-manager-for-wp-e-commerce');
 					}
 
 					content = '<div>'+
-									'<div style="height:17rem;"><iframe width="100%" height="100%" src="https://www.youtube.com/embed/'+ ( ( id == 'batch_update_sm_editor_grid' ) ? 'COXCuX2rFrk' : 'GMgysSQw7_g' ) +'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>'+
 									'<p style="font-size:1.2em;margin:1em;">'+description+'</p>'+
+									'<div style="height:17rem;"><iframe width="100%" height="100%" src="https://www.youtube.com/embed/'+ ( ( id == 'batch_update_sm_editor_grid' ) ? 'COXCuX2rFrk' : 'GMgysSQw7_g' ) +'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>'+
 								'</div>'
 
 					title = ( ( id == 'batch_update_sm_editor_grid' ) ? btnText + ' - <span style="color: red;">'+_x('Biggest Time Saver', 'modal title', 'smart-manager-for-wp-e-commerce')+' </span>' : btnText ) + sprintf(_x('(Only in %s)', 'modal title', 'smart-manager-for-wp-e-commerce'), '<a href="'+ window.smart_manager.pricingPageURL +'" target="_blank">'+_x('Pro', 'modal title', 'smart-manager-for-wp-e-commerce')+'</a>');
@@ -2679,6 +2679,7 @@ Smart_Manager.prototype.event_handler = function() {
 						content: content,
 						width: 'w-2/6',
 						autoHide: false,
+						isFooterItemsCenterAligned: true,
 						cta: {
 							title: _x('Get Pro at 25% off', 'button', 'smart-manager-for-wp-e-commerce'),
 							callback: function() {

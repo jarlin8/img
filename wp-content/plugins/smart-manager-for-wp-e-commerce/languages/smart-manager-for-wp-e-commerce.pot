@@ -2,14 +2,14 @@
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: Smart Manager - WooCommerce Advanced Bulk Edit, Inventory Management & more... 7.3.0\n"
+"Project-Id-Version: Smart Manager - WooCommerce Advanced Bulk Edit, Inventory Management & more... 7.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/smart-manager-for-wp-e-commerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-12-15T15:12:48+05:30\n"
+"POT-Creation-Date: 2022-12-23T15:59:52+05:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: smart-manager-for-wp-e-commerce\n"
@@ -47,7 +47,7 @@ msgid "<span class=\"sm_pricing_icon\"> 🔥 </span> Go Pro"
 msgstr ""
 
 #: class-smart-manager.php:696
-#: class-smart-manager.php:1524
+#: class-smart-manager.php:1534
 #: classes/class-smart-manager-admin-welcome.php:252
 #: pro/classes/class-smart-manager-pro-access-privilege.php:189
 msgid "Settings"
@@ -71,7 +71,7 @@ msgid "25% off"
 msgstr ""
 
 #: class-smart-manager.php:894
-msgid "%s to check Smart Manager Pro features and claim your discount."
+msgid "%s to check Smart Manager Pro features/benefits and claim your discount."
 msgstr ""
 
 #: class-smart-manager.php:894
@@ -104,44 +104,44 @@ msgstr ""
 msgid "you will have to wait for the current background process to finish."
 msgstr ""
 
-#: class-smart-manager.php:1517
+#: class-smart-manager.php:1527
 msgid "PRO"
 msgstr ""
 
-#: class-smart-manager.php:1517
+#: class-smart-manager.php:1527
 msgid "LITE"
 msgstr ""
 
-#: class-smart-manager.php:1526
+#: class-smart-manager.php:1536
 #: classes/class-smart-manager-admin-welcome.php:254
 msgid "Docs"
 msgstr ""
 
-#: class-smart-manager.php:1529
+#: class-smart-manager.php:1539
 msgid "%1s"
 msgstr ""
 
-#: class-smart-manager.php:1537
+#: class-smart-manager.php:1547
 msgid "An upgrade for Smart Manager Pro"
 msgstr ""
 
-#: class-smart-manager.php:1537
+#: class-smart-manager.php:1547
 msgid "is available."
 msgstr ""
 
-#: class-smart-manager.php:1537
+#: class-smart-manager.php:1547
 msgid "Click to upgrade."
 msgstr ""
 
-#: class-smart-manager.php:1639
+#: class-smart-manager.php:1649
 msgid "A required Smart Manager file is missing. Can't continue. "
 msgstr ""
 
-#: class-smart-manager.php:1654
+#: class-smart-manager.php:1664
 msgid "Error:"
 msgstr ""
 
-#: class-smart-manager.php:1718
+#: class-smart-manager.php:1728
 msgid "Auto-updates are not available for this plugin."
 msgstr ""
 
@@ -374,18 +374,18 @@ msgstr ""
 msgid "Slug"
 msgstr ""
 
-#: classes/class-smart-manager-base.php:1408
-#: classes/class-smart-manager-base.php:1409
-#: classes/class-smart-manager-base.php:1410
+#: classes/class-smart-manager-base.php:1413
+#: classes/class-smart-manager-base.php:1414
+#: classes/class-smart-manager-base.php:1415
 msgid "Trash"
 msgstr ""
 
-#: classes/class-smart-manager-base.php:2931
-#: classes/class-smart-manager-base.php:2935
+#: classes/class-smart-manager-base.php:2936
+#: classes/class-smart-manager-base.php:2940
 msgid "%d record%s updated successfully!"
 msgstr ""
 
-#: classes/class-smart-manager-base.php:3110
+#: classes/class-smart-manager-base.php:3115
 msgid "%d record%s deleted successfully!"
 msgstr ""
 
@@ -1619,15 +1619,15 @@ msgstr ""
 msgid "Click to copy"
 msgstr ""
 
-#: pro/classes/class-smart-manager-pro-user.php:185
+#: pro/classes/class-smart-manager-pro-user.php:180
 msgid "Nickname"
 msgstr ""
 
-#: pro/classes/class-smart-manager-pro-user.php:1247
+#: pro/classes/class-smart-manager-pro-user.php:1242
 msgid "Email cannot be empty"
 msgstr ""
 
-#: pro/classes/class-smart-manager-pro-user.php:1253
+#: pro/classes/class-smart-manager-pro-user.php:1248
 msgid "Email already exists. Please enter another email."
 msgstr ""
 
@@ -1824,8 +1824,8 @@ msgstr ""
 
 #: assets/js/admin.js:1
 #: assets/js/smart-manager.js:2507
-#: assets/js/smart-manager.js:2697
-#: assets/js/smart-manager.js:3179
+#: assets/js/smart-manager.js:2698
+#: assets/js/smart-manager.js:3180
 msgctxt "modal content"
 msgid "This feature is available only in the %s version"
 msgstr ""
@@ -1834,8 +1834,8 @@ msgstr ""
 #: assets/js/smart-manager.js:292
 #: assets/js/smart-manager.js:2268
 #: assets/js/smart-manager.js:2507
-#: assets/js/smart-manager.js:2697
-#: assets/js/smart-manager.js:3179
+#: assets/js/smart-manager.js:2698
+#: assets/js/smart-manager.js:3180
 msgctxt "modal content"
 msgid "Pro"
 msgstr ""
@@ -2476,7 +2476,7 @@ msgstr ""
 
 #: assets/js/smart-manager.js:2569
 #: assets/js/smart-manager.js:2592
-#: assets/js/smart-manager.js:2693
+#: assets/js/smart-manager.js:2694
 msgctxt "notification"
 msgid "Pro"
 msgstr ""
@@ -2513,7 +2513,12 @@ msgstr ""
 
 #: assets/js/smart-manager.js:2664
 msgctxt "modal description"
-msgid "You can change / update multiple fields of the entire store OR for selected items by selecting multiple records and then click on Bulk Edit."
+msgid "You can change/update multiple fields of the entire store OR for selected items using the Bulk Edit feature. Refer to this doc on %s or watch the video below."
+msgstr ""
+
+#: assets/js/smart-manager.js:2664
+msgctxt "modal description"
+msgid "how to do bulk edit"
 msgstr ""
 
 #: assets/js/smart-manager.js:2667
@@ -2536,92 +2541,92 @@ msgctxt "modal title"
 msgid "Pro"
 msgstr ""
 
-#: assets/js/smart-manager.js:2683
+#: assets/js/smart-manager.js:2684
 msgctxt "button"
 msgid "Get Pro at 25% off"
 msgstr ""
 
-#: assets/js/smart-manager.js:2693
+#: assets/js/smart-manager.js:2694
 msgctxt "notification"
 msgid "Duplicate Records (Only in %s)"
 msgstr ""
 
-#: assets/js/smart-manager.js:2819
+#: assets/js/smart-manager.js:2820
 msgctxt "columns settings description"
 msgid "Drag the enabled columns to the right to disable them and vise-versa. Drag the columns top or bottom to rearrange their position in the grid."
 msgstr ""
 
-#: assets/js/smart-manager.js:2821
+#: assets/js/smart-manager.js:2822
 msgctxt "columns settings description"
 msgid "Click %s to reset the Columns order to default."
 msgstr ""
 
-#: assets/js/smart-manager.js:2821
+#: assets/js/smart-manager.js:2822
 msgctxt "columns settings description"
 msgid "here"
 msgstr ""
 
-#: assets/js/smart-manager.js:2825
+#: assets/js/smart-manager.js:2826
 msgctxt "columns settings searchbox heading"
 msgid "Enabled"
 msgstr ""
 
-#: assets/js/smart-manager.js:2826
+#: assets/js/smart-manager.js:2827
 msgctxt "placeholder"
 msgid "Search For Enabled Columns..."
 msgstr ""
 
-#: assets/js/smart-manager.js:2832
+#: assets/js/smart-manager.js:2833
 msgctxt "columns settings searchbox heading"
 msgid "Disabled"
 msgstr ""
 
-#: assets/js/smart-manager.js:2833
+#: assets/js/smart-manager.js:2834
 msgctxt "placeholder"
 msgid "Search For Disabled Columns..."
 msgstr ""
 
-#: assets/js/smart-manager.js:3150
+#: assets/js/smart-manager.js:3151
 msgctxt "notification"
 msgid "You have entered incorrect data in the highlighted cells."
 msgstr ""
 
-#: assets/js/smart-manager.js:3178
+#: assets/js/smart-manager.js:3179
 msgctxt "modal title"
 msgid "Note"
 msgstr ""
 
-#: assets/js/smart-manager.js:3189
+#: assets/js/smart-manager.js:3190
 msgctxt "progressbar modal title"
 msgid "Please Wait"
 msgstr ""
 
-#: assets/js/smart-manager.js:3190
+#: assets/js/smart-manager.js:3191
 msgctxt "progressbar modal content"
 msgid "Initializing..."
 msgstr ""
 
-#: assets/js/smart-manager.js:3190
+#: assets/js/smart-manager.js:3191
 msgctxt "progressbar modal content"
 msgid "Continue in background"
 msgstr ""
 
-#: assets/js/smart-manager.js:3202
+#: assets/js/smart-manager.js:3203
 msgctxt "modal title"
 msgid "Warning"
 msgstr ""
 
-#: assets/js/smart-manager.js:3203
+#: assets/js/smart-manager.js:3204
 msgctxt "modal content"
 msgid "Are you sure?"
 msgstr ""
 
-#: assets/js/smart-manager.js:3206
+#: assets/js/smart-manager.js:3207
 msgctxt "button"
 msgid "Yes"
 msgstr ""
 
-#: assets/js/smart-manager.js:3219
+#: assets/js/smart-manager.js:3220
 msgctxt "button"
 msgid "No"
 msgstr ""

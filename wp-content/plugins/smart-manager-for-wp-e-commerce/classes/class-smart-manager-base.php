@@ -1289,6 +1289,11 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					delete_transient( 'sa_sm_'.$this->dashboard_key );
 					$store_model_transient = false;
 					update_option( '_sm_update_701'.'_'.$this->dashboard_key, 1, 'no' );
+				}
+				if ( false === get_option( '_sm_update_740_user' ) ) {
+					delete_transient( 'sa_sm_user' );
+					$store_model_transient = false;
+					update_option( '_sm_update_740_user', 1, 'no' );
 				}	
 			}
 

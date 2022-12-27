@@ -163,11 +163,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 					$temp ['allow_showhide']	= true;
 					$temp ['exportable']		= true; //default true. flag for enabling the column in export
 					$temp ['searchable']		= true;
-
-					if( $field_nm == 'user_registered' ) {
-						$temp ['searchable']		= false;	
-					}
-					
 					$temp ['placeholder'] = ''; //for advanced search
 
 					//Code for handling the positioning of the columns
@@ -923,10 +918,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 						}
 
 						$this->req_params['sort_params']['sortOrder'] = strtoupper( $this->req_params['sort_params']['sortOrder'] );
-
-						$join = " JOIN {$wpdb->usermeta} 
+						if ( false === strpos( $join, "JOIN {$wpdb->usermeta}" ) ) {
+							$join .= " JOIN {$wpdb->usermeta} 
 		        					ON ({$wpdb->usermeta}.user_id = {$wpdb->users}.id)";
-
+		        		}
 		        		if( !empty( $this->req_params['sort_params']['sort_by_meta_key'] ) ) {
 		        			$where .= " AND ( ".$wpdb->prefix."".$table_nm.".meta_key ='".$this->req_params['sort_params']['sort_by_meta_key'] ."' ) ";
 		        		}
