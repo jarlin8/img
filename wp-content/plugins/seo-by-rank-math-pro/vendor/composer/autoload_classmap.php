@@ -81,6 +81,8 @@ return array(
     'RankMathPro\\Redirections\\Schedule' => $baseDir . '/includes/modules/redirections/class-schedule.php',
     'RankMathPro\\Register_Vars' => $baseDir . '/includes/class-register-vars.php',
     'RankMathPro\\Rest\\Rest' => $baseDir . '/includes/class-rest.php',
+    'RankMathPro\\SEO_Analysis\\Competitor_Analysis' => $baseDir . '/includes/modules/seo-analysis/class-competitor-analysis.php',
+    'RankMathPro\\SEO_Analysis\\SEO_Analysis_Pro' => $baseDir . '/includes/modules/seo-analysis/class-seo-analysis-pro.php',
     'RankMathPro\\Schema\\Admin' => $baseDir . '/includes/modules/schema/class-admin.php',
     'RankMathPro\\Schema\\Ajax' => $baseDir . '/includes/modules/schema/class-ajax.php',
     'RankMathPro\\Schema\\Display_Conditions' => $baseDir . '/includes/modules/schema/class-display-conditions.php',

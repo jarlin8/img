@@ -11,6 +11,7 @@
 namespace RankMathPro\Analytics;
 
 use WP_REST_Request;
+use RankMath\Traits\Cache;
 use RankMath\Traits\Hooker;
 use RankMath\Analytics\Stats;
 use RankMath\Helper;
@@ -23,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Keywords {
 
-	use Hooker;
+	use Hooker, Cache;
 
 	/**
 	 * Main instance
@@ -209,8 +210,15 @@ class Keywords {
 	 * @return array Keywords usage info.
 	 */
 	public function get_tracked_keywords_summary() {
-		$summary          = $this->get_tracked_keywords_quota();
-		$summary['total'] = $this->get_tracked_keywords_count();
+		$cache_key   = 'tracked_keywords_summary';
+		$cache_group = 'tracked_keywords_summary';
+		$summary     = $this->get_cache( $cache_key, $cache_group );
+
+		if ( empty( $summary ) ) {
+			$summary          = $this->get_tracked_keywords_quota();
+			$summary['total'] = $this->get_tracked_keywords_count();
+			$this->set_cache( $cache_key, $summary, $cache_group, DAY_IN_SECONDS );
+		}
 
 		return $summary;
 	}
@@ -255,6 +263,17 @@ class Keywords {
 	 */
 	public function get_tracked_keywords_rows( WP_REST_Request $request ) {
 		$per_page = 25;
+
+		$cache_args             = $request->get_params();
+		$cache_args['per_page'] = $per_page;
+
+		$cache_group = 'rank_math_rest_tracked_keywords_rows';
+		$cache_key   = $this->generate_hash( $cache_args );
+		$result      = $this->get_cache( $cache_key, $cache_group );
+		if ( ! empty( $result ) ) {
+			return $result;
+		}
+
 		$page     = ! empty( $request->get_param( 'page' ) ) ? $request->get_param( 'page' ) : 1;
 		$orderby  = ! empty( $request->get_param( 'orderby' ) ) ? $request->get_param( 'orderby' ) : 'default';
 		$order    = ! empty( $request->get_param( 'order' ) ) ? strtoupper( $request->get_param( 'order' ) ) : 'DESC';
@@ -333,6 +352,8 @@ class Keywords {
 		} else {
 			$search_data     = $this->get_tracked_keywords_data( $args );
 			$result['total'] = count( $search_data );
+
+			$this->set_cache( $cache_key, $result, $cache_group, DAY_IN_SECONDS );
 		}
 		return $result;
 	}

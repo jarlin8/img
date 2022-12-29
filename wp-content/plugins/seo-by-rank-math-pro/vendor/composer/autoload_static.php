@@ -82,6 +82,8 @@ class ComposerStaticInit0d9f807883abadeb2577675a9c386005
         'RankMathPro\\Redirections\\Schedule' => __DIR__ . '/../..' . '/includes/modules/redirections/class-schedule.php',
         'RankMathPro\\Register_Vars' => __DIR__ . '/../..' . '/includes/class-register-vars.php',
         'RankMathPro\\Rest\\Rest' => __DIR__ . '/../..' . '/includes/class-rest.php',
+        'RankMathPro\\SEO_Analysis\\Competitor_Analysis' => __DIR__ . '/../..' . '/includes/modules/seo-analysis/class-competitor-analysis.php',
+        'RankMathPro\\SEO_Analysis\\SEO_Analysis_Pro' => __DIR__ . '/../..' . '/includes/modules/seo-analysis/class-seo-analysis-pro.php',
         'RankMathPro\\Schema\\Admin' => __DIR__ . '/../..' . '/includes/modules/schema/class-admin.php',
         'RankMathPro\\Schema\\Ajax' => __DIR__ . '/../..' . '/includes/modules/schema/class-ajax.php',
         'RankMathPro\\Schema\\Display_Conditions' => __DIR__ . '/../..' . '/includes/modules/schema/class-display-conditions.php',

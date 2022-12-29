@@ -13,6 +13,7 @@ namespace RankMathPro\Analytics;
 use stdClass;
 use WP_Error;
 use WP_REST_Request;
+use RankMath\Traits\Cache;
 use RankMath\Traits\Hooker;
 use RankMath\Analytics\Stats;
 
@@ -23,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Posts {
 
-	use Hooker;
+	use Hooker, Cache;
 
 	/**
 	 * Main instance
@@ -489,8 +490,19 @@ class Posts {
 	 * @return array Posts rows.
 	 */
 	public function get_posts_rows( WP_REST_Request $request ) {
+		$per_page = 25;
+
+		$cache_args             = $request->get_params();
+		$cache_args['per_page'] = $per_page;
+
+		$cache_group = 'rank_math_rest_posts_rows';
+		$cache_key   = $this->generate_hash( $cache_args );
+		$data        = $this->get_cache( $cache_key, $cache_group );
+		if ( ! empty( $data ) ) {
+			return $data;
+		}
+
 		// Pagination.
-		$per_page  = 25;
 		$offset    = ( $request->get_param( 'page' ) - 1 ) * $per_page;
 		$orderby   = $request->get_param( 'orderby' );
 		$post_type = sanitize_key( $request->get_param( 'postType' ) );
@@ -628,6 +640,8 @@ class Posts {
 		}
 		if ( empty( $data ) ) {
 			$data['response'] = 'No Data';
+		} else {
+			$this->set_cache( $cache_key, $data, $cache_group, DAY_IN_SECONDS );
 		}
 		return $data;
 	}
