@@ -1,7 +1,4 @@
 <?php
-/*
-Name:Menu Items Visibility Control
-*/
 if ( ! defined( 'ABSPATH' ) ) exit;
 class Begin_Menu_Items_Visibility_Control {
 	private static $instance = null;
@@ -25,7 +22,7 @@ class Begin_Menu_Items_Visibility_Control {
 		global $menu_items, $wpdb;
 
 		$screen = get_current_screen();
-		if( 'nav-menus' != $screen->base )
+		if ( 'nav-menus' != $screen->base )
 			return;
 
 		$this->template_edit();
@@ -48,8 +45,8 @@ class Begin_Menu_Items_Visibility_Control {
 	function template_edit() {
 		?>
 		<script type="text/html" id="tmpl-menu-items-visivility-control">
-			<p class="field-visibility description description-wide">
-				<label for="edit-menu-item-visibility-{{data.id}}">条件判断：</label>
+			<p class="field-visibility be-ico-admin be-ico-admin-judge description description-wide" style="margin: 10px 0 0;">
+				<label for="edit-menu-item-visibility-{{data.id}}">条件判断</label>
 				<input type="text" class="widefat code" id="edit-menu-item-visibility-{{data.id}}" name="menu-item-visibility[{{data.id}}]" value="{{data.value}}" />
 			</p>
 		</script>
@@ -90,7 +87,7 @@ class Begin_Menu_Items_Visibility_Control {
 	}
 
 	function remove_visibility_meta( $post_id ) {
-		if( is_nav_menu_item( $post_id ) ) {
+		if ( is_nav_menu_item( $post_id ) ) {
 			delete_post_meta( $post_id, '_menu_item_visibility' );
 		}
 	}

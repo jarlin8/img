@@ -5,12 +5,12 @@ get_header(); ?>
 	<?php if (zm_get_option('type_cat')) { ?><?php if ( !is_paged() ) :get_template_part( 'template/type-cat' ); endif; ?><?php } ?>
 	<?php fall_main(); ?>
 <?php } else { ?>
-	<section id="picture" class="content-area site-img grid-cat-<?php echo zm_get_option('img_f'); ?>">
-		<main id="main" class="site-main" role="main">
+	<section id="picture" class="picture-area content-area site-img grid-cat-<?php echo zm_get_option('img_f'); ?>">
+		<main id="main" class="be-main site-main" role="main">
 			<?php if (zm_get_option('type_cat')) { ?><?php if ( !is_paged() ) : get_template_part( 'template/type-cat' ); endif; ?><?php } ?>
 			<?php while ( have_posts() ) : the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php post_class('scl'); ?>>
-				<div class="picture-box ms bk" <?php aos_a(); ?>>
+				<div class="picture-box sup bk" <?php aos_a(); ?>>
 					<figure class="picture-img">
 						<?php img_thumbnail(); ?>
 					</figure>

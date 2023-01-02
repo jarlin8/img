@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if (zm_get_option('group_cat_a')) { ?>
-<div class="g-row g-line sort" name="<?php echo zm_get_option('group_cat_a_s'); ?>" <?php aos(); ?>>
+<div class="g-row g-line group-cat-a sort" name="<?php echo zm_get_option('group_cat_a_s'); ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div class="group-cat">
 			<?php $display_categories =  explode(',',zm_get_option('group_cat_a_id') ); foreach ($display_categories as $category) { ?>
@@ -13,8 +13,7 @@
 
 			<div class="gr2">
 				<div class="gr-cat-box">
-					<h3 class="gr-cat-title" <?php aos_b(); ?>><a href="<?php echo get_category_link($category);?>" title="<?php echo strip_tags(category_description($category)); ?>"><?php single_cat_title(); ?></a></h3>
-					<div class="gr-cat-more" <?php aos_b(); ?>><a href="<?php echo get_category_link($category);?>"><?php _e( '更多', 'begin' ); ?> <i class="be be-fastforward"></i></a></div>
+					<h3 class="gr-cat-title" <?php aos_b(); ?>><a href="<?php echo get_category_link($category);?>"><?php single_cat_title(); ?><span class="gr-cat-more"><i class="be be-more"></i></span></a></h3>
 					<div class="clear"></div>
 					<div class="gr-cat-site">
 						<?php if (zm_get_option('group_cat_a_top')) { ?>

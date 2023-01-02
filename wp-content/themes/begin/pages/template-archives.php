@@ -52,7 +52,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // 文章归档
 if ( ! defined( 'ABSPATH' ) ) exit;
 function be_archives_list() {
-	if( !$output = get_option('be_archives_list') ){
+	if ( !$output = get_option('be_archives_list') ){
 		$output = '<div id="all_archives">';
         $the_query = new WP_Query( 'posts_per_page=-1&ignore_sticky_posts=1' );
 		$year=0; $mon=0; $i=0; $j=0;
@@ -70,7 +70,7 @@ function be_archives_list() {
 				$mon = $mon_tmp;
 				$output .= '<li><span class="mon">'. $mon .'月</span><ul class="post_list">';
 			}
-			$output .= '<li>'. get_the_time('d日 ') .'<a href="'. get_permalink() .'">'. get_the_title() .'</a>';
+			$output .= '<li><time datetime="'.get_the_date('Y-m-d').' ' . get_the_time('H:i:s').'">'. get_the_time('d日 ') .'</time><a href="'. get_permalink() .'">'. get_the_title() .'</a>';
 		endwhile;
 		wp_reset_postdata();
 		$output .= '</ul></li></ul></div>';
@@ -80,13 +80,13 @@ function be_archives_list() {
 }
 ?>
 	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+		<main id="main" class="be-main site-main" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
 				<article id="post-<?php the_ID(); ?>" <?php post_class('bk da'); ?>>
 
-				<?php if ( get_post_meta($post->ID, 'header_img', true) || get_post_meta($post->ID, 'header_bg', true) ) { ?>
+				<?php if ( get_post_meta(get_the_ID(), 'header_img', true) || get_post_meta(get_the_ID(), 'header_bg', true) ) { ?>
 				<?php } else { ?>
 					<header class="entry-header">
 						<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>

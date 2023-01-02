@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	padding: 0;
 	overflow: hidden;
 	border: 1px solid #e7e7e7;
-	border-radius: 5px;
+	border-radius: 8px;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
@@ -28,6 +28,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	transform: translateY(-50%);
 	-webkit-transform: translateY(-50%);
 	text-shadow: 5px 2px 5px #000;
+}
+
+.archives-header .single-content p:first-child {
+	margin: 0;
 }
 
 .archives-meta {
@@ -70,7 +74,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	margin: 0 0 10px 0;
 	padding: 0;
 	overflow: hidden;
-	border-radius: 5px;
+	border-radius: 8px;
 	border: 1px solid #e7e7e7;
 }
 
@@ -186,7 +190,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 </style>
 <?php
 function up_archives_list() {
-	if( !$output = get_option('up_archives_list') ){
+	if ( !$output = get_option('up_archives_list') ){
 		$output = '<div id="archives-box">';
 		$the_query = new WP_Query( 'posts_per_page=-1&cat='.zm_get_option('cat_up_n').'&year='.zm_get_option('year_n').'&monthnum='.zm_get_option('mon_n').'&ignore_sticky_posts=1' );
 		$year = 0; $mon = 0; $i = 0; $j = 0;
@@ -207,7 +211,7 @@ function up_archives_list() {
 				$output .= '<ul class="mon-list da">';
 			}
 			$output .= '<li class="day-box da">';
-			$output .= '<span class="day-w"><span class="days">'. get_the_time('d') .'</span><span class="week-d">日<br />'. get_the_time('l') .'</span></span>';
+			$output .= '<span class="day-w"><time datetime="'.get_the_date('Y-m-d').' ' . get_the_time('H:i:s').'"><span class="days">'. get_the_time('d') .'</span><span class="week-d">日<br />'. get_the_time('l') .'</span></time></span>';
 			$output .= '<a href="'. get_permalink() .'">'. get_the_title() .'</a></li>';
 			$output .= '</li>';
 
@@ -223,7 +227,7 @@ function up_archives_list() {
 }
 ?>
 <div id="archives-up" class="content-area">
-	<main id="main" class="site-main" role="main">
+	<main id="main" class="be-main site-main" role="main">
 		<?php while ( have_posts() ) : the_post(); ?>
 			<article id="post-<?php the_ID(); ?>">
 				<header class="archives-header bk">

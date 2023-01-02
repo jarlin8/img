@@ -7,13 +7,14 @@
 		'ignore_sticky_posts' => 1
 	) );
 ?>
-<?php if($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
+<?php if ($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
 <div class="g-row g-line grl sort" name="<?php echo zm_get_option('group_post_s'); ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div class="group-post-box">
 			<article id="post-<?php the_ID(); ?>" class="group-post-list">
 				<div class="group-post-img" <?php aos_b(); ?>>
 					<?php gr_wd_thumbnail(); ?>
+					<div class="group-post-img-cat"><?php zm_category(); ?></div>
 				</div>
 				<div class="group-post-content" <?php aos_b(); ?>>
 					<?php the_title( sprintf( '<h3 class="group-post-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>

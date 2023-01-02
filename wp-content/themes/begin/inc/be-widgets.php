@@ -5,7 +5,7 @@ class new_cat extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'new_cat',
-			'description' => __( '显示全部分类或某个分类的最新文章' ),
+			'description' =>'显示全部分类或某个分类的最新文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('new_cat', '最新文章', $widget_ops);
@@ -41,8 +41,8 @@ class new_cat extends WP_Widget {
 		}
 		echo $before_widget;
 		if ($newWindow) $newWindow = "target='_blank'";
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 			}
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title; 
@@ -59,7 +59,7 @@ class new_cat extends WP_Widget {
 	</h3>
 <?php } ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div class="new_cat">
 <?php } else { ?>
 <div class="post_cat">
@@ -67,7 +67,7 @@ class new_cat extends WP_Widget {
 	<ul>
 	<?php 
 		global $post;
-		if($instance['cat_child']) {
+		if ($instance['cat_child']) {
 			if ( is_single() ) {
 				$q =  new WP_Query(array(
 					'ignore_sticky_posts' => 1,
@@ -100,19 +100,19 @@ class new_cat extends WP_Widget {
 		}
 	?>
 	<?php while ($q->have_posts()) : $q->the_post(); ?>
-		<?php if($instance['show_thumbs']) { ?>
+		<?php if ($instance['show_thumbs']) { ?>
 			<li>
 				<span class="thumbnail">
 					<?php zm_thumbnail(); ?>
 				</span>
 				<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-				<span class="date"><?php the_time('m/d') ?></span>
+				<?php grid_meta(); ?>
 				<?php views_span(); ?>
 			</li>
 		<?php } else { ?>
-			<li class="only-title<?php if($instance['show_time']) { ?> only-title-date<?php } ?>">
-				<?php if($instance['show_time']) { ?><span class="date"><?php the_time('m/d') ?></span><?php } ?>
-				<?php the_title( sprintf( '<a class="srm" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+			<li class="only-title<?php if ($instance['show_time']) { ?> only-title-date<?php } ?>">
+				<?php if ($instance['show_time']) { ?><?php grid_meta(); ?><?php } ?>
+				<?php the_title( sprintf( '<a class="srm get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 			</li>
 		<?php } ?>
 		<?php endwhile; ?>
@@ -205,7 +205,7 @@ class img_cat extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'img_cat',
-			'description' => __( '以图片形式调用一个分类的文章' ),
+			'description' => '以图片形式调用一个分类的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('img_cat', '分类图片', $widget_ops);
@@ -239,8 +239,8 @@ class img_cat extends WP_Widget {
 		}
 		echo $before_widget;
 		if ($newWindow) $newWindow = "target='_blank'";
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 			}
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title; 
@@ -278,7 +278,7 @@ class img_cat extends WP_Widget {
 	<span class="img-box">
 		<span class="img-x2">
 			<span class="insets">
-				<span class="img-title"><a href="<?php the_permalink() ?>" rel="bookmark"><?php echo wp_trim_words( get_the_title(), 12 ); ?></a></span>
+				<span class="img-title"><a href="<?php the_permalink() ?>" rel="bookmark"><?php the_title( sprintf( '<span class="img-title-t over">'), '</span>' ); ?></a></span>
 				<?php zm_thumbnail(); ?>
 			</span>
 		</span>
@@ -358,7 +358,7 @@ class recent_comments extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'recent_comments',
-			'description' => __( '带头像的近期留言' ),
+			'description' => '带头像的近期留言',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('recent_comments', '近期留言', $widget_ops);
@@ -366,6 +366,7 @@ class recent_comments extends WP_Widget {
 
 	public function zm_defaults() {
 		return array(
+			'ellipsis'   => 1,
 			'title_z'    => '',
 			'show_icon'  => '',
 			'show_svg'   => '',
@@ -388,11 +389,11 @@ class recent_comments extends WP_Widget {
 		$authornot = strip_tags($instance['authornot']) ? absint( $instance['authornot'] ) : 1;
 ?>
 
-<div id="message" class="message-widget gaimg">
-	<?php if($instance['show_icon']) { ?>
+<div id="message" class="message-widget gaimg<?php if ( ! $instance['ellipsis'] ) { ?> message-item<?php } ?>">
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
@@ -407,7 +408,7 @@ class recent_comments extends WP_Widget {
 		}
 		if ( $comments ) : foreach ( $comments as $comment ) : ?>
 
-		<li class="bkc load">
+		<li class="message-item-li load">
 			<a href="<?php echo get_permalink($comment->comment_post_ID); ?>#anchor-comment-<?php echo $comment->comment_ID; ?>" title="<?php _e( '发表在', 'begin' ); ?>：<?php echo get_the_title($comment->comment_post_ID); ?>" rel="external nofollow">
 				<?php if (zm_get_option('cache_avatar')) { ?>
 					<?php echo begin_avatar( $comment->comment_author_email, $avatar_size, '', get_comment_author( $comment->comment_ID ) ); ?>
@@ -418,8 +419,25 @@ class recent_comments extends WP_Widget {
 						echo '<img class="avatar photo" src="data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" alt="'. get_comment_author( $comment->comment_ID ) .'"  width="30" height="30" data-original="' . preg_replace(array('/^.+(src=)(\"|\')/i', '/(\"|\')\sclass=(\"|\').+$/i'), array('', ''), get_avatar( $comment->comment_author_email, $avatar_size, '', get_comment_author( $comment->comment_ID ) )) . '" />';
 					} ?>
 				<?php } ?>
-				<span class="comment_author"><strong><?php echo get_comment_author( $comment->comment_ID ); ?></strong></span>
-				<?php echo convert_smilies($comment->comment_content); ?>
+				<?php if ( zm_get_option( 'comment_vip' ) ) { ?>
+					<?php
+						$authoremail = get_comment_author_email( $comment );
+						if ( email_exists( $authoremail ) ) {
+							$commet_user_role = get_user_by( 'email', $authoremail );
+							$comment_user_role = $commet_user_role->roles[0];
+								if ( $comment_user_role !== zm_get_option('roles_vip') ) {
+									echo '<span class="comment_author">' . get_comment_author( $comment->comment_ID ) . '</span>';
+								} else {
+									echo '<span class="comment_author message-widget-vip">' . get_comment_author( $comment->comment_ID ) . '</span>';
+								}
+						} else {
+							echo '<span class="comment_author">' . get_comment_author( $comment->comment_ID ) . '</span>';
+						}
+					?>
+				<?php } else { ?>
+					<span class="comment_author da"><?php echo get_comment_author( $comment->comment_ID ); ?></span>
+				<?php } ?>
+				<span class="say-comment da"><?php echo convert_smilies( $comment->comment_content ); ?></span>
 			</a>
 		</li>
 
@@ -437,6 +455,7 @@ class recent_comments extends WP_Widget {
 		$instance = $old_instance;
 		$instance = array();
 		$instance['title_z'] = strip_tags($new_instance['title_z']);
+		$instance['ellipsis'] = !empty( $new_instance['ellipsis'] ) ? 1 : 0;
 		$instance['show_icon'] = strip_tags($new_instance['show_icon']);
 		$instance['show_svg'] = strip_tags($new_instance['show_svg']);
 		$instance['title'] = strip_tags( $new_instance['title'] );
@@ -481,6 +500,10 @@ class recent_comments extends WP_Widget {
 		<label for="<?php echo $this->get_field_id( 'number' ); ?>">显示数量：</label>
 		<input class="number-text" id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="number" step="1" min="1" value="<?php echo $number; ?>" size="3" />
 	</p>
+	<p>
+		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id( 'ellipsis' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'ellipsis' ) ); ?>" <?php checked( ( bool ) $instance["ellipsis"], true ); ?>>
+		<label for="<?php echo esc_attr( $this->get_field_id( 'ellipsis' ) ); ?>">简化样式</label>
+	</p>
 	<input type="hidden" id="<?php echo $this->get_field_id('submit'); ?>" name="<?php echo $this->get_field_name('submit'); ?>" value="1" />
 <?php }
 }
@@ -495,7 +518,7 @@ class hot_comment extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'hot_comment',
-			'description' => __( '调用评论最多的文章' ),
+			'description' => '调用评论最多的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('hot_comment', '热评文章', $widget_ops);
@@ -504,6 +527,7 @@ class hot_comment extends WP_Widget {
 	public function zm_defaults() {
 		return array(
 			'show_thumbs' => 1,
+			'title_all'   => 0,
 			'mycat'       => 0,
 			'title_z'     => '',
 			'show_icon'   => '',
@@ -527,56 +551,70 @@ class hot_comment extends WP_Widget {
 		$days = strip_tags($instance['days']) ? absint( $instance['days'] ) : 90;
 ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ( $instance['show_thumbs'] ) { ?>
 <div class="new_cat">
 <?php } else { ?>
-<div id="hot_comment_widget" class="widget-li-icon">
+<div id="hot_comment_widget" class="widget-li-icon<?php if ( ! $instance['title_all'] ) { ?> title-li-all<?php } ?>">
 <?php } ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ( $instance['show_icon'] ) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
-		<?php if($instance['show_thumbs']) { ?>
+
 			<?php
-				if($instance['mycat']) {
+				if ( $instance['mycat'] ) {
 					$cat = get_the_category();
-					foreach($cat as $key=>$category){
+					foreach( $cat as $key=>$category ){
 						$catid = $category->term_id;
 					}
 				} else {
 					$catid = '';
 				}
 				$review = new WP_Query( array(
-					'post_type' => array( 'post' ),
-					'showposts' => $number,
-					'cat' => $catid,
+					'post_type'           => array( 'post' ),
+					'showposts'           => $number,
+					'cat'                 => $catid,
 					'ignore_sticky_posts' => true,
-					'orderby' => 'comment_count',
-					'order' => 'dsc',
-					'date_query' => array(
+					'orderby'             => 'comment_count',
+					'order'               => 'DESC',
+					'date_query'          => array(
 						array(
-							'after' => ''.$days. 'month ago',
+							'after'       => ''.$days. 'month ago',
 						),
 					),
 				) );
 			?>
 			
-			<?php while ( $review->have_posts() ): $review->the_post(); ?>
-				<li>
-					<span class="thumbnail">
-						<?php zm_thumbnail(); ?>
-					</span>
-					<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-					<span class="date"><?php the_time('m/d') ?></span>
-					<span class="discuss"><?php comments_number( '', '<i class="be be-speechbubble ri"></i>1 ', '<i class="be be-speechbubble ri"></i>%' ); ?></span>
-				</li>
+			<?php $i=0; while ( $review->have_posts() ): $review->the_post(); $i++; ?>
+				<?php if ( $instance['show_thumbs'] ) { ?>
+					<li>
+						<span class="thumbnail">
+							<?php zm_thumbnail(); ?>
+						</span>
+						<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
+						<?php grid_meta(); ?>
+						<span class="discuss"><?php comments_number( '', '<i class="be be-speechbubble ri"></i>1 ', '<i class="be be-speechbubble ri"></i>%' ); ?></span>
+					</li>
+				<?php } else { ?>
+					<?php if ( ! $instance['title_all'] ) { ?>
+						<li class="title-all-item">
+							<span class='li-icon li-icon-<?php echo $i; ?>'><?php echo $i; ?></span>
+							<span class="title-all">
+								<a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a>
+								<span class="title-all-inf">
+									<?php grid_meta(); ?>
+									<span class="discuss"><?php comments_number( '', '<i class="be be-speechbubble ri"></i>1 ', '<i class="be be-speechbubble ri"></i>%' ); ?></span>
+								</span>
+							</span>
+						</li>
+					<?php } else { ?>
+						<li class="srm"><span class='li-icon li-icon-<?php echo $i; ?>'><?php echo $i; ?></span><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></li>
+					<?php } ?>
+				<?php } ?>
 			<?php endwhile;?>
-		<?php } else { ?>
-			<?php hot_comment_viewed($number, $days); ?>
-		<?php } ?>
 		<?php wp_reset_query(); ?>
 	</ul>
 </div>
@@ -588,6 +626,7 @@ class hot_comment extends WP_Widget {
 		$instance = $old_instance;
 		$instance = array();
 		$instance['show_thumbs'] = !empty($new_instance['show_thumbs']) ? 1 : 0;
+		$instance['title_all'] = !empty($new_instance['title_all']) ? 1 : 0;
 		$instance['mycat'] = !empty($new_instance['mycat']) ? 1 : 0;
 		$instance['title_z'] = strip_tags($new_instance['title_z']);
 		$instance['show_icon'] = strip_tags($new_instance['show_icon']);
@@ -637,10 +676,13 @@ class hot_comment extends WP_Widget {
 		<input class="number-text-d" id="<?php echo $this->get_field_id( 'days' ); ?>" name="<?php echo $this->get_field_name( 'days' ); ?>" type="number" step="1" min="1" value="<?php echo $days; ?>" size="3" />
 		<label>有图/无图：月/天</label>
 	</p>
-
 	<p>
 		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('show_thumbs') ); ?>" name="<?php echo esc_attr( $this->get_field_name('show_thumbs') ); ?>" <?php checked( (bool) $instance["show_thumbs"], true ); ?>>
 		<label for="<?php echo esc_attr( $this->get_field_id('show_thumbs') ); ?>">显示缩略图</label>
+	</p>
+	<p>
+		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('title_all') ); ?>" name="<?php echo esc_attr( $this->get_field_name('title_all') ); ?>" <?php checked( (bool) $instance["title_all"], true ); ?>>
+		<label for="<?php echo esc_attr( $this->get_field_id('title_all') ); ?>">截断标题</label>
 	</p>
 	<p>
 		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('mycat') ); ?>" name="<?php echo esc_attr( $this->get_field_name('mycat') ); ?>" <?php checked( (bool) $instance["mycat"], true ); ?>>
@@ -660,7 +702,7 @@ class cx_tag_cloud extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'cx_tag_cloud',
-			'description' => __( '可实现3D特效' ),
+			'description' => '可实现3D特效',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('cx_tag_cloud', '热门标签', $widget_ops);
@@ -691,10 +733,10 @@ class cx_tag_cloud extends WP_Widget {
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 20;
 		$tags_id = strip_tags($instance['tags_id']) ? absint( $instance['tags_id'] ) : 1;
 ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<?php if ($instance['show_3d']) { ?>
@@ -789,7 +831,7 @@ class random_post extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'random_post',
-			'description' => __( '显示随机文章' ),
+			'description' => '显示随机文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('random_post', '随机文章', $widget_ops);
@@ -819,15 +861,15 @@ class random_post extends WP_Widget {
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 5;
 ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div class="new_cat">
 <?php } else { ?>
 <div id="random_post_widget">
 <?php } ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
@@ -836,7 +878,7 @@ class random_post extends WP_Widget {
 		foreach($cat as $key=>$category){
 		    $catid = $category->term_id;
 		}
-		if($instance['this_cat']) {
+		if ($instance['this_cat']) {
 			$args = array( 'orderby' => 'rand', 'showposts' => $number, 'ignore_sticky_posts' => 1,'cat' => $catid );
 		} else {
 			$args = array( 'orderby' => 'rand', 'showposts' => $number, 'ignore_sticky_posts' => 1 );
@@ -846,17 +888,17 @@ class random_post extends WP_Widget {
 		while ($query_posts->have_posts()) : $query_posts->the_post();
 		?>
 
-		<?php if($instance['show_thumbs']) { ?>
+		<?php if ($instance['show_thumbs']) { ?>
 			<li>
 				<span class="thumbnail">
 					<?php zm_thumbnail(); ?>
 				</span>
 				<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-				<span class="date"><?php the_time('m/d') ?></span>
+				<?php grid_meta(); ?>
 				<?php views_span(); ?>
 			</li>
 		<?php } else { ?>
-			<li class="srm"><?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></li>
+			<li class="srm the-icon"><?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></li>
 		<?php } ?>
 
 		<?php endwhile;?>
@@ -934,7 +976,7 @@ class related_post extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'related_post',
-			'description' => __( '显示相关文章' ),
+			'description' => '显示相关文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('related_post', '相关文章', $widget_ops);
@@ -963,15 +1005,15 @@ class related_post extends WP_Widget {
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 5;
 ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div class="new_cat">
 <?php } else { ?>
 <div class="post_cat">
 <?php } ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
@@ -988,17 +1030,17 @@ class related_post extends WP_Widget {
 			setup_postdata($post);
 		?>
 
-			<?php if($instance['show_thumbs']) { ?>
+			<?php if ($instance['show_thumbs']) { ?>
 				<li>
 					<span class="thumbnail">
 						<?php zm_thumbnail(); ?>
 					</span>
 					<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-					<span class="date"><?php the_time('m/d') ?></span>
+					<?php grid_meta(); ?>
 					<?php views_span(); ?>
 				</li>
 			<?php } else { ?>
-				<li class="srm"><?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></li>
+				<li class="srm the-icon"><?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></li>
 			<?php } ?>
 
 		<?php
@@ -1015,13 +1057,13 @@ class related_post extends WP_Widget {
 			setup_postdata($post);
 		?>
 
-			<?php if($instance['show_thumbs']) { ?>
+			<?php if ($instance['show_thumbs']) { ?>
 				<li>
 					<span class="thumbnail">
 						<?php zm_thumbnail(); ?>
 					</span>
 					<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-					<span class="date"><?php the_time('m/d') ?></span>
+					<?php grid_meta(); ?>
 					<?php views_span(); ?>
 				</li>
 			<?php } else { ?>
@@ -1101,7 +1143,7 @@ class hot_commend extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'hot_commend',
-			'description' => __( '调用指定的文章' ),
+			'description' => '调用指定的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('hot_commend', '本站推荐', $widget_ops);
@@ -1130,21 +1172,21 @@ class hot_commend extends WP_Widget {
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 5;
 ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div id="hot" class="hot_commend">
 <?php } else { ?>
 <div class="hot_comment_widget">
 <?php } ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
 		<?php $i = 1; query_posts( array ( 'meta_key' => 'hot', 'showposts' => $number, 'ignore_sticky_posts' => 1 ) ); while ( have_posts() ) : the_post(); ?>
 
-			<?php if($instance['show_thumbs']) { ?>
+			<?php if ($instance['show_thumbs']) { ?>
 				<li>
 					<span class="thumbnail">
 						<?php zm_thumbnail(); ?>
@@ -1227,7 +1269,7 @@ class readers extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'readers',
-			'description' => __( '最活跃的读者' ),
+			'description' => '最活跃的读者',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('readers', '读者墙', $widget_ops);
@@ -1256,10 +1298,10 @@ class readers extends WP_Widget {
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 6;
 		$days = strip_tags($instance['days']) ? absint( $instance['days'] ) : 90;
 ?>
-<?php if($instance['show_icon']) { ?>
+<?php if ($instance['show_icon']) { ?>
 	<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 <?php } ?>
-<?php if($instance['show_svg']) { ?>
+<?php if ($instance['show_svg']) { ?>
 	<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 <?php } ?>
 <div id="readers_widget" class="readers">
@@ -1364,7 +1406,7 @@ class feed_widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'feed_widget',
-			'description' => __( 'RSS、微信、微博' ),
+			'description' => 'RSS、微信、微博',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('feed', '关注我们', $widget_ops);
@@ -1516,7 +1558,7 @@ class sponsor extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'sponsor',
-			'description' => __( '用于侧边添加广告代码' ),
+			'description' => '用于侧边添加广告代码',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('sponsor', '广告位', $widget_ops);
@@ -1576,7 +1618,7 @@ class sponsor extends WP_Widget {
 		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></p>
 		<p><label for="<?php echo $this->get_field_id('text'); ?>">内容：</label>
 		<textarea class="widefat" rows="16" cols="20" id="<?php echo $this->get_field_id('text'); ?>" name="<?php echo $this->get_field_name('text'); ?>"><?php echo $text; ?></textarea></p>
-		<p><input id="<?php echo $this->get_field_id('filter'); ?>" name="<?php echo $this->get_field_name('filter'); ?>" type="checkbox" <?php checked(isset($instance['filter']) ? $instance['filter'] : 0); ?> />&nbsp;<label for="<?php echo $this->get_field_id('filter'); ?>"><?php _e('Automatically add paragraphs'); ?></label></p>
+		<p><input id="<?php echo $this->get_field_id('filter'); ?>" name="<?php echo $this->get_field_name('filter'); ?>" type="checkbox" <?php checked(isset($instance['filter']) ? $instance['filter'] : 0); ?> />&nbsp;<label for="<?php echo $this->get_field_id('filter'); ?>">自动添加段落</label></p>
 		<input type="hidden" id="<?php echo $this->get_field_id('submit'); ?>" name="<?php echo $this->get_field_name('submit'); ?>" value="1" />
 <?php }
 }
@@ -1590,7 +1632,7 @@ class about extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'about',
-			'description' => __( '本站信息、RSS、微信、微博、QQ' ),
+			'description' => '本站信息、RSS、微信、微博、QQ',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('about', '关于本站', $widget_ops);
@@ -1601,7 +1643,8 @@ class about extends WP_Widget {
 			'show_social_icon'   => 1,
 			'show_caption'       => 0,
 			'show_inf'           => 1,
-			'about_back'         => 'https://s2.loli.net/2021/12/05/FOKvZnDLSYtQk3M.jpg',
+			'show_mixed'           => 0,
+			'about_back'         => get_template_directory_uri() . '/img/default/options/user.jpg',
 			'weixin'             => get_template_directory_uri() . '/img/favicon.png"',
 			'about_img'          => get_template_directory_uri() . '/img/favicon.png"',
 			'about_name'         => '网站名称',
@@ -1613,84 +1656,83 @@ class about extends WP_Widget {
 			'tqq'                => 'be be-qq',
 			'tqqurl'             => '88888',
 			'cqqurl'             => '',
-			'title'              => '关于本站',
 		);
 	}
 
 	function widget($args, $instance) {
 		extract($args);
-		$title_w = title_i_w();
 		$defaults = $this -> zm_defaults();
 		$instance = wp_parse_args( (array) $instance, $defaults );
-		$title = apply_filters( 'widget_title', $instance['title'] );
 		echo $before_widget;
-		if ( ! empty( $title ) )
-		echo $before_title . $title_w . $title . $after_title;
 ?>
 
 <div id="feed_widget">
 	<div class="feed-about">
-		<?php if ( $instance[ 'about_back' ]  ) { ?>
-			<div class="author-back" style="background-image: url('<?php echo $instance['about_back']; ?>');"></div>
-		<?php } ?>
-		<div class="about-main">
-			<div class="about-img">
-				<div class="about-img-box"><img src="<?php echo $instance['about_img']; ?>" alt="name"/></div>
+		<?php if ( $instance[ 'show_mixed' ]  ) { ?>
+			<div class="about-the-mixed bgt">
+				<img src="<?php echo $instance['about_img']; ?>" alt="name"/>
+				<div class="about-name"><?php echo $instance['about_name']; ?></div>
+				<?php echo $instance['about_the']; ?>
 			</div>
-			<div class="clear"></div>
-			<div class="about-name"><?php echo $instance['about_name']; ?></div>
-			<div class="about-the<?php if($instance['show_caption']) { ?> about-the-layout<?php } ?>"><?php echo $instance['about_the']; ?></div>
-		</div>
-		<div class="clear"></div>
-
-		<?php if($instance['show_social_icon']) { ?>
-		<div class="feed-about-box">
-			<?php if($instance['weixin']) { ?>
-				<div class="feed-t weixin">
-					<span class="weixin-b">
-						<span class="weixin-qr yy fd bk">
-							<img src="<?php echo $instance['weixin']; ?>" alt=" weixin"/>
-							<span class="clear"></span>
-							<span class="arrow-down"></span>
-						</span>
-						<a class="dah"><i class="be be-weixin"></i></a>
-					</span>
-				</div>
-			<?php } ?>
-
-			<?php if ( $instance[ 'tqq' ] ) { ?>
-				<?php if ( $instance[ 'cqqurl' ]  ) { ?>
-					<div class="feed-t tqq"><a class="dah" target=blank rel="external nofollow" href="<?php echo $instance['cqqurl']; ?>" target="_blank" rel="external nofollow"><i class="<?php echo $instance['tqq']; ?>"></i></a></div>
-				<?php } else { ?>
-					<div class="feed-t tqq"><a class="dah" target=blank rel="external nofollow" href=http://wpa.qq.com/msgrd?V=3&uin=<?php echo $instance['tqqurl']; ?>&Site=QQ&Menu=yes><i class="<?php echo $instance['tqq']; ?>"></i></a></div>
-				<?php } ?>
-			<?php } ?>
-
-			<?php if ( $instance[ 'tsina' ] ) { ?>
-				<div class="feed-t tsina"><a class="dah" title="" href="<?php echo $instance['tsinaurl']; ?>" target="_blank" rel="external nofollow"><i class="<?php echo $instance['tsina']; ?>"></i></a></div>
-			<?php } ?>
-
-			<?php if ( $instance[ 'rss' ] ) { ?>
-				<div class="feed-t feed"><a class="dah" title="" href="<?php echo $instance['rssurl']; ?>" target="_blank" rel="external nofollow"><i class="<?php echo $instance['rss']; ?>"></i></a></div>
-			<?php } ?>
-
-			<div class="clear"></div>
-		</div>
 		<?php } else { ?>
-			<span class="social-clear"></span>
+			<?php if ( $instance[ 'about_back' ]  ) { ?>
+				<div class="author-back" style="background-image: url('<?php echo $instance['about_back']; ?>');"></div>
+			<?php } ?>
+			<div class="about-main bgt">
+				<div class="about-img bgt">
+					<div class="about-img-box"><img src="<?php echo $instance['about_img']; ?>" alt="name"/></div>
+				</div>
+				<div class="clear"></div>
+				<div class="about-name"><?php echo $instance['about_name']; ?></div>
+				<div class="about-the<?php if ($instance['show_caption']) { ?> about-the-layout<?php } ?>"><?php echo $instance['about_the']; ?></div>
+			</div>
 		<?php } ?>
-		<div class="clear"></div>
-		<?php if($instance['show_inf']) { ?>
-		<div class="about-inf">
-			<span class="about about-cn"><span><?php _e( '文章', 'begin' ); ?></span><?php $count_posts = wp_count_posts(); echo $published_posts = $count_posts->publish;?></span>
-			<span class="about about-pn"><span><?php _e( '留言', 'begin' ); ?></span>
-			<?php 
-				$my_email = get_bloginfo ( 'admin_email' );
-				global $wpdb;echo $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->comments where comment_author_email!='$my_email' And comment_author_email!=''");
-			?>
-			</span>
-			<span class="about about-cn"><span><?php _e( '访客', 'begin' ); ?></span><?php echo all_view(); ?></span>
-		</div>
+		<?php if ($instance['show_social_icon']) { ?>
+			<div class="clear"></div>
+			<div class="feed-about-box">
+				<?php if ($instance['weixin']) { ?>
+					<div class="feed-t weixin">
+						<span class="weixin-b">
+							<span class="weixin-qr yy fd bk">
+								<img src="<?php echo $instance['weixin']; ?>" alt=" weixin"/>
+								<span class="clear"></span>
+								<span class="arrow-down"></span>
+							</span>
+							<a class="dah"><i class="be be-weixin"></i></a>
+						</span>
+					</div>
+				<?php } ?>
+
+				<?php if ( $instance[ 'tqq' ] ) { ?>
+					<?php if ( $instance[ 'cqqurl' ]  ) { ?>
+						<div class="feed-t tqq"><a class="dah" target=blank rel="external nofollow" href="<?php echo $instance['cqqurl']; ?>" target="_blank" rel="external nofollow"><i class="<?php echo $instance['tqq']; ?>"></i></a></div>
+					<?php } else { ?>
+						<div class="feed-t tqq"><a class="dah" target=blank rel="external nofollow" href=http://wpa.qq.com/msgrd?V=3&uin=<?php echo $instance['tqqurl']; ?>&Site=QQ&Menu=yes><i class="<?php echo $instance['tqq']; ?>"></i></a></div>
+					<?php } ?>
+				<?php } ?>
+
+				<?php if ( $instance[ 'tsina' ] ) { ?>
+					<div class="feed-t tsina"><a class="dah" title="" href="<?php echo $instance['tsinaurl']; ?>" target="_blank" rel="external nofollow"><i class="<?php echo $instance['tsina']; ?>"></i></a></div>
+				<?php } ?>
+
+				<?php if ( $instance[ 'rss' ] ) { ?>
+					<div class="feed-t feed"><a class="dah" title="" href="<?php echo $instance['rssurl']; ?>" target="_blank" rel="external nofollow"><i class="<?php echo $instance['rss']; ?>"></i></a></div>
+				<?php } ?>
+				<div class="clear"></div>
+			</div>
+		<?php } ?>
+		<?php if ($instance['show_inf']) { ?>
+			<div class="clear"></div>
+			<div class="about-inf">
+				<span class="about about-cn"><span><?php _e( '文章', 'begin' ); ?></span><?php $count_posts = wp_count_posts(); echo $published_posts = $count_posts->publish;?></span>
+				<span class="about about-pn"><span><?php _e( '留言', 'begin' ); ?></span>
+				<?php 
+					$my_email = get_bloginfo ( 'admin_email' );
+					global $wpdb;echo $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->comments where comment_author_email!='$my_email' And comment_author_email!=''");
+				?>
+				</span>
+				<span class="about about-cn"><span><?php _e( '访客', 'begin' ); ?></span><?php echo all_view(); ?></span>
+			</div>
 		<?php } else { ?>
 			<span class="social-clear"></span>
 		<?php } ?>
@@ -1709,7 +1751,7 @@ class about extends WP_Widget {
 		$instance['show_social_icon'] = !empty($new_instance['show_social_icon']) ? 1 : 0;
 		$instance['show_caption'] = !empty($new_instance['show_caption']) ? 1 : 0;
 		$instance['show_inf'] = !empty($new_instance['show_inf']) ? 1 : 0;
-		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['show_mixed'] = !empty($new_instance['show_mixed']) ? 1 : 0;
 		$instance['about_img'] = $new_instance['about_img'];
 		$instance['about_name'] = $new_instance['about_name'];
 		$instance['about_back'] = $new_instance['about_back'];
@@ -1728,12 +1770,6 @@ class about extends WP_Widget {
 	function form($instance) {
 		$defaults = $this -> zm_defaults();
 		$instance = wp_parse_args( (array) $instance, $defaults );
-		if ( isset( $instance[ 'title' ] ) ) {
-			$title = $instance[ 'title' ];
-		}
-		else {
-			$title = '关于本站';
-		}
 		global $wpdb;
 		$instance = wp_parse_args((array) $instance, array('weixin' => '' . get_template_directory_uri() . '/img/favicon.png"'));
 		$weixin = $instance['weixin'];
@@ -1741,7 +1777,7 @@ class about extends WP_Widget {
 		$about_img = $instance['about_img'];
 		$instance = wp_parse_args((array) $instance, array('about_name' => '网站名称'));
 		$about_name = $instance['about_name'];
-		$instance = wp_parse_args((array) $instance, array('about_back' => 'https://s2.loli.net/2021/12/05/FOKvZnDLSYtQk3M.jpg'));
+		$instance = wp_parse_args((array) $instance, array('about_back' => get_template_directory_uri() . '/img/default/options/user.jpg'));
 		$about_back = $instance['about_back'];
 		$instance = wp_parse_args((array) $instance, array('about_the' => '到小工具中更改此内容'));
 		$about_the = $instance['about_the'];
@@ -1760,10 +1796,6 @@ class about extends WP_Widget {
 		$instance = wp_parse_args((array) $instance, array('cqqurl' => ''));
 		$cqqurl = $instance['cqqurl'];
 ?>
-	<p>
-		<label for="<?php echo $this->get_field_id( 'title' ); ?>">标题：</label>
-		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" />
-	</p>
 
 	<p>
 		<label for="<?php echo $this->get_field_id('about_img'); ?>">头像：</label>
@@ -1776,7 +1808,7 @@ class about extends WP_Widget {
 	</p>
 
 	<p>
-		<label for="<?php echo $this->get_field_id('about_name'); ?>">昵称：</label>
+		<label for="<?php echo $this->get_field_id('about_name'); ?>">网站名称：</label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'about_name' ); ?>" name="<?php echo $this->get_field_name( 'about_name' ); ?>" type="text" value="<?php echo $about_name; ?>" />
 	</p>
 
@@ -1788,6 +1820,11 @@ class about extends WP_Widget {
 	<p>
 		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('show_caption') ); ?>" name="<?php echo esc_attr( $this->get_field_name('show_caption') ); ?>" <?php checked( (bool) $instance["show_caption"], true ); ?>>
 		<label for="<?php echo esc_attr( $this->get_field_id('show_caption') ); ?>">长说明</label>
+	</p>
+
+	<p>
+		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('show_mixed') ); ?>" name="<?php echo esc_attr( $this->get_field_name('show_mixed') ); ?>" <?php checked( (bool) $instance["show_mixed"], true ); ?>>
+		<label for="<?php echo esc_attr( $this->get_field_id('show_mixed') ); ?>">混排</label>
 	</p>
 
 	<p>
@@ -1848,7 +1885,7 @@ class be_img_widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_img_widget',
-			'description' => __( '调用最新图片文章' ),
+			'description' => '调用最新图片文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_img_widget', '最新图片', $widget_ops);
@@ -1881,18 +1918,18 @@ class be_img_widget extends WP_Widget {
 		}
 		echo $before_widget;
 		if ($newWindow) $newWindow = "target='_blank'";
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 			}
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title;
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 4;
 ?>
 
-<?php if($instance['show_icon']) { ?>
+<?php if ($instance['show_icon']) { ?>
 	<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 <?php } ?>
-<?php if($instance['show_svg']) { ?>
+<?php if ($instance['show_svg']) { ?>
 	<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 <?php } ?>
 <div class="picture img_widget bgt">
@@ -1902,7 +1939,7 @@ class be_img_widget extends WP_Widget {
 			'showposts' => $number, 
 			);
 
-			if($instance['cat']) {
+			if ($instance['cat']) {
 				$args = array(
 					'showposts' => $number, 
 					'tax_query' => array(
@@ -2001,7 +2038,7 @@ class be_video_widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_video_widget',
-			'description' => __( '调用最新视频文章' ),
+			'description' => '调用最新视频文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_video_widget', '最新视频', $widget_ops);
@@ -2034,17 +2071,17 @@ class be_video_widget extends WP_Widget {
 		}
 		echo $before_widget;
 		if ($newWindow) $newWindow = "target='_blank'";
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 			}
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title;
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 4;
 ?>
-<?php if($instance['show_icon']) { ?>
+<?php if ($instance['show_icon']) { ?>
 	<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 <?php } ?>
-<?php if($instance['show_svg']) { ?>
+<?php if ($instance['show_svg']) { ?>
 	<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 <?php } ?>
 <div class="picture video_widget">
@@ -2054,7 +2091,7 @@ class be_video_widget extends WP_Widget {
 			'showposts' => $number, 
 			);
 
-			if($instance['cat']) {
+			if ($instance['cat']) {
 				$args = array(
 					'showposts' => $number, 
 					'tax_query' => array(
@@ -2153,7 +2190,7 @@ class be_tao_widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_tao_widget',
-			'description' => __( '调用最新商品' ),
+			'description' => '调用最新商品',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_tao_widget', '最新商品', $widget_ops);
@@ -2186,18 +2223,18 @@ class be_tao_widget extends WP_Widget {
 		}
 		echo $before_widget;
 		if ($newWindow) $newWindow = "target='_blank'";
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 			}
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title;
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 4;
 ?>
 
-<?php if($instance['show_icon']) { ?>
+<?php if ($instance['show_icon']) { ?>
 	<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 <?php } ?>
-<?php if($instance['show_svg']) { ?>
+<?php if ($instance['show_svg']) { ?>
 	<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 <?php } ?>
 <div class="picture tao_widget bgt">
@@ -2207,7 +2244,7 @@ class be_tao_widget extends WP_Widget {
 			'showposts' => $number, 
 			);
 
-			if($instance['cat']) {
+			if ($instance['cat']) {
 				$args = array(
 					'showposts' => $number, 
 					'tax_query' => array(
@@ -2306,7 +2343,7 @@ class php_text extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'php_text',
-			'description' => __( '支持PHP、JavaScript、短代码等' ),
+			'description' => '支持PHP、JavaScript、短代码等',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct( 'php_text', '增强文本', $widget_ops );
@@ -2345,7 +2382,7 @@ class php_text extends WP_Widget {
 			$more_i = '<span class="more-i"><span></span><span></span><span></span></span>';
 		}
 		if ( $cssClass ) {
-			if( strpos($before_widget, 'class') === false ) {
+			if ( strpos($before_widget, 'class') === false ) {
 				$before_widget = str_replace('>', 'class="'. $cssClass . '"', $before_widget);
 			} else {
 				$before_widget = str_replace('class="', 'class="'. $cssClass . ' ', $before_widget);
@@ -2361,20 +2398,20 @@ class php_text extends WP_Widget {
 		if (!empty($text)) {
 			echo $bare ? '' : $before_widget;
 		if ($newWindow) $newWindow = 'target="_blank"';
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 				echo $bare ? $title : $before_title . $title_w . $title . $after_title;
 			}
-			if($instance['show_icon']) {
-				if($instance['titleUrl']) {
+			if ($instance['show_icon']) {
+				if ($instance['titleUrl']) {
 					echo '<h3 class="widget-title-cat-icon cat-w-icon da"><a href=' . $titleUrl . ' ' . $newWindow . '><i class="t-icon ' . $instance['show_icon'] . '"></i>' . $instance['title_z'], more_i() . '</a></h3>';
 				} else {
 					echo '<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon ' . $instance['show_icon'] . '"></i>' . $instance['title_z'] . '</h3>';
 				}
 			}
 
-			if($instance['show_svg']) {
-				if($instance['titleUrl']) {
+			if ($instance['show_svg']) {
+				if ($instance['titleUrl']) {
 					echo '<h3 class="widget-title-cat-icon cat-w-icon da"><a href=' . $titleUrl . '><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#'.$instance['show_svg'].'"></use></svg>' . $instance['title_z'], more_i() . '</a></h3>';
 				} else {
 					echo '<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#'.$instance['show_svg'].'"></use></svg>' . $instance['title_z'] . '</h3>';
@@ -2472,7 +2509,7 @@ class be_timing_post extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_timing_post',
-			'description' => __( '即将发表的文章' ),
+			'description' => '即将发表的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_timing_post', '即将发布', $widget_ops);
@@ -2501,20 +2538,23 @@ class be_timing_post extends WP_Widget {
 ?>
 
 <div class="timing_post">
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
 		<?php
-		$be_query = new WP_Query( array ( 'post_status' => 'future', 'order' => 'ASC', 'showposts' => $number, 'ignore_sticky_posts' => '1'));
-		if ($be_query->have_posts()) {
-			while ($be_query->have_posts()) : $be_query->the_post();
-				$do_not_duplicate = get_the_ID(); ?>
-				<li><i class="be be-schedule"> <?php the_time('G:i') ?></i><?php the_title(); ?></li>
-			<?php endwhile;}
+			$be_query = new WP_Query( array ( 'post_status' => 'future', 'order' => 'ASC', 'showposts' => $number, 'ignore_sticky_posts' => '1'));
+			if ($be_query->have_posts()) {
+				while ($be_query->have_posts()) : $be_query->the_post();
+					$do_not_duplicate = get_the_ID(); ?>
+					<li><i class="be be-schedule"> <?php the_time('G:i') ?></i><?php the_title(); ?></li>
+				<?php endwhile; wp_reset_query();
+			} else {
+				echo '<li>'. __( '暂无文章', 'begin' ) .'</li>';
+			}
 		?>
 	</ul>
 </div>
@@ -2575,7 +2615,7 @@ class author_widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'author_widget',
-			'description' => __( '显示所有作者头像' ),
+			'description' => '显示所有作者头像',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('author_widget', '作者墙', $widget_ops);
@@ -2663,7 +2703,7 @@ class about_author extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'about_author',
-			'description' => __( '只显示在正文和作者页面' ),
+			'description' => '只显示在正文和作者页面',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('about_author', '关于作者', $widget_ops);
@@ -2676,21 +2716,16 @@ class about_author extends WP_Widget {
 			'show_comment'  => 1,
 			'show_views'    => 1,
 			'show_like'     => 1,
-			'author_back'    => 'https://s2.loli.net/2021/12/05/FOKvZnDLSYtQk3M.jpg',
-			'title'         => '关于作者',
+			'author_back'   => get_template_directory_uri() . '/img/default/options/user.jpg',
 		);
 	}
 
 	function widget($args, $instance) {
 		extract($args);
-		$title_w = title_i_w();
 		$defaults = $this -> zm_defaults();
 		$instance = wp_parse_args( (array) $instance, $defaults );
 		if ( is_author() || is_single() ){ 
-			$title = apply_filters( 'widget_title', $instance['title'] );
 			echo $before_widget;
-			if ( ! empty( $title ) )
-			echo $before_title . $title_w . $title . $after_title;
      	}
 ?>
 
@@ -2740,15 +2775,15 @@ class about_author extends WP_Widget {
 		<div class="clear"></div>
 		<div class="author-th">
 			<div class="author-description"><?php the_author_meta( 'user_description' ); ?></div>
-			<?php if($instance['show_inf']) { ?>
-				<div class="author-th-inf">
-					<?php if ($instance['show_posts'] ) { ?><div class="author-n author-nickname"><span><?php the_author_posts(); ?></span><br /><?php _e( '文章', 'begin' ); ?></div><?php } ?>
-					<?php if ($instance['show_comment'] ) { ?><div class="author-n"><span><?php echo $comment_count;?></span><br /><?php _e( '评论', 'begin' ); ?></div><?php } ?>
-					<?php if ($instance['show_views'] && zm_get_option('post_views')) { ?><div class="author-n"><span><?php author_posts_views(get_the_author_meta('ID'));?></span><br /><?php _e( '浏览', 'begin' ); ?></div><?php } ?>
-					<?php if ($instance['show_like'] && zm_get_option('post_views')) { ?><div class="author-n author-th-views"><span><?php like_posts_views(get_the_author_meta('ID'));?></span><br /><?php _e( '点赞', 'begin' ); ?></div><?php } ?>
+			<?php if ($instance['show_inf']) { ?>
+				<div class="author-th-inf<?php if ( zm_get_option( 'languages_en' ) ) { ?> author-th-inf-en<?php } ?>">
+					<?php if ($instance['show_posts'] ) { ?><div class="author-n author-nickname"><?php _e( '文章', 'begin' ); ?><br /><span><?php the_author_posts(); ?></span></div><?php } ?>
+					<?php if ($instance['show_comment'] ) { ?><div class="author-n"><?php _e( '评论', 'begin' ); ?><br /><span><?php echo $comment_count;?></span></div><?php } ?>
+					<?php if ($instance['show_views'] && zm_get_option('post_views')) { ?><div class="author-n"><?php _e( '浏览', 'begin' ); ?><br /><span><?php author_posts_views(get_the_author_meta('ID'));?></span></div><?php } ?>
+					<?php if ($instance['show_like'] && zm_get_option('post_views')) { ?><div class="author-n author-th-views"><?php _e( '点赞', 'begin' ); ?><br /><span><?php like_posts_views(get_the_author_meta('ID'));?></span></div><?php } ?>
 				</div>
 			<?php } ?>
-			<div class="author-m"><a href="<?php echo get_author_posts_url( get_the_author_meta( 'ID' ), get_the_author_meta( 'user_nicename' ) ); ?>"><?php _e( '更多文章', 'begin' ); ?></a></div>
+			<div class="author-m"><a class="bk" href="<?php echo get_author_posts_url( get_the_author_meta( 'ID' ), get_the_author_meta( 'user_nicename' ) ); ?>"><?php _e( '更多文章', 'begin' ); ?></a></div>
 			<div class="clear"></div>
 		</div>
 	<div class="clear"></div>
@@ -2775,22 +2810,12 @@ class about_author extends WP_Widget {
 	function form($instance) {
 		$defaults = $this -> zm_defaults();
 		$instance = wp_parse_args( (array) $instance, $defaults );
-		if ( isset( $instance[ 'title' ] ) ) {
-			$title = $instance[ 'title' ];
-		}
-		else {
-			$title = '关于作者';
-		}
 		global $wpdb;
-		$instance = wp_parse_args((array) $instance, array('author_back' => 'https://s2.loli.net/2021/12/05/FOKvZnDLSYtQk3M.jpg'));
+		$instance = wp_parse_args((array) $instance, array('author_back' => get_template_directory_uri() . '/img/default/options/user.jpg'));
 		$author_back = $instance['author_back'];
 		// $instance = wp_parse_args((array) $instance, array('author_url' => ''));
 		// $author_url = $instance['author_url'];
 ?>
-	<p>
-		<label for="<?php echo $this->get_field_id( 'title' ); ?>">标题：</label>
-		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" />
-	</p>
 	<p>
 		<label for="<?php echo $this->get_field_id('author_back'); ?>">背景图片：</label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'author_back' ); ?>" name="<?php echo $this->get_field_name( 'author_back' ); ?>" type="text" value="<?php echo $author_back; ?>" />
@@ -2828,7 +2853,7 @@ class be_updated_posts extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_updated_posts',
-			'description' => __( '调用最近更新过的文章' ),
+			'description' => '调用最近更新过的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_updated_posts', '最近更新过的文章', $widget_ops);
@@ -2859,14 +2884,14 @@ class be_updated_posts extends WP_Widget {
 ?>
 
 <div class="post_cat">
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
-		<?php if ( function_exists('recently_updated_posts') ) recently_updated_posts($number,$days); ?>
+		<?php if ( function_exists('recently_updated_posts') ) recently_updated_posts( $number,$days ); ?>
 	</ul>
 </div>
 
@@ -2929,8 +2954,8 @@ add_action( 'widgets_init', 'be_updated_posts_init' );
 class ajax_login extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
-			'classname' => 'ajax_login',
-			'description' => __( 'Ajax 登录注册小工具' ),
+			'classname' => 'ajax-login-widget',
+			'description' => 'Ajax 登录注册小工具',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('ajax_login', '登录注册', $widget_ops);
@@ -2939,10 +2964,15 @@ class ajax_login extends WP_Widget {
 	function widget($args, $instance) {
 		$title_w = title_i_w();
 		echo $args['before_widget'];
-		LoginAjax::widget($instance);
-		echo $args['after_widget'];
+
 	?>
+
+	<div class="be-login-widget">
+		<?php be_login_reg(); ?>
+	</div>
+
 	<?php
+		echo $args['after_widget'];
 	}
 		function update( $new_instance, $old_instance ) {
 			$instance = $old_instance;
@@ -2966,7 +2996,7 @@ class be_pages_recent_comments extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_pages_recent_comments',
-			'description' => __( '调用指定文章/页面留言' ),
+			'description' => '调用指定文章/页面留言',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_pages_recent_comments', '留言板', $widget_ops);
@@ -2998,10 +3028,10 @@ class be_pages_recent_comments extends WP_Widget {
 ?>
 
 <div id="message" class="message-widget gaimg">
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 
@@ -3102,7 +3132,7 @@ class be_tabs extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_tabs',
-			'description' => __( '最新文章、热评文章、热门文章、最近留言' ),
+			'description' => '最新文章、热评文章、热门文章、最近留言',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_tabs', 'Tab组合小工具', $widget_ops);
@@ -3215,19 +3245,19 @@ class be_tabs extends WP_Widget {
 			));
 		} ?>
 		<div class="new_cat">
-			<ul id="tab-recent-<?php echo $this -> number ?>" class="zm-tab group <?php if($instance['recent_thumbs']) { echo 'thumbs-enabled'; } ?>" style="display:block;">
+			<ul id="tab-recent-<?php echo $this -> number ?>" class="zm-tab group <?php if ($instance['recent_thumbs']) { echo 'thumbs-enabled'; } ?>" style="display:block;">
 				<h4><?php _e( '最新文章', 'begin' ); ?></h4>
 				<?php while ($recent->have_posts()): $recent->the_post(); ?>
 				<li>
-					<?php if($instance['recent_thumbs']) { ?>
+					<?php if ($instance['recent_thumbs']) { ?>
 						<span class="thumbnail">
 							<?php zm_thumbnail(); ?>
 						</span>
 						<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-						<span class="date"><?php the_time('m/d') ?></span>
+						<?php grid_meta(); ?>
 						<?php views_span(); ?>
 					<?php } else { ?>
-						<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+						<?php the_title( sprintf( '<a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 					<?php } ?>
 				</li>
 				<?php endwhile; ?>
@@ -3242,7 +3272,7 @@ class be_tabs extends WP_Widget {
 				'cat'                   => $instance['popular_cat_id'],
 				'ignore_sticky_posts'   => true,
 				'orderby'               => 'comment_count',
-				'order'                 => 'dsc',
+				'order'                 => 'DESC',
 				'date_query' => array(
 					array(
 						'after' => $instance['popular_time'],
@@ -3252,19 +3282,19 @@ class be_tabs extends WP_Widget {
 		?>
 
 		<div class="new_cat">
-			<ul id="tab-popular-<?php echo $this -> number ?>" class="zm-tab group <?php if($instance['popular_thumbs']) { echo 'thumbs-enabled'; } ?>">
+			<ul id="tab-popular-<?php echo $this -> number ?>" class="zm-tab group <?php if ($instance['popular_thumbs']) { echo 'thumbs-enabled'; } ?>">
 				<h4><?php _e( '热评文章', 'begin' ); ?></h4>
 				<?php while ( $popular->have_posts() ): $popular->the_post(); ?>
 				<li>
-					<?php if($instance['popular_thumbs']) { ?>
+					<?php if ($instance['popular_thumbs']) { ?>
 						<span class="thumbnail">
 							<?php zm_thumbnail(); ?>
 						</span>
 						<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-						<span class="date"><?php the_time('m/d') ?></span>
+						<?php grid_meta(); ?>
 						<span class="discuss"><?php comments_number( '', '<i class="be be-speechbubble ri"></i>1 ', '<i class="be be-speechbubble ri"></i>%' ); ?></span>
 					<?php } else { ?>
-						<a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a>
+						<a class="get-icon" href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a>
 					<?php } ?>
 				</li>
 				<?php endwhile; ?>
@@ -3276,7 +3306,7 @@ class be_tabs extends WP_Widget {
 			<ul id="tab-viewe-<?php echo $this -> number ?>" class="zm-tab group">
 				<h4><?php _e( '热门文章', 'begin' ); ?></h4>
 				<?php if (zm_get_option('post_views')) { ?>
-					<?php if($instance['viewe_thumbs']) { ?>
+					<?php if ($instance['viewe_thumbs']) { ?>
 						<?php get_timespan_most_viewed_img('post',$instance["viewe_number"],$instance["viewe_days"], true, true); ?>
 					<?php } else { ?>
 						<?php get_timespan_most_viewed('post',$instance["viewe_number"],$instance["viewe_days"], true, true); ?>
@@ -3302,7 +3332,7 @@ class be_tabs extends WP_Widget {
 
 				<li>
 					<a href="<?php echo get_permalink($comment->comment_post_ID); ?>#anchor-comment-<?php echo $comment->comment_ID; ?>" title="<?php _e( '发表在', 'begin' ); ?>：<?php echo get_the_title($comment->comment_post_ID); ?>" rel="external nofollow">
-						<?php if($instance['comments_avatars']) : ?>
+						<?php if ($instance['comments_avatars']) : ?>
 						<?php if (zm_get_option('cache_avatar')) { ?>
 							<?php echo begin_avatar( $comment->comment_author_email, $avatar_size, '', get_comment_author( $comment->comment_ID ) ); ?>
 						<?php } else { ?>
@@ -3313,7 +3343,24 @@ class be_tabs extends WP_Widget {
 							} ?>
 						<?php } ?>
 						<?php endif; ?>
-						<span class="comment_author"><strong><?php echo get_comment_author( $comment->comment_ID ); ?></strong></span>
+						<?php if ( zm_get_option( 'comment_vip' ) ) { ?>
+							<?php
+								$authoremail = get_comment_author_email( $comment );
+								if ( email_exists( $authoremail ) ) {
+									$commet_user_role = get_user_by( 'email', $authoremail );
+									$comment_user_role = $commet_user_role->roles[0];
+										if ( $comment_user_role !== zm_get_option('roles_vip') ) {
+											echo '<span class="comment_author">' . get_comment_author( $comment->comment_ID ) . '</span>';
+										} else {
+											echo '<span class="comment_author message-widget-vip">' . get_comment_author( $comment->comment_ID ) . '</span>';
+										}
+								} else {
+									echo '<span class="comment_author">' . get_comment_author( $comment->comment_ID ) . '</span>';
+								}
+							?>
+						<?php } else { ?>
+							<span class="comment_author"><?php echo get_comment_author( $comment->comment_ID ); ?></span>
+						<?php } ?>
 						<?php echo convert_smilies($comment->comment_content); ?>
 					</a>
 				</li>
@@ -3458,7 +3505,7 @@ class site_profile extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'site_profile',
-			'description' => __( '网站概况' ),
+			'description' => '网站概况',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('site_profile', '网站概况', $widget_ops);
@@ -3487,10 +3534,10 @@ class site_profile extends WP_Widget {
 ?>
 
 <div class="site-profile">
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
@@ -3564,7 +3611,7 @@ class hot_post_img extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'hot_post_img',
-			'description' => __( '调用点击最多的文章' ),
+			'description' => '调用点击最多的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('hot_post_img', '热门文章', $widget_ops);
@@ -3595,20 +3642,20 @@ class hot_post_img extends WP_Widget {
 		$days = strip_tags($instance['days']) ? absint( $instance['days'] ) : 90;
 ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div id="hot_post_widget" class="new_cat">
 <?php } else { ?>
 <div id="hot_post_widget" class="widget-li-icon">
 <?php } ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
 		<?php if (zm_get_option('post_views')) { ?>
-		<?php if($instance['show_thumbs']) { ?>
+		<?php if ($instance['show_thumbs']) { ?>
 			<?php get_timespan_most_viewed_img('post',$number,$days, true, true); ?>
 		<?php } else { ?>
 		    <?php get_timespan_most_viewed('post',$number,$days, true, true); ?>
@@ -3691,7 +3738,7 @@ class be_like_most_img extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_like_most_img',
-			'description' => __( '调用点赞最多的文章' ),
+			'description' => '调用点赞最多的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_like_most_img', '大家喜欢', $widget_ops);
@@ -3722,19 +3769,19 @@ class be_like_most_img extends WP_Widget {
 		$days = strip_tags($instance['days']) ? absint( $instance['days'] ) : 90;
 ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div id="like" class="new_cat">
 <?php } else { ?>
 <div id="like" class="like_most">
 <?php } ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
-		<?php if($instance['show_thumbs']) { ?>
+		<?php if ($instance['show_thumbs']) { ?>
 			<?php get_like_most_img('post',$number,$days, true, true); ?>
 		<?php } else { ?>
 			<?php get_like_most('post',$number,$days, true, true); ?>
@@ -3816,8 +3863,11 @@ if ( !class_exists('ajax_widget') ) {
 			// ajax functions
 			add_action('wp_ajax_ajax_widget_content', array(&$this, 'ajax_ajax_widget_content'));
 			add_action('wp_ajax_nopriv_ajax_widget_content', array(&$this, 'ajax_ajax_widget_content'));
-			$widget_ops = array('classname' => 'widget_ajax', 'description' => __('最新文章、热门文章、推荐文章、热门文章等', 'begin-tab'));
-			parent::__construct('ajax_widget', __('Ajax组合小工具', 'begin-tab'), $widget_ops);
+			$widget_ops = array(
+				'classname' => 'widget_ajax',
+				'description' => '最新文章、热门文章、推荐文章、热门文章等'
+			);
+			parent::__construct('ajax_widget', 'Ajax组合小工具', $widget_ops);
 		}
 
 		function form( $instance ) {
@@ -3840,125 +3890,125 @@ if ( !class_exists('ajax_widget') ) {
 
 			<div class="ajax_options_form">
 
-		        <h4><?php _e('选择', 'begin-tab'); ?></h4>
+		        <h4>选择</h4>
 
 				<div class="ajax_select_tabs">
 					<label class="alignleft" style="display: block; width: 50%; margin-bottom: 5px;" for="<?php echo $this->get_field_id("tabs"); ?>_recent">
 						<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("tabs"); ?>_recent" name="<?php echo $this->get_field_name("tabs"); ?>[recent]" value="1" <?php if (isset($tabs['recent'])) { checked( 1, $tabs['recent'], true ); } ?> />		
-						<?php _e( '最新文章', 'begin-tab'); ?>
+						最新文章
 					</label>
 					<label class="alignleft" style="display: block; width: 50%; margin-bottom: 5px" for="<?php echo $this->get_field_id("tabs"); ?>_popular">
 						<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("tabs"); ?>_popular" name="<?php echo $this->get_field_name("tabs"); ?>[popular]" value="1" <?php if (isset($tabs['popular'])) { checked( 1, $tabs['popular'], true ); } ?> />
-						<?php _e( '大家喜欢', 'begin-tab'); ?>
+						大家喜欢
 					</label>
 					<label class="alignleft" style="display: block; width: 50%; margin-bottom: 5px;" for="<?php echo $this->get_field_id("tabs"); ?>_hot">
 						<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("tabs"); ?>_hot" name="<?php echo $this->get_field_name("tabs"); ?>[hot]" value="1" <?php if (isset($tabs['hot'])) { checked( 1, $tabs['hot'], true ); } ?> />
-						<?php _e( '热门文章', 'begin-tab'); ?>
+						热门文章
 					</label>
 					<label class="alignleft" style="display: block; width: 50%; margin-bottom: 5px;" for="<?php echo $this->get_field_id("tabs"); ?>_review">
 						<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("tabs"); ?>_review" name="<?php echo $this->get_field_name("tabs"); ?>[review]" value="1" <?php if (isset($tabs['review'])) { checked( 1, $tabs['review'], true ); } ?> />
-						<?php _e( '热评文章', 'begin-tab'); ?>
+						热评文章
 					</label>
 					<label class="alignleft" style="display: block; width: 50%; margin-bottom: 5px;" for="<?php echo $this->get_field_id("tabs"); ?>_comments">
 						<input type="checkbox" class="checkbox ajax_enable_comments" id="<?php echo $this->get_field_id("tabs"); ?>_comments" name="<?php echo $this->get_field_name("tabs"); ?>[comments]" value="1" <?php if (isset($tabs['comments'])) { checked( 1, $tabs['comments'], true ); } ?> />
-						<?php _e( '最近留言', 'begin-tab'); ?>
+						最近留言
 					</label>
 					<label class="alignleft" style="display: block; width: 50%; margin-bottom: 5px;" for="<?php echo $this->get_field_id("tabs"); ?>_recommend">
 						<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("tabs"); ?>_recommend" name="<?php echo $this->get_field_name("tabs"); ?>[recommend]" value="1" <?php if (isset($tabs['recommend'])) { checked( 1, $tabs['recommend'], true ); } ?> />
-						<?php _e( '推荐阅读', 'begin-tab'); ?>
+						推荐阅读
 					</label>
 				</div>
 				<div class="clear"></div>
 
-				<h4 class="ajax_tab_order_header"><?php _e('顺序', 'begin-tab'); ?></h4>
+				<h4 class="ajax_tab_order_header">顺序</h4>
 
 				<div class="ajax_tab_order">
 					<label class="alignleft" for="<?php echo $this->get_field_id('tab_order'); ?>_recent" style="width: 50%;">
 						<input id="<?php echo $this->get_field_id('tab_order'); ?>_recent" name="<?php echo $this->get_field_name('tab_order'); ?>[recent]" type="number" min="1" step="1" value="<?php echo $tab_order['recent']; ?>" style="width: 48px;" />
-						<?php _e('最新文章', 'begin-tab'); ?>
+						最新文章
 					</label>
 					<label class="alignleft" for="<?php echo $this->get_field_id('tab_order'); ?>_popular" style="width: 50%;">
 						<input id="<?php echo $this->get_field_id('tab_order'); ?>_popular" name="<?php echo $this->get_field_name('tab_order'); ?>[popular]" type="number" min="1" step="1" value="<?php echo $tab_order['popular']; ?>" style="width: 48px;" />
-						<?php _e('大家喜欢', 'begin-tab'); ?>
+						大家喜欢
 					</label>
 					<label class="alignleft" for="<?php echo $this->get_field_id('tab_order'); ?>_hot" style="width: 50%;">
 						<input id="<?php echo $this->get_field_id('tab_order'); ?>_hot" name="<?php echo $this->get_field_name('tab_order'); ?>[hot]" type="number" min="1" step="1" value="<?php echo $tab_order['hot']; ?>" style="width: 48px;" />
-						<?php _e('热门文章', 'begin-tab'); ?>
+						热门文章
 					</label>
 					<label class="alignleft" for="<?php echo $this->get_field_id('tab_order'); ?>_review" style="width: 50%;">
 						<input id="<?php echo $this->get_field_id('tab_order'); ?>_review" name="<?php echo $this->get_field_name('tab_order'); ?>[review]" type="number" min="1" step="1" value="<?php echo $tab_order['review']; ?>" style="width: 48px;" />
-						<?php _e('热评文章', 'begin-tab'); ?>
+						热评文章
 					</label>
 					<label class="alignleft" for="<?php echo $this->get_field_id('tab_order'); ?>_comments" style="width: 50%;">
 						<input id="<?php echo $this->get_field_id('tab_order'); ?>_comments" name="<?php echo $this->get_field_name('tab_order'); ?>[comments]" type="number" min="1" step="1" value="<?php echo $tab_order['comments']; ?>" style="width: 48px;" />
-						<?php _e('最近留言', 'begin-tab'); ?>
+						最近留言
 					</label>
 					<label class="alignleft" for="<?php echo $this->get_field_id('tab_order'); ?>_recommend" style="width: 50%;">
 						<input id="<?php echo $this->get_field_id('tab_order'); ?>_recommend" name="<?php echo $this->get_field_name('tab_order'); ?>[recommend]" type="number" min="1" step="1" value="<?php echo $tab_order['recommend']; ?>" style="width: 48px;" />
-						<?php _e('推荐阅读', 'begin-tab'); ?>
+						推荐阅读
 					</label>
 				</div>
 				<div class="clear"></div>
 
-				<h4 class="ajax_advanced_options_header"><?php _e('选项', 'begin-tab'); ?></h4>
+				<h4 class="ajax_advanced_options_header">选项</h4>
 
 				<div class="ajax_advanced_options">
 			        <p>
 						<label for="<?php echo $this->get_field_id("allow_pagination"); ?>">
 							<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id("allow_pagination"); ?>" name="<?php echo $this->get_field_name("allow_pagination"); ?>" value="1" <?php if (isset($allow_pagination)) { checked( 1, $allow_pagination, true ); } ?> />
-							<?php _e( '显示翻页', 'begin-tab'); ?>
+							显示翻页
 						</label>
 					</p>
 
 						<p>
 							<label for="<?php echo $this->get_field_id("show_thumb"); ?>">
 								<input type="checkbox" class="checkbox ajax_show_thumbnails" id="<?php echo $this->get_field_id("show_thumb"); ?>" name="<?php echo $this->get_field_name("show_thumb"); ?>" value="1" <?php if (isset($show_thumb)) { checked( 1, $show_thumb, true ); } ?> />
-								<?php _e( '显示缩略图', 'begin-tab'); ?>
+								显示缩略图
 							</label>
 						</p>
 
 					<div class="ajax_post_options">
 
 						<p>
-							<label for="<?php echo $this->get_field_id('post_num'); ?>"><?php _e('显示数量：', 'begin-tab'); ?>
+							<label for="<?php echo $this->get_field_id('post_num'); ?>">显示数量
 								<input class="number-text" id="<?php echo $this->get_field_id('post_num'); ?>" name="<?php echo $this->get_field_name('post_num'); ?>" type="number" min="1" step="1" value="<?php echo $post_num; ?>" />
 							</label>
 						</p>
 
 					    <p>
 							<label for="<?php echo $this->get_field_id('comment_num'); ?>">
-								<?php _e('评论显示数量：', 'begin-tab'); ?>
+								评论显示数量
 								<input class="number-text" type="number" min="1" step="1" id="<?php echo $this->get_field_id('comment_num'); ?>" name="<?php echo $this->get_field_name('comment_num'); ?>" value="<?php echo $comment_num; ?>" />
 							</label>
 						</p>
 
 						<p>
-							<label for="<?php echo $this->get_field_id('like_days'); ?>"><?php _e('大家喜欢时间限定（天）：', 'begin-tab'); ?>
+							<label for="<?php echo $this->get_field_id('like_days'); ?>">大家喜欢时间限定（天）：
 								<input class="number-text-d" id="<?php echo $this->get_field_id('like_days'); ?>" name="<?php echo $this->get_field_name('like_days'); ?>" type="number" min="1" step="1" value="<?php echo $like_days; ?>" />
 							</label>
 						</p>
 
 						<p>
-							<label for="<?php echo $this->get_field_id('viewe_days'); ?>"><?php _e('热门文章时间限定（天）：', 'begin-tab'); ?>
+							<label for="<?php echo $this->get_field_id('viewe_days'); ?>">热门文章时间限定（天）：
 								<input class="number-text-d" id="<?php echo $this->get_field_id('viewe_days'); ?>" name="<?php echo $this->get_field_name('viewe_days'); ?>" type="number" min="1" step="1" value="<?php echo $viewe_days; ?>" />
 							</label>
 						</p>
 					
 						<p>
-							<label for="<?php echo $this->get_field_id('review_days'); ?>"><?php _e('热评文章时间限定（月）：', 'begin-tab'); ?>
+							<label for="<?php echo $this->get_field_id('review_days'); ?>">热评文章时间限定（月）：
 								<input class="number-text-d" id="<?php echo $this->get_field_id('review_days'); ?>" name="<?php echo $this->get_field_name('review_days'); ?>" type="number" min="1" step="1" value="<?php echo $review_days; ?>" />
 							</label>
 						</p>
 
 						<p>
-							<label for="<?php echo $this->get_field_id('authornot'); ?>"><?php _e('评论排除的用户ID：', 'begin-tab'); ?>
+							<label for="<?php echo $this->get_field_id('authornot'); ?>">评论排除的用户ID：
 								<br />
 								<input id="<?php echo $this->get_field_id('authornot'); ?>" name="<?php echo $this->get_field_name('authornot'); ?>" type="text" value="<?php echo $authornot; ?>" />
 							</label>
 						</p>
 
 						<p>
-							<label for="<?php echo $this->get_field_id('pcat'); ?>"><?php _e('最新文章排除的分类ID，如：1,3：', 'begin-tab'); ?>
+							<label for="<?php echo $this->get_field_id('pcat'); ?>">最新文章排除的分类ID，如：1,3：
 								<br />
 								<input id="<?php echo $this->get_field_id('pcat'); ?>" name="<?php echo $this->get_field_name('pcat'); ?>" type="text" value="<?php echo $pcat; ?>" />
 							</label>
@@ -3994,7 +4044,7 @@ if ( !class_exists('ajax_widget') ) {
 			$tabs_count = count($tabs);
 			if ($tabs_count <= 1) {
 				$tabs_count = 1;
-			} elseif($tabs_count > 5) {
+			} elseif ($tabs_count > 5) {
 				$tabs_count = 6;
 			}
 
@@ -4091,7 +4141,7 @@ if ( !class_exists('ajax_widget') ) {
 				if ( isset( $settings[ $number ] ) ) {
 					$args = $settings[ $number ];
 				} else {
-					die('<ul><li>'. __('请到外观→小工具页面，添加此小工具！', 'begin').' </li></ul>');
+					die('<ul><li>请到外观→小工具页面，添加此小工具！</li></ul>');
 				}
 			}
 
@@ -4139,10 +4189,10 @@ if ( !class_exists('ajax_widget') ) {
 									</span>
 
 									<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-									<span class="date"><?php the_time('m/d') ?></span>
+									<?php grid_meta(); ?>
 									<?php views_span(); ?>
 								<?php } else { ?>
-									<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+									<?php the_title( sprintf( '<a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 								<?php } ?>
 								<div class="clear"></div>
 							</li>
@@ -4178,7 +4228,7 @@ if ( !class_exists('ajax_widget') ) {
 							'order' => 'DESC'
 							));
 
-							$last_page = $recent->max_num_pages; while ($recent->have_posts()) : $recent->the_post();
+							$last_page = $recent->max_num_pages; if ( $recent->have_posts() ) : while ($recent->have_posts()) : $recent->the_post();
 						?>
 						<li>
 							<?php if ( $show_thumb == 1 ) { ?>
@@ -4187,14 +4237,18 @@ if ( !class_exists('ajax_widget') ) {
 								</span>
 
 								<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-								<span class="date"><?php the_time('m/d') ?></span>
+								<?php grid_meta(); ?>
 								<span class="be-like"><i class="be be-thumbs-up-o ri"></i><?php zm_get_current_count(); ?></span>
 							<?php } else { ?>
-								<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+								<?php the_title( sprintf( '<a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 							<?php } ?>
 							<div class="clear"></div>
 						</li>
-						<?php endwhile;wp_reset_query(); ?>
+						<?php endwhile;?>
+						<?php else : ?>
+							<li class="be-none-w"><?php _e( '暂无被点赞的文章', 'begin' ); ?></li>
+						<?php endif; ?>
+						<?php wp_reset_query(); ?>
 					</ul>
 
 		            <div class="clear"></div>
@@ -4212,7 +4266,7 @@ if ( !class_exists('ajax_widget') ) {
 						<h4><?php _e( '热门文章', 'begin' ); ?></h4>
 						<?php if (zm_get_option('post_views')) { ?>
 						<?php 
-							$date_query=array(
+							$date_query = array(
 								array(
 									'column' => 'post_date',
 									'before' => date('Y-m-d H:i',time()),
@@ -4224,13 +4278,13 @@ if ( !class_exists('ajax_widget') ) {
 							'meta_key' => 'views',
 							'orderby' => 'meta_value_num',
 							'post_status' => 'publish',
-							'posts_per_page'=>$post_num,
+							'posts_per_page'=> $post_num,
 							'date_query' => $date_query,
 							'paged' => $page,
 							'order' => 'DESC'
 						));
 
-						$last_page = $recent->max_num_pages; while ($recent->have_posts()) : $recent->the_post();
+						$last_page = $recent->max_num_pages; if ( $recent->have_posts() ) : while ($recent->have_posts()) : $recent->the_post();
 						?>
 
 						<li>
@@ -4240,15 +4294,19 @@ if ( !class_exists('ajax_widget') ) {
 								</span>
 
 							<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-							<span class="date"><?php the_time('m/d') ?></span>
+							<?php grid_meta(); ?>
 							<?php views_span(); ?>
 							<?php } else { ?>
-								<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+								<?php the_title( sprintf( '<a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 							<?php } ?>
 							<div class="clear"></div>
 						</li>
 
-						<?php endwhile; wp_reset_query(); ?>
+						<?php endwhile;?>
+						<?php else : ?>
+							<li class="be-none-w"><?php _e( '暂无', 'begin' ); ?></li>
+						<?php endif; ?>
+						<?php wp_reset_query(); ?>
 						<?php } else { ?>
 							<li>需要启用文章浏览统计</a></li>
 						<?php } ?>
@@ -4276,7 +4334,7 @@ if ( !class_exists('ajax_widget') ) {
 							'order' => 'DESC'
 							));
 
-							$last_page = $recent->max_num_pages; while ($recent->have_posts()) : $recent->the_post();
+							$last_page = $recent->max_num_pages; if ( $recent->have_posts() ) : while ($recent->have_posts()) : $recent->the_post();
 						?>
 							<li>
 								<?php if ( $show_thumb == 1 ) { ?>
@@ -4285,14 +4343,17 @@ if ( !class_exists('ajax_widget') ) {
 									</span>
 
 								<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-								<span class="date"><?php the_time('m/d') ?></span>
+								<?php grid_meta(); ?>
 								<?php views_span(); ?>
 								<?php } else { ?>
-									<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+									<?php the_title( sprintf( '<a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 								<?php } ?>
 								<div class="clear"></div>
 							</li>
 						<?php endwhile;?>
+						<?php else : ?>
+							<li class="be-none-w">编辑文章，勾选“本站推荐小工具中”</li>
+						<?php endif; ?>
 						<?php wp_reset_query(); ?>
 					</ul>
 
@@ -4331,22 +4392,30 @@ if ( !class_exists('ajax_widget') ) {
 
 							<li>
 								<a href="<?php echo get_permalink($comment->comment_post_ID); ?>#anchor-comment-<?php echo $comment->comment_ID; ?>" title="<?php _e( '发表在', 'begin' ); ?>：<?php echo get_the_title($comment->comment_post_ID); ?>" rel="external nofollow">
-									<?php if (zm_get_option('cache_avatar')) { ?>
-										<?php echo begin_avatar( $comment->comment_author_email, $avatar_size, '', get_comment_author( $comment->comment_ID ) ); ?>
+									<?php if ( zm_get_option( 'comment_vip' ) ) { ?>
+										<?php
+											$authoremail = get_comment_author_email( $comment );
+											if ( email_exists( $authoremail ) ) {
+												$commet_user_role = get_user_by( 'email', $authoremail );
+												$comment_user_role = $commet_user_role->roles[0];
+													if ( $comment_user_role !== zm_get_option('roles_vip') ) {
+														echo '<span class="comment_author">' . get_comment_author( $comment->comment_ID ) . '</span>';
+													} else {
+														echo '<span class="comment_author message-widget-vip">' . get_comment_author( $comment->comment_ID ) . '</span>';
+													}
+											} else {
+												echo '<span class="comment_author">' . get_comment_author( $comment->comment_ID ) . '</span>';
+											}
+										?>
 									<?php } else { ?>
-										<?php if ( !zm_get_option( 'avatar_load' ) ) {
-											echo get_avatar( $comment->comment_author_email, $avatar_size, '', get_comment_author( $comment->comment_ID ) );
-										} else {
-											echo '<img class="avatar photo" src="data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" alt="'. get_comment_author( $comment->comment_ID ) .'"  width="30" height="30" data-original="' . preg_replace(array('/^.+(src=)(\"|\')/i', '/(\"|\')\sclass=(\"|\').+$/i'), array('', ''), get_avatar( $comment->comment_author_email, $avatar_size, '', get_comment_author( $comment->comment_ID ) )) . '" />';
-										} ?>
+										<span class="comment_author"><?php echo get_comment_author( $comment->comment_ID ); ?></span>
 									<?php } ?>
-									<span class="comment_author"><strong><?php echo get_comment_author( $comment->comment_ID ); ?></strong></span>
 									<?php echo convert_smilies($comment->comment_content); ?>
 								</a>
 							</li>
 
 							<?php endforeach; else : ?>
-								<li><?php _e('暂无留言', 'begin'); ?></li>
+								<li class="be-none-w"><?php _e( '暂无留言', 'begin' ); ?></li>
 								<?php $no_comments = true;
 							endif; ?>
 						</ul>
@@ -4364,13 +4433,13 @@ if ( !class_exists('ajax_widget') ) {
 
 					<?php
 						$review = new WP_Query( array(
-							'post_type' => array( 'post' ),
-							'showposts' => $post_num,
+							'post_type'           => array( 'post' ),
+							'showposts'           => $post_num,
 							'ignore_sticky_posts' => true,
-							'orderby' => 'comment_count',
-							'post_status' => 'publish',
-							'order' => 'dsc',
-							'paged' => $page,
+							'post_status'         => 'publish',
+							'orderby'             => 'comment_count',
+							'order'               => 'DESC',
+							'paged'               => $page,
 							'date_query' => array(
 								array(
 									'after' => ''.$review_days. 'month ago',
@@ -4389,10 +4458,10 @@ if ( !class_exists('ajax_widget') ) {
 								</span>
 
 							<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-							<span class="date"><?php the_time('m/d') ?></span>
+							<?php grid_meta(); ?>
 							<span class="discuss"><?php comments_number( '', '<i class="be be-speechbubble ri"></i>1 ', '<i class="be be-speechbubble ri"></i>%' ); ?></span>
 						<?php } else { ?>
-							<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+							<?php the_title( sprintf( '<a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 						<?php } ?>
 						<div class="clear"></div>
 					</li>
@@ -4438,7 +4507,7 @@ class be_mday_post extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_mday_post',
-			'description' => __( '今日发表的文章' ),
+			'description' => '今日发表的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_mday_post', '今日更新', $widget_ops);
@@ -4467,15 +4536,15 @@ class be_mday_post extends WP_Widget {
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 5;
 ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div class="new_cat">
 <?php } else { ?>
 <div class="mday_post">
 <?php } ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
@@ -4496,13 +4565,13 @@ class be_mday_post extends WP_Widget {
 		?>
 		<?php if ( $query->have_posts() ) : while ( $query->have_posts() ) : $query->the_post();?>
 		<li>
-			<?php if($instance['show_thumbs']) { ?>
+			<?php if ($instance['show_thumbs']) { ?>
 				<span class="thumbnail"><?php zm_thumbnail(); ?></span>
 				<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-				<span class="date"><?php the_time('m/d') ?></span>
+				<?php grid_meta(); ?>
 				<span class="widget-cat"><i class="be be-sort"></i><?php zm_category(); ?></span>
 			<?php } else { ?>
-				<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+				<?php the_title( sprintf( '<a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 			<?php } ?>
 			<div class="clear"></div>
 		</li>
@@ -4511,8 +4580,8 @@ class be_mday_post extends WP_Widget {
 		<?php wp_reset_query(); ?>
 		<?php else : ?>
 		<li>
-			<span class="date"><?php echo $showtime=date("m/d");?></span>
-			<span class="new-title-no">暂无更新</span>
+			<span class="date"><time datetime="<?php echo get_the_date('Y-m-d'); ?> <?php echo get_the_time('H:i:s'); ?>"><?php echo $showtime=date("m/d");?></time></span>
+			<span class="new-title-no"><?php _e( '暂无更新', 'begin' ); ?></span>
 		</li>
 		<?php endif;?>
 	</ul>
@@ -4582,7 +4651,7 @@ class be_week_post extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_week_post',
-			'description' => __( '本周更新的文章' ),
+			'description' => '本周更新的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_week_post', '本周更新', $widget_ops);
@@ -4611,7 +4680,7 @@ class be_week_post extends WP_Widget {
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 5;
 ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div class="new_cat">
 <?php } else { ?>
 <div class="mday_post">
@@ -4632,13 +4701,13 @@ class be_week_post extends WP_Widget {
 		?>
 		<?php if ( $query->have_posts() ) : while ( $query->have_posts() ) : $query->the_post();?>
 			<li>
-				<?php if($instance['show_thumbs']) { ?>
+				<?php if ($instance['show_thumbs']) { ?>
 					<span class="thumbnail"><?php zm_thumbnail(); ?></span>
 					<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
 					<span class="s-cat"><?php zm_category(); ?></span>
-					<span class="date"><?php the_time('m/d') ?></span>
+					<?php grid_meta(); ?>
 				<?php } else { ?>
-					<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+					<?php the_title( sprintf( '<a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 				<?php } ?>
 				<div class="clear"></div>
 			</li>
@@ -4646,7 +4715,7 @@ class be_week_post extends WP_Widget {
 		<?php wp_reset_query(); ?>
 		<?php else : ?>
 		<li>
-			<span class="new-title-no">暂无更新</span>
+			<span class="new-title-no"><?php _e( '暂无更新', 'begin' ); ?></span>
 		</li>
 		<?php endif;?>
 	</ul>
@@ -4701,7 +4770,7 @@ class be_specified_post extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_specified_post',
-			'description' => __( '调用限定时间内的文章' ),
+			'description' => '调用限定时间内的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_specified_post', '限定时间文章', $widget_ops);
@@ -4736,10 +4805,10 @@ class be_specified_post extends WP_Widget {
 ?>
 
 <div class="new_cat">
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
@@ -4771,7 +4840,7 @@ class be_specified_post extends WP_Widget {
 			<span class="thumbnail"><?php zm_thumbnail(); ?></span>
 			<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
 			<span class="discuss"><?php comments_number( '', '<i class="be be-speechbubble ri"></i>1 ', '<i class="be be-speechbubble ri"></i>%' ); ?></span>
-			<span class="date"><?php the_time('m/d') ?></span>
+			<?php grid_meta(); ?>
 			<div class="clear"></div>
 		</li>
 
@@ -4779,7 +4848,7 @@ class be_specified_post extends WP_Widget {
 		<?php wp_reset_query(); ?>
 		<?php else : ?>
 		<li>
-			<span class="new-title-no">暂无文章</span>
+			<span class="new-title-no"><?php _e( '暂无文章', 'begin' ); ?></span>
 		</li>
 		<?php endif;?>
 	</ul>
@@ -4836,7 +4905,7 @@ function form( $instance ) {
 			<label for="<?php echo $this->get_field_id('show_svg'); ?>">彩色图标代码：</label>
 			<input class="widefat" id="<?php echo $this->get_field_id('show_svg'); ?>" name="<?php echo $this->get_field_name('show_svg'); ?>" type="text" value="<?php echo $instance['show_svg']; ?>" />
 		</p>
-		<h4 class="from_m_options_header"><?php _e('输入起止日期', 'begin-tab'); ?></h4>
+		<h4 class="from_m_options_header">输入起止日期</h4>
 
 		<p>
 			<label for="<?php echo $this->get_field_id('from_y'); ?>" style="width: 33%;">从 
@@ -4875,7 +4944,7 @@ class be_show_widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_show_widget',
-			'description' => __( '调用产品文章' ),
+			'description' => '调用产品文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_show_widget', '最新产品', $widget_ops);
@@ -4909,18 +4978,18 @@ class be_show_widget extends WP_Widget {
 		}
 		echo $before_widget;
 		if ($newWindow) $newWindow = "target='_blank'";
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 			}
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title;
 		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 4;
 ?>
 
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 	<?php } ?>
 <div class="picture img_widget">
@@ -4930,7 +4999,7 @@ class be_show_widget extends WP_Widget {
 			'showposts' => $number, 
 			);
 
-			if($instance['cat']) {
+			if ($instance['cat']) {
 				$args = array(
 					'showposts' => $number, 
 					'tax_query' => array(
@@ -5030,7 +5099,7 @@ class child_cat extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'child_cat',
-			'description' => __( '用于显示当前文章或者分类，同级分类' ),
+			'description' => '用于显示当前文章或者分类，同级分类',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('child_cat', '同级分类', $widget_ops);
@@ -5059,7 +5128,7 @@ class child_cat extends WP_Widget {
 ?>
 
 <?php if ( get_post_type() == 'post' && get_category_children( get_category_id( the_category_ID( false ) ) ) != "" ) { ?>
-	<div class="widget_categories related-cat">
+	<div class="be_widget_cat related-cat">
 		<?php
 			echo '<ul class="cat_list">';
 			echo wp_list_categories( "child_of=".get_category_id( the_category_ID( false ) ). "&depth=0&hide_empty=0&use_desc_for_title=&hierarchical=0&title_li=&orderby=id&order=ASC" );
@@ -5083,7 +5152,7 @@ class child_cat extends WP_Widget {
 			$title = $instance[ 'title' ];
 		}
 		else {
-			$title = '父子分类';
+			$title = '同级分类';
 		}
 		global $wpdb;
 		// $instance = wp_parse_args((array) $instance, array('author_url' => ''));
@@ -5104,7 +5173,7 @@ class same_post extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'same_post',
-			'description' => __( '调用相同分类的文章' ),
+			'description' => '调用相同分类的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('same_post', '同分类文章', $widget_ops);
@@ -5137,7 +5206,7 @@ class same_post extends WP_Widget {
 ?>
 
 <?php if ( is_single() ) { ?>
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div class="new_cat">
 <?php } else { ?>
 <div class="post_cat">
@@ -5160,17 +5229,17 @@ class same_post extends WP_Widget {
 			) );
 		?>
 		<?php while ($q->have_posts()) : $q->the_post(); ?>
-			<?php if($instance['show_thumbs']) { ?>
+			<?php if ($instance['show_thumbs']) { ?>
 				<li class="cat-title">
 				<span class="thumbnail">
 					<?php zm_thumbnail(); ?>
 				</span>
 				<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
-				<span class="date"><?php the_time('m/d') ?></span>
+				<?php grid_meta(); ?>
 				<?php views_span(); ?>
 			</li>
 			<?php } else { ?>
-				<li class="srm"><?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></li>
+				<li class="srm the-icon"><?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></li>
 			<?php } ?>
 
 		<?php endwhile; ?>
@@ -5232,7 +5301,7 @@ class slider_post extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'slider_post',
-			'description' => __( '以幻灯形式调用指定的文章' ),
+			'description' => '以幻灯形式调用指定的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('slider_post', '幻灯', $widget_ops);
@@ -5305,7 +5374,7 @@ class be_tag_post extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_tag_post',
-			'description' => __( '调用相同标签的文章' ),
+			'description' => '调用相同标签的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_tag_post', '同标签文章', $widget_ops);
@@ -5337,35 +5406,35 @@ class be_tag_post extends WP_Widget {
 		$tag_id = strip_tags($instance['tag_id']);
 ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div class="new_cat">
 <?php } else { ?>
 <div class="tag_post">
 <?php } ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 
 	<ul>
-		<?php if($instance['tag_id']) { ?>
+		<?php if ($instance['tag_id']) { ?>
 			<?php $recent = new WP_Query( array( 'posts_per_page' => $number, 'tag__in' => explode(',', $tag_id)) ); ?>
 			<?php while($recent->have_posts()) : $recent->the_post(); ?>
 			<li>
-				<?php if($instance['show_thumbs']) { ?>
+				<?php if ($instance['show_thumbs']) { ?>
 					<span class="thumbnail">
 						<?php zm_thumbnail(); ?>
 					</span>
 				<?php } ?>
-				<?php if($instance['show_thumbs']) { ?>
+				<?php if ($instance['show_thumbs']) { ?>
 					<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
 				<?php } else { ?>
-					<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+					<?php the_title( sprintf( '<a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 				<?php } ?>
-				<?php if($instance['show_thumbs']) { ?>
-					<span class="date"><?php the_time('m/d') ?></span>
+				<?php if ($instance['show_thumbs']) { ?>
+					<?php grid_meta(); ?>
 					<?php views_span(); ?>
 				<?php } ?>
 			</li>
@@ -5446,7 +5515,7 @@ class ids_post extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'ids_post',
-			'description' => __( '调用指定ID的文章' ),
+			'description' => '调用指定ID的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('ids_post', '指定文章', $widget_ops);
@@ -5476,15 +5545,15 @@ class ids_post extends WP_Widget {
 ?>
 
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div class="new_cat">
 <?php } else { ?>
 <div class="ids_post">
 <?php } ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
@@ -5497,18 +5566,18 @@ class ids_post extends WP_Widget {
 		 ?>
 		<?php while (have_posts()) : the_post(); ?>
 		<li>
-			<?php if($instance['show_thumbs']) { ?>
+			<?php if ($instance['show_thumbs']) { ?>
 				<span class="thumbnail">
 					<?php zm_thumbnail(); ?>
 				</span>
 			<?php } ?>
-			<?php if($instance['show_thumbs']) { ?>
+			<?php if ($instance['show_thumbs']) { ?>
 				<span class="new-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></span>
 			<?php } else { ?>
-				<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
+				<?php the_title( sprintf( '<a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 			<?php } ?>
-			<?php if($instance['show_thumbs']) { ?>
-				<span class="date"><?php the_time('m/d') ?></span>
+			<?php if ($instance['show_thumbs']) { ?>
+				<?php grid_meta(); ?>
 				<span class="widget-cat"><i class="be be-sort"></i><?php zm_category(); ?></span>
 			<?php } ?>
 		</li>
@@ -5579,10 +5648,10 @@ function ids_post_init() {
 class tree_menu extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
-			'description' => __( '添加折叠树型菜单。' ),
+			'description' => '添加折叠树型菜单。',
 			'customize_selective_refresh' => true,
 		);
-		parent::__construct( 'tree_menu', __('折叠菜单'), $widget_ops );
+		parent::__construct( 'tree_menu', '折叠菜单', $widget_ops );
 	}
 	public function widget( $args, $instance ) {
 		$title_w = title_i_w();
@@ -5652,11 +5721,6 @@ class tree_menu extends WP_Widget {
 					<?php endforeach; ?>
 				</select>
 			</p>
-			<?php if ( $wp_customize instanceof WP_Customize_Manager ) : ?>
-				<p class="edit-selected-nav-menu" style="<?php if ( ! $nav_menu ) { echo 'display: none;'; } ?>">
-					<button type="button" class="button"><?php _e( 'Edit Menu' ) ?></button>
-				</p>
-			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -5672,7 +5736,7 @@ class t_img_cat extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 't_img_cat',
-			'description' => __( '显示全部分类或某个分类的文章' ),
+			'description' => '显示全部分类或某个分类的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('t_img_cat', '分类模块', $widget_ops);
@@ -5705,8 +5769,8 @@ class t_img_cat extends WP_Widget {
 		}
 		echo $before_widget;
 		if ($newWindow) $newWindow = "target='_blank'";
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 			}
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title; 
@@ -5762,7 +5826,7 @@ class t_img_cat extends WP_Widget {
 		} ?>
 		<?php while ($q->have_posts()) : $q->the_post(); ?>
 		<?php if ($instance['show_time']) { ?><span class="w-list-date"><?php the_time('m/d'); ?></span><?php } ?>
-		<li class="srm"><?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></li>
+		<li class="srm the-icon"><?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></li>
 		<?php endwhile; ?>
 		<?php wp_reset_query(); ?>
 	</ul>
@@ -5844,7 +5908,7 @@ class widget_cover extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'widget_cover',
-			'description' => __( '以图片封面形式显示分类' ),
+			'description' => '以图片封面形式显示分类',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('widget_cover', '分类封面', $widget_ops);
@@ -5872,7 +5936,7 @@ class widget_cover extends WP_Widget {
 ?>
 
 <div class="widget-cat-cover">
-	<?php if( $instance['show_tags'] ) { ?>
+	<?php if ( $instance['show_tags'] ) { ?>
 		<?php 
 			$args=array( 'include' => $instance['cat_id'] );
 			$tags = get_tags($args);
@@ -5885,7 +5949,7 @@ class widget_cover extends WP_Widget {
 				<a href="<?php echo get_tag_link($tagid); ?>" rel="bookmark">
 				<div class="cat-rec-content ms bk" <?php aos_a(); ?>>
 					<div class="cat-rec lazy<?php $term_id = get_query_var( 'cat' );if ( get_option( 'zm_taxonomy_svg'.$term_id ) ) { ?> cat-rec-ico-svg<?php } else { ?> cat-rec-ico-img<?php } ?>">
-						<?php if( $instance['show_cat_ico'] ) { ?>
+						<?php if ( $instance['show_cat_ico'] ) { ?>
 							<?php if ( zm_get_option( 'cat_icon' ) ) { ?>
 								<?php $term_id = get_query_var( 'cat' );if ( !get_option('zm_taxonomy_svg'.$tagid ) ) { ?>
 									<?php $term_id = get_query_var( 'cat' );if ( get_option('zm_taxonomy_icon'.$tagid ) ) { ?><i class="cat-rec-icon fd <?php echo zm_taxonomy_icon_code(); ?>"></i><?php } ?>
@@ -5923,7 +5987,7 @@ class widget_cover extends WP_Widget {
 				<a href="<?php echo get_category_link( $cat->cat_ID ); ?>" rel="bookmark">
 				<div class="cat-rec-content ms bk" <?php aos_a(); ?>>
 					<div class="cat-rec lazy<?php $term_id = get_query_var( 'cat' );if ( get_option( 'zm_taxonomy_svg'.$term_id ) ) { ?> cat-rec-ico-svg<?php } else { ?> cat-rec-ico-img<?php } ?>">
-						<?php if( $instance['show_cat_ico'] ) { ?>
+						<?php if ( $instance['show_cat_ico'] ) { ?>
 							<?php if ( zm_get_option( 'cat_icon' ) ) { ?>
 								<?php $term_id = get_query_var( 'cat' );if ( !get_option('zm_taxonomy_svg'.$term_id ) ) { ?>
 									<?php $term_id = get_query_var( 'cat' );if ( get_option('zm_taxonomy_icon'.$term_id ) ) { ?><i class="cat-rec-icon fd <?php echo zm_taxonomy_icon_code(); ?>"></i><?php } ?>
@@ -5991,7 +6055,7 @@ class widget_cover extends WP_Widget {
 	</p>
 	<p>
 		<label for="<?php echo $this->get_field_id( 'cat_id' ); ?>">输入分类或标签ID：</label>
-		<textarea style="height:80px;" class="widefat" id="<?php echo $this->get_field_id( 'cat_id' ); ?>" name="<?php echo $this->get_field_name( 'cat_id' ); ?>"><?php echo stripslashes(htmlspecialchars(( $instance['cat_id'] ), ENT_QUOTES)); ?></textarea>
+		<input class="widefat" id="<?php echo $this->get_field_id('cat_id'); ?>" name="<?php echo $this->get_field_name('cat_id'); ?>" type="text" value="<?php echo $instance['cat_id']; ?>" />
 	</p>
 	<input type="hidden" id="<?php echo $this->get_field_id('submit'); ?>" name="<?php echo $this->get_field_name('submit'); ?>" value="1" />
 <?php }
@@ -6007,7 +6071,7 @@ class special_tag extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'special_tag',
-			'description' => __( '调用所有专题标题' ),
+			'description' => '调用所有专题标题',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('special_tag', '所有专题', $widget_ops);
@@ -6032,10 +6096,10 @@ class special_tag extends WP_Widget {
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title;
 ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 
@@ -6108,7 +6172,7 @@ class widget_cat_icon extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'widget_cat_icon',
-			'description' => __( '分类目录可以显示分类图标' ),
+			'description' => '分类目录可以显示分类图标',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('widget_cat_icon', '分类目录', $widget_ops);
@@ -6121,6 +6185,7 @@ class widget_cat_icon extends WP_Widget {
 			'title_z'        => '',
 			'show_icon'      => '',
 			'show_svg'       => '',
+			'hide_empty'     => 0,
 			'title'          => '分类目录',
 		);
 	}
@@ -6138,19 +6203,24 @@ class widget_cat_icon extends WP_Widget {
 ?>
 
 
-<div class="widget_categories<?php if ($instance['show_icon_no']) { ?> widget-cat-ico<?php } ?>">
-	<?php if($instance['show_icon']) { ?>
+<div class="be_widget_cat<?php if ($instance['show_icon_no']) { ?> widget-cat-ico<?php } ?>">
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
 		<?php
+		if ( $instance['hide_empty'] ) {
+			$hide_empty = 0;
+		} else {
+			$hide_empty = 1;
+		}
 			$args=array(
 				'exclude' => $e_cat,
-				'taxonomy' => array('category', 'taobao', 'gallery', 'videos', 'products', 'notice'),
-				'hide_empty' => 0
+				'taxonomy' => array( 'category', 'taobao', 'gallery', 'videos', 'products', 'notice' ),
+				'hide_empty' => $hide_empty
 			);
 			$cats = get_categories($args);
 			foreach ( $cats as $cat ) {
@@ -6175,6 +6245,7 @@ class widget_cat_icon extends WP_Widget {
 		$instance = $old_instance;
 		$instance = array();
 		$instance['show_icon_no'] = !empty($new_instance['show_icon_no']) ? 1 : 0;
+		$instance['hide_empty'] = !empty($new_instance['hide_empty']) ? 1 : 0;
 		$instance['title_z'] = strip_tags($new_instance['title_z']);
 		$instance['show_icon'] = strip_tags($new_instance['show_icon']);
 		$instance['show_svg'] = strip_tags($new_instance['show_svg']);
@@ -6215,6 +6286,10 @@ class widget_cat_icon extends WP_Widget {
 		<textarea style="height:50px;" class="widefat" id="<?php echo $this->get_field_id( 'e_cat' ); ?>" name="<?php echo $this->get_field_name( 'e_cat' ); ?>"><?php echo stripslashes(htmlspecialchars(( $instance['e_cat'] ), ENT_QUOTES)); ?></textarea>
 	</p>
 	<p>
+		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('hide_empty') ); ?>" name="<?php echo esc_attr( $this->get_field_name('hide_empty') ); ?>" <?php checked( (bool) $instance["hide_empty"], true ); ?>>
+		<label for="<?php echo esc_attr( $this->get_field_id('hide_empty') ); ?>">显示空分类</label>
+	</p>
+	<p>
 		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('show_icon_no') ); ?>" name="<?php echo esc_attr( $this->get_field_name('show_icon_no') ); ?>" <?php checked( (bool) $instance["show_icon_no"], true ); ?>>
 		<label for="<?php echo esc_attr( $this->get_field_id('show_icon_no') ); ?>">显示分类图标</label>
 	</p>
@@ -6232,7 +6307,7 @@ class widget_tree_cat extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'widget_tree_cat',
-			'description' => __( '以折叠目录树方式显示子分类目录' ),
+			'description' => '以折叠目录树方式显示子分类目录',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('widget_tree_cat', '折叠分类', $widget_ops);
@@ -6242,9 +6317,11 @@ class widget_tree_cat extends WP_Widget {
 		return array(
 			'title_z'      => '',
 			'show_icon'    => '',
+			'show_tree'    => '1',
 			'show_svg'     => '',
 			'count'        => '',
 			'e_cat'        => '',
+			'hide_empty'     => '',
 			'title'        => '折叠分类',
 		);
 	}
@@ -6261,18 +6338,23 @@ class widget_tree_cat extends WP_Widget {
 		$e_cat = strip_tags($instance['e_cat']);
 		$c = ! empty( $instance['count'] ) ? '1' : '0';
 ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 
-<ul class="tree_categories">
+<ul class="<?php if ($instance['show_tree']) { ?>tree_cat_enable<?php } else { ?>tree_cat<?php } ?><?php if ( ! $instance['count'] ) { ?> cat_count_no<?php } ?>">
 	<?php
+		if ( $instance['hide_empty'] ) {
+			$hide_empty = 0;
+		} else {
+			$hide_empty = 1;
+		}
 		$args = wp_list_categories( array(
 			'exclude'            => $e_cat,
-			'hide_empty'         => 0,
+			'hide_empty'         => $hide_empty,
 			'echo'               => false,
 			'show_count'         => $c,
 			'use_desc_for_title' => 0,
@@ -6291,12 +6373,14 @@ class widget_tree_cat extends WP_Widget {
 		$instance = $old_instance;
 		$instance = array();
 		$instance['title_z'] = strip_tags($new_instance['title_z']);
+		$instance['hide_empty'] = !empty($new_instance['hide_empty']) ? 1 : 0;
 		$instance['show_icon'] = strip_tags($new_instance['show_icon']);
 		$instance['show_svg'] = strip_tags($new_instance['show_svg']);
 		$instance['title'] = strip_tags( $new_instance['title'] );
 		$instance['about_back'] = $new_instance['about_back'];
 		$instance['e_cat'] = strip_tags($new_instance['e_cat']);
 		$instance['count'] = ! empty( $new_instance['count'] ) ? 1 : 0;
+		$instance['show_tree'] = ! empty( $new_instance['show_tree'] ) ? 1 : 0;
 		return $instance;
 	}
 	function form($instance) {
@@ -6311,6 +6395,7 @@ class widget_tree_cat extends WP_Widget {
 		global $wpdb;
 		$e_cat = strip_tags($instance['e_cat']);
 		$count = isset( $instance['count'] ) ? (bool) $instance['count'] : false;
+		$show_tree = isset( $instance['show_tree'] ) ? (bool) $instance['show_tree'] : false;
 ?>
 	<p>
 		<label for="<?php echo $this->get_field_id( 'title' ); ?>">标题：</label>
@@ -6320,7 +6405,14 @@ class widget_tree_cat extends WP_Widget {
 		<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id( 'count' ); ?>" name="<?php echo $this->get_field_name( 'count' ); ?>"<?php checked( $count ); ?> />
 		<label for="<?php echo $this->get_field_id( 'count' ); ?>">显示文章数目</label><br />
 	</p>
-
+	<p>
+		<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id( 'show_tree' ); ?>" name="<?php echo $this->get_field_name( 'show_tree' ); ?>"<?php checked( $show_tree ); ?> />
+		<label for="<?php echo $this->get_field_id( 'show_tree' ); ?>">折叠显示</label><br />
+	</p>
+	<p>
+		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('hide_empty') ); ?>" name="<?php echo esc_attr( $this->get_field_name('hide_empty') ); ?>" <?php checked( (bool) $instance["hide_empty"], true ); ?>>
+		<label for="<?php echo esc_attr( $this->get_field_id('hide_empty') ); ?>">显示空分类</label>
+	</p>
 	<p>
 		<label for="<?php echo $this->get_field_id('title_z'); ?>">图标标题：</label>
 		<input class="widefat" id="<?php echo $this->get_field_id('title_z'); ?>" name="<?php echo $this->get_field_name('title_z'); ?>" type="text" value="<?php echo $instance['title_z']; ?>" />
@@ -6351,7 +6443,7 @@ class widget_notice extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'widget_notice',
-			'description' => __( '滚动显示公告' ),
+			'description' => '滚动显示公告',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('widget_notice', '滚动公告', $widget_ops);
@@ -6364,7 +6456,7 @@ class widget_notice extends WP_Widget {
 			'show_svg'       => '',
 			'cat'            => '',
 			'number'         => 2,
-			'notice_back'    => 'https://s2.loli.net/2021/12/05/ort1CgdKHILlFUm.jpg',
+			'notice_back'    => get_template_directory_uri() . '/img/default/random/320.jpg',
 		);
 	}
 
@@ -6382,10 +6474,10 @@ class widget_notice extends WP_Widget {
 
 <div class="zm-notice">
 
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<?php if ( $instance[ 'notice_back' ]  ) { ?>
@@ -6446,7 +6538,7 @@ class widget_notice extends WP_Widget {
 	global $wpdb;
 	$instance = wp_parse_args((array) $instance, array('number' => '2'));
 	$number = strip_tags($instance['number']);
-		$instance = wp_parse_args((array) $instance, array('notice_back' => 'https://s2.loli.net/2021/12/05/ort1CgdKHILlFUm.jpg'));
+		$instance = wp_parse_args((array) $instance, array('notice_back' => get_template_directory_uri() . '/img/default/random/320.jpg'));
 		$notice_back = $instance['notice_back'];
 ?>
 	<p>
@@ -6488,7 +6580,7 @@ class widget_special extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'widget_special',
-			'description' => __( '调用专题封面' ),
+			'description' => '调用专题封面',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('widget_special', '专题封面', $widget_ops);
@@ -6518,35 +6610,47 @@ class widget_special extends WP_Widget {
 ?>
 
 <div class="widget-cat-cover">
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 
-	<?php if($instance['pages_id']) { ?>
+	<?php if ($instance['pages_id']) { ?>
 		<?php 
-			$posts = get_posts( array( 'post_type' => 'any', 'orderby' => 'menu_order', 'include' => $instance['pages_id']) ); if($posts) : foreach( $posts as $post ) : setup_postdata( $post );
+			global $post;
+			$posts = get_posts( array( 'post_type' => 'any', 'orderby' => 'menu_order', 'include' => $instance['pages_id']) ); if ($posts) : foreach( $posts as $post ) : setup_postdata( $post );
 		?>
 		<div class="cover4x">
 			<div class="cat-cover-main">
 				<div class="cat-cover-img thumbs-b lazy">
-					<?php $image = get_post_meta($post->ID, 'thumbnail', true); ?>
+					<?php $image = get_post_meta(get_the_ID(), 'thumbnail', true); ?>
 					<a class="thumbs-back" href="<?php echo get_permalink($post->ID); ?>" rel="bookmark" data-src="<?php echo $image; ?>">
 						<div class="special-mark fd"><?php _e( '专题', 'begin' ); ?></div>
-						<?php 
-							$special = get_post_meta($post->ID, 'special', true);
-							echo '<div class="special-count bgt fd">';
-							echo get_tag_post_count( $special );
-							echo  _e( '篇', 'begin' );
-							echo '</div>';
-						?>
-						<div class="cover-des-box"><div class="cover-des"><?php echo get_the_title($post->ID); ?></div></div>
+						<div class="cover-des-box">
+							<?php 
+								$special = get_post_meta(get_the_ID(), 'special', true);
+								echo '<div class="special-count bgt fd">';
+								echo get_tag_post_count( $special );
+								echo  _e( '篇', 'begin' );
+								echo '</div>';
+							?>
+							<div class="cover-des">
+								<div class="cover-des-main over">
+									<?php
+									$description = get_post_meta( get_the_ID(), 'description', true );
+									if ( get_post_meta( get_the_ID(), 'description', true ) ) { ?>
+										<?php echo $description; ?>
+									<?php } else { ?>
+									<?php echo get_the_title($post->ID); ?>
+									<?php } ?>
+								</div>
+							</div>
+						</div>
 					</a>
-					<div class="clear"></div>
+					<h4 class="cat-cover-title"><?php echo get_the_title($post->ID); ?></h4>
 				</div>
-				<a href="<?php echo get_permalink($post->ID); ?>" rel="bookmark"><h4 class="cat-cover-title"><?php echo get_the_title($post->ID); ?></h4></a>
 			</div>
 		</div>
 		<?php endforeach; endif; ?>
@@ -6614,7 +6718,7 @@ class be_recently_viewed extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_recently_viewed',
-			'description' => __( '最近浏览的文章' ),
+			'description' => '最近浏览的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_recently_viewed', '最近浏览的文章', $widget_ops);
@@ -6639,10 +6743,10 @@ class be_recently_viewed extends WP_Widget {
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title;
 ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 
@@ -6704,7 +6808,7 @@ class widget_filter extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'widget_filter',
-			'description' => __( '多条件筛选' ),
+			'description' => '多条件筛选',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('widget_filter', '条件筛选', $widget_ops);
@@ -6725,16 +6829,20 @@ class widget_filter extends WP_Widget {
 		$defaults = $this -> zm_defaults();
 		$instance = wp_parse_args( (array) $instance, $defaults );
 		$title = apply_filters( 'widget_title', $instance['title'] );
-		echo $before_widget;
-		if ( ! empty( $title ) )
-		echo $before_title . $title_w . $title . $after_title;
+		if ( ! is_page() ) {
+			echo $before_widget;
+			if ( ! empty( $title ) ) {
+				echo $before_title . $title_w . $title . $after_title;
+			}
+		}
 ?>
 
+<?php if ( ! is_page() ) { ?>
 <div class="widget-filter">
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 
@@ -6746,6 +6854,7 @@ class widget_filter extends WP_Widget {
 		</div>
 	</div>
 </div>
+<?php } ?>
 
 <?php
 	echo $after_widget;
@@ -6797,7 +6906,7 @@ class widget_color_cat extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'widget_color_cat',
-			'description' => __( '单栏分类目录' ),
+			'description' => '单栏分类目录',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('widget_color_cat', '单栏分类', $widget_ops);
@@ -6824,10 +6933,10 @@ class widget_color_cat extends WP_Widget {
 		echo $before_title . $title_w . $title . $after_title;
 		$e_cat = strip_tags($instance['e_cat']);
 ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 
@@ -6845,7 +6954,7 @@ class widget_color_cat extends WP_Widget {
 		foreach ( $cats as $cat ) {
 		query_posts( 'cat=' . $cat->cat_ID );
 	?>
-	<li><a href="<?php echo get_category_link($cat->cat_ID);?>" rel="bookmark"><?php echo $cat->cat_name; ?></a></li>
+	<li><a class="get-icon" href="<?php echo get_category_link($cat->cat_ID);?>" rel="bookmark"><?php echo $cat->cat_name; ?></a></li>
 	<?php } ?>
 	<?php wp_reset_query(); ?>
 </ul>
@@ -6908,7 +7017,7 @@ class special_list extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'special_list',
-			'description' => __( '调用某个专题文章列表' ),
+			'description' => '调用某个专题文章列表',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('special_list', '专题模块', $widget_ops);
@@ -6942,8 +7051,8 @@ class special_list extends WP_Widget {
 		}
 		echo $before_widget;
 		if ($newWindow) $newWindow = "target='_blank'";
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 			}
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title; 
@@ -6973,7 +7082,7 @@ class special_list extends WP_Widget {
 					<figure class="cover-img">
 						<?php 
 							global $wpdb, $post;
-							$image = get_post_meta($post->ID, 'thumbnail', true);
+							$image = get_post_meta(get_the_ID(), 'thumbnail', true);
 							echo '<img src=';
 							if (zm_get_option('special_thumbnail')) {
 								echo get_template_directory_uri().'/prune.php?src='.$image.'&w='.zm_get_option('img_k_w').'&h='.zm_get_option('img_k_h').'&a='.zm_get_option('crop_top').'&zc=1';
@@ -6983,7 +7092,7 @@ class special_list extends WP_Widget {
 							echo ' alt="'.$post->post_title .'" />'; 
 						?>
 					</figure>
-					<div class="cover-des-box"><div class="cover-des"><?php $description = get_post_meta($post->ID, 'description', true);{echo $description;} ?></div></div>
+					<div class="cover-des-box"><div class="cover-des"><?php $description = get_post_meta(get_the_ID(), 'description', true);{echo $description;} ?></div></div>
 				</a>
 				<div class="clear"></div>
 			</div>
@@ -6992,11 +7101,15 @@ class special_list extends WP_Widget {
 				<span class="special-more">
 					<?php 
 						global $wpdb, $post;
-						$special = get_post_meta($post->ID, 'special', true);
+						$special = get_post_meta(get_the_ID(), 'special', true);
 						echo '<span class="special-list-count">';
-						echo  _e( '共', 'begin' );
-						echo get_tag_post_count( $special );
-						echo  _e( '篇', 'begin' );
+						if ( get_tag_post_count( $special ) >= 1 ) {
+							echo  _e( '共', 'begin' );
+							echo get_tag_post_count( $special );
+							echo  _e( '篇', 'begin' );
+						} else {
+							echo '未添加文章</span>';
+						}
 						echo '</span>  ';
 					?>
 					<?php _e( '更多', 'begin' ); ?>
@@ -7009,16 +7122,21 @@ class special_list extends WP_Widget {
 	<?php wp_reset_query(); ?>
 
 	<ul class="post_cat">
+
 		<?php
 			$args = array(
 				'tag_id' => get_tag_id_slug($instance['tag_slug']),
 				'posts_per_page' => $instance['numposts'],
 			);
 			query_posts($args);
-			if(have_posts()) : while (have_posts()) : the_post();
 		?>
-		<?php the_title( sprintf( '<li class="srm"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></li>' ); ?>
-		<?php endwhile; endif; wp_reset_query();?>
+		<?php if ( have_posts() ) : ?>
+		<?php while ( have_posts() ) : the_post(); ?>
+		<?php the_title( sprintf( '<li class="srm the-icon"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></li>' ); ?>
+		<?php endwhile; ?>
+		<?php else : ?>
+			<?php _e( '未添加文章', 'begin' ); ?>
+		<?php endif; wp_reset_query();?>
 	</ul>
 </div>
 
@@ -7098,7 +7216,7 @@ class cat_popular extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'cat_popular',
-			'description' => __( '调用相同分类的热门文章' ),
+			'description' => '调用相同分类的热门文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('cat_popular', '本类热门', $widget_ops);
@@ -7112,6 +7230,7 @@ class cat_popular extends WP_Widget {
 			'show_svg'      => '',
 			'number'        => 5,
 			'metakey'        => 'views',
+			'catid'        => '',
 			'title'         => '本类热门',
 		);
 	}
@@ -7129,23 +7248,27 @@ class cat_popular extends WP_Widget {
 		$metakey = strip_tags($instance['metakey']) ? absint( $instance['metakey'] ) : 'views';
 ?>
 
-<?php if($instance['show_thumbs']) { ?>
+<?php if ($instance['show_thumbs']) { ?>
 <div id="hot" class="hot_commend">
 <?php } else { ?>
 <div id="hot_comment_widget">
 <?php } ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<ul>
 		<?php 
-			global $post;
+			global $post, $catid;
 			$cat = get_the_category();
-			foreach($cat as $key=>$category){
-				$catid = $category->term_id;
+			if ( $instance['catid'] ) { 
+				$catid = $instance['catid'];
+			} else {
+				foreach($cat as $key=>$category){
+					$catid = $category->term_id;
+				}
 			}
 			$q = new WP_Query( array(
 				'showposts' => $number,
@@ -7159,7 +7282,7 @@ class cat_popular extends WP_Widget {
 			) );
 		?>
 		<?php $i = 1; while ($q->have_posts()) : $q->the_post(); ?>
-			<?php if($instance['show_thumbs']) { ?>
+			<?php if ($instance['show_thumbs']) { ?>
 			<li>
 				<span class="thumbnail">
 					<?php zm_thumbnail(); ?>
@@ -7187,6 +7310,7 @@ class cat_popular extends WP_Widget {
 		$instance['show_icon'] = strip_tags($new_instance['show_icon']);
 		$instance['show_svg'] = strip_tags($new_instance['show_svg']);
 		$instance['metakey'] = strip_tags($new_instance['metakey']);
+		$instance['catid'] = strip_tags($new_instance['catid']);
 		$instance['title'] = strip_tags( $new_instance['title'] );
 		$instance['number'] = strip_tags($new_instance['number']);
 		return $instance;
@@ -7205,6 +7329,7 @@ class cat_popular extends WP_Widget {
 		$number = strip_tags($instance['number']);
 		$instance = wp_parse_args((array) $instance, array('metakey' => 'views'));
 		$metakey = strip_tags($instance['metakey']);
+		$catid = strip_tags($instance['catid']);
 ?>
 	<p>
 		<label for="<?php echo $this->get_field_id( 'title' ); ?>">标题：</label>
@@ -7225,6 +7350,10 @@ class cat_popular extends WP_Widget {
 	<p>
 		<label for="<?php echo $this->get_field_id('metakey'); ?>">自定义栏目名称：</label>
 		<input class="widefat" id="<?php echo $this->get_field_id('metakey'); ?>" name="<?php echo $this->get_field_name('metakey'); ?>" type="text" value="<?php echo $instance['metakey']; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id('catid'); ?>">指定分类ID：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id('catid'); ?>" name="<?php echo $this->get_field_name('catid'); ?>" type="text" value="<?php echo $instance['catid']; ?>" />
 	</p>
 	<p>
 		<label for="<?php echo $this->get_field_id( 'number' ); ?>">显示数量：</label>
@@ -7248,7 +7377,7 @@ class ajax_text_widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'ajax_text',
-			'description' => __( '使用Ajax加载短代码' ),
+			'description' => '使用Ajax加载短代码',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('ajax_text', '短代码', $widget_ops);
@@ -7278,10 +7407,10 @@ class ajax_text_widget extends WP_Widget {
 ?>
 
 <div class="new_cat">
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<div class="ajax-text-widget" data-text="<?php echo $text; ?>"><div class="ajax-widget-loading"></div></div>
@@ -7345,7 +7474,7 @@ class widget_cat_tag extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'widget_cat_tag',
-			'description' => __( '分类标签' ),
+			'description' => '分类标签',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('widget_cat_tag', '分类标签', $widget_ops);
@@ -7378,17 +7507,18 @@ class widget_cat_tag extends WP_Widget {
 ?>
 
 <?php if ( !is_page() && get_post_type() == 'post' ) { ?>
-<?php if($instance['show_icon']) { ?>
+<?php if ($instance['show_icon']) { ?>
 	<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 <?php } ?>
-<?php if($instance['show_svg']) { ?>
+<?php if ($instance['show_svg']) { ?>
 	<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 <?php } ?>
 
-<div class="tagcloud">
+<div class="tagcloud tagcloud-cat">
 	<?php 
 		$category = get_the_category();
-		if( $instance['cat_id'] ) {
+		$all_tags[] = '';
+		if ( $instance['cat_id'] ) {
 			$be_catid = $instance['cat_id'];
 		} else {
 			$be_catid = $category[0]->cat_ID;
@@ -7410,7 +7540,7 @@ class widget_cat_tag extends WP_Widget {
 
 			$args = array(
 				'smallest'  => 12,
-				'largest'   => 12,
+				'largest'   => 16,
 				'unit'      => 'px',
 				'number'    => $number,
 				//'format'    => 'list',
@@ -7490,7 +7620,7 @@ class be_comment_list extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_comment_list',
-			'description' => __( '显示当前文章评论者列表' ),
+			'description' => '显示当前文章评论者列表',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_comment_list', '评论者列表', $widget_ops);
@@ -7518,10 +7648,10 @@ class be_comment_list extends WP_Widget {
 		}
 ?>
 <?php if ( is_single() ) { ?>
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 
@@ -7593,7 +7723,7 @@ class bulletin_cat extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'bulletin_cat',
-			'description' => __( '显示最新公告' ),
+			'description' => '显示最新公告',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('bulletin_cat', '网站公告', $widget_ops);
@@ -7628,21 +7758,21 @@ class bulletin_cat extends WP_Widget {
 		}
 		echo $before_widget;
 		if ($newWindow) $newWindow = "target='_blank'";
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 			}
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title; 
 ?>
 
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 	<?php } ?>
 
-<div class="notice-cat<?php if($instance['show_thumbs']) { ?> notice-shuo<?php } ?>">
+<div class="notice-cat<?php if ($instance['show_thumbs']) { ?> notice-shuo<?php } ?>">
 	<ul>
 		<?php
 			$args = array(
@@ -7650,7 +7780,7 @@ class bulletin_cat extends WP_Widget {
 				'showposts' => $instance['numposts'], 
 			);
 
-			if($instance['cat']) {
+			if ($instance['cat']) {
 				$args = array(
 					'showposts' => $instance['numposts'], 
 					'tax_query' => array(
@@ -7664,7 +7794,7 @@ class bulletin_cat extends WP_Widget {
 		?>
 		<?php $be_query = new WP_Query($args); while ($be_query->have_posts()) : $be_query->the_post(); ?>
 		<li>
-			<?php if($instance['show_thumbs']) { ?>
+			<?php if ($instance['show_thumbs']) { ?>
 				<a href="<?php echo get_category_link( $instance['cat'] ); ?>" rel="bookmark">
 					<span class="meta-author-avatar shuo-avatar">
 						<?php 
@@ -7678,6 +7808,13 @@ class bulletin_cat extends WP_Widget {
 
 					<span class="shuo-w dah">
 						<span class="arrow-left"></span>
+						<span class="shuo-entry-meta dah">
+							<span class="shuo-author dah"><?php the_author(); ?></span>
+							<span class="clear"></span>
+							<span class="shuo-inf shuo-date dah"><?php time_ago( $time_type ='post' ); ?></span>
+							<span class="shuo-inf shuo-time dah"><?php echo get_the_time('H:i:s'); ?></span>
+						</span>
+						<span class="clear"></span>
 						<?php 
 							$content = get_the_content();
 							$content = wp_strip_all_tags(str_replace(array('[',']'),array('<','>'),$content));
@@ -7686,7 +7823,7 @@ class bulletin_cat extends WP_Widget {
 					</span>
 				</a>
 			<?php } else { ?>
-				<?php if($instance['show_time']) { ?><span class="date-n"><span class="day-n"><?php the_time('m') ?></span>/<span class="month-n"><?php the_time('d') ?></span></span><?php } else { ?><i class="be be-volumedown"></i><?php } ?>
+				<?php if ($instance['show_time']) { ?><span class="date-n"><span class="day-n"><?php the_time('m') ?></span>/<span class="month-n"><?php the_time('d') ?></span></span><?php } else { ?><i class="be be-volumedown"></i><?php } ?>
 				<?php the_title( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 			<?php } ?>
 		</li>
@@ -7780,7 +7917,7 @@ class ajax_search_widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'ajax_search_widget',
-			'description' => __( 'Ajax搜索' ),
+			'description' => 'Ajax搜索',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('ajax_search_widget', 'Ajax搜索', $widget_ops);
@@ -7808,10 +7945,10 @@ class ajax_search_widget extends WP_Widget {
 ?>
 
 <div class="widget-ajax-searchd">
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
 	<?php } ?>
 	<div class="ajax-search-input">
@@ -7875,7 +8012,7 @@ class be_site_widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'be_site_widget',
-			'description' => __( '显示网址' ),
+			'description' => '显示网址',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('be_site_widget', '网址收藏', $widget_ops);
@@ -7910,21 +8047,21 @@ class be_site_widget extends WP_Widget {
 		}
 		echo $before_widget;
 		if ($newWindow) $newWindow = "target='_blank'";
-			if(!$hideTitle && $title) {
-				if($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			if (!$hideTitle && $title) {
+				if ($titleUrl) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
 			}
 		if ( ! empty( $title ) )
 		echo $before_title . $title_w . $title . $after_title; 
 ?>
 
-	<?php if($instance['show_icon']) { ?>
+	<?php if ($instance['show_icon']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 	<?php } ?>
-	<?php if($instance['show_svg']) { ?>
+	<?php if ($instance['show_svg']) { ?>
 		<h3 class="widget-title-cat-icon cat-w-icon da"><a href="<?php echo $titleUrl; ?>" target="_blank"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?><?php more_i(); ?></a></h3>
 	<?php } ?>
 
-<div class="sites-widget<?php if(!$instance['show_favicon']) { ?> no-sites-cat-ico<?php } ?>">
+<div class="sites-widget<?php if (!$instance['show_favicon']) { ?> no-sites-cat-ico<?php } ?>">
 	<ul>
 		<?php
 			$args = array(
@@ -7932,7 +8069,7 @@ class be_site_widget extends WP_Widget {
 				'showposts' => $instance['numposts'], 
 			);
 
-			if($instance['cat']) {
+			if ($instance['cat']) {
 				$args = array(
 					'showposts' => $instance['numposts'], 
 					'tax_query' => array(
@@ -7948,12 +8085,12 @@ class be_site_widget extends WP_Widget {
 		<li class="srm">
 			<?php 
 				global $post; 
-				$sites_link = get_post_meta( $post->ID, 'sites_link', true );
-				$sites_url = get_post_meta( $post->ID, 'sites_url', true );
+				$sites_link = get_post_meta( get_the_ID(), 'sites_link', true );
+				$sites_url = get_post_meta( get_the_ID(), 'sites_url', true );
 			?>
 
-			<?php if($instance['show_favicon']) { ?>
-				<?php if ( get_post_meta( $post->ID, 'sites_url', true )) { ?>
+			<?php if ($instance['show_favicon']) { ?>
+				<?php if ( get_post_meta( get_the_ID(), 'sites_url', true )) { ?>
 					<a href="<?php echo $sites_url; ?>" target="_blank" rel="external nofollow">
 						<div class="sites-ico dah bk load"><img class="sites-img" src="data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-original="<?php echo zm_get_option( 'favicon_api' ); ?><?php echo $sites_url; ?>" alt="<?php the_title(); ?>"></div>
 					</a>
@@ -7964,7 +8101,7 @@ class be_site_widget extends WP_Widget {
 				<?php } ?>
 			<?php } ?>
 
-			<?php if($instance['show_time']) { ?><span class="date"><span><?php _e( '收录', 'begin' ); ?></span><?php the_time('m/d') ?></span><?php } ?>
+			<?php if ($instance['show_time']) { ?><span class="date"><span><?php _e( '收录', 'begin' ); ?></span><time datetime="<?php echo get_the_date('Y-m-d'); ?> <?php echo get_the_time('H:i:s'); ?>"><?php the_time('m/d') ?></time></span><?php } ?>
 			<?php the_title( sprintf( '<a class="sites-title-w" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?>
 		</li>
 		<?php endwhile; ?>
@@ -8050,6 +8187,704 @@ function form( $instance ) {
 add_action( 'widgets_init', 'be_site_init' );
 function be_site_init() {
 	register_widget( 'be_site_widget' );
+}
+
+// RSS
+class be_widget_rss extends WP_Widget {
+	public function __construct() {
+		$widget_ops = array(
+			'classname' => 'be_widget_rss',
+			'description' => '调用任意站点RSS和feed文章',
+			'customize_selective_refresh' => true,
+		);
+		parent::__construct('be_widget_rss', 'RSS', $widget_ops);
+	}
+
+	public function zm_defaults() {
+		return array(
+			'show_tags'   => 0,
+			'title_z'     => '',
+			'show_icon'   => '',
+			'show_svg'    => '',
+			'feed'    => '',
+			'numposts'     => 5,
+			'title'       => 'RSS',
+		);
+	}
+
+	function widget($args, $instance) {
+		extract($args);
+		$title_w = title_i_w();
+		$defaults = $this -> zm_defaults();
+		$instance = wp_parse_args( (array) $instance, $defaults );
+		$title = apply_filters( 'widget_title', $instance['title'] );
+		echo $before_widget;
+		if ( ! empty( $title ) )
+		echo $before_title . $title_w . $title . $after_title;
+?>
+
+<div class="post_cat">
+	<?php if ($instance['show_icon']) { ?>
+		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
+	<?php } ?>
+	<?php if ($instance['show_svg']) { ?>
+		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
+	<?php } ?>
+	<?php
+		include_once( ABSPATH . WPINC . '/feed.php' );
+		$rss = fetch_feed( $instance['feed'] );
+		$maxitems = 0;
+		if ( ! is_wp_error( $rss ) ) :
+			$maxitems = $rss->get_item_quantity( $instance['numposts'] );
+			$rss_items = $rss->get_items( 0, $maxitems );
+		endif;
+	?>
+	<ul>
+		<?php if ( $maxitems == 0 ) : ?>
+			<li class="srm"><?php _e( '暂无文章', 'begin' ); ?></li>
+		<?php else : ?>
+			<?php foreach ( $rss_items as $item ) : ?>
+				<li class="srm the-icon">
+					<a href="<?php echo esc_url( $item->get_permalink() ); ?>" rel="external nofollow" target="_blank">
+						<?php echo esc_html( $item->get_title() ); ?>
+					</a>
+				</li>
+			<?php endforeach; ?>
+		<?php endif; ?>
+	</ul>
+</div>
+
+<?php
+	echo $after_widget;
+	}
+	function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
+		$instance = array();
+		$instance['title_z'] = strip_tags($new_instance['title_z']);
+		$instance['show_icon'] = strip_tags($new_instance['show_icon']);
+		$instance['show_svg'] = strip_tags($new_instance['show_svg']);
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['feed'] = strip_tags($new_instance['feed']);
+		$instance['numposts'] = $new_instance['numposts'];
+		return $instance;
+	}
+	function form($instance) {
+		$defaults = $this -> zm_defaults();
+		$instance = wp_parse_args( (array) $instance, $defaults );
+		if ( isset( $instance[ 'title' ] ) ) {
+			$title = $instance[ 'title' ];
+		}
+		else {
+			$title = 'RSS';
+		}
+		global $wpdb;
+?>
+	<p>
+		<label for="<?php echo $this->get_field_id( 'title' ); ?>">标题：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id('title_z'); ?>">图标标题：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id('title_z'); ?>" name="<?php echo $this->get_field_name('title_z'); ?>" type="text" value="<?php echo $instance['title_z']; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id('show_icon'); ?>">单色图标代码：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id('show_icon'); ?>" name="<?php echo $this->get_field_name('show_icon'); ?>" type="text" value="<?php echo $instance['show_icon']; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id('show_svg'); ?>">彩色图标代码：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id('show_svg'); ?>" name="<?php echo $this->get_field_name('show_svg'); ?>" type="text" value="<?php echo $instance['show_svg']; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id( 'feed' ); ?>">输入RSS feed URL：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id('feed'); ?>" name="<?php echo $this->get_field_name('feed'); ?>" type="text" value="<?php echo $instance['feed']; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id( 'numposts' ); ?>">显示数量：</label>
+		<input class="number-text" id="<?php echo $this->get_field_id( 'numposts' ); ?>" name="<?php echo $this->get_field_name( 'numposts' ); ?>" type="number" step="1" min="1" value="<?php echo $instance['numposts']; ?>" size="3" />
+	</p>
+	<input type="hidden" id="<?php echo $this->get_field_id('submit'); ?>" name="<?php echo $this->get_field_name('submit'); ?>" value="1" />
+<?php }
+}
+
+add_action( 'widgets_init', 'be_widget_rss_init' );
+function be_widget_rss_init() {
+	register_widget( 'be_widget_rss' );
+}
+
+// 目录小工具
+class be_toc_widget extends WP_Widget {
+	public function __construct() {
+		$widget_ops = array(
+			'classname' => 'be-toc-widget toc-no',
+			'description' => '文章目录',
+			'customize_selective_refresh' => true,
+		);
+		parent::__construct('be_toc_widget', '文章目录', $widget_ops);
+	}
+
+	public function zm_defaults() {
+		return array(
+			'title' => '文章目录',
+		);
+	}
+
+	function widget($args, $instance) {
+		extract($args);
+		$defaults = $this -> zm_defaults();
+		$instance = wp_parse_args( (array) $instance, $defaults );
+		$title = apply_filters( 'widget_title', $instance['title'] );
+		if ( ! wp_is_mobile() ) {
+			echo $before_widget;
+		}
+?>
+<?php if ( ! wp_is_mobile() && zm_get_option( 'be_toc') ) { ?>
+	<div id="toc-widge" class="toc-widge">
+		<div class="toc-widge-title"><i class="be be-sort"></i><?php _e( '文章目录', 'begin' ); ?></div>
+		<div class="toc-widge-main">
+			<?php be_toc(); ?>
+		</div>
+		<div class="adorn rec-adorn-s"></div>
+		<div class="adorn rec-adorn-x"></div>
+	</div>
+<?php } ?>
+<?php
+	echo $after_widget;
+	}
+	function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
+		$instance = array();
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		return $instance;
+	}
+	function form($instance) {
+		$defaults = $this -> zm_defaults();
+		$instance = wp_parse_args( (array) $instance, $defaults );
+		if ( isset( $instance[ 'title' ] ) ) {
+			$title = $instance[ 'title' ];
+		} else {
+			$title = '文章目录';
+		}
+		global $wpdb;
+?>
+	<p><label for="<?php echo $this->get_field_id( 'title' ); ?>">标题：</label>
+	<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
+	<input type="hidden" id="<?php echo $this->get_field_id('submit'); ?>" name="<?php echo $this->get_field_name('submit'); ?>" value="1" />
+<?php }
+}
+add_action( 'widgets_init', 'be_toc_widget_init' );
+function be_toc_widget_init() {
+	register_widget( 'be_toc_widget' );
+}
+
+// 联系我们
+class be_contact_widget extends WP_Widget {
+	public function __construct() {
+		$widget_ops = array(
+			'classname' => 'be-contact-widget',
+			'description' => '用于发送邮件',
+			'customize_selective_refresh' => true,
+		);
+		parent::__construct('be_contact_widget', '联系我们', $widget_ops);
+	}
+
+	public function zm_defaults() {
+		return array(
+			'title_z'      => '',
+			'show_icon'    => '',
+			'show_svg'     => '',
+			'title' => '联系我们'
+		);
+	}
+
+	function widget($args, $instance) {
+		extract($args);
+		$title_w = title_i_w();
+		$defaults = $this -> zm_defaults();
+		$instance = wp_parse_args( (array) $instance, $defaults );
+		$title = apply_filters( 'widget_title', $instance['title'] );
+		echo $before_widget;
+		if ( ! empty( $title ) )
+		echo $before_title . $title_w . $title . $after_title;
+?>
+
+<div class="widget-be-contact">
+	<?php if ($instance['show_icon']) { ?>
+		<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
+	<?php } ?>
+	<?php if ($instance['show_svg']) { ?>
+		<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
+	<?php } ?>
+	<div class="mail-main"><?php echo be_display_contact_form(); ?></div>
+	<div class="clear"></div>
+</div>
+
+<?php
+	echo $after_widget;
+	}
+	function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
+		$instance = array();
+		$instance['title_z'] = strip_tags($new_instance['title_z']);
+		$instance['show_icon'] = strip_tags($new_instance['show_icon']);
+		$instance['show_svg'] = strip_tags($new_instance['show_svg']);
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		return $instance;
+	}
+	function form($instance) {
+		$defaults = $this -> zm_defaults();
+		$instance = wp_parse_args( (array) $instance, $defaults );
+		if ( isset( $instance[ 'title' ] ) ) {
+			$title = $instance[ 'title' ];
+		}
+		else {
+			$title = '联系我们';
+		}
+		global $wpdb;
+?>
+	<p>
+		<label for="<?php echo $this->get_field_id( 'title' ); ?>">标题：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id('title_z'); ?>">图标标题：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id('title_z'); ?>" name="<?php echo $this->get_field_name('title_z'); ?>" type="text" value="<?php echo $instance['title_z']; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id('show_icon'); ?>">单色图标代码：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id('show_icon'); ?>" name="<?php echo $this->get_field_name('show_icon'); ?>" type="text" value="<?php echo $instance['show_icon']; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id('show_svg'); ?>">彩色图标代码：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id('show_svg'); ?>" name="<?php echo $this->get_field_name('show_svg'); ?>" type="text" value="<?php echo $instance['show_svg']; ?>" />
+	</p>
+	<input type="hidden" id="<?php echo $this->get_field_id('submit'); ?>" name="<?php echo $this->get_field_name('submit'); ?>" value="1" />
+<?php }
+}
+
+add_action( 'widgets_init', 'be_contact_widget_init' );
+function be_contact_widget_init() {
+	register_widget( 'be_contact_widget' );
+}
+
+// 附件信息
+class be_attachment_widget extends WP_Widget {
+	public function __construct() {
+		$widget_ops = array(
+			'classname' => 'be-attachment-inf',
+			'description' => '用于显示当前文章图片附件信息',
+			'customize_selective_refresh' => true,
+		);
+		parent::__construct( 'be_attachment_widget', '图片信息', $widget_ops );
+	}
+
+	public function zm_defaults() {
+		return array(
+			'title'     => '图片信息',
+			'model'     => 0,
+			'down_btu'  => 0,
+		);
+	}
+
+	function widget($args, $instance) {
+		extract($args);
+		$defaults = $this -> zm_defaults();
+		$title_w = title_i_w();
+		$instance = wp_parse_args( (array) $instance, $defaults );
+		$title = apply_filters('widget_title', empty($instance['title']) ? '' : $instance['title'], $instance);
+
+		if ( $instance['model'] ) {
+			$number = 1;
+		} else {
+			$number = -1;
+		}
+
+		$attachments = get_children( array(
+			'post_parent'    => get_the_ID(),
+			'post_type'      => 'attachment',
+			'numberposts'    => $number,
+			'post_status'    => 'inherit',
+			'post_mime_type' => 'image',
+			'order'          => 'ASC',
+			'orderby'        => 'menu_order ASC'
+		) );
+
+		if ( $attachments ) {
+			$title = apply_filters( 'widget_title', $instance['title'] );
+			echo $before_widget;
+			if ( ! empty( $title ) )
+			echo $before_title . $title_w . $title . $after_title;
+		}
+?>
+<?php if ( $attachments ) { ?>
+	<div class="be-attachment-inf-box<?php if ( $instance['model'] ) { ?> annex-one<?php } else { ?> annex-mult<?php } ?>">
+		<?php 
+			foreach ( $attachments as $attachment_id => $attachment ) {
+				echo '<div class="be-attachment-item">';
+				$image_url = wp_get_attachment_image_url( $attachment_id );
+				$image_id = be_get_image_id( $image_url );
+				$metadata = wp_get_attachment_metadata( $image_id );
+				$image = get_post_meta( get_the_ID(), 'thumbnail', true );
+				echo '<div class="annex-img sc">';
+				if ( get_post_meta( get_the_ID(), 'thumbnail', true ) ) {
+					echo '<img src="' . $image . '" alt="' . $image_id . '" width="320" height="240" />';
+				} else {
+					echo '<img src="'. get_template_directory_uri() . '/prune.php?src=' . $image_url . '&w=320&h=240&a=' .zm_get_option('crop_top') . '&zc=1" alt="' . $image_id . '" width="320" height="240" />';
+				}
+				if ( !$instance['down_btu'] || is_user_logged_in() ) {
+					echo '<a class="annex-down" href="' . $image_url . '" download="' . $image_url . '"></a>';
+				} else {
+					echo '<span class="annex-down show-layer" data-show-layer="login-layer"></span>';
+				}
+				echo '</div>';
+
+				echo '<div class="annex-inf bgt">';
+				echo sprintf(__( '编号', 'begin' )) . '<span>' . $image_id . '</span>';
+				echo '<div class="bgt">' . sprintf(__( '分辨率', 'begin' )) . '<span>';
+				echo $metadata['width'];
+				echo '&times;' . $metadata['height'] . '</span></div>';
+				echo '<div class="bgt">' . sprintf(__( '大小', 'begin' )) . '<span>' . size_format( filesize( get_attached_file( $image_id ) ), 2 ) . '</span></div>';
+				echo '</div>';
+				echo '</div>';
+			}
+		?>
+	</div>
+<?php } ?>
+<?php
+	echo $after_widget;
+	}
+	function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
+		$instance = array();
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['down_btu'] = !empty($new_instance['down_btu']) ? 1 : 0;
+		$instance['model'] = !empty($new_instance['model']) ? 1 : 0;
+		return $instance;
+	}
+	function form($instance) {
+		$defaults = $this -> zm_defaults();
+		$instance = wp_parse_args( (array) $instance, $defaults );
+		if ( isset( $instance[ 'title' ] ) ) {
+			$title = $instance[ 'title' ];
+		}
+		else {
+			$title = '图片信息';
+		}
+		global $wpdb;
+?>
+	<p>
+		<label for="<?php echo $this->get_field_id( 'title' ); ?>">标题：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" />
+	</p>
+	<p>
+		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('down_btu') ); ?>" name="<?php echo esc_attr( $this->get_field_name('down_btu') ); ?>" <?php checked( (bool) $instance["down_btu"], true ); ?>>
+		<label for="<?php echo esc_attr( $this->get_field_id('down_btu') ); ?>">登录可见下载按钮</label>
+	</p>
+
+	<p>
+		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id('model') ); ?>" name="<?php echo esc_attr( $this->get_field_name('model') ); ?>" <?php checked( (bool) $instance["model"], true ); ?>>
+		<label for="<?php echo esc_attr( $this->get_field_id('model') ); ?>">仅一张图</label>
+	</p>
+	<input type="hidden" id="<?php echo $this->get_field_id('submit'); ?>" name="<?php echo $this->get_field_name('submit'); ?>" value="1" />
+<?php }
+}
+add_action( 'widgets_init', 'be_attachment_widget_init' );
+function be_attachment_widget_init() {
+	register_widget( 'be_attachment_widget' );
+}
+
+// 评论置顶
+class be_sticky_comments_widget extends WP_Widget {
+	public function __construct() {
+		$widget_ops = array(
+			'classname' => 'be-attachment-inf',
+			'description' => '显示置顶的评论',
+			'customize_selective_refresh' => true,
+		);
+		parent::__construct( 'be_sticky_comments_widget', '评论置顶', $widget_ops );
+	}
+
+	public function zm_defaults() {
+		return array(
+			'ellipsis'   => 0,
+			'title_z'    => '',
+			'show_icon'  => '',
+			'number'     => 5,
+			'title'      => '评论置顶',
+		);
+	}
+
+	function widget( $args, $instance ) {
+		extract( $args );
+		$title_w = title_i_w();
+		$defaults = $this -> zm_defaults();
+		$instance = wp_parse_args( ( array ) $instance, $defaults );
+		// 查询
+		global $post;
+		$query_args = apply_filters( 'sticky_comments_query', array(
+			'number'      => $instance['number'],
+			'status'      => 'approve',
+			'post_status' => 'publish',
+			'meta_query'  => array(
+				array(
+					'key'    => 'comment_sticky',
+					'value'  => '1'
+				)
+			)
+		) );
+
+		$query    = new WP_Comment_Query;
+		$comments = $query->query( $query_args );
+		if ( $comments ) :
+
+		$title = apply_filters( 'widget_title', $instance['title'] );
+		echo $before_widget;
+		if ( ! empty( $title ) )
+		echo $before_title . $title_w . $title . $after_title;
+		$number = strip_tags($instance['number']) ? absint( $instance['number'] ) : 5;
+		?>
+
+		<div id="message" class="message-widget gaimg<?php if ( ! $instance['ellipsis'] ) { ?> message-item<?php } ?>">
+			<?php if ( $instance['show_icon'] ) { ?>
+				<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
+			<?php } ?>
+
+			<?php
+				$output = '<ul id="sticky-comments-widget">';
+				if ( $comments ) {
+					foreach ( $comments as $comment ) {
+						$output .= '<li class="sticky-comments-item load"><a href="' . get_permalink( $comment->comment_post_ID ) . '#anchor-comment-' . $comment->comment_ID . '" title="' . sprintf(__( '发表在', 'begin' )) . '：' . get_the_title( $comment->comment_post_ID ) . '" rel="external nofollow">';
+						if ( ! zm_get_option( 'avatar_load' ) ) {
+							$output .= get_avatar( $comment->comment_author_email, '96', '', get_comment_author( $comment->comment_ID ) );
+						} else {
+							$output .= '<img class="avatar photo" src="data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" alt="' . get_comment_author( $comment->comment_ID ) . '" width="96" height="96" data-original="' . preg_replace( array( '/^.+(src=)(\"|\')/i', '/(\"|\')\sclass=(\"|\').+$/i' ), array( '', '' ), get_avatar( $comment->comment_author_email, '96' ) ) . '" />';
+						}
+						$output .= '<span class="comment_author da">';
+						$output .= get_comment_author( $comment->comment_ID );
+						$output .= '</span>';
+						$output .= '<span class="say-comment da">';
+						$output .= convert_smilies( $comment->comment_content );
+						$output .= '</span>';
+						$output .= '</a></li>';
+					}
+				 }
+				$output .= '</ul>';
+				echo $output;
+				endif;
+			?>
+		</div>
+		<?php
+		echo $after_widget;
+	}
+
+	function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
+		$instance = array();
+		$instance['ellipsis'] = !empty( $new_instance['ellipsis'] ) ? 1 : 0;
+		$instance['title_z'] = strip_tags( $new_instance['title_z'] );
+		$instance['show_icon'] = strip_tags( $new_instance['show_icon'] );
+		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['number'] = strip_tags( $new_instance['number'] );
+		return $instance;
+	}
+
+	function form( $instance ) {
+		$defaults = $this -> zm_defaults();
+		$instance = wp_parse_args( ( array ) $instance, $defaults );
+		if ( isset( $instance[ 'title' ] ) ) {
+			$title = $instance[ 'title' ];
+		}
+		else {
+			$title = '评论置顶';
+		}
+		$instance = wp_parse_args( ( array ) $instance, array( 'number' => '5' ) );
+		$number = strip_tags( $instance['number'] );
+?>
+	<p><label for="<?php echo $this->get_field_id( 'title' ); ?>">标题：</label>
+	<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
+	<p>
+		<label for="<?php echo $this->get_field_id( 'title_z' ); ?>">图标标题：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id('title_z'); ?>" name="<?php echo $this->get_field_name( 'title_z' ); ?>" type="text" value="<?php echo $instance['title_z']; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id( 'show_icon' ); ?>">单色图标代码：</label>
+		<input class="widefat" id="<?php echo $this->get_field_id('show_icon'); ?>" name="<?php echo $this->get_field_name( 'show_icon' ); ?>" type="text" value="<?php echo $instance['show_icon']; ?>" />
+	</p>
+	<p>
+		<label for="<?php echo $this->get_field_id( 'number' ); ?>">显示数量：</label>
+		<input class="number-text" id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="number" step="1" min="1" value="<?php echo $number; ?>" size="3" />
+	</p>
+	<p>
+		<input type="checkbox" class="checkbox" id="<?php echo esc_attr( $this->get_field_id( 'ellipsis' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'ellipsis' ) ); ?>" <?php checked( ( bool ) $instance["ellipsis"], true ); ?>>
+		<label for="<?php echo esc_attr( $this->get_field_id( 'ellipsis' ) ); ?>">简化样式</label>
+	</p>
+	<input type="hidden" id="<?php echo $this->get_field_id( 'submit' ); ?>" name="<?php echo $this->get_field_name( 'submit' ); ?>" value="1" />
+<?php }
+}
+
+add_action( 'widgets_init', 'be_sticky_comments_widget_init' );
+function be_sticky_comments_widget_init() {
+	register_widget( 'be_sticky_comments_widget' );
+}
+
+// 专栏
+class be_column_cover extends WP_Widget {
+	public function __construct() {
+		$widget_ops = array(
+			'classname' => 'be_column_cover',
+			'description' =>'显示专栏封面列表',
+			'customize_selective_refresh' => true,
+		);
+		parent::__construct('be_column_cover', '专栏', $widget_ops);
+	}
+
+	public function zm_defaults() {
+		return array(
+			'show_icon' => '',
+			'title_z'   => '',
+			'show_svg'  => '',
+			'title'     => '专栏',
+			'special_id'     => '',
+		);
+	}
+
+	function widget( $args, $instance ) {
+		extract( $args );
+		$defaults = $this -> zm_defaults();
+		$title_w = title_i_w();
+		$instance = wp_parse_args( ( array ) $instance, $defaults );
+		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance );
+		$hideTitle = ! empty( $instance['hideTitle'] ) ? true : false;
+		$titleUrl = empty( $instance['titleUrl'] ) ? '' : $instance['titleUrl'];
+		$newWindow = ! empty( $instance['newWindow'] ) ? true : false;
+		if ( zm_get_option( 'more_im' ) ) {
+			$more_i = '<span class="more-i more-im"><span></span><span></span><span></span></span>';
+		} else {
+			$more_i = '<span class="more-i"><span></span><span></span><span></span></span>';
+		}
+		echo $before_widget;
+		if ( $newWindow ) $newWindow = "target='_blank'";
+			if ( ! $hideTitle && $title ) {
+				if ( $titleUrl ) $title = "<a href='$titleUrl' $newWindow>$title $more_i</a>";
+			}
+		if ( ! empty( $title ) )
+		echo $before_title . $title_w . $title . $after_title; 
+?>
+<div class="new_cat">
+	<?php if ( $instance['titleUrl'] ) { ?>
+		<h3 class="widget-title-cat-icon cat-w-icon da">
+			<a href="<?php echo $instance['titleUrl']; ?>" rel="bookmark">
+				<i class="t-icon <?php echo $instance['show_icon']; ?>"></i>
+				<?php echo $instance['title_z']; ?>
+				<?php more_i(); ?>
+			</a>
+		</h3>
+	<?php } else { ?>
+		<?php if ( $instance['show_icon'] ) { ?>
+			<h3 class="widget-title-cat-icon cat-w-icon da"><i class="t-icon <?php echo $instance['show_icon']; ?>"></i><?php echo $instance['title_z']; ?></h3>
+		<?php } ?>
+		<?php if ( $instance['show_svg'] ) { ?>
+			<h3 class="widget-title-cat-icon cat-w-icon da"><svg class="t-svg icon" aria-hidden="true"><use xlink:href="#<?php echo $instance['show_svg']; ?>"></use></svg><?php echo $instance['title_z']; ?></h3>
+		<?php } ?>
+	<?php } ?>
+	<ul>
+		<?php
+			$special = array(
+				'taxonomy'      => 'special',
+				'show_count'    => 1,
+				'orderby'       => 'menu_order',
+				'order'         => 'ASC',
+				'include'       => $instance['special_id'],
+				'hide_empty'    => 0,
+				'hierarchical'  => 0
+			);
+			$cats = get_categories( $special );
+		?>
+		<?php foreach( $cats as $cat ) :  ?>
+			<li>
+				<span class="thumbnail lazy">
+					<?php if ( zm_get_option( 'lazy_s' ) ) { ?>
+						<a class="thumbs-back sc" href="<?php echo get_category_link( $cat->term_id ) ?>" rel="bookmark" data-src="<?php echo cat_cover_url( $cat->term_id ); ?>"></a>
+					<?php } else { ?>
+						<a class="thumbs-back sc" href="<?php echo get_category_link( $cat->term_id ) ?>" rel="bookmark" style="background-image: url(<?php echo cat_cover_url( $cat->term_id ); ?>);"></a>
+					<?php } ?>
+				</span>
+				<span class="new-title column-title-w">
+					<a href="<?php echo get_category_link( $cat->term_id ) ?>" rel="bookmark">
+						<?php echo $cat->name; ?>
+						<span class="special-des-w"><?php echo term_description( $cat->term_id ); ?></span>
+					</a>
+				</span>
+				<span class="views"><?php echo $cat->count; ?><?php _e( '篇', 'begin' ); ?></span>
+			</li>
+		<?php endforeach; ?>
+		<?php wp_reset_postdata(); ?>
+	</ul>
+</div>
+
+<?php
+	echo $after_widget;
+}
+
+function update( $new_instance, $old_instance ) {
+	$instance = $old_instance;
+	$instance = array();
+	$instance['show_icon'] = strip_tags( $new_instance['show_icon'] );
+	$instance['special_id'] = strip_tags( $new_instance['special_id'] );
+	$instance['hideTitle'] = ! empty( $new_instance['hideTitle'] ) ? 1 : 0;
+	$instance['newWindow'] = ! empty( $new_instance['newWindow'] ) ? 1 : 0;
+	$instance['title'] = strip_tags( $new_instance['title'] );
+	$instance['title_z'] = strip_tags( $new_instance['title_z'] );
+	$instance['titleUrl'] = strip_tags( $new_instance['titleUrl'] );
+	return $instance;
+}
+
+function form( $instance ) {
+	$defaults = $this -> zm_defaults();
+	$instance = wp_parse_args( ( array ) $instance, $defaults );
+	$instance = wp_parse_args( ( array ) $instance, 
+		array( 
+			'title' => '专栏',
+			'titleUrl' => '',
+		)
+	);
+	$titleUrl = $instance['titleUrl'];
+	?>
+
+		<p>
+			<label for="<?php echo $this->get_field_id( 'title' ); ?>">标题：</label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $instance['title']; ?>" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'title_z' ); ?>">图标标题：</label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title_z' ); ?>" name="<?php echo $this->get_field_name( 'title_z' ); ?>" type="text" value="<?php echo $instance['title_z']; ?>" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'show_icon' ); ?>">单色图标代码：</label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'show_icon' ); ?>" name="<?php echo $this->get_field_name( 'show_icon' ); ?>" type="text" value="<?php echo $instance['show_icon']; ?>" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'show_svg' ); ?>">彩色图标代码：</label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'show_svg' ); ?>" name="<?php echo $this->get_field_name( 'show_svg' ); ?>" type="text" value="<?php echo $instance['show_svg']; ?>" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'titleUrl' ); ?>">标题链接：</label>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'titleUrl' ); ?>" name="<?php echo $this->get_field_name( 'titleUrl' ); ?>" type="text" value="<?php echo $titleUrl; ?>" />
+		</p>
+		<p>
+			<input type="checkbox" id="<?php echo $this->get_field_id( 'newWindow' ); ?>" class="checkbox" name="<?php echo $this->get_field_name( 'newWindow' ); ?>" <?php checked( isset( $instance['newWindow'] ) ? $instance['newWindow'] : 0); ?> />
+			<label for="<?php echo $this->get_field_id( 'newWindow' ); ?>">在新窗口打开标题链接</label>
+		</p>
+	<p>
+		<label for="<?php echo $this->get_field_id( 'special_id' ); ?>">输入专栏ID：</label>
+		<textarea style="height:80px;" class="widefat" id="<?php echo $this->get_field_id( 'special_id' ); ?>" name="<?php echo $this->get_field_name( 'special_id' ); ?>"><?php echo stripslashes(htmlspecialchars( ( $instance['special_id'] ), ENT_QUOTES ) ); ?></textarea>
+	</p>
+<?php }
+}
+
+add_action( 'widgets_init', 'be_column_cover_init' );
+function be_column_cover_init() {
+	register_widget( 'be_column_cover' );
 }
 
 // 分类法

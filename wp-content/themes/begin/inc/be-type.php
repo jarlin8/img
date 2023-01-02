@@ -454,7 +454,7 @@ function create_show_taxonomies() {
 // 公告筛选
 add_action( 'restrict_manage_posts', 'add_be_notice_filters', 10, 1 ); 
 function add_be_notice_filters( $post_type ){
-	if( 'bulletin' !== $post_type ){
+	if ( 'bulletin' !== $post_type ){
 		return;
 	}
 
@@ -477,4 +477,34 @@ function add_be_notice_filters( $post_type ){
 			'hierarchical'    =>  true,
 		) );
 	}
+}
+
+
+add_action( 'init', 'be_special', 0 );
+function be_special() {
+	$type_url = zm_get_option( 'be_special_url' );
+	$labels = array(
+		'name'              => '专栏',
+		'singular_name'     => '专栏',
+		'search_items'      => '搜索专栏',
+		'all_items'         => '所有专栏',
+		'parent_item'       => '父级专栏',
+		'parent_item_colon' => '父级专栏:',
+		'edit_item'         => '编辑专栏',
+		'update_item'       => '更新专栏',
+		'add_new_item'      => '添加新专栏',
+		'new_item_name'     => 'New Genre Name',
+		'menu_name'         => '专栏',
+	);
+
+	$args = array(
+		'hierarchical'      => true,
+		'labels'            => $labels,
+		'show_ui'           => true,
+		'show_in_rest'      => true,
+		'show_admin_column' => true,
+		'query_var'         => true,
+		'rewrite'           => array( 'slug' => $type_url ),
+	);
+	register_taxonomy( 'special', array( 'post' ), $args );
 }

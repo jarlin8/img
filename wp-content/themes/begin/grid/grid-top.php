@@ -14,9 +14,9 @@
 					<?php the_title( sprintf( '<h2 class="grid-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 
 					<span class="grid-inf">
-						<?php if ( get_post_meta($post->ID, 'link_inf', true) ) { ?>
+						<?php if ( get_post_meta(get_the_ID(), 'link_inf', true) ) { ?>
 							<?php if (zm_get_option('meta_author')) { ?><span class="grid-author"><?php grid_author_inf(); ?></span><?php } ?>
-							<span class="link-inf"><?php $link_inf = get_post_meta($post->ID, 'link_inf', true);{ echo $link_inf;}?></span>
+							<span class="link-inf"><?php $link_inf = get_post_meta(get_the_ID(), 'link_inf', true);{ echo $link_inf;}?></span>
 							<span class="grid-inf-l">
 							<?php views_span(); ?>
 							<?php echo t_mark(); ?>
@@ -25,8 +25,9 @@
 							<?php if (zm_get_option('meta_author')) { ?><span class="grid-author"><?php grid_author_inf(); ?></span><?php } ?>
 							<?php views_span(); ?>
 							<span class="grid-inf-l">
-								<span class="date"><i class="be be-schedule ri"></i><?php the_time( 'm/d' ); ?></span>
-								<?php if ( get_post_meta($post->ID, 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
+								<?php echo be_vip_meta(); ?>
+								<?php grid_meta(); ?>
+								<?php if ( get_post_meta(get_the_ID(), 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
 								<?php echo t_mark(); ?>
 							</span>
 						<?php } ?>

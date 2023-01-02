@@ -1,5 +1,12 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if (zm_get_option('single_rolling')) { ?>
+	<?php if (zm_get_option('single_rolling')) { ?>
+	<?php 
+		if ( zm_get_option( 'not_single_rolling_cat' ) ) {
+			$notcat = implode( ',', zm_get_option( 'not_single_rolling_cat' ) );
+		} else {
+			$notcat = '';
+		}
+		if ( ! in_category( explode( ',', $notcat ) ) ) { ?>
 	<?php 
 		global $post;
 		$catid = '';
@@ -31,4 +38,5 @@
 			</div>
 		</div>
 	<?php endif; ?>
+	<?php } ?>
 <?php } ?>

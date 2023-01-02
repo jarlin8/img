@@ -16,44 +16,44 @@
 					query_posts($args);
 				?>
 				<?php while (have_posts()) : the_post(); ?>
-				<?php $image = get_post_meta($post->ID, 'guide_img', true); ?>
-				<?php $group_slider_url = get_post_meta($post->ID, 'group_slider_url', true); ?>
-				<?php $small_img = get_post_meta($post->ID, 'small_img', true); ?>
-				<?php $video = get_post_meta($post->ID, 'guide_video', true); ?>
+				<?php $image = get_post_meta(get_the_ID(), 'guide_img', true); ?>
+				<?php $group_slider_url = get_post_meta(get_the_ID(), 'group_slider_url', true); ?>
+				<?php $small_img = get_post_meta(get_the_ID(), 'small_img', true); ?>
+				<?php $video = get_post_meta(get_the_ID(), 'guide_video', true); ?>
 				<?php 
-					$s_t_a = get_post_meta($post->ID, 's_t_a', true);
-					$s_t_b = get_post_meta($post->ID, 's_t_b', true);
-					$s_t_c = get_post_meta($post->ID, 's_t_c', true);
-					$s_n_b = get_post_meta($post->ID, 's_n_b', true);
-					$s_n_b_l = get_post_meta($post->ID, 's_n_b_l', true);
+					$s_t_a = get_post_meta(get_the_ID(), 's_t_a', true);
+					$s_t_b = get_post_meta(get_the_ID(), 's_t_b', true);
+					$s_t_c = get_post_meta(get_the_ID(), 's_t_c', true);
+					$s_n_b = get_post_meta(get_the_ID(), 's_n_b', true);
+					$s_n_b_l = get_post_meta(get_the_ID(), 's_n_b_l', true);
 				?>
 					<div class="slider-group-main">
-						<?php if ( get_post_meta($post->ID, 'guide_video', true) ) { ?>
+						<?php if ( get_post_meta(get_the_ID(), 'guide_video', true) ) { ?>
 							<a data-fancybox class="slider-video-a" href="<?php echo $video; ?>">
-								<div class="slider-video-play<?php if ( !get_post_meta($post->ID, 's_t_b', true) ) { ?> slider-video-play-show<?php } ?>">
+								<div class="slider-video-play<?php if ( !get_post_meta(get_the_ID(), 's_t_b', true) ) { ?> slider-video-play-show<?php } ?>">
 									<div class="slider-video-ico"></div>
 								</div>
 							</a>
 						<?php } ?>
 
 						<?php if (zm_get_option('group_slider_url')) { ?>
-							<a href="<?php if ( get_post_meta($post->ID, 'group_slider_url', true) ) { ?><?php echo $group_slider_url; ?><?php } else { ?><?php the_permalink(); ?><?php } ?>" rel="bookmark"><div class="group-big-img big-back-img<?php if (zm_get_option('group_blur')) { ?> big-blur<?php } ?>" style="background-image: url('<?php echo $image; ?>');height:<?php echo zm_get_option('big_back_img_h'); ?>px;"></div></a>
+							<a href="<?php if ( get_post_meta(get_the_ID(), 'group_slider_url', true) ) { ?><?php echo $group_slider_url; ?><?php } else { ?><?php the_permalink(); ?><?php } ?>" rel="bookmark"><div class="group-big-img big-back-img<?php if (zm_get_option('group_blur')) { ?> big-blur<?php } ?>" style="background-image: url('<?php echo $image; ?>');height:<?php echo zm_get_option('big_back_img_h'); ?>px;"></div></a>
 						<?php } else { ?>
 							<div class="group-big-img big-back-img<?php if (zm_get_option('group_blur')) { ?> big-blur<?php } ?>" style="background-image: url('<?php echo $image; ?>');height:<?php echo zm_get_option('big_back_img_h'); ?>px;"></div>
 						<?php } ?>
 
 						<?php if (zm_get_option('group_slider_url')) { ?>
-							<?php if ( get_post_meta($post->ID, 'small_img', true) ) : ?><div class="group-small-img bgt"><a href="<?php if ( get_post_meta($post->ID, 'group_slider_url', true) ) { ?><?php echo $group_slider_url; ?><?php } else { ?><?php the_permalink(); ?><?php } ?>" rel="bookmark"><img class="group-act2" src="<?php echo $small_img; ?>"></a></div><?php endif; ?>
+							<?php if ( get_post_meta(get_the_ID(), 'small_img', true) ) : ?><div class="group-small-img bgt"><a href="<?php if ( get_post_meta(get_the_ID(), 'group_slider_url', true) ) { ?><?php echo $group_slider_url; ?><?php } else { ?><?php the_permalink(); ?><?php } ?>" rel="bookmark"><img class="group-act2" src="<?php echo $small_img; ?>"></a></div><?php endif; ?>
 						<?php } else { ?>
-							<?php if ( get_post_meta($post->ID, 'small_img', true) ) : ?><div class="group-small-img bgt"><img class="group-act2" src="<?php echo $small_img; ?>"></div><?php endif; ?>
+							<?php if ( get_post_meta(get_the_ID(), 'small_img', true) ) : ?><div class="group-small-img bgt"><img class="group-act2" src="<?php echo $small_img; ?>"></div><?php endif; ?>
 						<?php } ?>
 
-						<div class="slider-group-mask<?php if ( get_post_meta($post->ID, 's_t_b', true) ) : ?> slider-mask<?php endif; ?>">
-							<div class="slider-group-main-box bgt<?php if ( get_post_meta($post->ID, 'small_img', true) ) : ?> small-img-box<?php endif; ?><?php if ( get_post_meta($post->ID, 'g_s_c', true) ) { ?> g-s-c<?php } else { ?> g-s-l<?php } ?>">
-								<div class="group-slider-main-body bgt<?php if ( get_post_meta($post->ID, 'guide_video', true) ) { ?> video-main"<?php } ?>">
+						<div class="slider-group-mask<?php if ( get_post_meta(get_the_ID(), 's_t_b', true) ) : ?> slider-mask<?php endif; ?>">
+							<div class="slider-group-main-box bgt<?php if ( get_post_meta(get_the_ID(), 'small_img', true) ) : ?> small-img-box<?php endif; ?><?php if ( get_post_meta(get_the_ID(), 'g_s_c', true) ) { ?> g-s-c<?php } else { ?> g-s-l<?php } ?>">
+								<div class="group-slider-main-body bgt<?php if ( get_post_meta(get_the_ID(), 'guide_video', true) ) { ?> video-main"<?php } ?>">
 									<?php if (zm_get_option('group_slider_t')) { ?>
-										<?php if ( get_post_meta($post->ID, 's_t_b', true) ) { ?>
-											<?php if ( get_post_meta($post->ID, 'small_img', true) ) { ?>
+										<?php if ( get_post_meta(get_the_ID(), 's_t_b', true) ) { ?>
+											<?php if ( get_post_meta(get_the_ID(), 'small_img', true) ) { ?>
 												<div class="group-slider-main bgt">
 											<?php } else { ?>
 												<div class="group-slider-main no-small bgt">
@@ -63,7 +63,7 @@
 													<p class="gt2 s-t-b bgt group-act2"><?php echo $s_t_b; ?></p>
 													<p class="gt1 s-t-c bgt group-act3"><?php echo $s_t_c; ?></p>
 												</div>
-												<?php if ( get_post_meta($post->ID, 's_n_b', true) ) { ?>
+												<?php if ( get_post_meta(get_the_ID(), 's_n_b', true) ) { ?>
 													<div class="group-img-more bgt group-act4"><a class="dah" href="<?php echo $s_n_b_l; ?>" rel="bookmark" target="_blank"><?php echo $s_n_b; ?></a></div>
 												<?php } ?>
 												<div class="clear"></div>
@@ -90,9 +90,9 @@
 				query_posts($args);
 			?>
 			<?php while (have_posts()) : the_post(); ?>
-			<?php $image = get_post_meta($post->ID, 'guide_img', true); ?>
-			<div class="group-lazy-img ajax-owl-loading" style="height:<?php echo zm_get_option('big_back_img_h'); ?>px;">
-				<img src="<?php echo $image; ?>" />
+			<?php $image = get_post_meta(get_the_ID(), 'guide_img', true); ?>
+			<div class="group-lazy-img ajax-owl-loading">
+				<div class="group-big-img big-back-img<?php if (zm_get_option('group_blur')) { ?> big-blur<?php } ?>" style="background-image: url('<?php echo $image; ?>');height:<?php echo zm_get_option('big_back_img_h'); ?>px;"></div>
 			</div>
 			<?php endwhile; ?>
 			<?php wp_reset_query(); ?>
@@ -108,7 +108,7 @@
 			<?php } else { ?>
 				<a href="<?php echo zm_get_option('group_slider_img_url'); ?>" rel="external nofollow" >
 			<?php } ?>
-			<img class="show-slider-img ms bk" src="<?php echo zm_get_option('group_slider_img'); ?>" alt="show">
+			<div class="group-big-img big-back-img<?php if (zm_get_option('group_blur')) { ?> big-blur<?php } ?>" style="background-image: url('<?php echo zm_get_option('group_slider_img'); ?>');height:<?php echo zm_get_option('big_back_img_h'); ?>px;"></div>
 			<?php if (zm_get_option('group_slider_video_url')) { ?><div class="slider-video-ico"></div><?php } ?></a>
 		</div>
 

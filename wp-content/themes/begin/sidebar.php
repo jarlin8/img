@@ -1,15 +1,19 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<?php if ( get_post_meta(get_the_ID(), 'sidebar_l', true) ) { ?>
+<?php if ( is_single() || is_page()) { ?>
+<?php if ( get_post_meta( get_the_ID(), 'sidebar_l', true ) ) { ?>
 <div id="sidebar-l" class="widget-area all-sidebar">
 <?php } else { ?>
 <div id="sidebar" class="widget-area all-sidebar">
 <?php } ?>
+<?php } else { ?>
+<div id="sidebar" class="widget-area all-sidebar">
+<?php } ?>
 
-	<?php if ( is_page('template-cms') ) : ?>
+	<?php if ( is_page( 'template-cms' ) ) : ?>
 		<?php dynamic_sidebar( 'cms-page' ); ?>
 	<?php endif; ?>
 
-	<?php if (is_single() || is_page() ) : ?>
+	<?php if ( is_single() || is_page() ) : ?>
 		<?php if ( ! dynamic_sidebar( 'sidebar-s' ) ) : ?>
 			<aside id="add-widgets" class="widget widget_text bk">
 				<h3 class="widget-title da bkx"><i class="be be-warning"></i>添加小工具</h3>

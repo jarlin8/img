@@ -1,14 +1,15 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if (zm_get_option('group_features')) { ?>
-<div class="g-row g-line sort" name="<?php echo zm_get_option('group_features_s'); ?>">
+<div class="g-row g-line group-features-line sort" name="<?php echo zm_get_option('group_features_s'); ?>">
 	<div class="g-col">
 		<div class="group-features">
 			<div class="group-title" <?php aos_b(); ?>>
-				<?php if ( zm_get_option('features_t') == '' ) { ?>
-				<?php } else { ?>
+				<?php if ( ! zm_get_option('features_t') == '' ) { ?>
 					<h3><?php echo zm_get_option('features_t'); ?></h3>
 				<?php } ?>
-				<div class="group-des"><?php echo zm_get_option('features_des'); ?></div>
+				<?php if ( ! zm_get_option('features_des') == '' ) { ?>
+					<div class="group-des"><?php echo zm_get_option('features_des'); ?></div>
+				<?php } ?>
 				<div class="clear"></div>
 			</div>
 			<div class="section-box">
@@ -26,7 +27,9 @@
 				<div class="clear"></div>
 				<?php if ( zm_get_option('features_url') == '' ) { ?>
 				<?php } else { ?>
-					<div class="img-more"><a href="<?php echo zm_get_option('features_url'); ?>"><?php _e( '更多', 'begin' ); ?> <i class="be be-fastforward"></i></a></div>
+					<div class="group-post-more da">
+						<a href="<?php echo zm_get_option('features_url'); ?>" title="<?php _e( '更多', 'begin' ); ?>" rel="external nofollow"><i class="be be-more"></i></a>
+					</div>
 				<?php } ?>
 			</div>
 		</div>

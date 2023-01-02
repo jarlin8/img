@@ -71,7 +71,7 @@ function del_category_base_query_vars($public_query_vars) {
 }
 
 function del_category_base_request($query_vars) {
-	if( isset( $query_vars['category_redirect'] ) ) {
+	if ( isset( $query_vars['category_redirect'] ) ) {
 		$catlink = trailingslashit( get_option( 'home' ) ) . user_trailingslashit( $query_vars['category_redirect'], 'category' );
 		status_header( 301 );
 		header( "Location: $catlink" );

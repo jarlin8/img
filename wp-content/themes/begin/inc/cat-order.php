@@ -114,7 +114,7 @@ final class ZM_Term_Order {
 	}
 
 	public function add_column_header( $columns = array() ) {
-		$columns['order'] = __( '排序', 'begin' );
+		$columns['order'] ='排序';
 		return $columns;
 	}
 
@@ -181,11 +181,11 @@ final class ZM_Term_Order {
 		?>
 		<div class="form-field form-required">
 			<label for="order">
-				<?php esc_html_e( '排序', 'begin' ); ?>
+				排序
 			</label>
 			<input type="number" pattern="[0-9.]+" name="order" id="order" value="0" size="11">
 			<p class="description">
-				<?php esc_html_e( '输入数字自定义排序。', 'begin' ); ?>
+				输入数字自定义排序
 			</p>
 		</div>
 		<?php
@@ -196,13 +196,13 @@ final class ZM_Term_Order {
 		<tr class="form-field">
 			<th scope="row" valign="top">
 				<label for="order">
-					<?php esc_html_e( '分类排序', 'begin' ); ?>
+					分类排序
 				</label>
 			</th>
 			<td>
 				<input name="order" id="order" type="text" value="<?php echo $this->get_term_order( $term ); ?>" size="11" />
 				<p class="description">
-					<?php esc_html_e( '输入数字自定义排序。', 'begin' ); ?>
+					输入数字自定义排序。
 				</p>
 			</td>
 		</tr>
@@ -217,7 +217,7 @@ final class ZM_Term_Order {
 		<fieldset>
 			<div class="inline-edit-col">
 				<label>
-					<span class="title"><?php esc_html_e( '排序', 'begin' ); ?></span>
+					<span class="title">排序</span>
 					<span class="input-text-wrap">
 						<input type="number" pattern="[0-9.]+" class="ptitle" name="order" value="" size="11">
 					</span>

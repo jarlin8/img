@@ -11,7 +11,7 @@
 				'showposts' => zm_get_option( 'flexisel_n' ), 
 			);
 
-			if( zm_get_option( 'gallery_id' ) ) {
+			if ( zm_get_option( 'gallery_id' ) ) {
 				$args = array(
 					'showposts' => zm_get_option( 'flexisel_n' ), 
 					'tax_query' => array(

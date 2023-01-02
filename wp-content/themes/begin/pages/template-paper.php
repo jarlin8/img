@@ -1,43 +1,32 @@
 <?php
 /*
 Template Name: 空白模板
+Template Post Type: post, page
 */
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
-<style type="text/css">
-#primary.paper-area {
-	width: 100%;
-}
-
-.page-template-template-paper #page .page {
-	position: relative;
-	background: transparent;
-	margin: 0 0 10px 0;
-	padding: 0;
-	border: none;
-	box-shadow: none;
-	border-radius: 0;
-}
-
-.paper-content img {
-	max-width: 100%;
-	width: auto\9;
-	height: auto;
-	vertical-align: middle;
-	display: block;
-}
-</style>
-
-<div id="primary" class="paper-area">
-	<main id="main" class="site-main" role="main">
-	<?php while ( have_posts() ) : the_post(); ?>
-		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-			<div class="paper-content">
-				<?php the_content(); ?>
-			</div>
-		</article>
-	<?php endwhile; ?>
+<div id="<?php if ( get_post_meta(get_the_ID(), 'sidebar_l', true) ) { ?>primary-l<?php } else { ?>primary<?php } ?>" class="paper-sidebar<?php if ( get_post_meta( get_the_ID(), 'no_sidebar', true ) ) { ?> paper-area no-sidebar<?php } else { ?> content-area<?php } ?>">
+	<main id="main" class="be-main site-main" role="main">
+		<?php while ( have_posts() ) : the_post(); ?>
+			<article id="post-<?php the_ID(); ?>"  class="page type-page status-publish">
+				<div class="paper-content">
+					<?php the_content(); ?>
+				<div class="clear"></div>
+				<?php edit_post_link('<i class="be be-editor"></i>', '<div class="page-edit-link edit-link">', '</div>' ); ?>
+				<div class="clear"></div>
+				</div>
+			</article>
+		<?php endwhile; ?>
 	</main>
 </div>
 
+<?php if ( ! get_post_meta( get_the_ID(), 'no_sidebar', true ) ) { ?>
+	<?php if ( class_exists( 'DW_Question_Answer' ) ) { ?>
+		<?php if ( ! is_singular( 'dwqa-question' ) ) { ?>
+			<?php get_sidebar(); ?>
+		<?php } ?>
+	<?php } else { ?>
+		<?php get_sidebar(); ?>
+	<?php } ?>
+<?php } ?>
 <?php get_footer(); ?>

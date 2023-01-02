@@ -2,10 +2,9 @@
 <?php if (zm_get_option('group_contact')) { ?>
 	<div class="g-row g-line sort contact" name="<?php echo zm_get_option('group_contact_s'); ?>" <?php aos(); ?>>
 		<div class="g-col">
-			<div class="section-box">
+			<div class="section-box group-contact-wrap">
 				<div class="group-title" <?php aos_b(); ?>>
-					<?php if ( zm_get_option('group_contact_t') == '' ) { ?>
-					<?php } else { ?>
+					<?php if ( ! zm_get_option('group_contact_t') == '' ) { ?>
 						<h3><?php echo zm_get_option('group_contact_t'); ?></h3>
 					<?php } ?>
 					<div class="clear"></div>
@@ -17,15 +16,26 @@
 						'ignore_sticky_posts' => 1
 					) );
 				?>
-				<?php if($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
-					<div class="group-contact">
-						<?php if (zm_get_option('tr_contact')) { ?>
-						<div class="group-contact-main single-content" <?php aos_b(); ?>>
-						<?php } else { ?>
-						<div class="group-contact-main-all single-content" <?php aos_b(); ?>>
-						<?php } ?>
-							<?php global $more; $more = 0; the_content( '' ); ?>
+				<?php if ($posts) : foreach( $posts as $post ) : setup_postdata( $post ); ?>
+					<div class="group-contact<?php if ( ! zm_get_option( 'contact_img_m' ) || ( zm_get_option( 'contact_img_m' ) == 'contact_img_right')) { ?> group-contact-lr<?php } ?>">
+						<div class="single-content<?php if ( zm_get_option( 'tr_contact' ) ) { ?> group-contact-main<?php } else { ?> group-contact-main-all<?php } ?>" <?php aos_b(); ?>>
+							<?php 
+								$content = get_the_content();
+								$content = strip_shortcodes( $content );
+								if ( zm_get_option( 'languages_en' ) ) {
+									echo begin_strimwidth( strip_tags( $content), 0, zm_get_option('contact_words_n' ), '...' );
+								} else {
+									echo wp_trim_words( $content, zm_get_option( 'contact_words_n' ), '...' );
+								}
+							?>
 						</div>
+
+						<?php if ( zm_get_option( 'group_contact_bg' ) ) { ?>
+							<div class="group-contact-img">
+								<img alt="contact" src="<?php echo zm_get_option( 'group_contact_img' ); ?>">
+							</div>
+						<?php } ?>
+
 						<div class="clear"></div>
 						<?php if ( zm_get_option('group_more_z') ||  zm_get_option('group_contact_z')) { ?>
 							<div class="group-contact-more">

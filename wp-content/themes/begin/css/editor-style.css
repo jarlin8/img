@@ -10,10 +10,9 @@ html .content.mceContentBody {
 	position: relative;
 }
 
-html .footer_inf_t.mceContentBody,html {
-	font: 14px "Microsoft YaHei",微软雅黑,Helvetica;
-	color: #555;
-	line-height: 100%;
+body.csf_wp_editor {
+	font-family: "Microsoft YaHei",Helvetica,Arial,Lucida Grande,Tahoma,sans-serif;
+	font-size: 14px;
 }
 
 html .content.mceContentBody:before {
@@ -80,7 +79,7 @@ a img {
 }
 
 a {
-	color: #3690cf;
+	color: #4d8cb8;
 	text-decoration: none;
 }
 
@@ -94,6 +93,7 @@ p,ul,ol,dd,pre {
 }
 
 h2 {
+	position: relative;
 	font-size: 19px;
 	line-height: 190%;
 	margin: 10px -10px;
@@ -102,6 +102,7 @@ h2 {
 }
 
 h3,h4 {
+	position: relative;
 	font-size: 17px;
 	line-height: 190%;
 	margin: 10px -10px;
@@ -110,11 +111,11 @@ h3,h4 {
 }
 h6, 
 h5 {
+	position: relative;
 	font-size: 16px;
 }
 
 p {
-	text-align: justify;
 	margin: 0 0 15px;
 }
 
@@ -160,9 +161,10 @@ img {
 
 .wp-caption {
 	background: #f3f3f3;
-	border: 1px solid #ebebeb;
 	padding: 5px;
+	margin: 0 0 0 -5px !important;
 	border-radius: 3px;
+	border: 1px solid #ebebeb;
 }
 
 .wp-caption img[class*="wp-image-"] {
@@ -267,4 +269,50 @@ pre {
 	margin: 0px 0px 1px -15px;
 	padding: 2px;
 	color: #666;
+}
+
+h2:before, 
+h3:before, 
+h4:before, 
+h5:before, 
+h6:before {
+	position: absolute;
+	top: -14px;
+	left: 5px;
+	font-size: 12px;
+	font-weight: 400;
+	color: #c5c5c5;
+	font-style: italic;
+	transform: scale(0.8);
+}
+
+h2:before {
+	content: "H2";
+}
+
+h3:before {
+	content: "H3";
+}
+
+h4:before {
+	content: "H4";
+}
+
+h5:before {
+	content: "H5";
+}
+
+h6:before {
+	content: "H6";
+}
+
+h5::after, h6:after {
+	position: absolute;
+	content: "";
+	top: 8px;
+	left: -10px;
+	width: 5px;
+	height: 16px;
+	border-radius: 5px;
+	background: linear-gradient(to top, #5bca94, #6a82fb);
 }

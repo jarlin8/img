@@ -14,7 +14,7 @@ function wp_be_keywordlink_topbarmessage($msg) {
 
 function wp_be_keywordlink_showdefinitions() {
 	$links = get_option(WP_KEYWORDLINK_OPTION);
-	echo '<h4><span class="dashicons dashicons-index-card"></span> 全部关键词</h4>';
+	echo '<h4>全部关键词</h4>';
 	// 显示条数和搜索
 	if ($links) { 
 		$wp_pagelimit = get_option(WP_PAGELIMIT_OPTION);
@@ -24,7 +24,7 @@ function wp_be_keywordlink_showdefinitions() {
 			$page_num++;
 		}
 
-		if(isset($_POST['wp_page']) && $_POST['wp_page']) {
+		if (isset($_POST['wp_page']) && $_POST['wp_page']) {
 			$wp_page = $_POST['wp_page'];
 		} else {
 			$wp_page = $page_num - 1;
@@ -37,7 +37,7 @@ function wp_be_keywordlink_showdefinitions() {
 			<input type=text name=page_limit value=<?php echo $page_limit; ?> size=3 />
 			<?php
 				for ($ii=1;$ii<$page_num;$ii++) {
-					if($ii == $wp_page){
+					if ($ii == $wp_page){
 						echo '<input class="button" style="margin:0 0 0 3px;" type=submit name=wp_page value='.$ii.' />';
 					} else {
 						echo '<input class="button" style="margin:0 0 0 3px;" type=submit name=wp_page value='.$ii.' />';
@@ -52,7 +52,7 @@ function wp_be_keywordlink_showdefinitions() {
 	</p>
 
 	<?php
-		if(isset($_POST['search_k']) && $_POST['search_k']) {
+		if (isset($_POST['search_k']) && $_POST['search_k']) {
 		} else { 
 			$links  = array_slice($links, ($wp_page-1)*$page_limit, $page_limit);
 		}
@@ -60,19 +60,19 @@ function wp_be_keywordlink_showdefinitions() {
 		echo "<table class='widefat'>\n";
 		echo "<thead><tr><th>序号</th><th>关键词</th><th>链接</th><th>属性</th><th>操作</th><th><input type=checkbox name=All onclick=checkAll('checkbox')></th></tr></thead>\n";
 		$cnt = ($wp_page-1)*$page_limit;
-		if(isset($_POST['search_k']) && $_POST['search_k']) { $cnt = 0; }
+		if (isset($_POST['search_k']) && $_POST['search_k']) { $cnt = 0; }
 		foreach ($links as $keyword => $details) {
 			list($link,$nofollow,$firstonly,$newwindow,$ignorecase,$isaffiliate,$docomments,$zh_CN,$desc) = explode('|',$details);
 			$cleankeyword = stripslashes($keyword);
-			if(!$desc){ $desc = $cleankeyword; }
+			if (!$desc){ $desc = $cleankeyword; }
 			$desc = stripslashes($desc);
 
-			if( isset($_POST['search_k']) && $_POST['search_k'] ) {
+			if ( isset($_POST['search_k']) && $_POST['search_k'] ) {
 				$search_k = $_POST['search_k'];
-				if( preg_match("/$search_k/Ui",$cleankeyword) ) {
+				if ( preg_match("/$search_k/Ui",$cleankeyword) ) {
 					if ($cnt++ % 2) echo '<tr class=alternate>'; else echo '<tr>';
 						echo "<td>$cnt</td><td><a title=\"$desc\">$cleankeyword</a></td><td><a href='$link'>";
-						//if( function_exists(mb_strimwidth) ){ echo mb_strimwidth($link, 0, 35, '...'); } else { echo substr($link, 0, 35); }
+						//if ( function_exists(mb_strimwidth) ){ echo mb_strimwidth($link, 0, 35, '...'); } else { echo substr($link, 0, 35); }
 						echo "</a></td>";
 						 
 						/* show attributes */
@@ -103,7 +103,7 @@ function wp_be_keywordlink_showdefinitions() {
 			} else {
 				if ($cnt++ % 2) echo '<tr class=alternate>'; else echo '<tr>';
 				echo "<td>$cnt</td><td><a title=\"$desc\">$cleankeyword</a></td><td><a href='$link'>";
-				if( function_exists('mb_strimwidth') ){ echo mb_strimwidth($link, 0, 35, '...'); } else { echo substr($link, 0, 35); }
+				if ( function_exists('mb_strimwidth') ){ echo mb_strimwidth($link, 0, 35, '...'); } else { echo substr($link, 0, 35); }
 				echo "</a></td>";
 
 				/* show attributes */
@@ -208,7 +208,7 @@ function wp_be_keywordlink_addnew() {
 	global $last_link_options;
 	@list($last_link,$last_nofollow,$last_firstonly,$last_newwindow,$last_ignorecase,$last_isaffiliate,$last_docomments,$last_zh_CN,$last_desc) = explode("|",$last_link_options);
 	?>
- 		<h4><span class="dashicons dashicons-welcome-add-page"></span> 编辑 / 添加关键词</h4>
+ 		<h4>编辑 / 添加关键词</h4>
  		<a name="keywordeditor"></a>
  		<form name=wp_keywordadd id=wp_keywordadd method="post" action="">
 		<input type=hidden name=action value=save />
@@ -220,13 +220,13 @@ function wp_be_keywordlink_addnew() {
 			<td></td>
 			<td class="attri-butes">
 				<br />
-				<label for=zh_CN><input class="checkbox of-input" type=checkbox id=zh_CN name=zh_CN value="1" <?php if($last_zh_CN) { echo 'checked';} ?>/>中文关键词</label>
-				<label for=docomments><input class="checkbox of-input" type=checkbox id=docomments name=docomments value="1" <?php if($last_docomments) { echo 'checked';} ?>/>评论匹配关键词</label><br />
-				<label for=newwindow><input class="checkbox of-input" type=checkbox id=newwindow name=newwindow value="1" <?php if($last_newwindow) { echo 'checked';} ?>/>新窗口打开链接</label><br />
-				<label for=nofollow><input class="checkbox of-input" type=checkbox id=nofollow name=nofollow value="1" <?php if($last_nofollow) { echo 'checked';} ?>/>添加Nofollow</label><br />
-				<label for=ignorecase><input class="checkbox of-input" type=checkbox id=ignorecase name=ignorecase value="1" <?php if($last_ignorecase) { echo 'checked';} ?>/>不区分大小写</label><br />
-				<label for=isaffiliate><input class="checkbox of-input" type=checkbox id=isaffiliate name=isaffiliate value="1" <?php if($last_isaffiliate) { echo 'checked';} ?>/>内链（区别样式）</label><br />
-				<label for=firstonly><input class="checkbox of-input" type=checkbox id=firstonly name=firstonly value="1" <?php if($last_firstonly) { echo 'checked';} ?>/>仅匹配一个关键词</label>
+				<label for=zh_CN><input class="checkbox of-input" type=checkbox id=zh_CN name=zh_CN value="1" <?php if ($last_zh_CN) { echo 'checked';} ?>/>中文关键词</label>
+				<label for=docomments><input class="checkbox of-input" type=checkbox id=docomments name=docomments value="1" <?php if ($last_docomments) { echo 'checked';} ?>/>评论匹配关键词</label><br />
+				<label for=newwindow><input class="checkbox of-input" type=checkbox id=newwindow name=newwindow value="1" <?php if ($last_newwindow) { echo 'checked';} ?>/>新窗口打开链接</label><br />
+				<label for=nofollow><input class="checkbox of-input" type=checkbox id=nofollow name=nofollow value="1" <?php if ($last_nofollow) { echo 'checked';} ?>/>添加Nofollow</label><br />
+				<label for=ignorecase><input class="checkbox of-input" type=checkbox id=ignorecase name=ignorecase value="1" <?php if ($last_ignorecase) { echo 'checked';} ?>/>不区分大小写</label><br />
+				<label for=isaffiliate><input class="checkbox of-input" type=checkbox id=isaffiliate name=isaffiliate value="1" <?php if ($last_isaffiliate) { echo 'checked';} ?>/>内链（区别样式）</label><br />
+				<label for=firstonly><input class="checkbox of-input" type=checkbox id=firstonly name=firstonly value="1" <?php if ($last_firstonly) { echo 'checked';} ?>/>仅匹配一个关键词</label>
 			</td>
 		</tr>
 		<tr><td><input type=submit class="button-primary" style="margin:20px 0;" value="保存" /></td></tr></table>
@@ -235,20 +235,20 @@ function wp_be_keywordlink_addnew() {
 }
 
 function wp_be_keywordlink_global_options() {
-	if(isset($_POST['action'])){
-		if($_POST['action'] == 'global_options'){
+	if (isset($_POST['action'])){
+		if ($_POST['action'] == 'global_options'){
 			$match_num_from = $_POST[match_num_from];
 			$match_num_to  =  $_POST[match_num_to];
-			if(!$match_num_from || !$match_num_to){ $match_num_from= 2; $match_num_to = 3; }
-			if($match_num_from > $match_num_to){ $match_num_from = $_POST[match_num_to]; $match_num_to = $_POST[match_num_from]; }
+			if (!$match_num_from || !$match_num_to){ $match_num_from= 2; $match_num_to = 3; }
+			if ($match_num_from > $match_num_to){ $match_num_from = $_POST[match_num_to]; $match_num_to = $_POST[match_num_from]; }
 			$link_itself = $_POST[link_itself];
-			if(!$link_itself){ $link_itself = 0; }
+			if (!$link_itself){ $link_itself = 0; }
 			$ignore_pre = $_POST[ignore_pre];
-			if(!$ignore_pre){ $ignore_pre = 0; }
+			if (!$ignore_pre){ $ignore_pre = 0; }
 			$ignore_page = $_POST[ignore_page];
-			if(!$ignore_page){ $ignore_page = 0; }
+			if (!$ignore_page){ $ignore_page = 0; }
 			$support_author = $_POST[support_author];
-			if(!$support_author){ $support_author = 0; }
+			if (!$support_author){ $support_author = 0; }
 			$global_options = implode( "|", array($match_num_from, $match_num_to, $link_itself, $ignore_pre, $ignore_page, $support_author) );
 			update_option(WP_GLOBAL_OPTION,$global_options); 
 			wp_be_keywordlink_topbarmessage('更新成功');
@@ -256,7 +256,7 @@ function wp_be_keywordlink_global_options() {
 	}
 
 	$the_global_options = get_option(WP_GLOBAL_OPTION);
-	if($the_global_options) {
+	if ($the_global_options) {
 		list($match_num_from, $match_num_to, $link_itself, $ignore_pre, $ignore_page, $support_author) = explode("|", $the_global_options);
 	} else {
 		$match_num_from = 2;
@@ -310,11 +310,11 @@ function wp_be_keywordlink_deletekeyword() {
 	$links = get_option(WP_KEYWORDLINK_OPTION);
 	$keyword = $_POST['keyword'];
 
-	if( preg_match("/#/",$keyword) ) {
+	if ( preg_match("/#/",$keyword) ) {
 		$keywords = explode("#",$keyword);
 	}
 
-	if(empty($keywords) ? '' : $keywords) {
+	if (empty($keywords) ? '' : $keywords) {
 		foreach($keywords as $keyword){
 			if (!isset($links[$keyword])) continue;
 			unset($links[$keyword]);
@@ -331,19 +331,19 @@ function wp_be_keywordlink_deletekeyword() {
 
 function wp_be_keywordlink_optionpage() {
 	/* 执行动作 */
-	if(isset($_POST['action'])) {
+	if (isset($_POST['action'])) {
 		if ($_POST['action']=='save') wp_be_keywordlink_savenew(); 
 	}
-	if(isset($_POST['action'])) {
+	if (isset($_POST['action'])) {
 		if ($_POST['action']=='delete') wp_be_keywordlink_deletekeyword();
 	}
-	if(isset($_POST['action'])) {
+	if (isset($_POST['action'])) {
 		if ($_POST['action']=='importcvs') wp_be_keywordlink_cvsimport();
 	}
-	if(isset($_POST['page_limit'])) {
+	if (isset($_POST['page_limit'])) {
 		if ($_POST['page_limit']) wp_be_pagelimit_updated();
 	}
-	if(isset($_POST['wp_keywordlink_deactivate_yes'])) {
+	if (isset($_POST['wp_keywordlink_deactivate_yes'])) {
 		if ($_POST['wp_keywordlink_deactivate_yes']) {
 			wp_be_keywordlink_deactivate();
 		}
@@ -380,7 +380,7 @@ function wp_be_keywordlink_replace($content,$iscomments) {
 	$links = $wp_keywordlinks; 
 
 	$the_global_options = get_option(WP_GLOBAL_OPTION);
-	if($the_global_options){
+	if ($the_global_options){
 		list($match_num_from, $match_num_to, $link_itself, $ignore_pre, $ignore_page, $support_author) = explode("|", $the_global_options);
 	} else {
 		$match_num_from = 2;
@@ -398,8 +398,13 @@ function wp_be_keywordlink_replace($content,$iscomments) {
 				if ($iscomments && $docomments==0)
 					continue;
 
+				// 如果是链接本身,则跳过.
+				$recent_url = 'http://'.$_SERVER['SERVER_NAME'].$_SERVER["REQUEST_URI"];
+				if ( $link == $recent_url )
+				continue;
+
 			   $cleankeyword = stripslashes($keyword);
-			   if(!$desc){ $desc = $cleankeyword; }
+			   if (!$desc){ $desc = $cleankeyword; }
 			   $desc = addcslashes($desc, '$');
 		 		if ($isaffiliate)
 					$url  = "<span class='keyword-inner'>";
@@ -418,16 +423,16 @@ function wp_be_keywordlink_replace($content,$iscomments) {
 
 				$ex_word = preg_quote($cleankeyword,'\'');
 				//ignore pre & ignore_keywordlink
-				if( $num_2 = preg_match_all("/<wp_nokeywordlink>.*?<\/wp_nokeywordlink>/is", $content, $ignore_keywordlink) )
+				if ( $num_2 = preg_match_all("/<wp_nokeywordlink>.*?<\/wp_nokeywordlink>/is", $content, $ignore_keywordlink) )
 					for($i=1;$i<=$num_2;$i++)
 					$content = preg_replace( "/<wp_nokeywordlink>.*?<\/wp_nokeywordlink>/is", "%ignore_keywordlink_$i%", $content, 1);
 
-					if( $num_1 = preg_match_all("/<pre.*?>.*?<\/pre>/is", $content, $ignore_pre) )
+					if ( $num_1 = preg_match_all("/<pre.*?>.*?<\/pre>/is", $content, $ignore_pre) )
 					for($i=1;$i<=$num_1;$i++)
 					$content = preg_replace( "/<pre.*?>.*?<\/pre>/is", "%ignore_pre_$i%", $content, 1);
 
 				// 排除
-				if( $num_3 = preg_match_all("/<div class=\"full-img\">.*?<\/div>/is", $content, $ignore_keywordlink) )
+				if ( $num_3 = preg_match_all("/<div class=\"full-img\">.*?<\/div>/is", $content, $ignore_keywordlink) )
 					for($i=1;$i<=$num_3;$i++)
 					$content = preg_replace( "/<div class=\"full-img\">.*?<\/div>/is", "%ignore_keywordlink_$i%", $content, 1);
 
@@ -476,7 +481,7 @@ function wp_be_keywordlink_replace_comments($content) {
 }
 
 function wp_be_pagelimit_updated() {
-	if(isset($_POST['page_limit'])) {
+	if (isset($_POST['page_limit'])) {
 		$page_limit = $_POST['page_limit'];
 		update_option(WP_PAGELIMIT_OPTION,$page_limit);
 		wp_be_keywordlink_topbarmessage('显示的内容');
@@ -488,20 +493,20 @@ function wp_be_keywordlink_init() {
 	$wp_keywordlinks = get_option(WP_KEYWORDLINK_OPTION);
 }
 
-if( function_exists( 'wp_title' ) ) {
+if ( function_exists( 'wp_title' ) ) {
 	wp_keywordlink_add();
 }
 
 function wp_be_keywordlink_last_options() {
 	global $last_link_options;
 	$links = get_option(WP_KEYWORDLINK_OPTION);
-	if($links)
+	if ($links)
 	$last_link_options = array_pop($links);
 }
 
 function be_suport_author() {
 	$the_global_options = get_option(WP_GLOBAL_OPTION);
-	if($the_global_options){
+	if ($the_global_options){
 		list($match_num_from, $match_num_to, $link_itself, $ignore_pre, $ignore_page, $support_author) = explode("|", $the_global_options);
 	} else {
 		$match_num_from = 2;
@@ -512,7 +517,7 @@ function be_suport_author() {
 		$support_author =0;
 	}
 
-	if($support_author){
+	if ($support_author){
 		echo '<!-- WP Keyword Link by liucheng.name -->';
 	}
 }
@@ -574,7 +579,7 @@ function wp_be_keywordlink_cvsexport() {
  	foreach ($links as $keyword => $details) {
 		list($link,$nofollow,$firstonly,$newwindow,$ignorecase,$isaffiliate,$docomments,$zh_CN,$desc) = explode("|",$details);
 		$cleankeyword = $keyword;
-		if(!$desc){ $desc = $cleankeyword; }
+		if (!$desc){ $desc = $cleankeyword; }
 		echo "\"$cleankeyword\",";
 		echo "\"$link\",";
 
@@ -596,7 +601,7 @@ function wp_be_keywordlink_cvsexport() {
 function wp_be_keywordlink_cvsmenu() {
 ?>
 	<hr />
-	<h4><span class="dashicons dashicons-update"></span> 导入 / 导出关键词</h4>
+	<h4>导入 / 导出关键词</h4>
 
 	<form enctype="multipart/form-data" name=cvs_form method="post" action="">
 	 <input type="radio" name="action" value="exportcvs" checked />导出文件
@@ -634,7 +639,7 @@ function wp_be_keywordlink_cvsimport() {
 			// Strip "" from the beginning and end of the keyword and url
 			$keyword = trim($keyword, "\"");
 			$link    = trim($link, "\"");
-			if(!$desc){ $desc = $keyword; } else { $desc    = trim($desc, "\""); }
+			if (!$desc){ $desc = $keyword; } else { $desc    = trim($desc, "\""); }
 			// Ignore empty keywords, or keywords with no link 
 			if ($keyword == "" || $link == "") {
 				$skip++;
@@ -667,7 +672,7 @@ function wp_be_keywordlink_cvsimport() {
 }
 
 function wp_be_keywordlink_checkcvs() {
-	if(isset($_POST['action'])) { 
+	if (isset($_POST['action'])) { 
 		if ($_POST['action']=='exportcvs')
 		wp_be_keywordlink_cvsexport();
 	}

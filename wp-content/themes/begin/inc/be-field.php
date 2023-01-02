@@ -50,9 +50,9 @@ add_action('videos_edit_form_fields','edit_category_field',10,2);
 add_action('products_edit_form_fields','edit_category_field',10,2);
 
 function taxonomy_metadate($term_id){
-	if(isset($_POST['cat-title']) && isset($_POST['cat-words'])){
+	if (isset($_POST['cat-title']) && isset($_POST['cat-words'])){
 
-		if(!current_user_can('manage_categories')){
+		if (!current_user_can('manage_categories')){
 			return $term_id;
 		}
 
@@ -119,8 +119,8 @@ function edit_tags_field($tag){
 add_action('post_tag_edit_form_fields','edit_tags_field',10,2);
 
 function tags_metadate($term_id){
-	if(isset($_POST['tag-title']) && isset($_POST['tag-words'])){
-		if(!current_user_can('manage_categories')){
+	if (isset($_POST['tag-title']) && isset($_POST['tag-words'])){
+		if (!current_user_can('manage_categories')){
 			return $term_id;
 		}
 

@@ -47,7 +47,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	float: left;
 	width: 14.285714%;
 	line-height: 280%;
-	padding: 1px;
+	padding: 3px;
 }
 
 .menu-list .menu li a {
@@ -60,7 +60,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	overflow: hidden;
 	padding: 0 2px;
 	border: 1px solid #e7e7e7;
-	border-radius: 5px;
+	border-radius: 8px;
 	transition-duration: .5s;
 }
 
@@ -120,7 +120,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 </style>
 
 <div id="primary" class="content-area">
-	<main id="main" class="site-main" role="main">
+	<main id="main" class="be-main site-main" role="main">
 		<div class="menu-list">
 			<?php if ( ! dynamic_sidebar( 'all-cat' ) ) : ?>
 				<aside class="add-widgets">

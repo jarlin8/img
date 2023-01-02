@@ -4,33 +4,37 @@ get_header(); ?>
 
 	<?php begin_primary_class(); ?>
 
-		<main id="main" class="site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?><?php if (get_post_meta($post->ID, 'sub_section', true) ) { ?> sub-h<?php } ?>" role="main">
+		<main id="main" class="be-main site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?><?php if (get_post_meta(get_the_ID(), 'sub_section', true) ) { ?> sub-h<?php } ?>" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
 				<?php get_template_part( 'template/content', get_post_format() ); ?>
 
-				<?php get_template_part( 'template/single-scrolling' ); ?>
-
 				<?php if (zm_get_option('copyright')) { ?>
 					<?php get_template_part( 'template/copyright' ); ?>
 				<?php } ?>
 
-				<?php nav_single(); ?>
-
-				<?php if (zm_get_option('single_tao')) { ?>
-					<?php get_template_part( 'template/single-tao' ); ?>
-				<?php } ?>
-
-				<?php if (zm_get_option('related_img')) { ?>
-					<?php get_template_part( 'template/related-img' ); ?>
+				<?php if ( zm_get_option( 'single_tab_tags' ) ) { ?>
+					<?php get_template_part( '/template/single-code-tag' ); ?>
 				<?php } ?>
 
 				<?php get_template_part( 'template/single-widget' ); ?>
 
-				<?php if (zm_get_option('single_tab')) { ?>
-					<?php get_template_part( '/template/cat-tab' ); ?>
+				<?php get_template_part( 'template/single-scrolling' ); ?>
+
+				<?php if ( ! zm_get_option( 'related_img' ) || ( zm_get_option( 'related_img' ) == 'related_outside' ) ) { ?>
+					<?php 
+						if ( zm_get_option( 'not_related_cat' ) ) {
+							$notcat = implode( ',', zm_get_option( 'not_related_cat' ) );
+						} else {
+							$notcat = '';
+						}
+						if ( ! in_category( explode( ',', $notcat ) ) ) { ?>
+						<?php get_template_part( 'template/related-img' ); ?>
+					<?php } ?>
 				<?php } ?>
+
+				<?php nav_single(); ?>
 
 				<?php get_template_part('ad/ads', 'comments'); ?>
 
@@ -38,11 +42,10 @@ get_header(); ?>
 
 			<?php endwhile; ?>
 
-		</main><!-- .site-main -->
-	</div><!-- .content-area -->
+		</main>
+	</div>
 
-<?php if ( get_post_meta( $post->ID, 'no_sidebar', true ) || ( zm_get_option('single_no_sidebar') ) ) { ?>
-<?php } else { ?>
+<?php if ( ! get_post_meta( get_the_ID(), 'no_sidebar', true ) && ( ! zm_get_option( 'single_no_sidebar' ) ) ) { ?>
 <?php get_sidebar(); ?>
 <?php } ?>
 <?php get_footer(); ?>

@@ -19,7 +19,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 	if ( !empty( $_POST['email'] ) ){
 		if (!is_email(esc_attr( $_POST['email'] )))
 			$error[] = __('错误：您输入的电子邮件地址不正确！', 'begin');
-		elseif( email_exists(esc_attr( $_POST['email'] ) ) && email_exists(esc_attr( $_POST['email'] )) != $current_user->ID )
+		elseif ( email_exists(esc_attr( $_POST['email'] ) ) && email_exists(esc_attr( $_POST['email'] )) != $current_user->ID )
 			$error[] = __('错误：该电子邮件已被其他用户使用！', 'begin');
 		else{
 			wp_update_user( array ('ID' => $current_user->ID, 'user_email' => esc_attr( $_POST['email'] )));
@@ -35,11 +35,26 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 		update_user_meta($current_user->id, 'display_name', esc_attr( $_POST['nickname'] ) );
 	}
 
+	if ( !empty( $_POST['first_name'] ) ) {
+		wp_update_user( array ('ID' => $current_user->id, 'display_name' => esc_attr( $_POST['first_name'] ) ) ) ;
+		update_user_meta($current_user->id, 'first_name', esc_attr( $_POST['first_name'] ) );
+		update_user_meta($current_user->id, 'display_name', esc_attr( $_POST['first_name'] ) );
+	}
+
+	if ( !empty( $_POST['display_name'] ) ) {
+		wp_update_user( array ('ID' => $current_user->id, 'display_name' => esc_attr( $_POST['display_name'] ) ) ) ;
+		update_user_meta($current_user->id, 'display_name', esc_attr( $_POST['display_name'] ) );
+		update_user_meta($current_user->id, 'display_name', esc_attr( $_POST['display_name'] ) );
+	}
+
 	if ( !empty( $_POST['description'] ) )
 		update_user_meta( $current_user->ID, 'description', esc_attr( $_POST['description'] ) );
 
 	if ( !empty( $_POST['userimg'] ) )
 		update_user_meta( $current_user->ID, 'userimg', esc_attr( $_POST['userimg'] ) );
+
+	if ( !empty( $_POST['remark'] ) )
+		update_user_meta( $current_user->ID, 'remark', esc_attr( $_POST['remark'] ) );
 
 	if ( count($error) == 0 ) {
 		do_action('edit_user_profile_update', $current_user->ID);
@@ -48,10 +63,10 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 	}
 }
 ?>
-<fieldset class="bk">
-<legend><h4 class="update-user-t"><?php _e( '修改个人信息', 'begin' ); ?></h4></legend>
+<div class="profile-box">
+<h4 class="update-user-t user-info-ico"><i class="be be-timerauto"></i><?php _e( '我的资料', 'begin' ); ?></h4>
 <div id="my-profile" class="user-profile" role="main">
-	<?php if(is_user_logged_in()){ ?>
+	<?php if ( is_user_logged_in() ) { ?>
 		<div class="profile-message">
 			<?php if ( isset( $_GET['updated'] ) ) : ?>
 				<legend><p class="profile-error profile-updated"><?php _e( '个人信息已更新！', 'begin' ); ?></p></legend>
@@ -60,7 +75,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 		</div>
 		<p class="clear"></p>
 
-		<form name="profile" id="your-profile" action="" method="post" enctype="multipart/form-data">
+		<form name="profile" id="your-profile" action="" method="post" autocomplete="off" enctype="multipart/form-data">
 			<p class="fp form-username">
 				<label for="nickname"><?php _e( '用户名', 'begin' ); ?></label>
 				<input class="text-input bky" name="user_login" type="text" id="user_login" disabled="disabled" value="<?php echo $current_user->user_login; ?>" /><span class="description"><?php _e( '不可更改', 'begin' ); ?></span>
@@ -69,6 +84,30 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 				<label for="nickname"><?php _e( '昵称', 'begin' ); ?><i class="be be-star"></i></label>
 				<input class="text-input dah" name="nickname" type="text" id="nickname" value="<?php the_author_meta( 'nickname', $current_user->ID ); ?>" />
 			</p>
+			<p class="fp form-username">
+				<label for="first_name"><?php _e( '名字', 'begin' ); ?></label>
+				<input class="text-input dah" name="first_name" type="text" id="first_name" value="<?php the_author_meta( 'first_name', $current_user->ID ); ?>" /><span class="description"><?php _e( '字母或数字', 'begin' ); ?></span>
+			</p>
+			<p class="fp form-username">
+				<label for="display_name"><?php _e( '公开显示名', 'begin' ); ?></label>
+				<select name="display_name" id="display_name" class="display-name-select">
+					<?php
+						$public_display                      = array();
+						$public_display['display_nickname']  = $current_user->nickname;
+						$public_display['display_firstname'] = $current_user->first_name;
+						$public_display['display_lastname']  = $current_user->last_name;
+					?>
+					<?php foreach ( $public_display as $id => $item ) : ?>
+						<option <?php selected( $current_user->display_name, $item ); ?>><?php echo $item; ?></option>
+					<?php endforeach; ?>
+				</select>
+			</p>
+			<!--
+			<p class="fp form-username">
+				<label for="display_name"><?php _e( '输入显示名', 'begin' ); ?></label>
+				<input class="text-input dah" name="display_name" type="text" id="display_name" value="<?php the_author_meta( 'display_name', $current_user->ID ); ?>" />
+			</p>
+			-->
 			<p class="fp form-password">
 				<label for="pass1"><?php _e( '新密码', 'begin' ); ?></label>
 				<input class="text-input user_pwd1 dah" name="pass1" type="password" id="pass1" />
@@ -91,6 +130,10 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 				<label for="url"><?php _e( '我的网站', 'begin' ); ?></label>
 				<input class="text-input dah" name="url" type="text" id="url" value="<?php the_author_meta( 'user_url', $current_user->ID ); ?>" />
 			</p>
+			<p class="fp form-userimg">
+				<label for="remark"><?php _e( '备注信息', 'begin' ); ?></label>
+				<input class="text-input dah" name="remark" type="text" id="remark" value="<?php the_author_meta( 'remark', $current_user->ID ); ?>" />
+			</p>
 			<p class="fp form-textarea">
 				<label for="description"><?php _e( '个人说明', 'begin' ); ?></label>
 				<textarea name="description" id="description" class="des-textarea dah" rows="3"><?php the_author_meta( 'description', $current_user->ID ); ?></textarea>
@@ -109,7 +152,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 						echo get_avatar( $current_user->user_email, 96, '', $current_user->display_name);
 					endif;
 				?>
-				<?php do_action('edit_user_profile', $current_user); ?>
+				<?php do_action('be_show_user_profile', $current_user); ?>
 
 				<?php if ( get_option( 'show_avatars' ) ) { ?>
 					<div class="my-gravatar-apply">
@@ -119,7 +162,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 							} else {
 								$gravatarurl = 'https://cn.gravatar.com/';
 							}
-							echo '<a class="bk bet-btn" href="' . $gravatarurl . '" rel="external nofollow" target="_blank">' . sprintf(__( '申请头像', 'begin' )) . '</a>';
+							echo '<a class="bk bet-btn dah" href="' . $gravatarurl . '" rel="external nofollow" target="_blank">' . sprintf(__( '申请头像', 'begin' )) . '</a>';
 						?>
 					</div>
 				<?php } ?>
@@ -127,7 +170,7 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 				<p class="clear"></p>
 			</p>
 			<p class="form-submit">
-				<input name="updateuser" type="submit" id="updateuser" class="submit button dah bet-btn" value="<?php _e( '更新个人信息', 'begin' ); ?>" />
+				<input name="updateuser" type="submit" id="updateuser" class="submit button dah hz bet-btn<?php echo cur(); ?>" value="<?php _e( '更新个人信息', 'begin' ); ?>" />
 				<?php wp_nonce_field( 'update-user' ) ?>
 				<input name="action" type="hidden" id="action" value="update-user" />
 			</p>
@@ -152,4 +195,4 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 		?>
 	<?php } ?>
 </div>
-</fieldset>
+</div>

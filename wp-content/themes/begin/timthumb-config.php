@@ -1,65 +1,70 @@
 <?php
-if(! defined('DEBUG_ON') )                                      define ('DEBUG_ON', false);
-if(! defined('DEBUG_LEVEL') )                           define ('DEBUG_LEVEL', 1);
-if(! defined('MEMORY_LIMIT') )                          define ('MEMORY_LIMIT', '30M');
-if(! defined('BLOCK_EXTERNAL_LEECHERS') )       define ('BLOCK_EXTERNAL_LEECHERS', false);
-if(! defined('DISPLAY_ERROR_MESSAGES') )        define ('DISPLAY_ERROR_MESSAGES', true);
+if (! defined('DEBUG_ON') )                                      define ('DEBUG_ON', false);
+if (! defined('DEBUG_LEVEL') )                           define ('DEBUG_LEVEL', 1);
+if (! defined('MEMORY_LIMIT') )                          define ('MEMORY_LIMIT', '30M');
+if (! defined('BLOCK_EXTERNAL_LEECHERS') )       define ('BLOCK_EXTERNAL_LEECHERS', false);
+if (! defined('DISPLAY_ERROR_MESSAGES') )        define ('DISPLAY_ERROR_MESSAGES', true);
 //Image fetching and caching
-if(! defined('ALLOW_EXTERNAL') )                        define ('ALLOW_EXTERNAL', true);
-if(! defined('ALLOW_ALL_EXTERNAL_SITES') )      define ('ALLOW_ALL_EXTERNAL_SITES', false);
-if(! defined('FILE_CACHE_ENABLED') )            define ('FILE_CACHE_ENABLED', TRUE);
-if(! defined('FILE_CACHE_TIME_BETWEEN_CLEANS')) define ('FILE_CACHE_TIME_BETWEEN_CLEANS', 604800);
+if (! defined('ALLOW_EXTERNAL') )                        define ('ALLOW_EXTERNAL', true);
+if (! defined('ALLOW_ALL_EXTERNAL_SITES') )      define ('ALLOW_ALL_EXTERNAL_SITES', false);
+if (! defined('FILE_CACHE_ENABLED') )            define ('FILE_CACHE_ENABLED', TRUE);
+if (! defined('FILE_CACHE_TIME_BETWEEN_CLEANS')) define ('FILE_CACHE_TIME_BETWEEN_CLEANS', 604800);
 
-if(! defined('FILE_CACHE_MAX_FILE_AGE') )       define ('FILE_CACHE_MAX_FILE_AGE', 604800);
-if(! defined('FILE_CACHE_SUFFIX') )             define ('FILE_CACHE_SUFFIX', '.txt');
-if(! defined('FILE_CACHE_PREFIX') )             define ('FILE_CACHE_PREFIX', 'begin');
-if(! defined('FILE_CACHE_DIRECTORY') )          define ('FILE_CACHE_DIRECTORY', '../../thumbnail');
-if(! defined('MAX_FILE_SIZE') )                         define ('MAX_FILE_SIZE', 10485760);
-if(! defined('CURL_TIMEOUT') )                          define ('CURL_TIMEOUT', 20);
-if(! defined('WAIT_BETWEEN_FETCH_ERRORS') )     define ('WAIT_BETWEEN_FETCH_ERRORS', 3600);
+if (! defined('FILE_CACHE_MAX_FILE_AGE') )       define ('FILE_CACHE_MAX_FILE_AGE', 604800);
+if (! defined('FILE_CACHE_SUFFIX') )             define ('FILE_CACHE_SUFFIX', '.txt');
+if (! defined('FILE_CACHE_PREFIX') )             define ('FILE_CACHE_PREFIX', 'begin');
+if (! defined('FILE_CACHE_DIRECTORY') )          define ('FILE_CACHE_DIRECTORY', '../../thumbnail');
+if (! defined('MAX_FILE_SIZE') )                         define ('MAX_FILE_SIZE', 10485760);
+if (! defined('CURL_TIMEOUT') )                          define ('CURL_TIMEOUT', 20);
+if (! defined('WAIT_BETWEEN_FETCH_ERRORS') )     define ('WAIT_BETWEEN_FETCH_ERRORS', 3600);
 
 //Browser caching
-if(! defined('BROWSER_CACHE_MAX_AGE') )         define ('BROWSER_CACHE_MAX_AGE', 604800);
-if(! defined('BROWSER_CACHE_DISABLE') )         define ('BROWSER_CACHE_DISABLE', false);
+if (! defined('BROWSER_CACHE_MAX_AGE') )         define ('BROWSER_CACHE_MAX_AGE', 604800);
+if (! defined('BROWSER_CACHE_DISABLE') )         define ('BROWSER_CACHE_DISABLE', false);
 
 //Image size and defaults
-if(! defined('MAX_WIDTH') )                                     define ('MAX_WIDTH', 1500);
-if(! defined('MAX_HEIGHT') )                            define ('MAX_HEIGHT', 1500);
-if(! defined('NOT_FOUND_IMAGE') )                       define ('NOT_FOUND_IMAGE', '');
-if(! defined('ERROR_IMAGE') )                           define ('ERROR_IMAGE', '');
-if(! defined('PNG_IS_TRANSPARENT') )            define ('PNG_IS_TRANSPARENT', FALSE);
-if(! defined('DEFAULT_Q') )                                     define ('DEFAULT_Q', 75);
-if(! defined('DEFAULT_ZC') )                            define ('DEFAULT_ZC', 1);
-if(! defined('DEFAULT_F') )                                     define ('DEFAULT_F', '');
-if(! defined('DEFAULT_S') )                                     define ('DEFAULT_S', 0);
-if(! defined('DEFAULT_CC') )                            define ('DEFAULT_CC', 'ffffff');
-if(! defined('DEFAULT_WIDTH') )                         define ('DEFAULT_WIDTH', 100);
-if(! defined('DEFAULT_HEIGHT') )                        define ('DEFAULT_HEIGHT', 100);
+if (! defined('MAX_WIDTH') )                                     define ('MAX_WIDTH', 1500);
+if (! defined('MAX_HEIGHT') )                            define ('MAX_HEIGHT', 1500);
+if (! defined('NOT_FOUND_IMAGE') )                       define ('NOT_FOUND_IMAGE', '');
+if (! defined('ERROR_IMAGE') )                           define ('ERROR_IMAGE', '');
+if (! defined('PNG_IS_TRANSPARENT') )            define ('PNG_IS_TRANSPARENT', FALSE);
+if (! defined('DEFAULT_Q') )                                     define ('DEFAULT_Q', 75);
+if (! defined('DEFAULT_ZC') )                            define ('DEFAULT_ZC', 1);
+if (! defined('DEFAULT_F') )                                     define ('DEFAULT_F', '');
+if (! defined('DEFAULT_S') )                                     define ('DEFAULT_S', 0);
+if (! defined('DEFAULT_CC') )                            define ('DEFAULT_CC', 'ffffff');
+if (! defined('DEFAULT_WIDTH') )                         define ('DEFAULT_WIDTH', 100);
+if (! defined('DEFAULT_HEIGHT') )                        define ('DEFAULT_HEIGHT', 100);
 
-if(! defined('OPTIPNG_ENABLED') )               define ('OPTIPNG_ENABLED', false);  
-if(! defined('OPTIPNG_PATH') )                  define ('OPTIPNG_PATH', '/usr/bin/optipng');
-if(! defined('PNGCRUSH_ENABLED') )              define ('PNGCRUSH_ENABLED', false); 
-if(! defined('PNGCRUSH_PATH') )                 define ('PNGCRUSH_PATH', '/usr/bin/pngcrush');
+if (! defined('OPTIPNG_ENABLED') )               define ('OPTIPNG_ENABLED', false);  
+if (! defined('OPTIPNG_PATH') )                  define ('OPTIPNG_PATH', '/usr/bin/optipng');
+if (! defined('PNGCRUSH_ENABLED') )              define ('PNGCRUSH_ENABLED', false); 
+if (! defined('PNGCRUSH_PATH') )                 define ('PNGCRUSH_PATH', '/usr/bin/pngcrush');
 
-if(! defined('WEBSHOT_ENABLED') )       define ('WEBSHOT_ENABLED', false);
-if(! defined('WEBSHOT_CUTYCAPT') )      define ('WEBSHOT_CUTYCAPT', '/usr/local/bin/CutyCapt');
-if(! defined('WEBSHOT_XVFB') )          define ('WEBSHOT_XVFB', '/usr/bin/xvfb-run');
-if(! defined('WEBSHOT_SCREEN_X') )      define ('WEBSHOT_SCREEN_X', '1024');
-if(! defined('WEBSHOT_SCREEN_Y') )      define ('WEBSHOT_SCREEN_Y', '768');
-if(! defined('WEBSHOT_COLOR_DEPTH') )   define ('WEBSHOT_COLOR_DEPTH', '24');
-if(! defined('WEBSHOT_IMAGE_FORMAT') )  define ('WEBSHOT_IMAGE_FORMAT', 'png');
-if(! defined('WEBSHOT_TIMEOUT') )       define ('WEBSHOT_TIMEOUT', '20');
-if(! defined('WEBSHOT_USER_AGENT') )    define ('WEBSHOT_USER_AGENT', "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2.18) Gecko/20110614 Firefox/3.6.18");
-if(! defined('WEBSHOT_JAVASCRIPT_ON') ) define ('WEBSHOT_JAVASCRIPT_ON', true);
-if(! defined('WEBSHOT_JAVA_ON') )       define ('WEBSHOT_JAVA_ON', false);
-if(! defined('WEBSHOT_PLUGINS_ON') )    define ('WEBSHOT_PLUGINS_ON', true);
-if(! defined('WEBSHOT_PROXY') )         define ('WEBSHOT_PROXY', '');
-if(! defined('WEBSHOT_XVFB_RUNNING') )  define ('WEBSHOT_XVFB_RUNNING', false);
+if (! defined('WEBSHOT_ENABLED') )       define ('WEBSHOT_ENABLED', false);
+if (! defined('WEBSHOT_CUTYCAPT') )      define ('WEBSHOT_CUTYCAPT', '/usr/local/bin/CutyCapt');
+if (! defined('WEBSHOT_XVFB') )          define ('WEBSHOT_XVFB', '/usr/bin/xvfb-run');
+if (! defined('WEBSHOT_SCREEN_X') )      define ('WEBSHOT_SCREEN_X', '1024');
+if (! defined('WEBSHOT_SCREEN_Y') )      define ('WEBSHOT_SCREEN_Y', '768');
+if (! defined('WEBSHOT_COLOR_DEPTH') )   define ('WEBSHOT_COLOR_DEPTH', '24');
+if (! defined('WEBSHOT_IMAGE_FORMAT') )  define ('WEBSHOT_IMAGE_FORMAT', 'png');
+if (! defined('WEBSHOT_TIMEOUT') )       define ('WEBSHOT_TIMEOUT', '20');
+if (! defined('WEBSHOT_USER_AGENT') )    define ('WEBSHOT_USER_AGENT', "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.2.18) Gecko/20110614 Firefox/3.6.18");
+if (! defined('WEBSHOT_JAVASCRIPT_ON') ) define ('WEBSHOT_JAVASCRIPT_ON', true);
+if (! defined('WEBSHOT_JAVA_ON') )       define ('WEBSHOT_JAVA_ON', false);
+if (! defined('WEBSHOT_PLUGINS_ON') )    define ('WEBSHOT_PLUGINS_ON', true);
+if (! defined('WEBSHOT_PROXY') )         define ('WEBSHOT_PROXY', '');
+if (! defined('WEBSHOT_XVFB_RUNNING') )  define ('WEBSHOT_XVFB_RUNNING', false);
 
 // 添加外链图片地址域名
-if(! isset($ALLOWED_SITES)){
+if (! isset($ALLOWED_SITES)){
 	$ALLOWED_SITES = array (
 		's0.wordpress.com',
+		'ps.w.org',
+		'i0.wp.com',
+		'i1.wp.com',
+		'i2.wp.com',
+		'i3.wp.com',
 		'ww1.sinaimg.cn',
 		'ww2.sinaimg.cn',
 		'ww3.sinaimg.cn',
@@ -68,12 +73,21 @@ if(! isset($ALLOWED_SITES)){
 		'wx2.sinaimg.cn',
 		'wx3.sinaimg.cn',
 		'wx4.sinaimg.cn',
+		'tva1.sinaimg.cn',
+		'tva2.sinaimg.cn',
+		'tva3.sinaimg.cn',
+		'tva4.sinaimg.cn',
+		'tvax1.sinaimg.cn',
+		'tvax2.sinaimg.cn',
+		'tvax3.sinaimg.cn',
+		'tvax4.sinaimg.cn',
 		'n.sinaimg.cn',
 		's2.ax1x.com',
 		's1.ax1x.com',
 		'img.maocdn.cn',
-		'desk-fd.zol-img.com.cn',
 		's2.loli.net',
+		'desk-fd.zol-img.com.cn',
+		'img.wtuce.com',
 		'xxxxxxxxxxx',
 	);
 }
@@ -107,11 +121,11 @@ class timthumb {
 		$tim = new timthumb();
 		$tim->handleErrors();
 		$tim->securityChecks();
-		if($tim->tryBrowserCache()){
+		if ($tim->tryBrowserCache()){
 			exit(0);
 		}
 		$tim->handleErrors();
-		if(FILE_CACHE_ENABLED && $tim->tryServerCache()){
+		if (FILE_CACHE_ENABLED && $tim->tryServerCache()){
 			exit(0);
 		}
 		$tim->handleErrors();
@@ -128,10 +142,10 @@ class timthumb {
 
 		$this->salt = @filemtime(__FILE__) . '-' . @fileinode(__FILE__);
 		$this->debug(3, "Salt is: " . $this->salt);
-		if(FILE_CACHE_DIRECTORY){
-			if(! is_dir(FILE_CACHE_DIRECTORY)){
+		if (FILE_CACHE_DIRECTORY){
+			if (! is_dir(FILE_CACHE_DIRECTORY)){
 				@mkdir(FILE_CACHE_DIRECTORY);
-				if(! is_dir(FILE_CACHE_DIRECTORY)){
+				if (! is_dir(FILE_CACHE_DIRECTORY)){
 					$this->error("Could not create the file cache directory.");
 					return false;
 				}
@@ -151,11 +165,11 @@ class timthumb {
 		$this->url = parse_url($this->src);
 		$this->src = preg_replace('/https?:\/\/(?:www\.)?' . $this->myHost . '/i', '', $this->src);
 		
-		if(strlen($this->src) <= 3){
+		if (strlen($this->src) <= 3){
 			$this->error("No image specified");
 			return false;
 		}
-		if(BLOCK_EXTERNAL_LEECHERS && array_key_exists('HTTP_REFERER', $_SERVER) && (! preg_match('/^https?:\/\/(?:www\.)?' . $this->myHost . '(?:$|\/)/i', $_SERVER['HTTP_REFERER']))){
+		if (BLOCK_EXTERNAL_LEECHERS && array_key_exists('HTTP_REFERER', $_SERVER) && (! preg_match('/^https?:\/\/(?:www\.)?' . $this->myHost . '(?:$|\/)/i', $_SERVER['HTTP_REFERER']))){
 
 			$imgData = base64_decode("R0lGODlhUAAMAIAAAP8AAP///yH5BAAHAP8ALAAAAABQAAwAAAJpjI+py+0Po5y0OgAMjjv01YUZ\nOGplhWXfNa6JCLnWkXplrcBmW+spbwvaVr/cDyg7IoFC2KbYVC2NQ5MQ4ZNao9Ynzjl9ScNYpneb\nDULB3RP6JuPuaGfuuV4fumf8PuvqFyhYtjdoeFgAADs=");
 			header('Content-Type: image/gif');
@@ -167,18 +181,18 @@ class timthumb {
 			return false;
 			exit(0);
 		}
-		if(preg_match('/^https?:\/\/[^\/]+/i', $this->src)){
+		if (preg_match('/^https?:\/\/[^\/]+/i', $this->src)){
 			$this->debug(2, "Is a request for an external URL: " . $this->src);
 			$this->isURL = true;
 		} else {
 			$this->debug(2, "Is a request for an internal file: " . $this->src);
 		}
-		if($this->isURL && (! ALLOW_EXTERNAL)){
+		if ($this->isURL && (! ALLOW_EXTERNAL)){
 			$this->error("You are not allowed to fetch images from an external website.");
 			return false;
 		}
-		if($this->isURL){
-			if(ALLOW_ALL_EXTERNAL_SITES){
+		if ($this->isURL){
+			if (ALLOW_ALL_EXTERNAL_SITES){
 				$this->debug(2, "Fetching from all external sites is enabled.");
 			} else {
 				$this->debug(2, "Fetching only from selected external sites is enabled.");
@@ -189,20 +203,20 @@ class timthumb {
 						$allowed = true;
 					}
 				}
-				if(! $allowed){
+				if (! $allowed){
 					return $this->error("Need to add external picture domain name!");
 				}
 			}
 		}
 
 		$cachePrefix = ($this->isURL ? '_ext_' : '_int_');
-		if($this->isURL){
+		if ($this->isURL){
 			$arr = explode('&', $_SERVER ['QUERY_STRING']);
 			asort($arr);
 			$this->cachefile = $this->cacheDirectory . '/' . FILE_CACHE_PREFIX . $cachePrefix . md5($this->salt . implode('', $arr) . $this->fileCacheVersion) . FILE_CACHE_SUFFIX;
 		} else {
 			$this->localImage = $this->getLocalImagePath($this->src);
-			if(! $this->localImage){
+			if (! $this->localImage){
 				$this->debug(1, "Could not find the local image: {$this->localImage}");
 				$this->error("Could not find the internal image you specified.");
 				$this->set404();
@@ -224,15 +238,15 @@ class timthumb {
 		}
 	}
 	public function run(){
-		if($this->isURL){
-			if(! ALLOW_EXTERNAL){
+		if ($this->isURL){
+			if (! ALLOW_EXTERNAL){
 				$this->debug(1, "Got a request for an external image but ALLOW_EXTERNAL is disabled so returning error msg.");
 				$this->error("You are not allowed to fetch images from an external website.");
 				return false;
 			}
 			$this->debug(3, "Got request for external image. Starting serveExternalImage.");
-			if($this->param('webshot')){
-				if(WEBSHOT_ENABLED){
+			if ($this->param('webshot')){
+				if (WEBSHOT_ENABLED){
 					$this->debug(3, "webshot param is set, so we're going to take a webshot.");
 					$this->serveWebshot();
 				} else {
@@ -250,16 +264,16 @@ class timthumb {
 		return true;
 	}
 	protected function handleErrors(){
-		if($this->haveErrors()){ 
-			if(NOT_FOUND_IMAGE && $this->is404()){
-				if($this->serveImg(NOT_FOUND_IMAGE)){
+		if ($this->haveErrors()){ 
+			if (NOT_FOUND_IMAGE && $this->is404()){
+				if ($this->serveImg(NOT_FOUND_IMAGE)){
 					exit(0);
 				} else {
 					$this->error("Additionally, the 404 image that is configured could not be found or there was an error serving it.");
 				}
 			}
-			if(ERROR_IMAGE){
-				if($this->serveImg(ERROR_IMAGE)){
+			if (ERROR_IMAGE){
+				if ($this->serveImg(ERROR_IMAGE)){
 					exit(0);
 				} else {
 					$this->error("Additionally, the error image that is configured could not be found or there was an error serving it.");
@@ -271,29 +285,29 @@ class timthumb {
 		return false;
 	}
 	protected function tryBrowserCache(){
-		if(BROWSER_CACHE_DISABLE){ $this->debug(3, "Browser caching is disabled"); return false; }
-		if(!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) ){
+		if (BROWSER_CACHE_DISABLE){ $this->debug(3, "Browser caching is disabled"); return false; }
+		if (!empty($_SERVER['HTTP_IF_MODIFIED_SINCE']) ){
 			$this->debug(3, "Got a conditional get");
 			$mtime = false;
-			if(! is_file($this->cachefile)){
+			if (! is_file($this->cachefile)){
 				return false;
 			}
-			if($this->localImageMTime){
+			if ($this->localImageMTime){
 				$mtime = $this->localImageMTime;
 				$this->debug(3, "Local real file's modification time is $mtime");
-			} else if(is_file($this->cachefile)){
+			} else if (is_file($this->cachefile)){
 				$mtime = @filemtime($this->cachefile);
 				$this->debug(3, "Cached file's modification time is $mtime");
 			}
-			if(! $mtime){ return false; }
+			if (! $mtime){ return false; }
 
 			$iftime = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']);
 			$this->debug(3, "The conditional get's if-modified-since unixtime is $iftime");
-			if($iftime < 1){
+			if ($iftime < 1){
 				$this->debug(3, "Got an invalid conditional get modified since time. Returning false.");
 				return false;
 			}
-			if($iftime < $mtime){
+			if ($iftime < $mtime){
 				$this->debug(3, "File has been modified since last fetch.");
 				return false;
 			} else {
@@ -307,13 +321,13 @@ class timthumb {
 	}
 	protected function tryServerCache(){
 		$this->debug(3, "Trying server cache");
-		if(file_exists($this->cachefile)){
+		if (file_exists($this->cachefile)){
 			$this->debug(3, "Cachefile {$this->cachefile} exists");
-			if($this->isURL){
+			if ($this->isURL){
 				$this->debug(3, "This is an external request, so checking if the cachefile is empty which means the request failed previously.");
-				if(filesize($this->cachefile) < 1){
+				if (filesize($this->cachefile) < 1){
 					$this->debug(3, "Found an empty cachefile indicating a failed earlier request. Checking how old it is.");
-					if(time() - @filemtime($this->cachefile) > WAIT_BETWEEN_FETCH_ERRORS){
+					if (time() - @filemtime($this->cachefile) > WAIT_BETWEEN_FETCH_ERRORS){
 						$this->debug(3, "File is older than " . WAIT_BETWEEN_FETCH_ERRORS . " seconds. Deleting and returning false so app can try and load file.");
 						@unlink($this->cachefile);
 						return false;
@@ -327,7 +341,7 @@ class timthumb {
 			} else {
 				$this->debug(3, "Trying to serve cachefile {$this->cachefile}");
 			}
-			if($this->serveCacheFile()){
+			if ($this->serveCacheFile()){
 				$this->debug(3, "Succesfully served cachefile {$this->cachefile}");
 				return true;
 			} else {
@@ -344,7 +358,7 @@ class timthumb {
 
 	}
 	protected function haveErrors(){
-		if(sizeof($this->errors) > 0){
+		if (sizeof($this->errors) > 0){
 			return true;
 		}
 		return false;
@@ -365,21 +379,21 @@ class timthumb {
 	}
 	protected function serveInternalImage(){
 		$this->debug(3, "Local image path is $this->localImage");
-		if(! $this->localImage){
+		if (! $this->localImage){
 			$this->sanityFail("localImage not set after verifying it earlier in the code.");
 			return false;
 		}
 		$fileSize = filesize($this->localImage);
-		if($fileSize > MAX_FILE_SIZE){
+		if ($fileSize > MAX_FILE_SIZE){
 			$this->error("The file you specified is greater than the maximum allowed file size.");
 			return false;
 		}
-		if($fileSize <= 0){
+		if ($fileSize <= 0){
 			$this->error("The file you specified is <= 0 bytes.");
 			return false;
 		}
 		$this->debug(3, "Calling processImageAndWriteToCache() for local image.");
-		if($this->processImageAndWriteToCache($this->localImage)){
+		if ($this->processImageAndWriteToCache($this->localImage)){
 			$this->serveCacheFile();
 			return true;
 		} else { 
@@ -392,14 +406,14 @@ class timthumb {
 		}
 		$this->debug(3, "cleanCache() called");
 		$lastCleanFile = $this->cacheDirectory . '/timthumb_cacheLastCleanTime.touch';
-		if(! is_file($lastCleanFile)){
+		if (! is_file($lastCleanFile)){
 			$this->debug(1, "File tracking last clean doesn't exist. Creating $lastCleanFile");
 			if (!touch($lastCleanFile)) {
 				$this->error("Could not create cache clean timestamp file.");
 			}
 			return;
 		}
-		if(@filemtime($lastCleanFile) < (time() - FILE_CACHE_TIME_BETWEEN_CLEANS) ){
+		if (@filemtime($lastCleanFile) < (time() - FILE_CACHE_TIME_BETWEEN_CLEANS) ){
 			$this->debug(1, "Cache was last cleaned more than " . FILE_CACHE_TIME_BETWEEN_CLEANS . " seconds ago. Cleaning now.");
 			if (!touch($lastCleanFile)) {
 				$this->error("Could not create cache clean timestamp file.");
@@ -408,7 +422,7 @@ class timthumb {
 			if ($files) {
 				$timeAgo = time() - FILE_CACHE_MAX_FILE_AGE;
 				foreach($files as $file){
-					if(@filemtime($file) < $timeAgo){
+					if (@filemtime($file) < $timeAgo){
 						$this->debug(3, "Deleting cache file $file older than max age: " . FILE_CACHE_MAX_FILE_AGE . " seconds");
 						@unlink($file);
 					}
@@ -426,7 +440,7 @@ class timthumb {
 		$mimeType = $sData['mime'];
 
 		$this->debug(3, "Mime type of image is $mimeType");
-		if(! preg_match('/^image\/(?:gif|jpg|jpeg|png)$/i', $mimeType)){
+		if (! preg_match('/^image\/(?:gif|jpg|jpeg|png)$/i', $mimeType)){
 			return $this->error("The image being resized is not a valid gif, jpg or png.");
 		}
 
@@ -512,7 +526,7 @@ class timthumb {
 		$canvas_color_G = hexdec (substr ($canvas_color, 2, 2));
 		$canvas_color_B = hexdec (substr ($canvas_color, 4, 2));
 
-		if(preg_match('/^image\/png$/i', $mimeType) && !PNG_IS_TRANSPARENT && $canvas_trans){ 
+		if (preg_match('/^image\/png$/i', $mimeType) && !PNG_IS_TRANSPARENT && $canvas_trans){ 
 			$color = imagecolorallocatealpha ($canvas, $canvas_color_R, $canvas_color_G, $canvas_color_B, 127);		
 		}else{
 			$color = imagecolorallocatealpha ($canvas, $canvas_color_R, $canvas_color_G, $canvas_color_B, 0);
@@ -633,20 +647,20 @@ class timthumb {
 
 		$imgType = "";
 		$tempfile = tempnam($this->cacheDirectory, 'timthumb_tmpimg_');
-		if(preg_match('/^image\/(?:jpg|jpeg)$/i', $mimeType)){ 
+		if (preg_match('/^image\/(?:jpg|jpeg)$/i', $mimeType)){ 
 			$imgType = 'jpg';
 			imagejpeg($canvas, $tempfile, $quality); 
-		} else if(preg_match('/^image\/png$/i', $mimeType)){ 
+		} else if (preg_match('/^image\/png$/i', $mimeType)){ 
 			$imgType = 'png';
 			imagepng($canvas, $tempfile, floor($quality * 0.09));
-		} else if(preg_match('/^image\/gif$/i', $mimeType)){
+		} else if (preg_match('/^image\/gif$/i', $mimeType)){
 			$imgType = 'gif';
-			imagegif($canvas, $tempfile);
+			imagegif ($canvas, $tempfile);
 		} else {
 			return $this->sanityFail("Could not match mime type after verifying it previously.");
 		}
 
-		if($imgType == 'png' && OPTIPNG_ENABLED && OPTIPNG_PATH && @is_file(OPTIPNG_PATH)){
+		if ($imgType == 'png' && OPTIPNG_ENABLED && OPTIPNG_PATH && @is_file(OPTIPNG_PATH)){
 			$exec = OPTIPNG_PATH;
 			$this->debug(3, "optipng'ing $tempfile");
 			$presize = filesize($tempfile);
@@ -654,22 +668,22 @@ class timthumb {
 			clearstatcache();
 			$aftersize = filesize($tempfile);
 			$sizeDrop = $presize - $aftersize;
-			if($sizeDrop > 0){
+			if ($sizeDrop > 0){
 				$this->debug(1, "optipng reduced size by $sizeDrop");
-			} else if($sizeDrop < 0){
+			} else if ($sizeDrop < 0){
 				$this->debug(1, "optipng increased size! Difference was: $sizeDrop");
 			} else {
 				$this->debug(1, "optipng did not change image size.");
 			}
-		} else if($imgType == 'png' && PNGCRUSH_ENABLED && PNGCRUSH_PATH && @is_file(PNGCRUSH_PATH)){
+		} else if ($imgType == 'png' && PNGCRUSH_ENABLED && PNGCRUSH_PATH && @is_file(PNGCRUSH_PATH)){
 			$exec = PNGCRUSH_PATH;
 			$tempfile2 = tempnam($this->cacheDirectory, 'timthumb_tmpimg_');
 			$this->debug(3, "pngcrush'ing $tempfile to $tempfile2");
 			$out = `$exec $tempfile $tempfile2`;
 			$todel = "";
-			if(is_file($tempfile2)){
+			if (is_file($tempfile2)){
 				$sizeDrop = filesize($tempfile) - filesize($tempfile2);
-				if($sizeDrop > 0){
+				if ($sizeDrop > 0){
 					$this->debug(1, "pngcrush was succesful and gave a $sizeDrop byte size reduction");
 					$todel = $tempfile;
 					$tempfile = $tempfile2;
@@ -695,10 +709,10 @@ class timthumb {
 		$this->debug(3, "Locking and replacing cache file.");
 		$lockFile = $this->cachefile . '.lock';
 		$fh = fopen($lockFile, 'w');
-		if(! $fh){
+		if (! $fh){
 			return $this->error("Could not open the lockfile for writing an image.");
 		}
-		if(flock($fh, LOCK_EX)){
+		if (flock($fh, LOCK_EX)){
 			@unlink($this->cachefile);
 			rename($tempfile4, $this->cachefile);
 			flock($fh, LOCK_UN);
@@ -720,31 +734,31 @@ class timthumb {
 		if (defined('LOCAL_FILE_BASE_DIRECTORY')) {
 			$docRoot = LOCAL_FILE_BASE_DIRECTORY;   
 		}
-		if(!isset($docRoot)){ 
+		if (!isset($docRoot)){ 
 			$this->debug(3, "DOCUMENT_ROOT is not set. This is probably windows. Starting search 1.");
-			if(isset($_SERVER['SCRIPT_FILENAME'])){
+			if (isset($_SERVER['SCRIPT_FILENAME'])){
 				$docRoot = str_replace( '\\', '/', substr($_SERVER['SCRIPT_FILENAME'], 0, 0-strlen($_SERVER['PHP_SELF'])));
 				$this->debug(3, "Generated docRoot using SCRIPT_FILENAME and PHP_SELF as: $docRoot");
 			} 
 		}
-		if(!isset($docRoot)){ 
+		if (!isset($docRoot)){ 
 			$this->debug(3, "DOCUMENT_ROOT still is not set. Starting search 2.");
-			if(isset($_SERVER['PATH_TRANSLATED'])){
+			if (isset($_SERVER['PATH_TRANSLATED'])){
 				$docRoot = str_replace( '\\', '/', substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0-strlen($_SERVER['PHP_SELF'])));
 				$this->debug(3, "Generated docRoot using PATH_TRANSLATED and PHP_SELF as: $docRoot");
 			} 
 		}
-		if($docRoot && $_SERVER['DOCUMENT_ROOT'] != '/'){ $docRoot = preg_replace('/\/$/', '', $docRoot); }
+		if ($docRoot && $_SERVER['DOCUMENT_ROOT'] != '/'){ $docRoot = preg_replace('/\/$/', '', $docRoot); }
 		$this->debug(3, "Doc root is: " . $docRoot);
 		$this->docRoot = $docRoot;
 
 	}
 	protected function getLocalImagePath($src){
 		$src = ltrim($src, '/');
-		if(! $this->docRoot){
+		if (! $this->docRoot){
 			$this->debug(3, "We have no document root set, so as a last resort, lets check if the image is in the current dir and serve that.");
 			$file = preg_replace('/^.*?([^\/\\\\]+)$/', '$1', $src);
-			if(is_file($file)){
+			if (is_file($file)){
 				return $this->realpath($file);
 			}
 			return $this->error("Could not find your website document root and the file specified doesn't exist in timthumbs directory. We don't support serving files outside timthumb's directory without a document root for security reasons.");
@@ -752,20 +766,20 @@ class timthumb {
 			$this->error("Server path does not exist. Ensure variable \$_SERVER['DOCUMENT_ROOT'] is set correctly");
 		}
 
-		if(file_exists ($this->docRoot . '/' . $src)) {
+		if (file_exists ($this->docRoot . '/' . $src)) {
 			$this->debug(3, "Found file as " . $this->docRoot . '/' . $src);
 			$real = $this->realpath($this->docRoot . '/' . $src);
-			if(stripos($real, $this->docRoot) === 0){
+			if (stripos($real, $this->docRoot) === 0){
 				return $real;
 			} else {
 				$this->debug(1, "Security block: The file specified occurs outside the document root.");
 			}
 		}
 		$absolute = $this->realpath('/' . $src);
-		if($absolute && file_exists($absolute)){
+		if ($absolute && file_exists($absolute)){
 			$this->debug(3, "Found absolute path: $absolute");
-			if(! $this->docRoot){ $this->sanityFail("docRoot not set when checking absolute path."); }
-			if(stripos($absolute, $this->docRoot) === 0){
+			if (! $this->docRoot){ $this->sanityFail("docRoot not set when checking absolute path."); }
+			if (stripos($absolute, $this->docRoot) === 0){
 				return $absolute;
 			} else {
 				$this->debug(1, "Security block: The file specified occurs outside the document root.");
@@ -783,10 +797,10 @@ class timthumb {
 		foreach ($sub_directories as $sub){
 			$base .= $sub . '/';
 			$this->debug(3, "Trying file as: " . $base . $src);
-			if(file_exists($base . $src)){
+			if (file_exists($base . $src)){
 				$this->debug(3, "Found file as: " . $base . $src);
 				$real = $this->realpath($base . $src);
-				if(stripos($real, $this->realpath($this->docRoot)) === 0){
+				if (stripos($real, $this->realpath($this->docRoot)) === 0){
 					return $real;
 				} else {
 					$this->debug(1, "Security block: The file specified occurs outside the document root.");
@@ -809,10 +823,10 @@ class timthumb {
 	protected function serveWebshot(){
 		$this->debug(3, "Starting serveWebshot");
 		$instr = "Please follow the instructions at http://code.google.com/p/timthumb/ to set your server up for taking website screenshots.";
-		if(! is_file(WEBSHOT_CUTYCAPT)){
+		if (! is_file(WEBSHOT_CUTYCAPT)){
 			return $this->error("CutyCapt is not installed. $instr");
 		}
-		if(! is_file(WEBSHOT_XVFB)){
+		if (! is_file(WEBSHOT_XVFB)){
 			return $this->Error("Xvfb is not installed. $instr");
 		}
 		$cuty = WEBSHOT_CUTYCAPT;
@@ -829,11 +843,11 @@ class timthumb {
 		$proxy = WEBSHOT_PROXY ? ' --http-proxy=' . WEBSHOT_PROXY : '';
 		$tempfile = tempnam($this->cacheDirectory, 'timthumb_webshot');
 		$url = $this->src;
-		if(! preg_match('/^https?:\/\/[a-zA-Z0-9\.\-]+/i', $url)){
+		if (! preg_match('/^https?:\/\/[a-zA-Z0-9\.\-]+/i', $url)){
 			return $this->error("Invalid URL supplied.");
 		}
 		$url = preg_replace('/[^A-Za-z0-9\-\.\_:\/\?\&\+\;\=]+/', '', $url); //RFC 3986 plus ()$ chars to prevent exploit below. Plus the following are also removed: @*!~#[]',
-		if(WEBSHOT_XVFB_RUNNING){
+		if (WEBSHOT_XVFB_RUNNING){
 			putenv('DISPLAY=:100.0');
 			$command = "$cuty $proxy --max-wait=$timeout --user-agent=\"$ua\" --javascript=$jsOn --java=$javaOn --plugins=$pluginsOn --js-can-open-windows=off --url=\"$url\" --out-format=$format --out=$tempfile";
 		} else {
@@ -842,12 +856,12 @@ class timthumb {
 		$this->debug(3, "Executing command: $command");
 		$out = `$command`;
 		$this->debug(3, "Received output: $out");
-		if(! is_file($tempfile)){
+		if (! is_file($tempfile)){
 			$this->set404();
 			return $this->error("The command to create a thumbnail failed.");
 		}
 		$this->cropTop = true;
-		if($this->processImageAndWriteToCache($tempfile)){
+		if ($this->processImageAndWriteToCache($tempfile)){
 			$this->debug(3, "Image processed succesfully. Serving from cache");
 			return $this->serveCacheFile();
 		} else {
@@ -855,14 +869,14 @@ class timthumb {
 		}
 	}
 	protected function serveExternalImage(){
-		if(! preg_match('/^https?:\/\/[a-zA-Z0-9\-\.]+/i', $this->src)){
+		if (! preg_match('/^https?:\/\/[a-zA-Z0-9\-\.]+/i', $this->src)){
 			$this->error("Invalid URL supplied.");
 			return false;
 		}
 		$tempfile = tempnam($this->cacheDirectory, 'timthumb');
 		$this->debug(3, "Fetching external image into temporary file $tempfile");
 		$this->toDelete($tempfile);
-		if(! $this->getURL($this->src, $tempfile)){
+		if (! $this->getURL($this->src, $tempfile)){
 			@unlink($this->cachefile);
 			touch($this->cachefile);
 			$this->debug(3, "Error fetching URL: " . $this->lastURLError);
@@ -871,14 +885,14 @@ class timthumb {
 		}
 
 		$mimeType = $this->getMimeType($tempfile);
-		if(! preg_match("/^image\/(?:jpg|jpeg|gif|png)$/i", $mimeType)){
+		if (! preg_match("/^image\/(?:jpg|jpeg|gif|png)$/i", $mimeType)){
 			$this->debug(3, "Remote file has invalid mime type: $mimeType");
 			@unlink($this->cachefile);
 			touch($this->cachefile);
 			$this->error("The remote file is not a valid image. Mimetype = '" . $mimeType . "'" . $tempfile);
 			return false;
 		}
-		if($this->processImageAndWriteToCache($tempfile)){
+		if ($this->processImageAndWriteToCache($tempfile)){
 			$this->debug(3, "Image processed succesfully. Serving from cache");
 			return $this->serveCacheFile();
 		} else {
@@ -888,7 +902,7 @@ class timthumb {
 	public static function curlWrite($h, $d){
 		fwrite(self::$curlFH, $d);
 		self::$curlDataWritten += strlen($d);
-		if(self::$curlDataWritten > MAX_FILE_SIZE){
+		if (self::$curlDataWritten > MAX_FILE_SIZE){
 			return 0;
 		} else {
 			return strlen($d);
@@ -896,16 +910,16 @@ class timthumb {
 	}
 	protected function serveCacheFile(){
 		$this->debug(3, "Serving {$this->cachefile}");
-		if(! is_file($this->cachefile)){
+		if (! is_file($this->cachefile)){
 			$this->error("serveCacheFile called in timthumb but we couldn't find the cached file.");
 			return false;
 		}
 		$fp = fopen($this->cachefile, 'rb');
-		if(! $fp){ return $this->error("Could not open cachefile."); }
+		if (! $fp){ return $this->error("Could not open cachefile."); }
 		fseek($fp, strlen($this->filePrependSecurityBlock), SEEK_SET);
 		$imgType = fread($fp, 3);
 		fseek($fp, 3, SEEK_CUR);
-		if(ftell($fp) != strlen($this->filePrependSecurityBlock) + 6){
+		if (ftell($fp) != strlen($this->filePrependSecurityBlock) + 6){
 			@unlink($this->cachefile);
 			return $this->error("The cached image file seems to be corrupt.");
 		}
@@ -913,7 +927,7 @@ class timthumb {
 		$this->sendImageHeaders($imgType, $imageDataSize);
 		$bytesSent = @fpassthru($fp);
 		fclose($fp);
-		if($bytesSent > 0){
+		if ($bytesSent > 0){
 			return true;
 		}
 		$content = file_get_contents ($this->cachefile);
@@ -928,10 +942,10 @@ class timthumb {
 		}
 	}
 	protected function sendImageHeaders($mimeType, $dataSize){
-		if(! preg_match('/^image\//i', $mimeType)){
+		if (! preg_match('/^image\//i', $mimeType)){
 			$mimeType = 'image/' . $mimeType;
 		}
-		if(strtolower($mimeType) == 'image/jpg'){
+		if (strtolower($mimeType) == 'image/jpg'){
 			$mimeType = 'image/jpeg';
 		}
 		$gmdate_expires = gmdate ('D, d M Y H:i:s', strtotime ('now +10 days')) . ' GMT';
@@ -940,7 +954,7 @@ class timthumb {
 		header ('Accept-Ranges: none');
 		header ('Last-Modified: ' . $gmdate_modified);
 		header ('Content-Length: ' . $dataSize);
-		if(BROWSER_CACHE_DISABLE){
+		if (BROWSER_CACHE_DISABLE){
 			$this->debug(3, "Browser cache is disabled so setting non-caching headers.");
 			header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 			header("Pragma: no-cache");
@@ -987,22 +1001,22 @@ class timthumb {
 		$rem = @$_SERVER["REMOTE_ADDR"];
 		$ff = @$_SERVER["HTTP_X_FORWARDED_FOR"];
 		$ci = @$_SERVER["HTTP_CLIENT_IP"];
-		if(preg_match('/^(?:192\.168|172\.16|10\.|127\.)/', $rem)){ 
-			if($ff){ return $ff; }
-			if($ci){ return $ci; }
+		if (preg_match('/^(?:192\.168|172\.16|10\.|127\.)/', $rem)){ 
+			if ($ff){ return $ff; }
+			if ($ci){ return $ci; }
 			return $rem;
 		} else {
-			if($rem){ return $rem; }
-			if($ff){ return $ff; }
-			if($ci){ return $ci; }
+			if ($rem){ return $rem; }
+			if ($ff){ return $ff; }
+			if ($ci){ return $ci; }
 			return "UNKNOWN";
 		}
 	}
 	protected function debug($level, $msg){
-		if(DEBUG_ON && $level <= DEBUG_LEVEL){
+		if (DEBUG_ON && $level <= DEBUG_LEVEL){
 			$execTime = sprintf('%.6f', microtime(true) - $this->startTime);
 			$tick = sprintf('%.6f', 0);
-			if($this->lastBenchTime > 0){
+			if ($this->lastBenchTime > 0){
 				$tick = sprintf('%.6f', microtime(true) - $this->lastBenchTime);
 			}
 			$this->lastBenchTime = microtime(true);
@@ -1014,7 +1028,7 @@ class timthumb {
 	}
 	protected function getMimeType($file){
 		$info = getimagesize($file);
-		if(is_array($info) && $info['mime']){
+		if (is_array($info) && $info['mime']){
 			return $info['mime'];
 		}
 		return '';
@@ -1023,7 +1037,7 @@ class timthumb {
 		$inimem = ini_get('memory_limit');
 		$inibytes = timthumb::returnBytes($inimem);
 		$ourbytes = timthumb::returnBytes(MEMORY_LIMIT);
-		if($inibytes < $ourbytes){
+		if ($inibytes < $ourbytes){
 			ini_set ('memory_limit', MEMORY_LIMIT);
 			$this->debug(3, "Increased memory from $inimem to " . MEMORY_LIMIT);
 		} else {
@@ -1043,10 +1057,10 @@ class timthumb {
 	protected function getURL($url, $tempfile){
 		$this->lastURLError = false;
 		$url = preg_replace('/ /', '%20', $url);
-		if(function_exists('curl_init')){
+		if (function_exists('curl_init')){
 			$this->debug(3, "Curl is installed so using it to fetch URL.");
 			self::$curlFH = fopen($tempfile, 'w');
-			if(! self::$curlFH){
+			if (! self::$curlFH){
 				$this->error("Could not open $tempfile for writing.");
 				return false;
 			}
@@ -1065,14 +1079,14 @@ class timthumb {
 			$curlResult = curl_exec($curl);
 			fclose(self::$curlFH);
 			$httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-			if($httpStatus == 404){
+			if ($httpStatus == 404){
 				$this->set404();
 			}
-			if($httpStatus == 302){
+			if ($httpStatus == 302){
 				$this->error("External Image is Redirecting. Try alternate image url");
 				return false;
 			}
-			if($curlResult){
+			if ($curlResult){
 				curl_close($curl);
 				return true;
 			} else {
@@ -1082,20 +1096,20 @@ class timthumb {
 			}
 		} else {
 			$img = @file_get_contents ($url);
-			if($img === false){
+			if ($img === false){
 				$err = error_get_last();
-				if(is_array($err) && $err['message']){
+				if (is_array($err) && $err['message']){
 					$this->lastURLError = $err['message'];
 				} else {
 					$this->lastURLError = $err;
 				}
-				if(preg_match('/404/', $this->lastURLError)){
+				if (preg_match('/404/', $this->lastURLError)){
 					$this->set404();
 				}
 
 				return false;
 			}
-			if(! file_put_contents($tempfile, $img)){
+			if (! file_put_contents($tempfile, $img)){
 				$this->error("Could not write to $tempfile.");
 				return false;
 			}
@@ -1105,7 +1119,7 @@ class timthumb {
 	}
 	protected function serveImg($file){
 		$s = getimagesize($file);
-		if(! ($s && $s['mime'])){
+		if (! ($s && $s['mime'])){
 			return false;
 		}
 		header ('Content-Type: ' . $s['mime']);
@@ -1113,7 +1127,7 @@ class timthumb {
 		header ('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 		header ("Pragma: no-cache");
 		$bytes = @readfile($file);
-		if($bytes > 0){
+		if ($bytes > 0){
 			return true;
 		}
 		$content = @file_get_contents ($file);

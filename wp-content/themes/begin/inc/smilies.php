@@ -1,6 +1,6 @@
 <?php
 function be_smilies_src( $old, $img ) {
-    return get_stylesheet_directory_uri().'/img/smilies/'.$img;
+    return get_template_directory_uri().'/img/smilies/'.$img;
 }
 function be_smilies(){
 	global $wpsmiliestrans;

@@ -1,15 +1,12 @@
 <?php
 /*
 Template Name: 留言板
+Template Post Type: post, page
 */
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
 
 <style type="text/css">
-#primary {
-	width: 100%;
-}
-
 .comment-reply-title span, .comments-title{
 	display: none;
 }
@@ -19,8 +16,8 @@ get_header(); ?>
 }
 </style>
 
-<div id="primary" class="content-area">
-	<main id="main" class="site-main" role="main">
+<div id="primary" class="content-area no-sidebar">
+	<main id="main" class="be-main site-main" role="main">
 		<?php while ( have_posts() ) : the_post(); ?>
 			<?php get_template_part( 'template/content', 'page' ); ?>
 			<?php if ( comments_open() || get_comments_number() ) : ?>

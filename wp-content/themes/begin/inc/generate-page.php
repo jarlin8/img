@@ -5,12 +5,12 @@ function begin_add_page( $title, $slug, $page_template='' ){
 	$allPages = get_pages();
 	$exists = false;
 	foreach( $allPages as $page ) {
-		if( strtolower( $page->post_name ) == strtolower( $slug ) ){
+		if ( strtolower( $page->post_name ) == strtolower( $slug ) ){
 			$exists = true;
 		}
 	}
 
-	if( $exists == false ) {
+	if ( $exists == false ) {
 		$new_page_id = wp_insert_post(
 			array(
 				'post_title'     => $title,
@@ -24,7 +24,7 @@ function begin_add_page( $title, $slug, $page_template='' ){
 			)
 		);
 
-		if( $new_page_id && $page_template!='' ) {
+		if ( $new_page_id && $page_template!='' ) {
 			update_post_meta( $new_page_id, '_wp_page_template', $page_template );
 		}
 	}
@@ -35,6 +35,7 @@ function begin_add_template() {
 	if ( 'themes.php' == $pagenow && isset( $_GET['activated'] ) ) {
 		begin_add_page( '用户中心', 'user-center', 'pages/template-user.php' );
 		begin_add_page( '用户注册', 'registered', 'pages/template-reg.php' );
+		begin_add_page( '专题专栏', 'column', 'pages/template-all-column.php' );
 	}
 }
 add_action( 'load-themes.php','begin_add_template' );
@@ -45,12 +46,12 @@ function begin_add_page_publish( $title, $slug, $page_template='' ){
 	$allPages = get_pages();
 	$exists = false;
 	foreach( $allPages as $page ) {
-		if( strtolower( $page->post_name ) == strtolower( $slug ) ){
+		if ( strtolower( $page->post_name ) == strtolower( $slug ) ){
 			$exists = true;
 		}
 	}
 
-	if( $exists == false ) {
+	if ( $exists == false ) {
 		$new_page_id = wp_insert_post(
 			array(
 				'post_title'     => $title,
@@ -58,14 +59,14 @@ function begin_add_page_publish( $title, $slug, $page_template='' ){
 				'post_name'      => $slug,
 				'comment_status' => 'closed',
 				'ping_status'    => 'closed',
-				'post_content'   => '[full_img]<img class="aligncenter size-medium" src="https://s2.loli.net/2021/12/05/B4CjFhsIinmlt1J.jpg" width="1300" height="339" />[/full_img]<p align="left"></p>[bet_submission_form]',
+				'post_content'   => '[full_img]<img class="aligncenter size-medium" src="' . get_template_directory_uri() . '/img/default/options/1200.jpg" width="1300" height="339" />[/full_img]<p align="left"></p>[bet_submission_form]',
 				'post_status'    => 'publish',
 				'post_author'    => 1,
 				'menu_order'    => 0
 			)
 		);
 
-		if( $new_page_id && $page_template!='' ) {
+		if ( $new_page_id && $page_template!='' ) {
 			update_post_meta( $new_page_id, '_wp_page_template', $page_template );
 		}
 	}

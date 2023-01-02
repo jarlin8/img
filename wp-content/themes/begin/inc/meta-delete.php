@@ -38,7 +38,6 @@ array(
 	"down_local_btn" => array("name" => "down_local_btn"),
 	"down_official_btn" => array("name" => "down_official_btn"),
 	"sidebar_l" => array("name" => "sidebar_l"),
-	"menu_post" => array("name" => "menu_post"),
 	"no_abstract" => array("name" => "no_abstract"),
 	"slide_title" => array("name" => "slide_title"),
 	"down_link_much" => array("name" => "down_link_much"),
@@ -75,6 +74,7 @@ array(
 	"poster_img" => array("name" => "poster_img"),
 	"sites_des" => array("name" => "sites_des"),
 	"sites_url" => array("name" => "sites_url"),
+	"sites_ico" => array("name" => "sites_ico"),
 	"taourl_t" => array("name" => "taourl_t"),
 	"m_taourl" => array("name" => "m_taourl"),
 	"spare_t" => array("name" => "spare_t"),
@@ -83,6 +83,17 @@ array(
 	"be_file_os" => array("name" => "be_file_os"),
 	"be_file_inf" => array("name" => "be_file_inf"),
 	"be_down_size" => array("name" => "be_down_size"),
+	"slider_gallery_n" => array("name" => "slider_gallery_n"),
+	"foldimg_img" => array("name" => "foldimg_img"),
+	"foldimg_title" => array("name" => "foldimg_title"),
+	"foldimg_more" => array("name" => "foldimg_more"),
+	"foldimg_more_url" => array("name" => "foldimg_more_url"),
+	"process_ico" => array("name" => "process_ico"),
+	"assist_ico" => array("name" => "assist_ico"),
+	"group_help_post" => array("name" => "group_help_post"),
+	"group_strong" => array("name" => "group_strong"),
+	"no_show_title" => array("name" => "no_show_title"),
+	"no_img_title" => array("name" => "no_img_title"),
 );
 
 function save_one_delete($post_id) {

@@ -70,7 +70,26 @@
 				</div>
 				<div class="tcb-qq tcb-pl"><div></div><div></div><div></div><div></div><div></div></div>
 			</div>
-			<div class="placard-close yy dah"></div>
+			<div class="placard-close yy dah<?php echo cur(); ?>"></div>
 		</div>
 	</div>
+
+<script>
+jQuery(document).ready(function($) {
+	if (jQuery.cookie('be_placard') != '1') {
+		var time = plt.time;
+		var millisecond = new Date().getTime();
+		var expiresTime = new Date(millisecond + 60 * 1000 * time);
+		setTimeout(function() {
+			$('.placard-bg').addClass("alter");
+			$('.placard-close').click(function() {
+				$('.placard-bg').removeClass("alter")
+			});
+			jQuery.cookie('be_placard', '1', {
+				expires: expiresTime
+			}); 
+		}, 8000);
+	}
+})
+</script>
 <?php } ?>

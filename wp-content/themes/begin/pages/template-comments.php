@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 	margin: 5px;
 	padding: 0 5px 5px 5px;
 	overflow: hidden;
-	border-radius: 5px;
+	border-radius: 8px;
 	border: 1px solid #e7e7e7;
 }
 
@@ -54,13 +54,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 </style>
 
 <div id="primary" class="content-area">
-	<main id="main" class="site-main" role="main">
+	<main id="main" class="be-main site-main" role="main">
 		<?php while ( have_posts() ) : the_post(); ?>
 			<div class="comment-authors">
 				<?php the_content(); ?>
 			</div>
 		<?php endwhile; ?>
 		<?php top_comment_authors(98); ?>
+		<div class="clear"></div>
+		<?php edit_post_link('<i class="be be-editor"></i>', '<div class="page-edit-link edit-link">', '</div>' ); ?>
 		<div class="clear"></div>
 	</main>
 </div>

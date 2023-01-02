@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
 
 	<?php begin_primary_class(); ?>
-		<main id="main" class="site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?>" role="main">
+		<main id="main" class="be-main site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?>" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('ms bk'); ?>>
@@ -24,7 +24,6 @@ get_header(); ?>
 						<?php wp_link_pages(array('before' => '', 'after' => '', 'next_or_number' => 'number', 'link_before' =>'<span>', 'link_after'=>'</span>')); ?>
 						<?php wp_link_pages(array('before' => '', 'after' => '</div>', 'next_or_number' => 'next', 'previouspagelink' => '', 'nextpagelink' => '<span><i class="be be-arrowright"></i></span> ')); ?>
 
-						<?php if (zm_get_option('zm_like')) { ?><?php share_poster(); ?><?php } ?>
 						<?php if (zm_get_option('single_weixin')) { ?>
 							<?php get_template_part( 'template/weixin' ); ?>
 						<?php } ?>
@@ -39,8 +38,7 @@ get_header(); ?>
 						<div class="clear"></div>
 					</div>
 
-
-				</article><!-- #post -->
+				</article>
 
 				<?php if (zm_get_option('copyright')) { ?>
 					<?php get_template_part( 'template/copyright' ); ?>
@@ -52,6 +50,6 @@ get_header(); ?>
 
 			<?php endwhile; ?>
 
-		</main><!-- .site-main -->
-	</div><!-- .content-area -->
+		</main>
+	</div>
 <?php get_footer(); ?>

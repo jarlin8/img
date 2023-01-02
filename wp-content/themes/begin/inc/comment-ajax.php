@@ -43,7 +43,7 @@ $comment_author       = ( isset($_POST['author']) )  ? trim(strip_tags($_POST['a
 $comment_author_email = ( isset($_POST['email']) )   ? trim($_POST['email']) : null;
 $comment_author_url   = ( isset($_POST['url']) )     ? trim($_POST['url']) : null;
 $comment_content      = ( isset($_POST['comment']) ) ? trim($_POST['comment']) : null;
-$edit_id              = ( isset($_POST['edit_id']) ) ? $_POST['edit_id'] : null; // 提取 edit_id
+$address              = ( isset($_POST['address']) ) ? $_POST['address'] : null;
 
 // If the user is logged in
 $user = wp_get_current_user();
@@ -65,6 +65,13 @@ if ( $user->ID ) {
 }
 
 $comment_type = '';
+
+if ( zm_get_option('comment_honeypot') ) {
+	if ( ! $address === false || ! $address === '' ) {
+		err('<i class="be be-info"></i>' . sprintf(__( 'error', 'begin' )) . '');
+	}
+}
+
 if ( zm_get_option('no_email') ) {
 	if ( '' == $comment_author )
 		err('<i class="be be-info"></i>' . sprintf(__( '必须填写昵称。', 'begin' )) . '');
@@ -108,7 +115,7 @@ $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_emai
 
 
 function ihacklog_user_can_edit_comment($new_cmt_data,$comment_ID = 0) {
-	if(current_user_can('edit_comment', $comment_ID)) {
+	if (current_user_can('edit_comment', $comment_ID)) {
 		return true;
 	}
 	$comment = get_comment( $comment_ID );
@@ -120,16 +127,7 @@ function ihacklog_user_can_edit_comment($new_cmt_data,$comment_ID = 0) {
 	return $rs;
 }
 
-if ( $edit_id ) {
-	$comment_id = $commentdata['comment_ID'] = $edit_id;
-	if( ihacklog_user_can_edit_comment($commentdata,$comment_id) ){
-		wp_update_comment( $commentdata );
-	} else {
-		err('<i class="be be-info"></i>' . sprintf(__( '您没有编辑此评论的权限', 'begin' )) . ''); 
-	}
-}else{
-	$comment_id = wp_new_comment( $commentdata );
-}
+$comment_id = wp_new_comment( $commentdata );
 
 $comment = get_comment($comment_id);
 if ( !$user->ID ) {

@@ -1,14 +1,17 @@
 <?php 
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
-<?php if (!zm_get_option('search_the') || (zm_get_option("search_the") == 'search_list')){ ?>
+<?php if ( ! zm_get_option( 'search_the' ) || ( zm_get_option( "search_the" ) == 'search_list' ) ) { ?>
 <!-- list -->
-	<section id="primary" class="content-area search-site">
-		<main id="main" class="site-main" role="main">
+	<section id="primary" class="content-area search-site<?php if ( zm_get_option('infinite_post' ) ){ ?> search-list-infinite<?php } ?><?php if ( zm_get_option( 'search_sidebar' ) ) { ?> search-sidebar<?php } ?>">
+		<main id="main" class="be-main site-main" role="main">
 			<?php if ( have_posts() ) : ?>
-				<div class="search-page search-page-title bk">
+				<div class="search-page search-page-title">
 					<?php while ( have_posts() ) : the_post(); ?>
-						<article class="search-entry-title scl"><a href="<?php the_permalink(); ?>"><?php the_title(); ?><span class="search-inf"><?php time_ago( $time_type ='post' ); ?></span></a></article>
+						<article class="search-entry-title scl bk">
+							<span class="search-inf"><time datetime="<?php echo get_the_date('Y-m-d'); ?> <?php echo get_the_time('H:i:s'); ?>"><?php time_ago( $time_type ='post' ); ?></time></span>
+							<a class="srm" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+						</article>
 					<?php endwhile; ?>
 				</div>
 			<?php else : ?>
@@ -20,16 +23,16 @@ get_header(); ?>
 	</section>
 <?php } ?>
 
-<?php if (zm_get_option('search_the') == 'search_img'){ ?>
+<?php if ( zm_get_option( 'search_the' ) == 'search_img' ) { ?>
 <!-- img -->
 <?php if ( have_posts() ) : ?>
-	<section id="picture" class="content-area grid-cat-<?php echo zm_get_option('img_f'); ?>">
+	<section id="picture" class="picture-area content-area grid-cat-<?php echo zm_get_option( 'img_f' ); ?>">
 		<main id="main" class="site-main" role="main">
 				<?php while ( have_posts() ) : the_post(); ?>
 				<article class="picture scl" <?php aos_a(); ?>>
 					<div class="picture-box ms sup bk">
 						<figure class="picture-img">
-							<?php if (zm_get_option('hide_box')) { ?>
+							<?php if ( zm_get_option( 'hide_box') ) { ?>
 								<a rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>"><div class="hide-box"></div></a>
 								<a rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>"><div class="hide-excerpt"><?php if (has_excerpt('')){ echo wp_trim_words( get_the_excerpt(), 62, '...' ); } else { echo wp_trim_words( get_the_content(), 72, '...' ); } ?></div></a>
 							<?php } ?>
@@ -37,11 +40,8 @@ get_header(); ?>
 						</figure>
 						<?php the_title( sprintf( '<h2 class="grid-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 						<span class="grid-inf">
-							<span class="g-cat"><i class="be be-folder ri"></i><?php zm_category(); ?></span>
 							<span class="grid-inf-l">
-								<span class="date"><i class="be be-schedule ri"></i><?php the_time( 'm/d' ); ?></span>
 								<?php views_span(); ?>
-								<?php if ( get_post_meta($post->ID, 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
 							</span>
 			 			</span>
 			 			<div class="clear"></div>
@@ -64,14 +64,13 @@ get_header(); ?>
 <?php endif; ?>
 <?php } ?>
 
-<?php if (zm_get_option('search_the') == 'search_normal'){ ?>
+<?php if ( zm_get_option( 'search_the' ) == 'search_normal' ) { ?>
 <!-- normal -->
-	<section id="primary" class="content-area">
+	<section id="primary" class="content-area search-normal<?php if ( zm_get_option( 'search_sidebar' ) ) { ?> search-sidebar<?php } ?>">
 		<?php if ( have_posts() ) : ?>
-			<main id="main" class="site-main<?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
+			<main id="main" class="site-main<?php if ( zm_get_option( 'post_no_margin' ) ) { ?> domargin<?php } ?>" role="main">
 				<?php while ( have_posts() ) : the_post(); ?>
 					<?php get_template_part( 'template/content', get_post_format() ); ?>
-					<?php get_template_part('ad/ads', 'archive'); ?>
 				<?php endwhile; ?>
 			</main>
 		<?php else : ?>
@@ -84,5 +83,7 @@ get_header(); ?>
 		<div class="clear"></div>
 	</section>
 <?php } ?>
-
+<?php if ( zm_get_option( 'search_sidebar' ) && zm_get_option( 'search_the' ) !== 'search_img' ) { ?>
+<?php search_sidebar(); ?>
+<?php } ?>
 <?php get_footer(); ?>

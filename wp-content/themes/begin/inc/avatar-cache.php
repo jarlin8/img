@@ -12,7 +12,7 @@ function begin_avatar( $email = 'aaaaa@aaaaaa.com', $size = '96', $default = '',
 	$e = $upload_dir['basedir'] . '/avatar/' . $f . $size . '.png';
 	$d = $upload_dir['basedir'] . '/avatar/' . $f . '-d.png';
 
-	if($default=='')
+	if ($default=='')
 	$random_avata = explode(',' , zm_get_option('random_avatar_url'));
 	$random_avata_array = array_rand($random_avata);
 	$src = $random_avata[$random_avata_array];

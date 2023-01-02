@@ -4,11 +4,12 @@
 	<div class="g-col bgt">
 		<div class="hot-box bgt">
 			<div class="group-title bgt" <?php aos_b(); ?>>
-				<?php if ( zm_get_option('group_carousel_t') == '' ) { ?>
-				<?php } else { ?>
+				<?php if ( ! zm_get_option('group_carousel_t') == '' ) { ?>
 					<h3 class="bgt"><?php echo zm_get_option('group_carousel_t'); ?></h3>
 				<?php } ?>
-				<div class="group-des bgt"><?php echo zm_get_option('carousel_des'); ?></div>
+				<?php if ( ! zm_get_option('carousel_des') == '' ) { ?>
+					<div class="group-des bgt"><?php echo zm_get_option('carousel_des'); ?></div>
+				<?php } ?>
 				<div class="clear"></div>
 			</div>
 
@@ -22,7 +23,7 @@
 							)
 						);
 
-						if(zm_get_option('group_gallery_id')) {
+						if (zm_get_option('group_gallery_id')) {
 							$args = new WP_Query(
 								array(
 									'showposts' => zm_get_option('carousel_n'), 
@@ -43,7 +44,20 @@
 				<div id="post-<?php the_ID(); ?>" <?php post_class('post bk yy'); ?>>
 					<div class="scrolling-thumbnail"><?php zm_thumbnail_scrolling(); ?></div>
 					<div class="clear"></div>
-					<?php the_title( sprintf( '<h2 class="carousel-title bgt over"><a class="bgt" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+					<?php 
+					if ( zm_get_option( 'group_carousel_c' ) ) {
+						$title = ' carousel-title-c';
+					} else {
+						$title = '';
+					}
+					?>
+					<?php
+						if ( zm_get_option( 'group_carousel_c' ) ) {
+							$title = ' carousel-title-c';
+						} else {
+							$title = '';
+						}
+						the_title( sprintf( '<h2 class="carousel-title bgt over' . $title . '"><a class="bgt" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 				</div>
 				<?php endwhile; ?>
 				<?php wp_reset_query(); ?>

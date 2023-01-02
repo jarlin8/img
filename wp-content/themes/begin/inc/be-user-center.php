@@ -24,10 +24,19 @@ function login_info() { ?>
 			<div class="user-info bgt">
 				<div class="arrow-up"></div>
 				<div class="user-info-min yy bk">
-					<?php if (current_user_can( 'manage_options' )) { ?>
+					<?php if ( current_user_can( 'manage_options' ) ) { ?>
 						<a href="<?php echo admin_url(); ?>" rel="external nofollow" target="_blank" title="<?php _e( '后台管理', 'begin' ); ?>">
 					<?php } else { ?>
-						<a href="<?php echo admin_url(); ?>" rel="external nofollow">
+						<?php if (zm_get_option('no_admin')) { ?>
+							<?php if ( !zm_get_option('user_url') == '' ) { ?>
+								<a href="<?php echo get_permalink( zm_get_option('user_url') ); ?>" rel="external nofollow" title="<?php _e( '用户中心', 'begin' ); ?>">
+							<?php } else { ?>
+								<a href="javascript:;" rel="external nofollow">
+							<?php } ?>
+						<?php } else { ?>
+							<a href="<?php echo admin_url(); ?>" rel="external nofollow" title="<?php _e( '后台管理', 'begin' ); ?>">
+						<?php } ?>
+
 					<?php } ?>
 						<h3 class="hz fd"><?php echo $user_identity; ?></h3>
 						<?php if ( get_option( 'show_avatars' ) ) { ?>
@@ -35,19 +44,31 @@ function login_info() { ?>
 								<?php if (zm_get_option('cache_avatar')) { ?>
 									<?php global $userdata; wp_get_current_user(); echo begin_avatar($userdata->user_email, 96, '', $user_identity); ?>
 								<?php } else { ?>
-									<?php global $userdata; wp_get_current_user(); echo get_avatar($userdata->ID, 96, '', $user_identity); ?>
+									<?php global $userdata; wp_get_current_user(); be_avatar_user(); ?>
 								<?php } ?>
 							</div>
 						<?php } else { ?>
 							<div class="usericon-place"></div>
 						<?php } ?>
 					</a>
+					<?php if ( function_exists( 'epd_assets_vip' ) ) { ?>
+						<div class="be-vip-userinfo-name"><?php epd_vip_name(); ?></div>
+					<?php } ?>
+
+					<?php if ( function_exists( 'epd_assets_vip' ) ) { ?>
+						<div class="be-vip-userinfo">
+							<?php epd_vip_btu(); ?>
+						</div>
+						<div class="clear"></div>
+					<?php } ?>
 					<div class="userinfo fd">
 						<p>
 							<?php if ( !zm_get_option('user_url') == '' ) { ?>
-								<a href="<?php echo get_permalink( zm_get_option('user_url') ); ?>"><?php _e( '用户中心', 'begin' ); ?></a>
+								<a href="<?php echo get_permalink( zm_get_option( 'user_url' ) ); ?>"><?php _e( '用户中心', 'begin' ); ?></a>
+							<?php } else { ?>
+								<a href="<?php echo home_url( '/' ); ?>user-center<?php if ( zm_get_option( 'page_html' ) ) { ?>.html<?php } ?>"><?php _e( '用户中心', 'begin' ); ?></a>
 							<?php } ?>
-							<a class="user-logout" href="<?php echo wp_logout_url('index.php'); ?>"><?php _e( '安全退出', 'begin' ); ?></a>
+							<a class="user-logout" href="<?php echo wp_logout_url( get_permalink() ); ?>"><?php _e( '安全退出', 'begin' ); ?></a>
 						</p>
 						<div class="clear"></div>
 					</div>
@@ -58,7 +79,7 @@ function login_info() { ?>
 		<?php if ( !is_user_logged_in()) { ?>
 			<?php if ( !zm_get_option('wel_come') == '' ) { ?>
 			<div class="greet-top bgt">
-				<?php if(isset($_COOKIE["comment_author_" . COOKIEHASH])!="") { ?>
+				<?php if (isset($_COOKIE["comment_author_" . COOKIEHASH])!="") { ?>
 					<?php printf(__('%s 欢迎回来！'), $_COOKIE["comment_author_" . COOKIEHASH]) ?>
 				<?php } else { ?>
 					<div class="user-wel bgt"><?php echo stripslashes( zm_get_option('wel_come') ); ?></div>
@@ -69,7 +90,7 @@ function login_info() { ?>
 
 	<?php } ?>
 
-	<div class="login-reg login-admin fd">
+	<div class="login-reg login-admin">
 		<?php if ( !zm_get_option('user_l') == '' ) { ?>
 			<?php if ( !is_user_logged_in()){ ?>
 				<div class="nav-set">
@@ -82,7 +103,7 @@ function login_info() { ?>
 			<?php if ( !is_user_logged_in()){ ?>
 				<div class="nav-set">
 				 	<div class="nav-login">
-						<div class="show-layer bgt" data-show-layer="login-layer" role="button"><i class="be be-personoutline"></i><?php _e( '登录', 'begin' ); ?></div>
+						<div class="show-layer bgt<?php echo cur(); ?>" data-show-layer="login-layer" role="button"><i class="be be-personoutline"></i><?php _e( '登录', 'begin' ); ?></div>
 					</div>
 				</div>
 			<?php } ?>
@@ -108,13 +129,12 @@ function my_inf() { ?>
 	</div>
 
 	<p class="bgt">
-		<?php if (zm_get_option('languages_en')) { ?>
+		<?php if ( zm_get_option( 'languages_en' ) ) { ?>
 			<script type="text/javascript">
 			var d, s = "";
 			var x = new Array("Sunday", "Monday", "Tuesday","Wednesday","Thursday", "Friday","Saturday");
 			d = new Date();
 			s+=d.getDate()+" / "+(d.getMonth() + 1)+" / "+d.getFullYear()+"";
-
 			document.writeln(s);
 			</script>
 		<?php } else { ?>
@@ -128,16 +148,15 @@ function my_inf() { ?>
 			</script>
 		<?php } ?>
 	</p>
-	<div class="m-logout bgt"><a class="bgt bk" href="<?php echo wp_logout_url('index.php'); ?>"><?php _e( '安全退出', 'begin' ); ?></a></div>
+	<div class="m-logout bgt"><a class="bgt bk" href="<?php echo wp_logout_url( home_url() ); ?>"><?php _e( '安全退出', 'begin' ); ?></a></div>
 	<div class="my-avatar">
-		<?php global $current_user; wp_get_current_user();
+		<?php global $current_user, $userdata, $user_identity; wp_get_current_user();
 			echo '<div class="m-img bgt load">';
 			if (zm_get_option('cache_avatar')):
-				echo begin_avatar( $current_user->user_email, 96, '', $current_user->display_name); 
+				echo begin_avatar($userdata->user_email, 96, '', $user_identity);
 			else :
-				echo get_avatar( $current_user->user_email, 96, '', $current_user->display_name); 
+				echo be_avatar_user();
 			endif;
-
 			echo '</div>';
 			echo '<div class="m-name bgt"><span class="bgt">' . __('欢迎回来！', 'begin' ) . '</strong>' . '</span><br />';
 			echo '' . $current_user->display_name . "\n";
@@ -150,59 +169,48 @@ function my_inf() { ?>
 
 // my-data
 function my_data() { ?>
-<div class="my-info">
-	<?php global $current_user;
-	wp_get_current_user();
+<div class="my-info<?php if ( zm_get_option( 'languages_en' ) ) { ?> my-info-en<?php } ?>">
+	<h4 class="user-info-t user-info-ico"><i class="be be-personoutline"></i><?php _e( '我的信息', 'begin' ); ?></h4>
+
+	<?php global $current_user; wp_get_current_user();
 	function user_role() {
 		$role = __('未知', 'begin' );
-		if( current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( 'manage_options' ) ) {
 			$role= __('管理员', 'begin' );
 		}
-		if( current_user_can( 'publish_pages' ) && !current_user_can( 'manage_options' ) ) {
+		if ( current_user_can( 'publish_pages' ) && !current_user_can( 'manage_options' ) ) {
 			$role= __('编辑', 'begin' );
 		}
-		if( current_user_can( 'publish_posts' ) && !current_user_can( 'publish_pages' ) ) {
+		if ( current_user_can( 'publish_posts' ) && !current_user_can( 'publish_pages' ) ) {
 			$role= __('作者', 'begin' );
 		}
-		if( current_user_can( 'edit_posts' ) && !current_user_can( 'publish_posts' ) ) {
+		if ( current_user_can( 'edit_posts' ) && !current_user_can( 'publish_posts' ) ) {
 			$role= __('投稿者', 'begin' );
 		}
-		if( current_user_can( 'read' ) && !current_user_can( 'edit_posts' ) ) {
+		if ( current_user_can( 'read' ) && !current_user_can( 'edit_posts' ) ) {
 			$role= __('订阅者', 'begin' );
 		}
-		if (zm_get_option('user_roles') == 'vip_roles') {
-			if( current_user_can( 'vip_roles' ) && !current_user_can( 'edit_posts' ) ) {
-				$role= zm_get_option('roles_name');
-			}
+		if ( current_user_can( 'vip_roles' ) && !current_user_can( 'edit_posts' ) ) {
+			$role= '<span class="user-inf-role-vip">' . zm_get_option('roles_name') . ' <i class="cx cx-svip"></i></span>';
 		}
 		return $role;
 	}
-	echo '<ul><li>';
-	echo '<strong>' . __('用户名', 'begin' ) . '</strong>' . $current_user->user_login . "\n";
-	echo '</li><li>';;
-	echo '<strong>' . __('昵称', 'begin' ) . '</strong>' . $current_user->nickname . "\n";
-	echo '</li><li>';
-	echo '<strong>' . __('角色', 'begin' ) . '</strong>' . user_role() . "\n";
-	echo '</li><li>';
-	echo '<strong>' . __('邮箱', 'begin' ) . '</strong>' . $current_user->user_email . "\n";
-	echo '</li></ul>';
+	echo '<ul class="user-inf-box">';
+	if ( function_exists( 'epd_vip_name' ) ) {
+		echo '<li><strong>' . __('角色', 'begin' ) . '</strong>';
+		echo '<span class="be-ed-vip-name">';
+		epd_vip_name();
+		echo '</span>';
+		echo '</li>';
+	} else {
+		echo '<li><strong>' . __('角色', 'begin' ) . '</strong>' . user_role() . '</li>';
+	}
+	echo '<li><strong>' . __( '评论', 'begin' ) . '</strong>' . $comments = get_comments( array( 'user_id' => $current_user->ID, 'count' => true ) ) . '</li>';
+	echo '<li><strong>' . __( '文章', 'begin' ) . '</strong>' . count_user_posts( $current_user->ID, 'post', false ) . '</li>';
+	echo '</ul>';
 	?>
 
-	<ul>
-		<li><strong><?php _e( '评论', 'begin' ); ?></strong><?php echo $comments = get_comments(array('user_id' => $current_user->ID, 'count' => true)); ?></li>
-		<li><strong><?php _e( '文章', 'begin' ); ?></strong><?php echo count_user_posts( $current_user->ID, 'post', false ); ?></li>
-		<li><strong><?php _e( '注册时间', 'begin' ); ?></strong><?php user_registered(); ?></li>
-		<li>
-			<strong><?php _e( '最后登录', 'begin' ); ?></strong>
-			<?php
-				global $userdata;
-				if ( get_user_meta( $userdata->ID, 'last_login', true ) ) {
-					wp_get_current_user(); get_last_login($userdata->ID);
-				} else {
-					echo  __( '暂无记录', 'begin' );
-				}
-			?>
-		</li>
+	<ul class="user-inf-box">
 		<li>
 			<strong><?php _e( '我的站点', 'begin' ); ?></strong>
 			<?php
@@ -215,14 +223,27 @@ function my_data() { ?>
 				}
 			?>
 		</li>
+		<li><strong><?php _e( '注册时间', 'begin' ); ?></strong><?php user_registered(); ?></li>
+		<li>
+			<strong><?php _e( '最后登录', 'begin' ); ?></strong>
+			<?php
+				global $userdata;
+				if ( get_user_meta( $userdata->ID, 'last_login', true ) ) {
+					wp_get_current_user();
+					get_last_login( $userdata->ID );
+				} else {
+					echo  __( '暂无记录', 'begin' );
+				}
+			?>
+		</li>
 	</ul>
 	<div class="clear"></div>
-		<?php
-			global $userdata;
-			if ( !get_user_meta( $userdata->ID, 'last_login', true ) ) {
-				echo '<div class="modify-email">请修改邮箱及密码，之后可以用邮箱登录本站</div>';
-			}
-		?>
+	<?php
+		global $userdata;
+		if ( ! get_user_meta( $userdata->ID, 'last_login', true ) ) {
+			echo '<div class="modify-email">请修改邮箱及密码，之后可以用邮箱登录本站</div>';
+		}
+	?>
 </div>
 <?php }
 
@@ -236,7 +257,7 @@ function my_comment() { ?>
 	$comments = $comments_query->query( array_merge( array( 'number' => 20, 'order' => 'DESC', 'status' => 'approve', 'type' => 'comments', 'post_status' => 'publish', 'user_id' =>$author_id ) ) );
 	if ( $comments ) : foreach ( $comments as $comment ) : ?>
 	<li class="bkc">
-		<a href="<?php echo get_permalink($comment->comment_post_ID); ?>#anchor-comment-<?php echo $comment->comment_ID; ?>" title="发表在：<?php echo get_the_title($comment->comment_post_ID); ?>" rel="external nofollow">
+		<a class="my-posts-li" href="<?php echo get_permalink($comment->comment_post_ID); ?>#anchor-comment-<?php echo $comment->comment_ID; ?>" title="发表在：<?php echo get_the_title($comment->comment_post_ID); ?>" rel="external nofollow">
 			<?php echo convert_smilies($comment->comment_content); ?>
 		</a>
 	</li>
@@ -277,7 +298,7 @@ function my_post() { ?>
 				'paged' => $paged
 			);
 			query_posts($args);
-			if(have_posts()) : while (have_posts()) : the_post();
+			if (have_posts()) : while (have_posts()) : the_post();
 				switch(get_post(get_the_ID())->post_status){
 					case 'publish':
 					$status='' . sprintf(__( '通过', 'begin' )) . '';
@@ -290,7 +311,7 @@ function my_post() { ?>
 
 			<tfoot>
 				<tr>
-					<td width="800"><?php the_title( sprintf( '<a href="%s" target="_blank" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></td>
+					<td width="800"><?php the_title( sprintf( '<a class="my-posts-li" href="%s" target="_blank" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></td>
 					<td width="120" class="tc fj"><?php the_time( 'Y-m-d' ); ?></td>
 					<td width="100" class="tc fj"><?php views_print(); ?></td>
 					<td width="120" class="tc fj">

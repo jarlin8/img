@@ -1,26 +1,32 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if (zm_get_option('group_new')) { ?>
-<div class="g-row g-line sort" name="<?php echo zm_get_option('group_new_s'); ?>" <?php aos(); ?>>
+<div class="g-row g-line group-news-line sort" name="<?php echo zm_get_option('group_new_s'); ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div class="group-news">
 			<div class="group-title" <?php aos_b(); ?>>
-					<?php if ( zm_get_option('group_new_t') == '' ) { ?>
-					<?php } else { ?>
-						<h3><?php echo zm_get_option('group_new_t'); ?></h3>
-					<?php } ?>
-				<div class="group-des"><?php echo zm_get_option('group_new_des'); ?></div>
+				<?php if ( ! zm_get_option('group_new_t') == '' ) { ?>
+					<a href="<?php echo zm_get_option('group_new_more_url'); ?>" rel="bookmark"><h3><?php echo zm_get_option('group_new_t'); ?></h3></a>
+				<?php } ?>
+				<?php if ( ! zm_get_option('group_new_des') == '' ) { ?>
+					<div class="group-des"><?php echo zm_get_option('group_new_des'); ?></div>
+				<?php } ?>
 				<div class="clear"></div>
 			</div>
-			<div class="group-news-content">
+			<div class="group-news-content lbm">
 				<?php
 					$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
-					$recent = new WP_Query( array( 'posts_per_page' => zm_get_option('group_new_n'), 'category__not_in' => explode(',',zm_get_option('not_group_new')), 'paged' => $paged) );
+					if ( zm_get_option( 'not_group_new' ) ) {
+						$notcat = implode( ',', zm_get_option( 'not_group_new' ) );
+					} else {
+						$notcat = '';
+					}
+					$recent = new WP_Query( array( 'posts_per_page' => zm_get_option('group_new_n'), 'category__not_in' => explode(',', $notcat), 'paged' => $paged) );
 				?>
 				<?php while($recent->have_posts()) : $recent->the_post(); $do_not_cat[] = $post->ID; ?>
 				<?php if (zm_get_option('group_new_list')) { ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class('bky group-new-list'); ?>>
 					<header class="entry-header bgt" <?php aos_b(); ?>>
-						<?php the_title( sprintf( '<h2 class="entry-title bgt srm"><a href="%s" rel="bookmark"><i class="be be-arrowright"></i>', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+						<?php the_title( sprintf( '<h2 class="entry-title bgt srm"><a class="get-icon" href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 					</header>
 				<?php } else { ?>
 					<article id="post-<?php the_ID(); ?>" <?php post_class('bky'); ?>>

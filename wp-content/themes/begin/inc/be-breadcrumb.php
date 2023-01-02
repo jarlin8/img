@@ -85,7 +85,7 @@ function be_breadcrumb() {
 			$archive_link     = esc_url( get_post_type_archive_link( $post_type ) );
 
 			$taxonomy_exists = taxonomy_exists( $custom_taxonomy );
-			if( empty( $get_last_category ) && !empty( $custom_taxonomy ) && $taxonomy_exists ) {
+			if ( empty( $get_last_category ) && !empty( $custom_taxonomy ) && $taxonomy_exists ) {
 
 				if ( $terms = begin_taxonomy_terms( $post->ID, $custom_taxonomy, array( 'orderby' => 'parent', 'order' => 'DESC' ) ) ) {
 					$main_term = $terms[0];
@@ -135,7 +135,7 @@ function be_breadcrumb() {
 			$breadcrumb_trail = $category_links . $breadcrumb_trail;
 	}
 
-	if( is_archive() ) {
+	if ( is_archive() ) {
 		if ( is_category() || is_tag() || is_tax() ) {
 			$term_object        = get_term( $queried_object );
 			$taxonomy           = $term_object->taxonomy;
@@ -146,6 +146,12 @@ function be_breadcrumb() {
 
 			if ( is_tax('filtersa') || is_tax('filtersb') || is_tax('filtersc') || is_tax('filtersd') || is_tax('filterse') || is_tax('filtersf') ) {
 				$current_term_link  = sprintf(__( '筛选', 'begin' )) . $delimiter . $term_name;
+			} else {
+				$current_term_link  = $before . $term_name . $after;
+			}
+
+			if ( is_tax( 'special' ) ) {
+				$current_term_link  = '<span class="home-text"><a href="' . get_permalink( zm_get_option( 'column_url' ) ) . '">' . sprintf( __( '专栏', 'begin' ) ) . '</a>' . $delimiter . $term_name;
 			} else {
 				$current_term_link  = $before . $term_name . $after;
 			}
@@ -184,10 +190,10 @@ function be_breadcrumb() {
 
 			if ( is_year() ) {
 				$breadcrumb_trail = $before . $year . $after;
-			} elseif( is_month() ) {
+			} elseif ( is_month() ) {
 				$year_link        = sprintf( $link, esc_url( get_year_link( $year ) ), $year );
 				$breadcrumb_trail = $year_link . $delimiter . $before . $month_name . $after;
-			} elseif( is_day() ) {
+			} elseif ( is_day() ) {
 				$year_link        = sprintf( $link, esc_url( get_year_link( $year ) ), $year );
 				$month_link       = sprintf( $link, esc_url( get_month_link( $year, $monthnum ) ), $month_name );
 				$breadcrumb_trail = $year_link . $delimiter . $month_link . $delimiter . $before . $day . $after;
@@ -202,7 +208,7 @@ function be_breadcrumb() {
 
 	if ( is_search() ) {
 		global $wp_query;
-		$breadcrumb_trail = __( '搜索', 'begin' ) . $before . $delimiter . get_search_query() . $delimiter . $wp_query->found_posts . __( '篇', 'begin' ) . $after;
+		$breadcrumb_trail = __( '搜索', 'begin' ) . $before . $delimiter . get_search_query() . $delimiter . $wp_query->found_posts . '&nbsp;' . __( '篇', 'begin' ) . $after;
 	}
 
 	if ( is_404() ) {

@@ -1,13 +1,13 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if (zm_get_option('products_on')) { ?>
-<div class="line-four sort" name="<?php echo zm_get_option('products_on_s'); ?>">
+<div class="line-four line-four-show-item sort" name="<?php echo zm_get_option('products_on_s'); ?>">
 	<?php
 		$args = array(
 			'post_type' => 'show',
 			'showposts' => zm_get_option('products_n'), 
 		);
 
-		if(zm_get_option('products_id')) {
+		if (zm_get_option('products_id')) {
 			$args = array(
 				'showposts' => zm_get_option('products_n'), 
 				'tax_query' => array(

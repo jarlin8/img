@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 </style>
 
 	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
+		<main id="main" class="be-main site-main" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php post_class('bk da'); ?>>
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 							$no_comments = false;
 							$avatar_size = 96;
 							$comments_query = new WP_Comment_Query();
-							$comments = $comments_query->query( array_merge( array( 'number' => 66, 'type' => 'comments', 'author__not_in' => 1 ) ) );
+							$comments = $comments_query->query( array_merge( array( 'number' => 66, 'type' => 'comments', 'status' => 'approve', 'author__not_in' => 1 ) ) );
 							if ( $comments ) : foreach ( $comments as $comment ) : ?>
 
 							<li class="bkc load">

@@ -7,10 +7,12 @@ class Begin_Favorite_Posts {
 		global $wpdb;
 		$this->db = $wpdb;
 		$this->table = $this->db->prefix . 'be_favorite';
-		// add_action( 'after_switch_theme', array($this, 'favorite_data') );
-		if (zm_get_option('shar_favorite')) {
+		add_action( 'after_switch_theme', array($this, 'favorite_data') );
+		if ( zm_get_option( 'shar_favorite' ) ) {
 			// add_action( 'optionsframework_after', array($this, 'favorite_data') );
-			add_action( 'optionsframework_after_validate', array($this, 'favorite_data') );
+			if ( is_admin() && zm_get_option( 'favorite_data' ) ) {
+				add_action( 'init', array($this, 'favorite_data') );
+			}
 		}
 		add_action( 'wp_enqueue_scripts', array($this, 'enqueue_scripts') );
 		add_shortcode( 'favorite-post-btn', array($this, 'button_shortcode') );
@@ -102,11 +104,11 @@ class Begin_Favorite_Posts {
 		$status = $this->get_post_status( $post_id, get_current_user_id() );
 		?>
 		<span class="favorite-box">
-		<a class="keep-favorite-link zmy-btn-beshare bk" href="#" data-id="<?php echo $post_id; ?>">
+		<a class="keep-favorite-link be-btn-beshare bk" href="#" data-id="<?php echo $post_id; ?>">
 			<?php if ( $status ) { ?>
-				<span class="keep-favorite zmy-btn-favorite dah" data-hover="<?php _e( '取消收藏', 'begin' ); ?>"><span class="arrow-share"></span></span>
+				<span class="keep-favorite be-btn-favorite dah" data-hover="<?php _e( '取消收藏', 'begin' ); ?>"><span class="arrow-share"></span></span>
 			<?php } else { ?>
-				<span class="keep-not-favorite zmy-btn-favorite dah" data-hover="<?php _e( '收藏', 'begin' ); ?>"><span class="arrow-share"></span></span>
+				<span class="keep-not-favorite be-btn-favorite dah" data-hover="<?php _e( '收藏', 'begin' ); ?>"><span class="arrow-share"></span></span>
 			<?php } ?>
 		</a>
 		</span>
@@ -169,7 +171,7 @@ function like_button() {
 		if ( is_user_logged_in() ) {
 			keep_button();
 		} else {
-			echo '<span class="favorite-box show-layer" data-show-layer="login-layer"><a class="zmy-btn-beshare bk no-favorite dah" rel="external nofollow"><span class="like-number sharetip bz">'. sprintf(__( '登录收藏', 'begin' )) .'</span><div class="triangle-down"></div></a></span>';
+			echo '<span class="favorite-box show-layer" data-show-layer="login-layer"><a class="be-btn-beshare bk no-favorite dah" rel="external nofollow"><span class="like-number sharetip bz">'. sprintf(__( '登录收藏', 'begin' )) .'</span><div class="triangle-down"></div></a></span>';
 		}
 	}
 }
@@ -178,7 +180,7 @@ class begin_favorite_post_widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array(
 			'classname' => 'begin_favorite_post_widget',
-			'description' => __( '显示用户个人收藏的文章' ),
+			'description' => '显示用户个人收藏的文章',
 			'customize_selective_refresh' => true,
 		);
 		parent::__construct('begin_favorite_post_widget', '我的收藏', $widget_ops);
@@ -207,7 +209,7 @@ class begin_favorite_post_widget extends WP_Widget {
 			'title' => '我的收藏',
 			'post_type' => 'all',
 			'limit' => 10,
-			'remove_link' => 'off'
+			'remove_link' => 'on'
 		);
 		$instance = wp_parse_args( (array) $instance, $defaults );
 		$title = esc_attr( $instance['title'] );
@@ -217,13 +219,13 @@ class begin_favorite_post_widget extends WP_Widget {
 		$post_types = get_post_types( array( 'public' => true ) );
 		?>
 		<p>
-			<label><?php _e( '标题：', 'begin' ); ?> </label>
+			<label>标题：</label>
 			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" />
 		</p>
 		<p>
-			<label><?php _e( '文章类型：', 'begin' ) ?></label>
+			<label>文章类型：</label>
 			<select id="<?php echo $this->get_field_id( 'post_type' ); ?>" name="<?php echo $this->get_field_name( 'post_type' ); ?>" >
-				<option value="all" <?php selected( $post_type, '全部' ) ?>><?php _e( '全部', 'begin' ) ?></option>
+				<option value="all" <?php selected( $post_type, '全部' ) ?>>全部</option>
 				<?php foreach ($post_types as $pt) { ?>
 					<option value="<?php echo $pt; ?>" <?php selected( $post_type, $pt ) ?>><?php echo $pt; ?></option>
 				<?php } ?>
@@ -235,7 +237,7 @@ class begin_favorite_post_widget extends WP_Widget {
 		</p>
 		<p>
 			<input class="checkbox" type="checkbox" <?php checked( $remove_link, 'on' ); ?> id="<?php echo $this->get_field_id( 'remove_link' ); ?>" name="<?php echo $this->get_field_name( 'remove_link' ); ?>" />
-			<label for="<?php echo $this->get_field_id( 'remove_link' ); ?>"><?php _e( '显示删除按钮', 'begin' ) ?></label>
+			<label for="<?php echo $this->get_field_id( 'remove_link' ); ?>">显示删除按钮</label>
 		</p>
 		<?php
 	}

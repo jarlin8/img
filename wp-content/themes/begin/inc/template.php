@@ -2,9 +2,9 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 // 博客布局
 function blog_template() { ?>
-<div id="primary" class="content-area common">
-	<main id="main" class="site-main<?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
-		<?php if (zm_get_option('slider')) { ?>
+<div id="<?php if ( get_post_meta(get_the_ID(), 'sidebar_l', true) ) { ?>primary-l<?php } else { ?>primary<?php } ?>" class="content-area common<?php if ( get_post_meta( get_the_ID(), 'no_sidebar', true ) ) { ?> no-sidebar<?php } ?>">
+	<main id="main" class="site-main<?php if ( ! zm_get_option( 'blog_ajax' ) ) { ?> be-main<?php } ?><?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
+		<?php if ( zm_get_option( 'slider' ) ) { ?>
 			<?php
 				global $wpdb, $post;
 				if ( !is_paged() ) :
@@ -13,7 +13,7 @@ function blog_template() { ?>
 			?>
 		<?php } ?>
 
-		<?php if (zm_get_option('cms_top')) { ?>
+		<?php if ( zm_get_option( 'blog_top' ) ) { ?>
 			<?php
 				if ( !is_paged() ) :
 					get_template_part( 'template/b-top' );
@@ -22,52 +22,33 @@ function blog_template() { ?>
 		<?php } ?>
 
 		<?php
-			if ( !is_paged() ) :
-				get_template_part( 'template/blog-special' );
-			endif;
-		?>
-
-		<?php if (zm_get_option('cat_all')) { ?>
-			<?php
+			if ( zm_get_option( 'blog_special' ) ) {
 				if ( !is_paged() ) :
-					require get_template_directory() . '/template/all-cat.php';
+					page_special();
 				endif;
-			?>
-		<?php } ?>
-
-		<?php 
-			if ( !is_paged() ) :
-			get_template_part( '/template/b-cover' ); 
-			endif;
+			}
 		?>
 
 		<?php
-			if ( !is_paged() ) :
-				get_template_part( '/inc/filter-general' );
-			endif;
+			if ( zm_get_option( 'blog_special_list' ) ) {
+				if ( !is_paged() ) :
+					page_special_list();
+				endif;
+			}
 		?>
 
-		<?php if ( !is_paged() && !zm_get_option('new_cat_id')== '' ) { ?>
-			<div class="be-new-nav bk ms" <?php aos_f(); ?>>
-				<ul class="new-tabs-all tab-but current"><li><?php _e( '最新文章', 'begin' ); ?></li></ul>
-				<ul class="new-tabs-cat">
-					<?php $display_categories = explode(',',zm_get_option('new_cat_id') ); foreach ($display_categories as $category) { ?>
-						<?php query_posts( array( 'cat' => $category) ); ?>
-						<li><a class="tags-cat tab-but" data-id="<?php echo $category; ?>" href="#"><?php single_cat_title(); ?></a></li>
-					<?php wp_reset_query(); ?>
-					<?php } ?>
-				</ul>
-			</div>
-			<div class="clear"></div>
-			<div class="ajax-cat-cntent cat-border catpast"></div>
-			<div class="ajax-new-cntent netcurrent">
-		<?php } ?>
-
+		<?php 
+			if ( zm_get_option( 'blog_cat_cover' ) ) {
+				if ( !is_paged() ) :
+					cat_cover();
+				endif;
+			}
+		?>
 <?php }
 
 // 图片布局
 function grid_template_a() { ?>
-	<?php if (zm_get_option('slider')) { ?>
+	<?php if ( zm_get_option( 'slider' ) ) { ?>
 		<?php
 			global $wpdb, $post;
 			if ( !is_paged() ) :
@@ -76,7 +57,7 @@ function grid_template_a() { ?>
 		?>
 	<?php } ?>
 
-	<?php if (zm_get_option('cms_top')) { ?>
+	<?php if ( zm_get_option( 'img_top' ) ) { ?>
 		<?php
 			if ( !is_paged() ) :
 				get_template_part( 'template/img-top' );
@@ -84,58 +65,32 @@ function grid_template_a() { ?>
 		?>
 	<?php } ?>
 
-	<?php if (zm_get_option('cat_all')) { ?>
-		<?php require get_template_directory() . '/template/all-cat.php'; ?>
-	<?php } ?>
-
-	<?php 
-		if ( !is_paged() ) :
-		get_template_part( '/template/blog-special' ); 
-		endif;
-	?>
-
-	<?php 
-		if ( !is_paged() ) :
-		get_template_part( '/template/b-cover' ); 
-		endif;
-	?>
-
-	<?php 
-		if ( !is_paged() ) :
-		get_template_part( '/template/cat-tab' ); 
-		endif;
-	?>
-
 	<?php
-		if ( !is_paged() ) :
-			get_template_part( '/inc/filter-general' );
-		endif;
+		if ( zm_get_option( 'img_special' ) ) {
+			if ( !is_paged() ) :
+				page_special();
+			endif;
+		}
+	?>
+
+	<?php 
+		if ( zm_get_option( 'img_cat_cover' ) ) {
+			if ( !is_paged() ) :
+				echo '<span class="grid-cover">';
+					cat_cover();
+				echo '</span>';
+			endif;
+		}
 	?>
 <?php }
 function grid_template_b() { ?>
 	<?php grid_template_a(); ?>
-	<section id="picture" class="content-area grid-cat-<?php echo zm_get_option('img_f'); ?>">
-		<main id="main" class="site-main" role="main">
-		<?php if ( !is_paged() && !zm_get_option('new_cat_id')== '' ) { ?>
-			<div class="be-new-nav-img" <?php aos_f(); ?>>
-				<ul class="new-tabs-all-img current"><li><?php _e( '最新文章', 'begin' ); ?></li></ul>
-				<ul class="new-tabs-cat-img">
-					<?php $display_categories = explode(',',zm_get_option('new_cat_id') ); foreach ($display_categories as $category) { ?>
-						<?php query_posts( array( 'cat' => $category) ); ?>
-						<li><a class="tags-cat-img" data-id="<?php echo $category; ?>" href="#"><?php single_cat_title(); ?></a></li>
-					<?php wp_reset_query(); ?>
-					<?php } ?>
-				</ul>
-			</div>
-			<div class="clear"></div>
-			<div class="ajax-cat-cntent-img cat-border catpast"></div>
-			<div class="ajax-new-cntent-img netcurrent">
-		<?php } ?>
+	<section id="picture" class="picture-area content-area grid-cat-<?php echo zm_get_option('img_f'); ?>">
+		<main id="main" class="be-main site-main" role="main">
 <?php }
 
 function grid_template_c() { ?>
 <?php grid_template_d(); ?>
-<?php if ( !is_paged() && !zm_get_option('new_cat_id')== '' ) { ?></div><?php } ?>
 </main>
 <?php begin_pagenav(); ?>
 <div class="clear"></div>
@@ -148,24 +103,9 @@ function grid_template_d() { ?>
 <article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('ajax-grid-img scl'); ?>>
 	<div class="picture-box sup ms bk">
 		<figure class="picture-img">
-			<?php if (zm_get_option('hide_box')) { ?>
-				<a rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>"><div class="hide-box"></div></a>
-				<a rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>">
-					<div class="hide-excerpt">
-						<?php if (has_excerpt('')){
-								echo wp_trim_words( get_the_excerpt(), 30, '...' );
-							} else {
-								$content = get_the_content();
-								$content = wp_strip_all_tags(str_replace(array('[',']'),array('<','>'),$content));
-								echo wp_trim_words( $content, 30, '...' );
-							}
-						?>
-					</div>
-				</a>
-			<?php } ?>
-
-			<?php if ( get_post_meta($post->ID, 'direct', true) ) { ?>
-				<?php $direct = get_post_meta($post->ID, 'direct', true); ?>
+			<?php echo be_img_excerpt(); ?>
+			<?php if ( get_post_meta(get_the_ID(), 'direct', true) ) { ?>
+				<?php $direct = get_post_meta(get_the_ID(), 'direct', true); ?>
 				<?php zm_thumbnail_link(); ?>
 			<?php } else { ?>
 				<?php zm_grid_thumbnail(); ?>
@@ -178,8 +118,8 @@ function grid_template_d() { ?>
 		<?php the_title( sprintf( '<h2 class="grid-title over"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 		<span class="grid-inf">
 			<?php if ( has_post_format('link') ) { ?>
-				<?php if ( get_post_meta($post->ID, 'link_inf', true) ) { ?>
-					<span class="link-inf"><?php $link_inf = get_post_meta($post->ID, 'link_inf', true);{ echo $link_inf;}?></span>
+				<?php if ( get_post_meta(get_the_ID(), 'link_inf', true) ) { ?>
+					<span class="link-inf"><?php $link_inf = get_post_meta(get_the_ID(), 'link_inf', true);{ echo $link_inf;}?></span>
 				<?php } else { ?>
 					<span class="g-cat"><?php zm_category(); ?></span>
 				<?php } ?>
@@ -188,9 +128,10 @@ function grid_template_d() { ?>
 				<span class="g-cat"><?php zm_category(); ?></span>
 			<?php } ?>
 			<span class="grid-inf-l">
-				<?php if ( !has_post_format('link') ) { ?><span class="date"><i class="be be-schedule ri"></i><?php the_time( 'm/d' ); ?></span><?php } ?>
+				<?php echo be_vip_meta(); ?>
+				<?php if ( !has_post_format('link') ) { ?><?php grid_meta(); ?><?php } ?>
 				<?php views_span(); ?>
-				<?php if ( get_post_meta($post->ID, 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
+				<?php if ( get_post_meta(get_the_ID(), 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
 			</span>
 		</span>
 		<div class="clear"></div>
@@ -201,34 +142,47 @@ function grid_template_d() { ?>
 
 // 分类图片
 function grid_cat_template() { ?>
-<?php if (zm_get_option('slider')) { ?>
+<?php if ( zm_get_option( 'slider' ) ) { ?>
 	<?php
-		global $wpdb, $post;
-		if ( !is_paged() ) :
-			require get_template_directory() . '/template/slider.php';
-		endif;
+		global $post;
+		require get_template_directory() . '/template/slider.php';
 	?>
 <?php } ?>
 
-<section id="grid-cat" class="content-area">
-	<main id="main" class="site-main" role="main">
-		<?php get_template_part( '/template/b-cover' ); ?>
+<section id="grid-cat" class="grid-cat-area content-area">
+	<main id="main" class="be-main site-main" role="main">
 		<?php 
 			global $wpdb, $post; $do_not_duplicate[] = '';
-			if (zm_get_option('cms_top')) {
+			if ( zm_get_option( 'catimg_top' ) ) {
 				require get_template_directory() . '/grid/grid-top.php';
 			}
 			require get_template_directory() . '/grid/grid-cat-new.php';
-			get_template_part( '/inc/filter-general' );
-			if ( !is_paged() ) :
-				get_template_part( '/template/blog-special' ); 
-				get_template_part( '/template/cat-tab' );
-			endif;
+			if ( zm_get_option( 'catimg_cat_cover' ) ) {
+				cat_cover();
+			}
+			if (zm_get_option( 'filters' ) && zm_get_option( 'catimg_filter' ) ){
+				get_template_part( '/inc/filter-general' );
+			}
+			if ( zm_get_option( 'catimg_special' ) ) {
+				page_special();
+			}
+
 			require get_template_directory() . '/grid/grid-cat-a.php';
 			get_template_part( '/grid/grid-widget-one' );
 			require get_template_directory() . '/grid/grid-cat-carousel.php';
 			require get_template_directory() . '/grid/grid-cat-b.php';
 			get_template_part( '/grid/grid-widget-two' );
+			if ( zm_get_option( 'catimg_special_list' ) ) {
+				echo '<div class="catimg-cover-box">';
+					page_special_list();
+				echo '</div>';
+			}
+
+			if ( zm_get_option( 'catimg_ajax_cat' ) ) {
+				echo '<div class="catimg-ajax-cat-post">';
+				echo do_shortcode( zm_get_option( 'catimg_ajax_cat_post_code' ) );
+				echo '</div>';
+			}
 			require get_template_directory() . '/grid/grid-cat-c.php';
 		 ?>
 	</main>
@@ -238,11 +192,10 @@ function grid_cat_template() { ?>
 // grid new
 function grid_new() { ?>
 <?php global $wpdb, $post; ?>
-<div class="grid-cat-site grid-cat-<?php echo zm_get_option('grid_new_f'); ?>">
-	<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('bky gn'); ?>>
+	<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('bky gn aos-animate'); ?>>
 		<div class="grid-cat-bx4 sup ms bk">
 			<figure class="picture-img">
-				<?php if ( get_post_meta($post->ID, 'direct', true) ) { ?>
+				<?php if ( get_post_meta(get_the_ID(), 'direct', true) ) { ?>
 					<?php zm_thumbnail_link(); ?>
 				<?php } else { ?>
 					<?php zm_thumbnail(); ?>
@@ -253,26 +206,27 @@ function grid_new() { ?>
 				<?php if ( has_post_format('link') ) { ?><div class="img-ico"><a rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>"><i class="be be-link"></i></a></div><?php } ?>
 			</figure>
 
-			<?php if ( get_post_meta($post->ID, 'direct', true) ) { ?>
-				<?php $direct = get_post_meta($post->ID, 'direct', true); ?>
+			<?php if ( get_post_meta(get_the_ID(), 'direct', true) ) { ?>
+				<?php $direct = get_post_meta(get_the_ID(), 'direct', true); ?>
 				<h2 class="grid-title"><a href="<?php echo $direct ?>" target="_blank" rel="external nofollow"><?php the_title(); ?></a></h2>
 			<?php } else { ?>
 				<?php the_title( sprintf( '<h2 class="grid-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 			<?php } ?>
 
 			<span class="grid-inf">
-				<?php if ( get_post_meta($post->ID, 'link_inf', true) ) { ?>
-					<span class="link-inf"><?php $link_inf = get_post_meta($post->ID, 'link_inf', true);{ echo $link_inf;}?></span>
+				<?php if ( get_post_meta(get_the_ID(), 'link_inf', true) ) { ?>
+					<span class="link-inf"><?php $link_inf = get_post_meta(get_the_ID(), 'link_inf', true);{ echo $link_inf;}?></span>
 					<span class="grid-inf-l">
-					<?php if ( !get_post_meta($post->ID, 'direct', true) ) { ?><span class="g-cat"><?php zm_category(); ?></span><?php } ?>
+					<?php if ( !get_post_meta(get_the_ID(), 'direct', true) ) { ?><span class="g-cat"><?php zm_category(); ?></span><?php } ?>
 					<?php echo t_mark(); ?>
 					</span>
 				<?php } else { ?>
 					<?php if (zm_get_option('meta_author')) { ?><span class="grid-author"><?php grid_author_inf(); ?></span><?php } ?>
-					<?php if ( !get_post_meta($post->ID, 'direct', true) ) { ?><span class="g-cat"><?php zm_category(); ?></span><?php } ?>
+					<?php if ( !get_post_meta(get_the_ID(), 'direct', true) ) { ?><span class="g-cat"><?php zm_category(); ?></span><?php } ?>
 					<span class="grid-inf-l">
-						<span class="date"><i class="be be-schedule ri"></i><?php the_time( 'm/d' ); ?></span>
-						<?php if ( get_post_meta($post->ID, 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
+						<?php echo be_vip_meta(); ?>
+						<?php grid_meta(); ?>
+						<?php if ( get_post_meta(get_the_ID(), 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
 						<?php echo t_mark(); ?>
 					</span>
 				<?php } ?>
@@ -280,7 +234,6 @@ function grid_new() { ?>
 			<div class="clear"></div>
 		</div>
 	</article>
-</div>
 <?php }
 
 // 杂志布局
@@ -305,10 +258,25 @@ if (zm_get_option('slider_l') == 'slider_n') {
 	require get_template_directory() . '/template/slider.php';
 }
 get_template_part( '/cms/cms-top' );
-get_template_part( '/cms/cat-special' );
+if ( zm_get_option( 'cms_special' ) ) {
+	if ( !is_paged() ) :
+	echo '<div class="cms-cover-box sort" name="' . zm_get_option( 'cms_special_s' ) . '">';
+		page_special();
+	echo '</div>';
+	endif;
+}
+
+if ( zm_get_option( 'cms_special_list' ) ) {
+	if ( !is_paged() ) :
+	echo '<div class="cms-cover-box sort" name="' . zm_get_option( 'cms_special_list_s' ) . '">';
+		page_special_list();
+	echo '</div>';
+	endif;
+}
 get_template_part( '/cms/cat-cover' );
 get_template_part( '/cms/cms-widget-two-menu' );
 require get_template_directory() . '/cms/cms-news.php';
+require get_template_directory() . '/cms/cms-new-code.php';
 get_template_part( '/inc/filter-home' );
 require get_template_directory() . '/cms/cms-cat-tab.php';
 get_template_part( '/template/letter-show' );
@@ -321,9 +289,11 @@ get_template_part( '/cms/cms-widget-two' );
 require get_template_directory() . '/cms/cms-cat-lead.php';
 require get_template_directory() . '/cms/cms-cat-small.php';
 get_template_part( '/cms/cms-video' );
+if ( zm_get_option( 'cms_ajax_tabs' ) ) {
 echo '<div class="sort" name="'. zm_get_option('tab_h_s') .'">';
-get_template_part( '/template/cat-tab' ); 
+get_template_part( '/cms/cms-code-cat-tab' ); 
 echo '</div>';
+}
 echo '</main>';
 echo '</div>';
 
@@ -348,7 +318,8 @@ get_template_part( '/cms/cms-tao' );
 if (function_exists( 'is_shop' )) {
 	get_template_part( '/woocommerce/be-woo/cms-woo' );
 }
-require get_template_directory() . '/cms/cms-cat-big-n.php'; 
+require get_template_directory() . '/cms/cms-cat-big-n.php';
+require get_template_directory() . '/cms/cms-cat-code.php';
 echo '</div>';
 ?>
 <?php }
@@ -362,8 +333,15 @@ function group_template() { ?>
 	function group() {
 	global $wpdb, $post; $do_not_cat[] = '';
 	get_template_part( '/group/group-contact' );
+	get_template_part( '/group/group-explain' );
 	get_template_part( '/group/group-notice' );
+	get_template_part( '/group/group-cover' );
 	get_template_part( '/group/group-dean' );
+	get_template_part( '/group/group-foldimg' );
+	get_template_part( '/group/group-process' );
+	get_template_part( '/group/group-assist' );
+	require get_template_directory() . '/group/group-strong.php';
+	get_template_part( '/group/group-help' );
 	get_template_part( '/group/group-tool' );
 	get_template_part( '/group/group-show' );
 	get_template_part( '/group/group-service' );
@@ -375,7 +353,6 @@ function group_template() { ?>
 	get_template_part( '/group/group-features' );
 	get_template_part( '/group/group-cat-img' );
 	get_template_part( '/group/group-wd' );
-	get_template_part( '/group/group-explain' );
 	get_template_part( '/group/group-widget-one' );
 	get_template_part( '/group/group-dow-tab' );
 	require get_template_directory() . '/group/group-news.php';
@@ -387,6 +364,8 @@ function group_template() { ?>
 	require get_template_directory() . '/group/group-tab.php';
 	require get_template_directory() . '/group/group-cat-c.php';
 	require get_template_directory() . '/group/group-carousel.php';
+	require get_template_directory() . '/group/group-cat-lr.php';
+	require get_template_directory() . '/group/group-cat-code.php';
 } ?>
 <?php group(); ?>
 </div>
@@ -397,7 +376,7 @@ function group_template() { ?>
 // fall
 function fall_main() { ?>
 <section id="post-fall" class="content-area">
-	<main id="main" class="fall-main post-fall" role="main">
+	<main id="main" class="be-main fall-main post-fall" role="main">
 		<?php while ( have_posts() ) : the_post(); ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class('fall scl fall-off'); ?>>
 			<div class="fall-box sup bk load">
@@ -408,7 +387,6 @@ function fall_main() { ?>
 				$n = count($strResult[1]);	
 				if ( $n > 0 ) { ?>
 					<figure class="fall-img">
-						<a rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>"></a>
 						<?php zm_waterfall_img(); ?>
 						<?php if ( has_post_format('video') ) { ?><a rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>"><i class="be be-play"></i></a><?php } ?>
 						<?php if ( has_post_format('quote') ) { ?><div class="img-ico"><a rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>"><i class="be be-display"></i></a></div><?php } ?>
@@ -430,4 +408,61 @@ function fall_main() { ?>
 	<div class="clear"></div>
 </section>
 <div class="other-nav"><?php begin_pagenav(); ?></div>
+<?php }
+
+// qa
+function beqa_article() { ?>
+<?php if (zm_get_option('post_no_margin')) { ?>
+<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class( 'post ms bk doclose scl' ); ?>>
+<?php } else { ?>
+<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class( 'post ms bk scl' ); ?>>
+<?php } ?>
+	<?php 
+		echo '<div class="qa-cat-avatar load gdz">';
+		// echo '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ), get_the_author_meta( 'user_nicename' ) ) . '">';
+		echo '<a href="' . get_permalink() . '" rel="external nofollow">';
+			if (zm_get_option( 'cache_avatar' ) ) {
+			echo begin_avatar( get_the_author_meta( 'email' ), '96', '', get_the_author() );
+			} else {
+				echo be_avatar_author();
+			}
+		echo '</a>';
+		echo '</div>';
+	?>
+
+	<div class="qa-cat-content">
+		<header class="qa-header">
+			<?php the_title( sprintf( '<h2 class="entry-title gdz"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+		</header>
+
+		<div class="qa-cat-meta gdz">
+			<?php 
+				echo '<span class="qa-meta qa-cat">';
+				the_category( ' ' );
+				echo '</span>';
+
+				echo '<span class="qa-meta qa-time"><span class="qa-meta-class"></span>';
+				echo '<time datetime="';
+				echo get_the_date('Y-m-d');
+				echo ' ' . get_the_time('H:i:s');
+				echo '">';
+				time_ago( $time_type ='post' );
+				echo '</time></span>';
+
+				qa_get_comment_last();
+
+				echo '<span class="qa-meta qa-r">';
+					if (!zm_get_option('close_comments')) {
+						echo '<span class="qa-meta qa-comment">';
+							comments_popup_link( '<span class="no-comment"><i>' . sprintf( __( '回复', 'begin' ) ) . '</i>' . sprintf( __( '0', 'begin' ) ) . '</span>', '<i>' . sprintf( __( '回复', 'begin' ) ) . '</i>1 ', '<i>' . sprintf( __( '回复', 'begin' ) ) . '</i>%' );
+						echo '</span>';
+					}
+					views_qa();
+				echo '</span>';
+
+			?>
+			<div class="clear"></div>
+		</div>
+	</div>
+</article>
 <?php }

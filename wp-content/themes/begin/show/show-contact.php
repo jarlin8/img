@@ -1,13 +1,13 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php 
-	$s_f_t = get_post_meta($post->ID, 's_f_t', true);
-	$s_f_e = get_post_meta($post->ID, 's_f_e', true);
-	$s_f_n_a = get_post_meta($post->ID, 's_f_n_a', true);
-	$s_f_n_a_l = get_post_meta($post->ID, 's_f_n_a_l', true);
-	$s_f_n_b = get_post_meta($post->ID, 's_f_n_b', true);
-	$s_f_n_b_l = get_post_meta($post->ID, 's_f_n_b_l', true);
+	$s_f_t = get_post_meta(get_the_ID(), 's_f_t', true);
+	$s_f_e = get_post_meta(get_the_ID(), 's_f_e', true);
+	$s_f_n_a = get_post_meta(get_the_ID(), 's_f_n_a', true);
+	$s_f_n_a_l = get_post_meta(get_the_ID(), 's_f_n_a_l', true);
+	$s_f_n_b = get_post_meta(get_the_ID(), 's_f_n_b', true);
+	$s_f_n_b_l = get_post_meta(get_the_ID(), 's_f_n_b_l', true);
 ?>
-<?php if ( get_post_meta($post->ID, 's_f_e', true) ) { ?>
+<?php if ( get_post_meta(get_the_ID(), 's_f_e', true) ) { ?>
 <div class="g-row show-grey da">
 	<div class="g-col">
 		<div class="section-box">

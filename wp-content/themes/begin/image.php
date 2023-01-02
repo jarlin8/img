@@ -2,7 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
 <div id="primary-l" class="content-area no-sidebar meta-b">
-	<main id="main" class="site-main" role="main">
+	<main id="main" class="be-main site-main" role="main">
 		<?php while ( have_posts() ) : the_post(); ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<header class="entry-header">
@@ -25,6 +25,7 @@ get_header(); ?>
 							);
 						}
 					?>
+					大小 <?php echo size_format( filesize( get_attached_file( $attachment_id ) ), 2 ); ?>
 				</span>
 				<?php views_span(); ?>
 				<?php edit_post_link('<i class="be be-editor"></i>', '<span class="edit-link">', '</span>' ); ?>

@@ -5,10 +5,10 @@ Template Name: 作者墙
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
 
-<main id="main" class="author-content" role="main">
+<main id="main" class="be-main author-content" role="main">
 	<?php while ( have_posts() ) : the_post(); ?>
 		<article id="post-<?php the_ID(); ?>" <?php post_class( 'bk da' ); ?> <?php aos_a(); ?>>
-			<?php if ( get_post_meta( $post->ID, 'header_img', true ) || get_post_meta( $post->ID, 'header_bg', true ) ) { ?>
+			<?php if ( get_post_meta( get_the_ID(), 'header_img', true ) || get_post_meta( get_the_ID(), 'header_bg', true ) ) { ?>
 			<?php } else { ?>
 				<header class="entry-header">
 					<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>

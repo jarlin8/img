@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if (zm_get_option('cat_one_10')) { ?>
-<div class="line-one sort" name="<?php echo zm_get_option('cat_one_10_s'); ?>">
+<div class="line-one line-one-10 sort" name="<?php echo zm_get_option('cat_one_10_s'); ?>">
 	<?php $display_categories = explode(',',zm_get_option('cat_one_10_id') ); foreach ($display_categories as $category) { ?>
 	<?php if (zm_get_option('no_cat_child')) { ?>
 		<?php query_posts( array('cat' => $category ) ); ?>

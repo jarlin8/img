@@ -6,7 +6,7 @@ class addvideo{
 	private $height = '500px';
 	private $youku_client_id = 'd0b1b77a17cded3b';
 	public function __construct(){
-		if(!empty($youku_client_id) && strlen($youku_client_id) == 16){
+		if (!empty($youku_client_id) && strlen($youku_client_id) == 16){
 			$this->youku_client_id = $youku_client_id;
 		}
 
@@ -100,7 +100,7 @@ class addvideo{
 		try{
 			$request = new WP_Http();
 			$data = (array)$request->request($url, array('timeout' => 3));
-			if(!isset($data['body'])){
+			if (!isset($data['body'])){
 				$data['data'] = '';
 			}
 			preg_match('/"vid":"(\w+)"/i', (string)$data['body'], $match);
@@ -111,7 +111,7 @@ class addvideo{
 				$embed = $this->get_iframe("//open.iqiyi.com/developer/player_js/coopPlayerIndex.html?vid={$vid}&tvId={$tvid}&height=100%&width=100%&autoplay=0", $url);
 			}
 		}catch(Exception $e){}
-		if(empty($embed)){
+		if (empty($embed)){
 			$embed = '解析失败，请刷新页面重试';
 		}
 		return apply_filters( 'embed_iqiyi', $embed, $matches, $attr, $url, $rawattr );
@@ -150,7 +150,7 @@ class addvideo{
 	}
 
 	private function is_https(){
-		if(strtolower($_SERVER['HTTPS']) == 'on'){
+		if (strtolower($_SERVER['HTTPS']) == 'on'){
 			return true;
 		}else{
 			return false;

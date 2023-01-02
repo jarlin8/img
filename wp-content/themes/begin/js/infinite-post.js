@@ -1,7 +1,7 @@
 jQuery(document).ready(function($){
 	var pages_n = Ajaxpost.pages_n;
 	var ias = $.ias({
-		container: "#main",
+		container: ".be-main",
 		item: ".scl",
 		pagination: "#nav-below",
 		next: "#nav-below .nav-previous a",

@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
 <?php get_header(); ?>
 <div id="primary-width" class="content-area">
-	<main id="main" class="site-main site-main-cat<?php if ( zm_get_option( 'site_cat_fixed' ) ) { ?> site-cat-fixed<?php } ?>" role="main">
+	<main id="main" class="be-main site-main sites-main site-main-cat<?php if ( zm_get_option( 'site_cat_fixed' ) ) { ?> site-cat-fixed<?php } ?>" role="main">
 		<?php if ( zm_get_option( 'all_site_cat' ) ) { ?><?php all_sites_cat(); ?><?php } ?>
 		<?php $taxonomy = 'favorites';$terms = get_terms($taxonomy); foreach ( $terms as $cat ) { ?>
 		<?php 
@@ -42,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 				<div class="clear"></div>
 				<a class="sites-cat-more" href="<?php echo get_term_link( $cat ); ?>" ><i class="be be-more"></i></a>
 
-				<?php if( $catid == zm_get_option( 'sites_widgets_one_n' ) ) { ?>
+				<?php if ( $catid == zm_get_option( 'sites_widgets_one_n' ) ) { ?>
 					<div class="sites-all da">
 						<div class="sites-widget da sites-widget-<?php echo zm_get_option( 'sw_f' ); ?>">
 							<div class="slf">
@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		<?php } ?>
 	</main>
 </div>
-<?php if( zm_get_option( 'sites_cat_id' ) ) { ?>
+<?php if ( zm_get_option( 'sites_cat_id' ) ) { ?>
 <style type="text/css">
 .sites-catid-<?php echo zm_get_option( 'sites_cat_id' ); ?> {
 	display: none;

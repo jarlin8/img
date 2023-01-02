@@ -5,7 +5,6 @@ get_header(); ?>
 <div class="container show-hui">
 	<?php get_template_part( '/show/show-slider' ); ?>
 	<div id="group-section">
-		<?php get_template_part( '/show/show-dean' ); ?>
 		<?php get_template_part( '/show/show-content' ); ?>
 		<?php get_template_part( '/show/show-contact' ); ?>
 		<?php get_template_part( '/show/show-comments' ); ?>

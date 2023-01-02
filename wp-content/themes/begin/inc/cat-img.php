@@ -19,7 +19,7 @@ function zm_add_style() {
 		th.column-thumb {width:60px;}
 		.form-field img.taxonomy-image {max-width:200px;max-height:40px;border-radius: 5px;}
 		.inline-edit-row fieldset .thumb label span.title, .column-thumb span {width:40px;height:40px;display:inline-block;overflow: hidden;border-radius: 5px;}
-		.inline-edit-row fieldset .thumb img,.column-thumb img {width: 40px;height: 40px;}
+		.inline-edit-row fieldset .thumb img,.column-thumb img {width: auto;height: 40px;}
 	</style>';
 }
 
@@ -32,11 +32,11 @@ function zm_add_texonomy_field() {
 	}
 	
 	echo '<div class="form-field">
-		<label for="taxonomy_image">' . __('图片', 'begin') . '</label>
+		<label for="taxonomy_image">图片</label>
 		<input type="text" name="taxonomy_image" id="taxonomy_image" value="" />
 		<br/>
-		<button class="zm_upload_image_button button">' . __('添加图片', 'begin') . '</button>
-	</div>'.zm_script();
+		<button class="zm_upload_image_button be-cat-but button">添加图片</button>
+	</div><br />'.zm_script();
 }
 
 function zm_edit_texonomy_field($taxonomy) {
@@ -52,10 +52,10 @@ function zm_edit_texonomy_field($taxonomy) {
 	else
 		$image_url = zm_taxonomy_image_url( $taxonomy->term_id, NULL, TRUE );
 	echo '<tr class="form-field">
-		<th scope="row" valign="top"><label for="taxonomy_image">' . __('图片', 'begin') . '</label></th>
+		<th scope="row" valign="top"><label for="taxonomy_image">图片</label></th>
 		<td><img class="taxonomy-image" src="' . zm_taxonomy_image_url( $taxonomy->term_id, 'medium', TRUE ) . '"/><br/><input type="text" name="taxonomy_image" id="taxonomy_image" value="'.$image_url.'" /><br />
-		<button class="zm_upload_image_button button">' . __('添加图片', 'begin') . '</button>
-		<button class="zm_remove_image_button button">' . __('删除图片', 'begin') . '</button>
+		<button class="zm_upload_image_button be-cat-but button">添加图片</button>
+		<button class="zm_remove_image_button be-cat-but button">删除图片</button>
 		</td>
 	</tr>'.zm_script();
 }
@@ -134,7 +134,7 @@ function zm_script() {
 add_action('edit_term','zm_save_taxonomy_image');
 add_action('create_term','zm_save_taxonomy_image');
 function zm_save_taxonomy_image($term_id) {
-	if(isset($_POST['taxonomy_image']))
+	if (isset($_POST['taxonomy_image']))
 		update_option('zm_taxonomy_image'.$term_id, $_POST['taxonomy_image'], NULL);
 }
 
@@ -159,9 +159,9 @@ function zm_taxonomy_image_url($term_id = NULL, $size = 'full', $return_placehol
 	}
 	
 	$taxonomy_image_url = get_option('zm_taxonomy_image'.$term_id);
-	if(!empty($taxonomy_image_url)) {
+	if (!empty($taxonomy_image_url)) {
 		$attachment_id = zm_get_attachment_id_by_url($taxonomy_image_url);
-		if(!empty($attachment_id)) {
+		if (!empty($attachment_id)) {
 		$taxonomy_image_url = wp_get_attachment_image_src($attachment_id, $size);
 		$taxonomy_image_url = $taxonomy_image_url[0];
 		}
@@ -182,8 +182,8 @@ function zm_quick_edit_custom_box($column_name, $screen, $name) {
 				<span class="title"><img src="" alt="Thumbnail"/></span>
 				<span class="input-text-wrap"><input type="text" name="taxonomy_image" value="" class="tax_list" /></span>
 				<span class="input-text-wrap">
-					<button class="zm_upload_image_button button">' . __('添加图片', 'begin') . '</button>
-					<button class="zm_remove_image_button button">' . __('删除图片', 'begin') . '</button>
+					<button class="zm_upload_image_button be-cat-but button">添加图片</button>
+					<button class="zm_remove_image_button be-cat-but button">删除图片</button>
 				</span>
 			</label>
 		</div>
@@ -192,7 +192,7 @@ function zm_quick_edit_custom_box($column_name, $screen, $name) {
 
 function zm_taxonomy_columns( $columns ) {
 	$new_columns = array();
-	$new_columns['cb'] = $columns['cb'];
+	$new_columns['cb'] = !empty($columns['cb']) ? 1 : 0;
 	$new_columns['thumb'] = __('图片', 'begin');
 
 	unset( $columns['cb'] );
@@ -234,22 +234,22 @@ function zm_taxonomy_image($term_id = NULL, $size = 'full', $attr = NULL, $echo 
 	}
 	
 	$taxonomy_image_url = get_option('zm_taxonomy_image'.$term_id);
-	if(!empty($taxonomy_image_url)) {
+	if (!empty($taxonomy_image_url)) {
 		$attachment_id = zm_get_attachment_id_by_url($taxonomy_image_url);
-		if(!empty($attachment_id))
+		if (!empty($attachment_id))
 			$taxonomy_image = wp_get_attachment_image($attachment_id, $size, FALSE, $attr);
 		else {
 			$image_attr = '';
-			if(is_array($attr)) {
-				if(!empty($attr['class']))
+			if (is_array($attr)) {
+				if (!empty($attr['class']))
 					$image_attr .= ' class="'.$attr['class'].'" ';
-				if(!empty($attr['alt']))
+				if (!empty($attr['alt']))
 					$image_attr .= ' alt="'.$attr['alt'].'" ';
-				if(!empty($attr['width']))
+				if (!empty($attr['width']))
 					$image_attr .= ' width="'.$attr['width'].'" ';
-				if(!empty($attr['height']))
+				if (!empty($attr['height']))
 					$image_attr .= ' height="'.$attr['height'].'" ';
-				if(!empty($attr['title']))
+				if (!empty($attr['title']))
 					$image_attr .= ' title="'.$attr['title'].'" ';
 			}
 			$taxonomy_image = '<img src="'.$taxonomy_image_url.'" '.$image_attr.'/>';

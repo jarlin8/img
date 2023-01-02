@@ -1,10940 +1,12161 @@
-<?php
-
-function optionsframework_option_name() {
-
-	// This gets the theme name from the stylesheet
-	$themename = wp_get_theme();
-	$themename = preg_replace("/\W/", "_", strtolower($themename) );
-
-	$optionsframework_settings = get_option( 'optionsframework' );
-	$optionsframework_settings['id'] = $themename;
-	update_option( 'optionsframework', $optionsframework_settings );
+<?php if ( ! defined( 'ABSPATH' )  ) { die; }
+if ( ! function_exists( 'zm_get_option' ) ) {
+	function zm_get_option( $option = '', $default = null ) {
+		$options = get_option( 'begin' );
+		return ( isset( $options[$option] ) ) ? $options[$option] : $default;
+	}
 }
 
-function optionsframework_options() {
-
-	$blogpath =  get_stylesheet_directory_uri() . '/img';
-	$bloghome =  home_url( '/' );
-	$bloglogin =  home_url( '/' ).'wp-login.php';
-	$qq_auth =  home_url( '/' ).'wp-content/themes/begin/inc/social/qq-auth.php';
-	$weibo_auth =  home_url( '/' ).'wp-content/themes/begin/inc/social/sina-auth.php';
-	$weixin_auth =  home_url( '/' );
-
-	$options_categories = array();
-	$options_categories_obj = get_categories(array('hide_empty' => 0));
-	foreach ($options_categories_obj as $category) {
-		$options_categories[$category->cat_ID] = $category->cat_name;
-	}
-
-	$options_tags = array();
-	$options_tags_obj = get_tags();
-	foreach ( $options_tags_obj as $tag ) {
-		$options_tags[$tag->term_id] = $tag->name;
-	}
-
-	$options_pages = array();
-	$options_pages_obj = get_pages( 'sort_column=post_parent,menu_order' );
-	$options_pages[''] = '选择页面:';
-	foreach ($options_pages_obj as $page) {
-		$options_pages[$page->ID] = $page->post_title;
-	}
-
-	$test_array = array(
-		'' => '中',
-		't' => '上',
-		'b' => '下',
-		'l' => '左',
-		'r' => '右'
-	);
-
-	$rand_link = array(
-		'rating' => '正常',
-		'rand' => '随机'
-	);
-
-	$inks_img_txt = array(
-		'0' => '文字',
-		'1' => '图片'
-	);
-
-	$fl789 = array(
-		'7' => '七栏',
-		'8' => '八栏',
-		'9' => '九栏'
-	);
-
-	$fl2468 = array(
-		'2' => '两栏',
-		'4' => '四栏',
-		'6' => '六栏',
-		'8' => '八栏'
-	);
-
-	$fl1234 = array(
-		'1' => '1栏',
-		'2' => '2栏',
-		'3' => '3栏',
-		'4' => '4栏'
-	);
-
-	$fl345 = array(
-		'3' => '3栏',
-		'4' => '4栏',
-		'5' => '5栏'
-	);
-
-	$fl456 = array(
-		'4' => '4栏',
-		'5' => '5栏',
-		'6' => '6栏'
-	);
-
-	$fl56 = array(
-		'5' => '5栏',
-		'6' => '6栏'
-	);
-
-	$fsl45 = array(
-		'4' => '4栏',
-		'5' => '5栏'
-	);
-
-	$fl34 = array(
-		'3' => '3栏',
-		'4' => '4栏'
-	);
-
-	$swf12 = array(
-		'1' => '1栏',
-		'2' => '2栏'
-	);
-
-	$cover234 = array(
-		'2' => '2栏',
-		'3' => '3栏',
-		'4' => '4栏',
-		'5' => '5栏'
-	);
-
-	$options = array();
-
-	$options[] = array(
-		'desc' => '',
-		'id' => 'show_box',
-		'class' => 'show_box',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	// 首页设置
-
-	$options[] = array(
-		'name' => '首页设置',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '首页布局选择',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'id' => 'layout',
-		'class' => 'rr',
-		'std' => 'blog',
-		'type' => 'radio',
-		'options' => array(
-			'blog' => '博客布局',
-			'img' => '图片布局',
-			'grid' => '分类图片',
-			'cms' => '杂志布局',
-			'group' => '公司主页',
-		)
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '首页幻灯',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'slider',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '调用方法，编辑准备显示在幻灯中的文章，在编辑器下面“将文章添加到幻灯”面板中输入图片链接地址即可',
-		'class' => 'icon_sm el fol '
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'slider_n',
-		'std' => '2',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '间隔，默认4000毫秒',
-		'id' => 'owl_time',
-		'std' => '4000',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '进度条',
-		'id' => 'slide_progress',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自动裁剪图片',
-		'id' => 'show_img_crop',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '调用视频',
-		'id' => 'show_slider_video',
-		'std' => '0',
-		'class' => 'hb',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '上传MP4视频或者输入视频地址',
-		'id' => 'show_slider_video_url',
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '仅显示一张图片',
-		'id' => 'slider_only_img',
-		'class' => 'hb',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '上传图片',
-		'id' => 'show_slider_img',
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图片链接到',
-		'id' => 'show_slider_img_url',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '博客（图片）布局排除的分类文章',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '输入排除的分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'not_cat_n',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '专题（博客与图片布局）',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'blog_special',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入专题页面ID，多个页面ID用英文半角逗号","隔开',
-		'id' => 'blog_special_id',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '',
-		'id' => 'special_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl456 
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '博客与图片布局分类链接',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'new_cat_id',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '首页推荐文章',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cms_top',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：1',
-		'id' => 'cms_top_s',
-		'class' => 'mini',
-		'std' => '1',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇',
-		'id' => 'cms_top_n',
-		'class' => 'mini',
-		'std' => '4',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '首页图片布局',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '使用瀑布流',
-		'id' => 'grid_fall',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => ''
-	);
-
-	$options[] = array(
-		'name' => '最新文章分栏',
-		'desc' => '',
-		'id' => 'img_top_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl456 
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => 'Tab组合分类',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'ajax_tabs',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '博客布局不显示',
-		'id' => 'blog_ajax_tabs',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '博客布局位置调整，0=第1篇下面，1=第2篇下面...',
-		'id' => 'blog_ajax_tabs_n',
-		'class' => 'mini',
-		'std' => '3',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'tab_b_n',
-		'std' => '8',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'tabs_mode',
-		'class' => 'rr',
-		'std' => 'tabs_list_mode',
-		'type' => 'radio',
-		'options' => array(
-			'tabs_list_mode' => '列表',
-			'tabs_img_mode' => '图片',
-			'tabs_default_mode' => '标准',
-		)
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '分类A设置',
-		'desc' => '自定义文字',
-		'id' => 'tab_b_a',
-		'std' => '推荐文章',
-		'type' => 'text'
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择一个分类',
-		'id' => 'tab_b_a_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '分类B设置',
-		'desc' => '自定义文字',
-		'id' => 'tab_b_b',
-		'std' => '专题文章',
-		'type' => 'text'
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择一个分类',
-		'id' => 'tab_b_b_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '分类C设置',
-		'desc' => '自定义文字',
-		'id' => 'tab_b_c',
-		'std' => '分类文章',
-		'type' => 'text'
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择一个分类',
-		'id' => 'tab_b_c_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '分类D设置',
-		'desc' => '自定义文字（留空则不显示）',
-		'id' => 'tab_b_d',
-		'std' => '分类文章',
-		'type' => 'text'
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择一个分类',
-		'id' => 'tab_b_d_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '全部分类链接',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cat_all',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入排除的分类ID，比如：1,2',
-		'id' => 'cat_all_e',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '首页分类封面',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'h_cat_cover',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示在正文页面顶部',
-		'id' => 'single_cover',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '杂志布局排序：2',
-		'id' => 'cms_cover_s',
-		'class' => 'mini',
-		'std' => '2',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '输入分类ID',
-		'desc' => '多个ID用英文半角逗号","隔开',
-		'id' => 'cat_cover_id',
-		'class' => 'tk',
-		'std' => '1,2',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'cover_img_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $cover234 
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '模式选择',
-		'id' => 'cat_rec_m',
-		'class' => 'rr',
-		'std' => 'cat_rec_ico',
-		'type' => 'radio',
-		'options' => array(
-			'cat_rec_ico' => '图标',
-			'cat_rec_img' => '图片'
-		)
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'desc' => '调用标签',
-		'id' => 'cat_tag_cover',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '输入标签ID',
-		'desc' => '多个ID用英文半角逗号","隔开',
-		'id' => 'cat_cover_tag_id',
-		'class' => 'tk',
-		'std' => '1,2',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '图片布局分栏',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '',
-		'id' => 'img_f',
-		'class' => 'rr',
-		'std' => '4',
-		'type' => 'radio',
-		'options' => $fl456 
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '首页多条件筛选',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'filter_general',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '图片布局显示摘要',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'hide_box',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '首页新窗口或标签打开链接',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'blank',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '移动端首页显示的页面',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '输入链接地址，不使用请留空',
-		'id' => 'mobile_home_url',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '首页页脚链接',
-		'class' => 'bel',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'footer_link',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '可以输入链接分类ID，显示特定的链接在首页，留空则显示全部链接',
-		'id' => 'link_f_cat',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示网站Favicon图标',
-		'id' => 'home_link_ico',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图片链接',
-		'id' => 'footer_img',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端不显示',
-		'id' => 'footer_link_no',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '更多链接按钮',
-		'desc' => '选择友情链接页面',
-		'id' => 'link_url',
-		'type' => 'select',
-		'options' => $options_pages
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	// 基本设置
-
-	$options[] = array(
-		'name' => '基本设置',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '文章列表截断字数',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '自动截断字数，默认值：100',
-		'id' => 'words_n',
-		'std' => '100',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '摘要截断字数，默认值：90',
-		'id' => 'word_n',
-		'std' => '90',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '图片延迟加载',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '缩略图延迟加载',
-		'id' => 'lazy_s',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '正文图片延迟加载',
-		'id' => 'lazy_e',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '公告',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示，并代替首页面包屑导航',
-		'id' => 'bulletin',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入一个公告分类ID，调用指定的分类',
-		'id' => 'bulletin_id',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '公告滚动篇数',
-		'id' => 'bulletin_n',
-		'std' => '2',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '公告分类模板选择',
-		'id' => 'notice_m',
-		'class' => 'rr',
-		'std' => 'notice_s',
-		'type' => 'radio',
-		'options' => array(
-			'notice_d' => '默认',
-			'notice_s' => '说说',
-		)
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '弹窗公告',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'placard_layer',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择一个分类',
-		'id' => 'placard_cat_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'desc' => '输入文章ID，留空则显示5篇分类文章',
-		'id' => 'placard_id',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分钟，默认30分钟弹出一次',
-		'id' => 'placard_time',
-		'std' => '30',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示最新文章图片',
-		'id' => 'placard_img',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义内容',
-		'id' => 'custom_placard',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '标题',
-		'id' => 'custom_placard_title',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '链接',
-		'id' => 'custom_placard_url',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '图片',
-		'id' => 'custom_placard_img',
-		"std" => "https://s2.loli.net/2021/12/05/qH1SNgls95RZGJP.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'name' => '内容',
-		'id' => 'custom_placard_content',
-		'class' => 't70',
-		'std' => '',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'desc' => '排除管理员',
-		'id' => 'admin_placard',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '阅读全文按钮',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '阅读全文按钮文字，留空则不显示',
-		'id' => 'more_w',
-		'std' => '阅读全文',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '直达链接按钮文字，留空则不显示',
-		'id' => 'direct_w',
-		'std' => '直达链接',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '按钮默认隐藏',
-		'id' => 'more_hide',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => 'Ajax加载文章',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'infinite_post',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '加载页数',
-		'id' => 'pages_n',
-		'std' => '3',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '页号显示',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '首页页号数',
-		'id' => 'first_mid_size',
-		'std' => '2',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '其它页号数',
-		'id' => 'mid_size',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入页号跳转',
-		'id' => 'input_number ',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端简化分页',
-		'id' => 'turn_small',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '替换用户默认链接',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'id' => 'my_author',
-		'class' => 'rr',
-		'std' => 'author_id',
-		'type' => 'radio',
-		'options' => array(
-			'author_id' => '用户ID',
-			'author_link' => '用户名称',
-		)
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '用段落标题生成文章索引目录',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'be_toc',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'toc_style',
-		'class' => 'rr',
-		'std' => 'tocjq',
-		'type' => 'radio',
-		'options' => array(
-			'tocjq' => '单级显示',
-			'tocphp' => '层级显示',
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '几个标题时生成目录',
-		'id' => 'toc_title_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'toc_mode',
-		'class' => 'rr',
-		'std' => 'toc_four',
-		'type' => 'radio',
-		'options' => array(
-			'toc_four' => '仅四级标题',
-			'toc_all' => '二至六级标题',
-		)
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '正文相关设置',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '历史上的今天',
-		'id' => 'begin_today',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图片Lightbox查看',
-		'id' => 'lightbox_on',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '可视化编辑器',
-		'id' => 'visual_editor',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '段首空格',
-		'id' => 'p_first',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '正文继续阅读按钮',
-		'id' => 'all_more',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '编辑器增加中文字体',
-		'id' => 'custum_font',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '在线视频支持',
-		'id' => 'smart_ideo',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '复制提示',
-		'id' => 'copy_tips',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '禁止复制及右键，注：管理员登录无效',
-		'id' => 'copyright_pro',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '禁止复制CSS版',
-		'id' => 'no_copy',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '段落末尾版权链接',
-		'id' => 'copy_upset',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '禁止打印',
-		'id' => 'print_no',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章分页显示全部按钮',
-		'id' => 'link_pages_all',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章外链接添加nofollow',
-		'id' => 'link_external',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章内链接新窗口打开，需与上面的选项同时使用',
-		'id' => 'link_internal',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '正文无侧边栏',
-		'id' => 'single_no_sidebar',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '正文底部Tab组合分类',
-		'id' => 'single_tab',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '代码高亮',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '自动代码高亮显示',
-		'id' => 'be_code',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '手动代码高亮显示',
-		'id' => 'highlight',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '优化相关',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '不显示分类链接中的"category"，更改后需保存一次固定链接设置',
-		'id' => 'no_category',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分类归档链接添加"/"斜杠，更改后需保存一次固定链接设置',
-		'id' => 'category_x',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '页面添加.html后缀，更改后需保存一下固定链接设置',
-		'id' => 'page_html',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自动将文章标题作为图片ALT标签内容',
-		'id' => 'image_alt',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '上传附件自动按时间重命名',
-		'id' => 'be_upload_name',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示用户登录注册时间',
-		'id' => 'last_login',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章批量操作',
-		'id' => 'bulk_actions_post',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => 'Ajax移动文章到回收站',
-		'id' => 'ajax_move_post',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义字段筛选',
-		'id' => 'meta_key_filter',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示文章ID',
-		'id' => 'post_ssid',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'desc' => '禁用xmlrpc',
-		'id' => 'xmlrpc_no',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '禁用文章修订',
-		'id' => 'revisions_no',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '禁用oEmbed',
-		'id' => 'embed_no',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '禁用 REST API，连接小程序需取消',
-		'id' => 'disable_api',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '阻止恶意URL请求',
-		'id' => 'be_safety',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '密码链接修正',
-		'id' => 'forget_password',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移除后台菜单分隔符',
-		'id' => 'remove_separator',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '侧边栏小工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '侧边栏跟随滚动',
-		'id' => 'sidebar_sticky',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '小工具条件判断',
-		'id' => 'widget_logic',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '小工具CSS类',
-		'id' => 'widget_class',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '小工具克隆',
-		'id' => 'clone_widgets',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '使用Ajax短代码小工具',
-		'id' => 'ajax_text_widget',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '头部小工具',
-		'id' => 'header_widget',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'header_widget_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl34 
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'h_widget_m',
-		'class' => 'rr',
-		'std' => 'cat_single_m',
-		'type' => 'radio',
-		'options' => array(
-			'cat_single_m' => '在分类及正文页面显示',
-			'cat_m' => '仅在分类页面显示',
-			'all_m' => '全局显示',
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端不显示',
-		'id' => 'h_widget_p',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '正文底部小工具',
-		'id' => 'single_e',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章小工具段落插入位置',
-		'id' => 'widget_p',
-		'std' => '3',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '页脚小工具',
-		'id' => 'footer_w',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端不显示页脚小工具',
-		'id' => 'mobile_footer_w',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '自定义文章显示数',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '一般用于使用图片布局的分类/标签，自定义文章显示数',
-		'class' => 'el'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cat_posts_id',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示数',
-		'id' => 'posts_n',
-		'class' => 'mini',
-		'std' => '20',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类相关',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示分类推荐文章',
-		'id' => 'cat_top',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分类归档不显示子分类文章',
-		'id' => 'no_child',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分类排序',
-		'id' => 'cat_order',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分类图标',
-		'id' => 'cat_icon',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '启用分类封面',
-		'id' => 'cat_cover',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '归档页子分类链接',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'child_cat',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '',
-		'id' => 'child_cat_f',
-		'class' => 'rr',
-		'std' => '8',
-		'type' => 'radio',
-		'options' => $fl789
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入排除的分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'child_cat_no',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类图片',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示（分类填写描述才能显示）',
-		'id' => 'cat_des',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示描述',
-		'id' => 'cat_des_p',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '单独显示描述',
-		'id' => 'cat_area',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自动裁剪图片',
-		'id' => 'cat_des_img',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '标题居左',
-		'id' => 'des_title_l',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => ''
-	);
-
-	$options[] = array(
-		'name' => '默认图片',
-		'desc' => '上传默认图片',
-		'id' => 'cat_des_img_d',
-		"std" => "https://s2.loli.net/2021/12/05/qH1SNgls95RZGJP.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '正文上下篇文章链接',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'id' => 'post_nav_mode',
-		'class' => 'rr',
-		'std' => 'full_site',
-		'type' => 'radio',
-		'options' => array(
-			'full_site' => '全站',
-			'same_cat' => '同分类',
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '缩略图',
-		'id' => 'post_nav_img',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '不显示',
-		'id' => 'post_nav_no',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '正文底部滚动同分类文章',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'single_rolling',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'single_rolling_n',
-		'std' => '10',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '正文相关文章',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'related_img',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '显示模式',
-		'id' => 'related_mode',
-		'class' => 'rr',
-		'std' => 'slider_grid',
-		'type' => 'radio',
-		'options' => array(
-			'related_normal' => '标准',
-			'slider_grid' => '图片',
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'related_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '正文底部商品',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'single_tao',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'single_tao_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '图片/视频/商品/产品/网址文章归档',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '篇数 ，自定义文章显示数',
-		'id' => 'type_posts_n',
-		'std' => '20',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示该类型所有分类链接',
-		'id' => 'type_cat',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '图片/视频/商品/Woo产品分类页面模板',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '篇数',
-		'id' => 'custom_cat_n',
-		'std' => '12',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '最新文章图标',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'news_ico',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '默认一周（168小时）内发表的文章显示，最短24小时',
-		'id' => 'new_n',
-		'std' => '168',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '友情链接页面',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '自助友情链接',
-		'id' => 'add_link',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '显示模式',
-		'id' => 'links_model',
-		'std' => 'links_ico',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => array(
-			'links_ico' => '图标模式',
-			'links_default' => '默认模式',
-		)
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '图标模式选择',
-		'desc' => '',
-		'id' => 'link_favicon',
-		'class' => 'rr',
-		'std' => 'favicon_ico',
-		'type' => 'radio',
-		'options' => array(
-			'favicon_ico' => 'Favicon图标',
-			'first_ico' => '首字图标',
-		)
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '图标模式排序',
-		'desc' => '',
-		'id' => 'rand_link',
-		'class' => 'rr',
-		'std' => 'rating',
-		'type' => 'radio',
-		'options' => $rand_link
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '默认模式选择',
-		'desc' => '',
-		'id' => 'links_img_txt',
-		'class' => 'rr',
-		'std' => '0',
-		'type' => 'radio',
-		'options' => $inks_img_txt
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '排除的链接',
-		'desc' => '输入排除的链接ID，多个ID用","隔开',
-		'id' => 'link_cat',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '链接Favicon图标API',
-		'class' => 'bel',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '输入获取链接favicon图标API地址',
-		'id' => 'favicon_api',
-		'class' => 'tk',
-		'std' => 'https://favicon.cccyun.cc/',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	// 站点管理
-	$options[] = array(
-		'name' => '站点管理',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '管理站点',
-		'desc' => '启用前端登录',
-		'id' => 'login',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '隐藏顶部菜单及站点管理',
-		'id' => 'top_nav_no',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '顶部菜单登录按钮 ',
-		'id' => 'profile',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '主菜单登录按钮',
-		'id' => 'menu_login',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '菜单注册按钮',
-		'id' => 'menu_reg',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端登录按钮',
-		'id' => 'mobile_login',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '前端显示找回密码',
-		'id' => 'reset_pass',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '登录验证码',
-		'id' => 'login_captcha',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '注册验证码',
-		'id' => 'register_captcha',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '找回密码验证码',
-		'id' => 'lost_captcha',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '注册直接输入密码',
-		'id' => 'go_reg',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '注册后自动登录',
-		'id' => 'register_auto',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '非管理员和编辑禁止进后台',
-		'id' => 'no_admin',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '只允许社会化登录',
-		'id' => 'only_social_login',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '注册登录页面模板只显示注册',
-		'id' => 'reg_sign',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义登录按钮链接',
-		'id' => 'user_l',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '退出登录后跳转的页面',
-		'id' => 'logout_to',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '注册按钮链接',
-		'id' => 'reg_l',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '顶部欢迎语',
-		'id' => 'wel_come',
-		'class' => '',
-		'std' => '欢迎光临！',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '用户中心',
-		'desc' => '选择用户中心页面',
-		'id' => 'user_url',
-		'type' => 'select',
-		'class' => '',
-		'options' => $options_pages
-	);
-
-	$options[] = array(
-		'name' => '用户投稿',
-		'desc' => '选择投稿页面',
-		'id' => 'tou_url',
-		'type' => 'select',
-		'class' => '',
-		'options' => $options_pages
-	);
-
-	$options[] = array(
-		'name' => '用户中心背景图片',
-		'desc' => '上传背景图片',
-		'id' => 'personal_img',
-        "std" => "https://s2.loli.net/2021/12/05/qH1SNgls95RZGJP.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '重定向默认登录链接，适合不想让别人进入默认登录注册页面，又不影响重置密码',
-		'id' => 'redirect_login',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '重定向网址',
-		'id' => 'redirect_login_link',
-		'class' => 'tk',
-		'std' => '链接地址',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '修改默认登录链接，适合不想让别人知道默认登录注册页面链接，但会影响重置密码',
-		'id' => 'login_link',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'login_link_h'
-	);
-
-	$options[] = array(
-		'desc' => '前缀',
-		'id' => 'pass_h',
-		'class' => 'tw3',
-		'std' => 'my',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '后缀',
-		'id' => 'word_q',
-		'class' => 'tw3',
-		'std' => 'the',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '跳转网址',
-		'id' => 'go_link',
-		'std' => '链接地址',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '要记住修改后的链接，默认登录地址：http://域名/wp-login.php?my=the',
-		'id' => 'login_s',
-		'class' => 'el'
-	);
-
-	// 菜单设置
-	$options[] = array(
-		'name' => '菜单设置',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '导航菜单固定模式',
-		'id' => 'menu_m',
-		'class' => 'rr',
-		'std' => 'menu_d',
-		'type' => 'radio',
-		'options' => array(
-			'menu_d' => '正常模式',
-			'menu_n' => '永不固定',
-			'menu_g' => '保持固定',
-		)
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '主要菜单样式',
-		'id' => 'main_nav',
-		'class' => ''
-	);
-
-	$options[] = array(
-		'desc' => '色块模式',
-		'id' => 'menu_block',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '文字加粗',
-		'id' => 'nav_ace',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '半透明',
-		'id' => 'menu_glass',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '居左',
-		'id' => 'site_nav_left',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '顶部菜单更多按钮',
-		'id' => 'top_nav_more',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '菜单项显示数，实际显示数+1',
-		'id' => 'top_nav_n',
-		'std' => '8',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '主菜单更多按钮',
-		'id' => 'nav_more',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '菜单项显示数，实际显示数+1',
-		'id' => 'nav_n',
-		'std' => '8',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '通用头部模式',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'header_normal',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '通长导航',
-		'id' => 'menu_full',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'h_main_o',
-		'class' => 'rr',
-		'std' => 'h_search',
-		'type' => 'radio',
-		'options' => array(
-			'h_search' => '搜索框',
-			'h_contact' => '自定义内容',
-		)
-	);
-
-	$options[] = array(
-		'name' => '头部自定义内容',
-		'desc' => '',
-		'id' => 'header_contact',
-		'class' => 't70',
-		'std' => '<div class="contact-main contact-l"><i class="be be-phone"></i>13088888888</div><div class="contact-main contact-r"><i class="be be-display"></i>联系我们</div>',
-		'type' => 'textarea'
-	);
-
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '背景色',
-		'id' => 'header_color',
-		'std' => '#ffffff',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '',
-		'id' => '',
-		'class' => ''
-	);
-
-	$options[] = array(
-		'name' => '背景图片',
-		'desc' => '背景图片',
-		'id' => 'top_bg',
-		"std" => "",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '移动端菜单',
-		'desc' => '移动端菜单与PC端不同',
-		'id' => 'mobile_nav',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '单独的移动端菜单（不能有二级菜单，有特殊需要时启用）',
-		'id' => 'm_nav',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端页脚菜单',
-		'id' => 'footer_menu',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端页脚菜单自动隐藏',
-		'id' => 'footer_menu_no',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端页脚菜单微信',
-		'id' => 'nav_weixin_on',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '上传微信二维码图片（＜240px）',
-		'id' => 'nav_weixin_img',
-		'std' => "$blogpath/favicon.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '菜单条件判断',
-		'id' => 'menu_visibility',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '二级菜单显示描述',
-		'id' => 'menu_des',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端导航按钮链接到页面',
-		'id' => 'nav_no',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择页面',
-		'id' => 'nav_url',
-		'type' => 'select',
-		'class' => 'mini',
-		'options' => $options_pages
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '菜单图文',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'menu_post',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '说明：添加一个自定义链接菜单项，URL输入#号，CSS类输入：mynav',
-		'id' => 'menu_post_my',
-		'class' => 'el',
-		'std' => ''
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'menu_cat_cover_md',
-		'class' => 'rr',
-		'std' => 'menu_post_id',
-		'type' => 'radio',
-		'options' => array(
-			'menu_post_id' => '指定文章',
-			'menu_cover_id' => '分类封面',
-			'menu_all_cat' => '全部分类',
-		)
-	);
-
-	$options[] = array(
-		'name' => '指定文章',
-		'desc' => '编辑文章，在“将文章添加到”面板中，勾选“菜单图文”调用指定文章',
-		'id' => 'menu_post_sm',
-		'class' => 'el',
-		'std' => ''
-	);
-
-	$options[] = array(
-		'name' => '分类封面',
-		'desc' => '输入添加封面的分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'menu_cat_cover_id',
-		'std' => '1,2,3,4',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-	
-	$options[] = array(
-		'name' => '排除的分类',
-		'desc' => '输入排除的分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'menu_cat_e_id',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '菜单分类',
-		'class' => 'bel',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'nav_cat',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '说明：添加一个自定义链接菜单项，URL输入#号，CSS类输入：mycat',
-		'id' => 'nav_cat_my',
-		'class' => 'el',
-		'std' => ''
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'nav_cat_md',
-		'class' => 'rr',
-		'std' => 'nav_cat',
-		'type' => 'radio',
-		'options' => array(
-			'nav_cat' => '全部分类',
-			'nav_cover' => '分类封面',
-		)
-	);
-
-	$options[] = array(
-		'name' => '排除的分类',
-		'desc' => '输入排除的分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'nav_cat_e_id',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	// 缩略图
-	$options[] = array(
-		'name' => '缩略图',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '缩略图方式',
-		'id' => 'img_way',
-		'class' => 'rr',
-		'std' => 'no_thumb',
-		'type' => 'radio',
-		'options' => array(
-			'd_img' => '默认缩略图',
-			'o_img' => '阿里云OSS',
-			'q_img' => '七牛云',
-			'upyun' => '又拍云',
-			'cos_img' => '腾讯COS',
-			'no_thumb' => '不裁剪',
-		)
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '缩略图不裁剪显示比例',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '不使用自定义请留空！',
-		'id' => 'img_bl_t',
-		'class' => 'bl el'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '标准缩略图 默认75',
-		'id' => 'img_bl',
-		'class' => 'bl',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '杂志分类模块缩略图 默认41',
-		'id' => 'img_k_bl',
-		'class' => 'bl',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图片布局缩略图 默认75',
-		'id' => 'grid_bl',
-		'class' => 'bl',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '视频缩略图 默认75',
-		'id' => 'img_v_bl',
-		'class' => 'bl',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '商品缩略图 默认100',
-		'id' => 'img_t_bl',
-		'class' => 'bl',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '幻灯小工具 默认75',
-		'id' => 'img_s_bl',
-		'class' => 'bl',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '横向滚动 默认75',
-		'id' => 'img_l_bl',
-		'class' => 'bl',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分类宽图 默认33.3',
-		'id' => 'img_full_bl',
-		'class' => 'bl',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '网址缩略图 默认75',
-		'id' => 'sites_bl',
-		'class' => 'bl',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '缩略图自动裁剪设置',
-		'id' => 'c_img',
-		'class' => ''
-	);
-
-	$options[] = array(
-		'desc' => '缩略裁剪位置',
-		'id' => 'img_crop',
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '',
-		'id' => 'crop_top',
-		'std' => '',
-		'type' => 'radio',
-		'options' => $test_array
-	);
-
-	$options[] = array(
-		'desc' => '标准缩略图',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 280',
-		'id' => 'img_w',
-		'class' => 'mh',
-		'std' => '280',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 210',
-		'id' => 'img_h',
-		'class' => 'mh',
-		'std' => '210',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '杂志分类模块缩略图',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 560',
-		'id' => 'img_k_w',
-		'class' => 'mh',
-		'std' => '560',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 230',
-		'id' => 'img_k_h',
-		'class' => 'mh',
-		'std' => '230',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '图片布局缩略图',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 280',
-		'id' => 'grid_w',
-		'class' => 'mh',
-		'std' => '280',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 210',
-		'id' => 'grid_h',
-		'class' => 'mh',
-		'std' => '210',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '图片缩略图',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 280',
-		'id' => 'img_i_w',
-		'class' => 'mh',
-		'std' => '280',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 210',
-		'id' => 'img_i_h',
-		'class' => 'mh',
-		'std' => '210',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '视频缩略图',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 280',
-		'id' => 'img_v_w',
-		'class' => 'mh',
-		'std' => '280',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 210',
-		'id' => 'img_v_h',
-		'class' => 'mh',
-		'std' => '210',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '商品缩略图',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 400',
-		'id' => 'img_t_w',
-		'class' => 'mh',
-		'std' => '400',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 400',
-		'id' => 'img_t_h',
-		'class' => 'mh',
-		'std' => '400',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '首页幻灯',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 800',
-		'id' => 'img_h_w',
-		'class' => 'mh',
-		'std' => '800',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 300',
-		'id' => 'img_h_h',
-		'class' => 'mh',
-		'std' => '300',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '幻灯小工具',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 350',
-		'id' => 'img_s_w',
-		'class' => 'mh',
-		'std' => '350',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 260',
-		'id' => 'img_s_h',
-		'class' => 'mh',
-		'std' => '260',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '分类宽图',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 900',
-		'id' => 'img_full_w',
-		'class' => 'mh',
-		'std' => '900',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 350',
-		'id' => 'img_full_h',
-		'class' => 'mh',
-		'std' => '350',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '网址缩略图',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 280',
-		'id' => 'sites_w',
-		'class' => 'mh',
-		'std' => '280',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 210',
-		'id' => 'sites_h',
-		'class' => 'mh',
-		'std' => '210',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '分类图片',
-		'id' => 'img_c',
-	);
-
-	$options[] = array(
-		'desc' => '宽 默认 1200',
-		'id' => 'img_des_w',
-		'class' => 'mh',
-		'std' => '1200',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '高 默认 250',
-		'id' => 'img_des_h',
-		'class' => 'mh',
-		'std' => '250',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '瀑布流',
-		'desc' => '宽度，默认190，当调整了页面宽度或者调整分栏，修改这个值，直至两侧对齐',
-		'id' => 'fall_width',
-		'class' => '',
-		'std' => '190',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '限制文章列表缩略图',
-		'desc' => '缩略图最大宽度，默认值：200',
-		'id' => 'thumbnail_width',
-		'class' => '',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '调整信息位置，默认距左：240',
-		'id' => 'meta_left',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '随机缩略图',
-		'desc' => '默认 5 张图片',
-		'id' => 'rand_img_n',
-		'std' => '5',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自动裁剪',
-		'id' => 'clipping_rand_img',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章中无图，不显示随机缩略图',
-		'id' => 'no_rand_img',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '标准随机缩略图链接，多张图片中间用英文半角逗号","隔开',
-		'desc' => '',
-		'id' => 'random_image_url',
-		'class' => 't70',
-		'std' => 'https://s2.loli.net/2021/12/05/xj715tdFgs9ykTw.jpg,https://s2.loli.net/2021/12/05/4ItBJy28PfDLrSn.jpg,https://s2.loli.net/2021/12/05/Xe3IHN2BT1oGtFp.jpg,https://s2.loli.net/2021/12/05/IDkLpfcJrAGUCZV.jpg,https://s2.loli.net/2021/12/05/2BOx8H6R9JjYX4i.jpg',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '分类模块随机缩略图链接，多张图片中间用英文半角逗号","隔开',
-		'desc' => '',
-		'id' => 'random_long_url',
-		'class' => 't70',
-		'std' => 'https://s2.loli.net/2021/12/05/Fda6ThrZHWuIiCM.jpg,https://s2.loli.net/2021/12/05/yhF4eC8SBGW3Oit.jpg,https://s2.loli.net/2021/12/05/I5nOrG3hKq1d6WV.jpg,https://s2.loli.net/2021/12/05/cYKnida45PrzyWl.jpg,https://s2.loli.net/2021/12/05/R6Ay2o9ZfYKwQvH.jpg',
-		'type' => 'textarea'
-	);
-
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '特色图片',
-		'desc' => '启用特色图片，如不使用该功能请不要开启',
-		'id' => 'wp_thumbnails',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '特色图片自动裁剪',
-		'id' => 'clipping_thumbnails',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '外链图片自动本地化（酌情开启）',
-		'id' => 'save_image',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '禁止WP自动裁剪图片',
-		'id' => 'disable_img_sizes',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '手动缩略图自动裁剪',
-		'id' => 'manual_thumbnail',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	// 分类模板
-	$options[] = array(
-		'name' => '分类模板',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '选择不同分类（标签）布局',
-		'desc' => '图片布局（输入分类ID，多个ID用","隔开，以下相同）',
-		'id' => 'cat_layout_img',
-		'class' => '',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图片布局，有侧边栏',
-		'id' => 'cat_layout_img_s',
-		'class' => '',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图片布局（可单独设置缩略图大小）',
-		'id' => 'cat_layout_grid',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图片布局，有播放图标',
-		'id' => 'cat_layout_play',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '通长缩略图',
-		'id' => 'cat_layout_full',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '标题列表',
-		'id' => 'cat_layout_list',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '格子标题',
-		'id' => 'cat_layout_title',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '网格布局',
-		'id' => 'cat_layout_square',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '时间轴',
-		'id' => 'cat_layout_line',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '问答模式',
-		'id' => 'cat_layout_qa',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '瀑布流',
-		'id' => 'cat_layout_fall',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '子分类封面',
-		'id' => 'cat_child_cover',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '子分类',
-		'id' => 'cat_layout_child',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '子分类图片',
-		'id' => 'cat_layout_child_img',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '正文模板选择',
-		'desc' => '问答简化（输入分类ID，多个ID用","隔开）',
-		'id' => 'single_layout_qa',
-		'class' => '',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图片分类归档使用瀑布流',
-		'id' => 'gallery_fall',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '瀑布流显示文章信息',
-		'id' => 'fall_inf',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '子分类封面图标模式',
-		'id' => 'child_cover_ico',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	// 文章信息
-	$options[] = array(
-		'name' => '文章信息',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '文章信息设置',
-		'id' => 'post_meta_inf'
-	);
-
-	$options[] = array(
-		'desc' => '文章信息显示在标题下面',
-		'id' => 'meta_b',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '正文标题居中',
-		'id' => 'title_c',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '不居中时文章信息两行',
-		'id' => 'inf_back',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '正文显示作者信息',
-		'id' => 'meta_author_single',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章列表显示作者信息',
-		'id' => 'meta_author',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章列表只显示作者链接',
-		'id' => 'meta_author_link',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '网格模块不显示作者信息',
-		'id' => 'author_hide',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '阅读模式',
-		'id' => 'reading_m',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '打印按钮',
-		'id' => 'print_on',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章字数',
-		'id' => 'word_count',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '阅读时间',
-		'id' => 'reading_time',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端隐藏字数和阅读时间',
-		'id' => 'word_time',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '使用标准日期格式',
-		'id' => 'meta_time',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '标准日期文章列表不显示年',
-		'id' => 'no_year',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示时间',
-		'id' => 'meta_time_second',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示文章分类',
-		'id' => 'post_cat',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '点赞数',
-		'id' => 'meta_zm_like',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '最后更新日期',
-		'id' => 'post_replace',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示文章标签',
-		'id' => 'post_tags',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示百度收录与否',
-		'id' => 'baidu_record',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示文章末尾固定信息',
-		'id' => 'copyright_info',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入信息，可使用HTML代码',
-		'id' => 'copyright_content',
-		'std' => '文章末尾固定信息',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '隐藏缩略图上分类名称',
-		'id' => 'no_thumbnail_cat',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章列表显示标签',
-		'id' => 'post_tag_cloud',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '限制数量',
-		'id' => 'post_tag_cloud_n',
-		'std' => '2',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示正文底部版权信息',
-		'id' => 'copyright',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示作者头像',
-		'id' => 'copyright_avatar',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义版权信息第一行，可使用HTML代码',
-		'id' => 'copyright_statement',
-		'class' => 't70',
-		'std' => '',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义版权信息第二行，可使用HTML代码',
-		'id' => 'copyright_indicate',
-		'class' => 't70',
-		'std' => '<strong>转载请务必保留本文链接：</strong>{{link}}',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '{{title}}表示文章标题，{{link}}表示文章链接，比如获取文章标题和链接：<a href="{{link}}">{{title}}</a>',
-		'desc' => '',
-		'id' => 'copyright_case'
-	);
-
-	// 评论设置
-	$options[] = array(
-		'name' => '评论设置',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '评论相关设置',
-		'desc' => '',
-		'id' => 'comment_related'
-	);
-
-	$options[] = array(
-		'desc' => 'Ajax评论',
-		'id' => 'comment_ajax',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '评论Ajax翻页',
-		'id' => 'infinite_comment',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '评论@回复',
-		'id' => 'at',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => 'QQ快速评论',
-		'id' => 'qq_info',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '回复邮件通知',
-		'id' => 'mail_notify',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '解锁提交评论',
-		'id' => 'qt',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '评论只填写昵称',
-		'id' => 'no_email',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '隐藏评论网址表单',
-		'id' => 'no_comment_url',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '默认隐藏评论表单',
-		'id' => 'not_comment_form',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '评论检查中文',
-		'id' => 'refused_spam',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '评论等级',
-		'id' => 'vip',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '评论楼层',
-		'id' => 'comment_floor',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '评论贴图',
-		'id' => 'embed_img',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '评论表情',
-		'id' => 'emoji_show',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '禁止评论HTML',
-		'id' => 'comment_html',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '删除评论按钮',
-		'id' => 'del_comment',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '禁止评论超链接',
-		'id' => 'comment_url',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '评论信息',
-		'id' => 'comment_counts',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '关闭评论',
-		'id' => 'close_comments',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '登录显示评论模块',
-		'id' => 'login_comment',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '禁止冒充管理员留言',
-		'id' => 'check_admin',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '管理员名称',
-		'id' => 'admin_name',
-		'class' => '',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '管理员邮箱',
-		'id' => 'admin_email',
-		'class' => '',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '评论提示文字',
-		'desc' => '留空不显示',
-		'id' => 'comment_hint',
-		'class' => 'tk',
-		'std' => '赠人玫瑰，手留余香...',
-		'type' => 'text'
-	);
-
-	// CMS设置
-	$options[] = array(
-		'name' => '杂志布局',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '幻灯显示模式',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'id' => 'slider_l',
-		'class' => 'rr',
-		'std' => 'slider_n',
-		'type' => 'radio',
-		'options' => array(
-			'slider_n' => '标准',
-			'slider_w' => '通栏',
-		)
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '专题',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cms_special',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：2',
-		'id' => 'cms_special_s',
-		'class' => 'mini',
-		'std' => '2',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入专题页面ID',
-		'id' => 'cms_special_id',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '最新文章',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'news',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：2',
-		'id' => 'news_s',
-		'class' => 'mini',
-		'std' => '2',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'news_model',
-		'std' => 'news_grid',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => array(
-			'news_grid' => '网格模式',
-			'news_normal' => '标准模式',
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'news_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入排除的分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'not_news_n',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '图文模块',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示（位于最新文章模块中）',
-		'id' => 'post_img',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'post_img_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '多条件筛选',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cms_filter_h',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：3',
-		'id' => 'cms_filter_s',
-		'class' => 'mini',
-		'std' => '3',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '首字母分类/标签',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'letter_show',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：3',
-		'id' => 'letter_show_s',
-		'class' => 'mini',
-		'std' => '3',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '标题文字',
-		'id' => 'letter_t',
-		'std' => '全部分类',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'letter_show_md',
-		'class' => 'rr',
-		'std' => 'letter_cat',
-		'type' => 'radio',
-		'options' => array(
-			'letter_cat' => '分类',
-			'letter_tag' => '标签',
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '默认展开',
-		'id' => 'letter_hidden',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '杂志单栏小工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cms_widget_one',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：3',
-		'id' => 'cms_widget_one_s',
-		'class' => 'mini',
-		'std' => '3',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '杂志菜单小工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cms_two_menu',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：3',
-		'id' => 'cms_two_menu_s',
-		'class' => 'mini',
-		'std' => '3',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => 'AJAX分类',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cms_cat_tab',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：3',
-		'id' => 'cms_cat_tab_s',
-		'class' => 'mini',
-		'std' => '3',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'cms_cat_tab_n',
-		'std' => '10',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择第一个分类',
-		'id' => 'cms_cat_tab_one_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入其余分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cms_cat_tab_id',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '缩略图',
-		'id' => 'cms_cat_tab_img',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '图片模块',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'picture_box',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：4',
-		'id' => 'picture_s',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'picture_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '正常文章分类',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开，留空则不显示',
-		'id' => 'img_id',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '调用图片分类',
-		'desc' => '输入图片日志分类ID，多个分类用英文半角逗号","隔开，留空则不显示',
-		'id' => 'picture_id',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '杂志两栏小工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cms_widget_two',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：5',
-		'id' => 'cms_widget_two_s',
-		'std' => '5',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '单栏分类列表(5篇文章)',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cat_one_5',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：6',
-		'id' => 'cat_one_5_s',
-		'std' => '6',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cat_one_5_id',
-		'std' => '1',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '单栏分类列表(无缩略图)',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cat_one_on_img',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：6',
-		'id' => 'cat_one_on_img_s',
-		'std' => '6',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'cat_one_on_img_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cat_one_on_img_id',
-		'std' => '1',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '单栏分类列表(10篇文章)',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cat_one_10',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：7',
-		'id' => 'cat_one_10_s',
-		'std' => '7',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cat_one_10_id',
-		'std' => '1',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '视频模块',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'video_box',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：8',
-		'id' => 'video_s',
-		'std' => '8',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'video_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '调用视频日志',
-		'id' => 'video',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '视频日志分类',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'video_id',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '调用分类文章',
-		'id' => 'video_post',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择一个分类',
-		'id' => 'video_post_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '混排分类列表',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cat_lead',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：9',
-		'id' => 'cat_lead_s',
-		'std' => '9',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'cat_lead_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示小图',
-		'id' => 'no_lead_img',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cat_lead_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '两栏分类列表',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cat_small',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：9',
-		'id' => 'cat_small_s',
-		'std' => '9',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'cat_small_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '不显示第一篇摘要',
-		'id' => 'cat_small_z',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cat_small_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '杂志Tab组合分类',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '排序：10',
-		'id' => 'tab_h_s',
-		'std' => '10',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '杂志侧边栏',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cms_no_s',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '杂志侧边栏跟随滚动',
-		'id' => 'cms_slider_sticky',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '产品模块',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'products_on',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：11',
-		'id' => 'products_on_s',
-		'std' => '11',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '产品显示个数',
-		'id' => 'products_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入产品分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'products_id',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '特色模块',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'grid_ico_cms',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：12',
-		'id' => 'grid_ico_cms_s',
-		'std' => '12',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图标无背景色',
-		'id' => 'cms_ico_b',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '',
-		'id' => 'grid_ico_cms_n',
-		'class' => 'rr',
-		'std' => '6',
-		'type' => 'radio',
-		'options' => $fl2468
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '工具模块',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cms_tool',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：12',
-		'id' => 'cms_tool_s',
-		'std' => '12',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '杂志三栏小工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cms_widget_three',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：12',
-		'id' => 'cat_widget_three_s',
-		'std' => '12',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '',
-		'id' => 'cms_widget_three_fl',
-		'std' => '3',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl1234
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类图片',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cat_square',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：12',
-		'id' => 'cat_square_s',
-		'std' => '12',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'cat_square_n',
-		'std' => '6',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cat_square_id',
-		'std' => '2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类网格',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cat_grid',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：13',
-		'id' => 'cat_grid_s',
-		'std' => '13',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'cat_grid_n',
-		'std' => '6',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cat_grid_id',
-		'std' => '2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '图片滚动模块',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'flexisel',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：14',
-		'id' => 'flexisel_s',
-		'std' => '14',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'flexisel_n',
-		'std' => '8',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '调用方式',
-		'id' => 'flexisel_m',
-		'class' => 'rr',
-		'std' => 'flexisel_cat',
-		'type' => 'radio',
-		'options' => array(
-			'flexisel_cat' => '文章分类',
-			'flexisel_img' => '图片分类',
-			'flexisel_key' => '指定文章',
-		)
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '文章分类',
-		'desc' => '选择一个分类',
-		'id' => 'flexisel_cat_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'name' => '图片分类',
-		'desc' => '输入图片分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'gallery_id',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '指定文章',
-		'desc' => '通过为文章添加自定义栏目，调用指定文章',
-		'id' => 'key_n',
-		'std' => 'views',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'flexisel_f',
-		'std' => '5',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl56 
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '底部分类列表',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cat_big',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：15',
-		'id' => 'cat_big_s',
-		'std' => '15',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'cat_big_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '三栏',
-		'id' => 'cat_big_three',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cat_big_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '不显示第一篇摘要',
-		'id' => 'cat_big_z',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '商品',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'tao_h',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：16',
-		'id' => 'tao_h_s',
-		'std' => '16',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'tao_h_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '排序',
-		'id' => 'h_tao_sort',
-		'class' => 'rr',
-		'std' => 'time',
-		'type' => 'radio',
-		'options' => array(
-			'time' => '发表时间',
-			'views' => '浏览量',
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'tao_h_id',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	if ( function_exists( 'is_shop' ) ) {
-		$options[] = array(
-			'name' => 'WOO产品',
-			'type' => 'groupstart'
-		);
-
-		$options[] = array(
-			'desc' => '显示，需要安装商城插件 WooCommerce 并发表产品',
-			'id' => 'product_h',
-			'std' => '0',
-			'class' => '',
-			'type' => 'checkbox'
-		);
-
-		$options[] = array(
-			'name' => '',
-			'desc' => '排序：17',
-			'id' => 'product_h_s',
-			'std' => '17',
-			'class' => 'mini',
-			'type' => 'text'
-		);
-
-		$options[] = array(
-			'name' => '',
-			'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-			'id' => 'product_h_id',
-			'class' => 'tk',
-			'std' => '',
-			'type' => 'text'
-		);
-
-		$options[] = array(
-			'name' => '',
-			'desc' => '产品商品显示数量',
-			'id' => 'product_h_n',
-			'class' => 'mini',
-			'std' => '4',
-			'type' => 'text'
-		);
-
-		$options[] = array(
-			'name' => '分栏',
-			'desc' => '',
-			'id' => 'cms_woo_f',
-			'std' => '4',
-			'class' => 'rr',
-			'type' => 'radio',
-			'options' => $fl456 
-		);
-
-		$options[] = array(
-			'type' => 'groupend'
-		);
-	}
-
-	$options[] = array(
-		'name' => '底部无缩略图分类列表',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'cat_big_not',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：19',
-		'id' => 'cat_big_not_s',
-		'std' => '19',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'cat_big_not_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '三栏',
-		'id' => 'cat_big_not_three',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'cat_big_not_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '文章列表日期',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'list_date',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类列表是否显示子分类文章',
-		'class' => 'bel',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '不显示子分类文章',
-		'id' => 'no_cat_child',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-// 公司主页
-
-	$options[] = array(
-		'name' => '公司主页',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '幻灯',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_slider',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '调用方法， 页面 → 新建页面，在编辑器下面的“用于公司主页幻灯”面板中输入图片地址，发表即可',
-		'class' => 'icon_sm el fol '
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'group_slider_n',
-		'std' => '3',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => 'px 高度，默认500',
-		'id' => 'big_back_img_h',
-		'std' => '500',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => 'px 用于移动端显示全图，留空默认240',
-		'id' => 'big_back_img_m_h',
-		'std' => '',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '链接到目标',
-		'id' => 'group_slider_url',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示文字',
-		'id' => 'group_slider_t',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '模糊大背景图片',
-		'id' => 'group_blur',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '菜单浮在幻灯上',
-		'id' => 'group_nav',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '调用视频',
-		'id' => 'group_slider_video',
-		'std' => '0',
-		'class' => 'hb',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '上传MP4视频或者输入视频地址',
-		'id' => 'group_slider_video_url',
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '仅显示一张图片',
-		'id' => 'group_only_img',
-		'class' => 'hb',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '上传图片',
-		'id' => 'group_slider_img',
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图片链接到',
-		'id' => 'group_slider_img_url',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '关于我们',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_contact',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：1',
-		'id' => 'group_contact_s',
-		'std' => '1',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义标题文字',
-		'id' => 'group_contact_t',
-		'std' => '关于我们',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择页面',
-		'id' => 'contact_p',
-		'type' => 'select',
-		'class' => 'mini',
-		'options' => $options_pages
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '"详细查看"图标',
-		'id' => 'group_more_ico',
-		'std' => 'be be-stack',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '"详细查看"按钮文字，留空则不显示',
-		'id' => 'group_more_z',
-		'std' => '详细查看',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义"详细查看"链接地址',
-		'id' => 'group_more_url',
-		'placeholder' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '"联系方式"图标',
-		'id' => 'group_contact_ico',
-		'std' => 'be be-phone',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '"联系方式"按钮文字，留空则不显示',
-		'id' => 'group_contact_z',
-		'std' => '联系方式',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入"联系方式"链接地址',
-		'id' => 'group_contact_url',
-		'placeholder' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端截断文字',
-		'id' => 'tr_contact',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '公司主页公告',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_bulletin',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：1',
-		'id' => 'group_bulletin_s',
-		'std' => '1',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '公告分类ID',
-		'id' => 'group_bulletin_id',
-		'class' => 'mini',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '公告滚动篇数',
-		'id' => 'group_bulletin_n',
-		'std' => '2',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '服务项目',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'dean',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：2',
-		'id' => 'dean_s',
-		'std' => '2',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义标题文字',
-		'id' => 'dean_t',
-		'std' => '服务项目',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文字说明',
-		'id' => 'dean_des',
-		'std' => '服务项目模块',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '调用内容方法',
-		'id' => 'dean_d',
-		'class' => 'el',
-		'desc' => '编辑页面或者文章，在下面"仅用于公司主页服务模块"面板中输入相关内容',
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'deanm_f',
-		'class' => 'rr',
-		'std' => '4',
-		'type' => 'radio',
-		'options' => $fl345
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端强制1栏',
-		'id' => 'deanm_fm',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_tool',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：2',
-		'id' => 'tool_s',
-		'std' => '2',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义标题文字',
-		'id' => 'tool_t',
-		'std' => '工具',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文字说明',
-		'id' => 'tool_des',
-		'std' => '实用工具',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'stool_f',
-		'class' => 'rr',
-		'std' => '4',
-		'type' => 'radio',
-		'options' => $fl345
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '产品模块',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_products',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：3',
-		'id' => 'group_products_s',
-		'std' => '3',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'group_products_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义标题文字',
-		'id' => 'group_products_t',
-		'std' => '主要产品',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文字说明',
-		'id' => 'group_products_des',
-		'std' => '产品日志模块',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '产品分类',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'group_products_id',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入更多按钮链接地址，留空则不显示',
-		'id' => 'group_products_url',
-		'placeholder' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'group_products_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl456 
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '服务宗旨',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'service',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：4',
-		'id' => 'service_s',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文字说明',
-		'id' => 'service_des',
-		'std' => '服务宗旨模块',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '标题',
-		'desc' => '自定义标题文字',
-		'id' => 'service_t',
-		'std' => '服务宗旨',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入左侧模块文章或页面ID，多个文章用英文半角逗号","隔开',
-		'id' => 'service_l_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入右侧模块文章或页面ID，多个文章用英文半角逗号","隔开',
-		'id' => 'service_r_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入中间模块文章或页面ID',
-		'id' => 'service_c_id',
-		'std' => '1',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入中间模块图片地址',
-		'id' => 'service_c_img',
-		'std' => 'https://s2.loli.net/2021/12/05/qH1SNgls95RZGJP.jpg',
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '背景图片',
-		'desc' => '上传背景图片',
-		'id' => 'service_bg_img',
-		 "std" => "https://s2.loli.net/2021/12/05/Eropm1CV78ZblMn.jpg",
-		'type' => 'upload'
-	);
-
-		$options[] = array(
-			'type' => 'groupend'
-		);
-
-	if (function_exists( 'is_shop' )) {
-		$options[] = array(
-			'name' => 'WOO产品',
-			'type' => 'groupstart'
-		);
-
-		$options[] = array(
-			'desc' => '显示，需要安装商城插件 WooCommerce 并发表产品',
-			'id' => 'g_product',
-			'class' => '',
-			'std' => '0',
-			'type' => 'checkbox'
-		);
-
-		$options[] = array(
-			'name' => '',
-			'desc' => '排序：5',
-			'id' => 'g_product_s',
-			'std' => '5',
-			'class' => 'mini',
-			'type' => 'text'
-		);
-
-		$options[] = array(
-			'name' => '',
-			'desc' => '自定义标题文字',
-			'id' => 'g_product_t',
-			'std' => 'WOO产品',
-			'type' => 'text'
-		);
-
-		$options[] = array(
-			'name' => '',
-			'desc' => '文字说明',
-			'id' => 'g_product_des',
-			'std' => 'WOO产品模块',
-			'class' => 'tk',
-			'type' => 'text'
-		);
-
-		$options[] = array(
-			'name' => '产品分类',
-			'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-			'id' => 'g_product_id',
-			'std' => '',
-			'type' => 'text'
-		);
-
-		$options[] = array(
-			'name' => '',
-			'desc' => '产品显示数量',
-			'id' => 'g_product_n',
-			'std' => '4',
-			'class' => 'mini',
-			'type' => 'text'
-		);
-
-		$options[] = array(
-			'name' => '分栏',
-			'desc' => '',
-			'id' => 'group_woo_f',
-			'std' => '4',
-			'class' => 'rr',
-			'type' => 'radio',
-			'options' => $fl456 
-		);
-
-		$options[] = array(
-			'type' => 'groupend'
-		);
-	}
-
-	$options[] = array(
-		'name' => '特色',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_ico',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：6',
-		'id' => 'group_ico_s',
-		'std' => '6',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义标题文字',
-		'id' => 'group_ico_t',
-		'std' => '特色',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文字说明',
-		'id' => 'group_ico_des',
-		'std' => '特色模块',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'grid_ico_group_n',
-		'class' => 'rr',
-		'std' => '6',
-		'type' => 'radio',
-		'options' => $fl2468
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '图标无背景色',
-		'id' => 'group_ico_b',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '描述',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_post',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：6',
-		'id' => 'group_post_s',
-		'std' => '6',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入文章或页面ID，多个分类用英文半角逗号","隔开',
-		'id' => 'group_post_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '简介',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_features',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：6',
-		'id' => 'group_features_s',
-		'std' => '6',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义标题文字',
-		'id' => 'features_t',
-		'std' => '本站简介',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文字说明',
-		'id' => 'features_des',
-		'std' => '公司简介模块',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择一个分类',
-		'id' => 'features_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'features_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入更多按钮链接地址，留空则不显示',
-		'id' => 'features_url',
-		'placeholder' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'group_features_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl456 
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '展示',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_img',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：6',
-		'id' => 'group_img_s',
-		'std' => '6',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'group_img_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'group_img_id',
-		'class' => 'tk',
-		'type' => 'select',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'group_img_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl456 
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类左右图',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_wd',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：7',
-		'id' => 'group_wd_s',
-		'std' => '7',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'group_wd_id_n',
-		'std' => '6',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'group_wd_id',
-		'std' => '2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '说明',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_explain',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：9',
-		'id' => 'group_explain_s',
-		'std' => '9',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择简介页面',
-		'id' => 'explain_p',
-		'type' => 'select',
-		'class' => 'mini',
-		'options' => $options_pages
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义标题文字',
-		'id' => 'group_explain_t',
-		'std' => '公司说明',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '一栏小工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_widget_one',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：10',
-		'id' => 'group_widget_one_s',
-		'std' => '10',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '最新文章',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_new',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：11',
-		'id' => 'group_new_s',
-		'std' => '11',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '标题',
-		'desc' => '自定义标题文字',
-		'id' => 'group_new_t',
-		'std' => '最新文章',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文字说明',
-		'id' => 'group_new_des',
-		'std' => '这里是本站最新发表的文章',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '标题模式',
-		'id' => 'group_new_list',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'group_new_n',
-		'std' => '10',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入排除的分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'not_group_new',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '商品模块',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'g_tao_h',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：11',
-		'id' => 'g_tao_s',
-		'std' => '11',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'g_tao_h_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '排序',
-		'id' => 'g_tao_sort',
-		'class' => 'rr',
-		'std' => 'time',
-		'type' => 'radio',
-		'options' => array(
-			'time' => '发表时间',
-			'views' => '浏览量',
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'g_tao_h_id',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '三栏小工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_widget_three',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：13',
-		'id' => 'group_widget_three_s',
-		'std' => '13',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '新闻资讯A',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_cat_a',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：14',
-		'id' => 'group_cat_a_s',
-		'std' => '14',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'group_cat_a_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'group_cat_a_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '第一篇调用分类推荐文章',
-		'id' => 'group_cat_a_top',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '两栏小工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_widget_two',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：15',
-		'id' => 'group_widget_two_s',
-		'std' => '15',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '新闻资讯B',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_cat_b',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：16',
-		'id' => 'group_cat_b_s',
-		'std' => '16',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'group_cat_b_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'group_cat_b_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '第一篇调用分类置顶文章',
-		'id' => 'group_cat_b_top',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => 'Tab分类',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_tab',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：17',
-		'id' => 'group_tab_s',
-		'std' => '17',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'group_tab_n',
-		'std' => '8',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'group_tab_cat_id',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'stab_f',
-		'class' => 'rr',
-		'std' => '4',
-		'type' => 'radio',
-		'options' => $fl456 
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '显示文章信息',
-		'id' => 'group_tab_meta',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '新闻资讯C',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_cat_c',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：18',
-		'id' => 'group_cat_c_s',
-		'std' => '18',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'group_cat_c_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'group_cat_c_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '第一篇显示缩略图',
-		'id' => 'group_cat_c_img',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '热门推荐',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'group_carousel',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '标题',
-		'desc' => '自定义标题文字',
-		'id' => 'group_carousel_t',
-		'std' => '热门推荐',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文字说明',
-		'id' => 'carousel_des',
-		'std' => '文字说明文字说明文字说明文字说明文字说明文字说明',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排序：19',
-		'id' => 'group_carousel_s',
-		'std' => '19',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择一个分类',
-		'id' => 'group_carousel_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '调用图片日志',
-		'id' => 'group_gallery',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '图片日志分类',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'group_gallery_id',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'carousel_n',
-		'std' => '8',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '背景图片',
-		'desc' => '上传背景图片',
-		'id' => 'carousel_bg_img',
-		 "std" => "https://s2.loli.net/2021/12/05/ioc8JHN1MfBgynv.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '隔行变色',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'g_line',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类列表是否显示子分类文章',
-		'class' => 'bel',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '不显示子分类文章',
-		'id' => 'group_no_cat_child',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	// 首页分类图片布局
-
-	$options[] = array(
-		'name' => '分类图片',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '分类图片布局最新文章',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'grid_cat_new',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'grid_cat_news_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'grid_new_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl456
-	);
-
-	$options[] = array(
-		'name' => '分类链接',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'grid_new_cat_id',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分类文章数不受上面限制',
-		'id' => 'grid_new_cat_n',
-		'class' => 'tk',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类模块A',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'grid_cat_a',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'grid_cat_a_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'grid_cat_a_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'grid_cat_a_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl456
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示同级分类链接',
-		'id' => 'grid_cat_a_child',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '杂志单栏小工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'grid_widget_one',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类滚动模块',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'grid_carousel',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'grid_carousel_n',
-		'std' => '8',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	if ( $options_categories ) {
-	$options[] = array(
-		'name' => '',
-		'desc' => '选择一个分类',
-		'id' => 'grid_carousel_id',
-		'type' => 'select',
-		'options' => $options_categories);
-	}
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'grid_carousel_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl456 
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类模块B',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'grid_cat_b',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'grid_cat_b_n',
-		'std' => '5',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'grid_cat_b_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'grid_cat_b_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl456
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '杂志三栏小工具',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'grid_widget_two',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '分类模块C',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示',
-		'id' => 'grid_cat_c',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '篇数',
-		'id' => 'grid_cat_c_n',
-		'std' => '4',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'grid_cat_c_id',
-		'std' => '1,2',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '分栏',
-		'desc' => '',
-		'id' => 'grid_cat_c_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fl456
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-
-	$options[] = array(
-		'name' => '分类列表是否显示子分类文章',
-		'class' => 'bel',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '不显示子分类文章',
-		'id' => 'no_grid_cat_child',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	// 搜索设置
-	$options[] = array(
-		'name' => '搜索设置',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '默认搜索设置',
-		'desc' => '启用',
-		'id' => 'wp_s',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '只搜索标题',
-		'id' => 'search_title',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '搜索结果只有一个自动跳转',
-		'id' => 'auto_search_post',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '搜索选项',
-		'id' => 'search_option',
-		'class' => 'rr',
-		'std' => 'search_default',
-		'type' => 'radio',
-		'options' => array(
-			'search_default' => '默认',
-			'search_url' => '修改搜索URL',
-			'search_cat' => '分类搜索',
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '排除的分类',
-		'id' => 'not_search_cat',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => 'Ajax搜索',
-	);
-
-	$options[] = array(
-		'desc' => 'Ajax搜索替换默认',
-		'id' => 'ajax_search',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => 'Ajax搜索显示篇数',
-		'id' => 'ajax_search_n',
-		'std' => '16',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '搜索结果布局',
-		'id' => 'search_the',
-		'class' => 'rr',
-		'std' => 'search_list',
-		'type' => 'radio',
-		'options' => array(
-			'search_list' => '标题布局',
-			'search_img' => '图片布局',
-			'search_normal' => '标准布局',
-		)
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '搜索引擎',
-	);
-
-	$options[] = array(
-		'desc' => '百度',
-		'id' => 'baidu_s',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => 'Google',
-		'id' => 'Google_s',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '必应',
-		'id' => 'bing_s',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '360',
-		'id' => '360_s',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '搜狗',
-		'id' => 'sogou_s',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => 'Google 搜索ID',
-		'id' => 'google_t',
-		'class' => 'el',
-	);
-
-	$options[] = array(
-		'desc' => '申请地址：https://cse.google.com/',
-		'id' => 'google_id',
-		'class' => '',
-		'std' => '005077649218303215363:ngrflw3nv8m',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '搜索推荐',
-		'id' => 'search_nav',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '主菜单搜索按钮',
-		'id' => 'menu_search_button',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	// 网站标志
-
-	$options[] = array(
-		'name' => '网站标志',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '站点LOGO/标志',
-		'id' => 'site_sign',
-		'class' => 'rr',
-		'std' => 'logo_small',
-		'type' => 'radio',
-		'options' => array(
-			'logos' => 'LOGO',
-			'logo_small' => '标志+标题',
-			'no_logo' => '仅标题',
-		)
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '上传Logo',
-		'desc' => '透明png或svg图片最佳，比例 220×50px',
-		'id' => 'logo',
-		"std" => "$blogpath/logo.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '上传标志',
-		'desc' => '透明png或svg图片最佳，比例 50×50px',
-		'id' => 'logo_small_b',
-		"std" => "$blogpath/logo-s.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '站点名称扫光动画',
-		'id' => 'logo_css',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '自定义Favicon',
-		'desc' => '上传favicon.ico(普通图片格式的也可以)，并通过FTP上传到网站根目录',
-		'id' => 'favicon',
-		'class' => '',
-		"std" => "$blogpath/favicon.ico",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '自定义IOS屏幕图标',
-		'desc' => '上传苹果移动设备添加到主屏幕图标',
-		'id' => 'apple_icon',
-		'class' => '',
-		"std" => "$blogpath/favicon.png",
-		'type' => 'upload'
-	);
-
-	// 辅助功能
-
-	$options[] = array(
-		'name' => '辅助功能',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '阿里图标库',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '<a href="https://www.iconfont.cn/">添加图标</a>',
-		'id' => 'iconfont_cn',
-		'class' => 'icon_sm icon-url'
-	);
-
-	$options[] = array(
-		'desc' => '单色图标链接（Font class）：',
-		'class' => 'icon_sm el fol '
-	);
-
-	$options[] = array(
-		'id' => 'iconfont_url',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '彩色图标链接（Symbol）：',
-		'class' => 'icon_sm el fol'
-	);
-
-	$options[] = array(
-		'id' => 'iconsvg_url',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '本地图标，将下载的图标库解压，把文件夹改名为iconfont，上传到begin\css目录中',
-		'id' => 'iconfont',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '编辑器切换',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '使用经典编辑器',
-		'id' => 'start_classic_editor',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '使用经典小工具编辑器',
-		'id' => 'classic_widgets',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '前端禁止加载区块编辑器style和script',
-		'id' => 'disable_block_styles',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => 'Gravatar 头像设置',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'id' => 'gravatar_url',
-		'class' => 'rr',
-		'std' => 'zh',
-		'type' => 'radio',
-		'options' => array(
-			'no' => '默认',
-			'cn' => 'cn获取',
-			'ssl' => 'ssl获取',
-			'zh' => '自定义'
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '后台禁止头像',
-		'id' => 'ban_avatars',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '头像延迟加载',
-		'id' => 'avatar_load',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '自定义获取头像地址',
-		'desc' => '默认：cravatar.cn/avatar/',
-		'id' => 'zh_url',
-		'class' => 'tk',
-		'std' => 'cravatar.cn/avatar/',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '自定义默认头像',
-	);
-
-	$options[] = array(
-		'id' => 'default_avatar_m',
-		'class' => 'rr',
-		'std' => 'default_avatar_f',
-		'type' => 'radio',
-		'options' => array(
-			'default_avatar_f' => '固定',
-			'default_avatar_r' => '随机'
-		)
-	);
-
-	$options[] = array(
-		'desc' => '上传自定义固定默认头像，更改后需进入设置 → 讨论 → 默认头像，勾选“自定义”，并保存更改',
-		'class' => 'el fol'
-	);
-
-	$options[] = array(
-		'id' => 'default_avatar',
-		'std' => "$blogpath/logo-s.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '上传头像',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '允许上传头像',
-		'id' => 'local_avatars',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '允许所有角色上传头像',
-		'id' => 'all_local_avatars',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '头像缓存到本地',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用，设置 wp-content/uploads/avatar 目录权限为 755 或 777',
-		'id' => 'cache_avatar',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '获取头像地址',
-		'desc' => '默认：http://www.gravatar.com/avatar/',
-		'id' => 'gravatar_origin',
-		'class' => 'tk',
-		'std' => 'cravatar.cn/avatar/',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '未设置头像则显示：',
-		'id' => 'avatar_sm',
-		'class' => 'el'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'avatar_url',
-		'class' => 'rr',
-		'std' => 'letter_img',
-		'type' => 'radio',
-		'options' => array(
-			'letter_img' => '首字图片',
-			'rand_img' => '随机图片',
-		)
-	);
-
-	$options[] = array(
-		'name' => '随机头像，多张图片链接用英文半角逗号","隔开',
-		'desc' => '',
-		'id' => 'random_avatar_url',
-		'class' => 't70',
-		'std' => 'https://s2.loli.net/2021/12/05/RtCpJUTL2rMkF6A.png,https://s2.loli.net/2021/12/05/ILhr3MKxnCuUfXz.png,https://s2.loli.net/2021/12/05/NecWi7RSmsqPOjn.png,https://s2.loli.net/2021/12/05/adt7TRIfmNLDVvX.png,https://s2.loli.net/2021/12/05/QEvL8gx9ZzwPYis.png',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '社会化登录',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'be_social_login',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => 'QQ',
-		'desc' => '申请地址：<a href="https://connect.qq.com/" title="申请地址">https://connect.qq.com</a>',
-		'id' => 'qq_id_url',
-		'class' => 'social_hide social_sm el'
-	);
-	
-	$options[] = array(
-		'desc' => '网站回调域：'. $qq_auth .'',
-		'id' => 'qq_id_auth',
-		'class' => 'social_hide social_sm el'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => 'QQ APP ID',
-		'id' => 'qq_app_id',
-		'class' => 'social_hide',
-		'std' => '123',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => 'QQ APP Key',
-		'id' => 'qq_key',
-		'class' => 'social_hide',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '微博',
-		'desc' => '申请地址：<a href="https://open.weibo.com/" title="申请地址">https://open.weibo.com</a>',
-		'id' => 'weibo_key_url',
-		'class' => 'social_hide social_sm el'
-	);
-
-	$options[] = array(
-		'desc' => '应用地址：'. $weibo_auth .'',
-		'id' => 'weibo_key_auth',
-		'class' => 'social_hide social_sm el'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微博 App Key',
-		'id' => 'weibo_key',
-		'class' => 'social_hide',
-		'std' => '123',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微博 App Secret',
-		'id' => 'weibo_secret',
-		'class' => 'social_hide',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '微信',
-		'desc' => '申请地址（企业认证）：<a href="https://open.weixin.qq.com/" title="申请地址">https://open.weixin.qq.com</a>',
-		'id' => 'weibo_key_url',
-		'class' => 'social_hide social_sm el'
-	);
-
-	$options[] = array(
-		'desc' => '授权回调域：'. $weixin_auth .'',
-		'id' => 'weibo_key_auth',
-		'class' => 'social_hide social_sm el'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微信 APP ID',
-		'id' => 'weixin_id',
-		'class' => 'social_hide',
-		'std' => '123',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微信 App Secret',
-		'id' => 'weixin_secret',
-		'class' => 'social_hide',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '登录后跳转的地址',
-		'desc' => '比如网站首页链接',
-		'id' => 'social_login_url',
-		'class' => 'social_hide tk',
-		'std' => $bloghome,
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '邮件SMTP',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'setup_email_smtp',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '发件人名称',
-		'id' => 'email_name',
-		'std' => '来自网站',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '邮箱SMTP服务器',
-		'id' => 'email_smtp',
-		'std' => 'smtp.163.com',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '邮箱账户',
-		'id' => 'email_account',
-		'std' => 'beginthemes@163.com',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '客户端授权密码 ( 不是邮箱登录密码 )',
-		'id' => 'email_authorize',
-		'std' => 'NLSUYCUSEXUGUYHR',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '多条件筛选',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'filters',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '单项选择'
-	);
-
-	$options[] = array(
-		'desc' => '筛选分类',
-		'id' => 'filters_cat',
-		'class' => 'fia-catid chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '筛选A',
-		'id' => 'filters_a',
-		'class' => 'fia-catid chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '筛选B',
-		'id' => 'filters_b',
-		'class' => 'fia-catid chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '筛选C',
-		'id' => 'filters_c',
-		'class' => 'fia-catid chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '筛选D',
-		'id' => 'filters_d',
-		'class' => 'fia-catid chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '筛选E',
-		'id' => 'filters_e',
-		'class' => 'fia-catid chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '筛选F',
-		'id' => 'filters_f',
-		'class' => 'fia-catid chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '分类及文字'
-	);
-
-	$options[] = array(
-		'desc' => '筛选分类，多个","隔开',
-		'id' => 'filters_cat_id',
-		'class' => 'chl',
-		'std' => '1,2',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '标题文字',
-		'id' => 'filter_t',
-		'class' => 'chl',
-		'std' => '条 件 筛 选',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '筛选A文字',
-		'id' => 'filters_a_t',
-		'class' => 'chl',
-		'std' => '风格',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '筛选B文字',
-		'id' => 'filters_b_t',
-		'class' => 'chl',
-		'std' => '价格',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '筛选C文字',
-		'id' => 'filters_c_t',
-		'class' => 'chl',
-		'std' => '功能',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '筛选D文字',
-		'id' => 'filters_d_t',
-		'class' => 'chl',
-		'std' => '大小',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '筛选E文字',
-		'id' => 'filters_e_t',
-		'class' => 'chl',
-		'std' => '地域',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '筛选F文字',
-		'id' => 'filters_f_t',
-		'class' => 'chl',
-		'std' => '品牌',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '筛选条件默认隐藏',
-		'id' => 'filters_hidden',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '筛选结果使用图片布局',
-		'id' => 'filters_img',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '前端投稿',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用，新建页面并添加短代码 [bet_submission_form]',
-		'id' => 'front_tougao',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '模式选择',
-		'id' => 'tougao_mode',
-		'class' => 'rr',
-		'std' => 'post_mode',
-		'type' => 'radio',
-		'options' => array(
-			'post_mode' => '文章投稿',
-			'info_mode' => '信息提交',
-		)
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '不审核立即发表',
-		'id' => 'instantly_publish',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '文章投稿设置',
-	);
-
-	$options[] = array(
-		'desc' => '允许特色图像',
-		'id' => 'thumbnail_required',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '投稿（贡献）者上传权限',
-		'id' => 'user_upload',
-		'class' => 'rr',
-		'std' => 'removecap',
-		'type' => 'radio',
-		'options' => array(
-			'removecap' => '禁止',
-			'addcap' => '允许',
-		)
-	);
-
-	$options[] = array(
-		'name' => '分类排除',
-		'desc' => '输入排除的分类ID，多个分类用英文半角逗号","隔开',
-		'id' => 'not_front_cat',
-		'std' => '',
-		'class' => 'tk',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '信息提交设置'
-	);
-
-	$options[] = array(
-		'desc' => '仅提交到“公告”文章',
-		'id' => 'submit_bulletin',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入一个分类ID',
-		'id' => 'info_cat',
-		'class' => 'mini',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'desc' => '表单文字，留空不显示',
-		'class' => 'el'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '表单A文字',
-		'id' => 'info_a',
-		'class' => 'mh',
-		'std' => '姓名',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '表单B文字',
-		'id' => 'info_b',
-		'class' => 'mh',
-		'std' => '职业',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '表单C文字',
-		'id' => 'info_c',
-		'class' => 'mh',
-		'std' => '学历',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '表单D文字',
-		'id' => 'info_d',
-		'class' => 'mh',
-		'std' => '电话',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '表单E文字',
-		'id' => 'info_e',
-		'class' => 'mh',
-		'std' => '微信/QQ',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '表单F文字',
-		'id' => 'info_f',
-		'class' => 'mh',
-		'std' => '邮箱',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'desc' => '单选文字，留空不显示',
-		'class' => 'el'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '单选A文字',
-		'id' => 's_info_a',
-		'class' => 'mh',
-		'std' => '选择',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '单选B文字',
-		'id' => 's_info_b',
-		'class' => 'mh',
-		'std' => '高中',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '单选C文字',
-		'id' => 's_info_c',
-		'class' => 'mh',
-		'std' => '大专',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '单选D文字',
-		'id' => 's_info_d',
-		'class' => 'mh',
-		'std' => '本科',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '单选E文字',
-		'id' => 's_info_e',
-		'class' => 'mh',
-		'std' => '本科以上',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '单选F文字',
-		'id' => 's_info_f',
-		'class' => 'mh',
-		'std' => '备用选项',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '文章浏览统计',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'post_views',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '仅登录可见',
-		'id' => 'user_views',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '<a href="' . home_url() . '/wp-admin/options-general.php?page=views_options">更多设置</a>',
-		'id' => 'setup_views'
-
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '邀请码注册',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'invitation_code',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '<a href="' . home_url() . '/wp-admin/admin.php?page=be_invitation_code_add">添加邀请码</a>',
-		'id' => 'add_invitation'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '仅登录访问',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'force_login',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '登录注册页面链接',
-		'id' => 'force_login_url',
-		'class' => 'tk',
-		'std' => $bloglogin,
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '跟随按钮设置',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '返回首页按钮',
-		'id' => 'scroll_z',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '公告按钮',
-		'id' => 'placard_but',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '返回顶部按钮',
-		'id' => 'scroll_h',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '转到底部按钮',
-		'id' => 'scroll_b',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '夜间模式',
-		'id' => 'read_night',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '跟随搜索按钮',
-		'id' => 'scroll_s',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '跟随评论按钮',
-		'id' => 'scroll_c',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示简繁体转换按钮',
-		'id' => 'gb2',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示本页二维码按钮',
-		'id' => 'qrurl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端不显示',
-		'id' => 'mobile_scroll',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '是否使用自定义分类文章',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '公告',
-		'id' => 'no_bulletin',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '图片',
-		'id' => 'no_gallery',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '视频',
-		'id' => 'no_videos',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '商品',
-		'id' => 'no_tao',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '网址',
-		'id' => 'no_favorites',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '产品',
-		'id' => 'no_products',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '什么角色显示后台自定义分类法',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '默认作者及投稿者以下不显示',
-		'id' => 'no_type',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '修改角色，管理员10，编辑7，作者2，投稿者1',
-		'id' => 'user_level',
-		'class' => 'mini',
-		'std' => '3',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '选择角色显示文章选项面板',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '管理员10，编辑7，作者2，投稿者1',
-		'id' => 'boxes_level',
-		'class' => 'mini',
-		'std' => '3',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '新浪微博关注按钮',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'weibo_t',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入新浪微博ID',
-		'id' => 'weibo_id',
-		'std' => '1882973105',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '关注微信公众号获取验证码',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '微信公众号名称',
-		'id' => 'wechat_fans',
-		'std' => '公众号名称',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '统一的密码和关键字',
-		'id' => 'wechat_unite',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '统一密码',
-		'id' => 'weifans_pass',
-		'std' => '123',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '统一关键字',
-		'id' => 'weifans_key',
-		'std' => '关键字',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '微信公众号二维码图片',
-		'desc' => '上传微信公众号二维码图片',
-		'id' => 'wechat_qr',
-		'std' => "$blogpath/favicon.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '在线咨询',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'contact_us',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '默认不隐藏',
-		'id' => 'contact_s',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微信文字',
-		'id' => 'weixing_us_t',
-		'std' => '微信咨询',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '上传微信二维码',
-		'desc' => '微信二维码',
-		'id' => 'weixing_us',
-        "std" => "$blogpath/favicon.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => 'QQ文字',
-		'id' => 'usqq_t',
-		'std' => 'QQ咨询',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => 'QQ号码',
-		'id' => 'usqq_id',
-		'std' => '8888',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '在线咨询文字',
-		'id' => 'usshang_t',
-		'std' => '在线咨询',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '在线咨询链接',
-		'id' => 'usshang_url',
-		'std' => '#',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '电话文字',
-		'id' => 'us_phone_t',
-		'std' => '服务热线',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '电话号码',
-		'id' => 'us_phone',
-		'std' => '1308888888',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => 'QQ在线',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'qq_online',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自定义文字',
-		'id' => 'qq_name',
-		'std' => '在线咨询',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入QQ号码',
-		'id' => 'qq_id',
-		'std' => '8888',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '输入手机号',
-		'id' => 'm_phone',
-		'std' => '13688888888',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微信说明',
-		'id' => 'weixing_t',
-		'std' => '微信',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微信二维码',
-		'id' => 'weixing_qr',
-        "std" => "$blogpath/favicon.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '正文末尾微信二维码',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'single_weixin',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '只显示一个微信二维码',
-		'id' => 'single_weixin_one',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微信文字',
-		'id' => 'weixin_h',
-		'std' => '我的微信',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微信说明文字',
-		'id' => 'weixin_h_w',
-		'std' => '微信扫一扫',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '上传微信二维码图片（＜240px）',
-		'id' => 'weixin_h_img',
-		'std' => "$blogpath/favicon.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微信公众号文字',
-		'id' => 'weixin_g',
-		'std' => '我的微信公众号',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '微信公众号说明文字',
-		'id' => 'weixin_g_w',
-		'std' => '微信扫一扫',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '上传微信公众号二维码图片（＜240px）',
-		'id' => 'weixin_g_img',
-		'std' => "$blogpath/favicon.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '点赞分享',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '打赏',
-		'id' => 'shar_donate',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '点赞',
-		'id' => 'shar_like',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-	
-	$options[] = array(
-		'desc' => '收藏',
-		'id' => 'shar_favorite',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '分享',
-		'id' => 'shar_share',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '链接',
-		'id' => 'shar_link',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '海报',
-		'id' => 'shar_poster',
-		'class' => 'chl',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '同时显示在左侧',
-		'id' => 'like_left',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '海报设置',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'name' => '自定义海报网站名称',
-		'desc' => '网站名称',
-		'id' => 'poster_site_name',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '网站副标题',
-		'id' => 'poster_site_tagline',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '自定义海报LOGO',
-		'desc' => '上传LOGO（50×50）',
-		'id' => 'poster_logo',
-		'std' => '',
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'name' => '海报默认图片',
-		'desc' => '上传海报默认图片',
-		'id' => 'poster_default_img',
-		'std' => '',
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '打赏二维码',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '上传微信收款二维码图片',
-		'id' => 'qr_a',
-		"std" => "$blogpath/favicon.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '上传支付宝收钱二维码图片',
-		'id' => 'qr_b',
-		"std" => "$blogpath/favicon.png",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '会员登录查看',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'name' => '选择一个有权查看隐藏内容的角色',
-		'id' => 'user_roles',
-		'class' => 'rr ht',
-		'std' => 'author',
-		'type' => 'radio',
-		'options' => array(
-			'administrator' => '管理员',
-			'editor'        => '编辑',
-			'author'        => '作者',
-			'contributor'   => '贡献者',
-			'subscriber'    => '订阅者',
-			'vip_roles'     => '自定义角色'
-		)
-	);
-
-	$options[] = array(
-		'name' => '自定义提示',
-		'desc' => '',
-		'id' => 'role_visible_t',
-		'class' => 'tk ht',
-		'std' => '隐藏的内容',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '无权限查看提示文字',
-		'desc' => '',
-		'id' => 'role_visible_w',
-		'class' => 'tk ht',
-		'std' => '无权限查看',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '自定义说明',
-		'desc' => '',
-		'id' => 'role_visible_c',
-		'class' => 'ht',
-		'std' => '会员登录后查看',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '新建角色',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '',
-		'id' => 'del_new_roles',
-		'class' => 'rr',
-		'std' => 'no_roles',
-		'type' => 'radio',
-		'options' => array(
-			'no_roles' => '无新角色',
-			'new_roles' => '新建角色',
-			'del_roles' => '删除角色'
-		)
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '角色名称',
-		'id' => 'roles_name',
-		'std' => '会员',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => 'el',
-		'desc' => '改角色名称，先选择→删除角色→保存设置→修改文字→选择→新建角色→保存设置→最后选择→无新角色→保存设置'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '评论查看自定义文字',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'reply_read_d',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '自定义提示',
-		'desc' => '',
-		'id' => 'reply_read_t',
-		'class' => 'tk ht',
-		'std' => '此处为隐藏的内容',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '自定义说明',
-		'desc' => '',
-		'id' => 'reply_read_c',
-		'class' => 'ht',
-		'std' => '发表评论并刷新，方可查看',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '登录查看自定义文字',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'login_read_d',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '自定义提示',
-		'desc' => '',
-		'id' => 'login_read_t',
-		'class' => 'tk ht',
-		'std' => '此处为隐藏的内容',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '自定义说明',
-		'desc' => '',
-		'id' => 'login_read_c',
-		'class' => 'ht',
-		'std' => '注册登录后，方可查看',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '自定义登录/评论查看按钮背景',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '上传图片',
-		'id' => 'read_img',
-		'class' => '',
-        "std" => "https://s2.loli.net/2021/12/05/Eropm1CV78ZblMn.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '自定义404页面',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '自定义404页面标题',
-		'id' => '404_t',
-		'class' => 'tk',
-		'std' => '亲，你迷路了！',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '自定义404页面内容',
-		'desc' => '',
-		'id' => '404_c',
-		'std' => '亲，该网页可能搬家了！<br /><a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '404跳转首页',
-		'desc' => '',
-		'id' => '404_go',
-		'class' => 'rr',
-		'std' => '404_d',
-		'type' => 'radio',
-		'options' => array(
-			'404_s' => '读秒跳转',
-			'404_h' => '直接跳转',
-			'404_d' => '不跳转'
-		)
-	);
-
-	$options[] = array(
-		'name' => '自定义链接',
-		'desc' => '',
-		'id' => '404_url',
-		'class' => 'tk',
-		'std' => ''. home_url() .'',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '切换主题为英文语言',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '英文语言',
-		'id' => 'languages_en',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '网址页面',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '',
-		'id' => 'site_f',
-		'std' => '4',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $fsl45 
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示篇数',
-		'id' => 'site_p_n',
-		'std' => '100',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '网址页面排除的父分类ID',
-		'id' => 'sites_cat_id',
-		'std' => '',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '网址显示Favicon图标',
-		'id' => 'sites_ico',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '装饰动画',
-		'id' => 'sites_adorn',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分类目录',
-		'id' => 'all_site_cat',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '固定在左侧',
-		'id' => 'site_cat_fixed',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '网址页面小工具，输入网址分类ID，显示在指定分类下',
-		'id' => 'sites_widgets_one_n',
-		'std' => '',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '',
-		'id' => 'sw_f',
-		'std' => '2',
-		'class' => 'rr',
-		'type' => 'radio',
-		'options' => $swf12 
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '网址正文显示网站截图',
-		'id' => 'site_sc',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '获取网站描述出错时勾选，用后取消勾选',
-		'id' => 'sites_url_error',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	if ( function_exists( 'is_shop' ) ) {
-		$options[] = array(
-			'name' => 'WOO商店',
-			'type' => 'groupstart'
-		);
-
-		$options[] = array(
-			'name' => '',
-			'desc' => '每页显示数量',
-			'id' => 'woo_cols_n',
-			'std' => '20',
-			'class' => 'mini',
-			'type' => 'text'
-		);
-
-		$options[] = array(
-			'name' => '',
-			'desc' => '相关文章数量',
-			'id' => 'woo_related_n',
-			'std' => '4',
-			'class' => 'mini',
-			'type' => 'text'
-		);
-
-		$options[] = array(
-			'name' => '分栏',
-			'desc' => '',
-			'id' => 'woo_f',
-			'std' => '5',
-			'class' => 'rr',
-			'type' => 'radio',
-			'options' => $fl456 
-		);
-
-		$options[] = array(
-			'name' => '默认缩略图',
-			'desc' => '默认缩略图',
-			'id' => 'woo_thumbnail',
-	        "std" => "https://s2.loli.net/2022/01/06/9rRz78gvLDP5plh.jpg",
-			'type' => 'upload'
-		);
-
-		$options[] = array(
-			'name' => '商店页面默认图片',
-			'desc' => '商店页面默认图片',
-			'id' => 'shop_header_img',
-	        "std" => "https://s2.loli.net/2021/12/05/I6agBhOx9Qtyl7p.jpg",
-			'type' => 'upload'
-		);
-
-		$options[] = array(
-			'type' => 'groupend'
-		);
-	}
-
-	$options[] = array(
-		'name' => '综合辅助',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '链接点击统计（短链接）',
-		'id' => 'links_click',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '下载模块登录查看密码',
-		'id' => 'login_down_key',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移除jquery migrate',
-		'id' => 'remove_jqmigrate',
-		'class' => '',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '在页脚显示查询次数及加载时间',
-		'id' => 'web_queries',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '显示WordPress设置选项字段',
-		'id' => 'all_settings',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '删除文章收藏数据表',
-		'id' => 'delete_favorite',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '头部添加“referrer”标签（仅外链新浪微相册时用）',
-		'id' => 'no_referrer',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '只有临时使用文章快速编辑和定时发布时使用，防止文章选项丢失',
-		'id' => 'meta_delete',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '背景图片',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '启用后台登录美化',
-		'id' => 'custom_login',
-		'class' => '',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '上传背景图片',
-		'id' => 'login_img',
-        "std" => "https://s2.loli.net/2021/12/05/DrSqPxyc7WlmYEf.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '必应每日壁纸',
-		'id' => 'bing_login',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '注册页面背景图片',
-		'desc' => '上传背景图片',
-		'id' => 'reg_img',
-		'class' => '',
-		"std" => "https://s2.loli.net/2021/12/05/9xnPUO2ZtFSNfrW.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '必应每日壁纸',
-		'id' => 'bing_reg',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '下载页面背景图片',
-		'desc' => '上传背景图片',
-		'id' => 'down_header_img',
-		'class' => '',
-		"std" => "https://s2.loli.net/2021/12/05/qH1SNgls95RZGJP.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '作者存档头部图片',
-		'desc' => '上传背景图片',
-		'id' => 'header_author_img',
-		'class' => '',
-		"std" => "https://s2.loli.net/2021/12/05/qH1SNgls95RZGJP.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '用户信息背景图片',
-		'desc' => '上传背景图片',
-		'id' => 'user_back',
-		'class' => '',
-		"std" => "https://s2.loli.net/2021/12/05/FOKvZnDLSYtQk3M.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '页脚小工具背景图片',
-		'desc' => '上传背景图片',
-		'id' => 'footer_widget_img',
-		'class' => '',
-		"std" => "https://s2.loli.net/2021/12/05/I6agBhOx9Qtyl7p.jpg",
-		'type' => 'upload'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '下载页面',
-		'class' => 'bel',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '下载链接到根目录，并执行下面的操作',
-		'id' => 'root_down_url',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '自动将“inc/download.php”文件复制到网站根目录，勾选后需保存两次设置，用后取消勾选',
-		'id' => 'root_file_move',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '版权说明',
-	);
-
-	$options[] = array(
-		'desc' => '可使用HTML代码',
-		'id' => 'down_explain',
-		'std' => '本站大部分下载资源收集于网络，只做学习和交流使用，版权归原作者所有。若您需要使用非免费的软件或服务，请购买正版授权并合法使用。本站发布的内容若侵犯到您的权益，请联系站长删除，我们将及时处理。',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	// SEO设置
-
-	$options[] = array(
-		'name' => 'SEO',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '站点SEO',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用主题自带SEO功能，如使用其它SEO插件，请取消勾选',
-		'id' => 'wp_title',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '显示OG协议标签',
-		'id' => 'og_title',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '首页描述（Description）',
-		'desc' => '',
-		'id' => 'description',
-		'std' => '一般不超过200个字符',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '首页关键词（KeyWords）',
-		'desc' => '',
-		'id' => 'keyword',
-		'std' => '一般不超过100个字符',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '自定义网站首页title',
-		'desc' => '留空则不显示自定义title',
-		'id' => 'home_title',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '自定义网站首页副标题',
-		'desc' => '留空则不显示副标题',
-		'id' => 'home_info',
-		'class' => 'tk',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '首页显示站点副标题',
-		'id' => 'blog_info',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '文章title无网站名称',
-		'id' => 'blog_name',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '修改站点分隔符',
-		'id' => 'connector',
-		'std' => '|',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '分隔符无空格',
-		'id' => 'blank_connector',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '杂志、分类图片、公司布局首页分页链接301转向',
-		'id' => 'home_paged_ban',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '站点地图',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '更新站点地图xml格式，查看：<a href="' . home_url() . '/sitemap.xml">sitemap.xml</a>',
-		'id' => 'sitemap_xml',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '更新站点地图txt格式，查看：<a href="' . home_url() . '/sitemap.txt">sitemap.txt</a>',
-		'id' => 'sitemap_txt',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '更新文章数，输入“-1”为全部',
-		'id' => 'sitemap_n',
-		'class' => 'mini',
-		'std' => '100',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '包括标签',
-		'id' => 'no_sitemap_tag',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '同时更新上万文章可能会卡死，酌情设置，更新完取消勾选并保存设置',
-		'class' => 'sitemap_h el',
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '文章归档页面',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '刷新文章归档页面，需保存两次主题选项设置，用后关闭',
-		'id' => 'update_be_archives',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '文章更新页面',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '刷新文章更新页面，需保存两次主题选项设置，用后关闭',
-		'id' => 'update_up_archives',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '可以单独设置年、月、分类，留空则显示全部文章',
-		'id' => 'up_t',
-		'class' => 'el'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '年份',
-		'id' => 'year_n',
-		'class' => 'tw3',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '月份',
-		'id' => 'mon_n',
-		'class' => 'tw3',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分类ID',
-		'id' => 'cat_up_n',
-		'class' => 'tw3',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '用文章标签作为关键词添加内链',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'tag_c',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'desc' => '链接数量',
-		'id' => 'chain_n',
-		'std' => '2',
-		'class' => 'mini',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '关键词',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'keyword_link',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '<a href="' . home_url() . '/wp-admin/options-general.php?page=keywordlink">添加关键词</a>',
-		'id' => 'keyword_link_settings'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '百度快速收录',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'baidu_daily',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '准入密钥',
-		'id' => 'daily_token',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '百度普通收录',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用',
-		'id' => 'baidu_link',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '准入密钥',
-		'id' => 'link_token',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '自定义分类法固定链接',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '启用并选择',
-		'id' => 'begin_types_link',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'begin_types',
-		'class' => 'rr',
-		'std' => 'link_id',
-		'type' => 'radio',
-		'options' => array(
-			'link_id' => '文章ID.html',
-			'link_name' => '文章名称.html',
-		)
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '自定义分类法链接前缀',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '“公告”固定链接前缀',
-		'id' => 'bull_url',
-		'std' => 'bulletin',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“公告分类”固定链接前缀',
-		'id' => 'bull_cat_url',
-		'std' => 'notice',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“图片”固定链接前缀',
-		'id' => 'img_url',
-		'std' => 'picture',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“图片分类”固定链接前缀',
-		'id' => 'img_cat_url',
-		'std' => 'gallery',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“视频”固定链接前缀',
-		'id' => 'video_url',
-		'std' => 'video',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“视频分类”固定链接前缀',
-		'id' => 'video_cat_url',
-		'std' => 'videos',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“商品”固定链接前缀',
-		'id' => 'sp_url',
-		'std' => 'tao',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“商品分类”固定链接前缀',
-		'id' => 'sp_cat_url',
-		'std' => 'taobao',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“网址”固定链接前缀',
-		'id' => 'favorites_url',
-		'std' => 'sites',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“网址分类”固定链接前缀',
-		'id' => 'favorites_cat_url',
-		'std' => 'favorites',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“产品”固定链接前缀',
-		'id' => 'show_url',
-		'std' => 'show',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '“产品分类”固定链接前缀',
-		'id' => 'show_cat_url',
-		'std' => 'products',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '流量统计代码',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'name' => '异步，用于在页头添加异步统计代码',
-		'desc' => '',
-		'id' => 'tongji_h',
-		'std' => '',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '同步，用于在页脚添加同步统计代码',
-		'desc' => '',
-		'id' => 'tongji_f',
-		'std' => '',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$wp_editor_settings = array(
-		'quicktags' => 1,
-		'tinymce' => 1,
-		'media_buttons' => 1,
-		'textarea_rows' => 5,
-		'tinymce' => array( 'plugins' => 'wordpress, wplink, textcolor, charmap' )
-	);
-
-	$options[] = array(
-		'name' => '页脚信息',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'id' => 'footer_inf_t',
-		'std' => '<p style="text-align: center;">Copyright &copy;&nbsp;&nbsp;站点名称&nbsp;&nbsp;版权所有.</p><p style="text-align: center;">主题选项→SEO选项卡，最下面修改页脚信息</p><p style="text-align: center;"><a title="主题设计：知更鸟" href="http://zmingcx.com/" target="_blank" rel="external nofollow"><img src="' . get_template_directory_uri() . '/img/logo.png" alt="Begin主题" width="120" height="27" /></a></p>',
-		'type' => 'editor',
-		'settings' => $wp_editor_settings
-	);
-
-	$options[] = array(
-		'desc' => '回行显示，选择文字“居中对齐”',
-		'class' => 'el'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '域名备案信息',
-		'class' => 'bel',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '公网安备小图标',
-		'id' => 'wb_img',
-		'class' => 'chl5',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '域名备案小图标',
-		'id' => 'yb_img',
-		'class' => 'chl5',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '公网安备号',
-		'id' => 'wb_info',
-		'class' => 'chl5',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '域名备案号',
-		'id' => 'yb_info',
-		'class' => 'chl5',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '公网安备链接',
-		'id' => 'wb_url',
-		'class' => 'chl5',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'desc' => '工信部链接',
-		'id' => 'yb_url',
-		'class' => 'chl5',
-		'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	// 广告设置
-
-	$options[] = array(
-		'name' => '广告位',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '头部通栏广告位',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'ad_h_t',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '只在首页显示',
-		'id' => 'ad_h_t_h',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '输入头部通栏广告代码（非移动端）',
-		'desc' => '宽度小于等于 1080px',
-		'id' => 'ad_ht_c',
-		'class' => '',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '输入头部通栏广告代码（用于移动端）',
-		'desc' => '',
-		'id' => 'ad_ht_m',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '头部两栏广告位',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'ad_h',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'desc' => '只在首页显示',
-		'id' => 'ad_h_h',
-		'class' => 'chl',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => '',
-	);
-
-	$options[] = array(
-		'name' => '输入头部左侧广告代码（非移动端）',
-		'desc' => '宽度小于等于 758px',
-		'id' => 'ad_h_c',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '输入头部左侧广告代码（用于移动端）',
-		'desc' => '',
-		'id' => 'ad_h_c_m',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '输入头部右侧广告代码（非移动端）',
-		'desc' => '宽度小于等于 307px',
-		'id' => 'ad_h_cr',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/2uTMHlGZOLPYCoQ.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '文章列表广告位',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'ad_a',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '输入文章列表广告代码（非移动端）',
-		'desc' => '宽度小于等于 760px',
-		'id' => 'ad_a_c',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '输入文章列表广告代码（用于移动端）',
-		'desc' => '',
-		'id' => 'ad_a_c_m',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '正文标题广告位',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'ad_s',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '输入正文标题广告代码（非移动端）',
-		'desc' => '宽度小于等于 740px',
-		'id' => 'ad_s_c',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '输入正文标题广告代码（用于移动端）',
-		'desc' => '',
-		'id' => 'ad_s_c_m',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '正文底部广告位',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'ad_s_b',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '输入正文底部广告代码（非移动端）',
-		'desc' => '宽度小于等于 740px',
-		'id' => 'ad_s_c_b',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '输入正文底部广告代码（用于移动端）',
-		'desc' => '',
-		'id' => 'ad_s_c_b_m',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '评论上方广告位',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '显示',
-		'id' => 'ad_c',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '输入评论上方广告代码（非移动端）',
-		'desc' => '宽度小于等于 760px',
-		'id' => 'ad_c_c',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '输入评论上方广告代码（用于移动端）',
-		'desc' => '',
-		'id' => 'ad_c_c_m',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '正文短代码广告位',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'name' => '输入正文短代码广告代码（非移动端）',
-		'desc' => '宽度小于等于 740px',
-		'id' => 'ad_s_z',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'name' => '输入正文短代码广告代码（用于移动端）',
-		'desc' => '',
-		'id' => 'ad_s_z_m',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '文件下载页面广告代码',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '',
-		'id' => 'ad_down',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '弹窗下载广告位',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '',
-		'id' => 'ad_down_file',
-		'std' => '<a href="#" target="_blank"><img src="https://s2.loli.net/2021/12/05/7J38OVbmzZHlSjK.jpg" alt="广告也精彩" /></a>',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	$options[] = array(
-		'name' => '需要在页头<head></head>之间加载的广告代码',
-		'class' => 'bel',
-		'type' => 'groupstart'
-	);
-
-	$options[] = array(
-		'desc' => '',
-		'id' => 'ad_t',
-		'std' => '',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'type' => 'groupend'
-	);
-
-	// 定制CSS
-
-	$options[] = array(
-		'name' => '定制风格',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '页面宽度',
-		'desc' => 'px 固定宽度（默认1122）',
-		'id' => 'custom_width',
-		'class' => '',
-		 'std' => '',
-		'type' => 'text'
-	);
-	
-	$options[] = array(
-		'name' => '',
-		'desc' => '% 按百分比（小于99）',
-		'id' => 'adapt_width',
-		 'std' => '',
-		'type' => 'text'
-	);
-
-	$options[] = array(
-		'id' => 'left_explain',
-		'class' => 'el',
-		'desc' => '不使用自定义宽度请留空'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '文章列表无下边距',
-		'id' => 'post_no_margin',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-	
-	$options[] = array(
-		'name' => '',
-		'desc' => '模块标题前装饰',
-		'id' => 'title_i',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '彩色标题更多按钮',
-		'id' => 'more_im',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '标题无背景色',
-		'id' => 'fresh_no',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '移动端禁止缩放',
-		'id' => 'mobile_viewport',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '动画特效',
-		'id' => 'aos_scroll',
-		'std' => '0',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'id' => 'aos_data',
-		'class' => 'rr',
-		'std' => 'fade-up',
-		'type' => 'radio',
-		'options' => array(
-			'fade-up' => '向上',
-			'fade-in' => '渐显',
-			'zoom-in' => '缩放',
-		)
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-
-	$options[] = array(
-		'name' => '颜色风格',
-		'desc' => '选择自己喜欢的颜色，不使用自定义颜色清空即可',
-		'id' => 'custom_color',
-		'class' => 'el'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '一键换色',
-		'id' => 'all_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '站点标题',
-		'id' => 'blogname_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '副标题',
-		'id' => 'blogdescription_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '超链接',
-		'id' => 'link_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '菜单颜色',
-		'id' => 'menu_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '按钮',
-		'id' => 'button_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分类名称',
-		'id' => 'cat_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '幻灯',
-		'id' => 'slider_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '正文H标签',
-		'id' => 'h_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '搜索按钮',
-		'id' => 's_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '分享按钮',
-		'id' => 'z_color',
-		'std' => '',
-		'type' => 'color'
-	);
-
-	$options[] = array(
-		'name' => '',
-		'desc' => '',
-		'id' => '',
-		'class' => ''
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '自定义样式',
-		'desc' => '样式代码示例',
-		'id' => 'custom_css',
-		'class' => '',
-		'std' => '',
-		'type' => 'textarea'
-	);
-
-	$options[] = array(
-		'class' => 'el cod',
-		'name' => '例1：顶部菜单改为渐变色：',
-		'desc' => '.header-top {background: linear-gradient(to right, #ffecea, #c4e7f7, #ffecea, #c4e7f7, #ffecea);border-bottom: none;}'
-	);
-
-	$options[] = array(
-		'class' => 'el cod',
-		'name' => '例2：主菜单改为黑色：',
-		'desc' => '#menu-container, .headroom--not-top .menu-glass {background: #323232 !important;}.nav-ace .down-menu > li > a, #menu-container .sf-arrows .sf-with-ul:after {color: #fff;}'
-	);
-
-	$options[] = array(
-		'name' => '使用帮助',
-		'type' => 'heading'
-	);
-
-	$options[] = array(
-		'name' => '主题使用说明',
-		'class' => 'el help_but',
-		'desc' => '点击右侧<i></i>按钮，查看主题使用说明',
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '保存设置',
-		'class' => 'el save_but',
-		'desc' => '修改某个设置后，必须保存设置，右侧<i></i>按钮为保存，快捷键：Enter',
-	);
-
-	$options[] = array(
-		'class' => 'el',
-		'desc' => '有些设置启用后，需要保存两次设置才会生效，比如：文章归档和文章更新页面及站点地图等',
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '选项显示状态',
-		'class' => 'el all_but',
-		'desc' => '<strong>始终显示：</strong>勾选右上<i></i>选项， 保存设置之后，始终处于全部显示状态',
-		'std' => '1',
-		'type' => 'checkbox'
-	);
-
-	$options[] = array(
-		'class' => 'el expand_but',
-		'desc' => '<strong>临时显示：</strong>点击右侧<i></i>按钮，临时处于全部显示或隐藏状态',
-	);
-
-	$options[] = array(
-		'class' => 'el',
-		'desc' => '<strong>单项显示：</strong>点击小标题，可以单个显示或隐藏',
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '快速定位选项',
-		'class' => 'el',
-		'desc' => '将选项设置为始终显示状态，利用浏览器的查找功能，输入关键字，快速定位到功能设置，快捷键：Ctrl+f',
-	);
-
-	$options[] = array(
-		'id' => 'clear'
-	);
-
-	$options[] = array(
-		'name' => '分类/专题/文章/页面ID',
-		'class' => 'el cat_but',
-		'desc' => '<strong>分类和专题ID：</strong>点击右侧<i></i>查看',
-	);
-
-	$options[] = array(
-		'class' => 'el',
-		'desc' => '<strong>文章和页面ID：</strong>进入文章（页面）→所有文章（所有页面），查看ID',
-	);
-
-	return $options;
+if ( ! zm_get_option( 'save_ajax' ) || ( zm_get_option( 'save_ajax' ) == 'ajax' ) ) {
+	$save = true;
 }
+if ( zm_get_option( 'save_ajax' ) == 'normal' ) {
+	$save = false;
+}
+
+$select_template = array('');
+foreach ( $select_template as $select_template ) {
+	$options_select_template['archive-default'] = "默认模板";
+	$options_select_template['category-code-a'] = "Ajax图片布局";
+	$options_select_template['category-code-b'] = "Ajax卡片布局";
+	$options_select_template['category-code-c'] = "Ajax标题布局";
+	$options_select_template['category-code-f'] = "Ajax标题列表";
+	$options_select_template['category-code-e'] = "Ajax问答布局";
+	$options_select_template['category-code-c'] = "Ajax标准布局";
+	$options_select_template['category-img']    = "图片布局";
+	$options_select_template['category-grid']   = "图片布局，单独设置大小";
+	$options_select_template['category-img-s']  = "图片布局，有侧边栏";
+	$options_select_template['category-list']   = "标题列表";
+	$options_select_template['category-fall']   = "瀑布流";
+	$options_select_template['category-square'] = "网格布局";
+	$options_select_template['category-full']   = "通长缩略图";
+}
+
+$select_template_tag = array('');
+foreach ( $select_template_tag as $select_template_tag ) {
+	$options_select_template_tag['archive-default'] = "默认模板";
+	$options_select_template_tag['category-img']    = "图片布局";
+	$options_select_template_tag['category-grid']   = "图片布局，单独设置大小";
+	$options_select_template_tag['category-img-s']  = "图片布局，有侧边栏";
+	$options_select_template_tag['category-list']   = "标题列表";
+	$options_select_template_tag['category-fall']   = "瀑布流";
+	$options_select_template_tag['category-square'] = "网格布局";
+	$options_select_template_tag['category-full']   = "通长缩略图";
+}
+
+$imgdefault  = get_template_directory_uri() . '/img/default';
+$imgpath     = get_template_directory_uri() . '/img';
+$bloghome    = home_url( '/' );
+$bloglogin   = home_url( '/' ).'wp-login.php';
+$qq_auth     = home_url( '/' ).'wp-content/themes/begin/inc/social/qq-auth.php';
+$weibo_auth  = home_url( '/' ).'wp-content/themes/begin/inc/social/sina-auth.php';
+$weixin_auth = home_url( '/' );
+$selectemail = get_option( 'admin_email' );
+$mid         = '多个ID用英文半角逗号","隔开';
+$idcat       = '输入分类ID，多个ID用英文半角逗号","隔开';
+$anh         = '<span class="after-perch">留空则以后台阅读设置为准</span>';
+$shortcode_help = '
+<span><strong>代码示例</strong></span>[be_ajax_post style="grid" column="2" terms="1,2,3" posts_per_page="4"]<br />
+<span><strong>示例说明</strong></span>卡片模式，2栏，分别调用ID为1,2,3的分类文章，每页显示4篇<br /><br />
+<span><strong>可选参数</strong></span>可组合使用，多个参数用一个半角空格隔开，不能有多余的空格，可重复添加多个短代码<br />
+<span><strong>图片模式</strong></span>[be_ajax_post]<br />
+<span><strong>卡片模式</strong></span>[be_ajax_post style="grid"]<br />
+<span><strong>标题模式</strong></span>[be_ajax_post style="title"]<br />
+<span><strong>标题列表</strong></span>[be_ajax_post style="list"]<br />
+<span><strong>问答模式</strong></span>[be_ajax_post style="qa"]<br />
+<span><strong>标准模式</strong></span>[be_ajax_post style="default"]<br />
+<span><strong>调用标签</strong></span>[be_ajax_post column="4" cat="34,39" tags="tag"]<br />
+<span><strong>分栏</strong></span>[be_ajax_post column="4"]<br />
+<span><strong>可选分栏数</strong></span>图片模式 4 5 6&nbsp;/&nbsp;卡片与标题模式 1 2 3 4&nbsp;/&nbsp;标题列表仅1栏<br />
+<span><strong>无全部文章按钮</strong></span>[be_ajax_post btn_all="no"]<br />
+<span><strong>无选择按钮</strong></span>[be_ajax_post btn="no"]<br />
+<span><strong>显示首页幻灯</strong></span>[be_ajax_post slider="1"]<br />
+<span><strong>调用指定分类</strong></span>[be_ajax_post terms="1,2,3,4"]<br />
+<span><strong>每页4篇文章</strong></span>[be_ajax_post posts_per_page="4"]<br />
+<span><strong>图片模式缩略图</strong></span>[be_ajax_post img="1"]<br />
+<span><strong>随机排序</strong></span>[be_ajax_post orderby="rand"]<br />
+<span><strong>按发表日期排序</strong></span>[be_ajax_post orderby="date" order="DESC"]<br />
+<span><strong>按更新日期排序</strong></span>[be_ajax_post orderby="modified" order="DESC"]<br />
+<span><strong>按评论数排序</strong></span>[be_ajax_post orderby="comment_count" order="DESC"]<br />
+<span><strong>按浏览量排序</strong></span>[be_ajax_post meta_key="views" orderby="meta_value_num" order="DESC"]<br />
+<span><strong>无限加载按钮</strong></span>[be_ajax_post more="more"]<br />
+<span><strong>无限滚动加载</strong></span>[be_ajax_post more="more" infinite="true"]<br /><br />
+<strong>可在文章、页面和“增强文本”小工具中添加上述短代码</strong><br />
+<strong>在“增强文本”小工具中，可以在小工具“CSS类”中添加“apc”或者“nobg”让小工具无背景色</strong>';
+
+$test_array = array(
+	''  => '中',
+	't' => '上',
+	'b' => '下',
+	'l' => '左',
+	'r' => '右'
+);
+
+$rand_link = array(
+	'rating' => '正常',
+	'rand'   => '随机'
+);
+
+$ajax_orderby = array(
+	'date'          => '发表日期',
+	'modified'      => '最后更新',
+	'comment_count' => '评论数',
+	'views'         => '浏览量'
+);
+
+$inks_img_txt = array(
+	'0' => '文字',
+	'1' => '图片'
+);
+
+$fl789 = array(
+	'7' => '七栏',
+	'8' => '八栏',
+	'9' => '九栏'
+);
+
+$fl24568 = array(
+	'2' => '两栏',
+	'4' => '四栏',
+	'5' => '五栏',
+	'6' => '六栏',
+	'8' => '八栏'
+);
+
+$fl2456 = array(
+	'2' => '两栏',
+	'4' => '四栏',
+	'5' => '五栏',
+	'6' => '六栏',
+);
+
+$fl245 = array(
+	'2' => '两栏',
+	'4' => '四栏',
+	'5' => '五栏',
+);
+
+$fl1234 = array(
+	'1' => '1栏',
+	'2' => '2栏',
+	'3' => '3栏',
+	'4' => '4栏'
+);
+
+$fl345 = array(
+	'3' => '3栏',
+	'4' => '4栏',
+	'5' => '5栏'
+);
+
+$fl456 = array(
+	'4' => '4栏',
+	'5' => '5栏',
+	'6' => '6栏'
+);
+
+$fl56 = array(
+	'5' => '5栏',
+	'6' => '6栏'
+);
+
+$fsl45 = array(
+	'4' => '4栏',
+	'5' => '5栏'
+);
+
+$fl3456 = array(
+	'3' => '3栏',
+	'4' => '4栏',
+	'5' => '5栏',
+	'6' => '6栏'
+);
+
+$fl23456 = array(
+	'2' => '2栏',
+	'3' => '3栏',
+	'4' => '4栏',
+	'5' => '5栏',
+	'6' => '6栏'
+);
+
+$fl34 = array(
+	'3' => '3栏',
+	'4' => '4栏'
+);
+
+$swf12 = array(
+	'1' => '1栏',
+	'2' => '2栏'
+);
+
+$cover234 = array(
+	'2' => '2栏',
+	'3' => '3栏',
+	'4' => '4栏',
+	'5' => '5栏'
+);
+
+$prefix = 'begin';
+
+CSF::createOptions( $prefix, array(
+	'framework_title'         => '主题选项',
+	'framework_class'         => 'be-box',
+
+	'menu_title'              => '主题选项',
+	'menu_slug'               => 'begin-options',
+	'menu_type'               => 'submenu',
+	'menu_capability'         => 'manage_options',
+	'menu_icon'               => null,
+	'menu_position'           => null,
+	'menu_hidden'             => false,
+	'menu_parent'             => 'themes.php',
+
+	'show_bar_menu'           => true,
+	'show_sub_menu'           => false,
+	'show_in_network'         => true,
+	'show_in_customizer'      => false,
+
+	'show_search'             => false,
+	'show_reset_all'          => true,
+	'show_reset_section'      => true,
+	'show_footer'             => true,
+	'show_all_options'        => true,
+	'show_form_warning'       => true,
+	'sticky_header'           => true,
+	'save_defaults'           => true,
+	'ajax_save'               => $save,
+
+	'admin_bar_menu_icon'     => 'cx cx-begin',
+	'admin_bar_menu_priority' => 80,
+
+	'footer_text'             => '',
+	'footer_after'            => '',
+	'footer_credit'           => '',
+
+	'database'                => '',
+	'transient_time'          => 0,
+
+	'contextual_help'         => array(),
+	'contextual_help_sidebar' => '',
+
+	'enqueue_webfont'         => true,
+	'async_webfont'           => false,
+
+	'output_css'              => true,
+
+	'nav'                     => 'normal',
+	'theme'                   => 'be',
+	'class'                   => '',
+
+	'defaults'                => array(),
+
+));
+
+CSF::createSection( $prefix, array(
+	'title'       => '操作说明',
+	'icon'  => 'dashicons dashicons-buddicons-groups',
+	'description' => '',
+	'fields'      => array(
+
+		array(
+			'id'      => 'save_ajax',
+			'type'    => 'radio',
+			'title'   => '保存模式',
+			'inline'  => true,
+			'options' => array(
+				'ajax'    => 'Ajax无刷新',
+				'normal'  => '正常模式',
+			),
+			'default' => 'ajax',
+		),
+
+		array(
+			'class'    => 'be-button-url be-button-help-url',
+			'type'     => 'subheading',
+			'title'    => '使用文档',
+			'content'  => '<span class="button-primary"><a href="https://zmingcx.com/begin-guide.html" rel="external nofollow" target="_blank">查看文档</a></span>',
+		),
+
+		array(
+			'class'    => 'be-home-help',
+			'title'   => '温馨提示',
+			'type'    => 'content',
+			'content' => '主题设置开关较多，不要把所有开关都打开，有些功能您并不一定能用到',
+		),
+
+		array(
+			'class'    => 'be-home-help',
+			'title'   => '快速定位设置项',
+			'type'    => 'content',
+			'content' => '点击左上&nbsp;&nbsp;<i class="beico dashicons dashicons-ellipsis"></i>展开所有设置按钮，在同一个页面显示所有设置，利用浏览器搜索功能（Ctrl+f），输入关键字定位到设置项',
+		),
+
+		array(
+			'class'    => 'be-home-help',
+			'title'   => '左上按钮',
+			'type'    => 'content',
+			'content' => '<i class="beico dashicons dashicons-ellipsis"></i>展开所有设置选项',
+		),
+
+		array(
+			'class'    => 'be-home-help',
+			'title'   => '左侧按钮',
+			'type'    => 'content',
+			'content' => '<i class="dashicons dashicons-plus-alt2"></i>展开所有菜单',
+		),
+
+		array(
+			'class'    => 'be-home-help',
+			'title'   => '右上按钮',
+			'type'    => 'content',
+			'content' => '<i class="dashicons dashicons-update-alt"></i>保存设置',
+		),
+
+		array(
+			'class'    => 'be-home-help',
+			'title'   => '右侧按钮',
+			'type'    => 'content',
+			'content' => '<i class="be be-sort"></i>查看分类及专题页面 ID',
+		),
+
+		array(
+			'class'    => 'be-home-help',
+			'title'   => '右下按钮',
+			'type'    => 'content',
+			'content' => '<i class="to-down-up"></i>返回顶部及转至底部',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'id'     => 'home_setting',
+	'title'  => '首页设置',
+	'icon'   => 'dashicons dashicons-admin-home',
+) );
+
+// 首页选择
+CSF::createSection( $prefix, array(
+	'parent'      => 'home_setting',
+	'title'       => '首页布局',
+	'icon'        => '',
+	'description' => '选择一个首页布局',
+	'fields'      => array(
+
+		array(
+			'id'      => 'layout',
+			'type'    => 'radio',
+			'title'   => '首页布局选择',
+			'options' => array(
+				'blog'   => '博客布局',
+				'img'    => '图片布局',
+				'grid'   => '分类图片',
+				'cms'    => '杂志布局',
+				'group'  => '公司主页',
+			),
+			'default' => 'blog',
+		),
+
+		array(
+			'title'   => '页面使用首页布局',
+			'type'    => 'content',
+			'content' => '新建页面 → 右侧页面属性面板 → 模板，选择对应的模板发表即可。',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'home_setting',
+	'title'       => '博客布局',
+	'icon'        => '',
+	'description' => '首页博客布局设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'blog_top',
+			'type'     => 'switcher',
+			'title'    => '推荐文章',
+		),
+
+		array(
+			'id'       => 'blog_top_n',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'number',
+			'title'    => '显示篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'blog_special',
+			'type'     => 'switcher',
+			'title'    => '专题',
+		),
+
+		array(
+			'id'       => 'blog_special_list',
+			'type'     => 'switcher',
+			'title'    => '专题列表',
+		),
+
+		array(
+			'id'       => 'blog_cat_cover',
+			'type'     => 'switcher',
+			'title'    => '分类封面',
+		),
+
+		array(
+			'id'       => 'blog_ajax',
+			'type'     => 'switcher',
+			'title'    => 'Ajax加载文章列表',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'blog_ajax_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '每页篇数',
+			'default'  => '15',
+			'after'    => $anh,
+		),
+
+		array(
+			'id'      => 'blog_ajax_id',
+			'class'   => 'be-child-item',
+			'type'    => 'checkbox',
+			'title'   => '选择分类',
+			'inline'  => true,
+			'options' => 'categories',
+			'query_args' => array(
+				'orderby'  => 'ID',
+				'order'    => 'ASC',
+			),
+		),
+
+		array(
+			'id'      => 'blog_ajax_cat_style',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '样式',
+			'inline'  => true,
+			'options' => array(
+				'default' => '标准样式',
+				'grid'    => '卡片样式',
+			),
+			'default' => 'default',
+		),
+
+		array(
+			'id'      => 'blog_ajax_cat_btn',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '分类按钮',
+			'inline'  => true,
+			'options' => array(
+				'yes'  => '显示',
+				'no'   => '不显示',
+			),
+			'default' => 'yes',
+		),
+
+		array(
+			'id'      => 'blog_ajax_nav_btn',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '翻页模式',
+			'inline'  => true,
+			'options' => array(
+				'true'   => '数字翻页',
+				'more'   => '更多按钮',
+			),
+			'default' => 'true',
+		),
+
+		array(
+			'id'      => 'blog_ajax_infinite',
+			'class'   => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '更多按钮滚动加载',
+			'inline'  => true,
+			'options' => array(
+				'false'  => '否',
+				'true'   => '是',
+			),
+			'default' => 'false',
+		),
+
+		array(
+			'type'    => 'content',
+			'title'   => '以下为非Ajax加载模式设置',
+		),
+
+		array(
+			'id'      => 'blog_not_cat',
+			'type'    => 'checkbox',
+			'title'   => '排除的分类文章',
+			'inline'  => true,
+			'options' => 'categories',
+			'query_args' => array(
+				'orderby'  => 'ID',
+				'order'    => 'ASC',
+			),
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'home_setting',
+	'title'       => '图片布局',
+	'icon'        => '',
+	'description' => '首页图片布局设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'img_top',
+			'type'     => 'switcher',
+			'title'    => '推荐文章',
+		),
+
+		array(
+			'id'       => 'img_top_n',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'number',
+			'title'    => '显示篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'img_special',
+			'type'     => 'switcher',
+			'title'    => '专题',
+		),
+
+		array(
+			'id'       => 'img_cat_cover',
+			'type'     => 'switcher',
+			'title'    => '分类封面',
+		),
+
+		array(
+			'id'       => 'img_ajax',
+			'type'     => 'switcher',
+			'title'    => 'Ajax加载文章列表',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'img_ajax_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '每页篇数',
+			'default'  => '15',
+			'after'    => $anh,
+		),
+
+		array(
+			'id'      => 'img_ajax_id',
+			'class'   => 'be-child-item',
+			'type'    => 'checkbox',
+			'title'   => '选择分类',
+			'inline'  => true,
+			'options' => 'categories',
+			'query_args' => array(
+				'orderby'  => 'ID',
+				'order'    => 'ASC',
+			),
+		),
+
+		array(
+			'id'      => 'img_ajax_cat_btn',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '分类按钮',
+			'inline'  => true,
+			'options' => array(
+				'yes'   => '显示',
+				'no'   => '不显示',
+			),
+			'default' => 'yes',
+		),
+
+		array(
+			'id'      => 'img_ajax_feature',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '缩略图模式',
+			'inline'  => true,
+			'options' => array(
+				'0'   => '标准',
+				'1'   => '图片',
+			),
+			'default' => '0',
+		),
+
+		array(
+			'id'      => 'img_ajax_f',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '5',
+		),
+
+		array(
+			'id'      => 'img_ajax_nav_btn',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '翻页模式',
+			'inline'  => true,
+			'options' => array(
+				'true'   => '数字翻页',
+				'more'   => '更多按钮',
+			),
+			'default' => 'true',
+		),
+
+		array(
+			'id'      => 'img_ajax_infinite',
+			'class'   => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '更多按钮滚动加载',
+			'inline'  => true,
+			'options' => array(
+				'false'  => '否',
+				'true'   => '是',
+			),
+			'default' => 'false',
+		),
+
+		array(
+			'type'    => 'content',
+			'title'   => '以下为非Ajax加载模式设置',
+		),
+
+		array(
+			'id'      => 'grid_not_cat',
+			'type'    => 'checkbox',
+			'title'   => '排除的分类文章',
+			'inline'  => true,
+			'options' => 'categories',
+			'query_args' => array(
+				'orderby'  => 'ID',
+				'order'    => 'ASC',
+			),
+		),
+
+		array(
+			'id'       => 'grid_fall',
+			'type'     => 'switcher',
+			'title'    => '使用瀑布流',
+			'label'    => '',
+		),
+
+		array(
+			'id'      => 'img_f',
+			'type'    => 'radio',
+			'title'   => '图片布局分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '4',
+		),
+
+		array(
+			'id'      => 'img_top_f',
+			'type'    => 'radio',
+			'title'   => '最新文章分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'hide_box',
+			'type'     => 'switcher',
+			'title'    => '图片布局显示摘要',
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'home_setting',
+	'title'       => '首页幻灯',
+	'icon'        => '',
+	'description' => '调用方法：编辑文章在下面“将文章添加到幻灯”面板中添加图片链接，即可将该文章显示在幻灯中',
+	'fields'      => array(
+
+		array(
+			'id'       => 'slider',
+			'type'     => 'switcher',
+			'title'    => '幻灯',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'slider_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 2,
+		),
+
+		array(
+			'id'       => 'owl_time',
+			'type'     => 'number',
+			'after'    => '<span class="after-perch">默认4000毫秒</span>',
+			'title'    => '间隔',
+			'default'  => 4000,
+		),
+
+		array(
+			'id'       => 'slide_progress',
+			'type'     => 'switcher',
+			'title'    => '进度条',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'show_img_crop',
+			'type'     => 'switcher',
+			'title'    => '自动裁剪图片',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'slider_edit',
+			'type'     => 'switcher',
+			'title'    => '编辑时打开',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'slide_post',
+			'class'    => 'be-parent-item',
+			'type'     => 'switcher',
+			'title'    => '右侧模块',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'slide_post_m',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '移动端显示',
+			'label'    => '',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'slide_post_id',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '输入文章ID',
+			'subtitle' => '',
+			'before'   => '',
+			'after'    => '输入两个文章ID，用英文半角逗号","隔开',
+		),
+
+		array(
+			'id'       => 'show_slider_video',
+			'class'    => 'be-parent-item',
+			'type'     => 'switcher',
+			'title'    => '仅显示一个视频',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'show_slider_video_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'upload',
+			'title'    => 'MP4视频',
+		),
+
+		array(
+			'id'       => 'slider_only_img',
+			'class'    => 'be-parent-item',
+			'type'     => 'switcher',
+			'title'    => '仅显示一张图片',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'show_slider_img',
+			'class'    => 'be-child-item',
+			'type'     => 'upload',
+			'title'    => '图片',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'show_slider_img_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '图片链接到',
+			'subtitle' => '',
+			'before'   => '',
+			'after'    => '点击图片跳转的地址',
+		),
+
+	//end
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'home_setting',
+	'title'       => '文章排序',
+	'icon'        => '',
+	'description' => '在首页博客、图片布局及分类归档页面，显示文章排序按钮',
+	'fields'      => array(
+
+		array(
+			'id'       => 'order_btu',
+			'type'     => 'switcher',
+			'title'    => '首页排序按钮',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'cat_order_btu',
+			'type'     => 'switcher',
+			'title'    => '归档页排序按钮',
+			'label'    => '',
+		),
+
+		array(
+			'title'    => '选择按钮',
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+		),
+
+		array(
+			'id'       => 'order_date',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '发表',
+			'label'    => '按文章发表日期排序',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'order_modified',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '更新',
+			'label'    => '按文章最后更新日期排序',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'order_rand',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '随机',
+			'label'    => '随机排序',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'order_commented',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '热评',
+			'label'    => '按文章评论数排序',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'order_views',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '热门',
+			'label'    => '按文章浏览量排序',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'order_like',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '点赞',
+			'label'    => '按文章点赞数排序',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'home_setting',
+	'title'       => '专题专栏',
+	'icon'        => '',
+	'description' => '在首页显示专题专栏封面及列表',
+	'fields'      => array(
+
+		array(
+			'type'     => 'content',
+			'title'    => '专题专栏封面',
+		),
+
+		array(
+			'id'       => 'code_special_id',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '输入专栏ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'      => 'special_f',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'blog_special_id',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '输入专题页面ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'type'     => 'content',
+			'title'    => '专题专栏列表',
+		),
+
+		array(
+			'id'       => 'code_special_list_id',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '输入专栏ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'blog_special_list_id',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '输入专题页面ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'          => 'column_url',
+			'type'        => 'select',
+			'title'       => '全部专栏',
+			'placeholder' => '选择页面',
+			'options'     => 'pages',
+			'after'       => '用于专栏面包屑导航前缀链接',
+			'query_args'  => array(
+				'posts_per_page' => -1
+			)
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'home_setting',
+	'title'       => '首页分类封面',
+	'icon'        => '',
+	'description' => '在首页显示分类封面',
+	'fields'      => array(
+
+		array(
+			'id'       => 'single_cover',
+			'type'     => 'switcher',
+			'title'    => '同时显示在正文页面顶部',
+		),
+
+		array(
+			'id'       => 'cat_cover_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'      => 'cat_rec_m',
+			'type'    => 'radio',
+			'title'   => '模式选择',
+			'inline'  => true,
+			'options' => array(
+				'cat_rec_ico'   => '图标',
+				'cat_rec_img'   => '图片',
+			),
+			'default' => 'cat_rec_ico',
+		),
+
+		array(
+			'id'      => 'cover_img_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $cover234,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'cat_tag_cover',
+			'type'     => 'switcher',
+			'title'    => '调用标签',
+		),
+
+		array(
+			'id'       => 'cat_cover_tag_id',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '输入标签ID',
+			'after'    => $mid,
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'home_setting',
+	'title'       => '首页其它设置',
+	'icon'        => '',
+	'description' => '首页多条件筛选等',
+	'fields'      => array(
+
+		array(
+			'id'       => 'blank',
+			'type'     => 'switcher',
+			'title'    => '首页新窗口或标签打开链接',
+		),
+
+		array(
+			'id'       => 'mobile_home_url',
+			'type'     => 'text',
+			'title'    => '移动端首页显示的页面',
+			'after'    => '输入链接地址，不使用请留空',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'home_setting',
+	'title'       => '首页页脚链接',
+	'icon'        => '',
+	'description' => '在首页页脚显示友情链接',
+	'fields'      => array(
+
+		array(
+			'id'       => 'footer_link',
+			'type'     => 'switcher',
+			'title'    => '首页页脚链接',
+		),
+
+		array(
+			'id'       => 'link_f_cat',
+			'type'     => 'text',
+			'title'    => '链接分类',
+			'after'    => '可以输入链接分类ID，显示特定的链接在首页，留空则显示全部链接',
+		),
+
+		array(
+			'id'       => 'home_link_ico',
+			'type'     => 'switcher',
+			'title'    => '显示网站 Favicon 图标',
+		),
+
+		array(
+			'id'       => 'footer_img',
+			'type'     => 'switcher',
+			'title'    => '图片链接',
+		),
+
+		array(
+			'id'       => 'footer_link_no',
+			'type'     => 'switcher',
+			'title'    => '移动端不显示',
+		),
+
+		array(
+			'id'          => 'link_url',
+			'type'        => 'select',
+			'title'       => '更多链接按钮',
+			'placeholder' => '选择页面',
+			'options'     => 'pages',
+			'query_args'  => array(
+				'posts_per_page' => -1
+			)
+		),
+	)
+));
+
+// 杂志开始
+CSF::createSection( $prefix, array(
+	'id'     => 'cms_setting',
+	'title'  => '杂志布局',
+	'icon'  => 'dashicons dashicons-welcome-widgets-menus',
+) );
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '幻灯显示模式',
+	'icon'        => '',
+	'description' => '选择幻灯显示模式',
+	'fields'      => array(
+
+		array(
+			'id'      => 'slider_l',
+			'type'    => 'radio',
+			'title'   => '幻灯显示模式',
+			'inline'  => true,
+			'options' => array(
+				'slider_n' => '标准',
+				'slider_w' => '通栏',
+			),
+			'default' => 'slider_n',
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '推荐文章',
+	'icon'        => '',
+	'description' => '调用方法：编辑文章在下面“将文章添加到”面板，勾选“首页推荐文章”，并更新发表',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_top',
+			'type'     => 'switcher',
+			'title'    => '推荐文章',
+		),
+
+		array(
+			'id'       => 'cms_top_s',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认：1</span>',
+			'default'  => 1,
+		),
+
+		array(
+			'id'       => 'cms_top_n',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'number',
+			'title'    => '显示篇数',
+			'default'  => 4,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '专题',
+	'icon'        => '',
+	'description' => '在首页设置中添加专题页面 ID',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_special',
+			'type'     => 'switcher',
+			'title'    => '专题',
+		),
+
+		array(
+			'id'       => 'cms_special_s',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认2</span>',
+			'default'  => 2,
+		),
+
+		array(
+			'id'       => 'cms_special_list',
+			'type'     => 'switcher',
+			'title'    => '专题列表',
+		),
+
+		array(
+			'id'       => 'cms_special_list_s',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认3</span>',
+			'default'  => 3,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '分类封面',
+	'icon'        => '',
+	'description' => '在首页显示分类封面',
+	'fields'      => array(
+
+		array(
+			'id'       => 'h_cat_cover',
+			'type'     => 'switcher',
+			'title'    => '首页分类封面',
+		),
+		array(
+			'id'       => 'cms_cover_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 2,
+			'after'    => '<span class="after-perch">默认：2</span>',
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '最新文章',
+	'icon'        => '',
+	'description' => '设置最新文章显示模式',
+	'fields'      => array(
+
+		array(
+			'id'       => 'news',
+			'type'     => 'switcher',
+			'title'    => '最新文章',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'news_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认4</span>',
+			'default'  => 4,
+		),
+
+		array(
+			'id'      => 'news_model',
+			'type'    => 'radio',
+			'title'   => '显示模式',
+			'inline'  => true,
+			'options' => array(
+				'news_grid'   => '网格模式',
+				'news_normal' => '标准模式',
+			),
+			'default' => 'news_grid',
+		),
+
+		array(
+			'id'       => 'news_grid_sticky',
+			'type'     => 'switcher',
+			'title'    => '网格模式显示置顶文章',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'news_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'      => 'not_news_n',
+			'type'    => 'checkbox',
+			'title'   => '排除的分类',
+			'inline'  => true,
+			'options' => 'categories',
+			'query_args' => array(
+				'orderby'  => 'ID',
+				'order'    => 'ASC',
+			),
+		),
+
+		array(
+			'id'       => 'post_img',
+			'type'     => 'switcher',
+			'title'    => '图文模块',
+		),
+
+		array(
+			'id'       => 'post_img_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'class'    => 'be-child-item be-child-last-item',
+			'title'   => '说明',
+			'type'    => 'content',
+			'content' => '位于最新文章模块中，编辑文章在下面“将文章添加到”面板中，勾选“杂志布局图文模块”，并更新文章',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '最新分类',
+	'icon'        => '',
+	'description' => 'AJAX分类最新文章',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_new_code_cat',
+			'type'     => 'switcher',
+			'title'    => '显示',
+		),
+
+		array(
+			'id'       => 'cms_new_code_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认4</span>',
+			'default'  => 4,
+		),
+
+		array(
+			'id'      => 'cms_new_code_style',
+			'type'    => 'radio',
+			'title'   => '显示模式',
+			'inline'  => true,
+			'options' => array(
+				'grid'    => '卡片',
+				'title'   => '标题',
+				'list'    => '列表',
+				'default' => '标准',
+			),
+			'default' => 'grid',
+		),
+
+		array(
+			'id'      => 'cms_new_code_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl1234,
+			'default' => '2',
+		),
+
+		array(
+			'id'       => 'cms_new_code_n',
+			'type'     => 'number',
+			'title'    => '每页篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'      => 'cms_new_prev_next_btn',
+			'type'    => 'radio',
+			'title'   => '上下页按钮',
+			'inline'  => true,
+			'options' => array(
+				'true'   => '显示',
+				'false'  => '不显示',
+			),
+			'default' => 'true',
+		),
+
+		array(
+			'id'      => 'cms_new_code_no_cat_btn',
+			'type'    => 'radio',
+			'title'   => '分类按钮',
+			'inline'  => true,
+			'options' => array(
+				'yes'   => '显示',
+				'no'    => '不显示',
+			),
+			'default' => 'yes',
+		),
+
+		array(
+			'id'      => 'cms_new_code_id',
+			'type'    => 'checkbox',
+			'title'   => '选择分类',
+			'inline'  => true,
+			'options' => 'categories',
+			'query_args' => array(
+				'orderby'  => 'ID',
+				'order'    => 'ASC',
+			),
+		),
+
+		array(
+			'id'       => 'cms_new_code_post_img',
+			'type'     => 'switcher',
+			'title'    => '图文模块',
+		),
+
+		array(
+			'class'    => 'be-child-item be-child-last-item',
+			'title'   => '说明',
+			'type'    => 'content',
+			'content' => '位于最新文章模块中，编辑文章在下面“将文章添加到”面板中，勾选“杂志布局图文模块”，并更新文章',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '多条件筛选',
+	'icon'        => '',
+	'description' => '设置是否在杂志首页显示多条件筛选',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_filter_h',
+			'type'     => 'switcher',
+			'title'    => '多条件筛选',
+		),
+
+		array(
+			'id'       => 'cms_filter_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认5</span>',
+			'default'  => 5,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '首字母分类/标签',
+	'icon'        => '',
+	'description' => '以首字母分组排序显示分类/标签',
+	'fields'      => array(
+
+		array(
+			'id'       => 'letter_show',
+			'type'     => 'switcher',
+			'title'    => '首字母分类/标签',
+		),
+
+		array(
+			'id'       => 'letter_show_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认6</span>',
+			'default'  => 6,
+		),
+
+		array(
+			'id'       => 'letter_t',
+			'type'     => 'text',
+			'title'    => '标题文字',
+			'default'  => '全部分类',
+		),
+
+		array(
+			'id'      => 'letter_show_md',
+			'type'    => 'radio',
+			'title'   => '调用模式',
+			'inline'  => true,
+			'options' => array(
+				'letter_cat' => '分类',
+				'letter_tag' => '标签',
+			),
+			'default' => 'letter_cat',
+		),
+
+		array(
+			'id'       => 'letter_exclude',
+			'type'     => 'text',
+			'title'    => '输入排除的分类/标签ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'letter_hidden',
+			'type'     => 'switcher',
+			'title'    => '默认展开',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '杂志单栏小工具',
+	'icon'        => '',
+	'description' => '杂志单栏小工具',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_widget_one',
+			'type'     => 'switcher',
+			'title'    => '杂志单栏小工具',
+		),
+
+		array(
+			'id'       => 'cms_widget_one_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认7</span>',
+			'default'  => 7,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '杂志菜单小工具',
+	'icon'        => '',
+	'description' => '杂志菜单小工具',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_two_menu',
+			'type'     => 'switcher',
+			'title'    => '杂志菜单小工具',
+		),
+
+		array(
+			'id'       => 'cms_two_menu_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认8</span>',
+			'default'  => 8,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => 'AJAX分类',
+	'icon'        => '',
+	'description' => '设置AJAX加载分类',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_cat_tab',
+			'type'     => 'switcher',
+			'title'    => 'AJAX分类',
+		),
+
+		array(
+			'id'       => 'cms_cat_tab_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认9</span>',
+			'default'  => 9,
+		),
+
+		array(
+			'id'       => 'cms_cat_tab_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 10,
+		),
+
+		array(
+			'id'       => 'cms_cat_tab_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'cms_cat_tab_img',
+			'type'     => 'switcher',
+			'title'    => '缩略图',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '图片模块',
+	'icon'        => '',
+	'description' => '图片模块',
+	'fields'      => array(
+
+		array(
+			'id'       => 'picture_box',
+			'type'     => 'switcher',
+			'title'    => '图片模块',
+		),
+
+		array(
+			'id'       => 'picture_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认10</span>',
+			'default'  => 10,
+		),
+
+		array(
+			'id'       => 'picture_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'img_id',
+			'type'     => 'text',
+			'title'    => '正常文章分类',
+			'after'    => '输入分类ID，多个分类用英文半角逗号","隔开，留空则不显示',
+		),
+
+		array(
+			'id'       => 'picture_id',
+			'type'     => 'text',
+			'title'    => '调用图片分类',
+			'after'    => '输入分类ID，多个分类用英文半角逗号","隔开，留空则不显示',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '杂志两栏小工具',
+	'icon'        => '',
+	'description' => '杂志两栏小工具',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_widget_two',
+			'type'     => 'switcher',
+			'title'    => '杂志两栏小工具',
+		),
+
+		array(
+			'id'       => 'cms_widget_two_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认11</span>',
+			'default'  => 11,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '单栏分类列表(5篇文章)',
+	'icon'        => '',
+	'description' => '单栏分类列表(5篇文章)',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_one_5',
+			'type'     => 'switcher',
+			'title'    => '单栏分类列表(5篇文章)',
+		),
+
+		array(
+			'id'       => 'cat_one_5_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认12</span>',
+			'default'  => 12,
+		),
+
+		array(
+			'id'       => 'cat_one_5_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '单栏分类列表(无缩略图)',
+	'icon'        => '',
+	'description' => '单栏分类列表(无缩略图)',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_one_on_img',
+			'type'     => 'switcher',
+			'title'    => '单栏分类列表(无缩略图)',
+		),
+
+		array(
+			'id'       => 'cat_one_on_img_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认13</span>',
+			'default'  => 13,
+		),
+
+		array(
+			'id'       => 'cat_one_on_img_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'cat_one_on_img_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '单栏分类列表(10篇文章)',
+	'icon'        => '',
+	'description' => '单栏分类列表(10篇文章)',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_one_10',
+			'type'     => 'switcher',
+			'title'    => '单栏分类列表(10篇文章)',
+		),
+
+		array(
+			'id'       => 'cat_one_10_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认14</span>',
+			'default'  => 14,
+		),
+
+		array(
+			'id'       => 'cat_one_10_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '视频模块',
+	'icon'        => '',
+	'description' => '视频模块',
+	'fields'      => array(
+
+		array(
+			'id'       => 'video_box',
+			'type'     => 'switcher',
+			'title'    => '视频模块',
+		),
+
+		array(
+			'id'       => 'video_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认15</span>',
+			'default'  => 15,
+		),
+
+		array(
+			'id'       => 'video_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'video',
+			'type'     => 'switcher',
+			'title'    => '调用视频日志',
+		),
+
+		array(
+			'id'       => 'video_id',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'video_post',
+			'type'     => 'switcher',
+			'title'    => '调用分类文章',
+		),
+
+		array(
+			'id'          => 'video_post_id',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'        => 'select',
+			'title'       => '选择一个分类',
+			'placeholder' => '选择分类',
+			'options'     => 'categories',
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '混排分类列表',
+	'icon'        => '',
+	'description' => '混排分类列表',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_lead',
+			'type'     => 'switcher',
+			'title'    => '混排分类列表',
+		),
+
+		array(
+			'id'       => 'cat_lead_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认16</span>',
+			'default'  => 16,
+		),
+
+		array(
+			'id'       => 'cat_lead_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'no_lead_img',
+			'type'     => 'switcher',
+			'title'    => '显示小图',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'cat_lead_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '两栏分类列表',
+	'icon'        => '',
+	'description' => '两栏分类列表',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_small',
+			'type'     => 'switcher',
+			'title'    => '两栏分类列表',
+		),
+
+		array(
+			'id'       => 'cat_small_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认17</span>',
+			'default'  => 17,
+		),
+
+		array(
+			'id'       => 'cat_small_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'cat_small_z',
+			'type'     => 'switcher',
+			'title'    => '不显示第一篇摘要',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'cat_small_img_no',
+			'type'     => 'switcher',
+			'title'    => '不显示缩略图',
+		),
+
+		array(
+			'id'       => 'cat_small_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => 'Tab组合分类',
+	'icon'        => '',
+	'description' => 'AJAX调用分类文章',
+	'fields'      => array(
+
+	array(
+			'id'       => 'cms_ajax_tabs',
+			'type'     => 'switcher',
+			'title'    => 'Tab组合分类',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'tab_h_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认18</span>',
+			'default'  => 18,
+		),
+
+		array(
+			'id'       => 'tab_b_n',
+			'type'     => 'number',
+			'title'    => '显示篇数',
+			'default'  => 8,
+		),
+
+		array(
+			'id'       => 'home_tab_cat_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'      => 'tabs_mode',
+			'type'    => 'radio',
+			'title'   => '显示模式',
+			'inline'  => true,
+			'options' => array(
+				'imglist'  => '列表',
+				'grid'     => '卡片',
+				'default'  => '标准',
+				'photo'    => '图片',
+			),
+			'default' => 'imglist',
+		),
+
+		array(
+			'id'      => 'home_tab_code_f',
+			'type'    => 'radio',
+			'title'   => '分栏（卡片/图片）',
+			'inline'  => true,
+			'options' => $fl23456,
+			'default' => '4',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '杂志侧边栏',
+	'icon'        => '',
+	'description' => '杂志侧边栏',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_no_s',
+			'type'     => 'switcher',
+			'title'    => '杂志侧边栏',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'cms_slider_sticky',
+			'type'     => 'switcher',
+			'title'    => '侧边栏跟随滚动',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '产品模块',
+	'icon'        => '',
+	'description' => '产品模块',
+	'fields'      => array(
+
+		array(
+			'id'       => 'products_on',
+			'type'     => 'switcher',
+			'title'    => '产品模块',
+		),
+
+		array(
+			'id'       => 'products_on_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">21</span>',
+			'default'  => 21,
+		),
+
+		array(
+			'id'       => 'products_n',
+			'type'     => 'number',
+			'title'    => '产品显示个数',
+			'after'    => '<span class="after-perch">默认4</span>',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'products_id',
+			'type'     => 'text',
+			'title'    => '输入产品分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '特色模块',
+	'icon'        => '',
+	'description' => '调用内容方法：编辑页面或者文章，在下面“仅用于特色模块”面板中输入相关内容',
+	'fields'      => array(
+
+		array(
+			'id'       => 'grid_ico_cms',
+			'type'     => 'switcher',
+			'title'    => '特色模块',
+		),
+
+		array(
+			'id'       => 'grid_ico_cms_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认22</span>',
+			'default'  => 22,
+		),
+
+		array(
+			'id'       => 'cms_ico_b',
+			'type'     => 'switcher',
+			'title'    => '图标无背景色',
+		),
+
+		array(
+			'id'      => 'grid_ico_cms_n',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl24568,
+			'default' => '6',
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '工具模块',
+	'icon'        => '',
+	'description' => '调用内容方法：编辑页面或者文章，在下面“仅用于工具模块”面板中输入相关内容',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_tool',
+			'type'     => 'switcher',
+			'title'    => '工具模块',
+		),
+
+		array(
+			'id'       => 'cms_tool_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认23</span>',
+			'default'  => 23,
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '杂志三栏小工具',
+	'icon'        => '',
+	'description' => '杂志三栏小工具',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_widget_three',
+			'type'     => 'switcher',
+			'title'    => '杂志三栏小工具',
+		),
+
+		array(
+			'id'       => 'cat_widget_three_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认24</span>',
+			'default'  => 24,
+		),
+
+		array(
+			'id'      => 'cms_widget_three_fl',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl1234,
+			'default' => '3',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '分类图片',
+	'icon'        => '',
+	'description' => '分类图片',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_square',
+			'type'     => 'switcher',
+			'title'    => '分类图片',
+		),
+
+		array(
+			'id'       => 'cat_square_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认25</span>',
+			'default'  => 25,
+		),
+
+		array(
+			'id'       => 'cat_square_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 6,
+		),
+
+		array(
+			'id'       => 'cat_square_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '分类网格',
+	'icon'        => '',
+	'description' => '分类网格',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_grid',
+			'type'     => 'switcher',
+			'title'    => '分类网格',
+		),
+
+		array(
+			'id'       => 'cat_grid_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认26</span>',
+			'default'  => 26,
+		),
+
+		array(
+			'id'       => 'cat_grid_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 6,
+		),
+
+		array(
+			'id'       => 'cat_grid_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '图片滚动模块',
+	'icon'        => '',
+	'description' => '图片滚动模块',
+	'fields'      => array(
+
+		array(
+			'id'       => 'flexisel',
+			'type'     => 'switcher',
+			'title'    => '图片滚动模块',
+		),
+
+		array(
+			'id'       => 'flexisel_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认27</span>',
+			'default'  => 27,
+		),
+
+		array(
+			'id'       => 'flexisel_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 8,
+		),
+
+		array(
+			'id'      => 'flexisel_m',
+			'type'    => 'radio',
+			'title'   => '调用方式',
+			'inline'  => true,
+			'options' => array(
+				'flexisel_cat' => '文章分类',
+				'flexisel_img' => '图片分类',
+				'flexisel_key' => '指定文章',
+			),
+			'default' => 'flexisel_cat',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '文章分类',
+		),
+
+		array(
+			'id'          => 'flexisel_cat_id',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'        => 'select',
+			'title'       => '选择一个分类',
+			'placeholder' => '选择分类',
+			'options'     => 'categories',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '图片分类',
+		),
+
+		array(
+			'id'       => 'gallery_id',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '指定文章',
+		),
+
+		array(
+			'id'       => 'key_n',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '添加自定义字段',
+			'after'    => '通过为文章添加自定义字段，调用指定文章',
+			'default'  => 'views',
+		),
+
+		array(
+			'id'      => 'flexisel_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl56,
+			'default' => '5',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '底部分类列表',
+	'icon'        => '',
+	'description' => '底部分类列表',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_big',
+			'type'     => 'switcher',
+			'title'    => '底部分类列表',
+		),
+
+		array(
+			'id'       => 'cat_big_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认28</span>',
+			'default'  => 28,
+		),
+
+		array(
+			'id'       => 'cat_big_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'cat_big_three',
+			'type'     => 'switcher',
+			'title'    => '三栏',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'cat_big_z',
+			'type'     => 'switcher',
+			'title'    => '不显示第一篇摘要',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'cat_big_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '商品',
+	'icon'        => '',
+	'description' => '商品',
+	'fields'      => array(
+
+		array(
+			'id'       => 'tao_h',
+			'type'     => 'switcher',
+			'title'    => '商品',
+		),
+
+		array(
+			'id'       => 'tao_h_s',
+			'type'     => 'number',
+			'title'    => '标题',
+			'after'    => '<span class="after-perch">默认29</span>',
+			'default'  => 29,
+		),
+
+		array(
+			'id'       => 'tao_h_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'      => 'h_tao_sort',
+			'type'    => 'radio',
+			'title'   => '排序',
+			'inline'  => true,
+			'options' => array(
+				'time'  => '发表时间',
+				'views' => '浏览量',
+			),
+			'default' => 'time',
+		),
+
+		array(
+			'id'       => 'tao_h_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+	
+if ( function_exists( 'is_shop' ) ) {
+	CSF::createSection( $prefix, array(
+		'parent'      => 'cms_setting',
+		'title'       => 'WOO产品',
+		'icon'        => '',
+		'description' => '需要安装商城插件 WooCommerce 并发表产品',
+		'fields'      => array(
+
+			array(
+				'id'       => 'product_h',
+				'type'     => 'switcher',
+				'title'    => 'WOO产品',
+			),
+
+			array(
+				'id'       => 'product_h_s',
+				'type'     => 'number',
+				'title'    => '排序',
+				'after'    => '<span class="after-perch">默认30</span>',
+				'default'  => 30,
+			),
+
+			array(
+				'id'       => 'product_h_n',
+				'type'     => 'number',
+				'title'    => '产品商品显示数量',
+				'after'    => '<span class="after-perch">默认4</span>',
+				'default'  => 4,
+			),
+
+			array(
+				'id'       => 'product_h_id',
+				'type'     => 'text',
+				'title'    => '输入分类ID',
+				'after'    => $mid,
+			),
+
+			array(
+				'id'      => 'cms_woo_f',
+				'type'    => 'radio',
+				'title'   => '分栏',
+				'inline'  => true,
+				'options' => $fl456,
+				'default' => '4',
+			),
+		)
+	));
+}
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '底部无缩略图分类列表',
+	'icon'        => '',
+	'description' => '底部无缩略图分类列表',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_big_not',
+			'type'     => 'switcher',
+			'title'    => '底部无缩略图分类列表',
+		),
+
+		array(
+			'id'       => 'cat_big_not_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认31</span>',
+			'default'  => 31,
+		),
+
+		array(
+			'id'       => 'cat_big_not_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'cat_big_not_three',
+			'type'     => 'switcher',
+			'title'    => '三栏',
+		),
+
+		array(
+			'id'       => 'cat_big_not_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => 'Ajax分类短代码',
+	'icon'        => '',
+	'description' => '通过添加短代码调用分类文章',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cms_ajax_cat',
+			'type'     => 'switcher',
+			'title'    => '显示',
+		),
+
+		array(
+			'id'       => 'cms_ajax_cat_post_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认32</span>',
+			'default'  => 32,
+		),
+
+		array(
+			'id'    => 'cms_ajax_cat_post_code',
+			'type'  => 'textarea',
+			'title' => '输入短代码',
+			'default'  => '[be_ajax_post]',
+		),
+
+		array(
+			'class'    => 'be-help-code',
+			'title'    => '短代码示例',
+			'type'    => 'content',
+			'content' => $shortcode_help,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'cms_setting',
+	'title'       => '其它',
+	'icon'        => '',
+	'description' => '设置是显示文章日期及子分类',
+	'fields'      => array(
+
+		array(
+			'id'       => 'list_date',
+			'type'     => 'switcher',
+			'title'    => '文章列表日期',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_cat_child',
+			'type'     => 'switcher',
+			'title'    => '分类列表是否显示子分类文章',
+		),
+	)
+));
+// 杂志结束
+
+// 公司开始
+CSF::createSection( $prefix, array(
+	'id'    => 'group_setting',
+	'title' => '公司主页',
+	'icon'  => 'dashicons dashicons-cover-image',
+) );
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '幻灯',
+	'icon'        => '',
+	'description' => '调用方法， 新建文章或页面，在编辑器下面“用于公司主页幻灯”面板中输入图片地址，发表即可',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_slider',
+			'type'     => 'switcher',
+			'title'    => '幻灯',
+		),
+
+		array(
+			'id'       => 'group_slider_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 3,
+		),
+
+		array(
+			'id'       => 'big_back_img_h',
+			'type'     => 'number',
+			'title'    => '高度',
+			'after'    => '<span class="after-perch">默认500</span>',
+			'default'  => 500,
+		),
+
+		array(
+			'id'       => 'big_back_img_m_h',
+			'type'     => 'number',
+			'title'    => '移动端高度',
+			'after'    => '<span class="after-perch">用于移动端显示全图，留空默认240</span>',
+		),
+
+		array(
+			'id'       => 'group_slider_url',
+			'type'     => 'switcher',
+			'title'    => '链接到目标',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'group_slider_t',
+			'type'     => 'switcher',
+			'title'    => '显示文字',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'group_blur',
+			'type'     => 'switcher',
+			'title'    => '模糊大背景图片',
+		),
+
+		array(
+			'id'       => 'group_nav',
+			'type'     => 'switcher',
+			'title'    => '菜单浮在幻灯上',
+		),
+
+		array(
+			'id'       => 'group_slider_video',
+			'class'    => 'be-parent-item',
+			'type'     => 'switcher',
+			'title'    => '仅显示一个视频',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'group_slider_video_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'upload',
+			'title'    => 'MP4视频',
+		),
+
+		array(
+			'id'       => 'group_only_img',
+			'class'    => 'be-parent-item',
+			'type'     => 'switcher',
+			'title'    => '仅显示一张图片',
+			'label'    => '',
+		),
+
+		array(
+			'id'       => 'group_slider_img',
+			'class'    => 'be-child-item',
+			'type'     => 'upload',
+			'title'    => '图片',
+			'default'  => '',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'group_slider_img_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '图片链接到',
+			'subtitle' => '',
+			'before'   => '',
+			'after'    => '点击图片跳转的地址',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '关于我们',
+	'icon'        => '',
+	'description' => '关于我们',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_contact',
+			'type'     => 'switcher',
+			'title'    => '关于我们',
+		),
+
+		array(
+			'id'       => 'group_contact_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认1</span>',
+			'default'  => 1,
+		),
+
+		array(
+			'id'       => 'group_contact_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '关于我们',
+		),
+
+		array(
+			'id'          => 'contact_p',
+			'type'        => 'select',
+			'title'       => '选择页面',
+			'placeholder' => '选择页面',
+			'options'     => 'pages',
+			'query_args'  => array(
+				'posts_per_page' => -1
+			)
+		),
+
+		array(
+			'id'       => 'contact_words_n',
+			'type'     => 'number',
+			'title'    => '显示字数',
+			'after'    => '<span class="after-perch">默认210</span>',
+			'default'  => 210,
+		),
+
+		array(
+			'id'       => 'tr_contact',
+			'type'     => 'switcher',
+			'title'    => '移动端截断文字',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'group_contact_bg',
+			'type'     => 'switcher',
+			'title'    => '显示图片',
+		),
+
+		array(
+			'id'       => 'group_contact_img',
+			'class'    => 'be-child-item',
+			'type'     => 'upload',
+			'title'    => '上传图片',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'      => 'contact_img_m',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '图片显示模式',
+			'inline'  => true,
+			'options' => array(
+				'contact_img_center' => '居中',
+				'contact_img_right' => '居右',
+			),
+			'default' => 'contact_img_center',
+		),
+
+		array(
+			'id'       => 'group_more_z',
+			'type'     => 'text',
+			'title'    => '详细查看按钮文字',
+			'after'    => '留空则不显示',
+			'default'  => '详细查看',
+		),
+
+		array(
+			'id'       => 'group_more_ico',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '图标代码',
+			'default'  => 'be be-stack',
+		),
+
+		array(
+			'id'       => 'group_more_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '详细查看链接地址',
+		),
+
+		array(
+			'id'       => 'group_contact_z',
+			'type'     => 'text',
+			'title'    => '联系方式按钮文字',
+			'after'    => '留空则不显示',
+			'default'  => '关于我们',
+		),
+
+		array(
+			'id'       => 'group_contact_ico',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '图标代码',
+			'default'  => 'be be-phone',
+		),
+
+		array(
+			'id'       => 'group_contact_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '联系方式链接地址',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '说明',
+	'icon'        => '',
+	'description' => '说明',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_explain',
+			'type'     => 'switcher',
+			'title'    => '说明',
+		),
+
+		array(
+			'id'       => 'group_explain_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认2</span>',
+			'default'  => 2,
+		),
+
+		array(
+			'id'          => 'explain_p',
+			'type'        => 'select',
+			'title'       => '选择简介页面',
+			'placeholder' => '选择页面',
+			'options'     => 'pages',
+			'query_args'  => array(
+				'posts_per_page' => -1
+			)
+		),
+
+		array(
+			'id'       => 'explain_words_n',
+			'type'     => 'number',
+			'title'    => '显示字数',
+			'after'    => '<span class="after-perch">默认180</span>',
+			'default'  => 180,
+		),
+
+		array(
+			'id'       => 'group_explain_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '公司说明',
+		),
+
+		array(
+			'id'       => 'group_explain_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '公司说明模块',
+		),
+
+		array(
+			'id'       => 'explain_content_t',
+			'type'     => 'text',
+			'title'    => '文字说明小标题',
+			'default'  => '文字说明小标题',
+		),
+
+		array(
+			'id'       => 'group_explain_url',
+			'type'     => 'text',
+			'title'    => '自定义链接',
+		),
+
+		array(
+			'id'       => 'group_explain_more',
+			'type'     => 'text',
+			'title'    => '自定义链接文字',
+		),
+
+		array(
+			'id'       => 'group_explain_more_no',
+			'type'     => 'switcher',
+			'title'    => '不显示链接按钮',
+		),
+
+		array(
+			'id'       => 'ex_thumbnail_only',
+			'type'     => 'switcher',
+			'title'    => '仅显示一张图',
+		),
+
+		array(
+			'id'       => 'ex_thumbnail_a',
+			'class'    => 'be-child-item',
+			'type'     => 'upload',
+			'title'    => '上传左图片',
+			'default'  => $imgdefault . '/random/320.jpg',
+			'preview'  => true,
+		),
+
+
+		array(
+			'id'       => 'ex_thumbnail_b',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'upload',
+			'title'    => '上传右图片',
+			'default'  => $imgdefault . '/random/320.jpg',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '公示板',
+	'icon'        => '',
+	'description' => '公示板',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_notice',
+			'type'     => 'switcher',
+			'title'    => '公示板',
+		),
+
+		array(
+			'id'       => 'group_notice_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认3</span>',
+			'default'  => 3,
+		),
+
+		array(
+			'id'       => 'group_notice_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '公示板',
+		),
+
+		array(
+			'id'       => 'group_notice_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '公示板说明',
+		),
+
+		array(
+			'id'       => 'group_notice_inf',
+			'type'     => 'textarea',
+			'title'    => '输入右侧文字信息',
+			'sanitize' => false,
+			'after'    => '可使用HTML代码',
+			'default'  => '<h2>H2 响应式设计</h2><div class="clear"></div><h3>H3 自定义颜色风格</h3><h4>H4 响应式设计不依赖任何前端框架</h4><h5>H5 不依赖任何前端框架</h5><h6>H6 响应式设计自定义颜色风格不依赖任何前端框架风格不依赖任何风格不依赖任何</h6>',
+		),
+
+		array(
+			'id'       => 'group_notice_img',
+			'type'     => 'upload',
+			'title'    => '左侧图片',
+			'default'  => $imgdefault . '/random/560.jpg',
+			'preview'  => true,
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '分类封面',
+	'icon'        => '',
+	'description' => '分类封面',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_cat_cover',
+			'type'     => 'switcher',
+			'title'    => '分类封面',
+		),
+
+		array(
+			'id'       => 'group_cat_cover_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认4</span>',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'group_cat_cover_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'      => 'group_cover_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl345,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'group_cover_gray',
+			'type'     => 'switcher',
+			'title'    => '图片灰色',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'group_cover_title',
+			'type'     => 'switcher',
+			'title'    => '显示分类名称',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '服务项目',
+	'icon'        => '',
+	'description' => '调用方法：编辑页面或者文章，在下面"仅用于公司主页服务模块"面板中输入相关内容',
+	'fields'      => array(
+
+		array(
+			'id'       => 'dean',
+			'type'     => 'switcher',
+			'title'    => '服务项目',
+		),
+
+		array(
+			'id'       => 'dean_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认5</span>',
+			'default'  => 5,
+		),
+
+		array(
+			'id'       => 'dean_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '服务项目',
+		),
+
+		array(
+			'id'       => 'dean_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '服务项目模块',
+		),
+
+		array(
+			'id'      => 'deanm_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl345,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'deanm_fm',
+			'type'     => 'switcher',
+			'title'    => '移动端强制1栏',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '推荐',
+	'icon'        => '',
+	'description' => '调用方法：编辑页面或者文章，在下面"仅用于公司主页推荐模块"面板中添加图片及相关内容',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_foldimg',
+			'type'     => 'switcher',
+			'title'    => '推荐',
+		),
+
+		array(
+			'id'       => 'foldimg_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认6</span>',
+			'default'  => 6,
+		),
+
+		array(
+			'id'       => 'foldimg_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default' => '推荐',
+		),
+
+		array(
+			'id'       => 'foldimg_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default' => '推荐说明',
+		),
+
+		array(
+			'id'       => 'foldimg_fl',
+			'type'     => 'switcher',
+			'title'    => '移动端显示1栏',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '流程',
+	'icon'        => '',
+	'description' => '调用方法：编辑页面或者文章，在下面找到"公司流程模块图标代码"输入图标代码',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_process',
+			'type'     => 'switcher',
+			'title'    => '流程',
+		),
+
+		array(
+			'id'       => 'process_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认7</span>',
+			'default'  => 7,
+		),
+
+		array(
+			'id'       => 'process_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '工作流程',
+		),
+
+		array(
+			'id'       => 'process_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '工作流程说明',
+		),
+
+		array(
+			'id'       => 'process_turn',
+			'type'     => 'switcher',
+			'title'    => '显示动画',
+			'default'  => true,
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '支持',
+	'icon'        => '',
+	'description' => '调用方法：编辑页面或者文章，在下面找到"公司支持模块图标代码"输入图标代码',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_assist',
+			'type'     => 'switcher',
+			'title'    => '支持',
+		),
+
+		array(
+			'id'       => 'group_assist_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认8</span>',
+			'default'  => 8,
+		),
+
+		array(
+			'id'       => 'group_assist_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '协助支持',
+		),
+
+		array(
+			'id'       => 'group_assist_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '协助支持说明',
+		),
+
+		array(
+			'id'       => 'group_assist_url',
+			'type'     => 'switcher',
+			'title'    => '链接到文章',
+			'default'  => true,
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '咨询',
+	'icon'        => '',
+	'description' => '调用方法：编辑页面或者文章，在下面勾选"添加到公司首页咨询模块"',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_strong',
+			'type'     => 'switcher',
+			'title'    => '咨询',
+		),
+
+		array(
+			'id'       => 'group_strong_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认9</span>',
+			'default'  => 9,
+		),
+
+		array(
+			'id'       => 'group_strong_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '咨询',
+		),
+
+		array(
+			'id'       => 'group_strong_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '咨询说明',
+		),
+
+		array(
+			'id'       => 'group_strong_title_c',
+			'type'     => 'switcher',
+			'title'    => '标题居中',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'group_strong_inf',
+			'type'     => 'textarea',
+			'title'    => '输入左侧文字信息',
+			'sanitize' => false,
+			'after'    => '可使用HTML代码',
+			'default'  => '<h2>H2 响应式设计</h2><div class="clear"></div><h3>H3 自定义颜色风格</h3><h4>H4 响应式设计不依赖任何前端框架</h4><h5>H5 不依赖任何前端框架</h5><h6>H6 响应式设计自定义颜色风格不依赖任何前端框架风格</h6>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '帮助',
+	'icon'        => '',
+	'description' => '调用方法：编辑页面或者文章，在下面勾选"添加到公司首页帮助模块"',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_help',
+			'type'     => 'switcher',
+			'title'    => '帮助',
+		),
+
+		array(
+			'id'       => 'group_help_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认10</span>',
+			'default'  => 10,
+		),
+
+		array(
+			'id'       => 'group_help_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '帮助',
+		),
+
+		array(
+			'id'       => 'group_help_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '帮助说明',
+		),
+
+		array(
+			'id'       => 'group_help_num',
+			'type'     => 'switcher',
+			'title'    => '显示序号',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'group_help_img',
+			'type'     => 'upload',
+			'title'    => '左侧图片',
+			'default'  => $imgdefault . '/random/320.jpg',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '工具',
+	'icon'        => '',
+	'description' => '调用方法：编辑页面或者文章，在下面"仅用于工具模块"面板中输入相关内容',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_tool',
+			'type'     => 'switcher',
+			'title'    => '工具',
+		),
+
+		array(
+			'id'       => 'tool_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认11</span>',
+			'default'  => 11,
+		),
+
+		array(
+			'id'       => 'tool_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '工具',
+		),
+
+		array(
+			'id'       => 'tool_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '实用工具',
+		),
+
+		array(
+			'id'      => 'stool_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl3456,
+			'default' => '4',
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '产品模块',
+	'icon'        => '',
+	'description' => '产品模块',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_products',
+			'type'     => 'switcher',
+			'title'    => '产品模块',
+		),
+
+		array(
+			'id'       => 'group_products_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认12</span>',
+			'default'  => 12,
+		),
+
+		array(
+			'id'       => 'group_products_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'group_products_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '主要产品',
+		),
+
+		array(
+			'id'       => 'group_products_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '产品日志模块',
+		),
+
+		array(
+			'id'       => 'group_products_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'group_products_url',
+			'type'     => 'text',
+			'title'    => '输入更多按钮链接地址',
+			'after'    => '留空则不显示',
+		),
+
+		array(
+			'id'      => 'group_products_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '4',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '服务宗旨',
+	'icon'        => '',
+	'description' => '服务宗旨',
+	'fields'      => array(
+
+		array(
+			'id'       => 'service',
+			'type'     => 'switcher',
+			'title'    => '服务宗旨',
+		),
+
+		array(
+			'id'       => 'service_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认13</span>',
+			'default'  => 13,
+		),
+
+		array(
+			'id'       => 'service_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '服务宗旨',
+		),
+
+
+		array(
+			'id'       => 'service_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '服务宗旨模块',
+		),
+
+		array(
+			'id'       => 'service_l_id',
+			'type'     => 'text',
+			'title'    => '输入左侧模块文章或页面ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'service_r_id',
+			'type'     => 'text',
+			'title'    => '输入右侧模块文章或页面ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'service_c_id',
+			'type'     => 'text',
+			'title'    => '输入中间模块文章或页面ID',
+		),
+
+		array(
+			'id'       => 'service_c_img',
+			'type'     => 'upload',
+			'title'    => '输入中间模块图片地址',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'service_bg_img',
+			'type'     => 'upload',
+			'title'    => '背景图片',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'service_img_edit',
+			'type'     => 'switcher',
+			'title'    => '图片无链接',
+		),
+	)
+));
+
+if (function_exists( 'is_shop' )) {
+	CSF::createSection( $prefix, array(
+		'parent'      => 'group_setting',
+		'title'       => 'WOO产品',
+		'icon'        => '',
+		'description' => 'WOO产品',
+		'fields'      => array(
+
+		array(
+			'type'    => 'content',
+			'content' => '需要安装商城插件 WooCommerce 并发表产品',
+		),
+
+			array(
+				'id'       => 'g_product',
+				'type'     => 'switcher',
+				'title'    => 'WOO产品',
+			),
+
+			array(
+				'id'       => 'g_product_s',
+				'type'     => 'number',
+				'title'    => '排序',
+				'after'    => '<span class="after-perch">默认14</span>',
+				'default'  => 14,
+			),
+
+			array(
+				'id'       => 'g_product_t',
+				'type'     => 'text',
+				'title'    => '标题',
+				'default'  => 'WOO产品',
+			),
+
+			array(
+				'id'       => 'g_product_des',
+				'type'     => 'text',
+				'title'    => '说明',
+				'default'  => 'WOO产品模块',
+			),
+
+			array(
+				'id'       => 'g_product_id',
+				'type'     => 'text',
+				'title'    => '输入产品分类ID',
+				'after'    => $mid,
+			),
+
+			array(
+				'id'       => 'g_product_n',
+				'type'     => 'number',
+				'title'    => '产品显示数量',
+				'default'  => 4,
+			),
+
+			array(
+				'id'      => 'group_woo_f',
+				'type'    => 'radio',
+				'title'   => '分栏',
+				'inline'  => true,
+				'options' => $fl456,
+				'default' => '4',
+			),
+		)
+	));
+}
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '特色',
+	'icon'        => '',
+	'description' => '调用方法：编辑页面或者文章，在下面"仅用于特色模块"面板中输入相关内容',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_ico',
+			'type'     => 'switcher',
+			'title'    => '特色',
+		),
+
+		array(
+			'id'       => 'group_ico_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 15,
+			'after'    => '<span class="after-perch">默认15</span>',
+		),
+
+		array(
+			'id'       => 'group_ico_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '特色',
+		),
+
+		array(
+			'id'       => 'group_ico_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '特色模块',
+		),
+
+		array(
+			'id'      => 'grid_ico_group_n',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl24568,
+			'default' => '6',
+		),
+
+		array(
+			'id'       => 'group_ico_b',
+			'type'     => 'switcher',
+			'title'    => '图标无背景色',
+		),
+
+		array(
+			'id'       => 'group_ico_img',
+			'type'     => 'switcher',
+			'title'    => '不显示文字(仅适用于图片)',
+		),
+
+		array(
+			'id'       => 'group_md_gray',
+			'type'     => 'switcher',
+			'title'    => '图片灰色',
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '描述',
+	'icon'        => '',
+	'description' => '描述',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_post',
+			'type'     => 'switcher',
+			'title'    => '描述',
+		),
+
+		array(
+			'id'       => 'group_post_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 16,
+			'after'    => '<span class="after-perch">默认16</span>',
+		),
+
+		array(
+			'id'       => 'group_post_id',
+			'type'     => 'text',
+			'title'    => '输入文章或页面ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '简介',
+	'icon'        => '',
+	'description' => '简介',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_features',
+			'type'     => 'switcher',
+			'title'    => '简介',
+		),
+
+		array(
+			'id'       => 'group_features_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 17,
+			'after'    => '<span class="after-perch">默认17</span>',
+		),
+
+		array(
+			'id'       => 'features_t',
+			'type'     => 'text',
+			'title'    => '自定义标题',
+			'default'  => '本站简介',
+		),
+
+		array(
+			'id'       => 'features_des',
+			'type'     => 'text',
+			'title'    => '自定义描述',
+			'default'  => '本站简介描述',
+		),
+
+		array(
+			'id'          => 'features_id',
+			'type'        => 'select',
+			'title'       => '选择一个分类',
+			'placeholder' => '选择分类',
+			'options'     => 'categories',
+		),
+
+		array(
+			'id'       => 'features_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+		array(
+			'id'      => 'group_features_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'features_url',
+			'type'     => 'text',
+			'title'    => '输入更多按钮链接地址',
+			'after'    => '留空则不显示',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '展示',
+	'icon'        => '',
+	'description' => '展示',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_img',
+			'type'     => 'switcher',
+			'title'    => '展示',
+		),
+
+		array(
+			'id'       => 'group_img_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 18,
+			'after'    => '<span class="after-perch">默认18</span>',
+		),
+
+		array(
+			'id'       => 'group_img_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'group_img_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'  => $mid,
+		),
+
+		array(
+			'id'      => 'group_img_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '4',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '分类左右图',
+	'icon'        => '',
+	'description' => '图片调用方法：编辑选定的分类中的一篇文章，在编辑框下面“将文章添加到”面板中，勾选“分类推荐文章”，并更新发表',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_wd',
+			'type'     => 'switcher',
+			'title'    => '分类左右图',
+		),
+
+		array(
+			'id'       => 'group_wd_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认19</span>',
+			'default'  => 19,
+		),
+
+		array(
+			'id'       => 'group_wd_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '一栏小工具',
+	'icon'        => '',
+	'description' => '一栏小工具',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_widget_one',
+			'type'     => 'switcher',
+			'title'    => '一栏小工具',
+		),
+
+		array(
+			'id'       => 'group_widget_one_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认20</span>',
+			'default'  => 20,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '最新文章',
+	'icon'        => '',
+	'description' => '最新文章',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_new',
+			'type'     => 'switcher',
+			'title'    => '最新文章',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'group_new_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认21</span>',
+			'default'  => 21,
+		),
+
+		array(
+			'id'       => 'group_new_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '最新文章',
+		),
+
+		array(
+			'id'       => 'group_new_more_url',
+			'type'     => 'text',
+			'title'    => '标题链接',
+		),
+
+		array(
+			'id'       => 'group_new_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '这里是本站最新发表的文章',
+		),
+
+		array(
+			'id'       => 'group_new_list',
+			'type'     => 'switcher',
+			'title'    => '标题模式',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'group_new_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 10,
+		),
+
+		array(
+			'id'      => 'not_group_new',
+			'type'    => 'checkbox',
+			'title'   => '排除的分类',
+			'inline'  => true,
+			'options' => 'categories',
+			'query_args' => array(
+				'orderby'  => 'ID',
+				'order'    => 'ASC',
+			),
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '商品模块',
+	'icon'        => '',
+	'description' => '商品模块',
+	'fields'      => array(
+
+		array(
+			'id'       => 'g_tao_h',
+			'type'     => 'switcher',
+			'title'    => '商品模块',
+		),
+
+		array(
+			'id'       => 'g_tao_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认22</span>',
+			'default'  => 22,
+		),
+
+		array(
+			'id'       => 'g_tao_h_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'      => 'g_tao_sort',
+			'type'    => 'radio',
+			'title'   => '排序',
+			'inline'  => true,
+			'options' => array(
+				'time'  => '发表时间',
+				'views' => '浏览量',
+			),
+			'default' => 'time',
+		),
+
+		array(
+			'id'       => 'g_tao_h_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '三栏小工具',
+	'icon'        => '',
+	'description' => '三栏小工具',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_widget_three',
+			'type'     => 'switcher',
+			'title'    => '三栏小工具',
+		),
+
+		array(
+			'id'       => 'group_widget_three_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认23</span>',
+			'default'  => 23,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '新闻资讯A',
+	'icon'        => '',
+	'description' => '新闻资讯A',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_cat_a',
+			'type'     => 'switcher',
+			'title'    => '新闻资讯A',
+		),
+
+		array(
+			'id'       => 'group_cat_a_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 24,
+			'after'    => '<span class="after-perch">默认24</span>',
+		),
+
+		array(
+			'id'       => 'group_cat_a_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'group_cat_a_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'group_cat_a_top',
+			'type'     => 'switcher',
+			'title'    => '第一篇调用分类推荐文章',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '两栏小工具',
+	'icon'        => '',
+	'description' => '两栏小工具',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_widget_two',
+			'type'     => 'switcher',
+			'title'    => '两栏小工具',
+		),
+
+		array(
+			'id'       => 'group_widget_two_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认25</span>',
+			'default'  => 25,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '新闻资讯B',
+	'icon'        => '',
+	'description' => '新闻资讯B',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_cat_b',
+			'type'     => 'switcher',
+			'title'    => '新闻资讯B',
+		),
+
+		array(
+			'id'       => 'group_cat_b_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 26,
+			'after'    => '<span class="after-perch">默认26</span>',
+		),
+
+		array(
+			'id'       => 'group_cat_b_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'group_cat_b_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'group_cat_b_top',
+			'type'     => 'switcher',
+			'title'    => '第一篇调用分类置顶文章',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => 'AJAX分类',
+	'icon'        => '',
+	'description' => 'AJAX加载TAB分类',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_tab',
+			'type'     => 'switcher',
+			'title'    => 'AJAX分类',
+		),
+
+		array(
+			'id'       => 'group_tab_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 27,
+			'after'    => '<span class="after-perch">默认27</span>',
+		),
+
+		array(
+			'id'       => 'group_tab_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => 'AJAX分类',
+		),
+
+		array(
+			'id'       => 'group_tab_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 8,
+		),
+
+		array(
+			'id'       => 'group_tab_cat_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'      => 'group_tabs_mode',
+			'type'    => 'radio',
+			'title'   => '显示模式',
+			'inline'  => true,
+			'options' => array(
+				'photo'    => '图片',
+				'grid'     => '卡片',
+				'title'    => '标题',
+			),
+			'default' => '',
+		),
+
+		array(
+			'id'      => 'stab_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl3456,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'group_tab_img_meta',
+			'type'     => 'switcher',
+			'title'    => '图片模式显示文章信息',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '新闻资讯C',
+	'icon'        => '',
+	'description' => '新闻资讯C',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_cat_c',
+			'type'     => 'switcher',
+			'title'    => '新闻资讯C',
+		),
+
+		array(
+			'id'       => 'group_cat_c_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 28,
+			'after'    => '<span class="after-perch">默认28</span>',
+		),
+
+		array(
+			'id'       => 'group_cat_c_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'group_cat_c_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'group_cat_c_img',
+			'type'     => 'switcher',
+			'title'    => '第一篇显示缩略图',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '热门推荐',
+	'icon'        => '',
+	'description' => '热门推荐',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_carousel',
+			'type'     => 'switcher',
+			'title'    => '热门推荐',
+		),
+
+		array(
+			'id'       => 'group_carousel_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 29,
+			'after'    => '<span class="after-perch">默认29</span>',
+		),
+
+		array(
+			'id'       => 'carousel_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 8,
+		),
+
+		array(
+			'id'       => 'group_carousel_t',
+			'type'     => 'text',
+			'title'    => '标题',
+			'default'  => '热门推荐',
+		),
+
+		array(
+			'id'       => 'carousel_des',
+			'type'     => 'text',
+			'title'    => '说明',
+			'default'  => '热门推荐说明',
+		),
+
+		array(
+			'id'          => 'group_carousel_id',
+			'type'        => 'select',
+			'title'       => '选择一个分类',
+			'placeholder' => '选择分类',
+			'options'     => 'categories',
+		),
+
+		array(
+			'id'       => 'group_carousel_c',
+			'type'     => 'switcher',
+			'title'    => '标题居中',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'group_gallery',
+			'type'     => 'switcher',
+			'title'    => '调用图片日志',
+		),
+
+		array(
+			'id'       => 'group_gallery_id',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '输入图片分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'carousel_bg_img',
+			'type'     => 'upload',
+			'title'    => '背景图片',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '新闻资讯D',
+	'icon'        => '',
+	'description' => '以左右模块展示两个分类文章列表',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_cat_d',
+			'type'     => 'switcher',
+			'title'    => '新闻资讯D',
+		),
+
+		array(
+			'id'       => 'group_cat_d_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'default'  => 30,
+			'after'    => '<span class="after-perch">默认30</span>',
+		),
+
+		array(
+			'id'       => 'group_cat_d_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 8,
+		),
+
+		array(
+			'id'          => 'group_cat_d_l_id',
+			'type'        => 'select',
+			'title'       => '选择左侧分类',
+			'placeholder' => '选择分类',
+			'options'     => 'categories',
+		),
+
+		array(
+			'id'       => 'group_cat_d_l_img',
+			'type'     => 'upload',
+			'title'    => '左侧图片',
+			'default'  => $imgdefault . '/random/560.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'          => 'group_cat_d_r_id',
+			'type'        => 'select',
+			'title'       => '选择右侧分类',
+			'placeholder' => '选择分类',
+			'options'     => 'categories',
+		),
+
+		array(
+			'id'       => 'group_cat_d_r_img',
+			'type'     => 'upload',
+			'title'    => '右侧图片',
+			'default'  => $imgdefault . '/random/560.jpg',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => 'Ajax分类短代码',
+	'icon'        => '',
+	'description' => '通过添加短代码调用分类文章',
+	'fields'      => array(
+
+		array(
+			'id'       => 'group_ajax_cat',
+			'type'     => 'switcher',
+			'title'    => '显示',
+		),
+
+		array(
+			'id'       => 'group_ajax_cat_post_s',
+			'type'     => 'number',
+			'title'    => '排序',
+			'after'    => '<span class="after-perch">默认31</span>',
+			'default'  => 31,
+		),
+
+		array(
+			'id'    => 'group_ajax_cat_post_code',
+			'type'  => 'textarea',
+			'title' => '输入短代码',
+			'default'  => '[be_ajax_post]',
+		),
+
+		array(
+			'class'    => 'be-help-code',
+			'title'    => '短代码示例',
+			'type'    => 'content',
+			'content' => $shortcode_help,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'group_setting',
+	'title'       => '其它',
+	'icon'        => '',
+	'description' => '其它',
+	'fields'      => array(
+
+		array(
+			'id'       => 'g_line',
+			'type'     => 'switcher',
+			'title'    => '隔行变色',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'group_no_cat_child',
+			'type'     => 'switcher',
+			'title'    => '不显示子分类文章',
+		),
+	)
+));
+
+// 公司结束
+
+CSF::createSection( $prefix, array(
+	'id'    => 'catimg_setting',
+	'title' => '分类图片',
+	'icon'  => 'dashicons dashicons-format-gallery',
+) );
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'catimg_setting',
+	'title'       => '最新文章',
+	'icon'        => '',
+	'description' => '分类图片首页最新文章',
+	'fields'      => array(
+
+		array(
+			'id'       => 'grid_cat_new',
+			'type'     => 'switcher',
+			'title'    => '最新文章',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'grid_cat_news_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'grid_new_cat_tab',
+			'type'     => 'switcher',
+			'title'    => '分类链接',
+		),
+
+		array(
+			'id'       => 'grid_new_cat_id',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'grid_new_cat_n',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '分类文章数不受上面限制',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'grid_new_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '4',
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'catimg_setting',
+	'title'       => '其它模块',
+	'icon'        => '',
+	'description' => '分类封面、条件筛选等',
+	'fields'      => array(
+
+		array(
+			'id'       => 'catimg_cat_cover',
+			'type'     => 'switcher',
+			'title'    => '分类封面',
+		),
+
+		array(
+			'id'       => 'catimg_filter',
+			'type'     => 'switcher',
+			'title'    => '显示多条件筛选',
+		),
+
+		array(
+			'id'       => 'catimg_special',
+			'type'     => 'switcher',
+			'title'    => '专题',
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'catimg_setting',
+	'title'       => '分类模块A',
+	'icon'        => '',
+	'description' => '分类模块A',
+	'fields'      => array(
+
+		array(
+			'id'       => 'grid_cat_a',
+			'type'     => 'switcher',
+			'title'    => '分类模块A',
+		),
+
+		array(
+			'id'       => 'grid_cat_a_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'grid_cat_a_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'      => 'grid_cat_a_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'grid_cat_a_child',
+			'type'     => 'switcher',
+			'title'    => '同级/子分类链接',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'grid_cat_a_des',
+			'type'     => 'switcher',
+			'title'    => '分类描述',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'catimg_setting',
+	'title'       => '杂志单栏小工具',
+	'icon'        => '',
+	'description' => '杂志单栏小工具',
+	'fields'      => array(
+
+		array(
+			'id'       => 'grid_widget_one',
+			'type'     => 'switcher',
+			'title'    => '杂志单栏小工具',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'catimg_setting',
+	'title'       => '分类滚动模块',
+	'icon'        => '',
+	'description' => '分类滚动模块',
+	'fields'      => array(
+
+		array(
+			'id'       => 'grid_carousel',
+			'type'     => 'switcher',
+			'title'    => '分类滚动模块',
+		),
+
+		array(
+			'id'       => 'grid_carousel_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 8,
+		),
+
+		array(
+			'id'          => 'grid_carousel_id',
+			'type'        => 'select',
+			'title'       => '选择一个分类',
+			'placeholder' => '选择分类',
+			'options'     => 'categories',
+		),
+
+		array(
+			'id'      => 'grid_carousel_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'grid_carousel_des',
+			'type'     => 'switcher',
+			'title'    => '分类描述',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'catimg_setting',
+	'title'       => '分类模块B',
+	'icon'        => '',
+	'description' => '分类模块B',
+	'fields'      => array(
+
+		array(
+			'id'       => 'grid_cat_b',
+			'type'     => 'switcher',
+			'title'    => '分类模块B',
+		),
+
+		array(
+			'id'       => 'grid_cat_b_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 5,
+		),
+
+		array(
+			'id'       => 'grid_cat_b_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'      => 'grid_cat_b_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '5',
+		),
+
+		array(
+			'id'       => 'grid_cat_b_des',
+			'type'     => 'switcher',
+			'title'    => '分类描述',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'catimg_setting',
+	'title'       => '杂志三栏小工具',
+	'icon'        => '',
+	'description' => '杂志三栏小工具',
+	'fields'      => array(
+
+		array(
+			'id'       => 'grid_widget_two',
+			'type'     => 'switcher',
+			'title'    => '杂志三栏小工具',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'catimg_setting',
+	'title'       => 'Ajax分类短代码',
+	'icon'        => '',
+	'description' => '通过添加短代码调用分类文章',
+	'fields'      => array(
+
+		array(
+			'id'       => 'catimg_ajax_cat',
+			'type'     => 'switcher',
+			'title'    => '显示',
+		),
+
+		array(
+			'id'    => 'catimg_ajax_cat_post_code',
+			'type'  => 'textarea',
+			'title' => '输入短代码',
+			'default'  => '[be_ajax_post]',
+		),
+
+		array(
+			'class'    => 'be-help-code',
+			'title'    => '短代码示例',
+			'type'    => 'content',
+			'content' => $shortcode_help,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'catimg_setting',
+	'title'       => '分类模块C',
+	'icon'        => '',
+	'description' => '分类模块C',
+	'fields'      => array(
+
+		array(
+			'id'       => 'grid_cat_c',
+			'type'     => 'switcher',
+			'title'    => '分类模块C',
+		),
+
+		array(
+			'id'       => 'grid_cat_c_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'grid_cat_c_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'      => 'grid_cat_c_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'grid_cat_c_des',
+			'type'     => 'switcher',
+			'title'    => '分类描述',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'catimg_setting',
+	'title'       => '子分类文章',
+	'icon'        => '',
+	'description' => '分类模块中是否显示子分类文章',
+	'fields'      => array(
+
+		array(
+			'id'       => 'no_grid_cat_child',
+			'type'     => 'switcher',
+			'title'    => '不显示子分类文章',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'id'    => 'admin_setting',
+	'title' => '站点管理',
+	'icon'        => 'dashicons dashicons-admin-users',
+) );
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'admin_setting',
+	'title'       => '管理站点',
+	'icon'        => '',
+	'description' => '登录注册相关设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'login',
+			'type'     => 'switcher',
+			'title'    => '前端登录',
+			'label'    => '',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'profile',
+			'type'     => 'switcher',
+			'title'    => '顶部菜单登录按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'menu_login',
+			'type'     => 'switcher',
+			'title'    => '主菜单登录按钮',
+			'default'  => true,
+		),
+		array(
+			'id'       => 'menu_reg',
+			'type'     => 'switcher',
+			'title'    => '菜单注册按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'mobile_login',
+			'type'     => 'switcher',
+			'title'    => '移动端登录按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'reset_pass',
+			'type'     => 'switcher',
+			'title'    => '前端显示找回密码',
+			'default'  => true,
+		),
+		array(
+			'id'       => 'login_captcha',
+			'type'     => 'switcher',
+			'title'    => '登录验证码',
+		),
+
+		array(
+			'id'       => 'register_captcha',
+			'type'     => 'switcher',
+			'title'    => '注册验证码',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'lost_captcha',
+			'type'     => 'switcher',
+			'title'    => '找回密码验证码',
+			'default'  => true,
+		),
+		array(
+			'id'       => 'go_reg',
+			'type'     => 'switcher',
+			'title'    => '注册输入密码',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'reg_captcha',
+			'type'     => 'switcher',
+			'title'    => '注册邮箱验证',
+			'default'  => true,
+			'after'    => '<span class="after-perch">需要与"注册输入密码"同时使用</span>',
+		),
+
+		array(
+			'id'       => 'reg_above',
+			'type'     => 'switcher',
+			'title'    => '用户注册页面首屏为注册表单',
+			'default'  => true,
+		),
+		array(
+			'id'       => 'register_auto',
+			'type'     => 'switcher',
+			'title'    => '注册后自动登录',
+		),
+
+		array(
+			'id'       => 'no_admin',
+			'type'     => 'switcher',
+			'title'    => '非管理员和编辑禁止进后台',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'only_social_login',
+			'type'     => 'switcher',
+			'title'    => '仅允许社会化登录',
+		),
+
+		array(
+			'id'       => 'user_l',
+			'type'     => 'text',
+			'title'    => '自定义登录按钮链接',
+		),
+
+		array(
+			'id'       => 'reg_l',
+			'type'     => 'text',
+			'title'    => '注册按钮链接',
+		),
+
+		array(
+			'id'       => 'logout_to',
+			'type'     => 'text',
+			'title'    => '退出登录后跳转的页面',
+		),
+
+		array(
+			'id'       => 'wel_come',
+			'type'     => 'text',
+			'title'    => '顶部欢迎语',
+			'default'  => '欢迎光临！',
+		),
+
+		array(
+			'id'       => 'reg_clause',
+			'type'     => 'textarea',
+			'title'    => '注册登录协议说明文字',
+			'sanitize' => false,
+			'default'  => '<p style="text-align: center;">注册登录即视为同意以上条款</p>',
+			'after'    => '可使用HMTL代码',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'admin_setting',
+	'title'       => '用户中心',
+	'icon'        => '',
+	'description' => '设置前端用户中心',
+	'fields'      => array(
+
+		array(
+			'id'          => 'user_url',
+			'type'        => 'select',
+			'title'       => '用户中心',
+			'placeholder' => '选择页面',
+			'options'     => 'pages',
+			'query_args'  => array(
+				'posts_per_page' => -1
+			)
+		),
+
+		array(
+			'id'          => 'tou_url',
+			'type'        => 'select',
+			'title'       => '用户投稿',
+			'placeholder' => '选择页面',
+			'options'     => 'pages',
+			'query_args'  => array(
+				'posts_per_page' => -1
+			)
+		),
+
+		array(
+			'id'       => 'personal_img',
+			'type'     => 'upload',
+			'title'    => '用户中心背景图片',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'admin_setting',
+	'title'       => '背景图片',
+	'icon'        => '',
+	'description' => '上传一些页面及模块的背景图片',
+	'fields'      => array(
+
+		array(
+			'id'       => 'custom_login',
+			'type'     => 'switcher',
+			'title'    => '启用后台登录美化',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'login_img',
+			'class'    => 'be-child-item',
+			'type'     => 'upload',
+			'title'    => '背景图片',
+			'default'  => 'https://desk-fd.zol-img.com.cn/t_s1920x1080c5/g7/M00/0E/09/ChMkLGMxCYeIYVapABUiNwouqU0AAH5vQICQNEAFSJP842.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'bing_login',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '必应每日壁纸',
+		),
+
+		array(
+			'id'       => 'reg_img',
+			'type'     => 'upload',
+			'title'    => '注册页面背景图片',
+			'default'  => 'https://desk-fd.zol-img.com.cn/t_s1920x1080c5/g7/M00/0E/09/ChMkLGMxCYeIYVapABUiNwouqU0AAH5vQICQNEAFSJP842.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'bing_reg',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '必应每日壁纸',
+		),
+
+		array(
+			'id'       => 'reg_content_img',
+			'type'     => 'upload',
+			'title'    => '注册页面小背景图片',
+			'default'  => 'http://sjbz.fd.zol-img.com.cn/t_s480x800c/g7/M00/0E/09/ChMkK2MxCo-IcMYqABUiNwouqU0AAH5wALKDPIAFSJP124.jpg',
+			'preview'  => true,
+			'after'    => '<span class="after-perch">图片大小（≈350×550px）</span>',
+		),
+
+		array(
+			'id'       => 'no_reg_content_img',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '注册页面仅显示毛玻璃效果',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'header_author_img',
+			'type'     => 'upload',
+			'title'    => '作者存档头部图片',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'user_back',
+			'type'     => 'upload',
+			'title'    => '用户信息背景图片',
+			'default'  => $imgdefault . '/options/user.jpg',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'admin_setting',
+	'title'       => '重定向登录注册链接',
+	'icon'        => '',
+	'description' => '重定向默认登录注册页面到指定链接，选择一个自己认为适合的',
+	'fields'      => array(
+
+		array(
+			'id'       => 'redirect_login',
+			'type'     => 'switcher',
+			'title'    => '重定向默认登录链接',
+			'after'    => '<span class="after-perch">适合不想让别人进入默认登录注册页面，又不影响重置密码</span>',
+		),
+
+		array(
+			'id'       => 'redirect_login_link',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '重定向网址',
+		),
+
+
+		array(
+			'id'       => 'login_link',
+			'type'     => 'switcher',
+			'title'    => '修改默认登录链接',
+			'after'    => '<span class="after-perch">适合不想让别人知道默认登录注册页面链接，但会影响重置密码</span>',
+		),
+
+		array(
+			'id'       => 'pass_h',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '前缀',
+			'default'  => 'my',
+		),
+
+		array(
+			'id'       => 'word_q',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '后缀',
+			'default'  => 'the',
+		),
+
+		array(
+			'id'       => 'go_link',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '跳转网址',
+			'default'  => '链接地址',
+		),
+
+		array(
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'content',
+			'content'  => '要记住修改后的链接，默认登录地址：<b>http://域名/wp-login.php?my=the</b>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'id'    => 'seo_setting',
+	'title' => 'SEO设置',
+	'icon'  => 'dashicons dashicons-chart-bar',
+) );
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'seo_setting',
+	'title'       => '站点SEO',
+	'icon'        => '',
+	'description' => '与SEO相关的设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'wp_title',
+			'type'     => 'switcher',
+			'title'    => '启用SEO功能',
+			'default'  => true,
+			'label'    => '如使用其它SEO插件，取消勾选，以免重复显示SEO内容',
+		),
+
+		array(
+			'id'       => 'og_title',
+			'type'     => 'switcher',
+			'title'    => '显示OG协议标签',
+			'default'  => true,
+		),
+
+		array(
+			'id'    => 'description',
+			'type'  => 'textarea',
+			'title' => '首页描述（Description）',
+			'default'  => '一般不超过200个字符',
+		),
+
+		array(
+			'id'    => 'keyword',
+			'type'  => 'textarea',
+			'title' => '首页关键词（KeyWords）',
+			'default'  => '一般不超过100个字符',
+		),
+
+		array(
+			'id'       => 'home_title',
+			'type'     => 'text',
+			'title'    => '自定义网站首页title',
+			'after'    => '留空则不显示自定义title',
+		),
+
+		array(
+			'id'       => 'home_info',
+			'type'     => 'text',
+			'title'    => '自定义网站首页副标题',
+			'after'    => '留空则不显示自定义副标题',
+		),
+
+		array(
+			'id'       => 'blog_info',
+			'type'     => 'switcher',
+			'title'    => '首页显示站点副标题',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'connector',
+			'type'     => 'text',
+			'title'    => '修改站点分隔符',
+			'default'  => '|',
+		),
+
+		array(
+			'id'       => 'blank_connector',
+			'type'     => 'switcher',
+			'title'    => '分隔符无空格',
+		),
+
+		array(
+			'id'       => 'blog_name',
+			'type'     => 'switcher',
+			'title'    => '正文title不显示网站名称',
+			'label'    => '同时删除分隔符及勾选分隔符无空格',
+		),
+
+		array(
+			'id'       => 'seo_title_tag',
+			'type'     => 'switcher',
+			'title'    => '正文title显示为标签+文章标题',
+		),
+
+		array(
+			'id'       => 'seo_tag_number',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '标签数量',
+			'default'  => '5',
+		),
+
+		array(
+			'id'       => 'seo_separator_tag',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '标签分隔符',
+			'default'  => '-',
+		),
+
+		array(
+			'id'       => 'home_paged_ban',
+			'type'     => 'switcher',
+			'title'    => '杂志、公司布局首页分页链接301转向',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'seo_setting',
+	'title'       => '站点地图',
+	'icon'        => '',
+	'description' => '更新站点地图，勾选启用或改动设置后，需要保存两次设置，才会生成站点地图文件，用后取消勾选',
+	'fields'      => array(
+
+		array(
+			'id'       => 'wp_sitemap_no',
+			'type'     => 'switcher',
+			'title'    => 'WP原生站点地图',
+			'default'  => true,
+			'after'    => '<span class="after-perch">默认链接：<a href="' . home_url() . '/wp-sitemap.xml" target="_blank">wp-sitemap.xml</a></span>',
+		),
+
+		array(
+			'class'    => 'be-child-item be-child-last-item',
+			'title'    => '提示',
+			'type'    => 'content',
+			'content' => '原生站点地图，支持大部分搜索引擎，因动态生成，可能索引速度较慢',
+		),
+
+		array(
+			'id'       => 'sitemap_xml',
+			'type'     => 'switcher',
+			'title'    => '更新xml格式站点地图',
+			'after'    => '<span class="after-perch">链接：<a href="' . home_url() . '/' . zm_get_option( 'sitemap_name' ) . '.xml" target="_blank">' . zm_get_option( 'sitemap_name' ) . '.xml</a></span>',
+		),
+
+		array(
+			'id'       => 'sitemap_txt',
+			'type'     => 'switcher',
+			'title'    => '更新txt格式站点地图',
+			'after'    => '<span class="after-perch">链接：<a href="' . home_url() . '/' . zm_get_option( 'sitemap_name' ) . '.txt" target="_blank">' . zm_get_option( 'sitemap_name' ) . '.txt</a></span>',
+		),
+
+		array(
+			'id'       => 'sitemap_name',
+			'type'     => 'text',
+			'title'    => '自定义地图文件名称',
+			'default'  => 'sitemap',
+			'after'    => '防止被恶意采集利用',
+		),
+
+		array(
+			'id'       => 'sitemap_n',
+			'type'     => 'number',
+			'title'    => '更新文章数',
+			'default'  => '1000',
+			'after'    => '<span class="after-perch">输入“-1”为全部，更新完取消勾选并保存设置</span>',
+		),
+
+		array(
+			'title'    => '<span style="color: #cf4944;">提示</span>',
+			'type'    => 'content',
+			'content' => '<span style="color: #cf4944;">同时更新上万文章可能会卡死，造成主题选项不能使用，酌情设置</span>',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '拆分生成多个地图文件',
+		),
+
+		array(
+			'id'       => 'offset_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '排除文章数',
+			'default'  => '0',
+			'after'    => '<span class="after-perch">默认保持 0</span>',
+		),
+
+		array(
+			'id'       => 'sitemap_m',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '后缀',
+			'after'    => '例如输入：a，则地图文件名为：sitemap-a，默认留空',
+		),
+
+		array(
+			'class'    => 'be-child-item be-child-last-item be-help-inf',
+			'title'    => '拆分操作说明',
+			'type'    => 'content',
+			'content' => '
+			<b>第1个地图文件</b>&nbsp;&nbsp;&nbsp;&nbsp;设置"更新文章数" 1000，生成第1个地图文件 sitemap.xml<br />
+			<b>第2个地图文件</b>&nbsp;&nbsp;&nbsp;&nbsp;在“排除文章数”中输入 1000 排除最新的 1000 篇文章，在“后缀”输入a，生成第2个地图文件 sitemap-a.xml<br />
+			<b>第3个地图文件</b>&nbsp;&nbsp;&nbsp;&nbsp;在“排除文章数”中输入 2000 排除最新的 2000 篇文章，在“后缀”输入b，生成第3个地图文件 sitemap-b.xml<br />
+			以此类推...<br />
+			每次更改需要保存两次设置，否则不会生成新的站点地图文件',
+		),
+
+		array(
+			'id'       => 'no_sitemap_pages',
+			'type'     => 'switcher',
+			'title'    => '包括页面',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_sitemap_cat',
+			'type'     => 'switcher',
+			'title'    => '包括分类',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_sitemap_tag',
+			'type'     => 'switcher',
+			'title'    => '包括标签',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_sitemap_type',
+			'type'     => 'switcher',
+			'title'    => '包括公告、图片、视频、商品等',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'seo_setting',
+	'title'       => '更新文章归档页面',
+	'icon'        => '',
+	'description' => '更新文章归档页面，勾选启用后，需要保存两次设置，用后取消勾选。因在同一个页面显示上万文章可能会卡死，酌情使用！',
+	'fields'      => array(
+
+		array(
+			'id'       => 'update_be_archives',
+			'type'     => 'switcher',
+			'title'    => '刷新文章归档页面',
+			'after'    => '<span class="after-perch">需保存两次主题选项设置，用后关闭，文章较多可能会卡死</span>',
+		),
+
+		array(
+			'id'       => 'update_up_archives',
+			'type'     => 'switcher',
+			'title'    => '刷新文章更新页面',
+			'after'    => '<span class="after-perch">需保存两次主题选项设置，用后关闭，设置一下时间段，防止文章较多卡死</span>',
+		),
+
+		array(
+			'title'    => '说明',
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => '可以单独设置年、月、分类，留空则显示全部文章',
+		),
+
+		array(
+			'id'       => 'year_n',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '年份',
+		),
+
+		array(
+			'id'       => 'mon_n',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '月份',
+		),
+
+		array(
+			'id'       => 'cat_up_n',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '分类ID',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'seo_setting',
+	'title'       => '关键词内链',
+	'icon'        => '',
+	'description' => '设置关键词内链',
+	'fields'      => array(
+
+
+		array(
+			'id'       => 'keyword_link',
+			'type'     => 'switcher',
+			'title'    => '关键词',
+			'default'  => true,
+		),
+
+		array(
+			'class'    => 'be-button-url be-child-item be-child-last-item',
+			'type'     => 'subheading',
+			'title'    => '设置关键词',
+			'content'  => '<span class="button-primary"><a href="' . home_url() . '/wp-admin/options-general.php?page=keywordlink" target="_blank">添加关键词</a></span>'
+		),
+
+		array(
+			'id'       => 'tag_c',
+			'type'     => 'switcher',
+			'title'    => '用文章标签作为关键词添加内链',
+		),
+
+		array(
+			'id'       => 'chain_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '数量',
+			'default'  => 2,
+		),
+
+		array(
+			'class'    => 'be-child-item be-child-last-item',
+			'title'    => '提示',
+			'type'    => 'content',
+			'content' => '<span style="color: #cf4944;">如果网站标签较多，更新文章时可能会卡死，酌情使用</span>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'seo_setting',
+	'title'       => '自动添加标签',
+	'icon'        => '',
+	'description' => '自动为文章添加使用过的标签',
+	'fields'      => array(
+
+		array(
+			'id'       => 'auto_tags',
+			'type'     => 'switcher',
+			'title'    => '自动添加标签',
+		),
+
+		array(
+			'id'       => 'auto_tags_n',
+			'type'     => 'number',
+			'title'    => '添加数量',
+			'default'  => 6,
+		),
+
+		array(
+			'id'       => 'auto_tags_random',
+			'type'     => 'switcher',
+			'title'    => '随机',
+		),
+
+		array(
+			'title'    => '提示',
+			'type'    => 'content',
+			'content' => '<span style="color: #cf4944;">如果网站标签较多，更新文章时可能会卡死，酌情使用</span>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'seo_setting',
+	'title'       => '百度收录',
+	'icon'        => '',
+	'description' => '将文章自动提交给百度',
+	'fields'      => array(
+
+		array(
+			'id'       => 'baidu_link',
+			'type'     => 'switcher',
+			'title'    => '百度普通收录',
+		),
+
+		array(
+			'id'       => 'link_token',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '准入密钥',
+		),
+
+		array(
+			'id'       => 'baidu_daily',
+			'type'     => 'switcher',
+			'title'    => '百度快速收录',
+		),
+
+		array(
+			'id'       => 'daily_token',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '准入密钥',
+		),
+
+		array(
+			'id'       => 'baidu_time',
+			'type'     => 'switcher',
+			'title'    => '百度时间因子',
+			'after'    => '<span class="after-perch">主题时间标注清晰符合要求，百度官方也未提供任何具体代码，有效与否自行判断</span>',
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'seo_setting',
+	'title'       => '自定义分类法固定链接',
+	'icon'        => '',
+	'description' => '用于修改公告、图片、视频、商品、产品等固定链接。',
+	'fields'      => array(
+
+		array(
+			'id'       => 'begin_types_link',
+			'type'     => 'switcher',
+			'title'    => '自定义分类法固定链接',
+		),
+
+		array(
+			'id'      => 'begin_types',
+			'type'    => 'radio',
+			'title'   => '选择',
+			'inline'  => true,
+			'options' => array(
+				'link_id'   => '文章ID.html',
+				'link_name' => '文章名称.html',
+			),
+			'default' => 'link_id',
+		),
+
+		array(
+			'title'   => '提示',
+			'type'    => 'content',
+			'content' => '修改后到WP后台→设置→固定链接设置，保存一下，否则不会生效',
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'seo_setting',
+	'title'       => '自定义分类法链接前缀',
+	'icon'        => '',
+	'description' => '修改保存主题设置后，必需保存一次固定链接设置才会生效',
+	'fields'      => array(
+
+		array(
+			'id'       => 'bull_url',
+			'type'     => 'text',
+			'title'    => '公告链接前缀',
+			'default'  => 'bulletin',
+		),
+
+		array(
+			'id'       => 'bull_cat_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '公告分类链接前缀',
+			'default'  => 'notice',
+		),
+
+		array(
+			'id'       => 'img_url',
+			'type'     => 'text',
+			'title'    => '图片链接前缀',
+			'default'  => 'picture',
+		),
+
+		array(
+			'id'       => 'img_cat_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '图片分类链接前缀',
+			'default'  => 'gallery',
+		),
+
+		array(
+			'id'       => 'video_url',
+			'type'     => 'text',
+			'title'    => '视频链接前缀',
+			'default'  => 'video',
+		),
+
+		array(
+			'id'       => 'video_cat_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '视频分类链接前缀',
+			'default'  => 'videos',
+		),
+
+		array(
+			'id'       => 'sp_url',
+			'type'     => 'text',
+			'title'    => '商品链接前缀',
+			'default'  => 'tao',
+		),
+
+		array(
+			'id'       => 'sp_cat_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '商品分类链接前缀',
+			'default'  => 'taobao',
+		),
+
+		array(
+			'id'       => 'favorites_url',
+			'type'     => 'text',
+			'title'    => '网址链接前缀',
+			'default'  => 'sites',
+		),
+
+		array(
+			'id'       => 'favorites_cat_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '网址分类链接前缀',
+			'default'  => 'favorites',
+		),
+
+		array(
+			'id'       => 'show_url',
+			'type'     => 'text',
+			'title'    => '产品链接前缀',
+			'default'  => 'show',
+		),
+
+		array(
+			'id'       => 'show_cat_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '产品分类链接前缀',
+			'default'  => 'products',
+		),
+
+		array(
+			'id'       => 'be_special_url',
+			'type'     => 'text',
+			'title'    => '专题链接前缀',
+			'default'  => 'special',
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'seo_setting',
+	'title'       => '流量统计代码',
+	'icon'        => '',
+	'description' => '用于添加流量统计代码',
+	'fields'      => array(
+
+		array(
+			'id'        => 'tongji_h',
+			'type'      => 'textarea',
+			'title'     => '异步',
+			'sanitize'  => false,
+			'after'     => '用于在页头添加异步统计代码（例如：百度统计）',
+		),
+
+		array(
+			'id'        => 'tongji_f',
+			'type'      => 'textarea',
+			'title'     => '同步',
+			'sanitize'  => false,
+			'after'     => '用于在页脚添加同步统计代码（例如：站长统计）',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'seo_setting',
+	'title'       => '页脚信息',
+	'icon'        => '',
+	'description' => '修改添加页脚信息',
+	'fields'      => array(
+
+		array(
+			'id'        => 'footer_inf_t',
+			'type'      => 'wp_editor',
+			'title'     => '页脚信息',
+			'sanitize'  => false,
+			'after'     => '回行显示，选择文字“居中对齐”',
+			'default'   => '<p style="text-align: center;">Copyright &copy;&nbsp;&nbsp;站点名称&nbsp;&nbsp;版权所有.</p><p style="text-align: center;">主题选项→SEO选项卡，最下面修改页脚信息</p><p style="text-align: center;"><a title="主题设计：知更鸟" href="http://zmingcx.com/" target="_blank" rel="external nofollow"><img src="' . get_template_directory_uri() . '/img/logo.png" alt="Begin主题" width="120" height="27" /></a></p>',
+		),
+
+		array(
+			'id'       => 'yb_info',
+			'type'     => 'text',
+			'title'    => '域名备案号',
+		),
+
+		array(
+			'id'       => 'yb_url',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '工信部链接',
+		),
+
+		array(
+			'id'       => 'yb_img',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'upload',
+			'title'    => '域名备案小图标',
+			'default'  => '',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'wb_info',
+			'type'     => 'text',
+			'title'    => '公网安备号',
+		),
+
+		array(
+			'id'       => 'wb_url',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '公网安备链接',
+		),
+
+		array(
+			'id'       => 'wb_img',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'upload',
+			'title'    => '公网安备小图标',
+			'default'  => '',
+			'preview'  => true,
+		),
+	)
+));
+
+// 基本设置
+CSF::createSection( $prefix, array(
+	'id'    => 'basic_setting',
+	'title' => '基本设置',
+	'icon'  => 'dashicons dashicons-admin-generic',
+) );
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '文章列表截断字数',
+	'description' => '可以根据页面宽度适当调整文章列表摘要的显示字数',
+	'fields'      => array(
+
+		array(
+			'id'       => 'words_n',
+			'type'     => 'number',
+			'title'    => '自动截断字数',
+			'after'    => '<span class="after-perch">默认值：100</span>',
+			'default'  => 100,
+		),
+
+		array(
+			'id'       => 'word_n',
+			'type'     => 'number',
+			'title'    => '摘要截断字数',
+			'after'    => '<span class="after-perch">默认值：90</span>',
+			'default'  => 90,
+		),
+	)
+) );
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '阅读全文按钮',
+	'icon'        => '',
+	'description' => '自定义文章列表阅读全文按钮文字',
+	'fields'      => array(
+
+		array(
+			'id'       => 'more_w',
+			'type'     => 'text',
+			'title'    => '阅读全文按钮文字',
+			'after'    => '留空则不显示',
+			'default'  => '',
+		),
+
+		array(
+			'id'       => 'direct_w',
+			'type'     => 'text',
+			'title'    => '直达链接按钮文字',
+			'after'    => '留空则不显示',
+			'default'  => '直达链接',
+		),
+
+		array(
+			'id'       => 'more_hide',
+			'type'     => 'switcher',
+			'title'    => '默认隐藏',
+			'label'    => '鼠标悬停时显示',
+			'default'  => true,
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '图片延迟加载',
+	'icon'        => '',
+	'description' => '延迟加载图片，提高页面加载速度',
+	'fields'      => array(
+
+		array(
+			'id'       => 'lazy_s',
+			'type'     => 'switcher',
+			'title'    => '缩略图延迟加载',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'lazy_e',
+			'type'     => 'switcher',
+			'title'    => '正文图片延迟加载',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '公告',
+	'icon'        => '',
+	'description' => '用滚动公告代替首页面包屑导航',
+	'fields'      => array(
+
+		array(
+			'id'       => 'bulletin',
+			'type'     => 'switcher',
+			'title'    => '公告',
+		),
+
+		array(
+			'id'       => 'bulletin_id',
+			'type'     => 'text',
+			'title'    => '输入公告分类ID',
+			'after'    => '调用指定的分类',
+		),
+
+		array(
+			'id'       => 'bulletin_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 2,
+		),
+
+		array(
+			'id'      => 'notice_m',
+			'type'    => 'radio',
+			'title'   => '公告分类模板选择',
+			'inline'  => true,
+			'options' => array(
+				'notice_d' => '默认',
+				'notice_s' => '说说',
+			),
+			'default' => 'notice_s',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '弹窗公告',
+	'icon'        => '',
+	'description' => '设置定时弹出的公告',
+	'fields'      => array(
+
+		array(
+			'id'       => 'placard_layer',
+			'type'     => 'switcher',
+			'title'    => '弹窗公告',
+		),
+
+		array(
+			'id'       => 'admin_placard',
+			'type'     => 'switcher',
+			'title'    => '排除管理员',
+		),
+
+		array(
+			'id'          => 'placard_cat_id',
+			'type'        => 'select',
+			'title'       => '选择一个分类',
+			'placeholder' => '选择分类',
+			'options'     => 'categories',
+		),
+
+		array(
+			'id'       => 'placard_id',
+			'type'     => 'text',
+			'title'    => '输入文章ID',
+			'after'    => '调用指定文章，留空则显示5篇分类文章',
+		),
+
+		array(
+			'id'       => 'placard_time',
+			'type'     => 'number',
+			'title'    => '默认30分钟弹出一次',
+			'after'    => '<span class="after-perch">分钟</span>',
+			'default'  => 30,
+		),
+
+		array(
+			'id'       => 'placard_img',
+			'type'     => 'switcher',
+			'title'    => '显示最新文章图片',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'custom_placard',
+			'type'     => 'switcher',
+			'title'    => '自定义内容',
+		),
+
+		array(
+			'id'       => 'custom_placard_title',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '标题',
+		),
+
+		array(
+			'id'       => 'custom_placard_url',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '链接',
+		),
+
+		array(
+			'id'       => 'custom_placard_img',
+			'class'    => 'be-child-item',
+			'type'     => 'upload',
+			'title'    => '图片',
+			'default'  => $imgdefault . '/random/320.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'        => 'custom_placard_content',
+			'class'     => 'be-child-item be-child-last-item',
+			'type'      => 'textarea',
+			'title'     => '内容',
+			'sanitize'  => false,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => 'Ajax加载文章',
+	'icon'        => '',
+	'description' => '滚动页面时，自动加载下一页文章',
+	'fields'      => array(
+
+		array(
+			'id'       => 'infinite_post',
+			'type'     => 'switcher',
+			'title'    => 'Ajax 加载文章',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'pages_n',
+			'type'     => 'number',
+			'title'    => '加载页数',
+			'default'  => 3,
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '页号显示',
+	'icon'        => '',
+	'description' => '设置文章列表分页按钮显示模式',
+	'fields'      => array(
+
+		array(
+			'id'       => 'first_mid_size',
+			'type'     => 'number',
+			'title'    => '首页页号数',
+			'default'  => 2,
+		),
+
+		array(
+			'id'       => 'mid_size',
+			'type'     => 'number',
+			'title'    => '其它页号数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'       => 'input_number',
+			'type'     => 'switcher',
+			'title'    => '输入页号跳转',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'turn_small',
+			'type'     => 'switcher',
+			'title'    => '移动端简化分页',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_pagination',
+			'type'     => 'switcher',
+			'title'    => '不显示分页按钮',
+		),
+
+		array(
+			'id'       => 'rewrite_paged_url',
+			'type'     => 'switcher',
+			'title'    => '自定义分页链接前缀',
+			'label'    => '更改后，需要保存一次固定链接设置',
+		),
+
+		array(
+			'id'       => 'rewrite_paged_url_txt',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '自定义分页链接前缀',
+			'default'  => 'mypage',
+		),
+
+		array(
+			'title'   => '说明',
+			'class'    => 'be-help-code be-child-item be-child-last-item',
+			'type'    => 'content',
+			'content' => '为恶意采集增加难度，可与上面“不显示分页按钮”同时使用<br /><span>默认翻页链接</span>/page/2/<br /><span>修改后翻页链接</span>/mypage/2/<br /><strong>更改后需要保存一次固定链接设置</strong>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '替换用户默认链接',
+	'icon'        => '',
+	'description' => '替换文章作者归档页默认链接，防止暴露登录名称',
+	'fields'      => array(
+
+		array(
+			'id'      => 'my_author',
+			'type'    => 'radio',
+			'title'   => '作者链接后缀',
+			'inline'  => true,
+			'options' => array(
+				'first_name' => '用户名字',
+				'last_name'  => '用户姓氏',
+			),
+			'default' => 'first_name',
+		),
+
+		array(
+			'title'   => '提示',
+			'type'    => 'content',
+			'content' => '后台 → 用户 → 个人资料页面 → 显示名称，在名字或姓氏中输入字母单词，不能使用中文，并在“公开显示为”选择除登录名之外的',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '生成文章索引目录',
+	'icon'        => '',
+	'description' => '用段落标题生成文章索引目录',
+	'fields'      => array(
+
+		array(
+			'id'       => 'be_toc',
+			'type'     => 'switcher',
+			'title'    => '生成文章索引目录',
+		),
+
+		array(
+			'id'      => 'toc_mode',
+			'type'    => 'radio',
+			'title'   => '选择几级标题',
+			'inline'  => true,
+			'options' => array(
+				'toc_four' => '仅四级标题',
+				'toc_all'  => '二至六级标题',
+			),
+			'default' => 'toc_four',
+		),
+
+		array(
+			'id'      => 'toc_style',
+			'type'    => 'radio',
+			'title'   => '层级显示',
+			'inline'  => true,
+			'options' => array(
+				'tocjq'  => '单级显示',
+				'tocphp' => '层级显示',
+			),
+			'default' => 'tocjq',
+		),
+
+		array(
+			'id'       => 'toc_title_n',
+			'type'     => 'number',
+			'title'    => '几个标题时生成目录',
+			'default'  => 4,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '正文设置',
+	'icon'        => '',
+	'description' => '正文显示内容设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'begin_today',
+			'type'     => 'switcher',
+			'title'    => '历史上的今天',
+		),
+
+		array(
+			'id'       => 'lightbox_on',
+			'type'     => 'switcher',
+			'title'    => '图片 Lightbox 放大查看',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'auto_img_link',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '图片自动添加超链接',
+			'after'    => '<span class="after-perch">用于触发放大查看，酌情开启</span>',
+		),
+
+		array(
+			'id'       => 'p_first',
+			'type'     => 'switcher',
+			'title'    => '段首缩进',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'all_more',
+			'type'     => 'switcher',
+			'title'    => '正文继续阅读按钮',
+		),
+
+		array(
+			'id'       => 'custum_font',
+			'type'     => 'switcher',
+			'title'    => '编辑器增加中文字体',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'copy_tips',
+			'type'     => 'switcher',
+			'title'    => '复制提示',
+		),
+
+		array(
+			'id'       => 'copyright_pro',
+			'type'     => 'switcher',
+			'title'    => '禁止复制及右键',
+			'after'    => '<span class="after-perch">管理员登录无效</span>',
+		),
+
+		array(
+			'id'       => 'no_copy',
+			'type'     => 'switcher',
+			'title'    => '禁止复制CSS版',
+		),
+
+		array(
+			'id'       => 'copy_upset',
+			'type'     => 'switcher',
+			'title'    => '在段落末尾添加隐藏的版权链接',
+			'after'    => '<span class="after-perch">为恶意采集增加难度</span>',
+		),
+
+		array(
+			'id'       => 'copy_upset_txt',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '自定义文字',
+			'after'    => '默认文章源自+网站名称',
+			'default'  => '文章源自',
+		),
+
+		array(
+			'id'       => 'link_pages_all',
+			'type'     => 'switcher',
+			'title'    => '文章分页显示全部按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'link_external',
+			'type'     => 'switcher',
+			'title'    => '文章外链接添加nofollow',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'link_internal',
+			'type'     => 'switcher',
+			'title'    => '文章内链接新窗口打开',
+			'after'    => '<span class="after-perch">需与上面的选项同时使用</span>',
+		),
+		array(
+			'id'       => 'single_no_sidebar',
+			'type'     => 'switcher',
+			'title'    => '正文无侧边栏',
+		),
+
+		array(
+			'id'       => 'photo_album_n',
+			'type'     => 'number',
+			'title'    => '相册短代码默认每页显示图片数',
+			'default'  => 4,
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '代码高亮',
+	'icon'        => '',
+	'description' => '显示代码高亮',
+	'fields'      => array(
+
+		array(
+			'id'       => 'be_code',
+			'type'     => 'switcher',
+			'title'    => '自动代码高亮显示',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'highlight',
+			'type'     => 'switcher',
+			'title'    => '手动代码高亮显示',
+			'default'  => true,
+			'after'    => '<span class="after-perch">仅为兼容老版本主题</span>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => 'AJAX分类短代码',
+	'icon'        => '',
+	'description' => '在文章或页面中添加短代码，以Ajax调用分类文章',
+	'fields'      => array(
+
+		array(
+			'id'       => 'ajax_cat_btn_flow',
+			'type'     => 'switcher',
+			'title'    => '按钮不回行',
+			'after'    => '<span class="after-perch">分类按钮较多时，在移动端一行显示</span>',
+		),
+
+		array(
+			'class'    => 'be-help-code',
+			'title'    => '短代码示例',
+			'type'    => 'content',
+			'content' => $shortcode_help,
+		),
+	)
+));
+
+// 子项
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '功能优化',
+	'icon'        => '',
+	'description' => '用于优化WordPress功能',
+	'fields'      => array(
+
+		array(
+			'id'       => 'no_category',
+			'type'     => 'switcher',
+			'title'    => '去掉分类链接中的"category"',
+			'after'    => '<span class="after-perch">更改后需保存一次固定链接设置</span>',
+		),
+
+		array(
+			'id'       => 'category_x',
+			'type'     => 'switcher',
+			'title'    => '分类归档链接添加"/"斜杠',
+			'after'    => '<span class="after-perch">更改后需保存一次固定链接设置</span>',
+		),
+
+		array(
+			'id'       => 'page_html',
+			'type'     => 'switcher',
+			'title'    => '页面添加.html后缀',
+			'after'    => '<span class="after-perch">更改后需保存一次固定链接设置</span>',
+		),
+
+		array(
+			'id'       => 'image_alt',
+			'type'     => 'switcher',
+			'title'    => '自动将文章标题作为图片 alt 标签内容',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'be_upload_name',
+			'type'     => 'switcher',
+			'title'    => '上传附件自动按时间重命名',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'last_login',
+			'type'     => 'switcher',
+			'title'    => '显示用户登录注册时间',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'bulk_actions_post',
+			'type'     => 'switcher',
+			'title'    => '文章批量操作',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'ajax_move_post',
+			'type'     => 'switcher',
+			'title'    => '后台 Ajax 移动文章到回收站',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'meta_key_filter',
+			'type'     => 'switcher',
+			'title'    => '后台自定义字段筛选',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'post_ssid',
+			'type'     => 'switcher',
+			'title'    => '后台显示文章ID',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'clone_post',
+			'type'     => 'switcher',
+			'title'    => '后台复制文章',
+		),
+
+		array(
+			'id'       => 'xmlrpc_no',
+			'type'     => 'switcher',
+			'title'    => '禁用 xmlrpc',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'script_defer',
+			'type'     => 'switcher',
+			'title'    => '延迟加载脚本',
+		),
+
+		array(
+			'id'       => 'embed_no',
+			'type'     => 'switcher',
+			'title'    => '禁用oEmbed',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'revisions_no',
+			'type'     => 'switcher',
+			'title'    => '禁止修订版本',
+			'default'  => true,
+			'after'    => '<span class="after-perch">效果不太好</span>',
+		),
+
+		array(
+			'id'       => 'disable_api',
+			'type'     => 'switcher',
+			'title'    => '禁用 REST API',
+			'after'    => '<span class="after-perch">使用区块编辑器、连接小程序需取消</span>',
+		),
+
+		array(
+			'id'       => 'x-frame',
+			'type'     => 'switcher',
+			'title'    => '禁止被 iframe 网页嵌套',
+		),
+
+		array(
+			'id'       => 'be_safety',
+			'type'     => 'switcher',
+			'title'    => '阻止恶意URL请求',
+		),
+
+		array(
+			'id'       => 'forget_password',
+			'type'     => 'switcher',
+			'title'    => '修正QQ邮箱密码链接',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'delete_enclosure',
+			'type'     => 'switcher',
+			'title'    => '禁止添加 enclosed 字段',
+			'after'    => '<span class="after-perch">酌情</span>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '侧边栏小工具',
+	'icon'        => '',
+	'description' => '与侧边栏小工具相关的设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'sidebar_sticky',
+			'type'     => 'switcher',
+			'title'    => '侧边栏跟随滚动',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'widget_logic',
+			'type'     => 'switcher',
+			'title'    => '小工具条件判断',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'clone_widgets',
+			'type'     => 'switcher',
+			'title'    => '小工具克隆',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'single_e',
+			'type'     => 'switcher',
+			'title'    => '正文底部小工具',
+		),
+
+		array(
+			'id'      => 'single_e_f',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $swf12,
+			'default' => '2',
+		),
+
+		array(
+			'id'       => 'header_widget',
+			'type'     => 'switcher',
+			'title'    => '头部小工具',
+		),
+
+		array(
+			'id'       => 'h_widget_p',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '移动端不显示',
+		),
+
+		array(
+			'id'      => 'h_widget_m',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '显示位置',
+			'inline'  => true,
+			'options' => array(
+				'cat_single_m' => '在分类及正文页面显示',
+				'cat_m'        => '仅在分类页面显示',
+				'all_m'        => '全局显示',
+			),
+			'default' => 'cat_single_m',
+		),
+
+		array(
+			'id'      => 'header_widget_f',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl34,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'footer_w',
+			'type'     => 'switcher',
+			'title'    => '页脚小工具',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'mobile_footer_w',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '移动端不显示',
+		),
+
+		array(
+			'id'      => 'footer_w_f',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl3456,
+			'default' => '3',
+		),
+
+		array(
+			'id'       => 'footer_contact',
+			'type'     => 'switcher',
+			'title'    => '右侧固定内容',
+		),
+
+		array(
+			'id'        => 'footer_contact_html',
+			'class'    => 'be-child-item',
+			'type'      => 'textarea',
+			'title'     => '输入内容，支持HTML代码',
+			'sanitize'  => false,
+		),
+
+
+		array(
+			'id'       => 'footer_widget_img',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'upload',
+			'title'    => '页脚小工具背景图片',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'widget_p',
+			'type'     => 'number',
+			'title'    => '文章小工具段落插入位置',
+			'after'    => '<span class="after-perch">在第几个段后</span>',
+			'default'  => 3,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '自定义文章显示数',
+	'icon'        => '',
+	'description' => '一般用于使用图片布局的分类或标签，自定义文章显示数',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_posts_id',
+			'type'     => 'text',
+			'title'    => '输入分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'posts_n',
+			'type'     => 'number',
+			'title'    => '显示数',
+			'default'  => 20,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '分类设置',
+	'icon'        => '',
+	'description' => '与分类相关的一些设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'cat_top',
+			'type'     => 'switcher',
+			'title'    => '显示分类推荐文章',
+		),
+
+		array(
+			'id'       => 'no_child',
+			'type'     => 'switcher',
+			'title'    => '分类归档不显示子分类文章',
+		),
+
+		array(
+			'id'       => 'select_templates',
+			'type'     => 'switcher',
+			'title'    => '选择分类模板',
+		),
+
+		array(
+			'id'       => 'cat_order',
+			'type'     => 'switcher',
+			'title'    => '分类排序',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'cat_icon',
+			'type'     => 'switcher',
+			'title'    => '分类图标',
+		),
+
+		array(
+			'id'       => 'cat_cover',
+			'type'     => 'switcher',
+			'title'    => '分类封面',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'child_cat',
+			'type'     => 'switcher',
+			'title'    => '在分类归档页显示父子分类链接',
+		),
+
+		array(
+			'id'      => 'child_cat_f',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl789,
+			'default' => '8',
+		),
+
+		array(
+			'id'       => 'child_cat_no',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '输入排除的分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'child_cat_exclude',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '同级分类排除本身',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'cat_des',
+			'type'     => 'switcher',
+			'title'    => '分类图片',
+			'after'    => '<span class="after-perch">分类填写描述才能显示</span>',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'cat_des_img_d',
+			'class'    => 'be-child-item',
+			'type'     => 'upload',
+			'title'    => '默认图片',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'after'    => '用于未单独设置分类图片的分类',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'cat_des_p',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '显示描述',
+		),
+
+		array(
+			'id'       => 'cat_area',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '单独显示描述',
+		),
+
+		array(
+			'id'       => 'cat_des_img',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '自动裁剪图片',
+		),
+
+		array(
+			'id'       => 'des_title_l',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '标题居左',
+		),
+
+		array(
+			'id'       => 'header_title_narrow',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '不显示标题',
+		),
+
+		array(
+			'id'       => 'cat_des_img_zoom',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '移动端图片缩放',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '正文标签文章',
+	'icon'        => '',
+	'description' => '用AJAX加载标签文章替换文章末尾默认标签',
+	'fields'      => array(
+
+		array(
+			'id'       => 'single_tab_tags',
+			'type'     => 'switcher',
+			'title'    => '启用',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'single_tab_tags_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'      => 'single_tab_tags_order',
+			'type'    => 'radio',
+			'title'   => '文章排序',
+			'inline'  => true,
+			'options' => array(
+				'date'   => '时间',
+				'rand'    => '随机',
+			),
+			'default' => 'rand',
+		),
+
+		array(
+			'id'      => 'single_tab_tags_style',
+			'type'    => 'radio',
+			'title'   => '显示模式',
+			'inline'  => true,
+			'options' => array(
+				'photo'   => '图片',
+				'grid'    => '卡片',
+				'list'    => '列表',
+			),
+			'default' => 'photo',
+		),
+
+		array(
+			'id'      => 'single_tab_tags_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl245,
+			'default' => '4',
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '正文上下篇文章链接',
+	'icon'        => '',
+	'description' => '设置上下篇文章链接模式',
+	'fields'      => array(
+
+		array(
+			'id'      => 'post_nav_mode',
+			'type'    => 'radio',
+			'title'   => '显示模式',
+			'inline'  => true,
+			'options' => array(
+				'full_site' => '全站',
+				'same_cat'  => '同分类',
+			),
+			'default' => 'full_site',
+		),
+
+		array(
+			'id'       => 'post_nav_img',
+			'type'     => 'switcher',
+			'title'    => '显示缩略图',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'post_nav_no',
+			'type'     => 'switcher',
+			'title'    => '不显示该模块',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '正文底部滚动同分类文章',
+	'icon'        => '',
+	'description' => '以图片形式在正文底部滚动显示同分类文章',
+	'fields'      => array(
+
+		array(
+			'id'       => 'single_rolling',
+			'type'     => 'switcher',
+			'title'    => '正文底部滚动同分类文章',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'single_rolling_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 10,
+		),
+
+		array(
+			'id'      => 'not_single_rolling_cat',
+			'type'    => 'checkbox',
+			'title'   => '排除的分类',
+			'inline'  => true,
+			'options' => 'categories',
+			'query_args' => array(
+				'orderby'  => 'ID',
+				'order'    => 'ASC',
+			),
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '正文相关文章',
+	'icon'        => '',
+	'description' => '在正文底部显示相同标签的文章',
+	'fields'      => array(
+
+		array(
+			'id'      => 'related_img',
+			'type'    => 'radio',
+			'title'   => '显示位置',
+			'inline'  => true,
+			'options' => array(
+				'related_no'      => '不显示',
+				'related_inside'  => '显示在文章中',
+				'related_outside' => '显示在文章下面'
+			),
+			'default' => 'related_inside',
+		),
+
+		array(
+			'id'      => 'related_orderby',
+			'type'    => 'radio',
+			'title'   => '排序',
+			'inline'  => true,
+			'options' => array(
+				'related_date'     => '发表时间',
+				'related_rand'     => '随机显示',
+				'related_modified' => '最后更新时间'
+			),
+			'default' => 'related_date',
+		),
+
+		array(
+			'id'      => 'related_mode',
+			'type'    => 'radio',
+			'title'   => '显示模式',
+			'inline'  => true,
+			'options' => array(
+				'related_normal' => '标准',
+				'slider_grid'    => '图片',
+			),
+			'default' => 'slider_grid',
+		),
+
+		array(
+			'id'       => 'related_n',
+			'type'     => 'number',
+			'title'    => '篇数',
+			'default'  => 4,
+		),
+
+		array(
+			'id'      => 'not_related_cat',
+			'type'    => 'checkbox',
+			'title'   => '排除的分类',
+			'inline'  => true,
+			'options' => 'categories',
+			'query_args' => array(
+				'orderby'  => 'ID',
+				'order'    => 'ASC',
+			),
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '自定义分类法文章显示数',
+	'icon'        => '',
+	'description' => '自定义图片、视频、商品、产品、网址文章归档及页面显示文章数',
+	'fields'      => array(
+
+		array(
+			'id'       => 'type_posts_n',
+			'type'     => 'number',
+			'title'    => '归档篇数',
+			'default'  => 20,
+		),
+
+		array(
+			'id'       => 'type_cat',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '显示该类型所有分类链接',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'custom_cat_n',
+			'type'     => 'number',
+			'title'    => '页面篇数',
+			'default'  => 12,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '最新文章图标',
+	'icon'        => '',
+	'description' => '最新文章图标设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'news_ico',
+			'type'     => 'switcher',
+			'title'    => '最新文章图标',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'news_date',
+			'type'     => 'switcher',
+			'title'    => '突出最新文章日期',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'new_n',
+			'type'     => 'number',
+			'title'    => '显示时限',
+			'default'  => 168,
+			'after'    => '<span class="after-perch">小时，默认一周（168小时）内发表的文章显示，最短24小时</span>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '友情链接页面',
+	'icon'        => '',
+	'description' => '友情链接页面设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'add_link',
+			'type'     => 'switcher',
+			'title'    => '自助友情链接',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'site_inks_des',
+			'type'     => 'switcher',
+			'title'    => '显示描述',
+		),
+
+		array(
+			'id'       => 'inks_adorn',
+			'type'     => 'switcher',
+			'title'    => '装饰动画',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'links_model',
+			'type'    => 'radio',
+			'title'   => '显示模式',
+			'inline'  => true,
+			'options' => array(
+				'links_ico'     => '图标模式',
+				'links_default' => '默认模式',
+			),
+			'default' => 'links_ico',
+		),
+
+		array(
+			'id'      => 'link_favicon',
+			'type'    => 'radio',
+			'title'   => '图标模式选择',
+			'inline'  => true,
+			'options' => array(
+				'favicon_ico' => 'Favicon图标',
+				'first_ico'   => '首字图标',
+			),
+			'default' => 'favicon_ico',
+		),
+
+		array(
+			'id'      => 'rand_link',
+			'type'    => 'radio',
+			'title'   => '图标模式排序',
+			'inline'  => true,
+			'options' => $rand_link, 
+			'default' => 'rating',
+		),
+
+		array(
+			'id'      => 'links_img_txt',
+			'type'    => 'radio',
+			'title'   => '默认模式选择',
+			'inline'  => true,
+			'options' => $inks_img_txt,
+			'default' => '0',
+		),
+
+		array(
+			'id'       => 'link_cat',
+			'type'     => 'text',
+			'title'    => '输入排除的链接ID',
+			'after'    => $mid,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'basic_setting',
+	'title'       => '网站Favicon图标API',
+	'icon'        => '',
+	'description' => '设置获取网站Favicon图标API',
+	'fields'      => array(
+
+		array(
+			'id'       => 'favicon_api',
+			'type'     => 'text',
+			'title'    => '获取图标API地址',
+			'default' => 'https://favicon.cccyun.cc/',
+			'after'    => '输入获取网站favicon图标API地址，默认：https://favicon.cccyun.cc/',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'id'    => 'menu_setting',
+	'title' => '菜单设置',
+	'icon'        => 'dashicons dashicons-menu-alt',
+) );
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'menu_setting',
+	'title'       => '菜单外观',
+	'icon'        => '',
+	'description' => '设置菜单外观样式及显示模式',
+	'fields'      => array(
+
+		array(
+			'id'      => 'menu_m',
+			'type'    => 'radio',
+			'title'   => '导航菜单固定模式',
+			'inline'  => true,
+			'options' => array(
+				'menu_d' => '正常模式',
+				'menu_n' => '永不固定',
+				'menu_g' => '保持固定',
+			),
+			'default' => 'menu_d',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '主要菜单样式',
+		),
+
+		array(
+			'id'       => 'menu_block',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '色块模式',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'nav_ace',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '文字加粗',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'menu_glass',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '半透明',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'site_nav_left',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '居左',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'top_nav_show',
+			'type'     => 'switcher',
+			'title'    => '顶部菜单及站点管理',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'nav_extend',
+			'type'     => 'switcher',
+			'title'    => '伸展菜单',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'nav_width',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '伸展菜单宽度',
+			'after'    => '<span class="after-perch">px 默认1250，不使用自定义宽度请留空</span>',
+		),
+
+		array(
+			'id'       => 'nav_full_width',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '100%宽',
+		),
+
+		array(
+			'id'       => 'subjoin_menu',
+			'type'     => 'switcher',
+			'title'    => '附加菜单',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'mega_menu',
+			'type'     => 'switcher',
+			'title'    => '超级菜单',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'select_menu',
+			'type'     => 'switcher',
+			'title'    => '选择菜单',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'assign_menus',
+			'type'     => 'switcher',
+			'title'    => '指派菜单',
+			'default'  => true,
+			'after'    => '<span class="after-perch">为每个页面<a href="' . home_url() . '/wp-admin/nav-menus.php?action=locations" target="_blank"><b> 设置 </b></a>不同的菜单</span>',
+		),
+
+		array(
+			'id'       => 'menu_visibility',
+			'type'     => 'switcher',
+			'title'    => '菜单条件判断',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'menu_des',
+			'type'     => 'switcher',
+			'title'    => '二级菜单显示描述',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'menu_setting',
+	'title'       => '通用头部模式',
+	'icon'        => '',
+	'description' => '网站名称在上，主菜单在下的一种导航菜单模式，比较适合在桌面端使用',
+	'fields'      => array(
+
+		array(
+			'id'       => 'header_normal',
+			'type'     => 'switcher',
+			'title'    => '通用头部模式',
+		),
+
+		array(
+			'id'      => 'h_main_o',
+			'type'    => 'radio',
+			'title'   => '右侧显示',
+			'inline'  => true,
+			'options' => array(
+				'h_search'  => '搜索框',
+				'h_contact' => '自定义内容',
+			),
+			'default' => 'h_search',
+		),
+
+		array(
+			'id'       => 'logo_box_height',
+			'type'     => 'number',
+			'title'    => '头部高度',
+			'after'    => '<span class="after-perch">px，默认80</span>',
+			'default'  => 80,
+		),
+
+		array(
+			'id'      => 'header_color',
+			'type'    => 'color',
+			'title'   => '背景颜色',
+			'default' => '#ffffff',
+		),
+
+		array(
+			'id'        => 'header_contact',
+			'type'      => 'textarea',
+			'title'     => '自定义内容',
+			'sanitize'  => false,
+		),
+
+		array(
+			'id'       => 'top_bg',
+			'type'     => 'upload',
+			'title'    => '背景图片',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'      => 'top_bg_m',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '图片显示模式',
+			'inline'  => true,
+			'options' => array(
+				'repeat_x' => '重复显示',
+				'repeat_y' => '不重复显示',
+			),
+			'default' => 'repeat_x',
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'menu_setting',
+	'title'       => '移动端菜单',
+	'icon'        => '',
+	'description' => '设置移动端菜单',
+	'fields'      => array(
+
+		array(
+			'id'       => 'footer_menu',
+			'type'     => 'switcher',
+			'title'    => '移动端页脚菜单',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'footer_menu_no',
+			'type'     => 'switcher',
+			'title'    => '移动端页脚菜单自动隐藏',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'nav_weixin_on',
+			'type'     => 'switcher',
+			'title'    => '移动端页脚菜单微信',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'mobile_nav',
+			'type'     => 'switcher',
+			'title'    => '移动端菜单与PC端不同',
+		),
+
+		array(
+			'id'       => 'm_nav',
+			'type'     => 'switcher',
+			'title'    => '单独的移动端菜单',
+			'after'    => '<span class="after-perch">不能有二级菜单，有特殊需要时启用</span>',
+		),
+
+		array(
+			'id'       => 'nav_weixin_img',
+			'type'     => 'upload',
+			'title'    => '微信二维码图片',
+			'default'  => $imgpath . '/favicon.png',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'nav_no',
+			'type'     => 'switcher',
+			'title'    => '移动端导航按钮链接到页面',
+		),
+
+		array(
+			'id'          => 'nav_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'        => 'select',
+			'title'       => '选择页面',
+			'placeholder' => '选择页面',
+			'options'     => 'pages',
+			'query_args'  => array(
+				'posts_per_page' => -1
+			)
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'id'    => 'thumbnail_setting',
+	'title' => '缩略图',
+	'icon'        => 'dashicons dashicons-format-image',
+) );
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'thumbnail_setting',
+	'title'       => '缩略图',
+	'icon'        => '',
+	'description' => '缩略图方式及大小比例',
+	'fields'      => array(
+
+		array(
+			'id'      => 'img_way',
+			'type'    => 'radio',
+			'title'   => '缩略图方式',
+			'inline'  => true,
+			'options' => array(
+				'd_img'    => '默认缩略图',
+				'o_img'    => '阿里云OSS',
+				'q_img'    => '七牛云',
+				'upyun'    => '又拍云',
+				'cos_img'  => '腾讯COS',
+				'no_thumb' => '不裁剪',
+			),
+			'default' => 'no_thumb',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '自动裁剪设置',
+		),
+
+		array(
+			'id'      => 'crop_top',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'inline'  => true,
+			'title'   => '缩略裁剪位置',
+			'options' => $test_array,
+			'default' => '',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '标准缩略图',
+		),
+
+		array(
+			'id'       => 'img_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认280</span>',
+			'default'  => 280,
+		),
+
+		array(
+			'id'       => 'img_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认210</span>',
+			'default'  => 210,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content' => '杂志分类模块缩略图',
+		),
+
+		array(
+			'id'       => 'img_k_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认560</span>',
+			'default'  => 560,
+		),
+
+		array(
+			'id'       => 'img_k_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认230</span>',
+			'default'  => 230,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content' => '图片布局缩略图',
+		),
+
+		array(
+			'id'       => 'grid_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认280</span>',
+			'default'  => 280,
+		),
+
+		array(
+			'id'       => 'grid_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认210</span>',
+			'default'  => 210,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content' => '图片缩略图',
+		),
+
+		array(
+			'id'       => 'img_i_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认280</span>',
+			'default'  => 280,
+		),
+
+		array(
+			'id'       => 'img_i_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认210</span>',
+			'default'  => 210,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content' => '视频缩略图',
+		),
+
+		array(
+			'id'       => 'img_v_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认280</span>',
+			'default'  => 280,
+		),
+
+		array(
+			'id'       => 'img_v_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认210</span>',
+			'default'  => 210,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content' => '商品缩略图',
+		),
+
+		array(
+			'id'       => 'img_t_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认400</span>',
+			'default'  => 400,
+		),
+
+		array(
+			'id'       => 'img_t_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认400</span>',
+			'default'  => 400,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content' => '首页幻灯',
+		),
+
+		array(
+			'id'       => 'img_h_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认800</span>',
+			'default'  => 800,
+		),
+
+		array(
+			'id'       => 'img_h_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认300</span>',
+			'default'  => 300,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content' => '幻灯小工具',
+		),
+
+		array(
+			'id'       => 'img_s_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认350</span>',
+			'default'  => 350,
+		),
+
+		array(
+			'id'       => 'img_s_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认260</span>',
+			'default'  => 260,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content' => '分类宽图',
+		),
+
+		array(
+			'id'       => 'img_full_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认900</span>',
+			'default'  => 900,
+		),
+
+		array(
+			'id'       => 'img_full_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认350</span>',
+			'default'  => 350,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content' => '网址缩略图',
+		),
+
+		array(
+			'id'       => 'sites_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认280</span>',
+			'default'  => 280,
+		),
+
+		array(
+			'id'       => 'sites_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认210</span>',
+			'default'  => 210,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content' => '分类图片',
+		),
+
+		array(
+			'id'       => 'img_des_w',
+			'class'    => 'be-child-item be-child-number',
+			'type'     => 'number',
+			'title'    => '宽',
+			'after'    => '<span class="after-perch">默认1200</span>',
+			'default'  => 1200,
+		),
+
+		array(
+			'id'       => 'img_des_h',
+			'class'    => 'be-child-item be-child-last-number',
+			'type'     => 'number',
+			'title'    => '高',
+			'after'    => '<span class="after-perch">默认250</span>',
+			'default'  => 250,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '不裁剪显示比例',
+		),
+
+		array(
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => '不使用自定义请留空',
+		),
+
+		array(
+			'id'       => 'img_bl',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '标准缩略图',
+			'after'    => '<span class="after-perch">默认75</span>',
+		),
+
+		array(
+			'id'       => 'img_k_bl',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '杂志分类模块缩略图',
+			'after'    => '<span class="after-perch">默认41</span>',
+		),
+
+		array(
+			'id'       => 'grid_bl',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '图片布局缩略图',
+			'after'    => '<span class="after-perch">默认75</span>',
+		),
+
+		array(
+			'id'       => 'img_v_bl',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '视频缩略图',
+			'after'    => '<span class="after-perch">默认75</span>',
+		),
+
+		array(
+			'id'       => 'img_t_bl',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '商品缩略图',
+			'after'    => '<span class="after-perch">默认100</span>',
+		),
+
+		array(
+			'id'       => 'img_s_bl',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '幻灯小工具',
+			'after'    => '<span class="after-perch">默认75</span>',
+		),
+
+		array(
+			'id'       => 'img_l_bl',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '横向滚动',
+			'after'    => '<span class="after-perch">默认75</span>',
+		),
+
+		array(
+			'id'       => 'img_full_bl',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '分类宽图',
+			'after'    => '<span class="after-perch">默认33.3</span>',
+		),
+
+		array(
+			'id'       => 'sites_bl',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'number',
+			'title'    => '网址缩略图',
+			'after'    => '<span class="after-perch">默认75</span>',
+		),
+
+		array(
+			'id'       => 'fall_width',
+			'type'     => 'number',
+			'title'    => '瀑布流',
+			'after'    => '<span class="after-perch">默认190，当调整了页面宽度或者调整分栏，修改这个值，直至两侧对齐</span>',
+			'default'  => 190,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '限制文章列表缩略图',
+		),
+
+		array(
+			'id'       => 'thumbnail_width',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '缩略图最大宽度',
+			'after'    => '<span class="after-perch">默认值200</span>',
+		),
+
+		array(
+			'id'       => 'meta_left',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'number',
+			'title'    => '调整信息位置',
+			'after'    => '<span class="after-perch">默认距左240</span>',
+		),
+
+		array(
+			'id'       => 'wp_thumbnails',
+			'type'     => 'switcher',
+			'title'    => '特色图片',
+			'after'    => '<span class="after-perch">如不使用该功能请不要开启</span>',
+		),
+
+		array(
+			'id'       => 'clipping_thumbnails',
+			'type'     => 'switcher',
+			'title'    => '特色图片自动裁剪',
+		),
+
+		array(
+			'id'       => 'disable_img_sizes',
+			'type'     => 'switcher',
+			'title'    => '禁止WP自动裁剪图片',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'manual_thumbnail',
+			'type'     => 'switcher',
+			'title'    => '手动缩略图自动裁剪',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'thumbnail_setting',
+	'title'       => '随机缩略图',
+	'icon'        => '',
+	'description' => '设置随机缩略图',
+	'fields'      => array(
+
+		array(
+			'id'       => 'no_rand_img',
+			'type'     => 'switcher',
+			'title'    => '文章中无图，不显示随机缩略图',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'clipping_rand_img',
+			'type'     => 'switcher',
+			'title'    => '自动裁剪',
+		),
+
+		array(
+			'id'       => 'rand_img_n',
+			'type'     => 'number',
+			'title'    => '随机图数量',
+			'after'    => '<span class="after-perch">默认5</span>',
+			'default'  => 5,
+		),
+
+		array(
+			'id'    => 'random_image_url',
+			'type'  => 'textarea',
+			'title' => '标准随机缩略图链接',
+			'after'    => '多张图片中间用英文半角逗号","隔开',
+			'default'  => $imgdefault . '/random/320.jpg',
+		),
+
+		array(
+			'id'    => 'random_long_url',
+			'type'  => 'textarea',
+			'title' => '分类模块随机缩略图链接',
+			'after'    => '多张图片中间用英文半角逗号","隔开',
+			'default'  => $imgdefault . '/random/560.jpg',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'thumbnail_setting',
+	'title'       => '图片本地化',
+	'icon'        => '',
+	'description' => '将文章中外链图片自动下载到本地，有些外链图片（如头条），需要切换到“文本”编辑模式，更新发表。',
+	'fields'      => array(
+
+		array(
+			'id'       => 'save_image',
+			'type'     => 'switcher',
+			'title'    => '外链图片自动本地化',
+			'after'    => '<span class="after-perch">酌情开启</span>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'title'       => '分类模板',
+	'icon'        => 'dashicons dashicons-category',
+	'description' => '选择分类模板，让分类显示不同的外观布局',
+	'fields'      => array(
+
+		array(
+			'id'          => 'default_cat_template',
+			'type'        => 'select',
+			'title'       => '分类默认模板',
+			'placeholder' => '',
+			'options'     => $options_select_template,
+		),
+
+		array(
+			'id'          => 'default_tag_template',
+			'type'        => 'select',
+			'title'       => '标签默认模板',
+			'placeholder' => '',
+			'options'     => $options_select_template_tag,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '分类Ajax模板选择',
+		),
+
+		array(
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => '输入分类ID，不可重复添加',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_a',
+			'class'    => 'be-normal-item',
+			'type'     => 'text',
+			'title'    => 'Ajax图片布局',
+			'after'    => $idcat,
+		),
+
+		array(
+			'id'      => 'ajax_layout_code_a_f',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl456,
+			'default' => '5',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_a_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '每页篇数',
+			'default'  => '15',
+			'after'    => $anh,
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_a_r',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '侧边栏',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_a_btn',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '子分类按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'ajax_layout_code_a_img',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '缩略图',
+			'inline'  => true,
+			'options' => array(
+				'0'   => '正常',
+				'1'   => '图片',
+			),
+			'default' => '0',
+		),
+
+		array(
+			'id'      => 'ajax_code_a_orderby',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '文章排序',
+			'inline'  => true,
+			'options' => $ajax_orderby,
+			'default' => 'date',
+		),
+
+		array(
+			'id'      => 'nav_btn_a',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '翻页模式',
+			'inline'  => true,
+			'options' => array(
+				'true'   => '数字翻页',
+				'more'   => '更多按钮',
+			),
+			'default' => 'true',
+		),
+
+		array(
+			'id'      => 'more_infinite_a',
+			'class'   => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '更多按钮滚动加载',
+			'inline'  => true,
+			'options' => array(
+				'false'  => '否',
+				'true'   => '是',
+			),
+			'default' => 'false',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_b',
+			'type'     => 'text',
+			'title'    => 'Ajax卡片布局',
+			'after'    => $idcat,
+		),
+
+		array(
+			'id'      => 'ajax_layout_code_b_f',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl1234,
+			'default' => '3',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_b_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '每页篇数',
+			'default'  => '12',
+			'after'    => $anh,
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_b_r',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '侧边栏',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_b_btn',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '子分类按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'ajax_code_b_orderby',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '文章排序',
+			'inline'  => true,
+			'options' => $ajax_orderby,
+			'default' => 'date',
+		),
+
+		array(
+			'id'      => 'nav_btn_b',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '翻页模式',
+			'inline'  => true,
+			'options' => array(
+				'true'   => '数字翻页',
+				'more'   => '更多按钮',
+			),
+			'default' => 'true',
+		),
+
+		array(
+			'id'      => 'more_infinite_b',
+			'class'   => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '更多按钮滚动加载',
+			'inline'  => true,
+			'options' => array(
+				'false'  => '否',
+				'true'   => '是',
+			),
+			'default' => 'false',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_c',
+			'type'     => 'text',
+			'title'    => 'Ajax标题布局',
+			'after'    => $idcat,
+		),
+
+		array(
+			'id'      => 'ajax_layout_code_c_f',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fl1234,
+			'default' => '3',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_c_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '每页篇数',
+			'default'  => '12',
+			'after'    => $anh,
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_c_r',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '侧边栏',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_c_btn',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '子分类按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'ajax_code_c_orderby',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '文章排序',
+			'inline'  => true,
+			'options' => $ajax_orderby,
+			'default' => 'date',
+		),
+
+		array(
+			'id'      => 'nav_btn_c',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '翻页模式',
+			'inline'  => true,
+			'options' => array(
+				'true'   => '数字翻页',
+				'more'   => '更多按钮',
+			),
+			'default' => 'true',
+		),
+
+		array(
+			'id'      => 'more_infinite_c',
+			'class'   => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '更多按钮滚动加载',
+			'inline'  => true,
+			'options' => array(
+				'false'  => '否',
+				'true'   => '是',
+			),
+			'default' => 'false',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_f',
+			'type'     => 'text',
+			'title'    => 'Ajax标题列表',
+			'after'    => $idcat,
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_f_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '每页篇数',
+			'default'  => '12',
+			'after'    => $anh,
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_f_r',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '侧边栏',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_f_btn',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '子分类按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'ajax_code_f_orderby',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '文章排序',
+			'inline'  => true,
+			'options' => $ajax_orderby,
+			'default' => 'date',
+		),
+
+		array(
+			'id'      => 'nav_btn_f',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '翻页模式',
+			'inline'  => true,
+			'options' => array(
+				'true'   => '数字翻页',
+				'more'   => '更多按钮',
+			),
+			'default' => 'true',
+		),
+
+		array(
+			'id'      => 'more_infinite_f',
+			'class'   => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '更多按钮滚动加载',
+			'inline'  => true,
+			'options' => array(
+				'false'  => '否',
+				'true'   => '是',
+			),
+			'default' => 'false',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_e',
+			'type'     => 'text',
+			'title'    => 'Ajax问答布局',
+			'after'    => $idcat,
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_e_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '每页篇数',
+			'default'  => '10',
+			'after'    => $anh,
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_e_btn',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '子分类按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_e_btn_m',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '标准按钮',
+			'after'    => '<span class="after-perch">子分类较多时选择</span>',
+		),
+
+		array(
+			'id'      => 'ajax_code_e_orderby',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '文章排序',
+			'inline'  => true,
+			'options' => $ajax_orderby,
+			'default' => 'date',
+		),
+
+		array(
+			'id'      => 'nav_btn_e',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '翻页模式',
+			'inline'  => true,
+			'options' => array(
+				'true'   => '数字翻页',
+				'more'   => '更多按钮',
+			),
+			'default' => 'true',
+		),
+
+		array(
+			'id'      => 'more_infinite_e',
+			'class'   => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '更多按钮滚动加载',
+			'inline'  => true,
+			'options' => array(
+				'false'  => '否',
+				'true'   => '是',
+			),
+			'default' => 'false',
+		),
+
+		array(
+			'id'       => 'single_layout_qa',
+			'type'     => 'text',
+			'title'    => '正文问答模板',
+			'after'    => '可与分类Ajax问答模板配套使用',
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_d',
+			'type'     => 'text',
+			'title'    => 'Ajax标准布局',
+			'after'    => $idcat,
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_d_n',
+			'class'    => 'be-child-item',
+			'type'     => 'number',
+			'title'    => '每页篇数',
+			'default'  => '10',
+			'after'    => $anh,
+		),
+
+		array(
+			'id'       => 'ajax_layout_code_d_btn',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '子分类按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'ajax_code_d_orderby',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '文章排序',
+			'inline'  => true,
+			'options' => $ajax_orderby,
+			'default' => 'date',
+		),
+
+		array(
+			'id'      => 'nav_btn_d',
+			'class'   => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '翻页模式',
+			'inline'  => true,
+			'options' => array(
+				'true'   => '数字翻页',
+				'more'   => '更多按钮',
+			),
+			'default' => 'true',
+		),
+
+		array(
+			'id'      => 'more_infinite_d',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '更多按钮滚动加载',
+			'inline'  => true,
+			'options' => array(
+				'false'  => '否',
+				'true'   => '是',
+			),
+			'default' => 'false',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '专栏Ajax模板选择',
+		),
+
+		array(
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => '输入分类ID，不可重复添加，其它选项与上面分类设置相同',
+		),
+
+		array(
+			'id'      => 'ajax_special_code_a',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'   => 'Ajax图片布局',
+			'after'    => $idcat,
+		),
+
+		array(
+			'id'      => 'ajax_special_code_b',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'   => 'Ajax卡片布局',
+			'after'    => $idcat,
+		),
+
+		array(
+			'id'      => 'ajax_special_code_c',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'   => 'Ajax标题布局',
+			'after'    => $idcat,
+		),
+
+		array(
+			'id'      => 'ajax_special_code_d',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'   => 'Ajax标题列表',
+			'after'    => $idcat,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '选择不同分类/标签布局',
+		),
+
+		array(
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => '输入分类/标签 ID，多个ID用英文半角逗号","隔开，不可重复添加，会覆盖上面AJAX模板设置',
+		),
+
+		array(
+			'id'       => 'cat_layout_default',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '默认模板',
+		),
+
+		array(
+			'id'       => 'cat_layout_img',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '图片布局',
+		),
+
+		array(
+			'id'       => 'cat_layout_img_s',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '图片布局， 有侧边栏',
+		),
+
+		array(
+			'id'       => 'cat_layout_grid',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '图片布局，可单独设置缩略图大小',
+		),
+
+		array(
+			'id'       => 'cat_layout_play',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '图片布局，有播放图标',
+		),
+
+		array(
+			'id'       => 'cat_layout_full',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '通长缩略图',
+		),
+
+		array(
+			'id'       => 'cat_layout_list',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '标题列表',
+		),
+
+		array(
+			'id'       => 'cat_layout_title',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '格子标题',
+		),
+
+		array(
+			'id'       => 'cat_layout_square',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '网格布局',
+		),
+
+		array(
+			'id'       => 'cat_layout_line',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '时间轴',
+		),
+
+		array(
+			'id'       => 'cat_layout_fall',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '瀑布流',
+		),
+
+		array(
+			'id'       => 'cat_child_cover',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '子分类封面',
+		),
+
+		array(
+			'id'       => 'cat_layout_child',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '子分类',
+		),
+
+		array(
+			'id'       => 'cat_layout_child_img',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '子分类图片',
+		),
+
+		array(
+			'id'       => 'gallery_fall',
+			'type'     => 'switcher',
+			'title'    => '图片分类归档使用瀑布流',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'fall_inf',
+			'type'     => 'switcher',
+			'title'    => '瀑布流显示文章信息',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'child_cover_ico',
+			'type'     => 'switcher',
+			'title'    => '子分类封面图标模式',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'title'       => '文章信息',
+	'icon'  => 'dashicons dashicons-edit-page',
+	'description' => '文章相关信息设置',
+	'fields'      => array(
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '文章信息设置',
+		),
+
+		array(
+			'id'       => 'meta_b',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '文章信息显示在标题下面',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'title_c',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '正文标题居中',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'inf_back',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '不居中时文章信息两行',
+		),
+
+		array(
+			'id'       => 'meta_author_single',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '正文显示作者信息',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'meta_author',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '文章列表显示作者信息',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'author_hide',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '网格模块不显示作者信息',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'reading_m',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '阅读模式',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'print_on',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '打印按钮',
+		),
+
+		array(
+			'id'       => 'word_count',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '文章字数',
+		),
+
+		array(
+			'id'       => 'reading_time',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '阅读时间',
+		),
+
+		array(
+			'id'       => 'word_time',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '移动端隐藏字数和阅读时间',
+		),
+
+		array(
+			'id'       => 'meta_time',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '使用标准日期格式',
+		),
+
+		array(
+			'id'       => 'no_year',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '标准日期文章列表不显示年',
+		),
+
+		array(
+			'id'       => 'meta_time_second',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '显示时间',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'post_cat',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '显示文章分类',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'meta_zm_like',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '点赞数',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'post_replace',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '最后更新日期',
+		),
+
+		array(
+			'id'       => 'post_tags',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '显示文章标签',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'baidu_record',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '显示百度收录与否',
+		),
+
+
+		array(
+			'id'       => 'copyright_info',
+			'type'     => 'switcher',
+			'title'    => '显示文章末尾固定信息',
+			'default'  => true,
+		),
+
+		array(
+			'id'        => 'copyright_content',
+			'class'     => 'be-child-item be-child-last-item',
+			'type'      => 'textarea',
+			'title'     => '输入信息，可使用HTML代码',
+			'sanitize'  => false,
+			'default'   => '文章末尾固定信息',
+		),
+
+		array(
+			'id'       => 'no_thumbnail_cat',
+			'type'     => 'switcher',
+			'title'    => '缩略图上分类名称',
+			'default'  => true,
+			'after'    => '<span class="after-perch">鼠标悬停显示</span>',
+		),
+
+		array(
+			'id'       => 'limit_tags_number',
+			'type'     => 'number',
+			'title'    => '文章标签显示数量',
+			'after'    => '<span class="after-perch">留空显示全部</span>',
+		),
+
+		array(
+			'id'       => 'post_tag_cloud',
+			'type'     => 'switcher',
+			'title'    => '文章列表显示标签',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'post_tag_cloud_n',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'number',
+			'title'    => '数量',
+			'default'  => 2,
+		),
+
+		array(
+			'id'       => 'auto_add_like',
+			'type'     => 'switcher',
+			'title'    => '自动添加点赞字段',
+			'default'  => true,
+			'label'    => '用于文章排序',
+		),
+
+		array(
+			'id'       => 'copyright',
+			'type'     => 'switcher',
+			'title'    => '显示正文底部版权信息',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'copyright_avatar',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '显示作者头像',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'copyright_statement',
+			'class'    => 'be-child-item',
+			'type'     => 'textarea',
+			'title'    => '自定义版权信息第一行',
+			'sanitize' => false,
+			'after'    => '可使用HTML代码',
+		),
+
+		array(
+			'id'        => 'copyright_indicate',
+			'class'     => 'be-child-item be-child-last-item',
+			'type'      => 'textarea',
+			'title'     => '自定义版权信息第二行',
+			'sanitize'  => false,
+			'default'   => '<strong>转载请务必保留本文链接：</strong>{{link}}',
+			'after'     => '{{title}}表示文章标题，{{link}}表示文章链接，比如获取文章标题和链接：＜a href="{{link}}">{{title}}＜/a＞',
+		),
+	)
+));
+
+
+
+
+CSF::createSection( $prefix, array(
+	'id'          => 'comments_setting',
+	'title'       => '评论设置',
+	'icon'        => 'dashicons dashicons-admin-comments',
+	'description' => '与评论相关的设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'comment_ajax',
+			'type'     => 'switcher',
+			'title'    => 'Ajax评论',
+			'default'  => true,
+			'label'    => '启用后，删除WP程序根目录的wp-comments-post，可防垃圾评论',
+		),
+
+		array(
+			'id'       => 'infinite_comment',
+			'type'     => 'switcher',
+			'title'    => '评论Ajax翻页',
+		),
+
+		array(
+			'id'       => 'at',
+			'type'     => 'switcher',
+			'title'    => '评论@回复',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'qq_info',
+			'type'     => 'switcher',
+			'title'    => 'QQ快速评论',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'mail_notify',
+			'type'     => 'switcher',
+			'title'    => '回复邮件通知',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'qt',
+			'type'     => 'switcher',
+			'title'    => '解锁提交评论',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'not_comment_form',
+			'type'     => 'switcher',
+			'title'    => '默认隐藏评论表单',
+		),
+
+		array(
+			'id'       => 'no_comment_url',
+			'type'     => 'switcher',
+			'title'    => '不显示评论网址表单',
+		),
+
+		array(
+			'id'       => 'no_email',
+			'type'     => 'switcher',
+			'title'    => '评论只填写昵称',
+			'label'    => '同时需要到讨论设置中，取消“评论者必须填入名字和电子邮箱地址”勾选',
+		),
+
+		array(
+			'id'       => 'login_reply_btn',
+			'type'     => 'switcher',
+			'title'    => '不显示登录回复按钮',
+		),
+
+		array(
+			'id'       => 'comment_honeypot',
+			'type'     => 'switcher',
+			'title'    => '防机器人',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'refused_spam',
+			'type'     => 'switcher',
+			'title'    => '评论检查中文',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'sticky_comments',
+			'type'     => 'switcher',
+			'title'    => '评论置顶',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'comments_top',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '显示在评论模块上面',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'comment_time',
+			'type'     => 'switcher',
+			'title'    => '评论时间',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'vip',
+			'type'     => 'switcher',
+			'title'    => '评论等级',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'comment_floor',
+			'type'     => 'switcher',
+			'title'    => '评论楼层',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'comment_remark',
+			'type'     => 'switcher',
+			'title'    => '备注信息',
+		),
+
+		array(
+			'id'       => 'comment_region',
+			'type'     => 'switcher',
+			'title'    => '地区信息',
+			'after'    => '<span class="after-perch">需上传IP数据库dat文件到网站根目录</span>',
+		),
+
+		array(
+			'id'       => 'ip_dat_name',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '数据库文件名称',
+			'default'  => 'ipbe',
+		),
+
+		array(
+			'id'       => 'embed_img',
+			'type'     => 'switcher',
+			'title'    => '评论贴图',
+		),
+
+		array(
+			'id'       => 'emoji_show',
+			'type'     => 'switcher',
+			'title'    => '评论表情',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'comment_html',
+			'type'     => 'switcher',
+			'title'    => '禁止评论HTML',
+		),
+
+		array(
+			'id'       => 'del_comment',
+			'type'     => 'switcher',
+			'title'    => '删除评论按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'comment_url',
+			'type'     => 'switcher',
+			'title'    => '禁止评论超链接',
+		),
+
+		array(
+			'id'       => 'comment_counts',
+			'type'     => 'switcher',
+			'title'    => '评论信息',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'be_show_avatars',
+			'type'     => 'switcher',
+			'title'    => '申请头像按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'close_comments',
+			'type'     => 'switcher',
+			'title'    => '关闭评论',
+		),
+
+		array(
+			'id'       => 'login_comment',
+			'type'     => 'switcher',
+			'title'    => '登录显示评论模块',
+		),
+
+		array(
+			'id'       => 'check_admin',
+			'type'     => 'switcher',
+			'title'    => '禁止冒充管理员留言',
+		),
+
+		array(
+			'id'       => 'admin_name',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '管理员名称',
+		),
+
+		array(
+			'id'       => 'admin_email',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '管理员邮箱',
+		),
+
+		array(
+			'id'       => 'comment_vip',
+			'type'     => 'switcher',
+			'title'    => '显示评论VIP',
+		),
+
+		array(
+			'id'      => 'roles_vip',
+			'class'   => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '选择显示评论VIP的角色',
+			'inline'  => true,
+			'options' => array(
+				'administrator' => '管理员',
+				'editor'        => '编辑',
+				'author'        => '作者',
+				'contributor'   => '贡献者',
+				'subscriber'    => '订阅者',
+				'vip_roles'     => '自定义角色'
+			),
+			'default' => 'contributor',
+		),
+
+		array(
+			'id'       => 'comment_hint',
+			'type'     => 'text',
+			'title'    => '评论提示文字',
+			'default'  => '赠人玫瑰，手留余香...',
+			'after'    => '留空不显示',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'title'       => '搜索设置',
+	'icon'        => 'dashicons dashicons-search',
+	'description' => '搜索设置',
+	'fields'      => array(
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '默认搜索设置',
+		),
+
+		array(
+			'id'       => 'wp_s',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '默认搜索设置',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'menu_search',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '弹窗搜索',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'search_captcha',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '搜索验证',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'search_title',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '仅搜索标题',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'auto_search_post',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '结果仅一个自动跳转',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'search_option',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '搜索选项',
+			'inline'  => true,
+			'options' => array(
+				'search_default' => '默认',
+				'search_url'     => '修改搜索URL',
+				'search_cat'     => '分类搜索',
+			),
+			'default' => 'search_default',
+		),
+
+		array(
+			'id'       => 'not_search_cat',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '输入排除的分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'      => 'search_post_type',
+			'type'    => 'checkbox',
+			'title'   => '选择参与搜索的文章类型',
+			'inline'  => true,
+			'options' => 'post_types',
+ 			'default'      => array( 'post', 'page', 'bulletin', 'picture', 'video', 'tao', 'show', 'sites' )
+		),
+
+		array(
+			'id'       => 'ajax_search',
+			'type'     => 'switcher',
+			'title'    => 'Ajax搜索替换默认',
+		),
+
+		array(
+			'id'       => 'ajax_search_n',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'number',
+			'title'    => 'Ajax搜索显示篇数',
+			'default'  => '16',
+		),
+
+		array(
+			'id'      => 'search_the',
+			'type'    => 'radio',
+			'title'   => '搜索结果布局',
+			'inline'  => true,
+			'options' => array(
+				'search_list'   => '标题布局',
+				'search_img'    => '图片布局',
+				'search_normal' => '标准布局',
+			),
+			'default' => 'search_list',
+		),
+
+		array(
+			'id'       => 'search_sidebar',
+			'type'     => 'switcher',
+			'title'    => '显示侧边栏',
+			'default'  => true,
+		),
+
+		array(
+			'class'    => 'be-flex-parent-title',
+			'type'     => 'subheading',
+		),
+
+		array(
+			'class'    => 'be-flex-switcher-parent-title',
+			'type'     => 'subheading',
+			'content'  => '搜索引擎',
+		),
+
+		array(
+			'id'       => 'baidu_s',
+			'class'    => 'be-flex-switcher be-flex-switcher-first',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '百度',
+		),
+
+		array(
+			'id'       => 'google_s',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => 'Google',
+		),
+
+		array(
+			'id'       => 'bing_s',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '必应',
+		),
+
+		array(
+			'id'       => '360_s',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '360',
+		),
+
+		array(
+			'id'       => 'sogou_s',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '搜狗',
+		),
+
+		array(
+			'id'       => 'google_id',
+			'type'     => 'text',
+			'title'    => 'Google 搜索ID',
+			'default'  => '005077649218303215363:ngrflw3nv8m',
+			'after'    => '申请地址：https://cse.google.com/',
+		),
+
+		array(
+			'id'       => 'search_nav',
+			'type'     => 'switcher',
+			'title'    => '搜索推荐',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'menu_search_button',
+			'type'     => 'switcher',
+			'title'    => '主菜单搜索按钮',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'title'       => '网站标志',
+	'icon'  => 'dashicons dashicons-wordpress-alt',
+	'description' => '上传设置网站LOGO及标志等',
+	'fields'      => array(
+
+		array(
+			'id'      => 'site_sign',
+			'type'    => 'radio',
+			'title'   => '站点LOGO/标志',
+			'inline'  => true,
+			'options' => array(
+				'logos'      => 'LOGO',
+				'logo_small' => '标志+标题',
+				'no_logo'    => '仅标题',
+			),
+			'default' => 'logo_small',
+		),
+
+		array(
+			'id'       => 'logo_css',
+			'type'     => 'switcher',
+			'title'    => '站点名称扫光动画',
+			'label'    => '',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'logo',
+			'type'     => 'upload',
+			'title'    => '网站 logo',
+			'default'  => $imgpath . '/logo.png',
+			'preview'  => true,
+			'after'    => '透明png或svg图片最佳，默认高度50px',
+		),
+
+		array(
+			'id'       => 'logo_small_b',
+			'type'     => 'upload',
+			'title'    => '网站标志',
+			'default'  => $imgpath . '/logo-s.png',
+			'preview'  => true,
+			'after'    => '透明png或svg正方形图片最佳，默认高度50px',
+		),
+
+
+		array(
+			'id'       => 'favicon',
+			'type'     => 'upload',
+			'title'    => '自定义 Favicon',
+			'default'  => $imgpath . '/favicon.ico',
+			'preview'  => true,
+			'after'    => '上传favicon.ico(普通图片格式的也可以)，并通过FTP上传到网站根目录',
+		),
+
+		array(
+			'id'       => 'apple_icon',
+			'type'     => 'upload',
+			'title'    => '自定义 iOS 图标',
+			'default'  => $imgpath . '/favicon.png',
+			'preview'  => true,
+			'after'    => '上传苹果移动设备主屏幕图标',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'id'    => 'aux_setting',
+	'title' => '辅助功能',
+	'icon'  => 'dashicons dashicons-image-filter',
+) );
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '阿里图标库',
+	'icon'        => '',
+	'description' => '添加设置阿里图标库',
+	'fields'      => array(
+
+		array(
+			'class'    => 'be-button-url',
+			'type'     => 'subheading',
+			'title'    => '访问阿里图标库',
+			'content'  => '<span class="button-primary"><a href="https://www.iconfont.cn/" target="_blank">添加图标</a></span>',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '阿里图标外链',
+		),
+
+		array(
+			'class'    => 'be-child-item be-help-item',
+			'title'    => '说明',
+			'type'    => 'content',
+			'content'  => '添加修改图标库后，需重新添加链接',
+		),
+
+		array(
+			'id'       => 'iconfont_url',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '单色图标链接',
+			'after'    => '（Font class）后缀为css',
+		),
+
+		array(
+			'id'       => 'iconsvg_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '彩色图标链接',
+			'after'    => '（Symbol）后缀为js',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '阿里图标本地',
+		),
+
+		array(
+			'class'    => 'be-child-item be-help-item',
+			'title'    => '说明',
+			'type'    => 'content',
+			'content'  => '在本地调图标库，不使用请不要勾选',
+		),
+
+
+		array(
+			'id'       => 'black_font',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '单色图标',
+			'after'    => '<span class="after-perch">将下载的图标库文件夹改名为font，上传到 wp-content 目录</span>',
+		),
+
+		array(
+			'id'       => 'color_icon',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '彩色图标',
+			'after'    => '<span class="after-perch">将下载的图标库文件夹改名为icon，上传到 wp-content 目录</span>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '编辑器切换',
+	'icon'        => '',
+	'description' => '用于在区块编辑器与经典编辑器间切换',
+	'fields'      => array(
+
+		array(
+			'id'       => 'start_classic_editor',
+			'type'     => 'switcher',
+			'title'    => '经典编辑器',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'classic_widgets',
+			'type'     => 'switcher',
+			'title'    => '经典小工具编辑器',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'disable_block_styles',
+			'type'     => 'switcher',
+			'title'    => '禁止加载区块样式',
+			'default'  => true,
+			'after'    => '<span class="after-perch">禁止加载区块编辑器style和script</span>',
+		),
+
+		array(
+			'id'       => 'remove_global_css',
+			'type'     => 'switcher',
+			'title'    => '禁止加载区块全局样式',
+			'default'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '头像设置',
+	'icon'        => '',
+	'description' => 'Gravatar 头像设置',
+	'fields'      => array(
+
+		array(
+			'id'      => 'gravatar_url',
+			'type'    => 'radio',
+			'title'   => '获取头像方式',
+			'inline'  => true,
+			'options' => array(
+				'no'  => '默认',
+				'cn'  => 'cn获取',
+				'ssl' => 'ssl获取',
+				'zh'  => '自定义'
+			),
+			'default' => 'zh',
+		),
+
+		array(
+			'id'       => 'zh_url',
+			'type'     => 'text',
+			'title'    => '自定义获取头像地址',
+			'after'    => '默认：cravatar.cn/avatar/',
+			'default'  => 'cravatar.cn/avatar/',
+		),
+
+		array(
+			'id'       => 'ban_avatars',
+			'type'     => 'switcher',
+			'title'    => '后台禁止头像',
+		),
+
+		array(
+			'id'       => 'avatar_load',
+			'type'     => 'switcher',
+			'title'    => '头像延迟加载',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'default_avatar_m',
+			'type'    => 'radio',
+			'title'   => '自定义默认头像',
+			'inline'  => true,
+			'options' => array(
+				'default_avatar_f' => '固定',
+				'default_avatar_r' => '随机'
+			),
+			'default' => 'default_avatar_f',
+		),
+
+		array(
+			'id'       => 'default_avatar',
+			'class'    => 'be-child-item',
+			'type'     => 'upload',
+			'title'    => '默认头像',
+			'default'  => $imgpath . '/logo-s.png',
+			'preview'  => true,
+			'after'    => '上传更改自定义固定默认头像后，需进入设置 → 讨论 → 默认头像，勾选“自定义”，并保存更改',
+		),
+
+
+		array(
+			'id'       => 'local_avatars',
+			'type'     => 'switcher',
+			'title'    => '允许上传本地头像',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'all_local_avatars',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '允许所有角色上传头像',
+		),
+
+		array(
+			'id'       => 'avatar_size',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'number',
+			'title'    => '上传图片限制大小',
+			'after'    => '<span class="after-perch">默认200约等于200KB</span>',
+			'default'  => '200',
+		),
+
+		array(
+			'id'       => 'cache_avatar',
+			'type'     => 'switcher',
+			'title'    => '头像缓存到本地',
+			'after'    => '<span class="after-perch">设置 wp-content/uploads/avatar 目录权限为 755 或 777</span>',
+		),
+
+		array(
+			'id'       => 'gravatar_origin',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '获取头像地址',
+			'default'  => 'cravatar.cn',
+			'after'    => '默认：https://www.gravatar.com/avatar/',
+		),
+
+		array(
+			'id'      => 'avatar_url',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '未设置头像则显示',
+			'inline'  => true,
+			'options' => array(
+				'letter_img' => '首字图片',
+				'rand_img'   => '随机图片',
+			),
+			'default' => 'letter_img',
+		),
+
+		array(
+			'id'    => 'random_avatar_url',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'  => 'textarea',
+			'title' => '随机头像',
+			'after'    => '多张图片链接用英文半角逗号","隔开',
+			'default' => $imgpath . '/favicon.png',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '社会化登录',
+	'icon'        => '',
+	'description' => '社会化登录',
+	'fields'      => array(
+
+		array(
+			'id'       => 'be_social_login',
+			'type'     => 'switcher',
+			'title'    => '社会化登录',
+		),
+
+		array(
+			'id'       => 'login_data',
+			'type'     => 'switcher',
+			'title'    => '创建数据表',
+			'after'    => '<span class="after-perch">开启后，需保存两次设置，然后取消勾选</span>',
+		),
+
+		array(
+			'title'    => 'QQ',
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+		),
+
+		array(
+			'title'    => '申请地址',
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => '<a href="https://connect.qq.com/" target="_blank" title="申请地址">https://connect.qq.com</a>',
+		),
+
+		array(
+			'title'    => '网站回调域',
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => $qq_auth,
+		),
+
+		array(
+			'id'       => 'qq_app_id',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => 'QQ APP ID',
+		),
+
+		array(
+			'id'       => 'qq_key',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => 'QQ APP Key',
+		),
+
+		array(
+			'title'    => '微博',
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+		),
+
+		array(
+			'title'    => '申请地址',
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => '<a href="https://open.weibo.com/" target="_blank" title="申请地址">https://open.weibo.com</a>',
+		),
+
+		array(
+			'title'    => '应用地址',
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => $weibo_auth,
+		),
+
+		array(
+			'id'       => 'weibo_key',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '微博 App Key',
+		),
+
+		array(
+			'id'       => 'weibo_secret',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '微博 App Secret',
+		),
+
+		array(
+			'title'    => '微信',
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+		),
+
+		array(
+			'title'    => '申请地址（企业资格认证）',
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => '<a href="https://open.weixin.qq.com/" target="_blank" title="申请地址">https://open.weixin.qq.com</a>',
+		),
+
+		array(
+			'title'    => '授权回调域',
+			'class'    => 'be-child-item',
+			'type'    => 'content',
+			'content' => $weixin_auth,
+		),
+
+		array(
+			'id'       => 'weixin_id',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '微信 APP ID',
+		),
+
+		array(
+			'id'       => 'weixin_secret',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '微信 App Secret',
+		),
+
+		array(
+			'id'       => 'social_login_url',
+			'type'     => 'text',
+			'title'    => '登录后跳转的地址',
+			'default'  => $bloghome,
+			'after'    => '比如网站首页链接',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '邮件SMTP',
+	'icon'        => '',
+	'description' => '大部分主机默认情况下都不允许发送邮件，通过第三方邮件 SMTP 实现邮件发送',
+	'fields'      => array(
+
+		array(
+			'id'       => 'setup_email_smtp',
+			'type'     => 'switcher',
+			'title'    => '邮件SMTP',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'email_name',
+			'type'     => 'text',
+			'title'    => '发件人名称',
+			'default'  => '来自网站',
+		),
+
+		array(
+			'id'       => 'email_smtp',
+			'type'     => 'text',
+			'title'    => '邮箱SMTP服务器',
+			'default'  => 'smtp.163.com',
+			'after'    => '如：smtp.qq.com、smtp.126.com、smtp.163.com',
+		),
+
+		array(
+			'id'       => 'email_account',
+			'type'     => 'text',
+			'title'    => '邮箱账户',
+			'default'  => 'beginthemes@163.com',
+		),
+
+		array(
+			'id'       => 'email_authorize',
+			'type'     => 'text',
+			'title'    => '客户端授权密码',
+			'after'    => '非邮箱登录密码',
+			'default'  => 'NLSUYCUSEXUGUYHR',
+		),
+
+		array(
+			'id'       => 'email_port',
+			'type'     => 'text',
+			'title'    => '端口',
+			'after'    => '不需要改',
+			'default'  => '465',
+		),
+
+		array(
+			'id'       => 'email_secure',
+			'type'     => 'text',
+			'title'    => '加密类型',
+			'after'    => '端口25时 留空，465时 ssl，不需要改',
+			'default'  => 'ssl',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '多条件筛选',
+	'icon'        => '',
+	'description' => '多条件筛选',
+	'fields'      => array(
+
+		array(
+			'id'       => 'filters',
+			'type'     => 'switcher',
+			'title'    => '多条件筛选',
+		),
+
+		array(
+			'id'       => 'filters_hidden',
+			'type'     => 'switcher',
+			'title'    => '筛选条件默认折叠',
+		),
+
+		array(
+			'id'       => 'filters_img',
+			'type'     => 'switcher',
+			'title'    => '筛选结果使用图片布局',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '筛选项选择',
+		),
+
+		array(
+			'id'       => 'filters_cat',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选分类',
+		),
+
+		array(
+			'id'       => 'filters_a',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选 A',
+		),
+
+		array(
+			'id'       => 'filters_b',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选 B',
+		),
+
+		array(
+			'id'       => 'filters_c',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选 C',
+		),
+
+		array(
+			'id'       => 'filters_d',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选 D',
+		),
+
+		array(
+			'id'       => 'filters_e',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选 E',
+		),
+
+		array(
+			'id'       => 'filters_f',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选 F',
+		),
+
+		array(
+			'id'       => 'filters_g',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选 G',
+		),
+
+		array(
+			'id'       => 'filters_h',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选 H',
+		),
+
+		array(
+			'id'       => 'filters_i',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选 I',
+		),
+
+		array(
+			'id'       => 'filters_j',
+			'class'    => 'be-flex-switcher',
+			'type'     => 'switcher',
+			'default'  => true,
+			'before'   => '筛选 J',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '分类及文字',
+		),
+
+		array(
+			'id'       => 'filters_cat_id',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '输入筛选分类ID',
+			'after'    => $mid,
+		),
+
+		array(
+			'id'       => 'filter_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '标题文字',
+			'default'  => '条 件 筛 选',
+		),
+
+
+		array(
+			'id'       => 'filters_a_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '筛选 A 文字',
+			'default'  => '风格',
+		),
+
+		array(
+			'id'       => 'filters_b_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '筛选 B 文字',
+			'default'  => '价格',
+		),
+
+		array(
+			'id'       => 'filters_c_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '筛选 C 文字',
+			'default'  => '功能',
+		),
+
+		array(
+			'id'       => 'filters_d_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '筛选 D 文字',
+			'default'  => '大小',
+		),
+
+		array(
+			'id'       => 'filters_e_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '筛选 E 文字',
+			'default'  => '地域',
+		),
+
+		array(
+			'id'       => 'filters_f_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '筛选 F 文字',
+			'default'  => '品牌',
+		),
+
+		array(
+			'id'       => 'filters_g_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '筛选 G 文字',
+			'default'  => '国家',
+		),
+
+		array(
+			'id'       => 'filters_h_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '筛选 H 文字',
+			'default'  => '尺寸',
+		),
+
+		array(
+			'id'       => 'filters_i_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '筛选 I 文字',
+			'default'  => '时间',
+		),
+
+		array(
+			'id'       => 'filters_j_t',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '筛选 J 文字',
+			'default'  => '参数',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '前端投稿',
+	'icon'        => '',
+	'description' => '用于前端发表文章，新建页面并添加短代码 [bet_submission_form]',
+	'fields'      => array(
+
+		array(
+			'id'       => 'front_tougao',
+			'type'     => 'switcher',
+			'title'    => '前端投稿',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'instantly_publish',
+			'type'     => 'switcher',
+			'title'    => '不审核立即发表',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'tougao_mode',
+			'type'    => 'radio',
+			'title'   => '模式选择',
+			'inline'  => true,
+			'options' => array(
+				'post_mode' => '文章投稿',
+				'info_mode' => '信息提交',
+			),
+			'default' => 'post_mode',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '文章投稿设置',
+		),
+
+		array(
+			'id'       => 'thumbnail_required',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '允许特色图像',
+		),
+
+		array(
+			'id'      => 'user_upload',
+			'class'    => 'be-child-item',
+			'type'    => 'radio',
+			'title'   => '投稿（贡献）者上传权限',
+			'inline'  => true,
+			'options' => array(
+				'removecap' => '禁止',
+				'addcap'    => '允许',
+			),
+			'default' => 'removecap',
+		),
+
+		array(
+			'id'      => 'not_front_cat',
+			'type'    => 'checkbox',
+			'title'   => '排除的分类',
+			'inline'  => true,
+			'options' => 'categories',
+			'query_args' => array(
+				'orderby'  => 'ID',
+				'order'    => 'ASC',
+			),
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '信息提交设置',
+		),
+
+		array(
+			'id'       => 'submit_bulletin',
+			'class'    => 'be-child-item',
+			'type'     => 'switcher',
+			'title'    => '仅提交到“公告”文章',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'info_cat',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '输入一个分类ID',
+		),
+
+		array(
+			'class'    => 'be-parent-title be-child-item',
+			'type'     => 'subheading',
+			'content'  => '表单文字，留空不显示',
+		),
+
+		array(
+			'id'       => 'info_a',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '表单 A 文字',
+			'default'  => '姓名',
+		),
+
+		array(
+			'id'       => 'info_b',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '表单 B 文字',
+			'default'  => '职业',
+		),
+
+		array(
+			'id'       => 'info_c',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '表单 C 文字',
+			'default'  => '学历',
+		),
+
+		array(
+			'id'       => 'info_d',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '表单 D 文字',
+			'default'  => '电话',
+		),
+
+		array(
+			'id'       => 'info_e',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '表单 E 文字',
+			'default'  => '微信/QQ',
+		),
+
+		array(
+			'id'       => 'info_f',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '表单 F 文字',
+			'default'  => '邮箱',
+		),
+
+		array(
+			'class'    => 'be-parent-title be-child-item',
+			'type'     => 'subheading',
+			'content'  => '单选文字，留空不显示',
+		),
+
+		array(
+			'id'       => 's_info_a',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '单选 A 文字',
+			'default'  => '选择',
+		),
+
+		array(
+			'id'       => 's_info_b',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '单选 B 文字',
+			'default'  => '高中',
+		),
+
+		array(
+			'id'       => 's_info_e',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '单选 C 文字',
+			'default'  => '大专',
+		),
+
+		array(
+			'id'       => 's_info_d',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '单选 D 文字',
+			'default'  => '本科',
+		),
+
+		array(
+			'id'       => 's_info_c',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '单选 C 文字',
+			'default'  => '本科以上',
+		),
+
+		array(
+			'id'       => 's_info_f',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '单选 F 文字',
+			'default'  => '备用选项',
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '文章浏览统计',
+	'icon'        => '',
+	'description' => '用于统计文章被浏览点击次数',
+	'fields'      => array(
+
+		array(
+			'id'       => 'post_views',
+			'type'     => 'switcher',
+			'title'    => '文章浏览统计',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'user_views',
+			'type'     => 'switcher',
+			'title'    => '仅登录可见',
+		),
+
+		array(
+			'class'    => 'be-button-url',
+			'type'     => 'subheading',
+			'title'    => '详细设置',
+			'content'  => '<span class="button-primary"><a href="' . home_url() . '/wp-admin/options-general.php?page=views_options" target="_blank">更多设置</a></span>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '图片压缩',
+	'icon'        => '',
+	'description' => '上传图片时，对图片进行自动压缩',
+	'fields'      => array(
+
+		array(
+			'id'       => 'reduce_img',
+			'type'     => 'switcher',
+			'title'    => '图片压缩',
+		),
+
+		array(
+			'class'    => 'be-button-url',
+			'type'     => 'subheading',
+			'title'    => '详细设置',
+			'content'  => '<span class="button-primary"><a href="' . home_url() . '/wp-admin/options-general.php?page=resize-after-upload" target="_blank">设置压缩</a></span>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '注册邀请码',
+	'icon'        => '',
+	'description' => '用于在注册表单中添加邀请码',
+	'fields'      => array(
+
+		array(
+			'id'       => 'invitation_code',
+			'type'     => 'switcher',
+			'title'    => '注册邀请码',
+		),
+
+		array(
+			'id'       => 'code_data',
+			'type'     => 'switcher',
+			'title'    => '创建数据表',
+			'after'    => '<span class="after-perch">开启后，需保存两次设置，然后取消勾选</span>',
+		),
+
+		array(
+			'class'    => 'be-button-url',
+			'type'     => 'subheading',
+			'title'    => '添加邀请码',
+			'content'  => '<span class="button-primary"><a href="' . home_url() . '/wp-admin/admin.php?page=be_invitation_code_add" target="_blank">添加邀请码</a></span>',
+		),
+		array(
+			'class'    => 'be-button-url',
+			'type'     => 'subheading',
+			'title'    => '前端显示邀请码',
+			'content'  => '新建页面 → 添加短代码 [be_reg_codes] 并发表',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '仅登录访问',
+	'icon'        => '',
+	'description' => '仅登录访问网站',
+	'fields'      => array(
+
+		array(
+			'id'       => 'force_login',
+			'type'     => 'switcher',
+			'title'    => '仅登录访问',
+		),
+
+		array(
+			'id'       => 'force_login_url',
+			'type'     => 'text',
+			'title'    => '登录注册页面链接',
+			'default'  => $bloglogin,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '密码访问网站',
+	'icon'        => '',
+	'description' => '密码访问网站',
+	'fields'      => array(
+
+		array(
+			'id'       => 'be_password_status',
+			'type'     => 'switcher',
+			'title'    => '密码访问网站',
+		),
+
+		array(
+			'id'       => 'be_password_pass',
+			'type'     => 'text',
+			'title'    => '访问密码',
+		),
+
+		array(
+			'id'       => 'be_show_password',
+			'type'     => 'switcher',
+			'title'    => '显示密码',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '跟随按钮设置',
+	'icon'        => '',
+	'description' => '跟随按钮设置',
+	'fields'      => array(
+
+		array(
+			'id'       => 'scroll_z',
+			'type'     => 'switcher',
+			'title'    => '返回首页按钮',
+		),
+
+		array(
+			'id'       => 'placard_but',
+			'type'     => 'switcher',
+			'title'    => '公告按钮',
+		),
+
+		array(
+			'id'       => 'scroll_h',
+			'type'     => 'switcher',
+			'title'    => '返回顶部按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'scroll_b',
+			'type'     => 'switcher',
+			'title'    => '转到底部按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'read_night',
+			'type'     => 'switcher',
+			'title'    => '夜间模式',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'scroll_s',
+			'type'     => 'switcher',
+			'title'    => '跟随搜索按钮',
+		),
+
+		array(
+			'id'       => 'scroll_c',
+			'type'     => 'switcher',
+			'title'    => '跟随评论按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'gb2',
+			'type'     => 'switcher',
+			'title'    => '简繁体转换按钮',
+		),
+
+		array(
+			'id'       => 'qrurl',
+			'type'     => 'switcher',
+			'title'    => '显示本页二维码按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'but_scroll_show',
+			'type'     => 'switcher',
+			'title'    => '显隐动画',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'mobile_scroll',
+			'type'     => 'switcher',
+			'title'    => '移动端不显示',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '自定义分类法',
+	'icon'        => '',
+	'description' => '是否使用自定义分类法',
+	'fields'      => array(
+
+		array(
+			'id'       => 'no_bulletin',
+			'type'     => 'switcher',
+			'title'    => '公告',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_gallery',
+			'type'     => 'switcher',
+			'title'    => '图片',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_videos',
+			'type'     => 'switcher',
+			'title'    => '视频',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_tao',
+			'type'     => 'switcher',
+			'title'    => '商品',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_favorites',
+			'type'     => 'switcher',
+			'title'    => '网址',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_products',
+			'type'     => 'switcher',
+			'title'    => '产品',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_type',
+			'type'     => 'switcher',
+			'title'    => '仅管理员及编辑可见后台自定义分类法',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '新浪微博关注按钮',
+	'icon'        => '',
+	'description' => '显示在网站名称右侧',
+	'fields'      => array(
+
+		array(
+			'id'       => 'weibo_t',
+			'type'     => 'switcher',
+			'title'    => '新浪微博关注按钮',
+		),
+
+		array(
+			'id'       => 'weibo_id',
+			'type'     => 'text',
+			'title'    => '输入新浪微博ID',
+			'default'  => '1882973105',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '联系我们',
+	'icon'        => '',
+	'description' => '用于发送电子邮件',
+	'fields'      => array(
+
+		array(
+			'id'       => 'mail_form_phone',
+			'type'     => 'switcher',
+			'title'    => '表单中显示电话',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'mail_form_subject',
+			'type'     => 'switcher',
+			'title'    => '表单中显示主题',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'fix_mail_form',
+			'type'     => 'switcher',
+			'title'    => '显示左侧固定表单',
+		),
+
+		array(
+			'id'       => 'to_email',
+			'type'     => 'text',
+			'title'    => '收件邮箱',
+			'default'  => $selectemail,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '自定义表单文字',
+		),
+
+		array(
+			'id'       => 'mail_name',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '名称',
+			'default'  => '您的姓名',
+		),
+
+		array(
+			'id'       => 'mail_email',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '邮箱',
+			'default'  => '您的邮箱',
+		),
+
+		array(
+			'id'       => 'mail_phone',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '电话',
+			'default'  => '您的电话',
+		),
+
+		array(
+			'id'       => 'mail_subject',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '主题',
+			'default'  => '邮件主题',
+		),
+
+		array(
+			'id'       => 'mail_message',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '内容',
+			'default'  => '邮件内容',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '获取公众号验证码',
+	'icon'        => '',
+	'description' => '关注微信公众号获取验证码',
+	'fields'      => array(
+
+		array(
+			'id'       => 'wechat_fans',
+			'type'     => 'text',
+			'title'    => '微信公众号名称',
+			'default'  => '公众号名称',
+		),
+
+		array(
+			'id'       => 'wechat_unite',
+			'type'     => 'switcher',
+			'title'    => '统一的密码和关键字',
+		),
+
+		array(
+			'id'       => 'weifans_pass',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '统一密码',
+		),
+
+		array(
+			'id'       => 'weifans_key',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'text',
+			'title'    => '统一关键字',
+		),
+
+		array(
+			'id'       => 'wechat_qr',
+			'type'     => 'upload',
+			'title'    => '微信公众号二维码图片',
+			'default'  => $imgpath . '/favicon.png',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '在线咨询',
+	'icon'        => '',
+	'description' => '用于添加联系信息',
+	'fields'      => array(
+
+		array(
+			'id'       => 'contact_us',
+			'type'     => 'switcher',
+			'title'    => '在线咨询',
+		),
+
+		array(
+			'id'       => 'weixing_us_t',
+			'type'     => 'text',
+			'title'    => '微信文字',
+			'default'  => '微信咨询',
+		),
+
+		array(
+			'id'       => 'weixing_us',
+			'type'     => 'upload',
+			'title'    => '微信二维码',
+			'default'  => $imgpath . '/favicon.png',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'usqq_t',
+			'type'     => 'text',
+			'title'    => 'QQ文字',
+			'default'  => 'QQ咨询',
+		),
+
+		array(
+			'id'       => 'usqq_id',
+			'type'     => 'text',
+			'title'    => 'QQ号码',
+			'default'  => '8888',
+		),
+
+		array(
+			'id'       => 'usshang_t',
+			'type'     => 'text',
+			'title'    => '在线咨询文字',
+			'default'  => '在线咨询',
+		),
+
+		array(
+			'id'       => 'usshang_url',
+			'type'     => 'text',
+			'title'    => '在线咨询链接',
+			'default'  => '#',
+		),
+
+		array(
+			'id'       => 'us_phone_t',
+			'type'     => 'text',
+			'title'    => '电话文字',
+			'default'  => '服务热线',
+		),
+
+		array(
+			'id'       => 'us_phone',
+			'type'     => 'text',
+			'title'    => '电话号码',
+			'default'  => '1308888888',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => 'QQ在线',
+	'icon'        => '',
+	'description' => '用于显示联系方式QQ、微信、电话等',
+	'fields'      => array(
+
+		array(
+			'id'       => 'qq_online',
+			'type'     => 'switcher',
+			'title'    => 'QQ在线',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'qq_name',
+			'type'     => 'text',
+			'title'    => '自定义文字',
+			'default'  => '在线咨询',
+		),
+
+		array(
+			'id'       => 'qq_id',
+			'type'     => 'text',
+			'title'    => '输入QQ号码',
+			'default'  => '8888',
+		),
+
+		array(
+			'id'       => 'm_phone',
+			'type'     => 'text',
+			'title'    => '输入手机号',
+			'default'  => '13688888888',
+		),
+
+		array(
+			'id'       => 'weixing_t',
+			'type'     => 'text',
+			'title'    => '微信说明',
+			'default'  => '微信',
+		),
+
+		array(
+			'id'       => 'weixing_qr',
+			'type'     => 'upload',
+			'title'    => '微信二维码',
+			'default'  => $imgpath . '/favicon.png',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '正文末尾微信二维码',
+	'icon'        => '',
+	'description' => '用于在正文末尾显示微信二维码',
+	'fields'      => array(
+
+		array(
+			'id'       => 'single_weixin',
+			'type'     => 'switcher',
+			'title'    => '正文末尾微信二维码',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'single_weixin_one',
+			'type'     => 'switcher',
+			'title'    => '只显示一个微信二维码',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'weixin_h',
+			'type'     => 'text',
+			'title'    => '微信文字',
+			'default'  => '我的微信',
+		),
+
+		array(
+			'id'       => 'weixin_h_w',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '微信说明文字',
+			'default'  => '微信扫一扫',
+		),
+
+		array(
+			'id'       => 'weixin_h_img',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'upload',
+			'title'    => '微信二维码图片',
+			'default'  => $imgpath . '/favicon.png',
+			'preview'  => true,
+		),
+
+
+		array(
+			'id'       => 'weixin_g',
+			'type'     => 'text',
+			'title'    => '微信公众号文字',
+			'default'  => '我的微信公众号',
+		),
+
+		array(
+			'id'       => 'weixin_g_w',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '微信公众号说明文字',
+			'default'  => '微信扫一扫',
+		),
+
+		array(
+			'id'       => 'weixin_g_img',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'upload',
+			'title'    => '微信公众号二维码图片',
+			'default'  => $imgpath . '/favicon.png',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '点赞分享',
+	'icon'        => '',
+	'description' => '用于在正文末尾显示点赞、打赏、分享等',
+	'fields'      => array(
+
+		array(
+			'id'       => 'shar_donate',
+			'type'     => 'switcher',
+			'title'    => '打赏',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'shar_like',
+			'type'     => 'switcher',
+			'title'    => '点赞',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'shar_favorite',
+			'type'     => 'switcher',
+			'title'    => '收藏',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'favorite_data',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'switcher',
+			'title'    => '创建数据表',
+			'after'    => '<span class="after-perch">开启后，需保存两次设置，然后取消勾选</span>',
+		),
+
+
+		array(
+			'id'       => 'shar_share',
+			'type'     => 'switcher',
+			'title'    => '分享',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'shar_link',
+			'type'     => 'switcher',
+			'title'    => '链接',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'shar_poster',
+			'type'     => 'switcher',
+			'title'    => '海报',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'be_like_content',
+			'type'     => 'switcher',
+			'title'    => '仅移动端显示',
+		),
+
+		array(
+			'id'       => 'like_left',
+			'type'     => 'switcher',
+			'title'    => '同时显示在左侧',
+			'default'  => true,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '海报设置',
+		),
+
+		array(
+			'id'       => 'poster_site_name',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '网站名称',
+			'after'    => '输入空格不显示网站名称',
+		),
+
+		array(
+			'id'       => 'poster_site_tagline',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '网站副标题',
+			'after'    => '输入空格不显示网站副标题',
+		),
+
+		array(
+			'id'       => 'poster_logo',
+			'class'    => 'be-child-item',
+			'type'     => 'upload',
+			'title'    => '海报LOGO',
+			'default'  => '',
+			'preview'  => true,
+			'after'    => '默认调用网站标志',
+		),
+
+		array(
+			'id'       => 'poster_default_img',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'upload',
+			'title'    => '海报默认图片',
+			'default'  => $imgdefault . '/random/320.jpg',
+			'preview'  => true,
+			'after'    => '文章中无图时显示默认图片',
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '打赏二维码',
+		),
+
+		array(
+			'id'       => 'qr_a',
+			'class'    => 'be-child-item',
+			'type'     => 'upload',
+			'title'    => '微信收款二维码图片',
+			'default'  => $imgpath . '/favicon.png',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'qr_b',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'upload',
+			'title'    => '支付宝收钱二维码图片',
+			'default'  => $imgpath . '/favicon.png',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '会员登录查看',
+	'icon'        => '',
+	'description' => '用于指定用户登录后查看文章内容',
+	'fields'      => array(
+
+		array(
+			'id'      => 'user_roles',
+			'type'    => 'radio',
+			'title'   => '选择一个有权查看隐藏内容的角色',
+			'inline'  => true,
+			'options' => array(
+				'administrator' => '管理员',
+				'editor'        => '编辑',
+				'author'        => '作者',
+				'contributor'   => '贡献者',
+				'subscriber'    => '订阅者',
+				'vip_roles'     => '自定义角色'
+			),
+			'default' => 'contributor',
+		),
+
+		array(
+			'id'       => 'role_visible_t',
+			'type'     => 'text',
+			'title'    => '自定义提示',
+			'default'  => '隐藏的内容',
+		),
+
+		array(
+			'id'       => 'role_visible_w',
+			'type'     => 'text',
+			'title'    => '无权限查看提示文字',
+			'default'  => '无权限查看',
+		),
+
+		array(
+			'id'       => 'role_visible_c',
+			'type'     => 'textarea',
+			'title'    => '自定义说明',
+			'default'  => '会员登录后查看',
+			'sanitize' => false,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '新建角色',
+	'icon'        => '',
+	'description' => '创建自定义角色',
+	'fields'      => array(
+
+		array(
+			'id'      => 'del_new_roles',
+			'type'    => 'radio',
+			'title'   => '创建一个新角色',
+			'inline'  => true,
+			'options' => array(
+				'no_roles'  => '无新角色',
+				'new_roles' => '新建角色',
+				'del_roles' => '删除角色'
+			),
+			'default' => 'no_roles',
+		),
+
+		array(
+			'id'       => 'roles_name',
+			'type'     => 'text',
+			'title'    => '角色名称',
+			'default'  => '会员',
+		),
+
+		array(
+			'id'       => 'user_edit_posts',
+			'type'     => 'switcher',
+			'title'    => '允许编辑文章',
+		),
+
+		array(
+			'id'       => 'user_upload_files',
+			'type'     => 'switcher',
+			'title'    => '允许上传附件',
+		),
+
+		array(
+			'class'    => 'be-help-inf',
+			'title'    => '设置说明',
+			'type'    => 'content',
+			'content' => '
+			<b>修改角色名称</b>&nbsp;&nbsp;&nbsp;&nbsp;先选择“删除角色”，保存两次设置，修改文字，选择“新建角色”，保存两次设置<br />
+			<b>修改角色权限</b>&nbsp;&nbsp;&nbsp;&nbsp;先选择“删除角色”，保存两次设置，选择权限，选择“新建角色”，保存两次设置<br />
+			修改调整设置后，必须保存两次设置，否则不会生效<br />',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '登录/评论查看自定义文字',
+	'icon'        => '',
+	'description' => '登录/评论查看自定义文字',
+	'fields'      => array(
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '评论查看自定义文字',
+		),
+
+		array(
+			'id'       => 'reply_read_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '自定义提示',
+			'default'  => '此处为隐藏的内容',
+		),
+
+		array(
+			'id'       => 'reply_read_c',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'textarea',
+			'title'    => '自定义说明',
+			'default'  => '发表评论并刷新，方可查看',
+			'sanitize' => false,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '登录查看自定义文字',
+		),
+
+		array(
+			'id'       => 'login_read_t',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '自定义提示',
+			'default'  => '此处为隐藏的内容',
+		),
+
+		array(
+			'id'       => 'login_read_c',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'     => 'textarea',
+			'title'    => '自定义说明',
+			'default'  => '注册登录后，方可查看',
+		),
+	)
+));
+
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '自定义404页面',
+	'icon'        => '',
+	'description' => '自定义404页面',
+	'fields'      => array(
+
+		array(
+			'id'       => '404_t',
+			'type'     => 'text',
+			'title'    => '自定义404页面标题',
+			'default'    => '亲，你迷路了！',
+		),
+
+		array(
+			'id'       => '404_c',
+			'type'     => 'textarea',
+			'title'    => '自定义404页面内容',
+			'default'  => '亲，该网页可能搬家了！<br />',
+			'sanitize' => false,
+		),
+
+		array(
+			'id'      => '404_go',
+			'type'    => 'radio',
+			'title'   => '404跳转',
+			'inline'  => true,
+			'options' => array(
+				'404_s' => '读秒跳转',
+				'404_h' => '直接跳转',
+				'404_d' => '不跳转'
+			),
+			'default' => '404_d',
+		),
+
+		array(
+			'id'       => '404_url',
+			'type'     => 'text',
+			'title'    => '自定义跳转链接',
+			'default'  => home_url(),
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '切换主题语言',
+	'icon'        => '',
+	'description' => '用于主题前端显示英文语言，后台→设置→常规选项→站点语言→选择 English (United States)',
+	'fields'      => array(
+
+		array(
+			'id'       => 'languages_en',
+			'type'     => 'switcher',
+			'title'    => '英文',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '网址页面',
+	'icon'        => '',
+	'description' => '网址页面',
+	'fields'      => array(
+
+		array(
+			'id'      => 'site_f',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $fsl45,
+			'default' => '4',
+		),
+
+		array(
+			'id'       => 'site_p_n',
+			'type'     => 'number',
+			'title'    => '显示篇数',
+			'default'  => 100,
+		),
+
+		array(
+			'id'       => 'sites_cat_id',
+			'type'     => 'text',
+			'title'    => '网址页面排除的父分类ID',
+		),
+
+		array(
+			'id'       => 'sites_ico',
+			'type'     => 'switcher',
+			'title'    => '网址显示Favicon图标',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'sites_adorn',
+			'type'     => 'switcher',
+			'title'    => '装饰动画',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'all_site_cat',
+			'type'     => 'switcher',
+			'title'    => '分类目录',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'site_cat_fixed',
+			'type'     => 'switcher',
+			'title'    => '固定在左侧',
+			'default'  => true,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '网址页面小工具',
+		),
+
+		array(
+			'id'       => 'sites_widgets_one_n',
+			'class'    => 'be-child-item',
+			'type'     => 'text',
+			'title'    => '输入网址分类ID，显示在指定分类下',
+		),
+
+		array(
+			'id'      => 'sw_f',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '分栏',
+			'inline'  => true,
+			'options' => $swf12,
+			'default' => '2',
+		),
+
+		array(
+			'id'       => 'site_sc',
+			'type'     => 'switcher',
+			'title'    => '网址正文显示网站截图',
+			'default'  => true,
+		),
+
+		array(
+			'id'      => 'screenshot_api',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '截图API接口',
+			'inline'  => true,
+			'options' => array(
+				'api_wp'        => 's0.wp',
+				'api_wordpress' => 's0.wordpress.com',
+				'api_urlscan'   => 'urlscan.io',
+			),
+			'default' => 'api_wp',
+		),
+
+		array(
+			'id'       => 'sites_url_error',
+			'type'     => 'switcher',
+			'title'    => '获取网站描述出错时勾选，用后取消勾选',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '会员模块',
+	'icon'        => '',
+	'description' => '需要安装 ErphpDown 插件',
+	'fields'      => array(
+
+		array(
+			'id'       => 'be_down_show',
+			'type'     => 'switcher',
+			'title'    => '不加载插件下载模块',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'no_epd_css',
+			'type'     => 'switcher',
+			'title'    => '不加载插件样式',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'be_login_epd',
+			'type'     => 'switcher',
+			'title'    => '弹窗登录',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'goods_count',
+			'type'     => 'switcher',
+			'title'    => '已售数量',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'vip_meta',
+			'type'     => 'switcher',
+			'title'    => '资源信息',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'menu_vip',
+			'type'     => 'switcher',
+			'title'    => '菜单VIP',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'vip_scroll',
+			'type'     => 'switcher',
+			'title'    => '跟随VIP',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'be_rec_but_url',
+			'type'     => 'text',
+			'title'    => '充值链接',
+		),
+
+		array(
+			'id'       => 'be_vip_but_url',
+			'type'     => 'text',
+			'title'    => '会员链接',
+		),
+
+		array(
+			'id'       => 'vip10img',
+			'type'     => 'upload',
+			'title'    => '终身会员背景图片',
+			'default'  => '',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'vip9img',
+			'type'     => 'upload',
+			'title'    => '包年会员背景图片',
+			'default'  => '',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'vip8img',
+			'type'     => 'upload',
+			'title'    => '包季会员背景图片',
+			'default'  => '',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'vip7img',
+			'type'     => 'upload',
+			'title'    => '包月会员背景图片',
+			'default'  => '',
+			'preview'  => true,
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '文档设置',
+	'icon'        => '',
+	'description' => '需要上传文档模板补丁',
+	'fields'      => array(
+
+		array(
+			'id'       => 'docs_name',
+			'type'     => 'text',
+			'title'    => '文档标题',
+			'default'  => '主题使用文档',
+		),
+
+		array(
+			'id'       => 'docs_name_url',
+			'type'     => 'text',
+			'title'    => '文档标题链接',
+			'default'  => '',
+		),
+
+		array(
+			'id'       => 'docs_bread_txt',
+			'type'     => 'text',
+			'title'    => '面包屑导航文字',
+			'default'  => '使用文档',
+		),
+
+		array(
+			'id'       => 'docs_bread_url',
+			'type'     => 'text',
+			'title'    => '面包屑导航链接',
+			'default'  => '',
+		),
+
+		array(
+			'id'       => 'docs_logo',
+			'type'     => 'upload',
+			'title'    => '标志',
+			'default'  => $imgpath . '/logo-s.png',
+			'preview'  => true,
+			'after'    => '透明png或svg图片最佳，比例 50×50px',
+		),
+
+		array(
+			'id'       => 'docs_logo_svg',
+			'type'     => 'textarea',
+			'title'    => '输入SVG图标代码',
+			'sanitize' => false,
+		),
+
+		array(
+			'id'       => 'docs_notice',
+			'type'     => 'switcher',
+			'title'    => '文档公告',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'docs_notice_id',
+			'type'     => 'text',
+			'title'    => '调用指定的分类',
+			'after'    => '输入一个公告分类ID',
+		),
+
+		array(
+			'id'       => 'docs_notice_n',
+			'type'     => 'number',
+			'title'    => '公告滚动篇数',
+			'default'  => '2',
+		),
+
+		array(
+			'id'       => 'docs_nav_but',
+			'type'     => 'switcher',
+			'title'    => '菜单自定义按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'docs_nav_but_text',
+			'type'     => 'text',
+			'title'    => '按钮文字',
+		),
+
+		array(
+			'id'       => 'docs_nav_but_url',
+			'type'     => 'text',
+			'title'    => '链接地址',
+			'default'  => '',
+		),
+
+		array(
+			'id'       => 'docs_footer',
+			'type'     => 'textarea',
+			'title'    => '页脚信息',
+			'sanitize' => false,
+			'default'  => 'Copyright ©  站点名称  版权所有.',
+		),
+	)
+));
+
+if ( function_exists( 'is_shop' ) ) {
+	CSF::createSection( $prefix, array(
+		'parent'      => 'aux_setting',
+		'title'       => 'WOO商店',
+		'icon'        => '',
+		'description' => '需要安装商店插件 WooCommerce ',
+		'fields'      => array(
+
+			array(
+				'id'       => 'woo_cols_n',
+				'type'     => 'number',
+				'title'    => '每页显示数量',
+				'default'  => 20,
+			),
+
+			array(
+				'id'       => 'woo_related_n',
+				'type'     => 'number',
+				'title'    => '相关文章数量',
+				'default'  => 4,
+			),
+
+			array(
+				'id'      => 'woo_f',
+				'type'    => 'radio',
+				'title'   => '分栏',
+				'inline'  => true,
+				'options' => $fl456,
+				'default' => '5',
+			),
+
+			array(
+				'id'       => 'woo_thumbnail',
+				'type'     => 'upload',
+				'title'    => '默认缩略图',
+				'default'  => $imgdefault . '/random/320.jpg',
+				'preview'  => true,
+			),
+
+			array(
+				'id'       => 'shop_header_img',
+				'type'     => 'upload',
+				'title'    => '商店页面默认图片',
+				'default'  => $imgdefault . '/options/1200.jpg',
+				'preview'  => true,
+			),
+		)
+	));
+}
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '自定义仪表盘',
+	'icon'        => '',
+	'description' => '隐藏仪表盘默认元素，并添加自定义内容',
+	'fields'      => array(
+
+		array(
+			'id'       => 'hide_dashboard',
+			'type'     => 'switcher',
+			'title'    => '隐藏仪表盘默认元素',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'add_dashboard',
+			'type'     => 'switcher',
+			'title'    => '显示自定义内容',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'dashboard_title',
+			'type'     => 'text',
+			'title'    => '自定义标题',
+			'default'  => '欢迎光临本站',
+		),
+
+		array(
+			'id'       => 'dashboard_content',
+			'type'     => 'textarea',
+			'title'    => '自定义内容',
+			'sanitize' => false,
+			'default'  => '辅助功能 → 自定义仪表盘，修改此内容 ',
+			'after'    => '支持HTML代码',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '自定义媒体路径',
+	'icon'        => '',
+	'description' => '修改默认媒体路径',
+	'fields'      => array(
+
+		array(
+			'id'       => 'be_upload_path',
+			'type'     => 'switcher',
+			'title'    => '启用',
+		),
+
+		array(
+			'id'       => 'be_upload_path_url',
+			'type'     => 'text',
+			'title'    => '自定义路径',
+			'default'  => 'wp-content/media',
+			'after'    => 'WP缺省为wp-content/uploads',
+		),
+
+		array(
+			'class'    => 'be-button-url be-button-help-url',
+			'type'     => 'subheading',
+			'title'    => '媒体设置',
+			'content'  => '<span class="button-primary"><a href="' . home_url() . '/wp-admin/options-media.php" target="_blank">媒体设置</a></span>',
+		),
+
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '综合辅助',
+	'icon'        => '',
+	'description' => '综合辅助',
+	'fields'      => array(
+
+		array(
+			'id'       => 'links_click',
+			'type'     => 'switcher',
+			'title'    => '短链接',
+			'label'    => '用于链接按钮点击统计',
+		),
+
+		array(
+			'id'       => 'login_down_key',
+			'type'     => 'switcher',
+			'title'    => '下载模块登录查看密码',
+		),
+
+		array(
+			'id'       => 'remove_jqmigrate',
+			'type'     => 'switcher',
+			'title'    => '移除jQuery迁移辅助',
+			'after'    => '<span class="after-perch">如发现有错误，取消勾选</span>',
+		),
+
+		array(
+			'id'       => 'web_queries',
+			'type'     => 'switcher',
+			'title'    => '在页脚显示查询次数及加载时间',
+		),
+
+		array(
+			'id'       => 'all_settings',
+			'type'     => 'switcher',
+			'title'    => '显示WordPress设置选项字段',
+		),
+
+		array(
+			'id'       => 'delete_favorite',
+			'type'     => 'switcher',
+			'title'    => '删除文章收藏数据表',
+		),
+
+		array(
+			'id'       => 'no_referrer',
+			'type'     => 'switcher',
+			'title'    => '头部添加“referrer”标签',
+			'after'    => '<span class="after-perch">仅用于解决微相册等外链图片限制</span>',
+		),
+
+		array(
+			'id'       => 'meta_delete',
+			'type'     => 'switcher',
+			'title'    => '防止文章选项丢失',
+			'after'    => '<span class="after-perch">只有临时使用文章快速编辑和定时发布时使用</span>',
+		),
+
+		array(
+			'id'       => 'be_feed_cache',
+			'type'     => 'number',
+			'title'    => 'RSS小工具缓存时间',
+			'default'  => '',
+			'after'    => '<span class="after-perch">例如：7200，2天</span>',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'aux_setting',
+	'title'       => '下载页面',
+	'icon'        => '',
+	'description' => '设置单独的下载页面',
+	'fields'      => array(
+
+		array(
+			'id'       => 'root_down_url',
+			'type'     => 'switcher',
+			'title'    => '下载链接到根目录，并执行下面的操作',
+		),
+
+		array(
+			'id'       => 'root_file_move',
+			'type'     => 'switcher',
+			'title'    => '复制下载模板到网站根目录',
+			'after'    => '<span class="after-perch">自动将“inc/download.php”文件复制到网站根目录，勾选后需保存两次设置，用后取消勾选</span>',
+		),
+
+		array(
+			'id'       => 'down_header_img',
+			'type'     => 'upload',
+			'title'    => '页面背景图片',
+			'default'  => $imgdefault . '/options/1200.jpg',
+			'preview'  => true,
+		),
+
+		array(
+			'id'       => 'down_explain',
+			'type'     => 'textarea',
+			'title'    => '版权说明',
+			'default'  => '本站大部分下载资源收集于网络，只做学习和交流使用，版权归原作者所有。若您需要使用非免费的软件或服务，请购买正版授权并合法使用。本站发布的内容若侵犯到您的权益，请联系站长删除，我们将及时处理。',
+			'sanitize' => false,
+			'after'    => '可使用HTML代码',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'title'       => '广告位',
+	'icon'        => 'dashicons dashicons-admin-site-alt2',
+	'description' => '设置广告位',
+	'fields'      => array(
+
+		array(
+			'id'       => 'ad_h_t',
+			'type'     => 'switcher',
+			'title'    => '头部通栏广告位',
+		),
+
+		array(
+			'id'         => 'ad_h_t_h',
+			'class'      => 'be-child-item',
+			'type'       => 'switcher',
+			'title'      => '只在首页显示',
+			'dependency' => array( 'ad_h_t', '==', 'true' ),
+		),
+
+		array(
+			'id'         => 'ad_ht_c',
+			'class'      => 'be-child-item',
+			'type'       => 'textarea',
+			'title'      => '输入头部通栏广告代码',
+			'before'     => 'PC端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_h_t', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'         => 'ad_ht_m',
+			'class'      => 'be-child-item be-child-last-item',
+			'type'       => 'textarea',
+			'title'      => '输入头部通栏广告代码',
+			'before'     => '移动端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_h_t', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'       => 'ad_h',
+			'type'     => 'switcher',
+			'title'    => '头部两栏广告位',
+		),
+
+		array(
+			'id'         => 'ad_h_h',
+			'class'      => 'be-child-item',
+			'type'       => 'switcher',
+			'title'      => '只在首页显示',
+			'dependency' => array( 'ad_h', '==', 'true' ),
+		),
+
+		array(
+			'id'         => 'ad_h_c',
+			'class'      => 'be-child-item',
+			'type'       => 'textarea',
+			'title'      => '输入头部左侧广告代码',
+			'before'     => 'PC端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_h', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'         => 'ad_h_c_m',
+			'class'      => 'be-child-item',
+			'type'       => 'textarea',
+			'title'      => '输入头部左侧广告代码',
+			'before'     => '移动端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_h', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'         => 'ad_h_cr',
+			'class'      => 'be-child-item be-child-last-item',
+			'type'       => 'textarea',
+			'title'      => '输入头部右侧广告代码',
+			'before'     => 'PC端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_h', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/ggr.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'       => 'ad_a',
+			'type'     => 'switcher',
+			'title'    => '文章列表广告位',
+		),
+
+		array(
+			'id'         => 'ad_a_c',
+			'class'      => 'be-child-item',
+			'type'       => 'textarea',
+			'title'      => '输入文章列表广告代码',
+			'before'     => 'PC端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_a', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'         => 'ad_a_c_m',
+			'class'      => 'be-child-item be-child-last-item',
+			'type'       => 'textarea',
+			'title'      => '输入文章列表广告代码',
+			'before'     => '移动端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_a', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'       => 'ad_s',
+			'type'     => 'switcher',
+			'title'    => '正文标题广告位',
+		),
+
+		array(
+			'id'         => 'ad_s_c',
+			'class'      => 'be-child-item',
+			'type'       => 'textarea',
+			'title'      => '输入文章列表广告代码',
+			'before'     => 'PC端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_s', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'         => 'ad_s_c_m',
+			'class'      => 'be-child-item be-child-last-item',
+			'type'       => 'textarea',
+			'title'      => '输入文章列表广告代码',
+			'before'     => '移动端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_s', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'       => 'ad_s_b',
+			'type'     => 'switcher',
+			'title'    => '正文底部广告位',
+		),
+
+		array(
+			'id'         => 'ad_s_c_b',
+			'class'      => 'be-child-item',
+			'type'       => 'textarea',
+			'title'      => '输入文章列表广告代码',
+			'before'     => 'PC端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_s_b', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'         => 'ad_s_c_b_m',
+			'class'      => 'be-child-item be-child-last-item',
+			'type'       => 'textarea',
+			'title'      => '输入文章列表广告代码',
+			'before'     => '移动端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_s_b', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'       => 'ad_c',
+			'type'     => 'switcher',
+			'title'    => '评论上方广告位',
+		),
+
+		array(
+			'id'         => 'ad_c_c',
+			'class'      => 'be-child-item',
+			'type'       => 'textarea',
+			'title'      => '输入文章列表广告代码',
+			'before'     => 'PC端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_c', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'         => 'ad_c_c_m',
+			'class'      => 'be-child-item be-child-last-item',
+			'type'       => 'textarea',
+			'title'      => '输入文章列表广告代码',
+			'before'     => '移动端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_c', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'       => 'ad_s_k',
+			'type'     => 'switcher',
+			'title'    => '设置正文短代码广告位',
+		),
+
+		array(
+			'id'         => 'ad_s_z',
+			'class'      => 'be-child-item',
+			'type'       => 'textarea',
+			'title'      => '输入文章列表广告代码',
+			'before'     => 'PC端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_s_k', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'         => 'ad_s_z_m',
+			'class'      => 'be-child-item be-child-last-item',
+			'type'       => 'textarea',
+			'title'      => '输入文章列表广告代码',
+			'before'     => '移动端',
+			'sanitize'   => false,
+			'dependency' => array( 'ad_s_k', '==', 'true' ),
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'       => 'ad_down',
+			'type'     => 'textarea',
+			'title'    => '文件下载页面广告代码',
+			'sanitize' => false,
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'       => 'ad_down_file',
+			'type'     => 'textarea',
+			'title'    => '弹窗下载广告位',
+			'sanitize' => false,
+			'default'    => '<a href="#" target="_blank"><img src="' . $imgdefault . '/options/gg.jpg" alt="广告也精彩" /></a>',
+		),
+
+		array(
+			'id'       => 'ad_t',
+			'type'     => 'textarea',
+			'title'    => '需要在页头<head></head>之间加载的广告代码',
+			'sanitize' => false,
+			'default'  => '',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'id'     => 'style_setting',
+	'title'  => '定制风格',
+	'icon'  => 'dashicons dashicons-admin-appearance',
+) );
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'style_setting',
+	'title'       => '颜色风格',
+	'icon'        => '',
+	'description' => '择自己喜欢的颜色，不使用自定义颜色清除即可',
+	'fields'      => array(
+
+		array(
+			'id'      => 'all_color',
+			'type'    => 'color',
+			'title'    => '统一颜色',
+			'default' => '',
+		),
+
+		array(
+			'type'    => 'content',
+			'title'    => '分别选择颜色',
+			'content' => '',
+		),
+
+		array(
+			'id'      => 'blogname_color',
+			'class'   => 'be-flex-color',
+			'type'    => 'color',
+			'default' => '',
+			'before'  => '站点标题',
+		),
+
+		array(
+			'id'      => 'blogdescription_color',
+			'class'   => 'be-flex-color',
+			'type'    => 'color',
+			'default' => '',
+			'before'  => '站点副标题',
+		),
+
+		array(
+			'id'      => 'link_color',
+			'class'   => 'be-flex-color',
+			'type'    => 'color',
+			'default' => '',
+			'before'  => '超链接',
+		),
+
+		array(
+			'id'      => 'menu_color',
+			'class'   => 'be-flex-color',
+			'type'    => 'color',
+			'default' => '',
+			'before'  => '菜单颜色',
+		),
+
+		array(
+			'id'      => 'button_color',
+			'class'   => 'be-flex-color',
+			'type'    => 'color',
+			'default' => '',
+			'before'  => '按钮',
+		),
+
+		array(
+			'id'      => 'cat_color',
+			'class'   => 'be-flex-color',
+			'type'    => 'color',
+			'default' => '',
+			'before'  => '分类名称',
+		),
+
+		array(
+			'id'      => 'slider_color',
+			'class'   => 'be-flex-color',
+			'type'    => 'color',
+			'default' => '',
+			'before'  => '幻灯',
+		),
+
+		array(
+			'id'      => 'h_color',
+			'class'   => 'be-flex-color',
+			'type'    => 'color',
+			'default' => '',
+			'before'  => '正文H标签',
+		),
+
+		array(
+			'id'      => 'z_color',
+			'class'   => 'be-flex-color',
+			'type'    => 'color',
+			'default' => '',
+			'before'  => '分享按钮',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'style_setting',
+	'title'       => '页面宽度',
+	'icon'        => '',
+	'description' => '自定义主题全局宽度，如启用了菜单设置 → 菜单外观→ 伸展菜单，需要相应调整宽度数值',
+	'fields'      => array(
+
+		array(
+			'id'       => 'custom_width',
+			'type'     => 'number',
+			'title'    => '固定宽度',
+			'default'  => '',
+			'after'    => '<span class="after-perch">px 默认1122，不使用自定义宽度请留空</span>',
+		),
+
+		array(
+			'id'       => 'adapt_width',
+			'type'     => 'number',
+			'title'    => '百分比',
+			'default'  => '',
+			'after'    => '<span class="after-perch">% 小于99，不使用自定义宽度请留空</span>',
+		),
+
+		array(
+			'class'    => 'be-help-inf',
+			'title'    => '提示',
+			'type'    => 'content',
+			'content' => '建议选择固定宽度，按百分比显示可能在笔记本小屏上还可以，但在27寸、34寸显示器中就太宽了',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'style_setting',
+	'title'       => '自定义样式',
+	'icon'        => '',
+	'description' => '自定义主题 CSS 样式',
+	'fields'      => array(
+
+		array(
+			'id'       => 'custom_css',
+			'type'     => 'textarea',
+			'title'    => '自定义样式 CSS',
+			'sanitize' => false,
+		),
+
+		array(
+			'class'    => 'be-parent-title',
+			'type'     => 'subheading',
+			'content'  => '样式代码示例',
+		),
+
+		array(
+			'class'   => 'be-child-item be-child-item-css',
+			'title'   => '顶部菜单改为渐变色',
+			'type'    => 'content',
+			'content' => '
+				.header-top {<br/>
+				background: linear-gradient(to right, #ffecea, #c4e7f7, #ffecea, #c4e7f7, #ffecea);<br/>
+				border-bottom: none;<br/>
+				}',
+		),
+
+		array(
+			'class'   => 'be-child-item be-child-last-item be-child-item-css',
+			'title'   => '主菜单改为黑色',
+			'type'    => 'content',
+			'content' => '
+			#menu-container, .headroom--not-top .menu-glass {<br/>
+			background: #262626 !important;<br/>
+			border-bottom: 1px solid #262626;<br/>
+			}<br/>
+			.nav-ace .down-menu > li > a, 
+			#menu-container .sf-arrows .sf-with-ul:after {<br/>
+			color: #ccc;<br/>
+			}<br/>
+
+			.logo-site::before {<br/>
+			background: linear-gradient(to right, rgba(0, 0, 0, 0) 46%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0) 54%) 50% 50%;<br/>
+			}<br/>
+			.menu-login-btu .nav-login-l a, .menu-login-btu .nav-login .show-layer {<br/>
+			color: #000 !important;<br/>
+			border: 1px solid #939393;<br/>
+			}<br/>
+
+			.menu-login-btu .nav-reg a {<br/>
+			border: 1px solid #939393;<br/>
+			}',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'parent'      => 'style_setting',
+	'title'       => '其它样式',
+	'icon'        => '',
+	'description' => '修改设置样式',
+	'fields'      => array(
+
+		array(
+			'id'       => 'aos_scroll',
+			'type'     => 'switcher',
+			'title'    => '动画特效',
+		),
+
+		array(
+			'id'      => 'aos_data',
+			'class'    => 'be-child-item be-child-last-item',
+			'type'    => 'radio',
+			'title'   => '动画效果',
+			'inline'  => true,
+			'options' => array(
+				'fade-up' => '向上',
+				'fade-in' => '渐显',
+				'zoom-in' => '缩放',
+			),
+			'default' => 'fade-up',
+		),
+
+		array(
+			'id'       => 'post_no_margin',
+			'type'     => 'switcher',
+			'title'    => '文章列表无下边距',
+		),
+
+		array(
+			'id'       => 'hover_box',
+			'type'     => 'switcher',
+			'title'    => '鼠标悬停阴影',
+		),
+
+		array(
+			'id'       => 'title_i',
+			'type'     => 'switcher',
+			'title'    => '模块标题前装饰',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'title_l',
+			'type'     => 'switcher',
+			'title'    => '文章列表悬停装饰',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'more_im',
+			'type'     => 'switcher',
+			'title'    => '彩色标题更多按钮',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'fresh_no',
+			'type'     => 'switcher',
+			'title'    => '标题无背景色（测试中）',
+		),
+
+		array(
+			'id'       => 'mobile_viewport',
+			'type'     => 'switcher',
+			'title'    => '移动端禁止缩放',
+			'default'  => true,
+		),
+
+		array(
+			'id'       => 'mouse_cursor',
+			'type'     => 'switcher',
+			'title'    => '鼠标特效',
+		),
+	)
+));
+
+CSF::createSection( $prefix, array(
+	'title'       => '备份设置',
+	'icon'        => 'dashicons dashicons-update',
+	'description' => '将主题设置数据导出为 backup + 日期.json 文件，用于备份恢复选项设置',
+	'fields'      => array(
+
+		array(
+			'type' => 'backup',
+		),
+
+		array(
+			'title'   => '警告',
+			'type'    => 'content',
+			'content' => '不要随意输入内容，并执行导入操作，否则所有设置将消失！',
+		),
+	)
+) );

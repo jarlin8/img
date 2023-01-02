@@ -1,6 +1,6 @@
 <?php 
 if ( ! defined( 'ABSPATH' ) ) exit;
-if ( !zm_get_option( 'layout' ) || ( zm_get_option( 'layout' ) == 'blog' ) ) {
+if ( ! zm_get_option( 'layout' ) || ( zm_get_option( 'layout' ) == 'blog' ) ) {
 	get_template_part( 'template/blog' );
 }
 if ( zm_get_option( 'layout' ) == 'img' ) {

@@ -1,13 +1,19 @@
 <?php 
 if ( ! defined( 'ABSPATH' ) ) exit;
+/**
+ * category Template: 格子标题
+ */
 get_header(); ?>
 
 	<section id="novel" class="content-area">
-		<main id="main" class="site-main" role="main">
+		<main id="main" class="be-main site-main" role="main">
 			<?php
 				global $query_string;
 				query_posts( $query_string . '&order=ASC&showposts=1000' );
 			?>
+
+			<?php if ( zm_get_option( 'order_btu' ) ) { ?><?php be_order(); ?><?php } ?>
+
 			<?php while ( have_posts() ) : the_post(); ?>
 			<article class="novel-main" <?php aos_a(); ?>>
 				<div class="novel-box bk sup">

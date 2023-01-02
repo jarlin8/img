@@ -5,6 +5,8 @@ class be_user_avatars {
 	public function __construct() {
 		add_action( 'show_user_profile', array( $this, 'edit_user_profile' ) );
 		add_action( 'edit_user_profile', array( $this, 'edit_user_profile' ) );
+		add_action( 'be_show_user_profile', array( $this, 'edit_user_profile' ) );
+		add_action( 'be_edit_user_profile', array( $this, 'edit_user_profile' ) );
 		add_action( 'personal_options_update', array( $this, 'edit_user_profile_update' ) );
 		add_action( 'edit_user_profile_update', array( $this, 'edit_user_profile_update' ) );
 		if ( !is_admin() ) {
@@ -68,7 +70,7 @@ class be_user_avatars {
 		}
 
 		$author_class = is_author( $user_id ) ? ' current-author' : '' ;
-		$avatar       = "<img alt='" . esc_attr( $alt ) . "' src='" . $local_avatars[$size] . "' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}' />";
+		$avatar = "<img alt='" . esc_attr( $alt ) . "' src='" . $local_avatars[$size] . "' class='avatar avatar-{$size}{$author_class} photo' height='{$size}' width='{$size}' />";
 
 		return apply_filters( 'be_user_avatar', $avatar, $user_id );
 	}
@@ -87,17 +89,17 @@ class be_user_avatars {
 
 					<td>
 						<?php
-							if ( zm_get_option('all_local_avatars') || current_user_can( 'upload_files' ) ) {
+							if ( zm_get_option( 'all_local_avatars' ) || current_user_can( 'upload_files' ) ) {
 							wp_nonce_field( 'be_user_avatar_nonce', '_be_user_avatar_nonce', false );
 							echo '<input type="file" name="be-user-avatar" id="be-local-avatar" /><br />';
 
 							if ( empty( $profileuser->be_user_avatar ) ) {
 								echo '<span class="description">' . sprintf(__( '选择一张图片', 'begin' )) . '</span>';
+								echo '<p class="description">' . sprintf(__( '头像图片要求小于', 'begin' )) . zm_get_option( 'avatar_size' ) . 'KB</p>';
 							} else {
 								echo '<input type="checkbox" name="be-user-avatar-erase" id="be-user-avatar-erase" value="1" /><label for="be-user-avatar-erase">' . sprintf(__( '删除本地头像', 'begin' )) . '</label><br />';
 								echo '<span class="description">' . sprintf(__( '上传新头像或删除本地头像', 'begin' )) . '</span>';
-							}
-
+								}
 						} else {
 							if ( empty( $profileuser->be_user_avatar ) ) {
 								echo '<span class="description">' . sprintf(__( '未设置本地头像，在Gravatar.com上设置您的头像', 'begin' )) . '</span>';
@@ -115,19 +117,22 @@ class be_user_avatars {
 			<?php
 				if ( zm_get_option('all_local_avatars') || current_user_can( 'upload_files' ) ) {
 					wp_nonce_field( 'be_user_avatar_nonce', '_be_user_avatar_nonce', false );
-						if ( empty( $profileuser->be_user_avatar ) ) {
-							echo '<p><label for="be-local-avatar" class="update-avatar dah bk bet-btn"> ' . sprintf(__( '上传头像', 'begin' )). '</label><input type="text" name="userdefinedFile" id="userfile" class="bky" value="' . sprintf(__( '未选择文件', 'begin' )). '"><input type="file" name="be-user-avatar" id="be-local-avatar" style="display: none;" /></p>';
-						} else {
-							echo '<p><label for="be-local-avatar" class="update-avatar dah bk bet-btn"> ' . sprintf(__( '更换头像', 'begin' )). '</label><input type="text" name="userdefinedFile" id="userfile" class="bky" value="' . sprintf(__( '未选择文件', 'begin' )). '"><input type="file" name="be-user-avatar" id="be-local-avatar" style="display: none;" /></p>';
-						}
-						if ( empty( $profileuser->be_user_avatar ) ) {
-							echo '<p class="no-avatar">' . sprintf(__( '未设置本地头像', 'begin' )). '</p>';
-						} else {
-							echo '<div class="rememberme pretty success">';
-							echo '<input type="checkbox" name="be-user-avatar-erase" id="be-user-avatar-erase" value="1">';
-							echo '<label for="be-user-avatar-erase" class="del-avatars" type="checkbox"/><i class="mdi" data-icon=""></i>' . sprintf(__( '删除本地头像', 'begin' )). '</label>';
-							echo '</div>';
-						}
+					if ( empty( $profileuser->be_user_avatar ) ) {
+						echo '<p><label for="be-local-avatar" class="update-avatar dah bk bet-btn' . cur() . '">' . sprintf(__( '上传头像', 'begin' )). '</label><input type="text" name="userdefinedFile" id="userfile" class="bky" value="' . sprintf(__( '未选择文件', 'begin' )). '"><input type="file" name="be-user-avatar" id="be-local-avatar" style="display: none;" /></p>';
+					} else {
+						echo '<p><label for="be-local-avatar" class="update-avatar dah bk bet-btn' . cur() . '">' . sprintf(__( '更换头像', 'begin' )). '</label><input type="text" name="userdefinedFile" id="userfile" class="bky" value="' . sprintf(__( '未选择文件', 'begin' )). '"><input type="file" name="be-user-avatar" id="be-local-avatar" style="display: none;" /></p>';
+					}
+					if ( empty( $profileuser->be_user_avatar ) ) {
+						echo '<p class="no-avatar">' . sprintf(__( '未设置本地头像', 'begin' )). '</p>';
+					} else {
+						echo '<div class="rememberme pretty success">';
+						echo '<input type="checkbox" name="be-user-avatar-erase" id="be-user-avatar-erase" value="1">';
+						echo '<label for="be-user-avatar-erase" class="del-avatars" type="checkbox"/><i class="mdi" data-icon=""></i>' . sprintf(__( '删除本地头像', 'begin' )). '</label>';
+						echo '</div>';
+					}
+
+					echo '<p class="avatar-size-tip">' . sprintf(__( '头像图片要求小于', 'begin' )) . zm_get_option( 'avatar_size' ) . 'KB</p>';
+
 				} else {
 					echo '<span class="apply-box">';
 					if ( empty( $profileuser->be_user_avatar ) ) {
@@ -148,6 +153,8 @@ class be_user_avatars {
 		if ( ! isset( $_POST['_be_user_avatar_nonce'] ) || ! wp_verify_nonce( $_POST['_be_user_avatar_nonce'], 'be_user_avatar_nonce' ) )
 			return;
 
+		$allowed_file_size = zm_get_option( 'avatar_size' ) . '000';
+
 		if ( ! empty( $_FILES['be-user-avatar']['name'] ) ) {
 			$mimes = array(
 				'jpg|jpeg|jpe' => 'image/jpeg',
@@ -159,27 +166,38 @@ class be_user_avatars {
 				require_once ABSPATH . 'wp-admin/includes/file.php';
 
 			$this->avatar_delete( $user_id );
-			if ( strstr( $_FILES['be-user-avatar']['name'], '.php' ) )
-				//wp_die( '' . sprintf(__( '', 'begin' )) . '');
-				die('' . sprintf(__( '出于安全原因，不能上传该类型文件', 'begin' )) . '') ;
-			$this->user_id_being_edited = $user_id; 
-			$avatar = wp_handle_upload( $_FILES['be-user-avatar'], array( 'mimes' => $mimes, 'test_form' => false, 'unique_filename_callback' => array( $this, 'unique_filename_callback' ) ) );
 
-			if ( empty( $avatar['file'] ) ) {  
-				switch ( $avatar['error'] ) {
-				case '' . sprintf(__( '文件类型不符合安全准则', 'begin' )) . '';
-					add_action( 'user_profile_update_errors', function( $error = 'avatar_error' ){;
-						sprintf(__( '请上传头像的有效图像文件', 'begin' ));
-					} );
-					break;
-				default :
-					add_action( 'user_profile_update_errors', function( $error = 'avatar_error' ){
-						"<strong>".sprintf(__( '上传头像时出错', 'begin' ))."</strong> ". esc_attr( $avatar['error'] );
-					} );
+			if ( strstr( $_FILES['be-user-avatar']['name'], '.php' ) )
+				wp_die( sprintf( __( '不能上传php文件', 'begin' ) ) );
+
+			if ( $_FILES['be-user-avatar']['size'] > $allowed_file_size ) {
+
+				if ( is_admin() ) {
+					wp_die( sprintf(__( '头像图片要求小于', 'begin' )) . zm_get_option( 'avatar_size' ) . 'KB' );
+				} else {
 				}
-				return;
+
+			} else {
+				$this->user_id_being_edited = $user_id; 
+				$avatar = wp_handle_upload( $_FILES['be-user-avatar'], array( 'mimes' => $mimes, 'test_form' => false, 'unique_filename_callback' => array( $this, 'unique_filename_callback' ) ) );
+
+				if ( empty( $avatar['file'] ) ) {
+					switch ( $avatar['error'] ) {
+						case '' . sprintf(__( '此文件不能用于头像', 'begin' )) . '';
+							add_action( 'user_profile_update_errors', function( $error = 'avatar_error' ) {;
+								sprintf(__( '请上传有效的头像图片文件', 'begin' ));
+						} );
+						break;
+						default :
+						add_action( 'user_profile_update_errors', function( $error = 'avatar_error' ) {
+							"<strong>".sprintf(__( '上传头像时出错', 'begin' ))."</strong> ". esc_attr( $avatar['error'] );
+						} );
+					}
+					return;
+				}
+
+				update_user_meta( $user_id, 'be_user_avatar', array( 'full' => $avatar['url'] ) );
 			}
-			update_user_meta( $user_id, 'be_user_avatar', array( 'full' => $avatar['url'] ) );
 
 		} elseif ( ! empty( $_POST['be-user-avatar-erase'] ) ) {
 			$this->avatar_delete( $user_id );
@@ -207,7 +225,7 @@ class be_user_avatars {
 
 	public function unique_filename_callback( $dir, $name, $ext ) {
 		$user = get_user_by( 'id', (int) $this->user_id_being_edited );
-		$name = $base_name = sanitize_file_name( $user->display_name . '_avatar' );
+		$name = $base_name = sanitize_file_name( $user->id . '_avatar' );
 		$number = 1;
 
 		while ( file_exists( $dir . "/$name$ext" ) ) {

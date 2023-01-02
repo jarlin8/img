@@ -9,11 +9,11 @@
 			<?php query_posts( array( 'showposts' => 1, 'cat' => $category, 'post__not_in' => $do_not_duplicate ) ); ?>
 		<?php } ?>
 
-		<div class="cat-container bk" <?php aos_a(); ?>>
-			<h3 class="cat-title bkx ms"><a href="<?php echo get_category_link($category);?>"><?php cat_module_title(); ?></a></h3>
+		<div class="cat-container ms bk bkx" <?php aos_a(); ?>>
+			<h3 class="cat-title bkx da"><a href="<?php echo get_category_link($category);?>"><?php cat_module_title(); ?></a></h3>
 			<div class="clear"></div>
 			<?php while ( have_posts() ) : the_post(); ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class('post cms-cat-lead-post ms bky doclose'); ?>>
+				<article id="post-<?php the_ID(); ?>" <?php post_class('post cms-cat-lead-post bky doclose'); ?>>
 					<figure class="thumbnail">
 						<?php zm_thumbnail(); ?>
 					</figure>
@@ -54,7 +54,7 @@
 						</figure>
 					<?php } ?>
 					<header class="entry-header">
-						<?php the_title( sprintf( '<h2 class="entry-title over srm"><a href="%s" rel="bookmark">' . t_mark(), esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+						<h2 class="entry-title over<?php if (!zm_get_option('no_lead_img')) { ?>  srm<?php } ?>"><a href="<?php echo get_permalink(); ?>" rel="bookmark"><?php echo t_mark(); ?><?php the_title(); ?></a></h2>
 					</header>
 
 					<div class="entry-content">
@@ -79,6 +79,7 @@
 					</div>
 				</article>
 			<?php endwhile; ?>
+			<?php wp_reset_query(); ?>
 			<div class="clear"></div>
 		</div>
 		<div class="clear"></div>

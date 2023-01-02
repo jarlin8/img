@@ -6,21 +6,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta http-equiv="Cache-Control" content="no-transform" />
 <meta http-equiv="Cache-Control" content="no-siteapp" />
-<?php be_title(); ?>
-<?php if ( !zm_get_option('favicon') == '' ) { ?>
-<link rel="shortcut icon" href="<?php echo zm_get_option('favicon'); ?>">
-<?php } ?>
-<?php if ( !zm_get_option('apple_icon') == '' ) { ?>
-<link rel="apple-touch-icon" sizes="114x114" href="<?php echo zm_get_option('apple_icon'); ?>" />
-<?php } ?>
+<?php do_action( 'title_head' ); ?>
+<?php do_action( 'favicon_ico' ); ?>
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 <?php wp_head(); ?>
 <?php echo zm_get_option('ad_t'); ?>
 <?php echo zm_get_option('tongji_h'); ?>
-<?php if ( wp_is_mobile() && is_home() && !zm_get_option('mobile_home_url') == '' ) { ?>
-	<?php header('location:'.zm_get_option('mobile_home_url').'') ?>
-<?php } ?>
-
 </head>
 <body <?php body_class(); ?> ontouchstart="">
 <?php wp_body_open(); ?>
@@ -42,8 +33,8 @@
 	<?php } ?>
 	<div id="content" class="site-content">
 	<?php if (zm_get_option('filters_img')) { ?>
-		<section id="picture" class="content-area grid-cat-<?php echo zm_get_option('img_f'); ?>">
-			<main id="main" class="site-main" role="main">
+		<section id="picture" class="picture-area content-area grid-cat-<?php echo zm_get_option('img_f'); ?>">
+			<main id="main" class="be-main site-main" role="main">
 				<?php if ( have_posts() ) : ?>
 				<?php while ( have_posts() ) : the_post(); ?>
 				<article class="picture scl" <?php aos_a(); ?>>
@@ -61,7 +52,7 @@
 							<span class="grid-inf-l">
 								<span class="date"><i class="be be-schedule ri"></i><?php the_time( 'm/d' ); ?></span>
 								<?php views_span(); ?>
-								<?php if ( get_post_meta($post->ID, 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
+								<?php if ( get_post_meta(get_the_ID(), 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
 							</span>
 			 			</span>
 			 			<div class="clear"></div>
@@ -80,7 +71,7 @@
 		</section><!-- .content-area -->
 	<?php }else { ?>
 		<section id="primary" class="content-area">
-			<main id="main" class="site-main<?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
+			<main id="main" class="be-main site-main<?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
 
 				<?php if ( have_posts() ) : ?>
 

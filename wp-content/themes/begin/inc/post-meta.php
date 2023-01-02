@@ -2,32 +2,35 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 // 文章信息
 function begin_entry_meta() {
+	global $post;
 	if ( ! is_single() ) :
 		if (zm_get_option('meta_author')) {
 			if (zm_get_option('author_hide')) {echo '<span class="meta-author author-hide">';} else {echo '<span class="meta-author">';}
-			if (zm_get_option('meta_author_link')) {
-				simple_author_inf();
-			} else {
-				if (zm_get_option('aos_scroll')) {
-					simple_author_inf();
-				} else {
-					echo '<span class="meta-author-avatar load">';
-					if (zm_get_option('cache_avatar')) {
-						echo begin_avatar( get_the_author_meta('email'), '96', '', get_the_author() );
-					} else {
-						be_avatar_author();
-					}
-					echo '</span>';
-					author_inf();
-				}
-			}
-		echo '</span>';
+			simple_author_inf();
+			echo '</span>';
 		}
-	echo '<span class="date">';
-		time_ago( $time_type ='post' );
-	echo '</span>';
+
+		if ( zm_get_option( 'news_date' ) ) {
+			$t1 = $post->post_date;
+			$t2 = date( "Y-m-d H:i:s" );
+			$t3 = zm_get_option( 'new_n' );
+			$newest = ( strtotime( $t2 )-strtotime( $t1 ) )/3600;
+			if ( $newest < $t3 ) {
+				echo '<span class="date date-new">';
+			} else {
+				echo '<span class="date">';
+			}
+		} else {
+			echo '<span class="date">';
+		}
+	echo '<time datetime="';
+	echo get_the_date('Y-m-d');
+	echo ' ' . get_the_time('H:i:s');
+	echo '">';
+	time_ago( $time_type ='post' );
+	echo '</time></span>';
 	views_span();
-	post_tag_cloud();
+	be_vip_meta();
 	if ( post_password_required() ) { 
 		echo '<span class="comment"><a href=""><i class="icon-scroll-c ri"></i>' . sprintf(__( '密码保护', 'begin' )) . '</a></span>';
 	} else {
@@ -37,20 +40,21 @@ function begin_entry_meta() {
 			echo '</span>';
 		}
 	}
+	post_tag_cloud();
 	else :
 	echo '<ul class="single-meta">';
 		if (zm_get_option('baidu_record')) {baidu_record_t();}
 
 		views_li();
 	if (zm_get_option('reading_m')) {
-		echo '<span class="reading-open">'. sprintf(__( '阅读模式', 'begin' )) .'</span>';
+		echo '<span class="reading-open' . cur() . '">'. sprintf(__( '阅读模式', 'begin' )) .'</span>';
 	}
 		edit_post_link('<i class="be be-editor"></i>', '<li class="edit-link">', '</li>' );
 	echo '</ul>';
 	if (zm_get_option('reading_m')) {
-		echo '<span class="reading-close bk dah"><i class="be be-cross"></i></span>';
+		echo '<span class="reading-close bk dah' . cur() . '"><i class="be be-cross"></i></span>';
 	}
-	echo '<span class="s-hide"><span class="off-side"></span></span>';
+	echo '<span class="s-hide' . cur() . '"><span class="off-side"></span></span>';
 	endif;
 }
 
@@ -78,37 +82,40 @@ function timeline_meta() {
 
 // 日志信息
 function begin_format_meta() {
+	global $post;
 	if (zm_get_option('meta_author')) {
 		if (zm_get_option('author_hide')) {echo '<span class="meta-author author-hide">';} else {echo '<span class="meta-author">';}
-		if (zm_get_option('meta_author_link')) {
-			simple_author_inf();
-		} else {
-			if (zm_get_option('aos_scroll')) {
-				simple_author_inf();
-			} else {
-				echo '<span class="meta-author-avatar load">';
-				if (zm_get_option('cache_avatar')) {
-					echo begin_avatar( get_the_author_meta('email'), '96', '', get_the_author() );
-				} else {
-					be_avatar_author();
-				}
-				echo '</span>';
-				author_inf();
-			}
-		}
+		simple_author_inf();
 		echo '</span>';
 	}
-	echo '<span class="date">';
-		time_ago( $time_type ='post' );
-	echo '</span>';
-	echo '<span class="format-cat"><i class="be be-sort ri"></i>';
+
+		if ( zm_get_option( 'news_date' ) ) {
+			$t1 = $post->post_date;
+			$t2 = date( "Y-m-d H:i:s" );
+			$t3 = zm_get_option( 'new_n' );
+			$newest = ( strtotime( $t2 )-strtotime( $t1 ) )/3600;
+			if ( $newest < $t3 ) {
+				echo '<span class="date date-new">';
+			} else {
+				echo '<span class="date">';
+			}
+		} else {
+			echo '<span class="date">';
+		}
+	echo '<time datetime="';
+	echo get_the_date('Y-m-d');
+	echo ' ' . get_the_time('H:i:s');
+	echo '">';
+	time_ago( $time_type ='post' );
+	echo '</time></span>';
+	echo '<span class="format-cat">';
 		zm_category();
-	if( is_tax('notice') ) {
+	if ( is_tax('notice') ) {
 		echo get_the_term_list( get_the_ID(), 'notice');
 	}
 	echo '</span>';
 	views_span();
-	post_tag_cloud();
+
 	if ( post_password_required() ) { 
 		echo '<span class="comment"><a href=""><i class="icon-scroll-c ri"></i>' . sprintf(__( '密码保护', 'begin' )) . '</a></span>';
 	} else {
@@ -118,6 +125,7 @@ function begin_format_meta() {
 			echo '</span>';
 		}
 	}
+	post_tag_cloud();
 }
 
 function meta_back() {
@@ -146,25 +154,29 @@ function begin_single_meta() {
 			echo '</span>';
 		}
 
-		echo '<span class="my-date"><i class="be be-schedule ri"></i>';
+		echo '<span class="meta-date">';
+		echo '<time datetime="';
+		echo get_the_date('Y-m-d');
+		echo ' ' . get_the_time('H:i:s');
+		echo '">';
 		time_ago( $time_type ='posts' );
-		echo '</span>';
+		echo '</time></span>';
 		echo '<span class="meta-block"></span>';
 		if ( zm_get_option( 'inf_back' ) && !zm_get_option( 'title_c' ) ) {
 			echo '<span class="meta-margin"></span>';
 		}
 		if (zm_get_option('post_cat')) {
-			echo '<span class="meta-cat"><i class="be be-sort ri"></i>';
+			echo '<span class="meta-cat">';
 			the_category( ' ' );
 			echo get_the_term_list( $post->ID, 'gallery', '' );
 			echo '</span>';
 		}
-		$from = get_post_meta($post->ID, 'from', true);
-		$copyright = get_post_meta($post->ID, 'copyright', true);
-		if ( get_post_meta($post->ID, 'from', true) ) :
+		$from = get_post_meta(get_the_ID(), 'from', true);
+		$copyright = get_post_meta(get_the_ID(), 'copyright', true);
+		if ( get_post_meta(get_the_ID(), 'from', true) ) :
 			echo '<span class="meta-source">';
 			echo sprintf(__( '来源：', 'begin' ));
-			if ( get_post_meta($post->ID, 'copyright', true) ) :
+			if ( get_post_meta(get_the_ID(), 'copyright', true) ) :
 				echo '<a href="';
 				echo $copyright;
 				echo '" rel="nofollow" target="_blank">';
@@ -190,10 +202,10 @@ function begin_single_meta() {
 
 		views_span();
 
-		if( get_post_meta( $post->ID, 'zm_like', true ) && zm_get_option('meta_zm_like') ){
+		if ( get_post_meta( get_the_ID(), 'zm_like', true ) && zm_get_option('meta_zm_like') ){
 			echo '<span class="post-like">';
 			echo '<i class="be be-thumbs-up-o ri"></i>';
-			echo get_post_meta( $post->ID, 'zm_like', true );
+			echo get_post_meta( get_the_ID(), 'zm_like', true );
 			echo '</span>';
 		}
 		if (zm_get_option('print_on')) {
@@ -209,26 +221,30 @@ function begin_single_meta() {
 			echo '</span>';
 		}
 	if (zm_get_option('reading_m')) {
-		echo '<span class="reading-open">'. sprintf(__( '阅读模式', 'begin' )) .'</span>';
+		echo '<span class="reading-open' . cur() . '">'. sprintf(__( '阅读模式', 'begin' )) .'</span>';
 	}
 		edit_post_link('<i class="be be-editor"></i>', '<span class="edit-link">', '</span>' );
 	echo '</div>';
 	if (zm_get_option('reading_m')) {
-		echo '<span class="reading-close bk dah"><i class="be be-cross"></i></span>';
+		echo '<span class="reading-close bk dah' . cur() . '"><i class="be be-cross"></i></span>';
 	}
 	if ( get_post_type() !== 'bulletin' ) {
-		echo '<span class="s-hide"><span class="off-side"></span></span>';
+		echo '<span class="s-hide' . cur() . '"><span class="off-side"></span></span>';
+	}
+	if ( function_exists( 'be_single_vip_meta_inf' ) ) {
+		be_single_vip_meta_inf();
 	}
 }
 
 function begin_single_cat() {
 	global $wpdb, $post;
-	if ( get_post_meta($post->ID, 'header_img', true) || get_post_meta($post->ID, 'header_bg', true) ):
+	if ( get_post_meta(get_the_ID(), 'header_img', true) || get_post_meta(get_the_ID(), 'header_bg', true) ):
 	else:
 	endif;
 	echo '<div class="single-cat-tag dah">';
 		echo '<div class="single-cat dah"><i class="be be-sort"></i>';
 			the_category( ' ' );
+			echo get_the_term_list( $post->ID, 'special', '' );
 			if (zm_get_option('post_replace')) {
 				if ( ( get_the_modified_time( 'Y' )*365+get_the_modified_time( 'z' ) ) > (get_the_time( 'Y' )*365+get_the_time( 'z' ) ) ) :
 				echo '<span class="single-replace dah">';
@@ -244,10 +260,14 @@ function begin_single_cat() {
 
 function begin_related_meta() {
 	echo '<span class="date">';
-		time_ago( $time_type ='post' );
-	echo '</span>';
+	echo '<time datetime="';
+	echo get_the_date('Y-m-d');
+	echo ' ' . get_the_time('H:i:s');
+	echo '">';
+	time_ago( $time_type ='post' );
+	echo '</time></span>';
 	views_span();
-	post_tag_cloud();
+
 	if ( post_password_required() ) { 
 		echo '<span class="comment"><a href=""><i class="icon-scroll-c ri"></i>' . sprintf(__( '密码保护', 'begin' )) . '</a></span>';
 	} else {
@@ -257,6 +277,7 @@ function begin_related_meta() {
 			echo '</span>';
 		}
 	}
+	post_tag_cloud();
 }
 
 // 页面信息
@@ -280,24 +301,20 @@ function begin_page_meta() {
 		}
 		views_li();
 	echo '</ul>';
-	echo '<span class="s-hide"><span class="off-side"></span></span>';
+	echo '<span class="s-hide' . cur() . '"><span class="off-side"></span></span>';
 }
 
 // 专题
 function begin_page_meta_zt() {
 	global $wpdb, $post;
 	echo '<div class="single-meta-zt begin-single-meta">';
-		echo '<span class="my-date">';
-		time_ago( $time_type ='pages' );
-		echo '</span>';
-
-		$special = get_post_meta($post->ID, 'special', true);
+		$special = get_post_meta(get_the_ID(), 'special', true);
 		echo '<span><i class="be be-stack ri"></i>';
-		if ( get_post_meta($post->ID, 'special', true) ) {
+		if ( get_tag_post_count( $special ) >= 1 ) {
 			echo get_tag_post_count( $special );
 			echo '篇</span>';
 		} else {
-			echo '无专题文章</span>';
+			echo '未添加文章</span>';
 		}
 		views_span();
 		edit_post_link('<i class="be be-editor"></i>', '<span class="edit-link">', '</span>' );
@@ -307,8 +324,12 @@ function begin_page_meta_zt() {
 // 其它信息
 function begin_grid_meta() {
 	echo '<span class="date">';
-		the_time( 'm/d' ); 
-	echo '</span>';
+	echo '<time datetime="';
+	echo get_the_date('Y-m-d');
+	echo ' ' . get_the_time('H:i:s');
+	echo '">';
+	the_time( 'm/d' ); 
+	echo '</time></span>';
 	views_span();
 	if (!zm_get_option('close_comments')) {
 		if ( post_password_required() ) { 
@@ -322,12 +343,13 @@ function begin_grid_meta() {
 }
 
 // grid inf
-function grid_inf() { ?>
-<?php global $wpdb, $post; ?>
-<span class="grid-inf">
+function grid_inf() {
+	global $wpdb, $post;
+?>
+<span class="grid-inf gdz">
 	<?php if ( has_post_format('link') ) { ?>
-		<?php if ( get_post_meta($post->ID, 'link_inf', true) ) { ?>
-			<span class="link-inf"><?php $link_inf = get_post_meta($post->ID, 'link_inf', true);{ echo $link_inf;}?></span>
+		<?php if ( get_post_meta(get_the_ID(), 'link_inf', true) ) { ?>
+			<span class="link-inf"><?php $link_inf = get_post_meta(get_the_ID(), 'link_inf', true);{ echo $link_inf;}?></span>
 		<?php } else { ?>
 			<?php if (zm_get_option('meta_author')) { ?><span class="grid-author"><?php grid_author_inf(); ?></span><?php } ?>
 			<span class="g-cat"><?php zm_category(); ?></span>
@@ -337,20 +359,23 @@ function grid_inf() { ?>
 		<span class="g-cat"><?php zm_category(); ?></span>
 	<?php } ?>
 	<span class="grid-inf-l">
+		<?php echo be_vip_meta(); ?>
 		<?php views_span(); ?>
-		<?php if ( !has_post_format('link') ) { ?><span class="date"><?php the_time( 'm/d' ); ?></span><?php } ?>
-		<?php if ( get_post_meta($post->ID, 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
+		<?php if ( !has_post_format('link') ) { ?><span class="date"><time datetime="<?php echo get_the_date('Y-m-d'); ?> <?php echo get_the_time('H:i:s'); ?>"><?php the_time( 'm/d' ); ?></time></span><?php } ?>
+		<?php if ( get_post_meta(get_the_ID(), 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
 	</span>
 </span>
 <?php }
 
 // fall
-function fall_inf() { ?>
-<?php global $wpdb, $post; ?>
+function fall_inf() {
+	global $wpdb, $post;
+?>
 <span class="grid-inf">
 	<span class="g-cat"><?php zm_category(); ?><?php echo get_the_term_list( $post->ID, 'gallery', '' ); ?></span>
 	<span class="grid-inf-l">
-		<span class="date"><?php the_time( 'm/d' ); ?></span>
+		<span class="date"><time datetime="<?php echo get_the_date('Y-m-d'); ?> <?php echo get_the_time('H:i:s'); ?>"><?php the_time( 'm/d' ); ?></time></span>
+		<?php echo be_vip_meta(); ?>
 	</span>
 </span>
 <?php }
@@ -380,7 +405,7 @@ function time_ago( $time_type ){
 		case 'posts';
 			echo get_the_date();
 			if (zm_get_option('meta_time_second')) {
-				echo '<i class="i-time">' . get_the_time('H:i:s') . '</i>';
+				echo ' ' . get_the_time('H:i:s') . '';
 			}
 		break;
 		case 'pages';
@@ -393,32 +418,32 @@ function time_ago( $time_type ){
 	switch( $time_type ){
 		case 'comment': 
 			$time_diff = current_time('timestamp') - get_comment_time('U');
-			if( $time_diff <= 300 )
-				echo ('刚刚');
-			elseif(  $time_diff>=300 && $time_diff <= 86400 ) //24 小时之内
-				echo human_time_diff(get_comment_time('U'), current_time('timestamp')).'前';
+			if ( $time_diff <= 300 )
+			echo sprintf(__( '刚刚', 'begin' ));
+			elseif (  $time_diff>=300 && $time_diff <= 86400 )
+				echo human_time_diff(get_comment_time('U'), current_time('timestamp')).''.sprintf(__( '前', 'begin' )).'';
 			else
 				printf(__('%1$s at %2$s'), get_comment_date(),  get_comment_time());
 		break;
 		case 'post';
 			$time_diff = current_time('timestamp') - get_the_time('U');
-			if( $time_diff <= 300 )
-				echo ('刚刚');
-			elseif(  $time_diff>=300 && $time_diff <= 86400 ) //24 小时之内
-				echo human_time_diff(get_the_time('U'), current_time('timestamp')).'前';
+			if ( $time_diff <= 300 )
+			echo sprintf(__( '刚刚', 'begin' ));
+			elseif (  $time_diff>=300 && $time_diff <= 86400 )
+				echo human_time_diff(get_the_time('U'), current_time('timestamp')).''.sprintf(__( '前', 'begin' )).'';
 			else
-				echo the_time( 'm月d日' );
+				echo the_time( sprintf( __( 'm月d日', 'begin' ) ) );
 		break;
 		case 'posts';
 			//$time_diff = current_time('timestamp') - get_the_time('U');
-			//if( $time_diff <= 300 )
-				//echo ('刚刚');
-			//elseif(  $time_diff>=300 && $time_diff <= 86400 ) //24 小时之内
+			//if ( $time_diff <= 300 )
+				//echo sprintf(__( '刚刚', 'begin' ));
+			//elseif (  $time_diff>=300 && $time_diff <= 86400 )
 				//echo human_time_diff(get_the_time('U'), current_time('timestamp')).'前';
 			//else
 				echo get_the_date();
 				if (zm_get_option('meta_time_second')) {
-					echo '<i class="i-time">' . get_the_time('H:i:s') . '</i>';
+					echo ' ' . get_the_time('H:i:s') . '';
 				}
 		break;
 		case 'pages';
@@ -427,3 +452,13 @@ function time_ago( $time_type ){
 	}
 }
 }
+
+function be_vip_meta() {
+	if ( function_exists( 'be_vip_meta_inf' ) ) {
+		be_vip_meta_inf();
+	}
+}
+
+function grid_meta() { ?>
+	<span class="date"><time datetime="<?php echo get_the_date('Y-m-d'); ?> <?php echo get_the_time('H:i:s'); ?>"><?php the_time( 'm/d' ); ?></time></span>
+<?php }

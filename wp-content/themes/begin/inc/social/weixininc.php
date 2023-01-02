@@ -1,7 +1,7 @@
 <?php 
 class BeginloginWEIXIN {
 	function login($appid,$appkey,$code){
-		if($_REQUEST ['state'] == 'beginlogin_weixin'){
+		if ($_REQUEST ['state'] == 'beginlogin_weixin'){
 			$token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=".$appid."&secret=".$appkey."&code=".$code."&grant_type=authorization_code";
 			$response = beginlogin_get_url_contents ( $token_url );
 			$msg = json_decode ( $response );
@@ -22,7 +22,7 @@ class BeginloginWEIXIN {
 	function weixin_cb(){
 		global $wpdb;
 		$mbt_weixinlogin_backurl = zm_get_option('social_login_url')?zm_get_option('social_login_url'):get_bloginfo('url');
-		if(isset($_SESSION ['weixin_open_id'])){
+		if (isset($_SESSION ['weixin_open_id'])){
 			$user_ID = $wpdb->get_var("SELECT ID FROM $wpdb->users WHERE weixinid='".$wpdb->escape($_SESSION['weixin_open_id'])."'");
 			if ($user_ID) {
 				wp_set_auth_cookie($user_ID,true,false);

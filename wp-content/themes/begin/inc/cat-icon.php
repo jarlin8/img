@@ -21,7 +21,7 @@ function zm_add_icon_texonomy_field() {
 	}
 
 	echo '<div class="form-field">
-		<label for="taxonomy_icon">' . __('单色图标', 'begin') . '</label>
+		<label for="taxonomy_icon">单色图标</label>
 		<input type="text" name="taxonomy_icon" id="taxonomy_icon" value="" />
 		<br/>
 		<span class="cat-words">输入单色图标字体代码</span><br />
@@ -38,7 +38,7 @@ function zm_icon_edit_texonomy_field($taxonomy) {
 
 	$icon_code = zm_taxonomy_icon_code( $taxonomy->term_id, NULL, TRUE );
 	echo '<tr class="form-field">
-		<th scope="row" valign="top"><label for="taxonomy_icon">' . __('单色图标', 'begin') . '</label></th>
+		<th scope="row" valign="top"><label for="taxonomy_icon">单色图标</label></th>
 		<td>' . zm_taxonomy_icon_code( $taxonomy->term_id, 'medium', TRUE ) . '<br/><input type="text" name="taxonomy_icon" id="taxonomy_icon" value="'.$icon_code.'" /><br />
 		<span class="cat-words">输入单色图标字体代码</span><br />
 		</td><br />
@@ -48,7 +48,7 @@ function zm_icon_edit_texonomy_field($taxonomy) {
 add_action('edit_term','zm_save_taxonomy_icon');
 add_action('create_term','zm_save_taxonomy_icon');
 function zm_save_taxonomy_icon($term_id) {
-	if(isset($_POST['taxonomy_icon']))
+	if (isset($_POST['taxonomy_icon']))
 		update_option('zm_taxonomy_icon'.$term_id, $_POST['taxonomy_icon'], NULL);
 }
 
@@ -72,9 +72,9 @@ function zm_taxonomy_icon_code($term_id = NULL, $size = 'full', $return_placehol
 	}
 
 	$taxonomy_icon_code = get_option('zm_taxonomy_icon'.$term_id);
-	if(!empty($taxonomy_icon_code)) {
+	if (!empty($taxonomy_icon_code)) {
 		$attachment_id = zm_icon_get_attachment_id_by_code($taxonomy_icon_code);
-		if(!empty($attachment_id)) {
+		if (!empty($attachment_id)) {
 		$taxonomy_icon_code = $taxonomy_icon_code[0];
 		}
 	}
@@ -102,7 +102,7 @@ function zm_add_svg_texonomy_field() {
 	}
 
 	echo '<div class="form-field">
-		<label for="taxonomy_svg">' . __('彩色图标', 'begin') . '</label>
+		<label for="taxonomy_svg">彩色图标</label>
 		<input type="text" name="taxonomy_svg" id="taxonomy_svg" value="" />
 		<br/>
 		<span class="cat-words">输入彩色图标字体代码</span><br />
@@ -119,7 +119,7 @@ function zm_svg_edit_texonomy_field($taxonomy) {
 
 	$svg_code = zm_taxonomy_svg_code( $taxonomy->term_id, NULL, TRUE );
 	echo '<tr class="form-field">
-		<th scope="row" valign="top"><label for="taxonomy_svg">' . __('彩色图标', 'begin') . '</label></th>
+		<th scope="row" valign="top"><label for="taxonomy_svg">彩色图标</label></th>
 		<td>' . zm_taxonomy_svg_code( $taxonomy->term_id, 'medium', TRUE ) . '<br/><input type="text" name="taxonomy_svg" id="taxonomy_svg" value="'.$svg_code.'" /><br />
 		<span class="cat-words">输入彩色图标字体代码</span><br />
 		</td><br />
@@ -129,7 +129,7 @@ function zm_svg_edit_texonomy_field($taxonomy) {
 add_action('edit_term','zm_save_taxonomy_svg');
 add_action('create_term','zm_save_taxonomy_svg');
 function zm_save_taxonomy_svg($term_id) {
-	if(isset($_POST['taxonomy_svg']))
+	if (isset($_POST['taxonomy_svg']))
 		update_option('zm_taxonomy_svg'.$term_id, $_POST['taxonomy_svg'], NULL);
 }
 
@@ -153,9 +153,9 @@ function zm_taxonomy_svg_code($term_id = NULL, $size = 'full', $return_placehold
 	}
 
 	$taxonomy_svg_code = get_option('zm_taxonomy_svg'.$term_id);
-	if(!empty($taxonomy_svg_code)) {
+	if (!empty($taxonomy_svg_code)) {
 		$attachment_id = zm_svg_get_attachment_id_by_code($taxonomy_svg_code);
-		if(!empty($attachment_id)) {
+		if (!empty($attachment_id)) {
 		$taxonomy_svg_code = $taxonomy_svg_code[0];
 		}
 	}

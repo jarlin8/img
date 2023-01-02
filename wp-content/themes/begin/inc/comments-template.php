@@ -13,9 +13,9 @@ function begin_comment($comment, $args, $depth) {
 	}
 	if ( zm_get_option( 'comment_floor' ) ) { 
 		$comorder = get_option( 'comment_order' );
-		if( $comorder == 'asc' ){
+		if ( $comorder == 'asc' ){
 			global $commentcount;
-			if( !$commentcount ) {
+			if ( !$commentcount ) {
 				if ( get_query_var('cpage') > 0 )
 				$page = get_query_var('cpage')-1;
 				else $page = get_query_var( 'cpage' );
@@ -24,7 +24,7 @@ function begin_comment($comment, $args, $depth) {
 			}
 		} else {
 			global $commentcount, $wpdb, $post;
-			if( !$commentcount ) {
+			if ( !$commentcount ) {
 				$comments = $wpdb->get_results("SELECT * FROM $wpdb->comments WHERE comment_post_ID = $post->ID AND comment_type not in ('trackback','pingback') AND comment_approved = '1' AND !comment_parent");
 				$cnt = count( $comments );
 				//$comments = get_comments( array( 'status' => 'approve', 'parent' => '0', 'post_id' => $post_id, 'count' => true) );
@@ -48,7 +48,7 @@ function begin_comment($comment, $args, $depth) {
 	<?php endif; ?>
 	<div class="comment-author vcard">
 		<?php if ( get_option( 'show_avatars' ) ) { ?>
-			<div class="comment-avatar load<?php if ( get_option( 'show_avatars' ) ) { ?> comment-avatar-show bk<?php } ?>">
+			<div class="comment-avatar load<?php if ( get_option( 'show_avatars' ) ) { ?> comment-avatar-show bk dah<?php } ?>">
 				<?php if (zm_get_option('cache_avatar')) { ?>
 					<?php echo begin_avatar( $comment->comment_author_email, 96, '', get_comment_author() ); ?>
 				<?php } else { ?>
@@ -57,7 +57,25 @@ function begin_comment($comment, $args, $depth) {
 			</div>
 		<?php } ?>
 
-		<strong><?php comment_author_link(); ?></strong>
+		<?php if ( zm_get_option( 'comment_vip' ) ) { ?>
+			<?php
+				$authoremail = get_comment_author_email( $comment );
+				if ( email_exists( $authoremail ) ) {
+					$commet_user_role = get_user_by( 'email', $authoremail );
+					$comment_user_role = $commet_user_role->roles[0];
+						if ( $comment_user_role !== zm_get_option('roles_vip') ) {
+							echo '<strong>' . get_comment_author_link( $comment->comment_ID ) . '</strong>';
+						} else {
+							echo '<strong class="comment-author-vip">' . get_comment_author_link( $comment->comment_ID ) . '</strong>';
+						}
+				} else {
+					echo '<strong>' . get_comment_author_link( $comment->comment_ID ) . '</strong>';
+				}
+			?>
+		<?php } else { ?>
+			<strong><?php comment_author_link(); ?></strong>
+		<?php } ?>
+
 		<?php 
 			if ($comment->comment_author_email == get_option('admin_email')) {
 				echo '<span class="author-mark author-admin"><i class="be be-personoutline" title="'. sprintf(__( '管理员', 'begin' )) .'"></i></span>';
@@ -72,16 +90,16 @@ function begin_comment($comment, $args, $depth) {
 			$post_author = begin_comment_by_post_author( $comment );
 			if ( zm_get_option('vip') && ! $post_author ) {
 				get_author_class( $comment->comment_author_email, $comment->user_id );
-				if( current_user_can('manage_options') ) {}
+				if ( current_user_can('manage_options') ) {}
 			}
 		?>
 		<span class="comment-meta commentmetadata">
 			<a href="<?php echo htmlspecialchars( get_comment_link( $comment->comment_ID ) ); ?>"></a><br />
 			<span class="comment-aux">
-				<?php echo get_comment_date(); ?>
-				<span class="comment-time"><?php echo get_comment_time(); ?></span>
-				<?php edit_comment_link( '<i class="be be-editor"></i>' , '&nbsp;', '' ); ?>
-
+				<span class="comment-date">
+					<time datetime="<?php echo get_comment_date( 'Y-m-d' ); ?> <?php echo get_comment_time( 'H:i:s' ); ?>"><?php echo get_comment_date(); ?><?php if ( zm_get_option( 'comment_time' ) && ! wp_is_mobile() ) { ?> <?php echo get_comment_time( 'H:i:s' ); ?><?php } ?></time>
+				</span>
+				<?php edit_comment_link( sprintf( __( '编辑', 'begin' ) ), '<span class="comment-edit">', '</span>' ); ?>
 				<?php if (zm_get_option('del_comment')) { ?>
 				<?php
 					if ( current_user_can('level_10') ) {
@@ -90,47 +108,61 @@ function begin_comment($comment, $args, $depth) {
 					}
 				?>
 				<?php } ?>
-
-				<?php 
-					if ( in_category( explode( ',',zm_get_option( 'single_layout_qa' ) ) ) ) {
+				<?php if ( zm_get_option( 'comment_remark' ) ) { ?>
+					<?php 
 						$my_id = $comment->user_id;
 						$user_info = get_userdata( $my_id );
 						if ( $my_id && $user_info->remark ) {
 							echo '<span class="remark-txt"><span class="dashicons dashicons-location"></span>' . $user_info->remark . '</span>';
 						}
-					}
-				?>
+					?>
+				<?php } ?>
 
-				<?php if (zm_get_option('comment_floor')) { ?>
+				<?php if ( zm_get_option( 'comment_region' ) ) { ?>
+					<?php 
+						if ( function_exists( 'be_convert_ip' ) ) {
+							$my_id = $comment->user_id;
+							$user_info = get_userdata( $my_id );
+							if ( $my_id && $user_info->remark ) {
+								$user_region = $user_info->remark;
+							} else {
+								$user_region = be_convert_ip( get_comment_author_ip() );
+							}
+							echo '<span class="remark-txt"><span class="dashicons dashicons-location"></span>' . $user_region . '</span>';
+						}
+					?>
+				<?php } ?>
+		
+				<?php if ( zm_get_option( 'comment_floor' ) ) { ?>
 					<span class="floor">
 						<?php
-							if($comorder == 'asc'){
-								if(!$parent_id = $comment->comment_parent){
-									switch ($commentcount){
+							if ( $comorder == 'asc' ) {
+								if ( !$parent_id = $comment->comment_parent ) {
+									switch ( $commentcount ){
 										case 0 : echo "<span class='floor-c floor-s'><i>1</i><em>F</em></span>"; ++$commentcount; break;
 										case 1 : echo "<span class='floor-c floor-b'><i>2</i><em>F</em></span>"; ++$commentcount; break;
 										case 2 : echo "<span class='floor-c floor-d'><i>3</i><em>F</em></span>"; ++$commentcount; break;
-										default : printf('<span class="floor-c floor-l"><i>%1$s</i><em>F</em></span>', ++$commentcount);
+										default : printf( '<span class="floor-c floor-l"><i>%1$s</i><em>F</em></span>', ++$commentcount );
 									}
 								}
 							} else {
-								if(!$parent_id = $comment->comment_parent){
-									switch ($commentcount){
+								if ( !$parent_id = $comment->comment_parent ) {
+									switch ( $commentcount ){
 										case 2 : echo "<span class='floor-c floor-s'><i>1</i><em>F</em></span>"; --$commentcount; break;
 										case 3 : echo "<span class='floor-c floor-b'><i>2</i><em>F</em></span>"; --$commentcount; break;
 										case 4 : echo "<span class='floor-c floor-d'><i>3</i><em>F</em></span>"; --$commentcount; break;
-										default : printf('<span class="floor-c floor-l"><i>%1$s</i><em>F</em></span>', --$commentcount);
+										default : printf( '<span class="floor-c floor-l"><i>%1$s</i><em>F</em></span>', --$commentcount );
 									}
 								}
 							}
 						?>
-						<?php if( $depth > 1 ){ printf('<span class="floor-c floor-l floor-l-b"><em>B</em><span class="floor-b-count">%1$s</span></span>', $depth-1); } ?>
+						<?php if ( $depth > 1 ){ printf( '<span class="floor-c floor-l floor-l-b"><em>B</em><span class="floor-b-count">%1$s</span></span>', $depth-1 ); } ?>
 					</span>
 				<?php } ?>
 				<br />
-				<?php if($args['max_depth']!=$depth) { ?>
-					<?php if( get_option( 'comment_registration' ) && ! is_user_logged_in() ) { ?>
-						<span class="login-show show-layer" data-show-layer="login-layer" role="button"><i class="be be-stack"> </i><?php _e( '登录回复', 'begin' ); ?></span>
+				<?php if ($args['max_depth']!=$depth) { ?>
+					<?php if ( get_option( 'comment_registration' ) && ! is_user_logged_in() ) { ?>
+						<?php if ( ! zm_get_option( 'login_reply_btn' ) ) { ?><span class="reply login-reply login-show show-layer" data-show-layer="login-layer" role="button"><i class="be be-stack"> </i><?php _e( '登录回复', 'begin' ); ?></span><?php } ?>
 					<?php } else { ?>
 						<?php
 						comment_reply_link(
@@ -155,7 +187,7 @@ function begin_comment($comment, $args, $depth) {
 			</span>
 		</span>
 	</div>
-	<div class="clear"></div>
+
 	<?php comment_text(); ?>
 	<?php if ( $comment->comment_approved == '0' ) : ?>
 		<div class="comment-awaiting-moderation"><?php _e( '您的评论正在等待审核！', 'begin' ); ?></div>

@@ -15,31 +15,31 @@ class Linksclick {
 	public function register_post_type() {
 		$slug = 'surl';
 		$labels = array(
-			'name'               => __( '短链接', 'begin' ),
-			'singular_name'      => __( '链接', 'begin' ),
-			'add_new'            => __( '添加链接', 'begin' ),
-			'add_new_item'       => __( '添加新链接', 'begin' ),
-			'edit'               => __( '编辑', 'begin' ),
-			'edit_item'          => __( '编辑链接', 'begin' ),
-			'new_item'           => __( '新的链接', 'begin' ),
-			'view'               => __( '查看链接', 'begin' ),
-			'view_item'          => __( '查看链接', 'begin' ),
-			'search_items'       => __( '搜索链接', 'begin' ),
-			'not_found'          => __( '你还没有发表链接', 'begin' ),
-			'not_found_in_trash' => __( '回收站中没有链接', 'begin' ),
+			'name'               => '短链接',
+			'singular_name'      => '链接',
+			'add_new'            => '添加链接',
+			'add_new_item'       => '添加新链接',
+			'edit'               => '编辑',
+			'edit_item'          => '编辑链接',
+			'new_item'           => '新的链接',
+			'view'               => '查看链接',
+			'view_item'          => '查看链接',
+			'search_items'       => '搜索链接',
+			'not_found'          => '你还没有发表链接',
+			'not_found_in_trash' => '回收站中没有链接',
 			'messages'           => array(
 				 0 => '', // Unused. Messages start at index 1.
-				 1 => __( '链接更新。<a href="%s">查看链接</a>', 'begin' ),
-				 2 => __( '自定义字段已更新。', 'begin' ),
-				 3 => __( '自定义字段已删除。', 'begin' ),
-				 4 => __( '链接已更新。', 'begin' ),
+				 1 => '链接更新。<a href="%s">查看链接</a>',
+				 2 => '自定义字段已更新。',
+				 3 => '自定义字段已删除。',
+				 4 => '链接已更新。',
 				/* translators: %s: date and time of the revision */
-				 5 => isset( $_GET['revision'] ) ? sprintf( __( '文章已从 %s 恢复到修订版本', 'begin' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-				 6 => __( '链接已更新。 <a href="%s">查看链接</a>', 'begin' ),
-				 7 => __( '链接已保存', 'begin' ),
-				 8 => __( '链接已提交。', 'begin' ),
-				 9 => __( '链接定时', 'begin' ),
-				10 => __( '链接草稿已更新。', 'begin' ),
+				 5 => isset( $_GET['revision'] ) ? sprintf( '文章已从 %s 恢复到修订版本', wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+				 6 => '链接已更新。 <a href="%s">查看链接</a>',
+				 7 => '链接已保存',
+				 8 => '链接已提交。',
+				 9 => '链接定时',
+				10 => '链接草稿已更新。',
 			),
 		);
 
@@ -51,8 +51,8 @@ class Linksclick {
 				'public'        => true,
 				'query_var'     => true,
 				'menu_position' => 57,
-				'menu_icon'          => 'dashicons-chart-bar',
-				'supports'      => array( 'title' ),
+				'menu_icon'     => 'dashicons-editor-unlink',
+				'supports'      => array( 'title', 'custom-fields' ),
 				'rewrite'       => array( 'slug' => $rewrite_slug, 'with_front' => false ),
 			)
 		);
@@ -61,19 +61,19 @@ class Linksclick {
 	public function columns_filter( $columns ) {
 		$columns = array(
 			'cb'        => '<input type="checkbox" />',
-			'title'     => __( '标题', 'begin' ),
-			'url'       => __( '重定向链接', 'begin' ),
-			'permalink' => __( '自定义链接', 'begin' ),
-			'clicks'    => __( '点击', 'begin' ),
-			'id'    => __( 'ID', 'begin' ),
+			'title'     => '标题',
+			'url'       => '重定向链接',
+			'permalink' => '自定义链接',
+			'clicks'    => '点击',
+			'id'        => 'ID',
 		);
 		return $columns;
 	}
 
 	public function columns_data( $column ) {
 		global $post;
-		$url   = get_post_meta( $post->ID, '_surl_redirect', true );
-		$count = get_post_meta( $post->ID, '_surl_count', true );
+		$url   = get_post_meta( get_the_ID(), '_surl_redirect', true );
+		$count = get_post_meta( get_the_ID(), 'surl_count', true );
 		if ( 'url' == $column ) {
 			echo make_clickable( esc_url( $url ? $url : '' ) );
 		}
@@ -100,17 +100,17 @@ class Linksclick {
 	}
 
 	public function add_meta_box() {
-		add_meta_box( 'surl', __( '链接信息', 'begin' ), array( $this, 'meta_box' ), 'surl', 'normal', 'high' );
+		add_meta_box( 'surl', '链接信息', array( $this, 'meta_box' ), 'surl', 'normal', 'high' );
 	}
 
 	public function meta_box() {
 		global $post;
 		printf( '<input type="hidden" name="_surl_nonce" value="%s" />', wp_create_nonce( plugin_basename(__FILE__) ) );
-		printf( '<p><label for="%s">%s</label></p>', '_surl_redirect', __( '重定向链接', 'begin' ) );
-		printf( '<p><input style="%s" type="text" name="%s" id="%s" value="%s" /></p>', 'width: 99%;', '_surl_redirect', '_surl_redirect', esc_attr( get_post_meta( $post->ID, '_surl_redirect', true ) ) );
-		printf( '<p><label for="%s">%s</label></p>', '', __( '重定向后，实际的访问链接', 'begin' ) );
-		$count = isset( $post->ID ) ? get_post_meta($post->ID, '_surl_count', true) : 0;
-		echo '<p>' . sprintf( __( '该链接已被点击 %d 次', 'begin' ), esc_attr( $count ) ) . '</p>';
+		printf( '<p><label for="%s">%s</label></p>', '_surl_redirect', '重定向链接');
+		printf( '<p><input style="%s" type="text" name="%s" id="%s" value="%s" /></p>', 'width: 99%;', '_surl_redirect', '_surl_redirect', esc_attr( get_post_meta( get_the_ID(), '_surl_redirect', true ) ) );
+		printf( '<p><label for="%s">%s</label></p>', '', '重定向后，实际的访问链接' );
+		$count = isset( $post->ID ) ? get_post_meta(get_the_ID(), 'surl_count', true) : 0;
+		echo '<p>' . sprintf( '该链接已被点击 %d 次', esc_attr( $count ) ) . '</p>';
 	}
 
 	public function meta_box_save( $post_id, $post ) {
@@ -142,20 +142,20 @@ class Linksclick {
 		}
 		global $wp_query;
 		// Update the count
-		$count = isset( $wp_query->post->_surl_count ) ? (int) $wp_query->post->_surl_count : 0;
-		update_post_meta( $wp_query->post->ID, '_surl_count', $count + 1 );
+		$count = isset( $wp_query->post->surl_count ) ? (int) $wp_query->post->surl_count : 0;
+		if ( ! current_user_can( 'manage_options' ) ){
+			update_post_meta( $wp_query->post->ID, 'surl_count', $count + 1 );
+		}
 		// Handle the redirect
 		$redirect = isset( $wp_query->post->ID ) ? get_post_meta( $wp_query->post->ID, '_surl_redirect', true ) : '';
-
 		// Filter the redirect URL.
 		$redirect = apply_filters( 'simple_urls_redirect_url', $redirect, $count );
 		 // Action hook that fires before the redirect.
 		do_action( 'simple_urls_redirect', $redirect, $count );
 		if ( ! empty( $redirect ) ) {
-			wp_redirect( esc_url_raw( $redirect ), 301);
+			wp_redirect( esc_url_raw( $redirect ), 301 );
 			exit;
-		}
-		else {
+		} else {
 			wp_redirect( home_url(), 302 );
 			exit;
 		}

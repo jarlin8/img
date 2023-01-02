@@ -60,10 +60,19 @@
 					text: '链接按钮',
 					menu: [
 						{
+							text: '多栏按钮盒子',
+							icon: 'pluscircle',
+							onclick: function() {
+								selected = tinyMCE.activeEditor.selection.getContent();
+								editor.insertContent('[bebtn]'+selected+'[/bebtn]');
+							}
+						},
+
+						{
 							text: '下载按钮',
 							icon: 'nonbreaking',
 							onclick: function() {
-								editor.insertContent('[url href=' + '下载链接地址]按钮名称[/url]');
+								editor.insertContent('[url href="' + '下载链接地址"]按钮名称[/url]');
 							}
 						},
 
@@ -71,7 +80,7 @@
 							text: '链接按钮',
 							icon: 'nonbreaking',
 							onclick: function() {
-								editor.insertContent('[link href=' + '链接地址]按钮名称[/link]');
+								editor.insertContent('[link href="' + '链接地址"]按钮名称[/link]');
 							}
 						},
 
@@ -79,7 +88,7 @@
 							text: '居中按钮',
 							icon: 'nonbreaking',
 							onclick: function() {
-								editor.insertContent('[but href=' + '链接地址]居中按钮[/but]');
+								editor.insertContent('[but href="' + '链接地址"]居中按钮[/but]');
 							}
 						},
 
@@ -101,9 +110,9 @@
 
 						{
 							text: '弹窗链接',
-							icon: 'nonbreaking',
+							icon: 'fullscreen',
 							onclick: function() {
-								editor.insertContent('[beiframe href=' + '链接地址]按钮名称[/beiframe]');
+								editor.insertContent('[beiframe href="' + '链接地址"]按钮名称[/beiframe]');
 							}
 						},
 
@@ -114,7 +123,7 @@
 					text: '图片相关',
 					menu: [
 						{
-							text: '添加相册',
+							text: '添加幻灯',
 							icon: 'image',
 							onclick: function() {
 								selected = tinyMCE.activeEditor.selection.getContent();
@@ -143,22 +152,23 @@
 				},
 
 				{
-					text: '综合功能',
+					text: '装饰美化',
 					menu: [
 
 						{
-							text: '字体图标',
-							icon: 'paste',
+							text: '插入章节',
+							icon: 'line',
 							onclick: function() {
-								editor.insertContent('[fontzm icon="图标代码" size="24" color="c40000" sup="0"]');
+								editor.insertContent('[chapter text="章节"]' + '');
 							}
 						},
 
 						{
-							text: '登录按钮',
-							icon: 'user',
+							text: '首字下沉',
+							icon: 'forecolor',
 							onclick: function() {
-								editor.insertContent('[loginbut sup="0"]登录[/loginbut]');
+								selected = tinyMCE.activeEditor.selection.getContent();
+								editor.insertContent('[drop]'+selected+'[/drop]');
 							}
 						},
 
@@ -171,28 +181,13 @@
 							}
 						},
 
+
 						{
 							text: '两栏文字',
 							icon: 'tabledeletecol',
 							onclick: function() {
 								selected = tinyMCE.activeEditor.selection.getContent();
 								editor.insertContent('[two_column]'+selected+'[/two_column]');
-							}
-						},
-
-						{
-							text: '嵌入文章',
-							icon: 'newdocument',
-							onclick: function() {
-								editor.insertContent('[quote ids=文章ID]' + '');
-							}
-						},
-
-						{
-							text: '同标签文章',
-							icon: 'anchor',
-							onclick: function() {
-								editor.insertContent('[tags_post title=小标题 n=篇数 ids=标签ID]' + '');
 							}
 						},
 
@@ -215,10 +210,58 @@
 						},
 
 						{
-							text: '插入章节',
-							icon: 'line',
+							text: '浅色文字',
+							icon: 'forecolor',
 							onclick: function() {
-								editor.insertContent('[chapter text=section]' + '');
+								selected = tinyMCE.activeEditor.selection.getContent();
+								editor.insertContent('[bec]'+selected+'[/bec]');
+							}
+						},
+
+						{
+							text: '字体图标',
+							icon: 'paste',
+							onclick: function() {
+								editor.insertContent('[fontzm icon="图标代码" size="24" color="c40000" sup="0"]');
+							}
+						},
+
+					]
+				},
+
+				{
+					text: '嵌入内容',
+					menu: [
+
+						{
+							text: '登录按钮',
+							icon: 'user',
+							onclick: function() {
+								editor.insertContent('[loginbut sup="0"]登录[/loginbut]');
+							}
+						},
+
+						{
+							text: '嵌入文章',
+							icon: 'newdocument',
+							onclick: function() {
+								editor.insertContent('[quote ids="文章ID"]' + '');
+							}
+						},
+
+						{
+							text: 'Ajax分类',
+							icon: 'tableleftheader',
+							onclick: function() {
+								editor.insertContent('[be_ajax_post terms="1,2,3" posts_per_page="8" column="4" btn_all="no"]' + '');
+							}
+						},
+
+						{
+							text: '同标签文章',
+							icon: 'anchor',
+							onclick: function() {
+								editor.insertContent('[tags_post title="小标题" n="篇数" ids="标签ID"]' + '');
 							}
 						},
 
@@ -228,6 +271,15 @@
 							onclick: function() {
 								selected = tinyMCE.activeEditor.selection.getContent();
 								editor.insertContent('<fieldset><legend>我是标题</legend>'+selected+'</fieldset>' + '');
+							}
+						},
+
+						{
+							text: '固定提示框',
+							icon: 'warning',
+							onclick: function() {
+								selected = tinyMCE.activeEditor.selection.getContent();
+								editor.insertContent('[docs]'+selected+'[/docs]');
 							}
 						},
 
@@ -248,19 +300,10 @@
 						},
 
 						{
-							text: '浅色文字',
-							icon: 'forecolor',
-							onclick: function() {
-								selected = tinyMCE.activeEditor.selection.getContent();
-								editor.insertContent('[bec]'+selected+'[/bec]');
-							}
-						},
-
-						{
 							text: 'MP4视频',
 							icon: 'media',
 							onclick: function() {
-								editor.insertContent('[videos src=视频地址]');
+								editor.insertContent('[videos src="视频地址"]');
 							}
 						}
 					]

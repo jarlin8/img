@@ -24,7 +24,7 @@ var calcHeight = function() {
 }
 jQuery(window).resize(function() {
 	calcHeight();
-	}).load(function() {
+	}).on('load',function() {
     calcHeight();
 });
 
@@ -75,13 +75,13 @@ jQuery(document).ready(function($){
 </script>
 
 </head>
-<body id="by" style="overflow-y: hidden;">
+<body id="by" class="switch-preview">
 <div id="switch">
 	<div class="switch-center">
 		<div class="switch-close"><a title="关闭演示" href="javascript:close();"><i class="be be-cross"></i></a></div>
 		<div class="switch-link">
 			<div class="demo-ico"><a target="_blank" title="访问演示链接" href="<?php echo $down_demo;?>">链接</a></div>
-			<div class="demo-ico"><a target="_blank" title="下载该资源" href="<?php echo dirname('http://'.$_SERVER['HTTP_HOST'].$_SERVER["REQUEST_URI"]); ?>/down.php?id=<?php echo base64_encode($id); ?>" >下载</a></div>
+			<div class="demo-ico"><a target="_blank" title="下载该资源" href="<?php echo dirname('http://'.$_SERVER['HTTP_HOST'].$_SERVER["REQUEST_URI"]); ?>/download.php?id=<?php echo base64_encode($id); ?>" >下载</a></div>
 		</div>
 		<div class="switch-ico">
 			<div class="demo-ico"><a href="javascript:" title="手机横向"><div class="mobile-h"><i class="be be-mobile-h"></i></div></a></div>

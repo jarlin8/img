@@ -123,7 +123,23 @@ jQuery(document).ready(function($){
 		}
 	});
 
-	$('#slider-title, #slider-widge').owlCarousel({
+	$('.slider-strong').owlCarousel({
+		items: 2,
+		lazyLoad: true,
+		loop: true,
+		nav: false,
+		dots: true,
+		animateOut: 'fadeOut',
+		margin: 20,
+		autoplay: true,
+		responsiveRefreshRate: 200,
+		responsiveBaseElement: window,
+		responsiveClass: true,
+		autoplayTimeout: 5200,
+		autoplayHoverPause: true
+	});
+
+	$('.slider-title, .slider-widge').owlCarousel({
 		items: 1,
 		lazyLoad: true,
 		loop: true,
@@ -135,15 +151,17 @@ jQuery(document).ready(function($){
 		responsiveRefreshRate: 200,
 		responsiveBaseElement: window,
 		responsiveClass: true,
-		autoplayTimeout: 4200,
+		autoplayTimeout: 4500,
 		autoplayHoverPause: true
 	});
 
-	$('#slider-single').owlCarousel({
-		items: 1,
+
+	var slider_sn = slider_items_n.slider_sn;
+	$('.slider-single').owlCarousel({
 		lazyLoad: true,
-		loop: false,
+		loop: true,
 		nav: true,
+		autoplay: true,
 		navText: ["<i class='bz be be-arrowleft'></i>", "<i class='bz be be-arrowright'></i>"],
 		animateOut: 'fadeOut',
 		margin: 10,
@@ -151,7 +169,20 @@ jQuery(document).ready(function($){
 		responsiveRefreshRate: 200,
 		responsiveClass: true,
 		autoplayTimeout: 4200,
-		autoplayHoverPause: true
+		autoplayHoverPause: true,
+		responsive: {
+			0 : {
+				items: 1
+			},
+
+			600 : {
+				items: slider_sn
+			},
+
+			1200 : {
+				items: slider_sn
+			}
+		}
 	});
 
 	var grid_carousel_f = gridcarousel.grid_carousel_f;

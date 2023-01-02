@@ -1,14 +1,14 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if (zm_get_option('video_box')) { ?>
 <?php if (zm_get_option('video')) { ?>
-	<div class="line-four sort" name="<?php echo zm_get_option('video_s'); ?>">
+	<div class="line-four line-four-video-item sort" name="<?php echo zm_get_option('video_s'); ?>">
 		<?php
 			$args = array(
 				'post_type' => 'video',
 				'showposts' => zm_get_option('video_n'), 
 			);
 
-			if(zm_get_option('video_id')) {
+			if (zm_get_option('video_id')) {
 				$args = array(
 					'showposts' => zm_get_option('video_n'), 
 					'tax_query' => array(
@@ -38,7 +38,7 @@
 <?php } ?>
 
 <?php if (zm_get_option('video_post')) { ?>
-<div class="line-four sort" name="<?php echo zm_get_option('video_s'); ?>">
+<div class="line-four line-four-video-item sort" name="<?php echo zm_get_option('video_s'); ?>">
 	<?php query_posts('showposts='.zm_get_option('video_n').'&category__and='.zm_get_option('video_post_id')); while (have_posts()) : the_post(); ?>
 	<div class="xl4 xm4">
 		<div class="picture-cms ms bk" <?php aos_a(); ?>>

@@ -1,5 +1,8 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
+/**
+ * category Template: 子分类
+ */
 get_header(); ?>
 
 <style type="text/css">
@@ -22,8 +25,8 @@ get_header(); ?>
 	position: relative;
 	background: #fff;
 	margin: 0 0 10px 0;
-	border-radius: 5px;
-	border: 1px solid #e7e7e7;
+	border-radius: 8px;
+	border: 1px solid #ececec;
 }
 
 .child-inf {
@@ -35,8 +38,7 @@ get_header(); ?>
 	float: left;
 	background: #f8f8f8;
 	width: 100%;
-	border-radius: 5px 5px 0 0;
-	border-bottom: 1px solid #e7e7e7;
+	border-radius: 8px 8px 0 0;
 }
 
 .ch3 .cat-title a {
@@ -96,7 +98,7 @@ get_header(); ?>
 						'category' => $the_cat->cat_ID,
 						'numberposts' => 8,
 					));
-					if(!empty($posts)){
+					if (!empty($posts)){
 						echo '<div class="ch3" ';
 						echo aos_a();
 						echo '>';
@@ -110,7 +112,7 @@ get_header(); ?>
 							<ul class="child-list">';
 								foreach($posts as $post){
 									echo '<i class="child-inf">'.mysql2date('d/m', $post->post_date).'</i>
-										<li><a href="'.get_permalink($post->ID).'">'.$post->post_title.'</a></li>';
+										<li class="list-title"><a class="srm" href="'.get_permalink($post->ID).'">'.$post->post_title.'</a></li>';
 								}
 							echo '</ul>';
 						echo '</div></div>';

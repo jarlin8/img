@@ -54,7 +54,7 @@ class BeginloginQQ {
 		return beginlogin_get_url_contents ( $get_user_info );
 	}
 	function qq_cb(){
-		if(isset($_SESSION['qq_openid'])){
+		if (isset($_SESSION['qq_openid'])){
 			global $wpdb;
 			$user_ID = $wpdb->get_var("SELECT ID FROM $wpdb->users WHERE qqid='".$wpdb->escape($_SESSION['qq_openid'])."'");
 			if ($user_ID) {

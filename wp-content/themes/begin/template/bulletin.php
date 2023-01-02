@@ -7,7 +7,7 @@
 				'showposts' => zm_get_option('bulletin_n'), 
 			);
 
-			if(zm_get_option('bulletin_id')) {
+			if (zm_get_option('bulletin_id')) {
 				$args = array(
 					'showposts' => zm_get_option('bulletin_n'), 
 					'tax_query' => array(

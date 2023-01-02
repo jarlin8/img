@@ -18,7 +18,7 @@ function cat_cover_add_style() {
 		th.column-thumb_cover {width:60px;}
 		.form-field img.taxonomy-cover {max-width:100px;max-height:40px;border-radius: 5px;}
 		.inline-edit-row fieldset .thumb_cover label span.title, .column-thumb_cover span {width:40px;height:40px;display:inline-block;overflow: hidden;border-radius: 50%;}
-		.inline-edit-row fieldset .thumb_cover img,.column-thumb_cover img {width: 40px;height: 40px;}
+		.inline-edit-row fieldset .thumb_cover img,.column-thumb_cover img {width: auto;height: 40px;}
 	</style>';
 }
 
@@ -31,10 +31,10 @@ function cat_add_texonomy_field() {
 	}
 
 	echo '<div class="form-field">
-		<label for="taxonomy_cover">' . __('封面', 'begin') . '</label>
+		<label for="taxonomy_cover">封面</label>
 		<input type="text" name="taxonomy_cover" id="taxonomy_cover" value="" />
 		<br/>
-		<button class="cat_upload_cover_button button">' . __('添加封面', 'begin') . '</button>
+		<button class="cat_upload_cover_button be-cat-but button">添加封面</button><br /><br />
 	</div>'.cat_script();
 }
 
@@ -51,10 +51,10 @@ function cat_edit_texonomy_field($taxonomy) {
 	else
 		$cover_url = cat_cover_url( $taxonomy->term_id, NULL, TRUE );
 	echo '<tr class="form-field">
-		<th scope="row" valign="top"><label for="taxonomy_cover">' . __('封面', 'begin') . '</label></th>
+		<th scope="row" valign="top"><label for="taxonomy_cover">封面</label></th>
 		<td><img class="taxonomy-cover" src="' . cat_cover_url( $taxonomy->term_id, 'medium', TRUE ) . '"/><br/><input type="text" name="taxonomy_cover" id="taxonomy_cover" value="'.$cover_url.'" /><br />
-		<button class="cat_upload_cover_button button">' . __('添加封面', 'begin') . '</button>
-		<button class="cat_remove_cover_button button">' . __('删除封面', 'begin') . '</button>
+		<button class="cat_upload_cover_button be-cat-but button">添加封面</button>
+		<button class="cat_remove_cover_button be-cat-but button">删除封面</button>
 		</td>
 	</tr>'.cat_script();
 }
@@ -132,7 +132,7 @@ function cat_script() {
 add_action('edit_term','cat_save_taxonomy_cover');
 add_action('create_term','cat_save_taxonomy_cover');
 function cat_save_taxonomy_cover($term_id) {
-	if(isset($_POST['taxonomy_cover']))
+	if (isset($_POST['taxonomy_cover']))
 		update_option('cat_taxonomy_cover'.$term_id, $_POST['taxonomy_cover'], NULL);
 }
 
@@ -156,9 +156,9 @@ function cat_cover_url($term_id = NULL, $size = 'full', $return_placeholder = FA
 	}
 
 	$taxonomy_cover_url = get_option('cat_taxonomy_cover'.$term_id);
-	if(!empty($taxonomy_cover_url)) {
+	if (!empty($taxonomy_cover_url)) {
 		$attachment_id = cat_get_attachment_id_by_url($taxonomy_cover_url);
-		if(!empty($attachment_id)) {
+		if (!empty($attachment_id)) {
 		$taxonomy_cover_url = wp_get_attachment_image_src($attachment_id, $size);
 		$taxonomy_cover_url = $taxonomy_cover_url[0];
 		}
@@ -178,8 +178,8 @@ function cat_quick_edit_custom_box($column_name, $screen, $name) {
 				<span class="title"><img src="" alt="Thumbnail"/></span>
 				<span class="input-text-wrap"><input type="text" name="taxonomy_cover" value="" class="tax_list" /></span>
 				<span class="input-text-wrap">
-					<button class="cat_upload_cover_button button">' . __('添加封面', 'begin') . '</button>
-					<button class="cat_remove_cover_button button">' . __('删除封面', 'begin') . '</button>
+					<button class="cat_upload_cover_button be-cat-but button">添加封面</button>
+					<button class="cat_remove_cover_button be-cat-but button">删除封面</button>
 				</span>
 			</label>
 		</div>
@@ -188,8 +188,8 @@ function cat_quick_edit_custom_box($column_name, $screen, $name) {
 
 function cat_taxonomy_columns( $columns ) {
 	$new_columns = array();
-	$new_columns['cb'] = $columns['cb'];
-	$new_columns['thumb_cover'] = __('封面', 'begin');
+	$new_columns['cb'] = !empty($columns['cb']) ? 1 : 0;
+	$new_columns['thumb_cover'] = '封面';
 	unset( $columns['cb'] );
 	return array_merge( $new_columns, $columns );
 }
@@ -227,22 +227,22 @@ function cat_taxonomy_cover($term_id = NULL, $size = 'full', $attr = NULL, $echo
 	}
 
 	$taxonomy_cover_url = get_option('cat_taxonomy_cover'.$term_id);
-	if(!empty($taxonomy_cover_url)) {
+	if (!empty($taxonomy_cover_url)) {
 		$attachment_id = cat_get_attachment_id_by_url($taxonomy_cover_url);
-		if(!empty($attachment_id))
+		if (!empty($attachment_id))
 			$taxonomy_cover = wp_get_attachment_cover($attachment_id, $size, FALSE, $attr);
 		else {
 			$cover_attr = '';
-			if(is_array($attr)) {
-				if(!empty($attr['class']))
+			if (is_array($attr)) {
+				if (!empty($attr['class']))
 					$cover_attr .= ' class="'.$attr['class'].'" ';
-				if(!empty($attr['alt']))
+				if (!empty($attr['alt']))
 					$cover_attr .= ' alt="'.$attr['alt'].'" ';
-				if(!empty($attr['width']))
+				if (!empty($attr['width']))
 					$cover_attr .= ' width="'.$attr['width'].'" ';
-				if(!empty($attr['height']))
+				if (!empty($attr['height']))
 					$cover_attr .= ' height="'.$attr['height'].'" ';
-				if(!empty($attr['title']))
+				if (!empty($attr['title']))
 					$cover_attr .= ' title="'.$attr['title'].'" ';
 			}
 			$taxonomy_cover = '<img src="'.$taxonomy_cover_url.'" '.$cover_attr.'/>';

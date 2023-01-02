@@ -1,21 +1,27 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
-<div class="cms-news-grid-container">
-	<div class="marked-ico da" <?php aos_a(); ?>><?php _e( '最近更新', 'begin' ); ?></div>
-	<?php if (zm_get_option('cms_top')) { ?>
-		<?php 
-			$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-			$do_show[] = '';
-			$recent = new WP_Query( array( 'posts_per_page' => zm_get_option('news_n'), 'category__not_in' => explode(',', zm_get_option('not_news_n')), 'post__not_in' => $do_show, 'meta_query' => array( array( 'key' => 'cms_top', 'compare' => 'NOT EXISTS')), 'ignore_sticky_posts' => 1, 'paged' => $paged ));
-		?>
-	<?php } else { ?>
-		<?php 
-			$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-			$do_show[] = '';
-			$recent = new WP_Query( array( 'posts_per_page' => zm_get_option('news_n'), 'post__not_in' => $do_show, 'category__not_in' => explode(',',zm_get_option('not_news_n')), 'ignore_sticky_posts' => 1, 'paged' => $paged ) );
-		?>
-	<?php } ?>
+<div class="cms-news-grid-container cms-news-item">
+	<div class="marked-ico da" <?php aos_a(); ?>><?php _e( '最新', 'begin' ); ?></div>
+	<?php 
+		if ( zm_get_option( 'news_grid_sticky' ) ) {
+			$sticky = '0';
+		} else {
+			$sticky = '1';
+		}
+		$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+		if ( zm_get_option( 'not_news_n' ) ) {
+			$notcat = implode( ',', zm_get_option( 'not_news_n' ) );
+		} else {
+			$notcat = '';
+		}
+		$do_show[] = '';
+		if ( zm_get_option( 'cms_top' ) ) { 
+			$recent = new WP_Query( array( 'posts_per_page' => zm_get_option( 'news_n' ), 'category__not_in' => explode( ',', $notcat ), 'post__not_in' => $do_show, 'meta_query' => array( array( 'key' => 'cms_top', 'compare' => 'NOT EXISTS' ) ), 'ignore_sticky_posts' => $sticky, 'paged' => $paged ));
+		} else {
+			$recent = new WP_Query( array( 'posts_per_page' => zm_get_option( 'news_n' ), 'post__not_in' => $do_show, 'category__not_in' => explode( ',', $notcat ), 'ignore_sticky_posts' => $sticky, 'paged' => $paged ) );
+		}
+	?>
 	<?php while($recent->have_posts()) : $recent->the_post(); $do_not_duplicate[] = $post->ID; ?>
-	<?php if(zm_get_option('news_n') < 4 ) { ?>
+	<?php if (zm_get_option('news_n') < 4 ) { ?>
 		<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('ms bk gl2'); ?>>
 	<?php } else { ?>
 		<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('ms bk gl'); ?>>
@@ -29,8 +35,8 @@
 				<?php zm_thumbnail(); ?>
 			</figure>
 			<header class="entry-header">
-				<?php if ( get_post_meta($post->ID, 'direct', true) ) { ?>
-				<?php $direct = get_post_meta($post->ID, 'direct', true); ?>
+				<?php if ( get_post_meta(get_the_ID(), 'direct', true) ) { ?>
+				<?php $direct = get_post_meta(get_the_ID(), 'direct', true); ?>
 					<h2 class="entry-title over"><a href="<?php echo $direct ?>" target="_blank" rel="external nofollow"><?php the_title(); ?></a></h2>
 				<?php } else { ?>
 					<h2 class="entry-title over"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a></h2>
@@ -38,18 +44,9 @@
 			</header>
 
 			<div class="entry-content">
-				<div class="archive-content">
-					<?php if (has_excerpt('')){
-							echo wp_trim_words( get_the_excerpt(), 30, '...' );
-						} else {
-							$content = get_the_content();
-							$content = wp_strip_all_tags(str_replace(array('[',']'),array('<','>'),$content));
-							echo wp_trim_words( $content, 35, '...' );
-				        }
-					?>
-				</div>
+				<div class="archive-content"></div>
 				<span class="entry-meta lbm">
-					<?php if ( get_post_meta($post->ID, 'direct', true) ) { ?>
+					<?php if ( get_post_meta( get_the_ID(), 'direct', true ) ) { ?>
 					<span class="date"><?php time_ago( $time_type ='post' ); ?>&nbsp;</span>
 					<?php views_span(); ?>
 					<?php } else { ?>

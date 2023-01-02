@@ -11,9 +11,15 @@ function ssl_avatar($avatar) {
 	return $avatar;
 }
 
-if (zm_get_option('no') !== 'no') :
-	if ( !zm_get_option( 'gravatar_url' ) || ( zm_get_option( "gravatar_url") == 'zh' ) ) {
-		add_filter( 'get_avatar', function ( $avatar ) { return str_replace( ['www.gravatar.com/avatar/', '0.gravatar.com/avatar/', '1.gravatar.com/avatar/', '2.gravatar.com/avatar/', 'secure.gravatar.com/avatar/', 'cn.gravatar.com/avatar/'], ''. zm_get_option( 'zh_url' ) .'', $avatar ); } );
+if ( zm_get_option('no' ) !== 'no' ) :
+	if ( ! zm_get_option( 'gravatar_url' ) || ( zm_get_option( "gravatar_url") == 'zh' ) ) {
+		add_filter( 'get_avatar', function ( $avatar ) {
+			return str_replace(
+				['www.gravatar.com/avatar/', '0.gravatar.com/avatar/', '1.gravatar.com/avatar/', '2.gravatar.com/avatar/', 'secure.gravatar.com/avatar/', 'cn.gravatar.com/avatar/'],
+				zm_get_option( 'zh_url' ),
+				$avatar
+			);
+		} );
 	}
 
 	if ( zm_get_option( 'gravatar_url' ) == 'cn' ) {
@@ -35,7 +41,7 @@ if ( zm_get_option( 'default_avatar_m' ) == 'default_avatar_r' ) {
 }
 function be_default_avatar( $avatar_defaults ) {
 	$beavatar = zm_get_option( 'default_avatar' );
-	$avatar_defaults[ $beavatar ] = '自定义';
+	$avatar_defaults[ $beavatar ] = sprintf(__( '自定义', 'begin' ));
 	return $avatar_defaults;
 }
 

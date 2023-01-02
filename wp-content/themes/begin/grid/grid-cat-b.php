@@ -10,16 +10,16 @@
 	<div class="grid-cat-box">
 		<div class="grid-cat-title-box">
 			<h3 class="grid-cat-title" <?php aos_b(); ?>><a href="<?php echo get_category_link($category);?>" title="<?php _e( '更多', 'begin' ); ?>"><?php single_cat_title(); ?></a></h3>
-			<div class="grid-cat-des" <?php aos_a(); ?>><?php echo category_description( $category ); ?></div>
+			<?php if ( zm_get_option( 'grid_cat_b_des' ) ) { ?><div class="grid-cat-des" <?php aos_a(); ?>><?php echo category_description( $category ); ?></div><?php } ?>
 		</div>
 		<div class="clear"></div>
-		<div class="grid-cat-site grid-cat-<?php echo zm_get_option('grid_cat_b_f'); ?>">
+		<div class="grid-cat-site grid-cat-b grid-cat-<?php echo zm_get_option('grid_cat_b_f'); ?>">
 			<?php while ( have_posts() ) : the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('bky'); ?>>
 					<div class="grid-cat-bx4 sup ms bk">
 						<figure class="picture-img">
 
-							<?php if ( get_post_meta($post->ID, 'direct', true) ) { ?>
+							<?php if ( get_post_meta(get_the_ID(), 'direct', true) ) { ?>
 								<?php zm_thumbnail_link(); ?>
 							<?php } else { ?>
 								<?php zm_thumbnail(); ?>
@@ -31,16 +31,16 @@
 							<?php if ( has_post_format('link') ) { ?><div class="img-ico"><a rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>"><i class="be be-link"></i></a></div><?php } ?>
 						</figure>
 
-						<?php if ( get_post_meta($post->ID, 'direct', true) ) { ?>
-							<?php $direct = get_post_meta($post->ID, 'direct', true); ?>
+						<?php if ( get_post_meta(get_the_ID(), 'direct', true) ) { ?>
+							<?php $direct = get_post_meta(get_the_ID(), 'direct', true); ?>
 							<h2 class="grid-title over"><a href="<?php echo $direct ?>" target="_blank" rel="external nofollow"><?php the_title(); ?></a></h2>
 						<?php } else { ?>
 							<?php the_title( sprintf( '<h2 class="grid-title over"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 						<?php } ?>
 
 						<span class="grid-inf">
-							<?php if ( get_post_meta($post->ID, 'link_inf', true) ) { ?>
-								<span class="link-inf"><?php $link_inf = get_post_meta($post->ID, 'link_inf', true);{ echo $link_inf;}?></span>
+							<?php if ( get_post_meta(get_the_ID(), 'link_inf', true) ) { ?>
+								<span class="link-inf"><?php $link_inf = get_post_meta(get_the_ID(), 'link_inf', true);{ echo $link_inf;}?></span>
 								<span class="grid-inf-l">
 								<?php views_span(); ?>
 								<?php echo t_mark(); ?>
@@ -49,8 +49,9 @@
 								<?php if (zm_get_option('meta_author')) { ?><span class="grid-author"><?php grid_author_inf(); ?></span><?php } ?>
 								<?php views_span(); ?>
 								<span class="grid-inf-l">
-									<span class="date"><i class="be be-schedule ri"></i><?php the_time( 'm/d' ); ?></span>
-									<?php if ( get_post_meta($post->ID, 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
+									<?php echo be_vip_meta(); ?>
+									<?php grid_meta(); ?>
+									<?php if ( get_post_meta(get_the_ID(), 'zm_like', true) ) : ?><span class="grid-like"><span class="be be-thumbs-up-o">&nbsp;<?php zm_get_current_count(); ?></span></span><?php endif; ?>
 									<?php echo t_mark(); ?>
 								</span>
 							<?php } ?>

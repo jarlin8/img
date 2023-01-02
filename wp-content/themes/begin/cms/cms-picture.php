@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if ( zm_get_option( 'picture_box' ) ) { ?>
-	<div class="line-four sort" name="<?php echo zm_get_option( 'picture_s' ); ?>">
+	<div class="line-four line-four-picture-item sort" name="<?php echo zm_get_option( 'picture_s' ); ?>">
 		<?php if ( zm_get_option( 'img_id' ) ) { ?>
 			<?php $display_categories = explode( ',',zm_get_option( 'img_id' ) ); foreach ( $display_categories as $category ) { ?>
 			<?php if (zm_get_option( 'no_cat_child' ) ) { ?>
@@ -43,7 +43,7 @@
 							'posts_per_page'   => zm_get_option( 'picture_n' ),
 							'orderby'          => 'date', 
 							'order'            => 'DESC', 
-							'caller_get_posts' => 1
+							'ignore_sticky_posts' => 1
 						);
 						$be_query = new WP_Query( $args );
 					?>

@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 function Baidu_Submit($post_ID) {
 	$WEB_TOKEN = zm_get_option('link_token');
 	$WEB_DOMAIN = home_url();
-	if(get_post_meta($post_ID,'Baidusubmit',true) == 1) return;
+	if (get_post_meta($post_ID,'Baidusubmit',true) == 1) return;
 	$url = get_permalink($post_ID);
 	$api = 'http://data.zz.baidu.com/urls?site='.$WEB_DOMAIN.'&token='.$WEB_TOKEN;
 	$ch  = curl_init();

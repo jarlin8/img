@@ -1,5 +1,8 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
+/**
+ * category Template: 子分类图片
+ */
 get_header(); ?>
 
 <style type="text/css">
@@ -31,7 +34,7 @@ get_header(); ?>
 	background: #fff;
 	margin: 0 0 10px 0;
 	overflow: hidden;
-	border-radius: 5px;
+	border-radius: 8px;
 	border: 1px solid #e7e7e7;
 }
 
@@ -63,7 +66,7 @@ get_header(); ?>
 						'category' => $the_cat->cat_ID,
 						'numberposts' => 8,
 					));
-					if(!empty($posts)){
+					if (!empty($posts)){
 						echo '<h3 class="grid-cat-title" data-aos="zoom-in"><a href="'.get_category_link($the_cat).'">'.$the_cat->name.'</a></h3><div class="clear"></div>';
 						foreach($posts as $post) {
 							echo '<div class="child-img-box child-img-'. zm_get_option('img_f') .'" ';

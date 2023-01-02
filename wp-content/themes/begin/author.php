@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
 
 <section id="primary" class="content-area">
-	<main id="main" class="site-main<?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
+	<main id="main" class="be-main site-main<?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
 		<?php if ( have_posts() ) : ?>
 
 		<?php while ( have_posts() ) : the_post(); ?>

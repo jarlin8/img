@@ -1,0 +1,292 @@
+.codebox {
+	position: relative;
+	background: #f1f1f1;
+	margin: 0 0 15px 0;
+	overflow: hidden;
+	border-radius: 5px;
+	transition: all .3s ease;
+	border: 1px solid #e7e7e7;
+}
+
+.night .codebox {
+	background: #323232;
+	border: none;
+}
+
+.codebox:hover {
+	box-shadow: 0 0 3px rgba(0,0,0,0.15);
+}
+
+.codebox pre {
+	border: none;
+	margin: 0;
+	padding: 40px 10px 10px 10px;
+}
+
+.night pre {
+	border: 1px solid #262626;
+}
+
+.codebox .prettyprint {
+	border-bottom: 5px solid #f1f1f1;
+}
+
+.codebox .code-prune {
+	padding: 10px;
+	border-bottom: none;
+}
+
+.codebox pre:after {
+	position: absolute;
+	top: 0px;
+	left: 0;
+	width: 100%;
+	height: 30px;
+	content: "";
+	background: #f1f1f1;
+	border-bottom: 1px solid #e7e7e7;
+}
+
+.night .codebox pre:after {
+	background: #262626;
+	border-bottom: 1px solid #262626;
+}
+
+.codebox pre:before {
+	position: absolute;
+	top: .7em;
+	left: .7em;
+	display: block;
+	height: .5em;
+	width: .5em;
+	content: "";
+	border-radius: 50%;
+	background: #f44;
+	box-shadow: 0 0 0 1px #f44,1em 0 0 1px #9b3,2em 0 0 1px #fb5;
+	filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+	opacity: .5;
+	z-index: 1;
+	transition: all .3s ease;
+}
+
+.codebox:hover.codebox pre:before {
+	filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+	opacity: 1
+}
+
+.codebox .code-prune:before,.codebox .code-prune:after {
+	display: none;
+}
+
+.btn-clipboard {
+	position: absolute;
+	top: 1px;
+	right: 3px;
+	padding: 2px 6px;
+	text-align: center;
+	font-size: 12px;
+	cursor: pointer;
+	color: #bbb;
+	z-index: 1;
+	display: inline-block;
+	animation: fade-in;
+	animation-duration: 0.5s;
+}
+
+.btn-clipboard:hover {
+	color: #333;
+}
+
+.codebox li:hover {
+	background: #f3f6fa;
+	color: #333 !important;
+}
+
+.night .codebox li:hover {
+	background: #262626;
+	color: #fb5 !important;
+}
+
+.night .codebox li span {
+	background:  transparent;
+}
+
+.codebox ol li {
+	margin: 0;
+}
+
+.prettyprint ol {
+	font-size: 13px;
+	font-size: 1.3rem;
+}
+
+ol.linenums {
+	margin-top: 0;
+	margin-bottom: 0
+}
+
+li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 {
+	list-style-type: none
+}
+
+.prettyprint,pre.prettyprint {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	background: #fff;
+	overflow: hidden;
+}
+
+.night .prettyprint,.night pre.prettyprint {
+	background: #323232;
+	color: RGB(50%,50%,50%);
+}
+
+.prettyprint.linenums,pre.prettyprint.linenums {
+	-webkit-box-shadow: inset 42px 0 0 #f3f6fa,inset 43px 0 0 #f3f6fa;
+	box-shadow: inset 42px 0 0 #f3f6fa,inset 43px 0 0 #f3f6fa;
+}
+
+.night .prettyprint.linenums,.night pre.prettyprint.linenums {
+	-webkit-box-shadow: inset 42px 0 0 #262626,inset 43px 0 0 #262626;
+	box-shadow: inset 42px 0 0 #262626,inset 43px 0 0 #262626;
+}
+
+.prettyprint.linenums ol,pre.prettyprint.linenums ol {
+	margin: 0 0 0 33px;
+}
+
+.prettyprint.linenums ol li,pre.prettyprint.linenums ol li {
+	padding-left: 8px;
+	color: #999;
+	line-height: 23px;
+	margin-left: 0;
+	list-style: decimal;
+}
+
+.prettyprint .com {
+	color: #a17367;
+}
+
+.prettyprint .lit {
+	color: #a17367;
+}
+
+.prettyprint .pun,.prettyprint .opn,.prettyprint .clo {
+	color: #555;
+}
+
+.prettyprint .fun {
+	color: #dc322f;
+}
+
+.prettyprint .str,.prettyprint .atv {
+	color: #a17367;
+}
+
+.prettyprint .kwd {
+	color: #22c3a8;
+}
+
+.prettyprint .tag {
+	color: #228ec3;
+}
+
+.prettyprint .typ,.prettyprint .atn,.prettyprint .dec,.prettyprint .var {
+	color: #444;
+}
+
+.prettyprint .pln {
+	color: #666;
+}
+
+.pln {
+	color: #000
+}
+
+@media screen {
+	.str {
+		color: #080
+	}
+
+	.kwd {
+		color: #008
+	}
+
+	.com {
+		color: #800
+	}
+
+	.typ {
+		color: #606
+	}
+
+	.lit {
+		color: #066
+	}
+
+	.pun,.opn,.clo {
+		color: #660
+	}
+
+	.tag {
+		color: #008
+	}
+
+	.atn {
+		color: #606
+	}
+
+	.atv {
+		color: #080
+	}
+
+	.dec,.var {
+		color: #606
+	}
+
+	.fun {
+		color: red
+	}
+}
+
+@media print,projection {
+	.str {
+		color: #060
+	}
+
+	.kwd {
+		color: #006;
+		font-weight: bold
+	}
+
+	.com {
+		color: #600;
+		font-style: italic
+	}
+
+	.typ {
+		color: #404;
+		font-weight: bold
+	}
+
+	.lit {
+		color: #044
+	}
+
+	.pun,.opn,.clo {
+		color: #440
+	}
+
+	.tag {
+		color: #006;
+		font-weight: bold
+	}
+
+	.atn {
+		color: #404
+	}
+
+	.atv {
+		color: #060
+	}
+}

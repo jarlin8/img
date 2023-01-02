@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 Template Name: 用户中心
 */
 ?>
-<?php if(is_user_logged_in()){?>
+<?php if (is_user_logged_in()){?>
 <?php get_header(); ?>
 <link rel="stylesheet" href="<?php bloginfo('template_url'); ?>/css/user-center.css" />
 <script type="text/javascript" src="<?php bloginfo('template_directory'); ?>/js/responsive-tabs.js"></script>
@@ -27,11 +27,27 @@ jQuery(document).ready(function($){
 });
 </script>
 
-<div id="personal" class="da ms">
+<div id="personal" class="da">
+	<div class="personal-top dah bkxy">
+		<?php global $current_user, $userdata, $user_identity; wp_get_current_user();
+			echo '<div class="personal-img bgt load">';
+			if (zm_get_option('cache_avatar')):
+				echo begin_avatar($userdata->user_email, 96, '', $user_identity);
+			else :
+				echo be_avatar_user();
+			endif;
+			echo '</div>';
+			echo '<div class="personal-name bgt"><span class="bgt">' . __('欢迎回来！', 'begin' ) . '</strong>' . '</span>';
+			echo '' . $current_user->display_name . "\n";
+			echo '</div>';
+		?>
+		<?php edit_post_link('<i class="be be-editor"></i>', '<div class="user-edit-link">', '</div>' ); ?>
+		<div class="clear"></div>
+	</div>
 	<div id="container">
 		<div id="usertab">
-			<ul class="resp-tabs-list hor_1">
-				<li class="myli"><i class="be be-businesscard"></i><?php _e( '我的信息', 'begin' ); ?></li>
+			<ul class="resp-tabs-list hor_1 resp-tab-active">
+				<li class="myli"><i class="cx cx-haibao"></i><?php _e( '我的信息', 'begin' ); ?></li>
 
 				<?php if ( class_exists( 'WShop' ) ) { ?>
 					<li><i class="be be-clipboard"></i><?php _e( '我的订单', 'begin' ); ?></li>
@@ -50,13 +66,16 @@ jQuery(document).ready(function($){
 				<?php } ?>
 			</ul>
 
-			<div class="resp-tabs-container hor_1">
+			<div class="resp-tabs-container hor_1 da">
 
 				<div>
 					<h4><?php _e( '我的信息', 'begin' ); ?></h4>
 					<div class="my-user">
 						<?php my_inf(); ?>
 						<?php my_data(); ?>
+						<div class="user-content">
+							<?php the_content(); ?>
+						</div>
 						<?php get_template_part( 'inc/my-data' ); ?>
 					</div>
 					<div class="clear"></div>
@@ -79,12 +98,12 @@ jQuery(document).ready(function($){
 				<?php } ?>
 
 				<div>
-					<h4><?php _e( '我的文章', 'begin' ); ?><span class="m-number">（ <?php echo count_user_posts( $current_user->ID, 'post', false ); ?> ）<span></h4>
+					<h4><?php _e( '我的文章', 'begin' ); ?><span class="m-number"><?php echo count_user_posts( $current_user->ID, array( 'post', 'bulletin', 'picture', 'video', 'tao' ), false ); ?><span></h4>
 					<div class="my-user"><?php my_post(); ?></div>
 				</div>
 
 				<div>
-					<h4><?php _e( '我的评论', 'begin' ); ?><span class="m-number">（<?php echo $comments = get_comments(array('user_id' => $current_user->ID, 'count' => true)); ?> ）<span></h4>
+					<h4><?php _e( '我的评论', 'begin' ); ?><span class="m-number"><?php echo $comments = get_comments( array( 'user_id' => $current_user->ID, 'count' => true ) ); ?><span></h4>
 					<div class="my-user"><?php my_comment(); ?></div>
 				</div>
 

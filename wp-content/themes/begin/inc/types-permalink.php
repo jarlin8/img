@@ -10,6 +10,7 @@ $begin_types = array(
 	'show' => zm_get_option('show_url'),
 	'product' => 'product',
 	'portfolio' => 'portfolio',
+	'dwqa-question' => 'dwqa-question',
 	// 可以在此添加其它
 );
 

@@ -39,9 +39,9 @@ function getId(e) {
 	return document.getElementById(e)
 }
 function InsertValue() { 
-	var title = getId("post_title").value;
+	var betab = getId("post_title").value;
 	var btn = getId("btn").value;
-	html = '[start_tab][wptab number="' + btn + '" title="' + title + '"  ]' + '编辑添加内容' + '[/wptab][end_tab]';
+	html = '[start_tab][wptab number="' + btn + '" title="' + betab + '"  ]' + '编辑添加内容' + '[/wptab][end_tab]';
 	window.parent.tinyMCE.activeEditor.execCommand('mceInsertContent', 0, html);
 	window.parent.tinyMCE.activeEditor.windowManager.close()
 }

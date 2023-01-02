@@ -6,8 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
 <?php get_header(); ?>
 
-<section id="picture" class="content-area grid-cat-<?php echo zm_get_option('img_f'); ?>">
-	<main id="main" class="site-main" role="main">
+<section id="picture" class="picture-area content-area grid-cat-<?php echo zm_get_option('img_f'); ?>">
+	<main id="main" class="be-main site-main" role="main">
 		<?php
 		$taxonomy = 'gallery'; 
 		$terms = get_terms($taxonomy); foreach ($terms as $cat) {
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 			'tax_query' => array( array( 'taxonomy' => $taxonomy, 'terms' => $catid, 'include_children' => false ) )
 		);
 		$query = new WP_Query($args);
-		if( $query->have_posts() ) { ?>
+		if ( $query->have_posts() ) { ?>
 		<div class="clear"></div>
 		<div class="grid-cat-title-box">
 			<h3 class="grid-cat-title" <?php aos_a(); ?>><a href="<?php echo get_term_link( $cat ); ?>" title="<?php _e( '更多', 'begin' ); ?>"><?php echo $cat->name; ?></a></h3>

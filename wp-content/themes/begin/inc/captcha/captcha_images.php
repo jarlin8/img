@@ -9,7 +9,7 @@ class CaptchaSecurityImages {
 		$font_size = $height * 0.65;
 		$image = @imagecreate( $width, $height ) or die( 'Cannot initialize new GD image stream' );
 		// 颜色*/
-		$background_color = imagecolorallocate( $image, 255, 255, 255 );
+		$background_color = imagecolorallocate( $image, 241, 241, 241 );
 		$text_color = imagecolorallocate( $image, 38, 38, 38 );
 		$noise_color = imagecolorallocate( $image, 114, 114, 114 );
 		// 线
@@ -20,7 +20,7 @@ class CaptchaSecurityImages {
 		$textbox = imagettfbbox( $font_size, 0, $this->font, $code ) or die( '出错了' );
 		$x = ( $width - $textbox[4] )/2;
 		$y = ( $height - $textbox[5] )/2;
-		imagettftext( $image, $font_size, 0, $x, $y, $text_color, $this->font , $code ) or die( '出错了' );
+		imagettftext( $image, $font_size, 0, (int)$x, $y, $text_color, $this->font, $code ) or die( '出错了' );
 		/* 输出 */
 		ob_clean();
 		header( 'Content-Type: image/jpeg' );

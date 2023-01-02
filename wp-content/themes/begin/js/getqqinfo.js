@@ -1,14 +1,4 @@
 jQuery(document).ready(function($) {
-	var $ = jQuery;
-	var i = 0,
-	got = -1,
-	len = document.getElementsByTagName('script').length;
-	while (i <= len && got == -1) {
-		var js_url = document.getElementsByTagName('script')[i].src,
-		got = js_url.indexOf('getqqinfo.js');
-		i++;
-	}
-	// getqqinfo_url = js_url.replace('getqqinfo.js', 'qq-info.php'),
 	var qq = goqq.qqinf;
 	$("#fillqq").click(function() {
 		var abc = $('#qq').val();

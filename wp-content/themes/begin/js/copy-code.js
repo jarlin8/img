@@ -1,10 +1,7 @@
 jQuery(document).ready(function() {
 	var copy_text_label = '<i class="be be-stack"></i>';
-	var copied_text_label = '<i class="be be-clipboard"></i>';
-	var copy_text_label_safari = 'Press "⌘ + C" to copy';
-	var copy_text_label_other_browser = 'Press "Ctrl + C" to copy';
-
-	var copyButton = '<div class="btn-clipboard bgt" title="复制" data-original-title="Copy to clipboard">' + copy_text_label + '</div>';
+	var copied_text_label = '<span class="dashicons dashicons-yes"></span> <i class="be be-clipboard"></i>';
+	var copyButton = '<div class="btn-clipboard bgt" title="Copy">' + copy_text_label + '</div>';
 	jQuery('pre').each(function() {
 		jQuery(this).wrap('<div class="codebox"/>');
 	});
@@ -20,28 +17,20 @@ jQuery(document).ready(function() {
 	function(event) {
 		event.clearSelection();
 		event.trigger.innerHTML = copied_text_label;
+		jQuery('.dashicons-yes').closest('.codebox').addClass('pre-loading');
 		window.setTimeout(function() {
 			event.trigger.innerHTML = copy_text_label;
+			jQuery('.codebox').removeClass('pre-loading');
 		},
-		2000);
+		1000);
 	});
 
 	copyCode.on('error',
 	function(event) {
-		var is_safari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-		if (is_safari) {
-			event.trigger.textContent = copy_text_label_safari;
-		} else if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
-			event.trigger.textContent = copy_text_label_other_browser;
-		} else {
-			event.trigger.textContent = copy_text_label_other_browser;
-		}
-
 		window.setTimeout(function() {
 			event.trigger.textContent = copy_text_label;
 		},
-		5000);
+		2000);
 	});
 
 });

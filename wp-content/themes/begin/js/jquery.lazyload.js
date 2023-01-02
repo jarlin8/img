@@ -13,10 +13,14 @@ jQuery(document).ready(function($){
 		skip_invisible : false,
 		effect: "fadeIn",
 		threshold: 200,
-		failure_limit: 100
-	})
+		failure_limit: 999
+	});
 
 	$(".load").removeClass('load');
+
+	$(".user-box").mouseenter(function() {
+		$(".usericon img").lazyload()
+	});
 
 	$("#search-main img").lazyload({
 		container: $("#search-main")
@@ -30,15 +34,22 @@ jQuery(document).ready(function($){
 		$(window).trigger("resize");
 	}, 50);
 
-	$('.lazy a, .site-lazy, .thumbs-de-back, .cat-rec-back').Lazy({
+
+	var placeholder_img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8+B8AAucB8kTMRj8AAAAASUVORK5CYII=";
+	$('.lazy, .lazy a, .site-lazy, .thumbs-de-back, .cat-rec-back, .bgimg').Lazy({
 		effect: 'fadeIn',
-		effectTime: 300,
-		visibleOnly: true,
-		threshold: 500
+		placeholder: placeholder_img,
+		effectTime: 250
+	});
+
+	$('#sidr-main .lazy').lazy({
+		appendScroll: $('#sidr-main'),
+		placeholder: placeholder_img
 	});
 
 	$('#search-main .lazy a').Lazy({
-		appendScroll: '#search-main'
+		appendScroll: '#search-main',
+		placeholder: placeholder_img
 	});
 });
 }

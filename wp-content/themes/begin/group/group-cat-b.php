@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if (zm_get_option('group_cat_b')) { ?>
-<div class="g-row g-line sort" name="<?php echo zm_get_option('group_cat_b_s'); ?>" <?php aos(); ?>>
+<div class="g-row g-line group-cat-b sort" name="<?php echo zm_get_option('group_cat_b_s'); ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div class="group-cat">
 			<?php $display_categories =  explode(',',zm_get_option('group_cat_b_id') ); foreach ($display_categories as $category) { ?>
@@ -14,8 +14,7 @@
 
 			<div class="gr2">
 				<div class="gr-cat-box">
-					<h3 class="gr-cat-title" <?php aos_b(); ?>><a href="<?php echo get_category_link($category);?>" title="<?php echo strip_tags(category_description($category)); ?>"><?php single_cat_title(); ?></a></h3>
-					<div class="gr-cat-more"><a href="<?php echo get_category_link($category);?>"><?php _e( '更多', 'begin' ); ?> <i class="be be-fastforward"></i></a></div>
+					<h3 class="gr-cat-title" <?php aos_b(); ?>><a href="<?php echo get_category_link($category);?>"><?php single_cat_title(); ?><span class="gr-cat-more"><i class="be be-more"></i></span></a></h3>
 					<div class="clear"></div>
 					<div class="gr-cat-site">
 						<?php if (zm_get_option('group_cat_b_top')) { ?>
@@ -33,7 +32,7 @@
 									<?php query_posts( array( 'showposts' => zm_get_option('group_cat_b_n'), 'cat' => $category, 'offset' => 0, 'post__not_in' => $do_not_cat ) ); ?>
 								<?php } ?>
 								<?php while ( have_posts() ) : the_post(); ?>
-									<li class="list-date"><?php the_time('m/d') ?></li>
+									<li class="list-date"><time datetime="<?php echo get_the_date('Y-m-d'); ?> <?php echo get_the_time('H:i:s'); ?>"><?php the_time('m/d') ?></time></li>
 									<div class="be-aos" <?php aos_b(); ?>><?php the_title( sprintf( '<li class="list-title"><a class="srm" href="%s" rel="bookmark">' . t_mark(), esc_url( get_permalink() ) ), '</a></li>' ); ?></div>
 								<?php endwhile; ?>
 								<?php wp_reset_query(); ?>
@@ -55,7 +54,7 @@
 									<?php query_posts( array( 'showposts' => zm_get_option('group_cat_b_n'), 'cat' => $category, 'offset' => 1, 'post__not_in' => $do_not_cat ) ); ?>
 								<?php } ?>
 								<?php while ( have_posts() ) : the_post(); ?>
-									<li class="list-date"><?php the_time('m/d') ?></li>
+									<li class="list-date"><time datetime="<?php echo get_the_date('Y-m-d'); ?> <?php echo get_the_time('H:i:s'); ?>"><?php the_time('m/d') ?></time></li>
 									<?php the_title( sprintf( '<li class="list-title"><a class="srm" href="%s" rel="bookmark">' . t_mark(), esc_url( get_permalink() ) ), '</a></li>' ); ?>
 								<?php endwhile; ?>
 								<?php wp_reset_query(); ?>

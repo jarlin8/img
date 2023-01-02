@@ -6,11 +6,6 @@
 		<div class="gr-wd-box">
 
 			<?php $do_not_cat[] = ''; query_posts( array( 'showposts' => 1, 'cat' => $category, 'post__not_in' => $do_not_cat ) ); ?>
-			<div class="gr-cat-wd">
-				<h3 class="gr-cat-wd-title"><a href="<?php echo get_category_link($category);?>"><?php single_cat_title(); ?><span class="more-i"><span></span><span></span><span></span></span></a></h3>
-				<div class="clear"></div>
-			</div>
-
 			<div class="gr-wd-b">
 				<div class="gr-wd gr-wd-img">
 					<?php if (zm_get_option('group_no_cat_child')) { ?>
@@ -22,6 +17,10 @@
 					<?php while ( have_posts() ) : the_post(); $do_not_cat[] = $post->ID; ?>
 						<div class="group-top-img" <?php aos_b(); ?>>
 							<?php gr_wd_thumbnail(); ?>
+							<div class="gr-cat-wd">
+								<div class="gr-cat-wd-title"><a href="<?php echo get_category_link($category);?>"><?php single_cat_title(); ?></a></div>
+								<div class="clear"></div>
+							</div>
 						</div>
 					<?php endwhile; ?>
 				</div>
@@ -53,9 +52,9 @@
 					<ul <?php aos_b(); ?>>
 						<?php if (zm_get_option('group_no_cat_child')) { ?>
 							<?php query_posts( array('cat' => $category ) ); ?>
-							<?php query_posts( array( 'showposts' => zm_get_option('group_wd_id_n'), 'category__in' => array(get_query_var('cat')), 'offset' => 0, 'post__not_in' => $do_not_cat ) ); ?>
+							<?php query_posts( array( 'showposts' => '5', 'category__in' => array(get_query_var('cat')), 'offset' => 0, 'post__not_in' => $do_not_cat ) ); ?>
 						<?php } else { ?>
-							<?php query_posts( array( 'showposts' => zm_get_option('group_wd_id_n'), 'cat' => $category, 'offset' => 0, 'post__not_in' => $do_not_cat ) ); ?>
+							<?php query_posts( array( 'showposts' => '5', 'cat' => $category, 'offset' => 0, 'post__not_in' => $do_not_cat ) ); ?>
 						<?php } ?>
 						<?php while ( have_posts() ) : the_post(); ?>
 							<?php the_title( sprintf( '<li class="list-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></li>' ); ?>

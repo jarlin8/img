@@ -4,8 +4,8 @@
 		<div class="group-title" <?php aos_a(); ?>>
 			<h3><?php _e( '相关文章', 'begin' ); ?></h3>
 		</div>
-		<section id="picture" class="content-area site-img grid-cat-4">
-			<main id="main" class="site-main" role="main">
+		<section id="picture" class="picture-area content-area site-img grid-cat-4">
+			<main id="main" class="be-main site-main" role="main">
 				<?php 
 					$loop = new WP_Query( array( 'post_type' => 'show', 'posts_per_page' => 4, 'post__not_in' => array($post->ID) ) );
 					while ( $loop->have_posts() ) : $loop->the_post();

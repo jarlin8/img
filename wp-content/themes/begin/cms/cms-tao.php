@@ -22,7 +22,7 @@
 					'meta_key'         => 'views',
 					'orderby'          => $orderby, 
 					'order'            => 'DESC', 
-					'caller_get_posts' => 1
+					'ignore_sticky_posts' => 1
 				);
 				$be_query = new WP_Query( $args );
 			?>

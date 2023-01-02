@@ -1,15 +1,21 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
+/**
+ * category Template: 时间轴
+ */
 get_header(); ?>
 <link rel="stylesheet" href="<?php bloginfo('template_url'); ?>/css/line.css" />
 <section id="timeline" class="container">
-	<main id="main" class="site-main" role="main">
+	<main id="main" class="be-main site-main" role="main">
 		<?php if ( ( zm_get_option( 'no_child' ) ) && is_category() ) { ?>
 			<?php 
 				$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
 				query_posts( array( 'category__in' => array( get_query_var( 'cat' ) ), 'paged' => $paged ) );
 			?>
 		<?php } ?>
+
+		<?php if ( zm_get_option( 'order_btu' ) ) { ?><?php be_order(); ?><?php } ?>
+
 		<?php while ( have_posts() ) : the_post(); ?>
 			<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('timeline-block scl'); ?>>
 				<div class="timeline-time da bk">
@@ -23,7 +29,7 @@ get_header(); ?>
 								$content = $post->post_content;
 								preg_match_all('/<img.*?(?: |\\t|\\r|\\n)?src=[\'"]?(.+?)[\'"]?(?:(?: |\\t|\\r|\\n)+.*?)?>/sim', $content, $strResult, PREG_PATTERN_ORDER);
 								$n = count($strResult[1]);
-								if($n > 0) { ?>
+								if ($n > 0) { ?>
 								<figure class="thumbnail timeline-thum">
 									<?php zm_thumbnail(); ?>
 								</figure>

@@ -1,13 +1,16 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if (zm_get_option('group_products')) { ?>
-<div class="g-row g-line sort" name="<?php echo zm_get_option('group_products_s'); ?>" <?php aos(); ?>>
+<div class="g-row g-line group-features-line sort" name="<?php echo zm_get_option('group_products_s'); ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div class="group-features">
 			<div class="group-title" <?php aos_b(); ?>>
-				<?php if ( !zm_get_option('group_products_t') == '' ) { ?>
-				<h3><?php echo zm_get_option('group_products_t'); ?></h3>
+				<?php if ( ! zm_get_option('group_products_t') == '' ) { ?>
+					<h3><?php echo zm_get_option('group_products_t'); ?></h3>
 				<?php } ?>
-				<div class="group-des"><?php echo zm_get_option('group_products_des'); ?></div>
+
+				<?php if ( ! zm_get_option('group_products_des') == '' ) { ?>
+					<div class="group-des"><?php echo zm_get_option('group_products_des'); ?></div>
+				<?php } ?>
 				<div class="clear"></div>
 			</div>
 			<div class="section-box">
@@ -17,7 +20,7 @@
 						'showposts' => zm_get_option('group_products_n'), 
 					);
 
-					if(zm_get_option('group_products_id')) {
+					if (zm_get_option('group_products_id')) {
 						$args = array(
 							'showposts' => zm_get_option('group_products_n'), 
 							'tax_query' => array(
@@ -43,7 +46,7 @@
 				<div class="clear"></div>
 				<?php if ( zm_get_option('group_products_url') == '' ) { ?>
 				<?php } else { ?>
-					<div class="img-more"><a href="<?php echo zm_get_option('group_products_url'); ?>"><?php _e( '更多', 'begin' ); ?> <i class="be be-fastforward"></i></a></div>
+					<div class="group-post-more bk da"><a href="<?php echo zm_get_option('group_products_url'); ?>" title="<?php _e( '更多', 'begin' ); ?>" rel="external nofollow"><i class="be be-more"></i></a></div>
 				<?php } ?>
 			</div>
 		</div>

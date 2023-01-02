@@ -1,7 +1,5 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
-if ($current_user->user_level < zm_get_option('boxes_level')) {
-} else {
 // 文章SEO
 $seo_post_meta_boxes =
 array(
@@ -28,7 +26,7 @@ function seo_post_meta_boxes() {
 	global $post, $seo_post_meta_boxes;
 
 	foreach ($seo_post_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -124,18 +122,37 @@ array(
 		"title" => "本站推荐小工具中",
 		"type"=>"checkbox"),
 
-	"menu_post" => array(
-		"name" => "menu_post",
+
+	"group_help_post" => array(
+		"name" => "group_help_post",
 		"std" => "",
-		"title" => "菜单图文",
+		"title" => "添加到公司首页帮助模块",
 		"type"=>"checkbox"),
+
+	"group_strong" => array(
+		"name" => "group_strong",
+		"std" => "",
+		"title" => "添加到公司首页咨询模块",
+		"type"=>"checkbox"),
+
+	"process_ico" => array(
+		"name" => "process_ico",
+		"std" => "",
+		"title" => "公司流程模块图标代码",
+		"type"=>"text"),
+
+	"assist_ico" => array(
+		"name" => "assist_ico",
+		"std" => "",
+		"title" => "公司支持模块图标代码",
+		"type"=>"text")
 );
 
 function added_post_meta_boxes() {
 	global $post, $added_post_meta_boxes;
 
 	foreach ($added_post_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -209,7 +226,7 @@ array(
 	"thumbnail" => array(
 		"name" => "thumbnail",
 		"std" => "",
-		"title" => "输入图片地址，调用指定缩略图",
+		"title" => "调用指定缩略图",
 		"type"=>"upload"),
 );
 
@@ -218,7 +235,7 @@ function thumbnail_post_meta_boxes() {
 	global $post, $thumbnail_post_meta_boxes;
 
 	foreach ($thumbnail_post_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -230,7 +247,7 @@ function thumbnail_post_meta_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 		}
 	}
@@ -303,7 +320,7 @@ function show_post_meta_boxes() {
 	global $post, $show_post_meta_boxes;
 
 	foreach ($show_post_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -315,11 +332,11 @@ function show_post_meta_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'upload_file':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择文件</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择文件</a></span>';
 			break;
 			case 'text':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
@@ -375,13 +392,19 @@ array(
 		"std" => "",
 		"title" => "输入图片地址，一行一个不能有空行和空格，图片尺寸必须相同",
 		"type"=>"textarea"),
+
+	"no_show_title" => array(
+		"name" => "no_show_title",
+		"std" => "",
+		"title" => "不显示标题文字",
+		"type"=>"checkbox"),
 );
 
 function header_show_meta_boxes() {
 	global $post, $header_show_meta_boxes;
 
 	foreach ($header_show_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -393,7 +416,13 @@ function header_show_meta_boxes() {
 			break;
 			case 'textarea':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<textarea id="seo-excerpt" class="file-uploads" cols="40" rows="2" name="' . $meta_box['name'] . '">' . $meta_box['std'] . '</textarea><a href="javascript:;" class="begin_file button">选择图片</a><br />';
+				echo '<textarea id="seo-excerpt" class="file-uploads" cols="40" rows="2" name="' . $meta_box['name'] . '">' . $meta_box['std'] . '</textarea><a href="javascript:;" class="show_file button">选择图片</a>';
+			break;
+			case 'checkbox':
+				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
+				else $checked = '';
+				echo '<br /><label><input type="checkbox" class="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
+				echo '' . $meta_box['title'] . '</label><br />';
 			break;
 		}
 	}
@@ -435,13 +464,19 @@ array(
 		"std" => "",
 		"title" => "输入图片地址",
 		"type"=>"text"),
+
+	"no_img_title" => array(
+		"name" => "no_img_title",
+		"std" => "",
+		"title" => "不显示标题文字",
+		"type"=>"checkbox"),
 );
 
 function header_bg_meta_boxes() {
 	global $post, $header_bg_meta_boxes;
 
 	foreach ($header_bg_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -453,10 +488,16 @@ function header_bg_meta_boxes() {
 			break;
 			case 'text':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
-			}
+			case 'checkbox':
+				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
+				else $checked = '';
+				echo '<br /><label><input type="checkbox" class="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
+				echo '' . $meta_box['title'] . '</label><br />';
+			break;
 		}
+	}
 }
 
 function header_bg_meta_box() {
@@ -628,6 +669,12 @@ array(
 		"title" => "原文链接",
 		"type"=>"text"),
 
+	"slider_gallery_n" => array(
+		"name" => "slider_gallery_n",
+		"std" => "",
+		"title" => "幻灯短代码每页显示图片数",
+		"type"=>"text"),
+
 	"fancy_box" => array(
 		"name" => "fancy_box",
 		"std" => "",
@@ -645,7 +692,7 @@ function other_post_meta_boxes() {
 	global $post, $other_post_meta_boxes;
 
 	foreach ($other_post_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -657,7 +704,7 @@ function other_post_meta_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'text':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
@@ -705,22 +752,22 @@ add_action('save_post', 'save_other_post_postdata');
 // 仅用于公司服务模块
 $pr_post_meta_boxes =
 array(
-	"pr_b" => array(
-		"name" => "pr_b",
-		"std" => "",
-		"title" => "第二行文字",
-		"type"=>"text"),
-
 	"pr_a" => array(
 		"name" => "pr_a",
 		"std" => "",
-		"title" => "第三行图片上的文字 ( 必填 )",
+		"title" => "图片上的文字 ( 必填 )",
+		"type"=>"text"),
+
+	"pr_b" => array(
+		"name" => "pr_b",
+		"std" => "",
+		"title" => "第一行文字",
 		"type"=>"text"),
 
 	"pr_c" => array(
 		"name" => "pr_c",
 		"std" => "",
-		"title" => "第四行文字",
+		"title" => "第二行文字",
 		"type"=>"text"),
 
 	"pr_d" => array(
@@ -747,7 +794,7 @@ function pr_post_meta_boxes() {
 	global $post, $pr_post_meta_boxes;
 
 	foreach ($pr_post_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -763,7 +810,7 @@ function pr_post_meta_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 		}
 	}
@@ -798,6 +845,100 @@ if (zm_get_option('dean')) {
 add_action('admin_menu', 'pr_post_meta_box');
 add_action('save_post', 'pr_seo_post_postdata');
 }
+
+// 推荐模块
+$fold_post_meta_boxes = array(
+	"foldimg_img" => array(
+		"name" => "foldimg_img",
+		"std" => "",
+		"title" => "输入图片地址",
+		"type"=>"upload"
+	),
+
+	"foldimg_title" => array(
+		"name" => "foldimg_title",
+		"std" => "",
+		"title" => "文字说明，支持HTML代码",
+		"type"=>"textarea"
+	),
+
+	"foldimg_more" => array(
+		"name" => "foldimg_more",
+		"std" => "",
+		"title" => "按钮名称",
+		"type"=>"text"),
+
+	"foldimg_more_url" => array(
+		"name" => "foldimg_more_url",
+		"std" => "",
+		"title" => "按钮链接地址",
+		"type"=>"text"
+	)
+);
+
+
+function fold_post_meta_boxes() {
+	global $post, $fold_post_meta_boxes;
+
+	foreach ( $fold_post_meta_boxes as $meta_box ) {
+		$meta_box_value = get_post_meta( get_the_ID(), $meta_box['name'] . '', true );
+		if ($meta_box_value != "")
+
+		$meta_box['std'] = $meta_box_value;
+		echo '<input type="hidden" name="' . $meta_box['name'] . '_noncename" id="' . $meta_box['name'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
+
+		switch ( $meta_box['type'] ) {
+			case 'title':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+			break;
+
+			case 'text':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /></span><br />';
+			break;
+
+			case 'textarea':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<textarea id="seo-excerpt" cols="40" rows="2" name="' . $meta_box['name'] . '">' . $meta_box['std'] . '</textarea><br />';
+			break;
+
+			case 'upload':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
+			break;
+		}
+	}
+}
+
+function fold_post_meta_box() {
+	global $theme_name;
+	if ( function_exists( 'add_meta_box' ) ) {
+		add_meta_box( 'fold_post_meta_box', '仅用于公司主页推荐模块', 'fold_post_meta_boxes', 'page', 'normal', 'high' );
+	}
+}
+
+function fold_post_postdata( $post_id ) {
+	global $post, $fold_post_meta_boxes;
+	foreach ( $fold_post_meta_boxes as $meta_box ) {
+		if ( !isset( $_POST[$meta_box['name'] . '_noncename'] ) || !wp_verify_nonce( $_POST[$meta_box['name'] . '_noncename'], plugin_basename(__FILE__) ) ) {
+			return $post_id;
+		}
+
+		if ( 'page' == $_POST['post_type'] ) {
+			if ( !current_user_can('edit_page', $post_id ) ) return $post_id;
+		} else {
+			if ( !current_user_can('edit_post', $post_id ) ) return $post_id;
+		}
+
+		$data = isset( $_POST[$meta_box['name'] . ''] ) ? $_POST[$meta_box['name'] . ''] : null;
+		if ( get_post_meta( $post_id, $meta_box['name'] . '') == "") add_post_meta( $post_id, $meta_box['name'] . '', $data, true );
+		elseif ( $data != get_post_meta( $post_id, $meta_box['name'] . '', true ) ) update_post_meta( $post_id, $meta_box['name'] . '', $data );
+		elseif ( $data == "" ) delete_post_meta( $post_id, $meta_box['name'] . '', get_post_meta( $post_id, $meta_box['name'] . '', true ) );
+	}
+}
+
+add_action('admin_menu', 'fold_post_meta_box');
+add_action('save_post', 'fold_post_postdata');
 
 // 页面相关自定义栏目
 $new_meta_page_boxes =
@@ -860,7 +1001,31 @@ array(
 		"name" => "keywords",
 		"std" => "",
 		"title" => "页面关键词，多个关键词用半角逗号隔开",
-		"type"=>"text")
+		"type"=>"text"),
+
+	"process_ico" => array(
+		"name" => "process_ico",
+		"std" => "",
+		"title" => "公司流程模块图标代码",
+		"type"=>"text"),
+
+	"assist_ico" => array(
+		"name" => "assist_ico",
+		"std" => "",
+		"title" => "公司支持模块图标代码",
+		"type"=>"text"),
+
+	"group_help_post" => array(
+		"name" => "group_help_post",
+		"std" => "",
+		"title" => "添加到公司首页帮助模块",
+		"type"=>"checkbox"),
+
+	"group_strong" => array(
+		"name" => "group_strong",
+		"std" => "",
+		"title" => "添加到公司首页咨询模块",
+		"type"=>"checkbox")
 );
 
 
@@ -868,7 +1033,7 @@ function new_meta_page_boxes() {
 	global $post, $new_meta_page_boxes;
 
 	foreach ($new_meta_page_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1003,7 +1168,7 @@ function page_slider_post_meta_boxes() {
 	global $post, $page_slider_post_meta_boxes;
 
 	foreach ($page_slider_post_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1019,11 +1184,11 @@ function page_slider_post_meta_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'upload_file':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择文件</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择文件</a></span>';
 			break;
 			case 'checkbox':
 				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
@@ -1104,7 +1269,7 @@ function show_page_meta_boxes() {
 	global $post, $show_page_meta_boxes;
 
 	foreach ($show_page_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1120,11 +1285,11 @@ function show_page_meta_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'upload_file':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择文件</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择文件</a></span>';
 			break;
 			case 'checkbox':
 				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
@@ -1139,7 +1304,7 @@ function show_page_meta_boxes() {
 function show_page_meta_box() {
 	global $theme_name;
 	if (function_exists('add_meta_box')) {
-		add_meta_box('show_page_meta_box', '将文章添加到首页幻灯（不包括公司主页）', 'show_page_meta_boxes', 'page', 'normal', 'high');
+		add_meta_box('show_page_meta_box', '将页面添加到首页幻灯（不包括公司主页）', 'show_page_meta_boxes', 'page', 'normal', 'high');
 	}
 }
 
@@ -1190,7 +1355,7 @@ function special_page_meta_boxes() {
 	global $post, $special_page_meta_boxes;
 
 	foreach ($special_page_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1206,7 +1371,7 @@ function special_page_meta_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'checkbox':
 				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
@@ -1254,6 +1419,12 @@ array(
 		"std" => "",
 		"title" => "输入图片地址，一行一个不能有多余的回行和空格，图片尺寸必须相同",
 		"type"=>"textarea"),
+
+	"no_show_title" => array(
+		"name" => "no_show_title",
+		"std" => "",
+		"title" => "不显示标题文字",
+		"type"=>"checkbox"),
 );
 
 
@@ -1261,7 +1432,7 @@ function header_show_page_meta_boxes() {
 	global $post, $header_show_page_meta_boxes;
 
 	foreach ($header_show_page_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1277,7 +1448,13 @@ function header_show_page_meta_boxes() {
 			break;
 			case 'textarea':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<textarea id="seo-excerpt" class="file-uploads" cols="40" rows="2" name="' . $meta_box['name'] . '">' . $meta_box['std'] . '</textarea><a href="javascript:;" class="begin_file button">选择图片</a><br />';
+				echo '<textarea id="seo-excerpt" class="file-uploads" cols="40" rows="2" name="' . $meta_box['name'] . '">' . $meta_box['std'] . '</textarea><a href="javascript:;" class="begin_file button">选择图片</a>';
+			break;
+			case 'checkbox':
+				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
+				else $checked = '';
+				echo '<br /><label><input type="checkbox" class="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
+				echo '' . $meta_box['title'] . '</label><br />';
 			break;
 		}
 	}
@@ -1319,13 +1496,19 @@ array(
 		"std" => "",
 		"title" => "输入图片地址",
 		"type"=>"upload"),
+
+	"no_img_title" => array(
+		"name" => "no_img_title",
+		"std" => "",
+		"title" => "不显示标题文字",
+		"type"=>"checkbox"),
 );
 
 function header_bg_page_meta_boxes() {
 	global $post, $header_bg_page_meta_boxes;
 
 	foreach ($header_bg_page_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1337,7 +1520,13 @@ function header_bg_page_meta_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
+			break;
+			case 'checkbox':
+				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
+				else $checked = '';
+				echo '<br /><label><input type="checkbox" class="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
+				echo '' . $meta_box['title'] . '</label><br />';
 			break;
 		}
 	}
@@ -1374,22 +1563,22 @@ add_action('save_post', 'save_header_bg_pagedata');
 // 仅用于公司主页服务模块
 $pr_meta_page_boxes =
 array(
-	"pr_b" => array(
-		"name" => "pr_b",
-		"std" => "",
-		"title" => "第二行文字",
-		"type"=>"text"),
-
 	"pr_a" => array(
 		"name" => "pr_a",
 		"std" => "",
-		"title" => "第三行图片上的文字 ( 必填 )",
+		"title" => "图片上的文字 ( 必填 )",
+		"type"=>"text"),
+
+	"pr_b" => array(
+		"name" => "pr_b",
+		"std" => "",
+		"title" => "第一行文字",
 		"type"=>"text"),
 
 	"pr_c" => array(
 		"name" => "pr_c",
 		"std" => "",
-		"title" => "第四行文字",
+		"title" => "第二行文字",
 		"type"=>"text"),
 
 	"pr_d" => array(
@@ -1416,7 +1605,7 @@ function pr_meta_page_boxes() {
 	global $post, $pr_meta_page_boxes;
 
 	foreach ($pr_meta_page_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1432,7 +1621,7 @@ function pr_meta_page_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 		}
 	}
@@ -1505,6 +1694,13 @@ array(
 		"title" => "文章关键词，多个关键词用半角逗号隔开，留空则自动将文章标签做为关键词",
 		"type"=>"text"),
 
+	"slider_gallery_n" => array(
+		"name" => "slider_gallery_n",
+		"std" => "",
+		"title" => "相册每页显示图片数",
+		"type"=>"text"
+	),
+
 	"no_sidebar" => array(
 		"name" => "no_sidebar",
 		"std" => "",
@@ -1515,7 +1711,8 @@ array(
 		"name" => "down_link_much",
 		"std" => "",
 		"title" => "多栏下载按钮",
-		"type"=>"checkbox"),
+		"type"=>"checkbox"
+	),
 
 );
 
@@ -1523,7 +1720,7 @@ function new_meta_picture_boxes() {
 	global $post, $new_meta_picture_boxes;
 
 	foreach ($new_meta_picture_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1539,7 +1736,7 @@ function new_meta_picture_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'textarea':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
@@ -1589,6 +1786,12 @@ array(
 		"title" => "添加图片地址，调用指定缩略图，图片尺寸要求与主题选项中缩略图大小相同",
 		"type"=>"upload"),
 
+	"poster_img" => array(
+		"name" => "poster_img",
+		"std" => "",
+		"title" => "自定义海报图片",
+		"type"=>"upload"),
+
 	"custom_title" => array(
 		"name" => "custom_title",
 		"std" => "",
@@ -1608,11 +1811,19 @@ array(
 		"title" => "文章关键词，多个关键词用半角逗号隔开，留空则自动将文章标签做为关键词",
 		"type"=>"text"),
 
+	"slider_gallery_n" => array(
+		"name" => "slider_gallery_n",
+		"std" => "",
+		"title" => "相册每页显示图片数",
+		"type"=>"text"
+	),
+
 	"no_sidebar" => array(
 		"name" => "no_sidebar",
 		"std" => "",
 		"title" => "隐藏侧边栏",
-		"type"=>"checkbox"),
+		"type"=>"checkbox"
+	),
 
 );
 
@@ -1621,7 +1832,7 @@ function new_meta_video_boxes() {
 	global $post, $new_meta_video_boxes;
 
 	foreach ($new_meta_video_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1637,7 +1848,7 @@ function new_meta_video_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'textarea':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
@@ -1778,19 +1989,26 @@ array(
 		"title" => "文章关键词，多个关键词用半角逗号隔开，留空则自动将文章标签做为关键词",
 		"type"=>"text"),
 
+	"slider_gallery_n" => array(
+		"name" => "slider_gallery_n",
+		"std" => "",
+		"title" => "相册每页显示图片数",
+		"type"=>"text"
+	),
+
 	"no_sidebar" => array(
 		"name" => "no_sidebar",
 		"std" => "",
 		"title" => "隐藏侧边栏",
-		"type"=>"checkbox"),
-
+		"type"=>"checkbox"
+	),
 );
 
 function new_meta_tao_boxes() {
 	global $post, $new_meta_tao_boxes;
 
 	foreach ($new_meta_tao_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1806,7 +2024,7 @@ function new_meta_tao_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'textarea':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
@@ -1874,6 +2092,12 @@ array(
 		"title" => "网站截图",
 		"type"=>"upload"),
 
+	"sites_ico" => array(
+		"name" => "sites_ico",
+		"std" => "",
+		"title" => "自定义图标",
+		"type"=>"upload"),
+
 	"order" => array(
 		"name" => "sites_order",
 		"std" => "0",
@@ -1891,7 +2115,7 @@ function new_meta_sites_boxes() {
 	global $post, $new_meta_sites_boxes;
 
 	foreach ($new_meta_sites_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 
 		$meta_box['std'] = $meta_box_value;
@@ -1907,7 +2131,7 @@ function new_meta_sites_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'textarea':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
@@ -1962,56 +2186,56 @@ array(
 		"name" => "down_name",
 		"std" => "",
 		"title" => "资源名称",
-		"type"=>"text"
+		"type"=>"be_text"
 	),
 
 	"be_down_name" => array(
 		"name" => "be_down_name",
 		"std" => "",
 		"title" => "预设名称",
-		"type" => "checkbox"
+		"type" => "be_checkbox"
 	),
 
 	"file_os" => array(
 		"name" => "file_os",
 		"std" => "",
 		"title" => "应用平台",
-		"type"=>"text"
+		"type"=>"be_text"
 	),
 
 	"be_file_os" => array(
 		"name" => "be_file_os",
 		"std" => "",
 		"title" => "预设名称",
-		"type" => "checkbox"
+		"type" => "be_checkbox"
 	),
 
 	"file_inf" => array(
 		"name" => "file_inf",
 		"std" => "",
 		"title" => "资源版本",
-		"type"=>"text"
+		"type"=>"be_text"
 	),
 
 	"be_file_inf" => array(
 		"name" => "be_file_inf",
 		"std" => "",
 		"title" => "预设名称",
-		"type" => "checkbox"
+		"type" => "be_checkbox"
 	),
 
 	"down_size" => array(
 		"name" => "down_size",
 		"std" => "",
 		"title" => "资源大小",
-		"type"=>"text"
+		"type"=>"be_text"
 	),
 
 	"be_down_size" => array(
 		"name" => "be_down_size",
 		"std" => "",
 		"title" => "预设名称",
-		"type" => "checkbox"
+		"type" => "be_checkbox"
 	),
 
 	"links_id" => array(
@@ -2067,6 +2291,13 @@ array(
 		"name" => "r_baidu_password",
 		"std" => "",
 		"title" => "网盘密码 ( 回复或登录可见 )",
+		"type"=>"text"
+	),
+
+	"vip_purview" => array(
+		"name" => "vip_purview",
+		"std" => "",
+		"title" => "会员可见网盘密码",
 		"type"=>"text"
 	),
 
@@ -2130,7 +2361,7 @@ array(
 function down_post_meta_boxes() {
 	global $post, $down_post_meta_boxes;
 	foreach ($down_post_meta_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 		$meta_box['std'] = $meta_box_value;
 		echo '<input type="hidden" name="' . $meta_box['name'] . '_noncename" id="' . $meta_box['name'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
@@ -2142,9 +2373,13 @@ function down_post_meta_boxes() {
 				echo '<h4>' . $meta_box['title'] . '</h4>';
 				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /></span><br />';
 			break;
+			case 'be_text':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /></span>';
+			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'textarea':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
@@ -2167,6 +2402,12 @@ function down_post_meta_boxes() {
 				else $checked = '';
 				echo '<br /><label><input type="checkbox" class="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
 				echo '' . $meta_box['title'] . '</label><br />';
+			break;
+			case 'be_checkbox':
+				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
+				else $checked = '';
+				echo '<br /><label class="be-label"><input type="checkbox" class="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
+				echo '' . $meta_box['title'] . '</label>';
 			break;
 		}
 	}
@@ -2199,7 +2440,6 @@ function save_down_post_postdata($post_id) {
 
 add_action('admin_menu', 'down_post_meta_box');
 add_action('save_post', 'save_down_post_postdata');
-}
 
 // 格子图标模块
 $gw_page_boxes =
@@ -2244,7 +2484,7 @@ array(
 function gw_page_boxes() {
 	global $post, $gw_page_boxes;
 	foreach ($gw_page_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 		$meta_box['std'] = $meta_box_value;
 		echo '<input type="hidden" name="' . $meta_box['name'] . '_noncename" id="' . $meta_box['name'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
@@ -2258,7 +2498,7 @@ function gw_page_boxes() {
 			break;
 			case 'upload':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
-				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span><br />';
+				echo '<span class="form-field file-uploads"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
 			break;
 			case 'textarea':
 				echo '<h4>' . $meta_box['title'] . '</h4>';
@@ -2317,6 +2557,12 @@ array(
 		"title" => "彩色图标",
 		"type"=>"checkbox"),
 
+	"tool_des" => array(
+		"name" => "tool_des",
+		"std" => "",
+		"title" => "文字描述",
+		"type"=>"textarea"),
+
 	"tool_button" => array(
 		"name" => "tool_button",
 		"std" => "",
@@ -2334,7 +2580,7 @@ array(
 function tool_page_boxes() {
 	global $post, $tool_page_boxes;
 	foreach ($tool_page_boxes as $meta_box) {
-		$meta_box_value = get_post_meta($post->ID, $meta_box['name'] . '', true);
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
 		if ($meta_box_value != "")
 		$meta_box['std'] = $meta_box_value;
 		echo '<input type="hidden" name="' . $meta_box['name'] . '_noncename" id="' . $meta_box['name'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
@@ -2401,12 +2647,376 @@ add_action('admin_menu', 'tool_page_meta_box');
 add_action('save_post', 'tool_page_postdata');
 }
 
+// 产品
+$new_meta_show_boxes =
+array(
+	"custom_title" => array(
+		"name" => "custom_title",
+		"std" => "",
+		"title" => "SEO自定义文章标题",
+		"type"=>"text"),
+
+	"description" => array(
+		"name" => "description",
+		"std" => "",
+		"title" => "文章描述，留空则自动截取首段一定字数作为文章描述",
+		"type"=>"textarea"),
+
+	"keywords" => array(
+		"name" => "keywords",
+		"std" => "",
+		"title" => "文章关键词，多个关键词用半角逗号隔开",
+		"type"=>"text"),
+
+	"slider_gallery_n" => array(
+		"name" => "slider_gallery_n",
+		"std" => "",
+		"title" => "相册每页显示图片数",
+		"type"=>"text"
+	),
+
+	"down_link_much" => array(
+		"name" => "down_link_much",
+		"std" => "",
+		"title" => "多栏按钮",
+		"type"=>"checkbox"),
+
+	"thumbnail" => array(
+		"name" => "thumbnail",
+		"std" => "",
+		"title" => "调用指定缩略图",
+		"type"=>"upload"),
+);
+
+// 面板内容
+function new_meta_show_boxes() {
+	global $post, $new_meta_show_boxes;
+
+	foreach ($new_meta_show_boxes as $meta_box) {
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
+		if ($meta_box_value != "")
+
+		$meta_box['std'] = $meta_box_value;
+		echo '<input type="hidden" name="' . $meta_box['name'] . '_noncename" id="' . $meta_box['name'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
+
+		switch ($meta_box['type']) {
+			case 'title':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+			break;
+			case 'text':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /></span><br />';
+			break;
+			case 'textarea':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<textarea id="seo-excerpt" cols="40" rows="2" name="' . $meta_box['name'] . '">' . $meta_box['std'] . '</textarea><br />';
+			break;
+			case 'radio':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				$counter = 1;
+				foreach ($meta_box['buttons'] as $radiobutton) {
+					$checked = "";
+					if (isset($meta_box['std']) && $meta_box['std'] == $counter) {
+						$checked = 'checked = "checked"';
+					}
+					echo '<input ' . $checked . ' type="radio" class="kcheck" value="' . $counter . '" name="' . $meta_box['name'] . '_value"/>' . $radiobutton;
+					$counter++;
+				}
+			break;
+			case 'checkbox':
+				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
+				else $checked = '';
+				echo '<br /><label><input type="checkbox" class="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
+				echo '' . $meta_box['title'] . '</label><br />';
+				break;
+			case 'upload':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
+			break;
+			}
+		}
+}
+function create_meta_show_box() {
+	global $theme_name;
+	if (function_exists('add_meta_box')) {
+		add_meta_box('new-meta-boxes', '产品设置', 'new_meta_show_boxes', 'show', 'normal', 'high');
+	}
+}
+function save_show_postdata($post_id) {
+	global $post, $new_meta_show_boxes;
+	foreach ($new_meta_show_boxes as $meta_box) {
+		if ( !isset($_POST[$meta_box['name'] . '_noncename']) || !wp_verify_nonce( $_POST[$meta_box['name'] . '_noncename'], plugin_basename(__FILE__) )) {
+			return $post_id;
+		}
+		if ('page' == $_POST['post_type']) {
+			if (!current_user_can('edit_page', $post_id)) return $post_id;
+		} else {
+			if (!current_user_can('edit_post', $post_id)) return $post_id;
+		}
+		$data = isset($_POST[$meta_box['name'] . '']) ? $_POST[$meta_box['name'] . ''] : null;
+		if (get_post_meta($post_id, $meta_box['name'] . '') == "") add_post_meta($post_id, $meta_box['name'] . '', $data, true);
+		elseif ($data != get_post_meta($post_id, $meta_box['name'] . '', true)) update_post_meta($post_id, $meta_box['name'] . '', $data);
+		elseif ($data == "") delete_post_meta($post_id, $meta_box['name'] . '', get_post_meta($post_id, $meta_box['name'] . '', true));
+	}
+}
+add_action('admin_menu', 'create_meta_show_box');
+add_action('save_post', 'save_show_postdata');
+
+// 产品幻灯
+$new_meta_show_h_a_boxes =
+array(
+	"s_a_img_d" => array(
+		"name" => "s_a_img_d",
+		"std" => "",
+		"title" => "大背景图地址",
+		"type"=>"upload"),
+
+	"s_a_img_x" => array(
+		"name" => "s_a_img_x",
+		"std" => "",
+		"title" => "浮动层小图地址",
+		"type"=>"upload"),
+
+	"s_a_t_a" => array(
+		"name" => "s_a_t_a",
+		"std" => "",
+		"title" => "第一行文字",
+		"type"=>"text"),
+
+	"s_a_t_b" => array(
+		"name" => "s_a_t_b",
+		"std" => "",
+		"title" => "第二行文字（大字）",
+		"type"=>"text"),
+
+	"s_a_t_c" => array(
+		"name" => "s_a_t_c",
+		"std" => "",
+		"title" => "第三行文字",
+		"type"=>"text"),
+
+	"s_a_n_b" => array(
+		"name" => "s_a_n_b",
+		"std" => "",
+		"title" => "按钮名称",
+		"type"=>"text"),
+
+	"s_a_n_b_l" => array(
+		"name" => "s_a_n_b_l",
+		"std" => "",
+		"title" => "按钮链接",
+		"type"=>"text"),
+);
+
+// 面板内容
+function new_meta_show_h_a_boxes() {
+	global $post, $new_meta_show_h_a_boxes;
+
+	foreach ($new_meta_show_h_a_boxes as $meta_box) {
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
+		if ($meta_box_value != "")
+
+		$meta_box['std'] = $meta_box_value;
+		echo '<input type="hidden" name="' . $meta_box['name'] . '_noncename" id="' . $meta_box['name'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
+
+		switch ($meta_box['type']) {
+			case 'title':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+			break;
+			case 'text':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /></span><br />';
+			break;
+			case 'upload':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /><a href="javascript:;" class="begin_file button">选择图片</a></span>';
+			break;
+			}
+		}
+}
+function create_show_h_a_meta_box() {
+	global $theme_name;
+	if (function_exists('add_meta_box')) {
+		add_meta_box('create_show_h_a_meta_box', '产品头部图片设置', 'new_meta_show_h_a_boxes', 'show', 'normal', 'high');
+	}
+}
+function save_show_h_a_postdata($post_id) {
+	global $post, $new_meta_show_h_a_boxes;
+	foreach ($new_meta_show_h_a_boxes as $meta_box) {
+		if ( !isset($_POST[$meta_box['name'] . '_noncename']) || !wp_verify_nonce( $_POST[$meta_box['name'] . '_noncename'], plugin_basename(__FILE__) )) {
+			return $post_id;
+		}
+		if ('page' == $_POST['post_type']) {
+			if (!current_user_can('edit_page', $post_id)) return $post_id;
+		} else {
+			if (!current_user_can('edit_post', $post_id)) return $post_id;
+		}
+		$data = $_POST[$meta_box['name'] . ''];
+		if (get_post_meta($post_id, $meta_box['name'] . '') == "") add_post_meta($post_id, $meta_box['name'] . '', $data, true);
+		elseif ($data != get_post_meta($post_id, $meta_box['name'] . '', true)) update_post_meta($post_id, $meta_box['name'] . '', $data);
+		elseif ($data == "") delete_post_meta($post_id, $meta_box['name'] . '', get_post_meta($post_id, $meta_box['name'] . '', true));
+	}
+}
+add_action('admin_menu', 'create_show_h_a_meta_box');
+add_action('save_post', 'save_show_h_a_postdata');
+
+// 标题及其它
+$new_meta_show_q_boxes =
+array(
+	"s_j_t" => array(
+		"name" => "s_j_t",
+		"std" => "",
+		"title" => "简介标题",
+		"type"=>"text"),
+
+	"s_j_e" => array(
+		"name" => "s_j_e",
+		"std" => "",
+		"title" => "简介描述",
+		"type"=>"text"),
+
+	"s_c_t" => array(
+		"name" => "s_c_t",
+		"std" => "正文标题",
+		"title" => "正文标题",
+		"type"=>"text"),
+
+	"s_f_t" => array(
+		"name" => "s_f_t",
+		"std" => "附加模块标题",
+		"title" => "附加模块标题",
+		"type"=>"text"),
+
+	"s_f_e" => array(
+		"name" => "s_f_e",
+		"std" => "",
+		"title" => "附加模块内容",
+		"type"=>"text"),
+
+	"s_f_n_a" => array(
+		"name" => "s_f_n_a",
+		"std" => "<i class='be be-stack'></i> 详细查看",
+		"title" => "附加模块按钮A文字",
+		"type"=>"text"),
+
+	"s_f_n_a_l" => array(
+		"name" => "s_f_n_a_l",
+		"std" => "",
+		"title" => "附加模块按钮A链接",
+		"type"=>"text"),
+
+	"s_f_n_b" => array(
+		"name" => "s_f_n_b",
+		"std" => "<i class='be be-phone'></i> 联系方式",
+		"title" => "附加模块按钮b文字",
+		"type"=>"text"),
+
+	"s_f_n_b_l" => array(
+		"name" => "s_f_n_b_l",
+		"std" => "",
+		"title" => "附加模块按钮B链接",
+		"type"=>"text"),
+);
+
+// 面板内容
+function new_meta_show_q_boxes() {
+	global $post, $new_meta_show_q_boxes;
+
+	foreach ($new_meta_show_q_boxes as $meta_box) {
+		$meta_box_value = get_post_meta(get_the_ID(), $meta_box['name'] . '', true);
+		if ($meta_box_value != "")
+
+		$meta_box['std'] = $meta_box_value;
+		echo '<input type="hidden" name="' . $meta_box['name'] . '_noncename" id="' . $meta_box['name'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
+
+		switch ($meta_box['type']) {
+			case 'title':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+			break;
+			case 'text':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<span class="form-field"><input type="text" size="40" name="' . $meta_box['name'] . '" value="' . $meta_box['std'] . '" /></span><br />';
+			break;
+			case 'textarea':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				echo '<textarea id="seo-excerpt" cols="40" rows="2" name="' . $meta_box['name'] . '">' . $meta_box['std'] . '</textarea><br />';
+			break;
+			case 'radio':
+				echo '<h4>' . $meta_box['title'] . '</h4>';
+				$counter = 1;
+				foreach ($meta_box['buttons'] as $radiobutton) {
+					$checked = "";
+					if (isset($meta_box['std']) && $meta_box['std'] == $counter) {
+						$checked = 'checked = "checked"';
+					}
+					echo '<input ' . $checked . ' type="radio" class="kcheck" value="' . $counter . '" name="' . $meta_box['name'] . '_value"/>' . $radiobutton;
+					$counter++;
+				}
+			break;
+			case 'checkbox':
+				if (isset($meta_box['std']) && $meta_box['std'] == 'true') $checked = 'checked = "checked"';
+				else $checked = '';
+				echo '<br /><input type="checkbox" name="' . $meta_box['name'] . '" value="true"  ' . $checked . ' />';
+				echo '<label>' . $meta_box['title'] . '</label><br />';
+				break;
+			}
+		}
+}
+function create_show_q_meta_box() {
+	global $theme_name;
+	if (function_exists('add_meta_box')) {
+		add_meta_box('create_show_q_meta_box', '标题及其它', 'new_meta_show_q_boxes', 'show', 'normal', 'high');
+	}
+}
+function save_show_q_postdata($post_id) {
+	global $post, $new_meta_show_q_boxes;
+	foreach ($new_meta_show_q_boxes as $meta_box) {
+		if ( !isset($_POST[$meta_box['name'] . '_noncename']) || !wp_verify_nonce( $_POST[$meta_box['name'] . '_noncename'], plugin_basename(__FILE__) )) {
+			return $post_id;
+		}
+		if ('page' == $_POST['post_type']) {
+			if (!current_user_can('edit_page', $post_id)) return $post_id;
+		} else {
+			if (!current_user_can('edit_post', $post_id)) return $post_id;
+		}
+		$data = $_POST[$meta_box['name'] . ''];
+		if (get_post_meta($post_id, $meta_box['name'] . '') == "") add_post_meta($post_id, $meta_box['name'] . '', $data, true);
+		elseif ($data != get_post_meta($post_id, $meta_box['name'] . '', true)) update_post_meta($post_id, $meta_box['name'] . '', $data);
+		elseif ($data == "") delete_post_meta($post_id, $meta_box['name'] . '', get_post_meta($post_id, $meta_box['name'] . '', true));
+	}
+}
+add_action('admin_menu', 'create_show_q_meta_box');
+add_action('save_post', 'save_show_q_postdata');
+
 function upload_js() { ?>
 <script>
-jQuery(document).ready(function() {
+jQuery(document).ready(function($) {
+	$('body').on('click', '.begin_file',
+	function(e) {
+		e.preventDefault();
+		var buon = $(this),
+		custom_uploader = wp.media({
+			title: '添加图片',
+			library: {
+				type: 'image'
+			},
+			button: {
+				text: '选择'
+			},
+
+			multiple: false // 选择多个 true
+		}).on('select',
+		function() {
+			var id = buon.prev();
+			var attachment = custom_uploader.state().get('selection').first().toJSON();
+			$(id).val(attachment.url);
+		}).open();
+	});
+
+
 	var $ = jQuery;
 	if (typeof wp !== 'undefined' && wp.media && wp.media.editor) {
-		$(document).on('click', '.begin_file',
+		$(document).on('click', '.show_file',
 		function(e) {
 			e.preventDefault();
 			var button = $(this);

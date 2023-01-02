@@ -25,7 +25,7 @@
 				<?php } ?>
 			</div>
 
-		<?php if (zm_get_option('web_queries') && current_user_can('manage_options')) { ?><?php if(function_exists('queries')) queries(true) ;?><?php } ?>
+		<?php if (zm_get_option('web_queries') && current_user_can('manage_options')) { ?><?php if (function_exists('queries')) queries(true) ;?><?php } ?>
 		</div>
 		<?php if (zm_get_option('footer_menu') && wp_is_mobile()) { ?>
 			<div class="footer-clear"></div>
@@ -40,18 +40,28 @@
 				?>
 			</nav>
 		<?php } ?>
+		<?php if (zm_get_option('profile') || zm_get_option('menu_login') || zm_get_option('mobile_login')) { ?><?php get_template_part( 'template/login' ); ?><?php } ?>
+		<?php get_template_part( 'template/scroll' ); ?>
+		<?php get_template_part( 'template/placard' ); ?>
+		<?php get_template_part( 'template/the-blank' ); ?>
+		<?php get_template_part( 'template/contact' ); ?>
+		<?php if (zm_get_option('weibo_t')) { ?>
+			<script src="https://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
+			<html xmlns:wb="https://open.weibo.com/wb">
+		<?php } ?>
+		<?php if ( zm_get_option( 'fix_mail_form' ) ) { ?>
+			<div class="slide-mail-box">
+				<div class="slide-mail-btu dah"><span class="dashicons dashicons-email-alt hz"></span></div>
+					<div class="slide-mail-wrap">
+						<div class="slide-mail-main mail-main"><?php echo be_display_contact_form(); ?></div>
+					</div>
+				<div class="clear"></div>
+			</div>
+		<?php } ?>
+
+		<script type='text/javascript' id='superfish-js-after'>var fallwidth = {fall_width: <?php echo zm_get_option( 'fall_width' ); ?>}</script>
+		<?php wp_footer(); ?>
 	</footer>
-	<?php if (zm_get_option('profile') || zm_get_option('menu_login') || zm_get_option('mobile_login')) { ?><?php get_template_part( 'template/login' ); ?><?php } ?>
-	<?php get_template_part( 'template/scroll' ); ?>
-	<?php get_template_part( 'template/placard' ); ?>
-	<?php get_template_part( 'template/the-blank' ); ?>
-	<?php get_template_part( 'template/contact' ); ?>
-	<?php if (zm_get_option('weibo_t')) { ?>
-		<script src="https://tjs.sjs.sinajs.cn/open/api/js/wb.js" type="text/javascript" charset="utf-8"></script>
-		<html xmlns:wb="https://open.weibo.com/wb">
-	<?php } ?>
 </div>
-<script type='text/javascript' id='superfish-js-after'>var fallwidth = {fall_width: <?php echo zm_get_option( 'fall_width' ); ?>}</script>
-<?php wp_footer(); ?>
 </body>
 </html>

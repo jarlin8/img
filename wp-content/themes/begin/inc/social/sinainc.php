@@ -33,7 +33,7 @@ class BeginloginWEIBO {
 	function sina_cb(){
 		global $wpdb;
 		$uidArray = json_decode($this->get_user_id());
-		if(isset($_SESSION['sina_openid']) && isset($_SESSION['sina_access_token']) && $uidArray->uid == $wpdb->escape($_SESSION['sina_openid'])){
+		if (isset($_SESSION['sina_openid']) && isset($_SESSION['sina_access_token']) && $uidArray->uid == $wpdb->escape($_SESSION['sina_openid'])){
 
 			$user_ID = $wpdb->get_var("SELECT ID FROM $wpdb->users WHERE sinaid='".$wpdb->escape($_SESSION['sina_openid'])."'");
 			if ($user_ID) {

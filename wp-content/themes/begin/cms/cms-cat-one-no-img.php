@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if (zm_get_option('cat_one_on_img')) { ?>
-<div class="line-one sort" name="<?php echo zm_get_option('cat_one_on_img_s'); ?>">
+<div class="line-one line-one-no-img sort" name="<?php echo zm_get_option('cat_one_on_img_s'); ?>">
 	<?php $display_categories = explode(',',zm_get_option('cat_one_on_img_id') ); foreach ($display_categories as $category) { ?>
 	<?php if (zm_get_option('no_cat_child')) { ?>
 		<?php query_posts( array('cat' => $category ) ); ?>
@@ -10,7 +10,7 @@
 	<?php } ?>
 
 		<div class="cat-container ms bk" <?php aos_a(); ?>>
-			<h3 class="cat-title bkx"><a href="<?php echo get_category_link($category);?>"><?php cat_module_title(); ?></a></h3>
+			<h3 class="cat-title bkx da"><a href="<?php echo get_category_link($category);?>"><?php cat_module_title(); ?></a></h3>
 			<div class="clear"></div>
 			<div class="cat-site">
 				<ul class="cat-one-list">

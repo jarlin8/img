@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 function Daily_submit($post_ID) {
 	$WEB_TOKEN = zm_get_option('daily_token');
 	$WEB_DOMAIN = home_url( '/' );
-	if(get_post_meta($post_ID,'Dailysubmit',true) == 1) return;
+	if (get_post_meta($post_ID,'Dailysubmit',true) == 1) return;
 	$url = get_permalink($post_ID);;
 	$api = 'http://data.zz.baidu.com/urls?site='.$WEB_DOMAIN.'&token='.$WEB_TOKEN.'&type=daily';
 	$ch  = curl_init();

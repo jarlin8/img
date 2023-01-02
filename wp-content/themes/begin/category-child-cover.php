@@ -1,5 +1,8 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
+/**
+ * category Template: 子分类封面
+ */
 get_header(); ?>
 
 <style type="text/css">

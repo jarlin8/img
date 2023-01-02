@@ -1,9 +1,12 @@
 <?php 
 if ( ! defined( 'ABSPATH' ) ) exit;
+/**
+ * category Template: 标准模板
+ */
 get_header(); ?>
 
 <section id="primary" class="content-area">
-	<main id="main" class="site-main<?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
+	<main id="main" class="be-main site-main<?php if (zm_get_option('post_no_margin')) { ?> domargin<?php } ?>" role="main">
 	<?php get_template_part( 'template/cat-top' ); ?>
 		<?php if ( ( zm_get_option( 'no_child' ) ) && is_category() ) { ?>
 			<?php 
@@ -11,6 +14,9 @@ get_header(); ?>
 				query_posts( array( 'category__in' => array( get_query_var( 'cat' ) ), 'paged' => $paged ) );
 			?>
 		<?php } ?>
+
+		<?php if ( zm_get_option( 'order_btu' ) ) { ?><?php be_order(); ?><?php } ?>
+
 		<?php if ( have_posts() ) : ?>
 
 		<?php while ( have_posts() ) : the_post(); ?>

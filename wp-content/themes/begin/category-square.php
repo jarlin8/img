@@ -1,15 +1,20 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
+/**
+ * category Template: 网格布局
+ */
 get_header(); ?>
 
 <section id="primary" class="content-area cms-news-grid-container cat-square">
-	<main id="main" class="site-main" role="main">
+	<main id="main" class="be-main site-main" role="main">
 		<?php if ( ( zm_get_option( 'no_child' ) ) && is_category() ) { ?>
 			<?php 
 				$paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
 				query_posts( array( 'category__in' => array( get_query_var( 'cat' ) ), 'paged' => $paged ) );
 			?>
 		<?php } ?>
+
+		<?php if ( zm_get_option( 'order_btu' ) ) { ?><?php be_order(); ?><?php } ?>
 
 		<?php while ( have_posts() ) : the_post(); ?>
 

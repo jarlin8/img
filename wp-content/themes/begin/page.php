@@ -2,8 +2,8 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
 
-	<?php begin_primary_class(); ?>
-		<main id="main" class="site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?><?php if (get_post_meta($post->ID, 'sub_section', true) ) { ?> sub-h<?php } ?>" role="main">
+	<div id="<?php if ( get_post_meta(get_the_ID(), 'sidebar_l', true) ) { ?>primary-l<?php } else { ?>primary<?php } ?>" class="content-area meta-b<?php if ( get_post_meta( get_the_ID(), 'no_sidebar', true ) ) { ?> no-sidebar<?php } ?>">
+		<main id="main" class="be-main site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?><?php if (get_post_meta(get_the_ID(), 'sub_section', true) ) { ?> sub-h<?php } ?>" role="main">
 
 		<?php while ( have_posts() ) : the_post(); ?>
 
@@ -18,9 +18,9 @@ get_header(); ?>
 		</main><!-- .site-main -->
 	</div><!-- .content-area -->
 
-<?php if ( !get_post_meta($post->ID, 'no_sidebar', true) ) { ?>
+<?php if ( ! get_post_meta( get_the_ID(), 'no_sidebar', true ) ) { ?>
 	<?php if ( class_exists( 'DW_Question_Answer' ) ) { ?>
-		<?php if (!is_singular( 'dwqa-question' ) ) { ?>
+		<?php if ( ! is_singular( 'dwqa-question' ) ) { ?>
 			<?php get_sidebar(); ?>
 		<?php } ?>
 	<?php } else { ?>

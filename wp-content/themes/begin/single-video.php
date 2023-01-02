@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header(); ?>
 
 	<?php begin_primary_class(); ?>
-		<main id="main" class="site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?>" role="main">
+		<main id="main" class="be-main site-main<?php if (zm_get_option('p_first') ) { ?> p-em<?php } ?>" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
 				<article id="post-<?php the_ID(); ?>" <?php aos_a(); ?> <?php post_class('ms bk'); ?>>
@@ -40,12 +40,15 @@ get_header(); ?>
 
 							<?php the_content(); ?>
 							<?php get_template_part( 'inc/file' ); ?>
-							<?php if ( get_post_meta($post->ID, 'no_sidebar', true) ) : ?><style>#primary {width: 100%;}#sidebar,.r-hide {display: none;}</style><?php endif; ?>
+							<?php if ( get_post_meta(get_the_ID(), 'no_sidebar', true) ) : ?><style>#primary {width: 100%;}#sidebar,.r-hide {display: none;}</style><?php endif; ?>
 						</div>
 
 						<?php begin_link_pages(); ?>
+						<?php echo bedown_show(); ?>
 
-						<?php be_like(); ?>
+						<?php if ( ! zm_get_option( 'be_like_content' ) || ( wp_is_mobile() ) ) { ?>
+							<?php be_like(); ?>
+						<?php } ?>
 						<?php if (zm_get_option('single_weixin')) { ?>
 							<?php get_template_part( 'template/weixin' ); ?>
 						<?php } ?>
@@ -54,8 +57,8 @@ get_header(); ?>
 						<?php get_template_part('ad/ads', 'single-b'); ?>
 
 						<footer class="single-footer">
-							<div class="single-cat-tag">
-								<div class="single-cat">分类：<?php echo get_the_term_list( $post->ID,  'videos', '' ); ?>
+							<div class="single-cat-tag dah">
+								<div class="single-cat dah"><i class="be be-sort"></i><?php echo get_the_term_list( $post->ID, 'videos', '' ); ?>
 								</div>
 							</div>
 						</footer><!-- .entry-footer -->
@@ -73,7 +76,23 @@ get_header(); ?>
 				<?php type_nav_single(); ?>
 
 				<?php if (zm_get_option('related_img')) { ?>
-					<?php get_template_part( 'template/related-video' ); ?>
+					<div id="related-img" class="ms bk da" <?php aos_a(); ?>>
+						<?php 
+							$loop = new WP_Query( array( 'post_type' => 'video', 'posts_per_page' => zm_get_option('related_n'), 'post__not_in' => array($post->ID) ) );
+							while ( $loop->have_posts() ) : $loop->the_post();
+						?>
+						<div class="r4">
+							<div class="related-site">
+								<figure class="related-site-img">
+									<?php videos_thumbnail(); ?>
+								 </figure>
+								<div class="related-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></div>
+							</div>
+						</div>
+						<?php endwhile; ?>
+						<?php wp_reset_query(); ?>
+						<div class="clear"></div>
+					</div>
 				<?php } ?>
 
 				<?php get_template_part('ad/ads', 'comments'); ?>
@@ -85,8 +104,7 @@ get_header(); ?>
 		</main><!-- .site-main -->
 	</div><!-- .content-area -->
 
-<?php if ( get_post_meta( $post->ID, 'no_sidebar', true ) || ( zm_get_option('single_no_sidebar') ) ) { ?>
-<?php } else { ?>
+<?php if ( ! get_post_meta( get_the_ID(), 'no_sidebar', true ) && ( ! zm_get_option( 'single_no_sidebar' ) ) ) { ?>
 <?php get_sidebar(); ?>
 <?php } ?>
 <?php get_footer(); ?>

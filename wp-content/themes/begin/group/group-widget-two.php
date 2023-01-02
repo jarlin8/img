@@ -1,6 +1,6 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php if (zm_get_option('group_widget_two')) { ?>
-<div class="g-row g-line sort" name="<?php echo zm_get_option('group_widget_two_s'); ?>" <?php aos(); ?>>
+<div class="g-row g-line group-widget-two-line sort" name="<?php echo zm_get_option('group_widget_two_s'); ?>" <?php aos(); ?>>
 	<div class="g-col">
 		<div id="group-widget-two" class="group-widget dy">
 			<?php if ( ! dynamic_sidebar( 'group-two' ) ) : ?>

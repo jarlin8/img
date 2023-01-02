@@ -4,8 +4,27 @@
 	margin: 0 0 15px 0;
 	overflow: hidden;
 	border-radius: 5px;
-	transition: all .3s ease;
-	border: 1px solid #e7e7e7;
+	-webkit-animation: fade-in;
+	animation: fade-in;
+	animation-duration: 0.5s;
+	-webkit-animation: fade-in 0.5s;
+	border: 1px solid #ececec;
+}
+
+pre {
+	line-height: 23px;
+	opacity: 0.1;
+	font-size: 13px;
+	font-size: 1.3rem;
+}
+
+.pre-loading ol {
+	opacity: 0.3;
+}
+
+.codebox .dashicons-yes, 
+.codebox .be-clipboard {
+	color: #666;
 }
 
 .night .codebox {
@@ -14,10 +33,11 @@
 }
 
 .codebox:hover {
-	box-shadow: 0 0 3px rgba(0,0,0,0.15);
+	box-shadow: 0 0 8px rgba(0,0,0,0.1);
 }
 
 .codebox pre {
+	opacity: 1;
 	border: none;
 	margin: 0;
 	padding: 40px 10px 10px 10px;
