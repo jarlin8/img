@@ -314,6 +314,8 @@ class Rest extends WP_REST_Controller {
 			);
 		}
 
+		$keywords = html_entity_decode( $keywords );
+
 		// Check remain keywords count can be added.
 		$total_keywords = Keywords::get()->get_tracked_keywords_count();
 		$new_keywords   = Keywords::get()->extract_addable_track_keyword( $keywords );
@@ -465,8 +467,10 @@ class Rest extends WP_REST_Controller {
 		if ( $force || ( ! $is_admin_bar && $this->should_update_pagespeed( $id ) ) ) {
 			// Page Score.
 			$analyzer = new SEO_Analyzer();
-			$score    = $analyzer->get_page_score( $url );
-			$update   = [];
+			$analyzer->set_url();
+
+			$score  = $analyzer->get_page_score( $url );
+			$update = [];
 			if ( $score > 0 ) {
 				$update['page_score'] = $score;
 			}

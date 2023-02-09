@@ -48,24 +48,16 @@ ob_start();
 	<!-- wp:column -->
 	<?php if ( ! empty( $schema['thumbnailUrl'] ) ) {
 		$image_id = attachment_url_to_postid( $schema['thumbnailUrl'] );
-		$srcset   = '';
-		$alt      = '';
+		$img      = '<img src="' . esc_url( $schema['thumbnailUrl'] ) . '" />';
+
 		if ( $image_id ) {
-			$srcset = wp_get_attachment_image_srcset( $image_id );
-			$alt    = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
-		}
-		if ( ! $alt && $episode_title ) {
-			$alt = $episode_title;
+			$img = wp_get_attachment_image( $image_id, 'medium', false, [ 'class' => 'wp-image-' . $image_id ] );
 		}
 		?>
 		<div class="wp-block-column" style="flex: 0 0 25%;">
 			<!-- wp:image -->
-				<figure class="wp-block-image size-large is-resized">
-					<img
-						src="<?php echo esc_url( $schema['thumbnailUrl'] ); ?>"
-						<?php if ( $alt ) : ?>alt="<?php echo esc_attr( $alt ); ?>"<?php endif; ?>
-						<?php if ( $srcset ) : ?>srcset="<?php echo esc_attr( $srcset ); ?>"<?php endif; ?>
-					/>
+				<figure class="wp-block-image size-medium is-resized">
+					<?php echo wp_kses_post( $img ); ?>
 				</figure>
 			<!-- /wp:image -->
 		</div>

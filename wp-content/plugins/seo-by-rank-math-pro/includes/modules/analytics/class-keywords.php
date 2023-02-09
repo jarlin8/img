@@ -274,12 +274,12 @@ class Keywords {
 			return $result;
 		}
 
-		$page     = ! empty( $request->get_param( 'page' ) ) ? $request->get_param( 'page' ) : 1;
-		$orderby  = ! empty( $request->get_param( 'orderby' ) ) ? $request->get_param( 'orderby' ) : 'default';
-		$order    = ! empty( $request->get_param( 'order' ) ) ? strtoupper( $request->get_param( 'order' ) ) : 'DESC';
-		$keyword  = ! empty( $request->get_param( 'search' ) ) ? filter_var( urldecode( $request->get_param( 'search' ) ), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_BACKTICK ) : '';
-		$offset   = ( $page - 1 ) * $per_page;
-		$args     = wp_parse_args(
+		$page    = ! empty( $request->get_param( 'page' ) ) ? $request->get_param( 'page' ) : 1;
+		$orderby = ! empty( $request->get_param( 'orderby' ) ) ? $request->get_param( 'orderby' ) : 'default';
+		$order   = ! empty( $request->get_param( 'order' ) ) ? strtoupper( $request->get_param( 'order' ) ) : 'DESC';
+		$keyword = ! empty( $request->get_param( 'search' ) ) ? filter_var( urldecode( $request->get_param( 'search' ) ), FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_BACKTICK ) : '';
+		$offset  = ( $page - 1 ) * $per_page;
+		$args    = wp_parse_args(
 			[
 
 				'dimension' => 'query',
@@ -287,10 +287,10 @@ class Keywords {
 				'keyword'   => $keyword,
 			]
 		);
-		$data     = $this->get_tracked_keywords_data( $args );
-		$data     = Stats::get()->set_dimension_as_key( $data );
-		$history  = $this->get_graph_data_for_keywords( \array_keys( $data ) );
-		$data     = Stats::get()->set_query_position( $data, $history );
+		$data    = $this->get_tracked_keywords_data( $args );
+		$data    = Stats::get()->set_dimension_as_key( $data );
+		$history = $this->get_graph_data_for_keywords( \array_keys( $data ) );
+		$data    = Stats::get()->set_query_position( $data, $history );
 
 		if ( 'default' === $orderby ) {
 			uasort(
@@ -304,7 +304,7 @@ class Keywords {
 					}
 
 					if ( 0 === intval( $b['position']['total'] ) ) {
-						return false;
+						return 0;
 					}
 
 					return $a['position']['total'] > $b['position']['total'];

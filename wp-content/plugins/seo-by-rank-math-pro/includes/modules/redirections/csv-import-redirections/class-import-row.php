@@ -195,11 +195,13 @@ class Import_Row {
 		$sources = $this->get_sources();
 		$sources = array_unique( array_merge( $sources, $data['sources'] ), SORT_REGULAR );
 
+		$url_to = ! empty( $input['destination'] ) ? $input['destination'] : $data['url_to'];
+
 		$redirection = Redirection::from(
 			[
 				'id'          => $data['id'],
 				'sources'     => $sources,
-				'url_to'      => $data['url_to'],
+				'url_to'      => $url_to,
 				'header_code' => $data['header_code'],
 				'status'      => $data['status'],
 			]

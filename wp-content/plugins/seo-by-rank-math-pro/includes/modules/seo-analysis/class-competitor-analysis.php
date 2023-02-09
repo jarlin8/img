@@ -33,7 +33,7 @@ class Competitor_Analysis {
 		$this->filter( 'rank_math/seo_analysis/api_endpoint', 'set_ca_param' );
 		$this->action( 'rank_math/seo_analysis/after_analyze', 'store_results' );
 		$this->action( 'rank_math/seo_analysis/after_set_url', 'load_previous_results' );
-		$this->action( 'rank_math/tools/clear_seo_analysis', 'clear_competitor_results' );
+		$this->action( 'rank_math/tools/clear_seo_analysis', 'clear_competitor_results', 5 );
 	}
 
 	/**
