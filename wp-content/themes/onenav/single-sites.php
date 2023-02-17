@@ -7,11 +7,19 @@
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 get_header(); ?>
-    <div id="content" class="container my-4 my-md-5">
+            <div id="content" class="container my-4 my-md-5">
                 <?php 
                 $sites_type = get_post_meta(get_the_ID(), '_sites_type', true);
-                if($sites_type == "down") include( get_theme_file_path('/templates/content-down.php') );
-                else include( get_theme_file_path('/templates/content-site.php') );
+                $user_level = get_post_meta($post->ID, '_user_purview_level', true);
+                $post_show  = !(!is_user_logged_in() && $user_level && $user_level != 'all');
+                if(!$post_show){
+                    get_user_level_directions_html('site');
+                } else {
+                    if ($sites_type == "down")
+                        include(get_theme_file_path('/templates/content-down.php'));
+                    else
+                        include(get_theme_file_path('/templates/content-site.php'));
+                }
                 ?>
 
                 <h2 class="text-gray text-lg my-4"><i class="site-tag iconfont icon-tag icon-lg mr-1" ></i><?php _e('相关导航','i_theme') ?></h2>
@@ -24,13 +32,13 @@ get_header(); ?>
                 endif; 
                 ?>
                 
-        </div><!-- content-layout end -->
-    </div><!-- content-wrap end -->
+            </div><!-- content-layout end -->
+        </div><!-- content-wrap end -->
     <?php get_sidebar('sites');  ?>
     </main>
 </div><!-- container end -->
 <script>
-<?php if( io_get_option('leader_board') && io_get_option('details_chart')){ ?>
+<?php if( $post_show && io_get_option('leader_board',true) && io_get_option('details_chart',true)){ ?>
 loadFunc(function() {
     loadChart();
 });

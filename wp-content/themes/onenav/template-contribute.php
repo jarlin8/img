@@ -52,7 +52,7 @@ $contribute_type = io_get_option('contribute_type',array('sites'));
                                 $name = __('新书籍','i_theme');
                                 break;
                         }
-                        echo '<a href="'.esc_url(get_permalink(io_get_option('contribute_pages'))).'/?type='.$_type.'" class="tab-btn '.($_type==$type?'active':'').'">'.$name.'</a>';
+                        echo '<a href="'.io_get_template_page_url('template-contribute.php').'/?type='.$_type.'" class="tab-btn '.($_type==$type?'active':'').'">'.$name.'</a>';
                     } 
                     ?>
                 </div>
@@ -81,7 +81,6 @@ $contribute_type = io_get_option('contribute_type',array('sites'));
     </div>
 <script>
     var tg_data = {
-        is_007:<?php echo (io_get_option('io_captcha','','tcaptcha_007')?'!0':'!1') ?>,
         sites_img_max:"<?php echo io_get_option('sites_tg_opt',64,'img_size') ?>",
         post_img_max:"<?php echo io_get_option('post_tg_opt',1024,'img_size') ?>",
         theme_key:"<?php echo ioThemeKey() ?>",
@@ -105,8 +104,5 @@ $contribute_type = io_get_option('contribute_type',array('sites'));
         }
     }
 </script>
-<?php if( io_get_option('io_captcha','','tcaptcha_007') ) { ?>
-    <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
-<?php } ?>
 <?php wp_enqueue_script('new-post') ?>
 <?php get_footer(); ?>

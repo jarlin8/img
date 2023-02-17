@@ -1,4 +1,13 @@
 <?php
+/*
+ * @Author: iowen
+ * @Author URI: https://www.iowen.cn/
+ * @Date: 2021-06-03 08:56:02
+ * @LastEditors: iowen
+ * @LastEditTime: 2023-02-04 01:31:17
+ * @FilePath: \onenav\templates\related-sites.php
+ * @Description: 
+ */
 /*!
  * Theme Name:One Nav
  * Theme URI:https://www.iotheme.cn/
@@ -38,7 +47,7 @@ if ($i < $post_num) {
             $exclude[] = get_the_ID();
             //if(current_user_can('level_10') || !get_post_meta($post->ID, '_visible', true)):
             ?>
-                <div class="url-card <?php echo io_get_option('two_columns')?"col-6":"" ?> col-sm-6 col-md-4 <?php echo before_class($post->ID) ?>">
+                <div class="url-card <?php echo io_get_option('two_columns',false)?"col-6":"" ?> col-sm-6 col-md-4 <?php echo before_class($post->ID) ?>">
                 <?php include( get_theme_file_path('/templates/card-site.php') ); ?>
                 </div>
             <?php //endif; 
@@ -69,7 +78,7 @@ if ($i < $post_num) {
             while ( $related_items->have_posts() ) : $related_items->the_post();
             //if(current_user_can('level_10') || !get_post_meta($post->ID, '_visible', true)):
             ?>
-                <div class="url-card <?php echo io_get_option('two_columns')?"col-6":"" ?> col-sm-6 col-md-4 <?php echo before_class($post->ID) ?>">
+                <div class="url-card <?php echo io_get_option('two_columns',false)?"col-6":"" ?> col-sm-6 col-md-4 <?php echo before_class($post->ID) ?>">
                 <?php include( get_theme_file_path('/templates/card-site.php') ); ?>
                 </div>
             <?php //endif; 

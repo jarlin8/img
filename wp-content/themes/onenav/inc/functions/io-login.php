@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-09 21:11:15
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-27 18:45:45
+ * @LastEditTime: 2023-02-17 04:13:57
  * @FilePath: \onenav\inc\functions\io-login.php
  * @Description: 
  */
@@ -27,8 +27,8 @@ function io_login_authenticate($user, $username, $password){
 	$limit	= get_transient($key) ?: 0;
 
 	if($limit >= io_get_option('login_limit',5)){
-		remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
-		remove_filter('authenticate', 'wp_authenticate_email_password', 20, 3);
+		remove_filter('authenticate', 'wp_authenticate_username_password', 20);
+		remove_filter('authenticate', 'wp_authenticate_email_password', 20);
 
 		return new WP_Error( 'too_many_retries', sprintf(__('已多次登录失败，请%s分钟后重试！', 'i_theme'),io_get_option('login_limit_time',10)) );
 	}
@@ -109,7 +109,7 @@ function io_login_footer(){
             <span>Copyright © <a href="'. esc_url(home_url()) .'" class="text-white-50" title="'. get_bloginfo('name') .'" rel="home">'. get_bloginfo('name') .'</a></span> 
     </div>';
 }
-if (!io_get_option('user_center') && io_get_option('modify_default_style')) {
+if (!io_get_option('user_center',false) && io_get_option('modify_default_style',false)) {
     add_action('login_head', 'io_custom_login_style');
     add_action('login_header', 'io_login_header');
     add_action('login_footer', 'io_login_footer');
@@ -126,13 +126,14 @@ if (!io_get_option('user_center') && io_get_option('modify_default_style')) {
 /**
  * 获取注册时验证标题
  * 'email' 'phone'
+ * @param mixed $page reg or lost_verify
  * @return string
  */
-function get_reg_name(){
+function get_reg_name($page = 'reg'){
     $title = '';
-    $types = io_get_option('reg_type');
+    $types = io_get_option("{$page}_type",array('email'));
     if (count($types) == 1) {
-        foreach (io_get_option('reg_type') as $v) {
+        foreach ($types as $v) {
             switch ($v) {
                 case 'email':
                     $title .= __('邮箱', 'i_theme');
@@ -150,42 +151,31 @@ function get_reg_name(){
 
 /**
  * 验证方式判断
- * @param mixed $reg_type
  * @param mixed $to
+ * @param mixed $type
+ * @param mixed $page reg or lost_verify
  * @return array
  */
-function reg_form_judgment($to){
-    $reg_type = io_get_option('reg_type');
+function reg_form_judgment($to, $type ='', $page = 'reg'){
+    $reg_type = $type ?: io_get_option("{$page}_type", array('email'));
     $error = '';
     $type = '';
     if (!$reg_type || !$to) {
         return array('type' => $type, 'to' => $to, 'error'=>(array('status' => 3, 'msg' => __('参数传入错误','i_theme' ))));
     }
 
-    if (count($reg_type) == 1) {
+    if ( is_array($reg_type) && count($reg_type) == 1) {
         foreach ($reg_type as $v) {
-            switch ($v) {
-                case 'email':
-                    $type = 'email';
-                    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
-                        $error = array(
-                            "status" => 3,
-                            "msg" => __('邮箱格式错误', 'i_theme')
-                        );
-                    }
-                    break;
-                case 'phone':
-                    $type = 'phone';
-                    if (!IOSMS::is_phone_number($to)) {
-                        $error = array(
-                            "status" => 3,
-                            "msg" => __('手机号格式错误！', 'i_theme')
-                        );
-                    }
-                    break;
-            }
+            $data  = io_filter_var_to($to,$v);
+            $type  = isset($data['type'])?$data['type']:'';
+            $error = isset($data['error'])?$data['error']:'';
         }
     } else {
+        if($reg_type){
+            $data  = io_filter_var_to($to,$reg_type);
+            $type  = isset($data['type'])?$data['type']:'';
+            $error = isset($data['error'])?$data['error']:'';
+        }
         if (is_numeric($to)) {
             if (IOSMS::is_phone_number($to)) {
                 $type = 'phone';
@@ -200,4 +190,28 @@ function reg_form_judgment($to){
         }
     }
     return array('type' => $type, 'to' => $to, 'error' => $error);
+}
+function io_filter_var_to($to, $type){
+    $data = array();
+    switch ($type) {
+        case 'email':
+            $data['type'] = 'email';
+            if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
+                $data['error'] = array(
+                    "status" => 3,
+                    "msg" => __('邮箱格式错误', 'i_theme')
+                );
+            }
+            break;
+        case 'phone':
+            $data['type'] = 'phone';
+            if (!IOSMS::is_phone_number($to)) {
+                $data['error'] = array(
+                    "status" => 3,
+                    "msg" => __('手机号格式错误！', 'i_theme')
+                );
+            }
+            break;
+    }
+    return $data;
 }

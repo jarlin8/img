@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-03-01 10:19:02
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-27 18:40:52
+ * @LastEditTime: 2023-02-17 06:45:46
  * @FilePath: \onenav\inc\auth\gzh.php
  * @Description: 
  */
@@ -32,7 +32,7 @@ try {
 
         $text = '微信扫码' . (!empty($_REQUEST["bind"]) ? '绑定' : '登录');
         $html = '<div class="text-center mb-2"><i class="text-success iconfont icon-qr-sweep mr-2"></i>' . $text . '</div>';
-        $html .= '<div class="text-center"><img class="signin-qrcode-img" src="' . $qrcode . '" alt="' . $text . '"></div>';
+        $html .= '<div class="text-center"><img class="signin-qrcode-img" src="' . $qrcode . '" alt="' . $text . '" style="width:198px"></div>';
         $but  = '<div class="text-muted"><small>使用其他方式 <a href="'. esc_url(home_url('/login/')) .'" class="signup">'.__('登录','i_theme').'</a> / <a href="'. esc_url(home_url('/login/?action=register')) .'" class="signup">'.__('注册','i_theme').'</a></small></div>';
         echo (json_encode(array('html' => $html, 'but'=>$but, 'url' => $callback, 'state' => $oauth->state)));
     }

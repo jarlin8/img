@@ -46,7 +46,7 @@ if($imgurl == ''){
                 <div class="col">
                     <div class="d-md-flex mt-n3 mb-5 my-xl-0">
                         <div class="app-ico text-center mr-0 mr-md-2 mb-3 mb-md-0">
-                            <?php if(io_get_option('lazyload')): ?>
+                            <?php if(io_get_option('lazyload',false)): ?>
                             <img class="app-rounded mr-0 mr-md-3 lazy" src="<?php echo $default_ico; ?>" data-src="<?php echo $imgurl ?>" width="128" alt="<?php echo $name  ?>">
                             <?php else: ?>
                             <img class="app-rounded mr-0 mr-md-3" src="<?php echo $imgurl ?>" width="128" alt="<?php echo $name  ?>">
@@ -96,7 +96,7 @@ if($imgurl == ''){
                                 <div class="carousel-item <?php echo $i==0?'active':'' ?>"> 
                                     <div class="img_wrapper"> 
                                     <a href="<?php echo $screen_img ?>" class="text-center" data-fancybox="screen" data-caption="<?php echo sprintf( __('%s的使用截图', 'i_theme'), $name ).'['.($i+1).']' ?>"> 
-                                    <?php if(io_get_option('lazyload')): ?>
+                                    <?php if(io_get_option('lazyload',false)): ?>
                                     <img src="" data-src="<?php echo $screen_img ?>" class="img-fluid lazy" alt="<?php echo sprintf( __('%s的使用截图', 'i_theme'), $name ).'['.($i+1).']' ?>">
                                     <?php else: ?>
                                     <img src="<?php echo $screen_img ?>" class="img-fluid" alt="<?php echo sprintf( __('%s的使用截图', 'i_theme'), $name ).'['.($i+1).']' ?>">
@@ -142,7 +142,7 @@ if($imgurl == ''){
                     <?php if($formal_url = get_post_meta(get_the_ID(), '_down_formal', true)) echo ('<div class="text-center"><a href="' . go_to($formal_url) . '" target="_blank" class="btn btn-lg btn-outline-primary custom_btn-outline  text-lg radius-50 py-3 px-5 my-3">'.__('去官方网站了解更多','i_theme').'</a></div>') ?>
                 </div> 
             </div>
-            <?php if( io_get_option('leader_board') && io_get_option('details_chart')){ ?>
+            <?php if( io_get_option('leader_board',false) && io_get_option('details_chart',false)){ ?>
             <h2 class="text-gray text-lg my-4"><i class="iconfont icon-zouxiang mr-1"></i>数据统计</h2>
             <div class="card"> 
                 <div id="chart-container" class="" style="height:300px" data-type="<?php echo $sites_type ?>" data-post_id="<?php echo get_the_ID() ?>" data-nonce="<?php echo wp_create_nonce( 'post_ranking_data' ) ?>">
@@ -199,7 +199,7 @@ if($imgurl == ''){
                             <?php show_ad('ad_res_down_popup',false, '<div class="apd apd-footer d-none d-md-block mb-4">' , '</div>');  ?> 
                             <div class="statement p-3"><p></p>
                                 <i class="iconfont icon-statement icon-2x mr-2" style="vertical-align: middle;"></i><strong><?php _e('声明：','i_theme') ?></strong>
-                                <div class="text-sm mt-2" style="margin-left: 39px;"><?php echo io_get_option('down_statement') ?></div>
+                                <div class="text-sm mt-2" style="margin-left: 39px;"><?php echo io_get_option('down_statement','') ?></div>
                             </div>
                         </div>  
                         <div style="position: absolute;bottom: -40px;width: 100%;text-align: center;"><a href="javascript:" data-dismiss="modal"><i class="iconfont icon-close-circle icon-2x" style="color: #fff;"></i></a></div>

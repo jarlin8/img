@@ -6,14 +6,14 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:55:57
  * @LastEditors: iowen
- * @LastEditTime: 2022-01-23 12:47:37
+ * @LastEditTime: 2023-02-03 23:56:34
  * @FilePath: \onenav\author.php
  * @Description: 
  */
 ?>
 <?php if ( ! defined( 'ABSPATH' ) ) { exit; }?>
 <?php 
-if(!io_get_option('user_center')){
+if(!io_get_option('user_center',false)){
     global $wp_query;
     $wp_query->set_404();
     status_header(404);

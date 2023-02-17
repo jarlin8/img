@@ -1,20 +1,9 @@
-
-window.callback = function(res){
-    if(res.ret === 0){
-        var but = document.getElementById("TencentCaptcha");
-        document.getElementById("tcaptcha_ticket").value = res.ticket;
-        document.getElementById("tcaptcha_randstr").value = res.randstr;
-        document.getElementById("tcaptcha_007").value = 1;
-        but.style.cssText = "color:#fff;background:#4fb845;border-color:#4fb845;pointer-events:none";
-        but.innerHTML = tg_data.local.v_success;
-    } else if(res.ret === 2) {
-        var but = document.getElementById("TencentCaptcha");
-        but.innerHTML = tg_data.local.v_canceled;
-    }
-}; 
-if( !tg_data.is_007 ) {
-    //var canvas_code = {};
-}
+/*!
+ * Theme Name:One Nav
+ * Theme URI:https://www.iotheme.cn/
+ * Author:iowen
+ * Author URI:https://www.iowen.cn/
+ */
 function currentType(data) {
     var t = $(data).data('type');
     $('input[name="sites_type"]').val(t);
@@ -39,67 +28,22 @@ function currentType(data) {
             showAlert({"status":3,"msg":tg_data.local.fill_url});
         }
     });
-    $('.post-tg').submit(function() {
-        var t = $(this);
-        var myform = t[0];
+    $('.post-tg #submit').click(function() {
+        var t = $(this); 
 
-        if(t.hasClass('is-post')) tinyMCE.triggerSave();
-
-        var formData = new FormData(myform);
-        if( tg_data.is_007 ) {
-            if($('#tcaptcha_007').val()!='1'){
-                showAlert({"status":3,"msg":tg_data.local.v_first});
-                return false;
-            }
-        } else {
-            if($('#input_veri').val().toLowerCase() != canvas_code['tougao_captcha'].toLowerCase()){
-                showAlert({"status":3,"msg":tg_data.local.code_error});
-                return false;
-            } 
-            for (var i in canvas_code) {
-                formData.append('canvas_code['+i+']', canvas_code[i]);
-            }
-        }
-        $.ajax({
-            url:         theme.ajaxurl,
-            type:        'POST',
-            dataType:    'json',
-            data:        formData,
-            cache:       false,
-            processData: false,
-            contentType: false
-        }).done(function (result) {
+        if (t.hasClass('is-post')) tinyMCE.triggerSave();
+        
+        captcha_ajax(t, '', function (result) {
             if(result.status == 1){
-                if( !tg_data.is_007 ) {
-                    drawCode('tougao_captcha', canvas_code);
-                    $('#input_veri').val('');
-                }else{
-                    var but = document.getElementById("TencentCaptcha");
-                    but.style.cssText = "";
-                    but.innerHTML = tg_data.local.v_text;
-                    $('#tcaptcha_007').val('');
-                }
                 $('.form-control').not(':button, :submit, :reset, :hidden').val('').removeAttr('checked').removeAttr('selected');
                 //清理图标
                 $(".show-sites").attr("src", theme.addico);
                 $(".tougao-sites").val('');
                 $(".remove-sites").data('id','').hide();
                 $(".upload-sites").val("").parent().removeClass('disabled');
-
-                if (result.url) {
-                    window.location.href = result.url;
-                    window.location.reload;
-                }
+                $('[name="image_captcha"]').val('');
+                $('.image-captcha').click();
             }
-            if(result.reset == 1){
-                var but = document.getElementById("TencentCaptcha");
-                but.style.cssText = "";
-                but.innerHTML = tg_data.local.v_text;
-                $('#tcaptcha_007').val('');
-            }
-            showAlert(result);
-        }).fail(function (result) {
-            showAlert({"status":3,"msg":tg_data.local.timeout});
         });
         return false;
     }); 

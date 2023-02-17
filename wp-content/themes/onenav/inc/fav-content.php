@@ -46,7 +46,7 @@ function fav_con($mid,$parent_term = null) {
         <div class="d-flex flex-fill align-items-center mb-4">
             <h4 class="text-gray text-lg m-0">
                 <i class="site-tag <?php echo $icon ?> icon-lg mr-1" id="term-<?php echo $tag_id ?>"></i>
-                <?php if( null !== $parent_term && io_get_option("tab_p_n")&& !wp_is_mobile() ){ 
+                <?php if( null !== $parent_term && io_get_option("tab_p_n",false)&& !wp_is_mobile() ){ 
                     echo $parent_term->name . '<span style="color:#f1404b"> · </span>';
                 } 
                 echo $mid->name; ?>
@@ -96,7 +96,7 @@ function fav_con_a($mid,$parent_term = null) {
         <div class="d-flex flex-fill align-items-center mb-4">
             <h4 class="text-gray text-lg m-0">
                 <i class="site-tag <?php echo $icon ?> icon-lg mr-1" id="term-<?php echo $tag_id ?>"></i>
-                <?php if( null !== $parent_term && io_get_option("tab_p_n")&& !wp_is_mobile() ){ 
+                <?php if( null !== $parent_term && io_get_option("tab_p_n",false)&& !wp_is_mobile() ){ 
                     echo $parent_term['title'] . '<span style="color:#f1404b"> · </span>';
                 } 
                 echo $mid['title']; ?>
@@ -144,7 +144,7 @@ function fav_con_tab($category,$parent_term,$is_ajax = false) {
      */
     do_action( 'io_before_show_category_code' ,$parent_term );
     ?>
-        <?php if(io_get_option("tab_p_n") ){ ?>
+        <?php if(io_get_option("tab_p_n",false) ){ ?>
         <h4 class="text-gray text-lg">
             <i class="site-tag <?php echo $icon ?> icon-lg mr-1" id="term-<?php echo $parent_term['object_id'] ?>"></i>
             <?php echo $parent_term['title']; ?>
@@ -237,10 +237,10 @@ endif;
 if(!function_exists('show_card')):
 /**
  * 显示分类内容
- * @param  String $site_n 需显示的数量
- * @param  String $cat_id 分类id
- * @param  String $taxonomy 分类名
- * @param  String $ajax  
+ * @param  string $site_n 需显示的数量
+ * @param  int $cat_id 分类id
+ * @param  string $taxonomy 分类名
+ * @param  string $ajax  
  */
 function show_card($site_n,$cat_id,$taxonomy,$ajax=''){ 
     if ( !in_array( $taxonomy, get_menu_category_list() ) ){
@@ -267,7 +267,7 @@ function show_card($site_n,$cat_id,$taxonomy,$ajax=''){
     $myposts = wp_cache_get( $cache_key ,'home-card');
     if ( false === $myposts ) { 
         $myposts = new WP_Query( array_merge($args,$args2) );
-        if( io_get_option('show_sticky'))
+        if( io_get_option('show_sticky',false))
             $myposts= sticky_posts_to_top($myposts,to_post_type($taxonomy),$taxonomy,$cat_id);
         //show_post($myposts,$taxonomy,$ajax);
         if( $_order == '_down_count' || $_order == 'views' )
@@ -294,10 +294,10 @@ endif;
 if(!function_exists('show_post')){
 /**
  * 输出内容卡片
- * @param  object $myposts 
- * @param  String $taxonomy 分类名
- * @param  String $ajax  
- * @param  String $cat_id 分类id
+ * @param WP_Query $myposts 
+ * @param string $taxonomy 分类名
+ * @param string $ajax  
+ * @param string $cat_id 分类id
  */
 function show_post($myposts,$taxonomy,$ajax,$cat_id=0){
     global $post, $is_sidebar;
@@ -325,19 +325,19 @@ function show_post($myposts,$taxonomy,$ajax,$cat_id=0){
             }
         }
         S_SETTING: 
-        if(io_get_option('site_card_mode') == 'max'){ 
+        if(io_get_option('site_card_mode','max') == 'max'){ 
             S_MAX:
-            echo '<div class="url-card io-px-2 '.get_columns('sites',$cat_id,false,$is_sidebar).' '. before_class($post->ID).' '.$ajax.'">';
+            echo '<div class="url-card io-px-2 '.get_columns('sites',$cat_id,false,$is_sidebar,'max').' '. before_class($post->ID).' '.$ajax.'">';
             include( get_theme_file_path('/templates/card-sitemax.php') );
             echo '</div>';
-        }elseif(io_get_option('site_card_mode') == 'min'){ 
+        }elseif(io_get_option('site_card_mode','max') == 'min'){ 
             S_MIM:
             echo '<div class="url-card io-px-2 '.get_columns('sites',$cat_id,false,$is_sidebar).' '. before_class($post->ID).' '.$ajax.'">';
             include( get_theme_file_path('/templates/card-sitemini.php') );
             echo '</div>';
         }else{ 
             S_DEF:
-            echo '<div class="url-card io-px-2 '.(io_get_option('two_columns')?"col-6 ":"").get_columns('sites',$cat_id,false,$is_sidebar).' '. before_class($post->ID).' '.$ajax.'">';
+            echo '<div class="url-card io-px-2 '.(io_get_option('two_columns',false)?"col-6 ":"").get_columns('sites',$cat_id,false,$is_sidebar).' '. before_class($post->ID).' '.$ajax.'">';
             include( get_theme_file_path('/templates/card-site.php') );
             echo '</div>';
         }
@@ -356,7 +356,7 @@ function show_post($myposts,$taxonomy,$ajax,$cat_id=0){
             }
         }
         A_SETTING: 
-        if(io_get_option('app_card_mode') == 'card'){
+        if(io_get_option('app_card_mode','card') == 'card'){
             A_CARD:
             echo'<div class="io-px-2 col-12 col-md-6 col-lg-4 col-xxl-5a '.$ajax.'">';
             include( get_theme_file_path('/templates/card-appcard.php') ); 
@@ -385,12 +385,12 @@ function show_post($myposts,$taxonomy,$ajax,$cat_id=0){
             }
         }
         P_SETTING:
-        if(io_get_option('post_card_mode')=="card"){
+        if(io_get_option('post_card_mode','card')=="card"){
             P_CARD:
             echo '<div class="io-px-2 col-12 col-sm-6 col-lg-4 col-xxl-3 '.$ajax.'">';
             get_template_part( 'templates/card','postmin' );
             echo '</div>';
-        }elseif(io_get_option('post_card_mode')=="default"){
+        }elseif(io_get_option('post_card_mode','card')=="default"){
             P_DEF:
             echo '<div class="io-px-2 col-6 col-md-4 col-xl-3 col-xxl-6a py-2 py-md-3 '.$ajax.'">';
             get_template_part( 'templates/card','post' );

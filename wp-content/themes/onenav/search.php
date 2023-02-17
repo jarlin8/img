@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-03-01 10:19:07
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-25 22:52:44
+ * @LastEditTime: 2023-02-04 00:12:50
  * @FilePath: \onenav\search.php
  * @Description: 
  */
@@ -20,7 +20,7 @@ get_header();
 			<div class="content-layout">
 				<div class="mb-4"> 
 					<?php 
-					$search_page = io_get_option('search_page_post')['enabled'];
+					$search_page = io_get_option('search_page_post',array('enabled'=>array()))['enabled'];
 					if(count($search_page)>1){
 					foreach($search_page as $k => $v){
 						//$title = sprintf( __('有关“%s”的网站', 'i_theme'), htmlspecialchars($s) ) ;

@@ -1,4 +1,13 @@
 <?php if ( ! defined( 'ABSPATH' )  ) { die; }
+/*
+ * @Author: iowen
+ * @Author URI: https://www.iowen.cn/
+ * @Date: 2022-07-20 16:23:07
+ * @LastEditors: iowen
+ * @LastEditTime: 2023-02-17 06:58:13
+ * @FilePath: \onenav\inc\theme-settings.php
+ * @Description: 
+ */
  
 if (!is_admin()) return;
 $prefix = 'io_get_option';
@@ -55,6 +64,7 @@ $hot_list_order = array(
     'views'         => '查看次数',
     'comment_count' => '评论量',
     '_down_count'   => '下载最多(APP)',
+    'random'        => '随机',
 );
 if(!io_get_option('user_center',false)){
     $hot_list_order['_like_count'] = '点赞(大家喜欢)';
@@ -102,13 +112,7 @@ CSF::createSection( $prefix, array(
         array(
             'type'    => 'content',
             'title'   => '系统环境',
-            'content' => '<ul><li><strong>操作系统</strong>： ' . PHP_OS . ' </li>
-            <li><strong>运行环境</strong>： ' . $_SERVER["SERVER_SOFTWARE"] . ' </li>
-            <li><strong>PHP版本</strong>： ' . PHP_VERSION . ' </li>
-            <li><strong>WordPress版本</strong>： ' . get_bloginfo('version') . '</li>
-            <li><strong>系统信息</strong>： ' . php_uname() . ' </li>
-            <li><strong>服务器时间</strong>： ' . current_time('mysql') . '</li></ul>
-            <a class="button button-primary" href="' . admin_url('site-health.php?tab=debug') . '">查看更多系统信息</a>',
+            'content' => io_get_system_info(),
         ),
         array(
             'type'    => 'content',
@@ -251,6 +255,13 @@ CSF::createSection( $prefix, array(
             'after'   => $tip_ico.'填24小时时间，如浅色：7，深色：18',
 			'class'   => 'compact'
 		),
+        array(
+            'id'      => 'back_to_top_ico',
+            'type'    => 'icon',
+            'title'   => '次级导航返回后按钮',
+            'default' => 'iconfont icon-back',
+            'class'   => 'new',
+        ),
         array(
             'id'      => 'mobile_header_layout',
             'type'    => "image_select",
@@ -399,10 +410,25 @@ CSF::createSection( $prefix, array(
             'id'      => 'nav_comment',
             'type'    => 'switcher',
             'title'   => __('站点评论','io_setting'),
-            'text_on' => '启用',
-            'text_off'=> '禁用',
-            'text_width' => 80,
             'default' => true,
+            'label'   => '全局开关',
+        ),
+        array(
+            'id'      => 'global_remove',
+            'type'    => 'radio',
+            'title'   => '内容显示权限',
+            'options' => array(
+                'admin' => '仅查看对应权限内容',
+                'user'  => '仅限制未登录用户',
+                'point' => '不限制仅提示',
+            ),
+            'default' => 'point',
+            'class'   => 'new',
+            'after'   => '<p>'.$tip_ico.'选项说明（如有疑问，请试试）：</p><ol><li><b>仅查看对应权限内容</b>：根据权限，彻底阻止访问未授权的内容，访问高权资源会404，相当于网站不存在对应资源。</li>
+                            <li><b>不限制仅提示</b>：在首页等列表能看到站点所有资源，进入高权资源会提示引导相关操作，如登录，升级用户组等。</li>
+                            <li><b>仅限制未登录用户</b>：未登录用户如[仅查看对应权限内容]选项，登录用户如[不限制仅提示]选项</li></ol>
+                            <p>内容权限请到内容编辑页内修改</p>
+                            注意：管理员可见资源永远只能管理员看到',
         ),
         array(
             'id'      => 'min_nav',
@@ -411,17 +437,17 @@ CSF::createSection( $prefix, array(
             'label'   => __('开启后，左侧菜单默认收缩，开启前请设置好菜单项图标','io_setting'),
             'default' => false,
         ),
-        array(
-            'id'             => 'blog_pages',
-            'type'           => 'select',
-            'title'          => '博客页面',
-            'after'          => __(' 如果没有，新建页面，选择“博客页面”模板并保存。<br>用于最新资讯旁边的“所有”按钮。','io_setting'),
-            'options'        => 'pages',
-            'query_args'     => array(
-                'posts_per_page'  => -1,
-            ),
-            'placeholder'    => __('选择一个页面', 'io_setting'), 
-        ),
+        //array(
+        //    'id'             => 'blog_pages',
+        //    'type'           => 'select',
+        //    'title'          => '博客页面',
+        //    'after'          => __(' 如果没有，新建页面，选择“博客页面”模板并保存。<br>用于最新资讯旁边的“所有”按钮。','io_setting'),
+        //    'options'        => 'pages',
+        //    'query_args'     => array(
+        //        'posts_per_page'  => -1,
+        //    ),
+        //    'placeholder'    => __('选择一个页面', 'io_setting'), 
+        //),
         array(
             'id'        => 'sidebar_layout',
             'type'      => 'radio',
@@ -441,6 +467,13 @@ CSF::createSection( $prefix, array(
             'after'   => __('大屏顶部菜单在移动设备上显示到侧边栏菜单，-->留空则不显示<--','io_setting'),
             'default' => '站点推荐',
             'class'   => '',
+        ),
+        array(
+            'id'      => 'nav_top_mobile_ico',
+            'type'    => 'icon',
+            'title'   => '移动设备顶部菜单图标',
+            'default' => 'iconfont icon-category',
+            'class'   => 'compact min new',
         ),
         array(
             'id'          => 'cdn_resources',
@@ -556,39 +589,39 @@ CSF::createSection( $prefix, array(
         array(
             'id'         => 'links',
             'type'       => 'switcher',
-            'title'      => ' ┗━━ '.__('友情链接','io_setting'),
+            'title'      => __('友情链接','io_setting'),
             'label'      => __('在首页底部添加友情链接','io_setting'),
             'default'    => true,
-            'class'      => 'compact',
+            'class'      => 'compact min',
             'dependency' => array( 'show_friendlink', '==', true )
         ),
         array(
             'id'          => 'home_links',
             'type'        => 'checkbox',
-            'title'       => ' ┗━━ '.__('首页显示分类','io_setting'),
+            'title'       => __('首页显示分类','io_setting'),
             'after'       => __('不选则全部显示。','io_setting'),
             'inline'      => true,
-            'class'       => 'compact',
+            'class'       => 'compact min',
             'options'     => 'categories',
             'query_args'  => array(
                 'taxonomy'  => 'link_category',
             ),
             'dependency'  => array( 'show_friendlink|links', '==|==', 'true|true' )
         ),
-        array(
-            'id'          => 'links_pages',
-            'type'        => 'select',
-            'title'       => ' ┗━━ '.__('友情链接归档页','io_setting'),
-            'after'       => __(' 如果没有，新建页面，选择“友情链接”模板并保存。','io_setting'),
-            'options'     => 'pages',
-            'class'       => 'compact',
-            'query_args'  => array(
-                'posts_per_page'  => -1,
-            ),
-            'placeholder' => __('选择友情链接归档页面', 'io_setting'),
-            //'default'     => io_get_template_page_url('template-links.php',true),
-            'dependency'  => array( 'show_friendlink|links', '==|==', 'true|true' )
-        ),
+        //array(
+        //    'id'          => 'links_pages',
+        //    'type'        => 'select',
+        //    'title'       => __('友情链接归档页','io_setting'),
+        //    'after'       => __(' 如果没有，新建页面，选择“友情链接”模板并保存。','io_setting'),
+        //    'options'     => 'pages',
+        //    'class'       => 'compact min',
+        //    'query_args'  => array(
+        //        'posts_per_page'  => -1,
+        //    ),
+        //    'placeholder' => __('选择友情链接归档页面', 'io_setting'),
+        //    //'default'     => io_get_template_page_url('template-links.php',true),
+        //    'dependency'  => array( 'show_friendlink|links', '==|==', 'true|true' )
+        //),
         array(
             'id'      => 'save_image',
             'type'    => 'switcher',
@@ -651,25 +684,28 @@ CSF::createSection( $prefix, array(
                     'id'    => 'favorites',
                     'type'  => 'spinner',
                     'title' => __('网址数量','io_setting'),
-                    'step'       => 1,
+                    'step'  => 1,
                 ),
                 array(
                     'id'    => 'apps',
                     'type'  => 'spinner',
                     'title' => __('App 数量','io_setting'),
-                    'step'       => 1,
+                    'step'  => 1,
+                    'class' => 'compact min',
                 ),
                 array(
                     'id'    => 'books',
                     'type'  => 'spinner',
                     'title' => __('书籍数量','io_setting'),
-                    'step'       => 1,
+                    'step'  => 1,
+                    'class' => 'compact min',
                 ),
                 array(
                     'id'    => 'category',
                     'type'  => 'spinner',
                     'title' => __('文章数量','io_setting'),
-                    'step'       => 1,
+                    'step'  => 1,
+                    'class' => 'compact min',
                 ),
             ),
             'default'        => array(
@@ -684,7 +720,6 @@ CSF::createSection( $prefix, array(
             'id'         => 'term_more_text',
             'type'       => 'text',
             'title'      => '更多按钮文案',
-            'class'      => 'new',
             'default'    => 'more+', 
         ),
         array(
@@ -697,20 +732,11 @@ CSF::createSection( $prefix, array(
         array(
             'id'      => 'category_sticky',
             'type'    => 'switcher',
-            'title'   => ' ┗━━ '.__('分类&归档页置顶内容前置','io_setting'),
+            'title'   => __('分类&归档页置顶内容前置','io_setting'),
             'label'   => __('注意：会导致第一页内容超过设置的显示数量','io_setting'),
             'default' => false, 
-            'class'   => 'compact',
+            'class'   => 'compact min',
             'dependency' => array( 'show_sticky', '==', true )
-        ),
-        array(
-            'id'      => 'sites_sortable',
-            'type'    => 'switcher',
-            'title'   => __('网址拖拽排序','io_setting'),
-            'label'   => __('在后台网址列表使用拖拽排序,请同时选择“首页网址分类排序”为“自定义排序字段”','io_setting'),
-            'desc'    => __('如果想继续使用老版的排序字段，请关闭此功能','io_setting'),
-            'class'   => '',
-            'default' => true,
         ),
         array(
             'id'        => 'home_sort',
@@ -744,6 +770,7 @@ CSF::createSection( $prefix, array(
                         '_down_count'   => '下载次数',
                         'comment_count' => '评论量',
                     ),
+                    'class' => 'compact min',
                 ),
                 array(
                     'id'    => 'books',
@@ -757,6 +784,7 @@ CSF::createSection( $prefix, array(
                         'views'         => '查看次数',
                         'comment_count' => '评论量',
                     ),
+                    'class' => 'compact min',
                 ),
                 array(
                     'id'    => 'category',
@@ -770,6 +798,7 @@ CSF::createSection( $prefix, array(
                         'views'         => '查看次数',
                         'comment_count' => '评论量',
                     ),
+                    'class' => 'compact min',
                 ),
             ),
             'default'        => array(
@@ -798,10 +827,10 @@ CSF::createSection( $prefix, array(
         array(
             'id'      => 'tab_ajax',
             'type'    => 'switcher',
-            'title'   => ' ┗━━ '.__('tab模式 ajax 加载','io_setting'),
+            'title'   => __('tab模式 ajax 加载','io_setting'),
             'label'   => __('降低首次载入时间，但切换tab时有一定延时','io_setting'),
             'default' => true,
-            'class'   => 'compact',
+            'class'   => 'compact min',
             'dependency' => array( 'tab_type', '==', true )
         ),
         array(
@@ -889,6 +918,7 @@ CSF::createSection( $prefix, array(
                         'modified'      => '修改日期',
                         'date'          => '创建日期',
                         'views'         => '查看次数',
+                        'rand'          => '随机',
                     ),
                     'default'   => 'modified',
                     'class'     => 'compact min',
@@ -1091,19 +1121,19 @@ CSF::createSection( $prefix, array(
             'class'      => 'compact',
             'dependency' => array( 'bulletin|show_bulletin', '==|==', 'true|true' )
         ),
-        array(
-            'id'             => 'all_bull',
-            'type'           => 'select',
-            'title'          => __('公告归档页','io_setting'),
-            'after'           => __(' 如果没有，新建页面，选择“所有公告”模板并保存。','io_setting'),
-            'options'        => 'pages',
-            'query_args'     => array(
-                'posts_per_page'  => -1,
-            ),
-            'class'          => 'compact',
-            'placeholder'    => __('选择公告归档页面', 'io_setting'),
-            'dependency'     => array( 'bulletin|show_bulletin', '==|==', 'true|true' )
-        ),
+        //array(
+        //    'id'             => 'all_bull',
+        //    'type'           => 'select',
+        //    'title'          => __('公告归档页','io_setting'),
+        //    'after'           => __(' 如果没有，新建页面，选择“所有公告”模板并保存。','io_setting'),
+        //    'options'        => 'pages',
+        //    'query_args'     => array(
+        //        'posts_per_page'  => -1,
+        //    ),
+        //    'class'          => 'compact',
+        //    'placeholder'    => __('选择公告归档页面', 'io_setting'),
+        //    'dependency'     => array( 'bulletin|show_bulletin', '==|==', 'true|true' )
+        //),
         array(
             'id'        => 'bull_img',
             'type'      => 'upload',
@@ -1121,39 +1151,39 @@ CSF::createSection( $prefix, array(
         array(
             'id'         => 'customize_d_n',
             'type'       => 'text',
-            'title'      => ' ┗━━ '.__('预设网址（每日推荐）','io_setting'),
-            'class'      => 'compact',
+            'title'      => __('预设网址（每日推荐）','io_setting'),
+            'class'      => 'compact min',
             'after'      => __('自定义网址模块添加预设网址，显示位置：<br>1、首页“我的导航”模块预设网址<br>2、“mini 书签页”快速导航列表<br><br>例：1,22,33,44 用英语逗号分开（填文章ID）','io_setting'), 
         ),
         array(
             'id'         => 'customize_show',
             'type'       => 'switcher',
-            'title'      => ' ┗━━ '.__('始终显示[预设网址（每日推荐）]','io_setting'),
+            'title'      => __('始终显示[预设网址（每日推荐）]','io_setting'),
             'label'      => __('开启用户中心后仍然显示预设网址','io_setting'), 
             'default'    => true,
-            'class'      => 'compact',
+            'class'      => 'compact min',
             'dependency' => array( 'customize_card', '==', true )
         ),
         array(
             'id'         => 'customize_count',
             'type'       => 'spinner',
-            'title'      => ' ┗━━ '.__('最多分类','io_setting'),
+            'title'      => __('最多分类','io_setting'),
             'after'      => __('最多显示多少用户自定义网址分类，0 为全部显示','io_setting'), 
             'step'       => 1,
             'default'    => 8,
-            'class'      => 'compact',
+            'class'      => 'compact min',
             'dependency' => array( 'customize_card', '==', true )
         ),
         array(
             'id'         => 'customize_n',
             'type'       => 'spinner',
-            'title'      => ' ┗━━ '.__('最近点击','io_setting'),
+            'title'      => __('最近点击','io_setting'),
             'after'      => __('最近点击网址记录的最大数量','io_setting'),
             'max'        => 50,
             'min'        => 1,
             'step'       => 1,
             'default'    => 10,
-            'class'      => 'compact',
+            'class'      => 'compact min',
             'dependency' => array( 'customize_card', '==', true )
         ),
         array(
@@ -1304,14 +1334,15 @@ CSF::createSection( $prefix, array(
                     'title'      => __('前置站内搜索','io_setting'),
                     'label'      => __('开头显示站内搜索，关闭将不显示搜索推荐','io_setting'),
                     'default'    => true,
+                    'class'      => 'compact min',
                     'dependency' => array( 'search_big', '==', true )
                 ),
                 array(
                     'id'         => 'big_title',
                     'type'       => 'text',
                     'title'      => __('大字标题','io_setting'),
-                    'after'      => __('留空不显示','io_setting'), 
-                    'class'   => '', 
+                    'after'      => $tip_ico.__('留空不显示','io_setting'), 
+                    'class'      => 'compact min',
                     'dependency' => array( 'search_big', '==', true )
                 ),
                 array(
@@ -1320,6 +1351,7 @@ CSF::createSection( $prefix, array(
                     'title'      => __('暗色主题压暗背景','io_setting'),
                     'label'      => __('切换到暗色主题时自动压暗背景','io_setting'),
                     'default'    => true,
+                    'class'      => 'compact min',
                     'dependency' => array( 'search_big', '==', true )
                 ),
                 array(
@@ -1335,6 +1367,7 @@ CSF::createSection( $prefix, array(
                         'css-bing'      => __('bing 每日图片','io_setting'),
                         'canvas-fx'     => __('canvas 特效','io_setting'),
                     ),
+                    'class'      => 'compact min',
                     'dependency' => array( 'search_big', '==', true )
                 ),
                 array(
@@ -1351,6 +1384,7 @@ CSF::createSection( $prefix, array(
                         'color-2' => '#ed17de',
                         'color-3' => '#f4275e',
                     ),
+                    'class'      => 'compact min',
                     'dependency' => array( 'search_big|big_skin', '==|==', 'true|css-color' )
                 ),
                 array(
@@ -1358,6 +1392,7 @@ CSF::createSection( $prefix, array(
                     'type'      => 'upload',
                     'title'     => '背景图片',
                     'add_title' => __('上传','io_setting'),
+                    'class'      => 'compact min',
                     'dependency' => array( 'search_big|big_skin', '==|==', 'true|css-img' )
                 ),
                 array(
@@ -1367,6 +1402,7 @@ CSF::createSection( $prefix, array(
                     'default' => '0',
                     'inline'  => true,
                     'options' => get_all_fx_bg(),
+                    'class'      => 'compact min',
                     'dependency' => array( 'search_big|big_skin', '==|==', 'true|canvas-fx' )
                 ),
                 array(
@@ -1378,6 +1414,7 @@ CSF::createSection( $prefix, array(
                     'attributes' => array(
                         'style'    => 'width: 100%'
                     ),
+                    'class'      => 'compact min',
                     'dependency' => array( 'search_big|canvas_id|big_skin', '==|==|==', 'true|custom|canvas-fx' )
                 ),
                 array(
@@ -1385,6 +1422,7 @@ CSF::createSection( $prefix, array(
                     'type'       => 'switcher',
                     'title'      => __('背景渐变','io_setting'),
                     'default'    => false,
+                    'class'      => 'compact min',
                     'dependency' => array( 'search_big|big_skin', '==|!=', 'true|no-bg' )
                 ),
                 array(
@@ -1392,6 +1430,7 @@ CSF::createSection( $prefix, array(
                     'type'       => 'switcher',
                     'title'      => __('文章轮播上移','io_setting'),
                     'default'    => false,
+                    'class'      => 'compact min',
                     'dependency' => array( 'search_big', '==', true )
                 ),
             ),
@@ -1445,19 +1484,19 @@ CSF::createSection( $prefix, array(
         array(
             'id'      => 'views_n',
             'type'    => 'text',
-            'title'   => ' ┗━━ '.__('访问基数','io_setting'),
+            'title'   => __('访问基数','io_setting'),
             'after'   => __('随机访问基数，取值范围：(0~10)*访问基数<br>设置大于0的整数启用，会导致访问统计虚假，酌情开启，关闭请填0','io_setting'),
             'default' => 0,
-            'class'      => 'compact',
+            'class'      => 'compact min',
             'dependency' => array( 'post_views', '==', true )
         ),
         array(
             'id'      => 'views_r',
             'type'    => 'text',
-            'title'   => ' ┗━━ '.__('访问随机计数','io_setting'),
+            'title'   => __('访问随机计数','io_setting'),
             'after'   => __('访问一次随机增加访问次数，比如访问一次，增加5次<br>取值范围：(1~10)*访问随机数<br>设置大于0的数字启用，可以是小数，如：0.5，但小于0.5会导致取0值<br>会导致访问统计虚假，酌情开启，关闭请填0','io_setting'),
             'default' => 0,
-            'class'      => 'compact',
+            'class'      => 'compact min',
             'dependency' => array( 'post_views', '==', true )
         ),
         array(
@@ -1477,20 +1516,20 @@ CSF::createSection( $prefix, array(
         array(
             'id'      => 'details_chart',
             'type'    => 'switcher',
-            'title'   => ' ┗━━ '.__('详情页显示统计图表','io_setting'),
-            'class'   => 'compact',
+            'title'   => __('详情页显示统计图表','io_setting'),
+            'class'   => 'compact min',
             'default' => true,
             'dependency' => array( 'leader_board', '==', true )
         ),
         array(
             'id'         => 'how_long',
             'type'       => 'spinner',
-            'title'      => ' ┗━━ '.__('统计数据保留天数','io_setting'),
+            'title'      => __('统计数据保留天数','io_setting'),
             'after'      => __('最少30天','io_setting'),
             'unit'       => '天',
             'step'       => 1,
             'default'    => 30,
-            'class'      => 'compact',
+            'class'      => 'compact min',
             'dependency' => array( 'leader_board', '==', true )
         ),
         array(
@@ -1597,11 +1636,28 @@ CSF::createSection( $prefix, array(
             'after'   => '选择首页网址块显示风格：大、中、小<br>'.$tip_ico.'分类设置中的样式优先级最高，如发现此设置无效，请检查分类设置。',
         ),
         array(
+            'id'      => 'two_columns',
+            'type'    => 'switcher',
+            'title'   => __('小屏显示两列','io_setting'),
+            'label'   => __('手机等小屏幕显示两列。不支持[大]号卡片样式','io_setting'),
+            'default' => false,
+            'dependency' => array( 'site_card_mode', '!=', 'max' )
+        ),
+        array(
             'id'        => 'site_archive_n',
             'type'      => 'number',
             'title'     => __('网址分类页显示数量','io_setting'),
             'default'   => 30,
             'after'     => '填写需要显示的数量。填写 0 为根据<a href="'.home_url().'/wp-admin/options-reading.php">系统设置数量显示</a>',
+        ),
+        array(
+            'id'      => 'sites_sortable',
+            'type'    => 'switcher',
+            'title'   => __('网址拖拽排序','io_setting'),
+            'label'   => __('在后台网址列表使用拖拽排序,请同时选择“首页网址分类排序”为“自定义排序字段”','io_setting'),
+            'desc'    => __('如果想继续使用老版的排序字段，请关闭此功能','io_setting'),
+            'class'   => '',
+            'default' => true,
         ),
         array(
             'id'         => 'no_ico',
@@ -1615,7 +1671,7 @@ CSF::createSection( $prefix, array(
             'title'      => __('首字图标','io_setting'),
             'label'      => '未手动上传图标的网址使用首字图标',
             'default'    => false,
-            'class'      => 'new',
+            'dependency' => array( 'no_ico', '==', false )
         ),
         array(
             'id'         => 'first_api_ico',
@@ -1624,7 +1680,7 @@ CSF::createSection( $prefix, array(
             'label'      => '如果 api 图标获取失败，则使用首字图标',
             'default'    => false,
             'class'      => 'compact',
-            'dependency' => array( 'is_letter_ico', '==', true )
+            'dependency' => array( 'no_ico|is_letter_ico', '==|==', 'false|true' )
         ),
         array(
             'id'      => 'letter_ico_s',
@@ -1636,7 +1692,7 @@ CSF::createSection( $prefix, array(
             'unit'    => '%',
             'default' => 40,
             'class'   => 'compact',
-            'dependency' => array( 'is_letter_ico|first_api_ico', '==|==', 'true|false' )
+            'dependency' => array( 'no_ico|is_letter_ico|first_api_ico', '==|==|==', 'false|true|false' )
         ),
         array(
             'id'      => 'letter_ico_b',
@@ -1648,7 +1704,7 @@ CSF::createSection( $prefix, array(
             'unit'    => '%',
             'default' => 90,
             'class'   => 'compact',
-            'dependency' => array( 'is_letter_ico|first_api_ico', '==|==', 'true|false' )
+            'dependency' => array( 'no_ico|is_letter_ico|first_api_ico', '==|==|==', 'false|true|false' )
         ),
         array(
             'id'         => 'report_button',
@@ -1663,7 +1719,6 @@ CSF::createSection( $prefix, array(
             'type'       => 'switcher',
             'title'      => '自动检查网址状态',
             'label'      => '服务器定时检查网址状态（1小时一次），会占用部分服务器资源，',
-            'class'      => 'new',
             'default'    => false,
         ),
         //array(  选项无效？？？？？？？？？
@@ -1699,6 +1754,7 @@ CSF::createSection( $prefix, array(
                     'title'   => '超时',
                     'unit'    => '秒',
                     'after'   => '若链接在检测时超时多久被视为失效。',
+                    'class'   => 'compact min',
                 ),
                 array(
                     'id'      => 'max_execution_time',
@@ -1706,6 +1762,7 @@ CSF::createSection( $prefix, array(
                     'title'   => '最大执行时间',
                     'unit'    => '秒',
                     'after'   => '设置后台每次检查最多可以运行时长。',
+                    'class'   => 'compact min',
                 ),
                 array(
                     'id'      => 'server_load_limit',
@@ -1714,13 +1771,14 @@ CSF::createSection( $prefix, array(
                     'after'   => $is_server_load ? '当前负载：<span id="io_current_load" data-url="'.esc_url(admin_url('admin-ajax.php', 'relative')).'">0.00</span><br><br>
                                     当平均服务器负载超过此值时，链接检查将会停止。此栏填0以关闭负载限制。<br>'.$tip_ico.'如果不懂意思，请保持默认，默认值：4 。' :
                                     '当前服务器不支持负载限制设置！（一般只支持 Linux 系统）',
-                    'class'   => $is_server_load?'':'disabled',
+                    'class'   => ($is_server_load?'':'disabled').' compact min',
                 ),
                 array(
                     'id'      => 'exclusion_list',
                     'type'    => 'textarea',
                     'title'   => __('排除列表','io_setting'),  
                     'before'  => '不检测含有以下关键字的链接（每个关键字用<b>英语逗号</b>分隔，不能有空格）',
+                    'class'   => 'compact min',
                 ),
             ),
             'default'    => array(
@@ -1777,25 +1835,14 @@ CSF::createSection( $prefix, array(
             'class'     => 'compact min',
             'dependency'  => array( 'details_page', '==', true ),
         ),
-        //array(
-        //    'id'      => 'show_speed',
-        //    'type'    => 'switcher',
-        //    'title'   => ' ┗━━ '.__('显示网址链接速度(死链)','io_setting'),
-        //    'label'   => __('在网址详情页显示目标网址的链接速度、国家或地区等信息','io_setting'),
-        //    'desc'    => '为网址失效状态提供数据来源<br>前台 JS 检测，不影响服务器性能',
-        //    'default' => false,
-        //    'class'   => 'compact',
-        //    'dependency' => array( 'details_page', '==', true )
-        //),
-        //array(
-        //    'id'      => 'failure_valve',
-        //    'type'    => 'spinner',
-        //    'title'   => ' ┗━━ '.__('网址失效状态(死链)','io_setting'),
-        //    'desc'    => __('详情页检测链接失败几次后提示管理员检测网址有效性<br>0为关闭提示','io_setting'),
-        //    'default' => 0,
-        //    'class'   => 'compact',
-        //    'dependency' => array( 'details_page|show_speed', '==|==', 'true|true' )
-        //),
+        array(
+            'id'          => 'sites_default_content',
+            'type'        => 'switcher',
+            'title'       => __('网址详情页“数据评估”开关','io_setting'),
+            'label'       => __('内容可在主题文件夹里的 inc\functions\io-single-site.php get_data_evaluation()方法里修改，或者在子主题中重写此方法。','io_setting'),
+            'class'        => 'compact min',
+            'dependency'  => array( 'details_page', '==', true ),
+        ),
         array(
             'id'        => 'sites_columns',
             'type'      => 'tabbed',
@@ -1893,8 +1940,7 @@ CSF::createSection( $prefix, array(
                     )
                 ),
             ),
-            'class'     => '',
-            'after'     => $tip_ico.'如果内容没有根据此设置变化，请检查对应分类的设置。',
+            'after'     => $tip_ico.'注意：如果内容没有根据此设置变化，请检查对应分类的设置。',
         ),
     )
 ));
@@ -2032,7 +2078,6 @@ CSF::createSection( $prefix, array(
             'type'        => 'switcher',
             'title'       => __('OG标签','io_setting'),
             'label'       => __('在头部显示OG标签','io_setting'),
-            'class'       => 'new',
             'default'     => true,
         ),
         array(
@@ -2044,13 +2089,6 @@ CSF::createSection( $prefix, array(
             'default'   => get_theme_file_uri('/screenshot.jpg'),
             'class'     => 'compact',
             'dependency' => array( 'og_switcher', '==', 'true'),
-        ),
-        array(
-            'id'          => 'sites_default_content',
-            'type'        => 'switcher',
-            'title'       => __('网址详情页“数据评估”开关','io_setting'),
-            'label'       => __('内容可在主题文件夹里的 inc\functions\io-single-site.php get_data_evaluation()方法里修改，或者在子主题中重写此方法。','io_setting'),
-            'class'       => '',
         ),
         array(
             'id'        => 'tag_c',
@@ -2196,6 +2234,9 @@ CSF::createSection( $prefix, array(
             'title'   => __('go跳转白名单','io_setting'),
             'subtitle'=> __('go跳转和正文nofollow白名单','io_setting'),
             'after'   => __('一行一个地址，注意不要有空格。<br>需要包含http(s)://<br>iowen.cn和www.iowen.cn为不同的网址<br>此设置同时用于 nofollow 的排除。','io_setting'),
+            'attributes' => array(
+                'rows' => 4,
+            ),
         ),
     )
 ));
@@ -2400,11 +2441,11 @@ CSF::createSection( $prefix, array(
 ));
 
 //
-// SEO-SiteMAP&推广
+// SEO-SiteMAP&推送
 //
 CSF::createSection( $prefix, array(
     'parent'   => 'seo_settings',
-    'title'       => __('SiteMAP&推广','io_setting'),
+    'title'       => __('SiteMAP&推送','io_setting'),
     'icon'        => 'fas fa-sitemap',
     'fields'      => array(
         array(
@@ -2443,7 +2484,7 @@ CSF::createSection( $prefix, array(
                     'id'      => 'baidu-num',
                     'type'    => 'text',
                     'title'   => __('生成链接数量','io_setting'),
-                    'after'   => '链接数越大所占用的资源也越大，根据自己的服务器配置情况设置数量。最新发布的文章首先排在最前。 -1 表示所有。<br />此数量仅指post type的数量总和，不包括分类，勾选的分类是全部生成链接。',
+                    'after'   => '链接数越大所占用的资源也越大，根据自己的服务器配置情况设置数量。最新发布的文章首先排在最前。 <br />-1 表示所有。如果文章太多生成失败，请使用第三方插件。<br />此数量仅指post type的数量总和，不包括分类，勾选的分类是全部生成链接。',
                 ),
                 array(
                     'id'      => 'baidu-auto-update',
@@ -2463,6 +2504,7 @@ CSF::createSection( $prefix, array(
                 'baidu-num'            => '500',
                 'baidu-auto-update'    => true,
             ),
+            'class'      => 'compact min',
             'dependency' => array( 'site_map', '==', true )
         ),
         array(
@@ -2480,6 +2522,7 @@ CSF::createSection( $prefix, array(
                     'type'     => 'text',
                     'title'    => __('推送token值','io_setting'),
                     'after'    => __('输入百度主动推送token值','io_setting'),
+                    'class'    => 'compact min',
                     'dependency'   => array( 'switcher', '==', 'true' )
                 ), 
             ),
@@ -2501,12 +2544,14 @@ CSF::createSection( $prefix, array(
                     'id'       => 'xzh_id',
                     'title'    => __('熊掌号 appid','io_setting'),
                     'type'     => 'text',
+                    'class'    => 'compact min',
                     'dependency'   => array( 'switcher', '==', 'true' )
                 ),
                 array(
                     'id'       => 'xzh_token',
                     'title'    => __('熊掌号 token','io_setting'),
                     'type'     => 'text',
+                    'class'    => 'compact min',
                     'dependency'   => array( 'switcher', '==', 'true' )
                 ),
             ),
@@ -2543,7 +2588,7 @@ CSF::createSection( $prefix, array(
             'id'      => 'weather_location',
             'type'    => 'radio',
             'title'   => __('天气位置','io_setting'),
-            'default' => __('footer','io_setting'),
+            'default' => 'footer',
             'inline'  => true,
             'options' => array(
                 'header'  => __('头部', 'io_setting'),
@@ -2579,7 +2624,7 @@ CSF::createSection( $prefix, array(
             'type'       => 'button_set',
             'title'      => __('字体图标源', 'io_setting'),
             'label'      => __('fa 和阿里图标二选一，为轻量化资源，不能共用。', 'io_setting'),
-            'desc'       => '<a href="https://www.iotheme.cn/onenavzhuticaidantubiaoshezhi.html" target="_blank">教程--></a>',
+            'desc'       => $tip_ico.'使用方法：<a href="https://www.iotheme.cn/onenavzhuticaidantubiaoshezhi.html" target="_blank">教程--></a>',
             'options'    => array(
                 ''  => 'fa图标',
                 '1' => '阿里图标',
@@ -2595,18 +2640,61 @@ CSF::createSection( $prefix, array(
         array(
             'id'         => 'iconfont_url',  
             'type'       => 'textarea',
-            'title'      => ' ┗━━ '.__('阿里图标库地址', 'io_setting'),
+            'title'      => __('阿里图标库地址', 'io_setting'),
             'after'       => '<h4>输入阿里图标库在线链接，可多个，一行一个地址，注意不要有空格。</h4>图标库地址：<a href="https://www.iconfont.cn/" target="_blank">--></a><br>教程地址：<a href="https://www.iotheme.cn/one-nav-yidaohangzhutishiyongaliyuntubiaodefangfa.html" target="_blank">--></a>
             <br><p><i class="fa fa-fw fa-info-circle fa-fw"></i> 阿里图标库项目的 FontClass/Symbol前缀 必须为 “<b>io-</b>”，Font Family 必须为 “<b>io</b>”，具体看上面的教程。</p>注意：项目之间的<b>图标名称</b>不能相同，<b>彩色</b>图标不支持变色。',
-            'class'      => 'compact',
+            'class'      => 'compact min',
+            'attributes' => array(
+                'rows' => 4,
+            ),
             'default'    => '//at.alicdn.com/t/font_1620678_18rbnd2homc.css',
             'dependency' => array( 'is_iconfont', '==', '1' )
         ),
-        
         array(
-            'type'    => 'submessage',
-            'style'   => 'danger',
-            'content' => __('下面的功能尽量不要动，出问题了点击上方“重置部分”重置此页设置','io_setting'),
+            'id'        => 'ip_location',
+            'type'      => 'fieldset',
+            'title'     => __('IP归属地','io_setting'),
+            'fields'    => array(
+                array(
+                    'id'      => 'level',
+                    'type'    => "select",
+                    'title'   => 'IP归属地显示格式',
+                    'options' => array(
+                        '1' => '仅国家',
+                        '2' => '仅省',
+                        '3' => '仅市',
+                        '4' => '国家+省',
+                        '5' => '省+市',
+                        '6' => '详细',
+                    ),
+                    'default' => '2',
+                ),
+                array(
+                    'id'      => 'v4_type',
+                    'type'    => 'radio',
+                    'title'   => 'IPv4归属地数据库版本',
+                    'inline'  => true,
+                    'options' => array(
+                        'qqwry'     => 'QQwry',
+                        'ip2region' => 'Ip2Region',
+                    ), 
+                    'class'   => 'compact min',
+                    'default' => 'qqwry',
+                ),
+                array(
+                    'id'      => 'comment',
+                    'type'    => 'switcher',
+                    'title'   => '评论显示用户归属地',
+                    'default' => false,
+                    'class'   => 'compact min',
+                ),
+                array(
+                    'type'    => 'submessage',
+                    'style'   => 'info',
+                    'content' => ip_db_manage(),
+                ),
+            ),
+            'class'   => 'new',
         ),
         array(
             'id'      => 'ico-source',
@@ -2665,6 +2753,9 @@ CSF::createSection( $prefix, array(
             'title'      => __('博客随机头部图片','io_setting'),
             'subtitle'   => __('缩略图、文章页随机图片','io_setting'),
             'after'      => __('一行一个图片地址，注意不要有空格<br>','io_setting'),
+            'attributes' => array(
+                'rows' => 10,
+            ),
             'default'    => '//cdn.iowen.cn/gh/owen0o0/ioStaticResources@master/screenshots/1.jpg'.PHP_EOL.'//cdn.iowen.cn/gh/owen0o0/ioStaticResources@master/screenshots/2.jpg'.PHP_EOL.'//cdn.iowen.cn/gh/owen0o0/ioStaticResources@master/screenshots/3.jpg'.PHP_EOL.'//cdn.iowen.cn/gh/owen0o0/ioStaticResources@master/screenshots/4.jpg'.PHP_EOL.'//cdn.iowen.cn/gh/owen0o0/ioStaticResources@master/screenshots/5.jpg'.PHP_EOL.'//cdn.iowen.cn/gh/owen0o0/ioStaticResources@master/screenshots/6.jpg'.PHP_EOL.'//cdn.iowen.cn/gh/owen0o0/ioStaticResources@master/screenshots/7.jpg'.PHP_EOL.'//cdn.iowen.cn/gh/owen0o0/ioStaticResources@master/screenshots/8.jpg'.PHP_EOL.'//cdn.iowen.cn/gh/owen0o0/ioStaticResources@master/screenshots/9.jpg'.PHP_EOL.'//cdn.iowen.cn/gh/owen0o0/ioStaticResources@master/screenshots/0.jpg',
         ),
     )
@@ -2790,14 +2881,15 @@ CSF::createSection( $prefix, array(
         ),
         array(
             'id'      => 'sms_sdk',
-            'default' => 'null',
-            'title'   => '设置短信接口',
             'type'    => "select",
+            'title'   => '设置短信接口',
             'options' => array(
                 'ali'     => __('阿里云短信', 'io_setting'),
                 'tencent' => __('腾讯云短信', 'io_setting'),
                 'smsbao'  => __('短信宝', 'io_setting'),
             ),
+            'default' => 'null',
+            'class'   => 'new',
         ),
         array(
             'id'         => 'sms_ali_option',
@@ -2831,9 +2923,10 @@ CSF::createSection( $prefix, array(
                         array(
                             'id'      => 'template_code',
                             'type'    => 'text',
-                            'class'   => 'compact min',
                             'title'   => '模板CODE',
+                            'class'   => 'compact min',
                             'desc'    => '已审核的的短信模板代码，示例：SMS_154950000<br>
+                            模板内容示例：<code>您的验证码为：${code}，......</code> 必须要有 <code style="color: #ee0f00;padding:0px 3px">${code}</code> 变量。<br>
                             <a target="_blank" href="https://www.aliyun.com/product/sms?source=5176.11533457&userCode=5lpzuu4m">申请地址</a>',
                             'default' => '',
                         ),
@@ -2861,18 +2954,20 @@ CSF::createSection( $prefix, array(
                             'class'   => 'compact min',
                             'desc'    => '腾讯云短信应用的SDK AppID和AppKey',
                         ),
+                        /* SDK3.0需要的参数
                         array(
-                            'id' => 'secret_id',
-                            'type' => 'text',
+                            'id'    => 'secret_id',
+                            'type'  => 'text',
                             'title' => 'Access Id',
                             'class' => 'compact min',
                         ),
                         array(
-                            'id' => 'secret_key',
-                            'type' => 'text',
+                            'id'    => 'secret_key',
+                            'type'  => 'text',
                             'title' => 'Access Key',
                             'class' => 'compact min',
                         ),
+                        */
                         array(
                             'id'      => 'sign_name',
                             'type'    => 'text',
@@ -2886,6 +2981,7 @@ CSF::createSection( $prefix, array(
                             'title'   => '模板ID',
                             'class'   => 'compact min',
                             'desc'    => '已审核的的短信模板ID，示例：1660000<br>
+                            模板内容示例：<code>您的验证码为{1}，{2}分钟内有效，......</code> 必须要有 <code style="color: #ee0f00;padding:0px 3px">{1}</code> 和 <code style="color: #ee0f00;padding:0px 3px">{2}</code> 变量。<br>
                             <a target="_blank" href="https://cloud.tencent.com/act/cps/redirect?redirect=10068&cps_key=bda57913e36ec90681a3b90619e44708">申请地址</a>',
                         ),
                     ),
@@ -2923,7 +3019,8 @@ CSF::createSection( $prefix, array(
                             'type'    => 'text',
                             'class'   => 'compact min',
                             'title'   => '模板内容',
-                            'desc'    => '模板内容，必须要有<code style="color: #ee0f00;padding:0px 3px">{code}</code>变量<br>示例：<code>【一为主题】您的验证码为{code}，在{time}分钟内有效。</code><br>
+                            'desc'    => '模板内容，必须要有<code style="color: #ee0f00;padding:0px 3px">{code}</code>变量。<br>
+                            模板内容示例：<code>【一为主题】您的验证码为{code}，{time}分钟内有效。</code><br>
                             <a target="_blank" href="http://www.smsbao.com/reg?r=12245">短信宝官网</a>',
                         ),
                     ),
@@ -2999,15 +3096,15 @@ CSF::createSection( $prefix, array(
                 array(
                     'id'    => 'update_date',
                     'type'  => 'date',
-                    'title' => '┗━━'.__('公告日期','io_setting'),
+                    'title' => __('公告日期','io_setting'),
                     'settings' => array(
                         'dateFormat'      => 'yy-mm-dd',
                         'changeMonth'     => true,
                         'changeYear'      => true, 
                         'showButtonPanel' => true,
                     ),
-                    'after' => __('用于登录用户判断是否有更新（不会显示在弹窗里）','io_setting'),
-                    'class'      => 'compact',
+                    'after'      => __('用于登录用户判断是否有更新（不会显示在弹窗里）','io_setting'),
+                    'class'      => 'compact min',
                     'dependency' => array( 'logged_show', '==', 'true' ),
                 ),
                 array(
@@ -3689,6 +3786,12 @@ CSF::createSection( $prefix, array(
             'type' => 'submessage',
         ),
         array(
+            'type' => 'submessage',
+            'style' => 'danger',
+            'content' => '<p style="text-align: center">'.$tip_ico.'【注册验证项】至少选一项</p>',
+            'dependency' => array( 'reg_verification|reg_type', '==|==', 'true|'), 
+        ),
+        array(
             'id'      => 'reg_verification',
             'type'    => 'switcher',
             'title'   => __('注册时验证','io_setting'),
@@ -3706,15 +3809,21 @@ CSF::createSection( $prefix, array(
             ), 
             'class'   => 'compact min',
             'default' => array('email'),
-            'after'   => $tip_ico.'如果都勾选，注册时可任选一项验证。',
+            'after'   => $tip_ico.'如果都勾选，注册时可任选一项验证。【至少选一项】',
             'dependency' => array( 'reg_verification', '==', 'true', '', 'visible' ), 
         ),
         array(
+            'type' => 'submessage',
+            'style' => 'info',
             'content' => '<h4>社交登录后是否提示绑定邮箱/手机。</h4><ol><li>不绑定：就是不绑定。</li><li>提醒绑定：提示绑定，并跳转到绑定页，可跳过。</li><li>强制绑定：用户第一次使用社交登录后并未完成注册，需添加邮箱/手机、密码等操作后才能真正完成注册，同时也可以绑定现有账号（比如用户以前用邮箱注册了账号，就可以通过登录以前的账号自动关联社交账户）。</li></ol>
             <p>'.$tip_ico.'如果选择“强制绑定”，用户没有完成绑定前不会插入用户表，同时实现绑定已有账号。</p>
             <p>'.$tip_ico.'此功能需<a href="' . io_get_admin_csf_url('其他功能/邮箱发信') . '">邮件发信设置</a>和<a href="' . io_get_admin_csf_url('其他功能/短信接口') . '">短信接口设置</a>，请提前配置好相关设置。</p>',
-            'style' => 'info',
+        ),
+        array(
             'type' => 'submessage',
+            'style' => 'danger',
+            'content' => '<p style="text-align: center">'.$tip_ico.'【绑定项】至少选一项</p>',
+            'dependency' => array( 'bind_email|bind_type', 'any|==', 'bind,must|'), 
         ),
         array(
             'id'        => 'bind_email',
@@ -3738,7 +3847,7 @@ CSF::createSection( $prefix, array(
             ), 
             'class'   => 'compact min',
             'default' => array('email'),
-            'after'   => $tip_ico.'如果都勾选，则必须都绑定。',
+            'after'   => $tip_ico.'如果都勾选，则必须都绑定。【至少选一项】',
             'dependency' => array( 'bind_email', 'any', 'bind,must', '', 'visible' ), 
         ),
         array(
@@ -3774,6 +3883,74 @@ CSF::createSection( $prefix, array(
             'default' => false,
             'class'   => 'new',
         ),
+        array(
+            'id'       => 'lost_verify_type',
+            'type'     => "checkbox",
+            'title'    => '找回密码',
+            'subtitle' => '找回密码验证方式',
+            'inline'  => true,
+            'options'  => array(
+                'email'       => '邮箱',
+                'phone'       => '手机',
+            ),
+            'default'  => "email",
+            'class'    => 'new',
+            'after'    => $tip_ico.'如果都勾选，找回密码时可任选一项验证。【至少选一项】',
+        ),
+        array(
+            'type' => 'submessage',
+            'style' => 'danger',
+            'content' => '<p style="text-align: center">'.$tip_ico.'【找回密码】至少选一项</p>',
+            'dependency' => array( 'lost_verify_type', '==', ''), 
+        ),
+        array(
+            'id'        => 'user_agreement',
+            'type'      => 'fieldset',
+            'title'     => '用户协议',
+            'fields'    => array(
+                array(
+                    'id'      => 'switch',
+                    'type'    => 'switcher',
+                    'title'   => __('开关','io_setting'),
+                ),
+                array(
+                    'id'      => 'pact_page',
+                    'type'    => 'select',
+                    'title'   => '用户协议页面', 
+                    'options'    => 'pages',
+                    'query_args' => array(
+                        'posts_per_page' => -1,
+                    ),
+                    'desc'       => '新建页面，写入用户协议，然后选择该页面',
+                    'class'      => 'compact min',
+                    'dependency' => array( 'switch', '==', true )
+                ),
+                array(
+                    'id'         => 'privacy_page',
+                    'type'       => 'select',
+                    'title'      => '隐私协议页面',
+                    'options'    => 'pages',
+                    'query_args' => array(
+                        'posts_per_page' => -1,
+                    ),
+                    'desc'       => '新建页面，写入隐私协议，然后选择该页面',
+                    'class'      => 'compact min',
+                    'dependency' => array( 'switch', '==', true )
+                ),
+                array(
+                    'id'      => 'default',
+                    'type'    => 'switcher',
+                    'title'   => '默认勾选',
+                    'dependency' => array( 'switch', '==', true )
+                ),
+            ),
+            'default' => array(
+                'switch'       => false,
+                'pact_page'    => '',
+                'privacy_page' => '',
+                'default'      => false,
+            ),
+        ), 
         array(
             'id'        => 'user_nickname_stint',
             'type'      => 'textarea',
@@ -4003,7 +4180,6 @@ CSF::createSection( $prefix, array(
                                             'sanitize'   => false,
                                             'class'      => 'compact min',
                                         ),
-
                                     ),
                                 ),
                                 array(
@@ -4252,14 +4428,15 @@ CSF::createSection( $prefix, array(
             'title'     => '禁止冒充管理员留言',
             'fields'    => array(
                 array(
-                    'id'         => 'admin_name',
-                    'type'       => 'text',
-                    'title'      => __('管理员名称','io_setting'),
+                    'id'    => 'admin_name',
+                    'type'  => 'text',
+                    'title' => __('管理员名称','io_setting'),
                 ),
                 array(
-                    'id'         => 'admin_email',
-                    'type'       => 'text',
-                    'title'      => __('管理员邮箱','io_setting'),
+                    'id'    => 'admin_email',
+                    'type'  => 'text',
+                    'title' => __('管理员邮箱','io_setting'),
+                    'class' => 'compact min',
                 ),
             ),
             'default'  => array(
@@ -4272,14 +4449,15 @@ CSF::createSection( $prefix, array(
             'title'     => '评论过滤',
             'fields'    => array(
                 array(
-                    'id'         => 'no_url',
-                    'type'       => 'switcher',
-                    'title'      => __('评论禁止链接','io_setting'),
+                    'id'    => 'no_url',
+                    'type'  => 'switcher',
+                    'title' => __('评论禁止链接','io_setting'),
                 ),
                 array(
-                    'id'         => 'no_chinese',
-                    'type'       => 'switcher',
-                    'title'      => __('评论必须包含汉字','io_setting'),
+                    'id'    => 'no_chinese',
+                    'type'  => 'switcher',
+                    'title' => __('评论必须包含汉字','io_setting'),
+                    'class' => 'compact min',
                 ),
             ),
             'default'  => array(
@@ -4295,47 +4473,129 @@ CSF::createSection( $prefix, array(
             'default' => true,
         ),
         array(
-            'id'        => 'io_captcha',
+            'id'       => 'captcha_type',
+            'type'     => "select",
+            'title'    => '人机验证类型',
+            'options'  => array(
+                'null'     => '关闭',
+                'image'    => '图片验证码',
+                'tcaptcha' => '腾讯图形验证码',
+                'geetest'  => '极验行为验4.0',
+                'vaptcha'  => 'VAPTCHA',
+            ),
+            'default'  => 'image',
+            'class'    => 'new',
+            'after'    => $tip_ico.'注意：切换后请刷新静态缓存、cdn缓存等各种缓存',
+        ),
+        array(
+            'id'        => 'tcaptcha_option',
             'type'      => 'fieldset',
-            'title'     => '腾讯防水墙',
-            'subtitle'  => '<span style="color:#f00">开启后，请认真填写，填错会造成无法登录后台</span>',
-            'before'    => '如果开启的防水墙后进不了后台，请将主题文件‘functions.php’里“LOGIN_007”的 true 改为 false 。',
-            'fields'    => array(
+            'title'     => '腾讯图形验证码',
+            'class'     => 'compact',
+            'fields'    => array(   
                 array(
-                    'id'        => 'tcaptcha_007',
-                    'type'      => 'switcher',
-                    'title'     => __('启用腾讯防水墙','io_setting'),
-                    'desc'      => __('在登录页、投稿、评论等低添加验证，提升安全性','io_setting'),
-                ),    
-                array(
-                    'id'        => 'appid_007',
-                    'type'      => 'text',
-                    'title'     => __('腾讯防水墙 App ID','io_setting'),
-                    'dependency'=> array( 'tcaptcha_007', '==', 'true' ),
-                ),    
-                array(
-                    'id'        => 'appsecretkey_007',
-                    'type'      => 'text',
-                    'title'     => __('腾讯防水墙 App Secret Key','io_setting'),
-                    'after'     => __('请填写完整，包括后面的**','io_setting'),
-                    'dependency'=> array( 'tcaptcha_007', '==', 'true' ),
-                ),    
-                array(
-                    'type'    => 'subheading',
-                    'content' => __('App ID 申请地址：','io_setting').'<a href="https://cloud.tencent.com/login?s_url=https%3A%2F%2Fconsole.cloud.tencent.com%2Fcaptcha" target="_blank">防水墙</a>',
-                    'dependency'=> array( 'tcaptcha_007', '==', 'true' ),
+                    'style'   => 'info',
+                    'type'    => 'submessage',
+                    'content' => '<span style="color:#f00">开启后，请认真填写，填错会造成无法登录后台</span><br/>
+                    申请地址：<a target="_blank" href="https://console.cloud.tencent.com/captcha/graphical">腾讯图形验证码【腾讯防水墙】</a>',
                 ),
                 array(
-                    'id'        => 'comment_007',
-                    'type'      => 'switcher',
-                    'title'     => __('评论开启验证','io_setting'),
-                    'dependency'=> array( 'tcaptcha_007', '==', 'true' ),
+                    'id'    => 'appid',
+                    'type'  => 'text',
+                    'title' => '验证码CaptchaAppId',
+                ),
+                array(
+                    'id'    => 'secret_key',
+                    'type'  => 'text',
+                    'title' => '验证码AppSecretKey',
+                    'after' => __('请填写完整，包括后面的**','io_setting'),
+                    'class' => 'compact min',
+                ),
+                //https://console.cloud.tencent.com/cam/capi
+                array(
+                    'id'    => 'api_secret_id',
+                    'type'  => 'text',
+                    'title' => 'API密钥SecretId',
+                    'after' => $tip_ico.'注意：以前的【腾讯防水墙】版本请留空',
+                ),
+                array(
+                    'id'    => 'api_secret_key',
+                    'type'  => 'text',
+                    'title' => 'API密钥SecretKey',
+                    'class' => 'compact min',
+                    'after' => $tip_ico.'注意：以前的【腾讯防水墙】版本请留空',
+                ),
+
+                array(
+                    'type'    => 'submessage',
+                    'style'   => 'danger',
+                    'content' => '如果开启人机验证后进不了后台，请将主题文件‘functions.php’里“LOGIN_007”的 true 改为 false 。',
                 ),
             ),
-            'default'  => array(
-                'tcaptcha_007'   => false, 
-            ),
+            'dependency'=> array( 'captcha_type', '==', 'tcaptcha' ),
         ), 
+        array(
+            'id'         => 'geetest_option',
+            'type'       => 'fieldset',
+            'title'      => '极验行为参数 ',
+            'class'      => 'compact',
+            'fields'     => array(
+                array(
+                    'style'   => 'info',
+                    'type'    => 'submessage',
+                    'content' => '<span style="color:#f00">开启后，请认真填写，填错会造成无法登录后台</span><br/>
+                    申请地址：<a target="_blank" href="https://www.geetest.com">极验行为验官网</a>',
+                ),
+                array(
+                    'id'    => 'id',
+                    'type'  => 'text',
+                    'title' => '验证 Id',
+                ),
+                array(
+                    'id'    => 'key',
+                    'type'  => 'text',
+                    'title' => '验证 Key',
+                    'class' => 'compact min',
+                ),
+                array(
+                    'style'   => 'danger',
+                    'type'    => 'submessage',
+                    'content' => '如果开启人机验证后进不了后台，请将主题文件‘functions.php’里“LOGIN_007”的 true 改为 false 。',
+                ),
+            ),
+            'dependency' => array('captcha_type', '==', 'geetest'),
+        ),
+        array(
+            'id'         => 'vaptcha_option',
+            'type'       => 'fieldset',
+            'title'      => 'VAPTCHA参数',
+            'class'      => 'compact',
+            'fields'     => array(
+                array(
+                    'style'   => 'info',
+                    'type'    => 'submessage',
+                    'content' => '<span style="color:#f00">开启后，请认真填写，填错会造成无法登录后台</span><br/>
+                    申请地址：<a target="_blank" href="https://www.vaptcha.com/">VAPTCHA验证</a>',
+                ),
+                array(
+                    'id'    => 'id',
+                    'type'  => 'text',
+                    'title' => 'VID',
+                ),
+                array(
+                    'id'    => 'key',
+                    'type'  => 'text',
+                    'title' => 'KEY',
+                    'class' => 'compact min',
+                ),
+                array(
+                    'style'   => 'danger',
+                    'type'    => 'submessage',
+                    'content' => '如果开启人机验证后进不了后台，请将主题文件‘functions.php’里“LOGIN_007”的 true 改为 false 。',
+                ),
+            ),
+            'dependency' => array('captcha_type', '==', 'vaptcha'),
+        ),
 		array(
 				'id'		 => 'login_limit',
 				'type'       => 'spinner',
@@ -4349,8 +4609,7 @@ CSF::createSection( $prefix, array(
 		array(
 				'id'		 => 'login_limit_time',
 				'type'       => 'spinner',
-				'title'      => ' ',
-				'subtitle'	 => '登录失败多少分钟后可再次尝试',
+				'title'      => '登录失败重试频率',
 				'after'      => '默认10分钟，表示失败5次后要过10分钟才能再次尝试登录。',
 				'unit'       => '分钟',
 				'default'    => 10,
@@ -4373,19 +4632,18 @@ CSF::createSection( $prefix, array(
             'title'   => '前端投稿',
             'default' => true,
             'label'   => '此功能启用后，下面选项才有意义。',
-            'class'   => 'new',
         ),
-        array(
-            'id'             => 'contribute_pages',
-            'type'           => 'select',
-            'title'          => '投稿页面',
-            'after'          => __(' 如果没有，新建页面，选择“投稿模板”模板并保存。','io_setting'),
-            'options'        => 'pages',
-            'query_args'     => array(
-                'posts_per_page'  => -1,
-            ),
-            'placeholder'    => __('选择投稿页面', 'io_setting'), 
-        ),
+        //array(
+        //    'id'             => 'contribute_pages',
+        //    'type'           => 'select',
+        //    'title'          => '投稿页面',
+        //    'after'          => __(' 如果没有，新建页面，选择“投稿模板”模板并保存。','io_setting'),
+        //    'options'        => 'pages',
+        //    'query_args'     => array(
+        //        'posts_per_page'  => -1,
+        //    ),
+        //    'placeholder'    => __('选择投稿页面', 'io_setting'), 
+        //),
         array(
             'id'           => 'contribute_can',
             'type'         => 'button_set',
@@ -4615,7 +4873,6 @@ CSF::createSection( $prefix, array(
 			'label'		=> __('添加推广链接获取佣金','io_setting'),
             'after'   	=> '<br><p>显示： 由 OneNav 强力驱动</p>',
 			'default'	=> true,
-			'class'		=> 'new'
 		),
         array(
             'id'     	=> 'io_id',
@@ -4782,7 +5039,7 @@ CSF::createSection( $prefix, array(
                 array(
                     'name'  => 'Email',
                     'loc'   => 'footer',
-                    'ico'   => 'iconfont icon-gonggao4',
+                    'ico'   => 'iconfont icon-email',
                     'type'  => 'url',
                     'url'   => 'mailto:1234567788@QQ.COM',
                 )
@@ -4924,7 +5181,6 @@ CSF::createSection( $prefix, array(
             'text_off'=> '未屏蔽',
             'text_width' => 80,
             'default' => false,
-            'class'   => 'new'
         ),
         array(
             'id'      => 'disable_rest_api',
@@ -4987,6 +5243,7 @@ CSF::createSection( $prefix, array(
             'type'    => 'switcher',
             'title'   => __('禁用古腾堡编辑器','io_setting'),
             'label'   => __('禁用Gutenberg编辑器，换回经典编辑器。','io_setting'),
+            'desc'    => $tip_ico.'注意：古腾堡如果出现json错误，可以重新保存一下固定连接试试。',
             'text_on' => '已禁用',
             'text_off'=> '未禁用',
             'text_width' => 80,

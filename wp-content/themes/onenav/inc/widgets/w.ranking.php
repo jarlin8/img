@@ -148,9 +148,6 @@ if ( ! function_exists( 'ranking_post' ) ) {
         }
         
         $html       = '';
-        $post_num   = $instance['number'];
-        $post_id    = $post->ID;
-        $exclude    = array($post_id);
         $terms      = array(); 
         
         $instance['before_div'] = $before_div;
@@ -158,6 +155,9 @@ if ( ! function_exists( 'ranking_post' ) ) {
 
         //匹配同类
         if(is_single() && $instance['similar'] && $post->post_type === $instance['type']){
+            $post_num   = $instance['number'];
+            $post_id    = $post->ID;
+            $exclude    = array($post_id);
             $posttags   = get_the_terms( $post_id, $taxonomy_tag );  
             $taxterms   = get_the_terms( $post_id, $taxonomy_cat );
             

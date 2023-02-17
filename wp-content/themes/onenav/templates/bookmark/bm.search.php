@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:01
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-03 23:34:34
+ * @LastEditTime: 2023-02-04 01:52:51
  * @FilePath: \onenav\templates\bookmark\bm.search.php
  * @Description: 
  */
@@ -18,7 +18,7 @@
         <script src="//widget.heweather.net/simple/static/js/he-simple-common.js?v=1.1"></script>
     </div> 
         <ul class="nav navbar-menu"> 
-                        <?php if( io_get_option('nav_login') ){ 
+                        <?php if( io_get_option('nav_login',false) ){ 
                             global $user_ID; 
                             if(!$user_ID) {?>
                             <li class="nav-login ml-3">

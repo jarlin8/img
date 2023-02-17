@@ -10,7 +10,7 @@ get_header(); ?>
 <div id="content" class="container my-4 my-md-5">
     <div class="post-cover overlay-hover mb-3 mb-md-4">
         <div class="media rounded-xl media-5x1">
-            <?php if(io_get_option('lazyload')): ?>
+            <?php if(io_get_option('lazyload',false)): ?>
                 <div class="media-content" data-src="<?php echo io_get_option('bull_img','') ?>"><span class="overlay"></span></div>
             <?php else: ?>
                 <div class="media-content"style="background-image: url(<?php echo io_get_option('bull_img','') ?>);"><span class="overlay"></span></div>
@@ -18,7 +18,7 @@ get_header(); ?>
             <div class="card-img-overlay d-flex justify-content-center text-center flex-column p-3 p-md-4">
                 <div class="h4 text-white">—— <?php _e('公告','i_theme') ?> ——</div>
                 <div class="text-xs">
-                    <a class="mx-1 custom-piece_c_b" href="<?php echo get_permalink(io_get_option('all_bull')) ?>" style="color:#fff;background:#f12345;padding:2px 5px;border-radius:3px;"><small><?php _e('所有公告','i_theme') ?></small></a>
+                    <a class="mx-1 custom-piece_c_b" href="<?php echo io_get_template_page_url('template-bulletin.php') ?>" style="color:#fff;background:#f12345;padding:2px 5px;border-radius:3px;"><small><?php _e('所有公告','i_theme') ?></small></a>
                 </div>                
             </div>
         </div>
@@ -70,8 +70,8 @@ get_header(); ?>
             </div>
             <div class="near-navigation rounded mt-4 py-2">
                 <?php
-                $prev_post = get_previous_post(true);//与当前文章同分类的上一篇文章
-                $next_post = get_next_post(true);//与当前文章同分类的下一篇文章
+                $prev_post = get_previous_post();
+                $next_post = get_next_post();
                 ?>
                 <?php if (!empty( $prev_post )) { ?>
                 <div class="nav previous border-right border-color">

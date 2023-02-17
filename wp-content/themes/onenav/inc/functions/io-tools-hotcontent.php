@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-18 21:12:13
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-15 21:27:12
+ * @LastEditTime: 2023-02-08 14:32:49
  * @FilePath: \onenav\inc\functions\io-tools-hotcontent.php
  * @Description: 
  */
@@ -31,6 +31,9 @@ function get_home_hot_card($data){
         case 'comment_count':
             $args['orderby'] = array( $data['order'] => 'DESC', 'ID' => 'DESC' );
             break;
+        case 'random':
+            $args['orderby'] = 'rand';
+            break;
         
         default:
             $args['meta_key'] = $data['order'];
@@ -53,7 +56,7 @@ function get_home_hot_card($data){
             <?php include(get_theme_file_path('/templates/card-sitemini.php')); ?>
             </div>
         <?php } else {?>
-            <div class="url-card <?php echo io_get_option('two_columns')?"col-6":"" ?> <?php get_columns('sites','') ?> <?php echo before_class($post->ID) ?>">
+            <div class="url-card <?php echo io_get_option('two_columns',false)?"col-6":"" ?> <?php get_columns('sites','') ?> <?php echo before_class($post->ID) ?>">
             <?php include(get_theme_file_path('/templates/card-site.php'));?>
             </div>
         <?php } ?>

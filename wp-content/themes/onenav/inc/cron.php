@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-01-25 03:01:51
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-24 22:13:05
+ * @LastEditTime: 2023-02-04 00:24:22
  * @FilePath: \onenav\inc\cron.php
  * @Description: 定时任务
  */
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * daily 每天   hourly 每小时    twicedaily 每日两次    10min 10分钟
  */
 function io_setup_cron_events_schedule(){
-    if (io_get_option('leader_board')) {
+    if (io_get_option('leader_board',false)) {
         if(!wp_next_scheduled('io_clean_expired_ranking_data')){
             wp_schedule_event(time(), 'daily', 'io_clean_expired_ranking_data');
         }
@@ -44,7 +44,7 @@ add_action('wp', 'io_setup_cron_events_schedule');
  */
 function io_auto_delete_close_order(){
     global $wpdb;
-    $day = io_get_option('how_long');
+    $day = io_get_option('how_long',30);
     $sql = "DELETE FROM {$wpdb->ioviews} where DATEDIFF(curdate(), `time`)>{$day}";
     // `time` < date_sub(curdate(), INTERVAL 30 DAY 
     //mysqli_query($link, $sql) or die('删除数据出错：' . mysqli_error($link));

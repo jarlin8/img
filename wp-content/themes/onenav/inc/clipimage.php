@@ -34,7 +34,7 @@ function io_theme_get_thumb($post = null){
 			$post_thumbnail_src = $strResult[1][0];   //获取该图片 src
 		}else{	
             //如果日志中没有图片，则显示随机图片
-            $random_img = explode(PHP_EOL , io_get_option('random_head_img'));
+            $random_img = explode(PHP_EOL , io_get_option('random_head_img',''));
             $random_img_array = array_rand($random_img);
             $post_thumbnail_src = trim($random_img[$random_img_array]);
 		}
@@ -67,7 +67,7 @@ function io_get_thumbnail($size = 'thumbnail',$isback = false){
     if($isback){
         return getOptimizedImageUrl($post_thumbnail_src, $size,'90');
     }
-    if(io_get_option('lazyload')){
+    if(io_get_option('lazyload',false)){
         $loadimg_url=get_theme_file_uri('/images/t.png');
         return 'src="'.$loadimg_url.'" data-src="'.getOptimizedImageUrl($post_thumbnail_src, $size,'90').'"';
     } else {

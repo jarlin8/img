@@ -20,9 +20,9 @@ if($ico_info && $ico_info['ico_a']){
     $size = 'background-size: '.$ico_info["ico_size"].'%';
 }
 ?>
-	<div class="card-book list-item">
+    <div class="card-book list-item">
         <div class="media media-5x7 p-0 rounded">
-            <?php if(io_get_option('lazyload')): ?>
+            <?php if(io_get_option('lazyload',false)): ?>
             <a class="media-content" href="<?php the_permalink(); ?>" <?php echo ($target!=''?$target:new_window()) ?> data-bg="url(<?php echo get_post_meta_img(get_the_ID(), '_thumbnail', true) ?>)"></a>
             <?php else: ?>
             <a class="media-content" href="<?php the_permalink(); ?>" <?php echo ($target!=''?$target:new_window()) ?>  style="background-image: url(<?php echo get_post_meta_img(get_the_ID(), '_thumbnail', true) ?>)"></a>
@@ -40,4 +40,4 @@ if($ico_info && $ico_info['ico_a']){
                 </div>
             </div>
         </div>
-    </div>	 
+    </div>     

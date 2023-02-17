@@ -139,16 +139,16 @@ function io_add_db_table() {
  * 全屏加载效果html
  */
 function get_loading_fx(){
-    if(io_get_option('loading_fx')) { 
+    if(io_get_option('loading_fx',false)) { 
         echo '<div id="loading">'.loading_type().'</div>';
     }
 }
 # 激活友情链接模块
 # --------------------------------------------------------------------
-if(io_get_option('show_friendlink'))add_filter( 'pre_option_link_manager_enabled', '__return_true' );
+if(io_get_option('show_friendlink',false))add_filter( 'pre_option_link_manager_enabled', '__return_true' );
 require_once get_theme_file_path('/inc/post-type.php');
-if(io_get_option('save_image')) require_once get_theme_file_path('/inc/save-image.php');
-if( io_get_option('post_views') ) require_once get_theme_file_path('/inc/postviews/postviews.php');
+if(io_get_option('save_image',false)) require_once get_theme_file_path('/inc/save-image.php');
+if( io_get_option('post_views',false) ) require_once get_theme_file_path('/inc/postviews/postviews.php');
 
 # 获取CSF框架图片
 # --------------------------------------------------------------------
@@ -187,7 +187,7 @@ function get_search_list(){
         );
     }
 }/**
- * 
+ * 获取自定义搜索列表序号
  * @return array 
  */
 function get_search_min_list(){
@@ -199,11 +199,31 @@ function get_search_min_list(){
     if(!isset($search_min_list['custom_search_list'])){
         return array('没有添加搜索项');
     }
-    $list = array('选择搜索列表');
-    foreach( $search_min_list['custom_search_list'] as $v ){ 
-        $list[] = $v['search_list_id'];
+    $list = array('没添加自定义搜索列表');
+    if (isset($search_min_list['custom_search_list']) && !empty($search_min_list['custom_search_list'])) {
+        $list = array('选择搜索列表');
+        foreach ($search_min_list['custom_search_list'] as $v) {
+            $list[] = $v['search_list_id'];
+        }
     }
     return $list;
+}
+function get_site_type_name($type){
+    switch($type){
+        case "sites":
+            $name = __('网址','i_theme');
+            break;
+        case "wechat":
+            $name = __('公众号','i_theme');
+            break;
+        case "down":
+            $name = __('资源','i_theme');
+            break;
+        default:
+            $name = __('网址','i_theme');
+            break;
+    }
+    return $name;
 }
 function get_book_type_name($type){
     switch($type){
@@ -409,7 +429,7 @@ function get_rankings_data($myposts,$type,$_is_go,$post_view=0){
         if($type=='sites'){
             $sites_type = get_post_meta($post_id, '_sites_type', true);
             if($sites_type == 'sites'){
-                if(!io_get_option('details_page') || (io_get_option('details_page')&&$_is_go)){
+                if(!io_get_option('details_page',false) || (io_get_option('details_page',false)&&$_is_go)){
                     $url   = get_post_meta($post_id, '_sites_link', true);
                     $is_go = true;
                 }
@@ -533,7 +553,11 @@ add_filter( 'post_link', 'io_suppress_post_link', 10, 2 );
  */
 function show_sticky_tag($isSticky){
     $span = '';
-    $sticky = io_get_option('sticky_tag');
+    $default = array(
+        'switcher' => false,
+        'name'     => 'T',
+    );
+    $sticky = io_get_option('sticky_tag',$default);
     if($isSticky && $sticky['switcher'])
         $span = '<span class="badge badge-danger text-ss mr-1" title="'.__('置顶','i_theme').'">'.$sticky['name'].'</span>';
     echo $span;
@@ -544,7 +568,12 @@ function show_sticky_tag($isSticky){
  */
 function show_new_tag($post_date){
     $span = '';
-    $new = io_get_option('new_tag');
+    $default = array(
+        'switcher' => false,
+        'name'     => 'N',
+        'date'     => 7,
+    );
+    $new = io_get_option('new_tag',$default);
     if($new['switcher']){
         $t2=date("Y-m-d H:i:s",current_time( 'timestamp' ));
         $t3=$new['date']*24;
@@ -569,7 +598,7 @@ add_filter( 'mce_css', 'io_plugin_mce_css' );
 function io_plugin_mce_css( $mce_css ) {
     if ( ! empty( $mce_css ) )
         $mce_css .= ',';
-    $mce_css .= get_theme_file_uri('css/editor-style.css?v=' . VERSION);
+    $mce_css .= get_theme_file_uri('css/editor-style.css');
     return $mce_css;
 }
 function io_register_tinymce_button( $buttons ) {
@@ -583,6 +612,8 @@ function io_register_tinymce_button( $buttons ) {
     
     if(is_admin()){
         $buttons[] = 'io_ad';
+        $buttons[] = 'io_hide';
+        $buttons[] = 'io_post_card';
     }
     $buttons[] = 'wp_adv';
     $buttons[] = 'dfw';
@@ -605,7 +636,7 @@ function io_register_tinymce_button2($buttons) {
     return array_merge($io_btn, $buttons);
 }
 function io_add_tinymce_button( $plugin_array ) {
-    $plugin_array['io_button_script'] = get_theme_file_uri('/js/mce-buttons.js?v='.VERSION);
+    $plugin_array['io_button_script'] = get_theme_file_uri('/js/mce-buttons.js');
     return $plugin_array;
 }    
 //为编辑器加入body class
@@ -652,7 +683,7 @@ function io_body_class(){
     //$class .= theme_mode();
 
     $class .= io_is_show_sidebar(); 
-    if(io_get_option('min_nav')) $class .= ' mini-sidebar'; 
+    if(io_get_option('min_nav',false)) $class .= ' mini-sidebar'; 
     if ((is_single() || is_page()) && get_post_format()) {
         $class .= ' postformat-' . get_post_format();
     }
@@ -674,7 +705,7 @@ function io_auto_theme_mode(){
         if($auto_mode=='auto-system')
             $ars = ' || (!night && window.matchMedia("(prefers-color-scheme: dark)").matches)';
         echo '<script>
-    var default_c = "'. io_get_option('theme_mode') .'";
+    var default_c = "'. io_get_option('theme_mode','') .'";
     var night = document.cookie.replace(/(?:(?:^|.*;\s*)io_night_mode\s*\=\s*([^;]*).*$)|^.*$/, "$1"); 
     try {
         if (night === "0"'.$ars.') {
@@ -818,7 +849,7 @@ function dark_mode_js(){
     if( !defined( 'WP_CACHE' ) || !WP_CACHE )
         return; 
     echo '<script type="text/javascript">
-    var default_c = "'.io_get_option('theme_mode').'";
+    var default_c = "'.io_get_option('theme_mode','').'";
     var night = document.cookie.replace(/(?:(?:^|.*;\s*)io_night_mode\s*\=\s*([^;]*).*$)|^.*$/, "$1"); 
     if(night == "1"){
         document.body.classList.remove("io-black-mode");
@@ -880,7 +911,7 @@ function get_menu_list( $theme_location ) {
  * ******************************************************************************************************
  */
 function new_window($forced=false){
-    if(io_get_option('new_window') || $forced)
+    if(io_get_option('new_window',false) || $forced)
         return 'target="_blank"';
     else
         return '';
@@ -896,10 +927,10 @@ function nofollow($url, $details = false, $is_blank = false){
     if($details)
         return $ret;
 
-    if(io_get_option('is_nofollow') && !is_go_exclude($url))
+    if(io_get_option('is_nofollow',false) && !is_go_exclude($url))
         $ret .= 'external nofollow';
 
-    if(io_get_option('new_window') ||  $is_blank)
+    if(io_get_option('new_window',false) ||  $is_blank)
         $ret .= ' noopener';
 
     if($ret == '')
@@ -946,8 +977,8 @@ function is_go_exclude($url){
     $exclude_links[] = '/';/* 有关相对链接*/
     $exclude_links[] = '#';/*用于内部链接*/
 
-    if(io_get_option('exclude_links')){
-        $a = explode(PHP_EOL , io_get_option('exclude_links'));
+    if(io_get_option('exclude_links',false)){
+        $a = explode(PHP_EOL , io_get_option('exclude_links',false));
         $exclude_links = array_merge($exclude_links, $a);
     }
     foreach ($exclude_links as $val){
@@ -1025,9 +1056,11 @@ function format_url($url,$is_format=false){
     if(io_get_option('ico-source', true, 'url_format') || $is_format){
         $pattern = '@^(?:https?://)?([^/]+)@i';
         $result = preg_match($pattern, $url, $matches);
-        return $matches[1];
-    }
-    else{
+        if ($result) {
+            return $matches[1];
+        }
+        return $url;
+    } else {
         return $url;
     }
 } 
@@ -1046,7 +1079,7 @@ function format_number($n, $precision = 2)
 # 获取点赞数
 # --------------------------------------------------------------------
 function get_like($post_id ,$post_type = "sites"){
-    if(io_get_option('user_center') && function_exists('io_get_post_star_count')){
+    if(io_get_option('user_center',false) && function_exists('io_get_post_star_count')){
         $type         = $post_type;
         if($post_type == "sites-down")
             $type     = "sites";
@@ -1054,8 +1087,8 @@ function get_like($post_id ,$post_type = "sites"){
         $like_count   = $like_data['count'];
     }else{
         if ( !$like_count = get_post_meta( $post_id, '_like_count', true ) ) {
-            if(io_get_option('like_n')>0){
-                $like_count = mt_rand(0, 10)*io_get_option('like_n');
+            if(io_get_option('like_n',0)>0){
+                $like_count = mt_rand(0, 10)*io_get_option('like_n',0);
                 update_post_meta( $post_id, '_like_count', $like_count );
             }
             else
@@ -1244,10 +1277,11 @@ function io_add_post_data_fields($post_ID) {
         add_post_meta($post_ID, '_down_count', 0, true);
         add_post_meta($post_ID, '_like_count', 0, true);
         add_post_meta($post_ID, '_star_count', 0, true);
+        add_post_meta($post_ID, '_user_purview_level', 'all', true);
     }
 }
 function like_button($post_id,$post_type="sites",$display = true){
-    if(io_get_option('user_center') && function_exists('io_get_post_star_count')){
+    if(io_get_option('user_center',false) && function_exists('io_get_post_star_count')){
         $type         = $post_type;
         if($post_type == "sites-down")
             $type     = "sites";
@@ -1326,7 +1360,7 @@ function like_button($post_id,$post_type="sites",$display = true){
         return $button;
 }
 function like_home_button($post_id,$post_type="sites",$display = true){
-    if(io_get_option('user_center') && function_exists('io_get_post_star_count')){
+    if(io_get_option('user_center',false) && function_exists('io_get_post_star_count')){
         $like_data    = io_get_post_star_count($post_id,$post_type);
         $like_count   = $like_data['count'];
         $liked        = $like_data['status']; 
@@ -1399,7 +1433,7 @@ function add_menu_content_card(){
                     $is_null=false;
                 }
                 if($is_null) continue;
-                if(io_get_option("tab_type")) {
+                if(io_get_option("tab_type",false)) {
                     fav_con_tab($category['submenu'],$category,io_get_option("tab_ajax",true));
                 }else{
                     echo '<span id="term-'.$category['object_id'].'"></span>'; // 添加菜单描点
@@ -1440,7 +1474,7 @@ function get_bing_img_cache($idx=0,$size='uhd'){
         $suffix = '_UHD.jpg';
         $url_add = "_UHD.jpg&pid=hp&w=2880&h=1620&rs=1&c=4&r=0";
     }
-    if(io_get_option('bing_cache')){
+    if(io_get_option('bing_cache',false)){
         $imgDir = wp_upload_dir();
         $bingDir = $imgDir['basedir'].'/bing';
         if (!file_exists($bingDir)) {
@@ -1457,7 +1491,10 @@ function get_bing_img_cache($idx=0,$size='uhd'){
 
             file_put_contents($bingDir.'/'.$today.$suffix, $content); // 写入今天的
             $yesterdayimg=$bingDir.'/'.$yesterday.$suffix;
-            if (file_exists($yesterdayimg)) unlink($yesterdayimg); //删除昨天的 
+            if (file_exists($yesterdayimg)) {
+                fclose($yesterdayimg);
+                unlink($yesterdayimg); //删除昨天的 
+            }
             $src = $imgDir['baseurl'].'/bing/'.$today.$suffix;
         } else {
             $src = $imgDir['baseurl'].'/bing/'.$today.$suffix;
@@ -1599,8 +1636,8 @@ function io_save_img($src,$ext='') {
  * @return bool
  */
 function unexclude_image($url){
-    if(io_get_option('exclude_image')){
-        $exclude = explode(PHP_EOL , io_get_option('exclude_image'));
+    if(io_get_option('exclude_image','')){
+        $exclude = explode(PHP_EOL , io_get_option('exclude_image',''));
         $exclude[] = $_SERVER['HTTP_HOST']; 
         foreach($exclude as $v){
             if(strpos($url, $v) !== false){
@@ -1694,7 +1731,17 @@ function io_get_attachment_post($filename, $url) {
     );
 } 
 
-
+function io_head_favicon(){
+    if (io_get_option('favicon','')) {
+        echo "<link rel='shortcut icon' href='" . io_get_option('favicon','') . "'>";
+    } else {
+        echo "<link rel='shortcut icon' href='" . home_url('/favicon.ico') . "'>";
+    }
+    if (io_get_option('apple_icon','')) {
+        echo "<link rel='apple-touch-icon' href='" . io_get_option('apple_icon','') . "'>";
+    }
+}
+add_action('admin_head', 'io_head_favicon');
 
 
 function get_sites_card_meta($post = ''){
@@ -1704,6 +1751,7 @@ function get_sites_card_meta($post = ''){
     $link_url       = get_post_meta($post->ID, '_sites_link', true); 
     $default_ico    = get_theme_file_uri('/images/favicon.png');
     $title          = get_the_title();
+    $is_dead        = get_post_meta($post->ID, '_affirm_dead_url', true);
 
     $summary=htmlspecialchars(get_post_meta($post->ID, '_sites_sescribe', true));
     if( $summary=='' ){
@@ -1724,7 +1772,7 @@ function get_sites_card_meta($post = ''){
         $tip_title="<img src='https://open.weixin.qq.com/qr/code?username=" . $wechat_id . "' width='{$width}'>";
         $is_html = 'data-html="true"';
     } else {
-        switch(io_get_option('po_prompt')) {
+        switch(io_get_option('po_prompt','null')) {
             case 'null':  
                 $tip_title = $title;
                 $tooltip = '';
@@ -1772,7 +1820,7 @@ function get_sites_card_meta($post = ''){
         $blank = 'target="_blank"' ;
         $url = $link_url;
     }else{
-        if(io_get_option('details_page')){
+        if(io_get_option('details_page',false)){
             $url=get_permalink();
         }else{ 
             if($sites_type && $sites_type != "sites"){
@@ -1790,7 +1838,7 @@ function get_sites_card_meta($post = ''){
     }
     $ico            = '';
     $first_api_ico  = false;
-    //if( !io_get_option('no_ico') ){
+    //if( !io_get_option('no_ico','') ){
         if($post->post_type != 'sites'){
             $ico = io_theme_get_thumb();
         }else{
@@ -1814,6 +1862,17 @@ function get_sites_card_meta($post = ''){
             }
         }
     //}
+    if ($is_dead )
+        $link_url = get_permalink();
+
+
+    $post_show  = true;
+    $user_level = get_post_meta($post->ID, '_user_purview_level', true);
+    if ( (!is_user_logged_in() && $user_level && $user_level != 'all') ) {
+        $link_url = get_permalink();
+        $post_show = false;
+    }
+
     $sites_card_meta = array(
         "post_id"       => $post->ID,
         "ico"           => $ico,
@@ -1828,7 +1887,9 @@ function get_sites_card_meta($post = ''){
         "sites_type"    => $sites_type,
         "link_url"      => $link_url,// 目标地址
         "default_ico"   => $default_ico,
-        "first_api_ico" => $first_api_ico
+        "first_api_ico" => $first_api_ico,
+        "is_dead"       => $is_dead,
+        "post_show"     => $post_show
     );
     return $sites_card_meta;
 }
@@ -1853,7 +1914,7 @@ function get_lazy_img($src, $alt, $size, $class='', $def_src='', $is_error=false
         $onerror = $error_src?:'onerror="javascript:this.src=\''.$def_src.'\'"';
     }
 
-    if (io_get_option('lazyload')) {
+    if (io_get_option('lazyload',false)) {
         return '<img class="'.$class.' lazy unfancybox" src="'.$def_src.'" data-src="'.$src.'" '.$onerror.' height="'.$size.'"  alt="'.$alt.'">';
     }else{
         return '<img class="'.$class.' unfancybox" src="'.$src.'" '.$onerror.' height="'.$size.'" alt="'.$alt.'">';
@@ -1867,7 +1928,7 @@ function get_lazy_img($src, $alt, $size, $class='', $def_src='', $is_error=false
  * @return string 
  */
 function get_lazy_img_bg($src, $style=''){ 
-    if (io_get_option('lazyload')) {
+    if (io_get_option('lazyload',false)) {
         return 'data-bg="url('.$src.')"'.($style==''?'':' style="'.$style.'"');
     }else{
         return 'style="background-image: url('.$src.')'.';'.$style.'"';
@@ -1904,6 +1965,9 @@ function get_columns($type='sites', $cat_id='', $display=true, $is_sidebar=false
             $columns['xxl'] -= 1;
             $columns['xl'] -= 1;
             $columns['lg'] -= 1;
+        }
+        if($mode=='max'){
+            $columns['sm'] = 1;
         }
         $class = " col-{$columns['sm']}a col-sm-{$columns['sm']}a col-md-{$columns['md']}a col-lg-{$columns['lg']}a col-xl-{$columns['xl']}a col-xxl-{$columns['xxl']}a ";
     }
@@ -1962,7 +2026,7 @@ function is_master($email = '') {
     $handsome = array( '1' => ' ', );
     $adminEmail = get_option( 'admin_email' );
     if( $email == $adminEmail ||  in_array( $email, $handsome )  )
-    echo '<span class="is-author"  data-toggle="tooltip" data-placement="right" title="'.__('博主','i_theme').'"><i class="iconfont icon-user icon-fw"></i></span>';
+    return '<span class="is-author"  data-toggle="tooltip" data-placement="right" title="'.__('博主','i_theme').'"><i class="iconfont icon-user icon-fw"></i></span>';
 }
 /**
  * 首页标签图标,菜单图标
@@ -1976,7 +2040,7 @@ function get_tag_ico($terms, $mid, $default='iconfont icon-tag'){
     $icon = $default; 
     if(!is_array($mid))
         return $icon; 
-    if(!io_get_option('same_ico') && $terms!='' ){
+    if(!io_get_option('same_ico',false) && $terms!='' ){
         if($terms == "favorites") { 
             $icon = 'iconfont icon-tag'; 
         } elseif($terms == "apps") { 
@@ -1989,46 +2053,27 @@ function get_tag_ico($terms, $mid, $default='iconfont icon-tag'){
             $icon = $default;
         }
     }else{
-        //if(empty($mid['classes']) || ( count($mid['classes'])==1 && empty($mid['classes'][0])) )
-        //    $icon = get_cate_ico($mid['post_content']);
-        //else{
-        if(!$icon = get_post_meta( $mid['ID'], 'menu_ico', true )){
-            $classes = preg_grep( '/^(fa[b|s]?|io)(-\S+)?$/i', $mid['classes'] );
-            if( !empty( $classes ) ){
-                $icon = implode(" ",$mid['classes']);
-            }else{
-                $icon = $default;
+        if( isset($mid['ID']) || (isset($mid['classes'])&&is_array($mid['classes'])) ){
+            if(!$icon = get_post_meta( $mid['ID'], 'menu_ico', true )){
+                $classes = preg_grep( '/^(fa[b|s]?|io)(-\S+)?$/i', $mid['classes'] );
+                if( !empty( $classes ) ){
+                    $icon = implode(" ",$mid['classes']);
+                }else{
+                    $icon = $default;
+                }
             }
         }
-        //}
     }
     return $icon;
 }
-# 头衔
+# 评论头衔
 # --------------------------------------------------------------------
 function site_rank( $comment_author_email, $user_id ) {
     $adminEmail = get_option( 'admin_email' );
     if($comment_author_email ==$adminEmail) 
         return;
 
-    if (user_can($user_id, 'manage_options')) {
-        $rank =  __('管理员', 'i_theme');
-    }
-    if (user_can($user_id, 'edit_others_posts')) {
-        $rank =  __('编辑', 'i_theme');
-    }
-    if (user_can($user_id, 'publish_posts')) {
-        $rank =  __('作者', 'i_theme');
-    }
-    if (user_can($user_id, 'edit_posts')) {
-        $rank =  __('投稿者', 'i_theme');
-    }
-    if($user_id == 0) {
-        $rank =  __('游客', 'i_theme');
-    }
-    if(!isset($rank)){
-        $rank =  __('读者', 'i_theme');
-    }
+    $rank = io_get_user_cap_string($user_id);
     return $rank = '<span class="rank" title="'.__('头衔：','i_theme') . $rank .'">'. $rank .'</span>';
 
     //$v1 = 'Vip1';
@@ -2064,8 +2109,8 @@ function site_rank( $comment_author_email, $user_id ) {
 }
 # 评论格式
 # --------------------------------------------------------------------
-if(!function_exists('my_comment_format')){
-    function my_comment_format($comment, $args, $depth){
+if(!function_exists('io_comment_default_format')){
+    function io_comment_default_format($comment, $args, $depth){
         $GLOBALS['comment'] = $comment;
         ?>
         <li <?php comment_class('comment'); ?> id="li-comment-<?php comment_ID() ?>">
@@ -2078,7 +2123,7 @@ if(!function_exists('my_comment_format')){
                 <section class="comment-text d-flex flex-fill flex-column">
                     <div class="comment-info d-flex align-items-center mb-1">
                         <div class="comment-author text-sm w-100"><?php comment_author_link(); ?>
-                        <?php is_master( $comment->comment_author_email ); echo site_rank( $comment->comment_author_email, $comment->user_id ); ?>
+                        <?php echo is_master( $comment->comment_author_email ); echo site_rank( $comment->comment_author_email, $comment->user_id ); ?>
                         </div>                                        
                     </div>
                     <div class="comment-content d-inline-block text-sm">
@@ -2091,7 +2136,10 @@ if(!function_exists('my_comment_format')){
                     </div>
                     <div class="d-flex flex-fill text-xs text-muted pt-2">
                         <div class="comment-meta">
-                            <div class="info"><time itemprop="datePublished" datetime="<?php echo get_comment_date( 'c' );?>"><?php echo timeago(get_comment_date('Y-m-d G:i:s'));?></time></div>
+                            <span class="info mr-2"><i class="iconfont icon-time mr-1"></i><time itemprop="datePublished" datetime="<?php echo get_comment_date( 'c' );?>"><?php echo timeago(get_comment_date('Y-m-d G:i:s'));?></time></span>
+                            <?php if(io_get_option('ip_location',false,'comment')){ ?>
+                            <span class="info-location"><i class="iconfont icon-location mr-1"></i><?php echo io_get_ip_location(get_comment_author_ip()) ?></span>
+                            <?php } ?>
                         </div>
                         <div class="flex-fill"></div>
                         <?php comment_reply_link(array_merge($args, array('depth' => $depth, 'max_depth' => $args['max_depth']))); ?>
@@ -2143,7 +2191,7 @@ function io_refused_spam_comments($comment_data) {
     }
     return ($comment_data);
 }
-if (!is_user_logged_in()) add_filter('preprocess_comment', 'io_refused_spam_comments');
+add_filter('preprocess_comment', 'io_refused_spam_comments');
 /**
  * 禁止评论自动超链接
  * ******************************************************************************************************
@@ -2172,19 +2220,19 @@ function filter_pre_get_posts( $query ){
             'books'       => 'modified',
             'category'    => 'date'
         ));
-        if ( is_tax('favorites') ){ $num = io_get_option('site_archive_n')?:''; $meta = $home_sort['favorites']; } 
-        if ( is_tax('sitetag') ){ $num = io_get_option('site_archive_n')?:''; $meta = $home_sort['favorites']; } 
-        if ( is_tax('apps') ){ $num = io_get_option('app_archive_n')?:''; $meta = $home_sort['apps']; } 
-        if ( is_tax('apptag') ){ $num = io_get_option('app_archive_n')?:''; $meta = $home_sort['apps']; } 
-        if ( is_tax('books') ){ $num = io_get_option('book_archive_n')?:''; $meta = $home_sort['books']; } 
-        if ( is_tax('booktag') ){ $num = io_get_option('book_archive_n')?:''; $meta = $home_sort['books']; } 
-        if ( is_tax('series') ){ $num = io_get_option('book_archive_n')?:''; $meta = $home_sort['books']; } 
+        if ( is_tax('favorites') ){ $num = io_get_option('site_archive_n',12)?:''; $meta = $home_sort['favorites']; } 
+        if ( is_tax('sitetag') ){ $num = io_get_option('site_archive_n',12)?:''; $meta = $home_sort['favorites']; } 
+        if ( is_tax('apps') ){ $num = io_get_option('app_archive_n',12)?:''; $meta = $home_sort['apps']; } 
+        if ( is_tax('apptag') ){ $num = io_get_option('app_archive_n',12)?:''; $meta = $home_sort['apps']; } 
+        if ( is_tax('books') ){ $num = io_get_option('book_archive_n',12)?:''; $meta = $home_sort['books']; } 
+        if ( is_tax('booktag') ){ $num = io_get_option('book_archive_n',12)?:''; $meta = $home_sort['books']; } 
+        if ( is_tax('series') ){ $num = io_get_option('book_archive_n',12)?:''; $meta = $home_sort['books']; } 
         
         if ( '' != $num ){ $query->set( 'posts_per_page', $num ); }
 
         if( '' != $meta ){
             if( $meta=="views" || $meta=="_sites_order" || $meta=="_down_count" ){
-                if($meta=="_sites_order"&& io_get_option('sites_sortable')){
+                if($meta=="_sites_order"&& io_get_option('sites_sortable',false)){
                     $query->set( 'orderby',  array( 'menu_order' => 'ASC', 'ID' => 'DESC' )  ); 
                 }else{
                     $query->set( 'meta_key', $meta );
@@ -2196,7 +2244,6 @@ function filter_pre_get_posts( $query ){
             }
         }
     }
-    return $query;
 }
 endif;
 /**
@@ -2351,15 +2398,16 @@ function category_sticky_to_top( $posts ) {
                             )
                     );
                 }
-                $stickies = get_posts($args);
             }else{
-                $stickies = get_posts( array(
-                    'post__in' => $sticky_posts,
-                    'post_type' => $wp_query->query_vars['post_type'],
+                $args = array(
+                    'post__in'    => $sticky_posts,
                     'post_status' => 'publish',
-                    'nopaging' => true
-                ) );
+                    'post_type'   => $wp_query->query_vars['post_type'],
+                    'nopaging'    => true
+                );
             }
+            $args = apply_filters('io_archive_query_var_filters', $args);
+            $stickies = get_posts($args);
             foreach ( $stickies as $sticky_post ) {
                 array_splice( $posts, $sticky_offset, 0, array( $sticky_post ) );
                 $sticky_offset++;
@@ -2427,7 +2475,7 @@ function io_delete_home_post_cache($data,$_this) {
 function io_edit_post_delete_home_cache( $terms, $taxonomy='favorites' )
 {
     if (wp_using_ext_object_cache()){
-        $site_n= io_get_option('card_n')[$taxonomy];
+        $site_n= io_get_option('card_n',16,$taxonomy);
         $ajax = 'ajax-url';
         //$slug = get_term_by( 'id', $terms, 'favorites')->slug;
         $cache_key      = 'io_home_posts_'.$terms.'_'.$taxonomy.'_'. $site_n.'_';
@@ -2520,7 +2568,7 @@ function loading_type($id=0){
     if($id!=0){
         $type = $id;
     }else{
-        $type = io_get_option('loading_type')?:'rand';
+        $type = io_get_option('loading_type','1')?:'rand';
         if($type == 'rand')
             $type = wp_rand(1,7);
     }
@@ -2565,7 +2613,7 @@ function io_get_swiper( $swiper_data ){
 if (io_get_option('tag_c', false, 'switcher')) {
     add_filter('the_content','tag_link',8);
     function tag_link($content){
-        $option = io_get_option('tag_c');
+        $option = io_get_option('tag_c',array());
         global $post_type;
         $match_num_from = 1;        //配置：一个关键字少于多少不替换  
         $match_num_to = $option['chain_n'];        //配置：一个关键字最多替换，建议不大于2  
@@ -2664,7 +2712,7 @@ function lazyload_fancybox($content) {
         //添加懒加载
         $imgpattern   = '/<img(.*?)src=[\'|"]([^\'"]+)[\'|"](.*?)>/i';
         //$imgpattern = "/<img(.*?)src=('|\")([^>]*).(bmp|gif|jpeg|jpg|png|swf)('|\")(.*?)>/i";
-        if(io_get_option('lazyload')){
+        if(io_get_option('lazyload',false)){
             $imgreplacement = '<img$1data-src="$2" src="'.$loadimg_url.'" alt="'.$title.'"$3>';
         } else {
             $imgreplacement = '<img$1src="$2" alt="'.$title.'"$3>';
@@ -2698,7 +2746,7 @@ function ioc_seo_wl( $content ) {
                 $pos = strpos($url,$srcUrl); 
                 if ( $pos === false ) {
                     $_url=$matches[$i][3];
-                    if(io_get_option('is_go') && is_go_exclude($_url)===false && !preg_match('/\.(jpg|jepg|png|ico|bmp|gif|tiff)$/i',$_url) && !preg_match('/(ed2k|thunder|Flashget|flashget|qqdl):\/\//i',$_url)) {
+                    if(io_get_option('is_go',false) && is_go_exclude($_url)===false && !preg_match('/\.(jpg|jepg|png|ico|bmp|gif|tiff)$/i',$_url) && !preg_match('/(ed2k|thunder|Flashget|flashget|qqdl):\/\//i',$_url)) {
                         $_url= go_to($_url);
                     }
                     $tag = '<a'.$matches[$i][1].'href='.$matches[$i][2].$_url.$matches[$i][4].$matches[$i][5].'>';
@@ -2735,7 +2783,7 @@ function ioc_seo_wl( $content ) {
 
 # 评论作者链接跳转 or 评论作者链接新窗口打开
 # --------------------------------------------------------------------
-if (io_get_option('is_go')) {
+if (io_get_option('is_go',false)) {
     add_filter('get_comment_author_link', 'comment_author_link_to');
     function comment_author_link_to() {
         $encodeurl = get_comment_author_url();
@@ -2761,11 +2809,11 @@ if (io_get_option('is_go')) {
 # --------------------------------------------------------------------
 function modify_css(){
     $css = '';
-    if (io_get_option("custom_css")) {
-        $css .= substr(io_get_option("custom_css"),0);
+    if (io_get_option("custom_css",'')) {
+        $css .= substr(io_get_option("custom_css",''),0);
     }
-    $css .= '.customize-width{max-width:'.io_get_option('h_width').'px}';
-    $css .= '.sidebar-nav{width:'.io_get_option('sidebar_width').'px}@media (min-width: 768px){.main-content{margin-left:'.io_get_option('sidebar_width').'px;}.main-content .page-header{left:'.io_get_option('sidebar_width').'px;}}';
+    $css .= '.customize-width{max-width:'.io_get_option('h_width',1900).'px}';
+    $css .= '.sidebar-nav{width:'.io_get_option('sidebar_width',220).'px}@media (min-width: 768px){.main-content{margin-left:'.io_get_option('sidebar_width',220).'px;}.main-content .page-header{left:'.io_get_option('sidebar_width',220).'px;}}';
     if($css != '')
         echo "<style>" . $css . "</style>";
 }
@@ -2788,8 +2836,8 @@ function block_theme_editor_access() {
     }
 } 
 function add_popup(){
-    if(is_404() || !io_get_option('enable_popup')) return;
-    $popup_set = io_get_option('popup_set');
+    if(is_404() || !io_get_option('enable_popup',false) || is_io_login()) return;
+    $popup_set = io_get_option('popup_set',array());
     if( $popup_set['only_home'] && !(is_home() || is_front_page()) ) return;
     //---date_default_timezone_set(TIMEZONE);
     $update_date = $popup_set['logged_show']?strtotime($popup_set['update_date']):'1';
@@ -2861,108 +2909,6 @@ function io_win_console(){
     </script>
 <?php
     }
-}
-# 登录页添加验证码
-# -------------------------------------------------------------------- 
-function add_login_head() {
-    echo '<script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>';
-    echo '<style type="text/css">.login_button {line-height:38px;border-radius:3px;cursor:pointer;color:#fff;background:#f1404b;border:2px solid #f1404b;font-size:14px;margin-bottom:20px;text-align:center;transition:.5s;}.login_button:hover{color:#fff;background:#111;border-color:#111;}</style>'; 
-}
-function add_captcha_body(){ ?>
-    <input type="hidden" id="wp007_tcaptcha" name="tcaptcha_007" value="" />
-    <input type="hidden" id="wp007_ticket" name="tencent_ticket" value="" />
-    <input type="hidden" id="wp007_randstr" name="tencent_randstr" value="" /> 
-    <?php if(io_get_option('user_center')){ ?>
-    <script type="text/javascript">
-        window.loginTicket = function(res){
-            if(res.ret === 0){
-                document.getElementById("wp007_ticket").value = res.ticket;
-                document.getElementById("wp007_randstr").value = res.randstr;
-                document.getElementById("wp007_tcaptcha").value = 1;
-                $("#wp_login_form").submit();  
-            }
-            else if(res.ret === 2) {
-                $("div#result").html("");
-                $("<div>").html("你没有完成验证！").appendTo("div#result").hide().fadeIn("slow");  
-            }
-        }
-    </script>
-    <?php }else{ ?>
-    <div id="TencentCaptcha" data-appid="<?php echo io_get_option('io_captcha', '', 'appid_007') ?>" data-cbfn="callback" class="login_button"><?php _e('验证',"i_theme") ?></div>
-    <script>
-        window.callback = function(res){
-            if(res.ret === 0){
-                var but = document.getElementById("TencentCaptcha");
-                document.getElementById("wp007_ticket").value = res.ticket;
-                document.getElementById("wp007_randstr").value = res.randstr;
-                document.getElementById("wp007_tcaptcha").value = 1;
-                but.style.cssText = "color:#fff;background:#4fb845;border-color:#4fb845;pointer-events:none";
-                but.innerHTML = "<?php  _e('验证成功',"i_theme") ?>";
-            }
-        }
-    </script>
-    <?php } ?>
-<?php
-}
-function validate_tcaptcha_login($user) { 
-    $slide=$_POST['tcaptcha_007'];
-    if($slide == ''){
-        return  new WP_Error('broke', __("请先验证！！！","i_theme"));
-    }
-    else{
-        $result = validate_ticket($_POST['tencent_ticket'],$_POST['tencent_randstr']);
-        if ($result['result']) {
-            return $user;
-        } else{
-            return  new WP_Error('broke', $result['message']);
-        }
-    }
-}
-if( LOGIN_007 && io_get_option('io_captcha', '', 'tcaptcha_007') ){
-    add_action('login_head', 'add_login_head');
-    add_action('login_form','add_captcha_body');
-    if(!io_get_option('user_center')){
-        add_filter('wp_authenticate_user',  'validate_tcaptcha_login',100,1);
-    }else{
-        add_action('lostpassword_form','add_captcha_body');
-        add_action('register_form','add_captcha_body');
-        add_action('io_bind_form','add_captcha_body');
-    }
-}
-function io_ajax_is_robots($id=''){
-    $captcha = io_get_option('io_captcha');
-    if( LOGIN_007 && $captcha['tcaptcha_007'] && $captcha['appid_007'] ){
-        if(isset($_REQUEST['comment']) && !$captcha['comment_007']){
-            return true;
-        }
-        if(isset($_REQUEST['tcaptcha_007'])&&!empty($_REQUEST['tcaptcha_007'])&&($_REQUEST['tcaptcha_007']=='1')){
-            $tencent007 = validate_ticket($_REQUEST['tencent_ticket'],$_REQUEST['tencent_randstr']);
-            if($tencent007['result']){
-                return true;
-            }else{
-                echo (json_encode(array('status' => 2, 'msg' => $tencent007['message'])));
-                exit();
-            }
-        }else{
-            echo (json_encode(array('status' => 2, 'msg' => '人机验证失败!')));
-            exit();
-        }
-    }else if(isset($_REQUEST['captcha'])){
-        if (empty($_REQUEST['captcha']) || strlen($_REQUEST['captcha']) < 4) {
-            echo (json_encode(array('status' => 2, 'msg' => '请输入图形验证码')));
-            exit();
-        }
-        if (empty($_REQUEST['canvas_code'][$id])) {
-            echo (json_encode(array('status' => 3, 'msg' => '环境异常，请刷新后重试')));
-            exit();
-        }
-        $vcode =  $_REQUEST['canvas_code'][$id];
-        if (strtolower($vcode) != strtolower($_REQUEST['captcha'])) {
-            echo (json_encode(array('status' => 3, 'msg' => '图形验证码错误')));
-            exit();
-        }
-    }
-    return true;
 }
 # 重写规则
 # --------------------------------------------------------------------
@@ -3258,27 +3204,59 @@ function the_post_page() {
 
 /**
  * 查询IP地址
+ * @param mixed $ip
+ * @param mixed $level 1国家 2省 3市 4国家加省 5省加市 6详细
+ * @return mixed
  */
-function query_ip_addr($ip)
-{
+function io_get_ip_location($ip, $level = ''){
+    if (empty($ip))
+        return '无记录';
+    $option = io_get_option('ip_location', array('level'=>2,'v4_type'=>'qqwry'));
+    $level = $level ?: (int)$option['level'];
+    require_once get_theme_file_path('/inc/classes/ip/function.php'); 
+    $isQQwry = $option['v4_type']=='qqwry';
     $url = 'http://freeapi.ipip.net/'.$ip;
-    $body = wp_remote_retrieve_body(wp_remote_get($url));
-    $arr = json_decode($body);
-    if ($arr[1] == $arr[2]) {
-        array_splice($arr, 2, 1);
+    $data = itbdw\Ip\IpLocation::getLocation($ip, $isQQwry);
+    if( isset($data['error'])){
+        return '错误：' . $data['msg'];
     }
-
-    return implode($arr);
+    switch ($level) {
+        case 1:
+            $loc = $data['country'];
+            break;
+        case 2:
+            $loc = $data['province'];
+            break;
+        case 3:
+            $loc = $data['city'];
+            break;
+        case 4:
+            $loc = $data['country'].$data['province'];
+            break;
+        case 5:
+            $loc = $data['province'].$data['city'];
+            break;
+        case 6:
+            $loc = $data['area'];
+            break;
+        default:
+            $loc = $data['province'];
+            break;
+    }
+    if (empty($loc))
+        $loc = '未知';
+    return $loc;
 }
 
 /**
- * 记录用户登录时间
+ * 记录用户登录时间和IP
  */
-function user_last_login($user_login)
-{
+function user_last_login($user_login){
     $user = get_user_by('login', $user_login);
     $time = current_time('mysql');
     update_user_meta($user->ID, 'last_login', $time);
+    $login_ip = IOTOOLS::get_ip();  
+    update_user_meta( $user->ID, 'last_login_ip', $login_ip);  
 }
 add_action('wp_login', 'user_last_login');
 
@@ -3287,7 +3265,7 @@ add_action('wp_login', 'user_last_login');
  */
 function is_disable_username($name)
 {
-    $disable_reg_keywords = io_get_option('user_nickname_stint');
+    $disable_reg_keywords = io_get_option('user_nickname_stint','');
     $disable_reg_keywords = preg_split("/,|，|\s|\n/", $disable_reg_keywords);
 
     if (!$disable_reg_keywords || !$name) {
@@ -3399,7 +3377,7 @@ function format_http($url){
  * @return 
  */
 function show_ad($loc, $is_tow = true, $begin = '<div class="container apd apd-footer">', $end = '</div>'){
-    $ad_data = io_get_option($loc);
+    $ad_data = io_get_option($loc,array('switch'=>false,'tow'=>false));
     if( $ad_data['switch']&&( 
         $ad_data['loc'] === '1' ||
         ($ad_data['loc'] === '3' && !wp_is_mobile() ) || 
@@ -3421,15 +3399,17 @@ function show_ad($loc, $is_tow = true, $begin = '<div class="container apd apd-f
  * 根据页面模板获取页面链接
  * 没用就自动创建
  * @param string $template 模板文件名称
+ * @param int $is_id 返回文章id
+ * @param array $args
  * @return string|int|bool
  */
-function io_get_template_page_url($template, $is_id = false, $args = array())
-{
-    $cache = wp_cache_get($template, 'page_url', true);
+function io_get_template_page_url($template, $is_id = false, $args = array()){
+    $cache_key = $template . ($is_id ? '_is_id' : '');
+    $cache = wp_cache_get($cache_key, 'page_url', true);
     if ($cache) return $cache;
     $templates = array(
         'template-blog.php'       => array('博客', 'blog'),
-        'template-bulletin'       => array('公告列表', 'bulletin'),
+        'template-bulletin.php'   => array('公告列表', 'bulletin'),
         'template-contribute.php' => array('投稿', 'contribute'),
         'template-links.php'      => array('友情链接', 'links'),
         'template-rankings'       => array('排行榜', 'rankings'),
@@ -3456,10 +3436,12 @@ function io_get_template_page_url($template, $is_id = false, $args = array())
         update_post_meta($page_id, '_wp_page_template', $template);
     }
     if ($page_id) {
-        if($is_id)
+        if ($is_id) {
+            wp_cache_set($cache_key, $page_id, 'page_url');
             return $page_id;
-        $url = get_permalink($page_id);
-        wp_cache_set($template, $url, 'page_url');
+        }
+        $url = esc_url(get_permalink($page_id));
+        wp_cache_set($cache_key, $url, 'page_url');
         return $url;
     } else {
         return false;
@@ -3484,7 +3466,7 @@ function io_add_sidebar_list_filters($sidebars){
 add_filter('io_sidebar_list_filters', 'io_add_sidebar_list_filters'); 
 
 //主题更新
-if(io_get_option('update_theme')){
+if(io_get_option('update_theme',false)){
     require_once get_theme_file_path('/inc/classes/theme.update.checker.class.php');  
     $example_update_checker = new ThemeUpdateChecker(
         'onenav', 

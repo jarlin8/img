@@ -6,9 +6,9 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-05 16:03:25
  * @LastEditors: iowen
- * @LastEditTime: 2022-02-10 18:34:33
+ * @LastEditTime: 2023-02-11 15:32:34
  * @FilePath: \onenav\templates\widget\widget-carousel-post.php
- * @Description: 
+ * @Description: 图片、文章轮播
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }  
 ?>
@@ -18,11 +18,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
     <div class="col-12 col-md-5 col-lg-4 col-xl-3 mt-4 mt-md-0">
         <div class="card new-news mb-0 overflow-hidden rounded-xl">
             <h3 class="h6 news_title"><i class="iconfont icon-category"></i>&nbsp;&nbsp;<?php _e('最新资讯','i_theme') ?></h3>
-            <a class="news_all_btn text-xs" href="<?php echo get_permalink(io_get_option('blog_pages')) ?>" <?php echo new_window() ?> title="<?php _e('最新资讯','i_theme') ?>"><?php _e('所有','i_theme') ?></a>
+            <a class="news_all_btn text-xs" href="<?php echo io_get_template_page_url('template-blog.php') ?>" <?php echo new_window() ?> title="<?php _e('最新资讯','i_theme') ?>"><?php _e('所有','i_theme') ?></a>
             <ul>
             <?php 
             $args = array(
-                'category__not_in' => explode(',', io_get_option('article_not_in')),
+                'category__not_in' => explode(',', io_get_option('article_not_in','')),
                 'ignore_sticky_posts' => 1,
             );
             $the_query = new WP_Query( $args );

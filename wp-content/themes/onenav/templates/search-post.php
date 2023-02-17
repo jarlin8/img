@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:02
  * @LastEditors: iowen
- * @LastEditTime: 2021-09-28 17:20:56
+ * @LastEditTime: 2023-02-04 01:31:40
  * @FilePath: \onenav\templates\search-post.php
  * @Description: 
  */
@@ -14,12 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 <div class="cat_list">
     <?php if ( have_posts() ) : ?>
     <?php while ( have_posts() ) : the_post();?>
-
-
     <div class="list-grid list-grid-padding">
         <div class="list-item card">
             <div class="media media-3x2 rounded col-4 col-md-4">
-                <?php if(io_get_option('lazyload')): ?>
+                <?php if(io_get_option('lazyload',false)): ?>
                 <a class="media-content" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>" data-src="<?php echo io_theme_get_thumb() ?>"></a>
                 <?php else: ?>
                 <a class="media-content" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>" style="background-image: url(<?php echo io_theme_get_thumb() ?>);"></a>
@@ -41,7 +39,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                             <a href="<?php echo get_category_link($category[0]->term_id ) ?>"><?php echo $category[0]->cat_name ?></a>
                         </span>
                         <?php } ?>
-                     
                         <div class="flex-fill"></div>
                         <div>
                             <time class="mx-1"><?php echo timeago( get_the_time('Y-m-d G:i:s') ) ?></time>
@@ -49,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                     </div>        
                 </div>
             </div>
-        </div>							
+        </div>                            
     </div> 
     <?php endwhile; endif;?>
 </div>

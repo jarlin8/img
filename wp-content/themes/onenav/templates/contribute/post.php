@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-07-04 18:39:10
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-16 22:16:25
+ * @LastEditTime: 2023-02-01 17:46:19
  * @FilePath: \onenav\templates\contribute\post.php
  * @Description: 
  */
@@ -107,26 +107,12 @@ if ($option['img_size'] > 0) {
                 </div>
             </div>
             <?php } ?>
-            <input type="hidden" name="action" value="io_sites_submit"></input>
+            <input type="hidden" name="action" value="io_posts_submit"></input>
 			<?php wp_nonce_field('posts_submit'); ?>
             <div class="card rounded-lg relative">
                 <div class="card-body">
-                    <?php if( !io_get_option('io_captcha','','tcaptcha_007') ) {
-                        wp_enqueue_script('captcha');  ?>
-                        <div class="input-group text-sm mb-3">
-                            <input id="input_veri" type="text" name="captcha" class="form-control input_veri" maxlength="4" canvas-id="tougao_captcha" placeholder="<?php _e('输入验证码','i_theme') ?>">
-                            <div class="input-group-append position-relative match-code">
-                                <span class="position-absolute h-100 d-flex align-items-center key-icon"></span>
-                                <span class="verification-texts input-group-text text-sm py-0 pr-1 pl-3" data-toggle="tooltip" title="<?php _e('点击刷新','i_theme') ?>"><canvas id="tougao_captcha" canvas-code="tougao_captcha" width="92" height="33"></canvas></span>
-                            </div>  
-                        </div>
-                    <?php } else { ?>
-                        <input type="hidden" id="tcaptcha_007" name="tcaptcha_007" value="" />
-                        <input type="hidden" id="tcaptcha_ticket" name="tencent_ticket" value="" />
-                        <input type="hidden" id="tcaptcha_randstr" name="tencent_randstr" value="" />
-                        <button id="TencentCaptcha" type="button" class="btn btn-outline-danger custom_btn-outline col-12 mb-3" data-appid="<?php echo io_get_option('io_captcha','','appid_007') ?>" data-cbfn="callback"><?php _e('验证','i_theme') ?></button>   
-                    <?php } ?>
-                    <button type="submit" name="submit" class="btn btn-danger btn-block"><i class="iconfont icon-upload-wd mr-2"></i><?php echo $btn_text ?></button>
+                    <?php echo get_captcha_input_html('io_posts_submit') ?>
+                    <button type="submit" id="submit" name="submit" class="btn btn-danger btn-block is-post"><i class="iconfont icon-upload-wd mr-2"></i><?php echo $btn_text ?></button>
                 </div>
             </div>
         </div>

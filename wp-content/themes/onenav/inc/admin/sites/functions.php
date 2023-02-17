@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-20 18:28:17
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-21 04:48:42
+ * @LastEditTime: 2023-02-07 18:20:42
  * @FilePath: \onenav\inc\admin\sites\functions.php
  * @Description: 
  */
@@ -22,7 +22,8 @@ add_action('admin_notices', 'io_sites_invalid_apply_admin_notice');
 
 
 function io_sites_invalid_apply_admin_notice() {
-    if (isset($_GET['page']) && 'user_auth' == $_GET['page']) {
+    $screen = get_current_screen();
+    if (!($screen->post_type == 'sites' || $screen->id == 'dashboard') ) {
         return;
     } 
     $sites_count    = get_invalid_count(0);
@@ -55,7 +56,36 @@ function io_sites_invalid_submenu_page() {
 function io_require_sites_invalid_submenu_page() {
     require get_theme_file_path('inc/admin/pages/page-sites-invalid.php');
 }
-
+# 后台检测失效网址状态
+# --------------------------------------------------------------------
+function sites_invalid_prompt_menu() {
+    if( ! is_admin() ) { return; }
+    global $wp_admin_bar; 
+    $sites_count    = get_invalid_count(0);
+    if ($sites_count) : 
+        $wp_admin_bar->add_menu(array(
+            'id' => 'sites_invalid',  
+            'title' => '<span class="update-plugins count-2" style="display: inline-block;background-color: #d54e21;color: #fff;font-size: 9px;font-weight: 600;border-radius: 10px;z-index: 26;height: 18px;margin-right: 5px;"><span class="update-count" style="display: block;padding: 0 6px;line-height: 17px;">'.$sites_count.'</span></span>个失效网址', 
+            'href' => admin_url('/edit.php?post_type=sites&page=invalid-sites')
+        ));     
+    endif; 
+    wp_reset_postdata();
+}
+add_action('admin_bar_menu', 'sites_invalid_prompt_menu', 2000);
+function sites_revive_prompt_menu() {
+    if( ! is_admin() ) { return; }
+    global $wp_admin_bar; 
+    $sites_count    = get_revive_url_count();
+    if ($sites_count) : 
+        $wp_admin_bar->add_menu(array(
+            'id' => 'sites_revive',  
+            'title' => '<span class="update-plugins count-2" style="display: inline-block;background-color: #d54e21;color: #fff;font-size: 9px;font-weight: 600;border-radius: 10px;z-index: 26;height: 18px;margin-right: 5px;"><span class="update-count" style="display: block;padding: 0 6px;line-height: 17px;">'.$sites_count.'</span></span>个复活网址', 
+            'href' => admin_url('/edit.php?post_type=sites&sites_status=5&page=invalid-sites')
+        ));     
+    endif; 
+    wp_reset_postdata();
+}
+add_action('admin_bar_menu', 'sites_revive_prompt_menu', 2000);
 
 function get_column_info(){
     $columns = array(
@@ -84,6 +114,21 @@ function invalid_setting_scripts() {
         wp_enqueue_script('io_page', get_theme_file_uri('/inc/admin/assets/page-list.js'), array(), VERSION );
     }
 }
+/**
+ * 移出失效链接列表
+ * 
+ * @param mixed $post_id
+ * @return void
+ */
+function move_out_invalid_url($post_id){
+    delete_post_meta($post_id,'invalid');
+    delete_post_meta($post_id,'report');
+    delete_post_meta($post_id,'_invalid_reason');//无效原因
+    delete_post_meta($post_id,'_dead_link');
+    //delete_post_meta($post_id,'_redirect_url');
+}
+
+
 function invalid_post_init() { 
     if ( isset( $_REQUEST['page'] ) && 'invalid-sites'===$_REQUEST['page'] ) {
         
@@ -112,7 +157,7 @@ function invalid_post_init() {
         if ( $doaction ) { 
             check_admin_referer( 'bulk-invalid' );
         
-            $sendback = remove_query_arg( array( 'trashed', 'untrashed', 'deleted', 'locked', 'regaind', 'updated', 'ids' ), wp_get_referer() );
+            $sendback = remove_query_arg( array( 'trashed', 'untrashed', 'deleted', 'locked', 'regaind', 'updated', 'confirmd', 'ids' ), wp_get_referer() );
             if ( ! $sendback ) {
                 $sendback = admin_url( $parent_file );
             }
@@ -179,13 +224,11 @@ function invalid_post_init() {
         
                     foreach ( (array) $post_ids as $post_id ) { 
                         if($redirect = get_post_meta($post_id, '_redirect_url', true)){
-                            update_post_meta($post_id, "_sites_link", $redirect ); 
+                            update_post_meta($post_id, "_sites_link", $redirect );
+                            move_out_invalid_url($post_id);
 
-                            delete_post_meta($post_id,'invalid');
-                            delete_post_meta($post_id,'report');
-                            delete_post_meta($post_id,'_invalid_reason');
-                            delete_post_meta($post_id,'_dead_link');
-                            delete_post_meta($post_id,'_redirect_url');
+                            delete_post_meta($post_id,'_affirm_dead_url');
+                            delete_post_meta($post_id,'_revive_url_m');
                             $updated++;
                         }
                     }
@@ -196,15 +239,14 @@ function invalid_post_init() {
                     $regaind = 0;
         
                     foreach ( (array) $post_ids as $post_id ) { 
-                        delete_post_meta($post_id,'invalid');
-                        delete_post_meta($post_id,'report');
-                        delete_post_meta($post_id,'_invalid_reason');
-                        delete_post_meta($post_id,'_dead_link');
-                        delete_post_meta($post_id,'_redirect_url');
+                        move_out_invalid_url($post_id);
+                        
+                        delete_post_meta($post_id,'_affirm_dead_url');
+                        delete_post_meta($post_id,'_revive_url_m');
                         $regaind++;
                     }
         
-                    $sendback = add_query_arg(array('regaind' => $regaind),$sendback);
+                    $sendback = add_query_arg(array('regaind' => $regaind,'updated' => ''),$sendback);
                     break;
                 case 'delete':
                     $deleted = 0;
@@ -227,6 +269,18 @@ function invalid_post_init() {
                         $deleted++;
                     }
                     $sendback = add_query_arg( 'deleted', $deleted, $sendback );
+                    break;
+                case 'blacklist': //添加到确认失效列表
+                    $confirmd = 0;
+                    foreach ( (array) $post_ids as $post_id ) {
+                        if (!get_post_meta($post_id, '_affirm_dead_url', true)) {
+                            add_post_meta($post_id, '_affirm_dead_url', 1);
+                            $wpdb->update($wpdb->posts, array('post_mime_type' => 1), array('ID' => $post_id));
+                        }
+                        move_out_invalid_url($post_id);
+                        $confirmd++;
+                    }
+                    $sendback = add_query_arg(array('confirmd' => $confirmd,'updated' => ''),$sendback);
                     break;
                 default:
                     break;
@@ -261,19 +315,54 @@ function get_invalid_count($threshold = 5){
         INNER JOIN $wpdb->postmeta
         ON ( $wpdb->posts.ID = $wpdb->postmeta.post_id )
         WHERE 1=1
-        AND ( ( $wpdb->postmeta.meta_key = 'invalid' AND CAST($wpdb->postmeta.meta_value AS SIGNED) > '$threshold' )
-        OR ( $wpdb->postmeta.meta_key = 'report' AND CAST($wpdb->postmeta.meta_value AS SIGNED) > '0' ) )
+        AND ( 
+            ( $wpdb->postmeta.meta_key = 'invalid' AND CAST($wpdb->postmeta.meta_value AS SIGNED) > '$threshold' )
+            OR ( $wpdb->postmeta.meta_key = 'report' AND CAST($wpdb->postmeta.meta_value AS SIGNED) > '0' ) 
+        )
         AND $wpdb->posts.post_type = 'sites'
         AND (($wpdb->posts.post_status = 'publish'))";
         $_invalid_count = intval($wpdb->get_var($sql));
     }
     return $_invalid_count;
 }
+/**
+ * 获取确实失效的网站数量
+ *  
+ * @return int
+ */
+function get_affirm_dead_url_count(){
+    global $wpdb;
+    $sql = "SELECT COUNT(*)
+    FROM $wpdb->posts
+    INNER JOIN $wpdb->postmeta
+    ON ( $wpdb->posts.ID = $wpdb->postmeta.post_id )
+    WHERE 1=1
+    AND ( ( $wpdb->postmeta.meta_key = '_affirm_dead_url' AND $wpdb->postmeta.meta_value = '1' ) )
+    AND $wpdb->posts.post_type = 'sites'
+    AND (($wpdb->posts.post_status = 'publish'))";
+    return intval($wpdb->get_var($sql));
+}
 
+/**
+ * 获取可能复活的网站数量
+ *  
+ * @return int
+ */
+function get_revive_url_count(){
+    global $wpdb;
+    $sql = "SELECT COUNT(*)
+    FROM $wpdb->posts
+    INNER JOIN $wpdb->postmeta
+    ON ( $wpdb->posts.ID = $wpdb->postmeta.post_id )
+    WHERE 1=1
+    AND ( ( $wpdb->postmeta.meta_key = '_revive_url_m' AND $wpdb->postmeta.meta_value = '666' ) )
+    AND $wpdb->posts.post_type = 'sites'
+    AND (($wpdb->posts.post_status = 'publish'))";
+    return intval($wpdb->get_var($sql));
+}
 /**
  * 获取无效的网站数量
  *  
- * @param int  $threshold
  * @return int
  */
 function get_invalid_dead_count(){
@@ -291,7 +380,6 @@ function get_invalid_dead_count(){
 /**
  * 获取重定向的网站数量
  *  
- * @param int  $threshold
  * @return int
  */
 function get_invalid_redirect_count(){
@@ -309,7 +397,6 @@ function get_invalid_redirect_count(){
 /**
  * 获取注意的网站数量
  *  
- * @param int  $threshold
  * @return int
  */
 function get_invalid_warn_count(){
@@ -327,7 +414,8 @@ function get_invalid_warn_count(){
 /**
  * 获取单页无效的网站
  *  
- * @param int  $threshold
+ * @param int  $page 当前页
+ * @param int  $count 一页数量
  * @return object
  */
 function get_invalid_sites($page = 0,$count=20){
@@ -502,10 +590,6 @@ function io_column_default( $item, $column_name ) {
         }
         return;
     } elseif ( 'type' === $column_name ) {
-        //global $failure_n;
-        //if(!$failure_n)
-        //    $failure_n  = io_get_option('failure_valve');
-
         $sites_invalid  = get_post_meta($post->ID,'invalid',true);
         $sites_report   = get_post_meta($post->ID,'_invalid_reason',true);
         if(io_get_option('server_link_check',false)){
@@ -513,9 +597,6 @@ function io_column_default( $item, $column_name ) {
             $http_code      = $link->analyse_status();
             echo '<span class="invalid-type invalid-'.$http_code['code'].'">'.( empty( $link->http_code ) ? '' : $link->http_code ).' '.$http_code['text'].'</span>';
         }
-        //if($sites_invalid>$failure_n){
-        //    echo '<span class="invalid-type invalid-0">可能失效</span>';
-        //}
         if(!empty($sites_report) && is_array($sites_report)){
             foreach($sites_report as $report){
                 if(is_numeric($report)){
@@ -529,10 +610,13 @@ function io_column_default( $item, $column_name ) {
     } elseif ( 'handle' === $column_name ) {
         global $post_args;
         $nonce = wp_create_nonce( 'bulk-invalid' );
-        echo '<a href="'.get_delete_post_link( $post->ID,'',true ) .'" title="彻底删除网址">' . __('删除','i_theme') . '</a> | ';
-        echo '<a href="'.esc_url( wp_nonce_url( "edit.php?post_type=sites&page=invalid-sites&post=$post->ID&action=regain", 'bulk-invalid' ) ).'" title="恢复网址到正常状态">' . __('恢复','i_theme') . '</a>';
+        if (!isset($_GET['sites_status']) || (isset($_GET['sites_status']) && !in_array($_GET['sites_status'],array(4,5)))) {
+            echo '<a href="' . esc_url(wp_nonce_url("edit.php?post_type=sites&page=invalid-sites&post=$post->ID&action=blacklist", 'bulk-invalid')) . '" title="保留链接，提示用户失效（避免SEO掉链）">确认失效</a> | ';
+        }
+        echo '<a href="'.get_delete_post_link( $post->ID,'',true ) .'" title="彻底删除网址">删除</a> | ';
+        echo '<a href="'.esc_url( wp_nonce_url( "edit.php?post_type=sites&page=invalid-sites&post=$post->ID&action=regain", 'bulk-invalid' ) ).'" title="恢复网址到正常状态">恢复</a>';
         if($redirect_url = get_post_meta($post->ID,'_redirect_url',true)){
-            echo ' | <a href="'.esc_url( wp_nonce_url( "edit.php?post_type=sites&page=invalid-sites&post=$post->ID&action=update", 'bulk-invalid' ) ).'" title="更新网址为重定向地址并恢复状态">' . __('更新并恢复','i_theme') . '</a>';
+            echo ' | <a href="'.esc_url( wp_nonce_url( "edit.php?post_type=sites&page=invalid-sites&post=$post->ID&action=update", 'bulk-invalid' ) ).'" title="更新网址为重定向地址并恢复状态">更新并恢复</a>';
         }
         return;
     } else {
@@ -780,7 +864,7 @@ function io_list_get_views() {
             'All <span class="count">(%s)</span>',
             $num_posts,
             'posts'
-        ),
+        ).'(不含确认无效)',
         number_format_i18n( $num_posts )
     );
     $status_links['all'] = io_get_edit_link( $all_args, $all_inner_html, $class );
@@ -788,7 +872,9 @@ function io_list_get_views() {
     $list = array(
         "dead" => 1, 
         "redirect" => 2, 
-        "warning" => 3
+        "warning" => 3,
+        "affirm" => 4,
+        "revive" => 5
     );
     foreach($list as $name => $status){
         $class = '';
@@ -803,20 +889,32 @@ function io_list_get_views() {
         switch($name){
             case "dead": 
                 $status_label = sprintf(
-                    __('失效 %s','i_theme'),
+                    '失效 %s',
                     '<span class="count">('.get_invalid_dead_count().')</span>'
                 );
                 break;
             case "redirect": 
                 $status_label = sprintf(
-                    __('重定向 %s','i_theme'),
+                    '重定向 %s',
                     '<span class="count">('.get_invalid_redirect_count().')</span>'
                 );
                 break;
             case "warning": 
                 $status_label = sprintf(
-                    __('注意 %s','i_theme'),
+                    '注意 %s',
                     '<span class="count">('.get_invalid_warn_count().')</span>'
+                );
+                break;
+            case "affirm": 
+                $status_label = sprintf(
+                    '确认无效 %s',
+                    '<span class="count">('.get_affirm_dead_url_count().')</span>'
+                );
+                break;
+            case "revive": 
+                $status_label = sprintf(
+                    '反馈复活 %s',
+                    '<span class="count">('.get_revive_url_count().')</span>'
                 );
                 break;
         }

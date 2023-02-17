@@ -98,7 +98,7 @@ get_header(); ?>
         ),
     );
     $show_list = array();
-    if(io_get_option('leader_board'))
+    if(io_get_option('leader_board',false))
         $show_list  = get_post_meta( get_the_ID(), '_show-list', true )['enabled'];//array('book','sites','post');
     $count      = get_post_meta( get_the_ID(), '_show-count', true );
     foreach($show_list as $k=>$v){

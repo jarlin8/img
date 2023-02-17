@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-09 21:11:15
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-03 22:07:47
+ * @LastEditTime: 2023-02-04 01:16:12
  * @FilePath: \onenav\inc\functions\io-widget-tab.php
  * @Description: 
  */
@@ -39,7 +39,7 @@ function get_tab_post_html($data,$type,$class=''){
     );
     $items = new WP_Query( $args ); 
     
-    if( io_get_option('show_sticky'))
+    if( io_get_option('show_sticky',false))
         $items = sticky_posts_to_top($items,to_post_type($data['type']),$data['type'],$data['cat']);
     if ($items->have_posts()) :
         while ( $items->have_posts() ) : $items->the_post();

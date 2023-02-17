@@ -51,18 +51,18 @@ new AsyncEmail();
  * 根据用户设置选择邮件发送方式
  */
 function i_switch_mailer($phpmailer){
-    $mailer = io_get_option('i_default_mailer');
+    $mailer = io_get_option('i_default_mailer','smtp');
     if($mailer === 'smtp'){
         //$phpmailer->Mailer = 'smtp';
-        $phpmailer->Host        = io_get_option('i_smtp_host');
+        $phpmailer->Host        = io_get_option('i_smtp_host','');
         $phpmailer->SMTPAuth    = true; // 强制它使用用户名和密码进行身份验证
-        $phpmailer->Port        = io_get_option('i_smtp_port');
-        $phpmailer->Username    = io_get_option('i_smtp_username');
-        $phpmailer->Password    = io_get_option('i_smtp_password');
+        $phpmailer->Port        = io_get_option('i_smtp_port','');
+        $phpmailer->Username    = io_get_option('i_smtp_username','');
+        $phpmailer->Password    = io_get_option('i_smtp_password','');
 
         // Additional settings…
-        $phpmailer->SMTPSecure  = io_get_option('i_smtp_secure');
-        $phpmailer->FromName    = io_get_option('i_smtp_name');
+        $phpmailer->SMTPSecure  = io_get_option('i_smtp_secure','');
+        $phpmailer->FromName    = io_get_option('i_smtp_name','');
         $phpmailer->From        = $phpmailer->Username; // 多数SMTP提供商要求发信人与SMTP服务器匹配，自定义发件人地址可能无效
         $phpmailer->Sender      = $phpmailer->From; //Return-Path--
         $phpmailer->AddReplyTo($phpmailer->From,$phpmailer->FromName); //Reply-To--
@@ -84,7 +84,7 @@ add_action('phpmailer_init', 'i_switch_mailer');
  * @return  bool|array
  */
 function io_mail($from, $to, $title = '', $args = array(), $template = 'comment') {
-    $mail_type  = io_get_option('i_default_mailer');
+    $mail_type  = io_get_option('i_default_mailer','');
     $title      = $title ? trim($title) : io_get_mail_title($template);
     $content    = io_mail_render($args, $template);
     $headers    = '';
@@ -352,3 +352,46 @@ function io_add_links_submit_email_to_admin($data)
     io_async_mail('', get_option('admin_email'), sprintf( __('[%s]新的友情链接待审核', 'i_theme'), get_bloginfo('name') ),$args , 'add-links'); 
 }
 add_action('io_ajax_add_links_submit_success', 'io_add_links_submit_email_to_admin', 99);
+/**
+ * 通知用户
+ * 邮件 短信 或者站内信等
+ * #TODO 
+ * @param mixed $type 
+ * @param mixed $to
+ * @param mixed $msg
+ * @return void
+ */
+function io_notify_user($type, $to = '', $msg = ''){
+
+}
+
+
+//用户绑定手机号通知
+function io_user_bind_new_email_or_phone_notice($user_id, $type, $new_to, $old_to){
+    $user = get_userdata($user_id);
+
+    $blog_name = get_bloginfo('name');
+    $new_to = io_get_hide_info($new_to, $type);
+    $old_to = $old_to ? io_get_hide_info($old_to, $type) : false;
+
+    if('email' === $type){
+        $title       = $old_to ? __('邮箱修改成功', 'i_theme') : __('邮箱绑定成功', 'i_theme');
+        $info_text   = $old_to ? __('您的账号绑定的邮箱已修改', 'i_theme') : __('您的账号已成功绑定邮箱', 'i_theme');
+        $action_text = $old_to ? sprintf(__('由 %s 修改为 %s', 'i_theme'), $old_to, $new_to) : __('邮箱：', 'i_theme') . $new_to;
+    } else {
+        $title       = $old_to ? __('手机号修改成功', 'i_theme') : __('手机号绑定成功', 'i_theme');
+        $info_text   = $old_to ? __('您的账号绑定的手机号已修改', 'i_theme') : __('您的账号已成功绑定手机号', 'i_theme');
+        $action_text = $old_to ? sprintf(__('由 %s 修改为 %s', 'i_theme'), $old_to, $new_to) : __('手机号：', 'i_theme') . $new_to;
+    }
+    $message = __('您好，', 'i_theme') . $user->display_name . '!<br />';
+    $message .= $info_text . '<br />';
+    $message .= $action_text . '<br/><br/>';
+    $message .= __('如非您本人操作，请及时与客服联系！', 'i_theme');
+
+    $args = array(
+        'content' => $message,
+    );
+    
+    io_mail('', $user->user_email, '['.$blog_name.']'.$title, $args , 'content');
+}
+add_action('io_user_bind_new_email_or_phone', 'io_user_bind_new_email_or_phone_notice', 99, 4);

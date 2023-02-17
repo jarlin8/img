@@ -23,10 +23,10 @@ if($ico_info && $ico_info['ico_a']){
     $size = 'background-size: '.$ico_info["ico_size"].'%';
 }
 ?>
-	<div class="card-app card">
-	    <div class="card-body align-items-center d-flex flex-fill py-3">
+    <div class="card-app card">
+        <div class="card-body align-items-center d-flex flex-fill py-3">
             <div class="media size-70 p-0 app-rounded" <?php echo $bg ?>>
-                <?php if(io_get_option('lazyload')): ?>
+                <?php if(io_get_option('lazyload',false)): ?>
                 <a class="media-content" href="<?php the_permalink(); ?>" <?php echo new_window() ?> data-bg="url(<?php echo get_post_meta_img(get_the_ID(), '_app_ico', true) ?>)" style="<?php echo $size ?>"></a>
                 <?php else: ?>
                 <a class="media-content" href="<?php the_permalink(); ?>" <?php echo new_window() ?>  style="background-image: url(<?php echo get_post_meta_img(get_the_ID(), '_app_ico', true) ?>);<?php echo $size ?>"></a>
@@ -41,7 +41,7 @@ if($ico_info && $ico_info['ico_a']){
                         <?php 
                         $post_tags = get_the_terms(get_the_ID(),'apptag');
                         if(!$post_tags) $post_tags = get_the_terms(get_the_ID(),'apps');
-					    if ($post_tags) {
+                        if ($post_tags) {
                             $c = count($post_tags)>4 ? 4 : count($post_tags);
                             for( $i = 0; $i < $c; $i++ ) {
                                 echo '<span class="mr-1"><a href="'.get_tag_link($post_tags[$i]->term_id).'" rel="tag">' . $post_tags[$i]->name . '</a></span>';

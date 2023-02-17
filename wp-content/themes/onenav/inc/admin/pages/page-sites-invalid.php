@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-20 18:28:17
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-24 19:15:06
+ * @LastEditTime: 2023-02-07 17:45:14
  * @FilePath: \onenav\inc\admin\pages\page-sites-invalid.php
  * @Description: 
  */
@@ -80,6 +80,22 @@ if(isset( $_REQUEST['sites_status']) && !empty($_REQUEST['sites_status'])){
                 'meta_value'        => '1',    
             )
         );
+    }elseif($_REQUEST['sites_status'] == 4){
+        $args = wp_parse_args(
+            $args,
+            array(
+                'meta_key'          => '_affirm_dead_url', 
+                'meta_value'        => '1',    
+            )
+        );
+    }elseif($_REQUEST['sites_status'] == 5){
+        $args = wp_parse_args(
+            $args,
+            array(
+                'meta_key'          => '_revive_url_m', 
+                'meta_value'        => '666',    
+            )
+        );
     }
 }else{
     $args = wp_parse_args(
@@ -134,6 +150,7 @@ $bulk_counts = array(
 	'regaind'   => isset( $_REQUEST['regaind'] ) ? absint( $_REQUEST['regaind'] ) : 0,
 	'deleted'   => isset( $_REQUEST['deleted'] ) ? absint( $_REQUEST['deleted'] ) : 0,
 	'trashed'   => isset( $_REQUEST['trashed'] ) ? absint( $_REQUEST['trashed'] ) : 0,
+	'confirmd'  => isset( $_REQUEST['confirmd'] ) ? absint( $_REQUEST['confirmd'] ) : 0,
 	'untrashed' => isset( $_REQUEST['untrashed'] ) ? absint( $_REQUEST['untrashed'] ) : 0,
 );
 $bulk_messages['sites']     = array(
@@ -146,6 +163,8 @@ $bulk_messages['sites']     = array(
 	/* translators: %s: Number of posts. */
 	'trashed'   => _n( '%s post moved to the Trash.', '%s posts moved to the Trash.', $bulk_counts['trashed'] ),
 	/* translators: %s: Number of posts. */
+	'confirmd'  => _n( '%s 个网址确认失效。', '%s 个网址确认失效。', $bulk_counts['confirmd'] ),
+	/* translators: %s: Number of posts. */
 	'untrashed' => _n( '%s post restored from the Trash.', '%s posts restored from the Trash.', $bulk_counts['untrashed'] ),
 ); 
 $bulk_counts   = array_filter( $bulk_counts );
@@ -153,7 +172,6 @@ $bulk_counts   = array_filter( $bulk_counts );
 
 <div class="wrap">
     <h1 class="wp-heading-inline"><?php echo esc_html( $post_title  ); ?></h1>
- 
 <?php 
 if ( isset( $_REQUEST['s'] ) && strlen( $_REQUEST['s'] ) ) {
 	echo '<span class="subtitle">';
@@ -199,7 +217,7 @@ if ( $messages ) {
 }
 unset( $messages );
 
-$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'locked', 'skipped', 'updated', 'deleted', 'trashed', 'untrashed', 'regaind' ), $_SERVER['REQUEST_URI'] );
+$_SERVER['REQUEST_URI'] = remove_query_arg( array( 'locked', 'skipped', 'updated', 'deleted', 'regaind', 'confirmd', 'trashed', 'untrashed' ), $_SERVER['REQUEST_URI'] );
 
 ?>
 <!------------------------- 批处理的信息 END------------------------->

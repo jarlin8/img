@@ -59,7 +59,7 @@ class new_cat extends WP_Widget {
             <div class="list-item py-2">
                 <?php if($instance['show_thumbs']) { ?>
                 <div class="media media-3x2 rounded col-4 mr-3">
-                    <?php if(io_get_option('lazyload')): ?>
+                    <?php if(io_get_option('lazyload',false)): ?>
                     <a class="media-content" href="<?php the_permalink(); ?>" <?php echo $newWindow ?> title="<?php the_title(); ?>" data-src="<?php echo  io_theme_get_thumb() ?>"></a>
                     <?php else: ?>
                     <a class="media-content" href="<?php the_permalink(); ?>" <?php echo $newWindow ?> title="<?php the_title(); ?>" style="background-image: url(<?php echo  io_theme_get_thumb() ?>);"></a>
@@ -202,7 +202,7 @@ class new_bulletin extends WP_Widget {
             <?php endwhile; ?>
             <?php wp_reset_postdata(); ?>
         </div>
-        <div class="mt-4"><a href="<?php echo get_permalink(io_get_option('all_bull')) ?>" target="_blank" class="btn btn-outline-danger btn-block"><?php _e('更多','io_setting') ?></a></div>
+        <div class="mt-4"><a href="<?php echo io_get_template_page_url('template-bulletin.php') ?>" target="_blank" class="btn btn-outline-danger btn-block"><?php _e('更多','io_setting') ?></a></div>
     </div>
 
     <?php
@@ -393,7 +393,7 @@ class related_post extends WP_Widget {
                 <div class="list-item py-2">
                     <?php if($instance['show_thumbs']) { ?>
                     <div class="media media-3x2 rounded col-4 mr-3">
-                        <?php if(io_get_option('lazyload')): ?>
+                        <?php if(io_get_option('lazyload',false)): ?>
                         <a class="media-content" href="<?php the_permalink(); ?>" <?php echo $newWindow ?> title="<?php the_title(); ?>" data-src="<?php echo  io_theme_get_thumb() ?>"></a>
                         <?php else: ?>
                         <a class="media-content" href="<?php the_permalink(); ?>" <?php echo $newWindow ?> title="<?php the_title(); ?>" style="background-image: url(<?php echo  io_theme_get_thumb() ?>);"></a>
@@ -433,7 +433,7 @@ class related_post extends WP_Widget {
                 <div class="list-item py-2">
                     <?php if($instance['show_thumbs']) { ?>
                     <div class="media media-3x2 rounded col-4 mr-3">
-                        <?php if(io_get_option('lazyload')): ?>
+                        <?php if(io_get_option('lazyload',false)): ?>
                         <a class="media-content" href="<?php the_permalink(); ?>" <?php echo $newWindow ?> title="<?php the_title(); ?>" data-src="<?php echo  io_theme_get_thumb() ?>"></a>
                         <?php else: ?>
                         <a class="media-content" href="<?php the_permalink(); ?>" <?php echo $newWindow ?> title="<?php the_title(); ?>" style="background-image: url(<?php echo  io_theme_get_thumb() ?>);"></a>
@@ -624,7 +624,7 @@ class about_author extends WP_Widget {
 
     <div class="widget-author-cover">
         <div class="media media-2x1">
-            <?php if(io_get_option('lazyload')): ?>
+            <?php if(io_get_option('lazyload',false)): ?>
             <div class="media-content" data-src="<?php echo $instance['author_back']; ?>"></div>
             <?php else: ?>
             <div class="media-content" style="background-image: url(<?php echo $instance['author_back']; ?>);"></div>
@@ -639,18 +639,10 @@ class about_author extends WP_Widget {
     <div class="widget-author-meta text-center p-4">
           <div class="h6 mb-3"><?php the_author(); ?><small class="d-block">
             <span class="badge badge-outline-primary mt-2">
-                <?php $user_id=$author_id;//get_post($id)->post_author;
-                if(user_can($user_id,'install_plugins')) {
-                    echo  __('博主','io_setting');
-                }elseif(user_can($user_id,'edit_others_posts')) {
-                    echo  __('编辑','io_setting');
-                }elseif(user_can($user_id,'publish_posts')) {
-                    echo __('作者','io_setting');
-                }elseif(user_can($user_id,'delete_posts')) {
-                    echo __('投稿者','io_setting');
-                }elseif(user_can($user_id,'read')) {
-                    echo __('订阅者','io_setting');
-                }?>
+                <?php 
+                $user_id=$author_id;//get_post($id)->post_author;
+                echo io_get_user_cap_string($user_id);
+                ?>
             </span></small>
         </div>
           <div class="desc text-xs mb-3 overflowClip_2"></div>

@@ -4,20 +4,23 @@
 use Aliyun\DySDKLite\SignatureHelper;
 
 //腾讯sdk
+use Tencent\ioSms\SendSms;
+/**
+ * 腾讯SDK3.0
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
 use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloud\Common\Exception\TencentCloudSDKException;
 use TencentCloud\Sms\V20210111\SmsClient;
 use TencentCloud\Sms\V20210111\Models\SendSmsRequest;
+*/
 
-class IOSMS
-{
+class IOSMS {
     public static $time = '30';
 
     public static function send($to, $code, $sdk = '')
     {
-        $sdk = $sdk ? $sdk : io_get_option('sms_sdk');
+        $sdk = $sdk ? $sdk : io_get_option('sms_sdk','ali');
         if (!$sdk) {
             return array('error' => 1, 'to' => $to, 'msg' => '暂无短信接口，请与客服联系');
         }
@@ -30,7 +33,7 @@ class IOSMS
                 $result = self::ali_send($to, $code);
                 break;
             case 'tencent':
-                $result = self::tencent_send($to, $code);
+                $result = self::tencent_send2($to, $code);
                 break;
             case 'smsbao':
                 $result = self::smsbao_send($to, $code);
@@ -54,8 +57,7 @@ class IOSMS
      * @param {*}
      * @return {*}
      */
-    public static function smsbao_send($to, $code)
-    {
+    public static function smsbao_send($to, $code){
         $cofig = io_get_option('sms_smsbao_option');
         if (empty($cofig['userame']) || (empty($cofig['password']) && empty($cofig['api_key'])) || empty($cofig['template'])) {
             return array('error' => 1, 'msg' => '短信宝：缺少配置参数');
@@ -101,8 +103,7 @@ class IOSMS
     }
 
     //阿里云发送短信
-    public static function ali_send($to, $code)
-    {
+    public static function ali_send($to, $code){
         // Download：https://github.com/jacky-pony/DySDKLite
 
         $cofig = io_get_option('sms_ali_option');
@@ -163,10 +164,11 @@ class IOSMS
         }
     }
 
-    public static function tencent_send($to, $code)
-    {
-        
+    public static function tencent_send($to, $code){
         //腾讯php sdk3.0发送短信
+        /**
+            如果使用3.0，需在 composer.json 文件中添加 "tencentcloud/sms": "^3.0"
+         */
         $cofig = io_get_option('sms_tencent_option');
         if (empty($cofig['app_id']) || empty($cofig['secret_id']) || empty($cofig['secret_key']) || empty($cofig['sign_name']) || empty($cofig['template_id'])) {
             return array('error' => 1, 'msg' => '腾讯云短信：缺少配置参数');
@@ -218,6 +220,37 @@ class IOSMS
             }
             return $toArray;
         } catch (TencentCloudSDKException $e) {
+            return array('error' => 1, 'msg' => $e->getMessage());
+        }
+    }
+    public static function tencent_send2($to, $code) {
+        //https://github.com/qcloudsms/qcloudsms_php
+        //腾讯php sdk2.0发送短信
+        $cofig = io_get_option('sms_tencent_option');
+        if (empty($cofig['app_id']) || empty($cofig['app_key']) || empty($cofig['sign_name']) || empty($cofig['template_id'])) {
+            return array('error' => 1, 'msg' => '腾讯云短信：缺少配置参数');
+        }
+        $app_id      = $cofig['app_id'];
+        $app_key     = $cofig['app_key'];
+        $sign_name   = $cofig['sign_name'];
+        $template_id = $cofig['template_id'];
+
+        require_once __DIR__ . "/TencentSms.php";
+        try {
+            $sender  = new SendSms($app_id, $app_key);
+            $result  = $sender->sendParam("86", $to, $template_id, array($code, "30"), $sign_name);
+            $toArray = json_decode($result, true);
+
+            if (isset($toArray['result']) && $toArray['result'] == 0) {
+                $toArray['error']  = 0;
+                $toArray['result'] = true;
+            } else {
+                $toArray['error']  = 1;
+                $toArray['msg']    = $toArray['errmsg'] . ' | 错误码:' . $toArray['result'];
+                $toArray['result'] = false;
+            }
+            return $toArray;
+        } catch (\Exception $e) {
             return array('error' => 1, 'msg' => $e->getMessage());
         }
     }

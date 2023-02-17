@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:01
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-25 22:12:27
+ * @LastEditTime: 2023-02-04 00:19:03
  * @FilePath: \onenav\taxonomy-sitetag.php
  * @Description: 
  */
@@ -25,12 +25,12 @@ get_header(); ?>
                     }
                     if ( have_posts() ) : while ( have_posts() ) : the_post(); 
                     //if(current_user_can('level_10') || !get_post_meta($post->ID, '_visible', true)) {
-                        if(io_get_option('site_card_mode') == 'max'){ ?>
+                        if(io_get_option('site_card_mode','max') == 'max'){ ?>
                             <div class="url-card col-sm-6 col-md-4 col-lg-6 col-xl-4  <?php echo before_class($post->ID) ?>">
                             <?php include( get_theme_file_path('/templates/card-sitemax.php') ); ?>
                             </div>
                         <?php }else{ ?>
-                            <div class="url-card <?php echo io_get_option('two_columns')?"col-6":"" ?> col-sm-6 col-md-4 col-xl-3 <?php echo before_class($post->ID) ?>">
+                            <div class="url-card <?php echo io_get_option('two_columns',false)?"col-6":"" ?> col-sm-6 col-md-4 col-xl-3 <?php echo before_class($post->ID) ?>">
                             <?php include( get_theme_file_path('/templates/card-site.php') ); ?>
                             </div>
                         <?php }

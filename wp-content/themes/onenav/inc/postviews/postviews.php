@@ -14,23 +14,29 @@ function ioo_process_postviews() {
 	if( ! wp_is_post_revision( $post ) && ! is_preview() ) {
 		if( is_single() || is_page() ) {
 			$id = (int) $post->ID ;
-			$views_options = io_get_option( 'views_options' );
+			$default = array(
+				'count'        => '0',
+				'exclude_bots' => true,
+				'template'     => '0',
+				'use_ajax'     => true,
+			);
+			$views_options = io_get_option( 'views_options', $default );
 			if ( !$post_views = get_post_meta( $post->ID, 'views', true ) ) {
-				if(io_get_option('views_n')>0)
-					$post_views = mt_rand(0, 10)*io_get_option('views_n');
+				if(io_get_option('views_n',0)>0)
+					$post_views = mt_rand(0, 10)*io_get_option('views_n',0);
 				else
 					$post_views = 0;
 			}
 			$should_count = is_views_execution($views_options);
 			if( $should_count && ( ( isset( $views_options['use_ajax'] ) && (int) $views_options['use_ajax'] === 0 ) || ( !defined( 'WP_CACHE' ) || !WP_CACHE ) ) ) {
-				if (io_get_option('views_r')>0) {
-					$view = round( mt_rand(1,10) * io_get_option('views_r'));
+				if (io_get_option('views_r',0)>0) {
+					$view = round( mt_rand(1,10) * io_get_option('views_r',0));
 				} else {
 					$view = 1;
 				}
 				update_post_meta( $id, 'views', ( $post_views + $view ) );
 				do_action( 'postviews_increment_views', ( $post_views + $view ) );
-				if (io_get_option('leader_board')&&!is_page()) io_add_post_view($id,get_post_type( $id ),wp_is_mobile(),$view);
+				if (io_get_option('leader_board',true)&&!is_page()) io_add_post_view($id,get_post_type( $id ),wp_is_mobile(),$view);
 			}
 		}
 	}
@@ -104,7 +110,13 @@ function ioo_postview_cache_count_enqueue() {
 	if( !defined( 'WP_CACHE' ) || !WP_CACHE )
 		return;
 
-	$views_options = io_get_option( 'views_options' );
+	$default = array(
+		'count'        => '0',
+		'exclude_bots' => true,
+		'template'     => '0',
+		'use_ajax'     => true,
+	);
+	$views_options = io_get_option( 'views_options', $default );
 
 	if( isset( $views_options['use_ajax'] ) && (int) $views_options['use_ajax'] === 0 )
 		return;
@@ -137,7 +149,13 @@ function ioo_postview_cache_count_enqueue() {
 if ( ! function_exists( 'the_views' ) ) {
 function the_views($display = true, $prefix = '', $postfix = '', $always = false) {
 	$post_views = (int) get_post_meta( get_the_ID(), 'views', true );
-	$views_options = io_get_option('views_options');
+	$default = array(
+		'count'        => '0',
+		'exclude_bots' => true,
+		'template'     => '0',
+		'use_ajax'     => true,
+	);
+	$views_options = io_get_option('views_options',$default);
 	$views_template = $views_options['template']==0?'%VIEW_COUNT%': '%VIEW_COUNT_ROUNDED%';
 	$output = $prefix.str_replace( array( '%VIEW_COUNT%', '%VIEW_COUNT_ROUNDED%' ), array( number_format_i18n( $post_views ), ioo_postviews_round_number( $post_views) ), stripslashes( $views_template ) ).$postfix;
 	if($display) {
@@ -176,14 +194,20 @@ function ioo_increment_views() {
 	if( !defined( 'WP_CACHE' ) || !WP_CACHE )
 		return;
 
-	$views_options = io_get_option( 'views_options' );
+	$default = array(
+		'count'        => '0',
+		'exclude_bots' => true,
+		'template'     => '0',
+		'use_ajax'     => true,
+	);
+	$views_options = io_get_option( 'views_options', $default );
 
 	if( isset( $views_options['use_ajax'] ) && (int) $views_options['use_ajax']  === 0 )
 		return;
 
 	$post_id =  (int) sanitize_key( $_GET['postviews_id'] );
 	if( $post_id > 0 ) {
-		if (io_get_option('leader_board')&&!is_page()) io_add_post_view($post_id,get_post_type( $post_id ),wp_is_mobile());
+		if (io_get_option('leader_board',true)&&!is_page()) io_add_post_view($post_id,get_post_type( $post_id ),wp_is_mobile());
 
 		$post_views = get_post_custom( $post_id );
 		$post_views = (int) $post_views['views'][0] ;

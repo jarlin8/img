@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-07-09 14:00:16
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-21 04:19:13
+ * @LastEditTime: 2023-02-04 01:16:32
  * @FilePath: \onenav\inc\functions\io-widgets.php
  * @Description: 
  */
@@ -39,7 +39,7 @@ function load_widgets_min_sites_html($myposts, $instance, $index=''){
             $url            = get_permalink();
             $nofollow       = '';
             $is_views       = '';
-            if(($instance['go'] && $sites_type == "sites" && $link_url != '') || ($sites_type == "sites" && $link_url != '' && !io_get_option('details_page'))){
+            if(($instance['go'] && $sites_type == "sites" && $link_url != '') || ($sites_type == "sites" && $link_url != '' && !io_get_option('details_page',false))){
                 $url        = $instance['nofollow'] ? $link_url : go_to($link_url);
                 $nofollow   = $instance['nofollow'] ? '' : nofollow($link_url);
                 $is_views   = 'is-views ';
@@ -109,7 +109,7 @@ function load_widgets_min_post_html($myposts, $instance, $index=''){
             if($show_thumbs){
                 $temp .= "<div class='media media-3x2 rounded col-4 mr-3'>";
                 $thumbnail =  io_theme_get_thumb();
-                if(io_get_option('lazyload'))
+                if(io_get_option('lazyload',false))
                     $temp .= '<a class="media-content" href="'.get_permalink().'" '. $newWindow .' title="'.get_the_title().'" data-src="'.$thumbnail.'"></a>';
                 else
                     $temp .= '<a class="media-content" href="'.get_permalink().'" '. $newWindow .' title="'.get_the_title().'" style="background-image: url('.$thumbnail.');"></a>';

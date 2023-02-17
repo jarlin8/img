@@ -6,10 +6,9 @@
  * Author URI:https://www.iowen.cn/
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }  ?>
-   
-    		<div class="card-post list-item">
+            <div class="card-post list-item">
                 <div class="media media-4x3 p-0 rounded">
-                    <?php if(io_get_option('lazyload')): ?>
+                    <?php if(io_get_option('lazyload',false)): ?>
                     <a class="media-content" href="<?php the_permalink(); ?>" <?php echo new_window() ?> data-src="<?php echo  io_theme_get_thumb() ?>"></a>
                     <?php else: ?>
                     <a class="media-content" href="<?php the_permalink(); ?>" <?php echo new_window() ?>  style="background-image: url(<?php echo  io_theme_get_thumb() ?>);"></a>
@@ -30,14 +29,14 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }  ?>
                             <div class="flex-fill"></div>
                             <div class="text-muted text-xs">
                                 <?php 
-    				            if( function_exists( 'the_views' ) ) { the_views( true, '<span class="views mr-1"><i class="iconfont icon-chakan mr-1"></i>','</span>' ); }
+                                    if( function_exists( 'the_views' ) ) { the_views( true, '<span class="views mr-1"><i class="iconfont icon-chakan mr-1"></i>','</span>' ); }
                                 ?>
-                                <?php if(!io_get_option('user_center')): ?>
+                                <?php if(!io_get_option('user_center',false)): ?>
                                 <a href="<?php the_permalink(); ?>"><i class="iconfont icon-heart mr-1"></i><?php echo get_like(get_the_ID()) ?></a>
                                 <?php endif; ?>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>								
+            </div>                                
 

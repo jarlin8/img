@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-08-30 11:10:06
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-19 00:24:31
+ * @LastEditTime: 2023-02-13 15:58:25
  * @FilePath: \onenav\inc\framework\customize\options-function.php
  * @Description: 
  */
@@ -24,10 +24,15 @@ function active_html(){
             $con = '<div id="authorization_form" class="authorization-form ajax-form" ajax-url="' . esc_url(admin_url('admin-ajax.php')) . '">
             <h4 class="aut-title">授权主题</h4>
             <div class="aut-content">
-            <p style="color:#fd4c73;">请先使用订单提供的激活码<a href="//www.iotheme.cn/user?try=reg" target="_blank" title="注册域名">注册域名</a>。 如果没有购买，请访问<a href="//www.iotheme.cn/store/onenav.html" target="_blank" title="购买主题">iTheme</a>购买。</p>
+            <p style="color:#fd4c73;">请先使用订单提供的激活码<a href="//www.iotheme.cn/user?action=reg" target="_blank" title="授权域名">授权域名</a>(<a href="https://www.iotheme.cn/zhutishouquanyumingzhuceshuoming.html" target="_blank" title="授权教程">授权教程</a>)。 如果没有购买，请访问<a href="//www.iotheme.cn/store/onenav.html" target="_blank" title="购买主题">iTheme</a>购买。</p>
             <div style="margin-bottom: 20px">
-            <input class="regular-text not-change" type="text" ajax-name="key_code" value="" placeholder="请输入激活码">
-            <input type="hidden" ajax-name="action" value="get_iotheme_authorization">
+            <input class="regular-text not-change" type="text" ajax-name="key_code" value="" placeholder="请输入激活码">';
+            if(filter_var( $_SERVER["HTTP_HOST"], FILTER_VALIDATE_IP) !== false){
+                $con .= '<div style="text-align:center;margin-top:8px">
+                <span style="display:initial;background:#ffdede;color:#760d0d;padding:2px 10px;border-radius:5px;margin-top:5px">注意：<code>'.$_SERVER["HTTP_HOST"].'</code>
+                不是域名，请用授权的域名或子域名访问网站。</span></div>';
+            }
+            $con .= '<input type="hidden" ajax-name="action" value="get_iotheme_authorization">
             </div>
             <a href="javascript:;" id="authorization_submit" class="but c-blue ajax-submit curl-aut-submit">一键授权</a>
             <div class="ajax-notice"></div>
@@ -36,6 +41,153 @@ function active_html(){
         }
         echo $con;
 }
+function ip_db_manage(){
+    $basedir            = wp_upload_dir()['basedir'].'/ip_data';
+    $l_qqwry_path       = $basedir.'/qqwry.dat';
+    $l_ip2region_path   = $basedir.'/ip2region.xdb';
+    $l_v6_path          = $basedir.'/ipv6wry.db';
+
+    $ipv4_type          = io_get_option('ip_location', 'qqwry', 'v4_type');
+    $ip_qqwry_path      = maybe_unserialize(get_option('ip_qqwry_path', ''));
+    $ip_ip2region_path  = maybe_unserialize(get_option('ip_ip2region_path', ''));
+    $ip_v6_path         = maybe_unserialize(get_option('ip_v6_path', ''));
+
+    if(empty($ip_qqwry_path) && file_exists($l_qqwry_path)){
+        $ip_qqwry_path = array('time'=>'手动上传','path'=>$l_qqwry_path);
+    }
+    if(empty($ip_ip2region_path) && file_exists($l_ip2region_path)){
+        $ip_ip2region_path = array('time'=>'手动上传','path'=>$l_ip2region_path);
+    }
+    if(empty($ip_v6_path) && file_exists($l_v6_path)){
+        $ip_v6_path = array('time'=>'手动上传','path'=>$l_v6_path);
+    }
+
+    $ip_v4_path         = $ip_ip2region_path;
+    if ($ipv4_type == 'qqwry')
+        $ip_v4_path = $ip_qqwry_path;
+
+    $admin_ajax_url = admin_url('admin-ajax.php');
+    $v4_html = 'IPv4数据库：<span class="ip-v4-path">未下载</span> <a href="'.add_query_arg(array('action'=>'update_ip_data','type'=>'v4'), $admin_ajax_url).'" class="but c-blue ajax-get">下载数据</a>';
+    $v6_html = 'IPv6数据库：<span class="ip-v6-path">未下载</span> <a href="'.add_query_arg(array('action'=>'update_ip_data','type'=>'v6'), $admin_ajax_url).'" class="but c-blue ajax-get">下载数据</a>';
+    if($ip_v4_path){
+        $v4_html = 'IPv4数据库：<span class="ip-v4-path">数据更新日期('.$ip_v4_path['time'].')</span> <a href="'.add_query_arg(array('action'=>'update_ip_data','type'=>'v4'), $admin_ajax_url).'" class="but c-blue ajax-get">更新数据</a>';
+    }
+    if($ip_v6_path){
+        $v6_html = 'IPv6数据库：<span class="ip-v6-path">数据更新日期('.$ip_v6_path['time'].')</span> <a href="'.add_query_arg(array('action'=>'update_ip_data','type'=>'v6'), $admin_ajax_url).'" class="but c-blue ajax-get">更新数据</a>';
+    }
+    $html = '<h4>IP 归属地数据配置</h4><div class="ajax-form">
+    <div style="display:flex;align-items:center">'.$v4_html.'</div>
+    <div style="display:flex;align-items:center">'.$v6_html.'</div>
+    <div class="ajax-notice"></div></div>
+    <p><b>注意：</b>如果无法下载，请 <a href="https://iowen.lanzouf.com/iJwA90msx90d" target="_blank">下载数据包</a> 手动 <b>上传</b> 并 <b>解压</b> 到 \wp-content\uploads\ip_data 目录</p>';
+    return $html;
+}
+/**
+ * 下载ip数据包
+ * @return never
+ */
+function io_update_ip_data(){ 
+    $type = $_REQUEST['type'];
+    $basedir = wp_upload_dir()['basedir'].'/ip_data';
+    if (!file_exists($basedir)) {
+        if(!mkdir($basedir, 0755)){
+            exit(json_encode(array('error' => 1, 'msg' => '创建文件夹失败，请检测(/wp-content/uploads)文件夹权限，赋予 755/www 权限。')));
+        }
+    }
+    
+    $ipv4_type          = io_get_option('ip_location', 'qqwry', 'v4_type');
+    $ip_qqwry_path      = maybe_unserialize(get_option('ip_qqwry_path', ''));
+    $ip_ip2region_path  = maybe_unserialize(get_option('ip_ip2region_path', ''));
+    $ip_v6_path         = maybe_unserialize(get_option('ip_v6_path', ''));
+    $ip_v4_path         = $ip_ip2region_path;
+    
+    $ip_qqwry_url      = 'https://api.iowen.cn/ip_data/qqwry.dat.zip';//'https://99wry.cf/qqwry.dat';
+    $ip_ip2region_url  = 'https://api.iowen.cn/ip_data/ip2region.xdb.zip';//'https://github.com/lionsoul2014/ip2region/raw/master/data/ip2region.xdb';
+    $ip_v6_url         = 'https://api.iowen.cn/ip_data/ipv6wry.db.zip';//'https://ip.zxinc.org/ip.7z';
+    $ip_v4_url         = $ip_ip2region_url;
+
+    $option_key = 'ip_ip2region_path';
+    $data_name  = 'ip2region.xdb';
+    if ($ipv4_type == 'qqwry'){
+        $ip_v4_path = $ip_qqwry_path;
+        $ip_v4_url  = $ip_qqwry_url;
+        $option_key = 'ip_qqwry_path';
+        $data_name  = 'qqwry.dat';
+    }
+    $ip_path = $ip_v4_path;
+    $ip_url  = $ip_v4_url;
+    if("v4" != $type){
+        $option_key = 'ip_v6_path';
+        $data_name  = 'ipv6wry.db';
+        $ip_path    = $ip_v6_path;
+        $ip_url     = $ip_v6_url;
+    }
+
+    $http      = new Yurun\Util\HttpRequest;
+    $response  = $http->get('https://api.iowen.cn/ip_data/v.html');
+    $v_data    = $response->json(true);
+    if(!$v_data) {
+        exit(json_encode(array('error' => 1, 'msg' => '数据信息获取失败，请重试！')));
+    }
+    $data_time = $v_data[$data_name];
+
+    if (!empty($ip_path) && isset($ip_path['time'])) {
+        if(strtotime($ip_path['time'])>=strtotime($data_time)){
+            exit(json_encode(array('error' => 0, 'msg' => '已经是最新数据，无需更新！服务器数据日期：'.$data_time)));
+        }
+    }
+
+    $stime = microtime(true);
+
+    $response = $http->get($ip_url);
+    $result   = $response->body();
+
+    $qqwry_time = microtime(true);
+    
+    $download_spend = $qqwry_time - $stime;
+    if (!$result) {
+        exit(json_encode(array('error' => 1, 'msg' => '下载失败，'.sprintf("下载耗时%s秒", sprintf("%.2f",$download_spend)))));
+    }
+
+    $unzip_time = microtime(true);
+    $tmp_file    = $basedir . '/' . 'ipdata.zip';
+    $online_file = $basedir . '/' . $data_name;
+
+    //if(!empty($ip_path) && isset($ip_path['path']) && file_exists($ip_path['path'])){
+    //    if(!unlink($ip_path['path'])){
+    //        exit(json_encode(array('error' => 1, 'msg' => '旧文件删除错误，请检查文件夹权限或者手动删除('.$ip_path['path'].')')));
+    //    }
+    //}
+    if (file_put_contents($tmp_file, $result)) {
+        if (!class_exists('ZipArchive')) {
+            exit(json_encode(array('error' => 1, 'msg' => '错误：您的 PHP 版本不支持解压缩(unzip)功能。')));
+        }
+        $zip = new ZipArchive;
+        // 检查存档是否可读。
+        if ($zip->open($tmp_file) === TRUE) {
+            if (is_writeable($basedir.'/')) {
+                $zip->extractTo($basedir);
+                $zip->close();
+                if(!unlink($tmp_file)){
+                    exit(json_encode(array('error' => 1, 'msg' => '缓存文件删除错误，请检查文件夹权限或者手动删除('.$tmp_file.')')));
+                }
+            } else {
+                exit(json_encode(array('error' => 1, 'msg' => '错误：服务器无法写入目录('.$basedir.'/'.')。')));
+            }
+        } else {
+            exit(json_encode(array('error' => 1, 'msg' => '错误：无法读取存档。')));
+        }
+        
+        $put_time  = microtime(true);
+        $put_spend = $put_time - $unzip_time;
+        update_option($option_key, maybe_serialize(array('time' => $data_time, 'path' => $online_file)), false);
+        exit(json_encode(array('error' => 0, 'reload' => 1, 'msg' => "更新成功， " . sprintf("下载耗时%s秒，写入耗时%s秒", sprintf("%.2f",$download_spend), sprintf("%.2f",$put_spend)))));
+    } else {
+        exit(json_encode(array('error' => 1, 'msg' => "更新失败， " . sprintf("下载耗时%s秒，", sprintf("%.2f",$download_spend)))));
+    }
+}
+add_action('wp_ajax_update_ip_data', 'io_update_ip_data');
+
 function add_customize_scripts(){
     wp_register_style('admin-options', CSF::include_plugin_url('customize/css/options.css'), array(), VERSION, '');
     wp_enqueue_style('admin-options'); 
@@ -79,15 +231,28 @@ if(!function_exists('get_all_taxonomy')){
 // 获取效果列表
 if(!function_exists('get_all_fx_bg')){
 	function get_all_fx_bg(){  
-        $fxbg = array();
-        for($i=0;$i<=17;$i++){
-            if($i==0)
-                $fxbg[$i] = '随机';// $i;
-            else
-                $fxbg[sprintf("%02d", $i)] = $i;
-        }
-        $fxbg['custom'] = '自定义';
-        return $fxbg;
+        $fx_bg = array(
+            '0'      => '随机',
+            '01'     => '1蜂窝侵蚀',
+            '02'     => '2方格电流',
+            '03'     => '3点-线',
+            '04'     => '4视差点云',
+            '05'     => '5方块龙卷',
+            '06'     => '6圆-点',
+            '07'     => '7星空白熊',
+            '08'     => '8星空流星',
+            '09'     => '9复古银幕',
+            '10'     => '10晚霞',
+            '11'     => '11星空小人',
+            '12'     => '12夜',
+            '13'     => '13色',
+            '14'     => '14轮回方块',
+            '15'     => '15粒子点',
+            '16'     => '16圆',
+            '17'     => '17夜-树',
+            'custom' => '自定义',
+        );
+        return $fx_bg;
     }
 }
 /**
@@ -373,7 +538,7 @@ function io_notice_update()
         $con = '<div class="notice notice-warning">
         <p style="color:#ff2f86"><i class="fa fa-bullhorn fa-fw"></i></p>
         <b style="font-size: 1.2em;color:#ff2f86;">欢迎使用 OneNav 主题</b>
-        <p>当前主题还未授权，部分功能无法使用，请在主题设置中进行授权验证</p><p><a class="button button-primary" href="'.esc_url(admin_url('admin.php?page=theme_settings#tab=%e5%bc%80%e5%a7%8b%e4%bd%bf%e7%94%a8')).'">立即授权</a><a style="margin-left: 10px;" class="button" href="https://www.iotheme.cn/" target="_blank">访问一为主题官网</a></p><p></p>
+        <p>当前主题还未授权，部分功能无法使用，请在主题设置中进行授权验证</p><p><a class="button button-primary" href="'.esc_url(admin_url('admin.php?page=theme_settings#tab=%e5%bc%80%e5%a7%8b%e4%bd%bf%e7%94%a8')).'">立即授权</a><a style="margin-left: 10px;" class="button" href="https://www.iotheme.cn/zhutishouquanyumingzhuceshuoming.html" target="_blank">授权教程</a></p><p></p>
         </div>';
     echo $con;
     }
@@ -399,3 +564,21 @@ function io_save_theme_version()
     update_option('onenav_update_version', VERSION);
 }
 add_action("csf_io_get_option_save_after", 'io_save_theme_version');
+
+function io_get_system_info(){
+    $_theme = wp_get_theme();
+    $sub = '<li><strong>主题版本</strong>： ' . $_theme->get('Version') . ' </li>';
+    if($_theme->get('Template')){
+        $sub = '<li><strong>子主题信息</strong>： ' . $_theme->get('Name').' / '.$_theme->get('Version') . ' </li>';
+        $sub .= '<li><strong>父主题版本</strong>： ' . wp_get_theme($_theme->get('Template'))->get('Version') . '</li>';
+    }
+    $html = '<ul><li><strong>操作系统</strong>： ' . PHP_OS . ' </li>
+    <li><strong>运行环境</strong>： ' . $_SERVER["SERVER_SOFTWARE"] . ' </li>
+    <li><strong>PHP版本</strong>： ' . PHP_VERSION . ' </li>
+    <li><strong>WordPress版本</strong>： ' . get_bloginfo('version') . '</li>
+    '.$sub.'
+    <li><strong>系统信息</strong>： ' . php_uname() . ' </li>
+    <li><strong>服务器时间</strong>： ' . current_time('mysql') . '</li></ul>
+    <a class="button button-primary" href="' . admin_url('site-health.php?tab=debug') . '">查看更多系统信息</a>';
+    return $html;
+}

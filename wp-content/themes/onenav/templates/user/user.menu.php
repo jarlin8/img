@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:02
  * @LastEditors: iowen
- * @LastEditTime: 2022-01-23 15:18:16
+ * @LastEditTime: 2023-02-16 13:15:25
  * @FilePath: \onenav\templates\user\user.menu.php
  * @Description: 
  */
@@ -46,7 +46,7 @@ $mobile=wp_is_mobile()?'#user':'';
                         <li><a class="<?php echo io_conditional_class('user-tab sites',             $user_tab == 'sites'        ); ?>" href="/user/sites<?=$mobile?>"><?php _e('网址管理', 'i_theme'); ?></a></li>
                         <li><a class="<?php echo io_conditional_class('user-tab stars',             $user_tab == 'stars'        ); ?>" href="/user/stars<?=$mobile?>"><?php _e('我的收藏', 'i_theme'); ?></a></li>
                         <li><a class="<?php echo io_conditional_class('user-tab security',          $user_tab == 'security'     ); ?>" href="/user/security<?=$mobile?>"><?php _e('账户安全', 'i_theme'); ?></a></li>
-                        <li><a class="btn btn-light btn-block mt-4" href="<?php echo wp_logout_url(home_url());?>"><?php _e('安全退出', 'i_theme'); ?></a></li>
+                        <li><a class="btn btn-lg btn-block mt-4" href="<?php echo wp_logout_url(home_url());?>"><?php _e('安全退出', 'i_theme'); ?></a></li>
                     </ul>
                 </nav>
             </div>

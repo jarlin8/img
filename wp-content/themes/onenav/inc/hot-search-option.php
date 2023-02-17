@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-08-30 14:41:57
  * @LastEditors: iowen
- * @LastEditTime: 2021-10-01 16:44:12
+ * @LastEditTime: 2023-02-08 16:36:36
  * @FilePath: \onenav\inc\hot-search-option.php
  * @Description: 
  */
@@ -15,7 +15,7 @@ include( get_theme_file_path('/inc/search-list.php') );
 
 CSF::createOptions( $prefix, array(
     'framework_title' => '自定义热榜',
-    'menu_title'      => '自定义热榜',
+    'menu_title'      => '◉自定义热榜',
     'menu_slug'       => 'hot_search_settings', 
     'show_search'             => false,  
     'show_reset_section'      => false,
@@ -101,9 +101,9 @@ CSF::createSection( $prefix, array(
                 array(
                     'id'        => 'hot',
                     'type'      => 'text',
-                    'title'     => '热度节点',
+                    'title'     => '热度节点(可留空)',
                     'class'      => 'compact min',
-                    'after'     => '可留空。阅读量，查看量，指数，热度',
+                    'after'     => '阅读量，查看量，指数，热度',
                     'attributes' => array(
                         'style'    => 'width: 100%'
                     ),
@@ -118,7 +118,54 @@ CSF::createSection( $prefix, array(
                         'style'    => 'width: 100%'
                     ),
                 ),
-                /**
+                array(
+                    'id'     => 'headers',
+                    'type'   => 'group',
+                    'title'  => __('请求头(可留空)','io_setting'),
+                    'class'  => 'compact min',
+                    'fields' => array(
+                        array(
+                            'id'    => 'key',
+                            'type'  => 'text',
+                            'title' => 'KEY',
+                        ),
+                        array(
+                            'id'    => 'value',
+                            'type'  => 'text',
+                            'title' => 'Value',
+                            'class' => 'compact min',
+                        ),
+                    ),
+                    'after' => 'userAgent 不需要设置，默认自动添加<br>
+                    常用请求头KEY：<code>accept</code>、<code>acceptLanguage</code>、<code>acceptEncoding</code>、<code>acceptRanges</code>、<code>cacheControl</code>、<code>contentType</code>、<code>range</code>、<code>referer</code>'
+                ),
+                array(
+                    'id'     => 'cookies',
+                    'type'   => 'group',
+                    'title'  => __('Cookie(可留空)','io_setting'),
+                    'class'  => 'compact min',
+                    'fields' => array(
+                        array(
+                            'id'    => 'key',
+                            'type'  => 'text',
+                            'title' => 'KEY',
+                        ),
+                        array(
+                            'id'    => 'value',
+                            'type'  => 'text',
+                            'title' => 'Value',
+                            'class' => 'compact min',
+                        ),
+                    ),
+                ),
+                array(
+                    'id'      => 'cache',
+                    'type'    => 'number',
+                    'title'   => '缓存时间',
+                    'class'   => 'compact min',
+                    'unit'    => '分钟',
+                    'default' => 60,
+                ),
                 array(
                     'id'           => 'request_type',
                     'type'         => 'button_set',
@@ -148,8 +195,8 @@ CSF::createSection( $prefix, array(
                             'class' => 'compact min',
                         ),
                     ),
+                    'dependency' => array( 'request_type', '==', 'post' )
                 ),
-                */
             ),
             'accordion_title_number' => true,
             'default'   => array(
@@ -161,6 +208,7 @@ CSF::createSection( $prefix, array(
                 'title' =>'live.last.link.title',
                 'link' =>'live.last.link.url',
                 'hot' =>'',
+                'cache' =>'60',
                 )
             )
         ),
@@ -225,12 +273,20 @@ CSF::createSection( $prefix, array(
                 array(
                     'id'        => 'hot',
                     'type'      => 'text',
-                    'title'     => '热度节点',
+                    'title'     => '热度节点(可留空)',
                     'class'      => 'compact min',
-                    'after'     => '可留空。阅读量，查看量，指数，热度',
+                    'after'     => '阅读量，查看量，指数，热度',
                     'attributes' => array(
                         'style'    => 'width: 100%'
                     ),
+                ),
+                array(
+                    'id'        => 'cache',
+                    'type'      => 'number',
+                    'title'     => '缓存时间',
+                    'class'     => 'compact min',
+                    'unit'      => '分钟',
+                    'default'   => 60,
                 ),
             ),
             'accordion_title_number' => true,
@@ -243,6 +299,7 @@ CSF::createSection( $prefix, array(
                 'title' =>'title',
                 'link' =>'link',
                 'hot' =>'',
+                'cache' =>'60',
                 )
             )
         ),

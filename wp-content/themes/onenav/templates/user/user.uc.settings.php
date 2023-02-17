@@ -77,14 +77,13 @@ global $current_user;
                                     <?php
                                     $avatar_list = get_open_avatar_list($current_user);
                                     if( !empty($avatar_list) && is_array($avatar_list)){
-                                        $open_list = get_open_login_name();
                                         foreach($avatar_list as $type => $url){
                                     ?>
                                     <label class="<?php echo $type ?>-avatar-label">
                                         <img src="<?php echo $url ?>" class="avatar rounded-circle mr-2" width="38" height="38">
                                         <div class="custom-control custom-radio custom-control-inline">
                                             <input type="radio" id="avatar-<?php echo $type ?>" name="avatar" class="custom-control-input" value="<?php echo $type ?>" <?php echo($current_user->avatar_type==$type ? 'checked':'') ?> >
-                                            <label class="custom-control-label" for="avatar-<?php echo $type ?>"><?php echo sprintf(__('%s头像','i_theme'),$open_list[$type]) ?></label>
+                                            <label class="custom-control-label" for="avatar-<?php echo $type ?>"><?php echo sprintf(__('%s头像','i_theme'),get_open_login_name($type)) ?></label>
                                         </div>
                                     </label>
                                     <?php
@@ -118,7 +117,7 @@ global $current_user;
                         <div class="form-group row">
                             <label class="col-sm-3 col-md-2 col-form-label"></label> 
                             <div class="col-sm-9 col-md-10">
-                                <button type="submit" class="submit btn btn-primary"><?php _e('保存资料','i_theme') ?></button>
+                                <button type="submit" class="submit btn vc-yellow px-5"><?php _e('保存资料','i_theme') ?></button>
                             </div>
                         </div>
                     </form> 

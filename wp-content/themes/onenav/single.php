@@ -8,7 +8,13 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 get_header(); ?>
 <div id="content" class="container my-3 my-md-4">
-    <?php get_template_part( 'templates/breadcrumb' ) ?>
+    <?php 
+    $user_level = get_post_meta($post->ID, '_user_purview_level', true);
+    if((!is_user_logged_in() && $user_level && $user_level != 'all')){
+        get_user_level_directions_html( 'post' );
+    } else {
+        get_template_part('templates/breadcrumb');
+    ?>
     <main class="content" role="main">
     <div class="content-wrap">
         <div class="content-layout">
@@ -96,6 +102,7 @@ get_header(); ?>
                 </div>
                 <?php } ?>
             </div>
+            <?php } ?>
             <h4 class="text-gray text-lg my-4"><i class="site-tag iconfont icon-book icon-lg mr-1" ></i><?php _e('相关文章','i_theme') ?></h4>
             <div class="row mb-n4"> 
                 <?php get_template_part( 'templates/related','post' ); ?>

@@ -1,5 +1,14 @@
 <?php
 /*
+ * @Author: iowen
+ * @Author URI: https://www.iowen.cn/
+ * @Date: 2021-06-03 08:55:57
+ * @LastEditors: iowen
+ * @LastEditTime: 2023-02-07 00:10:18
+ * @FilePath: \onenav\comments.php
+ * @Description: 
+ */
+/*
  * 如果当前帖子受密码保护，而访问者尚未输入密码，将不加载评论。
  */
 if ( post_password_required() ) {
@@ -10,7 +19,7 @@ if ( post_password_required() ) {
 <!-- comments -->
 <?php  
 show_ad('ad_comments_top',false, '<div class="post-apd mt-4">' , '</div>'); 
-if(io_get_option('nav_comment')){
+if(io_get_option('nav_comment',false)){
 ?>
 <div id="comments" class="comments">
 	<h2 id="comments-list-title" class="comments-title h5 mx-1 my-4">
@@ -30,7 +39,7 @@ if(io_get_option('nav_comment')){
 						<a class="btn btn-light btn-sm btn-rounded" href="<?php echo esc_url(wp_login_url( urlencode(get_permalink()) )) ?>"><?php _e('立即登录','i_theme') ?></a>
 					</div>
 					<?php else : ?>
-					<form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post" id="commentform" class="text-sm mb-4">	
+					<form id="commentform" class="text-sm mb-4">	
 						<div class="visitor-avatar d-flex flex-fill mb-2">
 							<?php if ( is_user_logged_in() )://判断是否登录，获取admin头像 ?>
 							<?php global $current_user;wp_get_current_user(); ?>
@@ -54,35 +63,15 @@ if(io_get_option('nav_comment')){
 						</div>
 						<?php endif; ?>
 						<?php do_action('comment_form', $post->ID); ?>
-						<div class="com-footer text-right">
+						<div class="com-footer d-flex justify-content-end flex-wrap">
 							<?php wp_nonce_field('comment_ticket'); ?>
 							<a rel="nofollow" id="cancel-comment-reply-link" style="display: none;" href="javascript:;" class="btn btn-light custom_btn-outline mx-2"><?php _e('再想想','i_theme') ?></a>
-							<?php if( io_get_option('io_captcha','','tcaptcha_007') && io_get_option('io_captcha','','comment_007') ) { ?>
-                            <input type="hidden" id="wp007_tcaptcha" name="tcaptcha_007" value="" />
-                            <input type="hidden" id="wp007_ticket" name="tencent_ticket" value="" />
-                            <input type="hidden" id="wp007_randstr" name="tencent_randstr" value="" />
-							<input class="btn btn-dark custom_btn-d" name="submit" type="button" id="TencentCaptcha" tabindex="5" value="<?php _e('发表评论','i_theme') ?>" data-appid="<?php echo io_get_option('io_captcha','','appid_007') ?>" data-cbfn="commentsTicket"/>
-							<?php } else { ?>
-							<input class="btn btn-dark custom_btn-d" name="submit" type="submit" id="submit" tabindex="5" value="<?php _e('发表评论','i_theme') ?>"/>
-							<?php } ?>
+							<?php echo get_captcha_input_html('ajax_comment') ?>
+							<button class="btn btn-dark custom_btn-d ml-2" type="submit" id="submit"><?php _e('发表评论','i_theme') ?></button>
+							<input type="hidden" name="action" value="ajax_comment"/>
 							<?php comment_id_fields(); ?>
 						</div>
 					</form>
-					<?php if( io_get_option('io_captcha','','tcaptcha_007') && io_get_option('io_captcha','','comment_007') ) { ?>
-						<script type="text/javascript">
-							window.commentsTicket = function(res){
-								if(res.ret === 0){
-									document.getElementById("wp007_ticket").value = res.ticket;
-									document.getElementById("wp007_randstr").value = res.randstr;
-									document.getElementById("wp007_tcaptcha").value = 1;
-									$("#commentform").submit();
-								}
-								else if(res.ret === 2) {
-									showAlert(JSON.parse('{"status":3,"msg":"你没有完成验证！"}'));
-								}
-							}
-						</script>
-					<?php } ?>
 					<div class="clear"></div>
 					<?php endif; ?>
 				</div>
@@ -93,7 +82,7 @@ if(io_get_option('nav_comment')){
 			<div id="loading-comments"><span></span></div>
 			<?php if(have_comments()) { ?>
 			<ul class="comment-list">
-				<?php wp_list_comments('type=comment&callback=my_comment_format&max_depth=10000'); ?>	
+				<?php wp_list_comments('type=comment&callback=io_comment_default_format&max_depth=10000'); ?>	
 			</ul>
 				<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) { ?>
 				<nav id="comments-navi"  class="text-center my-3">

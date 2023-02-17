@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: One Nav\n"
-"POT-Creation-Date: 2022-07-17 11:44+0800\n"
-"PO-Revision-Date: 2022-07-17 11:51+0800\n"
+"POT-Creation-Date: 2023-02-17 03:45+0800\n"
+"PO-Revision-Date: 2023-02-17 03:46+0800\n"
 "Last-Translator: \n"
 "Language-Team: iowen\n"
 "Language: ko\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: style.css\n"
@@ -39,80 +39,81 @@ msgstr "홈 페이지로 돌아갑니다"
 msgid "基本信息"
 msgstr "기본정보"
 
-#: comments.php:19
+#: comments.php:28
 msgid "暂无评论"
 msgstr "코멘트가 없습니다"
 
-#: comments.php:19
+#: comments.php:28
 msgid "1 条评论"
 msgstr "댓글 1개"
 
-#: comments.php:19
+#: comments.php:28
 msgid "% 条评论"
 msgstr "% 댓글"
 
-#: comments.php:29
+#: comments.php:38
 msgid "您必须登录才能参与评论！"
 msgstr "댓글에 참여하려면 로그인해야 합니다!"
 
-#: comments.php:30
+#: comments.php:39
 msgid "立即登录"
 msgstr "지금 로그인"
 
-#: comments.php:38
+#: comments.php:47
 msgid "退出"
 msgstr "종료합니다"
 
-#: comments.php:47
+#: comments.php:56
 msgid "输入评论内容..."
 msgstr "댓글 입력..."
 
-#: comments.php:51 templates/contribute/post.php:101
+#: comments.php:60 templates/contribute/post.php:101
 #: templates/contribute/sites.php:151 templates/user/user.uc.settings.php:38
 msgid "昵称"
 msgstr "닉네임"
 
-#: comments.php:52 templates/login/reg.php:151
-#: templates/user/user.uc.security.php:202
+#: comments.php:61 inc/functions/functions.php:194
+#: inc/functions/functions.php:278 inc/functions/io-login.php:139
+#: inc/functions/io-user.php:469
 msgid "邮箱"
 msgstr "사서함입니다"
 
-#: comments.php:53 inc/post-type.php:21 inc/post-type.php:22
-#: templates/contribute/sites.php:27 templates/user/user.uc.settings.php:98
-#: templates/user/user.uc.stars.php:48
+#: comments.php:62 inc/inc.php:214 inc/inc.php:223 inc/post-type.php:21
+#: inc/post-type.php:22 templates/contribute/sites.php:27
+#: templates/user/user.uc.settings.php:97 templates/user/user.uc.stars.php:48
 msgid "网址"
 msgstr "웹 사이트입니다"
 
-#: comments.php:59
+#: comments.php:68
 msgid "再想想"
 msgstr "다시 생각해 보십시오"
 
-#: comments.php:64 comments.php:66
+#: comments.php:70
 msgid "发表评论"
 msgstr "댓글을 달다"
 
-#: comments.php:91
+#: comments.php:80
 msgid "评论已关闭..."
 msgstr "댓글이 닫혔습니다..."
 
-#: comments.php:104
+#: comments.php:93
 msgid "暂无评论..."
 msgstr "코멘트없음..."
 
-#: footer.php:188 templates/bookmark/bm.footer.php:22
+#: footer.php:175 templates/bookmark/bm.footer.php:26
 #: templates/user/user.uc.sites.php:37 templates/widget/header-user.php:33
 msgid "我的书签"
 msgstr "내 책갈피"
 
-#: footer.php:193
+#: footer.php:180
 msgid "mini 书签"
 msgstr "미니 책갈피입니다"
 
-#: footer.php:198 inc/theme-start.php:470
+#: footer.php:185 inc/theme-start.php:488
 msgid "夜间模式"
 msgstr "야간 모드"
 
-#: footer.php:222
+#: footer.php:209
 msgid "热门推荐："
 msgstr "추천 명소:"
 
@@ -165,9 +166,9 @@ msgstr "기여 기능이 꺼져 있습니다"
 
 #: inc/action/ajax-app.php:19 inc/action/ajax-post.php:18
 #: inc/action/ajax-post.php:147 inc/action/ajax-sites.php:18
-#: inc/action/ajax.php:88 inc/action/ajax.php:777 inc/action/ajax.php:939
-#: inc/user-callback.php:18 inc/user-callback.php:66 inc/user-callback.php:252
-#: inc/user-callback.php:280 inc/user-callback.php:325
+#: inc/action/ajax-user.php:173 inc/action/ajax-user.php:223
+#: inc/action/ajax-user.php:519 inc/action/ajax.php:56 inc/action/ajax.php:748
+#: inc/action/ajax.php:918
 msgid "对不起!您没有通过安全检查"
 msgstr "죄송합니다! 보안 검사를 받지 못했습니다"
 
@@ -181,12 +182,12 @@ msgstr "기고도 너무 부지런하셨네요%s 초 후에 다시 시도해 보
 msgid "网站"
 msgstr "웹 사이트"
 
-#: inc/action/ajax-app.php:48 inc/inc.php:215 inc/inc.php:218
+#: inc/action/ajax-app.php:48 inc/inc.php:220 inc/inc.php:257 inc/inc.php:260
 msgid "资源"
 msgstr "리소스입니다"
 
-#: inc/action/ajax-app.php:50 inc/action/ajax-sites.php:39
-#: templates/content-site.php:120 templates/contribute/sites.php:28
+#: inc/action/ajax-app.php:50 inc/action/ajax-sites.php:39 inc/inc.php:217
+#: templates/content-site.php:99 templates/contribute/sites.php:28
 msgid "公众号"
 msgstr "공공 번호"
 
@@ -203,7 +204,7 @@ msgid "链接必须填写，且必须符合URL格式。"
 msgstr "링크를 입력해야 하며 URL 형식을 준수해야 합니다."
 
 #: inc/action/ajax-app.php:80 inc/action/ajax-sites.php:74
-#: inc/action/ajax.php:211
+#: inc/action/ajax.php:173
 msgid "存在相同的链接地址，请不要重复提交哦！"
 msgstr "동일한 링크 주소가 존재, 오 제출을 반복하지 마십시오!"
 
@@ -230,8 +231,8 @@ msgid "“官网地址”和“网盘地址”怎么地也待填一个把。"
 msgstr "공식 웹 사이트 주소와 웹 디스크 주소는 아무리 기입해야합니다."
 
 #: inc/action/ajax-app.php:125 inc/action/ajax-post.php:161
-#: inc/action/ajax-sites.php:123 inc/theme-start.php:549
-#: template-contribute.php:93 template-contribute.php:94
+#: inc/action/ajax-sites.php:123 inc/theme-start.php:562
+#: template-contribute.php:92 template-contribute.php:93
 #, php-format
 msgid "图片大小不能超过 %s kb"
 msgstr "그림 크기는 3kb를 초과할 %s 없습니다"
@@ -327,89 +328,272 @@ msgstr "소개는 반드시 기입해야 합니다!"
 msgid "简介长度不得超过80字。"
 msgstr "소개 길이는 80단어를 초과할 수 없습니다."
 
-#: inc/action/ajax.php:37 inc/user-callback.php:100 inc/user-callback.php:141
+#: inc/action/ajax-user.php:23 inc/action/ajax-user.php:259
 msgid "请认真填写表单！"
 msgstr "양식을 작성하십시오!"
 
-#: inc/action/ajax.php:59
+#: inc/action/ajax-user.php:36
+msgid "未找到此手机号注册账户!"
+msgstr ""
+
+#: inc/action/ajax-user.php:51
 msgid "用户名或密码错误，请重试!"
 msgstr "사용자 이름 또는 암호가 잘못되었습니다."
 
-#: inc/action/ajax.php:76
+#: inc/action/ajax-user.php:66
 msgid "登录成功，跳转中！"
 msgstr "로그인 성공, 점프!"
 
-#: inc/action/ajax.php:121 inc/inc.php:2041
-msgid "您的评论需要审核后才能显示！"
-msgstr "댓글이 표시하려면 검토가 필요합니다!"
+#: inc/action/ajax-user.php:83
+msgid "请输入用户名！"
+msgstr "사용자 이름을 입력하십시오!"
 
-#: inc/action/ajax.php:214
-msgid "没有重复地址，可以提交！"
-msgstr "중복 주소가 없습니다, 당신은 제출 할 수 있습니다!"
+#: inc/action/ajax-user.php:85
+msgid "用户名长度至少5位!"
+msgstr "사용자 이름 길이가 5비트 이상입니다!"
 
-#: inc/action/ajax.php:217
-msgid "请填写地址！"
-msgstr "주소를 기입해 주십시오!"
+#: inc/action/ajax-user.php:87
+msgid "此用户名包含无效字符，只能使用字母数字下划线！"
+msgstr "이 사용자 이름에 잘못된 문자가 포함되어 있습니다."
 
-#: inc/action/ajax.php:268 inc/action/ajax.php:477
-msgid "反馈成功"
-msgstr "피드백이 성공했습니다"
+#: inc/action/ajax-user.php:89
+msgid "该用户名已被注册，请再选择一个！"
+msgstr "사용자 이름이 등록되었습니다, 다른 것을 선택하십시오!"
 
-#: inc/action/ajax.php:303
-msgid "错误！"
-msgstr "오류입니다"
+#: inc/action/ajax-user.php:102 inc/action/ajax-user.php:357
+msgid "该电子邮件地址已经被注册，请换一个！"
+msgstr "이메일 주소가 등록되었습니다."
 
-#: inc/action/ajax.php:320 inc/action/ajax.php:322
-msgid "移动端"
-msgstr "UC 모바일 검색"
+#: inc/action/ajax-user.php:105 inc/action/ajax-user.php:360
+#: inc/action/ajax-user.php:657 inc/action/ajax-user.php:704
+msgid "该手机号已有绑定帐号！"
+msgstr ""
 
-#: inc/action/ajax.php:320 inc/action/ajax.php:322
-msgid "合计"
-msgstr "합계입니다"
+#: inc/action/ajax-user.php:110
+msgid "邮箱怎么变了！"
+msgstr "사서함이 변경되었습니다!"
 
-#: inc/action/ajax.php:320
-msgid "下载量"
-msgstr "다운로드합니다"
+#: inc/action/ajax-user.php:113
+msgid "请输入验证码！"
+msgstr "인증번호를 입력하십시오"
 
-#: inc/action/ajax.php:365 inc/user-callback.php:225
+#: inc/action/ajax-user.php:115 inc/action/ajax-user.php:266
+msgid "验证码不正确！"
+msgstr "확인 코드가 올바르지 않습니다!"
+
+#: inc/action/ajax-user.php:121 inc/action/ajax-user.php:398
+#: inc/action/ajax-user.php:469
+msgid "密码长度至少6位!"
+msgstr "암호 길이는 적어도 6 자리입니다!"
+
+#: inc/action/ajax-user.php:123 inc/action/ajax-user.php:401
+#: inc/action/ajax-user.php:472
+msgid "密码不一致!"
+msgstr "암호가 일치하지 않습니다!"
+
+#: inc/action/ajax-user.php:162
+#, fuzzy
+#| msgid "登录成功，跳转中！"
+msgid "注册成功，跳转中！"
+msgstr "로그인 성공, 점프!"
+
+#: inc/action/ajax-user.php:170
+msgid "请先登录才能收藏哦!"
+msgstr "먼저 로그인해야 소장할 수 있습니다!"
+
+#: inc/action/ajax-user.php:179
+msgid "文章 id 错误"
+msgstr "아티클 ID 가 오류입니다"
+
+#: inc/action/ajax-user.php:192
+msgid "取消收藏成功"
+msgstr "즐겨찾기취소에 성공했습니다"
+
+#: inc/action/ajax-user.php:194
+msgid "取消收藏失败！！！"
+msgstr "즐겨찾기를 취소하지 못했습니다!!!"
+
+#: inc/action/ajax-user.php:197 inc/action/ajax-user.php:210
+msgid "收藏成功"
+msgstr "컬렉션 성공"
+
+#: inc/action/ajax-user.php:200
+msgid "操作异常！！！"
+msgstr "작업 예외 !!!"
+
+#: inc/action/ajax-user.php:212
+msgid "收藏失败！！！"
+msgstr "즐겨찾기실패 !!!"
+
+#: inc/action/ajax-user.php:227 inc/action/ajax-user.php:321
+msgid "非法请求!"
+msgstr "불법 요청!"
+
+#: inc/action/ajax-user.php:245
+msgid "资料修改成功！"
+msgstr "데이터 수정 성공!"
+
+#: inc/action/ajax-user.php:264 inc/action/ajax.php:849 inc/action/ajax.php:871
+#: inc/action/ajax.php:893 inc/action/ajax.php:898 inc/action/ajax.php:930
+#: inc/action/ajax.php:982 inc/action/ajax.php:1007 inc/action/ajax.php:1027
+#: inc/action/ajax.php:1055 inc/action/ajax.php:1063 inc/action/ajax.php:1079
+#: inc/action/ajax.php:1084 inc/action/ajax.php:1103 inc/action/ajax.php:1108
+#: inc/action/ajax.php:1141 inc/action/ajax.php:1151
+#: inc/functions/functions.php:94
+msgid "数据错误！"
+msgstr "데이터 오류!"
+
+#: inc/action/ajax-user.php:316 inc/action/ajax-user.php:339
+msgid "绑定成功！"
+msgstr "바인딩 성공!"
+
+#: inc/action/ajax-user.php:377
+#, fuzzy
+#| msgid "请填写电子邮件地址！"
+msgid "该电子邮件尚未注册！"
+msgstr "이메일 주소를 입력하십시오!"
+
+#: inc/action/ajax-user.php:380
+msgid "该手机号尚未注册！"
+msgstr ""
+
+#: inc/action/ajax-user.php:395 inc/action/ajax-user.php:466
+#, fuzzy
+#| msgid "信息不能为空！"
+msgid "密码不能为空"
+msgstr "정보는 비어 있을 수 없습니다!"
+
+#: inc/action/ajax-user.php:429
+msgid "未查询到您的帐号信息"
+msgstr ""
+
+#: inc/action/ajax-user.php:452
+msgid "密码修改成功！"
+msgstr "암호 수정이 성공했습니다!"
+
+#: inc/action/ajax-user.php:463 inc/action/ajax-user.php:551
+#: inc/action/ajax-user.php:564 inc/action/ajax-user.php:594
+#: inc/action/ajax-user.php:630 inc/action/ajax-user.php:672
+#: inc/action/ajax.php:327
 msgid "请先登录!"
 msgstr "먼저 로그인해야 소장할 수 있습니다!"
 
-#: inc/action/ajax.php:368
+#: inc/action/ajax-user.php:486
+msgid "请输入原密码!"
+msgstr ""
+
+#: inc/action/ajax-user.php:490
+msgid "新密码和原密码不能相同!"
+msgstr ""
+
+#: inc/action/ajax-user.php:494
+msgid "原密码错误!"
+msgstr ""
+
+#: inc/action/ajax-user.php:524
+msgid "无权修改！"
+msgstr "수정할 권리가 없습니다!"
+
+#: inc/action/ajax-user.php:544
+msgid "保存成功！"
+msgstr "저장 성공!"
+
+#: inc/action/ajax-user.php:567 inc/action/ajax-user.php:598
+#: inc/action/ajax-user.php:633
+#, fuzzy
+#| msgid "参数错误!"
+msgid "参数错误！"
+msgstr "매개 변수가 잘못되었습니다!"
+
+#: inc/action/ajax-user.php:574 inc/action/ajax-user.php:605
+msgid "用户邮箱错误，请联系管理员。"
+msgstr ""
+
+#: inc/action/ajax-user.php:579 inc/action/ajax-user.php:610
+msgid "未找到绑定的手机号。"
+msgstr ""
+
+#: inc/action/ajax-user.php:646 inc/action/ajax-user.php:690
+msgid "不能与现在的邮箱相同！"
+msgstr ""
+
+#: inc/action/ajax-user.php:649 inc/action/ajax-user.php:694
+msgid "该邮箱已有绑定帐号！"
+msgstr ""
+
+#: inc/action/ajax-user.php:654 inc/action/ajax-user.php:700
+msgid "不能与现在的手机号相同！"
+msgstr ""
+
+#: inc/action/ajax.php:84 inc/inc.php:2130
+msgid "您的评论需要审核后才能显示！"
+msgstr "댓글이 표시하려면 검토가 필요합니다!"
+
+#: inc/action/ajax.php:176
+msgid "没有重复地址，可以提交！"
+msgstr "중복 주소가 없습니다, 당신은 제출 할 수 있습니다!"
+
+#: inc/action/ajax.php:179
+msgid "请填写地址！"
+msgstr "주소를 기입해 주십시오!"
+
+#: inc/action/ajax.php:230 inc/action/ajax.php:450
+msgid "反馈成功"
+msgstr "피드백이 성공했습니다"
+
+#: inc/action/ajax.php:265
+msgid "错误！"
+msgstr "오류입니다"
+
+#: inc/action/ajax.php:282 inc/action/ajax.php:284
+msgid "移动端"
+msgstr "UC 모바일 검색"
+
+#: inc/action/ajax.php:282 inc/action/ajax.php:284
+msgid "合计"
+msgstr "합계입니다"
+
+#: inc/action/ajax.php:282
+msgid "下载量"
+msgstr "다운로드합니다"
+
+#: inc/action/ajax.php:330 inc/functions/functions.php:191
 msgid "参数错误!"
 msgstr "매개 변수가 잘못되었습니다!"
 
-#: inc/action/ajax.php:372
+#: inc/action/ajax.php:333
 msgid "权限不足!"
 msgstr "권한이 충분하지 않습니다!"
 
-#: inc/action/ajax.php:375
-msgid "请先验证邮箱！"
-msgstr "먼저 확인하십시오!!!"
+#: inc/action/ajax.php:336
+#, fuzzy
+#| msgid "绑定邮箱"
+msgid "请先绑定邮箱！"
+msgstr "사서함을 바인딩합니다"
 
-#: inc/action/ajax.php:384
+#: inc/action/ajax.php:352
 msgid "已解除绑定"
 msgstr "바인딩이 해제되었습니다"
 
-#: inc/action/ajax.php:543 templates/user/user.uc.sites.php:258
+#: inc/action/ajax.php:514 templates/user/user.uc.sites.php:258
 msgid "已添加"
 msgstr "추가되었습니다"
 
-#: inc/action/ajax.php:543 templates/tools-customize.php:89
+#: inc/action/ajax.php:514 templates/tools-customize.php:89
 #: templates/tools-customizeforuser.php:274
 #: templates/user/user.uc.sites.php:258
 msgid "添加"
 msgstr "추가합니다"
 
-#: inc/action/ajax.php:715 inc/action/ajax.php:780 inc/action/ajax.php:826
-#: inc/action/ajax.php:865 inc/action/ajax.php:888 inc/action/ajax.php:906
-#: inc/action/ajax.php:942 inc/action/ajax.php:995 inc/action/ajax.php:1014
-#: inc/action/ajax.php:1034 inc/action/ajax.php:1063 inc/action/ajax.php:1088
-#: inc/action/ajax.php:1135
+#: inc/action/ajax.php:686 inc/action/ajax.php:751 inc/action/ajax.php:801
+#: inc/action/ajax.php:844 inc/action/ajax.php:867 inc/action/ajax.php:885
+#: inc/action/ajax.php:921 inc/action/ajax.php:978 inc/action/ajax.php:1001
+#: inc/action/ajax.php:1021 inc/action/ajax.php:1050 inc/action/ajax.php:1075
+#: inc/action/ajax.php:1098
 msgid "请登录！"
 msgstr "로그인하십시오!"
 
-#: inc/action/ajax.php:762 templates/tools-customize.php:44
+#: inc/action/ajax.php:733 templates/tools-customize.php:44
 #: templates/tools-customizeforuser.php:116
 #: templates/tools-customizeforuser.php:168
 #: templates/tools-customizeforuser.php:191
@@ -417,98 +601,121 @@ msgid "没有数据！点右上角编辑添加网址"
 msgstr ""
 "데이터가 없습니다! 포인트 오른쪽 상단 모서리에 있는 URL 추가를 편집합니다"
 
-#: inc/action/ajax.php:791 inc/action/ajax.php:803 inc/action/ajax.php:833
-#: inc/action/ajax.php:842
+#: inc/action/ajax.php:762 inc/action/ajax.php:778 inc/action/ajax.php:808
+#: inc/action/ajax.php:821
 msgid "内容错误！"
 msgstr "내용이 잘못되었습니다!"
 
-#: inc/action/ajax.php:793
+#: inc/action/ajax.php:764
 msgid "网址内容不能为空！"
 msgstr "URL 콘텐츠는 비어 있을 수 없습니다!"
 
-#: inc/action/ajax.php:798 inc/action/ajax.php:837 inc/action/ajax.php:1003
+#: inc/action/ajax.php:769 inc/action/ajax.php:812 inc/action/ajax.php:986
 msgid "分类名称已经存在，不能再新建！"
 msgstr "범주 이름이 이미 있으며 더 이상 만들 수 없습니다!"
 
-#: inc/action/ajax.php:806 inc/action/ajax.php:925
+#: inc/action/ajax.php:781 inc/action/ajax.php:904
 msgid "当前分类下已经存在同样的 URL 地址！"
 msgstr "동일한 URL 주소가 현재 분류 아래에 이미 있습니다!"
 
-#: inc/action/ajax.php:809 inc/action/ajax.php:928
+#: inc/action/ajax.php:784 inc/action/ajax.php:907
 msgid "当前分类下已经存在同样名称的网址！"
 msgstr "동일한 이름의 URL이 현재 분류 아래에 이미 있습니다!"
 
-#: inc/action/ajax.php:817 inc/action/ajax.php:1006
+#: inc/action/ajax.php:792 inc/action/ajax.php:993
 msgid "添加成功！"
 msgstr "추가에 성공했습니다."
 
-#: inc/action/ajax.php:820 inc/action/ajax.php:857 inc/action/ajax.php:989
+#: inc/action/ajax.php:795 inc/action/ajax.php:836 inc/action/ajax.php:972
 msgid "添加失败！"
 msgstr "추가에 실패했습니다!"
 
-#: inc/action/ajax.php:855
+#: inc/action/ajax.php:834
 #, php-format
 msgid "成功添加 %s 个网址。"
 msgstr "%s URL이 성공적으로 추가되었습니다."
 
-#: inc/action/ajax.php:870 inc/action/ajax.php:892 inc/action/ajax.php:914
-#: inc/action/ajax.php:919 inc/action/ajax.php:951 inc/action/ajax.php:999
-#: inc/action/ajax.php:1020 inc/action/ajax.php:1040 inc/action/ajax.php:1068
-#: inc/action/ajax.php:1076 inc/action/ajax.php:1092 inc/action/ajax.php:1097
-#: inc/action/ajax.php:1103 inc/action/ajax.php:1140 inc/action/ajax.php:1145
-#: inc/action/ajax.php:1151 inc/action/ajax.php:1204 inc/action/ajax.php:1214
-msgid "数据错误！"
-msgstr "데이터 오류!"
-
-#: inc/action/ajax.php:878 inc/action/ajax.php:1055
+#: inc/action/ajax.php:857 inc/action/ajax.php:1042
 msgid "删除成功！"
 msgstr "삭제 성공!"
 
-#: inc/action/ajax.php:880 inc/action/ajax.php:900 inc/action/ajax.php:933
-#: inc/action/ajax.php:1008 inc/action/ajax.php:1028 inc/action/ajax.php:1057
-#: inc/action/ajax.php:1081
+#: inc/action/ajax.php:859 inc/action/ajax.php:879 inc/action/ajax.php:912
+#: inc/action/ajax.php:995 inc/action/ajax.php:1015 inc/action/ajax.php:1044
+#: inc/action/ajax.php:1068
 msgid "操作失败，稍后再试！"
 msgstr "작업이 실패했습니다."
 
-#: inc/action/ajax.php:921
+#: inc/action/ajax.php:900
 msgid "网址没有变化！"
 msgstr "이름은 변경되지 않았습니다!"
 
-#: inc/action/ajax.php:931 inc/action/ajax.php:1026
+#: inc/action/ajax.php:910 inc/action/ajax.php:1013
 msgid "修改成功！"
 msgstr "수정 성공!"
 
-#: inc/action/ajax.php:987
+#: inc/action/ajax.php:970
 #, php-format
 msgid "成功添加 %s 个分类，%s 个网址。"
 msgstr ""
 "%s 개의 카테고리가 성공적으로 추가되었으며 %s 개의 URL이 추가되었습니다."
 
-#: inc/action/ajax.php:1024
+#: inc/action/ajax.php:1011
 msgid "分类名称已经存在！"
 msgstr "분류 이름이 이미 있습니다!"
 
-#: inc/action/ajax.php:1051
+#: inc/action/ajax.php:1038
 msgid "此分类内包含网址，无法删除！"
 msgstr "이 분류에는 URL이 포함되어 있으며 삭제할 수 없습니다!"
 
-#: inc/action/ajax.php:1079
+#: inc/action/ajax.php:1066
 msgid "移动成功"
 msgstr "이동에 성공했습니다"
 
-#: inc/action/ajax.php:1127 inc/action/ajax.php:1175
-msgid "排序成功！"
-msgstr "정렬 성공!"
-
-#: inc/action/ajax.php:1199
+#: inc/action/ajax.php:1136
 msgid "请先筛选到分类再排序！"
 msgstr "정렬하기 전에 분류로 필터링하십시오!"
 
-#: inc/action/ajax.php:1324
-msgid "请求失败,请再试一次！"
-msgstr "요청이 실패했습니다."
+#: inc/auth/baidu-callback.php:28 inc/auth/dyh-callback.php:56
+#: inc/auth/gitee-callback.php:28 inc/auth/github-callback.php:28
+#: inc/auth/gzh-callback.php:42 inc/auth/gzh-callback.php:140
+#: inc/auth/qq-callback.php:28 inc/auth/sina-callback.php:28
+#: inc/auth/wechat-callback.php:27
+msgid "绑定失败"
+msgstr ""
 
-#: inc/auth/gzh-callback.php:100
+#: inc/auth/baidu-callback.php:28 inc/auth/dyh-callback.php:56
+#: inc/auth/gitee-callback.php:28 inc/auth/github-callback.php:28
+#: inc/auth/gzh-callback.php:42 inc/auth/gzh-callback.php:140
+#: inc/auth/qq-callback.php:28 inc/auth/sina-callback.php:28
+#: inc/auth/wechat-callback.php:27
+#, fuzzy
+#| msgid "登录失败通知 - %s"
+msgid "登录失败"
+msgstr "로그인 실패 알림 - %s"
+
+#: inc/auth/baidu-callback.php:55 inc/auth/gitee-callback.php:55
+#: inc/auth/github-callback.php:51 inc/auth/gzh-callback.php:69
+#: inc/auth/qq-callback.php:53 inc/auth/sina-callback.php:56
+#: inc/auth/wechat-callback.php:55
+msgid "处理错误"
+msgstr ""
+
+#: inc/auth/dyh.php:28 inc/auth/gzh.php:36 inc/shortcode.php:222
+#: template-contribute.php:75 templates/bookmark/bm.header.php:59
+#: templates/bookmark/bm.header.php:79 templates/bookmark/bm.quick.php:91
+#: templates/bookmark/bm.search.php:25 templates/login/login.php:23
+#: templates/login/login.php:78 templates/login/lost.php:56
+#: templates/login/reg.php:64 templates/login/reg.php:104
+msgid "登录"
+msgstr "로그인"
+
+#: inc/auth/dyh.php:28 inc/auth/gzh.php:36 templates/login/login.php:82
+#: templates/login/lost.php:56 templates/login/reg.php:25
+#: templates/login/reg.php:70 templates/login/reg.php:100
+msgid "注册"
+msgstr "가입하기"
+
+#: inc/auth/gzh-callback.php:134 inc/functions/io-login.php:164
 msgid "参数传入错误"
 msgstr "인수가 오류를 전달했습니다"
 
@@ -522,27 +729,109 @@ msgstr "[%s]에 대한 리뷰가 검토되었습니다"
 msgid "[%s]上有新的待审投稿"
 msgstr "[%s]에 새로운 출품이 있습니다"
 
-#: inc/fav-content.php:216 templates/tools-customizeforuser.php:179
+#: inc/fav-content.php:223 templates/tools-customizeforuser.php:179
 #: templates/tools-hotcontent.php:40
 msgid "加载中..."
 msgstr "로드 중..."
 
-#: inc/fav-content.php:318 taxonomy-apps.php:24 taxonomy-apptag.php:24
+#: inc/fav-content.php:306 taxonomy-apps.php:24 taxonomy-apptag.php:24
 #: taxonomy-books.php:29 taxonomy-booktag.php:25 taxonomy-favorites.php:29
 #: taxonomy-series.php:25 taxonomy-sitetag.php:24 templates/search-app.php:14
-#: templates/search-book.php:14 templates/search-sites.php:14
+#: templates/search-book.php:14 templates/search-sites.php:17
 msgid "没有内容"
 msgstr "콘텐츠가 없습니다"
 
-#: inc/functions/io-check-link.php:590
+#: inc/functions/functions.php:122
+msgid "排序成功！"
+msgstr "정렬 성공!"
+
+#: inc/functions/functions.php:132
+#, fuzzy, php-format
+#| msgid "没有相关内容!"
+msgid "找到 %s 个相关内容"
+msgstr "관련 콘텐츠가 없습니다!"
+
+#: inc/functions/functions.php:160
+#, php-format
+msgid "「%s」邮箱验证码"
+msgstr "\"%s\" 이메일 확인 코드"
+
+#: inc/functions/functions.php:164
+#, fuzzy
+#| msgid "邮箱验证码发送成功，请前往邮箱查看！"
+msgid "发送成功，请前往邮箱查看！"
+msgstr ""
+"이메일 확인 코드가 성공적으로 전송되었습니다, 이메일을 확인하시기 바랍니다!"
+
+#: inc/functions/functions.php:166
+msgid "发送验证码失败，请稍后再尝试。"
+msgstr "확인 코드를 보내지 못했습니다."
+
+#: inc/functions/functions.php:172
+msgid "短信已发送"
+msgstr ""
+
+#: inc/functions/functions.php:195 inc/functions/functions.php:279
+#: inc/functions/io-login.php:142 inc/functions/io-user.php:475
+msgid "手机号"
+msgstr ""
+
+#: inc/functions/functions.php:198
+#, php-format
+msgid "请输入%s验证码"
+msgstr ""
+
+#: inc/functions/functions.php:234
+msgid "图形验证码"
+msgstr ""
+
+#: inc/functions/functions.php:236
+msgid "点击刷新"
+msgstr "새로 고침을 클릭합니다"
+
+#: inc/functions/functions.php:284
+#, fuzzy, php-format
+#| msgid "验证码错误！"
+msgid "%s验证码错误！"
+msgstr "인증 코드 오류!"
+
+#: inc/functions/functions.php:289
+#, php-format
+msgid "%s验证码已过期"
+msgstr ""
+
+#: inc/functions/functions.php:292
+#, php-format
+msgid "%s验证码效验成功"
+msgstr ""
+
+#: inc/functions/functions.php:450
+msgid "请求失败,请再试一次！"
+msgstr "요청이 실패했습니다."
+
+#: inc/functions/functions.php:657
+#, fuzzy
+#| msgid "权限不足!"
+msgid "权限不足"
+msgstr "권한이 충분하지 않습니다!"
+
+#: inc/functions/functions.php:668
+msgid "此内容已隐藏，请登录后查看！"
+msgstr ""
+
+#: inc/functions/functions.php:671
+msgid "登录查看"
+msgstr ""
+
+#: inc/functions/io-check-link.php:594
 msgid "失效链接"
 msgstr "링크를 무효화합니다"
 
-#: inc/functions/io-check-link.php:596
+#: inc/functions/io-check-link.php:600
 msgid "连接超时"
 msgstr "연결 시간 초과입니다"
 
-#: inc/functions/io-check-link.php:602 inc/functions/io-single-site.php:52
+#: inc/functions/io-check-link.php:606 inc/functions/io-single-site.php:59
 msgid "重定向&变更"
 msgstr "리디렉션&변경"
 
@@ -551,51 +840,115 @@ msgstr "리디렉션&변경"
 msgid "已多次登录失败，请%s分钟后重试！"
 msgstr "여러 번 로그인하지 못했습니다, %s 분 후에 다시 시도하십시오!"
 
-#: inc/functions/io-single-site.php:20
+#: inc/functions/io-login.php:147
+msgid "邮箱或手机号"
+msgstr ""
+
+#: inc/functions/io-login.php:175
+#, fuzzy
+#| msgid "邮箱格式错误！"
+msgid "邮箱格式错误"
+msgstr "사서함 형식이 잘못되었습니다!"
+
+#: inc/functions/io-login.php:184
+#, fuzzy
+#| msgid "链接格式错误！"
+msgid "手机号格式错误！"
+msgstr "링크 형식이 잘못되었습니다!"
+
+#: inc/functions/io-login.php:200
+#, fuzzy
+#| msgid "邮箱格式错误！"
+msgid "手机号或邮箱格式错误！"
+msgstr "사서함 형식이 잘못되었습니다!"
+
+#: inc/functions/io-oauth.php:211 inc/functions/io-oauth.php:218
+#: inc/search-list.php:154 inc/search-list.php:155
+msgid "微信"
+msgstr "WeChat"
+
+#: inc/functions/io-oauth.php:225 inc/search-list.php:160
+#: inc/search-list.php:161
+msgid "微博"
+msgstr "마이크로 블로깅"
+
+#: inc/functions/io-oauth.php:232 inc/search-list.php:25 inc/search-list.php:62
+msgid "百度"
+msgstr "바이두"
+
+#: inc/functions/io-oauth.php:239
+msgid "支付宝"
+msgstr "알리페이"
+
+#: inc/functions/io-oauth.php:253
+msgid "码云"
+msgstr ""
+
+#: inc/functions/io-oauth.php:260
+msgid "华为"
+msgstr "화웨이"
+
+#: inc/functions/io-oauth.php:267
+msgid "谷歌"
+msgstr "Google"
+
+#: inc/functions/io-oauth.php:274
+msgid "微软"
+msgstr "마이크로 소프트"
+
+#: inc/functions/io-oauth.php:295
+msgid "钉钉"
+msgstr "못을 박다"
+
+#: inc/functions/io-single-site.php:27
 msgid "数据评估"
 msgstr "데이터 평가"
 
-#: inc/functions/io-single-site.php:45 inc/functions/io-single-site.php:68
+#: inc/functions/io-single-site.php:52 inc/functions/io-single-site.php:75
 msgid "反馈"
 msgstr "피드백"
 
-#: inc/functions/io-single-site.php:51
+#: inc/functions/io-single-site.php:58
 msgid "已失效"
 msgstr "더 이상 유효하지 않습니다"
 
-#: inc/functions/io-single-site.php:53
+#: inc/functions/io-single-site.php:60
 msgid "已屏蔽"
 msgstr "차단됨"
 
-#: inc/functions/io-single-site.php:54
+#: inc/functions/io-single-site.php:61
 msgid "敏感内容"
 msgstr "민감한 콘텐츠"
 
-#: inc/functions/io-single-site.php:55
+#: inc/functions/io-single-site.php:62
 msgid "其他"
 msgstr "기타"
 
-#: inc/functions/io-single-site.php:75
+#: inc/functions/io-single-site.php:82
 msgid "让我们一起共建文明社区！您的反馈至关重要！"
 msgstr "문명화된 공동체를 함께 건설합시다! 귀하의 의견은 매우 중요합니다!"
 
-#: inc/functions/io-single-site.php:90
+#: inc/functions/io-single-site.php:91
+msgid "已可访问"
+msgstr ""
+
+#: inc/functions/io-single-site.php:101
 msgid "其它信息，可选"
 msgstr "추가 정보, 선택 사항"
 
-#: inc/functions/io-single-site.php:93
+#: inc/functions/io-single-site.php:104
 msgid "重定向&变更后的地址"
 msgstr "리디렉션&변경된 주소입니다"
 
-#: inc/functions/io-single-site.php:96
+#: inc/functions/io-single-site.php:107
 msgid "提交反馈"
 msgstr "피드백을 제출합니다"
 
-#: inc/functions/io-single-site.php:124 inc/functions/io-single-site.php:130
+#: inc/functions/io-single-site.php:135 inc/functions/io-single-site.php:141
 msgid "信息不能为空！"
 msgstr "정보는 비어 있을 수 없습니다!"
 
-#: inc/functions/io-single-site.php:152 inc/theme-start.php:465
+#: inc/functions/io-single-site.php:163 inc/theme-start.php:483
 #: templates/user/user.uc.sites.php:314 templates/user/user.uc.sites.php:399
 #: templates/user/user.uc.sites.php:430 templates/user/user.uc.sites.php:461
 #: templates/user/user.uc.sites.php:514 templates/user/user.uc.sites.php:549
@@ -605,9 +958,221 @@ msgstr "정보는 비어 있을 수 없습니다!"
 msgid "网络错误 --."
 msgstr "네트워크 오류 --."
 
-#: inc/functions/io-tools-hotcontent.php:44
+#: inc/functions/io-tools-hotcontent.php:47
 msgid "没有数据！请开启统计并等待产生数据"
 msgstr "데이터가 없습니다! 통계를 켜고 데이터가 생성될 때까지 기다립니다"
+
+#: inc/functions/io-user.php:79
+msgid "游客"
+msgstr "관광객"
+
+#: inc/functions/io-user.php:82
+msgid "管理员"
+msgstr "관리자입니다"
+
+#: inc/functions/io-user.php:85 inc/theme-start.php:489 page.php:22
+#: single-bulletin.php:42 single.php:35 template-contribute.php:21
+#: template-links.php:22 templates/content-app.php:32
+#: templates/content-book.php:84 templates/content-down.php:58
+#: templates/content-site.php:86 templates/tools-customize.php:26
+#: templates/tools-customizeforuser.php:53
+msgid "编辑"
+msgstr "편집합니다"
+
+#: inc/functions/io-user.php:88
+msgid "作者"
+msgstr "저자"
+
+#: inc/functions/io-user.php:91
+msgid "投稿者"
+msgstr "기고자"
+
+#: inc/functions/io-user.php:94
+msgid "读者"
+msgstr "독자"
+
+#: inc/functions/io-user.php:154
+#, fuzzy
+#| msgid "邮箱"
+msgid "旧邮箱"
+msgstr "사서함입니다"
+
+#: inc/functions/io-user.php:155
+msgid "旧手机号"
+msgstr ""
+
+#: inc/functions/io-user.php:233
+#, fuzzy
+#| msgid "绑定邮箱"
+msgid "你没有绑定邮箱！"
+msgstr "사서함을 바인딩합니다"
+
+#: inc/functions/io-user.php:237
+msgid "你没有绑定手机号！"
+msgstr ""
+
+#: inc/functions/io-user.php:251
+msgid "前往绑定"
+msgstr ""
+
+#: inc/functions/io-user.php:352
+msgid "账号绑定"
+msgstr "계정 바인딩"
+
+#: inc/functions/io-user.php:471
+msgid "修改邮箱"
+msgstr ""
+
+#: inc/functions/io-user.php:471 inc/functions/io-user.php:638
+#: templates/login/bind.php:96 templates/login/bind.php:109
+msgid "绑定邮箱"
+msgstr "사서함을 바인딩합니다"
+
+#: inc/functions/io-user.php:477
+msgid "修改手机号"
+msgstr ""
+
+#: inc/functions/io-user.php:477 templates/login/bind.php:98
+msgid "绑定手机号"
+msgstr ""
+
+#: inc/functions/io-user.php:482 inc/functions/io-user.php:648
+msgid "设置密码"
+msgstr "암호를 설정합니다"
+
+#: inc/functions/io-user.php:482 inc/functions/io-user.php:655
+msgid "修改密码"
+msgstr "암호를 수정합니다"
+
+#: inc/functions/io-user.php:486
+msgid "重设密码"
+msgstr ""
+
+#: inc/functions/io-user.php:501
+#, php-format
+msgid "验证旧%s"
+msgstr ""
+
+#: inc/functions/io-user.php:502
+#, php-format
+msgid "设置新%s"
+msgstr ""
+
+#: inc/functions/io-user.php:503
+#, fuzzy
+#| msgid "修改成功！"
+msgid "修改成功"
+msgstr "수정 성공!"
+
+#: inc/functions/io-user.php:531
+msgid "获取验证码以验证旧邮箱："
+msgstr ""
+
+#: inc/functions/io-user.php:532
+msgid "获取验证码以验证旧手机号："
+msgstr ""
+
+#: inc/functions/io-user.php:538 inc/functions/io-user.php:575
+#: inc/functions/io-user.php:736
+#, fuzzy
+#| msgid "验证"
+msgid "验证码"
+msgstr "유효성 검사"
+
+#: inc/functions/io-user.php:539 inc/functions/io-user.php:576
+#: inc/functions/io-user.php:737 templates/login/bind.php:168
+#: templates/login/reg.php:81
+msgid "发送验证码"
+msgstr "인증번호 발송"
+
+#: inc/functions/io-user.php:546
+msgid "立即验证"
+msgstr ""
+
+#: inc/functions/io-user.php:561
+#, fuzzy
+#| msgid "输入邮箱"
+msgid "请输入邮箱"
+msgstr "사서함을 입력합니다"
+
+#: inc/functions/io-user.php:562
+msgid "请输入手机号"
+msgstr ""
+
+#: inc/functions/io-user.php:565
+msgid "请输入您需要修改的新邮箱。"
+msgstr ""
+
+#: inc/functions/io-user.php:566
+msgid "请输入您需要修改的新手机号。"
+msgstr ""
+
+#: inc/functions/io-user.php:584 inc/functions/io-user.php:708
+msgid "确认提交"
+msgstr ""
+
+#: inc/functions/io-user.php:602
+msgid "用户协议"
+msgstr ""
+
+#: inc/functions/io-user.php:605
+msgid "隐私声明"
+msgstr ""
+
+#: inc/functions/io-user.php:609
+msgid "阅读并同意"
+msgstr ""
+
+#: inc/functions/io-user.php:621 inc/theme-start.php:500
+msgid "请先阅读并同意用户协议"
+msgstr ""
+
+#: inc/functions/io-user.php:643
+msgid "绑定手机"
+msgstr ""
+
+#: inc/functions/io-user.php:660
+msgid "换绑账号"
+msgstr ""
+
+#: inc/functions/io-user.php:662
+msgid "已绑定："
+msgstr ""
+
+#: inc/functions/io-user.php:664
+msgid "绑定账号"
+msgstr ""
+
+#: inc/functions/io-user.php:690
+msgid "请输入原密码"
+msgstr ""
+
+#: inc/functions/io-user.php:697
+msgid "请输入新密码"
+msgstr ""
+
+#: inc/functions/io-user.php:701
+msgid "请再次输入新密码"
+msgstr ""
+
+#: inc/functions/io-user.php:713
+msgid "忘记密码？点击重设密码。"
+msgstr ""
+
+#: inc/functions/io-user.php:740 templates/login/bind.php:176
+#: templates/login/login.php:65 templates/login/reg.php:85
+msgid "密码"
+msgstr "비밀번호"
+
+#: inc/functions/io-user.php:744 templates/login/reg.php:89
+msgid "确认密码"
+msgstr "암호를 확인합니다"
+
+#: inc/functions/io-user.php:750 inc/shortcode.php:294
+#: templates/user/user.uc.sites.php:108 templates/user/user.uc.sites.php:200
+#: templates/user/user.uc.sites.php:482 templates/user/user.uc.sites.php:762
+msgid "提交"
+msgstr "제출 확인"
 
 #: inc/functions/io-widgets.php:31 inc/functions/io-widgets.php:91
 #: inc/functions/io-widgets.php:164 inc/functions/io-widgets.php:205
@@ -615,345 +1180,332 @@ msgstr "데이터가 없습니다! 통계를 켜고 데이터가 생성될 때�
 msgid "没有数据！"
 msgstr "데이터가 없습니다!"
 
-#: inc/hot-search.php:66
+#: inc/hot-search-option.php:124
+msgid "请求头(可留空)"
+msgstr ""
+
+#: inc/hot-search-option.php:145
+msgid "Cookie(可留空)"
+msgstr ""
+
+#: inc/hot-search-option.php:172
+msgid "请求类型"
+msgstr ""
+
+#: inc/hot-search-option.php:183
+msgid "请求参数"
+msgstr ""
+
+#: inc/hot-search.php:100
 msgid "没有获取到内容。"
 msgstr "콘텐츠를 가져오지 못했습니다."
 
-#: inc/hot-search.php:72
-msgid "网络拥堵，请稍后再试。"
-msgstr "네트워크가 혼잡합니다."
-
-#: inc/inc.php:189 inc/inc.php:204
+#: inc/inc.php:231 inc/inc.php:246
 msgid "图书"
 msgstr "책 시리즈"
 
-#: inc/inc.php:192
+#: inc/inc.php:234
 msgid "期刊"
 msgstr "월간"
 
-#: inc/inc.php:195
+#: inc/inc.php:237
 msgid "电影"
 msgstr "영화"
 
-#: inc/inc.php:198
+#: inc/inc.php:240
 msgid "电视剧"
 msgstr "드라마"
 
-#: inc/inc.php:201
+#: inc/inc.php:243
 msgid "小视频"
 msgstr "작은 비디오"
 
-#: inc/inc.php:212
+#: inc/inc.php:254
 msgid "软件"
 msgstr "소프트웨어"
 
-#: inc/inc.php:256
+#: inc/inc.php:298
 msgid "请到[后台->外观->菜单]中添加“搜索推荐”菜单。"
 msgstr "[백그라운드->-> 메뉴]에 [검색 권장 사항] 메뉴를 추가합니다."
 
-#: inc/inc.php:258
+#: inc/inc.php:300
 msgid "请到[后台->外观->菜单]中设置菜单。"
 msgstr "[백그라운드-> 모양-> 메뉴]로 이동하여 메뉴를 설정합니다."
 
-#: inc/inc.php:505
+#: inc/inc.php:562
 msgid "置顶"
 msgstr "상단을 설정합니다"
 
-#: inc/inc.php:520
+#: inc/inc.php:582
 msgid "新"
 msgstr "새로운"
 
-#: inc/inc.php:758
+#: inc/inc.php:829
 msgid "帅气的我简直无法用语言描述！"
 msgstr "멋진 나는 말로 설명 할 수 없습니다!"
 
-#: inc/inc.php:1214 inc/inc.php:1223 inc/inc.php:1234
+#: inc/inc.php:1294 inc/inc.php:1303 inc/inc.php:1314
 msgid "收藏"
 msgstr "컬렉션"
 
-#: inc/inc.php:1248 inc/inc.php:1257
+#: inc/inc.php:1328 inc/inc.php:1337
 msgid "点赞"
 msgstr "좋아요를 누르세요"
 
-#: inc/inc.php:1268
+#: inc/inc.php:1348
 msgid "赞"
 msgstr "짱"
 
-#: inc/inc.php:1688 inc/inc.php:1697 inc/inc.php:1704
+#: inc/inc.php:1783 inc/inc.php:1792 inc/inc.php:1799
 #: templates/content-app.php:135 templates/content-app.php:145
-#: templates/content-app.php:169 templates/content-book.php:142
+#: templates/content-app.php:169 templates/content-book.php:145
 #: templates/content-down.php:179
 msgid "下载"
 msgstr "다운로드합니다"
 
-#: inc/inc.php:1690 inc/inc.php:1706 templates/content-site.php:118
-#: templates/content-site.php:125
+#: inc/inc.php:1785 inc/inc.php:1801 templates/content-site.php:97
+#: templates/content-site.php:104
 msgid "居然没有添加二维码"
 msgstr "QR 코드를 추가하지 않았습니다"
 
-#: inc/inc.php:1692 inc/inc.php:1708
+#: inc/inc.php:1787 inc/inc.php:1803
 msgid "没有 url"
 msgstr "URL이 없습니다"
 
-#: inc/inc.php:1874
+#: inc/inc.php:1982
 msgid "刚刚"
 msgstr "그냥"
 
-#: inc/inc.php:1876
+#: inc/inc.php:1984
 msgid "年前"
 msgstr "몇 년 전"
 
-#: inc/inc.php:1877
+#: inc/inc.php:1985
 msgid "个月前"
 msgstr "몇 달 전"
 
-#: inc/inc.php:1878
+#: inc/inc.php:1986
 msgid "周前"
 msgstr "일주일 전"
 
-#: inc/inc.php:1879
+#: inc/inc.php:1987
 msgid "天前"
 msgstr "며칠 전"
 
-#: inc/inc.php:1880
+#: inc/inc.php:1988
 msgid "小时前"
 msgstr "시간 전"
 
-#: inc/inc.php:1881
+#: inc/inc.php:1989
 msgid "分钟前"
 msgstr "분 전"
 
-#: inc/inc.php:1882
+#: inc/inc.php:1990
 msgid "秒前"
 msgstr "초 전"
 
-#: inc/inc.php:1918 inc/widgets.php:640
+#: inc/inc.php:2026
 msgid "博主"
 msgstr "블로거"
 
-#: inc/inc.php:1968 inc/user-functions.php:31
-msgid "管理员"
-msgstr "관리자입니다"
-
-#: inc/inc.php:1971 inc/theme-start.php:471 inc/user-functions.php:34
-#: inc/widgets.php:642 page.php:22 single-bulletin.php:42 single.php:29
-#: template-contribute.php:21 template-links.php:22
-#: templates/content-app.php:32 templates/content-book.php:84
-#: templates/content-down.php:58 templates/content-site.php:104
-#: templates/tools-customize.php:26 templates/tools-customizeforuser.php:53
-msgid "编辑"
-msgstr "편집합니다"
-
-#: inc/inc.php:1974 inc/user-functions.php:37 inc/widgets.php:644
-msgid "作者"
-msgstr "저자"
-
-#: inc/inc.php:1977 inc/user-functions.php:40 inc/widgets.php:646
-msgid "投稿者"
-msgstr "기고자"
-
-#: inc/inc.php:1980
-msgid "游客"
-msgstr "관광객"
-
-#: inc/inc.php:1983 inc/user-functions.php:43
-msgid "读者"
-msgstr "독자"
-
-#: inc/inc.php:1985
+#: inc/inc.php:2074
 msgid "头衔："
 msgstr "제목:"
 
-#: inc/inc.php:2070
+#: inc/inc.php:2162
 msgid "请勿冒充管理员发表评论！"
 msgstr "관리자로 가장하여 댓글을 달지 마십시오!"
 
-#: inc/inc.php:2083
+#: inc/inc.php:2175
 msgid "别啊，昵称和评论里面添加链接会怀孕的哟！！"
 msgstr "아아, 닉네임과 댓글에 링크를 추가하면 임신할 수 있습니다! !"
 
-#: inc/inc.php:2087 inc/inc.php:2090
+#: inc/inc.php:2179 inc/inc.php:2182
 msgid "评论必须含中文！"
 msgstr "댓글에는 중국어가 있어야 합니다!"
 
-#: inc/inc.php:2095
+#: inc/inc.php:2187
 #, php-format
 msgid "不好意思，您的评论违反了%s博客评论规则"
 msgstr "죄송합니다, 귀하의 의견은 %s 댓글 규칙을 위반했다"
 
-#: inc/inc.php:2542 inc/inc.php:2560
+#: inc/inc.php:2633 inc/inc.php:2651
 #, php-format
 msgid "查看与 %s 相关的文章"
 msgstr "이 문서의 %s 문서를 봅니다"
 
-#: inc/inc.php:2884 template-contribute.php:104
-#: templates/contribute/post.php:127 templates/contribute/sites.php:178
-msgid "验证"
-msgstr "유효성 검사"
-
-#: inc/inc.php:2893 template-contribute.php:102
-msgid "验证成功"
-msgstr "유효성 검사가 성공했습니다"
-
-#: inc/inc.php:2903 template-contribute.php:99
-msgid "请先验证！！！"
-msgstr "먼저 확인하십시오!!!"
-
-#: inc/inc.php:3090
+#: inc/inc.php:3050
 #, php-format
 msgid "%s在「%s」中回复了你"
 msgstr "%s \"%s\"에서 당신에게 회신했습니다"
 
-#: inc/inc.php:3098 inc/inc.php:3101
+#: inc/inc.php:3058 inc/inc.php:3061
 #, php-format
 msgid "%s在你的文章「%s」中发表了评论"
 msgstr "%s \"%s\"에 댓글을 달기 위해 글을 쓰는 것을 볼 수 있습니다"
 
-#: inc/inc.php:3159
+#: inc/inc.php:3119
 #, php-format
 msgid "欢迎来到%s，请首先在个人设置中完善您的账号信息。"
 msgstr ""
 "이메일%s 에 오신 것을 환영합니다, 먼저 개인 설정에서 계정 정보를 개선하시기 "
 "바랍니다."
 
-#: inc/inc.php:3216
+#: inc/inc.php:3176
 #, php-format
 msgid "获得注册奖励%s"
 msgstr "등록 어워드 를 받으세요%s"
 
-#: inc/inc.php:3225
+#: inc/inc.php:3185
 #, php-format
 msgid "获得注册推广（来自%s的注册）奖励%s"
 msgstr "등록 프로모션(등록%s) 보상을 받으세요%s"
 
-#: inc/mailfunc/mailfunc.php:157
+#: inc/mailfunc/mailfunc.php:161
 #, php-format
 msgid "新评论通知 - %s"
 msgstr "새 댓글 알림 - %s"
 
-#: inc/mailfunc/mailfunc.php:160
+#: inc/mailfunc/mailfunc.php:164
 #, php-format
 msgid "您的博客有新评论 - %s"
 msgstr "블로그에 새 댓글이 있습니다 - %s"
 
-#: inc/mailfunc/mailfunc.php:163
+#: inc/mailfunc/mailfunc.php:167
 #, php-format
 msgid "你的登录密码重置链接 - %s"
 msgstr "로그인 암호 재설정 링크 - %s"
 
-#: inc/mailfunc/mailfunc.php:166
+#: inc/mailfunc/mailfunc.php:170
 #, php-format
 msgid "登录成功通知 - %s"
 msgstr "로그인 성공 알림 - %s"
 
-#: inc/mailfunc/mailfunc.php:169
+#: inc/mailfunc/mailfunc.php:173
 #, php-format
 msgid "登录失败通知 - %s"
 msgstr "로그인 실패 알림 - %s"
 
-#: inc/mailfunc/mailfunc.php:172
+#: inc/mailfunc/mailfunc.php:176
 #, php-format
 msgid "新评论回复通知 - %s"
 msgstr "새 댓글 회신 알림 - %s"
 
-#: inc/mailfunc/mailfunc.php:176
+#: inc/mailfunc/mailfunc.php:179
 #, php-format
 msgid "站内通知 - %s"
 msgstr "인바운드 알림 - %s"
 
-#: inc/mailfunc/mailfunc.php:212 inc/mailfunc/mailfunc.php:265
+#: inc/mailfunc/mailfunc.php:216 inc/mailfunc/mailfunc.php:269
 #, php-format
 msgid "%s上的文章有了新的回复"
 msgstr "%s 기사에 대한 새로운 응답이 있습니다"
 
-#: inc/mailfunc/mailfunc.php:234 inc/mailfunc/mailfunc.php:251
-#: inc/mailfunc/mailfunc.php:253
+#: inc/mailfunc/mailfunc.php:238 inc/mailfunc/mailfunc.php:255
+#: inc/mailfunc/mailfunc.php:257
 #, php-format
 msgid "%1$s在%2$s中回复你"
 msgstr "%1$s %2$s 당신에게 회신 할 수 있습니다"
 
-#: inc/mailfunc/mailfunc.php:237
+#: inc/mailfunc/mailfunc.php:241
 #, php-format
 msgid "我在%1$s中回复了你"
 msgstr "나는 %1$s 당신에게 대답했다"
 
-#: inc/mailfunc/mailfunc.php:282
+#: inc/mailfunc/mailfunc.php:286
 msgid "你的博客空间登录提醒"
 msgstr "블로그 공간 로그인 알림"
 
-#: inc/mailfunc/mailfunc.php:301
+#: inc/mailfunc/mailfunc.php:305
 msgid "你的博客空间登录错误警告"
 msgstr "블로그 공간 로그인 오류 경고"
 
-#: inc/mailfunc/mailfunc.php:333
+#: inc/mailfunc/mailfunc.php:336
 #, php-format
 msgid "你的登录密码重置链接-%1$s"
 msgstr "로그인 암호 재설정 링크-%1$s"
 
-#: inc/mailfunc/mailfunc.php:349
+#: inc/mailfunc/mailfunc.php:352
 #, php-format
 msgid "[%s]新的友情链接待审核"
 msgstr "[%s] 새로운 링크는 검토 중입니다"
 
-#: inc/open-login.php:57
+#: inc/mailfunc/mailfunc.php:378
+#, fuzzy
+#| msgid "邮箱修改成功！"
+msgid "邮箱修改成功"
+msgstr "사서함 수정이 성공했습니다!"
+
+#: inc/mailfunc/mailfunc.php:378
+#, fuzzy
+#| msgid "绑定成功！"
+msgid "邮箱绑定成功"
+msgstr "바인딩 성공!"
+
+#: inc/mailfunc/mailfunc.php:379
+msgid "您的账号绑定的邮箱已修改"
+msgstr ""
+
+#: inc/mailfunc/mailfunc.php:379
+msgid "您的账号已成功绑定邮箱"
+msgstr ""
+
+#: inc/mailfunc/mailfunc.php:380 inc/mailfunc/mailfunc.php:384
+#, php-format
+msgid "由 %s 修改为 %s"
+msgstr ""
+
+#: inc/mailfunc/mailfunc.php:380
+#, fuzzy
+#| msgid "邮箱"
+msgid "邮箱："
+msgstr "사서함입니다"
+
+#: inc/mailfunc/mailfunc.php:382
+#, fuzzy
+#| msgid "修改成功！"
+msgid "手机号修改成功"
+msgstr "수정 성공!"
+
+#: inc/mailfunc/mailfunc.php:382
+#, fuzzy
+#| msgid "绑定成功！"
+msgid "手机号绑定成功"
+msgstr "바인딩 성공!"
+
+#: inc/mailfunc/mailfunc.php:383
+msgid "您的账号绑定的手机号已修改"
+msgstr ""
+
+#: inc/mailfunc/mailfunc.php:383
+msgid "您的账号已成功绑定手机号"
+msgstr ""
+
+#: inc/mailfunc/mailfunc.php:384
+msgid "手机号："
+msgstr ""
+
+#: inc/mailfunc/mailfunc.php:386
+msgid "您好，"
+msgstr ""
+
+#: inc/mailfunc/mailfunc.php:389
+msgid "如非您本人操作，请及时与客服联系！"
+msgstr ""
+
+#: inc/open-login.php:87
 msgid "社交帐号登录"
 msgstr "소셜 계정 로그인"
 
-#: inc/open-login.php:166 inc/open-login.php:167 inc/open-login.php:168
-#: inc/search-list.php:154 inc/search-list.php:155
-#: templates/user/user.uc.security.php:148
-msgid "微信"
-msgstr "WeChat"
-
-#: inc/open-login.php:169
-msgid "支付宝"
-msgstr "알리페이"
-
-#: inc/open-login.php:170 inc/search-list.php:160 inc/search-list.php:161
-#: templates/user/user.uc.security.php:160
-msgid "微博"
-msgstr "마이크로 블로깅"
-
-#: inc/open-login.php:171 inc/search-list.php:25 inc/search-list.php:62
-msgid "百度"
-msgstr "바이두"
-
-#: inc/open-login.php:172
-msgid "华为"
-msgstr "화웨이"
-
-#: inc/open-login.php:173
-msgid "谷歌"
-msgstr "Google"
-
-#: inc/open-login.php:174
-msgid "微软"
-msgstr "마이크로 소프트"
-
-#: inc/open-login.php:177
-msgid "钉钉"
-msgstr "못을 박다"
-
-#: inc/open-login.php:196
+#: inc/open-login.php:146
 #, php-format
 msgid "%s快速登录"
 msgstr "빠른 로그인을 %s"
 
-#: inc/open-login.php:283 inc/open-login.php:304 template-contribute.php:75
-#: templates/bookmark/bm.header.php:59 templates/bookmark/bm.header.php:79
-#: templates/bookmark/bm.quick.php:91 templates/bookmark/bm.search.php:25
-#: templates/login/login.php:23 templates/login/login.php:75
-#: templates/login/login.php:77 templates/login/lost.php:72
-#: templates/login/reg.php:132 templates/login/reg.php:180
-msgid "登录"
-msgstr "로그인"
-
-#: inc/open-login.php:283 inc/open-login.php:304 templates/login/login.php:82
-#: templates/login/lost.php:72 templates/login/reg.php:94
-#: templates/login/reg.php:138 templates/login/reg.php:173
-#: templates/login/reg.php:175
-msgid "注册"
-msgstr "가입하기"
+#: inc/open-login.php:451
+#, php-format
+msgid "该用户已经绑定了 %s 账号"
+msgstr ""
 
 #: inc/post-type.php:23 templates/user/user.uc.sites.php:181
 msgid "添加网址"
@@ -1323,8 +1875,8 @@ msgstr "메타데이터 가져오기(이름, 설명, 키워드, 국가)"
 msgid "刷新图标"
 msgstr "아이콘을 새로 고칩니다"
 
-#: inc/postviews/postviews.php:203 inc/widgets.php:661
-#: templates/content-book.php:54 templates/content-site.php:67
+#: inc/postviews/postviews.php:227 inc/widgets.php:657
+#: templates/content-book.php:54 templates/content-site.php:46
 msgid "浏览"
 msgstr "탐색합니다"
 
@@ -1344,7 +1896,7 @@ msgstr "구글은 두 번"
 msgid "站内"
 msgstr "역 안에 있습니다"
 
-#: inc/search-list.php:38 templates/search/big.php:64
+#: inc/search-list.php:38 templates/search/big.php:66
 msgid "站内搜索"
 msgstr "역 내 검색"
 
@@ -1482,212 +2034,135 @@ msgstr "후크 그물을 당기다"
 msgid "猎聘网"
 msgstr "사냥 그물"
 
-#: inc/theme-start.php:463
+#: inc/shortcode.php:221 inc/widgets.php:654
+msgid "评论"
+msgstr "댓글을 달다"
+
+#: inc/shortcode.php:223
+msgid "密码验证"
+msgstr ""
+
+#: inc/shortcode.php:228
+msgid "管理员可见"
+msgstr ""
+
+#: inc/shortcode.php:232
+msgid "作者可见"
+msgstr ""
+
+#: inc/shortcode.php:265
+#, php-format
+msgid "隐藏内容%s"
+msgstr ""
+
+#: inc/shortcode.php:291
+#, fuzzy
+#| msgid "用户名或密码错误，请重试!"
+msgid "密码错误，请重新输入"
+msgstr "사용자 이름 또는 암호가 잘못되었습니다."
+
+#: inc/shortcode.php:293
+msgid "请输入密码"
+msgstr ""
+
+#: inc/shortcode.php:308
+msgid "隐藏内容！"
+msgstr ""
+
+#: inc/shortcode.php:309
+#, php-format
+msgid "%s后才能查看！"
+msgstr ""
+
+#: inc/theme-start.php:481
 msgid "您已经赞过了!"
 msgstr "당신은 그것을 좋아했습니다!"
 
-#: inc/theme-start.php:464
+#: inc/theme-start.php:482
 msgid "谢谢点赞!"
 msgstr "좋아요를 눌러 주셔서 감사합니다!"
 
-#: inc/theme-start.php:466
+#: inc/theme-start.php:484
 msgid "为什么不选分类。"
 msgstr "분류를 선택하지 않는 이유는 무엇입니다."
 
-#: inc/theme-start.php:467
+#: inc/theme-start.php:485
 msgid "添加成功。"
 msgstr "추가에 성공했습니다."
 
-#: inc/theme-start.php:468
+#: inc/theme-start.php:486
 msgid "访问超时，请再试试，或者手动填写。"
 msgstr "액세스 시간이 초과되었습니다."
 
-#: inc/theme-start.php:469
+#: inc/theme-start.php:487
 msgid "日间模式"
 msgstr "데이 모드"
 
-#: inc/theme-start.php:472 templates/login/bind.php:102
-#: templates/login/bind.php:140 templates/login/bind.php:142
-#: templates/user/user.uc.security.php:218
-#: templates/user/user.uc.security.php:350
-#: templates/user/user.uc.security.php:355
+#: inc/theme-start.php:490 templates/login/bind.php:149
+#: templates/login/bind.php:186
 msgid "确定"
 msgstr "확인합니다"
 
-#: inc/theme-start.php:473
+#: inc/theme-start.php:491
 msgid "该网址已经存在了 --."
 msgstr "URL이 이미 있습니다--."
 
-#: inc/theme-start.php:474 templates/tools-customize.php:90
+#: inc/theme-start.php:492 templates/tools-customize.php:90
 #: templates/tools-customizeforuser.php:275
 msgid "取消"
 msgstr "취소합니다"
 
-#: inc/theme-start.php:475
+#: inc/theme-start.php:493
 msgid "成功"
 msgstr "성공"
 
-#: inc/theme-start.php:476
+#: inc/theme-start.php:494
 msgid "信息"
 msgstr "정보"
 
-#: inc/theme-start.php:477
+#: inc/theme-start.php:495 templates/user/user.uc.sites.php:688
 msgid "警告"
 msgstr "경고"
 
-#: inc/theme-start.php:478
+#: inc/theme-start.php:496
 msgid "错误"
 msgstr "오류입니다"
 
-#: inc/theme-start.php:479
+#: inc/theme-start.php:497
 msgid "网盘提取码已复制，点“确定”进入下载页面。"
 msgstr "네트워크 디스크 추출 코드가 복사되었습니다."
 
-#: inc/user-callback.php:15
-msgid "请先登录才能收藏哦!"
-msgstr "먼저 로그인해야 소장할 수 있습니다!"
-
-#: inc/user-callback.php:24
-msgid "文章 id 错误"
-msgstr "아티클 ID 가 오류입니다"
-
-#: inc/user-callback.php:37
-msgid "取消收藏成功"
-msgstr "즐겨찾기취소에 성공했습니다"
-
-#: inc/user-callback.php:39
-msgid "取消收藏失败！！！"
-msgstr "즐겨찾기를 취소하지 못했습니다!!!"
-
-#: inc/user-callback.php:42 inc/user-callback.php:55
-msgid "收藏成功"
-msgstr "컬렉션 성공"
-
-#: inc/user-callback.php:45
-msgid "操作异常！！！"
-msgstr "작업 예외 !!!"
-
-#: inc/user-callback.php:57
-msgid "收藏失败！！！"
-msgstr "즐겨찾기실패 !!!"
-
-#: inc/user-callback.php:70 inc/user-callback.php:105
-msgid "非法请求!"
-msgstr "불법 요청!"
-
-#: inc/user-callback.php:89
-msgid "资料修改成功！"
-msgstr "데이터 수정 성공!"
-
-#: inc/user-callback.php:109 inc/user-callback.php:145
-#: inc/user-callback.php:294 templates/login/reg.php:44
-msgid "邮箱怎么变了！"
-msgstr "사서함이 변경되었습니다!"
-
-#: inc/user-callback.php:111 inc/user-callback.php:147
-#: inc/user-callback.php:296 templates/login/reg.php:48
-msgid "验证码不正确！"
-msgstr "확인 코드가 올바르지 않습니다!"
-
-#: inc/user-callback.php:129 inc/user-callback.php:189
-msgid "绑定成功！"
-msgstr "바인딩 성공!"
-
-#: inc/user-callback.php:199 templates/login/bind.php:179
-#: templates/login/reg.php:221
-msgid "请填写邮箱！"
-msgstr "이메일을 입력하십시오!"
-
-#: inc/user-callback.php:201 inc/user-callback.php:229
-msgid "邮箱格式错误！"
-msgstr "사서함 형식이 잘못되었습니다!"
-
-#: inc/user-callback.php:211 inc/user-callback.php:238
-#: templates/login/reg.php:38
-msgid "该电子邮件地址已经被注册，请换一个！"
-msgstr "이메일 주소가 등록되었습니다."
-
-#: inc/user-callback.php:212 inc/user-callback.php:239
-#, php-format
-msgid "「%s」邮箱验证码"
-msgstr "\"%s\" 이메일 확인 코드"
-
-#: inc/user-callback.php:214 inc/user-callback.php:242
-msgid "邮箱验证码发送成功，请前往邮箱查看！"
+#: inc/theme-start.php:498
+msgid "请稍候"
 msgstr ""
-"이메일 확인 코드가 성공적으로 전송되었습니다, 이메일을 확인하시기 바랍니다!"
 
-#: inc/user-callback.php:216 inc/user-callback.php:244
-msgid "发送验证码失败，请稍后再尝试。"
-msgstr "확인 코드를 보내지 못했습니다."
-
-#: inc/user-callback.php:260
-msgid "两次输入的密码不同！"
-msgstr "암호를 두 번 입력하는 것은 다릅니다"
-
-#: inc/user-callback.php:262 templates/login/reg.php:54
-msgid "密码长度至少6位!"
-msgstr "암호 길이는 적어도 6 자리입니다!"
-
-#: inc/user-callback.php:268
-msgid "密码修改成功！"
-msgstr "암호 수정이 성공했습니다!"
-
-#: inc/user-callback.php:270 inc/user-callback.php:316
-msgid "没用任何变更！"
-msgstr "변경 사항이 없습니다!"
-
-#: inc/user-callback.php:288 templates/login/reg.php:46
-msgid "请输入验证码！"
-msgstr "인증번호를 입력하십시오"
-
-#: inc/user-callback.php:290
-msgid "邮箱不能为空！"
-msgstr "사서함은 비어 있을 수 없습니다!"
-
-#: inc/user-callback.php:301
-msgid "此邮箱已存在！"
-msgstr "이 사서함이 이미 있습니다!"
-
-#: inc/user-callback.php:310
-msgid "邮箱修改成功！"
-msgstr "사서함 수정이 성공했습니다!"
-
-#: inc/user-callback.php:314
-msgid "邮箱验证成功！"
-msgstr "유효성 검사가 성공했습니다"
-
-#: inc/user-callback.php:330
-msgid "无权修改！"
-msgstr "수정할 권리가 없습니다!"
-
-#: inc/user-callback.php:350
-msgid "保存成功！"
-msgstr "저장 성공!"
+#: inc/theme-start.php:499
+msgid "正在处理请稍后..."
+msgstr ""
 
 #: inc/widgets.php:14
 msgid "显示全部分类或某个分类的最新文章"
 msgstr "모든 범주 또는 분류에 대한 최신 아티클을 표시합니다"
 
-#: inc/widgets.php:17 inc/widgets.php:108 template-blog.php:18
+#: inc/widgets.php:17 inc/widgets.php:108 template-blog.php:21
 msgid "最新文章"
 msgstr "최신 기사"
 
 #: inc/widgets.php:115 inc/widgets.php:233 inc/widgets.php:326
-#: inc/widgets.php:491 inc/widgets.php:580
+#: inc/widgets.php:495 inc/widgets.php:584
 msgid "标题："
 msgstr "제목:"
 
 #: inc/widgets.php:119 inc/widgets.php:237 inc/widgets.php:330
-#: inc/widgets.php:495
+#: inc/widgets.php:499
 msgid "图标代码："
 msgstr "아이콘 코드:"
 
-#: inc/widgets.php:124 inc/widgets.php:242 inc/widgets.php:500
+#: inc/widgets.php:124 inc/widgets.php:242 inc/widgets.php:504
 msgid "在新窗口打开链接"
 msgstr "새 창에서 제목 링크를 엽니다"
 
-#: inc/widgets.php:127 inc/widgets.php:245 inc/widgets.php:503
+#: inc/widgets.php:127 inc/widgets.php:245 inc/widgets.php:507
 msgid "显示文章数："
 msgstr "아티클 수를 표시합니다."
 
@@ -1699,7 +2174,7 @@ msgstr "분류를 선택합니다."
 msgid "全部分类"
 msgstr "모두 분류됩니다"
 
-#: inc/widgets.php:136 inc/widgets.php:508
+#: inc/widgets.php:136 inc/widgets.php:512
 msgid "显示缩略图"
 msgstr "축소판 그림을 표시합니다"
 
@@ -1736,51 +2211,43 @@ msgstr "수량 표시:"
 msgid "显示相关文章"
 msgstr "관련 문서를 표시합니다"
 
-#: inc/widgets.php:354 inc/widgets.php:483 single.php:100
+#: inc/widgets.php:354 inc/widgets.php:487 single.php:106
 msgid "相关文章"
 msgstr "관련 기사"
 
-#: inc/widgets.php:524
+#: inc/widgets.php:528
 msgid "用于侧边添加广告代码"
 msgstr "측면에 광고 코드를 추가할 수 있습니다"
 
-#: inc/widgets.php:527 inc/widgets.php:575
+#: inc/widgets.php:531 inc/widgets.php:579
 msgid "广告位"
 msgstr "광고 위치"
 
-#: inc/widgets.php:582
+#: inc/widgets.php:586
 msgid "内容："
 msgstr "내용:"
 
-#: inc/widgets.php:584
+#: inc/widgets.php:588
 msgid "自动分段"
 msgstr "자동 세그먼트"
 
-#: inc/widgets.php:598
+#: inc/widgets.php:602
 msgid "只显示在正文和作者页面"
 msgstr "본문 및 작성자 페이지에만 표시됩니다"
 
-#: inc/widgets.php:601
+#: inc/widgets.php:605
 msgid "关于作者"
 msgstr "저자에 대해"
 
-#: inc/widgets.php:648
-msgid "订阅者"
-msgstr "구독자"
-
-#: inc/widgets.php:655
+#: inc/widgets.php:651
 msgid "文章"
 msgstr "기사"
 
-#: inc/widgets.php:658
-msgid "评论"
-msgstr "댓글을 달다"
-
-#: inc/widgets.php:664
+#: inc/widgets.php:660
 msgid "获赞"
 msgstr "칭찬을 받았다"
 
-#: inc/widgets.php:692
+#: inc/widgets.php:688
 msgid "背景图片："
 msgstr "배경 이미지:"
 
@@ -1819,44 +2286,44 @@ msgstr "페이지 사이드바에 가젯을 추가하려면 여기를 클릭하�
 msgid "点此为“分类归档侧边栏”添加小工具"
 msgstr "분류 아카이브 사이드바에 가젯을 추가하려면 클릭하십시오"
 
-#: single-app.php:20 single-book.php:21
+#: single-app.php:25 single-book.php:25
 #, php-format
 msgid "相关%s"
 msgstr "관련 %s"
 
-#: single-bulletin.php:80 single-bulletin.php:86 single.php:76 single.php:82
+#: single-bulletin.php:79 single-bulletin.php:85 single.php:81 single.php:87
 msgid "上一篇"
 msgstr "이전"
 
-#: single-bulletin.php:87 single-bulletin.php:100 single.php:83 single.php:96
+#: single-bulletin.php:86 single-bulletin.php:99 single.php:88 single.php:101
 msgid "没有更多了..."
 msgstr "더 이상..."
 
-#: single-bulletin.php:93 single-bulletin.php:99 single.php:89 single.php:95
+#: single-bulletin.php:92 single-bulletin.php:98 single.php:94 single.php:100
 msgid "下一篇"
 msgstr "다음"
 
-#: single-sites.php:17
+#: single-sites.php:25
 msgid "相关导航"
 msgstr "관련 탐색"
 
-#: single-sites.php:156 single-sites.php:160
+#: single-sites.php:164 single-sites.php:168
 msgid "网络错误"
 msgstr "네트워크 오류입니다"
 
-#: single.php:62
+#: single.php:68
 msgid "版权声明："
 msgstr "저작권 고지:"
 
-#: single.php:62
+#: single.php:68
 msgid "发表于"
 msgstr "에 게시"
 
-#: single.php:63
+#: single.php:69
 msgid "转载请注明："
 msgstr "재인쇄는 다음을 표시하십시오."
 
-#: single.php:63
+#: single.php:69
 msgid "本文固定链接"
 msgstr "이 문서는 링크를 고정합니다"
 
@@ -1892,49 +2359,61 @@ msgstr "아무 작업도 수행할 수 없습니다."
 msgid "需要登录才能访问！"
 msgstr "액세스하려면 로그인이 필요합니다!"
 
-#: template-contribute.php:89
+#: template-contribute.php:88
 msgid "只能上传图片！"
 msgstr "이미지만 업로드할 수 있습니다!"
 
-#: template-contribute.php:90
+#: template-contribute.php:89
 msgid "图片类型只能是jpeg,jpg,png！"
 msgstr "이미지 유형은 jpeg, jpg, png일 수 있습니다!"
 
-#: template-contribute.php:91
+#: template-contribute.php:90
 msgid "网络连接错误！"
 msgstr "네트워크 연결 오류!"
 
-#: template-contribute.php:92
+#: template-contribute.php:91
 msgid "请选择文件！"
 msgstr "파일을 선택하십시오!"
 
-#: template-contribute.php:95
+#: template-contribute.php:94
 msgid "获取失败，请再试试，或者手动填写！"
 msgstr "실패를 얻으려면 다시 시도하거나 수동으로 입력하십시오!"
 
-#: template-contribute.php:96
+#: template-contribute.php:95
 msgid "获取成功，没有的请手动填写！"
 msgstr "성공, 아니 수동으로 작성하시기 바랍니다!"
 
-#: template-contribute.php:97
+#: template-contribute.php:96
 msgid "访问超时，请再试试，或者手动填写！"
 msgstr "액세스 시간 초과, 다시 시도하거나 수동으로 입력하십시오!"
 
-#: template-contribute.php:98
+#: template-contribute.php:97
 msgid "验证码错误！"
 msgstr "인증 코드 오류!"
 
-#: template-contribute.php:100
+#: template-contribute.php:98
+msgid "请先验证！！！"
+msgstr "먼저 확인하십시오!!!"
+
+#: template-contribute.php:99
 msgid "链接格式错误！"
 msgstr "링크 형식이 잘못되었습니다!"
 
-#: template-contribute.php:101
+#: template-contribute.php:100
 msgid "请先填写网址链接！"
 msgstr "먼저 URL 링크를 입력하십시오!"
 
-#: template-contribute.php:103
+#: template-contribute.php:101
+msgid "验证成功"
+msgstr "유효성 검사가 성공했습니다"
+
+#: template-contribute.php:102
 msgid "您取消了验证！"
 msgstr "유효성 검사를 취소했습니다!"
+
+#: template-contribute.php:103
+msgid "验证"
+msgstr "유효성 검사"
 
 #: template-rankings.php:12
 msgid "网址热度排行榜"
@@ -2032,9 +2511,9 @@ msgstr "몇 달 전"
 msgid "总"
 msgstr "총"
 
-#: templates/bookmark/bm.footer.php:26 templates/breadcrumb.php:15
+#: templates/bookmark/bm.footer.php:30 templates/breadcrumb.php:15
 #: templates/breadcrumb.php:21 templates/breadcrumb.php:52
-#: templates/login/login.php:79 templates/login/reg.php:177
+#: templates/login/login.php:79 templates/login/reg.php:101
 msgid "首页"
 msgstr "Home"
 
@@ -2180,7 +2659,7 @@ msgstr "직통"
 msgid "详情"
 msgstr "세부 사항"
 
-#: templates/cat-list.php:26 templates/content-site.php:132
+#: templates/cat-list.php:26 templates/content-site.php:115
 msgid "标签："
 msgstr "태그:"
 
@@ -2282,28 +2761,28 @@ msgstr "언어"
 msgid "最新"
 msgstr "최신"
 
-#: templates/content-app.php:165 templates/content-book.php:137
+#: templates/content-app.php:165 templates/content-book.php:140
 #: templates/content-down.php:173
 msgid "下载地址: "
 msgstr "다운로드 주소: "
 
-#: templates/content-app.php:167 templates/content-book.php:140
+#: templates/content-app.php:167 templates/content-book.php:143
 #: templates/content-down.php:177
 msgid "描述"
 msgstr "묘사하다"
 
-#: templates/content-app.php:168 templates/content-book.php:141
+#: templates/content-app.php:168 templates/content-book.php:144
 #: templates/content-down.php:178
 msgid "提取码"
 msgstr "코드를 추출합니다"
 
-#: templates/content-app.php:177 templates/content-book.php:159
+#: templates/content-app.php:177 templates/content-book.php:162
 #: templates/content-down.php:201
 msgid "声明："
 msgstr "면책 조항:"
 
 #: templates/content-app.php:195 templates/content-app.php:196
-#: templates/content-book.php:148 templates/content-book.php:149
+#: templates/content-book.php:151 templates/content-book.php:152
 #: templates/content-down.php:185 templates/content-down.php:186
 msgid "无"
 msgstr "없음"
@@ -2341,7 +2820,7 @@ msgstr "레이블입니다"
 msgid "系列"
 msgstr "시리즈"
 
-#: templates/content-book.php:103
+#: templates/content-book.php:106
 msgid "下载资源"
 msgstr "리소스를 다운로드합니다"
 
@@ -2359,23 +2838,41 @@ msgstr ""
 msgid "解压密码："
 msgstr "압축 해제 암호:"
 
-#: templates/content-site.php:102
+#: templates/content-site.php:54
+msgid "链接已失效"
+msgstr ""
+
+#: templates/content-site.php:84
 msgid "翻译站点"
 msgstr "번역 사이트"
 
-#: templates/content-site.php:116
+#: templates/content-site.php:95
 msgid "小程序"
 msgstr "애플릿"
 
-#: templates/content-site.php:147
+#: templates/content-site.php:119
+msgid "爱站权重："
+msgstr ""
+
+#: templates/content-site.php:121
+#, fuzzy
+#| msgid "移动端"
+msgid "移动"
+msgstr "UC 모바일 검색"
+
+#: templates/content-site.php:138
 msgid "链接直达"
 msgstr "링크는 직접 연결됩니다"
 
-#: templates/content-site.php:155
+#: templates/content-site.php:148
 msgid "其他站点:"
 msgstr "기타 사이트:"
 
-#: templates/content-site.php:193
+#: templates/content-site.php:155
+msgid "经过确认，此站已经关闭，故本站不再提供跳转，仅保留存档。"
+msgstr ""
+
+#: templates/content-site.php:187
 msgid "数据统计"
 msgstr "통계"
 
@@ -2476,14 +2973,6 @@ msgstr "연락처 정보"
 msgid "输入联系方式"
 msgstr "연락처 정보를 입력합니다"
 
-#: templates/contribute/post.php:117 templates/contribute/sites.php:168
-msgid "输入验证码"
-msgstr "인증번호를 입력하십시오"
-
-#: templates/contribute/post.php:120 templates/contribute/sites.php:171
-msgid "点击刷新"
-msgstr "새로 고침을 클릭합니다"
-
 #: templates/contribute/sites.php:53
 msgid "图标:"
 msgstr "아이콘:"
@@ -2521,11 +3010,11 @@ msgid "网址选项"
 msgstr "URL 옵션"
 
 #. Template Name of the plugin/theme
-#: templates/friendlink.php:12
+#: templates/friendlink.php:17
 msgid "友情链接"
 msgstr "링크"
 
-#: templates/friendlink.php:28
+#: templates/friendlink.php:33
 msgid "更多链接"
 msgstr "더 많은 링크"
 
@@ -2537,179 +3026,96 @@ msgstr "새로 고칩니다"
 msgid "获取失败，请再试一次！"
 msgstr "실패를 얻으려면 다시 시도하십시오!"
 
-#: templates/login/bind.php:62 templates/login/bind.php:97
-#: templates/user/user.uc.security.php:192
-msgid "绑定邮箱"
-msgstr "사서함을 바인딩합니다"
-
-#: templates/login/bind.php:97
+#: templates/login/bind.php:15
 msgid "绑定邮箱完成注册"
 msgstr "사서함을 바인딩합니다"
 
-#: templates/login/bind.php:102
-msgid "设置邮箱"
-msgstr "사서함을 설정합니다"
-
-#: templates/login/bind.php:105
-msgid "登录并绑定"
-msgstr "로그인하고 바인딩합니다"
-
-#: templates/login/bind.php:105
-msgid "绑定现有账号"
-msgstr "기존 계정을 바인딩합니다"
-
-#: templates/login/bind.php:115
+#: templates/login/bind.php:18
 msgid "输入邮箱"
 msgstr "사서함을 입력합니다"
 
-#: templates/login/bind.php:120 templates/login/bind.php:196
-#: templates/login/bind.php:202 templates/login/reg.php:157
-#: templates/login/reg.php:238 templates/login/reg.php:244
-#: templates/user/user.uc.security.php:212
-#: templates/user/user.uc.security.php:301
-#: templates/user/user.uc.security.php:307
-msgid "发送验证码"
-msgstr "인증번호 발송"
+#: templates/login/bind.php:99
+msgid "输入手机号"
+msgstr ""
 
-#: templates/login/bind.php:124
-msgid "设置密码"
-msgstr "암호를 설정합니다"
+#: templates/login/bind.php:152
+msgid "登录并绑定"
+msgstr "로그인하고 바인딩합니다"
 
-#: templates/login/bind.php:130 templates/login/login.php:62
+#: templates/login/bind.php:152
+msgid "绑定现有账号"
+msgstr "기존 계정을 바인딩합니다"
+
+#: templates/login/bind.php:173 templates/login/login.php:62
+msgid "用户名/手机号/邮箱"
+msgstr ""
+
+#: templates/login/bind.php:173 templates/login/login.php:62
 msgid "用户名或邮箱"
 msgstr "사용자 이름 또는 사서함입니다"
 
-#: templates/login/bind.php:133 templates/login/login.php:65
-#: templates/login/reg.php:162
-msgid "密码"
-msgstr "비밀번호"
+#: templates/login/bind.php:188 templates/login/reg.php:112
+msgid "退出登录"
+msgstr "로그아웃"
 
-#: templates/login/bind.php:182 templates/login/reg.php:224
-#: templates/user/user.uc.security.php:288
-msgid "稍等..."
-msgstr "잠깐 만요..."
-
-#: templates/login/bind.php:203 templates/login/login.php:125
-#: templates/login/reg.php:245 templates/user/user.uc.security.php:282
-#: templates/user/user.uc.security.php:308
-#: templates/user/user.uc.security.php:329
-#: templates/user/user.uc.security.php:356
-#: templates/user/user.uc.settings.php:147
-msgid "网络错误！"
-msgstr "네트워크 오류!"
-
-#: templates/login/bind.php:210 templates/login/reg.php:252
-#: templates/user/user.uc.security.php:364
-msgid "重新发送"
-msgstr "다시 보냅니다"
-
-#: templates/login/bind.php:216 templates/login/reg.php:258
-#: templates/user/user.uc.security.php:370
-msgid "秒后重新发送"
-msgstr "초 후에 다시 보냅니다"
-
-#: templates/login/login.php:57
+#: templates/login/login.php:58
 msgid "欢迎回来"
 msgstr "다시 오신 것을 환영합니다"
 
-#: templates/login/login.php:69
+#: templates/login/login.php:73
 msgid "记住我的登录信息"
 msgstr "내 로그인 정보를 기억하십시오"
 
 #: templates/login/login.php:82
-msgid "没有账号?"
+#, fuzzy
+#| msgid "没有账号?"
+msgid "没有账号？"
 msgstr "이미 계정이 있습니까?"
 
 #: templates/login/login.php:82 templates/login/lost.php:18
-#: templates/login/lost.php:52
+#: templates/login/lost.php:53
 msgid "找回密码"
 msgstr "비밀번호 찾기"
 
-#: templates/login/lost.php:54
-msgid "输入用户名或电子邮箱地址，您会收到一封新密码链接的电子邮件。"
-msgstr ""
-"사용자 이름 또는 이메일 주소를 입력하면 새 암호 링크로부터 이메일을 받게 됩니"
-"다."
-
-#: templates/login/lost.php:63 templates/login/lost.php:65
-msgid "获取新密码"
-msgstr "새 암호를 가져옵니다"
-
-#: templates/login/reg.php:20
-msgid "请输入用户名！"
-msgstr "사용자 이름을 입력하십시오!"
-
-#: templates/login/reg.php:22
-msgid "用户名长度至少5位!"
-msgstr "사용자 이름 길이가 5비트 이상입니다!"
-
-#: templates/login/reg.php:25
-msgid "此用户名包含无效字符，只能使用字母数字下划线！"
-msgstr "이 사용자 이름에 잘못된 문자가 포함되어 있습니다."
-
-#: templates/login/reg.php:28
-msgid "该用户名已被注册，请再选择一个！"
-msgstr "사용자 이름이 등록되었습니다, 다른 것을 선택하십시오!"
-
-#: templates/login/reg.php:33
-msgid "请填写电子邮件地址！"
-msgstr "이메일 주소를 입력하십시오!"
-
-#: templates/login/reg.php:35
-msgid "电子邮件地址不正确！"
-msgstr "이메일 주소가 올바르지 않습니다!"
-
-#: templates/login/reg.php:56
-msgid "密码不一致!"
-msgstr "암호가 일치하지 않습니다!"
-
-#: templates/login/reg.php:129
+#: templates/login/reg.php:61
 msgid "禁止注册"
 msgstr "등록은 금지되어 있습니다"
 
-#: templates/login/reg.php:132 templates/login/reg.php:180
+#: templates/login/reg.php:64 templates/login/reg.php:104
 msgid "已有账号?"
 msgstr "이미 계정이 있습니까?"
 
-#: templates/login/reg.php:147 templates/user/user.uc.settings.php:45
+#: templates/login/reg.php:73 templates/user/user.uc.settings.php:45
 msgid "用户名"
 msgstr "사용자 이름입니다"
 
-#: templates/login/reg.php:166
-msgid "确认密码"
-msgstr "암호를 확인합니다"
-
-#: templates/login/reg.php:185
+#: templates/login/reg.php:110
 msgid "注册成功"
 msgstr "등록이 성공했습니다"
 
-#: templates/login/reg.php:187
-msgid "退出登录"
-msgstr "로그아웃"
-
-#: templates/login/reg.php:190
+#: templates/login/reg.php:115
 msgid "管理站点"
 msgstr "사이트를 관리합니다"
 
-#: templates/login/reg.php:192 templates/title.php:156
+#: templates/login/reg.php:117 templates/title.php:156
 msgid "用户中心"
 msgstr "사용자 센터"
 
-#: templates/login/reg.php:196
+#: templates/login/reg.php:121
 msgid "3秒后自动跳转"
 msgstr "3초 후에 자동으로 점프합니다"
 
 #: templates/related-app.php:78 templates/related-book.php:78
-#: templates/related-post.php:63 templates/related-sites.php:81
+#: templates/related-post.php:63 templates/related-sites.php:90
 msgid "没有相关内容!"
 msgstr "관련 콘텐츠가 없습니다!"
 
-#: templates/search/big.php:54 templates/search/default.php:43
+#: templates/search/big.php:56 templates/search/default.php:43
 #: templates/search/mini.php:19 templates/search/modal.php:43
 msgid "输入关键字搜索"
 msgstr "키워드 검색을 입력합니다"
 
-#: templates/sidebar-nav.php:83
+#: templates/sidebar-nav.php:69
 msgid "返回上级"
 msgstr "상위로 돌아갑니다"
 
@@ -2845,120 +3251,45 @@ msgid "下一页"
 msgstr "다음 페이지"
 
 #: templates/user/user.uc.security.php:34
-msgid "账号绑定"
-msgstr "계정 바인딩"
-
-#: templates/user/user.uc.security.php:37
-msgid "QQ"
-msgstr "QQ"
-
-#: templates/user/user.uc.security.php:40
-msgid "解绑QQ账户"
-msgstr "QQ 계정을 바인딩 해제합니다"
-
-#: templates/user/user.uc.security.php:42
-msgid "绑定QQ"
-msgstr "QQ를 바인딩합니다"
-
-#: templates/user/user.uc.security.php:49
-#: templates/user/user.uc.security.php:96
-msgid "微信(公众号)"
-msgstr "WeChat (공개 번호)"
-
-#: templates/user/user.uc.security.php:52
-#: templates/user/user.uc.security.php:99
-#: templates/user/user.uc.security.php:151
-msgid "解绑微信账户"
-msgstr "WeChat 계정을 해제합니다"
-
-#: templates/user/user.uc.security.php:54
-#: templates/user/user.uc.security.php:56
-#: templates/user/user.uc.security.php:101
-#: templates/user/user.uc.security.php:153
-msgid "绑定微信"
-msgstr "WeChat을 바인딩합니다"
-
-#: templates/user/user.uc.security.php:163
-msgid "解绑微博账户"
-msgstr "웨이보 계정을 해지하다"
-
-#: templates/user/user.uc.security.php:165
-msgid "绑定微博"
-msgstr "웨이보를 바인딩합니다"
-
-#: templates/user/user.uc.security.php:181
-#, php-format
-msgid "解绑%s账户"
-msgstr "%s 계정의 바인딩을 해제합니다"
-
-#: templates/user/user.uc.security.php:183
-#, php-format
-msgid "绑定%s"
-msgstr "바인딩 %s"
-
-#: templates/user/user.uc.security.php:198
-msgid "未验证"
-msgstr "유효성이 검사되지 않았습니다"
-
-#: templates/user/user.uc.security.php:208
-msgid "邮箱验证码"
-msgstr "이메일 확인 코드"
-
-#: templates/user/user.uc.security.php:222
-msgid "修改密码"
-msgstr "암호를 수정합니다"
-
-#: templates/user/user.uc.security.php:226
-msgid "新密码"
-msgstr "새 암호입니다"
-
-#: templates/user/user.uc.security.php:230
-msgid "如果您想修改您的密码，请在此输入新密码，否则请留空。"
-msgstr "암호를 변경하려면 여기에 새 암호를 입력하거나 비워 둡니다."
-
-#: templates/user/user.uc.security.php:235
-msgid "重复密码"
-msgstr "비밀번호를 다시 입력하십시오"
-
-#: templates/user/user.uc.security.php:239
-msgid ""
-"再输入一遍新密码。提示：您的密码最好至少包含8个字符。为了保证密码强度，使用大"
-"小写字母、数字和符号（例如! \" ? $ % ^ & ）"
+msgid "安全信息"
 msgstr ""
-"새 암호를 다시 입력합니다. 팁: 암호는 최소 8자 이상 포함하는 것이 가장 좋습니"
-"다. 암호 강도를 보장하기 위해 대/소문자, 숫자 및 기호(예: !)를 사용합니다. "
-"\" ? $ % ^ & ）"
 
-#: templates/user/user.uc.security.php:247
-#: templates/user/user.uc.security.php:276
-#: templates/user/user.uc.security.php:281
-msgid "保存密码"
-msgstr "암호를 저장합니다"
-
-#: templates/user/user.uc.security.php:260
+#: templates/user/user.uc.security.php:50
 msgid "密码长度至少8位"
 msgstr "암호 길이가 8비트 이상입니다"
 
-#: templates/user/user.uc.security.php:264
+#: templates/user/user.uc.security.php:54
 msgid "两次输入密码不相同"
 msgstr "암호를 두 번 입력하는 것은 다릅니다"
 
-#: templates/user/user.uc.security.php:268
-#: templates/user/user.uc.security.php:338
-#: templates/user/user.uc.settings.php:134
+#: templates/user/user.uc.security.php:58
+#: templates/user/user.uc.settings.php:133
 msgid "保存中..."
 msgstr "저장 중..."
 
-#: templates/user/user.uc.security.php:314
+#: templates/user/user.uc.security.php:66
+#: templates/user/user.uc.security.php:71
+msgid "保存密码"
+msgstr "암호를 저장합니다"
+
+#: templates/user/user.uc.security.php:72
+#: templates/user/user.uc.security.php:105
+#: templates/user/user.uc.settings.php:146
+msgid "网络错误！"
+msgstr "네트워크 오류!"
+
+#: templates/user/user.uc.security.php:78
 msgid "你确定要解除绑定？"
 msgstr "바인딩을 해제하시겠습니까?"
 
-#: templates/user/user.uc.security.php:314
-msgid "绑定前请先验证邮箱并设置密码，否则会造成账号丢失！"
+#: templates/user/user.uc.security.php:78
+#, fuzzy
+#| msgid "绑定前请先验证邮箱并设置密码，否则会造成账号丢失！"
+msgid "解绑前请先设置邮箱和密码，否则可能造成账号丢失！"
 msgstr ""
 "바인딩하기 전에 이메일 확인 및 암호 설정, 그렇지 않으면 계정이 손실됩니다!"
 
-#: templates/user/user.uc.security.php:314
+#: templates/user/user.uc.security.php:78
 msgid "是否继续？"
 msgstr "가져오기를 계속하시겠습니까?"
 
@@ -2982,42 +3313,42 @@ msgstr "사용자 지정"
 msgid "默认"
 msgstr "기본값입니다"
 
-#: templates/user/user.uc.settings.php:87
+#: templates/user/user.uc.settings.php:86
 #, php-format
 msgid "%s头像"
 msgstr "%s 아바타"
 
-#: templates/user/user.uc.settings.php:104
+#: templates/user/user.uc.settings.php:103
 msgid "个人描述"
 msgstr "개인 설명"
 
-#: templates/user/user.uc.settings.php:110
+#: templates/user/user.uc.settings.php:109
 msgid "个人封面"
 msgstr "개인 표지"
 
-#: templates/user/user.uc.settings.php:113
+#: templates/user/user.uc.settings.php:112
 msgid "更换封面"
 msgstr "커버를 교체합니다"
 
-#: templates/user/user.uc.settings.php:121
-#: templates/user/user.uc.settings.php:142
-#: templates/user/user.uc.settings.php:146
+#: templates/user/user.uc.settings.php:120
+#: templates/user/user.uc.settings.php:141
+#: templates/user/user.uc.settings.php:145
 msgid "保存资料"
 msgstr "자료를 저장합니다"
 
-#: templates/user/user.uc.settings.php:180
+#: templates/user/user.uc.settings.php:179
 msgid "头像设置成功！"
 msgstr "아바타 설정이 성공했습니다!"
 
-#: templates/user/user.uc.settings.php:183
+#: templates/user/user.uc.settings.php:182
 msgid "头像设置失败！"
 msgstr "아바타 설정이 실패했습니다!"
 
-#: templates/user/user.uc.settings.php:215
+#: templates/user/user.uc.settings.php:214
 msgid "封面设置成功！"
 msgstr "아바타 설정이 성공했습니다!"
 
-#: templates/user/user.uc.settings.php:218
+#: templates/user/user.uc.settings.php:217
 msgid "封面设置失败！"
 msgstr "아바타 설정이 실패했습니다!"
 
@@ -3035,11 +3366,6 @@ msgstr "삭제합니다"
 msgid "添加分类"
 msgstr "분류를 추가합니다"
 
-#: templates/user/user.uc.sites.php:108 templates/user/user.uc.sites.php:200
-#: templates/user/user.uc.sites.php:482 templates/user/user.uc.sites.php:762
-msgid "提交"
-msgstr "제출 확인"
-
 #: templates/user/user.uc.sites.php:126
 #, php-format
 msgid "添加书签到“%s”"
@@ -3056,6 +3382,10 @@ msgstr "공식 인제스트 URL을 북마크에 추가합니다"
 #: templates/user/user.uc.sites.php:283 templates/user/user.uc.sites.php:331
 msgid "选取的文件必须是HTML文件！"
 msgstr "선택한 파일은 HTML 파일이어야 합니다!"
+
+#: templates/user/user.uc.sites.php:286
+msgid "注意"
+msgstr ""
 
 #: templates/user/user.uc.sites.php:286
 msgid "你选取了文件： "
@@ -3173,3 +3503,111 @@ msgstr "보조 탐색"
 #. Template Name of the plugin/theme
 msgid "排行榜"
 msgstr "리더 보드"
+
+#~ msgid "请先验证邮箱！"
+#~ msgstr "먼저 확인하십시오!!!"
+
+#~ msgid "网络拥堵，请稍后再试。"
+#~ msgstr "네트워크가 혼잡합니다."
+
+#~ msgid "请填写邮箱！"
+#~ msgstr "이메일을 입력하십시오!"
+
+#~ msgid "两次输入的密码不同！"
+#~ msgstr "암호를 두 번 입력하는 것은 다릅니다"
+
+#~ msgid "没用任何变更！"
+#~ msgstr "변경 사항이 없습니다!"
+
+#~ msgid "邮箱不能为空！"
+#~ msgstr "사서함은 비어 있을 수 없습니다!"
+
+#~ msgid "此邮箱已存在！"
+#~ msgstr "이 사서함이 이미 있습니다!"
+
+#~ msgid "邮箱验证成功！"
+#~ msgstr "유효성 검사가 성공했습니다"
+
+#~ msgid "订阅者"
+#~ msgstr "구독자"
+
+#~ msgid "输入验证码"
+#~ msgstr "인증번호를 입력하십시오"
+
+#~ msgid "设置邮箱"
+#~ msgstr "사서함을 설정합니다"
+
+#~ msgid "稍等..."
+#~ msgstr "잠깐 만요..."
+
+#~ msgid "重新发送"
+#~ msgstr "다시 보냅니다"
+
+#~ msgid "秒后重新发送"
+#~ msgstr "초 후에 다시 보냅니다"
+
+#~ msgid "输入用户名或电子邮箱地址，您会收到一封新密码链接的电子邮件。"
+#~ msgstr ""
+#~ "사용자 이름 또는 이메일 주소를 입력하면 새 암호 링크로부터 이메일을 받게 "
+#~ "됩니다."
+
+#~ msgid "获取新密码"
+#~ msgstr "새 암호를 가져옵니다"
+
+#~ msgid "电子邮件地址不正确！"
+#~ msgstr "이메일 주소가 올바르지 않습니다!"
+
+#~ msgid "QQ"
+#~ msgstr "QQ"
+
+#~ msgid "解绑QQ账户"
+#~ msgstr "QQ 계정을 바인딩 해제합니다"
+
+#~ msgid "绑定QQ"
+#~ msgstr "QQ를 바인딩합니다"
+
+#~ msgid "微信(公众号)"
+#~ msgstr "WeChat (공개 번호)"
+
+#~ msgid "解绑微信账户"
+#~ msgstr "WeChat 계정을 해제합니다"
+
+#~ msgid "绑定微信"
+#~ msgstr "WeChat을 바인딩합니다"
+
+#~ msgid "解绑微博账户"
+#~ msgstr "웨이보 계정을 해지하다"
+
+#~ msgid "绑定微博"
+#~ msgstr "웨이보를 바인딩합니다"
+
+#, php-format
+#~ msgid "解绑%s账户"
+#~ msgstr "%s 계정의 바인딩을 해제합니다"
+
+#, php-format
+#~ msgid "绑定%s"
+#~ msgstr "바인딩 %s"
+
+#~ msgid "未验证"
+#~ msgstr "유효성이 검사되지 않았습니다"
+
+#~ msgid "邮箱验证码"
+#~ msgstr "이메일 확인 코드"
+
+#~ msgid "新密码"
+#~ msgstr "새 암호입니다"
+
+#~ msgid "如果您想修改您的密码，请在此输入新密码，否则请留空。"
+#~ msgstr "암호를 변경하려면 여기에 새 암호를 입력하거나 비워 둡니다."
+
+#~ msgid "重复密码"
+#~ msgstr "비밀번호를 다시 입력하십시오"
+
+#~ msgid ""
+#~ "再输入一遍新密码。提示：您的密码最好至少包含8个字符。为了保证密码强度，使"
+#~ "用大小写字母、数字和符号（例如! \" ? $ % ^ & ）"
+#~ msgstr ""
+#~ "새 암호를 다시 입력합니다. 팁: 암호는 최소 8자 이상 포함하는 것이 가장 좋"
+#~ "습니다. 암호 강도를 보장하기 위해 대/소문자, 숫자 및 기호(예: !)를 사용합"
+#~ "니다. \" ? $ % ^ & ）"

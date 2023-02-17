@@ -3,98 +3,139 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-10 22:22:47
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-08 01:08:16
+ * @LastEditTime: 2023-02-17 06:16:14
  * @FilePath: \onenav\js\captcha.js
- * @Description: 图形验证
+ * @Description: 验证
  */
-(function($){ 
-    if ($("[canvas-code]").length) {
-        canvas_code = {};
-        $("[canvas-code]").each(function () {
-            var _this = $(this);
-            var _id = _this.attr('id'); 
-            drawCode(_id, canvas_code);
-        });
 
-        $(document).on('click', "[canvas-code]", function () {
-            var _this = $(this);
-            var _id = _this.attr('id'); 
-            drawCode(_id, canvas_code);
-        })
-
-        $(document).on('input porpertychange', 'input[name="captcha"]', function () {
-            var _this = $(this);
-            var _id = _this.attr('canvas-id');
-            var val = _this.val().toLowerCase();
-            var match_code = _this.siblings('.match-code').children('.key-icon');
-            if (val.length > 3) {
-                var vcode = canvas_code[_id];
-                if (val == vcode) {
-                    match_code.html('<i class="iconfont icon-adopt icon-fw text-success"></i>');
-                } else {
-                    match_code.html('<i class="iconfont icon-close-circle icon-fw text-danger"></i>');
+function CaptchaInit() {
+    var _mode = $('[captcha-type]');
+    if (_mode.length) {
+        var mode = _mode.attr('captcha-type');
+        var _body = $('body');
+        window.captcha = {}
+        switch (mode) {
+            case 'image':
+                var _code = $('.image-captcha');
+                _code.each(function () {
+                    get_img($(this));
+                });
+                $('.image-captcha').click(function () {
+                    get_img($(this));
+                });
+                function get_img(_this) {
+                    $.ajax({
+                        url: theme.ajaxurl,
+                        data: {
+                            action: 'get_img_captcha',
+                            id: _this.data('id'),
+                        },
+                    }).done(function (data) {
+                        _this.html('<img alt="img code" src="' + data.img + '" class="">');
+                    });
                 }
-            } else {
-                match_code.html('');
-            }
-        })
-    }
-})(jQuery);
-
-function drawCode(id, code) {
-    var width = $("#" + id).attr("width");
-    var height = $("#" + id).attr("height");
-    var doc = document.getElementById(id);
-    var ctx = doc.getContext("2d");
-
-    doc.width = width;
-    doc.height = height;
-    const chars = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-    let _code = '';
-    for (var i = 0; i <= 3; i++) {
-        var char = chars[Math.floor(Math.random() * chars.length)];
-        _code += char.toLowerCase();
-        var x = width / 5 * (i + 1);
-        var y = height/2 + (Math.random() * 10) + 2;
-        var deg  = randomNum(-25, 25) * Math.PI / 180;
-        ctx.font = "bold " + randomNum(21, 25) + "px SimHei";
-        ctx.fillStyle = randomColor();
-        /**设置旋转角度和坐标原点**/
-        ctx.translate(x, y);
-        ctx.rotate(deg); 
-        ctx.fillText(char, 0, 0);
-        /**恢复旋转角度和坐标原点**/
-        ctx.rotate(-deg);
-        ctx.translate(-x, -y);
-    }
-    code[id] = _code;
-    for (var i = 0; i <= 5; i++){ 
-        ctx.strokeStyle = randomColor();
-        ctx.beginPath();
-        ctx.moveTo(Math.random() * width, Math.random() * height);
-        ctx.lineTo(Math.random() * width, Math.random() * height); 
-        ctx.stroke();
-    }
-    for (var i = 0; i <= 30; i++) {
-        ctx.strokeStyle = randomColor();
-        ctx.beginPath();
-        var x = Math.random() * width;
-        var y = Math.random() * height;
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + 1, y + 1);
-        ctx.stroke();
+                break;
+            case 'tcaptcha':
+                var $btn = $("#TencentCaptcha.io-tcaptcha");
+                var appid = _mode.data('appid');
+                if (!$btn.length) {
+                    _body.append('<div class="hide io-tcaptcha" id="TencentCaptcha" data-appid="' + appid + '" data-cbfn="TCaptchaOK"></div>')
+                    $.getScript("//ssl.captcha.qq.com/TCaptcha.js");
+                }
+                break;
+            case 'geetest':
+                GeetestOpen(false);
+                break;
+            case 'vaptcha':
+                VaptchaOpen(false);
+                break;
+        }
     }
 }
-function randomNum(minNum,maxNum){ 
-    switch(arguments.length){ 
-        case 1: 
-            return parseInt(Math.random()*minNum+1,10);
-        case 2: 
-            return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10); 
-        default: 
-            return 0; 
-    } 
-} 
-function randomColor() {
-    return "rgb(" + Math.floor(230 * Math.random() + 20) + "," + Math.floor(190 * Math.random() + 30) + "," + Math.floor(190 * Math.random() + 30) + ")";
+CaptchaInit();
+
+function CaptchaOpen(_this, mode) {
+    switch (mode) {
+        case 'tcaptcha':
+            TCaptchaOpen(_this);
+            break;
+        case 'geetest':
+            window.captcha._this = _this;
+            GeetestOpen(true);
+            break;
+        case 'vaptcha':
+            window.captcha._this = _this;
+            VaptchaOpen(true);
+            break;
+    }
+    return !1;
+}
+
+//腾讯验证码
+function TCaptchaOpen(_this) {
+    console.log(25);
+    window.captcha._this = _this;
+    $("#TencentCaptcha.io-tcaptcha").trigger('click');	  	
+}
+function TCaptchaOK(res) {
+    window.captcha.ticket = 0;
+    window.captcha.randstr = 0;
+    if (res.ret === 0) {
+        window.captcha.ticket  = res.ticket;
+        window.captcha.randstr = res.randstr;
+        window.captcha._this.click();
+    }
+}
+//极验行为验4.0
+function GeetestOpen(open) {
+    var _mode = $('[captcha-type]');
+    if (window.GeetestCaptcha) {
+        open && window.GeetestCaptcha.showCaptcha();
+        return;
+    }
+    if (!_mode.length) {
+        return;
+    }
+    initGeetest4({
+        captchaId: _mode.data('appid'),
+        product: 'bind',
+    }, function (captchaObj) {
+        captchaObj.onReady(function () {
+            window.GeetestCaptcha = captchaObj;
+            open && captchaObj.showCaptcha();
+        }).onSuccess(function (e) {
+            var getValidate = captchaObj.getValidate();
+            window.captcha.captcha_output = getValidate.captcha_output;
+            window.captcha.gen_time = getValidate.gen_time;
+            window.captcha.lot_number = getValidate.lot_number;
+            window.captcha.ticket = getValidate.pass_token;
+            window.captcha._this.click();
+        })
+    });
+}
+//Vaptcha
+function VaptchaOpen(open) {
+    var _mode = $('[captcha-type]');
+    if (window.VaptchaObj) {
+        open && window.VaptchaObj.validate();
+        return;
+    }
+    if (!_mode.length) {
+        return;
+    }
+    vaptcha({
+        vid: _mode.data('appid'),
+        mode: 'invisible',
+        scene: 0,
+        area: 'auto',
+    }).then(function (VAPTCHAObj) {
+        window.VaptchaObj = VAPTCHAObj;
+        VAPTCHAObj.listen('pass', function () {
+            serverToken = VAPTCHAObj.getServerToken();
+            window.captcha.ticket  = serverToken.token;
+            window.captcha.server = serverToken.server;
+            window.VaptchaObj.reset();
+            window.captcha._this.click();
+        })
+    })
 }

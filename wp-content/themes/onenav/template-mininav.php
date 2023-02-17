@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-28 16:29:55
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-19 22:10:27
+ * @LastEditTime: 2023-02-04 00:21:20
  * @FilePath: \onenav\template-mininav.php
  * @Description: 
  */
@@ -25,7 +25,7 @@ Template Name: 次级导航
     get_template_part( 'templates/tools','hotsearch' ); 
 
     // 加载自定义模块
-    //if(is_user_logged_in() && io_get_option('user_center')){
+    //if(is_user_logged_in() && io_get_option('user_center',false)){
     //    get_template_part( 'templates/tools','customizeforuser' ); 
     //}else{
     //    get_template_part( 'templates/tools','customize' ); 

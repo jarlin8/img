@@ -8,7 +8,7 @@ get_header(); ?>
 
 <div class="post-cover overlay-hover mb-3 mb-md-4">
     <div class="media rounded-xl media-5x1">
-        <?php if(io_get_option('lazyload')): ?>
+        <?php if(io_get_option('lazyload',false)): ?>
             <div class="media-content" data-src="<?php echo io_get_option('bull_img','') ?>"><span class="overlay"></span></div>
         <?php else: ?>
             <div class="media-content"style="background-image: url(<?php echo io_get_option('bull_img','') ?>);"><span class="overlay"></span></div>

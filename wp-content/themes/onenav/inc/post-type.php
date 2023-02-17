@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:55:57
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-19 20:21:11
+ * @LastEditTime: 2023-02-10 10:48:59
  * @FilePath: \onenav\inc\post-type.php
  * @Description: 
  */
@@ -324,7 +324,7 @@ function create_filters_series() {
 	));
 }
 
-if (io_get_option('show_bulletin')) :
+if (io_get_option('show_bulletin',true)) :
 // 公告
 add_action( 'init', 'post_type_bulletin' );
 function post_type_bulletin() {
@@ -571,7 +571,7 @@ function io_add_sticky_button() {
 }
 # 自定义文章添加置顶按钮
 # -----------------------------------------------------------------
-if (io_get_option('disable_gutenberg')) { 
+if (io_get_option('disable_gutenberg',false)) { 
 	add_action('admin_footer', 'io_add_sticky_button');
 }else{
 	add_action( 'add_meta_boxes', 'add_sticky_box' );
@@ -604,7 +604,7 @@ function io_ordinal_manage_posts_columns($columns){
 	);
 	$columns = array_merge($defaults, $columns);
 	//$columns['link']	= __('链接','io_setting');   
-	if (!io_get_option('sites_sortable')){
+	if (!io_get_option('sites_sortable',false)){
 		$columns['ordinal']	= __('排序','io_setting'); 
 	}
 	return $columns;
@@ -671,7 +671,7 @@ function sort_sites_order($query) {
 	}
 }
 
-if(!io_get_option('sites_sortable')) add_action('quick_edit_custom_box',  'io_add_quick_edit', 10, 2);
+if(!io_get_option('sites_sortable',false)) add_action('quick_edit_custom_box',  'io_add_quick_edit', 10, 2);
 function io_add_quick_edit($column_name, $post_type) {
 	if ($column_name == 'ordinal') {
 		//请注意：<fieldset>类可以是：
@@ -732,7 +732,7 @@ function io_save_quick_edit_data($post_id) {
 	} 
 }
 
-if( io_get_option('sites_sortable') && is_admin() && ( !defined( 'DOING_AJAX' ) || !DOING_AJAX )) add_filter('posts_orderby', 'io_posts_orderby', 99, 2);
+if( io_get_option('sites_sortable',false) && is_admin() && ( !defined( 'DOING_AJAX' ) || !DOING_AJAX )) add_filter('posts_orderby', 'io_posts_orderby', 99, 2);
 function io_posts_orderby($orderBy, $query) {
 	//排除前台ajax调用
 	//if( is_admin() && ( !defined( 'DOING_AJAX' ) || !DOING_AJAX ))
@@ -752,7 +752,7 @@ function io_posts_orderby($orderBy, $query) {
 
     if (is_admin() && function_exists('get_current_screen')){
         $current_screen = get_current_screen(); 
-        if ( ($current_screen->post_type == 'sites')){
+        if ( is_a($current_screen,'WP_Screen') && ($current_screen->post_type == 'sites')){
             global $wpdb;
             
 
@@ -775,7 +775,7 @@ function io_quick_edit_javascript() {
 	if (is_object($current_screen) || ($current_screen->post_type == 'sites')){
 		if($current_screen->id == 'edit-sites'){
 			$sortable = '';
-			if ( io_get_option('sites_sortable') && io_get_option('home_sort','','favorites')=='_sites_order'){
+			if ( io_get_option('sites_sortable',false) && io_get_option('home_sort','','favorites')=='_sites_order'){
 				$sortable = "
 				var post_type 	= '".$current_screen->post_type."';
 				var _nonce		= '".wp_create_nonce( 'sortable_nonce_' . $userdata->ID)."';

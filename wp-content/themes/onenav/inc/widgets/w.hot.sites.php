@@ -108,7 +108,7 @@ if ( ! function_exists( 'hot_sites' ) ) {
                 );
                 break;
             case 'like':  
-                $meta_key =io_get_option('user_center')?'_star_count':'_like_count';
+                $meta_key =io_get_option('user_center',false)?'_star_count':'_like_count';
                 $order_args = array(
                     'meta_key'  => $meta_key,      
                     'orderby'   => array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ), 

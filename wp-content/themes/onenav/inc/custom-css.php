@@ -6,19 +6,19 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-03-01 10:19:02
  * @LastEditors: iowen
- * @LastEditTime: 2022-08-24 16:03:50
+ * @LastEditTime: 2023-02-04 00:25:26
  * @FilePath: \onenav\inc\custom-css.php
  * @Description: 
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 //  
 function custom_color(){
-    if(io_get_option('custom_color')){
-        $link_c = io_get_option('link_c');
-        $bnt_c = io_get_option('bnt_c');
-        $card_a_c = io_get_option('card_a_c');
-        $piece_c = io_get_option('piece_c');
-        $styles = '';
+    if(io_get_option('custom_color',false)){
+        $link_c   = io_get_option('link_c','');
+        $bnt_c    = io_get_option('bnt_c','');
+        $card_a_c = io_get_option('card_a_c','');
+        $piece_c  = io_get_option('piece_c','');
+        $styles   = '';
         $styles .= ".panel-body a:not(.no-c){color:" . $link_c['color'] . "}.panel-body a:not(.no-c):hover{color:" . $link_c['hover'] . "}"; 
         $styles .= "a:hover,.io-grey-mode .sidebar-show,.io-grey-mode .sidebar-item>a:hover,.io-grey-mode .sidebar-item li>a:hover,.home-like:hover,
         .io-grey-mode .sidebar-popup>div>ul>li>a:hover{color:" . $card_a_c . "}

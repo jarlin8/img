@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-08-30 14:41:57
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-19 17:14:24
+ * @LastEditTime: 2023-02-08 11:18:18
  * @FilePath: \onenav\inc\search-settings.php
  * @Description: 
  */
@@ -15,7 +15,7 @@ include( get_theme_file_path('/inc/search-list.php') );
 
 CSF::createOptions( $prefix, array(
     'framework_title' => '搜索源配置',
-    'menu_title'      => '搜索源配置',
+    'menu_title'      => '◉搜索源配置',
     'menu_slug'       => 'search_settings', 
     'show_search'             => false,  
     'show_reset_section'      => false,

@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-20 18:28:17
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-17 22:46:53
+ * @LastEditTime: 2023-02-05 02:18:00
  * @FilePath: \onenav\inc\admin\functions.php
  * @Description: 
  */
@@ -202,20 +202,28 @@ function io_search_box($text, $input_id,$items){
 		<?php
 }
 
-function get_bulk_actions() {
+function get_bulk_actions(){
 
-    global $post_type_object,$actions;
-    $actions       = array(); 
-    if ( current_user_can( $post_type_object->cap->edit_posts ) ) {
-            $actions['delete'] = __( 'Delete' );
+    global $post_type_object, $actions;
+    $actions = array();
+    if (current_user_can($post_type_object->cap->edit_posts)) {
+        $actions['delete'] = __('Delete');
     }
 
-    if ( current_user_can( $post_type_object->cap->delete_posts ) ) {
-            $actions['trash'] = __( 'Move to Trash' );
+    if (current_user_can($post_type_object->cap->edit_posts)) {
+        $actions['regain'] = __('恢复');
     }
 
-    if ( current_user_can( $post_type_object->cap->edit_posts ) ) {
-            $actions['regain'] = __( '恢复' );
+    if (current_user_can($post_type_object->cap->edit_posts)) {
+        $actions['update'] = __('更新并恢复');
+    }
+
+    if (current_user_can($post_type_object->cap->edit_posts) && (!isset($_GET['sites_status']) || (isset($_GET['sites_status']) && $_GET['sites_status'] != 4))) {
+        $actions['blacklist'] = __('确认失效');
+    }
+
+    if (current_user_can($post_type_object->cap->delete_posts)) {
+        $actions['trash'] = __('Move to Trash');
     }
 
     return $actions;

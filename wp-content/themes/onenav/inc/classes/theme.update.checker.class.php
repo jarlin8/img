@@ -23,7 +23,7 @@ class ThemeUpdateChecker {
 	public $enableAutomaticChecking = true; //启用/禁用自动更新检查。
 	
 	protected $optionName = '';      //哪里存储更新信息。
-	protected $automaticCheckDone = false; 
+
 	/**
 	 * Class constructor.
 	 *
@@ -35,7 +35,7 @@ class ThemeUpdateChecker {
 		$this->theme = $theme;
 		$this->metadataUrl = $metadataUrl;
 		$this->enableAutomaticChecking = $enableAutomaticChecking;
-		$this->optionName = 'external_theme_updates-'.$this->theme;
+		$this->optionName = 'theme_updates-'.$this->theme;
 		
 		$this->installHooks();		
 	}
@@ -53,7 +53,7 @@ class ThemeUpdateChecker {
 		}
 		
 		//将我们的更新信息插入WP维护的更新列表中。
-		add_filter('site_transient_update_themes', array($this,'injectUpdate')); 
+		//add_filter('site_transient_update_themes', array($this,'injectUpdate')); 
 		
 		//当WP删除自己的更新信息时，请删除我们的更新信息。
 		//这通常在安装，删除或升级主题时发生。
@@ -124,23 +124,24 @@ class ThemeUpdateChecker {
 	/**
 	 * 检查主题更新。
 	 * 
-	 * @return void
+	 * @return StdClass
 	 */
 	public function checkForUpdates(){
-		$state = get_option($this->optionName);
+		$state = get_transient($this->optionName);
 		if ( empty($state) ){
 			$state = new StdClass;
 			$state->lastCheck = 0;
 			$state->checkedVersion = '';
 			$state->update = null;
+		
+			$state->lastCheck = time();
+			$state->checkedVersion = $this->getInstalledVersion();
+			set_transient($this->optionName, $state, 5 * MINUTE_IN_SECONDS); //检查前保存以防出错
+			
+			$state->update = $this->requestUpdate();
+			set_transient($this->optionName, $state, 5 * MINUTE_IN_SECONDS);
 		}
-		
-		$state->lastCheck = time();
-		$state->checkedVersion = $this->getInstalledVersion();
-		update_option($this->optionName, $state); //检查前保存以防出错
-		
-		$state->update = $this->requestUpdate();
-		update_option($this->optionName, $state);
+		return $state;
 	}
 	
 	/**
@@ -151,9 +152,25 @@ class ThemeUpdateChecker {
 	 * @return mixed
 	 */
 	public function onTransientUpdate($value){
-		if ( !$this->automaticCheckDone ){
-			$this->checkForUpdates();
-			$this->automaticCheckDone = true;
+		$state = $this->checkForUpdates();
+
+		if ( $value && is_a($state,'StdClass') && 
+		isset($state->update) && !empty($state->update) && is_object($state->update) && method_exists($state->update, 'toWpFormat') && 
+		isset($state->update->toWpFormat()['new_version']) && 
+		version_compare( $this->getInstalledVersion(), $state->update->toWpFormat()['new_version'], '<' )
+		) {
+			$value->response[$this->theme] = $state->update->toWpFormat();
+		} else {
+			// No update is available.
+			$item = array(
+				'theme'        => $this->theme,
+				'new_version'  => strval($this->getInstalledVersion()),
+				'url'          => 'https://www.iotheme.cn/store/onenav.html',
+				'package'      => 'https://www.iotheme.cn/store/onenav.html#update-log',
+				'requires'     => 5.6,
+				'requires_php' => 7.2,
+			);
+			$value->no_update[$this->theme] = $item;
 		}
 		return $value;
 	}
@@ -165,9 +182,9 @@ class ThemeUpdateChecker {
 	 * @return StdClass Modified update list.
 	 */
 	public function injectUpdate($updates){
-		$state = get_option($this->optionName);
+		$state = get_transient($this->optionName);
 		
-		if ( !empty($state) && isset($state->update) && !empty($state->update) && is_object($state->update) && method_exists($state->update, 'toWpFormat') ){
+		if ( $updates && !empty($state) && is_a($state,'StdClass') && isset($state->update) && !empty($state->update) && is_object($state->update) && method_exists($state->update, 'toWpFormat') ){
 			$updates->response[$this->theme] = $state->update->toWpFormat();
 		}
 		
@@ -179,7 +196,7 @@ class ThemeUpdateChecker {
 	 * @return void
 	 */
 	public function deleteStoredData(){
-		delete_option($this->optionName);
+		delete_transient($this->optionName);
 	} 
 }
 	
@@ -200,6 +217,8 @@ class ThemeUpdate {
 	public $version;      //版本号。
 	public $details_url;  //用户可以在其中了解有关此版本的更多信息的URL。
 	public $download_url; //此主题版本的下载URL。可选的。
+	public $requires;
+	public $requires_php;      //版本号。
 	
 	/**
 	 * 根据其JSON编码表示形式创建一个新的ThemeUpdate实例。
@@ -237,6 +256,8 @@ class ThemeUpdate {
 			'theme' => $this->slug,
 			'new_version' => $this->version,
 			'url' => $this->details_url,
+			'requires' => $this->requires,
+			'requires_php' => $this->requires_php,
 		);
 		
 		if ( !empty($this->download_url) ){

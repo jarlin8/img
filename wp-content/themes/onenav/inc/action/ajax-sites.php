@@ -4,14 +4,14 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-07-04 21:42:55
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-27 18:36:39
+ * @LastEditTime: 2023-02-04 01:03:29
  * @FilePath: \onenav\inc\action\ajax-sites.php
  * @Description: 
  */
 
 //提交网址
 function io_ajax_new_sites(){  
-    if (!io_get_option('is_contribute')) {
+    if (!io_get_option('is_contribute',true)) {
         io_error (json_encode(array('status' => 1,'msg' => __('投稿功能已关闭','i_theme'))));
     }
     if (!wp_verify_nonce($_POST['_wpnonce'],"tougao_robot")){
@@ -111,7 +111,7 @@ function io_ajax_new_sites(){
     }
     
     //执行人机验证
-    io_ajax_is_robots('tougao_captcha');
+    io_ajax_is_robots();
     
     //上传图片
     $oldimg_id = 0;
@@ -181,5 +181,5 @@ function io_ajax_new_sites(){
         io_error('{"status":4,"reset":1, "msg":"'.__('投稿失败！','i_theme').'"}');
     }
 }
-add_action('wp_ajax_nopriv_io_post_submit', 'io_ajax_new_sites');  
-add_action('wp_ajax_io_post_submit', 'io_ajax_new_sites');
+add_action('wp_ajax_nopriv_io_sites_submit', 'io_ajax_new_sites');  
+add_action('wp_ajax_io_sites_submit', 'io_ajax_new_sites');

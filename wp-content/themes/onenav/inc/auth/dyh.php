@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-03-01 10:19:02
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-27 12:32:43
+ * @LastEditTime: 2023-02-17 06:44:43
  * @FilePath: \onenav\inc\auth\dyh.php
  * @Description: 
  */
@@ -21,9 +21,9 @@ $qrcode           = $config['qr_code'];
 $action = !empty($_REQUEST["bind"]) ? '绑定' : '登录';
 $text = '微信扫码' . $action;
 $html = '<div class="text-center mb-2"><i class="text-success iconfont icon-qr-sweep mr-2"></i>' . $text . '</div>';
-$html .= '<div class="text-center"><img class="signin-qrcode-img" src="' . $qrcode . '" alt="' . $text . '"></div>';
-$html .= '<div class="text-center text-sm text-muted mb-3"> 如已关注，请回复“'.$action.'”二字获取验证码 </div>';
-$html .= '<div class="io-wx-box"><input type="text" id="io_ws_code" class="io-wx-input form-control" placeholder="验证码"/><button type="button" class="btn btn-success mt-2 io-wx-btn ml-2">验证'.$action.'</button></div>'; 
+$html .= '<div class="text-center"><img class="signin-qrcode-img" src="' . $qrcode . '" alt="' . $text . '" style="width:198px"></div>';
+$html .= '<div class="text-center text-xs text-muted mb-3"> 如已关注，请回复“'.$action.'”二字获取验证码 </div>';
+$html .= '<div class="io-wx-box"><input type="text" id="io_ws_code" class="io-wx-input form-control" placeholder="验证码"/><button type="button" class="btn vc-blue mt-2 io-wx-btn ml-2">验证'.$action.'</button></div>'; 
 //$but  = '<div class="text-center mt-2"><a href="'. esc_url(home_url('/login/')) .'" class="btn btn-outline-danger px-4 px-lg-5 ml-auto">返回</a></div>';
 $but  = '<div class="text-muted mt-3"><small>使用其他方式 <a href="'. esc_url(home_url('/login/')) .'" class="signup">'.__('登录','i_theme').'</a> / <a href="'. esc_url(home_url('/login/?action=register')) .'" class="signup">'.__('注册','i_theme').'</a></small></div>';
 echo (json_encode(array('html' => $html, 'but'=>$but, 'url' => $callback)));

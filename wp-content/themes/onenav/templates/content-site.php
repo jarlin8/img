@@ -16,32 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                 <div class="col-12 col-sm-5 col-md-4 col-lg-3">
                     <?php 
                     $m_link_url = get_post_meta(get_the_ID(), '_sites_link', true);  
-                    $imgurl     = get_post_meta_img(get_the_ID(), '_thumbnail', true);
+                    $is_dead    = get_post_meta(get_the_ID(), '_affirm_dead_url', true);
                     $is_preview = false;
                     $sitetitle  = get_the_title();
-                    if($imgurl == '' || io_get_option('sites_preview') ){
-                        if( $m_link_url != '' || ($sites_type == "sites" && $m_link_url != '') ){
-                            if($imgurl = get_post_meta(get_the_ID(), '_sites_preview', true)){
-                                $is_preview = true;
-                            }else{
-                                if(!io_get_option('sites_preview')){
-                                    if(empty($imgurl) && io_get_option('is_letter_ico',false) && !io_get_option('first_api_ico',false)){
-                                        $imgurl = io_letter_ico($sitetitle, 160);
-                                    }else{
-                                        $imgurl = (io_get_option('ico-source','https://api.iowen.cn/favicon/','ico_url') .format_url($m_link_url) . io_get_option('ico-source','.png','ico_png'));
-                                    }
-                                }else{
-                                    $imgurl = '//s0.wp.com/mshots/v1/'. format_url($m_link_url,true) .'?w=383&h=328';
-                                    $is_preview = true;
-                                }
-                            }
-                        }
-                        elseif($sites_type == "wechat")
-                            $imgurl = get_theme_file_uri('/images/qr_ico.png');
-                        else
-                            $imgurl = get_theme_file_uri('/images/favicon.png');
-                    }
-                    $views = function_exists('the_views')? the_views(false) :  '0' ;
+                    $imgurl     = get_site_thumbnail($sitetitle, $m_link_url, $sites_type, true ,$is_preview);
+                    $views      = function_exists('the_views')? the_views(false) :  '0' ;
                     ?>
                     <div class="siteico">
                         <?php if(!$is_preview){ ?>
@@ -71,6 +50,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                                 </span>
                             </a> 
                         </div>
+                        <?php if ($is_dead) { ?>
+                            <div class="link-dead"><i class="iconfont icon-subtract mr-1"></i><?php _e('链接已失效','i_theme') ?></div>
+                        <?php } ?>
                     </div>
                 </div>
                 <div class="col mt-4 mt-sm-0">
@@ -78,14 +60,14 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                         <?php 
                         $terms = get_the_terms( get_the_ID(), 'favorites' ); 
                         if(isset($_GET['mininav-id'])){
-                            echo '<a class="btn-cat custom_btn-d mb-2" href="' . esc_url( get_permalink(intval($_GET['mininav-id'])) ) . '">' . get_post( intval($_GET['mininav-id']) )->post_title . '</a>';
+                            echo '<a class="btn-cat custom_btn-d mr-1" href="' . esc_url( get_permalink(intval($_GET['mininav-id'])) ) . '">' . get_post( intval($_GET['mininav-id']) )->post_title . '</a>';
                             echo '<i class="iconfont icon-arrow-r-m custom-piece_c" style="font-size:50%;color:#f1404b;vertical-align:0.075rem"></i>';
                         }
                         if( !empty( $terms ) ){
                             foreach( $terms as $term ){
                                 if($term->parent != 0){
                                     $parent_category = get_term( $term->parent );
-                                    echo '<a class="btn-cat custom_btn-d mb-2" href="' . esc_url( get_category_link($parent_category->term_id)) . '">' . esc_html($parent_category->name) . '</a>';
+                                    echo '<a class="btn-cat custom_btn-d mr-1" href="' . esc_url( get_category_link($parent_category->term_id)) . '">' . esc_html($parent_category->name) . '</a>';
                                     echo '<i class="iconfont icon-arrow-r-m custom-piece_c" style="font-size:50%;color:#f1404b;vertical-align:0.075rem"></i>';
                                     break;
                                 }
@@ -93,7 +75,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                             foreach( $terms as $term ){
                                 $name = $term->name;
                                 $link = esc_url( get_term_link( $term, 'favorites' ) );
-                                echo "<a class='btn-cat custom_btn-d mb-2' href='$link'>".$name."</a>";
+                                echo "<a class='btn-cat custom_btn-d mr-1' href='$link'>".$name."</a>";
                             }
                         }  
                         ?>
@@ -106,9 +88,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                         <div class="mt-2">
                             <?php 
                             $width = 150;
-                            $m_post_link_url = $m_link_url ?: get_permalink(get_the_ID());
-                            $qrurl = "<img src='".get_qr_url($m_post_link_url, $width)."' width='{$width}'>";
-                            $qrname = __("手机查看",'i_theme');
                             if(get_post_meta_img(get_the_ID(), '_wechat_qr', true) || $sites_type == 'wechat'){
                                 $m_qrurl = get_post_meta_img(get_the_ID(), '_wechat_qr', true);
                                 $qrurl = "<img src='".$m_qrurl."' width='{$width}'>";
@@ -126,31 +105,45 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                                         }
                                     }
                                 }
+                            }else{
+                                $m_post_link_url = $m_link_url ?: get_permalink(get_the_ID());
+                                $qrurl = "<img src='".get_qr_url($m_post_link_url, $width)."' width='{$width}'>";
+                                $qrname = __("手机查看",'i_theme');
                             }
                             ?>
                             <p class="mb-2"><?php echo io_get_excerpt(170,'_sites_sescribe') ?></p> 
                             <?php the_terms( get_the_ID(), 'sitetag',__('标签：','i_theme').'<span class="mr-1">', '<i class="iconfont icon-wailian text-ss"></i></span> <span class="mr-1">', '<i class="iconfont icon-wailian text-ss"></i></span>' ); ?>
                             <?php 
-                            if($sites_type == "sites" && io_get_option('url_rank')){
+                            if($sites_type == "sites" && !$is_dead && io_get_option('url_rank',false)){
                                 $aizhan = go_to('https://baidurank.aizhan.com/baidu/'.format_url($m_link_url,true),true);
-                                echo '<div class="mt-2">爱站权重：';
+                                echo '<div class="mt-2">'.__('爱站权重：','i_theme');
                                 echo '<span class="mr-2">PC <a href="'. $aizhan .'" title="百度权重" target="_blank"><img class="" src="//baidurank.aizhan.com/api/br?domain='.format_url($m_link_url,true).'&style=images" alt="百度权重" title="百度权重" style="height:18px"></a></span>';
-                                echo '<span class="mr-2">移动 <a href="'. $aizhan .'" title="百度移动权重" target="_blank"><img class="" src="//baidurank.aizhan.com/api/mbr?domain='.format_url($m_link_url,true).'&style=images" alt="百度移动权重" title="百度移动权重" style="height:18px"></a></span>';
+                                echo '<span class="mr-2">'.__('移动','i_theme') .' <a href="'. $aizhan .'" title="百度移动权重" target="_blank"><img class="" src="//baidurank.aizhan.com/api/mbr?domain='.format_url($m_link_url,true).'&style=images" alt="百度移动权重" title="百度移动权重" style="height:18px"></a></span>';
                                 echo '</div>';
                             }
                             ?>
-                            
                             <div class="site-go mt-3">
-                                <?php if($m_link_url!=""): ?>
+                                <?php 
+                                if ($m_link_url != "") {
+                                    $a_class = '';
+                                    $a_ico   = 'icon-arrow-r-m';
+                                    if ($is_dead) {
+                                        $m_link_url = esc_url(home_url());
+                                        $a_class = ' disabled';
+                                        $a_ico   = 'icon-subtract';
+                                    }
+                                ?>
                                     <div id="security_check_img"></div>
                                     <span class="site-go-url">
-                                    <a style="margin-right: 10px;" href="<?php echo go_to($m_link_url) ?>" title="<?php echo $sitetitle ?>" target="_blank" class="btn btn-arrow"><span><?php _e('链接直达','i_theme') ?><i class="iconfont icon-arrow-r-m"></i></span></a>
+                                    <a href="<?php echo go_to($m_link_url) ?>" title="<?php echo $sitetitle ?>" target="_blank" class="btn btn-arrow mr-2<?php echo $a_class ?>"><span><?php _e('链接直达', 'i_theme') ?><i class="iconfont <?php echo $a_ico ?>"></i></span></a>
                                     </span>
-                                <?php endif; ?>
+                                <?php } ?>
+                                <?php if(!$is_dead){ ?>
                                 <a href="javascript:" class="btn btn-arrow qr-img"  data-toggle="tooltip" data-placement="bottom" data-html="true" title="<?php echo $qrurl ?>"><span><?php echo $qrname ?><i class="iconfont icon-qr-sweep"></i></span></a>
+                                <?php } ?>
                                 <?php get_report_button() ?>
                             </div>
-                            <?php if($spare_link =get_post_meta(get_the_ID(),'_spare_sites_link', true)) { ?>
+                            <?php if(!$is_dead && $spare_link =get_post_meta(get_the_ID(),'_spare_sites_link', true)) { ?>
                                 <div class="spare-site mb-3"> 
                                 <i class="iconfont icon-url"></i><span class="mr-3"><?php _e('其他站点:','i_theme') ?></span>
                                 <?php for ($i=0;$i<count($spare_link);$i++) { ?>
@@ -158,8 +151,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                                 <?php } ?> 
                                 </div>
                             <?php } ?>
-                                    
-                            <p id="check_s" class="text-sm" style="display:none"><i class="iconfont icon-loading icon-spin"></i></p> 
+                            <?php if($is_dead){ ?>
+                            <p class="text-xs link-dead-msg"><i class="iconfont icon-warning mr-2"></i><?php _e('经过确认，此站已经关闭，故本站不再提供跳转，仅保留存档。','i_theme') ?></p> 
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
@@ -189,7 +183,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                         
                 </div>
             </div>
-            <?php if( io_get_option('leader_board') && io_get_option('details_chart')){ //图表统计?>
+            <?php if( io_get_option('leader_board',false) && io_get_option('details_chart',false)){ //图表统计?>
             <h2 class="text-gray text-lg my-4"><i class="iconfont icon-zouxiang mr-1"></i><?php _e('数据统计','i_theme') ?></h2>
             <div class="card io-chart"> 
                 <div id="chart-container" class="" style="height:300px" data-type="<?php echo $sites_type ?>" data-post_id="<?php echo get_the_ID() ?>" data-nonce="<?php echo wp_create_nonce( 'post_ranking_data' ) ?>">

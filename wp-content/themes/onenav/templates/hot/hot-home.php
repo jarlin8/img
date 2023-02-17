@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-07-27 14:18:44
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-05 00:03:51
+ * @LastEditTime: 2023-02-04 01:54:48
  * @FilePath: \onenav\templates\hot\hot-home.php
  * @Description: 
  */
@@ -23,7 +23,7 @@ get_header()
 		<?php get_template_part( 'templates/search/mini' ) ?>
 		<div class="row row-sm">
             <?php
-            $list=io_get_option('hot_home_list');
+            $list=io_get_option('hot_home_list',array());
             foreach ($list as $value) {
                 echo '<div class="col-12 col-md-6 col-lg-4 mb-3">';
                 hot_search($value); 

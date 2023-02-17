@@ -4,14 +4,14 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-07-04 21:36:40
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-17 10:36:56
+ * @LastEditTime: 2023-02-04 01:03:19
  * @FilePath: \onenav\inc\action\ajax-post.php
  * @Description: 
  */
 
 //前台投稿
 function io_ajax_new_posts_sites(){
-    if (!io_get_option('is_contribute')) {
+    if (!io_get_option('is_contribute',true)) {
         io_error (json_encode(array('status' => 1,'msg' => __('投稿功能已关闭','i_theme'))));
     }
     if (!wp_verify_nonce($_POST['_wpnonce'],'posts_submit')){
@@ -83,7 +83,7 @@ function io_ajax_new_posts_sites(){
     }
 
     //人机验证
-    io_ajax_is_robots('tougao_captcha');
+    io_ajax_is_robots();
 
     $category   = array($category);
 
@@ -125,7 +125,7 @@ function io_ajax_new_posts_sites(){
         'msg'    =>__('投稿成功！','i_theme')
     );
     if($u_id){
-        $send['url'] = get_permalink($in_id);
+        $send['goto'] = get_permalink($in_id);
     }
     if(!$is_publish){
         do_action('io_contribute_to_publish', get_post($in_id));
@@ -133,8 +133,8 @@ function io_ajax_new_posts_sites(){
     io_error($send);
 
 }
-add_action('wp_ajax_io_sites_submit', 'io_ajax_new_posts_sites');
-add_action('wp_ajax_nopriv_io_sites_submit', 'io_ajax_new_posts_sites');
+add_action('wp_ajax_io_posts_submit', 'io_ajax_new_posts_sites');
+add_action('wp_ajax_nopriv_io_posts_submit', 'io_ajax_new_posts_sites');
 
 //编辑器上传图片
 function io_ajax_img_upload(){

@@ -20,7 +20,7 @@ blockquote p:last-of-type{margin:0;padding:0}
 pre{position:relative;overflow-y:auto;border:0;color:#777;border-radius:3px;padding:1rem;margin:1.5rem 0;line-height:1.2;white-space:pre-wrap;word-wrap:break-word;background-color:rgba(0,0,0,.04)}
 a img{border:0}
 a{color:#555}
-p{margin-bottom:1.25rem;font-size:1rem;line-height:2;word-wrap:break-word}
+p{font-size:1rem;line-height:1.6;word-wrap:break-word}
 h1,h2,h3,h4,h5,h6{margin-bottom:1rem}
 h1{font-size:1.5rem}
 h2{font-size:1.25rem;border-left:5px solid #f1404b;padding:.25rem 0 .25rem 10px;margin-left:-15px}
@@ -32,6 +32,9 @@ ul,ol{font-size:.875rem}
 table{width:100%}
 fieldset{width:94%;padding:5px 15px;margin:0 0 10px 0;border:1px solid #ddd}
 legend{font-weight:bold;padding:5px}
+.io-edit-hide-content{padding:8px;margin-top:10px;margin-bottom:10px;background-color:rgba(155,155,155,.05);border:1px dashed rgba(155,155,155,.3);border-radius:8px}
+.io-edit-hide-content p:first-of-type,.io-edit-hide-content p:last-child{color:#fff;font-size:12px;background-color:#444;margin:0;padding:2px 10px;border-radius:6px}
+.io-edit-post-card-content{margin:auto;margin-top:10px;margin-bottom:10px;max-width:456px;padding:8px 20px;background-color:rgba(155,155,155,.1);border:1px solid rgba(155,155,155,.3);border-radius:8px}
 img{height:auto;max-width:100%;vertical-align:middle}
 .wp-caption{background:#f3f3f3;border:1px solid #ebebeb;padding:5px;border-radius:3px}
 .wp-caption img[class*="wp-image-"]{display:block;margin:0}

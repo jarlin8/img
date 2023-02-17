@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:02
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-25 23:21:46
+ * @LastEditTime: 2023-02-04 01:54:30
  * @FilePath: \onenav\templates\hot\hot-api.php
  * @Description: 
  */
@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }  ?>
             $('.slug-<?php echo $t ?>').text(response.subtitle);
             if(response.type === 'hot'){
             for(var i=0;i<data.length;i++) {
-                <?php if( io_get_option('hot_iframe') && $iframe && !wp_is_mobile()): ?>
+                <?php if( io_get_option('hot_iframe',false) && $iframe && !wp_is_mobile()): ?>
                 html += '<li class="d-flex text-sm mb-2"><div><span class="hot-rank hot-rank-'+ (data[i]['index'])+' text-xs text-center">'+ (data[i]['index'])+'</span><a class="ml-2" data-fancybox data-type="iframe" data-src="'+data[i]['link'].replace(/^https?:/,"")+'" href="javascript:;">'+data[i]['title']+'</a></div><div class="ml-auto hot-heat d-none d-md-block text-muted">'+data[i]['hot']+'</div></li>'
                 <?php else: ?>
                 html += '<li class="d-flex text-sm mb-2"><div><span class="hot-rank hot-rank-'+ (data[i]['index'])+' text-xs text-center">'+ (data[i]['index'])+'</span><a class="ml-2" href="'+data[i]['link']+'" target="_blank" rel="external noopener nofollow">'+data[i]['title']+'</a></div><div class="ml-auto hot-heat d-none d-md-block text-muted">'+data[i]['hot']+'</div></li>';
@@ -57,7 +57,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }  ?>
             }else if(response.type === 'taoke'){
             for(var i=0;i<data.length;i++) {
                 html += '<li class="text-sm mb-3">';
-                <?php if( io_get_option('hot_iframe') && $iframe && !wp_is_mobile()): ?>
+                <?php if( io_get_option('hot_iframe',false) && $iframe && !wp_is_mobile()): ?>
                 html += '<div class="mb-1"><span class="hot-rank hot-rank-'+ (data[i]['index']) +' text-xs text-center">'+ (data[i]['index']) +'</span><a class="ml-2" data-fancybox data-type="iframe" data-src="'+data[i]['link'].replace(/^https?:/,"")+'" href="javascript:;">'+data[i]['title']+'</a></div>';
                 <?php else: ?>
                 html += '<div class="mb-1"><span class="hot-rank hot-rank-'+ (data[i]['index']) +' text-xs text-center">'+ (data[i]['index']) +'</span><a class="ml-2" href="'+data[i]['link']+'" target="_blank" rel="external noopener nofollow">'+data[i]['title']+'</a></div>';
@@ -68,7 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }  ?>
             }
             }else{
             for(var i=0;i<data.length;i++) {
-                <?php if( io_get_option('hot_iframe') && $iframe && !wp_is_mobile()): ?>
+                <?php if( io_get_option('hot_iframe',false) && $iframe && !wp_is_mobile()): ?>
                 html += '<li class="d-flex text-sm mb-2"><div><span class="hot-rank hot-rank-'+ (data[i]['index'])+' text-xs text-center">'+ (data[i]['index'])+'</span><a class="ml-2" data-fancybox data-type="iframe" data-src="'+data[i]['link'].replace(/^https?:/,"")+'" href="javascript:;">'+data[i]['title']+'</a></div></li>';
                 <?php else: ?>
                 html += '<li class="d-flex text-sm mb-2"><div><span class="hot-rank hot-rank-'+ (data[i]['index'])+' text-xs text-center">'+ (data[i]['index'])+'</span><a class="ml-2" href="'+data[i]['link']+'" target="_blank" rel="external noopener nofollow">'+data[i]['title']+'</a></div></li>';

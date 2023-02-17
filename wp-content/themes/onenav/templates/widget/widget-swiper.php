@@ -8,7 +8,7 @@
  * @LastEditors: iowen
  * @LastEditTime: 2022-02-24 00:01:53
  * @FilePath: \onenav\templates\widget\widget-swiper.php
- * @Description: 
+ * @Description: big轮播
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 if( is_home() || is_front_page() ) {

@@ -12,14 +12,14 @@ if($bookmark_id == 'default')
     return;
 if(empty($customize_terms))
     $customize_terms = $iodb->getTerm($bookmark_id);
-$is_go = ((io_get_option('is_go') && get_bookmark_seting('is_go',$bookmark_set)=='')?false:true);
-if(io_get_option('customize_show') && io_get_option('customize_d_n')){
+$is_go = ((io_get_option('is_go',false) && get_bookmark_seting('is_go',$bookmark_set)=='')?false:true);
+if(io_get_option('customize_show',false) && io_get_option('customize_d_n','')){
     global $post; 
         $args = array(
             'post_type'           => 'sites',  
             'ignore_sticky_posts' => 1,     
             'posts_per_page'      => -1,     
-            'post__in'            => explode(',', io_get_option('customize_d_n')),    
+            'post__in'            => explode(',', io_get_option('customize_d_n','')),    
             'orderby'             => 'post__in',     
         );
     $myposts = new WP_Query( $args );
@@ -33,7 +33,7 @@ $i_u = 0;
             <div class="sites-tabs-container d-flex align-items-end rounded">
                 <div class="d-flex flex-fill container-lg overflow-hidden text-nowrap">
                     <div class="d-flex sites-tabs-btn">
-                    <?php if(io_get_option('customize_d_n') && io_get_option('customize_show') && $myposts->have_posts()): $i_t = 1;?>
+                    <?php if(io_get_option('customize_d_n','') && io_get_option('customize_show',false) && $myposts->have_posts()): $i_t = 1;?>
                         <a class="nav-link sites-tab-btn sites-tab active" href="#my-c-nav"><?php _e('每日推荐', 'i_theme' ); ?></a>
                     <?php endif; ?>
                     <?php if($customize_terms){
@@ -57,7 +57,7 @@ $i_u = 0;
             </div> 
         </section>
         <main id="cust-sites" class="tab-content customize-sites-list mt-4">
-            <?php if(io_get_option('customize_d_n') && io_get_option('customize_show') && $myposts->have_posts()):  $i_u = 1;?>
+            <?php if(io_get_option('customize_d_n','') && io_get_option('customize_show',false) && $myposts->have_posts()):  $i_u = 1;?>
             <div id="my-c-nav" class="sites-pane mb-4 active">                    
                 <div class="row row-sm">
                 <?php    
@@ -89,7 +89,7 @@ $i_u = 0;
                                         <div class="card-body" style="padding:0.4rem 0.5rem;">
                                             <div class="url-content d-flex align-items-center">
                                                 <div class="url-img rounded-circle mr-2 d-flex align-items-center justify-content-center">
-                                                    <?php if(io_get_option('lazyload')): ?>
+                                                    <?php if(io_get_option('lazyload',false)): ?>
                                                     <img class="lazy" src="<?php echo $default_ico; ?>" data-src="<?php echo $ico ?>" alt="<?php echo $c_url->url_name ?>">
                                                     <?php else: ?>
                                                     <img class="" src="<?php echo $ico ?>" alt="<?php echo $c_url->url_name ?>">

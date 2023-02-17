@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:02
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-25 22:28:19
+ * @LastEditTime: 2023-02-09 03:30:05
  * @FilePath: \onenav\templates\cat-list.php
  * @Description: 
  */
@@ -44,8 +44,10 @@ if( is_blog() ) {
         'ignore_sticky_posts' => 1,
         'paged' => $paged,
     );
+
     if(isset($_GET['cat']))
         $args['cat'] = $_GET['cat'];
+    $args = apply_filters('io_blog_post_query_var_filters', $args);
     query_posts( $args );
 }
 ?>
@@ -57,7 +59,7 @@ if( is_blog() ) {
     <div class="list-grid list-grid-padding">
         <div class="list-item card">
             <div class="media media-3x2 rounded col-4 col-md-4">
-                <?php if(io_get_option('lazyload')): ?>
+                <?php if(io_get_option('lazyload',false)): ?>
                 <a class="media-content" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>" data-src="<?php echo io_theme_get_thumb() ?>"></a>
                 <?php else: ?>
                 <a class="media-content" href="<?php the_permalink(); ?>" title="<?php the_title(); ?>" style="background-image: url(<?php echo io_theme_get_thumb() ?>);"></a>

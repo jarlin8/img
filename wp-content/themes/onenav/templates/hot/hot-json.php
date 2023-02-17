@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:02
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-25 23:21:52
+ * @LastEditTime: 2023-02-08 11:51:55
  * @FilePath: \onenav\templates\hot\hot-json.php
  * @Description: 
  */
@@ -33,7 +33,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }  ?>
 (function($){ 
     var ruleId =  "<?php echo $rule_id ?>" ;
     var link_regular = "<?php echo $link_regular ?>" ;
-    var datas = {<?php //if(!empty($request_data)) foreach($request_data as $v){echo 'data['.$v['key'].']'.':"'.$v['value'].'",';} ?>type:'<?php echo $type ?>', action:'get_hot_data',url:"<?php echo $api ?>"};
+    var datas = {type:'<?php echo $type ?>', action:'get_hot_data',id:ruleId};
     getList(ruleId);
     $('#hot-lod-<?php echo $t ?>').on('click', function() {
         $(this).children('i').addClass('icon-spin');
@@ -66,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }  ?>
                 if(link_regular!==''){
                     link = link_regular.replace("%s%",link);
                 }
-                <?php if( io_get_option('hot_iframe') && $iframe && !wp_is_mobile()): ?>
+                <?php if( io_get_option('hot_iframe',false) && $iframe && !wp_is_mobile()): ?>
                 html += '<div class="d-flex text-sm mb-2"><div><span class="hot-rank hot-rank-'+ (i+1)+' text-xs text-center">'+ (i+1)+'</span><a class="ml-2" data-fancybox data-type="iframe" data-src="'+link.replace(/^https?:/,"")+'" href="javascript:;">'+data[i].<?php echo $title_node ?>+'</a></div><div class="ml-auto hot-heat d-none d-md-block text-muted">'+data[i].<?php echo $hot_node ?>+'</div></div>'
                 <?php else: ?>
                 html += '<div class="d-flex text-sm mb-2"><div><span class="hot-rank hot-rank-'+ (i+1)+' text-xs text-center">'+ (i+1)+'</span><a class="ml-2" href="'+link+'" target="_blank" rel="external noopener nofollow">'+data[i].<?php echo $title_node ?>+'</a></div><div class="ml-auto hot-heat d-none d-md-block text-muted">'+data[i].<?php echo $hot_node ?>+'</div></div>';
@@ -78,7 +78,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }  ?>
                 if(link_regular!==''){
                     link = link_regular.replace("%s%",link);
                 }
-                <?php if( io_get_option('hot_iframe') && $iframe && !wp_is_mobile()): ?>
+                <?php if( io_get_option('hot_iframe',false) && $iframe && !wp_is_mobile()): ?>
                 html += '<div class="d-flex text-sm mb-2"><div><span class="hot-rank hot-rank-'+ (i+1)+' text-xs text-center">'+ (i+1)+'</span><a class="ml-2" data-fancybox data-type="iframe" data-src="'+link.replace(/^https?:/,"")+'" href="javascript:;">'+data[i].<?php echo $title_node ?>+'</a></div></div>';
                 <?php else: ?>
                 html += '<div class="d-flex text-sm mb-2"><div><span class="hot-rank hot-rank-'+ (i+1)+' text-xs text-center">'+ (i+1)+'</span><a class="ml-2" href="'+link+'" target="_blank" rel="external noopener nofollow">'+data[i].<?php echo $title_node ?>+'</a></div></div>';

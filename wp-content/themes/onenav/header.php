@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:55:58
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-26 14:11:15
+ * @LastEditTime: 2023-02-04 00:11:22
  * @FilePath: \onenav\header.php
  * @Description: 
  */
@@ -21,17 +21,17 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <?php get_template_part( 'templates/title' ) ?>
-<link rel="shortcut icon" href="<?php echo io_get_option('favicon') ?>">
-<link rel="apple-touch-icon" href="<?php echo io_get_option('apple_icon') ?>">
+<link rel="shortcut icon" href="<?php echo io_get_option('favicon','') ?>">
+<link rel="apple-touch-icon" href="<?php echo io_get_option('apple_icon','') ?>">
 <!--[if IE]><script src="<?php echo get_theme_file_uri('/js/html5.min.js') ?>"></script><![endif]-->
 <?php wp_head(); ?>
 <?php custom_color() ?>
 <!-- 自定义代码 -->
-<?php echo io_get_option('code_2_header');?>
+<?php echo io_get_option('code_2_header','');?>
 <!-- end 自定义代码 -->
 </head> 
 <body <?php body_class(io_body_class()) ?>>
-<?php if(io_get_option('loading_fx')) { ?><div id="loading"><?php loading_type() ?></div><?php } ?>
+<?php if(io_get_option('loading_fx',false)) { ?><div id="loading"><?php loading_type() ?></div><?php } ?>
 <?php 
 if(!get_query_var('bookmark_id')){
     if (!is_404()) {

@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:55:58
  * @LastEditors: iowen
- * @LastEditTime: 2022-02-24 02:11:56
+ * @LastEditTime: 2023-02-04 00:10:20
  * @FilePath: \onenav\go.php
  * @Description: 
  */
@@ -18,7 +18,7 @@ if(strlen($_SERVER['REQUEST_URI']) > 384 || strpos($_SERVER['REQUEST_URI'], "eva
 }
 $is_safe = true;
 // -------------通过[referer]禁止站外访问跳转地址----------------
-if(io_get_option("is_must_on_site")){
+if(io_get_option("is_must_on_site",true)){
     $url_array = parse_url($_SERVER['HTTP_REFERER']);
     if($_SERVER['HTTP_HOST'] != $url_array["host"]) { 
         $is_safe = false;
@@ -87,7 +87,7 @@ body{margin:0;padding:0}body{height:100%}#loading{-webkit-box-pack:center;-ms-fl
     ?>
     <div class="loading-content">
         <div class="logo-img">
-            <img id="img_logo" src="<?php echo io_get_option('logo_normal_light') ?>" alt="<?php echo $blog_name ?>">
+            <img id="img_logo" src="<?php echo io_get_option('logo_normal_light','') ?>" alt="<?php echo $blog_name ?>">
         </div>
         <div class="loading-info">                        
             <div class="flex flex-center loading-tip">                          
@@ -125,7 +125,7 @@ body{margin:0;padding:0}body{height:100%}#loading{-webkit-box-pack:center;-ms-fl
 </div>
 <script>
     if(document.documentElement.classList.contains('io-black-mode')){
-        document.getElementById('img_logo').src='<?php echo io_get_option('logo_normal') ?>';
+        document.getElementById('img_logo').src='<?php echo io_get_option('logo_normal','') ?>';
     }
     //延时30S关闭跳转页面，用于文件下载后不会关闭跳转页的问题
     setTimeout(function() {

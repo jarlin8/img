@@ -20,7 +20,7 @@ $app_name =  get_post_meta(get_the_ID(), '_app_name', true)?:get_the_title();
                     <div class="d-md-flex mt-n3 mb-5 my-xl-0">
                         <div class="app-ico text-center mr-0 mr-md-2 mb-3 mb-md-0">
                             <?php $app_ico = get_post_meta_img(get_the_ID(), '_app_ico', true); ?>
-                            <?php if(io_get_option('lazyload')): ?>
+                            <?php if(io_get_option('lazyload',false)): ?>
                             <img class="app-rounded mr-0 mr-md-3 lazy" src="<?php echo $default_ico; ?>" data-src="<?php echo $app_ico ?>" width="128" alt="<?php echo $app_name  ?>">
                             <?php else: ?>
                             <img class="app-rounded mr-0 mr-md-3" src="<?php echo $app_ico ?>" width="128" alt="<?php echo $app_name  ?>">
@@ -74,7 +74,7 @@ $app_name =  get_post_meta(get_the_ID(), '_app_name', true)?:get_the_title();
                                 <div class="carousel-item <?php echo $i==0?'active':'' ?>"> 
                                     <div class="img_wrapper"> 
                                     <a href="<?php echo $screen_img ?>" class="text-center" data-fancybox="screen" data-caption="<?php echo sprintf( __('%s的使用截图', 'i_theme'), $app_name ).'['.($i+1).']' ?>"> 
-                                    <?php if(io_get_option('lazyload')): ?>
+                                    <?php if(io_get_option('lazyload',false)): ?>
                                     <img src="" data-src="<?php echo $screen_img ?>" class="img-fluid lazy" alt="<?php echo sprintf( __('%s的使用截图', 'i_theme'), $app_name ).'['.($i+1).']' ?>">
                                     <?php else: ?>
                                     <img src="<?php echo $screen_img ?>" class="img-fluid" alt="<?php echo sprintf( __('%s的使用截图', 'i_theme'), $app_name ).'['.($i+1).']' ?>">
@@ -107,15 +107,15 @@ $app_name =  get_post_meta(get_the_ID(), '_app_name', true)?:get_the_title();
             </div>  
     <main class="content" role="main">
     <div class="content-wrap">
-		<div class="content-layout">
+        <div class="content-layout">
             <div class="panel site-content card transparent"> 
-		        <div class="card-body p-0">
-					<div class="apd-bg">
+                <div class="card-body p-0">
+                    <div class="apd-bg">
                         <?php show_ad('ad_app_content_top',false, '<div class="apd apd-right">' , '</div>'); ?>
                     </div> 
                     <div class="panel-body single my-4 ">
                     <?php //echo  (isset($down_list[0]['version_describe'])?$down_list[0]['version_describe']:'') ?>
-    	            <?php the_content();?> 
+                    <?php the_content();?> 
                     <?php thePostPage() ?>
                     </div>
                     <?php if($formal_url = get_post_meta(get_the_ID(), '_down_formal', true)) echo ('<div class="text-center"><a href="' . go_to($formal_url) . '" target="_blank" class="btn btn-lg btn-outline-primary custom_btn-outline  text-lg radius-50 py-3 px-5 my-3">'.__('去官方网站了解更多','i_theme').'</a></div>') ?>
@@ -125,7 +125,7 @@ $app_name =  get_post_meta(get_the_ID(), '_app_name', true)?:get_the_title();
             <!-- 历史版本 -->
             <h2 class="text-gray text-lg my-4"><i class="iconfont icon-version icon-lg mr-1" id="historic"></i><?php _e('历史版本','i_theme') ?></h2>
             <div class="card historic"> 
-		        <div class="card-body" id="accordionExample">
+                <div class="card-body" id="accordionExample">
                     <div class="row row-sm text-center ">  
                         <div class="col text-left"><?php _e('版本','i_theme') ?></div>
                         <div class="col "><?php _e('日期','i_theme') ?></div>
@@ -175,15 +175,15 @@ $app_name =  get_post_meta(get_the_ID(), '_app_name', true)?:get_the_title();
                             <?php show_ad('ad_res_down_popup',false, '<div class="apd apd-footer d-none d-md-block mb-4">' , '</div>'); ?> 
                             <div class="statement p-3"><p></p>
                                 <i class="iconfont icon-statement icon-2x mr-2" style="vertical-align: middle;"></i><strong><?php _e('声明：','i_theme') ?></strong>
-				                <div class="text-sm mt-2" style="margin-left: 39px;"><?php echo io_get_option('down_statement') ?></div>
-				            </div>
+                                <div class="text-sm mt-2" style="margin-left: 39px;"><?php echo io_get_option('down_statement','') ?></div>
+                            </div>
                         </div>  
                         <div style="position: absolute;bottom: -40px;width: 100%;text-align: center;"><a href="javascript:" data-dismiss="modal"><i class="iconfont icon-close-circle icon-2x" style="color: #fff;"></i></a></div>
                     </div>
                 </div>  
             </div> 
 <script type="text/javascript">
-    <?php echo 'var down_list = '.io_js_down_goto_pretreatment(json_encode($down_list)).';'; echo 'var is_go = '.(io_get_option('is_go')?:0).';';  echo 'var home = "'.home_url().'";';?>  
+    <?php echo 'var down_list = '.io_js_down_goto_pretreatment(json_encode($down_list)).';'; echo 'var is_go = '.(io_get_option('is_go',false)?:0).';';  echo 'var home = "'.home_url().'";';?>  
     $(document).on('click','button.btn_down',function(ev) {
         ev.preventDefault();
         var down = down_list[parseInt($(this).data('id'))] ;

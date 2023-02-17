@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-10 21:22:37
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-21 22:12:07
+ * @LastEditTime: 2023-02-04 01:21:32
  * @FilePath: \onenav\inc\widgets\w.hot.apps.php
  * @Description: 热门app小工具
  */
@@ -103,7 +103,7 @@ if ( ! function_exists( 'io_hot_apps' ) ) {
                 );
                 break;
             case 'like':  
-                $meta_key =io_get_option('user_center')?'_star_count':'_like_count';
+                $meta_key =io_get_option('user_center',false)?'_star_count':'_like_count';
                 $order_args = array(
                     'meta_key'  => $meta_key,      
                     'orderby'   => array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ), 

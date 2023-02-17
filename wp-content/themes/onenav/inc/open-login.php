@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:55:58
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-28 21:43:11
+ * @LastEditTime: 2023-02-17 02:11:24
  * @FilePath: \onenav\inc\open-login.php
  * @Description: 
  */
@@ -78,19 +78,42 @@ function get_social_login_btn()
     return $buttons;
 }
 function openloginFormButton(){
-    if(!io_get_option('open_qq') && !io_get_option('open_weibo') && !io_get_option('open_wechat') && !io_get_option('open_weixin_dyh') && !io_get_option('open_weixin_gzh') && !io_get_option('open_prk') ) return;
+    if ( isset($_GET['action']) &&'register' === $_GET['action'])
+        return;
+    $btn = get_social_login_btn();
+    $btn .= get_prk_btn_html();
+    if(empty($btn)) return;
     echo '<p id="openlogin-box" class="openlogin-box text-center">'; 
     echo '<span class="social-separator separator text-muted text-xs mb-3">'.__('社交帐号登录','i_theme').'</span>';
-    echo get_social_login_btn();
-    get_prk_btn_html();
+    echo $btn;
     echo '</p>';
     if (io_get_oauth_login_url('weixin_gzh')) {
         $type = io_get_option('open_weixin_gzh_key', 'gzh', 'type');
-        get_weixin_qr_js($type);
+        if(!(io_is_wechat_app() && 'gzh'===$type))
+            get_weixin_qr_js($type);
     }
 }
 add_filter('io_login_form', 'openloginFormButton');
 
+/**
+ * 判断用户是否已经绑定了开放平台账户.
+ *
+ * @param string $type
+ * @param int    $user_id
+ *
+ * @return bool|string
+ */
+function io_has_connect($type = 'qq', $user_id = 0){
+    $user_id = $user_id ?: get_current_user_id();
+    if($type){
+        if ('weixin_gzh' == $type) {
+            $type = 'wechat_'.io_get_option('open_weixin_gzh_key', 'gzh', 'type');
+        }
+        return get_user_meta($user_id, $type.'_openid', true);
+    }
+
+    return false;
+} 
 /**
  * 获取社交登录名称
  * @param mixed $type
@@ -108,8 +131,9 @@ function get_open_login_name($type){
 }
 
 function get_prk_btn_html(){
-    if(io_get_option('open_prk')){
-        $list = io_get_option('open_prk_list');
+    $btn = '';
+    if(io_get_option('open_prk',false)){
+        $list = io_get_option('open_prk_list','');
         if(is_array($list)){
             foreach($list as $type){
                 $ico = $type;
@@ -119,11 +143,11 @@ function get_prk_btn_html(){
                 if('sina'===$type){
                     $ico = 'weibo';
                 }
-                echo '<a href="'.get_theme_file_uri('/inc/auth/prk.php').'?type='.$type.'&loginurl='.(isset($_REQUEST["redirect_to"])?$_REQUEST["redirect_to"]:io_get_option('open_login_url')).'" title="'.sprintf(__('%s快速登录','i_theme'),get_open_login_name($type)).'" rel="nofollow" class="prk-login openlogin-'.$ico.'-a"><i class="iconfont icon-'.$ico.'"></i></a>';
-
+                $btn .= '<a href="'.get_theme_file_uri('/inc/auth/prk.php').'?type='.$type.'&loginurl='.(isset($_REQUEST["redirect_to"])?$_REQUEST["redirect_to"]:io_get_option('open_login_url','')).'" title="'.sprintf(__('%s快速登录','i_theme'),get_open_login_name($type)).'" rel="nofollow" class="open-login prk-login openlogin-'.$ico.'-a"><i class="iconfont icon-'.$ico.'"></i></a>';
             }
         }
     }
+    return $btn;
 }
 function get_open_avatar_list($current_user){ 
     $open_avatar = array();
@@ -268,7 +292,7 @@ function io_oauth_update_user($args,$is_weixin_dyh = false)
         $return_data['error'] = false;
     } else {
         // 既未登录且openid未占用，则新建用户并绑定
-        if(io_get_option('user_center') && io_get_option('bind_email')=='must'){
+        if(io_get_option('user_center',false) && io_get_option('bind_email','must')=='must'){
             //添加到临时数据
             if(!session_id()) session_start();
             $_SESSION['temp_oauth'] = maybe_serialize($args);
@@ -318,7 +342,12 @@ function io_oauth_update_user($args,$is_weixin_dyh = false)
     return $return_data;
 }
 
-
+/**
+ * 更新第三方账号数据
+ * @param mixed $args
+ * @param mixed $is_new
+ * @return void
+ */
 function io_oauth_update_user_meta($args, $is_new = false)
 {
     /** 需求数据明细 */
@@ -386,7 +415,7 @@ function io_oauth_login_after_execute($oauth_result,$is_redirect=true){
         exit;
     } else {
         $rurl = !empty($oauth_result['rurl']) ? $oauth_result['rurl'] : $oauth_result['redirect_url'];
-        if(io_get_option('user_center') && $oauth_result['bind'] && io_get_option('bind_email')=='bind'){
+        if(io_get_option('user_center',false) && $oauth_result['bind'] && io_get_option('bind_email','bind')=='bind'){
             $rurl = home_url('/login/?action=bind').'&redirect_to='.$rurl;
         }
         if ($is_redirect) {
@@ -414,8 +443,12 @@ function io_update_oauth_data($user_id){
         //绑定用户不更新以下数据
         $args['name'] = '';
         $args['description'] = '';
-        io_oauth_update_user_meta($args); 
-
-        unset($_SESSION['temp_oauth']);
+        if (!io_has_connect($args['type'], $user_id)) {
+            io_oauth_update_user_meta($args);
+            unset($_SESSION['temp_oauth']);
+        }else{
+            unset($_SESSION['temp_oauth']);
+            io_error('{"status":3,"msg":"'.sprintf(__('该用户已经绑定了 %s 账号','i_theme'),$args['type']).'","goto":"'.esc_url(home_url('/user/security')).'"}'); 
+        }
     }
 }

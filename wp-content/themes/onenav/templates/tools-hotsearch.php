@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:02
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-05 00:05:48
+ * @LastEditTime: 2023-02-04 01:46:32
  * @FilePath: \onenav\templates\tools-hotsearch.php
  * @Description: 
  */
@@ -16,7 +16,7 @@ if (io_get_option('is_show_hot',true)):
 if(is_page()){
     $hotlist = get_post_meta(get_the_ID(), 'hot_new', true);   
 }else{
-    $hotlist= io_get_option('hot_new');
+    $hotlist= io_get_option('hot_new','');
 }
 if(!empty($hotlist) && is_array($hotlist)){
     echo '<div class="overflow-x-auto hot-search-panel mb-3 pb-2" style="margin:0 -.5rem;padding:0 .5rem"><div class="row row-sm hot-search">';

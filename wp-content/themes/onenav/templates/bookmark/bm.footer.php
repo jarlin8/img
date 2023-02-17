@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-04-10 16:08:29
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-22 18:09:56
+ * @LastEditTime: 2023-02-04 01:51:42
  * @FilePath: \onenav\templates\bookmark\bm.footer.php
  * @Description: 
  */
@@ -39,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }?>
     </footer> 
 <?php wp_footer(); ?> 
 <!-- 自定义代码 -->
-<?php echo io_get_option('code_2_footer');?>
+<?php echo io_get_option('code_2_footer','');?>
 <!-- end 自定义代码 -->
 </body>
 </html>

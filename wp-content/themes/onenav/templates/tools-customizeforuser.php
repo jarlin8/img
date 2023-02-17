@@ -6,11 +6,11 @@
  * Author URI:https://www.iowen.cn/
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
-<?php if(io_get_option('customize_card')){ 
+<?php if(io_get_option('customize_card',false)){ 
     global $iodb;
     $user_id = get_current_user_id();
-    $customize_terms = $iodb->getTerm($user_id,io_get_option('customize_count'));
-    if(io_get_option('customize_show') && io_get_option('customize_d_n')){
+    $customize_terms = $iodb->getTerm($user_id,io_get_option('customize_count',8));
+    if(io_get_option('customize_show',false) && io_get_option('customize_d_n','')){
         global $post; 
             $args = array(
                 'post_type'           => 'sites',  
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
         <div class="d-flex flex-fill customize-menu"> 
             <div class='slider_menu mini_tab' sliderTab="sliderTab" >
                 <ul class="nav nav-pills tab-auto-scrollbar menu overflow-x-auto ajax-cm-home" role="tablist"> 
-                    <?php if(io_get_option('customize_d_n') && io_get_option('customize_show') && $myposts->have_posts()): $i_t = 1;?>
+                    <?php if(io_get_option('customize_d_n','') && io_get_option('customize_show',false) && $myposts->have_posts()): $i_t = 1;?>
                     <li class="pagenumber nav-item">
                         <a class="nav-link active"  data-toggle="pill" href="#my-c-nav"><?php _e('每日推荐', 'i_theme' ); ?></a>
                     </li><?php endif; ?>
@@ -53,7 +53,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
             <a class='btn-edit text-xs ml-2' href="javascript:;"><?php _e('编辑', 'i_theme' ); ?></a>
         </div>
         <div id="cust-sites" class="tab-content mt-4">
-            <?php if(io_get_option('customize_d_n') && io_get_option('customize_show') && $myposts->have_posts()):  $i_u = 1;?>
+            <?php if(io_get_option('customize_d_n','') && io_get_option('customize_show',false) && $myposts->have_posts()):  $i_u = 1;?>
             <div id="my-c-nav" class="tab-pane active">                    
                 <div class="row row-sm">
                 <?php    
@@ -85,7 +85,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                                         <div class="card-body" style="padding:0.4rem 0.5rem;">
                                             <div class="url-content d-flex align-items-center">
                                                 <div class="url-img rounded-circle mr-2 d-flex align-items-center justify-content-center">
-                                                    <?php if(io_get_option('lazyload')): ?>
+                                                    <?php if(io_get_option('lazyload',false)): ?>
                                                     <img class="lazy" src="<?php echo $default_ico; ?>" data-src="<?php echo $ico ?>" alt="<?php echo $c_url->url_name ?>">
                                                     <?php else: ?>
                                                     <img class="" src="<?php echo $ico ?>" alt="<?php echo $c_url->url_name ?>">
@@ -137,7 +137,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                                             <div class="card-body" style="padding:0.4rem 0.5rem;">
                                                 <div class="url-content d-flex align-items-center">
                                                     <div class="url-img rounded-circle mr-2 d-flex align-items-center justify-content-center">
-                                                        <?php if(io_get_option('lazyload')): ?>
+                                                        <?php if(io_get_option('lazyload',false)): ?>
                                                         <img class="lazy" src="<?php echo $default_ico; ?>" data-src="<?php echo $ico ?>" alt="<?php echo $c_url->url_name ?>">
                                                         <?php else: ?>
                                                         <img class="" src="<?php echo $ico ?>" alt="<?php echo $c_url->url_name ?>">

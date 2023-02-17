@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:02
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-25 22:29:13
+ * @LastEditTime: 2023-02-04 01:36:13
  * @FilePath: \onenav\templates\slide-blog.php
  * @Description: 文章轮播模块
  */
@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 $swiper_data = array();
 
-$set_count   = io_get_option('article_n');
-$img_ad      = io_get_option('carousel_img');
+$set_count   = io_get_option('article_n',5);
+$img_ad      = io_get_option('carousel_img',array());
 
 if($img_ad){
     foreach($img_ad as $ad){
@@ -65,9 +65,9 @@ if( is_blog() ){
 <div class="<?php echo $article_css ?>">
     <div class="h-100 d-flex flex-column justify-content-between">
     <?php
-    if(io_get_option('two_article')){
+    if(io_get_option('two_article','')){
         $args = array(
-            'post__in' => explode(',', io_get_option('two_article')),
+            'post__in' => explode(',', io_get_option('two_article','')),
             'orderby'        => 'post__in', 
             'posts_per_page' => -1
         );
@@ -82,7 +82,7 @@ if( is_blog() ){
     $rand_posts = get_posts( $args );
     foreach( $rand_posts as $post ) : ?>  
         <div class="media media-21x9 rounded-xl">
-            <?php if(io_get_option('lazyload')): ?>
+            <?php if(io_get_option('lazyload',false)): ?>
             <a class="media-content media-title-bg" href="<?php the_permalink(); ?>" <?php echo new_window() ?> data-src="<?php echo  io_theme_get_thumb() ?>">
             <?php else: ?>
             <a class="media-content media-title-bg" href="<?php the_permalink(); ?>" <?php echo new_window() ?>  style="background-image: url(<?php echo  io_theme_get_thumb() ?>);">

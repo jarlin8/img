@@ -8,20 +8,6 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 <?php 
 
-$menu_list = array();
-if(io_get_option('sort_menu')){
-    foreach (io_get_option('sort_menu')['enabled'] as $key => $value) {
-        $menu_list[] = substr($key, 3);
-    }
-}
-//$categories= get_categories(array(
-//    'taxonomy'     => array('favorites','apps'),
-//    //'meta_key'     => '_term_order',
-//    'include'      => $menu_list,
-//    'orderby'      => 'include',
-//    //'order'        => 'desc',
-//    'hide_empty'   => 0,
-//)); 
 $is_min_nav = false;
 if($nav_id = get_post_meta( get_the_ID(), 'nav-id', true )){
     $categories = get_menu_list($nav_id);
@@ -45,7 +31,7 @@ function get_cate_ico($class){
 } 
 $logo_class = '';
 $logo_light_class = 'class="d-none"';
-if(io_get_option('theme_mode')=="io-grey-mode"){
+if(io_get_option('theme_mode',"io-grey-mode")=="io-grey-mode"){
     $logo_class = 'class="logo-dark d-none"';
     $logo_light_class = 'class="logo-light"';
 } 
@@ -61,12 +47,12 @@ $smooth = $is_home?'smooth':'';
                         <h1 class="text-hide position-absolute"><?php bloginfo('name') ?></h1>
                         <?php endif; ?>
                         <a href="<?php echo esc_url( home_url() ) ?>" class="logo-expanded">
-                            <img src="<?php echo io_get_option('logo_normal_light') ?>" height="40" <?php echo $logo_light_class ?> alt="<?php bloginfo('name') ?>">
-                            <img src="<?php echo io_get_option('logo_normal') ?>" height="40" <?php echo $logo_class ?> alt="<?php bloginfo('name') ?>">
+                            <img src="<?php echo io_get_option('logo_normal_light','') ?>" height="40" <?php echo $logo_light_class ?> alt="<?php bloginfo('name') ?>">
+                            <img src="<?php echo io_get_option('logo_normal','') ?>" height="40" <?php echo $logo_class ?> alt="<?php bloginfo('name') ?>">
                         </a>
                         <a href="<?php echo esc_url( home_url() ) ?>" class="logo-collapsed">
-                            <img src="<?php echo io_get_option('logo_small_light') ?>" height="40" <?php echo $logo_light_class ?> alt="<?php bloginfo('name') ?>">
-                            <img src="<?php echo io_get_option('logo_small') ?>" height="40" <?php echo $logo_class ?> alt="<?php bloginfo('name') ?>">
+                            <img src="<?php echo io_get_option('logo_small_light','') ?>" height="40" <?php echo $logo_light_class ?> alt="<?php bloginfo('name') ?>">
+                            <img src="<?php echo io_get_option('logo_small','') ?>" height="40" <?php echo $logo_class ?> alt="<?php bloginfo('name') ?>">
                         </a>
                     </div>
                     <!-- logo end -->
@@ -79,15 +65,15 @@ $smooth = $is_home?'smooth':'';
                                 <li class="sidebar-item">
                                     <?php $callback = isset($_GET['mininav-id'])?esc_url(get_permalink(intval($_GET['mininav-id']))):esc_url(home_url()); ?>
                                     <a href="<?php echo $callback ?>" class=" change-href">
-                                        <i class="iconfont icon-back icon-fw icon-lg"></i>
+                                        <i class="<?php echo io_get_option('back_to_top_ico','iconfont icon-back') ?> icon-fw icon-lg"></i>
                                         <span><?php _e('返回上级','i_theme') ?></span>
                                     </a>
                                 </li>  
                                 <?php endif; ?>
-                                <?php if( wp_is_mobile() && $nav_name = io_get_option('nav_top_mobile') ): ?>
+                                <?php if( wp_is_mobile() && $nav_name = io_get_option('nav_top_mobile','') ): ?>
                                 <li class="sidebar-item top-menu">
                                     <a href="javascript:;" class="<?php echo $smooth ?>  change-href">
-                                        <i class="iconfont icon-category icon-fw icon-lg"></i>
+                                        <i class="<?php echo io_get_option('nav_top_mobile_ico','iconfont icon-category') ?> icon-fw icon-lg"></i>
                                         <span><?php echo $nav_name ?></span>
                                     </a>
                                     <i class="iconfont icon-arrow-r-m sidebar-more text-sm"></i>
@@ -143,7 +129,7 @@ $smooth = $is_home?'smooth':'';
                                             </a>
                                         </li> 
                                     <?php }else {  // 含子菜单处理
-                                        $open = !io_get_option('min_nav')&&get_post_meta( $category['ID'], 'open', true )?' sidebar-show':''; //默认展开
+                                        $open = !io_get_option('min_nav',false)&&get_post_meta( $category['ID'], 'open', true )?' sidebar-show':''; //默认展开
                                     ?>
                                         <li class="sidebar-item<?php echo $open ?>">
                                             <?php $href_change =  ($is_home?'': $base_url ).'#term-' .$category['object_id']; ?>

@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-03-01 10:19:06
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-27 23:15:20
+ * @LastEditTime: 2023-02-17 06:48:45
  * @FilePath: \onenav\inc\theme-start.php
  * @Description: 
  */
@@ -205,16 +205,13 @@ require get_theme_file_path('/inc/admin/functions.php');
 require get_theme_file_path('/inc/cron.php'); 
 require get_theme_file_path('/inc/meta-menu.php'); 
 require get_theme_file_path('/inc/hot-search-option.php'); 
-if(io_get_option('custom_search')) require get_theme_file_path('/inc/search-settings.php'); 
-if(io_get_option('site_map'))      require get_theme_file_path('/inc/classes/do.sitemap.class.php'); 
+if(io_get_option('custom_search',false)) require get_theme_file_path('/inc/search-settings.php'); 
+if(io_get_option('site_map',false))      require get_theme_file_path('/inc/classes/do.sitemap.class.php'); 
 
 global $iodb, $ioview; 
 $iodb = new IODB();
 $ioview = new IOVIEW();
 
-//if (io_get_option('disable_gutenberg')) {
-//    add_editor_style( 'css/editor-style.css' );
-//}
 if (!defined('IO_PRO') || !function_exists('isActive') ){
     wp_die('禁止破解！否则冻结订单，享受完整功能与专属服务请<a href="https://www.iotheme.cn" target="_blank">购买正版</a>！', '禁止破解！', array('response'=>403));
 }
@@ -255,10 +252,10 @@ function get_assets_path(){
             'jquery-ui'         => '',
             'jquery-touch'      => '',
         );
-        switch(io_get_option('cdn_resources')){
+        switch(io_get_option('cdn_resources','bytecdntp')){
             case 'jsdelivr':
                 $jsdelivr_cdn = io_get_option('jsdelivr_cdn','')?:'cdn.jsdelivr.net';
-                $js_v = '1.2127';
+                $js_v = '1.2206';
                 $assets[ 'font-awesome' ]   = '//'.$jsdelivr_cdn.'/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css';
                 $assets[ 'font-awesome4' ]  = '//'.$jsdelivr_cdn.'/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.min.css';
                 $assets[ 'iconfont' ]       = '//'.$jsdelivr_cdn.'/gh/owen0o0/ioStaticResources@'.$js_v.'/onenav/css/iconfont.css';
@@ -266,7 +263,7 @@ function get_assets_path(){
                 $assets[ 'bootstrap' ]      = '//'.$jsdelivr_cdn.'/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css';
                 $assets[ 'swiper' ]         = '//'.$jsdelivr_cdn.'/npm/swiper@7.3.0/swiper-bundle.min.css';
                 $assets[ 'lightbox' ]       = '//'.$jsdelivr_cdn.'/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css';
-            
+
                 $assets[ 'jquery' ]         = '//'.$jsdelivr_cdn.'/npm/jquery@3.5.1/dist/jquery.min.js';
                 $assets[ 'clipboard-mini' ] = '//'.$jsdelivr_cdn.'/npm/clipboard@2.0.10/dist/clipboard.min.js';
                 $assets[ 'popper' ]         = '//'.$jsdelivr_cdn.'/npm/popper.js@1.16.0/dist/umd/popper.min.js';
@@ -343,7 +340,7 @@ function get_assets_version($path, $v=false){
 function theme_load_scripts() {
     $assets_path = get_assets_path(); 
 
-    if (io_get_option('disable_gutenberg')) {
+    if (io_get_option('disable_gutenberg',false)) {
         wp_dequeue_style('wp-block-library');
         wp_dequeue_style('wp-block-library-theme');
         wp_dequeue_style('wc-block-style'); // 移除WOO插件区块样式
@@ -376,15 +373,15 @@ function theme_load_scripts() {
     wp_register_script( 'captcha',                  $assets_path['captcha'], array(), get_assets_version($assets_path['captcha']), true );
     wp_register_script( 'new-post',                 $assets_path['new-post'], array('jquery'), get_assets_version($assets_path['new-post']), true );
 
-    if( 'local'!==io_get_option('cdn_resources') ){ //本地调用wp自带js代码
+    if( 'local'!==io_get_option('cdn_resources','local') ){ //本地调用wp自带js代码
         wp_register_script( 'jquery-ui',            $assets_path['jquery-ui'], array('jquery'), get_assets_version($assets_path['jquery-ui']), true );
         wp_register_script( 'jquery-touch',         $assets_path['jquery-touch'], array('jquery'), get_assets_version($assets_path['jquery-touch']), true );
     }
-    if( !is_admin() ){
+    if( !is_admin() ){ 
         wp_enqueue_style('iconfont');
-        if ( !get_query_var('bookmark_id')) {
-            if ( io_get_option('is_iconfont')) {
-                $urls = io_get_option('iconfont_url');
+        if ( !is_bookmark() && !is_io_login()) {
+            if ( io_get_option('is_iconfont',false)) {
+                $urls = io_get_option('iconfont_url','');
                 $urls = explode(PHP_EOL , $urls);
                 $index = 1;
                 if(!empty($urls)&&is_array($urls)){
@@ -403,7 +400,7 @@ function theme_load_scripts() {
         wp_enqueue_style('bootstrap');
         //add_filter('io_add_lightbox_js', '__return_true');
         if( apply_filters('io_add_lightbox_js', false) || 
-            ( io_get_option('hot_iframe') && (is_home() || is_front_page() || is_mininav() || get_query_var('custom_page')=='hotnews') ) ||  
+            ( io_get_option('hot_iframe',false) && (is_home() || is_front_page() || is_mininav() || get_query_var('custom_page')=='hotnews') ) ||  
             is_single() 
         ){
             wp_enqueue_style('lightbox'); 
@@ -412,10 +409,10 @@ function theme_load_scripts() {
 
         wp_enqueue_script('jquery');
         wp_add_inline_script( 'jquery', '/* <![CDATA[ */ 
-        function loadFunc(func) {var oldOnload = window.onload;if(typeof window.onload != "function"){window.onload = func;}else{window.onload = function(){oldOnload();func();}}} 
+        function loadFunc(func) {if (document.all){window.attachEvent("onload",func);}else{window.addEventListener("load",func,false);}}   
         /* ]]> */');
         if( ( is_home() ||  is_front_page() || is_io_user() ) && is_user_logged_in() ){
-            if( 'local'===io_get_option('cdn_resources') ){
+            if( 'local'===io_get_option('cdn_resources','local') ){
                 wp_enqueue_script('jquery-ui-sortable');
                 wp_enqueue_script('jquery-ui-droppable');
                 wp_enqueue_script('jquery-touch-punch');
@@ -430,28 +427,25 @@ function theme_load_scripts() {
             wp_enqueue_script('swiper');
         }
 
-        if(is_single() || get_query_var('bookmark_id')) wp_enqueue_script('clipboard-mini');
-        if(is_single() && io_get_option('leader_board') && io_get_option('details_chart')) wp_enqueue_script('echarts');
+        if(is_single() || is_bookmark()) wp_enqueue_script('clipboard-mini');
+        if(is_single() && io_get_option('leader_board',false) && io_get_option('details_chart',false)) wp_enqueue_script('echarts');
         wp_enqueue_script('popper');
         wp_enqueue_script('bootstrap');
-        wp_enqueue_script('sidebar'); 
-        if(io_get_option('lazyload')) wp_enqueue_script('lazyload'); 
-
-        if( ( io_get_option('hot_iframe') && (is_home() || is_front_page() || is_mininav() || get_query_var('custom_page')=='hotnews') ) ||  is_single() ) wp_enqueue_script('lightbox-js'); 
+        if (!is_io_login()) {
+            wp_enqueue_script('sidebar');
+            if(io_get_option('lazyload',false)) wp_enqueue_script('lazyload'); 
+        }
+        if( ( io_get_option('hot_iframe',false) && (is_home() || is_front_page() || is_mininav() || get_query_var('custom_page')=='hotnews') ) ||  is_single() ) wp_enqueue_script('lightbox-js'); 
         
         wp_enqueue_style('style'); 
         wp_enqueue_script('appjs'); 
 
-        if( get_query_var('bookmark_id')) {
+        if( is_bookmark() ) {
             //wp_enqueue_script('color-thief'); 
             wp_enqueue_script('bookmark'); 
         }
 
-        if( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-            $captcha = io_get_option('io_captcha',array('tcaptcha_007'=>'','comment_007'=>''));
-            if( $captcha['tcaptcha_007'] && $captcha['comment_007'] ){
-                wp_enqueue_script( 'captcha-007','//ssl.captcha.qq.com/TCaptcha.js',array(),'',true );
-            }
+        if( is_singular() && comments_open() ) {
             wp_enqueue_script( 'comment-reply' );
             wp_enqueue_script( 'comments-ajax' );
         }
@@ -463,20 +457,21 @@ function theme_load_scripts() {
     /* ]]> */');
     wp_localize_script('appjs', 'theme' , array(
         'ajaxurl'      => admin_url( 'admin-ajax.php' ),
+        'uri'          => get_template_directory_uri(),
         'addico'       => get_theme_file_uri('/images/add.png'),
         'order'        => get_option('comment_order'),
         'formpostion'  => 'top', 
-        'defaultclass' => io_get_option('theme_mode')=="io-black-mode"?'':io_get_option('theme_mode'), 
-        'isCustomize'  => io_get_option('customize_card'),
+        'defaultclass' => io_get_option('theme_mode','io-black-mode')=="io-black-mode"?'':io_get_option('theme_mode','io-black-mode'), 
+        'isCustomize'  => io_get_option('customize_card',false),
         'icourl'       => $ico_source['ico_url'],
         'icopng'       => $ico_source['ico_png'],
         'urlformat'    => $ico_source['url_format'],
-        'customizemax' => io_get_option('customize_n'),
-        'newWindow'    => io_get_option('new_window'),
-        'lazyload'     => io_get_option('lazyload'),
-        'minNav'       => io_get_option('min_nav'),
-        'loading'      => io_get_option('loading_fx'),
-        'hotWords'     => io_get_option('baidu_hot_words'),
+        'customizemax' => io_get_option('customize_n',10),
+        'newWindow'    => io_get_option('new_window',false),
+        'lazyload'     => io_get_option('lazyload',false),
+        'minNav'       => io_get_option('min_nav',false),
+        'loading'      => io_get_option('loading_fx',false),
+        'hotWords'     => io_get_option('baidu_hot_words','baidu'),
         'classColumns' => get_columns('sites','',false),
         'apikey'       => ioThemeKey(),//iowenKey(),
         'isHome'       => ( is_home() || is_front_page() || is_mininav() ),
@@ -500,9 +495,27 @@ function theme_load_scripts() {
         'warningAlert'      => __('警告','i_theme'),
         'errorAlert'        => __('错误','i_theme'),
         'extractionCode'    => __('网盘提取码已复制，点“确定”进入下载页面。','i_theme'),
+        'wait'              => __('请稍候','i_theme'),
+        'loading'           => __('正在处理请稍后...','i_theme'),
+        'userAgreement'     => __('请先阅读并同意用户协议','i_theme'),
+        'reSend'            => __('秒后重新发送','i_theme'),
     ));
 }
 
+function add_captcha_js(){
+    $captcha = io_get_option('captcha_type','tcaptcha');
+    switch ($captcha) {
+        case 'tcaptcha':
+            //wp_enqueue_script( 'captcha-007','//ssl.captcha.qq.com/TCaptcha.js',array(),null,true ); //通过js加载
+            break;
+        case 'geetest':
+            wp_enqueue_script( 'captcha-007','//static.geetest.com/v4/gt4.js',array(),null,true );
+            break;
+        case 'vaptcha':
+            wp_enqueue_script( 'captcha-007','//v-cn.vaptcha.com/v3.js',array(),null,true );
+            break;
+    }
+}
 function io_admin_load_scripts($hook) {
     if( !is_admin() )return;
 	if( $hook == 'post.php' || $hook == 'post-new.php' || $hook == 'toplevel_page_theme_settings' ) {
@@ -519,10 +532,10 @@ function io_admin_load_scripts($hook) {
 add_action('admin_enqueue_scripts', 'io_admin_load_scripts');
 
 function io_csf_enqueue(){
-    if(io_get_option('is_iconfont')){
-        //wp_register_style( 'iconfont-io',  io_get_option('iconfont_url'), array(), '' );
+    if(io_get_option('is_iconfont',false)){
+        //wp_register_style( 'iconfont-io',  io_get_option('iconfont_url',''), array(), '' );
         //wp_enqueue_style('iconfont-io'); 
-        $urls = io_get_option('iconfont_url');
+        $urls = io_get_option('iconfont_url','');
         $urls = explode(PHP_EOL , $urls);
         $index = 1;
         if(!empty($urls)&&is_array($urls)){
@@ -537,28 +550,6 @@ function io_csf_enqueue(){
     wp_enqueue_style( 'iconfont', get_theme_file_uri('/css/iconfont.css') , array(), VERSION );
 }
 add_action('csf_enqueue', 'io_csf_enqueue');
-
-function io_login_head() {
-    if(!io_get_option('user_center')) return;
-
-    $assets_path    = get_assets_path(); 
-    $iconfont       = $assets_path['iconfont'];
-    $bootstrap      = $assets_path['bootstrap'];
-
-    $jquery         = $assets_path['jquery'];
-    $bootstrap_js   = $assets_path['bootstrap-js'];
-
-    $login          = get_theme_file_uri('/css/login.css');
-    echo '<link rel="stylesheet" href="'. $iconfont . get_assets_version($iconfont,true).'" type="text/css"/>';
-    echo '<link rel="stylesheet" href="'. $bootstrap . get_assets_version($bootstrap, true).'" type="text/css"/>';
-    echo '<link rel="stylesheet" href="'. $login . get_assets_version($login, true).'" type="text/css"/>';
-    echo '<script type="text/javascript" src="'. $jquery . get_assets_version($jquery, true).'"></script>';
-
-    if ( isset($_GET['action']) && $_GET['action'] === "bind" ) { 
-        echo '<script type="text/javascript" src="'. $bootstrap_js . get_assets_version($bootstrap_js, true).'"></script>';
-    }
-}
-add_action('login_head', 'io_login_head');
 
 //为编辑器添加全局变量
 add_action('wp_enqueue_editor', function () {

@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:55:57
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-22 22:00:46
+ * @LastEditTime: 2023-02-04 00:09:43
  * @FilePath: \onenav\footer.php
  * @Description: 
  */
@@ -48,11 +48,11 @@ if(io_get_option('footer_layout','def')=="big"){
         <div class="footer-text <?php echo $footer_class['body'] ?>">
             <?php if(io_get_option('footer_layout','def')=="big"): ?>
             <div class="row my-4">
-                <?php if(!wp_is_mobile() || (wp_is_mobile() && io_get_option('footer_t1'))): ?>
+                <?php if(!wp_is_mobile() || (wp_is_mobile() && io_get_option('footer_t1',true))): ?>
                 <div class="col-12 col-md-4 mb-4 mb-md-0">
                     <a class="footer-logo" href="<?php echo esc_url( home_url() ) ?>" title="<?php bloginfo('name') ?>">
-                        <img src="<?php echo io_get_option('logo_normal_light') ?>" class="logo-light mb-3" alt="<?php bloginfo('name') ?>" height="40">
-                        <img src="<?php echo io_get_option('logo_normal') ?>" class="logo-dark d-none mb-3" alt="<?php bloginfo('name') ?>" height="40">
+                        <img src="<?php echo io_get_option('logo_normal_light','') ?>" class="logo-light mb-3" alt="<?php bloginfo('name') ?>" height="40">
+                        <img src="<?php echo io_get_option('logo_normal','') ?>" class="logo-dark d-none mb-3" alt="<?php bloginfo('name') ?>" height="40">
                     </a>
                     <div class="text-sm"><?php echo io_get_option('footer_t1_code','') ?></div>
                 </div>
@@ -88,7 +88,7 @@ if(io_get_option('footer_layout','def')=="big"){
                         ?>
                     </div>
                 </div>
-                <?php if(!wp_is_mobile() || (wp_is_mobile() && io_get_option('footer_t3'))): ?>
+                <?php if(!wp_is_mobile() || (wp_is_mobile() && io_get_option('footer_t3',false))): ?>
                 <div class="col-12 col-md-3 text-md-right mb-4 mb-md-0">
                 <?php
                 $f_imgs = io_get_option('footer_t3_img','');
@@ -145,12 +145,12 @@ if(io_get_option('footer_layout','def')=="big"){
             }
         }
         ?>
-        <?php if( io_get_option('search_position') && in_array("tool",io_get_option('search_position')) ){ ?>
+        <?php if( io_get_option('search_position',array('home')) && in_array("tool",io_get_option('search_position',array('home'))) ){ ?>
         <a href="javascript:" data-toggle="modal" data-target="#search-modal" class="btn rounded-circle m-1" rel="search">
             <i class="iconfont icon-search"></i>
         </a>
         <?php } ?>
-        <?php if(io_get_option('weather') && io_get_option('weather_location')=='footer'){ ?>
+        <?php if(io_get_option('weather',false) && io_get_option('weather_location','footer')=='footer'){ ?>
         <!-- 天气  -->
         <div class="btn rounded-circle weather m-1">
             <div id="he-plugin-simple" style="display: contents;"></div>
@@ -167,7 +167,7 @@ if(io_get_option('footer_layout','def')=="big"){
         <!-- 天气 end -->
         <?php } ?>
         <?php 
-        if(io_get_option('user_center')){
+        if(io_get_option('user_center',false)){
             if(is_user_logged_in()){  
                 global $current_user; 
                 $bm_id = base64_io_encode(sprintf("%08d", $current_user->ID));
@@ -200,7 +200,7 @@ if(io_get_option('footer_layout','def')=="big"){
  */
 do_action( 'io_after_footer' );
 ?>
-<?php if(io_get_option('search_position') && ( in_array("top",io_get_option('search_position')) || in_array("tool",io_get_option('search_position')) ) ){ ?>  
+<?php if(io_get_option('search_position',array('home')) && ( in_array("top",io_get_option('search_position',array('home'))) || in_array("tool",io_get_option('search_position',array('home'))) ) ){ ?>  
 <div class="modal fade search-modal" id="search-modal">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">  
@@ -218,7 +218,7 @@ do_action( 'io_after_footer' );
 <?php } ?>
 <?php wp_footer(); ?> 
 <!-- 自定义代码 -->
-<?php echo io_get_option('code_2_footer');?>
+<?php echo io_get_option('code_2_footer','');?>
 <!-- end 自定义代码 -->
 </body>
 </html>

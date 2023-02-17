@@ -1,5 +1,7 @@
 .disabled{pointer-events:none;filter:grayscale(100%);-webkit-filter:grayscale(100%);-moz-filter:grayscale(100%);-ms-filter:grayscale(100%);-o-filter:grayscale(100%);filter:url("data:image/svg+xml;utf8,#grayscale");filter:progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);-webkit-filter:grayscale(1)}
 .compact{padding-top:0!important;border-top:none!important;margin-top:-10px!important}
+.compact .csf-after-text{margin-bottom:5px}
+.compact .csf-before-text{margin-top:5px}
 .auto-height textarea{min-height:auto;height:auto}
 .csf-metabox-hide+.csf-field.compact{margin-top:0!important;padding-top:20px!important}
 i.added::after{content:'HOT';position:absolute;background:#ff0006;border-radius:10px;padding:1px 10px;font-size:12px;color:#fff;right:10px}
@@ -32,7 +34,7 @@ i.added::after{content:'HOT';position:absolute;background:#ff0006;border-radius:
 .search-list-name a{margin-left:10px;padding:5px 10px;color:#fff;text-decoration:none}
 .search-list-name a:hover{background-color: #545557;}
 .components-flex.components-select-control{height:auto}
-.but{border-radius:4px;display:inline-block;border-radius:4px;-webkit-transition:.15s !important;transition:.15s !important;vertical-align:middle;font-size:14px;padding:5px 20px;text-align:center;box-shadow:none;background:rgba(136,136,136,.1);color:#888;border:1px solid transparent;line-height:1.44;margin:2px;min-height:unset;text-decoration:none}
+.but{border-radius:4px;display:inline-block;border-radius:4px;-webkit-transition:.15s !important;transition:.15s !important;vertical-align:middle;font-size:14px;padding:5px 20px;text-align:center;box-shadow:none;background:rgba(136,136,136,.1);color:#888;border:1px solid transparent;line-height:1.44;margin:2px 10px;min-height:unset;text-decoration:none}
 .but a{color:inherit}
 .but svg.icon,.but>.fa{margin-right:.25em}
 .but.radius,.radius>.but{border-radius:50px;padding:.3em .8em}
@@ -81,3 +83,14 @@ i.added::after{content:'HOT';position:absolute;background:#ff0006;border-radius:
 .text-help:hover{text-decoration:none;color:#fdce75}
 .csf-field.io-horizontal .csf-title{position:relative!important;width:20%!important;float:left!important}
 .csf-field.io-horizontal .csf-fieldset{float:right!important;width:calc(80% - 20px)!important}
+.my-2{margin-top:10px;margin-bottom:10px;}
+.io-modal .csf-modal-inner{height:auto}
+.io-hide-modal .csf-modal-content{height:auto;padding:20px;max-height:600px}
+.io-modal select{max-width:none}
+.io-modal .form-control{display:block;width:100%;color:#495057;background-color:#fff;background-clip:padding-box;border:1px solid #ced4da;border-radius:0.25rem;transition:border-color .15s ease-in-out,box-shadow .15s ease-in-out}
+.io-modal .input-group{position:relative;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;-ms-flex-align:stretch;align-items:stretch;width:100%}
+.io-modal .input-group>.form-control{position:relative;-ms-flex:1 1 auto;flex:1 1 auto;width:1%;min-width:0;margin-bottom:0}
+.io-modal .input-group-append{display:-ms-flexbox;display:flex;margin-left:-1px}
+.input-group:not(.has-validation)>.form-control:not(:last-child){border-top-right-radius:0;border-bottom-right-radius:0}
+.input-group-append .btn{margin:0}
+.input-group>.input-group-append>.btn{border-top-left-radius:0;border-bottom-left-radius:0}

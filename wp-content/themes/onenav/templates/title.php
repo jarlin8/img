@@ -78,9 +78,9 @@ if( is_single() || is_page() ) {
 	if( empty($excerpt)) $excerpt = io_get_excerpt(200); 
 
 	if( $tag!="" ) $keywords=$tag;
-	elseif(io_get_option('seo_home_keywords','')) $keywords=io_get_option('seo_home_keywords');
+	elseif(io_get_option('seo_home_keywords','')) $keywords=io_get_option('seo_home_keywords','');
 	if( !empty($excerpt)) $description=$excerpt;
-	elseif(io_get_option('seo_home_desc','')) $description=io_get_option('seo_home_desc');
+	elseif(io_get_option('seo_home_desc','')) $description=io_get_option('seo_home_desc','');
 }
 if(is_category()){ 
 	$cat_id = get_query_var('cat');

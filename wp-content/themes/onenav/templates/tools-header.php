@@ -6,17 +6,18 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-03-01 10:19:07
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-25 23:21:15
+ * @LastEditTime: 2023-02-08 16:59:14
  * @FilePath: \onenav\templates\tools-header.php
  * @Description: 搜索模块加顶部导航
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; } 
-$search_big = io_get_option('search_skin') ? io_get_option('search_skin') : false;
+$search_big      = io_get_option('search_skin','') ?: false;
+$search_position = io_get_option('search_position', array('home'));
 
 if(is_404() || is_author() || is_single() || is_search() || (is_page() && !is_mininav()) || get_query_var('is_user_route') || get_query_var('custom_page')=="hotnews")://不显示搜索框的页面
     get_template_part('templates/header', 'banner');
 else:
-if( io_get_option('search_position') && in_array("home",io_get_option('search_position')) && $search_big && $search_big['search_big']=='1' ){
+if( $search_position && in_array("home",$search_position) && $search_big && $search_big['search_big']=='1' ){
     if (is_mininav() && !get_post_meta( get_the_ID(), 'search_box', true )){
         get_template_part( 'templates/header','banner' );
         echo '<div class="my-2"></div>';  
@@ -62,7 +63,7 @@ if( io_get_option('search_position') && in_array("home",io_get_option('search_po
             }
         }
         // 加载搜索模块
-        if (io_get_option('search_position') && in_array("home", io_get_option('search_position'))) {
+        if ( in_array("home", $search_position)) {
             get_template_part('templates/search/big');
         } else {
             echo '<div class="no-search my-2 p-1"></div>';
@@ -91,7 +92,7 @@ if( io_get_option('search_position') && in_array("home",io_get_option('search_po
         get_template_part( 'templates/bulletin' );  
 
     // 加载搜索模块 
-    if(io_get_option('search_position') && in_array("home",io_get_option('search_position')) ){
+    if( $search_position && in_array("home",$search_position) ){
         get_template_part( 'templates/search/default' );
     } else {
         echo '<div class="no-search my-2 p-1"></div>';

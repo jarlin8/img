@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:55:58
  * @LastEditors: iowen
- * @LastEditTime: 2022-01-26 16:20:11
+ * @LastEditTime: 2023-02-08 17:14:22
  * @FilePath: \onenav\inc\hot-search.php
  * @Description: 
  */
@@ -41,8 +41,6 @@ function hot_search($hot_data){
             $hot_node   = $custom_data['hot'];
 
             $link_regular = isset($custom_data['link_regular'])?$custom_data['link_regular']:'';
-            //$request_type = $custom_data['request_type'];
-            //$request_data = isset($custom_data['request_data'])?$custom_data['request_data']:'';
             include( get_theme_file_path('/templates/hot/hot-json.php') ); 
             break;
         default:
@@ -54,25 +52,88 @@ add_action('wp_ajax_nopriv_get_hot_data', 'io_get_hot_search_data');
 add_action('wp_ajax_get_hot_data', 'io_get_hot_search_data');
 if(!function_exists('io_get_hot_search_data')) {
 function io_get_hot_search_data(){ 
-    $_data = wp_remote_get($_REQUEST['url'],array('sslverify' => FALSE));
-    if ($_data && ! is_wp_error( $_data )) {
-        $_data = wp_remote_retrieve_body($_data) ;
-        if($_REQUEST['type']=='json')
-            $_data = json_decode($_data, true);
-        else
-            $_data = json_decode(json_encode(simplexml_load_string($_data, 'SimpleXMLElement', LIBXML_NOCDATA)), true); //将返回的xml转为数组
-        
-        if(empty($_data)||$_data==''||$_data==null) {
-            io_error(array( "status"=>0,"code"=>202,"data"=> __("没有获取到内容。",'i_theme')));
-        }
-        io_error(array( "status"=>1,"data"=> $_data),false,10);
-    }elseif(is_wp_error($_data)){
-        io_error(array( "status"=>0,"code"=>$_data->get_error_code(),"data"=> $_data->get_error_message()));
+    $rule_id    = esc_sql($_REQUEST['id']);
+    $type       = esc_sql($_REQUEST['type']);
+    $cache_key  = "io_free_hot_data_{$rule_id}_{$type}";
+
+    $_data      = get_transient($cache_key);
+    if($_data)
+        io_error(array("status" => 1, "data" => $_data), false, 10);
+
+    $_ua = array(
+        '[dev]general information acquisition module - level 30 min, version:3.2',
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36",
+    );
+    $default_ua = array('userAgent'=>$_ua[wp_rand(0,2)]);
+    $custom_api = get_option( 'io_hot_search_list' )[$type.'_list'];
+    $custom_data= $custom_api[$rule_id-1];
+    $api_url    = $custom_data['url'];
+    $api_cache  = isset($custom_data['cache']) ? (int)$custom_data['cache'] : 60;
+    $api_data   = isset($custom_data['request_data']) ? io_option_data_to_array($custom_data['request_data']) : '';
+    $api_method = strtoupper(isset($custom_data['request_type']) ? $custom_data['request_type'] : 'get');
+    $api_header = isset($custom_data['headers']) ? io_option_data_to_array($custom_data['headers'], $default_ua) : $default_ua;
+    $api_cookie = isset($custom_data['cookies']) ? io_option_data_to_array($custom_data['cookies']) : '';
+
+    
+    $http = new Yurun\Util\HttpRequest;
+    $http->headers($api_header);
+    if($api_cookie)
+        $http->cookies($api_cookie);
+
+    $response = $http->send($api_url, $api_data, $api_method);
+    if(!$response->success){
+        io_error(array( "status"=>0,"code"=>$response->httpCode(),"data"=> $response->errno()));
+    }
+    if ('json' === $type) {
+        $_data = $response->json(true);
+    }else{
+        $_data = json_decode(json_encode($response->xml()),true);
+    }
+    if (io_free_hot_is_data($_data, $custom_data['datas'])) {
+        // TODO 格式化数据输出？
+        $res = array("status" => 1, "data" => $_data);
+        $_data['cache_time'] = io_get_time();
+        set_transient($cache_key, $_data, $api_cache * MINUTE_IN_SECONDS);
+        io_error($res, false, 5);
     } else {
-        io_error(array( "status"=>0,"code"=>404,"data"=> __("网络拥堵，请稍后再试。",'i_theme')));
+        io_error(array( "status"=>0, "code"=>202, "data"=> __("没有获取到内容。",'i_theme'), "res"=>$_data), false, 1);
     }
 }
 }
+/**
+ * 设置项数据转数组
+ * 设置项键名 'key' 'value'
+ * @param array $datas 
+ * @param array $default 预设值
+ * @return array
+ */
+function io_option_data_to_array($datas, $default = array()){
+    $args = $default;
+    foreach($datas as $data){
+        $args[$data['key']] = $data['value'];
+    }
+    return $args;
+}
+/**
+ * 判断获取的内容是否包含数据
+ * @param array $datas
+ * @param string $nodes
+ * @return bool
+ */
+function io_free_hot_is_data($datas, $nodes){
+    $_nodes = explode('.', $nodes);
+    $_data  = $datas;
+    foreach($_nodes as $node){
+        if(isset($_data[$node])){
+            $_data = $_data[$node];
+        }else{
+            return false;
+        }
+    }
+    return !empty($_data);
+}
+
 // 热搜列表
 if(!function_exists('all_topnew_list')){
 	function all_topnew_list(){  
@@ -142,41 +203,9 @@ if(!function_exists('all_topnew_list')){
                 'hot_type'      => 'api'
             ),
             array(
-                'rule_id'       => '100008',
-                'name'          => '微信搞笑',
-                'description'   => '微信搞笑 https://weixin.sogou.com',
-                'ico'           => get_hot_ico('wechat'),
-                'is_iframe'     => false,
-                'hot_type'      => 'api'
-            ),
-            array(
-                'rule_id'       => '100009',
-                'name'          => '微信财经迷',
-                'description'   => '微信财经迷 https://weixin.sogou.com/pcindex/pc/pc_6/pc_6.html',
-                'ico'           => get_hot_ico('wechat'),
-                'is_iframe'     => false,
-                'hot_type'      => 'api'
-            ),
-            array(
-                'rule_id'       => '100010',
-                'name'          => '微信八卦精',
-                'description'   => '微信八卦精 https://weixin.sogou.com/pcindex/pc/pc_4/pc_4.html',
-                'ico'           => get_hot_ico('wechat'),
-                'is_iframe'     => false,
-                'hot_type'      => 'api'
-            ),
-            array(
                 'rule_id'       => '100011',
                 'name'          => '微信热搜词',
                 'description'   => '微信热搜词 https://weixin.sogou.com/',
-                'ico'           => get_hot_ico('wechat'),
-                'is_iframe'     => false,
-                'hot_type'      => 'api'
-            ),
-            array(
-                'rule_id'       => '100012',
-                'name'          => '微信热门',
-                'description'   => '微信热门 https://weixin.sogou.com/',
                 'ico'           => get_hot_ico('wechat'),
                 'is_iframe'     => false,
                 'hot_type'      => 'api'

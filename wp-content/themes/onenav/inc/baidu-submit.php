@@ -13,7 +13,7 @@ if (io_get_option('baidu_submit',false,'switcher')) {
     // 主动推送
     if(!function_exists('Baidu_Submit')){
 		function Baidu_Submit($post_ID) {
-			$WEB_TOKEN = io_get_option('baidu_submit')['token_p'];
+			$WEB_TOKEN = io_get_option('baidu_submit','','token_p');
 			$WEB_DOMAIN = esc_url(home_url());
 			if(get_post_meta($post_ID,'Baidusubmit',true) == 1) return;
 			$url = get_permalink($post_ID);
@@ -58,8 +58,8 @@ if ( io_get_option('baidu_xzh',false,'switcher')) {
 		function Baidu_XZH_Submit($post_ID) {
 			//已成功推送的文章不再推送
 			if(get_post_meta($post_ID,'BaiduXZHsubmit',true) == 1) return;
-			$WEB_TOKEN = io_get_option('baidu_xzh')['xzh_token'];
-			$WEB_APPID = io_get_option('baidu_xzh')['xzh_id']; 
+			$WEB_TOKEN = io_get_option('baidu_xzh','','xzh_token');
+			$WEB_APPID = io_get_option('baidu_xzh','','xzh_id'); 
 			$url = get_permalink($post_ID);
 			$api = 'http://data.zz.baidu.com/urls?appid='. $WEB_APPID .'&token='. $WEB_TOKEN .'&type=realtime';
 			$ch = curl_init();
@@ -145,19 +145,19 @@ function io_baidu_post_img(){
 /**
  * 添加熊掌号关注按钮
  */
-//if(io_get_option('baidu_xzh')['xzh_gz']) add_action('wp_head','baidu_xzh');
+//if(io_get_option('baidu_xzh','','xzh_gz')) add_action('wp_head','baidu_xzh');
 function baidu_xzh() {
 	if(is_single()){
 		echo '<script type="application/ld+json">{
 	"@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
 	"@id": "'.get_the_permalink().'",
- 	"appid": "'. io_get_option('baidu_xzh')['xzh_id'] .'",
+	"appid": "'. io_get_option('baidu_xzh','','xzh_id') .'",
 	"title": "'.get_the_title().'",
 	"images": ["'.io_baidu_post_img().'"],
 	"description": "'.io_baidu_excerpt().'",
 	"pubDate": "'.get_the_time('Y-m-d\TH:i:s').'"
 }</script>';}
 	echo "\n";
-	echo '<script src="//msite.baidu.com/sdk/c.js?appid='. io_get_option('baidu_xzh')['xzh_id'] .'"></script>';
+	echo '<script src="//msite.baidu.com/sdk/c.js?appid='. io_get_option('baidu_xzh','','xzh_id') .'"></script>';
 	echo "\n";
 }

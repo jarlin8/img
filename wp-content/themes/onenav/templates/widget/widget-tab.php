@@ -6,9 +6,9 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-01-13 19:56:02
  * @LastEditors: iowen
- * @LastEditTime: 2022-02-24 00:00:35
+ * @LastEditTime: 2023-02-04 23:39:20
  * @FilePath: \onenav\templates\widget\widget-tab.php
- * @Description: 
+ * @Description: tab卡片
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 if( is_home() || is_front_page() ) {

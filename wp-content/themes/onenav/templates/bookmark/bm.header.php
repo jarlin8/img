@@ -12,7 +12,7 @@ if(empty($customize_terms))
    $customize_terms = $iodb->getTerm($bookmark_id);
 ?>
 <header class="navbar navbar-dark fixed-top">
-   <?php if(io_get_option('weather')): ?>
+   <?php if(io_get_option('weather',false)): ?>
    <!-- weather widgets -->
    <div class="weather">
       <div id="he-plugin-simple" style="display: contents;"></div>
@@ -52,7 +52,7 @@ if(empty($customize_terms))
    <?php endif; ?>
    <ul class="nav navbar-menu"> 
       <?php 
-      if( io_get_option('nav_login') ){  
+      if( io_get_option('nav_login',false) ){  
          if(!is_user_logged_in()) {
       ?>
 			<li class="nav-login ml-3">
@@ -115,7 +115,7 @@ if(empty($customize_terms))
                   </div>
                </div>
                <?php endif; ?>
-               <?php if(io_get_option('is_go')): ?>
+               <?php if(io_get_option('is_go',false)): ?>
                <div class="form-group">
                   <label for="is-go"><?php _e('内链跳转&直链','i_theme') ?></label>
                   <div class="custom-control custom-switch">

@@ -122,11 +122,15 @@ function io_ajax_recheck() {
 
     //如果立即检查失败，这将确保在下一个work()运行期间检查该链接。
     $link->last_check_attempt  = 0;
-    $link->isOptionLinkChanged = true;
-    $link->save();
+    //$link->isOptionLinkChanged = true;
 
+    $is_save = true;
+    if (get_post_meta($id, '_affirm_dead_url', true) || get_post_meta($id, '_revive_url_m', true)) {
+        $is_save = false;
+    }
+    if($is_save) $link->save();
     //检查链接并保存结果。
-    $link->check( true );
+    $link->check($is_save);
 
     $status   = $link->analyse_status();
     $response = array(

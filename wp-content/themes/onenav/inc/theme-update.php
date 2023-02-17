@@ -6,24 +6,22 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-04-15 04:33:41
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-18 23:31:48
+ * @LastEditTime: 2023-02-16 23:27:34
  * @FilePath: \onenav\inc\theme-update.php
  * @Description: 
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-if( is_admin() ){
-    updataDB();
-}
-function updataDB(){
+function updateDB(){
+    $rewrite = false;
     if(is_admin()){
         $version = get_option( 'onenav_version',false );
-        $rewrite = false;
         if(!$version){
             $version = VERSION;
             update_option( 'onenav_version', $version );
         }
         if ( version_compare( $version, '3.0330', '<' ) && version_compare( $version, '2.0407', '>' ) ) {
+            update_option( 'onenav_version', '3.0330' );
             global $wpdb;
             $list = $wpdb->get_results("SELECT * FROM $wpdb->users");
             if($list) {
@@ -57,33 +55,33 @@ function updataDB(){
             $wpdb->query("ALTER TABLE `$wpdb->iocustomterm` CHANGE `name` `name` TEXT DEFAULT NULL");
             $wpdb->query("ALTER TABLE `$wpdb->iocustomterm` CHANGE `ico` `ico` TEXT DEFAULT NULL");
 
-            if(!$wpdb->query("SELECT post_id FROM $wpdb->iocustomurl")){
+            if(!column_in_db_table($wpdb->iocustomurl,'post_id')){
                 $wpdb->query("ALTER TABLE $wpdb->iocustomurl ADD post_id bigint(20)");
             }
-            if(!$wpdb->query("SELECT summary FROM $wpdb->iocustomurl")){
+            if(!column_in_db_table($wpdb->iocustomurl,'summary')){
                 $wpdb->query("ALTER TABLE $wpdb->iocustomurl ADD summary varchar(255) DEFAULT NULL");
             }
-            update_option( 'onenav_version', '3.0330' );
             $rewrite = true;
         }
         if ( version_compare( $version, '3.0731', '<' ) && version_compare( $version, '3.0330', '>=' ) ) {
+            update_option( 'onenav_version', '3.0731' );
             global $wpdb;
             $wpdb->query("ALTER TABLE $wpdb->iocustomterm ADD INDEX `user_id` (`user_id`);");
             $wpdb->query("ALTER TABLE $wpdb->iocustomurl ADD INDEX `user_id` (`user_id`);");
             $wpdb->query("ALTER TABLE $wpdb->iocustomurl ADD INDEX `term_id` (`term_id`);");
-            update_option( 'onenav_version', '3.0731' );
             $rewrite = true;
         }
         if ( version_compare( $version, '3.0901', '<' ) && version_compare( $version, '3.0731', '>=' ) ) {
+            update_option( 'onenav_version', '3.0901' );
             global $wpdb;
             $wpdb->query("ALTER TABLE `$wpdb->iomessages` CHANGE `msg_read` `msg_read` TEXT DEFAULT NULL");
-            if(!$wpdb->query("SELECT `meta` FROM $wpdb->iomessages")){
+            if(!column_in_db_table($wpdb->iomessages,'meta')){
                 $wpdb->query("ALTER TABLE $wpdb->iomessages ADD `meta` text DEFAULT NULL");
             }
-            update_option( 'onenav_version', '3.0901' );
             $rewrite = true;
         }
         if ( version_compare( $version, '3.1421', '<' ) ) {
+            update_option( 'onenav_version', '3.1421' );
             global $wpdb ,$iodb;
             //$iodb = new IODB();
             $list = $wpdb->get_results("SELECT * FROM `$wpdb->postmeta` WHERE (`meta_key` IN ('_app_screenshot','_sites_screenshot') AND `meta_value` != '')");
@@ -102,16 +100,18 @@ function updataDB(){
                 }
                 //$wpdb->query($iodb->multArrayInsert($wpdb->postmeta, array("post_id","meta_key","meta_value"),$datas));
             }
-            update_option( 'onenav_version', '3.1421' );
             $rewrite = true;
         }
         if ( version_compare( $version, '3.1918', '<' ) && version_compare( $version, '3.0330', '>=' ) ) {
-            global $wpdb;
-            $wpdb->query("ALTER TABLE $wpdb->iocustomterm ADD `parent` bigint(20) NOT NULL DEFAULT 0 AFTER `user_id`");
             update_option( 'onenav_version', '3.1918' );
+            global $wpdb;
+            if (!column_in_db_table($wpdb->iocustomterm, 'parent')) {
+                $wpdb->query("ALTER TABLE $wpdb->iocustomterm ADD `parent` bigint(20) NOT NULL DEFAULT 0 AFTER `user_id`");
+            }
             $rewrite = true;
         }
-        if( version_compare( $version, '3.2118', '<' ) ){
+        if( version_compare( $version, '3.2139', '<' ) ){
+            update_option( 'onenav_version', '3.2139' );
             global $wpdb;
             $list = $wpdb->get_results("SELECT * FROM $wpdb->users WHERE `user_email` REGEXP '^io.*@io.com$'");
             if($list ){
@@ -119,7 +119,37 @@ function updataDB(){
                     $wpdb->query("UPDATE $wpdb->users SET `user_email`='' WHERE `ID`=$value->ID");
                 }
             }
-            update_option( 'onenav_version', '3.2118' );
+            set_time_limit(0);
+
+            //开始更新
+            $result = $wpdb->get_var("SELECT COUNT(*) FROM `$wpdb->posts` WHERE `post_type` IN ('sites','post','app','book')");
+            $term_count = (int)$result;
+            $result = $wpdb->get_var("SELECT MAX(`ID`) FROM `$wpdb->posts` ");
+            $max_id = (int)$result;
+
+            $term_last_id = 0;
+            $do_count     = 0;
+            $step         = 1000; //每次从数据库取多少
+            while ($do_count < $term_count && $term_last_id < $max_id) { 
+                if ($term_last_id < $max_id) {
+                    $obj = $wpdb->get_results("SELECT ID FROM `$wpdb->posts` WHERE `ID`> {$term_last_id} AND `post_type` IN ('sites','post','app','book') ORDER BY `ID` LIMIT " . $step);
+                    $values_pre = "";
+                    $values     = array();
+                    foreach ($obj as $row) {
+                        $id           = $row->ID;
+                        $term_last_id = $id;
+
+                        $values_pre .= "(%d, %s, %s),";
+                        $values[]   = $id;
+                        $values[]   = '_user_purview_level';
+                        $values[]   = 'all';
+                        $do_count++;
+                    }
+                    $sql = $wpdb->prepare("INSERT INTO `{$wpdb->postmeta}` (`post_id`, `meta_key`, `meta_value`) VALUES " . substr($values_pre, 0, -1), $values);
+                    $wpdb->query($sql);
+                }
+            }
+            $rewrite = true;
         }
         if($rewrite){
             wp_cache_flush();
@@ -127,4 +157,167 @@ function updataDB(){
             $wp_rewrite->flush_rules();
         }
     }
+    return $rewrite;
 }
+
+function io_update_theme_after_update_db() {
+    $current_v = '3.2139';
+    $v = get_option('onenav_version', false);
+    if(!$v){
+        update_option( 'onenav_version', $current_v );
+    }
+    $v_html = '';
+    $nonce= wp_create_nonce('io_up_db');
+    if( $v != $current_v ){
+        $v_html = '<p><a class="button ajax-up-get" href="' . add_query_arg(array('action' => 'io_update_theme_v', '_wpnonce' => $nonce), admin_url('admin-ajax.php')) . '">立即更新</a></p>';
+    }
+    global $wpdb;
+
+    $db = array();
+    if(!column_in_db_table($wpdb->iocustomurl,'post_id')){
+        $db[] = 1;
+    }
+    if(!column_in_db_table($wpdb->iocustomurl,'summary')){
+        $db[] = 2;
+    }
+    if(!column_in_db_table($wpdb->iomessages,'meta')){
+        $db[] = 3;
+    }
+    if(!column_in_db_table($wpdb->iocustomterm,'parent')){
+        $db[] = 4;
+    }
+    $db_html = '';
+    if($db){
+        $db_html = '<div>检查到数据库缺少字段。</div>';
+        $db_html .= '<p><a class="button ajax-up-get" href="' . add_query_arg(array('action' => 'io_update_theme_db', 'type' => implode('-',$db), '_wpnonce' => $nonce), admin_url('admin-ajax.php')) . '">立即补缺</a></p>';
+    }
+
+    $do_action = $db_html;
+    if($v_html){
+        $do_action = $v_html;
+    }
+    if ($do_action) {
+        $js = '<script type="text/javascript">
+        (function ($) {
+        $(".ajax-up-get").click( function () {
+            var _this = $(this);
+            if(_this.attr("disabled")){
+                return !1;
+            }
+            var _notice = _this.parents(".notice-error").find(".ajax-notice");
+            var _tt = _this.html();
+            var ajax_url = _this.attr("href");
+            var spin = "<i class=\'fa fa-spinner fa-spin fa-fw\'></i> "
+            var n_type = "warning";
+            var n_msg = spin + "正在处理，请稍候...";
+            _this.attr("disabled", true);
+            _this.html(spin + "请稍候...");
+            $.ajax({
+                type: "GET",
+                url: ajax_url,
+                dataType: "json",
+                error: function (n) {
+                    var n_con = "<div style=\'padding: 10px;margin: 0;\' class=\'notice notice-error\'><b>" + "网络异常或者操作失败，请稍候再试！ " + n.status + "|" + n.statusText + "</b></div>";
+                    _notice.html(n_con);
+                    _this.attr("disabled", false);
+                    _this.html( _tt );
+                },
+                success: function (n) {
+                    if (n.msg) {
+                        n_type = n.error_type || (n.error ? "error" : "info");
+                        var n_con = "<div style=\'padding: 10px;margin: 0;\' class=\'notice notice-" + n_type + "\'><b>" + n.msg + "</b></div>";
+                        _notice.html(n_con);
+                    }
+                    _this.attr("disabled", false);
+                    _this.html( _tt );
+                    if (n.reload) {
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    }
+                }
+            });
+            return !1;
+        });
+    })(jQuery);
+    </script>';
+        $html = '<div class="notice notice-error is-dismissible">';
+        $html .= '<h3>onenav 数据库需更新！</h3>';
+        $html .= $do_action;
+        $html .= '<div class="ajax-notice" style="margin-bottom:10px"></div>';
+        $html .= '</div>';
+        echo $html.$js;
+    }
+}
+add_action('admin_notices', 'io_update_theme_after_update_db');
+
+function column_in_db_table($table, $column){
+    global $wpdb;
+    return $wpdb->get_var("SELECT count(*) FROM information_schema.columns WHERE table_name = '$table' AND column_name = '$column'");
+}
+function io_update_theme_v_ajax(){
+    if( !is_super_admin() ){
+        echo (json_encode(array('error' => 1, 'msg' => '权限不足！')));
+        exit();
+    }
+    if (!wp_verify_nonce($_GET['_wpnonce'],"io_up_db")){
+        echo (json_encode(array('error' => 1, 'msg' => '对不起!您没有通过安全检查！')));
+        exit();
+    }
+    if(get_transient( 'onenav_manual_update_version' )){
+        echo (json_encode(array('error' => 1, 'msg' => '正在后台更新，请3分钟后刷新窗口，如果窗口消失，说明更新成功！')));
+        exit();
+    }
+    set_transient('onenav_manual_update_version', 1, 3 * MINUTE_IN_SECONDS);
+    if (!updateDB()) {
+        if (update_option('onenav_version', '3.1539')) {
+            updateDB();
+            echo (json_encode(array('error' => 0, 'msg' => '更新成功！', 'reload' => 1)));
+            exit();
+        }
+    }
+    echo (json_encode(array('error' => 0, 'msg' => '更新成功！', 'reload' => 1)));
+    exit();
+}
+add_action('wp_ajax_io_update_theme_v', 'io_update_theme_v_ajax');
+
+function io_update_theme_db_ajax(){
+    if( !is_super_admin() ){
+        echo (json_encode(array('error' => 1, 'msg' => '权限不足！')));
+        exit();
+    }
+    if (!wp_verify_nonce($_GET['_wpnonce'],"io_up_db")){
+        echo (json_encode(array('error' => 1, 'msg' => '对不起!您没有通过安全检查！')));
+        exit();
+    }
+    $db = $_GET['type'];
+    $type = explode('-', $db);
+    global $wpdb;
+    foreach ($type as $v) {
+        switch ($v) {
+            case '1':
+                if(!column_in_db_table($wpdb->iocustomurl,'post_id')){
+                    $wpdb->query("ALTER TABLE $wpdb->iocustomurl ADD `post_id` bigint(20)");
+                }
+                break;
+            case '2':
+                if(!column_in_db_table($wpdb->iocustomurl,'summary')){
+                    $wpdb->query("ALTER TABLE $wpdb->iocustomurl ADD `summary` varchar(255) DEFAULT NULL");
+                }
+                break;
+            case '3':
+                if(!column_in_db_table($wpdb->iomessages,'meta')){
+                    $wpdb->query("ALTER TABLE $wpdb->iomessages ADD `meta` text DEFAULT NULL");
+                }
+                break;
+            case '4':
+                if(!column_in_db_table($wpdb->iocustomterm,'parent')){
+                    $wpdb->query("ALTER TABLE $wpdb->iocustomterm ADD `parent` bigint(20) NOT NULL DEFAULT 0 AFTER `user_id`");
+                }
+                break;
+        }
+    }
+    echo (json_encode(array('error' => 0, 'msg' => '插入成功！','reload' => 1)));
+    exit();
+}
+add_action('wp_ajax_io_update_theme_db', 'io_update_theme_db_ajax');

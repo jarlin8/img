@@ -2,8 +2,8 @@
 Theme Name:OneNav
 Theme URI:https://www.iotheme.cn
 Description:一导航， 集网址、资源、资讯于一体的导航主题。 <br /> 官网：<a href="https://www.iotheme.cn">一主题</a>
-Version: 3.2129
-Requires at least: 5.5
+Version: 3.2206
+Requires at least: 5.6
 Tested up to: 5.8
 Requires PHP: 7.2
 Author:一为
@@ -13,19 +13,10 @@ Text Domain: i_theme
 */
 
 /*
-修复首页添加多个同分类到不同父级时出现的跳转异常问题
-修复“分类&标签固定链接模式”开启勾选[分类]后，文章分类404的问题
-修复网址投稿免审核失效的问题
-修复新分页格式规则已知问题
-修复一些反馈问题
-优化新分页格式规则（可能增加未知问题）
-增加默认文章新分页格式匹配任何自定义规则，如 /%year%/%monthnum%/%day%/%post_id%.html
-增加手机号码绑定
-增加 百度  gitee github 登录
-增加微信公众号关键词自动回复
+修复反馈问题
+增加注册隐私页复选框
 
 TODO 书签归档页
 TODO 网站 app 书籍 归档页  
 TODO 个人标签页网址增加选项卡切换模式
-TODO 短代码网址块排列
 */

@@ -15,17 +15,17 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }  ?>
 <?php 
 $sites_meta=get_sites_card_meta(); 
 $is_goto   = $sites_meta["sites_type"] == "sites" && get_post_meta($post->ID, "_goto", true) ? true : false;
-$max_url   = 'href="'.$sites_meta["url"].'" '                                              .$sites_meta["blank"]. ' ' .($is_goto ? "" : nofollow($sites_meta["link_url"], io_get_option("details_page")));
+$max_url   = 'href="'.$sites_meta["url"].'" '                                              .$sites_meta["blank"]. ' ' .($is_goto ? "" : nofollow($sites_meta["link_url"], io_get_option("details_page",false)));
 $goto_url  = 'href="'.($is_goto?$sites_meta['link_url']:go_to($sites_meta['link_url'])). '" target="_blank" '         .($is_goto ? "" : nofollow($sites_meta["link_url"]))                               .' title="'. __("直达","i_theme") .'"';
 $max_views =$sites_meta['is_views'];
 $goto_views='is-views';
-if( $sites_meta['link_url']!="" &&  !get_post_meta($post->ID, '_goto', true) && io_get_option("details_page") && io_get_option("url_reverse") ){
-    $goto_url  = 'href="'.$sites_meta["url"].'" '                                              .$sites_meta["blank"]. ' ' .($is_goto ? "" : nofollow($sites_meta["link_url"], io_get_option("details_page"))).' title="'. __("详情","i_theme") .'"';
+if( $sites_meta['link_url']!="" &&  !get_post_meta($post->ID, '_goto', true) && io_get_option("details_page",false) && io_get_option("url_reverse",false) ){
+    $goto_url  = 'href="'.$sites_meta["url"].'" '                                              .$sites_meta["blank"]. ' ' .($is_goto ? "" : nofollow($sites_meta["link_url"], io_get_option("details_page",false))).' title="'. __("详情","i_theme") .'"';
     $max_url   = 'href="'.($is_goto?$sites_meta['link_url']:go_to($sites_meta['link_url'])). '" target="_blank" '         .($is_goto ? "" : nofollow($sites_meta["link_url"]));
     $max_views ='is-views';
     $goto_views='';
 }
-$no_ico = io_get_option('no_ico')?'no_ico':'';
+$no_ico = io_get_option('no_ico',false)?'no_ico':'';
 ?>
         <div class="url-body default <?php echo $no_ico ?>">    
             <a <?php echo $max_url ?> data-id="<?php echo $post->ID ?>" data-url="<?php echo rtrim($sites_meta['link_url'],"/") ?>" class="card no-c <?php echo $max_views ?> mb-4 site-<?php echo $post->ID ?>" <?php echo $sites_meta['tooltip'] . ' ' . $sites_meta['is_html'] ?> title="<?php echo $sites_meta['tip_title'] ?>">
@@ -49,7 +49,7 @@ $no_ico = io_get_option('no_ico')?'no_ico':'';
                     </div>
                 </div> 
             </a> 
-            <?php if( $sites_meta['link_url']!="" && io_get_option("togo") && io_get_option("details_page") ) { ?>
+            <?php if( $sites_meta['link_url']!="" && io_get_option("togo",false) && io_get_option("details_page",false) ) { ?>
             <a <?php echo $goto_url ?> class="togo text-center text-muted <?php echo $goto_views ?>" data-id="<?php echo $post->ID ?>" data-toggle="tooltip" data-placement="right"><i class="iconfont icon-goto"></i></a>
             <?php } ?>
         </div>

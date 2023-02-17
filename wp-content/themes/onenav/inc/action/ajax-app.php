@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-07-04 21:42:55
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-27 18:40:24
+ * @LastEditTime: 2023-02-04 01:02:52
  * @FilePath: \onenav\inc\action\ajax-app.php
  * @Description: 
  */
@@ -12,7 +12,7 @@
 // TODO:待完善
 //提交网址
 function io_ajax_new_sites(){  
-    if (!io_get_option('is_contribute')) {
+    if (!io_get_option('is_contribute',true)) {
         io_error (json_encode(array('status' => 1,'msg' => __('投稿功能已关闭','i_theme'))));
     }
     if (!wp_verify_nonce($_POST['_wpnonce'],"tougao_robot")){
@@ -116,7 +116,7 @@ function io_ajax_new_sites(){
     //}
 
     //执行人机验证
-    io_ajax_is_robots('tougao_captcha');
+    io_ajax_is_robots();
     
     //上传图片
     $oldimg_id = 0;

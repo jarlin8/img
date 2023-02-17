@@ -283,7 +283,7 @@ $(function() {
                 showAlert(JSON.parse('{"status":4,"msg":"<?php _e('选取的文件必须是HTML文件！','i_theme') ?>"}'));
                 return;
             }
-            ioConfirm("<div><p class='text-xl text-center mb-3'><?php _e('你选取了文件： ','i_theme') ?></p>"+selectedFile.name+"<br><?php _e('是否继续导入？','i_theme') ?></div>",function(result){
+            ioConfirm("<?php _e('注意','i_theme') ?>","<div><p class='text-xl text-center mb-3'><?php _e('你选取了文件： ','i_theme') ?></p>"+selectedFile.name+"<br><?php _e('是否继续导入？','i_theme') ?></div>",function(result){
                 if(result){
                     var load = loadingShow();
                     runConverterSelectedFile(function(result){
@@ -685,7 +685,7 @@ $(function() {
         }
         var url_i = $("#terms-"+t.data('id')+"").find('li').length-1;
         if( url_i>0 ){
-            ioConfirm("<div><?php _e('此分类内包含多个网址，是否继续删除分类并清空网址？','i_theme') ?></div>",function(result){
+            ioConfirm("<?php _e('警告','i_theme') ?>","<div><?php _e('此分类内包含多个网址，是否继续删除分类并清空网址？','i_theme') ?></div>",function(result){
                 if(result){
                     removeTerms(t,1);
                 }

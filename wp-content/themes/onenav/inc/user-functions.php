@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-04-15 04:33:41
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-21 03:30:21
+ * @LastEditTime: 2023-02-07 04:08:50
  * @FilePath: \onenav\inc\user-functions.php
  * @Description: 
  */
@@ -20,28 +20,8 @@ function io_restrict_admin(){
         }
     }
 }
-require get_theme_file_path('/inc/user-callback.php'); 
-/**
- * 获取用户权限描述字符.
- * --------------------------------------------------------------------------------------
- */
-function io_get_user_cap_string($user_id)
-{
-    if (user_can($user_id, 'manage_options')) {
-        return __('管理员', 'i_theme');
-    }
-    if (user_can($user_id, 'edit_others_posts')) {
-        return __('编辑', 'i_theme');
-    }
-    if (user_can($user_id, 'publish_posts')) {
-        return __('作者', 'i_theme');
-    }
-    if (user_can($user_id, 'edit_posts')) {
-        return __('投稿者', 'i_theme');
-    }
+//require get_theme_file_path('/inc/user-callback.php'); 
 
-    return __('读者', 'i_theme');
-}
 /**
  * 获取用户收藏的所有文章ID.
  * --------------------------------------------------------------------------------------
@@ -826,7 +806,7 @@ function get_bookmark_seting( $type, $seting=''){
             if($seting){
                 $value=$seting['sites_title'];
             }else{
-                $value=io_get_option('search_skin')['big_title']?:get_bloginfo('name');
+                $value=io_get_option('search_skin','','big_title')?:get_bloginfo('name');
             }
             break;
         case 'quick_nav':  

@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:55:58
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-27 18:38:23
+ * @LastEditTime: 2023-02-12 16:45:19
  * @FilePath: \onenav\inc\action\ajax.php
  * @Description: 
  */
@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 $functions = array(
     'ajax-post',
     'ajax-sites',
+    'ajax-user',
     'ajax-admin'
 );
 
@@ -22,70 +23,29 @@ foreach ($functions as $function) {
     $path = 'inc/action/' . $function . '.php';
     require get_theme_file_path($path);
 }
-
-add_action('wp_ajax_nopriv_user_login', 'user_login_callback'); 
-add_action('wp_ajax_user_login', 'user_login_callback');
-function user_login_callback(){ 
-    $username = esc_sql($_POST['username']);
-    $password = $_POST['password'];
-    $remember = esc_sql($_POST['rememberme']);
-    if($remember){
-        $remember = true;
-    } else {
-        $remember = false;
-    }
-    if($username=='' || $password==''){ 
-        io_error('{"status":2,"msg":"'.__('请认真填写表单！','i_theme').'"}');
-        exit();
-    }
-    //执行人机验证
-    io_ajax_is_robots();
-
-    if(is_email($username)){
-        $user = get_user_by( 'email', $username );
-        if ( isset( $user, $user->user_login, $user->user_status ) && 0 == (int) $user->user_status )
-            $username = $user->user_login;
-    }elseif (io_get_option('user_login_phone') && IOSMS::is_phone_number($username)) {
-        $user_data = io_get_user_by($username, 'phone');
-        if (empty($user_data)) {
-            echo (json_encode(array('error' => 1, 'msg' => '未找到此手机号注册账户')));
-            exit();
-        }
-        $username = $user_data->user_login;
-    }
-    $login_data = array(
-        'user_login' =>$username,
-        'user_password' =>$password,
-        'remember' =>$remember,
-    ); 
-
-    $user_verify = wp_signon($login_data);
-    //wp_signon 是wordpress自带的函数，通过用户信息来授权用户(登录)，可记住用户名
-    if(is_wp_error($user_verify)){
-        if( $user_verify->get_error_code() == 'too_many_retries' )
-            io_error(array('status'=>3,'msg'=>$user_verify->get_error_message()));
-        io_error('{"status":3,"msg":"'.__('用户名或密码错误，请重试!','i_theme').'"}'); 
-        exit();
-    } else {  
-        
-        //绑定尝试社交登录的账号
-        if(io_get_option('user_center')&&isset($_POST['old_bind'])) io_update_oauth_data($user_verify->ID);
-
-        if ( (isset( $_REQUEST['redirect'] ) && !empty($_REQUEST['redirect'])) || (isset( $_REQUEST['redirect_to'] ) && !empty($_REQUEST['redirect_to'])) ){
-            $redirect_to = isset($_REQUEST['redirect']) ?  $_REQUEST['redirect'] : $_REQUEST['redirect_to'];  
-        } elseif (user_can($user_verify->ID,'manage_options')) {
-            $redirect_to = admin_url();  
-        } else {
-            $redirect_to = home_url();  
-        }
-        if(!( !defined( 'WP_CACHE' ) || !WP_CACHE ) && defined('WP_ROCKET_VERSION')){
-            $redirect_to = $redirect_to.'?t='.time();
-        }
-        io_error('{"status":1,"msg":"'.__('登录成功，跳转中！','i_theme').'","goto":"'.urldecode($redirect_to).'"}'); 
-        exit();
-    }
+/**
+ * 获取图片验证码
+ * @return void
+ */
+function get_img_captcha_callback(){
+    require get_theme_file_path('/inc/classes/CaptchaBuilder.php');
     
+    $code_id = !empty($_REQUEST['id']) ? $_REQUEST['id'] : 'code';
+    ob_start();
+    $captch = new CaptchaBuilder(); 
+    $captch->create();
+    $captch->output();
+    $data = ob_get_contents();
+    ob_end_clean();
+    @session_start();
+    $_SESSION['captcha_img_code_' . $code_id] = strtolower($captch->getText());
+    $_SESSION['captcha_img_time_' . $code_id] = time();
+    $imageString = base64_encode($data);
+    io_error(array('img' => 'data:image/jpeg;base64,' . $imageString));
 }
+add_action('wp_ajax_nopriv_get_img_captcha', 'get_img_captcha_callback'); 
+add_action('wp_ajax_get_img_captcha', 'get_img_captcha_callback');
+
 
 //提交评论
 add_action('wp_ajax_nopriv_ajax_comment', 'fa_ajax_comment_callback');
@@ -108,38 +68,31 @@ function fa_ajax_comment_callback(){
     $user = wp_get_current_user();
     do_action('set_comment_cookies', $comment, $user);
     $GLOBALS['comment'] = $comment; //根据你的评论结构自行修改，如使用默认主题则无需修改
-    ?> 
-    <li <?php comment_class('comment'); ?> id="li-comment-<?php comment_ID() ?>" style="position: relative;">
-        <div id="comment-<?php comment_ID(); ?>" class="comment_body d-flex flex-fill">    
+    $comment_id = $comment->comment_ID;
+    $html = '<li '. comment_class('comment', $comment, null, false).' id="li-comment-'. $comment_id .'" style="position: relative;">
+        <div id="comment-'. $comment_id .'" class="comment_body d-flex flex-fill">    
             <div class="profile mr-2 mr-md-3"> 
-                <?php 
-                echo  get_avatar( $comment, 96, '', get_comment_author() );
-                ?>
+                '.get_avatar( $comment, 96, '', get_comment_author() ).'
             </div>                    
             <section class="comment-text d-flex flex-fill flex-column">
                 <div class="comment-info d-flex align-items-center mb-1">
-                    <div class="comment-author text-sm w-100"><?php comment_author_link(); ?>
-                    <?php is_master( $comment->comment_author_email ); echo site_rank( $comment->comment_author_email, $comment->user_id ); ?>
+                    <div class="comment-author text-sm w-100">'. get_comment_author_link(). is_master( $comment->comment_author_email ) . site_rank( $comment->comment_author_email, $comment->user_id ) .'
                     </div>                                        
                 </div>
                 <div class="comment-content d-inline-block text-sm">
-                    <?php comment_text(); ?> 
-                    <?php
-                    if ($comment->comment_approved == '0'){
-                        echo '<span class="cl-approved">('.__('您的评论需要审核后才能显示！','i_theme').')</span><br />';
-                    } 
-                    ?>
+                    '. get_comment_text($comment) .
+                    ($comment->comment_approved == '0'?'<span class="cl-approved">('.__('您的评论需要审核后才能显示！','i_theme').')</span><br />':'').'
                 </div>
                 <div class="d-flex flex-fill text-xs text-muted pt-2">
                     <div class="comment-meta">
-                        <div class="info"><time itemprop="datePublished" datetime="<?php echo get_comment_date( 'c' );?>"><?php echo timeago(get_comment_date('Y-m-d G:i:s'));?></time></div>
+                        <div class="info"><time itemprop="datePublished" datetime="'. get_comment_date( 'c' ).'">'. timeago(get_comment_date('Y-m-d G:i:s')).'</time></div>
                     </div>
                 </div>
             </section>
         </div>
         <div class="new-comment" style="background: #4bbbff;position: absolute;top: -1rem;bottom: 1rem;left: -1.25rem;right: -1.25rem;opacity: .2;"></div>
-        </li>    
-    <?php die();
+        </li>  ';  
+    io_error(array('status'=>1,'msg'=>'','html'=>$html));
 }
 }
 
@@ -157,6 +110,7 @@ function io_submit_link()
     if (empty($_POST['link_url'])) {
         io_error('{"status":3,"msg":"请填写链接地址"}'); 
     }
+	io_ajax_is_robots();
     $linkdata = array(
         'link_name'   => esc_attr($_POST['link_name']),
         'link_url'    => esc_url($_POST['link_url']),
@@ -287,13 +241,13 @@ function io_n_increment_views() {
         return;
 
     $post_id =  (int) sanitize_key( $_GET['postviews_id'] );
-    if( $post_id > 0 && is_views_execution(io_get_option( 'views_options' )) ) {
+    if( $post_id > 0 && is_views_execution(io_get_option( 'views_options',array() )) ) {
         $views_count = get_post_meta($post_id, 'views', true);  
         if (!$views_count || !is_numeric($views_count)){
             $views_count = 0;
         }
         update_post_meta($post_id, 'views', ($views_count + 1));
-        if (io_get_option('leader_board')&&!is_page()) io_add_post_view($post_id,get_post_type( $post_id ),wp_is_mobile());
+        if (io_get_option('leader_board',false)&&!is_page()) io_add_post_view($post_id,get_post_type( $post_id ),wp_is_mobile());
         echo $views_count+1;
         exit();
     }
@@ -328,7 +282,7 @@ function io_get_post_ranking_data() {
             $series     = ['pc', __('移动端','i_theme'), __('合计','i_theme'),__('下载量','i_theme')];
             else
             $series     = ['pc', __('移动端','i_theme'), __('合计','i_theme')];
-            $day = (int)io_get_option('how_long')-1;
+            $day = (int)io_get_option('how_long',30)-1;
             if($day>29)$day=29;
             for($i=$day;$i>=0;$i--){
                 $time = date("Y-m-d", strtotime('-'. $i . 'day',current_time( 'timestamp' )));
@@ -382,10 +336,17 @@ function unbound_open_id() {
         io_error('{"status":4,"msg":"'.__('请先绑定邮箱！','i_theme').'"}');   
     }
 
-    delete_user_meta($_POST['user_id'],  $_POST['type'] . '_openid');  
-    delete_user_meta($_POST['user_id'],  $_POST['type'] . '_getUserInfo'); 
-    delete_user_meta($_POST['user_id'],  $_POST['type'] . '_avatar'); 
-    if(get_user_meta( $_POST['user_id'], 'avatar_type', true )==$_POST['type']){
+    $type = esc_sql($_POST['type']);
+    if ('weixin_gzh' == $type) {
+        $type = 'wechat_'.io_get_option('open_weixin_gzh_key', 'gzh', 'type');
+    }
+    if('weibo'==$type){
+        $type = 'sina';
+    }
+    delete_user_meta($_POST['user_id'],  $type . '_openid');  
+    delete_user_meta($_POST['user_id'],  $type . '_getUserInfo'); 
+    delete_user_meta($_POST['user_id'],  $type . '_avatar'); 
+    if(get_user_meta( $_POST['user_id'], 'avatar_type', true )==$type){
         update_user_meta( $_POST['user_id'], 'avatar_type', 'letter');
     }
     io_error('{"status":1,"msg":"'.__('已解除绑定','i_theme').'"}'); 
@@ -425,7 +386,7 @@ function io_add_down_count() {
 
     $post_id =  (int) sanitize_key( $_POST['id'] );
     if( $post_id > 0 ) {
-        if (io_get_option('leader_board')&&!is_page()) io_add_post_view($post_id,get_post_type( $post_id ),0,1,'down');
+        if (io_get_option('leader_board',false)&&!is_page()) io_add_post_view($post_id,get_post_type( $post_id ),0,1,'down');
         $down_count = get_post_meta($post_id, '_down_count', true);  
         if (!$down_count || !is_numeric($down_count)){
             $down_count = 0;
@@ -464,27 +425,30 @@ function report_site_content_callback(){
     $post_id    = sanitize_key($_REQUEST['post_id']); 
     $reason     = sanitize_text_field($_REQUEST['reason']);
     $redirect   = sanitize_text_field($_REQUEST['redirect']);
-    if($post_id=='' || $reason=='' && ($reason=='2' && $redirect=='')){
+    if($post_id=='' || $reason=='' || ($reason=='2' && $redirect=='')){
         io_error('{"status":3,"msg":"数据错误！"}'); 
     }
-    if ($count = get_post_meta($post_id, 'report', true)) {
-        $msg = get_post_meta($post_id, '_invalid_reason', true);
-    }else{
-        $count = 0;
-        $msg = array();
+    if('666'===$reason){
+        update_post_meta($post_id, "_revive_url_m", $reason); //地址复活了
+    } else {
+        if ($count = get_post_meta($post_id, 'report', true)) {
+            $msg = get_post_meta($post_id, '_invalid_reason', true);
+        } else {
+            $count = 0;
+            $msg = array();
+        }
+        $msg[] = $reason;
+        update_post_meta($post_id, "report", $count + 1); //反馈次数
+        update_post_meta($post_id, "_invalid_reason", array_unique($msg)); //反馈理由
+        if ($reason == "1")
+            update_post_meta($post_id, "_dead_link", 1); //确定是死链接
+        if ($redirect)
+            update_post_meta($post_id, "_redirect_url", $redirect); //重定向地址
     }
-    $msg[] = $reason;
-    update_post_meta( $post_id, "report", $count+1 ); //反馈次数
-    update_post_meta( $post_id, "_invalid_reason", array_unique($msg) );//反馈理由
-    if($reason=="1") update_post_meta( $post_id, "_dead_link", 1 );//确定是死链接
-    if($redirect) update_post_meta( $post_id, "_redirect_url", $redirect );//重定向地址
-    echo(json_encode(
-        array(
-            'status' =>1,
-            'msg'    =>__("反馈成功",'i_theme')
-        )
+    io_error(array(
+        'status' =>1,
+        'msg'    =>__("反馈成功",'i_theme')
     ));
-    die();
 }
 
 // 首页TAB模式ajax加载内容     
@@ -738,7 +702,7 @@ function load_home_customize_tab(){
                     <div class="card-body" style="padding:0.4rem 0.5rem;">
                         <div class="url-content d-flex align-items-center">
                             <div class="url-img rounded-circle mr-2 d-flex align-items-center justify-content-center">
-                                <?php if(io_get_option('lazyload')): ?>
+                                <?php if(io_get_option('lazyload',false)): ?>
                                 <img class="lazy" src="<?php echo $default_ico; ?>" data-src="<?php echo $ico ?>" alt="<?php echo $c_url->url_name ?>">
                                 <?php else: ?>
                                 <img class="" src="<?php echo $ico ?>" alt="<?php echo $c_url->url_name ?>">
@@ -1268,96 +1232,4 @@ function io_tips_success($msg){
         'status' => 1,
         'msg'    => $msg,
     ));
-}
-add_action( 'wp_ajax_io_007_validate', 'io_007_validate_callback');
-add_action( 'wp_ajax_nopriv_io_007_validate', 'io_007_validate_callback');
-function io_007_validate_callback(){ 
-    //error(json_encode(array(
-    //    'result'=>1,
-    //    'message'  => ''
-    //)));
-    $Ticket = $_POST['ticket'];
-    $Randstr = $_POST['randstr'];
-    io_error(json_encode(validate_ticket($Ticket,$Randstr)));
-}
-/**
- * 请求服务器验证
- */
-function validate_ticket($Ticket,$Randstr){
-    $AppSecretKey = io_get_option('io_captcha','','appsecretkey_007');  
-    $appid = io_get_option('io_captcha','','appid_007');  
-    $UserIP = $_SERVER["REMOTE_ADDR"]; 
-
-    $url = "https://ssl.captcha.qq.com/ticket/verify";
-    $params = array(
-        "aid" => $appid,
-        "AppSecretKey" => $AppSecretKey,
-        "Ticket" => $Ticket,
-        "Randstr" => $Randstr,
-        "UserIP" => $UserIP
-    );
-    $paramstring = http_build_query($params);
-    $content = txcurl($url,$paramstring);
-    $result = json_decode($content,true);
-    if($result){
-        if($result['response'] == 1){
-            
-            return array(
-                'result'=>1,
-                'message'  => ''
-            );
-        }else{
-            return array(
-                'result'=>0,
-                'message'  => $result['err_msg']
-            );
-        }
-    }else{
-        return array(
-            'result'=>0,
-            'message'  => __('请求失败,请再试一次！','i_theme')
-        );
-    }
-}
-
-/**
- * 请求接口返回内容
- * @param  string $url [请求的URL地址]
- * @param  string $params [请求的参数]
- * @param  int $ipost [是否采用POST形式]
- * @return  string
-*/
-function txcurl($url,$params=false,$ispost=0){
-    $httpInfo = array();
-    $ch = curl_init();
-
-    curl_setopt( $ch, CURLOPT_HTTP_VERSION , CURL_HTTP_VERSION_1_1 );
-    curl_setopt( $ch, CURLOPT_USERAGENT , 'ioTheme' );
-    curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT , 60 );
-    curl_setopt( $ch, CURLOPT_TIMEOUT , 60);
-    curl_setopt( $ch, CURLOPT_RETURNTRANSFER , true );
-    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true);
-    if( $ispost )
-    {
-        curl_setopt( $ch , CURLOPT_POST , true );
-        curl_setopt( $ch , CURLOPT_POSTFIELDS , $params );
-        curl_setopt( $ch , CURLOPT_URL , $url );
-    }
-    else
-    {
-        if($params){
-            curl_setopt( $ch , CURLOPT_URL , $url.'?'.$params );
-        }else{
-            curl_setopt( $ch , CURLOPT_URL , $url);
-        }
-    }
-    $response = curl_exec( $ch );
-    if ($response === FALSE) {
-        //echo "cURL Error: " . curl_error($ch);
-        return false;
-    }
-    $httpCode = curl_getinfo( $ch , CURLINFO_HTTP_CODE );
-    $httpInfo = array_merge( $httpInfo , curl_getinfo( $ch ) );
-    curl_close( $ch );
-    return $response;
 }

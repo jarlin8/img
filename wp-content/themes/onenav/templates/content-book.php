@@ -96,7 +96,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                             </div>
                             <div class="site-go mt-3">
                                 <?php if($buy_list = get_post_meta(get_the_ID(), '_buy_list', true)) foreach ($buy_list as $value) {
-                                    echo '<a target="_blank" href="' . go_to($value['url']). '" class="btn btn-mgs rounded-lg" data-toggle="tooltip" data-placement="top" title="'.$value['term'].'"><span class="b-name">'.$value['term'].'</span><span class="b-price">'.($value['price']?:'0').'</span><i class="iconfont icon-buy_car"></i></a>';
+                                    if($value['price']){
+                                        echo '<a target="_blank" href="' . go_to($value['url']). '" class="btn btn-mgs rounded-lg" data-toggle="tooltip" data-placement="top" title="'.$value['term'].'"><span class="b-name">'.$value['term'].'</span><span class="b-price">'.($value['price']?:'0').'</span><i class="iconfont icon-buy_car"></i></a>';
+                                    }else{
+                                        echo '<a target="_blank" href="' . go_to($value['url']). '" class="btn btn-arrow rounded-lg" title="'.$value['term'].'"><span class="b-name">'.$value['term'].'</span><i class="iconfont icon-arrow-r"></i></a>';
+                                    }
                                 }
                                 if( $down_list ) { ?>
                                 <a href="javascript:" class="btn btn-arrow qr-img"  title="<?php echo __('下载资源','i_theme') ?>" data-id="0" data-toggle="modal" data-target="#book-down-modal"><span><?php echo __('下载资源','i_theme') ?><i class="iconfont icon-down"></i></span></a>
@@ -156,7 +160,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
                             <?php show_ad('ad_res_down_popup',false, '<div class="apd apd-footer d-none d-md-block mb-4">' , '</div>');  ?> 
                             <div class="statement p-3"><p></p>
                                 <i class="iconfont icon-statement icon-2x mr-2" style="vertical-align: middle;"></i><strong><?php _e('声明：','i_theme') ?></strong>
-                                <div class="text-sm mt-2" style="margin-left: 39px;"><?php echo io_get_option('down_statement') ?></div>
+                                <div class="text-sm mt-2" style="margin-left: 39px;"><?php echo io_get_option('down_statement','') ?></div>
                             </div>
                         </div>  
                         <div style="position: absolute;bottom: -40px;width: 100%;text-align: center;"><a href="javascript:" data-dismiss="modal"><i class="iconfont icon-close-circle icon-2x" style="color: #fff;"></i></a></div>

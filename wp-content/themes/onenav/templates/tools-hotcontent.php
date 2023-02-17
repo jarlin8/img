@@ -6,14 +6,14 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:02
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-19 12:09:32
+ * @LastEditTime: 2023-02-04 01:45:35
  * @FilePath: \onenav\templates\tools-hotcontent.php
  * @Description: 
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 <?php 
-if(io_get_option('hot_card')){ 
-    if($hot_list = io_get_option('home_hot_list')){
+if(io_get_option('hot_card',false)){ 
+    if($hot_list = io_get_option('home_hot_list','')){
 ?>
     
     <div class="d-flex slider-menu-father mb-4">

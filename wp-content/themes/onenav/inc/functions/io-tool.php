@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-07-04 21:26:44
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-28 22:11:06
+ * @LastEditTime: 2023-02-08 13:00:29
  * @FilePath: \onenav\inc\functions\io-tool.php
  * @Description: 
  */
@@ -43,6 +43,20 @@ function is_rankings(){
  */
 function is_contribute(){
 	return is_page_template('template-contribute.php');
+}
+/**
+ * 是否为登录页
+ * @return bool 
+ */
+function is_io_login(){
+	return get_query_var('custom_action') === 'login';
+}
+/**
+ * 是否为书签页
+ * @return bool 
+ */
+function is_bookmark(){
+	return  get_query_var('bookmark_id');
 }
 /**
  * 生成二维码
@@ -101,6 +115,20 @@ function io_show_qrcode($text, $size = 256, $margin = 10, $level = 'L'){
         header($header);
     }
 	echo io_get_qrcode($text, $size, $margin, $level);
+}
+/**
+ * 获取时间
+ * @param string $format
+ * @param string $offset  日期偏移 如前一天 '-1day'
+ * @return string
+ */
+function io_get_time($format='', $offset=''){
+	$format = $format ?: 'Y-m-d H:i:s';
+	if($offset)
+		$time = date($format, strtotime($offset,current_time( 'timestamp' )));
+	else
+		$time = date($format, current_time('timestamp'));
+	return $time;
 }
 /**
  * 文字计数
@@ -279,4 +307,20 @@ function io_get_captcha($counts = 6){
         $code .= $original[rand(0, count($original) - 1)];
     }
     return strtolower($code);
+}
+/**
+ * 
+ * 
+ * @param mixed $abc
+ * @return float|int
+ */
+function char_to_num($abc){
+    $ten = 0;
+    $len = strlen($abc);
+    for($i=1;$i<=$len;$i++){
+		$char = substr($abc,0-$i,1);//反向获取单个字符
+        $int = ord($char);
+        $ten += ($int-65)*pow(26,$i-1);
+    }
+    return $ten;
 }

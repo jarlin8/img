@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-01-26 18:10:38
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-14 23:24:38
+ * @LastEditTime: 2023-02-08 00:38:23
  * @FilePath: \onenav\inc\redirect-canonical.php
  * @Description: rewrite_rules_array 删除判断 is_admin()
  */ 
@@ -48,7 +48,7 @@ function inner_page_link_format( $link, $number ){
 					$link = preg_replace( "%(\.html)/([0-9]+)(/)?%", '/'."$2$1", $link );
 				}
 			}else{
-				if(io_get_option('rewrites_types') == 'post_id'){
+				if(io_get_option('rewrites_types','post_id') == 'post_id'){
 					$link = preg_replace( "%(\.html)/([0-9]+)(/)?%", '-'."$2$1", $link );
 				}else{
 					$link = preg_replace( "%(\.html)/([0-9]+)(/)?%", '/'."$2$1", $link );
@@ -446,13 +446,13 @@ $_iotpostypes = array(
 global $IOPOSTTYPE;
 $IOPOSTTYPE = apply_filters( 'io_rewrites_post_type', $_iotpostypes );
 if( get_option('permalink_structure') ):
-if( io_get_option('rewrites_end') ){ //删除链接结尾 ‘/’
+if( io_get_option('rewrites_end',false) ){ //删除链接结尾 ‘/’
 	add_filter( 'user_trailingslashit', 'io_custom_post_trailingslashit', 10, 2 );
 }
 if( io_get_option('rewrites_types','post_id') == 'post_id' ) {
 	add_filter( 'post_type_link', 'io_custom_post_type_link_id', 1, 2 );
 	add_action( 'rewrite_rules_array', 'io_custom_post_type_rewrites_init_id' );
-} elseif( io_get_option('rewrites_types') == 'postname' && io_get_option('rewrites_end') ) {// rewrites_end 为 false 使用wp默认规则
+} elseif( io_get_option('rewrites_types','postname') == 'postname' && io_get_option('rewrites_end',true) ) {// rewrites_end 为 false 使用wp默认规则
 	add_filter( 'post_type_link', 'io_custom_post_type_link_name', 1, 2 );
 	add_action( 'rewrite_rules_array', 'io_custom_post_type_rewrites_init_name' );
 }
@@ -469,7 +469,7 @@ function io_custom_post_trailingslashit($string, $type_of_url){
 		return $string;
 	}
 	global $IOPOSTTYPE, $is_new_page, $post, $wp_query;
-	if( $IOPOSTTYPE && in_array( $post->post_type,array_keys($IOPOSTTYPE) ) && isset($wp_query->query_vars['page']) && $wp_query->query_vars['page']==0){
+	if( $IOPOSTTYPE && $post && in_array( $post->post_type,array_keys($IOPOSTTYPE) ) && isset($wp_query->query_vars['page']) && $wp_query->query_vars['page']==0){
 		return untrailingslashit( $string );
 	}
 	if( (!$is_new_page && isset($wp_query->query_vars['page']) && $wp_query->query_vars['page']!=0) ){  // 如果没用启用 $is_new_page 则文章分页结尾加 ‘/’
@@ -482,7 +482,7 @@ function io_custom_post_type_link_id( $link, $post ){
 	global $IOPOSTTYPE, $wp_rewrite;
 	if ( in_array( $post->post_type,array_keys($IOPOSTTYPE) ) ){
 		$slashes = $wp_rewrite->use_trailing_slashes?'/':'';
-		return home_url( $IOPOSTTYPE[$post->post_type].'/' . $post->ID . (io_get_option('rewrites_end') ? '.html' : $slashes) );
+		return home_url( $IOPOSTTYPE[$post->post_type].'/' . $post->ID . (io_get_option('rewrites_end',true) ? '.html' : $slashes) );
 	} else {
 		return $link;
 	}
@@ -493,7 +493,7 @@ function io_custom_post_type_rewrites_init_id( $rules ){
 	
 	$post_rule = '/([0-9]+)?(?:/([0-9]+))?/?$';
 	$comment_rule = '/([0-9]+)?/comment-page-([0-9]{1,})/?$';
-	if(io_get_option('rewrites_end')){
+	if(io_get_option('rewrites_end',true)){
 		if($is_new_page){
             $post_rule = '/([0-9]+)?-?([0-9]+)?.html/?$';
             $comment_rule = '/([0-9]+)?/comment-page-([0-9]{1,}).html/?$';

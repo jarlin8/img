@@ -4,13 +4,13 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-09-10 16:47:20
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-18 21:29:30
+ * @LastEditTime: 2023-02-17 01:02:30
  * @FilePath: \onenav\templates\login\bind.php
  * @Description: 
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; } 
-$is_bind_type      = io_get_option('bind_email');
-$bind_type         = io_get_option('bind_type');
+$is_bind_type      = io_get_option('bind_email','');
+$bind_type         = io_get_option('bind_type','');
 $bind_current_type = 'email';
 $bind_title        = __('绑定邮箱完成注册','i_theme');
 $action_1          = "register_after_bind_email";
@@ -73,10 +73,8 @@ if($is_bind_type!='must'&&!is_user_logged_in()){
             session_start();
         if (!isset($_SESSION['temp_oauth']) || (isset($_SESSION['temp_oauth']) && empty($_SESSION['temp_oauth'])))
             wp_safe_redirect($redirect_to);
-        switch (maybe_unserialize($_SESSION['temp_oauth'])['type']) {
-            case 'qq':
-                $type = 'qq';
-                break;
+        $type = maybe_unserialize($_SESSION['temp_oauth'])['type'];
+        switch ($type) {
             case 'sina':
                 $type = 'weibo';
                 break;
@@ -86,7 +84,7 @@ if($is_bind_type!='must'&&!is_user_logged_in()){
             case 'wechat_dyh':
                 $type = 'wechat-dyh';
                 break;
-            case 'wechat':
+            case 'wx':
                 $type = 'wechat';
                 break;
         }
@@ -109,11 +107,12 @@ if ($bind_current_type == 'email') {
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title><?php _e( '绑定邮箱', 'i_theme' ); ?> - <?php bloginfo('name') ?></title>
-<link rel="shortcut icon" href="<?php echo io_get_option('favicon') ?>">
-<link rel="apple-touch-icon" href="<?php echo io_get_option('apple_icon') ?>">
+<link rel="shortcut icon" href="<?php echo io_get_option('favicon','') ?>">
+<link rel="apple-touch-icon" href="<?php echo io_get_option('apple_icon','') ?>">
 <meta name='robots' content='noindex,nofollow' /> 
 <?php do_action('login_head'); ?>
-<?php $login_color = io_get_option('login_color'); ?>
+<?php wp_head() ?>
+<?php $login_color = io_get_option('login_color',array()); ?>
 <style> 
 :root {
 --bg-color-l: <?php echo $login_color['color-l'] ?>;
@@ -130,7 +129,7 @@ if ($bind_current_type == 'email') {
                 <div class="row no-gutters">
                     <!-- Logo & Information Panel-->
                     <div class="col-md-6 col-lg-7 col-xl-8 my-n5 d-none d-md-block">
-                        <div class="info d-flex p-5 mr-n5 position-relative login-img rounded-xl shadow-lg" style="background-image: url(<?php echo io_get_option('login_ico') ?>);">
+                        <div class="info d-flex p-5 mr-n5 position-relative login-img rounded-xl shadow-lg" style="background-image: url(<?php echo io_get_option('login_ico','') ?>);">
                             <div class="content position-absolute mr-5 pr-5">
                                 <div class="logo">
                                     <h1><?php bloginfo('name') ?></h1>
@@ -140,54 +139,54 @@ if ($bind_current_type == 'email') {
                         </div>
                     </div>
                     <!-- Form Panel    -->
-                    <div class="col-12 col-md-6 col-lg-5 col-xl-4 bg-white rounded-xl shadow-lg">
+                    <div class="col-12 col-md-6 col-lg-5 col-xl-4 bg-blur rounded-xl shadow-lg">
                         <div class="form d-flex align-items-center p-4 p-md-5">
                             <div class="content">
                                 <div class="sign-header h4 mb-3 mb-md-4"><?php echo $bind_title ?></div>
-                                <div id="result" style="color:#f1404b;height:30px"></div>
                                 <?php if($is_bind_type=="must"&&!isset($_GET['type'])): ?>
                                 <ul class="nav nav-justified mb-4" id="pills-tab" role="tablist">
                                     <li class="nav-item">
-                                        <a class="nav-link active" id="pills-new-tab" data-toggle="pill" data-btn="<?php _e('确定','i_theme') ?>" data-action="<?php echo $action_1 ?>" href="#pills-new" role="tab" aria-controls="pills-new" aria-selected="true"><?php _e('设置邮箱','i_theme') ?></a>
+                                        <a class="nav-link active" id="pills-new-tab" data-toggle="pill" data-btn="<?php _e('确定','i_theme') ?>" data-action="<?php echo $action_1 ?>" href="#pills-new" role="tab" aria-controls="pills-new" aria-selected="true"><?php echo $bind_title ?></a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" id="pills-old-tab" data-toggle="pill" data-btn="<?php _e('登录并绑定','i_theme') ?>" data-action="user_login" href="#pills-old" role="tab" aria-controls="pills-old" aria-selected="false"><?php _e('绑定现有账号','i_theme') ?></a>
                                     </li>
                                 </ul>
                                 <?php endif; ?>
-                                <form method="post" action="" class="form-validate mb-3" id="wp_login_form">
+                                <form method="post" action="" class="form-validate wp-user-form mb-3" id="wp_login_form">
                                     <div class="tab-content" id="pills-tabContent">
                                         <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-new-tab">
                                             <input type="hidden" name="action" value="<?php echo $action_1 ?>" />
                                             <input type="hidden" name="old_bind" value="1" />
                                             <input type="hidden" name="bind_type" value="<?php echo $bind_current_type ?>" />
                                             <input type="hidden" name="task" value="<?php echo $task ?>" />
-                                            <div class="form-group mb-0">
-                                                <input type="text" name="user_email" tabindex="2" id="user_email" placeholder="<?php echo $bind_placeholder ?>" value="<?php if(!empty($user_email)) echo $user_email; ?>"  size="30" class="input-material"/> 
-                                                <div style="color:#f1404b;height:25px"><small><?php if(!empty($email_error))  echo '<i class="iconfont icon-crying mr-2"></i>'.$email_error; ?></small></div>
+                                            <div class="form-group mb-3">
+                                                <input type="text" name="email_phone" tabindex="2" id="user_email" placeholder="<?php echo $bind_placeholder ?>" size="30" class="form-control"/> 
                                             </div> 
-                                            <div class="form-group mb-0 verification" style="display:none">
-                                                <input type="text" name="verification_code" tabindex="3" id="verification_code" placeholder="验证码"  size="6" class="input-material"/> 
-                                                <a href="javascript:;" class="btn-token col-form-label text-sm"><?php _e('发送验证码','i_theme') ?></a>
-                                                <div style="color:#f1404b;height:25px"><small class="code-error"><?php if(!empty($code_error))  echo '<i class="iconfont icon-crying mr-2"></i>'.$code_error; ?></small></div>
+                                            <div class="form-group mb-3 verification" style="display:none">
+                                                <input type="text" name="verification_code" tabindex="3" id="verification_code" placeholder="验证码"  size="6" class="form-control"/> 
+                                                <a href="javascript:;" class="btn-token col-form-label text-sm" data-action="reg_email_or_phone_token"><?php _e('发送验证码','i_theme') ?></a>
                                             </div> 
                                         </div>
                                         <div class="tab-pane fade" id="pills-old" role="tabpanel" aria-labelledby="pills-old-tab">
-                                            <div class="form-group mb-4">
-                                                <input type="text" name="username" placeholder="<?php io_get_option('user_login_phone')?_e('用户名/手机号/邮箱','i_theme'):_e('用户名或邮箱','i_theme') ?>" class="input-material">
+                                            <div class="form-group mb-3">
+                                                <input type="text" name="username" placeholder="<?php io_get_option('user_login_phone',false)?_e('用户名/手机号/邮箱','i_theme'):_e('用户名或邮箱','i_theme') ?>" class="form-control">
                                             </div>
-                                            <div class="form-group mb-4">
-                                                <input type="password" name="password" placeholder="<?php _e('密码','i_theme') ?>" class="input-material">
+                                            <div class="form-group position-relative mb-3">
+                                                <input type="password" name="password" placeholder="<?php _e('密码','i_theme') ?>" class="form-control">
+                                                <div class="password-show-btn" data-show="0"><i class="iconfont icon-chakan-line"></i></div>
                                             </div> 
-                                            <input type="hidden" name="redirect_to" value="<?php echo $redirect_to ?>" /> 
+                                            <input type="hidden" name="redirect_to" value="<?php echo esc_url_raw( $redirect_to ); ?>" />
                                         </div>
-                                        <div class="mb-4"><?php do_action('io_bind_form'); ?></div>
+                                        <div class="mb-3"><?php do_action('io_bind_form'); ?></div>
                                     </div>
-                                    <?php  if( LOGIN_007 && io_get_option('io_captcha','','tcaptcha_007') && io_get_option('io_captcha','','appid_007') ) { ?>
-                                    <input class="btn btn-danger btn-block submit-btn" type="button" id="TencentCaptcha" value="<?php _e('确定','i_theme') ?>" data-appid="<?php echo io_get_option('io_captcha','','appid_007') ?>" data-cbfn="loginTicket"/>
-                                    <?php } else { ?>
-                                    <button id="submitbtn" type="submit" class="btn btn-danger btn-block submit-btn"><?php _e('确定','i_theme') ?></button>
-                                    <?php } ?> 
+                                    <div class="form-group mb-3">
+                                        <?php echo get_captcha_input_html($action_1,'form-control') ?>
+                                    </div> 
+                                    <button id="submit" type="submit" class="btn btn-shadow vc-red btn-hover-dark btn-block submit-btn"><?php _e('确定','i_theme') ?></button>
+                                    <?php if (is_user_logged_in() && $is_bind_type=='must') { ?>
+                                    <a href="<?php echo esc_url(wp_logout_url(home_url())) ?>" class="btn vc-red btn-outline btn-block mt-3"><?php _e('退出登录', 'i_theme') ?></a>
+                                    <?php } ?>
                                     <div class="login-form mt-4 mb-n4 d-none"><?php do_action('io_login_form'); ?></div>
                                 </form> 
                             </div>
@@ -198,97 +197,37 @@ if ($bind_current_type == 'email') {
         </div>
         <div class="footer-copyright my-4">
             <div class="text-white-50 text-center">
-                <small>Copyright © <a href="<?php echo esc_url(home_url()) ?>" class="text-white-50" title="<?php bloginfo('name') ?>" rel="home"><?php bloginfo('name') ?></a></small> 
+                <small><?php io_copyright('text-white-50',true) ?></small> 
             </div>
         </div>
     </div>
     <script type="text/javascript">//ajax 提交数据 
-        $("#user_email").on("input propertychange",function(){
-            if($(this).val().length > 2)
-                $(".verification").slideDown(); 
-        });
         $("#pills-new-tab").click(function() {
-            $('input[name="action"]').val($(this).data("action"));
-            $('input.submit-btn').val($(this).data("btn"));
-            $('button.submit-btn').text($(this).data("btn"));
+            var t = $(this);
+            $('input[name="action"]').val(t.data("action"));
+            $('input.submit-btn').val(t.data("btn"));
+            $('button.submit-btn').text(t.data("btn"));
             $('.login-form').addClass('d-none');
+            if($('.image-captcha')[0]){
+                $('.image-captcha').data("id",t.data("action"));
+                $('[name="image_captcha"]').val('');
+                $('.image-captcha').click();
+            }
         });
         $("#pills-old-tab").click(function() {
-            $('input[name="action"]').val($(this).data("action"));
-            $('input.submit-btn').val($(this).data("btn"));
-            $('button.submit-btn').text($(this).data("btn"));
-            $('.login-form').removeClass('d-none');
-        });
-        $(".btn-token").click(function() {
             var t = $(this);
-            var email = $('#user_email');
-            if(!email.val()){
-                $('.code-error').text("<?php _e('请填写邮箱！','i_theme') ?>");
-                return;
+            $('input[name="action"]').val(t.data("action"));
+            $('input.submit-btn').val(t.data("btn"));
+            $('button.submit-btn').text(t.data("btn"));
+            $('.login-form').removeClass('d-none');
+            if($('.image-captcha')[0]){
+                $('.image-captcha').data("id",t.data("action"));
+                $('[name="image_captcha"]').val('');
+                $('.image-captcha').click();
             }
-            t.text("<?php _e('稍等...','i_theme') ?>").addClass("disabled");
-            email.attr("readonly","readonly");
-            $.ajax({
-                url: "<?php echo admin_url( 'admin-ajax.php' ) ?>", 
-                data : "action=reg_email_token&mm_mail="+email.val(),
-                type: 'POST',
-                dataType: 'json',
-            })
-            .done(function(response) {  
-                if(response.status == 1){
-                    settime();
-                    $('.code-error').html('<span style="color:#2ac12a">'+response.msg+'</span>'); 
-                }else{
-                    email.removeAttr("readonly");
-                    t.text("<?php _e('发送验证码','i_theme') ?>").removeClass("disabled");
-                    $('.code-error').text(response.msg); 
-                }
-            })
-            .fail(function() { 
-                email.removeAttr("readonly"); 
-                t.text("<?php _e('发送验证码','i_theme') ?>").removeClass("disabled");
-                $('.code-error').text("<?php _e('网络错误！','i_theme') ?>");
-            });
-        });  
-        var timer;
-        var countdown=60;
-        function settime() {
-            if (countdown == 0) {
-                $(".btn-token").html("<?php _e('重新发送','i_theme') ?>").removeClass("disabled"); 
-                countdown = 60;
-                clearTimeout(timer);
-                $('#user_email').removeAttr("readonly");
-                return;
-            } else {
-                $(".btn-token").html(countdown+"<?php _e('秒后重新发送','i_theme') ?>");
-                countdown--; 
-            };
-            timer=setTimeout(function() { 
-                settime() 
-            },1000) 
-        }
-        $("#wp_login_form").submit(function() {
-            $('#result').html('<i class="loader iconfont icon-loading icon-spin icon-2x"></i>').fadeIn();
-            var input_data = $('#wp_login_form').serialize(); 
-            $.ajax({
-                type: "POST",
-                url: "<?php echo admin_url( 'admin-ajax.php' ) ?>",
-                data: input_data,
-                dataType: "json",
-                success: function(msg){
-                    if(msg.status==1){
-                        $('div#result').html('').css('color','#2ac12a');
-                        $('<div>').html("<i class='iconfont icon-smiley mr-2'></i>"+msg.msg).appendTo('div#result').hide().fadeIn('slow');
-                        setTimeout(location.href="<?php echo $redirect_to ?>",3000);
-                    }else{
-                        $('div#result').html('');
-                        $('<div>').html("<i class='iconfont icon-crying mr-2'></i>"+msg.msg).appendTo('div#result').hide().fadeIn('slow');
-                    }
-                }
-            });
-            return false;
-        }); 
+        });
     </script>
     <?php do_action( 'login_footer' ); ?>
+    <?php wp_footer(); ?>
 </body>
 </html>

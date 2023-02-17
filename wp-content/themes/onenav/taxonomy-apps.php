@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-03-01 10:19:07
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-25 22:11:39
+ * @LastEditTime: 2023-02-04 00:14:04
  * @FilePath: \onenav\taxonomy-apps.php
  * @Description: APP 分类归档
  */
@@ -24,7 +24,7 @@ get_header(); ?>
 						echo '<div class="col-lg-12"><div class="nothing">'.__("没有内容","i_theme").'</div></div>';
 					}
 					if ( have_posts() ) : while ( have_posts() ) : the_post();  
-                        if(io_get_option('app_card_mode') == 'card'){
+                        if(io_get_option('app_card_mode','card') == 'card'){
                             echo'<div class="col-1a col-md-2a col-lg-3a col-xl-4a">';
                             include( get_theme_file_path('/templates/card-appcard.php') ); 
                             echo'</div>';

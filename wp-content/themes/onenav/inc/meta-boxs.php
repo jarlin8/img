@@ -128,9 +128,35 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
     );
     CSF::createSection( $page_options, array( 'fields' => $fields ));
 }
+$user_purview_filters = apply_filters( 'io_post_user_purview_filters', array(
+    array(
+        'id'      => '_user_purview_level',
+        'type'    => 'button_set',
+        'title'   => __('查看权限', 'io_setting'),
+        'options' => array(
+            'all'   => '所有',
+            'user'  => '登录用户',
+            'admin' => '管理员',
+        ),
+        'default' => 'all',
+        'desc'    => '高权用户会看到同权和低权的内容',
+    ),
+));
+if (class_exists('CSF') && IO_PRO) {
+    $post_options = 'post_post_meta';
+    CSF::createMetabox($post_options, array(
+        'title'     => __('查看权限','io_setting'),
+        'post_type' => 'post',
+        'data_type' => 'unserialize',
+        'theme'     => 'light',
+        'priority'  => 'high',
+        'nav'       => 'inline',
+    ));
+    CSF::createSection( $post_options, array( 'fields' => $user_purview_filters ));
+}
 
 $sortable = '';
-if(io_get_option('sites_sortable')){
+if(io_get_option('sites_sortable',false)){
     $sortable = 'disabled';
 }
 // 网站
@@ -142,6 +168,7 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
         'data_type' => 'unserialize',
         'theme'     => 'light',
         'priority'  => 'high',
+        'nav'       => 'inline',
     ));
     $fields = apply_filters('io_sites_post_meta_filters',
         array(
@@ -361,7 +388,16 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
             ),
         )
     );
-    CSF::createSection( $site_options, array( 'fields' => $fields ));
+    CSF::createSection( $site_options, array( 
+        'title'  => '基础信息',
+        'icon'   => 'fas fa-dice-d6',
+        'fields' => $fields )
+    );
+    CSF::createSection( $site_options, array( 
+        'title'  => '用户权限',
+        'icon'   => 'fa fa-shopping-cart',
+        'fields' => $user_purview_filters )
+    );
 }
 
 // app
@@ -617,6 +653,11 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
         'icon'   => 'fab fa-vine',
         'fields' => $fields_ver )
     );
+    CSF::createSection( $app_options, array( 
+        'title'  => '用户权限',
+        'icon'   => 'fa fa-shopping-cart',
+        'fields' => $user_purview_filters )
+    );
 }
 
 // 书籍
@@ -628,6 +669,7 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
         'data_type' => 'unserialize',
         'theme'     => 'light',
         'priority'  => 'high',
+        'nav'       => 'inline',
     ));
     $fields = apply_filters('io_book_post_meta_filters',
         array(
@@ -692,12 +734,12 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                         'placeholder' => __('如留空，请删除项','io_setting'),
                     ),
                 ), 
-                'default' => io_get_option('books_metadata'),
+                'default' => io_get_option('books_metadata',array()),
             ),
             array(
                 'id'     => '_buy_list',
                 'type'   => 'group',
-                'title'  => __('购买列表','io_setting'),
+                'title'  => __('获取列表','io_setting'),
                 'fields' => array(
                     array(
                         'id'      => 'term',
@@ -708,12 +750,12 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                     array(
                         'id'    => 'url',
                         'type'  => 'text',
-                        'title' => __('购买地址','io_setting'),
+                        'title' => __('URL地址','io_setting'),
                     ),
                     array(
                         'id'    => 'price',
                         'type'  => 'text',
-                        'title' => __('价格','io_setting'),
+                        'title' => __('价格(可忽略)','io_setting'),
                     ),
                 ), 
             ),
@@ -749,7 +791,16 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
             ),
         )
     );
-    CSF::createSection( $book_options, array( 'fields' => $fields ));
+    CSF::createSection( $book_options, array( 
+        'title'  => '基础信息',
+        'icon'   => 'fas fa-dice-d6',
+        'fields' => $fields )
+    );
+    CSF::createSection( $book_options, array( 
+        'title'  => '用户权限',
+        'icon'   => 'fa fa-shopping-cart',
+        'fields' => $user_purview_filters )
+    );
 }
 
 // 公告
@@ -1081,6 +1132,7 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                             'modified'      => '修改日期',
                             'date'          => '创建日期',
                             'views'         => '查看次数',
+                            'random'        => '随机',
                         ),
                         'default'   => 'modified',
                         'class'     => 'compact min',
@@ -1189,7 +1241,7 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                     ),
                     array(
                         'type'    => 'content',
-                        'content' => '<div style="text-align:center;"><a id="hot-option" href="javascript:" class="button button-primary" data-id="hot_new" data-user="'.io_get_option('iowen_key').'" style="padding:8px 80px"> 配 置 </a></div>',
+                        'content' => '<div style="text-align:center;"><a id="hot-option" href="javascript:" class="button button-primary" data-id="hot_new" data-user="'.io_get_option('iowen_key','').'" style="padding:8px 80px"> 配 置 </a></div>',
                         'dependency' => array( 
                             array( 'rule_id', '==', '' ),
                             array( 'hot_type', '==', 'api' )
@@ -1197,7 +1249,7 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                     ),
                     array(
                         'type'    => 'content',
-                        'content' => '<div style="text-align:center;"><a id="hot-modify" href="javascript:" class="button button-primary" data-id="hot_new" data-user="'.io_get_option('iowen_key').'" style="padding:8px 80px"> 修 改 </a></div>',
+                        'content' => '<div style="text-align:center;"><a id="hot-modify" href="javascript:" class="button button-primary" data-id="hot_new" data-user="'.io_get_option('iowen_key','').'" style="padding:8px 80px"> 修 改 </a></div>',
                         'dependency' => array( 
                             array( 'rule_id', '!=', '' ),
                             array( 'hot_type', '==', 'api' )

@@ -38,7 +38,7 @@ h3{font-size: 1.1rem;margin-top: 20px}
 							<p>本站名称：<?php echo get_bloginfo('name') ?><br>
 							本站链接：<?php echo esc_url(home_url()) ?><br>
 							本站描述：<?php echo get_bloginfo('description') ?><br>
-							本站图标：<?php echo io_get_option('favicon') ?></p>
+							本站图标：<?php echo io_get_option('favicon','') ?></p>
 						</div>
 						<p>PS:链接由于无法访问或您的博客没有发现本站链接等其他原因，将会暂时撤销超链接，恢复请留言通知我，望请谅解，谢谢！</p>
 						<?php } ?>
@@ -64,7 +64,7 @@ h3{font-size: 1.1rem;margin-top: 20px}
 										<div class="card-body">
 											<div class="url-content d-flex align-items-center"> 
 												<div class="url-img rounded-circle mr-2 d-flex align-items-center justify-content-center">
-													<?php if(io_get_option('lazyload')): ?>
+													<?php if(io_get_option('lazyload',false)): ?>
 													<img class="lazy" src="<?php echo $default_ico; ?>" data-src="<?php echo $ico ?>">
 													<?php else: ?>
 													<img class="" src="<?php echo $ico ?>">
@@ -97,7 +97,7 @@ h3{font-size: 1.1rem;margin-top: 20px}
 										<div class="card-body">
 											<div class="url-content d-flex align-items-center"> 
 												<div class="url-img rounded-circle mr-2 d-flex align-items-center justify-content-center">
-													<?php if(io_get_option('lazyload')): ?>
+													<?php if(io_get_option('lazyload',false)): ?>
 													<img class="lazy" src="<?php echo $default_ico; ?>" data-src="<?php echo $ico ?>">
 													<?php else: ?>
 													<img class="" src="<?php echo $ico ?>">
@@ -122,7 +122,7 @@ h3{font-size: 1.1rem;margin-top: 20px}
 					<h2 class="text-gray text-lg my-4"><i class="iconfont icon-diandian mr-1"></i>提交链接</h2>
 					<div class="card">
 						<div class="card-body">
-							<form method="post" class="io-add-link-form ajax-form">
+							<form method="post" class="io-add-link-form only-submit">
 									
 								<div class="form-row">
 									<div class="form-group col-md-6">
@@ -144,10 +144,11 @@ h3{font-size: 1.1rem;margin-top: 20px}
 										<input type="text" size="40" class="form-control" id="link_image" name="link_image" placeholder="请输入LOGO图像地址" />
 									</div>
 								</div> 
-								<div class="text-right">  
+								<div class=" d-flex justify-content-end flex-wrap">  
 								<input type="hidden" name="action" value="io_submit_link"> 
-								<button type="reset" class="btn btn-light">重填</button>
-								<button type="submit" class="btn btn-dark">提交申请</button>
+								<?php echo get_captcha_input_html('io_submit_link') ?>
+								<button type="reset" class="btn btn-light d-none d-md-block ml-2">重填</button>
+								<button type="submit" id="submit" class="btn btn-dark ml-2">提交申请</button>
 								</div>
 							</form> <!--表单结束-->
 						</div>

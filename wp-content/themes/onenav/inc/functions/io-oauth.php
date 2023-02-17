@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2023-01-24 15:33:40
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-28 22:08:40
+ * @LastEditTime: 2023-02-17 02:07:45
  * @FilePath: \onenav\inc\functions\io-oauth.php
  * @Description: 
  */
@@ -65,8 +65,35 @@ add_action('template_redirect', 'io_oauth_template', 5);
  * @return string
  */
 function get_oauth_callback_url($type){
+    if('weibo'==$type){
+        $type = 'sina';
+    }
     //return esc_url(home_url('/oauth/' . $type . '/callback'));
     return esc_url(get_theme_file_uri("/inc/auth/{$type}-callback.php"));
+}
+/**
+ * 获取社交登录的链接
+ * @param mixed $type
+ * @param mixed $rurl
+ * @return bool|string
+ */
+function io_get_oauth_login_url($type, $rurl = ''){
+    if (!$rurl) {
+        $rurl = !empty($_GET['redirect_to']) ? $_GET['redirect_to'] : home_url();
+    }
+
+    if (io_get_option('open_' . $type, false)) {
+        if ('weixin_gzh' == $type) {
+            $type = io_get_option('open_weixin_gzh_key', 'gzh', 'type');
+        }
+        if('weibo'==$type){
+            $type = 'sina';
+        }
+        //$url = home_url('/oauth/' . $type);
+        $url = get_theme_file_uri("/inc/auth/{$type}.php");
+        return add_query_arg('loginurl', $rurl, $url);
+    }
+    return false;
 }
 /**
  * 输出微信二维码js
@@ -80,16 +107,18 @@ function get_weixin_qr_js($type = 'gzh',$is_popup = false, $echo = true){
     $js = '<script type="text/javascript">';
     $js .= 'var _state="";
     $(document).on("click", ".qrcode-signin", function () {
+        if ($("#user_agreement")[0] && !$("#user_agreement").is(":checked")) {
+            ioPopupTips(2, localize.userAgreement);
+            return false;
+        }
         var _this = $(this);
         var url = _this.attr("href");
         var container = $("#wp_login_form").parent();
-
         _this.addClass("disabled");
         $.post(url, null, function (n) {
             if(n){
                 if(n.msg){
                     console.log(n.msg);
-                    _this.removeClass("disabled");
                 }
                 if(n.html){'
                     .($is_popup?'ioPopup("small",n.html,"","");':'container.html("<div class=\'sign-header h4 mb-3 mb-md-5\'>扫码登录</div>"+n.html+n.but);'). '
@@ -98,8 +127,8 @@ function get_weixin_qr_js($type = 'gzh',$is_popup = false, $echo = true){
                 }
             }else{
                 console.log("二维码获取失败，请稍后再试");
-                _this.removeClass("disabled");
             }
+            _this.removeClass("disabled");
         }, "json");
         return false;
         });';
@@ -161,6 +190,12 @@ function get_weixin_qr_js($type = 'gzh',$is_popup = false, $echo = true){
 }
 /**
  * 获取社交登录信息
+ * 
+ * 'name'  => 'QQ',
+ * 'type'  => 'qq',
+ * 'class' => 'openlogin-qq-a',
+ * 'n_key' => 'nickname',
+ * 'icon'  => 'icon-qq',
  * @return array
  */
 function get_social_type_data(){
@@ -265,25 +300,4 @@ function get_social_type_data(){
         )
     );
     return apply_filters('io_social_type_data_filters', $args);
-}
-/**
- * 获取社交登录的链接
- * @param mixed $type
- * @param mixed $rurl
- * @return bool|string
- */
-function io_get_oauth_login_url($type, $rurl = ''){
-    if (!$rurl) {
-        $rurl = !empty($_GET['redirect_to']) ? $_GET['redirect_to'] : home_url();
-    }
-
-    if (io_get_option('open_' . $type, false)) {
-        if ('weixin_gzh' == $type) {
-            $type = io_get_option('open_weixin_gzh_key', 'gzh', 'type');
-        }
-        //$url = home_url('/oauth/' . $type);
-        $url = get_theme_file_uri("/inc/auth/{$type}.php");
-        return add_query_arg('loginurl', $rurl, $url);
-    }
-    return false;
 }

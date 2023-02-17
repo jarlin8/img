@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2023-01-14 17:19:39
  * @LastEditors: iowen
- * @LastEditTime: 2023-01-29 17:11:22
+ * @LastEditTime: 2023-02-04 01:02:18
  * @FilePath: \onenav\inc\action\ajax-admin.php
  * @Description: 
  */
@@ -36,7 +36,7 @@ function io_weixin_gzh_create_menu()
     if (!$data || !is_array($data)) {
         io_error(array('error'=>1,'msg'=>'json格式错误'));
     }
-    $config = io_get_option('open_weixin_gzh_key');
+    $config = io_get_option('open_weixin_gzh_key',array());
     try {
         require_once get_theme_file_path('/inc/classes/open.wechat.gzh.class.php');
         $oauth = new ioLoginWechatGZH($config['appid'], $config['appkey'],io_get_option('open_weixin_gzh_key', 'gzh', 'type'));

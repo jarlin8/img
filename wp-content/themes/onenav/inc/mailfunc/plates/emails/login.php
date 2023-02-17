@@ -17,5 +17,5 @@ $this->layout('base', array('blogName' => get_bloginfo('name'), 'logo' => io_get
     登录名: <?=$this->e($loginName)?>
     <br>登录密码: ******
     <br>登录时间: <?php echo date("Y-m-d H:i:s",current_time( 'timestamp' )); ?>
-    <br>登录IP: <?=$this->e($ip)?><?php echo ' [' . query_ip_addr($ip) . ']'; ?>
+    <br>登录IP: <?=$this->e($ip)?><?php echo ' [' . io_get_ip_location($ip) . ']'; ?>
 </div>

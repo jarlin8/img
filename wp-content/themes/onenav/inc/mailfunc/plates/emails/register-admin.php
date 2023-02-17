@@ -16,5 +16,5 @@ $this->layout('base', array('blogName' => get_bloginfo('name'), 'logo' => io_get
     用户名: <?=$this->e($loginName)?>
     <br>注册邮箱: <?=$this->e($email)?>
     <br>注册时间: <?php echo date("Y-m-d H:i:s",current_time( 'timestamp' )); ?>
-    <br>注册IP: <?=$this->e($ip)?><?php echo ' [' . query_ip_addr($ip) . ']'; ?>
+    <br>注册IP: <?=$this->e($ip)?><?php echo ' [' . io_get_ip_location($ip) . ']'; ?>
 </div>

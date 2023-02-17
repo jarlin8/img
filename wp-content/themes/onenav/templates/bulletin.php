@@ -6,12 +6,12 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:01
  * @LastEditors: iowen
- * @LastEditTime: 2021-11-23 20:29:07
+ * @LastEditTime: 2023-02-04 01:21:57
  * @FilePath: \onenav\templates\bulletin.php
  * @Description: 
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
-<?php if( io_get_option('show_bulletin') && io_get_option('bulletin')) : ?>
+<?php if( io_get_option('show_bulletin',false) && io_get_option('bulletin',false)) : ?>
 <div id="bulletin_box" class="card my-2" >
     <div class="card-body py-1 px-2 px-md-3 d-flex flex-fill text-xs text-muted">
 		<div><i class="iconfont icon-bulletin" style="line-height:25px"></i></div>
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 				<?php 
 				$args = array(
 					'post_type' => 'bulletin', 
-					'posts_per_page' => io_get_option('bulletin_n')
+					'posts_per_page' => io_get_option('bulletin_n',5)
 				);
 				$i = 0;
 				$the_query = new WP_Query($args); 

@@ -4,15 +4,22 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-21 12:46:57
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-05 20:01:55
+ * @LastEditTime: 2023-02-09 23:09:52
  * @FilePath: \onenav\inc\functions\io-single-site.php
  * @Description: 
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 if(!function_exists('get_data_evaluation')):
+/**
+ * 数据评估HTML
+ * @param mixed $name
+ * @param mixed $views
+ * @param mixed $url
+ * @return void
+ */
 function get_data_evaluation($name,$views,$url){
-    if(!io_get_option('sites_default_content')) return;
+    if(!io_get_option('sites_default_content',false)) return;
     global $post;
     $aizhan_data = go_to('https://www.aizhan.com/seo/'. format_url($url,true));
     $chinaz_data = go_to('https://seo.chinaz.com/?q='. format_url($url,true));
@@ -79,9 +86,13 @@ function report_model_body(){
                         <input type="hidden" name="action" value="report_site_content">
                         <div class="form-row">
                             <?php
-                            foreach(get_report_reason() as $key => $reason){
+                            $option = get_report_reason();
+                            if(get_post_meta(get_the_ID(), '_affirm_dead_url', true)){
+                                $option = array('666' => __('已可访问','i_theme'));
+                            }
+                            foreach ($option as $key => $reason) {
                                 echo '<div class="col-6 py-1">
-                                <label><input type="radio" name="reason" class="reason-type-'.$key.'" value="'.$key.'" '.($key==1?'checked':'').'> '.$reason.'</label>
+                                <label><input type="radio" name="reason" class="reason-type-' . $key . '" value="' . $key . '" ' . (in_array($key,array(1,666)) ? 'checked' : '') . '> ' . $reason . '</label>
                             </div>';
                             }
                             ?>

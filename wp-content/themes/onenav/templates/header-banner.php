@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:02
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-03 23:34:20
+ * @LastEditTime: 2023-02-04 01:30:08
  * @FilePath: \onenav\templates\header-banner.php
  * @Description: 顶部导航
  */
@@ -19,8 +19,8 @@ if(is_404() || is_single() || is_search() || (is_page() && !is_mininav()) || get
 }else if(is_author() || get_query_var("is_user_route")){ //顶部菜单需透明
     $big_header = "big-header-banner";
 }else{
-    $search_big = io_get_option('search_skin') ? io_get_option('search_skin') : false;
-    if (io_get_option('search_position') && in_array("home", io_get_option('search_position')) && $search_big && $search_big['search_big']=='1') {
+    $search_big = io_get_option('search_skin','') ? io_get_option('search_skin','') : false;
+    if (io_get_option('search_position',array('home')) && in_array("home", io_get_option('search_position',array('home'))) && $search_big && $search_big['search_big']=='1') {
         $big_header = $search_big['big_skin']!="no-bg"?'big-header-banner':'no-big-header';
     }
 }
@@ -40,15 +40,15 @@ if(io_get_option('mobile_header_layout','header-center')=='header-center'){
                 <div class="container-fluid p-0 position-relative">
                     <div class="<?php echo $header_logo ?>">
                         <a href="<?php echo esc_url( home_url() ) ?>" class="navbar-brand d-md-none m-0" title="<?php bloginfo('name') ?>">
-                            <img src="<?php echo io_get_option('logo_normal_light') ?>" class="logo-light" alt="<?php bloginfo('name') ?>" height="30">
-                            <img src="<?php echo io_get_option('logo_normal') ?>" class="logo-dark d-none" alt="<?php bloginfo('name') ?>" height="30">
+                            <img src="<?php echo io_get_option('logo_normal_light','') ?>" class="logo-light" alt="<?php bloginfo('name') ?>" height="30">
+                            <img src="<?php echo io_get_option('logo_normal','') ?>" class="logo-dark d-none" alt="<?php bloginfo('name') ?>" height="30">
                         </a>
                     </div>
                     <?php echo $mobile_menu_left ?>
                     <div class="collapse navbar-collapse order-2 order-md-1">
                         <div class="header-mini-btn">
                             <label>
-                                <input id="mini-button" type="checkbox" <?php echo io_get_option('min_nav')?'':'checked="checked"'?>>
+                                <input id="mini-button" type="checkbox" <?php echo io_get_option('min_nav',false)?'':'checked="checked"'?>>
                                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> 
                                     <path class="line--1" d="M0 40h62c18 0 18-20-17 5L31 55"></path>
                                     <path class="line--2" d="M0 50h80"></path>
@@ -57,7 +57,7 @@ if(io_get_option('mobile_header_layout','header-center')=='header-center'){
                             </label>
                         
                         </div>
-                        <?php if(io_get_option('weather') && io_get_option('weather_location')=='header'){ ?>
+                        <?php if(io_get_option('weather',false) && io_get_option('weather_location','header')=='header'){ ?>
                         <!-- 天气 -->
                         <div class="weather">
                             <div id="he-plugin-simple" style="display: contents;"></div>
@@ -87,7 +87,7 @@ if(io_get_option('mobile_header_layout','header-center')=='header-center'){
                         </li>
                         <!-- 一言 end -->
                         <?php } ?>
-                        <?php if( io_get_option('nav_login') ){ 
+                        <?php if( io_get_option('nav_login',false) ){ 
                             global $user_ID; 
                             if(!$user_ID) {?>
                             <li class="nav-login ml-3 ml-md-4">
@@ -97,7 +97,7 @@ if(io_get_option('mobile_header_layout','header-center')=='header-center'){
                                 get_template_part( 'templates/widget/header', 'user' );
                             }
                         } ?>
-                        <?php if( io_get_option('search_position') && in_array("top",io_get_option('search_position')) ){ ?>
+                        <?php if( io_get_option('search_position',array('home')) && in_array("top",io_get_option('search_position',array('home'))) ){ ?>
                         <li class="nav-search ml-3 ml-md-4">
                             <a href="javascript:" data-toggle="modal" data-target="#search-modal"><i class="iconfont icon-search icon-lg"></i></a>
                         </li>

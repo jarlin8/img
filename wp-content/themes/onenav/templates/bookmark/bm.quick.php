@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:01
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-26 14:37:09
+ * @LastEditTime: 2023-02-04 01:52:28
  * @FilePath: \onenav\templates\bookmark\bm.quick.php
  * @Description: 
  */
@@ -16,13 +16,13 @@ global $iodb, $customize_terms, $bookmark_id, $bookmark_set;
 $quick_begin = '<section class="quick-sites position-relative"><div class="container text-center px-5"><div class="row">';
 $quick_after = '</div></div></section>';
 if($bookmark_id == 'default'){
-    if( io_get_option('customize_d_n') ){
+    if( io_get_option('customize_d_n','') ){
         global $post; 
         $args = array(
             'post_type'           => 'sites',  
             'ignore_sticky_posts' => 1,     
             'posts_per_page'      => 12,     
-            'post__in'            => explode(',', io_get_option('customize_d_n')),    
+            'post__in'            => explode(',', io_get_option('customize_d_n','')),    
             'orderby'             => 'post__in',     
         );
         $myposts = new WP_Query( $args );
@@ -35,7 +35,7 @@ if($bookmark_id == 'default'){
             <a class="sites-btn col-3 col-md-2 text-center mb-4" target="_blank" href="<?php echo go_to($url) ?>" title="<?php echo $sites_meta['title'] ?>" <?php echo  nofollow($url,false,true) ?>>
                 <div class="d-flex mb-2">
                 <div class="sites-icon mx-auto ub-blur-bg">
-                    <?php if(io_get_option('lazyload')): ?>
+                    <?php if(io_get_option('lazyload',false)): ?>
                     <img class="lazy" src="<?php echo $sites_meta['default_ico'] ?>" data-src="<?php echo $sites_meta['ico'] ?>" alt="<?php echo $sites_meta['title'] ?>">
                     <?php else: ?>
                     <img class="" src="<?php echo $sites_meta['ico'] ?>" alt="<?php echo $sites_meta['title'] ?>">
@@ -66,7 +66,7 @@ if($bookmark_id == 'default'){
         <a class="sites-btn col-3 col-md-2 text-center mb-4" target="_blank" href="<?php echo go_to($c_url->url) ?>" title="<?php echo $c_url->url_name ?>" <?php echo  nofollow($c_url->url,false,true) ?>>
             <div class="d-flex mb-2">
             <div class="sites-icon mx-auto ub-blur-bg">
-                <?php if(io_get_option('lazyload')): ?>
+                <?php if(io_get_option('lazyload',false)): ?>
                 <img class="lazy" src="<?php echo $default_ico; ?>" data-src="<?php echo $ico ?>" alt="<?php echo $c_url->url_name ?>">
                 <?php else: ?>
                 <img class="" src="<?php echo $ico ?>" alt="<?php echo $c_url->url_name ?>">

@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:55:57
  * @LastEditors: iowen
- * @LastEditTime: 2022-11-12 15:43:05
+ * @LastEditTime: 2023-02-16 00:03:12
  * @FilePath: \onenav\functions.php
  * @Description: 
  */
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 /** -------------------------------------------------
  # 
- # 如果开启的防水墙后进不了后台，将下面的 true 改为 false
+ # 如果开启的验证码后进不了后台，将下面的 true 改为 false
  #
  ** ------------------------------------------------- */ 
 define ('LOGIN_007', true );
