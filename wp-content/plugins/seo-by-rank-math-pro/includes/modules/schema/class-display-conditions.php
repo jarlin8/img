@@ -167,21 +167,16 @@ class Display_Conditions {
 				}
 				$in_schema = $condition['value'];
 			}
-			if (
-				'ProfilePage' === $in_schema &&
-				! empty( $condition['authorID'] ) &&
-				( is_singular() || is_author() )
-			) {
+
+			if ( 'ProfilePage' === $in_schema && ! is_singular() ) {
+				continue;
+			}
+
+			if ( 'ProfilePage' === $in_schema && ! empty( $condition['authorID'] ) ) {
 				$author_ids = wp_parse_id_list( $condition['authorID'] );
-				if ( is_singular() ) {
-					global $post;
+				global $post;
 
-					if ( ! in_array( (int) $post->post_author, $author_ids, true ) ) {
-						continue;
-					}
-				}
-
-				if ( is_author() && ! in_array( get_query_var( 'author' ), $author_ids, true ) ) {
+				if ( ! in_array( (int) $post->post_author, $author_ids, true ) ) {
 					continue;
 				}
 			}

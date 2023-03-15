@@ -337,7 +337,7 @@ class Posts {
 	 * @return integer
 	 */
 	public function get_position_for_badges( $column, $page ) {
-		$start = strtotime( '-30 days ', Stats::get()->end );
+		$start = date( 'Y-m-d H:i:s', strtotime( '-30 days ', Stats::get()->end ) );
 		if ( 'traffic' === $column ) {
 			$rows = DB::traffic()
 				->select( 'page' )

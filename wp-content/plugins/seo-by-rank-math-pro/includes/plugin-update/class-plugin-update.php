@@ -655,9 +655,12 @@ class Plugin_Update {
 
 		$this->maybe_add_auth_params( $params );
 
-		$api_url = add_query_arg( 'v', RANK_MATH_PRO_VERSION, $this->api_url . '/updateCheck/' );
+		if ( ! isset( $params['username'] ) || Admin_Helper::is_plan_expired() ) {
+			return false;
+		}
+
 		$response = wp_remote_post(
-			$api_url,
+			add_query_arg( 'v', RANK_MATH_PRO_VERSION, $this->api_url . '/updateCheck2/' ),
 			[
 				'timeout' => defined( 'DOING_CRON' ) && DOING_CRON ? 30 : 10,
 				'body'    => $params,
