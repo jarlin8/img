@@ -1,0 +1,28 @@
+{
+    "require": {
+        "guzzlehttp/guzzle": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "AIKit\\Dependencies\\": "dependencies/"
+        }
+    },
+    "extra": {
+        "mozart": {
+            "dep_namespace": "AIKit\\Dependencies\\",
+            "dep_directory": "/dependencies/",
+            "classmap_directory": "/classes/dependencies/",
+            "classmap_prefix": "AIKit_"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "\"vendor/bin/mozart\" compose",
+            "composer dump-autoload"
+        ],
+        "post-update-cmd": [
+            "\"vendor/bin/mozart\" compose",
+            "composer dump-autoload"
+        ]
+    }
+}
