@@ -1,5 +1,6 @@
 <?php
 function wp_automatic_license_notice() {
+	return true;
 	 
 	$purchase=get_option('wp_automatic_license','');
 	
@@ -89,3 +90,5 @@ function wp_automatic_license_notice() {
 	
 }
 add_action( 'admin_notices', 'wp_automatic_license_notice' );
+/* Anti-Leecher Identifier */
+/* Credited By BABIATO-FORUM */

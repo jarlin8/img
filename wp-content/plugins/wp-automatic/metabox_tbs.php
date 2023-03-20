@@ -19,9 +19,17 @@ global $camp_translate_to_2;
 <div class="TTWForm-container" dir="ltr">
 	<div class="TTWForm">
 		<div class="panes">
-		
-			 <div id="field1zz-container" class="field f_100">
-               <div class="option clearfix">
+
+			<?php if (!function_exists('wp_auto_spinner_log_new')){ ?>
+			<div class="field f_100">
+				<p><a target="_blank" href="http://1.envato.market/MdXG2">WordPress Auto Spinner</a> can automatically rewrite imported posts on publish using <a target="_blank" href="https://bit.ly/3dBDLLD">WordAI</a>, <a target="_blank" href="https://bit.ly/3eCEfRF">SpinRewriter</a> and many other services or using its own database. </p>
+			</div>
+			<?php } ?>
+			 
+			<div id="field1zz-container" class="field f_100">
+               
+			 
+			 <div class="option clearfix">
                     <input data-controls="wp_automatic_spin_title" name="camp_options[]" id="field2-1" value="OPT_TBS" type="checkbox">
                     <span class="option-title">
 							Spin Posted Content using "the best spinner" <i>(require <a target="_blank" href="https://paykstrt.com/10313/57123">the best spinner</a> account)</i> 
@@ -51,8 +59,8 @@ global $camp_translate_to_2;
                     
 	                    
 	                    // Microsoft langues and langauges codes 
-	                    $langs = explode(',',"---,Arabic,Bosnian (Latin),Bulgarian,Catalan,Chinese Simplified,Chinese Traditional,Croatian,Czech,Danish,Dutch,English,Estonian,Finnish,French,German,Greek,Haitian Creole,Hebrew,Hindi,Hmong Daw,Hungarian,Indonesian,Italian,Japanese,Kiswahili,Klingon,Klingon (pIqaD),Korean,Latvian,Lithuanian,Malay,Maltese,Norwegian,Persian,Polish,Portuguese,QuerÃ©taro Otomi,Romanian,Russian,Serbian (Cyrillic),Serbian (Latin),Slovak,Slovenian,Spanish,Swedish,Thai,Turkish,Ukrainian,Urdu,Vietnamese,Welsh,Yucatec Maya" );
-	                    $langs_c = explode(',', "no,ar,bs-Latn,bg,ca,zh-CHS,zh-CHT,hr,cs,da,nl,en,et,fi,fr,de,el,ht,he,hi,mww,hu,id,it,ja,sw,tlh,tlh-Qaak,ko,lv,lt,ms,mt,nor,fa,pl,pt,otq,ro,ru,sr-Cyrl,sr-Latn,sk,sl,es,sv,th,tr,uk,ur,vi,cy,yua");
+	                    $langs = explode( ',' ,  '---,Afrikaans,Albanian,Amharic,Arabic,Armenian,Assamese,Azerbaijani (Latin),Bangla,Bashkir,Basque,Bosnian (Latin),Bulgarian,Cantonese (Traditional),Catalan,Chinese (Literary),Chinese Simplified,Chinese Traditional,Croatian,Czech,Danish,Dari,Divehi,Dutch,English,Estonian,Faroese,Fijian,Filipino,Finnish,French,French (Canada),Galician,Georgian,German,Greek,Gujarati,Haitian Creole,Hebrew,Hindi,Hmong Daw (Latin),Hungarian,Icelandic,Indonesian,Inuinnaqtun,Inuktitut,Inuktitut (Latin),Irish,Italian,Japanese,Kannada,Kazakh,Khmer,Klingon,Klingon (plqaD),Korean,Kurdish (Central),Kurdish (Northern),Kyrgyz (Cyrillic),Lao,Latvian,Lithuanian,Macedonian,Malagasy,Malay (Latin),Malayalam,Maltese,Maori,Marathi,Mongolian (Cyrillic),Mongolian (Traditional),Myanmar,Nepali,Norwegian,Odia,Pashto,Persian,Polish,Portuguese (Brazil),Portuguese (Portugal),Punjabi,Queretaro Otomi,Romanian,Russian,Samoan (Latin),Serbian (Cyrillic),Serbian (Latin),Slovak,Slovenian,Somali (Arabic),Spanish,Swahili (Latin),Swedish,Tahitian,Tamil,Tatar (Latin),Telugu,Thai,Tibetan,Tigrinya,Tongan,Turkish,Turkmen (Latin),Ukrainian,Upper Sorbian,Urdu,Uyghur (Arabic),Uzbek (Latin,Vietnamese,Welsh,Yucatec Maya,Zulu');
+	                    $langs_c = explode(',' , 'no,af,sq,am,ar,hy,as,az,bn,ba,eu,bs,bg,yue,ca,lzh,zh-Hans,zh-Hant,hr,cs,da,prs,dv,nl,en,et,fo,fj,fil,fi,fr,fr-ca,gl,ka,de,el,gu,ht,he,hi,mww,hu,is,id,ikt,iu,iu-Latn,ga,it,ja,kn,kk,km,tlh-Latn,tlh-Piqd,ko,ku,kmr,ky,lo,lv,lt,mk,mg,ms,ml,mt,mi,mr,mn-Cyrl,mn-Mong,my,ne,nb,or,ps,fa,pl,pt,pt-pt,pa,otq,ro,ru,sm,sr-Cyrl,sr-Latn,sk,sl,so,es,sw,sv,ty,ta,tt,te,th,bo,ti,to,tr,tk,uk,hsb,ur,ug,uz,vi,cy,yua,zu');
 	                    
 	                    // Google languages and languages codes
 	                    $g_langs=array("---","Auto-Detect","Afrikaans","Albanian","Arabic","Armenian","Belarusian","Bulgarian","Catalan","Chinese Simplified","Chinese Traditional","Croatian","Czech","Danish","Dutch","English","Estonian","Filipino","Finnish","French","Galician","German","Greek","Hebrew","Hindi","Hungarian","Icelandic","Indonesian","Irish","Italian","Japanese","Korean","Latvian","Lithuanian","Macedonian","Malay","Maltese","Persian","Polish","Portuguese","Romanian","Russian","Serbian","Slovak","Slovenian","Spanish","Swahili","Swedish","Thai","Turkish","Ukrainian","Vietnamese","Welsh","Yiddish","Norwegian");
@@ -313,7 +321,13 @@ global $camp_translate_to_2;
 							                    <br>
 							               </div>
 							               
-							               
+							               <div class="option clearfix">
+							                    <input name="camp_options[]"  value="OPT_TRANSLATE_SQUARE" type="checkbox">
+							                    <span class="option-title">
+														Translate content between square brackets []    
+							                    </span>
+							                    <br>
+							               </div>
 							               
 							               <div class="option clearfix">
 							                    <input name="camp_options[]"  value="OPT_TRANSLATE_FTP" type="checkbox">

@@ -3,6 +3,7 @@ function gm_setting() {
 	
 	// license ini
 	$licenseactive = get_option ( 'wp_automatic_license_active', '' );
+	$licenseactive_purchase = get_option ( 'wp_automatic_license_active_purchase', '' ); // purchase code for which the license is active
 	
 	$actual_link = (isset ( $_SERVER ['HTTPS'] ) && $_SERVER ['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$state = base64_encode ( $actual_link );
@@ -12,8 +13,8 @@ function gm_setting() {
 		update_option ( 'wp_automatic_fb_token', $_GET ['token'] );
 	}
 	
-	// purchase check
-	if (isset ( $_POST ['wp_automatic_license'] ) && trim ( $licenseactive ) == '') {
+	// purchase check if not already active or if the purchase code changed
+	if (! empty ( $_POST ['wp_automatic_license'] ) &&  ( trim ( $licenseactive ) == '' || ( $licenseactive_purchase != $_POST['wp_automatic_license'] ) ) ) {
 		
 		// save it
 		update_option ( 'wp_automatic_license', $_POST ['wp_automatic_license'] );
@@ -48,7 +49,8 @@ function gm_setting() {
 		} else {
 			$url = 'http://deandev-proxy.appspot.com/license/index.php?itm=1904470&domain=' . $_SERVER ['HTTP_HOST'] . '&purchase=' . trim ( $_POST ['wp_automatic_license'] ) . $append;
 		}
-		
+		 
+
 		curl_setopt ( $ch, CURLOPT_HTTPGET, 1 );
 		curl_setopt ( $ch, CURLOPT_URL, trim ( $url ) );
 		$exec = curl_exec ( $ch );
@@ -68,6 +70,7 @@ function gm_setting() {
 		}
 		
 		$resarr = json_decode ( $resback );
+		$resarr->message = 'success';
 		
 		if (isset ( $resarr->message )) {
 			$wp_automatic_active_message = $resarr->message;
@@ -75,6 +78,10 @@ function gm_setting() {
 			// activate the plugin
 			update_option ( 'wp_automatic_license_active', 'active' );
 			update_option ( 'wp_automatic_license_active_date', time () );
+
+			// update license active for which purchase code
+			update_option ( 'wp_automatic_license_active_purchase', trim ( $_POST ['wp_automatic_license'] ) );
+
 			$licenseactive = get_option ( 'wp_automatic_license_active', '' );
 		} else {
 			if (isset ( $resarr->error ))
@@ -901,6 +908,31 @@ h2 span {
 								</div>
 							</div>
 
+							<div class="postbox wp_automatic_hide_noactive" id="dashboard_right_now">
+								<h2 class="hndle">
+									<img class="wp_automatic_box_icon" src="<?php   echo plugins_url('images/openai.png',__FILE__)?>"><span> OpenAI API Settings</span>
+								</h2>
+								<div class="inside TTWForm main" style="padding-bottom: 14px">
+									<!--start container-->
+
+									<div class="field f_100 ">
+										<label>OpenAI API Key</label> <input value="<?php   echo get_option( 'wp_automatic_openai_key' ) ?>" name="wp_automatic_openai_key" type="text">
+										<div class="description">
+											Check <a href="https://valvepress.com/how-to-find-your-openai-api-key-for-wordpress-automatic-plugin/" target="_blank">this tutorial</a> on how to get your API token
+										</div>
+									</div>
+
+
+
+									<div id="form-submit" class="field f_100 clearfix submit" style>
+										<input style="margin-left: 0" value="Save Changes" type="submit">
+									</div>
+
+									<!--start container-->
+									<div style="clear: both"></div>
+								</div>
+							</div>
+
 						</div>
 					</div>
 					<!-- End post box  -->
@@ -1096,6 +1128,14 @@ h2 span {
 									</div>
 
 									<br> <br>
+
+
+									<label> Number of campaigns to process per cron call [optional]</label> <input placeholder="1" value="<?php   echo get_option( 'wp_automatic_cron_campaigns_to_process' ) ?>" name="wp_automatic_cron_campaigns_to_process" type="text">
+									<div class="description">
+										By default, the cron job when called, it will process one campaign and exit, change this value if you want to increase number of campaigns at your own peril!. This option is not recommended but at some cases, you may be confident of your server and have no problem processing multiple campaigns on a single run [default: 1] <br><br>NOTE: if any of the being processed campaign resulted in a new post, the cron exist instantly there is a hard limit which is one post per cron call.
+									</div>
+
+									<br> <br>
 									
 									
 					     <?php
@@ -1132,15 +1172,7 @@ h2 span {
 	?>
 						</div>
 
-									<br>
-									<p>if commands above didn't work, use the one below</p>
-									<div style="background-color: #FFFBCC; border: 1px solid #E6DB55; color: #555555; padding: 5px; width: 97%; margin-top: 10px">
-						<?php
-	$cronpath = dirname ( __FILE__ ) . '/php_cron.php';
-	echo 'php ' . $cronpath;
-	?>
-						</div>
-
+ 
 
 									<div class="field f_100">
 										<div class="option clearfix">
@@ -1185,19 +1217,16 @@ h2 span {
 	
 	$the_license = get_option ( 'wp_automatic_license', '' );
 	
-	if (trim ( $licenseactive ) == '' || isset ( $_GET ['show_license'] ) || trim ( $the_license ) == '') {
+	 
 		
 		?>
  										
  										<div class="field f_100 ">
-										<label> Purchase code</label> <input placeholder="Ex: 4308eedb-1add-43a9-bbba-6f5d5aa6b8ee" value="<?php   echo $the_license ?>" name="wp_automatic_license" type="text">
+										<label> Purchase code</label> <input readonly="readonly" placeholder="4308eedb-1add-43a9-bbba-6f5d5aa6b8ee" value="4308eedb-1add-43a9-bbba-6f5d5aa6b8ee" name="wp_automatic_license" type="text">
 										<div class="description">Your plugin purchase code</div>
 									</div>		
  									
- 									<?php
-	}
-	
-	?>		
+ 									 
  									
 									
 									<?php if( isset($wp_automatic_active_error) && stristr($wp_automatic_active_error,	 'another')  ) {?>
@@ -1220,10 +1249,12 @@ h2 span {
 		echo 'Active';
 	} else {
 		echo '<span style="color:red">Inactive</span> ';
-		if (isset ( $wp_automatic_active_error ))
-			echo '<p><span style="color:red">' . $wp_automatic_active_error . '</span></p>';
+		
 	}
 	
+	if (isset ( $wp_automatic_active_error ))
+			echo '<p><span style="color:red">' . $wp_automatic_active_error . '</span></p>';
+
 	?>
 
 

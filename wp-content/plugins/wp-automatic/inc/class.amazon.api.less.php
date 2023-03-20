@@ -34,7 +34,6 @@ class wp_automatic_amazon_api_less {
 	public $slugs = array ();
 	public $session_id = '';
 	public $session_ubid = '';
-	
 	function __construct(&$ch, $region) {
 		$this->ch = $ch;
 		$this->region = $region;
@@ -78,6 +77,13 @@ class wp_automatic_amazon_api_less {
 		
 		// curl_setopt($this->ch, CURLOPT_ENCODING , "");
 		
+		// simulate location
+		if ($this->session_ubid != '') {
+	
+			$headers [] = "Cookie: session-id={$this->session_id};  ubid-main={$this->session_ubid}; ";
+			echo '<br>Custom location is requested.. setting session-id and ubid....';
+		}
+		
 		curl_setopt ( $this->ch, CURLOPT_HTTPHEADER, $headers );
 		
 		$exec = curl_exec ( $this->ch );
@@ -115,7 +121,7 @@ class wp_automatic_amazon_api_less {
 			curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url_gcache ) );
 			$exec_gcache = curl_exec ( $this->ch );
 			
-			if (stristr ( $exec_gcache, $asin_code ) && ! stristr ( $exec_gcache, ' 404 ' ) && ! stristr($exec_gcache, 'unusual traffic from your computer') ) {
+			if (stristr ( $exec_gcache, $asin_code ) && ! stristr ( $exec_gcache, ' 404 ' ) && ! stristr ( $exec_gcache, 'unusual traffic from your computer' )) {
 				echo '<-- Perfect';
 				
 				$exec = $exec_gcache;
@@ -124,7 +130,7 @@ class wp_automatic_amazon_api_less {
 				echo '<-- to no avail';
 			}
 		}
-		 
+		
 		// plan c google translate proxy
 		if (stristr ( $exec, '/captcha/' ) || $cuinfo ['http_code'] == 503) {
 			echo '<br>Amazon asked for Capacha... Trying auto-proxy.......<br>';
@@ -136,25 +142,22 @@ class wp_automatic_amazon_api_less {
 				$GoogleTranslateProxy = new GoogleTranslateProxy ( $this->ch );
 				$exec = $GoogleTranslateProxy->fetch ( $item_url );
 				
-				//capcha check return don't deactivate keyword
-				if(stristr($exec, '/captcha/')){
+				// capcha check return don't deactivate keyword
+				if (stristr ( $exec, '/captcha/' )) {
 					echo '<br><span style="color:red">Got a Captcha again, changing use agent for next call</span>';
 					$this->update_agent_required = true;
-					exit;
+					exit ();
 				}
-				
 			} catch ( Exception $e ) {
 				
 				echo '<br>ProxyViaGoogleException:' . $e->getMessage ();
 			}
 		}
 		
-		 //404 not found
-		if($http_code == 404){
+		// 404 not found
+		if ($http_code == 404) {
 			throw new Exception ( '404 Not founnd from Amazon when tried to load this product' );
 		}
-		 
-		
 		
 		// validate returned result
 		if (! stristr ( $exec, $asin_code )) {
@@ -168,8 +171,9 @@ class wp_automatic_amazon_api_less {
 		$exec = str_replace ( 'iso-8859-1', 'utf-8', $exec );
 		
 		// report location
-		preg_match('!id="glow-ingress-line2">(.*?)</span>!s' , $exec , $loc_match );
-		if(isset($loc_match[1])) echo '<br>Found location value:' . $loc_match[1];
+		preg_match ( '!id="glow-ingress-line2">(.*?)</span>!s', $exec, $loc_match );
+		if (isset ( $loc_match [1] ))
+			echo '<br>Found location value:' . $loc_match [1];
 		
 		// dom
 		$doc = new DOMDocument ();
@@ -186,17 +190,17 @@ class wp_automatic_amazon_api_less {
 			$item_title = trim ( $title_element->nodeValue );
 		}
 		
-		if(trim($item_title) == '' ){
-			preg_match( '{<meta property="og:title" content="(.*?)"}' , $exec , $title_matches   );
-			$item_title = isset( $title_matches[1]) ? $title_matches[1] : '' ;
+		if (trim ( $item_title ) == '') {
+			preg_match ( '{<meta property="og:title" content="(.*?)"}', $exec, $title_matches );
+			$item_title = isset ( $title_matches [1] ) ? $title_matches [1] : '';
 		}
 		
 		$ret ['link_title'] = $item_title;
 		
-		// the description productDescription
-		 
+		// the description productDescription https://www.amazon.com/Smiling-Compatible-Tempered-Protector-Protective/dp/B089ZRVKC4 https://monosnap.com/file/ahLC53FKPu5gdSTNZadpvrj6uZ2TaR
 		$item_description = '';
-		preg_match_all ( '{<div id="productDescription.*?<p>(.*?)</p>[^<]}s', $exec, $description_matches );
+		preg_match_all ( '{<div id="productDescription".*?<p>(.*?)</p>[^<]}s', $exec, $description_matches );
+		
 		$description_matches = $description_matches [1];
 		if (isset ( $description_matches [0] )) {
 			
@@ -205,12 +209,15 @@ class wp_automatic_amazon_api_less {
 			$item_description = str_replace ( array (
 					'<p>',
 					'</p>',
-					'<![CDATA['
+					'<![CDATA[' 
 			), '', $item_description );
 		}
 		
-	 
+		echo '<br>ProductDescription [Product description] extracted chars:' . '<--' . strlen ( $item_description );
+		
 		if (trim ( $item_description ) == '' && stristr ( $exec, 'id="aplus"' )) {
+			
+			echo '<br>aplus [User Iframe description]  extracted:';
 			
 			$elements = $xpath->query ( '//*[@id="aplus"]' );
 			
@@ -223,20 +230,35 @@ class wp_automatic_amazon_api_less {
 				), '', $item_description );
 				$item_description = strip_tags ( $item_description, '<p><br><img><h3>' );
 			}
+			
+			echo '<--' . strlen ( $item_description );
 		}
 		
 		// book description bookDesc_iframe_wrapper
-		if (stristr ( $exec, 'bookDesc_iframe_wrapper' )) {
+		if (stristr ( $exec, 'book_description_expander' )) {
 			
-			preg_match_all ( '{<noscript>\s*(<div>.*?)</noscript}s', $exec, $book_desc_matches );
+			$elements_book = $xpath->query ( '//*[@data-a-expander-name="book_description_expander"]' );
 			
-			if (count ( $book_desc_matches [1] ) == 1 && isset ( $book_desc_matches [1] [0] )) {
-				$item_description = $book_desc_matches [1] [0] . '<br>' . $item_description;
+			if ($elements_book->length > 0) {
+				$item_book_description = $doc->saveHTML ( $elements_book->item ( 0 ) );
+				
+				// <a
+				$item_book_description = preg_replace ( array (
+						
+						'{<a.*?/a>}s' 
+				
+				), '', $item_book_description );
+				
+				$item_book_description = strip_tags ( $item_book_description, '<p><br><img><h3>' );
+				
+				$item_description = $item_book_description . '<br>' . $item_description;
 				echo '<br>Book description found.. appending...';
+				
+				echo '<--' . strlen ( $item_book_description ) . ' chars';
 			}
 		}
 		
-		//book detailBulletsWrapper_feature_div
+		// book detailBulletsWrapper_feature_div https://www.amazon.com/dp/B00117ZTOS https://monosnap.com/file/r9XyRm2SF8b0Lzv2Wd2Js5L8cjQWue
 		if (stristr ( $exec, 'detailBulletsWrapper_feature_div' )) {
 			
 			$detailelements = $xpath->query ( '//*[@id="detailBullets_feature_div"]/ul/li' );
@@ -244,21 +266,38 @@ class wp_automatic_amazon_api_less {
 			$detailBulletsWrapper_feature_div = '';
 			if ($detailelements->length > 0) {
 				foreach ( $detailelements as $element ) {
-					$detailBulletsWrapper_feature_div .= (  str_replace("\n" , '' ,($element->nodeValue)) ) . '<br>';
+					$detailBulletsWrapper_feature_div .= (str_replace ( "\n", '', ($element->nodeValue) )) . '<br>';
 				}
 			}
 			
-			 
-			
-			if ( trim($detailBulletsWrapper_feature_div) != ''  ) {
-				//$detailBulletsWrapper_feature_div = str_replace("\n" , '' , $detailBulletsWrapper_feature_div);
-				$item_description =  $item_description . '<br>' . $detailBulletsWrapper_feature_div;
+			if (trim ( $detailBulletsWrapper_feature_div ) != '') {
+				// $detailBulletsWrapper_feature_div = str_replace("\n" , '' , $detailBulletsWrapper_feature_div);
+				$item_description = $item_description . '<br>' . $detailBulletsWrapper_feature_div;
 				echo '<br>detailBulletsWrapper details found.. appending...';
 			}
 		}
-		
+
+		//book on mobile gcache contains id productDescription_fullView, extracting description using this id if item descritpion is empty
+		if(trim($item_description) == '' && stristr($exec,'productDescription_fullView')){
+			echo '<br>productDescription_fullView [Book description] found on mobile.. extracting...';
+
+			$elements_book = $xpath->query ( '//*[@id="productDescription_fullView"]' );
+
+			//saving 
+			if ($elements_book->length > 0) {
+				$item_book_description = $doc->saveHTML ( $elements_book->item ( 0 ) );
+				
+				$item_description = $item_book_description ;
+				 
+				
+				echo '<--' . strlen ( $item_book_description ) . ' chars';
+			}else{
+				echo '<-- Failed to extract';
+			}
+
+		}
+ 
 		$ret ['item_description'] = $item_description;
-		
 		
 		// features
 		$elements = $xpath->query ( '//*[@id="feature-bullets"]/ul/li/span[@class="a-list-item"]' );
@@ -272,7 +311,7 @@ class wp_automatic_amazon_api_less {
 		}
 		
 		$ret ['item_features'] = $item_features;
-
+		
 		// product details //*[@id="prodDetails"]/div
 		
 		$elements_details = $xpath->query ( '//*[@id="prodDetails"]/div' );
@@ -280,33 +319,30 @@ class wp_automatic_amazon_api_less {
 		$item_details = '';
 		if ($elements_details->length > 0) {
 			foreach ( $elements_details as $element ) {
-				$item_details = trim ( $doc->saveHTML($element) );
+				$item_details = trim ( $doc->saveHTML ( $element ) );
 			}
-			 
 		}
 		
-		//remove feedback div
-		$item_details = preg_replace('{<div id="pricingFeedbackDiv.*?div>}s' , '' ,  $item_details );
-		$item_details = preg_replace('{<table id="productDetails_feedback_sections.*?/table>}s' , '' ,  $item_details );
-		 
+		// remove feedback div
+		$item_details = preg_replace ( '{<div id="pricingFeedbackDiv.*?div>}s', '', $item_details );
+		$item_details = preg_replace ( '{<table id="productDetails_feedback_sections.*?/table>}s', '', $item_details );
 		
-		$item_details = str_replace('<h1 class="a-size-medium a-spacing-small secHeader"> Feedback </h1>' , '' , $item_details );
+		$item_details = str_replace ( '<h1 class="a-size-medium a-spacing-small secHeader"> Feedback </h1>', '', $item_details );
 		
 		$ret ['item_details'] = $item_details;
-		 
-		//manufacture description //*[@id="aplus"]/div
+		
+		// manufacture description //*[@id="aplus"]/div
 		$elements_details = $xpath->query ( '//*[@id="aplus"]/div' );
 		
 		$item_details = '';
 		if ($elements_details->length > 0) {
 			foreach ( $elements_details as $element ) {
-				$item_details = trim ( $doc->saveHTML($element) );
+				$item_details = trim ( $doc->saveHTML ( $element ) );
 			}
-			
 		}
 		
 		$ret ['item_manufacture_description'] = $item_details;
-		 
+		
 		// images large":"
 		preg_match_all ( '{colorImages\': \{.*?large":".*?".*?script>}s', $exec, $imgs_matches );
 		
@@ -344,7 +380,7 @@ class wp_automatic_amazon_api_less {
 			} else {
 				$poassible_book_imgs = '';
 			}
-			 
+			
 			if (trim ( $poassible_book_imgs ) != '') {
 				preg_match_all ( '{https://.*?\.jpg}s', $poassible_book_imgs, $possible_book_img_srcs );
 				$possible_book_img_srcs = $possible_book_img_srcs [0];
@@ -359,19 +395,18 @@ class wp_automatic_amazon_api_less {
 			}
 		}
 		
-		if(count($item_images) == 0 && strpos($exec, 'data-zoom-hires')){
+		if (count ( $item_images ) == 0 && strpos ( $exec, 'data-zoom-hires' )) {
 			
-			preg_match_all('{data-zoom-hires="(.*?)"}', $exec, $mobile_imgs_matches);
+			preg_match_all ( '{data-zoom-hires="(.*?)"}', $exec, $mobile_imgs_matches );
 			
-			$item_images = $mobile_imgs_matches[1];
-		 
+			$item_images = $mobile_imgs_matches [1];
 		}
 		
 		$ret ['item_images'] = $item_images;
 		
 		// prices priceblock_ourprice
 		unset ( $elements );
-		 
+		
 		if (stristr ( $exec, 'id="priceblock_dealprice' ) || stristr ( $exec, 'id=priceblock_dealprice' )) {
 			$elements = $xpath->query ( '//*[@id="priceblock_dealprice"]' );
 			
@@ -389,7 +424,6 @@ class wp_automatic_amazon_api_less {
 			
 			echo '<br>Price tag:price_inside_buybox';
 			$elements = $xpath->query ( '//*[@id="price_inside_buybox"]' );
-		
 		} elseif (stristr ( $exec, 'id="newBuyBoxPrice' ) || stristr ( $exec, 'id=newBuyBoxPrice' )) {
 			
 			echo '<br>Price tag:newBuyBoxPrice';
@@ -410,7 +444,7 @@ class wp_automatic_amazon_api_less {
 			
 			if (isset ( $possible_price_matches [0] ) && trim ( $possible_price_matches [0] ) != '')
 				$item_price = $possible_price_matches [0];
-		} elseif ( stristr ( $exec, '<span class="a-size-small a-color-price">')   && ! stristr( $exec, '<span class="a-size-small a-color-price">(' )   ) {
+		} elseif (stristr ( $exec, '<span class="a-size-small a-color-price">' ) && ! stristr ( $exec, '<span class="a-size-small a-color-price">(' )) {
 			
 			echo '<br>Price tag:a-color-price';
 			
@@ -419,7 +453,7 @@ class wp_automatic_amazon_api_less {
 			
 			if (isset ( $possible_price_matches [0] ) && trim ( $possible_price_matches [0] ) != '')
 				$item_price = trim ( $possible_price_matches [0] );
-		}elseif( stristr($exec, '<span class="a-size-large a-color-price">')){
+		} elseif (stristr ( $exec, '<span class="a-size-large a-color-price">' )) {
 			
 			echo '<br>Price tag:a-size-large a-color-price';
 			
@@ -428,23 +462,20 @@ class wp_automatic_amazon_api_less {
 			
 			if (isset ( $possible_price_matches [0] ) && trim ( $possible_price_matches [0] ) != '')
 				$item_price = trim ( $possible_price_matches [0] );
-				
+		} elseif (stristr ( $exec, '<span class="a-price a-text-price a-size-medium" data-a-size="b" data-a-color="price"><span class="a-offscreen">' )) {
 			
-		}elseif(stristr($exec, '<span class="a-price a-text-price a-size-medium" data-a-size="b" data-a-color="price"><span class="a-offscreen">')){
-		
-			//<span class="a-price a-text-price a-size-medium" data-a-size="b" data-a-color="price"><span class="a-offscreen">$8.48</span>
-		
-			echo '<br>Price tag: a-price a-text-price a-size-medium" data-a-size="b" data-a-color="price"  '; 
+			// <span class="a-price a-text-price a-size-medium" data-a-size="b" data-a-color="price"><span class="a-offscreen">$8.48</span>
+			
+			echo '<br>Price tag: a-price a-text-price a-size-medium" data-a-size="b" data-a-color="price"  ';
 			
 			preg_match_all ( '{<span class="a-price a-text-price a-size-medium" data-a-size="b" data-a-color="price"><span class="a-offscreen">(.*?)</span>}s', $exec, $possible_price_matches );
 			$possible_price_matches = $possible_price_matches [1];
 			
 			if (isset ( $possible_price_matches [0] ) && trim ( $possible_price_matches [0] ) != '')
 				$item_price = trim ( $possible_price_matches [0] );
+		} elseif (stristr ( $exec, 'data-a-color="price"><span class="a-offscreen">' )) {
 			
-		}elseif(stristr($exec,'data-a-color="price"><span class="a-offscreen">')){
-			
-			//data-a-color="price"><span class="a-offscreen">$8.48</span>
+			// data-a-color="price"><span class="a-offscreen">$8.48</span>
 			echo '<br>Price tag: data-a-color="price"';
 			
 			preg_match_all ( '{data-a-color="price"><span class="a-offscreen">(.*?)</span>}s', $exec, $possible_price_matches );
@@ -452,13 +483,7 @@ class wp_automatic_amazon_api_less {
 			
 			if (isset ( $possible_price_matches [0] ) && trim ( $possible_price_matches [0] ) != '')
 				$item_price = trim ( $possible_price_matches [0] );
-			
-
 		}
-		
-		
-		
-		
 		
 		// translation extra space removal
 		$item_price = str_replace ( '$ ', '$', $item_price );
@@ -475,16 +500,16 @@ class wp_automatic_amazon_api_less {
 			
 			$item_pre_price = trim ( $elements->item ( 0 )->nodeValue );
 			$item_pre_price = preg_replace ( '{ -.*}', '', $item_pre_price );
-		}elseif(stristr($exec, 'data-a-strike="true" data-a-color="secondary">')){
+		} elseif (stristr ( $exec, 'data-a-strike="true" data-a-color="secondary">' )) {
 			
-			//data-a-strike="true" data-a-color="secondary"><span class="a-offscreen">$169.00</span>
+			// data-a-strike="true" data-a-color="secondary"><span class="a-offscreen">$169.00</span>
 			echo '<br>Pre price tag:data-a-strike="true"';
 			
 			preg_match ( '{data-a-strike="true" data-a-color="secondary"><span class="a-offscreen">(.*?)</span>}s', $exec, $possible_price_matches_pre );
 			$possible_price_matches_pre = $possible_price_matches_pre [1];
 			
-			if(trim($possible_price_matches_pre) != '') $item_pre_price = $possible_price_matches_pre;
-			 
+			if (trim ( $possible_price_matches_pre ) != '')
+				$item_pre_price = $possible_price_matches_pre;
 		}
 		
 		$ret ['item_pre_price'] = $item_pre_price;
@@ -494,40 +519,41 @@ class wp_automatic_amazon_api_less {
 		$ret ['item_reviews'] = 'https://www.amazon.' . $this->region . '/reviews/iframe?akid=AKIAJDYHK6WW2AYDNYJA&alinkCode=xm2&asin=' . $asin_code . '&atag=iatefpro&exp=2035-07-19T16%3A07%3A21Z&v=2&sig=ofoCKfF6T0LDaPzBPX%252BB2tnjuzE3gCl%252BstWxTFdnCJQ%253D';
 		
 		// item rating <div id="averageCustomerReviews" ..... a-star-4">
-		preg_match( '{<div id="averageCustomerReviews" .*?a-star-(\d[-\d]*)}s' , $exec , $rating_matches  );
+		preg_match ( '{<div id="averageCustomerReviews" .*?a-star-(\d[-\d]*)}s', $exec, $rating_matches );
 		
 		$item_rating = '';
-		if( isset($rating_matches[1]) && trim($rating_matches[1]) !='' ){
-			$rating_matches[1] = str_replace('-' , '.' , $rating_matches[1] );
-			if(is_numeric($rating_matches[1])){
-				$item_rating = $rating_matches[1];
+		$ret ['item_rating'] = ''; // default
+		if (isset ( $rating_matches [1] ) && trim ( $rating_matches [1] ) != '') {
+			$rating_matches [1] = str_replace ( '-', '.', $rating_matches [1] );
+			if (is_numeric ( $rating_matches [1] )) {
+				$item_rating = $rating_matches [1];
 				$ret ['item_rating'] = $item_rating;
 				echo '<br>Item rating found:' . $item_rating;
 			}
 		}
 		
-		//out of stock yes or no <div id="outOfStock
-		//example https://www.amazon.es/dp/B01LVXGKSQ
-		$ret ['item_out_of_stock'] = '' ;
+		// out of stock yes or no <div id="outOfStock
+		// example https://www.amazon.es/dp/B01LVXGKSQ
+		$ret ['item_out_of_stock'] = '';
 		
-		if( trim($ret ['item_price']) == ''  && stristr($exec, '<div id="outOfStock') ){
-			$ret['item_out_of_stock'] = 'yes';
+		if (trim ( $ret ['item_price'] ) == '' && stristr ( $exec, '<div id="outOfStock' )) {
+			$ret ['item_out_of_stock'] = 'yes';
 		}
 		
-		//categories <ul class="a-unordered-list a-horizontal a-size-small">
-		$ret['item_cats'] =  '';
-		preg_match('!<ul class="a-unordered-list a-horizontal a-size-small">(.*?)</ul>!s' ,  $exec , $whole_cat_matches );
+		// categories <ul class="a-unordered-list a-horizontal a-size-small">
+		$ret ['item_cats'] = '';
+		preg_match ( '!<ul class="a-unordered-list a-horizontal a-size-small">(.*?)</ul>!s', $exec, $whole_cat_matches );
 		
-		if(isset($whole_cat_matches[1]) && trim($whole_cat_matches[1]) != '' ){
-
-			//cats found 
-			preg_match_all('!<a.*?>(.*?)</a>!s' , $whole_cat_matches[1] , $cats_matches );
-				
-				if(isset($cats_matches[1]) && is_array($cats_matches[1]) ){
-					$ret['item_cats']  = implode( ' > ' , array_map('trim',$cats_matches[1]));
-				}
+		if (isset ( $whole_cat_matches [1] ) && trim ( $whole_cat_matches [1] ) != '') {
+			
+			// cats found
+			preg_match_all ( '!<a.*?>(.*?)</a>!s', $whole_cat_matches [1], $cats_matches );
+			
+			if (isset ( $cats_matches [1] ) && is_array ( $cats_matches [1] )) {
+				$ret ['item_cats'] = implode ( ' > ', array_map ( 'trim', $cats_matches [1] ) );
+			}
 		}
-		 
+		
 		return $ret;
 	}
 	
@@ -609,56 +635,71 @@ class wp_automatic_amazon_api_less {
 	 * @param string $ch
 	 *        	curl handler
 	 */
-	public function getASINs($moreUrl) {
-		
-		// save timing limit
-		sleep ( rand ( 3, 5 ) );
-		
-		// curl get
-		$x = 'error';
-		$url = $moreUrl;
-		
-		// echo '<br>Call URL is: ' . $moreUrl;
-		
-		/*
-		 * $this->ch = curl_init ();
-		 * $verbose=fopen('/Applications/MAMP/htdocs/wordpress/wp-content/plugins/wp-automatic/verbose.txt', 'w');
-		 * curl_setopt($this->ch, CURLOPT_VERBOSE , 1);
-		 * curl_setopt($this->ch, CURLOPT_STDERR,$verbose);
-		 */
+	public function getASINs($moreUrl, $htmlAdded = false) {
+		if (! $htmlAdded) {
+			
+			// save timing limit
+			sleep ( rand ( 3, 5 ) );
+			
+			// curl get
+			$x = 'error';
+			$url = $moreUrl;
+			
+			// echo '<br>Call URL is: ' . $moreUrl;
+			
+			/*
+			 * $this->ch = curl_init ();
+			 * $verbose=fopen('/Applications/MAMP/htdocs/wordpress/wp-content/plugins/wp-automatic/verbose.txt', 'w');
+			 * curl_setopt($this->ch, CURLOPT_VERBOSE , 1);
+			 * curl_setopt($this->ch, CURLOPT_STDERR,$verbose);
+			 */
+			
+			$headers = array ();
+			$headers [] = "Authority: www.amazon.{$this->region}";
+			$headers [] = "Upgrade-Insecure-Requests: 1";
+			// $headers[] = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36";
+			$headers [] = "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+			$headers [] = "Sec-Fetch-Site: none";
+			$headers [] = "Sec-Fetch-Mode: navigate";
+			$headers [] = "Sec-Fetch-Dest: document";
+			$headers [] = "Accept-Language: en-US,en;q=0.9";
+			
+			// simulate location
+			if ($this->session_ubid != '') {
+				
+				$headers [] = "Cookie: session-id={$this->session_id};  ubid-main={$this->session_ubid}; ";
+				echo '<br>Custom location is requested.. setting session-id and ubid....';
+			}
+			
+			curl_setopt ( $this->ch, CURLOPT_HTTPHEADER, $headers );
+			// curl_setopt($this->ch, CURLOPT_ENCODING , "");
+			curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
+			curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+			
+			$exec = curl_exec ( $this->ch );
+			
+			$x = curl_error ( $this->ch );
+			$cuinfo = curl_getinfo ( $this->ch );
+		} else {
+			$exec = $moreUrl;
+			
+			//if whishlist, only grab list items and ignore suggested products at the end of the page <ul id="g-items"
+			if(stristr($exec,'<ul id="g-items"')){
+				
+				$exec_parts =explode('<ul id="g-items"' , $exec );
+				$exec_parts2= explode( '</ul>' , $exec_parts[1]);
 		 
-		$headers = array ();
-		$headers [] = "Authority: www.amazon.{$this->region}";
-		$headers [] = "Upgrade-Insecure-Requests: 1";
-		// $headers[] = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.122 Safari/537.36";
-		$headers [] = "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
-		$headers [] = "Sec-Fetch-Site: none";
-		$headers [] = "Sec-Fetch-Mode: navigate";
-		$headers [] = "Sec-Fetch-Dest: document";
-		$headers [] = "Accept-Language: en-US,en;q=0.9";
-		
-		//simulate location
-		if($this->session_ubid != ''){
-		 
-			$headers[] = "Cookie: session-id={$this->session_id};  ubid-main={$this->session_ubid}; ";
-			echo '<br>Custom location is requested.. setting session-id and ubid....';
+				if($exec_parts2[0] != ''){
+					$exec = $exec_parts2[0];
+					echo '<br>Whishlist items found, adpating HTML...';
+					
+				}
+				
+				
+			}
+			
 			
 		}
-		
-		
-		
-		curl_setopt ( $this->ch, CURLOPT_HTTPHEADER, $headers );
-		// curl_setopt($this->ch, CURLOPT_ENCODING , "");
-		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
-		
-		$exec = curl_exec ( $this->ch );
-		
-		
-	
-		
-		$x = curl_error ( $this->ch );
-		$cuinfo = curl_getinfo ( $this->ch );
 		
 		// Validate reply
 		if (trim ( $exec ) == '') {
@@ -671,15 +712,15 @@ class wp_automatic_amazon_api_less {
 				$exec = $gzdec;
 		}
 		
-		//current location report id="glow-ingress-line2">
-		//New York 10001&zwnj;
-		//</span>
-		preg_match('!id="glow-ingress-line2">(.*?)</span>!s' , $exec , $loc_match );
-		if(isset($loc_match[1]))
-		echo '<br>Found location value:' . $loc_match[1];
-		  
+		// current location report id="glow-ingress-line2">
+		// New York 10001&zwnj;
+		// </span>
+		preg_match ( '!id="glow-ingress-line2">(.*?)</span>!s', $exec, $loc_match );
+		if (isset ( $loc_match [1] ))
+			echo '<br>Found location value:' . $loc_match [1];
+		
 		// Capacha check
-		if (  stristr ( $exec, '/captcha/' ) || $cuinfo ['http_code'] == 503) {
+			if (stristr ( $exec, '/captcha/' ) || ( isset($cuinfo) && $cuinfo ['http_code'] == 503)  ) {
 			echo '<br>Amazon asked for Capacha..  Trying auto-proxy....';
 			
 			require_once 'proxy.GoogleTranslate.php';
@@ -688,44 +729,44 @@ class wp_automatic_amazon_api_less {
 				
 				$GoogleTranslateProxy = new GoogleTranslateProxy ( $this->ch );
 				$exec = $GoogleTranslateProxy->fetch ( $url );
-			
-				//capcha check return don't deactivate keyword 
-				if(stristr($exec, '/captcha/')){
+				
+				// capcha check return don't deactivate keyword
+				if (stristr ( $exec, '/captcha/' )) {
 					echo '<br><span style="color:red">Got a Captcha again, changing use agent for next call</span>';
 					$this->update_agent_required = true;
-					exit;
+					exit ();
 				}
-			
 			} catch ( Exception $e ) {
 				
 				echo '<br>ProxyViaGoogleException:' . $e->getMessage ();
 			}
 		}
 		
-		//best selling pages pter/dp/B08L5M9BTJ/re
-		$asins = array();
-		if( ! stristr( $exec, 'data-asin' ) && stristr($exec, '/dp/')  ){
+		// best selling pages pter/dp/B08L5M9BTJ/re
+		$asins = array ();
+		if (! stristr ( $exec, 'data-asin' ) && stristr ( $exec, '/dp/' )) {
 			echo '<br>No data-asin search but there are products, lets grab them...';
-			preg_match_all('!/dp/(.{10})/!', $exec , $asins_matches);
+			preg_match_all ( '!/dp/(.{10})[/|"|\?]!', $exec, $asins_matches );
+
+		
 			
-			$asins =   (array_values(array_unique($asins_matches[1])));
-			  
+			$asins = (array_values ( array_unique ( $asins_matches [1] ) ));
 		}
 		
 		// validate products found
-		if (! stristr ( $exec, 'data-asin' ) && (! isset($asins) || count($asins) == 0  ) ) {
+		if (! stristr ( $exec, 'data-asin' ) && (! isset ( $asins ) || count ( $asins ) == 0)) {
 			// throw new Exception('No items found') ;
 			echo '<br>No items found for search results';
 			
 			echo $exec;
 			
 			return array ();
-		} 
+		}
 		
-		//extract from search results
-		if(count($asins ) == 0){
+		// extract from search results
+		$all_valid_items_html = '';
+		if (count ( $asins ) == 0) {
 			
-			 
 			// dom data-index
 			// dom
 			$doc = new DOMDocument ();
@@ -735,8 +776,6 @@ class wp_automatic_amazon_api_less {
 			
 			// title
 			$elements = $xpath->query ( '//*[@data-index]' );
-			
-			$all_valid_items_html = '';
 			
 			foreach ( $elements as $single_asin_element ) {
 				
@@ -768,7 +807,8 @@ class wp_automatic_amazon_api_less {
 		$slugs = array (); // ini
 		foreach ( $asins as $product_asin ) {
 			preg_match ( '{/([^/]*?)/dp/' . $product_asin . '}', $all_valid_items_html, $slug_match );
-			if( isset( $slug_match [1]) ) $slugs [] = $slug_match [1];
+			if (isset ( $slug_match [1] ))
+				$slugs [] = $slug_match [1];
 		}
 		
 		$this->slugs = $slugs;

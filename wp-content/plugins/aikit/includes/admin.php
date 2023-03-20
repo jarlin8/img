@@ -129,6 +129,14 @@ class AIKit_Admin {
                     'translatedName' => __('Hungarian', 'aikit') . ' (Magyar)',
                     'name' => 'Magyar',
                 ],
+                'bg' => [
+                    'translatedName' => __('Bulgarian', 'aikit') . ' (Български)',
+                    'name' => 'Български',
+                ],
+                'el' => [
+                    'translatedName' => __('Greek', 'aikit') . ' (Ελληνικά)',
+                    'name' => 'Ελληνικά',
+                ],
             ];
         }
         return self::$_instance;
@@ -994,6 +1002,7 @@ class AIKit_Admin {
         $setting = get_option('aikit_setting_openai_model');
 
         $defaultModels = [
+            'gpt-3.5-turbo',
             'gpt-3.5-turbo-0301',
             'text-davinci-003',
             'text-curie-001',

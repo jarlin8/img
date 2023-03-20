@@ -64,6 +64,19 @@ class InstaScrape {
 		$x = curl_error ( $this->ch );
 		$cuinfo = curl_getinfo ( $this->ch );
 		
+		//report cuinfo
+		echo '<br>cuinfo:' ; 
+		print_r ( $cuinfo);
+		print_r($x);
+
+		// Curl if http code is 429 
+		if (isset ( $cuinfo ['http_code'] ) && $cuinfo ['http_code'] == 429) {
+			
+			//report 
+			echo '<br>429 error, too many requests, please use a private proxy on the plugin settings page';	
+			
+		}
+
  		
 		if (isset ( $cuinfo ['url'] ) &&  $this->is_not_logged_in($cuinfo ) ) {
 			throw new Exception ( '<br><span style="color:red">Added session is not correct or expired. Please visit the plugin settings page and add a fresh session. Also make sure not to logout of your account for the session to stay alive.</span>' );
@@ -186,7 +199,7 @@ class InstaScrape {
 		
 		// Curl get
 		$x = 'error';
-		$url = 'https://www.instagram.com/' . trim ( $name );
+		$url = 'https://www.instagram.com/' . trim ( $name ).'/';
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
 		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
 		
@@ -209,12 +222,63 @@ class InstaScrape {
 		$cuinfo = curl_getinfo ( $this->ch );
 		$http_code = $cuinfo ['http_code'];
 		$x = curl_error ( $this->ch );
-		
+
+		//report cui
+		echo '<br>curl info:';
+		echo '<pre>';
+		print_r($cuinfo);
+		echo '</pre>';
 		 
+		
+	 
+		//first try 
+		if (isset ( $cuinfo ['url'] ) &&    $this->is_not_logged_in($cuinfo )   ) {
+			
+			echo '<br>First try failed, trying loading the page directly without cookies';
+			
+			//we are not logged in, lets find another fkn way
+			//curl ini
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_HEADER,0);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+			curl_setopt($ch, CURLOPT_TIMEOUT,20);
+			curl_setopt($ch, CURLOPT_REFERER, 'http://www.bing.com/');
+			curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.8) Gecko/2009032609 Firefox/3.0.8');
+			curl_setopt($ch, CURLOPT_MAXREDIRS, 5); // Good leeway for redirections.
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // Many login forms redirect at least once.
+			curl_setopt($ch, CURLOPT_COOKIEJAR , "cookie.txt");
+			curl_setopt ( $ch, CURLOPT_PROXY, trim ( '108.186.244.116:80' ) );
+			
+			//curl get
+			$x='error';
+		  
+			//curl get
+			$x='error';
+		 
+			curl_setopt($ch, CURLOPT_HTTPGET, 1);
+			curl_setopt($ch, CURLOPT_URL, trim($url));
+			$exec=curl_exec($ch);
+			$x=curl_error($ch);
+			$cui = curl_getinfo ( $ch );
+
+			//report cui
+			echo '<br>curl info:';
+			echo '<pre>';
+			print_r($cui);
+			echo '</pre>';
+
+
+			echo $exec.$x;
+			exit;
+			  
+			
+		}
 		
 		// Curl error check
 		
-		if (isset ( $cuinfo ['url'] ) &&    $this->is_not_logged_in($cuinfo )   ) {
+		if (isset ( $cuinfo ['url'] ) &&    $this->is_not_logged_in($cuinfo ) && ! stristr($exec, 'profilePage_')  ) {
+ 			
 			throw new Exception ( '<br><span style="color:red">Added session is not correct or expired. Please visit the plugin settings page and add a fresh session. Also make sure not to logout of your account for the session to stay alive.</span>' );
 		}
 		
@@ -318,7 +382,7 @@ class InstaScrape {
 		
 		//workaround for IG returing error when loading items page, which adds new cookies , this one reset cookis
 		curl_setopt( $this->ch, CURLOPT_COOKIELIST	 , 'ALL'); //erases all previous cookies held in memory including ds_user_id which causes the issue
-		curl_setopt ( $this->ch, CURLOPT_COOKIE, 'sessionid=' . $this->sess . '; csrftoken=eqYUPd3nV0gDSWw43IYZjydziMndrn4l; ds_user_id=123;' );
+		curl_setopt ( $this->ch, CURLOPT_COOKIE, 'sessionid=' . $this->sess . '; csrftoken=eqYUPd3nV0gDSWw43IYZjydziMndrn4l;' );
 		
 	}
 	
@@ -328,7 +392,14 @@ class InstaScrape {
 		$url = $cuinfo['url'];
 		$code = $cuinfo['http_code'];
 		
-		if(stristr($url , 'login') || stristr($url, 'privacy/checks' ) || $code == 401 ){
+		if(stristr($url , 'login') || stristr($url , 'instagram.com/challenge') || stristr($url, 'privacy/checks' ) || $code == 401 ){
+			
+			//report cookie invalid
+			echo '<br>Cookie invalid, redirecting to login page, deletting cookie...';
+
+			//delete wordpress option wp_automatic_ig_sess
+			delete_option('wp_automatic_ig_sess');
+			
 			return true;
 		}else{
 			return false;

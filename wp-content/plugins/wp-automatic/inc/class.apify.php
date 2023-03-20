@@ -16,7 +16,13 @@ class ValvePress_APIFY {
 		
 	}
 	
-	function apify(){
+	/**
+	 * Fetches the content from APIFY.COM
+	 * @param string $apify_wait_for_mills - wait for x milliseconds before fetching the content from APIFY default 0
+	 * @return string - the content from APIFY.COM
+	 * @throws Exception - if the APIFY token is empty or the reply is empty or the reply contains an error or the reply does not contain pageContent 
+	 */
+	function apify($apify_wait_for_mills = 0){
 		
 		//empty reply
 		if(trim($this->token) == '' ){
@@ -25,6 +31,19 @@ class ValvePress_APIFY {
 		
 		
 		$json_to_post =str_replace('https://www.example.com', $this->link, $this->json_raw);
+
+		//parse int $api_wait_for_mills
+		$apify_wait_for_mills = intval($apify_wait_for_mills);
+
+		//if apify_wait_for_mills is not 0 and is a number 
+		if($apify_wait_for_mills != 0 && is_numeric($apify_wait_for_mills) ){
+			
+			// add await context.waitFor(1000); to the json before const pageTitle
+			$json_to_post = str_replace('const pageTitle', 'await context.waitFor(' . $apify_wait_for_mills . ');\n    const pageTitle', $json_to_post);
+		
+			//echo $json_to_post;exit;
+		}
+
 
 		$curlurl="https://api.apify.com/v2/acts/apify~web-scraper/run-sync-get-dataset-items?token=" . $this->token;
 		 

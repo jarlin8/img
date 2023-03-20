@@ -28,7 +28,7 @@ function aikit_rest_openai_generate_images ($data) {
 	}
 
 	$client = new \AIKit\Dependencies\GuzzleHttp\Client();
-	$model = 'gpt-3.5-turbo-0301';
+	$model = 'gpt-3.5-turbo';
     $prompt = sprintf("Describe an image that would be best fit for this text:\n\n %s\n\n----\nCreative image description in one sentence of 6 words:\n", $text);
     $maxTokens = min(
         intval((str_word_count($text) + 150) * 1.33),
@@ -66,7 +66,7 @@ function aikit_rest_openai_generate_images ($data) {
 		return new WP_Error( 'no_choices', 'Could not generate image prompt', array( 'status' => 400 ) );
 	}
 
-    if (strpos($model, 'gpt-3.5-turbo') === 0) {
+    if (strpos($model, 'gpt-3.5-turbo') === 0 || strpos($model, 'gpt-4') === 0) {
         $imagePrompt = trim($choices[0]['message']['content']);
     } else {
         $imagePrompt = trim($choices[0]['text']);
@@ -224,6 +224,14 @@ function aikit_get_max_tokens_for_model($model) {
         return 4000;
     }
 
+    if (strpos($model, 'gpt-4-32k') === 0) {
+        return 32000;
+    }
+
+    if (strpos($model, 'gpt-4') === 0) {
+        return 8000;
+    }
+
     return 2000;
 }
 
@@ -340,7 +348,7 @@ function aikit_rest_openai_do_request ( $data, $type, $language ) {
 }
 
 function aikit_get_openai_text_completion_endpoint ($model) {
-    if (strpos($model, 'gpt-3.5-turbo') === 0) {
+    if (strpos($model, 'gpt-3.5-turbo') === 0 || strpos($model, 'gpt-4') === 0) {
         return 'https://api.openai.com/v1/chat/completions';
     }
 
@@ -348,8 +356,7 @@ function aikit_get_openai_text_completion_endpoint ($model) {
 }
 
 function aikit_build_text_generation_request_body ($model, $prompt, $maxTokensToGenerate, $temperature = 0.7) {
-    // if model starts with gpt-3.5-turbo then we need to use the new API
-    if (strpos($model, 'gpt-3.5-turbo') === 0) {
+    if (strpos($model, 'gpt-3.5-turbo') === 0 || strpos($model, 'gpt-4') === 0) {
         return json_encode([
             'model' => $model,
             'messages' => [
@@ -378,7 +385,7 @@ function aikit_parse_text_generation_response ($responseJson, $model, $maxTokens
         return new WP_Error( 'no_choices', 'No completions found, please try again using different text.', array( 'status' => 400 ) );
     }
 
-    if (strpos($model, 'gpt-3.5-turbo') === 0) {
+    if (strpos($model, 'gpt-3.5-turbo') === 0 || strpos($model, 'gpt-4') === 0 ) {
         $resultText = trim($choices[0]['message']['content']);
     } else {
         $resultText = trim($choices[0]['text']);

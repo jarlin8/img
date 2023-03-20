@@ -101,6 +101,7 @@ function craigslist_fetch_items($keyword, $camp) {
 	$exec = curl_exec ( $this->ch );
 	$x = curl_error ( $this->ch );
 	
+
 	
 	// error check
 	if(trim($x) != ''){

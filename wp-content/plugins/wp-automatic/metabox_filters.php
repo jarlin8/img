@@ -261,6 +261,11 @@ global $camp_post_execlude;
 								            
 						               </div>
 						               
+									   <input name="camp_options[]"  value="OPT_CRITERIA_ALL" type="checkbox">
+										<span class="option-title">
+												Skip the post only if all rules applied (default: skip if any rule applied)
+										</span>
+
 						               <div class="description">* This option will check returned fields that you pick and skip the post if <strong>ANY</strong> of the set rules applied
 								            <br><br>*Copy the field name from below the campaign post template option above
 								            <br><br>*<strong>Example1</strong>: we can skip the post if the title contains the word "bad", use this config:<br>[vid_title] <small>--</small> Contains <small>--</small> Bad
@@ -268,7 +273,7 @@ global $camp_post_execlude;
 								            <br><br>*<strong>Example2</strong>: If we want to skip the youtube video if the author is named "Atef", use this config:<br>[vid_author_title] <small>--</small> == <small>--</small> Atef 
 								            
 								            
-								            </div>
+								        </div>
 		               
 		               </div>
 		               
@@ -385,6 +390,11 @@ global $camp_post_execlude;
 								                 
 							                    
 								            </div>
+
+											<input name="camp_options[]"  value="OPT_CRITERIA_MUST_ANY" type="checkbox">
+											<span class="option-title">
+													Approve the post if any rule applies (default: approve if all rules apply)
+											</span>
 								            
 								            <div class="description">* This option will check returned fields that you pick and import the post only if <strong>ALL</strong> set rules applied
 								            <br><br>*Copy the field name from below the campaign post template option above
@@ -457,6 +467,27 @@ global $camp_post_execlude;
 			            
 	               </div>
          </div> 
+         
+         <div class="field f_100">
+               <div class="option clearfix">
+                    
+                    <input name="camp_options[]" data-controls="comment_skip_filter_keys" value="OPT_FILTER_COMMENT" type="checkbox">
+                    <span class="option-title">
+							Skip the comment if a keyword exists in the comment body or username
+                    </span>
+                    <br>
+                    
+		            <div id="comment_skip_filter_keys" class="field f_100">
+		               <label for="field6">
+		                   Banned keywords (one word per line)
+		               </label>
+		               
+		            	<textarea name="cg_comment_filter_keys" ><?php   echo @$camp_general['cg_comment_filter_keys']?></textarea>
+		            	<div class="description">*The plugin will check if this keyword exist on the comment and skip if available. it will also check the username </div>
+ 		            </div>
+		            
+               </div>
+		 </div>
 		
 		<div class="clear"></div>
 	</div>

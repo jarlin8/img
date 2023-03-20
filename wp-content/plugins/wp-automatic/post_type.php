@@ -215,6 +215,16 @@ function wp_automatic_columns_display($wp_automatic_columns){
 			 
 				echo $ret->camp_yt_user;
 			
+			}elseif( $ret->camp_type == 'Amazon' && $ret->camp_keywords == '*' ){
+				
+				$camp_general = unserialize (base64_decode( $ret->camp_general) );
+			
+				if(trim($camp_general['cg_am_custom_urls']) != ''){
+					echo $camp_general['cg_am_custom_urls'] ;
+				}else{
+					echo 'Custom HTML';
+				}
+				
 			}else{
 				
 				if(strlen($ret->camp_keywords) > 100){

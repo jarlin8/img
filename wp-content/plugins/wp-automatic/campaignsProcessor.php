@@ -5,23 +5,14 @@
  *
  */
 
-if (   time() > 1596240000){
-	$wp_automatic_lcs = get_option('wp_automatic_license_active','');
-	$wp_automatic_lcsc = get_option('wp_automatic_license','');
-	
-	if( trim($wp_automatic_lcs) != 'active'  || ! stristr($wp_automatic_lcsc, '-') ){
-		
-		delete_option('wp_automatic_license_active');
-		echo 'Please visit the plugin settings page and add your purchase code to activate the plugin';
-		exit;
-	}
-}
+
 
 class CampaignProcessor{
 	
 	// Public vars
 	public $db;
 	public $prefix;
+	public $wp_prefix;
 	 
 	
 	function __construct(){
@@ -29,7 +20,7 @@ class CampaignProcessor{
 		// Database initialization
 		global $wpdb;
 		$this->db = $wpdb;
-		$this->wp_prefix = $wpdb->prefix;
+		$this->prefix = $this->wp_prefix = $wpdb->prefix;
 		
 		echo '<small><i>Plugin started performance report before running the script: '.  number_format(memory_get_peak_usage()/(1024*1024),2) .'MB of ram and DB queries count:'.get_num_queries() .'</i> </small><br>';
 		
@@ -75,17 +66,24 @@ class CampaignProcessor{
 		// check if need to process camaigns or skip
 		if (count ( $camps ) == 0) {
 			
-			  echo '<br>No valid campaigns to process ';
+			  echo '<br>No valid campaigns were found to process ';
 			return;
 			
 		}else{
 			
-			if(trim($cid) == '')   echo '<br>DB contains '.count($camps).' campaigns<br>';
+			if(trim($cid) == '')   echo '<br>DB contains ('.count($camps).') campaigns<br>';
 				
 		}
 	
 		// now processing each fetched campaign
 		$i = 0;
+		$processed_campaigns_count = 0; // count the number of campaigns processed
+		$wp_automatic_cron_campaigns_to_process = trim( get_option('wp_automatic_cron_campaigns_to_process',1)); // get the number of campaigns to process before exiting the script
+
+		//if not is numeric or not > 1 set it to 1
+		if(! is_numeric($wp_automatic_cron_campaigns_to_process) || $wp_automatic_cron_campaigns_to_process < 1 ) $wp_automatic_cron_campaigns_to_process = 1;
+
+
 		foreach ( $camps as $campaign ) {
 			
 			// reading post status
@@ -130,11 +128,11 @@ class CampaignProcessor{
 						
 					$difference = $this->get_time_difference($last_update, time());
 						
-					  echo '<br> last processing was <strong>'.$difference. '</strong> minutes ago ';
+					  echo ' & last processing was <strong>'.$difference. '</strong> minutes ago ';
 						
 					if($difference > $post_every ){
 						
-						echo '<br>Campaign passed the time and eligible to be processed';
+						echo '<-- Campaign passed the update interval and is eligible to be processed, let\'s process it...';
 						
 	
 						//process
@@ -186,20 +184,43 @@ class CampaignProcessor{
 							if($eligible_for_posting){
 								update_post_meta($campaign->camp_id,'last_update',time());
 								$this->processCampaign( $campaign ,'Cron' );
-								echo '<br>Exit cron now and complete next cron.';
-								exit;
+
+								//increment processed campaigns count
+								$processed_campaigns_count++;
+
+								//if processed campaigns count is equal to max campaigns per cron then exit cron
+								if($processed_campaigns_count >= $wp_automatic_cron_campaigns_to_process){
+									
+									//report that processed campaigns reached max campaigns per cron and exit cron
+									echo '<br>Processed '.$processed_campaigns_count.' campaigns and reached max campaigns per cron. Exit cron now and complete next cron.';
+
+									exit;
+								}
+								 
 							}
 						 
 							
 						}else{
 							update_post_meta($campaign->camp_id,'last_update',time());
 							$this->processCampaign( $campaign ,'Cron' );
-							echo '<br>Exit cron now and complete next cron.';
-							exit;
+							
+							//increment processed campaigns count
+							$processed_campaigns_count++;
+
+							//if processed campaigns count is equal to max campaigns per cron then exit cron
+							if($processed_campaigns_count >= $wp_automatic_cron_campaigns_to_process){
+								
+								//report that processed campaigns reached max campaigns per cron and exit cron
+								echo '<br>Processed '.$processed_campaigns_count.' campaigns and reached max campaigns per cron. Exit cron now and complete next cron.';
+
+								exit;
+							}
+							 
+							 
 						}
 						
 					}else{
-						  echo '<br>Campaign still not passed '.$post_every . ' minutes';
+						  echo '<-- Campaign still not passed '.$post_every . ' minutes';
 					}
 						
 						
@@ -223,7 +244,7 @@ class CampaignProcessor{
 				*/
 				
 			}else{
-				  echo "<br>Campaign {$campaign->camp_id} is not published ..";
+				  echo "<br>Campaign #{$campaign->camp_id} is not published skipping...<br>";
 				  
 				  if(isset($_GET['id'])){
 				  	
@@ -399,6 +420,11 @@ class CampaignProcessor{
 			
 			require_once 'core.aliexpress.php';
 			$WpAutomatic = new WpAutomaticaliexpress();
+
+		}elseif($camp_type == 'gpt3'){
+			
+			require_once 'core.gpt3.php';
+			$WpAutomatic = new WpAutomaticgpt3();	
 			
 		}elseif( $camp_type == 'Multi' ){
 			

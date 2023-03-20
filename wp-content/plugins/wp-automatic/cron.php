@@ -21,10 +21,47 @@ if (isset ( $_GET ['id'] )) {
 	if (! is_int ( $id ))
 		exit ();
 } else {
+
+	//update when a last time an external cron job was triggered
+	update_option ( 'wp_automatic_cron_last', time () );
 	
 	$id = false;
 	echo '<strong>Welcome</strong> to WordPress Automatic cron job, current system time is:' . time() .  '...<br>';
-	wp_automatic_log_new('Cron job triggered', 'Cron job just started now..... ');
+	wp_automatic_log_new('EXTERNAL Cron job triggered', 'Cron job just started now..... ');
+
+	// check if there is an already running cron job by checking if an option exist with the name wp_automatic_cron_running
+	$wp_automatic_cron_running = get_option ( 'wp_automatic_cron_running', false );
+
+	if ($wp_automatic_cron_running != false) {
+		
+		// check if the cron is running for more than 5 minutes
+		if (time () - $wp_automatic_cron_running > 300) {
+			
+			// more than 10 minutes, kill it
+			echo '<br><strong>Warning:</strong> There is an already running cron job that is running for more than 5 minutes, killing it now...';
+			wp_automatic_log_new('EXTERNAL Cron job killed', 'Cron job was running for more than 5 minutes, killing it now..... ');
+			
+			// delete the option
+			delete_option ( 'wp_automatic_cron_running' );
+		} else {
+			
+			// less than 5 minutes, exit
+			echo '<br><strong>Info:</strong> There is an already running cron job that is running for less than 5 minutes, skipping it now...';
+			wp_automatic_log_new('EXTERNAL Cron job skipped', 'Cron job was running for less than 5 minutes, skipping it now..... ');
+			exit ();
+		}
+	}
+	else
+	{
+		echo '<br><strong>Info:</strong> No running cron job found, starting now...';
+		 
+	}
+	
+	// set that a cron is running and set the value to the time it is running on 
+	update_option ( 'wp_automatic_cron_running', time () );
+
+
+
 }
 
 //options for fatal handler function
@@ -70,9 +107,12 @@ function wp_automatic_fatal_handler() {
 	}
 	
 	wp_automatic_log_new('The end', 'Plugin completed its work in (' . $time_used.  ') seconds and reached the end successfully, time to die' );
+
+	//delete the option flag that the campaign is running
+	delete_option ( 'wp_automatic_cron_running' );
 	
 	//report performance 
-	echo '<br><i><small>Plugin complteted running.. peak ram used was: ' . number_format ( memory_get_peak_usage () / (1024 * 1024), 2 ) . ' MB, current:' . number_format ( memory_get_usage () / (1024 * 1024), 2 ) . ', DB queries count:' . get_num_queries () . ', Time used: ' . $time_used . ' seconds</small></i>';
+	echo '<br><i><small>Plugin completed running.. peak ram used was: ' . number_format ( memory_get_peak_usage () / (1024 * 1024), 2 ) . ' MB, current:' . number_format ( memory_get_usage () / (1024 * 1024), 2 ) . ', DB queries count:' . get_num_queries () . ', Time used: ' . $time_used . ' seconds</small></i>';
 }
 
 
@@ -87,9 +127,12 @@ if ($wp_automatic_version < 202) {
 	exit ();
 }
 
+ 
+
 // Inistantiate campaign processor class
 require_once 'campaignsProcessor.php';
 
+//wrap
 $CampaignProcessor = new CampaignProcessor ();
 
 // Trigger Processing

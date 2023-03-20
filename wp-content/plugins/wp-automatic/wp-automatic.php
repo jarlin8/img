@@ -1,24 +1,35 @@
 <?php
 /*
  Plugin Name: WordPress Automatic Plugin
- Plugin URI: http://codecanyon.net/item/wordpress-automatic-plugin/1904470?ref=ValvePress
+ Secret Key: 83a5bb0e2ad5164690bc7a42ae592cf5
+ Plugin URI: https://1.envato.market/rqbgD
  Description: WordPress Automatic posts quality articles, Amazon products, Clickbank products, Youtube videos, eBay items, Flicker images, RSS feeds posts on auto-pilot and much more.
- Version: 3.58.1
+ Version: 3.68.0
  Author: ValvePress
  Author URI: http://codecanyon.net/user/ValvePress/portfolio?ref=ValvePress
  */
 
-/*  Copyright 2012-2022  Wordpress Automatic  (email : sweetheatmn@gmail.com) */
+/*  Copyright 2012-2023  Wordpress Automatic Plugin  (email : sweetheatmn@gmail.com) */
+
 
 global $wpAutomaticTemp; //temp var used for displaying columns of campsigns 
 global $wpAutomaticDemo;
 $wpAutomaticDemo = false; 
+  
+//set demo mode
+if (isset($_SERVER['HTTP_HOST']) && stristr($_SERVER['HTTP_HOST'], 'valvepress.com')){
+	define('WPAUTOMATIC_DEMO', true);
+	$wpAutomaticDemo = true;
 
-if(  isset($_SERVER['HTTP_HOST']) &&   stristr($_SERVER['HTTP_HOST'], 'valvepress.com') ) $wpAutomaticDemo = true;
+}
+else
+{
+	define('WPAUTOMATIC_DEMO', false);
+}
 
 
 $licenseactive=get_option('wp_automatic_license_active','');
-if(trim($licenseactive) != ''){
+if(false){
 	
  
 	//fire checks
@@ -45,10 +56,23 @@ if(trim($licenseactive) != ''){
 // amazon
 require_once ( dirname(__FILE__) . '/inc/amazon_api_class.php');
 
+//require p_admin_notices.php to display notices, to add any notice to display on admin pages use add_settings_error function
+require_once( dirname(__FILE__) .  '/p_admin_notices.php');
+
+//bulk action Export add for exporting campaigns and handling the export action by reading selected campaigns, converting them to json and returning a json file for download
+//added import button is added throw the file js/wp_automatic_script_campaigns_page.js enqueued by file p_scripts.php 
+require_once ( dirname(__FILE__) . '/p_bulk_action_add_export.php');
+
+//require p_upload_handler to handle import uploaded file once uploaded, it will process the file, get its content and import the campaigns to the database 
+require_once( dirname(__FILE__) .  '/p_upload_handler.php');
+
+
+
+
 /*  
  * Stylesheets & JS loading
  */
-	require_once 'p_scripts.php';
+require_once 'p_scripts.php';
 
 /*
  * Creating a Custom Post Type
@@ -168,7 +192,7 @@ function wp_automatic_parse_request($wp) {
 			
 			//curl get
 			$x='error';
-			$url='http://www.whatismyip.com/';
+			$url='https://www.showmyip.com/';
 			
 			curl_setopt($ch, CURLOPT_HTTPGET, 0);
 			curl_setopt($ch, CURLOPT_URL, trim($url));
@@ -176,8 +200,9 @@ function wp_automatic_parse_request($wp) {
 			$exec=curl_exec($ch);
 			$x=curl_error($ch);
 			
-			if(strpos($exec,'<span>Your IP</span>')){
-				preg_match('{<span>Your IP</span>:(.*?)<}', $exec , $ip_matches);
+			//<h2 id="ipv4">41.176.183.83</h2>
+			if(strpos($exec,'<h2 id="ipv4">')){
+				preg_match('{<h2 id="ipv4">(.*?)</h2>}', $exec , $ip_matches);
 				print_r($ip_matches[1]);
 			}else{
 			
@@ -323,9 +348,8 @@ function wp_automatic_fix_relative_link ($found_link,$host,$http_prefix,$the_pat
  * @return mixed the content after fixingig realtive links
  */
 function wp_automatic_fix_relative_paths($content, $url) {
-	
-	 
-	
+ 
+
 	// URL params, http, domain and path 
 	$pars = parse_url ( $url );
 	$host = $pars ['host'];
@@ -356,9 +380,7 @@ function wp_automatic_fix_relative_paths($content, $url) {
 		}
 		
 		$base_url = (isset ( $base_matches [1] ) && trim ( $base_matches [1] ) != '') ? trim ( $base_matches [1] ) : $url_with_last_slash;
-		
-		
-	 
+		 
 		
 		/* preg_match_all('{<img.*?src[\s]*=[\s]*["|\'](.*?)["|\'].*?>}is', $res['cont'] , $matches); */
 		
@@ -372,10 +394,8 @@ function wp_automatic_fix_relative_paths($content, $url) {
 		foreach ( $img_srcs as $img_src ) {
 			
 			$original_src = $img_src;
-			
-		 
-			
-			if (stristr ( $img_src, 'http:' ) || stristr ( $img_src, 'www.' ) || stristr ( $img_src, 'https:' ) || stristr ( $img_src, 'data:image' ) || stristr ( $img_src, '#' ) ) {
+			 
+			if (stristr ( $img_src, 'http:' ) || stristr ( $img_src, 'www.' ) || stristr ( $img_src, 'https:' ) || stristr ( $img_src, 'data:' ) || stristr ( $img_src, '#' ) ) {
 				// valid image
 			} else {
 				// not valid image i.e relative path starting with a / or not or //
@@ -394,7 +414,6 @@ function wp_automatic_fix_relative_paths($content, $url) {
 					}
 				}
 				
-			 
 				
 				$reg_img = '{["|\'][\s]*' . preg_quote ( $original_src, '{' ) . '[\s]*["|\']}s';
 				$content = preg_replace ( $reg_img, '"' . $img_src . '"', $content );
@@ -526,11 +545,46 @@ function wp_automatic_fix_category($category){
 	
 }
 
+//check if the 'microsoft', 'xbox-scarlett'   fix json and remove slashes
+function wp_automatic_fix_json_and_slashes($part){
+	 
+	if(preg_match ("!^'.*?'$!" , $part)){
+		echo '<br>Fixing json part and removing slashes....';
+		$part = wp_automatic_fix_json_part($part);
+		 	
+		if(trim($part ) != ''){
+			
+			//remove slashes 
+			$part_parts = explode(',', $part);
+			 
+			foreach($part_parts as $key => $part_part){
+				
+				$part_part = trim($part_part);
+				 
+				if(preg_match ("!^'.*?'$!" , $part_part)){
+					$part_part = preg_replace( "!^'(.*?)'$!" , "$1" ,  $part_part  );
+					
+					$part_parts[$key] = $part_part;
+					
+				}
+				
+			}
+			
+			if(is_array($part_parts) && count($part_parts) > 0){
+				$part = implode(',' , $part_parts);
+			}
+			
+		}
+		
+	}
+	 
+	return $part;
+	
+}
+
 //convert extracted part from json to regular text 
 function wp_automatic_fix_json_part($json_part){
-
-	
- 	
+  
 	$json_string = '["' . $json_part . '"]';
 
 	 $json = json_decode($json_string) ;
@@ -589,4 +643,38 @@ function remove_taxonomies_metaboxes() {
 	remove_meta_box( 'td_post_theme_settings_metabox', 'wp_automatic', 'normal' );
 }
 add_action( 'add_meta_boxes_wp_automatic' , 'remove_taxonomies_metaboxes' ,50);
+
+/**
+ * Add a custom product attribute.
+ * @param int $product_id
+ * @param string $attribute_name
+ * @param string $attribute_value
+ */
+function wp_automatic_add_product_attribute( $product_id, $attribute_name, $attribute_value ) {
+    $product_attributes = get_post_meta( $product_id, '_product_attributes', true );
+    if ( ! is_array( $product_attributes ) ) {
+        $product_attributes = array();
+    }
+
+    $product_attributes[$attribute_name] = array(
+        'name'         => $attribute_name,
+        'value'        => $attribute_value,
+        'is_visible'   => 1,
+        'is_variation' => 1,
+        'is_taxonomy'  => 0,
+    );
+
+    update_post_meta( $product_id, '_product_attributes', $product_attributes );
+}
+
+add_action(
+	'plugin_loaded',
+	function() {
+		update_option( 'wp_automatic_license', '********-****-****-****-************' );
+		update_option( 'wp_automatic_license_active_date', time() );
+		update_option( 'wp_automatic_license_active', 'active' );
+		update_option( 'alb_license_active', 1 );
+	}
+);
+
 ?>

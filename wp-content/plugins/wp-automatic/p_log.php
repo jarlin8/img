@@ -103,7 +103,7 @@ function gm_log(){
 	<div class="icon32" id="icon-edit-comments">
 		<br>
 	</div>
-	<h2>WP automatic action log</h2>
+	<h2>WP Automatic logs</h2>
 	<form method="post" action="">
 		<div class="tablenav top">
 			<div class="alignleft actions">

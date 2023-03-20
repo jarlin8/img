@@ -2,20 +2,20 @@
 # This file is distributed under the same license as the AIKit plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: AIKit 3.3.0\n"
+"Project-Id-Version: AIKit 3.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aikit\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-03-09T22:32:06+00:00\n"
+"POT-Creation-Date: 2023-03-17T14:11:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: aikit\n"
 
 #. Plugin Name of the plugin
-#: includes/admin.php:162
+#: includes/admin.php:170
 msgid "AIKit"
 msgstr ""
 
@@ -135,284 +135,292 @@ msgstr ""
 msgid "Hungarian"
 msgstr ""
 
-#: includes/admin.php:161
-#: includes/admin.php:171
+#: includes/admin.php:133
+msgid "Bulgarian"
+msgstr ""
+
+#: includes/admin.php:137
+msgid "Greek"
+msgstr ""
+
+#: includes/admin.php:169
+#: includes/admin.php:179
 msgid "AIKit Settings"
 msgstr ""
 
-#: includes/admin.php:172
+#: includes/admin.php:180
 msgid "Settings"
 msgstr ""
 
-#: includes/admin.php:180
+#: includes/admin.php:188
 msgid "Add/Edit Prompts (Advanced)"
 msgstr ""
 
-#: includes/admin.php:181
+#: includes/admin.php:189
 msgid "Prompts (Advanced)"
 msgstr ""
 
-#: includes/admin.php:202
-#: includes/admin.php:494
+#: includes/admin.php:210
+#: includes/admin.php:502
 msgid "Save Settings"
 msgstr ""
 
-#: includes/admin.php:324
+#: includes/admin.php:332
 msgid "Here you can edit or add new prompts that would appear in the \"AI\" dropdown menu. You can also reorder the prompts by dragging and dropping them in the order you wish. "
 msgstr ""
 
-#: includes/admin.php:325
+#: includes/admin.php:333
 msgid "There are lots of online resources that could help and give you tips & trick on how to best edit prompts. Simply search YouTube/Google for \"Prompt engineering\" to gain more knowledge on the topic."
 msgstr ""
 
-#: includes/admin.php:330
+#: includes/admin.php:338
 msgid "Add Prompt"
 msgstr ""
 
-#: includes/admin.php:332
+#: includes/admin.php:340
 msgid "Resetting prompts will remove all changes you made in this screen, and will bring back the builtin prompts that AIKit provides out of the box. Are you sure you want to proceed?"
 msgstr ""
 
-#: includes/admin.php:333
+#: includes/admin.php:341
 msgid "Reset Prompts"
 msgstr ""
 
-#: includes/admin.php:355
-#: includes/admin.php:506
+#: includes/admin.php:363
+#: includes/admin.php:514
 msgid "Are you sure you want to remove this prompt?"
 msgstr ""
 
-#: includes/admin.php:364
-#: includes/admin.php:516
+#: includes/admin.php:372
+#: includes/admin.php:524
 msgid "Requires text selection"
 msgstr ""
 
-#: includes/admin.php:367
-#: includes/admin.php:519
+#: includes/admin.php:375
+#: includes/admin.php:527
 msgid "Choose this option if you want to enforce text selection in the text editor. Most of the time you will want to leave this option selected. Deselect it only if you are adding a prompt that doesn't require input from author, like if you want OpenAI to generate text about random topic for example."
 msgstr ""
 
-#: includes/admin.php:374
-#: includes/admin.php:527
+#: includes/admin.php:382
+#: includes/admin.php:535
 msgid "Temperature"
 msgstr ""
 
-#: includes/admin.php:380
-#: includes/admin.php:533
+#: includes/admin.php:388
+#: includes/admin.php:541
 msgid "Controls randomness: Lowering results in less random completions. As the temperature approaches zero, the model will become deterministic and repetitive."
 msgstr ""
 
-#: includes/admin.php:387
-#: includes/admin.php:543
+#: includes/admin.php:395
+#: includes/admin.php:551
 msgid "Number of words to generate"
 msgstr ""
 
-#: includes/admin.php:396
-#: includes/admin.php:552
+#: includes/admin.php:404
+#: includes/admin.php:560
 msgid "Fixed number of words"
 msgstr ""
 
-#: includes/admin.php:401
-#: includes/admin.php:557
+#: includes/admin.php:409
+#: includes/admin.php:565
 msgid "Number of words"
 msgstr ""
 
-#: includes/admin.php:407
-#: includes/admin.php:563
+#: includes/admin.php:415
+#: includes/admin.php:571
 msgid "Choose this option if you want to generate a fixed number of words, regardless of how long the selected text is. This is helpful for certain types of prompts, like generating a paragraph on a certain topic for example."
 msgstr ""
 
-#: includes/admin.php:419
-#: includes/admin.php:575
+#: includes/admin.php:427
+#: includes/admin.php:583
 msgid "Relative to length of text selected"
 msgstr ""
 
-#: includes/admin.php:424
-#: includes/admin.php:580
+#: includes/admin.php:432
+#: includes/admin.php:588
 msgid "Multiplier"
 msgstr ""
 
-#: includes/admin.php:433
-#: includes/admin.php:589
+#: includes/admin.php:441
+#: includes/admin.php:597
 msgid "Choose this option if you want to calculate the length of the generated words relative to the length of words selected. 1x = same length as select text, 2x means two times, etc. Summarization is a good candidate to use this option for."
 msgstr ""
 
-#: includes/admin.php:443
-#: includes/admin.php:600
+#: includes/admin.php:451
+#: includes/admin.php:608
 msgid "Prompts"
 msgstr ""
 
-#: includes/admin.php:460
-#: includes/admin.php:462
-#: includes/admin.php:617
-#: includes/admin.php:619
+#: includes/admin.php:468
+#: includes/admin.php:470
+#: includes/admin.php:625
+#: includes/admin.php:627
 msgid "Menu title"
 msgstr ""
 
-#: includes/admin.php:465
-#: includes/admin.php:622
+#: includes/admin.php:473
+#: includes/admin.php:630
 msgid "This is title that will appear in the AI menu for this prompt."
 msgstr ""
 
-#: includes/admin.php:472
-#: includes/admin.php:630
+#: includes/admin.php:480
+#: includes/admin.php:638
 msgid "Prompt"
 msgstr ""
 
-#: includes/admin.php:475
-#: includes/admin.php:633
+#: includes/admin.php:483
+#: includes/admin.php:641
 msgid "If this prompt requires text selection, the phrase"
 msgstr ""
 
-#: includes/admin.php:477
-#: includes/admin.php:635
+#: includes/admin.php:485
+#: includes/admin.php:643
 msgid "will be replaced by the selected text before doing the request. Make sure to include it in your prompt."
 msgstr ""
 
-#: includes/admin.php:660
+#: includes/admin.php:668
 msgid "OpenAI Settings"
 msgstr ""
 
-#: includes/admin.php:670
+#: includes/admin.php:678
 msgid "OpenAI Key"
 msgstr ""
 
-#: includes/admin.php:681
+#: includes/admin.php:689
 msgid "Language for text generation"
 msgstr ""
 
-#: includes/admin.php:692
+#: includes/admin.php:700
 msgid "OpenAI Preferred Model"
 msgstr ""
 
-#: includes/admin.php:703
+#: includes/admin.php:711
 msgid "Max Tokens Multiplier (text length)"
 msgstr ""
 
-#: includes/admin.php:714
+#: includes/admin.php:722
 msgid "Autocompleted Text Background Color"
 msgstr ""
 
-#: includes/admin.php:725
+#: includes/admin.php:733
 msgid "Elementor support"
 msgstr ""
 
-#: includes/admin.php:735
+#: includes/admin.php:743
 msgid "Image sizes available"
 msgstr ""
 
-#: includes/admin.php:763
+#: includes/admin.php:771
 msgid "Image counts for each size"
 msgstr ""
 
-#: includes/admin.php:773
+#: includes/admin.php:781
 msgid "Image generation styles"
 msgstr ""
 
-#: includes/admin.php:781
+#: includes/admin.php:789
 msgid "Adjust the plugin to your needs by editing the settings here."
 msgstr ""
 
-#: includes/admin.php:789
+#: includes/admin.php:797
 msgid "Elementor supported?"
 msgstr ""
 
-#: includes/admin.php:793
+#: includes/admin.php:801
 msgid "When this is enabled, you will be able to use AIKit right inside Elementor editor using a widget called \"AIKit Editor\"."
 msgstr ""
 
-#: includes/admin.php:826
+#: includes/admin.php:834
 msgid "Image styles are phrases that will be added at the end an image's prompt to change the look of the image. You can use it to maintain a certain style of images for your posts. If you like colorful images, you can add \"colourful\" as one of the styles. If you want to appear as if they were drawn by leonardo davinci, add \"by leonardo davinci\" as a style. Each line would be considered a different style and AIKit will choose a random style out of this list each time it generates an image and append it at the end of the prompt. "
 msgstr ""
 
-#: includes/admin.php:862
+#: includes/admin.php:870
 msgid "This controls the number of image you want to generate for each image size, these will appear as options in the AI image generation menu. Enter comma-separated numbers. Example: \"1,2,4\". Maximum allowed number is 10."
 msgstr ""
 
-#: includes/admin.php:874
+#: includes/admin.php:882
 msgid "Small"
 msgstr ""
 
-#: includes/admin.php:878
+#: includes/admin.php:886
 msgid "This controls the size of the images generated. If you want to have the option to generate small images in the AI image generation menu, check this box."
 msgstr ""
 
-#: includes/admin.php:892
+#: includes/admin.php:900
 msgid "Medium"
 msgstr ""
 
-#: includes/admin.php:897
+#: includes/admin.php:905
 msgid "If you want to have the option to generate medium images in the AI image generation menu, check this box."
 msgstr ""
 
-#: includes/admin.php:910
+#: includes/admin.php:918
 msgid "Large"
 msgstr ""
 
-#: includes/admin.php:915
+#: includes/admin.php:923
 msgid "If you want to have the option to generate large images in the AI image generation menu, check this box."
 msgstr ""
 
-#: includes/admin.php:932
+#: includes/admin.php:940
 msgid "The OpenAI key is invalid. Make sure you have entered the correct key."
 msgstr ""
 
-#: includes/admin.php:939
+#: includes/admin.php:947
 msgid "The OpenAI key is valid."
 msgstr ""
 
-#: includes/admin.php:950
+#: includes/admin.php:958
 msgid "For instructions on how to get an OpenAI key, please visit "
 msgstr ""
 
-#: includes/admin.php:981
+#: includes/admin.php:989
 msgid "The language of the text you want to generate."
 msgstr ""
 
-#: includes/admin.php:985
+#: includes/admin.php:993
 msgid " For consistent autocomplete results, make sure that the text you write in your post is written in the same language you picked here."
 msgstr ""
 
-#: includes/admin.php:1028
+#: includes/admin.php:1037
 msgid "Some models are more capable than others. For example, the davinci model is more capable than the ada model, which is more capable than the babbage model, and so on. The davinci model is the most capable model, but it is also the most expensive model. The ada model is the least capable model, but it is also the least expensive model."
 msgstr ""
 
-#: includes/admin.php:1030
+#: includes/admin.php:1039
 msgid " For more information, see "
 msgstr ""
 
-#: includes/admin.php:1046
+#: includes/admin.php:1055
 msgid ""
 "AIKit's builtin prompts are already preconfigured to generate a sensible number of words depending on the prompt.\n"
 "                However, if you want to change the number of words generated, you can do so here. The slider is a multiplier of the number of tokens that AIKit\n"
 "                would normally generate. For example, if a request would normally generate 100 words, you can set the multiplier to 2x and AIKit will generate 200 words instead."
 msgstr ""
 
-#: includes/admin.php:1055
+#: includes/admin.php:1064
 msgid "Think of this as a global way to increase/decrease the length of generated text for all existing autocomplete options/prompts at once."
 msgstr ""
 
-#: includes/admin.php:1068
+#: includes/admin.php:1077
 msgid "Green"
 msgstr ""
 
-#: includes/admin.php:1069
+#: includes/admin.php:1078
 msgid "Blue"
 msgstr ""
 
-#: includes/admin.php:1070
+#: includes/admin.php:1079
 msgid "Red"
 msgstr ""
 
-#: includes/admin.php:1071
+#: includes/admin.php:1080
 msgid "Orange"
 msgstr ""
 
-#: includes/admin.php:1072
+#: includes/admin.php:1081
 msgid "Purple"
 msgstr ""
 
-#: includes/admin.php:1077
+#: includes/admin.php:1086
 msgid "If you prefer to have the autocompleted text stand out more, you can choose a background color for the autocompleted text."
 msgstr ""
 

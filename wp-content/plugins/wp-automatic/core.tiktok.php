@@ -324,37 +324,24 @@ class WpAutomatictiktok extends wp_automatic {
 					$exec=curl_exec($this->ch);
 					$x=curl_error($this->ch);
 					$info = curl_getinfo($this->ch);
-					
-					 
+ 					 
 				}
 				
 				if($info['http_code'] == 403 || stristr($info['url'], 'login')){
 					echo '<br>Tried to load the items page and TikTok returned 403 error, tring auto-proxy ';
 					
-					require_once 'inc/proxy.GoogleTranslate.php';
+					$binglink = "http://webcache.googleusercontent.com/search?q=cache:" . urlencode ( $tiktok_url );
+					echo '<br>Cache link:' . $binglink;
 					
-					try {
-						
-						$GoogleTranslateProxy = new GoogleTranslateProxy ( $this->ch );
-						$exec = $GoogleTranslateProxy->fetch ( $tiktok_url );
-						  
-						
-						//capcha check return don't deactivate keyword
-						if(stristr($exec, '/video/')){
-							
-							echo '<-- nice, auto-proxy returned results...';
-							$exec = str_replace('https://www-tiktok-com.translate.goog/' , 'https://www.tiktok.com/' , $exec);
-							
-						}else{
-							echo '<-- Returned auto-translate proxy did not contain videos either.';
-						}
-						
-					} catch ( Exception $e ) {
-						
-						echo '<br>ProxyViaGoogleException:' . $e->getMessage ();
-					}
+					$headers = array ();
+					curl_setopt ( $this->ch, CURLOPT_HTTPHEADER, $headers );
 					
+					curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
+					curl_setopt ( $this->ch, CURLOPT_URL, trim ( ($binglink) ) );
+					curl_setopt ( $this->ch, CURLOPT_REFERER, 'http://ezinearticles.com' );
+					$exec = curl_exec ( $this->ch );
 					
+					 
 				}
 				
 				 
@@ -362,7 +349,7 @@ class WpAutomatictiktok extends wp_automatic {
 				if( strpos($exec, '/video/') ){
 					
 					//extract video links 
-					preg_match_all('{https://www.tiktok.com/@[\w\d_]*?/video/(\d*)}s', $exec, $found_vids_matches);
+					preg_match_all('{https://www.tiktok.com/@[\w\d_\.]*?/video/(\d*)}s', $exec, $found_vids_matches);
 					  
 					$items = $found_vids_matches[0];
 					$items_ids = $found_vids_matches[1];

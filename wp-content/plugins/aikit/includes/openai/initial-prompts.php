@@ -106,6 +106,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Írjon egy bekezdést erről',
                 'prompt' => "Írjon egy bekezdést erről a témáról:\n\n[[text]]\n\n----\nÍrt bekezdés:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Напишете параграф за това',
+                'prompt' => "Напишете параграф за тази тема:\n\n[[text]]\n\n----\nНаписан параграф:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Γράψτε ένα παράγραφο για αυτό',
+                'prompt' => "Γράψτε ένα παράγραφο για αυτό το θέμα:\n\n[[text]]\n\n----\nΓραμμένος παράγραφος:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -219,6 +227,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Folytassa ezt a szöveget',
 				'prompt' => "Folytassa ezt a szöveget:\n\n[[text]]\n\n----\nFolytatott szöveg:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Продължете този текст',
+                'prompt' => "Продължете този текст:\n\n[[text]]\n\n----\nПродължен текст:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Συνεχίστε αυτό το κείμενο',
+                'prompt' => "Συνεχίστε αυτό το κείμενο:\n\n[[text]]\n\n----\nΣυνεχιζόμενο κείμενο:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -333,6 +349,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Ötletek generálása erről',
 				'prompt' => "Hozzon létre néhány ötletet erről a pontokkal:\n\n[[text]]\n\n----\nPontokkal létrehozott ötletek:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Генериране на идеи за това',
+                'prompt' => "Генерирайте няколко идеи за това като точки:\n\n[[text]]\n\n----\nГенерирани идеи в точки:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Δημιουργία ιδεών σχετικά με αυτό',
+                'prompt' => "Δημιουργήστε μερικές ιδέες σχετικά με αυτό ως σημεία:\n\n[[text]]\n\n----\nΔημιουργημένες ιδέες ως σημεία:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -446,6 +470,14 @@ const AIKIT_INITIAL_PROMPTS = [
 		        'menuTitle' => 'Írjon egy cikket erről',
 		        'prompt' => "Írjon egy teljes cikket erről:\n\n[[text]]\n\n----\nÍrt cikk:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Напишете статия за това',
+                'prompt' => "Напишете пълна статия за това:\n\n[[text]]\n\n----\nНаписана статия:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Γράψτε ένα άρθρο για αυτό',
+                'prompt' => "Γράψτε ένα ολοκληρωμένο άρθρο για αυτό:\n\n[[text]]\n\n----\nΓραμμένο άρθρο:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -559,6 +591,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'TL;DR generálása',
 				'prompt' => "Generáljon TL;DR-t ehhez a szöveghez:\n\n[[text]]\n\n----\nTL;DR:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Генериране на TL;DR',
+                'prompt' => "Генерирайте TL;DR за този текст:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Δημιουργία TL;DR',
+                'prompt' => "Δημιουργήστε TL;DR για αυτό το κείμενο:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -672,6 +712,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Összefoglalás',
                 'prompt' => "Összefoglalja ezt a szöveget:\n\n[[text]]\n\n----\nÖsszefoglalás:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Резюме',
+                'prompt' => "Резюмирайте този текст:\n\n[[text]]\n\n----\nРезюме:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Σύνοψη',
+                'prompt' => "Συνοψίστε αυτό το κείμενο:\n\n[[text]]\n\n----\nΣύνοψη:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -785,6 +833,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Összefoglalás (összefoglaló)',
 				'prompt' => "Összefoglalja ezt a szöveget összefoglaló módon:\n\n[[text]]\n\n----\nÖsszefoglaló:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Резюме (кратко)',
+                'prompt' => "Кратко резюмирайте този текст:\n\n[[text]]\n\n----\nКратко резюме:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Σύνοψη (σύντομη)',
+                'prompt' => "Συνοψίστε αυτό το κείμενο σύντομα:\n\n[[text]]\n\n----\nΣύντομη σύνοψη:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -899,6 +955,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Összefoglalás (pontok)',
                 'prompt' => "Összefoglalja ezt a szöveget pontokba:\n\n[[text]]\n\n----\nÖsszefoglalás:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Резюме (точки)',
+                'prompt' => "Резюмирайте този текст в точки:\n\n[[text]]\n\n----\nРезюме:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Σύνοψη (σημεία)',
+                'prompt' => "Συνοψίστε αυτό το κείμενο σε σημεία:\n\n[[text]]\n\n----\nΣύνοψη:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1012,6 +1076,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Parafrazálás',
                 'prompt' => "Parafrazálja ezt a szöveget:\n\n[[text]]\n\n----\nParafrazált szöveg:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Параграф',
+                'prompt' => "Параграфирайте този текст:\n\n[[text]]\n\n----\nПараграфиран текст:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Παράγραφος',
+                'prompt' => "Παραγράψτε αυτό το κείμενο:\n\n[[text]]\n\n----\nΠαραγραφοποιημένο κείμενο:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1125,6 +1197,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Parafrazálás (vicces)',
 				'prompt' => "Parafrazáld ezt a szöveget viccesen:\n\n[[text]]\n\n----\nViccesen parafrazált szöveg:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Параграф (сарказъм)',
+                'prompt' => "Параграфирайте този текст сарказм:\n\n[[text]]\n\n----\nПараграфиран текст сарказм:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Παράφραση (σαρκασμός)',
+                'prompt' => "Παραφράστε αυτό το κείμενο σαρκασμός:\n\n[[text]]\n\n----\nΠαραφρασμένο κείμενο σαρκασμός:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1237,7 +1317,15 @@ const AIKIT_INITIAL_PROMPTS = [
 	        'hu' => [
 				'menuTitle' => 'Parafrazálás (vicces)',
                 'prompt' => "Parafrazálja ezt a szöveget viccesen:\n\n[[text]]\n\n----\nVicces parafrazálás:\n",
-	        ]
+	        ],
+            'bg' => [
+                'menuTitle' => 'Параграф (хумор)',
+                'prompt' => "Параграфирайте този текст с хумор:\n\n[[text]]\n\n----\nТекст с хумор:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Παραφράσεις (χιουμοριστικά)',
+                'prompt' => "Παραφράστε αυτό το κείμενο χιουμοριστικά:\n\n[[text]]\n\n----\nΧιουμοριστική παραφράσεις κειμένου:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1351,6 +1439,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Felirat generálása',
                 'prompt' => "Felirat generálása ehhez a szöveghez:\n\n[[text]]\n\n----\nFelirat:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Генериране на субтитри',
+                'prompt' => "Генериране на заглавие за този текст:\n\n[[text]]\n\n----\nЗаглавие:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Δημιουργία υπότιτλων',
+                'prompt' => "Δημιουργήστε έναν τίτλο για αυτό το κείμενο:\n\n[[text]]\n\n----\nΤίτλος:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1464,6 +1560,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Átalakítás hirdetéssé',
 				'prompt' => "Átalakítsa a következő szöveget egy kreatív hirdetésre:\n\n[[text]]\n\n----\nHirdetés:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Превръщане в реклама',
+                'prompt' => "Превърнете следния текст в креативна реклама:\n\n[[text]]\n\n----\nРеклама:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Μετατροπή σε διαφήμιση',
+                'prompt' => "Μετατρέψτε το παρακάτω κείμενο σε διαφημιστική διαφήμιση:\n\n[[text]]\n\n----\nΔιαφήμιση:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1577,6 +1681,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Magyarázza el egy 5 évesnek',
 				'prompt' => "Magyarázza el ezt egy 5 évesnek:\n\n[[text]]\n\n----\nMagyarázat:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Обяснете на 5-годишно дете',
+                'prompt' => "Обяснете това на 5-годишно дете:\n\n[[text]]\n\n----\nОбяснение:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Εξηγήστε σε ένα παιδί 5 ετών',
+                'prompt' => "Εξηγήστε αυτό σε ένα παιδί 5 ετών:\n\n[[text]]\n\n----\nΕξήγηση:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1690,6 +1802,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Találj egy megfelelő idézetet',
 				'prompt' => "Találj egy megfelelő idézetet a következő szöveghez:\n\n[[text]]\n\n----\nMegfelelő idézet:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Намерете съвпадаща цитат',
+                'prompt' => "Намерете съвпадаща цитат за следния текст:\n\n[[text]]\n\n----\nСъвпадаща цитат:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Βρείτε μια ταιριαστή παράθεση',
+                'prompt' => "Βρείτε μια ταιριαστή παράθεση για τον παρακάτω κείμενο:\n\n[[text]]\n\n----\nΤαιριαστή παράθεση:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1803,6 +1923,14 @@ const AIKIT_INITIAL_PROMPTS = [
 				'menuTitle' => 'Képötlet generálása',
                 'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
 	        ],
+            'bg' => [
+                'menuTitle' => 'Генериране на идея за изображение',
+                'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
+            ],
+            'el' => [
+                'menuTitle' => 'Δημιουργία ιδέας εικόνας',
+                'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,

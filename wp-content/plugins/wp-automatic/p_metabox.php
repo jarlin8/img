@@ -47,14 +47,16 @@ $ad1=  array('[ad_2]','will be replaced with the Second ad code added in the set
 $ad2=  array('[ad_1]','will be replaced with the first ad code added in the settings page');
 $source=array( '[source_link]' , 'will be replaced with the original article source link') ;
 $allowed_tags['Articles']=  array(array('[keyword]','Keyword used to get current item'), array('[matched_content]' ,' will be replaced with the original fetched article content'),array('[original_title]','article title'), array('[author_name]','author name') , array('[author_link]','author link')  ,$ad1,$ad2,$source );
+$allowed_tags['gpt3'] = array(array('[keyword]','Keyword used to get current item'), array('[matched_content]' ,' will be replaced with the original fetched article content'),array('[original_title]','article title') ,$ad1,$ad2,$source );
 $allowed_tags['ArticlesBase']=  array(array('[keyword]','Keyword used to get current item'), array('[matched_content]' ,' will be replaced with the original fetched article content'),array('[original_title]','article title'), array('[author_name]','author name') , array('[author_link]','author link')  ,$ad1,$ad2,$source );
 $allowed_tags['Feeds']= $allowed_tags['Multi'] =  array( array('[matched_content]' ,' will be replaced with the original fetched article content') ,array('[original_title]','title of the post') , array('[author]','Author name if displayed at the feed or extracted using the extract original author option') ,array('[publish_date]','the date when the feed item published'),array('[feed_name]','Title of the feed extracted from the feed content') ,array('[enclosure_link]','Returns the enclosure link of the item in the feed, this could be an image/audio or video link'),array('[og_img]','Only if you used the option to set a featured image from og:img this tag will return the og:image src url'),array('[rule_{ruleNumber}]','Returns the content from the set rule, for example, if you have set two rules to extract the content using REGEX. [rule_1] returns content from the first rule and [rule_2] returns the second rule content and so on...'),array('[rule_{ruleNumber}_plain]','Returns the content from the set rule in plain text after removing all html tags, for example, if you have set two rules to extract the content using REGEX. [rule_1_plain] returns content from the first rule and [rule_2_plain] returns the second rule content and so on... all in plain text'),$ad1,$ad2,$source , array('[redirect_url]','If the source post URL redirects to another URL, this tag will contain the final redirection URL'), array('[source_domain]','Domain name of the source URL') , array('[source_url_encoded]','Encoded source URL to be added as a parameter on a link') , array( '[cats]' , 'Comma spearated list of the post categories as shown on the RSS feed if exist' ) );
 $allowed_tags['Amazon']=array(array('[keyword]','Keyword used to get current item'), array('[product_img]',' will be replaced with the product image src'), array('[product_imgs_html]','Html of all the product images'), array('[product_imgs]','Comma separated list of image srcs of the product'),array('[product_link]',' will be replaced with the product amazon page link'),array('[chart_url]','get replaced by the add to chart link of the product at amazon'),array('[product_list_price]','Product list price without discount') , array('[list_price_numeric]','Numeric value of the list price without currency') ,array('[price_with_discount]','If on sale, the original and new price are displayed.If not, the list price is displayed this tag is rendered on display to represent current price'),array('[price_with_discount_fixed]','If on sale, the original and new price are displayed.If not, the list price is displayed this tag value get generated when the product firstly added. It does not get updated with new price'),array('[product_price]',' Will be replaced with the product price like $32.10 with currency attached if possible Note  some products will not return a price'),array('[price_numeric]','price in a numeric format like 32.10 this price is suitable for woocommerce product price custom field named _price'), array('[price_currency]','The price currency i.e $ or € etc.'), array('[product_desc]',' will be replaced with the original fetched product descreption') , array('[item_details]','Technical product details/table ')  , array('[product_asin]','Product ASIN'), array('[product_upc]','Product Universal Product Code') , array('[product_brand]','Brand of the item if exists'), array('[product_author]','Author of the item if exists') ,array('[price_update_date]','Date and time when the price was updated by the plugin'),array('[item_rating]', 'Rating of the product out of 5') ,array('[item_cats]', 'Categories of the product') ,array('[item_manufacture_description]','Date and time when the price was updated by the plugin') ,$ad1,$ad2,$source);
 $allowed_tags['Clickbank']=array( array('[keyword]','Keyword used to get current item'), array('[product_img]',' will be replaced with the product image html') , array('[product_img_src]',' will be replaced with the product image src') , array('[product_link]',' will be replaced with the product sales page with your affiliate link') , array('[product_original_link]',' will be replaced with product sales page link without affiliation')   ,  array('[product_desc]',' will be replaced with the original fetched product descreption'),$ad1,$ad2,$source);
-$allowed_tags['Youtube']=array(array('[keyword]','Keyword used to get current item'), array('[vid_title]','Title of the video') ,array('[vid_player]',' will be replaced with the posted video player embed code') ,array('[vid_id]',' will be replaced with the youtube original vid id'), array('[source_link]',' will be replaced with the youtube original vid link') , array('[vid_img]',' replaced with video thumb img src') , array('[vid_views]',' will be replaced with video views count') , array('[vid_rating]',' will be replaced with stars rating out of 5 of the video') ,  array('[vid_desc]',' will be replaced with the original fetched video descreption') , array('[vid_time]','Video publish timestamp '), array('[vid_date]','Date when the video was published'), array('[vid_duration]','Video duration ') , array('[vid_author]','Video author channel id') , array('[vid_author_title]','Video author title') , array('[vid_likes]','Number of video likes'), array('[vid_dislikes]','Number of video dislikes'),array('[vid_tags]','Video tags comma separated only if the option to post YT tags as tags is active') ,array('[vid_download_url]' , 'Download URL of the video from y2mate.com' )  , $ad1,$ad2,$source );
+$allowed_tags['Youtube']=array(array('[keyword]','Keyword used to get current item'), array('[vid_title]','Title of the video') ,array('[vid_player]',' will be replaced with the posted video player embed code') ,array('[vid_id]',' will be replaced with the youtube original vid id'), array('[source_link]',' will be replaced with the youtube original vid link') , array('[vid_img]',' replaced with video thumb img src') , array('[vid_views]',' will be replaced with video views count') , array('[vid_rating]',' will be replaced with stars rating out of 5 of the video') ,  array('[vid_desc]',' will be replaced with the original fetched video descreption') , array('[vid_time]','Video publish timestamp '), array('[vid_date]','Date when the video was published'), array('[vid_duration]','Video duration ') , array('[vid_duration_in_seconds]','Video duration calculated in seconds ') , array('[vid_author]','Video author channel id') , array('[vid_author_title]','Video author title') , array('[vid_likes]','Number of video likes'), array('[vid_dislikes]','Number of video dislikes'),array('[vid_tags]','Video tags comma separated only if the option to post YT tags as tags is active') ,array('[vid_download_url]' , 'Download URL of the video from y2mate.com'), array('[transcript]','Transcript text as paragraphs of the video if available') , array('[transcript_raw]','Transcript as copied from youtube time and sentences like 00:01 hello ') , $ad1,$ad2,$source );
+
 $allowed_tags['Vimeo']=array(array('[keyword]','Keyword used to get current item'),array('[vid_title]','title of the video'),  array('[vid_description]',' will be replaced with the original fetched video descreption'), array('[vid_embed]',' will be replaced with the posted video player embed code') ,array('[vid_id]',' will be replaced with the original vid id'), array('[vid_url]',' will be replaced with the vimeo original vid link') , array('[vid_img]',' replaced with video thumb img src') , array('[vid_views]',' will be replaced with video views count') , array('[vid_likes]',' will be replaced with stars likes number of the video')  , array('[vid_duration]','Video duration in seconds'), array('[vid_duration_readable]','Video duration in  hh:mm:ss format'), array('[vid_width]', 'width of the video player'), array('[vid_height]', 'Height of the video player')  ,  array('[vid_created_time]','Video creation time '),array('[vid_modified_time]', 'last modification date') , array('[vid_author_name]','Video author name '),array('[vid_author_id]','video author id') , array('[vid_author_link]','video author link'), array('[vid_author_picutre]','video author picture src link'),array('[vid_tags]','Tags of the video comma separated')  , $ad1,$ad2 );
 $allowed_tags['Flicker']=array(array('[keyword]','Keyword used to get current item'), array('[img_title]','Image Title'),array('[img_author]','Image author ID'),array('[img_src]','Image Src link'),array('[img_src_s]','small square 75x75') , array('[img_src_q]','large square 150x150') , array('[img_src_t]','thumbnail, 100 on longest side') , array('[img_src_m]','small, 240 on longest side') , array('[img_src_n]','small, 320 on longest side') , array('[img_src_z]','medium 640, 640 on longest side') , array('[img_src_c]','medium 800, 800 on longest side†') , array('[img_src_b]','large, 1024 on longest side ') , array('[img_src_h]','large, 1600 on longest side ') , array('[img_src_k]','large, 2048 on longest side ') , array('[img_src_o]','Original Image uploaded with original size') ,array('[img_link]','Image link on flicker'),array('[img_author_name]','Image author name'),array('[img_description]','Image description'),array('[img_date_posted]','Date when the image posted'),array('[img_date_taken]','Date when the image taken'),array('[img_viewed]','Num of views of the image'),array('[img_tags]','image tags on flicker'),$ad1,$ad2,$source );
-$allowed_tags['eBay']=array(array('[keyword]','Keyword used to get current item'),array('[item_id]','added item id on ebay'),array('[item_title]','item title'),array('[item_desc]','item description'),array('[item_images]','html of all item images'),array('[item_img]','item image http source'),array('[item_link]','item link on ebay'),array('[item_bids]','Number of current bids if applicable'),array('[item_price]','current item price'),array('[item_bin]','item buy it now price if applicable'),array('[item_end_date]','item when the listing ends'), array('[item_seller_username]' , 'Username of the seller') , array('[item_seller_url]' , 'URL of the seller'), array('[item_location]' , 'Location of the item'), array('[item_ships_to]' , 'Item shipping to location'), array('[item_condition]' , 'Condition of the item, New or Used') , array('[item_condition_desc]' , 'Description of the condition as added from the seller') , array('[item_return_policy]' , 'If seller accepts returns'), array('[item_listing_type]' , 'Type of the listing Auction or buy it now'), array('[item_shipping_start]' , 'If seller starts shipping after recieving the payment') , array('[item_subtitle]' , 'Subtitle of the item')  , array('[item_category]' , 'Name of item category') , array('[item_category]' , 'Name of item category') , array('[item_payment]' , 'Available payment method') , array('[item_postal]' , 'Postal code of the item location')  ,$ad1,$ad2,$source );
+$allowed_tags['eBay']=array(array('[keyword]','Keyword used to get current item'),array('[item_id]','added item id on ebay'),array('[item_title]','item title'),array('[item_desc]','item description'),array('[item_images]','html of all item images'),array('[item_img]','item image http source'),array('[item_link]','item link on ebay'),array('[item_bids]','Number of current bids if applicable'),array('[item_price]','current item price'),array('[item_marketing_price]','Price before discount defaults to price'), array('[item_price_with_discount]','Item price before discount deleted then current price. defaults to item price if no discount') ,array('[item_bin]','item buy it now price if applicable'),array('[item_end_date]','item when the listing ends'), array('[item_seller_username]' , 'Username of the seller') , array('[item_seller_url]' , 'URL of the seller'), array('[item_location]' , 'Location of the item'), array('[item_ships_to]' , 'Item shipping to location'), array('[item_condition]' , 'Condition of the item, New or Used') , array('[item_condition_desc]' , 'Description of the condition as added from the seller') , array('[item_return_policy]' , 'If seller accepts returns'), array('[item_listing_type]' , 'Type of the listing Auction or buy it now'), array('[item_shipping_start]' , 'If seller starts shipping after recieving the payment') , array('[item_subtitle]' , 'Subtitle of the item')  , array('[item_category]' , 'Name of item category') , array('[item_category]' , 'Name of item category') , array('[item_payment]' , 'Available payment method') , array('[item_postal]' , 'Postal code of the item location')  ,$ad1,$ad2,$source );
 $allowed_tags['Pinterest'] = array(array('[pin_id]','Numerical id of the posted pin'),array('[pin_url]','Pin url at pinterest.com'),array('[pin_link]','original page link where the pin image exits *only for pins with link back to the source'),array('[pin_title]','Title of the pin'),array('[pin_description]','Description of the pin'),array('[pin_board_id]','Numeric ID of the board the pin belons to'),array('[pin_board_url]','URL of the matching board'),array('[pin_board_name]','Name of the board the pin belons to'),array('[pin_pinner_username]','Username of the pinner'),array('[pin_pinner_full_name]','Full name of the pinner'),array('[pin_pinner_id]','Numeric ID of the pin pinner'),array('[pin_domain]','Domain for the pin if posted from a url'),array('[repin_count]','Number of repins'),array('[pin_img]','Image src link for the pin image'),array('[pin_img_width]','Width of the pin image'),array('[pin_img_height]','Height of the pin image'),$ad1,$ad2);
 $allowed_tags['Instagram'] = array( array('[item_title]','Instagram image title'), array('[item_embed]','The embed code of the item'), array('[item_vid_embed]','Item vido embed code') , array('[item_id]','The instagram pic id'),array('[item_url]','Instagram pic url'),array('[item_description]','Instagram pic description'),array('[item_img]','Instagram image src'),array('[item_images]','Item images HTML code'),array('[item_img_width]','Width of the instagram image'),array('[item_img_height]','Height of the image'),array('[item_user_id]','Instagram user id'),array('[item_user_username]','Username of the instagram image poster'),array('[item_user_name]','user name of the image poster'),array('[item_user_profile_pic]','Image src of the user pic'),array('[item_created_date]','date when the item created'),array('[item_likes_count]','Likes count of the item'),array('[item_comments_count]','Comments count of the item'),array('[item_tags]','Comma separated list of tags'),array('[item_location_name]','Location name'),array('[item_location_id]','Location ID'),array('[item_location_url]','Location explore link'), array('[video_view_count]','Views count only if the imported item is a video.') ,$ad1,$ad2,$source );
 $allowed_tags['TikTok'] = array(array('[item_id]','Numeric ID of the video'),array('[item_url]','URL of the video'),array('[item_description]','Description of the video'),array('[item_img]','Cover image url of the video'),array('[item_img_width]','Width of the video cover pic'),array('[item_img_height]','height of the video cover pic'),array('[item_user_username]','username of the video uploader'),array('[item_user_name]','Name of the video uploader'),array('[item_tags]','hashtags of the video comma separated'),array('[item_images]',''),array('[item_title]','Title of the video'),array('[item_embed]','Embed code of the video') );
@@ -86,6 +88,14 @@ $allowed_tags['Walmart'] = array(array('[item_img]','Url of the item image'),arr
 $allowed_tags['Single'] = array( array('[matched_content]','Content extracted from all rules'),array('[matched_content_plain]','Content extracted from all rules in plain text after removing all html tags'),array('[source_link]','Original link of the source content'),array('[rule_{ruleNumber}]','Returns the content from the set rule, for example, if you have set two rules to extract the content using REGEX. [rule_1] returns content from the first rule and [rule_2] returns the second rule content and so on...'),array('[rule_{ruleNumber}_plain]','Returns the content from the set rule in plain text after removing all html tags, for example, if you have set two rules to extract the content using REGEX. [rule_1_plain] returns content from the first rule and [rule_2_plain] returns the second rule content and so on... all in plain text'),$ad1,$ad2);
 $allowed_tags['Careerjet'] = array(array('[item_title]','Job title'),array('[item_description]','Job description'),array('[item_url]','URL of the job'),array('[item_date]','Date when the job was posted'),array('[item_date_timestamp]','Date when the job was posted'),array('[item_locations]','Location of the work'),array('[item_site]','Site of the job'),array('[item_company]','Company of the job'),array('[item_salary]','Salary'),array('[item_salary_min]','Minimum salary'),array('[item_salary_max]','Maximum salary'),array('[item_salary_type]','Salary type'),array('[item_salary_currency_code]','Currency of the sallary') , array( '[item_source_site]'  , 'Name of the source site displayed below the job description') , array('[item_logo_html]' , 'HTML of the logo image if available') , array('[item_logo]' , 'src link of the logo image if available') ) ;
 $allowed_tags['Aliexpress'] = array( array('[item_id]','Numeric ID of the item'),    array('[item_url]','Link to the item'),    array('[item_title]','Title'),    array('[item_rating]','Numeric rating value out of 5'),    array('[item_orders]','Number of current orders'),    array('[item_price_current]','current displayed price'),    array('[item_price_original]','price before sale'),    array('[item_images]','Comma separated list of images URLs'),    array('[item_ship_from]','Location of the item'),    array('[item_delivery_time]','Time taken for delivery'),    array('[item_ship_cost]','Shipping costs'),    array('[item_wish_count]','whishes count'),    array('[item_description_url]','Link for the description iframe'),    array('[item_img]','Product featured image URL'),    array('[item_imgs_html]','HTML of the product images'),    array('[item_image_html]','Featured Image HTML'),    array('[item_description]','Description'), array('[item_price_numeric]','Numeric value for the price'),    array('[item_price_original_numeric]','Numeric value for the item price before sale'), array('[price_with_discount]', 'Price and sale price displayed side by side'), array('[item_affiliate_url]' , 'Affiliate link for the item') );
+
+
+$gpt_tag = array('[gpt]Prompt[/gpt]', 'Call OpenAI for a prompt and return the result for example [gpt3]Write an article about [original_title] in French[/gpt3]'); 
+
+//merge gpt_tag array to every array in $allowed_tags values
+foreach ($allowed_tags as $key => $value) {
+	array_push($allowed_tags[$key], $gpt_tag);
+}
 
 $query="select * from {$prefix}automatic_camps where camp_id='$post_id'";
 $res=$wpdb->get_results($query);
@@ -229,8 +239,7 @@ if (count($res) > 0 ){
 	$camp_post_title='[original_title]';
 	$camp_post_content='[ad_1]
 [matched_content]
-[ad_2]
-<br><a href="[source_link]">Source</a> by <a href="[author_link]">[author_name]</a>';
+[ad_2]';
 	
 	$camp_amazon_category='';
 	$camp_amazon_region='';
@@ -238,7 +247,7 @@ if (count($res) > 0 ){
 	@$camp_post_category= '';
 	$camp_post_status='publish';
 	@$post_name='';
-	$camp_type='Articles';
+	$camp_type='gpt3';
 	$camp_search_order='';
 	$camp_youtube_order='';
 	$camp_youtube_cat='';
@@ -274,6 +283,7 @@ if (count($res) > 0 ){
 	$camp_options[] = 'OPT_FEED_SCRIPT';
 	$camp_options[] = 'OPT_WM_CACHE';
 	$camp_options[] = 'OPT_CJ_CACHE';
+	$camp_options[] = 'OPT_OPENAI_PENDING';
 	
 	$camp_yt_user='';
 	$camp_translate_from='no';
@@ -306,7 +316,7 @@ if (count($res) > 0 ){
 	}
 	
 	// undefined camp_general keys
-	$camp_generalKeys = "cg_custom_selector,cg_feed_custom_id,cg_custom_selector2,cg_feed_custom_id2,cg_custom_selector3,cg_feed_custom_id3,cg_feed_custom_regex,cg_feed_custom_regex2,cg_part_to_field,cg_custom_strip_selector,cg_feed_custom_strip_id,cg_custom_strip_selector2,cg_feed_custom_strip_id2,cg_custom_strip_selector3,cg_feed_custom_strip_id3,cg_post_strip,cg_custom_selector_tag,cg_feed_custom_id_tag,cg_custom_selector_author,cg_feed_custom_id_author,cg_min_length,cg_feed_encoding,cg_cl_page,cg_iu_media,cg_iu_attribute,cg_iu_lang,cg_fb_source,cg_fb_page,cg_fb_page_id,cg_fb_title_count,cg_am_node,cg_am_order,cg_am_min,cg_am_max,cg_am_param_type,cg_am_param,cg_yt_dte_minutes,cg_vm_user_channel,cg_vm_user,cg_vm_order,cg_vm_order_dir,cg_vm_cc,cg_vm_width,cg_vm_height,cg_sc_user_playlist,cg_sc_user,cg_sc_from,cg_sc_to,cg_pt_user_channel,cg_pt_user,cg_pt_title_count,cg_it_user,cg_it_title_count,cg_tw_lang,cg_yt_playlist,cg_yt_license,cg_yt_type,cg_yt_duration,cg_yt_definition,cg_yt_width,cg_yt_height,cg_yt_ctr,cg_yt_lang,cg_eb_user,cg_eb_site,cg_eb_cat,cg_ebay_custom,cg_eb_listing,cg_eb_order,cg_eb_min,cg_eb_max,cg_eb_iframe_h,cg_eb_param,cg_eb_redirect_end,cg_fl_user,cg_fl_user_album,cg_fl_order,cg_cb_lang,cg_camp_tax,cg_keyword_cat,cg_tags_limit,cg_keyword_tag,cg_content_limit,cg_title_limit,cg_camp_post_regex_exact,cg_camp_post_regex_exclude,cg_wpml_lang,cg_tag_tax,cg_translate_method,cg_ev_filter,cg_ev_cat,cg_ev_tags,cg_ev_author,cg_ev_sort,cg_ev_sort_dir,cg_ev_api,cg_cat_replace";
+	$camp_generalKeys = "cg_custom_selector,cg_feed_custom_id,cg_custom_selector2,cg_feed_custom_id2,cg_custom_selector3,cg_feed_custom_id3,cg_feed_custom_regex,cg_feed_custom_regex2,cg_part_to_field,cg_custom_strip_selector,cg_feed_custom_strip_id,cg_custom_strip_selector2,cg_feed_custom_strip_id2,cg_custom_strip_selector3,cg_feed_custom_strip_id3,cg_post_strip,cg_custom_selector_tag,cg_feed_custom_id_tag,cg_custom_selector_author,cg_feed_custom_id_author,cg_min_length,cg_feed_encoding,cg_cl_page,cg_iu_media,cg_iu_attribute,cg_iu_lang,cg_fb_source,cg_fb_page,cg_fb_page_id,cg_fb_title_count,cg_am_node,cg_am_order,cg_am_min,cg_am_max,cg_am_param_type,cg_am_param,cg_yt_dte_minutes,cg_vm_user_channel,cg_vm_user,cg_vm_order,cg_vm_order_dir,cg_vm_cc,cg_vm_width,cg_vm_height,cg_sc_user_playlist,cg_sc_user,cg_sc_from,cg_sc_to,cg_pt_user_channel,cg_pt_user,cg_pt_title_count,cg_it_user,cg_it_title_count,cg_tw_lang,cg_yt_playlist,cg_yt_license,cg_yt_type,cg_yt_duration,cg_yt_definition,cg_yt_width,cg_yt_height,cg_yt_ctr,cg_yt_lang,cg_eb_user,cg_eb_site,cg_eb_cat,cg_ebay_custom,cg_eb_listing,cg_eb_order,cg_eb_min,cg_eb_max,cg_eb_iframe_h,cg_eb_param,cg_eb_redirect_end,cg_fl_user,cg_fl_user_album,cg_fl_order,cg_cb_lang,cg_camp_tax,cg_keyword_cat,cg_tags_limit,cg_keyword_tag,cg_content_limit,cg_title_limit,cg_camp_post_regex_exact,cg_camp_post_regex_exclude,cg_wpml_lang,cg_tag_tax,cg_translate_method,cg_ev_filter,cg_ev_cat,cg_ev_tags,cg_ev_author,cg_ev_sort,cg_ev_sort_dir,cg_ev_api,cg_cat_replace,cg_tag_replace";
 	$camp_generalKeys = explode(',', $camp_generalKeys);
 	
 	foreach ($camp_generalKeys as $camp_generalKey){
@@ -356,8 +366,11 @@ if (count($res) > 0 ){
 			</label>
 			<select <?php if(count($raw_res) != 0)   echo 'disabled="disabled"' ?> name="camp_type" id="camp_type">
 				
-				<option  value="Articles"  <?php @wp_automatic_opt_selected('Articles',$camp_type) ?> >EzineArticles</option>
+			    <option  value="gpt3"  <?php @wp_automatic_opt_selected('gpt3',$camp_type) ?> >OpenAI GPT Articles</option>
 				<option  value="Feeds"  <?php @wp_automatic_opt_selected('Feeds',$camp_type) ?> >Feeds</option>
+				<option  value="Multi"  <?php @wp_automatic_opt_selected('Multi',$camp_type) ?> >Multi-page scraper</option>
+				<option  value="Single"  <?php @wp_automatic_opt_selected('Single',$camp_type) ?> >Single-page scraper</option>
+				<option  value="Articles"  <?php @wp_automatic_opt_selected('Articles',$camp_type) ?> >EzineArticles</option>				
 				<option  value="Amazon"  <?php @wp_automatic_opt_selected('Amazon',$camp_type) ?> >Amazon</option>
 				<option  value="Aliexpress"  <?php @wp_automatic_opt_selected('Aliexpress',$camp_type) ?> >AliExpress</option>
 				<option  value="Clickbank"  <?php @wp_automatic_opt_selected('Clickbank',$camp_type) ?> >Clickbank</option>
@@ -379,8 +392,7 @@ if (count($res) > 0 ){
 				<option  value="Reddit"  <?php @wp_automatic_opt_selected('Reddit',$camp_type) ?> >Reddit</option>
 				<option  value="Walmart"  <?php @wp_automatic_opt_selected('Walmart',$camp_type) ?> >Walmart</option>
 				<option  value="Careerjet"  <?php @wp_automatic_opt_selected('Careerjet',$camp_type) ?> >Careerjet</option>
-				<option  value="Single"  <?php @wp_automatic_opt_selected('Single',$camp_type) ?> >Single-page scraper</option>
-				<option  value="Multi"  <?php @wp_automatic_opt_selected('Multi',$camp_type) ?> >Multi-page scraper</option>
+				
 				  
 			</select>
 			
@@ -389,7 +401,7 @@ if (count($res) > 0 ){
 		</div>
           
 
-          <div  id="field111-container" class="field typepart Articles ArticlesBase Amazon Clickbank Youtube Vimeo Flicker  eBay f_100 Pinterest Instagram Twitter SoundCloud Itunes Envato DailyMotion Walmart Careerjet TikTok Aliexpress" style="display:none;" >
+          <div  id="field111-container" class="field typepart Articles gpt3 ArticlesBase Amazon Clickbank Youtube Vimeo Flicker  eBay f_100 Pinterest Instagram Twitter SoundCloud Itunes Envato DailyMotion Walmart Careerjet TikTok Aliexpress" style="display:none;" >
                <label for="field111">
                     Campaign keywords <i>(search for these keywords) (comma separated)</i>
                </label>
@@ -559,11 +571,11 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:10px;padding-top:8px;" >
- 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+ 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:5px;padding-top:8px;" >
- 		 		 					 <button  title="Remove rule"  class="cleaner" >x</button>
+ 		 		 					 <button  title="Remove rule"  class="dashicons-before dashicons-no cleaner" ></button>
  		 		 				</td>
  		 		 			
  		 		 			</tr>
@@ -595,11 +607,11 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+ 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Remove title"  class="cleaner" >x</button>
+ 		 		 					 <button  title="Remove title"  class="dashicons-before dashicons-no cleaner" ></button>
  		 		 				</td>
  		 		 			
  		 		 			</tr>
@@ -632,15 +644,15 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Locate" data-popup-field-name  class="visual_selector" >.</button>
+ 		 		 					 <button  title="Locate" data-popup-field-name  class="dashicons-before dashicons-color-picker  visual_selector" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+ 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Remove rule"  class="cleaner" >x</button>
+ 		 		 					 <button  title="Remove rule"  class="dashicons-before dashicons-no cleaner" ></button>
  		 		 				</td>
  		 		 			
  		 		 			</tr>
@@ -656,11 +668,20 @@ if (count($res) > 0 ){
 			<div class="field f_100" >
 			
 				<div class="option clearfix">
-	                    <input name="camp_options[]"   value="OPT_FEED_APIFY2" type="checkbox">
+	                    <input data-controls="apify_wait_for_div" name="camp_options[]"   value="OPT_FEED_APIFY2" type="checkbox">
 	                    <span class="option-title">
-								Load the items list page using APIFY.COM (only if this site requires JavaScript)
+								Load the items list page using APIFY.COM <br>(only if this site requires JavaScript)
 	                    </span>
 	                    <br>
+						<div class="field f_100" id="apify_wait_for_div">
+						
+								<label for ="apify_wait_for">Wait for how many milliseconds after loading the site: [Optional]</label>
+								<input name="cg_apify_wait_for" value="<?php  echo @$camp_general['cg_apify_wait_for']  ?>" placeholder="0" type="text">
+								<div class="description">
+									Wait for how many milliseconds after loading the site. This is useful if the site loads some content after a few seconds. for example: 15000 (waits for 15 seconds)
+								</div>
+					
+						</div>
 	             </div>
 	             
 			
@@ -795,11 +816,11 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:10px;padding-top:8px;" >
- 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+ 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:5px;padding-top:8px;" >
- 		 		 					 <button  title="Remove rule"  class="cleaner" >x</button>
+ 		 		 					 <button  title="Remove rule"  class="dashicons-before dashicons-no cleaner" ></button>
  		 		 				</td>
  		 		 			
  		 		 			</tr>
@@ -831,11 +852,11 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+ 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Remove title"  class="cleaner" >x</button>
+ 		 		 					 <button  title="Remove title"  class="dashicons-before dashicons-no cleaner" ></button>
  		 		 				</td>
  		 		 			
  		 		 			</tr>
@@ -899,7 +920,7 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Locate"  data-popup-field-name  class="visual_selector" >.</button>
+ 		 		 					 <button  title="Locate"  data-popup-field-name  class="dashicons-before dashicons-color-picker  visual_selector" ></button>
  		 		 				</td>
  		 		 			
  		 		 			</tr>
@@ -1111,7 +1132,7 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Locate" data-popup-field-name class="visual_selector" >.</button>
+ 		 		 					 <button  title="Locate" data-popup-field-name class="dashicons-before dashicons-color-picker  visual_selector" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
@@ -1191,11 +1212,11 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:10px;padding-top:8px;" >
- 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+ 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:5px;padding-top:8px;" >
- 		 		 					 <button  title="Remove rule"  class="cleaner" >x</button>
+ 		 		 					 <button  title="Remove rule"  class="dashicons-before dashicons-no cleaner" ></button>
  		 		 				</td>
  		 		 			
  		 		 			</tr>
@@ -1227,11 +1248,11 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+ 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Remove title"  class="cleaner" >x</button>
+ 		 		 					 <button  title="Remove title"  class="dashicons-before dashicons-no cleaner" ></button>
  		 		 				</td>
  		 		 			
  		 		 			</tr>
@@ -1264,15 +1285,15 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Locate"  data-popup-field-name class="visual_selector" >.</button>
+ 		 		 					 <button  title="Locate"  data-popup-field-name class="dashicons-before dashicons-color-picker  visual_selector" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+ 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Remove rule"  class="cleaner" >x</button>
+ 		 		 					 <button  title="Remove rule"  class="dashicons-before dashicons-no cleaner" ></button>
  		 		 				</td>
  		 		 			
  		 		 			</tr>
@@ -1457,7 +1478,7 @@ if (count($res) > 0 ){
 				<div style="margin-top:0;padding-top:0;padding-bottom:20px" class="select_control_div_div cg_ml_ttl_method cg_ml_ttl_method_visual field f_100">
  		 		 		
  		 		 		<div  class="field typepart Multi" >
-					 		<label>URL of a single post</label> <input value="<?php  echo @$camp_general['cg_ml_example']   ?>" name="cg_ml_example"  data-visual-selector-Multi-example type="text">	
+					 		<label>URL of a single post</label> <input value="<?php  echo @$camp_general['cg_ml_example']   ?>" name="cg_ml_example" data-fill-this-field-after-picking-first-link  data-visual-selector-Multi-example type="text">	
 					 		<div class="description">This URL will be used for the visual selector so add a URL for an example post</div> 
 						</div>
 		 		 		 		
@@ -1480,7 +1501,7 @@ if (count($res) > 0 ){
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
- 		 		 					 <button  title="Locate" data-popup-field-name="cg_ml_example"  class="visual_selector" >.</button>
+ 		 		 					 <button  title="Locate" data-popup-field-name="cg_ml_example"  class="dashicons-before dashicons-color-picker  visual_selector" ></button>
  		 		 				</td>
  		 		 				
  		 		 				<td    style="padding-left:15px;padding-top:8px;" >
@@ -1570,13 +1591,17 @@ if (count($res) > 0 ){
 															</select>
 						 		 		 				</td>
 						 		 		 				
-						 		 		 				<td    style="padding-left:10px;padding-top:8px;" >
-						 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+						 		 		 				<td    style="padding-left:5x;padding-top:8px;" >
+						 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
 						 		 		 				</td>
 						 		 		 				
 						 		 		 				<td    style="padding-left:5px;padding-top:8px;" >
-						 		 		 					 <button  title="Remove rule"  class="cleaner" >x</button>
+						 		 		 					 <button  title="Remove rule"  class="dashicons-before dashicons-no cleaner" ></button>
 						 		 		 				</td>
+
+														 <td    style="padding-left:5px;padding-top:8px;" >
+											 		 		<button  title="Copy rule tag"  class="dashicons-before dashicons-tag copy_rule_tag" ></button>
+											 		 	</td>
 						 		 		 			
 						 		 		 			</tr>
  		 		 		
@@ -1586,7 +1611,7 @@ if (count($res) > 0 ){
 						 		 		 			
 						 		 		 				}	
 						 		 		 } ?>
-								                	
+								                	<tr><td style="padding-top:20px" colspan="6">If using XPath and the part you picked is a link and you just want the URL, append this to the end of the XPath /@href so for example instead of "/html/body/div[1]/div[1]/div[3]/a", modify it to be "/html/body/div[1]/div[1]/div[3]/a/@href"</td></tr>
 								                	<tr><td style="padding-top:20px" colspan="6">For each extraction rule, a new tag will be available for you to use on the <b>post template</b> or custom fields section below. It returns the extracted content. <br>For example, the first part you extract using the first rule will have tag named [rule_1] and the second part will have a tag named [rule_2]</td></tr>
 								             
 								                	
@@ -1621,24 +1646,36 @@ if (count($res) > 0 ){
 						 		 		 			
 						 		 		 			<tr>
 						 		 		 				
-						 		 		 				<td  style="padding-right:10px;width:300px" >
-						 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities( $cg_feed_custom_regex_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_feed_custom_regex[]" type="text">
+						 		 		 				<td  style="padding-right:5px;width:300px" >
+						 		 		 				 		<input   class="no-unify"  value="<?php  echo htmlentities( $cg_feed_custom_regex_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_feed_custom_regex[]" type="text">
 						 		 		 				</td>
 						 		 		 				
-						 		 		 				<td    style="padding-left:15px;padding-top:8px;" >
-						 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+														<td    style="padding-left:5px;padding-top:8px;" >
+															<span class="option-title">
+																			<abbr title="Tick if you want the plugin to extract the first match only not all matches">Single?</abbr>
+															</span>   
+															<input  class="no-unify"  title="Single match" name="camp_options[]"   value="OPT_FEED_REGEX_SINGLE_<?php echo $i ?>" type="checkbox">
+														</td>
+
+						 		 		 				<td    style="padding-left:5px;padding-top:8px;" >				 
+						 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
 						 		 		 				</td>
 						 		 		 				
-						 		 		 				<td    style="padding-left:15px;padding-top:8px;" >
-						 		 		 					 <button  title="Remove title"  class="cleaner" >x</button>
+						 		 		 				<td    style="padding-left:5px;padding-top:8px;" >
+						 		 		 					 <button  title="Remove rule"  class="dashicons-before dashicons-no cleaner" ></button>
 						 		 		 				</td>
+
+														<td    style="padding-left:5px;padding-top:8px;" >
+											 		 		 <button  title="Copy rule tag"  class="dashicons-before dashicons-tag copy_rule_tag" ></button>
+											 		 	</td>
 						 		 		 			
 						 		 		 			</tr>
 						 		 		 		
 						 		 		 		<?php  $i++ ; } ?>
 								                	
-								                	<tr><td style="padding-top:20px" colspan="3">If you want to extract content between two unique texts in the content use this  <strong>startTextHere(.*?)endTextHere</strong>  where startTextHere is the unique text that the plugin will extract starting after and endTextHere is the unique text that the plugin will stop once found. The extracted part must be wraped by brackets<br><br>Example: source content contains this html<br> &lt;span class=&quot;author&quot;&gt;Mo Atef&lt;/span&gt; <br>and we want to grab the author name "Mo Atef", we can use this Regex<br> &lt;span class=&quot;author&quot;&gt;(.*?)&lt;/span&gt;</td></tr>
-								                <tr><td style="padding-top:20px" colspan="3">For each Regex rule, a new tag will be available for you to use on the <b>post template</b> or custom fields section below. It returns the extracted content. <br>For example, the first part you extract using the first rule will have tag named [rule_1] and the second part will have a tag named [rule_2]</td></tr>
+								                	<tr><td style="padding-top:20px" colspan="5">If you want to extract content between two unique texts in the content use this  <strong>startTextHere(.*?)endTextHere</strong>  where startTextHere is the unique text that the plugin will extract starting after and endTextHere is the unique text that the plugin will stop once found. The extracted part must be wraped by brackets<br><br>Example: source content contains this html<br> &lt;span class=&quot;author&quot;&gt;Mo Atef&lt;/span&gt; <br>and we want to grab the author name "Mo Atef", we can use this Regex<br> &lt;span class=&quot;author&quot;&gt;(.*?)&lt;/span&gt;</td></tr>
+								                <tr><td style="padding-top:20px" colspan="5">For each Regex rule, a new tag will be available for you to use on the <b>post template</b> or custom fields section below. It returns the extracted content. <br>For example, the first part you extract using the first rule will have tag named [rule_1] and the second part will have a tag named [rule_2]</td></tr>
+								                <tr><td style="padding-top:20px" colspan="5">Tick the checkbox if you want the a single match only </td></tr>
 								                </table>
 								                
 								                 
@@ -1653,7 +1690,7 @@ if (count($res) > 0 ){
 								            
 								            
 								            <div class="field typepart Multi">
-										 		<label>URL of a single post</label> <input value="<?php  echo @$camp_general['cg_ml_example_2']   ?>" name="cg_ml_example_2"  data-visual-selector-Multi-example type="text">	
+										 		<label>URL of a single post</label> <input value="<?php  echo @$camp_general['cg_ml_example_2']   ?>" name="cg_ml_example_2" data-fill-this-field-after-picking-first-link  data-visual-selector-Multi-example type="text">	
 										 		<div class="description">This URL will be used for the visual selector so add a URL for an example post</div> 
 											</div>
 
@@ -1668,30 +1705,45 @@ if (count($res) > 0 ){
 											 		 		 			
 											 		 		 			$i=0;
 											 		 		 			foreach ($cg_feed_visual as $cg_feed_visual_rule){
+
+																			//default cg_feed_visual_hint if not set
+																			if(!isset($camp_general['cg_feed_visual_hint'][$i])) $camp_general['cg_feed_visual_hint'][$i]= '';
+
 											 		 		 			?>
 											 		 		 			
-											 		 		 			<tr>
+											 		 		 			<tr class="rule_row" >
 											 		 		 				
 											 		 		 				<td  style="padding-right:10px;width:300px" >
 											 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities($cg_feed_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_feed_visual[]" type="text">
+																			
+																					<textarea placeholder="Optional hint for your reference to remember what this part represents..." rows="2" style="max-height:50px;" name="cg_feed_visual_hint[]"  ><?php echo htmlentities(@$camp_general['cg_feed_visual_hint'][$i],ENT_COMPAT, 'UTF-8') ?></textarea>
+																					
 											 		 		 				</td>
 											 		 		 				
-											 		 		 				<td    style="padding-left:15px;padding-top:8px;" > 
-											 		 		 					 <button  title="Locate" data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes" class="visual_selector" >.</button>
+											 		 		 				<td    style="padding-left:5px;padding-top:8px;" >
+
+																			</td>
+											 		 		 				
+											 		 		 				<td    style="padding-left:5px;padding-top:8px;" > 
+											 		 		 					 <button  title="Locate" data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes" class="dashicons-before dashicons-color-picker visual_selector" ></button>
 											 		 		 				</td>
 											 		 		 				 
-											 		 		 				<td    style="padding-left:15px;padding-top:8px;" >
-											 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+											 		 		 				<td    style="padding-left:5px;padding-top:8px;" >
+											 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
 											 		 		 				</td>
 											 		 		 				
-											 		 		 				<td    style="padding-left:15px;padding-top:8px;" >
-											 		 		 					 <button  title="Remove rule"  class="cleaner" >x</button>
+											 		 		 				<td    style="padding-left:5px;padding-top:8px;" >
+											 		 		 					 <button  title="Remove rule"  class="dashicons-before dashicons-no cleaner" ></button>
+											 		 		 				</td>
+
+																			<td    style="padding-left:5px;padding-top:8px;" >
+											 		 		 					 <button  title="Copy rule tag"  class="dashicons-before dashicons-tag copy_rule_tag" ></button>
 											 		 		 				</td>
 											 		 		 			
 											 		 		 			</tr>
 											 		 		 		
 											 		 		 		<?php  $i++ ; } ?>
-											 		 		 		
+											 		 		 		<tr><td style="padding-top:20px" colspan="4">Click the (<span class="dashicons-before dashicons-color-picker"></span>) button and pick the desired part, the plugin will load a visual selector and when you click a specific part, the plugin will return an XPath and save it to the box<br><br>If the part you picked is a link and you just want the URL, append this to the end of the XPath /@href so for example instead of "/html/body/div[1]/div[1]/div[3]/a", modify it to be "/html/body/div[1]/div[1]/div[3]/a/@href"</td></tr>
 											 		 		 		<tr><td style="padding-top:20px" colspan="4">For each part you pick a new tag will be available for you to use on the <b>post template</b> or custom fields section below. It returns the extracted content. <br>For example, the first part you pick will have tag named [rule_1] and the second part will have a tag named [rule_2]</td></tr>
 											 		 		 		
 											 		</table>								            			
@@ -1737,6 +1789,8 @@ if (count($res) > 0 ){
 												    	<br><br>Example #1 "class|tags|post_tags" will extract the part with class=tags and set it to a custom field named post_tags 
 												    	<br><br>Example #2 "regex|liked(.*?)times|likes_count" will extract the content between "liked" and "times" and create a custom field with this value
 												    	<br><br>If customFieldName is excerpt, then the extracted part will be set as an excerpt and if customFieldName is tags, the extracted part will be set as tags
+												    	<br><br>If customFieldName is tags, then the extracted part will be set as tags
+													<br><br>If customFieldName is categories, then the extracted part will be set as categories
 												    	<br><br>Add |1 to the end of the rule if you want to get the first match only 
 												    	<br><br>Prefix the customFieldName with  "taxonomy_" if you want to add the value as a cusotm taxonomy. ex: class|tags|taxonomy_product_tag will extract the part with class named tags and set to the taxonomy named product_tag
 												    	</i>
@@ -1756,11 +1810,20 @@ if (count($res) > 0 ){
 						               	<div id="feed_postcont" class="field f_100 typepart Feeds Multi Single" style="display:none;" >	 
 						               		 
 						               		 <div class="option clearfix">
-								                    <input name="camp_options[]"   value="OPT_FEED_APIFY" type="checkbox">
+								                    <input data-controls="apify_wait_for_div_single" name="camp_options[]"   value="OPT_FEED_APIFY" type="checkbox">
 								                    <span class="option-title">
 															Load the site single web pages using APIFY.COM (only if this site requires JavaScript)
 								                    </span>
 								                    <br>
+													<div class="field f_100" id="apify_wait_for_div_single">
+													
+															<label for ="apify_wait_for_single">Wait for how many milliseconds after loading the site: [Optional]</label>
+															<input name="cg_apify_wait_for_single" value="<?php  echo @$camp_general['cg_apify_wait_for_single']  ?>" placeholder="0" type="text">
+															<div class="description">
+																Wait for how many milliseconds after loading the site. This is useful if the site loads some content after a few seconds. for example: 15000 (waits for 15 seconds)
+															</div>
+												
+													</div>
 								             </div>
 						               		 
 						               		<div class="option clearfix">
@@ -1804,11 +1867,11 @@ if (count($res) > 0 ){
 						 		 		 				
 						 		 		 				  		 		 				
 						 		 		 				<td    style="padding-left:10px;padding-top:8px;" >
-						 		 		 					 <button  title="Duplicate rule"  class="duplicator" >+</button>
+						 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
 						 		 		 				</td>
 						 		 		 				
 						 		 		 				<td    style="padding-left:5px;padding-top:8px;" >
-						 		 		 					 <button  title="Remove rule"  class="cleaner" >x</button>
+						 		 		 					 <button  title="Remove rule"  class="dashicons-before dashicons-no cleaner" ></button>
 						 		 		 				</td>
 						 		 		 			
 						 		 		 			</tr>
@@ -1848,7 +1911,7 @@ if (count($res) > 0 ){
 	                    
 							                    <input name="camp_options[]"  data-controls="post_strip_c" id="post_strip_opt" value="OPT_STRIP_R" type="checkbox">
 							                    <span class="option-title">
-														Strip parts after extracting content using REGEX
+														Strip parts after extracting content using REGEX (ADVANCED)
 							                    </span>
 							                    <br>
 							                    
@@ -1862,13 +1925,99 @@ if (count($res) > 0 ){
 									            </div>
 									            
 							               </div>
+
+										   <div class="option clearfix">
+													
+													<input name="camp_options[]"  data-controls="post_strip_wrd"  value="OPT_STRIP_BY_WORD" type="checkbox">
+													<span class="option-title">
+															Strip paragraphs that contain a specific word (like Read more)
+													</span>
+													<br>
+													
+													<div id="post_strip_wrd" class="field f_100">
+													<label for="field6">
+															Words (one per line)
+													</label>
+													
+														<textarea name="cg_post_strip_by_words" ><?php    echo  (@$camp_general['cg_post_strip_by_words'])   ?></textarea>
+													
+													</div>
+													
+											</div>
+
+										   <div class="option clearfix">
+	                    
+							                    <input name="camp_options[]"  data-controls="post_strip_visual" value="OPT_STRIP_VISUAL" type="checkbox">
+							                    <span class="option-title">
+														Strip parts after extracting content using Visual selector/XPath (Newbie friendly)
+							                    </span>
+							                    <br>
+							                    
+									            <div id="post_strip_visual" class="field f_100">
+									              
+												   <div class="field typepart Multi">	
+													   <label>Example URL of a single post</label> <input value="<?php  echo @$camp_general['cg_ml_example_strip']   ?>" name="cg_ml_example_strip" data-fill-this-field-after-picking-first-link  data-visual-selector-Multi-example type="text">	
+														<div class="description">This URL will be used for the visual selector, so add a URL for an example post</div> 
+													</div>
+															
+													
+											 
+											 		<table> 		 			
+											 		 		 			<?php 
+											 		 		 				 
+											 		 		 			$cg_feed_visual_strip = @$camp_general['cg_feed_visual_strip'];
+											 		 		 			if(!is_array($cg_feed_visual_strip)) $cg_feed_visual_strip = array('');
+											 		 		 			
+											 		 		 			$i=0;
+											 		 		 			foreach ($cg_feed_visual_strip as $cg_feed_visual_rule){
+											 		 		 			?>
+											 		 		 			
+											 		 		 			<tr>
+											 		 		 				
+											 		 		 				<td  style="padding-right:5px;width:300px" >
+											 		 		 				 		<input  class="no-unify"  value="<?php  echo htmlentities($cg_feed_visual_rule,ENT_COMPAT, 'UTF-8')  ?>" name="cg_feed_visual_strip[]" type="text">
+											 		 		 				</td>
+											 		 		 				
+											 		 		 				<td    style="padding-left:15px;padding-top:8px;" > 
+											 		 		 					 <button  title="Locate" data-popup-field-name="cg_ml_example_strip"  data-popup-field-rss="yes" class="dashicons-before dashicons-color-picker visual_selector" ></button>
+											 		 		 				</td>
+											 		 		 				 
+											 		 		 				<td    style="padding-left:5px;padding-top:8px;" >
+											 		 		 					 <button  title="Duplicate rule"  class="dashicons-before dashicons-plus duplicator" ></button>
+											 		 		 				</td>
+											 		 		 				
+											 		 		 				<td    style="padding-left:5px;padding-top:8px;" >
+											 		 		 					 <button  title="Remove rule"  class="dashicons-before dashicons-no cleaner" ></button>
+											 		 		 				</td>
+											 		 		 			
+											 		 		 			</tr>
+											 		 		 		
+											 		 		 		<?php  $i++ ; } ?>
+											 		 		 		
+											 		 		 		<tr><td style="padding-top:20px" colspan="4">*Click on the dot icon and select parts to remove that exists on the part you want originally to extract as the post content<br><br>*Selected parts will be removed before extracting the actual content for the post so take care!<br><br>*You can add an XPath manually like:<br> <code>//p[contains(., "read more")]</code> which will remove the paragraph that contains the text "read more"</td></tr>
+											 		 		 		
+											 		</table>
+									                 
+									               
+									            </div>
+									            
+							               </div>
+
+										   <div class="option clearfix">
+	                    
+							                    <input name="camp_options[]" value="OPT_STRIP_IMGS" type="checkbox">
+							                    <span class="option-title">
+														Strip images from extracted post content
+							                    </span>
+ 
+							               </div>
 							               
 							               
 											<div class="option clearfix">
 	                    
 							                    <input name="camp_options[]"  data-controls="post_strip_t"  value="OPT_STRIP_T" type="checkbox">
 							                    <span class="option-title">
-														Strip html tags
+														Strip HTML tags
 							                    </span>
 							                    <br> 
 							                    
@@ -1900,11 +2049,26 @@ if (count($res) > 0 ){
 							               </div>
 					               
 							                 <div class="option clearfix">
-							                    <input name="camp_options[]"   value="OPT_ORIGINAL_TIME" type="checkbox">
+							                    <input data-controls="original_time_dev" name="camp_options[]"   value="OPT_ORIGINAL_TIME" type="checkbox">
 							                    <span class="option-title">
 														Add posts with its original time   
 							                    </span>
 							                    <br>
+
+
+												<div id="original_time_dev"  class="field f_100">
+												
+													<label>
+									                    REGEX pattern to extract the original time (Optional)
+									               </label>
+									               
+									                <input value="<?php    echo @$camp_general['cg_original_time_regex']   ?>"  name="cg_original_time_regex" type="text">
+													<div class="description" >Example: <br><code>20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?.\d{2}:\d{2}</code> </div>
+									               
+
+
+									            </div>
+
 							               </div>
 					               
 					               		   <div class="option clearfix">
@@ -1936,7 +2100,7 @@ if (count($res) > 0 ){
 									                		<td  style="vertical-align: top;width: 100%;" ><input value="<?php   echo htmlspecialchars( @$camp_general['cg_feed_custom_id_cat'])   ?>" name="cg_feed_custom_id_cat"    type="text"></td>
 									                		
 									                		<td    style="padding-left:15px;padding-top:8px;padding-right:10px"   valign="top">
-						 		 		 					 <button  title="Locate"  data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes"  class="visual_selector cat_locator" >.</button>
+						 		 		 					 <button  title="Locate"  data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes"  class="dashicons-before dashicons-color-picker visual_selector cat_locator" ></button>
 						 		 		 				</td>
 									                		
 									                		
@@ -2030,13 +2194,13 @@ if (count($res) > 0 ){
 											<div class="option clearfix">
 							                    <input data-controls="wp_automatic_tags_extract" name="camp_options[]"   value="OPT_ORIGINAL_TAGS" type="checkbox">
 							                    <span class="option-title">
-														Extract original tags and set it as tags (using id/class)    
+														Extract original tags and set it as WordPress tags (using CSS ID/Class)    
 							                    </span>
 							                    
 							                    <div id="wp_automatic_tags_extract" class="field f_100">
 							                    	<label for="field6">
-								                    Division ID or Class or XPath (ADVANCED) 
-								               </label>
+								                    Division ID or Class or XPath or click the dot button to pick using visual selector
+								               			</label>
 								                
 								                <table>
 								                	<tr>
@@ -2055,7 +2219,7 @@ if (count($res) > 0 ){
 								                		<td  style="vertical-align: top;width: 100%;" ><input value="<?php   echo htmlspecialchars( @$camp_general['cg_feed_custom_id_tag'])   ?>" name="cg_feed_custom_id_tag"    type="text"></td>
 								                		
 								                		<td    style="padding-left:15px;padding-top:8px;padding-right:10px"   valign="top">
-					 		 		 					 <button  title="Locate"  data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes"  class="visual_selector tag_locator" >.</button>
+					 		 		 					 <button  title="Locate"  data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes"  class="dashicons-before dashicons-color-picker visual_selector tag_locator" ></button>
 					 		 		 				</td>
 								                		
 								                		
@@ -2076,6 +2240,28 @@ if (count($res) > 0 ){
 								                	 							                		
 								                	</tr>
 								                </table>
+
+												<div class="option clearfix">
+	                    
+									                    <input name="camp_options[]"  data-controls="post_tag_replace"  value="OPT_ORIGINAL_TAGS_REPLACE" type="checkbox">
+									                    <span class="option-title">
+																Search and replace in extracted tags names  
+									                    </span>
+									                    <br> 
+									                    
+											            <div id="post_tag_replace" class="field f_100">
+											               
+											                <label>
+											                    Search|Replace (one per line)
+											               </label>
+											               
+											                <textarea name="cg_tag_replace"><?php  echo ( empty($camp_general['cg_tag_replace']) ?  '' :  $camp_general['cg_tag_replace'] )  ?></textarea>
+											               <div class="description" >example: sports|Sport<br><br>This will replace the tag named sports with Sport so this is the final tag name on your site </div>
+											            </div>
+											            
+									               </div>
+
+
 							                    </div>
 							                    
 							                    <br>
@@ -2111,7 +2297,7 @@ if (count($res) > 0 ){
 								                		<td  style="vertical-align: top;width: 100%;" ><input value="<?php   echo htmlspecialchars( @$camp_general['cg_feed_custom_id_author'])   ?>" name="cg_feed_custom_id_author"    type="text"></td>
 								                		
 								                		<td    style="padding-left:15px;padding-top:8px;padding-right:10px"   valign="top">
-					 		 		 					 <button  title="Locate"  data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes"  class="visual_selector author_locator" >.</button>
+					 		 		 					 <button  title="Locate"  data-popup-field-name="cg_ml_example_2"  data-popup-field-rss="yes"  class="dashicons-before dashicons-color-picker visual_selector author_locator" ></button>
 					 		 		 				</td>
 								                		
 								                		<td style="min-width:85px;" valign="top" >
@@ -2132,6 +2318,17 @@ if (count($res) > 0 ){
 								                		
 								                	 							                		
 								                	</tr>
+													 
+													<tr>
+														<td colspan="3">
+															<div class="description" >
+																			You can leave config empty, the plugin will try to auto detect it
+														</div>
+														</td>
+													</tr>
+
+																		
+
 								                </table>
 							                    </div>
 							                    
@@ -2139,7 +2336,7 @@ if (count($res) > 0 ){
 							               </div>
 
 							                <div class="option clearfix">
-							                    <input name="camp_options[]"   value="OPT_ORIGINAL_META" type="checkbox">
+							                    <input name="camp_options[]"   value="OPT_ORIGINAL_META_DESC" type="checkbox">
 							                    <span class="option-title">
 														Extract original meta description and set as Yoast/Rank Math meta description   
 							                    </span>
@@ -3251,14 +3448,16 @@ if (count($res) > 0 ){
                </label>
                
                <select name="cg_fb_source" >
-                   
+               
+			   		  <option  value="profile"  <?php @wp_automatic_opt_selected('profile',$camp_general['cg_fb_source']) ?>  >
+                         Profile or a page with the new page experience
+                    </option>
+
                     <option  value="page"  <?php @wp_automatic_opt_selected('page',$camp_general['cg_fb_source']) ?> >
                          Page with a legacy like button (old page Layout)
                     </option>
                     
-                    <option  value="profile"  <?php @wp_automatic_opt_selected('profile',$camp_general['cg_fb_source']) ?>  >
-                         Profile or a page with the new page experience
-                    </option>
+                   
                     
                    
   
@@ -3268,6 +3467,8 @@ if (count($res) > 0 ){
                     
                      
                 </select>
+
+				<div class="description">*Leacy like button is the blue button as seen on Facebook CNN page here https://web.facebook.com/cnn, other gray like button/follow button is the new layout <br></div>
 		 		
 		 		
 		 
@@ -3277,7 +3478,7 @@ if (count($res) > 0 ){
 			 
 			 <input value="<?php   echo @$camp_general['cg_fb_page']  ?>" name="cg_fb_page"   type="text">
 			 <input value="<?php   echo @$camp_general['cg_fb_page_id']  ?>" name="cg_fb_page_id"   type="hidden" >
-			 <div class="description"><a href="http://valvepress.com/?p=565" target="_blank">How to get the id?</a></div>
+			 <div class="description">Just paste the Page link or add the Numeric ID manually, <a href="http://valvepress.com/?p=565" target="_blank">How to get the id?</a></div>
 
  			            
  
@@ -3864,7 +4065,7 @@ if (count($res) > 0 ){
                     
                     <input name="camp_options[]"   data-controls="amazon_custom_url" value="OPT_AMAZON_CUSTOM" type="checkbox">
                     <span class="option-title">
-							Custom amazon search URL/Best sellers (Amazon link containing a list of products ) 
+							Custom amazon search URL/Best sellers/Whishlist (Amazon link containing a list of products ) 
                     </span>
                     <br>
                     
@@ -3873,7 +4074,7 @@ if (count($res) > 0 ){
 		                    Amazon Search URL 
 		               </label>
 		               <input type="text" name="cg_am_custom_urls" value="<?php   echo @$camp_general['cg_am_custom_urls']  ?>">
-		            	<div class="description">Use [keyword] inside the URL if needed<br>ex1: https://www.amazon.com/s?k=[keyword]&s=price-desc-rank<br><br>ex2:https://www.amazon.com/Best-Sellers-Appliances/zgbs/appliances/</div>
+		            	<div class="description">*Use [keyword] inside the URL if needed<br><br>Example 1 (Search page): https://www.amazon.com/s?k=[keyword]&s=price-desc-rank<br><br>Example 2 (Top sellers): https://www.amazon.com/Best-Sellers-Appliances/zgbs/appliances/<br><br>Example 3 (Whishlist): https://www.amazon.com/hz/wishlist/ls/1J5CXJUWGMDIO</div>
 		            	
 		            	<div class="field f_100">
 		            	<input  data-controls-r='' name="camp_options[]"   value="OPT_AM_NO_KEYS" type="checkbox">
@@ -3884,6 +4085,29 @@ if (count($res) > 0 ){
 		            
 		        </div>
 		        </div>
+		        </div>
+
+               <div class="field f_100">
+	               <div class="option clearfix">
+	                    
+	                    <input data-controls-r='' name="camp_options[]"   data-controls="amazon_custom_html" value="OPT_AMAZON_CUSTOM_HTML" type="checkbox">
+	                    <span class="option-title">
+								Extract products from added page HTML 
+	                    </span>
+	                    <br>
+	                    
+			            <div id="amazon_custom_html" class="field f_100">
+			              
+			               <label>
+			                    HTML of the page that contains the product links 
+			               </label>
+			              	  <textarea  name="cg_am_html"><?php echo htmlentities( @$camp_general['cg_am_html'],ENT_COMPAT, 'UTF-8')  ?></textarea>
+				            	<div class="description">*Paste the whole page HTML that contains the products<br><br>*Suitable for infinte scroll pages like whichlists, check <a href="https://valvepress.com/how-to-import-all-products-from-amazon-wish-list-to-wordpress-using-wordpress-automatic-plugin/" target="_blank">this tutorial</a> on how to import using this option</div>
+				            	
+				             
+			            
+			       		 </div>
+			        </div>
 		        </div>
 		        
 		        <div class="field f_100">
@@ -4018,7 +4242,7 @@ if (count($res) > 0 ){
                     
                     <input data-controls="yt_date_c" name="camp_options[]" id="yt_date" value="OPT_YT_DATE" type="checkbox">
                     <span class="option-title">
-							Exclude Item if it is older than a specific date  
+							Exclude Item if it is older than a specific date or if specific amount of time passed since the item was published
                     </span>
                     <br>
                     
@@ -4026,67 +4250,74 @@ if (count($res) > 0 ){
 		               
 		               <div id="yt_date_c_d" class="field f_100">
 		                
-		                Day:
+
+					   <div id="specific_date_skip">
+
+							Day:
+							
+							<select style="width:80px" class="no-unify" name="cg_yt_dte_day" >  
+								<option value='01'  <?php @wp_automatic_opt_selected('01',$camp_general['cg_yt_dte_day']) ?> >01</option>
+								<option value='02'  <?php @wp_automatic_opt_selected('02',$camp_general['cg_yt_dte_day']) ?> >02</option>
+								<option value='03'  <?php @wp_automatic_opt_selected('03',$camp_general['cg_yt_dte_day']) ?> >03</option>
+								<option value='04'  <?php @wp_automatic_opt_selected('04',$camp_general['cg_yt_dte_day']) ?> >04</option>
+								<option value='05'  <?php @wp_automatic_opt_selected('05',$camp_general['cg_yt_dte_day']) ?> >05</option>
+								<option value='06'  <?php @wp_automatic_opt_selected('06',$camp_general['cg_yt_dte_day']) ?> >06</option>
+								<option value='07'  <?php @wp_automatic_opt_selected('07',$camp_general['cg_yt_dte_day']) ?> >07</option>
+								<option value='08'  <?php @wp_automatic_opt_selected('08',$camp_general['cg_yt_dte_day']) ?> >08</option>
+								<option value='09'  <?php @wp_automatic_opt_selected('09',$camp_general['cg_yt_dte_day']) ?> >09</option>
+								<option value='10'  <?php @wp_automatic_opt_selected('10',$camp_general['cg_yt_dte_day']) ?> >10</option>
+								<option value='11'  <?php @wp_automatic_opt_selected('11',$camp_general['cg_yt_dte_day']) ?> >11</option>
+								<option value='12'  <?php @wp_automatic_opt_selected('12',$camp_general['cg_yt_dte_day']) ?> >12</option>
+								<option value='13'  <?php @wp_automatic_opt_selected('13',$camp_general['cg_yt_dte_day']) ?> >13</option>
+								<option value='14'  <?php @wp_automatic_opt_selected('14',$camp_general['cg_yt_dte_day']) ?> >14</option>
+								<option value='15'  <?php @wp_automatic_opt_selected('15',$camp_general['cg_yt_dte_day']) ?> >15</option>
+								<option value='16'  <?php @wp_automatic_opt_selected('16',$camp_general['cg_yt_dte_day']) ?> >16</option>
+								<option value='17'  <?php @wp_automatic_opt_selected('17',$camp_general['cg_yt_dte_day']) ?> >17</option>
+								<option value='18'  <?php @wp_automatic_opt_selected('18',$camp_general['cg_yt_dte_day']) ?> >18</option>
+								<option value='19'  <?php @wp_automatic_opt_selected('19',$camp_general['cg_yt_dte_day']) ?> >19</option>
+								<option value='20'  <?php @wp_automatic_opt_selected('20',$camp_general['cg_yt_dte_day']) ?> >20</option>
+								<option value='21'  <?php @wp_automatic_opt_selected('21',$camp_general['cg_yt_dte_day']) ?> >21</option>
+								<option value='22'  <?php @wp_automatic_opt_selected('22',$camp_general['cg_yt_dte_day']) ?> >22</option>
+								<option value='23'  <?php @wp_automatic_opt_selected('23',$camp_general['cg_yt_dte_day']) ?> >23</option>
+								<option value='24'  <?php @wp_automatic_opt_selected('24',$camp_general['cg_yt_dte_day']) ?> >24</option>
+								<option value='25'  <?php @wp_automatic_opt_selected('25',$camp_general['cg_yt_dte_day']) ?> >25</option>
+								<option value='26'  <?php @wp_automatic_opt_selected('26',$camp_general['cg_yt_dte_day']) ?> >26</option>
+								<option value='27'  <?php @wp_automatic_opt_selected('27',$camp_general['cg_yt_dte_day']) ?> >27</option>
+								<option value='28'  <?php @wp_automatic_opt_selected('28',$camp_general['cg_yt_dte_day']) ?> >28</option>
+								<option value='29'  <?php @wp_automatic_opt_selected('29',$camp_general['cg_yt_dte_day']) ?> >29</option>
+								<option value='30'  <?php @wp_automatic_opt_selected('30',$camp_general['cg_yt_dte_day']) ?> >30</option>
+								<option value='31'  <?php @wp_automatic_opt_selected('31',$camp_general['cg_yt_dte_day']) ?> >31</option>
+							</select>
+							Month:
+							<select  style="width:80px" class="no-unify"  name="cg_yt_dte_month" >
+								<option value='01'  <?php @wp_automatic_opt_selected('01',$camp_general['cg_yt_dte_month']) ?> >January</option>
+								<option value='02'  <?php @wp_automatic_opt_selected('02',$camp_general['cg_yt_dte_month']) ?> >February</option>
+								<option value='03'  <?php @wp_automatic_opt_selected('03',$camp_general['cg_yt_dte_month']) ?> >March</option>
+								<option value='04'  <?php @wp_automatic_opt_selected('04',$camp_general['cg_yt_dte_month']) ?> >April</option>
+								<option value='05'  <?php @wp_automatic_opt_selected('05',$camp_general['cg_yt_dte_month']) ?> >May</option>
+								<option value='06'  <?php @wp_automatic_opt_selected('06',$camp_general['cg_yt_dte_month']) ?> >June</option>
+								<option value='07'  <?php @wp_automatic_opt_selected('07',$camp_general['cg_yt_dte_month']) ?> >July</option>
+								<option value='08'  <?php @wp_automatic_opt_selected('08',$camp_general['cg_yt_dte_month']) ?> >August</option>
+								<option value='09'  <?php @wp_automatic_opt_selected('09',$camp_general['cg_yt_dte_month']) ?> >September</option>
+								<option value='10'  <?php @wp_automatic_opt_selected('10',$camp_general['cg_yt_dte_month']) ?> >October</option>
+								<option value='11'  <?php @wp_automatic_opt_selected('11',$camp_general['cg_yt_dte_month']) ?> >November</option>
+								<option value='12'  <?php @wp_automatic_opt_selected('12',$camp_general['cg_yt_dte_month']) ?> >December</option>
+							</select>
+							Year:<input style="width:70px" class="no-unify" value="<?php   echo $camp_general['cg_yt_dte_year']   ?>" name="cg_yt_dte_year"     type="text">
 						
-						<select style="width:80px" class="no-unify" name="cg_yt_dte_day" >  
-							<option value='01'  <?php @wp_automatic_opt_selected('01',$camp_general['cg_yt_dte_day']) ?> >01</option>
-							<option value='02'  <?php @wp_automatic_opt_selected('02',$camp_general['cg_yt_dte_day']) ?> >02</option>
-							<option value='03'  <?php @wp_automatic_opt_selected('03',$camp_general['cg_yt_dte_day']) ?> >03</option>
-							<option value='04'  <?php @wp_automatic_opt_selected('04',$camp_general['cg_yt_dte_day']) ?> >04</option>
-							<option value='05'  <?php @wp_automatic_opt_selected('05',$camp_general['cg_yt_dte_day']) ?> >05</option>
-							<option value='06'  <?php @wp_automatic_opt_selected('06',$camp_general['cg_yt_dte_day']) ?> >06</option>
-							<option value='07'  <?php @wp_automatic_opt_selected('07',$camp_general['cg_yt_dte_day']) ?> >07</option>
-							<option value='08'  <?php @wp_automatic_opt_selected('08',$camp_general['cg_yt_dte_day']) ?> >08</option>
-							<option value='09'  <?php @wp_automatic_opt_selected('09',$camp_general['cg_yt_dte_day']) ?> >09</option>
-							<option value='10'  <?php @wp_automatic_opt_selected('10',$camp_general['cg_yt_dte_day']) ?> >10</option>
-							<option value='11'  <?php @wp_automatic_opt_selected('11',$camp_general['cg_yt_dte_day']) ?> >11</option>
-							<option value='12'  <?php @wp_automatic_opt_selected('12',$camp_general['cg_yt_dte_day']) ?> >12</option>
-							<option value='13'  <?php @wp_automatic_opt_selected('13',$camp_general['cg_yt_dte_day']) ?> >13</option>
-							<option value='14'  <?php @wp_automatic_opt_selected('14',$camp_general['cg_yt_dte_day']) ?> >14</option>
-							<option value='15'  <?php @wp_automatic_opt_selected('15',$camp_general['cg_yt_dte_day']) ?> >15</option>
-							<option value='16'  <?php @wp_automatic_opt_selected('16',$camp_general['cg_yt_dte_day']) ?> >16</option>
-							<option value='17'  <?php @wp_automatic_opt_selected('17',$camp_general['cg_yt_dte_day']) ?> >17</option>
-							<option value='18'  <?php @wp_automatic_opt_selected('18',$camp_general['cg_yt_dte_day']) ?> >18</option>
-							<option value='19'  <?php @wp_automatic_opt_selected('19',$camp_general['cg_yt_dte_day']) ?> >19</option>
-							<option value='20'  <?php @wp_automatic_opt_selected('20',$camp_general['cg_yt_dte_day']) ?> >20</option>
-							<option value='21'  <?php @wp_automatic_opt_selected('21',$camp_general['cg_yt_dte_day']) ?> >21</option>
-							<option value='22'  <?php @wp_automatic_opt_selected('22',$camp_general['cg_yt_dte_day']) ?> >22</option>
-							<option value='23'  <?php @wp_automatic_opt_selected('23',$camp_general['cg_yt_dte_day']) ?> >23</option>
-							<option value='24'  <?php @wp_automatic_opt_selected('24',$camp_general['cg_yt_dte_day']) ?> >24</option>
-							<option value='25'  <?php @wp_automatic_opt_selected('25',$camp_general['cg_yt_dte_day']) ?> >25</option>
-							<option value='26'  <?php @wp_automatic_opt_selected('26',$camp_general['cg_yt_dte_day']) ?> >26</option>
-							<option value='27'  <?php @wp_automatic_opt_selected('27',$camp_general['cg_yt_dte_day']) ?> >27</option>
-							<option value='28'  <?php @wp_automatic_opt_selected('28',$camp_general['cg_yt_dte_day']) ?> >28</option>
-							<option value='29'  <?php @wp_automatic_opt_selected('29',$camp_general['cg_yt_dte_day']) ?> >29</option>
-							<option value='30'  <?php @wp_automatic_opt_selected('30',$camp_general['cg_yt_dte_day']) ?> >30</option>
-							<option value='31'  <?php @wp_automatic_opt_selected('31',$camp_general['cg_yt_dte_day']) ?> >31</option>
-						</select>
-						Month:
-						<select  style="width:80px" class="no-unify"  name="cg_yt_dte_month" >
-							<option value='01'  <?php @wp_automatic_opt_selected('01',$camp_general['cg_yt_dte_month']) ?> >January</option>
-							<option value='02'  <?php @wp_automatic_opt_selected('02',$camp_general['cg_yt_dte_month']) ?> >February</option>
-							<option value='03'  <?php @wp_automatic_opt_selected('03',$camp_general['cg_yt_dte_month']) ?> >March</option>
-							<option value='04'  <?php @wp_automatic_opt_selected('04',$camp_general['cg_yt_dte_month']) ?> >April</option>
-							<option value='05'  <?php @wp_automatic_opt_selected('05',$camp_general['cg_yt_dte_month']) ?> >May</option>
-							<option value='06'  <?php @wp_automatic_opt_selected('06',$camp_general['cg_yt_dte_month']) ?> >June</option>
-							<option value='07'  <?php @wp_automatic_opt_selected('07',$camp_general['cg_yt_dte_month']) ?> >July</option>
-							<option value='08'  <?php @wp_automatic_opt_selected('08',$camp_general['cg_yt_dte_month']) ?> >August</option>
-							<option value='09'  <?php @wp_automatic_opt_selected('09',$camp_general['cg_yt_dte_month']) ?> >September</option>
-							<option value='10'  <?php @wp_automatic_opt_selected('10',$camp_general['cg_yt_dte_month']) ?> >October</option>
-							<option value='11'  <?php @wp_automatic_opt_selected('11',$camp_general['cg_yt_dte_month']) ?> >November</option>
-							<option value='12'  <?php @wp_automatic_opt_selected('12',$camp_general['cg_yt_dte_month']) ?> >December</option>
-						</select>
-						 Year:<input style="width:70px" class="no-unify" value="<?php   echo $camp_general['cg_yt_dte_year']   ?>" name="cg_yt_dte_year"     type="text">
- 		            
+						 </div>
+
+
+
  		               </div>
  		            
  		            	<div class="option clearfix">
  		            	
 		                     <span class="option-title">
-									Exclude Item if specific time passed from publishing it.  
+									Exclude the Item if a specific amount of time passed instead of a fixed date.  
 		                     </span>
 	 		            	 
-	 		            	 <input data-controls="yt_date_c_t" name="camp_options[]"   value="OPT_YT_DATE_T" type="checkbox">
+	 		            	 <input data-controls="yt_date_c_t" data-controls-r="specific_date_skip" name="camp_options[]"   value="OPT_YT_DATE_T" type="checkbox">
 		                     <br>
 		                     
 		                     <div id="yt_date_c_t" class="field f_100">
@@ -4264,7 +4495,108 @@ if (count($res) > 0 ){
 		 
 		 
 		 <!-- / Vimeo Part -->
-		 	 
+		 
+		 <!-- gpt3 part -->
+		 <div class="typepart gpt3" style="display:none">
+		
+		 		<div id="article_generation_prompt" class="field f_100">
+			 		<label>Articles titles generation prompt</label> 
+					<input value="<?php  echo @$camp_general['cg_gp_prompt_titles']   ?>" name="cg_gp_prompt_titles" type="text" placeholder="Suggest articles titles about [keyword]">
+					<div class="description">The prompt will be used to generate the article titles. You can use [keyword] to substitute the keyword anywhere in the prompt.<br><br>
+							*Example: Suggest articles titles about [keyword]<br>
+							*Example2: Suggest a list of titles for a new horror story that include [keyword]<br>
+							*Example3: Name a list of cities in [keyword]	<br>
+							*Example4: Suggest 100 Articles titles about [keyword]	<br>
+							 
+					</div>
+			
+					<div class="field f_100">
+						<div class="option clearfix">
+							<input name="camp_options[]" id="OPT_GP_ONE_TITLES"  value="OPT_GP_ONE_TITLES" type="checkbox">
+							<span class="option-title">
+							Post one article only for every keyword
+							</span>
+							<br>
+
+							<div class="description">By default, the plugin grab list of titles and post every new title as a new post, enable this option to only consider the first title.</div>
+
+						</div>
+					</div>
+			
+			</div>
+		 
+			<div class="field f_100">
+			 		 
+
+				<div class="option clearfix">
+                    <input data-controls-r="article_generation_prompt" name="camp_options[]" id="OPT_GP_NO_TITLES"  value="OPT_GP_NO_TITLES" type="checkbox">
+                    <span class="option-title">
+					Disable using prompt for title generation and use the keyword from the title box directly as the [article_title]
+                    </span>
+                    <br>
+
+					<div class="description">By default, the plugin will use the prompt to generate the article titles list. Check this to disable it and use every added keyword directly as the [article_title].</div>
+
+               </div>
+
+
+			</div>
+ 
+
+			<div class="field f_100">
+			 		
+			
+					<div id="article_generation_prompt_cnt" class="field  ">
+
+							<label>Article content generation prompt</label> 
+							
+							<textarea name="cg_gp_prompt" placeholder="Write an article about [article_title]" ><?php    echo htmlentities(@$camp_general['cg_gp_prompt'],ENT_COMPAT, 'UTF-8')   ?></textarea>
+							
+							
+							<div class="description">The prompt will be used to generate the article content. You can use [article_title] to insert the article title in the prompt.<br><br>
+									*Example: Write an article about [article_title]<br>
+									*Example2: Write a new horror story about [article_title]	<br>
+									*Example3: Write an article about best attractions located in [article_title]<br>
+									*Example4: Write an article about [article_title] and include HTML headings<br> 
+									*Example4: Write 1000 words article about [article_title] and include FAQs section at the end<br> 
+
+							</div>	 
+					</div>
+
+					<div class="">
+			 		 
+
+							<div class="option clearfix">
+								<input data-controls-r="article_generation_prompt_cnt" name="camp_options[]" id="OPT_GP_NO_CONTENT"  value="OPT_GP_NO_CONTENT" type="checkbox">
+								<span class="option-title">
+									Disable using prompt for content generation (In case you have your own content)
+								</span>
+								<br>
+
+								<div class="description">By default, the plugin will use the prompt to generate the article content and it can then be used using the [matched_content]</div>
+
+							</div>
+
+
+					</div>
+
+			</div>
+
+			 
+			
+
+
+
+			<div class="field f_100">
+			 		<label>How many times to call OpenAI GPT3 for titles for each keyword</label> 
+					<input value="<?php  echo @$camp_general['cg_gp_prompt_count']   ?>" name="cg_gp_prompt_count" type="number" placeholder="1">
+					<div class="description">By default, the plugin will call for new titles once, it will then disable the keyword. increase this if needed.</div>
+			</div>
+		
+		
+		</div>
+		 <!-- / gpt3 part -->
+
 		 <!--  Sound cloud part -->
 		 
 		 <div class="typepart SoundCloud" style="display:none">
@@ -5244,7 +5576,7 @@ if (count($res) > 0 ){
 		                    
 	                    </div>
 	                    
-	                    
+	       
 		                
 		            	<br>
 		            	<div class="field f_100">
@@ -5253,6 +5585,8 @@ if (count($res) > 0 ){
 									Don't use keywords add videos without filtering . 
 		                    </span>
 	                    </div>
+
+
 	                    
 	                    
 	                    <div class="description">Tip: If you want to post from many channels, just add the channel ID and activate the option to post without keywords then leave the next 7 options below to thier default values. This will reduce the used quota per request from 100 to 3. Daily quota is 10000 and a single search request takes 100</div>
@@ -6467,6 +6801,10 @@ if (count($res) > 0 ){
 [ad_2]
 <br><a href="[source_link]">Source</a> by <a href="[author_link]">[author_name]</a></div>		
 
+<div class="tempgpt3">[ad_1]
+[matched_content]
+[ad_2]</div>	
+
 <div class="tempArticlesBase">[ad_1]
 [matched_content]
 [ad_2]
@@ -6515,7 +6853,7 @@ Location:
 
 			<!-- amazon template -->	
 			<div class="tempAmazon">[product_imgs_html]
-Price: <span style="color:#b12704">[price_with_discount]</span><br><i><small>(as of [price_update_date] - <span class="wp_automatic_amazon_disclaimer" title="Product prices and availability are accurate as of the date/time indicated and are subject to change. Any price and availability information displayed on [relevant Amazon Site(s), as applicable] at the time of purchase will apply to the purchase of this product.">Details</span>)</small></i><br><br><a href="[product_link]"><img data-src="https://i.imgur.com/ISRHEWs.png"></a> 
+Price: <span style="color:#b12704">[price_with_discount]</span><br><i><small>(as of [price_update_date] - <span class="wp_automatic_amazon_disclaimer" title="Product prices and availability are accurate as of the date/time indicated and are subject to change. Any price and availability information displayed on [relevant Amazon Site(s), as applicable] at the time of purchase will apply to the purchase of this product.">Details</span>)</small></i><br><br><a href="[product_link]"><img data-src="https://valvepress.s3.amazonaws.com/imgs/buy_now.png"></a> 
 [ad_1]
 [product_desc]
 <br>[ad_2]</div> 
@@ -6531,11 +6869,11 @@ Price: <span style="color:#b12704">[price_with_discount]</span><br><i><small>(as
 <p style="text-align: center; font-size: 150%;"><strong><a href="[product_link]">Click here to get [original_title] at discounted price while it's still available...</a></strong></p>
 
 <p style="text-align: center; ">
-<a href="[product_link]"><img style="display:inline" data-src="https://i.imgur.com/RBVKrWl.jpg"></a></p>
+<a href="[product_link]"><img style="display:inline" data-src="https://valvepress.s3.amazonaws.com/imgs/order_now.jpeg"></a></p>
 
 <p style="text-align: center; ">
 <em>All orders are protected by SSL encryption – the highest industry standard for online security from trusted vendors.<br>
-<img data-src="https://i.imgur.com/YgpMeUW.png"><br>
+<img data-src="https://valvepress.s3.amazonaws.com/imgs/money_back_gurantee.png"><br>
 [original_title] is backed with a 60 Day No Questions Asked Money Back Guarantee. If within the first 60 days of receipt you are not satisfied with Wake Up Lean™, you can request a refund by sending an email to the address given inside the product and we will immediately refund your entire purchase price, with no questions asked.</em></p>
 
 <!--more-->
@@ -6549,11 +6887,11 @@ Price: <span style="color:#b12704">[price_with_discount]</span><br><i><small>(as
 <p style="text-align: center; font-size: 150%;"><strong><a href="[product_link]">Click here to get [original_title] at discounted price while it's still available...</a></strong></p>
 
 <p style="text-align: center; ">
-<a href="[product_link]"><img style="display:inline" data-src="https://i.imgur.com/RBVKrWl.jpg"></a></p>
+<a href="[product_link]"><img style="display:inline" data-src="https://valvepress.s3.amazonaws.com/imgs/order_now.jpeg"></a></p>
 
 <p style="text-align: center; ">
 <em>All orders are protected by SSL encryption – the highest industry standard for online security from trusted vendors.<br>
-<img data-src="https://i.imgur.com/YgpMeUW.png"><br>
+<img data-src="https://valvepress.s3.amazonaws.com/imgs/money_back_gurantee.png"><br>
 [original_title] is backed with a 60 Day No Questions Asked Money Back Guarantee. If within the first 60 days of receipt you are not satisfied with Wake Up Lean™, you can request a refund by sending an email to the address given inside the product and we will immediately refund your entire purchase price, with no questions asked.</em></p>
 </div>			
 			
@@ -6658,7 +6996,7 @@ Price: <span style="color:#b12704">[price_with_discount]</span><br><i><small>(as
 		<div class="tempAliexpress">[item_imgs_html]
 Price: <span style="color:#b12704">[price_with_discount]</span>
 
-<a href="[item_affiliate_url]"><img src="https://i.imgur.com/ISRHEWs.png"></a> 
+<a href="[item_affiliate_url]"><img src="https://valvepress.s3.amazonaws.com/imgs/buy_now.png"></a> 
 
 [item_description]</div>
 	
@@ -6691,7 +7029,7 @@ Price: <span style="color:#b12704">[price_with_discount]</span>
   
   <div class="tempeBay">[item_images] 
 <br> [item_desc]
-<br> Price : [item_price]
+<br> Price : [item_price_with_discount]
 <br> Ends on : [readable_time][item_end_date][/readable_time]
 <br> <a href="[item_link]">View on eBay </a></div>
 

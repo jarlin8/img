@@ -207,7 +207,7 @@ function Envato_fetch_items($keyword, $camp) {
 		  echo '<br>Envato returned an error:'.$exec;
 		
 		//if page 60 reset
-		if(stristr($exec, 'page does not have a valid value')){
+		if(stristr($exec, 'page does not have a valid value')  || stristr($exec, 'less than or equal to 60')  ){
 			
 			  echo '<br>Keyword have no more items deactivating...';
 			$query = "update {$this->wp_prefix}automatic_keywords set keyword_start = -1 where keyword_id=$kid ";

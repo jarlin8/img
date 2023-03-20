@@ -42,8 +42,8 @@ global $camp_post_category;
 					<input data-controls="permalink_external" name="camp_options[]" value="OPT_LINK_SOURSE" type="checkbox"> <span class="option-title"> Make permalinks link directly to the source (Posts will not load at your site) </span> <br>
 				
 					<div id="permalink_external" class="field f_100">
-
-						<span style="padding-left:20px;"><strong>TIP:</strong></span> If you want to make external links open on a new tab, install <a href="https://wordpress.org/plugins/open-external-links-in-a-new-window/" target="_blank">this free plugin</a>
+						<span style="padding-left:20px;"><strong>Requirement:</strong></span> If you are posting to a custom post type,You must  install <a href="https://wordpress.org/plugins/page-links-to/" target="_blank">this free plugin</a> for this feature to work
+						<br><br><span style="padding-left:20px;"><strong>TIP:</strong></span> If you want to make external links open on a new tab, install <a href="https://wordpress.org/plugins/open-external-links-in-a-new-window/" target="_blank">this free plugin</a>
 
 
 					</div>

@@ -72,7 +72,7 @@ global $camp_post_custom_v;
                     
                     <input name="camp_options[]"  value="OPT_PRODUCT_EXTERNAL" type="checkbox">
                     <span class="option-title">
-							Add the product as external affiliate product
+							Add the product as external affiliate product (set the buy now button to the imported link)) 
                     </span>
                       
                </div>
@@ -219,7 +219,7 @@ global $camp_post_custom_v;
                     
                     <input name="camp_options[]" id="cusom_fields_option" value="OPT_CUSTOM" type="checkbox">
                     <span class="option-title">
-							Add custom fields/Taxonomies to the posts 
+							Add Custom Fields/Taxonomies/Excerpt to the created posts 
                     </span>
                     
                     <br>
@@ -271,12 +271,14 @@ if($added == 0){
 		               
 		               
 		           		</div>
-			            <div class="description"><br>*Prefix the field name with "taxonomy_" if you want the value to be added as a custom taxonomy ex "taxonomy_product_tag" adds the value to the taxonomy named product_tag
+			            <div class="description"><br>*Prefix the field name with "taxonomy_" if you want the value to be added as a custom taxonomy ex "taxonomy_product_tag" adds the value to the taxonomy named product_tag<br><br>* Set the field name to excerpt if you want the value to be set as post excerpt
 			            
 			            <?php if ( class_exists( 'WooCommerce' ) ) {
 			            		
 			            		echo '<br><br>*Set the field name to "woo_gallery" if you want to set a product gallery from a rule that contains images <br><br>*Set the field name to "_price" if you want to set product price to an extracted value';
 			            	
+								//echo instructions to set the field name to attribute_attributeName to set a product attribute
+								echo '<br><br>*Set the field name to "attribute_attributeName" if you want to set a product attribute to an extracted value ex: attribute_brand will set the brand attribute to the set value';
 			            } ?>
 			            
 			            </div>

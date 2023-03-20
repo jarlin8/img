@@ -19,10 +19,19 @@ function wp_automatic_post_edit_form_tag() {
 		add_meta_box( 'status-meta-boxes', 'Run & Status', 'wp_automatic_status_meta_boxes', 'wp_automatic', 'normal', 'high' );
 		add_meta_box( 'page-meta-boxes', 'Campaign options', 'wp_automatic_meta_boxes', 'wp_automatic', 'normal', 'high' );
 		add_meta_box( 'temp-meta-boxes', 'Post template', 'wp_automatic_temp_meta_boxes', 'wp_automatic', 'normal', 'low' );
+		
+		//open ai metabox 
+		add_meta_box( 'openai-meta-boxes', 'OpenAI', 'wp_automatic_openai_meta_boxes', 'wp_automatic', 'normal', 'low' );
+		
 		add_meta_box( 'basic-meta-boxes', 'Post type, format & status', 'wp_automatic_basic_meta_boxes', 'wp_automatic', 'normal', 'low' );
 		add_meta_box( 'imgs-meta-boxes', 'Images', 'wp_automatic_imgs_meta_boxes', 'wp_automatic', 'normal', 'low' );
 		add_meta_box( 'posted-meta-box', 'Posted posts', 'wp_automatic_posted_meta_boxe', 'wp_automatic', 'side', 'low' );
+		
 		add_meta_box( 'actions-meta-box', 'Actions', 'wp_automatic_actions_meta_boxe', 'wp_automatic', 'side', 'low' );
+		
+		//tutorial metabox
+		add_meta_box( 'tutorial-meta-box', 'Tutorial', 'wp_automatic_tutorial_meta_boxe', 'wp_automatic', 'side', 'low' );
+		
 		add_meta_box( 'categories-meta-boxes', 'Categories & Tags', 'wp_automatic_cats_meta_boxes', 'wp_automatic', 'normal', 'low' );
 		add_meta_box( 'filters-meta-boxes', 'Posts filters', 'wp_automatic_filters_meta_boxes', 'wp_automatic', 'normal', 'low' );
 		add_meta_box( 'tbs-meta-boxes', 'Rewriting, Translation & Multi-language', 'wp_automatic_tbs_meta_boxes', 'wp_automatic', 'normal', 'low' );
@@ -32,6 +41,7 @@ function wp_automatic_post_edit_form_tag() {
 		add_meta_box( 'links-meta-boxes', 'Links', 'wp_automatic_links_meta_boxes', 'wp_automatic', 'normal', 'low' );
 		
 		
+		
 	}
 	
 /* Saves the meta box data. */
@@ -39,6 +49,10 @@ function wp_automatic_post_edit_form_tag() {
 
 function wp_automatic_posted_meta_boxe(){
 	require_once('posted_metabox.php');
+}
+
+function wp_automatic_tutorial_meta_boxe(){
+	require_once('metabox_tutorials.php');
 }
 
 function wp_automatic_actions_meta_boxe(){
@@ -80,6 +94,10 @@ function wp_automatic_mods_meta_boxes(){
 
 function wp_automatic_mil_meta_boxes(){
 	require_once 'metabox_mil.php';
+}
+
+function wp_automatic_openai_meta_boxes(){
+	require_once 'metabox_openai.php';
 }
 
 function wp_automatic_links_meta_boxes(){
@@ -267,7 +285,7 @@ function wp_automatic_metabox_order( $order ) {
 	
 	return array(
 			'side' =>  'wp_automatic_page-meta-boxes3,submitdiv,posted-meta-box,actions-meta-box',
-			'normal' => 'status-meta-boxes,page-meta-boxes,slugdiv,temp-meta-boxes,basic-meta-boxes,imgs-meta-boxes,categories-meta-boxes,filters-meta-boxes,tbs-meta-boxes,mods-meta-boxes,links-meta-boxes,mil-meta-boxes,woothemes-settings'
+			'normal' => 'status-meta-boxes,page-meta-boxes,slugdiv,temp-meta-boxes,openai-meta-boxes,basic-meta-boxes,imgs-meta-boxes,categories-meta-boxes,filters-meta-boxes,tbs-meta-boxes,mods-meta-boxes,links-meta-boxes,mil-meta-boxes,woothemes-settings'
 					
 					);
 	 

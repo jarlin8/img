@@ -16,6 +16,17 @@ global $camp_post_category;
 	<div class="TTWForm">
 		<div class="panes">
 
+			<div class="field f_100">
+				<div class="option clearfix">
+			               <input name="camp_options[]"  value="OPT_LINK_PREFIX" type="checkbox">
+		                   <span class="option-title">
+								Post item even if there is already a posted one from another campaign (By default same url get posted once)    
+		                   </span>
+		                   <br>
+		        </div>    
+				<div class="description"><i>(This will suffix the orignal url to make a new url by adding a parameter named "rand" )</i></div>
+			</div>
+
 			 <div class="field f_100">
 	               <div class="option clearfix">
 	                    <input name="camp_options[]"  value="OPT_NO_DEACTIVATE" type="checkbox">

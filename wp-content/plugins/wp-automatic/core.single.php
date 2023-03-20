@@ -44,8 +44,16 @@ class WpAutomaticSingle extends wp_automatic {
 			$apify = new ValvePress_APIFY( $wp_automatic_apify_key , html_entity_decode ( $cg_sn_source ) , $this->ch );
 			
 			try {
+
+				// cg_apify_wait_for_single
+				$cg_apify_wait_for_single = isset ( $camp_general ['cg_apify_wait_for_single'] ) ? $camp_general ['cg_apify_wait_for_single'] : 0;
+
+				//report the wait time
+				if( $cg_apify_wait_for_single > 0 ){
+					echo '<br>Waiting for '.$cg_apify_wait_for_single.' mill seconds before loading the content';
+				}
 				
-				$apify_content = $apify->apify();
+				$apify_content = $apify->apify($cg_apify_wait_for_single);
 				$original_cont = $apify_content;
 				
 			} catch (Exception $e) {
@@ -72,7 +80,7 @@ class WpAutomaticSingle extends wp_automatic {
 		
 		
 		// fix relative paths
-		$original_cont = $this->fix_relative_paths ( $original_cont, $cg_sn_source );
+		$original_cont = wp_automatic_fix_relative_paths ( $original_cont, $cg_sn_source );
 		
 		// dom class
 		require_once 'inc/class.dom.php';

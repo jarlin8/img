@@ -13,6 +13,8 @@ class wpAutomaticDom {
 	
 	function __construct($html){
 		 
+		 
+		
 		//make sure encoding exits
 		if( stristr($html, '<meta http-equiv="Content-Type" content="text/html; charset') || stristr($html, '<meta http-equiv="content-type" content="text/html; charset')){
 			//correct
@@ -120,6 +122,12 @@ class wpAutomaticDom {
 			
 		   }else{
 		   	 $matchHtml =  $this->doc->saveHTML($element);
+		   }
+
+		   //if $matchHtml starts with href=" then remove it and the next "
+		   if(preg_match('{^href="([^"]+?)"}', $matchHtml)){
+			echo '<br><- href= found removing it';
+		   	$matchHtml = preg_replace('{href="([^"]+?)"}', '$1', $matchHtml);
 		   }
 			
 			$allMatchs[] = $matchHtml;
@@ -414,6 +422,26 @@ class wpAutomaticDom {
 			}
  			
 		}
+	}
+
+	//function to take a list of xpaths, find HTML elements matching them and remove them from the DOM then return the new HTML
+	function removeElementsByXPath($xpathArr){
+		$xpathObj = new DOMXPath($this->doc);
+		foreach ($xpathArr as $xpath){
+			
+			var_dump($xpath);
+
+			echo '<br>Removing element by XPath: '.$xpath;
+			
+			$xpathMatches = @$xpathObj->query("$xpath");
+
+			echo ' <--Found '.count($xpathMatches).' matches';
+
+			foreach ($xpathMatches as $match){
+				$match->parentNode->removeChild($match);
+			}
+		}
+		return $this->doc->saveHTML();
 	}
 	
 }

@@ -6,10 +6,17 @@ require_once 'core.php';
 // Specific articles class
 Class WpAutomaticArticlesBase extends wp_automatic{
 
+	
+
+
+ 
 /*
  * ---* article base get links for a keyword ---
  */
 function article_base_getlinks($keyword, $camp) {
+
+ 
+
 	
 	$camp_opt = unserialize ( $camp->camp_options );
 	
@@ -361,5 +368,7 @@ function articlebase_get_post($camp) {
 		} // if keyword not ''
 	} // foreach keyword
 }
+
+
 
 }

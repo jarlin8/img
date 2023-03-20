@@ -64,6 +64,12 @@ class WpAutomaticFeeds extends wp_automatic {
 	 * ---* processing feed link ---
 	 */
 	function feed_process_link($feed, $camp) {
+
+		// add a random number as parameter rand to the end of the feed if it contains .xml , wp-content/uploads
+		if (stristr ( $feed, '.xml' ) && stristr ( $feed, 'wp-content/uploads' )) {
+			$feed = $feed . '?rand=' . rand ( 1, 30000 );
+			echo '<br>Feed URL contains wp-content/uploads and .xml , adding a random number to the end of the URL to avoid caching';
+		}
 		
 		// detect encoding mbstring
 		if (! function_exists ( 'mb_detect_encoding' )) {
@@ -299,11 +305,16 @@ class WpAutomaticFeeds extends wp_automatic {
 			timer_start ();
 			$rss = fetch_feed ( stripslashes ( $feed ) );
 			echo '<br>Time taken to load the feed from the source:' . timer_stop ();
+
+			
 		 
 		
 		} else {
 			echo '<br>Loaded locally';
 			$rss = fetch_feed ( $localFeed );
+			
+			//log that the feed was loaded locally
+			wp_automatic_log_new('Feed' , 'Feed loaded locally');
 		}
 		
 		// Remove added filter
@@ -321,7 +332,9 @@ class WpAutomaticFeeds extends wp_automatic {
 			$maxitems = @$rss->get_item_quantity ();
 			
 			echo '<br>Feed contains ' . $maxitems . ' posts';
-			 
+			
+			 //log the feed load time
+			wp_automatic_log_new('Feed' , 'Feed load time:'.timer_stop() . ' and contains ('. $maxitems . ') posts' );
 			 
 			// Build an array of all the items, starting with element 0 (first element).
 			$rss_items = $rss->get_items ( 0, $maxitems );
@@ -333,7 +346,22 @@ class WpAutomaticFeeds extends wp_automatic {
 			remove_action ( 'http_api_curl', 'wp_automatic_setup_curl_options' );
 		} else {
 			$error_string = $rss->get_error_message ();
-			echo '<br><strong>Error:</strong>' . $error_string;
+			
+			
+			//check if error is `403` and report that this page maybe protected by cloudflare and user should check the tutorial on how to import from this site
+			if(stristr($error_string, '403')){
+				
+				//error message inside a span with color red
+				$error_string = '<br><span style="color:red">403 error: This page maybe protected by cloudflare, Check <a href="https://valvepress.com/how-to-import-from-rss-feeds-protected-with-cloudflare/" target="blank"> THIS TUTURIAL</a> on how to import from this site</span>';
+				echo $error_string;
+				
+			}else{
+
+				echo '<br><strong>Error:</strong>' . $error_string;
+
+			}
+		
+		
 		}
 		
 		if (! isset ( $maxitems ) || $maxitems == 0)
@@ -360,12 +388,30 @@ class WpAutomaticFeeds extends wp_automatic {
 			}
 			
 			$original_url = $url; // used for exclusion because the effective_url may change below
-			                      
+			 
+			
 			// google news links correction
 			if (stristr ( $url, 'news.google' ) && stristr ( $url, 'url=' )) {
 				$urlParts = explode ( 'url=', $url );
 				$correctUrl = $urlParts [1];
 				$url = $correctUrl;
+			}elseif(stristr($url,'news.google') && stristr($url,'/articles/') ){
+				 echo '<br>Google news link found ('.$url.'), Finding original link now...<br>';
+				 
+				 //api call to get the real link
+				 try{
+					 
+					$new_link = $this->get_google_news_link($url);
+
+					$url = $new_link;
+
+					echo ' Correct link: '.$url;
+	
+				}catch(Exception $e){
+					//report error with color red 
+					echo '<br><span style="color:red">Error: '.$e->getMessage().'</span>';
+				}
+
 			}
 			
 			// Google alerts links correction
@@ -384,16 +430,24 @@ class WpAutomaticFeeds extends wp_automatic {
 				if ($isItemsEndReached == 'yes') {
 					
 					// Last time there were no new links check if the case didn't change
-					if ($lastFirstFeedUrl == md5 ( $url )) {
-						
-						// still no new links stop checking now
-						echo '<br>First url in the feed:' . $url;
-						echo '<br>This link was the same as the last time we did not find new links so ... skipping till new posts get added <a href="#" class="wp_automatic_ajax" data-action="wp_automatic_ajax" data-function="forget_lastFirstFeedUrl" data-data="' . $feedMd5 . '" data-camp="' . $camp->camp_id . '" >Forget this fact Now</a>.';
+					if (  $lastFirstFeedUrl == md5 ( $url )   ) {
 						
 						// delete transient cache
 						delete_transient ( 'feed_' . $feedMd5 );
 						
-						return false;
+						if( ! in_array('OPT_LINK_NOCACHE', $camp_opt)){
+
+							
+							// still no new links stop checking now
+							echo '<br>First url in the feed:' . $url;
+							echo '<br>This link was the same as the last time we did not find new links so ... skipping till new posts get added <a href="#" class="wp_automatic_ajax" data-action="wp_automatic_ajax" data-function="forget_lastFirstFeedUrl" data-data="' . $feedMd5 . '" data-camp="' . $camp->camp_id . '" >Forget this fact Now</a>.';
+							
+							
+							return false;
+						}
+						
+						
+					
 					} else {
 						// new links found remove the isItemsEndReached flag
 						delete_post_meta ( $camp->camp_id, $feedMd5 . '_isItemsEndReached' );
@@ -477,6 +531,9 @@ class WpAutomaticFeeds extends wp_automatic {
 			$enclosures = $item->get_enclosures ();
 			
 			$i = 0;
+			
+			$enclosure_link = '' ;// reset enclosure link
+
 			foreach ( $enclosures as $enclosure ) {
 				
 				if (trim ( $enclosure->type ) != '') {
@@ -561,7 +618,8 @@ class WpAutomaticFeeds extends wp_automatic {
 				$res ['cats'] = $cat_str;
 				$res ['tags'] = '';
 				$res ['enclosure_link'] = isset ( $enclosure_link ) ? $enclosure_link : '';
-				
+				 
+
 				// custom atributes
 				$arr = array ();
 				$arrValues = array_values ( $item->data ['child'] );
@@ -577,7 +635,7 @@ class WpAutomaticFeeds extends wp_automatic {
 				$og_title_enabled = in_array ( 'OPT_FEED_OG_TTL', $camp_opt ) || (isset ( $camp_general ['cg_ml_ttl_method'] ) && trim ( $camp_general ['cg_ml_ttl_method'] ) != 'auto');
 				
 				// original meta description, add the regex extraction rule and activate the specific part to custom field method if not enabled 
-				if(in_array('OPT_ORIGINAL_META', $camp_opt)){
+				if(in_array('OPT_ORIGINAL_META_DESC', $camp_opt)){
 					
 					//add specific part to custom field extraction if not enabled 
 					if( ! in_array( 'OPT_FEED_PTF' , $camp_opt) ){
@@ -634,7 +692,13 @@ class WpAutomaticFeeds extends wp_automatic {
 					 
 						try {
 
-							$apify_content = $apify->apify();
+							// cg_apify_wait_for_single
+							$cg_apify_wait_for_single = isset($camp_general['cg_apify_wait_for_single']) ? $camp_general['cg_apify_wait_for_single'] : 0;
+
+							//report 
+							echo '<br>Waiting for '.$cg_apify_wait_for_single.' mill seconds after loading the content...';
+
+							$apify_content = $apify->apify($cg_apify_wait_for_single);
 							$original_cont = $apify_content;
 							
 						 
@@ -660,7 +724,8 @@ class WpAutomaticFeeds extends wp_automatic {
 				  
 					echo ' <--' . strlen ( $original_cont ) . ' chars returned in ' . timer_stop () . ' seconds';
 					 
-				
+					// copy of the original content for later use that is unmodified
+					$original_cont_raw = $original_cont;
 					 
 					// converting encoding
 					if (in_array ( 'OPT_FEED_CONVERT_ENC', $camp_opt )) {
@@ -670,7 +735,52 @@ class WpAutomaticFeeds extends wp_automatic {
 				 
 					// fix single quote used instead of regular quote
 					$original_cont = $this->convert_single_quotes ( $original_cont );
+
+					// remove pargrphs containing a specific word, if enabled, add OPT_STRIP_VISUAL to camp_opt and add words to cg_feed_visual_strip
+					if(in_array('OPT_STRIP_BY_WORD', $camp_opt) && !empty($camp_general['cg_post_strip_by_words']) ){
+
+						// add OPT_STRIP_VISUAL to camp_opt
+						$camp_opt[] = 'OPT_STRIP_VISUAL';
+
+						// if cg_feed_visual_strip is not an array, set it to an empty array
+						if(!is_array($camp_general['cg_feed_visual_strip'])){
+							$camp_general['cg_feed_visual_strip'] = array();
+						}
+
+						// split cg_post_strip_by_words by new line, filter empty valaues and add xpaths to cg_feed_visual_strip
+						$cg_post_strip_by_words = array_filter( explode( "\n", $camp_general['cg_post_strip_by_words'] ) );
+ 
+						// xpath example //p[contains(., "payroll")]
+						foreach($cg_post_strip_by_words as $cg_post_strip_by_word){
+							$camp_general['cg_feed_visual_strip'][] = '//p[contains(., "'.trim($cg_post_strip_by_word).'")]';
+						}
+ 
+					}
 					 
+					// strip parts using xpaths stored on $camp_general['cg_feed_visual_strip'] 
+					if (in_array ( 'OPT_STRIP_VISUAL', $camp_opt )) {
+
+						//require class.dom.php
+						require_once 'inc/class.dom.php';
+						$wpAutomaticDom = new wpAutomaticDom ( $original_cont );
+						
+						$cg_feed_visual_strip =   array_filter( $camp_general ['cg_feed_visual_strip'] );
+					
+						//if is array and not empty
+						if (is_array($cg_feed_visual_strip) && !empty($cg_feed_visual_strip))
+						{
+							$newContent = $wpAutomaticDom->removeElementsByXpath($cg_feed_visual_strip);
+
+							//if new content is not empty then replace the original content
+							if (!empty($newContent))
+							{
+								$original_cont = $newContent;
+							} 
+ 
+						}
+					
+					
+					}
 					
 					// fix lazy loading
 					if (in_array ( 'OPT_FEED_LAZY', $camp_opt )) {
@@ -700,7 +810,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					}
 					
 					// fix images
-					$original_cont = $this->fix_relative_paths ( $original_cont, $url );
+					$original_cont = wp_automatic_fix_relative_paths ( $original_cont, $url );
 				
 				} // end-content-extraction
 				  
@@ -710,8 +820,15 @@ class WpAutomaticFeeds extends wp_automatic {
 					$found_date = ''; // ini
 					
 					echo '<br>Finding original date... ';
+
+					$cg_original_time_regex = isset( $camp_general ['cg_original_time_regex'] )  ? trim ( $camp_general ['cg_original_time_regex'] ) : '';
 					
-					preg_match ( "!20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?.\d{2}:\d{2}!s", $original_cont, $date_matches );
+					// if regex is empty use default
+					if ($cg_original_time_regex == '') {
+						$cg_original_time_regex = '20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d*)?.\d{2}:\d{2}';
+					}
+
+					preg_match("!{$cg_original_time_regex}!s", $original_cont, $date_matches );
 					
 					//timestamp instead  data-time="1649495312">A
 					if (isset ( $date_matches [0] ) && trim ( $date_matches [0] ) != '') {
@@ -756,9 +873,45 @@ class WpAutomaticFeeds extends wp_automatic {
 						 echo '<- can not find';
 					}
 				}
+
+				// custom config for web-stories support. if the post type is web-story and the opt_full_feed is enabled then we need to remove it from camp_opt and add OPT_FEED_CUSTOM
+				if (in_array ( 'OPT_FULL_FEED', $camp_opt ) && $camp->camp_post_type == 'web-story' && strpos ( $original_cont, '<amp-story' ) !== false ) {
+					
+					echo '<br>Web story detected...Extracing whole html';
+
+					// remove OPT_FULL_FEED
+					$camp_opt = array_diff ( $camp_opt, array (
+							'OPT_FULL_FEED'
+					) );
+
+					// add OPT_FEED_CUSTOM
+					$camp_opt [] = 'OPT_FEED_CUSTOM';
+
+					 // add custom config to simulate visual selector method and picking whole html
+					$camp_general ['cg_feed_extraction_method'] = 'css';
+				
+					$camp_general ['cg_feed_custom_id'] = array('/html');
+					$cg_feed_css_size = array ();
+					$cg_feed_css_wrap = array ();
+					$cg_custom_selector = array ();
+					
+					foreach ( $camp_general ['cg_feed_visual'] as $singleVisual ) {
+						$cg_feed_css_size [] = 'single';
+						$cg_feed_css_wrap [] = 'outer';
+						$cg_custom_selector [] = 'xpath';
+					}
+					
+					$camp_general ['cg_feed_css_size'] = $cg_feed_css_size;
+					$camp_general ['cg_feed_css_wrap'] = $cg_feed_css_wrap;
+					$camp_general ['cg_custom_selector'] = $cg_custom_selector;
+				 
+				}
 				
 				// FULL CONTENT
 				if (in_array ( 'OPT_FULL_FEED', $camp_opt )) {
+
+					// reset fullContentSuccess flag to true 
+					$this->fullContentSuccess = true;
 					
 					// test url
 					// $url ="http://news.jarm.com/view/75431";
@@ -781,9 +934,9 @@ class WpAutomaticFeeds extends wp_automatic {
 					
 					// Redability instantiate
 					require_once 'inc/wp_automatic_readability/wp_automatic_Readability.php';
-					
 					$wp_automatic_Readability = new wp_automatic_Readability ( $original_cont, $url );
-					
+				 
+
 					$wp_automatic_Readability->debug = false;
 					$result = $wp_automatic_Readability->init ();
 					
@@ -890,6 +1043,10 @@ class WpAutomaticFeeds extends wp_automatic {
 						}
 					} else {
 						echo '<br>Looks like we couldn\'t find the full content. :( returning summary';
+
+						//set the fullContentSuccess flag to false, this flag is to set the post as pending if posting from a specific list of urls and auto detect method is enabled
+						$this->fullContentSuccess = false;
+
 					}
 					
 					// Class or ID extraction
@@ -988,14 +1145,35 @@ class WpAutomaticFeeds extends wp_automatic {
 							
 							// extracting
 							if (trim ( $original_cont ) != '') {
-								preg_match_all ( '{' . $cg_feed_custom_regex_single . '}is', $original_cont, $matchregex );
+								preg_match_all ( '!' . $cg_feed_custom_regex_single . '!is', $original_cont, $matchregex );
+								$c = 0;
+								
+							 
+								if(! isset($matchregex)) $matchregex = array(); //fix count(null) in next line
 								
 								for($i = 1; $i < count ( $matchregex ); $i ++) {
 									
+									
 									foreach ( $matchregex [$i] as $newmatch ) {
-										
+										  
 										if (trim ( $newmatch ) != '') { //good we have a new extraction
+									
+											//json part to fix?  "(.*?)" 
+											if (stristr($cg_feed_custom_regex_single , '"(.*?)' )){
+												echo '<-- Fixing JSON Part';
+												$suggestedFixedContent = wp_automatic_fix_json_part($newmatch);
+												
+												//overwriting
+												if(trim($suggestedFixedContent) != ''){
+													echo '<-- Fix success overwriting ';
+													$newmatch = $suggestedFixedContent;
+												}
+												
+												
+												
+											}
 											
+											 
 											// update the final match for all found extraction from all rules
 											if (trim ( $finalmatch2 ) != '') {
 												$finalmatch2 .= '<br>' . $newmatch;
@@ -1013,6 +1191,15 @@ class WpAutomaticFeeds extends wp_automatic {
 												
 											}
 										}
+									
+									$c++;
+									
+										//break the loop if a single match only is needed
+										if(in_array('OPT_FEED_REGEX_SINGLE_' . $i , $camp_opt)){
+											echo '<-- Single match break';
+											break;
+										}
+									
 									}
 								}
 								
@@ -1020,7 +1207,7 @@ class WpAutomaticFeeds extends wp_automatic {
 								$res ['rule_' . $rule_num] = $finalmatch2;
 								$res ['rule_' . $rule_num . '_plain'] = strip_tags ( $finalmatch2 );
 								
-								echo '<-- ' . strlen ( $finalmatch2 ) . ' chars found';
+								echo '<-- ' . strlen ( $finalmatch2 ) . ' chars found total of ' . $c . ' matches';
 							} else {
 								echo '<br>Can not load original content.';
 							}
@@ -1043,8 +1230,15 @@ class WpAutomaticFeeds extends wp_automatic {
 				//Issue fix no title but URL instead of the title when title is set to auto-detect
 				if($camp_general ['cg_ml_ttl_method']  == 'auto' && stristr($title, 'http')){
 					echo '<br>Extracting a good title....';
-					$res['title'] = $title = $this->extract_title_auto($title,$original_cont);
-					
+
+					$possible_title = $this->extract_title_auto($title,$original_cont);
+
+					if(trim($possible_title) != ''){
+						echo '<-- Good title found';  
+						$res['title'] = $title = $possible_title;
+					}else{
+						echo '<-- No title found';
+					}
 				}
 			 
 				
@@ -1189,6 +1383,31 @@ class WpAutomaticFeeds extends wp_automatic {
 						$res ['title'] = $current_title;
 					}
 				} // end regex replace
+
+				// if option active OPT_STRIP_IMGS then remove all images
+				if (in_array ( 'OPT_STRIP_IMGS', $camp_opt )) {
+					
+					echo '<br>Stripping images...';
+
+					//count before removing
+					$countBefore = $this->chars_count ( $res ['matched_content'] );
+					
+					$res ['matched_content'] = preg_replace ( '{<img[^>]+\\>}', '', $res ['matched_content'] );
+					$res ['cont'] = preg_replace ( '{<img[^>]+\\>}', '', $res ['cont'] );
+
+					//count after removing
+					$countAfter = $this->chars_count ( $res ['matched_content'] );
+
+					echo '<-- ' . ($countBefore - $countAfter) . ' chars removed';
+					
+					// replacing in rules
+					$i = 1;
+					while ( isset ( $res ["rule_$i"] ) ) {
+						
+						$res ["rule_$i"] = preg_replace ( '{<img[^>]+\\>}', '', $res ["rule_$i"] );
+						$i ++;
+					}
+				}
 				  
 				// strip tags
 				if (in_array ( 'OPT_STRIP_T', $camp_opt )) {
@@ -1375,6 +1594,8 @@ class WpAutomaticFeeds extends wp_automatic {
 											 
 											foreach($cat_founds as $key => $val){
 												
+												if(stristr($val, ';')) $val = html_entity_decode($val);
+												
 												if(trim($val) == trim($post_cat_replace_arr_single_arr[0])){
 													$cat_founds[$key] = $post_cat_replace_arr_single_arr[1];
 													echo '<-- found';
@@ -1442,12 +1663,51 @@ class WpAutomaticFeeds extends wp_automatic {
 							if (stristr ( $extract, '<a' )) {
 								preg_match_all ( '{<a .*?>(.*?)</a}su', $extract, $tags_matches );
 								
+								
+								$tags_founds = array(); //init
 								$tags_founds = $tags_matches [1];
 								$tags_founds = array_map ( 'strip_tags', $tags_founds );
+								$tags_founds = array_map('trim', $tags_founds);
 								
-								$tags_str = implode ( ',', $tags_founds );
 								
-								echo ' Found tags:' . $tags_str;
+								// if option OPT_ORIGINAL_TAGS_REPLACE is set replace the tags 
+								if (in_array('OPT_ORIGINAL_TAGS_REPLACE', $camp_opt))
+								{
+ 
+									// replace tags
+									if (trim($camp_general['cg_tag_replace']) != '')
+									{
+
+										$post_tag_replace_arr = explode("\n", $camp_general['cg_tag_replace']);
+
+										//report count of available tags
+										echo '<br> - ' . count($tags_founds) . ' tags found: ' . implode(', ', $tags_founds);
+
+										foreach ($post_tag_replace_arr as $post_tag_replace)
+										{
+
+											$post_tag_replace = trim($post_tag_replace);
+
+											if (trim($post_tag_replace) != '')
+											{
+
+												$post_tag_replace_arr = explode('|', $post_tag_replace);
+
+												$tag_from = trim($post_tag_replace_arr[0]);
+												$tag_to = trim($post_tag_replace_arr[1]);
+
+												echo '<br> - Replacing tag ' . $tag_from . ' with ' . $tag_to;
+  
+												$tags_founds = str_replace($tag_from, $tag_to, $tags_founds);
+											}
+										}
+									}
+								}
+
+
+						 		$tags_str = implode ( ',', $tags_founds );
+								
+								echo '<br>Found tags:' . $tags_str;
 								$res ['tags'] = $tags_str;
 							}
 						}
@@ -1528,7 +1788,24 @@ class WpAutomaticFeeds extends wp_automatic {
 					
 					if (trim ( $res ['author'] ) == '') {
 						
-						echo '<br>You must add a valid ID/Class to Extract Author, No Author will get extracted.';
+						echo '<br>You did not set a specific config to Extract Author, The plugin will try to auto-detect... ';
+
+						// try to auto detect author using extract_author_auto
+						if(isset($original_cont_raw)){
+							$author_str = $this->extract_author_auto ( $original_cont_raw );
+						}else{
+							$author_str = $this->extract_author_auto ( $original_cont );
+						}
+
+						if (trim ( $author_str ) != '') {
+							echo '<br>Auto detected author:' . $author_str;
+							$res ['author'] = $author_str;
+						}else{
+							echo '<br>Auto detection failed';
+						}
+
+
+
 					}
 				} // extract author
 				
@@ -1687,8 +1964,15 @@ class WpAutomaticFeeds extends wp_automatic {
 							// Match
 							preg_match_all ( '{' . trim ( $rule_value ) . '}is', $original_cont, $matchregex );
 						 
-							echo '<-- ' . count($matchregex[1]) . ' matches ';
-							 
+						 
+						 
+							if(isset($matchregex[1])){
+								echo '<-- ' . count($matchregex[1]) . ' matches ';
+							}else{
+								echo '<-- Added REGEX seems not to contain (.*?)  the part to really parse, please add it'; 
+							}
+							
+							
 							$matchregex_vals = isset($matchregex [1])? $matchregex [1] : array() ;
 							
 							if (isset ( $matchregex [2] ))
@@ -1705,6 +1989,23 @@ class WpAutomaticFeeds extends wp_automatic {
 							// Read matches
 							foreach ( $matchregex_vals as $newmatch ) {
 								
+								//fix json part 
+								//json part to fix?  "(.*?)" 
+								if (stristr($rule_value , '"(.*?)' )){
+									echo '<-- Fixing JSON Part';
+									$suggestedFixedContent = wp_automatic_fix_json_part($newmatch);
+									
+									//overwriting
+									if(trim($suggestedFixedContent) != ''){
+										echo '<-- Fix success overwriting ';
+										$newmatch = $suggestedFixedContent;
+									}
+									
+									
+									
+								}
+								
+
 								if (trim ( $newmatch ) != '') {
 									
 									if (trim ( $finalmatch ) == '') {
@@ -1727,7 +2028,7 @@ class WpAutomaticFeeds extends wp_automatic {
 								echo ' <--' . $this->chars_count ( $finalmatch ) . ' chars extracted';
 								
 								if ($rule_field == 'categories') { 
-									$res ['cats'] = $finalmatch;
+									$res ['cats'] = $res ['categories_to_set']  = $finalmatch;
 								
 
 								} else {
@@ -1777,7 +2078,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					// if no http
 					$original_cont = str_replace ( 'content="//', 'content="http://', $original_cont );
 					
-					echo '<br>Extracting og:image :';
+					echo '<br>Extracting og:image...';
 					
 					// let's find og:image may be the content we got has no image
 					preg_match ( '{<meta[^<]*?(?:property|name)=["|\']og:image["|\'][^<]*?>}s', $original_cont, $plain_og_matches );
@@ -1818,9 +2119,28 @@ class WpAutomaticFeeds extends wp_automatic {
 							$res ['og_alt'] = $foundAlt;
 							$currentOgImage = $og_img;
 						}
+					}else{
+
+
+						// if a webstory is found, get the image from the poster-portrait-src attribute
+						if(stristr($original_cont, '<amp-story') && stristr($original_cont, 'poster-portrait-src') ){
+							preg_match_all ( '/poster-portrait-src=["|\'](.*?)["|\']/', $original_cont, $webstory_matches );
+							$webstory_matches = $webstory_matches[1];
+							if(isset($webstory_matches[0])){
+
+								echo '<br>Webstory found, getting image from poster-portrait-src attribute: '.$webstory_matches[0].'';
+
+								$res ['og_img'] = $webstory_matches[0];
+								$res ['og_alt'] = '';
+								$og_alt = '';
+							}
+						}
+
 					}
 				}
+
 				
+				 
 				// fix FB embeds
 				if (stristr ( $res ['cont'], 'fb-post' ) && ! stristr ( $res ['cont'], 'connect.facebook' )) {
 					echo '<br>Possible Facebook embeds found adding embed scripts';
@@ -1861,6 +2181,7 @@ class WpAutomaticFeeds extends wp_automatic {
 						}
 					}
 				}
+
 				
 				// check if image or not
 				if (in_array ( 'OPT_MUST_IMAGE', $camp_opt ) && ! stristr ( $res ['cont'], '<img' ) && trim ( $currentOgImage ) == '') {
@@ -1874,6 +2195,8 @@ class WpAutomaticFeeds extends wp_automatic {
 					// og image fix
 					if (isset ( $res ['og_img'] ) && trim ( $res ['og_img'] ) != '') {
 						
+						$og_img = $res ['og_img'];
+
 						// make sure it has the domain
 						if (! stristr ( $og_img, 'http:' )) {
 							if (stristr ( $og_img, '//' )) {
@@ -1896,7 +2219,7 @@ class WpAutomaticFeeds extends wp_automatic {
 					if (in_array ( 'OPT_FEED_OG_TTL', $camp_opt ) || (isset ( $camp_general ['cg_ml_ttl_method'] ) && trim ( $camp_general ['cg_ml_ttl_method'] ) != 'auto')) {
 						
 						if (in_array ( 'OPT_FEED_OG_TTL', $camp_opt )) {
-							// let's find og:image may be the content we got has no image
+							// let's find og:title may be the content we got has no 
 							preg_match ( '{<meta[^<]*?property=["|\']og:title["|\'][^<]*?>}s', $original_cont, $plain_og_matches );
 							
 							if (@stristr ( $plain_og_matches [0], 'og:title' )) {
@@ -2012,23 +2335,28 @@ class WpAutomaticFeeds extends wp_automatic {
 							}
 						}
 						
-						
-						if(! in_array('OPT_FEED_NO_DECODE', $camp_opt)){
-							$possibleTitle = '';
-							if (trim ( $finalContent ) != '') {
-								$possibleTitle = strip_tags ( $finalContent );
+						//set title from extraction if available
+						if(isset($finalContent) && trim($finalContent) != ''){
+							if(! in_array('OPT_FEED_NO_DECODE', $camp_opt)){
+								$possibleTitle = '';
+								if (trim ( $finalContent ) != '') {
+									$possibleTitle = strip_tags ( $finalContent );
+								}
+								
+								if (trim ( $possibleTitle ) != '') {
+									$res ['original_title'] = html_entity_decode ( $possibleTitle, ENT_QUOTES | ENT_HTML401 );
+									$res ['title'] = html_entity_decode ( $possibleTitle, ENT_QUOTES | ENT_HTML401 );
+								}
+								
+							}else{
+								$res ['original_title'] = $res ['title'] = $finalContent;
 							}
-							
-							if (trim ( $possibleTitle ) != '') {
-								$res ['original_title'] = html_entity_decode ( $possibleTitle, ENT_QUOTES | ENT_HTML401 );
-								$res ['title'] = html_entity_decode ( $possibleTitle, ENT_QUOTES | ENT_HTML401 );
-							}
-							
-						}else{
-							$res ['original_title'] = $res ['title'] = $finalContent;
 						}
 						
 					}
+
+
+ 
 					 
  					return $res;
 				}
@@ -2099,6 +2427,128 @@ class WpAutomaticFeeds extends wp_automatic {
 			}
 		}
 		
+	}
+
+	/**
+	 * Function takes the original HTML and try to find the author name 
+	 * @param string $cont
+	 * @return string $author
+	 */
+	function extract_author_auto($cont){
+	
+		$author = '';
+	
+		//<meta name="author" content="John Doe">
+		if(stristr($cont, '<meta name="author"')){
+			preg_match('!<meta name="author" content="(.*?)"!', $cont, $author_matchs);
+	
+			if( trim($author_matchs[1]) != ''){
+				$author = $author_matchs[1];
+				echo 'author meta:'. $author;
+				return $author;
+			}
+		}
+	
+		 //"@type": "Person", "name": "Rizwan Choudhury"
+		 //"@type":"Person","name":"Holly Ellyatt"
+		 //"@type":"Person","@id":"https://valvepress.com/#/schema/person/2e36bfac540bde918e245be55c976600","name":"Atef"
+ 
+		 
+		 if(stristr($cont, '"Person"') && stristr($cont, '"@type"') ){
+
+			preg_match_all('!"@type"\s*:\s*"Person".*?"name"\s*:\s*"(.*?)"!s', $cont, $author_matchs);
+		 	
+		 	if(isset($author_matchs[1][0])){
+		 		$author = $author_matchs[1][0];
+		 		echo 'author schema:'. $author;
+		 		return $author;
+		 	}
+		 }
+
+		 //"author":"Duncan Riley"
+		 if(stristr($cont, '"author"')){
+		 	
+		 	preg_match_all('!"author"\s*:\s*"(.*?)"!', $cont, $author_matchs);
+		 	
+		 	if(isset($author_matchs[1][0])){
+		 		$author = $author_matchs[1][0];
+		 		echo 'author json:'. $author;
+		 		return $author;
+		 	}
+		 }
+
+		 //<span class="author">Duncan Riley</span>
+		 if(stristr($cont, '<span class="author">')){
+		 	
+		 	preg_match_all('!<span class="author">(.*?)</span>!', $cont, $author_matchs);
+		 	
+		 	if(isset($author_matchs[1][0])){
+		 		$author = $author_matchs[1][0];
+		 		echo 'author span:'. $author;
+		 		return $author;
+		 	}
+		 }
+
+
+	
+	}
+
+	/**
+	 * Function takes Google news link and returns the original link
+	 * Firstly it checks the cache if table automatic_links contains a record with link_url = md5($link) then the value will be the column link_title
+	 * If not found then it will make an api_call to google to get the original link
+	 * it will then cache the result in the table automatic_links for future use
+	 *@param string $link
+	 *@return string $link
+	 @throws Exception if the api call fails or the link is not found in google news 
+	 */
+	function get_google_news_link($link) {
+	
+		global $wpdb;
+	
+		//check if the link is already cached
+		$md5 = md5($link);
+		$cache = $wpdb->get_row("select * from {$wpdb->prefix}automatic_links where link_url = '$md5' ");
+ 
+		
+		if( isset($cache->link_url) > 0 ){
+			//found in cache
+			$link = $cache->link_title;
+			echo ' <span style="color:blue">[cached]</span>';
+		}else{
+			//not found in cache
+			$url = $link;
+			
+			try{
+				$newUrl = $this->api_call('googleNewsLinkExtractor', array('googleNewsLink' => $url));
+
+				if(trim($newUrl) != ''){
+					$link = $url = $newUrl;
+
+					echo ' <span style="color:green">[new]</span>';
+
+					//cache the result
+					$wpdb->insert("{$wpdb->prefix}automatic_links", array(
+							'link_url' => $md5,
+							'link_title' => $link
+					));
+
+				}
+				 
+
+			}catch(Exception $e){
+				
+				throw new Exception('Error in google news link extractor: '.$e->getMessage());
+
+				
+			}
+
+	
+			
+		}
+	
+		return $link;
+	
 	}
 	
 }

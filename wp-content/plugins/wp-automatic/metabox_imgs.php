@@ -59,6 +59,10 @@ global $camp_post_category;
 						</div>
 
 						<div class="option clearfix">
+								<input name="camp_options[]" value="OPT_PIXABAY_ALT_MAIN_KEY" type="checkbox"> <span class="option-title"> Set the keyword used to get this post as the featured image alt </span>
+						</div>
+
+						<div class="option clearfix">
 							<input data-controls="minimum_image_width" name="camp_options[]" value="OPT_THUMB_WIDTH_CHECK" type="checkbox"> <span class="option-title"> Check image width and skip images with width below a specifc width in pixels </span>
 
 							<div id="minimum_image_width">
@@ -113,8 +117,8 @@ global $camp_post_category;
 								
 								
 							<div id="wp_automatic_pixabay_keyword" class="field f_100">
-								<label for="field6"> Keyword for the search </label> <input value="<?php   echo @$camp_general['cg_pixabay_keyword']  ?>" name="cg_pixabay_keyword" type="text">
-								
+								<label> Keyword for the search </label> <input value="<?php   echo @$camp_general['cg_pixabay_keyword']  ?>" name="cg_pixabay_keyword" type="text">
+								<div class="description">If this post was generated a keyword, you can use [keyword] tag in this box to substitute with the tag used to get the post</div>
 							</div>
 							
 							<div class="field f_100">
@@ -122,6 +126,12 @@ global $camp_post_category;
 								<div class="option clearfix">
 									<input name="camp_options[]" value="OPT_PIXABAY_FORCE" type="checkbox"> <span class="option-title"> Force using PixaBay images and ignore source found images (By default, PixaBay image if no image found to set) </span>
 								</div>
+
+								<div class="option clearfix">
+									<input name="camp_options[]" value="OPT_PIXABAY_ALT" type="checkbox"> <span class="option-title"> Set the keyword used to get this image as the featured image alt </span>
+								</div>
+
+
 
 								<div class="option clearfix">
 

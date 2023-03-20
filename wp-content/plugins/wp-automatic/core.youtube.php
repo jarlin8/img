@@ -83,7 +83,33 @@
 			}
 			
 			if (in_array ( 'OPT_YT_DATE', $camp_opt )) {
-				$beforeDate = $camp_general ['cg_yt_dte_year'] . "-" . $camp_general ['cg_yt_dte_month'] . "-" . $camp_general ['cg_yt_dte_day'] . 'T00:00:00Z';
+				
+				//if OPT_YT_DATE_T is set then generate a date based on the current date minus the minutes otherwise, use the date set 
+				
+				if(in_array ( 'OPT_YT_DATE_T', $camp_opt )){
+					
+					$minutes = $camp_general ['cg_yt_dte_minutes'];
+					$minutes = intval($minutes);
+					
+					 
+					$now = time();
+					$now = $now - ($minutes * 60);
+					
+					//format the date to  RFC 3339 format
+					$formatedDate = date('Y-m-d\TH:i:s\Z',$now);
+
+					$beforeDate = $date = $formatedDate;
+
+					//report date
+					echo '<br>Using date: '.$date;
+
+				}else{
+					$date = $camp_general ['cg_yt_dte_year'] . "-" . $camp_general ['cg_yt_dte_month'] . "-" . $camp_general ['cg_yt_dte_day'];
+					$beforeDate =  $date . 'T00:00:00Z';
+				}
+				
+				
+				
 				$search_url .= "&publishedAfter=" . $beforeDate;
 			}
 			
@@ -271,13 +297,23 @@
 			
 			// verify reply
 			if (! stristr ( $exec, '"kind"' )) {
-				echo '<br>Not valid reply from Youtube:' . $exec . $x;
+			
 				
 				//remove broken token
 				if( stristr($exec, 'location": "pageToken') ){
 					echo '<br>Token seems to be defected, removing it....';
 					delete_post_meta ( $camp->camp_id, $tokenName );
 				}
+
+				//if { "error exists, decode json and display error in red 
+				if(stristr($exec, '"error"')){
+					$json_error = json_decode($exec);
+					echo '<br><span style="color:red">Youtube Error: '.$json_error->error->message.'</span>';
+				}else{
+					echo '<br>Not valid reply from Youtube:' . $exec . $x;
+				}
+
+				
 				
 				return false;
 			}
@@ -363,8 +399,8 @@
 				// $link_img = str_replace('hqdefault', 'hqdefault', $link_img);
 				
 				// get item title
-				  
-				$link_title = addslashes ( htmlspecialchars_decode($itm->snippet->title) );
+				$link_title = addslashes ( htmlspecialchars_decode($itm->snippet->title , ENT_QUOTES) );
+ 
 				
 				// Skip private videos
 				if ($link_title == 'Private video') {
@@ -793,7 +829,46 @@
 						// download link
 						$temp ['vid_download_url'] = 'https://www.youtubepp.com/watch?v=' . $temp ['vid_id'];
 						
-					
+					 
+						//convert time to seconds
+						$temp['vid_duration_in_seconds'] = $this->time_to_seconds($temp['vid_duration']);
+					 
+						// get transcript if available exists as a tag using do_tag_exists
+						if($this->do_tag_exists($camp , array('[transcript]' , '[transcript_raw]'))){
+						
+							//report tag exists, getting transcript
+							echo '<br>Transcript tag found, getting transcript ...';
+
+							//init transcript
+							$temp['transcript']	= '';
+							$temp['transcript_raw'] = '';
+
+							//get transcript using get_video_transcript function and try catch
+							try{
+
+								$result = $this->get_video_transcript($temp['vid_id']);
+
+								$temp['transcript'] = $result['text'];
+
+								//report success and charlength of $temp['transcript'] 
+								echo '<br>Transcript got successfully with a length of ' . strlen($temp['transcript']) . ' chars';
+
+
+								//$result['sentences'] contains an array of sentences and every sentence has time and text, lets iterate the sentences, concatinate time to the text and add a new line
+								foreach($result['sentences'] as $sentence){
+									$temp['transcript_raw'] .= $sentence['time'] . ' ' . $sentence['text'] . "\n";
+								}
+
+								 
+							
+							}catch(Exception $e){
+								echo '<br>Transcript error: '.$e->getMessage();
+							}
+ 
+						 
+						}
+
+					 
 						
 						return $temp;
 					} else {
@@ -831,13 +906,19 @@
 			$url=trim($user);
 			curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
 			curl_setopt($this->ch, CURLOPT_URL, trim($url));
+			
+			//set SOCS cookie for youtube ask for cookies
+			$cookies = 'SOCS=CAISNQgDEitib3FfaWRlbnRpdHlmcm9udGVuZHVpc2VydmVyXzIwMjMwMjI4LjA2X3AwGgJlbiACGgYIgJSKoAY;';
+			curl_setopt($this->ch, CURLOPT_COOKIE, $cookies);
+			
 			$exec=curl_exec($this->ch);
 			$x=curl_error($this->ch);
 			$cuinfo = curl_getinfo($this->ch);
 			
+			
 			echo '<-- returned ' . $cuinfo['size_download'] . ' request code: '. $cuinfo['http_code'];
 			
-	 		
+
 			preg_match('!"externalId":"(.*?)"!', $exec , $id_matches);
 			
 			if(isset($id_matches[1]) && trim($id_matches[1]) != '' ) {
@@ -850,10 +931,33 @@
 				return $id_matches[1];
 				
 				
+			}else{
+				
+				echo '<-- not found';
+				 
 			}
 			 
 			
 			return $user;
+		}
+
+		//function that takes the video ID and returns the video transcript in text format using Youtube API
+		function get_video_transcript($video_id){
+			 
+			echo '<br>Getting transcript for video ID: '.$video_id;
+			
+			//use api_call function to get the transcript from remote server using method getTranscript and try catch
+			try{
+				$transcript = $this->api_call('getTranscript', array('videoId' => $video_id));
+
+				return $transcript;
+
+			}catch(Exception $e){
+				throw new Exception('Error getting transcript: '.$e->getMessage());
+			}
+
+			
+			
 		}
 		
 	}

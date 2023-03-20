@@ -116,7 +116,13 @@ global $camp_replace_link;
 		               </label>
 		                
 		                <textarea name="cg_keywords_replace" ><?php   echo  @$camp_general['cg_keywords_replace']  ?></textarea>
-		             <div class="description">The plugin will search for the keyword  and hyperlink with this link<br>example 1: seo|https://moz.com<br>example 2: seo,link building|https://moz.com</div>
+		             
+						<input name="camp_options[]"  value="OPT_REPLACE_KEYWORD_ONCE" type="checkbox">
+						<span class="option-title">
+								Replace only once per post (by default it will replace all occurences)
+						</span>
+						
+						<div class="description">The plugin will search for the keyword  and hyperlink with this link<br>example 1: seo|https://moz.com<br>example 2: seo,link building|https://moz.com</div>
 		            </div>
 		            
                </div>

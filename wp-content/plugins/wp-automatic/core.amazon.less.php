@@ -59,6 +59,8 @@ class WpAutomaticAmazon extends wp_automatic {
 					$res = $this->db->get_results ( $query );
 				}
 				
+			 
+				
 				// delete already posted items from other campaigns
 				// deleting duplicated items
 				$res_count = count ( $res );
@@ -124,7 +126,26 @@ class WpAutomaticAmazon extends wp_automatic {
 						
 						try {
 							
-							$this->simulate_location ( $camp->camp_amazon_region );
+							//location simulate 
+							if(in_array('OPT_AM_LOC', $camp_opt)){
+								
+								$cookie_content =   $this->cookie_content('wp_automatic_amazon') ;
+								
+								//delete the cookie if not contining needed session and ubid
+								if( stristr($cookie_content  , trim($camp_general['cg_am_session'])) && stristr($cookie_content  , trim($camp_general['cg_am_ubid'])) ){
+									echo '<br>Current cookieJar contains the needed session-id and ubid, approving it';
+								}else{
+									echo '<br>Deleting currrent cookieJar for setting the new session and ubid';
+									$this->cookie_delete('wp_automatic_amazon') ;
+									
+									if ( isset($camp_general['cg_am_session']) &&  $camp_general['cg_am_session'] != ''  &&  $camp_general['cg_am_ubid'] != '' ){
+										$obj->session_id = trim($camp_general['cg_am_session']);
+										$obj->session_ubid = trim($camp_general['cg_am_ubid']);
+									}
+								
+								}
+								
+							} 
 							
 							$agent = $this->get_user_agent ();
 							curl_setopt ( $this->ch, CURLOPT_USERAGENT, $agent );
@@ -630,9 +651,6 @@ class WpAutomaticAmazon extends wp_automatic {
 					
 					}
 					 
-				 
-					
-					
 				}
 				
 				$agent = $this->get_user_agent ();
@@ -649,15 +667,27 @@ class WpAutomaticAmazon extends wp_automatic {
 					}
 				} else {
 					
-					 
-					$ASINs = $obj->getASINs ( $scrapeURL );
 					
+					//hijack added product HTML 
+					if($keyword == '*' && in_array('OPT_AMAZON_CUSTOM_HTML',$camp_opt) && 	$camp_general['cg_am_html'] != ''  ){
+						
+						echo '<br>Extracting products from added HTML...';
+						 
+						$ASINs = $obj->getASINs ( $camp_general['cg_am_html'] , true );
+						
+					}else{
+						
+						$ASINs = $obj->getASINs ( $scrapeURL );
+						
+					}
+					 
 					if ($obj->update_agent_required)
 						$this->update_user_agent ();
 				}
 				
 				$slugs = $obj->slugs;
 				
+				  
 				$i = 0;
 				foreach ( $ASINs as $ASIN ) {
 					echo '<br>ASIN:' . $ASIN;
@@ -669,7 +699,7 @@ class WpAutomaticAmazon extends wp_automatic {
 					
 					$linkKeyword = "{$camp->camp_id}_$keyword";
 					// $query = "INSERT INTO {$this->wp_prefix}automatic_amazon_links ( link_url , link_title , link_keyword , link_status ,link_desc,link_price,link_img,link_review)VALUES ( '$linkUrl', '$title', '{$camp->camp_id}_$keyword', '0','$desc','{$price}','{$imgurl}','{$review}')";
-					$query = "INSERT INTO {$this->wp_prefix}automatic_amazon_links (link_url,link_keyword , link_status , link_desc) SELECT * FROM (SELECT '$ASIN' , '$linkKeyword' , '0' , '$slug' ) AS tmp WHERE NOT EXISTS ( SELECT link_url FROM {$this->wp_prefix}automatic_amazon_links WHERE link_url like '%$ASIN' ) LIMIT 1";
+					$query = "INSERT INTO {$this->wp_prefix}automatic_amazon_links (link_url,link_keyword , link_status , link_desc) SELECT * FROM (SELECT '$ASIN' , '$linkKeyword' , '0' , '$slug' ) AS tmp WHERE NOT EXISTS ( SELECT link_url FROM {$this->wp_prefix}automatic_amazon_links WHERE link_keyword='$linkKeyword' and link_url like '%$ASIN' ) LIMIT 1";
 					
 					$insert = $this->db->query ( $query );
 					
@@ -714,59 +744,10 @@ class WpAutomaticAmazon extends wp_automatic {
 			}
 		}
 	} // end func
-	function simulate_location($region) {
+	
+	function simulate_location() {
 		
-		// disable this feature now
-		return true;
-		
-		if ($this->isAmazonLocationSimulated == false) {
-			
-			// region to location
-			if ($region == 'com') {
-				$curlpost = "locationType=LOCATION_INPUT&zipCode=10001&storeContext=gateway&deviceType=web&pageType=Search&actionSource=glow";
-			} elseif ($region == 'co.uk') {
-				$curlpost = "locationType=LOCATION_INPUT&zipCode=E1+7EF&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow";
-			} elseif ($region == 'ca') {
-				$curlpost = 'locationType=LOCATION_INPUT&zipCode=V5K+0A1&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow';
-			} elseif ($region == 'de') {
-				$curlpost = "locationType=LOCATION_INPUT&zipCode=10178&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow";
-			} elseif ($region == 'fr') {
-				$curlpost = "locationType=LOCATION_INPUT&zipCode=75000&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow";
-			} elseif ($region == 'it') {
-				$curlpost = "locationType=LOCATION_INPUT&zipCode=00127&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow";
-			} elseif ($region == 'es') {
-				$curlpost = "locationType=LOCATION_INPUT&zipCode=08005&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow";
-			} elseif ($region == 'co.jp') {
-				$curlpost = "locationType=LOCATION_INPUT&zipCode=100-0000&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow";
-			} elseif ($region == 'in') {
-				$curlpost = "locationType=LOCATION_INPUT&zipCode=110001&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow";
-			} elseif ($region == 'com.br') {
-				$curlpost = "locationType=LOCATION_INPUT&zipCode=20010-000&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow";
-			} elseif ($region == 'com.mx') {
-				$curlpost = "locationType=LOCATION_INPUT&zipCode=44100&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow";
-			}
-			
-			/*
-			 * elseif(){
-			 * $curlpost = "locationType=LOCATION_INPUT&zipCode=2000&storeContext=generic&deviceType=web&pageType=Gateway&actionSource=glow";
-			 * //2000
-			 *
-			 * }
-			 */
-			
-			echo '<br>Simulating location  for amazon.' . $region;
-			
-			// curl post
-			$curlurl = "https://www.amazon.$region/gp/delivery/ajax/address-change.html";
-			curl_setopt ( $this->ch, CURLOPT_URL, $curlurl );
-			curl_setopt ( $this->ch, CURLOPT_POST, true );
-			curl_setopt ( $this->ch, CURLOPT_POSTFIELDS, $curlpost );
-			$x = 'error';
-			$exec = curl_exec ( $this->ch );
-			$x = curl_error ( $this->ch );
-			
-			$this->isAmazonLocationSimulated = true;
-		}
+	 
 	}
 	
 	/**

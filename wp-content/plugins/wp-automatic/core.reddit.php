@@ -275,12 +275,26 @@ class WpAutomaticReddit extends wp_automatic {
 			// link_flair_richtext flairs
 			$item_flairs = '';
 			$item_flairs_arr = array ();
+		 
+			
 			if (isset ( $itemTxt->data->link_flair_richtext )) {
 				
 				$link_flair_richtext = is_array ( $itemTxt->data->link_flair_richtext ) ? $itemTxt->data->link_flair_richtext : array ();
 				
+				if(count($link_flair_richtext) == 0 && isset($itemTxt->data->link_flair_text) && trim($itemTxt->data->link_flair_text) != '' ){
+					$link_flair_richtext = array($itemTxt->data->link_flair_text);
+				}
+				
+			 
+ 				
 				foreach ( $link_flair_richtext as $link_flair_richtext_s ) {
-					$item_flairs_arr [] = $link_flair_richtext_s->t;
+				
+					if(isset($link_flair_richtext_s->t)){
+						$item_flairs_arr [] = $link_flair_richtext_s->t;
+					}else{
+						$item_flairs_arr [] = $link_flair_richtext_s;
+					}
+				
 				}
 				
 				$item_flairs = implode ( ',', $item_flairs_arr );

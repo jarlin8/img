@@ -311,7 +311,9 @@ function ebay_fetch_items($keyword, $camp) {
 	$x = curl_error ( $this->ch );
  	 
 	 $json_reply = json_decode($exec);
-	  
+	 
+ 
+
 	   //error report  
 	 if( isset ( $json_reply->errors ) ){
 	 	echo '<br>eBay returned an error: <span style="color:red">'.  $json_reply->errors[0]->message  . '</span>';
@@ -337,13 +339,19 @@ function ebay_fetch_items($keyword, $camp) {
 	 
 	 if(isset($json_reply->itemSummaries ))
 	 $search_results = $json_reply->itemSummaries;
- 	
- 	 
+	 
 	 echo '<br>Got ' . count($search_results) . ' items from eBay';
 	 
+	 $isLastPage = false; //is last page init
+
+	//check if last page when offset * 10 is larger than or equal to the $search_results['total']
+	if( isset($json_reply->total) && $start * 10 >= $json_reply->total ){
+		$isLastPage = true;
+	}
+
 	 
-	  
-	 if ( count ( $search_results )== 0  ) {
+	  //deactivate the key if no result or last page
+	 if ( $isLastPage  || count ( $search_results ) == 0  ) {
 	  
 		  echo '<br>End of eBay search results, resetting page number';
 		
@@ -416,6 +424,13 @@ function ebay_fetch_items($keyword, $camp) {
 			$itm ['item_price'] = $item_new->currentBidPrice->value ;
 			$itm ['item_price_currency'] = $item_new->currentBidPrice->currency ;
 		}
+
+		//marketingPrice which is the price before discount
+		$itm['item_marketing_price'] = $itm ['item_price']; //default to item price
+
+		if( isset(   $item_new->marketingPrice  ) ){
+			$itm ['item_marketing_price'] = $item_new->marketingPrice->originalPrice->value ;
+		}
 		
 		$itm ['item_bin'] =    isset($item_new->listingInfo[0]->buyItNowPrice[0]->__value__) ? $item_new->listingInfo[0]->buyItNowPrice[0]->__value__ : '';
 		
@@ -432,6 +447,8 @@ function ebay_fetch_items($keyword, $camp) {
 		$itm['item_seller_score'] = $item_new->seller->feedbackScore;
 		$itm['item_condition'] = $item_new->condition;
   		
+		 
+
 		$data = base64_encode(serialize ( $itm ));
 			
 			
@@ -595,9 +612,10 @@ function ebay_get_post($camp) {
 				
 					
 				  
-				// extract img itemprop="image" src="
-				if(stristr($exec, 'maxImageUrl":"')){
-					preg_match_all('{maxImageUrl":"(.*?)"}', $exec,$matches);
+				// extract img ZOOM_GUID","URL":"https://i.ebayimg.com/images/g/-5sAAOSwRLlZo1fM/s-l500.jpg"
+				if(stristr($exec, 'ZOOM_GUID","URL":"')){
+					preg_match_all('{ZOOM_GUID","URL":"([^"]*?s-l500\.jpg)"}', $exec,$matches);
+					 
 				}else{
 					//displayImgUrl":"
 					preg_match_all('{displayImgUrl":"(.*?)"}', $exec,$matches);
@@ -609,7 +627,8 @@ function ebay_get_post($camp) {
 				$json_txt = '["'.$json_txt.'"]';
 					
 				$imgs_arr = json_decode($json_txt);
-					
+				
+			 
 				$img = $imgs_arr[0];
 				
 					
@@ -639,9 +658,7 @@ function ebay_get_post($camp) {
 				if(in_array('OPT_EB_FULL_DESC', $camp_opt) || in_array('OPT_EB_FULL_IMG', $camp_opt) || in_array('OPT_EB_FULL_DESC_SPEC', $camp_opt) ){
 
 					  echo '<br>Extracting full description and images from original product page...';
-
-					
-					  
+			 		  
 					//building url
 
 					//extract ebay site ext
@@ -857,7 +874,19 @@ function ebay_get_post($camp) {
 					$data['item_condition_desc'] =wp_automatic_fix_json_part($re_matches[1]);
 				}
 				
-				 
+				//if item_marketing_price is empty set it to item_price
+				if(! isset($data['item_marketing_price']) || trim($data['item_marketing_price']) == '' ){
+					$data['item_marketing_price'] = $data['item_price'];
+				}
+
+				//new tag item_price_with_discount 
+				$data['item_price_with_discount'] = $data['item_price']; //default is item price
+
+				//if price is not equal to marketing price then it's discounted, build the new tag to the value of <del>item_marketing_price</del> - item_price
+				if( $data['item_price'] != $data['item_marketing_price'] ){
+					$data['item_price_with_discount'] = '<del>'.$data['item_marketing_price'].'</del> - '.$data['item_price'];
+				}
+				  
 				
 				return $data;
 				

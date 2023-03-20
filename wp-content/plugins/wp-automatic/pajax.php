@@ -186,7 +186,7 @@ function wp_automatic_yt_playlists_callback() {
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 		curl_setopt($ch, CURLOPT_TIMEOUT,20);
 		curl_setopt($ch, CURLOPT_REFERER, 'http://www.bing.com/');
-		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36');
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36');
 		curl_setopt($ch, CURLOPT_MAXREDIRS, 5); // Good leeway for redirections.
 		@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // Many login forms redirect at least once.
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -487,7 +487,7 @@ function wp_automatic_iframe_callback() {
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 		curl_setopt($ch, CURLOPT_TIMEOUT,30);
 		curl_setopt($ch, CURLOPT_REFERER, 'http://www.bing.com/');
-		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36');
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36');
 		curl_setopt($ch, CURLOPT_MAXREDIRS, 5); // Good leeway for redirections.
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // Many login forms redirect at least once.
  		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -506,8 +506,10 @@ function wp_automatic_iframe_callback() {
 		if(isset($_GET['js_enabled'])){
 			
 			//echo '<br>Loading the content using APIFY.COM service....';
-			
-			
+
+			//wait_for 
+			$wait_for = isset($_GET['wait_for']) ? $_GET['wait_for'] : 0 ;
+
 			$wp_automatic_apify_key = get_option('wp_automatic_apify_key','');
 			
 			require_once 'inc/class.apify.php';
@@ -515,7 +517,7 @@ function wp_automatic_iframe_callback() {
 			
 			try {
 				
-				$apify_content = $apify->apify();
+				$apify_content = $apify->apify( $wait_for );
 				$content = $apify_content;
 				
 			} catch (Exception $e) {

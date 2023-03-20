@@ -5,6 +5,9 @@ require_once 'core.php';
 class WpAutomaticInstagram extends wp_automatic {
 	function instagram_get_post($camp) {
 		
+		//load ig cookie 
+		$this->load_cookie('ig');
+		
 		// sess required
 		$wp_automatic_ig_sess = trim ( get_option ( 'wp_automatic_ig_sess', '' ) );
 		
@@ -31,7 +34,7 @@ class WpAutomaticInstagram extends wp_automatic {
 				
 				if ($wp_automatic_ig_sess == '') {
 					echo '<br><span style="color:red">Please visit the plugin settings page and add the required Instagram session cookie.</span>';
-					return false;
+					 
 				}
 				
 				// getting links from the db for that keyword
@@ -200,13 +203,16 @@ class WpAutomaticInstagram extends wp_automatic {
 						echo '<br>More than one image exists, getting more details from Instagram';
 						$isDetailedItemInfoRequired = true;
 					}
-					
-					
+				 
+					 
 					
 					// get more details if needed
 					if ($isDetailedItemInfoRequired) {
 						
 						echo '<br>Now loading IG original Page URL...';
+						
+						//reset the item_images if contains an image with a url signature expired ticket 21285
+						$temp['item_images'] = '' ;
 						
 						require_once 'inc/class.instagram.php';
 						
@@ -253,18 +259,10 @@ class WpAutomaticInstagram extends wp_automatic {
 							$temp ['item_vid_embed'] = $videoEmbed;
 						}
 						
-						
-						
-						
-						// item images ini
-						$img_template = stripslashes ( $camp_general ['cg_it_full_img_t'] );
-						if (trim ( $img_template ) == '')
-							$img_template = '<img src="[img_src]" />';
-						
-							$temp ['item_images'] = str_replace('[img_src]', $temp ['item_img'], $img_template); 
+						 
 						
 						// slider images
-						if (in_array ( 'OPT_IT_SLIDER', $camp_opt )) {
+						if ( 1 ) {
 							
 							$all_childs_html = '';
 							$img_template = stripslashes ( $camp_general ['cg_it_full_img_t'] );
@@ -282,20 +280,23 @@ class WpAutomaticInstagram extends wp_automatic {
 									$temp ['item_img'] = $display_resource->src;
 								}
 								
-								$all_childs = $fullItemDetails->graphql->shortcode_media->edge_sidecar_to_children->edges;
-								
-								foreach ( $all_childs as $child ) {
+							
+								//slider all images
+								if(in_array ( 'OPT_IT_SLIDER', $camp_opt )){
+									$all_childs = $fullItemDetails->graphql->shortcode_media->edge_sidecar_to_children->edges;
 									
-									$all_childs_html .= str_replace ( '[img_src]', $child->node->display_url, $img_template );
-									
-									if (! stristr ( $img_template, '<img ' )) {
-										$all_childs_html .= '<img class="delete" src="' . $child->node->display_url . '" />';
+									foreach ( $all_childs as $child ) {
+										
+										$all_childs_html .= str_replace ( '[img_src]', $child->node->display_url, $img_template );
+										
+										if (! stristr ( $img_template, '<img ' )) {
+											$all_childs_html .= '<img class="delete" src="' . $child->node->display_url . '" />';
+										}
 									}
+									
+									if (trim ( $all_childs_html ) != '')
+										$temp ['item_images'] = $all_childs_html;
 								}
-								
-								if (trim ( $all_childs_html ) != '')
-									$temp ['item_images'] = $all_childs_html;
-								
 							}elseif(isset($fullItemDetails->items)){
 								
 								//case items
@@ -330,14 +331,25 @@ class WpAutomaticInstagram extends wp_automatic {
 										$i++;
 									}
 									
+									
+									
+									if(in_array ( 'OPT_IT_SLIDER', $camp_opt )){
 									if (trim ( $all_childs_html ) != '')
 										$temp ['item_images'] = $all_childs_html;
-								
+									}
 								
 							}
 						
 						
 						}
+						
+						// rebuild item_images if no slider was available
+						$img_template = stripslashes ( $camp_general ['cg_it_full_img_t'] );
+						if (trim ( $img_template ) == '')
+							$img_template = '<img src="[img_src]" />';
+							
+							if(trim($temp ['item_images']) == '')
+							$temp ['item_images'] = str_replace('[img_src]', $temp ['item_img'], $img_template); 
 						
  						
 						if (  (isset ( $fullItemDetails->graphql->shortcode_media->shortcode ) && trim ( $fullItemDetails->graphql->shortcode_media->shortcode ) == $t_data ['item_id']) || isset($fullItemDetails->items[0])   ) {
@@ -519,8 +531,11 @@ class WpAutomaticInstagram extends wp_automatic {
 					if (! in_array ( 'OPT_IT_NO_VID_IMG_HIDE', $camp_opt ) && isset ( $temp ['is_video'] ) && $temp ['is_video'] == 'yes') {
 						$temp ['item_images'] = str_replace ( '<img', '<img style="display:none" ', $temp ['item_images'] );
 					}
-					
+									
+ 					
  					return $temp;
+				
+				
 				} else {
 					echo '<br>No links found for this keyword';
 				}

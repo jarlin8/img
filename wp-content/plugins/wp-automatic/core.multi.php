@@ -101,7 +101,8 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		curl_setopt ( $ch, CURLOPT_CONNECTTIMEOUT, 10 );
 		curl_setopt ( $ch, CURLOPT_TIMEOUT, 20 );
 		curl_setopt ( $ch, CURLOPT_REFERER, 'http://www.bing.com/' );
-		curl_setopt ( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36' );
+		curl_setopt ( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36' );
+		 
 		curl_setopt ( $ch, CURLOPT_MAXREDIRS, 5 ); // Good leeway for redirections.
 		curl_setopt ( $ch, CURLOPT_FOLLOWLOCATION, 1 ); // Many login forms redirect at least once.
 		                                                // curl_setopt ( $ch, CURLOPT_COOKIEJAR, "cookie.txt" );
@@ -212,7 +213,13 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			
 			try {
 				
-				$apify_content = $apify->apify();
+				//wait for mills
+				$cg_apify_wait_for = isset($camp_general['cg_apify_wait_for']) ? $camp_general['cg_apify_wait_for'] : 0;
+
+				//report $cg_apify_wait_for
+				echo '<br>Waiting for '.$cg_apify_wait_for.' milliseconds after loading the page';
+
+				$apify_content = $apify->apify($cg_apify_wait_for);
 				$exec = $apify_content;
 				
 				 
@@ -241,7 +248,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		  
 		}
 		
-		
+		 
 		// validate response
 		if (trim ( $exec ) == '') {
 			echo '<br>Did not return valid content ' . $x;
@@ -256,11 +263,12 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		preg_match ( '{<base href="(.*?)"}', $exec, $base_matches );
 		$base_url = (isset ( $base_matches [1] ) && trim ( $base_matches [1] ) != '') ? trim ( $base_matches [1] ) : '';
 		
+	 
+		
+		
 		//relative path fix 
 		$exec = wp_automatic_fix_relative_paths ( $exec, $cg_ml_source );
-		
-	 
-	  
+		 
 		// loading the dom
 		require_once 'inc/class.dom.php';
 		$wpAutomaticDom = new wpAutomaticDom ( $exec );
@@ -356,7 +364,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 				
 				echo '<-- ' . strlen ( $content ) . ' chars';
 				
-				
+			 
 				
 				if (trim ( $content ) != '') {
 					$finalContent .= $content . "\n";
@@ -375,8 +383,12 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			// Get links from html <a href="https://example.com"></a>
 			preg_match_all ( '{href\s*?=\s*?["|\'](.*?)["|\'].*?>(.*?)</a>}s', $finalContent, $link_matches );
 			
+			
+			
 			if (count ( $link_matches [1] ) == 0) {
-				preg_match_all ( '{(http[s]?://.*?)[\s|\'|"]}s', $finalContent, $link_matches );
+				preg_match_all ( '{(http[s]?://?.*?)[\s|\'|"]}s', $finalContent, $link_matches );
+				
+			 
 				
 				$found_links = $found_titles = $link_matches [1];
 			} else {
@@ -421,7 +433,13 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		
 		$finalContent = '';
 		
-		if( $cg_ml_cnt_method == 'infinite' ){
+
+		if( in_array('OPT_MULTI_FIXED_LIST' , $camp_opt) ){
+
+			//posting from a fixed list, no pagination
+
+
+		}elseif( $cg_ml_cnt_method == 'infinite' ){
 			
 			echo '<br>Infintie pagination found....';
 			$finalContent = 'https://infinite.pagination'; // placeholder for infite pagination 

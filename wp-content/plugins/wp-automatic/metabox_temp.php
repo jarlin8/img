@@ -52,6 +52,30 @@ global $camp_post_content;
                </div>
 		 </div>
 
+		 <div  class="field f_100">
+               <div class="option clearfix">
+                    
+                    <input name="camp_options[]" data-controls = "default_slug"  value="OPT_CUSTOM_SLUG" type="checkbox">
+                    <span class="option-title">
+							Custom post slug/permalink (by default, it will be the post title)
+                    </span>
+                    <br>
+                    
+		            <div id="default_slug" class="field f_100">
+		               <label>
+		                    slug template
+		               </label>
+		               
+					   <input value="<?php   echo @$camp_general['cg_custom_slug']  ?>" name="cg_custom_slug"    type="text">
+		            	 
+		            
+		            <div class="description">For example, [original_title] TEST</div>	 
+		             	
+		            </div>
+		            
+               </div>
+		 </div>
+
 		<div  class="field f_100">
                <div class="option clearfix">
                     

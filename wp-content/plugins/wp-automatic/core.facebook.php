@@ -225,12 +225,16 @@
 				$x = curl_error ( $this->ch );
 				$cu_info = curl_getinfo($this->ch);
 				
+				 
+				
  				
 				//events new page layout mbasic endpoint does not work, get from FB directly
 				// condition 1: events condition 2:  ba  exists, this is a class for the error displayed <div class="y z ba bb bc"><span class="bd">The page you requested was not found
-				if($cg_fb_from == 'events' &&   (    $cu_info['http_code'] == 404 )         ){
+				//>The page you requested cannot be displayed right now
+				//role="main"><div class="bi bj bk j bl"><span class="bm">The page you requested cannot be displayed right now. I
+				if($cg_fb_from == 'events' &&   (    $cu_info['http_code'] == 404   || stristr($exec,'The page you requested cannot be displayed right now') || preg_match( '!<div class="\w{1,2} \w{1,2} \w{1,2} \w{1,2} \w{1,2}"><span class="\w{1,2}">!' , $exec )  )         ){
 					echo '<br>Events page returned "The page you requested was not found", trying FB directly method';
-					
+					 
 					//https://www.facebook.com/lekfequoiconcerts/events
 					//curl get
 					$x='error';
@@ -332,6 +336,7 @@
 						
 								 
 					 
+						 
 						
 						require_once 'inc/class.dom.php';
 						$wpAutomaticDom = new wpAutomaticDom ( '<html><head></head><body>' . $exec . '</body>' );
@@ -605,6 +610,7 @@
 								$title = $title_matches [1];
 							}
 						} else {
+ 
 							
 							echo '<br>Case#2 content'; // {"tn":"*s"}
 							
@@ -617,11 +623,14 @@
 							$items = $wpAutomaticDom->getContentByXPath ( '//*[@data-ft="target"]' );
 							
 							$found_story_text = $items [0];
-							$found_story_text .= isset ( $items [1] ) ? $items [1] : '';
-	
+							$found_story_text .= isset ( $items [1] ) ? $items [1] : ''; //example response https://pastebin.com/z6NLP86p
+	 
+
 							//remove translation div class="do dp
 							$found_story_text = preg_replace('!<div class=".. ..".*?</div>!', '', $found_story_text);
+							
 							 
+
 							
 							// faked matching array
 							$contMatches = array (
@@ -632,6 +641,9 @@
 											$found_story_text 
 									) 
 							);
+
+							//print_r($contMatches);
+							//exit;
 							
 							/*
 							 * preg_match_all('!tn":"\*s"}\'>[\s]*<span[^<]*?>(.*?)</span>.?</?div!s', $item,$contMatches);
@@ -673,6 +685,11 @@
 							// Remove See Translation link <div class="_x7p _3nc8"><a href="#" data-targetid="3592641020750357" data-ft="[]" data-sigil="m-see-translate-link">See translation</a></div>
 							$matched_text_content = preg_replace ( '{<div class="_x7p _3nc8"><a href="#" .*?</a></div>}', '', $matched_text_content );
 							
+							// ticket 22215 remove empty story link <a href="/story.php?story_fbid=pfbid02tzWoKBPYzmcFmbcqsTHNErhEYBtiDDUY7NqkyWqJ4apwbgQNeiN3nuV2dU46WsJwl&amp;id=100063630095850&amp;eav=AfZjBDXBTmgmeykaYgSP2JOesaH3_yyU-NW8C5rFLhSQ8w5U5ody48ZXomg0D0pMtvw&amp;m_entstream_source=timeline&amp;_ft_=encrypted_tracking_data.0AY8o4sc06GWX4JG4dy-ibNc4ta3Jz8n9VM07ecNVy-kLCGqx2YP5KRCjSNTHz0zqQTOpnzimfIDeRdVkS1ntnXOk4b1HLiUXsnTAV6Ynmt8uwlInLiVAapKSCvTg8qCxTxWgyl4-rSMx17dEPjdtvlzwsfOXFKVTxVUBMo5BC9VmbafF6rvPlb2mWIqX6_mdlXExY5RALUb3ecTiZDY6VdgQ7J1cJfjT8SHfrtKv9Dn-kWFoSHF2DCPn587BTLAN77HgaWcabhTxSXnCb9BNndhEBkbS8gIqmVmo9g0RVyNIVDWzzjX61JuJpxd2JbdBfqUV6ALZQRFjcX1VZrKYeaguwLbJ_QR65pXJjUdjyTzoAl2-v5Krk_A9WCJR6xLBiloQ4D4kZH9xSDJjtgvbtNuX8wfVCAqCli-OWg6f-lvh3ttU960iM2rCLVZ-JA2OXbzi1i5ngIndvL095KjePnfYJ51fxcCBHXaFZ0XEE7hlsdpKHlPFOSDazynXCtuCrGuhJ9PYeotxVl5zh489BybBnk7GxahmG1zUdMrqzEV6UvSu4YDmFNdf4J0__TwnBB0BR4VFMysDBRrHOOgPM08ijF03RMqn3KOCKP47f45BGerGfSqHLcyc1AkDMnJdiMu-vNwiONI5Po1x1yLhanp428CVRFVJCEIkJQN0zBNCX0y0snZtahAvHpC-FcSUpW1wImVG5y4W3S12VYBFoWqMwVjs4eurbGKYkzvmbFWHY2Xunzp6C487VtZbvLLOvJoidBpBpjbK7_RRgqegrqkjL5OdpAsDX2DRddWA-FLaHL1MosAA2bhnVoUMY1rHtkIDgYR5keHhZE382ammzGRc0go6GwU-EezKZFv1lYx-xeCYeLf-z2Jmi3rCO9c1WEdoIcnkBR04bLqrA0YxyoR0L5xqbwdg_n-JrkqgisLSW8B-ATtRxvtowoqgYyX5snFCy1P_JW5CWRCadCiy1I4AEocqLtKsUQCE-boepFE5h04tBvIZLj6MMva5MQ-p2dwqYF3AV03YJnUvMBo7VyH2mrkCegCJvrwiOe5rQwGOiSJKvrFS-zEafEUrd_Rxo284KLkoQxGVZVc9ol2s-dthJJVmSoCmuykuw7cp2y0rKznBmYYvQCUH9sG1WnvDFb_rxhM7OBsz5W6G_YV5U_LBf8ZuFl0WunI47OaPb3EKTghhMB5R072qz8VOgKZV5G2OQrMIWOJ7D_jPPSk3E5Fx5j9ysyCkWwGhWoni7eE3JXHfvj1WyC1qQKIT2aOa3jbn_dZdjAUZjkfaVWQaWB57lfjivb5hS__IiawzW9WC9weGzY0ml0sCOEF20mzDxvK5O0khE04krc3KykahilCiZtZSVpzxZTIVqvQgIa5MU4_228QA0hOuxBhkUCosrpj_rC8t0ZubA4wc3DVqrsD81HwYzTMNbtQ9VQmMqQK9gg76fEQHRhOfsn3nEztYqyvWHI6Gjg&amp;__tn__=%2As%2As-R&amp;paipv=0" aria-label="Open story" class="_5msj"></a>
+							$matched_text_content = preg_replace ( '!<a href="/story.php[^<]*?"></a>!is', '', $matched_text_content );
+
+						 
+
 							if (stristr ( $matched_text_content, 'background-image' ) || stristr ( $matched_text_content, 'color:rgba' ) || stristr ( $matched_text_content, 'font-size' )) {
 								$matched_text_content = strip_tags ( $matched_text_content, '<br><br /><a>' );
 							}
@@ -1000,6 +1017,10 @@
 								if (! in_array ( 'OPT_FB_TXT_SKIP', $camp_opt ))
 									$content = $possible_full;
 							}
+						}else{
+
+							echo '<-- Firstly found text is alredy full text, skipping full text extraction';
+
 						}
 						
 						$content = str_replace ( 'See Translation', '', $content );
@@ -2144,7 +2165,7 @@
 								
 							}
 							
-							if ($foundOldPost) {
+							if (isset($foundOldPost) && $foundOldPost) {
 								echo '<br>Found old posts on current list of posts, lets set the pointer to first page again';
 								delete_post_meta ( $camp->camp_id, 'nextPageUrl' );
 								delete_post_meta ( $camp->camp_id, 'wp_automatic_fb_checked_years' );

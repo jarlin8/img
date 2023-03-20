@@ -4,8 +4,30 @@ add_filter('the_content', 'wp_automatic_the_content_filter');
 	
 function wp_automatic_the_content_filter($cnt){
 		global $post;
+		 
 		
 		if(! isset($post->ID)) return $cnt;
+		
+		//remove crazy added <br> and <p> tags added by evil WP developers https://core.trac.wordpress.org/ticket/56893  locacl ticket 21308
+		preg_match_all('!<script.*?script>!s' , $cnt , $scripts_found );
+		
+		foreach($scripts_found[0] as $script_found){
+			
+			$script_found_copy = $script_found;
+			
+			if(stristr($script_found_copy, '<p>') || stristr($script_found_copy, '<br')){
+				$script_found_copy = str_replace( array('<p>' , '<br>' , '<br />' ,'</p>' )  , '' , $script_found_copy  );
+				$cnt = str_replace( $script_found , $script_found_copy , $cnt );
+			}
+			
+			
+		}
+
+		//fix broken amazon image from https://i.imgur.com/ISRHEWs.png to https://valvepress.s3.amazonaws.com/buy_amazon.png
+		if( stristr($cnt, 'i.imgur.com/ISRHEWs.png') ){
+			$cnt = str_replace('i.imgur.com/ISRHEWs.png', 'valvepress.s3.amazonaws.com/imgs/buy_now.png' , $cnt );
+		}
+		 
 		
 		//fix youtube deleted rating images
 		if( stristr($cnt, 'youtube.com/static/images') ){
@@ -30,9 +52,7 @@ function wp_automatic_the_content_filter($cnt){
 			
 			$cnt= preg_replace ( '/<img [^>]*src=["|\'][^"|\']+.*?>/i', '' ,$cnt ,1 );
 			
-		}else{
-			
-		}
+		} 
 		
 		//remove gallery from home
 		if(stristr($cnt, 'wp_automatic_gallery')){
@@ -81,11 +101,12 @@ function wp_automatic_the_content_filter($cnt){
 
 add_filter('post_link','wp_automatic_permalink_changer' , 10, 3);
 
+ 
 function wp_automatic_permalink_changer($permalink , $post, $leavename=false  ){
    
 	 
 	if (!empty($post->ID)) {
-
+ 
 		$link_to_source = get_post_meta($post->ID, '_link_to_source', true);
  
 		if ( trim($link_to_source) != '' ) {

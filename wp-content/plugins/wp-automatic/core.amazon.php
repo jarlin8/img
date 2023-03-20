@@ -6,6 +6,7 @@ class WpAutomaticAmazon extends wp_automatic {
 	
 	/*
 	 * ---* Get Amazon Post ---
+	 * sample response from api request https://pastebin.com/BEaGE3YJ
 	 */
 	function amazon_get_post($camp) {
 		
@@ -115,6 +116,8 @@ class WpAutomaticAmazon extends wp_automatic {
 							$Item = $result->Items->Item;
 							$Item = $result[0]; 
 							
+					
+
 						} catch ( Exception $e ) {
 							echo '<br>Amazon error:' . $e->getMessage ();
 						}
