@@ -114,6 +114,14 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Γράψτε ένα παράγραφο για αυτό',
                 'prompt' => "Γράψτε ένα παράγραφο για αυτό το θέμα:\n\n[[text]]\n\n----\nΓραμμένος παράγραφος:\n",
             ],
+            'fa' => [
+                'menuTitle' => 'یک پاراگراف درباره این بنویسید',
+                'prompt' => "یک پاراگراف درباره این موضوع بنویسید:\n\n[[text]]\n\n----\nنوشته شده پاراگراف:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Napíšte odsek o tomto',
+                'prompt' => "Napíšte odsek o tejto téme:\n\n[[text]]\n\n----\nNapísaný odsek:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -234,6 +242,14 @@ const AIKIT_INITIAL_PROMPTS = [
             'el' => [
                 'menuTitle' => 'Συνεχίστε αυτό το κείμενο',
                 'prompt' => "Συνεχίστε αυτό το κείμενο:\n\n[[text]]\n\n----\nΣυνεχιζόμενο κείμενο:\n",
+            ],
+            'fa' => [
+                'menuTitle' => 'ادامه این متن',
+                'prompt' => "ادامه این متن:\n\n[[text]]\n\n----\nمتن ادامه یافته:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Pokračovať v texte',
+                'prompt' => "Pokračovať v texte:\n\n[[text]]\n\n----\nPokračovanie textu:\n",
             ],
         ],
         'wordLength' => [
@@ -357,6 +373,14 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Δημιουργία ιδεών σχετικά με αυτό',
                 'prompt' => "Δημιουργήστε μερικές ιδέες σχετικά με αυτό ως σημεία:\n\n[[text]]\n\n----\nΔημιουργημένες ιδέες ως σημεία:\n",
             ],
+            'fa' => [
+                'menuTitle' => 'ایجاد ایده‌هایی درباره این',
+                'prompt' => "چند ایده درباره آن را به عنوان نقطه ایجاد کنید:\n\n[[text]]\n\n----\nایجاد شده به عنوان نقطه ایده‌ها:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Vytvoriť nápady o tomto',
+                'prompt' => "Vytvorte niekoľko nápadov o tomto ako body:\n\n[[text]]\n\n----\nVytvorené ako body nápady:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -477,6 +501,14 @@ const AIKIT_INITIAL_PROMPTS = [
             'el' => [
                 'menuTitle' => 'Γράψτε ένα άρθρο για αυτό',
                 'prompt' => "Γράψτε ένα ολοκληρωμένο άρθρο για αυτό:\n\n[[text]]\n\n----\nΓραμμένο άρθρο:\n",
+            ],
+            'fa' => [
+                'menuTitle' => 'یک مقاله درباره این بنویسید',
+                'prompt' => "یک مقاله کامل درباره این بنویسید:\n\n[[text]]\n\n----\nمتن نوشته شده:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Napíšte článok o tomto',
+                'prompt' => "Napíšte úplný článok o tomto:\n\n[[text]]\n\n----\nNapísaný článok:\n",
             ],
         ],
         'wordLength' => [
@@ -599,6 +631,14 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Δημιουργία TL;DR',
                 'prompt' => "Δημιουργήστε TL;DR για αυτό το κείμενο:\n\n[[text]]\n\n----\nTL;DR:\n",
             ],
+            'fa' => [
+                'menuTitle' => 'ساخت TL;DR',
+                'prompt' => "TL;DR این متن را تولید کنید:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Vytvoriť TL;DR',
+                'prompt' => "Vytvorte TL;DR pre tento text:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -720,6 +760,14 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Σύνοψη',
                 'prompt' => "Συνοψίστε αυτό το κείμενο:\n\n[[text]]\n\n----\nΣύνοψη:\n",
             ],
+            'fa' => [
+                'menuTitle' => 'خلاصه',
+                'prompt' => "خلاصه این متن:\n\n[[text]]\n\n----\nخلاصه:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Zhrnutie',
+                'prompt' => "Zhrnúť tento text:\n\n[[text]]\n\n----\nZhrnutie:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -840,6 +888,14 @@ const AIKIT_INITIAL_PROMPTS = [
             'el' => [
                 'menuTitle' => 'Σύνοψη (σύντομη)',
                 'prompt' => "Συνοψίστε αυτό το κείμενο σύντομα:\n\n[[text]]\n\n----\nΣύντομη σύνοψη:\n",
+            ],
+            'fa' => [
+                'menuTitle' => 'خلاصه (خلاصه)',
+                'prompt' => "خلاصه این متن به طور خلاصه:\n\n[[text]]\n\n----\nخلاصه:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Zhrnutie (úrychlené)',
+                'prompt' => "Zhrnúť tento text rýchlo:\n\n[[text]]\n\n----\nZhrnutie:\n",
             ],
         ],
         'wordLength' => [
@@ -963,6 +1019,14 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Σύνοψη (σημεία)',
                 'prompt' => "Συνοψίστε αυτό το κείμενο σε σημεία:\n\n[[text]]\n\n----\nΣύνοψη:\n",
             ],
+            'fa' => [
+                'menuTitle' => 'خلاصه (نقاط)',
+                'prompt' => "خلاصه این متن به نقاط:\n\n[[text]]\n\n----\nخلاصه:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Zhrnutie (bodky)',
+                'prompt' => "Zhrňte tento text bodkami:\n\n[[text]]\n\n----\nZhrnutie:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1083,6 +1147,14 @@ const AIKIT_INITIAL_PROMPTS = [
             'el' => [
                 'menuTitle' => 'Παράγραφος',
                 'prompt' => "Παραγράψτε αυτό το κείμενο:\n\n[[text]]\n\n----\nΠαραγραφοποιημένο κείμενο:\n",
+            ],
+            'fa' => [
+                'menuTitle' => 'پاراگراف',
+                'prompt' => "پاراگراف کنید این متن:\n\n[[text]]\n\n----\nمتن پاراگراف شده:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Paragraf',
+                'prompt' => "Paragrafujte tento text:\n\n[[text]]\n\n----\nParagrafovaný text:\n",
             ],
         ],
         'wordLength' => [
@@ -1205,6 +1277,14 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Παράφραση (σαρκασμός)',
                 'prompt' => "Παραφράστε αυτό το κείμενο σαρκασμός:\n\n[[text]]\n\n----\nΠαραφρασμένο κείμενο σαρκασμός:\n",
             ],
+            'fa' => [
+                'menuTitle' => 'پارافریز (سختگیرانه)',
+                'prompt' => "پارافریز این متن به شیوه سختگیرانه:\n\n[[text]]\n\n----\nمتن پارافریز شده سختگیرانه:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Parafrazovať (sarkasticky)',
+                'prompt' => "Parafrazovať tento text sarkasticky:\n\n[[text]]\n\n----\nSarkasticky parafrazovaný text:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1325,6 +1405,14 @@ const AIKIT_INITIAL_PROMPTS = [
             'el' => [
                 'menuTitle' => 'Παραφράσεις (χιουμοριστικά)',
                 'prompt' => "Παραφράστε αυτό το κείμενο χιουμοριστικά:\n\n[[text]]\n\n----\nΧιουμοριστική παραφράσεις κειμένου:\n",
+            ],
+            'fa' => [
+                'menuTitle' => 'پارافریز (مزاح)',
+                'prompt' => "پارافریز کنید این متن به شکل مزاح:\n\n[[text]]\n\n----\nمتن پارافریز شده به شکل مزاح:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Parafraza (humor)',
+                'prompt' => "Parafrazať tento text humoristicky:\n\n[[text]]\n\n----\nHumoristická parafraza:\n",
             ],
         ],
         'wordLength' => [
@@ -1447,6 +1535,14 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Δημιουργία υπότιτλων',
                 'prompt' => "Δημιουργήστε έναν τίτλο για αυτό το κείμενο:\n\n[[text]]\n\n----\nΤίτλος:\n",
             ],
+            'fa' => [
+                'menuTitle' => 'ایجاد زیرنویس',
+                'prompt' => "ایجاد عنوان برای این متن:\n\n[[text]]\n\n----\nعنوان:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Generovať titulky',
+                'prompt' => "Generovať titulok pre tento text:\n\n[[text]]\n\n----\nTitulok:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1567,6 +1663,14 @@ const AIKIT_INITIAL_PROMPTS = [
             'el' => [
                 'menuTitle' => 'Μετατροπή σε διαφήμιση',
                 'prompt' => "Μετατρέψτε το παρακάτω κείμενο σε διαφημιστική διαφήμιση:\n\n[[text]]\n\n----\nΔιαφήμιση:\n",
+            ],
+            'fa' => [
+                'menuTitle' => 'تبدیل به تبلیغ',
+                'prompt' => "متن زیر را به تبلیغ خلاقانه تبدیل کنید:\n\n[[text]]\n\n----\nتبلیغ:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Previesť na reklamu',
+                'prompt' => "Previesť nasledujúci text na kreatívnu reklamu:\n\n[[text]]\n\n----\nReklama:\n",
             ],
         ],
         'wordLength' => [
@@ -1689,6 +1793,14 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Εξηγήστε σε ένα παιδί 5 ετών',
                 'prompt' => "Εξηγήστε αυτό σε ένα παιδί 5 ετών:\n\n[[text]]\n\n----\nΕξήγηση:\n",
             ],
+            'fa' => [
+                'menuTitle' => 'به یک کودک ۵ سالگی توضیح دهید',
+                'prompt' => "این را به یک کودک ۵ سالگی توضیح دهید:\n\n[[text]]\n\n----\nتوضیح:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Vysvetlite to 5-ročnému dieťaťu',
+                'prompt' => "Vysvetlite toto 5-ročnému dieťaťu:\n\n[[text]]\n\n----\nVysvetlenie:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1810,6 +1922,14 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Βρείτε μια ταιριαστή παράθεση',
                 'prompt' => "Βρείτε μια ταιριαστή παράθεση για τον παρακάτω κείμενο:\n\n[[text]]\n\n----\nΤαιριαστή παράθεση:\n",
             ],
+            'fa' => [
+                'menuTitle' => 'یافتن نقل قول مطابق',
+                'prompt' => "یافتن نقل قول مطابق برای متن زیر:\n\n[[text]]\n\n----\nنقل قول مطابق:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Nájsť zhodnú citáciu',
+                'prompt' => "Nájsť zhodnú citáciu pre nasledujúci text:\n\n[[text]]\n\n----\nZhodná citácia:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1929,6 +2049,14 @@ const AIKIT_INITIAL_PROMPTS = [
             ],
             'el' => [
                 'menuTitle' => 'Δημιουργία ιδέας εικόνας',
+                'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
+            ],
+            'fa' => [
+                'menuTitle' => 'ایجاد فکره تصویر',
+                'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
+            ],
+            'sk' => [
+                'menuTitle' => 'Vytvoriť nápad na obrázok',
                 'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
             ],
         ],

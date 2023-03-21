@@ -4,7 +4,7 @@
  * Plugin Name:       AIKit
  * Plugin URI:        https://getaikit.com
  * Description:       AIKit is your WordPress AI assistant, powered by OpenAI's GPT-3 & DALL.E 2.
- * Version:           3.5.0
+ * Version:           3.7.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Domain Path:       /languages
@@ -14,6 +14,7 @@ require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/includes/constants.php';
 require __DIR__ . '/includes/openai/prompt-manager.php';
 require __DIR__ . '/includes/openai/initial-prompts.php';
+require __DIR__ . '/includes/import-export.php';
 require __DIR__ . '/includes/admin.php';
 require __DIR__ . '/includes/openai/requests.php';
 
@@ -102,6 +103,7 @@ register_uninstall_hook( __FILE__, 'aikit_uninstall' );
 
 function aikit_uninstall() {
     delete_option( 'aikit_setting_openai_key' );
+    delete_option( 'aikit_plugin_version' );
     delete_option( 'aikit_setting_openai_key_valid' );
     delete_option( 'aikit_setting_openai_language' );
     delete_option( 'aikit_setting_openai_model' );
@@ -117,11 +119,13 @@ function aikit_uninstall() {
 
     delete_option( 'aikit_prompts' );
 
+    $aiKitPromptManager = AIKit_Prompt_Manager::get_instance();
 	$languages = AIKit_Admin::instance(
-		AIKit_Prompt_Manager::get_instance()
+		$aiKitPromptManager,
+        AIKit_Import_Export_Manager::get_instance($aiKitPromptManager)
     )->get_languages();
 
-    foreach ($languages as $language) {
+    foreach ($languages as $language => $obj) {
         delete_option( 'aikit_prompts_' . $language );
     }
 }

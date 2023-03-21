@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AIKit 1.3.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aikit\n"
-"POT-Creation-Date: 2023-03-17T14:11:09+00:00\n"
-"PO-Revision-Date: 2023-03-17 16:14+0200\n"
+"POT-Creation-Date: 2023-03-20T16:25:05+00:00\n"
+"PO-Revision-Date: 2023-03-20 18:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Domain: aikit\n"
 
 #. Plugin Name of the plugin
-#: includes/admin.php:170
+#: includes/admin.php:180
 msgid "AIKit"
 msgstr "AIKit"
 
@@ -30,7 +30,7 @@ msgstr ""
 "AIKit es tu asistente de IA para WordPress, impulsado por GPT-3 y DALL.E 2 "
 "de OpenAI."
 
-#: aikit.php:73
+#: aikit.php:74
 msgid ""
 "Thank you for using AIKit! Please consider entering your OpenAI key in order "
 "to start leveraging AI content generation."
@@ -38,139 +38,151 @@ msgstr ""
 "¡Gracias por utilizar AIKit! Por favor, considera introducir tu clave OpenAI "
 "para empezar a aprovechar la generación de contenidos de IA."
 
-#: aikit.php:77
+#: aikit.php:78
 msgid "Configure AIKit"
 msgstr "Configurar AIKit"
 
-#: includes/admin.php:33
+#: includes/admin.php:35
 msgid "English"
 msgstr "Inglés"
 
-#: includes/admin.php:37
+#: includes/admin.php:39
 msgid "German"
 msgstr "Alemán"
 
-#: includes/admin.php:41
+#: includes/admin.php:43
 msgid "French"
 msgstr "Francés"
 
-#: includes/admin.php:45
+#: includes/admin.php:47
 msgid "Spanish"
 msgstr "Español"
 
-#: includes/admin.php:49
+#: includes/admin.php:51
 msgid "Italian"
 msgstr "Italiano"
 
-#: includes/admin.php:53
+#: includes/admin.php:55
 msgid "Portuguese"
 msgstr "Portugués"
 
-#: includes/admin.php:57
+#: includes/admin.php:59
 msgid "Dutch"
 msgstr "Holandés"
 
-#: includes/admin.php:61
+#: includes/admin.php:63
 msgid "Polish"
 msgstr "Polaco"
 
-#: includes/admin.php:65
+#: includes/admin.php:67
 msgid "Russian"
 msgstr "Ruso"
 
-#: includes/admin.php:69
+#: includes/admin.php:71
 msgid "Japanese"
 msgstr "Japonés"
 
-#: includes/admin.php:73
+#: includes/admin.php:75
 msgid "Chinese"
 msgstr "Chino"
 
-#: includes/admin.php:77
+#: includes/admin.php:79
 msgid "Brazilian Portuguese"
 msgstr "Portugués de Brasil"
 
-#: includes/admin.php:81
+#: includes/admin.php:83
 msgid "Turkish"
 msgstr "Turco"
 
-#: includes/admin.php:85
+#: includes/admin.php:87
 msgid "Arabic"
 msgstr "Árabe"
 
-#: includes/admin.php:89
+#: includes/admin.php:91
 msgid "Korean"
 msgstr "Coreano"
 
-#: includes/admin.php:93
+#: includes/admin.php:95
 msgid "Hindi"
 msgstr "Hindi"
 
-#: includes/admin.php:97
+#: includes/admin.php:99
 msgid "Indonesian"
 msgstr "Indonesia"
 
-#: includes/admin.php:101
+#: includes/admin.php:103
 msgid "Swedish"
 msgstr "Sueco"
 
-#: includes/admin.php:105
+#: includes/admin.php:107
 msgid "Danish"
 msgstr "Danés"
 
-#: includes/admin.php:109
+#: includes/admin.php:111
 msgid "Finnish"
 msgstr "En finés"
 
-#: includes/admin.php:113
+#: includes/admin.php:115
 msgid "Norwegian"
 msgstr "Noruega"
 
-#: includes/admin.php:117
+#: includes/admin.php:119
 msgid "Romanian"
 msgstr "Rumano"
 
-#: includes/admin.php:121
+#: includes/admin.php:123
 msgid "Georgian"
 msgstr "Georgiano"
 
-#: includes/admin.php:125
+#: includes/admin.php:127
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: includes/admin.php:129
+#: includes/admin.php:131
 msgid "Hungarian"
 msgstr "Húngaro"
 
-#: includes/admin.php:133
+#: includes/admin.php:135
 msgid "Bulgarian"
 msgstr "Búlgaro"
 
-#: includes/admin.php:137
+#: includes/admin.php:139
 msgid "Greek"
 msgstr "Griego"
 
-#: includes/admin.php:169 includes/admin.php:179
+#: includes/admin.php:143
+msgid "Persian"
+msgstr "Persa"
+
+#: includes/admin.php:147
+msgid "Slovak"
+msgstr "Eslovaquia"
+
+#: includes/admin.php:179 includes/admin.php:189
 msgid "AIKit Settings"
 msgstr "Ajustes de AIKit"
 
-#: includes/admin.php:180
+#: includes/admin.php:190
 msgid "Settings"
 msgstr "Ajustes"
 
-#: includes/admin.php:188
+#: includes/admin.php:198
 msgid "Add/Edit Prompts (Advanced)"
 msgstr "Añadir/editar prompts (Avanzado)"
 
-#: includes/admin.php:189
+#: includes/admin.php:199
 msgid "Prompts (Advanced)"
 msgstr "Prompts (Avanzado)"
 
-#: includes/admin.php:210 includes/admin.php:502
+#: includes/admin.php:207 includes/admin.php:208
+msgid "Export/Import Settings"
+msgstr "Ajustes de exportación/importación"
+
+#: includes/admin.php:229 includes/admin.php:521
 msgid "Save Settings"
 msgstr "Guardar configuración"
 
-#: includes/admin.php:332
+#: includes/admin.php:351
 msgid ""
 "Here you can edit or add new prompts that would appear in the \"AI\" "
 "dropdown menu. You can also reorder the prompts by dragging and dropping "
@@ -180,7 +192,7 @@ msgstr ""
 "desplegable “AI”. También puedes reordenar los avisos arrastrándolos y "
 "soltándolos en el orden que desees. "
 
-#: includes/admin.php:333
+#: includes/admin.php:352
 msgid ""
 "There are lots of online resources that could help and give you tips & trick "
 "on how to best edit prompts. Simply search YouTube/Google for \"Prompt "
@@ -190,11 +202,11 @@ msgstr ""
 "trucos sobre cómo editar mejor los prompts. Simplemente busca en YouTube/"
 "Google “Prompt engineering” para obtener más conocimientos sobre el tema."
 
-#: includes/admin.php:338
+#: includes/admin.php:357
 msgid "Add Prompt"
 msgstr "Añadir pregunta"
 
-#: includes/admin.php:340
+#: includes/admin.php:359
 msgid ""
 "Resetting prompts will remove all changes you made in this screen, and will "
 "bring back the builtin prompts that AIKit provides out of the box. Are you "
@@ -204,19 +216,19 @@ msgstr ""
 "realizado en esta pantalla y volverán a aparecer los avisos integrados que "
 "AIKit proporciona de fábrica. ¿Estás seguro de que quieres continuar?"
 
-#: includes/admin.php:341
+#: includes/admin.php:360
 msgid "Reset Prompts"
 msgstr "Restablecer indicaciones"
 
-#: includes/admin.php:363 includes/admin.php:514
+#: includes/admin.php:382 includes/admin.php:533
 msgid "Are you sure you want to remove this prompt?"
 msgstr "¿Estás seguro de que quieres eliminar este aviso?"
 
-#: includes/admin.php:372 includes/admin.php:524
+#: includes/admin.php:391 includes/admin.php:543
 msgid "Requires text selection"
 msgstr "Requiere selección de texto"
 
-#: includes/admin.php:375 includes/admin.php:527
+#: includes/admin.php:394 includes/admin.php:546
 msgid ""
 "Choose this option if you want to enforce text selection in the text editor. "
 "Most of the time you will want to leave this option selected. Deselect it "
@@ -229,11 +241,11 @@ msgstr ""
 "del autor, como si quieres que OpenAI genere un texto sobre un tema "
 "aleatorio, por ejemplo."
 
-#: includes/admin.php:382 includes/admin.php:535
+#: includes/admin.php:401 includes/admin.php:554
 msgid "Temperature"
 msgstr "Temperatura"
 
-#: includes/admin.php:388 includes/admin.php:541
+#: includes/admin.php:407 includes/admin.php:560
 msgid ""
 "Controls randomness: Lowering results in less random completions. As the "
 "temperature approaches zero, the model will become deterministic and "
@@ -243,19 +255,19 @@ msgstr ""
 "aleatorias. A medida que la temperatura se acerque a cero, el modelo se "
 "volverá determinista y repetitivo."
 
-#: includes/admin.php:395 includes/admin.php:551
+#: includes/admin.php:414 includes/admin.php:570
 msgid "Number of words to generate"
 msgstr "Número de palabras a generar"
 
-#: includes/admin.php:404 includes/admin.php:560
+#: includes/admin.php:423 includes/admin.php:579
 msgid "Fixed number of words"
 msgstr "Número fijo de palabras"
 
-#: includes/admin.php:409 includes/admin.php:565
+#: includes/admin.php:428 includes/admin.php:584
 msgid "Number of words"
 msgstr "Número de palabras"
 
-#: includes/admin.php:415 includes/admin.php:571
+#: includes/admin.php:434 includes/admin.php:590
 msgid ""
 "Choose this option if you want to generate a fixed number of words, "
 "regardless of how long the selected text is. This is helpful for certain "
@@ -266,15 +278,15 @@ msgstr ""
 "determinados tipos de indicaciones, como generar un párrafo sobre un tema "
 "concreto, por ejemplo."
 
-#: includes/admin.php:427 includes/admin.php:583
+#: includes/admin.php:446 includes/admin.php:602
 msgid "Relative to length of text selected"
 msgstr "En relación con la longitud del texto seleccionado"
 
-#: includes/admin.php:432 includes/admin.php:588
+#: includes/admin.php:451 includes/admin.php:607
 msgid "Multiplier"
 msgstr "Multiplicador"
 
-#: includes/admin.php:441 includes/admin.php:597
+#: includes/admin.php:460 includes/admin.php:616
 msgid ""
 "Choose this option if you want to calculate the length of the generated "
 "words relative to the length of words selected. 1x = same length as select "
@@ -286,28 +298,28 @@ msgstr ""
 "longitud que el texto seleccionado, 2x significa dos veces, etc. El resumen "
 "es un buen candidato para utilizar esta opción."
 
-#: includes/admin.php:451 includes/admin.php:608
+#: includes/admin.php:470 includes/admin.php:627
 msgid "Prompts"
 msgstr "Prompts"
 
-#: includes/admin.php:468 includes/admin.php:470 includes/admin.php:625
-#: includes/admin.php:627
+#: includes/admin.php:487 includes/admin.php:489 includes/admin.php:644
+#: includes/admin.php:646
 msgid "Menu title"
 msgstr "Título del menú"
 
-#: includes/admin.php:473 includes/admin.php:630
+#: includes/admin.php:492 includes/admin.php:649
 msgid "This is title that will appear in the AI menu for this prompt."
 msgstr "Este es el título que aparecerá en el menú AI para esta petición."
 
-#: includes/admin.php:480 includes/admin.php:638
+#: includes/admin.php:499 includes/admin.php:657
 msgid "Prompt"
 msgstr "Prompt"
 
-#: includes/admin.php:483 includes/admin.php:641
+#: includes/admin.php:502 includes/admin.php:660
 msgid "If this prompt requires text selection, the phrase"
 msgstr "Si esta pregunta requiere selección de texto, la frase"
 
-#: includes/admin.php:485 includes/admin.php:643
+#: includes/admin.php:504 includes/admin.php:662
 msgid ""
 "will be replaced by the selected text before doing the request. Make sure to "
 "include it in your prompt."
@@ -315,55 +327,55 @@ msgstr ""
 "será sustituido por el texto seleccionado antes de realizar la petición. "
 "Asegúrate de incluirlo en tu petición."
 
-#: includes/admin.php:668
+#: includes/admin.php:687
 msgid "OpenAI Settings"
 msgstr "Configuración de OpenAI"
 
-#: includes/admin.php:678
+#: includes/admin.php:697
 msgid "OpenAI Key"
 msgstr "Clave OpenAI"
 
-#: includes/admin.php:689
+#: includes/admin.php:708
 msgid "Language for text generation"
 msgstr "Lenguaje para la generación de textos"
 
-#: includes/admin.php:700
+#: includes/admin.php:719
 msgid "OpenAI Preferred Model"
 msgstr "Modelo preferido de OpenAI"
 
-#: includes/admin.php:711
+#: includes/admin.php:730
 msgid "Max Tokens Multiplier (text length)"
 msgstr "Multiplicador de tokens máximos (longitud del texto)"
 
-#: includes/admin.php:722
+#: includes/admin.php:741
 msgid "Autocompleted Text Background Color"
 msgstr "Color de fondo del texto autocompletado"
 
-#: includes/admin.php:733
+#: includes/admin.php:752
 msgid "Elementor support"
 msgstr "Compatibilidad con Elementor"
 
-#: includes/admin.php:743
+#: includes/admin.php:762
 msgid "Image sizes available"
 msgstr "Tamaños de imagen disponibles"
 
-#: includes/admin.php:771
+#: includes/admin.php:790
 msgid "Image counts for each size"
 msgstr "Recuento de imágenes para cada tamaño"
 
-#: includes/admin.php:781
+#: includes/admin.php:800
 msgid "Image generation styles"
 msgstr "Estilos de generación de imágenes"
 
-#: includes/admin.php:789
+#: includes/admin.php:808
 msgid "Adjust the plugin to your needs by editing the settings here."
 msgstr "Ajusta el plugin a tus necesidades editando la configuración aquí."
 
-#: includes/admin.php:797
+#: includes/admin.php:816
 msgid "Elementor supported?"
 msgstr "¿Es compatible con Elementor?"
 
-#: includes/admin.php:801
+#: includes/admin.php:820
 msgid ""
 "When this is enabled, you will be able to use AIKit right inside Elementor "
 "editor using a widget called \"AIKit Editor\"."
@@ -371,7 +383,7 @@ msgstr ""
 "Cuando esto esté activado, podrás utilizar AIKit directamente dentro del "
 "editor de Elementor utilizando un widget llamado “Editor de AIKit”."
 
-#: includes/admin.php:834
+#: includes/admin.php:853
 msgid ""
 "Image styles are phrases that will be added at the end an image's prompt to "
 "change the look of the image. You can use it to maintain a certain style of "
@@ -391,7 +403,7 @@ msgstr ""
 "estilo aleatorio de esta lista cada vez que genere una imagen y lo añadirá "
 "al final de la indicación. "
 
-#: includes/admin.php:870
+#: includes/admin.php:889
 msgid ""
 "This controls the number of image you want to generate for each image size, "
 "these will appear as options in the AI image generation menu. Enter comma-"
@@ -402,11 +414,11 @@ msgstr ""
 "AI. Introduce números separados por comas. Ejemplo: “1,2,4”. El número "
 "máximo permitido es 10."
 
-#: includes/admin.php:882
+#: includes/admin.php:901
 msgid "Small"
 msgstr "Pequeño"
 
-#: includes/admin.php:886
+#: includes/admin.php:905
 msgid ""
 "This controls the size of the images generated. If you want to have the "
 "option to generate small images in the AI image generation menu, check this "
@@ -416,11 +428,11 @@ msgstr ""
 "generar imágenes pequeñas en el menú de generación de imágenes AI, marca "
 "esta casilla."
 
-#: includes/admin.php:900
+#: includes/admin.php:919
 msgid "Medium"
 msgstr "Medio"
 
-#: includes/admin.php:905
+#: includes/admin.php:924
 msgid ""
 "If you want to have the option to generate medium images in the AI image "
 "generation menu, check this box."
@@ -428,11 +440,11 @@ msgstr ""
 "Si quieres tener la opción de generar imágenes medias en el menú de "
 "generación de imágenes AI, marca esta casilla."
 
-#: includes/admin.php:918
+#: includes/admin.php:937
 msgid "Large"
 msgstr "Grande"
 
-#: includes/admin.php:923
+#: includes/admin.php:942
 msgid ""
 "If you want to have the option to generate large images in the AI image "
 "generation menu, check this box."
@@ -440,26 +452,26 @@ msgstr ""
 "Si quieres tener la opción de generar imágenes grandes en el menú de "
 "generación de imágenes AI, marca esta casilla."
 
-#: includes/admin.php:940
+#: includes/admin.php:959
 msgid "The OpenAI key is invalid. Make sure you have entered the correct key."
 msgstr ""
 "La clave de OpenAI no es válida. Asegúrese de haber introducido la clave "
 "correcta."
 
-#: includes/admin.php:947
+#: includes/admin.php:966
 msgid "The OpenAI key is valid."
 msgstr "La clave OpenAI es válida."
 
-#: includes/admin.php:958
+#: includes/admin.php:977
 msgid "For instructions on how to get an OpenAI key, please visit "
 msgstr ""
 "Para obtener instrucciones sobre cómo conseguir una clave OpenAI, visita "
 
-#: includes/admin.php:989
+#: includes/admin.php:1008
 msgid "The language of the text you want to generate."
 msgstr "La lengua del texto que quieres generar."
 
-#: includes/admin.php:993
+#: includes/admin.php:1012
 msgid ""
 " For consistent autocomplete results, make sure that the text you write in "
 "your post is written in the same language you picked here."
@@ -468,7 +480,7 @@ msgstr ""
 "el texto que escribes en tu entrada está escrito en el mismo idioma que "
 "elegiste aquí."
 
-#: includes/admin.php:1037
+#: includes/admin.php:1056
 msgid ""
 "Some models are more capable than others. For example, the davinci model is "
 "more capable than the ada model, which is more capable than the babbage "
@@ -482,11 +494,11 @@ msgstr ""
 "modelo más caro. El modelo ada es el modelo menos capaz, pero también es el "
 "modelo menos caro."
 
-#: includes/admin.php:1039
+#: includes/admin.php:1058
 msgid " For more information, see "
 msgstr " Para más información, consulta "
 
-#: includes/admin.php:1055
+#: includes/admin.php:1074
 msgid ""
 "AIKit's builtin prompts are already preconfigured to generate a sensible "
 "number of words depending on the prompt.\n"
@@ -506,7 +518,7 @@ msgstr ""
 "generaría normalmente 100 palabras, puedes establecer el multiplicador en 2x "
 "y AIKit generará 200 palabras en su lugar."
 
-#: includes/admin.php:1064
+#: includes/admin.php:1083
 msgid ""
 "Think of this as a global way to increase/decrease the length of generated "
 "text for all existing autocomplete options/prompts at once."
@@ -515,33 +527,87 @@ msgstr ""
 "texto generado para todas las opciones/prompts de autocompletar existentes a "
 "la vez."
 
-#: includes/admin.php:1077
+#: includes/admin.php:1096
 msgid "Green"
 msgstr "Verde"
 
-#: includes/admin.php:1078
+#: includes/admin.php:1097
 msgid "Blue"
 msgstr "Azul"
 
-#: includes/admin.php:1079
+#: includes/admin.php:1098
 msgid "Red"
 msgstr "Rojo"
 
-#: includes/admin.php:1080
+#: includes/admin.php:1099
 msgid "Orange"
 msgstr "Naranja"
 
-#: includes/admin.php:1081
+#: includes/admin.php:1100
 msgid "Purple"
 msgstr "Morado"
 
-#: includes/admin.php:1086
+#: includes/admin.php:1105
 msgid ""
 "If you prefer to have the autocompleted text stand out more, you can choose "
 "a background color for the autocompleted text."
 msgstr ""
 "Si prefieres que el texto autocompletado destaque más, puedes elegir un "
 "color de fondo para el texto autocompletado."
+
+#: includes/import-export.php:122
+msgid "AIKit Export/Import Settings"
+msgstr "Ajustes de exportación/importación de AIKit"
+
+#: includes/import-export.php:123
+msgid "Export Settings"
+msgstr "Ajustes de exportación"
+
+#: includes/import-export.php:124
+msgid "Download the current settings and prompts as a json file."
+msgstr "Descarga la configuración actual y los avisos como un archivo json."
+
+#: includes/import-export.php:125
+msgid "Export All Settings + Prompts"
+msgstr "Exportar todos los ajustes + avisos"
+
+#: includes/import-export.php:127
+msgid "Export Prompts only"
+msgstr "Sólo indicaciones de exportación"
+
+#: includes/import-export.php:129 includes/import-export.php:137
+msgid "Import Settings"
+msgstr "Configuración de importación"
+
+#: includes/import-export.php:130
+msgid "Upload a settings json file to import settings and/or prompts."
+msgstr ""
+"Cargue un archivo json de configuración para importar configuraciones y/o "
+"avisos."
+
+#: includes/import-export.php:131
+msgid "Important:"
+msgstr "Importante:"
+
+#: includes/import-export.php:131
+msgid ""
+"It's highly recommended to backup your current settings before importing new "
+"settings, so you can revert back if needed."
+msgstr ""
+"Es muy recomendable hacer una copia de seguridad de tu configuración actual "
+"antes de importar la nueva, para que puedas volver atrás si es necesario."
+
+#: includes/import-export.php:153
+msgid "Settings were imported successfully."
+msgstr "La configuración se ha importado correctamente."
+
+#: includes/import-export.php:155
+msgid "File must be a json file."
+msgstr "El archivo debe ser un archivo json."
+
+#: includes/import-export.php:158
+msgid "File not uploaded."
+msgstr "Archivo no cargado."
 
 #: includes/integration/elementor-editor.php:36
 msgid "AIKit Editor"

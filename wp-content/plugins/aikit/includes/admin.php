@@ -12,6 +12,7 @@ class AIKit_Admin {
      * @var AIKit_Prompt_Manager
      */
     private $prompt_manager;
+    private $export_import_manager;
 
     private $languages = [];
 
@@ -23,10 +24,11 @@ class AIKit_Admin {
      * @static
      * @return AIKit_Admin - Main instance.
      */
-    public static function instance($prompt_manager) {
+    public static function instance($prompt_manager, $export_import_manager) {
         if ( is_null( self::$_instance ) ) {
             self::$_instance = new self();
             self::$_instance->prompt_manager = $prompt_manager;
+            self::$_instance->export_import_manager = $export_import_manager;
 
             self::$_instance->languages = [
                 'en' => [
@@ -137,6 +139,14 @@ class AIKit_Admin {
                     'translatedName' => __('Greek', 'aikit') . ' (Ελληνικά)',
                     'name' => 'Ελληνικά',
                 ],
+                'fa' => [
+                    'translatedName' => __('Persian', 'aikit') . ' (فارسی)',
+                    'name' => 'فارسی',
+                ],
+                'sk' => [
+                    'translatedName' => __('Slovak', 'aikit') . ' (Slovenčina)',
+                    'name' => 'Slovenčina',
+                ],
             ];
         }
         return self::$_instance;
@@ -190,6 +200,15 @@ class AIKit_Admin {
             'manage_options',
             'aikit_prompts',
             array( $this, 'prompts_page' )
+        );
+
+        add_submenu_page(
+            'aikit',
+            esc_html__('Export/Import Settings', 'aikit'),
+            esc_html__('Export/Import Settings', 'aikit'),
+            'manage_options',
+            'aikit_export_import_settings',
+            array( $this->export_import_manager, 'export_import_settings_page' )
         );
     }
 
@@ -1091,8 +1110,10 @@ class AIKit_Admin {
     }
 }
 
+$aiKitPromptManager = AIKit_Prompt_Manager::get_instance();
 $AI_kit_admin = AIKit_Admin::instance(
-        AIKit_Prompt_Manager::get_instance(),
+    $aiKitPromptManager,
+    AIKit_Import_Export_Manager::get_instance($aiKitPromptManager),
 );
 
 add_action('admin_init', array ($AI_kit_admin, 'register_settings'));

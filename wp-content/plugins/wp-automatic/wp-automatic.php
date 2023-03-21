@@ -1,8 +1,7 @@
 <?php
 /*
  Plugin Name: WordPress Automatic Plugin
- Secret Key: 83a5bb0e2ad5164690bc7a42ae592cf5
- Plugin URI: https://1.envato.market/rqbgD
+ Plugin URI: https://1.envato.market/5ENm9
  Description: WordPress Automatic posts quality articles, Amazon products, Clickbank products, Youtube videos, eBay items, Flicker images, RSS feeds posts on auto-pilot and much more.
  Version: 3.68.0
  Author: ValvePress

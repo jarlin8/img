@@ -9160,7 +9160,7 @@ class wp_automatic {
 
 			$json = json_encode(
 				array(
-					'model'       => 'text-davinci-003',
+					'model'       => 'gpt-3.5-turbo',
 					'prompt'      => $args['prompt'],
 					'temperature' => 0,
 					'max_tokens'  => 4000,
