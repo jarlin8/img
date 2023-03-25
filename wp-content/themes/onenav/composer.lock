@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "86b21253515bcb6db49e6b1e5b9b887b",
+    "content-hash": "8e99a5c19f42f53e734a2752f20cbfea",
     "packages": [
         {
             "name": "psr/http-message",
@@ -108,6 +108,47 @@
                 "source": "https://github.com/php-fig/log/tree/1.1.4"
             },
             "time": "2021-05-03T11:20:27+00:00"
+        },
+        {
+            "name": "yurunsoft/pay-sdk",
+            "version": "v3.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Yurunsoft/PaySDK.git",
+                "reference": "c423f62ba9d0bbbc545d1d1bcd4bc45563e83289"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Yurunsoft/PaySDK/zipball/c423f62ba9d0bbbc545d1d1bcd4bc45563e83289",
+                "reference": "c423f62ba9d0bbbc545d1d1bcd4bc45563e83289",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5",
+                "yurunsoft/yurun-http": "~4.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "2.18.3"
+            },
+            "bin": [
+                "src/Weixin/Tool/CertificateDownloader.php"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Yurun\\PaySDK\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP 集成支付 SDK ，集成了支付宝、微信支付的支付接口和其它相关接口的操作。",
+            "support": {
+                "issues": "https://github.com/Yurunsoft/PaySDK/issues",
+                "source": "https://github.com/Yurunsoft/PaySDK/tree/v3.1.5"
+            },
+            "time": "2022-07-08T01:05:11+00:00"
         },
         {
             "name": "yurunsoft/yurun-http",

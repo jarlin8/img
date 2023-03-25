@@ -128,20 +128,7 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
     );
     CSF::createSection( $page_options, array( 'fields' => $fields ));
 }
-$user_purview_filters = apply_filters( 'io_post_user_purview_filters', array(
-    array(
-        'id'      => '_user_purview_level',
-        'type'    => 'button_set',
-        'title'   => __('查看权限', 'io_setting'),
-        'options' => array(
-            'all'   => '所有',
-            'user'  => '登录用户',
-            'admin' => '管理员',
-        ),
-        'default' => 'all',
-        'desc'    => '高权用户会看到同权和低权的内容',
-    ),
-));
+
 if (class_exists('CSF') && IO_PRO) {
     $post_options = 'post_post_meta';
     CSF::createMetabox($post_options, array(
@@ -152,7 +139,7 @@ if (class_exists('CSF') && IO_PRO) {
         'priority'  => 'high',
         'nav'       => 'inline',
     ));
-    CSF::createSection( $post_options, array( 'fields' => $user_purview_filters ));
+    CSF::createSection( $post_options, array( 'fields' => get_user_purview_filters() ));
 }
 
 $sortable = '';
@@ -282,7 +269,7 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                 'library' => 'image',
                 'class'   => 'sites-ico',
                 'before'  => '① <b>获取图标：</b>可以自动下载目标图标到本地。 <br>② <b>生成图标：</b>可生成名字首字图标。（“data:image”图片信息，不会有预览。）<br><span class="sites-ico-msg" style="display:none;color:#dc1e1e;"></span>',
-                'desc'    => __('使用自定义图标','io_setting'),
+                'desc'    => __('留空则使用api自动获取图标','io_setting'),
             ),
             array(
                 'id'      => '_sites_preview',
@@ -394,9 +381,9 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
         'fields' => $fields )
     );
     CSF::createSection( $site_options, array( 
-        'title'  => '用户权限',
+        'title'  => '权限&商品',
         'icon'   => 'fa fa-shopping-cart',
-        'fields' => $user_purview_filters )
+        'fields' => get_user_purview_filters() )
     );
 }
 
@@ -539,9 +526,9 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
     $fields_ver = apply_filters('io_app_post_ver_meta_filters',
         array(
             array(
-                'content' => '<p>填写资源下载地址和版本控制</p>',
-                'style' => 'info',
-                'type' => 'submessage',
+                'content' => '<h4>填写资源下载地址和版本控制</h4>如果需要开启付费下载，请到【权限&商品】选项卡开启“付费”-“附件下载”',
+                'style'   => 'info',
+                'type'    => 'submessage',
             ), 
             array(
                 'id'     => 'app_down_list',
@@ -555,6 +542,17 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                         'placeholder'=>__('添加版本号','io_setting'),
                     ),
                     array(
+                        'id'      => 'index',
+                        'type'    => 'spinner',
+                        'title'   => '商品 ID',
+                        'min'     => 1,
+                        'max'     => 1000,
+                        'step'    => 1,
+                        'after'   => 'ID 不能小于1，且必须唯一，也不要随意修改，因为购买凭证和此ID关联。',
+                        'class'   => 'compact min',
+                        'dependency' => array('price_type', '==', 'multi', 'all'),
+                    ),
+                    array(
                         'id'    => 'app_date',
                         'type'  => 'date',
                         'title' => __('更新日期','io_setting'),
@@ -564,6 +562,7 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                             'changeYear'      => true, 
                             'showButtonPanel' => true,
                         ),
+                        'class'      => 'compact min',
                         'default' => date('Y-m-d',current_time( 'timestamp' )),
                     ),
                     array(
@@ -571,6 +570,22 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                         'type'   => 'text',
                         'title'  => __('APP 大小', 'io_setting'),
                         'after'  => __('填写单位：KB,MB,GB,TB' ,'io_setting'),
+                        'class'  => 'compact min',
+                    ),
+                    array(
+                        'id'         => 'pay_price',
+                        'type'       => 'number',
+                        'title'      => '销售价格',
+                        'class'      => 'compact min',
+                        'default'    => 0,
+                        'dependency' => array( 'price_type', '==', 'multi', 'all' ), 
+                    ),
+                    array(
+                        'id'         => 'price',
+                        'type'       => 'number',
+                        'title'      => '原价',
+                        'class'      => 'compact min',
+                        'dependency' => array( 'price_type', '==', 'multi', 'all' ), 
                     ),
                     array(
                         'id'     => 'down_url',
@@ -586,16 +601,19 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                                 'id'    => 'down_btn_url',
                                 'type'  => 'text',
                                 'title' => __('下载地址','io_setting'),
+                                'class' => 'compact min',
                             ),
                             array(
                                 'id'    => 'down_btn_tqm',
                                 'type'  => 'text',
                                 'title' => __('提取码','io_setting'),
+                                'class' => 'compact min',
                             ),
                             array(
                                 'id'    => 'down_btn_info',
                                 'type'  => 'text',
                                 'title' => __('描述','io_setting'),
+                                'class' => 'compact min',
                             ),
                         ), 
                     ),
@@ -607,8 +625,17 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                         'options' => array(
                             'official'  => __('官方版','io_setting'),
                             'cracked'   => __('开心版','io_setting'),
+                            'other'     => __('自定义','io_setting'),
                         ),
                         'default' => 'official',
+                    ),
+                    array(
+                        'id'      => 'status_custom',
+                        'type'    => 'text',
+                        'title'   => __('自定义状态','io_setting'),
+                        'class'   => 'compact min',
+                        'desc'    => '留空则不显示',
+                        'dependency' => array( 'app_status', '==', 'other' )
                     ),
                     array(
                         'id'    => 'app_ad',
@@ -635,13 +662,14 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
                 'default' => array(
                     array( 
                         'app_version' => '最新版',
-                        'app_date' => date('Y-m-d',current_time( 'timestamp' )),
-                        'down_url' => array(
+                        'index'       => 1,
+                        'app_date'    => date('Y-m-d',current_time( 'timestamp' )),
+                        'down_url'    => array(
                             array(
                                 'down_btn_name' => __('百度网盘','io_setting'),
                             )
                         ), 
-                        'app_status' => 'official',
+                        'app_status'   => 'official',
                         'app_language' => __('中文','io_setting')
                     ),
                 )
@@ -654,9 +682,9 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
         'fields' => $fields_ver )
     );
     CSF::createSection( $app_options, array( 
-        'title'  => '用户权限',
+        'title'  => '权限&商品',
         'icon'   => 'fa fa-shopping-cart',
-        'fields' => $user_purview_filters )
+        'fields' => get_user_purview_filters() )
     );
 }
 
@@ -797,9 +825,9 @@ if( class_exists( 'CSF' ) && IO_PRO ) {
         'fields' => $fields )
     );
     CSF::createSection( $book_options, array( 
-        'title'  => '用户权限',
+        'title'  => '权限&商品',
         'icon'   => 'fa fa-shopping-cart',
-        'fields' => $user_purview_filters )
+        'fields' => get_user_purview_filters() )
     );
 }
 

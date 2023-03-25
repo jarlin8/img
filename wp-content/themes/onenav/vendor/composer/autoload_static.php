@@ -10,6 +10,7 @@ class ComposerStaticInit8383bdb3ab87e55b1720062c188a8241
         'Y' => 
         array (
             'Yurun\\Util\\' => 11,
+            'Yurun\\PaySDK\\' => 13,
             'Yurun\\OAuthLogin\\' => 17,
         ),
         'P' => 
@@ -23,6 +24,10 @@ class ComposerStaticInit8383bdb3ab87e55b1720062c188a8241
         'Yurun\\Util\\' => 
         array (
             0 => __DIR__ . '/..' . '/yurunsoft/yurun-http/src',
+        ),
+        'Yurun\\PaySDK\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/yurunsoft/pay-sdk/src',
         ),
         'Yurun\\OAuthLogin\\' => 
         array (

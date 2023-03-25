@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2023-01-17 22:37:17
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-17 07:04:09
+ * @LastEditTime: 2023-03-09 14:27:52
  * @FilePath: \onenav\inc\functions\io-user.php
  * @Description: 
  */
@@ -223,7 +223,7 @@ function is_user_page($name){
 function add_remind_bind(){
     $user = wp_get_current_user();
     $is_bind   = io_get_option('bind_email','');
-    if(!$user->ID || $is_bind!='bind' || is_404() || !io_get_option('remind_bind',false) || is_user_page('security')) {
+    if(!$user->ID || $is_bind!='bind' || is_404() || !io_get_option('remind_bind',false) || is_user_page('security') || is_io_login()) {
         return; 
     }
     $bind_type = io_get_option('bind_type',array());
@@ -245,7 +245,7 @@ function add_remind_bind(){
         <div id='io-remind-bind' class="io-bomb">
             <div class="io-bomb-overlay"></div>
             <div class="io-bomb-body text-center" style="max-width:260px">
-                <div class="io-bomb-content rounded bg-white"> 
+                <div class="io-bomb-content rounded bg-white p-3"> 
                 <i class="iconfont icon-tishi icon-8x text-success"></i> 
                             <p class="text-md mt-3"><?php echo $title ?></p> 
                             <a href="<?php echo home_url('/login/?action=bind&type=bind') ?>" class="btn btn-danger mt-3 popup-bind-close"><?php _e('前往绑定','i_theme') ?></a>
@@ -497,7 +497,7 @@ function io_get_user_bind_info_html($type = 'email', $user = '', $step = 1){
         $bind_html = io_get_password_reset_from($user);
     } else {
         if ($to) {
-            $bind_tip = '<div class="mx-3 step-simple text-xs">
+            $bind_tip = '<div class="mx-3 mt-3 step-simple text-xs">
             <span class="' . (1 === $step ? 'active' : '') . '">' . sprintf(__('验证旧%s', 'i_theme'), $name) . '</span>
             <span class="' . (2 === $step ? 'active' : '') . '">' . sprintf(__('设置新%s', 'i_theme'), $name) . '</span>
             <span class="' . (3 === $step ? 'active' : '') . '">' . __('修改成功', 'i_theme') . '</span></div>';
@@ -511,8 +511,9 @@ function io_get_user_bind_info_html($type = 'email', $user = '', $step = 1){
         }
     }
     $html = '';
-    $html .= io_get_modal_header($head_fx, $icon, $title);
-    $html .= '<div class="modal-body">';
+    $html .= io_get_modal_header($head_fx, $icon);
+    $html .= '<div class="modal-body bg-blur">';
+    $html .= '<div class="text-center pt-3">'.$title.'</div>';
     $html .= $bind_tip;
     $html .= $bind_html;
     $html .= '</div>';
@@ -545,7 +546,7 @@ function io_get_verify_user_from($to, $type = 'email'){
     $input .= '<input type="hidden" name="type" value="' . $type . '">';
     $input .= '<button type="submit" class="btn vc-blue btn-shadow btn-submit btn-block"><i class="iconfont icon-competence mr-1"></i>'.__('立即验证','i_theme').'</button>';
 
-    $form = '<form class="user-bind-from m-3">' . $input . '</form>';
+    $form = '<form class="user-bind-from p-3">' . $input . '</form>';
     return $form;
 }
 
@@ -583,7 +584,7 @@ function io_get_user_bind_from($type = 'email',$is_new = true){
     $input .= '<input type="hidden" name="type" value="' . $type . '">';
     $input .= '<button type="submit" class="btn vc-blue btn-shadow btn-submit btn-block"><i class="iconfont icon-adopt mr-1"></i>'.__('确认提交','i_theme').'</button>';
 
-    $form = '<form class="user-bind-from m-3">' . $input . '</form>';
+    $form = '<form class="user-bind-from p-3">' . $input . '</form>';
 
     return $form;
 }
@@ -686,7 +687,7 @@ function io_get_password_set_from($is_new, $user){
     $phone      = io_get_user_phone($user->ID);
     $html       = '';
 
-    $html .= '<form class="user-bind-from m-3">';
+    $html .= '<form class="user-bind-from p-3">';
     $html .= '<div class="mb-4">';
     if (!$is_new) {
         $html .= '<div class="form-group position-relative mb-3">';
@@ -712,7 +713,7 @@ function io_get_password_set_from($is_new, $user){
     $html .= '</form>';
     if (!$is_new && ($user_email || $phone)) {
         $url = esc_url(add_query_arg(array('type' => 'reset_password', 'action' => 'get_user_security_info_set_modal'), admin_url( 'admin-ajax.php' )));
-        $html .= '<div class="text-right m-3 mt-n2">';
+        $html .= '<div class="text-right px-3 pb-2 mt-n3">';
         $html .= '<a href="' . $url . '" class="text-xs user-reset-password text-muted"><i class="iconfont icon-tishi mr-1"></i>'.__('忘记密码？点击重设密码。','i_theme').'</a>';
         $html .= '</div>';
     }
@@ -730,7 +731,7 @@ function io_get_password_reset_from($user=''){
     if(!$user->ID){
         $html = '<form method="post" class="wp-user-form" id="wp_login_form">';
     }else{
-        $html = '<form class="m-3" id="wp_login_form">';
+        $html = '<form class="p-3" id="wp_login_form">';
     }
     $html .= '<div class="form-group mb-3">
             <input type="text" name="email_phone" tabindex="2" id="user_email" placeholder="' . get_reg_name('lost_verify') . '" size="30" class="form-control input-material"/> 

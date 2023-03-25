@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-10 21:26:22
  * @LastEditors: iowen
- * @LastEditTime: 2022-07-08 18:58:25
+ * @LastEditTime: 2023-03-11 21:59:57
  * @FilePath: \onenav\inc\widgets\w.framework.php
  * @Description: 
  */
@@ -56,5 +56,6 @@ loadWidget('w.random.sites');
 loadWidget('w.hot.api');
 loadWidget('w.about.website');
 loadWidget('w.ranking');
+loadWidget('w.pay.box');
 
 // TODO 最近更新过的内容

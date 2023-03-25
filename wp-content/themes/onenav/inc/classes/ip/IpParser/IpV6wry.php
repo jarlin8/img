@@ -35,7 +35,7 @@ class IpV6wry implements IpParserInterface
     public function getIp($ip)
     {
         if(!file_exists(static::$filePath)){
-            return array('error'=>1,'msg'=>'IP归属地数据库不存在！');
+            return array('error'=>1,'msg'=>'请前往「其他功能/其他杂项」IP归属地下载数据库！');
         }
         try {
             $tmp = self::query($ip);

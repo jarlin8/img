@@ -1,7 +1,12 @@
 .disabled{pointer-events:none;filter:grayscale(100%);-webkit-filter:grayscale(100%);-moz-filter:grayscale(100%);-ms-filter:grayscale(100%);-o-filter:grayscale(100%);filter:url("data:image/svg+xml;utf8,#grayscale");filter:progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);-webkit-filter:grayscale(1)}
-.compact{padding-top:0!important;border-top:none!important;margin-top:-10px!important}
-.compact .csf-after-text{margin-bottom:5px}
-.compact .csf-before-text{margin-top:5px}
+.compact{padding-top:2px!important;padding-bottom:2px!important;border-top:none!important;margin-top:5px!important;margin-bottom:5px!important}
+.csf-field:not(.compact):not(.csf-depend-on)+.compact{margin-top:-15px!important}
+.csf-field-group .csf-cloneable-content > .csf-field:not(.compact):not(.csf-depend-on)+.compact,
+.csf-field-fieldset .csf-fieldset-content > .csf-field:not(.compact):not(.csf-depend-on)+.compact,
+.csf-field-accordion .csf-accordion-content > .csf-field:not(.compact):not(.csf-depend-on)+.compact
+{margin-top:-9px!important}
+.compact .csf-after-text{margin-bottom:8px}
+.compact .csf-before-text{margin-top:8px}
 .auto-height textarea{min-height:auto;height:auto}
 .csf-metabox-hide+.csf-field.compact{margin-top:0!important;padding-top:20px!important}
 i.added::after{content:'HOT';position:absolute;background:#ff0006;border-radius:10px;padding:1px 10px;font-size:12px;color:#fff;right:10px}

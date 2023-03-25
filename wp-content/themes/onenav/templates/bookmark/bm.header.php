@@ -150,7 +150,7 @@ if(empty($customize_terms))
                   </select>
                </div>
 
-               <div class="form-group img-radio">
+               <div class="form-group io-radio">
                   <?php $bgSet = get_bookmark_seting('bg',$bookmark_set) ?>
                   <label><?php _e('选择背景','i_theme') ?><span class="text-xs ml-2"><?php _e('动态背景会影响性能','i_theme') ?></span></label>
                   <input type="text" class="form-control mb-2" name="custom-img" id="custom-img" placeholder="<?php _e('自定义图片(url)','i_theme') ?>" value="<?php echo get_bookmark_seting('custom_img',$bookmark_set) ?>" style="<?php echo ($bgSet == 'custom'?'':'display:none') ?>">

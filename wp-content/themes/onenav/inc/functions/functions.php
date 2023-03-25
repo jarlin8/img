@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-09 21:11:15
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-16 15:51:55
+ * @LastEditTime: 2023-03-24 23:03:18
  * @FilePath: \onenav\inc\functions\functions.php
  * @Description: 
  */
@@ -17,12 +17,16 @@ $functions = array(
     'io-login',
     'io-user',
     'io-tools-hotcontent',
+    'io-single-post',
     'io-single-site',
+    'io-single-app',
+    'io-single-book',
     'io-letter-ico',
     'io-tool',
     'io-footer',
     'io-oauth',
-    'io-site'
+    'io-meta',
+    'io-search'
 );
 
 foreach ($functions as $function) {
@@ -584,43 +588,46 @@ add_action('io_archive_query_var_filters', 'io_user_purview_level_query_var_filt
  * @return array
  */
 function get_post_user_purview_level_query_var(){
+    $option = io_get_option('global_remove','close');
+    if ('close' === $option) {
+        return array();
+    }
     $args = array(
         array(
             'key'     => '_user_purview_level',
-            'value'   => array('user','all'),
+            'value'   => array('user','all','buy'),
             'compare' => 'IN'
         )
     );
-    $option = io_get_option('global_remove','point');
     $user   = wp_get_current_user();
-        if(!$user->ID && in_array($option, array('admin', 'user'))){
+    if(!$user->ID && in_array($option, array('admin', 'user'))){
+        $args = array(
+            array(
+                'key'     => '_user_purview_level',
+                'value'   => 'all', //添加 buy ？？？？？？？？
+                'compare' => '='
+            )
+        );
+    } else {
+        if (user_can($user->ID, 'manage_options')) {
             $args = array(
                 array(
                     'key'     => '_user_purview_level',
-                    'value'   => 'all',
-                    'compare' => '='
+                    'value'   => array('admin','user','all','buy'),
+                    'compare' => 'IN'
                 )
             );
         } else {
-            if (user_can($user->ID, 'manage_options')) {
-                $args = array(
-                    array(
-                        'key'     => '_user_purview_level',
-                        'value'   => array('admin','user','all'),
-                        'compare' => 'IN'
-                    )
-                );
-            } else {
-                // TODO 其他用户权限 VIP 等
-                $args = array(
-                    array(
-                        'key'     => '_user_purview_level',
-                        'value'   => array('user','all'),
-                        'compare' => 'IN'
-                    )
-                );
-            }
+            // TODO 其他用户权限 VIP 等
+            $args = array(
+                array(
+                    'key'     => '_user_purview_level',
+                    'value'   => array('user','all','buy'),
+                    'compare' => 'IN'
+                )
+            );
         }
+    }
     return $args;
 }
 
@@ -631,48 +638,106 @@ function get_post_user_purview_level_query_var(){
  * @param bool $echo
  * @return void|string
  */
-function get_user_level_directions_html($post_type, $echo = true){
-    $title      = get_the_title();
+function get_user_level_directions_html($post_type, $echo = false){
+    global $post;
+    $post_id = $post->ID;
+    //$option = io_get_option('global_remove','close');
+    //if ('close' === $option) {
+    //    return false;
+    //}
+    
+    $user_level = get_post_meta($post_id, '_user_purview_level', true);
+    if(!$user_level){
+        update_post_meta($post_id, '_user_purview_level', 'all');
+        return false;
+    }
+
+    if($user_level && 'buy'===$user_level){ 
+        $buy_option = get_post_meta($post_id, 'buy_option', true);
+    }
+    if(isset($buy_option)){
+        if('view' === $buy_option['buy_type']){
+            $is_buy = iopay_is_buy($post_id);
+        }
+    }
+
+    $user   = wp_get_current_user();
+    if (!$user->ID && $user_level && in_array($user_level, array('admin','user'))) {
+        $title     = __('权限不足', 'i_theme');
+        $tips      = __('此内容已隐藏，请登录后查看！', 'i_theme');
+        $btn       = __('登录查看', 'i_theme');
+        $ico       = 'icon-user';
+        $color     = '';
+        $url_class = '';
+        $url       = esc_url(wp_login_url(io_get_current_url()));
+        $meta      = '';
+        $tips_b    = '';
+    }
+    if (isset($is_buy) && !$is_buy) {
+        $title     = __('付费资源', 'i_theme');
+        $tips      = __('此内容已隐藏，请购买后查看！', 'i_theme');
+        $btn       = __('购买查看', 'i_theme');
+        $ico       = 'icon-buy_car';
+        $color     = '';
+        $url_class = 'io-ajax-modal-get nofx';
+        $url       = esc_url(add_query_arg(array('action' => 'pay_cashier_modal', 'id' => $post_id, 'index' => 0), admin_url('admin-ajax.php'))); 
+        $meta      = '';
+        $buy_data  = get_post_meta($post_id, 'buy_option', true);
+        $org       = '';
+        $tag       = '';
+        if ((float) $buy_data['pay_price'] < (float) $buy_data['price']) {
+            $org = '<span class="original-price text-sm"><span class="text-xs">' . io_get_option('pay_unit', '￥') . '</span>' . $buy_data['price'] . '</span>';
+            $tag = '<div class="badge vc-red"><i class="iconfont icon-time-o mr-2"></i>' . __('限时特惠', 'i_theme') . '</div>';
+        }
+        $meta   .= '<div class="text-32"><span class="text-xs text-danger">' . io_get_option('pay_unit', '￥') . '</span><span class="text-danger font-weight-bold">' . $buy_data['pay_price'] . '</span> ' . $org . '</div>'.$tag;
+        $tips_b = iopay_pay_tips_box('end');
+    }
+    if(!isset($url)){
+        return false;
+    }
+    $name = get_the_title();
     switch ($post_type) {
-        case 'site':
-            $sites_type = get_post_meta(get_the_ID(), '_sites_type', true);
-            $link_url   = get_post_meta(get_the_ID(), '_sites_link', true);
-            $thumbnail  = get_site_thumbnail($title, $link_url, $sites_type, false);
+        case 'sites':
+            $sites_type = get_post_meta($post_id, '_sites_type', true);
+            $link_url   = get_post_meta($post_id, '_sites_link', true);
+            $thumbnail  = get_site_thumbnail($name, $link_url, $sites_type, false);
             break;
         case 'app':
-            $thumbnail = get_post_meta_img(get_the_ID(), '_app_ico', true);
+            $thumbnail = get_post_meta_img($post_id, '_app_ico', true);
             break;
         case 'book':
-            $thumbnail = get_post_meta_img(get_the_ID(), '_thumbnail', true);
+            $thumbnail = get_post_meta_img($post_id, '_thumbnail', true);
             break;
         default:
             $thumbnail = io_theme_get_thumb();
     }
-    $html = '<main class="content" role="main">
-        <div class="content-wrap">
-            <div class="content-layout">';
-    $html .= '<div class="user-level-box io-radius mb-5"> 
-    <div class="user-level-header modal-header-bg text-center p-3">
-        <div class="m-3"><i class="iconfont icon-version icon-3x"></i></div>
-        <div class="m-2">' . __('权限不足','i_theme') . '</div>
-    </div>
-    <div class="user-level-body p-3 d-flex">
-        <div class="card-thumbnail img-type-' . $post_type . ' mr-3 d-none d-md-block">
-            <div class="h-100 img-box">
-                <img src="' . $thumbnail . '" alt="' . $title . '">
-            </div> 
-        </div> 
-        <div class="d-flex flex-fill flex-column"> 
-            <div class="list-body text-center text-md-left my-3 my-md-0">
-                <h1 class="h5">' . $title . '</h1>
-                <div class="mt-2 text-xs text-muted"><i class="iconfont icon-tishi mr-1"></i>' . __('此内容已隐藏，请登录后查看！','i_theme') . '</div>
-            </div> 
-            <div class="text-center text-md-right my-3 my-md-0"> 
-                <a href="' . esc_url(wp_login_url(io_get_current_url())) . '" class="btn btn-dark custom_btn-d btn-lg"><i class="iconfont icon-user mr-2"></i>' . __('登录查看','i_theme') . '</a> 
-            </div>    
-        </div> 
-    </div>
-</div>';
+
+    $html = '<div class="user-level-box mb-5">';
+    $html .= '<div class="user-level-header io-radius modal-header-bg ' . $color . ' px-3 py-1 py-md-2">';
+    $html .= '<div class="text-lg mb-5"><i class="iconfont icon-version mr-2"></i>';
+    $html .= '<span>' . $title . '</span></div>';
+    $html .= '</div>';
+
+    $html .= '<div class="user-level-body d-flex io-radius shadow bg-blur p-3 mt-n5 ml-1 ml-md-3">';
+    $html .= '<div class="card-thumbnail img-type-' . $post_type . ' mr-2 mr-md-3">';
+    $html .= '<div class="h-100 img-box">';
+    $html .= '<img src="' . $thumbnail . '" alt="' . $name . '">';
+    $html .= '</div> ';
+    $html .= '</div> ';
+    $html .= '<div class="d-flex flex-fill flex-column">';
+    $html .= '<div class="list-body">';
+    $html .= '<h1 class="h5 overflowClip_2">' . $name . '</h1>';
+    $html .= '<div class="mt-2 text-xs text-muted"><i class="iconfont icon-tishi mr-1"></i>' . $tips . '</div>';
+    $html .= $meta;
+    $html .= '</div> ';
+    $html .= '<div class="text-right">';
+    $html .= '<a href="' . $url . '" class="btn vc-blue btn-outline ' . $url_class . ' btn-md-lg"><i class="iconfont ' . $ico . ' mr-2"></i>' . $btn . '</a>';
+    $html .= '</div>'; 
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= $tips_b;
+    $html .= '</div>';
+
     if ($echo)
         echo $html;
     else
@@ -716,13 +781,280 @@ function io_user_is_commented($user_id = 0, $post_id = 0){
  * @param mixed $title
  * @return string
  */
-function io_get_modal_header($class = 'jb-blue', $icon = '', $title = ''){
+function io_get_modal_header($class = 'fx-blue', $icon = '', $title = ''){
+    $class = !empty($class) ? $class : 'fx-blue';
     $html = '<div class="modal-header modal-header-bg ' . $class . '">';
-    $html .= '<button type="button" class="close io-close" data-dismiss="modal" aria-label="Close"><i class="iconfont icon-close-circle text-xl"></i></button>';
+    $html .= '<button type="button" class="close io-close" data-dismiss="modal" aria-label="Close"><i class="iconfont icon-close-circle text-xl" aria-hidden="true"></i></button>';
     $html .= '<div class="text-center">';
     $html .= $icon ? '<i class="iconfont ' . $icon . ' icon-2x"></i>' : '';
     $html .= $title ? '<div class="mt-2 text-lg">' . $title . '</div>' : '';
     $html .= '</div>';
     $html .= '</div>';
+    return $html;
+}
+
+/**
+ * 获取模态框简单头部
+ * @param mixed $class
+ * @param mixed $icon
+ * @param mixed $title
+ * @return string
+ */
+function io_get_modal_header_simple($class = 'vc-blue', $icon = '', $title = ''){
+    $class = !empty($class) ? $class : 'vc-blue';
+    $html = '<div class="modal-header py-2 modal-header-simple ' . $class . '">';
+    $html .= '<span></span>';
+    $html .= '<div class="text-md">';
+    $html .= $icon ? '<i class="iconfont ' . $icon . ' mr-2"></i>' : '';
+    $html .= $title ? '<span class="text-sm">' . $title . '</span>' : '';
+    $html .= '</div>';
+    $html .= '<button type="button" class="close io-close" data-dismiss="modal" aria-label="Close"><i class="iconfont icon-close-circle text-xl" aria-hidden="true"></i></button>';
+    $html .= '</div>';
+    return $html;
+}
+
+
+/**
+ * ajax模态框通知
+ * @param mixed $type
+ * @param mixed $msg
+ * @return never
+ */
+function io_ajax_notice_modal($type = 'warning', $msg = ''){
+    $type_class = array(
+        'success' => 'blue',
+        'info'    => 'green',
+        'warning' => 'yellow',
+        'danger'  => 'red',
+    );
+    $icon_class = array(
+        'success' => 'icon-adopt',
+        'info'    => 'icon-tishi',
+        'warning' => 'icon-warning',
+        'danger'  => 'icon-crying-circle',
+    );
+
+    $class = isset($type_class[$type]) ? $type_class[$type] : 'yellow';
+    $icon  = isset($icon_class[$type]) ? $icon_class[$type] : 'icon-warning';
+
+    $html = io_get_modal_header('fx-' . $class, $icon);
+    $html .= '<div class="modal-body bg-blur">';
+    $html .= '<div class="d-flex justify-content-center align-items-center text-md p-3 c-' . $class . '" style="min-height:135px">' . $msg . '</div>';
+    $html .= '</div>';
+    echo $html;
+    exit;
+}
+/**
+ * 头部效果
+ * @return string
+ */
+function io_header_fx(){
+    $s = false;
+    if($s){
+        return '';
+    }
+    $html = '<div class="background-fx">';
+    for ($i=1; $i < 12; $i++) { 
+        $index = sprintf("%02d", $i);
+        $html .= '<img src="'. get_theme_file_uri('/images/fx/shape-'.$index.'.svg') .'" class="shape-'.$index.'">';
+    }
+    $html .= '</div>';
+    return $html;
+}
+/**
+ * 获取编辑按钮
+ * 
+ * @param mixed $text
+ * @param mixed $before
+ * @param mixed $after
+ * @param mixed $post_id
+ * @param mixed $class
+ * @return string|null
+ */
+function io_get_post_edit_link( $post_id = 0, $text = null, $before = '', $after = '', $class = 'post-edit-link' ) {
+    $url = get_edit_post_link( $post_id );
+    if ( ! $url ) {
+        return;
+    }
+
+    $text   = $text?:'<i class="iconfont icon-modify mr-1"></i>'.__('编辑','i_theme');
+    $before = $before?:'<span class="edit-link text-xs ml-2 text-muted">';
+    $after  = $after?:'</span>';
+
+    if ( null === $text ) {
+        $text = __( 'Edit This' );
+    }
+
+    $link = '<a class="' . esc_attr( $class ) . '" href="' . esc_url( $url ) . '">' . $text . '</a>';
+
+    return $before .  $link . $after;
+}
+
+/**
+ * 获取文章分类和标签html
+ * 
+ * @param int    $post_id
+ * @param array  $taxonomy
+ * @param string $before 
+ * @param string $sep    
+ * @param string $after  
+ * @return string
+ */
+function io_get_post_tags($post_id, $taxonomy, $before = '', $sep = '', $after = ''){
+    $before = $before?:'<span class="mr-2">';
+    $sep    = $sep?:'<i class="iconfont icon-wailian text-ss"></i></span> <span class="mr-2">';
+    $after  = $after?:'<i class="iconfont icon-wailian text-ss"></i></span>';
+
+    $html = '';
+    foreach ($taxonomy as $tax) {
+        $html .= get_the_term_list($post_id, $tax, $before, $sep, $after);
+    }
+    return $html;
+}
+
+/**
+ * 获取文章分类和标签按钮html
+ * 
+ * @param int    $post_id
+ * @param array  $taxonomy
+ * @param string $before
+ * @param string $after
+ * @param string $count
+ * @return string
+ */
+function io_get_cat_tags_btn($post_id, $taxonomy, $before = '', $after = '', $count = 0){
+    $color = array(
+        'vc-l-gray', 
+        'vc-l-red', 
+        'vc-l-yellow', 
+        'vc-l-cyan', 
+        'vc-l-blue', 
+        'vc-l-violet', 
+        ''
+    );
+
+    $i = 0;
+    $btn = '';
+    foreach ($taxonomy as $tax) {
+        $datas = get_the_terms( $post_id, $tax );
+        if($datas){
+            foreach($datas as $tag) {
+                $btn .= '<a href="'.get_tag_link($tag->term_id).'" class="btn ' . $color[mt_rand(0, count($color)-1)] . ' btn-sm text-xs text-height-xs m-1 rounded-pill"  rel="tag" title="'.__('查看更多文章','i_theme').'">' . $before . $tag->name . $after . '</a>';
+                $i++;
+                if ($count && $i == $count) {
+                    break;
+                }
+            }
+        }
+    }
+    return $btn;
+}
+
+/**
+ * 获取文章时间
+ * 
+ * @return string
+ */
+function io_get_post_time(){
+    global $post;
+    $modified_time = get_the_modified_time('U', $post);
+    $time          = get_the_time('U', $post);
+
+    if ($modified_time > $time) {
+        $time_html = '<span title="' . io_date_time($time) . __('发布','i_theme').'">' . timeago($modified_time) . __('更新','i_theme').'</span>';
+    } else {
+        $time_html = '<span title="' . io_date_time($time) . __('发布','i_theme').'">' . timeago($time) . __('发布','i_theme').'</span>';
+    }
+    return $time_html;
+}
+/**
+ * 下载列表模态框
+ * 
+ * @param mixed $title 标题
+ * @param mixed $down_list 资源列表
+ * @param mixed $type app book
+ * @param mixed $decompression
+ * @return string
+ */
+function io_get_down_modal($title, $down_list, $type, $decompression = ''){
+    global $post;
+    $post_id = $post->ID;
+    $key     = '';
+    if('app'===$type){
+        $key = 'down_btn_';
+    }
+    $html = '<div class="modal fade search-modal resources-down-modal" id="'.$type.'-down-modal">';
+    $html .= '<div class="modal-dialog modal-lg modal-dialog-centered">';
+    $html .= '<div class="modal-content overflow-hidden">';
+    $html .= io_get_modal_header_simple('', 'icon-down', $title );
+    $html .= '<div class="modal-body down_body">';
+
+    $html .= '<div class="down_btn_list mb-4">';
+    
+    if($down_list){
+        $html .= '<div class="row">';
+        $html .= '<div class="col-6 col-md-7">'.__('描述','i_theme').'</div>';
+        $html .= '<div class="col-2 col-md-2" style="white-space: nowrap;">'.__('提取码','i_theme').'</div>';
+        $html .= '<div class="col-4 col-md-3 text-right">'.__('下载','i_theme').'</div>';
+        $html .= '</div>';
+        $html .= '<div class="col-12 line-thead my-2" style="height:1px;background: rgba(136, 136, 136, 0.4);"></div>';
+
+        $list = '';
+        for($i=0;$i<count($down_list);$i++){
+            $list .= '<div class="row">';
+            $list .= '<div class="col-6 col-md-7">'. ($down_list[$i][$key.'info']?:__('无','i_theme')) .'</div>';
+            $list .= '<div class="col-2 col-md-2" style="white-space: nowrap;">'. ($down_list[$i][$key.'tqm']?:__('无','i_theme')) .'</div>';
+            $list .= '<div class="col-4 col-md-3 text-right"><a class="btn btn-danger custom_btn-d py-0 px-1 mx-auto down_count text-sm" href="'. go_to($down_list[$i][$key.'url']) .'" target="_blank" data-id="'. $post_id .'" data-action="down_count" data-clipboard-text="'.($down_list[$i][$key.'tqm']?:'').'" data-mmid="down-mm-'.$i.'">'.$down_list[$i][$key.'name'].'</a></div>';
+            if($down_list[$i][$key.'tqm']) 
+                $list .= '<input type="text" style="width:1px;position:absolute;height:1px;background:transparent;border:0px solid transparent" name="down-mm-'.$i.'" value="'.$down_list[$i][$key.'tqm'].'" id="down-mm-'.$i.'">';
+            $list .= '</div>';
+            $list .= '<div class="col-12 line-thead my-2" style="height:1px;background: rgba(136, 136, 136, 0.2);"></div>';
+        }
+        $html .= $list;
+
+    }else{
+        $html = '<div class="tips-box btn-block">'.__('没有内容','i_theme').'</div>';
+    }
+    if ($decompression)
+        $html .= '<div class="w-100 text-right"><p class="mt-2 tips-box text-sm py-0">' . __('解压密码：', 'i_theme') . $decompression . '</p></div>';
+    $html .= '</div>';
+
+    $html .= show_ad('ad_res_down_popup', false, '<div class="apd apd-footer d-none d-md-block mb-4">', '</div>', false);       
+    $html .= '<div class="io-alert border-2w text-sm" role="alert"><i class="iconfont icon-statement mr-2" ></i><strong>' . __('声明：', 'i_theme') . '</strong>' . io_get_option('down_statement', '') . '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';  
+    $html .= '</div>'; 
+    
+    return $html;
+}
+/**
+ * 头部层级导航
+ * @return string
+ */
+function io_post_header_nav($type){
+    global $post;
+    $html  = '';
+    $terms = get_the_terms( $post->ID, $type ); 
+    if(isset($_GET['mininav-id'])){
+        // 加入次级导航链接
+        $html .= '<a class="btn-cat custom_btn-d mr-1" href="' . esc_url( get_permalink(intval($_GET['mininav-id'])) ) . '">' . get_post( intval($_GET['mininav-id']) )->post_title . '</a>';
+        $html .= '<i class="iconfont icon-arrow-r-m custom-piece_c" style="font-size:50%;color:#f1404b;vertical-align:0.075rem"></i>';
+    }
+    if( !empty( $terms ) ){
+        foreach( $terms as $term ){
+            if($term->parent != 0){
+                $parent_category = get_term( $term->parent );
+                $html .= '<a class="btn-cat custom_btn-d mr-1" href="' . esc_url( get_category_link($parent_category->term_id)) . '">' . esc_html($parent_category->name) . '</a>';
+                $html .= '<i class="iconfont icon-arrow-r-m custom-piece_c" style="font-size:50%;color:#f1404b;vertical-align:0.075rem"></i>';
+                break;
+            }
+        } 
+        foreach( $terms as $term ){
+            $name = $term->name;
+            $link = esc_url( get_term_link( $term, $type ) );
+            $html .= "<a class='btn-cat custom_btn-d mr-1' href='{$link}'>{$name}</a>";
+        }
+    }
     return $html;
 }

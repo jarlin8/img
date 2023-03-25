@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-04-15 04:33:41
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-16 23:27:34
+ * @LastEditTime: 2023-03-11 19:12:57
  * @FilePath: \onenav\inc\theme-update.php
  * @Description: 
  */
@@ -119,36 +119,8 @@ function updateDB(){
                     $wpdb->query("UPDATE $wpdb->users SET `user_email`='' WHERE `ID`=$value->ID");
                 }
             }
-            set_time_limit(0);
-
             //开始更新
-            $result = $wpdb->get_var("SELECT COUNT(*) FROM `$wpdb->posts` WHERE `post_type` IN ('sites','post','app','book')");
-            $term_count = (int)$result;
-            $result = $wpdb->get_var("SELECT MAX(`ID`) FROM `$wpdb->posts` ");
-            $max_id = (int)$result;
-
-            $term_last_id = 0;
-            $do_count     = 0;
-            $step         = 1000; //每次从数据库取多少
-            while ($do_count < $term_count && $term_last_id < $max_id) { 
-                if ($term_last_id < $max_id) {
-                    $obj = $wpdb->get_results("SELECT ID FROM `$wpdb->posts` WHERE `ID`> {$term_last_id} AND `post_type` IN ('sites','post','app','book') ORDER BY `ID` LIMIT " . $step);
-                    $values_pre = "";
-                    $values     = array();
-                    foreach ($obj as $row) {
-                        $id           = $row->ID;
-                        $term_last_id = $id;
-
-                        $values_pre .= "(%d, %s, %s),";
-                        $values[]   = $id;
-                        $values[]   = '_user_purview_level';
-                        $values[]   = 'all';
-                        $do_count++;
-                    }
-                    $sql = $wpdb->prepare("INSERT INTO `{$wpdb->postmeta}` (`post_id`, `meta_key`, `meta_value`) VALUES " . substr($values_pre, 0, -1), $values);
-                    $wpdb->query($sql);
-                }
-            }
+            io_update_post_purview();
             $rewrite = true;
         }
         if($rewrite){
@@ -160,6 +132,45 @@ function updateDB(){
     return $rewrite;
 }
 
+/**
+ * 为文章添加自定义字段
+ * 
+ * @param mixed $type
+ * @return void
+ */
+function io_update_post_purview($key='_user_purview_level', $val='all', $WHERE="`post_type` IN ('sites','post','app','book')"){
+    global $wpdb;
+    set_time_limit(0);
+
+    //开始更新
+    $result = $wpdb->get_var("SELECT COUNT(*) FROM `$wpdb->posts` WHERE $WHERE");
+    $term_count = (int)$result;
+    $result = $wpdb->get_var("SELECT MAX(`ID`) FROM `$wpdb->posts` ");
+    $max_id = (int)$result;
+
+    $term_last_id = 0;
+    $do_count     = 0;
+    $step         = 1000; //每次从数据库取多少
+    while ($do_count < $term_count && $term_last_id < $max_id) { 
+        if ($term_last_id < $max_id) {
+            $obj = $wpdb->get_results("SELECT ID FROM `$wpdb->posts` WHERE `ID`> {$term_last_id} AND $WHERE ORDER BY `ID` LIMIT " . $step);
+            $values_pre = "";
+            $values     = array();
+            foreach ($obj as $row) {
+                $id           = $row->ID;
+                $term_last_id = $id;
+
+                $values_pre .= "(%d, %s, %s),";
+                $values[]   = $id;
+                $values[]   = $key;
+                $values[]   = $val;
+                $do_count++;
+            }
+            $sql = $wpdb->prepare("INSERT INTO `{$wpdb->postmeta}` (`post_id`, `meta_key`, `meta_value`) VALUES " . substr($values_pre, 0, -1), $values);
+            $wpdb->query($sql);
+        }
+    }
+}
 function io_update_theme_after_update_db() {
     $current_v = '3.2139';
     $v = get_option('onenav_version', false);
@@ -255,6 +266,10 @@ function column_in_db_table($table, $column){
     global $wpdb;
     return $wpdb->get_var("SELECT count(*) FROM information_schema.columns WHERE table_name = '$table' AND column_name = '$column'");
 }
+function io_is_table($table){
+    global $wpdb;
+    return $wpdb->get_var("SELECT `table_name` FROM information_schema.TABLES WHERE `table_name` ='$table'");
+}
 function io_update_theme_v_ajax(){
     if( !is_super_admin() ){
         echo (json_encode(array('error' => 1, 'msg' => '权限不足！')));
@@ -280,6 +295,24 @@ function io_update_theme_v_ajax(){
     exit();
 }
 add_action('wp_ajax_io_update_theme_v', 'io_update_theme_v_ajax');
+
+function io_update_post_purview_ajax(){
+    if( !is_super_admin() ){
+        echo (json_encode(array('error' => 1, 'msg' => '权限不足！')));
+        exit();
+    }
+    if(get_option( 'onenav_manual_post_purview' , 0 )){
+        echo (json_encode(array('error' => 1, 'msg' => '已经执行了，不要重复点击！')));
+        exit();
+    }
+    update_option('onenav_manual_post_purview', 1);
+
+    io_update_post_purview('_user_purview_level', 'all', "`post_type` = 'post'");
+
+    echo (json_encode(array('error' => 0, 'msg' => '更新成功！', 'reload' => 1)));
+    exit();
+}
+add_action('wp_ajax_io_update_post_purview', 'io_update_post_purview_ajax');
 
 function io_update_theme_db_ajax(){
     if( !is_super_admin() ){

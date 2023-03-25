@@ -221,6 +221,7 @@ function add_hide_content($atts, $content = null){
         'reply'    => __('评论','i_theme'),
         'logged'   => __('登录','i_theme'),
         'password' => __('密码验证','i_theme'),
+        'buy'      => __('付费阅读','i_theme'),
     );
 
     global $post;
@@ -252,6 +253,13 @@ function add_hide_content($atts, $content = null){
             } else {
                 return get_hide_tips_html($type, $type_text[$type], $pas, $image, $tips);
             }
+        case 'buy':
+            $is_buy = iopay_is_buy($post->ID, 0, $post->post_type);
+            if ( $is_buy ) {
+                return get_hide_show_html($content);
+            } else {
+                return get_hide_tips_html($type, $type_text[$type]);
+            }
     }
 }
 /**
@@ -279,8 +287,10 @@ function get_hide_tips_html($type, $title, $pas = '', $image = '', $tips = ''){
         'reply'    => 'icon-comment',
         'logged'   => 'icon-user',
         'password' => 'icon-key-circle',
+        'buy'      => 'icon-buy_car',
     );
-    switch($type){
+    $pay      = '';
+    switch ($type) {
         case 'reply':
             $action = '<a href="#comments" class="btn btn-dark custom_btn-d no-c smooth-n px-4"><i class="iconfont ' . $type_ico[$type] . ' mr-2"></i>' . $title . '</a>';
             break;
@@ -288,28 +298,43 @@ function get_hide_tips_html($type, $title, $pas = '', $image = '', $tips = ''){
             $action = '<a href="' . esc_url(wp_login_url(io_get_current_url())) . '" class="btn btn-dark custom_btn-d no-c px-4"><i class="iconfont ' . $type_ico[$type] . ' mr-2"></i>' . $title . '</a>';
             break;
         case 'password':
-            $action = $pas ? '<div class="text-xs text-danger"><i class="iconfont icon-warning mr-1"></i>' . __('密码错误，请重新输入','i_theme') . '</div>' : '';
+            $action = $pas ? '<div class="text-xs text-danger"><i class="iconfont icon-warning mr-1"></i>' . __('密码错误，请重新输入', 'i_theme') . '</div>' : '';
             $action .= '<form class="d-flex" action="' . io_get_current_url() . '" method="POST">';
-            $action .= '<input type="text" name="secret-key" class="form-control" placeholder="' . __('请输入密码','i_theme') . '">';
-            $action .= '<button type="submit" class="btn btn-dark custom_btn-d ml-2 flex-none px-4"><i class="iconfont ' . $type_ico[$type] . ' mr-2"></i>' . __('提交','i_theme') . '</button>';
+            $action .= '<input type="text" name="secret-key" class="form-control" placeholder="' . __('请输入密码', 'i_theme') . '">';
+            $action .= '<button type="submit" class="btn btn-dark custom_btn-d ml-2 flex-none px-4"><i class="iconfont ' . $type_ico[$type] . ' mr-2"></i>' . __('提交', 'i_theme') . '</button>';
             $action .= '</form>';
+            break;
+        case 'buy':
+            global $post;
+            $url = esc_url(add_query_arg(array('action' => 'pay_cashier_modal', 'id' => $post->ID, 'index' => 0), admin_url('admin-ajax.php')));
+            $buy_option = get_post_meta($post->ID, 'buy_option', true);
+            $pay_price = $buy_option['pay_price'];
+            $original_price = $buy_option['price'];
+            $unit = '<span class="text-xs">' . io_get_option('pay_unit', '￥') . '</span>';
+
+            $original_price = $original_price && $original_price > $pay_price ? ' <div class="original-price d-inline-block text-xs">' . $unit . $original_price . '</span></div>' : '';
+            $pay = '<div><span class="text-xl text-danger">' . $unit . $pay_price . '</span>' . $original_price . '</div>';
+            $pay .= '<div class="w-100 text-md-right"><div class="text-xs tips-box px-2 py-0">多个隐藏块只需支付一次</div></div>';
+            $action = '<a href="' . $url . '" class="btn btn-dark custom_btn-d no-c px-4 io-ajax-modal-get nofx"><i class="iconfont ' . $type_ico[$type] . ' mr-2"></i>' . $title . '</a>';
             break;
     }
     $thumbnail = '<i class="iconfont ' . $type_ico[$type] . ' icon-3x"></i>';
-    if('password' === $type && '' !== $image){
+    if ('password' === $type && '' !== $image) {
         $thumbnail = '<img src="' . $image . '" alt="' . $title . '">';
     }
-    $hide = '<div class="content-hide-tips hide-type-' . $type . ' d-flex p-3 flex-column flex-md-row">
-    <div class="card-thumbnail modal-header-bg mx-auto mr-md-3 '. (('password' === $type && '' !== $image) ? '' : 'd-none d-md-block').'">
-        <div class="h-100 img-box">'.$thumbnail.'</div> 
-    </div> 
-    <div class="d-flex flex-fill flex-column">
-        <div class="list-body text-center text-md-left my-3 my-md-0">
-            <div class="hide-tips-title"><i class="iconfont icon-lock mr-2"></i>' . __('隐藏内容！', 'i_theme') . '</div>
-            <div class="mt-2 text-xs text-muted"><i class="iconfont icon-tishi mr-1"></i>' . ($tips ? $tips.'<br/>' : '') . sprintf(__('%s后才能查看！', 'i_theme'), $title) . '</div>
-        </div> 
-        <div class="'.('password'===$type?'':'text-center text-md-right').' my-3 my-md-0">'.$action.'</div>
-    </div>
-</div>';
+    $hide = '<div class="content-hide-tips hide-type-' . $type . ' d-flex p-3 flex-column flex-md-row">';
+    $hide .= '<div class="card-thumbnail modal-header-bg mx-auto mr-md-3 ' . (('password' === $type && '' !== $image) ? '' : 'd-none d-md-block') . '">';
+    $hide .= '<div class="h-100 img-box">' . $thumbnail . '</div>';
+    $hide .= '</div>';
+    $hide .= '<div class="d-flex flex-fill flex-column">';
+    $hide .= '<div class="list-body text-center text-md-left my-2 my-md-0">';
+    $hide .= '<div class="hide-tips-title"><i class="iconfont icon-lock mr-2"></i>' . __('隐藏内容！', 'i_theme') . '</div>';
+    $hide .= '<div class="mt-2 text-xs text-muted"><i class="iconfont icon-tishi mr-1"></i>' . ($tips ? $tips . '<br/>' : '') . sprintf(__('%s后才能查看！', 'i_theme'), $title) . '</div>';
+    $hide .= $pay;
+    $hide .= '</div>';
+    $hide .= '<div class="' . ('password' === $type ? '' : 'text-center text-md-right') . ' my-2 my-md-0">' . $action . '</div>';
+    $hide .= '</div>';
+    $hide .= '</div>';
+
     return $hide;
 }

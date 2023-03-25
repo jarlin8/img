@@ -4,14 +4,14 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-07-04 21:42:55
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-04 01:02:52
+ * @LastEditTime: 2023-03-11 03:00:50
  * @FilePath: \onenav\inc\action\ajax-app.php
  * @Description: 
  */
 
 // TODO:待完善
 //提交网址
-function io_ajax_new_sites(){  
+function io_ajax_new_app(){  
     if (!io_get_option('is_contribute',true)) {
         io_error (json_encode(array('status' => 1,'msg' => __('投稿功能已关闭','i_theme'))));
     }
@@ -190,5 +190,50 @@ function io_ajax_new_sites(){
         io_error('{"status":4,"msg":"'.__('投稿失败！','i_theme').'"}');
     }
 }
-add_action('wp_ajax_nopriv_io_post_submit', 'io_ajax_new_sites');  
-add_action('wp_ajax_io_post_submit', 'io_ajax_new_sites');
+add_action('wp_ajax_nopriv_io_app_submit', 'io_ajax_new_app');  
+add_action('wp_ajax_io_app_submit', 'io_ajax_new_app');
+
+function io_ajax_get_app_down_btn(){
+    $post_id   = esc_sql($_REQUEST['post_id']);
+    $index     = (int)esc_sql($_REQUEST['id']);
+    $down_list = io_get_app_down_by_index($post_id);
+    $app_name  = get_post_meta($post_id, '_app_name', true)?:get_the_title($post_id); 
+    $down      = $down_list[$index];
+    $html      = io_get_modal_header_simple('', 'icon-down', $app_name . ' - ' . $down['app_version']);
+    $html      .= '<div class="p-4">
+    <div class="row">
+        <div class="col-6 col-md-7">'.__('描述','i_theme').'</div>
+        <div class="col-2 col-md-2" style="white-space: nowrap;">'.__('提取码','i_theme').'</div>
+        <div class="col-4 col-md-3 text-right">'.__('下载','i_theme').'</div>
+    </div>
+    <div class="col-12 line-thead my-2" style="height:1px;background: rgba(136, 136, 136, 0.4);"></div>';
+    $list = '';
+    if (!empty($down['down_url'])) {
+        $i = 0;
+        foreach ($down['down_url'] as $d) {
+            $url = $d['down_btn_url'] == "" ? "javascript:" : $d['down_btn_url'];
+            if (io_get_option('is_go', false) && !io_get_option('is_app_down_nogo', false)) {
+                $url = go_to($url);
+            }
+            $target = $d['down_btn_url'] == "" ? '' : ' target="_blank"';
+            $list .= '<div class="row">';
+            $list .= '<div class="col-6 col-md-7">' . ($d['down_btn_info'] ?: __('无', 'i_theme')) . '</div>';
+            $list .= '<div class="col-2 col-md-2" style="white-space: nowrap;">' . ($d['down_btn_tqm'] ?: __('无', 'i_theme')) . '</div>';
+            $list .= '<div class="col-4 col-md-3 text-right"><a class="btn btn-danger custom_btn-d py-0 px-1 mx-auto down_count copy-data text-sm" href="' . $url . '" ' . $target . ' data-clipboard-text="' . $d['down_btn_tqm'] . '" data-id="' . $post_id . '" data-action="down_count" data-mmid="down-mm-' . $i . '">' . $d['down_btn_name'] . '</a></div>';
+            $list .= '</div>';
+            $list .= '<div class="col-12 line-thead my-2" style="height:1px;background: rgba(136, 136, 136, 0.2);"></div>';
+            $i++;
+        }
+    }else{
+        $list = '<div class="tips-box btn-block">'.__('没有内容','i_theme').'</div>';
+    }
+    $html .= '<div class="down_btn_list mb-4">';
+    $html .= $list;
+    $html .= '</div>';
+    $html .= show_ad('ad_res_down_popup', false, '<div class="apd apd-footer d-none d-md-block mb-4">', '</div>', false);
+    $html .= '<div class="io-alert border-2w text-sm" role="alert"><i class="iconfont icon-statement mr-2" ></i><strong>' . __('声明：', 'i_theme') . '</strong>' . io_get_option('down_statement', '') . '</div>';
+    $html .= '</div>';
+    exit($html);
+}
+add_action('wp_ajax_nopriv_get_app_down_btn', 'io_ajax_get_app_down_btn');  
+add_action('wp_ajax_get_app_down_btn', 'io_ajax_get_app_down_btn');

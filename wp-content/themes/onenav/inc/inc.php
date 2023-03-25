@@ -248,20 +248,6 @@ function get_book_type_name($type){
     }
     return $name;
 }
-function get_app_type_name($type){
-    switch($type){
-        case "app":
-            $name = __('软件','i_theme');
-            break;
-        case "down":
-            $name = __('资源','i_theme');
-            break;
-        default:
-            $name = __('资源','i_theme');
-            break;
-    }
-    return $name;
-}
 # 网站块类型（兼容1.0）
 # --------------------------------------------------------------------
 function before_class($post_id){
@@ -990,26 +976,36 @@ function is_go_exclude($url){
 }
 /**
  * app下载js地址预处理
- * @param string $metadata 下载数据json
+ * @see io_ajax_get_app_down_btn()
+ * @deprecated 4.0 将被弃用
+ * @param array $metadata 下载数据json
  * @return string
  */
 function io_js_down_goto_pretreatment($metadata){
+    $data = array();
+    foreach($metadata as $m){
+        $data[] = array(
+            'app_version' => $m['app_version'],
+            'down_url'    => $m['down_url']
+        );
+    }
+    $meta_string = json_encode($data);
     if( io_get_option('is_go',false) && !io_get_option('is_app_down_nogo',false)){
         //"down_btn_url":"https://www.iowen.cn/"
         $regexp = 'down_btn_url":"([^"]+)';
-        if(preg_match_all("/$regexp/i", $metadata, $matches, PREG_SET_ORDER)) { // s 匹配换行
+        if(preg_match_all("/$regexp/i", $meta_string, $matches, PREG_SET_ORDER)) { // s 匹配换行
             if( !empty($matches) ) {
                 $srcUrl = get_option('siteurl'); 
                 for ($i=0; $i < count($matches); $i++)
                 { 
                     $url = $matches[$i][1];
                     $url_goto = go_to(stripslashes($matches[$i][1]));
-                    $metadata = str_replace($url,$url_goto,$metadata);  
+                    $meta_string = str_replace($url,$url_goto,$meta_string);  
                 }
             }
         }
     }
-    return $metadata;
+    return $meta_string;
 }
 add_filter( 'query_vars',  'wp_link_pages_all_parameter_queryvars'  );
 add_action( 'the_post',  'wp_link_pages_all_the_post'  , 0 );
@@ -1490,9 +1486,8 @@ function get_bing_img_cache($idx=0,$size='uhd'){
             $content = wp_remote_retrieve_body($response);
 
             file_put_contents($bingDir.'/'.$today.$suffix, $content); // 写入今天的
-            $yesterdayimg=$bingDir.'/'.$yesterday.$suffix;
+            $yesterdayimg = $bingDir.'/'.$yesterday.$suffix;
             if (file_exists($yesterdayimg)) {
-                fclose($yesterdayimg);
                 unlink($yesterdayimg); //删除昨天的 
             }
             $src = $imgDir['baseurl'].'/bing/'.$today.$suffix;
@@ -1744,161 +1739,12 @@ function io_head_favicon(){
 add_action('admin_head', 'io_head_favicon');
 
 
-function get_sites_card_meta($post = ''){
-    if('' === $post){
-        global $post;
-    }
-    $link_url       = get_post_meta($post->ID, '_sites_link', true); 
-    $default_ico    = get_theme_file_uri('/images/favicon.png');
-    $title          = get_the_title();
-    $is_dead        = get_post_meta($post->ID, '_affirm_dead_url', true);
-
-    $summary=htmlspecialchars(get_post_meta($post->ID, '_sites_sescribe', true));
-    if( $summary=='' ){
-        $summary = io_get_excerpt(30);
-        update_post_meta($post->ID, '_sites_sescribe',$summary);
-    } 
-    $sites_type = get_post_meta($post->ID, '_sites_type', true);
-    if($post->post_type != 'sites')
-        $link_url = get_permalink($post->ID);
-    $tip_title = $link_url;
-    $is_html = '';
-    $width = 128;
-    $tooltip = 'data-toggle="tooltip" data-placement="bottom"';
-    if($wechat_qr = get_post_meta_img($post->ID, '_wechat_qr', true)){
-        $tip_title="<img src='" . $wechat_qr . "' width='{$width}'>";
-        $is_html = 'data-html="true"';
-    } elseif(($wechat_id = get_post_meta_img($post->ID, '_wechat_id', true)) && !get_post_meta_img($post->ID, '_is_min_app', true)){
-        $tip_title="<img src='https://open.weixin.qq.com/qr/code?username=" . $wechat_id . "' width='{$width}'>";
-        $is_html = 'data-html="true"';
-    } else {
-        switch(io_get_option('po_prompt','null')) {
-            case 'null':  
-                $tip_title = $title;
-                $tooltip = '';
-                break;
-            case 'url': 
-                if($link_url==""){
-                    if($sites_type == "down")
-                        $tip_title = __('下载','i_theme').'“'.$title.'”';
-                    elseif ($sites_type == "wechat") 
-                        $tip_title = __('居然没有添加二维码','i_theme');
-                    else
-                        $tip_title = __('没有 url','i_theme');
-                }
-                break;
-            case 'summary':
-                if($sites_type == "down")
-                    $tip_title = __('下载','i_theme').'“'.$title.'”';
-                else
-                    $tip_title = $summary;
-                break;
-            case 'qr':
-                if($link_url==""){
-                    if($sites_type == "down")
-                        $tip_title = __('下载','i_theme').'“'.$title.'”';
-                    elseif ($sites_type == "wechat") 
-                        $tip_title = __('居然没有添加二维码','i_theme');
-                    else
-                        $tip_title = __('没有 url','i_theme');
-                }
-                else{
-                    $tip_title = "<img src='".get_qr_url($link_url, $width)."' width='{$width}' height='{$width}'>";
-                    $is_html = 'data-html="true"';
-                }
-                break;
-            default:  
-        } 
-    } 
-    
-    $url = '';
-    $blank = new_window() ;
-    $is_views = '';
-    //($sites_meta['sites_type'] == "sites" && get_post_meta($post->ID, '_goto', true))?$sites_meta['link_url']:go_to($sites_meta['link_url'])
-    if($sites_type == "sites" && get_post_meta($post->ID, '_goto', true)){
-        $is_views = 'is-views';
-        $blank = 'target="_blank"' ;
-        $url = $link_url;
-    }else{
-        if(io_get_option('details_page',false)){
-            $url=get_permalink();
-        }else{ 
-            if($sites_type && $sites_type != "sites"){
-                $url=get_permalink();
-            }
-            elseif($link_url==""){
-                $url = 'javascript:';
-                $blank = '';
-            }else{
-                $is_views = 'is-views';
-                $blank = 'target="_blank"' ;
-                $url = go_to($link_url);
-            }
-        }
-    }
-    $ico            = '';
-    $first_api_ico  = false;
-    //if( !io_get_option('no_ico','') ){
-        if($post->post_type != 'sites'){
-            $ico = io_theme_get_thumb();
-        }else{
-            $ico = get_post_meta_img($post->ID, '_thumbnail', true);
-            if(empty($ico) && io_get_option('is_letter_ico',false) && !io_get_option('first_api_ico',false)){
-                $ico = io_letter_ico($title);
-            }elseif(empty($ico) && io_get_option('is_letter_ico',false) && io_get_option('first_api_ico',false)){
-                $first_api_ico = true;
-            }
-        }
-        if($ico == ''){
-            if( $link_url != '' || ($sites_type == "sites" && $link_url != '') ){
-                $source = io_get_option( 'ico-source', array( "url_format"=>true, "ico_url"=>"https://api.iowen.cn/favicon/", "ico_png"=>".png" ) );
-                $ico = ($source['ico_url'] .format_url($link_url) . $source['ico_png']);
-            }elseif($sites_type == "wechat"){
-                $ico = get_theme_file_uri('/images/qr_ico.png');
-            }elseif($sites_type == "down"){
-                $ico = get_theme_file_uri('/images/down_ico.png');
-            }else{
-                $ico = $default_ico;
-            }
-        }
-    //}
-    if ($is_dead )
-        $link_url = get_permalink();
-
-
-    $post_show  = true;
-    $user_level = get_post_meta($post->ID, '_user_purview_level', true);
-    if ( (!is_user_logged_in() && $user_level && $user_level != 'all') ) {
-        $link_url = get_permalink();
-        $post_show = false;
-    }
-
-    $sites_card_meta = array(
-        "post_id"       => $post->ID,
-        "ico"           => $ico,
-        "url"           => $url,// 详情页
-        "is_views"      => $is_views,
-        "is_html"       => $is_html,
-        "blank"         => $blank,
-        "summary"       => $summary,
-        "tooltip"       => $tooltip,
-        "title"         => $title,
-        "tip_title"     => $tip_title,
-        "sites_type"    => $sites_type,
-        "link_url"      => $link_url,// 目标地址
-        "default_ico"   => $default_ico,
-        "first_api_ico" => $first_api_ico,
-        "is_dead"       => $is_dead,
-        "post_show"     => $post_show
-    );
-    return $sites_card_meta;
-}
 /**
  * 输出lazy图片
  * 
  * @param  string   $src       图片地址
  * @param  string   $alt       名称
- * @param  int      $size      大小
+ * @param  int|string|array $size      大小
  * @param  string   $class     class
  * @param  string   $def_src   默认图片
  * @param  boolean  $is_error  是否触发错误输出
@@ -1914,10 +1760,15 @@ function get_lazy_img($src, $alt, $size, $class='', $def_src='', $is_error=false
         $onerror = $error_src?:'onerror="javascript:this.src=\''.$def_src.'\'"';
     }
 
-    if (io_get_option('lazyload',false)) {
-        return '<img class="'.$class.' lazy unfancybox" src="'.$def_src.'" data-src="'.$src.'" '.$onerror.' height="'.$size.'"  alt="'.$alt.'">';
+    if(is_array($size)){
+        $_size = 'height="'.$size[1].'" width="'.$size[0].'"';
     }else{
-        return '<img class="'.$class.' unfancybox" src="'.$src.'" '.$onerror.' height="'.$size.'" alt="'.$alt.'">';
+        $_size = 'height="'.$size.'" width="'.$size.'"';
+    }
+    if (io_get_option('lazyload',false)) {
+        return '<img class="'.$class.' lazy unfancybox" src="'.$def_src.'" data-src="'.$src.'" '.$onerror.' '.$_size.'  alt="'.$alt.'">';
+    }else{
+        return '<img class="'.$class.' unfancybox" src="'.$src.'" '.$onerror.' '.$_size.' alt="'.$alt.'">';
     }
 }
 /**
@@ -1961,15 +1812,19 @@ function get_columns($type='sites', $cat_id='', $display=true, $is_sidebar=false
         } else {
             $columns = io_get_option($type.'_columns', $columns);
         }
-        if($is_sidebar){
-            $columns['xxl'] -= 1;
-            $columns['xl'] -= 1;
-            $columns['lg'] -= 1;
+        if (is_array($columns) && isset($columns['xl'])) {
+            if ($is_sidebar) {
+                $columns['xxl'] -= 1;
+                $columns['xl'] -= 1;
+                $columns['lg'] -= 1;
+            }
+            if ($mode == 'max') {
+                $columns['sm'] = 1;
+            }
+            $class = " col-{$columns['sm']}a col-sm-{$columns['sm']}a col-md-{$columns['md']}a col-lg-{$columns['lg']}a col-xl-{$columns['xl']}a col-xxl-{$columns['xxl']}a ";
+        }else{
+            $class = " col-2a col-sm-2a col-md-2a col-lg-3a col-xl-5a col-xxl-6a ";
         }
-        if($mode=='max'){
-            $columns['sm'] = 1;
-        }
-        $class = " col-{$columns['sm']}a col-sm-{$columns['sm']}a col-md-{$columns['md']}a col-lg-{$columns['lg']}a col-xl-{$columns['xl']}a col-xxl-{$columns['xxl']}a ";
     }
     if($display)
         echo $class;
@@ -1980,7 +1835,9 @@ endif;
 # 时间格式转化
 # --------------------------------------------------------------------
 function timeago( $ptime ) {
-    $ptime = strtotime($ptime);
+    if (!is_numeric($ptime)) {
+        $ptime = strtotime($ptime);
+    }
     $etime = current_time( 'timestamp' ) - $ptime;
     if($etime < 1) return __('刚刚', 'i_theme');
     $interval = array (
@@ -3370,30 +3227,37 @@ function format_http($url){
 
 /**
  * 显示广告
- * @param string $loc
- * @param bool $is_tow
- * @param string $begin 含footer广告位默认值
- * @param string $end  含footer广告位默认值
- * @return 
+ * 
+ * @param mixed $loc
+ * @param mixed $is_tow
+ * @param mixed $begin
+ * @param mixed $end
+ * @param mixed $echo
+ * @return mixed
  */
-function show_ad($loc, $is_tow = true, $begin = '<div class="container apd apd-footer">', $end = '</div>'){
+function show_ad($loc, $is_tow = true, $begin = '<div class="container apd apd-footer">', $end = '</div>', $echo = true){
     $ad_data = io_get_option($loc,array('switch'=>false,'tow'=>false));
+    $html    = '';
     if( $ad_data['switch']&&( 
         $ad_data['loc'] === '1' ||
         ($ad_data['loc'] === '3' && !wp_is_mobile() ) || 
         ($ad_data['loc'] === '2' && wp_is_mobile() ) 
     )) {
         if(!$is_tow){
-            echo $begin . stripslashes( $ad_data['content'] ) . $end; 
+            $html = $begin . stripslashes( $ad_data['content'] ) . $end; 
         }else{
             if( $ad_data['tow'] ) { 
-                echo '<div class="row mb-4"><div class="apd apd-home col-12 col-xl-6">'. stripslashes( $ad_data['content'] ) .'</div>
+                $html = '<div class="row mb-4"><div class="apd apd-home col-12 col-xl-6">'. stripslashes( $ad_data['content'] ) .'</div>
                 <div class="apd apd-home col-12 col-xl-6 d-none d-xl-block">'. stripslashes( $ad_data['content2'] ) .'</div></div>';     
             } else {
-                echo '<div class="row mb-4"><div class="apd apd-home col-12">'. stripslashes( $ad_data['content'] ) .'</div></div>';
+                $html = '<div class="row mb-4"><div class="apd apd-home col-12">'. stripslashes( $ad_data['content'] ) .'</div></div>';
             }
         }
     }
+    if ($echo)
+        echo $html;
+    else
+        return $html;
 }
 /**
  * 根据页面模板获取页面链接

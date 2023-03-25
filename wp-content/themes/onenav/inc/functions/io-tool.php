@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-07-04 21:26:44
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-08 13:00:29
+ * @LastEditTime: 2023-03-12 00:02:43
  * @FilePath: \onenav\inc\functions\io-tool.php
  * @Description: 
  */
@@ -58,6 +58,35 @@ function is_io_login(){
 function is_bookmark(){
 	return  get_query_var('bookmark_id');
 }
+
+/**
+ * 删除内容或者数组的两端空格
+ * 
+ * @param array|string $input
+ * @return array|string
+ */
+function io_trim($input){
+    if (!is_array($input)) {
+        return trim($input);
+    }
+    return array_map('io_trim', $input);
+}
+
+/**
+ * is url
+ * 
+ * @param mixed $url
+ * @return bool
+ */
+function io_is_url($url){
+	if (preg_match("/^http[s]?:\/\/.*$/", $url)) {
+	//if (false !== filter_var($url, FILTER_VALIDATE_URL)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 /**
  * 生成二维码
  * @param mixed $text 内容
@@ -323,4 +352,43 @@ function char_to_num($abc){
         $ten += ($int-65)*pow(26,$i-1);
     }
     return $ten;
+}
+
+/**
+ * 多久后
+ * 
+ * @param mixed $time
+ * @return bool|string
+ */
+function io_friend_after_date($time){
+	if (!$time)
+		return false;
+	if (!is_numeric($time)) {
+		$time = strtotime($time);
+	}
+	$today      	= strtotime(date("Y-m-d", current_time('timestamp'))); //今天
+	$tomorrow       = $today + 3600 * 24; //明天
+	$after_tomorrow = $tomorrow + 3600 * 24; //后天
+	$three_days     = $after_tomorrow + 3600 * 24; //大后天
+
+	$date = '';
+
+	switch ($time) {
+		case $time > $three_days:
+			$date = date(__('m月d日 H:i', 'i_theme'), $time);
+			break;
+		case $time > $after_tomorrow:
+			$date = __('后天', 'i_theme') . date('H:i', $time);
+			break;
+		case $time > $tomorrow:
+			$date = __('明天', 'i_theme') . date('H:i', $time);
+			break;
+		case $time > $today:
+			$date = __('今天', 'i_theme') . date('H:i', $time);
+			break;
+		default:
+			$date = date(__('m月d日 H:i', 'i_theme'), $time);
+			break;
+	}
+	return $date;
 }

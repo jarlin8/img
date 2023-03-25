@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-12-06 23:15:33
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-07 02:05:16
+ * @LastEditTime: 2023-03-17 21:38:02
  * @FilePath: \onenav\inc\classes\ip\IpParser\Ip2Region.php
  * @Description: 每个 ip 数据段的 region 信息都固定了格式：国家|区域|省份|城市|ISP，
  */
@@ -43,7 +43,7 @@ class Ip2Region implements IpParserInterface
     public function getIp($ip)
     {
         if(!file_exists($this->filePath)){
-            return array('error'=>1,'msg'=>'IP归属地数据库不存在！');
+            return array('error'=>1,'msg'=>'请前往「其他功能/其他杂项」IP归属地下载数据库！');
         }
         try {
             $this->newWithFileOnly($this->filePath);

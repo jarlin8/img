@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:55:58
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-12 16:45:19
+ * @LastEditTime: 2023-03-10 00:51:00
  * @FilePath: \onenav\inc\action\ajax.php
  * @Description: 
  */
@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 $functions = array(
     'ajax-post',
     'ajax-sites',
+    'ajax-app',
     'ajax-user',
     'ajax-admin'
 );
@@ -1197,7 +1198,7 @@ function io_error($errMsg, $err=false, $cache = 0) {
     if($err){
         header('HTTP/1.0 500 Internal Server Error');
     }
-    header('Content-Type: text/json;charset=UTF-8');
+    header("Content-type:application/json;character=utf-8");
     if($cache>0){
         header("Cache-Control: public"); 
         header("Pragma: cache"); 
@@ -1216,11 +1217,11 @@ function io_error($errMsg, $err=false, $cache = 0) {
  * @param mixed $msg
  * @return never
  */
-function io_tips_error($msg){
+function io_tips_error($msg, $err=true){
     io_error(array(
-        'status' => 2,
+        'status' => 3,
         'msg'    => $msg,
-    ),true);
+    ),$err);
 }
 /**
  * 输出成功

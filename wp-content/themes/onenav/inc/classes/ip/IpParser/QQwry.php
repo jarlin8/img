@@ -56,7 +56,7 @@ class QQwry implements IpParserInterface
     public function getIp($ip)
     {
         if(!file_exists($this->filePath)){
-            return array('error'=>1,'msg'=>'IP归属地数据库不存在！');
+            return array('error'=>1,'msg'=>'请前往「其他功能/其他杂项」IP归属地下载数据库！');
         }
         try {
             $tmp = $this->getAddr($ip);

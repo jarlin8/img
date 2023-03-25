@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-03-01 10:19:07
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-08 16:59:14
+ * @LastEditTime: 2023-03-11 12:08:30
  * @FilePath: \onenav\templates\tools-header.php
  * @Description: 搜索模块加顶部导航
  */
@@ -26,7 +26,10 @@ if( $search_position && in_array("home",$search_position) && $search_big && $sea
 
         // padding-bottom
         $padding = '';
-        if ((is_home() || is_front_page()) && count(io_get_option('home_widget',array(),'enabled'))>0 && $search_big['post_top']) {
+        if ( $search_big['post_top'] &&
+            (((is_home() || is_front_page()) && (count(io_get_option('home_widget',array(),'enabled'))>0 || (io_get_option('is_show_hot',true)&&io_get_option('hot_new',''))) ) ||
+            (is_mininav() && (isset(get_post_meta(get_the_ID(),'widget',true)['enabled'])||(io_get_option('is_show_hot',true)&&get_post_meta(get_the_ID(), 'hot_new', true)))))
+        ) {
             $padding .= 'post-top ';
         }
         
@@ -75,7 +78,8 @@ if( $search_position && in_array("home",$search_position) && $search_big && $sea
             echo '</div>';
         }
 
-    
+        iopay_get_auto_ad_html((is_mininav()?'page':'home'), 'my-4 mx-2 mb-n4 mb-md-n5', 'search');
+
         echo '</div>';  
     }
 } else { 

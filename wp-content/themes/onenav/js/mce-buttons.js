@@ -3,7 +3,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2019-09-23 19:45:05
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-12 15:38:07
+ * @LastEditTime: 2023-02-28 17:05:20
  * @FilePath: \onenav\js\mce-buttons.js
  * @Description: https://www.tiny.cloud/docs-4x/integrations/angular2/#eventbinding
  * https://www.tiny.cloud/docs-4x/api/tinymce.ui/tinymce.ui.listbox/#settings
@@ -145,6 +145,7 @@
 						<option class="level-0" value="reply">评论可见</option>\
 						<option class="level-0" value="logged">登录可见</option>\
 						<option class="level-0" value="password">密码验证</option>\
+						<option class="level-0" value="buy">付费阅读</option>\
 					</select>\
 						<div class="password-input hidden">\
 						<h4>密码验证选项：</h4>\

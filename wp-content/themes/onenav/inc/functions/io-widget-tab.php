@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-09 21:11:15
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-04 01:16:12
+ * @LastEditTime: 2023-02-28 02:18:20
  * @FilePath: \onenav\inc\functions\io-widget-tab.php
  * @Description: 
  */
@@ -66,7 +66,7 @@ function get_tab_widget_sites($data,$type,$class=''){
     $html = '<div class="tab-card type-'.$data['type'].' '.$class.'"><a '.$url.' class="icon-btn" title="'.$sites_meta['title'].'">
 <div class="img-bg bg-white overflow-hidden app-rounded">
 <div class="overflow-hidden rounded-circle bg-light d-flex align-items-center justify-content-center">
-    '.get_lazy_img($sites_meta['ico'],$sites_meta['title'],70,'',$sites_meta['default_ico']).'
+    '.get_lazy_img($sites_meta['ico'],$sites_meta['title'],array('auto',70),'',$sites_meta['default_ico']).'
 </div> 
 </div>
 <div class="icon-title text-center mt-1">

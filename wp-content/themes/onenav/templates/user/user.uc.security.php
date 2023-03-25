@@ -1,9 +1,14 @@
 <?php
-/*!
- * Theme Name:One Nav
- * Theme URI:https://www.iotheme.cn/
- * Author:iowen
- * Author URI:https://www.iowen.cn/
+/*
+ * @Theme Name:One Nav
+ * @Theme URI:https://www.iotheme.cn/
+ * @Author: iowen
+ * @Author URI: https://www.iowen.cn/
+ * @Date: 2021-06-03 08:56:02
+ * @LastEditors: iowen
+ * @LastEditTime: 2023-02-23 20:39:23
+ * @FilePath: \onenav\templates\user\user.uc.security.php
+ * @Description: 
  */
 ?>
 <?php get_header(); ?>
@@ -45,34 +50,6 @@ $bind_type = io_get_option('bind_type',array('email'));
 	</div> 
 <script type="text/javascript">
     (function($){ 
-        $('#io-dopassword').on('submit',function(){  
-            if( $("#mm_pass_new").val()!="" && $("#mm_pass_new").val().length<8 ){
-                alert("<?php _e('密码长度至少8位','i_theme') ?>");
-                return false;
-            };
-            if($("#mm_pass_new").val()!=$("#mm_pass_new2").val()){
-                alert("<?php _e('两次输入密码不相同','i_theme') ?>");
-                return false;
-            };
-            var t = $(this);
-            t.find('.submit').text("<?php _e('保存中...','i_theme') ?>").attr("disabled",true);
-            $.ajax({
-                url: theme.ajaxurl, 
-                data : $(this).serialize(),
-                type: 'POST',
-                dataType: 'json',
-            })
-            .done(function(response) {  
-                t.find('.submit').text("<?php _e('保存密码','i_theme') ?>").removeAttr("disabled");
-                countdown = 0;
-                showAlert(response); 
-            })
-            .fail(function() {  
-                t.find('.submit').text("<?php _e('保存密码','i_theme') ?>").removeAttr("disabled");
-                showAlert(JSON.parse('{"status":4,"msg":"<?php _e('网络错误！','i_theme') ?>"}'));
-            });
-            return false;
-        });
         $('.unbound-open-id').on('click',function(){ 
             var t = $(this);
             ioConfirm("<?php _e('你确定要解除绑定？','i_theme') ?>","<div><?php _e('解绑前请先设置邮箱和密码，否则可能造成账号丢失！','i_theme') ?><br><br><?php _e('是否继续？','i_theme') ?></div>",

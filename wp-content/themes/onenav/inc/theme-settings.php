@@ -1,14 +1,15 @@
-<?php if ( ! defined( 'ABSPATH' )  ) { die; }
+<?php
 /*
  * @Author: iowen
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-07-20 16:23:07
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-17 06:58:13
+ * @LastEditTime: 2023-03-23 01:59:42
  * @FilePath: \onenav\inc\theme-settings.php
  * @Description: 
  */
- 
+
+if ( ! defined( 'ABSPATH' )  ) { die; }
 if (!is_admin()) return;
 $prefix = 'io_get_option';
 
@@ -16,7 +17,7 @@ CSF::createOptions( $prefix, array(
     'framework_title' => 'OneNav <small>V'.wp_get_theme()->get('Version').' <a class="ml-3 text-help" href="https://www.iotheme.cn/one-nav-zhutishouce.html" target="_blank"><i class="fab fa-hire-a-helper"></i> 使用手册</a>'.'</small>',
     'menu_title'      => __('主题设置','csf'),
     'menu_slug'       => 'theme_settings', 
-    'menu_position'   => 59,
+    'menu_position'   => 58,
     'save_defaults'   => true,
     'ajax_save'       => true,
     'show_bar_menu'   => false,
@@ -98,8 +99,9 @@ CSF::createSection( $prefix, array(
         array(
             'id'      => 'update_beta',
             'type'    => 'switcher',
-            'title'   => __('检测Beta版更新','io_setting'),
-            'label'   => __('Beta版及测试版，可体验最新功能，同时可能会有各种bug。','io_setting'),
+            'title'   => __('加入Beta版体验','io_setting'),
+            'label'   => '可体验最新功能',
+            'after'   => '开启后加入Beta版更新通道，Beta版及测试版，可体验最新功能，同时也可能会有各种bug。',
             'class'   => 'compact min',
             'default' => false,
             'dependency' => array( 'update_theme', '==', true )
@@ -260,7 +262,6 @@ CSF::createSection( $prefix, array(
             'type'    => 'icon',
             'title'   => '次级导航返回后按钮',
             'default' => 'iconfont icon-back',
-            'class'   => 'new',
         ),
         array(
             'id'      => 'mobile_header_layout',
@@ -407,6 +408,16 @@ CSF::createSection( $prefix, array(
             'default' => true,
         ),
         array(
+            'id'      => 'm_language',
+            'type'    => 'switcher',
+            'title'   => __('多语言','io_setting'),
+            'default' => false,
+            'class'   => 'new',
+            'desc'    => '设置项启用多语言支持。</br>单语言站请不要开启，如：只有中文、只有英语等。</br></br>
+                        <b>注意</b>：开启后需配合“多语言”插件，插件请自行查找；开启此选项仅用于主题设置选项填写的内容增加翻译。</br></br>
+                        <b>词条翻译</b> 如选项名称有“多语言”字样，可填多语言内容，格式为：zh<code>==</code>服务内容<code>--</code>en<code>==</code>Service Content </br>如果不需要翻译，直接填内容，如：服务内容'
+        ),
+        array(
             'id'      => 'nav_comment',
             'type'    => 'switcher',
             'title'   => __('站点评论','io_setting'),
@@ -421,14 +432,21 @@ CSF::createSection( $prefix, array(
                 'admin' => '仅查看对应权限内容',
                 'user'  => '仅限制未登录用户',
                 'point' => '不限制仅提示',
+                'close' => '关闭',
             ),
-            'default' => 'point',
+            'default' => 'close',
             'class'   => 'new',
-            'after'   => '<p>'.$tip_ico.'选项说明（如有疑问，请试试）：</p><ol><li><b>仅查看对应权限内容</b>：根据权限，彻底阻止访问未授权的内容，访问高权资源会404，相当于网站不存在对应资源。</li>
+            'after'   => '<div class="ajax-form"><p>'.$tip_ico.'注意：开启此选项可能会导致文章404，解决方法：</p>
+                                <li>手动编辑文章，在“权限&商品”选项卡中选择“所有”</li>
+                                <li>点击自动添加，会自动扫描全部文章内容添加对应字段，注意：先备份数据库，有问题请恢复。<a class="ajax-get" href="' . add_query_arg(array('action' => 'io_update_post_purview'), admin_url('admin-ajax.php')) . '">立即添加-></a></li>
+                            <div class="ajax-notice"></div>
+                            </div>
+                            <p><b>选项说明：</b></p><ol><li><b>仅查看对应权限内容</b>：根据权限，彻底阻止访问未授权的内容，访问高权资源会404，相当于网站不存在对应资源。</li>
                             <li><b>不限制仅提示</b>：在首页等列表能看到站点所有资源，进入高权资源会提示引导相关操作，如登录，升级用户组等。</li>
-                            <li><b>仅限制未登录用户</b>：未登录用户如[仅查看对应权限内容]选项，登录用户如[不限制仅提示]选项</li></ol>
+                            <li><b>仅限制未登录用户</b>：未登录用户如[仅查看对应权限内容]选项，登录用户如[不限制仅提示]选项</li>
+                            <li><b>关闭</b>：内容权限等级不生效</li></ol>
                             <p>内容权限请到内容编辑页内修改</p>
-                            注意：管理员可见资源永远只能管理员看到',
+                            注意：(必看)<br/>1、如果未关闭此功能，管理员可见资源永远只能管理员看到。<br/>2、采集类直接写库的任务需增加字段<code>_user_purview_level</code>，取值<code>all</code>。',
         ),
         array(
             'id'      => 'min_nav',
@@ -437,17 +455,6 @@ CSF::createSection( $prefix, array(
             'label'   => __('开启后，左侧菜单默认收缩，开启前请设置好菜单项图标','io_setting'),
             'default' => false,
         ),
-        //array(
-        //    'id'             => 'blog_pages',
-        //    'type'           => 'select',
-        //    'title'          => '博客页面',
-        //    'after'          => __(' 如果没有，新建页面，选择“博客页面”模板并保存。<br>用于最新资讯旁边的“所有”按钮。','io_setting'),
-        //    'options'        => 'pages',
-        //    'query_args'     => array(
-        //        'posts_per_page'  => -1,
-        //    ),
-        //    'placeholder'    => __('选择一个页面', 'io_setting'), 
-        //),
         array(
             'id'        => 'sidebar_layout',
             'type'      => 'radio',
@@ -473,7 +480,7 @@ CSF::createSection( $prefix, array(
             'type'    => 'icon',
             'title'   => '移动设备顶部菜单图标',
             'default' => 'iconfont icon-category',
-            'class'   => 'compact min new',
+            'class'   => 'compact min',
         ),
         array(
             'id'          => 'cdn_resources',
@@ -1613,6 +1620,44 @@ CSF::createSection( $prefix, array(
             'after'       => '填写分类id，用英语逗号分开，如：11,100<br><br>文章分类id列表：'.get_cats_id(),
             'class'       => '',
         ), 
+        array(
+            'id'        => 'post_copyright_multi',
+            'type'      => 'group',
+            'title'     => '版权提示内容',
+            'fields'    => array(
+                array(
+                    'id'    => 'language',
+                    'type'  => 'text',
+                    'title' => '语言缩写',
+                    'after' => '如：zh  en ，<a href="https://zh.wikipedia.org/wiki/ISO_639-1" target="_blank">各国语言缩写参考</a>'
+                ),
+                array(
+                    'id'         => 'content',
+                    'type'       => 'textarea',
+                    'title'      => '内容',
+                    'desc'       => '支持HTML代码，请注意代码规范及标签闭合',
+                    'attributes' => array(
+                        'rows' => 2,
+                    ),
+                    'sanitize'   => false,
+                    'class'      => 'compact min',
+                ),
+            ),
+            'before'       => '需在基础设置开启多语言(默认语言放第一个)',
+            'class'        => 'new',
+            'button_title' => '添加语言',
+            'accordion_title_prefix' => '语言：',
+            'default'   => array(
+                array(
+                    'language' => 'zh',
+                    'content'  => '文章版权归作者所有，未经允许请勿转载。',
+                ),
+                array(
+                    'language' => 'en',
+                    'content'  => 'The copyright of the article belongs to the author, please do not reprint without permission.',
+                ),
+            ),
+        ),
     )
 ));
 //
@@ -1974,7 +2019,7 @@ CSF::createSection( $prefix, array(
             'id'          => 'is_app_down_nogo',
             'type'        => 'switcher',
             'title'       => __('下载地址禁止GO跳转','io_setting'),
-            'label'       => '依赖“基础设置”中的“内链跳转(go跳转)”',
+            'label'       => '依赖 “seo设置”->“Go 跳转” 中的 “内链跳转(go跳转)”',
             'desc'        => $tip_ico.'可以通过go跳转白名单解决单个控制',
             'class'       => '',
             'dependency'  => array( 'is_go', '==', true, 'all', 'visible' ),
@@ -2694,7 +2739,6 @@ CSF::createSection( $prefix, array(
                     'content' => ip_db_manage(),
                 ),
             ),
-            'class'   => 'new',
         ),
         array(
             'id'      => 'ico-source',
@@ -2889,7 +2933,6 @@ CSF::createSection( $prefix, array(
                 'smsbao'  => __('短信宝', 'io_setting'),
             ),
             'default' => 'null',
-            'class'   => 'new',
         ),
         array(
             'id'         => 'sms_ali_option',
@@ -3881,7 +3924,6 @@ CSF::createSection( $prefix, array(
             'title'   => '手机号登录',
             'label'   => '允许使用手机号作为用户名登录',
             'default' => false,
-            'class'   => 'new',
         ),
         array(
             'id'       => 'lost_verify_type',
@@ -3894,7 +3936,6 @@ CSF::createSection( $prefix, array(
                 'phone'       => '手机',
             ),
             'default'  => "email",
-            'class'    => 'new',
             'after'    => $tip_ico.'如果都勾选，找回密码时可任选一项验证。【至少选一项】',
         ),
         array(
@@ -4076,7 +4117,7 @@ CSF::createSection( $prefix, array(
                     'id'       => 'type',
                     'type'     => 'radio',
                     'title'    => '类型',
-                    'after'    => '【公众号】为 300元/年 的账号，其他的都选【订阅号】',
+                    'after'    => '【公众号】为 300元/年 的<b>服务号</b>，其他的都选【订阅号】<br>注意：<b>订阅号</b>即使交了300认证通过，一样只能选【订阅号】',
                     'inline'   => true,
                     'options'  => array(
                         'gzh'   => '公众号',
@@ -4483,8 +4524,7 @@ CSF::createSection( $prefix, array(
                 'geetest'  => '极验行为验4.0',
                 'vaptcha'  => 'VAPTCHA',
             ),
-            'default'  => 'image',
-            'class'    => 'new',
+            'default'  => 'null',
             'after'    => $tip_ico.'注意：切换后请刷新静态缓存、cdn缓存等各种缓存',
         ),
         array(
@@ -4831,6 +4871,15 @@ CSF::createSection( $prefix, array(
             'dependency'  => array( 'contribute_type', 'any', 'book' )
         ),
     )
+));
+
+//
+// 商城设置
+//
+CSF::createSection($prefix, array(
+    'id'    => 'io_pay',
+    'title' => '商城设置',
+    'icon'  => 'fa fa-cart-plus',
 ));
 
 //

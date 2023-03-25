@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-06-03 08:56:00
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-17 03:34:24
+ * @LastEditTime: 2023-03-11 04:37:03
  * @FilePath: \onenav\templates\login\login.php
  * @Description: 
  */
@@ -17,6 +17,7 @@ if ( (isset( $_REQUEST['redirect'] ) && !empty($_REQUEST['redirect'])) || (isset
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
+<?php io_auto_theme_mode() ?>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -34,7 +35,7 @@ if ( (isset( $_REQUEST['redirect'] ) && !empty($_REQUEST['redirect'])) || (isset
 }
 </style>
 </head>
-<body <?php body_class(theme_mode()); ?> >
+<body <?php body_class(io_body_class()); ?> >
 <?php dark_mode_js() ?>
     <div class="page login-page">
         <div class="container d-flex align-items-center">

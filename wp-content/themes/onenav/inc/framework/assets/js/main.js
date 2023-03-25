@@ -967,6 +967,11 @@
         $cloned_item.find(':input[name!="_pseudo"]').each( function() {
           this.name = this.name.replace( '___', '' ).replace( field_id +'[0]', field_id +'['+ count +']' );
         });
+        var _index = $cloned_item.find('input[name*="index"]');
+        if (_index[0] && count > 0) {
+          var _i = parseInt($wrapper.children('.csf-cloneable-item:last-child').find('input[name*="index"]').val()) + 1;
+          _index.val(_i);
+        }
 
         $wrapper.append($cloned_item);
         $wrapper.accordion('refresh');

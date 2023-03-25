@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-02-20 18:28:17
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-07 18:20:42
+ * @LastEditTime: 2023-03-20 13:59:03
  * @FilePath: \onenav\inc\admin\sites\functions.php
  * @Description: 
  */
@@ -227,6 +227,7 @@ function invalid_post_init() {
                             update_post_meta($post_id, "_sites_link", $redirect );
                             move_out_invalid_url($post_id);
 
+                            delete_post_meta($post_id,'_redirect_url');
                             delete_post_meta($post_id,'_affirm_dead_url');
                             delete_post_meta($post_id,'_revive_url_m');
                             $updated++;
@@ -287,7 +288,6 @@ function invalid_post_init() {
             }
         
             $sendback = remove_query_arg( array( 'action', 'action2', 'tags_input', 'post_author', 'comment_status', 'ping_status', '_status', 'post', 'bulk_edit', 'post_view' ), $sendback );
-            echo $sendback;
             wp_redirect( $sendback );
             exit;
         } elseif ( ! empty( $_REQUEST['_wp_http_referer'] ) ) {

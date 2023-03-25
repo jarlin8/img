@@ -60,7 +60,29 @@
             }, 300);
         }
         initSidebarNav($(".sidebar-item.top-menu"));
+
+        $('.io-ajax-auto').each(function() {
+            var _this = $(this);
+            var url = _this.attr('href');
+            if (!url) {
+                url = _this.data('href');
+            }
+            $.get(url, null, function (data, status) {
+                _this.html(data);
+            });
+            return false;
+        });
+        if (GetQueryVal('iopay')) {
+            if (!window.load_io_pay) {
+                window.load_io_pay = true;
+                $.getScript(theme.uri+"/iopay/assets/js/pay.js",function() {
+                    weixin_auto_send();
+                });
+            }
+        }
     });
+    
+
 	function initSidebarNav(container) {
         if(!container[0]) return;
 		var dropdownToggle = $('<i class="iconfont icon-arrow-r-m sidebar-more text-sm"></i>');
@@ -1322,6 +1344,28 @@
             change_input(this);
         }
     });
+    
+    $(document).on('click', '[data-for]', function () {
+        var _this = $(this);
+        var _tt;
+        var _for = _this.data('for');
+        var _f = _this.parents('form');
+        var _v = _this.data('value');
+        var _group = $(_this.parents('[for-group]')[0]);
+        if (_group.length) {
+            _group.find('[data-for="' + _for + '"]').removeClass('active');
+        } else {
+            _this.siblings().removeClass('active');
+        }
+
+        _this.addClass('active');
+        _tt = _this.html();
+        _f.find("input[name='" + _for + "']").val(_v).trigger('change');
+    
+        _f.find("span[name='" + _for + "']").html(_tt);
+    })
+    
+    
     $('.only-submit #submit').click(function() { 
         var _this = $(this); 
         var _form = _this.closest('form'); 
@@ -1355,8 +1399,16 @@
         var _this = $(this);
         var url = _this.attr('href');
         var content = _this.closest('.modal-content'); 
+        content.css({
+            'height': content.outerHeight()
+        }).animate({
+            'height': '220px'
+        },200);
+        content.find('.io-modal-content').html('');
+        content.find('.loading-anim').fadeIn(200);
         $.get(url, null, function (data, status) {
-            _this.closest('.io-modal-content').html(data).slideDown(200, function () {
+            content.find('.io-modal-content').html(data).slideDown(200, function () {
+                content.find('.loading-anim').fadeOut(200);
                 var height = $(this).outerHeight();
                 content.animate({
                     'height': height,
@@ -1375,7 +1427,7 @@
     $('.user-bind-modal').on('click',function(){
         var t = $(this);
         var url = t.attr('href');
-        var modal = ioModal();
+        var modal = ioModal(t);
         $.get(url, null, function (data, status) {
             modal.find('.io-modal-content').html(data).slideDown(200, function () {
                 modal.find('.loading-anim').fadeOut(200);
@@ -1413,6 +1465,116 @@
                     });
                 });
                 $('[captcha-type]')[0] && CaptchaInit();
+            }
+        });
+        return false;
+    });
+    $(document).on("click", ".io-ajax-modal-get", function () {
+        var t = $(this);
+        var url = t.attr('href');
+        if (!url) {
+            url = t.data('href');
+        }
+        var modal = ioModal(t);
+        $.get(url, null, function (data, status) {
+            modal.find('.io-modal-content').html(data).slideDown(200, function () {
+                modal.find('.loading-anim').fadeOut(200);
+                var height = $(this).outerHeight();
+                var content = modal.find('.modal-content');
+                content.animate({
+                    'height': height,
+                }, 200, 'swing', function () {
+                    content.css({
+                        'height': '',
+                        'overflow': '',
+                        'transition': ''
+                    })
+                });
+            });
+            $('.modal .dependency-box').dependency();
+            if ($('.initiate-pay')[0] && !window.load_io_pay) {
+                window.load_io_pay = true;
+                $.getScript(theme.uri+"/iopay/assets/js/pay.js");
+            }
+        });
+        return false;
+    });
+    $(document).on("click", ".modal .io-ajax-price-get", function () {
+        var t = $(this);
+        var url = t.attr('href');
+        if (!url) {
+            url = t.data('href');
+        }
+        var b = t.parent();
+        if (b.hasClass('disabled') || t.attr('disabled')) {
+            return false;
+        }
+        b.children().attr('disabled', false);
+        t.attr('disabled', true);
+        b.addClass('disabled');
+        var p = t.closest('form');
+        var content = p.find(t.data('target'));
+        var loading = '<div class="d-flex align-items-center justify-content-center bg-o-muted position-absolute io-radius h-100 w-100"><i class="iconfont icon-loading icon-spin icon-2x"></i></div>';
+        content.append(loading);
+        $.get(url, null, function (data, status) {
+            var _t = $(data);
+            content.html(_t);
+            _t[0].click();
+            b.removeClass('disabled');
+        });
+        return false;
+    });
+    $(document).on("input", ".get-ajax-custom-product-val", debounce(function () {
+        var t = $(this);
+        url = t.data('href');
+        if (t.hasClass('disabled')) {
+            return false;
+        }
+        t.addClass('disabled');
+        var p = t.closest('form');
+        var content = p.find(t.data('target'));
+        var hh = '<i class="iconfont icon-point"></i>';
+        var loading = '<i class="iconfont icon-loading icon-spin"></i>';
+        content.html(loading);
+        $.get(url, p.serializeObject(), function (data, status) {
+            if (data.msg) {
+                alert.status = data.status?data.status:(data.error ? 4 : 1);
+                alert.msg = data.msg;
+                showAlert(alert);
+                content.html(hh);
+            } else {
+                content.html(data);
+            }
+            t.removeClass('disabled');
+        });
+        return false;
+    },800));
+    $(document).on("click", ".io-ajax-modal", function () {
+        var t   = $(this);
+        var modal = ioModal(t);
+        $.ajax({
+            type : 'POST',
+            url : theme.ajaxurl,  
+            data : t.data(),
+            success : function( data ){
+                modal.find('.io-modal-content').html(data).slideDown(200, function () {
+                    modal.find('.loading-anim').fadeOut(200);
+                    var height = $(this).outerHeight();
+                    var content = modal.find('.modal-content');
+                    content.animate({
+                        'height': height,
+                    }, 200, 'swing', function () {
+                        content.css({
+                            'height': '',
+                            'overflow': '',
+                            'transition': ''
+                        })
+                    });
+                });
+            },
+            error: function () { 
+                modal.modal('hide');
+                showAlert(JSON.parse('{"status":4,"msg":"'+localize.networkerror+'"}'));
             }
         });
         return false;
@@ -1457,6 +1619,102 @@
         }
         token_submit();
     });
+
+    $.fn.dependency = function () {
+        function checkBoolean(v) {
+            switch (v) {
+                case true:
+                case 'true':
+                case 1:
+                case '1':
+                    v = true;
+                    break;
+
+                case null:
+                case false:
+                case 'false':
+                case 0:
+                case '0':
+                    v = false;
+                    break;
+            }
+            return v;
+        };
+
+        function evalCondition(condition, val1, val2) {
+            if (condition == '==') {
+                return checkBoolean(val1) == checkBoolean(val2);
+            } else if (condition == '!=') {
+                return checkBoolean(val1) != checkBoolean(val2);
+            } else if (condition == '>=') {
+                return Number(val2) >= Number(val1);
+            } else if (condition == '<=') {
+                return Number(val2) <= Number(val1);
+            } else if (condition == '>') {
+                return Number(val2) > Number(val1);
+            } else if (condition == '<') {
+                return Number(val2) < Number(val1);
+            } else if (condition == 'any') {
+                if ($.isArray(val2)) {
+                    for (var i = val2.length - 1; i >= 0; i--) {
+                        if ($.inArray(val2[i], val1.split(',')) !== -1) {
+                            return true;
+                        }
+                    }
+                } else {
+                    if ($.inArray(val2, val1.split(',')) !== -1) {
+                        return true;
+                    }
+                }
+            } else if (condition == 'not-any') {
+                if ($.isArray(val2)) {
+                    for (var i = val2.length - 1; i >= 0; i--) {
+                        if ($.inArray(val2[i], val1.split(',')) == -1) {
+                            return true;
+                        }
+                    }
+                } else {
+                    if ($.inArray(val2, val1.split(',')) == -1) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+
+        return this.each(function () {
+            var $this = $(this),
+                $fields = $this.find('[data-controller]');
+            if ($fields.length) {
+                var is_on = 'is-on';
+                $fields.each(function () {
+                    var $field = $(this);
+                    if ($field.attr(is_on)) return;
+                    var controllers = $field.attr(is_on, true).data('controller').split('|'),
+                        conditions = $field.data('condition').split('|'),
+                        values = $field.data('value').toString().split('|');
+                    $.each(controllers, function (index, depend_id) {
+                        var value = values[index] || '',
+                            condition = conditions[index] || conditions[0] || '==';
+                        $this.on('change', "[name='" + depend_id + "']", function (elem) {
+                            var $elem = $(this);
+                            var _type = $elem.attr('type');
+                            var val2 = (_type == 'checkbox') ? $elem.is(':checked') : $elem.val();
+                            var is_show = evalCondition(condition, value, val2);
+
+                            $field.trigger('controller.change', is_show);
+                            if (is_show) {
+                                $field.show()
+                            } else {
+                                $field.hide()
+                            }
+                        });
+                    });
+                });
+            }
+        });
+    };
+    $('.dependency-box').dependency();
 })(jQuery);
 function change_input(_this) {
     if ($(_this).attr('data-status') == 'true' && $(_this).val().length <= $(_this).parent().attr('data-max')) {
@@ -1680,6 +1938,8 @@ function ioPopup(type, html, maskStyle, btnCallBack) {
 		size = 'io-bomb-sm';
 	}else if( type == 'confirm' ){
 		size = 'io-bomb-md';
+	}else if( type == 'pay' ){
+		size = 'io-bomb-sm io-bomb-nopd';
 	}
 	var template = '\
 	<div class="io-bomb ' + size + ' io-bomb-open">\
@@ -1754,16 +2014,37 @@ function ioConfirm(title, message, btnCallBack) {
 	};
 	return popup;
 } 
-function ioModal() {
-    var id = 'refresh_modal';
+function debounce(callback, delay, immediate) {
+    var timeout;
+    return function () {
+        var context = this,
+            args = arguments;
+        var later = function () {
+            timeout = null;
+            if (!immediate) {
+                callback.apply(context, args);
+            }
+        };
+        var callNow = (immediate && !timeout);
+        clearTimeout(timeout);
+        timeout = setTimeout(later, delay);
+        if (callNow) {
+            callback.apply(context, args);
+        }
+    };
+}
+function ioModal(_this) {
+    var size = _this.data('modal_size') || 'modal-medium';
+    var type = _this.data('modal_type') || 'modal-suspend';
+    var id = 'refresh_modal'+type;
     var modal_html = '<div class="modal fade" id="' + id + '" tabindex="-1" role="dialog" aria-hidden="false">\
-    <div class="modal-dialog modal-medium modal-dialog-centered" role="document">\
-    <div class="modal-content">\
+    <div class="modal-dialog '+ size +' modal-dialog-centered" role="document">\
+    <div class="modal-content '+ type +'">\
     </div>\
     </div>\
     </div>\
     </div>';
-    var loading = '<div class="io-modal-content"></div><div class="loading-anim"><div class="d-flex align-items-center justify-content-center h-100"><i class="iconfont icon-loading icon-spin icon-2x"></i></div></div>';
+    var loading = '<div class="io-modal-content"></div><div class="loading-anim io-radius bg-blur-20"><div class="d-flex align-items-center justify-content-center h-100"><i class="iconfont icon-loading icon-spin icon-2x"></i></div></div>';
 
     var modal = $('#'+id);
     if (!modal[0]) {
@@ -1777,6 +2058,24 @@ function ioModal() {
     modal.modal('show');
     return modal;
 } 
+
+function GetQueryVal(key) {
+    var url = window.parent.location.search;
+    if (url.indexOf("?") != -1) {
+        var str = url.substr(1);
+        if (str.indexOf("#" != -1)) {
+            str = str.substr(0);
+        }
+        strs = str.split("&");
+        for (var i = 0; i < strs.length; i++) {
+            if (strs[i].indexOf(key) != -1) {
+                return strs[i].split("=")[1];
+            }
+        }
+    }
+    return null;
+}
+
 var chartTheme ='';
 var domChart = document.getElementById("chart-container");
 var ioChart;
@@ -1840,7 +2139,6 @@ function is_function(functionName){
  * @param {*} _this 
  * @param {*} data 
  * @param {*} success 
- * @param {*} msg 
  * @returns 
  */
 function captcha_ajax(_this, data='', success='') {

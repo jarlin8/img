@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-03-01 10:19:06
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-17 06:48:45
+ * @LastEditTime: 2023-03-24 01:03:19
  * @FilePath: \onenav\inc\theme-start.php
  * @Description: 
  */
@@ -118,12 +118,26 @@ function io_register_menus(){
     $navs = apply_filters('io_nav_list_filters', $navs);
     register_nav_menus($navs);
 }
-add_action('after_setup_theme', 'my_theme_setup');
-function my_theme_setup(){
+function io_theme_languages_setup(){
     load_theme_textdomain( 'i_theme', get_template_directory() . '/languages' );
     load_theme_textdomain( 'io_setting', get_template_directory() . '/languages' );
 }
+add_action('after_setup_theme', 'io_theme_languages_setup');
+function io_theme_locale($locale, $domain){
+    if ('i_theme' === $domain) {
+        switch ($locale) {
+            case 'en_AU':
+            case 'en_GB':
+            case 'en_US':
+                return 'en';
 
+            default:
+                return $locale;
+        }
+    }
+    return $locale;
+}
+add_action('theme_locale', 'io_theme_locale',10 ,2);
 /**
  * 启用主题后进仪表盘 
  */
@@ -187,10 +201,11 @@ function get_root_host($url){
 }
 
 global $wpdb;
-$wpdb->iomessages   = $wpdb->prefix.'io_messages';
-$wpdb->iocustomurl  = $wpdb->prefix.'io_custom_url';
-$wpdb->iocustomterm = $wpdb->prefix.'io_custom_term';
-$wpdb->ioviews      = $wpdb->prefix.'io_views';
+$wpdb->iomessages   = $wpdb->prefix . 'io_messages';
+$wpdb->iocustomurl  = $wpdb->prefix . 'io_custom_url';
+$wpdb->iocustomterm = $wpdb->prefix . 'io_custom_term';
+$wpdb->ioviews      = $wpdb->prefix . 'io_views';
+$wpdb->iopayorder   = $wpdb->prefix . 'io_pay_order';
 
 require get_theme_file_path('/inc/primary.php'); 
 require get_theme_file_path('/inc/classes/sms.class.php'); 
@@ -200,6 +215,7 @@ require get_theme_file_path('/inc/classes/io.view.class.php');
 require get_theme_file_path('/inc/theme-update.php'); 
 require get_theme_file_path('/inc/classes/menuico.class.php'); 
 require get_theme_file_path('/inc/inc.php'); 
+require get_theme_file_path('/iopay/functions.php'); 
 require get_theme_file_path('/inc/functions/functions.php'); 
 require get_theme_file_path('/inc/admin/functions.php'); 
 require get_theme_file_path('/inc/cron.php'); 
@@ -245,6 +261,7 @@ function get_assets_path(){
             'bookmark'          => get_theme_file_uri('/js/bookmark.js'),
             'lazyload'          => get_theme_file_uri('/js/lazyload.min.js'),
             'echarts'           => get_theme_file_uri('/js/echarts.min.js'),
+            'sites-chart'       => get_theme_file_uri('/js/sites-chart.js'),
 
             'captcha'           => get_theme_file_uri('/js/captcha.js'), //验证码
             'new-post'          => get_theme_file_uri('/js/new-post.js'), //投稿
@@ -255,7 +272,7 @@ function get_assets_path(){
         switch(io_get_option('cdn_resources','bytecdntp')){
             case 'jsdelivr':
                 $jsdelivr_cdn = io_get_option('jsdelivr_cdn','')?:'cdn.jsdelivr.net';
-                $js_v = '1.2206';
+                $js_v = '1.5324';
                 $assets[ 'font-awesome' ]   = '//'.$jsdelivr_cdn.'/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css';
                 $assets[ 'font-awesome4' ]  = '//'.$jsdelivr_cdn.'/npm/@fortawesome/fontawesome-free@5.15.4/css/v4-shims.min.css';
                 $assets[ 'iconfont' ]       = '//'.$jsdelivr_cdn.'/gh/owen0o0/ioStaticResources@'.$js_v.'/onenav/css/iconfont.css';
@@ -369,6 +386,7 @@ function theme_load_scripts() {
     wp_register_script( 'bookmark',                 $assets_path['bookmark'], array('jquery'), get_assets_version($assets_path['bookmark']), true );
     wp_register_script( 'lazyload',                 $assets_path['lazyload'], array('jquery'), get_assets_version($assets_path['lazyload']), true );
     wp_register_script( 'echarts',                  $assets_path['echarts'], array(), get_assets_version($assets_path['echarts']), true );
+    wp_register_script( 'sites-chart',              $assets_path['sites-chart'], array('echarts'), get_assets_version($assets_path['sites-chart']), true );
 
     wp_register_script( 'captcha',                  $assets_path['captcha'], array(), get_assets_version($assets_path['captcha']), true );
     wp_register_script( 'new-post',                 $assets_path['new-post'], array('jquery'), get_assets_version($assets_path['new-post']), true );
@@ -428,7 +446,7 @@ function theme_load_scripts() {
         }
 
         if(is_single() || is_bookmark()) wp_enqueue_script('clipboard-mini');
-        if(is_single() && io_get_option('leader_board',false) && io_get_option('details_chart',false)) wp_enqueue_script('echarts');
+
         wp_enqueue_script('popper');
         wp_enqueue_script('bootstrap');
         if (!is_io_login()) {
@@ -499,6 +517,10 @@ function theme_load_scripts() {
         'loading'           => __('正在处理请稍后...','i_theme'),
         'userAgreement'     => __('请先阅读并同意用户协议','i_theme'),
         'reSend'            => __('秒后重新发送','i_theme'),
+        'weChatPay'         => __('微信支付','i_theme'),
+        'alipay'            => __('支付宝','i_theme'),
+        'scanQRPay'         => __('请扫码支付','i_theme'),
+        'payGoto'           => __('支付成功，页面跳转中','i_theme'),
     ));
 }
 

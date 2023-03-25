@@ -24,7 +24,7 @@ get_header();
 					if(count($search_page)>1){
 					foreach($search_page as $k => $v){
 						//$title = sprintf( __('有关“%s”的网站', 'i_theme'), htmlspecialchars($s) ) ;
-						echo '<a class="btn btn-search mr-2 text-gray '. ($post_type==$k?'current':'') .'" href="'. esc_url(home_url()) .'?s='. htmlspecialchars($s) .'&post_type='.$k.'" title="'. sprintf( __('有关“%s”的%s', 'i_theme'), htmlspecialchars($s),$v ) .'">'. $v.'</a>';
+						echo '<a class="btn btn-search mr-2 text-gray '. ($post_type==$k?'current':'') .'" href="'. esc_url(home_url()) .'?s='. htmlspecialchars($s) .'&post_type='.$k.'" title="'. sprintf( __('有关“%s”的%s', 'i_theme'), htmlspecialchars($s), io_get_search_type_name($k) ) .'">'. io_get_search_type_name($k) .'</a>';
 					}}
 					?>
 				</div>

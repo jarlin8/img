@@ -319,13 +319,15 @@ function io_wp_login_failure_notify($login_name){
  * @param $message
  * @param $key
  */
-function io_reset_password_message( $message, $key ) {
-    io_ajax_is_robots();
-    if ( strpos($_POST['user_login'], '@') ) {
-        $user_data = get_user_by('email', trim($_POST['user_login']));
-    } else {
-        $login = trim($_POST['user_login']);
-        $user_data = get_user_by('login', $login);
+function io_reset_password_message( $message, $key, $user_login, $user_data ) {
+    if(!is_admin()) io_ajax_is_robots();
+    if (!$user_data) {
+        if (strpos($_POST['user_login'], '@')) {
+            $user_data = get_user_by('email', trim($_POST['user_login']));
+        } else {
+            $login     = trim($_POST['user_login']);
+            $user_data = get_user_by('login', $login);
+        }
     }
     $user_login = $user_data->user_login;
     $user_email = $user_data->user_email;
@@ -335,7 +337,7 @@ function io_reset_password_message( $message, $key ) {
     //return io_mail_render($args, 'findpass');
     io_mail('', $user_email, sprintf( __('你的登录密码重置链接-%1$s', 'i_theme'), get_bloginfo('name') ),$args , 'findpass');
 }
-add_filter('retrieve_password_message', 'io_reset_password_message', 10, 2);
+add_filter('retrieve_password_message', 'io_reset_password_message', 10, 4);
 
 /**
  * 用户提交链接向管理员发送邮件 

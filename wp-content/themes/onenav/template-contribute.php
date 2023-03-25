@@ -69,9 +69,9 @@ $contribute_type = io_get_option('contribute_type',array('sites'));
                 <div class="container my-5 py-md-5 text-center">
                     <img src="<?php echo get_theme_file_uri('/images/no.svg') ?>" width="300"/>
                     <?php if('admin' === $contribute_can && is_user_logged_in() && !current_user_can('manage_options')){ ?>
-                    <h3 class="h3 mt-n5"><i class="iconfont icon-crying mr-2"></i><?php _e('无权操作，请联系管理员！','i_theme') ?></h3>
+                    <h3 class="text-sm text-muted mt-3"><i class="iconfont icon-crying mr-2"></i><?php _e('无权操作，请联系管理员！','i_theme') ?></h3>
                     <?php }else{ ?>
-                    <h3 class="h3 mt-n5"><i class="iconfont icon-crying mr-2"></i><?php _e('需要登录才能访问！','i_theme') ?></h3>
+                    <h3 class="text-sm text-muted mt-3"><i class="iconfont icon-crying mr-2"></i><?php _e('需要登录才能访问！','i_theme') ?></h3>
                     <a class="btn btn-danger px-5 mt-5" href="<?php echo esc_url(wp_login_url( io_get_current_url() )) ?>"><?php _e('登录','i_theme') ?></a>
                     <?php } ?>
                 </div>

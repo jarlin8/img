@@ -6,7 +6,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-03-01 10:19:06
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-04 00:11:58
+ * @LastEditTime: 2023-03-10 01:05:38
  * @FilePath: \onenav\index.php
  * @Description: 
  */
@@ -19,7 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }?>
     get_template_part( 'templates/article','list' ); 
 
     // 加载热搜模块
-    get_template_part( 'templates/tools','hotsearch' ); 
+    get_template_part( 'templates/tools','hotsearch' );
+
+    iopay_get_auto_ad_html('home', 'my-4', 'content');
 
     // 加载自定义模块
     if(is_user_logged_in() && io_get_option('user_center',false)){

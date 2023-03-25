@@ -3,7 +3,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2022-01-24 21:51:38
  * @LastEditors: iowen
- * @LastEditTime: 2022-06-22 17:23:57
+ * @LastEditTime: 2023-03-06 16:23:22
  * @FilePath: \onenav\inc\framework\customize\js\options.js
  * @Description: 
  */
@@ -19,6 +19,22 @@
     $(document).ready(function ($) {
     });
     
+    $(document).on('change', '.csf-fieldset-content .custom-unit input:radio', function () {
+        var t = $(this);
+        var p = t.closest('.csf-fieldset-content');
+        var u = t.next('.csf--text').text();
+        var us = [];
+        t.closest('ul').find('.csf--text').each(function () {
+            us.push($(this).text())
+        });
+        p.find('.csf--unit,.csf-cloneable-title-prefix').each(function () {
+            var _t = $(this);
+            var reg = new RegExp(us.join('|'));
+            var unit = _t.text().replace(reg, u);
+            _t.text(unit);
+        })
+    });
+
     $(document).on("click", ".home-widget-type", function (){ 
         var t = $(this);
         var type = t.find('input:radio:checked').val();
@@ -87,7 +103,7 @@
             data: _data,
             dataType: "json",
             error: function (n) {
-                var n_con = '<div style="padding: 10px;margin: 0;" class="notice notice-error"><b>' + "网络异常或者操作失败，请稍候再试！ " + n.status + '|' + n.statusText + '</b></div>';
+                var n_con = '<div style="padding: 10px;margin: 0;" class="notice notice-error"><b>' + "网络异常，请稍候再试！如果使用了CDN，请设置CDN回源跟随协议、SSL严格模式或者开启类似功能，应各家CDN设置不同，具体选项请咨询CDN客服。" + n.status + '|' + n.statusText + '</b></div>';
                 _notice.html(n_con);
                 _this.attr("disabled", false).removeClass('jb-blue');
                 if(!_this.hasClass("bnt-svg")) _this.html("操作失败");

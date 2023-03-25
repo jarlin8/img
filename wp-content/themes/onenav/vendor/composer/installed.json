@@ -110,6 +110,50 @@
             "install-path": "../psr/log"
         },
         {
+            "name": "yurunsoft/pay-sdk",
+            "version": "v3.1.5",
+            "version_normalized": "3.1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Yurunsoft/PaySDK.git",
+                "reference": "c423f62ba9d0bbbc545d1d1bcd4bc45563e83289"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Yurunsoft/PaySDK/zipball/c423f62ba9d0bbbc545d1d1bcd4bc45563e83289",
+                "reference": "c423f62ba9d0bbbc545d1d1bcd4bc45563e83289",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5",
+                "yurunsoft/yurun-http": "~4.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "2.18.3"
+            },
+            "time": "2022-07-08T01:05:11+00:00",
+            "bin": [
+                "src/Weixin/Tool/CertificateDownloader.php"
+            ],
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Yurun\\PaySDK\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP 集成支付 SDK ，集成了支付宝、微信支付的支付接口和其它相关接口的操作。",
+            "support": {
+                "issues": "https://github.com/Yurunsoft/PaySDK/issues",
+                "source": "https://github.com/Yurunsoft/PaySDK/tree/v3.1.5"
+            },
+            "install-path": "../yurunsoft/pay-sdk"
+        },
+        {
             "name": "yurunsoft/yurun-http",
             "version": "v4.4.1",
             "version_normalized": "4.4.1.0",

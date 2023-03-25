@@ -4,7 +4,7 @@
  * @Author URI: https://www.iowen.cn/
  * @Date: 2021-09-10 16:47:20
  * @LastEditors: iowen
- * @LastEditTime: 2023-02-17 01:02:30
+ * @LastEditTime: 2023-03-11 04:38:23
  * @FilePath: \onenav\templates\login\bind.php
  * @Description: 
  */
@@ -103,10 +103,11 @@ if ($bind_current_type == 'email') {
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
+<?php io_auto_theme_mode() ?>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title><?php _e( '绑定邮箱', 'i_theme' ); ?> - <?php bloginfo('name') ?></title>
+<title><?php echo $bind_title ?> - <?php bloginfo('name') ?></title>
 <link rel="shortcut icon" href="<?php echo io_get_option('favicon','') ?>">
 <link rel="apple-touch-icon" href="<?php echo io_get_option('apple_icon','') ?>">
 <meta name='robots' content='noindex,nofollow' /> 
@@ -121,7 +122,7 @@ if ($bind_current_type == 'email') {
 .openlogin-<?php echo $type  ?>-a{pointer-events:none;filter:grayscale(100%);-webkit-filter:grayscale(100%);-moz-filter:grayscale(100%);-ms-filter:grayscale(100%);-o-filter:grayscale(100%);filter:url("data:image/svg+xml;utf8,#grayscale");filter:progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);-webkit-filter:grayscale(1)}
 </style>
 </head>
-<body <?php body_class(theme_mode()); ?> >
+<body <?php body_class(io_body_class()); ?> >
 <?php dark_mode_js() ?>
     <div class="page login-page">
         <div class="container d-flex align-items-center">
