@@ -186,7 +186,7 @@ if ( ! function_exists( 'flatsome_header_add_to_cart_fragment_count_label' ) ) {
 		?>
 		<i class="icon-shopping-<?php echo $icon; ?>" data-icon-label="<?php echo WC()->cart->cart_contents_count; ?>">
 		<?php
-		$fragments[ 'i.icon-shopping-' . $icon ] = ob_get_clean();
+		$fragments[ '.cart-item i.icon-shopping-' . $icon ] = ob_get_clean();
 
 		return $fragments;
 	}

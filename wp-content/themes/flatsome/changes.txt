@@ -1,3 +1,25 @@
+--- 3.16.7 ---
+FIXED: Issue with quantity buttons on cart not functioning after updating cart on WooCommerce 7.5.
+
+--- 3.16.6 ---
+NEW: WooCommerce 7.4 compatibility.
+NEW: Updated Google Fonts list.
+
+ENHANCEMENT: Added localization admin info panel.
+
+FIXED: Integration of woocommerce-tm-extra-product did not load due to class name change.
+FIXED: PHP warning in class-wc-product-data-fields.php undefined array key 0.
+FIXED: Compatibility issue with YITH WooCommerce Wishlist and UX Builder.
+FIXED: Warning in the block editor when the "UX Builder content" block is rendered.
+FIXED: Google Maps API deprecated message.
+
+--- 3.16.5 ---
+NEW: WooCommerce 7.3 compatibility.
+NEW: Updated Google Fonts list.
+
+FIXED: Cart count was added to the shop icon globally in some cases (fragments).
+FIXED: Editing checkout page in UX Builder if cart is empty.
+
 --- 3.16.4 ---
 NEW: WooCommerce 7.2.1 compatibility.
 

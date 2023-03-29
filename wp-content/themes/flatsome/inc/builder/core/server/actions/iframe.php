@@ -103,7 +103,7 @@ add_action( 'ux_builder_enqueue_scripts', function ( $context ) {
  */
 add_action( 'wp_enqueue_scripts', function () {
   do_action( 'ux_builder_enqueue_scripts', 'content' );
-} );
+}, 5 );
 
 
 
@@ -113,3 +113,8 @@ add_action( 'wp_enqueue_scripts', function () {
 add_action( 'wp_print_footer_scripts', function () {
   echo '<app-tools></app-tools>';
 } );
+
+/**
+ * Don’t redirect to cart when empty cart.
+ */
+add_filter( 'woocommerce_checkout_redirect_empty_cart', '__return_false', 999 );

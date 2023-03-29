@@ -95,7 +95,7 @@ if ( is_woocommerce_activated() ) {
 		}
 
 		// Extra Product Options.
-		if ( is_extension_activated( 'TM_Extra_Product_Options' ) ) {
+		if ( is_extension_activated( 'THEMECOMPLETE_Extra_Product_Options' ) ) {
 			wp_enqueue_style( 'flatsome-woocommerce-extra-product-options', $integrations_uri . '/wc-extra-product-options/extra-product-options.css', 'flatsome-woocommerce-style' );
 		}
 

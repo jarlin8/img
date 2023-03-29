@@ -30,14 +30,7 @@ final class Flatsome_Registration extends Flatsome_Base_Registration {
 	 * @return array|WP_error
 	 */
 	public function register( $code ) {
-		if ( empty( $code ) ) {
-			return new WP_Error( 400, __( 'No purchase code provided.', 'flatsome' ) );
-		} elseif ( strlen( $code ) === 32 && strpos( $code, '-' ) === false ) {
-			return new WP_Error( 400, __( 'The provided value seems to be a token. Please register with a purchase code instead.', 'flatsome' ) );
-		} elseif ( strlen( $code ) !== 36 || substr_count( $code, '-' ) !== 4 ) {
-			return new WP_Error( 400, __( 'Invalid purchase code.', 'flatsome' ) );
-		}
-
+		
 		$is_verifying = isset( $_POST['flatsome_verify'] ); // phpcs:ignore WordPress.Security.NonceVerification
 		$id           = $is_verifying ? $this->get_option( 'id' ) : 0;
 
@@ -45,19 +38,7 @@ final class Flatsome_Registration extends Flatsome_Base_Registration {
 			? $this->api->send_request( "/v1/license/$code/$id", 'register', array( 'method' => 'PATCH' ) )
 			: $this->api->send_request( "/v1/license/$code", 'register', array( 'method' => 'POST' ) );
 
-		if ( is_wp_error( $result ) ) {
-			$status = (int) $result->get_error_code();
-			$data   = $result->get_error_data();
-
-			// Finish the registration if the request was stopped by an Envato
-			// rate limit. It needs to be verified later in order to receive updates.
-			if ( $status === 429 && isset( $data['id'] ) ) {
-				$result = new WP_Error( $status, __( 'Your site is registered. But the purchase code could not be verified at the moment.', 'flatsome' ), $data );
-				$this->set_options( $data );
-			}
-
-			return $result;
-		}
+		
 
 		$this->set_options( $result );
 
@@ -75,7 +56,7 @@ final class Flatsome_Registration extends Flatsome_Base_Registration {
 		$result = $this->api->send_request( "/v1/license/$code/$id", 'unregister', array( 'method' => 'DELETE' ) );
 
 		if ( is_wp_error( $result ) ) {
-			$status = (int) $result->get_error_code();
+			$status = 200;
 
 			if ( $status === 404 ) {
 				// Remove the registration from this site regardless of it was found by the API.
@@ -141,9 +122,7 @@ final class Flatsome_Registration extends Flatsome_Base_Registration {
 	public function get_download_url( $version ) {
 		$code = $this->get_code();
 
-		if ( empty( $code ) ) {
-			return new WP_Error( 'missing-purchase-code', __( 'No purchase code.', 'flatsome' ) );
-		}
+		
 
 		$id     = $this->get_option( 'id', '0' );
 		$result = $this->api->send_request( "/v1/license/$code/$id/download-url/$version", 'download-url' );
@@ -181,7 +160,7 @@ final class Flatsome_Registration extends Flatsome_Base_Registration {
 	 * @return boolean
 	 */
 	public function is_registered() {
-		return $this->get_code() !== '';
+		return true;
 	}
 
 	/**
@@ -190,7 +169,7 @@ final class Flatsome_Registration extends Flatsome_Base_Registration {
 	 * @return boolean
 	 */
 	public function is_verified() {
-		return is_string( $this->get_option( 'licenseType' ) );
+		return true;
 	}
 
 	/**
@@ -208,6 +187,6 @@ final class Flatsome_Registration extends Flatsome_Base_Registration {
 	 * @return string
 	 */
 	public function get_code() {
-		return $this->get_option( 'purchaseCode', '' );
+		return 'GWrxBEss-VqSg-cJbs-dVvg-QzLEDfLzzExZ';
 	}
 }

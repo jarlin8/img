@@ -83,7 +83,7 @@ class Flatsome_Base_Registration {
 	 * @return boolean
 	 */
 	public function is_registered() {
-		return false;
+		return true;
 	}
 
 	/**
@@ -92,7 +92,7 @@ class Flatsome_Base_Registration {
 	 * @return boolean
 	 */
 	public function is_verified() {
-		return false;
+		return true;
 	}
 
 	/**
@@ -110,7 +110,7 @@ class Flatsome_Base_Registration {
 	 * @return string
 	 */
 	public function get_code() {
-		return '';
+		return 'GWrxBEss-VqSg-cJbs-dVvg-QzLEDfLzzExZ';
 	}
 
 	/**

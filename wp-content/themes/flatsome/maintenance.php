@@ -7,7 +7,6 @@
  */
 
 ?>
-
 <!DOCTYPE html>
 <html <?php language_attributes(); ?> class="<?php flatsome_html_classes(); ?>">
 <head>

@@ -8,7 +8,6 @@
 
 do_action( 'get_header', null, array() );
 ?>
-
 <!DOCTYPE html>
 <html <?php language_attributes(); ?> class="<?php flatsome_html_classes(); ?>">
 <head>

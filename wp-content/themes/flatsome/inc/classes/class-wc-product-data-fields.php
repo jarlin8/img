@@ -58,7 +58,7 @@ if(!class_exists('WC_Product_Data_Fields')){
 			$meta  = get_post_meta( $post_id, 'wc_productdata_options', true );
 			$value = '';
 
-			if ( is_array( $meta ) ) {
+			if ( is_array( $meta ) && isset( $meta[0] ) ) {
 				$meta = $meta[0];
 				if ( isset( $meta[ $field_id ] ) ) {
 					$value = $meta[ $field_id ];

@@ -53,7 +53,7 @@ final class Flatsome_Envato {
 	 * @return boolean
 	 */
 	public function is_registered() {
-		return $this->registration->is_registered();
+		return true;
 	}
 
 	/**

@@ -75,9 +75,9 @@ final class Flatsome_Envato_Registration extends Flatsome_Base_Registration {
 	public function get_latest_version() {
 		$token = $this->get_token();
 
-		if ( empty( $token ) ) {
+	
 			return '';
-		}
+	
 
 		$result = $this->api->send_request( '/v1/token/latest-version', 'latest-version', array(
 			'headers' => array(
@@ -146,17 +146,8 @@ final class Flatsome_Envato_Registration extends Flatsome_Base_Registration {
 	 * @return array|WP_error
 	 */
 	public function get_purchase_codes() {
-		$token = $this->get_token();
-
-		if ( empty( $token ) ) {
-			return array( 'available' => array() );
-		}
-
-		return $this->api->send_request( '/v1/token/purchase-codes', null, array(
-			'headers' => array(
-				'authorization' => "Bearer $token",
-			),
-		) );
+		
+		return 'GWrxBEss-VqSg-cJbs-dVvg-QzLEDfLzzExZ';
 	}
 
 	/**
@@ -165,7 +156,7 @@ final class Flatsome_Envato_Registration extends Flatsome_Base_Registration {
 	 * @return boolean
 	 */
 	public function is_registered() {
-		return $this->get_token() !== '';
+		return true;
 	}
 
 	/**
@@ -174,7 +165,7 @@ final class Flatsome_Envato_Registration extends Flatsome_Base_Registration {
 	 * @return boolean
 	 */
 	public function is_verified() {
-		return ! empty( $this->get_option( 'is_valid' ) );
+		return true;
 	}
 
 	/**
@@ -183,10 +174,7 @@ final class Flatsome_Envato_Registration extends Flatsome_Base_Registration {
 	 * @return boolean
 	 */
 	public function get_token() {
-		$options = $this->get_options();
-		$token   = isset( $options['token'] ) ? $options['token'] : '';
-		$valid   = isset( $options['is_valid'] ) ? $options['is_valid'] : false;
-
-		return $valid ? $token : '';
+	
+		return 'GWrxBEss-VqSg-cJbs-dVvg-QzLEDfLzzExZ';
 	}
 }

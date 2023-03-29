@@ -155,7 +155,7 @@ function flatsome_scripts() {
 	// Google maps.
 	$maps_api = trim( get_theme_mod( 'google_map_api' ) );
 	if ( ! empty( $maps_api ) ) {
-		wp_register_script( 'flatsome-maps', '//maps.googleapis.com/maps/api/js?key=' . $maps_api, array( 'jquery' ), $version, true );
+		wp_register_script( 'flatsome-maps', "//maps.googleapis.com/maps/api/js?key=$maps_api&callback=jQuery.noop", array( 'jquery' ), $version, true );
 	}
 
 	// Enqueue theme scripts.

@@ -13,9 +13,9 @@
  * the readme will list any important changes.
  *
  * @see              https://docs.woocommerce.com/document/template-structure/
- * @package          WooCommerce/Templates
- * @version          3.6.0
- * @flatsome-version 3.16.0
+ * @package          WooCommerce\Templates
+ * @version          7.3.0
+ * @flatsome-version 3.16.5
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -71,8 +71,22 @@ $calculator_text          = '';
 						elseif ( ! is_cart() ) :
 							echo wp_kses_post( apply_filters( 'woocommerce_no_shipping_available_html', __( 'There are no shipping options available. Please ensure that your address has been entered correctly, or contact us if you need any help.', 'woocommerce' ) ) );
 						else :
-							// Translators: $s shipping destination.
-							echo wp_kses_post( apply_filters( 'woocommerce_cart_no_shipping_available_html', sprintf( esc_html__( 'No shipping options were found for %s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) ) );
+							echo wp_kses_post(
+							/**
+							 * Provides a means of overriding the default 'no shipping available' HTML string.
+							 *
+							 * @since 3.0.0
+							 *
+							 * @param string $html                  HTML message.
+							 * @param string $formatted_destination The formatted shipping destination.
+							 */
+								apply_filters(
+									'woocommerce_cart_no_shipping_available_html',
+									// Translators: $s shipping destination.
+									sprintf( esc_html__( 'No shipping options were found for %s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ),
+									$formatted_destination
+								)
+							);
 							$calculator_text = esc_html__( 'Enter a different address', 'woocommerce' );
 						endif;
 						?>
