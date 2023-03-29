@@ -301,12 +301,6 @@ function aawp_renew_product_reviews( $products ) {
 
             $review_data = $AAWP_Review_Crawler->get_data( $asin );
 
-            /*
-            echo '<strong>Crawled ratings for ASIN ' . $asin . ':';
-            var_dump( $review_data );
-            echo '<br>';
-            */
-
             if ( ! isset( $product_asin_ids[$asin] ) || ! isset( $products[ $product_asin_ids[ $asin ] ] ) )
                 continue;
 

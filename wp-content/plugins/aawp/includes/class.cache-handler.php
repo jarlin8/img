@@ -132,7 +132,7 @@ if ( ! class_exists( 'AAWP_Cache_Handler') ) {
                 $this->renew_products();
 
             } catch (Exception $e) {
-                aawp_log( 'Product (Renew)', sprintf( '*** ERROR EXCEPTION: <code>%s</code> ***', $e->getMessage() ) );
+                aawp_log( 'Amazon API (Product Renew)', sprintf( '*** ERROR EXCEPTION: <code>%s</code> ***', $e->getMessage() ) );
             }
 
             $debug_execution_time = microtime(true) - $debug_start_time;
@@ -230,7 +230,7 @@ if ( ! class_exists( 'AAWP_Cache_Handler') ) {
             //echo 'Products renewed: ' . $renewed . '<br>';
 
             if ( $renewed > 0 ) {
-                aawp_log( 'Product (Renew)', sprintf( wp_kses( _n( '<code>%d</code> cached product renewed via API.', '<code>%d</code> cached products renewed via API.', absint( $renewed ), 'aawp' ), [ 'code' => [] ] ), absint( $renewed ) ) );
+                aawp_log( 'Amazon API (Product Renew)', sprintf( wp_kses( _n( '<code>%d</code> cached product renewed via API.', '<code>%d</code> cached products renewed via API.', absint( $renewed ), 'aawp' ), [ 'code' => [] ] ), absint( $renewed ) ) );
             }
         }
 

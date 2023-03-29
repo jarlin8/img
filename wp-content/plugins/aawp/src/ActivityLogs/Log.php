@@ -207,7 +207,7 @@ class Log {
 	 *
 	 * @return \AAWP\ActivityLogs\Log
 	 */
-	public static function create( $level, $user_id = 0, $component, $message, $context ) {
+	public static function create( $level, $user_id, $component, $message, $context ) {
 
 		return new Log(
 			0,

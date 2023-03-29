@@ -33,6 +33,7 @@ class Ad extends AdvancedAdsType {
 
 		add_filter( 'advanced-ads-types-without-size', [ $this, 'remove_size' ] );
 		add_action( 'wp_ajax_aawp_ad_ads_preview', [ $this, 'ajax_ad_preview' ] );
+		add_filter( 'advanced-ads-tracking-clickable-types', [ $this, 'add_aawp_ad' ] );
 	}
 
 	/**
@@ -46,6 +47,15 @@ class Ad extends AdvancedAdsType {
 		$types[] = 'aawp';
 
 		return $types;
+	}
+
+	/**
+	 * Render icon on the ad overview list
+	 *
+	 * @param Advanced_Ads_Ad $ad ad object.
+	 */
+	public function render_icon( $ad ) {
+		printf( '<img src="%s" width="50" height="50"/>', esc_url( AAWP_PLUGIN_URL . 'assets/img/advanced-ads.svg' ) );
 	}
 
 	/**
@@ -274,5 +284,20 @@ class Ad extends AdvancedAdsType {
 		$shortcode = $shortcode . ' template="' . $template . '" ]';
 
 		return do_shortcode( $shortcode );
+	}
+
+	/**
+	 * Add aawp ad compatibility to click tracking.
+	 *
+	 * @param array $ads Click trackable ads.
+	 *
+	 * @since 3.20
+	 *
+	 * @return array Click trackable ads including aawp ad.
+	 */
+	public function add_aawp_ad( $ads ) {
+		$ads[] = 'aawp';
+
+		return $ads;
 	}
 }

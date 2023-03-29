@@ -238,7 +238,7 @@ class API extends Functions {
 			$input['status'] = 0;
 
 			if ( ! aawp_check_dependencies() ) {
-				$input['error'] = sprintf( wp_kses( __( 'Your server is missing some dependencies. Please take a look at the <a href="%s">support page</a> and upgrade your server.', 'aawp' ), [ 'a' => [ 'href' => [] ] ] ), admin_url( 'admin.php?page=aawp-support' ) );
+				$input['error'] = sprintf( wp_kses( __( 'Your server is missing some dependencies. Please take a look at the <a href="%s">support page</a> and upgrade your server.', 'aawp' ), [ 'a' => [ 'href' => [] ] ] ), admin_url( 'admin.php?page=aawp-tools' ) );
 				return $input;
 			}
 
@@ -379,8 +379,8 @@ class API extends Functions {
 		}//end if
 
 		?>
-		<input type="hidden" name="aawp_api[status]" value="<?php echo $status; ?>" />
-		<input type="hidden" name="aawp_api[error]" value="<?php echo $error; ?>" />
+		<input type="hidden" name="aawp_api[status]" value="<?php echo esc_attr( $status ); ?>" />
+		<input type="hidden" name="aawp_api[error]" value="<?php echo esc_attr( $error ); ?>" />
 		<?php
 	}
 

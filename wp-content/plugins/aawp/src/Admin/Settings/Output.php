@@ -123,9 +123,23 @@ class Output extends Functions {
 		);
 
 		/*
-			* Action to add more settings within this section
-			*/
+		 * Action to add more settings within this section
+		 */
 		do_action( 'aawp_settings_output_register' );
+
+		/**
+		 * CSS/JS Assets Section.
+		 *
+		 * @since 3.20.
+		 */
+		add_settings_field(
+			'aawp_cs_js_assets',
+			__( 'CSS/JS Assets', 'aawp' ),
+			[ &$this, 'settings_cs_js_assets_render' ],
+			'aawp_output',
+			'aawp_output_section',
+			[ 'label_for' => 'aawp_cs_js_assets' ]
+		);
 
 		// After action fields
 		add_settings_field(
@@ -608,7 +622,35 @@ class Output extends Functions {
 		do_action( 'aawp_settings_output_button_render' );
 	}
 
+	/**
+	 * Render CS/JS Assets Section.
+	 *
+	 * @since 3.20.
+	 */
+	public function settings_cs_js_assets_render() {
+
+		$load_assets_globally = ! empty( $this->options['output']['load_assets_globally'] );
+		?>
+			<p>
+				<input type="checkbox" id="aawp_load_assets_globally" name="aawp_output[load_assets_globally]" value="1" <?php echo $load_assets_globally === true ? 'checked' : ''; ?> >
+				<label for="aawp_load_assets_globally"><?php _e( 'Load Assets Globally', 'aawp' ); ?></label>
+			</p>
+			<p>
+				<small><?php esc_html_e( "By enabling this option, AAWP assets will be loaded site-wide. Only check if your site is having styling or compatibility issues.", 'aawp' ); ?></small>
+			</p>
+		<?php
+	}
+
 	public function settings_custom_css_render() {
+
+		// Render code editor.
+		wp_add_inline_script(
+			'code-editor',
+			sprintf(
+				'jQuery( function() { wp.codeEditor.initialize( "aawp_custom_css", %s ); } );',
+				wp_json_encode( wp_enqueue_code_editor( ['type' => 'text/css' ] ) )
+			)
+		);
 
 		$custom_css_activated = ( isset( $this->options['output']['custom_css_activated'] ) && $this->options['output']['custom_css_activated'] == '1' ) ? 1 : 0;
 		$custom_css           = ( ! empty( $this->options['output']['custom_css'] ) ) ? $this->options['output']['custom_css'] : '';
@@ -619,12 +661,7 @@ class Output extends Functions {
 			<label for="aawp_custom_css_activated"><?php _e( 'Output custom CSS styles', 'aawp' ); ?></label>
 		</p>
 		<br />
-		<textarea id="aawp_custom_css" name="aawp_output[custom_css]" rows="10" cols="80" style="width: 100%;">
-		<?php
-		echo esc_html( $custom_css );
-		// echo stripslashes($custom_css);
-		?>
-		</textarea>
+		<textarea id="aawp_custom_css" name="aawp_output[custom_css]" rows="10" cols="80" style="width: 100%;"><?php echo esc_html( $custom_css ); ?></textarea>
 		<p>
 			<small><?php _e( "Please don't use the <code>style</code> tag. Simply paste you CSS classes/definitions e.g. <code>.aawp .aawp-product { background-color: #000; }</code> or <code>.aawp .aawp-product--horizontal { background-color: #000; }</code>", 'aawp' ); ?></small>
 		</p>

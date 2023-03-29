@@ -37,11 +37,18 @@ class Loader {
 
 			// ActivityLogs.
 			'ActivityLogs\\Init',
+
+			// Comparison Tables Shortcode Handler.
 			'Admin\\ComparisonTable\\ShortcodeHandler',
+
+			// Click Tracking.
+			'ClickTracking\\Init',
 
 			// Advanced Ads.
 			'Admin\\AdvancedAds\\Init',
-			'Elementor\\Elementor'
+			'Elementor\\Elementor',
+			'API\\UsageTracking',
+			'API\\Notifications',
 		];
 
 		if ( is_admin() ) {
@@ -52,7 +59,8 @@ class Loader {
 
 				// Admin Pages.
 				'Admin\\Menu',
-				'Admin\\Support',
+				'Admin\\Tools',
+				'Admin\\Tools\\Support', // Only required because of the register settings field.
 
 				// Comparison Table.
 				'Admin\\ComparisonTable\\Table',

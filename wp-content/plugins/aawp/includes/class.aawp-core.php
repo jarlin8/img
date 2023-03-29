@@ -80,6 +80,10 @@ if ( !class_exists( 'AAWP_Core' ) ) {
 
             $this->shortcodes_used = true;
 
+            // Enqueue Assets.
+            wp_enqueue_style( 'aawp' );
+            wp_enqueue_script( 'aawp' );
+
             // Shortcode action
             ob_start();
 

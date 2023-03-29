@@ -15,7 +15,7 @@ import save from './save';
 
 registerBlockType( 'aawp/aawp-block', {
 
-    icon: <img src={aawpIcon} alt="AAWP Logo"/>,
+    icon: <img src={aawpIcon} alt="AAWP Logo" height="24" width="24"/>,
     name: "aawp/aawp-block",
     title: "AAWP",
     category: "widgets",

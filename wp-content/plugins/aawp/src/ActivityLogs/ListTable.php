@@ -259,11 +259,11 @@ class ListTable extends WP_List_Table {
 	 */
 	protected function get_sortable_columns() {
 		return [
-			'id'        => [ 'id', true ],
-			'timestamp' => [ 'timestamp', true ],
-			'component' => [ 'level', true ],
-			'user'      => [ 'user', true ],
-			'source'    => [ 'source', true ],
+			'id'        => [ 'id', 'asc' ],
+			'timestamp' => [ 'timestamp', 'asc' ],
+			'component' => [ 'level', 'asc' ],
+			'user'      => [ 'user', 'asc' ],
+			'source'    => [ 'source', 'asc' ],
 		];
 	}
 
@@ -316,7 +316,11 @@ class ListTable extends WP_List_Table {
 				'label' => __( '	Licensing', 'aawp' ),
 			],
 			[
-				'value' => 'api',
+				'value' => 'aawp',
+				'label' => __( 'AAWP API', 'aawp' ),
+			],
+			[
+				'value' => 'amazon',
 				'label' => __( 'Amazon API', 'aawp' ),
 			],
 			[
@@ -432,17 +436,7 @@ class ListTable extends WP_List_Table {
 	public function no_items() {
 
 		if ( ! $this->db->is_logging_enabled() ) {
-			printf(
-				wp_kses( /* translators: %s - AAWP Logs Settings Page. */
-					__( 'Activity Logging is currently disabled. Please <a href="%s">enable logging</a> to start saving logs in the database.', 'aawp' ),
-					[
-						'a' => [
-							'href' => [],
-						],
-					]
-				),
-				esc_url( wp_nonce_url( admin_url( 'admin.php?page=aawp-logs&section=settings' ), 'aawp-settings' ) )
-			);
+			esc_html_e( 'Activity Logging is currently disabled. Please enable logging to start saving logs in the database.', 'aawp' );
 		} else {
 
 			esc_html_e( 'No logs found.', 'aawp' );
@@ -470,7 +464,7 @@ class ListTable extends WP_List_Table {
 	 *
 	 * @since 3.19
 	 */
-	public function display_page() {
+	public function render_page() {
 
 		$this->prepare_column_headers();
 		$this->process_admin_ui();
@@ -506,12 +500,12 @@ class ListTable extends WP_List_Table {
 
 		if ( ! empty( $_REQUEST['startdate'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$where_conditions[] = 'timestamp > %s';
-			$where_values[]     = absint( $_REQUEST['startdate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$where_values[]     = sanitize_text_field( $_REQUEST['startdate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		if ( ! empty( $_REQUEST['enddate'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$where_conditions[] = 'timestamp < %s';
-			$where_values[]     = absint( $_REQUEST['enddate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$where_values[]     = sanitize_text_field( $_REQUEST['enddate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		if ( ! empty( $where_conditions ) ) {

@@ -37,6 +37,7 @@ class Logs implements Countable, Iterator {
 	 *
 	 * @return \AAWP\ActivityLogs\Log|null Return null when no items in collection.
 	 */
+	#[\ReturnTypeWillChange]
 	public function current() {
 
 		return $this->valid() ? $this->list[ $this->iterator_position ] : null;
@@ -47,6 +48,7 @@ class Logs implements Countable, Iterator {
 	 *
 	 * @since 3.19
 	 */
+	#[\ReturnTypeWillChange]
 	public function next() {
 
 		++ $this->iterator_position;
@@ -59,6 +61,7 @@ class Logs implements Countable, Iterator {
 	 *
 	 * @return int
 	 */
+	#[\ReturnTypeWillChange]
 	public function key() {
 
 		return $this->iterator_position;
@@ -71,6 +74,7 @@ class Logs implements Countable, Iterator {
 	 *
 	 * @return bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function valid() {
 
 		return isset( $this->list[ $this->iterator_position ] );
@@ -81,6 +85,7 @@ class Logs implements Countable, Iterator {
 	 *
 	 * @since 3.19
 	 */
+	#[\ReturnTypeWillChange]
 	public function rewind() {
 
 		$this->iterator_position = 0;
@@ -93,6 +98,7 @@ class Logs implements Countable, Iterator {
 	 *
 	 * @return int
 	 */
+	#[\ReturnTypeWillChange]
 	public function count() {
 
 		return count( $this->list );

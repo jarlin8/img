@@ -200,8 +200,8 @@ final class Plugin {
 		require_once AAWP_PLUGIN_DIR . 'includes/class.aawp-wrapper.php';
 		require_once AAWP_PLUGIN_DIR . 'includes/class.aawp-core.php';
 		require_once AAWP_PLUGIN_DIR . 'includes/class.aawp-functions.php';
-		require_once AAWP_PLUGIN_DIR . 'includes/class.aawp-review-crawler.php';
 		require_once AAWP_PLUGIN_DIR . 'includes/api-functions.php';
+		require_once AAWP_PLUGIN_DIR . 'includes/class.aawp-review-crawler.php';
 		require_once AAWP_PLUGIN_DIR . 'includes/cache-functions.php';
 		require_once AAWP_PLUGIN_DIR . 'includes/class.cache-handler.php';
 		require_once AAWP_PLUGIN_DIR . 'includes/class.template-functions.php';
@@ -259,9 +259,6 @@ final class Plugin {
 			require_once AAWP_PLUGIN_DIR . 'includes/admin/dashboard-page.php';
 			require_once AAWP_PLUGIN_DIR . 'includes/admin/sysinfo.php';
 			require_once AAWP_PLUGIN_DIR . 'includes/admin/modals.php';
-
-			// Settings.
-			require_once AAWP_PLUGIN_DIR . 'includes/admin/infoboxes.php';
 
 			// Pages.
 			require_once AAWP_PLUGIN_DIR . 'includes/admin/list-edit.php';

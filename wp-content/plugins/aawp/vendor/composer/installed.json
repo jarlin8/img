@@ -122,5 +122,42 @@
             "zend",
             "zikula"
         ]
+    },
+    {
+        "name": "woocommerce/action-scheduler",
+        "version": "3.2.1",
+        "version_normalized": "3.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/woocommerce/action-scheduler.git",
+            "reference": "3c24064f115cd55e972d73d5d48f14133ac60b0d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/woocommerce/action-scheduler/zipball/3c24064f115cd55e972d73d5d48f14133ac60b0d",
+            "reference": "3c24064f115cd55e972d73d5d48f14133ac60b0d",
+            "shasum": ""
+        },
+        "require-dev": {
+            "phpunit/phpunit": "^7.5",
+            "woocommerce/woocommerce-sniffs": "0.1.0",
+            "wp-cli/wp-cli": "~2.5.0"
+        },
+        "time": "2021-06-21T20:21:35+00:00",
+        "type": "wordpress-plugin",
+        "extra": {
+            "scripts-description": {
+                "test": "Run unit tests",
+                "phpcs": "Analyze code against the WordPress coding standards with PHP_CodeSniffer",
+                "phpcbf": "Fix coding standards warnings/errors automatically with PHP Code Beautifier"
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-3.0-or-later"
+        ],
+        "description": "Action Scheduler for WordPress and WooCommerce",
+        "homepage": "https://actionscheduler.org/"
     }
 ]

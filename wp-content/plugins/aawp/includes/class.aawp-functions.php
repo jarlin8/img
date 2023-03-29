@@ -336,15 +336,11 @@ if ( !class_exists( 'AAWP_Functions' ) ) {
 
                 $products_fetched = $this->get_products_from_api( $products_missing );
 
-                //aawp_debug( $products_fetched, '$products_fetched' );
-
                 if ( is_string( $products_fetched ) )
                     return $products_fetched;
 
                 if ( is_array( $products_fetched ) && sizeof( $products_fetched ) > 0 )
                     $items = $items + $products_fetched;
-
-                //aawp_debug( $items, '$items after fetched' );
             }
 
             // Keep original order
@@ -583,7 +579,7 @@ if ( !class_exists( 'AAWP_Functions' ) ) {
                 }
             }
 
-            aawp_log( 'Product', sprintf( wp_kses( _n( 'Fetched product with ASIN <code>%s</code> from the API.', 'Fetched products with ASIN <code>%s</code> from the API.', count( $asins ),  'aawp' ), [ 'code' => [] ] ), implode( ',', $asins ) )  );
+            aawp_log( 'Amazon API (Product)', sprintf( wp_kses( _n( 'Fetched product with ASIN <code>%s</code> from the API.', 'Fetched products with ASIN <code>%s</code> from the API.', count( $asins ),  'aawp' ), [ 'code' => [] ] ), implode( ',', $asins ) )  );
 
             return $products;
         }

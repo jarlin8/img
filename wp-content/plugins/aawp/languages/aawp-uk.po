@@ -1,16 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: AAWP\n"
-"Report-Msgid-Bugs-To: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-11-14T03:38:47+00:00\n"
-"PO-Revision-Date: 2022-11-14T03:38:47+00:00\n"
-"Language: uk\n"
 "X-Generator: Localazy (https://localazy.com)\n"
+"Project-Id-Version: AAWP\n"
+"Language: uk\n"
 "Plural-Forms: nplurals=3; plural=((n%10==1) && (n%100!=11)) ? 0 : ((n%10>=2 && n%10<=4) && ((n%100<12 || n%100>14))) ? 1 : 2;\n"
 
 #: src/ActivityLogs/ListTable.php:316
@@ -23,89 +18,121 @@ msgstr "\"Як продовжити ліцензію?\""
 
 #: src/Admin/Settings/License.php:328
 msgid "\"How to upgrade your license?\""
-msgstr "\"How to upgrade your license?\""
+msgstr "«Як оновити ліцензію?»"
 
 #: src/Admin/Settings/License.php:330
 msgid "\"License Server – Problems and Fixes\""
-msgstr "\"License Server – Problems and Fixes\""
+msgstr "«Сервер ліцензій — Проблеми та Виправлення»"
 
 #: includes/libraries/class.plugin-updater.php:268
 msgid "%1$sView version %2$s details%3$s."
-msgstr "%1$sПереглянути деталі%3$s версії %2$s."
+msgstr "%1$sПереглянути подробиці версії %2$s%3$s."
 
 #: includes/libraries/class.plugin-updater.php:276
 msgid "%1$sView version %2$s details%3$s or %4$supdate now%5$s."
-msgstr "%1$sПереглянути деталі%3$s версії %2$s або %4$s оновити зараз%5$s."
+msgstr "%1$sПереглянути подробиці версії %2$s%3$s або %4$sоновити зараз%5$s."
 
-#: includes/product-helper-functions.php:553
+#: includes/product-helper-functions.php:551
 msgid "%d pages"
-msgstr "%d pages"
+msgstr "%d сторінки"
 
-#: includes/product-helper-functions.php:508
+#: includes/product-helper-functions.php:506
 msgid "%s (Publication Date)"
-msgstr "%s (Publication Date)"
+msgstr "%s (Дата публікації)"
 
-#: includes/product-helper-functions.php:511
+#: includes/product-helper-functions.php:509
 msgid "%s (Publisher)"
-msgstr "%s (Publisher)"
+msgstr "%s (Видавець)"
 
 #: src/Admin/ComparisonTable/functions.php:286
 msgid "----- Elements -----"
-msgstr "----- Elements -----"
+msgstr "----- Елементи -----"
 
 #: src/Admin/ComparisonTable/functions.php:278
 msgid "----- Product Data -----"
-msgstr "----- Product Data -----"
+msgstr "----- Дані Продукту -----"
+
+#: assets/block/dist/index.js:1
+msgid "-- Select A Display Type --"
+msgstr "-- Виберіть тип відображення --"
+
+#: assets/block/dist/index.js:1
+msgid "-- Select A Filter --"
+msgstr "-- Виберіть фільтр --"
 
 #: src/Elementor/Widget.php:120
 #: assets/block/dist/index.js:1
 msgid "-- Select An Option --"
-msgstr "-- Виберіть Oпцію --"
+msgstr "-- Виберіть опцію --"
+
+#: src/ClickTracking/Init.php:638
+msgid "-- Select a tracking id --"
+msgstr "-- Виберіть ідентифікатор відстеження --"
 
 #: src/Admin/Settings/General.php:188
 msgid "12 Hours"
-msgstr "12 Годин"
+msgstr "12 годин"
 
 #: src/Admin/Settings/General.php:189
 msgid "1 Day"
-msgstr "1 День"
+msgstr "1 день"
 
 #: src/Admin/Settings/General.php:191
 msgid "1 Week"
-msgstr "1 Tиждень"
+msgstr "1 тиждень"
+
+#: assets/block/dist/index.js:1
+msgid "2 Columns"
+msgstr "2 колонки"
+
+#: assets/block/dist/index.js:1
+msgid "3 Columns"
+msgstr "3 колонки"
 
 #: src/Admin/Settings/General.php:190
 msgid "3 Days"
-msgstr "3 Дні"
+msgstr "3 дні"
+
+#: assets/block/dist/index.js:1
+msgid "4 Columns"
+msgstr "4 колонки"
+
+#: assets/block/dist/index.js:1
+msgid "5 Columns"
+msgstr "5 колонок"
+
+#: assets/block/dist/index.js:1
+msgid "6 Columns"
+msgstr "6 колонок"
 
 #: src/Admin/Settings/License.php:93
 msgid "<a href=\"%s\">Update available</a>."
-msgstr "<a href=\"%s\">Update available</a>."
+msgstr "<a href=\"%s\">Доступне оновлення</a>."
 
 #: includes/license-functions.php:306
 msgid "<a href=\"%s\" style=\"color: red;\">Unlicensed copy. Please enter a valid license key.</a>"
-msgstr "<a href=\"%s\" style=\"color: red;\">Unlicensed copy. Please enter a valid license key.</a>"
+msgstr "<a href=\"%s\" style=\"color: red;\">Неліцензійна копія. Будь ласка, введіть дійсний ліцензійний ключ.</a>"
 
 #: src/ShortenLinks/Settings.php:67
 msgid "<b>Attention:</b> <i>With shortened links, the geotargeting function can currently not be used.</i>"
-msgstr "<b>Увага:</b> <i>При скорочених посиланнях функція геотаргетингу наразі не може бути використана.</i>"
+msgstr "<b>Увага:</b> <i>функція геотаргетингу в даний час не може бути використана зі скороченими посиланнями.</i>"
 
 #: includes/functions/class.extended.php:314
 msgid "<strong>Extra benefit:</strong> The Amazon prime logo can be linked to the \"Amazon Prime 30-day free trial\" landingpage and you receive an extra commission for Amazon Prime referrals."
-msgstr "<strong>Extra benefit:</strong> The Amazon prime logo can be linked to the \"Amazon Prime 30-day free trial\" landingpage and you receive an extra commission for Amazon Prime referrals."
+msgstr "<strong>Додаткова вигода:</strong> Логотип Amazon Prime можна пов'язати з цільовою сторінкою «Amazon Prime 30-денна безкоштовна пробна версія», і ви отримаєте додаткову комісію за рефералів Amazon Prime."
 
 #: includes/functions/components/affiliate-links-extended.php:54
 msgid "<strong>Note:</strong> By enabling this option please be aware that your visitors will <u>not be redirected to the product page</u>. Instead they will be forwarded to a new page on Amazon in order to confirm the add to cart action. Afterwards the 90-days-cookie will be set."
-msgstr "<strong>Note:</strong> By enabling this option please be aware that your visitors will <u>not be redirected to the product page</u>. Instead they will be forwarded to a new page on Amazon in order to confirm the add to cart action. Afterwards the 90-days-cookie will be set."
+msgstr "<strong>Примітка:</strong> Увімкнувши цю опцію, будь ласка, зауважте, що ваші відвідувачі не будуть <u>перенаправлені на сторінку товару</u>. Замість цього вони будуть перенаправлені на нову сторінку на Amazon для підтвердження додавання в кошик. Після цього буде встановлено 90-денний файл cookie."
 
 #: src/Admin/Settings/General.php:372
 #: src/Admin/Settings/General.php:425
 msgid "<strong>Note:</strong> The placeholder %last_update% can be used here."
-msgstr "<strong>Note:</strong> The placeholder %last_update% can be used here."
+msgstr "<strong>Примітка:</strong> тут можна використовувати заповнювач %last_update%."
 
-#: src/Admin/Settings/Output.php:325
+#: src/Admin/Settings/Output.php:339
 msgid "<strong>Note:</strong> This option might not be valid for all templates."
-msgstr "<strong>Примітка:</strong> Ця опція може бути не дійсною для всіх шаблонів."
+msgstr "<strong>Примітка:</strong> Ця опція може бути дійсною не для всіх шаблонів."
 
 #: src/Admin/ClassicEditor.php:235
 #: src/Admin/Menu.php:92
@@ -120,66 +147,83 @@ msgctxt "block title"
 msgid "AAWP"
 msgstr "AAWP"
 
+#: src/ClickTracking/Init.php:60
+msgid "AAWP - Clicks"
+msgstr "AAWP - Kліки"
+
 #: src/ActivityLogs/Init.php:46
 msgid "AAWP - Logs"
 msgstr "AAWP - Журнали"
 
 #: src/Admin/ProductsTable/Init.php:40
 msgid "AAWP - Products"
-msgstr "AAWP - Продукти"
+msgstr "AAWP - Товари"
 
 #: src/Admin/Settings.php:59
 msgid "AAWP - Settings"
-msgstr "AAWP - Settings"
+msgstr "AAWP - Налаштування"
 
 #: src/Admin/Support.php:73
 msgid "AAWP - Support"
-msgstr "AAWP - Support"
+msgstr "AAWP - Підтримка"
 
 #: src/Admin/ComparisonTable/Table.php:119
 msgid "AAWP - Tables"
-msgstr "AAWP - Tables"
+msgstr "AAWP - Таблиці"
+
+#: src/Admin/Tools.php:49
+msgid "AAWP - Tools"
+msgstr "AAWP - Інструменти"
 
 #: src/Admin/Welcome.php:54
 msgid "AAWP - Welcome"
 msgstr "AAWP - Ласкаво просимо"
 
+#: src/ActivityLogs/ListTable.php:320
+msgid "AAWP API"
+msgstr "AAWP API"
+
 #: includes/functions/deprecated/class.widget.php:18
 msgid "AAWP (Old Widget)"
-msgstr "AAWP (Old Widget)"
+msgstr "AAWP (Старий Bіджет)"
 
 #: includes/functions/class.extended.php:331
 msgid "AAWP can track clicks on affiliate links coming through the plugin by creating events via your favorite tracking tool. Currently supported:"
-msgstr "AAWP can track clicks on affiliate links coming through the plugin by creating events via your favorite tracking tool. Currently supported:"
+msgstr "AAWP може відстежувати кліки на партнерські посилання, що надходять через плагін, створюючи події за допомогою вашого улюбленого інструменту відстеження. Наразі підтримується:"
+
+#: src/Admin/Tools/ScheduledActions.php:68
+msgid "AAWP is using the <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Action Scheduler</a> library, which allows it to queue and process bigger tasks in the background without making your site slower for your visitors. Below you can see the list of all tasks and their status. This table can be very useful when debugging certain issues."
+msgstr "AAWP використовує бібліотеку <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Планувальник Дій</a>, яка дозволяє йому ставити в чергу і обробляти великі завдання у фоновому режимі, не сповільнюючи роботу вашого сайту для відвідувачів. Нижче ви можете побачити список усіх завдань та їхній статус. Ця таблиця може бути дуже корисною при налагодженні певних проблем."
 
 #: src/Admin/Settings/API.php:91
 msgid "API Key"
-msgstr "API Key"
+msgstr "Ключ API"
 
 #: src/Admin/Settings/API.php:296
 msgid "API Key Validator"
-msgstr "API Key Validator"
+msgstr "Валідатор Kлючів API"
 
 #: src/Admin/Settings/API.php:100
 msgid "API Secret"
-msgstr "API Secret"
+msgstr "Секрет API"
 
 #: includes/admin/hooks.php:104
 msgid "API access keys created using the old \"Amazon AWS Console\" are no longer functional. If you haven't created a new API key yet, you can do so directly from your Amazon Associates account (<a href=\"%s\" target=\"_blank\">see instructions</a>)."
-msgstr "API access keys created using the old \"Amazon AWS Console\" are no longer functional. If you haven't created a new API key yet, you can do so directly from your Amazon Associates account (<a href=\"%s\" target=\"_blank\">see instructions</a>)."
+msgstr "Ключі доступу до API, створені за допомогою старої «Amazon AWS Console», більше не функціонують. Якщо ви ще не створили новий ключ API, ви можете зробити це безпосередньо зі свого облікового запису Amazon Associates ( <a href=\"%s\" target=\"_blank\">див. інструкції</a> )."
 
 #: src/Admin/Settings/API.php:213
 msgid "API key is missing."
-msgstr "API key is missing."
+msgstr "Ключ API відсутній."
 
 #: src/Admin/Settings/API.php:217
 msgid "API secret is missing."
-msgstr "API secret is missing."
+msgstr "Секрет API відсутній."
 
 #: includes/admin/product-edit.php:104
-#: src/Admin/AdvancedAds/Ad.php:127
+#: src/Admin/AdvancedAds/Ad.php:137
 #: src/Admin/ClassicEditor.php:259
 #: src/Admin/ProductsTable/ListTable.php:215
+#: src/ClickTracking/ListTable.php:403
 #: src/Elementor/Widget.php:144
 #: assets/block/dist/index.js:1
 msgid "ASIN"
@@ -189,115 +233,148 @@ msgstr "ASIN"
 msgid "ASIN/ISBN:"
 msgstr "ASIN/ISBN:"
 
+#: src/Admin/Tools/ScheduledActions.php:83
+msgid "Action Scheduler library is also used by other plugins, like WooCommerce, so you might see tasks that are not related to our plugin in the table below."
+msgstr "Бібліотека Планувальника Дій також використовується іншими плагінами, наприклад, WooCommerce, тому в таблиці нижче ви можете побачити завдання, які не пов'язані з нашим плагіном."
+
 #: includes/admin/list-overview.php:39
 #: includes/admin/product-overview.php:36
 msgid "Actions"
-msgstr "Actions"
+msgstr "Дії"
 
 #: includes/admin/functions.php:23
+#: src/Admin/ProductsTable/ListTable.php:325
 msgid "Active"
-msgstr "Active"
+msgstr "Активно"
 
 #: src/ActivityLogs/ListTable.php:437
 msgid "Activity Logging is currently disabled. Please <a href=\"%s\">enable logging</a> to start saving logs in the database."
-msgstr "Ведення журналу активності наразі вимкнено. Будь ласка, <a href=\"%s\">увімкніть реєстрацію</a>, щоб почати зберігати журнали в базі даних."
+msgstr "Ведення журналу активності зараз вимкнено. Будь ласка, <a href=\"%s\">увімкніть ведення журналу</a>, щоб зберігати журнали в базі даних."
+
+#: src/ActivityLogs/ListTable.php:439
+msgid "Activity Logging is currently disabled. Please enable logging to start saving logs in the database."
+msgstr "Логування Активності наразі вимкнено. Будь ласка, увімкніть його, щоб почати зберігати журнали в базі даних."
 
 #: src/ActivityLogs/Init.php:68
 msgid "Activity Logs"
-msgstr "Журнали Активності"
+msgstr "Журнали активності"
 
 #: src/Admin/AdvancedAds/Ad.php:29
 msgid "Add Amazon Products with AAWP."
-msgstr "Додай Продукти Amazon за допомогою AAWP."
+msgstr "Додавайте товари Amazon за допомогою AAWP."
 
 #: src/Admin/ComparisonTable/Table.php:62
 msgid "Add New"
-msgstr "Add New"
+msgstr "Додати Hовий"
 
 #: src/Admin/ComparisonTable/Table.php:61
 msgid "Add New Table"
-msgstr "Add New Table"
+msgstr "Додати Hову Tаблицю"
 
 #: src/Admin/ComparisonTable/Table.php:635
 msgid "Add new products"
-msgstr "Add new products"
+msgstr "Додайте нові продукти"
 
 #: src/Admin/ComparisonTable/Table.php:393
 msgid "Add new row"
-msgstr "Add new row"
+msgstr "Додати новий рядок"
 
 #: src/Admin/ComparisonTable/Table.php:639
 msgid "Add product by ASIN"
-msgstr "Add product by ASIN"
+msgstr "Додати продукт по ASIN"
 
 #: includes/functions/components/affiliate-links-extended.php:48
 msgid "Add to Cart Links (90-days-cookie)"
-msgstr "Add to Cart Links (90-days-cookie)"
+msgstr "Посилання для Додавання в Кошик (90-днів-cookie)"
 
-#: src/Admin/Settings/Output.php:183
+#: src/Admin/Settings/Output.php:197
 msgid "Adding"
-msgstr "Adding"
+msgstr "Додавання"
+
+#: assets/block/dist/index.js:1
+msgid "Adding HTML image \"title\" attribute."
+msgstr "Додавання атрибуту «title» для HTML-зображення."
+
+#: assets/block/dist/index.js:1
+msgid "Adding a new class to the product container."
+msgstr "Додавання нового класу до блоку товару."
 
 #: includes/admin/functions.php:103
 msgid "Additionally the notice will be highlighted for <strong>admins only</strong>."
-msgstr "Additionally the notice will be highlighted for <strong>admins only</strong>."
+msgstr "Крім того, повідомлення буде виділено <strong>лише для адміністраторів</strong>."
 
-#: src/Admin/Settings/Output.php:471
+#: src/Admin/Settings/Output.php:485
 msgid "Advertised price"
-msgstr "Advertised price"
+msgstr "Оголошена ціна"
 
 #: src/Admin/Settings/General.php:465
 msgid "Affiliate ID"
-msgstr "Affiliate ID"
+msgstr "Ідентифікатор партнера"
 
 #: src/Admin/Settings/General.php:93
 msgid "Affiliate links"
-msgstr "Affiliate links"
+msgstr "Партнерські посилання"
+
+#: assets/block/dist/index.js:1
+msgid "Align images right or left"
+msgstr "Вирівнювання зображень за правим або лівим краєм"
+
+#: src/Admin/ProductsTable/ListTable.php:310
+msgid "All"
+msgstr "Всі"
+
+#: src/ClickTracking/Settings.php:242
+msgid "All Clicks Cleared."
+msgstr "Усі Kліки Очищено."
 
 #: src/Admin/ComparisonTable/Table.php:60
 msgid "All Tables"
-msgstr "All Tables"
+msgstr "Всі Таблиці"
 
 #: includes/functions/widgets/class.widget-bestseller.php:138
 #: includes/functions/widgets/class.widget-box.php:129
 #: includes/functions/widgets/class.widget-new-releases.php:140
 msgid "All available shortcode adjustments"
-msgstr "All available shortcode adjustments"
+msgstr "Всі доступні налаштування шорткодів"
 
-#: src/ActivityLogs/ListTable.php:340
+#: src/ActivityLogs/ListTable.php:344
 msgid "All components"
 msgstr "Всі компоненти"
 
 #: src/Admin/ProductsTable/ListTable.php:453
 msgid "All products cleared via products list table."
-msgstr "Всі продукти очищаються за допомогою таблиці списку продуктів."
+msgstr "Усі товари видалені з таблиці списку товарів."
 
-#: src/Admin/Settings/Output.php:570
+#: src/ClickTracking/ListTable.php:535
+msgid "All time"
+msgstr "Весь час"
+
+#: src/Admin/Settings/Output.php:584
 #: assets/block/dist/index.js:1
 msgid "Amazon"
 msgstr "Amazon"
 
-#: src/Admin/Settings/Output.php:586
+#: src/Admin/Settings/Output.php:600
 msgid "Amazon: Black"
-msgstr "Amazon: Black"
+msgstr "Amazon: Чорний"
 
-#: src/Admin/Settings/Output.php:587
+#: src/Admin/Settings/Output.php:601
 msgid "Amazon: White"
-msgstr "Amazon: White"
+msgstr "Amazon: Білий"
 
-#: src/ActivityLogs/ListTable.php:320
+#: src/ActivityLogs/ListTable.php:324
 #: src/Admin/Settings/API.php:29
 msgid "Amazon API"
 msgstr "Amazon API"
 
 #: src/Admin/Settings/API.php:263
 msgid "Amazon API Connected. %s"
-msgstr "Amazon API Підключено. %s"
+msgstr "Amazon API підключено. %s"
 
 #: src/Admin/Settings/API.php:158
 #: src/Admin/Settings/API.php:270
 msgid "Amazon API Disconnected. %s"
-msgstr "API Amazon Відключено. %s"
+msgstr "Amazon API відключено. %s"
 
 #: src/Admin/Settings/API.php:303
 msgid "Amazon API v5 Migration"
@@ -305,7 +382,7 @@ msgstr "Міграція Amazon API v5"
 
 #: src/Admin/Settings/API.php:301
 msgid "Amazon API “not connected” – Frequent causes"
-msgstr "Amazon API “not connected” – Frequent causes"
+msgstr "Amazon API «не підключено» – Часті причини"
 
 #: src/Admin/Settings/API.php:291
 msgid "Amazon Associates"
@@ -313,7 +390,7 @@ msgstr "Amazon Associates"
 
 #: includes/functions/widgets/class.widget-bestseller.php:25
 msgid "Amazon Bestseller List"
-msgstr "Amazon Bestseller List"
+msgstr "Список бестселерів Amazon"
 
 #: src/Admin/ClassicEditor.php:272
 #: src/Elementor/Widget.php:176
@@ -323,15 +400,15 @@ msgstr "Кнопка Amazon"
 
 #: includes/functions/class.link.php:93
 msgid "Amazon Icon"
-msgstr "Ікона Аmazon"
+msgstr "Іконка Аmazon"
 
-#: includes/product-helper-functions.php:352
+#: includes/product-helper-functions.php:350
 msgid "Amazon Kindle Edition"
-msgstr "Amazon Kindle Edition"
+msgstr "Amazon Kindle Видання"
 
 #: includes/admin/list-edit.php:30
 msgid "Amazon List"
-msgstr "Amazon List"
+msgstr "Список Amazon"
 
 #: includes/functions/class.link.php:94
 #: assets/block/dist/index.js:1
@@ -340,83 +417,95 @@ msgstr "Логотип Amazon"
 
 #: includes/functions/widgets/class.widget-new-releases.php:25
 msgid "Amazon New Releases List"
-msgstr "Amazon New Releases List"
+msgstr "Список Нових Випусків Amazon"
 
-#: includes/functions/class.extended.php:594
+#: includes/functions/class.extended.php:602
 msgid "Amazon Prime"
 msgstr "Amazon Prime"
 
-#: includes/product-helper-functions.php:333
+#: includes/product-helper-functions.php:331
 msgid "Amazon Prime Video (Video on Demand)"
-msgstr "Amazon Prime Video (Video on Demand)"
+msgstr "Amazon Prime Video (Відео на Вимогу)"
 
 #: includes/admin/product-edit.php:31
 msgid "Amazon Product"
-msgstr "Amazon Product"
+msgstr "Продукт Amazon"
 
 #: src/Admin/Settings/API.php:293
-#: src/Admin/Support.php:182
+#: src/Admin/Tools/Support.php:157
 msgid "Amazon Product Advertising API"
-msgstr "Amazon Product Advertising API"
+msgstr "API для Pеклами Продуктів Amazon"
 
 #: src/Admin/Settings/API.php:76
 msgctxt "Settings Section Headline"
 msgid "Amazon Product Advertising API"
-msgstr "Amazon Product Advertising API"
+msgstr "API для Pеклами Продуктів Amazon"
 
 #: src/Admin/Settings/General.php:387
 msgid "Amazon Product Advertising API License Agreement"
-msgstr "Amazon Product Advertising API License Agreement"
+msgstr "Ліцензійна Угода API Для Реклами Продуктів Amazon"
 
 #: includes/functions/widgets/class.widget-box.php:25
 msgid "Amazon Single/Multiple Boxes"
-msgstr "Амазонські Поодинокі/Kілька Коробки"
+msgstr "Один/декілька товарів Amazon"
 
 #: src/Admin/Settings/General.php:397
 msgid "Amazon advised to include a disclaimer adjacent to the pricing or availability information."
-msgstr "Amazon advised to include a disclaimer adjacent to the pricing or availability information."
+msgstr "Amazon радить включати відмову від відповідальності поруч з інформацією про ціну або наявність продукту."
+
+#: assets/block/dist/index.js:1
+msgid "Amount Saved"
+msgstr "Заощаджена сума"
 
 #: includes/admin/list-edit.php:90
 msgid "Amount of items"
-msgstr "Amount of items"
+msgstr "Кількість елементів"
 
 #: includes/functions/deprecated/class.widget.php:107
 #: includes/functions/widgets/class.widget-bestseller.php:108
 #: includes/functions/widgets/class.widget-new-releases.php:108
 msgid "Amount of items:"
-msgstr "Кількість предметів:"
+msgstr "Кількість:"
 
 #: includes/libraries/class.license-handler.php:222
 msgid "An error occurred, please try again."
-msgstr "An error occurred, please try again."
+msgstr "Сталася помилка. Будь ласка, спробуйте ще раз."
 
-#: src/Admin/Settings/Output.php:189
+#: assets/block/dist/index.js:1
+msgid "Apply a link to the output"
+msgstr "Застосувати посилання до контенту"
+
+#: src/Admin/Settings/Output.php:203
 msgid "Apply adding on image link titles"
-msgstr "Apply adding on image link titles"
+msgstr "Застосувати додавання до заголовків посилань на зображення"
 
 #: src/Admin/Settings/General.php:470
 msgid "As a member of our <a href=\"%s\" target=\"_blank\">affiliate partner program</a>, you will receive a commission for every new AAWP customer you refer. If you wish, you can enter your affiliate ID in the field below. As soon as you have activated the \"Credits\" function above, your Affiliate ID will automatically be appended to the generated link."
-msgstr "As a member of our <a href=\"%s\" target=\"_blank\">affiliate partner program</a>, you will receive a commission for every new AAWP customer you refer. If you wish, you can enter your affiliate ID in the field below. As soon as you have activated the \"Credits\" function above, your Affiliate ID will automatically be appended to the generated link."
+msgstr "Як учасник нашої <a href=\"%s\" target=\"_blank\">партнерської програми</a>, ви будете отримувати комісію за кожного нового клієнта AAWP, якого ви приведете. За бажанням, ви можете ввести свій партнерський ідентифікатор у поле нижче. Як тільки ви активуєте функцію \"Кредити\" вище, ваш партнерський ідентифікатор буде автоматично додано до згенерованого посилання."
+
+#: assets/block/dist/index.js:1
+msgid "Ascending"
+msgstr "За зростанням"
 
 #: includes/admin/product-edit.php:200
 msgid "Attributes"
-msgstr "Attributes"
+msgstr "Атрибути"
 
-#: includes/product-helper-functions.php:361
+#: includes/product-helper-functions.php:359
 msgid "Audible Audiobook"
-msgstr "Audible Audiobook"
+msgstr "Звукова Aудіокнига"
 
-#: includes/product-helper-functions.php:495
+#: includes/product-helper-functions.php:493
 msgid "Audience Rating: "
-msgstr "Audience Rating: "
+msgstr "Рейтинг Глядачів: "
 
-#: includes/product-helper-functions.php:370
+#: includes/product-helper-functions.php:368
 msgid "Audio CD – Audiobook"
-msgstr "Audio CD – Audiobook"
+msgstr "Аудіо CD — Аудіокнига"
 
 #: includes/functions.php:120
 msgid "Australia"
-msgstr "Australia"
+msgstr "Австралія"
 
 #: src/Admin/Settings/License.php:390
 msgid "Automatic"
@@ -424,12 +513,15 @@ msgstr "Автоматично"
 
 #: src/Admin/ComparisonTable/Settings.php:115
 msgid "Background color"
-msgstr "Background color"
+msgstr "Колір фону"
 
-#: src/Admin/Flyout.php:99
+#: assets/block/dist/index.js:1
+msgid "Basic"
+msgstr "Основний"
+
 #: src/Admin/Welcome.php:204
 msgid "Beginners Guide"
-msgstr "Посібник для Початківців"
+msgstr "Посібник для початківців"
 
 #: includes/functions.php:121
 msgid "Belgium"
@@ -437,31 +529,35 @@ msgstr "Бельгія"
 
 #: src/Admin/Welcome.php:99
 msgid "Best WordPress Plugin for Amazon Affiliates"
-msgstr "Найкращий плагін WordPress для Amazon Affiliates"
+msgstr "Найкращий плагін WordPress для Amazon Affiliates."
 
 #: includes/admin/functions.php:53
 #: includes/functions/class.bestseller.php:22
 #: includes/functions/class.bestseller.php:59
 #: includes/functions/class.bestseller.php:319
 msgid "Bestseller"
-msgstr "Bestseller"
+msgstr "Бестселер"
 
 #: src/Admin/Welcome.php:169
 #: assets/block/dist/index.js:1
 msgid "Bestseller Lists"
-msgstr "Списки Бестселерів"
+msgstr "Списки бестселерів"
 
 #: includes/functions/class.bestseller.php:300
 msgid "Bestseller No."
-msgstr "Bestseller No."
+msgstr "Бестселер №"
 
 #: includes/functions/class.bestseller.php:331
 msgid "Bestseller No. %NUMBER%"
-msgstr "Bestseller No. %NUMBER%"
+msgstr "Бестселер № %NUMBER%"
+
+#: assets/block/dist/index.js:1
+msgid "Bestseller (Lists)"
+msgstr "Бестселер (Списки)"
 
 #: src/ShortenLinks/Settings.php:77
 msgid "Bitly Access Token"
-msgstr "Токен Доступу Bitly"
+msgstr "Токен доступу Bitly"
 
 #: includes/functions/class.extended.php:104
 msgid "Blue"
@@ -470,160 +566,200 @@ msgstr "Синій"
 #: includes/functions/class.box.php:21
 #: includes/functions/class.box.php:58
 msgid "Boxes"
-msgstr "Boxes"
+msgstr "Коробки"
 
 #: includes/functions.php:122
 msgid "Brazil"
-msgstr "Brazil"
+msgstr "Бразилія"
 
 #: includes/functions/widgets/class.widget-bestseller.php:137
 #: includes/functions/widgets/class.widget-new-releases.php:139
 msgid "Browse Nodes"
-msgstr "Browse Nodes"
+msgstr "Перегляд Вузлів"
 
 #: includes/admin/list-overview.php:60
 msgid "Browse Nodes disabled"
-msgstr "Browse Nodes disabled"
+msgstr "Перегляд Вузлів вимкнено"
 
 #: includes/admin/list-edit.php:84
 msgid "Browse node id or keyword(s)"
-msgstr "Browse node id or keyword(s)"
+msgstr "Перегляньте ідентифікатор вузла або ключове(і) слово(а)"
+
+#: src/ClickTracking/ListTable.php:411
+msgid "Browser"
+msgstr "Браузер"
 
 #: src/Admin/Settings/Output.php:119
 #: assets/block/dist/index.js:1
 msgid "Button"
-msgstr "Button"
+msgstr "Кнопка"
+
+#: assets/block/dist/index.js:1
+msgid "Button Text"
+msgstr "Текст кнопки"
 
 #: src/Admin/ComparisonTable/functions.php:285
 msgid "Buy Now Button"
-msgstr "Buy Now Button"
+msgstr "Кнопка «Купити Зараз»"
 
-#: includes/class.aawp-functions.php:744
-#: includes/class.template-functions.php:1217
-#: src/Admin/Settings/Output.php:546
+#: includes/class.aawp-functions.php:740
+#: includes/class.template-functions.php:1228
+#: src/Admin/Settings/Output.php:560
 msgid "Buy on Amazon"
-msgstr "Buy on Amazon"
+msgstr "Купуйте на Amazon"
 
 #: src/Admin/ComparisonTable/Table.php:274
 msgid "By editing the following customizations, you are going to overwrite the <a href=\"%s\">global settings</a> for this table only."
-msgstr "By editing the following customizations, you are going to overwrite the <a href=\"%s\">global settings</a> for this table only."
+msgstr "Редагуючи наступні налаштування, ви заміните <a href=\"%s\">глобальні налаштування</a> лише для цієї таблиці."
+
+#: src/Admin/Settings/Output.php:639
+msgid "By enabling this option, AAWP assets will be loaded site-wide. Only check if your site is having styling or compatibility issues."
+msgstr "Якщо увімкнути цю опцію, ресурси AAWP будуть завантажені на весь сайт. Перевірте лише, чи немає на вашому сайті проблем зі стилем або сумісністю."
+
+#: src/Admin/Settings/Output.php:137
+msgid "CSS/JS Assets"
+msgstr "Ресурси CSS/JS"
 
 #: src/Admin/Settings/General.php:84
 msgid "Cache"
-msgstr "Cache"
+msgstr "Кеш"
 
 #: src/Admin/Settings/General.php:199
 msgid "Cache duration"
-msgstr "Cache duration"
+msgstr "Тривалість кешу"
 
-#: src/Admin/Settings.php:247
+#: src/Admin/Settings.php:208
 msgid "Cache will be updated in the background. This might take some minutes."
-msgstr "Cache will be updated in the background. This might take some minutes."
+msgstr "Кеш буде оновлюватися у фоновому режимі. Це може зайняти кілька хвилин."
 
 #: includes/functions.php:119
 msgid "Canada"
-msgstr "Canada"
+msgstr "Канада"
 
 #: src/Admin/ClassicEditor.php:300
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: includes/functions.php:186
+#: includes/functions.php:188
 #: assets/block/dist/index.js:1
 msgid "Cart"
-msgstr "Cart"
+msgstr "Кошик"
 
-#: src/Admin/Settings/Output.php:588
+#: src/Admin/Settings/Output.php:602
 msgid "Cart: Black"
-msgstr "Cart: Black"
+msgstr "Кошик: Чорний"
 
-#: src/Admin/Settings/Output.php:589
+#: src/Admin/Settings/Output.php:603
 msgid "Cart: White"
-msgstr "Cart: White"
+msgstr "Кошик: Білий"
 
 #: includes/functions/class.link.php:95
 msgid "Cart icon"
 msgstr "Іконка кошика"
 
+#: assets/block/dist/index.js:1
+msgid "Center"
+msgstr "Центр"
+
 #: includes/admin/infoboxes.php:102
 #: includes/admin/infoboxes.php:108
 msgid "Changelog"
-msgstr "Changelog"
+msgstr "Список змін"
 
-#: src/Admin/Settings/Output.php:177
-#: src/Admin/Settings/Output.php:304
-#: src/Admin/Settings/Output.php:357
+#: src/Admin/Settings/Output.php:191
+#: src/Admin/Settings/Output.php:318
+#: src/Admin/Settings/Output.php:371
 msgid "Characters"
-msgstr "Characters"
+msgstr "Символи"
+
+#: src/ClickTracking/Init.php:696
+msgid "Chart"
+msgstr "Діаграма"
+
+#: src/ClickTracking/Init.php:503
+msgid "Chart Type"
+msgstr "Тип Діаграми"
 
 #: src/Plugin.php:108
 #: src/Plugin.php:120
 msgid "Cheatin&#8217; huh?"
-msgstr "Cheatin&#8217; huh?"
+msgstr "Шахраюєш, так?"
 
 #: includes/functions/components/cronjobs.php:43
 msgid "Check if you <u>don't</u> want to use the built-in cronjobs for updating the cache"
-msgstr "Check if you <u>don't</u> want to use the built-in cronjobs for updating the cache"
+msgstr "Перевірте, чи не хочете ви <u>не</u> використовувати вбудовані крон-завдання для оновлення кешу"
 
 #: src/Admin/Settings/General.php:213
 msgid "Check in order to <u>disable</u> the built in database garbage collection"
-msgstr "Check in order to <u>disable</u> the built in database garbage collection"
+msgstr "Перевірте, щоб <u>відключити</u> вбудовану збірку сміття в базі даних"
 
 #: includes/functions/components/geotargeting.php:69
 msgid "Check in order to active geotargeting functionality"
-msgstr "Check in order to active geotargeting functionality"
+msgstr "Перевірте, щоб активувати функцію геотаргетингу"
 
-#: src/Admin/Settings/Output.php:217
+#: src/Admin/Settings/Output.php:231
 msgid "Check in order to deliver images via a privacy proxy"
-msgstr "Check in order to deliver images via a privacy proxy"
+msgstr "Перевірте, щоб передавати зображення через проксі-сервер"
 
 #: src/Admin/Settings/General.php:251
 msgid "Check in order to download images and host them locally instead of using Amazon servers"
-msgstr "Check in order to download images and host them locally instead of using Amazon servers"
+msgstr "Перевірте, щоб завантажувати зображення та розміщувати їх локально, а не на серверах Amazon"
 
 #: src/Admin/Settings/General.php:322
 msgid "Check in order to execute shortcodes within term/category/archive descriptions"
-msgstr "Check in order to execute shortcodes within term/category/archive descriptions"
+msgstr "Перевірте, щоб виконати шорткоди в описах термінів/категорій/архівів"
 
 #: src/Admin/Settings/General.php:318
 msgid "Check in order to execute shortcodes within text widgets"
-msgstr "Check in order to execute shortcodes within text widgets"
+msgstr "Встановіть прапорець для виконання шорткодов у текстових віджетах"
 
 #: includes/functions/components/stores.php:50
 msgid "Check in order to setup multiple tracking ids for further functionality"
-msgstr "Check in order to setup multiple tracking ids for further functionality"
+msgstr "Перевірте, щоб налаштувати кілька ідентифікаторів відстеження для подальшої функціональності"
 
-#: src/Admin/Settings/Output.php:322
+#: src/Admin/Settings/Output.php:336
 msgid "Check in order to show descriptions on mobile devices too"
-msgstr "Check in order to show descriptions on mobile devices too"
+msgstr "Поставте прапорець, щоб описи також відображалися на мобільних пристроях"
 
 #: src/Admin/Settings/General.php:410
 msgid "Check in order to show disclaimer after widgets in any case"
-msgstr "Check in order to show disclaimer after widgets in any case"
+msgstr "Перевірте, щоб показувати відмову від відповідальності після віджетів у будь-якому випадку"
 
-#: src/Admin/Settings/Output.php:504
+#: src/Admin/Settings/Output.php:518
 msgid "Check in order to show old price"
-msgstr "Check in order to show old price"
+msgstr "Перевірте, щоб показати стару ціну"
 
-#: src/Admin/Settings/Output.php:508
+#: src/Admin/Settings/Output.php:522
 msgid "Check in order to show price reduction"
-msgstr "Check in order to show price reduction"
+msgstr "Поставте прапорець, щоб показати зниження ціни"
 
 #: includes/functions/components/affiliate-links-extended.php:51
 msgid "Check in order to use \"add to cart\" links instead of the default links"
-msgstr "Check in order to use \"add to cart\" links instead of the default links"
+msgstr "Перевірте, щоб використовувати посилання «додати в кошик» замість посилань за замовчуванням"
 
 #: src/Admin/Settings/General.php:438
 msgid "Check only in case shortcodes produce unneeded spacing, line-breaks or empty paragraphs."
-msgstr "Check only in case shortcodes produce unneeded spacing, line-breaks or empty paragraphs."
+msgstr "Перевіряйте, лише якщо шорткоди створюють непотрібні інтервали, розриви рядків або порожні абзаци."
+
+#: src/ClickTracking/Settings.php:55
+msgid "Check the user roles that should be excluded from tracking."
+msgstr "Перевірте ролі користувачів, які слід виключити з відстеження."
+
+#: src/ClickTracking/Settings.php:45
+msgid "Check to enable tracking Amazon affiliate links clicks."
+msgstr "Перевірте, щоб включити відстеження кліків партнерських посилань Amazon."
+
+#: src/ClickTracking/Settings.php:64
+msgid "Check to enable tracking the location of the visitor."
+msgstr "Перевірте, щоб включити відстеження місцезнаходження відвідувача."
 
 #: includes/functions/class.extended.php:314
 msgid "Check your <a href=\"%s\">Amazon associates page</a> for more information."
-msgstr "Check your <a href=\"%s\">Amazon associates page</a> for more information."
+msgstr "Перевірте свою <a href=\"%s\">сторінку Amazon Associates</a> для отримання додаткової інформації."
 
 #: includes/functions.php:123
 msgid "China"
-msgstr "China"
+msgstr "Китай"
 
 #: src/Admin/ClassicEditor.php:263
 #: src/Elementor/Widget.php:182
@@ -632,47 +768,83 @@ msgstr "Виберіть значення поля"
 
 #: src/Admin/Welcome.php:134
 msgid "Choose the products you want to display on your website and place them anywhere you like!"
-msgstr "Виберіть продукти, які ви хочете відобразити на своєму веб-сайті, і розмістіть їх у будь-якому зручному місці!"
+msgstr "Виберіть товари, які ви хочете відобразити на своєму веб-сайті, і розмістіть їх у будь-якому зручному місці!"
 
 #: src/Admin/ClassicEditor.php:282
 #: src/Elementor/Widget.php:213
 msgid "Choose your comparison table"
-msgstr "Виберіть свою порівняльну таблицю"
+msgstr "Виберіть таблицю порівняння"
 
-#: src/Admin/AdvancedAds/Ad.php:85
+#: src/Admin/AdvancedAds/Ad.php:95
 #: src/Admin/ClassicEditor.php:252
 msgid "Choose your display variant"
-msgstr "Виберіть свій варіант відображення"
+msgstr "Виберіть варіант відображення"
+
+#: assets/block/dist/index.js:1
+msgid "Choose your display variant:"
+msgstr "Виберіть варіант відображення:"
 
 #: src/Admin/Settings/General.php:142
 msgid "Cleanup shortcode output"
-msgstr "Cleanup shortcode output"
+msgstr "Очистити вихід шорткоду"
+
+#: src/ClickTracking/ListTable.php:49
+msgid "Click"
+msgstr "Натисніть"
 
 #: includes/functions/class.extended.php:330
 msgid "Click Tracking"
-msgstr "Click Tracking"
+msgstr "Відстеження Kліків"
+
+#: src/ClickTracking/Init.php:460
+msgid "Click Tracking Disabled."
+msgstr "Відстеження Kліків Вимкнено."
+
+#: includes/functions/class.extended.php:330
+msgid "Click Tracking (Deprecated)"
+msgstr "Відстеження Kліків (Застаріле)"
+
+#: includes/functions/class.extended.php:341
+msgid "Click Tracking (New)"
+msgstr "Відстеження Kліків (Hове)"
+
+#: src/ClickTracking/ListTable.php:604
+msgid "Click Tracking is currently disabled."
+msgstr "Відстеження Kліків наразі вимкнено."
 
 #: includes/admin/infoboxes.php:181
 msgid "Click here to submit translations"
-msgstr "Click here to submit translations"
+msgstr "Натисніть тут, щоб надіслати переклади"
 
 #: src/Admin/ComparisonTable/Table.php:448
 msgid "Click in order to start product search"
-msgstr "Click in order to start product search"
+msgstr "Натисніть, щоб розпочати пошук продукту"
+
+#: src/Admin/ProductsTable/ListTable.php:222
+#: src/ClickTracking/Init.php:61
+#: src/ClickTracking/Init.php:102
+#: src/ClickTracking/Init.php:188
+#: src/ClickTracking/ListTable.php:48
+msgid "Clicks"
+msgstr "Кліки"
 
 #: includes/admin/modals.php:41
 #: src/Admin/ClassicEditor.php:236
 msgid "Close"
-msgstr "Close"
+msgstr "Закрити"
 
 #: src/Admin/Welcome.php:176
 msgid "Compare multiple products with each other by creating a comparison table with our handy table builder."
-msgstr "Порівняйте кілька продуктів між собою, створивши порівняльну таблицю за допомогою нашого зручного конструктора таблиць."
+msgstr "Порівнюйте кілька товарів між собою, створивши порівняльну таблицю за допомогою нашого зручного конструктора таблиць."
 
 #: src/Admin/Welcome.php:175
 #: assets/block/dist/index.js:1
 msgid "Comparison Tables"
-msgstr "Порівняльні Tаблиці"
+msgstr "Tаблиці порівняння"
+
+#: assets/block/dist/index.js:1
+msgid "Comparison  Table"
+msgstr "Таблиця порівняння"
 
 #: src/ActivityLogs/ListTable.php:300
 msgid "Component"
@@ -680,113 +852,138 @@ msgstr "Компонент"
 
 #: src/Admin/ComparisonTable/Table.php:229
 msgid "Configuration"
-msgstr "Configuration"
+msgstr "Конфігурація"
 
 #: src/Admin/ComparisonTable/functions.php:247
 msgid "Confirm selection"
-msgstr "Confirm selection"
+msgstr "Підтвердити вибір"
 
 #: src/Admin/Settings/API.php:333
 msgid "Connect"
-msgstr "Connect"
+msgstr "Підключитися"
 
 #: includes/admin/infoboxes.php:72
 msgid "Connect with us!"
-msgstr "Connect with us!"
+msgstr "Зв'яжіться з нами!"
 
 #: src/Admin/Settings/API.php:319
-#: src/Admin/Support.php:186
+#: src/Admin/Tools/Support.php:161
 msgid "Connected"
-msgstr "Connected"
+msgstr "Підключено"
 
-#: src/Admin/Flyout.php:109
 #: src/Admin/Welcome.php:227
 msgid "Contact Support"
-msgstr "Зверніться до служби Підтримки"
+msgstr "Зверніться до служби підтримки"
 
 #: includes/libraries/class.plugin-updater.php:263
 msgid "Contact your network administrator to install the update."
-msgstr "Щоб установити оновлення, зверніться до адміністратора мережі."
+msgstr "Щоб установити оновлення, зверніться до свого мережевого адміністратора."
 
 #: src/Admin/ComparisonTable/Table.php:175
 #: src/Admin/ComparisonTable/Table.php:688
 msgid "Copy Shortcode"
 msgstr "Копіювати шорткод"
 
-#: src/Admin/Support.php:175
+#: src/Admin/Tools/Support.php:150
 msgid "Core version"
-msgstr "Core version"
+msgstr "Основна версія"
 
-#: includes/product-helper-functions.php:979
+#: includes/product-helper-functions.php:977
 msgid "Could not write file %s"
-msgstr "Could not write file %s"
+msgstr "Не вдалося записати файл %s"
 
 #: src/Admin/Settings/API.php:109
+#: src/ClickTracking/ListTable.php:417
 msgid "Country"
 msgstr "Країна"
 
 #: src/Admin/Welcome.php:170
 msgid "Create automated bestseller lists & set the number of products individually: e.g. Top 3, Top 10 etc."
-msgstr "Створюйте автоматизовані списки бестселерів та встановлюйте кількість продуктів індивідуально: наприклад, Топ-3, Топ-10 тощо."
+msgstr "Створюйте автоматичні списки бестселерів та встановлюйте індивідуальну кількість товарів: наприклад, Top 3, Top 10 і т.д."
 
-#: src/Admin/Support.php:400
+#: src/Admin/Tools/Support.php:375
 msgid "Create the database tables of the plugin"
-msgstr "Create the database tables of the plugin"
+msgstr "Створіть таблиці бази даних плагіна"
 
-#: src/Admin/ProductsTable/ListTable.php:219
+#: src/Admin/ProductsTable/ListTable.php:225
+#: src/ClickTracking/ListTable.php:410
 msgid "Created At"
 msgstr "Створено в"
 
 #: src/Admin/Settings/API.php:300
 msgid "Creating API Keys"
-msgstr "Creating API Keys"
+msgstr "Створення Kлючів API"
 
 #: src/Admin/Settings/General.php:151
 msgid "Credits"
-msgstr "Credits"
+msgstr "Кредити"
 
-#: src/Admin/Settings/Output.php:531
+#: src/Admin/Settings/Output.php:545
 msgid "Currency Format"
-msgstr "Currency Format"
+msgstr "Формат Валюти"
+
+#: src/ClickTracking/ListTable.php:536
+msgid "Custom"
+msgstr "Користувацький"
 
 #: src/Admin/ComparisonTable/functions.php:290
 msgid "Custom Button"
-msgstr "Custom Button"
+msgstr "Користувацька Кнопка"
 
-#: src/Admin/Settings/Output.php:133
+#: src/Admin/Settings/Output.php:147
 msgid "Custom CSS"
-msgstr "Custom CSS"
+msgstr "Власний CSS"
+
+#: assets/block/dist/index.js:1
+msgid "Custom CSS Class"
+msgstr "Власний CSS клас"
+
+#: assets/block/dist/index.js:1
+msgid "Custom Description"
+msgstr "Власний опис"
 
 #: src/Admin/ComparisonTable/functions.php:292
 msgid "Custom HTML"
-msgstr "Custom HTML"
+msgstr "Користувацький HTML"
+
+#: assets/block/dist/index.js:1
+msgid "Custom Price"
+msgstr "Власна ціна"
+
+#: assets/block/dist/index.js:1
+msgid "Custom Rating"
+msgstr "Власний рейтинг"
+
+#: assets/block/dist/index.js:1
+msgid "Custom Ribbon Text"
+msgstr "Власний текст стрічки"
 
 #: includes/functions/widgets/class.widget-bestseller.php:128
 #: includes/functions/widgets/class.widget-box.php:120
 #: includes/functions/widgets/class.widget-new-releases.php:130
 msgid "Custom Template:"
-msgstr "Користувацький шаблон:"
+msgstr "Власний шаблон:"
 
 #: src/Admin/ComparisonTable/functions.php:291
 msgid "Custom Text"
-msgstr "Custom Text"
+msgstr "Користувацький Tекст"
 
 #: includes/functions/components/customizations.php:114
 msgid "Custom style"
-msgstr "Custom style"
+msgstr "Користувальницький стиль"
 
 #: includes/functions/components/templating.php:31
 msgid "Custom template"
-msgstr "Custom template"
+msgstr "Користувацький шаблон"
 
 #: templates/comparison.php:51
 #: templates/comparison.php:56
 msgid "Customer Rating"
-msgstr "Рейтинг Kлієнтів"
+msgstr "Рейтинг користувачів"
 
 #: src/Admin/ComparisonTable/Table.php:271
 msgid "Customizations"
-msgstr "Кастомізації"
+msgstr "Персоналізації"
 
 #: includes/functions/class.extended.php:109
 #: includes/functions/components/customizations.php:50
@@ -796,63 +993,64 @@ msgstr "Темний"
 
 #: includes/admin/dashboard-page.php:18
 msgid "Dashboard"
-msgstr "Dashboard"
+msgstr "Панель управління"
 
 #: includes/functions/class.fields.php:62
 #: assets/block/dist/index.js:1
 msgid "Data Fields"
-msgstr "Поля Даних"
+msgstr "Поля даних"
 
-#: src/Admin/Support.php:240
+#: src/Admin/Tools/Support.php:215
 msgid "Database"
 msgstr "База даних"
 
-#: src/Admin/Support.php:230
+#: src/Admin/Tools/Support.php:205
 msgid "Database, Cache & Cronjobs"
-msgstr "Database, Cache & Cronjobs"
+msgstr "База даних, Кеш & Cronjobs"
 
 #: src/Admin/Settings/General.php:207
 msgid "Database Garbage Colection"
-msgstr "Database Garbage Colection"
+msgstr "Збір відходів даних"
 
 #: src/Admin/Settings/General.php:207
 msgid "Database Garbage Collection"
-msgstr "Database Garbage Collection"
+msgstr "Видалення застарілих даних з бази даних"
 
 #: src/Admin/Settings/General.php:330
+#: src/ClickTracking/Init.php:604
 msgid "Date"
 msgstr "Дата"
 
 #: src/Admin/Settings/General.php:331
 msgid "Date and time"
-msgstr "Date and time"
+msgstr "Дата й час"
 
 #: src/Admin/Settings/License.php:366
 msgid "Deactivate License"
-msgstr "Деактивувати Ліцензію"
+msgstr "Деактивувати ліцензію"
 
 #: includes/functions/components/cronjobs.php:40
 msgid "Deactivating built-in cronjobs"
-msgstr "Deactivating built-in cronjobs"
+msgstr "Дезактивація вбудованих cronjob"
 
 #: includes/admin/class.support.php:407
 msgid "Debug logs"
-msgstr "Debug logs"
+msgstr "Журнали налагодження"
 
 #: includes/admin/class.support.php:401
 msgid "Debug mode"
-msgstr "Debug mode"
+msgstr "Режим налагодження"
 
-#: src/Admin/Settings/Output.php:523
-#: src/Admin/Settings/Output.php:524
+#: src/Admin/Settings/Output.php:537
+#: src/Admin/Settings/Output.php:538
 msgid "Declaration in %1$s"
-msgstr "Declaration in %1$s"
+msgstr "Декларація в %1$s"
 
 #: includes/functions/components/geotargeting.php:45
-#: src/Admin/AdvancedAds/Ad.php:175
+#: src/Admin/AdvancedAds/Ad.php:185
 #: assets/block/dist/index.js:1
 msgid "Default"
-msgstr "Default"
+msgstr "За замовчуванням"
 
 #: src/Admin/ComparisonTable/Settings.php:82
 msgid "Default Template"
@@ -861,34 +1059,46 @@ msgstr "Шаблон за замовчуванням"
 #: includes/functions/class.bestseller.php:92
 #: includes/functions/class.new-releases.php:89
 msgid "Default items"
-msgstr "Default items"
+msgstr "Елементи за замовчуванням"
 
 #: src/Admin/ComparisonTable/Settings.php:102
 msgid "Default style"
-msgstr "Default style"
+msgstr "Стиль за замовчуванням"
 
-#: src/Admin/Settings/Output.php:343
+#: src/Admin/Settings/Output.php:357
 msgid "Define the maximum length of the description text in the \"list\" template."
-msgstr "Define the maximum length of the description text in the \"list\" template."
+msgstr "Визначте максимальну довжину тексту опису в шаблоні \"список\"."
 
-#: src/Admin/AdvancedAds/Ad.php:167
+#: src/Admin/AdvancedAds/Ad.php:177
 #: src/Admin/ClassicEditor.php:280
 #: assets/block/dist/index.js:1
 msgid "Defines the maximum amount of products which will be shown."
-msgstr "Визначає максимальну кількість продуктів, які будуть показані."
+msgstr "Визначає максимальну кількість товарів, які будуть показані."
+
+#: assets/block/dist/index.js:1
+msgid "Defining the characteristic for applying the filter."
+msgstr "Визначення характеристик для застосування фільтру."
+
+#: assets/block/dist/index.js:1
+msgid "Defining the filter direction."
+msgstr "Визначення напрямку фільтра."
 
 #: src/Admin/ProductsTable/ListTable.php:77
-#: src/Admin/ProductsTable/ListTable.php:263
+#: src/Admin/ProductsTable/ListTable.php:269
 msgid "Delete"
-msgstr "Видаляти"
+msgstr "Видалити"
 
-#: src/ActivityLogs/ListTable.php:464
+#: src/ActivityLogs/ListTable.php:458
 msgid "Delete All Logs"
-msgstr "Видалити Всі Журнали"
+msgstr "Видалити всі журнали"
 
 #: src/Admin/ProductsTable/ListTable.php:520
 msgid "Delete All Products"
-msgstr "Видалити Всі Продукти"
+msgstr "Видалити всі товари"
+
+#: assets/block/dist/index.js:1
+msgid "Descending"
+msgstr "По спаданню"
 
 #: includes/admin/product-edit.php:157
 #: src/Admin/ClassicEditor.php:268
@@ -898,25 +1108,41 @@ msgstr "Видалити Всі Продукти"
 msgid "Description"
 msgstr "Опис"
 
-#: includes/functions.php:185
+#: assets/block/dist/index.js:1
+msgid "Description Items"
+msgstr "Елементи опису"
+
+#: assets/block/dist/index.js:1
+msgid "Description Length"
+msgstr "Довжина опису"
+
+#: includes/functions.php:187
 msgid "Detail Page"
-msgstr "Detail Page"
+msgstr "Сторінка Деталей"
 
 #: src/Admin/Welcome.php:215
 msgid "Detailed instructions on how to install, configure and use our plugin, you can find in our documentation."
-msgstr "Детальну інструкцію по встановленню, налаштуванню та використанню нашого плагіна ви можете знайти в нашій документації."
+msgstr "Детальні інструкції щодо встановлення, налаштування та використання нашого плагіна ви знайдете в нашій документації."
 
 #: includes/admin/list-overview.php:34
 #: includes/admin/product-overview.php:33
 #: includes/functions/class.extended.php:164
 #: includes/functions/class.extended.php:244
-#: includes/functions/class.extended.php:456
+#: includes/functions/class.extended.php:464
 msgid "Details"
-msgstr "Деталі"
+msgstr "Докладніше"
 
 #: includes/functions/class.extended.php:154
 msgid "Details Button"
-msgstr "Кнопка Деталі"
+msgstr "Кнопка Докладніше"
+
+#: src/ClickTracking/ListTable.php:413
+msgid "Device"
+msgstr "Пристрій"
+
+#: assets/block/dist/index.js:1
+msgid "Direction of ordering."
+msgstr "Напрямок сортування."
 
 #: includes/functions/class.extended.php:62
 #: includes/functions/class.extended.php:324
@@ -925,107 +1151,124 @@ msgstr "Кнопка Деталі"
 #: src/Admin/Settings/General.php:347
 #: src/Admin/Settings/General.php:380
 #: src/Admin/Settings/General.php:446
-#: src/Admin/Settings/Output.php:315
-#: src/Admin/Support.php:157
-#: src/Admin/Support.php:303
+#: src/Admin/Settings/Output.php:329
+#: src/Admin/Tools/Support.php:132
+#: src/Admin/Tools/Support.php:278
 msgid "Disabled"
-msgstr "Disabled"
+msgstr "Вимкнено"
+
+#: src/Admin/Settings/General.php:89
+msgid "Discarded Products"
+msgstr "Відкинуті Продукти"
 
 #: src/Admin/Settings/General.php:133
 msgid "Disclaimer"
-msgstr "Disclaimer"
+msgstr "Відмова від відповідальності"
 
 #: src/Admin/Settings/API.php:331
 msgid "Disconnect"
-msgstr "Disconnect"
+msgstr "Відключити"
 
 #: src/Admin/Settings/API.php:321
-#: src/Admin/Support.php:188
+#: src/Admin/Tools/Support.php:163
 msgid "Disconnected"
-msgstr "Disconnected"
+msgstr "Відключено"
 
 #: includes/hooks.php:535
 msgid "Disconnected from Amazon API: %s"
-msgstr "Disconnected from Amazon API: %s"
+msgstr "Від'єднано від Amazon API: %s"
 
 #: includes/hooks.php:523
 msgid "Disconnected from Amazon API: <code>%s</code>"
 msgstr "Відключено від Amazon API: <code>%s</code>"
 
+#: src/API/Notifications.php:404
+msgid "Dismiss this message"
+msgstr "Ігнорувати це повідомлення"
+
+#: assets/block/dist/index.js:1
+msgid "Display \"Buy on Amazon\" Button"
+msgstr "Відобразити кнопку \"Купити на Amazon\""
+
 #: includes/functions/class.extended.php:304
 msgid "Display Amazon Prime logo besides the advertised price, whenever this service is available for the related product."
-msgstr "Display Amazon Prime logo besides the advertised price, whenever this service is available for the related product."
+msgstr "Відображати логотип Amazon Prime поряд з оголошеною ціною, коли ця послуга доступна для відповідного продукту."
 
 #: src/Elementor/Widget.php:132
 msgid "Display Variant"
-msgstr "Варіант Відображення"
+msgstr "Відобразити варіант"
 
 #: includes/functions/widgets/class.widget-bestseller.php:26
 msgid "Display an automated bestseller list."
-msgstr "Display an automated bestseller list."
+msgstr "Відображення автоматизованого списку бестселерів."
 
 #: includes/functions/widgets/class.widget-new-releases.php:26
 msgid "Display an automated new releases list."
-msgstr "Відображення автоматизованого списку нових релізів."
+msgstr "Відобразити автоматизований список нових релізів."
 
 #: includes/functions/class.link.php:102
 msgid "Display icon after single links"
-msgstr "Display icon after single links"
+msgstr "Відображати піктограму після окремих посилань"
 
 #: includes/functions/widgets/class.widget-box.php:26
 msgid "Display single or multiple product boxes"
-msgstr "Показати однієї або кількох коробок продуктів"
+msgstr "Відобразити однин або декілька товарів"
 
 #: includes/admin/functions.php:95
 msgid "Displaying a message in case no products were found."
-msgstr "Displaying a message in case no products were found."
+msgstr "Відображення повідомлення, якщо продукти не знайдено."
+
+#: assets/block/dist/index.js:1
+msgid "Displaying an extra button and setting up the link target."
+msgstr "Відображення додаткової кнопки та налаштування посилання."
+
+#: assets/block/dist/index.js:1
+msgid "Displaying product boxes side by side."
+msgstr "Відображення товарів один біля одного."
 
 #: includes/functions/components/templating.php:47
 msgid "Do <u>not</u> enter the file extension! Valid example: <strong>my_template</strong>"
-msgstr "Do <u>not</u> enter the file extension! Valid example: <strong>my_template</strong>"
+msgstr "<u>Не</u> вводьте розширення файлу! Правильний приклад: <strong>my_template</strong>"
 
 #: src/Admin/Welcome.php:220
 msgid "Do you need assistance?"
 msgstr "Вам потрібна допомога?"
 
-#: includes/admin/infoboxes.php:101
-#: includes/admin/infoboxes.php:107
 #: includes/admin/plugins.php:51
 #: includes/functions/widgets/class.widget-bestseller.php:136
 #: includes/functions/widgets/class.widget-box.php:128
 #: includes/functions/widgets/class.widget-new-releases.php:138
-#: src/Admin/Flyout.php:104
 msgid "Documentation"
-msgstr "Documentation"
+msgstr "Документація"
 
 #: src/Admin/Settings/API.php:299
 #: src/Admin/Settings/License.php:327
 msgid "Documentation:"
-msgstr "Documentation:"
+msgstr "Документація:"
 
 #: includes/admin/infoboxes.php:124
 msgid "Don't miss any update and news about the plugin and sign up for our newsletter."
-msgstr "Don't miss any update and news about the plugin and sign up for our newsletter."
+msgstr "Не пропустіть жодного оновлення та новин про плагін і підпишіться на нашу розсилку."
 
-#: src/Admin/Settings/Output.php:481
+#: src/Admin/Settings/Output.php:495
 msgid "Don't show any messages when pricing is not available"
-msgstr "Don't show any messages when pricing is not available"
+msgstr "Не показувати жодних повідомлень, якщо ціна недоступна"
 
 #: includes/admin/class.support.php:425
 msgid "Download Log File"
-msgstr "Download Log File"
+msgstr "Завантажити файл журналу"
 
-#: src/Admin/Support.php:461
+#: src/Admin/Tools/Support.php:432
 msgid "Download System Info File"
-msgstr "Download System Info File"
+msgstr "Завантажити Файл Інформації про Систему"
 
-#: includes/class.aawp-functions.php:731
+#: includes/class.aawp-functions.php:727
 msgid "Due to recent adjustments of the new Amazon API, right now it is not possible to pass a Browse Node ID. Please use a search term like \"Harry Potter\" instead (<a href=\"%s\" target=\"_blank\" rel=\"nofollow\">Click here for more details</a>)."
-msgstr "Due to recent adjustments of the new Amazon API, right now it is not possible to pass a Browse Node ID. Please use a search term like \"Harry Potter\" instead (<a href=\"%s\" target=\"_blank\" rel=\"nofollow\">Click here for more details</a>)."
+msgstr "У зв'язку з нещодавніми змінами в новому API Amazon, наразі неможливо передати Iдентифікатор Вузла Перегляду. Будь ласка, використовуйте пошуковий термін на кшталт \"Гаррі Поттер\" (<a href=\"%s\" target=\"_blank\" rel=\"nofollow\">Клікніть тут для отримання докладнішої інформації</a>)."
 
 #: src/Admin/Settings/General.php:254
 msgid "Due to the terms and conditions of Amazon Associates it's not allowed to store images on your server. The use of this feature is on your responsibility and may lead into being banned from their affiliate program."
-msgstr "Due to the terms and conditions of Amazon Associates it's not allowed to store images on your server. The use of this feature is on your responsibility and may lead into being banned from their affiliate program."
+msgstr "Згідно з умовами та положеннями Amazon Associates заборонено зберігати зображення на вашому сервері. Використання цієї функції є вашою відповідальністю і може призвести до заборони на участь у їхній партнерській програмі."
 
 #: src/Admin/ComparisonTable/DuplicateTable.php:59
 msgid "Duplicate"
@@ -1041,68 +1284,99 @@ msgstr "EAN"
 
 #: includes/admin/list-edit.php:105
 msgid "Edit"
-msgstr "Edit"
+msgstr "Редагувати"
 
 #: src/Admin/ComparisonTable/Table.php:64
 msgid "Edit Table"
-msgstr "Edit Table"
+msgstr "Редагувати Tаблицю"
 
-#: includes/product-helper-functions.php:549
-#: includes/product-helper-functions.php:659
+#: includes/product-helper-functions.php:547
+#: includes/product-helper-functions.php:657
 msgid "Edition no. %d"
-msgstr "Edition no. %d"
+msgstr "Видання № %d"
+
+#: includes/functions.php:124
+msgid "Egypt"
+msgstr "Єгипет"
 
 #: includes/admin/infoboxes.php:133
 msgid "Email address"
 msgstr "Адреса електронної пошти"
 
+#: src/ClickTracking/Settings.php:218
+msgid "Empty Clicks"
+msgstr "Порожні Kліки"
+
+#: src/API/Notifications.php:173
+msgid "Empty response body!"
+msgstr "Порожнє тіло відповіді!"
+
+#: src/ClickTracking/Settings.php:44
+msgid "Enable Click Tracking"
+msgstr "Увімкнути Відстеження Kліків"
+
+#: src/ClickTracking/Settings.php:63
+msgid "Enable Location (Country) Tracking"
+msgstr "Увімкнути Відстеження Місцезнаходження (Країни)"
+
 #: src/ActivityLogs/Settings.php:43
 msgid "Enable Logging"
-msgstr "Увімкнути Журналювання"
+msgstr "Увімкнути ведення журналу"
 
 #: includes/admin/class.support.php:413
 msgid "Enable debug logging"
-msgstr "Enable debug logging"
+msgstr "Увімкнути ведення журналу налагодження"
 
-#: src/Admin/Settings/Output.php:313
-#: src/Admin/Support.php:156
+#: src/Admin/Settings/Output.php:327
+#: src/Admin/Tools/Support.php:131
 msgid "Enabled"
-msgstr "Enabled"
+msgstr "Увімкнено"
 
-#: src/ActivityLogs/ListTable.php:373
-#: src/ActivityLogs/ListTable.php:376
-#: src/ActivityLogs/ListTable.php:378
+#: src/ActivityLogs/ListTable.php:377
+#: src/ActivityLogs/ListTable.php:380
+#: src/ActivityLogs/ListTable.php:382
+#: src/ClickTracking/ListTable.php:501
+#: src/ClickTracking/ListTable.php:504
+#: src/ClickTracking/ListTable.php:506
 msgid "End date"
 msgstr "Дата завершення"
 
 #: src/Admin/ComparisonTable/Table.php:639
 msgid "Enter ASIN..."
-msgstr "Enter ASIN..."
+msgstr "Введіть ASIN..."
 
 #: src/Admin/ComparisonTable/Table.php:447
 msgid "Enter ASIN ..."
-msgstr "Enter ASIN ..."
+msgstr "Введіть ASIN ..."
+
+#: assets/block/dist/index.js:1
+msgid "Enter ASIN here..."
+msgstr "Введіть ASIN..."
 
 #: src/Admin/ComparisonTable/Table.php:332
 msgid "Enter a label or leave empty..."
-msgstr "Enter a label or leave empty..."
+msgstr "Введіть етикетку або залиште порожнім..."
 
 #: includes/functions/widgets/class.widget-bestseller.php:105
 #: includes/functions/widgets/class.widget-new-releases.php:105
 msgid "Enter a search term such as \"smartphone\""
-msgstr "Enter a search term such as \"smartphone\""
+msgstr "Введіть пошуковий термін, наприклад «смартфон»"
 
 #: src/Admin/ComparisonTable/Table.php:557
 msgid "Enter button text..."
-msgstr "Enter button text..."
+msgstr "Введіть текст кнопки..."
 
 #: src/Admin/ComparisonTable/Table.php:563
 msgid "Enter button url..."
-msgstr "Enter button url..."
+msgstr "Введіть URL-адресу кнопки..."
+
+#: assets/block/dist/index.js:1
+msgid "Enter keywords here. E.g. \"top 4k monitors\""
+msgstr "Введіть ключові слова. Наприклад, \"найкращі монітори 4k\""
 
 #: src/Admin/ComparisonTable/functions.php:237
 msgid "Enter search term..."
-msgstr "Enter search term..."
+msgstr "Введіть пошуковий термін..."
 
 #: src/Admin/Welcome.php:109
 msgid "Enter the license key in the plugin settings that you received when you purchased AAWP."
@@ -1110,19 +1384,23 @@ msgstr "Введіть в налаштуваннях плагіна ліценз
 
 #: src/Admin/Welcome.php:118
 msgid "Enter your Amazon API Key. If you have questions about this, read our <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferer\">documentation</a>."
-msgstr "Введіть свій ключ API Amazon. Якщо у вас є питання з цього приводу, прочитайте нашу <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferer\">документацію</a>."
+msgstr "Введіть ваш ключ Amazon API. Якщо у вас є питання з цього приводу, ознайомтесь з нашою <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferer\">документацією</a>."
 
-#: src/Admin/Support.php:321
+#: src/Admin/Tools/Support.php:296
 msgid "Environment"
-msgstr "Environment"
+msgstr "Середовище"
+
+#: assets/block/dist/index.js:1
+msgid "Equal"
+msgstr "Дорівнює"
 
 #: includes/libraries/class.plugin-updater.php:519
 msgid "Error"
-msgstr "Error"
+msgstr "Помилка"
 
 #: includes/admin/class.support.php:417
 msgid "Error codes found? Please check this article: <a href=\"%s\" rel=\"nofollow\" target=\"_blank\">Amazon API Error Codes</a>."
-msgstr "Error codes found? Please check this article: <a href=\"%s\" rel=\"nofollow\" target=\"_blank\">Amazon API Error Codes</a>."
+msgstr "Знайдено коди помилок? Будь ласка, перевірте цю статтю: <a href=\"%s\" rel=\"nofollow\" target=\"_blank\">Коди помилок API Amazon</a>."
 
 #: includes/hooks.php:24
 msgid "Every 10 minutes"
@@ -1132,74 +1410,124 @@ msgstr "Кожні 10 хвилин"
 msgid "Example"
 msgstr "Приклад"
 
+#: assets/block/dist/index.js:1
+msgid "Exclude"
+msgstr "Виключити"
+
+#: src/ClickTracking/Settings.php:54
+msgid "Exclude User Roles"
+msgstr "Виключити Ролі Користувачів"
+
+#: assets/block/dist/index.js:1
+msgid "Extra Button"
+msgstr "Додаткова кнопка"
+
 #: src/Admin/ComparisonTable/Table.php:71
 msgid "Featured Image"
-msgstr "Featured Image"
+msgstr "Рекомендоване Зображення"
 
 #: src/Admin/Settings/General.php:456
 msgid "Feel free to spread it to the world if you are happy with this plugin and want to support me :)"
-msgstr "Feel free to spread it to the world if you are happy with this plugin and want to support me :)"
+msgstr "Не соромтеся поширювати його по світу, якщо ви задоволені цим плагіном і хочете підтримати мене:)"
 
-#: src/ActivityLogs/ListTable.php:424
+#: src/API/Notifications.php:183
+msgid "Fetched Notifications Feed!"
+msgstr "Канал Сповіщень Отримано!"
+
+#: assets/block/dist/index.js:1
+msgid "Fields (Single product data)"
+msgstr "Поля (інформація про товар)"
+
+#: src/ActivityLogs/ListTable.php:428
+#: src/ClickTracking/Init.php:521
 #: assets/block/dist/index.js:1
 msgid "Filter"
-msgstr "Фільтр"
+msgstr "Фільтрувати"
 
-#: src/ActivityLogs/ListTable.php:338
+#: src/ClickTracking/Init.php:511
+#: assets/block/dist/index.js:1
+msgid "Filter By"
+msgstr "Фільтр по"
+
+#: assets/block/dist/index.js:1
+msgid "Filter Compare"
+msgstr "Фільтрувати порівняння"
+
+#: assets/block/dist/index.js:1
+msgid "Filter Items"
+msgstr "Фільтрувати елементи"
+
+#: assets/block/dist/index.js:1
+msgid "Filter Products"
+msgstr "Фільтрувати товари"
+
+#: assets/block/dist/index.js:1
+msgid "Filter Type"
+msgstr "Фільтрувати тип"
+
+#: src/ActivityLogs/ListTable.php:342
 msgid "Filter by component"
-msgstr "Фільтрувати за компонентом"
+msgstr "Фільтр по компоненту"
+
+#: assets/block/dist/index.js:1
+msgid "Filtering on the basis of certain attributes."
+msgstr "Фільтрування на основі певних атрибутів."
 
 #: src/Admin/Welcome.php:194
 msgid "First Class Customer Support"
-msgstr "Першокласна Підтримка Клієнтів"
+msgstr "Першокласна підтримка клієнтів"
 
 #: src/Admin/ComparisonTable/Settings.php:119
 msgid "Font color"
-msgstr "Font color"
+msgstr "Колір шрифту"
 
 #: src/Admin/Welcome.php:206
 msgid "For all newcomers, we have created a detailed guide, which should make your start with AAWP as easy as possible."
-msgstr "Для всіх новачків ми створили детальний посібник, який має максимально полегшити Ваш початок роботи з AAWP."
+msgstr "Для всіх новачків ми створили детальний посібник, який максимально полегшить початок роботи з AAWP."
 
 #: includes/functions/components/affiliate-links-extended.php:54
 msgid "For more information about \"add to cart links\" please take a look into the <a href=\"%s\" target=\"_blank\">official documentation</a> on Amazon Associates."
-msgstr "For more information about \"add to cart links\" please take a look into the <a href=\"%s\" target=\"_blank\">official documentation</a> on Amazon Associates."
+msgstr "Для отримання додаткової інформації про «посилання на додавання в кошик» зверніться до <a href=\"%s\" target=\"_blank\">офіційної документації</a> Amazon Associates."
 
-#: src/Admin/Settings/Output.php:226
+#: src/Admin/Settings/Output.php:240
 msgid "For more information please <a href=\"%s\" target=\"_blank\">take a look at this article</a>."
-msgstr "For more information please <a href=\"%s\" target=\"_blank\">take a look at this article</a>."
+msgstr "Для отримання додаткової інформації, будь ласка, <a href=\"%s\" target=\"_blank\">погляньте на цю статтю</a>."
 
-#: includes/functions.php:125
+#: includes/functions.php:126
 msgid "France"
-msgstr "France"
+msgstr "Франція"
 
 #: src/Admin/Settings/Functions.php:30
 #: src/Admin/Settings/Functions.php:49
 msgid "Functions"
-msgstr "Functions"
+msgstr "Функції"
 
 #: src/Admin/Settings/Functions.php:76
 msgid "Functions settings"
-msgstr "Functions settings"
+msgstr "Налаштування функцій"
 
-#: src/Admin/Settings/Output.php:204
+#: src/Admin/Settings/Output.php:218
 msgid "GDPR relevant"
-msgstr "GDPR relevant"
+msgstr "Відповідність GDPR"
 
 #: includes/functions/components/geotargeting.php:63
 msgid "GDPR warning"
-msgstr "GDPR warning"
+msgstr "Попередження GDPR"
 
 #: src/Admin/Menu.php:70
 msgid "GET STARTED"
-msgstr "ПОЧНЕМО"
+msgstr "ПОЧАТИ"
 
 #: src/Admin/Settings/General.php:29
 #: src/Admin/Settings/General.php:46
-#: src/Admin/Settings/Output.php:464
-#: src/Admin/Support.php:165
+#: src/Admin/Settings/Output.php:478
+#: src/Admin/Tools/Support.php:140
 msgid "General"
-msgstr "General"
+msgstr "Загальні"
+
+#: assets/block/dist/index.js:1
+msgid "General Settings"
+msgstr "Загальні налаштування"
 
 #: src/Elementor/Widget.php:261
 msgid "Generated Shortcode"
@@ -1207,55 +1535,63 @@ msgstr "Згенерований шорткод"
 
 #: includes/functions/components/geotargeting.php:63
 msgid "Geotargeting"
-msgstr "Geotargeting"
+msgstr "Геотаргетинг"
 
-#: includes/functions.php:124
+#: includes/functions.php:125
 msgid "Germany"
-msgstr "Germany"
+msgstr "Німеччина"
 
 #: src/Admin/Welcome.php:55
 msgid "Get Started"
-msgstr "Почнемо"
+msgstr "Почати"
 
 #: includes/functions/components/stores.php:75
 msgid "Get local Tracking ID"
-msgstr "Get local Tracking ID"
+msgstr "Отримайте локальний Iдентифікатор Відстеження"
 
 #: src/Admin/Settings/General.php:68
 msgid "Global settings"
-msgstr "Global settings"
+msgstr "Глобальні налаштування"
 
 #: includes/functions/class.extended.php:106
 msgid "Green"
 msgstr "Зелений"
 
+#: assets/block/dist/index.js:1
+msgid "Grid"
+msgstr "Сітка"
+
+#: src/ClickTracking/Init.php:507
+msgid "Group By"
+msgstr "Групувати за"
+
 #: src/Admin/Welcome.php:148
 msgid "Gutenberg Block"
-msgstr "Гутенберг-Блок"
+msgstr "Блок Gutenberg"
 
-#: src/Admin/Settings/Output.php:310
+#: src/Admin/Settings/Output.php:324
 msgid "HTML formatting"
-msgstr "Форматування HTML"
+msgstr "HTML-форматування"
 
-#: includes/product-helper-functions.php:343
+#: includes/product-helper-functions.php:341
 msgid "Hardcover Book"
-msgstr "Hardcover Book"
+msgstr "Книга в Твердій Обкладинці"
 
 #: src/ShortenLinks/Settings.php:103
 msgid "Heads up! Bitly Access Token is required for the Shortened Affiliate links to work."
-msgstr "Увага! Токен доступу Bitly необхідний для роботи Скорочених Партнерських посилань."
+msgstr "Увага! Для роботи скорочених партнерських посилань потрібен токен доступу Bitly."
 
 #: src/ShortenLinks/Settings.php:109
 msgid "Heads up! Bitly failed to create short links last time with the response below:"
-msgstr "Увага! Bitly не вдалося створити короткі посилання минулого разу з відповіддю нижче:"
+msgstr "Увага! Минулого разу Bitly не вдалося створити короткі посилання з повідомленням нижче:"
 
 #: src/Elementor/Widget.php:239
 msgid "Heads up! The section below is intended for advanced users. Please <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">check out our complete guide</a> and adjust the shortcode generated below."
-msgstr "Увага! Розділ нижче призначений для досвідчених користувачів. Будь ласка, <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">ознайомтеся з нашим повним посібником</a> та скоригуйте згенерований нижче шорткод."
+msgstr "Увага! Наведений нижче розділ призначений для досвідчених користувачів. Будь ласка, <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">прочитайте наш посібник</a> та налаштуйте шорткод, згенерований нижче."
 
 #: includes/admin/infoboxes.php:170
 msgid "Help us translate the plugin"
-msgstr "Help us translate the plugin"
+msgstr "Допоможіть нам перекласти плагін"
 
 #: src/Admin/Welcome.php:143
 msgid "Here's a selection of the most popular features of our plugin."
@@ -1263,188 +1599,225 @@ msgstr "Ось добірка найпопулярніших функцій на
 
 #: src/Admin/Settings/General.php:164
 msgid "Here you can specify the general settings."
-msgstr "Here you can specify the general settings."
+msgstr "Тут можна вказати загальні настройки."
 
-#: src/Admin/Settings/Output.php:156
+#: src/Admin/Settings/Output.php:170
 msgid "Here you can specify the output settings."
-msgstr "Here you can specify the output settings."
+msgstr "Тут ви можете вказати параметри виводу."
 
 #: src/Admin/Settings/Functions.php:92
 msgid "Here you can specify the settings for each included functionality."
-msgstr "Here you can specify the settings for each included functionality."
+msgstr "Тут ви можете вказати налаштування для кожного включеного функціоналу."
 
 #: includes/functions/class.extended.php:294
 #: src/Admin/ComparisonTable/functions.php:262
-#: src/Admin/Settings/Output.php:371
-#: src/Admin/Settings/Output.php:399
-#: src/Admin/Settings/Output.php:416
+#: src/Admin/Settings/Output.php:385
+#: src/Admin/Settings/Output.php:413
+#: src/Admin/Settings/Output.php:430
 msgid "Hide"
 msgstr "Приховати"
 
-#: src/Admin/Settings/Output.php:458
+#: src/Admin/Settings/Output.php:472
 msgid "Hide advertised price"
-msgstr "Hide advertised price"
+msgstr "Приховати рекламовану ціну"
 
-#: src/Admin/Settings/Output.php:564
+#: src/Admin/Settings/Output.php:578
 msgid "Hide button"
-msgstr "Hide button"
+msgstr "Кнопка Приховати"
 
-#: src/Admin/Settings/Output.php:467
+#: src/Admin/Settings/Output.php:481
 msgid "Hide decimal places for prices"
-msgstr "Приховати десяткові знаки для цін"
+msgstr "Приховати десяткові знаки в цінах"
 
-#: src/Admin/Settings/Output.php:333
+#: src/Admin/Settings/Output.php:347
 msgid "Hide description"
 msgstr "Приховати опис"
 
-#: src/Admin/Settings/Output.php:600
+#: src/Admin/Settings/Output.php:614
 msgid "Hide icon"
 msgstr "Приховати іконку"
 
 #: includes/admin/functions.php:100
 msgid "Hide notice for public visitors"
-msgstr "Hide notice for public visitors"
+msgstr "Приховати повідомлення для публічних відвідувачів"
 
 #: src/Admin/ComparisonTable/functions.php:263
 msgid "Hide on mobile devices only"
-msgstr "Hide on mobile devices only"
+msgstr "Приховати тільки на мобільних пристроях"
 
-#: src/Admin/Settings/Output.php:263
+#: src/Admin/Settings/General.php:209
+msgid "Hide products"
+msgstr "Приховати продукти"
+
+#: src/Admin/Settings/Output.php:277
 msgid "High"
-msgstr "High"
+msgstr "Висока"
 
 #: src/Admin/ComparisonTable/Table.php:612
 msgid "Highlight Product:"
-msgstr "Highlight Product:"
+msgstr "Виділіть Продукт:"
 
 #: src/Admin/ComparisonTable/Table.php:353
 msgid "Highlight row"
-msgstr "Highlight row"
+msgstr "Виділити рядок"
 
 #: src/Admin/ComparisonTable/Settings.php:112
 msgid "Highlight rows"
-msgstr "Highlight rows"
+msgstr "Виділити рядки"
 
-#: src/Admin/AdvancedAds/Ad.php:176
+#: src/Admin/AdvancedAds/Ad.php:186
 #: assets/block/dist/index.js:1
 msgid "Horizontal"
 msgstr "Горизонтально"
 
 #: src/Admin/Welcome.php:105
 msgid "How to Get Started"
-msgstr "Як Почати"
+msgstr "З чого почати"
 
-#: src/Admin/Settings.php:160
+#: src/Admin/Settings.php:155
 msgid "I'm a tooltip! Hover me for more information"
-msgstr "I'm a tooltip! Hover me for more information"
+msgstr "Я підказка! Щоб дізнатися більше, наведіть на мене курсор"
 
 #: src/ActivityLogs/ListTable.php:297
-#: src/Admin/ProductsTable/ListTable.php:213
+#: src/Admin/ProductsTable/ListTable.php:214
+#: src/ClickTracking/ListTable.php:402
 msgid "ID"
-msgstr "Ідентифікатор"
+msgstr "ID"
 
 #: includes/admin/product-edit.php:116
 msgid "ISBN"
 msgstr "ISBN"
 
 #: includes/functions/class.link.php:100
-#: src/Admin/Settings/Output.php:592
+#: src/Admin/Settings/Output.php:606
 msgid "Icon"
-msgstr "Icon"
+msgstr "Іконка"
 
 #: includes/admin/infoboxes.php:175
 msgid "If you are native speaker of a country which translations are not available yet for the plugin, we appreciate your help to <strong>translate the plugin into your language</strong> as well!"
-msgstr "If you are native speaker of a country which translations are not available yet for the plugin, we appreciate your help to <strong>translate the plugin into your language</strong> as well!"
+msgstr "Якщо ви є носієм країни, переклади якої ще не доступні для плагіна, ми цінуємо вашу допомогу, щоб також <strong>перекласти плагін вашою мовою</strong> !"
 
 #: src/Admin/Settings/License.php:371
 msgid "If your license has been upgraded and/or the status is incorrect, click \"Verify License\" to force a refresh."
-msgstr "If your license has been upgraded and/or the status is incorrect, click \"Verify License\" to force a refresh."
+msgstr "Якщо ваша ліцензія була оновлена і/або статус невірний, натисніть \"Перевірити ліцензію\", щоб оновити її."
 
-#: src/Admin/Settings/Output.php:204
+#: assets/block/dist/index.js:1
+msgid "Image Align"
+msgstr "Вирівнювання зображення"
+
+#: assets/block/dist/index.js:1
+msgid "Image Alt"
+msgstr "Альтернативний текст зображення"
+
+#: assets/block/dist/index.js:1
+msgid "Image Class"
+msgstr "Клас зображення"
+
+#: assets/block/dist/index.js:1
+msgid "Image Height"
+msgstr "Висота зображення"
+
+#: src/Admin/Settings/Output.php:218
 msgid "Image Proxy"
-msgstr "Image Proxy"
+msgstr "Проксі Зображення"
 
-#: src/Admin/Settings/Output.php:259
+#: src/Admin/Settings/Output.php:273
 msgid "Image Quality"
-msgstr "Image Quality"
+msgstr "Якість Зображення"
 
-#: src/Admin/Settings/Output.php:241
+#: assets/block/dist/index.js:1
+msgid "Image Selection"
+msgstr "Вибір зображення"
+
+#: src/Admin/Settings/Output.php:255
 #: assets/block/dist/index.js:1
 msgid "Image Size"
-msgstr "Image Size"
+msgstr "Розмір Зображення"
+
+#: assets/block/dist/index.js:1
+msgid "Image Title"
+msgstr "Заголовок зображення"
+
+#: assets/block/dist/index.js:1
+msgid "Image Width"
+msgstr "Ширина зображення"
 
 #: includes/admin/product-edit.php:140
 #: src/Admin/Settings/General.php:248
 msgid "Images"
-msgstr "Images"
+msgstr "Зображення"
 
 #: src/Admin/Settings/General.php:254
 msgid "Important note:"
-msgstr "Important note:"
+msgstr "Важлива примітка:"
 
-#: src/Admin/Support.php:385
+#: src/Admin/Tools/Support.php:360
 msgid "In case one of the values above is <span style=\"color: red;\"><strong>red</strong></span>, please get in contact with your webhoster in order to enable the missing PHP extensions."
-msgstr "In case one of the values above is <span style=\"color: red;\"><strong>red</strong></span>, please get in contact with your webhoster in order to enable the missing PHP extensions."
+msgstr "Якщо одне з наведених вище значень <span style=\"color: red;\"><strong>червоне</strong></span>, будь ласка, зв'яжіться з вашим веб-хостером, щоб увімкнути відсутні розширення PHP."
 
-#: src/Admin/Support.php:227
+#: src/Admin/Tools/Support.php:202
 msgid "In case one of the values above is <span style=\"color: red;\"><strong>red</strong></span>, please take a look into the documentation for the API registration workflow, review your existing API keys and ensure that your Amazon account is not locked."
-msgstr "In case one of the values above is <span style=\"color: red;\"><strong>red</strong></span>, please take a look into the documentation for the API registration workflow, review your existing API keys and ensure that your Amazon account is not locked."
+msgstr "Якщо одне з наведених вище значень <span style=\"color: red;\"><strong>червоне</strong></span>, будь ласка, ознайомтеся з документацією щодо процесу реєстрації API, перегляньте наявні ключі API та переконайтеся, що ваш обліковий запис Amazon не заблоковано."
 
-#: src/Admin/Settings/Output.php:437
+#: src/Admin/Settings/Output.php:451
 msgid "In case some ratings do not show up correctly, please <a href=\"%s\" target=\"_blank\">take a look at this article</a>."
-msgstr "In case some ratings do not show up correctly, please <a href=\"%s\" target=\"_blank\">take a look at this article</a>."
+msgstr "Якщо деякі рейтинги відображаються некоректно, будь ласка, <a href=\"%s\" target=\"_blank\">погляньте на цю статтю</a>."
 
 #: src/Admin/Settings/License.php:97
 msgid "In case the update does not show up correctly or you prefer updating the plugin by hand, please take a look at our <a href=\"%s\" target=\"_blank\">documentation</a> for a manual plugin update."
-msgstr "In case the update does not show up correctly or you prefer updating the plugin by hand, please take a look at our <a href=\"%s\" target=\"_blank\">documentation</a> for a manual plugin update."
+msgstr "Якщо оновлення не відображається коректно або ви віддаєте перевагу оновленню плагіна вручну, будь ласка, перегляньте нашу <a href=\"%s\" target=\"_blank\">документацію</a> для ручного оновлення плагіна."
 
-#: src/Admin/Settings.php:265
+#: src/Admin/Settings.php:226
 msgid "In case you are using a caching plugin, please make sure that you empty this cache too."
-msgstr "In case you are using a caching plugin, please make sure that you empty this cache too."
+msgstr "Якщо ви використовуєте плагін кешування, переконайтеся, що ви очистили і цей кеш."
 
 #: includes/functions/class.extended.php:339
 msgid "In case you created custom templates, please take a look into the documentation."
-msgstr "In case you created custom templates, please take a look into the documentation."
+msgstr "Якщо ви створили власні шаблони, будь ласка, ознайомтеся з документацією."
 
 #: includes/functions/components/customizations.php:145
 msgid "In case you want to replace the star rating icons, please take a look into the <a href=\"%s\" target=\"_blank\">documentation</a>."
-msgstr "In case you want to replace the star rating icons, please take a look into the <a href=\"%s\" target=\"_blank\">documentation</a>."
+msgstr "Якщо ви хочете замінити піктограми зоряного рейтингу, будь ласка, перегляньте <a href=\"%s\" target=\"_blank\">документацію</a>."
 
 #: includes/admin/infoboxes.php:59
 msgid "In order to make it as simple as possible for you, we created a detailed online documentation."
-msgstr "In order to make it as simple as possible for you, we created a detailed online documentation."
+msgstr "Для того, щоб зробити його максимально простим для вас, ми створили детальну онлайн-документацію."
 
 #: includes/functions/widgets/class.widget-box.php:101
 msgid "In order to show more than one box, simply enter multiple ASIN/ISBN and separate them with comma: e.g. <em>B00NGOD2OI,3551559007</em>"
-msgstr "Для того, щоб показати більше одного поля, просто введіть декілька ASIN/ISBN і розділіть їх комою: наприклад, <em>B00NGOD2OI,3551559007</em>."
+msgstr "Щоб відобразити кілька товарів, просто введіть декілька ASIN/ISBN, розділених комою: наприклад, <em>B00NGOD2OI,3551559007</em>"
 
 #: src/Admin/Settings/API.php:282
 msgid "In order to use this plugin you have to register as an Amazon Associate, signup for using the Amazon Product Advertising API and receiving your personal API credentials. Please take a look into the documentation in case you need any assistance."
-msgstr "In order to use this plugin you have to register as an Amazon Associate, signup for using the Amazon Product Advertising API and receiving your personal API credentials. Please take a look into the documentation in case you need any assistance."
+msgstr "Для того, щоб використовувати цей плагін, ви повинні зареєструватися як Amazon Associate, зареєструватися для використання API для Pеклами Продуктів Amazon і отримати ваші особисті облікові дані API. Будь ласка, подивіться в документації на випадок, якщо вам потрібна допомога."
 
-#: src/Admin/Settings/Output.php:255
+#: src/Admin/Settings/Output.php:269
 msgid "In the end it depends on the selected template how it handles the final image size."
-msgstr "In the end it depends on the selected template how it handles the final image size."
+msgstr "Зрештою, від обраного шаблону залежить, як він буде обробляти кінцевий розмір зображення."
 
 #: includes/admin/functions.php:25
 msgid "Inactive"
-msgstr "Inactive"
+msgstr "Неактивний"
+
+#: assets/block/dist/index.js:1
+msgid "Include"
+msgstr "Включити"
 
 #: src/Admin/Welcome.php:180
 msgid "Increase Conversion and Click-through rates (CTR)"
-msgstr "Підвищення Конверсії та Клікабельності (CTR)"
+msgstr "Підвищуйте показники конверсії та клікабельності (CTR)"
 
 #: src/Admin/Welcome.php:101
 msgid "Increase the value of your affiliate page and your earned commissions!"
-msgstr "Підвищуй цінність своєї партнерської сторінки і зароблені комісійні!"
+msgstr "Підвищуйте дохід своєї партнерської сторінки та зароблені комісійні!"
 
-#: includes/functions.php:126
+#: includes/functions.php:127
 msgid "India"
-msgstr "India"
+msgstr "Індія"
 
-#: src/Admin/Support.php:235
+#: src/Admin/Tools/Support.php:210
 msgid "Info"
-msgstr "Info"
+msgstr "Інформація"
 
 #: src/Admin/Settings/API.php:498
 #: src/Admin/Settings/License.php:499
@@ -1453,7 +1826,7 @@ msgstr "Інформація"
 
 #: src/Admin/Settings/General.php:124
 msgid "Inline info"
-msgstr "Inline info"
+msgstr "Інформація онлайн"
 
 #: src/Admin/ClassicEditor.php:303
 msgid "Insert"
@@ -1461,7 +1834,11 @@ msgstr "Вставити"
 
 #: src/Admin/ComparisonTable/Table.php:75
 msgid "Insert into table"
-msgstr "Insert into table"
+msgstr "Вставити в таблицю"
+
+#: src/Admin/ProductsTable/ListTable.php:340
+msgid "Invalid"
+msgstr "Недійсний"
 
 #: includes/libraries/class.license-handler.php:255
 msgid "Invalid license"
@@ -1473,25 +1850,25 @@ msgstr "Недійсна ліцензія."
 
 #: src/Admin/ComparisonTable/ShortcodeHandler.php:39
 msgid "Invalid table id."
-msgstr "Invalid table id."
+msgstr "Невірний ідентифікатор таблиці."
 
-#: includes/functions.php:127
+#: includes/functions.php:128
 msgid "Italy"
-msgstr "Italy"
+msgstr "Італія"
 
 #: includes/admin/list-overview.php:35
 msgid "Items"
-msgstr "Items"
+msgstr "Елементи"
 
-#: includes/functions.php:128
+#: includes/functions.php:129
 msgid "Japan"
-msgstr "Japan"
+msgstr "Японія"
 
 #: includes/functions/deprecated/class.widget.php:103
 msgid "Key:"
-msgstr "Key:"
+msgstr "Ключ:"
 
-#: src/Admin/AdvancedAds/Ad.php:151
+#: src/Admin/AdvancedAds/Ad.php:161
 #: src/Admin/ClassicEditor.php:261
 #: src/Elementor/Widget.php:158
 #: assets/block/dist/index.js:1
@@ -1501,56 +1878,80 @@ msgstr "Ключові слова"
 #: includes/functions/class.bestseller.php:99
 #: includes/functions/class.extended.php:204
 #: includes/functions/class.new-releases.php:96
-#: src/Admin/Settings/Output.php:603
+#: src/Admin/Settings/Output.php:617
 msgid "Label"
-msgstr "Label"
+msgstr "Етикетка"
 
 #: src/Admin/ComparisonTable/Settings.php:92
 #: src/Admin/ComparisonTable/Table.php:280
 msgid "Labels"
-msgstr "Labels"
+msgstr "Етикетки"
 
-#: src/Admin/Settings/Output.php:246
-#: src/Admin/Settings/Output.php:374
+#: src/Admin/Settings/Output.php:260
+#: src/Admin/Settings/Output.php:388
 #: assets/block/dist/index.js:1
 msgid "Large"
-msgstr "Large"
+msgstr "Великий"
+
+#: src/ClickTracking/ListTable.php:530
+msgid "Last 30 days"
+msgstr "Останні 30 днів"
+
+#: src/ClickTracking/ListTable.php:529
+msgid "Last 7 days"
+msgstr "Останні 7 днів"
 
 #: includes/admin/list-overview.php:38
 #: includes/admin/product-overview.php:35
 msgid "Last Update"
-msgstr "Last Update"
+msgstr "Останнє Оновлення"
+
+#: src/ClickTracking/ListTable.php:532
+msgid "Last month"
+msgstr "Останній місяць"
 
 #: includes/admin/list-edit.php:116
 #: includes/admin/product-edit.php:238
-#: src/Admin/Support.php:308
+#: src/Admin/Tools/Support.php:283
 msgid "Last update"
 msgstr "Останнє оновлення"
 
 #: includes/admin/product-edit.php:178
 #: includes/admin/product-edit.php:188
 msgid "Last update: %s"
-msgstr "Last update: %s"
+msgstr "Останнє оновлення: %s"
 
 #: src/Admin/Settings/General.php:115
 msgid "Last update format"
-msgstr "Last update format"
+msgstr "Формат останнього оновлення"
 
 #: src/Admin/Settings/General.php:391
 msgid "Last update on %last_update% / Affiliate links / Images from Amazon Product Advertising API"
-msgstr "Last update on %last_update% / Affiliate links / Images from Amazon Product Advertising API"
+msgstr "Останнє оновлення на %last_update% / Партнерські посилання / Зображення з API Для Реклами Продуктів Amazon"
+
+#: src/ClickTracking/ListTable.php:534
+msgid "Last year"
+msgstr "Минулого року"
 
 #: src/Admin/Settings/License.php:71
 msgid "Latest version installed"
-msgstr "Latest version installed"
+msgstr "Остання версія встановлена"
 
-#: src/Admin/Settings.php:158
+#: assets/block/dist/index.js:1
+msgid "Left"
+msgstr "Лівий"
+
+#: src/Admin/Settings.php:153
 msgid "Legend"
-msgstr "Legend"
+msgstr "Легенда"
+
+#: assets/block/dist/index.js:1
+msgid "Less"
+msgstr "Менше"
 
 #: includes/libraries/class.license-handler.php:251
 msgid "License expired"
-msgstr "Ліцензія закінчилася"
+msgstr "Термін дії ліцензії минув"
 
 #: src/Admin/Settings/License.php:147
 msgid "License key"
@@ -1558,63 +1959,91 @@ msgstr "Ліцензійний ключ"
 
 #: src/Admin/Settings/License.php:156
 msgid "License server"
-msgstr "Сервер ліцензій"
+msgstr "Ліцензійний сервер"
 
 #: src/Admin/Settings/License.php:44
 #: src/Admin/Settings/License.php:132
 msgid "Licensing"
-msgstr "Licensing"
+msgstr "Ліцензування"
 
 #: includes/functions/components/customizations.php:49
 #: includes/functions/components/customizations.php:62
 msgid "Light"
-msgstr "Light"
+msgstr "Світлий"
 
-#: src/Admin/Settings/Output.php:164
+#: src/Admin/Settings/Output.php:178
 msgid "Limit length"
-msgstr "Гранична довжина"
+msgstr "Обмеження довжини"
 
-#: src/Admin/Settings/Output.php:291
+#: src/Admin/Settings/Output.php:305
 msgid "Limit length for each list point"
-msgstr "Limit length for each list point"
+msgstr "Обмеження довжини для кожного пункту списку"
 
 #: templates/comparison.php:91
 #: templates/comparison.php:96
 #: templates/table.php:73
 #: assets/block/dist/index.js:1
 msgid "Link"
-msgstr "Link"
+msgstr "Посилання"
+
+#: assets/block/dist/index.js:1
+msgid "Link Class"
+msgstr "Клас посилання"
+
+#: assets/block/dist/index.js:1
+msgid "Link Icon"
+msgstr "Іконка посилання"
+
+#: assets/block/dist/index.js:1
+msgid "Link Overwrite"
+msgstr "Перевизначення посилання"
+
+#: assets/block/dist/index.js:1
+msgid "Link Title"
+msgstr "Заголовок посилання"
+
+#: assets/block/dist/index.js:1
+msgid "Link Type"
+msgstr "Тип посилання"
 
 #: src/Admin/ComparisonTable/Table.php:366
 msgid "Link output"
-msgstr "Link output"
+msgstr "Вихід посилання"
 
 #: includes/functions/class.extended.php:209
-#: includes/functions/components/geotargeting.php:80
-#: src/Admin/Settings/Output.php:396
+#: includes/functions/components/geotargeting.php:72
+#: src/Admin/Settings/Output.php:410
 msgid "Link target"
-msgstr "Link target"
+msgstr "Цільова посилання"
 
 #: includes/functions/class.link.php:19
 #: includes/functions/class.link.php:71
 #: includes/functions/class.link.php:85
 #: assets/block/dist/index.js:1
 msgid "Links"
-msgstr "Links"
+msgstr "Посилання"
 
 #: includes/functions/components/templating.php:29
-#: src/Admin/AdvancedAds/Ad.php:178
+#: src/Admin/AdvancedAds/Ad.php:188
 #: assets/block/dist/index.js:1
 msgid "List"
 msgstr "Список"
 
-#: src/Admin/Settings/Output.php:329
+#: src/Admin/Settings/Output.php:343
 msgid "List template"
 msgstr "Шаблон списку"
 
+#: assets/block/dist/index.js:1
+msgid "Lists"
+msgstr "Списки"
+
+#: src/Admin/Settings/Output.php:636
+msgid "Load Assets Globally"
+msgstr "Завантажте Pесурси Глобально"
+
 #: includes/functions/components/geotargeting.php:72
 msgid "Localization Service"
-msgstr "Localization Service"
+msgstr "Служба Локалізації"
 
 #: src/ActivityLogs/ListTable.php:39
 msgid "Log"
@@ -1622,28 +2051,27 @@ msgstr "Журнал"
 
 #: src/ActivityLogs/Settings.php:52
 msgid "Log Retention Period (Days)"
-msgstr "Період Зберігання Журналу (Днів)"
+msgstr "Термін зберігання журналу (дні)"
 
-#: src/ActivityLogs/Init.php:47
 #: src/ActivityLogs/ListTable.php:38
 msgid "Logs"
 msgstr "Журнали"
 
 #: src/ActivityLogs/Settings.php:53
 msgid "Logs older than the selected period will be permanently deleted from the database."
-msgstr "Журнали, старші за обраний період, будуть безповоротно видалені з бази даних."
+msgstr "Журнали, старші за вибраний період, будуть остаточно видалені з бази даних."
 
 #: includes/admin/infoboxes.php:100
 #: includes/admin/infoboxes.php:106
 msgid "Manage Account"
-msgstr "Управління Аккаунтом"
+msgstr "Керування обліковим записом"
 
 #: src/Admin/ComparisonTable/Table.php:620
 msgid "Maybe enter text ..."
-msgstr "Maybe enter text ..."
+msgstr "Можливо, введіть текст ..."
 
-#: src/Admin/Settings/Output.php:245
-#: src/Admin/Settings/Output.php:373
+#: src/Admin/Settings/Output.php:259
+#: src/Admin/Settings/Output.php:387
 #: assets/block/dist/index.js:1
 msgid "Medium"
 msgstr "Середній"
@@ -1652,37 +2080,41 @@ msgstr "Середній"
 msgid "Message"
 msgstr "Повідомлення"
 
-#: includes/functions.php:129
+#: includes/functions.php:130
 msgid "Mexico"
-msgstr "Mexico"
+msgstr "Мексика"
+
+#: assets/block/dist/index.js:1
+msgid "More"
+msgstr "Більше"
 
 #: src/ShortenLinks/Settings.php:84
 msgid "More information about the Bitly Access Token can be found in our <a href=\"%s\" target=\"_blank\">documentation</a>."
-msgstr "Більше інформації про Токен Доступу Bitly можна знайти в нашій <a href=\"%s\" target=\"_blank\">документації</a> ."
+msgstr "Більш детальну інформацію про токен доступу Bitly можна знайти в нашій <a href=\"%s\" target=\"_blank\">документації</a>."
 
 #: src/Admin/Settings/General.php:219
 msgid "More information about the database garbage collection can be found in our <a href=\"%s\" target=\"_blank\">documentation</a>."
-msgstr "More information about the database garbage collection can be found in our <a href=\"%s\" target=\"_blank\">documentation</a>."
+msgstr "Більш детальну інформацію про збір сміття бази даних можна знайти в нашій <a href=\"%s\" target=\"_blank\">документації</a>."
 
 msgid "Multiple ASIN values can be entered separated by comma."
 msgstr "Можна вводити декілька значень ASIN через кому."
 
-#: src/Admin/AdvancedAds/Ad.php:128
+#: src/Admin/AdvancedAds/Ad.php:138
 #: assets/block/dist/index.js:1
 msgid "Multiple ASIN values can be separated by comma."
-msgstr "Кілька значень ASIN можуть бути розділені комою."
+msgstr "Кілька значень ASIN можна розділити комою."
 
 #: includes/functions/components/stores.php:30
 msgid "Multiple Stores"
-msgstr "Multiple Stores"
+msgstr "Кілька Магазинів"
 
-#: src/Admin/Support.php:249
+#: src/Admin/Tools/Support.php:224
 msgid "N/A"
 msgstr "N/A"
 
 #: src/Admin/Menu.php:69
 msgid "Need Help?"
-msgstr "Потрібна Допомога?"
+msgstr "Потрібна допомога?"
 
 #: includes/functions/widgets/class.widget-bestseller.php:134
 #: includes/functions/widgets/class.widget-box.php:126
@@ -1690,9 +2122,9 @@ msgstr "Потрібна Допомога?"
 msgid "Need help?"
 msgstr "Потрібна допомога?"
 
-#: includes/functions.php:130
+#: includes/functions.php:131
 msgid "Netherlands"
-msgstr "Netherlands"
+msgstr "Нідерланди"
 
 #: includes/functions/class.new-releases.php:304
 msgid "New"
@@ -1704,71 +2136,96 @@ msgstr "Новий"
 #: includes/functions/class.new-releases.php:292
 #: assets/block/dist/index.js:1
 msgid "New Releases"
-msgstr "Нові Pелізи"
+msgstr "Нові релізи"
+
+#: assets/block/dist/index.js:1
+msgid "New Releases (Lists)"
+msgstr "Нові релізи (списки)"
 
 #: src/Admin/ComparisonTable/Table.php:63
 msgid "New Table"
-msgstr "New Table"
+msgstr "Нова Таблиця"
 
-#: src/Admin/Support.php:294
+#: src/Admin/Tools/Support.php:269
 msgid "Next Cronjob Execution"
-msgstr "Next Cronjob Execution"
+msgstr "Наступне виконання Cronjob"
+
+#: src/API/Notifications.php:412
+msgid "Next message"
+msgstr "Наступне повідомлення"
 
 #: src/Admin/ComparisonTable/Table.php:536
 msgid "No"
-msgstr "No"
+msgstr "Ні"
 
-#: includes/class.aawp-functions.php:700
+#: includes/class.aawp-functions.php:696
 msgid "No."
-msgstr "No."
+msgstr "№"
+
+#: src/ClickTracking/ListTable.php:607
+msgid "No clicks found."
+msgstr "Кліків не знайдено."
+
+#: src/ClickTracking/Init.php:457
+msgid "No clicks found with the selected filters."
+msgstr "За допомогою вибраних фільтрів кліків не знайдено."
 
 #: includes/admin/class.support.php:408
 msgid "No entries yet. "
-msgstr "No entries yet. "
+msgstr "Записів поки немає. "
 
-#: src/ActivityLogs/ListTable.php:448
+#: src/ActivityLogs/ListTable.php:442
 msgid "No logs found."
 msgstr "Журналів не знайдено."
 
-#: includes/admin/ajax.php:129
+#: src/API/Product.php:68
+msgid "No product found or invalid ASIN."
+msgstr "Продукт не знайдено або недійсний ASIN."
+
+#: includes/admin/ajax.php:127
 #: includes/admin/functions.php:89
+#: includes/class.template-handler.php:270
 #: src/Admin/ProductsTable/ListTable.php:50
 msgid "No products found."
-msgstr "No products found."
+msgstr "Товарів не знайдено."
 
 #: templates/comparison.php:57
 #: templates/deprecated/bestseller_table.php:46
 #: templates/deprecated/box_table.php:44
 #: templates/table.php:56
 msgid "No ratings yet"
-msgstr "Поки що немає відгуків"
+msgstr "Оцінок поки що немає"
 
 #: includes/admin/product-edit.php:151
 msgid "No thumbnail available."
-msgstr "No thumbnail available."
+msgstr "Мініатюра не доступна."
+
+#: assets/block/dist/index.js:1
+msgid "None"
+msgstr "Ніхто"
 
 #: includes/admin/functions.php:29
 msgid "Not available via API"
-msgstr "Not available via API"
+msgstr "Недоступно через API"
 
 #: includes/admin/functions.php:27
 #: src/Admin/ComparisonTable/Table.php:69
 msgid "Not found"
-msgstr "Not found"
+msgstr "Не знайдено"
 
 #: src/Admin/ComparisonTable/Table.php:70
 msgid "Not found in Trash"
-msgstr "Not found in Trash"
+msgstr "Не знайдено в Kошику"
 
 #: src/Admin/Settings/API.php:521
 #: src/Admin/Settings/API.php:543
 #: src/Admin/Settings/License.php:509
 #: src/Admin/Settings/License.php:531
 msgid "Not installed."
-msgstr "Not installed."
+msgstr "Не встановлено."
 
 #: includes/functions/class.extended.php:339
-#: src/Admin/Settings/Output.php:433
+#: src/Admin/Settings/Output.php:447
 msgid "Note:"
 msgstr "Примітка:"
 
@@ -1778,130 +2235,222 @@ msgstr "Примітка:"
 #: includes/functions/class.link.php:120
 #: includes/functions/class.new-releases.php:100
 msgid "Notices"
-msgstr "Notices"
+msgstr "Повідомлення"
 
-#: src/Admin/AdvancedAds/Ad.php:166
+#: src/API/Notifications.php:400
+msgid "Notifications"
+msgstr "Сповіщення"
+
+#: src/Admin/AdvancedAds/Ad.php:176
 #: src/Admin/ClassicEditor.php:280
 msgid "Number of Items"
-msgstr "Кількість Предметів"
+msgstr "Кількість елементів"
 
 #: src/Elementor/Widget.php:197
 #: assets/block/dist/index.js:1
 msgid "Number of items"
-msgstr "Кількість предметів"
+msgstr "Кількість елементів"
 
-#: src/Admin/Settings/Output.php:281
+#: src/Admin/Settings/Output.php:295
 msgid "Number of list points"
-msgstr "Number of list points"
+msgstr "Кількість пунктів списку"
 
-#: src/Admin/AdvancedAds/Ad.php:133
+#: src/Admin/AdvancedAds/Ad.php:143
 msgid "OR,"
 msgstr "АБО,"
 
-#: includes/functions.php:190
+#: src/ClickTracking/ListTable.php:412
+msgid "OS"
+msgstr "ОС"
+
+#: includes/functions.php:192
 msgid "Offers"
-msgstr "Offers"
+msgstr "Пропозиції"
 
 #: includes/class.template-handler.php:260
 msgid "Only admins can see this error message."
-msgstr "Only admins can see this error message."
+msgstr "Тільки адміністратори можуть бачити це повідомлення про помилку."
 
 #: src/Admin/ComparisonTable/Table.php:574
 msgid "Open in new window"
-msgstr "Open in new window"
+msgstr "Відкрити в новому вікні"
 
 #: includes/functions/class.extended.php:214
 msgid "Open links in a new window or tab"
-msgstr "Відкривати посилання в новому вікні або вкладці"
+msgstr "Відкривати посилання у новому вікні або новій вкладці"
 
 #: includes/functions/class.extended.php:108
 msgid "Orange"
 msgstr "Помаранчевий"
 
+#: assets/block/dist/index.js:1
+msgid "Order"
+msgstr "Сортування"
+
+#: assets/block/dist/index.js:1
+msgid "Order By"
+msgstr "Сортувати за"
+
+#: assets/block/dist/index.js:1
+msgid "Order Items"
+msgstr "Сортувати елементи"
+
+#: assets/block/dist/index.js:1
+msgid "Order Products"
+msgstr "Сортувати товари"
+
+#: assets/block/dist/index.js:1
+msgid "Ordering on the basis of certain attributes."
+msgstr "Сортування за певними атрибутами."
+
+#: assets/block/dist/index.js:1
+msgid "Other"
+msgstr "Інше"
+
 #: includes/admin/hooks.php:130
 msgid "Our plugin has built-in <strong>Accelerated Mobile Pages</strong> support for the <a href=\"%s\">official AMP plugin</a>. We recommend to <u>do not use any other plugin</u>."
-msgstr "Our plugin has built-in <strong>Accelerated Mobile Pages</strong> support for the <a href=\"%s\">official AMP plugin</a>. We recommend to <u>do not use any other plugin</u>."
+msgstr "Наш плагін має вбудовану підтримку <strong>Accelerated Mobile Pages</strong> для <a href=\"%s\">офіційного плагіна AMP</a>. Ми рекомендуємо <u>не використовувати інші плагіни</u>."
+
+#: includes/functions/class.extended.php:344
+msgid "Our plugin has it's own %s, which works more reliably and gives you more ways to analyze."
+msgstr "Наш плагін має власний %s, який працює більш надійно і дає вам більше можливостей для аналізу."
 
 #: src/Admin/Welcome.php:181
 msgid "Our product displays are designed to catch the visitor's attention and uses familiar patterns that get the visitor to click & buy!"
-msgstr "Наші дисплеї продуктів розроблені, щоб привернути увагу відвідувача, і використовують знайомі шаблони, які спонукають відвідувача натиснути та купити!"
+msgstr "Наші вітрини товарів створені для привернення уваги відвідувачів та використовують знайомі патерни, які викликають у відвідувача бажання клікнути та купити!"
 
 #: includes/admin/functions.php:158
 msgid "Outdated"
-msgstr "Outdated"
+msgstr "Застарілий"
 
 #: src/Admin/Settings/Output.php:29
 #: src/Admin/Settings/Output.php:46
 msgid "Output"
-msgstr "Output"
+msgstr "Вихід"
 
-#: src/Admin/Settings/Output.php:619
+#: src/Admin/Settings/Output.php:661
 msgid "Output custom CSS styles"
-msgstr "Output custom CSS styles"
+msgstr "Виведення користувацьких стилів CSS"
 
 #: src/Admin/Settings/Output.php:72
 msgid "Output settings"
-msgstr "Output settings"
+msgstr "Налаштування виводу"
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting HTML image \"alt\" attribute.."
+msgstr "Зміна HTML-атрибута \"alt\" для зображення..."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting HTML link \"target\" attribute (standard = current window)."
+msgstr "Зміна HTML-атрибута \"target\" для посилання (за замовчуванням – у поточному вікні)."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting HTML link \"title\" attribute."
+msgstr "Зміна HTML-атрибута \"title\" для посилання."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting HTML link \"title“ attribute."
+msgstr "Зміна HTML-атрибута \"title\" для посилання."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the button detail text."
+msgstr "Зміна докладного тексту кнопки."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the button text."
+msgstr "Зміна тексту кнопки."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the original product title."
+msgstr "Зміна оригінальної назви товару."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the price text."
+msgstr "Зміна тексту ціни."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the rating value."
+msgstr "Зміна значення рейтингу."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the ribbon text (e.g. bestseller no X) on the top left."
+msgstr "Зміна тексту стрічки (наприклад, бестселер без X) у верхньому лівому куті."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the sale ribbon text on the top right."
+msgstr "Зміна тексту стрічки продажу в правому верхньому куті."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the thumbnail size."
+msgstr "Зміна розміру мініатюри."
 
 #: includes/functions/widgets/class.widget-bestseller.php:139
 #: includes/functions/widgets/class.widget-box.php:130
 #: includes/functions/widgets/class.widget-new-releases.php:141
 msgid "PHP-Templating"
-msgstr "PHP-Шаблонизація"
+msgstr "PHP-шаблони"
 
-#: src/Admin/Support.php:342
-#: src/Admin/Support.php:358
-#: src/Admin/Support.php:364
+#: src/Admin/Tools/Support.php:317
+#: src/Admin/Tools/Support.php:333
+#: src/Admin/Tools/Support.php:339
 msgid "PHP \"%1$s\" extension"
-msgstr "PHP \"%1$s\" extension"
+msgstr "Розширення PHP \"%1$s\""
 
-#: src/Admin/Support.php:352
+#: src/Admin/Tools/Support.php:327
 msgid "PHP \"%1$s\" function"
-msgstr "PHP \"%1$s\" function"
+msgstr "Функція PHP \"%1$s\""
 
-#: src/Admin/Support.php:376
+#: src/Admin/Tools/Support.php:351
 msgid "PHP \"%1$s\" limit"
-msgstr "PHP \"%1$s\" limit"
+msgstr "Ліміт PHP \"%1$s\""
 
-#: src/Admin/Support.php:370
+#: src/Admin/Tools/Support.php:345
 msgid "PHP \"%1$s\" setting"
-msgstr "PHP \"%1$s\" setting"
+msgstr "Налаштування PHP \"%1$s\""
 
-#: src/Admin/Settings/Output.php:207
+#: src/Admin/Settings/Output.php:221
 msgid "PHP \"allow_url_fopen\" is not activated on your server. Please activate it on your own or get in touch with the support of your hosting provider."
-msgstr "PHP \"allow_url_fopen\" is not activated on your server. Please activate it on your own or get in touch with the support of your hosting provider."
+msgstr "На вашому сервері не активовано функцію PHP \"allow_url_fopen\". Будь ласка, активуйте його самостійно або зверніться до служби підтримки вашого хостинг-провайдера."
 
-#: src/Admin/Support.php:338
+#: src/Admin/Tools/Support.php:313
 msgid "PHP Version %1$s or newer required!"
-msgstr "PHP Version %1$s or newer required!"
+msgstr "Потрібна Версія PHP %1$s або новіша!"
 
 #: src/Admin/ComparisonTable/Table.php:59
 msgid "Parent Table:"
-msgstr "Parent Table:"
+msgstr "Основна Таблиця:"
 
-#: src/Admin/Settings/Output.php:489
+#: src/Admin/Settings/Output.php:503
 msgid "Percentage"
-msgstr "Percentage"
+msgstr "Відсоток"
+
+#: assets/block/dist/index.js:1
+msgid "Percentage Saved"
+msgstr "Відсоток економії"
 
 #: src/Admin/Welcome.php:150
 msgid "Place products easily and conveniently via our Interactive Gutenberg Block."
-msgstr "Розміщуйте продукти легко та зручно за допомогою нашого інтерактивного блоку Гутенберга."
+msgstr "Легко та зручно розміщуйте товари за допомогою нашого інтерактивного блоку Gutenberg."
+
+#: src/ClickTracking/Init.php:466
+msgid "Please <a href=\"%s\">enable click tracking</a> to track Amazon affiliate links clicks."
+msgstr "Будь ласка, <a href=\"%s\">увімкніть відстеження кліків</a>, щоб відстежувати переходи за партнерськими посиланнями Amazon."
 
 #: includes/license-functions.php:253
 msgid "Please <a href=\"%s\">enter a valid license key</a> in order to use the plugin and receive updates."
-msgstr "Please <a href=\"%s\">enter a valid license key</a> in order to use the plugin and receive updates."
+msgstr "Будь ласка, <a href=\"%s\">введіть дійсний ліцензійний ключ</a>, щоб використовувати плагін і отримувати оновлення."
 
 #: includes/functions/deprecated/class.widget.php:19
 msgid "Please do not use this widget anymore."
-msgstr "Please do not use this widget anymore."
+msgstr "Будь ласка, більше не використовуйте цей віджет."
 
-#: src/Admin/Settings/Output.php:629
+#: src/Admin/Settings/Output.php:666
 msgid "Please don't use the <code>style</code> tag. Simply paste you CSS classes/definitions e.g. <code>.aawp .aawp-product { background-color: #000; }</code> or <code>.aawp .aawp-product--horizontal { background-color: #000; }</code>"
-msgstr "Please don't use the <code>style</code> tag. Simply paste you CSS classes/definitions e.g. <code>.aawp .aawp-product { background-color: #000; }</code> or <code>.aawp .aawp-product--horizontal { background-color: #000; }</code>"
+msgstr "Будь ласка, не використовуйте тег <code>стилю</code>. Просто вставте свої класи/визначення CSS, наприклад <code>.aawp .aawp-product { background-color: #000; }</code> або <code>.aawp .aawp-product--horizontal { background-color: #000; }</code>"
 
 #: includes/admin/infoboxes.php:153
 msgid "Please enter a valid email address."
-msgstr "Please enter a valid email address."
+msgstr "Будь ласка, введіть дійсну адресу електронної пошти."
 
 #: src/Admin/Settings/License.php:346
 msgid "Please enter a valid license key."
@@ -1911,82 +2460,87 @@ msgstr "Будь ласка, введіть дійсний ліцензійни�
 #: includes/functions/widgets/class.widget-box.php:123
 #: includes/functions/widgets/class.widget-new-releases.php:133
 msgid "Please enter the custom template name without the file extension: e.g. <em>my_widget</em>"
-msgstr "Будь ласка, введіть назву користувацького шаблону без розширення файлу: наприклад, <em>my_widget</em>"
+msgstr "Будь ласка, введіть назву власного шаблону без розширення файлу: наприклад, <em>my_widget</em>"
 
 #: src/Admin/Settings/License.php:324
 msgid "Please enter your license credentials in order to receive updates."
-msgstr "Будь ласка, введіть свої ліцензійні дані, щоб отримувати оновлення."
+msgstr "Для отримання оновлень, вкажіть, будь ласка, облікові дані вашої ліцензії."
 
 #: src/Admin/Settings/API.php:526
 #: src/Admin/Settings/API.php:548
 #: src/Admin/Settings/License.php:514
 #: src/Admin/Settings/License.php:536
 msgid "Please install as soon as possible to avoid problems."
-msgstr "Please install as soon as possible to avoid problems."
+msgstr "Будь ласка, встановлюйте якомога швидше, щоб уникнути проблем."
 
 #: src/Admin/Settings/API.php:358
 msgid "Please make sure that your server is running PHP version %s or higher. In some cases, an older PHP version was the cause of various API problems."
-msgstr "Please make sure that your server is running PHP version %s or higher. In some cases, an older PHP version was the cause of various API problems."
+msgstr "Будь ласка, переконайтеся, що на вашому сервері працює PHP версії %s або вище. У деяких випадках старіша версія PHP була причиною різних проблем API."
 
 #: includes/functions/class.extended.php:75
 msgid "Please note that Amazon has not published an explicit statement yet, whether they allow shortened and therefore cloaked affiliate links or not. Making use of this functionality is on your own risk and might result into a exclusion of their partner program. <a href=\"%s\">Read more</a> about the supported services, their functionality and some examples."
-msgstr "Please note that Amazon has not published an explicit statement yet, whether they allow shortened and therefore cloaked affiliate links or not. Making use of this functionality is on your own risk and might result into a exclusion of their partner program. <a href=\"%s\">Read more</a> about the supported services, their functionality and some examples."
+msgstr "Зверніть увагу, що Amazon ще не опублікував чіткої заяви про те, чи дозволяють вони скорочені, а отже, замасковані партнерські посилання чи ні. Використання цієї функції здійснюється на ваш власний ризик і може призвести до виключення з їхньої партнерської програми. <a href=\"%s\">Детальніше</a> про підтримувані сервіси, їх функціональність та деякі приклади."
 
 #: src/Admin/Settings/License.php:420
 msgid "Please only change if you have been asked to do so by our support team, or if you have problems activating your license."
-msgstr "Please only change if you have been asked to do so by our support team, or if you have problems activating your license."
+msgstr "Будь ласка, змінюйте тільки якщо вас попросила про це наша служба підтримки або якщо у вас виникли проблеми з активацією ліцензії."
 
 #: includes/functions/deprecated/class.widget.php:85
 #: includes/functions/widgets/functions.php:61
 #: src/Admin/ComparisonTable/Table.php:340
 msgid "Please select..."
-msgstr "Будь ласка, виберіть..."
+msgstr "Будь ласка, зробіть вибір..."
+
+#: src/ClickTracking/Init.php:458
+msgid "Please select a different dates or check back later."
+msgstr "Будь ласка, виберіть інші дати або поверніться пізніше."
 
 #: templates/deprecated/bestseller_table.php:14
 #: templates/deprecated/box_table.php:14
 msgid "Please swipe over the table to view more."
-msgstr "Будь ласка, проведіть пальцем по таблиці, щоб переглянути більше."
+msgstr "Щоб переглянути більше, будь ласка, проведіть пальцем по таблиці."
 
 #: src/Admin/Settings/API.php:366
 msgid "Please take a look at our article \"<a href=\"%s\" target=\"_blank\">Amazon API “not connected” – Frequent causes</a>\" in order to solve this problem."
-msgstr "Please take a look at our article \"<a href=\"%s\" target=\"_blank\">Amazon API “not connected” – Frequent causes</a>\" in order to solve this problem."
+msgstr "Будь ласка, перегляньте нашу статтю « <a href=\"%s\" target=\"_blank\">Amazon API «не підключено» – Часті причини</a> », щоб вирішити цю проблему."
 
-#: includes/functions/components/geotargeting.php:88
+#: includes/functions/components/geotargeting.php:80
 msgid "Please take a look into the <a href=\"%s\" target=\"_blank\">documentation</a> for more information about the geotargeting feature."
-msgstr "Please take a look into the <a href=\"%s\" target=\"_blank\">documentation</a> for more information about the geotargeting feature."
+msgstr "Будь ласка, перегляньте <a href=\"%s\" target=\"_blank\">документацію</a> для отримання додаткової інформації про функцію геотаргетингу."
 
 #: includes/functions/components/templating.php:50
 msgid "Please take a look into the documentation how to use custom templating."
-msgstr "Please take a look into the documentation how to use custom templating."
+msgstr "Будь ласка, ознайомтеся з документацією щодо використання кастомних шаблонів."
 
-#: src/ActivityLogs/ListTable.php:332
+#: src/ActivityLogs/ListTable.php:336
 msgid "Plugin Update"
-msgstr "Оновлення Плагінів"
+msgstr "Оновлення плагіна"
 
 #: includes/admin/infoboxes.php:99
 #: includes/admin/infoboxes.php:105
 msgid "Plugin Website"
-msgstr "Plugin Website"
+msgstr "Веб-сайт Плагіна"
 
 #: includes/admin/hooks.php:148
 msgid "Plugin database upgrade finished. Enjoy all the new options!"
-msgstr "Plugin database upgrade finished. Enjoy all the new options!"
+msgstr "Оновлення бази даних плагінів завершено. Насолоджуйтесь усіма новими можливостями!"
 
 #: includes/admin/hooks.php:157
 msgid "Plugin settings has been successfully reset."
-msgstr "Plugin settings has been successfully reset."
+msgstr "Налаштування плагіна успішно скинуто."
 
 msgid "Plugin updated to version %s successfully."
-msgstr ""
+msgstr "Плагін успішно оновлено до версії %s."
 
-#: includes/functions.php:131
+#: includes/functions.php:132
 msgid "Poland"
-msgstr "Poland"
+msgstr "Польща"
 
 #: includes/functions/class.extended.php:168
-#: src/Admin/AdvancedAds/Ad.php:197
+#: src/Admin/AdvancedAds/Ad.php:207
 #: src/Admin/ProductsTable/ListTable.php:216
-#: src/Admin/Settings/Output.php:551
+#: src/Admin/Settings/Output.php:565
+#: src/ClickTracking/ListTable.php:404
 #: templates/comparison.php:20
 #: templates/comparison.php:25
 #: templates/deprecated/bestseller_table.php:20
@@ -1995,6 +2549,10 @@ msgstr "Poland"
 #: templates/table.php:41
 msgid "Preview"
 msgstr "Попередній перегляд"
+
+#: src/API/Notifications.php:408
+msgid "Previous message"
+msgstr "Попереднє повідомлення"
 
 #: src/Admin/ClassicEditor.php:271
 #: src/Admin/ComparisonTable/functions.php:281
@@ -2011,15 +2569,15 @@ msgstr "Ціна"
 
 #: src/Admin/Settings/General.php:352
 msgid "Price incl. tax, excl. shipping"
-msgstr "Price incl. tax, excl. shipping"
+msgstr "Ціна вкл. податку, без урахування доставки"
 
 #: includes/functions/class.fields.php:248
 msgid "Price not available"
-msgstr "Price not available"
+msgstr "Ціна недоступна"
 
-#: src/Admin/Settings/Output.php:496
+#: src/Admin/Settings/Output.php:510
 msgid "Price reduction"
-msgstr "Price reduction"
+msgstr "Зниження ціни"
 
 #: src/Admin/Settings/Output.php:111
 msgid "Pricing"
@@ -2027,9 +2585,9 @@ msgstr "Ціни"
 
 #: src/Admin/ComparisonTable/functions.php:282
 msgid "Prime Status"
-msgstr "Prime Status"
+msgstr "Прайм-Статус"
 
-#: src/ActivityLogs/ListTable.php:328
+#: src/ActivityLogs/ListTable.php:332
 #: templates/comparison.php:35
 #: templates/comparison.php:40
 #: templates/deprecated/bestseller_table.php:21
@@ -2037,39 +2595,47 @@ msgstr "Prime Status"
 #: templates/table.php:23
 #: templates/table.php:46
 msgid "Product"
-msgstr "Продукт"
+msgstr "Товар"
 
-#: src/Admin/ProductsTable/ListTable.php:388
+#: src/Admin/ProductsTable/ListTable.php:495
 msgid "Product <code>#%s</code> deleted via products listtable."
-msgstr "Продукт <code>#%s</code> видалено через таблицю списку продуктів."
+msgstr "Товар <code>#%s</code> видалено зі списку товарів."
 
-#: src/Admin/ProductsTable/ListTable.php:404
+#: src/Admin/ProductsTable/ListTable.php:511
 msgid "Product <code>#%s</code> renewed via products listtable."
-msgstr "Продукт <code>#%s</code> поновлено через таблицю списку продуктів."
+msgstr "Товар <code>#%s</code> оновлено у списку товарів."
 
 #: src/Admin/Welcome.php:163
 msgid "Product Box"
-msgstr "Коробка Продукту"
+msgstr "Товар"
+
+#: assets/block/dist/index.js:1
+msgid "Product Boxes"
+msgstr "Товари"
 
 #: src/Admin/ComparisonTable/functions.php:232
 msgid "Product Search"
-msgstr "Product Search"
+msgstr "Пошук Продукту"
 
-#: src/Admin/Settings/Output.php:400
+#: src/Admin/Settings/Output.php:414
 msgid "Product details"
-msgstr "Product details"
+msgstr "Деталі продукту"
 
 #: src/Admin/ComparisonTable/Table.php:443
 msgid "Product no. %d"
-msgstr "Product no. %d"
+msgstr "№ продукту: %d"
 
 #: includes/functions/components/geotargeting.php:56
 msgid "Product page"
-msgstr "Product page"
+msgstr "Сторінка продукту"
 
 #: includes/functions/components/geotargeting.php:55
 msgid "Product search (Recommended)"
-msgstr "Product search (Recommended)"
+msgstr "Пошук продукту (Pекомендовано)"
+
+#: src/ClickTracking/ListTable.php:225
+msgid "Product was removed from database."
+msgstr "Продукт був вилучений з бази даних."
 
 #: includes/admin/list-edit.php:96
 #: src/Admin/ComparisonTable/Table.php:238
@@ -2077,15 +2643,19 @@ msgstr "Product search (Recommended)"
 #: src/Admin/ProductsTable/Init.php:59
 #: src/Admin/ProductsTable/ListTable.php:37
 msgid "Products"
-msgstr "Products"
+msgstr "Продукти"
 
 #: src/Admin/Welcome.php:164
 msgid "Promote specific products with visually appealing and conversion optimized product boxes."
-msgstr "Рекламуйте конкретні продукти за допомогою візуально привабливих коробок продуктів, оптимізованих для конверсії."
+msgstr "Просувайте конкретні товари за допомогою візуально привабливих, оптимізованих для конверсії шаблонів."
 
-#: includes/product-helper-functions.php:545
+#: includes/product-helper-functions.php:543
 msgid "Publisher: %s"
-msgstr "Publisher: %s"
+msgstr "Видавець: %s"
+
+#: assets/block/dist/index.js:1
+msgid "Range"
+msgstr "Діапазон"
 
 #: includes/admin/product-edit.php:183
 #: src/Admin/Settings/Output.php:103
@@ -2095,182 +2665,222 @@ msgstr "Publisher: %s"
 #: templates/table.php:52
 #: assets/block/dist/index.js:1
 msgid "Rating"
-msgstr "Rating"
+msgstr "Рейтинг"
 
 #: src/Admin/Welcome.php:207
 msgid "Read Beginners Guide"
-msgstr "Прочитайте Посібник для Початківців"
+msgstr "Прочитайте посібник для початківців"
 
 #: src/Admin/Welcome.php:213
 #: src/Admin/Welcome.php:216
 msgid "Read Documentation"
-msgstr "Прочитайте Документацію"
+msgstr "Ознайомтесь з документацією"
 
-#: includes/functions.php:188
+#: src/API/Notifications.php:364
+msgid "Read More"
+msgstr "Читати Більше"
+
+#: includes/functions.php:190
 msgid "Recommend to"
-msgstr "Recommend to"
+msgstr "Рекомендувати"
 
 #: src/Admin/Settings/API.php:330
 msgid "Reconnect"
-msgstr "Reconnect"
+msgstr "Підключіться знову"
 
 #: includes/functions/class.extended.php:105
 msgid "Red"
 msgstr "Червоний"
 
+#: src/ClickTracking/ListTable.php:409
+msgid "Referer URL"
+msgstr "Реферальна URL-адреса"
+
+#: assets/block/dist/index.js:1
+msgid "Rel"
+msgstr "Rel"
+
 #: src/Admin/Settings/API.php:285
 msgid "Related links:"
-msgstr "Related links:"
+msgstr "Пов'язані посилання:"
 
-#: includes/product-helper-functions.php:619
+#: includes/product-helper-functions.php:617
 msgid "Released on %s"
-msgstr "Випущено на %s"
+msgstr "Розміщено %s"
 
-#: src/Admin/Support.php:390
+#: src/Admin/Tools/Support.php:365
 msgid "Remove all plugin data when uninstalling the plugin."
-msgstr "Remove all plugin data when uninstalling the plugin."
+msgstr "Видаляючи плагін, видаліть усі його дані."
 
-#: src/Admin/Support.php:405
+#: src/Admin/Tools/Support.php:380
 msgid "Remove all products and lists from the database tables of the plugin"
-msgstr "Remove all products and lists from the database tables of the plugin"
+msgstr "Видалити всі продукти і списки з таблиць бази даних плагіна"
 
 #: src/Admin/ComparisonTable/Table.php:73
 msgid "Remove featured image"
-msgstr "Remove featured image"
+msgstr "Видалити рекомендоване зображення"
 
 #: src/Admin/ComparisonTable/Table.php:379
 msgid "Remove row"
-msgstr "Remove row"
+msgstr "Вилучити рядок"
 
 #: src/Admin/ProductsTable/ListTable.php:76
-#: src/Admin/ProductsTable/ListTable.php:264
+#: src/Admin/ProductsTable/ListTable.php:270
 msgid "Renew"
-msgstr "Поновити"
+msgstr "Оновити"
 
-#: src/Admin/Settings.php:142
+#: src/Admin/Settings.php:137
 msgid "Renew Cache"
-msgstr "Оновити Kеш"
+msgstr "Оновити кеш"
 
-#: src/Admin/Support.php:247
+#: src/Admin/Tools/Support.php:222
 msgid "Renew Data Queue"
-msgstr "Renew Data Queue"
+msgstr "Оновити Чергу Даних"
 
-#: src/Admin/Settings.php:148
+#: src/Admin/Settings.php:143
 msgid "Renew Images Cache"
-msgstr "Оновити Kеш Зображень"
+msgstr "Оновити кеш зображень"
 
 #: includes/admin/functions.php:117
 msgid "Renew list"
-msgstr "Renew list"
+msgstr "Оновити список"
 
 #: includes/admin/functions.php:115
 msgid "Renew product"
-msgstr "Renew product"
+msgstr "Оновити продукт"
 
 #: includes/functions/components/cronjobs.php:50
 msgid "Renewing product data"
-msgstr "Оновлення даних продукту"
+msgstr "Оновлення даних товару"
 
 #: includes/functions/components/cronjobs.php:54
 msgid "Renewing product ratings"
-msgstr "Оновлення рейтингів продукту"
+msgstr "Оновлення рейтингів товару"
+
+#: assets/block/dist/index.js:1
+msgid "Replacing the PHP template which will be used for the output."
+msgstr "Заміна PHP-шаблону, який буде використовуватися для відображення."
+
+#: assets/block/dist/index.js:1
+msgid "Replacing the links."
+msgstr "Заміна посилань."
 
 #: src/Admin/MetaBox.php:78
 #: assets/block/dist/index.js:1
 msgid "Replacing the tracking id which will be used for affiliate links."
 msgstr "Заміна ідентифікатора відстеження, який буде використовуватися для партнерських посилань."
 
-#: src/Admin/Support.php:395
+#: assets/block/dist/index.js:1
+msgid "Required for comparing prices."
+msgstr "Потрібно для порівняння цін."
+
+#: src/Admin/Tools/Support.php:370
 msgid "Reset plugin settings to default."
-msgstr "Reset plugin settings to default."
+msgstr "Скинути налаштування плагіна до стандартних."
 
 #: includes/admin/infoboxes.php:45
 msgid "Resources & Support"
-msgstr "Resources & Support"
+msgstr "Ресурси та Підтримка"
 
-#: src/Admin/Settings/Output.php:319
+#: src/Admin/Settings/Output.php:333
 msgid "Responsive"
-msgstr "Responsive"
+msgstr "Чуйний"
 
 #: includes/admin/product-edit.php:173
-#: includes/class.template-functions.php:874
-#: includes/functions.php:189
+#: includes/class.template-functions.php:885
+#: includes/functions.php:191
 #: src/Admin/ComparisonTable/functions.php:284
-#: src/Admin/Settings/Output.php:401
-#: src/Admin/Settings/Output.php:413
-#: src/Admin/Settings/Output.php:419
+#: src/Admin/Settings/Output.php:415
+#: src/Admin/Settings/Output.php:427
+#: src/Admin/Settings/Output.php:433
 #: assets/block/dist/index.js:1
 msgid "Reviews"
 msgstr "Відгуки"
 
-#: src/Admin/Settings/Output.php:427
+#: src/Admin/Settings/Output.php:441
 msgid "Reviews label"
-msgstr "Етикетка відгуків"
+msgstr "Заголовок секції відгуків"
 
-#: includes/class.template-functions.php:987
+#: includes/class.template-functions.php:998
 msgid "Reviews on Amazon"
 msgstr "Відгуки на Amazon"
+
+#: assets/block/dist/index.js:1
+msgid "Right"
+msgstr "Правий"
 
 #: includes/functions/class.extended.php:120
 #: includes/functions/class.extended.php:194
 msgid "Rounded"
-msgstr "Rounded"
+msgstr "Округлі"
 
 #: src/Admin/ComparisonTable/Table.php:305
 msgid "Rows"
-msgstr "Rows"
+msgstr "Рядки"
 
-#: includes/product-helper-functions.php:570
+#: includes/product-helper-functions.php:568
 msgid "Running time: %d minutes"
-msgstr "Running time: %d minutes"
+msgstr "Тривалість: %d хвилин"
 
 #: includes/admin/upgrades.php:246
-#: includes/class.aawp-functions.php:782
+#: includes/class.aawp-functions.php:778
 #: includes/class.template-functions.php:346
-#: src/Admin/Settings/Output.php:494
+#: src/Admin/Settings/Output.php:508
 msgid "Sale"
-msgstr "Sale"
+msgstr "Розпродаж"
 
-#: src/Admin/Settings/Output.php:511
+#: assets/block/dist/index.js:1
+msgid "Sale Ribbon Text"
+msgstr "Текст стрічки розпродажу"
+
+#: src/Admin/Settings/Output.php:525
 msgid "Sale label"
-msgstr "Sale label"
+msgstr "Етикетка для продажу"
 
 #: includes/admin/product-edit.php:193
 msgid "Salesrank"
-msgstr "Salesrank"
+msgstr "Асортимент продажу"
 
-#: includes/functions.php:132
+#: includes/functions.php:133
 msgid "Saudi Arabia"
-msgstr "Saudi Arabia"
+msgstr "Саудівська Аравія"
 
-#: src/Admin/ProductsTable/ListTable.php:308
+#: src/Admin/Tools/ScheduledActions.php:62
+msgid "Scheduled Actions"
+msgstr "Заплановані Дії"
+
+#: src/Admin/ProductsTable/ListTable.php:372
 msgid "Search Product(s)"
-msgstr "Пошук Продукту(ів)"
+msgstr "Пошук товарів"
 
 #: src/Admin/ComparisonTable/Table.php:68
 msgid "Search Table"
-msgstr "Search Table"
+msgstr "Шукати Tаблицю"
 
 #: src/Admin/ComparisonTable/Table.php:643
 msgid "Search for product(s)"
-msgstr "Search for product(s)"
+msgstr "Пошук продукту(ів)"
 
 #: src/Admin/ComparisonTable/functions.php:240
 msgid "Search products"
-msgstr "Search products"
+msgstr "Шукати продукти"
+
+#: src/Admin/Tools/ScheduledActions.php:94
+msgid "Search results for <strong>%s</strong>"
+msgstr "Результати пошуку для <strong>%s</strong>"
 
 #: includes/functions/widgets/class.widget-bestseller.php:102
 #: includes/functions/widgets/class.widget-new-releases.php:102
 msgid "Search term:"
-msgstr "Search term:"
+msgstr "Пошуковий термін:"
 
-#: src/Admin/Flyout.php:51
+#: src/Admin/Flyout.php:53
 msgid "See Quick Links"
-msgstr "Дивіться Швидкі Посилання"
+msgstr "Перегляд швидких посилань"
 
 #: src/Admin/Welcome.php:186
 msgid "See all powerful Features of AAWP"
-msgstr "Перегляньте всі потужні Функції AAWP"
+msgstr "Переглянути всі можливості AAWP"
 
 #: src/Admin/Welcome.php:152
 #: src/Admin/Welcome.php:165
@@ -2279,42 +2889,75 @@ msgstr "Перегляньте всі потужні Функції AAWP"
 msgid "See how it works"
 msgstr "Подивіться, як це працює"
 
+#: assets/block/dist/index.js:1
+msgid "Select A Display Type"
+msgstr "Виберіть тип відображення"
+
+#: assets/block/dist/index.js:1
+msgid "Select A Table"
+msgstr "Виберіть таблицю"
+
+#: src/ClickTracking/Init.php:671
+msgid "Select Chart Type"
+msgstr "Виберіть Tип Діаграми"
+
 #: src/Admin/ComparisonTable/Table.php:616
 msgid "Select color..."
-msgstr "Select color..."
+msgstr "Виберіть колір..."
+
+#: src/ClickTracking/Init.php:564
+msgid "Select filter"
+msgstr "Виберіть фільтр"
+
+#: src/ClickTracking/Init.php:545
+msgid "Select group"
+msgstr "Виберіть групу"
 
 #: src/Admin/ComparisonTable/Table.php:503
 msgid "Select in order to overwrite..."
-msgstr "Select in order to overwrite..."
+msgstr "Виберіть, щоб перезаписати..."
 
-#: src/Admin/Support.php:272
+#: src/ClickTracking/ListTable.php:521
+msgid "Select timespan"
+msgstr "Виберіть часовий проміжок"
+
+#: src/Admin/Tools/Support.php:247
 msgid "Service Events"
-msgstr "Service Events"
+msgstr "Сервісні Події"
 
 #: src/Admin/ComparisonTable/Table.php:72
 msgid "Set featured image"
-msgstr "Set featured image"
+msgstr "Установити рекомендоване зображення"
 
-#: src/Admin/Support.php:325
+#: src/Admin/Tools/Support.php:300
 msgid "Setting"
 msgstr "Налаштування"
 
+#: assets/block/dist/index.js:1
+msgid "Setting a custom HTML link \"rel\" attribute"
+msgstr "Налаштування власного HTML-атрибуту \"rel\" для посилання"
+
 #: includes/admin/plugins.php:23
-#: src/ActivityLogs/ListTable.php:324
+#: src/ActivityLogs/ListTable.php:328
 #: src/Admin/Settings.php:55
 #: src/Admin/Settings.php:105
 #: src/Elementor/Widget.php:115
 msgid "Settings"
-msgstr "Настройки"
+msgstr "Налаштування"
+
+#: src/ActivityLogs/Settings.php:157
+#: src/ClickTracking/Settings.php:196
+msgid "Settings Saved."
+msgstr "Налаштування Збережено."
 
 #: src/Admin/Settings.php:110
 msgid "Settings Updated!"
-msgstr "Налаштування Оновлено!"
+msgstr "Налаштування збережені!"
 
 #: src/Admin/Settings.php:113
-#: src/Admin/Support.php:439
+#: src/Admin/Tools/Support.php:410
 msgid "Settings updated."
-msgstr "Settings updated."
+msgstr "Налаштування оновлено."
 
 #: includes/functions/class.extended.php:127
 #: includes/functions/class.extended.php:201
@@ -2326,7 +2969,7 @@ msgstr "Тінь"
 #: src/Admin/ComparisonTable/Table.php:683
 #: src/Admin/Settings/General.php:75
 msgid "Shortcode"
-msgstr "Shortcode"
+msgstr "Шорткод"
 
 #: src/ShortenLinks/Settings.php:47
 msgid "Shortened (Amzn.to)"
@@ -2334,15 +2977,19 @@ msgstr "Скорочено (Amzn.to)"
 
 #: src/Admin/ComparisonTable/functions.php:261
 msgid "Show"
-msgstr "Show"
+msgstr "Показати"
 
 #: src/Admin/ComparisonTable/Table.php:429
 msgid "Show/hide product"
-msgstr "Show/hide product"
+msgstr "Показати/приховати продукт"
 
 #: src/Admin/ComparisonTable/Table.php:316
 msgid "Show/hide row"
-msgstr "Show/hide row"
+msgstr "Показати/приховати рядок"
+
+#: assets/block/dist/index.js:1
+msgid "Show Numbering"
+msgstr "Показати нумерацію"
 
 #: includes/functions/class.extended.php:295
 msgid "Show Prime logo"
@@ -2352,95 +2999,184 @@ msgstr "Показати логотип Prime"
 msgid "Show Prime logo and link to Amazon Prime"
 msgstr "Показати логотип Prime і посилання на Amazon Prime"
 
+#: src/Admin/Settings/General.php:207
+msgid "Show Products anyway"
+msgstr "Усе одно Показати Продукти"
+
+#: assets/block/dist/index.js:1
+msgid "Show Reviews"
+msgstr "Відображати відгуки"
+
+#: assets/block/dist/index.js:1
+msgid "Show Ribbon"
+msgstr "Відображати стрічку"
+
+#: assets/block/dist/index.js:1
+msgid "Show Star Rating"
+msgstr "Відображати рейтинг"
+
 #: includes/admin/product-edit.php:204
 msgid "Show attributes"
-msgstr "Show attributes"
+msgstr "Показати атрибути"
 
 #: src/Admin/Settings/General.php:447
 msgid "Show credits after each single product or list."
-msgstr "Show credits after each single product or list."
+msgstr "Показувати кредити після кожного окремого продукту чи списку."
 
 #: src/Admin/Settings/General.php:448
 msgid "Show credits once at the bottom of the page."
-msgstr "Show credits once at the bottom of the page."
+msgstr "Показати кредити один раз в нижній частині сторінки."
 
 #: includes/helper.php:508
 msgid "Show debug information"
-msgstr "Show debug information"
+msgstr "Показати інформацію про налагодження"
 
-#: src/Admin/Settings/Output.php:332
+#: src/Admin/Settings/Output.php:346
 msgid "Show description"
-msgstr "Показати опис"
+msgstr "Відображати опис"
 
 #: src/Admin/Settings/General.php:381
 msgid "Show disclaimer after each single product or list"
-msgstr "Show disclaimer after each single product or list"
+msgstr "Показувати відмову від відповідальності після кожного окремого продукту або списку"
 
 #: src/Admin/Settings/General.php:382
 msgid "Show disclaimer once at the bottom of the page"
-msgstr "Show disclaimer once at the bottom of the page"
+msgstr "Показати відмову від відповідальності один раз внизу сторінки"
 
 #: src/Admin/Settings/General.php:348
 msgid "Show info text within each single product box"
-msgstr "Show info text within each single product box"
+msgstr "Показувати інформаційний текст у кожній окремій коробці продукту"
 
 #: src/Admin/ComparisonTable/Table.php:466
 msgid "Show more options"
-msgstr "Show more options"
+msgstr "Показати більше варіантів"
 
 #: src/Admin/ComparisonTable/functions.php:264
 msgid "Show on mobile devices only"
-msgstr "Show on mobile devices only"
+msgstr "Показувати тільки на мобільних пристроях"
 
-#: src/Admin/Settings/Output.php:417
+#: src/Admin/Settings/General.php:208
+msgid "Show product without price"
+msgstr "Показати продукт без ціни"
+
+#: src/Admin/Settings/Output.php:431
 msgid "Show total amount"
-msgstr "Show total amount"
+msgstr "Показати загальну суму"
 
 #: includes/admin/product-edit.php:66
 msgid "Showing data for the following store"
-msgstr "Showing data for the following store"
+msgstr "Показано дані для наступного магазину"
 
-#: includes/functions.php:133
+#: assets/block/dist/index.js:1
+msgid "Showing or hiding the \"Buy on Amazon\" button."
+msgstr "Відображає або приховує кнопку \"Купити на Amazon\"."
+
+#: assets/block/dist/index.js:1
+msgid "Showing or hiding the amount of reviews."
+msgstr "Відображає або приховує значення відгуків."
+
+#: assets/block/dist/index.js:1
+msgid "Showing or hiding the star rating."
+msgstr "Відображає або приховує рейтинг."
+
+#: assets/block/dist/index.js:1
+msgid "Showing the ribbon (e.g. bestseller no X) on the top left."
+msgstr "Відображає стрічку (наприклад, бестселер без X) у верхньому лівому куті."
+
+#: assets/block/dist/index.js:1
+msgid "Shows the numbering col when using table template for unordered lists."
+msgstr "Відображає стовпець нумерації при використанні шаблону таблиці для ненумерованих списків."
+
+#: assets/block/dist/index.js:1
+msgid "Similar to the global \"items\" attribute but defining the maximum filter (search) radius."
+msgstr "Аналогічно глобальному атрибуту \"items\", але визначаючи максимальні межі фільтру (пошуку)."
+
+#: assets/block/dist/index.js:1
+msgid "Similar to the global \"items\" attribute but defining the maximum order (search) radius."
+msgstr "Аналогічно глобальному атрибуту \"items\", але визначає максимальні межі сортування (пошуку)."
+
+#: includes/functions.php:134
 msgid "Singapore"
-msgstr "Singapore"
+msgstr "Сінгапур"
 
 #: includes/libraries/class.license-handler.php:247
 msgid "Site activated"
-msgstr "Site activated"
+msgstr "Сайт активований"
 
-#: src/Admin/Settings/Output.php:377
+#: src/Admin/Settings/Output.php:391
 msgid "Size:"
 msgstr "Розмір:"
 
 #: includes/functions/widgets/functions.php:63
-#: src/Admin/Settings/Output.php:244
-#: src/Admin/Settings/Output.php:372
+#: src/Admin/Settings/Output.php:258
+#: src/Admin/Settings/Output.php:386
 #: assets/block/dist/index.js:1
 msgid "Small"
-msgstr "Small"
+msgstr "Малий"
 
-#: includes/functions.php:636
-#: includes/functions.php:640
+#: includes/functions.php:638
+#: includes/functions.php:642
 msgid "Some of the input parameter relating to request are invalid or missing."
-msgstr "Some of the input parameter relating to request are invalid or missing."
+msgstr "Деякі з вхідних параметрів, що стосуються запиту, є недійсними або відсутніми."
 
-#: src/Admin/ProductsTable/ListTable.php:581
+#: src/Admin/ProductsTable/ListTable.php:663
 msgid "Something went wrong! Please <a href=\"%s\">check the  logs</a>."
 msgstr "Щось пішло не так! Будь ласка, <a href=\"%s\">перевірте журнали</a>."
 
-#: includes/product-helper-functions.php:960
+#: includes/product-helper-functions.php:958
 msgid "Sorry, this file type is not permitted for security reasons."
-msgstr "Sorry, this file type is not permitted for security reasons."
+msgstr "На жаль, цей тип файлів заборонено з міркувань безпеки."
 
-#: includes/functions.php:134
+#: src/ClickTracking/Init.php:605
+#: src/ClickTracking/ListTable.php:408
+msgid "Source"
+msgstr "Джерело"
+
+#: includes/functions.php:135
 msgid "Spain"
-msgstr "Spain"
+msgstr "Іспанія"
 
 #: includes/functions/components/customizations.php:51
 #: includes/functions/components/customizations.php:64
 #: includes/functions/components/customizations.php:113
 msgid "Special: WAYL"
-msgstr "Special: WAYL"
+msgstr "Спеціальний: WAYL"
+
+#: assets/block/dist/index.js:1
+msgid "Specifies a maximum amount of characters for each list item."
+msgstr "Вказує максимальну кількість символів для кожного елемента списку."
+
+#: assets/block/dist/index.js:1
+msgid "Specifies a maximum amount of characters for the product title."
+msgstr "Вказує максимальну кількість символів для назви товару."
+
+#: assets/block/dist/index.js:1
+msgid "Specifies the height of a single image."
+msgstr "Вказує висоту зображення."
+
+#: assets/block/dist/index.js:1
+msgid "Specifies the width of a single image."
+msgstr "Вказує ширину зображення."
+
+#: assets/block/dist/index.js:1
+msgid "Specify a maximum amount for list items."
+msgstr "Вкажіть максимальну кількість елементів списку."
+
+#: src/Admin/Settings/General.php:219
+msgid "Specify how to handle products that are no longer available on Amazon."
+msgstr "Вкажіть, як поводитися з товарами, які більше не доступні на Amazon."
+
+#: assets/block/dist/index.js:1
+msgid "Specify the link icon."
+msgstr "Вкажіть іконку посилання."
+
+#: assets/block/dist/index.js:1
+msgid "Specify the link type."
+msgstr "Вкажіть тип посилання."
+
+#: assets/block/dist/index.js:1
+msgid "Specify your own link CSS classes."
+msgstr "Вкажіть власні CSS-класи для посилань."
 
 #: includes/functions/class.bestseller.php:73
 #: includes/functions/class.bestseller.php:77
@@ -2456,30 +3192,32 @@ msgstr "Special: WAYL"
 #: src/Admin/ComparisonTable/Settings.php:68
 #: src/Admin/ComparisonTable/Table.php:287
 #: src/Admin/Settings/General.php:263
-#: src/Admin/Settings/Output.php:262
-#: src/Admin/Settings/Output.php:459
-#: src/Admin/Settings/Output.php:569
+#: src/Admin/Settings/Output.php:276
+#: src/Admin/Settings/Output.php:473
+#: src/Admin/Settings/Output.php:583
 msgid "Standard"
-msgstr "Standard"
+msgstr "Стандарт"
 
 #: src/Admin/ClassicEditor.php:270
 #: src/Admin/ComparisonTable/functions.php:283
-#: src/Admin/Settings/Output.php:368
+#: src/Admin/Settings/Output.php:382
 #: src/Elementor/Widget.php:174
 #: assets/block/dist/index.js:1
 msgid "Star Rating"
-msgstr "Star Rating"
+msgstr "Зірковий Рейтинг"
 
-#: src/ActivityLogs/ListTable.php:365
-#: src/ActivityLogs/ListTable.php:368
-#: src/ActivityLogs/ListTable.php:370
+#: src/ActivityLogs/ListTable.php:369
+#: src/ActivityLogs/ListTable.php:372
+#: src/ActivityLogs/ListTable.php:374
+#: src/ClickTracking/ListTable.php:493
+#: src/ClickTracking/ListTable.php:496
+#: src/ClickTracking/ListTable.php:498
 msgid "Start date"
 msgstr "Дата початку"
 
 #: includes/admin/list-edit.php:59
 #: includes/admin/product-edit.php:98
 #: includes/admin/product-overview.php:34
-#: src/Admin/ProductsTable/ListTable.php:214
 #: src/Admin/Settings/API.php:83
 #: src/Admin/Settings/API.php:497
 #: src/Admin/Settings/License.php:139
@@ -2493,16 +3231,16 @@ msgid "Store"
 msgstr "Магазин"
 
 #: includes/functions/class.extended.php:182
-#: src/Admin/Settings/Output.php:575
+#: src/Admin/Settings/Output.php:589
 msgid "Style"
-msgstr "Style"
+msgstr "Стиль"
 
 #: includes/functions/components/customizations.php:118
 #: includes/functions/widgets/class.widget-bestseller.php:112
 #: includes/functions/widgets/class.widget-box.php:104
 #: includes/functions/widgets/class.widget-new-releases.php:114
 msgid "Style:"
-msgstr "Style:"
+msgstr "Стиль:"
 
 #: includes/functions/components/customizations.php:107
 msgid "Style 2"
@@ -2532,19 +3270,19 @@ msgstr "Стиль 7"
 #: includes/functions/class.box.php:85
 #: includes/functions/class.new-releases.php:85
 msgid "Styles"
-msgstr "Styles"
+msgstr "Стилі"
 
 #: includes/admin/infoboxes.php:144
 msgid "Subscribe"
-msgstr "Subscribe"
+msgstr "Підписатися"
 
 #: includes/admin/hooks.php:71
 msgid "Substantial updates for the Amazon Affiliate plugin require an <a href=\"%s\">automated upgrade</a> of the plugin database in order to continue working."
-msgstr "Substantial updates for the Amazon Affiliate plugin require an <a href=\"%s\">automated upgrade</a> of the plugin database in order to continue working."
+msgstr "Значні оновлення для плагіна Amazon Affiliate вимагають <a href=\"%s\">автоматичного оновлення</a> бази даних плагінів, щоб продовжити роботу."
 
-#: src/Admin/Settings.php:264
+#: src/Admin/Settings.php:225
 msgid "Successfully deleted cached images."
-msgstr "Successfully deleted cached images."
+msgstr "Успішно видалені кешовані зображення."
 
 #: includes/admin/infoboxes.php:103
 #: includes/admin/infoboxes.php:109
@@ -2553,16 +3291,16 @@ msgstr "Successfully deleted cached images."
 msgid "Support"
 msgstr "Підтримка"
 
-#: includes/functions.php:135
+#: includes/functions.php:136
 msgid "Sweden"
-msgstr "Sweden"
+msgstr "Швеція"
 
 #: src/ActivityLogs/ListTable.php:210
 msgid "System"
 msgstr "Система"
 
 #: includes/functions/components/templating.php:30
-#: src/Admin/AdvancedAds/Ad.php:179
+#: src/Admin/AdvancedAds/Ad.php:189
 #: src/Admin/ComparisonTable/Table.php:56
 #: src/Admin/ComparisonTable/Table.php:79
 #: assets/block/dist/index.js:1
@@ -2572,20 +3310,20 @@ msgstr "Таблиця"
 #: src/Admin/ComparisonTable/Table.php:54
 msgctxt "Post Type Singular Name"
 msgid "Table"
-msgstr "Table"
+msgstr "Таблиця"
 
 #: src/Admin/ComparisonTable/Table.php:57
 msgid "Table Archives"
-msgstr "Table Archives"
+msgstr "Архіви Таблиць"
 
 #: src/Admin/ComparisonTable/Table.php:58
 msgid "Table Attributes"
-msgstr "Table Attributes"
+msgstr "Атрибути Таблиці"
 
 #: src/Admin/ComparisonTable/Settings.php:19
 #: src/Admin/ComparisonTable/Settings.php:50
 msgid "Table Builder"
-msgstr "Table Builder"
+msgstr "Конструктор Tаблиць"
 
 #: src/Admin/ComparisonTable/DuplicateTable.php:153
 msgid "Table Duplicated."
@@ -2593,32 +3331,37 @@ msgstr "Таблиця продубльована."
 
 #: src/Admin/ComparisonTable/Table.php:80
 msgid "Table Post Type"
-msgstr "Table Post Type"
+msgstr "Тип Tабличного Поста"
 
 #: src/Admin/ComparisonTable/ShortcodeHandler.php:131
 msgid "Table could not be displayed."
-msgstr "Table could not be displayed."
+msgstr "Не вдалося відобразити таблицю."
 
 #: src/Admin/ComparisonTable/ShortcodeHandler.php:54
 msgid "Table setup not completed."
-msgstr "Table setup not completed."
+msgstr "Налаштування таблиці не завершено."
 
 #: src/Admin/ComparisonTable/Table.php:55
 #: src/Admin/ComparisonTable/Table.php:120
 msgid "Tables"
-msgstr "Tables"
+msgstr "Таблиці"
 
 #: src/Admin/ComparisonTable/Table.php:53
 msgctxt "Post Type General Name"
 msgid "Tables"
-msgstr "Tables"
+msgstr "Таблиці"
+
+#: src/ClickTracking/ListTable.php:407
+#: assets/block/dist/index.js:1
+msgid "Target"
+msgstr "Ціль"
 
 #: src/Admin/Settings/API.php:135
 #: src/Admin/Settings/License.php:165
 msgid "Technical Information"
-msgstr "Technical Information"
+msgstr "Технічна Інформація"
 
-#: src/Admin/AdvancedAds/Ad.php:171
+#: src/Admin/AdvancedAds/Ad.php:181
 #: assets/block/dist/index.js:1
 msgid "Template"
 msgstr "Шаблон"
@@ -2631,179 +3374,199 @@ msgstr "Шаблон:"
 
 #: includes/functions/components/templating.php:46
 msgid "Template name"
-msgstr "Template name"
+msgstr "Назва шаблону"
 
 #: includes/class.template-functions.php:137
 msgid "Template not found."
-msgstr "Template not found."
+msgstr "Шаблон не знайдено."
 
 #: includes/functions/class.bestseller.php:84
 #: includes/functions/class.box.php:81
 #: includes/functions/class.new-releases.php:81
 msgid "Templates"
-msgstr "Templates"
+msgstr "Шаблони"
+
+#: assets/block/dist/index.js:1
+msgid "Templates & Styles"
+msgstr "Шаблони та стилі"
 
 #: src/Admin/Settings/License.php:417
 msgid "Test Connection"
-msgstr "Test Connection"
+msgstr "Перевірка Підключення"
 
 #: src/Admin/Settings/License.php:471
 #: src/Admin/Settings/License.php:481
 msgid "Test Connection Result:"
-msgstr "Test Connection Result:"
+msgstr "Результат Перевірки Підключення:"
+
+#: assets/block/dist/index.js:1
+msgid "Text"
+msgstr "Текст"
+
+#: assets/block/dist/index.js:1
+msgid "Text Links"
+msgstr "Текстові посилання"
 
 #: includes/functions/components/customizations.php:141
 msgid "The <strong>WAYL</strong> style is based on the <a href=\"%s\" target=\"_blank\">Wurst App Your Life</a>."
-msgstr "The <strong>WAYL</strong> style is based on the <a href=\"%s\" target=\"_blank\">Wurst App Your Life</a>."
+msgstr "Стиль <strong>WAYL</strong> заснований на <a href=\"%s\" target=\"_blank\">Wurst App Your Life</a>."
 
 #: src/Admin/ComparisonTable/Table.php:648
 msgid "The ASIN you enter must contain at least 10 digits."
-msgstr "The ASIN you enter must contain at least 10 digits."
+msgstr "ASIN, який ви вводите, повинен містити щонайменше 10 цифр."
 
-#: includes/functions.php:604
-#: includes/functions.php:608
+#: includes/functions.php:606
+#: includes/functions.php:610
 msgid "The Access Key is not enabled for accessing the Product Advertising API in general or this specific version only. Please migrate your credentials."
-msgstr "The Access Key is not enabled for accessing the Product Advertising API in general or this specific version only. Please migrate your credentials."
+msgstr "Ключ Доступу не ввімкнено для доступу до API для Pеклами Продуктів загалом або лише до цієї конкретної версії. Будь ласка, перенесіть свої облікові дані."
 
-#: includes/functions.php:648
+#: includes/functions.php:650
 msgid "The Access Key or security token included in the request is invalid."
-msgstr "The Access Key or security token included in the request is invalid."
+msgstr "Ключ Доступу або токен безпеки, що міститься в запиті, є недійсним."
 
 #: src/Admin/Welcome.php:141
 msgid "The Highlights of AAWP"
 msgstr "Основні моменти AAWP"
 
 msgid "The best WordPress plugin for Amazon Affiliates."
-msgstr "The best WordPress plugin for Amazon Affiliates."
+msgstr "Найкращий WordPress плагін для Amazon Affiliates."
 
 #: block.json
 msgctxt "block description"
 msgid "The best WordPress plugin for Amazon Affiliates."
-msgstr "Найкращий плагін WordPress для Amazon Affiliates."
+msgstr "Найкращий WordPress плагін для Amazon Affiliates."
 
 #: src/Admin/Settings/License.php:483
 msgid "The connection could not be established."
-msgstr "The connection could not be established."
+msgstr "Підключення не вдалося встановити."
 
 #: src/Admin/Settings/License.php:473
 msgid "The connection was successfully established."
-msgstr "The connection was successfully established."
+msgstr "Підключення успішно встановлено."
 
-#: src/Admin/Support.php:318
+#: src/Admin/Tools/Support.php:293
 msgid "The cronjob settings are meant for experienced users only!"
-msgstr "The cronjob settings are meant for experienced users only!"
+msgstr "Налаштування cronjob призначені лише для досвідчених користувачів!"
 
 #: includes/admin/hooks.php:105
 msgid "The database tables of our plugin had to be completely emptied and recreated. This means that all products and lists have to be fetched from the API again. The loading time of your website may increase at the beginning."
-msgstr "The database tables of our plugin had to be completely emptied and recreated. This means that all products and lists have to be fetched from the API again. The loading time of your website may increase at the beginning."
+msgstr "Таблиці бази даних нашого плагіна потрібно було повністю очистити та створити заново. Це означає, що всі продукти та списки потрібно знову отримати з API. Час завантаження вашого веб-сайту може збільшитися на початку."
 
 #: includes/admin/functions.php:177
 msgid "The following placeholder(s) can be used: <strong>%1$s</strong>"
-msgstr "The following placeholder(s) can be used: <strong>%1$s</strong>"
+msgstr "Можна використовувати наступні заповнювачі: <strong>%1$s</strong>."
 
 #: includes/functions/components/geotargeting.php:27
 msgid "The geotargeting functionality can be setup on the <a href=\"%s\" target=\"_blank\">functions tab</a>."
-msgstr "The geotargeting functionality can be setup on the <a href=\"%s\" target=\"_blank\">functions tab</a>."
+msgstr "Функцію географічного націлювання можна налаштувати на <a href=\"%s\" target=\"_blank\">вкладці функцій</a>."
 
 #: src/Admin/Settings/License.php:516
 msgid "The installed version is no longer up-to-date and should be updated. In case you were able to activate the license, everything is fine for now."
-msgstr "The installed version is no longer up-to-date and should be updated. In case you were able to activate the license, everything is fine for now."
+msgstr "Встановлена версія більше не є актуальною і її слід оновити. Якщо ви змогли активувати ліцензію, то наразі все гаразд."
 
 #: src/Admin/Settings/API.php:528
 msgid "The installed version is no longer up-to-date and should be updated. In case you were able to connect to the API, everything is fine for now."
-msgstr "The installed version is no longer up-to-date and should be updated. In case you were able to connect to the API, everything is fine for now."
+msgstr "Встановлена версія більше не є актуальною і її слід оновити. Якщо ви змогли підключитися до API, то наразі все гаразд."
 
 #: src/Admin/Settings/API.php:509
 msgid "The installed version is no longer up-to-date and should be updated to version %s or higher."
-msgstr "The installed version is no longer up-to-date and should be updated to version %s or higher."
+msgstr "Встановлена версія більше не оновлена і повинна бути оновлена до версії %s або вище."
 
 #: includes/functions/widgets/class.widget-new-releases.php:111
 msgid "The maximum amount of items for this type is 10."
-msgstr "The maximum amount of items for this type is 10."
+msgstr "Максимальна кількість елементів для цього типу - 10."
 
-#: includes/functions.php:644
+#: includes/functions.php:646
 msgid "The operation requested is invalid. Please verify that the operation name is typed correctly."
-msgstr "The operation requested is invalid. Please verify that the operation name is typed correctly."
+msgstr "Запитувана операція є недійсною. Будь ласка, перевірте, чи правильно введено назву операції."
 
-#: includes/functions.php:620
+#: includes/functions.php:622
 msgid "The partner tag is not mapped to a valid associate store with your access key. Please visit associates central."
-msgstr "The partner tag is not mapped to a valid associate store with your access key. Please visit associates central."
+msgstr "Тег партнера не прив'язаний до дійсного асоційованого магазину з вашим ключем доступу. Будь ласка, відвідайте центр для партнерів."
 
 #: src/Admin/Settings/General.php:209
 msgid "The plugin automatically takes care that old and thus no longer needed products and lists are regularly removed from the database. This function helps to reduce the load on your database and also ensures that the Amazon API's request limits are not exceeded."
-msgstr "The plugin automatically takes care that old and thus no longer needed products and lists are regularly removed from the database. This function helps to reduce the load on your database and also ensures that the Amazon API's request limits are not exceeded."
+msgstr "Плагін автоматично піклується про те, щоб старі і, отже, більше не потрібні товари і списки регулярно видалялися з бази даних. Ця функція допомагає зменшити навантаження на вашу базу даних, а також гарантує, що ліміти запитів Amazon API не будуть перевищені."
 
-#: includes/functions.php:624
+#: includes/functions.php:626
 msgid "The request has not been correctly signed."
-msgstr "The request has not been correctly signed."
+msgstr "Запит не був правильно підписаний."
 
-#: includes/functions.php:632
+#: includes/functions.php:634
 msgid "The request is past expiry date or the request date (either with 15 minute padding), or the request date occurs more than 15 minutes in the future."
-msgstr "The request is past expiry date or the request date (either with 15 minute padding), or the request date occurs more than 15 minutes in the future."
+msgstr "Запит минулий термін дії або дата запиту (або з 15-хвилинним доповненням), або дата запиту настає більше 15 хвилин у майбутньому."
 
-#: includes/functions.php:616
+#: includes/functions.php:618
 msgid "The request signature did not include all of the required components."
-msgstr "The request signature did not include all of the required components."
+msgstr "Підпис запиту не містить усіх необхідних компонентів."
 
-#: includes/functions.php:628
+#: includes/functions.php:630
 msgid "The request was denied due to request throttling. Please verify the number of requests made per second to the Amazon Product Advertising API."
-msgstr "The request was denied due to request throttling. Please verify the number of requests made per second to the Amazon Product Advertising API."
+msgstr "Запит відхилено через обмеження запиту. Будь ласка, перевірте кількість запитів, зроблених за секунду до API для Pеклами Продуктів Amazon."
 
 #: src/Admin/Settings/General.php:107
 msgid "Theme Support: Shortcodes"
-msgstr "Theme Support: Shortcodes"
+msgstr "Підтримка Тем: Шорткоди"
 
 #: src/Admin/ComparisonTable/Table.php:629
 msgid "There are no products added yet."
-msgstr "There are no products added yet."
+msgstr "Ще немає доданих продуктів."
 
 #: src/Admin/ComparisonTable/Table.php:389
 msgid "There are no rows added yet."
-msgstr "There are no rows added yet."
+msgstr "Ще не додано жодного рядка."
 
 #: includes/libraries/class.plugin-updater.php:257
 msgid "There is a new version of %1$s available."
-msgstr "There is a new version of %1$s available."
+msgstr "Доступна нова версія %1$s."
 
-#: src/Admin/Settings/Output.php:287
+#: src/Admin/Settings/Output.php:301
 msgid "There might be only a lower amount of description items available."
-msgstr "There might be only a lower amount of description items available."
+msgstr "Може бути доступна менша кількість елементів опису."
 
-#: src/Admin/Support.php:390
-#: src/Admin/Support.php:395
-#: src/Admin/Support.php:400
-#: src/Admin/Support.php:405
+#: src/Admin/Tools/Support.php:365
+#: src/Admin/Tools/Support.php:370
+#: src/Admin/Tools/Support.php:375
+#: src/Admin/Tools/Support.php:380
 msgid "This action is not reversible!"
-msgstr "This action is not reversible!"
+msgstr "Цю дію не можна відмінити!"
 
 #: includes/libraries/class.license-handler.php:214
 msgid "This appears to be an invalid license key for %s."
-msgstr "This appears to be an invalid license key for %s."
+msgstr "Здається, це недійсний ліцензійний ключ для %s."
 
-#: includes/class.aawp-functions.php:1117
+#: includes/class.aawp-functions.php:1113
 msgid "This feature is only available in the <a href=\"%s\" target=\"_blank\">extended version</a>."
-msgstr "This feature is only available in the <a href=\"%s\" target=\"_blank\">extended version</a>."
+msgstr "Ця функція доступна лише в <a href=\"%s\" target=\"_blank\">розширеній версії</a>."
 
 #: includes/admin/infoboxes.php:152
 msgid "This field is required."
-msgstr "This field is required."
+msgstr "Це поле є обов'язковим."
+
+#: src/ClickTracking/ListTable.php:531
+msgid "This month"
+msgstr "Цей місяць"
 
 #: includes/admin/hooks.php:101
 msgid "This plugin update brings support for the new Amazon Product Advertising API v5. This change has the following effects:"
-msgstr "This plugin update brings support for the new Amazon Product Advertising API v5. This change has the following effects:"
+msgstr "Це оновлення плагіна додає підтримку нового API для Pеклами Продуктів Amazon v5. Ця зміна має наступні ефекти:"
 
-#: includes/functions.php:542
+#: includes/functions.php:544
 msgid "This product was presentation was made with <a href=\"%s\" rel=\"nofollow\" target=\"_blank\" title=\"Amazon WordPress Plugin\">AAWP</a> plugin."
-msgstr "This product was presentation was made with <a href=\"%s\" rel=\"nofollow\" target=\"_blank\" title=\"Amazon WordPress Plugin\">AAWP</a> plugin."
+msgstr "Презентація цього продукту була зроблена за допомогою <a href=\"%s\" rel=\"nofollow\" target=\"_blank\" title=\"Amazon WordPress Plugin\">AAWP</a> плагіна."
 
-#: includes/class.aawp-functions.php:979
-#: src/Admin/Settings.php:161
+#: includes/class.aawp-functions.php:975
+#: src/Admin/Settings.php:156
 msgid "This value can be overwritten individually for each shortcode. Please take a look into the documentation."
-msgstr "This value can be overwritten individually for each shortcode. Please take a look into the documentation."
+msgstr "Це значення можна перезаписати окремо для кожного шорткоду. Будь ласка, зверніться до документації."
 
-#: src/Admin/Settings/Output.php:221
+#: src/Admin/Settings/Output.php:235
 msgid "This way Amazon will not receive the IP addresses of your visitors, as they would, when you embed images directly."
-msgstr "This way Amazon will not receive the IP addresses of your visitors, as they would, when you embed images directly."
+msgstr "Таким чином Amazon не отримає IP-адреси ваших відвідувачів, як це було б, якби ви вбудовували зображення безпосередньо."
+
+#: src/ClickTracking/ListTable.php:533
+msgid "This year"
+msgstr "Цього року"
 
 #: src/Admin/ClassicEditor.php:269
 #: src/Admin/ComparisonTable/functions.php:280
@@ -2811,7 +3574,7 @@ msgstr "This way Amazon will not receive the IP addresses of your visitors, as t
 #: src/Elementor/Widget.php:173
 #: assets/block/dist/index.js:1
 msgid "Thumbnail"
-msgstr "Thumbnail"
+msgstr "Мініатюра"
 
 #: src/ActivityLogs/ListTable.php:298
 msgid "Timestamp"
@@ -2825,67 +3588,95 @@ msgstr "Відмітка часу"
 #: src/Admin/ClassicEditor.php:267
 #: src/Admin/ComparisonTable/functions.php:279
 #: src/Admin/ProductsTable/ListTable.php:217
-#: src/Admin/ProductsTable/ListTable.php:536
+#: src/Admin/ProductsTable/ListTable.php:618
 #: src/Admin/Settings/Output.php:79
+#: src/ClickTracking/ListTable.php:405
 #: src/Elementor/Widget.php:171
 #: assets/block/dist/index.js:1
 msgid "Title"
-msgstr "Title"
+msgstr "Заголовок"
 
 #: includes/functions/deprecated/class.widget.php:91
 #: includes/functions/widgets/class.widget-bestseller.php:98
 #: includes/functions/widgets/class.widget-box.php:94
 #: includes/functions/widgets/class.widget-new-releases.php:98
 msgid "Title:"
-msgstr "Назва:"
+msgstr "Заголовок:"
+
+#: assets/block/dist/index.js:1
+msgid "Title Length"
+msgstr "Довжина заголовка"
 
 #: includes/functions/components/geotargeting.php:65
 msgid "To determine the country of origin, the current IP address of your page visitor will be analyzed through a third party service. The activation and use of the geo-targeting function is voluntary and is the responsibility of the site administrator."
-msgstr "To determine the country of origin, the current IP address of your page visitor will be analyzed through a third party service. The activation and use of the geo-targeting function is voluntary and is the responsibility of the site administrator."
+msgstr "Для визначення країни походження поточна IP-адреса відвідувача вашої сторінки буде проаналізована за допомогою стороннього сервісу. Активація та використання функції географічного націлювання є добровільним і несе відповідальність адміністратор сайту."
 
-#: src/Admin/Settings/Output.php:488
+#: assets/block/dist/index.js:1
+msgid "To display single product data e.g. title, description or price."
+msgstr "Для відображення даних про товар, наприклад, назви, опису або ціни."
+
+#: assets/block/dist/index.js:1
+msgid "To display the comparison table."
+msgstr "Для відображення таблиці порівняння."
+
+#: src/ClickTracking/ListTable.php:527
+msgid "Today"
+msgstr "Сьогодні"
+
+#: src/Admin/Tools.php:50
+#: src/Admin/Tools.php:76
+msgid "Tools"
+msgstr "Інструменти"
+
+#: src/ClickTracking/Init.php:187
+msgid "Total Clicks"
+msgstr "Загальна кількість Kліків"
+
+#: src/Admin/Settings/Output.php:502
 msgid "Total amount (incl. Currency)"
-msgstr "Total amount (incl. Currency)"
+msgstr "Загальна сума (в т.ч. валюта)"
 
 #: includes/functions/components/stores.php:64
 #: src/Admin/MetaBox.php:75
 #: src/Admin/Settings/API.php:118
+#: src/ClickTracking/Init.php:606
 #: assets/block/dist/index.js:1
 msgid "Tracking ID"
-msgstr "Tracking ID"
+msgstr "ID Відстеження"
 
 #: includes/functions/class.extended.php:325
 msgid "Tracking enabled and using ASIN (Article Number) as label"
-msgstr "Tracking enabled and using ASIN (Article Number) as label"
+msgstr "Ввімкнено відстеження та використання ASIN (Aртикул) як етикетки"
 
 #: includes/functions/class.extended.php:326
 msgid "Tracking enabled and using product title as label"
-msgstr "Tracking enabled and using product title as label"
+msgstr "Відстеження включений і використання назви продукту в якості етикетки"
 
 #: src/Admin/Settings/API.php:221
 msgid "Tracking id is missing."
-msgstr "Tracking id is missing."
+msgstr "Ідентифікатор відстеження відсутній."
 
 #: includes/admin/infoboxes.php:178
 msgid "Translations can be added simply by visiting our translation page."
-msgstr "Translations can be added simply by visiting our translation page."
+msgstr "Переклади можна додавати, просто відвідавши нашу сторінку перекладів."
 
-#: includes/functions.php:136
+#: includes/functions.php:137
 msgid "Turkey"
-msgstr "Turkey"
+msgstr "Туреччина"
 
 #: includes/admin/list-edit.php:71
 #: includes/admin/list-overview.php:33
+#: src/ClickTracking/ListTable.php:406
 msgid "Type"
-msgstr "Type"
+msgstr "Тип"
 
 #: includes/functions/deprecated/class.widget.php:95
 msgid "Type:"
 msgstr "Тип:"
 
-#: includes/functions.php:137
+#: includes/functions.php:138
 msgid "UK"
-msgstr "UK"
+msgstr "Великобританія"
 
 #: src/Admin/ProductsTable/ListTable.php:218
 msgid "URL"
@@ -2893,94 +3684,102 @@ msgstr "URL"
 
 #: includes/admin/product-edit.php:122
 msgid "URLs"
-msgstr "URLs"
+msgstr "URL-адреси"
 
-#: includes/functions.php:138
+#: includes/functions.php:139
 msgid "US"
 msgstr "США"
 
-#: includes/product-helper-functions.php:970
+#: includes/product-helper-functions.php:968
 msgid "Unable to create directory %s. Is its parent directory writable by the server?"
-msgstr "Unable to create directory %s. Is its parent directory writable by the server?"
+msgstr "Не вдалося створити каталог %s. Чи є його батьківський каталог доступним для запису сервером?"
 
-#: includes/functions.php:656
+#: includes/functions.php:658
 msgid "Undefined error."
-msgstr "Undefined error."
+msgstr "Невизначена помилка."
 
 #: includes/admin/hooks.php:106
 msgid "Unfortunately, some functions may no longer be available or work different now. This means that you may have to adjust existing shortcodes."
-msgstr "Unfortunately, some functions may no longer be available or work different now. This means that you may have to adjust existing shortcodes."
+msgstr "На жаль, деякі функції можуть бути недоступні або працювати по-іншому. Це означає, що вам, можливо, доведеться скоригувати наявні шорткоди."
 
-#: includes/functions.php:139
+#: includes/functions.php:140
 msgid "United Arab Emirates"
-msgstr "United Arab Emirates"
+msgstr "Об'єднані Арабські Емірати"
 
-#: src/Admin/Settings/Output.php:167
-#: src/Admin/Settings/Output.php:294
-#: src/Admin/Settings/Output.php:347
+#: src/Admin/Settings/Output.php:181
+#: src/Admin/Settings/Output.php:308
+#: src/Admin/Settings/Output.php:361
 msgid "Unlimited"
-msgstr "Не обмежено"
+msgstr "Без обмежень"
 
 #: includes/admin/infoboxes.php:117
 msgid "Upcoming features and discounts"
-msgstr "Upcoming features and discounts"
+msgstr "Найближчі функції та знижки"
 
 #: src/Admin/ComparisonTable/Table.php:65
 msgid "Update Table"
-msgstr "Update Table"
+msgstr "Оновити Tаблицю"
 
 #: includes/libraries/class.plugin-updater.php:287
 msgid "Update now."
-msgstr "Update now."
+msgstr "Оновити зараз."
 
 #: src/Admin/Settings/License.php:67
 msgid "Update v%1$s available"
-msgstr "Update v%1$s available"
+msgstr "Оновлення v%1$s доступне"
 
-#: src/Admin/ProductsTable/ListTable.php:220
+#: src/Admin/ProductsTable/ListTable.php:226
 msgid "Updated At"
 msgstr "Оновлено о"
 
 #: src/Admin/ComparisonTable/Table.php:76
 msgid "Uploaded to this table"
-msgstr "Uploaded to this table"
+msgstr "Завантажено до цієї таблиці"
 
 #: src/Admin/ComparisonTable/Table.php:74
 msgid "Use as featured image"
-msgstr "Use as featured image"
+msgstr "Використовувати як рекомендоване зображення"
 
-#: src/Admin/Settings/Output.php:186
+#: src/Admin/Settings/Output.php:200
 msgid "Use this field to show additional content at the end of <u>every</u> product title: e.g. <code>*</code> in order to refer to a footnote."
-msgstr "Use this field to show additional content at the end of <u>every</u> product title: e.g. <code>*</code> in order to refer to a footnote."
+msgstr "Використовуйте це поле, щоб показати додатковий вміст в кінці <u>кожного</u> заголовка товару: наприклад, <code>*</code> для посилання на виноску."
 
 #: src/ActivityLogs/ListTable.php:299
 msgid "User"
 msgstr "Користувач"
 
+#: assets/block/dist/index.js:1
+msgid "Using a custom product description."
+msgstr "Використання власного опису товару."
+
 #: includes/functions/components/cronjobs.php:47
 msgid "Using manual cronjobs"
-msgstr "Using manual cronjobs"
+msgstr "Використання ручних cronjobs"
 
 #: src/Admin/Welcome.php:226
 msgid "VIEW POPULAR QUESTIONS"
 msgstr "ПЕРЕГЛЯНУТИ ПОПУЛЯРНІ ПИТАННЯ"
 
+#: assets/block/dist/index.js:1
+msgid "Value"
+msgstr "Значення"
+
 #: includes/functions/class.fields.php:302
 msgid "Value \"%1$s\" is not supported."
-msgstr "Value \"%1$s\" is not supported."
+msgstr "Значення «%1$s» не підтримується."
 
 #: includes/functions/class.fields.php:141
 msgid "Value missing."
-msgstr "Value missing."
+msgstr "Відсутнє значення."
 
-#: src/Admin/Support.php:170
-#: src/Admin/Support.php:326
+#: src/Admin/Tools/Support.php:145
+#: src/Admin/Tools/Support.php:301
 msgid "Values"
 msgstr "Значення"
 
 #: src/Admin/Settings/License.php:363
 msgid "Verify License"
-msgstr "Перевірити Ліцензію"
+msgstr "Перевірити ліцензію"
 
 #: src/Admin/Settings/API.php:505
 #: src/Admin/Settings/API.php:519
@@ -2988,59 +3787,59 @@ msgstr "Перевірити Ліцензію"
 #: src/Admin/Settings/License.php:507
 #: src/Admin/Settings/License.php:528
 msgid "Version %s installed"
-msgstr "Version %s installed"
+msgstr "Версія %s встановлена"
 
-#: src/Admin/AdvancedAds/Ad.php:177
+#: src/Admin/AdvancedAds/Ad.php:187
 #: assets/block/dist/index.js:1
 msgid "Vertical"
 msgstr "Вертикально"
 
 #: src/Admin/ComparisonTable/Table.php:66
 msgid "View Table"
-msgstr "View Table"
+msgstr "Переглянути Tаблицю"
 
 #: src/Admin/ComparisonTable/Table.php:67
 msgid "View Tables"
-msgstr "View Tables"
+msgstr "Перегляд Tаблиць"
 
-#: src/Admin/ProductsTable/ListTable.php:171
+#: src/Admin/ProductsTable/ListTable.php:158
 msgid "View on Amazon"
-msgstr "Переглянути на Amazon"
+msgstr "Подивитись на Amazon"
 
 #: includes/admin/hooks.php:109
 msgid "We have collected everything worth knowing for you <a href=\"%s\" target=\"_blank\">here</a>."
-msgstr "We have collected everything worth knowing for you <a href=\"%s\" target=\"_blank\">here</a>."
+msgstr "Ми зібрали для вас усе, що варто знати, <a href=\"%s\" target=\"_blank\">тут</a>."
 
 #: src/Admin/Welcome.php:221
 msgid "We know that sometimes it can be overwhelming to learn a new subject. That's why we want to make it as easy as possible for you to get started."
-msgstr "Ми знаємо, що іноді вивчення нового предмета може бути дуже складним. Саме тому ми хочемо зробити так, щоб Вам було якомога легше розпочати роботу."
+msgstr "Ми знаємо, що іноді вивчення нового предмета може бути шокуючим. Ось чому ми хочемо, щоб вам було якомога простіше розпочати."
 
 #: includes/hooks.php:32
 msgid "Weekly"
 msgstr "Щотижня"
 
-#: src/Admin/AdvancedAds/Ad.php:180
+#: src/Admin/AdvancedAds/Ad.php:190
 #: assets/block/dist/index.js:1
 msgid "Widget"
 msgstr "Віджет"
 
-#: src/Admin/AdvancedAds/Ad.php:182
+#: src/Admin/AdvancedAds/Ad.php:192
 #: assets/block/dist/index.js:1
 msgid "Widget Small"
-msgstr "Малий Віджет"
+msgstr "Малий віджет"
 
-#: src/Admin/AdvancedAds/Ad.php:181
+#: src/Admin/AdvancedAds/Ad.php:191
 #: assets/block/dist/index.js:1
 msgid "Widget Vertical"
-msgstr "Вертикальний Віджет"
+msgstr "Вертикальний віджет"
 
-#: includes/functions.php:187
+#: includes/functions.php:189
 msgid "Wishlist"
-msgstr "Wishlist"
+msgstr "Список бажань"
 
 #: src/Admin/Settings/API.php:449
 msgid "Without the tracking id, conversions cannot be assigned to your affiliate account."
-msgstr "Without the tracking id, conversions cannot be assigned to your affiliate account."
+msgstr "Без ідентифікатора відстеження конверсії не можуть бути призначені вашому партнерському акаунту."
 
 #: includes/functions/class.extended.php:107
 msgid "Yellow"
@@ -3048,78 +3847,94 @@ msgstr "Жовтий"
 
 #: src/Admin/ComparisonTable/Table.php:534
 msgid "Yes"
-msgstr "Yes"
+msgstr "Так"
 
 #: src/Admin/ComparisonTable/functions.php:287
 msgid "Yes/No"
-msgstr "Yes/No"
+msgstr "Так/Ні"
+
+#: src/ClickTracking/ListTable.php:528
+msgid "Yesterday"
+msgstr "Вчора"
 
 #: src/Admin/Welcome.php:222
 msgid "You'll find many resources in our knowledge base, and if your questions can't be answered there, we have a friendly and dedicated support team that you can communicate with directly. Do not hesitate! We are always here for you and happy to help you with your affiliate website!"
-msgstr "Ви знайдете багато ресурсів у нашій базі знань, а якщо ви не знайдете там відповіді на свої запитання, у нас є дружня та віддана команда підтримки, з якою ви можете зв'язатися безпосередньо. Не соромтеся звертатися! Ми завжди тут для вас і раді допомогти вам з вашим партнерським веб-сайтом!"
+msgstr "У нашій базі знань ви знайдете безліч ресурсів і, якщо там немає відповіді на ваші запитання, ми маємо дружню команду підтримки, з якою ви можете зв'язатися напряму. Не сумнівайтеся! Ми завжди тут і раді допомогти вам із вашим партнерським сайтом!"
+
+#: assets/block/dist/index.js:1
+msgid "You can select another product image by entering a number from 1 to 5 or a direct link to an image file."
+msgstr "Ви можете вибрати інше зображення товару, ввівши число від 1 до 5 або вказавши пряме посилання на файл зображення."
 
 #: includes/libraries/class.plugin-updater.php:519
 msgid "You do not have permission to install plugin updates"
-msgstr "You do not have permission to install plugin updates"
+msgstr "У вас немає дозволу на встановлення оновлень плагіна"
 
 #: src/Admin/Settings.php:97
-#: src/Admin/Support.php:427
+#: src/Admin/Tools/Support.php:402
 msgid "You do not have sufficient permissions to access this page."
-msgstr "You do not have sufficient permissions to access this page."
+msgstr "Ви не маєте достатніх прав для доступу до цієї сторінки."
 
 #: src/Admin/Welcome.php:195
 msgid "You have problems or questions? Contact us! We are always happy to help!"
-msgstr "Виникли проблеми або питання? Звертайтеся до нас! Ми завжди раді допомогти!"
+msgstr "Виникли проблеми або питання? Зв'яжіться з нами! Ми завжди раді допомогти!"
 
-#: includes/functions.php:612
+#: includes/functions.php:614
 msgid "Your access key is not mapped to primary of approved associate store. Please visit associate central."
-msgstr "Your access key is not mapped to primary of approved associate store. Please visit associate central."
+msgstr "Ваш ключ доступу не прив'язаний до основного магазину затвердженого партнера. Будь ласка, відвідайте центральний розділ членства."
 
 #: includes/license-functions.php:277
 msgid "Your license expired. Please <a href=\"%s\" target=\"_blank\">renew your license</a> in order to receive future updates."
-msgstr "Your license expired. Please <a href=\"%s\" target=\"_blank\">renew your license</a> in order to receive future updates."
+msgstr "Термін дії вашої ліцензії закінчився. Будь ласка, <a href=\"%s\" target=\"_blank\">поновіть вашу ліцензію</a>, щоб отримувати майбутні оновлення."
 
 #: includes/libraries/class.license-handler.php:210
 msgid "Your license is not active for this URL."
-msgstr "Your license is not active for this URL."
+msgstr "Ваша ліцензія не активна для цієї URL-адреси."
 
 #: includes/libraries/class.license-handler.php:194
 msgid "Your license key expired on %s."
-msgstr "Your license key expired on %s."
+msgstr "Термін дії вашого ліцензійного ключа закінчився на %s."
 
 #: includes/libraries/class.license-handler.php:201
 msgid "Your license key has been disabled."
-msgstr "Your license key has been disabled."
+msgstr "Ваш ліцензійний ключ було вимкнено."
 
 #: includes/libraries/class.license-handler.php:218
 msgid "Your license key has reached its activation limit."
-msgstr "Your license key has reached its activation limit."
+msgstr "Ваш ліцензійний ключ досягнув ліміту активації."
 
 #: src/Admin/Settings/API.php:241
 msgid "Your server is missing some dependencies. Please take a look at the <a href=\"%s\">support page</a> and upgrade your server."
-msgstr "Your server is missing some dependencies. Please take a look at the <a href=\"%s\">support page</a> and upgrade your server."
+msgstr "На вашому сервері відсутні деякі залежності. Будь ласка, погляньте на <a href=\"%s\">сторінку підтримки</a> та оновіть свій сервер."
 
 #: includes/admin/hooks.php:58
 msgid "Your server is missing the PHP SOAP extension. <a href=\"%s\" target=\"_blank\">Please take a look at this article</a> in order to fix it."
-msgstr "Your server is missing the PHP SOAP extension. <a href=\"%s\" target=\"_blank\">Please take a look at this article</a> in order to fix it."
+msgstr "На вашому сервері відсутня розширення PHP SOAP. <a href=\"%s\" target=\"_blank\">Будь ласка, погляньте на цю статтю</a>, щоб виправити це."
 
 #: src/Admin/Settings/API.php:449
 msgid "Your tracking id should look similar to this: <strong>aawp-21</strong> (might differ depending on the country)."
-msgstr "Your tracking id should look similar to this: <strong>aawp-21</strong> (might differ depending on the country)."
+msgstr "Ваш ідентифікатор відстеження має виглядати приблизно так: <strong>aawp-21</strong> (може відрізнятися залежно від країни)."
 
 #: src/Plugin.php:135
 msgid "Your version of PHP is below the minimum version of PHP required by our plugin. Please contact your hosting company and request that your version will be upgraded to %1$s or later."
-msgstr "Your version of PHP is below the minimum version of PHP required by our plugin. Please contact your hosting company and request that your version will be upgraded to %1$s or later."
+msgstr "Ваша версія PHP нижче мінімальної версії PHP, необхідної для нашого плагіна. Будь ласка, зверніться до своєї хостингової компанії та попросіть оновити вашу версію до %1$s або пізнішої."
 
 msgid " %1$sView version %2$s details%3$s."
-msgstr ""
+msgstr "%1$sПереглянути деталі %3$s версії %2$s."
 
 msgid " %1$sView version %2$s details%3$s or %4$supdate now%5$s."
-msgstr ""
+msgstr "%1$sПереглянути деталі %3$s версії %2$s або %4$sоновити зараз%5$s."
 
-#: src/Admin/Support.php:242
+#: assets/block/dist/index.js:1
+msgid " Search for product(s) without ASIN"
+msgstr " Пошук товарів без ASIN"
+
+#: src/Admin/Tools/Support.php:217
 msgid "and"
-msgstr "і"
+msgstr "та"
+
+#: includes/functions/class.extended.php:345
+msgid "built-in click tracking"
+msgstr "вбудоване відстеження кліків"
 
 #: includes/functions/widgets/class.widget-box.php:99
 msgid "e.g. B00NGOD2OI or 3551559007"
@@ -3134,134 +3949,134 @@ msgstr "https://getaawp.com"
 
 #: src/Admin/ComparisonTable/Table.php:641
 msgid "or"
-msgstr "or"
+msgstr "або"
 
-#: includes/product-helper-functions.php:505
+#: includes/product-helper-functions.php:503
 msgid "%d Page"
 msgid_plural "%d Pages"
-msgstr[0] ""
-msgstr[1] "%d Сторінка"
-msgstr[2] ""
+msgstr[0] "%d Сторінка"
+msgstr[1] "%d Сторінки"
+msgstr[2] "%d Сторінок"
 
-#: src/Admin/ProductsTable/ListTable.php:423
+#: src/Admin/ProductsTable/ListTable.php:530
 msgid "<code>%1$d</code> product with ID <code>#%2$s</code> deleted via products listtable bulk action."
 msgid_plural "<code>%1$d</code> products with IDs <code>#%2$s</code> deleted via products listtable bulk action."
-msgstr[0] ""
-msgstr[1] "<code>%1$d</code> продукт з ідентифікатором <code>#%2$s</code> видалено за допомогою масових дій зі списком продуктів."
-msgstr[2] ""
+msgstr[0] "<code>%1$d</code> товар з ідентифікатором <code>#%2$s</code> видалено за допомогою масової дії зі списком товарів."
+msgstr[1] "<code>%1$d</code> товари з ідентифікатором <code>#%2$s</code> видалено за допомогою масової дії зі списком товарів."
+msgstr[2] "<code>%1$d</code> товарів з ідентифікатором <code>#%2$s</code> видалено за допомогою масової дії зі списком товарів."
 
-#: src/Admin/ProductsTable/ListTable.php:441
+#: src/Admin/ProductsTable/ListTable.php:548
 msgid "<code>%1$d</code> product with ID <code>#%2$s</code> renewed via products listtable bulk action."
 msgid_plural "<code>%1$d</code> products with IDs <code>#%2$s</code> renewed via products listtable bulk action."
-msgstr[0] ""
-msgstr[1] "<code>%1$d</code> продукт з ідентифікатором <code>#%2$s</code> поновлюється за допомогою масових дій зі списком продуктів."
-msgstr[2] ""
+msgstr[0] "<code>%1$d</code> товар з ідентифікатором <code>#%2$s</code> оновлюється за допомогою масової дії зі списком товарів."
+msgstr[1] "<code>%1$d</code> товари з ідентифікатором <code>#%2$s</code> оновлюється за допомогою масової дії зі списком товарів."
+msgstr[2] "<code>%1$d</code> товарів з ідентифікатором <code>#%2$s</code> оновлюється за допомогою масової дії зі списком товарів."
 
-#: src/Admin/ProductsTable/ListTable.php:563
+#: src/Admin/ProductsTable/ListTable.php:645
 msgid "<code>%1$s</code> Product %2$s. "
 msgid_plural "<code>%1$s</code> Products %2$s. "
-msgstr[0] ""
-msgstr[1] "<code>%1$s</code> Продукт %2$s."
-msgstr[2] ""
+msgstr[0] "<code>%1$s</code> товар %2$s."
+msgstr[1] "<code>%1$s</code> товари %2$s."
+msgstr[2] "<code>%1$s</code> товарів %2$s."
 
 #: includes/class.cache-handler.php:233
 msgid "<code>%d</code> cached product renewed via API."
 msgid_plural "<code>%d</code> cached products renewed via API."
-msgstr[0] ""
-msgstr[1] "<code>%d</code> кешований продукт поновлено через API."
-msgstr[2] ""
+msgstr[0] "<code>%d</code> кешований товар оновлюється через API."
+msgstr[1] "<code>%d</code> кешовані товари оновлюються через API."
+msgstr[2] "<code>%d</code> кешованих товарів оновлюються через API."
 
-#: src/Admin/Support.php:242
+#: src/Admin/Tools/Support.php:217
 msgid "<strong>%d</strong> list"
 msgid_plural "<strong>%d</strong> lists"
 msgstr[0] "<strong>%d</strong> список"
 msgstr[1] "<strong>%d</strong> списки"
 msgstr[2] "<strong>%d</strong> списків"
 
-#: src/Admin/Support.php:242
+#: src/Admin/Tools/Support.php:217
 msgid "<strong>%d</strong> product"
 msgid_plural "<strong>%d</strong> products"
-msgstr[0] "<strong>%d</strong> продукт"
-msgstr[1] "<strong>%d</strong> продукти"
-msgstr[2] "<strong>%d</strong> продуктів"
+msgstr[0] "<strong>%d</strong> товар"
+msgstr[1] "<strong>%d</strong> товари"
+msgstr[2] "<strong>%d</strong> товарів"
 
-#: includes/class.aawp-functions.php:586
+#: includes/class.aawp-functions.php:582
 msgid "Fetched product with ASIN <code>%s</code> from the API."
 msgid_plural "Fetched products with ASIN <code>%s</code> from the API."
-msgstr[0] ""
-msgstr[1] "Отриманий продукт з ASIN <code>%s</code> з API."
-msgstr[2] ""
+msgstr[0] "З API отриман товар з ASIN <code>%s</code>."
+msgstr[1] "З API отримані товари з ASIN <code>%s</code>."
+msgstr[2] "З API отримані товари з ASIN <code>%s</code>."
 
-#: includes/product-helper-functions.php:419
+#: includes/product-helper-functions.php:417
 msgid " (Actor)"
 msgid_plural " (Actors)"
-msgstr[0] ""
-msgstr[1] " (Актор)"
-msgstr[2] ""
+msgstr[0] " (Актор)"
+msgstr[1] " (Актори)"
+msgstr[2] " (Акторів)"
 
-#: includes/product-helper-functions.php:433
+#: includes/product-helper-functions.php:431
 msgid " (Author)"
 msgid_plural " (Authors)"
-msgstr[0] ""
-msgstr[1] " (Автор)"
-msgstr[2] ""
+msgstr[0] " (Автор)"
+msgstr[1] " (Автори)"
+msgstr[2] " (Авторів)"
 
-#: includes/product-helper-functions.php:424
+#: includes/product-helper-functions.php:422
 msgid " (Director)"
 msgid_plural " (Directors)"
-msgstr[0] ""
-msgstr[1] " (Директор)"
-msgstr[2] ""
+msgstr[0] " (Директор)"
+msgstr[1] " (Директори)"
+msgstr[2] " (Директорів)"
 
-#: includes/product-helper-functions.php:436
+#: includes/product-helper-functions.php:434
 msgid " (Narrator)"
 msgid_plural " (Narrators)"
-msgstr[0] ""
-msgstr[1] "(Оповідач)"
-msgstr[2] ""
+msgstr[0] "(Оповідач)"
+msgstr[1] "(Оповідачі)"
+msgstr[2] "(Оповідачів)"
 
-#: includes/product-helper-functions.php:474
+#: includes/product-helper-functions.php:472
 msgid " (Playback Language)"
 msgid_plural " (Playback Languages)"
-msgstr[0] ""
-msgstr[1] " (Мова відтворення)"
-msgstr[2] ""
+msgstr[0] " (Мова відтворення)"
+msgstr[1] "(Мови відтворення)"
+msgstr[2] "(Мов відтворення)"
 
-#: includes/product-helper-functions.php:430
+#: includes/product-helper-functions.php:428
 msgid " (Producer)"
 msgid_plural " (Producers)"
-msgstr[0] ""
-msgstr[1] "(Продюсер)"
-msgstr[2] ""
+msgstr[0] "(Режисер)"
+msgstr[1] "(Режисери)"
+msgstr[2] "(Режисерів)"
 
-#: includes/product-helper-functions.php:480
+#: includes/product-helper-functions.php:478
 msgid " (Publication Language)"
 msgid_plural " (Publication Languages)"
-msgstr[0] ""
-msgstr[1] " (Мова публікації)"
-msgstr[2] ""
+msgstr[0] " (Мова публікації)"
+msgstr[1] " (Мови публікації)"
+msgstr[2] " (Мов публікації)"
 
-#: includes/product-helper-functions.php:477
+#: includes/product-helper-functions.php:475
 msgid " (Subtitle)"
 msgid_plural " (Subtitles)"
-msgstr[0] ""
-msgstr[1] " (Субтитри)"
-msgstr[2] ""
+msgstr[0] " (Субтитри)"
+msgstr[1] "(Субтитрів)"
+msgstr[2] "(Субтитрів)"
 
-#: includes/product-helper-functions.php:427
+#: includes/product-helper-functions.php:425
 msgid " (Writer)"
 msgid_plural " (Writers)"
-msgstr[0] ""
-msgstr[1] "(Письменник)"
-msgstr[2] ""
+msgstr[0] "(Письменник)"
+msgstr[1] "(Письменники)"
+msgstr[2] "(Письменників)"
 
 #: src/Admin/ProductsTable/ListTable.php:38
 msgid "product"
-msgstr "продукт"
+msgstr "товар"
 
 #: src/Admin/ComparisonTable/Table.php:586
 msgid "sponsored"
-msgstr "sponsored"
+msgstr "cпонсовано"
 
 #: includes/functions/class.extended.php:63
 msgid "tinyurl.com"
@@ -3269,4 +4084,4 @@ msgstr "tinyurl.com"
 
 #: src/Admin/Settings/API.php:302
 msgid "“RequestThrottled” and how to fix it?"
-msgstr "“RequestThrottled” and how to fix it?"
+msgstr "«RequestThrottled» і як це виправити?"

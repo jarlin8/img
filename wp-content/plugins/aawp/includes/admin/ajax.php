@@ -118,8 +118,6 @@ function aawp_admin_ajax_search() {
 
             $products = aawp()->api->get_search_items( $search_args );
 
-            //aawp_debug_log( $products );
-
             // Error
             if ( is_string( $products ) ) {
                 $response = $products;
@@ -138,7 +136,6 @@ function aawp_admin_ajax_search() {
                 if ( ! empty( $output ) )
                     $response = $output;
             }
-
         }
 
         // response output

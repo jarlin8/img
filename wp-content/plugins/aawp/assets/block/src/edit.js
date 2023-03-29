@@ -696,7 +696,7 @@ export default function Edit( props ) {
 
     switch( look ) {
         case 'box':
-            itemsRange = linkIconSelect = linkClassInput = imageAlignSelect = imageWidthInput = imageHeightInput = imageClassInput = saleRibbonTextInput = [];
+            itemsRange = linkIconSelect = linkClassInput = imageAlignSelect = imageWidthInput = imageHeightInput = imageClassInput = [];
         break;
 
         case 'bestseller':
@@ -722,6 +722,7 @@ export default function Edit( props ) {
                         {'box' !== look ? itemsRange : ''}
                         {ribbonSelect}
                         {ribbon === true ? ribbonTextInput : ''}
+                        {saleRibbonTextInput}
                     </PanelBody>
                 ]
 
@@ -925,7 +926,13 @@ export default function Edit( props ) {
                             { value: 'link', label: [ <img src={aawp_data.icons.link} key="aawp-look-selector-links-image" alt="Text Links" />, <p key="aawp-look-selector-links-label"> { __( 'Text Links', 'aawp' ) } </p> ] },
                             { value: 'table', label: [ <img src={aawp_data.icons.table} key="aawp-look-selector-table-image" alt="Table" />, <p key="aawp-look-selector-table-label"> { __( 'Comparison Tables', 'aawp' ) } </p> ] }
                         ]}
-                        onChange= { (value) => setAttributes( { look: value } ) }
+                        onChange= { (value) => { 
+                            setAttributes( { look: value } );
+                            const isEditorSidebarOpened = wp.data.select( 'core/edit-post' ).isEditorSidebarOpened();
+                            if ( ! isEditorSidebarOpened ) {
+                                wp.data.dispatch( 'core/edit-post' ).openGeneralSidebar('edit-post/document');
+                            }
+                        } }
                     />
                 </Placeholder>                
             );

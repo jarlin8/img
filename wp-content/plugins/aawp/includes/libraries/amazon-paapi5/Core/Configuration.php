@@ -105,6 +105,11 @@ class Configuration {
                 $host = 'webservices.amazon.ca';
                 $region = 'us-east-1';
                 break;
+            // Egypt
+            case ( 'eg' ):
+                $host = 'webservices.amazon.eg';
+                $region = 'eu-west-1';
+                break;
             // France
             case ( 'fr' ):
                 $host = 'webservices.amazon.fr';

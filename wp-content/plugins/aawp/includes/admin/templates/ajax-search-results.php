@@ -39,9 +39,9 @@ if ( ! isset( $products ) || ! is_array( $products ) )
             <?php if ( ! empty( $product_price ) ) { ?>
                 <span class="aawp-ajax-search-item__price">
                     <?php echo $product_price; ?>
-                    <?php if ( $product_is_prime ) { ?>
-                        <span class="aawp-check-prime"></span>
-                    <?php } ?>
+                    <?php if ( $product_is_prime ) { 
+                        echo '<img src="'. AAWP_PLUGIN_URL .'assets/img/icon-check-prime.png"  alt="Amazon Prime" />';
+                    } ?>
                 </span>
             <?php } ?>
         </div>

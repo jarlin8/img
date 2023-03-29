@@ -37,6 +37,15 @@ class AAWP_Product {
     }
 
     /**
+     * Get product ID.
+     *
+     * @since 3.19
+     */
+    public function get_id() {
+        return ! empty( $this->data['id'] ) ? absint( $this->data['id'] ) : 0;
+    }
+
+    /**
      * Get type
      *
      * @return string/null
@@ -92,7 +101,7 @@ class AAWP_Product {
 
         // Cart
         if ( 'cart' === $type ) {
-            $url = 'https://www.amazon.' . AAWP_STORE . '/gp/aws/cart/add.html?ASIN.1=' . $this->get_asin() . '&Quantity.1=1&tag=' . AAWP_PLACEHOLDER_TRACKING_ID;
+            $url = 'https://www.amazon.' . AAWP_STORE . '/gp/aws/cart/add.html?ASIN.1=' . $this->get_asin() . '&Quantity.1=1&AssociateTag=' . AAWP_PLACEHOLDER_TRACKING_ID;
 
         // Reviews
         } elseif ( 'reviews' === $type ) {

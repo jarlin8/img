@@ -13,11 +13,11 @@ defined( 'ABSPATH' ) || exit;
 class Settings {
 
 	/**
-	 * Hooks.
+	 * Initialize.
 	 *
-	 * @since 3.18
+	 * @since 3.19
 	 */
-	public function hooks() {
+	public function init() {
 
 		// Should probably be in 'init' hook.
 		$this->schedule();
@@ -63,7 +63,7 @@ class Settings {
 	 */
 	public function render_page() { //phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		$this->hooks();
+		$this->init();
 
 		?>	
 			<?php do_action( 'aawp_logs_settings_init' ); ?>
@@ -153,8 +153,8 @@ class Settings {
 			'aawp_logs_settings_init',
 			static function () {
 				?>
-				<div style="margin-left: 0px;" class="notice notice-success amzn-link-shortener-notice is-dismissible">
-					<p><strong><?php esc_html_e( 'Settings Saved.', 'link-shortener-amzn' ); ?></strong></p>
+				<div style="margin-left: 0px;" class="notice notice-success is-dismissible">
+					<p><strong><?php esc_html_e( 'Settings Saved.', 'aawp' ); ?></strong></p>
 				</div>
 				<?php
 			}
@@ -174,8 +174,8 @@ class Settings {
 			return;
 		}
 
-		if ( ! wp_next_scheduled( 'aawp_clear_logs' ) ) {
-			wp_schedule_event( time(), 'daily', 'aawp_clear_logs' );
+		if ( ! wp_next_scheduled( 'aawp_wp_scheduled_daily_events' ) ) {
+			wp_schedule_event( time(), 'daily', 'aawp_wp_scheduled_daily_events' );
 		}
 	}
 }

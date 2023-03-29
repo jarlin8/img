@@ -81,20 +81,6 @@ class ListTable extends WP_List_Table {
 	}
 
 	/**
-	 * Column Status.
-	 *
-	 * @param Object $item A listtable item.
-	 *
-	 * @since 3.19
-	 *
-	 * @return string
-	 */
-	public function column_status( $item ) {
-
-		return ! empty( $item['status'] ) ? esc_html( ucfirst( $item['status'] ) ) : '-';
-	}
-
-	/**
 	 * Column Asin.
 	 *
 	 * @param Object $item A listtable item.
@@ -119,10 +105,11 @@ class ListTable extends WP_List_Table {
 	 */
 	public function column_preview( $item ) {
 
-		$image_id = ! empty( $item['image_ids'] ) ? $item['image_ids'][0] : 0;
-		$title    = ! empty( $item['title'] ) ? $item['title'] : '';
+		$image_id  = ! empty( $item['image_ids'] ) ? $item['image_ids'][0] : 0;
+		$title     = ! empty( $item['title'] ) ? $item['title'] : '';
+		$image_url = ! empty( \aawp_build_product_image_url( $image_id ) ) ? \aawp_build_product_image_url( $image_id ) : AAWP_PLUGIN_URL . 'assets/img/placeholder-medium.jpg';
 
-		return sprintf( '<img src="%1$s" alt="%2$s" title="%3$s" />', \aawp_build_product_image_url( $image_id ), $title, $title );
+		return sprintf( '<img src="%1$s" alt="%2$s" title="%3$s" />', $image_url, $title, $title );
 	}
 
 	/**
@@ -172,6 +159,22 @@ class ListTable extends WP_List_Table {
 	}
 
 	/**
+	 * Column Clicks.
+	 *
+	 * @param Object $item A listtable item.
+	 *
+	 * @since 3.19
+	 *
+	 * @return int
+	 */
+	public function column_clicks( $item ) {
+
+		$product_id = ! empty( $item['id'] ) ? $item['id'] : 0;
+
+		return \AAWP\ClickTracking\DB::get_total_clicks_by( 'product_id', $product_id );
+	}
+
+	/**
 	 * Column Created AT.
 	 *
 	 * @param Object $item A listtable item.
@@ -180,7 +183,7 @@ class ListTable extends WP_List_Table {
 	 *
 	 * @return string
 	 */
-	public function column_created_at( $item ) {
+	public function column_date_created( $item ) {
 		return ! empty( $item['date_created'] ) ? sanitize_text_field( $item['date_created'] ) : '-';
 	}
 
@@ -193,7 +196,7 @@ class ListTable extends WP_List_Table {
 	 *
 	 * @return string
 	 */
-	public function column_updated_at( $item ) {
+	public function column_date_updated( $item ) {
 		return ! empty( $item['date_updated'] ) ? sanitize_text_field( $item['date_updated'] ) : '-';
 	}
 
@@ -206,20 +209,23 @@ class ListTable extends WP_List_Table {
 	 */
 	public function get_columns() {
 
-		return apply_filters(
-			'aawp_admin_products_get_columns',
-			[
-				'cb'         => '<input type="checkbox" />',
-				'id'         => __( 'ID', 'aawp' ),
-				'status'     => __( 'Status', 'aawp' ),
-				'asin'       => __( 'ASIN', 'aawp' ),
-				'preview'    => __( 'Preview', 'aawp' ),
-				'title'      => __( 'Title', 'aawp' ),
-				'url'        => __( 'URL', 'aawp' ),
-				'created_at' => __( 'Created At', 'aawp' ),
-				'updated_at' => __( 'Updated At', 'aawp' ),
-			]
-		);
+		$columns = [
+			'cb'           => '<input type="checkbox" />',
+			'id'           => __( 'ID', 'aawp' ),
+			'asin'         => __( 'ASIN', 'aawp' ),
+			'preview'      => __( 'Preview', 'aawp' ),
+			'title'        => __( 'Title', 'aawp' ),
+			'url'          => __( 'URL', 'aawp' )
+		];
+
+		if ( ! empty( get_option( 'aawp_clicks_settings' )['enable'] ) ) {
+			$columns['clicks'] = __( 'Clicks', 'aawp' );
+		}
+
+		$columns['date_created'] = __( 'Created At', 'aawp' );
+		$columns['date_updated'] = __( 'Updated At', 'aawp' );
+
+		return apply_filters( 'aawp_admin_products_get_columns', $columns );
 	}
 
 	/**
@@ -229,12 +235,12 @@ class ListTable extends WP_List_Table {
 	 */
 	protected function get_sortable_columns() {
 		return [
-			'id'         => [ 'id', true ],
-			'status'     => [ 'status', true ],
-			'asin'       => [ 'asin', true ],
-			'title'      => [ 'title', true ],
-			'created_at' => [ 'created_at', true ],
-			'updated_at' => [ 'updated_at', true ],
+			'id'           => [ 'id', true ],
+			'asin'         => [ 'asin', true ],
+			'title'        => [ 'title', true ],
+			'clicks'       => [ 'clicks', true ],
+			'date_created' => [ 'date_created', true ],
+			'date_updated' => [ 'date_updated', true ],
 		];
 	}
 
@@ -279,15 +285,72 @@ class ListTable extends WP_List_Table {
 
 			<?php
 
-				if ( count( $this->items ) ) {
-					$this->bulk_actions();
-					$this->clear_all();
-					$this->pagination( $which );
-				}
+			if ( count( $this->items ) ) {
+				$this->bulk_actions();
+				$this->pagination( $which );
+			}
 			?>
 
 			<br class="clear" />
 		</div>
+		<?php
+	}
+
+	/**
+	 * Interface for filter products by status.
+	 *
+	 * @since 3.20.0
+	 */
+	private function filter_by_status() {
+
+		?>
+			<ul class="subsubsub">
+				<li><a class="<?php echo empty( $_GET['status'] ) || ( ! empty( $_GET['status'] ) && 'all' === $_GET['status'] ) ? 'current' : ''; ?>" 
+						href="<?php echo esc_url( admin_url( 'admin.php?page=aawp-products&status=all' ) ); ?>">
+					<?php echo esc_html__( 'All', 'aawp' ); ?>
+					<?php
+					echo '(' . count(
+						$this->products_db->get_products(
+							[
+								'status' => '',
+								'number' => PHP_INT_MAX,
+							]
+						)
+					) . ')';
+					?>
+					</a>
+				</li> |
+				<li><a class="<?php echo ! empty( $_GET['status'] ) && 'active' === $_GET['status'] ? 'current' : ''; ?>" 
+						href="<?php echo esc_url( admin_url( 'admin.php?page=aawp-products&status=active' ) ); ?>">
+					<?php echo esc_html__( 'Active', 'aawp' ); ?>
+					<?php
+					echo '(' . count(
+						$this->products_db->get_products(
+							[
+								'status' => 'active',
+								'number' => PHP_INT_MAX,
+							]
+						)
+					) . ')';
+					?>
+					</a>
+				</li> |
+				<li><a class="<?php echo ! empty( $_GET['status'] ) && 'invalid' === $_GET['status'] ? 'current' : ''; ?>" 
+						href="<?php echo esc_url( admin_url( 'admin.php?page=aawp-products&status=invalid' ) ); ?>">
+					<?php echo esc_html__( 'Invalid', 'aawp' ); ?>
+					<?php
+					echo '(' . count(
+						$this->products_db->get_products(
+							[
+								'status' => 'invalid',
+								'number' => PHP_INT_MAX,
+							]
+						)
+					) . ')';
+					?>
+					</a>
+				</li>
+			</ui>
 		<?php
 	}
 
@@ -298,6 +361,7 @@ class ListTable extends WP_List_Table {
 	 */
 	public function display_page() {
 
+		$this->filter_by_status();
 		$this->prepare_column_headers();
 		$this->process_actions();
 		$this->prepare_items();
@@ -306,7 +370,11 @@ class ListTable extends WP_List_Table {
 		echo '<form action="admin.php?page=aawp-products" id="products-filter" method="post">';
 
 		$this->search_box( esc_html__( 'Search Product(s)', 'aawp' ), 'aawp' );
-		$this->search_dropdown();
+
+		// Do not display search dropdown if there are no products or if it's not search request
+		if ( count( $this->items ) !== 0 || ! empty( $_REQUEST['s'] ) ) {
+			$this->search_dropdown();
+		}
 
 		parent::display();
 
@@ -324,7 +392,10 @@ class ListTable extends WP_List_Table {
 	public function prepare_items() {
 
 		$per_page = $this->get_items_per_page( 'aawp_admin_products_listtable_per_page', 15 );
-		$args     = [ 'number' => $per_page ];
+		$args     = [
+			'number' => $per_page,
+			'status' => '',
+		];
 
 		// Process search if required.
 		if ( ! empty( $_REQUEST['search-dropdown'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -334,10 +405,14 @@ class ListTable extends WP_List_Table {
 		if ( ! empty( $_REQUEST['orderby'] ) && ! empty( $_REQUEST['order'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$order = [
 				'orderby' => sanitize_sql_orderby( wp_unslash( $_REQUEST['orderby'] ) ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				'order'   => 'asc' === $_REQUEST['order'] ? 'DESC' : 'ASC', //phpcs:ignore
+				'order'   => 'asc' === $_REQUEST['order'] ? 'ASC' : 'DESC', //phpcs:ignore
 			];
 
 			$args = array_merge( $args, $order );
+		}
+
+		if ( ! empty( $_REQUEST['status'] ) && in_array( $_REQUEST['status'], [ 'active', 'invalid' ] ) ) {
+			$args['status'] = sanitize_text_field( wp_unslash( $_REQUEST['status'] ) );
 		}
 
 		// Offset.
@@ -345,7 +420,39 @@ class ListTable extends WP_List_Table {
 
 		$this->items = $this->products_db->get_products( $args );
 
+		// Order and Orderby Clicks. Manually sorted because clicks are on different table.
+		if ( ! empty( $order['orderby'] ) && $order['orderby'] === 'clicks' ) { //phpcs:ignore WordPress.PHP.YodaConditions.NotYoda
+
+			$args['number'] = PHP_INT_MAX;
+			// maybe becomes slow for large number of products.
+
+			$this->items = $this->products_db->get_products( $args );
+
+			$ordered_items = $this->items;
+			foreach ( $this->items as $key => $item ) {
+				$ordered_items[ $key ]['clicks'] = \AAWP\ClickTracking\DB::get_total_clicks_by( 'product_id', $item['id'] );
+			}
+
+			$order = 'DESC' === $order['order'] ? SORT_DESC : SORT_ASC;
+
+			$keys = array_column( $ordered_items, 'clicks' );
+			array_multisort( $keys, $order, $ordered_items );
+
+			$this->items = $ordered_items;
+
+			$this->items = array_slice( $this->items, 0, $per_page );
+		}//end if
+
 		$total_items = count( $this->products_db->get_products( [ 'number' => PHP_INT_MAX ] ) );
+
+		$total_items = count(
+			$this->products_db->get_products(
+				[
+					'status' => '',
+					'number' => PHP_INT_MAX,
+				]
+			)
+		);
 
 		$this->set_pagination_args(
 			[
@@ -367,7 +474,7 @@ class ListTable extends WP_List_Table {
 	 */
 	public function process_actions() { //phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 
-		if ( empty( $_REQUEST['_wpnonce'] ) || empty( $_REQUEST['action'] ) || ! ( in_array( $_REQUEST['action'], [ 'delete', 'renew' ], true ) || ! empty( $_REQUEST['clear-all'] ) ) ) {
+		if ( empty( $_REQUEST['_wpnonce'] ) || empty( $_REQUEST['action'] ) || ! ( in_array( $_REQUEST['action'], [ 'delete', 'renew' ], true ) ) ) {
 			return;
 		}
 
@@ -444,15 +551,6 @@ class ListTable extends WP_List_Table {
 					}
 				}//end if
 			}//end foreach
-
-			if ( isset( $_REQUEST['clear-all'] ) ) {
-
-				global $wpdb;
-				$wpdb->query( 'TRUNCATE TABLE ' . $wpdb->prefix . 'aawp_products' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-
-				aawp_log( 'Product', esc_html__( 'All products cleared via products list table.', 'aawp' ) );
-				$query = [ 'deleted' => 'all' ];
-			}
 		}//end if
 
 		set_transient( '_transient_aawp_products_listtable_actions_notice', true, 5 );
@@ -506,22 +604,6 @@ class ListTable extends WP_List_Table {
 	}
 
 	/**
-	 * Clear all products.
-	 *
-	 * @since 3.19
-	 */
-	private function clear_all() {
-
-		?>
-		<button
-			name="clear-all"
-			type="submit"
-			class="button"
-			value="1"><?php esc_html_e( 'Delete All Products', 'aawp' ); ?></button>
-		<?php
-	}
-
-	/**
 	 * Search dropdown.
 	 *
 	 * @since 3.19.
@@ -560,10 +642,10 @@ class ListTable extends WP_List_Table {
 						echo sprintf(
 							wp_kses(
 								/* translators: %1$s Product Count, %2$s - Action. */
-								_n( '<code>%1$s</code> Product %2$s. ', '<code>%1$s</code> Products %2$s. ', absint( reset( $query ) ), 'aawp' ),
+								_n( '<code>%1$s</code> Product %2$s. ', '<code>%1$s</code> Products %2$s. ', reset( $query ), 'aawp' ),
 								[ 'code' => [] ]
 							),
-							absint( reset( $query ) ),
+							reset( $query ),
 							esc_html( array_key_first( $query ) )
 						);
 						?>
@@ -581,7 +663,7 @@ class ListTable extends WP_List_Table {
 								__( 'Something went wrong! Please <a href="%s">check the  logs</a>.', 'aawp' ),
 								[ 'a' => [ 'href' => [] ] ]
 							),
-							esc_url( admin_url( 'admin.php?page=aawp-logs' ) )
+							esc_url( admin_url( 'admin.php?page=aawp-tools&tab=logs' ) )
 						);
 						?>
 					</p>

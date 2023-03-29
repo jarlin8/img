@@ -177,7 +177,7 @@ class Block {
 
 		$aawp_data = [
 			'icons'   => [
-				'logo'       => plugins_url( 'assets/img/awp-logo.svg', AAWP_PLUGIN_FILE ),
+				'logo'       => plugins_url( 'assets/img/aawp-banner.svg', AAWP_PLUGIN_FILE ),
 				'box'        => plugins_url( 'assets/img/Product_Boxes.svg', AAWP_PLUGIN_FILE ),
 				'fields'     => plugins_url( 'assets/img/Data_Fields.svg', AAWP_PLUGIN_FILE ),
 				'new'        => plugins_url( 'assets/img/New_Releases.svg', AAWP_PLUGIN_FILE ),
@@ -335,7 +335,7 @@ class Block {
 
 		switch ( $look ) {
 			case 'box':
-				return [ 'order', 'orderby', 'order_items', 'filterby', 'filter', 'filter_items', 'filter_type', 'filter_compare', 'title', 'title_length', 'link_title', 'link_overwrite', 'link_type', 'description', 'description_items', 'description_length', 'image', 'image_size', 'image_alt', 'image_title', 'button', 'button_text', 'button_detail', 'button_detail_text', 'button_detail_title', 'button_detail_target', 'button_detail_rel', 'price', 'rating', 'star_rating', 'reviews', 'template', 'grid', 'numbering', 'class', 'tracking_id' ];
+				return [ 'order', 'orderby', 'order_items', 'filterby', 'filter', 'filter_items', 'filter_type', 'filter_compare', 'title', 'title_length', 'link_title', 'link_overwrite', 'link_type', 'description', 'description_items', 'description_length', 'image', 'image_size', 'image_alt', 'image_title', 'button', 'button_text', 'button_detail', 'button_detail_text', 'button_detail_title', 'button_detail_target', 'button_detail_rel', 'price', 'sale_ribbon_text', 'rating', 'star_rating', 'reviews', 'template', 'grid', 'numbering', 'class', 'tracking_id' ];
 
 			case 'bestseller':
 			case 'new':

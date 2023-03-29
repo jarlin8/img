@@ -119,59 +119,48 @@ class Settings {
 
 			<?php do_action( 'aawp_settings_notices' ); ?>
 
-			<div id="poststuff">
-				<div id="post-body" class="metabox-holder columns-2 aawp-clearfix">
-					<div id="post-body-content" class="aawp-tabs-wrapper">
-						<?php $this->plugin_options_tabs(); ?>
-						<div class="meta-box-sortables ui-sortable">
-							<div class="postbox">
-								<div class="inside">
-									<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
-										<?php wp_nonce_field( 'aawp_update_options', '_wpnonce_aawp_update_options' ); ?>
-										<?php settings_fields( 'aawp_' . $this->current_tab ); ?>
-										<?php do_settings_sections( 'aawp_' . $this->current_tab ); ?>
+			<?php $this->plugin_options_tabs(); ?>
 
-										<?php if ( ! in_array( $this->current_tab, [ 'licensing', 'info' ], true ) && aawp_is_user_admin() ) { ?>
-										<p class="submit">
-											<?php submit_button( '', 'primary', 'aawp_update_options', false ); ?>&nbsp;
-										</p>
-									</form>
+			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
+				<?php wp_nonce_field( 'aawp_update_options', '_wpnonce_aawp_update_options' ); ?>
+				<?php settings_fields( 'aawp_' . $this->current_tab ); ?>
+				<?php do_settings_sections( 'aawp_' . $this->current_tab ); ?>
 
-									<form method="post" action="<?php echo esc_url( $current_tab_url ); ?>" style="display: inline-block;">
-											<?php wp_nonce_field( 'aawp_renew_cache', '_wpnonce_aawp_renew_cache' ); ?>
-											<?php submit_button( __( 'Renew Cache', 'aawp' ), 'delete small', 'aawp_renew_cache', false ); ?>
-									</form>
+				<?php if ( ! in_array( $this->current_tab, [ 'licensing', 'info' ], true ) && aawp_is_user_admin() ) { ?>
+				<p class="submit">
+					<?php submit_button( '', 'primary', 'aawp_update_options', false ); ?>&nbsp;
+				</p>
+			</form>
 
-											<?php if ( aawp_is_product_local_images_activated() ) { ?>
-										<form method="post" action="<?php echo esc_url( $current_tab_url ); ?>" style="display: inline-block;">
-												<?php wp_nonce_field( 'aawp_renew_images_cache', '_wpnonce_aawp_renew_images_cache' ); ?>
-												<?php submit_button( __( 'Renew Images Cache', 'aawp' ), 'delete small', 'aawp_renew_images_cache', false ); ?>
-										</form>
-									<?php } ?>
+			<form method="post" action="<?php echo esc_url( $current_tab_url ); ?>" style="display: inline-block;">
+					<?php wp_nonce_field( 'aawp_renew_cache', '_wpnonce_aawp_renew_cache' ); ?>
+					<?php submit_button( __( 'Renew Cache', 'aawp' ), 'delete small', 'aawp_renew_cache', false ); ?>
+			</form>
 
-									<?php } else { ?>
-									</form>
-											<?php
-									}//end if
-									?>
+					<?php if ( aawp_is_product_local_images_activated() ) { ?>
+				<form method="post" action="<?php echo esc_url( $current_tab_url ); ?>" style="display: inline-block;">
+						<?php wp_nonce_field( 'aawp_renew_images_cache', '_wpnonce_aawp_renew_images_cache' ); ?>
+						<?php submit_button( __( 'Renew Images Cache', 'aawp' ), 'delete small', 'aawp_renew_images_cache', false ); ?>
+				</form>
+			<?php } ?>
 
-									<h4><?php esc_html_e( 'Legend', 'aawp' ); ?></h4>
-									<ul class="aawp-admin-legend">
-										<li><span class="dashicons dashicons-info"></span> <?php esc_html_e( "I'm a tooltip! Hover me for more information", 'aawp' ); ?></li>
-										<li><span class="dashicons dashicons-admin-settings"></span> <?php esc_html_e( 'This value can be overwritten individually for each shortcode. Please take a look into the documentation.', 'aawp' ); ?></li>
-									</ul>
-								</div>
-							</div>
-						</div>
-					</div>
+			<?php } else { ?>
+			</form>
+					<?php
+			}//end if
+			?>
 
-					<div id="postbox-container-1" class="postbox-container">
-						<div class="meta-box-sortables">
-							<?php do_action( 'aawp_settings_infoboxes' ); ?>
-						</div>
-					</div>
+			<h4><?php esc_html_e( 'Legend', 'aawp' ); ?></h4>
+			<ul class="aawp-admin-legend">
+				<li><span class="dashicons dashicons-info"></span> <?php esc_html_e( "I'm a tooltip! Hover me for more information", 'aawp' ); ?></li>
+				<li><span class="dashicons dashicons-admin-settings"></span> <?php esc_html_e( 'This value can be overwritten individually for each shortcode. Please take a look into the documentation.', 'aawp' ); ?></li>
+			</ul>
+		</div>
 
-				</div>
+
+		<div id="postbox-container-1" class="postbox-container">
+			<div class="meta-box-sortables">
+				<?php do_action( 'aawp_settings_infoboxes' ); ?>
 			</div>
 		</div>
 
@@ -186,51 +175,23 @@ class Settings {
 	 */
 	public function plugin_options_tabs() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		global $aawp_settings_page_slug;
-
-		$settings_page_url = admin_url( 'admin.php?page=' . $aawp_settings_page_slug );
-
 		ksort( $this->plugin_settings_tabs );
 
-		echo '<ul id="aawp-settings-tabs" class="aawp-clearfix">';
+		$template = '<div id="aawp-settings-tabs">  <h2 class="nav-tab-wrapper">';
 
 		foreach ( $this->plugin_settings_tabs as $tab ) {
-			if ( ! isset( $tab['key'] ) || ! isset( $tab['title'] ) ) {
+
+			if ( empty( $tab['key'] ) || empty( $tab['title'] ) ) {
 				continue;
 			}
 
-			$tab_url = add_query_arg(
-				[
-					'tab' => $tab['key'],
-				],
-				$settings_page_url
-			);
+			$template .= '<a href=" ' . esc_url( admin_url( 'admin.php?page=aawp-settings&tab=' . $tab['key'] ) ) . ' " class="nav-tab aawp-settings-tabs__link ' . ( $this->current_tab === $tab['key'] ? 'nav-tab-active' : '' ) . ( isset( $tab['alert'] ) ? ' aawp-settings-tabs__link--'. $tab['alert'] : '' ) . '" >' . esc_html( $tab['title'] ) . '</a>';
+		}
 
-			?>
-			<li class="aawp-settings-tabs__item
-			<?php
-			if ( $this->current_tab === $tab['key'] ) {
-				echo ' aawp-settings-tabs__item--active';}
-			?>
-			">
-				<a class="aawp-settings-tabs__link
-				<?php
-				if ( isset( $tab['alert'] ) ) {
-					echo ' aawp-settings-tabs__link--' . sanitize_html_class( $tab['alert'] );
-				}
-				?>
-				" href="<?php echo esc_url( $tab_url ); ?>" title="<?php echo esc_attr( $tab['title'] ); ?>">
-					<?php
-					if ( isset( $tab['icon'] ) ) {
-						echo '<span class="dashicons dashicons-' . sanitize_html_class( $tab['icon'] ) . '"></span> ';}
-					?>
-					<?php echo esc_html( $tab['title'] ); ?>
-				</a>
-			</li>
-			<?php
-		}//end foreach
+		$template .= '</h2></div>';
 
-		echo '</ul>';
+		// phpcs:ignore
+		echo $template;
 	}
 
 	/**

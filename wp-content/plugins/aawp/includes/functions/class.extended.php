@@ -327,7 +327,7 @@ if ( !class_exists( 'AAWP_Extended_Functions' ) ) {
             );
 
             ?>
-            <h4><?php _e('Click Tracking', 'aawp'); ?></h4>
+            <h4><?php _e('Click Tracking (Deprecated)', 'aawp'); ?></h4>
             <p><?php _e('AAWP can track clicks on affiliate links coming through the plugin by creating events via your favorite tracking tool. Currently supported:', 'aawp'); ?> Google Analytics & Matomo.</p>
             <p>
                 <select id="aawp_click_tracking" name="aawp_general[click_tracking]">
@@ -337,6 +337,14 @@ if ( !class_exists( 'AAWP_Extended_Functions' ) ) {
                 </select>
             </p>
             <p><small><strong><?php _e('Note:', 'aawp'); ?></strong> <?php _e('In case you created custom templates, please take a look into the documentation.', 'aawp'); ?></small></p>
+
+            <h4><?php _e('Click Tracking (New)', 'aawp'); ?></h4>
+                <p><?php 
+                    printf( 
+                        __( 'Our plugin has it\'s own %s, which works more reliably and gives you more ways to analyze.', 'aawp' ),
+                        '<a href="'. esc_url( admin_url( 'admin.php?page=aawp-clicks' ) ) .'">' . esc_html__( 'built-in click tracking', 'aawp' ) . '</a>'
+                    )
+                 ?></p>
             <?php
         }
 
@@ -593,23 +601,14 @@ function aawp_get_prime_check_logo( $atts = array() ) {
 
     $title = __('Amazon Prime', 'aawp');
 
-    // Exceptions: Premium
-    /*
-    if ( 'fr' === $country || 'es' === $country ) {
-        $classes = 'aawp-check-premium';
-        $title = __('Amazon Premium', 'aawp');
-    */
     // Exception: Japan
     if ( 'co.jp' === $country ) {
-        $classes = 'aawp-check-prime aawp-check-prime--jp';
+        $prime_logo = '<img src="'. AAWP_PLUGIN_URL .'assets/img/icon-check-prime-jp.svg"  alt="'. esc_html( $title ) .'" />';
 
     // Default
     } else {
-        $classes = 'aawp-check-prime';
+        $prime_logo = '<img src="'. AAWP_PLUGIN_URL .'assets/img/icon-check-prime.svg"  alt="'. esc_html( $title ) .'" />';
     }
-
-    // Output
-    $prime_logo = '<span class="' . $classes . '"></span>';
 
     // Handle reflink & tracking id
     if ( ! empty( $atts['tracking_id'] ) ) {
@@ -622,8 +621,9 @@ function aawp_get_prime_check_logo( $atts = array() ) {
 
     $ref_link = aawp_get_amazon_prime_url( $country, $tracking_id );
 
-    if ( !empty ( $ref_link ) && 'linked' === $check_prime )
-        return '<a class="' . $classes . '" href="' . $ref_link . '" title="' . $title . '" rel="nofollow noopener sponsored" target="_blank"></a>';
+    if ( !empty ( $ref_link ) && 'linked' === $check_prime ) {
+        return '<a href="' . $ref_link . '" title="'. esc_html( $title ) .'" rel="nofollow noopener sponsored" target="_blank" class="aawp-check-prime">' . $prime_logo . '</a>';
+    }
 
     return $prime_logo;
 }

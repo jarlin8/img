@@ -101,8 +101,6 @@ function aawp_setup_product_data_for_database( $Item, $is_update = false ) {
 
             $review_data = $AAWP_Review_Crawler->get_data( $asin );
 
-            //aawp_debug( $data, '$data' );
-
             if ( ! empty( $review_data['rating'] ) )
                 $rating = $review_data['rating'];
 

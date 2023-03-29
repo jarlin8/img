@@ -25,7 +25,7 @@ class Menu {
 	public function init() {
 
 		add_action( 'admin_menu', [ $this, 'menu_init' ] );
-		add_action( 'in_admin_header', [ $this, 'header' ], PHP_INT_MAX );
+		add_action( 'in_admin_header', [ $this, 'header' ], PHP_INT_MIN );
 	}
 
 	/**

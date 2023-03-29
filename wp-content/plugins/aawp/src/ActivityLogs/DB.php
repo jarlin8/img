@@ -45,6 +45,7 @@ class DB {
 		$this->logs       = new Logs();
 
 		add_action( 'shutdown', [ $this, 'save' ] );
+		add_action( 'aawp_wp_scheduled_daily_events', [ $this, 'process_clear_logs' ] );
 	}
 
 	/**

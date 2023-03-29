@@ -3,7 +3,7 @@
  * Plugin Name:     AAWP
  * Plugin URI:      https://getaawp.com
  * Description:     The best WordPress plugin for Amazon Affiliates.
- * Version:         3.19.2
+ * Version:         3.20.1
  * Author:          AAWP
  * Author URI:      https://getaawp.com
  * Text Domain:     aawp
@@ -29,10 +29,11 @@ define( 'AAWP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AAWP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 // Plugin Version.
-const AAWP_VERSION = '3.19.2';
+const AAWP_VERSION = '3.20.1';
 
 // Require Autoload.
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/vendor/woocommerce/action-scheduler/action-scheduler.php';
 
 /**
  * Return the main instance of the Plugin.

@@ -37,15 +37,21 @@ add_action( 'aawp_load_admin_scripts', 'aawp_admin_scripts' );
  */
 function aawp_scripts() {
 
-    // Load styles.
-    wp_enqueue_style( 'aawp', AAWP_PLUGIN_URL . 'assets/dist/css/main.css', false, AAWP_VERSION );
+    // Register styles.
+    wp_register_style( 'aawp', AAWP_PLUGIN_URL . 'assets/dist/css/main.css', false, AAWP_VERSION );
 
-    // Don't load javascript on AMP endpoints.
+    // Don't register javascript on AMP endpoints.
     if ( aawp_is_amp_endpoint() )
         return;
 
-    // Load scripts.
-    wp_enqueue_script( 'aawp', AAWP_PLUGIN_URL . 'assets/dist/js/main.js', array( 'jquery' ), AAWP_VERSION, true );
+    // Register scripts.
+    wp_register_script( 'aawp', AAWP_PLUGIN_URL . 'assets/dist/js/main.js', array( 'jquery' ), AAWP_VERSION, true );
+
+    // Enqueue assets now if load assets globally is enabled. Else the assets are enqueued at the time of shortcode render.
+    if ( ! empty( aawp_get_option( 'load_assets_globally', 'output' ) ) ) {
+        wp_enqueue_style( 'aawp' );
+        wp_enqueue_script( 'aawp' );
+    }
 }
 add_action( 'aawp_load_scripts', 'aawp_scripts' );
 

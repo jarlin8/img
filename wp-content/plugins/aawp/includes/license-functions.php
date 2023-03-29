@@ -14,7 +14,7 @@ global $aawp_license_is_valid;
 function aawp_is_license_valid() {
     if (!get_option('aawp_licensing')['info']['status'] || get_option('aawp_licensing')['info']['status'] !== 'valid') {
         update_option('aawp_licensing', [
-            'key' => '123456-123456-123456-123456',
+            'key' => '******-******-******-******',
             'server' => '',
             'info' => ['status' => 'valid'],
         ]);

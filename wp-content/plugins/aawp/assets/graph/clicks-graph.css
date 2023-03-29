@@ -1,0 +1,116 @@
+.aawp-list-table--clicks #id, .aawp-list-table--clicks #link_type {
+    width: 5%;
+}
+
+.aawp-list-table--clicks #id, .aawp-list-table--clicks #country {
+    width: 5%;
+}
+
+.preview.column-preview {
+    float: left;
+}
+
+.title.column-title .truncate .ellipsis {
+    color: #2271b1;
+    cursor: pointer;
+}
+
+.title.column-title .full {
+    display: none;
+}
+
+.aawp-clicks-graph-settings {
+    display: flex;
+}
+
+.aawp-clicks-graph-date-filter-options {
+    margin-left: auto;
+}
+
+.aawp-clicks-graph-other-options select {
+    margin-top: 8px;
+}
+
+.aawp-clicks-graph-other-options {
+    display: flex;
+    gap: 10px;
+}
+
+.aawp-list-table--clicks .tablenav-pages span.displaying-num {
+    display: none;
+}
+
+.aawp-list-table--clicks, .aawp-clicks-graph-block-container {
+    margin-right: 20px;
+    margin-top: 15px;
+}
+
+.aawp-clicks-graph-body-block {
+    position: relative;
+    display: block;
+    margin-top: 15px;
+}
+
+.aawp-clicks-graph-block-container .aawp-error {
+    text-align: center;
+}
+  
+.aawp-clicks-graph-block-container .aawp-error-no-data-chart {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    border-bottom: 1px solid #f3f3f3;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0);
+    background: -moz-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, white 100%);
+    background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(100%, white));
+    background: -webkit-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, white 100%);
+    background: -o-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, white 100%);
+    background: -ms-radial-gradient(center, ellipse cover, rgba(255, 255, 255, 0) 0%, white 100%);
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0) 0%, white 100%);
+}
+
+.aawp-clicks-graph-overlay {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: #fff url(/wp-includes/images/spinner.gif) no-repeat center calc(50% - 12px);
+    z-index: 10;
+}
+
+.aawp-clicks-graph-block-container .aawp-error-no-data-chart .aawp-clicks-graph-modal {
+    position: absolute;
+    top: calc(50% - 2em);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1.5em 2em 2em 2em;
+    box-shadow: 0 0 25px 10px rgba(0, 0, 0, 0.08);
+    border-radius: 3px;
+    background-color: #fff;
+    text-align: center;
+    width: 20em;
+}
+  
+.aawp-clicks-graph-block-container .aawp-error-no-data-chart .aawp-clicks-graph-modal h2 {
+  padding: 0;
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.aawp-clicks-graph-block-container .aawp-error-no-data-chart .aawp-clicks-graph-modal p {
+  line-height: 1.3;
+}
+
+.aawp-clicks-graph-block-container .aawp-error-no-data-chart .aawp-clicks-graph-modal a {
+    text-decoration: none;
+}
+
+.aawp-clicks-exclude-roles td {
+    line-height: 2;
+}

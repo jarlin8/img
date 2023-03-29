@@ -267,8 +267,8 @@ if ( ! class_exists( 'AAWP_Template_Handler') ) {
          */
         private function display_notice_products_not_found() {
 
-            $not_found_text = ( ! empty( $this->options['functions'][$this->type . '_no_products_found_text'] ) ) ? $this->options['functions'][$this->type . '_no_products_found_text'] : null;
-            $not_found_hide_public = ( isset ( $this->options['functions'][$this->type . '_no_products_found_hide_public'] ) && $this->options['functions'][$this->type . '_no_products_found_hide_public'] == '1' ) ? true : false;
+            $not_found_text = ! empty( $this->options['functions'][$this->type . '_no_products_found_text'] ) ? $this->options['functions'][$this->type . '_no_products_found_text'] : esc_html__( 'No products found.', 'aawp' );
+            $not_found_hide_public = isset ( $this->options['functions'][$this->type . '_no_products_found_hide_public'] ) && $this->options['functions'][$this->type . '_no_products_found_hide_public'] == '1' ? true : false;
 
             if ( ! empty( $not_found_text ) ) {
 

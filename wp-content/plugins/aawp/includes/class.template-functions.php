@@ -398,14 +398,7 @@ if ( ! class_exists( 'AAWP_Template_Functions') ) {
 
             $url = $this->item->get_url( $type );
 
-            // Get tracking id.
-            if ( ! empty( $this->atts['tracking_id'] ) ) {
-                $tracking_id = trim( $this->atts['tracking_id'] );
-            } elseif ( ! empty( get_post_meta( get_the_ID(), 'aawp_tracking_id', true ) ) ) {
-                $tracking_id = trim( get_post_meta( get_the_ID(), 'aawp_tracking_id', true ) );
-            } else {
-                $tracking_id = aawp_get_default_tracking_id();
-            }
+            $tracking_id = $this->get_tracking_id();
 
             // Replace placeholder tracking id
             $url = aawp_replace_url_tracking_id_placeholder( $url, $tracking_id, false );
@@ -414,6 +407,24 @@ if ( ! class_exists( 'AAWP_Template_Functions') ) {
             $url = apply_filters( 'aawp_template_product_url', $url, $type, $this->atts );
 
             return $url;
+        }
+
+        /**
+         * Get tracking ID. Tracking ID is prioritized in the order of shortcode, per page/post, global settings.
+         *
+         * @since 3.19.
+         */
+        public function get_tracking_id( ) {
+
+            if ( ! empty( $this->atts['tracking_id'] ) ) {
+                $tracking_id = trim( $this->atts['tracking_id'] );
+            } elseif ( ! empty( get_post_meta( get_the_ID(), 'aawp_tracking_id', true ) ) ) {
+                $tracking_id = trim( get_post_meta( get_the_ID(), 'aawp_tracking_id', true ) );
+            } else {
+                $tracking_id = aawp_get_default_tracking_id();
+            }
+
+            return $tracking_id;
         }
 
         /**
@@ -479,7 +490,7 @@ if ( ! class_exists( 'AAWP_Template_Functions') ) {
 	        }
 
             // Return final image
-            return apply_filters( 'aawp_func_product_image', $image );
+            return apply_filters( 'aawp_func_product_image', esc_url( $image ) );
         }
 
         /**
@@ -1443,8 +1454,10 @@ if ( ! class_exists( 'AAWP_Template_Functions') ) {
 
             $attributes = array();
 
-            // Product ID
-            $attributes['product-id'] = $this->get_product_id();
+            // Product Asin & Title.
+            $attributes['product-asin']  = $this->get_product_id();
+            $attributes['product-id']    = $this->item->get_id();
+            $attributes['tracking-id']   = $this->get_tracking_id();
             $attributes['product-title'] = '%title%';
 
             $attributes = apply_filters( 'aawp_product_container_attributes', $attributes );

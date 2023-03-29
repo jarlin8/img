@@ -26,6 +26,8 @@ class Flyout {
 				add_action( 'admin_footer', [ $this, 'output' ] );
 			}
 		);
+
+		add_action( 'wp_ajax_aawp_notification_toggle', [ $this, 'notification_toggle' ] );
 	}
 
 	/**

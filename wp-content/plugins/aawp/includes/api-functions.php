@@ -66,7 +66,7 @@ function aawp_handle_api_product_error_response( $asin, $error ) {
     $log_text = 'API Response Error <br/> ASIN: <code>' . $asin . '</code> <br/> Code: ' . $error['code'] . '<br/> Message: ' . $error['message'];
 
     //aawp_debug_display( $log_text );
-    aawp_log( 'Product', $log_text );
+    aawp_log( 'Amazon API (Product)', $log_text );
 
     return;
     /*

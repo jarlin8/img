@@ -1,16 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: AAWP\n"
-"Report-Msgid-Bugs-To: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-11-14T03:38:47+00:00\n"
-"PO-Revision-Date: 2022-11-14T03:38:47+00:00\n"
-"Language: de_DE\n"
 "X-Generator: Localazy (https://localazy.com)\n"
+"Project-Id-Version: AAWP\n"
+"Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n==1) ? 0 : 1;\n"
 
 #: src/ActivityLogs/ListTable.php:316
@@ -37,15 +32,15 @@ msgstr "%1$sDetails zur Version %2$s anzeigen%3$s."
 msgid "%1$sView version %2$s details%3$s or %4$supdate now%5$s."
 msgstr "%1$sDetails zu Version %2$s anzeigen%3$s oder %4$sjetzt aktualisieren%5$s."
 
-#: includes/product-helper-functions.php:553
+#: includes/product-helper-functions.php:551
 msgid "%d pages"
 msgstr "%d Seiten"
 
-#: includes/product-helper-functions.php:508
+#: includes/product-helper-functions.php:506
 msgid "%s (Publication Date)"
 msgstr "%s (Veröffentlichungsdatum)"
 
-#: includes/product-helper-functions.php:511
+#: includes/product-helper-functions.php:509
 msgid "%s (Publisher)"
 msgstr "%s (Herausgeber)"
 
@@ -57,10 +52,22 @@ msgstr "----- Elemente -----"
 msgid "----- Product Data -----"
 msgstr "----- Produktinformationen -----"
 
+#: assets/block/dist/index.js:1
+msgid "-- Select A Display Type --"
+msgstr "— Wähle einen Anzeigetyp —"
+
+#: assets/block/dist/index.js:1
+msgid "-- Select A Filter --"
+msgstr "-- Filter auswählen --"
+
 #: src/Elementor/Widget.php:120
 #: assets/block/dist/index.js:1
 msgid "-- Select An Option --"
 msgstr "-- Wähle eine Option --"
+
+#: src/ClickTracking/Init.php:638
+msgid "-- Select a tracking id --"
+msgstr "-- Wählen Sie eine Tracking-ID aus --"
 
 #: src/Admin/Settings/General.php:188
 msgid "12 Hours"
@@ -74,9 +81,29 @@ msgstr "1 Tag"
 msgid "1 Week"
 msgstr "1 Woche"
 
+#: assets/block/dist/index.js:1
+msgid "2 Columns"
+msgstr "2 Spalten"
+
+#: assets/block/dist/index.js:1
+msgid "3 Columns"
+msgstr "3 Spalten"
+
 #: src/Admin/Settings/General.php:190
 msgid "3 Days"
 msgstr "3 Tage"
+
+#: assets/block/dist/index.js:1
+msgid "4 Columns"
+msgstr "4 Spalten"
+
+#: assets/block/dist/index.js:1
+msgid "5 Columns"
+msgstr "5 Spalten"
+
+#: assets/block/dist/index.js:1
+msgid "6 Columns"
+msgstr "6 Spalten"
 
 #: src/Admin/Settings/License.php:93
 msgid "<a href=\"%s\">Update available</a>."
@@ -103,7 +130,7 @@ msgstr "<strong>Hinweis:</strong> Durch Aktivieren dieser Einstellung, werden di
 msgid "<strong>Note:</strong> The placeholder %last_update% can be used here."
 msgstr "<strong>Hinweis:</strong> Das Platzhalter %last_update% kann hier verwendet werden."
 
-#: src/Admin/Settings/Output.php:325
+#: src/Admin/Settings/Output.php:339
 msgid "<strong>Note:</strong> This option might not be valid for all templates."
 msgstr "<strong>Hinweis:</strong> Diese Einstellung beeinflusst ggfls. nicht alle Templates."
 
@@ -119,6 +146,10 @@ msgstr "AAWP"
 msgctxt "block title"
 msgid "AAWP"
 msgstr "AAWP"
+
+#: src/ClickTracking/Init.php:60
+msgid "AAWP - Clicks"
+msgstr "AAWP - Klicks"
 
 #: src/ActivityLogs/Init.php:46
 msgid "AAWP - Logs"
@@ -140,9 +171,17 @@ msgstr "AAWP - Support"
 msgid "AAWP - Tables"
 msgstr "AAWP - Vergleichstabellen"
 
+#: src/Admin/Tools.php:49
+msgid "AAWP - Tools"
+msgstr "AAWP - Werkzeuge"
+
 #: src/Admin/Welcome.php:54
 msgid "AAWP - Welcome"
 msgstr "AAWP - Willkommen"
+
+#: src/ActivityLogs/ListTable.php:320
+msgid "AAWP API"
+msgstr "AAWP API"
 
 #: includes/functions/deprecated/class.widget.php:18
 msgid "AAWP (Old Widget)"
@@ -151,6 +190,10 @@ msgstr "AAWP (Altes Widget)"
 #: includes/functions/class.extended.php:331
 msgid "AAWP can track clicks on affiliate links coming through the plugin by creating events via your favorite tracking tool. Currently supported:"
 msgstr "AAWP kann Klicks auf Affliate Links (die durch das Plugin selbst erstellt werden) an dein bevorzugtes Tracking-Tool übertragen.<br />Aktuell werden folgende Tools unterstützt:"
+
+#: src/Admin/Tools/ScheduledActions.php:68
+msgid "AAWP is using the <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Action Scheduler</a> library, which allows it to queue and process bigger tasks in the background without making your site slower for your visitors. Below you can see the list of all tasks and their status. This table can be very useful when debugging certain issues."
+msgstr "AAWP verwendet die \n<a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Action Scheduler</a> Bibliothek, die es ermöglicht, größere Aufgaben in eine Warteschlange zu stellen und im Hintergrund zu bearbeiten, ohne dass deine Seite für deine Besucher langsamer wird. Unten siehst du eine Liste mit allen Aufgaben und ihrem Status. Diese Tabelle kann beim Debuggen bestimmter Probleme sehr nützlich sein."
 
 #: src/Admin/Settings/API.php:91
 msgid "API Key"
@@ -177,9 +220,10 @@ msgid "API secret is missing."
 msgstr "„API Secret“ fehlt."
 
 #: includes/admin/product-edit.php:104
-#: src/Admin/AdvancedAds/Ad.php:127
+#: src/Admin/AdvancedAds/Ad.php:137
 #: src/Admin/ClassicEditor.php:259
 #: src/Admin/ProductsTable/ListTable.php:215
+#: src/ClickTracking/ListTable.php:403
 #: src/Elementor/Widget.php:144
 #: assets/block/dist/index.js:1
 msgid "ASIN"
@@ -189,18 +233,27 @@ msgstr "ASIN"
 msgid "ASIN/ISBN:"
 msgstr "ASIN/ISBN:"
 
+#: src/Admin/Tools/ScheduledActions.php:83
+msgid "Action Scheduler library is also used by other plugins, like WooCommerce, so you might see tasks that are not related to our plugin in the table below."
+msgstr "Die Action Scheduler-Bibliothek wird auch von anderen Plugins wie WooCommerce verwendet, sodass du in der unten stehenden Tabelle möglicherweise Aufgaben siehst, die nicht mit unserem Plugin zusammenhängen."
+
 #: includes/admin/list-overview.php:39
 #: includes/admin/product-overview.php:36
 msgid "Actions"
 msgstr "Aktionen"
 
 #: includes/admin/functions.php:23
+#: src/Admin/ProductsTable/ListTable.php:325
 msgid "Active"
 msgstr "Aktiv"
 
 #: src/ActivityLogs/ListTable.php:437
 msgid "Activity Logging is currently disabled. Please <a href=\"%s\">enable logging</a> to start saving logs in the database."
 msgstr "Die Aktivitätsprotokollierung ist derzeit deaktiviert. Bitte <a href=\"%s\">aktivieren Sie die Protokollierung</a>, um Protokolle in der Datenbank zu speichern."
+
+#: src/ActivityLogs/ListTable.php:439
+msgid "Activity Logging is currently disabled. Please enable logging to start saving logs in the database."
+msgstr "Die Aktivitätsprotokollierung ist derzeit deaktiviert. Bitte aktiviere die Protokollierung, um mit der Speicherung von Protokollen in der Datenbank zu beginnen."
 
 #: src/ActivityLogs/Init.php:68
 msgid "Activity Logs"
@@ -234,25 +287,45 @@ msgstr "Product über ASIN hinzufügen"
 msgid "Add to Cart Links (90-days-cookie)"
 msgstr "Warenkorb-Links (90-Tage-Cookie)"
 
-#: src/Admin/Settings/Output.php:183
+#: src/Admin/Settings/Output.php:197
 msgid "Adding"
 msgstr "Zusatz"
+
+#: assets/block/dist/index.js:1
+msgid "Adding HTML image \"title\" attribute."
+msgstr "Füge das HTML-Attribut \"Titel\" für Bilder hinzu."
+
+#: assets/block/dist/index.js:1
+msgid "Adding a new class to the product container."
+msgstr "Füge eine neue Klasse zum Produktcontainer hinzu."
 
 #: includes/admin/functions.php:103
 msgid "Additionally the notice will be highlighted for <strong>admins only</strong>."
 msgstr "<strong>Nur für Administratoren</strong> wird der Hinweis zusätzlich optisch hervorgehoben."
 
-#: src/Admin/Settings/Output.php:471
+#: src/Admin/Settings/Output.php:485
 msgid "Advertised price"
 msgstr "Verkaufspreis"
 
 #: src/Admin/Settings/General.php:465
 msgid "Affiliate ID"
-msgstr "Affiliate ID"
+msgstr "Affiliate-ID"
 
 #: src/Admin/Settings/General.php:93
 msgid "Affiliate links"
 msgstr "Affiliate-Links"
+
+#: assets/block/dist/index.js:1
+msgid "Align images right or left"
+msgstr "Bilder rechts oder links ausrichten"
+
+#: src/Admin/ProductsTable/ListTable.php:310
+msgid "All"
+msgstr "Alle"
+
+#: src/ClickTracking/Settings.php:242
+msgid "All Clicks Cleared."
+msgstr "Alle Klicks gelöscht."
 
 #: src/Admin/ComparisonTable/Table.php:60
 msgid "All Tables"
@@ -264,7 +337,7 @@ msgstr "Alle Vergleichstabellen"
 msgid "All available shortcode adjustments"
 msgstr "Alle verfügbaren Shortcode-Attribute"
 
-#: src/ActivityLogs/ListTable.php:340
+#: src/ActivityLogs/ListTable.php:344
 msgid "All components"
 msgstr "Alle Komponenten"
 
@@ -272,20 +345,24 @@ msgstr "Alle Komponenten"
 msgid "All products cleared via products list table."
 msgstr "Alle Produkte werden über die Produktliste gelöscht."
 
-#: src/Admin/Settings/Output.php:570
+#: src/ClickTracking/ListTable.php:535
+msgid "All time"
+msgstr "Insgesamt"
+
+#: src/Admin/Settings/Output.php:584
 #: assets/block/dist/index.js:1
 msgid "Amazon"
 msgstr "Amazon"
 
-#: src/Admin/Settings/Output.php:586
+#: src/Admin/Settings/Output.php:600
 msgid "Amazon: Black"
 msgstr "Amazon: Schwarz"
 
-#: src/Admin/Settings/Output.php:587
+#: src/Admin/Settings/Output.php:601
 msgid "Amazon: White"
 msgstr "Amazon: Weiß"
 
-#: src/ActivityLogs/ListTable.php:320
+#: src/ActivityLogs/ListTable.php:324
 #: src/Admin/Settings/API.php:29
 msgid "Amazon API"
 msgstr "Amazon-API"
@@ -325,9 +402,9 @@ msgstr "Amazon-Button"
 msgid "Amazon Icon"
 msgstr "Amazon-Icon"
 
-#: includes/product-helper-functions.php:352
+#: includes/product-helper-functions.php:350
 msgid "Amazon Kindle Edition"
-msgstr "Amazon Kindle Edition"
+msgstr "Amazon Kindle-Edition"
 
 #: includes/admin/list-edit.php:30
 msgid "Amazon List"
@@ -342,20 +419,20 @@ msgstr "Amazon-Logo"
 msgid "Amazon New Releases List"
 msgstr "Amazon Neuerscheinungen-Liste"
 
-#: includes/functions/class.extended.php:594
+#: includes/functions/class.extended.php:602
 msgid "Amazon Prime"
 msgstr "Amazon Prime"
 
-#: includes/product-helper-functions.php:333
+#: includes/product-helper-functions.php:331
 msgid "Amazon Prime Video (Video on Demand)"
-msgstr "Amazon Prime Video (Video on Demand)"
+msgstr "Amazon Prime Video (Video-on-Demand)"
 
 #: includes/admin/product-edit.php:31
 msgid "Amazon Product"
 msgstr "Amazon-Produkt"
 
 #: src/Admin/Settings/API.php:293
-#: src/Admin/Support.php:182
+#: src/Admin/Tools/Support.php:157
 msgid "Amazon Product Advertising API"
 msgstr "Amazon Product Advertising API"
 
@@ -376,6 +453,10 @@ msgstr "Amazon Produktbox(en)"
 msgid "Amazon advised to include a disclaimer adjacent to the pricing or availability information."
 msgstr "Amazon rät dazu, einen Haftungsausschluss für die Aktualität der angezeigten Preise, auszugeben."
 
+#: assets/block/dist/index.js:1
+msgid "Amount Saved"
+msgstr "Gesparter Betrag"
+
 #: includes/admin/list-edit.php:90
 msgid "Amount of items"
 msgstr "Anzahl der Produkte"
@@ -390,7 +471,11 @@ msgstr "Anzahl der Produkte:"
 msgid "An error occurred, please try again."
 msgstr "Ein Fehler ist aufgetreten, bitte nochmals versuchen."
 
-#: src/Admin/Settings/Output.php:189
+#: assets/block/dist/index.js:1
+msgid "Apply a link to the output"
+msgstr "Einen Link auf die Ausgabe anwenden"
+
+#: src/Admin/Settings/Output.php:203
 msgid "Apply adding on image link titles"
 msgstr "Zusatz ebenfalls auf das „Titel“-Attribut von Bilder-Links anwenden"
 
@@ -398,19 +483,23 @@ msgstr "Zusatz ebenfalls auf das „Titel“-Attribut von Bilder-Links anwenden"
 msgid "As a member of our <a href=\"%s\" target=\"_blank\">affiliate partner program</a>, you will receive a commission for every new AAWP customer you refer. If you wish, you can enter your affiliate ID in the field below. As soon as you have activated the \"Credits\" function above, your Affiliate ID will automatically be appended to the generated link."
 msgstr "Als Teilnehmer an unserem <a href=\"%s\" target=\"_blank\">Affiliate Partnerprogramm</a>, erhältst du eine Provision für jeden vermittelten AAWP-Neukunden. Wenn du möchtest, kannst du deine Affiliate-ID in das unten stehende Feld eintragen. Sobald du die obige „Credits“-Funktion aktiviert hast, wird deine Affiliate-ID automatisch an den generierten Link dran gehängt."
 
+#: assets/block/dist/index.js:1
+msgid "Ascending"
+msgstr "Aufsteigend"
+
 #: includes/admin/product-edit.php:200
 msgid "Attributes"
 msgstr "Attribute"
 
-#: includes/product-helper-functions.php:361
+#: includes/product-helper-functions.php:359
 msgid "Audible Audiobook"
 msgstr "Audible Hörbuch"
 
-#: includes/product-helper-functions.php:495
+#: includes/product-helper-functions.php:493
 msgid "Audience Rating: "
 msgstr "Zielgruppen-Bewertung: "
 
-#: includes/product-helper-functions.php:370
+#: includes/product-helper-functions.php:368
 msgid "Audio CD – Audiobook"
 msgstr "Audio-CD – Hörbuch"
 
@@ -426,7 +515,10 @@ msgstr "Automatisch"
 msgid "Background color"
 msgstr "Hintergrundfarbe"
 
-#: src/Admin/Flyout.php:99
+#: assets/block/dist/index.js:1
+msgid "Basic"
+msgstr "Basic"
+
 #: src/Admin/Welcome.php:204
 msgid "Beginners Guide"
 msgstr "Ratgeber für Anfänger"
@@ -459,6 +551,10 @@ msgstr "Bestseller Nr."
 msgid "Bestseller No. %NUMBER%"
 msgstr "Bestseller Nr. %NUMBER%"
 
+#: assets/block/dist/index.js:1
+msgid "Bestseller (Lists)"
+msgstr "Bestseller (Listen)"
+
 #: src/ShortenLinks/Settings.php:77
 msgid "Bitly Access Token"
 msgstr "Bitly-Zugriffstoken"
@@ -489,24 +585,40 @@ msgstr "Browse Nodes deaktiviert"
 msgid "Browse node id or keyword(s)"
 msgstr "Browse Node ID oder Suchbegriff(e)"
 
+#: src/ClickTracking/ListTable.php:411
+msgid "Browser"
+msgstr "Browser"
+
 #: src/Admin/Settings/Output.php:119
 #: assets/block/dist/index.js:1
 msgid "Button"
 msgstr "Button"
 
+#: assets/block/dist/index.js:1
+msgid "Button Text"
+msgstr "Button Text"
+
 #: src/Admin/ComparisonTable/functions.php:285
 msgid "Buy Now Button"
 msgstr "Kaufen-Button"
 
-#: includes/class.aawp-functions.php:744
-#: includes/class.template-functions.php:1217
-#: src/Admin/Settings/Output.php:546
+#: includes/class.aawp-functions.php:740
+#: includes/class.template-functions.php:1228
+#: src/Admin/Settings/Output.php:560
 msgid "Buy on Amazon"
 msgstr "Bei Amazon kaufen"
 
 #: src/Admin/ComparisonTable/Table.php:274
 msgid "By editing the following customizations, you are going to overwrite the <a href=\"%s\">global settings</a> for this table only."
 msgstr "Die folgenden Anpassungsmöglichkeiten überschreiben die <a href=\"%s\">globalen Einstellungen</a> für diese Tabelle."
+
+#: src/Admin/Settings/Output.php:639
+msgid "By enabling this option, AAWP assets will be loaded site-wide. Only check if your site is having styling or compatibility issues."
+msgstr "Wenn du diese Option aktivierest, werden AAWP-Assets auf der gesamten Website geladen. Aktiviere nur, wenn deine Website Styling- oder Kompatibilitätsprobleme hat."
+
+#: src/Admin/Settings/Output.php:137
+msgid "CSS/JS Assets"
+msgstr "CSS/JS-Ressourcen"
 
 #: src/Admin/Settings/General.php:84
 msgid "Cache"
@@ -516,7 +628,7 @@ msgstr "Cache"
 msgid "Cache duration"
 msgstr "Aktualisierungs-Intervall"
 
-#: src/Admin/Settings.php:247
+#: src/Admin/Settings.php:208
 msgid "Cache will be updated in the background. This might take some minutes."
 msgstr "Der Cache wird im Hintergrund aktualisiert. Dies kann ein paar Minuten dauern."
 
@@ -528,16 +640,16 @@ msgstr "Kanada"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: includes/functions.php:186
+#: includes/functions.php:188
 #: assets/block/dist/index.js:1
 msgid "Cart"
 msgstr "Warenkorb"
 
-#: src/Admin/Settings/Output.php:588
+#: src/Admin/Settings/Output.php:602
 msgid "Cart: Black"
 msgstr "Warenkorb: Schwarz"
 
-#: src/Admin/Settings/Output.php:589
+#: src/Admin/Settings/Output.php:603
 msgid "Cart: White"
 msgstr "Warenkorb: Weiß"
 
@@ -545,21 +657,33 @@ msgstr "Warenkorb: Weiß"
 msgid "Cart icon"
 msgstr "Warenkorb-Symbol"
 
+#: assets/block/dist/index.js:1
+msgid "Center"
+msgstr "Center"
+
 #: includes/admin/infoboxes.php:102
 #: includes/admin/infoboxes.php:108
 msgid "Changelog"
-msgstr "Changelog"
+msgstr "Änderungsprotokoll"
 
-#: src/Admin/Settings/Output.php:177
-#: src/Admin/Settings/Output.php:304
-#: src/Admin/Settings/Output.php:357
+#: src/Admin/Settings/Output.php:191
+#: src/Admin/Settings/Output.php:318
+#: src/Admin/Settings/Output.php:371
 msgid "Characters"
 msgstr "Zeichen"
+
+#: src/ClickTracking/Init.php:696
+msgid "Chart"
+msgstr "Diagramm"
+
+#: src/ClickTracking/Init.php:503
+msgid "Chart Type"
+msgstr "Diagrammtyp"
 
 #: src/Plugin.php:108
 #: src/Plugin.php:120
 msgid "Cheatin&#8217; huh?"
-msgstr "Cheatin&#8217; huh?"
+msgstr "Schummeln, hm?"
 
 #: includes/functions/components/cronjobs.php:43
 msgid "Check if you <u>don't</u> want to use the built-in cronjobs for updating the cache"
@@ -573,7 +697,7 @@ msgstr "Markieren, um die eingebaute „Datenbank Garbage Collection“-Funktion
 msgid "Check in order to active geotargeting functionality"
 msgstr "Aktivieren, um Geotargeting zu verwenden"
 
-#: src/Admin/Settings/Output.php:217
+#: src/Admin/Settings/Output.php:231
 msgid "Check in order to deliver images via a privacy proxy"
 msgstr "Aktivieren, um die Produktbilder über einen Datenschutz-Proxy auszuliefern"
 
@@ -593,7 +717,7 @@ msgstr "Aktivieren, um Shortcodes in Text-Widgets auszuführen"
 msgid "Check in order to setup multiple tracking ids for further functionality"
 msgstr "Aktivieren, um mehrere Tracking-IDs für erweiternde Funktionen einzugeben"
 
-#: src/Admin/Settings/Output.php:322
+#: src/Admin/Settings/Output.php:336
 msgid "Check in order to show descriptions on mobile devices too"
 msgstr "Aktivieren, um die Beschreibung auch auf Smartphones auszugeben"
 
@@ -601,11 +725,11 @@ msgstr "Aktivieren, um die Beschreibung auch auf Smartphones auszugeben"
 msgid "Check in order to show disclaimer after widgets in any case"
 msgstr "Aktivieren, um den Hinweis in jedem Fall nach Widgets auszugeben"
 
-#: src/Admin/Settings/Output.php:504
+#: src/Admin/Settings/Output.php:518
 msgid "Check in order to show old price"
 msgstr "Aktivieren, um den alten Preis auszugeben"
 
-#: src/Admin/Settings/Output.php:508
+#: src/Admin/Settings/Output.php:522
 msgid "Check in order to show price reduction"
 msgstr "Aktivieren, um die Preisreduzierung auszugeben"
 
@@ -616,6 +740,18 @@ msgstr "Aktivieren, um Warenkorb-Links anstelle der „normalen“ Links zu verw
 #: src/Admin/Settings/General.php:438
 msgid "Check only in case shortcodes produce unneeded spacing, line-breaks or empty paragraphs."
 msgstr "Nur aktivieren, wenn die Ausgabe der Shortcodes unbeabsichtigte Freiräume, Zeilenumbrüche oder leere Paragraphen erzeugt."
+
+#: src/ClickTracking/Settings.php:55
+msgid "Check the user roles that should be excluded from tracking."
+msgstr "Aktiviere die Benutzerrollen, die vom Tracking ausgeschlossen werden sollen."
+
+#: src/ClickTracking/Settings.php:45
+msgid "Check to enable tracking Amazon affiliate links clicks."
+msgstr "Aktiviere das Tracking von Klicks auf Amazon-Affiliate-Links."
+
+#: src/ClickTracking/Settings.php:64
+msgid "Check to enable tracking the location of the visitor."
+msgstr "Aktiviere diese Option, um die Standortverfolgung des Besuchers zu aktivieren."
 
 #: includes/functions/class.extended.php:314
 msgid "Check your <a href=\"%s\">Amazon associates page</a> for more information."
@@ -639,18 +775,42 @@ msgstr "Wähle die Produkte aus, die du auf deiner Website anzeigen möchtest un
 msgid "Choose your comparison table"
 msgstr "Wähle deine Vergleichstabelle"
 
-#: src/Admin/AdvancedAds/Ad.php:85
+#: src/Admin/AdvancedAds/Ad.php:95
 #: src/Admin/ClassicEditor.php:252
 msgid "Choose your display variant"
 msgstr "Wähle deine Anzeigevariante"
+
+#: assets/block/dist/index.js:1
+msgid "Choose your display variant:"
+msgstr "Wähle deine Anzeigevariante:"
 
 #: src/Admin/Settings/General.php:142
 msgid "Cleanup shortcode output"
 msgstr "Shortcode-Ausgabe bereinigen"
 
+#: src/ClickTracking/ListTable.php:49
+msgid "Click"
+msgstr "Klick"
+
 #: includes/functions/class.extended.php:330
 msgid "Click Tracking"
 msgstr "Click-Tracking"
+
+#: src/ClickTracking/Init.php:460
+msgid "Click Tracking Disabled."
+msgstr "Klick Tracking deaktiviert"
+
+#: includes/functions/class.extended.php:330
+msgid "Click Tracking (Deprecated)"
+msgstr "Klick-Tracking (veraltet)"
+
+#: includes/functions/class.extended.php:341
+msgid "Click Tracking (New)"
+msgstr "Klick-Tracking (neu)"
+
+#: src/ClickTracking/ListTable.php:604
+msgid "Click Tracking is currently disabled."
+msgstr "Klick-Tracking ist derzeit deaktiviert."
 
 #: includes/admin/infoboxes.php:181
 msgid "Click here to submit translations"
@@ -659,6 +819,14 @@ msgstr "Hier klicken, um Übersetzungen einzureichen"
 #: src/Admin/ComparisonTable/Table.php:448
 msgid "Click in order to start product search"
 msgstr "Hier klicken, um eine Produktsuche zu starten"
+
+#: src/Admin/ProductsTable/ListTable.php:222
+#: src/ClickTracking/Init.php:61
+#: src/ClickTracking/Init.php:102
+#: src/ClickTracking/Init.php:188
+#: src/ClickTracking/ListTable.php:48
+msgid "Clicks"
+msgstr "Klicks"
 
 #: includes/admin/modals.php:41
 #: src/Admin/ClassicEditor.php:236
@@ -673,6 +841,10 @@ msgstr "Vergleiche mehrere Produkte miteinander, indem du eine Vergleichstabelle
 #: assets/block/dist/index.js:1
 msgid "Comparison Tables"
 msgstr "Vergleichstabellen"
+
+#: assets/block/dist/index.js:1
+msgid "Comparison  Table"
+msgstr "Vergleichstabelle"
 
 #: src/ActivityLogs/ListTable.php:300
 msgid "Component"
@@ -695,11 +867,10 @@ msgid "Connect with us!"
 msgstr "Folge uns!"
 
 #: src/Admin/Settings/API.php:319
-#: src/Admin/Support.php:186
+#: src/Admin/Tools/Support.php:161
 msgid "Connected"
 msgstr "Verbunden"
 
-#: src/Admin/Flyout.php:109
 #: src/Admin/Welcome.php:227
 msgid "Contact Support"
 msgstr "Support kontaktieren"
@@ -713,15 +884,16 @@ msgstr "Wende dich an deinen Netzwerkadministrator, um das Update zu installiere
 msgid "Copy Shortcode"
 msgstr "Shortcode kopieren"
 
-#: src/Admin/Support.php:175
+#: src/Admin/Tools/Support.php:150
 msgid "Core version"
 msgstr "Basis-Version"
 
-#: includes/product-helper-functions.php:979
+#: includes/product-helper-functions.php:977
 msgid "Could not write file %s"
 msgstr "Die Datei %s konnte nicht erstellt werden"
 
 #: src/Admin/Settings/API.php:109
+#: src/ClickTracking/ListTable.php:417
 msgid "Country"
 msgstr "Land"
 
@@ -729,11 +901,12 @@ msgstr "Land"
 msgid "Create automated bestseller lists & set the number of products individually: e.g. Top 3, Top 10 etc."
 msgstr "Erstelle automatische Bestsellerlisten und lege die Anzahl der Produkte individuell fest: z.B. Top 3, Top 10 etc."
 
-#: src/Admin/Support.php:400
+#: src/Admin/Tools/Support.php:375
 msgid "Create the database tables of the plugin"
 msgstr "Datenbank-Tabellen des Plugins erstellen"
 
-#: src/Admin/ProductsTable/ListTable.php:219
+#: src/Admin/ProductsTable/ListTable.php:225
+#: src/ClickTracking/ListTable.php:410
 msgid "Created At"
 msgstr "Erstellt am"
 
@@ -745,21 +918,45 @@ msgstr "API-Keys erstellen"
 msgid "Credits"
 msgstr "Unterstützung"
 
-#: src/Admin/Settings/Output.php:531
+#: src/Admin/Settings/Output.php:545
 msgid "Currency Format"
 msgstr "Währungsformat"
+
+#: src/ClickTracking/ListTable.php:536
+msgid "Custom"
+msgstr "Benutzerdefiniert"
 
 #: src/Admin/ComparisonTable/functions.php:290
 msgid "Custom Button"
 msgstr "Eigener Button"
 
-#: src/Admin/Settings/Output.php:133
+#: src/Admin/Settings/Output.php:147
 msgid "Custom CSS"
 msgstr "Eigenes CSS"
+
+#: assets/block/dist/index.js:1
+msgid "Custom CSS Class"
+msgstr "Benutzerdefinierte CSS-Klasse"
+
+#: assets/block/dist/index.js:1
+msgid "Custom Description"
+msgstr "Individuelle Beschreibung"
 
 #: src/Admin/ComparisonTable/functions.php:292
 msgid "Custom HTML"
 msgstr "Eigenes HTML"
+
+#: assets/block/dist/index.js:1
+msgid "Custom Price"
+msgstr "Individueller Preis"
+
+#: assets/block/dist/index.js:1
+msgid "Custom Rating"
+msgstr "Individuelle Bewertung"
+
+#: assets/block/dist/index.js:1
+msgid "Custom Ribbon Text"
+msgstr "Individueller Bandtext"
 
 #: includes/functions/widgets/class.widget-bestseller.php:128
 #: includes/functions/widgets/class.widget-box.php:120
@@ -803,11 +1000,11 @@ msgstr "Dashboard"
 msgid "Data Fields"
 msgstr "Datenfelder"
 
-#: src/Admin/Support.php:240
+#: src/Admin/Tools/Support.php:215
 msgid "Database"
 msgstr "Datenbank"
 
-#: src/Admin/Support.php:230
+#: src/Admin/Tools/Support.php:205
 msgid "Database, Cache & Cronjobs"
 msgstr "Datenbank, Cache & Cronjobs"
 
@@ -817,9 +1014,10 @@ msgstr "Datenbank Garbage Collection"
 
 #: src/Admin/Settings/General.php:207
 msgid "Database Garbage Collection"
-msgstr "Database Garbage Collection"
+msgstr "Datenbank Garbage Collection"
 
 #: src/Admin/Settings/General.php:330
+#: src/ClickTracking/Init.php:604
 msgid "Date"
 msgstr "Datum"
 
@@ -843,13 +1041,13 @@ msgstr "Fehlerprotokollierung"
 msgid "Debug mode"
 msgstr "Entwickler-Modus"
 
-#: src/Admin/Settings/Output.php:523
-#: src/Admin/Settings/Output.php:524
+#: src/Admin/Settings/Output.php:537
+#: src/Admin/Settings/Output.php:538
 msgid "Declaration in %1$s"
 msgstr "Angabe in %1$s"
 
 #: includes/functions/components/geotargeting.php:45
-#: src/Admin/AdvancedAds/Ad.php:175
+#: src/Admin/AdvancedAds/Ad.php:185
 #: assets/block/dist/index.js:1
 msgid "Default"
 msgstr "Standard"
@@ -867,28 +1065,40 @@ msgstr "Standard Anzahl"
 msgid "Default style"
 msgstr "Standard-Design"
 
-#: src/Admin/Settings/Output.php:343
+#: src/Admin/Settings/Output.php:357
 msgid "Define the maximum length of the description text in the \"list\" template."
 msgstr "Festlegen der maximalen Länge des Beschreibungstextes im Listen-Template."
 
-#: src/Admin/AdvancedAds/Ad.php:167
+#: src/Admin/AdvancedAds/Ad.php:177
 #: src/Admin/ClassicEditor.php:280
 #: assets/block/dist/index.js:1
 msgid "Defines the maximum amount of products which will be shown."
 msgstr "Definiere die maximale Anzahl von Produkten, die angezeigt werden."
 
+#: assets/block/dist/index.js:1
+msgid "Defining the characteristic for applying the filter."
+msgstr "Definiere die Merkmale für die Anwendung des Filters."
+
+#: assets/block/dist/index.js:1
+msgid "Defining the filter direction."
+msgstr "Lege die Filterrichtung fest."
+
 #: src/Admin/ProductsTable/ListTable.php:77
-#: src/Admin/ProductsTable/ListTable.php:263
+#: src/Admin/ProductsTable/ListTable.php:269
 msgid "Delete"
 msgstr "Löschen"
 
-#: src/ActivityLogs/ListTable.php:464
+#: src/ActivityLogs/ListTable.php:458
 msgid "Delete All Logs"
 msgstr "Alle Protokolle löschen"
 
 #: src/Admin/ProductsTable/ListTable.php:520
 msgid "Delete All Products"
 msgstr "Alle Produkte löschen"
+
+#: assets/block/dist/index.js:1
+msgid "Descending"
+msgstr "Absteigend"
 
 #: includes/admin/product-edit.php:157
 #: src/Admin/ClassicEditor.php:268
@@ -898,7 +1108,15 @@ msgstr "Alle Produkte löschen"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: includes/functions.php:185
+#: assets/block/dist/index.js:1
+msgid "Description Items"
+msgstr "Beschreibung Artikel"
+
+#: assets/block/dist/index.js:1
+msgid "Description Length"
+msgstr "Länge der Beschreibung"
+
+#: includes/functions.php:187
 msgid "Detail Page"
 msgstr "Detailseite"
 
@@ -910,13 +1128,21 @@ msgstr "Detaillierte Anweisungen zur Installation, Konfiguration und Verwendung 
 #: includes/admin/product-overview.php:33
 #: includes/functions/class.extended.php:164
 #: includes/functions/class.extended.php:244
-#: includes/functions/class.extended.php:456
+#: includes/functions/class.extended.php:464
 msgid "Details"
 msgstr "Details"
 
 #: includes/functions/class.extended.php:154
 msgid "Details Button"
 msgstr "Details-Button"
+
+#: src/ClickTracking/ListTable.php:413
+msgid "Device"
+msgstr "Gerät"
+
+#: assets/block/dist/index.js:1
+msgid "Direction of ordering."
+msgstr "Bestimme die Richtung der Sortierung."
 
 #: includes/functions/class.extended.php:62
 #: includes/functions/class.extended.php:324
@@ -925,11 +1151,15 @@ msgstr "Details-Button"
 #: src/Admin/Settings/General.php:347
 #: src/Admin/Settings/General.php:380
 #: src/Admin/Settings/General.php:446
-#: src/Admin/Settings/Output.php:315
-#: src/Admin/Support.php:157
-#: src/Admin/Support.php:303
+#: src/Admin/Settings/Output.php:329
+#: src/Admin/Tools/Support.php:132
+#: src/Admin/Tools/Support.php:278
 msgid "Disabled"
 msgstr "Deaktiviert"
+
+#: src/Admin/Settings/General.php:89
+msgid "Discarded Products"
+msgstr "Ausrangierte Produkte"
 
 #: src/Admin/Settings/General.php:133
 msgid "Disclaimer"
@@ -940,7 +1170,7 @@ msgid "Disconnect"
 msgstr "Verbindung trennen"
 
 #: src/Admin/Settings/API.php:321
-#: src/Admin/Support.php:188
+#: src/Admin/Tools/Support.php:163
 msgid "Disconnected"
 msgstr "Nicht verbunden"
 
@@ -951,6 +1181,14 @@ msgstr "Trennung der Verbindung mit der Amazon API: %s"
 #: includes/hooks.php:523
 msgid "Disconnected from Amazon API: <code>%s</code>"
 msgstr "Trennung der Verbindung mit der Amazon API: <code>%s</code>"
+
+#: src/API/Notifications.php:404
+msgid "Dismiss this message"
+msgstr "Diese Nachricht verwerfen"
+
+#: assets/block/dist/index.js:1
+msgid "Display \"Buy on Amazon\" Button"
+msgstr "Button „Bei Amazon kaufen“ anzeigen"
 
 #: includes/functions/class.extended.php:304
 msgid "Display Amazon Prime logo besides the advertised price, whenever this service is available for the related product."
@@ -980,6 +1218,14 @@ msgstr "Ausgabe einer oder mehrerer Produktboxen"
 msgid "Displaying a message in case no products were found."
 msgstr "Nachricht die ausgegeben wird, wenn keine Produkte gefunden wurden."
 
+#: assets/block/dist/index.js:1
+msgid "Displaying an extra button and setting up the link target."
+msgstr "Zeige einen zusätzlichen Button und richte dessen Linkziel ein."
+
+#: assets/block/dist/index.js:1
+msgid "Displaying product boxes side by side."
+msgstr "Produktboxen nebeneinander anzeigen."
+
 #: includes/functions/components/templating.php:47
 msgid "Do <u>not</u> enter the file extension! Valid example: <strong>my_template</strong>"
 msgstr "Bitte <u>nicht</u> die Datei-Endung eingeben! Korrektes Beispiel wäre: <strong>mein_template</strong>"
@@ -988,13 +1234,10 @@ msgstr "Bitte <u>nicht</u> die Datei-Endung eingeben! Korrektes Beispiel wäre: 
 msgid "Do you need assistance?"
 msgstr "Brauchen Sie Hilfe?"
 
-#: includes/admin/infoboxes.php:101
-#: includes/admin/infoboxes.php:107
 #: includes/admin/plugins.php:51
 #: includes/functions/widgets/class.widget-bestseller.php:136
 #: includes/functions/widgets/class.widget-box.php:128
 #: includes/functions/widgets/class.widget-new-releases.php:138
-#: src/Admin/Flyout.php:104
 msgid "Documentation"
 msgstr "Dokumentation"
 
@@ -1007,7 +1250,7 @@ msgstr "Dokumentation:"
 msgid "Don't miss any update and news about the plugin and sign up for our newsletter."
 msgstr "Du willst keine Updates und Neuigkeiten verpassen? Gerne halten wir dich per E-Mail auf dem Laufenden."
 
-#: src/Admin/Settings/Output.php:481
+#: src/Admin/Settings/Output.php:495
 msgid "Don't show any messages when pricing is not available"
 msgstr "Keinen Hinweis ausgeben, wenn der Preis nicht verfügbar ist"
 
@@ -1015,11 +1258,11 @@ msgstr "Keinen Hinweis ausgeben, wenn der Preis nicht verfügbar ist"
 msgid "Download Log File"
 msgstr "Log-Datei herunterladen"
 
-#: src/Admin/Support.php:461
+#: src/Admin/Tools/Support.php:432
 msgid "Download System Info File"
 msgstr "System-Info-Datei herunterladen"
 
-#: includes/class.aawp-functions.php:731
+#: includes/class.aawp-functions.php:727
 msgid "Due to recent adjustments of the new Amazon API, right now it is not possible to pass a Browse Node ID. Please use a search term like \"Harry Potter\" instead (<a href=\"%s\" target=\"_blank\" rel=\"nofollow\">Click here for more details</a>)."
 msgstr "Aufgrund der jüngsten Anpassungen an die neue Amazon-API, ist es aktuell nicht möglich, eine Browse Node ID zu übergeben. Bitte verwende stattdessen einen Suchbegriff wie z.B. \"Harry Potter\" (<a href=\"%s\" target=\"_blank\" rel=\"nofollow\">Klicke hier für mehr Informationen</a>)."
 
@@ -1047,14 +1290,34 @@ msgstr "Bearbeiten"
 msgid "Edit Table"
 msgstr "Vergleichstabelle bearbeiten"
 
-#: includes/product-helper-functions.php:549
-#: includes/product-helper-functions.php:659
+#: includes/product-helper-functions.php:547
+#: includes/product-helper-functions.php:657
 msgid "Edition no. %d"
 msgstr "Auflage Nr. %d"
+
+#: includes/functions.php:124
+msgid "Egypt"
+msgstr "Ägypten"
 
 #: includes/admin/infoboxes.php:133
 msgid "Email address"
 msgstr "E-Mail Adresse"
+
+#: src/ClickTracking/Settings.php:218
+msgid "Empty Clicks"
+msgstr "Leere Klicks"
+
+#: src/API/Notifications.php:173
+msgid "Empty response body!"
+msgstr "Leerer Antworttext!"
+
+#: src/ClickTracking/Settings.php:44
+msgid "Enable Click Tracking"
+msgstr "Klickverfolgung aktivieren"
+
+#: src/ClickTracking/Settings.php:63
+msgid "Enable Location (Country) Tracking"
+msgstr "Standort- (Land-) Tracking aktivieren"
 
 #: src/ActivityLogs/Settings.php:43
 msgid "Enable Logging"
@@ -1064,14 +1327,17 @@ msgstr "Protokollierung aktivieren"
 msgid "Enable debug logging"
 msgstr "Fehlerprotokollierung aktivieren"
 
-#: src/Admin/Settings/Output.php:313
-#: src/Admin/Support.php:156
+#: src/Admin/Settings/Output.php:327
+#: src/Admin/Tools/Support.php:131
 msgid "Enabled"
 msgstr "Aktiviert"
 
-#: src/ActivityLogs/ListTable.php:373
-#: src/ActivityLogs/ListTable.php:376
-#: src/ActivityLogs/ListTable.php:378
+#: src/ActivityLogs/ListTable.php:377
+#: src/ActivityLogs/ListTable.php:380
+#: src/ActivityLogs/ListTable.php:382
+#: src/ClickTracking/ListTable.php:501
+#: src/ClickTracking/ListTable.php:504
+#: src/ClickTracking/ListTable.php:506
 msgid "End date"
 msgstr "Enddatum"
 
@@ -1082,6 +1348,10 @@ msgstr "ASIN eingeben…"
 #: src/Admin/ComparisonTable/Table.php:447
 msgid "Enter ASIN ..."
 msgstr "ASIN eingeben …"
+
+#: assets/block/dist/index.js:1
+msgid "Enter ASIN here..."
+msgstr "ASIN hier eingeben..."
 
 #: src/Admin/ComparisonTable/Table.php:332
 msgid "Enter a label or leave empty..."
@@ -1100,6 +1370,10 @@ msgstr "Button-Text eingeben..."
 msgid "Enter button url..."
 msgstr "Button-URL eingeben…"
 
+#: assets/block/dist/index.js:1
+msgid "Enter keywords here. E.g. \"top 4k monitors\""
+msgstr "Gib deine Keywords ein. Z.B. „Top 4K Monitore“"
+
 #: src/Admin/ComparisonTable/functions.php:237
 msgid "Enter search term..."
 msgstr "Suchbegriff eingeben…"
@@ -1112,9 +1386,13 @@ msgstr "Gib den Lizenzschlüssel in den Plugin-Einstellungen ein, den du beim Ka
 msgid "Enter your Amazon API Key. If you have questions about this, read our <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferer\">documentation</a>."
 msgstr "Gib deinen Amazon-API-Schlüssel ein. Wenn du Fragen dazu hast, lies unsere <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferer\">Dokumentation</a>."
 
-#: src/Admin/Support.php:321
+#: src/Admin/Tools/Support.php:296
 msgid "Environment"
 msgstr "Servereinstellungen"
+
+#: assets/block/dist/index.js:1
+msgid "Equal"
+msgstr "Gleich"
 
 #: includes/libraries/class.plugin-updater.php:519
 msgid "Error"
@@ -1132,6 +1410,18 @@ msgstr "Alle 10 Minuten"
 msgid "Example"
 msgstr "Beispiel"
 
+#: assets/block/dist/index.js:1
+msgid "Exclude"
+msgstr "Ausschließen"
+
+#: src/ClickTracking/Settings.php:54
+msgid "Exclude User Roles"
+msgstr "Benutzerrollen ausschließen"
+
+#: assets/block/dist/index.js:1
+msgid "Extra Button"
+msgstr "Extra Button"
+
 #: src/Admin/ComparisonTable/Table.php:71
 msgid "Featured Image"
 msgstr "Beitragsbild"
@@ -1140,14 +1430,48 @@ msgstr "Beitragsbild"
 msgid "Feel free to spread it to the world if you are happy with this plugin and want to support me :)"
 msgstr "Wenn dir das Plugin gefällt, würde ich mich sehr freuen, wenn du dies der Welt mitteilst. :-)"
 
-#: src/ActivityLogs/ListTable.php:424
+#: src/API/Notifications.php:183
+msgid "Fetched Notifications Feed!"
+msgstr "Benachrichtigungs-Feed abgerufen!"
+
+#: assets/block/dist/index.js:1
+msgid "Fields (Single product data)"
+msgstr "Felder (Einzelproduktdaten)"
+
+#: src/ActivityLogs/ListTable.php:428
+#: src/ClickTracking/Init.php:521
 #: assets/block/dist/index.js:1
 msgid "Filter"
 msgstr "Filter"
 
-#: src/ActivityLogs/ListTable.php:338
+#: src/ClickTracking/Init.php:511
+#: assets/block/dist/index.js:1
+msgid "Filter By"
+msgstr "Filtern nach"
+
+#: assets/block/dist/index.js:1
+msgid "Filter Compare"
+msgstr "Filter vergleichen"
+
+#: assets/block/dist/index.js:1
+msgid "Filter Items"
+msgstr "Artikel filtern"
+
+#: assets/block/dist/index.js:1
+msgid "Filter Products"
+msgstr "Produkte filtern"
+
+#: assets/block/dist/index.js:1
+msgid "Filter Type"
+msgstr "Typ filtern"
+
+#: src/ActivityLogs/ListTable.php:342
 msgid "Filter by component"
 msgstr "Nach Komponenten filtern"
+
+#: assets/block/dist/index.js:1
+msgid "Filtering on the basis of certain attributes."
+msgstr "Filtere anhand bestimmter Attribute."
 
 #: src/Admin/Welcome.php:194
 msgid "First Class Customer Support"
@@ -1165,11 +1489,11 @@ msgstr "Für alle Neueinsteiger haben wir eine ausführliche Anleitung erstellt,
 msgid "For more information about \"add to cart links\" please take a look into the <a href=\"%s\" target=\"_blank\">official documentation</a> on Amazon Associates."
 msgstr "Für weitere Informationen zu den Warenkorb-Links, wirf bitte einen Blick in die <a href=\"%s\" target=\"_blank\">offizielle Dokumentation</a> im Amazon PartnerNet."
 
-#: src/Admin/Settings/Output.php:226
+#: src/Admin/Settings/Output.php:240
 msgid "For more information please <a href=\"%s\" target=\"_blank\">take a look at this article</a>."
 msgstr "Weitere Informationen findest du <a href=\"%s\" target=\"_blank\">in diesem Artikel</a>."
 
-#: includes/functions.php:125
+#: includes/functions.php:126
 msgid "France"
 msgstr "Frankreich"
 
@@ -1182,7 +1506,7 @@ msgstr "Funktionen"
 msgid "Functions settings"
 msgstr "Funktions-Einstellungen"
 
-#: src/Admin/Settings/Output.php:204
+#: src/Admin/Settings/Output.php:218
 msgid "GDPR relevant"
 msgstr "DSGVO relevant"
 
@@ -1196,10 +1520,14 @@ msgstr "LOSLEGEN"
 
 #: src/Admin/Settings/General.php:29
 #: src/Admin/Settings/General.php:46
-#: src/Admin/Settings/Output.php:464
-#: src/Admin/Support.php:165
+#: src/Admin/Settings/Output.php:478
+#: src/Admin/Tools/Support.php:140
 msgid "General"
 msgstr "Allgemein"
+
+#: assets/block/dist/index.js:1
+msgid "General Settings"
+msgstr "Allgemeine Einstellungen"
 
 #: src/Elementor/Widget.php:261
 msgid "Generated Shortcode"
@@ -1209,7 +1537,7 @@ msgstr "Generierter Shortcode"
 msgid "Geotargeting"
 msgstr "Geotargeting"
 
-#: includes/functions.php:124
+#: includes/functions.php:125
 msgid "Germany"
 msgstr "Deutschland"
 
@@ -1229,15 +1557,23 @@ msgstr "Globale Einstellungen"
 msgid "Green"
 msgstr "Grün"
 
+#: assets/block/dist/index.js:1
+msgid "Grid"
+msgstr "Raster"
+
+#: src/ClickTracking/Init.php:507
+msgid "Group By"
+msgstr "Gruppieren nach"
+
 #: src/Admin/Welcome.php:148
 msgid "Gutenberg Block"
 msgstr "Gutenbergblock"
 
-#: src/Admin/Settings/Output.php:310
+#: src/Admin/Settings/Output.php:324
 msgid "HTML formatting"
 msgstr "HTML-Formatierung"
 
-#: includes/product-helper-functions.php:343
+#: includes/product-helper-functions.php:341
 msgid "Hardcover Book"
 msgstr "Hardcover-Buch"
 
@@ -1265,7 +1601,7 @@ msgstr "Hier ist eine Auswahl der beliebtesten Funktionen unseres Plugins."
 msgid "Here you can specify the general settings."
 msgstr "Hier können allgemeine Einstellungen durchgeführt werden."
 
-#: src/Admin/Settings/Output.php:156
+#: src/Admin/Settings/Output.php:170
 msgid "Here you can specify the output settings."
 msgstr "Hier können jene Einstellungen durchgeführt werden, die die Ausgabe betreffen."
 
@@ -1275,29 +1611,29 @@ msgstr "Hier können weitere Einstellungen für die einzelnen Funktionen durchge
 
 #: includes/functions/class.extended.php:294
 #: src/Admin/ComparisonTable/functions.php:262
-#: src/Admin/Settings/Output.php:371
-#: src/Admin/Settings/Output.php:399
-#: src/Admin/Settings/Output.php:416
+#: src/Admin/Settings/Output.php:385
+#: src/Admin/Settings/Output.php:413
+#: src/Admin/Settings/Output.php:430
 msgid "Hide"
 msgstr "Ausblenden"
 
-#: src/Admin/Settings/Output.php:458
+#: src/Admin/Settings/Output.php:472
 msgid "Hide advertised price"
 msgstr "Verkaufspreis ausblenden"
 
-#: src/Admin/Settings/Output.php:564
+#: src/Admin/Settings/Output.php:578
 msgid "Hide button"
 msgstr "Button ausblenden"
 
-#: src/Admin/Settings/Output.php:467
+#: src/Admin/Settings/Output.php:481
 msgid "Hide decimal places for prices"
 msgstr "Dezimalstellen für Preise ausblenden"
 
-#: src/Admin/Settings/Output.php:333
+#: src/Admin/Settings/Output.php:347
 msgid "Hide description"
 msgstr "Beschreibung ausblenden"
 
-#: src/Admin/Settings/Output.php:600
+#: src/Admin/Settings/Output.php:614
 msgid "Hide icon"
 msgstr "Icon ausblenden"
 
@@ -1309,7 +1645,11 @@ msgstr "Nachricht vor Seitenbesuchern verstecken"
 msgid "Hide on mobile devices only"
 msgstr "Nur auf mobilen Endgeräten ausblenden"
 
-#: src/Admin/Settings/Output.php:263
+#: src/Admin/Settings/General.php:209
+msgid "Hide products"
+msgstr "Produkte verstecken"
+
+#: src/Admin/Settings/Output.php:277
 msgid "High"
 msgstr "Hoch"
 
@@ -1325,7 +1665,7 @@ msgstr "Zeile hervorheben"
 msgid "Highlight rows"
 msgstr "Zeilen hervorheben"
 
-#: src/Admin/AdvancedAds/Ad.php:176
+#: src/Admin/AdvancedAds/Ad.php:186
 #: assets/block/dist/index.js:1
 msgid "Horizontal"
 msgstr "Horizontal"
@@ -1334,12 +1674,13 @@ msgstr "Horizontal"
 msgid "How to Get Started"
 msgstr "Wie man anfängt"
 
-#: src/Admin/Settings.php:160
+#: src/Admin/Settings.php:155
 msgid "I'm a tooltip! Hover me for more information"
 msgstr "Ich bin ein Tooltip! Fahre mit der Mouse über mich, um mehr Informationen zu erhalten"
 
 #: src/ActivityLogs/ListTable.php:297
-#: src/Admin/ProductsTable/ListTable.php:213
+#: src/Admin/ProductsTable/ListTable.php:214
+#: src/ClickTracking/ListTable.php:402
 msgid "ID"
 msgstr "ID"
 
@@ -1348,9 +1689,9 @@ msgid "ISBN"
 msgstr "ISBN"
 
 #: includes/functions/class.link.php:100
-#: src/Admin/Settings/Output.php:592
+#: src/Admin/Settings/Output.php:606
 msgid "Icon"
-msgstr "Icon"
+msgstr "Symbol"
 
 #: includes/admin/infoboxes.php:175
 msgid "If you are native speaker of a country which translations are not available yet for the plugin, we appreciate your help to <strong>translate the plugin into your language</strong> as well!"
@@ -1360,18 +1701,46 @@ msgstr "Wenn du Muttersprachler einer Sprache bist, welche im Plugin noch fehlt,
 msgid "If your license has been upgraded and/or the status is incorrect, click \"Verify License\" to force a refresh."
 msgstr "Wenn deine Lizenz aktualisiert wurde und/oder der Status falsch ist, klicke auf \"Lizenz prüfen“, um eine Aktualisierung zu erzwingen."
 
-#: src/Admin/Settings/Output.php:204
+#: assets/block/dist/index.js:1
+msgid "Image Align"
+msgstr "Bild ausrichten"
+
+#: assets/block/dist/index.js:1
+msgid "Image Alt"
+msgstr "Bild-Alt"
+
+#: assets/block/dist/index.js:1
+msgid "Image Class"
+msgstr "Bildklasse"
+
+#: assets/block/dist/index.js:1
+msgid "Image Height"
+msgstr "Bildhöhe"
+
+#: src/Admin/Settings/Output.php:218
 msgid "Image Proxy"
 msgstr "Bild-Proxy"
 
-#: src/Admin/Settings/Output.php:259
+#: src/Admin/Settings/Output.php:273
 msgid "Image Quality"
 msgstr "Bild-Qualität"
 
-#: src/Admin/Settings/Output.php:241
+#: assets/block/dist/index.js:1
+msgid "Image Selection"
+msgstr "Bild-Auswahl"
+
+#: src/Admin/Settings/Output.php:255
 #: assets/block/dist/index.js:1
 msgid "Image Size"
 msgstr "Bild-Größe"
+
+#: assets/block/dist/index.js:1
+msgid "Image Title"
+msgstr "Bildtitel"
+
+#: assets/block/dist/index.js:1
+msgid "Image Width"
+msgstr "Bildbreite"
 
 #: includes/admin/product-edit.php:140
 #: src/Admin/Settings/General.php:248
@@ -1382,15 +1751,15 @@ msgstr "Bilder"
 msgid "Important note:"
 msgstr "Wichtiger Hinweis:"
 
-#: src/Admin/Support.php:385
+#: src/Admin/Tools/Support.php:360
 msgid "In case one of the values above is <span style=\"color: red;\"><strong>red</strong></span>, please get in contact with your webhoster in order to enable the missing PHP extensions."
 msgstr "Wenn einer der o.g. Werte <span style=\"color: red;\"><strong>rot</strong></span> ist, kontaktiere bitte deinen WebHoster, um die fehlenden PHP-Erweiterungen zu aktivieren."
 
-#: src/Admin/Support.php:227
+#: src/Admin/Tools/Support.php:202
 msgid "In case one of the values above is <span style=\"color: red;\"><strong>red</strong></span>, please take a look into the documentation for the API registration workflow, review your existing API keys and ensure that your Amazon account is not locked."
 msgstr "Wenn einer der o.g. Werte <span style=\"color: red;\"><strong>rot</strong></span> ist, schau bitte in die Dokumentation zum Thema „API-Registrierungs-Vorgang“, überprüfe deine vorhandenen API Schlüssel und stelle sicher, dass dein Amazon-Konto aktuell nicht gesperrt ist."
 
-#: src/Admin/Settings/Output.php:437
+#: src/Admin/Settings/Output.php:451
 msgid "In case some ratings do not show up correctly, please <a href=\"%s\" target=\"_blank\">take a look at this article</a>."
 msgstr "Falls die Bewertungen nicht ausgegeben werden, findest du <a href=\"%s\" target=\"_blank\">in diesem Artikel</a> weitere Infos dazu."
 
@@ -1398,7 +1767,7 @@ msgstr "Falls die Bewertungen nicht ausgegeben werden, findest du <a href=\"%s\"
 msgid "In case the update does not show up correctly or you prefer updating the plugin by hand, please take a look at our <a href=\"%s\" target=\"_blank\">documentation</a> for a manual plugin update."
 msgstr "Falls das Update bei dir nicht korrekt auftaucht, oder du es lieber händisch durchführen möchtest, findest du in der <a href=\"%s\" target=\"_blank\">Dokumentation</a> eine Unterstützung."
 
-#: src/Admin/Settings.php:265
+#: src/Admin/Settings.php:226
 msgid "In case you are using a caching plugin, please make sure that you empty this cache too."
 msgstr "Falls du ein Caching-Plugin verwendest, stelle bitte sicher, dass du auch diesen Cache leerst."
 
@@ -1422,13 +1791,17 @@ msgstr "Um mehr als eine Box auszugeben, kannst du einfach mehrere ASIN/ISBN hin
 msgid "In order to use this plugin you have to register as an Amazon Associate, signup for using the Amazon Product Advertising API and receiving your personal API credentials. Please take a look into the documentation in case you need any assistance."
 msgstr "Um dieses Plugin zu verwenden, musst du dich beim Amazon PartnerNet, sowie zur Nutzung der Amazon Product Advertising API anmelden. Anschließend benötigst du noch deine persönlichen API-Zugriffsschlüssel. Wenn du Hilfe bei der Anmeldung bzw. Einrichtung benötigst, findest du in der Dokumentation die entsprechenden Artikel."
 
-#: src/Admin/Settings/Output.php:255
+#: src/Admin/Settings/Output.php:269
 msgid "In the end it depends on the selected template how it handles the final image size."
 msgstr "Letztendlich ist die Ausgabe der Bild-Größe vom verwendeten Template abhängig."
 
 #: includes/admin/functions.php:25
 msgid "Inactive"
 msgstr "Inaktiv"
+
+#: assets/block/dist/index.js:1
+msgid "Include"
+msgstr "Einbeziehen"
 
 #: src/Admin/Welcome.php:180
 msgid "Increase Conversion and Click-through rates (CTR)"
@@ -1438,11 +1811,11 @@ msgstr "Konversions- und Klickraten (CTR) erhöhen"
 msgid "Increase the value of your affiliate page and your earned commissions!"
 msgstr "Steigere den Wert deiner Affiliate-Seite und deine verdienten Provisionen!"
 
-#: includes/functions.php:126
+#: includes/functions.php:127
 msgid "India"
 msgstr "Indien"
 
-#: src/Admin/Support.php:235
+#: src/Admin/Tools/Support.php:210
 msgid "Info"
 msgstr "Info"
 
@@ -1463,6 +1836,10 @@ msgstr "Einfügen"
 msgid "Insert into table"
 msgstr "Zur Vergleichstabelle einfügen"
 
+#: src/Admin/ProductsTable/ListTable.php:340
+msgid "Invalid"
+msgstr "Ungültig"
+
 #: includes/libraries/class.license-handler.php:255
 msgid "Invalid license"
 msgstr "Ungültige Lizenz"
@@ -1475,7 +1852,7 @@ msgstr "Ungültige Lizenz."
 msgid "Invalid table id."
 msgstr "Die ID der Vergleichstabelle ist ungültig."
 
-#: includes/functions.php:127
+#: includes/functions.php:128
 msgid "Italy"
 msgstr "Italien"
 
@@ -1483,7 +1860,7 @@ msgstr "Italien"
 msgid "Items"
 msgstr "Produkte"
 
-#: includes/functions.php:128
+#: includes/functions.php:129
 msgid "Japan"
 msgstr "Japan"
 
@@ -1491,7 +1868,7 @@ msgstr "Japan"
 msgid "Key:"
 msgstr "Suchbegriff bzw. ID:"
 
-#: src/Admin/AdvancedAds/Ad.php:151
+#: src/Admin/AdvancedAds/Ad.php:161
 #: src/Admin/ClassicEditor.php:261
 #: src/Elementor/Widget.php:158
 #: assets/block/dist/index.js:1
@@ -1501,7 +1878,7 @@ msgstr "Keywords"
 #: includes/functions/class.bestseller.php:99
 #: includes/functions/class.extended.php:204
 #: includes/functions/class.new-releases.php:96
-#: src/Admin/Settings/Output.php:603
+#: src/Admin/Settings/Output.php:617
 msgid "Label"
 msgstr "Beschriftung"
 
@@ -1510,20 +1887,32 @@ msgstr "Beschriftung"
 msgid "Labels"
 msgstr "Beschriftung"
 
-#: src/Admin/Settings/Output.php:246
-#: src/Admin/Settings/Output.php:374
+#: src/Admin/Settings/Output.php:260
+#: src/Admin/Settings/Output.php:388
 #: assets/block/dist/index.js:1
 msgid "Large"
 msgstr "Groß"
+
+#: src/ClickTracking/ListTable.php:530
+msgid "Last 30 days"
+msgstr "Letzte 30 Tage"
+
+#: src/ClickTracking/ListTable.php:529
+msgid "Last 7 days"
+msgstr "Letzte 7 Tage"
 
 #: includes/admin/list-overview.php:38
 #: includes/admin/product-overview.php:35
 msgid "Last Update"
 msgstr "Letzte Aktualisierung"
 
+#: src/ClickTracking/ListTable.php:532
+msgid "Last month"
+msgstr "letzter Monat"
+
 #: includes/admin/list-edit.php:116
 #: includes/admin/product-edit.php:238
-#: src/Admin/Support.php:308
+#: src/Admin/Tools/Support.php:283
 msgid "Last update"
 msgstr "Letzte Aktualisierung"
 
@@ -1540,13 +1929,25 @@ msgstr "Letzte Aktualisierung (Formatierung)"
 msgid "Last update on %last_update% / Affiliate links / Images from Amazon Product Advertising API"
 msgstr "Letzte Aktualisierung am %last_update% / Affiliate Links / Bilder von der Amazon Product Advertising API"
 
+#: src/ClickTracking/ListTable.php:534
+msgid "Last year"
+msgstr "Letztes Jahr"
+
 #: src/Admin/Settings/License.php:71
 msgid "Latest version installed"
 msgstr "Neueste Version bereits installiert"
 
-#: src/Admin/Settings.php:158
+#: assets/block/dist/index.js:1
+msgid "Left"
+msgstr "Links"
+
+#: src/Admin/Settings.php:153
 msgid "Legend"
 msgstr "Legende"
+
+#: assets/block/dist/index.js:1
+msgid "Less"
+msgstr "Weniger"
 
 #: includes/libraries/class.license-handler.php:251
 msgid "License expired"
@@ -1568,13 +1969,13 @@ msgstr "Lizenzierung"
 #: includes/functions/components/customizations.php:49
 #: includes/functions/components/customizations.php:62
 msgid "Light"
-msgstr "Light"
+msgstr "Licht"
 
-#: src/Admin/Settings/Output.php:164
+#: src/Admin/Settings/Output.php:178
 msgid "Limit length"
 msgstr "Zeichenbegrenzung festlegen"
 
-#: src/Admin/Settings/Output.php:291
+#: src/Admin/Settings/Output.php:305
 msgid "Limit length for each list point"
 msgstr "Zeichenbegrenzung für jeden Listenpunkt festlegen"
 
@@ -1585,13 +1986,33 @@ msgstr "Zeichenbegrenzung für jeden Listenpunkt festlegen"
 msgid "Link"
 msgstr "Link"
 
+#: assets/block/dist/index.js:1
+msgid "Link Class"
+msgstr "Link-Klasse"
+
+#: assets/block/dist/index.js:1
+msgid "Link Icon"
+msgstr "Link-Symbol"
+
+#: assets/block/dist/index.js:1
+msgid "Link Overwrite"
+msgstr "Link überschreiben"
+
+#: assets/block/dist/index.js:1
+msgid "Link Title"
+msgstr "Link-Titel"
+
+#: assets/block/dist/index.js:1
+msgid "Link Type"
+msgstr "Link-Typ"
+
 #: src/Admin/ComparisonTable/Table.php:366
 msgid "Link output"
 msgstr "Ausgabe verlinken"
 
 #: includes/functions/class.extended.php:209
-#: includes/functions/components/geotargeting.php:80
-#: src/Admin/Settings/Output.php:396
+#: includes/functions/components/geotargeting.php:72
+#: src/Admin/Settings/Output.php:410
 msgid "Link target"
 msgstr "Link-Ziel"
 
@@ -1603,14 +2024,22 @@ msgid "Links"
 msgstr "Links"
 
 #: includes/functions/components/templating.php:29
-#: src/Admin/AdvancedAds/Ad.php:178
+#: src/Admin/AdvancedAds/Ad.php:188
 #: assets/block/dist/index.js:1
 msgid "List"
 msgstr "Liste"
 
-#: src/Admin/Settings/Output.php:329
+#: src/Admin/Settings/Output.php:343
 msgid "List template"
 msgstr "Listen-Template"
+
+#: assets/block/dist/index.js:1
+msgid "Lists"
+msgstr "Listen"
+
+#: src/Admin/Settings/Output.php:636
+msgid "Load Assets Globally"
+msgstr "Assets global laden"
 
 #: includes/functions/components/geotargeting.php:72
 msgid "Localization Service"
@@ -1624,7 +2053,6 @@ msgstr "Protokoll"
 msgid "Log Retention Period (Days)"
 msgstr "Protokollaufbewahrungszeitraum (Tage)"
 
-#: src/ActivityLogs/Init.php:47
 #: src/ActivityLogs/ListTable.php:38
 msgid "Logs"
 msgstr "Protokolle"
@@ -1642,8 +2070,8 @@ msgstr "Kundenkonto verwalten"
 msgid "Maybe enter text ..."
 msgstr "Ggfls. Text eingeben …"
 
-#: src/Admin/Settings/Output.php:245
-#: src/Admin/Settings/Output.php:373
+#: src/Admin/Settings/Output.php:259
+#: src/Admin/Settings/Output.php:387
 #: assets/block/dist/index.js:1
 msgid "Medium"
 msgstr "Mittel"
@@ -1652,9 +2080,13 @@ msgstr "Mittel"
 msgid "Message"
 msgstr "Nachricht"
 
-#: includes/functions.php:129
+#: includes/functions.php:130
 msgid "Mexico"
 msgstr "Mexiko"
+
+#: assets/block/dist/index.js:1
+msgid "More"
+msgstr "Mehr"
 
 #: src/ShortenLinks/Settings.php:84
 msgid "More information about the Bitly Access Token can be found in our <a href=\"%s\" target=\"_blank\">documentation</a>."
@@ -1667,7 +2099,7 @@ msgstr "Weitere Informationen über die Datenbank Garbage-Collection findest du 
 msgid "Multiple ASIN values can be entered separated by comma."
 msgstr "Mehrere ASIN-Werte können, durch Trennung mit eines Kommas, eingegeben werden."
 
-#: src/Admin/AdvancedAds/Ad.php:128
+#: src/Admin/AdvancedAds/Ad.php:138
 #: assets/block/dist/index.js:1
 msgid "Multiple ASIN values can be separated by comma."
 msgstr "Mehrere ASIN-Werte können durch Komma getrennt werden."
@@ -1676,7 +2108,7 @@ msgstr "Mehrere ASIN-Werte können durch Komma getrennt werden."
 msgid "Multiple Stores"
 msgstr "Mehrere Shops"
 
-#: src/Admin/Support.php:249
+#: src/Admin/Tools/Support.php:224
 msgid "N/A"
 msgstr "N/A"
 
@@ -1690,7 +2122,7 @@ msgstr "Brauchen Sie Hilfe?"
 msgid "Need help?"
 msgstr "Benötigst du Hilfe?"
 
-#: includes/functions.php:130
+#: includes/functions.php:131
 msgid "Netherlands"
 msgstr "Niederlande"
 
@@ -1706,32 +2138,53 @@ msgstr "Neu"
 msgid "New Releases"
 msgstr "Neuerscheinungen"
 
+#: assets/block/dist/index.js:1
+msgid "New Releases (Lists)"
+msgstr "Neuerscheinungen (Listen)"
+
 #: src/Admin/ComparisonTable/Table.php:63
 msgid "New Table"
 msgstr "Neue Vergleichstabelle hinzufügen"
 
-#: src/Admin/Support.php:294
+#: src/Admin/Tools/Support.php:269
 msgid "Next Cronjob Execution"
 msgstr "Nächste Cronjob-Ausführung"
+
+#: src/API/Notifications.php:412
+msgid "Next message"
+msgstr "Nächste Nachricht"
 
 #: src/Admin/ComparisonTable/Table.php:536
 msgid "No"
 msgstr "Nein"
 
-#: includes/class.aawp-functions.php:700
+#: includes/class.aawp-functions.php:696
 msgid "No."
 msgstr "Nr."
+
+#: src/ClickTracking/ListTable.php:607
+msgid "No clicks found."
+msgstr "Keine Klicks gefunden."
+
+#: src/ClickTracking/Init.php:457
+msgid "No clicks found with the selected filters."
+msgstr "Keine Klicks mit den ausgewählten Filtern gefunden."
 
 #: includes/admin/class.support.php:408
 msgid "No entries yet. "
 msgstr "Keine Einträge vorhanden"
 
-#: src/ActivityLogs/ListTable.php:448
+#: src/ActivityLogs/ListTable.php:442
 msgid "No logs found."
 msgstr "Keine Protokolle gefunden."
 
-#: includes/admin/ajax.php:129
+#: src/API/Product.php:68
+msgid "No product found or invalid ASIN."
+msgstr "Kein Produkt gefunden oder ungültige ASIN."
+
+#: includes/admin/ajax.php:127
 #: includes/admin/functions.php:89
+#: includes/class.template-handler.php:270
 #: src/Admin/ProductsTable/ListTable.php:50
 msgid "No products found."
 msgstr "Keine Produkte gefunden."
@@ -1746,6 +2199,10 @@ msgstr "Aktuell keine Bewertungen"
 #: includes/admin/product-edit.php:151
 msgid "No thumbnail available."
 msgstr "Kein Vorschaubild verfügbar."
+
+#: assets/block/dist/index.js:1
+msgid "None"
+msgstr "Keine"
 
 #: includes/admin/functions.php:29
 msgid "Not available via API"
@@ -1768,7 +2225,7 @@ msgid "Not installed."
 msgstr "Nicht installiert."
 
 #: includes/functions/class.extended.php:339
-#: src/Admin/Settings/Output.php:433
+#: src/Admin/Settings/Output.php:447
 msgid "Note:"
 msgstr "Hinweis:"
 
@@ -1780,7 +2237,11 @@ msgstr "Hinweis:"
 msgid "Notices"
 msgstr "Hinweise"
 
-#: src/Admin/AdvancedAds/Ad.php:166
+#: src/API/Notifications.php:400
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: src/Admin/AdvancedAds/Ad.php:176
 #: src/Admin/ClassicEditor.php:280
 msgid "Number of Items"
 msgstr "Anzahl der Elemente"
@@ -1790,15 +2251,19 @@ msgstr "Anzahl der Elemente"
 msgid "Number of items"
 msgstr "Anzahl der Elemente"
 
-#: src/Admin/Settings/Output.php:281
+#: src/Admin/Settings/Output.php:295
 msgid "Number of list points"
 msgstr "Anzahl der Listenpunkte"
 
-#: src/Admin/AdvancedAds/Ad.php:133
+#: src/Admin/AdvancedAds/Ad.php:143
 msgid "OR,"
 msgstr "ODER,"
 
-#: includes/functions.php:190
+#: src/ClickTracking/ListTable.php:412
+msgid "OS"
+msgstr "OS"
+
+#: includes/functions.php:192
 msgid "Offers"
 msgstr "Angebote"
 
@@ -1818,9 +2283,37 @@ msgstr "Links in einem neuen Fenster/Tab öffnen"
 msgid "Orange"
 msgstr "Orange"
 
+#: assets/block/dist/index.js:1
+msgid "Order"
+msgstr "Sortierung"
+
+#: assets/block/dist/index.js:1
+msgid "Order By"
+msgstr "Sortieren nach"
+
+#: assets/block/dist/index.js:1
+msgid "Order Items"
+msgstr "Elemente sortieren"
+
+#: assets/block/dist/index.js:1
+msgid "Order Products"
+msgstr "Produkte sortieren"
+
+#: assets/block/dist/index.js:1
+msgid "Ordering on the basis of certain attributes."
+msgstr "Soritere nach bestimmten Attributen."
+
+#: assets/block/dist/index.js:1
+msgid "Other"
+msgstr "Andere"
+
 #: includes/admin/hooks.php:130
 msgid "Our plugin has built-in <strong>Accelerated Mobile Pages</strong> support for the <a href=\"%s\">official AMP plugin</a>. We recommend to <u>do not use any other plugin</u>."
 msgstr "Unser Plugin verfügt über eine integrierte Unterstützung für <strong>Accelerated Mobile Pages</strong>über das <a href=\"%s\">offizielle AMP-Plugin</a>. Wir empfehlen, <u>kein anderes Plugin zu verwenden</u>."
+
+#: includes/functions/class.extended.php:344
+msgid "Our plugin has it's own %s, which works more reliably and gives you more ways to analyze."
+msgstr "Unser Plugin hat sein eigenes %s, das zuverlässiger funktioniert und dir mehr Analysemöglichkeiten bietet."
 
 #: src/Admin/Welcome.php:181
 msgid "Our product displays are designed to catch the visitor's attention and uses familiar patterns that get the visitor to click & buy!"
@@ -1835,7 +2328,7 @@ msgstr "Nicht mehr aktuell"
 msgid "Output"
 msgstr "Ausgabe"
 
-#: src/Admin/Settings/Output.php:619
+#: src/Admin/Settings/Output.php:661
 msgid "Output custom CSS styles"
 msgstr "Eigenes CSS ausgeben"
 
@@ -1843,35 +2336,83 @@ msgstr "Eigenes CSS ausgeben"
 msgid "Output settings"
 msgstr "Ausgabe-Einstellungen"
 
+#: assets/block/dist/index.js:1
+msgid "Overwriting HTML image \"alt\" attribute.."
+msgstr "Überschreibe das \"alt\"-Attribut von HTML-Bildern..."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting HTML link \"target\" attribute (standard = current window)."
+msgstr "Überschreibe das HTML-Link-Attribut \"target\" (Standard = aktuelles Fenster)."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting HTML link \"title\" attribute."
+msgstr "Überschreibe das HTML-Link-Attribut \"title\"."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting HTML link \"title“ attribute."
+msgstr "Überschreibe das HTML-Link-Attribut \"title\"."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the button detail text."
+msgstr "Überschreibe den Button-Detailtext."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the button text."
+msgstr "Überschreibe den Button-Text."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the original product title."
+msgstr "Überschreibe den ursprünglichen Produkttitel."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the price text."
+msgstr "Überschreibe den Preistext."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the rating value."
+msgstr "Überschreibe den Bewertungswert."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the ribbon text (e.g. bestseller no X) on the top left."
+msgstr "Überschreibe den Ribbon-Text (z. B. Bestseller kein X) oben links."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the sale ribbon text on the top right."
+msgstr "Überschreiben Sie den Text des Verkaufsbandes oben rechts."
+
+#: assets/block/dist/index.js:1
+msgid "Overwriting the thumbnail size."
+msgstr "Überschreibe die Thumbnail-Größe."
+
 #: includes/functions/widgets/class.widget-bestseller.php:139
 #: includes/functions/widgets/class.widget-box.php:130
 #: includes/functions/widgets/class.widget-new-releases.php:141
 msgid "PHP-Templating"
 msgstr "Erstellen eigener PHP-Templates"
 
-#: src/Admin/Support.php:342
-#: src/Admin/Support.php:358
-#: src/Admin/Support.php:364
+#: src/Admin/Tools/Support.php:317
+#: src/Admin/Tools/Support.php:333
+#: src/Admin/Tools/Support.php:339
 msgid "PHP \"%1$s\" extension"
 msgstr "PHP \"%1$s“-Erweiterung"
 
-#: src/Admin/Support.php:352
+#: src/Admin/Tools/Support.php:327
 msgid "PHP \"%1$s\" function"
 msgstr "PHP \"%1$s“-Funktion"
 
-#: src/Admin/Support.php:376
+#: src/Admin/Tools/Support.php:351
 msgid "PHP \"%1$s\" limit"
 msgstr "PHP \"%1$s“ Limitierung"
 
-#: src/Admin/Support.php:370
+#: src/Admin/Tools/Support.php:345
 msgid "PHP \"%1$s\" setting"
 msgstr "PHP \"%1$s“-Einstellung"
 
-#: src/Admin/Settings/Output.php:207
+#: src/Admin/Settings/Output.php:221
 msgid "PHP \"allow_url_fopen\" is not activated on your server. Please activate it on your own or get in touch with the support of your hosting provider."
 msgstr "PHP \"allow_url_fopen\" is auf deinem Server nicht aktiviert. Wenn möglich bitte selbst aktivieren, oder Kontakt mit dem Support deines WebHosting-Anbieters aufnehmen."
 
-#: src/Admin/Support.php:338
+#: src/Admin/Tools/Support.php:313
 msgid "PHP Version %1$s or newer required!"
 msgstr "PHP Version %1$s oder neuer benötigt!"
 
@@ -1879,13 +2420,21 @@ msgstr "PHP Version %1$s oder neuer benötigt!"
 msgid "Parent Table:"
 msgstr "Übergeordnete Vergleichstabelle:"
 
-#: src/Admin/Settings/Output.php:489
+#: src/Admin/Settings/Output.php:503
 msgid "Percentage"
 msgstr "Angabe in Prozent"
+
+#: assets/block/dist/index.js:1
+msgid "Percentage Saved"
+msgstr "Eingesparter Prozentsatz"
 
 #: src/Admin/Welcome.php:150
 msgid "Place products easily and conveniently via our Interactive Gutenberg Block."
 msgstr "Platziere Produkte einfach und bequem über unseren interaktiven Gutenberg-Block."
+
+#: src/ClickTracking/Init.php:466
+msgid "Please <a href=\"%s\">enable click tracking</a> to track Amazon affiliate links clicks."
+msgstr "Bitte <a href=\"%s\">aktiviere das Click-Tracking</a>, um die Klicks auf Amazon-Partnerlinks zu verfolgen."
 
 #: includes/license-functions.php:253
 msgid "Please <a href=\"%s\">enter a valid license key</a> in order to use the plugin and receive updates."
@@ -1895,7 +2444,7 @@ msgstr "<a href=\"%s\">Bitte einen gültigen Lizenzschlüssel eingeben</a>, um d
 msgid "Please do not use this widget anymore."
 msgstr "Bitte dieses Widget nicht mehr verwenden."
 
-#: src/Admin/Settings/Output.php:629
+#: src/Admin/Settings/Output.php:666
 msgid "Please don't use the <code>style</code> tag. Simply paste you CSS classes/definitions e.g. <code>.aawp .aawp-product { background-color: #000; }</code> or <code>.aawp .aawp-product--horizontal { background-color: #000; }</code>"
 msgstr "Bitte nicht das <code>style</code>-Tag verwenden. Einfach dein CSS einfügen: z.B. <code>.aawp .aawp-product { background-color: #000; }</code> oder <code>.aawp .aawp-product--horizontal { background-color: #000; }</code>"
 
@@ -1942,6 +2491,10 @@ msgstr "Bitte nur ändern, wenn du von unserem Support-Team dazu aufgefordert wu
 msgid "Please select..."
 msgstr "Bitte auswählen…"
 
+#: src/ClickTracking/Init.php:458
+msgid "Please select a different dates or check back later."
+msgstr "Bitte wähle ein anderes Datum oder schaue später wieder vorbei."
+
 #: templates/deprecated/bestseller_table.php:14
 #: templates/deprecated/box_table.php:14
 msgid "Please swipe over the table to view more."
@@ -1951,7 +2504,7 @@ msgstr "Bitte streiche über die Tabelle, um mehr zu sehen."
 msgid "Please take a look at our article \"<a href=\"%s\" target=\"_blank\">Amazon API “not connected” – Frequent causes</a>\" in order to solve this problem."
 msgstr "Bitte lies dir unseren \"<a href=\"%s\" target=\"_blank\">Amazon API „nicht verbunden” – Häufige Ursachen</a>\" durch, um das Problem zu beheben."
 
-#: includes/functions/components/geotargeting.php:88
+#: includes/functions/components/geotargeting.php:80
 msgid "Please take a look into the <a href=\"%s\" target=\"_blank\">documentation</a> for more information about the geotargeting feature."
 msgstr "In der <a href=\"%s\" target=\"_blank\">Dokumentation</a> findest du weitere Informationen zur Geotargeting-Funktionalität."
 
@@ -1959,7 +2512,7 @@ msgstr "In der <a href=\"%s\" target=\"_blank\">Dokumentation</a> findest du wei
 msgid "Please take a look into the documentation how to use custom templating."
 msgstr "Weitere Informationen zum „Templating“ findest du in der Dokumentation."
 
-#: src/ActivityLogs/ListTable.php:332
+#: src/ActivityLogs/ListTable.php:336
 msgid "Plugin Update"
 msgstr "Plugin-Update"
 
@@ -1979,14 +2532,15 @@ msgstr "Die Plugin-Einstellungen wurden erfolgreich zurückgesetzt."
 msgid "Plugin updated to version %s successfully."
 msgstr "Plugin wurde erfolgreich auf Version %s aktualisiert."
 
-#: includes/functions.php:131
+#: includes/functions.php:132
 msgid "Poland"
 msgstr "Polen"
 
 #: includes/functions/class.extended.php:168
-#: src/Admin/AdvancedAds/Ad.php:197
+#: src/Admin/AdvancedAds/Ad.php:207
 #: src/Admin/ProductsTable/ListTable.php:216
-#: src/Admin/Settings/Output.php:551
+#: src/Admin/Settings/Output.php:565
+#: src/ClickTracking/ListTable.php:404
 #: templates/comparison.php:20
 #: templates/comparison.php:25
 #: templates/deprecated/bestseller_table.php:20
@@ -1995,6 +2549,10 @@ msgstr "Polen"
 #: templates/table.php:41
 msgid "Preview"
 msgstr "Vorschau"
+
+#: src/API/Notifications.php:408
+msgid "Previous message"
+msgstr "Vorige Nachricht"
 
 #: src/Admin/ClassicEditor.php:271
 #: src/Admin/ComparisonTable/functions.php:281
@@ -2017,7 +2575,7 @@ msgstr "Preis inkl. MwSt., zzgl. Versandkosten"
 msgid "Price not available"
 msgstr "Preis nicht verfügbar"
 
-#: src/Admin/Settings/Output.php:496
+#: src/Admin/Settings/Output.php:510
 msgid "Price reduction"
 msgstr "Preisreduzierung"
 
@@ -2029,7 +2587,7 @@ msgstr "Preise"
 msgid "Prime Status"
 msgstr "Prime-Status"
 
-#: src/ActivityLogs/ListTable.php:328
+#: src/ActivityLogs/ListTable.php:332
 #: templates/comparison.php:35
 #: templates/comparison.php:40
 #: templates/deprecated/bestseller_table.php:21
@@ -2039,11 +2597,11 @@ msgstr "Prime-Status"
 msgid "Product"
 msgstr "Produkt"
 
-#: src/Admin/ProductsTable/ListTable.php:388
+#: src/Admin/ProductsTable/ListTable.php:495
 msgid "Product <code>#%s</code> deleted via products listtable."
 msgstr "Produkt <code>#%s</code> wurde über die Produktliste gelöscht."
 
-#: src/Admin/ProductsTable/ListTable.php:404
+#: src/Admin/ProductsTable/ListTable.php:511
 msgid "Product <code>#%s</code> renewed via products listtable."
 msgstr "Produkt <code>#%s</code> wurde über die Produktliste erneuert."
 
@@ -2051,11 +2609,15 @@ msgstr "Produkt <code>#%s</code> wurde über die Produktliste erneuert."
 msgid "Product Box"
 msgstr "Produktbox"
 
+#: assets/block/dist/index.js:1
+msgid "Product Boxes"
+msgstr "Produkt-Boxen"
+
 #: src/Admin/ComparisonTable/functions.php:232
 msgid "Product Search"
 msgstr "Produktsuche"
 
-#: src/Admin/Settings/Output.php:400
+#: src/Admin/Settings/Output.php:414
 msgid "Product details"
 msgstr "Produkt-Detailseite"
 
@@ -2071,6 +2633,10 @@ msgstr "Produktseite"
 msgid "Product search (Recommended)"
 msgstr "Produktsuche (Empfohlen)"
 
+#: src/ClickTracking/ListTable.php:225
+msgid "Product was removed from database."
+msgstr "Das Produkt wurde aus der Datenbank entfernt."
+
 #: includes/admin/list-edit.php:96
 #: src/Admin/ComparisonTable/Table.php:238
 #: src/Admin/ProductsTable/Init.php:41
@@ -2083,9 +2649,13 @@ msgstr "Produkte"
 msgid "Promote specific products with visually appealing and conversion optimized product boxes."
 msgstr "Bewerbe bestimmte Produkte mit visuell ansprechenden und konversionsoptimierten Produktboxen."
 
-#: includes/product-helper-functions.php:545
+#: includes/product-helper-functions.php:543
 msgid "Publisher: %s"
 msgstr "Herausgeber: %s"
+
+#: assets/block/dist/index.js:1
+msgid "Range"
+msgstr "Bereich"
 
 #: includes/admin/product-edit.php:183
 #: src/Admin/Settings/Output.php:103
@@ -2106,7 +2676,11 @@ msgstr "Ratgeber für Anfänger lesen"
 msgid "Read Documentation"
 msgstr "Dokumentation lesen"
 
-#: includes/functions.php:188
+#: src/API/Notifications.php:364
+msgid "Read More"
+msgstr "Mehr anzeigen"
+
+#: includes/functions.php:190
 msgid "Recommend to"
 msgstr "Weiterempfehlen"
 
@@ -2118,19 +2692,27 @@ msgstr "Neu verbinden"
 msgid "Red"
 msgstr "Rot"
 
+#: src/ClickTracking/ListTable.php:409
+msgid "Referer URL"
+msgstr "Referrer-URL"
+
+#: assets/block/dist/index.js:1
+msgid "Rel"
+msgstr "Rel"
+
 #: src/Admin/Settings/API.php:285
 msgid "Related links:"
 msgstr "Hilfreiche Links:"
 
-#: includes/product-helper-functions.php:619
+#: includes/product-helper-functions.php:617
 msgid "Released on %s"
 msgstr "Veröffentlicht am %s"
 
-#: src/Admin/Support.php:390
+#: src/Admin/Tools/Support.php:365
 msgid "Remove all plugin data when uninstalling the plugin."
 msgstr "Bei der Deinstallation des Plugins alle gespeicherten Daten und Einstellungen entfernen."
 
-#: src/Admin/Support.php:405
+#: src/Admin/Tools/Support.php:380
 msgid "Remove all products and lists from the database tables of the plugin"
 msgstr "Alle Produkte und Listen aus den Datenbank-Tabellen des Plugins entfernen"
 
@@ -2143,19 +2725,19 @@ msgid "Remove row"
 msgstr "Zeile entfernen"
 
 #: src/Admin/ProductsTable/ListTable.php:76
-#: src/Admin/ProductsTable/ListTable.php:264
+#: src/Admin/ProductsTable/ListTable.php:270
 msgid "Renew"
 msgstr "Erneuern"
 
-#: src/Admin/Settings.php:142
+#: src/Admin/Settings.php:137
 msgid "Renew Cache"
 msgstr "Cache erneuern"
 
-#: src/Admin/Support.php:247
+#: src/Admin/Tools/Support.php:222
 msgid "Renew Data Queue"
 msgstr "Warteschlange zur Datenaktualisierung"
 
-#: src/Admin/Settings.php:148
+#: src/Admin/Settings.php:143
 msgid "Renew Images Cache"
 msgstr "Bilder-Cache erneuern"
 
@@ -2175,12 +2757,24 @@ msgstr "Produkt-Daten erneuern"
 msgid "Renewing product ratings"
 msgstr "Produkt-Bewertungen erneuern"
 
+#: assets/block/dist/index.js:1
+msgid "Replacing the PHP template which will be used for the output."
+msgstr "Ersetze das PHP-Templates, das für die Ausgabe verwendet wird."
+
+#: assets/block/dist/index.js:1
+msgid "Replacing the links."
+msgstr "Ersetze den Link."
+
 #: src/Admin/MetaBox.php:78
 #: assets/block/dist/index.js:1
 msgid "Replacing the tracking id which will be used for affiliate links."
 msgstr "Ersetze die Tracking-ID, die für Affiliate-Links verwendet wird."
 
-#: src/Admin/Support.php:395
+#: assets/block/dist/index.js:1
+msgid "Required for comparing prices."
+msgstr "Erforderlich für Preisvergleiche."
+
+#: src/Admin/Tools/Support.php:370
 msgid "Reset plugin settings to default."
 msgstr "Plugin-Einstellungen zurücksetzen."
 
@@ -2188,28 +2782,32 @@ msgstr "Plugin-Einstellungen zurücksetzen."
 msgid "Resources & Support"
 msgstr "Wichtige Links & Support"
 
-#: src/Admin/Settings/Output.php:319
+#: src/Admin/Settings/Output.php:333
 msgid "Responsive"
-msgstr "Responsive"
+msgstr "Ansprechbar"
 
 #: includes/admin/product-edit.php:173
-#: includes/class.template-functions.php:874
-#: includes/functions.php:189
+#: includes/class.template-functions.php:885
+#: includes/functions.php:191
 #: src/Admin/ComparisonTable/functions.php:284
-#: src/Admin/Settings/Output.php:401
-#: src/Admin/Settings/Output.php:413
-#: src/Admin/Settings/Output.php:419
+#: src/Admin/Settings/Output.php:415
+#: src/Admin/Settings/Output.php:427
+#: src/Admin/Settings/Output.php:433
 #: assets/block/dist/index.js:1
 msgid "Reviews"
 msgstr "Bewertungen"
 
-#: src/Admin/Settings/Output.php:427
+#: src/Admin/Settings/Output.php:441
 msgid "Reviews label"
 msgstr "Beschriftung"
 
-#: includes/class.template-functions.php:987
+#: includes/class.template-functions.php:998
 msgid "Reviews on Amazon"
 msgstr "Bewertungen auf Amazon"
+
+#: assets/block/dist/index.js:1
+msgid "Right"
+msgstr "Rechts"
 
 #: includes/functions/class.extended.php:120
 #: includes/functions/class.extended.php:194
@@ -2220,18 +2818,22 @@ msgstr "Abgerundet"
 msgid "Rows"
 msgstr "Zeilen"
 
-#: includes/product-helper-functions.php:570
+#: includes/product-helper-functions.php:568
 msgid "Running time: %d minutes"
 msgstr "Laufzeit: %d Minuten"
 
 #: includes/admin/upgrades.php:246
-#: includes/class.aawp-functions.php:782
+#: includes/class.aawp-functions.php:778
 #: includes/class.template-functions.php:346
-#: src/Admin/Settings/Output.php:494
+#: src/Admin/Settings/Output.php:508
 msgid "Sale"
 msgstr "Angebot"
 
-#: src/Admin/Settings/Output.php:511
+#: assets/block/dist/index.js:1
+msgid "Sale Ribbon Text"
+msgstr "Verkauf Farbband Text"
+
+#: src/Admin/Settings/Output.php:525
 msgid "Sale label"
 msgstr "Angebots-Markierung"
 
@@ -2239,11 +2841,15 @@ msgstr "Angebots-Markierung"
 msgid "Salesrank"
 msgstr "Verkaufsrang"
 
-#: includes/functions.php:132
+#: includes/functions.php:133
 msgid "Saudi Arabia"
 msgstr "Saudi-Arabien"
 
-#: src/Admin/ProductsTable/ListTable.php:308
+#: src/Admin/Tools/ScheduledActions.php:62
+msgid "Scheduled Actions"
+msgstr "Geplante Aktionen"
+
+#: src/Admin/ProductsTable/ListTable.php:372
 msgid "Search Product(s)"
 msgstr "Produkt(e) suchen"
 
@@ -2259,12 +2865,16 @@ msgstr "Produkt(e) suchen"
 msgid "Search products"
 msgstr "Produkte suchen"
 
+#: src/Admin/Tools/ScheduledActions.php:94
+msgid "Search results for <strong>%s</strong>"
+msgstr "Suchergebnisse für <strong>%s</strong>"
+
 #: includes/functions/widgets/class.widget-bestseller.php:102
 #: includes/functions/widgets/class.widget-new-releases.php:102
 msgid "Search term:"
 msgstr "Suchbegriff:"
 
-#: src/Admin/Flyout.php:51
+#: src/Admin/Flyout.php:53
 msgid "See Quick Links"
 msgstr "Siehe Quicklinks"
 
@@ -2279,15 +2889,39 @@ msgstr "Alle leistungsstarken Funktionen von AAWP anzeigen"
 msgid "See how it works"
 msgstr "Sehe hier, wie es funktioniert"
 
+#: assets/block/dist/index.js:1
+msgid "Select A Display Type"
+msgstr "Wähle einen Anzeigetyp"
+
+#: assets/block/dist/index.js:1
+msgid "Select A Table"
+msgstr "Wähle eine Tabelle"
+
+#: src/ClickTracking/Init.php:671
+msgid "Select Chart Type"
+msgstr "Wählen Sie den Diagrammtyp"
+
 #: src/Admin/ComparisonTable/Table.php:616
 msgid "Select color..."
 msgstr "Farbe auswählen…"
+
+#: src/ClickTracking/Init.php:564
+msgid "Select filter"
+msgstr "Filter auswählen"
+
+#: src/ClickTracking/Init.php:545
+msgid "Select group"
+msgstr "Gruppe auswählen"
 
 #: src/Admin/ComparisonTable/Table.php:503
 msgid "Select in order to overwrite..."
 msgstr "Nur zum Überschreiben auswählen…."
 
-#: src/Admin/Support.php:272
+#: src/ClickTracking/ListTable.php:521
+msgid "Select timespan"
+msgstr "Zeitspanne wählen"
+
+#: src/Admin/Tools/Support.php:247
 msgid "Service Events"
 msgstr "Hintergrund-Prozesse"
 
@@ -2295,24 +2929,33 @@ msgstr "Hintergrund-Prozesse"
 msgid "Set featured image"
 msgstr "Beitragsbild festlegen"
 
-#: src/Admin/Support.php:325
+#: src/Admin/Tools/Support.php:300
 msgid "Setting"
 msgstr "Einstellung"
 
+#: assets/block/dist/index.js:1
+msgid "Setting a custom HTML link \"rel\" attribute"
+msgstr "Lege ein benutzerdefiniertes „rel“ -Attribut für HTML-Links fest."
+
 #: includes/admin/plugins.php:23
-#: src/ActivityLogs/ListTable.php:324
+#: src/ActivityLogs/ListTable.php:328
 #: src/Admin/Settings.php:55
 #: src/Admin/Settings.php:105
 #: src/Elementor/Widget.php:115
 msgid "Settings"
 msgstr "Einstellungen"
 
+#: src/ActivityLogs/Settings.php:157
+#: src/ClickTracking/Settings.php:196
+msgid "Settings Saved."
+msgstr "Einstellungen gespeichert."
+
 #: src/Admin/Settings.php:110
 msgid "Settings Updated!"
 msgstr "Einstellungen aktualisiert!"
 
 #: src/Admin/Settings.php:113
-#: src/Admin/Support.php:439
+#: src/Admin/Tools/Support.php:410
 msgid "Settings updated."
 msgstr "Einstellungen aktualisiert."
 
@@ -2344,6 +2987,10 @@ msgstr "Produkt anzeigen/ausblenden"
 msgid "Show/hide row"
 msgstr "Zeile anzeigen/ausblenden"
 
+#: assets/block/dist/index.js:1
+msgid "Show Numbering"
+msgstr "Nummerierung anzeigen"
+
 #: includes/functions/class.extended.php:295
 msgid "Show Prime logo"
 msgstr "Prime-Logo ausgeben"
@@ -2351,6 +2998,22 @@ msgstr "Prime-Logo ausgeben"
 #: includes/functions/class.extended.php:296
 msgid "Show Prime logo and link to Amazon Prime"
 msgstr "Prime-Logo ausgeben und verlinken"
+
+#: src/Admin/Settings/General.php:207
+msgid "Show Products anyway"
+msgstr "Produkte trotzdem anzeigen"
+
+#: assets/block/dist/index.js:1
+msgid "Show Reviews"
+msgstr "Bewertungen anzeigen"
+
+#: assets/block/dist/index.js:1
+msgid "Show Ribbon"
+msgstr "Farbband anzeigen"
+
+#: assets/block/dist/index.js:1
+msgid "Show Star Rating"
+msgstr "Sternebewertung anzeigen"
 
 #: includes/admin/product-edit.php:204
 msgid "Show attributes"
@@ -2368,7 +3031,7 @@ msgstr "Credits einmalig am Seitenende ausgeben."
 msgid "Show debug information"
 msgstr "Entwickler-Informationen anzeigen"
 
-#: src/Admin/Settings/Output.php:332
+#: src/Admin/Settings/Output.php:346
 msgid "Show description"
 msgstr "Beschreibung anzeigen"
 
@@ -2392,7 +3055,11 @@ msgstr "Weitere Einstellungen anzeigen"
 msgid "Show on mobile devices only"
 msgstr "Nur auf mobilen Endgeräten anzeigen"
 
-#: src/Admin/Settings/Output.php:417
+#: src/Admin/Settings/General.php:208
+msgid "Show product without price"
+msgstr "Produkt ohne Preis anzeigen"
+
+#: src/Admin/Settings/Output.php:431
 msgid "Show total amount"
 msgstr "Anzahl ausgeben"
 
@@ -2400,7 +3067,35 @@ msgstr "Anzahl ausgeben"
 msgid "Showing data for the following store"
 msgstr "Ausgabe der Daten für den folgenden Amazon-Shop"
 
-#: includes/functions.php:133
+#: assets/block/dist/index.js:1
+msgid "Showing or hiding the \"Buy on Amazon\" button."
+msgstr "Blende den „Bei Amazon kaufen“-Button ein- oder aus. "
+
+#: assets/block/dist/index.js:1
+msgid "Showing or hiding the amount of reviews."
+msgstr "Blende die Anzahl der Bewertungen ein oder aus."
+
+#: assets/block/dist/index.js:1
+msgid "Showing or hiding the star rating."
+msgstr "Blende die Sternebewertung ein oder aus."
+
+#: assets/block/dist/index.js:1
+msgid "Showing the ribbon (e.g. bestseller no X) on the top left."
+msgstr "Zeige das Farbband (z. B. Bestseller kein X) oben links."
+
+#: assets/block/dist/index.js:1
+msgid "Shows the numbering col when using table template for unordered lists."
+msgstr "Zeigt die Nummerierungsspalte an, wenn die Tabellenvorlage für unsortierte Listen verwendet wird."
+
+#: assets/block/dist/index.js:1
+msgid "Similar to the global \"items\" attribute but defining the maximum filter (search) radius."
+msgstr "Ähnlich dem globalen Attribut „items“, definiert jedoch den maximalen Filter (Such-) Radius."
+
+#: assets/block/dist/index.js:1
+msgid "Similar to the global \"items\" attribute but defining the maximum order (search) radius."
+msgstr "Ähnlich dem globalen Attribut „Artikel“, definiert jedoch den Radius für maximale Reihenfolge (Suche)."
+
+#: includes/functions.php:134
 msgid "Singapore"
 msgstr "Singapur"
 
@@ -2408,31 +3103,36 @@ msgstr "Singapur"
 msgid "Site activated"
 msgstr "Website aktiviert"
 
-#: src/Admin/Settings/Output.php:377
+#: src/Admin/Settings/Output.php:391
 msgid "Size:"
 msgstr "Größe:"
 
 #: includes/functions/widgets/functions.php:63
-#: src/Admin/Settings/Output.php:244
-#: src/Admin/Settings/Output.php:372
+#: src/Admin/Settings/Output.php:258
+#: src/Admin/Settings/Output.php:386
 #: assets/block/dist/index.js:1
 msgid "Small"
 msgstr "Klein"
 
-#: includes/functions.php:636
-#: includes/functions.php:640
+#: includes/functions.php:638
+#: includes/functions.php:642
 msgid "Some of the input parameter relating to request are invalid or missing."
 msgstr "Einige der Eingabeparameter, die sich auf die Anfrage beziehen, sind ungültig oder fehlen."
 
-#: src/Admin/ProductsTable/ListTable.php:581
+#: src/Admin/ProductsTable/ListTable.php:663
 msgid "Something went wrong! Please <a href=\"%s\">check the  logs</a>."
 msgstr "Etwas ist schief gelaufen! Bitte <a href=\"%s\">überprüfen Sie die Protokolle</a>."
 
-#: includes/product-helper-functions.php:960
+#: includes/product-helper-functions.php:958
 msgid "Sorry, this file type is not permitted for security reasons."
 msgstr "Entschuldigung, aber dieser Dateityp ist aus Sicherheitsgründen nicht erlaubt."
 
-#: includes/functions.php:134
+#: src/ClickTracking/Init.php:605
+#: src/ClickTracking/ListTable.php:408
+msgid "Source"
+msgstr "Quelle"
+
+#: includes/functions.php:135
 msgid "Spain"
 msgstr "Spanien"
 
@@ -2441,6 +3141,42 @@ msgstr "Spanien"
 #: includes/functions/components/customizations.php:113
 msgid "Special: WAYL"
 msgstr "Extra: WAYL"
+
+#: assets/block/dist/index.js:1
+msgid "Specifies a maximum amount of characters for each list item."
+msgstr "Gib eine maximale Anzahl von Zeichen für jedes Listenelement an."
+
+#: assets/block/dist/index.js:1
+msgid "Specifies a maximum amount of characters for the product title."
+msgstr "Gib eine maximale Anzahl von Zeichen für den Produkttitel an."
+
+#: assets/block/dist/index.js:1
+msgid "Specifies the height of a single image."
+msgstr "Legt die Höhe eines einzelnen Bilds fest."
+
+#: assets/block/dist/index.js:1
+msgid "Specifies the width of a single image."
+msgstr "Legt die Breite eines einzelnen Bilds fest."
+
+#: assets/block/dist/index.js:1
+msgid "Specify a maximum amount for list items."
+msgstr "Gib einen Höchstbetrag für Listenelemente an."
+
+#: src/Admin/Settings/General.php:219
+msgid "Specify how to handle products that are no longer available on Amazon."
+msgstr "Gib an, wie mit Produkten umgegangen werden soll, die bei Amazon nicht mehr verfügbar sind."
+
+#: assets/block/dist/index.js:1
+msgid "Specify the link icon."
+msgstr "Gib das Link-Symbol an."
+
+#: assets/block/dist/index.js:1
+msgid "Specify the link type."
+msgstr "Gib den Linktyp an."
+
+#: assets/block/dist/index.js:1
+msgid "Specify your own link CSS classes."
+msgstr "Gib deine eigenen Link-CSS-Klassen an."
 
 #: includes/functions/class.bestseller.php:73
 #: includes/functions/class.bestseller.php:77
@@ -2456,30 +3192,32 @@ msgstr "Extra: WAYL"
 #: src/Admin/ComparisonTable/Settings.php:68
 #: src/Admin/ComparisonTable/Table.php:287
 #: src/Admin/Settings/General.php:263
-#: src/Admin/Settings/Output.php:262
-#: src/Admin/Settings/Output.php:459
-#: src/Admin/Settings/Output.php:569
+#: src/Admin/Settings/Output.php:276
+#: src/Admin/Settings/Output.php:473
+#: src/Admin/Settings/Output.php:583
 msgid "Standard"
 msgstr "Standard"
 
 #: src/Admin/ClassicEditor.php:270
 #: src/Admin/ComparisonTable/functions.php:283
-#: src/Admin/Settings/Output.php:368
+#: src/Admin/Settings/Output.php:382
 #: src/Elementor/Widget.php:174
 #: assets/block/dist/index.js:1
 msgid "Star Rating"
 msgstr "Sterne-Bewertung"
 
-#: src/ActivityLogs/ListTable.php:365
-#: src/ActivityLogs/ListTable.php:368
-#: src/ActivityLogs/ListTable.php:370
+#: src/ActivityLogs/ListTable.php:369
+#: src/ActivityLogs/ListTable.php:372
+#: src/ActivityLogs/ListTable.php:374
+#: src/ClickTracking/ListTable.php:493
+#: src/ClickTracking/ListTable.php:496
+#: src/ClickTracking/ListTable.php:498
 msgid "Start date"
 msgstr "Startdatum"
 
 #: includes/admin/list-edit.php:59
 #: includes/admin/product-edit.php:98
 #: includes/admin/product-overview.php:34
-#: src/Admin/ProductsTable/ListTable.php:214
 #: src/Admin/Settings/API.php:83
 #: src/Admin/Settings/API.php:497
 #: src/Admin/Settings/License.php:139
@@ -2493,7 +3231,7 @@ msgid "Store"
 msgstr "Shop"
 
 #: includes/functions/class.extended.php:182
-#: src/Admin/Settings/Output.php:575
+#: src/Admin/Settings/Output.php:589
 msgid "Style"
 msgstr "Design"
 
@@ -2542,7 +3280,7 @@ msgstr "Anmelden"
 msgid "Substantial updates for the Amazon Affiliate plugin require an <a href=\"%s\">automated upgrade</a> of the plugin database in order to continue working."
 msgstr "Das Amazon Affiliate plugins benötigt eine <a href=\"%s\">vollautomatische Aktualisierung</a> der Plugin-Datenbank."
 
-#: src/Admin/Settings.php:264
+#: src/Admin/Settings.php:225
 msgid "Successfully deleted cached images."
 msgstr "Die gespeicherte Bilder wurden erfolgreich gelöscht."
 
@@ -2553,7 +3291,7 @@ msgstr "Die gespeicherte Bilder wurden erfolgreich gelöscht."
 msgid "Support"
 msgstr "Support"
 
-#: includes/functions.php:135
+#: includes/functions.php:136
 msgid "Sweden"
 msgstr "Schweden"
 
@@ -2562,7 +3300,7 @@ msgid "System"
 msgstr "System"
 
 #: includes/functions/components/templating.php:30
-#: src/Admin/AdvancedAds/Ad.php:179
+#: src/Admin/AdvancedAds/Ad.php:189
 #: src/Admin/ComparisonTable/Table.php:56
 #: src/Admin/ComparisonTable/Table.php:79
 #: assets/block/dist/index.js:1
@@ -2613,12 +3351,17 @@ msgctxt "Post Type General Name"
 msgid "Tables"
 msgstr "Vergleichstabellen"
 
+#: src/ClickTracking/ListTable.php:407
+#: assets/block/dist/index.js:1
+msgid "Target"
+msgstr "Target"
+
 #: src/Admin/Settings/API.php:135
 #: src/Admin/Settings/License.php:165
 msgid "Technical Information"
 msgstr "Technische Informationen"
 
-#: src/Admin/AdvancedAds/Ad.php:171
+#: src/Admin/AdvancedAds/Ad.php:181
 #: assets/block/dist/index.js:1
 msgid "Template"
 msgstr "Template"
@@ -2643,6 +3386,10 @@ msgstr "Template nicht gefunden."
 msgid "Templates"
 msgstr "Templates"
 
+#: assets/block/dist/index.js:1
+msgid "Templates & Styles"
+msgstr "Templates & Styles"
+
 #: src/Admin/Settings/License.php:417
 msgid "Test Connection"
 msgstr "Verbindungsprüfung"
@@ -2652,6 +3399,14 @@ msgstr "Verbindungsprüfung"
 msgid "Test Connection Result:"
 msgstr "Ergebnis der Verbindungsprüfung:"
 
+#: assets/block/dist/index.js:1
+msgid "Text"
+msgstr "Text"
+
+#: assets/block/dist/index.js:1
+msgid "Text Links"
+msgstr "Text-Links"
+
 #: includes/functions/components/customizations.php:141
 msgid "The <strong>WAYL</strong> style is based on the <a href=\"%s\" target=\"_blank\">Wurst App Your Life</a>."
 msgstr "Das <strong>WAYL</strong>-Design basiert auf der <a href=\"%s\" target=\"_blank\">Wurst App Your Life</a> Website & App."
@@ -2660,12 +3415,12 @@ msgstr "Das <strong>WAYL</strong>-Design basiert auf der <a href=\"%s\" target=\
 msgid "The ASIN you enter must contain at least 10 digits."
 msgstr "Die eingegebene ASIN muss mindestens 10-stellig sein."
 
-#: includes/functions.php:604
-#: includes/functions.php:608
+#: includes/functions.php:606
+#: includes/functions.php:610
 msgid "The Access Key is not enabled for accessing the Product Advertising API in general or this specific version only. Please migrate your credentials."
 msgstr "Der Zugriffsschlüssel ist nicht für den Zugriff auf die Product Advertising API im Allgemeinen, oder nur auf diese spezielle Version aktiviert. Bitte migriere deine  Zugangsdaten."
 
-#: includes/functions.php:648
+#: includes/functions.php:650
 msgid "The Access Key or security token included in the request is invalid."
 msgstr "Der in der Anfrage enthaltene Zugriffsschlüssel oder Sicherheits-Token ist ungültig."
 
@@ -2689,7 +3444,7 @@ msgstr "Die Verbindung konnte nicht hergestellt werden."
 msgid "The connection was successfully established."
 msgstr "Die Verbindung wurde erfolgreich hergestellt."
 
-#: src/Admin/Support.php:318
+#: src/Admin/Tools/Support.php:293
 msgid "The cronjob settings are meant for experienced users only!"
 msgstr "Die Cronjob-Einstellungen sind nur für erfahrene Anwender!"
 
@@ -2721,11 +3476,11 @@ msgstr "Die installierte Version ist nicht mehr aktuell und sollte auf Version %
 msgid "The maximum amount of items for this type is 10."
 msgstr "Bei dieser Listen-Typ können maximal 10 Produkte ausgegeben werden."
 
-#: includes/functions.php:644
+#: includes/functions.php:646
 msgid "The operation requested is invalid. Please verify that the operation name is typed correctly."
 msgstr "Der angeforderte Vorgang ist ungültig. Bitte überprüfe, ob der Name des Vorgangs korrekt eingegeben wurde."
 
-#: includes/functions.php:620
+#: includes/functions.php:622
 msgid "The partner tag is not mapped to a valid associate store with your access key. Please visit associates central."
 msgstr "Das Partner-Tag (Tracking ID) ist deinem Zugangsschlüssel nicht zugeordnet. Bitte besuche das Amazon PartnerNet für weitere Informationen."
 
@@ -2733,19 +3488,19 @@ msgstr "Das Partner-Tag (Tracking ID) ist deinem Zugangsschlüssel nicht zugeord
 msgid "The plugin automatically takes care that old and thus no longer needed products and lists are regularly removed from the database. This function helps to reduce the load on your database and also ensures that the Amazon API's request limits are not exceeded."
 msgstr "Das Plugin kümmert sich eigenständig darum, dass alte und damit nicht mehr benötigte Produkte und Listen regelmäßig aus der Datenbank entfernt werden. Durch diese Funktion wird deine Datenbank entlastet und zudem sichergestellt, dass die Anfragen-Limitierung der Amazon API geschont wird."
 
-#: includes/functions.php:624
+#: includes/functions.php:626
 msgid "The request has not been correctly signed."
 msgstr "Die Anfrage wurde nicht korrekt signiert."
 
-#: includes/functions.php:632
+#: includes/functions.php:634
 msgid "The request is past expiry date or the request date (either with 15 minute padding), or the request date occurs more than 15 minutes in the future."
 msgstr "Die Anfrage ist abgelaufen oder das Anforderungsdatum (entweder mit 15 Minuten „Puffer“), oder das Anforderungsdatum liegt mehr als 15 Minuten in der Zukunft."
 
-#: includes/functions.php:616
+#: includes/functions.php:618
 msgid "The request signature did not include all of the required components."
 msgstr "Die Anforderungssignatur enthielt nicht alle erforderlichen Komponenten."
 
-#: includes/functions.php:628
+#: includes/functions.php:630
 msgid "The request was denied due to request throttling. Please verify the number of requests made per second to the Amazon Product Advertising API."
 msgstr "Die API-Anfrage wurde aufgrund der Drosselung deines Partner-Kontos abgelehnt. Bitte überprüfe die Anzahl der Anfragen pro Sekunde an die Amazon Product Advertising API."
 
@@ -2765,14 +3520,14 @@ msgstr "Bisher wurden noch keine Zeilen hinzugefügt."
 msgid "There is a new version of %1$s available."
 msgstr "Es ist eine neue Version von %1$s verfügbar."
 
-#: src/Admin/Settings/Output.php:287
+#: src/Admin/Settings/Output.php:301
 msgid "There might be only a lower amount of description items available."
 msgstr "Im Einzelfall ist eventuell nur eine geringere Anzahl an Listenpunkten verfügbar."
 
-#: src/Admin/Support.php:390
-#: src/Admin/Support.php:395
-#: src/Admin/Support.php:400
-#: src/Admin/Support.php:405
+#: src/Admin/Tools/Support.php:365
+#: src/Admin/Tools/Support.php:370
+#: src/Admin/Tools/Support.php:375
+#: src/Admin/Tools/Support.php:380
 msgid "This action is not reversible!"
 msgstr "Diese Aktion ist nicht umkehrbar!"
 
@@ -2780,7 +3535,7 @@ msgstr "Diese Aktion ist nicht umkehrbar!"
 msgid "This appears to be an invalid license key for %s."
 msgstr "Das scheint ein ungültiger Lizenzschlüssel für %s zu sein."
 
-#: includes/class.aawp-functions.php:1117
+#: includes/class.aawp-functions.php:1113
 msgid "This feature is only available in the <a href=\"%s\" target=\"_blank\">extended version</a>."
 msgstr "Diese Funktion ist nur in der <a href=\"%s\" target=\"_blank\">erweiterten Version</a> verfügbar."
 
@@ -2788,22 +3543,30 @@ msgstr "Diese Funktion ist nur in der <a href=\"%s\" target=\"_blank\">erweitert
 msgid "This field is required."
 msgstr "Dieses Feld ist ein Pflichtfeld."
 
+#: src/ClickTracking/ListTable.php:531
+msgid "This month"
+msgstr "Diesen Monat"
+
 #: includes/admin/hooks.php:101
 msgid "This plugin update brings support for the new Amazon Product Advertising API v5. This change has the following effects:"
 msgstr "Mit diesem Plugin-Update wird fortan die neue Amazon Product Advertising API v5 verwendet. Diese Änderung hat u.a. folgende Auswirkungen:"
 
-#: includes/functions.php:542
+#: includes/functions.php:544
 msgid "This product was presentation was made with <a href=\"%s\" rel=\"nofollow\" target=\"_blank\" title=\"Amazon WordPress Plugin\">AAWP</a> plugin."
 msgstr "Die Darstellung der Produkte wurde mit dem Plugin <a href=\"%s\" rel=\"nofollow\" target=\"_blank\" title=\"Amazon Affiliate WordPress Plugin\">AAWP</a> umgesetzt."
 
-#: includes/class.aawp-functions.php:979
-#: src/Admin/Settings.php:161
+#: includes/class.aawp-functions.php:975
+#: src/Admin/Settings.php:156
 msgid "This value can be overwritten individually for each shortcode. Please take a look into the documentation."
 msgstr "Dieser Wert kann bei jedem Shortcode überschrieben werden. Weitere Informationen dazu findest du in der Dokumentation."
 
-#: src/Admin/Settings/Output.php:221
+#: src/Admin/Settings/Output.php:235
 msgid "This way Amazon will not receive the IP addresses of your visitors, as they would, when you embed images directly."
 msgstr "Durch Aktivierung dieser Funktion, kommt Amazon nicht an die IP-Adresse der Seitenbesucher ran, wie es ohne der Fall wäre."
+
+#: src/ClickTracking/ListTable.php:533
+msgid "This year"
+msgstr "Dieses Jahr"
 
 #: src/Admin/ClassicEditor.php:269
 #: src/Admin/ComparisonTable/functions.php:280
@@ -2825,8 +3588,9 @@ msgstr "Zeitstempel"
 #: src/Admin/ClassicEditor.php:267
 #: src/Admin/ComparisonTable/functions.php:279
 #: src/Admin/ProductsTable/ListTable.php:217
-#: src/Admin/ProductsTable/ListTable.php:536
+#: src/Admin/ProductsTable/ListTable.php:618
 #: src/Admin/Settings/Output.php:79
+#: src/ClickTracking/ListTable.php:405
 #: src/Elementor/Widget.php:171
 #: assets/block/dist/index.js:1
 msgid "Title"
@@ -2839,17 +3603,43 @@ msgstr "Titel"
 msgid "Title:"
 msgstr "Titel:"
 
+#: assets/block/dist/index.js:1
+msgid "Title Length"
+msgstr "Titellänge"
+
 #: includes/functions/components/geotargeting.php:65
 msgid "To determine the country of origin, the current IP address of your page visitor will be analyzed through a third party service. The activation and use of the geo-targeting function is voluntary and is the responsibility of the site administrator."
 msgstr "Zur Ermittlung des Herkunftslandes, wird die aktuelle IP-Adresse des Seitenbesuchers durch einen externen Dienst ausgewertet. Die Aktivierung und Nutzung der Geo-targeting-Funktion ist freiwillig und liegt in der Verantwortung des Website-Administrators."
 
-#: src/Admin/Settings/Output.php:488
+#: assets/block/dist/index.js:1
+msgid "To display single product data e.g. title, description or price."
+msgstr "Zeige einzelne Produktdaten wie z.B. Titel, Beschreibung oder Preis an."
+
+#: assets/block/dist/index.js:1
+msgid "To display the comparison table."
+msgstr "Zeigt die Vergleichstabelle an."
+
+#: src/ClickTracking/ListTable.php:527
+msgid "Today"
+msgstr "Heute"
+
+#: src/Admin/Tools.php:50
+#: src/Admin/Tools.php:76
+msgid "Tools"
+msgstr "Werkzeuge"
+
+#: src/ClickTracking/Init.php:187
+msgid "Total Clicks"
+msgstr "Klicks insgesamt"
+
+#: src/Admin/Settings/Output.php:502
 msgid "Total amount (incl. Currency)"
 msgstr "Angabe als Betrag (inkl. Währung)"
 
 #: includes/functions/components/stores.php:64
 #: src/Admin/MetaBox.php:75
 #: src/Admin/Settings/API.php:118
+#: src/ClickTracking/Init.php:606
 #: assets/block/dist/index.js:1
 msgid "Tracking ID"
 msgstr "Tracking-ID"
@@ -2870,12 +3660,13 @@ msgstr "„Tracking-ID“ fehlt."
 msgid "Translations can be added simply by visiting our translation page."
 msgstr "Übersetzungen können ganz einfach über unser davor vorgesehenes System hinzugefügt werden."
 
-#: includes/functions.php:136
+#: includes/functions.php:137
 msgid "Turkey"
 msgstr "Türkei"
 
 #: includes/admin/list-edit.php:71
 #: includes/admin/list-overview.php:33
+#: src/ClickTracking/ListTable.php:406
 msgid "Type"
 msgstr "Typ"
 
@@ -2883,9 +3674,9 @@ msgstr "Typ"
 msgid "Type:"
 msgstr "Typ:"
 
-#: includes/functions.php:137
+#: includes/functions.php:138
 msgid "UK"
-msgstr "UK"
+msgstr "VK"
 
 #: src/Admin/ProductsTable/ListTable.php:218
 msgid "URL"
@@ -2895,15 +3686,15 @@ msgstr "URL"
 msgid "URLs"
 msgstr "URLs"
 
-#: includes/functions.php:138
+#: includes/functions.php:139
 msgid "US"
 msgstr "USA"
 
-#: includes/product-helper-functions.php:970
+#: includes/product-helper-functions.php:968
 msgid "Unable to create directory %s. Is its parent directory writable by the server?"
 msgstr "Verzeichnis %s kann nicht erstellt werden. Ist das übergeordnete Verzeichnis beschreibbar?"
 
-#: includes/functions.php:656
+#: includes/functions.php:658
 msgid "Undefined error."
 msgstr "Nicht definierter Fehler."
 
@@ -2911,13 +3702,13 @@ msgstr "Nicht definierter Fehler."
 msgid "Unfortunately, some functions may no longer be available or work different now. This means that you may have to adjust existing shortcodes."
 msgstr "Die ein oder andere Funktion ist leider nicht mehr, oder nur in abgeänderter Funktionsweise verfügbar. Dies hat zur Folge, dass bereits platzierte Shortcodes eventuell angepasst werden müssen."
 
-#: includes/functions.php:139
+#: includes/functions.php:140
 msgid "United Arab Emirates"
 msgstr "Vereinigte Arabische Emirate"
 
-#: src/Admin/Settings/Output.php:167
-#: src/Admin/Settings/Output.php:294
-#: src/Admin/Settings/Output.php:347
+#: src/Admin/Settings/Output.php:181
+#: src/Admin/Settings/Output.php:308
+#: src/Admin/Settings/Output.php:361
 msgid "Unlimited"
 msgstr "Unbegrenzt"
 
@@ -2937,7 +3728,7 @@ msgstr "Jetzt aktualisieren."
 msgid "Update v%1$s available"
 msgstr "Aktualisierung v%1$s verfügbar"
 
-#: src/Admin/ProductsTable/ListTable.php:220
+#: src/Admin/ProductsTable/ListTable.php:226
 msgid "Updated At"
 msgstr "Aktualisiert am"
 
@@ -2949,13 +3740,17 @@ msgstr "Hochgeladen zu dieser Vergleichstabelle"
 msgid "Use as featured image"
 msgstr "Als Beitragsbild verwenden"
 
-#: src/Admin/Settings/Output.php:186
+#: src/Admin/Settings/Output.php:200
 msgid "Use this field to show additional content at the end of <u>every</u> product title: e.g. <code>*</code> in order to refer to a footnote."
 msgstr "Verwende dieses Feld um zusätzlichen Text am Ende <u>jedes</u> Produkttitels auszugeben: z.B. <code>*</code> um auf eine Fußnote hinzuweisen."
 
 #: src/ActivityLogs/ListTable.php:299
 msgid "User"
 msgstr "Benutzer"
+
+#: assets/block/dist/index.js:1
+msgid "Using a custom product description."
+msgstr "Verwende eine benutzerdefinierte Produktbeschreibung."
 
 #: includes/functions/components/cronjobs.php:47
 msgid "Using manual cronjobs"
@@ -2965,6 +3760,10 @@ msgstr "Eigene Cronjobs verwenden"
 msgid "VIEW POPULAR QUESTIONS"
 msgstr "BELIEBTE FRAGEN ANZEIGEN"
 
+#: assets/block/dist/index.js:1
+msgid "Value"
+msgstr "Wert"
+
 #: includes/functions/class.fields.php:302
 msgid "Value \"%1$s\" is not supported."
 msgstr "Feldtyp \"%1$s\" wird nicht unterstützt."
@@ -2973,8 +3772,8 @@ msgstr "Feldtyp \"%1$s\" wird nicht unterstützt."
 msgid "Value missing."
 msgstr "Feldtyp (Value) fehlt."
 
-#: src/Admin/Support.php:170
-#: src/Admin/Support.php:326
+#: src/Admin/Tools/Support.php:145
+#: src/Admin/Tools/Support.php:301
 msgid "Values"
 msgstr "Werte"
 
@@ -2990,7 +3789,7 @@ msgstr "Lizenz prüfen"
 msgid "Version %s installed"
 msgstr "Version %s installiert"
 
-#: src/Admin/AdvancedAds/Ad.php:177
+#: src/Admin/AdvancedAds/Ad.php:187
 #: assets/block/dist/index.js:1
 msgid "Vertical"
 msgstr "Vertikal"
@@ -3003,7 +3802,7 @@ msgstr "Vergleichstabelle aufrufen"
 msgid "View Tables"
 msgstr "Vergleichstabellen aufrufen"
 
-#: src/Admin/ProductsTable/ListTable.php:171
+#: src/Admin/ProductsTable/ListTable.php:158
 msgid "View on Amazon"
 msgstr "Auf Amazon ansehen"
 
@@ -3019,22 +3818,22 @@ msgstr "Wir wissen, dass es manchmal überwältigend sein kann, ein neues Thema 
 msgid "Weekly"
 msgstr "Wöchentlich"
 
-#: src/Admin/AdvancedAds/Ad.php:180
+#: src/Admin/AdvancedAds/Ad.php:190
 #: assets/block/dist/index.js:1
 msgid "Widget"
 msgstr "Widget"
 
-#: src/Admin/AdvancedAds/Ad.php:182
+#: src/Admin/AdvancedAds/Ad.php:192
 #: assets/block/dist/index.js:1
 msgid "Widget Small"
 msgstr "Widget Klein"
 
-#: src/Admin/AdvancedAds/Ad.php:181
+#: src/Admin/AdvancedAds/Ad.php:191
 #: assets/block/dist/index.js:1
 msgid "Widget Vertical"
 msgstr "Widget Vertikal"
 
-#: includes/functions.php:187
+#: includes/functions.php:189
 msgid "Wishlist"
 msgstr "Wunschliste"
 
@@ -3054,16 +3853,24 @@ msgstr "Ja"
 msgid "Yes/No"
 msgstr "Ja/Nein"
 
+#: src/ClickTracking/ListTable.php:528
+msgid "Yesterday"
+msgstr "Gestern"
+
 #: src/Admin/Welcome.php:222
 msgid "You'll find many resources in our knowledge base, and if your questions can't be answered there, we have a friendly and dedicated support team that you can communicate with directly. Do not hesitate! We are always here for you and happy to help you with your affiliate website!"
 msgstr "In unserer Wissensdatenbank findest du viele Ressourcen. Und wenn deine Fragen dort nicht beantwortet werden können, haben wir ein freundliches und engagiertes Support-Team, mit dem du direkt kommunizieren kannst. Zögere nicht! Wir sind immer für dich da und helfen dir gerne mit deiner Affiliate-Website weiter!"
+
+#: assets/block/dist/index.js:1
+msgid "You can select another product image by entering a number from 1 to 5 or a direct link to an image file."
+msgstr "Du kannst ein anderes Produktbild auswählen, indem du eine Zahl von 1 bis 5 oder einen direkten Link zu einer Bilddatei eingibst."
 
 #: includes/libraries/class.plugin-updater.php:519
 msgid "You do not have permission to install plugin updates"
 msgstr "Du hast nicht die notwendigen Rechte, um auf diese Seite zuzugreifen"
 
 #: src/Admin/Settings.php:97
-#: src/Admin/Support.php:427
+#: src/Admin/Tools/Support.php:402
 msgid "You do not have sufficient permissions to access this page."
 msgstr "Du hast nicht die notwendigen Rechte, um auf diese Seite zuzugreifen."
 
@@ -3071,7 +3878,7 @@ msgstr "Du hast nicht die notwendigen Rechte, um auf diese Seite zuzugreifen."
 msgid "You have problems or questions? Contact us! We are always happy to help!"
 msgstr "Du hast Probleme oder Fragen? Kontaktiere uns! Wir helfen dir immer gerne weiter!"
 
-#: includes/functions.php:612
+#: includes/functions.php:614
 msgid "Your access key is not mapped to primary of approved associate store. Please visit associate central."
 msgstr "Dein Zugriffsschlüssel ist deinem Partnerkonto nicht zugeordnet. Bitte besuche das Amazon PartnerNet für weitere Informationen."
 
@@ -3117,9 +3924,17 @@ msgstr " %1$sDetails zur Version %2$s anzeigen%3$s."
 msgid " %1$sView version %2$s details%3$s or %4$supdate now%5$s."
 msgstr " %1$sDetails zur Version %2$s anzeigen%3$s oder %4$sjetzt aktualisieren%5$s."
 
-#: src/Admin/Support.php:242
+#: assets/block/dist/index.js:1
+msgid " Search for product(s) without ASIN"
+msgstr " Suche nach Produkt(en) ohne ASIN"
+
+#: src/Admin/Tools/Support.php:217
 msgid "and"
 msgstr "und"
+
+#: includes/functions/class.extended.php:345
+msgid "built-in click tracking"
+msgstr "integriertes Klick-Tracking"
 
 #: includes/functions/widgets/class.widget-box.php:99
 msgid "e.g. B00NGOD2OI or 3551559007"
@@ -3136,25 +3951,25 @@ msgstr "https://getaawp.com"
 msgid "or"
 msgstr "oder"
 
-#: includes/product-helper-functions.php:505
+#: includes/product-helper-functions.php:503
 msgid "%d Page"
 msgid_plural "%d Pages"
 msgstr[0] "%d Seite"
 msgstr[1] "%d Seiten"
 
-#: src/Admin/ProductsTable/ListTable.php:423
+#: src/Admin/ProductsTable/ListTable.php:530
 msgid "<code>%1$d</code> product with ID <code>#%2$s</code> deleted via products listtable bulk action."
 msgid_plural "<code>%1$d</code> products with IDs <code>#%2$s</code> deleted via products listtable bulk action."
 msgstr[0] "<code>%1$d</code> Produkt mit ID <code>#%2$s</code> wurde über die Massenaktion der Produktliste gelöscht."
 msgstr[1] "<code>%1$d</code> Produkte mit IDs <code>#%2$s</code> wurden über die Massenaktion der Produktliste gelöscht."
 
-#: src/Admin/ProductsTable/ListTable.php:441
+#: src/Admin/ProductsTable/ListTable.php:548
 msgid "<code>%1$d</code> product with ID <code>#%2$s</code> renewed via products listtable bulk action."
 msgid_plural "<code>%1$d</code> products with IDs <code>#%2$s</code> renewed via products listtable bulk action."
 msgstr[0] "<code>%1$d</code> Produkt mit der ID <code>#%2$s</code> wurde über die Massenaktion \"Produktliste\" erneuert."
 msgstr[1] "<code>%1$d</code> Produkte mit IDs <code>#%2$s</code> wurden über die Massenaktion \"Produktliste\" erneuert."
 
-#: src/Admin/ProductsTable/ListTable.php:563
+#: src/Admin/ProductsTable/ListTable.php:645
 msgid "<code>%1$s</code> Product %2$s. "
 msgid_plural "<code>%1$s</code> Products %2$s. "
 msgstr[0] "<code>%1$s</code> Produkt %2$s. "
@@ -3166,73 +3981,73 @@ msgid_plural "<code>%d</code> cached products renewed via API."
 msgstr[0] "<code>%d</code> zwischengespeichertes Produkt wurde über API erneuert."
 msgstr[1] "<code>%d</code> zwischengespeicherte Produkte wurden über API erneuert."
 
-#: src/Admin/Support.php:242
+#: src/Admin/Tools/Support.php:217
 msgid "<strong>%d</strong> list"
 msgid_plural "<strong>%d</strong> lists"
 msgstr[0] "<strong>%d</strong> Liste"
 msgstr[1] "<strong>%d</strong> Listen"
 
-#: src/Admin/Support.php:242
+#: src/Admin/Tools/Support.php:217
 msgid "<strong>%d</strong> product"
 msgid_plural "<strong>%d</strong> products"
 msgstr[0] "<strong>%d</strong> Produkt"
 msgstr[1] "<strong>%d</strong> Produkte"
 
-#: includes/class.aawp-functions.php:586
+#: includes/class.aawp-functions.php:582
 msgid "Fetched product with ASIN <code>%s</code> from the API."
 msgid_plural "Fetched products with ASIN <code>%s</code> from the API."
 msgstr[0] "Produkt mit ASIN <code>%s</code> wurde von der API abgerufen."
 msgstr[1] "Produkte mit ASIN <code>%s</code> wurden von der API abgerufen."
 
-#: includes/product-helper-functions.php:419
+#: includes/product-helper-functions.php:417
 msgid " (Actor)"
 msgid_plural " (Actors)"
 msgstr[0] " (Schauspieler)"
 msgstr[1] " (Schauspieler)"
 
-#: includes/product-helper-functions.php:433
+#: includes/product-helper-functions.php:431
 msgid " (Author)"
 msgid_plural " (Authors)"
 msgstr[0] " (Autor)"
 msgstr[1] " (Autoren)"
 
-#: includes/product-helper-functions.php:424
+#: includes/product-helper-functions.php:422
 msgid " (Director)"
 msgid_plural " (Directors)"
 msgstr[0] " (Regisseur)"
 msgstr[1] " (Regisseure)"
 
-#: includes/product-helper-functions.php:436
+#: includes/product-helper-functions.php:434
 msgid " (Narrator)"
 msgid_plural " (Narrators)"
 msgstr[0] " (Sprecher)"
 msgstr[1] " (Sprecher)"
 
-#: includes/product-helper-functions.php:474
+#: includes/product-helper-functions.php:472
 msgid " (Playback Language)"
 msgid_plural " (Playback Languages)"
 msgstr[0] " (Wiedergabesprache)"
 msgstr[1] " (Wiedergabesprachen)"
 
-#: includes/product-helper-functions.php:430
+#: includes/product-helper-functions.php:428
 msgid " (Producer)"
 msgid_plural " (Producers)"
 msgstr[0] " (Produzent)"
 msgstr[1] " (Produzenten)"
 
-#: includes/product-helper-functions.php:480
+#: includes/product-helper-functions.php:478
 msgid " (Publication Language)"
 msgid_plural " (Publication Languages)"
 msgstr[0] " (Veröffentlichungssprache)"
 msgstr[1] " (Veröffentlichungssprachen)"
 
-#: includes/product-helper-functions.php:477
+#: includes/product-helper-functions.php:475
 msgid " (Subtitle)"
 msgid_plural " (Subtitles)"
 msgstr[0] " (Untertitel)"
 msgstr[1] " (Untertitel)"
 
-#: includes/product-helper-functions.php:427
+#: includes/product-helper-functions.php:425
 msgid " (Writer)"
 msgid_plural " (Writers)"
 msgstr[0] " (Autor)"

@@ -4,11 +4,45 @@ Tags: amazon, affiliate
 Requires at least: 5.0.0
 Requires PHP: 5.6.0
 Tested up to: 6.1
-Stable tag: 3.19.2
+Stable tag: 3.20.1
 
 The best WordPress plugin for Amazon Affiliates.
 
 == Changelog ==
+
+= Version 3.20.1 (27th March 2023) =
+* Fix: Prime icon loading issue when the image is served from CDN
+* Info: Updated translations
+
+= Version 3.20.0 (16th March 2023) =
+* New: Built-in click tracking with a "Clicks" submenu
+* New: Amazon Egypt is available as selectable store now
+* New: Introduce Action Scheduler library to run background tasks
+* New: AAWP API for Notifications box and Usage data
+* New: Sale ribbon text option in block
+* Tweak: Load frontend assets only where AAWP is used, respectively a new setting to load assets globally
+* Tweak: Code Editor in Custom CSS box
+* Tweak: Open editor general sidebar on AAWP Block click
+* Tweak: Image proxy URL improvement
+* Tweak: Products overview - filter by statuses
+* Tweak: Load prime logo as image and no longer as background image
+* Tweak: Introduce Tools page to combine "Support", "Logs" & "Scheduled Actions"
+* Tweak: Products overview - when there are no products, the dropdown for search has been removed
+* Tweak: Products overview - When image is not available, placeholder image is shown instead
+* Tweak: Update AAWP logo on block & product search modal footer
+* Tweak: Admin flyout hover color
+* Fix: Localized store not working for SA & AE stores
+* Fix: Incorrect add to cart link
+* Fix: Incorrect sorting of products by date
+* Fix: Products overview - when all products are deleted, it shows 0 products deleted
+* Fix: Advanced Ads icon for AAWP Ad type
+* Fix: Advanced Ads click statistics didn't work properly for AAWP Ad type
+* Fix: Block logo size in widgets
+* Fix: PHP 8 Deprecated message - required parameter $context follows optional parameter $user_id
+* Fix: Use default value in case of no products found when settings isn't saved yet
+* Fix: Incorrect print while missing dependencies
+* Fix: CSS conflict for Ninja Tables
+* Info: Updated translation files
 
 = Version 3.19.2 (14th November 2022) =
 * Fix: Plugin update issue with v3.19

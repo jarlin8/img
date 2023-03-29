@@ -69,14 +69,6 @@ function aawp_settings_geotargeting_render() {
         <label for="aawp_geotargeting"><?php _e('Check in order to active geotargeting functionality', 'aawp'); ?></label>
     </p>
     <p>
-		<?php _e( 'Localization Service', 'aawp' ); ?>
-        <select id="aawp_geotargeting_api" name="aawp_functions[geotargeting_api]">
-			<?php foreach ( $geotargeting_api_options as $key => $label ) { ?>
-                <option value="<?php echo $key; ?>" <?php selected( $geotargeting_api, $key ); ?>><?php echo $label; ?></option>
-			<?php } ?>
-        </select>
-    </p>
-    <p>
         <?php _e( 'Link target', 'aawp' ); ?>
         <select id="aawp_geotargeting_mode" name="aawp_functions[geotargeting_mode]">
             <?php foreach ( $geotargeting_mode_options as $key => $label ) { ?>
@@ -151,10 +143,10 @@ function aawp_embed_geotargeting_script_data() {
 
     $geotargeting = isset( $options_functions['geotargeting'] ) &&  $options_functions['geotargeting'] === '1' && 'shortened' !== $affiliate_links ? 1 : 0;
 
-    if ( ! $geotargeting )
+    if ( ! apply_filters( 'aawp_settings_geotargeting', $geotargeting ) ) {
         return;
+    }
 
-	$api = ( ! empty ( $options_functions['geotargeting_api'] ) ) ? $options_functions['geotargeting_api'] : '';
     $geotargeting_mode = ( ! empty ( $options_functions['geotargeting_mode'] ) ) ? $options_functions['geotargeting_mode'] : 'title';
 
     // Settings
@@ -190,6 +182,10 @@ function aawp_embed_geotargeting_script_data() {
         $localized_stores['nz'] = 'com.au'; // New Zealand
 	}
 
+    if ( ! empty( $tracking_ids['ae'] ) && 'ae' !== $default_store ) {
+        $localized_stores['ae'] = 'ae'; // UAE
+    }
+
     if ( ! empty( $tracking_ids['com.be'] ) && 'com.be' !== $default_store ) {
         $localized_stores['be'] = 'com.be'; // Belgium
     }
@@ -210,6 +206,10 @@ function aawp_embed_geotargeting_script_data() {
         $localized_stores['de'] = 'de'; // Germany
         $localized_stores['at'] = 'de'; // Austria
         $localized_stores['ch'] = 'de'; // Switzerland
+    }
+
+    if ( ! empty( $tracking_ids['eg'] ) && 'eg' !== $default_store ) {
+        $localized_stores['eg'] = 'eg'; // Egypt
     }
 
     if ( ! empty( $tracking_ids['es'] ) && 'es' !== $default_store ) {
@@ -237,7 +237,7 @@ function aawp_embed_geotargeting_script_data() {
     }
 
     if ( ! empty( $tracking_ids['sa'] ) && 'sa' !== $default_store ) {
-        $localized_stores['sa'] = 'sg'; // Saudi Arabia
+        $localized_stores['sa'] = 'sa'; // Saudi Arabia
     }
 
     if ( ! empty( $tracking_ids['se'] ) && 'se' !== $default_store ) {
@@ -287,13 +287,21 @@ function aawp_embed_geotargeting_script_data() {
 		    $localized_stores['au'] = 'com'; // Australia
     }
 
-    //aawp_debug_log( __FUNCTION__ . ' >> $localized_stores:' );
-    //aawp_debug_log( $localized_stores );
+    $ip      = ! empty( $_SERVER['REMOTE_ADDR'] ) ? wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
+    $ip      = rest_is_ip_address( $ip ) ? wp_privacy_anonymize_ip( $ip ) : '';
+    $api_url = ! defined( 'AAWP_API_URL' ) ? 'https://api.getaawp.com/v1/country/' . $ip : AAWP_API_URL . '/country/' . $ip;
+    $ipinfo  = false;
+
+    if ( 'valid' !==  aawp_get_option( 'info', 'licensing' )['status'] ) {
+        $api_url = 'https://ipinfo.io/' . $ip . '/json/';
+        $ipinfo  = true;
+    }
 
     ?>
     <script type="text/javascript">
         /* <![CDATA[ */
-        var aawp_geotargeting_api = <?php echo json_encode( $api ); ?>;
+        var aawp_geotargeting_url = <?php echo json_encode( $api_url ); ?>;
+        var aawp_is_ipinfo = <?php echo json_encode( $ipinfo ) ?>;
         var aawp_geotargeting_settings = <?php echo json_encode( $settings ); ?>;
         var aawp_geotargeting_localized_stores = <?php echo json_encode( $localized_stores ); ?>;
         var aawp_geotargeting_tracking_ids = <?php echo json_encode( $tracking_ids ); ?>;
