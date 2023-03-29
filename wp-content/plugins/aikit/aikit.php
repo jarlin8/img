@@ -4,7 +4,7 @@
  * Plugin Name:       AIKit
  * Plugin URI:        https://getaikit.com
  * Description:       AIKit is your WordPress AI assistant, powered by OpenAI's GPT-3 & DALL.E 2.
- * Version:           3.7.0
+ * Version:           3.8.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Domain Path:       /languages
@@ -35,6 +35,9 @@ add_action( 'enqueue_block_assets', 'aikit_block_assets' );
 add_action( 'init', 'aikit_load_textdomain' );
 
 function aikit_load_textdomain() {
+    if ( ! is_admin() ) {
+        return;
+    }
 
     // get current language
     $currentLanguage = get_locale();
@@ -84,6 +87,9 @@ function aikit_admin_configure_notice() {
 
 
 function aikit_init() {
+     if ( ! is_admin() ) {
+         return;
+     }
     // Register our script just like we would enqueue it - for WordPress references
     $dependencies = require __DIR__ . '/fe/build/index.asset.php';
     wp_register_script( 'aikit_index_js', plugin_dir_url( __FILE__ ) . 'fe/build/index.js', $dependencies['dependencies'], $dependencies['version'] );

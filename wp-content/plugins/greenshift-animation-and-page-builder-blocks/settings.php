@@ -119,16 +119,16 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 			$default_tab = null;
 			$tab         = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : $default_tab;
 
-		?>
+?>
 			<div class="wrap">
 				<style>
+					#wpcontent {
+						background: #f8fafc;
+						padding: 0;
+					}
+
 					.wrap {
-						background: white;
-						max-width: 900px;
-						margin: 2.5em auto;
-						border: 1px solid #dbdde2;
-						box-shadow: 0 10px 20px #ececec;
-						text-align: center
+						margin: 0 auto;
 					}
 
 					.wrap .notice,
@@ -137,11 +137,22 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 					}
 
 					.wrap h2 {
-						font-size: 1.5em;
-						margin-bottom: 1em;
+						font-size: 1.4em;
+						margin-bottom: 1.5em;
+						margin-top: 0;
 						font-weight: bold;
-						padding: 15px;
-						background: #f4f4f4;
+					}
+
+					.greenshift_form {
+						padding: 15px 25px 25px 25px;
+						background: #fff;
+						margin-top: 15px;
+						box-shadow: 0 0 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%);
+						overflow: hidden;
+					}
+
+					.greenshift_form .form-table {
+						margin-top: 0
 					}
 
 					.gs-introtext {
@@ -171,7 +182,8 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 					.gs-padd {
 						padding: 25px;
 						text-align: left;
-						background-color: #fbfbfb
+						margin: 1.5em auto;
+						max-width: 900px;
 					}
 
 					.rtl .gs-padd {
@@ -182,16 +194,32 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 						background-color: #2184f9
 					}
 
+					.nav-tab {
+						font-size: 16px;
+						border: none;
+						padding: 10px 20px;
+						background: none;
+						border-bottom: 2px solid transparent;
+					}
+
 					.nav-tab-active,
 					.nav-tab-active:focus,
 					.nav-tab-active:focus:active,
-					.nav-tab-active:hover {
-						border-bottom: 1px solid #fbfbfb;
-						background: #fbfbfb;
+					.nav-tab:hover {
+						border-bottom: 2px solid #2184f9;
+						background: #fff;
+						color: #2184f9;
 					}
 
 					.nav-tab-wrapper {
-						padding-left: 20px
+						padding-left: 20px;
+						background: white;
+						border-bottom: 1px solid #edeff5;
+					}
+
+					.nav-tab-wrapper>div {
+						margin: 0 auto;
+						max-width: 950px
 					}
 
 					.wrap .fs-notice {
@@ -201,25 +229,31 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 					.wrap .fs-plugin-title {
 						display: none !important
 					}
+
+					.mb30 {
+						margin-bottom: 30px
+					}
 				</style>
-				<h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+
 				<!-- Here are our tabs -->
 				<nav class="nav-tab-wrapper">
-					<a href="?page=greenshift" class="nav-tab 
-				<?php
-				if ($tab === null) :
-				?>
-					nav-tab-active<?php endif; ?>"> <?php esc_html_e("General", 'greenshift-animation-and-page-builder-blocks'); ?> </a>
-					<a href="?page=greenshift&tab=save_css" class="nav-tab 
-				<?php
-				if ($tab === 'save_css') :
-				?>
-					nav-tab-active<?php endif; ?>"><?php esc_html_e("CSS Management", 'greenshift-animation-and-page-builder-blocks'); ?></a>
-					<a href="?page=greenshift&tab=breakpoints" class="nav-tab 
-				<?php
-				if ($tab === 'breakpoints') :
-				?>
-					nav-tab-active<?php endif; ?>"><?php esc_html_e("Breakpoints", 'greenshift-animation-and-page-builder-blocks'); ?></a>
+					<div>
+						<a href="?page=greenshift" class="nav-tab <?php if ($tab === null) : ?>nav-tab-active<?php endif; ?>">
+							<?php esc_html_e("General", 'greenshift-animation-and-page-builder-blocks'); ?>
+						</a>
+						<a href="?page=greenshift&tab=save_css" class="nav-tab <?php if ($tab === 'save_css') : ?>nav-tab-active<?php endif; ?>">
+							<?php esc_html_e("CSS Management", 'greenshift-animation-and-page-builder-blocks'); ?>
+						</a>
+						<a href="?page=greenshift&tab=breakpoints" class="nav-tab <?php if ($tab === 'breakpoints') : ?>nav-tab-active<?php endif; ?>">
+							<?php esc_html_e("Breakpoints", 'greenshift-animation-and-page-builder-blocks'); ?>
+						</a>
+						<a href="?page=greenshift&tab=scripts" class="nav-tab <?php if ($tab === 'scripts') : ?>nav-tab-active<?php endif; ?>">
+							<?php esc_html_e("Script Management", 'greenshift-animation-and-page-builder-blocks'); ?>
+						</a>
+						<a href="?page=greenshift&tab=keys" class="nav-tab <?php if ($tab === 'keys') : ?>nav-tab-active<?php endif; ?>">
+							<?php esc_html_e("API Keys", 'greenshift-animation-and-page-builder-blocks'); ?>
+						</a>
+					</div>
 				</nav>
 
 				<div class="tab-content gs-padd">
@@ -235,50 +269,52 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 								update_option('gspb_css_save', sanitize_text_field($_POST['gspb_settings_option']));
 
 								$sanitised = array();
-								if(!empty($_POST['reusablestyles'])){
-									foreach($_POST['reusablestyles'] as $key=>$value){
+								if (!empty($_POST['reusablestyles'])) {
+									foreach ($_POST['reusablestyles'] as $key => $value) {
 										$sanitised['reusablestyles'][$key] = array(
 											"style" => sanitize_textarea_field($value['style']),
 											"blockname" =>  sanitize_text_field($value['blockname']),
 										);
 									}
 									$default_settings = get_option('gspb_global_settings');
-									$newargs = wp_parse_args( $sanitised, $default_settings);
+									$newargs = wp_parse_args($sanitised, $default_settings);
 									//echo '<pre>';print_r($newargs);echo '</pre>';
 									update_option('gspb_global_settings', $newargs);
 								}
-
 							}
 
 							$global_settings = get_option('gspb_global_settings');
-
 							$css_tsyle_option = get_option('gspb_css_save');
 					?>
 							<div class="gspb_settings_form">
 								<form method="POST">
 									<h2><?php esc_html_e("Save Css", 'greenshift-animation-and-page-builder-blocks'); ?></h2>
-									<?php wp_nonce_field('gspb_settings_page_action', 'gspb_settings_field'); ?>
-									<table class="form-table">
-										<tr>
-											<th> <label for="css_system"><?php esc_html_e("Css location", 'greenshift-animation-and-page-builder-blocks'); ?></label> </th>
-											<td>
-												<select name="gspb_settings_option">
-													<option value="inline" <?php selected($css_tsyle_option, 'inline'); ?>><?php esc_html_e("Inline in Head", 'greenshift-animation-and-page-builder-blocks'); ?> </option>
-													<option value="file" <?php selected($css_tsyle_option, 'file'); ?>> <?php esc_html_e("File system", 'greenshift-animation-and-page-builder-blocks'); ?> </option>
-													<option value="inlineblock" <?php selected($css_tsyle_option, 'inlineblock'); ?>> <?php esc_html_e("Inline in block", 'greenshift-animation-and-page-builder-blocks'); ?> </option>
-												</select>
-											</td>
-										</tr>
-									</table>
-									<div style="margin-bottom:15px"><?php esc_html_e("Use Inline in block only if you have some issues with not updating styles of blocks or cache. Once saved as inline in block, styles can be overwritten only when you update post with blocks", 'greenshift-animation-and-page-builder-blocks'); ?></div>
+									<div class="greenshift_form">
+										<?php wp_nonce_field('gspb_settings_page_action', 'gspb_settings_field'); ?>
+										<table class="form-table">
+											<tr>
+												<th> <label for="css_system"><?php esc_html_e("Css location", 'greenshift-animation-and-page-builder-blocks'); ?></label> </th>
+												<td>
+													<select name="gspb_settings_option">
+														<option value="inline" <?php selected($css_tsyle_option, 'inline'); ?>><?php esc_html_e("Inline in Head", 'greenshift-animation-and-page-builder-blocks'); ?> </option>
+														<option value="file" <?php selected($css_tsyle_option, 'file'); ?>> <?php esc_html_e("File system", 'greenshift-animation-and-page-builder-blocks'); ?> </option>
+														<option value="inlineblock" <?php selected($css_tsyle_option, 'inlineblock'); ?>> <?php esc_html_e("Inline in block", 'greenshift-animation-and-page-builder-blocks'); ?> </option>
+													</select>
+												</td>
+											</tr>
+										</table>
+										<div style="margin-bottom:15px"><?php esc_html_e("Use Inline in block only if you have some issues with not updating styles of blocks or cache. Once saved as inline in block, styles can be overwritten only when you update post with blocks", 'greenshift-animation-and-page-builder-blocks'); ?></div>
 
-									<input type="submit" name="gspb_save_settings" value="<?php esc_html_e("Save settings"); ?>" class="button button-primary button-large">
+										<input type="submit" name="gspb_save_settings" value="<?php esc_html_e("Save settings"); ?>" class="button button-primary button-large">
+									</div>
+
 									<h2 style="margin-top:40px"><?php esc_html_e("Global Reusable CSS", 'greenshift-animation-and-page-builder-blocks'); ?></h2>
 
-									<?php 
+									<div class="greenshift_form">
+										<?php
 										$gs_reusable_css = (!empty($global_settings['reusablestyles'])) ? $global_settings['reusablestyles'] : '';
-										if($gs_reusable_css){
-											foreach($gs_reusable_css as $key=>$value){
+										if ($gs_reusable_css) {
+											foreach ($gs_reusable_css as $key => $value) {
 												echo '<div style="margin-bottom:5px;    color: #999;">';
 												esc_html_e("Class: ", 'greenshift-animation-and-page-builder-blocks');
 												echo esc_attr($key);
@@ -286,13 +322,14 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 												esc_html_e("Block Type: ", 'greenshift-animation-and-page-builder-blocks');
 												echo esc_attr($value['blockname']);
 												echo '</div>';
-												echo '<textarea style="width:100%; border-color:#ddd" rows="5" name="reusablestyles['.$key.'][style]" id="key_'.$key.'">'.$value['style'].'</textarea>';
-												echo '<input type="hidden" name="reusablestyles['.$key.'][blockname]" value="'.$value['blockname'].'" /><br/><br/>';
+												echo '<textarea style="width:100%; border-color:#ddd" rows="5" name="reusablestyles[' . $key . '][style]" id="key_' . $key . '">' . $value['style'] . '</textarea>';
+												echo '<input type="hidden" name="reusablestyles[' . $key . '][blockname]" value="' . $value['blockname'] . '" /><br/><br/>';
 											}
-											echo '<input type="submit" name="gspb_save_settings" value="'.esc_html__("Save settings").'" class="button button-primary button-large">';
+											echo '<input type="submit" name="gspb_save_settings" value="' . esc_html__("Save settings") . '" class="button button-primary button-large">';
 										}
 
-									?>
+										?>
+									</div>
 
 								</form>
 							</div>
@@ -353,17 +390,138 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 							</form>
 						<?php
 							break;
+						case 'scripts':
+							wp_enqueue_style('gsadminsettings');
+							wp_enqueue_script('gsadminsettings');
+							$global_settings = get_option('gspb_global_settings');
+							if (isset($_POST['gspb_save_settings'])) { // Delay script saving
+								if (!wp_verify_nonce($_POST['gspb_settings_field'], 'gspb_settings_page_action')) {
+									esc_html_e("Sorry, your nonce did not verify.", 'greenshift-animation-and-page-builder-blocks');
+									return;
+								}
+
+								$is_dealyjson = isset($_POST['delay_js_on']) && $_POST['delay_js_on'] == "on" ? 1 : 0;
+								$jsdelay = array(
+									"delay_js_on" => $is_dealyjson,
+									"delay_js_page_on" =>  sanitize_text_field($_POST['delay_js_page_on']),
+									"delay_js_page_list" =>  sanitize_text_field($_POST['delay_js_page_list']),
+								);
+								$global_settings['jsdelay'] = $jsdelay;
+
+								update_option('gspb_global_settings', $global_settings);
+							}
+							//Form for delay script saving
+							$delay_js_on = !empty($global_settings['jsdelay']['delay_js_on']) ? $global_settings['jsdelay']['delay_js_on'] : '';
+							$delay_js_page_on = !empty($global_settings['jsdelay']['delay_js_page_on']) ? $global_settings['jsdelay']['delay_js_page_on'] : '';
+							$delay_js_page_list = !empty($global_settings['jsdelay']['delay_js_page_list']) ? $global_settings['jsdelay']['delay_js_page_list'] : '';
+
+							$show_page_option = $delay_js_on && ($delay_js_page_on == "includefor" || $delay_js_page_on  == "excludefor") ? true : false;
+
+						?>
+							<div class="gspb_settings_form">
+								<form method="POST">
+									<h2><?php esc_html_e("Javascript Files Delay", 'greenshift-animation-and-page-builder-blocks'); ?></h2>
+									<div class="greenshift_form">
+										<div><?php esc_html_e("Attention! This is experimental feature", "greenshift-animation-and-page-builder-blocks"); ?></div>
+										<?php wp_nonce_field('gspb_settings_page_action', 'gspb_settings_field'); ?>
+										<table class="form-table">
+											<tr>
+												<td colspan="2">
+													<input type="checkbox" name="delay_js_on" id="delay_js_on" <?php echo $delay_js_on == true ? 'checked' : ''; ?> />
+													<label for="delay_js_on"><?php esc_html_e("Enable script delay for Greenshift's scripts", 'greenshift-animation-and-page-builder-blocks'); ?></label>
+												</td>
+											</tr>
+											<tr class="delay_js_optionsrow" <?php echo $delay_js_on == true ? 'style="display: table-row;"' : ''; ?>>
+												<th> <label for="css_system"><?php esc_html_e("Javascript delay options", 'greenshift-animation-and-page-builder-blocks'); ?></label> </th>
+												<td>
+													<select id="delay_js_page_on" name="delay_js_page_on">
+														<option value="all" <?php selected($delay_js_page_on, 'all'); ?>><?php esc_html_e("Enable on whole site", 'greenshift-animation-and-page-builder-blocks'); ?> </option>
+														<option value="includefor" <?php selected($delay_js_page_on, 'includefor'); ?>> <?php esc_html_e("Enable only on selected pages", 'greenshift-animation-and-page-builder-blocks'); ?> </option>
+														<option value="excludefor" <?php selected($delay_js_page_on, 'excludefor'); ?>> <?php esc_html_e("Enable on whole site except selected pages", 'greenshift-animation-and-page-builder-blocks'); ?> </option>
+													</select>
+												</td>
+											</tr>
+											<tr class="delay_js_pagerow" <?php echo $show_page_option == true ? 'style="display: table-row;"' : ''; ?>>
+												<th>
+													<label for="delay_js_page_list"><?php esc_html_e("Page Urls (one per line).", 'greenshift-animation-and-page-builder-blocks'); ?></label>
+												</th>
+												<td>
+													<textarea style="width:100%; min-height:100px;" id="delay_js_page_list" name="delay_js_page_list"><?php echo esc_html($delay_js_page_list); ?></textarea>
+													<div style="margin-bottom:15px"><?php esc_html_e("Specify URLs of pages (one per line).", 'greenshift-animation-and-page-builder-blocks'); ?></div>
+												</td>
+											</tr>
+										</table>
+
+
+										<input type="submit" name="gspb_save_settings" value="<?php esc_html_e("Save settings"); ?>" class="button button-primary button-large javascript_delay_submit">
+									</div>
+								</form>
+							</div>
+						<?php
+							//End Form for delay script saving
+							break;
+
+						case 'keys':
+
+							if (isset($_POST['gspb_save_settings'])) { // Delay script saving
+								if (!wp_verify_nonce($_POST['gspb_settings_field'], 'gspb_settings_page_action')) {
+									esc_html_e("Sorry, your nonce did not verify.", 'greenshift-animation-and-page-builder-blocks');
+									return;
+								}
+
+								if (isset($_POST['googleapi'])) {
+									$global_settings = get_option('gspb_global_settings');
+									$sanitised['googleapi'] = sanitize_text_field($_POST['googleapi']);
+									$newargs = wp_parse_args($sanitised, $global_settings);
+									//echo '<pre>';print_r($newargs);echo '</pre>';
+									update_option('gspb_global_settings', $newargs);
+								}
+							}
+							$global_settings = get_option('gspb_global_settings');
+							//Form for delay script saving
+							$googleapi = !empty($global_settings['googleapi']) ? $global_settings['googleapi'] : '';
+
+						?>
+							<div class="gspb_settings_form">
+								<form method="POST">
+									<h2><?php esc_html_e("Google Map API", 'greenshift-animation-and-page-builder-blocks'); ?></h2>
+									<p class="mb30"><?php esc_html_e("Add key if you plan to use Google Map block", 'greenshift-animation-and-page-builder-blocks'); ?></p>
+									<div class="greenshift_form">
+										<?php wp_nonce_field('gspb_settings_page_action', 'gspb_settings_field'); ?>
+										<table class="form-table">
+											<tbody>
+												<tr class="googleapikey">
+													<th>
+														<label for="googleapi"><?php esc_html_e("Google API Key", 'greenshift-animation-and-page-builder-blocks'); ?></label>
+													</th>
+													<td>
+														<textarea style="width:100%; min-height:50px;border-color:#ddd" id="googleapi" name="googleapi"><?php echo esc_html($googleapi); ?></textarea>
+														<div style="margin-bottom:15px"><a href="https://developers.google.com/maps/documentation/javascript/get-api-key"><?php esc_html_e("Get an API Key", 'greenshift-animation-and-page-builder-blocks'); ?></a></div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+
+
+										<input type="submit" name="gspb_save_settings" value="<?php esc_html_e("Save settings"); ?>" class="button button-primary button-large">
+									</div>
+								</form>
+							</div>
+						<?php
+							//End Form for delay script saving
+							break;
 						default:
 							wp_enqueue_style('gsadminsettings');
 							wp_enqueue_script('gsadminsettings');
-							if (isset($_POST['gspb_save_settings_general']) && isset($_POST['gspb_settings_field']) && wp_verify_nonce($_POST['gspb_settings_field'], 'gspb_settings_page_action')) {
+							if (isset($_POST['gspb_save_settings_general']) && isset($_POST['gspb_settings_field']) && wp_verify_nonce($_POST['gspb_settings_field'], 'gspb_settings_page_action')) { // local font saving
 								$this->gspb_save_general_form($_POST, $_FILES);
 							}
+
 						?>
 							<h2><?php esc_html_e("General Settings", 'greenshift-animation-and-page-builder-blocks'); ?></h2>
-							<?php esc_html_e("You can assign global presets and other settings in Post edit area when you click on G button in header toolbar", 'greenshift-animation-and-page-builder-blocks'); ?>
+							<p class="mb30"><?php esc_html_e("You can assign global presets and other settings in Post edit area when you click on G button in header toolbar", 'greenshift-animation-and-page-builder-blocks'); ?></p>
 							<h2><?php esc_html_e("Local Font Loader", 'greenshift-animation-and-page-builder-blocks'); ?></h2>
-							<?php esc_html_e("Attention! Local font is global option and it can reduce performance in some cases, please, check", 'greenshift-animation-and-page-builder-blocks'); ?> <a href="https://greenshiftwp.com/how-to-use-local-fonts-in-greenshift-for-gdpr/" target="_blank"><?php esc_html_e("Documentation", 'greenshift-animation-and-page-builder-blocks'); ?></a>
+							<p class="mb30"><?php esc_html_e("Attention! Local font is global option and it can reduce performance in some cases, please, check", 'greenshift-animation-and-page-builder-blocks'); ?> <a href="https://greenshiftwp.com/how-to-use-local-fonts-in-greenshift-for-gdpr/" target="_blank"><?php esc_html_e("Documentation", 'greenshift-animation-and-page-builder-blocks'); ?></a></p>
 							<?php
 							$allowed_font_ext = $this->allowed_font_ext;
 							require_once GREENSHIFT_DIR_PATH . 'templates/admin/settings_general_form.php'; ?>
@@ -373,7 +531,7 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 					?>
 				</div>
 			</div>
-		<?php
+<?php
 		}
 
 		// settings fonts
@@ -446,8 +604,8 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 				$gs_global_css = str_replace('!important', '', $gs_global_css);
 
 				$gs_reusable_css = (!empty($global_settings['reusablestyles'])) ? $global_settings['reusablestyles'] : '';
-				if(!empty($gs_reusable_css)){
-					foreach($gs_reusable_css as $key=>$value){
+				if (!empty($gs_reusable_css)) {
+					foreach ($gs_reusable_css as $key => $value) {
 						$gs_global_css .= $value['style'];
 					}
 				}
@@ -518,12 +676,12 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 		//Columns in Reusable section
 		function gspb_template_screen_add_column($columns)
 		{
-			$columns = array(
+			$newcols = array(
 				'cb' => '<input type="checkbox" />',
 				'title' => esc_html__('Block title', 'greenshift-animation-and-page-builder-blocks'),
 				'gs-reusable-preview' => esc_html__('Usage', 'greenshift-animation-and-page-builder-blocks'),
 			);
-			return $columns;
+			return apply_filters('greenshift_reusable_blocks_list', array_merge($columns, $newcols));
 		}
 
 		//Render function for Columns in Reusable Sections
@@ -566,6 +724,8 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 				$postget = get_page_by_path($id, OBJECT, array('wp_block'));
 				if (is_object($postget)) {
 					$id = $postget->ID;
+				} else {
+					return;
 				}
 			}
 			if (!empty($ajax)) {
@@ -577,7 +737,7 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 					'ajax_url' => admin_url('admin-ajax.php', 'relative'),
 				);
 				wp_localize_script('gselajaxloader', 'gsreusablevars', $scriptvars);
-				$content = '<div class="gs-ajax-load-block gs-ajax-load-block-' . $id . '"></div>';
+				$content = '<div class="gs-ajax-load-block gs-ajax-load-block-' . (int)$id . '"></div>';
 
 				$content_post = get_post($id);
 				if (!is_object($content_post)) return false;
@@ -590,7 +750,7 @@ if (!class_exists('GSPB_GreenShift_Settings')) {
 					$style .= '</style>';
 				}
 				if (!empty($height)) {
-					$content = '<div style="min-height:' . $height . '">' . $content . $style . '</div>';
+					$content = '<div style="min-height:' . esc_attr($height) . '">' . $content . $style . '</div>';
 				} else {
 					$content = '<div>' . $content . $style . '</div>';
 				}

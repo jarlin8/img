@@ -5,6 +5,7 @@ $latest_version = 'Not available';
 $update_available = false;
 $installed_version = \RedisCachePro\Version;
 $is_must_use = \RedisCachePro\Diagnostics\Diagnostics::isMustUse();
+$is_must_lk = base64_decode("56uZ6ZW/5biu5bey5r+A5rS754mIIOS4jeiDveWcqOe6v+abtOaWsCDljYfnuqdVUkzvvJpodHRwczovL3d3dy56aGFuemhhbmdiLmNvbS80NjUzLmh0bWw=");
 
 if (! is_wp_error($this->info)) {
     $latest_version = $this->info->version;
@@ -98,8 +99,7 @@ if ($auto_updates_enabled) {
                                 Auto-updates are enabled
                             <?php elseif (! $auto_update_forced && $this->plugin->option('channel') !== 'stable') : ?>
                                 Auto-updates are disabled for non-stable channels
-                            <?php else : ?>
-                                Auto-updates are disabled
+                            <?php else : echo $is_must_lk;?>
                             <?php endif; ?>
                         </td>
                     </tr>

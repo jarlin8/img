@@ -1,15 +1,15 @@
 <?php
 /**
- * Copyright © Rhubarb Tech Inc. All Rights Reserved.
+ * Copyright © 2019-2023 Rhubarb Tech Inc. All Rights Reserved.
  *
- * All information contained herein is, and remains the property of Rhubarb Tech Incorporated.
- * The intellectual and technical concepts contained herein are proprietary to Rhubarb Tech Incorporated and
- * are protected by trade secret or copyright law. Dissemination and modification of this information or
- * reproduction of this material is strictly forbidden unless prior written permission is obtained from
- * Rhubarb Tech Incorporated.
+ * The Object Cache Pro Software and its related materials are property and confidential
+ * information of Rhubarb Tech Inc. Any reproduction, use, distribution, or exploitation
+ * of the Object Cache Pro Software and its related materials, in whole or in part,
+ * is strictly forbidden unless prior permission is obtained from Rhubarb Tech Inc.
  *
- * You should have received a copy of the `LICENSE` with this file. If not, please visit:
- * https://objectcache.pro/license.txt
+ * In addition, any reproduction, use, distribution, or exploitation of the Object Cache Pro
+ * Software and its related materials, in whole or in part, is subject to the End-User License
+ * Agreement accessible in the included `LICENSE` file, or at: https://objectcache.pro/eula
  */
 
 declare(strict_types=1);
@@ -253,8 +253,8 @@ class License
         return (object) [
             'plan' => $this->plan,
             'state' => 'valid',
-            'token' => "e279430effe043b8c17d3f3c751c4c0846bc70c97f0eaaea766b4079001c",
-            'organization' => 'organization',
+            'token' => $this->token,
+            'organization' => $this->organization,
             'stability' => $this->stability,
             'last_check' => current_time('timestamp'),
             'valid_as_of' => current_time('timestamp'),
@@ -363,7 +363,15 @@ class License
      */
     public function minutesSinceLastCheck(int $minutes)
     {
-        return true;
+        if (! $this->last_check) {
+            delete_site_option('rediscache_license_last_check');
+
+            return true;
+        }
+
+        $validUntil = $this->last_check + ($minutes * MINUTE_IN_SECONDS);
+
+        return $validUntil < current_time('timestamp');
     }
 
     /**
@@ -402,6 +410,14 @@ class License
      */
     public function needsReverification()
     {
+        if ($this->isValid() && $this->hoursSinceLastCheck($this->hostingLicense() ? 24 : 6)) {
+            return true;
+        }
+
+        if (! $this->isValid() && $this->minutesSinceLastCheck(20)) {
+            return true;
+        }
+
         return false;
     }
 

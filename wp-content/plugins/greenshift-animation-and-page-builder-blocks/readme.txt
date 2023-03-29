@@ -8,7 +8,7 @@ Requires at least: 6.0
 Tested up to: 6.2
 Requires PHP: 7.0
 License: GPLv2 or later
-Stable tag: 4.8.3
+Stable tag: 5.7.2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 More than 20 special blocks for Gutenberg to build complex pages and animations with highest possible web vitals score.
@@ -35,13 +35,15 @@ Plugin doesn't use predefined styles, frameworks, icon fonts and script librarie
 ✅ Advanced sliders and tabs. Make any kind of content as carousel/slider/tabs. Convert regular gallery to advanced 3d slider
 ✅ Extended background options (color/gradient/videos) and overlays with hover transitions.
 ✅ CSS scroll animations and hover transitions without libraries. 
-✅ AR/VR 3d viewer block, based on google model viewer.
+✅ AR/VR 3d viewer block and Spline3d block.
 ✅ Dynamic blocks: animated headlines, countdown, counters, videos, tabs, togglers, Table of content, progress bars etc.
 ✅ Easily control all options for separate resolutions
 ✅ Parent Hover transitions and background animations
 ✅ Up to 3 shadows for making 3d design effects
 ✅ Custom side and dropdown slide panels, popup builder
 ✅ Local font, GDPR ready
+✅ Figma CSS to block design convertion
+✅ Reusable styles (global styles)
 
 = ADVANCED PAGE DESIGNS AND ANIMATIONS =
 With Greenshift's features, you can create complex pages and animations without code skills and directly inside core editor. Add spacing, positioning, css transform, shadows, borders like you can't do in any other page builder. Use Shadow presets, hover transition presets, overlay transitions, infinite css animations, Headline Effects, Custom Animations, Gradient Backgrounds, Shape Dividers, parental transitions and many more.
@@ -61,10 +63,10 @@ We believe that Greenshift is most optimized plugin for web vitals. It's because
 All our core features are free and will be free always. We don't sell any premium versions and don't limit functionality. In the same time, you may be interesting in extra blocks depending on your type of site. Check full list of addon's [blocks for wordpress](https://greenshiftwp.com/block-gallery/) 
 
 = ANIMATION ADDON =
-You can add any custom animation in core version, but Animation addon will give you more options based on popular GSAP library. Custom parallaxes, different triggers for animations (scroll, hover, click, stagger, batch), controll interpolation with scroll, Pin blocks while scroll, make Smooth flip between states, use Smart Lottie loader, add animated blobs, reveals, mouse interactions, animation chains and connections, text and svg animations. 
+You can add any custom animation in core version, but Animation addon will give you more options based on popular GSAP library. Custom parallaxes, different triggers for animations (scroll, hover, click, stagger, batch), controll interpolation with scroll, Pin blocks while scroll, make Smooth flip between states, use Smart Lottie loader, add animated blobs, reveals, mouse interactions, animation chains and connections, text and svg animations, image sequences and video loaders. Use Rive block to add Rive scenes and our special API to connect dynamic site values and Rive. 
 
 = QUERY ADDON =
-Query addon is usefull if you want to extend dynamic functionality. It has a lot of ready patterns for query loop block, you can customize and extend each of them with special Meta getter block (use to get and show any values from custom field, ACF, ToolSet or taxonomy meta), wishlist block, thumbs and hot counter. Visibility block allows you to show/hide content based on different filters (category, tags, taxonomy, custom field value, user roles, detection of current category). Advanced listing builder helps you to build directory listings.
+Query addon is usefull if you want to extend dynamic functionality. It has a lot of ready patterns for query loop block, you can customize and extend each of them with special Meta getter block (use to get and show any values from custom field, ACF, ToolSet or taxonomy meta), wishlist block, thumbs and hot counter. Visibility block allows you to show/hide content based on different filters (category, tags, taxonomy, custom field value, user roles, detection of current category). Advanced listing builder helps you to build directory listings. Query Builder allows you to build any kind of design for CPT loops and carousels.
 
 = SEO AND MARKETING ADDON =
 We have very long 10 year story of developing different tools for affiliate, review, comparison sites. In coordination with best affiliate professionals and bloggers, we built set of special, highly conversion blocks to earn more profit from your sites. Link parser helpers, offer blocks, comparison and versus tables, listings, score and review boxes, woocommerce boxes. All blocks have special mobile layouts.
@@ -105,6 +107,124 @@ Yes, we guarantee that Greenshift is built on top of google recommendations and 
 7. **Sliding panels, popups.** Build custom sliding panels, add any block, use for mega menus
 
 == Changelog ==
+
+= 5.7 =
+* Added: Spline3D Wordpress block
+* Added: Accessibility options for Sliding panel, toggler, social share buttons
+* Fix: some issues when using duplicate button in some scenarios when blocks have the same styles
+* Fix: child containers for Flexbox have Order option
+* Added: improvements in Slider script, added support for custom breakpoints and pause on autoplay for hover
+
+= 5.6 =
+* Added: Theme palette colors now uses variables instead flat colors
+* Added: Map field supports FSE template creation environment
+* Added: Accessibility labels for Button block
+* Added: Accordion script supports ajax render
+* Added: Repeater block (in Query Addon)
+
+= 5.5 =
+* Added: variable width detection for Row in Greenshift theme (plugin will use Wide width option which you can set in global Style editor)
+* Added: Custom icon option for accordion
+* Added: Right side option for Vertical tabs and increased width value
+* Added: Option to place popup on top of page (useful if you have long forms in popup)
+* Added: Color picker in Color component
+* Added: Refreshed Typography options
+* Added: Map block and Dynamic Map option
+* Added: Dynamic Label option for Button block
+* Added: Transform origin point for css transformations
+* Added: Reusable style feature will clean local styles when you add or update reusable style to block
+* Fix: some scenarios when Gutenberg plugin and Background options are not compatible
+
+= 5.4.1 =
+* Added: Performance improvements in style saving editor function
+
+= 5.4 =
+* Added: Progress bar has new Circle Style type
+* Added: Dynamic fields for progress bar
+* Added: Dynamic fields for counter
+* Added: Option to retrieve values from multidimensional arrays in dynamic fields
+
+= 5.3.3 =
+* Added: Gallery block for Query addon
+
+= 5.3 =
+* Added: Option to reorder Advanced lists
+* Added: New Price table patterns
+* Added: Videobox lightbox improvements
+
+= 5.2 =
+* Added: Updated Sizing Panel with variable width, height features
+* Added: Custom css grid template
+* Added: Variable font weight options for Advanced typography options
+* Added: Refreshed UI for better matching with core Wordpress and popular WP themes
+* Added: Security improvements for shortcode rendering
+
+= 5.1.3 =
+* Added: Custom Border options for Slider arrows
+
+= 5.1.1 =
+* Added: Library for Site editor
+
+= 5.1 =
+* Added: Title option to Advanced list links for better accessability
+* Added: Overflow auto option for Spacing panel
+
+= 5.0 =
+* Added: Animation panel has improved GSAP options with all basic transformations, scroll interpolation and triggers (this still requires Animation addon)
+* Added: [Switcher block](https://greenshiftwp.com/switcher-block/)
+* Added: Option to enable script delay for maximum web vitals score on pages with high amount of scripts [How to get 100 web vitals score on highly animated pages](https://greenshiftwp.com/quick-tip-how-to-make-extremely-heavily-animated-pages-with-100-score-on-web-vitals/)
+* Added: [Wireframe Library of patterns](https://greenshift.wpsoul.net/)
+* Added: Dynamic option for TOC block (for using in reusable templates)
+* Added: more predefined icons for Icon Picker and some improves in UI
+
+= 4.9.9 =
+* Added: TOC sticky panel has option to set breakpoint for collapsing
+* Added: Trigger start, end, infinite animation options for Quick Animation panel in GSAP
+* Fix: Fixed outside heading option for subtitle
+
+= 4.9.8 =
+* Added: Reusable ajax loading on hover uses click trigger if used on mobiles
+* Added: Position and Resize quick toolbar buttons are working in FSE now
+
+= 4.9.4 =
+* Added: Custom decimal values allows in spacing panel
+* Added: Reusable style Change/Remove selector has preselected class if you used it early
+
+= 4.9.3 =
+* Added: Vertical mode to Advanced typography component
+* Added: Tabs support inner tabs
+
+= 4.9.2 =
+* Added: CSS grid has up to 16 columns
+
+= 4.9.1 =
+* Added: CSS grid and Flexbox has option to control flex and grid parameters in each child Container separately [Overview of CSS grid control](https://www.facebook.com/groups/greenshiftwp/posts/887978685974738)
+
+= 4.9 =
+* Added: Advanced list have option to enable columns
+
+= 4.8.9 =
+* Added: Security improvements and image block fix for scenarios when image size is not available 
+
+= 4.8.8 =
+* Added: Margin auto switcher to spacing options 
+
+= 4.8.7 =
+* Added: Additional Size panel for Rows. 
+* Added: Skew options for CSS transforms
+* Added: Post link Post processor for Meta getter block
+* Added: Cookie option for visibility block
+
+= 4.8.6 =
+* Added: Improved Size panel. Added size panel to Advanced heading, text, container blocks
+
+= 4.8.5 =
+* Fix: fix widget notices and border radius issues
+
+= 4.8.4 =
+* Added: Responsive control to border radius
+* Added: Postfix to Counter block
+* Added: Removed redundant outline borders and toolbars on column and container hovers in editor when you hover on child element
 
 = 4.8.3 =
 * Added: Mailto links data type for Meta getter block

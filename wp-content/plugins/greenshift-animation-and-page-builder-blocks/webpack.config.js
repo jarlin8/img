@@ -14,6 +14,7 @@
          entry: {
             index: './src/index.js',
             gspbLibrary: './src/gspb-library/index.js',
+            gspbSiteEditor: './src/gspb-library/site-editor.js',
             gspbCustomEditor: './src/customJS/editor/index.js',
          },
          resolve: {

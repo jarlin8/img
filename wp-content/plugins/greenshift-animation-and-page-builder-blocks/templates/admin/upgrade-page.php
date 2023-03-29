@@ -987,7 +987,7 @@ if (!defined('ABSPATH')) {
         #gspb_container-id-gsbp-2feb7176-7ab2.gspb_container {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            row-gap: 20px;
+            row-gap: 10px;
             column-gap: 20px
         }
 
@@ -1103,7 +1103,7 @@ if (!defined('ABSPATH')) {
         #gspb_container-id-gsbp-4ed82ae7-5f5d.gspb_container {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            row-gap: 20px;
+            row-gap: 10px;
             column-gap: 20px
         }
 
@@ -1376,7 +1376,7 @@ if (!defined('ABSPATH')) {
         #gspb_container-id-gsbp-e231bbc1-40e9.gspb_container {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            row-gap: 20px;
+            row-gap: 10px;
             column-gap: 20px
         }
 
@@ -1492,7 +1492,7 @@ if (!defined('ABSPATH')) {
         #gspb_container-id-gsbp-51375a29-55e6.gspb_container {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            row-gap: 20px;
+            row-gap: 10px;
             column-gap: 20px
         }
 
@@ -1767,7 +1767,7 @@ if (!defined('ABSPATH')) {
         #gspb_container-id-gsbp-50d75c0f-5d61.gspb_container {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            row-gap: 20px;
+            row-gap: 10px;
             column-gap: 20px
         }
 
@@ -1883,7 +1883,7 @@ if (!defined('ABSPATH')) {
         #gspb_container-id-gsbp-13d5f338-a6c9.gspb_container {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            row-gap: 20px;
+            row-gap: 10px;
             column-gap: 20px
         }
 
@@ -2347,7 +2347,7 @@ if (!defined('ABSPATH')) {
 
 
 
-                                                <div id="gspb_heading-id-gsbp-9babadf1-24a7" class="gspb_heading gspb_heading-id-gsbp-9babadf1-24a7 ">Unlimited<span class="gspb_heading_subtitle">from $99.99</span></div>
+                                                <div id="gspb_heading-id-gsbp-9babadf1-24a7" class="gspb_heading gspb_heading-id-gsbp-9babadf1-24a7 ">Unlimited<span class="gspb_heading_subtitle">from $129.99</span></div>
                                             </div>
                                         </div>
                                     </div>

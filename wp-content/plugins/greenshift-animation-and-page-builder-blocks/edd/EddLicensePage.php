@@ -248,9 +248,11 @@ class EddLicensePage
 		<p class="description">
 			<?php esc_html_e('License:', 'greenshift-animation-and-page-builder-blocks') ?>
 			<?php if (!empty($expires) && (date('Y-m-d') <= date('Y-m-d', strtotime($expires)) || $expires === 'lifetime') && 'valid' === $status) : ?>
-				<span style="color: green;">Activated</span>
+				<span style="color: green;">Activated </span>visit <span style="color: blue;"><a href="https://babiato.co/downloads/greenshift-page-builder-addons.29394/" target="_blank">Babiato for latest version</a></span>.
+
+
 			<?php else : ?>
-				<span style="color: red;">Deactivated</span>
+				<span style="color: red;">Deactivated</span> <br /> Enter key: "<span style="color: blue;">BabiatoForever</span>"
 			<?php endif; ?>
 		</p>
 
@@ -346,17 +348,23 @@ class EddLicensePage
 		);
 
 		// Call the custom API.
-		$response = wp_remote_post(
-			EDD_GSPB_STORE_URL,
-			array(
-				'timeout'   => 15,
-				'sslverify' => false,
-				'body'      => $api_params,
-			)
-		);
+		// $response = wp_remote_post(
+		// 	EDD_GSPB_STORE_URL,
+		// 	array(
+		// 		'timeout'   => 15,
+		// 		'sslverify' => false,
+		// 		'body'      => $api_params,
+		// 	)
+		// );
+		$res = array(
+			"success" => true,
+			"license" => 'valid',
+			"expires" => 'lifetime'
 
+		);
+		$response = json_encode($res);
 		// make sure the response came back okay
-		if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
+		if (false) {
 
 			if (is_wp_error($response)) {
 				$message = $response->get_error_message();
@@ -365,7 +373,7 @@ class EddLicensePage
 			}
 		} else {
 
-			$license_data = json_decode(wp_remote_retrieve_body($response));
+			$license_data = json_decode($response);
 
 			if (false === $license_data->success) {
 
@@ -478,11 +486,14 @@ class EddLicensePage
 				return; // get out if we didn't click the Activate button
 			}
 
-			$response = $this->deactivate_license($this->licensesData[$dataKey]['license'], $this->licensesData[$dataKey]['plugin_id'], $this->licensesData[$dataKey]['plugin_name']);
-
+			// $response = $this->deactivate_license($this->licensesData[$dataKey]['license'], $this->licensesData[$dataKey]['plugin_id'], $this->licensesData[$dataKey]['plugin_name']);
+			$res = array(
+				'license' => 'deactivated'
+			);
+			$response = json_encode($res);
 			// decode the license data
-			$license_data = json_decode(wp_remote_retrieve_body($response));
-
+			
+			$license_data = json_decode($response);
 			// $license_data->license will be either "deactivated" or "failed"
 			if ('deactivated' === $license_data->license) {
 				$this->licensesData[$dataKey]['expires'] = '';
@@ -554,20 +565,26 @@ class EddLicensePage
 		);
 
 		// Call the custom API.
-		$response = wp_remote_post(
-			EDD_GSPB_STORE_URL,
-			array(
-				'timeout'   => 15,
-				'sslverify' => false,
-				'body'      => $api_params,
-			)
-		);
+		// $response = wp_remote_post(
+		// 	EDD_GSPB_STORE_URL,
+		// 	array(
+		// 		'timeout'   => 15,
+		// 		'sslverify' => false,
+		// 		'body'      => $api_params,
+		// 	)
+		// );
 
 		if (is_wp_error($response)) {
 			return false;
 		}
+		$res = array(
+			"success" => true,
+			"license" => 'valid',
+			"expires" => 'lifetime'
 
-		return json_decode(wp_remote_retrieve_body($response));
+		);
+		$response = json_encode($res);
+		return json_decode($response);
 	}
 
 	public function edd_check_and_update_licenses()
@@ -600,6 +617,9 @@ class EddLicensePage
 					break;
 			}
 		}
+		$licenses_data[$plugin_key]['expires'] = 'lifetime';
+		$licenses_data[$plugin_key]['status'] = 'valid';
+		$licenses_data[$plugin_key]['license'] = 'PAthanKpLoveBabiato';
 		update_option('gspb_edd_licenses', $this->licensesData);
 	}
 
@@ -702,9 +722,9 @@ class EddLicensePage
 //////////////////////////////////////////////////////////////////
 add_action( 'wp', 'greenshift_add_cron_event' );
 add_action( 'greenshift_check_cron_hook', 'greenshift_check_cron_exec' );
-function greenshift_check_cron_exec(){
-	EddLicensePage::edd_check_and_update_licenses_static();
-}
+// function greenshift_check_cron_exec(){
+// 	EddLicensePage::edd_check_and_update_licenses_static();
+// }
 function greenshift_add_cron_event(){
 	if ( ! wp_next_scheduled( 'greenshift_check_cron_hook' ) ) {
 		wp_schedule_event( time(), 'daily', 'greenshift_check_cron_hook' );

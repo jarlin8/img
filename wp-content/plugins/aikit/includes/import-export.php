@@ -100,7 +100,7 @@ class AIKit_Import_Export_Manager {
             update_option('aikit_setting_images_size_large', $json['imageSizesLarge']);
         }
 
-        if (isset($json['prompts'])) {
+        if (isset($json['prompts']) && $json['prompts'] !== false) {
             update_option('aikit_prompts', $json['prompts']);
 
             // get a vertical slice array for all prompts for a given language

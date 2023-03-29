@@ -29,3 +29,7 @@
     display: inline-block;
     margin-left: 5px;
 }
+
+.gspb_settings_form .delay_js_optionsrow, .gspb_settings_form .delay_js_pagerow{
+    display: none;
+}

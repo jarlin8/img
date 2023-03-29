@@ -37,6 +37,7 @@
     "lodash": "^4.17.21",
     "react-select": "^5.2.1",
     "use-debounce": "^8.0.4",
+    "use-eye-dropper": "^1.4.3",
     "xss-filters": "^1.2.7"
   }
 }
