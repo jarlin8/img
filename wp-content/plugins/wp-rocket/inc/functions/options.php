@@ -23,13 +23,25 @@ function get_rocket_option( $option, $default = false ) { // phpcs:ignore WordPr
 }
 
 /**
+ * Export settings into JSON.
+ *
+ * @return array
+ */
+function rocket_export_options() {
+	$site_name = get_rocket_parse_url( get_home_url() );
+	$site_name = $site_name['host'] . $site_name['path'];
+	$filename  = sprintf( 'wp-rocket-settings-%s-%s-%s.json', $site_name, date( 'Y-m-d' ), uniqid() ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
+	return [ $filename, wp_json_encode( get_option( WP_ROCKET_SLUG ), JSON_PRETTY_PRINT ) ]; // do not use get_rocket_option() here.
+}
+
+/**
  * Update a WP Rocket option.
  *
  * @since 3.0 Use the new options classes
  * @since 2.7
  *
  * @param  string $key    The option name.
- * @param  string $value  The value of the option.
+ * @param  mixed  $value  The value of the option.
  * @return void
  */
 function update_rocket_option( $key, $value ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
@@ -235,13 +247,6 @@ function get_rocket_cache_reject_uri( $force = false, $show_safe_content = true 
 		return '';
 	}
 
-	$uris = array_map(
-		function ( $uri ) {
-			return user_trailingslashit( $uri );
-		},
-		$uris
-		);
-
 	if ( '' !== $home_root ) {
 		foreach ( $uris as $i => $uri ) {
 			if ( preg_match( '/' . $home_root_escaped . '\(?\//', $uri ) ) {
@@ -403,6 +408,7 @@ function get_rocket_cache_query_string() { // phpcs:ignore WordPress.NamingConve
  */
 function rocket_valid_key() {
 	return true;
+
 }
 
 /**

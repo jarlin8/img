@@ -31,6 +31,13 @@ class HostResolver {
 			return self::$hostname;
 		}
 
+		if ( isset( $_SERVER['GROUPONE_BRAND_NAME'] ) ) {
+			if ( 'one.com' === strtolower( sanitize_text_field( wp_unslash( $_SERVER['GROUPONE_BRAND_NAME'] ) ) ) ) {
+				self::$hostname = 'onecom';
+				return 'onecom';
+			}
+		}
+
 		if ( isset( $_SERVER['cw_allowed_ip'] ) ) {
 			self::$hostname = 'cloudways';
 

@@ -40,7 +40,6 @@ return array(
     'WP_Rocket\\ServiceProvider\\Common_Subscribers' => $baseDir . '/inc/classes/ServiceProvider/class-common-subscribers.php',
     'WP_Rocket\\ServiceProvider\\Options' => $baseDir . '/inc/classes/ServiceProvider/class-options.php',
     'WP_Rocket\\Subscriber\\Admin\\Settings\\Beacon_Subscriber' => $baseDir . '/inc/deprecated/subscriber/admin/Settings/class-beacon-subscriber.php',
-    'WP_Rocket\\Subscriber\\Media\\Webp_Subscriber' => $baseDir . '/inc/classes/subscriber/Media/class-webp-subscriber.php',
     'WP_Rocket\\Subscriber\\Optimization\\Dequeue_JQuery_Migrate_Subscriber' => $baseDir . '/inc/deprecated/subscriber/Optimization/class-dequeue-jquery-migrate-subscriber.php',
     'WP_Rocket\\Subscriber\\Optimization\\Minify_HTML_Subscriber' => $baseDir . '/inc/deprecated/subscriber/admin/Optimization/class-minify-html-subscriber.php',
     'WP_Rocket\\Subscriber\\Third_Party\\Plugins\\Images\\Webp\\EWWW_Subscriber' => $baseDir . '/inc/classes/subscriber/third-party/plugins/Images/Webp/class-ewww-subscriber.php',

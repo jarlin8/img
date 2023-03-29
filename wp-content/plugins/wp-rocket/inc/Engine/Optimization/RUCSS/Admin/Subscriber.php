@@ -68,8 +68,10 @@ class Subscriber implements Subscriber_Interface {
 			'update_option_' . $slug                  => [
 				[ 'clean_used_css_and_cache', 9, 2 ],
 				[ 'maybe_set_processing_transient', 50, 2 ],
+				[ 'maybe_unlock_preload', 9, 2 ],
 			],
 			'switch_theme'                            => 'truncate_used_css',
+			'permalink_structure_changed'             => 'truncate_used_css',
 			'wp_trash_post'                           => 'delete_used_css_on_update_or_delete',
 			'delete_post'                             => 'delete_used_css_on_update_or_delete',
 			'clean_post_cache'                        => 'delete_used_css_on_update_or_delete',
@@ -82,7 +84,6 @@ class Subscriber implements Subscriber_Interface {
 				[ 'clear_usedcss_result' ],
 				[ 'display_processing_notice' ],
 				[ 'display_success_notice' ],
-				[ 'display_wrong_license_notice' ],
 				[ 'display_no_table_notice' ],
 				[ 'notice_write_permissions' ],
 			],
@@ -106,7 +107,6 @@ class Subscriber implements Subscriber_Interface {
 			'wp_ajax_rocket_spawn_cron'               => 'spawn_cron',
 			'rocket_deactivation'                     => 'cancel_queues',
 			'admin_head-tools_page_action-scheduler'  => 'delete_as_tables_transient_on_tools_page',
-			'pre_get_rocket_option_remove_unused_css' => 'disable_russ_on_wrong_license',
 			'rocket_before_rollback'                  => 'cancel_queues',
 		];
 	}
@@ -136,6 +136,30 @@ class Subscriber implements Subscriber_Interface {
 		}
 
 		$this->used_css->delete_used_css( untrailingslashit( $url ) );
+	}
+
+	/**
+	 * Maybe unlock all locked preload urls.
+	 *
+	 * @param array $old_value An array of submitted values for the settings.
+	 * @param array $value     An array of previous values for the settings.
+	 *
+	 * @return void
+	 */
+	public function maybe_unlock_preload( $old_value, $value ) {
+		if ( ! isset( $value['remove_unused_css'], $old_value['remove_unused_css'] ) ) {
+			return;
+		}
+
+		if ( $value['remove_unused_css'] === $old_value['remove_unused_css'] ) {
+			return;
+		}
+
+		if ( $value['remove_unused_css'] ) {
+			return;
+		}
+
+		do_action( 'rocket_preload_unlock_all_urls' );
 	}
 
 	/**
@@ -183,6 +207,16 @@ class Subscriber implements Subscriber_Interface {
 
 		$this->delete_used_css_rows();
 		$this->set_notice_transient();
+
+		wp_safe_remote_get(
+			home_url(),
+			[
+				'timeout'    => 0.01,
+				'blocking'   => false,
+				'user-agent' => 'WP Rocket/Homepage Preload',
+				'sslverify'  => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			]
+		);
 	}
 
 	/**
@@ -312,6 +346,16 @@ class Subscriber implements Subscriber_Interface {
 
 		$this->set_notice_transient();
 
+		wp_remote_get(
+			home_url(),
+			[
+				'timeout'    => 0.01,
+				'blocking'   => false,
+				'user-agent' => 'WP Rocket/Homepage Preload',
+				'sslverify'  => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+			]
+		);
+
 		wp_safe_redirect( esc_url_raw( wp_get_referer() ) );
 		rocket_get_constant( 'WP_ROCKET_IS_TESTING', false ) ? wp_die() : exit;
 	}
@@ -401,21 +445,6 @@ class Subscriber implements Subscriber_Interface {
 	 */
 	public function display_success_notice() {
 		$this->settings->display_success_notice();
-	}
-
-	/**
-	 * Display a notification on wrong license.
-	 *
-	 * @return void
-	 */
-	public function display_wrong_license_notice() {
-		$transient = get_transient( 'wp_rocket_no_licence' );
-
-		if ( ! $transient ) {
-			return;
-		}
-
-		$this->settings->display_wrong_license_notice();
 	}
 
 	/**
@@ -658,18 +687,6 @@ class Subscriber implements Subscriber_Interface {
 		}
 
 		$this->database->truncate_used_css_table();
-	}
-
-	/**
-	 * Disable RUCSS on wrong license.
-	 *
-	 * @return bool
-	 */
-	public function disable_russ_on_wrong_license() {
-		if ( false !== get_transient( 'wp_rocket_no_licence' ) ) {
-			return false;
-		}
-		return null;
 	}
 
 	/**
