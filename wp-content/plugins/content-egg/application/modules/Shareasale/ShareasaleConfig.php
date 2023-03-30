@@ -10,10 +10,11 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  * ShareasaleConfig class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ShareasaleConfig extends AffiliateParserModuleConfig {
+class ShareasaleConfig extends AffiliateParserModuleConfig
+{
 
     public function options()
     {
@@ -129,5 +130,4 @@ class ShareasaleConfig extends AffiliateParserModuleConfig {
 
         return array_merge($parent, $optiosn);
     }
-
 }

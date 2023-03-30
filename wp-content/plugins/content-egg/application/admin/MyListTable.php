@@ -13,11 +13,11 @@ use ContentEgg\application\helpers\TemplateHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 if (!class_exists('\WP_List_Table'))
 {
-    require_once( \ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+    require_once(\ABSPATH . 'wp-admin/includes/class-wp-list-table.php');
 }
 
 class MyListTable extends \WP_List_Table
@@ -80,11 +80,12 @@ class MyListTable extends \WP_List_Table
         $total_items = (int) $this->model->getDb()->get_var('SELECT FOUND_ROWS();');
 
         $this->set_pagination_args(
-                array(
-                    'total_items' => $total_items,
-                    'per_page' => static::per_page,
-                    'total_pages' => ceil($total_items / static::per_page)
-        ));
+            array(
+                'total_items' => $total_items,
+                'per_page' => static::per_page,
+                'total_pages' => ceil($total_items / static::per_page)
+            )
+        );
     }
 
     function column_default($item, $column_name)
@@ -133,7 +134,8 @@ class MyListTable extends \WP_List_Table
     function column_cb($item)
     {
         return sprintf(
-                '<input type="checkbox" name="id[]" value="%d" />', $item['id']
+            '<input type="checkbox" name="id[]" value="%d" />',
+            $item['id']
         );
     }
 
@@ -148,12 +150,12 @@ class MyListTable extends \WP_List_Table
     function process_bulk_action()
     {
         if ($this->current_action() === 'delete' && !empty($_REQUEST['id']))
-        {            
+        {
             if (!isset($_REQUEST['_wpnonce']) || !\wp_verify_nonce(sanitize_key($_REQUEST['_wpnonce']), 'bulk-' . $this->_args['plural']))
                 die('Invalid nonce');
 
             $ids = array_map('absint', (array) $_REQUEST['id']);
-            
+
             foreach ($ids as $id)
             {
                 $id = (int) $id;
@@ -161,5 +163,4 @@ class MyListTable extends \WP_List_Table
             }
         }
     }
-
 }

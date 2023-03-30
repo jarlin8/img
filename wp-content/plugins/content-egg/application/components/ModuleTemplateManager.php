@@ -12,9 +12,10 @@ use ContentEgg\application\components\ModuleManager;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ModuleTemplateManager extends TemplateManager {
+class ModuleTemplateManager extends TemplateManager
+{
 
     const TEMPLATE_DIR = 'templates';
     const CUSTOM_TEMPLATE_DIR = 'content-egg-templates';
@@ -49,7 +50,8 @@ class ModuleTemplateManager extends TemplateManager {
         if (ModuleManager::isCustomModule($this->module_id))
         {
             $path = \WP_CONTENT_DIR . '/' . \ContentEgg\CUSTOM_MODULES_DIR . '/' . $path_id . '/' . self::TEMPLATE_DIR;
-        } else
+        }
+        else
         {
             $path = \ContentEgg\PLUGIN_PATH . 'application/modules/' . $path_id . '/' . self::TEMPLATE_DIR;
         }
@@ -65,7 +67,7 @@ class ModuleTemplateManager extends TemplateManager {
             'theme' => \get_template_directory() . '/' . self::CUSTOM_TEMPLATE_DIR . '/' . $path_id,
             'custom' => \WP_CONTENT_DIR . '/' . self::CUSTOM_TEMPLATE_DIR . '/' . $path_id,
         );
-        
+
         $paths = \apply_filters('content_egg_module_template_dirs', $paths, $this->module_id, $path_id);
 
         return $paths;
@@ -115,5 +117,4 @@ class ModuleTemplateManager extends TemplateManager {
         $view_path = $this->getTempateDir() . DIRECTORY_SEPARATOR . TextHelper::clear($view_name) . '.php';
         $this->renderPath($view_path, $data);
     }
-
 }

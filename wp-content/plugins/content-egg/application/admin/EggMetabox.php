@@ -18,9 +18,10 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class EggMetabox {
+class EggMetabox
+{
 
     private $app_params = array();
 
@@ -28,6 +29,8 @@ class EggMetabox {
     {
         if (Plugin::isActivated() && LManager::isNulled())
             return;
+
+        \add_action('wp_ajax_cegg_update_products', array($this, 'ajaxUpdateProducts'));
 
         \add_action('add_meta_boxes', array($this, 'addMetabox'));
         \add_action('save_post', array($this, 'saveMeta'));
@@ -74,15 +77,28 @@ class EggMetabox {
      */
     public function renderMetabox($post)
     {
-        echo '<div ng-app="contentEgg" class="egg-container" id="content-egg" ng-cloak>';
-        echo '<div ng-controller="ContentEggController" class="container-fluid">';
-
-        PluginAdmin::render('metabox_general');
-
         $modules = ModuleManager::getInstance()->getModules(true);
         $module_ids = \apply_filters('content_egg_metabox_modules', array_keys($modules));
         $modules = array_intersect_key($modules, array_flip($module_ids));
 
+        $keywordsExist = false;
+        $dataExist = false;
+        foreach ($modules as $module)
+        {
+            if (!$keywordsExist && ContentManager::isAutoupdateKeywordExists($post->ID, $module->getId()))
+                $keywordsExist = true;
+
+            if (!$dataExist && ContentManager::isDataExists($post->ID, $module->getId()))
+                $dataExist = true;
+
+            if ($keywordsExist && $dataExist)
+                break;
+        }
+
+        echo '<div ng-app="contentEgg" class="egg-container" id="content-egg" ng-cloak>';
+        echo '<div ng-controller="ContentEggController" class="container-fluid" style="padding: 0px;">';
+
+        PluginAdmin::render('metabox_general', array('post' => $post, 'keywordsExist' => $keywordsExist, 'dataExist' => $dataExist));
         foreach ($modules as $module)
         {
             $module->enqueueScripts();
@@ -221,25 +237,14 @@ class EggMetabox {
         if (!isset($_POST['contentegg_nonce']))
             return;
 
-        /*
-         * why shouldn't i save metadata when its a revision?
-         *
-         * Apparently *_post_meta functions will automatically change
-         * to parent post id if passed revision post id. So you might modify original post,
-         * thinking you are modifying revision.
-         * 
-          if (\wp_is_post_revision($post_id))
-          return;
-         * 
-         */
-
         \check_admin_referer('contentegg_metabox', 'contentegg_nonce');
 
         if (isset($_POST['post_type']) && $_POST['post_type'] == 'page')
         {
             if (!current_user_can('edit_page', $post_id))
                 return;
-        } else
+        }
+        else
         {
             if (!current_user_can('edit_post', $post_id))
                 return;
@@ -257,7 +262,7 @@ class EggMetabox {
         {
             $keywords = array_map('sanitize_text_field', wp_unslash($_POST['cegg_updateKeywords']));
         }
-        
+
         $update_params = array();
         if (isset($_POST['cegg_updateParams']))
         {
@@ -281,7 +286,8 @@ class EggMetabox {
                 {
                     \update_post_meta($post_id, ContentManager::META_PREFIX_UPDATE_PARAMS . $module_id, json_decode($update_params[$module_id], true));
                 }
-            } else
+            }
+            else
             {
                 \delete_post_meta($post_id, ContentManager::META_PREFIX_KEYWORD . $module_id);
                 \delete_post_meta($post_id, ContentManager::META_PREFIX_UPDATE_PARAMS . $module_id);
@@ -332,4 +338,39 @@ class EggMetabox {
         return $data;
     }
 
+    public function ajaxUpdateProducts()
+    {
+        if (!isset($_POST['contentegg_nonce']) || !\wp_verify_nonce($_POST['contentegg_nonce'], 'contentegg_metabox'))
+            \wp_die('Invalid nonce');
+
+        if (!\current_user_can('edit_posts'))
+            \wp_die('You don\'t have access to this page.');
+
+        $post_id = isset($_POST['post_id']) ? intval(wp_unslash($_POST['post_id'])) : null;
+
+        if (!$post_id)
+            \wp_die('Invalid post ID');
+
+        @set_time_limit(60);
+
+        $action = isset($_POST['btn']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_POST['btn']))) : null;
+        if ($action == 'cegg_update_lists')
+            self::updateByKeyword($post_id);
+        elseif ($action == 'cegg_update_prices')
+            self::updateItems($post_id);
+        else
+            \wp_die('Invalid action');
+
+        \wp_die();
+    }
+
+    private function updateByKeyword($post_id)
+    {
+        ContentManager::updateAllByKeyword($post_id);
+    }
+
+    private function updateItems($post_id)
+    {
+        ContentManager::updateAllItems($post_id);
+    }
 }

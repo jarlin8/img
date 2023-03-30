@@ -16,7 +16,7 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class AutoblogModel extends Model
 {
@@ -113,7 +113,8 @@ class AutoblogModel extends Model
             $this->getDb()->insert($this->tableName(), $item);
 
             return $this->getDb()->insert_id;
-        } else
+        }
+        else
         {
             $this->getDb()->update($this->tableName(), $item, array('id' => $item['id']));
 
@@ -175,7 +176,8 @@ class AutoblogModel extends Model
             try
             {
                 $post_id = $this->createPost($keyword, $autoblog);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 $error_mess = TemplateHelper::formatDatetime(time(), 'timestamp');
                 if (strlen($keyword) < 100)
@@ -184,6 +186,8 @@ class AutoblogModel extends Model
                 }
                 $error_mess .= ' - ';
                 $autoblog['last_error'] = $error_mess . $e->getMessage();
+
+                \do_action('cegg_autoblog_error_handler', $autoblog, $e);
             }
 
             if ($post_id)
@@ -248,7 +252,8 @@ class AutoblogModel extends Model
             if (count($k_parts) == 1 && !$keyword)
             {
                 $keyword = trim($k);
-            } elseif (count($k_parts) == 2)
+            }
+            elseif (count($k_parts) == 2)
             {
                 $module_id = trim($k_parts[0]);
                 $module_id = str_replace(' ', '', $module_id); // name -> id
@@ -258,7 +263,8 @@ class AutoblogModel extends Model
                     continue;
                 }
                 $tmp_module_keywords[$module_id] = trim($k_parts[1]);
-            } else
+            }
+            else
             {
                 continue;
             } //error
@@ -275,7 +281,8 @@ class AutoblogModel extends Model
             if (isset($tmp_module_keywords[$module_id]))
             {
                 $module_keywords[$module_id] = $tmp_module_keywords[$module_id];
-            } else
+            }
+            else
             {
                 $module_keywords[$module_id] = $keyword;
             }
@@ -290,7 +297,8 @@ class AutoblogModel extends Model
             try
             {
                 $data = $module->doMultipleRequests($module_keywords[$module_id], $autoblog, true);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 // error
                 $data = null;
@@ -302,7 +310,8 @@ class AutoblogModel extends Model
                     $data[$i]->keyword = $module_keywords[$module_id];
                 }
                 $modules_data[$module->getId()] = $data;
-            } elseif ($autoblog['required_modules'] && in_array($module_id, $autoblog['required_modules']))
+            }
+            elseif ($autoblog['required_modules'] && in_array($module_id, $autoblog['required_modules']))
             {
                 throw new \Exception(sprintf(__('Data was not found for required module %s.', 'content-egg'), $module_id));
             }
@@ -341,7 +350,7 @@ class AutoblogModel extends Model
         $product_sync = GeneralConfig::getInstance()->option('woocommerce_product_sync');
         $woocommerce_modules = GeneralConfig::getInstance()->option('woocommerce_modules');
 
-        if ($autoblog['post_type'] == 'product' && ( $product_sync == 'manually' || !array_intersect_key($modules_data, $woocommerce_modules) ) && $main_product)
+        if ($autoblog['post_type'] == 'product' && ($product_sync == 'manually' || !array_intersect_key($modules_data, $woocommerce_modules)) && $main_product)
         {
             foreach ($modules_data[$main_product['module_id']] as $i => $product)
             {
@@ -372,7 +381,8 @@ class AutoblogModel extends Model
         if ((bool) $autoblog['post_status'])
         {
             $post_status = 'publish';
-        } else
+        }
+        else
         {
             $post_status = 'pending';
         }
@@ -387,7 +397,8 @@ class AutoblogModel extends Model
                 if (\is_serialized($cf_value))
                 {
                     $cf_value = @unserialize($cf_value);
-                } else
+                }
+                else
                 {
                     $cf_value = AutoblogModel::buildTemplate($cf_value, $modules_data, $keyword, $module_keywords, $main_product);
                 }
@@ -400,7 +411,8 @@ class AutoblogModel extends Model
         if ($autoblog['tags'])
         {
             $tags_input = AutoblogModel::buildTemplate($autoblog['tags'], $modules_data, $keyword, $module_keywords, $main_product);
-        } else
+        }
+        else
         {
             $tags_input = '';
         }
@@ -411,20 +423,24 @@ class AutoblogModel extends Model
             if ($autoblog['post_type'] == 'product')
             {
                 $categ_id = self::createWooNestedCategories($main_product['categoryPath']);
-            } else
+            }
+            else
             {
                 $categ_id = self::createNestedCategories($main_product['categoryPath']);
             }
-        } elseif (!empty($autoblog['config']['dynamic_categories']) && $autoblog['config']['dynamic_categories'] && $main_product['category'])
+        }
+        elseif (!empty($autoblog['config']['dynamic_categories']) && $autoblog['config']['dynamic_categories'] && $main_product['category'])
         {
             if ($autoblog['post_type'] == 'product')
             {
                 $categ_id = self::createWooCategory($main_product['category']);
-            } else
+            }
+            else
             {
                 $categ_id = self::createCategory($main_product['category']);
             }
-        } else
+        }
+        else
         {
             $categ_id = $autoblog['category'];
         }
@@ -484,7 +500,8 @@ class AutoblogModel extends Model
             if ($i == count($modules_data))
             {
                 $last_iteration = true;
-            } else
+            }
+            else
             {
                 $last_iteration = false;
             }
@@ -495,7 +512,7 @@ class AutoblogModel extends Model
             }
         }
 
-        \do_action('cegg_autoblog_post_create', $post_id);
+        \do_action('cegg_autoblog_post_create', $post_id, $autoblog);
 
         // set featured image. external or internal
         FeaturedImage::doAction($post_id);
@@ -527,7 +544,8 @@ class AutoblogModel extends Model
                 if ($rmatches)
                 {
                     $replace[$pattern] = rand((int) $rmatches[1], (int) $rmatches[2]);
-                } else
+                }
+                else
                 {
                     $replace[$pattern] = rand(0, 9999999);
                 }
@@ -550,7 +568,8 @@ class AutoblogModel extends Model
                 if (isset($module_keywords[$module_id]))
                 {
                     $replace[$pattern] = $module_keywords[$module_id];
-                } else
+                }
+                else
                 {
                     $replace[$pattern] = '';
                 }
@@ -571,7 +590,8 @@ class AutoblogModel extends Model
                 {
                     $tpattern = str_replace('.extra.', '.', $pattern);
                     $extra = true;
-                } else
+                }
+                else
                     $tpattern = $pattern;
 
                 $pattern_parts = explode('.', $tpattern);
@@ -594,7 +614,8 @@ class AutoblogModel extends Model
                 {
                     $tpattern = str_replace('.extra.', '.', $pattern);
                     $extra = true;
-                } else
+                }
+                else
                     $tpattern = $pattern;
 
                 $pattern_parts = explode('.', $tpattern);
@@ -603,11 +624,13 @@ class AutoblogModel extends Model
                 {
                     $index = (int) $pattern_parts[1]; // Amazon.0.title
                     $var_name = $pattern_parts[2];
-                } elseif (count($pattern_parts) == 2)
+                }
+                elseif (count($pattern_parts) == 2)
                 {
                     $index = 0; // Amazon.title
                     $var_name = $pattern_parts[1];
-                } else
+                }
+                else
                 {
                     $replace[$pattern] = '';
                     continue;
@@ -657,7 +680,8 @@ class AutoblogModel extends Model
         if ($keyword[0] == '[')
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -679,7 +703,8 @@ class AutoblogModel extends Model
         if ($total_autoblogs)
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -706,7 +731,7 @@ class AutoblogModel extends Model
 
         if (!function_exists('\wp_create_category'))
         {
-            require_once( \ABSPATH . 'wp-admin/includes/taxonomy.php' );
+            require_once(\ABSPATH . 'wp-admin/includes/taxonomy.php');
         }
 
         $parent = 0;
@@ -754,5 +779,4 @@ class AutoblogModel extends Model
 
         return $parent;
     }
-
 }

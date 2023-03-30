@@ -9,10 +9,11 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  */
-class CurrencyHelper {
+class CurrencyHelper
+{
 
     private $locale;
     protected $currencies = array();
@@ -578,7 +579,15 @@ class CurrencyHelper {
                 'decimal_sep' => '.',
                 'num_decimals' => 2,
                 'name' => 'USD/month',
-            ),            
+            ),
+            'BGN' => array(
+                'currency_symbol' => 'лв.',
+                'currency_pos' => 'right_space',
+                'thousand_sep' => '.',
+                'decimal_sep' => ',',
+                'num_decimals' => 2,
+                'name' => 'Bulgarian Lev',
+            ),
         );
     }
 
@@ -597,7 +606,8 @@ class CurrencyHelper {
         if (isset($this->currencies[$currency]) && isset($this->currencies[$currency][$key]))
         {
             $value = $this->currencies[$currency][$key];
-        } else
+        }
+        else
         {
             $value = null;
         }
@@ -610,17 +620,20 @@ class CurrencyHelper {
         if (is_array($value) && isset($value[$this->locale]))
         {
             return $value[$this->locale];
-        } elseif (isset($this->locales[$this->locale]) && isset($this->locales[$this->locale][$key]))
+        }
+        elseif (isset($this->locales[$this->locale]) && isset($this->locales[$this->locale][$key]))
         {
             return $this->locales[$this->locale][$key];
-        } elseif (is_array($value))
+        }
+        elseif (is_array($value))
         {
             return reset($value);
         } // first value
         elseif (is_scalar($value) && !is_null($value))
         {
             return $value;
-        } else
+        }
+        else
         {
             return $default;
         }
@@ -643,7 +656,7 @@ class CurrencyHelper {
             case 'right':
                 return $amount . $symbol;
             case 'pattern':
-                return str_replace('%PRICE%', $amount, $symbol);                
+                return str_replace('%PRICE%', $amount, $symbol);
             default:
                 return $symbol . ' ' . $amount;
         }
@@ -725,13 +738,16 @@ class CurrencyHelper {
         if ($from == 'EUR' && isset($rates[$to]))
         {
             return $rates[$to];
-        } elseif ($to == 'EUR' && isset($rates[$from]))
+        }
+        elseif ($to == 'EUR' && isset($rates[$from]))
         {
             return 1 / $rates[$from];
-        } elseif (isset($rates[$from]) && isset($rates[$to]))
+        }
+        elseif (isset($rates[$from]) && isset($rates[$to]))
         {
             return $rates[$to] / $rates[$from];
-        } else
+        }
+        else
         {
             return 0;
         }
@@ -772,5 +788,4 @@ class CurrencyHelper {
 
         return self::$currencyRates[$transient_name];
     }
-
 }

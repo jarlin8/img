@@ -8,18 +8,21 @@ use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\helpers\CurrencyHelper;
 use ContentEgg\application\components\ExternalFeaturedImage;
 use ContentEgg\application\components\AggregateOffer;
+use ContentEgg\application\components\StructuredData;
+
 
 /**
  * Plugin class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class Plugin {
+class Plugin
+{
 
-    const version = '10.9.1';
-    const db_version = 55;
+    const version = '11.4.2';
+    const db_version = 56;
     const wp_requires = '4.6.1';
     const slug = 'content-egg';
     const short_slug = 'cegg';
@@ -59,6 +62,7 @@ class Plugin {
                 LocalRedirect::initAction();
                 CurrencyHelper::getInstance(GeneralConfig::getInstance()->option('lang'));
                 ProductSearch::initAction();
+                StructuredData::initAction();
             }
             PriceAlert::getInstance()->init();
             AutoblogScheduler::initAction();
@@ -72,7 +76,6 @@ class Plugin {
             new ProductSearchWidget;
             new PriceMoversWidget;
         }
-        
     }
 
     public function registerScripts()
@@ -227,7 +230,6 @@ class Plugin {
     public function registerAmpStyles()
     {
         echo '.egg-container table td{padding:0} .egg-container .btn,.egg-container .cegg-price{white-space:nowrap;font-weight:700}.cegg-couponcode,.cegg-gridbox a{text-decoration:none}.egg-container .cegg-gridbox{box-shadow:0 8px 16px -6px #eee;border:1px solid #ddd;margin-bottom:25px;padding:20px}.egg-container .egg-listcontainer .row-products>div{margin-bottom:12px}.egg-container .btn{display:inline-block;padding:7px 14px;margin-bottom:0;font-size:14px;line-height:1.42857143;text-align:center;vertical-align:middle;touch-action:manipulation;cursor:pointer;user-select:none;background-image:none;border:1px solid transparent;border-radius:4px}.egg-container .btn-danger{color:#fff;background-color:#5cb85c;border-color:#4cae4c;text-decoration:none}.egg-container .panel-default{border:1px solid #ddd;padding:20px}.cegg-price-alert-wrap,.cegg-price-tracker-item div[id$=chart]{display:none}.cegg-price-tracker-panel .btn{margin-bottom:6px}.egg-container .cegg-no-top-margin{margin-top:0}.egg-container .cegg-mb5{margin-bottom:5px}.egg-container .cegg-mb10{margin-bottom:10px}.egg-container .cegg-mb15{margin-bottom:15px}.egg-container .cegg-mb20{margin-bottom:20px}.egg-container .cegg-mb25{margin-bottom:25px}.egg-container .cegg-mb30{margin-bottom:30px}.egg-container .cegg-mb35{margin-bottom:35px}.egg-container .cegg-lineh-20{line-height:20px}.egg-container .cegg-mr10{margin-right:10px}.egg-container .cegg-mr5{margin-right:5px}.egg-container .btn.cegg-btn-big{padding:13px 60px;line-height:1;font-size:20px;font-weight:700}.cegg-couponcode{text-align:center;background:#efffda;padding:8px;display:block;border:2px dashed #5cb85c;margin-bottom:12px}.cegg-bordered-box{border:2px solid #ededed;padding:25px}.cegg-price-tracker-item .cegg-price{font-size:22px;font-weight:700}.egg-list-coupons .btn{font-size:16px;font-weight:700;display:block}.cegg-listlogo-title{line-height:18px;font-size:15px}.cegg-list-withlogos .cegg-price,.egg-listcontainer .cegg-price{font-weight:700;font-size:20px;color:#5aaf0b}.egg-container .cegg-list-withlogos .btn{font-weight:700;font-size:15px;padding:8px 16px}.cegg-price-row strike{opacity:.42;font-size:90%}.cegg-list-logo-title{font-weight:700;font-size:17px}.egg-container .cegg-btn-grid .btn{display:block;margin-bottom:10px}#cegg_market .cegg-image-container img{max-height:350px}.cegg-review-block{padding:20px;border:1px solid #eee}.cegg-line-hr{clear:both;border-top:1px solid #eee;height:1px}.amp-wp-article-content .cegg-btn-row amp-img,.amp-wp-article-content .cegg-desc-cell amp-img,.amp-wp-article-content .cegg-price-tracker-panel .cegg-mb5 amp-img,.amp-wp-article-content .producttitle amp-img{display:inline-block;margin:0 4px 0 0;vertical-align:middle}.egg-container .cegg-promotion{top:25px;left:0;position:absolute;z-index:10}.egg-container .cegg-discount{background-color:#eb5e58;border-radius:0 4px 4px 0;color:#fff;display:inline-block;font-size:16px;padding:3px 5px}.cegg-thumb{position:relative}'
-        . '@media (max-width: 767px) {body .egg-container .hidden-xs {display: none;} body .egg-container .visible-xs {display: block;}} body .egg-container .visible-xs {display: none;}';
+            . '@media (max-width: 767px) {body .egg-container .hidden-xs {display: none;} body .egg-container .visible-xs {display: block;}} body .egg-container .visible-xs {display: none;}';
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Impactradius;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataZanox class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataImpactradius extends ExtraData {
+class ExtraDataImpactradius extends ExtraData
+{
 
 	public $CatalogId;
 	public $CampaignId;
@@ -54,5 +55,4 @@ class ExtraDataImpactradius extends ExtraData {
 	public $Gender;
 	public $Adult;
 	public $Uri;
-
 }

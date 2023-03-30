@@ -8,10 +8,11 @@ defined('\ABSPATH') || exit;
  * Model class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-abstract class Model {
+abstract class Model
+{
 
     public static $db;
     private static $models = array();
@@ -47,7 +48,8 @@ abstract class Model {
         if (self::$db !== null)
         {
             return self::$db;
-        } else
+        }
+        else
         {
             self::$db = $GLOBALS['wpdb'];
 
@@ -60,7 +62,8 @@ abstract class Model {
         if (isset(self::$models[$className]))
         {
             return self::$models[$className];
-        } else
+        }
+        else
         {
             return self::$models[$className] = new $className;
         }
@@ -72,7 +75,8 @@ abstract class Model {
         if (isset($labels[$attribute]))
         {
             return $labels[$attribute];
-        } else
+        }
+        else
         {
             return $this->generateAttributeLabel($attribute);
         }
@@ -84,7 +88,7 @@ abstract class Model {
             '-',
             '_',
             '.'
-                                        ), ' ', preg_replace('/(?<![A-Z])[A-Z]/', ' \0', $name)))));
+        ), ' ', preg_replace('/(?<![A-Z])[A-Z]/', ' \0', $name)))));
     }
 
     public function find(array $params)
@@ -105,7 +109,8 @@ abstract class Model {
         if (!empty($params['select']))
         {
             $sql .= $params['select'];
-        } else
+        }
+        else
         {
             $sql .= ' *';
         }
@@ -118,7 +123,8 @@ abstract class Model {
                 {
                     $sql .= ' WHERE ' . $params['where'][0];
                     $values += $params['where'][1];
-                } elseif (!is_array($params['where']))
+                }
+                elseif (!is_array($params['where']))
                 {
                     $sql .= ' WHERE ' . $params['where'];
                 }
@@ -219,7 +225,8 @@ abstract class Model {
         if ($winclude)
         {
             $sql = ' WHERE ';
-        } else
+        }
+        else
         {
             $sql = '';
         }
@@ -228,10 +235,12 @@ abstract class Model {
         {
             $sql .= $where[0];
             $values += $where[1];
-        } elseif (is_string($where))
+        }
+        elseif (is_string($where))
         {
             $sql .= $where;
-        } else
+        }
+        else
         {
             throw new \Exception('Wrong WHERE params.');
         }
@@ -254,7 +263,8 @@ abstract class Model {
             $this->getDb()->insert($this->tableName(), $item);
 
             return $this->getDb()->insert_id;
-        } else
+        }
+        else
         {
             $this->getDb()->update($this->tableName(), $item, array('id' => $item['id']));
 
@@ -293,7 +303,8 @@ abstract class Model {
         if ($this->getDb()->get_var($query) == $this->tableName())
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -326,5 +337,4 @@ abstract class Model {
             $this->getDb()->query($query);
         }
     }
-
 }

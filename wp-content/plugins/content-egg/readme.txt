@@ -17,6 +17,46 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+= 11.4.0 =
+* New: Trovaprezzi module.
+* New: Pass-through query parameters to redirect links.
+* Improvement: Update cron starts every 10 minutes.
+* Improvement: Internal update limits have been increased.
+* Fix: Shopee module: Locale selection.
+
+= 11.3.0 =
+* Improvement: Aliexpress module: Migration to new API platform.
+
+= 11.2.0 =
+* New: Shopee module.
+* New: Custom sorting for global shortcodes.
+* New: Feed module: Strict mode for full text search.
+* New: Feed module: Option to search products in stock only.
+* New: Shortcodes: Filtering products by EANs.
+* New: Product tags can be used for Deeplink settings.
+* Improvement: Feed modules: Price filter is applied to EAN search.
+
+= 11.1.0 =
+* Improvement: Kieskeurignl module: Price update feature.
+* Improvement: Frontend search: Support for the latest WP version.
+
+= 11.0.0 =
+* New: Bestbuy module.
+* New: Kieskeurignl module.
+* Improvement: Option for Brand taxonomy synchronization.
+
+= 10.12.0 =
+* New: Brand taxonomy synchronization for Rehub theme.
+
+= 10.11.0 =
+* New: "Update prices" button on post edit pages.
+* New: "Refresh listings" button on post edit pages.
+* New: Displaying EAN codes on post edit pages.
+
+= 10.10.0 =
+* New: Option to add Product/AggregateOffer markup to posts. 
+* New: Feed modules: XML mapping: xPath syntax is allowed. 
+
 = 10.9.0 =
 * Improvement: Block shortcodes: Sorting is applied before limit/offset.
 

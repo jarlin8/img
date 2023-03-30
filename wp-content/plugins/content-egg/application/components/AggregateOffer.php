@@ -6,7 +6,6 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\WooIntegrator;
-use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\components\ContentProduct;
@@ -16,9 +15,10 @@ use ContentEgg\application\components\ContentProduct;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class AggregateOffer {
+class AggregateOffer
+{
 
     public static function initAction()
     {
@@ -29,26 +29,20 @@ class AggregateOffer {
     }
 
     public static function addStructuredDataProduct($markup, $product)
-    {        
+    {
         $post_id = $product->get_id();
-        
+
         if (!WooIntegrator::getMetaSyncUniqueId($post_id))
             return $markup;
 
-        $affiliate_modules = ModuleManager::getInstance()->getAffiliteModulesList(true);
-        $modules_data = array();
-        foreach ($affiliate_modules as $module_id => $module_name)
-        {
-            if (!$data = ContentManager::getViewData($module_id, $post_id))
-                continue;
-            $modules_data[$module_id] = $data;
-        }
+        $data = ContentManager::getViewProductData($post_id);
 
-        $data = TemplateHelper::mergeData($modules_data);
+        if (!$data)
+            return $markup;
 
         foreach ($data as $i => $d)
         {
-            if ($d['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
+            if (!isset($d['stock_status']) || $d['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
                 unset($data[$i]);
         }
         $data = array_values($data);
@@ -65,8 +59,6 @@ class AggregateOffer {
             return $markup;
 
         $max_price_item = TemplateHelper::getMaxPriceItem($data);
-
-        $doffer = $markup['offers'][0];
 
         $markup['offers'] = array(
             '@type' => 'AggregateOffer',
@@ -87,5 +79,4 @@ class AggregateOffer {
 
         return $markup;
     }
-
 }

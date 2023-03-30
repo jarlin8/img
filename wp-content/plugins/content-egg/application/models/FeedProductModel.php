@@ -11,7 +11,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 abstract class FeedProductModel extends Model
 {
@@ -53,10 +53,16 @@ abstract class FeedProductModel extends Model
         return $this->getDb()->get_results($sql, \ARRAY_A);
     }
 
-    public function searchByEan($ean, $limit = 10)
+    public function searchByEan($ean, $limit = 10, $options = array())
     {
+        $where = 'ean = %s';
+        if (!empty($options['price_min']))
+            $where .= $this->getDb()->prepare('AND price >= %d', $options['price_min']);
+        if (!empty($options['price_max']))
+            $where .= $this->getDb()->prepare(' AND price <= %d', $options['price_max']);
+
         $ean = TextHelper::fixEan($ean);
-        $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE ean = %s LIMIT %d', $ean, $limit);
+        $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE ' . $where . ' LIMIT %d', $ean, $limit);
 
         return $this->getDb()->get_results($sql, \ARRAY_A);
     }
@@ -65,29 +71,35 @@ abstract class FeedProductModel extends Model
     {
         $where = '';
         if (!empty($options['price_min']))
-        {
             $where = $this->getDb()->prepare('price >= %d', $options['price_min']);
-        }
 
         if (!empty($options['price_max']))
         {
             if ($where)
-            {
                 $where .= ' AND ';
-            }
             $where .= $this->getDb()->prepare('price <= %d', $options['price_max']);
         }
         if ($where)
-        {
             $where = ' AND ' . $where;
-        }
 
         if (isset($options['search_type']) && $options['search_type'] == 'exact')
             $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE title COLLATE utf8mb4_unicode_520_ci LIKE %s' . $where . ' LIMIT %d', '%' . $keyword . '%', $limit);
+        elseif (isset($options['search_type']) && $options['search_type'] == 'strict')
+            $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE MATCH (title) AGAINST (%s IN BOOLEAN MODE)' . $where . ' LIMIT %d', self::prepareStricKeyword($keyword), $limit);
         else
             $sql = $this->getDb()->prepare('SELECT * FROM ' . $this->tableName() . ' WHERE MATCH (title) AGAINST (%s)' . $where . ' LIMIT %d', $keyword, $limit);
 
         return $this->getDb()->get_results($sql, \ARRAY_A);
+    }
+
+    public function prepareStricKeyword($keyword)
+    {
+        $keyword = str_replace(array('+', '-', '/', '"', '\'', '\\'), '', $keyword);
+        $keyword = trim(preg_replace('/\s+/', ' ', $keyword));
+        $keyword = str_replace(' ', ' +', $keyword);
+        $keyword = '+' . $keyword;
+
+        return $keyword;
     }
 
     public function searchById($id)
@@ -111,5 +123,4 @@ abstract class FeedProductModel extends Model
     {
         return $this->getDb()->get_col('SELECT ean, COUNT(*) c FROM ' . $this->tableName() . ' WHERE ean != "" GROUP BY ean HAVING c > 1');
     }
-
 }

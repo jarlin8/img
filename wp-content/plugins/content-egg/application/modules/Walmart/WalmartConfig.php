@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Walmart;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModuleConfig;
 
@@ -11,23 +11,25 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class WalmartConfig extends AffiliateParserModuleConfig {
+class WalmartConfig extends AffiliateParserModuleConfig
+{
 
-	public function options() {
+	public function options()
+	{
 		$optiosn = array(
 			'publisherId'             => array(
 				'title'       => 'Impact Publisher ID <span class="cegg_required">*</span>',
-				'description' => __( 'Your Impact Radius Publisher ID.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('Your Impact Radius Publisher ID.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'required' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => sprintf( __( 'The field "%s" can not be empty.', 'content-egg' ), 'Publisher ID' ),
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Publisher ID'),
 					),
 				),
 			),
@@ -44,39 +46,39 @@ class WalmartConfig extends AffiliateParserModuleConfig {
 			 *
 			 */
 			'entries_per_page'        => array(
-				'title'       => __( 'Results', 'content-egg' ),
-				'description' => __( 'Number of results for one search query.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results', 'content-egg'),
+				'description' => __('Number of results for one search query.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 8,
 				'validator'   => array(
 					'trim',
 					'absint',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
 						'arg'     => 25,
-						'message' => sprintf( __( 'The field "%s" can not be more than %d.', 'content-egg' ), 'Results', 25 ),
+						'message' => sprintf(__('The field "%s" can not be more than %d.', 'content-egg'), 'Results', 25),
 					),
 				),
 			),
 			'entries_per_page_update' => array(
-				'title'       => __( 'Results for updates and autoblogging', 'content-egg' ),
-				'description' => __( 'Number of results for automatic updates and autoblogging.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results for updates and autoblogging', 'content-egg'),
+				'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
 					'trim',
 					'absint',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
 						'arg'     => 25,
-						'message' => sprintf( __( 'The field "%s" can not be more than %d.', 'content-egg' ), 'Results', 25 ),
+						'message' => sprintf(__('The field "%s" can not be more than %d.', 'content-egg'), 'Results', 25),
 					),
 				),
 			),
 			'deeplink'                => array(
 				'title'       => 'Deeplink',
-				'description' => __( 'Set this option if you want to send traffic through one of affiliate network with Walmart support.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('Set this option if you want to send traffic through one of affiliate network with Walmart support.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -84,11 +86,11 @@ class WalmartConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'categoryId'              => array(
-				'title'            => __( 'Category', 'content-egg' ),
-				'description'      => __( 'Sorting criteria.', 'content-egg' ),
-				'callback'         => array( $this, 'render_dropdown' ),
+				'title'            => __('Category', 'content-egg'),
+				'description'      => __('Sorting criteria.', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					''         => __( '[ All ]', 'content-egg' ),
+					''         => __('[ All ]', 'content-egg'),
 					'.1334134' => 'Arts, Crafts & Sewing',
 					'.91083'   => 'Auto & Tires',
 					'.5427'    => 'Baby',
@@ -123,33 +125,33 @@ class WalmartConfig extends AffiliateParserModuleConfig {
 				'default'          => '',
 			),
 			'sort'                    => array(
-				'title'            => __( 'Sort', 'content-egg' ),
-				'description'      => __( 'Sorting criteria.', 'content-egg' ),
-				'callback'         => array( $this, 'render_dropdown' ),
+				'title'            => __('Sort', 'content-egg'),
+				'description'      => __('Sorting criteria.', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					'relevance'      => __( 'Relevance', 'content-egg' ),
-					'price'          => __( 'Price', 'content-egg' ),
-					'title'          => __( 'Title', 'content-egg' ),
-					'bestseller'     => __( 'Bestseller', 'content-egg' ),
-					'customerRating' => __( 'Customer Rating', 'content-egg' ),
-					'new'            => __( 'New', 'content-egg' ),
+					'relevance'      => __('Relevance', 'content-egg'),
+					'price'          => __('Price', 'content-egg'),
+					'title'          => __('Title', 'content-egg'),
+					'bestseller'     => __('Bestseller', 'content-egg'),
+					'customerRating' => __('Customer Rating', 'content-egg'),
+					'new'            => __('New', 'content-egg'),
 				),
 				'default'          => 'relevance',
 			),
 			'order'                   => array(
-				'title'            => __( 'Order', 'content-egg' ),
-				'description'      => __( 'Sort ordering criteria. This parameter is needed only for the sort types: Price, Title, Customer Rating.', 'content-egg' ),
-				'callback'         => array( $this, 'render_dropdown' ),
+				'title'            => __('Order', 'content-egg'),
+				'description'      => __('Sort ordering criteria. This parameter is needed only for the sort types: Price, Title, Customer Rating.', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					'asc'  => __( 'Asc', 'content-egg' ),
-					'desc' => __( 'Desc', 'content-egg' ),
+					'asc'  => __('Asc', 'content-egg'),
+					'desc' => __('Desc', 'content-egg'),
 				),
 				'default'          => 'relevance',
 			),
 			'price_min'               => array(
-				'title'       => __( 'Price min', 'content-egg' ),
-				'description' => __( 'Minimum price to include.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Price min', 'content-egg'),
+				'description' => __('Minimum price to include.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -157,9 +159,9 @@ class WalmartConfig extends AffiliateParserModuleConfig {
 				'metaboxInit' => true,
 			),
 			'price_max'               => array(
-				'title'       => __( 'Price max', 'content-egg' ),
-				'description' => __( 'Maximum price to include.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Price max', 'content-egg'),
+				'description' => __('Maximum price to include.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -167,9 +169,9 @@ class WalmartConfig extends AffiliateParserModuleConfig {
 				'metaboxInit' => true,
 			),
 			'description_size'        => array(
-				'title'       => __( 'Trim description', 'content-egg' ),
-				'description' => __( 'Description size in characters (0 - do not cut)', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Trim description', 'content-egg'),
+				'description' => __('Description size in characters (0 - do not cut)', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '300',
 				'validator'   => array(
 					'trim',
@@ -178,29 +180,28 @@ class WalmartConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'customer_reviews'        => array(
-				'title'       => __( 'Customer reviews', 'content-egg' ),
-				'description' => __( 'Parse customer reviews. It takes more time. Don\'t check if you don\'t need it.', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Customer reviews', 'content-egg'),
+				'description' => __('Parse customer reviews. It takes more time. Don\'t check if you don\'t need it.', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'reviews_as_comments'     => array(
-				'title'       => __( 'Reviews as post comments', 'content-egg' ),
-				'description' => __( 'Save user reviews as post comments.', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Reviews as post comments', 'content-egg'),
+				'description' => __('Save user reviews as post comments.', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'save_img'                => array(
-				'title'       => __( 'Save images', 'content-egg' ),
-				'description' => __( 'Save images on server', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Save images', 'content-egg'),
+				'description' => __('Save images on server', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 		);
 
-		return array_merge( parent::options(), $optiosn );
+		return array_merge(parent::options(), $optiosn);
 	}
-
 }

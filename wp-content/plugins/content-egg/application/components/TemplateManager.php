@@ -13,9 +13,10 @@ use ContentEgg\application\helpers\TemplateHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-abstract class TemplateManager {
+abstract class TemplateManager
+{
 
     private $templates = null;
     private $last_render_data;
@@ -91,7 +92,8 @@ abstract class TemplateManager {
             if ($data && !empty($data['name']))
             {
                 $templates[$template_id] = sanitize_text_field($data['name']);
-            } else
+            }
+            else
             {
                 $templates[$template_id] = $template_id;
             }
@@ -162,7 +164,8 @@ abstract class TemplateManager {
         if ($block)
         {
             $file .= 'blocks/';
-        } else
+        }
+        else
         {
             $file .= $this->getTempatePrefix();
         }
@@ -170,7 +173,8 @@ abstract class TemplateManager {
         if (is_file($file) && is_readable($file))
         {
             return $file;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -178,7 +182,7 @@ abstract class TemplateManager {
 
     public function getViewPath($view_name)
     {
-        $view_name = str_replace('.', '', $view_name);        
+        $view_name = str_replace('.', '', $view_name);
         if (self::isCustomTemplate($view_name))
         {
             $view_name = substr($view_name, 7);
@@ -187,20 +191,22 @@ abstract class TemplateManager {
                 $tpl_path = $custom_dir;
                 $file = trailingslashit($tpl_path) . TextHelper::clear($view_name) . '.php';
                 if (is_file($file) && is_readable($file))
-                {                    
+                {
                     return $file;
                 }
             }
 
             return false;
-        } else
+        }
+        else
         {
             $tpl_path = $this->getTempateDir();
             $file = trailingslashit($tpl_path) . TextHelper::clear($view_name) . '.php';
             if (is_file($file) && is_readable($file))
             {
                 return $file;
-            } else
+            }
+            else
             {
                 return false;
             }
@@ -216,7 +222,8 @@ abstract class TemplateManager {
             $parts = explode('/', $short_id);
             $custom = 'custom/';
             $id = $parts[1];
-        } else
+        }
+        else
         {
             $id = $short_id;
         }
@@ -235,7 +242,8 @@ abstract class TemplateManager {
         if (substr($template_id, 0, 7) == 'custom/')
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -253,7 +261,8 @@ abstract class TemplateManager {
             $is_custom = true;
             // del 'custom/' prefix
             $template = substr($template, 7);
-        } else
+        }
+        else
         {
             $is_custom = false;
         }
@@ -296,14 +305,13 @@ abstract class TemplateManager {
             $price_color = '#dc3545';
         }
 
-        $border = TemplateHelper::adjustBrightness($background, - 0.05);
-        $background_hover = TemplateHelper::adjustBrightness($background, - 0.15);
-        $border_hover = TemplateHelper::adjustBrightness($background_hover, - 0.05);
+        $border = TemplateHelper::adjustBrightness($background, -0.05);
+        $background_hover = TemplateHelper::adjustBrightness($background, -0.15);
+        $border_hover = TemplateHelper::adjustBrightness($background_hover, -0.05);
 
         $custom_css = '.cegg-price-color {color: ' . $price_color . ';} .egg-container .btn-danger {background-color: ' . $background . ' !important;border-color: ' . $border . ' !important;} .egg-container .btn-danger:hover,.egg-container .btn-danger:focus,.egg-container .btn-danger:active {background-color: ' . $background_hover . ' !important;border-color: ' . $border_hover . ' !important;}';
 
         \wp_add_inline_style('egg-products', $custom_css);
         self::$product_style_enqueued = true;
     }
-
 }

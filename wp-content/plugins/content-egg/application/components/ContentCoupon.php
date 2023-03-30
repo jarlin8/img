@@ -2,16 +2,17 @@
 
 namespace ContentEgg\application\components;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 /**
  * ContentCoupon class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ContentCoupon extends Content {
+class ContentCoupon extends Content
+{
 
 	public $code;
 	public $startDate;
@@ -19,5 +20,4 @@ class ContentCoupon extends Content {
 	public $domain;
 	public $merchant;
 	public $logo;
-
 }

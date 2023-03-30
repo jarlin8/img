@@ -19,9 +19,10 @@ use ContentEgg\application\helpers\ArrayHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class AmazonNoApiModule extends AffiliateParserModule {
+class AmazonNoApiModule extends AffiliateParserModule
+{
 
     private $api_client = null;
 
@@ -63,7 +64,8 @@ class AmazonNoApiModule extends AffiliateParserModule {
         if (!empty($query_params['locale']) && AmazonLocales::getLocale($query_params['locale']))
         {
             $locale = $query_params['locale'];
-        } else
+        }
+        else
         {
             $locale = $this->config('locale');
         }
@@ -71,7 +73,8 @@ class AmazonNoApiModule extends AffiliateParserModule {
         if ($is_autoupdate)
         {
             $limit = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $limit = $this->config('entries_per_page');
         }
@@ -103,7 +106,8 @@ class AmazonNoApiModule extends AffiliateParserModule {
             try
             {
                 $result = $client->getItem($item['extra']['ASIN']);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 continue;
             }
@@ -166,7 +170,8 @@ class AmazonNoApiModule extends AffiliateParserModule {
         if ($this->config('link_type') == 'add_to_cart')
         {
             $content->url = $extra->addToCartUrl;
-        } else
+        }
+        else
         {
             $content->url = \add_query_arg('tag', $this->getAssociateTagForLocale($locale), $content->orig_url);
         }
@@ -193,7 +198,8 @@ class AmazonNoApiModule extends AffiliateParserModule {
         if ($locale == $this->config('locale'))
         {
             return $this->config('associate_tag');
-        } else
+        }
+        else
         {
             return $this->config('associate_tag_' . $locale);
         }
@@ -234,7 +240,8 @@ class AmazonNoApiModule extends AffiliateParserModule {
         if (preg_match($regex, $url, $matches))
         {
             return $matches[1];
-        } else
+        }
+        else
         {
             return false;
         }
@@ -243,8 +250,8 @@ class AmazonNoApiModule extends AffiliateParserModule {
     private function generateAddToCartUrl($locale, $asin)
     {
         return $this->getAmazonAddToCartUrl($locale) .
-                '?ASIN.1=' . $asin . '&Quantity.1=1' .
-                '&AssociateTag=' . $this->getAssociateTagForLocale($locale);
+            '?ASIN.1=' . $asin . '&Quantity.1=1' .
+            '&AssociateTag=' . $this->getAssociateTagForLocale($locale);
     }
 
     public function viewDataPrepare($data)
@@ -256,7 +263,8 @@ class AmazonNoApiModule extends AffiliateParserModule {
             if (strstr($data[$key]['url'], 'AssociateTag='))
             {
                 $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'AssociateTag', $tag_id);
-            } else
+            }
+            else
             {
                 $data[$key]['url'] = TextHelper::addUrlParam($data[$key]['url'], 'tag', $tag_id);
             }
@@ -264,5 +272,4 @@ class AmazonNoApiModule extends AffiliateParserModule {
 
         return parent::viewDataPrepare($data);
     }
-
 }

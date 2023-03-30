@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\libs\cityads;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
@@ -10,14 +10,15 @@ use ContentEgg\application\libs\RestClient;
  * CityadsApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * @link: http://cityads.com/api/dev/interface/rest
  */
-require_once dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 
-class CityadsApi extends RestClient {
+class CityadsApi extends RestClient
+{
 
 	protected static $timeout = 30; //sec
 
@@ -38,17 +39,20 @@ class CityadsApi extends RestClient {
 	 *
 	 * @param string $responseType
 	 */
-	public function __construct( $api_key, $type = 'json' ) {
-		$this->setApiKey( $api_key );
-		$this->setResponseType( $type );
-		$this->setUri( self::API_URI_BASE );
+	public function __construct($api_key, $type = 'json')
+	{
+		$this->setApiKey($api_key);
+		$this->setResponseType($type);
+		$this->setUri(self::API_URI_BASE);
 	}
 
-	public function setApiKey( $api_key ) {
+	public function setApiKey($api_key)
+	{
 		$this->_api_key = $api_key;
 	}
 
-	public function getApiKey() {
+	public function getApiKey()
+	{
 		return $this->_api_key;
 	}
 
@@ -56,12 +60,12 @@ class CityadsApi extends RestClient {
 	 * Products
 	 * @link: http://cityads.com/api/dev/webmaster/goods-coupons?lang=ru#GETgoods
 	 */
-	public function products( $keywords, array $options ) {
+	public function products($keywords, array $options)
+	{
 		$options['keyword']     = $keywords;
 		$options['remote_auth'] = $this->getApiKey();
-		$response               = $this->restGet( '/goods', $options );
+		$response               = $this->restGet('/goods', $options);
 
-		return $this->_decodeResponse( $response );
+		return $this->_decodeResponse($response);
 	}
-
 }

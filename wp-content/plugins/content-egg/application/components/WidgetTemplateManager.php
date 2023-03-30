@@ -8,10 +8,11 @@ defined('\ABSPATH') || exit;
  * WidgetTemplateManager class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link https://www.keywordrush.com/
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class WidgetTemplateManager extends TemplateManager {
+class WidgetTemplateManager extends TemplateManager
+{
 
     const TEMPLATE_DIR = 'templates';
     const CUSTOM_TEMPLATE_DIR = 'content-egg-templates';
@@ -68,5 +69,4 @@ class WidgetTemplateManager extends TemplateManager {
 
         return parent::render($view_name, $_data);
     }
-
 }

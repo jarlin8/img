@@ -15,9 +15,10 @@ use ContentEgg\application\components\ModuleManager;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link httsp://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ToolsController {
+class ToolsController
+{
 
     const slug = 'content-egg-tools';
 
@@ -73,12 +74,12 @@ class ToolsController {
                 'ceggaction' => 'unsubscribe',
                 'email' => urlencode($subscriber['email']),
                 'key' => urlencode($subscriber['activkey']),
-                    ), \get_site_url());
+            ), \get_site_url());
             $delete_url = \add_query_arg(array(
                 'ceggaction' => 'delete',
                 'email' => urlencode($subscriber['email']),
                 'key' => urlencode($subscriber['activkey']),
-                    ), \get_site_url());
+            ), \get_site_url());
 
             $csv_line['unsubscribe_url'] = $unsubscribe_all_url;
             $csv_line['delete_url'] = $delete_url;
@@ -151,9 +152,9 @@ class ToolsController {
 
         if (!empty($_GET['field']))
             $field = sanitize_key(wp_unslash($_GET['field']));
-		else
-			$field = 'url';
-		
+        else
+            $field = 'url';
+
         $module = ModuleManager::getInstance()->factory($module_id);
         $model = $module->getProductModel();
 
@@ -166,9 +167,8 @@ class ToolsController {
 
         $filename = $module->getName() . '-' . $field . '-' . date('d-m-Y') . '.txt';
         FileHelper::sendDownloadHeaders($filename);
-	    $results = array_map('sanitize_text_field', $results);
+        $results = array_map('sanitize_text_field', $results);
         echo join("\r\n", $results); // phpcs:ignore
         exit;
     }
-
 }

@@ -2,15 +2,15 @@
 
 namespace ContentEgg\application\helpers;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 /**
  * FormValidator class file
  *
  * Modified version of: CodeIgniter CI_Form_validation
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2014 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  *
  */
@@ -39,15 +39,20 @@ defined( '\ABSPATH' ) || exit;
  * @since        Version 1.0
  * @filesource
  */
-if ( ! defined( 'MB_ENABLED' ) ) {
-	if ( extension_loaded( 'mbstring' ) ) {
-		define( 'MB_ENABLED', true );
-	} else {
-		define( 'MB_ENABLED', false );
+if (!defined('MB_ENABLED'))
+{
+	if (extension_loaded('mbstring'))
+	{
+		define('MB_ENABLED', true);
+	}
+	else
+	{
+		define('MB_ENABLED', false);
 	}
 }
 
-class FormValidator {
+class FormValidator
+{
 
 	/**
 	 * Required
@@ -56,8 +61,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function required( $str ) {
-		return is_array( $str ) ? (bool) count( $str ) : ( trim( $str ) !== '' );
+	public static function required($str)
+	{
+		return is_array($str) ? (bool) count($str) : (trim($str) !== '');
 	}
 
 	// --------------------------------------------------------------------
@@ -70,8 +76,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function regex_match( $str, $regex ) {
-		return (bool) preg_match( $regex, $str );
+	public static function regex_match($str, $regex)
+	{
+		return (bool) preg_match($regex, $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -84,14 +91,18 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function min_length( $str, $val ) {
-		if ( ! is_numeric( $val ) ) {
+	public static function min_length($str, $val)
+	{
+		if (!is_numeric($val))
+		{
 			return false;
-		} else {
+		}
+		else
+		{
 			$val = (int) $val;
 		}
 
-		return ( MB_ENABLED === true ) ? ( $val <= mb_strlen( $str ) ) : ( $val <= strlen( $str ) );
+		return (MB_ENABLED === true) ? ($val <= mb_strlen($str)) : ($val <= strlen($str));
 	}
 
 	// --------------------------------------------------------------------
@@ -104,14 +115,18 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function max_length( $str, $val ) {
-		if ( ! is_numeric( $val ) ) {
+	public static function max_length($str, $val)
+	{
+		if (!is_numeric($val))
+		{
 			return false;
-		} else {
+		}
+		else
+		{
 			$val = (int) $val;
 		}
 
-		return ( MB_ENABLED === true ) ? ( $val >= mb_strlen( $str ) ) : ( $val >= strlen( $str ) );
+		return (MB_ENABLED === true) ? ($val >= mb_strlen($str)) : ($val >= strlen($str));
 	}
 
 	// --------------------------------------------------------------------
@@ -124,14 +139,18 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function exact_length( $str, $val ) {
-		if ( ! is_numeric( $val ) ) {
+	public static function exact_length($str, $val)
+	{
+		if (!is_numeric($val))
+		{
 			return false;
-		} else {
+		}
+		else
+		{
 			$val = (int) $val;
 		}
 
-		return ( MB_ENABLED === true ) ? ( mb_strlen( $str ) === $val ) : ( strlen( $str ) === $val );
+		return (MB_ENABLED === true) ? (mb_strlen($str) === $val) : (strlen($str) === $val);
 	}
 
 	// --------------------------------------------------------------------
@@ -143,15 +162,19 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function valid_url( $str ) {
-		if ( empty( $str ) ) {
+	public static function valid_url($str)
+	{
+		if (empty($str))
+		{
 			return false;
 		}
 
 		$pattern = '/^(http|https):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)/i';
 
-		if ( is_string( $str ) && strlen( $str ) < 2000 ) {
-			if ( preg_match( $pattern, $str ) ) {
+		if (is_string($str) && strlen($str) < 2000)
+		{
+			if (preg_match($pattern, $str))
+			{
 				return true;
 			}
 		}
@@ -200,8 +223,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function valid_email( $str ) {
-		return (bool) filter_var( $str, FILTER_VALIDATE_EMAIL );
+	public static function valid_email($str)
+	{
+		return (bool) filter_var($str, FILTER_VALIDATE_EMAIL);
 	}
 
 	// --------------------------------------------------------------------
@@ -214,8 +238,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function alpha( $str ) {
-		return ctype_alpha( $str );
+	public static function alpha($str)
+	{
+		return ctype_alpha($str);
 	}
 
 	// --------------------------------------------------------------------
@@ -227,8 +252,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function alpha_numeric( $str ) {
-		return ctype_alnum( (string) $str );
+	public static function alpha_numeric($str)
+	{
+		return ctype_alnum((string) $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -240,8 +266,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function alpha_numeric_spaces( $str ) {
-		return (bool) preg_match( '/^[A-Z0-9 ]+$/i', $str );
+	public static function alpha_numeric_spaces($str)
+	{
+		return (bool) preg_match('/^[A-Z0-9 ]+$/i', $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -253,8 +280,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function alpha_dash( $str ) {
-		return (bool) preg_match( '/^[a-z0-9_-]+$/i', $str );
+	public static function alpha_dash($str)
+	{
+		return (bool) preg_match('/^[a-z0-9_-]+$/i', $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -266,8 +294,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function numeric( $str ) {
-		return (bool) preg_match( '/^[\-+]?[0-9]*\.?[0-9]+$/', $str );
+	public static function numeric($str)
+	{
+		return (bool) preg_match('/^[\-+]?[0-9]*\.?[0-9]+$/', $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -279,8 +308,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function integer( $str ) {
-		return (bool) preg_match( '/^[\-+]?[0-9]+$/', $str );
+	public static function integer($str)
+	{
+		return (bool) preg_match('/^[\-+]?[0-9]+$/', $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -292,8 +322,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function decimal( $str ) {
-		return (bool) preg_match( '/^[\-+]?[0-9]+\.[0-9]+$/', $str );
+	public static function decimal($str)
+	{
+		return (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -306,8 +337,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function greater_than( $str, $min ) {
-		return is_numeric( $str ) ? ( $str > $min ) : false;
+	public static function greater_than($str, $min)
+	{
+		return is_numeric($str) ? ($str > $min) : false;
 	}
 
 	// --------------------------------------------------------------------
@@ -320,8 +352,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function greater_than_equal_to( $str, $min ) {
-		return is_numeric( $str ) ? ( $str >= $min ) : false;
+	public static function greater_than_equal_to($str, $min)
+	{
+		return is_numeric($str) ? ($str >= $min) : false;
 	}
 
 	// --------------------------------------------------------------------
@@ -334,8 +367,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function less_than( $str, $max ) {
-		return is_numeric( $str ) ? ( $str < $max ) : false;
+	public static function less_than($str, $max)
+	{
+		return is_numeric($str) ? ($str < $max) : false;
 	}
 
 	// --------------------------------------------------------------------
@@ -348,8 +382,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function less_than_equal_to( $str, $max ) {
-		return is_numeric( $str ) ? ( $str <= $max ) : false;
+	public static function less_than_equal_to($str, $max)
+	{
+		return is_numeric($str) ? ($str <= $max) : false;
 	}
 
 	// --------------------------------------------------------------------
@@ -361,8 +396,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function is_natural( $str ) {
-		return ctype_digit( (string) $str );
+	public static function is_natural($str)
+	{
+		return ctype_digit((string) $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -374,8 +410,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function is_natural_no_zero( $str ) {
-		return ( $str != 0 && ctype_digit( (string) $str ) );
+	public static function is_natural_no_zero($str)
+	{
+		return ($str != 0 && ctype_digit((string) $str));
 	}
 
 	// --------------------------------------------------------------------
@@ -390,8 +427,9 @@ class FormValidator {
 	 *
 	 * @return    bool
 	 */
-	public static function valid_base64( $str ) {
-		return ( base64_encode( base64_decode( $str ) ) === $str );
+	public static function valid_base64($str)
+	{
+		return (base64_encode(base64_decode($str)) === $str);
 	}
 
 	// --------------------------------------------------------------------
@@ -403,12 +441,15 @@ class FormValidator {
 	 *
 	 * @return    string
 	 */
-	public static function prep_url( $str = '' ) {
-		if ( $str === 'http://' or $str === '' ) {
+	public static function prep_url($str = '')
+	{
+		if ($str === 'http://' or $str === '')
+		{
 			return '';
 		}
 
-		if ( strpos( $str, 'http://' ) !== 0 && strpos( $str, 'https://' ) !== 0 ) {
+		if (strpos($str, 'http://') !== 0 && strpos($str, 'https://') !== 0)
+		{
 			return 'http://' . $str;
 		}
 
@@ -424,16 +465,17 @@ class FormValidator {
 	 *
 	 * @return    string
 	 */
-	public static function encode_php_tags( $str ) {
-		return str_replace( array( '<?', '?>' ), array( '&lt;?', '?&gt;' ), $str );
+	public static function encode_php_tags($str)
+	{
+		return str_replace(array('<?', '?>'), array('&lt;?', '?&gt;'), $str);
 	}
-
 }
 
-if ( ! function_exists( 'affegg_intval_bool' ) ) {
+if (!function_exists('affegg_intval_bool'))
+{
 
-	function affegg_intval_bool( $str ) {
-		return intval( (bool) $str );
+	function affegg_intval_bool($str)
+	{
+		return intval((bool) $str);
 	}
-
 }

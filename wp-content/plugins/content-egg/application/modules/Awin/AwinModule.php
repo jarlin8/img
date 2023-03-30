@@ -15,9 +15,10 @@ use ContentEgg\application\modules\Awin\models\AwinProductModel;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class AwinModule extends AffiliateFeedParserModule {
+class AwinModule extends AffiliateFeedParserModule
+{
 
     public function info()
     {
@@ -87,7 +88,8 @@ class AwinModule extends AffiliateFeedParserModule {
         if (!(int) $data['in_stock'])
         {
             $product['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-        } else
+        }
+        else
         {
             $product['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
         }
@@ -97,7 +99,8 @@ class AwinModule extends AffiliateFeedParserModule {
         if (TextHelper::isEan($data['ean']))
         {
             $product['ean'] = $data['ean'];
-        } else
+        }
+        else
         {
             $product['ean'] = '';
         }
@@ -113,7 +116,8 @@ class AwinModule extends AffiliateFeedParserModule {
         if ($is_autoupdate)
         {
             $limit = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $limit = $this->config('entries_per_page');
         }
@@ -121,10 +125,12 @@ class AwinModule extends AffiliateFeedParserModule {
         if (TextHelper::isEan($keyword))
         {
             $results = $this->product_model->searchByEan($keyword, $limit);
-        } elseif (filter_var($keyword, FILTER_VALIDATE_URL))
+        }
+        elseif (filter_var($keyword, FILTER_VALIDATE_URL))
         {
             $results = $this->product_model->searchByUrl($keyword, $this->config('partial_url_match'), $limit);
-        } else
+        }
+        else
         {
             $options = array();
             if (!empty($query_params['price_min']))
@@ -168,13 +174,17 @@ class AwinModule extends AffiliateFeedParserModule {
             $content->price = $r['search_price'];
             $content->merchant = $r['merchant_name'];
             $content->currencyCode = $r['currency'];
+            if (isset($r['brand_name']))
+                $content->manufacturer = $r['brand_name'];
+
             $content->ean = $product['ean'];
 
             $pairs = self::getMerchantDomainPairs();
             if (isset($pairs[$content->merchant]))
             {
                 $content->domain = $pairs[$content->merchant];
-            } elseif (!strstr($content->orig_url, 'https://www.awin1.com'))
+            }
+            elseif (!strstr($content->orig_url, 'https://www.awin1.com'))
             {
                 $content->domain = TextHelper::getHostName($content->orig_url);
             }
@@ -186,10 +196,12 @@ class AwinModule extends AffiliateFeedParserModule {
             if (!empty($r['product_price_old']))
             {
                 $content->priceOld = $r['product_price_old'];
-            } elseif (!empty($r['base_price_amount']))
+            }
+            elseif (!empty($r['base_price_amount']))
             {
                 $content->priceOld = $r['base_price_amount'];
-            } elseif (!empty($r['base_price']))
+            }
+            elseif (!empty($r['base_price']))
             {
                 $content->priceOld = $r['base_price'];
             }
@@ -197,7 +209,8 @@ class AwinModule extends AffiliateFeedParserModule {
             if (isset($r['in_stock']) && !(int) $r['in_stock'])
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            } else
+            }
+            else
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
             }
@@ -231,7 +244,8 @@ class AwinModule extends AffiliateFeedParserModule {
             if (isset($r['in_stock']) && !(int) $r['in_stock'])
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            } else
+            }
+            else
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
             }
@@ -266,7 +280,7 @@ class AwinModule extends AffiliateFeedParserModule {
         }
 
         $default_params = array(
-            'columns' => 'aw_deep_link,product_name,aw_product_id,merchant_product_id,merchant_image_url,description,merchant_category,search_price,merchant_name,merchant_id,category_name,category_id,aw_image_url,currency,store_price,delivery_cost,merchant_deep_link,language,last_updated,reviews,average_rating,rating,number_available,in_stock,stock_quantity,valid_from,valid_to,is_for_sale,web_offer,pre_order,base_price_amount,product_price_old,base_price,ean',
+            'columns' => 'aw_deep_link,product_name,aw_product_id,merchant_product_id,merchant_image_url,description,merchant_category,search_price,merchant_name,merchant_id,category_name,category_id,aw_image_url,currency,store_price,delivery_cost,merchant_deep_link,language,last_updated,reviews,average_rating,rating,number_available,in_stock,stock_quantity,valid_from,valid_to,is_for_sale,web_offer,pre_order,base_price_amount,product_price_old,base_price,ean,brand_name',
             'format' => 'csv',
             'delimiter' => '%2C',
             'compression' => 'zip',
@@ -299,5 +313,4 @@ class AwinModule extends AffiliateFeedParserModule {
     {
         $this->render('update_panel', array('module_id' => $this->getId()));
     }
-
 }

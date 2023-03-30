@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2019 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 
 /**
@@ -26,7 +26,8 @@ defined('\ABSPATH') || exit;
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-class AwsV4 {
+class AwsV4
+{
 
     private $accessKeyID = null;
     private $secretAccessKey = null;
@@ -89,7 +90,7 @@ class AwsV4 {
 
     function addHeader($headerName, $headerValue)
     {
-        $this->awsHeaders [$headerName] = $headerValue;
+        $this->awsHeaders[$headerName] = $headerValue;
     }
 
     private function prepareCanonicalRequest()
@@ -104,7 +105,7 @@ class AwsV4 {
             $canonicalURL .= $key . ":" . $value . "\n";
         }
         $canonicalURL .= "\n";
-        $this->strSignedHeader = substr($signedHeaders, 0, - 1);
+        $this->strSignedHeader = substr($signedHeaders, 0, -1);
         $canonicalURL .= $this->strSignedHeader . "\n";
         $canonicalURL .= $this->generateHex($this->payload);
 
@@ -145,7 +146,7 @@ class AwsV4 {
         $signature = $this->calculateSignature($stringToSign);
         if ($signature)
         {
-            $this->awsHeaders ['Authorization'] = $this->buildAuthorizationString($signature);
+            $this->awsHeaders['Authorization'] = $this->buildAuthorizationString($signature);
 
             return $this->awsHeaders;
         }
@@ -190,5 +191,4 @@ class AwsV4 {
     {
         return gmdate("Ymd");
     }
-
 }

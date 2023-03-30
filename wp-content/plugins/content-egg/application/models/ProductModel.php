@@ -13,9 +13,10 @@ use ContentEgg\application\components\ContentProduct;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ProductModel extends Model {
+class ProductModel extends Model
+{
 
     const TRANSIENT_LAST_SYNC_DATE = 'cegg_products_last_sync';
     const PRODUCTS_TTL = 3600;
@@ -77,7 +78,7 @@ class ProductModel extends Model {
 
         for ($page = 2; $page <= ceil($total / $per_page); $page++)
         {
-            $offset = ( $page - 1 ) * $per_page;
+            $offset = ($page - 1) * $per_page;
             $sql = 'SELECT * FROM ' . $sql_part . ' OFFSET ' . $offset;
             $this->processProducts($this->getDb()->get_results($sql));
         }
@@ -163,7 +164,8 @@ class ProductModel extends Model {
                 if (isset($d[$k]))
                 {
                     $product[$k] = $d[$k];
-                } elseif (strstr($k, '_'))
+                }
+                elseif (strstr($k, '_'))
                 {
                     $pieces = explode('_', $k);
                     for ($i = 1; $i < count($pieces); $i++)
@@ -181,7 +183,8 @@ class ProductModel extends Model {
             if ($product['last_update'])
             {
                 $product['last_update'] = date("Y-m-d H:i:s", $product['last_update']);
-            } else
+            }
+            else
             {
                 $product['last_update'] = null;
             }
@@ -214,10 +217,10 @@ class ProductModel extends Model {
         if (isset($status[$status_id]))
         {
             return $status[$status_id];
-        } else
+        }
+        else
         {
             return null;
         }
     }
-
 }

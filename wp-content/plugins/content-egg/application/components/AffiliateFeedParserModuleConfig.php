@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 abstract class AffiliateFeedParserModuleConfig extends AffiliateParserModuleConfig
 {
@@ -27,8 +27,8 @@ abstract class AffiliateFeedParserModuleConfig extends AffiliateParserModuleConf
                     'absint',
                     array(
                         'call' => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
-                        'arg' => 100,
-                        'message' => sprintf(__('The field "%s" can not be more than %d.', 'content-egg'), 'Results', 100),
+                        'arg' => 200,
+                        'message' => sprintf(__('The field "%s" can not be more than %d.', 'content-egg'), 'Results', 200),
                     ),
                 ),
             ),
@@ -42,15 +42,15 @@ abstract class AffiliateFeedParserModuleConfig extends AffiliateParserModuleConf
                     'absint',
                     array(
                         'call' => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
-                        'arg' => 100,
-                        'message' => sprintf(__('The field "%s" can not be more than %d.', 'content-egg'), 'Results', 100),
+                        'arg' => 200,
+                        'message' => sprintf(__('The field "%s" can not be more than %d.', 'content-egg'), 'Results', 200),
                     ),
                 ),
             ),
             'partial_url_match' => array(
                 'title' => __('Search partial URL', 'content-egg'),
                 'description' => __('Partial URL match', 'content-egg')
-                . '<p class="description">' . __('You can use part of a URL to search for products by URL.', 'content-egg') . '</p>',
+                    . '<p class="description">' . __('You can use part of a URL to search for products by URL.', 'content-egg') . '</p>',
                 'callback' => array($this, 'render_checkbox'),
                 'default' => true,
                 'section' => 'default',
@@ -62,7 +62,7 @@ abstract class AffiliateFeedParserModuleConfig extends AffiliateParserModuleConf
                 'default' => false,
                 'section' => 'default',
             )
-                ));
+        ));
 
         $options['update_mode']['dropdown_options'] = array(
             'cron' => __('Cron', 'content-egg') . ' (' . __('recommended', 'content-egg') . ')',
@@ -74,6 +74,9 @@ abstract class AffiliateFeedParserModuleConfig extends AffiliateParserModuleConf
         $options['update_mode']['validator'][] = array(
             'call' => array($this, 'emptyLastImportDate'),
         );
+
+        $options['ttl_items']['default'] = 86400;
+
 
         return $options;
     }
@@ -93,5 +96,4 @@ abstract class AffiliateFeedParserModuleConfig extends AffiliateParserModuleConf
 
         return true;
     }
-
 }

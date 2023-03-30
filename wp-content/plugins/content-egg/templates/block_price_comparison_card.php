@@ -47,9 +47,9 @@ if (!$title)
                                 <span<?php if ($item['stock_status'] != -1) echo ' style="background-color: ' . esc_attr(TemplateHelper::getPriceColor()) . '"'; ?> class="cegg-price-badge"><?php echo esc_html(TemplateHelper::formatPriceCurrency($item['price'], $item['currencyCode'])); ?></span>
                             <?php endif; ?>
                         </a>
-                    <?php endforeach; ?>      
+                    <?php endforeach; ?>            
 
-                </div>
+                </div>   
 
                 <?php if ($amazon_last_updated): ?>
                     <div class="cegg-font60 cegg-lineheight15 text-right">

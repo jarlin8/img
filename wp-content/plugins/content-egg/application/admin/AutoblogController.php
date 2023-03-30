@@ -14,7 +14,7 @@ use ContentEgg\application\AutoblogScheduler;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class AutoblogController
 {
@@ -171,7 +171,8 @@ class AutoblogController
                     $redirect_url = AdminNotice::add2Url($redirect_url, 'autoblog_create_error', 'error');
                 else
                     $redirect_url = AdminNotice::add2Url($redirect_url, 'autoblog_batch_created', 'success', $created_count);
-            } else
+            }
+            else
             {
                 $item['id'] = $this->createAutoblog($item);
 
@@ -183,7 +184,8 @@ class AutoblogController
 
             \wp_safe_redirect($redirect_url);
             exit;
-        } else
+        }
+        else
         {
             // view page
             if (isset($_GET['duplicate_id']))
@@ -203,9 +205,11 @@ class AutoblogController
                             $item[$key] = unserialize($item[$key]);
                     }
                     $item['id'] = null;
-                } else
+                }
+                else
                     $item = $default;
-            } else
+            }
+            else
                 $item = $default;
 
             if (isset($_GET['id']))
@@ -215,7 +219,8 @@ class AutoblogController
                 {
                     $item = $default;
                     $notice = __('Autoblogging is not found', 'content-egg');
-                } else
+                }
+                else
                 {
                     $item['keywords'] = unserialize($item['keywords']);
                     $item['include_modules'] = unserialize($item['include_modules']);
@@ -250,7 +255,7 @@ class AutoblogController
 
         if ($item['status'])
         {
-            AutoblogScheduler::addScheduleEvent('hourly', time() + 900);
+            AutoblogScheduler::addScheduleEvent('hourly', time() + 600);
         }
 
         return $item['id'];
@@ -375,5 +380,4 @@ class AutoblogController
 
         dbDelta($sql);
     }
-
 }

@@ -15,9 +15,10 @@ use ContentEgg\application\components\ContentProduct;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class OfferModule extends AffiliateParserModule {
+class OfferModule extends AffiliateParserModule
+{
 
     public static $globals = null;
 
@@ -69,7 +70,8 @@ class OfferModule extends AffiliateParserModule {
             if (isset($item['extra']['priceXpath']))
             {
                 $custom = $item['extra']['priceXpath'];
-            } else
+            }
+            else
             {
                 $custom = '';
             }
@@ -86,10 +88,12 @@ class OfferModule extends AffiliateParserModule {
             if ($item['orig_url'])
             {
                 $url = $item['orig_url'];
-            } elseif ($item['url'])
+            }
+            elseif ($item['url'])
             {
                 $url = $item['url'];
-            } else
+            }
+            else
             {
                 continue;
             }
@@ -99,7 +103,8 @@ class OfferModule extends AffiliateParserModule {
             {
                 $parser->setUrl($url);
                 $price = $parser->xpathScalar($priceXpath);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 if ($e->getCode() == 404)
                 {
@@ -149,7 +154,8 @@ class OfferModule extends AffiliateParserModule {
                 if (!$item['extra']['deeplink'] && $original_domain = TextHelper::findOriginalDomain($item['orig_url']))
                 {
                     $item['domain'] = $original_domain;
-                } else
+                }
+                else
                 {
                     $item['domain'] = TextHelper::getHostName($item['orig_url']);
                 }
@@ -222,7 +228,8 @@ class OfferModule extends AffiliateParserModule {
         if (isset(self::$globals[$domain]))
         {
             return self::$globals[$domain];
-        } else
+        }
+        else
         {
             return false;
         }
@@ -235,7 +242,7 @@ class OfferModule extends AffiliateParserModule {
             return $custom;
         }
 
-        if ($custom && (!isset($global['in_priority']) || !(bool) $global['in_priority'] ))
+        if ($custom && (!isset($global['in_priority']) || !(bool) $global['in_priority']))
         {
             return $custom;
         }
@@ -243,10 +250,10 @@ class OfferModule extends AffiliateParserModule {
         if (isset($global[$option]))
         {
             return $global[$option];
-        } else
+        }
+        else
         {
             return null;
         }
     }
-
 }

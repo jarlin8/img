@@ -19,9 +19,10 @@ use ContentEgg\application\Translator;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class WooIntegrator {
+class WooIntegrator
+{
 
     const META_WOO_SYNC_MODULE_UNIQUE_ID = '_cegg_woo_sync_muid';
 
@@ -144,7 +145,8 @@ class WooIntegrator {
                 if (\apply_filters('cegg_dont_sync_sale_price', false))
                 {
                     $product->set_regular_price($item['price'] * $currency_rate);
-                } else
+                }
+                else
                 {
                     if (!\apply_filters('cegg_dont_touch_retail_price', false))
                         $product->set_regular_price($item['priceOld'] * $currency_rate);
@@ -152,24 +154,22 @@ class WooIntegrator {
                     if (!\apply_filters('cegg_dont_touch_sale_price', false))
                         $product->set_sale_price($item['price'] * $currency_rate);
                 }
-            } else
+            }
+            else
             {
-                /*
-                 * If my initial import from Products filled in all the correct Retail values, 
-                 * I don’t want them touched.  Retail should never really be changed regardless 
-                 * of the new lowest price.
-                 */
                 if ($product->get_regular_price() && \apply_filters('cegg_dont_touch_retail_price', false))
                 {
                     $product->set_sale_price($item['price'] * $currency_rate);
-                } else
+                }
+                else
                 {
                     $product->set_regular_price($item['price'] * $currency_rate);
                     if (!\apply_filters('cegg_dont_touch_sale_price', false))
                         $product->set_sale_price(null);
                 }
             }
-        } else
+        }
+        else
         {
             $product->set_price(null);
             $product->set_regular_price(null);
@@ -185,9 +185,9 @@ class WooIntegrator {
                 $product->set_stock_status('instock');
         }
 
-        if ($item['description'] && !$product->get_description() && !\apply_filters('cegg_disable_description_sync', false))
+        if ($item['description'] && !\apply_filters('cegg_disable_description_sync', false))
         {
-            if (\apply_filters('cegg_sync_full_description', false))
+            if (!$product->get_description() && \apply_filters('cegg_sync_full_description', false))
                 $product->set_description($item['description']);
             elseif (!$product->get_short_description() && !\apply_filters('cegg_dont_touch_short_description', false))
                 $product->set_short_description($item['description']);
@@ -200,6 +200,16 @@ class WooIntegrator {
 
         if ($product->get_type() == 'external' && \apply_filters('cegg_sync_woo_url_allowed', true))
             $product->set_product_url($item['url']);
+
+        // brand taxonomy (Rehub feature)
+        if (self::isRehubTheme())
+        {
+            $sync_brand = GeneralConfig::getInstance()->option('sync_brand');
+            if ($sync_brand == 'brand' && \apply_filters('cegg_sync_brand', true) && $item['manufacturer'])
+                \wp_set_object_terms($post_id, \sanitize_text_field($item['manufacturer']), 'store', true);
+            elseif ($sync_brand == 'store' && \apply_filters('cegg_sync_store', true) && $item['domain'])
+                \wp_set_object_terms($post_id, \sanitize_text_field($item['domain']), 'store', true);
+        }
 
         // update meta
         self::setMetaSyncUniqueId($post_id, $module_id, $item['unique_id']);
@@ -264,12 +274,14 @@ class WooIntegrator {
                     {
                         $taxonomy = TextHelper::truncate($taxonomy, 32, '', 'UTF-8', true);
                         \register_taxonomy(
-                                $taxonomy, apply_filters('woocommerce_taxonomy_objects_' . $taxonomy, array('product')), apply_filters('woocommerce_taxonomy_args_' . $taxonomy, array(
-                            'hierarchical' => true,
-                            'show_ui' => false,
-                            'query_var' => true,
-                            'rewrite' => false,
-                                ))
+                            $taxonomy,
+                            apply_filters('woocommerce_taxonomy_objects_' . $taxonomy, array('product')),
+                            apply_filters('woocommerce_taxonomy_args_' . $taxonomy, array(
+                                'hierarchical' => true,
+                                'show_ui' => false,
+                                'query_var' => true,
+                                'rewrite' => false,
+                            ))
                         );
                         $registered_taxonomy_count++;
                     }
@@ -287,9 +299,11 @@ class WooIntegrator {
                             $term_ids[] = $term_info['term_id'];
                     }
                     $term_ids = array_map('intval', $term_ids);
-                } else
+                }
+                else
                     $attr_id = 0;
-            } else
+            }
+            else
             {
                 // Local Attribute
                 $attr_id = 0;
@@ -581,4 +595,8 @@ class WooIntegrator {
         return TemplateHelper::btnText('woocommerce_btn_text', $default, false, $item);
     }
 
+    public static function isRehubTheme()
+    {
+        return (in_array(basename(\get_template_directory()), array('rehub', 'rehub-theme'))) ? true : false;
+    }
 }

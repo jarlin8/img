@@ -12,7 +12,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class BolcomConfig extends AffiliateParserModuleConfig
 {
@@ -228,5 +228,4 @@ class BolcomConfig extends AffiliateParserModuleConfig
         \delete_transient($transient_name);
         return true;
     }
-
 }

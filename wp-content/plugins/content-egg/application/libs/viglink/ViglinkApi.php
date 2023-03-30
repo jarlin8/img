@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\libs\viglink;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
@@ -10,15 +10,16 @@ use ContentEgg\application\libs\RestClient;
  * ViglinkApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * @link: https://viglink-developer-center.readme.io/
  *
  */
-require_once dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 
-class ViglinkApi extends RestClient {
+class ViglinkApi extends RestClient
+{
 
 	protected static $timeout = 40; //sec
 
@@ -31,43 +32,47 @@ class ViglinkApi extends RestClient {
 		'xml'
 	);
 
-	public function __construct( $apiKey, $secretKey, $response_type = 'json' ) {
+	public function __construct($apiKey, $secretKey, $response_type = 'json')
+	{
 		$this->apiKey    = $apiKey;
 		$this->secretKey = $secretKey;
-		$this->setResponseType( $response_type );
-		$this->setUri( self::API_URI_BASE );
+		$this->setResponseType($response_type);
+		$this->setUri(self::API_URI_BASE);
 	}
 
 	/**
 	 * Product Search
 	 * @link: https://viglink-developer-center.readme.io/docs/product-search
 	 */
-	public function search( $keyword, array $options ) {
+	public function search($keyword, array $options)
+	{
 		$options['query'] = $keyword;
-		$response         = $this->restGet( '/product/search', $options );
+		$response         = $this->restGet('/product/search', $options);
 
-		return $this->_decodeResponse( $response );
+		return $this->_decodeResponse($response);
 	}
 
 	/**
 	 * Get back the metadata about an product (Product URL) with this endpoint.
 	 * @link: https://viglink-developer-center.readme.io/docs/metadata
 	 */
-	public function getMetadata( $url ) {
+	public function getMetadata($url)
+	{
 		$options['url'] = $url;
-		$response       = $this->restGet( '/product/metadata', $options );
+		$response       = $this->restGet('/product/metadata', $options);
 
-		return $this->_decodeResponse( $response );
+		return $this->_decodeResponse($response);
 	}
 
-	public function restGet( $path, array $query = null ) {
-		if ( ! $query ) {
+	public function restGet($path, array $query = null)
+	{
+		if (!$query)
+		{
 			$query = array();
 		}
 		$query['apiKey'] = $this->apiKey;
-		$this->setCustomHeaders( array( 'Authorization' => 'secret ' . $this->secretKey ) );
+		$this->setCustomHeaders(array('Authorization' => 'secret ' . $this->secretKey));
 
-		return parent::restGet( $path, $query );
+		return parent::restGet($path, $query);
 	}
-
 }

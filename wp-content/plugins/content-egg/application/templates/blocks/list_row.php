@@ -23,6 +23,7 @@ use ContentEgg\application\helpers\TemplateHelper;
             <a<?php TemplateHelper::printRel(); ?> target="_blank"
                                                    href="<?php echo esc_url_raw($item['url']); ?>"><?php echo esc_html(TemplateHelper::truncate($item['title'], 100)); ?></a>
         </div>
+
     </div>
     <div class="col-md-3 col-sm-3 col-xs-12 cegg-price-cell text-center">
         <div class="cegg-price-row">

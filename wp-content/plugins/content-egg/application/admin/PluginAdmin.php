@@ -19,9 +19,10 @@ use ContentEgg\application\ModuleUpdateScheduler;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class PluginAdmin {
+class PluginAdmin
+{
 
     protected static $instance = null;
 
@@ -68,7 +69,7 @@ class PluginAdmin {
             new ToolsController;
             new ImportExportController;
             AeIntegrationConfig::getInstance()->adminInit();
-            ModuleUpdateScheduler::addScheduleEvent();
+            ModuleUpdateScheduler::addScheduleEvent('ten_min');
         }
 
         if (Plugin::isEnvato() && !Plugin::isActivated() && !\get_option(Plugin::slug . '_env_install'))
@@ -80,7 +81,6 @@ class PluginAdmin {
         {
             new \ContentEgg\application\Autoupdate(Plugin::version(), plugin_basename(\ContentEgg\PLUGIN_FILE), Plugin::getApiBase(), Plugin::slug);
         }
-
     }
 
     function admin_load_scripts()
@@ -107,9 +107,10 @@ class PluginAdmin {
         if ($file == plugin_basename(\ContentEgg\PLUGIN_FILE) && (Plugin::isActivated() || Plugin::isFree()))
         {
             return array_merge(
-                    $links, array(
-                '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=content-egg">' . __('Settings', 'content-egg') . '</a>',
-                    )
+                $links,
+                array(
+                    '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=content-egg">' . __('Settings', 'content-egg') . '</a>',
+                )
             );
         }
         return $links;
@@ -117,7 +118,7 @@ class PluginAdmin {
 
     public function add_admin_menu()
     {
-        $icon_svg = 'data:image/svg+xml;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAUCAYAAABvVQZ0AAAACXBIWXMAAC4jAAAuIwF4pT92AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA1dJREFUeNqNVElMU1EUfQShIIkYNUETBkUIRoNGRUwxYWMUQoxGwSnCBkIUcGRuS39/p99+OkBpy9gCZSodgIImQIACKtGtG+OGhIXRBFmQ4EKjpt77BVILDSzu4v/33rnnnnvuJTRNE/+QQFAQWoGIGCtrSZGeTeMPtDPZVlMpTVHEXFlDpBIJdy/w7RYgjHphHamSy2KSPLaXofPu73unHcthXtdq1Izz882WxnwNJJJSWwG3gOHFhxrVWfJ25Gfcq15vsVadIabpqGqF7MiVTnMVeTfqS+9v02trRYQOYPgfkEpUR14winiy4PFl9LbKdbVCwgJLOZSnFItJQ42APFErUyCR73KnqUIL59uCIW0E2zdpXzzltNrwoX8pGxJggkIde5EsjPgAOJGBNxJ/MPzALFkWY0norGtNXicmcjG1rcj4DxOlOiydcaM9MyiLBMrdBJNBGVKKCgn1utZutDTeD6QfCKaEZNVy2X4y5/5VWs8kM/DNgeEh6pJrbri1Z8a5isD4zYqChxqiuaKGnHBZB9P625o4dhtg9UIROTbSPX56sMOKmjxo0l7Na264nWcOHvkG7e0zDoslcmrwiwKYQWWEKEAbGoTmTTu+3THprmOJicPd49FTjqXoSXvQgEYtHZoY+Ai6vRbIpBFYKseqnFHEhMy6f0D9KagHWgGT7Cb04Dc5kMGp4Vr9SKM6iWAVjDwGL+C47BQySsI1LhfkeK5SxnHMtAIhecwyx8n80J+nauVR5XpndgoZJKUAFN757hl1OYZqASFoOpGUDoc2/75r1F3DsiW7AMOkIM9htEcZyyRpoFxuvtAKsaM9s/Ee27QeyqaDbAV/r+FWyWk3FKOdsJNocu4AfVOoZy+Q92O+gkZNJjp8Y3y2A1LAnGJFPK9zhd/bqtz0GXcBmOCP9L42DW4FAL6EgGqRmBMamWJgl1GGeribMtzl5HldK/A/bGP0NrPhUOMlfl8riwxTXVZbiUZ17t8CEBMVaETRkvACgyb74KT9A2/OvQIbJkEdOOibgOsMi3QsP2GsZzrC61o+MDHwCYz5JnasZwHMuhjpdX49b+8w18GO8wcKumkNUKIJ1vMzsEqmrUWUPNztSRnqcmVZTWXQ+ciW8hpOAipAz788QXuyosK+HQAAAABJRU5ErkJggg==';
+        $icon_svg = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNjgwLjc0IiBoZWlnaHQ9IjgzMS4zNyIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNjgwLjc0IDgzMS4zNyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+PG1ldGFkYXRhPjxyZGY6UkRGPjxjYzpXb3JrIHJkZjphYm91dD0iIj48ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD48ZGM6dHlwZSByZGY6cmVzb3VyY2U9Imh0dHA6Ly9wdXJsLm9yZy9kYy9kY21pdHlwZS9TdGlsbEltYWdlIi8+PGRjOnRpdGxlLz48L2NjOldvcms+PC9yZGY6UkRGPjwvbWV0YWRhdGE+PGRlZnM+PGNsaXBQYXRoIGlkPSJjbGlwUGF0aDI2Ij48cGF0aCBkPSJtMCA5MDBoNjAwdi05MDBoLTYwMHoiLz48L2NsaXBQYXRoPjwvZGVmcz48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLjMzMzMgMCAwIC0xLjMzMzMgLTYyLjI5NSAxMDE0LjEpIj48ZyBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgyNikiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDU1Ny4yMSAzOTYpIj48cGF0aCBkPSJtMCAwaC0zNi4zNTZzM2UtMyAtMC41OTYgM2UtMyAtMC45MDJjMC0xNDIuOTgtODYuMDMyLTIyMi40NS0yMDYuNDEtMjIyLjQ1LTEyMC4zOCAwLTIyOS41MiA3OS40ODMtMjI5LjUyIDIyMi40NiAwIDE0Mi45NyAxMDIuOTIgMzI1LjIxIDIyMy4zIDMyNS4yMSA5NC4xNTYgMCAxNzEuMjItMTEwLjMxIDIwMC4xOS0yMjcuMzFoLTM1Mi40MXYtMzdoMzk1LjAyYy0xLjQxMiA5LTMuMjcgMjAtNS4zNjQgMjloMC4wOTJjLTAuNTAyIDItMS4wMjEgNC43NzEtMS41NTMgNi45OTYtMC4wNTIgMC4yMjktMC4wOTkgMS4wMDQtMC4xNTEgMS4wMDRoLTAuMDE0Yy0zMi42NDggMTM1LTEyMy40IDI2Ny42MS0yMzUuNDMgMjY3LjYxLTE0MC45OSAwLTI2MS44OC0yMDkuODctMjYxLjg4LTM3MS4zOSAwLTE2MS41MiAxMjYuMTgtMjUyLjE0IDI2Ny4xNy0yNTIuMTRzMjQzLjM5IDkwLjUwMiAyNDMuMzkgMjUyLjAyYzAgMi4zNDgtMC4wMjMgNC45MDItMC4wNjkgNi45MDIiIGZpbGw9IiMwMGMxYWQiLz48L2c+PC9nPjwvZz48L3N2Zz4K';
         $title = 'Content Egg';
         if (Plugin::isPro())
             $title .= ' Pro';
@@ -149,10 +150,10 @@ class PluginAdmin {
         if (count($page_parts) > 1)
         {
             $plugin_page = $page_parts[0];
-        } else
+        }
+        else
             $plugin_page = Plugin::slug();
 
         return $file;
     }
-
 }

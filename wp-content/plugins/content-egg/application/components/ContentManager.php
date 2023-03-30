@@ -18,7 +18,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class ContentManager
 {
@@ -89,9 +89,7 @@ class ContentManager
         foreach ($data as $i => $d)
         {
             if (is_object($d))
-            {
                 $data[$i] = ArrayHelper::object2Array($d);
-            }
         }
         $data = self::setIds($data);
         // Sanitize content for allowed HTML tags and more.
@@ -178,27 +176,34 @@ class ContentManager
             if ($key == 'img')
             {
                 $data = \esc_url_raw($data);
-            } else
+            }
+            else
             {
                 $data = \wp_sanitize_redirect($data);
                 $data = filter_var($data, FILTER_SANITIZE_URL);
             }
-        } elseif ($key === 'description')
+        }
+        elseif ($key === 'description')
         {
-            $data = TextHelper::sanitizeHtml($data);            
-        } elseif ($key === 'linkHtml')
+            $data = TextHelper::sanitizeHtml($data);
+        }
+        elseif ($key === 'linkHtml')
         {
             $data = wp_kses_post($data);
-        } elseif ($key === 'title')
+        }
+        elseif ($key === 'title')
         {
             $data = \sanitize_text_field($data);
-        } elseif ($key === 'last_update' && !$data)
+        }
+        elseif ($key === 'last_update' && !$data)
         {
             $data = time();
-        } elseif ($key === 'ean' && $data)
+        }
+        elseif ($key === 'ean' && $data)
         {
             $data = TextHelper::fixEan(sanitize_text_field($data));
-        } else
+        }
+        else
         {
             $data = wp_strip_all_tags($data);
         }
@@ -207,12 +212,17 @@ class ContentManager
     public static function isDataExists($post_id, $module_id)
     {
         if (\get_post_meta($post_id, ContentManager::META_PREFIX_DATA . $module_id, true))
-        {
             return true;
-        } else
-        {
+        else
             return false;
-        }
+    }
+
+    public static function isAutoupdateKeywordExists($post_id, $module_id)
+    {
+        if (\get_post_meta($post_id, ContentManager::META_PREFIX_KEYWORD . $module_id, true))
+            return true;
+        else
+            return false;
     }
 
     public static function getData($post_id, $module_id)
@@ -242,10 +252,10 @@ class ContentManager
         if (!isset(self::$_view_data[$data_id]))
         {
             $data = self::getData($post_id, $module_id);
-            
+
             if (!is_array($data))
                 $data = array();
-            
+
             $data = self::dataPreviewPrepare($data, $module_id, $post_id, $params);
 
             self::$_view_data[$data_id] = $data;
@@ -280,28 +290,30 @@ class ContentManager
         if (!empty($params['locale']))
         {
             if (strstr($module_id, 'Amazon') && $params['locale'] == 'GB')
-            {
                 $params['locale'] = 'UK';
-            }
 
             foreach ($data as $key => $d)
             {
                 if (!isset($d['extra']['locale']))
-                {
                     continue;
-                }
 
                 $product_locale = $d['extra']['locale'];
 
                 if ($module_id == 'Ebay2')
-                {
                     $product_locale = str_replace('EBAY_', '', $product_locale);
-                }
 
                 if (strtolower($product_locale) != strtolower($params['locale']))
-                {
                     unset($data[$key]);
-                }
+            }
+        }
+
+        // ean filter
+        if (!empty($params['ean']))
+        {
+            foreach ($data as $key => $d)
+            {
+                if (empty($d['ean']) || !in_array($d['ean'], $params['ean']))
+                    unset($data[$key]);
             }
         }
 
@@ -352,7 +364,8 @@ class ContentManager
             {
                 unset(self::$_view_data[$data_id]);
             }
-        } else
+        }
+        else
         {
             self::$_view_data = array();
         }
@@ -378,14 +391,16 @@ class ContentManager
             if (empty($d['extra']['domain']) && isset($d['domain']))
             {
                 $data[$key]['extra']['domain'] = $d['domain'];
-            } elseif (empty($d['domain']) && isset($d['extra']['domain']))
+            }
+            elseif (empty($d['domain']) && isset($d['extra']['domain']))
             {
                 $data[$key]['domain'] = $d['extra']['domain'];
             }
             if (empty($d['extra']['logo']) && isset($d['logo']))
             {
                 $data[$key]['extra']['logo'] = $d['logo'];
-            } elseif (empty($d['logo']) && isset($d['extra']['logo']))
+            }
+            elseif (empty($d['logo']) && isset($d['extra']['logo']))
             {
                 $data[$key]['logo'] = $d['extra']['logo'];
             }
@@ -418,7 +433,15 @@ class ContentManager
                 {
                     $data[$key]['rating'] = 0;
                 }
-                $data[$key]['rating'] = round(( $data[$key]['rating'] * 2 ) / 2);
+                $data[$key]['rating'] = round(($data[$key]['rating'] * 2) / 2);
+            }
+
+            $data[$key]['number'] = 999;
+            $number = TemplateHelper::getNumberFromTitle($data[$key]['title']);
+            if ($number !== false)
+            {
+                $data[$key]['title'] = TemplateHelper::fixNumberedTitle($data[$key]['title']);
+                $data[$key]['number'] = $number;
             }
 
             $data[$key]['post_id'] = $post_id;
@@ -465,15 +488,11 @@ class ContentManager
         $keyword = \apply_filters('cegg_keyword_update', $keyword, $post_id, $module_id);
 
         if (!$keyword)
-        {
             return;
-        }
 
         $updateParams = \get_post_meta($post_id, ContentManager::META_PREFIX_UPDATE_PARAMS . $module_id, true);
         if (!$updateParams)
-        {
             $updateParams = array();
-        }
 
         $module = ModuleManager::getInstance()->factory($module_id);
 
@@ -488,10 +507,10 @@ class ContentManager
             if (!$data)
             {
                 \do_action('cegg_keyword_update_no_data', $post_id, $module_id);
-
                 return;
             }
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
             // error
             return;
@@ -505,25 +524,21 @@ class ContentManager
     {
         $module = ModuleManager::getInstance()->factory($module_id);
         if (!$module->isItemsUpdateAvailable())
-        {
             return;
-        }
 
         $items = ContentManager::getData($post_id, $module_id);
 
         if (!$items)
-        {
             return;
-        }
 
         try
         {
             $updated_data = $module->doRequestItems($items);
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
             // error
             ContentManager::touchUpdateItemsTime($post_id, $module_id);
-
             return;
         }
 
@@ -657,7 +672,8 @@ class ContentManager
             if (!empty($item['extra']['comments']))
             {
                 $data[$i]['extra']['comments'] = array();
-            } elseif (!empty($item['extra']['Reviews']))
+            }
+            elseif (!empty($item['extra']['Reviews']))
             {
                 $data[$i]['extra']['Reviews'] = array();
             }
@@ -678,16 +694,17 @@ class ContentManager
             'comment_approved' => 1,
         );
 
-        $is_rehub_theme = ( in_array(basename(\get_template_directory()), array(
-                    'rehub',
-                    'rehub-theme'
-                )) ) ? true : false;
+        $is_rehub_theme = (in_array(basename(\get_template_directory()), array(
+            'rehub',
+            'rehub-theme'
+        ))) ? true : false;
         $rehub_post_type = \get_post_meta($post_id, 'rehub_framework_post_type', true);
 
         if ($rehub_post_type && $rehub_post_type == 'review')
         {
             $is_review_post_type = true;
-        } else
+        }
+        else
         {
             $is_review_post_type = false;
         }
@@ -696,7 +713,8 @@ class ContentManager
         {
             $is_woo_product = true;
             $comment_data['comment_type'] = 'review';
-        } else
+        }
+        else
         {
             $is_woo_product = false;
         }
@@ -713,7 +731,8 @@ class ContentManager
             if ($is_rehub_theme && $is_review_post_type && !empty($comment['review']))
             {
                 $comment_content = $comment['review'];
-            } else
+            }
+            else
             {
                 $comment_content = $comment['comment'];
             }
@@ -732,7 +751,8 @@ class ContentManager
             if (isset($comment['parent_id']) && is_numeric($comment['parent_id']) && isset($comments_keys_map[$comment['parent_id']]))
             {
                 $comment_data['comment_parent'] = $comments_keys_map[$comment['parent_id']];
-            } else
+            }
+            else
             {
                 $comment_data['comment_parent'] = 0;
             }
@@ -813,7 +833,8 @@ class ContentManager
         if ($main_product_selector == 'max_price')
         {
             $order = 'desc';
-        } else
+        }
+        else
         {
             $order = 'asc';
         }
@@ -823,4 +844,37 @@ class ContentManager
         return $sorted[0];
     }
 
+    public static function getViewProductData($post_id, $merged = true)
+    {
+        $affiliate_modules = ModuleManager::getInstance()->getAffiliteModulesList(true);
+        $modules_data = array();
+        foreach (array_keys($affiliate_modules) as $module_id)
+        {
+            if (!$data = ContentManager::getViewData($module_id, $post_id))
+                continue;
+
+            $modules_data[$module_id] = $data;
+        }
+
+        if ($merged)
+            $modules_data = TemplateHelper::mergeData($modules_data);
+
+        return $modules_data;
+    }
+
+    public static function updateAllItems($post_id)
+    {
+        foreach (array_keys(ModuleManager::getInstance()->getAffiliteModulesList(true)) as $module_id)
+        {
+            ContentManager::updateItems($post_id, $module_id);
+        }
+    }
+
+    public static function updateAllByKeyword($post_id)
+    {
+        foreach (array_keys(ModuleManager::getInstance()->getAffiliteModulesList(true)) as $module_id)
+        {
+            ContentManager::updateByKeyword($post_id, $module_id);
+        }
+    }
 }

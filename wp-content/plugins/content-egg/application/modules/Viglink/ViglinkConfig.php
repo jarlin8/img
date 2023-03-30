@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Viglink;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModuleConfig;
 
@@ -10,47 +10,49 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  * AffiliatewindowConfig class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ViglinkConfig extends AffiliateParserModuleConfig {
+class ViglinkConfig extends AffiliateParserModuleConfig
+{
 
-	public function options() {
+	public function options()
+	{
 		$optiosn                             = array(
 			'apiKey'                  => array(
 				'title'       => 'API Key <span class="cegg_required">*</span>',
-				'description' => __( 'To track clicks by campaign, use your campaign-specific API Key.', 'content-egg' ) . ' ' .
-				                 sprintf( __( 'You can find your API key in your <a target="_blank" href="%s">VigLink</a> account.', 'content-egg' ), 'http://www.keywordrush.com/go/viglink' ) . ' ' .
-				                 __( 'When logged into your dashboard, go to Account > Sites > your domain name > "key" icon under Actions.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('To track clicks by campaign, use your campaign-specific API Key.', 'content-egg') . ' ' .
+					sprintf(__('You can find your API key in your <a target="_blank" href="%s">VigLink</a> account.', 'content-egg'), 'http://www.keywordrush.com/go/viglink') . ' ' .
+					__('When logged into your dashboard, go to Account > Sites > your domain name > "key" icon under Actions.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'required' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => sprintf( __( 'The field "%s" can not be empty.', 'content-egg' ), 'Password' ),
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Password'),
 					),
 				),
 			),
 			'secretKey'               => array(
 				'title'       => 'Secret Key <span class="cegg_required">*</span>',
-				'description' => __( 'When logged into your dashboard, go to Account > Sites > your domain name > "key" icon under Actions.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('When logged into your dashboard, go to Account > Sites > your domain name > "key" icon under Actions.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'required' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => sprintf( __( 'The field "%s" can not be empty.', 'content-egg' ), 'Username' ),
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Username'),
 					),
 				),
 			),
 			'entries_per_page'        => array(
-				'title'       => __( 'Results', 'content-egg' ),
-				'description' => __( 'Number of results for one search query.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results', 'content-egg'),
+				'description' => __('Number of results for one search query.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
 					'trim',
@@ -58,9 +60,9 @@ class ViglinkConfig extends AffiliateParserModuleConfig {
 				),
 			),
 			'entries_per_page_update' => array(
-				'title'       => __( 'Results for updates and autoblogging', 'content-egg' ),
-				'description' => __( 'Number of results for automatic updates and autoblogging.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results for updates and autoblogging', 'content-egg'),
+				'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
 					'trim',
@@ -69,8 +71,8 @@ class ViglinkConfig extends AffiliateParserModuleConfig {
 			),
 			'deeplink'                => array(
 				'title'       => 'Deeplink',
-				'description' => __( 'Used only for search by URL feature! Set <a target="_blank" href="https://ce-docs.keywordrush.com/set-up-products/deeplinksettings">Deeplink</a> for one of CPA-networks.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('Used only for search by URL feature! Set <a target="_blank" href="https://ce-docs.keywordrush.com/set-up-products/deeplinksettings">Deeplink</a> for one of CPA-networks.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -78,31 +80,31 @@ class ViglinkConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'country'                 => array(
-				'title'       => __( 'Country', 'content-egg' ),
-				'description' => __( 'Filter results to only include offers from a specific country. Please use ISO Alpha-2 country codes like "us" for United States. You can specify multiple countries separated by commas.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Country', 'content-egg'),
+				'description' => __('Filter results to only include offers from a specific country. Please use ISO Alpha-2 country codes like "us" for United States. You can specify multiple countries separated by commas.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 			),
 			'category'                => array(
-				'title'            => __( 'Category ', 'content-egg' ),
-				'description'      => __( 'Filter your query by a specific category.', 'content-egg' ),
-				'callback'         => array( $this, 'render_dropdown' ),
+				'title'            => __('Category ', 'content-egg'),
+				'description'      => __('Filter your query by a specific category.', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => self::getCategoriesList(),
 				'default'          => '',
 			),
 			'sortBy'                  => array(
-				'title'            => __( 'Sort order', 'content-egg' ),
-				'callback'         => array( $this, 'render_dropdown' ),
+				'title'            => __('Sort order', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					''       => __( 'Relevance', 'content-egg' ),
-					'price'  => __( 'Price low to high', 'content-egg' ),
-					'-price' => __( 'Price high to low', 'content-egg' ),
+					''       => __('Relevance', 'content-egg'),
+					'price'  => __('Price low to high', 'content-egg'),
+					'-price' => __('Price high to low', 'content-egg'),
 				),
 				'default'          => '',
 			),
 			'priceFrom'               => array(
-				'title'       => __( 'Price From', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Price From', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -110,8 +112,8 @@ class ViglinkConfig extends AffiliateParserModuleConfig {
 				'metaboxInit' => true,
 			),
 			'priceTo'                 => array(
-				'title'       => __( 'Price To', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Price To', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -119,40 +121,41 @@ class ViglinkConfig extends AffiliateParserModuleConfig {
 				'metaboxInit' => true,
 			),
 			'merchant'                => array(
-				'title'       => __( 'Merchant', 'content-egg' ),
-				'description' => sprintf( __( 'Filter your query by a specific merchant. Currently this filter is case-sensitive. The best way to ensure that it will return accurate results is to filter with a value <a target="_blank" href="%s">already discovered</a>. You can specify multiple merchants separated by commas.', 'content-egg' ), 'https://viglink-developer-center.readme.io/docs/product-search#section-faceting' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Merchant', 'content-egg'),
+				'description' => sprintf(__('Filter your query by a specific merchant. Currently this filter is case-sensitive. The best way to ensure that it will return accurate results is to filter with a value <a target="_blank" href="%s">already discovered</a>. You can specify multiple merchants separated by commas.', 'content-egg'), 'https://viglink-developer-center.readme.io/docs/product-search#section-faceting'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 			),
 			'filterImages'            => array(
-				'title'       => __( 'Images filter', 'content-egg' ),
-				'description' => __( 'Products with images', 'content-egg' ) . '<p class="description">' . __( 'Some merchants do not supply an image in their feeds. As such, you have the option here to filter out items that do not have a merchant-supplied image, or correctly structured image URL.', 'content-egg' ) . '</p>',
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Images filter', 'content-egg'),
+				'description' => __('Products with images', 'content-egg') . '<p class="description">' . __('Some merchants do not supply an image in their feeds. As such, you have the option here to filter out items that do not have a merchant-supplied image, or correctly structured image URL.', 'content-egg') . '</p>',
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => true,
 			),
 			'default_currency'        => array(
-				'title'       => __( 'Default currency', 'content-egg' ),
-				'description' => __( 'Expects the three-letter ISO 4217 currency code. Used only for search by URL feature.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Default currency', 'content-egg'),
+				'description' => __('Expects the three-letter ISO 4217 currency code. Used only for search by URL feature.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 			),
 			'save_img'                => array(
-				'title'       => __( 'Save images', 'content-egg' ),
-				'description' => __( 'Save images on server', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Save images', 'content-egg'),
+				'description' => __('Save images on server', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 			),
 		);
-		$optiosn                             = array_merge( parent::options(), $optiosn );
-		$optiosn['ttl_items']['description'] = __( 'Please note: Price update is only available for products added by direct URL (not by keyword search).', 'content-egg' );
+		$optiosn                             = array_merge(parent::options(), $optiosn);
+		$optiosn['ttl_items']['description'] = __('Please note: Price update is only available for products added by direct URL (not by keyword search).', 'content-egg');
 		$optiosn['update_mode']['default']   = 'cron';
 
 		return $optiosn;
 	}
 
-	public static function getCategoriesList() {
+	public static function getCategoriesList()
+	{
 		return array(
-			''                                                                => __( '[ All ]', 'content-egg' ),
+			''                                                                => __('[ All ]', 'content-egg'),
 			'Adult and Gambling'                                              => 'Adult and Gambling',
 			'Adult and Gambling > Adult'                                      => 'Adult and Gambling > Adult',
 			'Adult and Gambling > Gambling'                                   => 'Adult and Gambling > Gambling',
@@ -300,5 +303,4 @@ class ViglinkConfig extends AffiliateParserModuleConfig {
 			'Video Gaming > Other Gaming'                                     => 'Video Gaming > Other Gaming'
 		);
 	}
-
 }

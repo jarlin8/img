@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\CjLinks;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModuleConfig;
 
@@ -10,47 +10,49 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  * CjLinksConfig class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class CjLinksConfig extends AffiliateParserModuleConfig {
+class CjLinksConfig extends AffiliateParserModuleConfig
+{
 
-	public function options() {
+	public function options()
+	{
 		$options = array(
 			'access_token'            => array(
 				'title'       => 'Personal access token <span class="cegg_required">*</span>',
-				'description' => __( 'A Personal Access Token is a unique identification string for your account. You can get it <a target="_blank" href="https://developers.cj.com/account/personal-access-tokens">here</a>.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('A Personal Access Token is a unique identification string for your account. You can get it <a target="_blank" href="https://developers.cj.com/account/personal-access-tokens">here</a>.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'required' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => sprintf( __( 'The field "%s" can not be empty.', 'content-egg' ), 'Personal access token' ),
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Personal access token'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'website_id'              => array(
 				'title'       => 'Website ID <span class="cegg_required">*</span>',
-				'description' => __( 'PID - site id in CJ. Login in your account in CJ and follow "Account -> Websites"', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('PID - site id in CJ. Login in your account in CJ and follow "Account -> Websites"', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'required' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => __( 'The field "Website ID" can not be empty.', 'content-egg' ),
+						'message' => __('The field "Website ID" can not be empty.', 'content-egg'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'dev_key'                 => array(
 				'title'       => 'Developer key (deprecated)',
-				'description' => __( 'Developer keys have been deprecated. They will continue to work when authenticating with existing APIs, but will not work with future APIs. Please use personal access tokens instead.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('Developer keys have been deprecated. They will continue to work when authenticating with existing APIs, but will not work with future APIs. Please use personal access tokens instead.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -58,9 +60,9 @@ class CjLinksConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'entries_per_page'        => array(
-				'title'       => __( 'Results', 'content-egg' ),
-				'description' => __( 'Number of results for one search query.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results', 'content-egg'),
+				'description' => __('Number of results for one search query.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
 					'trim',
@@ -69,9 +71,9 @@ class CjLinksConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __( 'Results for updates and autoblogging', 'content-egg' ),
-				'description' => __( 'Number of results for automatic updates and autoblogging.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results for updates and autoblogging', 'content-egg'),
+				'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 3,
 				'validator'   => array(
 					'trim',
@@ -80,10 +82,10 @@ class CjLinksConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'advertiser_ids'          => array(
-				'title'       => __( 'Advertisers', 'content-egg' ),
-				'description' => __( 'A comma separated list of Advertiser IDs (CID). Restrict search results based on these IDs', 'content-egg' ) .
-				                 ' ' . __( 'or set this option to "joined" (this value restricts the search to advertisers with which you have a relationship).', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Advertisers', 'content-egg'),
+				'description' => __('A comma separated list of Advertiser IDs (CID). Restrict search results based on these IDs', 'content-egg') .
+					' ' . __('or set this option to "joined" (this value restricts the search to advertisers with which you have a relationship).', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 'joined',
 				'validator'   => array(
 					'trim',
@@ -93,9 +95,9 @@ class CjLinksConfig extends AffiliateParserModuleConfig {
 			'link_type'               => array(
 				'title'            => 'Link type',
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					''              => __( 'Any', 'content-egg' ),
+					''              => __('Any', 'content-egg'),
 					'Text Link'     => 'Text Link',
 					'Banner'        => 'Banner',
 					'Content Link'  => 'Content Link',
@@ -117,9 +119,9 @@ class CjLinksConfig extends AffiliateParserModuleConfig {
 			'promotion_type'          => array(
 				'title'            => 'Promotion type',
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					''              => __( 'Any', 'content-egg' ),
+					''              => __('Any', 'content-egg'),
 					'coupon'        => 'Coupon',
 					'sweepstakes'   => 'Sweepstakes',
 					'product'       => 'Hot Product',
@@ -132,11 +134,11 @@ class CjLinksConfig extends AffiliateParserModuleConfig {
 				'metaboxInit'      => true,
 			),
 			'category'                => array(
-				'title'            => __( 'Category ', 'content-egg' ),
+				'title'            => __('Category ', 'content-egg'),
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					''                                  => __( 'Any', 'content-egg' ),
+					''                                  => __('Any', 'content-egg'),
 					'Accessories'                       => 'Accessories',
 					'Air'                               => 'Air',
 					'Apparel'                           => 'Apparel',
@@ -319,9 +321,8 @@ class CjLinksConfig extends AffiliateParserModuleConfig {
 			),
 		);
 		$parent  = parent::options();
-		unset( $parent['featured_image'] );
+		unset($parent['featured_image']);
 
-		return array_merge( $parent, $options );
+		return array_merge($parent, $options);
 	}
-
 }

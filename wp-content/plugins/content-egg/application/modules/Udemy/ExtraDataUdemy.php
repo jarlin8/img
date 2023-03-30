@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Udemy;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataUdemy class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataUdemy extends ExtraData {
+class ExtraDataUdemy extends ExtraData
+{
 
 	public $is_paid;
 	public $avg_rating;
@@ -42,5 +43,4 @@ class ExtraDataUdemy extends ExtraData {
 	public $objectives_summary = array();
 	public $target_audiences = array();
 	public $bestseller_badge_content = array();
-
 }

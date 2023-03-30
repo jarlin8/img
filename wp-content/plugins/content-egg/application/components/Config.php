@@ -9,9 +9,10 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-abstract class Config {
+abstract class Config
+{
 
     protected $page_slug;
     protected $option_name;
@@ -27,7 +28,8 @@ abstract class Config {
         if ($id)
         {
             $instance_id = $id;
-        } else
+        }
+        else
         {
             $instance_id = $class;
         }
@@ -70,7 +72,7 @@ abstract class Config {
         global $pagenow;
         \add_action('admin_menu', array($this, 'add_admin_menu'));
 
-        if ($pagenow == 'options.php' || (!empty($_GET['page']) && sanitize_text_field(wp_unslash($_GET['page'])) == $this->page_slug ))
+        if ($pagenow == 'options.php' || (!empty($_GET['page']) && sanitize_text_field(wp_unslash($_GET['page'])) == $this->page_slug))
         {
             \add_action('admin_init', array($this, 'register_settings'));
         }
@@ -94,7 +96,8 @@ abstract class Config {
         if (isset($this->options[$option]) && isset($this->options[$option]['default']))
         {
             return $this->options[$option]['default'];
-        } else
+        }
+        else
         {
             return '';
         }
@@ -105,7 +108,8 @@ abstract class Config {
         if (isset($this->options[$option]) && isset($this->options[$option]['validator']))
         {
             return $this->options[$option]['validator'];
-        } else
+        }
+        else
         {
             return null;
         }
@@ -116,10 +120,12 @@ abstract class Config {
         if (isset($this->option_values[$option]))
         {
             return $this->option_values[$option];
-        } elseif ($this->option_values && $this->is_checkbox($option))
+        }
+        elseif ($this->option_values && $this->is_checkbox($option))
         {
             return false;
-        } else
+        }
+        else
         {
             return $this->get_default($option);
         }
@@ -128,9 +134,9 @@ abstract class Config {
     public function register_settings()
     {
         \register_setting(
-                $this->page_slug, // group, used for settings_fields()
-                $this->option_name, // option name, used as key in database
-                array($this, 'validate')      // validation callback
+            $this->page_slug, // group, used for settings_fields()
+            $this->option_name, // option name, used as key in database
+            array($this, 'validate')      // validation callback
         );
 
         // reinit options for later plugin binding
@@ -180,7 +186,8 @@ abstract class Config {
                 if ($field['section'] == 'default')
                 {
                     $section_title = '';
-                } else
+                }
+                else
                 {
                     $section_title = $field['section'];
                 }
@@ -190,8 +197,12 @@ abstract class Config {
             }
 
             \add_settings_field(
-                    $id, $field['title'], $field['callback'], $this->page_slug, // menu slug
-                    $field['section'], $params
+                $id,
+                $field['title'],
+                $field['callback'],
+                $this->page_slug, // menu slug
+                $field['section'],
+                $params
             );
         }
     }
@@ -201,14 +212,16 @@ abstract class Config {
         if (!empty($args['class']))
         {
             $class = $args['class'];
-        } else
+        }
+        else
         {
             $class = 'regular-text ltr';
         }
         if (!empty($args['type']))
         {
             $type = $args['type'];
-        } else
+        }
+        else
         {
             $type = 'text';
         }
@@ -226,8 +239,8 @@ abstract class Config {
     public function render_textarea($args)
     {
         echo '<textarea name="' . esc_attr($args['option_name']) . '['
-        . esc_attr($args['name']) . ']" id="'
-        . esc_attr($args['label_for']) . '" rows="2" class="large-text code">' . esc_html($args['value']) . '</textarea>';
+            . esc_attr($args['name']) . ']" id="'
+            . esc_attr($args['label_for']) . '" rows="2" class="large-text code">' . esc_html($args['value']) . '</textarea>';
         if (!empty($args['render_after']))
         {
             echo wp_kses_post($args['render_after']);
@@ -241,9 +254,9 @@ abstract class Config {
     public function render_password($args)
     {
         echo '<input type="password" name="' . esc_attr($args['option_name']) . '['
-        . esc_attr($args['name']) . ']" id="'
-        . esc_attr($args['label_for']) . '" value="'
-        . esc_attr($args['value']) . '" class="regular-text" />';
+            . esc_attr($args['name']) . ']" id="'
+            . esc_attr($args['label_for']) . '" value="'
+            . esc_attr($args['value']) . '" class="regular-text" />';
         if (!empty($args['render_after']))
             echo $args['render_after'];
         if ($args['description'])
@@ -257,14 +270,15 @@ abstract class Config {
         if ((bool) $args['value'])
         {
             $checked = ' checked="checked" ';
-        } else
+        }
+        else
         {
             $checked = '';
         }
         echo '<label for="' . esc_attr($args['label_for']) . '">';
         echo '<input type="checkbox" name="' . esc_attr($args['option_name']) . '['
-        . esc_attr($args['name']) . ']" id="'
-        . esc_attr($args['label_for']) . '"';
+            . esc_attr($args['name']) . ']" id="'
+            . esc_attr($args['label_for']) . '"';
         if ($checked)
             echo ' checked="checked" ';
         echo ' value="1" />';
@@ -278,15 +292,16 @@ abstract class Config {
     public function render_dropdown($args)
     {
         echo '<select name="' . esc_attr($args['option_name']) . '['
-        . esc_attr($args['name']) . ']" id="'
-        . esc_attr($args['label_for']) . '" value="'
-        . esc_attr($args['value']) . '" >';
+            . esc_attr($args['name']) . ']" id="'
+            . esc_attr($args['label_for']) . '" value="'
+            . esc_attr($args['value']) . '" >';
         foreach ($args['dropdown_options'] as $option_value => $option_name)
         {
             if ($option_value === $args['value'])
             {
                 $selected = ' selected="selected" ';
-            } else
+            }
+            else
             {
                 $selected = '';
             }
@@ -326,7 +341,8 @@ abstract class Config {
                 if (in_array($value, $args['value']))
                 {
                     $checked = ' checked="checked" ';
-                } else
+                }
+                else
                 {
                     $checked = '';
                 }
@@ -334,8 +350,8 @@ abstract class Config {
                 echo '<div class="cegg-checkbox">';
                 echo '<label for="' . esc_attr($args['label_for'] . '-' . $value) . '">';
                 echo '<input type="checkbox" name="' . esc_attr($args['option_name']) . '['
-                . esc_attr($args['name']) . '][' . esc_attr($value) . ']" id="'
-                . esc_attr($args['label_for'] . '-' . $value), '"';
+                    . esc_attr($args['name']) . '][' . esc_attr($value) . ']" id="'
+                    . esc_attr($args['label_for'] . '-' . $value), '"';
                 if ($checked)
                     echo ' checked="checked" ';
                 echo ' value="' . esc_attr($value) . '" />';
@@ -354,16 +370,16 @@ abstract class Config {
     public function render_hidden($args)
     {
         echo '<input type="hidden" name="' . esc_attr($args['option_name']) . '['
-        . esc_attr($args['name']) . '] value="'
-        . esc_attr($args['value']) . '" />';
+            . esc_attr($args['name']) . '] value="'
+            . esc_attr($args['value']) . '" />';
     }
 
     public function render_color_picker($args)
     {
         echo '<input name="' . esc_attr($args['option_name']) . '['
-        . esc_attr($args['name']) . ']" id="'
-        . esc_attr($args['label_for']) . '" value="'
-        . esc_attr($args['value']) . '" />';
+            . esc_attr($args['name']) . ']" id="'
+            . esc_attr($args['label_for']) . '" value="'
+            . esc_attr($args['value']) . '" />';
         if (!empty($args['render_after']))
         {
             echo wp_kses_post($args['render_after']);
@@ -382,7 +398,8 @@ abstract class Config {
         if (array_key_exists($option, $this->options))
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -423,7 +440,8 @@ abstract class Config {
                             if ($value === '')
                             {
                                 break;
-                            } else
+                            }
+                            else
                             {
                                 continue;
                             }
@@ -431,7 +449,8 @@ abstract class Config {
 
                         // filter
                         $value = call_user_func($v, $value);
-                    } else
+                    }
+                    else
                     {
                         // check 'when' condition
                         if (!empty($v['when']))
@@ -447,13 +466,15 @@ abstract class Config {
                         {
                             // filter
                             $value = call_user_func($v['call'], $value);
-                        } else
+                        }
+                        else
                         {
                             // validator
                             if (empty($v['arg']))
                             {
                                 $res = call_user_func($v['call'], $value);
-                            } else
+                            }
+                            else
                             {
                                 $res = call_user_func($v['call'], $value, $v['arg']);
                             }
@@ -482,7 +503,8 @@ abstract class Config {
         if ($this->options[$option]['callback'][1] == 'render_checkbox')
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -520,7 +542,8 @@ abstract class Config {
         if (isset($out[$option]))
         {
             return $out[$option];
-        } else
+        }
+        else
         {
             return $input[$option];
         }
@@ -541,5 +564,4 @@ abstract class Config {
 
         return $result;
     }
-
 }

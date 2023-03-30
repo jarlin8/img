@@ -11,20 +11,23 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * Aliexpress Affiliates API
  * @link: https://developers.aliexpress.com/en/doc.htm?apiName=aliexpress.affiliate.product.query&docId=118192&docType=1
+ * @link: https://open.aliexpress.com/doc/doc.htm?nodeId=27493&docId=118729#/?docId=1236
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 
 class Aliexpress2Api extends RestClient
 {
-
-    const API_URI_BASE = 'http://gw.api.taobao.com/router/rest';
+    const API_URI_BASE_TAOBAO = 'http://gw.api.taobao.com/router/rest';
+    const API_URI_BASE_ALIEXPRESS = 'https://api-sg.aliexpress.com/sync';
 
     protected $app_key;
     protected $app_secret;
+    protected $platform;
+
     protected $_responseTypes = array(
         'json',
     );
@@ -36,12 +39,21 @@ class Aliexpress2Api extends RestClient
      *
      * @param string $responseType
      */
-    public function __construct($app_key, $app_secret)
+    public function __construct($app_key, $app_secret, $platform = 'taobao')
     {
         $this->app_key = $app_key;
         $this->app_secret = $app_secret;
         $this->setResponseType('json');
-        $this->setUri(self::API_URI_BASE);
+        $this->setPlatform($platform);
+    }
+
+    public function setPlatform($platform)
+    {
+        $this->platform = $platform;
+        if ($this->platform == 'taobao')
+            $this->setUri(self::API_URI_BASE_TAOBAO);
+        else
+            $this->setUri(self::API_URI_BASE_ALIEXPRESS);
     }
 
     /**
@@ -133,7 +145,8 @@ class Aliexpress2Api extends RestClient
         {
             $code = (int) $r['resp_result']['resp_code'];
             $mess = $r['resp_result']['resp_msg'];
-        } elseif (isset($data['error_response']))
+        }
+        elseif (isset($data['error_response']))
         {
             $code = (int) $data['error_response']['code'];
             $mess = $data['error_response']['msg'];
@@ -150,5 +163,4 @@ class Aliexpress2Api extends RestClient
 
         return parent::myErrorHandler($response);
     }
-
 }

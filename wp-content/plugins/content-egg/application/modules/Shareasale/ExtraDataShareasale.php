@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Shareasale;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataShareasale class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataShareasale extends ExtraData {
+class ExtraDataShareasale extends ExtraData
+{
 
 	public $productid;
 	public $merchantid;
@@ -42,5 +43,4 @@ class ExtraDataShareasale extends ExtraData {
 	public $avesale7day;
 	public $avesale30day;
 	public $powerranktop100;
-
 }

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\PayTM;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataPayTM class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataPayTM extends ExtraData {
+class ExtraDataPayTM extends ExtraData
+{
 
 	public $seourl;
 	public $url_type;
@@ -23,5 +24,4 @@ class ExtraDataPayTM extends ExtraData {
 	public $search_weight;
 	public $merchant_name;
 	public $product_code;
-
 }

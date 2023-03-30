@@ -17,7 +17,7 @@ use ContentEgg\application\helpers\ArrayHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class Aliexpress2Module extends AffiliateParserModule
 {
@@ -64,7 +64,8 @@ class Aliexpress2Module extends AffiliateParserModule
         if ($is_autoupdate)
         {
             $options['page_size'] = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $options['page_size'] = $this->config('entries_per_page');
         }
@@ -72,10 +73,12 @@ class Aliexpress2Module extends AffiliateParserModule
         if (!empty($query_params['max_sale_price']) && $price = (int) $query_params['max_sale_price'])
         {
             $options['max_sale_price'] = $price * 100;
-        } elseif ($price = (int) $this->config('max_sale_price'))
+        }
+        elseif ($price = (int) $this->config('max_sale_price'))
         {
             $options['max_sale_price'] = $price * 100;
-        } else
+        }
+        else
         {
             $options['max_sale_price'] = 999999900;
         }
@@ -83,10 +86,12 @@ class Aliexpress2Module extends AffiliateParserModule
         if (!empty($query_params['min_sale_price']) && $price = (int) $query_params['min_sale_price'])
         {
             $options['min_sale_price'] = $price * 100;
-        } elseif ($price = (int) $this->config('min_sale_price'))
+        }
+        elseif ($price = (int) $this->config('min_sale_price'))
         {
             $options['min_sale_price'] = $price * 100;
-        } else
+        }
+        else
         {
             $options['min_sale_price'] = 1;
         }
@@ -140,7 +145,8 @@ class Aliexpress2Module extends AffiliateParserModule
                 return array();
             }
             $results = $results['aliexpress_affiliate_productdetail_get_response'];
-        } else
+        }
+        else
         {
             $results = $this->getAliexpressClient()->search($keyword, $options);
             if (!is_array($results) || !isset($results['aliexpress_affiliate_product_query_response']))
@@ -176,14 +182,17 @@ class Aliexpress2Module extends AffiliateParserModule
             {
                 $content->price = $r['target_sale_price'];
                 $content->priceOld = $r['target_original_price'];
-            } elseif (!empty($r['target_original_price']))
+            }
+            elseif (!empty($r['target_original_price']))
             {
                 $content->price = $r['target_original_price'];
-            } elseif (!empty($r['sale_price']))
+            }
+            elseif (!empty($r['sale_price']))
             {
                 $content->price = $r['sale_price'];
                 $content->priceOld = $r['original_price'];
-            } else
+            }
+            else
             {
                 $content->price = $r['original_price'];
             }
@@ -191,10 +200,12 @@ class Aliexpress2Module extends AffiliateParserModule
             if (!empty($r['target_original_price_currency']))
             {
                 $content->currencyCode = $r['target_original_price_currency'];
-            } elseif (!empty($r['target_sale_price_currency']))
+            }
+            elseif (!empty($r['target_sale_price_currency']))
             {
                 $content->currencyCode = $r['target_sale_price_currency'];
-            } else
+            }
+            else
             {
                 $content->currencyCode = $r['original_price_currency'];
             }
@@ -229,7 +240,8 @@ class Aliexpress2Module extends AffiliateParserModule
         try
         {
             $results = $this->getAliexpressClient()->product($product_ids, $options);
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
             return $items;
         }
@@ -237,7 +249,8 @@ class Aliexpress2Module extends AffiliateParserModule
         if (isset($results['aliexpress_affiliate_productdetail_get_response']['resp_result']['result']['products']['product']))
         {
             $results = $results['aliexpress_affiliate_productdetail_get_response']['resp_result']['result']['products']['product'];
-        } else
+        }
+        else
         {
             $results = array();
         }
@@ -287,7 +300,7 @@ class Aliexpress2Module extends AffiliateParserModule
     {
         if ($this->api_client === null)
         {
-            $this->api_client = new Aliexpress2Api($this->config('app_key'), $this->config('app_secret'));
+            $this->api_client = new Aliexpress2Api($this->config('app_key'), $this->config('app_secret'), $this->config('api_platform'));
         }
 
         return $this->api_client;
@@ -298,10 +311,12 @@ class Aliexpress2Module extends AffiliateParserModule
         if ($deeplink = $this->config('deeplink'))
         {
             return LinkHandler::createAffUrl($r['product_detail_url'], $deeplink);
-        } elseif ($tracking_id = $this->config('tracking_id'))
+        }
+        elseif ($tracking_id = $this->config('tracking_id'))
         {
             return $r['promotion_link'];
-        } else
+        }
+        else
         {
             return $r['product_detail_url'];
         }
@@ -345,7 +360,8 @@ class Aliexpress2Module extends AffiliateParserModule
         if (preg_match('/[0-9]{10,}/', $str))
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -357,10 +373,10 @@ class Aliexpress2Module extends AffiliateParserModule
         if (preg_match($regex, $url, $matches))
         {
             return $matches[1];
-        } else
+        }
+        else
         {
             return '';
         }
     }
-
 }

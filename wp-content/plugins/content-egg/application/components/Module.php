@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\components;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\helpers\TextHelper;
@@ -13,10 +13,11 @@ use ContentEgg\application\Plugin;
  * Module abstract class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-abstract class Module {
+abstract class Module
+{
 
 	private $id;
 	private $dir;
@@ -28,53 +29,70 @@ abstract class Module {
 	private $is_custom;
 	private $is_configurable;
 
-	public function __construct( $module_id = null ) {
-		if ( $module_id ) {
+	public function __construct($module_id = null)
+	{
+		if ($module_id)
+		{
 			$this->id = $module_id;
-		} else {
+		}
+		else
+		{
 			$this->id = static::getIdStatic();
 		}
 
 		$info = $this->info();
-		if ( ! empty( $info['name'] ) ) {
+		if (!empty($info['name']))
+		{
 			$this->name = $info['name'];
-		} else {
+		}
+		else
+		{
 			$this->name = $this->id;
 		}
-		if ( ! empty( $info['api_agreement'] ) ) {
+		if (!empty($info['api_agreement']))
+		{
 			$this->api_agreement = $info['api_agreement'];
 		}
-		if ( ! empty( $info['description'] ) ) {
+		if (!empty($info['description']))
+		{
 			$this->description = $info['description'];
 		}
-		if ( ! empty( $info['docs_uri'] ) ) {
+		if (!empty($info['docs_uri']))
+		{
 			$this->docs_uri = $info['docs_uri'];
 		}
 	}
 
-	public function info() {
+	public function info()
+	{
 		return array();
 	}
 
-	final public function getId() {
+	final public function getId()
+	{
 		return $this->id;
 	}
 
-	public function getName() {
+	public function getName()
+	{
 		return $this->name;
 	}
 
-	public function getDir() {
-		if ( $this->dir === null ) {
-			$rc        = new \ReflectionClass( get_class( $this ) );
-			$this->dir = dirname( $rc->getFileName() ) . DIRECTORY_SEPARATOR;
+	public function getDir()
+	{
+		if ($this->dir === null)
+		{
+			$rc        = new \ReflectionClass(get_class($this));
+			$this->dir = dirname($rc->getFileName()) . DIRECTORY_SEPARATOR;
 		}
 
 		return $this->dir;
 	}
 
-	public function isActive() {
-		if ( $this->is_active === null ) {
+	public function isActive()
+	{
+		if ($this->is_active === null)
+		{
 			// @todo
 			$this->is_active = true;
 		}
@@ -82,8 +100,10 @@ abstract class Module {
 		return $this->is_active;
 	}
 
-	final public function isCustom() {
-		if ( $this->is_custom === null ) {
+	final public function isCustom()
+	{
+		if ($this->is_custom === null)
+		{
 			// @todo
 			$this->is_custom = false;
 		}
@@ -91,15 +111,21 @@ abstract class Module {
 		return $this->is_custom;
 	}
 
-	public function isDeprecated() {
+	public function isDeprecated()
+	{
 		return false;
 	}
 
-	public function isConfigurable() {
-		if ( $this->is_configurable === null ) {
-			if ( is_file( $this->getDir() . $this->getMyPathId() . 'Config.php' ) ) {
+	public function isConfigurable()
+	{
+		if ($this->is_configurable === null)
+		{
+			if (is_file($this->getDir() . $this->getMyPathId() . 'Config.php'))
+			{
 				$this->is_configurable = true;
-			} else {
+			}
+			else
+			{
 				$this->is_configurable = false;
 			}
 		}
@@ -107,155 +133,200 @@ abstract class Module {
 		return $this->is_configurable;
 	}
 
-	public function isFree() {
+	public function isFree()
+	{
 		return false;
 	}
 
-	public function renderResults() {
-
+	public function renderResults()
+	{
 	}
 
-	public function renderSearchResults() {
-
+	public function renderSearchResults()
+	{
 	}
 
-	public function renderSearchPanel() {
-
+	public function renderSearchPanel()
+	{
 	}
 
-	public function enqueueScripts() {
-
+	public function enqueueScripts()
+	{
 	}
 
-	public function presavePrepare( $data, $post_id ) {
+	public function presavePrepare($data, $post_id)
+	{
 		return $data;
 	}
 
-	public function getConfigInstance() {
-		return ModuleManager::configFactory( $this->getId() );
+	public function getConfigInstance()
+	{
+		return ModuleManager::configFactory($this->getId());
 	}
 
-	public function config( $opt_name, $default = null ) {
-		if ( ! $this->getConfigInstance()->option_exists( $opt_name ) ) {
+	public function config($opt_name, $default = null)
+	{
+		if (!$this->getConfigInstance()->option_exists($opt_name))
+		{
 			return $default;
-		} else {
-			return $this->getConfigInstance()->option( $opt_name );
+		}
+		else
+		{
+			return $this->getConfigInstance()->option($opt_name);
 		}
 	}
 
-	public function render( $view_name, $_data = null ) {
-		if ( is_array( $_data ) ) {
-			extract( $_data, EXTR_PREFIX_SAME, 'data' );
-		} else {
+	public function render($view_name, $_data = null)
+	{
+		if (is_array($_data))
+		{
+			extract($_data, EXTR_PREFIX_SAME, 'data');
+		}
+		else
+		{
 			$data = $_data;
 		}
 
-		if ( ModuleManager::isCustomModule( $this->getId() ) ) {
+		if (ModuleManager::isCustomModule($this->getId()))
+		{
 			$base = \WP_CONTENT_DIR . '/' . \ContentEgg\CUSTOM_MODULES_DIR . '/';
-		} else {
+		}
+		else
+		{
 			$base = \ContentEgg\PLUGIN_PATH . 'application/modules/';
 		}
 
-		include $base . $this->getMyPathId() . '/views/' . TextHelper::clear( $view_name ) . '.php';
+		include $base . $this->getMyPathId() . '/views/' . TextHelper::clear($view_name) . '.php';
 	}
 
-	public function getJsUri() {
-		return \plugins_url( '\application\modules\\' . $this->getMyPathId() . '\js', \ContentEgg\PLUGIN_FILE );
+	public function getJsUri()
+	{
+		return \plugins_url('\application\modules\\' . $this->getMyPathId() . '\js', \ContentEgg\PLUGIN_FILE);
 	}
 
-	public function getApiAgreement() {
+	public function getApiAgreement()
+	{
 		return $this->api_agreement;
 	}
 
-	public function getDocsUri() {
+	public function getDocsUri()
+	{
 		return $this->docs_uri;
 	}
 
-	public function getDescription() {
+	public function getDescription()
+	{
 		return $this->description;
 	}
 
-	public function isAffiliateParser() {
+	public function isAffiliateParser()
+	{
 		return false;
 	}
 
-	public function isParser() {
+	public function isParser()
+	{
 		return false;
 	}
 
-	public function getMyPathId() {
-		return self::getPathId( $this->getId() );
+	public function getMyPathId()
+	{
+		return self::getPathId($this->getId());
 	}
 
-	public function getMyShortId() {
-		return self::getShortId( $this->getId() );
+	public function getMyShortId()
+	{
+		return self::getShortId($this->getId());
 	}
 
-	public static function getPathId( $module_id ) {
+	public static function getPathId($module_id)
+	{
 		// AE or Feed module?
-		$parts = explode( '__', $module_id );
+		$parts = explode('__', $module_id);
 
 		return $parts[0];
 	}
 
-	public function getShortId( $module_id ) {
+	public function getShortId($module_id)
+	{
 		// AE or Feed module?
-		$parts = explode( '__', $module_id );
-		if ( count( $parts ) == 2 ) {
+		$parts = explode('__', $module_id);
+		if (count($parts) == 2)
+		{
 			return $parts[1];
-		} else {
+		}
+		else
+		{
 			return $module_id;
 		}
 	}
 
-	public function renderMetaboxModule() {
-		PluginAdmin::render( 'metabox_module', array( 'module_id' => $this->getId(), 'module' => $this ) );
+	public function renderMetaboxModule()
+	{
+		PluginAdmin::render('metabox_module', array('module_id' => $this->getId(), 'module' => $this));
 	}
 
-	public function releaseVersion() {
+	public function releaseVersion()
+	{
 		return '';
 	}
 
-	public function isNew() {
-		if ( ! $module_version = $this->releaseVersion() ) {
+	public function isNew()
+	{
+		if (!$module_version = $this->releaseVersion())
+		{
 			return false;
 		}
 
-		$module_version = join( '.', array_slice( explode( '.', $module_version ), 0, 2 ) );
-		$plugin_version = join( '.', array_slice( explode( '.', Plugin::version() ), 0, 2 ) );
-		if ( $module_version == $plugin_version ) {
+		$module_version = join('.', array_slice(explode('.', $module_version), 0, 2));
+		$plugin_version = join('.', array_slice(explode('.', Plugin::version()), 0, 2));
+		if ($module_version == $plugin_version)
+		{
 			return true;
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 	}
 
-	public function requirements() {
+	public function requirements()
+	{
 		return '';
 	}
 
-	public function isFeedModule() {
-		if ( $this instanceof \ContentEgg\application\components\AffiliateFeedParserModule ) {
+	public function isFeedModule()
+	{
+		if ($this instanceof \ContentEgg\application\components\AffiliateFeedParserModule)
+		{
 			return true;
-		} else {
+		}
+		else
+		{
 			return false;
 		}
 	}
 
-	public static function getIdStatic() {
-		$parts = explode( '\\', get_called_class() );
+	public static function getIdStatic()
+	{
+		$parts = explode('\\', get_called_class());
 
-		return $parts[ count( $parts ) - 2 ];
+		return $parts[count($parts) - 2];
 	}
 
-	public function getStatusText() {
-		if ( $this->isActive() && $this->isDeprecated() ) {
+	public function getStatusText()
+	{
+		if ($this->isActive() && $this->isDeprecated())
+		{
 			return 'deprecated';
-		} elseif ( $this->isActive() ) {
+		}
+		elseif ($this->isActive())
+		{
 			return 'active';
-		} else {
+		}
+		else
+		{
 			return 'inactive';
 		}
 	}
-
 }

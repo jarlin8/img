@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\VkNews;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,13 +10,9 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataVkNews class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataVkNews extends ExtraData {
-
-	public $comments;
-	public $likes;
-	public $reposts;
-
+class ExtraDataVkNews extends ExtraData
+{
 }

@@ -16,9 +16,10 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class PriceAlert {
+class PriceAlert
+{
 
     private static $instance = null;
     private $tickbox_message;
@@ -34,7 +35,6 @@ class PriceAlert {
 
     private function __construct()
     {
-        
     }
 
     public function init()
@@ -124,7 +124,8 @@ class PriceAlert {
             // email
             $this->sendActivationEmail($email, $product, $alert);
             $this->jsonResult(__('We are now tracking this product for you. Please verify your email address to be notified of price drops.', 'content-egg-tpl'), 'success');
-        } else
+        }
+        else
             $this->jsonError(__('Internal Error. Please notify the administrator.', 'content-egg-tpl'));
         exit;
     }
@@ -138,13 +139,13 @@ class PriceAlert {
             'ceggaction' => 'unsubscribe',
             'email' => urlencode($email),
             'key' => urlencode($alert['activkey']),
-                ), \get_site_url());
+        ), \get_site_url());
 
         $uri = \add_query_arg(array(
             'ceggaction' => 'validate',
             'email' => urlencode($email),
             'key' => urlencode($alert['activkey']),
-                ), \get_permalink($alert['post_id']));
+        ), \get_permalink($alert['post_id']));
         $uri .= '#' . urlencode($alert['unique_id']);
 
         if ($template = GeneralConfig::getInstance()->option('email_template_activation'))
@@ -158,7 +159,8 @@ class PriceAlert {
                 '%UNSUBSCRIBE_URL%' => $unsubscribe_url,
             );
             $body = self::buildTemplate($template, $tags);
-        } else
+        }
+        else
         {
             $body = '<p>' . __('Hello,', 'content-egg-tpl') . '<br></p>';
             $body .= '<p>' . sprintf(__('You have successfully set a price drop alert for %s.', 'content-egg-tpl'), $product_title) . '</p>';
@@ -199,8 +201,8 @@ class PriceAlert {
     public function subscriptionManager()
     {
         $action = isset($_GET['ceggaction']) ? sanitize_key(wp_unslash($_GET['ceggaction'])) : '';
-		if (!$action)
-			return;
+        if (!$action)
+            return;
 
         switch ($action)
         {
@@ -220,11 +222,11 @@ class PriceAlert {
 
     private function actionValidateEmail()
     {
-	    $email = isset($_GET['email']) ? strtolower(sanitize_email(wp_unslash($_GET['email']))) : '';
-	    $key = isset($_GET['key']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_GET['key']))) : '';
+        $email = isset($_GET['email']) ? strtolower(sanitize_email(wp_unslash($_GET['email']))) : '';
+        $key = isset($_GET['key']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_GET['key']))) : '';
 
-		if (!$email || !$key)
-			return;
+        if (!$email || !$key)
+            return;
 
         $where = array(
             'email = %s AND activkey = %s AND status = %d',
@@ -242,11 +244,11 @@ class PriceAlert {
 
     private function actionUnsubscribeAll()
     {
-	    $email = isset($_GET['email']) ? strtolower(sanitize_email(wp_unslash($_GET['email']))) : '';
-	    $key = isset($_GET['key']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_GET['key']))) : '';
+        $email = isset($_GET['email']) ? strtolower(sanitize_email(wp_unslash($_GET['email']))) : '';
+        $key = isset($_GET['key']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_GET['key']))) : '';
 
-	    if (!$email || !$key)
-		    return;
+        if (!$email || !$key)
+            return;
 
         $where = array(
             'email = %s AND activkey = %s',
@@ -262,11 +264,11 @@ class PriceAlert {
 
     private function actionDeleteSubscription()
     {
-	    $email = isset($_GET['email']) ? strtolower(sanitize_email(wp_unslash($_GET['email']))) : '';
-	    $key = isset($_GET['key']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_GET['key']))) : '';
+        $email = isset($_GET['email']) ? strtolower(sanitize_email(wp_unslash($_GET['email']))) : '';
+        $key = isset($_GET['key']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_GET['key']))) : '';
 
-	    if (!$email || !$key)
-		    return;
+        if (!$email || !$key)
+            return;
 
         $where = array(
             'email = %s AND activkey = %s',
@@ -375,7 +377,7 @@ class PriceAlert {
                 'ceggaction' => 'unsubscribe',
                 'email' => urlencode($alert['email']),
                 'key' => urlencode($alert['activkey']),
-                    ), \get_site_url());
+            ), \get_site_url());
 
             $desired_price = TemplateHelper::formatPriceCurrency($alert['price'], $product['currencyCode']);
             $current_price = TemplateHelper::formatPriceCurrency($product['price'], $product['currencyCode']);
@@ -400,7 +402,8 @@ class PriceAlert {
                     '%UNSUBSCRIBE_URL%' => $unsubscribe_url,
                 );
                 $body = self::buildTemplate($template, $tags);
-            } else
+            }
+            else
             {
                 $body = '<p>' . __('Good news!', 'content-egg-tpl') . '<br></p>';
                 $body .= '<p>' . __('The price target you set for the item has been reached.', 'content-egg-tpl');
@@ -408,7 +411,7 @@ class PriceAlert {
                 $body .= '<ul>';
                 $body .= '<li>' . sprintf(__('Desired Price: %s', 'content-egg-tpl'), $desired_price) . '</li>';
                 $body .= '<li>' . sprintf(__('Current Price: <strong>%s</strong>', 'content-egg-tpl'), $current_price)
-                        . ' (' . __('as of', 'content-egg-tpl') . ' ' . TemplateHelper::getLastUpdateFormatted($alert['module_id'], $post_id) . ')</li>';
+                    . ' (' . __('as of', 'content-egg-tpl') . ' ' . TemplateHelper::getLastUpdateFormatted($alert['module_id'], $post_id) . ')</li>';
                 $body .= '<li>' . sprintf(__('Price dropped from %s to %s', 'content-egg-tpl'), $start_price, $current_price) . '</li>';
                 $body .= '</ul><br>';
                 $body .= sprintf(__('<a href="%s">More info...</a>', 'content-egg-tpl'), $post_url);
@@ -431,6 +434,7 @@ class PriceAlert {
 
     public static function isPriceAlertAllowed($unique_id = null, $module_id = null)
     {
+
         if (!GeneralConfig::getInstance()->option('price_history_days'))
             return false;
 
@@ -449,5 +453,4 @@ class PriceAlert {
     {
         return str_ireplace(array_keys($tags), array_values($tags), $template);
     }
-
 }

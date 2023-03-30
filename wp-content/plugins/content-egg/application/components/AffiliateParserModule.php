@@ -11,9 +11,10 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-abstract class AffiliateParserModule extends ParserModule {
+abstract class AffiliateParserModule extends ParserModule
+{
 
     final public function isAffiliateParser()
     {
@@ -25,7 +26,8 @@ abstract class AffiliateParserModule extends ParserModule {
         if (strpos($this->getName(), 'Coupon') !== false || $this->getName() == 'CJ Links')
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -41,7 +43,8 @@ abstract class AffiliateParserModule extends ParserModule {
         if ($this->getIdStatic() == 'AE')
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -63,33 +66,24 @@ abstract class AffiliateParserModule extends ParserModule {
         foreach ($data as $key => $item)
         {
             $data[$key]['percentageSaved'] = 0;
-            if (!isset($data[$key]['priceOld']))
-            {
-                $data[$key]['priceOld'] = $item['priceOld'] = 0;
-            }
-            if (!empty($item['priceOld']) && $item['priceOld'] <= $item['price'])
-            {
-                $data[$key]['priceOld'] = 0;
-            }
 
             if (!isset($data[$key]['priceOld']))
-            {
+                $data[$key]['priceOld'] = $item['priceOld'] = 0;
+
+            if (!empty($item['priceOld']) && $item['priceOld'] <= $item['price'])
                 $data[$key]['priceOld'] = 0;
-            }
+
+            if (!isset($data[$key]['priceOld']))
+                $data[$key]['priceOld'] = 0;
+
             if ($data[$key]['priceOld'] && $data[$key]['price'] && $data[$key]['price'] < $data[$key]['priceOld'])
-            {
-                $data[$key]['percentageSaved'] = floor(( (float) $data[$key]['priceOld'] - (float) $data[$key]['price'] ) / (float) $data[$key]['priceOld'] * 100);
-            }
+                $data[$key]['percentageSaved'] = floor(((float) $data[$key]['priceOld'] - (float) $data[$key]['price']) / (float) $data[$key]['priceOld'] * 100);
 
             if (empty($data[$key]['currency']) && !empty($item['currencyCode']))
-            {
                 $data[$key]['currency'] = TextHelper::currencyTyping($item['currencyCode']);
-            }
 
             if (!empty($data[$key]['domain']))
-            {
                 $data[$key]['merchant'] = \apply_filters('content_egg_custom_merchant', $data[$key]['merchant'], $data[$key]['domain']);
-            }
         }
 
         return $data;
@@ -97,7 +91,5 @@ abstract class AffiliateParserModule extends ParserModule {
 
     public function renderUpdatePanel()
     {
-        
     }
-
 }

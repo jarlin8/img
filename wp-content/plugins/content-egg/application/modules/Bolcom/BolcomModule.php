@@ -17,11 +17,10 @@ use ContentEgg\application\components\LinkHandler;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class BolcomModule extends AffiliateParserModule {
-
-    private $api_client = null;
+class BolcomModule extends AffiliateParserModule
+{
 
     public function info()
     {
@@ -78,7 +77,8 @@ class BolcomModule extends AffiliateParserModule {
         if ($is_autoupdate)
         {
             $limit = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $limit = $this->config('entries_per_page');
         }
@@ -187,11 +187,13 @@ class BolcomModule extends AffiliateParserModule {
                 if (isset($r['offerData']['offers'][0]['id']))
                 {
                     $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-                } else
+                }
+                else
                 {
                     $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
                 }
-            } else
+            }
+            else
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
@@ -204,7 +206,8 @@ class BolcomModule extends AffiliateParserModule {
             if (isset($r['parentCategoryPaths']))
             {
                 $column_name = 'name';
-                $content->categoryPath = array_map(function ($element) use ($column_name) {
+                $content->categoryPath = array_map(function ($element) use ($column_name)
+                {
                     return $element[$column_name];
                 }, $r['parentCategoryPaths'][0]['parentCategories']);
                 $content->category = end($content->categoryPath);
@@ -255,14 +258,15 @@ class BolcomModule extends AffiliateParserModule {
     public function doRequestItems(array $items)
     {
         $client = $this->getApiClient();
-        
+
         $options = array();
         $options['country'] = $this->config('country');
 
-        $item_ids = array_map(function ($element) {
+        $item_ids = array_map(function ($element)
+        {
             return $element['unique_id'];
         }, $items);
-        
+
 
         $results = $client->products($item_ids, $options);
         if (!$results || !isset($results['products']))
@@ -297,7 +301,8 @@ class BolcomModule extends AffiliateParserModule {
             if (isset($r['offerData']['offers'][0]['id']))
             {
                 $items[$unique_id]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-            } else
+            }
+            else
             {
                 $items[$unique_id]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
@@ -367,5 +372,4 @@ class BolcomModule extends AffiliateParserModule {
 
         return array($response['access_token'], (int) $response['expires_in']);
     }
-
 }

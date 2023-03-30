@@ -11,13 +11,14 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * @link: https://developer.impact.com/docs/apis/media-partners-product-data/versions/11/getting-started
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 
-class ImpactradiusApi extends RestClient {
+class ImpactradiusApi extends RestClient
+{
 
     const _API_VERSION = 12;
     const API_URI_BASE = 'https://product.api.impactradius.com/Mediapartners';
@@ -69,7 +70,7 @@ class ImpactradiusApi extends RestClient {
     {
         $query['IrVersion'] = self::_API_VERSION; // force API version
         $path = '/' . $this->AccountSid . $path;
-        
+
         $this->setCustomHeaders(array(
             'Authorization' => 'Basic ' . base64_encode($this->AccountSid . ':' . $this->AuthToken),
             'Accept' => 'application/json'
@@ -77,5 +78,4 @@ class ImpactradiusApi extends RestClient {
 
         return parent::restGet($path, $query);
     }
-
 }

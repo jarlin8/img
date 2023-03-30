@@ -3,7 +3,7 @@
 /*
  * Modified version of XmlStringStreamer, edited namespaces only 
  * @author keywordrush.com <support@keywordrush.com>
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 
 /**
@@ -23,7 +23,8 @@ use ContentEgg\application\vendor\XmlStringStreamer\StreamInterface;
 /**
  * The unique node parser starts at a given element name and flushes when its corresponding closing tag is found
  */
-class UniqueNode implements ParserInterface {
+class UniqueNode implements ParserInterface
+{
 	/**
 	 * Current working XML blob
 	 * @var string
@@ -46,7 +47,7 @@ class UniqueNode implements ParserInterface {
 	 * Records how far we've searched in the XML blob so far
 	 * @var integer
 	 */
-	private $hasSearchedUntilPos = - 1;
+	private $hasSearchedUntilPos = -1;
 
 	const FIND_OPENING_TAG_ACTION = 0;
 	const FIND_CLOSING_TAG_ACTION = 1;
@@ -83,13 +84,15 @@ class UniqueNode implements ParserInterface {
 	 *
 	 * @throws Exception if the required option uniqueNode isn't set
 	 */
-	public function __construct( array $options = array() ) {
-		$this->options = array_merge( array(
+	public function __construct(array $options = array())
+	{
+		$this->options = array_merge(array(
 			"extractContainer" => false,
-		), $options );
+		), $options);
 
-		if ( ! isset( $this->options["uniqueNode"] ) ) {
-			throw new Exception( "Required option 'uniqueNode' not set" );
+		if (!isset($this->options["uniqueNode"]))
+		{
+			throw new Exception("Required option 'uniqueNode' not set");
 		}
 	}
 
@@ -97,15 +100,18 @@ class UniqueNode implements ParserInterface {
 	 * Search the blob for our unique node's opening tag
 	 * @return bool|int Either returns the char position of the opening tag or false
 	 */
-	protected function getOpeningTagPos() {
+	protected function getOpeningTagPos()
+	{
 		$startPositionInBlob = false;
-		if ( preg_match( "/<" . preg_quote( $this->options["uniqueNode"] ) . "(>| )/", $this->workingBlob, $matches, PREG_OFFSET_CAPTURE ) === 1 ) {
+		if (preg_match("/<" . preg_quote($this->options["uniqueNode"]) . "(>| )/", $this->workingBlob, $matches, PREG_OFFSET_CAPTURE) === 1)
+		{
 			$startPositionInBlob = $matches[0][1];
 		}
 
 
-		if ( $startPositionInBlob === false ) {
-			$this->hasSearchedUntilPos = strlen( $this->workingBlob ) - 1;
+		if ($startPositionInBlob === false)
+		{
+			$this->hasSearchedUntilPos = strlen($this->workingBlob) - 1;
 		}
 
 		return $startPositionInBlob;
@@ -119,14 +125,17 @@ class UniqueNode implements ParserInterface {
 	 *
 	 * @return bool|int Either returns the char position of the short closing tag or false
 	 */
-	private function checkShortClosingTag( $workingBlob, $len ) {
+	private function checkShortClosingTag($workingBlob, $len)
+	{
 		$resultEndPositionInBlob = false;
-		while ( $len = strpos( $workingBlob, "/>", $len + 1 ) ) {
-			$subBlob  = substr( $workingBlob, $this->startPos, $len + strlen( "/>" ) - $this->startPos );
-			$cntOpen  = substr_count( $subBlob, "<" );
-			$cntClose = substr_count( $subBlob, "/>" );
-			if ( $cntOpen === $cntClose && $cntOpen === 1 ) {
-				$resultEndPositionInBlob = $len + strlen( "/>" );
+		while ($len = strpos($workingBlob, "/>", $len + 1))
+		{
+			$subBlob  = substr($workingBlob, $this->startPos, $len + strlen("/>") - $this->startPos);
+			$cntOpen  = substr_count($subBlob, "<");
+			$cntClose = substr_count($subBlob, "/>");
+			if ($cntOpen === $cntClose && $cntOpen === 1)
+			{
+				$resultEndPositionInBlob = $len + strlen("/>");
 				break; // end while. so $endPositionInBlob correct now
 			}
 		}
@@ -138,23 +147,33 @@ class UniqueNode implements ParserInterface {
 	 * Search the blob for our unique node's closing tag
 	 * @return bool|int Either returns the char position of the closing tag or false
 	 */
-	protected function getClosingTagPos() {
-		$endPositionInBlob = strpos( $this->workingBlob, "</" . $this->options["uniqueNode"] . ">" );
-		if ( $endPositionInBlob === false ) {
+	protected function getClosingTagPos()
+	{
+		$endPositionInBlob = strpos($this->workingBlob, "</" . $this->options["uniqueNode"] . ">");
+		if ($endPositionInBlob === false)
+		{
 
-			if ( isset( $this->options["checkShortClosing"] ) && $this->options["checkShortClosing"] === true ) {
-				$endPositionInBlob = $this->checkShortClosingTag( $this->workingBlob, $this->startPos );
+			if (isset($this->options["checkShortClosing"]) && $this->options["checkShortClosing"] === true)
+			{
+				$endPositionInBlob = $this->checkShortClosingTag($this->workingBlob, $this->startPos);
 			}
 
-			if ( $endPositionInBlob === false ) {
-				$this->hasSearchedUntilPos = strlen( $this->workingBlob ) - 1;
-			} else {
+			if ($endPositionInBlob === false)
+			{
+				$this->hasSearchedUntilPos = strlen($this->workingBlob) - 1;
+			}
+			else
+			{
 				$this->shortClosedTagNow = true;
 			}
-		} else {
-			if ( isset( $this->options["checkShortClosing"] ) && $this->options["checkShortClosing"] === true ) {
-				$tmpEndPositionInBlob = $this->checkShortClosingTag( substr( $this->workingBlob, 0, $endPositionInBlob ), $this->startPos );
-				if ( $tmpEndPositionInBlob !== false ) {
+		}
+		else
+		{
+			if (isset($this->options["checkShortClosing"]) && $this->options["checkShortClosing"] === true)
+			{
+				$tmpEndPositionInBlob = $this->checkShortClosingTag(substr($this->workingBlob, 0, $endPositionInBlob), $this->startPos);
+				if ($tmpEndPositionInBlob !== false)
+				{
 					$this->shortClosedTagNow = true;
 					$endPositionInBlob       = $tmpEndPositionInBlob;
 				}
@@ -169,7 +188,8 @@ class UniqueNode implements ParserInterface {
 	 *
 	 * @param int $startPositionInBlob Position of starting tag
 	 */
-	protected function startSalvaging( $startPositionInBlob ) {
+	protected function startSalvaging($startPositionInBlob)
+	{
 		$this->startPos = $startPositionInBlob;
 	}
 
@@ -178,11 +198,12 @@ class UniqueNode implements ParserInterface {
 	 *
 	 * @param int $endPositionInBlob Position of the closing tag
 	 */
-	protected function flush( $endPositionInBlob ) {
-		$endTagLen                 = $this->shortClosedTagNow ? 0 : strlen( "</" . $this->options["uniqueNode"] . ">" );
+	protected function flush($endPositionInBlob)
+	{
+		$endTagLen                 = $this->shortClosedTagNow ? 0 : strlen("</" . $this->options["uniqueNode"] . ">");
 		$realEndPosition           = $endPositionInBlob + $endTagLen;
-		$this->flushed             = substr( $this->workingBlob, $this->startPos, $realEndPosition - $this->startPos );
-		$this->workingBlob         = substr( $this->workingBlob, $realEndPosition );
+		$this->flushed             = substr($this->workingBlob, $this->startPos, $realEndPosition - $this->startPos);
+		$this->workingBlob         = substr($this->workingBlob, $realEndPosition);
 		$this->hasSearchedUntilPos = 0;
 		$this->shortClosedTagNow   = false;
 	}
@@ -194,31 +215,40 @@ class UniqueNode implements ParserInterface {
 	 *
 	 * @return bool                    Keep working?
 	 */
-	protected function prepareChunk( StreamInterface $stream ) {
-		if ( $this->hasSearchedUntilPos > - 1 && $this->hasSearchedUntilPos < ( strlen( $this->workingBlob ) - 1 ) ) {
+	protected function prepareChunk(StreamInterface $stream)
+	{
+		if ($this->hasSearchedUntilPos > -1 && $this->hasSearchedUntilPos < (strlen($this->workingBlob) - 1))
+		{
 			// More work to do
 			return true;
 		}
 
 		$chunk = $stream->getChunk();
 
-		if ( $chunk === false ) {
+		if ($chunk === false)
+		{
 			// EOF
-			if ( $this->hasSearchedUntilPos === - 1 && strlen( $this->workingBlob ) > 0 ) {
+			if ($this->hasSearchedUntilPos === -1 && strlen($this->workingBlob) > 0)
+			{
 				// EOF, but we haven't even started searching, special case that probably means we're dealing with a file of less size than the stream buffer
 				// Therefore, keep looping
 				return true;
 			}
 
 			return false;
-		} else {
+		}
+		else
+		{
 			// New chunk fetched
 
-			if ( $this->nextAction === self::FIND_OPENING_TAG_ACTION && ! $this->options["extractContainer"] ) {
+			if ($this->nextAction === self::FIND_OPENING_TAG_ACTION && !$this->options["extractContainer"])
+			{
 				// Prevent a memory leak if we never find our first node, throw away our old stuff
 				// but keep some letters to not cut off a first node
-				$this->workingBlob = substr( $this->workingBlob, - 1 * strlen( "<" . $this->options["uniqueNode"] . ">" ) ) . $chunk;
-			} else {
+				$this->workingBlob = substr($this->workingBlob, -1 * strlen("<" . $this->options["uniqueNode"] . ">")) . $chunk;
+			}
+			else
+			{
 				$this->workingBlob .= $chunk;
 			}
 
@@ -233,34 +263,41 @@ class UniqueNode implements ParserInterface {
 	 *
 	 * @return string|bool             The next xml node or false if one could not be retrieved
 	 */
-	public function getNodeFrom( StreamInterface $stream ) {
-		while ( $this->prepareChunk( $stream ) ) {
+	public function getNodeFrom(StreamInterface $stream)
+	{
+		while ($this->prepareChunk($stream))
+		{
 			// What's our next course of action?
-			if ( $this->nextAction === self::FIND_OPENING_TAG_ACTION ) {
+			if ($this->nextAction === self::FIND_OPENING_TAG_ACTION)
+			{
 				// Try to find an opening tag
 				$positionInBlob = $this->getOpeningTagPos();
 
-				if ( $positionInBlob !== false ) {
+				if ($positionInBlob !== false)
+				{
 
-					if ( $this->options["extractContainer"] && $this->preCapture ) {
-						$this->containerXml .= substr( $this->workingBlob, 0, $positionInBlob );
+					if ($this->options["extractContainer"] && $this->preCapture)
+					{
+						$this->containerXml .= substr($this->workingBlob, 0, $positionInBlob);
 						$this->preCapture   = false;
 					}
 
 
-					$this->startSalvaging( $positionInBlob );
+					$this->startSalvaging($positionInBlob);
 
 					// The next course of action will be to find a closing tag
 					$this->nextAction = self::FIND_CLOSING_TAG_ACTION;
 				}
 			}
 
-			if ( $this->nextAction === self::FIND_CLOSING_TAG_ACTION ) {
+			if ($this->nextAction === self::FIND_CLOSING_TAG_ACTION)
+			{
 				// Try to find a closing tag
 				$positionInBlob = $this->getClosingTagPos();
-				if ( $positionInBlob !== false ) {
+				if ($positionInBlob !== false)
+				{
 					// We found it, we now have a full node to flush out
-					$this->flush( $positionInBlob );
+					$this->flush($positionInBlob);
 
 					// The next course of action will be to find an opening tag
 					$this->nextAction = self::FIND_OPENING_TAG_ACTION;
@@ -274,7 +311,8 @@ class UniqueNode implements ParserInterface {
 			}
 		}
 
-		if ( $this->options["extractContainer"] ) {
+		if ($this->options["extractContainer"])
+		{
 			$this->containerXml .= $this->workingBlob;
 		}
 
@@ -286,9 +324,11 @@ class UniqueNode implements ParserInterface {
 	 * @return string XML string
 	 * @throws Exception if the extractContainer option isn't true
 	 */
-	public function getExtractedContainer() {
-		if ( ! $this->options["extractContainer"] ) {
-			throw new Exception( "This method requires the 'extractContainer' option to be true" );
+	public function getExtractedContainer()
+	{
+		if (!$this->options["extractContainer"])
+		{
+			throw new Exception("This method requires the 'extractContainer' option to be true");
 		}
 
 		return $this->containerXml;

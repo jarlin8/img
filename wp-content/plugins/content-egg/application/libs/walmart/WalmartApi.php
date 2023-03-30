@@ -11,7 +11,7 @@ use ContentEgg\application\libs\RestClient;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link httpS://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * @link: https://walmart.io/docs/affiliate/introduction
  */
@@ -125,5 +125,4 @@ class WalmartApi extends RestClient
 
         return $signature;
     }
-
 }

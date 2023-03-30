@@ -10,13 +10,14 @@ use ContentEgg\application\libs\RestClient;
  * QwantApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 
-class QwantApi extends RestClient {
+class QwantApi extends RestClient
+{
 
     const API_URI_BASE = 'https://api.qwant.com/api/search';
 
@@ -57,5 +58,4 @@ class QwantApi extends RestClient {
 
         return parent::restGet($path, $query);
     }
-
 }

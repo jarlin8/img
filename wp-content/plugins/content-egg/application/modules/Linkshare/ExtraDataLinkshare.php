@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Linkshare;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,15 +10,15 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataLinkshare class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataLinkshare extends ExtraData {
+class ExtraDataLinkshare extends ExtraData
+{
 
 	public $mid;
 	public $createdon;
 	public $sku;
 	public $upccode;
 	public $keywords;
-
 }

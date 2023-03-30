@@ -11,7 +11,7 @@ use ContentEgg\application\admin\LicConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class Autoupdate
 {
@@ -40,7 +40,8 @@ class Autoupdate
         if (!$slug)
         {
             $this->slug = $slug;
-        } else
+        }
+        else
         {
             $this->slug = basename($this->plugin_file, '.php');
         }
@@ -97,11 +98,12 @@ class Autoupdate
             $res->download_link = Plugin::getApiBase() . '?' . http_build_query($this->getRequestArray('download'));
             $res->sections = array(
                 'description' => sprintf(__('New version of %s plugin.', 'content-egg'), $plugin_data['Name']) . ' ' .
-                sprintf(__('Please <a target="_blank" href="%s">find here</a> the releases notes.', 'content-egg'), 'https://www.keywordrush.com/changelog/content-egg/readme.txt')
+                    sprintf(__('Please <a target="_blank" href="%s">find here</a> the releases notes.', 'content-egg'), 'https://www.keywordrush.com/changelog/content-egg/readme.txt')
             );
 
             return $res;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -117,7 +119,8 @@ class Autoupdate
         if ($result && !empty($result['version']))
         {
             return $result['version'];
-        } else
+        }
+        else
         {
             return false;
         }
@@ -125,15 +128,17 @@ class Autoupdate
 
     private function getRemote($cmd)
     {
-        $response = wp_remote_post(Plugin::getApiBase(), array(
-            'method' => 'POST',
-            'timeout' => 15,
-            'httpversion' => '1.0',
-            'blocking' => true,
-            'headers' => array(),
-            'body' => $this->getRequestArray($cmd),
-            'cookies' => array()
-                )
+        $response = wp_remote_post(
+            Plugin::getApiBase(),
+            array(
+                'method' => 'POST',
+                'timeout' => 15,
+                'httpversion' => '1.0',
+                'blocking' => true,
+                'headers' => array(),
+                'body' => $this->getRequestArray($cmd),
+                'cookies' => array()
+            )
         );
         if (is_wp_error($response))
         {
@@ -159,5 +164,4 @@ class Autoupdate
             'key' => LicConfig::getInstance()->option('license_key')
         );
     }
-
 }

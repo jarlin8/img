@@ -10,14 +10,15 @@ use ContentEgg\application\libs\RestClient;
  * BolcomJwtApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * @link: https://affiliate.bol.com/nl/handleiding/handleiding-toegang-api
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 
-class BolcomJwtApi extends RestClient {
+class BolcomJwtApi extends RestClient
+{
 
     const API_URI_BASE = 'https://api.bol.com/catalog/v4';
 
@@ -86,5 +87,4 @@ class BolcomJwtApi extends RestClient {
         $this->addCustomHeaders(array('Authorization' => 'Bearer ' . $this->access_token));
         return parent::restGet($path, $query);
     }
-
 }

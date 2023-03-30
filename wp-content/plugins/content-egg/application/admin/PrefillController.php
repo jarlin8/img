@@ -16,9 +16,10 @@ use ContentEgg\application\models\AutoblogModel;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class PrefillController {
+class PrefillController
+{
 
     const slug = 'content-egg-prefill';
 
@@ -66,7 +67,7 @@ class PrefillController {
     public function actionIndex()
     {
         PluginAdmin::getInstance()->render('prefill', array(
-                //'nonce' => \wp_create_nonce(basename(__FILE__)),
+            //'nonce' => \wp_create_nonce(basename(__FILE__)),
         ));
     }
 
@@ -91,7 +92,7 @@ class PrefillController {
         $post_id = intval($_POST['post_id']);
         $keyword_source = isset($_POST['keyword_source']) ? sanitize_text_field(wp_unslash($_POST['keyword_source'])) : '';
         $autoupdate = isset($_POST['autoupdate']) ? sanitize_text_field(wp_unslash($_POST['autoupdate'])) : false;
-        $autoupdate = filter_var($autoupdate, FILTER_VALIDATE_BOOLEAN);      
+        $autoupdate = filter_var($autoupdate, FILTER_VALIDATE_BOOLEAN);
         $keyword_count = isset($_POST['keyword_count']) ? intval(wp_unslash($_POST['keyword_count'])) : 5;
         $minus_words = isset($_POST['minus_words']) ? TextHelper::commaList(sanitize_text_field(wp_unslash($_POST['minus_words']))) : '';
         $custom_field_names = isset($_POST['custom_field_names']) ? array_map('sanitize_text_field', wp_unslash($_POST['custom_field_names'])) : array();
@@ -119,7 +120,7 @@ class PrefillController {
 
         if ($minus_words)
         {
-            $minus_words = explode(',', $minus_words);            
+            $minus_words = explode(',', $minus_words);
             $keyword = trim(str_replace($minus_words, '', $keyword));
             $keyword = preg_replace("/\s+/ui", ' ', $keyword);
         }
@@ -144,7 +145,8 @@ class PrefillController {
         try
         {
             $data = $parser->doMultipleRequests($keyword, array(), true);
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
             // error
             $log .= ' - ' . __('Error:', 'content-egg') . ' ' . $e->getMessage();
@@ -202,28 +204,33 @@ class PrefillController {
         {
             $post = \get_post($post_id);
             $keyword = $post->post_title;
-        } elseif ($keyword_source == '_tags')
+        }
+        elseif ($keyword_source == '_tags')
         {
             $keyword = join(' ', \wp_get_post_tags($post_id, array('fields' => 'names')));
-        } elseif ($keyword_source == '_density')
+        }
+        elseif ($keyword_source == '_density')
         {
             $kd = new KeywordDensity(GeneralConfig::getInstance()->option('lang'));
             $kd->setText($this->getDensText($post_id));
             $popular = $kd->getPopularWords($keyword_count);
             $keyword = join(' ', $popular);
-        } elseif ($keyword_source == '_custom_field')
+        }
+        elseif ($keyword_source == '_custom_field')
         {
             if (!$meta_name)
                 return '';
             return \get_post_meta($post_id, $meta_name, true);
-        } elseif (substr($keyword_source, 0, 9) == '_keyword_')
+        }
+        elseif (substr($keyword_source, 0, 9) == '_keyword_')
         {
             $module_id = substr($keyword_source, 9);
             if (!ModuleManager::getInstance()->moduleExists($module_id))
                 return '';
 
             $keyword = \get_post_meta($post_id, ContentManager::META_PREFIX_KEYWORD . $module_id, true);
-        } elseif (substr($keyword_source, 0, 5) == '_ean_')
+        }
+        elseif (substr($keyword_source, 0, 5) == '_ean_')
         {
             $module_id = substr($keyword_source, 5);
             if (!ModuleManager::getInstance()->moduleExists($module_id))
@@ -263,5 +270,4 @@ class PrefillController {
         $text = preg_replace('/' . $pattern . '/s', ' ', $text);
         return $text;
     }
-
 }

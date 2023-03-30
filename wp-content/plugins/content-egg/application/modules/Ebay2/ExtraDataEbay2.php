@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Ebay2;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -11,9 +11,10 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataEbay2 extends ExtraData {
+class ExtraDataEbay2 extends ExtraData
+{
 
 	public $locale;
 	public $seller = array();
@@ -37,5 +38,4 @@ class ExtraDataEbay2 extends ExtraData {
 	public $unitPrice;
 	public $unitPriceCurrency;
 	public $pricePerUnitDisplay;
-
 }

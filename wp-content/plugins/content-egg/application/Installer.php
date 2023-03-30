@@ -13,9 +13,10 @@ use ContentEgg\application\models\AutoblogModel;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class Installer {
+class Installer
+{
 
     private static $instance = null;
 
@@ -51,12 +52,12 @@ class Installer {
 
         self::requirements();
 
-        ModuleUpdateScheduler::addScheduleEvent();
+        ModuleUpdateScheduler::addScheduleEvent('ten_min');
         \add_option(Plugin::slug . '_do_activation_redirect', true);
         \add_option(Plugin::slug . '_first_activation_date', time());
         self::upgradeTables();
         if (AutoblogModel::isActiveAutoblogs())
-            AutoblogScheduler::addScheduleEvent();        
+            AutoblogScheduler::addScheduleEvent();
     }
 
     public static function deactivate()
@@ -117,16 +118,17 @@ class Installer {
 
         if ((int) $db_version >= (int) self::dbVesrion())
             return;
-        self::upgradeTables();
 
-        if ($db_version < 33)
-            self::upgrade_33();
+        self::upgradeTables();
 
         if ($db_version < 50)
             self::upgrade_v50();
 
         if ($db_version < 53)
             self::upgrade_v53();
+
+        if ($db_version < 56)
+            self::upgrade_v56();
 
         \update_option(Plugin::slug . '_db_version', self::dbVesrion());
     }
@@ -146,27 +148,23 @@ class Installer {
         dbDelta($sql);
     }
 
-    /**
-     * v 2.9.0 & 3.6.3
-     * reinit schedule event
-     */
-    private static function upgrade_33()
-    {
-        ModuleUpdateScheduler::clearScheduleEvent();
-        ModuleUpdateScheduler::addScheduleEvent();
-    }
-
     private static function upgrade_v50()
     {
         global $wpdb;
         $wpdb->query('DROP TABLE IF EXISTS ' . $wpdb->prefix . 'cegg_awin_product');
     }
-    
+
     private static function upgrade_v53()
     {
         global $wpdb;
         $wpdb->query('DROP TABLE IF EXISTS ' . $wpdb->prefix . 'cegg_daisycon_product');
-    }    
+    }
+
+    private static function upgrade_v56()
+    {
+        ModuleUpdateScheduler::clearScheduleEvent();
+        ModuleUpdateScheduler::addScheduleEvent('ten_min');
+    }
 
     public function redirect_after_activation()
     {
@@ -176,5 +174,4 @@ class Installer {
             \wp_safe_redirect(\get_admin_url(\get_current_blog_id(), 'admin.php?page=' . Plugin::slug));
         }
     }
-
 }

@@ -2,32 +2,38 @@
 
 namespace ContentEgg\application\libs\flickr;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 /**
  * FlickrHelper class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class FlickrHelper {
+class FlickrHelper
+{
 
-	static public function getFlickrUri( array $item, $size = 500 ) {
-		if ( ! isset( $item['img_id'] ) ) {
+	static public function getFlickrUri(array $item, $size = 500)
+	{
+		if (!isset($item['img_id']))
+		{
 			return '';
 		}
-		if ( ! isset( $item['secret'] ) ) {
+		if (!isset($item['secret']))
+		{
 			return '';
 		}
-		if ( ! isset( $item['server'] ) ) {
+		if (!isset($item['server']))
+		{
 			return '';
 		}
-		if ( ! isset( $item['farm'] ) ) {
+		if (!isset($item['farm']))
+		{
 			return '';
 		}
 
-		return self::getImgUri( $item['img_id'], $item['secret'], $item['server'], $item['farm'], $size );
+		return self::getImgUri($item['img_id'], $item['secret'], $item['server'], $item['farm'], $size);
 	}
 
 	/**
@@ -41,7 +47,8 @@ class FlickrHelper {
 	 *
 	 * @link http://www.flickr.com/services/api/misc.urls.html
 	 */
-	static public function getImgUri( $id, $secret, $server, $farm, $size = 500 ) {
+	static public function getImgUri($id, $secret, $server, $farm, $size = 500)
+	{
 		$size          = (int) $size;
 		$size_suffixes = array(
 			75   => 's',
@@ -56,14 +63,18 @@ class FlickrHelper {
 			1600 => 'h',
 			2048 => 'k'
 		);
-		if ( array_key_exists( $size, $size_suffixes ) ) {
-			$suffix = $size_suffixes[ $size ];
-		} else {
+		if (array_key_exists($size, $size_suffixes))
+		{
+			$suffix = $size_suffixes[$size];
+		}
+		else
+		{
 			$suffix = '';
 		}
 
 		$uri = "https://farm{$farm}.static.flickr.com/{$server}/{$id}_{$secret}";
-		if ( $suffix ) {
+		if ($suffix)
+		{
 			$uri .= '_' . $suffix;
 		}
 		$uri .= '.jpg';
@@ -71,12 +82,13 @@ class FlickrHelper {
 		return $uri;
 	}
 
-	static public function getImgLink( $owner, $id ) {
+	static public function getImgLink($owner, $id)
+	{
 		return 'http://www.flickr.com/photos/' . $owner . '/' . $id;
 	}
 
-	static public function getProfileLink( $owner, $id ) {
+	static public function getProfileLink($owner, $id)
+	{
 		return 'http://www.flickr.com/people/' . $owner . '/';
 	}
-
 }

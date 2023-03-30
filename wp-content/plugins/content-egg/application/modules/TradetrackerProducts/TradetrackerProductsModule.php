@@ -15,9 +15,10 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class TradetrackerProductsModule extends AffiliateParserModule {
+class TradetrackerProductsModule extends AffiliateParserModule
+{
 
     private $api_client = null;
 
@@ -56,7 +57,8 @@ class TradetrackerProductsModule extends AffiliateParserModule {
         if ($is_autoupdate)
         {
             $options['limit'] = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $options['limit'] = $this->config('entries_per_page');
         }
@@ -133,16 +135,20 @@ class TradetrackerProductsModule extends AffiliateParserModule {
                 if ($name == 'brand')
                 {
                     $content->manufacturer = $value;
-                } elseif (property_exists($content, $name))
+                }
+                elseif (property_exists($content, $name))
                 {
                     $content->$name = $value;
-                } elseif (property_exists($content, $lower_name))
+                }
+                elseif (property_exists($content, $lower_name))
                 {
                     $content->$lower_name = $value;
-                } elseif (property_exists($content->extra, $name))
+                }
+                elseif (property_exists($content->extra, $name))
                 {
                     $content->extra->$name = $value;
-                } else
+                }
+                else
                 {
                     continue;
                 }
@@ -196,7 +202,8 @@ class TradetrackerProductsModule extends AffiliateParserModule {
             try
             {
                 $results = $this->getApiClient()->getFeedProducts($keyword, $options);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 continue;
             }
@@ -226,7 +233,8 @@ class TradetrackerProductsModule extends AffiliateParserModule {
                 if ($this->config('stock_status') == 'out_of_stock')
                 {
                     $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-                } else
+                }
+                else
                 {
                     $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_UNKNOWN;
                 }
@@ -299,5 +307,4 @@ class TradetrackerProductsModule extends AffiliateParserModule {
 
         return false;
     }
-
 }

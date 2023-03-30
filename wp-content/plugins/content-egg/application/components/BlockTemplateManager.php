@@ -8,10 +8,11 @@ defined('\ABSPATH') || exit;
  * BlockTemplateManager class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link https://www.keywordrush.com/
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class BlockTemplateManager extends TemplateManager {
+class BlockTemplateManager extends TemplateManager
+{
 
     const TEMPLATE_DIR = 'templates';
     const CUSTOM_TEMPLATE_DIR = 'content-egg-templates';
@@ -32,7 +33,6 @@ class BlockTemplateManager extends TemplateManager {
 
     private function __construct()
     {
-        
     }
 
     public function getTempatePrefix()
@@ -52,7 +52,7 @@ class BlockTemplateManager extends TemplateManager {
             'theme' => \get_template_directory() . '/' . self::CUSTOM_TEMPLATE_DIR, // theme
             'custom' => \WP_CONTENT_DIR . '/' . self::CUSTOM_TEMPLATE_DIR,
         );
-        
+
         return \apply_filters('content_egg_block_template_dirs', $paths);
     }
 
@@ -92,10 +92,10 @@ class BlockTemplateManager extends TemplateManager {
         if ($file)
         {
             return $file;
-        } else
+        }
+        else
         {
             return false;
         }
     }
-
 }

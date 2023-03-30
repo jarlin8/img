@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Affiliatewindow;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModuleConfig;
 
@@ -10,34 +10,36 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  * AffiliatewindowConfig class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class AffiliatewindowConfig extends AffiliateParserModuleConfig {
+class AffiliatewindowConfig extends AffiliateParserModuleConfig
+{
 
 	//e2ca1aa65eed1cfd8d6297450f3558fd
 
-	public function options() {
+	public function options()
+	{
 		$optiosn = array(
 			'api_key'                 => array(
 				'title'       => 'API Key <span class="cegg_required">*</span>',
-				'description' => __( 'Access key for ProductServe API (ShopWindow Client) V3. You can get it <a href="https://www.affiliatewindow.com/affiliates/accountdetails.php">here</a>.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('Access key for ProductServe API (ShopWindow Client) V3. You can get it <a href="https://www.affiliatewindow.com/affiliates/accountdetails.php">here</a>.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'required' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => __( 'The "API Key" can not be empty', 'content-egg' ),
+						'message' => __('The "API Key" can not be empty', 'content-egg'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'entries_per_page'        => array(
-				'title'       => __( 'Results', 'content-egg' ),
-				'description' => __( 'Number of results for one search query.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results', 'content-egg'),
+				'description' => __('Number of results for one search query.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
 					'trim',
@@ -46,9 +48,9 @@ class AffiliatewindowConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __( 'Results for updates and autoblogging', 'content-egg' ),
-				'description' => __( 'Number of results for automatic updates and autoblogging.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results for updates and autoblogging', 'content-egg'),
+				'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
 					'trim',
@@ -57,11 +59,11 @@ class AffiliatewindowConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'sSort'                   => array(
-				'title'            => __( 'Sorting', 'content-egg' ),
+				'title'            => __('Sorting', 'content-egg'),
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					''           => __( 'Default', 'content-egg' ),
+					''           => __('Default', 'content-egg'),
 					'az'         => 'Alphabetical increasing',
 					'za'         => 'Alphabetical decreasing',
 					'hi'         => 'By price, decreasing',
@@ -75,8 +77,8 @@ class AffiliatewindowConfig extends AffiliateParserModuleConfig {
 			),
 			'merchantID'              => array(
 				'title'       => 'Merchant ID',
-				'description' => __( 'You can set several Merchant IDs with commas.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('You can set several Merchant IDs with commas.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -97,11 +99,11 @@ class AffiliatewindowConfig extends AffiliateParserModuleConfig {
 			 *
 			 */
 			'sMode'                   => array(
-				'title'            => __( 'Search mode', 'content-egg' ),
-				'description'      => __( 'Details about different search modes <a href="http://wiki.affiliatewindow.com/index.php/ShopWindow_Search_Modes_v3">here</a>.', 'content-egg' ),
-				'callback'         => array( $this, 'render_dropdown' ),
+				'title'            => __('Search mode', 'content-egg'),
+				'description'      => __('Details about different search modes <a href="http://wiki.affiliatewindow.com/index.php/ShopWindow_Search_Modes_v3">here</a>.', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					''         => __( 'Default', 'content-egg' ),
+					''         => __('Default', 'content-egg'),
 					'phrase'   => 'phrase',
 					'all'      => 'all',
 					'any'      => 'any',
@@ -114,28 +116,28 @@ class AffiliatewindowConfig extends AffiliateParserModuleConfig {
 			'bHotPick'                => array(
 				'title'       => 'Top products',
 				'description' => 'Include only the advertisers top products.',
-				'callback'    => array( $this, 'render_checkbox' ),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'iAdult'                  => array(
 				'title'       => 'Adult content',
 				'description' => 'Allow adult content.',
-				'callback'    => array( $this, 'render_checkbox' ),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => true,
 				'section'     => 'default',
 			),
 			'save_img'                => array(
-				'title'       => __( 'Save images', 'content-egg' ),
-				'description' => __( 'Save images on server', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Save images', 'content-egg'),
+				'description' => __('Save images on server', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'description_size'        => array(
-				'title'       => __( 'Trim description', 'content-egg' ),
-				'description' => __( 'Description size in characters (0 - do not cut)', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Trim description', 'content-egg'),
+				'description' => __('Description size in characters (0 - do not cut)', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '300',
 				'validator'   => array(
 					'trim',
@@ -145,7 +147,6 @@ class AffiliatewindowConfig extends AffiliateParserModuleConfig {
 			),
 		);
 
-		return array_merge( parent::options(), $optiosn );
+		return array_merge(parent::options(), $optiosn);
 	}
-
 }

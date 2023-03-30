@@ -17,9 +17,10 @@ use ContentEgg\application\Translator;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ProductSearch extends VirtualPage {
+class ProductSearch extends VirtualPage
+{
 
     const PAGE_SLUG = 'product-search';
     const shortcode = 'content-egg-search-form';
@@ -34,7 +35,6 @@ class ProductSearch extends VirtualPage {
             return;
 
         new self;
-        //parent::initAction();
     }
 
     protected function handleRequest($query_vars = array())
@@ -86,7 +86,7 @@ class ProductSearch extends VirtualPage {
     {
         $post_id = -1;
         $module_ids = GeneralConfig::getInstance()->option('search_modules');
-        $module_ids = apply_filters('cegg_frontend_search_module_ids', $module_ids);        
+        $module_ids = apply_filters('cegg_frontend_search_module_ids', $module_ids);
         $total = 0;
         foreach ($module_ids as $module_id)
         {
@@ -95,11 +95,12 @@ class ProductSearch extends VirtualPage {
                 continue;
 
             $query_params = apply_filters('cegg_frontend_search_module_query_params', array(), $module_id);
-            
+
             try
             {
                 $data = $parser->doRequest($this->keyword, $query_params, true);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 // error
                 continue;
@@ -121,5 +122,4 @@ class ProductSearch extends VirtualPage {
     {
         return sprintf(Translator::translate('Search Results for "%s"'), $this->keyword);
     }
-
 }

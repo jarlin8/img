@@ -2,16 +2,17 @@
 
 namespace ContentEgg\application\components;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 /**
  * Content class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class Content {
+class Content
+{
 
 	public $unique_id;
 	public $title;
@@ -21,5 +22,4 @@ class Content {
 	//public $redirect;
 	public $last_update;
 	public $extra;
-
 }

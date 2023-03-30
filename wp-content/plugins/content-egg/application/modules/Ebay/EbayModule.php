@@ -19,9 +19,10 @@ use ContentEgg\application\helpers\TemplateHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class EbayModule extends AffiliateParserModule {
+class EbayModule extends AffiliateParserModule
+{
 
     private $api_client_finding = null;
     private $api_client_shopping = null;
@@ -95,7 +96,8 @@ class EbayModule extends AffiliateParserModule {
         if ($is_autoupdate)
         {
             $options['paginationInput']['entriesPerPage'] = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $options['paginationInput']['entriesPerPage'] = $this->config('entries_per_page');
         }
@@ -138,7 +140,8 @@ class EbayModule extends AffiliateParserModule {
                 $filter['value'] = $conditions[$query_params['product_condition']];
                 $options['itemFilter'][] = $filter;
             }
-        } elseif ($this->config('condition'))
+        }
+        elseif ($this->config('condition'))
         {
             $filter['name'] = 'Condition';
             $filter['value'] = explode(',', rtrim($this->config('condition'), ','));
@@ -223,7 +226,8 @@ class EbayModule extends AffiliateParserModule {
             if ($this->config('listing_type') == 'FixedPrice,AuctionWithBIN')
             {
                 $filter['value'] = array('FixedPrice', 'AuctionWithBIN');
-            } else
+            }
+            else
             {
                 $filter['value'] = $this->config('listing_type');
             }
@@ -248,10 +252,12 @@ class EbayModule extends AffiliateParserModule {
         if (!empty($query_params['max_price']))
         {
             $max_price = $query_params['max_price'];
-        } elseif ($this->config('max_price'))
+        }
+        elseif ($this->config('max_price'))
         {
             $max_price = $this->config('max_price');
-        } else
+        }
+        else
         {
             $max_price = 0;
         }
@@ -265,10 +271,12 @@ class EbayModule extends AffiliateParserModule {
         if (!empty($query_params['min_price']))
         {
             $min_price = $query_params['min_price'];
-        } elseif ($this->config('min_price'))
+        }
+        elseif ($this->config('min_price'))
         {
             $min_price = $this->config('min_price');
-        } else
+        }
+        else
         {
             $min_price = 0;
         }
@@ -282,16 +290,18 @@ class EbayModule extends AffiliateParserModule {
         // TopRatedSellerOnly
         // The TopRatedSellerOnly item filter is supported for the following sites only:
         // US (EBAY-US), Motors (EBAY-MOTOR), UK (EBAY-GB), IE (EBAY-IE), DE (EBAY-DE), AT (EBAY-AT), and CH (EBAY-CH).
-        if ($this->config('top_rated_seller_only') &&
-                in_array($global_id, array(
-                    'EBAY-US',
-                    'EBAY-MOTOR',
-                    'EBAY-GB',
-                    'EBAY-IE',
-                    'EBAY-DE',
-                    'EBAY-AT',
-                    'EBAY-CH'
-                )))
+        if (
+            $this->config('top_rated_seller_only') &&
+            in_array($global_id, array(
+                'EBAY-US',
+                'EBAY-MOTOR',
+                'EBAY-GB',
+                'EBAY-IE',
+                'EBAY-DE',
+                'EBAY-AT',
+                'EBAY-CH'
+            ))
+        )
         {
             $filter['name'] = 'TopRatedSellerOnly';
             $filter['value'] = 1;
@@ -337,10 +347,12 @@ class EbayModule extends AffiliateParserModule {
         if ($this->config('search_logic') == 'OR')
         {
             $keywords = '(' . join(',', $keywords) . ')';
-        } elseif ($this->config('search_logic') == 'EXACT')
+        }
+        elseif ($this->config('search_logic') == 'EXACT')
         {
             $keywords = join(',', $keywords);
-        } else
+        }
+        else
         {
             $keywords = join(' ', $keywords);
         } //AND - default
@@ -427,9 +439,9 @@ class EbayModule extends AffiliateParserModule {
                 $old_price = (float) $items[$key]['price'];
                 if ($new_price != $old_price)
                 {
-                    $x = 100 - ( $new_price * 100 / $old_price );
+                    $x = 100 - ($new_price * 100 / $old_price);
                     $old_per_unit = (float) $items[$key]['extra']['pricePerUnit'];
-                    $new_per_unit = $old_per_unit - ( $old_per_unit * $x / 100 );
+                    $new_per_unit = $old_per_unit - ($old_per_unit * $x / 100);
                     $items[$key]['extra']['pricePerUnit'] = $new_per_unit;
                     $items[$key]['extra']['pricePerUnitDisplay'] = TemplateHelper::formatPriceCurrency($items[$key]['extra']['pricePerUnit'], $item['currencyCode']) . ' / ' . $items[$key]['extra']['unitPriceType'];
                 }
@@ -443,7 +455,8 @@ class EbayModule extends AffiliateParserModule {
             if ($r['ListingStatus'] == 'Active')
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-            } else
+            }
+            else
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
@@ -452,7 +465,8 @@ class EbayModule extends AffiliateParserModule {
             if (isset($r['Quantity']) && (int) $r['Quantity'] == 0)
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            } elseif (isset($r['Quantity']) && isset($r['QuantitySold']) && (int) $r['Quantity'] - (int) $r['QuantitySold'] == 0)
+            }
+            elseif (isset($r['Quantity']) && isset($r['QuantitySold']) && (int) $r['Quantity'] - (int) $r['QuantitySold'] == 0)
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
@@ -462,8 +476,8 @@ class EbayModule extends AffiliateParserModule {
 
             $items[$key]['extra']['listingInfo']['endTime'] = str_replace('T', ' ', $r['EndTime']);
             $items[$key]['extra']['listingInfo']['endTimeGmt'] = $items[$key]['extra']['listingInfo']['endTime'];
-            $items[$key]['extra']['listingInfo']['endTimeGmt'] = date("d-M-y H:i:s", strtotime(substr($items[$key]['extra']['listingInfo']['endTimeGmt'], 0, - 5)));
-            $items[$key]['extra']['listingInfo']['endTime'] = date("M d, Y H:i:s", strtotime(substr($items[$key]['extra']['listingInfo']['endTime'], 0, - 5)) + EbayConfig::timeZoneCorrection($this->config('global_id')));
+            $items[$key]['extra']['listingInfo']['endTimeGmt'] = date("d-M-y H:i:s", strtotime(substr($items[$key]['extra']['listingInfo']['endTimeGmt'], 0, -5)));
+            $items[$key]['extra']['listingInfo']['endTime'] = date("M d, Y H:i:s", strtotime(substr($items[$key]['extra']['listingInfo']['endTime'], 0, -5)) + EbayConfig::timeZoneCorrection($this->config('global_id')));
 
             $i++;
         }
@@ -499,7 +513,8 @@ class EbayModule extends AffiliateParserModule {
             if (is_array($r['sellingStatus']['convertedCurrentPrice']))
             {
                 $content->price = (float) $r['sellingStatus']['convertedCurrentPrice'][0];
-            } elseif (isset($r['sellingStatus']['convertedCurrentPrice']))
+            }
+            elseif (isset($r['sellingStatus']['convertedCurrentPrice']))
             {
                 $content->price = (float) $r['sellingStatus']['convertedCurrentPrice'];
             }
@@ -513,10 +528,12 @@ class EbayModule extends AffiliateParserModule {
             if (!empty($r['pictureURLLarge']))
             {
                 $content->img = $r['pictureURLLarge'];
-            } elseif (!empty($r['PictureURLSuperSize']))
+            }
+            elseif (!empty($r['PictureURLSuperSize']))
             {
                 $content->img = $r['PictureURLSuperSize'];
-            } elseif (!empty($r['galleryURL']))
+            }
+            elseif (!empty($r['galleryURL']))
             {
                 $img = $r['galleryURL'];
                 $img = str_replace('/140.jpg', '.jpg', $img);
@@ -564,17 +581,18 @@ class EbayModule extends AffiliateParserModule {
             if (isset($r['eekStatus']))
             {
                 $extra->eekStatus = is_array($r['eekStatus']) ? join(', ', $r['eekStatus']) : $r['eekStatus'];
-            } else
+            }
+            else
             {
                 $extra->eekStatus = '';
             }
 
             $extra->listingInfo->endTimeGmt = $extra->listingInfo->endTime;
-            $extra->listingInfo->endTimeGmt = date("d-M-y H:i:s", strtotime(substr($extra->listingInfo->endTimeGmt, 0, - 5)));
+            $extra->listingInfo->endTimeGmt = date("d-M-y H:i:s", strtotime(substr($extra->listingInfo->endTimeGmt, 0, -5)));
 
-            $extra->listingInfo->endTime = date("M d, Y H:i:s", strtotime(substr($extra->listingInfo->endTime, 0, - 5)) + EbayConfig::timeZoneCorrection($global_id));
+            $extra->listingInfo->endTime = date("M d, Y H:i:s", strtotime(substr($extra->listingInfo->endTime, 0, -5)) + EbayConfig::timeZoneCorrection($global_id));
             $extra->listingInfo->startTime = str_replace('T', ' ', $extra->listingInfo->startTime);
-            $extra->listingInfo->startTime = date("M d, Y H:i:s", strtotime(substr($extra->listingInfo->startTime, 0, - 5)) + EbayConfig::timeZoneCorrection($global_id));
+            $extra->listingInfo->startTime = date("M d, Y H:i:s", strtotime(substr($extra->listingInfo->startTime, 0, -5)) + EbayConfig::timeZoneCorrection($global_id));
             $extra->listingInfo->timeZone = EbayConfig::getTimeZone($global_id);
 
             if (isset($r['unitPrice']) && (float) $r['unitPrice']['quantity'])
@@ -628,7 +646,8 @@ class EbayModule extends AffiliateParserModule {
             if (isset($r['Description']))
             {
                 $description = $r['Description'];
-            } else
+            }
+            else
             {
                 $description = '';
             }
@@ -702,9 +721,9 @@ class EbayModule extends AffiliateParserModule {
         if ($this->config('skimlinks_id'))
         {
             return 'http://go.redirectingat.com/?'
-                    . 'url=' . urlencode($url)
-                    . '&id=' . $this->config('skimlinks_id')
-                    . '&xs=1';
+                . 'url=' . urlencode($url)
+                . '&id=' . $this->config('skimlinks_id')
+                . '&xs=1';
             //@todo: add sref parameter. This field is also used to detect spam
             //and it is recommended that it is always passed.
         }
@@ -716,8 +735,8 @@ class EbayModule extends AffiliateParserModule {
         if ($this->config('viglink_id'))
         {
             return 'http://redirect.viglink.com?'
-                    . 'out=' . urlencode($url)
-                    . '&key=' . $this->config('viglink_id');
+                . 'out=' . urlencode($url)
+                . '&key=' . $this->config('viglink_id');
         }
 
         if ($this->config('deeplink'))
@@ -769,11 +788,13 @@ class EbayModule extends AffiliateParserModule {
             $mpre = strtok($query['mpre'], '?');
             $tmp = explode('/', $mpre);
             $listing_id = end($tmp);
-        } elseif (isset($query['item']))
+        }
+        elseif (isset($query['item']))
         {
             // Finding API format
             $listing_id = $query['item'];
-        } else
+        }
+        else
         {
             return $url;
         }
@@ -868,5 +889,4 @@ class EbayModule extends AffiliateParserModule {
     {
         $this->render('update_panel', array('module_id' => $this->getId()));
     }
-
 }

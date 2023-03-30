@@ -13,11 +13,12 @@ use ContentEgg\application\libs\amazon\AwsV4;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * @link: https://webservices.amazon.com/paapi5/documentation/
  */
-class AmazonApi extends RestClient {
+class AmazonApi extends RestClient
+{
 
     private $access_key_id;
     private $secret_access_key;
@@ -146,5 +147,4 @@ class AmazonApi extends RestClient {
 
         throw new \Exception($error_mess, $response_code);
     }
-
 }

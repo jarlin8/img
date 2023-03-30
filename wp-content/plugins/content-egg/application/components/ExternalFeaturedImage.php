@@ -12,9 +12,10 @@ use ContentEgg\application\components\FeaturedImage;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2019 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExternalFeaturedImage {
+class ExternalFeaturedImage
+{
 
     const EXTERNAL_URL_META = '_cegg_thumbnail_external';
     const FAKE_INT_START = '99999';
@@ -123,7 +124,7 @@ class ExternalFeaturedImage {
         $width = $height = 0;
         if (ini_get('allow_url_fopen'))
         {
-            list( $width, $height ) = @getimagesize($url);
+            list($width, $height) = @getimagesize($url);
         }
         $save['width'] = $width;
         $save['height'] = $height;
@@ -161,7 +162,8 @@ class ExternalFeaturedImage {
         if (\get_post_meta($product_id, self::EXTERNAL_URL_META, true))
         {
             return self::generateFakeId($product_id);
-        } else
+        }
+        else
         {
             return $value;
         }
@@ -182,7 +184,8 @@ class ExternalFeaturedImage {
         if (\get_post_meta($object_id, self::EXTERNAL_URL_META, true))
         {
             return self::generateFakeId($object_id);
-        } else
+        }
+        else
         {
             return $value;
         }
@@ -205,12 +208,14 @@ class ExternalFeaturedImage {
         if ($image_size = self::getImageSize($size))
         {
             return array($external_url, $image_size['width'], $image_size['height'], $image_size['crop']);
-        } else
+        }
+        else
         {
             if (!empty($external_img['width']))
             {
                 $width = $external_img['width'];
-            } else
+            }
+            else
             {
                 $width = 800;
             }
@@ -218,7 +223,8 @@ class ExternalFeaturedImage {
             if (!empty($external_img['height']))
             {
                 $height = $external_img['height'];
-            } else
+            }
+            else
             {
                 $height = 600;
             }
@@ -300,7 +306,8 @@ class ExternalFeaturedImage {
         if (isset($meta_cache[$meta_key]))
         {
             $meta_value = $meta_cache[$meta_key][0];
-        } else
+        }
+        else
         {
             $meta_value = false;
         }
@@ -308,7 +315,8 @@ class ExternalFeaturedImage {
         if ($meta_value)
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -320,7 +328,8 @@ class ExternalFeaturedImage {
         if (!$external_img || empty($external_img['url']))
         {
             return false;
-        } else
+        }
+        else
         {
             return $external_img['url'];
         }
@@ -356,6 +365,5 @@ class ExternalFeaturedImage {
         $markup['image'] = $external_url;
 
         return $markup;
-    }  
-
+    }
 }

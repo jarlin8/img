@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\libs\clickbank;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
@@ -10,13 +10,14 @@ use ContentEgg\application\libs\RestClient;
  * ClickbankApi class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  */
-require_once dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 
-class ClickbankApi extends RestClient {
+class ClickbankApi extends RestClient
+{
 
 	const API_URI_BASE = 'https://accounts.clickbank.com/api2/';
 
@@ -32,16 +33,17 @@ class ClickbankApi extends RestClient {
 	 *
 	 * @param string $responseType
 	 */
-	public function __construct( $responseType = 'xml' ) {
-		$this->setResponseType( $responseType );
-		$this->setUri( self::API_URI_BASE );
+	public function __construct($responseType = 'xml')
+	{
+		$this->setResponseType($responseType);
+		$this->setUri(self::API_URI_BASE);
 	}
 
-	public function search( $keywords, array $options ) {
+	public function search($keywords, array $options)
+	{
 		$options['includeKeywords'] = $keywords;
-		$response                   = $this->restGet( '/marketplace', $options );
+		$response                   = $this->restGet('/marketplace', $options);
 
-		return $this->_decodeResponse( $response );
+		return $this->_decodeResponse($response);
 	}
-
 }

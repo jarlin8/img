@@ -19,7 +19,7 @@ use ContentEgg\application\modules\Walmart\WalmartConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class WalmartModule extends AffiliateParserModule
 {
@@ -89,7 +89,8 @@ class WalmartModule extends AffiliateParserModule
         if ($is_autoupdate)
         {
             $limit = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $limit = $this->config('entries_per_page');
         }
@@ -109,7 +110,8 @@ class WalmartModule extends AffiliateParserModule
             if ($param == 'order' && $value == 'asc')
             {
                 $value = 'ascending';
-            } elseif ($param == 'order' && $value == 'dec')
+            }
+            elseif ($param == 'order' && $value == 'dec')
             {
                 $value = 'descending';
             }
@@ -122,12 +124,15 @@ class WalmartModule extends AffiliateParserModule
 
         if (TextHelper::isEan($keyword))
         {
-            $results = $this->getApiClient()->searchUpc(ltrim($keyword, '0'));
-        } 
+            $keyword = ltrim($keyword, '0');
+            $keyword = str_pad($keyword, 12, '0', STR_PAD_LEFT);
+            $results = $this->getApiClient()->searchUpc($keyword);
+        }
         elseif ($product_id = $this->getProductId($keyword))
         {
             $results = $this->getApiClient()->products($product_id, $options);
-        } else
+        }
+        else
         {
 
             if ($this->config('categoryId'))
@@ -141,20 +146,24 @@ class WalmartModule extends AffiliateParserModule
             if (!empty($query_params['price_min']))
             {
                 $price_min = (float) $query_params['price_min'];
-            } elseif ($this->config('price_min'))
+            }
+            elseif ($this->config('price_min'))
             {
                 $price_min = (float) $this->config('price_min');
-            } else
+            }
+            else
             {
                 $price_min = 0;
             }
             if (!empty($query_params['price_max']))
             {
                 $price_max = (float) $query_params['price_max'];
-            } elseif ($this->config('price_max'))
+            }
+            elseif ($this->config('price_max'))
             {
                 $price_max = (float) $this->config('price_max');
-            } else
+            }
+            else
             {
                 $price_max = 0;
             }
@@ -197,7 +206,8 @@ class WalmartModule extends AffiliateParserModule
             if (!empty($r['shortDescription']))
             {
                 $content->description = $r['shortDescription'];
-            } elseif (!empty($r['longDescription']))
+            }
+            elseif (!empty($r['longDescription']))
             {
                 $content->description = $r['longDescription'];
             }
@@ -246,7 +256,8 @@ class WalmartModule extends AffiliateParserModule
             if ($r['stock'] == 'Not available')
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            } else
+            }
+            else
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
             }
@@ -291,7 +302,8 @@ class WalmartModule extends AffiliateParserModule
         try
         {
             $results = $this->getApiClient()->reviews($item_id);
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
             return array();
         }
@@ -379,7 +391,8 @@ class WalmartModule extends AffiliateParserModule
             if ($r['stock'] == 'Not available')
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            } else
+            }
+            else
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
             }
@@ -389,7 +402,8 @@ class WalmartModule extends AffiliateParserModule
             if (!empty($r['salePrice']))
             {
                 $items[$key]['price'] = $r['salePrice'];
-            } else
+            }
+            else
             {
                 $items[$key]['price'] = null;
             }
@@ -518,5 +532,4 @@ EOD;
     {
         $this->render('update_panel', array('module_id' => $this->getId()));
     }
-
 }

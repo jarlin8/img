@@ -18,7 +18,7 @@ use ContentEgg\application\helpers\TemplateHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class Ebay2Module extends AffiliateParserModule
 {
@@ -67,7 +67,8 @@ class Ebay2Module extends AffiliateParserModule
         if ($is_autoupdate)
         {
             $options['limit'] = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $options['limit'] = $this->config('entries_per_page');
         }
@@ -171,15 +172,15 @@ class Ebay2Module extends AffiliateParserModule
         }
 
         if ($this->config('priority_listing') == 'enabled' && in_array($locale, array(
-                    'EBAY_US',
-                    'EBAY_DE',
-                    'EBAY_FR',
-                    'EBAY_GB',
-                    'EBAY_IT',
-                    'EBAY_ES',
-                    'EBAY_AU',
-                    'EBAY_CA'
-                )))
+            'EBAY_US',
+            'EBAY_DE',
+            'EBAY_FR',
+            'EBAY_GB',
+            'EBAY_IT',
+            'EBAY_ES',
+            'EBAY_AU',
+            'EBAY_CA'
+        )))
         {
             $filters['priorityListing'] = 'true';
         }
@@ -199,9 +200,12 @@ class Ebay2Module extends AffiliateParserModule
 
         $results = array();
 
-        // search by product ID
-        if ($item = $this->searchById($keyword, $query_params))
+        if ($items = $this->searchByEan($keyword, $options, $query_params))
+            $results = $items;
+        elseif ($item = $this->searchById($keyword, $query_params))
             $results['itemSummaries'] = array($item);
+        elseif ($items = $this->searchByEpid($keyword, $options, $query_params))
+            $results = $items;
         else
             $results = $client->search($keyword, $options, $this->getHeaders($query_params));
 
@@ -216,7 +220,7 @@ class Ebay2Module extends AffiliateParserModule
         if ($pid = self::parsePidFromUrl($keyword))
             $keyword = $pid;
 
-        if (!preg_match('~\d{11,13}~', $keyword))
+        if (!preg_match('~\d{12,13}~', $keyword))
             return false;
 
         $client = $this->getEbayClientBrowse();
@@ -226,7 +230,8 @@ class Ebay2Module extends AffiliateParserModule
         try
         {
             $item = $client->getItemByLegacyId($keyword, array(), $this->getHeaders($query_params));
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
             // parent product
             if (strstr($e->getMessage(), 'get_items_by_item_group'))
@@ -243,6 +248,52 @@ class Ebay2Module extends AffiliateParserModule
             return $item;
         else
             return false;
+    }
+
+    private function searchByEpid($keyword, $options, $query_params)
+    {
+        if (!preg_match('~\d{8,11}~', $keyword))
+            return false;
+
+        $client = $this->getEbayClientBrowse();
+        $client->setAccessToken($this->getAccessToken());
+
+        try
+        {
+            $items = $client->searchByEpid($keyword, $options, $this->getHeaders($query_params));
+        }
+        catch (\Exception $e)
+        {
+            return false;
+        }
+
+        if ($items)
+            return $items;
+        else
+            return false;
+    }
+
+    private function searchByEan($keyword, $options, $query_params)
+    {
+        if (!TextHelper::isEan($keyword))
+            return false;
+
+        $client = $this->getEbayClientBrowse();
+        $client->setAccessToken($this->getAccessToken());
+
+        try
+        {
+            $items = $client->searchByGtin($keyword, $options, $this->getHeaders($query_params));
+        }
+        catch (\Exception $e)
+        {
+            return false;
+        }
+
+        if (!$items || !isset($items['itemSummaries']))
+            return false;
+
+        return $items;
     }
 
     private function getHeaders($query_params)
@@ -269,7 +320,8 @@ class Ebay2Module extends AffiliateParserModule
         if (!empty($query_params['locale']))
         {
             return $query_params['locale'];
-        } else
+        }
+        else
         {
             return $this->config('locale');
         }
@@ -312,7 +364,8 @@ class Ebay2Module extends AffiliateParserModule
         if (!empty($query_params['min_price']))
         {
             $min_price = $query_params['min_price'];
-        } else
+        }
+        else
         {
             $min_price = $this->config('min_price');
         }
@@ -320,7 +373,8 @@ class Ebay2Module extends AffiliateParserModule
         if (!empty($query_params['max_price']))
         {
             $max_price = $query_params['max_price'];
-        } else
+        }
+        else
         {
             $max_price = $this->config('max_price');
         }
@@ -399,7 +453,8 @@ class Ebay2Module extends AffiliateParserModule
             try
             {
                 $r = $client->getItem($unique_id, $options, $this->getHeaders($query_params));
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 if ($e->getCode() == 404)
                 {
@@ -455,10 +510,12 @@ class Ebay2Module extends AffiliateParserModule
         if (isset($r['itemAffiliateWebUrl']))
         {
             $content->url = $r['itemAffiliateWebUrl'];
-        } elseif ($deeplink = $this->config('deeplink'))
+        }
+        elseif ($deeplink = $this->config('deeplink'))
         {
             $content->url = LinkHandler::createAffUrl($content->orig_url, $deeplink);
-        } else
+        }
+        else
         {
             $content->url = $content->orig_url;
         }
@@ -471,7 +528,8 @@ class Ebay2Module extends AffiliateParserModule
         if ($this->config('image_size') == 'large' && isset($r['thumbnailImages'][0]['imageUrl']))
         {
             $content->img = $r['thumbnailImages'][0]['imageUrl'];
-        } elseif (isset($r['image']['imageUrl']))
+        }
+        elseif (isset($r['image']['imageUrl']))
         {
             $content->img = $r['image']['imageUrl'];
         }
@@ -494,12 +552,12 @@ class Ebay2Module extends AffiliateParserModule
         {
             $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
         }
-        
+
         if (isset($r['categoryPath']))
         {
             $content->categoryPath = explode('|', $r['categoryPath']);
             $content->category = end($content->categoryPath);
-        }     
+        }
 
         $extra = new ExtraDataEbay2;
         $extra->locale = $locale;
@@ -596,11 +654,10 @@ class Ebay2Module extends AffiliateParserModule
         if (!filter_var($url, FILTER_VALIDATE_URL))
             return false;
 
-        $regex = '~itm\/(\d{11,13})~';
+        $regex = '~itm\/(\d{12,13})~';
         if (preg_match($regex, $url, $matches))
             return $matches[1];
         else
             return false;
     }
-
 }

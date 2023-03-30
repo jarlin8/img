@@ -3,7 +3,7 @@
 /*
  * Modified version of XmlStringStreamer, edited namespaces only 
  * @author keywordrush.com <support@keywordrush.com>
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 
 /**
@@ -20,7 +20,8 @@ use Exception;
 /**
  * Interface describing a stream provider
  */
-interface StreamInterface {
+interface StreamInterface
+{
 	/**
 	 * Gets the next chunk form the stream if one is available
 	 * @return bool|string The next chunk if available, or false if not available

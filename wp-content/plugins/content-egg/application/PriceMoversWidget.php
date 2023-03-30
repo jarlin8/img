@@ -18,9 +18,10 @@ use ContentEgg\application\components\ContentProduct;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class PriceMoversWidget extends CEWidget {
+class PriceMoversWidget extends CEWidget
+{
 
     const shortcode = 'content-egg-price-movers';
 
@@ -59,61 +60,61 @@ class PriceMoversWidget extends CEWidget {
          */
 
         return
-                array(
-                    'title' => array(
-                        'type' => 'text',
-                        'default' => __('Price Drops', 'content-egg-tpl'),
-                        'title' => __('Title', 'content-egg'),
-                    ),
-                    'limit' => array(
-                        'type' => 'number',
-                        'min' => 1,
-                        'max' => 30,
-                        'default' => 5,
-                        'title' => __('Number of products to show', 'content-egg'),
-                    ),
-                    'drop_type' => array(
-                        'type' => 'select',
-                        'default' => 'absolute',
-                        'title' => __('Drop type', 'content-egg'),
-                        'options' => array(
-                            'absolute' => __('Biggest absolute', 'content-egg'),
-                            'relative' => __('Biggest relative', 'content-egg'),
+            array(
+                'title' => array(
+                    'type' => 'text',
+                    'default' => __('Price Drops', 'content-egg-tpl'),
+                    'title' => __('Title', 'content-egg'),
+                ),
+                'limit' => array(
+                    'type' => 'number',
+                    'min' => 1,
+                    'max' => 30,
+                    'default' => 5,
+                    'title' => __('Number of products to show', 'content-egg'),
+                ),
+                'drop_type' => array(
+                    'type' => 'select',
+                    'default' => 'absolute',
+                    'title' => __('Drop type', 'content-egg'),
+                    'options' => array(
+                        'absolute' => __('Biggest absolute', 'content-egg'),
+                        'relative' => __('Biggest relative', 'content-egg'),
                         //'recent' => __('Most recent', 'content-egg'),
-                        )
-                    ),
-                    'direction' => array(
-                        'type' => 'select',
-                        'default' => 'drops',
-                        'title' => __('Direction', 'content-egg'),
-                        'options' => array(
-                            'drops' => __('Price drops', 'content-egg'),
-                            'increases' => __('Price increases', 'content-egg'),
-                        )
-                    ),
-                    'last_update' => array(
-                        'type' => 'select',
-                        'default' => 7,
-                        'title' => __('Last update', 'content-egg'),
-                        'options' => array(
-                            1 => __('1 day ago', 'content-egg'),
-                            2 => sprintf(__('%d days ago', 'content-egg'), 2),
-                            3 => sprintf(__('%d days ago', 'content-egg'), 3),
-                            4 => sprintf(__('%d days ago', 'content-egg'), 4),
-                            5 => sprintf(__('%d days ago', 'content-egg'), 5),
-                            6 => sprintf(__('%d days ago', 'content-egg'), 6),
-                            7 => sprintf(__('%d days ago', 'content-egg'), 7),
-                            21 => sprintf(__('%d days ago', 'content-egg'), 21),
-                            30 => sprintf(__('%d days ago', 'content-egg'), 30),
-                        )
-                    ),
-                    'template' => array(
-                        'type' => 'select',
-                        'default' => 'wdgt_price_movers_grid',
-                        'title' => __('Template', 'content-egg'),
-                        'options' => WidgetTemplateManager::getInstance($this->slug())->getTemplatesList()
-                    ),
-        );
+                    )
+                ),
+                'direction' => array(
+                    'type' => 'select',
+                    'default' => 'drops',
+                    'title' => __('Direction', 'content-egg'),
+                    'options' => array(
+                        'drops' => __('Price drops', 'content-egg'),
+                        'increases' => __('Price increases', 'content-egg'),
+                    )
+                ),
+                'last_update' => array(
+                    'type' => 'select',
+                    'default' => 7,
+                    'title' => __('Last update', 'content-egg'),
+                    'options' => array(
+                        1 => __('1 day ago', 'content-egg'),
+                        2 => sprintf(__('%d days ago', 'content-egg'), 2),
+                        3 => sprintf(__('%d days ago', 'content-egg'), 3),
+                        4 => sprintf(__('%d days ago', 'content-egg'), 4),
+                        5 => sprintf(__('%d days ago', 'content-egg'), 5),
+                        6 => sprintf(__('%d days ago', 'content-egg'), 6),
+                        7 => sprintf(__('%d days ago', 'content-egg'), 7),
+                        21 => sprintf(__('%d days ago', 'content-egg'), 21),
+                        30 => sprintf(__('%d days ago', 'content-egg'), 30),
+                    )
+                ),
+                'template' => array(
+                    'type' => 'select',
+                    'default' => 'wdgt_price_movers_grid',
+                    'title' => __('Template', 'content-egg'),
+                    'options' => WidgetTemplateManager::getInstance($this->slug())->getTemplatesList()
+                ),
+            );
     }
 
     /**
@@ -228,5 +229,4 @@ class PriceMoversWidget extends CEWidget {
 
         return $a;
     }
-
 }

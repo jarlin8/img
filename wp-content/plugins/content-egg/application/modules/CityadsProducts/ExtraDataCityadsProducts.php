@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\CityadsProducts;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataCityads class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataCityadsProducts extends ExtraData {
+class ExtraDataCityadsProducts extends ExtraData
+{
 
 	public $shop_offer_id;
 	public $offer_id;
@@ -28,5 +29,4 @@ class ExtraDataCityadsProducts extends ExtraData {
 	public $shop_id;
 	public $orders;
 	public $properties;
-
 }

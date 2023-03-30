@@ -4,22 +4,23 @@ namespace ContentEgg;
 
 use ContentEgg\application\vendor\CVarDumper;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 /**
  * AutoLoader class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class AutoLoader {
+class AutoLoader
+{
 
     const NS_CUSTOM_MODULES = 'ContentEggCustomModule';
 
     private static $base_dir;
     private static $classMap = array(
-            //'ContentEgg\application\ContentEgg' => 'application/ContentEgg.php',
+        //'ContentEgg\application\ContentEgg' => 'application/ContentEgg.php',
     );
 
     public function __construct()
@@ -91,7 +92,6 @@ class AutoLoader {
             require $file;
         }
     }
-
 }
 
 new AutoLoader();

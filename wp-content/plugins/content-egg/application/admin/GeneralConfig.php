@@ -16,9 +16,10 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class GeneralConfig extends Config {
+class GeneralConfig extends Config
+{
 
     private static $affiliate_modules;
 
@@ -141,7 +142,7 @@ class GeneralConfig extends Config {
 
         $total_price_alerts = PriceAlertModel::model()->count('status = ' . PriceAlertModel::STATUS_ACTIVE);
         $sent_price_alerts = PriceAlertModel::model()->count('status = ' . PriceAlertModel::STATUS_DELETED
-                . ' AND TIMESTAMPDIFF( DAY, complet_date, "' . \current_time('mysql') . '") <= ' . PriceAlertModel::CLEAN_DELETED_DAYS);
+            . ' AND TIMESTAMPDIFF( DAY, complet_date, "' . \current_time('mysql') . '") <= ' . PriceAlertModel::CLEAN_DELETED_DAYS);
 
         $export_url = \get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-tools&action=subscribers-export');
 
@@ -165,7 +166,7 @@ class GeneralConfig extends Config {
             'cashback_integration' => array(
                 'title' => __('Cashback Tracker integration', 'content-egg'),
                 'description' => sprintf(__('Integration with %s plugin.', 'content-egg'), '<a target="_blanl" href="https://www.keywordrush.com/cashbacktracker">Cashback Tracker</a>') . ' ' .
-                __('Convert all affiliate links to trackable cashback links if possible.', 'content-egg'),
+                    __('Convert all affiliate links to trackable cashback links if possible.', 'content-egg'),
                 'callback' => array($this, 'render_dropdown'),
                 'dropdown_options' => array(
                     'enabled' => __('Enabled', 'content-egg'),
@@ -177,7 +178,7 @@ class GeneralConfig extends Config {
             'external_featured_images' => array(
                 'title' => __('External featured images', 'content-egg'),
                 'description' => __('Featured images from URL', 'content-egg') .
-                '<p class="description">' . __('', 'content-egg') . '</p>',
+                    '<p class="description">' . __('', 'content-egg') . '</p>',
                 'callback' => array($this, 'render_dropdown'),
                 'dropdown_options' => array(
                     'disabled' => __('Disabled - internal image is used', 'content-egg'),
@@ -264,9 +265,9 @@ class GeneralConfig extends Config {
             'woocommerce_echo_price_per_unit' => array(
                 'title' => __('Price per unit', 'content-egg'),
                 'description' => __('Show price per unit', 'content-egg') .
-                '<p class="description">' .
-                __('This option is available for Amazon and Ebay modules only.', 'content-egg') . '<br>' .
-                '</p>',
+                    '<p class="description">' .
+                    __('This option is available for Amazon and Ebay modules only.', 'content-egg') . '<br>' .
+                    '</p>',
                 'callback' => array($this, 'render_checkbox'),
                 'default' => false,
                 'section' => __('WooCommerce', 'content-egg'),
@@ -284,7 +285,7 @@ class GeneralConfig extends Config {
             'aggregate_offer' => array(
                 'title' => __('Aggregate offer', 'content-egg'),
                 'description' => __('Add AggregateOffer to product structured data. This can be used for price comparison sites.', 'content-egg') .
-                '<p class="description">' . __('', 'content-egg') . '</p>',
+                    '<p class="description">' . __('', 'content-egg') . '</p>',
                 'callback' => array($this, 'render_dropdown'),
                 'dropdown_options' => array(
                     'disabled' => __('Disabled', 'content-egg'),
@@ -293,10 +294,22 @@ class GeneralConfig extends Config {
                 'default' => 'disabled',
                 'section' => __('WooCommerce', 'content-egg'),
             ),
+            'sync_brand' => array(
+                'title' => __('Brand taxonomy', 'content-egg'),
+                'description' => __('Synchronization of manufacturer/store with Brand taxonomy of ReHub theme.', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'brand' => __('Manufacturer', 'content-egg'),
+                    'store' => __('Store domain', 'content-egg'),
+                    'disabled' => __('Disabled', 'content-egg'),
+                ),
+                'default' => 'disabled',
+                'section' => __('WooCommerce', 'content-egg'),
+            ),
             'filter_bots' => array(
                 'title' => __('Filter bots', 'content-egg'),
                 'description' => __('Bots can\'t activate parsers.', 'content-egg') .
-                '<p class="description">' . __('Updating price and keyword updating is made with page opening. If we determine update by useragent, and page is opened by one of known bots, no parsers will work in this case.', 'content-egg') . '</p>',
+                    '<p class="description">' . __('Updating price and keyword updating is made with page opening. If we determine update by useragent, and page is opened by one of known bots, no parsers will work in this case.', 'content-egg') . '</p>',
                 'callback' => array($this, 'render_checkbox'),
                 'default' => true,
                 'section' => __('General settings', 'content-egg'),
@@ -341,13 +354,13 @@ class GeneralConfig extends Config {
             'price_alert_enabled' => array(
                 'title' => 'Price alert',
                 'description' => __('Allow visitors to subscribe for price drop alert on email.', 'content-egg') .
-                '<p class="description">' . sprintf(__('Active subscriptions now: <b>%d</b>', 'content-egg'), $total_price_alerts) .
-                '. ' . sprintf(__('Messages are sent for last %d days: <b>%d</b>', 'content-egg'), PriceAlertModel::CLEAN_DELETED_DAYS, $sent_price_alerts) . '.' .
-                ' ' . sprintf(__('Export: [ <a href="%s">All</a> | <a href="%s">Active</a> ]', 'content-egg'), $export_url, $export_url . '&active_only=true') . '</p>' .
-                '<p class="description">' .
-                __('"Price history" option must be enabled.', 'content-egg') . '<br>' .
-                __('Recommendation: Go to Settings - Privacy and select Privacy Policy page.', 'content-egg') .
-                '</p>',
+                    '<p class="description">' . sprintf(__('Active subscriptions now: <b>%d</b>', 'content-egg'), $total_price_alerts) .
+                    '. ' . sprintf(__('Messages are sent for last %d days: <b>%d</b>', 'content-egg'), PriceAlertModel::CLEAN_DELETED_DAYS, $sent_price_alerts) . '.' .
+                    ' ' . sprintf(__('Export: [ <a href="%s">All</a> | <a href="%s">Active</a> ]', 'content-egg'), $export_url, $export_url . '&active_only=true') . '</p>' .
+                    '<p class="description">' .
+                    __('"Price history" option must be enabled.', 'content-egg') . '<br>' .
+                    __('Recommendation: Go to Settings - Privacy and select Privacy Policy page.', 'content-egg') .
+                    '</p>',
                 'callback' => array($this, 'render_checkbox'),
                 'default' => true,
                 'section' => __('Price alerts', 'content-egg'),
@@ -391,8 +404,8 @@ class GeneralConfig extends Config {
             'email_template_activation' => array(
                 'title' => __('Activation email template', 'content-egg'),
                 'description' => sprintf(__('Use the following tags: %s.', 'content-egg'), '%POST_ID%, %POST_URL%, %POST_TITLE%, %PRODUCT_TITLE%, %VALIDATE_URL%, %UNSUBSCRIBE_URL%') .
-                '<br>' . sprintf(__('%s is required tag.', 'content-egg'), '%VALIDATE_URL%') . ' ' .
-                sprintf(__('Use like %s.', 'content-egg'), \esc_html('<a href="%VALIDATE_URL%">%VALIDATE_URL%</a>')),
+                    '<br>' . sprintf(__('%s is required tag.', 'content-egg'), '%VALIDATE_URL%') . ' ' .
+                    sprintf(__('Use like %s.', 'content-egg'), \esc_html('<a href="%VALIDATE_URL%">%VALIDATE_URL%</a>')),
                 'callback' => array($this, 'render_textarea'),
                 'default' => '',
                 'section' => __('Price alerts', 'content-egg'),
@@ -489,6 +502,17 @@ class GeneralConfig extends Config {
                 ),
                 'section' => __('General settings', 'content-egg'),
             ),
+            'redirect_pass_parameters' => array(
+                'title' => __('Pass-through parameters', 'content-egg'),
+                'description' => __('Pass-through query parameters to redirect links.', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'enabled' => __('Enabled', 'content-egg'),
+                    'disabled' => __('Disabled', 'content-egg'),
+                ),
+                'default' => 'disabled',
+                'section' => __('General settings', 'content-egg'),
+            ),
             'outofstock_product' => array(
                 'title' => __('Out of Stock products', 'content-egg'),
                 'description' => __('How to deal with Out of Stock products.', 'content-egg'),
@@ -504,9 +528,9 @@ class GeneralConfig extends Config {
             'search_modules' => array(
                 'title' => __('Search modules', 'content-egg'),
                 'description' => __('Select modules to search on frontend.', 'content-egg') . ' ' .
-                __('Do not select more than 1-2 modules.', 'content-egg') . '<br>' .
-                __('Please note, AE modules work slowly and are not recommended for use as search modules.', 'content-egg') . '<br>' .
-                __('Do not forget to add search widget or shorcode [content-egg-search-form].', 'content-egg'),
+                    __('Do not select more than 1-2 modules.', 'content-egg') . '<br>' .
+                    __('Please note, AE modules work slowly and are not recommended for use as search modules.', 'content-egg') . '<br>' .
+                    __('Do not forget to add search widget or shorcode [content-egg-search-form].', 'content-egg'),
                 'checkbox_options' => self::getAffiliteModulesList(),
                 'callback' => array($this, 'render_checkbox_list'),
                 'default' => array(),
@@ -515,7 +539,7 @@ class GeneralConfig extends Config {
             'search_page_tpl' => array(
                 'title' => __('Search page template', 'content-egg'),
                 'description' => __('Template for body of search page.', 'content-egg') . ' ' .
-                __('You can use shortcodes, for example: [content-egg module=Amazon template=grid]', 'content-egg'),
+                    __('You can use shortcodes, for example: [content-egg module=Amazon template=grid]', 'content-egg'),
                 'callback' => array($this, 'render_textarea'),
                 'default' => '',
                 'section' => __('Frontend search', 'content-egg'),
@@ -542,6 +566,18 @@ class GeneralConfig extends Config {
                 ),
                 'section' => __('Frontend', 'content-egg'),
             ),
+            'add_schema_markup' => array(
+                'title' => __('Add schema markup', 'content-egg'),
+                'description' => __('Add Product/AggregateOffer markup to posts. Activate only if you use posts for price comparison or single products.', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'enabled' => __('Enabled', 'content-egg'),
+                    'disabled' => __('Disabled', 'content-egg'),
+                ),
+                'default' => 'disabled',
+                'section' => __('Frontend', 'content-egg'),
+            ),
+
             'frontend_texts' => array(
                 'title' => __('Frontend texts', 'content-egg'),
                 'description' => '',
@@ -608,11 +644,11 @@ class GeneralConfig extends Config {
         $value = isset($args['value'][$i]['value']) ? $args['value'][$i]['value'] : '';
 
         echo '<input name="' . \esc_attr($args['option_name']) . '['
-        . \esc_attr($args['name']) . '][' . esc_attr($i) . '][name]" value="'
-        . \esc_attr($name) . '" class="text" placeholder="' . \esc_attr(__('Domain name', 'content-egg')) . '"  type="text"/>';
+            . \esc_attr($args['name']) . '][' . esc_attr($i) . '][name]" value="'
+            . \esc_attr($name) . '" class="text" placeholder="' . \esc_attr(__('Domain name', 'content-egg')) . '"  type="text"/>';
         echo '<input name="' . \esc_attr($args['option_name']) . '['
-        . \esc_attr($args['name']) . '][' . esc_attr($i) . '][value]" value="'
-        . \esc_attr($value) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('Logo URL', 'content-egg')) . '"  type="text"/>';
+            . \esc_attr($args['name']) . '][' . esc_attr($i) . '][value]" value="'
+            . \esc_attr($value) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('Logo URL', 'content-egg')) . '"  type="text"/>';
     }
 
     public function render_logo_fields_block($args)
@@ -668,8 +704,8 @@ class GeneralConfig extends Config {
         echo '<input value="' . \esc_attr($field_name) . '" class="regular-text ltr" type="text" readonly />';
         echo ' &#x203A; ';
         echo '<input name="' . \esc_attr($args['option_name']) . '['
-        . \esc_attr($args['name']) . '][' . \esc_attr($field_name) . ']" value="'
-        . \esc_attr($value) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('Translated string', 'content-egg')) . '"  type="text"/>';
+            . \esc_attr($args['name']) . '][' . \esc_attr($field_name) . ']" value="'
+            . \esc_attr($value) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('Translated string', 'content-egg')) . '"  type="text"/>';
     }
 
     public function render_translation_block($args)
@@ -705,14 +741,14 @@ class GeneralConfig extends Config {
         $value = isset($args['value'][$i]['shop_info']) ? $args['value'][$i]['shop_info'] : '';
 
         echo '<input style="margin-bottom: 5px;" name="' . \esc_attr($args['option_name']) . '['
-        . \esc_attr($args['name']) . '][' . esc_attr($i) . '][name]" value="'
-        . \esc_attr($name) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('Domain name', 'content-egg')) . '"  type="text"/>';
+            . \esc_attr($args['name']) . '][' . esc_attr($i) . '][name]" value="'
+            . \esc_attr($name) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('Domain name', 'content-egg')) . '"  type="text"/>';
 
         echo '<textarea rows="2" name="' . \esc_attr($args['option_name']) . '['
-        . \esc_attr($args['name']) . '][' . esc_attr($i) . '][shop_info]" value="'
-        . \esc_attr($value) . '" class="large-text code" placeholder="' . \esc_attr(__('Shop info', 'content-egg')) . '"  type="text">' . \esc_html($value) . '</textarea>';
+            . \esc_attr($args['name']) . '][' . esc_attr($i) . '][shop_info]" value="'
+            . \esc_attr($value) . '" class="large-text code" placeholder="' . \esc_attr(__('Shop info', 'content-egg')) . '"  type="text">' . \esc_html($value) . '</textarea>';
     }
-    
+
 
 
     public function render_merchants_block($args)
@@ -756,8 +792,8 @@ class GeneralConfig extends Config {
 
         return $results;
     }
-    
-   
+
+
 
     public static function isShopInfoAvailable()
     {
@@ -773,5 +809,4 @@ class GeneralConfig extends Config {
 
         return false;
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Affiliatewindow;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataAffiliatewindow class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataAffiliatewindow extends ExtraData {
+class ExtraDataAffiliatewindow extends ExtraData
+{
 
 	public $bHotPick;
 	public $sSpecification;
@@ -27,5 +28,4 @@ class ExtraDataAffiliatewindow extends ExtraData {
 	public $iMerchantId;
 	public $iCategoryId;
 	public $iAdult;
-
 }

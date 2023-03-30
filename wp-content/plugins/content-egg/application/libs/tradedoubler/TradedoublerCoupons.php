@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\libs\tradedoubler;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
@@ -10,15 +10,16 @@ use ContentEgg\application\libs\RestClient;
  * TradedoublerCoupons class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * @link: http://dev.tradedoubler.com/vouchers/publisher/
  *
  */
-require_once dirname( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 
-class TradedoublerCoupons extends RestClient {
+class TradedoublerCoupons extends RestClient
+{
 
 	const API_URI_BASE = 'http://api.tradedoubler.com/1.0/vouchers';
 
@@ -37,26 +38,28 @@ class TradedoublerCoupons extends RestClient {
 	 *
 	 * @param string $responseType
 	 */
-	public function __construct( $token, $responseType = 'json' ) {
-		$this->setResponseType( $responseType );
-		$this->setUri( self::API_URI_BASE );
+	public function __construct($token, $responseType = 'json')
+	{
+		$this->setResponseType($responseType);
+		$this->setUri(self::API_URI_BASE);
 		$this->token = $token;
 	}
 
-	public function search( $query, array $params = array() ) {
+	public function search($query, array $params = array())
+	{
 		$uri                = $this->getUri();
 		$uri                .= '.' . $this->getResponseType();
 		$params['keywords'] = $query;
 
 		// All services in Tradedoubler APIs use the matrix syntax.
-		foreach ( $params as $key => $value ) {
-			$uri .= ';' . urlencode( $key ) . '=' . urlencode( $value );
+		foreach ($params as $key => $value)
+		{
+			$uri .= ';' . urlencode($key) . '=' . urlencode($value);
 		}
 		$o          = array();
 		$o['token'] = $this->token;
-		$response   = $this->restGet( $uri, $o );
+		$response   = $this->restGet($uri, $o);
 
-		return $this->_decodeResponse( $response );
+		return $this->_decodeResponse($response);
 	}
-
 }

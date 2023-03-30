@@ -16,7 +16,7 @@ use ContentEgg\application\modules\Impactradius\ExtraDataImpactradius;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class ImpactradiusModule extends AffiliateParserModule
 {
@@ -58,7 +58,8 @@ class ImpactradiusModule extends AffiliateParserModule
         if ($is_autoupdate)
         {
             $limit = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $limit = $this->config('entries_per_page');
         }
@@ -147,10 +148,12 @@ class ImpactradiusModule extends AffiliateParserModule
             if ($r['StockAvailability'] && $r['StockAvailability'] == 'InStock')
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-            } elseif ($r['StockAvailability'])
+            }
+            elseif ($r['StockAvailability'])
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            } else
+            }
+            else
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_UNKNOWN;
             }
@@ -210,10 +213,12 @@ class ImpactradiusModule extends AffiliateParserModule
             if ($result['StockAvailability'] && $result['StockAvailability'] == 'InStock')
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-            } elseif ($result['StockAvailability'])
+            }
+            elseif ($result['StockAvailability'])
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-            } else
+            }
+            else
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_UNKNOWN;
             }
@@ -246,5 +251,4 @@ class ImpactradiusModule extends AffiliateParserModule
     {
         $this->render('search_panel', array('module_id' => $this->getId()));
     }
-
 }

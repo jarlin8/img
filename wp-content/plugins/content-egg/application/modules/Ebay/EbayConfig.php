@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Ebay;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModuleConfig;
 
@@ -11,46 +11,48 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class EbayConfig extends AffiliateParserModuleConfig {
+class EbayConfig extends AffiliateParserModuleConfig
+{
 
-	public function options() {
+	public function options()
+	{
 		$optiosn                  = array(
 			'app_id'                  => array(
 				'title'       => 'App ID (Client ID) <span class="cegg_required">*</span>',
-				'description' => __( "Your application's OAuth credentials.", 'content-egg' ) . ' ' . sprintf( __( 'You can get it in <a target="_blank" href="%s">eBay Developers Program</a>.', 'content-egg' ), 'http://developer.ebay.com/join' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __("Your application's OAuth credentials.", 'content-egg') . ' ' . sprintf(__('You can get it in <a target="_blank" href="%s">eBay Developers Program</a>.', 'content-egg'), 'http://developer.ebay.com/join'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'required' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => sprintf( __( 'The field "%s" can not be empty.', 'content-egg' ), 'App ID (Client ID)' ),
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'App ID (Client ID)'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'cert_id'                 => array(
 				'title'       => 'Cert ID (Client Secret) <span class="cegg_required">*</span>',
-				'description' => __( "Your application's OAuth credentials.", 'content-egg' ) . ' ' . sprintf( __( 'You can get it in <a target="_blank" href="%s">eBay Developers Program</a>.', 'content-egg' ), 'http://developer.ebay.com/join' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __("Your application's OAuth credentials.", 'content-egg') . ' ' . sprintf(__('You can get it in <a target="_blank" href="%s">eBay Developers Program</a>.', 'content-egg'), 'http://developer.ebay.com/join'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'required' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => sprintf( __( 'The field "%s" can not be empty.', 'content-egg' ), 'Cert ID (Client Secret)' ),
+						'message' => sprintf(__('The field "%s" can not be empty.', 'content-egg'), 'Cert ID (Client Secret)'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'tracking_id'             => array(
 				'title'       => 'EPN Campaign ID',
-				'description' => __( 'This is connection with partner program EPN. Campaign ID is valid for all programs which were approved for you on EPN. If you leave this field blank - you will not get commissions from sales.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('This is connection with partner program EPN. Campaign ID is valid for all programs which were approved for you on EPN. If you leave this field blank - you will not get commissions from sales.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -58,9 +60,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'custom_id'               => array(
-				'title'       => __( 'EPN Custom ID (chanel)', 'content-egg' ),
-				'description' => __( 'Any word, for example, name of domain. Custom ID will be included in sale report on EPN, so, you can additionally check your traffic. ', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('EPN Custom ID (chanel)', 'content-egg'),
+				'description' => __('Any word, for example, name of domain. Custom ID will be included in sale report on EPN, so, you can additionally check your traffic. ', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -68,9 +70,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'ebayin_aff_id'           => array(
-				'title'       => __( 'Ebay.in Affilite ID', 'content-egg' ),
-				'description' => __( 'For eBay India\'s Affiliate program only. Go to <a href="https://ebayindia.hasoffers.com/publisher/#!/account">Ebay Hasoffers Dashboard</a> and find your Affiliate ID.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Ebay.in Affilite ID', 'content-egg'),
+				'description' => __('For eBay India\'s Affiliate program only. Go to <a href="https://ebayindia.hasoffers.com/publisher/#!/account">Ebay Hasoffers Dashboard</a> and find your Affiliate ID.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -78,9 +80,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'skimlinks_id'            => array(
-				'title'       => __( 'Skimlinks Site ID', 'content-egg' ),
-				'description' => __( 'Set this if you want to direct traffic over <a href="http://www.keywordrush.com/go/skimlinks">Skimlinks</a>. Id for domain you can find <a href="https://hub.skimlinks.com/account">here</a>.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Skimlinks Site ID', 'content-egg'),
+				'description' => __('Set this if you want to direct traffic over <a href="http://www.keywordrush.com/go/skimlinks">Skimlinks</a>. Id for domain you can find <a href="https://hub.skimlinks.com/account">here</a>.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -88,9 +90,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'viglink_id'              => array(
-				'title'       => __( 'Viglink ID', 'content-egg' ),
-				'description' => __( 'Set this if you want to direct traffic over <a href="http://www.keywordrush.com/go/viglink">Viglink</a>. Id for domain you can find <a href="http://www.viglink.com/install">here</a>. Id is the same for all domains', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Viglink ID', 'content-egg'),
+				'description' => __('Set this if you want to direct traffic over <a href="http://www.keywordrush.com/go/viglink">Viglink</a>. Id for domain you can find <a href="http://www.viglink.com/install">here</a>. Id is the same for all domains', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -98,9 +100,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'deeplink'                => array(
-				'title'       => __( 'Deeplink', 'content-egg' ),
-				'description' => __( 'Set Deeplink for one of CPA-networks. You can use parameter as <em>partner_id=12345</em>, or make link as template, for example, <em>{{url}}/partner_id-12345/</em>. Another example is   https://ad.admitad.com/g/g8f0qmlavfa/?ulp={{url_encoded}}. {{url}} and {{url_encoded}} - will be replaced by product url. If product url is after affiliate url - use {{url_encoded}}', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Deeplink', 'content-egg'),
+				'description' => __('Set Deeplink for one of CPA-networks. You can use parameter as <em>partner_id=12345</em>, or make link as template, for example, <em>{{url}}/partner_id-12345/</em>. Another example is   https://ad.admitad.com/g/g8f0qmlavfa/?ulp={{url_encoded}}. {{url}} and {{url_encoded}} - will be replaced by product url. If product url is after affiliate url - use {{url_encoded}}', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -108,49 +110,49 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'global_id'               => array(
-				'title'            => __( 'Locale', 'content-egg' ),
-				'description'      => __( 'Local site of Ebay. For each local site you must have separate registration in affiliate program.', 'content-egg' ),
-				'callback'         => array( $this, 'render_dropdown' ),
+				'title'            => __('Locale', 'content-egg'),
+				'description'      => __('Local site of Ebay. For each local site you must have separate registration in affiliate program.', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => self::getLocalesList(),
 				'default'          => self::getDefaultLocale(),
 				'section'          => 'default',
 			),
 			'entries_per_page'        => array(
-				'title'       => __( 'Results', 'content-egg' ),
-				'description' => __( 'Number of results for one search query.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results', 'content-egg'),
+				'description' => __('Number of results for one search query.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 12,
 				'validator'   => array(
 					'trim',
 					'absint',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
 						'arg'     => 100,
-						'message' => __( 'Field "Results" can not be more than 100.', 'content-egg' ),
+						'message' => __('Field "Results" can not be more than 100.', 'content-egg'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __( 'Results for updates and autoblogging', 'content-egg' ),
-				'description' => __( 'Number of results for automatic updates and autoblogging.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results for updates and autoblogging', 'content-egg'),
+				'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 9,
 				'validator'   => array(
 					'trim',
 					'absint',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
 						'arg'     => 100,
-						'message' => __( 'Field "Results for autoupdating" can not be more than 100.', 'content-egg' ),
+						'message' => __('Field "Results for autoupdating" can not be more than 100.', 'content-egg'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'sort_order'              => array(
-				'title'            => __( 'Sorting', 'content-egg' ),
+				'title'            => __('Sorting', 'content-egg'),
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
 					'BidCountFewest'           => 'BidCountFewest',
 					'BidCountMost'             => 'BidCountMost',
@@ -166,9 +168,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'          => 'default',
 			),
 			'end_time_to'             => array(
-				'title'       => __( 'Ending time', 'content-egg' ),
-				'description' => __( 'Lifetime of lots in seconds. Only lots which will be closed not later than the specified time will be chosen.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Ending time', 'content-egg'),
+				'description' => __('Lifetime of lots in seconds. Only lots which will be closed not later than the specified time will be chosen.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -176,9 +178,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'category_id'             => array(
-				'title'       => __( 'Category ', 'content-egg' ),
-				'description' => __( 'Id of category for searching. Id of categories you can find in URL of category on <a href="http://www.ebay.com/sch/allcategories/all-categories">this page</a>. You can set maximum 3 categories separated with comma. Example, "2195,2218,20094".', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Category ', 'content-egg'),
+				'description' => __('Id of category for searching. Id of categories you can find in URL of category on <a href="http://www.ebay.com/sch/allcategories/all-categories">this page</a>. You can set maximum 3 categories separated with comma. Example, "2195,2218,20094".', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -186,15 +188,15 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'description_search'      => array(
-				'title'       => __( 'Search in description', 'content-egg' ),
-				'description' => __( 'Include description of product in searching. This will take more time, than searching only by title.', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Search in description', 'content-egg'),
+				'description' => __('Include description of product in searching. This will take more time, than searching only by title.', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'search_logic'            => array(
-				'title'            => __( 'Searching logic', 'content-egg' ),
-				'callback'         => array( $this, 'render_dropdown' ),
+				'title'            => __('Searching logic', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
 					'AND'   => 'AND logic for multiple keywords',
 					'OR'    => 'OR logic for multiple keywords',
@@ -204,9 +206,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'          => 'default',
 			),
 			'condition'               => array(
-				'title'            => __( 'Product condition', 'content-egg' ),
+				'title'            => __('Product condition', 'content-egg'),
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
 					''               => 'Any',
 					'1000,'          => 'New',
@@ -221,9 +223,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'          => 'default',
 			),
 			'exclude_category'        => array(
-				'title'       => __( 'Exclude category', 'content-egg' ),
-				'description' => __( 'Id of category, which must be excluded while searching. Id of categories you can find in URL of category on <a href="http://www.ebay.com/sch/allcategories/all-categories">this page</a>. You can set maximum 25 categories separated with comma. Example, "2195,2218,20094".', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Exclude category', 'content-egg'),
+				'description' => __('Id of category, which must be excluded while searching. Id of categories you can find in URL of category on <a href="http://www.ebay.com/sch/allcategories/all-categories">this page</a>. You can set maximum 25 categories separated with comma. Example, "2195,2218,20094".', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -231,9 +233,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'feedback_score_min'      => array(
-				'title'            => __( 'Minimal seller rating', 'content-egg' ),
+				'title'            => __('Minimal seller rating', 'content-egg'),
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
 					''         => 'Any',
 					'10.'      => 'Yellow star - 10 ratings',
@@ -253,57 +255,57 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'          => 'default',
 			),
 			'best_offer_only'         => array(
-				'title'       => __( 'Best Offer', 'content-egg' ),
-				'description' => __( 'Only  "Best Offer" lots.', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Best Offer', 'content-egg'),
+				'description' => __('Only  "Best Offer" lots.', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'featured_only'           => array(
-				'title'       => __( 'Featured', 'content-egg' ),
-				'description' => __( 'Only "Featured" lots.', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Featured', 'content-egg'),
+				'description' => __('Only "Featured" lots.', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'free_shipping_only'      => array(
-				'title'       => __( 'Free Shipping', 'content-egg' ),
-				'description' => __( 'Only lots with free delivery', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Free Shipping', 'content-egg'),
+				'description' => __('Only lots with free delivery', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'local_pickup_only'       => array(
-				'title'       => __( 'Local Pickup', 'content-egg' ),
-				'description' => __( 'Only lots with "local pickup" option.', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Local Pickup', 'content-egg'),
+				'description' => __('Only lots with "local pickup" option.', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'get_it_fast_only'        => array(
-				'title'       => __( 'Get It Fast', 'content-egg' ),
-				'description' => __( 'Only "Get It Fast" lots.', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Get It Fast', 'content-egg'),
+				'description' => __('Only "Get It Fast" lots.', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'top_rated_seller_only'   => array(
-				'title'       => __( 'Top-rated seller', 'content-egg' ),
-				'description' => __( 'Only products from Top-rated "Top-rated" vendors.', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Top-rated seller', 'content-egg'),
+				'description' => __('Only products from Top-rated "Top-rated" vendors.', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'hide_dublicate_items'    => array(
-				'title'       => __( 'Hide duplicates', 'content-egg' ),
-				'description' => __( 'Filter similar lots', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Hide duplicates', 'content-egg'),
+				'description' => __('Filter similar lots', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => true,
 				'section'     => 'default',
 			),
 			'listing_type'            => array(
-				'title'            => __( 'Type of auction', 'content-egg' ),
-				'callback'         => array( $this, 'render_dropdown' ),
+				'title'            => __('Type of auction', 'content-egg'),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
 					''                          => 'All',
 					'Auction'                   => 'Auction',
@@ -315,9 +317,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'          => 'default',
 			),
 			'max_bids'                => array(
-				'title'       => __( 'Maximum bids', 'content-egg' ),
-				'description' => __( 'Example, 10', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Maximum bids', 'content-egg'),
+				'description' => __('Example, 10', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -325,9 +327,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'min_bids'                => array(
-				'title'       => __( 'Minimum bids', 'content-egg' ),
-				'description' => __( 'Example, 3', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Minimum bids', 'content-egg'),
+				'description' => __('Example, 3', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -335,9 +337,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'max_price'               => array(
-				'title'       => __( 'Maximal price', 'content-egg' ),
-				'description' => __( 'Example, 300.50', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Maximal price', 'content-egg'),
+				'description' => __('Example, 300.50', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -345,9 +347,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'metaboxInit' => true,
 			),
 			'min_price'               => array(
-				'title'       => __( 'Minimal price', 'content-egg' ),
-				'description' => __( 'Example, 10.98', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Minimal price', 'content-egg'),
+				'description' => __('Example, 10.98', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -355,17 +357,17 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'metaboxInit' => true,
 			),
 			'payment_method'          => array(
-				'title'            => __( 'Payment options', 'content-egg' ),
+				'title'            => __('Payment options', 'content-egg'),
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
-				'dropdown_options' => array( '' => 'Any', 'PayPal' => 'PayPal' ),
+				'callback'         => array($this, 'render_dropdown'),
+				'dropdown_options' => array('' => 'Any', 'PayPal' => 'PayPal'),
 				'default'          => '',
 				'section'          => 'default',
 			),
 			'available_to'            => array(
-				'title'       => __( 'Available to', 'content-egg' ),
-				'description' => __( 'Limits items to those available to the specified country only. Expects the two-letter ISO 3166 country code.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Available to', 'content-egg'),
+				'description' => __('Limits items to those available to the specified country only. Expects the two-letter ISO 3166 country code.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -373,9 +375,9 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'located_in'              => array(
-				'title'       => __( 'Located In', 'content-egg' ),
-				'description' => __( 'Expects the two-letter ISO 3166 country code to indicate the country where the item is located. Item filter AvailableTo cannot be used together with item filter LocatedIn.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Located In', 'content-egg'),
+				'description' => __('Expects the two-letter ISO 3166 country code to indicate the country where the item is located. Item filter AvailableTo cannot be used together with item filter LocatedIn.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -383,25 +385,25 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'seller'                  => array(
-				'title'       => __( 'Seller', 'content-egg' ),
-				'description' => __( 'Specify one or more seller names separated by comma. Search results will include items from the specified sellers only.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Seller', 'content-egg'),
+				'description' => __('Specify one or more seller names separated by comma. Search results will include items from the specified sellers only.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 				),
 			),
 			'get_description'         => array(
-				'title'       => __( 'Get description', 'content-egg' ),
-				'description' => __( 'Get description of product. This takes more requests for Ebay API and slow down searching. Description will be requested only for 20 first products for one searching', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Get description', 'content-egg'),
+				'description' => __('Get description of product. This takes more requests for Ebay API and slow down searching. Description will be requested only for 20 first products for one searching', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 			'description_size'        => array(
-				'title'       => __( 'Size of description', 'content-egg' ),
-				'description' => __( 'The maximum size of the item description. 0 - do not cut.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Size of description', 'content-egg'),
+				'description' => __('The maximum size of the item description. 0 - do not cut.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 2000,
 				'validator'   => array(
 					'trim',
@@ -410,21 +412,22 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'save_img'                => array(
-				'title'       => __( 'Save images', 'content-egg' ),
-				'description' => __( 'Save images on server', 'content-egg' ),
-				'callback'    => array( $this, 'render_checkbox' ),
+				'title'       => __('Save images', 'content-egg'),
+				'description' => __('Save images on server', 'content-egg'),
+				'callback'    => array($this, 'render_checkbox'),
 				'default'     => false,
 				'section'     => 'default',
 			),
 		);
 		$parent                   = parent::options();
-		$parent['ttl']['default'] = 28800;
-		$optiosn                  = array_merge( $parent, $optiosn );
+		$parent['ttl']['default'] = 259200;
+		$optiosn                  = array_merge($parent, $optiosn);
 
-		return self::moveRequiredUp( $optiosn );
+		return self::moveRequiredUp($optiosn);
 	}
 
-	public static function getLocalesList() {
+	public static function getLocalesList()
+	{
 		// @link: https://developer.ebay.com/DevZone/merchandising/docs/Concepts/SiteIDToGlobalID.html
 		// aff programs available
 		return array(
@@ -453,11 +456,13 @@ class EbayConfig extends AffiliateParserModuleConfig {
 		);
 	}
 
-	public static function getDefaultLocale() {
+	public static function getDefaultLocale()
+	{
 		return 'EBAY-US';
 	}
 
-	public static function getCurrencyByGlobalId( $global_id ) {
+	public static function getCurrencyByGlobalId($global_id)
+	{
 		//@link: http://developer.ebay.com/devzone/finding/callref/Enums/currencyIdList.html
 		$currency = array(
 			'EBAY-US'    => 'USD',
@@ -483,9 +488,12 @@ class EbayConfig extends AffiliateParserModuleConfig {
 			'EBAY-PH'    => 'PHP',
 			'EBAY-SG'    => 'SGD',
 		);
-		if ( isset( $currency[ $global_id ] ) ) {
-			return $currency[ $global_id ];
-		} else {
+		if (isset($currency[$global_id]))
+		{
+			return $currency[$global_id];
+		}
+		else
+		{
 			return 'USD';
 		}
 	}
@@ -498,15 +506,17 @@ class EbayConfig extends AffiliateParserModuleConfig {
 	 *
 	 * @return integer
 	 */
-	public static function timeZoneCorrection( $global_id ) {
-		switch ( $global_id ) {
+	public static function timeZoneCorrection($global_id)
+	{
+		switch ($global_id)
+		{
 			case 'EBAY-US':
 			case 'EBAY-MOTOR':
-				$countryhour = - 7;  // US, PDT(-7) - лето, PST(-8) зима
+				$countryhour = -7;  // US, PDT(-7) - лето, PST(-8) зима
 				break;
 			case 'EBAY-ENCA':
 			case 'EBAY-FRCA':
-				$countryhour = - 4;  // CA, EDT(-4) - лето, EST(-5) - зима
+				$countryhour = -4;  // CA, EDT(-4) - лето, EST(-5) - зима
 				break;
 			case 'EBAY-GB':
 			case 'EBAY-IE':
@@ -541,13 +551,18 @@ class EbayConfig extends AffiliateParserModuleConfig {
 				$countryhour = 0;
 		}
 
-		if ( $global_id == 'EBAY-AU' ) {// австралия и лето
-			if ( date( "I" ) ) {
+		if ($global_id == 'EBAY-AU')
+		{ // австралия и лето
+			if (date("I"))
+			{
 				$countryhour += 1;
 			}
-		} elseif ( ! in_array( $global_id, array( 'EBAY-IN', 'EBAY-HK', 'EBAY-MY', 'EBAY-PH', 'EBAY-SG' ) ) ) {
+		}
+		elseif (!in_array($global_id, array('EBAY-IN', 'EBAY-HK', 'EBAY-MY', 'EBAY-PH', 'EBAY-SG')))
+		{
 			// зима? - 1
-			if ( ! date( "I" ) ) {
+			if (!date("I"))
+			{
 				$countryhour -= 1;
 			}
 		}
@@ -564,68 +579,100 @@ class EbayConfig extends AffiliateParserModuleConfig {
 	 *
 	 * @return string
 	 */
-	public static function getTimeZone( $global_id ) {
-		if ( ! date( "I" ) ) {
+	public static function getTimeZone($global_id)
+	{
+		if (!date("I"))
+		{
 			$winter = true;
-		} else {
+		}
+		else
+		{
 			$winter = false;
 		}
-		switch ( $global_id ) {
+		switch ($global_id)
+		{
 			case 'EBAY-US':
-				if ( $winter ) {
+				if ($winter)
+				{
 					return 'PST';
-				} else {
+				}
+				else
+				{
 					return 'PDT';
 				}
 			case 'EBAY-MOTOR':
-				if ( $winter ) {
+				if ($winter)
+				{
 					return 'PST';
-				} else {
+				}
+				else
+				{
 					return 'PDT';
 				}
 			case 'EBAY-IT':
-				if ( $winter ) {
+				if ($winter)
+				{
 					return 'CEST';
-				} else {
+				}
+				else
+				{
 					return 'CET';
 				}
 			case 'EBAY-ENCA':
-				if ( $winter ) {
+				if ($winter)
+				{
 					return 'EST';
-				} else {
+				}
+				else
+				{
 					return 'EDT';
 				}
 			case 'EBAY-GB':
-				if ( $winter ) {
+				if ($winter)
+				{
 					return 'GMT';
-				} else {
+				}
+				else
+				{
 					return 'BST';
 				}
 			case 'EBAY-FR':
 			case 'EBAY-PL':
-				if ( $winter ) {
+				if ($winter)
+				{
 					return 'CEST';
-				} else {
+				}
+				else
+				{
 					return 'CET';
 				}
 			case 'EBAY-ES':
-				if ( $winter ) {
+				if ($winter)
+				{
 					return 'CEST';
-				} else {
+				}
+				else
+				{
 					return 'CET';
 				}
 			case 'EBAY-DE':
-				if ( $winter ) {
+				if ($winter)
+				{
 					return 'MEZ';
-				} else {
+				}
+				else
+				{
 					return 'MESZ';
 				}
 			case 'EBAY-IN':
 				return 'IST';
 			case 'EBAY-AU':
-				if ( $winter ) {
+				if ($winter)
+				{
 					return 'AEDT';
-				} else {
+				}
+				else
+				{
 					return 'AEST';
 				}
 
@@ -642,7 +689,8 @@ class EbayConfig extends AffiliateParserModuleConfig {
 		return '';
 	}
 
-	public static function getDomainByGlobalId( $global_id ) {
+	public static function getDomainByGlobalId($global_id)
+	{
 		$domains = array(
 			'EBAY-US'    => 'ebay.com',
 			'EBAY-IE'    => 'ebay.ie',
@@ -667,9 +715,12 @@ class EbayConfig extends AffiliateParserModuleConfig {
 			'EBAY-PH'    => 'ebay.ph',
 			'EBAY-SG'    => 'ebay.com.sg',
 		);
-		if ( isset( $domains[ $global_id ] ) ) {
-			return $domains[ $global_id ];
-		} else {
+		if (isset($domains[$global_id]))
+		{
+			return $domains[$global_id];
+		}
+		else
+		{
 			return 'ebay.com';
 		}
 	}
@@ -679,7 +730,8 @@ class EbayConfig extends AffiliateParserModuleConfig {
 	 *
 	 */
 
-	public static function getDomainByRotationId( $rotation_id ) {
+	public static function getDomainByRotationId($rotation_id)
+	{
 		$domains = array(
 			'711-53200-19255-0'   => 'ebay.com',
 			'5282-53468-19255-0'  => 'ebay.ie',
@@ -697,11 +749,13 @@ class EbayConfig extends AffiliateParserModuleConfig {
 			'4908-226936-19255-0' => 'ebay.pl',
 		);
 
-		if ( isset( $domains[ $rotation_id ] ) ) {
-			return $domains[ $rotation_id ];
-		} else {
+		if (isset($domains[$rotation_id]))
+		{
+			return $domains[$rotation_id];
+		}
+		else
+		{
 			return false;
 		}
 	}
-
 }

@@ -13,17 +13,17 @@ if (TemplateHelper::isModuleDataExist($items, 'Amazon', 'AmazonNoApi'))
 
 <div class="egg-container egg-list">
 
-    <?php if ($title): ?>
+    <?php if ($title) : ?>
         <h3><?php echo \esc_html($title); ?></h3>
     <?php endif; ?>
 
     <div class="egg-listcontainer">
-        <?php foreach ($items as $item): ?>
+        <?php foreach ($items as $item) : ?>
             <?php $this->renderBlock('list_row', array('item' => $item)); ?>
         <?php endforeach; ?>
     </div>
 
-    <?php if ($module_id == 'Amazon' || $module_id == 'AmazonNoApi'): ?>
+    <?php if ($module_id == 'Amazon' || $module_id == 'AmazonNoApi') : ?>
         <div class="row cegg-no-top-margin">
             <div class="col-md-12 text-right text-muted">
                 <small>

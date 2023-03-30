@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Aliexpress;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataAliexpress class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataAliexpress extends ExtraData {
+class ExtraDataAliexpress extends ExtraData
+{
 
 	public $lotNum;
 	public $packageType;
@@ -23,5 +24,4 @@ class ExtraDataAliexpress extends ExtraData {
 	public $volume;
 	public $evaluateScore;
 	public $commission;
-
 }

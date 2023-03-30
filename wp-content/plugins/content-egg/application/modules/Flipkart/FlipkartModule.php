@@ -16,7 +16,7 @@ use ContentEgg\application\components\LinkHandler;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class FlipkartModule extends AffiliateParserModule
 {
@@ -56,7 +56,8 @@ class FlipkartModule extends AffiliateParserModule
         if ($is_autoupdate)
         {
             $options['resultCount'] = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $options['resultCount'] = $this->config('entries_per_page');
         }
@@ -75,11 +76,13 @@ class FlipkartModule extends AffiliateParserModule
             if (isset($results['productBaseInfoV1']))
             {
                 $results = array($results);
-            } else
+            }
+            else
             {
                 return array();
             }
-        } else
+        }
+        else
         {
             $results = $client->search($keyword, $options);
             if (!is_array($results))
@@ -89,10 +92,12 @@ class FlipkartModule extends AffiliateParserModule
             if (isset($results['productInfoList']))
             {
                 $results = $results['productInfoList'];
-            } elseif (isset($results['products']))
+            }
+            elseif (isset($results['products']))
             {
                 $results = $results['products'];
-            } else
+            }
+            else
             {
                 return array();
             }
@@ -114,7 +119,8 @@ class FlipkartModule extends AffiliateParserModule
             if ((bool) $r['inStock'])
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-            } else
+            }
+            else
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
@@ -131,7 +137,8 @@ class FlipkartModule extends AffiliateParserModule
             if (isset($r['imageUrls']['800x800']))
             {
                 $content->img = $r['imageUrls']['800x800'];
-            } elseif (isset($r['imageUrls']['400x400']))
+            }
+            elseif (isset($r['imageUrls']['400x400']))
             {
                 $content->img = $r['imageUrls']['400x400'];
             }
@@ -187,14 +194,16 @@ class FlipkartModule extends AffiliateParserModule
         if (!empty($r['flipkartSellingPrice']))
         {
             $flipkartSellingPrice = (float) $r['flipkartSellingPrice']['amount'];
-        } else
+        }
+        else
         {
             $flipkartSellingPrice = 0;
         }
         if (!empty($r['flipkartSpecialPrice']))
         {
             $flipkartSpecialPrice = (float) $r['flipkartSpecialPrice']['amount'];
-        } else
+        }
+        else
         {
             $flipkartSpecialPrice = 0;
         }
@@ -203,10 +212,12 @@ class FlipkartModule extends AffiliateParserModule
         if ($flipkartSellingPrice && $flipkartSellingPrice < $flipkartSpecialPrice)
         {
             return $flipkartSellingPrice;
-        } elseif ($flipkartSpecialPrice)
+        }
+        elseif ($flipkartSpecialPrice)
         {
             return $flipkartSpecialPrice;
-        } else
+        }
+        else
         {
             return $flipkartSellingPrice;
         }
@@ -222,7 +233,8 @@ class FlipkartModule extends AffiliateParserModule
         if ($maximumRetailPrice && $maximumRetailPrice > $this->getPrice($r))
         {
             return $maximumRetailPrice;
-        } else
+        }
+        else
         {
             return 0;
         }
@@ -238,7 +250,8 @@ class FlipkartModule extends AffiliateParserModule
             try
             {
                 $results = $client->product($item['unique_id']);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 continue;
             }
@@ -263,7 +276,8 @@ class FlipkartModule extends AffiliateParserModule
             if ((bool) $r['inStock'])
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-            } else
+            }
+            else
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
@@ -323,5 +337,4 @@ class FlipkartModule extends AffiliateParserModule
 
         return LinkHandler::createAffUrl($url, $trackingParameters);
     }
-
 }

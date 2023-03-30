@@ -10,15 +10,16 @@ use ContentEgg\application\libs\RestClient;
  * YouTubeSearch class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * @link: https://developers.google.com/youtube/v3/docs/search/list
  *
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 
-class YouTubeSearch extends RestClient {
+class YouTubeSearch extends RestClient
+{
 
     const API_URI_BASE = 'https://www.googleapis.com/youtube/v3';
 
@@ -58,7 +59,7 @@ class YouTubeSearch extends RestClient {
             {
                 case 'relevanceLanguage':
                 case 'order':
-                //case 'format':
+                    //case 'format':
                 case 'key':
                 case 'part':
                 case 'safeSearch':
@@ -70,10 +71,10 @@ class YouTubeSearch extends RestClient {
                     break;
                 case 'maxResults':
                 case 'pageToken':
-                    $_query[$key] = ( (int) $param > 50 ) ? 50 : (int) $param;
+                    $_query[$key] = ((int) $param > 50) ? 50 : (int) $param;
                     break;
                 case 'strict':
-                    $_query[$key] = ( (bool) $param ) ? true : false;
+                    $_query[$key] = ((bool) $param) ? true : false;
                     break;
             }
         }
@@ -81,5 +82,4 @@ class YouTubeSearch extends RestClient {
 
         return $this->_decodeResponse($response);
     }
-
 }

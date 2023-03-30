@@ -13,9 +13,10 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ModuleUpdateVisit {
+class ModuleUpdateVisit
+{
 
     private static $instance = null;
 
@@ -29,7 +30,6 @@ class ModuleUpdateVisit {
 
     private function __construct()
     {
-        
     }
 
     public function init()
@@ -63,7 +63,7 @@ class ModuleUpdateVisit {
     private function updateByKeyword()
     {
         global $post;
-        
+
         if (empty($post))
             return;
 
@@ -82,7 +82,7 @@ class ModuleUpdateVisit {
 
             $keyword = \get_post_meta($post->ID, ContentManager::META_PREFIX_KEYWORD . $module->getId(), true);
             $keyword = \apply_filters('cegg_keyword_update', $keyword, $post->ID, $module->getId());
-            
+
             if (!$keyword)
                 continue;
 
@@ -96,10 +96,10 @@ class ModuleUpdateVisit {
     private function updateItems()
     {
         global $post;
-        
+
         if (empty($post))
             return;
-        
+
         foreach (ModuleManager::getInstance()->getAffiliateParsers(true) as $module)
         {
             if (!in_array($module->config('update_mode'), array('visit', 'visit_cron')))
@@ -117,5 +117,4 @@ class ModuleUpdateVisit {
             ContentManager::updateItems($post->ID, $module->getId());
         }
     }
-
 }

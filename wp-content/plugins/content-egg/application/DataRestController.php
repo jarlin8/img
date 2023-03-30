@@ -15,9 +15,10 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class DataRestController extends \WP_REST_Controller {
+class DataRestController extends \WP_REST_Controller
+{
 
     protected $namespace = 'cegg/v1/data';
 
@@ -36,7 +37,6 @@ class DataRestController extends \WP_REST_Controller {
 
     private function __construct()
     {
-        
     }
 
     public function init()
@@ -47,34 +47,34 @@ class DataRestController extends \WP_REST_Controller {
     public function register_routes()
     {
         \register_rest_route(
-                $this->namespace,
-                '/' . $this->rest_base . '/(?P<post_id>[\d]+)',
+            $this->namespace,
+            '/' . $this->rest_base . '/(?P<post_id>[\d]+)',
+            array(
                 array(
-                    array(
-                        'methods' => \WP_REST_Server::READABLE,
-                        'callback' => array($this, 'get_items'),
-                        'permission_callback' => '__return_true',
-                        'args' => array(
-                            'module_id' => array(
-                                'description' => __('Module ID.', 'woocommerce'),
-                                'type' => 'string',
-                            ),
-                            'module_type' => array(
-                                'description' => __('Module type.', 'woocommerce'),
-                                'type' => 'string',
-                            ),
-                            'extra' => array(
-                                'description' => __('Return extra.', 'woocommerce'),
-                                'type' => 'boolean',
-                            ),
-                            'synced' => array(
-                                'description' => __('Return a synced product only.', 'woocommerce'),
-                                'type' => 'boolean',
-                            ),
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => array($this, 'get_items'),
+                    'permission_callback' => '__return_true',
+                    'args' => array(
+                        'module_id' => array(
+                            'description' => __('Module ID.', 'woocommerce'),
+                            'type' => 'string',
+                        ),
+                        'module_type' => array(
+                            'description' => __('Module type.', 'woocommerce'),
+                            'type' => 'string',
+                        ),
+                        'extra' => array(
+                            'description' => __('Return extra.', 'woocommerce'),
+                            'type' => 'boolean',
+                        ),
+                        'synced' => array(
+                            'description' => __('Return a synced product only.', 'woocommerce'),
+                            'type' => 'boolean',
                         ),
                     ),
-                    'schema' => array($this, 'get_public_item_schema'),
-                )
+                ),
+                'schema' => array($this, 'get_public_item_schema'),
+            )
         );
     }
 
@@ -109,7 +109,8 @@ class DataRestController extends \WP_REST_Controller {
                 return array();
 
             $data[$mdata['module_id']] = array($mdata['unique_id'] => $mdata);
-        } else
+        }
+        else
         {
             if (!empty($request['module_id']))
                 $module_ids = array_intersect($module_ids, TextHelper::getArrayFromCommaList($request['module_id']));
@@ -143,5 +144,4 @@ class DataRestController extends \WP_REST_Controller {
 
         return \rest_ensure_response($data);
     }
-
 }

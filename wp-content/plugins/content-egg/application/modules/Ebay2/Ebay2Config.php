@@ -12,9 +12,10 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class Ebay2Config extends AffiliateParserModuleConfig {
+class Ebay2Config extends AffiliateParserModuleConfig
+{
 
     public function options()
     {
@@ -50,7 +51,7 @@ class Ebay2Config extends AffiliateParserModuleConfig {
             'tracking_id' => array(
                 'title' => 'ePN Campaign ID' . '**',
                 'description' => __('This is a 10-digit unique number provided by the eBay Partner Network. This is embedded in the campid part of the ePN affiliate link.', 'content-egg') .
-                ' ' . __('Campaign ID is valid for all programs which were approved for you on EPN. If you leave this field blank - you will not get commissions from sales.', 'content-egg'),
+                    ' ' . __('Campaign ID is valid for all programs which were approved for you on EPN. If you leave this field blank - you will not get commissions from sales.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
@@ -70,7 +71,7 @@ class Ebay2Config extends AffiliateParserModuleConfig {
             'deeplink' => array(
                 'title' => __('Deeplink', 'content-egg'),
                 'description' => __('Set this parameter only if you want to send traffic through third party affiliate networks.', 'content-egg') . ' ' .
-                sprintf(__('Read more: <a target="_blank" href="%s">How to find your deeplink</a>.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/deeplink-settings'),
+                    sprintf(__('Read more: <a target="_blank" href="%s">How to find your deeplink</a>.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/deeplink-settings'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
@@ -140,7 +141,7 @@ class Ebay2Config extends AffiliateParserModuleConfig {
             'category_id' => array(
                 'title' => __('Category ID', 'content-egg'),
                 'description' => __('The category ID is used to limit the results.', 'content-egg') . ' ' .
-                sprintf(__('Use the <a target="_blank" href="%s">Category Changes page</a> to find IDs.', 'content-egg'), 'https://pages.ebay.com/sellerinformation/news/categorychanges.html'),
+                    sprintf(__('Use the <a target="_blank" href="%s">Category Changes page</a> to find IDs.', 'content-egg'), 'https://pages.ebay.com/sellerinformation/news/categorychanges.html'),
                 // This field can have one category ID or a comma separated list of IDs. ->> Currently, you can pass in only one category ID per request.
                 'callback' => array($this, 'render_input'),
                 'default' => '',
@@ -184,7 +185,7 @@ class Ebay2Config extends AffiliateParserModuleConfig {
             'buying_options' => array(
                 'title' => __('Buying options', 'content-egg'),
                 'description' => __('Only items offering the specified buying formats are returned.', 'content-egg') . '<br>' .
-                'Buy It Now - items offered for a fixed-price. These items can also be offered as an auction. Once a bid is placed, Fixed Price is no longer available and the item is now only available as an auction.',
+                    'Buy It Now - items offered for a fixed-price. These items can also be offered as an auction. Once a bid is placed, Fixed Price is no longer available and the item is now only available as an auction.',
                 'checkbox_options' => array(
                     'FIXED_PRICE' => 'Fixed Price (Buy It Now)',
                     'AUCTION' => 'Auction',
@@ -196,7 +197,7 @@ class Ebay2Config extends AffiliateParserModuleConfig {
             'condition_ids' => array(
                 'title' => __('Condition IDs', 'content-egg'),
                 'description' => __('Only items with the specified condition ID are returned. Multiple values separated by comma can be used for this filter.', 'content-egg') . '<br>' .
-                sprintf('For more information on item conditions for some popular eBay categories, see the <a target="_blank" href="%s">Item Condition IDs and Names</a>.', 'https://developer.ebay.com/devzone/finding/callref/Enums/conditionIdList.html'),
+                    sprintf('For more information on item conditions for some popular eBay categories, see the <a target="_blank" href="%s">Item Condition IDs and Names</a>.', 'https://developer.ebay.com/devzone/finding/callref/Enums/conditionIdList.html'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
@@ -321,11 +322,11 @@ class Ebay2Config extends AffiliateParserModuleConfig {
             ),
         );
         $parent = parent::options();
-        $parent['ttl']['default'] = 28800;
+        $parent['ttl']['default'] = 259200;
         $parent['update_mode']['default'] = 'cron';
         $parent['update_mode']['validator'][] = array(
             'call' => array($this, 'deleteToken'),
-        );  
+        );
         $options = array_merge($parent, $options);
 
         return self::moveRequiredUp($options);
@@ -377,7 +378,8 @@ class Ebay2Config extends AffiliateParserModuleConfig {
         if (isset($currencies[$locale]))
         {
             return $currencies[$locale];
-        } else
+        }
+        else
         {
             return 'USD';
         }
@@ -387,13 +389,12 @@ class Ebay2Config extends AffiliateParserModuleConfig {
     {
         return 'EBAY_US';
     }
-    
+
     public function deleteToken()
     {
         $id = 'Ebay2';
         $transient_name = Plugin::slug() . '-' . $id . '-access_token';
-        \delete_transient($transient_name);   
+        \delete_transient($transient_name);
         return true;
     }
-
 }

@@ -9,9 +9,10 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-abstract class CEWidget extends \WP_Widget {
+abstract class CEWidget extends \WP_Widget
+{
 
     public $name;
     protected $slug;
@@ -21,7 +22,8 @@ abstract class CEWidget extends \WP_Widget {
 
     public function __construct()
     {
-        \add_action('widgets_init', function () {
+        \add_action('widgets_init', function ()
+        {
             \register_widget(get_called_class());
         });
 
@@ -32,10 +34,12 @@ abstract class CEWidget extends \WP_Widget {
         $this->settings = $this->settings();
 
         parent::__construct(
-                $this->slug, \esc_html($this->name), array(
-            'description' => \esc_html($this->description),
-            'classname' => $this->classname
-                )
+            $this->slug,
+            \esc_html($this->name),
+            array(
+                'description' => \esc_html($this->description),
+                'classname' => $this->classname
+            )
         );
 
         \add_action('save_post', array($this, 'flushСache'));
@@ -89,7 +93,8 @@ abstract class CEWidget extends \WP_Widget {
         if (isset($cache[$key]))
         {
             return $cache[$key];
-        } else
+        }
+        else
         {
             return null;
         }
@@ -131,7 +136,7 @@ abstract class CEWidget extends \WP_Widget {
                     $instance[$key] = empty($new_instance[$key]) ? 0 : 1;
                     break;
                 default:
-                    $instance[$key] = (!empty($new_instance[$key]) ) ? \sanitize_text_field($new_instance[$key]) : '';
+                    $instance[$key] = (!empty($new_instance[$key])) ? \sanitize_text_field($new_instance[$key]) : '';
                     break;
             }
         }
@@ -153,71 +158,59 @@ abstract class CEWidget extends \WP_Widget {
             $value = isset($instance[$key]) ? $instance[$key] : $setting['default'];
             switch ($setting['type'])
             {
-                case 'number' :
-                    ?>
+                case 'number':
+?>
                     <p>
                         <label for="<?php echo \esc_attr($this->get_field_id($key)); ?>"><?php echo \esc_attr($setting['title']); ?>
                             :</label>
-                        <input class="widefat" id="<?php echo \esc_attr($this->get_field_id($key)); ?>"
-                               name="<?php echo \esc_attr($this->get_field_name($key)); ?>" type="number"
-                               min="<?php echo \esc_attr($setting['min']); ?>"
-                               max="<?php echo \esc_attr($setting['max']); ?>"
-                               value="<?php echo \esc_attr($value); ?>"/>
+                        <input class="widefat" id="<?php echo \esc_attr($this->get_field_id($key)); ?>" name="<?php echo \esc_attr($this->get_field_name($key)); ?>" type="number" min="<?php echo \esc_attr($setting['min']); ?>" max="<?php echo \esc_attr($setting['max']); ?>" value="<?php echo \esc_attr($value); ?>" />
                     </p>
-                    <?php
+                <?php
                     break;
 
-                case 'select' :
-                    ?>
+                case 'select':
+                ?>
                     <p>
                         <label for="<?php echo \esc_attr($this->get_field_id($key)); ?>"><?php echo \esc_attr($setting['title']); ?>
                             :</label>
-                        <select class="widefat" id="<?php echo \esc_attr($this->get_field_id($key)); ?>"
-                                name="<?php echo \esc_attr($this->get_field_name($key)); ?>">
-                                    <?php foreach ($setting['options'] as $option_key => $option_value) : ?>
+                        <select class="widefat" id="<?php echo \esc_attr($this->get_field_id($key)); ?>" name="<?php echo \esc_attr($this->get_field_name($key)); ?>">
+                            <?php foreach ($setting['options'] as $option_key => $option_value) : ?>
                                 <option value="<?php echo \esc_attr($option_key); ?>" <?php \selected($option_key, $value); ?>><?php echo \esc_html($option_value); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </p>
-                    <?php
+                <?php
                     break;
 
-                case 'textarea' :
-                    ?>
+                case 'textarea':
+                ?>
                     <p>
                         <label for="<?php echo esc_attr($this->get_field_id($key)); ?>"><?php echo esc_html($setting['title']); ?>
                             :</label>
-                        <textarea class="widefat <?php echo esc_attr($class); ?>"
-                                  id="<?php echo esc_attr($this->get_field_id($key)); ?>"
-                                  name="<?php echo esc_attr($this->get_field_name($key)); ?>" cols="20"
-                                  rows="3"><?php echo esc_textarea($value); ?></textarea>
-                                  <?php if (isset($setting['desc'])) : ?>
+                        <textarea class="widefat <?php echo esc_attr($class); ?>" id="<?php echo esc_attr($this->get_field_id($key)); ?>" name="<?php echo esc_attr($this->get_field_name($key)); ?>" cols="20" rows="3"><?php echo esc_textarea($value); ?></textarea>
+                        <?php if (isset($setting['desc'])) : ?>
                             <small><?php echo esc_html($setting['desc']); ?></small>
                         <?php endif; ?>
                     </p>
-                    <?php
+                <?php
                     break;
 
-                case 'checkbox' :
-                    ?>
+                case 'checkbox':
+                ?>
                     <p>
-                        <input class="checkbox" id="<?php echo \esc_attr($this->get_field_id($key)); ?>"
-                               name="<?php echo \esc_attr($this->get_field_name($key)); ?>" type="checkbox"
-                               value="1" <?php checked($value, 1); ?> />
+                        <input class="checkbox" id="<?php echo \esc_attr($this->get_field_id($key)); ?>" name="<?php echo \esc_attr($this->get_field_name($key)); ?>" type="checkbox" value="1" <?php checked($value, 1); ?> />
                         <label for="<?php echo \esc_attr($this->get_field_id($key)); ?>"><?php echo \esc_attr($setting['title']); ?></label>
                     </p>
-                    <?php
+                <?php
                     break;
-                default :
-                    ?>
+                default:
+                ?>
                     <p>
                         <label for="<?php echo \esc_attr($this->get_field_id($key)); ?>"><?php echo \esc_attr($setting['title']); ?>
                             :</label>
-                        <input class="widefat" id="<?php echo \esc_attr($this->get_field_id($key)); ?>"
-                               name="<?php echo \esc_attr($this->get_field_name($key)); ?>" type="text"
-                               value="<?php echo \esc_attr($value); ?>">
+                        <input class="widefat" id="<?php echo \esc_attr($this->get_field_id($key)); ?>" name="<?php echo \esc_attr($this->get_field_name($key)); ?>" type="text" value="<?php echo \esc_attr($value); ?>">
                     </p>
-                    <?php
+<?php
                     break;
             }
         }
@@ -238,5 +231,4 @@ abstract class CEWidget extends \WP_Widget {
 
         echo wp_kses_post($args['after_widget']);
     }
-
 }

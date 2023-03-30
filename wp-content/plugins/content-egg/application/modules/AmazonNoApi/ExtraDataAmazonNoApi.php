@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\AmazonNoApi;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -11,9 +11,10 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataAmazonNoApi extends ExtraData {
+class ExtraDataAmazonNoApi extends ExtraData
+{
 
 	public $ASIN;
 	public $locale;
@@ -36,6 +37,4 @@ class ExtraDataAmazonNoApi extends ExtraData {
 	public $ThumbImageWidth;
 	 *
 	 */
-
-
 }

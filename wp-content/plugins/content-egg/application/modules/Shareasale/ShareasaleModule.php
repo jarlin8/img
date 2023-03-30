@@ -14,10 +14,11 @@ use ContentEgg\application\helpers\TextHelper;
  * ShareasaleModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ShareasaleModule extends AffiliateParserModule {
+class ShareasaleModule extends AffiliateParserModule
+{
 
     private $api_client = null;
 
@@ -52,7 +53,8 @@ class ShareasaleModule extends AffiliateParserModule {
         if ($is_autoupdate)
         {
             $limit = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $limit = $this->config('entries_per_page');
         }
@@ -95,7 +97,8 @@ class ShareasaleModule extends AffiliateParserModule {
             if ($r['status'][0] == 'In stock' && $r['status'][1] == 'No')
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK_;
-            } else
+            }
+            else
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
             }
@@ -125,7 +128,8 @@ class ShareasaleModule extends AffiliateParserModule {
             if ($r['description'])
             {
                 $content->description = $r['description'];
-            } elseif ($r['shortdescription'])
+            }
+            elseif ($r['shortdescription'])
             {
                 $content->description = $r['shortdescription'];
             }
@@ -174,5 +178,4 @@ class ShareasaleModule extends AffiliateParserModule {
     {
         PluginAdmin::render('_metabox_search_results', array('module_id' => $this->getId()));
     }
-
 }

@@ -13,9 +13,10 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-abstract class AffiliateFeedParserModule extends AffiliateParserModule {
+abstract class AffiliateFeedParserModule extends AffiliateParserModule
+{
 
     const TRANSIENT_LAST_IMPORT_DATE = 'cegg_products_last_import_';
     const PRODUCTS_TTL = 43200;
@@ -49,7 +50,8 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
         try
         {
             $m->maybeImportProducts();
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
             $error = $e->getMessage();
             if (!strstr($error, 'Product import is in progress'))
@@ -88,7 +90,7 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
 
     protected function dbDelta()
     {
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
         $sql = $this->product_model->getDump();
         dbDelta($sql);
@@ -128,7 +130,8 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
             if (time() + $last_export > static::IMPORT_TIME_LIMT)
             {
                 $last_export = 0;
-            } else
+            }
+            else
             {
                 throw new \Exception('Product import is in progress. Try later.');
             }
@@ -138,7 +141,7 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
         {
             // set in progress flag
             $this->deleteTemporaryFiles();
-            $this->setLastImportDate(time() * - 1);
+            $this->setLastImportDate(time() * -1);
             $this->maybeCreateProductTable();
 
             if (!$this->product_model->isTableExists())
@@ -162,10 +165,11 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
     public function isImportTime()
     {
         $last_export = $this->getLastImportDate();
-        if (!$last_export || ( time() - $last_export > self::getProductsTtl() ))
+        if (!$last_export || (time() - $last_export > self::getProductsTtl()))
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -196,7 +200,7 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
     {
         if (!function_exists('\download_url'))
         {
-            require_once( ABSPATH . "wp-admin" . '/includes/file.php' );
+            require_once(ABSPATH . "wp-admin" . '/includes/file.php');
         }
 
         $tmp = \download_url($feed_url, 900);
@@ -209,7 +213,8 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
         if (!$this->isZippedFeed())
         {
             return $tmp;
-        } else
+        }
+        else
         {
             return $this->unzipFeed($tmp);
         }
@@ -219,14 +224,13 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
     {
         if (!function_exists('\unzip_file'))
         {
-            require_once( ABSPATH . 'wp-admin/includes/file.php' );
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
         }
 
-        // unzip_file function requires the Filesystem API to be initialized
         global $wp_filesystem;
         if (!$wp_filesystem)
         {
-            require_once( ABSPATH . '/wp-admin/includes/file.php' );
+            require_once(ABSPATH . '/wp-admin/includes/file.php');
             \WP_Filesystem();
         }
 
@@ -262,10 +266,12 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
         if ($format == 'xml')
         {
             $this->processFeedXml($file);
-        } elseif ($format == 'json')
+        }
+        elseif ($format == 'json')
         {
             $this->processFeedJson($file);
-        } else
+        }
+        else
         {
             $this->processFeedCsv($file);
         }
@@ -282,7 +288,7 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
         $delimer = $this->detectCsvDelimiter($file);
         $in_stock_only = $this->config('in_stock', false);
         $i = 0;
-        while (( $data = fgetcsv($handle, 0, $delimer) ) !== false)
+        while (($data = fgetcsv($handle, 0, $delimer)) !== false)
         {
             if ($encoding == 'ISO-8859-1')
             {
@@ -294,7 +300,8 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
                 $data = str_replace("\xEF\xBB\xBF", '', $data);
             }
 
-            $data = array_map(function ($item) {
+            $data = array_map(function ($item)
+            {
                 return trim($item, ' \'"');
             }, $data);
 
@@ -314,9 +321,10 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
             try
             {
                 $product = $this->feedProductPrepare($data);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
-                if ($i > 10)
+                if ($i > 0)
                 {
                     continue;
                 }
@@ -325,7 +333,7 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
 
                 return;
             }
-            
+
 
             if (!$product)
             {
@@ -366,6 +374,7 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
 
         $streamer = \ContentEgg\application\vendor\XmlStringStreamer\XmlStringStreamer::createUniqueNodeParser($file, array('uniqueNode' => $uniqueNode));
         $in_stock_only = $this->config('in_stock', false);
+
         $i = 0;
         $products = array();
 
@@ -400,11 +409,11 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
             try
             {
                 $product = $this->feedProductPrepare($data);
-                
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
-                
-                if ($i > 10)
+
+                if ($i > 0)
                 {
                     continue;
                 }
@@ -490,9 +499,10 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
             try
             {
                 $product = $this->feedProductPrepare($data);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
-                if ($i > 10)
+                if ($i > 0)
                 {
                     continue;
                 }
@@ -537,18 +547,17 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
         $mapping = $this->config('mapping');
         $fields = array_values($mapping);
         $attributes = $node->attributes();
+
         foreach ($fields as $field)
         {
             if (isset($attributes[$field]))
-            {
                 $data[$field] = (string) $attributes[$field];
-            } elseif (isset($node->{$field}))
-            {
+            elseif (isset($node->{$field}))
                 $data[$field] = (string) $node->{$field};
-            } else
-            {
+            elseif ($res = $node->xpath($field))
+                $data[$field] = trim(\wp_strip_all_tags((string) $res[0]));
+            else
                 continue;
-            }
         }
 
         return $data;
@@ -683,7 +692,7 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
         global $wp_filesystem;
         if (!$wp_filesystem)
         {
-            require_once( ABSPATH . '/wp-admin/includes/file.php' );
+            require_once(ABSPATH . '/wp-admin/includes/file.php');
             \WP_Filesystem();
         }
 
@@ -714,10 +723,10 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule {
         if (!empty($mapping['product node']))
         {
             return $mapping['product node'];
-        } else
+        }
+        else
         {
             return false;
         }
     }
-
 }

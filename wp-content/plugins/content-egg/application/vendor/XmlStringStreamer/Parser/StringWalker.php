@@ -3,7 +3,7 @@
 /*
  * Modified version of XmlStringStreamer, edited namespaces only 
  * @author keywordrush.com <support@keywordrush.com>
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 
 /**
@@ -22,7 +22,8 @@ use ContentEgg\application\vendor\XmlStringStreamer\StreamInterface;
 /**
  * The string walker parser builds the XML nodes by fetching one element at a time until a certain depth is re-reached
  */
-class StringWalker implements ParserInterface {
+class StringWalker implements ParserInterface
+{
 	/**
 	 * Holds the parser configuration
 	 * @var array
@@ -76,68 +77,76 @@ class StringWalker implements ParserInterface {
 	 *
 	 * @param array $options An options array
 	 */
-	public function __construct( array $options = array() ) {
-		$this->options = array_merge( array(
+	public function __construct(array $options = array())
+	{
+		$this->options = array_merge(array(
 			"captureDepth"      => 2,
 			"expectGT"          => false,
 			"tags"              => array(
-				array( "<?", "?>", 0 ),
-				array( "<!--", "-->", 0 ),
-				array( "<![CDATA[", "]]>", 0 ),
-				array( "<!", ">", 0 ),
-				array( "</", ">", - 1 ),
-				array( "<", "/>", 0 ),
-				array( "<", ">", 1 ),
+				array("<?", "?>", 0),
+				array("<!--", "-->", 0),
+				array("<![CDATA[", "]]>", 0),
+				array("<!", ">", 0),
+				array("</", ">", -1),
+				array("<", "/>", 0),
+				array("<", ">", 1),
 			),
 			"tagsWithAllowedGT" => array(
-				array( "<!--", "-->" ),
-				array( "<![CDATA[", "]]>" ),
+				array("<!--", "-->"),
+				array("<![CDATA[", "]]>"),
 			),
 			"extractContainer"  => false,
-		), $options );
+		), $options);
 	}
 
 	/**
 	 * Shaves off the next element from the chunk
 	 * @return string[]|bool Either a shaved off element array(0 => Captured element, 1 => Data from last shaving point up to and including captured element) or false if one could not be obtained
 	 */
-	protected function shave() {
-		preg_match( "/<[^>]+>/", $this->chunk, $matches, PREG_OFFSET_CAPTURE );
+	protected function shave()
+	{
+		preg_match("/<[^>]+>/", $this->chunk, $matches, PREG_OFFSET_CAPTURE);
 
-		if ( isset( $matches[0], $matches[0][0], $matches[0][1] ) ) {
-			list( $captured, $offset ) = $matches[0];
+		if (isset($matches[0], $matches[0][0], $matches[0][1]))
+		{
+			list($captured, $offset) = $matches[0];
 
-			if ( $this->options["expectGT"] ) {
+			if ($this->options["expectGT"])
+			{
 				// Some elements support > inside
-				foreach ( $this->options["tagsWithAllowedGT"] as $tag ) {
-					list( $opening, $closing ) = $tag;
+				foreach ($this->options["tagsWithAllowedGT"] as $tag)
+				{
+					list($opening, $closing) = $tag;
 
-					if ( substr( $captured, 0, strlen( $opening ) ) === $opening ) {
+					if (substr($captured, 0, strlen($opening)) === $opening)
+					{
 						// We have a match, our preg_match may have ended too early
 						// Most often, this isn't the case
-						if ( substr( $captured, - 1 * strlen( $closing ) ) !== $closing ) {
+						if (substr($captured, -1 * strlen($closing)) !== $closing)
+						{
 							// In this case, the preg_match ended too early, let's find the real end
-							$position = strpos( $this->chunk, $closing );
-							if ( $position === false ) {
+							$position = strpos($this->chunk, $closing);
+							if ($position === false)
+							{
 								// We need more XML!
 
 								return false;
 							}
 
 							// We found the end, modify $captured
-							$captured = substr( $this->chunk, $offset, $position + strlen( $closing ) - $offset );
+							$captured = substr($this->chunk, $offset, $position + strlen($closing) - $offset);
 						}
 					}
 				}
 			}
 
 			// Data in between
-			$data = substr( $this->chunk, 0, $offset );
+			$data = substr($this->chunk, 0, $offset);
 
 			// Shave from chunk
-			$this->chunk = substr( $this->chunk, $offset + strlen( $captured ) );
+			$this->chunk = substr($this->chunk, $offset + strlen($captured));
 
-			return array( $captured, $data . $captured );
+			return array($captured, $data . $captured);
 		}
 
 		return false;
@@ -150,14 +159,19 @@ class StringWalker implements ParserInterface {
 	 *
 	 * @return string[] 0 => Opening tag, 1 => Closing tag
 	 */
-	protected function getEdges( $element ) {
+	protected function getEdges($element)
+	{
 		// TODO: Performance tuning possible here by not looping
 
-		foreach ( $this->options["tags"] as $tag ) {
-			list( $opening, $closing, $depth ) = $tag;
+		foreach ($this->options["tags"] as $tag)
+		{
+			list($opening, $closing, $depth) = $tag;
 
-			if ( substr( $element, 0, strlen( $opening ) ) === $opening
-			     && substr( $element, - 1 * strlen( $closing ) ) === $closing ) {
+			if (
+				substr($element, 0, strlen($opening)) === $opening
+				&& substr($element, -1 * strlen($closing)) === $closing
+			)
+			{
 
 				return $tag;
 			}
@@ -171,24 +185,32 @@ class StringWalker implements ParserInterface {
 	 *
 	 * @return bool Returns whether there is more XML data or not
 	 */
-	protected function prepareChunk( StreamInterface $stream ) {
-		if ( ! $this->firstRun && is_null( $this->shaved ) ) {
+	protected function prepareChunk(StreamInterface $stream)
+	{
+		if (!$this->firstRun && is_null($this->shaved))
+		{
 			// We're starting again after a flush
 			$this->shaved = "";
 
 			return true;
-		} else if ( is_null( $this->shaved ) ) {
+		}
+		else if (is_null($this->shaved))
+		{
 			$this->shaved = "";
 		}
 
 		$newChunk = $stream->getChunk();
 
-		if ( $newChunk !== false ) {
+		if ($newChunk !== false)
+		{
 			$this->chunk .= $newChunk;
 
 			return true;
-		} else {
-			if ( trim( $this->chunk ) !== "" && $this->chunk !== $this->lastChunk ) {
+		}
+		else
+		{
+			if (trim($this->chunk) !== "" && $this->chunk !== $this->lastChunk)
+			{
 				// Update anti-freeze protection chunk
 				$this->lastChunk = $this->chunk;
 
@@ -205,9 +227,11 @@ class StringWalker implements ParserInterface {
 	 * @return string XML string
 	 * @throws Exception if the extractContainer option isn't true
 	 */
-	public function getExtractedContainer() {
-		if ( ! $this->options["extractContainer"] ) {
-			throw new Exception( "This method requires the 'extractContainer' option to be true" );
+	public function getExtractedContainer()
+	{
+		if (!$this->options["extractContainer"])
+		{
+			throw new Exception("This method requires the 'extractContainer' option to be true");
 		}
 
 		return $this->containerXml;
@@ -220,16 +244,19 @@ class StringWalker implements ParserInterface {
 	 *
 	 * @return string|bool             The next xml node or false if one could not be retrieved
 	 */
-	public function getNodeFrom( StreamInterface $stream ) {
+	public function getNodeFrom(StreamInterface $stream)
+	{
 		// Iterate and append to $this->chunk
-		while ( $this->prepareChunk( $stream ) ) {
+		while ($this->prepareChunk($stream))
+		{
 			$this->firstRun = false;
 			// Shave off elements
-			while ( $shaved = $this->shave() ) {
-				list( $element, $data ) = $shaved;
+			while ($shaved = $this->shave())
+			{
+				list($element, $data) = $shaved;
 
 				// Analyze element
-				list( $opening, $closing, $depth ) = $this->getEdges( $element );
+				list($opening, $closing, $depth) = $this->getEdges($element);
 
 				// Update depth
 				$this->depth += $depth;
@@ -238,31 +265,40 @@ class StringWalker implements ParserInterface {
 				$captureOnce = false;
 
 				// Capture or don't?
-				if ( $this->depth === $this->options["captureDepth"] && $depth > 0 ) {
+				if ($this->depth === $this->options["captureDepth"] && $depth > 0)
+				{
 					// Yes, we've just entered capture depth, start capturing
 					$this->capture = true;
-				} else if ( $this->depth === $this->options["captureDepth"] - 1 && $depth < 0 ) {
+				}
+				else if ($this->depth === $this->options["captureDepth"] - 1 && $depth < 0)
+				{
 					// No, we've just exited capture depth, stop capturing and prepare for flush
 					$flush         = true;
 					$this->capture = false;
 
 					// ..but include this last node
 					$this->shaved .= $data;
-				} else if ( $this->options["extractContainer"] && $this->depth < $this->options["captureDepth"] ) {
+				}
+				else if ($this->options["extractContainer"] && $this->depth < $this->options["captureDepth"])
+				{
 					// We're outside of our capture scope, save to the special buffer if extractContainer is true
 					$this->containerXml .= $element;
-				} else if ( $depth === 0 && $this->depth + 1 === $this->options["captureDepth"] ) {
+				}
+				else if ($depth === 0 && $this->depth + 1 === $this->options["captureDepth"])
+				{
 					// Self-closing element - capture this element and flush but don't start capturing everything yet
 					$captureOnce = true;
 					$flush       = true;
 				}
 
 				// Capture the last retrieved node
-				if ( $this->capture || $captureOnce ) {
+				if ($this->capture || $captureOnce)
+				{
 					$this->shaved .= $data;
 				}
 
-				if ( $flush ) {
+				if ($flush)
+				{
 					// Flush the whole node and start over on the next
 					$flush        = $this->shaved;
 					$this->shaved = null;

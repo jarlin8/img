@@ -15,7 +15,7 @@ use ContentEgg\application\components\ExternalFeaturedImage;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class FeaturedImage
 {
@@ -47,7 +47,8 @@ class FeaturedImage
             {
                 FeaturedImage::setFeaturedImage($post_id, $item);
             }
-        } else
+        }
+        else
         {
             ExternalFeaturedImage::setExternalFeaturedImage($post_id, $item);
         }
@@ -78,7 +79,8 @@ class FeaturedImage
         if ($item)
         {
             $data = array($item);
-        } else
+        }
+        else
         {
             $data = self::getData($post_id);
         }
@@ -116,10 +118,12 @@ class FeaturedImage
             if ($featured_image == 'second' && isset($d[1]))
             {
                 unset($d[0]);
-            } elseif ($featured_image == 'last')
+            }
+            elseif ($featured_image == 'last')
             {
                 $d = array_reverse($d);
-            } elseif ($featured_image == 'rand')
+            }
+            elseif ($featured_image == 'rand')
             {
                 shuffle($d);
             }
@@ -164,7 +168,8 @@ class FeaturedImage
             }
 
             return $dublicate_file;
-        } else
+        }
+        else
         {
             // save image localy
             $file_name = ImageHelper::saveImgLocaly($item['img'], $item['title']);
@@ -184,7 +189,7 @@ class FeaturedImage
 
     public static function attachThumbnail($img_file, $post_id, $title = '')
     {
-        require_once( ABSPATH . 'wp-admin/includes/image.php' );
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
 
         $title = \sanitize_text_field($title);
         $filetype = \wp_check_filetype(basename($img_file), null);
@@ -205,5 +210,4 @@ class FeaturedImage
 
         return \set_post_thumbnail($post_id, $attach_id);
     }
-
 }

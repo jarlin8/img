@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class AdminNotice
 {
@@ -96,5 +96,4 @@ class AdminNotice
             $url = add_query_arg(self::GET_ID_PARAM, $id, $url);
         return $url;
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\GoogleNews;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ParserModule;
 use ContentEgg\application\libs\google\GNews;
@@ -15,66 +15,84 @@ use ContentEgg\application\admin\GeneralConfig;
  * GoogleNews class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class GoogleNewsModule extends ParserModule {
+class GoogleNewsModule extends ParserModule
+{
 
-	public function info() {
+	public function info()
+	{
 		return array(
 			'name'          => 'Google News',
 			'api_agreement' => 'https://support.google.com/news/answer/40796',
 		);
 	}
 
-	public function getParserType() {
+	public function getParserType()
+	{
 		return self::PARSER_TYPE_CONTENT;
 	}
 
-	public function doRequest( $keyword, $query_params = array(), $is_autoupdate = false ) {
+	public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
+	{
 		$params = array();
 
-		if ( $is_autoupdate ) {
-			$entries_per_page = $this->config( 'entries_per_page_update' );
-		} else {
-			$entries_per_page = $this->config( 'entries_per_page' );
+		if ($is_autoupdate)
+		{
+			$entries_per_page = $this->config('entries_per_page_update');
+		}
+		else
+		{
+			$entries_per_page = $this->config('entries_per_page');
 		}
 
-		$params['hl'] = GeneralConfig::getInstance()->option( 'lang' );
-		try {
+		$params['hl'] = GeneralConfig::getInstance()->option('lang');
+		try
+		{
 			$gn      = new GNews;
-			$results = $gn->search( $keyword, $params, (int) $entries_per_page );
-		} catch ( Exception $e ) {
-			throw new \Exception( strip_tags( $e->getMessage() ) );
+			$results = $gn->search($keyword, $params, (int) $entries_per_page);
 		}
-		if ( ! is_array( $results ) ) {
+		catch (Exception $e)
+		{
+			throw new \Exception(strip_tags($e->getMessage()));
+		}
+		if (!is_array($results))
+		{
 			return array();
 		}
 
 		$data = array();
-		foreach ( $results as $key => $r ) {
+		foreach ($results as $key => $r)
+		{
 			$content              = new Content;
-			$content->unique_id   = md5( $r['url'] );
+			$content->unique_id   = md5($r['url']);
 			$content->title       = $r['title'];
 			$content->description = $r['description'];
-			if ( $max_size = $this->config( 'description_size' ) ) {
-				$content->description = TextHelper::truncate( $content->description, $max_size );
-			} else {
+			if ($max_size = $this->config('description_size'))
+			{
+				$content->description = TextHelper::truncate($content->description, $max_size);
+			}
+			else
+			{
 				$content->description .= '...';
 			}
 
 			$content->url = $r['url'];
 
-			if ( ! empty( $r['img'] ) ) {
+			if (!empty($r['img']))
+			{
 				$content->img = $r['img'];
 			}
 			$extra = new ExtraDataGoogleNews;
-			ExtraDataGoogleNews::fillAttributes( $extra, $r );
+			ExtraDataGoogleNews::fillAttributes($extra, $r);
 
-			if ( ! empty( $r['links'] ) ) {
-				foreach ( $r['links'] as $link_r ) {
+			if (!empty($r['links']))
+			{
+				foreach ($r['links'] as $link_r)
+				{
 					$link = new ExtraGoogleNewsLinks;
-					ExtraDataGoogleNews::fillAttributes( $link, $link_r );
+					ExtraDataGoogleNews::fillAttributes($link, $link_r);
 					$extra->links = $link;
 				}
 			}
@@ -86,12 +104,13 @@ class GoogleNewsModule extends ParserModule {
 		return $data;
 	}
 
-	public function renderResults() {
-		PluginAdmin::render( '_metabox_results', array( 'module_id' => $this->getId() ) );
+	public function renderResults()
+	{
+		PluginAdmin::render('_metabox_results', array('module_id' => $this->getId()));
 	}
 
-	public function renderSearchResults() {
-		PluginAdmin::render( '_metabox_search_results', array( 'module_id' => $this->getId() ) );
+	public function renderSearchResults()
+	{
+		PluginAdmin::render('_metabox_search_results', array('module_id' => $this->getId()));
 	}
-
 }

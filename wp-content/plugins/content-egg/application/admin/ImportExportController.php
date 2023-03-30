@@ -11,10 +11,11 @@ use ContentEgg\application\components\ModuleManager;
  * ImportExportController class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ImportExportController {
+class ImportExportController
+{
 
     const slug = 'content-egg-import-export';
 
@@ -58,7 +59,8 @@ class ImportExportController {
                     $all_options[$option] = $save;
                 }
                 $message = __('Options were saved.', 'content-egg') . ' <a href="?page=content-egg">' . __('Page of settings', 'content-egg') . '</a>';
-            } else
+            }
+            else
                 $notice = __('Invalid format.', 'content-egg');
         }
         PluginAdmin::getInstance()->render('import_export', array(
@@ -68,5 +70,4 @@ class ImportExportController {
             'nonce' => \wp_create_nonce(basename(__FILE__)),
         ));
     }
-
 }

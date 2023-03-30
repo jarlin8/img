@@ -18,9 +18,10 @@ use \Keywordrush\AffiliateEgg\ParserManager;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class AEModule extends AffiliateParserModule {
+class AEModule extends AffiliateParserModule
+{
 
     public function __construct($module_id = null)
     {
@@ -91,7 +92,8 @@ class AEModule extends AffiliateParserModule {
         if ($is_autoupdate)
         {
             $entries_per_page = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $entries_per_page = $this->config('entries_per_page');
         }
@@ -109,7 +111,8 @@ class AEModule extends AffiliateParserModule {
             if ($matches[1])
             {
                 $catalog_atts = \shortcode_atts($catalog_default, \shortcode_parse_atts($matches[1]));
-            } else
+            }
+            else
             {
                 $catalog_atts = $catalog_default;
             }
@@ -153,7 +156,8 @@ class AEModule extends AffiliateParserModule {
                     return array();
                 }
             }
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
             $code = $e->getCode();
             $message = $e->getMessage();
@@ -172,7 +176,8 @@ class AEModule extends AffiliateParserModule {
             try
             {
                 $results[] = ParserManager::getInstance()->parseProduct($url);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 continue;
             }
@@ -212,12 +217,12 @@ class AEModule extends AffiliateParserModule {
             if ($r['in_stock'])
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-            } else
+            }
+            else
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
 
-            $content->url = LinkHandler::createAffUrl($r['orig_url'], $deeplink, (array) $content);
             $content->extra = new ExtraDataAE;
 
             if (isset($r['extra']['rating']))
@@ -260,7 +265,16 @@ class AEModule extends AffiliateParserModule {
                 unset($r['extra']['categoryPath']);
             }
 
+            if (isset($r['extra']['sku']))
+            {
+                $content->sku = $r['extra']['sku'];
+                unset($r['extra']['sku']);
+            }
+
             $content->extra->data = $r['extra'];
+
+            // must be after extra field
+            $content->url = LinkHandler::createAffUrl($r['orig_url'], $deeplink, (array) $content);
 
             $data[] = $content;
         }
@@ -283,7 +297,8 @@ class AEModule extends AffiliateParserModule {
             try
             {
                 $r = ParserManager::getInstance()->parseProduct($item['orig_url']);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 if ($e->getCode() == 404 || $e->getCode() == 410)
                 {
@@ -301,7 +316,8 @@ class AEModule extends AffiliateParserModule {
             if ($r['in_stock'])
             {
                 $items[$i]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-            } else
+            }
+            else
             {
                 $items[$i]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
@@ -366,5 +382,4 @@ class AEModule extends AffiliateParserModule {
     {
         PluginAdmin::render('_metabox_search_results', array('module_id' => $this->getId()));
     }
-
 }

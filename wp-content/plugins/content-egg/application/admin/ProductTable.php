@@ -15,23 +15,24 @@ use ContentEgg\application\components\ModuleManager;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ProductTable extends MyListTable {
+class ProductTable extends MyListTable
+{
 
     const per_page = 15;
 
     function get_columns()
     {
         return
-                array(
-                    'img' => '',
-                    'title' => ProductModel::model()->getAttributeLabel('title'),
-                    'module_id' => __('Module', 'content-egg'),
-                    'stock_status' => ProductModel::model()->getAttributeLabel('stock_status'),
-                    'price' => ProductModel::model()->getAttributeLabel('price'),
-                    'last_update' => ProductModel::model()->getAttributeLabel('last_update'),
-        );
+            array(
+                'img' => '',
+                'title' => ProductModel::model()->getAttributeLabel('title'),
+                'module_id' => __('Module', 'content-egg'),
+                'stock_status' => ProductModel::model()->getAttributeLabel('stock_status'),
+                'price' => ProductModel::model()->getAttributeLabel('price'),
+                'last_update' => ProductModel::model()->getAttributeLabel('last_update'),
+            );
     }
 
     function column_img($item)
@@ -50,14 +51,14 @@ class ProductTable extends MyListTable {
         $actions = array(
             'post_id' => sprintf(__('Post ID: %d', 'content-egg'), $item['post_id']),
             'view' => sprintf('<a href="%s">%s</a>', \get_post_permalink($item['post_id']), __('View', 'content-egg')),
-            
+
             'edit' => sprintf('<a href="%s">%s</a>', \esc_url($edit_link), __('Edit', 'content-egg')),
         );
         if ($item['url'])
             $actions['goto'] = sprintf('<a target="_blank" href="%s">%s</a>', \esc_url($item['url']), __('Go to', 'content-egg'));
 
         return '<strong><a class="row-title" href="' . \esc_url($edit_link) . '">' . \esc_html($title) . '</a></strong>' .
-                $this->row_actions($actions);
+            $this->row_actions($actions);
     }
 
     function column_price($item)
@@ -103,14 +104,19 @@ class ProductTable extends MyListTable {
         if ($last_update_timestamp > strtotime('-1 day', \current_time('timestamp', true)))
         {
             $show_date = sprintf(
-                    __('%s ago', '%s = human-readable time difference', 'content-egg'), \human_time_diff($last_update_timestamp, \current_time('timestamp', true))
+                __('%s ago', '%s = human-readable time difference', 'content-egg'),
+                \human_time_diff($last_update_timestamp, \current_time('timestamp', true))
             );
-        } else
+        }
+        else
         {
             $show_date = TemplateHelper::dateFormatFromGmt($last_update_timestamp, false);
         }
         return sprintf(
-                '<abbr datetime="%1$s" title="%2$s">%3$s</abbr>', esc_attr($show_date_time), esc_attr($show_date_time), esc_html($show_date)
+            '<abbr datetime="%1$s" title="%2$s">%3$s</abbr>',
+            esc_attr($show_date_time),
+            esc_attr($show_date_time),
+            esc_html($show_date)
         );
     }
 
@@ -148,7 +154,7 @@ class ProductTable extends MyListTable {
     private function print_modules_dropdown()
     {
         $modules = ModuleManager::getInstance()->getAffiliteModulesList(true);
-        $selected_module_id = !empty($_GET['module_id']) ? TextHelper::clear(sanitize_text_field( \wp_unslash($_GET['module_id']))) : '';
+        $selected_module_id = !empty($_GET['module_id']) ? TextHelper::clear(sanitize_text_field(\wp_unslash($_GET['module_id']))) : '';
 
         echo '<select name="module_id" id="dropdown_module_id"><option value="">' . \esc_html__('Filter by module', 'content-egg') . '</option>';
         foreach ($modules as $module_id => $module_name)
@@ -224,5 +230,4 @@ class ProductTable extends MyListTable {
 
         return $status_links;
     }
-
 }

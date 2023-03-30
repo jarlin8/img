@@ -10,10 +10,11 @@ use ContentEgg\application\components\CEWidget;
  * ProductSearchWidget class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link https://www.keywordrush.com/
- * @copyright Copyright &copy; 2020 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ProductSearchWidget extends CEWidget {
+class ProductSearchWidget extends CEWidget
+{
 
     public function slug()
     {
@@ -38,13 +39,13 @@ class ProductSearchWidget extends CEWidget {
     public function settings()
     {
         return
-                array(
-                    'title' => array(
-                        'type' => 'text',
-                        'default' => '',
-                        'title' => __('Title', 'content-egg'),
-                    ),
-        );
+            array(
+                'title' => array(
+                    'type' => 'text',
+                    'default' => '',
+                    'title' => __('Title', 'content-egg'),
+                ),
+            );
     }
 
     /**
@@ -66,9 +67,10 @@ class ProductSearchWidget extends CEWidget {
         if ($search_form_template)
         {
             ob_start();
-            require( $search_form_template );
+            require($search_form_template);
             $form = ob_get_clean();
-        } else
+        }
+        else
         {
             // standart wp search from
             $form = \get_search_form(false);
@@ -90,5 +92,4 @@ class ProductSearchWidget extends CEWidget {
         else
             return \esc_url(\home_url('/'));
     }
-
 }

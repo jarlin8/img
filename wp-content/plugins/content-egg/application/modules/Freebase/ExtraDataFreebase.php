@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Freebase;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataFreebase class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataFreebase extends ExtraData {
+class ExtraDataFreebase extends ExtraData
+{
 
 	public $article;
 	public $officialWebsite = array();
@@ -26,5 +27,4 @@ class ExtraDataFreebase extends ExtraData {
 	public $artistTrack = array();
 	public $dateOfBirth;
 	public $freebaseId;
-
 }

@@ -17,9 +17,10 @@ use ContentEgg\application\helpers\ArrayHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class KelkooModule extends AffiliateParserModule {
+class KelkooModule extends AffiliateParserModule
+{
 
     private $api_client = null;
     private $merchants = array();
@@ -82,7 +83,8 @@ class KelkooModule extends AffiliateParserModule {
         if ($is_autoupdate)
         {
             $limit = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $limit = $this->config('entries_per_page');
         }
@@ -104,14 +106,16 @@ class KelkooModule extends AffiliateParserModule {
         if (!empty($query_params['price_min']))
         {
             $options['filterGreaterThanEqual'] = 'price:' . (float) $query_params['price_min'];
-        } elseif ($this->config('price_min'))
+        }
+        elseif ($this->config('price_min'))
         {
             $options['filterGreaterThanEqual'] = 'price:' . (float) $this->config('price_min');
         }
         if (!empty($query_params['price_max']))
         {
             $options['filterLowerThanEqual'] = 'price:' . (float) $query_params['price_max'];
-        } elseif ($this->config('price_max'))
+        }
+        elseif ($this->config('price_max'))
         {
             $options['filterLowerThanEqual'] = 'price:' . (float) $this->config('price_max');
         }
@@ -119,7 +123,8 @@ class KelkooModule extends AffiliateParserModule {
         if (TextHelper::isEan($keyword))
         {
             $results = $this->getApiClient()->searchEan($keyword, $options);
-        } else
+        }
+        else
         {
             $results = $this->getApiClient()->search($keyword, $options);
         }
@@ -162,7 +167,8 @@ class KelkooModule extends AffiliateParserModule {
         if ($r['availabilityStatus'] == 'out_of_stock')
         {
             $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
-        } else
+        }
+        else
         {
             $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
         }
@@ -219,12 +225,14 @@ class KelkooModule extends AffiliateParserModule {
                 if (!empty($item['extra']['country']))
                 {
                     $options['country'] = $item['extra']['country'];
-                } else
+                }
+                else
                 {
                     $options['country'] = $this->config('region');
                 }
                 $result = $this->getApiClient()->offer($item['unique_id'], $options);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 continue;
             }
@@ -277,5 +285,4 @@ class KelkooModule extends AffiliateParserModule {
     {
         $this->render('update_panel', array('module_id' => $this->getId()));
     }
-
 }

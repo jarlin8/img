@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\SkimlinksCoupons;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,13 +10,13 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataTradetrackerCoupons class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataSkimlinksCoupons extends ExtraData {
+class ExtraDataSkimlinksCoupons extends ExtraData
+{
 
 	public $offer_type;
 	public $merchant_details = array();
 	public $terms;
-
 }

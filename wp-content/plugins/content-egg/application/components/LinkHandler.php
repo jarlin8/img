@@ -5,15 +5,17 @@ namespace ContentEgg\application\components;
 defined('\ABSPATH') || exit;
 
 use ContentEgg\application\helpers\TextHelper;
+use ContentEgg\application\helpers\TemplateHelper;
 
 /**
  * LinkHandler class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class LinkHandler {
+class LinkHandler
+{
 
     private static $instance = null;
 
@@ -60,42 +62,57 @@ class LinkHandler {
         if (!$deeplink)
         {
             $result = $url;
-        } elseif (substr(trim($deeplink), 0, 7) == '[regex]')
+        }
+        elseif (substr(trim($deeplink), 0, 7) == '[regex]')
         {
             // regex preg_replace
             $result = self::getRegexReplace($url, $deeplink);
-        } elseif (substr(trim($deeplink), 0, 13) == '[profitshare]')
+        }
+        elseif (substr(trim($deeplink), 0, 13) == '[profitshare]')
         {
             // ProfitShare link creator
             $result = self::getProfitshareLink($url, $deeplink, $item);
-        } elseif (substr(trim($deeplink), 0, 9) == '[lomadee]')
+        }
+        elseif (substr(trim($deeplink), 0, 9) == '[lomadee]')
         {
             // Lomadee link creator
             $result = self::getLomadeeLink($url, $deeplink, $item);
-        } elseif (substr(trim($deeplink), 0, 13) == '[trovaprezzi]')
+        }
+        elseif (substr(trim($deeplink), 0, 13) == '[trovaprezzi]')
         {
             // Trovaprezzi link creator
             $result = self::getTrovaprezziLink($url, $deeplink, $item);
-        } elseif (substr(trim($deeplink), 0, 9) == '[coupang]')
+        }
+        elseif (substr(trim($deeplink), 0, 9) == '[coupang]')
         {
             // Coupang link creator
             $result = self::getCoupangLink($url, $deeplink, $item);
-        } elseif (strstr($deeplink, '{{') && strstr($deeplink, '}}'))
+        }
+        elseif (strstr($deeplink, '{{') && strstr($deeplink, '}}'))
         {
             // template deeplink
             $result = self::getUrlTemplate($url, $deeplink, $item);
-        } elseif (!preg_match('/^https?:\/\//i', $deeplink))
+        }
+        elseif (!preg_match('/^https?:\/\//i', $deeplink))
         {
             // url with tail
             $result = self::getUrlWithTail($url, $deeplink);
-        } else
+        }
+        elseif (!strstr($deeplink, '%PRODUCT.'))
         {
             $result = $deeplink . urlencode($url);
         }
+        else
+        {
+            $result = $deeplink;
+        }
+
         if ($subid)
         {
             $result = self::getUrlWithTail($result, $subid);
         }
+
+        $result = self::replaceProductTags($result, $item);
 
         return $result;
     }
@@ -115,7 +132,8 @@ class LinkHandler {
         if ($query)
         {
             $url .= '&';
-        } else
+        }
+        else
         {
             $url .= '?';
         }
@@ -131,26 +149,21 @@ class LinkHandler {
         $template = str_replace('{{url}}', $url, $template);
         $template = str_replace('{{url_encoded}}', urlencode($url), $template);
         $template = str_replace('{{url_base64}}', base64_encode($url), $template);
+
         global $post;
 
         if ($item)
         {
             if (isset($item['post_id']))
-            {
                 $post_id = $item['post_id'];
-            } elseif (!empty($post))
-            {
+            elseif (!empty($post))
                 $post_id = $post->ID;
-            } else
-            {
+            else
                 $post_id = 0;
-            }
             $template = str_replace('{{post_id}}', urlencode($post_id), $template);
 
             if (!empty($item['unique_id']))
-            {
                 $template = str_replace('{{item_unique_id}}', urlencode($item['unique_id']), $template);
-            }
         }
 
         if (!empty($post))
@@ -177,7 +190,7 @@ class LinkHandler {
 
         $pattern = $parts[1];
         //$replacement = rtrim($parts[2], ']');
-        $replacement = substr($parts[2], 0, - 1);
+        $replacement = substr($parts[2], 0, -1);
 
         // null character allows a premature regex end and "/../e" injection
         if (strpos($pattern, chr(0)) !== false || !trim($pattern))
@@ -188,7 +201,8 @@ class LinkHandler {
         if ($result = @preg_replace($pattern, $replacement, $url))
         {
             return $result;
-        } else
+        }
+        else
         {
             return $url;
         }
@@ -261,7 +275,8 @@ class LinkHandler {
         if (isset($result['result'][0]['ps_url']))
         {
             return $result['result'][0]['ps_url'];
-        } else
+        }
+        else
         {
             return $url;
         }
@@ -298,7 +313,8 @@ class LinkHandler {
         if (isset($result['deeplinks'][0]['deeplink']))
         {
             return $result['deeplinks'][0]['deeplink'];
-        } else
+        }
+        else
         {
             return $url;
         }
@@ -361,7 +377,8 @@ class LinkHandler {
         if (isset($result['offers'][0]['url']))
         {
             return $result['offers'][0]['url'];
-        } else
+        }
+        else
         {
             return $url;
         }
@@ -419,7 +436,8 @@ class LinkHandler {
         if (isset($result['data'][0]['shortenUrl']))
         {
             return $result['data'][0]['shortenUrl'];
-        } else
+        }
+        else
         {
             return $url;
         }
@@ -443,7 +461,8 @@ class LinkHandler {
             if (count($parts) == 1)
             {
                 $default = trim($da);
-            } elseif (count($parts) == 2)
+            }
+            elseif (count($parts) == 2)
             {
                 if (!$default)
                 {
@@ -464,4 +483,38 @@ class LinkHandler {
         return $default;
     }
 
+    static public function replaceProductTags($template, array $item)
+    {
+        if (!$item)
+            return $template;
+
+        if (!stristr($template, '%PRODUCT.'))
+            return $template;
+
+        if (!preg_match_all('/(%PRODUCT\.[a-zA-Z0-9_\.\,\(\)]+%)/', $template, $matches))
+            return $template;
+
+        $replace = array();
+        foreach ($matches[1] as $pattern)
+        {
+            $replace[$pattern] = '';
+            $pattern_parts = explode('.', $pattern);
+            $var_name = $pattern_parts[1];
+            $var_name = rtrim($var_name, '%');
+            $var_name = \sanitize_text_field($var_name);
+
+            if (strtoupper($var_name) == 'EXTRA' && isset($pattern_parts[2]) && is_scalar($item[$var_name]))
+            {
+                $extra_var = rtrim($pattern_parts[2], '%');
+                $extra_var = \sanitize_text_field($extra_var);
+
+                if (isset($item['extra'][$extra_var]))
+                    $replace[$pattern] = urlencode($item['extra'][$extra_var]);
+            }
+            elseif (isset($item[$var_name]) && is_scalar($item[$var_name]))
+                $replace[$pattern] = urlencode($item[$var_name]);
+        }
+
+        return str_ireplace(array_keys($replace), array_values($replace), $template);
+    }
 }

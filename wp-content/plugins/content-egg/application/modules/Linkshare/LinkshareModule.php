@@ -14,8 +14,8 @@ use ContentEgg\application\helpers\TextHelper;
  * LinkshareModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class LinkshareModule extends AffiliateParserModule
 {
@@ -52,7 +52,8 @@ class LinkshareModule extends AffiliateParserModule
         if ($is_autoupdate)
         {
             $options['max'] = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $options['max'] = $this->config('entries_per_page');
         }
@@ -144,7 +145,8 @@ class LinkshareModule extends AffiliateParserModule
             {
                 $content->price = (float) $r['saleprice'][0];
                 $content->currencyCode = $r['saleprice']['@attributes']['currency'];
-            } else
+            }
+            else
             {
                 $content->price = (float) $r['saleprice'];
                 $content->currencyCode = $r['currency'];
@@ -153,7 +155,8 @@ class LinkshareModule extends AffiliateParserModule
             if (is_array($r['price']))
             {
                 $content->priceOld = (float) $r['price'][0];
-            } else
+            }
+            else
             {
                 $content->priceOld = (float) $r['price'];
             }
@@ -161,14 +164,15 @@ class LinkshareModule extends AffiliateParserModule
             $content->currency = TextHelper::currencyTyping($content->currencyCode);
             $content->url = $r['linkurl'];
             $content->orig_url = TextHelper::parseOriginalUrl($r['linkurl'], 'murl');
-            $content->img = (!empty($r['imageurl']) ) ? $r['imageurl'] : '';
-            $content->merchant = ( $r['merchantname'] ) ? $r['merchantname'] : '';
+            $content->img = (!empty($r['imageurl'])) ? $r['imageurl'] : '';
+            $content->merchant = ($r['merchantname']) ? $r['merchantname'] : '';
             $content->domain = TextHelper::parseDomain($content->url, 'murl');
 
             if (!empty($r['description']['long']))
             {
                 $content->description = $r['description']['long'];
-            } elseif (!empty($r['description']['short']) && trim($r['description']['short']) != $content->title)
+            }
+            elseif (!empty($r['description']['short']) && trim($r['description']['short']) != $content->title)
             {
                 $content->description = $r['description']['short'];
             }
@@ -191,11 +195,11 @@ class LinkshareModule extends AffiliateParserModule
             }
 
             $content->extra = new ExtraDataLinkshare;
-            $content->extra->mid = ( $r['mid'] ) ? $r['mid'] : '';
-            $content->extra->createdon = ( $r['createdon'] ) ? strtotime(str_replace('/', ' ', $r['createdon'])) : '';
-            $content->sku = $content->extra->sku = ( $r['sku'] ) ? $r['sku'] : '';
-            $content->upc = $content->extra->upccode = ( $r['upccode'] ) ? $r['upccode'] : '';
-            $content->extra->keywords = ( $r['keywords'] ) ? $r['keywords'] : '';
+            $content->extra->mid = ($r['mid']) ? $r['mid'] : '';
+            $content->extra->createdon = ($r['createdon']) ? strtotime(str_replace('/', ' ', $r['createdon'])) : '';
+            $content->sku = $content->extra->sku = ($r['sku']) ? $r['sku'] : '';
+            $content->upc = $content->extra->upccode = ($r['upccode']) ? $r['upccode'] : '';
+            $content->extra->keywords = ($r['keywords']) ? $r['keywords'] : '';
 
             $data[] = $content;
         }
@@ -222,5 +226,4 @@ class LinkshareModule extends AffiliateParserModule
     {
         PluginAdmin::render('_metabox_search_results', array('module_id' => $this->getId()));
     }
-
 }

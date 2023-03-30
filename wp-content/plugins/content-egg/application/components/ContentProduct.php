@@ -2,19 +2,20 @@
 
 namespace ContentEgg\application\components;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 /**
  * ContentProduct class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ContentProduct extends Content {
+class ContentProduct extends Content
+{
 
 	const STOCK_STATUS_IN_STOCK = 1;
-	const STOCK_STATUS_OUT_OF_STOCK = - 1;
+	const STOCK_STATUS_OUT_OF_STOCK = -1;
 	const STOCK_STATUS_UNKNOWN = 0;
 
 	public $price;
@@ -41,5 +42,4 @@ class ContentProduct extends Content {
 	public $features = array();
 	public $stock_status;
 	public $group;
-
 }

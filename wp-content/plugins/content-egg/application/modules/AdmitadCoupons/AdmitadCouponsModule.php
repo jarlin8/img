@@ -13,8 +13,8 @@ use ContentEgg\application\admin\PluginAdmin;
  * AdmitadCouponsModule class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class AdmitadCouponsModule extends AffiliateParserModule
 {
@@ -60,7 +60,8 @@ class AdmitadCouponsModule extends AffiliateParserModule
         if ($is_autoupdate)
         {
             $limit = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $limit = $this->config('entries_per_page');
         }
@@ -132,5 +133,4 @@ class AdmitadCouponsModule extends AffiliateParserModule
     {
         PluginAdmin::render('_metabox_search_results', array('module_id' => $this->getId()));
     }
-
 }

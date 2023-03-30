@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Pepperjam;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataPepperjam class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataPepperjam extends ExtraData {
+class ExtraDataPepperjam extends ExtraData
+{
 
 	public $program_id;
 	public $age_range;
@@ -41,5 +42,4 @@ class ExtraDataPepperjam extends ExtraData {
 	public $discontinued;
 	public $tech_spec_url;
 	public $keywords;
-
 }

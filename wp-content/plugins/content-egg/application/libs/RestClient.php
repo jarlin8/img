@@ -9,13 +9,13 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * Simple Rest Client
  * @todo: PUT/DELETE Request
  */
-class RestClient {
-
+class RestClient
+{
     protected static $timeout = 15; //sec
     protected static $useragent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:93.0) Gecko/20100101 Firefox/93.0';
 
@@ -148,7 +148,8 @@ class RestClient {
         if (strstr($path, 'http://') || strstr($path, 'https://'))
         {
             $uri = $path;
-        } else
+        }
+        else
         {
             $uri = $this->getUri();
             if ($path && $path[0] != '/' && $uri[strlen($uri) - 1] != '/')
@@ -183,7 +184,8 @@ class RestClient {
         if (is_string($data))
         {
             $client->setRawData($data, $enctype);
-        } elseif (is_array($data) || is_object($data))
+        }
+        elseif (is_array($data) || is_object($data))
         {
             $client->setParameterPost((array) $data);
         }
@@ -246,13 +248,14 @@ class RestClient {
             case 'atom':
                 $res = TextHelper::unserialize_xml($response);
                 break;
-            default :
+            default:
                 $res = $response;
         }
         if (is_array($res))
         {
             array_walk_recursive($res, array($this, '_fixUtf8'));
-        } elseif (is_scalar($res))
+        }
+        elseif (is_scalar($res))
         {
             $this->_fixUtf8($res);
         }
@@ -276,5 +279,4 @@ class RestClient {
 					/x';
         $text = preg_replace($regex, '$1', $text);
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\AdmitadCoupons;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataAdmitadCoupons class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataAdmitadCoupons extends ExtraData {
+class ExtraDataAdmitadCoupons extends ExtraData
+{
 
 	public $short_name;
 	public $advcampaign_id;
@@ -25,5 +26,4 @@ class ExtraDataAdmitadCoupons extends ExtraData {
 	public $types;
 	public $categories;
 	public $special_category;
-
 }

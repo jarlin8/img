@@ -2,23 +2,25 @@
 
 namespace ContentEgg\application\modules\Feed\models;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 /**
  * MyFeed1ProductModel class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class MyFeed1ProductModel extends MyFeedProductModel {
+class MyFeed1ProductModel extends MyFeedProductModel
+{
 
-	public function tableName() {
+	public function tableName()
+	{
 		return $this->getDb()->prefix . 'cegg_feed1_product';
 	}
 
-	public static function model( $className = __CLASS__ ) {
-		return parent::model( $className );
+	public static function model($className = __CLASS__)
+	{
+		return parent::model($className);
 	}
-
 }

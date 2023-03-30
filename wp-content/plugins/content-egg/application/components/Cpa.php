@@ -2,16 +2,17 @@
 
 namespace ContentEgg\application\components;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 /**
  * Cpa class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class Cpa {
+class Cpa
+{
 
 	const CPA_ADMITAD = 'admitad';
 	const CPA_GDESLON = 'gdeslon';
@@ -71,9 +72,11 @@ class Cpa {
 		),
 	);
 
-	static public function deeplinkPrepare( $deeplink ) {
+	static public function deeplinkPrepare($deeplink)
+	{
 		// multiple deeplink
-		if ( strstr( $deeplink, ';' ) ) {
+		if (strstr($deeplink, ';'))
+		{
 			return $deeplink;
 		}
 
@@ -89,31 +92,39 @@ class Cpa {
 			//'click.linksynergy.com' => 'RD_PARM1',
 		);
 
-		$p = parse_url( $deeplink );
+		$p = parse_url($deeplink);
 
-		if ( $p === false || empty( $p['host'] ) ) {
+		if ($p === false || empty($p['host']))
+		{
 			return $deeplink;
 		}
 
 		$host = $p['host'];
 
-		if ( $host == 'n.actionpay.ru' ) {
-			return str_replace( 'url=example.com', 'url=', $deeplink );
+		if ($host == 'n.actionpay.ru')
+		{
+			return str_replace('url=example.com', 'url=', $deeplink);
 		}
 
-		if ( array_key_exists( $host, $cpa ) ) {
-			$param = $cpa[ $host ];
-			if ( ! empty( $p['query'] ) ) {
-				parse_str( $p['query'], $query );
-			} else {
+		if (array_key_exists($host, $cpa))
+		{
+			$param = $cpa[$host];
+			if (!empty($p['query']))
+			{
+				parse_str($p['query'], $query);
+			}
+			else
+			{
 				$query = array();
 			}
-			if ( isset( $query[ $param ] ) ) {
-				unset( $query[ $param ] );
+			if (isset($query[$param]))
+			{
+				unset($query[$param]);
 			}
 			$url = $p['scheme'] . '://' . $p['host'] . $p['path'] . '?';
-			if ( $query ) {
-				$url .= http_build_query( $query ) . '&';
+			if ($query)
+			{
+				$url .= http_build_query($query) . '&';
 			}
 			$url .= $param . '=';
 
@@ -123,46 +134,62 @@ class Cpa {
 		return $deeplink;
 	}
 
-	static public function getCpaString( $shop_id ) {
-		$shop = ShopManager::getInstance()->getItem( $shop_id );
-		if ( empty( $shop->cpa ) ) {
+	static public function getCpaString($shop_id)
+	{
+		$shop = ShopManager::getInstance()->getItem($shop_id);
+		if (empty($shop->cpa))
+		{
 			return '';
 		}
 		$str = '';
-		foreach ( $shop->cpa as $cpa ) {
-			$str .= '<a target="_blank" href="' . self::getCpaLink( $cpa ) . '">';
-			$str .= '<img src="' . self::getCpaIco( $cpa ) . '" title="' . self::getCpaName( $cpa ) . '" />';
+		foreach ($shop->cpa as $cpa)
+		{
+			$str .= '<a target="_blank" href="' . self::getCpaLink($cpa) . '">';
+			$str .= '<img src="' . self::getCpaIco($cpa) . '" title="' . self::getCpaName($cpa) . '" />';
 			$str .= '</a> ';
 		}
 
 		return $str;
 	}
 
-	static public function getCpaLink( $cpa ) {
-		if ( ! empty( self::$cpa[ $cpa ] ) ) {
-			return self::$cpa[ $cpa ]['uri'];
-		} else {
+	static public function getCpaLink($cpa)
+	{
+		if (!empty(self::$cpa[$cpa]))
+		{
+			return self::$cpa[$cpa]['uri'];
+		}
+		else
+		{
 			return false;
 		}
 	}
 
-	static public function getCpaIco( $cpa ) {
-		if ( ! empty( self::$cpa[ $cpa ] ) ) {
-			return self::$cpa[ $cpa ]['ico'];
-		} else {
+	static public function getCpaIco($cpa)
+	{
+		if (!empty(self::$cpa[$cpa]))
+		{
+			return self::$cpa[$cpa]['ico'];
+		}
+		else
+		{
 			return false;
 		}
 	}
 
-	static public function getCpaName( $cpa ) {
-		if ( ! empty( self::$cpa[ $cpa ] ) ) {
-			return self::$cpa[ $cpa ]['name'];
-		} else {
+	static public function getCpaName($cpa)
+	{
+		if (!empty(self::$cpa[$cpa]))
+		{
+			return self::$cpa[$cpa]['name'];
+		}
+		else
+		{
 			return false;
 		}
 	}
 
-	static public function deeplinkSetSubid( $deeplink, $subid, $priority = 0 ) {
+	static public function deeplinkSetSubid($deeplink, $subid, $priority = 0)
+	{
 
 		$cpa = array(
 			'ad.admitad.com'        => 'subid',
@@ -174,36 +201,44 @@ class Cpa {
 			'click.linksynergy.com' => 'subid',
 		);
 
-		$p = parse_url( $deeplink );
-		if ( $p === false || ! isset( $p['host'] ) ) {
+		$p = parse_url($deeplink);
+		if ($p === false || !isset($p['host']))
+		{
 			return $deeplink;
 		}
 
 		$host = $p['host'];
 
 		//actionpay передает subid через path, остальные через query
-		if ( $host == 'n.actionpay.ru' ) {
-			return str_replace( '/subaccount', '/' . $subid, $deeplink );
+		if ($host == 'n.actionpay.ru')
+		{
+			return str_replace('/subaccount', '/' . $subid, $deeplink);
 		}
 
 
-		if ( array_key_exists( $host, $cpa ) ) {
-			$param = $cpa[ $host ];
-			if ( ! empty( $p['query'] ) ) {
-				parse_str( $p['query'], $query );
-			} else {
+		if (array_key_exists($host, $cpa))
+		{
+			$param = $cpa[$host];
+			if (!empty($p['query']))
+			{
+				parse_str($p['query'], $query);
+			}
+			else
+			{
 				$query = array();
 			}
 
 			$url = $p['scheme'] . '://' . $p['host'] . $p['path'] . '?';
 
-			if ( ! isset( $query[ $param ] ) || $query[ $param ] == '' || $priority == 1 ) {
-				unset( $query[ $param ] );
+			if (!isset($query[$param]) || $query[$param] == '' || $priority == 1)
+			{
+				unset($query[$param]);
 				$url .= $param . '=' . $subid . '&';
 			}
 
-			if ( $query ) {
-				$url .= http_build_query( $query );
+			if ($query)
+			{
+				$url .= http_build_query($query);
 			}
 
 			return $url;
@@ -212,8 +247,8 @@ class Cpa {
 		return $deeplink;
 	}
 
-	public static function getCpaIds() {
-		return array_keys( self::$cpa );
+	public static function getCpaIds()
+	{
+		return array_keys(self::$cpa);
 	}
-
 }

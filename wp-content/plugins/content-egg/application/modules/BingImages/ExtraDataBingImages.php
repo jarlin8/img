@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\BingImages;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataBingImages class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com6
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com6
  */
-class ExtraDataBingImages extends ExtraData {
+class ExtraDataBingImages extends ExtraData
+{
 
 	public $thumbnailUrl;
 	public $datePublished;
@@ -26,5 +27,4 @@ class ExtraDataBingImages extends ExtraData {
 	public $imageInsightsToken;
 	public $imageId;
 	public $accentColor;
-
 }

@@ -16,9 +16,10 @@ use ContentEgg\application\libs\daisycon\DaisyconApi;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class DaisyconModule extends AffiliateFeedParserModule {
+class DaisyconModule extends AffiliateFeedParserModule
+{
 
     const TRANSIENT_PROGRAMS = 'cegg_daisycon_programs';
 
@@ -94,7 +95,8 @@ class DaisyconModule extends AffiliateFeedParserModule {
         if ($data['status'] == 'active')
         {
             $product['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-        } else
+        }
+        else
         {
             $product['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
         }
@@ -112,7 +114,8 @@ class DaisyconModule extends AffiliateFeedParserModule {
         if (isset($data['ean']) && TextHelper::isEan($data['ean']))
         {
             $product['ean'] = $data['ean'];
-        } else
+        }
+        else
         {
             $product['ean'] = '';
         }
@@ -129,7 +132,8 @@ class DaisyconModule extends AffiliateFeedParserModule {
         if ($is_autoupdate)
         {
             $limit = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $limit = $this->config('entries_per_page');
         }
@@ -137,7 +141,8 @@ class DaisyconModule extends AffiliateFeedParserModule {
         if (TextHelper::isEan($keyword))
         {
             $results = $this->product_model->searchByEan($keyword, $limit);
-        } elseif (filter_var($keyword, FILTER_VALIDATE_URL) || substr_count($keyword, "/") >= 3)
+        }
+        elseif (filter_var($keyword, FILTER_VALIDATE_URL) || substr_count($keyword, "/") >= 3)
         {
             if (!$url_without_domain = ltrim(TextHelper::getUrlWithoutDomain($keyword), "/"))
             {
@@ -145,7 +150,8 @@ class DaisyconModule extends AffiliateFeedParserModule {
             }
 
             $results = $this->product_model->searchByUrl($url_without_domain, $this->config('partial_url_match'), $limit);
-        } else
+        }
+        else
         {
             $options = array();
             if (!empty($query_params['price_min']))
@@ -212,24 +218,28 @@ class DaisyconModule extends AffiliateFeedParserModule {
             if (!empty($r['image_medium']))
             {
                 $content->img = $r['image_medium'];
-            } elseif (!empty($r['image_small']))
+            }
+            elseif (!empty($r['image_small']))
             {
                 $content->img = $r['image_small'];
-            } elseif (!empty($r['image_large']))
+            }
+            elseif (!empty($r['image_large']))
             {
                 $content->img = $r['image_large'];
             }
             if (!empty($r['description']) && $r['title'] != $r['description'])
             {
                 $content->description = $r['description'];
-            } elseif (!empty($r['description_short']) && $r['title'] != $r['description_short'])
+            }
+            elseif (!empty($r['description_short']) && $r['title'] != $r['description_short'])
             {
                 $content->description = $r['description_short'];
             }
             if ($r['status'] == 'active')
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
-            } else
+            }
+            else
             {
                 $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
@@ -295,7 +305,8 @@ class DaisyconModule extends AffiliateFeedParserModule {
             if ($r['status'] == 'active')
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
-            } else
+            }
+            else
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
             }
@@ -351,7 +362,8 @@ class DaisyconModule extends AffiliateFeedParserModule {
             if (!$this->config('publisher_id') || !$this->config('username') || !$this->config('password'))
             {
                 $this->api_client = false;
-            } else
+            }
+            else
             {
                 $this->api_client = new DaisyconApi($this->config('publisher_id'), $this->config('username'), $this->config('password'));
             }
@@ -379,5 +391,4 @@ class DaisyconModule extends AffiliateFeedParserModule {
     {
         $this->render('update_panel', array('module_id' => $this->getId()));
     }
-
 }

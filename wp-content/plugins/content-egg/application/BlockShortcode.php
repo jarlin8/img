@@ -13,8 +13,8 @@ use ContentEgg\application\helpers\TemplateHelper;
  * BlockShortcode class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class BlockShortcode
 {
@@ -58,6 +58,7 @@ class BlockShortcode
             'btn_text' => '',
             'btn_class' => '',
             'locale' => '',
+            'ean' => '',
             'add_query_arg' => '',
         );
 
@@ -78,6 +79,7 @@ class BlockShortcode
         $a['btn_class'] = \sanitize_text_field($a['btn_class']);
         $a['add_query_arg'] = \sanitize_text_field(\wp_strip_all_tags($a['add_query_arg'], true));
         $a['locale'] = TextHelper::clear($a['locale']);
+        $a['ean'] = TemplateHelper::eanParamPrepare($a['ean']);
 
         if ($a['group'] && !$a['groups'])
             $a['groups'] = $a['group'];
@@ -112,7 +114,8 @@ class BlockShortcode
                     $module_ids[] = $module_id;
             }
             $a['modules'] = $module_ids;
-        } else
+        }
+        else
             $a['modules'] = array();
 
         if ($a['template'])
@@ -134,7 +137,8 @@ class BlockShortcode
                 return '';
 
             $post_id = $post->ID;
-        } else
+        }
+        else
             $post_id = $a['post_id'];
 
         $tpl_manager = BlockTemplateManager::getInstance();
@@ -151,7 +155,8 @@ class BlockShortcode
         {
             $supported_module_ids = explode(',', $headers['module_ids']);
             $supported_module_ids = array_map('trim', $supported_module_ids);
-        } elseif ($headers && !empty($headers['module_types']))
+        }
+        elseif ($headers && !empty($headers['module_types']))
         {
             $module_types = explode(',', $headers['module_types']);
             $module_types = array_map('trim', $module_types);
@@ -171,5 +176,4 @@ class BlockShortcode
 
         return ModuleViewer::getInstance()->viewBlockData($module_ids, $post_id, $a, $content);
     }
-
 }

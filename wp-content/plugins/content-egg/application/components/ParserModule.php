@@ -15,7 +15,7 @@ use ContentEgg\application\Plugin;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 abstract class ParserModule extends Module
 {
@@ -38,7 +38,8 @@ abstract class ParserModule extends Module
             if ($this->getConfigInstance()->option('is_active'))
             {
                 $this->is_active = true;
-            } else
+            }
+            else
             {
                 $this->is_active = false;
             }
@@ -63,7 +64,7 @@ abstract class ParserModule extends Module
         $data = parent::presavePrepare($data, $post_id);
 
         // do not save images for revisions & search results
-        if (( $post && wp_is_post_revision($post_id) ) || $post_id < 0)
+        if (($post && wp_is_post_revision($post_id)) || $post_id < 0)
         {
             return $data;
         }
@@ -78,10 +79,12 @@ abstract class ParserModule extends Module
                 if (!empty($item['orig_url']))
                 {
                     $url = $item['orig_url'];
-                } elseif (!empty($item['img']))
+                }
+                elseif (!empty($item['img']))
                 {
                     $url = $item['img'];
-                } else
+                }
+                else
                 {
                     $url = $item['url'];
                 }
@@ -104,7 +107,8 @@ abstract class ParserModule extends Module
                     // image exists
                     $item['img'] = $old_data[$key]['img'];
                     $item['img_file'] = $old_data[$key]['img_file'];
-                } elseif ($item['img'] && empty($item['img_file']))
+                }
+                elseif ($item['img'] && empty($item['img_file']))
                 {
                     $local_img_name = ImageHelper::saveImgLocaly($item['img'], $item['title']);
                     if ($local_img_name)
@@ -170,8 +174,9 @@ abstract class ParserModule extends Module
         {
             try
             {
-                list( $token, $expires_in ) = $this->requestAccessToken();
-            } catch (\Exception $e)
+                list($token, $expires_in) = $this->requestAccessToken();
+            }
+            catch (\Exception $e)
             {
                 return false;
             }
@@ -186,7 +191,8 @@ abstract class ParserModule extends Module
         if ($this->getIdStatic() == ModuleManager::FEED_MODULES_PREFIX)
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -212,7 +218,8 @@ abstract class ParserModule extends Module
         if (!\apply_filters('cegg_disable_multiple_keywords', false))
         {
             $keywords = explode(',', $keyword, 10);
-        } else
+        }
+        else
         {
             $keywords = array($keyword);
         }
@@ -222,15 +229,14 @@ abstract class ParserModule extends Module
         $results = array();
         foreach ($keywords as $i => $keyword)
         {
-            if ($i && $this->getId() == 'Amazon')
-            {
+            if ($i && $this->getId() == 'Amazon' && \apply_filters('cegg_amazon_one_request_per_second', true))
                 sleep(1);
-            }
 
             try
             {
                 $data = $this->doRequest($keyword, $query_params, $is_autoupdate);
-            } catch (\Exception $e)
+            }
+            catch (\Exception $e)
             {
                 if (count($keywords) == 1)
                     throw new \Exception($e->getMessage(), $e->getCode());
@@ -277,5 +283,4 @@ abstract class ParserModule extends Module
 
         return $results;
     }
-
 }

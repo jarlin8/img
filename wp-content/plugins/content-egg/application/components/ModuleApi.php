@@ -13,9 +13,10 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ModuleApi {
+class ModuleApi
+{
 
     const API_BASE = '-module-api';
 
@@ -55,7 +56,7 @@ class ModuleApi {
             $query = wp_unslash($_POST['query']); // phpcs:ignore
         else
             $query = '';
-        
+
         $query = json_decode($query, true);
 
         if (!$query)
@@ -69,9 +70,10 @@ class ModuleApi {
         }
 
         if ($query['keyword'][0] == '[' || filter_var($query['keyword'], FILTER_VALIDATE_URL))
-        {            
+        {
             $keyword = filter_var($query['keyword'], FILTER_SANITIZE_URL);
-        } else
+        }
+        else
         {
             $keyword = sanitize_text_field($query['keyword']);
         }
@@ -107,14 +109,16 @@ class ModuleApi {
                     {
                         $item->price = 0;
                         $item->priceOld = 0;
-                    } elseif (!(float) $item->priceOld)
+                    }
+                    elseif (!(float) $item->priceOld)
                     {
                         $item->priceOld = 0;
                     }
                 }
             }
             $this->formatJson(array('results' => $data, 'error' => ''));
-        } catch (\Exception $e)
+        }
+        catch (\Exception $e)
         {
             $this->formatJson(array('error' => $e->getMessage()));
         }
@@ -126,5 +130,4 @@ class ModuleApi {
         echo json_encode($data);
         \wp_die();
     }
-
 }

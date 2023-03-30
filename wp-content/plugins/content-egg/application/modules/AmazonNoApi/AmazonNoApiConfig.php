@@ -12,9 +12,10 @@ use ContentEgg\application\libs\amazon\AmazonLocales;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class AmazonNoApiConfig extends AffiliateParserModuleConfig {
+class AmazonNoApiConfig extends AffiliateParserModuleConfig
+{
 
     const ALLOWED_LOCALES = array('us', 'ca', 'de', 'es', 'fr', 'in', 'it', 'uk');
 
@@ -62,8 +63,7 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig {
             ),
             'entries_per_page_update' => array(
                 'title' => __('Results for updates', 'content-egg'),
-                'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg') . ' ' .
-                __('It needs a bit more time to get more than 10 results in one request.', 'content-egg'),
+                'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -91,7 +91,7 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig {
             'save_img' => array(
                 'title' => __('Save images', 'content-egg'),
                 'description' => __('Save images to local server', 'content-egg')
-                . ' <p class="description">' . __('Enabling this option may violate API rules.', 'content-egg') . '</p>',
+                    . ' <p class="description">' . __('Enabling this option may violate API rules.', 'content-egg') . '</p>',
                 'callback' => array($this, 'render_checkbox'),
                 'default' => false,
                 'section' => 'default',
@@ -100,7 +100,7 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig {
                 'title' => __('Small logos', 'content-egg'),
                 'callback' => array($this, 'render_dropdown'),
                 'description' => __('Enabling this option may violate API rules.', 'content-egg') . ' '
-                . sprintf(__('Read more: <a target="_blank" href="%s">Amazon brand usage guidelines</a>.', 'content-egg'), 'https://advertising.amazon.com/ad-specs/en/policy/brand-usage'),
+                    . sprintf(__('Read more: <a target="_blank" href="%s">Amazon brand usage guidelines</a>.', 'content-egg'), 'https://advertising.amazon.com/ad-specs/en/policy/brand-usage'),
                 'dropdown_options' => array(
                     'true' => __('Show small logos', 'content-egg'),
                     'false' => __('Hide small logos', 'content-egg'),
@@ -183,5 +183,4 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig {
     {
         return array_intersect_key(AmazonLocales::locales(), array_flip(self::ALLOWED_LOCALES));
     }
-
 }

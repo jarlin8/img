@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Walmart;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -11,10 +11,11 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  */
-class ExtraDataWalmart extends ExtraData {
+class ExtraDataWalmart extends ExtraData
+{
 
 	public $parentItemId;
 	public $comments = array();
@@ -43,5 +44,4 @@ class ExtraDataWalmart extends ExtraData {
 	public $addToCartUrl;
 	public $affiliateAddToCartUrl;
 	public $imageEntities = array();
-
 }

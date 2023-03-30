@@ -14,9 +14,10 @@ use ContentEgg\application\admin\GeneralConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class LocalRedirect {
+class LocalRedirect
+{
 
     const DEFAULT_REDIRECT_PREFIX = 'go';
 
@@ -50,8 +51,8 @@ class LocalRedirect {
                 $goce = sanitize_text_field(urldecode($match[1]));
             else
                 $goce = '';
-            
-        } elseif (isset($_GET[self::getPrefix()]))
+        }
+        elseif (isset($_GET[self::getPrefix()]))
         {
             $goce = sanitize_text_field(wp_unslash($_GET[self::getPrefix()]));
         }
@@ -72,6 +73,14 @@ class LocalRedirect {
             return;
 
         $code = (int) \apply_filters('cegg_local_redirect_code', 301);
+
+
+        if (GeneralConfig::getInstance()->option('redirect_pass_parameters') == 'enabled' && !empty($_SERVER['QUERY_STRING']))
+        {
+            parse_str($_SERVER['QUERY_STRING'], $params);
+            if ($params)
+                $url = \add_query_arg($params, $url);
+        }
 
         \wp_redirect(wp_sanitize_redirect($url), $code); // phpcs:ignore
         exit;
@@ -115,11 +124,13 @@ class LocalRedirect {
         {
             $url = $goce_parts[0];
             $code = $goce_parts[1];
-        } elseif (count($goce_parts) == 3)
+        }
+        elseif (count($goce_parts) == 3)
         {
             $url = $goce_parts[1];
             $code = $goce_parts[2];
-        } else
+        }
+        else
             return false;
 
         if ($code != substr(md5($url), 0, 3))
@@ -200,5 +211,4 @@ class LocalRedirect {
     {
         return base64_decode(strtr($input, '-~,', '+/='));
     }
-
 }

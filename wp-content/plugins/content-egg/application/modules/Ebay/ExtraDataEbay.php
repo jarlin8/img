@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Ebay;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataEbay class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataEbay extends ExtraData {
+class ExtraDataEbay extends ExtraData
+{
 
 	public $pictureURLSuperSize;
 	public $pictureURLLarge;
@@ -49,10 +50,10 @@ class ExtraDataEbay extends ExtraData {
 	public $isMultiVariationListing;
 	public $unitPriceType;
 	public $unitPriceQuantity;
-
 }
 
-class ExtraEbayListingInfo {
+class ExtraEbayListingInfo
+{
 
 	public $bestOfferEnabled;
 	public $buyItNowAvailable;
@@ -65,20 +66,20 @@ class ExtraEbayListingInfo {
 	public $oneDayShippingAvailable;
 	public $handlingTime;
 	public $watchCount;
-
 }
 
-class ExtraEbaySellingStatus {
+class ExtraEbaySellingStatus
+{
 
 	public $currentPrice;
 	public $convertedCurrentPrice;
 	public $sellingState;
 	public $timeLeft;
 	public $bidCount;
-
 }
 
-class ExtraEbayShippingInfo {
+class ExtraEbayShippingInfo
+{
 
 	public $shippingServiceCost;
 	public $shippingType;
@@ -86,23 +87,22 @@ class ExtraEbayShippingInfo {
 	public $expeditedShipping;
 	public $oneDayShippingAvailable;
 	public $handlingTime;
-
 }
 
-class ExtraEbaySeller {
+class ExtraEbaySeller
+{
 
 	public $userID;
 	public $feedbackRatingStar;
 	public $feedbackScore;
 	public $positiveFeedbackPercent;
-
 }
 
-class ExtraEbayHighBidder {
+class ExtraEbayHighBidder
+{
 
 	public $userID;
 	public $feedbackPrivate;
 	public $feedbackRatingStar;
 	public $feedbackScore;
-
 }

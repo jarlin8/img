@@ -9,7 +9,7 @@ defined('\ABSPATH') || exit;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class TextHelper
 {
@@ -31,11 +31,13 @@ class TextHelper
             if (!$middle)
             {
                 return mb_substr($string, 0, $length, $charset) . $etc;
-            } else
-            {
-                return mb_substr($string, 0, $length / 2, $charset) . $etc . mb_substr($string, - $length / 2, $charset);
             }
-        } else
+            else
+            {
+                return mb_substr($string, 0, $length / 2, $charset) . $etc . mb_substr($string, -$length / 2, $charset);
+            }
+        }
+        else
         {
             return $string;
         }
@@ -71,7 +73,8 @@ class TextHelper
         if (isset($options['ending']))
         {
             $defaults['ellipsis'] = $options['ending'];
-        } elseif (!empty($options['html']))
+        }
+        elseif (!empty($options['html']))
         {
             $defaults['ellipsis'] = "\xe2\x80\xa6";
         }
@@ -101,7 +104,8 @@ class TextHelper
                     if (preg_match('/<[\w]+[^>]*>/s', $tag[0]))
                     {
                         array_unshift($openTags, $tag[2]);
-                    } elseif (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag))
+                    }
+                    elseif (preg_match('/<\/([\w]+)[^>]*>/s', $tag[0], $closeTag))
                     {
                         $pos = array_search($closeTag[1], $openTags);
                         if ($pos !== false)
@@ -125,7 +129,8 @@ class TextHelper
                             {
                                 $left--;
                                 $entitiesLength += mb_strlen($entity[0], 'UTF-8');
-                            } else
+                            }
+                            else
                             {
                                 break;
                             }
@@ -134,7 +139,8 @@ class TextHelper
 
                     $truncate .= mb_substr($tag[3], 0, $left + $entitiesLength, 'UTF-8');
                     break;
-                } else
+                }
+                else
                 {
                     $truncate .= $tag[3];
                     $totalLength += $contentLength;
@@ -144,7 +150,8 @@ class TextHelper
                     break;
                 }
             }
-        } else
+        }
+        else
         {
             if (mb_strlen($text, 'UTF-8') <= $length)
             {
@@ -179,7 +186,8 @@ class TextHelper
                                 array_unshift($openTags, $closingTag[1]);
                             }
                         }
-                    } else
+                    }
+                    else
                     {
                         foreach ($droppedTags as $closingTag)
                         {
@@ -315,15 +323,17 @@ class TextHelper
 
     public static function spin($str)
     {
-//$new_str = preg_replace_callback('/\{([^{}]*)\}/uim', array('TextHelper', 'get_random'), $str);
+        //$new_str = preg_replace_callback('/\{([^{}]*)\}/uim', array('TextHelper', 'get_random'), $str);
         $new_str = preg_replace_callback(
-                '/\{([^{}]*)\}/uim', function ($matches)
-                {
-                    $rand = array_rand($split = explode("|", $matches[1]));
+            '/\{([^{}]*)\}/uim',
+            function ($matches)
+            {
+                $rand = array_rand($split = explode("|", $matches[1]));
 
-                    return $split[$rand];
-                }
-                , $str);
+                return $split[$rand];
+            },
+            $str
+        );
         if ($new_str !== $str)
         {
             $str = TextHelper::spin($new_str);
@@ -347,7 +357,7 @@ class TextHelper
         libxml_use_internal_errors(false);
 
         // Get input, loading an xml string with simplexml if its the top level of recursion
-        $data = ( (!$recurse ) && is_string($input) ) ? @simplexml_load_string($input, '\SimpleXMLElement', LIBXML_NOCDATA) : $input;
+        $data = ((!$recurse) && is_string($input)) ? @simplexml_load_string($input, '\SimpleXMLElement', LIBXML_NOCDATA) : $input;
 
         // Convert SimpleXMLElements to array
         if ($data instanceof \SimpleXMLElement)
@@ -365,7 +375,7 @@ class TextHelper
         }
 
         // Run callback and return
-        return (!is_array($data) && is_callable($callback) ) ? call_user_func($callback, $data) : $data;
+        return (!is_array($data) && is_callable($callback)) ? call_user_func($callback, $data) : $data;
     }
 
     static public function br2nl($str)
@@ -396,7 +406,8 @@ class TextHelper
         if ($to_int)
         {
             $p = (int) number_format($p, 2, '', '');
-        } else
+        }
+        else
         {
             if (strlen($p) == 2) // Under $1
             {
@@ -569,7 +580,8 @@ class TextHelper
         if (isset($arr[$go_param]))
         {
             return $arr[$go_param];
-        } else
+        }
+        else
         {
             return '';
         }
@@ -622,12 +634,12 @@ class TextHelper
 
         $digits = (string) $barcode;
         $even_sum = $digits[1] + $digits[3] + $digits[5] +
-                $digits[7] + $digits[9] + $digits[11];
+            $digits[7] + $digits[9] + $digits[11];
         $even_sum_three = $even_sum * 3;
         $odd_sum = $digits[0] + $digits[2] + $digits[4] +
-                $digits[6] + $digits[8] + $digits[10];
+            $digits[6] + $digits[8] + $digits[10];
         $total_sum = $even_sum_three + $odd_sum;
-        $next_ten = ( ceil($total_sum / 10) ) * 10;
+        $next_ten = (ceil($total_sum / 10)) * 10;
         $check_digit = $next_ten - $total_sum;
         if ($check_digit == $digits[12])
         {
@@ -658,7 +670,8 @@ class TextHelper
         if (preg_match('/B[0-9]{2}[0-9A-Z]{7}|[0-9]{9}(X|0-9])|[0-9]{10}|B0B[A-Z0-9]{7}/', $str))
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -686,7 +699,8 @@ class TextHelper
         if ($rating < $min_rating || $rating > $max_rating)
         {
             return null;
-        } else
+        }
+        else
         {
             return $rating;
         }
@@ -1210,7 +1224,8 @@ class TextHelper
         if (isset($url_parts['query']))
         {
             $query = $url_parts['query'];
-        } else
+        }
+        else
         {
             $query = '';
         }
@@ -1235,7 +1250,8 @@ class TextHelper
         if (isset($url_parts['query']))
         {
             $query = $url_parts['query'];
-        } else
+        }
+        else
         {
             $query = '';
         }
@@ -1258,7 +1274,8 @@ class TextHelper
         if ($position !== false && array_key_exists($position + 1, $parts))
         {
             return $parts[$position + 1];
-        } else
+        }
+        else
         {
             return false;
         }
@@ -1323,31 +1340,31 @@ class TextHelper
     public static function isHtmlTagDetected($string)
     {
         if ($string != strip_tags($string))
-        {
             return true;
-        } else
-        {
+        else
             return false;
-        }
     }
 
     public static function findOriginalUrl($url)
     {
         if (!$query = parse_url($url, PHP_URL_QUERY))
-        {
             return '';
-        }
 
         parse_str($query, $params);
+
+        if (isset($params['url']) && $query2 = parse_url($params['url'], PHP_URL_QUERY))
+        {
+            parse_str($query2, $params2);
+            if (isset($params2['origin_link']))
+                return $params2['origin_link'];
+        }
+
         foreach ($params as $param)
         {
             if (filter_var($param, FILTER_VALIDATE_URL))
-            {
                 return $param;
-            }
         }
 
         return false;
     }
-
 }

@@ -3,22 +3,23 @@
 namespace ContentEgg\application\modules\Aliexpress2;
 
 use ContentEgg\application\components\AffiliateParserModuleConfig;
+use ContentEgg\application\Plugin;
 
 /**
  * AliexpressConfig class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2020 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class Aliexpress2Config extends AffiliateParserModuleConfig {
+class Aliexpress2Config extends AffiliateParserModuleConfig
+{
 
     public function options()
     {
-        $optiosn = array(
+        $options = array(
             'app_key' => array(
                 'title' => 'App Key <span class="cegg_required">*</span>',
-                'description' => sprintf(__('Special key to access Aliexpress API. You can apply in the <a href="%s">Aliexpress console</a>.', 'content-egg'), 'https://console.aliexpress.com'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
@@ -33,8 +34,7 @@ class Aliexpress2Config extends AffiliateParserModuleConfig {
             ),
             'app_secret' => array(
                 'title' => 'App Secret <span class="cegg_required">*</span>',
-                'description' => sprintf(__('Special key to access Aliexpress API. You can apply in the <a href="%s">Aliexpress console</a>.', 'content-egg'), 'https://console.aliexpress.com'),
-                'callback' => array($this, 'render_input'),
+                'callback' => array($this, 'render_password'),
                 'default' => '',
                 'validator' => array(
                     'trim',
@@ -44,6 +44,16 @@ class Aliexpress2Config extends AffiliateParserModuleConfig {
                         'message' => sprintf(__('The "%s" can not be empty', 'content-egg'), 'App Secret'),
                     ),
                 ),
+            ),
+            'api_platform' => array(
+                'title' => __('API platform <span class="cegg_required">*</span>', 'content-egg'),
+                'description' => sprintf(__('Select the "Aliexpress open platform" for developer accounts <a target="_blank" href="%s">registered</a> after March 01, 2023, as well as after <a target="_blank" href="%s">migrating</a> your existing account to the new open platform.', 'content-egg'), 'https://open.aliexpress.com/doc/doc.htm?nodeId=27493&docId=118729#/?docId=1234', 'https://open.aliexpress.com/doc/doc.htm?nodeId=27493&docId=118729#/?docId=1236'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'aliexpress' => 'Aliexpress open platform',
+                    'taobao' => 'Taobao open platform',
+                ),
+                'default' => self::getDefaultApiPlatform(),
             ),
             'tracking_id' => array(
                 'title' => 'Tracking ID',
@@ -111,6 +121,7 @@ class Aliexpress2Config extends AffiliateParserModuleConfig {
                     'MXN' => 'MXN',
                     'NGZ' => 'NGZ',
                     'RUB' => 'RUB',
+                    'SAR' => 'SAR',
                     'SEK' => 'SEK',
                     'THB' => 'THB',
                     'TRY' => 'TRY',
@@ -232,35 +243,6 @@ class Aliexpress2Config extends AffiliateParserModuleConfig {
                 ),
                 'default' => '',
             ),
-            /*
-              'ship_to_country' => array(
-              'title' => __('Oversea warehouse', 'content-egg'),
-              'callback' => array($this, 'render_dropdown'),
-              'description' => __('Can be shipped from overseas warehouses, and logistics is highly efficient.', 'content-egg'),
-              'dropdown_options' => array(
-              '' => '- ' . __('Not selected', 'content-egg') . ' -',
-              'AT' => 'Austria',
-              'BE' => 'Belgium',
-              'CZ' => 'Czech Republic',
-              'DE' => 'Germany',
-              'DK' => 'Denmark',
-              'ES' => 'Spain',
-              'FR' => 'France',
-              'HU' => 'Hungary',
-              'IT' => 'Italy',
-              'LU' => 'Luxembourg',
-              'NL' => 'Netherlands',
-              'PL' => 'Poland',
-              'PT' => 'Portugal',
-              'RU' => 'Russia',
-              'SI' => 'Slovenia',
-              'SK' => 'Slovakia',
-              'UK' => 'United Kingdom',
-              ),
-              'default' => '',
-              ),
-             *
-             */
             'save_img' => array(
                 'title' => __('Save images', 'content-egg'),
                 'description' => __('Save images locally', 'content-egg'),
@@ -270,7 +252,17 @@ class Aliexpress2Config extends AffiliateParserModuleConfig {
             ),
         );
 
-        return array_merge(parent::options(), $optiosn);
+        $options = array_merge(parent::options(), $options);
+
+        return self::moveRequiredUp($options);
     }
 
+    private static function getDefaultApiPlatform()
+    {
+        $activation_date = \get_option(Plugin::slug . '_first_activation_date', false);
+        if ($activation_date && $activation_date < 1678609630)
+            return 'taobao';
+        else
+            return 'aliexpress';
+    }
 }

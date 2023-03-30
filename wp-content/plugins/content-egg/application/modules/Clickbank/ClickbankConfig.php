@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Clickbank;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\AffiliateParserModuleConfig;
 
@@ -10,64 +10,66 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  * ClickbankConfig class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ClickbankConfig extends AffiliateParserModuleConfig {
+class ClickbankConfig extends AffiliateParserModuleConfig
+{
 
-	public function options() {
+	public function options()
+	{
 		$optiosn = array(
 			'nickname'                => array(
 				'title'       => 'ClickBank nickname <span class="cegg_required">*</span>',
-				'description' => __( 'Your nickname on ClickBank.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'description' => __('Your nickname on ClickBank.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'required' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'required'),
 						'when'    => 'is_active',
-						'message' => __( 'The field "ClickBank nickname" can not be empty.', 'content-egg' ),
+						'message' => __('The field "ClickBank nickname" can not be empty.', 'content-egg'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'entries_per_page'        => array(
-				'title'       => __( 'Results', 'content-egg' ),
-				'description' => __( 'Number of results for one search query.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results', 'content-egg'),
+				'description' => __('Number of results for one search query.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 10,
 				'validator'   => array(
 					'trim',
 					'absint',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
 						'arg'     => 50,
-						'message' => __( 'The field "Results" can not be more than 50.', 'content-egg' ),
+						'message' => __('The field "Results" can not be more than 50.', 'content-egg'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'entries_per_page_update' => array(
-				'title'       => __( 'Results for updates and autoblogging', 'content-egg' ),
-				'description' => __( 'Number of results for automatic updates and autoblogging.', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Results for updates and autoblogging', 'content-egg'),
+				'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(
 					'trim',
 					'absint',
 					array(
-						'call'    => array( '\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to' ),
+						'call'    => array('\ContentEgg\application\helpers\FormValidator', 'less_than_equal_to'),
 						'arg'     => 50,
-						'message' => __( 'The field "Results" can not be more than 50.', 'content-egg' ),
+						'message' => __('The field "Results" can not be more than 50.', 'content-egg'),
 					),
 				),
 				'section'     => 'default',
 			),
 			'mainCategoryId'          => array(
-				'title'            => __( 'Category ', 'content-egg' ),
+				'title'            => __('Category ', 'content-egg'),
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
 					''      => 'All categories',
 					'1253.' => 'Arts &amp; Entertainment',
@@ -98,9 +100,9 @@ class ClickbankConfig extends AffiliateParserModuleConfig {
 				'section'          => 'default',
 			),
 			'sortField'               => array(
-				'title'            => __( 'Sorting', 'content-egg' ),
+				'title'            => __('Sorting', 'content-egg'),
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
 					''                          => 'Keyword Relevance',
 					'POPULARITY'                => 'Popularity',
@@ -115,9 +117,9 @@ class ClickbankConfig extends AffiliateParserModuleConfig {
 				'section'          => 'default',
 			),
 			'gravityV1'               => array(
-				'title'       => __( 'Minimum Gravity', 'content-egg' ),
+				'title'       => __('Minimum Gravity', 'content-egg'),
 				'description' => '',
-				'callback'    => array( $this, 'render_input' ),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -125,11 +127,11 @@ class ClickbankConfig extends AffiliateParserModuleConfig {
 				'section'     => 'default',
 			),
 			'productLanguages'        => array(
-				'title'            => __( 'Language', 'content-egg' ),
+				'title'            => __('Language', 'content-egg'),
 				'description'      => '',
-				'callback'         => array( $this, 'render_dropdown' ),
+				'callback'         => array($this, 'render_dropdown'),
 				'dropdown_options' => array(
-					''   => __( 'Any', 'content-egg' ),
+					''   => __('Any', 'content-egg'),
 					'EN' => 'English',
 					'DE' => 'German',
 					'ES' => 'Spanish',
@@ -156,9 +158,9 @@ class ClickbankConfig extends AffiliateParserModuleConfig {
 			 *
 			 */
 			'description_size'        => array(
-				'title'       => __( 'Trim description', 'content-egg' ),
-				'description' => __( 'Description size in characters (0 - do not cut)', 'content-egg' ),
-				'callback'    => array( $this, 'render_input' ),
+				'title'       => __('Trim description', 'content-egg'),
+				'description' => __('Description size in characters (0 - do not cut)', 'content-egg'),
+				'callback'    => array($this, 'render_input'),
 				'default'     => '0',
 				'validator'   => array(
 					'trim',
@@ -168,9 +170,8 @@ class ClickbankConfig extends AffiliateParserModuleConfig {
 			),
 		);
 		$parent  = parent::options();
-		unset( $parent['featured_image'] );
+		unset($parent['featured_image']);
 
-		return array_merge( $parent, $optiosn );
+		return array_merge($parent, $optiosn);
 	}
-
 }

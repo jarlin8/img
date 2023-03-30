@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\TradedoublerProducts;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataTradedoublerProducts class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2016 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataTradedoublerProducts extends ExtraData {
+class ExtraDataTradedoublerProducts extends ExtraData
+{
 
 	public $language;
 	public $fields;
@@ -25,5 +26,4 @@ class ExtraDataTradedoublerProducts extends ExtraData {
 	public $shippingCost;
 	public $sourceProductId;
 	public $programLogo;
-
 }

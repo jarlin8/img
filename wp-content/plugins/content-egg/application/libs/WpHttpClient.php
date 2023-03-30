@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\libs;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 /**
  * WpHttpClient class file
@@ -11,11 +11,12 @@ defined( '\ABSPATH' ) || exit;
  * @link: http://framework.zend.com/manual/1.12/ru/zend.http.client.html
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  */
-class WpHttpClient {
+class WpHttpClient
+{
 
 	/**
 	 * HTTP request methods
@@ -97,31 +98,42 @@ class WpHttpClient {
 	/**
 	 * Set the URI for the next request
 	 */
-	public function setUri( $uri ) {
+	public function setUri($uri)
+	{
 		$this->uri = $uri;
 	}
 
 	/**
 	 * Get the URI for the next request
 	 */
-	public function getUri( $as_string = false ) {
+	public function getUri($as_string = false)
+	{
 		return $this->uri;
 	}
 
-	public function setHeaders( $name, $value = null ) {
+	public function setHeaders($name, $value = null)
+	{
 		// If we got an array, go recusive!
-		if ( is_array( $name ) ) {
-			foreach ( $name as $k => $v ) {
-				if ( is_string( $k ) ) {
-					$this->setHeaders( $k, $v );
-				} else {
-					$this->setHeaders( $v, null );
+		if (is_array($name))
+		{
+			foreach ($name as $k => $v)
+			{
+				if (is_string($k))
+				{
+					$this->setHeaders($k, $v);
+				}
+				else
+				{
+					$this->setHeaders($v, null);
 				}
 			}
-		} else {
+		}
+		else
+		{
 			// Check if $name needs to be split
-			if ( $value === null && ( strpos( $name, ':' ) > 0 ) ) {
-				list( $name, $value ) = explode( ':', $name, 2 );
+			if ($value === null && (strpos($name, ':') > 0))
+			{
+				list($name, $value) = explode(':', $name, 2);
 			}
 
 			// Make sure the name is valid if we are in strict mode
@@ -133,17 +145,21 @@ class WpHttpClient {
 			 *
 			 */
 
-			$normalized_name = strtolower( $name );
+			$normalized_name = strtolower($name);
 
 			// If $value is null or false, unset the header
-			if ( $value === null || $value === false ) {
-				unset( $this->headers[ $normalized_name ] );
-			} else {
+			if ($value === null || $value === false)
+			{
+				unset($this->headers[$normalized_name]);
+			}
+			else
+			{
 				// Header names are storred lowercase internally.
-				if ( is_string( $value ) ) {
-					$value = trim( $value );
+				if (is_string($value))
+				{
+					$value = trim($value);
 				}
-				$this->headers[ $normalized_name ] = array( $name, $value );
+				$this->headers[$normalized_name] = array($name, $value);
 			}
 		}
 	}
@@ -158,11 +174,15 @@ class WpHttpClient {
 	 *
 	 * @return string|array|null The header value or null if it is not set
 	 */
-	public function getHeader( $key ) {
-		$key = strtolower( $key );
-		if ( isset( $this->headers[ $key ] ) ) {
-			return $this->headers[ $key ][1];
-		} else {
+	public function getHeader($key)
+	{
+		$key = strtolower($key);
+		if (isset($this->headers[$key]))
+		{
+			return $this->headers[$key][1];
+		}
+		else
+		{
 			return null;
 		}
 	}
@@ -170,10 +190,12 @@ class WpHttpClient {
 	/**
 	 * Set the next request's method
 	 */
-	public function setMethod( $method = self::GET ) {
+	public function setMethod($method = self::GET)
+	{
 
-		if ( $method !== self::GET && $method !== self::POST ) {
-			throw new \Exception( 'Only GET and POST methods avalible.' );
+		if ($method !== self::GET && $method !== self::POST)
+		{
+			throw new \Exception('Only GET and POST methods avalible.');
 		}
 
 		$this->method = $method;
@@ -187,13 +209,18 @@ class WpHttpClient {
 	 *
 	 * @return EHttpClient
 	 */
-	public function setParameterGet( $name, $value = null ) {
-		if ( is_array( $name ) ) {
-			foreach ( $name as $k => $v ) {
-				$this->_setParameter( 'GET', $k, $v );
+	public function setParameterGet($name, $value = null)
+	{
+		if (is_array($name))
+		{
+			foreach ($name as $k => $v)
+			{
+				$this->_setParameter('GET', $k, $v);
 			}
-		} else {
-			$this->_setParameter( 'GET', $name, $value );
+		}
+		else
+		{
+			$this->_setParameter('GET', $name, $value);
 		}
 	}
 
@@ -203,13 +230,18 @@ class WpHttpClient {
 	 * @param string|array $name
 	 * @param string $value
 	 */
-	public function setParameterPost( $name, $value = null ) {
-		if ( is_array( $name ) ) {
-			foreach ( $name as $k => $v ) {
-				$this->_setParameter( 'POST', $k, $v );
+	public function setParameterPost($name, $value = null)
+	{
+		if (is_array($name))
+		{
+			foreach ($name as $k => $v)
+			{
+				$this->_setParameter('POST', $k, $v);
 			}
-		} else {
-			$this->_setParameter( 'POST', $name, $value );
+		}
+		else
+		{
+			$this->_setParameter('POST', $name, $value);
 		}
 	}
 
@@ -222,10 +254,12 @@ class WpHttpClient {
 	 *
 	 * @return null
 	 */
-	protected function _setParameter( $type, $name, $value ) {
+	protected function _setParameter($type, $name, $value)
+	{
 		$parray = array();
-		$type   = strtolower( $type );
-		switch ( $type ) {
+		$type   = strtolower($type);
+		switch ($type)
+		{
 			case 'get':
 				$parray = &$this->paramsGet;
 				break;
@@ -234,28 +268,36 @@ class WpHttpClient {
 				break;
 		}
 
-		if ( $value === null ) {
-			if ( isset( $parray[ $name ] ) ) {
-				unset( $parray[ $name ] );
+		if ($value === null)
+		{
+			if (isset($parray[$name]))
+			{
+				unset($parray[$name]);
 			}
-		} else {
-			$parray[ $name ] = $value;
+		}
+		else
+		{
+			$parray[$name] = $value;
 		}
 	}
 
-	public function setTimeout( $value ) {
+	public function setTimeout($value)
+	{
 		$this->timeout = $value;
 	}
 
-	public function setSslVerify( $value ) {
+	public function setSslVerify($value)
+	{
 		$this->sslverify = $value;
 	}
 
-	public function setUserAgent( $value ) {
+	public function setUserAgent($value)
+	{
 		$this->useragent = $value;
 	}
 
-	public function setRedirection( $value ) {
+	public function setRedirection($value)
+	{
 		$this->redirection = $value;
 	}
 
@@ -264,15 +306,18 @@ class WpHttpClient {
 	 *
 	 * @return string
 	 */
-	protected function _prepareBody() {
+	protected function _prepareBody()
+	{
 		// According to RFC2616, a TRACE request should not have a body.
-		if ( $this->method == self::TRACE ) {
+		if ($this->method == self::TRACE)
+		{
 			return '';
 		}
 
 		// If we have raw_post_data set, just use it as the body.
-		if ( isset( $this->raw_post_data ) ) {
-			$this->setHeaders( 'Content-length', strlen( $this->raw_post_data ) );
+		if (isset($this->raw_post_data))
+		{
+			$this->setHeaders('Content-length', strlen($this->raw_post_data));
 
 			return $this->raw_post_data;
 		}
@@ -280,16 +325,18 @@ class WpHttpClient {
 		$body = '';
 
 		// If we have POST parameters, encode and add them to the body
-		if ( count( $this->paramsPost ) > 0 ) {
+		if (count($this->paramsPost) > 0)
+		{
 
 			// Encode body as application/x-www-form-urlencoded
-			$this->setHeaders( 'Content-type', self::ENC_URLENCODED );
-			$body = http_build_query( $this->paramsPost, '', '&' );
+			$this->setHeaders('Content-type', self::ENC_URLENCODED);
+			$body = http_build_query($this->paramsPost, '', '&');
 		}
 
 		// Set the content-length if we have a body or if request is POST/PUT
-		if ( $body || $this->method == self::POST || $this->method == self::PUT ) {
-			$this->setHeaders( 'Content-length', strlen( $body ) );
+		if ($body || $this->method == self::POST || $this->method == self::PUT)
+		{
+			$this->setHeaders('Content-length', strlen($body));
 		}
 
 		return $body;
@@ -300,63 +347,80 @@ class WpHttpClient {
 	 *
 	 * @return array
 	 */
-	protected function _prepareHeaders() {
+	protected function _prepareHeaders()
+	{
 		$headers = array();
 		// Set the host header
-		if ( ! isset( $this->headers['host'] ) ) {
-			$host            = parse_url( $this->uri, PHP_URL_HOST );
+		if (!isset($this->headers['host']))
+		{
+			$host            = parse_url($this->uri, PHP_URL_HOST);
 			$headers['Host'] = "{$host}";
 		}
 
 		// Set the connection header
-		if ( ! isset( $this->headers['connection'] ) ) {
+		if (!isset($this->headers['connection']))
+		{
 			$headers['Connection'] = "close";
 		}
 
 		// Set the Accept-encoding header if not set - depending on whether
 		// zlib is available or not.
-		if ( ! isset( $this->headers['accept-encoding'] ) ) {
-			if ( function_exists( 'gzinflate' ) ) {
+		if (!isset($this->headers['accept-encoding']))
+		{
+			if (function_exists('gzinflate'))
+			{
 				$headers['Accept-encoding'] = 'gzip, deflate';
-			} else {
+			}
+			else
+			{
 				$headers['Accept-encoding'] = 'identity';
 			}
 		}
 
 		// Set the content-type header
-		if ( $this->method == self::POST &&
-		     ( ! isset( $this->headers['content-type'] ) && isset( $this->enctype ) ) ) {
+		if (
+			$this->method == self::POST &&
+			(!isset($this->headers['content-type']) && isset($this->enctype))
+		)
+		{
 
 			$headers['Content-type'] = "{$this->enctype}";
 		}
 
 		// Add all other user defined headers
-		foreach ( $this->headers as $header ) {
-			list( $name, $value ) = $header;
-			if ( is_array( $value ) ) {
-				$value = implode( ', ', $value );
+		foreach ($this->headers as $header)
+		{
+			list($name, $value) = $header;
+			if (is_array($value))
+			{
+				$value = implode(', ', $value);
 			}
 
-			$headers[ $name ] = $value;
+			$headers[$name] = $value;
 		}
 
 		return $headers;
 	}
 
-	protected function _prepareParams() {
+	protected function _prepareParams()
+	{
 		$options           = array();
 		$options['method'] = $this->method;
 
-		if ( $this->timeout !== null ) {
+		if ($this->timeout !== null)
+		{
 			$options['timeout'] = $this->timeout;
 		}
-		if ( $this->sslverify !== null ) {
+		if ($this->sslverify !== null)
+		{
 			$options['sslverify'] = $this->sslverify;
 		}
-		if ( $this->useragent !== null ) {
+		if ($this->useragent !== null)
+		{
 			$options['user-agent'] = $this->useragent;
 		}
-		if ( $this->redirection !== null ) {
+		if ($this->redirection !== null)
+		{
 			$options['redirection'] = $this->redirection;
 		}
 
@@ -366,32 +430,40 @@ class WpHttpClient {
 		return $options;
 	}
 
-	public function request( $method = null ) {
-		if ( ! $this->uri ) {
-			throw new \Exception( 'No valid URI has been passed to the client' );
+	public function request($method = null)
+	{
+		if (!$this->uri)
+		{
+			throw new \Exception('No valid URI has been passed to the client');
 		}
 
-		if ( $method ) {
-			$this->setMethod( $method );
+		if ($method)
+		{
+			$this->setMethod($method);
 		}
 
 		// Add the additional GET parameters to uri
-		if ( ! empty( $this->paramsGet ) ) {
-			$query = parse_url( $this->uri, PHP_URL_QUERY );
-			if ( ! empty( $query ) ) {
+		if (!empty($this->paramsGet))
+		{
+			$query = parse_url($this->uri, PHP_URL_QUERY);
+			if (!empty($query))
+			{
 				$this->uri .= '&';
-			} else {
+			}
+			else
+			{
 				$this->uri .= '?';
 			}
-			$this->uri .= http_build_query( $this->paramsGet, null, '&' );
+			$this->uri .= http_build_query($this->paramsGet, null, '&');
 		}
 
-		$this->last_response = \wp_remote_request( $this->uri, $this->_prepareParams() );
+		$this->last_response = \wp_remote_request($this->uri, $this->_prepareParams());
 
 		return $this->last_response;
 	}
 
-	public function setRawData( $data, $enctype = null ) {
+	public function setRawData($data, $enctype = null)
+	{
 		$this->raw_post_data = $data;
 		//$this->setEncType($enctype);
 	}
@@ -403,17 +475,20 @@ class WpHttpClient {
 	 * used for several concurrent requests.
 	 *
 	 */
-	public function resetParameters() {
+	public function resetParameters()
+	{
 		// Reset parameter data
 		$this->paramsGet     = array();
 		$this->paramsPost    = array();
 		$this->raw_post_data = null;
 
 		// Reset headers
-		$allowed_headers = array( 'accept-charset' );
-		foreach ( $this->headers as $header => $val ) {
-			if ( ! in_array( $header, $allowed_headers ) ) {
-				unset( $this->headers[ $header ] );
+		$allowed_headers = array('accept-charset');
+		foreach ($this->headers as $header => $val)
+		{
+			if (!in_array($header, $allowed_headers))
+			{
+				unset($this->headers[$header]);
 			}
 		}
 	}
@@ -432,8 +507,8 @@ class WpHttpClient {
 	/**
 	 * Get the last HTTP response received by this client
 	 */
-	public function getLastResponse() {
+	public function getLastResponse()
+	{
 		return $this->last_response;
 	}
-
 }

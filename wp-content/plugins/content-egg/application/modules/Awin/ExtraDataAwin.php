@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Awin;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -11,10 +11,11 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2019 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  *
  */
-class ExtraDataAwin extends ExtraData {
+class ExtraDataAwin extends ExtraData
+{
 
 	public $merchant_product_id;
 	public $merchant_id;
@@ -31,5 +32,4 @@ class ExtraDataAwin extends ExtraData {
 	public $is_for_sale;
 	public $web_offer;
 	public $pre_order;
-
 }

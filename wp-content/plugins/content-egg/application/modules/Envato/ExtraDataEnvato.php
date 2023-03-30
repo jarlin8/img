@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Envato;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataEnvato class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2017 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataEnvato extends ExtraData {
+class ExtraDataEnvato extends ExtraData
+{
 
 	public $classification_url;
 	public $number_of_sales;
@@ -26,5 +27,4 @@ class ExtraDataEnvato extends ExtraData {
 	public $trending;
 	public $previews = array();
 	public $tags = array();
-
 }

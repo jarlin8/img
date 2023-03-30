@@ -7,15 +7,17 @@ defined('\ABSPATH') || exit;
 use \ContentEgg\application\Plugin;
 use \ContentEgg\application\helpers\TextHelper;
 use \ContentEgg\application\admin\AeIntegrationConfig;
+use ContentEgg\application\components\LManager;
 
 /**
  * ModuleManager class file
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ModuleManager {
+class ModuleManager
+{
 
     const DEFAULT_MODULES_DIR = 'application/modules';
     const AE_MODULES_PREFIX = 'AE';
@@ -141,7 +143,7 @@ class ModuleManager {
 
         $founded_modules = array();
 
-        while (( $m_dir = readdir($folder_handle) ) !== false)
+        while (($m_dir = readdir($folder_handle)) !== false)
         {
             if ($m_dir == '.' || $m_dir == '..')
             {
@@ -189,6 +191,9 @@ class ModuleManager {
 
     private function getFeedModules()
     {
+        if (Plugin::isActivated() && LManager::isNulled())
+            return array();
+
         $result = array();
 
         for ($i = 1; $i <= self::MAX_NUM_FEED_MODULES; $i++)
@@ -196,7 +201,8 @@ class ModuleManager {
             if (get_option('content-egg_Feed__' . $i))
             {
                 $result[] = self::FEED_MODULES_PREFIX . '__' . $i;
-            } else
+            }
+            else
             {
                 break;
             }
@@ -205,7 +211,8 @@ class ModuleManager {
         if (Plugin::isFree())
         {
             $max = 3;
-        } else
+        }
+        else
         {
             $max = self::MAX_NUM_FEED_MODULES;
         }
@@ -224,7 +231,8 @@ class ModuleManager {
         if (in_array($module_id, self::$custom_modules))
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -238,7 +246,8 @@ class ModuleManager {
             if (self::isCustomModule($module_id))
             {
                 $module_class = "\\ContentEggCustomModule\\" . $path_prefix . "\\" . $path_prefix . 'Module';
-            } else
+            }
+            else
             {
                 $module_class = "\\ContentEgg\\application\\modules\\" . $path_prefix . "\\" . $path_prefix . 'Module';
             }
@@ -250,7 +259,7 @@ class ModuleManager {
 
             $module = new $module_class($module_id);
 
-            if (!( $module instanceof \ContentEgg\application\components\Module ))
+            if (!($module instanceof \ContentEgg\application\components\Module))
             {
                 throw new \Exception("The module '{$module_id}' must inherit from Module.");
             }
@@ -269,7 +278,7 @@ class ModuleManager {
     public static function parserFactory($module_id)
     {
         $module = self::factory($module_id);
-        if (!( $module instanceof \ContentEgg\application\components\ParserModule ))
+        if (!($module instanceof \ContentEgg\application\components\ParserModule))
         {
             throw new \Exception("The parser module '{$module_id}' must inherit from ParserModule.");
         }
@@ -286,7 +295,8 @@ class ModuleManager {
             if (self::isCustomModule($module_id))
             {
                 $config_class = "\\ContentEggCustomModule\\" . $path_prefix . "\\" . $path_prefix . 'Config';
-            } else
+            }
+            else
             {
                 $config_class = "\\ContentEgg\\application\\modules\\" . $path_prefix . "\\" . $path_prefix . 'Config';
             }
@@ -300,13 +310,14 @@ class ModuleManager {
 
             if (self::factory($module_id)->isParser())
             {
-                if (!( $config instanceof \ContentEgg\application\components\ParserModuleConfig ))
+                if (!($config instanceof \ContentEgg\application\components\ParserModuleConfig))
                 {
                     throw new \Exception("The parser module config '{$config_class}' must inherit from ParserModuleConfig.");
                 }
-            } else
+            }
+            else
             {
-                if (!( $config instanceof \ContentEgg\application\components\ModuleConfig ))
+                if (!($config instanceof \ContentEgg\application\components\ModuleConfig))
                 {
                     throw new \Exception("The module config '{$config_class}' must inherit from ModuleConfig.");
                 }
@@ -323,7 +334,8 @@ class ModuleManager {
         if ($only_active)
         {
             return self::$active_modules;
-        } else
+        }
+        else
         {
             return self::$modules;
         }
@@ -424,7 +436,8 @@ class ModuleManager {
         if (isset(self::$modules[$module_id]))
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -435,7 +448,8 @@ class ModuleManager {
         if (isset(self::$active_modules[$module_id]))
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -497,28 +511,11 @@ class ModuleManager {
     {
         $results = array();
         $modules = ModuleManager::getInstance()->getAffiliateParsers($only_active);
-        $feeds = array();
         foreach ($modules as $module_id => $module)
         {
-            /*
-              if ($module->isFeedParser())
-              $feeds[$module_id] = $module->getName();
-              else
-             *
-             */
             $results[$module_id] = $module->getName();
         }
 
-        /*
-          if ($feeds)
-          {
-          array_pop($feeds);
-          $results = array_merge($results, $feeds);
-          }
-         *
-         */
-
         return $results;
     }
-
 }

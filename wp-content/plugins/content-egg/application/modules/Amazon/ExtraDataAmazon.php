@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Amazon;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -11,9 +11,10 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2019 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataAmazon extends ExtraData {
+class ExtraDataAmazon extends ExtraData
+{
 
 	public $locale;
 	public $associate_tag;
@@ -39,5 +40,4 @@ class ExtraDataAmazon extends ExtraData {
 	public $totalUsed;
 	public $UPCs = array();
 	public $EANs = array();
-
 }

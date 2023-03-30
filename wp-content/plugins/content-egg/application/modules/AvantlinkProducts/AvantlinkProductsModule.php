@@ -16,7 +16,7 @@ use ContentEgg\application\modules\AvantlinkProducts\ExtraDataAvantlinkProducts;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class AvantlinkProductsModule extends AffiliateParserModule
 {
@@ -39,7 +39,7 @@ class AvantlinkProductsModule extends AffiliateParserModule
         'GunMag Warehouse' => 'gunmagwarehouse.com',
         'Alien Gear Holsters' => 'aliengearholsters.com',
     );
-    
+
     private $api_client = null;
 
     public function info()
@@ -77,7 +77,8 @@ class AvantlinkProductsModule extends AffiliateParserModule
         if ($is_autoupdate)
         {
             $limit = $this->config('entries_per_page_update');
-        } else
+        }
+        else
         {
             $limit = $this->config('entries_per_page');
         }
@@ -87,7 +88,8 @@ class AvantlinkProductsModule extends AffiliateParserModule
         if (!empty($query_params['search_price_minimum']))
         {
             $options['search_price_minimum'] = (float) $query_params['search_price_minimum'];
-        } elseif ($this->config('search_price_minimum'))
+        }
+        elseif ($this->config('search_price_minimum'))
         {
             $options['search_price_minimum'] = (float) $this->config('search_price_minimum');
         }
@@ -95,7 +97,8 @@ class AvantlinkProductsModule extends AffiliateParserModule
         if (!empty($query_params['search_price_maximum']))
         {
             $options['search_price_maximum'] = (float) $query_params['search_price_maximum'];
-        } elseif ($this->config('search_price_maximum'))
+        }
+        elseif ($this->config('search_price_maximum'))
         {
             $options['search_price_maximum'] = (float) $this->config('search_price_maximum');
         }
@@ -169,7 +172,8 @@ class AvantlinkProductsModule extends AffiliateParserModule
             if ($r['strCategoryName'])
             {
                 $content->category = $r['strCategoryName'];
-            } elseif ($r['strDepartmentName'])
+            }
+            elseif ($r['strDepartmentName'])
             {
                 $content->category = $r['strDepartmentName'];
             }
@@ -177,7 +181,8 @@ class AvantlinkProductsModule extends AffiliateParserModule
             if ($r['txtLongDescription'])
             {
                 $content->description = strip_tags($r['txtLongDescription']);
-            } elseif ($r['txtShortDescription'])
+            }
+            elseif ($r['txtShortDescription'])
             {
                 $content->description = strip_tags($r['txtShortDescription']);
             }
@@ -189,7 +194,8 @@ class AvantlinkProductsModule extends AffiliateParserModule
             if ($r['strLargeImage'])
             {
                 $content->img = $r['strLargeImage'];
-            } elseif ($r['strMediumImage'])
+            }
+            elseif ($r['strMediumImage'])
             {
                 $content->img = $r['strMediumImage'];
             }
@@ -275,5 +281,4 @@ class AvantlinkProductsModule extends AffiliateParserModule
     {
         $this->render('update_panel', array('module_id' => $this->getId()));
     }
-
 }

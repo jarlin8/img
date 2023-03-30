@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Twitter;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,16 +10,17 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataTwitter class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataTwitter extends ExtraData {
+class ExtraDataTwitter extends ExtraData
+{
 
 	public $links = array();
-
 }
 
-class ExtraTwitterLinks {
+class ExtraTwitterLinks
+{
 
 	public $userId;
 	public $statusesCount;
@@ -27,5 +28,4 @@ class ExtraTwitterLinks {
 	public $friendsCount;
 	public $media;
 	public $profileImage;
-
 }

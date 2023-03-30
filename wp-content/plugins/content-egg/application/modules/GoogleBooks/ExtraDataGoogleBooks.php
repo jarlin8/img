@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\GoogleBooks;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataGoogleBooks class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataGoogleBooks extends ExtraData {
+class ExtraDataGoogleBooks extends ExtraData
+{
 
 	public $isbn = array();
 	public $language;
@@ -24,5 +25,4 @@ class ExtraDataGoogleBooks extends ExtraData {
 	public $printType;
 	public $categories;
 	public $publisher;
-
 }

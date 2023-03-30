@@ -15,7 +15,7 @@ use ContentEgg\application\helpers\TemplateHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2021 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class EggShortcode
 {
@@ -47,6 +47,7 @@ class EggShortcode
             'next' => 0,
             'template' => '',
             'locale' => '',
+            'ean' => '',
             'title' => '',
             'post_id' => 0,
             'cols' => 0,
@@ -79,6 +80,7 @@ class EggShortcode
         $a['groups'] = \sanitize_text_field($a['groups']);
         $a['group'] = \sanitize_text_field($a['group']);
         $a['hide'] = TemplateHelper::hideParamPrepare($a['hide']);
+        $a['ean'] = TemplateHelper::eanParamPrepare($a['ean']);
         $a['btn_text'] = \wp_strip_all_tags($a['btn_text'], true);
         $a['add_query_arg'] = \sanitize_text_field(\wp_strip_all_tags($a['add_query_arg'], true));
         if ($a['group'] && !$a['groups'])
@@ -118,13 +120,18 @@ class EggShortcode
         if (empty($a['module']))
             return;
 
+        $post_id = null;
         if (empty($a['post_id']))
         {
             global $post;
-            $post_id = $post->ID;
+            if (!empty($post))
+                $post_id = $post->ID;
         }
         else
             $post_id = $a['post_id'];
+
+        if (!$post_id)
+            return array();
 
         $module_id = $a['module'];
         if (!ModuleManager::getInstance()->isModuleActive($module_id))

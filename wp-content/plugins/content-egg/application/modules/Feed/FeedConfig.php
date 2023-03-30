@@ -13,7 +13,7 @@ use ContentEgg\application\helpers\TextHelper;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class FeedConfig extends AffiliateFeedParserModuleConfig
 {
@@ -44,7 +44,7 @@ class FeedConfig extends AffiliateFeedParserModuleConfig
             'feed_url' => array(
                 'title' => __('Feed download URL', 'content-egg') . ' <span class="cegg_required">*</span>',
                 'description' => __('CSV or XML format.', 'content-egg') . ' ' .
-                sprintf(__('Make sure your unzipped feed size is less than %s.', 'content-egg'), \WP_MAX_MEMORY_LIMIT),
+                    sprintf(__('Make sure your unzipped feed size is less than %s.', 'content-egg'), \WP_MAX_MEMORY_LIMIT),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
@@ -142,11 +142,19 @@ class FeedConfig extends AffiliateFeedParserModuleConfig
                 'title' => __('Search type', 'content-egg') . ' <span class="cegg_required">*</span>',
                 'callback' => array($this, 'render_dropdown'),
                 'dropdown_options' => array(
-                    'full' => 'Full text search',
+                    'full' => 'Full text search (relevance)',
+                    'strict' => 'Full text search (strict mode)',
                     'exact' => 'Exact phrase search',
                 ),
                 'default' => 'full',
-            ),            
+            ),
+            'in_stock' => array(
+                'title' => __('In stock', 'content-egg'),
+                'description' => __('Search only products in stock.', 'content-egg'),
+                'callback' => array($this, 'render_checkbox'),
+                'default' => true,
+                'section' => 'default',
+            ),
         );
         $options = array_merge(parent::options(), $options);
 
@@ -163,10 +171,12 @@ class FeedConfig extends AffiliateFeedParserModuleConfig
         if ($field_name == 'product node')
         {
             $display_name .= ' ' . __('(required for XML/JSON feed only)', 'content-egg');
-        } elseif (self::isMappingFieldRequared($field_name))
+        }
+        elseif (self::isMappingFieldRequared($field_name))
         {
             $display_name .= ' ' . __('(required)', 'content-egg');
-        } else
+        }
+        else
         {
             $display_name .= ' ' . __('(optional)', 'content-egg');
         }
@@ -175,8 +185,8 @@ class FeedConfig extends AffiliateFeedParserModuleConfig
         echo '<input value="' . \esc_attr($display_name) . '" class="regular-text ltr" type="text" readonly />';
         echo ' &#x203A; ';
         echo '<input name="' . \esc_attr($args['option_name']) . '['
-        . \esc_attr($args['name']) . '][' . \esc_attr($field_name) . ']" value="'
-        . \esc_attr($value) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('In your feed', 'content-egg')) . '"  type="text"/>';
+            . \esc_attr($args['name']) . '][' . \esc_attr($field_name) . ']" value="'
+            . \esc_attr($value) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('In your feed', 'content-egg')) . '"  type="text"/>';
     }
 
     public function render_mapping_block($args)
@@ -226,7 +236,8 @@ class FeedConfig extends AffiliateFeedParserModuleConfig
         if (isset($fields[$field]) && $fields[$field])
         {
             return true;
-        } else
+        }
+        else
         {
             return false;
         }
@@ -282,10 +293,10 @@ class FeedConfig extends AffiliateFeedParserModuleConfig
         if (filter_var($value, FILTER_VALIDATE_URL) === false)
         {
             return false;
-        } else
+        }
+        else
         {
             return true;
         }
     }
-
 }

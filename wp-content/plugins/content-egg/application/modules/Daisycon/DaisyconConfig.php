@@ -11,7 +11,7 @@ use ContentEgg\application\components\AffiliateFeedParserModuleConfig;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class DaisyconConfig extends AffiliateFeedParserModuleConfig
 {
@@ -34,7 +34,7 @@ class DaisyconConfig extends AffiliateFeedParserModuleConfig
                 ),
             ),
             'publisher_id' => array(
-                'title' => 'Publisher ID',
+                'title' => 'Publisher ID (deprecated)',
                 'description' => __('Your Daisycon publisher ID.', 'content-egg') . ' ' . __('Go to SETTINGS -> Account.', 'content-egg') . ' ' . __('It will be used for API authentication to retrieve certain campaign settings (currency and domain name).', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
@@ -43,7 +43,7 @@ class DaisyconConfig extends AffiliateFeedParserModuleConfig
                 ),
             ),
             'username' => array(
-                'title' => 'Email address',
+                'title' => 'Email address (deprecated)',
                 'description' => __('Your Daisycon email address.', 'content-egg') . ' ' . __('It will be used for API authentication to retrieve certain campaign settings (currency and domain name).', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
@@ -52,7 +52,7 @@ class DaisyconConfig extends AffiliateFeedParserModuleConfig
                 ),
             ),
             'password' => array(
-                'title' => 'Password',
+                'title' => 'Password (deprecated)',
                 'description' => __('Your Daisycon password.', 'content-egg') . ' ' . __('It will be used for API authentication to retrieve certain campaign settings (currency and domain name)..', 'content-egg'),
                 'callback' => array($this, 'render_password'),
                 'default' => '',
@@ -110,5 +110,4 @@ class DaisyconConfig extends AffiliateFeedParserModuleConfig
 
         return self::moveRequiredUp($options);
     }
-
 }

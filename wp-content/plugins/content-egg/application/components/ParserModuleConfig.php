@@ -8,10 +8,11 @@ defined('\ABSPATH') || exit;
  * ParserModuleConfig abstract class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-abstract class ParserModuleConfig extends ModuleConfig {
+abstract class ParserModuleConfig extends ModuleConfig
+{
 
     public function options()
     {
@@ -44,7 +45,7 @@ abstract class ParserModuleConfig extends ModuleConfig {
             'priority' => array(
                 'title' => __('Priority', 'content-egg'),
                 'description' => __('Priority sets order of modules in post. 0 - is the most highest priority.', 'content-egg') . ' ' .
-                __('Also it applied to price sorting.', 'content-egg'),
+                    __('Also it applied to price sorting.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -102,7 +103,8 @@ abstract class ParserModuleConfig extends ModuleConfig {
         if ($requirements = $this->getModuleInstance()->requirements())
         {
             return false;
-        } else
+        }
+        else
         {
             return true;
         }
@@ -133,5 +135,4 @@ abstract class ParserModuleConfig extends ModuleConfig {
 
         return $res;
     }
-
 }

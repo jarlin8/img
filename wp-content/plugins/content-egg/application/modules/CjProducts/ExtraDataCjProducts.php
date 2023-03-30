@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\CjProducts;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -11,9 +11,10 @@ use ContentEgg\application\components\ExtraData;
  *
  * @author keywordrush.com <support@keywordrush.com>
  * @link https://www.keywordrush.com
- * @copyright Copyright &copy; 2020 keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataCjProducts extends ExtraData {
+class ExtraDataCjProducts extends ExtraData
+{
 
 	public $advertiserId;
 	public $advertiserName;
@@ -43,5 +44,4 @@ class ExtraDataCjProducts extends ExtraData {
 	public $mpn;
 	public $unitPricingBaseMeasure;
 	public $unitPricingMeasure;
-
 }

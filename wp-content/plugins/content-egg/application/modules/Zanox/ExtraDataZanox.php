@@ -2,7 +2,7 @@
 
 namespace ContentEgg\application\modules\Zanox;
 
-defined( '\ABSPATH' ) || exit;
+defined('\ABSPATH') || exit;
 
 use ContentEgg\application\components\ExtraData;
 
@@ -10,10 +10,11 @@ use ContentEgg\application\components\ExtraData;
  * ExtraDataZanox class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class ExtraDataZanox extends ExtraData {
+class ExtraDataZanox extends ExtraData
+{
 
 	public $modified;
 	public $deliveryTime;
@@ -23,5 +24,4 @@ class ExtraDataZanox extends ExtraData {
 	public $merchantProductId;
 	public $trackingImg;
 	public $programId;
-
 }

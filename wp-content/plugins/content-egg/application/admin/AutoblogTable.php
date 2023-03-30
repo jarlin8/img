@@ -10,27 +10,29 @@ use ContentEgg\application\models\AutoblogModel;
  * AutoblogTable class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2022 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
-class AutoblogTable extends MyListTable {
+class AutoblogTable extends MyListTable
+{
 
     const per_page = 15;
 
     function get_columns()
     {
         $columns = array_merge(
-                array(
-                    'cb' => '<input type="checkbox" />',
-                ), array(
-            'name' => AutoblogModel::model()->getAttributeLabel('name'),
-            'create_date' => AutoblogModel::model()->getAttributeLabel('create_date'),
-            'last_run' => AutoblogModel::model()->getAttributeLabel('last_run'),
-            'status' => AutoblogModel::model()->getAttributeLabel('status'),
-            'keywords' => AutoblogModel::model()->getAttributeLabel('keywords'),
-            'post_count' => AutoblogModel::model()->getAttributeLabel('post_count'),
-            'last_error' => AutoblogModel::model()->getAttributeLabel('last_error'),
-                )
+            array(
+                'cb' => '<input type="checkbox" />',
+            ),
+            array(
+                'name' => AutoblogModel::model()->getAttributeLabel('name'),
+                'create_date' => AutoblogModel::model()->getAttributeLabel('create_date'),
+                'last_run' => AutoblogModel::model()->getAttributeLabel('last_run'),
+                'status' => AutoblogModel::model()->getAttributeLabel('status'),
+                'keywords' => AutoblogModel::model()->getAttributeLabel('keywords'),
+                'post_count' => AutoblogModel::model()->getAttributeLabel('post_count'),
+                'last_error' => AutoblogModel::model()->getAttributeLabel('last_error'),
+            )
         );
         return $columns;
     }
@@ -91,5 +93,4 @@ class AutoblogTable extends MyListTable {
         );
         return $sortable_columns;
     }
-
 }

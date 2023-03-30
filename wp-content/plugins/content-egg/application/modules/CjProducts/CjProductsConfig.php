@@ -10,8 +10,8 @@ use ContentEgg\application\components\AffiliateParserModuleConfig;
  * CjProductsConfig class file
  *
  * @author keywordrush.com <support@keywordrush.com>
- * @link http://www.keywordrush.com/
- * @copyright Copyright &copy; 2015 keywordrush.com
+ * @link https://www.keywordrush.com
+ * @copyright Copyright &copy; 2023 keywordrush.com
  */
 class CjProductsConfig extends AffiliateParserModuleConfig
 {
@@ -132,5 +132,4 @@ class CjProductsConfig extends AffiliateParserModuleConfig
 
         return self::moveRequiredUp(array_merge($parent, $options));
     }
-
 }
