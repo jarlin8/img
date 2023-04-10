@@ -52,9 +52,9 @@ void CloseAllOrders()
         {
          if(OrderMagicNumber() == MagicNumber && OrderCloseTime() == 0)
            {
-            if(OrderType() == OP_BUY)
+            if(OrderType() == OP_BUY || OrderType() == OP_SELL)
               {
-               if(OrderClose(OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_ASK), 3, Red))
+               if(OrderClose(OrderTicket(), OrderLots(), OrderType() == OP_BUY ? Bid : Ask, 3, Red))
                  {
                   Print("订单 #", OrderTicket(), " 被成功关闭");
                  }
@@ -64,29 +64,17 @@ void CloseAllOrders()
                  }
               }
             else
-                if(OrderType() == OP_SELL)
-                {
-                if(OrderClose(OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_BID), 3, Red))
-                  {
-                    Print("订单 #", OrderTicket(), " 被成功关闭");
-                  }
-                else
-                  {
-                    Print("订单 #", OrderTicket(), " 关闭失败并报错 #", GetLastError());
-                  }
-                }
-            else
-               if(OrderType() == OP_BUYSTOP || OrderType() == OP_SELLSTOP || OrderType() == OP_BUYLIMIT || OrderType() == OP_SELLLIMIT)
-                 {
-                  if(OrderDelete(OrderTicket()))
+                  if(OrderType() == OP_BUYSTOP || OrderType() == OP_SELLSTOP || OrderType() == OP_BUYLIMIT || OrderType() == OP_SELLLIMIT)
                     {
-                     Print("订单 #", OrderTicket(), " 被成功删除");
+                     if(OrderDelete(OrderTicket()))
+                       {
+                        Print("订单 #", OrderTicket(), " 被成功删除");
+                       }
+                     else
+                       {
+                        Print("订单 #", OrderTicket(), " 删除失败并报错 #", GetLastError());
+                       }
                     }
-                  else
-                    {
-                     Print("订单 #", OrderTicket(), " 删除失败并报错 #", GetLastError());
-                    }
-                 }
            }
          else
            {
@@ -103,6 +91,7 @@ void CloseAllOrders()
         }
      }
   }
+
 
 //+------------------------------------------------------------------+
 //| 参数变动关闭所有仓单的初始化功能                                    |
@@ -141,12 +130,12 @@ void OnTick()
                   SellLimitLots = lots;
                  }
               }
-         if(OrderMagicNumber() == MagicNumber && OrderCloseTime() != 0)
+         /*if(OrderMagicNumber() == MagicNumber && OrderCloseTime() != 0)
            {
             // 有订单被关闭则重置手数和利润
             CurrentBuyLotSize = LotSize;
             CurrentSellLotSize = LotSize;
-           }
+           }*/
         }
      }
 
