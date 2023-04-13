@@ -4,7 +4,6 @@
 
 jQuery(document).on('smart_manager_post_load_grid','#sm_editor_grid', function() {
 	if( window.smart_manager.current_selected_dashboard == 'product' && typeof(window.smart_manager.column_names_batch_update) != 'undefined' ) {
-
 		//Code for handling Product Attribute
 		if( typeof(window.smart_manager.column_names_batch_update['custom/product_attributes']) != 'undefined' && Object.keys(window.smart_manager.column_names_batch_update['custom/product_attributes']['values']).length > 0 ) {
 

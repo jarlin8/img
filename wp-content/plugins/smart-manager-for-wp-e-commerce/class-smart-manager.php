@@ -130,7 +130,6 @@ class Smart_Manager {
 		$this->plugin_path  = untrailingslashit( plugin_dir_path( SM_PLUGIN_FILE ) );
 		$this->plugin_url   = untrailingslashit( plugins_url( '/', SM_PLUGIN_FILE ) );
 		$this->update_msg   = 'editing';
-
 		define( 'SM_PLUGIN_DIR', dirname( $plugin ) );
 		define( 'SM_PLUGIN_BASE_NM', $plugin );
 		define( 'SM_TEXT_DOMAIN', 'smart-manager-for-wp-e-commerce' );
@@ -720,7 +719,6 @@ class Smart_Manager {
 			$option_nm = Smart_Manager_Pro_Access_Privilege::$access_privilege_option_start."".$current_user_role."".Smart_Manager_Pro_Access_Privilege::$access_privilege_option_end;
 			$beta_dashboard_privileges = $wpdb->get_results( $wpdb->prepare( "SELECT option_name, option_value FROM {$wpdb->prefix}options WHERE option_name = %s", $option_nm ), 'ARRAY_A' );
 		}
-	
 		if ( ( ! empty( $result_old[0] ) && ! empty( $result_old[0]->option_value ) ) || ! empty( $beta_dashboard_privileges ) || 'administrator' === $current_user_role ) { //modified cond for client fix
 			$this->add_menu();
 		}
@@ -1207,7 +1205,7 @@ class Smart_Manager {
 							'search_type' => ( ( !empty( $search_type ) ) ? $search_type : 'simple' ),
 							'wpdb_prefix' => $wpdb->prefix,
 							'trashEnabled' => $trash_enabled,
-							'background_process_running_message' => __( 'In the meanwhile, you can use Smart Manager. But before using actions like ', 'smart-manager-for-wp-e-commerce') .' <strong>'. __( 'Bulk Edit', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __('Duplicate Records', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Delete Records', 'smart-manager-for-wp-e-commerce') .'</strong>, '. __('you will have to wait for the current background process to finish.', 'smart-manager-for-wp-e-commerce' ),
+							'background_process_running_message' => __( 'In the meanwhile, you can use Smart Manager. But before using actions like ', 'smart-manager-for-wp-e-commerce') .' <strong>'. __( 'Bulk Edit', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __('Duplicate Records', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Delete Records', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Undo Tasks', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Delete Tasks', 'smart-manager-for-wp-e-commerce') .'</strong>, '. __('you will have to wait for the current background process to finish.', 'smart-manager-for-wp-e-commerce' ),
 							'trashAndDeletePermanently' => array( 'disable' => $disable_trash_and_delete_permanently, 'error_message' => $trash_and_delete_permanently_disable_message ),
 							'forceCollapseAdminMenu' => ( 'no' === get_option( 'sm_wp_force_collapse_admin_menu', 'yes' ) ) ? 0 : 1,
 							'rowHeight' => get_option( 'sm_grid_row_height', '50px' ),

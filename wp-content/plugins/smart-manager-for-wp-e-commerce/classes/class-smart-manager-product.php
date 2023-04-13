@@ -1693,18 +1693,20 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 		}
 
 		//function for modifying edited data before updating
-		public function products_inline_update_pre($edited_data) {
-			if (empty($edited_data)) return $edited_data;
-
+		public function products_inline_update_pre( $edited_data = array() ) {
+			if ( empty( $edited_data ) ) return $edited_data;
 			global $wpdb;
-
 			$prod_title_ids = array();
-
-			foreach ($edited_data as $key => $edited_row) {
-				if( empty( $key ) ) {
+			$prev_val = '';
+			// For getting current task_id
+			if ( true === array_key_exists( 'task_id', $edited_data ) ) {
+				$this->task_id = intval( $edited_data['task_id'] );
+				unset( $edited_data['task_id'] );
+			}
+			foreach ( $edited_data as $key => $edited_row ) {
+				if ( empty( $key ) ) {
 					continue;
 				}
-
 				// Code to handle setting of 'regular_price' & 'sale_price' in proper way
 				if( ! empty( $edited_row['postmeta/meta_key=_regular_price/meta_value=_regular_price'] ) || ! empty( $edited_row['postmeta/meta_key=_sale_price/meta_value=_sale_price'] ) ) {
 					if( !empty( $edited_row['postmeta/meta_key=_regular_price/meta_value=_regular_price'] ) ) {
@@ -1718,10 +1720,24 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 					$regular_price = ( isset( $edited_data[$key]['postmeta/meta_key=_regular_price/meta_value=_regular_price'] ) ) ? $edited_data[$key]['postmeta/meta_key=_regular_price/meta_value=_regular_price'] : get_post_meta( $key, '_regular_price', true );
 					$sale_price = ( isset( $edited_data[$key]['postmeta/meta_key=_sale_price/meta_value=_sale_price'] ) ) ? $edited_data[$key]['postmeta/meta_key=_sale_price/meta_value=_sale_price'] : get_post_meta( $key, '_sale_price', true );
 
-					if( $sale_price >= $regular_price ){
-						update_post_meta( $key, '_sale_price', '' );
-						if( isset( $edited_data[$key]['postmeta/meta_key=_sale_price/meta_value=_sale_price'] ) ){
+					if ( $sale_price >= $regular_price ) {
+						// For fetching previous value
+						if ( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
+							$prev_val = Smart_Manager_Pro_Task::get_previous_data( $key, 'postmeta', '_sale_price' );
+						}
+						if ( isset( $edited_data[$key]['postmeta/meta_key=_sale_price/meta_value=_sale_price'] ) ) {
 							unset( $edited_data[$key]['postmeta/meta_key=_sale_price/meta_value=_sale_price'] );
+						}
+						if ( ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) && ! is_wp_error( update_post_meta( $key, '_sale_price', '' ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) && ( ! empty( $key ) ) ) {
+			    				Smart_Manager_Base::$update_task_details_params[] = array(
+			    					'task_id' => $this->task_id,
+								    'action' => 'set_to',
+								    'status' => 'completed',
+								    'record_id' => $key,
+								    'field' => 'postmeta/meta_key=_sale_price/meta_value=_sale_price',                                                  
+								    'prev_val' => $prev_val,
+								    'updated_val' => ''
+							    );
 						}
 					}
 
@@ -1741,20 +1757,82 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 				}
 
 				if ( isset( $edited_row['postmeta/meta_key=_stock/meta_value=_stock'] ) ) { //For handling product inventory updates
-					sm_update_stock_status( $key, $edited_row['postmeta/meta_key=_stock/meta_value=_stock'] );
+					// For fetching previous value.
+					if( ! empty( $key ) && is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
+						$prev_val = Smart_Manager_Pro_Task::get_previous_data( $key, 'postmeta', '_stock' );
+					}
+					// Code for updating stock and it's status.
+					if ( ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) && ( ! empty( sm_update_stock_status( $key, $edited_row['postmeta/meta_key=_stock/meta_value=_stock'] ) ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) && ( ! empty( $key ) ) ) {
+						Smart_Manager_Base::$update_task_details_params[] = array(
+            						'task_id' => $this->task_id,
+							'action' => 'set_to',
+							'status' => 'completed',
+							'record_id' => $key,
+							'field' => 'postmeta/meta_key=_stock/meta_value=_stock',                                                       
+							'prev_val' => $prev_val,
+							'updated_val' => $edited_row['postmeta/meta_key=_stock/meta_value=_stock']
+						);
+        			}
 				}
-
 				if ( ! isset( $edited_row['postmeta/meta_key=_product_attributes/meta_value=_product_attributes'] ) ) {
  					continue;
 				}
-
 				$saved_product_attributes = get_post_meta( $key, '_product_attributes', true );
-
 				$product_attributes = array();
 				if( ! empty( $edited_row['postmeta/meta_key=_product_attributes/meta_value=_product_attributes'] ) ){
 					$product_attributes = json_decode($edited_row['postmeta/meta_key=_product_attributes/meta_value=_product_attributes'],true);
 				}
-
+				if ( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) && ( ! empty( $saved_product_attributes ) ) && ( is_array( $saved_product_attributes ) ) ) {
+					$term_ids = $prev_vals = array();
+					if( ( ! empty( $product_attributes ) ) && ( is_array( $product_attributes ) ) ) {
+						foreach ( $product_attributes as $attr => $attr_value ) {
+							if ( ! empty( $attr_value['value'] ) && ( is_array( $attr_value['value'] ) ) ) {
+								foreach ( $attr_value['value'] as $term_id => $term_value ) {
+									$term_ids[ $attr ][] = $term_id;
+								}
+							}	
+						}
+					}
+					foreach ( $saved_product_attributes as $taxonomy_nm => $value ) {
+						$attr_previous_vals = Smart_Manager_Base::$previous_vals[] = Smart_Manager_Pro_Task::get_previous_data( $key, 'terms', $taxonomy_nm );
+						if ( ( is_wp_error( $attr_previous_vals ) ) || empty( $attr_previous_vals ) || ( ! is_array( $attr_previous_vals ) ) ) continue;
+						foreach ( $attr_previous_vals as $prev_val ) {
+							$attr_previous_vals['term_id'][ $prev_val ] = 'custom/product_attributes_add';
+						}
+						if ( empty( $attr_previous_vals['term_id'] ) ) continue;
+						switch ( ( ! empty( $term_ids[ $taxonomy_nm ] ) ) && is_array( $attr_previous_vals['term_id'] ) && ( ! empty( $term_ids ) ) ) {
+							case ( count( $term_ids[ $taxonomy_nm ] ) > count( $attr_previous_vals['term_id'] ) ) :
+								$prev_vals = array_diff( $term_ids[ $taxonomy_nm ], array_keys( $attr_previous_vals['term_id'] ) );
+								if ( ( ! empty( $prev_vals ) ) && is_array( $prev_vals ) ) {
+									foreach ( $prev_vals as $prev_val ) {
+										$attr_previous_vals['term_id'][ $prev_val ] = 'custom/product_attributes_remove';
+									}
+								}
+								break;
+							case ( count( $term_ids[ $taxonomy_nm ] ) < count( $attr_previous_vals['term_id'] ) ):
+								$prev_vals = array_diff( array_keys( $attr_previous_vals['term_id'] ), $term_ids[ $taxonomy_nm ] );
+								if ( ( ! empty( $prev_vals ) ) && is_array( $prev_vals ) ) {
+									foreach ( $prev_vals as $prev_val ) {
+										$attr_previous_vals['term_id'][ $prev_val ] = 'custom/product_attributes_add';
+									}
+								}			
+								break;		
+						}		
+						foreach ( $attr_previous_vals['term_id'] as $term_id => $field_name ) {
+							if ( ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( $taxonomy_nm ) ) && ( ! empty( $key ) ) && ( ! empty( $field_name ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) ) {
+								Smart_Manager_Base::$update_task_details_params[] = array(
+					            			'task_id' => $this->task_id,
+									'action' => $taxonomy_nm,
+									'status' => 'completed',
+									'record_id' => $key,
+									'field' => $field_name,                                                       
+									'prev_val' => $term_id,
+									'updated_val' => maybe_serialize( $term_ids )
+								);
+							}
+						}
+					}
+				}
 				if( ! empty( $saved_product_attributes ) ) {
 					$removed_attributes = array_diff( array_keys( $saved_product_attributes ), array_keys( $product_attributes ) );
 					if( ! empty( $removed_attributes ) ){
@@ -1766,11 +1844,9 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 						);
 					}
 				}
-				
 				if (empty($product_attributes)) {
 					continue;
 				}
-
 				foreach ($product_attributes as $attr => $attr_value) {
 					if ($attr_value['is_taxonomy'] == 0) continue;
 					$product_attributes[$attr]['value'] = '';
@@ -1803,33 +1879,32 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 			}
 
 			$visibility = strtoupper($visibility);
-
+			$result = array();	
 			if( $visibility == strtoupper('visible') ) {
-                wp_remove_object_terms( $id, array('exclude-from-search', 'exclude-from-catalog'), 'product_visibility' );
-            } else {
+              			$result = wp_remove_object_terms( $id, array('exclude-from-search', 'exclude-from-catalog'), 'product_visibility' );					      					            
+            		} else {
 
-                $terms = '';
+				$terms = '';
 
-                if( $visibility == strtoupper('catalog') ) {
-                    $terms = 'exclude-from-search';
-                } else if( $visibility == strtoupper('search') ) {
-                    $terms = 'exclude-from-catalog';
-                } else if( $visibility == strtoupper('hidden') ) {
-                    $terms = array('exclude-from-search', 'exclude-from-catalog');
-                }
+				if( $visibility == strtoupper('catalog') ) {
+				    $terms = 'exclude-from-search';
+				} else if( $visibility == strtoupper('search') ) {
+				    $terms = 'exclude-from-catalog';
+				} else if( $visibility == strtoupper('hidden') ) {
+				    $terms = array('exclude-from-search', 'exclude-from-catalog');
+				}
 
-                if( !empty($terms) ) {
-                    wp_remove_object_terms( $id, array('exclude-from-search', 'exclude-from-catalog'), 'product_visibility' );
-                    wp_set_object_terms($id, $terms, 'product_visibility', true);
-                }
-            }
+				if( !empty($terms) ) {
+				   	wp_remove_object_terms( $id, array('exclude-from-search', 'exclude-from-catalog'), 'product_visibility' );
+				   	$result = wp_set_object_terms( $id, $terms, 'product_visibility', true );   
+				}
+			    }
+		    	return ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) ? true : false;
 		}
 
 		//function for inline update of custom fields
 		public function products_inline_update($edited_data, $params) {
-
 			global $current_user, $wpdb;
-
 			if(empty($edited_data)) return;
 
 			$attr_values = array();
@@ -1851,7 +1926,6 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 					if (!empty($src_exploded) && $src_exploded[1] == 'product_attributes') {
 						$col_values = $column['values'];
-
 						if (!empty($col_values)) {
 							foreach ($col_values as $key => $col_value) {
 								if ( empty( $key ) || empty( $col_value ) || ( false === is_array( $col_value ) ) || ( false === array_key_exists( 'val', $col_value ) ) || ( false === array_key_exists( 'type', $col_value ) ) || empty( $col_value['type'] ) ) continue;
@@ -1917,24 +1991,53 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 					sm_update_post( $id );
 				}
 
-				if( !empty($product_visibility_index) || !empty($product_featured_index) ) {
+				if ( !empty($product_visibility_index) || !empty($product_featured_index) ) {
 					//set the visibility taxonomy
-					$visibility = (!empty($edited_row['terms/product_visibility'])) ? $edited_row['terms/product_visibility'] : '';
-
-					if( !empty( $visibility ) ) {
-						$this->set_product_visibility( $id, $visibility );
+					$visibility = ( ! empty($edited_row['terms/product_visibility'] ) ) ? $edited_row['terms/product_visibility'] : '';
+					// For fetching previous value
+					if ( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
+						$prev_val = Smart_Manager_Pro_Task::get_previous_data( $id, 'terms', 'product_visibility' );
+						$prev_val = ( ! empty( $prev_val ) && ( ! empty( $params ) ) ) ? sa_sm_format_prev_val( array(
+								'prev_val' => $prev_val,
+								'update_column' => 'product_visibility',
+								'col_data_type' => $params,
+								'updated_val' => $visibility
+							) ) : $prev_val;
+					}
+					if ( ! empty( $visibility ) ) {
+						if ( ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( $id ) ) && ( ! empty( $this->set_product_visibility( $id, $visibility ) ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) ) {
+			            	Smart_Manager_Base::$update_task_details_params[] = array(
+			            		'task_id' => $this->task_id,
+				                'action' => 'set_to',
+				                'status' => 'completed',
+				                'record_id' => $id,
+				                'field' => 'terms/product_visibility',                                                               
+				                'prev_val' => $prev_val,
+				                'updated_val' => $visibility
+			                ); 
+			        	}
                     }
 
 					//set the featured taxonomy
 					$featured = (!empty($edited_row['terms/product_visibility_featured'])) ? $edited_row['terms/product_visibility_featured'] : '';
 					
-					if( !empty($featured) ) {
-                        if( !empty($featured) ) {
-                            $result = ( $featured == "Yes" || $featured == "yes" ) ? wp_set_object_terms($id, 'featured', 'product_visibility', true) : wp_remove_object_terms( $id, 'featured', 'product_visibility' );
-                        }
-					}
+                    if( !empty($featured) ) {
+                       	$result = ( $featured == "Yes" || $featured == "yes" ) ? wp_set_object_terms($id, 'featured', 'product_visibility', true) : wp_remove_object_terms( $id, 'featured', 'product_visibility' );
+                       	if ( ! empty( $result ) ) {
+							if ( ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) && ! empty( $this->task_id ) && ! empty( $id ) && ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) && ! empty( $featured ) ) {
+				            	Smart_Manager_Base::$update_task_details_params[] = array(
+				            		'task_id' => $this->task_id,
+					                'action' => 'set_to',
+					                'status' => 'completed',
+					                'record_id' => $id,
+					                'field' => 'terms/product_visibility_featured',                               
+					                'prev_val' => ( "Yes" === $featured || "yes" === $featured ) ? 'no' : 'yes',
+					                'updated_val' => $featured
+				                ); 
+				        	}
+	                    }
+                    }				
 				}
-
 				$attr_edited = (!empty($edited_row['custom/product_attributes'])) ? $edited_row['custom/product_attributes'] : '';
 				$attr_edited = array_filter(explode(', <br>',$attr_edited));
 
@@ -1957,9 +2060,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 						$taxonomy_nm = $attr_values[$taxonomy_nm]['taxonomy_nm'];
 						$attr_editd_val = array_filter(explode(" | ",$attr_editd_val));
-						
 						// if (empty($attr_editd_val)) continue;
-
 						$term_ids = array();
 
 						foreach ($attr_editd_val as $attr_editd) {
@@ -1975,7 +2076,10 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 							}
 							$term_ids [] = $term_id;
 						}
-						wp_set_object_terms($id, $term_ids, $taxonomy_nm);
+						if( ! empty( $id ) && is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
+							$prev_val = Smart_Manager_Pro_Task::get_previous_data( $id, 'terms', $taxonomy_nm );	
+						}
+						wp_set_object_terms( $id, $term_ids, $taxonomy_nm );
 					} 
 				}
 			}

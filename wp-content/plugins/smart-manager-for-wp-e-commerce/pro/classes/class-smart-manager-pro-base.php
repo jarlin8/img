@@ -26,12 +26,42 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			add_filter( 'sm_data_model', array( &$this, 'pro_data_model' ), 11, 2);
 			add_filter( 'sm_inline_update_pre', array( &$this, 'pro_inline_update_pre' ), 11, 1);
 			add_filter( 'sm_default_dashboard_model_postmeta_cols', array( &$this, 'pro_custom_postmeta_cols' ), 11, 1 );
+			add_filter(
+				'sm_task_update_action_name',
+				function() {
+					return 'set_to';
+				}
+			);
 
 			// Code for handling of `starts with/ends with` advanced search operators
-			$advanced_search_filter_tables = array_merge( ( ( ! empty( $this->advanced_search_table_types ) && ! empty( $this->advanced_search_table_types['flat'] ) && ! empty( $this->advanced_search_table_types['meta'] ) ) ? array_merge( array_keys( $this->advanced_search_table_types['flat'] ), array_keys( $this->advanced_search_table_types['meta'] ) ) : array( 'posts', 'postmeta' ) ), array( 'terms' ) );
-			foreach( $advanced_search_filter_tables as $table ){
-				add_filter( 'sm_search_format_query_'. $table .'_col_value', array( &$this, 'format_search_value' ), 11, 2 );
+			$advanced_search_filter_tables = array( 'posts', 'postmeta', 'terms' );
+			switch(  $this->advanced_search_table_types ) {
+				case ( ! empty( $this->advanced_search_table_types['flat'] ) && ! empty( $this->advanced_search_table_types['meta'] ) ):
+					$advanced_search_filter_tables = array_merge( array_merge( array_keys( $this->advanced_search_table_types['flat'] ), array_keys( $this->advanced_search_table_types['meta'] ) ), array( 'terms' ) );
+					break;
+				case ( ! empty( $this->advanced_search_table_types['flat'] ) && empty( $this->advanced_search_table_types['meta'] ) ):
+					$advanced_search_filter_tables = array_merge( array_keys( $this->advanced_search_table_types['flat'] ), array( 'terms' ) );
+					break;
+				case ( empty( $this->advanced_search_table_types['flat'] ) && ! empty( $this->advanced_search_table_types['meta'] ) ):
+					$advanced_search_filter_tables = array_merge( array_keys( $this->advanced_search_table_types['meta'] ), array( 'terms' ) );
+					break;
 			}
+			if( ! empty( $advanced_search_filter_tables ) && is_array( $advanced_search_filter_tables ) ){
+				foreach( $advanced_search_filter_tables as $table ){
+					add_filter( 'sm_search_format_query_' . $table . '_col_value', array( &$this, 'format_search_value' ), 11, 2 );
+				}
+			}
+			add_filter(
+				'sm_get_process_names_for_adding_tasks',
+				function( $process_name = '' ) {
+					if( empty( $process_name ) ) {
+						return;
+					}
+					return array(
+						'Bulk Edit',
+					);
+				}
+			);
 		}
 
 		public function get_yoast_meta_robots_values() {
@@ -187,7 +217,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 							$values[ $term_id ] = $obj['term'];
 
 							if( !empty( $obj['parent'] ) ) {
-								$values[ $term_id ] = ( $product_cat_values[ $obj['parent'] ] ) ? $product_cat_values[ $obj['parent'] ]['term']. ' > ' .$values[ $term_id ] : $values[ $term_id ];
+								$values[ $term_id ] = ( ! empty( $product_cat_values[ $obj['parent'] ] ) ) ? $product_cat_values[ $obj['parent'] ]['term']. ' > ' .$values[ $term_id ] : $values[ $term_id ];
 								if( in_array( $obj['parent'], $parent_cat_term_ids ) === false ) {
 									$parent_cat_term_ids[] = $obj['parent'];
 								}
@@ -459,48 +489,18 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		//function to handle batch update request
 		public function batch_update() {
 			global $wpdb, $current_user;
-
-			$current_store_model = get_transient( 'sa_sm_'.$this->dashboard_key );
-			if( ! empty( $current_store_model ) && !is_array( $current_store_model ) ) {
-				$current_store_model = json_decode( $current_store_model, true );
-			}
-			$col_model = (!empty($current_store_model['columns'])) ? $current_store_model['columns'] : array();
-
-			$col_data_type = array();
-
-			$data_cols_timestamp = array();
-
-			//Code for storing the timestamp cols
-			foreach( $col_model as $col ) {
-
-				if( empty( $col['type'] ) ) {
-					continue;
-				}
-
-				$type = $col['type'];
-				if( ($col['type'] == 'sm.datetime' || $col['type'] == 'sm.date' || $col['type'] == 'sm.time') && !empty( $col['date_type'] ) && $col['date_type'] == 'timestamp' ) {
-					$type = 'timestamp';
-				}
-
-				$col_data_type[$col['src']] = $type;
-			}
-
+			$col_data_type = self::get_column_data_type( $this->dashboard_key ); // For fetching column data type		
 			$batch_update_actions = (!empty($this->req_params['batch_update_actions'])) ? json_decode(stripslashes($this->req_params['batch_update_actions']), true) : array();
-
-			$dashboard_key = $this->dashboard_key; //fix for PHP 5.3 or earlier
-
-			$batch_update_actions = array_map( function( $batch_update_action ) use ($dashboard_key, $col_data_type) {
+			$dashboard_key = $this->dashboard_key; //fix for PHP 5.3 or earlier	
+			$batch_update_actions = array_map( function( $batch_update_action ) use ( $dashboard_key, $col_data_type ) {
 				$batch_update_action['dashboard_key'] = $dashboard_key;
 				$batch_update_action['date_type'] = ( ! empty( $col_data_type[$batch_update_action['type']] ) ) ? $col_data_type[$batch_update_action['type']] : 'text';
-				
 				//data type for handling copy_from_field operator
-				if( 'copy_from_field' === $batch_update_action['operator'] ) { 
+				if ( 'copy_from_field' === $batch_update_action['operator'] ) { 
 					$batch_update_action['copy_field_data_type'] = ( ! empty( $col_data_type[$batch_update_action['value']] ) ) ? $col_data_type[$batch_update_action['value']] : 'text';
 				}
-
 				return $batch_update_action;
 			}, $batch_update_actions);
-
 			$this->send_to_background_process( array( 'process_name' => 'Bulk Edit', 
 														'callback' => array( 'class_path' => $this->req_params['class_path'], 
 																			'func' => array( $this->req_params['class_nm'], 'process_batch_update' ) ),
@@ -509,28 +509,45 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 		//function to handle batch update request
 		public function send_to_background_process( $params = array() ) {
-
-			$selected_ids = (!empty($this->req_params['selected_ids'])) ? json_decode(stripslashes($this->req_params['selected_ids']), true) : array();
-			
+			$selected_ids = ( ! empty( $this->req_params['selected_ids'] ) ) ? json_decode( stripslashes( $this->req_params['selected_ids'] ), true ) : array();
 			$entire_store = false;
 
-			if( !empty( $this->req_params['storewide_option']) && $this->req_params['storewide_option'] == 'entire_store' && !empty($this->req_params['active_module']) ) { //code for fetching all the ids in case of any background process
+			if ( ( false === $this->entire_task ) && ( ! empty( $this->req_params['storewide_option'] ) ) && ( 'entire_store' === $this->req_params['storewide_option'] ) && ( ! empty( $this->req_params['active_module'] ) ) ) { //code for fetching all the ids in case of any background process
 				$selected_ids = $this->get_entire_store_ids();
 				$entire_store = true;
 			}
-
-			$identifier = '';
-
+			$identifier = '';	
+			$process_name = apply_filters( 'sm_get_process_names_for_adding_tasks', $params['process_name'] );
+			if ( ! empty( $process_name ) && ( is_array( $process_name ) ) && ( in_array( $params['process_name'], $process_name, true ) ) ) {
+				$task_id = 0;
+				if ( is_callable( array( 'Smart_Manager_Pro_Task', 'task_update' ) ) && ( ! empty( $this->req_params['title'] ) ) && ( ! empty( $this->dashboard_key ) ) && ( ! empty( $params['actions'] ) ) && ( ! empty( $selected_ids ) && is_array( $selected_ids ) ) ) {
+					$task_id = Smart_Manager_Pro_Task::task_update(
+						array(
+							'title' => $this->req_params['title'],
+							    'created_date' => date('Y-m-d H:i:s'),
+							    'completed_date' => '0000-00-00 00:00:00',
+							    'post_type' => $this->dashboard_key,
+							    'type' => 'bulk_edit',
+							    'status' => 'in-progress',
+							    'actions' => $params['actions'],
+							    'record_count' => count( $selected_ids ),
+							) 
+					);
+				}
+				$params['actions'] = array_map( function( $params_action ) use( $task_id ) {
+					$params_action['task_id'] = $task_id;	
+					return $params_action;
+				}, $params['actions'] );
+			}
 			if ( is_callable( array( 'Smart_Manager_Pro_Background_Updater', 'get_identifier' ) ) ) {
 				$identifier = Smart_Manager_Pro_Background_Updater::get_identifier();
 			}
-
-			if( !empty( $identifier ) && ! empty( $selected_ids ) ) {
+			if ( !empty( $identifier ) && ! empty( $selected_ids ) ) {
 
 				$default_params = array( 'process_name' => 'Bulk edit / Batch update', 
 										'callback' => array( 'class_path' => $this->req_params['class_path'], 
 															'func' => array( $this->req_params['class_nm'], 'process_batch_update' ) ),
-										'id_count' => count($selected_ids),
+										'id_count' => count( $selected_ids ),
 										'active_dashboard' => $this->dashboard_title,
 										'backgroundProcessRunningMessage' => $this->req_params['backgroundProcessRunningMessage'],
 										'entire_store' => $entire_store, 
@@ -551,14 +568,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 		//function to process batch update conditions
 		public static function process_batch_update( $args= array() ) {
-
 			do_action('sm_beta_pre_process_batch');
-
 			// code for processing logic for batch update
 			if( empty($args['type']) || empty($args['operator']) || empty($args['id']) || empty( $args['date_type'] ) ) {
 				return false;
 			}
-
 			$type_exploded = explode("/",$args['type']);
 
 			if( empty( $type_exploded ) ) {
@@ -578,19 +592,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			}
 
 			$prev_val = $new_val = '';
-
-			$prev_val_exclude_operators = array('set_to', 'copy_from_field');
-
-			if( ! in_array( $args['operator'], $prev_val_exclude_operators ) ) { //code to fetch prev stored values
-				if( $args['table_nm'] == 'posts' ) {
-					$prev_val = get_post_field($args['col_nm'], $args['id']);
-				} else if( $args['table_nm'] == 'postmeta' ) {
-					$prev_val = get_post_meta($args['id'], $args['col_nm'], true);
-				}
-
-				$prev_val = apply_filters( 'sm_beta_batch_update_prev_value', $prev_val, $args );
+			$prev_val = apply_filters( 'sm_beta_batch_update_prev_value', $prev_val, $args );
+			if( empty( $prev_val ) ) {
+				if( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
+					$prev_val = Smart_Manager_Pro_Task::get_previous_data( $args['id'], $args['table_nm'], $args['col_nm'] );
+				}	
 			}
-
 			if( $args['date_type'] == 'numeric' ) {
 				$prev_val = ( ! empty( $prev_val ) ) ? floatval( $prev_val ) : 0;
 			}
@@ -807,18 +814,16 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 		//function to handle the batch update db updates
 		public static function process_batch_update_db_updates( $args = array() ) {
-
 			do_action( 'sm_pre_batch_update_db_updates',$args );
 
 			set_transient( 'sm_beta_skip_delete_dashboard_transients', 1, DAY_IN_SECONDS ); // for preventing delete dashboard transients
-
+			Smart_Manager_Base::$update_task_details_params = array();
 			$update = false;
 			$default_batch_update = true;
 
 			$default_batch_update = apply_filters( 'sm_default_batch_update_db_updates', $default_batch_update, $args );
 
 			if( $default_batch_update ) {			
-
 				switch ( $args['table_nm'] ) {
 					case 'posts':
 						$update = wp_update_post( array( 'ID' => $args['id'], $args['col_nm'] => $args['value'] ) );
@@ -846,11 +851,31 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 						break;
 				}
 			}
-
 			$update = apply_filters( 'sm_post_batch_update_db_updates',$update ,$args );
-
-			if( is_wp_error( $update ) ) {
+			if ( is_wp_error( $update ) ) {
 				return false;
+			} elseif ( ! empty( $args['task_id'] ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) ) {
+				$action = apply_filters( 'sm_task_update_action_name', $args['operator'], $args['type'] );
+				Smart_Manager_Base::$update_task_details_params[] = array(
+					'task_id' => $args['task_id'],
+						    'action' => $action,
+						    'status' => 'completed',
+						    'record_id' => $args['id'],
+						    'field' => $args['type'],  
+						    'prev_val' => ( ( ! empty( $args['col_nm'] ) ) && ( ! empty( $args['date_type'] ) ) ) ? sa_sm_format_prev_val( array(
+											'prev_val' => $args['prev_val'],
+											'update_column' => $args['col_nm'],
+											'col_data_type' => $args['date_type'],
+											'updated_val' => $args['value']
+											)
+										) : $args['prev_val'],
+						    'updated_val' => $args['value'],
+				);
+			       	apply_filters( 'sm_task_details_update_by_prev_val', Smart_Manager_Base::$update_task_details_params );
+			    // For updating task details table
+				if ( ( ! empty( Smart_Manager_Base::$update_task_details_params ) ) && is_callable( array( 'Smart_Manager_Pro_Task', 'task_details_update' ) ) ) {
+					return Smart_Manager_Pro_Task::task_details_update();
+				}
 			} else {
 				return true;
 			}
@@ -858,7 +883,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 		//function to handle batch process complete
 		public static function batch_process_complete() {
-
 			$identifier = '';
 
 			if ( is_callable( array( 'Smart_Manager_Pro_Background_Updater', 'get_identifier' ) ) ) {
@@ -988,7 +1012,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			$each_field = array_keys( $columns_header );
 
 			$view_name = ( ! empty( $this->req_params['active_view'] ) ) ? $this->req_params['active_view'] . '-view_' : '';
-			$csv_file_name = sanitize_title(get_bloginfo( 'name' )) . '_' . $this->dashboard_key . '_' . $view_name . gmdate('d-M-Y_H:i:s') . ".csv";
+			$csv_file_name = sanitize_title(get_bloginfo( 'name' )) . '_' . $this->dashboard_key . '_' . $view_name . gmdate('d-M-Y_H:i:s');
+			$csv_file_name = ( ! empty( $this->req_params[ 'storewide_option' ] ) ) ? $csv_file_name . ".csv" : $csv_file_name . '_selected_records' . ".csv";
 
 			foreach( (array) $data['items'] as $row ){
 
@@ -1291,7 +1316,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 * 
 		 * @return string $search_value Formatted searched value.
 		 */
-		public function format_search_value( $search_value = '', $search_params = array() ){
+		public function format_search_value( $search_value = '', $search_params = array() ) {
 
 			$operator = ( ! empty( $search_params['selected_search_operator'] ) ) ? $search_params['selected_search_operator'] : '';
 
@@ -1307,6 +1332,37 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				default:
 					return $search_value;
 			}
+		}
+
+		/**
+		 * Function to fetch column data type
+		 *
+		 * @param  string $dashboard_key current dashboard name.
+		 * @return string $col_data_type column data type
+		 */
+		public static function get_column_data_type( $dashboard_key = '' ) {
+			if ( empty( $dashboard_key ) ) {
+				return;
+			}
+			$current_store_model = get_transient( 'sa_sm_' . $dashboard_key );
+			if ( empty( $current_store_model ) && is_array( $current_store_model ) ) {
+				return;
+			}
+			$current_store_model = json_decode( $current_store_model, true );
+			$col_model = ( ! empty( $current_store_model['columns'] ) ) ? $current_store_model['columns'] : array();
+			if ( empty( $col_model ) ) {
+				return;
+			}
+			$col_data_type = array();
+			$date_type_cols = array( 'sm.date', 'sm.datetime', 'sm.time', 'timestamp' );
+			//Code for storing the timestamp cols
+			foreach ( $col_model as $col ) {
+				if ( empty( $col['type'] ) ) {
+					continue;
+				}
+				$col_data_type[ $col['src'] ] = ( ( in_array( $col['type'], $date_type_cols, true ) ) && ( ! empty( $col['date_type'] ) && ( 'timestamp' === $col['date_type'] ) ) ) ? 'timestamp' : $col['type'];
+			} 
+			return $col_data_type;	
 		}
 	}
 }

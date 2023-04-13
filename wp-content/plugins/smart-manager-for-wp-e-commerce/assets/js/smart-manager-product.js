@@ -260,8 +260,6 @@ jQuery(document).on('sm_dashboard_change', '#sm_editor_grid', function() {
 			onUpdate: initializeChosen
 		}
 		window.smart_manager.showModal()
-
-	
 })
 
 .off('click', '#edit_attributes_add').on('click', '#edit_attributes_add', function(){
@@ -319,7 +317,6 @@ jQuery(document).on('sm_dashboard_change', '#sm_editor_grid', function() {
 
 	window.smart_manager.prodAttrDisplayIndex++;
 })
-
 //Function to handle Product Attribute Inline Edit
 Smart_Manager.prototype.prodAttributeInlineEdit = function(params){
 	if('undefined' === typeof(window.smart_manager.editedAttribueSlugs)){

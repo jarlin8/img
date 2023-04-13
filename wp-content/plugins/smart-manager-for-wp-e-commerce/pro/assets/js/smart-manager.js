@@ -20,7 +20,6 @@ Smart_Manager_Pro.prototype.getDataDefaultParams = function(params) {
 if(typeof window.smart_manager_pro === 'undefined'){
     window.smart_manager = new Smart_Manager_Pro();
 }
-
 jQuery(document).on('smart_manager_init','#sm_editor_grid', function() {
     window.smart_manager.batchUpdateSelectActionOption = '<option value="" disabled selected>'+_x('Select Action', 'bulk edit default action', 'smart-manager-for-wp-e-commerce')+'</option>';
     window.smart_manager.batchUpdateCopyFromOption = '<option value="copy_from">'+_x('copy from', 'bulk edit action', 'smart-manager-for-wp-e-commerce')+'</option>';
@@ -199,8 +198,18 @@ jQuery(document).on('smart_manager_init','#sm_editor_grid', function() {
     //     // To go to start of the SM page so users can see above notice.
     //     window.scrollTo(0,0);
     // }
+})
+// Code for handling the undo & delete tasks functionality
+.on('sm_show_tasks_change', '#sm_editor_grid', function(){
+    if("undefined" !== typeof(window.smart_manager.showTasks) && "function" === typeof(window.smart_manager.showTasks)){
+        window.smart_manager.showTasks();
+    }
+   jQuery(document).off( 'click', ".sm_top_bar_action_btns #sm_beta_undo_selected,.sm_top_bar_action_btns #sm_beta_undo_all_tasks,.sm_top_bar_action_btns #sm_beta_delete_selected_tasks, .sm_top_bar_action_btns #sm_beta_delete_all_tasks").on( 'click', ".sm_top_bar_action_btns #sm_beta_undo_selected,.sm_top_bar_action_btns #sm_beta_undo_all_tasks,.sm_top_bar_action_btns #sm_beta_delete_selected_tasks, .sm_top_bar_action_btns #sm_beta_delete_all_tasks", function(){
+        if("undefined" !== typeof(window.smart_manager.taskActionsModal) && "function" === typeof(window.smart_manager.taskActionsModal)){
+            window.smart_manager.taskActionsModal({id: jQuery(this).attr('id'),btnText: jQuery(this).text()});
+        }
+    })
 });
-
 //Function to determine if background process is running or not
 Smart_Manager.prototype.isBackgroundProcessRunning = function() {
 
@@ -425,7 +434,9 @@ Smart_Manager.prototype.generateCsvExport = function() {
                             table_model: (window.smart_manager.currentDashboardModel.hasOwnProperty('tables') ) ? window.smart_manager.currentDashboardModel.tables : '',
                             search_text: window.smart_manager.simpleSearchText,
                             advanced_search_query: JSON.stringify(window.smart_manager.advancedSearchQuery),
-                            is_taxonomy : window.smart_manager.isTaxonomyDashboard() || 0
+                            is_taxonomy: window.smart_manager.isTaxonomyDashboard() || 0,
+                            storewide_option: (true === window.smart_manager.exportStore) ? 'entire_store' : '',
+                            selected_ids: (window.smart_manager.getSelectedKeyIds()) ? JSON.stringify(window.smart_manager.getSelectedKeyIds()) : '',
                           };
     //Code for handling views
     let viewSlug = window.smart_manager.getViewSlug(window.smart_manager.dashboardName);
@@ -436,7 +447,7 @@ Smart_Manager.prototype.generateCsvExport = function() {
         params['active_module'] = (window.smart_manager.viewPostTypes.hasOwnProperty(viewSlug)) ? window.smart_manager.viewPostTypes[viewSlug] : window.smart_manager.dashboard_key;
     }
 
-    let export_url = window.smart_manager.sm_ajax_url + '&cmd='+ params['cmd'] +'&active_module='+ params['active_module'] +'&security='+ params['security'] +'&pro='+ params['pro'] +'&SM_IS_WOO30='+ params['SM_IS_WOO30'] +'&is_taxonomy='+ params['is_taxonomy'] +'&sort_params='+ encodeURIComponent(JSON.stringify(params['sort_params'])) +'&table_model='+ encodeURIComponent(JSON.stringify(params['table_model'])) +'&advanced_search_query='+ encodeURIComponent(JSON.stringify(window.smart_manager.advancedSearchQuery))+'&search_text='+ params['search_text'];
+    let export_url = window.smart_manager.sm_ajax_url + '&cmd='+ params['cmd'] +'&active_module='+ params['active_module'] +'&security='+ params['security'] +'&pro='+ params['pro'] +'&SM_IS_WOO30='+ params['SM_IS_WOO30'] +'&is_taxonomy='+ params['is_taxonomy'] +'&sort_params='+ encodeURIComponent(JSON.stringify(params['sort_params'])) +'&table_model='+ encodeURIComponent(JSON.stringify(params['table_model'])) +'&advanced_search_query='+ encodeURIComponent(JSON.stringify(window.smart_manager.advancedSearchQuery))+'&search_text='+ params['search_text'] + '&storewide_option=' + params['storewide_option'] + '&selected_ids=' + params['selected_ids'];
     export_url += ( window.smart_manager.date_params.hasOwnProperty('date_filter_params') ) ? '&date_filter_params='+ window.smart_manager.date_params['date_filter_params'] : '';
     export_url += ( window.smart_manager.date_params.hasOwnProperty('date_filter_query') ) ? '&date_filter_query='+ window.smart_manager.date_params['date_filter_query'] : '';
     
@@ -745,31 +756,28 @@ Smart_Manager.prototype.processBatchUpdate = function() {
 
     //Ajax request to batch update the selected records
     let params = {};
-        params.data = {
-                        cmd: 'batch_update',
-                        active_module: window.smart_manager.dashboard_key,
-                        security: window.smart_manager.sm_nonce,
-                        pro: true,
-                        storewide_option: ( updateAll == true ) ? 'entire_store' : '',
-                        selected_ids: JSON.stringify(window.smart_manager.getSelectedKeyIds()),
-                        batch_update_actions: JSON.stringify(actions),
-                        active_module_title: window.smart_manager.dashboardName,
-                        backgroundProcessRunningMessage: window.smart_manager.backgroundProcessRunningMessage,
-                        table_model: (window.smart_manager.currentDashboardModel.hasOwnProperty('tables') ) ? window.smart_manager.currentDashboardModel.tables : '',
-                        SM_IS_WOO30: window.smart_manager.sm_is_woo30,
-                        SM_IS_WOO22: window.smart_manager.sm_id_woo22,
-                        SM_IS_WOO21: window.smart_manager.sm_is_woo21
-                    };
-
-        params.showLoader = false;
-
+    params.data = {
+        cmd: 'batch_update',
+        active_module: window.smart_manager.dashboard_key,
+        security: window.smart_manager.sm_nonce,
+        pro: true,
+        storewide_option: ( updateAll == true ) ? 'entire_store' : '',
+        selected_ids: JSON.stringify(window.smart_manager.getSelectedKeyIds()),
+        batch_update_actions: JSON.stringify(actions),
+        active_module_title: window.smart_manager.dashboardName,
+        backgroundProcessRunningMessage: window.smart_manager.backgroundProcessRunningMessage,
+        table_model: (window.smart_manager.currentDashboardModel.hasOwnProperty('tables') ) ? window.smart_manager.currentDashboardModel.tables : '',
+        SM_IS_WOO30: window.smart_manager.sm_is_woo30,
+        SM_IS_WOO22: window.smart_manager.sm_id_woo22,
+        SM_IS_WOO21: window.smart_manager.sm_is_woo21
+    };
+    // Code for passing tasks params 
+    params.data = ("undefined" !== typeof(window.smart_manager.addTasksParams) && "function" === typeof(window.smart_manager.addTasksParams) && 1 == window.smart_manager.sm_beta_pro) ? window.smart_manager.addTasksParams(params.data) : params.data;
+    params.showLoader = false;
     if( (window.smart_manager.simpleSearchText != '' && window.smart_manager.searchType == 'simple') || (window.smart_manager.advancedSearchQuery.length > 0 && window.smart_manager.searchType != 'simple') ) {
         params.data.filteredResults = 1;
     }
-
-    window.smart_manager.send_request(params, function(response) {
-
-    });
+    window.smart_manager.send_request(params, function(response) {});
 }
 
 Smart_Manager.prototype.resetBatchUpdate = function() {
@@ -1281,63 +1289,182 @@ if ( document.addEventListener ) {
 }
 
 // Function to handle deletion of records
-Smart_Manager.prototype.deleteAllRecords = function ( actionArgs ) {
-
-    if( window.smart_manager.selectedRows.length == 0 && !window.smart_manager.selectAll ) {
+Smart_Manager.prototype.deleteAllRecords = function(actionArgs){
+    if("undefined" !== typeof(window.smart_manager.deleteAndUndoRecords) && "function" === typeof(window.smart_manager.deleteAndUndoRecords)){
+        window.smart_manager.deleteAndUndoRecords({cmd:'delete_all',args:('undefined' !== typeof('actionArgs')) ? actionArgs:{}});
+    }
+}
+// Function to handle undo tasks
+Smart_Manager.prototype.undoTasks = function(){
+    if("undefined" !== typeof(window.smart_manager.deleteAndUndoRecords) && "function" === typeof(window.smart_manager.deleteAndUndoRecords)){
+        window.smart_manager.deleteAndUndoRecords({cmd:'undo'});
+    }
+}
+// Function to handle tasks deletion
+Smart_Manager.prototype.deleteTasks = function(){
+    if("undefined" !== typeof(window.smart_manager.deleteAndUndoRecords) && "function" === typeof(window.smart_manager.deleteAndUndoRecords)){
+        window.smart_manager.deleteAndUndoRecords({cmd:'delete'});
+    }
+}
+// Function to handle displaying tasks
+Smart_Manager.prototype.showTasks = function(){
+    let props = [window.smart_manager.displayTasks,window.smart_manager.resetSearch,window.smart_manager.setDashboardDisplayName,window.smart_manager.load_dashboard,window.smart_manager.isTasksEnabled,window.smart_manager.reset];
+    if(!props && !(props.every(prop => ("undefined" === typeof(prop) && "function" !== typeof(prop))))){
+        return;
+    }
+    if(0 === jQuery(".sm_top_bar_action_btns:nth-last-child(5)").find('#undo_sm_editor_grid').length){
+        jQuery("#sm_top_bar_left .sm_top_bar_action_btns:nth-last-child(5)").append('<div id="undo_sm_editor_grid" class="sm_beta_dropdown">'+
+                                    '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">'+
+                                        '<path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />'+
+                                    '</svg>'+
+                                    '<span title="'+_x('Undo', 'tooltip', 'smart-manager-for-wp-e-commerce')+'">'+_x('Undo', 'button', 'smart-manager-for-wp-e-commerce')+'</span>'+
+                                    '<div class="sm_beta_dropdown_content">'+
+                                        '<a id="sm_beta_undo_selected" href="#">'+_x('Selected Tasks', 'undo button', 'smart-manager-for-wp-e-commerce')+'</a>'+
+                                        '<a id="sm_beta_undo_all_tasks" class="sm_entire_store" href="#">'+_x('All Tasks', 'undo button', 'smart-manager-for-wp-e-commerce')+'</a>'+
+                                    '</div>'+
+                                '</div>' +
+                                '<div id="delete_tasks_sm_editor_grid" class="sm_beta_dropdown">' +
+                                    '<svg class="sm-error-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">'+
+                                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>'+
+                                    '</svg>'+
+                                    '<span title="'+_x('Delete', 'tooltip', 'smart-manager-for-wp-e-commerce')+'">'+_x('Delete', 'button', 'smart-manager-for-wp-e-commerce')+'</span>'+
+                                    '<div class="sm_beta_dropdown_content">'+
+                                        '<a id="sm_beta_delete_selected_tasks" href="#">'+_x('Selected Tasks', 'delete tasks button', 'smart-manager-for-wp-e-commerce')+'</a>'+
+                                        '<a id="sm_beta_delete_all_tasks" class="sm_entire_store" href="#">'+_x('All Tasks', 'delete tasks button', 'smart-manager-for-wp-e-commerce')+'</a>'+
+                                    '</div>'+
+                                '</div>');
+    }
+    window.smart_manager.displayTasks({showHideTasks: window.smart_manager.isTasksEnabled()});
+    window.smart_manager.reset(true);
+    jQuery('#sm_nav_bar_search #search_content').html( ( window.smart_manager.searchType == 'simple' ) ? window.smart_manager.simpleSearchContent : window.smart_manager.advancedSearchContent);
+    window.smart_manager.resetSearch();
+    window.smart_manager.setDashboardDisplayName();
+    window.smart_manager.load_dashboard();        
+}
+// Display title modal 
+Smart_Manager.prototype.showTitleModal = function() {
+    if(!window.smart_manager.processName || !window.smart_manager.processContent){
         return;
     }
 
-    setTimeout( function() { 
+    // let description = _x('A clear and concise title for this task will make it easier for you to refer to or act on it later. We\'ve provided a pre-filled title based on your edits.','modal description','smart-manager-for-wp-e-commerce')
+    let description = sprintf(_x('Name the task for easier reference and future actions, especially for %s option. A pre-filled title has been suggested based on your changes.','modal description','smart-manager-for-wp-e-commerce'), '<strong>'+_x('Undo','modal description','smart-manager-for-wp-e-commerce')+'</strong>' )
 
-        window.smart_manager.showProgressDialog(_x('Delete Records', 'progressbar modal title', 'smart-manager-for-wp-e-commerce')); 
-
-        if( typeof (sa_sm_background_process_heartbeat) !== "undefined" && typeof (sa_sm_background_process_heartbeat) === "function" ) {
+    window.smart_manager.modal = {
+        title: _x('Task Title','modal title','smart-manager-for-wp-e-commerce'),
+        content: '<div style="padding-bottom: 1em; color: #6b7280!important;">'+description+'</div>'+
+                '<div id="show_modal_content"><input type="text" id="sm_add_title" placeholder="'+_x('Enter desired title here...','title placeholder','smart-manager-for-wp-e-commerce')+'" value="'+sprintf(_x('Edited %s','process title','smart-manager-for-wp-e-commerce'),window.smart_manager.processContent) +'"></div>',
+        autoHide: false,
+        cta: {
+            title: _x('Ok','button','smart-manager-for-wp-e-commerce'),
+            callback: function(){ 
+                let updatedTitle = jQuery('#sm_add_title').val();
+                if(updatedTitle){
+                    window.smart_manager.updatedTitle = updatedTitle;
+                    if("function" === typeof(window.smart_manager.processCallback)){
+                        ("undefined" !== typeof(window.smart_manager.processCallbackParams) && Object.keys(window.smart_manager.processCallbackParams).length > 0) ? window.smart_manager.processCallback(window.smart_manager.processCallbackParams) : window.smart_manager.processCallback()
+                    }
+                }
+            }
+        },
+        closeCTA: {title: _x('Cancel','button','smart-manager-for-wp-e-commerce')}
+    }
+     window.smart_manager.showModal()
+}
+// Function to handle records deletion, tasks undo and deletion of tasks records
+Smart_Manager.prototype.deleteAndUndoRecords = function(params = {}){
+    if(!params || (0 === Object.keys(params).length) || (false === params.hasOwnProperty('cmd')) || !params['cmd'] || ((0 === window.smart_manager.selectedRows.length && !window.smart_manager.selectAll) && (false === window.smart_manager.selectedAllTasks))){
+        return;
+    }
+    params.data = {
+        cmd:params['cmd'],
+        active_module: window.smart_manager.dashboard_key,
+        security: window.smart_manager.sm_nonce,
+        selected_ids: JSON.stringify(window.smart_manager.getSelectedKeyIds().sort(function(a, b){return b-a})),
+        storewide_option: (true === window.smart_manager.selectAll || true === window.smart_manager.selectedAllTasks) ? 'entire_store' : '',
+        active_module_title: window.smart_manager.dashboardName,
+        backgroundProcessRunningMessage: window.smart_manager.backgroundProcessRunningMessage,
+        pro: true,
+        SM_IS_WOO30: (window.smart_manager.sm_is_woo30) ? window.smart_manager.sm_is_woo30 : '',
+        SM_IS_WOO22: (window.smart_manager.sm_id_woo22) ? window.smart_manager.sm_id_woo22 : '',
+        SM_IS_WOO21: (window.smart_manager.sm_is_woo21) ? window.smart_manager.sm_is_woo21 : ''
+    };
+    let processName = '', tasksParams = ['undo','delete'];
+    if(tasksParams.includes(params['cmd'])){
+        params.data.isTasks = 1;
+    }
+    switch(params['cmd']){
+        case 'delete_all':
+            processName = _x('Delete Records','progressbar modal title','smart-manager-for-wp-e-commerce');
+            params.data.deletePermanently = (params.hasOwnProperty('args') && (params.args.hasOwnProperty('deletePermanently'))) ? params.args.deletePermanently : 0;
+            break;
+        case 'undo':
+            processName = _x('Undo Tasks','progressbar modal title','smart-manager-for-wp-e-commerce');
+            break;
+        case 'delete':
+            processName = _x('Delete Tasks','progressbar modal title','smart-manager-for-wp-e-commerce');
+            break;
+    }
+    setTimeout(function(){ 
+        window.smart_manager.showProgressDialog(processName); 
+        if("undefined" !== typeof(sa_sm_background_process_heartbeat) && "function" === typeof(sa_sm_background_process_heartbeat)){
             sa_sm_background_process_heartbeat(5000);
         }
-
-    } ,1);
-
-    let args = ( typeof('actionArgs') != 'undefined' ) ? actionArgs : {}; 
-
-    let params = {};
-        params.data = {
-                        cmd: 'delete_all',
-                        active_module: window.smart_manager.dashboard_key,
-                        security: window.smart_manager.sm_nonce,
-                        selected_ids: JSON.stringify(window.smart_manager.getSelectedKeyIds()),
-                        storewide_option: ( true === window.smart_manager.selectAll ) ? 'entire_store' : '',
-                        active_module_title: window.smart_manager.dashboardName,
-                        backgroundProcessRunningMessage: window.smart_manager.backgroundProcessRunningMessage,
-                        deletePermanently: ( ( args.hasOwnProperty('deletePermanently') ) ? args.deletePermanently : 0 ),
-                        pro: true,
-                        SM_IS_WOO30: ( window.smart_manager.sm_is_woo30 ) ? window.smart_manager.sm_is_woo30 : '',
-                        SM_IS_WOO22: ( window.smart_manager.sm_id_woo22 ) ? window.smart_manager.sm_id_woo22 : '',
-                        SM_IS_WOO21: ( window.smart_manager.sm_is_woo21 ) ? window.smart_manager.sm_is_woo21 : ''
-                    };
-
-        params.showLoader = false;
-
-        if( window.smart_manager.simpleSearchText != '' || window.smart_manager.advancedSearchQuery.length > 0 ) {
-            params.data.filteredResults = 1;
+    },1);
+    params.showLoader = false;
+    if('' !== window.smart_manager.simpleSearchText || window.smart_manager.advancedSearchQuery.length > 0){
+        params.data.filteredResults = 1;
+    }
+    window.smart_manager.send_request(params,function(response){});
+}
+// Function for displaying warning modal before doing undo/delete tasks records
+Smart_Manager.prototype.taskActionsModal = function(args = {}){
+    if(!args || !((Object.keys(args)).every(arg => args.hasOwnProperty(arg)))){
+        return;
+    }
+    window.smart_manager.selectedAllTasks = (['sm_beta_undo_all_tasks','sm_beta_delete_all_tasks'].includes(args.id)) ? true : false;
+    if(0 === window.smart_manager.selectedRows.length && !window.smart_manager.selectAll && !window.smart_manager.selectedAllTasks){
+        window.smart_manager.notification = {message: _x('Please select a task','notification','smart-manager-for-wp-e-commerce')}
+        window.smart_manager.showNotification()
+        return false;
+    }
+    
+    let undoTaskIds = (['sm_beta_undo_selected','sm_beta_undo_all_tasks'].includes(args.id)) ? 1 : 0,
+        deleteTasks = (['sm_beta_delete_selected_tasks','sm_beta_delete_all_tasks'].includes(args.id)) ? 1 : 0,
+        params = {},
+        paramsContent = '';
+        params.btnParams = {}
+        params.title = '<span class="sm-error-icon"><span class="dashicons dashicons-warning" style="vertical-align: text-bottom;"></span>&nbsp;'+_x('Attention!', 'modal title', 'smart-manager-for-wp-e-commerce')+'</span>';
+        switch(true){
+            case (undoTaskIds && "undefined" !== typeof(window.smart_manager.undoTasks) && "function" === typeof(window.smart_manager.undoTasks)):
+                paramsContent = _x('undo', 'modal content', 'smart-manager-for-wp-e-commerce');
+                params.btnParams.yesCallback = window.smart_manager.undoTasks;
+                break;
+            case (deleteTasks && "undefined" !== typeof(window.smart_manager.deleteTasks) && "function" === typeof(window.smart_manager.deleteTasks)):
+                paramsContent = '<span class="sm-error-icon">' + _x('delete', 'modal content', 'smart-manager-for-wp-e-commerce') + '</span>';
+                params.btnParams.yesCallback = window.smart_manager.deleteTasks;
+                break;
         }
+        params.content = _x('Are you sure you want to '+paramsContent+' ', 'modal content', 'smart-manager-for-wp-e-commerce') + '<strong>'+ args.btnText.toLowerCase() + '</strong>?';
+        if(window.smart_manager.selectedRows.length > 0 || window.smart_manager.loadedTotalRecords){
+            window.smart_manager.showConfirmDialog(params);
+        } else{
+            window.smart_manager.notification = {message: _x('No task to '+paramsContent, 'warning', 'smart-manager-for-wp-e-commerce')}
+            window.smart_manager.showNotification()
+        }   
+}
 
-    window.smart_manager.send_request(params, function(response) {
-        // if ( response ) {
-        //     let no_of_records = parseInt( response );
-        //     if ( no_of_records > 0 ) {
-        //         if( jQuery('#sm_top_bar_action_btns_basic #del_sm_editor_grid span').hasClass('sm-ui-state-disabled') === false ) {
-        //             jQuery('#sm_top_bar_action_btns_basic #del_sm_editor_grid span').addClass('sm-ui-state-disabled');
-        //         }
-        //         // setTimeout(function() {
-        //         //     params = { 'func_nm' : 'delete_all', 'title' : 'Delete Records' }
-        //         //     window.smart_manager.background_process_hearbeat( params );
-        //         // }, 1000);
-        //     } else {
-        //         window.smart_manager.refresh();
-        //         window.smart_manager.hideNotification();
-        //         window.smart_manager.showNotificationDialog('', 'Cannot delete the selected records');
-        //     }
-        // }
-    });
-
+// Function for displaying warning modal before doing export csv
+Smart_Manager.prototype.getExportCsv = function(args){
+    if(!args || !((Object.keys(args)).every(arg => args.hasOwnProperty(arg)))){
+        return;
+    }
+    args.params.content = _x('Are you sure you want to export the ','modal content','smart-manager-for-wp-e-commerce') + args.btnText + '?';
+    if("undefined" !== typeof(window.smart_manager.generateCsvExport) && "function" === typeof(window.smart_manager.generateCsvExport)){
+        args.params.btnParams.yesCallback = window.smart_manager.generateCsvExport;
+    }
+    window.smart_manager.exportStore = ('sm_export_entire_store' === args.id) ? true : false;
+    if("undefined" !== typeof(window.smart_manager.showConfirmDialog) && "function" === typeof(window.smart_manager.showConfirmDialog)){
+        window.smart_manager.showConfirmDialog(args.params);
+    }   
 }

@@ -4,7 +4,8 @@ if ( !defined( 'ABSPATH' ) ) exit;
 
 if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 	class Smart_Manager_Pro_Taxonomy_Base extends Smart_Manager_Pro_Base {
-        public $dashboard_key = '';
+		public $dashboard_key = '',
+		$prev_taxonomy_values = array();
 
 		protected static $_instance = null;
 		public static $term_taxonomy_update_cols = array( 'name', 'slug', 'term_group', 'description', 'parent' );
@@ -72,6 +73,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 
 			$join = ( ! empty( $clauses['join'] ) ) ? $clauses['join'] : '';
 			$where = ( ! empty( $clauses['where'] ) ) ? $clauses['where'] : '';
+			if ( ( ! empty( $this->req_params[ 'selected_ids' ] ) && '[]' !== $this->req_params[ 'selected_ids' ] ) && empty( $this->req_params['storewide_option'] ) && ( ! empty( $this->req_params[ 'cmd' ] ) && ( 'get_export_csv' === $this->req_params[ 'cmd' ] ) ) ) {
+				$selected_ids = json_decode( stripslashes( $this->req_params[ 'selected_ids' ] ) );
+				$where .= ( ! empty( $selected_ids ) ) ? " AND t.term_id IN (" . implode( ",", $selected_ids ) . ")" : $where;
+			}
 
 			// Code to add join condition for termmeta
 			if( ( ! empty( $this->req_params['search_text'] ) ) && false === strpos( $join, 'termmeta' ) ){
@@ -611,16 +616,18 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 				}
 
 				foreach( $edited_row as $key => $value ) {
+					$prev_val = '';
 					$edited_value_exploded = explode("/", $key);
 					
 					if( empty( $edited_value_exploded ) ) continue;
 
 					$update_table = $edited_value_exploded[0];
 					$update_column = $edited_value_exploded[1];
-
+					$this->field_names[ $id ][ $update_column ] = $key;
 					if ( 'termmeta' === $update_table && sizeof( $edited_value_exploded ) > 2 ) {
 						$update_column_exploded = explode("=",$edited_value_exploded[2]);
 						$update_column = $update_column_exploded[1];
+						$prev_taxonomy_values =  self:: terms_batch_update_prev_value( $prev_val, array( 'id' => $id, 'table_nm' => $update_table, 'col_nm' => $update_column, 'dashboard_key' => $this->dashboard_key ) );
 
 						if( in_array( $update_column, $params['data_cols_timestamp'] ) ) {
     						$value = strtotime( $value );
@@ -630,15 +637,27 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 							$term_meta_update_args[ $update_column ] = $value;
 							continue;
 						}
-						update_term_meta( $id, $update_column, $value );
+						$result = update_term_meta( $id, $update_column, $value );
+						if ( empty( $result ) || is_wp_error( $result ) || ( ! property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) || empty( $this->task_id ) || empty( $id ) ) {
+			    				continue;
+			    			}
+				    		Smart_Manager_Base::$update_task_details_params[] = array(
+				    			'task_id' => $this->task_id,
+							    'action' => 'set_to',
+							    'status' => 'completed',
+							    'record_id' => $id,
+							    'field' => $key,                                                               
+							    'prev_val' => $prev_taxonomy_values,
+							    'updated_val' => $value,
+						       	);	
 					} else if( in_array( $update_column, self::$term_taxonomy_update_cols ) ) {
 						$term_taxonomy_update_args[ $update_column ] = $value;
+						$this->prev_taxonomy_values[ $id ][ $update_column ] = self::terms_batch_update_prev_value( $prev_val, array( 'id' => $id, 'table_nm' => $update_table, 'col_nm' => $update_column, 'dashboard_key' => $this->dashboard_key ) );
 					}
 				}
-
 				if( ! empty( $term_taxonomy_update_args ) ){
 
-					// COde for newly added row
+					// Code for newly added row
 					if( empty( $id ) && ! empty( $term_taxonomy_update_args['name'] ) ){
 						$result = wp_insert_term( $term_taxonomy_update_args['name'], $this->dashboard_key, $term_taxonomy_update_args );
 
@@ -647,7 +666,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 						}
 
 						foreach( $term_meta_update_args as $key => $value ){
-							update_term_meta( $id, $update_column, $value );	
+							update_term_meta( $id, $update_column, $value );
 						}
 
 						continue;
@@ -657,6 +676,24 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 
 					if( is_wp_error( $result ) ){
 						// TODO
+					} else {
+						if ( ( ! property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) || empty( $this->task_id ) ) {
+			    				continue;
+			    			}
+						foreach ( $term_taxonomy_update_args as $key => $value ) {
+							if ( ( ( empty( $key ) ) ) || ! isset( $this->field_names[ $id ][ $key ] ) ) {
+		    						continue;
+		    					}
+			    				Smart_Manager_Base::$update_task_details_params[] = array(
+			    					'task_id' => $this->task_id,
+						        	'action' => 'set_to',
+						        	'status' => 'completed',
+						        	'record_id' => $id,
+						        	'field' => $this->field_names[ $id ][ $key ],                                                               
+						        	'prev_val' => $this->prev_taxonomy_values[ $id ][ $key ],
+						        	'updated_val' => $value,
+						        );	
+						}
 					}
 				}
 			}
@@ -700,21 +737,17 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 		 * @return string $prev_val updated field previous value.
 		 */
 		public static function terms_batch_update_prev_value( $prev_val = '', $args = array() ) {
-
 			if( empty( $args ) || empty( $args['table_nm'] ) || empty( $args['id'] ) || empty( $args['col_nm'] ) ){
 				return $prev_val;
 			}
-
 			if( 'termmeta' === $args['table_nm'] ) {
 				return get_term_meta( $args['id'], $args['col_nm'], true );
 			} else {
 				$terms = get_term_by( 'term_id', $args['id'], $args['dashboard_key'], 'ARRAY_A' );
 				return ( ! empty( $terms ) && ! empty( $terms[ $args['col_nm'] ] ) ) ? $terms[ $args['col_nm'] ] : $prev_val;
 			}
-
 			return $prev_val;
 		}
-
 		/**
 		 * Static function for processing db updates for bulk edit.
 		 *

@@ -99,7 +99,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		 * @return array $dashboard_model updated dashboard model.
 		 */
 		public function orders_dashboard_model( $dashboard_model = array(), $dashboard_model_saved = array() ){
-
 			if( empty( $this->custom_product_search_cols ) ){
 				return $dashboard_model;
 			}
@@ -153,7 +152,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			if ( !empty( $col_model_diff ) ) {
 				delete_transient( 'sa_sm_'.$this->dashboard_key );	
 			}
-
 			return $dashboard_model;
 		}
 

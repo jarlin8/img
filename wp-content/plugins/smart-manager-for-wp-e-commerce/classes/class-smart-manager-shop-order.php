@@ -572,16 +572,37 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 			if ( empty( $edited_data ) ) {
 				return $edited_data;
 			}
+			$prev_val = '';
+			// For getting current task_id
+			if ( true === array_key_exists( 'task_id', $edited_data ) ) {
+				$this->task_id = intval( $edited_data['task_id'] );
+				unset( $edited_data['task_id'] );
+			}
 			foreach( $edited_data as $id => $edited_row ) {
 				if( empty( $id ) ) {
 					continue;
 				}
-
+				// For fetching previous value
+				if ( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
+					$prev_val = Smart_Manager_Pro_Task::get_previous_data( $id, 'posts', 'post_status' );
+				}
 				if( ! empty( $edited_row['posts/post_status'] ) && class_exists( 'WC_Order' ) ) {
 					$order = new WC_Order( $id );
 					$order->update_status( $edited_row['posts/post_status'], '', true );
 					unset( $edited_data[$id]['posts/post_status'] );
 				}
+				if ( ( defined( 'SMPRO' ) && empty( SMPRO ) ) || empty( $this->task_id ) || empty( $edited_row['posts/post_status'] ) || empty(  property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) {
+				   	continue;
+				}
+			    	Smart_Manager_Base::$update_task_details_params[] = array(
+			    		'task_id' => $this->task_id,
+					'action' => 'set_to',
+					'status' => 'completed',
+					'record_id' => $id,
+					'field' => 'posts/post_status',                                                               
+					'prev_val' => $prev_val,
+					'updated_val' => $edited_row['posts/post_status']
+			       	);
 			}
 			return $edited_data;
 		}

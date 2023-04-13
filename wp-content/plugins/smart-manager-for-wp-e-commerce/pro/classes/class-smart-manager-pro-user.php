@@ -932,9 +932,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 	        	}
 	        }
 
-	        $query_limit_str = ( !empty( $this->req_params['cmd'] ) && $this->req_params['cmd'] == 'get_export_csv' ) ? '' : 'LIMIT '.$start_offset.', '.$limit;
-
-
+	        $query_limit_str = ( ! empty( $this->req_params['cmd'] ) && 'get_export_csv' === $this->req_params['cmd'] && ( ! empty( $this->req_params['storewide_option'] ) ) ) ? '' : 'LIMIT '.$start_offset.', '.$limit;
+	        if ( ( ! empty( $this->req_params[ 'selected_ids' ] ) && '[]' !== $this->req_params[ 'selected_ids' ] ) && empty( $this->req_params['storewide_option'] ) &&  ( ! empty( $this->req_params[ 'cmd' ] ) && ( 'get_export_csv' === $this->req_params[ 'cmd' ] ) ) ) {
+				$selected_ids = json_decode( stripslashes( $this->req_params[ 'selected_ids' ] ) );
+				$where .= ( ! empty( $selected_ids ) ) ? " AND {$wpdb->prefix}users.ID IN (" . implode( ",", $selected_ids ) . ")" : $where;
+			}
 			//code to fetch data from users table
 			$user_ids = $wpdb->get_col( $wpdb->prepare("SELECT DISTINCT {$wpdb->users}.id 
 														FROM {$wpdb->users}
@@ -1178,9 +1180,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		//function for modifying edited data before updating
 		public function user_inline_update($edited_data, $params) {
 			if (empty($edited_data)) return $edited_data;
-
 			global $wpdb;
-
 
 			$default_user_keys = array( 'ID', 'user_pass', 'user_login', 'user_nicename', 'user_url', 'user_email', 'display_name', 'nickname', 'first_name', 
 										'last_name', 'description', 'rich_editing', 'syntax_highlighting', 'comment_shortcuts', 'admin_color', 'use_ssl',
@@ -1196,6 +1196,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 				$insert_usermeta = array();
 
 				foreach( $edited_row as $key => $value ) {
+					$prev_val = '';
 					$edited_value_exploded = explode("/", $key);
 					
 					if( empty( $edited_value_exploded ) ) continue;
@@ -1212,29 +1213,37 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 								$default_insert_users [$update_column] = $value;
 							}
 						}
-					} else if ( sizeof( $edited_value_exploded ) > 2) {
-						$cond = explode("=",$edited_value_exploded[1]);
-
-						$update_column_exploded = explode("=",$edited_value_exploded[2]);
+					} elseif ( sizeof( $edited_value_exploded ) > 2) {
+						$cond = explode( '=', $edited_value_exploded[1]);
+						$update_column_exploded = explode( '=', $edited_value_exploded[2]);
 						$update_column = $update_column_exploded[1];
 
 						if( in_array( $update_column, $params['data_cols_timestamp'] ) ) {
     						$value = strtotime($value);
     					}
 
-						if( $update_table == 'usermeta' && in_array( $update_column, $default_user_keys ) ) {
-
+						if( 'usermeta' === $update_table && in_array( $update_column, $default_user_keys ) ) {
 							if( $update_column == 'use_ssl' ) {
 								$value = ( $value == 'yes' ) ? 0 : 1;
 							}
-
 							$default_insert_users [$update_column] = $value;
 						} else if( $update_table == 'usermeta' && in_array( $update_column, $default_user_keys ) === false ) {
 							$insert_usermeta [$update_column] = $value;
 						}
 					}
+					$this->field_names[ $id ][ $update_column ] = $key;
+					// For fetching previous values.
+					if ( ! empty( $id ) && ! empty( $update_table ) && ! empty( $update_column ) ) {
+						$prev_val = self:: users_batch_update_prev_value( $prev_val, array( 'id' => $id, 'table_nm' => $update_table, 'col_nm' => $update_column ) );
+						$prev_val = ( ( ! empty( $params ) ) && ( ! empty( $update_column ) ) ) ? sa_sm_format_prev_val( array(
+								'prev_val' => $prev_val,
+								'update_column' => $update_column,
+								'col_data_type' => $params,
+								'updated_val' => $value
+							) ) : $prev_val;
+						$this->prev_post_values[ $id ][ $update_column ] = $prev_val;
+					}					
 				}
-
 				if ( !empty ( $default_insert_users ) ) {
 					$default_insert_users['ID'] = intval( $id );
 
@@ -1257,21 +1266,46 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 						}
 					} else { //Code for updating users
 						$id = wp_update_user( $default_insert_users );
+		               			if ( ( ! property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) || empty( $this->task_id ) ||is_wp_error( $id ) || empty( $id ) ) {
+	    						continue;
+	    					}
+						foreach ( $default_insert_users as $key => $value ) {
+							if ( ( ( ! empty( $key ) ) && ('ID' === $key ) ) || ! isset( $this->field_names[ $id ][ $key ] ) ) {
+	    							continue;
+		    					}
+			    				Smart_Manager_Base::$update_task_details_params[] = array(
+			    					'task_id' => $this->task_id,
+								'action' => 'set_to',
+								'status' => 'completed',
+								'record_id' => $id,
+								'field' => $this->field_names[ $id ][ $key ],                                                               
+								'prev_val' => $this->prev_post_values[ $id ][ $key ],
+								'updated_val' => $value,
+							);
+						}
+						
 					}				
 				}
-
-				if( !is_wp_error( $id ) ) {
-					
-					if( !empty( $insert_usermeta ) ) {
-
-						foreach( $insert_usermeta as $key => $value ) {
-							update_user_meta( $id, $key, $value );
+				if ( ! is_wp_error( $id ) && ! empty( $insert_usermeta ) ) {
+					if ( ( ! property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) || empty( $this->task_id ) || empty( $id ) ) {
+		    				continue;
+		    			}
+					foreach ( $insert_usermeta as $key => $value ) {
+						if ( ( is_wp_error( update_user_meta( $id, $key, $value ) ) ) || empty( $key ) || ! isset( $this->field_names[ $id ][ $key ] ) ) {
+						    continue;
 						}
+				    			Smart_Manager_Base::$update_task_details_params[] = array(
+				    				'task_id' => $this->task_id,
+								'action' => 'set_to',
+								'status' => 'completed',
+								'record_id' => $id,
+								'field' => $this->field_names[ $id ][ $key ],                      
+								'prev_val' => $this->prev_post_values[ $id ][ $key ],
+								'updated_val' => $value,
+					   	);
 					}
 				}
-
 			}
-
 		}
 
 		public static function users_batch_update_entire_store_ids_from( $from, $params ) {
@@ -1310,8 +1344,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 				$prev_val = $wpdb->get_var( $wpdb->prepare( "SELECT ". $args['col_nm'] ." FROM $wpdb->users WHERE ID = %d", $args['id'] ) );
 			} else if( 'usermeta' === $args['table_nm'] && 'role' !== $args['col_nm'] ) {
 				$prev_val = get_user_meta( $args['id'], $args['col_nm'], true );
-			} 
-
+			} else if( 'usermeta' === $args['table_nm'] && 'role' === $args['col_nm'] ) {
+				$caps = get_user_meta($args['id'], 'wp_capabilities', true);
+				$prev_val = array_keys((array)$caps);
+			}
 			return $prev_val;
 		}
 
@@ -1477,6 +1513,5 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			}
 
 		}
-
 	}
 }

@@ -58,6 +58,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 			add_filter( 'cron_schedules', array( $this, 'cron_schedules' ), 1000 ); // phpcs:ignore 
 			add_filter( 'action_scheduler_run_schedule', array( $this, 'modify_action_scheduler_run_schedule' ), 1000 ); // phpcs:ignore 
 			add_action( 'wp_ajax_sa_sm_stop_background_process', array( $this, 'stop_background_process' ) );
+			add_action( 'sm_schedule_tasks_cleanup', array( &$this, 'schedule_tasks_cleanup_cron' ) ); // For handling deletion of tasks those are more than x number of days.
 		}
 
 		/**
@@ -72,7 +73,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 		 * @return mixed
 		 */
 		protected function task( $params ) {
-
 			// sleep(2);
 			if ( !empty($params['callback']) && !empty($params['args']) ) {
 				try {
@@ -546,7 +546,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 
 				update_option( $this->identifier.'_remaining', $update_remaining_count, 'no' );
 
-				if( 0 === $update_remaining_count ) { //Code for handling when the batch has completed
+				if( 0 === $update_remaining_count ) { // Code for handling when the batch has completed.
+					do_action( 'sm_background_process_complete', $this->identifier ); // For triggering task deletion after successfully completing undo task/deleting task.
 					delete_option( $this->identifier.'_ids' );
 					delete_option( $this->identifier.'_current_id_batch' );
 					
@@ -695,6 +696,26 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 			);
 
 			return $schedules;
+		}
+		/**
+		 * Delete tasks from tasks table those are more than x number of days
+		 * 
+		 * @return void
+		 */
+		public function schedule_tasks_cleanup_cron() {
+			$tasks_cleanup_interval_days = get_option( 'sa_sm_tasks_cleanup_interval_days' );
+			if ( empty( $tasks_cleanup_interval_days ) ) {
+				return;
+			}
+			include_once( SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-base.php' );
+			include_once dirname( __FILE__ ) . '/class-smart-manager-pro-base.php';
+			include_once dirname( __FILE__ ) . '/class-smart-manager-pro-task.php';
+			if ( is_callable( array( 'Smart_Manager_Pro_Task', 'delete_tasks' ) ) && is_callable( array( 'Smart_Manager_Pro_Task', 'get_task_ids' ) ) ) {
+				Smart_Manager_Pro_Task::delete_tasks( Smart_Manager_Pro_Task::get_task_ids( date( 'Y-m-d H:i:s', strtotime( "-" . $tasks_cleanup_interval_days . " Days" ) ) ) );	
+			}
+		    if ( is_callable( array( 'Smart_Manager_Pro_Task', 'schedule_task_deletion' ) ) ) {
+				Smart_Manager_Pro_Task::schedule_task_deletion();
+			}
 		}
 	}
 }

@@ -57,6 +57,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			add_filter('sm_beta_post_batch_process_args', __CLASS__. '::products_post_batch_process_args', 10, 1);
 			add_action('sm_pre_batch_update_db_updates', __CLASS__. '::products_pre_batch_update_db_updates', 10, 2);
 			add_filter('sm_post_batch_update_db_updates', __CLASS__. '::products_post_batch_update_db_updates', 10, 2);
+			add_filter( 'sm_beta_batch_update_prev_value',__CLASS__. '::products_batch_update_prev_value', 12, 2 );
+			add_filter( 'sm_custom_field_name',__CLASS__. '::products_custom_field_name', 12, 1 );
+			add_filter( 'sm_task_update_action_name',__CLASS__. '::products_task_update_action_name', 12, 2 );
+			add_filter( 'sm_task_details_update_by_prev_val',__CLASS__. '::task_details_update_by_prev_val', 12, 1 );
+			add_filter( 'sm_disable_task_details_update',__CLASS__. '::disable_task_details_update', 12, 2 );
 		}
 		
 		public static function products_post_batch_process_args( $args ) {
@@ -400,8 +405,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 				$update_flag = true;
 			}
 
-			if ( !empty($args['table_nm']) && $args['table_nm'] == 'postmeta' && (!empty($args['col_nm']) && $args['col_nm'] == '_stock') ) { //For handling product inventory updates
-                sm_update_stock_status( $args['id'], $args['value'] );
+			if ( ! empty( $args['table_nm'] ) && 'postmeta' === $args['table_nm'] && ( ! empty( $args['col_nm'] ) && '_stock' === $args['col_nm'] ) ) { //For handling product inventory updates
+                $update_flag = sm_update_stock_status( $args['id'], $args['value'] );
             }
 
 			// Code for 'WooCommerce Product Stock Alert' plugin compat -- triggering `save_post` action
@@ -420,14 +425,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
                 }
 			}
 
-			if( ( !empty( $args['table_nm'] ) && $args['table_nm'] == 'terms' ) && ( !empty( $args['col_nm'] ) && $args['col_nm'] == 'product_visibility' ) ) {
-				$val = ( !empty( $args['value'] ) ) ? $args['value'] : '';
-				self::$_instance->set_product_visibility( $args['id'], $val );
+			if( ( ! empty( $args['table_nm'] ) && 'terms' === $args['table_nm'] ) && ( ! empty( $args['col_nm'] ) && 'product_visibility' === $args['col_nm'] ) ) {
+				$val = ( ! empty( $args['value'] ) ) ? $args['value'] : '';
+				$update_flag = self::$_instance->set_product_visibility( $args['id'], $val );
 			}
 
 			if( ( !empty( $args['table_nm'] ) && $args['table_nm'] == 'terms' ) && ( !empty( $args['col_nm'] ) && $args['col_nm'] == 'product_visibility_featured' ) ) {
 				$val = ( !empty( $args['value'] ) ) ? $args['value'] : '';
-				( $val == "Yes" || $val == "yes" ) ? wp_set_object_terms( $args['id'], 'featured', 'product_visibility', true ) : wp_remove_object_terms( $args['id'], 'featured', 'product_visibility' );
+				$update_flag = ( $val == "Yes" || $val == "yes" ) ? wp_set_object_terms( $args['id'], 'featured', 'product_visibility', true ) : wp_remove_object_terms( $args['id'], 'featured', 'product_visibility' );
 			}
 
 			//Code for updating product attributes
@@ -567,7 +572,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 
 			do_action( 'woocommerce_update_product', $args['id'], wc_get_product( $args['id'] ) );
 
-			return $update_flag;
+			return ( ( ! empty( $update_flag ) ) && ( ! is_wp_error( $update_flag ) ) ) ? true : false;
 
 		}
 
@@ -667,6 +672,95 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			} else {
 				return true;
 			}
+		}
+		/**
+		* Get previous values for the taxonomy
+		*
+		* @param string $prev_val previous value for current taxonomy 
+		* @param array $args args has id, column name and table name 
+		* @return result of function call or empty value
+		*/ 
+		public static function products_batch_update_prev_value( $prev_val = '', $args = array() ) {
+			if ( 'custom' === $args['table_nm'] && in_array( $args['col_nm'], array( 'product_attributes_add', 'product_attributes_remove' ), true ) ) {
+				$result = wp_get_object_terms( $args['id'], $args['operator'], 'orderby=none&fields=ids' );
+				return ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) ? $result : $prev_val;
+			}
+			return $prev_val;
+		}
+
+		/**
+		* Get actual field name
+		*
+		* @param string $field_nm field_nm has field name 
+		* @return string result of actual field name
+		*/ 
+		public static function products_custom_field_name( $field_nm = '' ) {
+			return ( ( ! empty( $field_nm ) )  && ( in_array( $field_nm, array( 'custom/product_attributes_add', 'custom/product_attributes_remove' ), true ) ) ) ? 'custom/product_attributes' : $field_nm;
+		}
+		/**
+		* Get action name
+		*
+		* @param string $action action has action name 
+		* @param string $field_nm has field name 
+		* @return string result of action name
+		*/ 
+		public static function products_task_update_action_name( $action = '', $field_nm = '' ) {
+			return ( ( ! empty( $field_nm ) ) && ( in_array( $field_nm, array( 'custom/product_attributes_add', 'custom/product_attributes_remove' ), true ) ) ) ? $action : 'set_to';
+		}
+
+		/**
+		* Update update_task_details_params param by using previous value
+		*
+		* @param array $args args has array of task details update values
+		* @return void
+		*/ 
+		public static function task_details_update_by_prev_val( $args = array() ) {
+			$field_name = '';
+			if ( ! empty( $args ) ) {
+				foreach ( $args as $arg ) {
+					if ( empty( $arg['prev_val'] ) ) {
+						continue;
+					}
+					foreach ( $arg['prev_val'] as $prev_val ) {
+						switch (true) {
+								case empty( $prev_val ):
+									$field_name = 'custom/product_attributes_add';
+									break;
+								case ( ! empty( $prev_val ) && ( empty( in_array( $arg['updated_val'], $arg['prev_val'] ) ) && ( 'all' === $arg['updated_val'] && ( 'custom/product_attributes_add' === $arg['field'] ) ) ) ):
+									$field_name = 'custom/product_attributes_remove';
+									break;
+								case ( ! empty( $prev_val ) && ! empty( in_array( $arg['updated_val'], $arg['prev_val'] ) ) ):
+									$field_name = 'custom/product_attributes_add';
+									break;
+								case ( ! empty( $prev_val ) && ( empty( in_array( $arg['updated_val'], $arg['prev_val'] ) ) ||  ( 'all' === $arg['updated_val'] && ( 'custom/product_attributes_remove' === $arg['field'] ) ) ) ):
+									$field_name = 'custom/product_attributes_add';
+									break;
+						}
+						if ( ( ! empty( $arg['task_id'] ) ) ) {
+			            	Smart_Manager_Base::$update_task_details_params[] = array(
+			            		'task_id' => $arg['task_id'],
+								'action' => $arg['action'],
+								'status' => $arg['status'],
+								'record_id' => $arg['record_id'],
+								'field' => $field_name,   
+								'prev_val' => $prev_val,
+								'updated_val' => $arg['updated_val'],
+							); 
+			        	}
+					}
+				}
+			}
+		}
+
+		/**
+		* Disable task details update
+		*
+		* @param array $prev_val prev_val has previous value
+		* @param string $field_nm field name 
+		* @return boolean 
+		*/ 
+		public static function disable_task_details_update( $prev_val = array(), $field_nm = '' ) {
+			return ( ( ! empty( $prev_val ) ) && ( 'postmeta/meta_key=_product_attributes/meta_value=_product_attributes' === $field_nm ) ) ? true : false;
 		}
 
 	} //End of Class
