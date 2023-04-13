@@ -42,6 +42,9 @@ class WooIntegrator
         if (GeneralConfig::getInstance()->option('woocommerce_echo_price_per_unit'))
             \add_action('woocommerce_single_product_summary', array(__CLASS__, 'echoPricePerUnit'), 20);
 
+        if (GeneralConfig::getInstance()->option('outofstock_woo') == 'hide_price')
+            \add_filter('woocommerce_get_price_html', array(__CLASS__, 'hideOutOfStockPrice'), 10, 2);
+
         if (GeneralConfig::getInstance()->option('woocommerce_btn_text'))
         {
             \add_filter('woocommerce_product_single_add_to_cart_text', array(__CLASS__, 'customButtonText'), 10, 2);
@@ -185,11 +188,13 @@ class WooIntegrator
                 $product->set_stock_status('instock');
         }
 
-        if ($item['description'] && !\apply_filters('cegg_disable_description_sync', false))
+        $sync_description = GeneralConfig::getInstance()->option('woocommerce_sync_description');
+
+        if ($item['description'] && $sync_description && !\apply_filters('cegg_disable_description_sync', false))
         {
-            if (!$product->get_description() && \apply_filters('cegg_sync_full_description', false))
+            if ($sync_description == 'full' && !$product->get_description() && \apply_filters('cegg_sync_full_description', true))
                 $product->set_description($item['description']);
-            elseif (!$product->get_short_description() && !\apply_filters('cegg_dont_touch_short_description', false))
+            elseif ($sync_description == 'short' && !$product->get_short_description() && !\apply_filters('cegg_dont_touch_short_description', false))
                 $product->set_short_description($item['description']);
         }
 
@@ -211,10 +216,21 @@ class WooIntegrator
                 \wp_set_object_terms($post_id, \sanitize_text_field($item['domain']), 'store', true);
         }
 
+        $outofstock_woo = GeneralConfig::getInstance()->option('outofstock_woo');
+        if ($item['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK && $outofstock_woo == 'hide_product')
+            $product->set_catalog_visibility('hidden');
+        elseif ($outofstock_woo == 'hide_product')
+            $product->set_catalog_visibility('visible');
+
         // update meta
         self::setMetaSyncUniqueId($post_id, $module_id, $item['unique_id']);
 
-        return $product->save();
+        $res = $product->save();
+
+        if ($item['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK && $outofstock_woo == 'move_to_trash')
+            \wp_trash_post($product->get_id());
+
+        return $res;
     }
 
     public static function wooCreateAttr(array $item, $module_id, $post_id)
@@ -256,7 +272,7 @@ class WooIntegrator
                 $f_name = \wc_clean($prepared['name']);
 
                 // Taxonomy Attribute
-                // @see: class-wc-admin-attributes.php -> process_add_attribute() 
+                // @see: class-wc-admin-attributes.php -> process_add_attribute()
                 $attr_data = array(
                     'attribute_label' => $f_name,
                     'attribute_name' => $f_slug,
@@ -288,7 +304,7 @@ class WooIntegrator
 
                     $f_value_array = self::value2Array($f_value);
 
-                    // Creates the term and taxonomy relationship if it doesn't already exist.                    
+                    // Creates the term and taxonomy relationship if it doesn't already exist.
                     // It may be confusing but the returned array consists of term_taxonomy_ids instead of term_ids.
                     \wp_set_object_terms($product->get_id(), $f_value_array, $taxonomy);
 
@@ -400,7 +416,7 @@ class WooIntegrator
         /**
          * Modifiers
          */
-        // 16 M; 8 GB; 1.5 GB; 8MP; 30 fps; 2 m; 0.5600 kg; 6,37 кг        
+        // 16 M; 8 GB; 1.5 GB; 8MP; 30 fps; 2 m; 0.5600 kg; 6,37 кг
         if (preg_match('/^([0-9]*[.,]?[0-9]+)[\s+]?([\p{L}]+)$/u', $value, $matches))
         {
             $name = $name . ' (' . $matches[2] . ')';
@@ -554,7 +570,6 @@ class WooIntegrator
             if (empty($item['last_update']))
                 return;
 
-
             $date = TemplateHelper::dateFormatFromGmt($item['last_update'], true);
 
             echo '<span class="price_updated">';
@@ -598,5 +613,21 @@ class WooIntegrator
     public static function isRehubTheme()
     {
         return (in_array(basename(\get_template_directory()), array('rehub', 'rehub-theme'))) ? true : false;
+    }
+
+    public static function hideOutOfStockPrice($price, $that)
+    {
+        global $post;
+
+        if (\is_product() && $post->ID)
+        {
+            if (!$item = self::getSyncItem($post->ID))
+                return $price;
+
+            if (isset($item['stock_status']) && $item['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
+                return '';
+        }
+
+        return $price;
     }
 }

@@ -74,7 +74,6 @@ class LocalRedirect
 
         $code = (int) \apply_filters('cegg_local_redirect_code', 301);
 
-
         if (GeneralConfig::getInstance()->option('redirect_pass_parameters') == 'enabled' && !empty($_SERVER['QUERY_STRING']))
         {
             parse_str($_SERVER['QUERY_STRING'], $params);

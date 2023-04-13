@@ -17,7 +17,7 @@ use ContentEgg\application\helpers\TextHelper;
 class RestClient
 {
     protected static $timeout = 15; //sec
-    protected static $useragent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:93.0) Gecko/20100101 Firefox/93.0';
+    protected static $useragent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/111.0';
 
     /**
      * Endpoint uri of this web service

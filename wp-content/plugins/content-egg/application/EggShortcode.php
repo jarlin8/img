@@ -4,6 +4,7 @@ namespace ContentEgg\application;
 
 defined('\ABSPATH') || exit;
 
+use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\components\ModuleTemplateManager;
 use ContentEgg\application\components\Shortcoded;
@@ -19,7 +20,6 @@ use ContentEgg\application\helpers\TemplateHelper;
  */
 class EggShortcode
 {
-
     const shortcode = 'content-egg';
 
     private static $instance = null;
@@ -62,6 +62,7 @@ class EggShortcode
             'add_query_arg' => '',
             'sort' => '',
             'order' => '',
+            'keyword' => '',
         );
 
         $allowed_atts = \apply_filters('cegg_module_shortcode_atts', $allowed_atts);
@@ -83,6 +84,8 @@ class EggShortcode
         $a['ean'] = TemplateHelper::eanParamPrepare($a['ean']);
         $a['btn_text'] = \wp_strip_all_tags($a['btn_text'], true);
         $a['add_query_arg'] = \sanitize_text_field(\wp_strip_all_tags($a['add_query_arg'], true));
+        $a['keyword'] = \sanitize_text_field(html_entity_decode($a['keyword']));
+
         if ($a['group'] && !$a['groups'])
             $a['groups'] = $a['group'];
         if ($a['groups'])
@@ -105,15 +108,28 @@ class EggShortcode
             $a['order'] = 'desc';
 
         if ($a['template'] && $a['module'])
-        {
             $a['template'] = ModuleTemplateManager::getInstance($a['module'])->prepareShortcodeTempate($a['template']);
-        }
         else
             $a['template'] = '';
+
+
+        if ($a['keyword'] && !$a['groups'])
+        {
+            if (strstr($a['keyword'], '->'))
+            {
+
+                list($keywords, $groups) = ContentManager::prepareMultipleKeywords($a['keyword']);
+                $a['groups'] = $groups;
+            }
+            else
+                $a['groups'] = array($a['keyword']);
+        }
+
+
         return $a;
     }
 
-    public function viewData($atts, $content = "")
+    public function viewData($atts, $content = "", $shortcode_tag)
     {
         $a = $this->prepareAttr($atts);
 

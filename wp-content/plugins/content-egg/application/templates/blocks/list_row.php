@@ -19,7 +19,7 @@ use ContentEgg\application\helpers\TemplateHelper;
     </div>
     <div class="col-md-5 col-sm-5 col-xs-12 cegg-desc-cell hidden-xs">
         <div class="cegg-no-top-margin cegg-list-logo-title">
-			<img src="https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr( $item['domain']); ?>.svg" height="18" width="18">
+		<img src="https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr( $item['domain']); ?>.svg" height="18" width="18">
             <a<?php TemplateHelper::printRel(); ?> target="_blank"
                                                    href="<?php echo esc_url_raw($item['url']); ?>"><?php echo esc_html(TemplateHelper::truncate($item['title'], 100)); ?></a>
         </div>

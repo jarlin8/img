@@ -6,7 +6,7 @@ namespace ContentEgg;
   Plugin Name: Content Egg Pro
   Plugin URI: https://www.keywordrush.com/contentegg
   Description: All in one solution for creating affiliate websites.
-  Version: 11.4.2
+  Version: 11.7.0
   Author: keywordrush.com
   Author URI: https://www.keywordrush.com
   Text Domain: content-egg

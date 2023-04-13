@@ -35,8 +35,8 @@ class FeaturedImage
             return;
         }
 
-        // priority 11 - after meta save
-        \add_action('save_post', array($this, 'setImage'), 11, 2);
+        // priority 12 - after meta save
+        \add_action('save_post', array($this, 'setImage'), 12, 2);
     }
 
     public static function doAction($post_id, $item = null)

@@ -4,7 +4,7 @@
 //|                                              http://www.ssgg.net |
 //+------------------------------------------------------------------+
 #property link          "http://www.ssgg.net"
-#property version       "1.08"
+#property version       "2.0"
 #property strict
 #property copyright     "WinLimit - 2023"
 #property description   "SmartLimit黄金定制版.不要同时与其他EA混用或者手动下单干预！"

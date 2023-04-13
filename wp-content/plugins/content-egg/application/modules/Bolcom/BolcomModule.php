@@ -285,7 +285,7 @@ class BolcomModule extends AffiliateParserModule
 
             if (isset($r['offerData']['offers']))
             {
-                $offer = $r['offerData']['offers'][0]; //only first offer...
+                $offer = $r['offerData']['offers'][0];
                 if (!empty($offer['price']))
                 {
                     $items[$unique_id]['price'] = $offer['price'];

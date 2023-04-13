@@ -877,4 +877,61 @@ class ContentManager
             ContentManager::updateByKeyword($post_id, $module_id);
         }
     }
+
+    public static function prepareMultipleKeywords($keyword)
+    {
+        $keywords = array();
+        $groups = array();
+
+        if (!$keyword)
+            return array($keywords, $groups);
+
+        // format 1: keyword1->grp1,keyword2->grp2
+        if (!\apply_filters('cegg_disable_group_matching', false) && !\apply_filters('cegg_disable_multiple_keywords', false))
+        {
+            if (substr_count($keyword, '->') > 1 && substr_count($keyword, ',') >= 1)
+            {
+                $words = explode(',', $keyword);
+
+                foreach ($words as $w)
+                {
+                    $parts = explode('->', $w);
+                    $keywords[] = $parts[0];
+                    if (isset($parts[1]))
+                        $groups[] = $parts[1];
+                    else
+                        $groups[] = '';
+                }
+            }
+        }
+
+        // format 2: keyword1,keyword2->grp1,grp2
+        if (!$keywords)
+        {
+            if (!\apply_filters('cegg_disable_group_matching', false))
+            {
+                $parts = explode('->', $keyword);
+                if (count($parts) == 2)
+                {
+                    $groups = explode(',', $parts[1]);
+                    $keyword = trim($parts[0]);
+                }
+            }
+
+            if (!\apply_filters('cegg_disable_multiple_keywords', false))
+                $keywords = explode(',', $keyword, 30);
+            else
+                $keywords = array($keyword);
+        }
+
+        $keywords = array_map('trim', $keywords);
+        $keywords = array_map('sanitize_text_field', $keywords);
+
+        $groups = array_map('sanitize_text_field', $groups);
+        $groups = array_map('trim', $groups);
+
+        $groups = array_pad($groups, count($keywords) - count($groups) + 1, '');
+
+        return array($keywords, $groups);
+    }
 }

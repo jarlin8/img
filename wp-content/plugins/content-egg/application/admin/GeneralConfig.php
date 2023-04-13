@@ -294,6 +294,17 @@ class GeneralConfig extends Config
                 'default' => 'disabled',
                 'section' => __('WooCommerce', 'content-egg'),
             ),
+            'woocommerce_sync_description' => array(
+                'title' => __('Sync description', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    '' => __('Disabled', 'content-egg'),
+                    'full' => __('Sync full description', 'content-egg'),
+                    'short' => __('Sync short description', 'content-egg'),
+                ),
+                'default' => '',
+                'section' => __('WooCommerce', 'content-egg'),
+            ),
             'sync_brand' => array(
                 'title' => __('Brand taxonomy', 'content-egg'),
                 'description' => __('Synchronization of manufacturer/store with Brand taxonomy of ReHub theme.', 'content-egg'),
@@ -304,6 +315,18 @@ class GeneralConfig extends Config
                     'disabled' => __('Disabled', 'content-egg'),
                 ),
                 'default' => 'disabled',
+                'section' => __('WooCommerce', 'content-egg'),
+            ),
+            'outofstock_woo' => array(
+                'title' => __('Out of Stock products', 'external-importer'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    '' => __('Do nothing', 'external-importer'),
+                    'hide_price' => __('Hide WooCommerce price', 'external-importer'),
+                    'hide_product' => __('Set Catalog Visibility to Hidden', 'external-importer'),
+                    'move_to_trash' => __('Move WooCommerce product to trash', 'external-importer'),
+                ),
+                'default' => '',
                 'section' => __('WooCommerce', 'content-egg'),
             ),
             'filter_bots' => array(
@@ -749,8 +772,6 @@ class GeneralConfig extends Config
             . \esc_attr($value) . '" class="large-text code" placeholder="' . \esc_attr(__('Shop info', 'content-egg')) . '"  type="text">' . \esc_html($value) . '</textarea>';
     }
 
-
-
     public function render_merchants_block($args)
     {
         if (is_array($args['value']))
@@ -792,8 +813,6 @@ class GeneralConfig extends Config
 
         return $results;
     }
-
-
 
     public static function isShopInfoAvailable()
     {

@@ -20,7 +20,6 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATO
 
 class FlipkartApi extends RestClient
 {
-	protected static $useragent = 'Content Egg WP Plugin (https://www.keywordrush.com/contentegg)';
 	protected static $timeout = 30; //sec
 
 	const API_URI_BASE = 'https://affiliate-api.flipkart.net/affiliate/1.0';

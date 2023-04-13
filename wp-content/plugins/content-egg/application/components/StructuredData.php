@@ -7,6 +7,7 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\helpers\TemplateHelper;
+use ContentEgg\application\helpers\TextHelper;
 
 /**
  * StructuredData class file
@@ -76,6 +77,17 @@ class StructuredData
         if ($item['img'])
             $markup['image'] = $item['img'];
 
+        if ($item['ean'])
+            $markup['gtin14'] = TextHelper::fixEan($item['ean'], 14);
+
+        if ($item['manufacturer'])
+        {
+            $markup['brand'] = array(
+                '@type' => 'Brand',
+                'name' => $item['manufacturer'],
+            );
+        }
+
         if (!$min_price_item['converted_price'] || !$max_price_item['converted_price'])
             return;
 
@@ -97,6 +109,11 @@ class StructuredData
         }
 
         $markup['offers']['priceCurrency'] = $min_price_item['currencyCode'];
+
+        if ($min_price_item['stock_status'] == ContentProduct::STOCK_STATUS_IN_STOCK)
+            $markup['offers']['availability'] = 'https://schema.org/InStock';
+        elseif ($min_price_item['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
+            $markup['offers']['availability'] = 'https://schema.org/OutOfStock';
 
         $markup = \apply_filters('cegg_structured_data_single', $markup, $post_id, $items);
 

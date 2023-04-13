@@ -203,6 +203,7 @@ class ModuleViewer
             $data = array_splice($data, $params['offset'], $params['limit']);
             $this->module_data_pointer[$post_id][$module_id] = $params['offset'] + $params['limit'];
         }
+
         if (!$data)
             return;
 

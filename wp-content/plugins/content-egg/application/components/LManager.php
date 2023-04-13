@@ -128,6 +128,7 @@ class LManager
 
     public function displayNotice()
     {
+        return;
         if (LManager::isNulled() && time() > 1634198091)
         {
             $notice_date = \get_option(Plugin::slug . '_nulled_notice_date', 0);
@@ -377,7 +378,7 @@ class LManager
 
     public static function isNulled()
     {
-        return false;
+       return false;
     }
 
     public static function isValidLicFormat($value)

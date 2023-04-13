@@ -152,11 +152,14 @@ class ClickbankModule extends AffiliateParserModule
 	 */
 	private static function createHopLink($affiliate, $vendor, $tracking_id = null)
 	{
-		$link = 'http://' . $affiliate . '.' . $vendor . '.hop.clickbank.net';
+		//$link = 'http://' . $affiliate . '.' . $vendor . '.hop.clickbank.net';
+
+		$link = 'https://hop.clickbank.net/';
+		$link = add_query_arg('affiliate', $affiliate, $link);
+		$link = add_query_arg('vendor', $vendor, $link);
+
 		if ($tracking_id)
-		{
-			$link .= '/?tid=' . $tracking_id;
-		}
+			$link = add_query_arg('tid', $tracking_id);
 
 		return $link;
 	}

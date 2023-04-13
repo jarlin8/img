@@ -52,10 +52,10 @@ $ratings = TemplateHelper::generateStaticRatings(count($all_items));
                         <?php endif; ?>
                     <?php endif; ?>
 
-					<div class="cegg-no-top-margin cegg-list-logo-title">
+                    <div class="cegg-no-top-margin cegg-list-logo-title">
 					 <img src="https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/icons/favicon/<?php echo esc_attr( $item['domain']); ?>.svg" height="18" width="18">
 					 <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>"><?php echo esc_html(TemplateHelper::truncate($item['title'], 100)); ?></a>
-					 </div>
+                    </div>
                     <div class="text-center cegg-mt10 visible-xs">
                         <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>" class="btn btn-danger btn-block"><span><?php TemplateHelper::buyNowBtnText(true, $item, $btn_text); ?></span></a>
                             <?php if ($merchant = TemplateHelper::getMerhantName($item)) : ?>

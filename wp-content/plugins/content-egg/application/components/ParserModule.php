@@ -198,33 +198,11 @@ abstract class ParserModule extends Module
         }
     }
 
+
+
     public function doMultipleRequests($keyword, $query_params = array(), $is_autoupdate = false)
     {
-        $groups = array();
-
-        if (!\apply_filters('cegg_disable_group_matching', false))
-        {
-            $parts = explode('->', $keyword);
-            if (count($parts) == 2)
-            {
-                $groups = explode(',', $parts[1]);
-                $groups = array_map('trim', $groups);
-                $groups = array_map('sanitize_text_field', $groups);
-
-                $keyword = trim($parts[0]);
-            }
-        }
-
-        if (!\apply_filters('cegg_disable_multiple_keywords', false))
-        {
-            $keywords = explode(',', $keyword, 10);
-        }
-        else
-        {
-            $keywords = array($keyword);
-        }
-
-        $keywords = array_map('trim', $keywords);
+        list($keywords, $groups) = ContentManager::prepareMultipleKeywords($keyword);
 
         $results = array();
         foreach ($keywords as $i => $keyword)

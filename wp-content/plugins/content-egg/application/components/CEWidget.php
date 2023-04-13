@@ -42,10 +42,10 @@ abstract class CEWidget extends \WP_Widget
             )
         );
 
-        \add_action('save_post', array($this, 'flushСache'));
-        \add_action('deleted_post', array($this, 'flushСache'));
-        \add_action('switch_theme', array($this, 'flushСache'));
-        \add_action('content_egg_price_history_save', array($this, 'flushСache'));
+        \add_action('save_post', array($this, 'flushCache'));
+        \add_action('deleted_post', array($this, 'flushCache'));
+        \add_action('switch_theme', array($this, 'flushCache'));
+        \add_action('content_egg_price_history_save', array($this, 'flushCache'));
     }
 
     abstract public function slug();
@@ -100,7 +100,7 @@ abstract class CEWidget extends \WP_Widget
         }
     }
 
-    public function flushСache()
+    public function flushCache()
     {
         \wp_cache_delete($this->slug, 'widget');
     }
@@ -141,7 +141,7 @@ abstract class CEWidget extends \WP_Widget
             }
         }
 
-        $this->flushСache();
+        $this->flushCache();
 
         return $instance;
     }

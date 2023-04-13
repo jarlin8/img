@@ -9,6 +9,7 @@ use ContentEgg\application\helpers\CurrencyHelper;
 use ContentEgg\application\components\ExternalFeaturedImage;
 use ContentEgg\application\components\AggregateOffer;
 use ContentEgg\application\components\StructuredData;
+use ContentEgg\application\components\ShortcodePreprocessor;
 
 
 /**
@@ -21,7 +22,7 @@ use ContentEgg\application\components\StructuredData;
 class Plugin
 {
 
-    const version = '11.4.2';
+    const version = '11.7.0';
     const db_version = 56;
     const wp_requires = '4.6.1';
     const slug = 'content-egg';
@@ -51,12 +52,14 @@ class Plugin
         $this->loadTextdomain();
         if (self::isFree() || (self::isPro() && self::isActivated()) || self::isEnvato())
         {
+            EggShortcode::getInstance();
+            BlockShortcode::getInstance();
+            ShortcodePreprocessor::initAction();
+
             if (!\is_admin())
             {
                 \add_action('wp_enqueue_scripts', array($this, 'registerScripts'));
                 \add_action('amp_post_template_css', array($this, 'registerAmpStyles'));
-                EggShortcode::getInstance();
-                BlockShortcode::getInstance();
                 ModuleViewer::getInstance()->init();
                 ModuleUpdateVisit::getInstance()->init();
                 LocalRedirect::initAction();

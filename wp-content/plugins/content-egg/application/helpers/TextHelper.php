@@ -649,15 +649,15 @@ class TextHelper
         return false;
     }
 
-    public static function fixEan($barcode)
+    public static function fixEan($barcode, $n = 13)
     {
-        if (strlen($barcode == 13))
+        if (strlen($barcode == $n))
         {
             return $barcode;
         }
 
         $barcode = ltrim($barcode, '0');
-        $barcode = str_pad($barcode, 13, '0', STR_PAD_LEFT);
+        $barcode = str_pad($barcode, $n, '0', STR_PAD_LEFT);
 
         return $barcode;
     }

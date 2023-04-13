@@ -739,6 +739,8 @@ class TemplateHelper
 
     public static function mergeData(array $data)
     {
+        $all_items = array();
+
         foreach ($data as $module_id => $items)
         {
             foreach ($items as $item_ar)
@@ -808,9 +810,9 @@ class TemplateHelper
         $parts = explode('.', $domain);
         $merchant = $parts[0];
         if ($merchant == 'ebay')
-        {
             return 'eBay';
-        }
+        elseif ($merchant == 'amazon')
+            return ucfirst($domain);
 
         return ucfirst($merchant);
     }
