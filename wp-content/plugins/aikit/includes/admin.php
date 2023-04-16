@@ -16,6 +16,8 @@ class AIKit_Admin {
 
     private $languages = [];
 
+    private $auto_writer;
+
     /**
      * Main AIKit_Admin Instance.
      *
@@ -24,11 +26,9 @@ class AIKit_Admin {
      * @static
      * @return AIKit_Admin - Main instance.
      */
-    public static function instance($prompt_manager, $export_import_manager) {
+    public static function instance() {
         if ( is_null( self::$_instance ) ) {
             self::$_instance = new self();
-            self::$_instance->prompt_manager = $prompt_manager;
-            self::$_instance->export_import_manager = $export_import_manager;
 
             self::$_instance->languages = [
                 'en' => [
@@ -147,6 +147,10 @@ class AIKit_Admin {
                     'translatedName' => __('Slovak', 'aikit') . ' (Slovenčina)',
                     'name' => 'Slovenčina',
                 ],
+                'cs' => [
+                    'translatedName' => __('Czech', 'aikit') . ' (Čeština)',
+                    'name' => 'Čeština',
+                ],
             ];
         }
         return self::$_instance;
@@ -156,6 +160,9 @@ class AIKit_Admin {
      * AIKit_Admin Constructor.
      */
     public function __construct() {
+        $this->prompt_manager = AIKit_Prompt_Manager::get_instance();
+        $this->export_import_manager = AIKit_Import_Export_Manager::get_instance($this->prompt_manager);
+        $this->auto_writer = AIKIT_Auto_Writer::get_instance();
         $this->init();
     }
 
@@ -164,6 +171,7 @@ class AIKit_Admin {
      */
     public function init() {
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+        add_action( 'admin_enqueue_scripts', array( $this->auto_writer, 'enqueue_scripts' ) );
     }
 
     public function get_languages ()
@@ -191,6 +199,15 @@ class AIKit_Admin {
             'manage_options',
             'aikit',
             array( $this, 'options_page' )
+        );
+
+        add_submenu_page(
+            'aikit',
+            esc_html__('Auto Writer', 'aikit'),
+            esc_html__('Auto Writer', 'aikit'),
+            'manage_options',
+            'aikit_auto_writer',
+            array( $this->auto_writer, 'render' )
         );
 
         add_submenu_page(
@@ -268,7 +285,7 @@ class AIKit_Admin {
             } else {
                 $result[$operationId]['wordLength'] = array(
                     'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
-                    'value' => max(intval($obj['word_length_relative']), 1),
+                    'value' => max(floatval($obj['word_length_relative']), 1),
                 );
             }
 
@@ -451,7 +468,7 @@ class AIKit_Admin {
                                                     <?php echo esc_html__( 'Multiplier', 'aikit' ); ?>
                                                 </label>
                                                 <div class="col-sm-4">
-                                                    <input type="range" step="1" min="1" max="6" class="form-range aikit-slider mt-0" id="prompts[<?php echo esc_html__($promptKey, 'aikit') ?>][word_length_relative]" value="<?php echo ($promptObject['wordLength']['type'] == AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER) ? esc_html__($promptObject['wordLength']['value'], 'aikit') : '1' ?>" name="prompts[<?php echo esc_html__($promptKey, 'aikit') ?>][word_length_relative]">
+                                                    <input type="range" step="0.1" min="1" max="6" class="form-range aikit-slider mt-0" id="prompts[<?php echo esc_html__($promptKey, 'aikit') ?>][word_length_relative]" value="<?php echo ($promptObject['wordLength']['type'] == AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER) ? esc_html__($promptObject['wordLength']['value'], 'aikit') : '1' ?>" name="prompts[<?php echo esc_html__($promptKey, 'aikit') ?>][word_length_relative]">
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <span class="slider-value"></span>
@@ -607,7 +624,7 @@ class AIKit_Admin {
                                         <?php echo esc_html__( 'Multiplier', 'aikit' ); ?>
                                     </label>
                                     <div class="col-sm-4">
-                                        <input type="range" step="1" min="1" max="6" class="form-range aikit-slider mt-0" id="prompts[__PROMPT_KEY__][word_length_relative]" value="1" name="prompts[__PROMPT_KEY__][word_length_relative]">
+                                        <input type="range" step="0.1" min="1" max="6" class="form-range aikit-slider mt-0" id="prompts[__PROMPT_KEY__][word_length_relative]" value="1" name="prompts[__PROMPT_KEY__][word_length_relative]">
                                     </div>
                                     <div class="col-sm-2">
                                         <span class="slider-value"></span>
@@ -802,6 +819,16 @@ class AIKit_Admin {
 		    'aikit',
 		    'aikit_settings_section_openai'
 	    );
+
+        // OpenAI system message
+        register_setting('aikit_options', 'aikit_setting_openai_system_message');
+        add_settings_field(
+            'aikit_settings_openai_system_message',
+            esc_html__( 'OpenAI System Message', 'aikit' ),
+            array ($this, 'aikit_settings_openai_system_message_callback'),
+            'aikit',
+            'aikit_settings_section_openai'
+        );
     }
 
     function aikit_settings_section_openai_callback() {
@@ -1108,13 +1135,23 @@ class AIKit_Admin {
         </p>
         <?php
     }
+
+    function aikit_settings_openai_system_message_callback () {
+        $setting = get_option('aikit_setting_openai_system_message');
+        ?>
+        <textarea name="aikit_setting_openai_system_message" id="aikit_setting_openai_system_message" rows="5" cols="50"><?php echo isset( $setting ) && !empty($setting)? esc_attr( $setting ) : ''; ?></textarea>
+        <p>
+            <small>
+                <?php
+                echo esc_html__('System message help set the behaviour of the model. You can use it to ask the model to mimic a certain style or take a certain perspective for all text generations. For example, if you set this to "Shakespeare\' style", the mode will follow the style of Shakespeare in all text generations when possible. System message should work ONLY with GPT-4 and to a lesser extent with gpt-3.5-turbo models.', 'aikit');
+                ?>
+            </small>
+        </p>
+        <?php
+    }
 }
 
-$aiKitPromptManager = AIKit_Prompt_Manager::get_instance();
-$AI_kit_admin = AIKit_Admin::instance(
-    $aiKitPromptManager,
-    AIKit_Import_Export_Manager::get_instance($aiKitPromptManager),
-);
+$AI_kit_admin = AIKit_Admin::instance();
 
 add_action('admin_init', array ($AI_kit_admin, 'register_settings'));
 

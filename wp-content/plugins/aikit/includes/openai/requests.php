@@ -1,5 +1,7 @@
 <?php
 
+const AIKIT_IMAGE_GENERATION_MODEL = 'gpt-3.5-turbo';
+
 add_action( 'rest_api_init', function () {
     register_rest_route( 'aikit/openai/v1', '/autocomplete', array(
         'methods' => 'POST',
@@ -28,10 +30,10 @@ function aikit_rest_openai_generate_images ($data) {
 	}
 
 	$client = new \AIKit\Dependencies\GuzzleHttp\Client();
-	$model = 'gpt-3.5-turbo';
+	$model = AIKIT_IMAGE_GENERATION_MODEL;
     $prompt = sprintf("Describe an image that would be best fit for this text:\n\n %s\n\n----\nCreative image description in one sentence of 6 words:\n", $text);
     $maxTokens = min(
-        intval((str_word_count($text) + 150) * 1.33),
+        intval((calculate_word_count_utf8($text) + 150) * 1.33),
         aikit_get_max_tokens_for_model( $model )
     );
 
@@ -79,17 +81,7 @@ function aikit_rest_openai_generate_images ($data) {
 		$dimensions = '1024x1024';
 	}
 
-	$stylesArray = get_option( 'aikit_setting_images_styles' );
-	$stylesArray = explode("\n", $stylesArray);
-	$imagePrompt = rtrim(rtrim($imagePrompt), '.');
-
-	if (!empty($stylesArray)) {
-		$style = $stylesArray[array_rand($stylesArray)];
-		$imagePrompt .= ', ' . $style;
-	}
-
-	$imagePrompt = str_replace('"', '', $imagePrompt);
-	$imagePrompt = str_replace("'", '', $imagePrompt);
+    $imagePrompt = aikit_apply_image_styles_to_prompt($imagePrompt);
 
 	try {
 		$imageResponse = $client->request( 'POST', 'https://api.openai.com/v1/images/generations', [
@@ -304,12 +296,12 @@ function aikit_rest_openai_do_request ( $data, $type, $language ) {
     if ($promptWordLengthType == AIKIT_WORD_LENGTH_TYPE_FIXED) {
         $maxTokensToGenerate = intval($promptWordLength * 1.33);
     } else {
-        $maxTokensToGenerate = intval(str_word_count($text) * $promptWordLength * 1.33);
+        $maxTokensToGenerate = intval(calculate_word_count_utf8($text) * $promptWordLength * 1.33);
     }
 
     $maxTokensToGenerate *= $maxTokenMultiplier;
 
-	$theoreticalMaxTokensToGenerate = aikit_get_max_tokens_for_model($model) - intval(str_word_count($prompt) * 1.33);
+	$theoreticalMaxTokensToGenerate = aikit_get_max_tokens_for_model($model) - intval(calculate_word_count_utf8($prompt) * 1.33);
 
 	$actualMaxTokensToGenerate = min($maxTokensToGenerate, $theoreticalMaxTokensToGenerate);
 
@@ -357,14 +349,24 @@ function aikit_get_openai_text_completion_endpoint ($model) {
 
 function aikit_build_text_generation_request_body ($model, $prompt, $maxTokensToGenerate, $temperature = 0.7) {
     if (strpos($model, 'gpt-3.5-turbo') === 0 || strpos($model, 'gpt-4') === 0) {
+        $messages = [];
+
+        $systemMessage = get_option('aikit_setting_openai_system_message');
+        if (!empty($systemMessage)) {
+            $messages[] = [
+                'role' => 'system',
+                'content' => $systemMessage,
+            ];
+        }
+
+        $messages[] = [
+            'role' => 'user',
+            'content' => $prompt,
+        ];
+
         return json_encode([
             'model' => $model,
-            'messages' => [
-                [
-                    'role' => 'user',
-                    'content' => $prompt,
-                ],
-            ],
+            'messages' => $messages,
             "temperature" => $temperature,
             'max_tokens' => $maxTokensToGenerate,
         ]);
@@ -385,11 +387,7 @@ function aikit_parse_text_generation_response ($responseJson, $model, $maxTokens
         return new WP_Error( 'no_choices', 'No completions found, please try again using different text.', array( 'status' => 400 ) );
     }
 
-    if (strpos($model, 'gpt-3.5-turbo') === 0 || strpos($model, 'gpt-4') === 0 ) {
-        $resultText = trim($choices[0]['message']['content']);
-    } else {
-        $resultText = trim($choices[0]['text']);
-    }
+    $resultText = aikit_get_text_generation_based_on_model($model, $choices);
 
     return new WP_REST_Response([
         'text' => $resultText,
@@ -400,7 +398,103 @@ function aikit_parse_text_generation_response ($responseJson, $model, $maxTokens
     ], 200);
 }
 
+function aikit_apply_image_styles_to_prompt($prompt) {
+    $stylesArray = get_option( 'aikit_setting_images_styles' );
+    $stylesArray = explode("\n", $stylesArray);
+    $imagePrompt = rtrim(rtrim($prompt), '.');
+
+    if (!empty($stylesArray)) {
+        $style = $stylesArray[array_rand($stylesArray)];
+        $imagePrompt .= ', ' . $style;
+    }
+
+    $imagePrompt = str_replace('"', '', $imagePrompt);
+
+    return str_replace("'", '', $imagePrompt);
+}
+
+function aikit_get_text_generation_based_on_model ($model, $choices) {
+    if (strpos($model, 'gpt-3.5-turbo') === 0 || strpos($model, 'gpt-4') === 0 ) {
+        return trim($choices[0]['message']['content']);
+    }
+
+    return trim($choices[0]['text']);
+}
+
+function aikit_openai_text_generation_request($prompt, $maxTokens, $temperature = 0.7)
+{
+    $model = get_option('aikit_setting_openai_model');
+    $maxTokens = min($maxTokens, aikit_get_max_tokens_for_model($model));
+    $client = new \AIKit\Dependencies\GuzzleHttp\Client();
+
+    $res = $client->request('POST', aikit_get_openai_text_completion_endpoint($model), [
+        'body' => aikit_build_text_generation_request_body($model, $prompt, $maxTokens, $temperature),
+        'headers' => [
+            'Authorization' => 'Bearer ' . get_option('aikit_setting_openai_key'),
+            'Content-Type' => 'application/json',
+        ],
+    ]);
+
+    $body = $res->getBody();
+    $json = json_decode($body, true);
+
+    $choices = $json['choices'];
+
+    return aikit_get_text_generation_based_on_model($model, $choices);
+}
+
+function aikit_openai_image_generation_request($prompt, $dimensions='512x512') {
+
+    $client = new \AIKit\Dependencies\GuzzleHttp\Client();
+
+    $imagePrompt = aikit_apply_image_styles_to_prompt($prompt);
+
+    try {
+        $imageResponse = $client->request( 'POST', 'https://api.openai.com/v1/images/generations', [
+            'body'    => json_encode( [
+                'prompt'      => $imagePrompt,
+                'n'          => 1,
+                'size' => $dimensions,
+                'response_format' => 'url',
+            ] ),
+            'headers' => [
+                'Authorization' => 'Bearer ' . get_option( 'aikit_setting_openai_key' ),
+                'Content-Type'  => 'application/json',
+            ],
+        ] );
+
+    } catch (\AIKit\Dependencies\GuzzleHttp\Exception\ClientException $e) {
+        return new WP_Error( 'openai_error', json_encode([
+            'message' => 'error while calling openai',
+            'responseBody' => $e->getResponse()->getBody()->getContents(),
+        ]), array( 'status' => 500 ) );
+    } catch (\AIKit\Dependencies\GuzzleHttp\Exception\GuzzleException $e) {
+        return new WP_Error( 'openai_error', json_encode([
+            'message' => 'error while calling openai',
+            'responseBody' => $e->getMessage(),
+        ]), array( 'status' => 500 ) );
+    }
+
+    $body = $imageResponse->getBody();
+    $json = json_decode($body, true);
+    $data = $json['data'] ?? [];
+
+    $images = array();
+    foreach ($data as $image) {
+        $imageUrl = aikit_upload_file_by_url($image['url'], $dimensions, $imagePrompt);
+        if ($imageUrl) {
+            $images[] = $imageUrl;
+        }
+    }
+
+    return $images;
+}
+
 function aikit_get_language_used() {
     // get language from the saved settings
     return get_option('aikit_setting_openai_language', 'en');
+}
+
+function calculate_word_count_utf8($str) {
+    return count(preg_split('~[^\p{L}\p{N}\']+~u', $str));
 }

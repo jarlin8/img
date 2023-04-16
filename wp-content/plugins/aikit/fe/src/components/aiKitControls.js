@@ -510,7 +510,7 @@ export default createHigherOrderComponent( ( BlockEdit ) => {
                             </p>
                             <div style={{display: "flex", justifyContent: 'flex-end'}}>
                                 <Button variant="primary" className="components-button is-primary" onClick={ closeSelectionModal }  style={{float: 'right'}}>
-                                    {__('Ok', 'aikitt')}
+                                    {__('Ok', 'aikit')}
                                 </Button>
                             </div>
                         </Modal>

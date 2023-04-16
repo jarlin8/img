@@ -28,6 +28,7 @@ class AIKit_Import_Export_Manager {
         $imageSizesSmall = get_option('aikit_setting_images_size_small');
         $imageSizesMedium = get_option('aikit_setting_images_size_medium');
         $imageSizesLarge = get_option('aikit_setting_images_size_large');
+        $systemMessage = get_option('aikit_setting_openai_system_message');
 
         $json = array(
             'pluginVersion' => aikit_get_plugin_version(),
@@ -43,6 +44,7 @@ class AIKit_Import_Export_Manager {
             'imageSizesMedium' => boolval($imageSizesMedium),
             'imageSizesLarge' => boolval($imageSizesLarge),
             'prompts' => $prompts,
+            'systemMessage' => $systemMessage,
         );
 
         $promptsOnly = array(
@@ -110,6 +112,10 @@ class AIKit_Import_Export_Manager {
                 // save prompts for each language as options
                 update_option('aikit_prompts_' . $lang, $obj);
             }
+        }
+
+        if (isset($json['systemMessage'])) {
+            update_option('aikit_setting_openai_system_message', $json['systemMessage']);
         }
     }
 

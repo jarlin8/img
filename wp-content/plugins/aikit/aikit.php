@@ -4,7 +4,7 @@
  * Plugin Name:       AIKit
  * Plugin URI:        https://getaikit.com
  * Description:       AIKit is your WordPress AI assistant, powered by OpenAI's GPT-3 & DALL.E 2.
- * Version:           3.8.0
+ * Version:           3.10.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Domain Path:       /languages
@@ -15,6 +15,8 @@ require __DIR__ . '/includes/constants.php';
 require __DIR__ . '/includes/openai/prompt-manager.php';
 require __DIR__ . '/includes/openai/initial-prompts.php';
 require __DIR__ . '/includes/import-export.php';
+require __DIR__ . '/includes/openai/auto-writer/auto-writer-prompts.php';
+require __DIR__ . '/includes/openai/auto-writer/auto-writer.php';
 require __DIR__ . '/includes/admin.php';
 require __DIR__ . '/includes/openai/requests.php';
 
@@ -122,14 +124,11 @@ function aikit_uninstall() {
     delete_option( 'aikit_setting_images_counts' );
     delete_option( 'aikit_setting_images_styles' );
     delete_option( 'aikit_setting_elementor_supported' );
+    delete_option( 'aikit_setting_openai_system_message' );
 
     delete_option( 'aikit_prompts' );
 
-    $aiKitPromptManager = AIKit_Prompt_Manager::get_instance();
-	$languages = AIKit_Admin::instance(
-		$aiKitPromptManager,
-        AIKit_Import_Export_Manager::get_instance($aiKitPromptManager)
-    )->get_languages();
+	$languages = AIKit_Admin::instance()->get_languages();
 
     foreach ($languages as $language => $obj) {
         delete_option( 'aikit_prompts_' . $language );
@@ -147,7 +146,6 @@ function aikit_on_activation() {
 
 function aikit_set_default_settings () {
 
-    delete_option('aikit_setting_images_styles');
 	if (get_option('aikit_setting_images_size_small') === false) {
 		update_option('aikit_setting_images_size_small', AIKIT_DEFAULT_SETTING_IMAGES_SIZES_SMALL);
 	}
@@ -271,7 +269,7 @@ add_action('admin_head', 'aikit_classic_mce_inline_script');
 function aikit_classic_mce_inline_script() {
     global $pagenow;
 
-    if ($pagenow !== 'post.php' && $pagenow !== 'post-new.php') {
+    if ($pagenow !== 'post.php' && $pagenow !== 'post-new.php' && !(isset($_GET['page']) && $_GET['page'] === 'aikit_auto_writer')) {
         return;
     }
 

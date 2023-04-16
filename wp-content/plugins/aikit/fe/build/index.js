@@ -504,7 +504,7 @@ async function generateImages(imageCount, imageSize, autocompleteBlock, selected
       style: {
         float: 'right'
       }
-    }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Ok', 'aikitt')))), isSettingsModalOpen && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Modal, {
+    }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Ok', 'aikit')))), isSettingsModalOpen && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Modal, {
       title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)("AIKit is not properly configured", 'aikit'),
       onRequestClose: closeSettingsModal
     }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('It seems that AIKit is not configured correctly. Please make sure to enter a valid API key in the settings.', 'aikit')), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {

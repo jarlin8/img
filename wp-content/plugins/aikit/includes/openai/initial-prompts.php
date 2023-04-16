@@ -122,6 +122,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Napíšte odsek o tomto',
                 'prompt' => "Napíšte odsek o tejto téme:\n\n[[text]]\n\n----\nNapísaný odsek:\n",
             ],
+            'cs' => [
+                'menuTitle' => 'Napište odstavec o tomto',
+                'prompt' => "Napište odstavec o této tématu:\n\n[[text]]\n\n----\nNapsaný odstavec:\n",
+            ]
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -250,6 +254,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'sk' => [
                 'menuTitle' => 'Pokračovať v texte',
                 'prompt' => "Pokračovať v texte:\n\n[[text]]\n\n----\nPokračovanie textu:\n",
+            ],
+            'cs' => [
+                'menuTitle' => 'Pokračujte v tomto textu',
+                'prompt' => "Pokračujte v tomto textu:\n\n[[text]]\n\n----\nPokračování textu:\n",
             ],
         ],
         'wordLength' => [
@@ -381,6 +389,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Vytvoriť nápady o tomto',
                 'prompt' => "Vytvorte niekoľko nápadov o tomto ako body:\n\n[[text]]\n\n----\nVytvorené ako body nápady:\n",
             ],
+            'cs' => [
+                'menuTitle' => 'Vytvořit nápady o tomto',
+                'prompt' => "Vytvořte několik nápadů o tomto jako body:\n\n[[text]]\n\n----\nVytvořené jako body nápady:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -509,6 +521,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'sk' => [
                 'menuTitle' => 'Napíšte článok o tomto',
                 'prompt' => "Napíšte úplný článok o tomto:\n\n[[text]]\n\n----\nNapísaný článok:\n",
+            ],
+            'cs' => [
+                'menuTitle' => 'Napište článek o tomto',
+                'prompt' => "Napište úplný článek o tomto:\n\n[[text]]\n\n----\nNapsaný článek:\n",
             ],
         ],
         'wordLength' => [
@@ -639,6 +655,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Vytvoriť TL;DR',
                 'prompt' => "Vytvorte TL;DR pre tento text:\n\n[[text]]\n\n----\nTL;DR:\n",
             ],
+            'cs' => [
+                'menuTitle' => 'Vytvořit TL;DR',
+                'prompt' => "Vytvořte TL;DR pro tento text:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -768,6 +788,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Zhrnutie',
                 'prompt' => "Zhrnúť tento text:\n\n[[text]]\n\n----\nZhrnutie:\n",
             ],
+            'cs' => [
+                'menuTitle' => 'Shrnutí',
+                'prompt' => "Shrnutí tohoto textu:\n\n[[text]]\n\n----\nShrnutí:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -896,6 +920,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'sk' => [
                 'menuTitle' => 'Zhrnutie (úrychlené)',
                 'prompt' => "Zhrnúť tento text rýchlo:\n\n[[text]]\n\n----\nZhrnutie:\n",
+            ],
+            'cs' => [
+                'menuTitle' => 'Shrnutí (stručné)',
+                'prompt' => "Shrnutí tohoto textu stručně:\n\n[[text]]\n\n----\nShrnutí:\n",
             ],
         ],
         'wordLength' => [
@@ -1027,6 +1055,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Zhrnutie (bodky)',
                 'prompt' => "Zhrňte tento text bodkami:\n\n[[text]]\n\n----\nZhrnutie:\n",
             ],
+            'cs' => [
+                'menuTitle' => 'Shrnutí (body)',
+                'prompt' => "Shrňte tento text body:\n\n[[text]]\n\n----\nShrnutí:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1153,6 +1185,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'prompt' => "پاراگراف کنید این متن:\n\n[[text]]\n\n----\nمتن پاراگراف شده:\n",
             ],
             'sk' => [
+                'menuTitle' => 'Paragraf',
+                'prompt' => "Paragrafujte tento text:\n\n[[text]]\n\n----\nParagrafovaný text:\n",
+            ],
+            'cs' => [
                 'menuTitle' => 'Paragraf',
                 'prompt' => "Paragrafujte tento text:\n\n[[text]]\n\n----\nParagrafovaný text:\n",
             ],
@@ -1285,6 +1321,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Parafrazovať (sarkasticky)',
                 'prompt' => "Parafrazovať tento text sarkasticky:\n\n[[text]]\n\n----\nSarkasticky parafrazovaný text:\n",
             ],
+            'cs' => [
+                'menuTitle' => 'Parafrazovat (sarkasticky)',
+                'prompt' => "Parafrazujte tento text sarkasticky:\n\n[[text]]\n\n----\nSarkasticky parafrazovaný text:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1413,6 +1453,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'sk' => [
                 'menuTitle' => 'Parafraza (humor)',
                 'prompt' => "Parafrazať tento text humoristicky:\n\n[[text]]\n\n----\nHumoristická parafraza:\n",
+            ],
+            'cs' => [
+                'menuTitle' => 'Parafraze (humor)',
+                'prompt' => "Parafraze tento text humorně:\n\n[[text]]\n\n----\nHumorná parafraze:\n",
             ],
         ],
         'wordLength' => [
@@ -1543,6 +1587,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Generovať titulky',
                 'prompt' => "Generovať titulok pre tento text:\n\n[[text]]\n\n----\nTitulok:\n",
             ],
+            'cs' => [
+                'menuTitle' => 'Generovat titulky',
+                'prompt' => "Generovat titulek pro tento text:\n\n[[text]]\n\n----\nTitulek:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1671,6 +1719,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'sk' => [
                 'menuTitle' => 'Previesť na reklamu',
                 'prompt' => "Previesť nasledujúci text na kreatívnu reklamu:\n\n[[text]]\n\n----\nReklama:\n",
+            ],
+            'cs' => [
+                'menuTitle' => 'Převést na reklamu',
+                'prompt' => "Převeďte následující text na kreativní reklamu:\n\n[[text]]\n\n----\nReklama:\n",
             ],
         ],
         'wordLength' => [
@@ -1801,6 +1853,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Vysvetlite to 5-ročnému dieťaťu',
                 'prompt' => "Vysvetlite toto 5-ročnému dieťaťu:\n\n[[text]]\n\n----\nVysvetlenie:\n",
             ],
+            'cs' => [
+                'menuTitle' => 'Vysvětlit 5letému dítěti',
+                'prompt' => "Vysvětlit toto 5letému dítěti:\n\n[[text]]\n\n----\nVysvětlení:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1930,6 +1986,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Nájsť zhodnú citáciu',
                 'prompt' => "Nájsť zhodnú citáciu pre nasledujúci text:\n\n[[text]]\n\n----\nZhodná citácia:\n",
             ],
+            'cs' => [
+                'menuTitle' => 'Najít shodný citát',
+                'prompt' => "Najít shodný citát pro následující text:\n\n[[text]]\n\n----\nShodný citát:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -2057,6 +2117,10 @@ const AIKIT_INITIAL_PROMPTS = [
             ],
             'sk' => [
                 'menuTitle' => 'Vytvoriť nápad na obrázok',
+                'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
+            ],
+            'cs' => [
+                'menuTitle' => 'Vytvořit nápad na obrázek',
                 'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
             ],
         ],
