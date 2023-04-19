@@ -8,7 +8,7 @@ Requires at least: 6.0
 Tested up to: 6.2
 Requires PHP: 7.0
 License: GPLv2 or later
-Stable tag: 5.7.2
+Stable tag: 5.9.2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 More than 20 special blocks for Gutenberg to build complex pages and animations with highest possible web vitals score.
@@ -107,6 +107,26 @@ Yes, we guarantee that Greenshift is built on top of google recommendations and 
 7. **Sliding panels, popups.** Build custom sliding panels, add any block, use for mega menus
 
 == Changelog ==
+
+= 5.9.2 =
+* Fixes: gradient for background, border radius for videos
+* Added: Visibility Panel for blocks (requires Query addon)
+
+= 5.9.1 =
+* Added: Aspect ratio option for VideoBox
+* Added: Tabs reorder option
+* Added: Min/max values for variable sizing
+* Added: Some fixes from reports
+
+= 5.9 =
+* Added: Custom Fluid typography for presets
+* Added: Option to set Custom default styles for blocks
+
+= 5.8 =
+* Added: Aspect ratio option for Sizing and custom Fluid typography
+
+= 5.7.3 =
+* Added: option to set custom selector for trigger sliding panel, popup
 
 = 5.7 =
 * Added: Spline3D Wordpress block

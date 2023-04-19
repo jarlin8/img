@@ -449,31 +449,18 @@ function aikit_openai_image_generation_request($prompt, $dimensions='512x512') {
 
     $imagePrompt = aikit_apply_image_styles_to_prompt($prompt);
 
-    try {
-        $imageResponse = $client->request( 'POST', 'https://api.openai.com/v1/images/generations', [
-            'body'    => json_encode( [
-                'prompt'      => $imagePrompt,
-                'n'          => 1,
-                'size' => $dimensions,
-                'response_format' => 'url',
-            ] ),
-            'headers' => [
-                'Authorization' => 'Bearer ' . get_option( 'aikit_setting_openai_key' ),
-                'Content-Type'  => 'application/json',
-            ],
-        ] );
-
-    } catch (\AIKit\Dependencies\GuzzleHttp\Exception\ClientException $e) {
-        return new WP_Error( 'openai_error', json_encode([
-            'message' => 'error while calling openai',
-            'responseBody' => $e->getResponse()->getBody()->getContents(),
-        ]), array( 'status' => 500 ) );
-    } catch (\AIKit\Dependencies\GuzzleHttp\Exception\GuzzleException $e) {
-        return new WP_Error( 'openai_error', json_encode([
-            'message' => 'error while calling openai',
-            'responseBody' => $e->getMessage(),
-        ]), array( 'status' => 500 ) );
-    }
+    $imageResponse = $client->request( 'POST', 'https://api.openai.com/v1/images/generations', [
+        'body'    => json_encode( [
+            'prompt'      => $imagePrompt,
+            'n'          => 1,
+            'size' => $dimensions,
+            'response_format' => 'url',
+        ] ),
+        'headers' => [
+            'Authorization' => 'Bearer ' . get_option( 'aikit_setting_openai_key' ),
+            'Content-Type'  => 'application/json',
+        ],
+    ]);
 
     $body = $imageResponse->getBody();
     $json = json_decode($body, true);

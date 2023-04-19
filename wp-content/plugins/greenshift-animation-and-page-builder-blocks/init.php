@@ -174,7 +174,7 @@ function gspb_greenShift_register_scripts_blocks(){
 		'gs-swiper-init',
 		GREENSHIFT_DIR_URL . 'libs/swiper/init.js',
 		array(),
-		'8.1.6',
+		'8.1.7',
 		true
 	);
 	wp_localize_script(
@@ -188,14 +188,15 @@ function gspb_greenShift_register_scripts_blocks(){
 		'gs-swiper-loader',
 		GREENSHIFT_DIR_URL . 'libs/swiper/loader.js',
 		array(),
-		'7.3.4',
+		'7.3.5',
 		true
 	);
 	wp_localize_script(
 		'gs-swiper-loader',
 		'gs_swiper_params',
 		array(
-			'pluginURL' => GREENSHIFT_DIR_URL
+			'pluginURL' => GREENSHIFT_DIR_URL,
+			'breakpoints' => gspb_get_breakpoints()
 		)
 	);
 	wp_register_style('gsswiper', GREENSHIFT_DIR_URL . 'libs/swiper/swiper-bundle.min.css', array(), '8.0');
@@ -228,18 +229,17 @@ function gspb_greenShift_register_scripts_blocks(){
 
 	// video
 	wp_register_script(
-		'gsvideo',
-		GREENSHIFT_DIR_URL . 'libs/video/index.js',
-		array(),
-		'1.7',
-		true
-	);
-
-	wp_register_script(
 		'gsvimeo',
 		GREENSHIFT_DIR_URL . 'libs/video/vimeo.js',
 		array(),
 		'1.5',
+		true
+	);
+	wp_register_script(
+		'gsvideo',
+		GREENSHIFT_DIR_URL . 'libs/video/index.js',
+		array(),
+		'1.7',
 		true
 	);
 
@@ -301,7 +301,7 @@ function gspb_greenShift_register_scripts_blocks(){
 		'gsslidingpanel',
 		GREENSHIFT_DIR_URL . 'libs/slidingpanel/index.js',
 		array(),
-		'2.0',
+		'2.1',
 		true
 	);
 
@@ -450,7 +450,7 @@ function gspb_greenShift_register_scripts_blocks(){
 	}
 
 	//Script for ajax reusable loading
-	wp_register_script('gselajaxloader',  GREENSHIFT_DIR_URL . 'libs/reusable/index.js', array(), '1.6', true);
+	wp_register_script('gselajaxloader',  GREENSHIFT_DIR_URL . 'libs/reusable/index.js', array(), '1.7', true);
 	wp_register_style('gspreloadercss',  GREENSHIFT_DIR_URL . 'libs/reusable/preloader.css', array(), '1.2');
 
 
@@ -527,8 +527,18 @@ function gspb_greenShift_block_script_assets($html, $block)
 		// looking lazy load
 		if ($blockname === 'greenshift-blocks/image') {
 
-			if (!empty($block['attrs']) && isset($block['attrs']['additional']) && $block['attrs']['additional'] == 'lazyload') {
-				wp_enqueue_script('gs-lazyload');
+			if (!empty($block['attrs']) && isset($block['attrs']['additional'])) {
+				if($block['attrs']['additional'] == 'lazyload'){
+					wp_enqueue_script('gs-lazyload');
+				}else if($block['attrs']['additional'] == 'wp'){
+					if(!empty($block['attrs']['width'][0]) && $block['attrs']['width'][0] == 'custom' && class_exists('WP_HTML_Tag_Processor')){
+						$p = new WP_HTML_Tag_Processor( $html );
+						if ( $p->next_tag( array( 'tag_name' => 'IMG' ) ) ) {
+							$p->set_attribute( 'width', $block['attrs']['customWidth'][0].$block['attrs']['widthUnit'][0] );
+						}
+						$html = $p->get_updated_html();
+					}
+				}
 			}
 			if (!empty($block['attrs']['lightbox'])) {
 				wp_enqueue_script('gsslightboxfront');
@@ -920,6 +930,7 @@ function gspb_greenShift_editor_assets()
 	$row = (!empty($sitesettings['breakpoints']['row'])) ? (int)$sitesettings['breakpoints']['row'] : 1200;
 	$localfont = (!empty($sitesettings['localfont'])) ? $sitesettings['localfont'] : array();
 	$googleapi = (!empty($sitesettings['googleapi'])) ? esc_attr($sitesettings['googleapi']) : '';
+	$default_attributes = (!empty($sitesettings['default_attributes'])) ? $sitesettings['default_attributes'] : '';
 	$addonlink = admin_url('admin.php?page=greenshift_upgrade');
 	$updatelink = $addonlink;
 	$theme = wp_get_theme();
@@ -939,6 +950,7 @@ function gspb_greenShift_editor_assets()
 			'theme' => $themename,
 			'isRehub' => ($themename == 'rehub-theme'),
 			'isSaveInline' => (!empty($gspb_css_save) && $gspb_css_save == 'inlineblock') ? '1' : '',
+			'default_attributes' => $default_attributes,
 			'addonLink' => $addonlink,
 			'updateLink' => $updatelink,
 			'localfont' => apply_filters('gspb_local_font_array', $localfont),
@@ -1105,7 +1117,7 @@ function gspb_register_route()
 				'methods'             => 'GET',
 				'callback'            => 'gspb_get_global_settings',
 				'permission_callback' => function () {
-					return current_user_can('manage_options');
+					return current_user_can('edit_posts');
 				},
 				'args'                => array(),
 			),
@@ -1323,7 +1335,7 @@ if (!function_exists('gspb_get_categories')) {
 
 function gspb_get_saved_block()
 {
-	$args      = array(
+	$args = array(
 		'post_type'   => 'wp_block',
 		'post_status' => 'publish',
 		'posts_per_page' => 100

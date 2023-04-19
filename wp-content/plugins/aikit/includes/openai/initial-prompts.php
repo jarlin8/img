@@ -125,7 +125,11 @@ const AIKIT_INITIAL_PROMPTS = [
             'cs' => [
                 'menuTitle' => 'Napište odstavec o tomto',
                 'prompt' => "Napište odstavec o této tématu:\n\n[[text]]\n\n----\nNapsaný odstavec:\n",
-            ]
+            ],
+            'lt' => [
+                'menuTitle' => 'Parašykite apie tai',
+                'prompt' => "Parašykite apie šią temą:\n\n[[text]]\n\n----\nParašytas parašas:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -258,6 +262,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'cs' => [
                 'menuTitle' => 'Pokračujte v tomto textu',
                 'prompt' => "Pokračujte v tomto textu:\n\n[[text]]\n\n----\nPokračování textu:\n",
+            ],
+            'lt' => [
+                'menuTitle' => 'Tęsti šį tekstą',
+                'prompt' => "Tęsti šį tekstą:\n\n[[text]]\n\n----\nTęstinis tekstas:\n",
             ],
         ],
         'wordLength' => [
@@ -393,6 +401,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Vytvořit nápady o tomto',
                 'prompt' => "Vytvořte několik nápadů o tomto jako body:\n\n[[text]]\n\n----\nVytvořené jako body nápady:\n",
             ],
+            'lt' => [
+                'menuTitle' => 'Sukurti idėjas apie tai',
+                'prompt' => "Sukurkite kelias idėjas apie tai kaip taškus:\n\n[[text]]\n\n----\nSukurtos kaip taškai idėjos:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -525,6 +537,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'cs' => [
                 'menuTitle' => 'Napište článek o tomto',
                 'prompt' => "Napište úplný článek o tomto:\n\n[[text]]\n\n----\nNapsaný článek:\n",
+            ],
+            'lt' => [
+                'menuTitle' => 'Parašykite straipsnį apie tai',
+                'prompt' => "Parašykite pilną straipsnį apie tai:\n\n[[text]]\n\n----\nParašytas straipsnis:\n",
             ],
         ],
         'wordLength' => [
@@ -659,6 +675,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Vytvořit TL;DR',
                 'prompt' => "Vytvořte TL;DR pro tento text:\n\n[[text]]\n\n----\nTL;DR:\n",
             ],
+            'lt' => [
+                'menuTitle' => 'Sukurti TL;DR',
+                'prompt' => "Sukurkite TL;DR šiam tekstui:\n\n[[text]]\n\n----\nTL;DR:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -792,6 +812,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Shrnutí',
                 'prompt' => "Shrnutí tohoto textu:\n\n[[text]]\n\n----\nShrnutí:\n",
             ],
+            'lt' => [
+                'menuTitle' => 'Santrauka',
+                'prompt' => "Santrauka šį tekstą:\n\n[[text]]\n\n----\nSantrauka:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -924,6 +948,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'cs' => [
                 'menuTitle' => 'Shrnutí (stručné)',
                 'prompt' => "Shrnutí tohoto textu stručně:\n\n[[text]]\n\n----\nShrnutí:\n",
+            ],
+            'lt' => [
+                'menuTitle' => 'Santrauka (sutrumpinta)',
+                'prompt' => "Sutrumpinkite šį tekstą:\n\n[[text]]\n\n----\nSantrauka:\n",
             ],
         ],
         'wordLength' => [
@@ -1059,6 +1087,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Shrnutí (body)',
                 'prompt' => "Shrňte tento text body:\n\n[[text]]\n\n----\nShrnutí:\n",
             ],
+            'lt' => [
+                'menuTitle' => 'Santrauka (taškai)',
+                'prompt' => "Santraukite šį tekstą taškais:\n\n[[text]]\n\n----\nSantrauka:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1191,6 +1223,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'cs' => [
                 'menuTitle' => 'Paragraf',
                 'prompt' => "Paragrafujte tento text:\n\n[[text]]\n\n----\nParagrafovaný text:\n",
+            ],
+            'lt' => [
+                'menuTitle' => 'Paragrafas',
+                'prompt' => "Paragrafuokite šį tekstą:\n\n[[text]]\n\n----\nParagrafuotas tekstas:\n",
             ],
         ],
         'wordLength' => [
@@ -1325,6 +1361,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Parafrazovat (sarkasticky)',
                 'prompt' => "Parafrazujte tento text sarkasticky:\n\n[[text]]\n\n----\nSarkasticky parafrazovaný text:\n",
             ],
+            'lt' => [
+                'menuTitle' => 'Parafrazuoti (sarkastiskai)',
+                'prompt' => "Parafrazuokite šį tekstą sarkastiskai:\n\n[[text]]\n\n----\nSarkastiskai parafrazuotas tekstas:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_WORD_COUNT_MULTIPLIER,
@@ -1457,6 +1497,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'cs' => [
                 'menuTitle' => 'Parafraze (humor)',
                 'prompt' => "Parafraze tento text humorně:\n\n[[text]]\n\n----\nHumorná parafraze:\n",
+            ],
+            'lt' => [
+                'menuTitle' => 'Parafrazė (humor)',
+                'prompt' => "Parafrazuokite šį tekstą humoristiniu būdu:\n\n[[text]]\n\n----\nHumoristinė parafraza:\n",
             ],
         ],
         'wordLength' => [
@@ -1591,6 +1635,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Generovat titulky',
                 'prompt' => "Generovat titulek pro tento text:\n\n[[text]]\n\n----\nTitulek:\n",
             ],
+            'lt' => [
+                'menuTitle' => 'Generuoti subtitrus',
+                'prompt' => "Generuoti pavadinimą šiam tekstui:\n\n[[text]]\n\n----\nPavadinimas:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1724,6 +1772,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Převést na reklamu',
                 'prompt' => "Převeďte následující text na kreativní reklamu:\n\n[[text]]\n\n----\nReklama:\n",
             ],
+            'lt' => [
+                'menuTitle' => 'Pervesti į reklamą',
+                'prompt' => "Pervesti šį tekstą į kūrybingą reklamą:\n\n[[text]]\n\n----\nReklama:\n",
+            ]
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -1856,6 +1908,10 @@ const AIKIT_INITIAL_PROMPTS = [
             'cs' => [
                 'menuTitle' => 'Vysvětlit 5letému dítěti',
                 'prompt' => "Vysvětlit toto 5letému dítěti:\n\n[[text]]\n\n----\nVysvětlení:\n",
+            ],
+            'lt' => [
+                'menuTitle' => 'Paaiškinkite 5 metų vaikui',
+                'prompt' => "Paaiškinkite tai 5 metų vaikui:\n\n[[text]]\n\n----\nPaaiškinimas:\n",
             ],
         ],
         'wordLength' => [
@@ -1990,6 +2046,10 @@ const AIKIT_INITIAL_PROMPTS = [
                 'menuTitle' => 'Najít shodný citát',
                 'prompt' => "Najít shodný citát pro následující text:\n\n[[text]]\n\n----\nShodný citát:\n",
             ],
+            'lt' => [
+                'menuTitle' => 'Rasti atitinkantį citatą',
+                'prompt' => "Rasti atitinkantį citatą šiam tekstui:\n\n[[text]]\n\n----\nAtitinkantis citatas:\n",
+            ],
         ],
         'wordLength' => [
             'type' => AIKIT_WORD_LENGTH_TYPE_FIXED,
@@ -2121,6 +2181,10 @@ const AIKIT_INITIAL_PROMPTS = [
             ],
             'cs' => [
                 'menuTitle' => 'Vytvořit nápad na obrázek',
+                'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
+            ],
+            'lt' => [
+                'menuTitle' => 'Sukurti paveikslėlio idėją',
                 'prompt' => "Describe an image that would match this text:\n\n[[text]]\n\n----\nImage description:\n",
             ],
         ],

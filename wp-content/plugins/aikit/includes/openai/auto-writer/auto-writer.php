@@ -36,11 +36,23 @@ class AIKIT_Auto_Writer
     public function render()
     {
         $post_types = get_post_types( array( 'public' => true ), 'objects');
+        $selected_language = aikit_get_language_used();
+        $languages = AIKit_Admin::instance()->get_languages();
+        $selected_language_name = $languages[$selected_language]['name'] ?? 'English';
 
         ?>
         <h2><?php echo esc_html__( 'AIKit Auto Writer', 'aikit' ); ?></h2>
         <p><?php echo esc_html__( 'AIKit Auto Writer is a tool helps you write drafts quickly, but please review and edit before publishing for best results. This is not a substitute for human editing, but a drafting aid. Happy writing!', 'aikit' ); ?></p>
         <form id="aikit-auto-writer-form" action="<?php echo get_site_url(); ?>/?rest_route=/aikit/auto-writer/v1/write" method="post">
+            <div class="row">
+                <div class="col">
+                    <p>
+                        <?php echo esc_html__( 'Selected language:', 'aikit' ); ?>
+                        <span class="badge badge-pill badge-dark aikit-badge"><?php echo $selected_language_name?></span>
+                        <a href="<?php echo admin_url( 'admin.php?page=aikit' ); ?>" ><?php echo esc_html__( 'Change language', 'aikit' ); ?></a>
+                    </p>
+                </div>
+            </div>
             <div class="row mb-2">
                 <div class="col">
                     <div class="form-floating">
@@ -230,10 +242,15 @@ class AIKIT_Auto_Writer
             'posts_per_page' => 50,
             'paged' => $page,
             'meta_query' => array(
+                'relation' => 'AND',
                 array(
                     'key' => 'aikit_auto_written',
                     'compare' => '=',
                     'value' => '1'
+                ),
+                array(
+                    'key' => 'aikit_auto_written',
+                    'compare' => 'EXISTS'
                 )
             )
         ));
@@ -252,6 +269,8 @@ class AIKIT_Auto_Writer
                 <td colspan="3">'.esc_html__( 'No auto-written posts found.', 'aikit' ).'</td>
             </tr>';
         }
+
+        wp_reset_postdata();
 
         $big = 999999999;
         $html .= '<tr class="aikit-auto-writer-nav">
@@ -273,6 +292,8 @@ class AIKIT_Auto_Writer
 
     public function generate_post($data)
     {
+        set_time_limit(0);
+
         $topic = $data['topic'];
         $include_outline = boolval($data['include_outline']);
         $include_featured_image = boolval($data['include_featured_image']);
@@ -331,6 +352,7 @@ class AIKIT_Auto_Writer
                 $section_headlines = array_filter($section_headlines, function ($headline) {
                     return strlen($headline) > 0;
                 });
+                $section_headlines = array_slice($section_headlines, 0, $number_of_sections);
 
                 if ($include_outline) {
                     $content = $this->add_outline($content, $section_headlines);
@@ -340,7 +362,7 @@ class AIKIT_Auto_Writer
                 $title = aikit_openai_text_generation_request(
                     $this->build_prompt($prompts['article-title' . $prompt_name_suffix], array(
                             'description' => $topic,
-                            'section-headlines' => $section_headlines,
+                            'section-headlines' => implode("\n", $section_headlines),
                             'keywords' => $seo_keywords,
                         )
                     ), 1000, $temperature
@@ -349,6 +371,8 @@ class AIKIT_Auto_Writer
                 $title = $this->clean_title($title);
 
                 $section_summaries = [];
+
+
 
                 foreach ($section_headlines as $headline) {
                     $section_content = aikit_openai_text_generation_request(

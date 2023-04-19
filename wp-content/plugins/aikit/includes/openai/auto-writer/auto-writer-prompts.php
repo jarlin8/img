@@ -50,13 +50,63 @@ const AIKIT_AUTO_GENERATOR_PROMPTS = [
             ],
         ]
     ],
+    'lt' => [
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Generuokite straipsnio pavadinimą, kuris aptariama šią temą:\n[[description]]\nStraipsnyje bus pateikiamos šios sekcijos:\n[[section-headlines]]\n\nPavadinimas:",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Generuokite straipsnio pavadinimą, kuris aptariama šią temą:\n[[description]]\nStraipsnyje bus pateikiamos šios sekcijos:\n[[section-headlines]]\nBandykite naudoti šiuos SEO raktažodžius, kai tai įmanoma: [[keywords]]\n\nPavadinimas:",
+            ],
+            'article-intro' => [
+                'prompt' => "Parašykite įvadą straipsniui, kuris aptariama šią temą:\n[[description]]\nStraipsnyje pateikiamos šios sekcijos:\n[[section-headlines]]\n\nStraipsnio įvadas:",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Parašykite įvadą straipsniui, kuris aptariama šią temą:\n[[description]]\nStraipsnyje pateikiamos šios sekcijos:\n[[section-headlines]]\nBandykite naudoti šiuos SEO raktažodžius, kai tai įmanoma: [[keywords]]\n\nStraipsnio įvadas:",
+            ],
+            'section-headlines' => [
+                'prompt' => "Pasiūlykite sąrašą iš [[number-of-headlines]] galimų skyriaus antraščių straipsniui, kuris aptariama šią temą:\n[[description]]\n\nSkyriaus antraštės:",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Pasiūlykite sąrašą iš [[number-of-headlines]] galimų skyriaus antraščių straipsniui, kuris aptariama šią temą:\n[[description]]\nBandykite naudoti šiuos SEO raktažodžius, kai tai įmanoma: [[keywords]]\n\nSkyriaus antraštės:",
+            ],
+            'section' => [
+                'prompt' => "Rašau straipsnį apie šią temą:\n[[description]]\n\nKaip dalį šio straipsnio, parašykite teksto skyrių, kuris aptariama šią temą: [[section-headline]]\n\nSkyriaus tekstas be antraštės:",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => "Rašau straipsnį apie šią temą:\n[[description]]\n\nKaip dalį šio straipsnio, parašykite teksto skyrių, kuris aptariama šią temą: [[section-headline]]\n\nBandykite naudoti šiuos SEO raktažodžius, kai tai įmanoma: [[keywords]]\n\nSkyriaus tekstas be antraštės:",
+            ],
+            'article-conclusion' => [
+                'prompt' => "Parašykite išvadą straipsniui, kuris aptariama šią temą:\n[[description]]\nStraipsnyje pateikiamos šios sekcijos:\n[[section-headlines]]\n\nStraipsnio išvada:",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Parašykite išvadą straipsniui, kuris aptariama šią temą:\n[[description]]\nStraipsnyje pateikiamos šios sekcijos:\n[[section-headlines]]\nBandykite naudoti šiuos SEO raktažodžius, kai tai įmanoma: [[keywords]]\n\nStraipsnio išvada:",
+            ],
+            'image' => [
+                'prompt' => "Aprašykite vaizdą, kuris geriausiai tiktų šiam tekstui:\n\n [[text]]\n\n---\nKūrybinio vaizdo aprašymas vienu sakiniu iš 6 žodžių:\n",
+            ],
+            'section-summary' => [
+                'prompt' => "Parašykite trumpą skyriaus santrauką šiam straipsnio skyriaus tekste:\n[[section]]\n\nSkyriaus santrauka:",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Parašykite trumpą skyriaus santrauką šiam straipsnio skyriaus tekste:\n[[section]]\nBandykite naudoti šiuos SEO raktažodžius, kai tai įmanoma: [[keywords]]\n\nSkyriaus santrauka:",
+            ],
+            'tldr' => [
+                'prompt' => "Parašykite TL;DR šiam teksto:\n[[text]]\n\nTL;DR:",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Parašykite TL;DR šiam teksto:\n[[text]]\nBandykite naudoti šiuos SEO raktažodžius, kai tai įmanoma: [[keywords]]\n\nTL;DR:",
+            ],
+        ],
+    ],
+
     'de' => [
         'prompts' => [
             'article-title' => [
                 'prompt' => "Generiere einen Titel für einen Artikel, der das folgende Thema behandelt:\n[[description]]\nDer Artikel wird folgende Abschnitte enthalten:\n[[section-headlines]]\n\nTitel:",
             ],
             'article-title-with-seo-keywords' => [
-                'prompt' => "Generiere einen Titel für einen Artikel, der das folgende Thema behandelt:\n[[description]]\nDer Artikel wird folgende Abschnitte enthalten:\n[[section-headlines]]\nVersuche, die folgenden SEO-Schlüsselwörter zu verwenden, wenn möglich: [[keywords]]\n\nTitel:",
+                'prompt' => "Generiere einen Titel für einen Artikel, der das folgende Thema behandelt:\n[[description]]\nDer Artikel wird folgende Abschnitte enthalten:\n[[section-headlines]]\nVersuche, die folgenden SEO-Schlüsselwörter zu verwenden, wenn möglich: [[keywords]]\n\nKreativer Titel:",
             ],
             'article-intro' => [
                 'prompt' => "Schreibe eine Einleitung für einen Artikel, der das folgende Thema behandelt:\n[[description]]\nDer Artikel enthält folgende Abschnitte:\n[[section-headlines]]\n\nArtikel-Einleitung:",
@@ -882,567 +932,591 @@ const AIKIT_AUTO_GENERATOR_PROMPTS = [
         ]
     ],
     'da' => [
-        'article-title' => [
-            'prompt' => "Skriv en titel til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "Skriv en titel til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "Skriv en introduktion til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "Skriv en introduktion til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "Foreslå en liste med [[number-of-headlines]] overskrifter til afsnit, der kan være relevante for en artikel om følgende emne:\n[[description]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "Foreslå en liste med [[number-of-headlines]] overskrifter til afsnit, der kan være relevante for en artikel om følgende emne:\n[[description]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "Jeg skriver en artikel om følgende emne:\n[[description]]\n\nSom en del af artiklen, skriv en tekst, der behandler følgende overskrift: [[section-headline]]\n\nTekst uden overskrift:",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => 'Jeg skriver en artikel om følgende emne:\n[[description]]\n\nSom en del af artiklen, skal du skrive en tekst, der behandler følgende overskrift: [[section-headline]]\n\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]\n\nTekst uden overskrift:',
-        ],
-        'article-conclusion' => [
-            'prompt' => "Skriv en konklusion til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "Skriv en konklusion til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "Beskriv hvilket billede, der passer bedst til følgende tekst:\n\n [[text]]\n\n---\nKreativ billedbeskrivelse i en sætning 6 ord:\n",
-        ],
-        'section-summary' => [
-            'prompt' => "Skriv en kort opsummering af afsnittet for følgende artikeltekst:\n[[section]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "Skriv en kort opsummering af afsnittet for følgende artikeltekst:\n[[section]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "Skriv TL;DR for følgende tekst:\n[[text]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "Skriv TL;DR for følgende tekst:\n[[text]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Skriv en titel til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Skriv en titel til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "Skriv en introduktion til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Skriv en introduktion til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "Foreslå en liste med [[number-of-headlines]] overskrifter til afsnit, der kan være relevante for en artikel om følgende emne:\n[[description]]",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Foreslå en liste med [[number-of-headlines]] overskrifter til afsnit, der kan være relevante for en artikel om følgende emne:\n[[description]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
+            ],
+            'section' => [
+                'prompt' => "Jeg skriver en artikel om følgende emne:\n[[description]]\n\nSom en del af artiklen, skriv en tekst, der behandler følgende overskrift: [[section-headline]]\n\nTekst uden overskrift:",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => 'Jeg skriver en artikel om følgende emne:\n[[description]]\n\nSom en del af artiklen, skal du skrive en tekst, der behandler følgende overskrift: [[section-headline]]\n\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]\n\nTekst uden overskrift:',
+            ],
+            'article-conclusion' => [
+                'prompt' => "Skriv en konklusion til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Skriv en konklusion til en artikel om følgende emne:\n[[description]]\nArtiklen vil indeholde følgende afsnit:\n[[section-headlines]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "Beskriv hvilket billede, der passer bedst til følgende tekst:\n\n [[text]]\n\n---\nKreativ billedbeskrivelse i en sætning 6 ord:\n",
+            ],
+            'section-summary' => [
+                'prompt' => "Skriv en kort opsummering af afsnittet for følgende artikeltekst:\n[[section]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Skriv en kort opsummering af afsnittet for følgende artikeltekst:\n[[section]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "Skriv TL;DR for følgende tekst:\n[[text]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Skriv TL;DR for følgende tekst:\n[[text]]\nPrøv at bruge følgende SEO-nøgleord, hvis det er muligt: [[keywords]]",
+            ],
         ],
     ],
     'fi' => [
-        'article-title' => [
-            'prompt' => "Kirjoita artikkelin otsikko seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "Kirjoita artikkelin otsikko seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "Kirjoita artikkelin esipuhe seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "Kirjoita artikkelin esipuhe seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "Ehdota lista [[number-of-headlines]] otsikoista, jotka voivat olla relevantteja artikkelille seuraavasta aiheesta:\n[[description]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "Ehdota lista [[number-of-headlines]] otsikoista, jotka voivat olla relevantteja artikkelille seuraavasta aiheesta:\n[[description]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "Kirjoitan artikkelin seuraavasta aiheesta:\n[[description]]\n\nOsana artikkelia kirjoita teksti, joka käsittelee seuraavaa otsikkoa: [[section-headline]]\n\nTeksti ilman otsikkoa:",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => 'Kirjoitan artikkelin seuraavasta aiheesta:\n[[description]]\n\nOsana artikkelia kirjoita teksti, joka käsittelee seuraavaa otsikkoa: [[section-headline]]\n\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]\n\nTeksti ilman otsikkoa:',
-        ],
-        'article-conclusion' => [
-            'prompt' => "Kirjoita artikkelin johtopäätös seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "Kirjoita artikkelin johtopäätös seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "Kuvaile, mikä kuva sopii parhaiten seuraavaan tekstiin:\n\n [[text]]\n\n---\nLuova kuvaus kuvaan yhdessä lauseessa 6 sanaa:\n",
-        ],
-        'section-summary' => [
-            'prompt' => "Kirjoita lyhyt yhteenveto osiosta seuraavalle artikkelitekstille:\n[[section]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "Kirjoita lyhyt yhteenveto osiosta seuraavalle artikkelitekstille:\n[[section]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "Kirjoita TL;DR seuraavalle tekstille:\n[[text]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "Kirjoita TL;DR seuraavalle tekstille:\n[[text]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
-        ],
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Kirjoita artikkelin otsikko seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Kirjoita artikkelin otsikko seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "Kirjoita artikkelin esipuhe seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Kirjoita artikkelin esipuhe seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "Ehdota lista [[number-of-headlines]] otsikoista, jotka voivat olla relevantteja artikkelille seuraavasta aiheesta:\n[[description]]",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Ehdota lista [[number-of-headlines]] otsikoista, jotka voivat olla relevantteja artikkelille seuraavasta aiheesta:\n[[description]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
+            ],
+            'section' => [
+                'prompt' => "Kirjoitan artikkelin seuraavasta aiheesta:\n[[description]]\n\nOsana artikkelia kirjoita teksti, joka käsittelee seuraavaa otsikkoa: [[section-headline]]\n\nTeksti ilman otsikkoa:",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => 'Kirjoitan artikkelin seuraavasta aiheesta:\n[[description]]\n\nOsana artikkelia kirjoita teksti, joka käsittelee seuraavaa otsikkoa: [[section-headline]]\n\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]\n\nTeksti ilman otsikkoa:',
+            ],
+            'article-conclusion' => [
+                'prompt' => "Kirjoita artikkelin johtopäätös seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Kirjoita artikkelin johtopäätös seuraavasta aiheesta:\n[[description]]\nArtikkeli sisältää seuraavat osiot:\n[[section-headlines]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "Kuvaile, mikä kuva sopii parhaiten seuraavaan tekstiin:\n\n [[text]]\n\n---\nLuova kuvaus kuvaan yhdessä lauseessa 6 sanaa:\n",
+            ],
+            'section-summary' => [
+                'prompt' => "Kirjoita lyhyt yhteenveto osiosta seuraavalle artikkelitekstille:\n[[section]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Kirjoita lyhyt yhteenveto osiosta seuraavalle artikkelitekstille:\n[[section]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "Kirjoita TL;DR seuraavalle tekstille:\n[[text]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Kirjoita TL;DR seuraavalle tekstille:\n[[text]]\nYritä käyttää seuraavia SEO-avainsanoja, jos mahdollista: [[keywords]]",
+            ],
+        ]
     ],
     'no' => [
-        'article-title' => [
-            'prompt' => "Skriv en artikkeloverskrift for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "Skriv en artikkeloverskrift for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "Skriv en artikkelintroduksjon for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "Skriv en artikkelintroduksjon for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "Foreslå en liste med [[number-of-headlines]] overskrifter som kan være relevante for artikkelen for følgende emne:\n[[description]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "Foreslå en liste med [[number-of-headlines]] overskrifter som kan være relevante for artikkelen for følgende emne:\n[[description]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "Jeg skriver en artikkel om følgende emne:\n[[description]]\n\nSom en del av artikkelen, skriv tekst som behandler følgende overskrift: [[section-headline]]\n\nTekst uten overskrift:",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => 'Jeg skriver en artikkel om følgende emne:\n[[description]]\n\nSom en del av artikkelen, skriv tekst som behandler følgende overskrift: [[section-headline]]\n\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]\n\nTekst uten overskrift:',
-        ],
-        'article-conclusion' => [
-            'prompt' => "Skriv en artikkelkonklusjon for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "Skriv en artikkelkonklusjon for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "Beskriv hva slags bilde som passer best til følgende tekst:\n\n [[text]]\n\n---\nKreativ beskrivelse av bildet i ett setning med 6 ord:",
-        ],
-        'section-summary' => [
-            'prompt' => "Skriv en kort oppsummering av seksjonen for følgende artikkeltekst:\n[[section]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "Skriv en kort oppsummering av seksjonen for følgende artikkeltekst:\n[[section]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "Skriv TL;DR for følgende tekst:\n[[text]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "Skriv TL;DR for følgende tekst:\n[[text]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Skriv en artikkeloverskrift for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Skriv en artikkeloverskrift for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "Skriv en artikkelintroduksjon for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Skriv en artikkelintroduksjon for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "Foreslå en liste med [[number-of-headlines]] overskrifter som kan være relevante for artikkelen for følgende emne:\n[[description]]",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Foreslå en liste med [[number-of-headlines]] overskrifter som kan være relevante for artikkelen for følgende emne:\n[[description]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
+            ],
+            'section' => [
+                'prompt' => "Jeg skriver en artikkel om følgende emne:\n[[description]]\n\nSom en del av artikkelen, skriv tekst som behandler følgende overskrift: [[section-headline]]\n\nTekst uten overskrift:",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => 'Jeg skriver en artikkel om følgende emne:\n[[description]]\n\nSom en del av artikkelen, skriv tekst som behandler følgende overskrift: [[section-headline]]\n\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]\n\nTekst uten overskrift:',
+            ],
+            'article-conclusion' => [
+                'prompt' => "Skriv en artikkelkonklusjon for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Skriv en artikkelkonklusjon for følgende emne:\n[[description]]\nArtikkelen inneholder følgende seksjoner:\n[[section-headlines]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "Beskriv hva slags bilde som passer best til følgende tekst:\n\n [[text]]\n\n---\nKreativ beskrivelse av bildet i ett setning med 6 ord:",
+            ],
+            'section-summary' => [
+                'prompt' => "Skriv en kort oppsummering av seksjonen for følgende artikkeltekst:\n[[section]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Skriv en kort oppsummering av seksjonen for følgende artikkeltekst:\n[[section]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "Skriv TL;DR for følgende tekst:\n[[text]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Skriv TL;DR for følgende tekst:\n[[text]]\nPrøv å bruke følgende SEO-nøkkelord, hvis det er mulig: [[keywords]]",
+            ],
         ],
     ],
     'ro' => [
-        'article-title' => [
-            'prompt' => "Scrie un titlu de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "Scrie un titlu de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "Scrie o introducere de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "Scrie o introducere de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "Propune o listă cu [[number-of-headlines]] titluri care ar putea fi relevante pentru articolul pentru următorul subiect:\n[[description]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "Propune o listă cu [[number-of-headlines]] titluri care ar putea fi relevante pentru articolul pentru următorul subiect:\n[[description]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "Scriu un articol despre următorul subiect:\n[[description]]\n\nCa parte a articolului, scrie text care tratează următoarea secțiune: [[section-headline]]\n\nText fără secțiune:",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => 'Scriu un articol despre următorul subiect:\n[[description]]\n\nCa parte a articolului, scrie text care tratează următoarea secțiune: [[section-headline]]\n\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]\n\nText fără secțiune:',
-        ],
-        'article-conclusion' => [
-            'prompt' => "Scrie o concluzie de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "Scrie o concluzie de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "Descrie ce fel de imagine ar fi potrivită pentru următorul text:\n\n [[text]]\n\n---\nDescriere creativă a imaginii într-o propoziție cu 6 cuvinte:",
-        ],
-        'section-summary' => [
-            'prompt' => "Scrie un rezumat al secțiunii pentru următorul text de articol:\n[[section]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "Scrie un rezumat al secțiunii pentru următorul text de articol:\n[[section]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "Scrie TL;DR pentru următorul text:\n[[text]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "Scrie TL;DR pentru următorul text:\n[[text]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Scrie un titlu de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Scrie un titlu de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "Scrie o introducere de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Scrie o introducere de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "Propune o listă cu [[number-of-headlines]] titluri care ar putea fi relevante pentru articolul pentru următorul subiect:\n[[description]]",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Propune o listă cu [[number-of-headlines]] titluri care ar putea fi relevante pentru articolul pentru următorul subiect:\n[[description]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
+            ],
+            'section' => [
+                'prompt' => "Scriu un articol despre următorul subiect:\n[[description]]\n\nCa parte a articolului, scrie text care tratează următoarea secțiune: [[section-headline]]\n\nText fără secțiune:",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => 'Scriu un articol despre următorul subiect:\n[[description]]\n\nCa parte a articolului, scrie text care tratează următoarea secțiune: [[section-headline]]\n\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]\n\nText fără secțiune:',
+            ],
+            'article-conclusion' => [
+                'prompt' => "Scrie o concluzie de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Scrie o concluzie de articol pentru următorul subiect:\n[[description]]\nArticolul conține următoarele secțiuni:\n[[section-headlines]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "Descrie ce fel de imagine ar fi potrivită pentru următorul text:\n\n [[text]]\n\n---\nDescriere creativă a imaginii într-o propoziție cu 6 cuvinte:",
+            ],
+            'section-summary' => [
+                'prompt' => "Scrie un rezumat al secțiunii pentru următorul text de articol:\n[[section]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Scrie un rezumat al secțiunii pentru următorul text de articol:\n[[section]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "Scrie TL;DR pentru următorul text:\n[[text]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Scrie TL;DR pentru următorul text:\n[[text]]\nÎncearcă să folosești următoarele cuvinte cheie SEO, dacă este posibil: [[keywords]]",
+            ],
         ],
     ],
     'ka' => [
-        'article-title' => [
-            'prompt' => "დაწერეთ სტატიის სათაური შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "დაწერეთ სტატიის სათაური შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "დაწერეთ სტატიის შესავალი შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "დაწერეთ სტატიის შესავალი შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "დაწერეთ სექციის სათაური შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "დაწერეთ სექციის სათაური შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "დაწერეთ სექციის ტექსტი შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => "დაწერეთ სექციის ტექსტი შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
-        ],
-        'article-conclusion' => [
-            'prompt' => "დაწერეთ სტატიის ბოლო შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "დაწერეთ სტატიის ბოლო შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "დაწერეთ სურათის აღწერა შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
-        ],
-        'section-summary' => [
-            'prompt' => "დაწერეთ სექციის შეჯამება შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "დაწერეთ სექციის შეჯამება შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "დაწერეთ სტატიის შეჯამება შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "დაწერეთ სტატიის შეჯამება შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "დაწერეთ სტატიის სათაური შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "დაწერეთ სტატიის სათაური შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "დაწერეთ სტატიის შესავალი შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "დაწერეთ სტატიის შესავალი შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "შემოსავალი [[description]] თემაზე დახარჯვის შესახებ შეიძლება შეიცავდეს [[number-of-headlines]] სათაურს.",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "შეიტანე [[number-of-headlines]] სათაური, რომლებიც შეიძლება იყოს შესაბამისი მიმოხილვებისთვის შემდეგ თემაზე:\n[[description]]\nცადე, რომ გამოიყენებთ შემდეგი SEO სიტყვებს, თუ შეგიძლიათ: [[keywords]]",
+            ],
+            'section' => [
+                'prompt' => "დაწერეთ სექციის ტექსტი შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => "დაწერეთ სექციის ტექსტი შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
+            ],
+            'article-conclusion' => [
+                'prompt' => "დაწერეთ სტატიის ბოლო შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "დაწერეთ სტატიის ბოლო შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "დაწერეთ სურათის აღწერა შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
+            ],
+            'section-summary' => [
+                'prompt' => "დაწერეთ სექციის შეჯამება შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "დაწერეთ სექციის შეჯამება შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "დაწერეთ სტატიის შეჯამება შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "დაწერეთ სტატიის შეჯამება შემდეგი თემისთვის:\n[[description]]\nსტატია შეიცავს შემდეგი სექციებს:\n[[section-headlines]]\nსცადეთ გამოიყენოთ შემდეგი SEO სიტყვები, თუ შეგიძლიათ: [[keywords]]",
+            ],
         ],
     ],
     'vi' => [
-        'article-title' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
-        ],
-        'article-conclusion' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
-        ],
-        'section-summary' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "Đề xuất một danh sách [[number-of-headlines]] tiêu đề có thể của các phần cho một bài viết sẽ bao gồm các chủ đề sau:\n[[description]]\n\nTiêu đề của các phần:"
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Đề xuất một danh sách [[number-of-headlines]] tiêu đề có thể của các phần cho một bài viết sẽ bao gồm các chủ đề sau:\n[[description]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]\n\nTiêu đề của các phần:"
+            ],
+            'section' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
+            ],
+            'article-conclusion' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
+            ],
+            'section-summary' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Viết mô tả cho ảnh:\n[[description]]\nBài viết có các phần sau:\n[[section-headlines]]\nHãy thử sử dụng các từ khóa SEO sau, nếu có thể: [[keywords]]",
+            ],
         ],
     ],
     'hu' => [
-        'article-title' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
-        ],
-        'article-conclusion' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
-        ],
-        'section-summary' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "Suggest a list of [[number-of-headlines]] possible headlines of sections for an article that will cover the following topic:\n[[description]]\n\nSection headlines:",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Suggest a list of [[number-of-headlines]] possible headlines of sections for an article that will cover the following topic:\n[[description]]\nTry to use the following seo keywords when possible: [[keywords]]\n\nSection headlines:",
+            ],
+            'section' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
+            ],
+            'article-conclusion' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
+            ],
+            'section-summary' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Írj leírást a képhez:\n[[description]]\nA cikk tartalma:\n[[section-headlines]]\nPróbáld ki a következő SEO kulcsszavakat, ha lehet: [[keywords]]",
+            ],
         ],
     ],
     'bg' => [
-        'article-title' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
-        ],
-        'article-conclusion' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
-        ],
-        'section-summary' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "Предложете списък със [[number-of-headlines]] възможни заглавия на секции за статия, която ще обхване следната тема:\n[[description]]\n\nЗаглавия на секции:",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Предложете списък със [[number-of-headlines]] възможни заглавия на секции за статия, която ще обхване следната тема:\n[[description]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]\n\nЗаглавия на секции:",
+            ],
+            'section' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
+            ],
+            'article-conclusion' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
+            ],
+            'section-summary' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Напишете описание на изображението:\n[[description]]\nСтатията съдържа следните части:\n[[section-headlines]]\nОпитайте се да използвате следните ключови думи за SEO, ако е възможно: [[keywords]]",
+            ],
         ],
     ],
     'el' => [
-        'article-title' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
-        ],
-        'article-conclusion' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
-        ],
-        'section-summary' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "Προτείνετε μια λίστα με [[number-of-headlines]] πιθανούς τίτλους τμημάτων για ένα άρθρο που θα καλύπτει το ακόλουθο θέμα:\n[[description]]\n\nΤίτλοι τμημάτων:"
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Προτείνετε μια λίστα με [[number-of-headlines]] πιθανούς τίτλους τμημάτων για ένα άρθρο που θα καλύπτει το ακόλουθο θέμα:\n[[description]]\n\nΤίτλοι τμημάτων:\n\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
+            ],
+            'section' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
+            ],
+            'article-conclusion' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
+            ],
+            'section-summary' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Περιγράψτε την εικόνα:\n[[description]]\nΤο άρθρο περιέχει τα εξής τμήματα:\n[[section-headlines]]\nΠροσπαθήστε να χρησιμοποιήσετε τις ακόλουθες λέξεις-κλειδιά για SEO, αν είναι δυνατόν: [[keywords]]",
+            ],
         ],
     ],
     'fa' => [
-        'article-title' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]\nکلمات کلیدی برای سئو را در نظر بگیرید: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]\nکلمات کلیدی برای سئو را در نظر بگیرید: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]\nکلمات کلیدی برای سئو را در نظر بگیرید: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]\nکلمات کلیدی برای سئو را در نظر بگیرید: [[keywords]]",
-        ],
-        'article-conclusion' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]\nکلمات کلیدی برای سئو را در نظر بگیرید: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]",
-        ],
-        'section-summary' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]\nکلمات کلیدی برای سئو را در نظر بگیرید: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "توضیحات تصویر:\n[[description]]\nبخش‌های موجود در مقاله:\n[[section-headlines]]\nکلمات کلیدی برای سئو را در نظر بگیرید: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "یک عنوان برای مقاله‌ای که در مورد موضوع زیر صحبت می‌کند، تولید کنید:\n[[description]]\nاین مقاله شامل بخش‌های زیر می‌شود:\n[[section-headlines]]\n\nعنوان:",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "یک عنوان برای مقاله‌ای که در مورد موضوع زیر صحبت می‌کند، تولید کنید:\n[[description]]\nاین مقاله شامل بخش‌های زیر می‌شود:\n[[section-headlines]]\nوقتی امکانش هست از کلمات کلیدی سئو زیر استفاده کنید: [[keywords]]\n\nعنوان:",
+            ],
+            'article-intro' => [
+                'prompt' => "برای مقاله‌ای که در مورد موضوع زیر صحبت می‌کند، مقدمه‌ای بنویسید:\n[[description]]\nاین مقاله شامل بخش‌های زیر می‌شود:\n[[section-headlines]]\n\nمقدمه مقاله:",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "برای مقاله‌ای که در مورد موضوع زیر صحبت می‌کند، مقدمه‌ای بنویسید:\n[[description]]\nاین مقاله شامل بخش‌های زیر می‌شود:\n[[section-headlines]]\nوقتی امکانش هست از کلمات کلیدی سئو زیر استفاده کنید: [[keywords]]\n\nمقدمه مقاله:",
+            ],
+            'section-headlines' => [
+                'prompt' => "یک لیست از عناوین ممکن برای [[number-of-headlines]] بخش مختلف یک مقاله که در مورد موضوع زیر صحبت می‌کند، پیشنهاد دهید:\n[[description]]\n\nعناوین بخش‌ها:",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "لیستی از [[number-of-headlines]] عنوان بخش برای مقاله‌ای که درباره موضوع زیر صحبت می‌کند، پیشنهاد دهید:\n[[description]]\nهنگام امکان‌پذیر بودن، از کلمات کلیدی سئو زیر استفاده کنید: [[keywords]]\n\nعناوین بخش‌ها:",
+            ],
+            'section' => [
+                'prompt' => "من در حال نوشتن یک مقاله در مورد موضوع زیر هستم:\n[[description]]\n\nبه عنوان بخشی از این مقاله، یک بخش متنی بنویسید که در مورد موارد زیر بحث کند: [[section-headline]]\n\nمتن بدون عنوان بخش:",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => "من در حال نوشتن یک مقاله در مورد موضوع زیر هستم:\n[[description]]\n\nبه عنوان بخشی از این مقاله، یک بخش متنی بنویسید که در مورد موارد زیر بحث کند: [[section-headline]]\n\nسعی کنید از کلمات کلیدی سئو زیر استفاده کنید: [[keywords]]\n\nمتن بدون عنوان بخش:",
+            ],
+            'article-conclusion' => [
+                'prompt' => "نتیجه گیری مقاله ای که در مورد موضوع زیر صحبت می کند را بنویسید:\n[[description]]\nمقاله شامل بخش های زیر است:\n[[section-headlines]]\n\nنتیجه گیری مقاله:",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "نتیجه گیری مقاله ای که در مورد موضوع زیر صحبت می کند را بنویسید:\n[[description]]\nمقاله شامل بخش های زیر است:\n[[section-headlines]]\nسعی کنید از کلمات کلیدی سئو زیر استفاده کنید: [[keywords]]\n\nنتیجه گیری مقاله:",
+            ],
+            'image' => [
+                'prompt' => "تصویر مناسبی برای این متن شامل چه توصیفاتی می شود؟:\n\n [[text]]\n\n---\nتوصیف تصویر خلاقانه در یک جمله شامل 6 کلمه:\n",
+            ],
+            'section-summary' => [
+                'prompt' => "خلاصه کوتاهی از متن بخش مقاله زیر بنویسید:\n[[section]]\n\nخلاصه بخش:",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "برای متن بخش مقاله زیر خلاصه کوتاهی بنویسید:\n[[section]]\nهنگام امکان پذیر بودن، سعی کنید از کلمات کلیدی سئو زیر استفاده کنید:\n[[keywords]]\n\nخلاصه بخش:",
+            ],
+            'tldr' => [
+                'prompt' => "برای متن زیر یک TL;DR بنویسید:\n[[text]]\n\nTL;DR:",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "برای متن زیر یک TL;DR بنویسید:\n[[text]]\nهنگام امکان پذیر بودن، سعی کنید از کلمات کلیدی سئو زیر استفاده کنید:\n[[keywords]]\n\nTL;DR:",
+            ],
         ],
     ],
     'sk' => [
-        'article-title' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'article-conclusion' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'section-summary' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "Navrhnite zoznam [[number-of-headlines]] možných titulkov sekcií pre článok, ktorý bude kryť nasledujúce témy:\n[[description]]\n\nTitulky sekcií:",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Navrhnite zoznam [[number-of-headlines]] možných titulkov sekcií pre článok, ktorý bude kryť nasledujúce témy:\n[[description]]\nZohľadnite kľúčové slová pre SEO: [[keywords]] \n\nTitulky sekcií:",
+            ],
+            'section' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
+            'article-conclusion' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'section-summary' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
         ],
     ],
     'cs' => [
-        'article-title' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'article-title-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'article-intro' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'article-intro-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'section-headlines' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'section-headlines-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'section' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'section-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'article-conclusion' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'article-conclusion-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'image' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'section-summary' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'section-summary-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
-        ],
-        'tldr' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
-        ],
-        'tldr-with-seo-keywords' => [
-            'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+        'prompts' => [
+            'article-title' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'article-title-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
+            'article-intro' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'article-intro-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
+            'section-headlines' => [
+                'prompt' => "Navrhněte seznam [[number-of-headlines]] možných nadpisů sekce pro článek, který bude pokrývat následující témata:\n[[description]]\n\nNadpisy sekce:",
+            ],
+            'section-headlines-with-seo-keywords' => [
+                'prompt' => "Navrhněte seznam [[number-of-headlines]] možných nadpisů sekce pro článek, který bude pokrývat následující témata:\n[[description]]\nZohľadněte klíčová slova pro SEO: [[keywords]] \n\nNadpisy sekce:",
+            ],
+            'section' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'section-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
+            'article-conclusion' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'article-conclusion-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
+            'image' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'section-summary' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'section-summary-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
+            'tldr' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]",
+            ],
+            'tldr-with-seo-keywords' => [
+                'prompt' => "Popis obrázka:\n[[description]]\nSekcie v článku:\n[[section-headlines]]\nZohľadnite kľúčové slová pre SEO: [[keywords]]",
+            ],
         ],
     ]
 ];

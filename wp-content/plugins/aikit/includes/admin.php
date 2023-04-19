@@ -151,6 +151,10 @@ class AIKit_Admin {
                     'translatedName' => __('Czech', 'aikit') . ' (Čeština)',
                     'name' => 'Čeština',
                 ],
+                'lt' => [
+                    'translatedName' => __('Lithuanian', 'aikit') . ' (Lietuvių)',
+                    'name' => 'Lietuvių',
+                ],
             ];
         }
         return self::$_instance;

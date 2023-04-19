@@ -56,3 +56,13 @@ h2 {
 .aikit-auto-writer-placeholder-descriptions{
     font-size: 13px !important;
 }
+
+.aikit-badge {
+    background-color: #0d6efdd9;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 5px;
+}

@@ -4,7 +4,7 @@
  * Plugin Name:       AIKit
  * Plugin URI:        https://getaikit.com
  * Description:       AIKit is your WordPress AI assistant, powered by OpenAI's GPT-3 & DALL.E 2.
- * Version:           3.10.0
+ * Version:           3.11.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Domain Path:       /languages
