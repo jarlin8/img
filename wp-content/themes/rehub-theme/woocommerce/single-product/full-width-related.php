@@ -31,6 +31,10 @@ $limit = (rehub_option('width_layout') =='extended') ? 6 : 5;
             $related_array['gridtype'] = 'review';
             echo wpsm_woogrid_shortcode($related_array);                  
         }  
+        elseif ($current_design == 'gridmart') { 
+            $related_array['gridtype'] = 'gridmart';
+            echo wpsm_woogrid_shortcode($related_array);                  
+        }
         elseif ($current_design == 'griddigi') { 
             $related_array['gridtype'] = 'digital';
             echo wpsm_woogrid_shortcode($related_array);                  

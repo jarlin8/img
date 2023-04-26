@@ -21,7 +21,7 @@
 							<?php bp_group_request_user_avatar_thumb(); ?>
 						</div>
 						<div class="member-list-content">
-							<h5><?php bp_group_request_user_link(); ?></h5>
+							<div><?php bp_group_request_user_link(); ?></div>
 							<span class="activity"><?php bp_group_request_time_since_requested(); ?></span>
 							<p class="comments"><?php bp_group_request_comment(); ?></p>						
 						</div>				

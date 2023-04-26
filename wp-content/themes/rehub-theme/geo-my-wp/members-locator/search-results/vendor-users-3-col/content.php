@@ -58,11 +58,6 @@
                 $shop_link = dokan_get_store_url( $vendor_id );
                 $shop_name = esc_html( $store_info['store_name'] );
             }
-            elseif( class_exists('WCMp') && is_user_wcmp_vendor( $vendor_id ) ) {
-                $vendorobj = get_wcmp_vendor($vendor_id); 
-                $shop_link = $vendorobj->permalink;
-                $shop_name = get_user_meta($vendor_id, '_vendor_page_title', true);                      
-            }
             elseif( defined('WCFMmp_TOKEN') && wcfm_is_vendor( $vendor_id ) ) {
                 $shop_link = wcfmmp_get_store_url( $vendor_id );
                 $shop_name = get_user_meta( $vendor_id, 'store_name', true );

@@ -107,6 +107,7 @@ function ux_col($atts, $content = null) {
     'align' => '',
     'color' => '',
 	'sticky' => '',
+	'sticky_mode' => '',
     'parallax' => '',
     'force_first' => '',
     'bg' => '',
@@ -214,7 +215,7 @@ function ux_col($atts, $content = null) {
 	?>
 
 	<div id="<?php echo $_id; ?>" class="<?php echo esc_attr( $classes ); ?>" <?php echo $attributes; ?>>
-		<?php if ( $sticky ) flatsome_sticky_column_open(); ?>
+		<?php if ( $sticky ) flatsome_sticky_column_open('', $sticky_mode ); ?>
 		<div class="<?php echo esc_attr( $classes_inner ); ?>" <?php echo get_shortcode_inline_css( $css_args ); ?> <?php echo $attributes_inner; ?>>
 			<?php require __DIR__ . '/commons/border.php'; ?>
 			<?php echo do_shortcode( $content ); ?>

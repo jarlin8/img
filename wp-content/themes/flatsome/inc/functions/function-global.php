@@ -11,20 +11,23 @@ function flatsome_envato() {
  * Enqueues a webpack bundle.
  *
  * @param string $handle       Script handle name.
- * @param string $path         Path to asset fille.
+ * @param string $entrypoint   The entrypoint name.
  * @param array  $dependencies Extra dependencies.
  * @return void
  */
-function flatsome_enqueue_asset( $handle, $path, $dependencies = array() ) {
+function flatsome_enqueue_asset( $handle, $entrypoint, $dependencies = array() ) {
+	$filename     = "js/$entrypoint.js";
 	$theme        = wp_get_theme( get_template() );
 	$version      = $theme->get( 'Version' );
 	$template_dir = get_template_directory();
 	$template_uri = get_template_directory_uri();
-	$script_path  = "$template_dir/assets/js/$path.asset.php";
-	$script_url   = "$template_uri/assets/js/$path.js";
+	$assets_path  = "$template_dir/assets/assets.php";
+	$script_url   = "$template_uri/assets/$filename";
 
-	$script_asset = file_exists( $script_path )
-		? require $script_path
+	$assets = file_exists( $assets_path ) ? require $assets_path : array();
+
+	$script_asset = isset( $assets[ $filename ] )
+		? $assets[ $filename ]
 		: array( 'dependencies' => array(), 'version' => $version );
 
 	wp_enqueue_script(
@@ -240,6 +243,39 @@ function flatsome_get_block_list_by_id( $args = '' ) {
 }
 
 /**
+ * Retrieves a page given its title.
+ *
+ * @param string       $page_title Page title.
+ * @param string       $output     Optional. The required return type. One of OBJECT, ARRAY_A, or ARRAY_N, which
+ *                                 correspond to a WP_Post object, an associative array, or a numeric array,
+ *                                 respectively. Default OBJECT.
+ * @param string|array $post_type  Optional. Post type or array of post types. Default 'page'.
+ *
+ * @return WP_Post|array|null WP_Post (or array) on success, or null on failure.
+ */
+function flatsome_get_page_by_title( $page_title, $output = OBJECT, $post_type = 'page' ) {
+	$args  = array(
+		'title'                  => $page_title,
+		'post_type'              => $post_type,
+		'post_status'            => get_post_stati(),
+		'posts_per_page'         => 1,
+		'update_post_term_cache' => false,
+		'update_post_meta_cache' => false,
+		'no_found_rows'          => true,
+		'orderby'                => 'post_date ID',
+		'order'                  => 'ASC',
+	);
+	$query = new WP_Query( $args );
+	$pages = $query->posts;
+
+	if ( empty( $pages ) ) {
+		return null;
+	}
+
+	return get_post( $pages[0], $output );
+}
+
+/**
  * Calls a shortcode function by its tag name.
  *
  * @param string $tag     The shortcode of the function to be called.
@@ -249,7 +285,6 @@ function flatsome_get_block_list_by_id( $args = '' ) {
  * @return bool|string If a shortcode tag doesn't exist => false, if exists => the result of the shortcode.
  */
 function flatsome_apply_shortcode( $tag, $atts = array(), $content = null ) {
-
 	global $shortcode_tags;
 
 	if ( ! isset( $shortcode_tags[ $tag ] ) ) return false;
@@ -299,6 +334,26 @@ function flatsome_theme_key( $slug = null ) {
 	$slug = strtolower( $slug );
 
 	return $slug;
+}
+
+/**
+ * Callback to sort on priority.
+ *
+ * @param int $a First item.
+ * @param int $b Second item.
+ *
+ * @return bool
+ */
+function flatsome_sort_on_priority( $a, $b ) {
+	if ( ! isset( $a['priority'], $b['priority'] ) ) {
+		return - 1;
+	}
+
+	if ( $a['priority'] === $b['priority'] ) {
+		return 0;
+	}
+
+	return $a['priority'] < $b['priority'] ? - 1 : 1;
 }
 
 /**

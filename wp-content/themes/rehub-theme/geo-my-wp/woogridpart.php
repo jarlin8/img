@@ -87,7 +87,7 @@
         <?php echo ''.$sales_html; ?>
     <?php endif; ?>     
     <figure class="mb15 mt25 position-relative<?php if($custom_col) : ?> notresized<?php endif ; ?>">    
-        <a class="img-centered-flex rh-flex-center-align rh-flex-justify-center" href="<?php echo esc_url($woolink) ;?>"<?php echo ''.$wootarget ;?>>
+        <a class="img-centered-flex rh-flex-center-align rh-flex-justify-center" title="<?php the_title();?>" href="<?php echo esc_url($woolink) ;?>"<?php echo ''.$wootarget ;?>>
             <?php if($custom_col) : ?>
                 <?php 
                     $showimg = new WPSM_image_resizer();

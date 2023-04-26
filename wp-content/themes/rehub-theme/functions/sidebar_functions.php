@@ -113,7 +113,7 @@ function rehub_register_sidebars() {
 			'before_title' => '<div class="title">',
 			'after_title' => '</div>',
 		));	
-		if (defined('wcv_plugin_dir') || class_exists( 'WeDevs_Dokan' ) || class_exists('WCMp')){
+		if (defined('wcv_plugin_dir') || class_exists( 'WeDevs_Dokan' )){
 			register_sidebar(array(
 				'id' => 'wcw-storepage-sidebar',
 				'name' => esc_html__('Vendor store page sidebar', 'rehub-theme'),

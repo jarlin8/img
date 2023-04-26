@@ -223,33 +223,43 @@ function flatsome_ux_banner( $atts, $content = null ){
             'selector' => '.bg',
             'property' => 'background-position',
           ),
-		  'divider_top_height' => array(
-			  'selector' => '.ux-shape-divider--top svg',
-			  'property' => 'height',
-		  ),
-		  'divider_top_width'  => array(
-			  'selector' => '.ux-shape-divider--top svg',
-			  'property' => '--divider-top-width',
-			  'unit'     => '%',
-		  ),
-		  'divider_top_fill'   => array(
-			  'selector' => '.ux-shape-divider--top .ux-shape-fill',
-			  'property' => 'fill',
-		  ),
-		  'divider_height'     => array(
-			  'selector' => '.ux-shape-divider--bottom svg',
-			  'property' => 'height',
-		  ),
-		  'divider_width'      => array(
-			  'selector' => '.ux-shape-divider--bottom svg',
-			  'property' => '--divider-width',
-			  'unit'     => '%',
-		  ),
-		  'divider_fill'       => array(
-			  'selector' => '.ux-shape-divider--bottom .ux-shape-fill',
-			  'property' => 'fill',
-		  ),
         );
+
+	  if ( $divider_top ) {
+		  $args = array_merge( $args, array(
+			  'divider_top_height' => array(
+				  'selector' => '.ux-shape-divider--top svg',
+				  'property' => 'height',
+			  ),
+			  'divider_top_width'  => array(
+				  'selector' => '.ux-shape-divider--top svg',
+				  'property' => '--divider-top-width',
+				  'unit'     => '%',
+			  ),
+			  'divider_top_fill'   => array(
+				  'selector' => '.ux-shape-divider--top .ux-shape-fill',
+				  'property' => 'fill',
+			  ),
+		  ) );
+	  }
+
+	  if ( $divider ) {
+		  $args = array_merge( $args, array(
+			  'divider_height' => array(
+				  'selector' => '.ux-shape-divider--bottom svg',
+				  'property' => 'height',
+			  ),
+			  'divider_width'  => array(
+				  'selector' => '.ux-shape-divider--bottom svg',
+				  'property' => '--divider-width',
+				  'unit'     => '%',
+			  ),
+			  'divider_fill'   => array(
+				  'selector' => '.ux-shape-divider--bottom .ux-shape-fill',
+				  'property' => 'fill',
+			  ),
+		  ) );
+	  }
         echo ux_builder_element_style_tag($_id, $args, $atts);
       ?>
   </div>

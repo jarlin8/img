@@ -66,7 +66,7 @@ wp_add_inline_script('rehub', $script);
                                         $image_url = $image_url[0]; 
                                     ?> 
                                     <a data-rel="rh_top_gallery" href="<?php echo ''.$image_url;?>" target="_blank" data-thumb="<?php echo ''.$image_url;?>">            
-                                        <?php WPSM_image_resizer::show_static_resized_image(array('lazy'=>true, 'thumb'=> true, 'crop'=> false, 'height'=> 500, 'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_500_500.png'));?>
+                                        <?php WPSM_image_resizer::show_static_resized_image(array('lazy'=>false, 'thumb'=> true, 'crop'=> false, 'height'=> 500, 'width'=> 500,'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_500_500.png'));?>
                                     </a>
                                 </figure>
                                 <?php $post_image_gallery = $product->get_gallery_image_ids();?>
@@ -76,13 +76,13 @@ wp_add_inline_script('rehub', $script);
                                             <?php if(!$image_gallery) continue;?>
                                             <?php $image = wp_get_attachment_image_src($image_gallery, 'full'); $imgurl = (!empty($image[0])) ? $image[0] : ''; ?>
                                             <a data-rel="rh_top_gallery" data-thumb="<?php echo esc_url($imgurl);?>" href="<?php echo esc_url($imgurl);?>" target="_blank" class="rh-flex-center-align mb10" data-title="<?php echo esc_attr(get_post_field( 'post_excerpt', $image_gallery));?>"> 
-                                                <?php WPSM_image_resizer::show_static_resized_image(array('lazy'=>false, 'src'=> esc_url($imgurl), 'crop'=> false, 'height'=> 60));?>
+                                                <?php echo WPSM_image_resizer::show_wp_image('woocommerce_gallery_thumbnail', $image_gallery); ?> 
                                             </a>                               
                                         <?php endforeach;?> 
                                         <?php if(!empty($youtubecontent)):?>
                                             <?php foreach($youtubecontent as $videoitem):?>
                                                 <a href="<?php echo esc_url($videoitem['url']);?>" data-rel="rh_top_gallery" target="_blank" class="rh-flex-center-align mb10 rh_videothumb_link" data-poster="<?php echo parse_video_url($videoitem['url'], 'hqthumb'); ?>" data-thumb="<?php echo esc_url($videoitem['img'])?>"> 
-                                                    <img src="<?php echo esc_url($videoitem['img'])?>" alt="<?php echo esc_attr($videoitem['title'])?>" />
+                                                    <img src="<?php echo esc_url($videoitem['img'])?>" alt="<?php echo esc_attr($videoitem['title'])?>" width="115" height="65" />
                                                 </a>                                                    
                                             <?php endforeach;?> 
                                         <?php endif;?>
@@ -111,13 +111,13 @@ wp_add_inline_script('rehub', $script);
                                                     $image = $gallery_img;
                                                 }?>                                               
                                                 <a data-thumb="<?php echo esc_url($image)?>" data-rel="rh_top_gallery" href="<?php echo esc_url($image); ?>" data-title="<?php echo esc_attr($itemsync['title']);?>"> 
-                                                    <?php WPSM_image_resizer::show_static_resized_image(array('src'=> $image, 'height'=> 65, 'title' => $itemsync['title'], 'no_thumb_url' => get_template_directory_uri().'/images/default/noimage_100_70.png'));?>  
+                                                    <?php WPSM_image_resizer::show_static_resized_image(array('src'=> $image, 'height'=> 65, 'width'=> 65, 'title' => $itemsync['title'], 'no_thumb_url' => get_template_directory_uri().'/images/default/noimage_100_70.png'));?>  
                                                 </a>
                                             <?php endforeach;?>
                                             <?php if(!empty($youtubecontent)):?>
                                                 <?php foreach($youtubecontent as $videoitem):?>
                                                     <a href="<?php echo esc_url($videoitem['url']);?>" data-rel="rh_top_gallery" target="_blank" class="mb10 rh-flex-center-align rh_videothumb_link" data-poster="<?php echo parse_video_url($videoitem['url'], 'hqthumb'); ?>" data-thumb="<?php echo esc_url($videoitem['img'])?>"> 
-                                                        <img src="<?php echo esc_url($videoitem['img'])?>" alt="<?php echo esc_attr($videoitem['title'])?>" />
+                                                        <img src="<?php echo esc_url($videoitem['img'])?>" alt="<?php echo esc_attr($videoitem['title'])?>" width="115" height="65" />
                                                     </a>                                                    
                                                 <?php endforeach;?> 
                                             <?php endif;?>

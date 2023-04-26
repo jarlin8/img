@@ -16,7 +16,7 @@ register_post_type( 'blocks',
 		'has_archive'         => false,
 		'show_in_menu'        => true,
 		'supports'            => array( 'thumbnail', 'editor', 'title', 'revisions', 'custom-fields' ),
-		'show_in_nav_menus'   => true,
+		'show_in_nav_menus'   => false,
 		'exclude_from_search' => true,
 		'rewrite'             => array( 'slug' => '' ),
 		'publicly_queryable'  => true,
@@ -100,7 +100,7 @@ function ux_block_frontend() {
 		?>
 		<script>
           jQuery(document).ready(function ($) {
-            $.scrollTo('#<?php echo esc_attr( $_GET["block"] );?>', 300, {offset: -200})
+            $.scrollTo('#<?php echo esc_attr( $_GET["block"] );?>')
           })
 		</script>
 		<?php

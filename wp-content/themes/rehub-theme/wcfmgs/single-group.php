@@ -75,15 +75,6 @@ do_action( 'woocommerce_before_main_content' );
 												if ( !empty( $logo_image_url ) ) {
 													$store_logo = $logo_image_url[0];
 												}
-											} elseif( $marketplece == 'wcmarketplace' ) {
-												$vendor = get_wcmp_vendor( $vendor_id );
-												if( $vendor ) {
-													$shop_link = $vendor->permalink;
-												}
-												$logo_image_url = get_user_meta( $vendor_id, '_vendor_image', true );
-												if ( !empty( $logo_image_url ) ) {
-													$store_logo = $logo_image_url;
-												}
 											} elseif( $marketplece == 'wcpvendors' ) {
 												$shop_link = get_term_link( $vendor_id, WC_PRODUCT_VENDORS_TAXONOMY );
 												$vendor_data = WC_Product_Vendors_Utils::get_vendor_data_by_id( $vendor_id );

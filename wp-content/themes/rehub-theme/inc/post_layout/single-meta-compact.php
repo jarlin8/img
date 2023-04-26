@@ -35,9 +35,9 @@
                                         <figure class="text-center pt5 pb5 pl5 pr5 border-lightgrey">
                                             <?php $discountpercentage = get_post_meta($post->ID, 'rehub_offer_discount', true);?>       
                                             <?php if ($discountpercentage) :?>
-                                                <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><h5 class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo esc_html($discountpercentage);?></h5></span>
+                                                <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><div class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo esc_html($discountpercentage);?></div></span>
                                             <?php else :?>                                
-                                                <?php wpsm_thumb('smallgrid'); ?>
+                                                <?php echo WPSM_image_resizer::show_wp_image('smallgrid', '', array('lazydisable'=>true, 'loading'=>'eager')); ?> 
                                             <?php endif ;?>  
                                         </figure>                             
                                     </div>

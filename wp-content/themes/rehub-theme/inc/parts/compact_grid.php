@@ -108,7 +108,7 @@ if (rehub_option('enable_brand_taxonomy') == 1) {
                 <?php $discountpercentage = get_post_meta($post->ID, 'rehub_offer_discount', true); ?>
                 <?php if ($discountpercentage) : ?>
                     <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center">
-                        <h5 class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo esc_html($discountpercentage); ?></h5>
+                        <div class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo esc_html($discountpercentage); ?></div>
                     </span>
                 <?php else : ?>
                     <?php if (isset($custom_col)) : ?>
@@ -222,7 +222,7 @@ if (rehub_option('enable_brand_taxonomy') == 1) {
                                     <?php if ($offer_coupon_date) : ?>
                                         <i class="rhicon rhi-clock"></i><?php echo '' . $coupon_text; ?>
                                     <?php else : ?>
-                                        <i class="rhicon rhi-clock"></i><?php printf(esc_html__('%s ago', 'rehub-theme'), human_time_diff(get_the_time('U'), current_time('timestamp'))); ?>
+                                        <i class="rhicon rhi-clock"></i><?php printf(esc_html__('%s ago', 'rehub-theme'), human_time_diff(get_the_modified_time('U'), current_time('timestamp'))); ?>
                                     <?php endif; ?>
                                 </span>
                             </div>
@@ -244,6 +244,7 @@ if (rehub_option('enable_brand_taxonomy') == 1) {
             </div>
         </div>
     </div>
+    <?php rh_post_code_loop();?>
     <?php if ($disable_btn != 1 || $gridtype == 'compact') : ?>
         <div class="mt10 text-center clearbox"><?php rehub_generate_offerbtn('showme=button'); ?></div>
     <?php endif; ?>
@@ -335,7 +336,7 @@ if (rehub_option('enable_brand_taxonomy') == 1) {
                         <?php if ($offer_coupon_date) : ?>
                             <i class="rhicon rhi-clock"></i><?php echo '' . $coupon_text; ?>
                         <?php else : ?>
-                            <i class="rhicon rhi-clock"></i><?php printf(esc_html__('%s ago', 'rehub-theme'), human_time_diff(get_the_time('U'), current_time('timestamp'))); ?>
+                            <i class="rhicon rhi-clock"></i><?php printf(esc_html__('%s ago', 'rehub-theme'), human_time_diff(get_the_modified_time('U'), current_time('timestamp'))); ?>
                         <?php endif; ?>
                     </span>
                 </div>

@@ -24,7 +24,7 @@
                                 ?>                                                         
                                 <figure class="text-center margincenter">
                                     <?php woocommerce_show_product_sale_flash();?>
-                                    <?php echo WPSM_image_resizer::show_wp_image('woocommerce_single'); ?>
+                                    <?php echo WPSM_image_resizer::show_wp_image('woocommerce_single', '', array('lazydisable'=>true, 'loading'=>'eager')); ?>
                                 </figure>
                                 <?php do_action('rh_woo_after_single_image');?>
                             </div>

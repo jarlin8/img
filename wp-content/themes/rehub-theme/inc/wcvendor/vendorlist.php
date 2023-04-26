@@ -22,11 +22,11 @@
 	</div>
 	<div class="vendor_store_in_bp_single">
 		<div class="vendor_user_meta">
-			<h5>
+			<div class="fontbold">
 				<a href="<?php echo esc_url($vendor_user_link); ?>" class="wcvendors_cart_sold_by_meta">
 					<?php ( class_exists( 'BuddyPress' ) ) ? the_author_meta( 'nickname', $vendor_id ) : the_author_meta( 'display_name', $vendor_id ); ?>
 				</a>
-			</h5>
+			</div>
 			<?php if ( class_exists( 'WCVendors_Pro' ) ) : ?>
 				<div class="profile-socbutton lineheight25 margincenter mb10">
 					<div class="social_icon small_i">

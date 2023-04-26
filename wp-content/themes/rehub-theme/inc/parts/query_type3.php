@@ -67,6 +67,7 @@ else {
         </a>
     </figure>                                       
     <?php do_action( 'rehub_after_masonry_grid_figure' ); ?>
+    <?php rh_post_code_loop();?>
     <p><?php kama_excerpt('maxchar=200'); ?></p>
     <?php do_action( 'rehub_after_masonry_grid_text' ); ?>
 	<?php if(rehub_option('disable_btn_offer_loop')!='1')  : ?><?php rehub_generate_offerbtn('wrapperclass=block_btnblock width-100p mobile_block_btnclock&btn_more=no');?><?php endif; ?>   

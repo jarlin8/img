@@ -32,7 +32,7 @@ class Swatches_Admin_Product {
 	 * @param object     $attribute          Attribute.
 	 */
 	public function product_option_terms( $attribute_taxonomy, $i, $attribute ) {
-		if ( ! array_key_exists( $attribute_taxonomy->attribute_type, flatsome_swatches()->get_attribute_types() ) ) {
+		if ( ! array_key_exists( $attribute_taxonomy->attribute_type, swatches()->get_attribute_types() ) ) {
 			return;
 		}
 

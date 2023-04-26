@@ -36,11 +36,11 @@ use ContentEgg\application\helpers\CurrencyHelper;
             </div>
             <div class="rh-deal-details width-80-calc pl15 rtlpr15 floatright">
                 <div>
-                    <h5 class="fontnormal mt0 mb15"> 
+                    <div class="fontnormal mt0 mb15"> 
                     <a <?php echo ce_printRel();?> target="_blank" class="re_track_btn" href="<?php echo esc_url($afflink) ?>"  data-tracking-group="<?php echo esc_attr($modulecode);?>">
                         <?php echo esc_attr($offer_title); ?>
                     </a>  
-                    </h5>                  
+                    </div>                  
                 </div>                                    
                 <div class="rh-deal-price-cegg">
                     <div class="floatleft">

@@ -6,7 +6,7 @@
         <?php $bloglabel = (rehub_option('blog_posttype_label')) ? rehub_option('blog_posttype_label') : esc_html__('Blog', 'rehub-theme');?>
         <!-- Main Side -->
         <div class="main-side clearfix<?php if (rehub_option('blog_archive_layout') == 'gridfull_blog' || rehub_option('blog_archive_layout') == 'cardblogfull') : ?> full_width<?php endif ;?>">
-            <div class="wpsm-title position-relative flowhidden mb25 middle-size-title wpsm-cat-title"><h5 class="font140"><span><?php echo esc_attr($bloglabel); ?></span></h5></div>
+            <div class="wpsm-title position-relative flowhidden mb25 middle-size-title wpsm-cat-title"><div class="font140"><span><?php echo esc_attr($bloglabel); ?></span></div></div>
             <?php if (rehub_option('blog_archive_layout') == 'grid_blog' || rehub_option('blog_archive_layout') == 'cardblog') : ?>
                 <div class="rh-flex-eq-height col_wrap_three">
             <?php elseif (rehub_option('blog_archive_layout') == 'gridfull_blog' || rehub_option('blog_archive_layout') == 'cardblogfull') : ?>   

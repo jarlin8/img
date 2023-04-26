@@ -106,13 +106,6 @@
                         'filterorder'=> 'DESC', 
                         'filterdate' => 'all',
                         'filtermetakey' => '_wc_average_rating',                                                 
-                    ); 
-                    $prepare_filter[] = array (
-                        'filtertitle' => esc_html__('Expired', 'rehub-theme'),
-                        'filtertype' => 'expired',
-                        'filterorderby' => 'date',
-                        'filterorder'=> 'DESC', 
-                        'filterdate' => 'all',                        
                     );  
                     $prepare_filter = urlencode(json_encode($prepare_filter));             
                 ?>

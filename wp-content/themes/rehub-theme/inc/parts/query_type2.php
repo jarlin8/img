@@ -22,5 +22,6 @@
             <?php if(rehub_option('disable_btn_offer_loop')!='1')  : ?><?php rehub_create_btn('yes') ;?><?php endif; ?>
             <?php do_action( 'rehub_after_blog_list' ); ?>                        
         </div>
+        <?php rh_post_code_loop();?>
     </div>                                     
 </article>

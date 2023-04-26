@@ -54,6 +54,7 @@ require_once __DIR__ . '/shortcodes/ux_video.php';
 require_once __DIR__ . '/shortcodes/ux_sidebar.php';
 require_once __DIR__ . '/shortcodes/ux_nav.php';
 require_once __DIR__ . '/shortcodes/ux_stack.php';
+require_once __DIR__ . '/shortcodes/ux_lottie.php';
 
 if ( get_theme_mod( 'fl_portfolio', 1 ) ) {
 	require_once __DIR__ . '/shortcodes/ux_portfolio.php';

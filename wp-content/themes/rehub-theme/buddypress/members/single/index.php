@@ -70,14 +70,6 @@
 					$shop_url = dokan_get_store_url( $author_ID );
 					$sold_by = get_user_meta( $author_ID, 'dokan_store_name', true );
 				}
-				elseif(class_exists('WCMp')){
-					$is_vendor = is_user_wcmp_vendor( $author_ID );
-					if($is_vendor){
-						$vendorobj = get_wcmp_vendor($author_ID);
-						$shop_url = $vendorobj->permalink;
-						$sold_by = get_user_meta($author_ID, '_vendor_page_title', true); 
-					}
-				}
 	            elseif( defined('WCFMmp_TOKEN') ) {
 	            	$is_vendor = wcfm_is_vendor( $author_ID );
 	                $shop_url = wcfmmp_get_store_url( $author_ID );

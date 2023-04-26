@@ -4,7 +4,7 @@
 	Description: A Hybrid magazine/shop/review/news Wordpress Theme
 	Author: Wpsoul
 	Author URI: https://wpsoul.com/
-	Version: 18.7
+	Version: 18.9.8
 	Tags: two-columns, fluid-layout, custom-background, threaded-comments, translation-ready, custom-menu
 	License: 
 	License URI:
@@ -18,6 +18,7 @@ ul { list-style: none; }
 blockquote, q { quotes: none; }
 blockquote:before, blockquote:after, q:before, q:after { content: none; }
 table { border-collapse: collapse; width:100%; }
+td,th,tr{padding: 6px 12px;}
 *{box-sizing: border-box;}
 mark, ins{text-decoration: none;}
 
@@ -64,7 +65,7 @@ a.ajax_add_to_cart.loading:after, .wpsm_pretty_list ul li:before, .loading .re-i
 }
 
 /* HEADER AND MENU */
-#main_header { z-index: 1000 }
+#main_header { z-index: 998 }
 .responsive_nav_wrap { display: none; position: relative; width: 100% }
 header .logo-section { padding: 15px 0; overflow: visible; }
 header .logo { max-width: 450px; float: left; margin-right: 15px; line-height: 0; }
@@ -431,9 +432,9 @@ body:not(.noinnerpadding) .rh-post-wrapper {background:#fff; border: 1px solid #
 .csspopup .cpopupclose:hover {background: #dedede;}
 .limited-thumb-number a:nth-child(n+5){display: none;}
 .compare-full-thumbnails{overflow: hidden;}
-.compare-full-thumbnails a {width: 23%;vertical-align: middle;max-height: 300px;float: left;text-align: center;margin: 1%; text-decoration: none;}
+.compare-full-thumbnails a {width: 23%;vertical-align: middle;max-height: 300px;text-align: center;margin: 1%; text-decoration: none; display:inline-block}
 .compare-full-thumbnails.five-thumbnails a{width: 18%}
-.rh_mini_thumbs.compare-full-thumbnails img{max-height:65px; display:inline-block}
+.rh_mini_thumbs.compare-full-thumbnails img{max-height:65px; display:inline-block; width:auto}
 .rh_videothumb_link{position: relative;}
 .rh_videothumb_link:before{ content: "\f144"; position: absolute; top: 50%;left: 50%;margin: -35px 0 0 -35px;font-size: 70px;color: #fff;opacity: 0.8;height: 80px;text-align: center;z-index: 2;line-height: 80px;width: 80px;}
 .compare-full-thumbnails .rh_videothumb_link:before{font-size: 30px; margin: -15px 0 0 -15px; height: 30px; width: 30px; line-height: 30px}
@@ -866,7 +867,7 @@ ul.rh-big-tabs-ul .rh-big-tabs-li.active a{color: #111;font-weight: bold;}
 .height-22{height: 22px; line-height:22px;}.width-22{width:22px; min-width:22px;}.img-width-auto img{width:auto;}.img-maxh-100 img{max-height:100px;}.img-maxh-350 img{max-height:350px;}.img-maxh-500 img{max-height:500px;}
 .rh-hov-bor-line > a:after, .rh-border-line:after, nav.top_menu > ul:not(.off-canvas) > li > a:after {position: absolute;top: 0;left: 50%;content: "";height: 3px;width: 0;transition: width .5s, left .5s, right .5s;}
 nav.top_menu > ul:not(.off-canvas) > li > a:after{top: -1px}
-.rh-border-line:after, .rh-hov-bor-line.active a:after, .rh-hov-bor-line:hover a:after, nav.top_menu > ul:not(.off-canvas) > li > a:hover:after, nav.top_menu > ul:not(.off-canvas) > li.current_page_item > a:after {width: 100%;left: 0;right: 0;}
+.rh-border-line:after, .rh-hov-bor-line.active a:after, .rh-hov-bor-line:hover a:after, nav.top_menu > ul:not(.off-canvas) > li > a:hover:after, nav.top_menu > ul:not(.off-canvas) > li.current-menu-item > a:after {width: 100%;left: 0;right: 0;}
 .rh-hov-bor-line.below-border > a:after, .rh-border-line.below-border:after{top: auto; bottom: 0}
 .rh-circular-hover:before{content: "";position: absolute;top: -10px;left: -10px;width: calc(100% + 20px);height: calc(100% + 20px);background-color: rgba(0, 0, 0, 0.05); transform: scale(0);transition: all cubic-bezier(0.4, 0, 0.2, 1) 0.25s; border-radius: 100%; z-index: 1 }
 .rh-circular-hover:hover:before{transform: scale(1);}
@@ -1410,7 +1411,7 @@ div.gmw-directions-form-wrapper ul.travel-mode-options li{margin:0; list-style: 
 .wpsm_update{color: #004458;clear:both; background-color: #d9edf7; border: 1px solid #bce8f1; padding: 15px;margin-bottom: 16px; border-radius: 4px;}
 .wpsm_update .label-info, .wpsm_box .label-info{background-color: #5bc0de;display: inline-block;margin: 0 5px 0 0;padding: 3px 6px;font-size: 75%;font-weight: 700;color: #fff;text-align: center;white-space: nowrap;vertical-align: baseline;border-radius: .25em; line-height: 14px}
 .wpsm_update ul, .wpsm_update ol{margin: 20px 0 0 20px}
-.wpsm_update ul li, .wpsm_box ul li, .wcmp_main_menu ul li{list-style: disc;}
+.wpsm_update ul li, .wpsm_box ul li{list-style: disc;}
 .wpsm_update li, .wpsm_box li{margin: 0 0 5px 0}
 .wpsm_box ul, .wpsm_box ol{margin: 0 0 0 20px}
 .wpsm_box.nonefloat_box { float: none; }

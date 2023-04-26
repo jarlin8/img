@@ -32,7 +32,7 @@
                             <div class="wpsm-one-third wpsm-column-first compare-full-images">
                                 <figure>
                                     <?php echo re_badge_create('tablelabel'); ?>      
-                                    <?php echo WPSM_image_resizer::show_wp_image('large_inner', '', array('emptyimage'=>get_template_directory_uri() . '/images/default/noimage_450_350.png')); ?> 
+                                    <?php echo WPSM_image_resizer::show_wp_image('large_inner', '', array('lazydisable'=>true, 'loading'=>'eager')); ?> 
                                 </figure> 
                                 <?php echo rh_get_post_thumbnails(array('video'=>1, 'columns'=>4, 'height'=>50));?>                                         
                             </div>
@@ -191,7 +191,7 @@
 								$prosvalues = get_post_meta($post->ID, '_review_post_pros_text', true);
 								if(empty($prosvalues)){
 									$review_post = rehub_get_review_data();
-									$prosvalues = $review_post['review_post_pros_text'];
+									$prosvalues = !empty($review_post['review_post_pros_text']) ? $review_post['review_post_pros_text'] : '';
 								}
 								?>
                                 <?php if(!empty($prosvalues)):?>

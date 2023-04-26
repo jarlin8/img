@@ -2804,3 +2804,9 @@ function rh_safelist_css_wprocket($safelist) {
     return $safelist;
 }
 add_filter( 'rocket_rucss_safelist', 'rh_safelist_css_wprocket');
+
+if(!function_exists('rh_post_code_loop')){
+	function rh_post_code_loop($template=''){
+		block_template_part( 'post-loop' );
+	}
+}

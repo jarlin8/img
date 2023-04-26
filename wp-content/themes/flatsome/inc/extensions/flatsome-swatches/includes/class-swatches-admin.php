@@ -52,7 +52,7 @@ class Swatches_Admin {
 		// Add attribute option fields.
 		add_action( 'woocommerce_attribute_added', array( $this, 'add_attribute_options' ), 10, 2 );
 		add_action( 'woocommerce_attribute_updated', array( $this, 'update_attribute_options' ), 10, 3 );
-		add_action( 'woocommerce_attribute_updated', array( flatsome_swatches(), 'cache_clear' ), 10, 3 );
+		add_action( 'woocommerce_attribute_updated', array( swatches(), 'cache_clear' ), 10, 3 );
 		add_action( 'woocommerce_attribute_deleted', array( $this, 'delete_attribute_option' ), 10 );
 	}
 
@@ -129,7 +129,7 @@ class Swatches_Admin {
 
 		add_action( 'created_term', array( $this, 'save_term_meta' ), 10, 3 );
 		add_action( 'edit_term', array( $this, 'save_term_meta' ), 10, 3 );
-		add_action( 'edit_term', array( flatsome_swatches(), 'cache_clear' ), 10, 3 );
+		add_action( 'edit_term', array( swatches(), 'cache_clear' ), 10, 3 );
 	}
 
 	/**
@@ -143,12 +143,12 @@ class Swatches_Admin {
 
 		wp_enqueue_media();
 
-		wp_enqueue_style( 'flatsome-swatches-admin', get_template_directory_uri() . '/assets/css/extensions/flatsome-swatches-admin.css', array( 'wp-color-picker' ), flatsome_swatches()->version );
+		wp_enqueue_style( 'flatsome-swatches-admin', get_template_directory_uri() . '/assets/css/extensions/flatsome-swatches-admin.css', array( 'wp-color-picker' ), swatches()->version );
 		wp_enqueue_script( 'flatsome-swatches-admin', get_template_directory_uri() . '/assets/js/extensions/flatsome-swatches-admin.js', array(
 			'jquery',
 			'wp-color-picker',
 			'wp-util',
-		), flatsome_swatches()->version, true );
+		), swatches()->version, true );
 
 		wp_localize_script(
 			'flatsome-swatches-admin',
@@ -165,7 +165,7 @@ class Swatches_Admin {
 	 * @param string $taxonomy Taxonomy.
 	 */
 	public function add_attribute_term_fields( $taxonomy ) {
-		$attr = flatsome_swatches()->get_attribute( $taxonomy );
+		$attr = swatches()->get_attribute( $taxonomy );
 
 		do_action( 'flatsome_product_attribute_term_fields', $attr->attribute_type, '', 'add' );
 	}
@@ -177,7 +177,7 @@ class Swatches_Admin {
 	 * @param string $taxonomy Taxonomy.
 	 */
 	public function edit_attribute_term_fields( $term, $taxonomy ) {
-		$attr  = flatsome_swatches()->get_attribute( $taxonomy );
+		$attr  = swatches()->get_attribute( $taxonomy );
 		$value = get_term_meta( $term->term_id, $attr->attribute_type, true );
 
 		do_action( 'flatsome_product_attribute_term_fields', $attr->attribute_type, $value, 'edit' );
@@ -204,7 +204,7 @@ class Swatches_Admin {
 			esc_attr( $type ),
 			'edit' == $form ? '<th>' : '',
 			esc_attr( $type ),
-			esc_html( flatsome_swatches()->get_attribute_types()[ $type ] ),
+			esc_html( swatches()->get_attribute_types()[ $type ] ),
 			'edit' == $form ? '</th><td>' : ''
 		);
 		// phpcs:enable  WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -226,7 +226,7 @@ class Swatches_Admin {
 				<?php
 				break;
 			case 'ux_color':
-				$color   = flatsome_swatches()->parse_ux_color_term_meta( $value );
+				$color   = swatches()->parse_ux_color_term_meta( $value );
 				$value   = $color['color'];
 				$value_2 = '';
 				$name   .= '[]';
@@ -258,7 +258,7 @@ class Swatches_Admin {
 	 * @param string $taxonomy Taxonomy slug.
 	 */
 	public function save_term_meta( $term_id, $tt_id, $taxonomy ) {
-		foreach ( flatsome_swatches()->get_attribute_types() as $type => $label ) {
+		foreach ( swatches()->get_attribute_types() as $type => $label ) {
 			if ( isset( $_POST[ $type ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 				$value = wp_unslash( $_POST[ $type ] ); // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				if ( is_array( $value ) ) {
@@ -354,13 +354,13 @@ class Swatches_Admin {
 	public function add_attribute_column_content( $content, $column, $term_id ) {
 		if ( 'ux_swatch_preview' === $column ) {
 			$classes = array( 'ux-swatch-preview' );
-			$attr    = flatsome_swatches()->get_attribute( $_REQUEST['taxonomy'] ); // phpcs:ignore
+			$attr    = swatches()->get_attribute( $_REQUEST['taxonomy'] ); // phpcs:ignore
 			$value   = get_term_meta( $term_id, $attr->attribute_type, true );
 
 			switch ( $attr->attribute_type ) {
 				case 'ux_color':
 					$color_classes   = array( 'ux-swatch__color' );
-					$color           = flatsome_swatches()->parse_ux_color_term_meta( $value );
+					$color           = swatches()->parse_ux_color_term_meta( $value );
 					$classes[]       = 'ux-swatch--color';
 					$color_classes[] = $color['class'];
 					printf( '<div class="%s"><span class="%s" style="%s"></span></div>',

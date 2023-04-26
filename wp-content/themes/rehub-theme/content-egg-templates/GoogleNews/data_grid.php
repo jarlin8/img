@@ -20,9 +20,9 @@
                 </div>
             <?php endif; ?>
             <div class="medianews-body floatright width-100-calc">
-                <h5 class="rehub-main-font font90 lineheight20 mb10 mt0">
+                <div class="rehub-main-font font90 lineheight20 mb10 mt0">
                     <?php echo wpsm_hidelink_shortcode(array('link'=>$url, 'text'=>$title));?>
-                </h5>
+                </div>
                 <div class="font70 lineheight15">
                     <?php echo date(get_option('date_format'), $item['extra']['date']); ?> -
                     <?php echo wpsm_hidelink_shortcode(array('link'=>$url, 'text'=>$item['extra']['source']));?>

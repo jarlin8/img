@@ -363,6 +363,9 @@ class WPSM_Postfilters{
 	    }
 	    if ($filter_args->orderby != ''){
 	    	$args['orderby'] = $filter_args->orderby;
+			if($filter_args->orderby == 'random'){
+				$args['orderby'] = 'rand';
+            }
 	    }	
 	    if ($filter_args->orderby == 'view' || $filter_args->orderby == 'thumb' || $filter_args->orderby == 'discount' || $filter_args->orderby == 'price'){
 	    	$args['orderby'] = 'meta_value_num';
@@ -820,6 +823,9 @@ class WPSM_Woohelper{
 	        } 	        	   
 	        if ($filter_args->offset != '') {$args['offset'] = (int)$filter_args->offset;}   	        
 	    }
+		if($filter_args->orderby == 'random'){
+			$args['orderby'] = 'rand';
+		}
 		if (($filter_args->orderby == 'meta_value' || $filter_args->orderby == 'meta_value_num') && $filter_args->meta_key !='') {$args['meta_key'] = $filter_args->meta_key;}
 		if ($filter_args->orderby == 'price'){
 			$args['meta_key'] = '_price';

@@ -68,13 +68,13 @@ class Swatches_Frontend {
 	 * Enqueue scripts and stylesheets
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_style( 'flatsome-swatches-frontend', get_template_directory_uri() . '/assets/css/extensions/flatsome-swatches-frontend.css', array(), flatsome_swatches()->version );
+		wp_enqueue_style( 'flatsome-swatches-frontend', get_template_directory_uri() . '/assets/css/extensions/flatsome-swatches-frontend.css', array(), swatches()->version );
 		wp_style_add_data( 'flatsome-swatches-frontend', 'rtl', 'replace' );
 
 		wp_enqueue_script( 'flatsome-swatches-frontend', get_template_directory_uri() . '/assets/js/extensions/flatsome-swatches-frontend.js', array(
 			'jquery',
 			'flatsome-js',
-		), flatsome_swatches()->version, true );
+		), swatches()->version, true );
 	}
 
 	/**
@@ -106,13 +106,13 @@ class Swatches_Frontend {
 
 		<?php if ( get_theme_mod( 'swatches_color_selected', \Flatsome_Default::COLOR_SECONDARY ) !== \Flatsome_Default::COLOR_SECONDARY ) : ?>
 			.variations_form .ux-swatch.selected {
-			box-shadow: 0 0 0 0.1rem <?php echo get_theme_mod( 'swatches_color_selected' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+			box-shadow: 0 0 0 2px <?php echo get_theme_mod( 'swatches_color_selected' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 			}
 		<?php endif; ?>
 
 		<?php if ( get_theme_mod( 'swatches_box_color_selected', \Flatsome_Default::COLOR_SECONDARY ) !== \Flatsome_Default::COLOR_SECONDARY ) : ?>
 			.ux-swatches-in-loop .ux-swatch.selected {
-			box-shadow: 0 0 0 0.1rem <?php echo get_theme_mod( 'swatches_box_color_selected' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+			box-shadow: 0 0 0 2px <?php echo get_theme_mod( 'swatches_box_color_selected' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 			}
 		<?php endif; ?>
 
@@ -140,8 +140,8 @@ class Swatches_Frontend {
 	 * @uses swatch_html()
 	 */
 	public function get_swatch_html( $html, $args ) {
-		$swatch_types = flatsome_swatches()->get_attribute_types();
-		$attr         = flatsome_swatches()->get_attribute( $args['attribute'] );
+		$swatch_types = swatches()->get_attribute_types();
+		$attr         = swatches()->get_attribute( $args['attribute'] );
 
 		// Abort if this is normal attribute.
 		if ( empty( $attr ) || ! array_key_exists( $attr->attribute_type, $swatch_types ) ) {
@@ -155,7 +155,7 @@ class Swatches_Frontend {
 		$classes              = array( 'ux-swatches', "ux-swatches-attribute-{$attr->attribute_type}" );
 		$selector_classes     = array( 'variation-selector', "variation-select-{$attr->attribute_type}" );
 		$args['tooltip']      = get_theme_mod( 'swatches_tooltip', 1 );
-		$attr_options         = flatsome_swatches()->get_attribute_option_by_name( $args['attribute'] );
+		$attr_options         = swatches()->get_attribute_option_by_name( $args['attribute'] );
 		$use_variation_images = $this->use_variation_images( $attr_options );
 		$variations           = $use_variation_images ? array_map( array( $this, 'get_variation' ), $product->get_children() ) : $product->get_available_variations();
 
@@ -239,7 +239,7 @@ class Swatches_Frontend {
 			case 'ux_color':
 				$color_classes = array( 'ux-swatch__color' );
 				$value         = get_term_meta( $term->term_id, 'ux_color', true );
-				$color         = flatsome_swatches()->parse_ux_color_term_meta( $value );
+				$color         = swatches()->parse_ux_color_term_meta( $value );
 
 				if ( $color['class'] ) $color_classes[] = $color['class'];
 
@@ -318,7 +318,7 @@ class Swatches_Frontend {
 	public function get_variation_attributes_types( $attributes ) {
 		global $wc_product_attributes;
 		$types        = array();
-		$defined_attr = flatsome_swatches()->get_attribute_types();
+		$defined_attr = swatches()->get_attribute_types();
 
 		if ( ! empty( $attributes ) ) {
 			foreach ( $attributes as $name => $options ) {
@@ -359,7 +359,7 @@ class Swatches_Frontend {
 			return;
 		}
 
-		$attr_options  = flatsome_swatches()->get_attribute_option_by_name( $attribute_name );
+		$attr_options  = swatches()->get_attribute_option_by_name( $attribute_name );
 		$cache_enabled = apply_filters( 'flatsome_swatches_cache_enabled', true );
 		$transient     = 'flatsome_swatches_cache_' . $id;
 		$classes       = array( 'ux-swatches', 'ux-swatches-in-loop' );
@@ -439,7 +439,7 @@ class Swatches_Frontend {
 
 			switch ( $type_tmp ) {
 				case 'ux_color':
-					$color = flatsome_swatches()->parse_ux_color_term_meta( isset( $swatch['ux_color'] ) ? $swatch['ux_color'] : '' );
+					$color = swatches()->parse_ux_color_term_meta( isset( $swatch['ux_color'] ) ? $swatch['ux_color'] : '' );
 
 					if ( $color['class'] ) $color_classes[] = $color['class'];
 
@@ -473,7 +473,7 @@ class Swatches_Frontend {
 
 			if ( $swatch_layout === 'limit' && $swatch_count > $swatch_limit ) {
 				if ( $index >= $swatch_limit ) {
-					$swatch_classes[] = 'hidden';
+					$swatch_classes[] = 'ux-swatch--limited hidden';
 				}
 				if ( $index === $swatch_limit ) {
 					$html .= '<span class="ux-swatches__limiter">+' . ( $swatch_count - $swatch_limit ) . '</span>';
@@ -689,8 +689,8 @@ class Swatches_Frontend {
 	 * @return string
 	 */
 	public function layered_nav_term_html( $term_html, $term, $link, $count ) {
-		$swatch_types = flatsome_swatches()->get_attribute_types();
-		$attr         = flatsome_swatches()->get_attribute( $term->taxonomy );
+		$swatch_types = swatches()->get_attribute_types();
+		$attr         = swatches()->get_attribute( $term->taxonomy );
 
 		// Abort if this is normal attribute.
 		if ( empty( $attr ) || ! array_key_exists( $attr->attribute_type, $swatch_types ) ) {
@@ -724,7 +724,7 @@ class Swatches_Frontend {
 			case 'ux_color':
 				$color_classes = array( 'ux-swatch__color' );
 				$value         = get_term_meta( $term->term_id, 'ux_color', true );
-				$color         = flatsome_swatches()->parse_ux_color_term_meta( $value );
+				$color         = swatches()->parse_ux_color_term_meta( $value );
 				$classes[]     = 'ux-swatch--color';
 
 				if ( $color['class'] ) $color_classes[] = $color['class'];
@@ -780,7 +780,7 @@ class Swatches_Frontend {
 	 */
 	public function cache_clear_all( $new_value, $old_value ) {
 		if ( $new_value !== $old_value ) {
-			flatsome_swatches()->cache_clear();
+			swatches()->cache_clear();
 		}
 
 		return $new_value;

@@ -378,7 +378,8 @@ ul.postpagination li a:focus,
 .rh-hov-bor-line > a:after, nav.top_menu > ul:not(.off-canvas) > li > a:after, .rh-border-line:after,
 .wpsm-table.wpsm-table-main-color table tr th,
 .rh-hov-bg-main-slide:before,
-.rh-hov-bg-main-slidecol .col_item:before{ background: <?php echo ''.$maincolor;?>;}
+.rh-hov-bg-main-slidecol .col_item:before,
+.mvx-tablink.active::before{ background: <?php echo ''.$maincolor;?>;}
 @media (max-width: 767px) {
 	.postNavigation .postnavprev{ background: <?php echo ''.$maincolor; ?>; }
 }
@@ -818,7 +819,7 @@ input[type="submit"].dokan-btn-theme:active, a.dokan-btn-theme:active, .dokan-bt
 		body .woocommerce .products .product h3{font-size: <?php echo rehub_option('wooloop_heading_size');?>px}
 	<?php endif;?>
 	<?php if(rehub_option('wooloop_price_color') !='') : ?>
-		body .woocommerce .products .product .price{color: <?php echo rehub_option('wooloop_price_color');?> !important}
+		body .woocommerce .products .product .price, ul.product_list_widget li span.amount{color: <?php echo rehub_option('wooloop_price_color');?> !important}
 	<?php endif;?>
 	<?php if(rehub_option('wooloop_price_size') !='') : ?>
 		body .woocommerce .products .product .price{font-size: <?php echo rehub_option('wooloop_price_size');?>px !important}

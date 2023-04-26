@@ -64,7 +64,7 @@
     <ol id="loadcomment-list" class="commentlist">
     </ol>
         <?php
-            $custom_comment_field = '<textarea id="comment" name="comment" cols="30" rows="10" aria-required="true"></textarea>';
+            $custom_comment_field = '<textarea id="comment" name="comment" cols="30" rows="10" aria-required="true" aria-label="comment"></textarea>';
             $commenter = wp_get_current_commenter();
             comment_form(array(
                 'comment_field'         => $custom_comment_field,
@@ -91,3 +91,4 @@
     </div> <!-- end comments div -->
 <?php endif;?>
 </div>
+<?php if(rehub_option('rehub_single_after_comment')) : ?><div class="mediad mediad_after_comment mb15"><?php echo do_shortcode(rehub_option('rehub_single_after_comment')); ?></div><div class="clearfix"></div><?php endif; ?>

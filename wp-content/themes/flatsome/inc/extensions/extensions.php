@@ -41,4 +41,8 @@ if(is_woocommerce_activated()){
 	if ( get_theme_mod( 'additional_variation_images' ) && ! get_theme_mod( 'product_gallery_woocommerce' ) ) {
 		require $extensions_url . '/flatsome-variation-images/index.php';
 	}
+
+	if ( get_theme_mod( 'ajax_add_to_cart' ) ) {
+		require $extensions_url . '/flatsome-ajax-add-to-cart/flatsome-ajax-add-to-cart.php';
+	}
 }

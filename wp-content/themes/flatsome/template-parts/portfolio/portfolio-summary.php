@@ -3,12 +3,12 @@
  * Portfolio summary.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.16.0
+ * @flatsome-version 3.17.0
  */
 
 if(!flatsome_option('portfolio_title')) { ?>
 	<div class="featured_item_cats breadcrumbs mb-half">
-		<?php echo get_the_term_list( get_the_ID(), 'featured_item_category', '', '<span class="divider">|</span>', '' ); ?>
+		<?php echo get_the_term_list( get_the_ID(), 'featured_item_category', '', ' <span class="divider">|</span> ', '' ); ?>
 	</div>
 	<h1 class="entry-title uppercase"><?php the_title(); ?></h1>
 <?php } ?>

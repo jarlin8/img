@@ -52,9 +52,9 @@ else {
 	            } ?> 
     		</div>     	
 	    <?php endif;?>
-	    <h5 class="<?php if ($priceenable && $producttype) :?>mb5<?php else:?>mb10<?php endif;?> mt0"><?php do_action('rehub_in_title_post_list');?><?php if($hotenable && rehub_option('hotmeter_disable') !='1') {echo getHotLikeTitle($post->ID);}?><a href="<?php echo ''.$link;?>" <?php echo ''.$target;?> class="mr10"><?php the_title();?></a>
+	    <div class="<?php if ($priceenable && $producttype) :?>mb5<?php else:?>mb10<?php endif;?> mt0"><?php do_action('rehub_in_title_post_list');?><?php if($hotenable && rehub_option('hotmeter_disable') !='1') {echo getHotLikeTitle($post->ID);}?><a href="<?php echo ''.$link;?>" <?php echo ''.$target;?> class="mr10"><?php the_title();?></a>
 	    	<?php if ($priceenable && !$producttype) :?><?php rehub_create_price_for_list($post->ID);?><?php endif;?>
-	    </h5>
+	    </div>
 	    <?php if ($priceenable && $producttype) :?><?php rehub_create_price_for_list($post->ID);?><?php endif;?>
 	    <?php if($compareenable && $producttype && (rehub_option('compare_page') != '' || rehub_option('compare_multicats_textarea') != '')) {echo'<div class="woo-btn-actions-notext mb10">';echo wpsm_comparison_button(array('class'=>'rhwoosinglecompare', 'id'=>$post->ID)); echo '</div>';} ?>
 	    <?php if (!$nometa && !$producttype) :?>

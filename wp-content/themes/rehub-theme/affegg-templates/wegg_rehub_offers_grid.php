@@ -25,11 +25,11 @@
                 </a>                
             </figure>
             <div class="detail floatright width-100-calc pl15 rtlpr15">
-                <h5 class="mt0 lineheight20 fontnormal font95">
+                <div class="mt0 lineheight20 fontnormal font95">
                     <a rel="nofollow sponsored" target="_blank" href="<?php echo esc_url($afflink) ?>"<?php echo ''.$item['ga_event'] ?>>
                         <?php echo esc_attr($offer_title); ?>
                     </a>                    
-                </h5>
+                </div>
                 <div class="post-meta">
                     <?php if(!empty($offer_price)) : ?>
                         <div class="rh-deal-price mb10 fontbold font90">

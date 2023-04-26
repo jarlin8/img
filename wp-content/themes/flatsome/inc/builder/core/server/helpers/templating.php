@@ -17,6 +17,6 @@ function ux_builder_render( $__template, $__variables = array() ) {
   if ( in_array( $__template, array( 'editor', 'iframe-frontend', 'media', 'tinymce' ), true ) ) {
     include ux_builder_path( "/server/templates/{$__template}.php" );
   } else {
-    wp_die( "No template for <em>$__template</em> exist." );
+    wp_die( sprintf( "No template for <em>%s</em> exist.", esc_html( $__template ) ) );
   }
 }

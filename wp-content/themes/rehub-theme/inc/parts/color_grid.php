@@ -15,7 +15,7 @@ if( !is_wp_error($categories) && is_array($categories)){
 $enableimage = (isset($enableimage) && $enableimage !== 'false') ? $enableimage : '';
 ?>
 <div class="flowhidden col_item rh-shadow3 rehub-sec-smooth rh-hover-up <?php echo ($enableimage) ? 'rehub-main-color-bg css-ani-trigger' : 'whitebg rh-main-bg-hover';?> csstransall position-relative rh-hovered-wrap">
-<a class="abdfullwidth zind2" href="<?php the_permalink();?>"></a>
+<a class="abdfullwidth zind2" href="<?php the_permalink();?>" title="<?php the_title();?>"></a>
 <div class="rh-borderinside rh-hovered-scale pointernone<?php echo ($enableimage) ? ' rh-hovered-scalebig' : '';?>"></div>
 <div class="padd20 position-relative zind1">
     <div class="pt10 pr20 pl20 pb10">

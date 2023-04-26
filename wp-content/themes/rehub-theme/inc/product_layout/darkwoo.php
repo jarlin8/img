@@ -44,7 +44,7 @@
                                         $image_url = $image_url[0]; 
                                     ?> 
                                     <a data-rel="rh_top_gallery" href="<?php echo esc_url($image_url);?>" target="_blank" data-thumb="<?php echo esc_url($image_url);?>">            
-                                        <?php echo WPSM_image_resizer::show_wp_image('full', '', array('lazydisable'=>1)); ?>
+                                        <?php echo WPSM_image_resizer::show_wp_image('woocommerce_single', '', array('lazydisable'=>true, 'loading'=>'eager')); ?>
                                     </a>
                                 </figure>                                
                                 <?php else:?>
@@ -55,8 +55,8 @@
                                         $image_url = wp_get_attachment_image_src($image_id,'full');
                                         $image_url = $image_url[0]; 
                                     ?> 
-                                    <a data-rel="rh_top_gallery" href="<?php echo esc_url($image_url);?>" target="_blank" data-thumb="<?php echo esc_url($image_url);?>">            
-                                        <?php echo WPSM_image_resizer::show_wp_image('mediumgrid', '', array('emptyimage'=>get_template_directory_uri() . '/images/default/noimage_336_220.png')); ?>
+                                    <a data-rel="rh_top_gallery" href="<?php echo esc_url($image_url);?>" target="_blank" data-thumb="<?php echo esc_url($image_url);?>"> 
+                                        <?php echo WPSM_image_resizer::show_wp_image('mediumgrid', '', array('lazydisable'=>true, 'loading'=>'eager')); ?>           
                                     </a>
                                 </figure>
                                 <?php endif;?>
@@ -72,13 +72,13 @@
                                             <?php if(!$image_gallery) continue;?>
                                             <?php $image = wp_get_attachment_image_src($image_gallery, 'full'); $imgurl = (!empty($image[0])) ? $image[0] : ''; ?>
                                             <a data-rel="rh_top_gallery" data-thumb="<?php echo esc_url($imgurl);?>" href="<?php echo esc_url($imgurl);?>" target="_blank" class="rh-flex-center-align mb10 col_item" data-title="<?php echo esc_attr(get_post_field( 'post_excerpt', $image_gallery));?>"> 
-                                                <?php WPSM_image_resizer::show_static_resized_image(array('lazy'=>false, 'src'=> esc_url($imgurl), 'crop'=> false, 'height'=> 60,'no_thumb_url' => get_template_directory_uri().'/images/default/noimage_100_70.png'));?>
+                                                <?php WPSM_image_resizer::show_static_resized_image(array('lazy'=>false, 'src'=> esc_url($imgurl), 'crop'=> false, 'width'=>60, 'height'=> 60,'no_thumb_url' => get_template_directory_uri().'/images/default/noimage_100_70.png'));?>
                                             </a>                               
                                         <?php endforeach;?> 
                                         <?php if(!empty($youtubecontent)):?>
                                             <?php foreach($youtubecontent as $videoitem):?>
                                                 <a href="<?php echo esc_url($videoitem['url']);?>" data-rel="rh_top_gallery" target="_blank" class="rh-flex-center-align col_item mb10 rh_videothumb_link" data-poster="<?php echo parse_video_url($videoitem['url'], 'hqthumb'); ?>" data-thumb="<?php echo esc_url($videoitem['img'])?>"> 
-                                                    <img src="<?php echo esc_url($videoitem['img'])?>" alt="<?php echo ''.$videoitem['title']?>" />
+                                                    <img src="<?php echo esc_url($videoitem['img'])?>" alt="<?php echo ''.$videoitem['title']?>" width="115" height="65" />
                                                 </a>                                                    
                                             <?php endforeach;?> 
                                         <?php endif;?>  
@@ -90,7 +90,7 @@
                                                     $image = $gallery_img['img'];
                                                 }?>                                               
                                                 <a data-thumb="<?php echo esc_url($image)?>" data-rel="rh_top_gallery" href="<?php echo esc_url($image); ?>" data-title="<?php echo esc_attr($gallery_img['title']);?>" class="rh-flex-center-align mb10 col_item"> 
-                                                    <?php WPSM_image_resizer::show_static_resized_image(array('src'=> $image, 'height'=> 60, 'crop'=> false, 'title' => $gallery_img['title'], 'no_thumb_url' => get_template_directory_uri().'/images/default/noimage_100_70.png'));?>  
+                                                    <?php WPSM_image_resizer::show_static_resized_image(array('src'=> $image, 'height'=> 60, 'width'=>60, 'crop'=> false, 'title' => $gallery_img['title'], 'no_thumb_url' => get_template_directory_uri().'/images/default/noimage_100_70.png'));?>  
                                                 </a>
                                             <?php endforeach;?>  
                                         <?php endif;?>                                    

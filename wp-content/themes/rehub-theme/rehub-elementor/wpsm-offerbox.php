@@ -170,7 +170,7 @@ class Widget_Offerbox extends WPSM_Content_Widget_Base {
     }
 
     protected function query_fields() {
-        $this->add_control( 'id', [
+        $this->add_control( 'postid', [
             'type'        => 'select2ajax',
             'label'       => esc_html__( 'Post names', 'rehub-theme' ),
             'description' => esc_html__( 'Choose post to import Offer or add details in Manual Fields', 'rehub-theme' ),
@@ -201,7 +201,13 @@ class Widget_Offerbox extends WPSM_Content_Widget_Base {
     /* Widget output Rendering */
     protected function render() {
         $settings = $this->get_settings_for_display();
-        $id = $settings['id'];
+        $id = '';
+        if(!empty($settings['postid'])){
+            $id = $settings['postid'];
+        }
+        else if(!empty($settings['id'])){
+            $id = $settings['id'];
+        }
         $btnwoo = '';
         if(!empty($id)){
             if('product' == get_post_type($id)){

@@ -9,5 +9,5 @@ defined( 'ABSPATH' ) || exit;
 global $extensions_url;
 require $extensions_url . '/flatsome-swatches/includes/class-swatches.php';
 
-flatsome_swatches();
+swatches();
 

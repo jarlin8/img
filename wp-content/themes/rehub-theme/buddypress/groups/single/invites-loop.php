@@ -46,7 +46,7 @@
 							<?php bp_group_invite_user_avatar(); ?>
 						</div>
 						<div class="member-list-content">
-							<h5><?php bp_group_invite_user_link(); ?></h5>
+							<div><?php bp_group_invite_user_link(); ?></div>
 							<span class="activity"><?php bp_group_invite_user_last_active(); ?></span>
 						</div>				
 						<?php do_action( 'bp_group_send_invites_item' ); ?>

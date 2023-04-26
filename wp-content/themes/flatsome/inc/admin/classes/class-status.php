@@ -624,7 +624,7 @@ final class Status {
 					if ( $this->theme['is_child_theme'] ) {
 						echo '<mark class="success"><span class="dashicons dashicons-yes"></span></mark>';
 					} else {
-						/* translators: %s docs link. */
+						/* translators: %s: Docs link. */
 						echo '<span class="dashicons dashicons-no-alt"></span>&ndash; ' . wp_kses_post( sprintf( __( 'If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href="%s" target="_blank" rel="noopener noreferrer">How to create a child theme</a>', 'flatsome' ), 'https://developer.wordpress.org/themes/advanced-topics/child-themes/' ) );
 					}
 					?>
@@ -702,7 +702,7 @@ final class Status {
 						echo '<mark class="success">' . esc_html( $this->environment['wp_version'] ) . '</mark>';
 					} elseif ( $this->tests['wp_version']['result'] === Log_Level::CRITICAL ) {
 						$wp_version_required = wp_get_theme( get_template() )->get( 'RequiresWP' );
-						/* translators: The minimum required WP version number. */
+						/* translators: %s: The minimum required WP version number. */
 						$notice = sprintf( __( 'The theme requires WordPress version %s or above.', 'flatsome' ), $wp_version_required );
 						?>
 						<mark class="critical"><span class="dashicons dashicons-warning"></span>
@@ -725,7 +725,7 @@ final class Status {
 							echo '<mark class="success">' . esc_html( $this->environment['wc_version'] ) . '</mark>';
 						} else {
 							$wc_version_required = wp_get_theme( get_template() )->get( 'WC requires at least' );
-							/* translators: The minimum required WC version number. */
+							/* translators: %s: The minimum required WC version number. */
 							$notice = sprintf( __( 'The theme requires WooCommerce version %s or above.', 'flatsome' ), $wc_version_required );
 							?>
 							<mark class="critical"><span class="dashicons dashicons-warning"></span>
@@ -822,7 +822,7 @@ final class Status {
 						$class  = 'critical';
 
 						if ( version_compare( $this->environment['php_version'], $this->recommended_php_version, '<' ) ) {
-							/* translators: The recommended PHP version number. */
+							/* translators: %s: The recommended PHP version number. */
 							$notice = sprintf( __( 'We recommend using PHP version %s or above for greater performance and security.', 'flatsome' ), $this->recommended_php_version );
 							$class  = 'warning';
 						}
@@ -896,7 +896,7 @@ final class Status {
 					<?php else : ?>
 						<mark class="critical"><span class="dashicons dashicons-warning"></span>
 							<?php
-							/* translators: %s: docs link. */
+							/* translators: %s: Docs link. */
 							echo wp_kses_post( sprintf( __( 'Your site is not using HTTPS. <a href="%s" target="_blank" rel="noopener noreferrer">Learn more about HTTPS and SSL Certificates</a>.', 'flatsome' ), 'https://wordpress.com/support/https-ssl/' ) );
 							?>
 						</mark>

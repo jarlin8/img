@@ -1108,10 +1108,21 @@ function wpsm_woocompare_shortcode( $atts, $content = null ) {
 					array(
 						'key'     => $field,
 						'value'   => $valuekey,
-						'compare' => 'LIKE',
+						'compare' => '=',
 					),
 				),		                
 		    );			
+		}
+		if ( 'yes' === get_option( 'woocommerce_hide_out_of_stock_items' ) ) {
+			$args['tax_query'][] = array(
+				'relation' => 'AND',
+				array(
+					'taxonomy' => 'product_visibility',
+					'field'    => 'name',
+					'terms'    => 'outofstock',
+					'operator' => 'NOT IN',
+				)
+			);
 		}
 		ob_start(); 
 		?>
@@ -1144,16 +1155,6 @@ function wpsm_woocompare_shortcode( $atts, $content = null ) {
 										<a href="<?php echo dokan_get_store_url( $vendor_id );?>">
 											<img src="<?php echo rh_show_vendor_avatar($vendor_id, 50, 50, false);?>" class="vendor_store_image_single" width="50" height="50" />
 										</a>
-									<?php elseif ( class_exists('WCMp')):?>
-										<?php $is_vendor = is_user_wcmp_vendor( $vendor_id ); 
-										if($is_vendor) :?>         	        
-										<?php $vendorobj = get_wcmp_vendor($vendor_id); $store_url = $vendorobj->permalink;?>
-										<a href="<?php echo esc_url($store_url);?>">
-											<img src="<?php echo rh_show_vendor_avatar($vendor_id, 50, 50, false);?>" class="vendor_store_image_single" width="50" height="50" />
-										</a>								
-										<?php else:?>
-											<img src="<?php echo rh_show_vendor_avatar($vendor_id, 50, 50, false);?>" class="vendor_store_image_single" width="50" height="50" />
-										<?php endif;?>
 									<?php elseif (defined('WCFMmp_TOKEN')): ?>
 										<a href="<?php echo wcfmmp_get_store_url( $vendor_id ); ?>">
 											<img src="<?php echo rh_show_vendor_avatar($vendor_id, 50, 50, false);?>" class="vendor_store_image_single" width="50" height="50" />
@@ -1233,16 +1234,6 @@ function wpsm_woocompare_shortcode( $atts, $content = null ) {
 											<a href="<?php echo wcfmmp_get_store_url( $vendor_id );?>">
 												<img src="<?php echo rh_show_vendor_avatar($vendor_id, 90, 90);?>" class="vendor_store_image_single" width="90" height="90" />
 											</a>										
-										<?php elseif ( class_exists('WCMp')):?>
-											<?php $is_vendor = is_user_wcmp_vendor( $vendor_id ); 
-											if($is_vendor) :?>         	        
-											<?php $vendorobj = get_wcmp_vendor($vendor_id); $store_url = $vendorobj->permalink;?>
-											<a href="<?php echo esc_url($store_url);?>">
-												<img src="<?php echo rh_show_vendor_avatar($vendor_id, 90, 90);?>" class="vendor_store_image_single" width="90" height="90" />
-											</a>								
-											<?php else:?>
-												<img src="<?php echo rh_show_vendor_avatar($vendor_id, 90, 90);?>" class="vendor_store_image_single" width="90" height="90" />
-											<?php endif;?>											
 										<?php endif;?>
 									<?php endif;?>
 				                </div>
@@ -3521,11 +3512,10 @@ if (is_user_logged_in()) {
 	        	$ifvendor = true;
 	        endif; 
         endif; 
-        if( class_exists('WCMp')) :
-        	$is_vendor = is_user_wcmp_vendor( $user_id );        
+		if( function_exists('get_mvx_vendor')) :
+        	$is_vendor = is_user_mvx_vendor( $user_id );        
         	if($is_vendor) :
-				$wcmp_option = get_option("wcmp_vendor_general_settings_name");
-				$dashlink = (!empty($wcmp_option['wcmp_vendor'])) ? $wcmp_option['wcmp_vendor'] : '';        		
+				$dashlink = mvx_vendor_dashboard_page_id();        		
         		if ($dashlink > 0):
 	        		$output .= '<li class="user-editshop-link-intop menu-item"><a href="'. get_permalink($dashlink) .'"><i class="rhicon rhi-shopping-bagfeather" aria-hidden="true"></i><span>'. esc_html__("Manage Your Shop", "rehub-theme") .'</span></a></li>'; 
 	        	endif; 
@@ -3554,13 +3544,13 @@ $output .= '</ul></div>';
 	if(get_option('users_can_register')) :
 		if (empty ($loginurl)):
 			if ($wrap =='a'):
-				$output .= '<a class="act-rehub-login-popup'.$as_button.$class_show.'" data-type="login" href="#"><i class="'.$icon_class.'"></i><span>'.__("Login / Register", "rehub-theme").'</span></a>';
+				$output .= '<a class="act-rehub-login-popup'.$as_button.$class_show.'" data-type="login"  aria-label="Login" href="#"><i class="'.$icon_class.'"></i><span>'.__("Login / Register", "rehub-theme").'</span></a>';
 			else:
 				$output .= '<span class="act-rehub-login-popup'.$as_button.$class_show.'" data-type="login"><i class="'.$icon_class.'"></i><span>'.__("Login / Register", "rehub-theme").'</span></span>';
 			endif;
 		else:
 			if ($wrap =='a'):
-				$output .= '<a class="act-rehub-login-popup'.$as_button.$class_show.'" data-type="url" data-customurl="'.esc_url($loginurl).'"><i class="'.$icon_class.'"></i><span>'.__("Login / Register", "rehub-theme").'</span></a>';
+				$output .= '<a class="act-rehub-login-popup'.$as_button.$class_show.'" data-type="url"  aria-label="Login" data-customurl="'.esc_url($loginurl).'"><i class="'.$icon_class.'"></i><span>'.__("Login / Register", "rehub-theme").'</span></a>';
 			else:
 				$output .= '<span class="act-rehub-login-popup'.$as_button.$class_show.'" data-type="url" data-customurl="'.esc_url($loginurl).'"><i class="'.$icon_class.'"></i><span>'.__("Login / Register", "rehub-theme").'</span></span>';
 			endif;			
@@ -4604,11 +4594,7 @@ function rh_wcv_vendorslist_flat( $atts ) {
 		elseif( defined('WCFMmp_TOKEN') ){
 			$role = 'wcfm_vendor';
 			$meta_key = 'store_name';
-		}		
-        elseif( class_exists('WCMp')) {
-			$role = 'dc_vendor';
-			$meta_key = '_vendor_page_title';
-        }		
+		}			
 		
 		if( isset($_GET['orderby_sellers']) ) {
 			$orderby_sellers = $_GET['orderby_sellers'];
@@ -4726,12 +4712,7 @@ function rh_wcv_vendorslist_flat( $atts ) {
 			elseif ( defined( 'WCFMmp_TOKEN' ) ){
 				$shop_link = wcfmmp_get_store_url( $vendor->ID );
 				$shop_name = get_user_meta( $vendor->ID, 'store_name', true );
-			}				
-			elseif ( class_exists( 'WCMp' ) ){
-				$wcmp_vendor = get_wcmp_vendor($vendor->ID);
-				$shop_link = $wcmp_vendor->permalink;
-				$shop_name = get_user_meta($vendor->ID, '_vendor_page_title', true);
-			}			    	
+			}							    	
 	    	$vendor_id= $vendor->ID;
 	    	include(rh_locate_template('inc/wcvendor/vendorlist.php'));
 
@@ -5160,9 +5141,6 @@ function rh_get_profile_data($atts, $content = NULL){
 	}
 	elseif($userid == 'current'){
 		$userid = get_current_user_id();
-	}elseif($userid == 'vendor' && function_exists('get_wcmp_vendor_by_term')){
-		$vendor = get_wcmp_vendor_by_term(get_queried_object()->term_id);
-		$userid=$vendor->id; 
 	}
 	elseif($userid == 'bpuser' && function_exists('bp_displayed_user_id')){
 		$userid = bp_displayed_user_id();
@@ -5905,7 +5883,7 @@ function wpsm_reviewbox( $atts, $content = null ) {
 		    	$total_score = $score;
 		    }	
 			if($total_score){
-				$out .= '<span class="overall">'.$total_score.'</span><span class="overall-text">'.__('Expert Score', 'rehub-theme').'</span></div>';
+				$out .= '<span class="overall r_score_'.round($total_score).'">'.$total_score.'</span><span class="overall-text">'.__('Expert Score', 'rehub-theme').'</span></div>';
 			}	    
 			$out .='<div class="review-text"><span class="review-header">'.esc_html($title).'</span><p>'.wp_kses_post($description).'</p></div></div>';
 			if (!empty($criterias))  {
@@ -5916,7 +5894,7 @@ function wpsm_reviewbox( $atts, $content = null ) {
 					    	$perc_criteria = $criteriaflat[1]*10;
 					    	$out .='<div class="rate-bar clearfix" data-percent="'.$perc_criteria.'%">
 								<div class="rate-bar-title"><span>'.$criteriaflat[0].'</span></div>
-								<div class="rate-bar-bar"></div>
+								<div class="rate-bar-bar r_score_'.round($criteriaflat[1]).'"></div>
 								<div class="rate-bar-percent">'.$criteriaflat[1].'</div>
 							</div>';
 						}
@@ -5932,7 +5910,7 @@ function wpsm_reviewbox( $atts, $content = null ) {
 					    	$perc_criteria = $criteriascore*10;
 					    	$out .='<div class="rate-bar clearfix" data-percent="'.$perc_criteria.'%">
 								<div class="rate-bar-title"><span>'.esc_html($criterianame).'</span></div>
-								<div class="rate-bar-bar"></div>
+								<div class="rate-bar-bar r_score_'.round($criteriascore).'"></div>
 								<div class="rate-bar-percent">'.esc_html($criteriascore).'</div>
 							</div>';
 						}

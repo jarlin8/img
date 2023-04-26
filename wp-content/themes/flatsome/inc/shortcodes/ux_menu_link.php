@@ -60,8 +60,12 @@ function flatsome_render_ux_menu_link_shortcode( $atts, $content, $tag ) {
 		$link = '';
 	}
 
-	// Ensure paths (except hash) are rendered as full URLs.
-	if ( substr( $link, 0, 1 ) !== '#' && ! wp_http_validate_url( $link ) ) {
+	$protocols         = array_diff( wp_allowed_protocols(), array( 'http', 'https' ) );
+	$protocol          = explode( ':', $link )[0];
+	$skip_validate_url = substr( $link, 0, 1 ) === '#' || in_array( $protocol, $protocols, true );
+
+	// Ensure paths (except hash & specific protocols (f.ex: mailto:, sms:, ...) are rendered as full URLs.
+	if ( ! $skip_validate_url && ! wp_http_validate_url( $link ) ) {
 		$link = site_url( $link );
 	}
 
@@ -91,7 +95,7 @@ function flatsome_render_ux_menu_link_shortcode( $atts, $content, $tag ) {
 
 	?>
 	<div class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>">
-		<a class="ux-menu-link__link flex" href="<?php echo esc_attr( $link ); ?>"<?php echo flatsome_parse_target_rel( $link_atts ); ?>>
+		<a class="ux-menu-link__link flex" href="<?php echo esc_url( $link ); ?>" <?php echo flatsome_parse_target_rel( $link_atts, true ); ?>>
 			<?php echo $icon; ?>
 			<span class="ux-menu-link__text">
 				<?php echo esc_html( $atts['text'] ); ?>

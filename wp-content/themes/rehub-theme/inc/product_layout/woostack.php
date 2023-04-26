@@ -45,7 +45,8 @@
                                             $image_url = $image_url[0]; 
                                         ?> 
                                         <a data-rel="rh_top_gallery" id="navigation-image-1" href="<?php echo esc_url($image_url);?>" target="_blank" data-thumb="<?php echo esc_url($image_url);?>">            
-                                            <?php echo WPSM_image_resizer::show_wp_image('full'); ?>
+                                        
+                                            <?php echo WPSM_image_resizer::show_wp_image('full', '', array('lazydisable'=>true, 'loading'=>'eager')); ?>
                                         </a>
                                     </figure>
                                     <?php $post_image_gallery = $product->get_gallery_image_ids();?>

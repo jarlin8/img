@@ -10,7 +10,7 @@ add_ux_builder_shortcode( 'ux_banner', array(
   'wrap' => false,
   'info' => '{{ label }}',
   'resize' => array( 'bottom' ),
-  'allow' => array( 'text_box', 'ux_image' ),
+  'allow' => array( 'text_box', 'ux_image', 'ux_lottie' ),
   'add_buttons' => array( 'bottom-right' ),
   'addable_spots' => array( 'top', 'bottom' ),
   'priority' => 3,

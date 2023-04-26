@@ -43,6 +43,7 @@ $type = (isset($type)) ? $type : '';
 					meta_small(true, $first_cat, 'compactnoempty', false);
 					?>
 				</div>
+				<?php rh_post_code_loop();?>
 				<p class="mb15 greycolor hideonmobile lineheight20">
 					<?php kama_excerpt('maxchar=150'); ?>
 				</p>
@@ -124,6 +125,7 @@ $type = (isset($type)) ? $type : '';
 			</div>
 			<div class="newsdetail rh_gr_right_desc">
 				<p class="font90 mobfont80 lineheight20 moblineheight15 mb15"><?php kama_excerpt('maxchar=160'); ?></p>
+				<?php rh_post_code_loop();?>
 				<?php $content = $post->post_content; ?>
 				<?php if (false !== strpos($content, '[wpsm_update')) : ?>
 					<?php

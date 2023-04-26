@@ -26,6 +26,7 @@ require get_template_directory() . '/inc/classes/class-flatsome-registration.php
 require get_template_directory() . '/inc/classes/class-flatsome-envato.php';
 require get_template_directory() . '/inc/classes/class-flatsome-envato-admin.php';
 require get_template_directory() . '/inc/classes/class-flatsome-envato-registration.php';
+require get_template_directory() . '/inc/classes/class-flatsome-instagram.php';
 require get_template_directory() . '/inc/classes/class-uxthemes-api.php';
 
 /**
@@ -34,6 +35,7 @@ require get_template_directory() . '/inc/classes/class-uxthemes-api.php';
  */
 require get_template_directory() . '/inc/functions/function-conditionals.php';
 require get_template_directory() . '/inc/functions/function-global.php';
+require get_template_directory() . '/inc/functions/function-register.php';
 require get_template_directory() . '/inc/functions/function-upgrade.php';
 require get_template_directory() . '/inc/functions/function-update.php';
 require get_template_directory() . '/inc/functions/function-defaults.php';
@@ -96,7 +98,8 @@ require get_template_directory() . '/inc/shortcodes/gap.php';
 require get_template_directory() . '/inc/shortcodes/featured_box.php';
 require get_template_directory() . '/inc/shortcodes/ux_sidebar.php';
 require get_template_directory() . '/inc/shortcodes/buttons.php';
-require get_template_directory() . '/inc/shortcodes/share_follow.php';
+require get_template_directory() . '/inc/shortcodes/share.php';
+require get_template_directory() . '/inc/shortcodes/follow.php';
 require get_template_directory() . '/inc/shortcodes/elements.php';
 require get_template_directory() . '/inc/shortcodes/titles_dividers.php';
 require get_template_directory() . '/inc/shortcodes/lightbox.php';
@@ -126,6 +129,7 @@ require get_template_directory() . '/inc/shortcodes/ux_nav.php';
 require get_template_directory() . '/inc/shortcodes/ux_payment_icons.php';
 require get_template_directory() . '/inc/shortcodes/ux_stack.php';
 require get_template_directory() . '/inc/shortcodes/ux_text.php';
+require get_template_directory() . '/inc/shortcodes/ux_lottie.php';
 
 if(is_portfolio_activated()){
   require get_template_directory() . '/inc/shortcodes/portfolio.php';

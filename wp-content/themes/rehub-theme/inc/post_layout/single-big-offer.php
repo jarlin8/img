@@ -98,9 +98,9 @@
                                                 } ?>
                                                 <a href="<?php echo esc_url($offer_url) ?>" target="_blank" rel="nofollow sponsored" <?php echo '' . $outsidelinkpart; ?>>
                                                     <?php if (!has_post_thumbnail() && !empty($offer_thumb)) : ?>
-                                                        <?php WPSM_image_resizer::show_static_resized_image(array('lazy' => true, 'src' => $offer_thumb, 'crop' => false, 'height' => 450, 'width' => 350, 'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_450_350.png')); ?>
+                                                        <?php WPSM_image_resizer::show_static_resized_image(array('lazy' => false, 'src' => $offer_thumb, 'crop' => false, 'height' => 450, 'width' => 350, 'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_450_350.png')); ?>
                                                     <?php else : ?>
-                                                        <?php echo WPSM_image_resizer::show_wp_image('large_inner', '', array('emptyimage' => get_template_directory_uri() . '/images/default/noimage_450_350.png')); ?>
+                                                        <?php echo WPSM_image_resizer::show_wp_image('large_inner', '', array('lazydisable'=>true, 'loading'=>'eager')); ?>
                                                     <?php endif; ?>
                                                 </a>
                                             </figure>

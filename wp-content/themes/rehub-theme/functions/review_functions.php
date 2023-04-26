@@ -486,6 +486,7 @@ function rehub_get_overall_score_editor($criterias='', $manual=''){
 
 if( !function_exists('rehub_get_review') ) {
 function rehub_get_review(){
+	wp_enqueue_style('rhuserreviews');
 	$review_post = rehub_get_review_data();
 	global $post;
 	$postid = $post->ID;

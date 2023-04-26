@@ -11,7 +11,7 @@
 ?>
 <!-- NEWS SLIDER -->
 <div class="top_theme">
-	<h5><strong><?php echo esc_attr($label);?></strong></h5>
+	<div><strong><?php echo esc_attr($label);?></strong></div>
 	<div class="scrollers"> <span class="scroller down"></span> <span class="scroller up"></span> </div>
 	<ul class="wpsm-news-ticker">
 	<?php $pq = new WP_Query($args); 

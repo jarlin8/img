@@ -13,7 +13,7 @@ $search_layout = rehub_option('search_layout');
         <!-- Main Side -->
         <div class="main-side clearfix<?php if ($search_layout == 'gridfull' || $search_layout == 'mobilegridfull' || $search_layout == 'dealgridfull' || $search_layout == 'compactgridfull' || $search_layout == 'columngridfull' || $search_layout == 'cardblogfull') : ?> full_width<?php endif ;?>">
             <?php $cursearch = get_search_query();?>
-            <div class="wpsm-title position-relative flowhidden mb25 middle-size-title wpsm-cat-title"><h5 class="font140"><span><?php esc_html_e('Search results for:', 'rehub-theme'); ?></span> <?php echo esc_html($cursearch); ?></h5></div> 
+            <div class="wpsm-title position-relative flowhidden mb25 middle-size-title wpsm-cat-title"><div class="font140"><span><?php esc_html_e('Search results for:', 'rehub-theme'); ?></span> <?php echo esc_html($cursearch); ?></div></div> 
             <?php if ($search_layout == 'blog') : ?>
                 <div class="">
 

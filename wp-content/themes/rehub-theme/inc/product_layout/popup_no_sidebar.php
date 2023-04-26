@@ -68,8 +68,7 @@
                                         <?php endif;?>
                                     </div>
                                 </div>
-                                <div class="clear"></div>
-                                <?php echo wpsm_reviewbox(array('compact'=>1, 'id'=> $post->ID, 'scrollid'=>'tab-title-description'));?>                                
+                                <div class="clear"></div>                               
                                 <?php rh_show_vendor_info_single();?>
                                 <?php rh_woo_code_zone('content');?>
                                 <?php woocommerce_template_single_excerpt();?>

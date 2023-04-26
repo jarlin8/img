@@ -97,7 +97,7 @@ else {
                     if ($offer_priceold !='0' && is_numeric($offer_priceold) && $offer_priceold > $offer_pricesale) {
                         $off_proc = 0 -(100 - ($offer_pricesale / $offer_priceold) * 100);
                         $off_proc = round($off_proc);
-                        echo '<span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><h5 class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><div class="sale_letter font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0">'.$off_proc.'%</div></span>';
+                        echo '<span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><div class="font130 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><div class="sale_letter font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0">'.$off_proc.'%</div></div></span>';
                     }
                 ?>
             <?php else :?>              
@@ -128,7 +128,7 @@ else {
                         if($verify) {echo '<span class="verifymeta mr5 greencolor"><i class="rhicon rhi-shield-check"></i> '.esc_attr($verify).'</span>';}
                     ?>                      
                 </div>                        
-                <h3 class="font110 mb10 mt0 moblineheight20 <?php echo getHotIconclass($postid, true); ?>"><a href="<?php echo ''.$link;?>" <?php echo ''.$target;?> <?php echo ''.$outsidelinkpart; ?>><?php echo rh_expired_or_not($postid, 'span');?><?php echo ''.$offer_title ;?></a></h3>
+                <h2 class="font110 mb10 mt0 moblineheight20 <?php echo getHotIconclass($postid, true); ?>"><a href="<?php echo ''.$link;?>" <?php echo ''.$target;?> <?php echo ''.$outsidelinkpart; ?>><?php echo rh_expired_or_not($postid, 'span');?><?php echo ''.$offer_title ;?></a></h2>
                 <?php rehub_generate_offerbtn('showme=price&wrapperclass=pricefont110 rehub-main-color mobpricefont90 fontbold mb5 mr10 lineheight20 floatleft');?>
                 <?php 
                     if($offer_price_old && $offer_price){
@@ -160,6 +160,7 @@ else {
         <div class="rh_gr_middle_desc font80 lineheight15">
             <?php echo (wp_kses_post($offer_desc)); ?>
         </div>  
+        <?php rh_post_code_loop();?>
         <div class="rh_gr_btn_block">
             <?php rehub_generate_offerbtn('btn_more=yes&showme=button&wrapperclass=mobile_block_btnclock mb0');?>
         </div>        

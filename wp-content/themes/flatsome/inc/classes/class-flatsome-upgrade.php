@@ -62,6 +62,9 @@ class Flatsome_Upgrade {
 		'3.16.0' => array(
 			'update_3160',
 		),
+		'3.17.0' => array(
+			'update_3170',
+		),
 	);
 
 	/**
@@ -241,6 +244,17 @@ class Flatsome_Upgrade {
 				$setting['variant'] = 'regular';
 				set_theme_mod( $font_type, $setting );
 			}
+		}
+	}
+
+	/**
+	 * Performs upgrades to Flatsome 3.17.0
+	 */
+	private function update_3170() {
+		// Iterate sticky sidebar options and set their mode to 'javascript' if enabled before the upgrade.
+		foreach ( array( 'blog_sticky_sidebar', 'category_sticky_sidebar', 'cart_sticky_sidebar', 'checkout_sticky_sidebar' ) as $name ) {
+			if ( empty( get_theme_mod( $name ) ) ) continue;
+			set_theme_mod( $name . '_mode', 'javascript' );
 		}
 	}
 

@@ -177,7 +177,7 @@ $tf_support_date = '';
 								<form action="" method="post">
 									<?php wp_nonce_field('lb_deactivate_license', 'lb_deactivate_license_sec'); ?>
 									
-									<input type="text" name="deactivate_client_name" size="50" placeholder="<?php esc_html_e( "Themeforest Username", "rehub-theme" ); ?>" required value="<?php echo esc_attr($tf_username); ?>">
+									<input type="text" name="deactivate_client_name" size="50" placeholder="<?php esc_html_e( "YOUR Themeforest Username", "rehub-theme" ); ?>" required value="<?php echo esc_attr($tf_username); ?>">
 									<input type="text" name="deactivate_license_code" size="50" placeholder="<?php esc_html_e( "Enter Themeforest Purchase Code", "rehub-theme" ); ?>" required value="<?php echo esc_attr($tf_purchase_code); ?>">
 									<input type="hidden" name="lb_deactivate" value="yes">
 									<input type="submit" value="<?php esc_html_e( "Deactivate", "rehub-theme" ); ?>" class="button button-large button-primary rehub-large-button">

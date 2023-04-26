@@ -10,7 +10,7 @@
 wp_enqueue_script('rhcuttab');
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\helpers\CurrencyHelper;
-if (ContentEgg\application\Plugin::version() <5 || !$groups = TemplateHelper::getGroupsList($data, $groups))
+if (!$groups = TemplateHelper::getGroupsList($data, $groups))
 {
     include(rh_locate_template('content-egg-templates/block_all_merchant_widget.php'));
     return;

@@ -99,7 +99,7 @@ else {
             <div class="border-grey deal_img_wrap position-relative text-center width-100">       
             <a href="<?php echo esc_url($woolink) ;?>"<?php echo ''.$wootarget ;?> <?php echo ''.$outsidelinkpart; ?>>
             <?php if ($discountpercentage) :?>
-                <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><h5 class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo ''.$discountpercentage;?></h5></span>     
+                <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><div class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo ''.$discountpercentage;?></div></span>     
             <?php elseif (!has_post_thumbnail() && $product->is_on_sale() && $product->get_regular_price() && $product->get_price() > 0 && !$product->is_type( 'variable' )) :?>
                 <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center">
                     <h5 class="font150 fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0">

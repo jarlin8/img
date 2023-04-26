@@ -25,6 +25,31 @@ function rehub_plugin_page_setup( $default_settings ) {
     $default_settings['menu_slug']   = 'import_demo';
     return $default_settings;
 }
+
+function rh_get_page_by_title($search){
+	$query = new WP_Query(
+		array(
+			'post_type'              => 'page',
+			'title'                  => $search,
+			'post_status'            => 'publish',
+			'posts_per_page'         => 1,
+			'no_found_rows'          => true,
+			'ignore_sticky_posts'    => true,
+			'update_post_term_cache' => false,
+			'update_post_meta_cache' => false,
+			'orderby'                => 'post_date ID',
+			'order'                  => 'ASC',
+		)
+	);
+	 
+	if ( ! empty( $query->post ) ) {
+		$page_got_by_title = $query->post;
+	} else {
+		$page_got_by_title = null;
+	}
+
+	return $page_got_by_title;
+}
 /* 
  * Changes intro text
  */
@@ -90,7 +115,7 @@ function rehub_before_import_setup( $current_import ){
 		exit();		
 	}	
 	$curimp = $current_import['import_file_name'];
-	if( 'RePick' === $curimp || 'ReMag' === $curimp || 'ReCash' === $curimp || 'ReDeal' === $curimp || 'ReViewit' === $curimp || 'ReCart' === $curimp || 'ReCompare' === $curimp || 'ReMart' === $curimp || 'ReWise' === $curimp || 'ReGame' === $curimp || 'ReLearn' === $curimp) {
+	if( 'RePick' === $curimp || 'ReMag' === $curimp || 'ReCash' === $curimp || 'ReDeal' === $curimp || 'ReViewit' === $curimp || 'ReCart' === $curimp || 'ReCompare' === $curimp || 'ReMart' === $curimp || 'ReWise' === $curimp || 'ReGame' === $curimp || 'ReLearn' === $curimp || 'ReMarket' === $curimp) {
 		if($registeredlicense && empty($lb_verify_res['data']['themes'])){
 			echo '<p style="color:red;font-size:180%" class="notofficialtheme">You have no access to demo import, because you are using nulled or not official theme version. Please, purchase theme on <a href="https://themeforest.net/item/rehub-directory-multi-vendor-shop-coupon-affiliate-theme/7646339">Themeforest</a>, otherwise, your site can be blocked.</p>';		
 			exit();			
@@ -173,12 +198,6 @@ function rehub_import_files() {
 		else{
 			$rhcenotice = '<li>Content Egg - <span style="color:green">active</span>. Enable Offer module</li>';
 		}
-		if (!class_exists( 'RevSlider' )){
-			$rhrslidernotice = '<li><span style="color:red">Revolution Slider - NOT active</span>. <a href="'.$rplugins.'" target="_blank">'.$installpnotice.'</a></li>';
-		}
-		else{
-			$rhrslidernotice = '<li>Revolution Slider - <span style="color:green">active</span></li>';
-		}
 
 		if (!defined('GREENSHIFT_DIR_URL')){
 			$rhgsnotice = '<li><span style="color:red">Greenshift - NOT active</span>. <a href="'.$rplugins.'" target="_blank">'.$installpnotice.'</a></li>';
@@ -235,11 +254,11 @@ function rehub_import_files() {
 			$rhvendornotice = '<li>WC Vendor - <span style="color:green">active</span></li>';
 		}
 
-		if (!class_exists('WCMp')){
-			$rhmarketnotice = '<li><span style="color:red">WC marketplace - NOT active</span>. <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a></li>';
+		if (!function_exists('get_mvx_vendor')){
+			$rhmarketnotice = '<li><span style="color:red">MultivendorX - NOT active</span>. <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a></li>';
 		}
 		else{
-			$rhmarketnotice = '<li>WC marketplace - <span style="color:green">active</span></li>';
+			$rhmarketnotice = '<li>MultivendorX - <span style="color:green">active</span></li>';
 		}			
 
 		if (rehub_option('enable_brand_taxonomy') ){
@@ -355,8 +374,7 @@ function rehub_import_files() {
 		$recomparenotice .= $rhgsanimatenotice;
 		$recomparenotice .= $rhwoonotice;
 		$recomparenotice .='</ol>';
-		$recomparenotice .= $optionalnotice.' <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a><ol>';
-		$recomparenotice .= $rhrslidernotice;	
+		$recomparenotice .= $optionalnotice.' <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a><ol>';	
 		$recomparenotice .='</ol>';
 		$recomparenotice .= 'After installation, go to settings of Content Egg and enable Amazon and other modules. <a href="http://www.keywordrush.com/en/docs/content-egg" target="_blank">Check docs of Content Egg</a>. Choose "Shortcode only" for Add Content Option. <br><br><a href="https://wpsoul.com/make-smart-profitable-deal-affiliate-comparison-site-woocommerce/" target="_blank">How to use plugin with theme for price comparison in products.</a><br><br>Revolution slider is not included in demo, but you can download plugin <a href="'.$rplugins.'" target="_blank">from bonus plugins</a> and download separate Sliders from our <a href="http://rehubdocs.wpsoul.com/docs/rehub-theme/page-builder/slider-and-top-area-ready-templates/" target="_blank">Slider import page</a>. <br><br><a href="http://rehubdocs.wpsoul.com/docs/rehub-theme/shop-options-woo-edd/better-product-filtering/" target="_blank">Better Product Filtering.</a>';
 
@@ -369,7 +387,6 @@ function rehub_import_files() {
 		$redokannotice .= $optionalnotice.' <a href="'.$wpplugins.'" target="_blank">'.$installpnotice.'</a><ol>';
 		$redokannotice .= '<li>Buddypress Follow</li>';
 		$redokannotice .= $rhgmwnotice;	
-		$redokannotice .= $rhrslidernotice;
 		$redokannotice .='</ol>';	
 		$redokannotice .= 'After installation, go to settings of vendor plugin for basic configuration. We recommend to read our guide for some additional information about <a href="https://wpsoul.com/how-to-create-multi-vendor-shop-on-wordpress/" target="_blank">Multi vendor sites</a> and also docs for Vendor plugin';
 
@@ -390,7 +407,8 @@ function rehub_import_files() {
 		$revendornotice .= $tutorialnotice;	
 
 		$remarketnotice = $requirednotice.'<ol>';
-		$remarketnotice .= $rhelnotice;
+		$remarketnotice .= $rhgsnotice;
+		$remarketnotice .= $rhgsanimatenotice;
 		$remarketnotice .= $rhwoonotice;	
 		$remarketnotice .='</ol>';		
 		$remarketnotice .= $tutorialnotice;
@@ -655,62 +673,62 @@ function rehub_after_import_setup( $current_import ) {
 	
 	switch ( $import_file_name ) {
 		case 'ReMag' :
-			$front_page = get_page_by_title( 'Homepage Remag' );
+			$front_page = rh_get_page_by_title( 'Homepage Remag' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'ReViewit' :
-			$front_page = get_page_by_title( 'Greenshift Reviewit Homepage' );
+			$front_page = rh_get_page_by_title( 'Greenshift Reviewit Homepage' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break; 	
 		case 'ReGame' :
-			$front_page = get_page_by_title( 'Regame Homepage Greenshift' );
+			$front_page = rh_get_page_by_title( 'Regame Homepage Greenshift' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break; 	
 		case 'ReFashion' :
-			$front_page = get_page_by_title( 'Homepage Refashion' );
+			$front_page = rh_get_page_by_title( 'Homepage Refashion' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'ReDigit' :
-			$front_page = get_page_by_title( 'Homepage Redigit' );
+			$front_page = rh_get_page_by_title( 'Homepage Redigit' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'RePick':
-			$front_page = get_page_by_title( 'Home page' );
+			$front_page = rh_get_page_by_title( 'Home page' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			$top_menu = get_term_by( 'slug', 'top-menu', 'nav_menu' );
 			break;
 		case 'ReThing':
-			$front_page = get_page_by_title( 'Homepage Rething' );
+			$front_page = rh_get_page_by_title( 'Homepage Rething' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break;
 		case 'ReCash':
-			$front_page = get_page_by_title( 'Greenshift Recash' );
+			$front_page = rh_get_page_by_title( 'Greenshift Recash' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break;
 		case 'ReDeal':
-			$front_page = get_page_by_title( 'Greenshift Frontpage' );
+			$front_page = rh_get_page_by_title( 'Greenshift Frontpage' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			$themeoptionmenu = get_term_by('name', 'Menu for logo section', 'nav_menu');
 			break;			
 		case 'ReDirect':
-			$front_page = get_page_by_title( 'Homepage Redirect' );
+			$front_page = rh_get_page_by_title( 'Homepage Redirect' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );		
 			break;
 		case 'ReVendor':
-			$front_page = get_page_by_title( 'Revendor Home' );
+			$front_page = rh_get_page_by_title( 'Revendor Home' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'ReLearn':
-			$front_page = get_page_by_title( 'Relearn Homepage Greenshift' );
+			$front_page = rh_get_page_by_title( 'Relearn Homepage Greenshift' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;
 		case 'ReWise':
-			$front_page = get_page_by_title( 'Homepage Rewise Greenshift' );
+			$front_page = rh_get_page_by_title( 'Homepage Rewise Greenshift' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break;		
 		case 'ReDokan':
-			$front_page = get_page_by_title( 'Home Redokan' );
-			$blog_page = get_page_by_title( 'Reviews' );
+			$front_page = rh_get_page_by_title( 'Home Redokan' );
+			$blog_page = rh_get_page_by_title( 'Reviews' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			$userarray = array(
 				array (
@@ -727,31 +745,31 @@ function rehub_after_import_setup( $current_import ) {
 			);			
 			break;
 		case 'ReDokanNew':
-			$front_page = get_page_by_title( 'Homepage Redokan' );
+			$front_page = rh_get_page_by_title( 'Homepage Redokan' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			$top_menu = get_term_by( 'slug', 'top-menu', 'nav_menu' );		
 			break;			
 		case 'ReMarket':
-			$front_page = get_page_by_title( 'Remarket Home' );
+			$front_page = rh_get_page_by_title( 'Remarket Homepage Greenshift' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );	
 			$top_menu = get_term_by( 'slug', 'top-menu', 'nav_menu' );		
 			break;
 		case 'ReCart':
-			$front_page = get_page_by_title( 'Homepage Greenshift' );
+			$front_page = rh_get_page_by_title( 'Homepage Greenshift' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;	
 		case 'ReMart':
-			$front_page = get_page_by_title( 'Homepage Greenshift' );
+			$front_page = rh_get_page_by_title( 'Homepage Greenshift' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;	
 		case 'ReTour':
-			$front_page = get_page_by_title( 'Homepage Booking' );
+			$front_page = rh_get_page_by_title( 'Homepage Booking' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );			
 			break;							
 			
 		case 'ReCompare':
-			$front_page = get_page_by_title( 'Greenshift Homepage' );
-			$blog_page = get_page_by_title( 'News and reviews' );
+			$front_page = rh_get_page_by_title( 'Greenshift Homepage' );
+			$blog_page = rh_get_page_by_title( 'News and reviews' );
 			$main_menu = get_term_by( 'slug', 'main-menu', 'nav_menu' );
 			break;
 		default:			
@@ -826,7 +844,7 @@ function rehub_after_import_setup( $current_import ) {
 	echo 'Menu was assigned-------';
 
 	if ($import_file_name == 'ReCash'){
-		$firstparent = get_page_by_title( 'Layout examples', OBJECT, 'nav_menu_item');
+		$firstparent = rh_get_page_by_title( 'Layout examples', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'273', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($firstparent)){
 			foreach ($menus as $menu) {
@@ -837,7 +855,7 @@ function rehub_after_import_setup( $current_import ) {
 	}
 
 	if ($import_file_name == 'ReDokan'){
-		$firstparent = get_page_by_title( 'Unique product types', OBJECT, 'nav_menu_item');
+		$firstparent = rh_get_page_by_title( 'Unique product types', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'531', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($firstparent)){
 			foreach ($menus as $menu) {
@@ -848,7 +866,7 @@ function rehub_after_import_setup( $current_import ) {
 	}				
 
 	if ($import_file_name == 'RePick'){
-		$firstparent = get_page_by_title( 'Post Layouts', OBJECT, 'nav_menu_item');
+		$firstparent = rh_get_page_by_title( 'Post Layouts', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'131', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($firstparent)){
 			foreach ($menus as $menu) {
@@ -856,7 +874,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsec = get_page_by_title( 'Basic', OBJECT, 'nav_menu_item');
+		$parentsec = rh_get_page_by_title( 'Basic', OBJECT, 'nav_menu_item');
 		$menussec = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'4461', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussec) && !empty($parentsec)){
 			foreach ($menussec as $menusec) {
@@ -864,7 +882,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent3 = get_page_by_title( 'Advanced', OBJECT, 'nav_menu_item');
+		$parent3 = rh_get_page_by_title( 'Advanced', OBJECT, 'nav_menu_item');
 		$menus3 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'4462', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus3) && !empty($parent3)){
 			foreach ($menus3 as $menu3) {
@@ -882,7 +900,7 @@ function rehub_after_import_setup( $current_import ) {
 	}
 
 	if ($import_file_name == 'ReCompare'){
-		$parent = get_page_by_title( 'Best conversion pages', OBJECT, 'nav_menu_item');
+		$parent = rh_get_page_by_title( 'Best conversion pages', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'566', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($parent)){
 			foreach ($menus as $menu) {
@@ -890,7 +908,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsec = get_page_by_title( '🔥 Unique Functions', OBJECT, 'nav_menu_item');
+		$parentsec = rh_get_page_by_title( '🔥 Unique Functions', OBJECT, 'nav_menu_item');
 		$menussec = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'539', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussec) && !empty($parentsec)){
 			foreach ($menussec as $menusec) {
@@ -898,7 +916,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent3 = get_page_by_title( 'Simple Product Layouts', OBJECT, 'nav_menu_item');
+		$parent3 = rh_get_page_by_title( 'Simple Product Layouts', OBJECT, 'nav_menu_item');
 		$menus3 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'541', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus3) && !empty($parent3)){
 			foreach ($menus3 as $menu3) {
@@ -906,7 +924,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent4 = get_page_by_title( 'Advanced Product Layout', OBJECT, 'nav_menu_item');
+		$parent4 = rh_get_page_by_title( 'Advanced Product Layout', OBJECT, 'nav_menu_item');
 		$menus4 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'546', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus4) && !empty($parent4)){
 			foreach ($menus4 as $menu4) {
@@ -917,7 +935,7 @@ function rehub_after_import_setup( $current_import ) {
 	}
 
 	if ($import_file_name == 'ReTour'){
-		$parent = get_page_by_title( 'Layout Variants', OBJECT, 'nav_menu_item');
+		$parent = rh_get_page_by_title( 'Layout Variants', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'201', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($parent)){
 			foreach ($menus as $menu) {
@@ -925,7 +943,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsec = get_page_by_title( 'System Pages', OBJECT, 'nav_menu_item');
+		$parentsec = rh_get_page_by_title( 'System Pages', OBJECT, 'nav_menu_item');
 		$menussec = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'366', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussec) && !empty($parentsec)){
 			foreach ($menussec as $menusec) {
@@ -933,7 +951,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent3 = get_page_by_title( 'Inner Product', OBJECT, 'nav_menu_item');
+		$parent3 = rh_get_page_by_title( 'Inner Product', OBJECT, 'nav_menu_item');
 		$menus3 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'202', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus3) && !empty($parent3)){
 			foreach ($menus3 as $menu3) {
@@ -941,7 +959,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent4 = get_page_by_title( 'Inner Blog', OBJECT, 'nav_menu_item');
+		$parent4 = rh_get_page_by_title( 'Inner Blog', OBJECT, 'nav_menu_item');
 		$menus4 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'203', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus4) && !empty($parent4)){
 			foreach ($menus4 as $menu4) {
@@ -949,7 +967,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}	
-		$parent5 = get_page_by_title( 'Archive pages', OBJECT, 'nav_menu_item');
+		$parent5 = rh_get_page_by_title( 'Archive pages', OBJECT, 'nav_menu_item');
 		$menus5 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'204', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus5) && !empty($parent5)){
 			foreach ($menus5 as $menu5) {
@@ -960,7 +978,7 @@ function rehub_after_import_setup( $current_import ) {
 	}	
 
 	if ($import_file_name == 'ReMag'){
-		$parent = get_page_by_title( 'Page layouts', OBJECT, 'nav_menu_item');
+		$parent = rh_get_page_by_title( 'Page layouts', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'4008', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($parent)){
 			foreach ($menus as $menu) {
@@ -968,7 +986,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsec = get_page_by_title( 'Basic Post layouts', OBJECT, 'nav_menu_item');
+		$parentsec = rh_get_page_by_title( 'Basic Post layouts', OBJECT, 'nav_menu_item');
 		$menussec = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'4009', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussec) && !empty($parentsec)){
 			foreach ($menussec as $menusec) {
@@ -976,7 +994,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent3 = get_page_by_title( 'Deal Post layouts', OBJECT, 'nav_menu_item');
+		$parent3 = rh_get_page_by_title( 'Deal Post layouts', OBJECT, 'nav_menu_item');
 		$menus3 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'4018', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus3) && !empty($parent3)){
 			foreach ($menus3 as $menu3) {
@@ -984,7 +1002,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent4 = get_page_by_title( 'Extended layouts', OBJECT, 'nav_menu_item');
+		$parent4 = rh_get_page_by_title( 'Extended layouts', OBJECT, 'nav_menu_item');
 		$menus4 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'4022', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus4) && !empty($parent4)){
 			foreach ($menus4 as $menu4) {
@@ -992,7 +1010,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}	
-		$parent5 = get_page_by_title( 'Unique pages', OBJECT, 'nav_menu_item');
+		$parent5 = rh_get_page_by_title( 'Unique pages', OBJECT, 'nav_menu_item');
 		$menus5 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'4027', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus5) && !empty($parent5)){
 			foreach ($menus5 as $menu5) {
@@ -1003,7 +1021,7 @@ function rehub_after_import_setup( $current_import ) {
 	}	
 
 	if ($import_file_name == 'ReFashion'){
-		$parent = get_page_by_title( 'Woocommerce Pages', OBJECT, 'nav_menu_item');
+		$parent = rh_get_page_by_title( 'Woocommerce Pages', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'2227', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($parent)){
 			foreach ($menus as $menu) {
@@ -1011,7 +1029,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsec = get_page_by_title( 'Advanced Product Layouts', OBJECT, 'nav_menu_item');
+		$parentsec = rh_get_page_by_title( 'Advanced Product Layouts', OBJECT, 'nav_menu_item');
 		$menussec = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'2235', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussec) && !empty($parentsec)){
 			foreach ($menussec as $menusec) {
@@ -1019,7 +1037,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent3 = get_page_by_title( 'Basic product Layouts', OBJECT, 'nav_menu_item');
+		$parent3 = rh_get_page_by_title( 'Basic product Layouts', OBJECT, 'nav_menu_item');
 		$menus3 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'2236', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus3) && !empty($parent3)){
 			foreach ($menus3 as $menu3) {
@@ -1027,7 +1045,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent4 = get_page_by_title( 'Shop pages', OBJECT, 'nav_menu_item');
+		$parent4 = rh_get_page_by_title( 'Shop pages', OBJECT, 'nav_menu_item');
 		$menus4 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'2237', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus4) && !empty($parent4)){
 			foreach ($menus4 as $menu4) {
@@ -1035,7 +1053,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}	
-		$parent5 = get_page_by_title( 'Post Pages', OBJECT, 'nav_menu_item');
+		$parent5 = rh_get_page_by_title( 'Post Pages', OBJECT, 'nav_menu_item');
 		$menus5 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'2239', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus5) && !empty($parent5)){
 			foreach ($menus5 as $menu5) {
@@ -1043,7 +1061,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsix = get_page_by_title( 'Deal and Coupon Layouts', OBJECT, 'nav_menu_item');
+		$parentsix = rh_get_page_by_title( 'Deal and Coupon Layouts', OBJECT, 'nav_menu_item');
 		$menussix = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'2240', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussix) && !empty($parentsix)){
 			foreach ($menussix as $menusix) {
@@ -1051,7 +1069,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}	
-		$parent7 = get_page_by_title( 'Post and Review Layouts', OBJECT, 'nav_menu_item');
+		$parent7 = rh_get_page_by_title( 'Post and Review Layouts', OBJECT, 'nav_menu_item');
 		$menus7 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'2241', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus7) && !empty($parent7)){
 			foreach ($menus7 as $menu7) {
@@ -1059,7 +1077,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}	
-		$parenteight = get_page_by_title( 'Promo pages', OBJECT, 'nav_menu_item');
+		$parenteight = rh_get_page_by_title( 'Promo pages', OBJECT, 'nav_menu_item');
 		$menuseight = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'2228', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menuseight) && !empty($parenteight)){
 			foreach ($menuseight as $menueight) {
@@ -1070,7 +1088,7 @@ function rehub_after_import_setup( $current_import ) {
 	}
 
 	if ($import_file_name == 'ReDigit'){
-		$parent = get_page_by_title( 'Product Layouts', OBJECT, 'nav_menu_item');
+		$parent = rh_get_page_by_title( 'Product Layouts', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'63', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($parent)){
 			foreach ($menus as $menu) {
@@ -1078,7 +1096,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsec = get_page_by_title( 'Basic Layouts', OBJECT, 'nav_menu_item');
+		$parentsec = rh_get_page_by_title( 'Basic Layouts', OBJECT, 'nav_menu_item');
 		$menussec = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'74', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussec) && !empty($parentsec)){
 			foreach ($menussec as $menusec) {
@@ -1086,7 +1104,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent3 = get_page_by_title( 'Advanced Layouts', OBJECT, 'nav_menu_item');
+		$parent3 = rh_get_page_by_title( 'Advanced Layouts', OBJECT, 'nav_menu_item');
 		$menus3 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'84', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus3) && !empty($parent3)){
 			foreach ($menus3 as $menu3) {
@@ -1094,7 +1112,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent4 = get_page_by_title( 'Other pages', OBJECT, 'nav_menu_item');
+		$parent4 = rh_get_page_by_title( 'Other pages', OBJECT, 'nav_menu_item');
 		$menus4 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'379', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus4) && !empty($parent4)){
 			foreach ($menus4 as $menu4) {
@@ -1105,7 +1123,7 @@ function rehub_after_import_setup( $current_import ) {
 	}
 
 	if ($import_file_name == 'ReViewit'){
-		$parent = get_page_by_title( 'Special layouts', OBJECT, 'nav_menu_item');
+		$parent = rh_get_page_by_title( 'Special layouts', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'775', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($parent)){
 			foreach ($menus as $menu) {
@@ -1113,7 +1131,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsec = get_page_by_title( 'Post Layouts', OBJECT, 'nav_menu_item');
+		$parentsec = rh_get_page_by_title( 'Post Layouts', OBJECT, 'nav_menu_item');
 		$menussec = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'1130', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussec) && !empty($parentsec)){
 			foreach ($menussec as $menusec) {
@@ -1121,7 +1139,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent3 = get_page_by_title( 'Top Listing layouts', OBJECT, 'nav_menu_item');
+		$parent3 = rh_get_page_by_title( 'Top Listing layouts', OBJECT, 'nav_menu_item');
 		$menus3 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'1131', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus3) && !empty($parent3)){
 			foreach ($menus3 as $menu3) {
@@ -1132,7 +1150,7 @@ function rehub_after_import_setup( $current_import ) {
 	}
 
 	if ($import_file_name == 'ReDirect'){
-		$parent = get_page_by_title( 'Page examples', OBJECT, 'nav_menu_item');
+		$parent = rh_get_page_by_title( 'Page examples', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'257', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($parent)){
 			foreach ($menus as $menu) {
@@ -1140,7 +1158,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentfour = get_page_by_title( 'Inner Page Layouts', OBJECT, 'nav_menu_item');
+		$parentfour = rh_get_page_by_title( 'Inner Page Layouts', OBJECT, 'nav_menu_item');
 		$menusfour = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'438', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menusfour) && !empty($parentfour)){
 			foreach ($menusfour as $menufour) {
@@ -1148,7 +1166,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentfive = get_page_by_title( 'Main Layouts', OBJECT, 'nav_menu_item');
+		$parentfive = rh_get_page_by_title( 'Main Layouts', OBJECT, 'nav_menu_item');
 		$menusfive = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'1296', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menusfive) && !empty($parentfive)){
 			foreach ($menusfive as $menufive) {
@@ -1156,7 +1174,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsix = get_page_by_title( 'With custom elements', OBJECT, 'nav_menu_item');
+		$parentsix = rh_get_page_by_title( 'With custom elements', OBJECT, 'nav_menu_item');
 		$menussix = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'1297', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussix) && !empty($parentsix)){
 			foreach ($menussix as $menusix) {
@@ -1167,7 +1185,7 @@ function rehub_after_import_setup( $current_import ) {
 	}
 
 	if ($import_file_name == 'ReThing'){
-		$parent = get_page_by_title( 'Post formats', OBJECT, 'nav_menu_item');
+		$parent = rh_get_page_by_title( 'Post formats', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'250', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($parent)){
 			foreach ($menus as $menu) {
@@ -1175,7 +1193,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsec = get_page_by_title( 'Custom pages', OBJECT, 'nav_menu_item');
+		$parentsec = rh_get_page_by_title( 'Custom pages', OBJECT, 'nav_menu_item');
 		$menussec = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'270', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussec) && !empty($parentsec)){
 			foreach ($menussec as $menusec) {
@@ -1186,7 +1204,7 @@ function rehub_after_import_setup( $current_import ) {
 	}
 
 	if ($import_file_name == 'ReCart'){
-		$parent = get_page_by_title( 'Browse Categories', OBJECT, 'nav_menu_item');
+		$parent = rh_get_page_by_title( 'Browse Categories', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'487', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($parent)){
 			foreach ($menus as $menu) {
@@ -1194,7 +1212,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsec = get_page_by_title( 'Woocommerce Layouts', OBJECT, 'nav_menu_item');
+		$parentsec = rh_get_page_by_title( 'Woocommerce Layouts', OBJECT, 'nav_menu_item');
 		$menussec = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'489', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussec) && !empty($parentsec)){
 			foreach ($menussec as $menusec) {
@@ -1202,7 +1220,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent3 = get_page_by_title( 'Post & Review Layouts', OBJECT, 'nav_menu_item');
+		$parent3 = rh_get_page_by_title( 'Post & Review Layouts', OBJECT, 'nav_menu_item');
 		$menus3 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'1019', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus3) && !empty($parent3)){
 			foreach ($menus3 as $menu3) {
@@ -1210,7 +1228,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent4 = get_page_by_title( 'Promo pages', OBJECT, 'nav_menu_item');
+		$parent4 = rh_get_page_by_title( 'Promo pages', OBJECT, 'nav_menu_item');
 		$menus4 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'490', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus4) && !empty($parent4)){
 			foreach ($menus4 as $menu4) {
@@ -1218,7 +1236,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}	
-		$parent5 = get_page_by_title( 'Audio gadgets', OBJECT, 'nav_menu_item');
+		$parent5 = rh_get_page_by_title( 'Audio gadgets', OBJECT, 'nav_menu_item');
 		$menus5 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'962', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus5) && !empty($parent5)){
 			foreach ($menus5 as $menu5) {
@@ -1226,7 +1244,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent6 = get_page_by_title( 'Television and Systems', OBJECT, 'nav_menu_item');
+		$parent6 = rh_get_page_by_title( 'Television and Systems', OBJECT, 'nav_menu_item');
 		$menus6 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'963', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus6) && !empty($parent6)){
 			foreach ($menus6 as $menu6) {
@@ -1237,7 +1255,7 @@ function rehub_after_import_setup( $current_import ) {
 	}	
 
 	if ($import_file_name == 'ReDokanNew' || $import_file_name == 'ReMarket' || $import_file_name == 'ReVendor'){
-		$parent = get_page_by_title( 'Browse Categories', OBJECT, 'nav_menu_item');
+		$parent = rh_get_page_by_title( 'Browse Categories', OBJECT, 'nav_menu_item');
 		$menus = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'487', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus) && !empty($parent)){
 			foreach ($menus as $menu) {
@@ -1245,7 +1263,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parentsec = get_page_by_title( 'Woocommerce Layouts', OBJECT, 'nav_menu_item');
+		$parentsec = rh_get_page_by_title( 'Woocommerce Layouts', OBJECT, 'nav_menu_item');
 		$menussec = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'489', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menussec) && !empty($parentsec)){
 			foreach ($menussec as $menusec) {
@@ -1253,7 +1271,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent3 = get_page_by_title( 'Post & Review Layouts', OBJECT, 'nav_menu_item');
+		$parent3 = rh_get_page_by_title( 'Post & Review Layouts', OBJECT, 'nav_menu_item');
 		$menus3 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'1019', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus3) && !empty($parent3)){
 			foreach ($menus3 as $menu3) {
@@ -1261,7 +1279,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent4 = get_page_by_title( 'Promo pages', OBJECT, 'nav_menu_item');
+		$parent4 = rh_get_page_by_title( 'Promo pages', OBJECT, 'nav_menu_item');
 		$menus4 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'490', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus4) && !empty($parent4)){
 			foreach ($menus4 as $menu4) {
@@ -1269,7 +1287,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}	
-		$parent5 = get_page_by_title( 'Audio gadgets', OBJECT, 'nav_menu_item');
+		$parent5 = rh_get_page_by_title( 'Audio gadgets', OBJECT, 'nav_menu_item');
 		$menus5 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'962', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus5) && !empty($parent5)){
 			foreach ($menus5 as $menu5) {
@@ -1277,7 +1295,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent6 = get_page_by_title( 'Television and Systems', OBJECT, 'nav_menu_item');
+		$parent6 = rh_get_page_by_title( 'Television and Systems', OBJECT, 'nav_menu_item');
 		$menus6 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'963', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus6) && !empty($parent6)){
 			foreach ($menus6 as $menu6) {
@@ -1285,7 +1303,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}	
-		$parent8 = get_page_by_title( 'Currency', OBJECT, 'nav_menu_item');
+		$parent8 = rh_get_page_by_title( 'Currency', OBJECT, 'nav_menu_item');
 		$menus8 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'495', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus8) && !empty($parent8)){
 			foreach ($menus8 as $menu8) {
@@ -1293,7 +1311,7 @@ function rehub_after_import_setup( $current_import ) {
 			}
 			echo 'Menu hierarchy was fixed-------';
 		}
-		$parent9 = get_page_by_title( 'Language', OBJECT, 'nav_menu_item');
+		$parent9 = rh_get_page_by_title( 'Language', OBJECT, 'nav_menu_item');
 		$menus9 = get_posts(array('meta_key'=>'_menu_item_menu_item_parent', 'meta_value'=>'498', 'post_type'=> 'nav_menu_item'));
 		if(!empty($menus9) && !empty($parent9)){
 			foreach ($menus9 as $menu9) {

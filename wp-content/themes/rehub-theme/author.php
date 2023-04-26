@@ -144,7 +144,7 @@ if(function_exists('mycred_display_users_total_balance') && function_exists('myc
           <?php if( in_array('post', $user_post_types) ) : ?>
             <div role="tabpanel" class="tab-pane active" id="user-posts">
                 <div class="wpsm-title position-relative flowhidden mb25 middle-size-title wpsm-cat-title">
-                    <h5 class="font140"><span><?php esc_html_e( 'User Posts', 'rehub-theme' ); ?>:</span> <?php echo esc_html($author_name); ?></h5>
+                    <div class="font140"><span><?php esc_html_e( 'User Posts', 'rehub-theme' ); ?>:</span> <?php echo esc_html($author_name); ?></div>
                 </div>          
                 <?php if ( have_posts() ) : ?>
                     <?php while ( have_posts() ) : the_post(); ?>
@@ -160,7 +160,7 @@ if(function_exists('mycred_display_users_total_balance') && function_exists('myc
         <?php if( rehub_option('enable_blog_posttype') == '1' && in_array('blog', $user_post_types) ) : ?>
             <div role="tabpanel" class="tab-pane" id="user-articles">
                 <div class="wpsm-title position-relative flowhidden mb25 middle-size-title wpsm-cat-title">
-                    <h5 class="font140"><span><?php esc_html_e( 'User Articles', 'rehub-theme' ); ?>:</span> <?php echo esc_html($author_name); ?></h5>
+                    <div class="font140"><span><?php esc_html_e( 'User Articles', 'rehub-theme' ); ?>:</span> <?php echo esc_html($author_name); ?></div>
                 </div> 
                 <?php echo wpsm_small_thumb_loop_shortcode(array('data_source' => 'cpt','post_type'=>'blog', 'user_id'=>$author_ID, 'enable_pagination'=>'3'));?>
 
@@ -194,7 +194,7 @@ if(function_exists('mycred_display_users_total_balance') && function_exists('myc
         <?php if( in_array('comments', $user_post_types) ) : ?>
             <div role="tabpanel" class="tab-pane" id="user-comments">
                 <div class="wpsm-title position-relative flowhidden mb25 middle-size-title wpsm-cat-title">
-                    <h5 class="font140"><span><?php esc_html_e('Browsing All Comments By', 'rehub-theme'); ?>:</span> <?php echo esc_html($author_name); ?></h5>
+                    <div class="font140"><span><?php esc_html_e('Browsing All Comments By', 'rehub-theme'); ?>:</span> <?php echo esc_html($author_name); ?></div>
                 </div>
                 <ol class="commentlist">
                     <?php

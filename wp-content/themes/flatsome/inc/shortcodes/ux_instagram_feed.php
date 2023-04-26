@@ -2,12 +2,15 @@
 
 // Instagram Feed
 function ux_instagram_feed( $atts, $content = null ) {
+	static $count = 1;
+
 	extract( shortcode_atts( array(
-		'_id'                 => 'instagram-' . rand(),
+		'_id'                 => 'instagram-' . ( $count++ ),
+		'loading'             =>  get_theme_mod( 'instagram_lazy_load', 0 ) ? 'lazy' : '',
 		'photos'              => '10',
 		'class'               => '',
 		'visibility'          => '',
-		'username'            => 'wonderful_places',
+		'username'            => '',
 		'hashtag'             => '',
 		'hashtag_media'       => 'top', // or recent
 		'target'              => '_self',
@@ -37,16 +40,27 @@ function ux_instagram_feed( $atts, $content = null ) {
 		'size'                => 'small', // small - thumbnail - original.
 	), $atts ) );
 
+	if ( defined( 'UX_BUILDER_AJAX_REQUEST' ) ) {
+		$loading = 'eager';
+	}
+
 	ob_start();
 
 	$limit = $photos;
+
+	if ( empty( $username ) && defined( 'UX_BUILDER_DOING_AJAX' ) ) {
+		echo esc_html__( 'Please select an Instagram account', 'flatsome' );
+		return;
+	}
 
 	if ( $username != '' ) {
 		if ( substr( $username, 0, 1 ) === '#' ) {
 			$hashtag = substr( $username, 1 );
 		}
 
-		$media_array = flatsome_instagram_get_feed( $username, $hashtag, $hashtag_media );
+		$media_array = $loading === 'lazy'
+			? flatsome_instagram_get_placeholder_feed( $limit )
+			: flatsome_instagram_get_feed( $username, $hashtag, $hashtag_media );
 
 		if ( empty( $media_array ) ) {
 			echo esc_html__( 'No images found.', 'flatsome-admin' );
@@ -75,6 +89,16 @@ function ux_instagram_feed( $atts, $content = null ) {
 			$repeater['columns__md']         = $columns__md;
 			$repeater['depth']               = $depth;
 			$repeater['depth_hover']         = $depth_hover;
+
+			if ( $loading === 'lazy' ) {
+				unset( $atts['loading'] );
+
+				$value             = array_merge( $atts, array( '_id' => $_id ) );
+				$encoded_value     = base64_encode( serialize( $value ) );
+				$tick              = ceil( time() / MONTH_IN_SECONDS );
+				$hash              = substr( wp_hash( $tick . $encoded_value ), -12, 10 );
+				$repeater['attrs'] = 'data-flatsome-instagram="' . esc_attr( "$hash:$encoded_value" ) . '"';
+			}
 
 			// Filters for custom classes.
 			get_flatsome_repeater_start( $repeater );
@@ -126,6 +150,18 @@ function ux_instagram_feed( $atts, $content = null ) {
 
 add_shortcode( 'ux_instagram_feed', 'ux_instagram_feed' );
 
+function flatsome_instagram_get_placeholder_feed( $limit ) {
+	$media_svg = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"></svg>';
+    $media_url = 'data:image/svg+xml,' . rawurlencode( $media_svg );
+
+	return array_fill( 0, $limit, array(
+		'media_url'   => $media_url,
+		'link'        => '#',
+		'type'        => 'placeholder',
+		'description' => '',
+	) );
+}
+
 function flatsome_instagram_get_feed( $username, $hashtag, $hashtag_media ) {
 	$theme             = wp_get_theme( get_template() );
 	$accounts          = flatsome_facebook_accounts();
@@ -149,9 +185,11 @@ function flatsome_instagram_get_feed( $username, $hashtag, $hashtag_media ) {
 	}
 
 	if ( $account ) {
-		$instagram = flatsome_instagram_account_feed( $username, $account, $hashtag, $hashtag_media );
+		$instagram = isset( $account['type'] ) && $account['type'] === 'instagram'
+			? flatsome_instagram_request_media( $account['access_token'] )
+			: flatsome_instagram_account_feed( $username, $account, $hashtag, $hashtag_media );
 	} else {
-		$instagram = flatsome_instagram_scrape_html( $username, $hashtag );
+		$instagram = array();
 	}
 
 	if ( is_wp_error( $instagram ) ) {
@@ -162,6 +200,55 @@ function flatsome_instagram_get_feed( $username, $hashtag, $hashtag_media ) {
 	set_transient( $transient_name, $instagram_cache, apply_filters( 'null_instagram_cache_time', HOUR_IN_SECONDS * 2 ) );
 
 	return $instagram;
+}
+
+/**
+ * Get Instagram feed from access token.
+ *
+ * @param string $access_token Instagram access token.
+ */
+function flatsome_instagram_request_media( $access_token ) {
+	$response = wp_remote_get(
+		add_query_arg(
+			array(
+				'fields'       => 'media_type,media_url,thumbnail_url,caption,permalink',
+				'access_token' => $access_token,
+			),
+			'https://graph.instagram.com/me/media'
+		)
+	);
+
+	if ( is_wp_error( $response ) ) {
+		return new WP_Error( 'site_down', __( 'Unable to communicate with Instagram.', 'flatsome' ) );
+	} elseif ( wp_remote_retrieve_response_code( $response ) !== 200 ) {
+		return new WP_Error( 'invalid_response', __( 'An error occurred while retrieving media', 'flatsome' ) );
+	}
+
+	$body = json_decode( $response['body'], true );
+
+	if ( array_key_exists( 'error', $body ) && isset( $body['error']['message'] ) ) {
+		return new WP_Error( 'site_down', $body['error']['message'] );
+	}
+
+	return array_map(
+		function ( $entry ) {
+			$media_url = isset( $entry['media_url'] ) ? $entry['media_url'] : '';
+			$caption   = isset( $entry['caption'] ) ? wp_kses( $entry['caption'], array() ) : '';
+			$permalink = isset( $entry['permalink'] ) ? $entry['permalink'] : '';
+
+			if ( isset( $entry['thumbnail_url'] ) ) {
+				$media_url = $entry['thumbnail_url'];
+			}
+
+			return array(
+				'type'        => strtolower( $entry['media_type'] ),
+				'description' => $caption,
+				'media_url'   => $media_url,
+				'link'        => $permalink,
+			);
+		},
+		$body['data']
+	);
 }
 
 function flatsome_instagram_account_feed( $username, $account, $hashtag = '', $hashtag_media = 'top' ) {
@@ -367,78 +454,33 @@ function flatsome_instagram_get_hashtag_media( $name, $type, $user_id, $access_t
 	}
 }
 
+function flatsome_ajax_load_instagram () {
+	$data = isset( $_GET['data'] ) ? (string) $_GET['data'] : '';
+
+	list( $hash, $value ) = explode( ':', $data, 2 );
+
+	if ( empty( $value ) || empty( $hash ) ) {
+		wp_send_json_error( 'Invalid data' );
+	}
+
+	$atts     = maybe_unserialize( base64_decode( $value ) );
+	$tick     = ceil( time() / MONTH_IN_SECONDS );
+	$expected = substr( wp_hash( $tick . $value ), -12, 10 );
+
+	if ( ! hash_equals( $expected, $hash ) ) {
+		wp_send_json_error( 'Invalid hash' );
+	}
+
+	$atts['loading'] = 'eager';
+
+	$markup = ux_instagram_feed( $atts );
+
+	wp_send_json_success( trim( $markup ) );
+}
+add_action( 'wp_ajax_flatsome_load_instagram', 'flatsome_ajax_load_instagram' );
+add_action( 'wp_ajax_nopriv_flatsome_load_instagram', 'flatsome_ajax_load_instagram' );
+
 function flatsome_instagram_scrape_html( $username, $hashtag ) {
-	$req_param = ( $hashtag ) ? 'explore/tags/' . $hashtag : trim( $username );
-	$remote    = wp_remote_get( 'https://instagram.com/' . $req_param );
-	$instagram = array();
-
-	if ( is_wp_error( $remote ) ) {
-		return new WP_Error( 'site_down', esc_html__( 'Unable to communicate with Instagram.', 'flatsome-admin' ) );
-	}
-
-	if ( 200 != wp_remote_retrieve_response_code( $remote ) ) {
-		return new WP_Error( 'invalid_response', esc_html__( 'Instagram did not return a 200.', 'flatsome-admin' ) );
-	}
-
-	$shards      = explode( 'window._sharedData = ', $remote['body'] );
-
-	if ( ! isset( $shards[1] ) ) {
-		return new WP_Error( 'invalid_response', esc_html__( 'Could not scrape from Instagram (scraping is a deprecated method to retrieve images).', 'flatsome-admin' ) );
-	}
-
-	$insta_json  = explode( ';</script>', $shards[1] );
-	$insta_array = json_decode( $insta_json[0], true );
-
-	if ( ! $insta_array ) {
-		return new WP_Error( 'bad_json', esc_html__( 'Instagram has returned invalid data.', 'flatsome-admin' ) );
-	}
-
-	if ( isset( $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges'] ) ) {
-		$edges = $insta_array['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']['edges'];
-	} elseif ( $hashtag && isset( $insta_array['entry_data']['TagPage'][0]['graphql']['hashtag']['edge_hashtag_to_media']['edges'] ) ) {
-		$edges = $insta_array['entry_data']['TagPage'][0]['graphql']['hashtag']['edge_hashtag_to_media']['edges'];
-	} else {
-		return new WP_Error( 'bad_json_2', esc_html__( 'Instagram has returned invalid data.', 'flatsome-admin' ) );
-	}
-
-	if ( ! is_array( $edges ) ) {
-		return new WP_Error( 'bad_array', esc_html__( 'Instagram has returned invalid data.', 'flatsome-admin' ) );
-	}
-
-	foreach ( $edges as $edge ) {
-		$edge['node']['thumbnail_src'] = preg_replace( '/^https?\:/i', '', $edge['node']['thumbnail_src'] );
-		$edge['node']['display_url']   = preg_replace( '/^https?\:/i', '', $edge['node']['display_url'] );
-
-		if ( isset( $edge['node']['thumbnail_resources'] ) && is_array( $edge['node']['thumbnail_resources'] ) ) {
-			$edge['node']['thumbnail'] = $edge['node']['thumbnail_resources'][0]['src']; // 150x150
-			$edge['node']['small']     = $edge['node']['thumbnail_resources'][2]['src']; // 320x320
-		} else {
-			$edge['node']['thumbnail'] = $edge['node']['small'] = $edge['node']['thumbnail_src'];
-		}
-
-		$edge['node']['large'] = $edge['node']['thumbnail_src'];
-
-		if ( $edge['node']['is_video'] == true ) {
-			$type = 'video';
-		} else {
-			$type = 'image';
-		}
-
-		$caption = __( 'Instagram Image', 'flatsome-admin' );
-		if ( ! empty( $edge['node']['edge_media_to_caption']['edges'][0]['node']['text'] ) ) {
-			$caption = wp_kses( $edge['node']['edge_media_to_caption']['edges'][0]['node']['text'], array() );
-		}
-
-		$instagram[] = array(
-			'type'        => $type,
-			'description' => $caption,
-			'link'        => trailingslashit( '//instagram.com/p/' . $edge['node']['shortcode'] ),
-			'time'        => $edge['node']['taken_at_timestamp'],
-			'comments'    => $edge['node']['edge_media_to_comment']['count'],
-			'likes'       => $edge['node']['edge_liked_by']['count'],
-			'media_url'   => $edge['node']['display_url'],
-		);
-	}
-
-	return $instagram;
+	_deprecated_function( __METHOD__, '3.17', null );
+	return array();
 }

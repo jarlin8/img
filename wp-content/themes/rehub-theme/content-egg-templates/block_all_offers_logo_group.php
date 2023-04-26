@@ -10,7 +10,7 @@
 <?php 
 wp_enqueue_script('rhcuttab');
 use ContentEgg\application\helpers\TemplateHelper;
-if (ContentEgg\application\Plugin::version() <5 || !$groups = TemplateHelper::getGroupsList($data, $groups))
+if (!$groups = TemplateHelper::getGroupsList($data, $groups))
 {
     include(rh_locate_template('content-egg-templates/block_all_offers_logo.php'));
     return;

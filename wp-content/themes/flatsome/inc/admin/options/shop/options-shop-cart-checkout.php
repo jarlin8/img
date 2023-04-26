@@ -32,6 +32,25 @@ Flatsome_Option::add_field( 'option',  array(
 ));
 
 Flatsome_Option::add_field( 'option', array(
+	'type'            => 'select',
+	'settings'        => 'cart_sticky_sidebar_mode',
+	'label'           => __( 'Sticky mode', 'flatsome-admin' ),
+	'section'         => 'cart-checkout',
+	'default'         => '',
+	'choices'         => array(
+		''           => __( 'CSS (native)', 'flatsome-admin' ),
+		'javascript' => __( 'JavaScript (enhanced)', 'flatsome-admin' ),
+	),
+	'active_callback' => array(
+		array(
+			'setting'  => 'cart_sticky_sidebar',
+			'operator' => '==',
+			'value'    => true,
+		),
+	),
+) );
+
+Flatsome_Option::add_field( 'option', array(
 	'type'     => 'checkbox',
 	'settings' => 'cart_auto_refresh',
 	'label'    => __( 'Auto update on quantity change', 'flatsome-admin' ),
@@ -206,6 +225,25 @@ Flatsome_Option::add_field( 'option',  array(
   'section'     => 'woocommerce_checkout',
   'default' => 0
 ));
+
+Flatsome_Option::add_field( 'option', array(
+	'type'            => 'select',
+	'settings'        => 'checkout_sticky_sidebar_mode',
+	'label'           => __( 'Sticky mode', 'flatsome-admin' ),
+	'section'         => 'woocommerce_checkout',
+	'default'         => '',
+	'choices'         => array(
+		''           => __( 'CSS (native)', 'flatsome-admin' ),
+		'javascript' => __( 'JavaScript (enhanced)', 'flatsome-admin' ),
+	),
+	'active_callback' => array(
+		array(
+			'setting'  => 'checkout_sticky_sidebar',
+			'operator' => '==',
+			'value'    => true,
+		),
+	),
+) );
 
 Flatsome_Option::add_field( 'option',  array(
 	'type'        => 'textarea',

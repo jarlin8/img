@@ -28,11 +28,11 @@
             <div class="rh-deal-details width-80-calc pl15 rtlpr15 floatright">
                 <div class="rh-deal-text">
                     <div class="rh-deal-name mb10">
-                        <h5 class="mt0 mb10 fontnormal">
+                        <div class="mt0 mb10 fontnormal">
                         <a rel="nofollow sponsored" class="re_track_btn" target="_blank" href="<?php echo esc_url($afflink) ?>"<?php echo ''.$item['ga_event'] ?>>
                             <?php echo esc_attr($offer_title); ?>
                         </a>
-                        </h5>
+                        </div>
                     </div>
                 </div>
                 <div class="rh-flex-columns">

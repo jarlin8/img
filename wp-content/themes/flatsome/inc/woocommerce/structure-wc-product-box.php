@@ -99,7 +99,7 @@ if ( ! function_exists( 'flatsome_woocommerce_shop_loop_category' ) ) {
 		<p class="category uppercase is-smaller no-text-overflow product-cat op-7">
 			<?php
 			global $product;
-			$product_cats = function_exists( 'wc_get_product_category_list' ) ? wc_get_product_category_list( get_the_ID(), '\n', '', '' ) : $product->get_categories( '\n', '', '' );
+			$product_cats = wc_get_product_category_list( get_the_ID(), '\n', '', '' );
 			$product_cats = strip_tags( $product_cats );
 
 			if ( $product_cats ) {

@@ -99,6 +99,7 @@ if(!function_exists('rh_author_detail_box')){
                         <?php if(get_the_author_meta('user_url')) : ?><a href="<?php the_author_meta('user_url'); ?>" class="author-social hm" rel="nofollow"><i class="rhicon rhi-home"></i></a><?php endif; ?>
                         <?php if(get_the_author_meta('facebook')) : ?><a href="<?php the_author_meta('facebook'); ?>" class="author-social fb" rel="nofollow"><i class="rhicon rhi-facebook"></i></a><?php endif; ?>
                         <?php if(get_the_author_meta('twitter')) : ?><a href="<?php the_author_meta('twitter'); ?>" class="author-social tw" rel="nofollow"><i class="rhicon rhi-twitter"></i></a><?php endif; ?>
+                        <?php if(get_the_author_meta('linkedin')) : ?><a href="<?php the_author_meta('linkedin'); ?>" class="author-social in" rel="nofollow"><i class="rhicon rhi-linkedin"></i></a><?php endif; ?>
                         <?php if(get_the_author_meta('google')) : ?><a href="<?php the_author_meta('google'); ?>?rel=author" class="author-social gp" rel="nofollow"><i class="rhicon rhi-google-plus"></i></a><?php endif; ?>
                         <?php if(get_the_author_meta('tumblr')) : ?><a href="<?php the_author_meta('tumblr'); ?>" class="author-social tm" rel="nofollow"><i class="rhicon rhi-tumblr"></i></a><?php endif; ?>
                         <?php if(get_the_author_meta('instagram')) : ?><a href="<?php the_author_meta('instagram'); ?>" class="author-social ins" rel="nofollow"><i class="rhicon rhi-instagram"></i></a><?php endif; ?>
@@ -548,19 +549,6 @@ if (!function_exists('rh_gmw_vendor_in_popup')){
             $link = wcfm_is_vendor($userid) ? wcfmmp_get_store_url($userid) : bp_core_get_user_domain($userid);
             $name = wcfm_is_vendor($userid) ? get_user_meta($userid, 'store_name', true) : $location->display_name;
         }        
-        elseif (class_exists('WCMp')){
-            $is_vendor = is_user_wcmp_vendor( $userid );
-            $avatar = $is_vendor ? '<img src='.rh_show_vendor_avatar($userid, 120, 120).' />' : bp_core_fetch_avatar ( array( 'item_id' => $userid, 'type' => 'full' ) );
-            if($is_vendor){
-                $vendorobj = get_wcmp_vendor($userid);
-                $link = $vendorobj->permalink;
-                $name = get_user_meta($userid, '_vendor_page_title', true);                 
-            } 
-            else{
-                $link = bp_core_get_user_domain($userid);
-                $name = $location->display_name;                
-            }           
-        }
         else {
             $avatar = bp_core_fetch_avatar(array('item_id' => $userid, 'type' => 'full'));
             $link = bp_core_get_user_domain($userid);
@@ -602,8 +590,6 @@ if (!function_exists('rh_gmw_vendor_mapin')){
             $is_vendor = wcfm_is_vendor($user_id);            
         }elseif(class_exists('WeDevs_Dokan')){
             $is_vendor = dokan_is_user_seller($user_id);
-        }elseif(class_exists('WCMp')){
-            $is_vendor = is_user_wcmp_vendor($user_id);
         }
         if($is_vendor)
             return $map_vendor_icon;
@@ -654,9 +640,6 @@ if( !function_exists( 'bd_gmw_before_members_query' ) ){
         $include_vendor = array();
         if( class_exists( 'WeDevs_Dokan' ) ) {
             $user_role = 'seller';
-        }
-        elseif (class_exists('WCMp')){
-            $user_role = 'dc_vendor';
         }
         elseif(defined( 'wcv_plugin_dir' )) {
             $user_role = 'vendor';
@@ -796,18 +779,7 @@ if (!function_exists('rh_bp_show_vendor_in_loop')){
                 $out .='<a href="'.dokan_get_store_url( $vendor_id ).'" class="store_member_in_m_loop_a">'.esc_html( $store_info['store_name'] ).'</a>';
                 $out .='</div>';                
             }
-        }
-        elseif (class_exists('WCMp')){
-            $is_vendor = is_user_wcmp_vendor( $vendor_id );
-            if($is_vendor){
-                $vendorobj = get_wcmp_vendor($vendor_id);
-                $store_url = $vendorobj->permalink;
-                $store_name = get_user_meta($vendor_id, '_vendor_page_title', true); 
-                $out .='<div class="store_member_in_m_loop"><span class="store_member_in_m_loop_l">'.__('Owner of shop:', 'rehub-theme').'</span> ';
-                $out .='<a href="'.$store_url.'" class="store_member_in_m_loop_a">'.esc_html($store_name ).'</a>';
-                $out .='</div>'; 
-            }
-        }        
+        }       
         return $out;
     }
 }

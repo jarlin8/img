@@ -82,58 +82,6 @@
                                 <div class="woo-ce-list-area">
                                     <div class="border-lightgrey clearbox flowhidden mb25 rh-shadow1 rh-tabletext-block whitebg width-100p">
                                     <div class="rh-tabletext-block-heading fontbold"><span class="cursorpointer floatright lineheight15 ml10 toggle-this-table rtlmr10"></span><h4><?php esc_html_e('Price list', 'rehub-theme');?></h4></div>
-                                    <?php if( class_exists('WCMp')):?>
-                                            <div class="vendor-list-container rh_listoffers rh_listoffers_price_col">
-                                                               
-                                            <?php
-                                                global $WCMp;
-                                                $multivendor_product = $WCMp->product->get_multiple_vendors_array_for_single_product($post->ID);
-                                                $more_product_array = $multivendor_product['more_product_array'];
-
-                                                //We add also details of current product and attach to list of all prices (function is from classes/ class-wpsm-product.php)
-                                                $current_vendor_array = array();
-                                                $vendor_data = get_wcmp_product_vendors($post->ID);
-                                                if ($vendor_data) {
-                                                    if (isset($vendor_data->page_title)) {
-                                                        $current_vendor_array['seller_name'] = $vendor_data->page_title;
-                                                        $current_vendor_array['is_vendor'] = 1;
-
-                                                        $current_vendor_array['shop_link'] = $vendor_data->permalink;
-                                                        $current_vendor_array['rating_data'] = wcmp_get_vendor_review_info($vendor_data->term_id);
-                                                    }
-                                                } else {
-                                                    $current_vendor_array['seller_name'] = isset($other_user->data->display_name) ? $other_user->data->display_name : '';
-                                                    $current_vendor_array['is_vendor'] = 0;
-                                                    $current_vendor_array['shop_link'] = get_permalink(wc_get_page_id('shop'));
-                                                    $current_vendor_array['rating_data'] = 'admin';
-                                                }
-                                                $currency_symbol = get_woocommerce_currency_symbol();
-                                                $regular_price_val = $product->get_regular_price();
-                                                $sale_price_val = $product->get_sale_price();
-                                                $price_val = $product->get_price();
-                                                $current_vendor_array['product_name'] = $product->get_title();
-                                                $current_vendor_array['regular_price_val'] = $regular_price_val;
-                                                $current_vendor_array['sale_price_val'] = $sale_price_val;
-                                                $current_vendor_array['price_val'] = $price_val;
-                                                $current_vendor_array['product_id'] = $post->ID;
-                                                $current_vendor_array['product_type'] = $product->get_type();
-                                                if ($product->get_type() == 'variable') {
-                                                    $current_vendor_array['_min_variation_price'] = get_post_meta($post->ID, '_min_variation_price', true);
-                                                    $current_vendor_array['_max_variation_price'] = get_post_meta($post->ID, '_max_variation_price', true);
-                                                    $variable_min_sale_price = get_post_meta($post->ID, '_min_variation_sale_price', true);
-                                                    $variable_max_sale_price = get_post_meta($post->ID, '_max_variation_sale_price', true);
-                                                    $current_vendor_array['_min_variation_sale_price'] = $variable_min_sale_price ? $variable_min_sale_price : $current_vendor_array['_min_variation_price'];
-                                                    $current_vendor_array['_max_variation_sale_price'] = $variable_max_sale_price ? $variable_max_sale_price : $current_vendor_array['_max_variation_price'];
-                                                    $current_vendor_array['_min_variation_regular_price'] = get_post_meta($post->ID, '_min_variation_regular_price', true);
-                                                    $current_vendor_array['_max_variation_regular_price'] = get_post_meta($post->ID, '_max_variation_regular_price', true);
-                                                }
-
-                                                $more_product_array[] = $current_vendor_array;                                                    
-                                                $WCMp->template->get_template('single-product/multiple_vendors_products_body.php', array('more_product_array' => $more_product_array, 'sorting' => 'price'));
-                                            ?>      
-                                              
-                                        </div>                                             
-                                    <?php endif; ?>
                                     <?php
                                         /**
                                          * woocommerce_after_single_product_summary hook.

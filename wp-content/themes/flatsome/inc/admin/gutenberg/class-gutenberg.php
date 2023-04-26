@@ -99,7 +99,7 @@ class Gutenberg {
 		if ( ! $this->is_post_type_gutenberg( $typenow ) ) {
 			return;
 		}
-		wp_enqueue_script( 'flatsome-gutenberg-edit-button', $this->assets . '/js/edit-button.js', array( 'wp-edit-post' ), $this->version, true );
+		wp_enqueue_script( 'flatsome-gutenberg-edit-button', $this->assets . '/js/edit-button.js', array( 'wp-edit-post', 'wp-dom-ready' ), $this->version, true );
 
 		$page_id = get_the_ID();
 

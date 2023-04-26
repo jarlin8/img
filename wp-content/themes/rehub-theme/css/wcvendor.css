@@ -143,10 +143,10 @@ body.rtl .vendor_store_in_bp_last_products{text-align: left;}
 #wcv_mini_header h5{font-size: 18px; line-height: 30px; margin: 0 8px}
 #wcv_mini_header h5 a{color: #fff}
 .wcv_mini_header_content{z-index: 2; position: relative;}
-.category-vendormenu a, .wcmp_widget_vendor_product_categories ul li a{color: #111; text-decoration: none}
+.category-vendormenu a{color: #111; text-decoration: none}
 .category-vendormenu{margin: 0}
 .category-vendormenu li{margin: 0 0 14px 0}
-.category-vendormenu span, .wcmp_widget_vendor_product_categories .count{float: right;}
+.category-vendormenu span{float: right;}
 .vendor_storelist_name{padding: 0 10px;}
 .vendor_storelist_name span{font-size: 10px; line-height: 10px}
 .vendor_storelist_name a{display: block; font-size: 15px; text-decoration: none; font-weight: bold; line-height: 18px; }
@@ -205,7 +205,6 @@ table.wcv-table tr td, table.wcv-table tr th{border-bottom: 1px solid #E1E1E1;}
     box-shadow: none !important;
     border: 1px solid #e0e0e0 !important;
     width: 100% !important;}
-#wcmp-store-conatiner .wcmp-store-detail-list li{list-style: none;}
 .dokan-store-products-filter-area .product-name-search, input[type="submit"].dokan-btn-theme{border-radius: 0 !important;}
 .store-coupon-wrap{grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));display: grid;column-gap: 20px;}
 .store-coupon-wrap .code{color: #de5959;background: #ffe9e9;border: 2px dashed #fbc4c4;padding: 20px 30px;margin-bottom: 25px; position: relative;}
@@ -348,9 +347,6 @@ table.wcv-table tr td, table.wcv-table tr th{border-bottom: 1px solid #E1E1E1;}
 #dokan_tabs_container .table-striped th{background-color: rgba(119, 119, 119, 0.28); padding: 10px; text-align:inherit}
 #dokan_tabs_container .table-striped td{padding: 8px;}
 #dokan_tabs_container .table-striped tbody tr:nth-of-type(odd) {background-color: rgba(0,0,0,.05);}
-.dokan-store-open-close{font-size: 95%}
-.dokan-store-open-close span{float: right; font-size: 90%}
-.rtl .dokan-store-open-close span{float: left;}
 .dokan-review-author-img{float: left;}
 li.parent-cat-wrap{margin-bottom: 6px}
 .parent-cat-wrap a{color: #111}
@@ -373,50 +369,5 @@ table.product-listing-table td:not([colspan]){position: relative;padding: 10px; 
 table.product-listing-table td:not([colspan]):before{position: absolute;top: 50%;left: 9px;width: 45%;padding-right: 10px;text-align: left;content: attr(data-title);-webkit-transform: translateY(-50%) translateZ(0);transform: translateY(-50%);}
 table.product-listing-table td:not([colspan]):after{position: absolute;left: 47%;top: 0;display: block;height: 100%;border-left: 1px solid #eaeaea;content: "";}	
 }
-/* WCMp Dashboard Style */
-.wcmp_regi_main input.woocommerce-Button.button{padding: 0 12px}
-.simplePopupBackground{z-index: 9999999 !important;}
-.simplePopup{z-index: 99999999 !important;}
-#report_abuse_form input {margin-bottom:10px}
-#report-abuse table{width:100%}
-.goto_more_offer_tab.button {margin: 15px 0 20px !important;display: inline-block}
-.woo_full_width_extended .goto_more_offer_tab.button{display: block;}
-.wcmvendor-cover-mask{opacity: 1}
-#wcmvendor_profile_logo{width: 140px}
-#wcmvendor_profile_logo img{height: 140px;line-height: 140px;border: 3px solid #fff;background-color: rgba(255, 255, 255, 0.35);width: 140px;vertical-align: middle;}
-.blocked_desc{font-style: oblique;font-size: 14px;color: red}
-.by-vendor-name-link{display: none!important}
-#report_abuse{font-size: 14px; font-weight: bold; display: inline-block; margin: 0 0 8px 0}
-.vendor_woo_list .singleproductmultivendor_tab, .vendor_woo_list #tab-singleproductmultivendor{display: none !important;}
-span.wcmp_norating{white-space: nowrap; font-size: 12px}
-.wcmp_sale_price, .woocommerce-Tabs-panel ins .woocommerce-Price-amount{color: inherit !important;}
-.wcmp_regular_price, .woocommerce-Tabs-panel del .woocommerce-Price-amount{color: #999 !important}
-.vendor-list-container.re_sort_list.simple_sort_list .offer_thumb{width: 120px; padding: 18px}
-.wcmp-quick-info-wrapper form#respond input, .wcmp-quick-info-wrapper form#respond textarea{font-size: 90%; width: 100%; margin-bottom: 10px}
-.wcmp-quick-info-wrapper p{text-align: center;font-size: 90%}
-
-.user-profile-div .wcmp-profile-contacts ul{font-style: oblique;font-size: small}
-.wcmp-profile-contacts ul li {padding: 2px 0;}
-.wcmp_total_rating_number {display: none;}
-.wcmvendor_store_ratings{line-height: 21px}
-.wcmp_fpm_buttons .wcmp_fpm_button_separator, .owl-item .wcmp_fpm_buttons{display:none}
-.tax-dc_vendor_shop .wcvendor_store_desc {clear: both;}
-.tax-dc_vendor_shop .wcmvendor_store_ratings a {display: block;}
-.rh-container .wcmp_fpm_buttons{left: auto;right: 1em;margin-right: 0; top: 1em}
-.rh-container .woo-image-part .wcmp_fpm_buttons{top: 50px;}
-.rh-container .wcmp_fpm_buttons .wcmp_fpm_button img {margin: auto;}
-#qna-ask-input button{padding: 5px 12px;border-radius: 100px;cursor: pointer;}
-.tax-dc_vendor_shop .comment-respond h3{background: none transparent; margin: 0 0 15px 0; text-transform: none; padding: 0}
-.tax-dc_vendor_shop #comments h2{font-size: 15px}
-.tax-dc_vendor_shop #reviews{border: 1px solid #eee; padding: 0 25px;}
-body .wvm_style_basic .wvm_plan .wvm_features{background:white; border-left: 1px solid #eee;border-right: 1px solid #eee;padding: 25px 25px 35px 25px;}
-body .wvm_style_basic .wvm_plan .wvm_head .wvm_price{letter-spacing: -1px;font-size: 50px; line-height: 65px; text-shadow: none !important; font-weight: normal;}
-body .wvm_style_basic .wvm_plan .wvm_foot{padding: 16px 30px}
-.recomended-batch, .wvm_recommended_plan::before{display: none !important}
-.wvm_plan{box-shadow: 0 0 20px #ededed; transition: all 0.5s ease; position: relative; top: 0}
-.wvm_plan:hover{ box-shadow: 0 0 30px #ddd; top: -15px !important}
-body .wvm_style_basic .wvm_plan .wvm_title{font-size: 22px; font-weight: bold;}
-body .wvm_style_basic .wvm_recommended_plan .wvm_foot{padding: 26px}
-.wcmp-vendor-verification-badge h5 {display: inline;margin-left: 6px;line-height: 22px;}
 .wcvendor_store_name .vendor_badge {display: none !important;}
 .woocommerce #reviews #comments ol.vendor_comment_list li img.avatar{float:left;}

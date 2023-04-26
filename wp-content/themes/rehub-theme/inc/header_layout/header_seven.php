@@ -50,7 +50,7 @@
                         <?php if(rehub_option('header_seven_wishlist')):?>
                             <?php $icons ++;?>
                             <div class="celldisplay text-center">
-                            <a href="<?php echo esc_url(rehub_option('header_seven_wishlist'));?>" class="rh-header-icon mobileinmenu rh-wishlistmenu-link">
+                            <a href="<?php echo esc_url(rehub_option('header_seven_wishlist'));?>" class="rh-header-icon mobileinmenu rh-wishlistmenu-link" aria-label="Wishlist">
                                 <?php  
                                     $likedposts = '';       
                                     if ( is_user_logged_in() ) { // user is logged in

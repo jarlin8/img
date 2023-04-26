@@ -4,6 +4,7 @@
 <?php $maincolor = REHUB_MAIN_COLOR;?>
 <style scoped>
     #rh_woo_layout_inimage{background: <?php echo hex2rgba($maincolor, 0.05);?>}
+    .post-head-image-part img{max-height:200px}
 </style>
 <div class="rh-container"> 
     <div class="pt20 clearfix pb10">
@@ -46,7 +47,7 @@
                 <?php if($disableimage)  : ?>
                 <?php else : ?>
                     <div class="post-head-image-part position-relative rh-336-sidebar mb0 rh-flex-center-align rh-flex-justify-center mobmb15">
-                        <?php wpsm_thumb('large_inner', 200); ?>
+                        <?php echo WPSM_image_resizer::show_wp_image('large_inner', '', array('lazydisable'=>true, 'loading'=>'eager')); ?> 
                     </div>
                 <?php endif; ?>
             </div>            

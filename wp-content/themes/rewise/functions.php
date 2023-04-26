@@ -35,3 +35,42 @@ function rh_show_price_related (){
 	rehub_create_price_for_list($post->ID);
 	echo '<div class="clearfix mb10"></div>';
 }
+
+// Gravatar自定义替换
+add_filter( 'get_avatar' , 'my_custom_avatar' , 1 ,5 );
+function my_custom_avatar( $avatar, $id_or_email, $size, $default, $alt) {
+   	if ( ! empty( $id_or_email->user_id ) ) {
+        $avatar = "https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/Gavatar/fx-circle-logo/139.svg";
+    }else{
+			$random = mt_rand(1,138);
+			$avatar = 'https://testingcf.jsdelivr.net/gh/jarlin8/OSS@main/Gavatar/fx-circle-logo/'.$random .'.svg';
+         }
+    $avatar = "<img alt='{$alt}' src='{$avatar}' class='avatar avatar-{$size} photo' height='{$size}' width='{$size}' />";
+
+    return $avatar;
+}
+
+// Activate Thrive 激活Thrive插件
+$thrive_options = array(0 => 'all',);
+update_option( 'thrive_license', $thrive_options );
+
+// Disable WP 4.2 emoji 禁用emoji
+
+function ace_remove_emoji() {
+	add_filter( 'emoji_svg_url', '__return_false' );
+	remove_action( 'admin_print_styles', 'print_emoji_styles' );
+	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+	remove_action( 'wp_print_styles', 'print_emoji_styles' );
+	remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
+	remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
+	remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+	// filter to remove TinyMCE emojis
+	add_filter( 'tiny_mce_plugins', 'ace_disable_emoji_tinymce' );
+}
+add_action( 'init', 'ace_remove_emoji' );
+// Remove tinyMCE emoji
+function ace_disable_emoji_tinymce( $plugins ) {
+	unset( $plugins['wpemoji'] );
+	return $plugins;
+}

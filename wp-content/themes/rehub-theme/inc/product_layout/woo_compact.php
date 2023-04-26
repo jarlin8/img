@@ -48,8 +48,8 @@
                                             $image_url = wp_get_attachment_image_src($image_id,'full');
                                             $image_url = $image_url[0]; 
                                         ?> 
-                                        <a data-rel="rh_top_gallery" href="<?php echo ''.$image_url;?>" target="_blank" data-thumb="<?php echo ''.$image_url;?>">            
-                                            <?php WPSM_image_resizer::show_static_resized_image(array('lazy'=>true, 'thumb'=> true, 'crop'=> false, 'height'=> 120, 'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_200_140.png'));?>
+                                        <a data-rel="rh_top_gallery" href="<?php echo ''.$image_url;?>" target="_blank" data-thumb="<?php echo ''.$image_url;?>"> 
+                                            <?php WPSM_image_resizer::show_static_resized_image(array('lazy'=>false, 'thumb'=> true, 'crop'=> false, 'height'=> 120, 'width'=> 120,'no_thumb_url' => get_template_directory_uri() . '/images/default/noimage_500_500.png'));?>           
                                         </a>
                                     </figure>
                                     <?php do_action('rh_woo_after_single_image');?>

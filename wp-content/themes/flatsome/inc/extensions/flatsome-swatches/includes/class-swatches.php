@@ -219,9 +219,22 @@ final class Swatches {
 /**
  * Main instance.
  *
+ * @deprecated 3.17 Use swatches()
+ *
  * @return Swatches
  */
 function flatsome_swatches() {
+	_deprecated_function( __FUNCTION__, '3.17', 'swatches' );
+
+	return swatches();
+}
+
+/**
+ * Main instance.
+ *
+ * @return Swatches
+ */
+function swatches() {
 	return Swatches::instance();
 }
 

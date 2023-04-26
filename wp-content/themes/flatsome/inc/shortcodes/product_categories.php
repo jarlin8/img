@@ -245,7 +245,7 @@ function ux_product_categories($atts, $content = null, $tag = '' ) {
             </div><?php
       }
     }
-    woocommerce_reset_loop();
+	wc_reset_loop();
 
     get_flatsome_repeater_end($repeater);
 

@@ -5,7 +5,7 @@ ob_start();
 ?>
 <style id="custom-css" type="text/css">
 :root {
-  --primary-color: <?php echo get_theme_mod('color_primary', Flatsome_Default::COLOR_PRIMARY ); ?>;
+	--primary-color: <?php echo get_theme_mod('color_primary', Flatsome_Default::COLOR_PRIMARY ); ?>;
 }
 <?php
 // Screen sizes

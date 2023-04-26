@@ -26,6 +26,7 @@ global $product, $post;
                     <?php 
                         $title = get_the_title($item);
                         $url = get_the_permalink($item);
+                        $image_id = '';
                         if ( has_post_thumbnail($item) ){
                             $image_id = get_post_thumbnail_id($item);  
                             $image_url = wp_get_attachment_image_src($image_id, 'full');  
@@ -41,7 +42,7 @@ global $product, $post;
                     <div class="col_item border-lightgrey pb10 pl10 pr10 pt10">
                         <div class="medianews-img floatleft mr20 rtlml20">
                             <a href="<?php echo esc_url($url);?>">
-                            <?php WPSM_image_resizer::show_static_resized_image(array('src'=> $image_url, 'width'=> 80, 'title' => $title));?> 
+                                <?php WPSM_image_resizer::show_static_resized_image(array('src'=> $image_url, 'width'=> 80, 'height'=> 80, 'title' => $title, 'css_class'=>'width-80'));?>
                             </a>                    
                         </div>
                         <div class="medianews-body floatright width-100-calc">

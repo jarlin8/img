@@ -301,15 +301,34 @@ if ( ! function_exists( 'of_options' ) ) {
 		}
 
 		$of_options[] = array(
-			"name" => "Instagram",
-			"type" => "heading",
+			'name' => 'Instagram',
+			'type' => 'heading',
 		);
 
 		$of_options[] = array(
-			"name" => "Accounts",
-			"std"  => flatsome_facebook_accounts_html(),
-			"desc" => flatsome_facebook_login_button_html(),
-			"type" => "info"
+			'name' => 'Feed settings',
+			'id'   => 'instagram_lazy_load',
+			'desc' => 'Lazy load Instagram feeds when they appear the viewport.',
+			'std'  => 0,
+			'type' => 'checkbox',
+		);
+
+		$of_options[] = array(
+			'name' => 'Accounts',
+			'std'  => flatsome_facebook_accounts_html(),
+			'type' => 'info',
+		);
+
+		$of_options[] = array(
+			'name' => 'Cache',
+			'std'  => flatsome_facebook_cache_html(),
+			'type' => 'info',
+		);
+
+		$of_options[] = array(
+			'name' => 'Business Account',
+			'desc' => flatsome_facebook_login_button_html(),
+			'type' => 'info',
 		);
 
 		$of_options[] = array(
@@ -395,6 +414,14 @@ if ( ! function_exists( 'of_options' ) ) {
 			$of_options[] = array(
 				'id'   => 'additional_variation_images',
 				'desc' => 'Enable additional variation images (Flatsome gallery).',
+				'std'  => 0,
+				'type' => 'checkbox',
+			);
+
+			$of_options[] = array(
+				'name' => 'Single product',
+				'id'   => 'ajax_add_to_cart',
+				'desc' => 'Enable AJAX add to cart buttons on single product page & quick view.',
 				'std'  => 0,
 				'type' => 'checkbox',
 			);

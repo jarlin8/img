@@ -58,7 +58,7 @@ $widget_args = array( 'before_widget' => '<div class="rh-cartbox widget"><div>',
 ?>
 
 <?php get_header(); ?>
-<?php dokan_get_template_part( 'store-header' ); ?>
+<?php echo rh_generate_incss('widgetfilters'); dokan_get_template_part( 'store-header' ); ?>
 
 <!-- CONTENT -->
 <div class="rh-container wcvcontent woocommerce"> 

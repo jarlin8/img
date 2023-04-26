@@ -116,6 +116,10 @@ class Kirki_Fonts_Downloader {
 					$stored[ $url ] = $font_path;
 					$change         = true;
 				}
+
+				if ( is_string( $tmp_path ) && $tmp_path !== '' ) {
+					@unlink( $tmp_path );
+				}
 			}
 		}
 

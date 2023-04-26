@@ -24,7 +24,7 @@
 							<a href="<?php bp_group_member_domain(); ?>"><?php bp_group_member_avatar_thumb(); ?></a>
 						</div>
 						<div class="member-list-content">
-							<h5><?php bp_group_member_link(); ?></h5>
+							<div><?php bp_group_member_link(); ?></div>
 							<?php $userrating = get_user_meta(bp_get_group_member_id(), 'rh_bp_user_rating', true);?>
 							<?php if ($userrating):?>
 								<div class="star-small mb10"><span class="stars-rate"><span style="width: <?php echo (int)$userrating * 20;?>%;"></span></span></div>

@@ -38,6 +38,7 @@ function get_flatsome_repeater_start( $atts ) {
       'auto_slide' => 'false',
 	  'infinitive' => 'true',
       'format' => '',
+	  'attrs' => '',
     ) );
 
 	$row_classes      = array();
@@ -159,7 +160,7 @@ function get_flatsome_repeater_start( $atts ) {
   <?php } ?>
 
   <?php if($atts['type'] == 'slider') { // Slider grid ?>
-  <div class="row <?php echo $row_classes; ?>"  data-flickity-options='<?php echo $slider_options; ?>'>
+  <div class="row <?php echo $row_classes; ?>"  data-flickity-options='<?php echo $slider_options; ?>' <?php echo $atts['attrs'] ?>>
 
   <?php } else if($atts['type'] == 'slider-full') { // Full slider ?>
   <div id="<?php echo $atts['id']; ?>" class="<?php echo $row_classes_full; ?>" data-flickity-options='<?php echo $slider_options; ?>'>
@@ -174,7 +175,7 @@ function get_flatsome_repeater_start( $atts ) {
   <div class="container">
 
   <?php } else { // Normal Rows ?>
-  <div class="row <?php echo $row_classes; ?>">
+  <div class="row <?php echo $row_classes; ?>" <?php echo $atts['attrs'] ?>>
   <?php }
 }
 
@@ -413,18 +414,19 @@ function flatsome_smart_links($link){
     }
     // Get link by page title
     else if(strpos($link, '/') === false && !is_numeric($link)){
-      $get_page = get_page_by_title($link);
+      $get_page = flatsome_get_page_by_title($link);
       if( $get_page ) $link = get_permalink($get_page->ID);
     }
 
-	$protocols = wp_allowed_protocols();
-	array_push( $protocols, 'sms' );
-
-    return esc_url( $link, $protocols );
+	return esc_url( $link );
 }
 
 function flatsome_to_dashed($className) {
    return strtolower(preg_replace('/([\S\s])\s/', '$1-', $className));
+}
+
+function flatsome_to_underscore( $className ) {
+	return strtolower( preg_replace( '/([\S\s])\s/', '$1_', $className ) );
 }
 
 /*
@@ -453,7 +455,7 @@ function flatsome_parse_target_rel( array $link_atts, $trim = false ) {
 	$attrs = array();
 
 	if ( $link_atts['target'] == '_blank' ) {
-		$attrs[]            = "target=\"{$link_atts['target']}\"";
+		$attrs[]            = sprintf( 'target="%s"', esc_attr( $link_atts['target'] ) );
 		$link_atts['rel'][] = 'noopener';
 		$link_atts['rel'][] = 'noreferrer';
 	}
@@ -461,10 +463,10 @@ function flatsome_parse_target_rel( array $link_atts, $trim = false ) {
 	if ( isset( $link_atts['rel'] ) && is_array( $link_atts['rel'] ) && ! empty( array_filter( $link_atts['rel'] ) ) ) {
 		$relations = array_unique( array_filter( $link_atts['rel'] ) );
 		$rel       = implode( ' ', $relations );
-		$attrs[]   = "rel=\"{$rel}\"";
+		$attrs[]   = sprintf( 'rel="%s"', esc_attr( $rel ) );
 	}
 
-	$attrs = ' ' . implode( ' ', $attrs ) . ' ';
+	$attrs = ! empty( $attrs ) ? ' ' . implode( ' ', $attrs ) . ' ' : ' ';
 
 	return $trim ? trim( $attrs ) : $attrs;
 }

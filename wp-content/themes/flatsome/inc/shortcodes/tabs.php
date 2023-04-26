@@ -70,7 +70,7 @@ function ux_tab( $params, $content = null) {
 	), $params));
 
 	$x = $GLOBALS['tab_count'];
-	$GLOBALS['tabs'][$x] = array( 'title' => sprintf( $title, $GLOBALS['tab_count'] ), 'content' =>  $content );
+	$GLOBALS['tabs'][ $x ] = array( 'title' => $title, 'content' => $content );
 	$GLOBALS['tab_count']++;
 }
 

@@ -27,6 +27,10 @@ global $product, $post;
             $upsells_array['gridtype'] = 'review';
             echo wpsm_woogrid_shortcode($upsells_array);                  
         }
+        elseif ($current_design == 'gridmart') { 
+            $upsells_array['gridtype'] = 'gridmart';
+            echo wpsm_woogrid_shortcode($upsells_array);                  
+        }
         elseif ($current_design == 'griddigi') { 
             $upsells_array['gridtype'] = 'digital';
             echo wpsm_woogrid_shortcode($upsells_array);                  
