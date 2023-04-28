@@ -74,13 +74,13 @@ if (!function_exists('wcabe_verify_ajax_nonce_or_die')) {
 	}
 }
 
-if (!function_exists('wcabe_get_current_user_role')) {
+if (!function_exists( 'wcabe_get_current_user_roles' )) {
 	/**
 	 * Get an array of the current user assigned roles
 	 *
 	 * @return array
 	 */
-	function wcabe_get_current_user_role() {
+	function wcabe_get_current_user_roles() {
 		
 		if( is_user_logged_in() ) { // check if there is a logged in user
 			
@@ -94,5 +94,17 @@ if (!function_exists('wcabe_get_current_user_role')) {
 			return array(); // if there is no logged in user return empty array
 			
 		}
+	}
+}
+
+if (!function_exists('wcabe_is_current_user_admin')) {
+	/**
+	 * Check the current user if he has administrator role.
+	 *
+	 * @return bool
+	 */
+	function wcabe_is_current_user_admin(): bool {
+		$current_user = wp_get_current_user();
+		return in_array( 'administrator', (array) $current_user->roles );
 	}
 }

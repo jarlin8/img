@@ -70,7 +70,7 @@
                             if ($dataColumn->getSearchInSelectBoxEditing() === 1) { ?> wdt-search-in-select <?php };
                             if ($dataColumn->getPossibleValuesAjax() !== -1) { ?> wdt-possible-values-ajax <?php }; ?>"
                             <?php if ($dataColumn->getInputType() === 'multi-selectbox') { ?>multiple="multiple"<?php } ?>
-                            <?php if ($dataColumn->getSearchInSelectBoxEditing() === 1) { ?>data-live-search="true" data-live-search-placeholder="Search..."<?php } ?>
+                            <?php if ($dataColumn->getSearchInSelectBoxEditing() === 1) { ?>data-live-search="true" data-live-search-placeholder="<?php esc_attr_e('Search...','wpdatatables'); ?>"<?php } ?>
                             data-column_header="<?php echo esc_attr($dataColumn->getTitle()); ?>">
                         <?php
                         if ($dataColumn->getPossibleValuesAjax() === -1) {
@@ -80,7 +80,6 @@
                                 if ($possibleValue['value'] !== 'possibleValuesAddEmpty') { ?>
                                     <option value="<?php echo esc_attr($possibleValue['value']) ?>"
                                             data-label="<?php echo esc_attr($possibleValue['label']) ?>"><?php echo esc_html($possibleValue['label']) ?></option>
-
                                 <?php } ?>
                             <?php } ?>
                         <?php } ?>
@@ -149,7 +148,7 @@
 </div>
 
 <?php $currentSkin = $this->getTableSkin();
-      $skinsWithNewEditButtons = ['aqua','purple','dark']; ?>
+      $skinsWithNewEditButtons = ['aqua','purple','dark','raspberry-cream', 'mojito']; ?>
 
 <div id="<?php echo esc_attr($this->getId()) ?>_edit_dialog_buttons" class="wdt-edit-dialog-button-block"
      style="display: none">
@@ -159,24 +158,24 @@
     </button>
     <button id="<?php echo $this->getId() ?>_prev_edit_dialog" class="btn bgm-gray btn-icon-text wdt-prev-edit-button">
         <i class="<?php if(in_array($currentSkin, $skinsWithNewEditButtons )) { echo 'wpdt-icon-chevron-left'; } else { echo 'wpdt-icon-step-backward'; }?>"></i>
-        <?php esc_html_e('Prev', 'wpdatatables'); ?>
+        <?php if (!in_array($currentSkin, ['mojito','raspberry-cream'])) esc_html_e('Prev', 'wpdatatables'); ?>
     </button>
     <button id="<?php echo $this->getId() ?>_next_edit_dialog" class="btn bgm-gray btn-icon-text wdt-next-edit-button">
-        <?php esc_html_e('Next', 'wpdatatables'); ?>
+        <?php if (!in_array($currentSkin, ['mojito','raspberry-cream']))  esc_html_e('Next', 'wpdatatables'); ?>
         <i class="<?php if(in_array($currentSkin, $skinsWithNewEditButtons)) { echo 'wpdt-icon-chevron-right'; } else { echo 'wpdt-icon-step-forward'; }?>"></i>
     </button>
     <?php if ( !empty(array_intersect(['all', 'new_entry'], $this->getEditButtonsDisplayed()))) { ?>
-    <button id="<?php echo $this->getId() ?>_apply_edit_dialog" class="btn btn-success btn-icon-text wdt-apply-edit-button">
-        <i class="<?php if(in_array($currentSkin, $skinsWithNewEditButtons)) { echo 'wpdt-icon-check-circle-full'; } else { echo 'wpdt-icon-check';  }?>"></i>
-        <?php esc_html_e('Apply and add new', 'wpdatatables'); ?>
-    </button>
+        <button id="<?php echo $this->getId() ?>_apply_edit_dialog" class="btn btn-success btn-icon-text wdt-apply-edit-button">
+            <i class="<?php if(in_array($currentSkin, $skinsWithNewEditButtons)) { echo 'wpdt-icon-check-circle-full'; } else { echo 'wpdt-icon-check';  }?>"></i>
+            <?php esc_html_e('Apply and add new', 'wpdatatables'); ?>
+        </button>
     <?php } ?>
     <?php if ( $this->isEnableDuplicateButton() &&
         !empty(array_intersect(['all', 'duplicate'], $this->getEditButtonsDisplayed()))) { ?>
-    <button id="<?php echo $this->getId() ?>_apply_duplicate_dialog" class="btn btn-success btn-icon-text wdt-apply-duplicate-button hidden">
-        <i class="<?php if(in_array($currentSkin, $skinsWithNewEditButtons)) { echo 'wpdt-icon-check-circle-full'; } else { echo 'wpdt-icon-check';  }?>"></i>
-        <?php esc_html_e('Apply and duplicate', 'wpdatatables'); ?>
-    </button>
+        <button id="<?php echo $this->getId() ?>_apply_duplicate_dialog" class="btn btn-success btn-icon-text wdt-apply-duplicate-button hidden">
+            <i class="<?php if(in_array($currentSkin, $skinsWithNewEditButtons)) { echo 'wpdt-icon-check-circle-full'; } else { echo 'wpdt-icon-check';  }?>"></i>
+            <?php esc_html_e('Apply and duplicate', 'wpdatatables'); ?>
+        </button>
     <?php } ?>
     <button id="<?php echo $this->getId() ?>_ok_edit_dialog" class="btn btn-success btn-icon-text wdt-ok-edit-button">
         <i class="<?php if(in_array($currentSkin, $skinsWithNewEditButtons)) { echo 'wpdt-icon-check-circle'; } else { echo 'wpdt-icon-check-double-reg'; }?>"></i>

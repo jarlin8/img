@@ -45,17 +45,4 @@ var wcabehelper = {
 		} while (m);
 		return result.length ? result : valStr;
 	},
-
-	toggle: function (elem) {
-		if (elem.style.display === 'none') {
-			elem.style.display = 'block';
-		} else {
-			elem.style.display = 'none';
-		}
-	},
-
-	isToggleInDisplayState: function (elem) {
-		return elem.style.display === 'block';
-	}
-
 };

@@ -2,20 +2,17 @@
 * WPDataTables Material           skin styles
 */
 
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,500');
-
 .wpdt-c.wdt-skin-material {
     font-size: 13px;
 }
+.wpdt-c.wdt-skin-material .wpDataTablesFilter{
+    line-height:normal !important;
+}
 
 .wpdt-c.wdt-skin-material table.wpDataTable {
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--wpdt-roboto-google-font, inherit);
     font-weight: 100;
-}
-.wpdt-c.wdt-skin-material .wpDataTablesWrapper table.wpDataTable thead th,
-.wpdt-c.wdt-skin-material .wpDataTablesWrapper table.wpDataTable tbody td,
-.wpdt-c.wdt-skin-material .wpDataTablesWrapper table.wpDataTable tfoot td {
-    color: rgba(0, 0, 0, 0.87);
+    color: rgba(0, 0, 0, 0.87)
 }
 
 .wpdt-c.wdt-skin-material label {

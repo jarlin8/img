@@ -227,7 +227,7 @@
                         <div class="col-sm-12 p-l-0 p-r-0">
                             <div class="col-sm-6 p-l-12 p-b-12 p-t-12 p-r-0 pull-left">
                                 <h4 class="wdt-card-header-title m-t-0 m-b-4">
-                                    <?php esc_html_e('Still need help? ', 'wpdatatables'); ?>
+                                    <?php esc_html_e('Need help? ', 'wpdatatables'); ?>
                                 </h4>
                                 <p class="wpdt-text wpdt-font">
                                     <?php esc_html_e('We provide professional support to all our users via our ticketing system.'); ?></p>
@@ -263,19 +263,25 @@
                                  </span>
                         </p>
                         <p class="wpdt-text wpdt-font m-b-18">
-                            New update with awesome features, some improvements and bug fixes::
+                            A new update with some features and bug fixes:
                         </p>
                         <div class="alert alert-info m-b-0" role="alert">
                             <i class="wpdt-icon-info-circle-full"></i>
                             <ul>
-                                <li><strong>Feature:</strong> Creating tables from Excel or CSV from any URL.</li>
-                                <li><strong>Feature:</strong> New option: Include table title in exported Excel file and Copy as well.</li>
-                                <li><strong>Improvement:</strong> Remove unnecessary characters from SQL queries.</li>
-                                <li><strong>Improvement:</strong> Update libraries (Datatables, Table Tools, moment.js).</li>
-                                <li><strong>BugFix:</strong> Fixed issue with new version of Highcharts for axis min and max values.</li>
-                                <li><strong>BugFix:</strong> Fixed issue with editing when responsive mode is used.</li>
-                                <li>Other small bug fixes.</li>
-                            </ul>
+                                <li><strong>Feature:</strong> Rotation settings for column headers - choose to rotate header for 90° or -90°.</li>
+                                <li><strong>Feature:</strong> A new light skin - Mojito.</li>
+                                <li><strong>Feature:</strong> Star rating now has a new customization option - Color Picker.</li>
+                                <li><strong>Feature:</strong> New responsive option - Pagination Layout on mobile.</li>
+                                <li><strong>Improvement:</strong> Added a new hook, wpdatatables_before_render_table_config_data.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with browse page not loading when using certain MySQL versions.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with editing single y-axis ApexCharts.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with vertical/horizontal axis and dropshadow on Apexcharts.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with charts when minified.js is turned on.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with Powerful Filters integration for multiselectbox filters.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with compatibility with the latest version of ApexCharts.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with gradient for Highcharts.</li>
+                                <li><strong>BugFix:</strong> Fixed issue with translating the “Administrator” string to different languages.</li>
+                                <li>Other small bug fixes</li></ul>
                         </div>
 
                     </div>
@@ -511,7 +517,8 @@
                         <?php if (!defined('WDT_MD_ROOT_PATH')) { ?>
                             <div class="wdt-addons-links text-center">
                                 <button id="wdt-master-detail"
-                                        class="btn btn-icon-text btn-primary wdt-checkout-button tms-store-checkout">
+                                        class="btn btn-icon-text btn-primary wdt-checkout-button"
+                                        onclick=" window.open('https://wpdatatables.com/addons/?utm_source=wpdt-premium&amp;utm_medium=addons&amp;utm_content=wpdt&amp;utm_campaign=wpdt','_blank')">
                                     <i class="wpdt-icon-shopping-bag"></i>
                                     <?php esc_html_e('Purchase', 'wpdatatables'); ?>
                                 </button>
@@ -552,7 +559,8 @@
                         <?php if (!defined('WDT_PF_ROOT_PATH')) { ?>
                             <div class="wdt-addons-links text-center">
                                 <button id="wdt-powerful-filters"
-                                        class="btn btn-icon-text btn-primary wdt-checkout-button tms-store-checkout">
+                                        class="btn btn-icon-text btn-primary wdt-checkout-button"
+                                        onclick=" window.open('https://wpdatatables.com/addons/?utm_source=wpdt-premium&amp;utm_medium=addons&amp;utm_content=wpdt&amp;utm_campaign=wpdt','_blank')">
                                     <i class="wpdt-icon-shopping-bag"></i>
                                     <?php esc_html_e('Purchase', 'wpdatatables'); ?>
                                 </button>
@@ -592,7 +600,8 @@
                         <?php if (!defined('WDT_RB_ROOT_PATH')) { ?>
                             <div class="wdt-addons-links text-center">
                                 <button id="reportbuilder"
-                                        class="btn btn-icon-text btn-primary wdt-checkout-button tms-store-checkout">
+                                        class="btn btn-icon-text btn-primary wdt-checkout-button"
+                                        onclick=" window.open('https://wpdatatables.com/addons/?utm_source=wpdt-premium&amp;utm_medium=addons&amp;utm_content=wpdt&amp;utm_campaign=wpdt','_blank')">
                                     <i class="wpdt-icon-shopping-bag"></i>
                                     <?php esc_html_e('Purchase', 'wpdatatables'); ?>
                                 </button>
@@ -633,7 +642,8 @@
                         <?php if (!defined('WDT_FF_ROOT_PATH')) { ?>
                             <div class="wdt-addons-links text-center">
                                 <button id="wdt-formidable-integration"
-                                        class="btn btn-icon-text btn-primary wdt-checkout-button tms-store-checkout">
+                                        class="btn btn-icon-text btn-primary wdt-checkout-button"
+                                        onclick=" window.open('https://wpdatatables.com/addons/?utm_source=wpdt-premium&amp;utm_medium=addons&amp;utm_content=wpdt&amp;utm_campaign=wpdt','_blank')">
                                     <i class="wpdt-icon-shopping-bag"></i>
                                     <?php esc_html_e('Purchase', 'wpdatatables'); ?>
                                 </button>
@@ -673,7 +683,8 @@
                         <?php if (!defined('WDT_GF_ROOT_PATH')) { ?>
                             <div class="wdt-addons-links text-center">
                                 <button id="wdt-gravity-integration"
-                                        class="btn btn-icon-text btn-primary wdt-checkout-button tms-store-checkout">
+                                        class="btn btn-icon-text btn-primary wdt-checkout-button"
+                                        onclick=" window.open('https://wpdatatables.com/addons/?utm_source=wpdt-premium&amp;utm_medium=addons&amp;utm_content=wpdt&amp;utm_campaign=wpdt','_blank')">
                                     <i class="wpdt-icon-shopping-bag"></i>
                                     <?php esc_html_e('Purchase', 'wpdatatables'); ?>
                                 </button>
@@ -698,7 +709,7 @@
         </div>
         <div class="row">
             <h4 class="wdt-row-title m-b-20 text-center">
-                <?php esc_html_e('Need booking plugin?', 'wpdatatables'); ?></h4>
+                <?php esc_html_e('Need a booking plugin?', 'wpdatatables'); ?></h4>
         </div>
         <div class="row">
             <div class="col-sm-12 p-l-0 p-r-0">
@@ -710,7 +721,7 @@
                                 <?php esc_html_e('Appointments and Events WordPress Booking Plugin', 'wpdatatables'); ?>
                             </div>
                             <p class="wpdt-text wpdt-font m-b-0">
-                                <?php esc_html_e('Amelia is a simple yet powerful automated booking specialist, working 24/7 to make sure your customers can book appointments or events and pay online even while you sleep! 40,000+ businesses from healthcare, beauty, sports, automotive, educational, creative, HR and other industries use Amelia to flawlessly manage 500,000+ appointments and events worldwide each month.', 'wpdatatables'); ?></p>
+                                <?php echo sprintf(esc_html__('Amelia is a simple yet powerful automated booking specialist, working 24/7 to make sure your customers can book appointments or events and pay online even while you sleep! %s businesses from healthcare, beauty, sports, automotive, educational, creative, HR and other industries use Amelia to flawlessly manage %s appointments and events worldwide each month.', 'wpdatatables') ,AMELIA_NUMBER_OF_ACTIVE_INSTALLS , AMELIA_NUMBER_OF_APPOINTMENTS );?></p>
                             <p>
                                 <span class="wdt-stars-container stars-100">★★★★★</span>
                                 <span class="wdt-rating"> <?php esc_html_e('Rating: 4.8 - ‎123 reviews') ?></span>
@@ -718,7 +729,7 @@
                             </p>
                             <a href="https://wpamelia.com/?utm_source=full&utm_medium=plugin&utm_campaign=wpdtful" target="_blank" class="btn btn-primary">
                                 <?php esc_html_e('Learn More', 'wpdatatables'); ?>
-                                <i class="wpdt-icon-external-link-square-alt"></i>
+                                <i class="wpdt-icon-arrow-right"></i>
                             </a>
 
                         </div>

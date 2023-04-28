@@ -58,7 +58,12 @@
         $('#wdt-table-title-edit').change(function (e) {
             wpdatatable_config.setTitle($(this).val());
         });
-
+        /**
+         * Change table description
+         */
+        $('#wdt-table-description-edit').change(function (e) {
+            wpdatatable_config.setDescription($(this).val());
+        });
         /**
          * Change auto-refresh
          */
@@ -149,6 +154,12 @@
         $('#wdt-show-title').change(function (e) {
             wpdatatable_config.setShowTitle($(this).is(':checked') ? 1 : 0);
         });
+        /**
+         * Toggle show description
+         */
+        $('#wdt-show-description').change(function (e) {
+            wpdatatable_config.setShowDescription($(this).is(':checked') ? 1 : 0);
+        });
 
         /**
          * Change display length
@@ -190,6 +201,13 @@
          */
         $('#wdt-pagination-layout').change(function (e) {
             wpdatatable_config.setPaginationLayout($(this).val());
+        });
+
+        /**
+         * Set pagination layout for mobile devices
+         */
+        $('#wdt-pagination-layout-mobile').change(function (e) {
+            wpdatatable_config.setPaginationLayoutMobile($(this).val());
         });
 
         /**
@@ -741,6 +759,8 @@
                 $('div.wdt-foreign-key-block').show();
                 $('div.wdt-foreign-rule-display').show();
                 $('.wdt-possible-values-ajax-block').hide();
+                $('.wdt-and-logic-block').hide();
+                $('#wdt-and-logic').prop('checked', false);
                 if(wpdatatable_config.edit_only_own_rows == 1) {
                     $('.wdt-possible-values-foreign-keys-block').show();
                 } else {
@@ -840,7 +860,6 @@
             $block.remove();
         });
 
-
         $('#wdt-column-type').change(function (e) {
 
             /**
@@ -889,6 +908,9 @@
                 $('div.wdt-link-button-attribute-block').hide();
                 $('div.wdt-link-button-label-block').hide();
                 $('div.wdt-link-button-class-block').hide();
+                if ($('#wdt-column-filter-type').val() === 'number-range' ) {
+                    $('div.wdt-number-range-slider').show();
+                }
             } else if ($(this).val() == 'string') {
                 $('div.wdt-possible-values-type-block').show();
                 $('div.wdt-possible-values-options-block').show();
@@ -902,6 +924,7 @@
                 $('div.wdt-link-button-attribute-block').hide();
                 $('div.wdt-link-button-label-block').hide();
                 $('div.wdt-link-button-class-block').hide();
+                $('div.wdt-number-range-slider').hide();
             } else if (['date', 'datetime'].indexOf($(this).val()) !== -1
                 && $.inArray(wpdatatable_config.table_type, ['xls', 'csv', 'google_spreadsheet', 'json', 'nested_json', 'xml', 'serialized']) !== -1) {
                 $('div.wdt-date-input-format-block').show();
@@ -916,6 +939,7 @@
                 $('div.wdt-link-button-attribute-block').hide();
                 $('div.wdt-link-button-label-block').hide();
                 $('div.wdt-link-button-class-block').hide();
+                $('div.wdt-number-range-slider').hide();
             } else if ($(this).val() == 'link') {
                 $('div.wdt-possible-values-type-block').hide();
                 $('div.wdt-possible-values-options-block').hide();
@@ -931,6 +955,7 @@
                     $('div.wdt-link-button-class-block').show();
                 }
                 $('div.wdt-link-button-attribute-block').show();
+                $('div.wdt-number-range-slider').hide();
             } else {
                 $('div.wdt-possible-values-type-block').hide();
                 $('div.wdt-possible-values-options-block').hide();
@@ -944,6 +969,7 @@
                 $('div.wdt-link-button-attribute-block').hide();
                 $('div.wdt-link-button-label-block').hide();
                 $('div.wdt-link-button-class-block').hide();
+                $('div.wdt-number-range-slider').hide();
             }
         });
 
@@ -961,15 +987,24 @@
             var $filterInputSelectpicker = $('#wdt-filter-default-value-selectpicker');
             var $filterInputSelectpickerBlock = $('.wdt-filter-default-value-selectpicker-block');
             var $renderCheckboxesInModal = $('.wdt-checkboxes-in-modal-block #wdt-checkboxes-in-modal');
+            var $andLogic = $('.wdt-and-logic-block #wdt-and-logic');
             var $renderSearchInSelectBox = $('.wdt-search-in-selectbox-block #wdt-search-in-selectbox');
             var $renderCheckboxesInModalBlock = $('.wdt-checkboxes-in-modal-block');
             var $renderSearchInSelectBoxBlock = $('.wdt-search-in-selectbox-block');
+            let $rangeSliderMaxBlock = $('.wdt-range-max-value');
+            let $rangeSliderCustomMaxBlock = $('.wdt-range-max-value-custom');
+            let columnType = $('#wdt-column-type').val();
+            var $andLogicBlock = $('.wdt-and-logic-block');
+            var $useAndLogicBlock = $('#wdt-column-type').val() === 'string' && $('#wdt-column-values').val() !== 'foreignkey';
             var typeAttr = 'text';
 
             $renderCheckboxesInModal.prop('checked', 0);
+            $andLogic.prop('checked', 0);
             if ($.inArray(filterType, ['text', 'number']) != -1) {
                 $('div.wdt-exact-filtering-block').show();
                 $('div.wdt-number-range-slider').hide();
+                $rangeSliderMaxBlock.hide();
+                $rangeSliderCustomMaxBlock.hide();
                 if (filterType === 'number')
                     typeAttr = 'number';
                 $filterInput.attr('type', typeAttr);
@@ -982,9 +1017,12 @@
                 $filterInputSelectpicker.selectpicker('deselectAll');
                 $renderCheckboxesInModalBlock.hide();
                 $renderSearchInSelectBoxBlock.hide();
+                $andLogicBlock.hide();
             } else if ($.inArray(filterType, ['number-range', 'date-range', 'datetime-range', 'time-range']) != -1) {
                 $('div.wdt-exact-filtering-block').hide();
                 $('div.wdt-number-range-slider').hide();
+                $rangeSliderMaxBlock.hide();
+                $rangeSliderCustomMaxBlock.hide();
                 $filterInputBlock.hide();
                 $filterInputFromBlock.show();
                 $filterInputToBlock.show();
@@ -994,6 +1032,7 @@
                 $filterInputSelectpicker.selectpicker('deselectAll');
                 $renderCheckboxesInModalBlock.hide();
                 $renderSearchInSelectBoxBlock.hide();
+                $andLogicBlock.hide();
 
                 if ($filterInputFrom.data('DateTimePicker') != undefined)
                     $filterInputFrom.data('DateTimePicker').destroy();
@@ -1001,9 +1040,14 @@
                 if ($filterInputTo.data('DateTimePicker') != undefined)
                     $filterInputTo.data('DateTimePicker').destroy();
 
-                if (filterType == 'number-range'){
+                if (filterType == 'number-range' && $.inArray(columnType, ['float', 'int']) !== -1){
                     $('div.wdt-number-range-slider').show();
                     typeAttr = 'number';
+
+                    if ($('#wdt-column-range-slider').is(':checked')) {
+                        $rangeSliderMaxBlock.show();
+                        $('#wdt-max-value-display').trigger('change');
+                    }
                 }
 
 
@@ -1023,12 +1067,15 @@
             } else {
                 $('div.wdt-exact-filtering-block').show();
                 $('div.wdt-number-range-slider').hide();
+                $rangeSliderMaxBlock.hide();
+                $rangeSliderCustomMaxBlock.hide();
                 $filterInputBlock.hide();
                 $filterInputFromBlock.hide();
                 $filterInputToBlock.hide();
                 $filterInputSelectpickerBlock.show();
                 $renderCheckboxesInModalBlock.hide();
                 $renderSearchInSelectBoxBlock.hide();
+                $andLogicBlock.hide();
 
                 // Must recreate selectpicker block because Ajax Selectpicker
                 $filterInputSelectpickerBlock.html('<div class="fg-line"><div class="select"><select class="selectpicker" id="wdt-filter-default-value-selectpicker" data-none-selected-text="' + wpdatatables_frontend_strings.nothingSelected + '" data-live-search="true" title="' + wpdatatables_frontend_strings.nothingSelected + '"></select></div></div>');
@@ -1042,11 +1089,21 @@
                     $filterInputSelectpicker.removeAttr('multiple');
                 }
 
-                if (filterType === 'checkbox' && wpdatatable_config.filtering_form) {
-                    $renderCheckboxesInModalBlock.show();
+                if (filterType === 'checkbox') {
+                    if (wpdatatable_config.filtering_form)
+                        $renderCheckboxesInModalBlock.show();
+
+                    if ($useAndLogicBlock)
+                        $andLogicBlock.show();
                 }
                 if (filterType === 'multiselect' || filterType === 'select') {
                     $renderSearchInSelectBoxBlock.show();
+                    if (filterType === 'multiselect' && $useAndLogicBlock) {
+                        $andLogicBlock.show();
+                    } else {
+                        $andLogicBlock.hide();
+                    }
+
                     if (wpdatatable_config.currentOpenColumn.possibleValuesAjax === -1) {
                         $renderSearchInSelectBox.prop('checked', 0);
                     } else {
@@ -1327,6 +1384,34 @@
         });
 
         /**
+         * Show/hide number range settings and on 'range slider'  toggle
+         */
+        $('#wdt-column-range-slider').change(function (e) {
+            let $rangeSliderMaxBlock = $('.wdt-range-max-value');
+            let $rangeSliderCustomMaxBlock = $('.wdt-range-max-value-custom');
+            if ($(this).is(':checked')) {
+                $rangeSliderMaxBlock.show();
+            } else {
+                $('#wdt-max-value-display').val('default').selectpicker('refresh');
+                $rangeSliderMaxBlock.hide();
+                $rangeSliderCustomMaxBlock.hide();
+            }
+        });
+
+        /**
+         * Show/hide number range settings and on 'range slider'  toggle
+         */
+        $('#wdt-max-value-display').change(function (e) {
+            let $rangeSliderCustomMaxBlock = $('.wdt-range-max-value-custom');
+            if ($(this).val() === 'custom_text') {
+                $rangeSliderCustomMaxBlock.show();
+            } else {
+                $('#wdt-custom-max-value').val('');
+                $rangeSliderCustomMaxBlock.hide();
+            }
+        });
+
+        /**
          * Show/hide button label in Url link column
          */
         $('#wdt-link-button-attribute').change(function (e) {
@@ -1422,6 +1507,10 @@
                     return;
                 }
             }
+            if ((wpdatatable_config.table_type === 'csv' || wpdatatable_config.table_type === 'xls')
+                && wpdatatable_config.file_location == '') {
+                wpdatatable_config.file_location = 'wp_media_lib'
+            }
             if (wpdatatable_config.server_side == 1) {
                 for (var i in wpdatatable_config.columns) {
                     wpdatatable_config.columns[i].groupColumn = 0;
@@ -1436,7 +1525,6 @@
                     }
                 }
             }
-
 
             wpdatatable_config.connection = $('#wdt-table-connection').val();
             let file_source_action = $('#wdt-source-file-data').val();

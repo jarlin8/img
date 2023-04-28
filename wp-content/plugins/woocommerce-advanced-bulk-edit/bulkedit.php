@@ -519,6 +519,11 @@ class W3ExAdvBulkEditView{
 			$settings['setting_display_top_bar_link_bulkedit'] = 1;
 			update_option('w3exabe_settings',$settings);
 		}
+		
+		if (isset($_GET['setting_auto_regenrate_products_table_on_save']) && $_GET['setting_auto_regenrate_products_table_on_save'] == 1) {
+			$settings['setting_auto_regenrate_products_table_on_save'] = 1;
+			update_option('w3exabe_settings',$settings);
+		}
 
 		//
 		$skiploadfrontpage = true;
@@ -652,7 +657,8 @@ class W3ExAdvBulkEditView{
 			echo 'W3Ex.attr_cols["'.$attrname.'"] = {id:'.$attr->id.',attr:"'.$attrlabel.'",value:"'.$attrname.'"};';
 			echo PHP_EOL;
 		}
-		$blogusers = get_users( array( 'role__in' => array('administrator', 'shop_manager', 'seller', 'vendor'), 'fields' => array( 'ID', 'display_name' ) ) );
+		//$blogusers = get_users( array( 'role__in' => array('administrator', 'shop_manager', 'seller', 'vendor', 'customer'), 'fields' => array( 'ID', 'display_name' ) ) );
+		$blogusers = get_users(['fields' => array( 'ID', 'display_name' )]);
 		$settings = get_option('w3exabe_settings');
 		if(!is_array($settings))
 			$settings = array();
@@ -872,21 +878,9 @@ class W3ExAdvBulkEditView{
 					&nbsp;&nbsp;
 				<a href="https://wpmelon.com/r/support" target="_blank">Get Support</a>
 					&nbsp;&nbsp;
-				<a href="<?php echo WCABE_SITE_URL.'/wcabe-check-for-update/?version='.WCABE_VERSION; ?>"
-					id="btnCheckForUpdate"
-					target="_blank">Check for Updates</a>
+				<a href="<?php echo home_url().'/wp-admin/edit.php?post_type=product&page=advanced_bulk_edit&section=wcabe_settings'; ?>">Add License</a>
 			</span>
 		</h2>
-		<div id="contentCheckForUpdateWrapper" class="content-check-for-update-wrapper" style="display: none;">
-			<span id='btnCheckForUpdateClose' class="close"></span>
-			<div id="contentCheckForUpdate">
-				<p>
-					<?php _e( 'Checking for update ', 'woocommerce-advbulkedit');?>
-					<img class="loading" src="<?php echo $purl;?>images/loading-pulse-1s-200px.png" alt="...loading...">
-				</p>
-				<p>You can also check <a target="_blank" href="<?php echo WCABE_SITE_URL.'/wcabe-check-for-update/?version='.WCABE_VERSION; ?>">directly on our website</a>.</p>
-			</div>
-		</div>
 		<?php
 		if (wcabe_load_integration(WCABE_179_INTEG_SITE_WIDE_OPS)) {
 			W3ExABulkEdit_Integ_SiteWideOps::site_wide_ops_the_link();
@@ -1444,7 +1438,7 @@ class W3ExAdvBulkEditView{
 				</button>
 				</div>
 				<input id="selectedit" class="button-wcabe" type="button" value="<?php _e( "Selection Manager", "woocommerce-advbulkedit"); ?>" />
-				<button id="bulkedit" class="button-wcabe" type="button">
+				<button id="bulkedit" class="button-primary-wcabe" type="button">
 				<span class="icon-edit"></span>
 				<?php echo _e( "Advanced Bulk Edit", "woocommerce-advbulkedit");?>
 				</button>
@@ -1456,7 +1450,7 @@ class W3ExAdvBulkEditView{
 					<input id="quicksettingsbut" class="button-wcabe" type="button" value="<?php _e( "Quick Settings", "woocommerce-advbulkedit"); ?>" />
 				</div>
 				<div id="bulkedittext" style="display: inline-block;"><?php _e( "Selected rows for bulk editing", "woocommerce-advbulkedit"); ?>:<!--<input id="showselectedbut" class="button" type="button" value="Show Selected" />--></div><div id="bulkeditinfo"> 0 of 0</div>
-				<div class="mainbuttons-right">
+                <div class="mainbuttons-right">
 					<button class="btn-info" id="btn-info-show-hide-fields"></button>
 					<template id="btn-info-show-hide-fields-body">
 						<?php _e('To show more fields in the grid or hide the unused fields, please use the button "Show/Hide Fields"', "woocommerce-advbulkedit"); ?>
@@ -1483,7 +1477,7 @@ class W3ExAdvBulkEditView{
 			<input id="viewdialogbut" class="button-wcabe" type="button" value="<?php _e( "Load/Save View", "woocommerce-advbulkedit"); ?>" />
 			<input id="customfieldsbut" class="button-wcabe" type="button" value="<?php _e( "Custom Fields", "woocommerce-advbulkedit"); ?>" />
 			<input id="findcustomfieldsbut" class="button-wcabe" type="button" value="<?php _e( "Find Custom/Meta Fields", "woocommerce-advbulkedit"); ?>" />
-			<button id="pluginsettingsbut" class="button-wcabe" type="button">
+			<button id="pluginsettingsbut" class="button-primary-wcabe" type="button">
 			   <span class="icon-cog-outline"></span>
 				<?php _e( "Plugin Settings", "woocommerce-advbulkedit"); ?>
 			 </button>
@@ -2009,6 +2003,24 @@ class W3ExAdvBulkEditView{
 						</td>
 					</tr>
 
+					<tr>
+						<td width="50%" style="padding-top: 20px;">
+							<label><input id="setting-auto-regenrate-products-table-on-save-link" type="checkbox"
+									<?php
+									echo (
+											isset($settings['setting_auto_regenrate_products_table_on_save']) &&
+											$settings['setting_auto_regenrate_products_table_on_save'] == 0) ?
+											"" : "checked=checked"
+									;
+									
+									?>
+								><?php _e( 'Enable auto regeneration of products lookup table', 'woocommerce-advbulkedit'); ?></label>
+						</td>
+						<td  style="padding-top: 20px;">
+
+						</td>
+					</tr>
+
 
                     <tr>
 						<td width="50%" style="padding-top: 20px;">
@@ -2064,7 +2076,7 @@ class W3ExAdvBulkEditView{
 								}
 								echo '<div class="largeattr"><label><input type="checkbox" data-id="'.$lattr['name'].'" '.$checked.' autocomplete="off">'.$lattr['label'].'</label></div>';
 							}
-							echo '<div style="clear:both;width:1px;height:1px;"></div><div class="largeattr">(Needs page reload for the changes to take effect)</div></div>';
+							echo '<div style="clear:both;width:1px;height:1px;"></div><br><div class="largeattr_info">(NOTE: Needs page reload for the changes to take effect)</div></div>';
 						}
 					?>
 				</div>
@@ -2477,8 +2489,11 @@ class W3ExAdvBulkEditView{
 						<input id="bulk_regular_pricevalue" type="text" data-id="_regular_price" class="bulkvalue" placeholder="Skipped (empty)"/>
 					</td>
 					<td>
-						 <select id="bulk_regular_price_round" style="display: none;">
+						 <select id="bulk_regular_price_round" data-info-block-id="bulk_regular_price_round_info" style="display: none;">
 						 	<option value="noround"><?php _e( "no rounding", "woocommerce-advbulkedit"); ?></option>
+							<option value="excelround"><?php _e( "excel-like (1)", "woocommerce-advbulkedit"); ?></option>
+							<option value="excelround1"><?php _e( "excel-like (0.1)", "woocommerce-advbulkedit"); ?></option>
+							<option value="excelround01"><?php _e( "excel-like (0.01)", "woocommerce-advbulkedit"); ?></option>
 							<option value="roundup100"><?php _e( "round-up (100)", "woocommerce-advbulkedit"); ?></option>
 							<option value="roundup10"><?php _e( "round-up (10)", "woocommerce-advbulkedit"); ?></option>
 							<option value="roundup"><?php _e( "round-up (1)", "woocommerce-advbulkedit"); ?></option>
@@ -2491,10 +2506,7 @@ class W3ExAdvBulkEditView{
 							<option value="rounddown100"><?php _e( "round-down (100)", "woocommerce-advbulkedit"); ?></option>
 						 </select>
 						<div id="bulk_regular_price_round_info" style="visibility: hidden; display: inline-block;">
-<!--							<button id="btn-info-bulk-edit-reg-price-rounding" class="btn-info"></button>-->
-<!--							<template id="btn-info-bulk-edit-reg-price-rounding-body">-->
-<!--								--><?php //_e('Regular Price Help Info', 'woocommerce-advbulkedit'); ?>
-<!--							</template>-->
+							Example: <strong>123.1234</strong> &#x2192;  <strong>123.12</strong> &#9670; <strong>57.4561</strong> &#x2192;  <strong>57.45</strong>
 						</div>
 
 					</td>
@@ -2521,8 +2533,11 @@ class W3ExAdvBulkEditView{
 						<input id="bulk_sale_pricevalue" type="text" data-id="_sale_price" class="bulkvalue" placeholder="Skipped (empty)"/>
 					</td>
 					<td>
-					 	 <select id="bulk_sale_price_round" style="display: none;">
+					 	 <select id="bulk_sale_price_round" data-info-block-id="bulk_sale_price_round_info" style="display: none;">
 						 	<option value="noround"><?php _e( "no rounding", "woocommerce-advbulkedit"); ?></option>
+							<option value="excelround"><?php _e( "excel-like (1)", "woocommerce-advbulkedit"); ?></option>
+							<option value="excelround1"><?php _e( "excel-like (0.1)", "woocommerce-advbulkedit"); ?></option>
+							<option value="excelround01"><?php _e( "excel-like (0.01)", "woocommerce-advbulkedit"); ?></option>
 							<option value="roundup100"><?php _e( "round-up (100)", "woocommerce-advbulkedit"); ?></option>
 							<option value="roundup10"><?php _e( "round-up (10)", "woocommerce-advbulkedit"); ?></option>
 							<option value="roundup"><?php _e( "round-up (1)", "woocommerce-advbulkedit"); ?></option>
@@ -2534,7 +2549,10 @@ class W3ExAdvBulkEditView{
 							<option value="rounddown10"><?php _e( "round-down (10)", "woocommerce-advbulkedit"); ?></option>
 							<option value="rounddown100"><?php _e( "round-down (100)", "woocommerce-advbulkedit"); ?></option>
 						 </select>
-						 <input type="checkbox" id="saleskip"><label id="saleskiplabel" for="saleskip"> Skip products that have a sale price</label>
+						<input type="checkbox" id="saleskip"><label id="saleskiplabel" for="saleskip"> Skip products that have a sale price</label>
+						<div id="bulk_sale_price_round_info" style="visibility: hidden; display: inline-block;">
+							Example: <strong>123.1234</strong> &#x2192;  <strong>123.12</strong> &#9670; <strong>57.4561</strong> &#x2192;  <strong>57.45</strong>
+						</div>
 					</td>
 				</tr>
 				<tr data-id="_tax_status">
@@ -3380,8 +3398,11 @@ class W3ExAdvBulkEditView{
 			<!--//select dialog-->
 			<div id="selectdialog">
 
-			<div id="selquickactions">
-				<strong><?php _e( "Quick Selects", "woocommerce-advbulkedit"); ?>:</strong>
+            <div class="selquickactions">
+	            <?php echo apply_filters('wcabe_filter_selection_manager_before_content', ''); ?>
+            </div>
+			<div class="selquickactions">
+                <strong><?php _e( "Quick Selects", "woocommerce-advbulkedit"); ?>:</strong>
 				<a id="selallproducts" href="#" class="sel-manager-quick-action"><?php _e( "All Products", "woocommerce-advbulkedit"); ?></a>
 				<a id="selallvars" href="#" class="sel-manager-quick-action"><?php _e( "All Variations", "woocommerce-advbulkedit"); ?></a>
 				<a id="seldupproducts" href="#" class="sel-manager-quick-action"><?php _e( "Duplicate Products by:", "woocommerce-advbulkedit"); ?></a>

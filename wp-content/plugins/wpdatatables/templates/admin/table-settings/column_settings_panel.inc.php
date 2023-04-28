@@ -71,7 +71,7 @@
                                 <h4 class="c-title-color m-b-2">
                                     <?php esc_html_e('Displayed header', 'wpdatatables'); ?>
                                     <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                                       title="You can redefine the visible column header here, it will be shown instead of the orignial header."></i>
+                                       title="<?php esc_attr_e('You can redefine the visible column header here, it will be shown instead of the original header.', 'wpdatatables'); ?>"></i>
                                 </h4>
                                 <div class="form-group">
                                     <div class="fg-line">
@@ -85,7 +85,7 @@
                                 <h4 class="c-title-color m-b-2">
                                     <?php esc_html_e('Column position', 'wpdatatables'); ?>
                                     <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                                       title="You can redefine the position of the column here. Other columns will automatically re-position if you change it and click Apply."></i>
+                                       title="<?php esc_attr_e('You can redefine the position of the column here. Other columns will automatically re-position if you change it and click Apply.', 'wpdatatables'); ?>"></i>
                                 </h4>
                                 <div class="form-group">
                                     <div class="fg-line wdt-custom-number-input">
@@ -175,7 +175,7 @@
                                 <h4 class="c-title-color m-b-2">
                                     <?php esc_html_e('Hide on mobiles', 'wpdatatables'); ?>
                                     <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                                       title="Disabling this will make the column collapse to an expandable block when table viewed from mobile devices."></i>
+                                       title="<?php esc_attr_e('Disabling this will make the column collapse to an expandable block when table viewed from mobile devices.','wpdatatables'); ?>"></i>
                                 </h4>
 
                                 <div class="form-group">
@@ -191,7 +191,7 @@
                                 <h4 class="c-title-color m-b-2">
                                     <?php esc_html_e('Hide on tablets', 'wpdatatables'); ?>
                                     <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                                       title="Disabling this will make the column collapse to an expandable block when table viewed from tablet devices."></i>
+                                       title="<?php esc_attr_e('Disabling this will make the column collapse to an expandable block when table viewed from tablet devices.','wpdatatables'); ?>"></i>
                                 </h4>
 
                                 <div class="form-group">
@@ -213,7 +213,7 @@
                                 <h4 class="c-title-color m-b-2">
                                     <?php esc_html_e('CSS class(es)', 'wpdatatables'); ?>
                                     <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                                       title="Here you can define additional CSS classes, which will be applied to all the cells in this column and can be used for customizing the styling."></i>
+                                       title="<?php esc_attr_e('Here you can define additional CSS classes, which will be applied to all the cells in this column and can be used for customizing the styling.','wpdatatables'); ?>"></i>
                                 </h4>
                                 <div class="form-group">
                                     <div class="fg-line">
@@ -227,7 +227,7 @@
                                 <h4 class="c-title-color m-b-2">
                                     <?php esc_html_e('Visible on front-end', 'wpdatatables'); ?>
                                     <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                                       title="Disabling this will hide the column from table front-end. Please note that if column visibility is enabled in Table Tools block, front-end users will be able to access hidden columns as well."></i>
+                                       title="<?php esc_attr_e('Disabling this will hide the column from table front-end. Please note that if column visibility is enabled in Table Tools block, front-end users will be able to access hidden columns as well.','wpdatatables'); ?>"></i>
                                 </h4>
 
                                 <div class="form-group">
@@ -242,7 +242,42 @@
 
                         </div>
                         <!-- /.row -->
-
+                        <div class="row">
+                        <div class="col-sm-6">
+                            <h4 class="c-title-color m-b-2">
+			                    <?php esc_html_e('Column header alignment', 'wpdatatables'); ?>
+                                <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right" title=""
+                                   data-original-title="<?php esc_attr_e('You can override the default alignment for the column header here.', 'wpdatatables'); ?>"></i>
+                            </h4>
+                            <div class="fg-line">
+                                <div class="select">
+                                    <select class="form-control selectpicker" id="wdt-column-align-header" autocomplete="off"
+                                            title="<?php esc_attr_e('Default', 'wpdatatables'); ?>">
+                                        <option value="left"><?php esc_html_e('Left', 'wpdatatables'); ?></option>
+                                        <option value="center"><?php esc_html_e('Center', 'wpdatatables'); ?></option>
+                                        <option value="right"><?php esc_html_e('Right', 'wpdatatables'); ?></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <h4 class="c-title-color m-b-2">
+			                    <?php esc_html_e('Column cells alignment', 'wpdatatables'); ?>
+                                <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right" title=""
+                                   data-original-title="<?php esc_attr_e('You can override the default alignment for the column cells here.', 'wpdatatables'); ?>"></i>
+                            </h4>
+                            <div class="fg-line">
+                                <div class="select">
+                                    <select class="form-control selectpicker" id="wdt-column-align-fields" autocomplete="off"
+                                            title="<?php esc_attr_e('Default', 'wpdatatables'); ?>">
+                                        <option value="left"><?php esc_html_e('Left', 'wpdatatables'); ?></option>
+                                        <option value="center"><?php esc_html_e('Center', 'wpdatatables'); ?></option>
+                                        <option value="right"><?php esc_html_e('Right', 'wpdatatables'); ?></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
                         <!-- .row -->
                         <div class="row">
 
@@ -250,7 +285,7 @@
                                 <h4 class="c-title-color m-b-2">
                                     <?php esc_html_e('Column width', 'wpdatatables'); ?>
                                     <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                                       title="Input width for column( in percents with % or pixels without px). Leave a blank if you want to leave auto width."></i>
+                                       title="<?php esc_attr_e('Input width for column (in percents with % or pixels without px). Leave a blank if you want to leave auto width.','wpdatatables'); ?>"></i>
                                 </h4>
                                 <div class="form-group">
                                     <div class="fg-line">
@@ -328,11 +363,30 @@
 
                             </div>
 
+
+                            <div class="col-sm-6">
+                                <h4 class="c-title-color m-b-2 wdt-beta-feature">
+                                    <?php esc_html_e('Column header text rotation', 'wpdatatables'); ?>
+                                    <p class="m-b-2 wdt-beta-feature"><?php esc_html_e('BETA', 'wpdatatables'); ?></p>
+                                       <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right" title=""
+                                          data-original-title="<?php esc_attr_e('Here you can override the default rotation for the column header text.', 'wpdatatables'); ?>"></i>
+                                </h4>
+                                <div class="fg-line">
+                                    <div class="select">
+                                        <select class="form-control selectpicker" id="wdt-column-rotate-header-name" autocomplete="off"
+                                                title="<?php esc_attr_e('Default', 'wpdatatables'); ?>">
+                                            <option value="360"><?php esc_html_e('-90', 'wpdatatables'); ?></option>
+                                            <option value=""><?php esc_html_e('0', 'wpdatatables'); ?></option>
+                                            <option value="180"><?php esc_html_e('90', 'wpdatatables'); ?></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
                             <?php do_action('wdt_add_column_display_settings_element'); ?>
-
                         </div>
-                        <!-- /.row -->
 
+                        <!-- /.row -->
                     </div>
                     <!-- /#column-display-settings -->
 
@@ -756,7 +810,7 @@
                                 <h4 class="c-title-color m-b-2">
                                     <?php esc_html_e('Button text', 'wpdatatables'); ?>
                                     <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                                       title="You can set the button display text"></i>
+                                       title="<?php esc_attr_e('You can set the button display text','wpdatatables'); ?>"></i>
                                 </h4>
                                 <div class="form-group">
                                     <div class="fg-line">
@@ -770,7 +824,7 @@
                                 <h4 class="c-title-color m-b-2">
                                     <?php esc_html_e('Button class', 'wpdatatables'); ?>
                                     <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                                       title="You can set the button class"></i>
+                                       title="<?php esc_attr_e('You can set the button class','wpdatatables'); ?>"></i>
                                 </h4>
                                 <div class="form-group">
                                     <div class="fg-line">
@@ -1004,14 +1058,14 @@
                                      hidden="hidden">
                                     <div class="fg-line">
                                         <input type="text" class="form-control input-sm" value=""
-                                               id="wdt-filter-default-value-from" placeholder="From">
+                                               id="wdt-filter-default-value-from" placeholder="<?php esc_attr_e('From','wpdatatables'); ?>">
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-6 p-r-0 wdt-filter-default-value-to-block"
                                      hidden="hidden">
                                     <div class="fg-line">
                                         <input type="text" class="form-control input-sm" value=""
-                                               id="wdt-filter-default-value-to" placeholder="To">
+                                               id="wdt-filter-default-value-to" placeholder="<?php esc_attr_e('To','wpdatatables'); ?>">
                                     </div>
                                 </div>
                                 <div class="form-group wdt-filter-default-value-selectpicker-block" hidden="hidden">
@@ -1021,6 +1075,41 @@
 
                                             </select>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 wdt-filtering-enabled-block wdt-range-max-value">
+                                <h4 class="c-title-color m-b-2">
+                                    <?php esc_html_e('Max value', 'wpdatatables'); ?>
+                                    <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
+                                       title="<?php esc_attr_e('Choose how the max value on the range slider will be displayed.', 'wpdatatables'); ?>"></i>
+                                </h4>
+
+                                <div class="form-group">
+                                    <div class="fg-line">
+                                        <div class="select">
+                                            <select class="selectpicker" id="wdt-max-value-display">
+                                                <option value="default"><?php esc_html_e('Show max value', 'wpdatatables'); ?></option>
+                                                <option value="unlimited_text"><?php esc_html_e('Show \'Unlimited\' text', 'wpdatatables'); ?></option>
+                                                <option value="unlimited_symbol"><?php esc_html_e('Show unlimited symbol (∞)', 'wpdatatables'); ?></option>
+                                                <option value="custom_text"><?php esc_html_e('Custom text', 'wpdatatables'); ?></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 wdt-range-max-value-custom">
+                                <h4 class="c-title-color m-b-2">
+                                    <?php esc_html_e('Custom max value', 'wpdatatables'); ?>
+                                    <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
+                                       title="<?php esc_attr_e('Use a custom string as your max value on the range slider,', 'wpdatatables'); ?>"></i>
+                                </h4>
+                                <div class="form-group">
+                                    <div class="fg-line">
+                                        <input type="text" class="form-control input-sm" id="wdt-custom-max-value"
+                                               value="">
                                     </div>
                                 </div>
                             </div>
@@ -1050,6 +1139,20 @@
                                         <input id="wdt-search-in-selectbox" type="checkbox">
                                         <label for="wdt-search-in-selectbox"
                                                class="ts-label"><?php esc_html_e('Enable search in selectbox/multiselectbox', 'wpdatatables'); ?></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 wdt-filtering-enabled-block wdt-and-logic-block">
+                                <h4 class="c-title-color m-b-2">
+                                    <?php esc_html_e('Use AND logic in multiselectbox/checkbox', 'wpdatatables'); ?>
+                                    <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
+                                       title="<?php esc_attr_e('Use AND logic instead of OR in multiselectbox/checkbox. This means that checking multiple options restricts the results instead of broadening them.', 'wpdatatables'); ?>"></i>
+                                </h4>
+                                <div class="form-group">
+                                    <div class="toggle-switch" data-ts-color="blue">
+                                        <input id="wdt-and-logic" type="checkbox">
+                                        <label for="wdt-and-logic"
+                                               class="ts-label"><?php esc_html_e('Enable AND logic in multiselectbox/checkbox', 'wpdatatables'); ?></label>
                                     </div>
                                 </div>
                             </div>
@@ -1198,7 +1301,7 @@
 
                 <div class="pull-right">
                     <button class="btn btn-danger btn-icon-text wdt-cancel-column-settings">
-                       <?php esc_html_e('Cancel', 'wpdatatables'); ?>
+                        <?php esc_html_e('Cancel', 'wpdatatables'); ?>
                     </button>
                     <button class="btn btn-primary btn-icon-text wdt-column-apply">
                         <i class="wpdt-icon-save"></i> <?php esc_html_e('Save Changes', 'wpdatatables'); ?>

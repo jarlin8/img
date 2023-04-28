@@ -264,6 +264,8 @@ function wdtEditEnqueue()
     wp_enqueue_style('wdt-skin-aqua', WDT_ASSETS_PATH . 'css/wdt-skins/aqua.css', array(), WDT_CURRENT_VERSION);
     wp_enqueue_style('wdt-skin-purple', WDT_ASSETS_PATH . 'css/wdt-skins/purple.css', array(), WDT_CURRENT_VERSION);
     wp_enqueue_style('wdt-skin-dark', WDT_ASSETS_PATH . 'css/wdt-skins/dark.css', array(), WDT_CURRENT_VERSION);
+    wp_enqueue_style('wdt-skin-raspberry-cream', WDT_ASSETS_PATH . 'css/wdt-skins/raspberry-cream.css', array(), WDT_CURRENT_VERSION);
+	wp_enqueue_style('wdt-skin-mojito', WDT_ASSETS_PATH . 'css/wdt-skins/mojito.css', array(), WDT_CURRENT_VERSION);
 
     wp_enqueue_script('wdt-datatables', WDT_JS_PATH . 'jquery-datatables/jquery.dataTables.min.js', array(), WDT_CURRENT_VERSION, true);
     wp_enqueue_script('wdt-advanced-filter', WDT_JS_PATH . 'wpdatatables/wdt.columnFilter.js', array(), WDT_CURRENT_VERSION, true);
@@ -370,7 +372,10 @@ function wdtChartWizardEnqueue()
     wp_enqueue_script('wdt-highcharts', '//code.highcharts.com/highcharts.js', array(), WDT_CURRENT_VERSION, true);
     wp_enqueue_script('wdt-highcharts-more', '//code.highcharts.com/highcharts-more.js', array(), WDT_CURRENT_VERSION, true);
     wp_enqueue_script('wdt-highcharts-3d', '//code.highcharts.com/highcharts-3d.js', array(), WDT_CURRENT_VERSION, true);
-    wp_enqueue_script('wdt-heatmap', '//code.highcharts.com/modules/heatmap.js', array(), WDT_CURRENT_VERSION, true);
+	wp_enqueue_script('wdt-cylinder', '//code.highcharts.com/modules/cylinder.js', array(), WDT_CURRENT_VERSION, true);
+	wp_enqueue_script('wdt-heatmap', '//code.highcharts.com/modules/heatmap.js', array(), WDT_CURRENT_VERSION, true);
+	wp_enqueue_script('wdt-funnel', '//code.highcharts.com/modules/funnel.js', array(), WDT_CURRENT_VERSION, true);
+	wp_enqueue_script('wdt-funnel3d', '//code.highcharts.com/modules/funnel3d.js', array(), WDT_CURRENT_VERSION, true);
     wp_enqueue_script('wdt-treemap', '//code.highcharts.com/modules/treemap.js', array(), WDT_CURRENT_VERSION, true);
     wp_enqueue_script('wdt-exporting', '//code.highcharts.com/modules/exporting.js', array(), WDT_CURRENT_VERSION, true);
     wp_enqueue_script('wdt-exporting-data', '//code.highcharts.com/modules/export-data.js', array(), WDT_CURRENT_VERSION, true);
@@ -428,9 +433,6 @@ function wdtDashboardEnqueue()
     wp_enqueue_script('wdt-common');
     wp_enqueue_script('wdt-doc-js');
     wp_enqueue_script('wdt-dashboard-psl', WDT_ROOT_URL . 'assets/js/psl/psl.min.js', array(), WDT_CURRENT_VERSION, true);
-    wp_enqueue_script('wdt-dashboard-tms-store-checkout', WDT_JS_PATH . 'wpdatatables/wdt.store.checkout.js', array('jquery'), 1.12, true);
-
-    wp_localize_script('wdt-dashboard-tms-store-checkout', 'tmsStore', ['url' => WDT_STORE_URL]);
 
     do_action('wdt_enqueue_on_dashboard_page');
 }
@@ -504,9 +506,6 @@ function wdtAddOnsEnqueue()
 
     wp_enqueue_script('wdt-common');
     wp_enqueue_script('wdt-doc-js');
-    wp_enqueue_script('wdt-addons-tms-store-checkout', WDT_JS_PATH . 'wpdatatables/wdt.store.checkout.js', array('jquery'), 1.12, true);
-
-    wp_localize_script('wdt-addons-tms-store-checkout', 'tmsStore', ['url' => WDT_STORE_URL]);
 }
 
 /**
@@ -583,9 +582,6 @@ function wdtEdit()
         }
         WDTTools::exportJSVar('wpdatatable_init_config', $tableData->table);
     }
-
-    /** @noinspection PhpUnusedLocalVariableInspection */
-    $wdtUserRoles = get_editable_roles();
 
     if (isset($tableData) && isset($tableData->table)) {
         $connection = $tableData->table->connection;
@@ -717,11 +713,30 @@ function wdtChartWizard()
 
     $chartId = isset($_GET['chart_id']) ? (int)$_GET['chart_id'] : false;
     if (!empty($chartId)) {
-        $chartObj = new WPDataChart();
-        $chartObj->setId($chartId);
-        $chartObj->loadFromDB();
-        $chartObj->prepareData();
-        $chartObj->shiftStringColumnUp();
+        try {
+            $chartObj = new WPDataChart();
+            $chartObj->setId($chartId);
+            $chartObj->loadFromDB();
+            $chartObj->prepareData();
+            $chartObj->shiftStringColumnUp();
+            switch ($chartObj->getEngine()){
+                case 'google':
+                    $chartObj->prepareGoogleChartsRender();
+                    break;
+                case 'highcharts':
+                    $chartObj->prepareHighchartsRender();
+                    break;
+                case 'chartjs':
+                    $chartObj->prepareChartJSRender();
+                    break;
+                case 'apexcharts':
+                    $chartObj->prepareApexchartsRender();
+                    break;
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            exit;
+        }
     }
 
     ob_start();

@@ -333,10 +333,10 @@ h2 {
     margin-left: 20px;
 }
 
-#selquickactions{
+.selquickactions{
     padding:10px;
-    padding-bottom:20px;
-    padding-top:20px;
+    padding-bottom:6px;
+    padding-top:12px;
     line-height: 26px;
 }
 
@@ -525,6 +525,10 @@ input[type=text] {
     padding-top: 10px;
     width:294px;
     word-wrap: break-word;
+}
+
+.largeattr_info {
+    margin-left: 25px;
 }
 
 #findcustomfieldsdialog{

@@ -27,7 +27,7 @@ var WDTColumn = function (column, parent_table) {
      * Header to display
      * @type {null|string}
      */
-    this.display_header = null;
+    this.display_header = '';
 
     /**
      * Position of column in the table
@@ -125,13 +125,18 @@ var WDTColumn = function (column, parent_table) {
      * @type {number}
      */
     this.possibleValuesAjax = 10;
-
+    this.column_align_header = '';
+    this.column_align_fields = '';
+    /**
+     * Column rotate header name
+     *
+     */
+    this.column_rotate_header_name = '';
     /**
      * Toggle calculate total for numeric columns
      * @type {int}
      */
     this.calculateTotal = 0;
-
     /**
      * Toggle calculate average for numeric columns
      * @type {int}
@@ -197,6 +202,18 @@ var WDTColumn = function (column, parent_table) {
       *  @type {int}
       */
     this.rangeSlider = 0;
+
+    /**
+      * Display max value on range slider
+      *  @type {string}
+      */
+    this.rangeMaxValueDisplay = 'default';
+
+    /**
+      * Custom max value string in the range slider
+      *  @type {string}
+      */
+    this.customMaxRangeValue = null;
 
     /**
      * Filter label
@@ -278,6 +295,11 @@ var WDTColumn = function (column, parent_table) {
     this.checkboxesInModal = 0;
 
     /**
+     * Use AND logic in multiselectbox/checkbox filter
+     */
+    this.andLogic = 0;
+
+    /**
      * Open link column in a popup
      */
     this.linkTargetAttribute = '_self';
@@ -323,13 +345,14 @@ var WDTColumn = function (column, parent_table) {
         this.calculateMin = column.calculateMin || 0;
         this.calculateTotal = column.calculateTotal || 0;
         this.checkboxesInModal = column.checkboxesInModal || 0;
+        this.andLogic = column.andLogic || 0;
         this.color = column.color || '';
         this.conditional_formatting = column.conditional_formatting || [];
         this.css_class = column.css_class || '';
         this.dateInputFormat = column.dateInputFormat || '';
         this.decimalPlaces = column.decimalPlaces;
         this.defaultSortingColumn = column.defaultSortingColumn || 0;
-        this.display_header = column.display_header || null;
+        this.display_header = column.display_header || '';
         this.editingDefaultValue = column.editingDefaultValue || null;
         this.editingNonEmpty = column.input_mandatory || 0;
         this.searchInSelectBoxEditing = column.searchInSelectBoxEditing || 0;
@@ -356,20 +379,25 @@ var WDTColumn = function (column, parent_table) {
         this.linkButtonLabel = column.linkButtonLabel || null;
         this.linkButtonClass = column.linkButtonClass || null;
         this.rangeSlider = column.rangeSlider || 0;
+        this.rangeMaxValueDisplay = column.rangeMaxValueDisplay || 'default';
+        this.customMaxRangeValue = column.customMaxRangeValue || null;
         this.orig_header = column.orig_header || null;
         this.parent_table = column.parent_table || null;
         this.pos = column.pos || 0;
         this.possibleValuesAddEmpty = column.possibleValuesAddEmpty || 0;
         this.possibleValuesType = column.possibleValuesType || null;
         this.possibleValuesAjax = column.possibleValuesAjax || 10;
+        this.column_align_fields = column.column_align_fields || '';
         this.skip_thousands_separator = column.skip_thousands_separator || 0;
         this.sorting = typeof column.sorting !== 'undefined' ? column.sorting : 1;
+        this.column_align_header = column.column_align_header || '';
         this.text_after = column.text_after || null;
         this.text_before = column.text_before || null;
         this.type = column.type || null;
         this.valuesList = column.valuesList || null;
         this.visible = typeof column.visible !== 'undefined' ? column.visible : 1;
         this.width = column.width || null;
+        this.column_rotate_header_name = column.column_rotate_header_name || '';
 
         if ( typeof callbackExtendColumnObject !== 'undefined' ) {
             callbackExtendColumnObject(column, this);
@@ -1101,6 +1129,9 @@ WDTColumn.prototype.fillInputs = function () {
     jQuery('#wdt-column-values').selectpicker('val', this.possibleValuesType).change();
     jQuery('#wdt-column-values-list').tagsinput('removeAll');
     jQuery('#wdt-possible-values-ajax').selectpicker('val', this.possibleValuesAjax).change();
+    jQuery('#wdt-column-align-header').selectpicker('val', this.column_align_header).change();
+    jQuery('#wdt-column-align-fields').selectpicker('val', this.column_align_fields).change();
+    jQuery('#wdt-column-rotate-header-name').selectpicker('val', this.column_rotate_header_name).change();
     if (this.possibleValuesType == 'list') {
         jQuery('#wdt-column-values-list').tagsinput('add', this.valuesList);
     } else if (this.possibleValuesType == 'foreignkey') {
@@ -1167,6 +1198,8 @@ WDTColumn.prototype.fillInputs = function () {
         jQuery('li.column-filtering-settings-tab').removeClass('active').show();
         jQuery('#wdt-column-exact-filtering').prop('checked', this.exactFiltering).change();
         jQuery('#wdt-column-range-slider').prop('checked',this.rangeSlider).change();
+        jQuery('#wdt-max-value-display').selectpicker('val', this.rangeMaxValueDisplay);
+        jQuery('#wdt-custom-max-value').val(this.customMaxRangeValue);
         jQuery('#wdt-column-filter-label').val(this.filterLabel);
         jQuery('#wdt-search-in-selectbox').prop('checked', this.searchInSelectBox).change();
 
@@ -1174,12 +1207,17 @@ WDTColumn.prototype.fillInputs = function () {
             jQuery('#wdt-column-filter-type').selectpicker('val', this.filter_type);
             jQuery('#wdt-column-enable-filter').prop('checked', 1).change();
 
-            if (this.filter_type === 'checkbox' && this.parent_table.filtering_form === 1) {
-                jQuery('#wdt-checkboxes-in-modal').prop('checked', this.checkboxesInModal).change();
+            if (this.filter_type === 'checkbox') {
+                if (this.parent_table.filtering_form === 1)
+                    jQuery('#wdt-checkboxes-in-modal').prop('checked', this.checkboxesInModal).change();
+                jQuery('#wdt-and-logic').prop('checked', this.andLogic).change();
             }
 
             if (jQuery.inArray(this.filter_type, ['select', 'multiselect']) !== -1) {
                 jQuery('#wdt-search-in-selectbox').prop('checked', this.searchInSelectBox).change();
+
+                if (this.filter_type === 'multiselect')
+                    jQuery('#wdt-and-logic').prop('checked', this.andLogic).change();
             }
 
             if (this.filterDefaultValue) {
@@ -1399,6 +1437,9 @@ WDTColumn.prototype.applyChanges = function () {
     }
     this.possibleValuesAddEmpty = jQuery('#wdt-column-values-add-empty').is(':checked') ? 1 : 0;
     this.possibleValuesAjax = jQuery('#wdt-possible-values-ajax').val();
+    this.column_align_header = jQuery('#wdt-column-align-header').val();
+    this.column_align_fields = jQuery('#wdt-column-align-fields').val();
+    this.column_rotate_header_name = jQuery('#wdt-column-rotate-header-name').val();
     this.calculateTotal = ( jQuery('#wdt-column-calc-total').is(':checked') && ( this.type == 'int' || this.type == 'float' || this.type == 'formula') ) ? 1 : 0;
     this.calculateAvg = ( jQuery('#wdt-column-calc-avg').is(':checked') && ( this.type == 'int' || this.type == 'float' || this.type == 'formula') ) ? 1 : 0;
     this.calculateMax = ( jQuery('#wdt-column-calc-max').is(':checked') && ( this.type == 'int' || this.type == 'float' || this.type == 'formula') ) ? 1 : 0;
@@ -1436,6 +1477,8 @@ WDTColumn.prototype.applyChanges = function () {
             jQuery('#wdt-filter-default-value-selectpicker').selectpicker('val').join('|') :
             jQuery('#wdt-filter-default-value-selectpicker').selectpicker('val');
 
+        this.andLogic = jQuery('#wdt-and-logic').is(':checked') ? 1 : 0;
+
         if (this.parent_table.filtering_form === 1) {
             this.checkboxesInModal = ((jQuery('#wdt-checkboxes-in-modal').is(':checked') && this.filter_type === 'checkbox')) ? 1 : 0;
         }
@@ -1445,6 +1488,8 @@ WDTColumn.prototype.applyChanges = function () {
     this.editingNonEmpty = jQuery('#wdt-column-not-null').is(':checked') ? 1 : 0;
     this.searchInSelectBoxEditing = jQuery('#wdt-search-in-selectbox-editing').is(':checked') ? 1 : 0;
     this.rangeSlider = jQuery('#wdt-column-range-slider').is(':checked') ? 1 : 0;
+    this.rangeMaxValueDisplay = jQuery('#wdt-max-value-display').selectpicker('val');
+    this.customMaxRangeValue = jQuery('#wdt-custom-max-value').val();
 
     if ( typeof callbackApplyUIChangesForNewColumnOption !== 'undefined' ) {
         callbackApplyUIChangesForNewColumnOption(this);
@@ -1480,6 +1525,7 @@ WDTColumn.prototype.getJSON = function () {
         calculateMin: this.calculateMin,
         calculateTotal: this.calculateTotal,
         checkboxesInModal: this.checkboxesInModal,
+        andLogic: this.andLogic,
         color: this.color,
         conditional_formatting: this.conditional_formatting,
         css_class: this.css_class,
@@ -1517,15 +1563,20 @@ WDTColumn.prototype.getJSON = function () {
         possibleValuesAddEmpty: this.possibleValuesAddEmpty,
         possibleValuesType: this.possibleValuesType,
         possibleValuesAjax: this.type === 'string' ? this.possibleValuesAjax : -1,
+        column_align_fields: this.column_align_fields,
         rangeSlider: this.rangeSlider,
+        rangeMaxValueDisplay: this.rangeMaxValueDisplay,
+        customMaxRangeValue: this.customMaxRangeValue,
         skip_thousands_separator: this.skip_thousands_separator,
+        column_align_header: this.column_align_header,
         sorting: this.sorting,
         text_after: this.text_after,
         text_before: this.text_before,
         type: this.type,
         valuesList: this.valuesList,
         visible: this.visible,
-        width: this.width
+        width: this.width,
+        column_rotate_header_name: this.column_rotate_header_name
     };
 
     if ( typeof callbackExtendOptionInObjectFormat !== 'undefined' ) {
@@ -1544,7 +1595,7 @@ WDTColumn.prototype.renderSmallColumnBlock = function (columnIndex) {
 
     // Adding to the columns quickaccess modal
     var $columnBlock = jQuery(columnHtml).appendTo('#wdt-columns-list-modal div.wdt-columns-container');
-    this.display_header != null ?
+    this.display_header != '' ?
         $columnBlock.find('div.fg-line input').val(this.display_header) :
         $columnBlock.find('div.fg-line input').val(this.orig_header);
     $columnBlock.attr('data-orig_header', this.orig_header);

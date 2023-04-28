@@ -3,7 +3,9 @@
  */
 
 /*  Table   */
-
+.wpdt-c.wdt-skin-light .wpDataTablesFilter{
+    line-height:normal !important;
+}
 /*  Table Header  */
 
 .wpdt-c.wdt-skin-light .wpDataTablesWrapper table.wpDataTable > thead > tr > th {
@@ -77,6 +79,7 @@
     -moz-transition: .5s;
     -webkit-transition: .5s;
     transition: .5s;
+    height: 25px;
 }
 
 .wpdt-c.wdt-skin-light .wpDataTablesWrapper table.wpDataTable tr td:first-child {
@@ -359,6 +362,10 @@
 #wdt-filter-widget .wdt-skin-light .wpDataTableFilterSection {
     width: 100% !important;
     margin: 0 !important;
+}
+
+.wpdt-c.wdt-skin-light .wpDataTableFilterSection .wdt_checkbox_option input[type="checkbox"] {
+    top: 2px;
 }
 
 .wpdt-c.wdt-skin-light .wpDataTablesFilter .wpDataTableFilterSection input.form-control,

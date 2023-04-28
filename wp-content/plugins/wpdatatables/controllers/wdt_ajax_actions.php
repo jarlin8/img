@@ -31,6 +31,7 @@ function wdtGetAjaxData() {
     $globalSearchColumn = array();
     $searchInSelectBox = array();
     $searchInSelectBoxEditing = array();
+    $andLogic = array();
     $foreignKeyRule = array();
     $idColumn = '';
     $linkTargetAttribute = array();
@@ -48,6 +49,8 @@ function wdtGetAjaxData() {
     $userIdColumnHeader = '';
     $filterDefaultValue = array();
     $rangeSlider = array();
+    $rangeMaxValueDisplay = array();
+    $customMaxRangeValue = array();
 
     $wdtVar1 = isset($_GET['wdt_var1']) ? wdtSanitizeQuery($_GET['wdt_var1']) : $tableData->var1;
     $wdtVar2 = isset($_GET['wdt_var2']) ? wdtSanitizeQuery($_GET['wdt_var2']) : $tableData->var2;
@@ -69,7 +72,7 @@ function wdtGetAjaxData() {
         }
 
         $columnOrder[(int)$column->pos] = $column->orig_header;
-        if ($column->display_header) {
+        if ($column->display_header !='') {
             $columnTitles[$column->orig_header] = $column->display_header;
         } else {
             $columnTitles[$column->orig_header] = $column->orig_header;
@@ -120,6 +123,12 @@ function wdtGetAjaxData() {
         }
         if (isset($advancedSettings->rangeSlider) && $advancedSettings->rangeSlider == 1 ) {
             $rangeSlider[] = $column->orig_header;
+            if (isset($advancedSettings->rangeMaxValueDisplay)) {
+                $rangeMaxValueDisplay[] = $column->orig_header;
+            }
+            if (isset($advancedSettings->customMaxRangeValue)) {
+                $customMaxRangeValue[] = $column->orig_header;
+            }
         }
 
         $decimalPlaces[$column->orig_header] = isset($advancedSettings->decimalPlaces) ? $advancedSettings->decimalPlaces : null;
@@ -127,6 +136,7 @@ function wdtGetAjaxData() {
         $globalSearchColumn[$column->orig_header] = isset($advancedSettings->globalSearchColumn) ? $advancedSettings->globalSearchColumn : null;
         $searchInSelectBox[$column->orig_header] = isset($advancedSettings->searchInSelectBox) ? $advancedSettings->searchInSelectBox : null;
         $searchInSelectBoxEditing[$column->orig_header] = isset($advancedSettings->searchInSelectBoxEditing) ? $advancedSettings->searchInSelectBoxEditing : null;
+        $andLogic[$column->orig_header] = isset($advancedSettings->andLogic) ? $advancedSettings->andLogic : null;
         $linkTargetAttribute[$column->orig_header] = isset($advancedSettings->linkTargetAttribute) ? $advancedSettings->linkTargetAttribute : null;
         $linkNoFollowAttribute[$column->orig_header] = isset($advancedSettings->linkNoFollowAttribute) ? $advancedSettings->linkNoFollowAttribute : null;
         $linkNoreferrerAttribute[$column->orig_header] = isset($advancedSettings->linkNoreferrerAttribute) ? $advancedSettings->linkNoreferrerAttribute : null;
@@ -136,8 +146,12 @@ function wdtGetAjaxData() {
         $linkButtonClass[$column->orig_header] = isset($advancedSettings->linkButtonClass) ? $advancedSettings->linkButtonClass : null;
         $possibleValuesAddEmpty[$column->orig_header] = isset($advancedSettings->possibleValuesAddEmpty) ? $advancedSettings->possibleValuesAddEmpty : null;
         $rangeSlider[$column->orig_header] = isset($advancedSettings->rangeSlider) ? $advancedSettings->rangeSlider : null;
+        $rangeMaxValueDisplay[$column->orig_header] = isset($advancedSettings->rangeMaxValueDisplay) ? $advancedSettings->rangeMaxValueDisplay : null;
+        $customMaxRangeValue[$column->orig_header] = isset($advancedSettings->customMaxRangeValue) ? $advancedSettings->customMaxRangeValue : null;
         $foreignKeyRule[$column->orig_header] = isset($advancedSettings->foreignKeyRule) ? $advancedSettings->foreignKeyRule : null;
-
+	    $column_align_header[$column->orig_header] = isset($advancedSettings->column_align_header) ? $advancedSettings->column_align_header : '';
+	    $column_align_fields[$column->orig_header] = isset($advancedSettings->column_align_fields) ? $advancedSettings->column_align_fields : '';
+	    $column_rotate_header_name[$column->orig_header] = isset($advancedSettings->column_rotate_header_name) ? $advancedSettings->column_rotate_header_name : '';
     }
 
     if ($tableView == 'excel') {
@@ -207,6 +221,7 @@ function wdtGetAjaxData() {
         'globalSearchColumn'  => $globalSearchColumn,
         'searchInSelectBox'   => $searchInSelectBox,
         'searchInSelectBoxEditing' => $searchInSelectBoxEditing,
+        'andLogic'            => $andLogic,
         'filterTypes'         => $columnFilterTypes,
         'foreignKeyRule'      => $foreignKeyRule,
         'idColumn'            => $idColumn,
@@ -220,6 +235,8 @@ function wdtGetAjaxData() {
         'linkButtonClass'     => $linkButtonClass,
         'skip_thousands'      => $skipThousands,
         'rangeSlider'         => $rangeSlider,
+        'rangeMaxValueDisplay' => $rangeMaxValueDisplay,
+        'customMaxRangeValue'         => $customMaxRangeValue,
         'filterDefaultValue'  => $filterDefaultValue
     );
 

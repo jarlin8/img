@@ -51,19 +51,6 @@ class WpMelonWCABENewAjaxHandler
 			{
 				wcabe_process_ajax_autocomplete_product_selector_search();
 			} break;
-			case 'checkforupdate':
-			{
-				// Check for updates
-				$check_for_update_response = wp_remote_get(WCABE_SITE_URL.'/wp-json/wcabe/v1/checkforupdates/'.WCABE_VERSION);
-				$response = '';
-				if ($check_for_update_response['response']['code'] == '200') {
-					$response = json_decode( $check_for_update_response['body'] );
-				}
-				echo json_encode( [
-					'message'  => $response,
-				] );
-				die();
-			} break;
 		}
 	}
 }

@@ -33,15 +33,21 @@ class WDTColumn {
     protected $_searchInSelectBoxEditing = 1;
     protected $_filterLabel;
     protected $_checkboxesInModal = false;
+    protected $_andLogic = false;
     protected $_possibleValuesType;
     protected $_possibleValuesAddEmpty = false;
     protected $_possibleValuesAjax = 10;
+	protected $_column_align_fields = '';
     protected $_rangeSlider;
+    protected $_rangeMaxValueDisplay;
+    protected $_customMaxRangeValue;
     protected $_foreignKeyRule;
     protected $_editingDefaultValue = null;
     protected $_parentTable = null;
     protected $_linkButtonLabel;
+	protected $_column_align_header = '';
 
+	protected $_column_rotate_header_name = '';
     /**
      * WDTColumn constructor.
      *
@@ -64,6 +70,7 @@ class WDTColumn {
         $this->setFilterDefaultValue(WDTTools::defineDefaultValue($properties, 'filterDefaultValue', null));
         $this->setFilterLabel(WDTTools::defineDefaultValue($properties, 'filterLabel', null));
         $this->setCheckboxesInModal(WDTTools::defineDefaultValue($properties, 'checkboxesInModal', false));
+        $this->setAndLogic(WDTTools::defineDefaultValue($properties, 'andLogic', false));
         $this->_possibleValuesType = WDTTools::defineDefaultValue($properties, 'possibleValuesType', '');
         $this->setPossibleValuesAddEmpty(WDTTools::defineDefaultValue($properties, 'possibleValuesAddEmpty', false));
         $this->setPossibleValuesAjax(WDTTools::defineDefaultValue($properties, 'possibleValuesAjax', 10));
@@ -71,6 +78,8 @@ class WDTColumn {
         $this->setParentTable(WDTTools::defineDefaultValue($properties, 'parentTable', null));
         $this->setLinkButtonLabel(WDTTools::defineDefaultValue($properties, 'linkButtonLabel', null));
         $this->_rangeSlider = WDTTools::defineDefaultValue($properties, 'rangeSlider', '');
+        $this->setRangeMaxValueDisplay(WDTTools::defineDefaultValue($properties, 'rangeMaxValueDisplay', 'default'));
+        $this->setCustomMaxRangeValue(WDTTools::defineDefaultValue($properties, 'customMaxRangeValue', null));
 
     }
 
@@ -122,14 +131,12 @@ class WDTColumn {
     public function getTitle() {
         return apply_filters('wpdatatables_filter_column_title', $this->_title, $this->getOriginalHeader(), $this);
     }
-
     /**
      * @param string $title
      */
     public function setTitle($title) {
         $this->_title = $title;
     }
-
     /**
      * @return string
      */
@@ -351,7 +358,7 @@ class WDTColumn {
      * @param string $defaultValue
      */
     public function setFilterDefaultValue($defaultValue) {
-        if (strpos($defaultValue, '|') !== false) {
+        if ($defaultValue !== null && strpos($defaultValue, '|') !== false) {
             $defaultValue = explode('|', $defaultValue);
         }
         $this->_filterDefaultValue = $defaultValue;
@@ -536,6 +543,38 @@ class WDTColumn {
     /**
      * @return string
      */
+    public function getRangeMaxValueDisplay()
+    {
+        return $this->_rangeMaxValueDisplay;
+    }
+
+    /**
+     * @param string $rangeMaxValueDisplay
+     */
+    public function setRangeMaxValueDisplay($rangeMaxValueDisplay)
+    {
+        $this->_rangeMaxValueDisplay = $rangeMaxValueDisplay;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomMaxRangeValue()
+    {
+        return $this->_customMaxRangeValue;
+    }
+
+    /**
+     * @param string $customMaxRangeValue
+     */
+    public function setCustomMaxRangeValue($customMaxRangeValue)
+    {
+        $this->_customMaxRangeValue = $customMaxRangeValue;
+    }
+
+    /**
+     * @return string
+     */
     public function getFilterLabel() {
         return $this->_filterLabel;
     }
@@ -576,6 +615,20 @@ class WDTColumn {
     }
 
     /**
+     * @return bool
+     */
+    public function isAndLogic() {
+        return $this->_andLogic;
+    }
+
+    /**
+     * @param bool $andLogic
+     */
+    public function setAndLogic($andLogic) {
+        $this->_andLogic = $andLogic;
+    }
+
+    /**
      * @return string
      */
     public function getPossibleValuesType() {
@@ -609,13 +662,24 @@ class WDTColumn {
     public function getPossibleValuesAjax() {
         return $this->_possibleValuesAjax;
     }
-
+	public function getColumnAlignFields() {
+		return $this->_column_align_fields;
+	}
     /**
      * @param int $possibleValuesAjax
      */
     public function setPossibleValuesAjax($possibleValuesAjax) {
         $this->_possibleValuesAjax = $possibleValuesAjax;
     }
+	public function getColumnAlignHeader() {
+		return $this->_column_align_header;
+ 	}
+	public function setColumnAlignHeader($column_align) {
+		$this->_column_align_header = $column_align;
+	}
+	public function setColumnAlignFields($column_align) {
+		$this->_column_align_fields = $column_align;
+	}
 
     /**
      * @return mixed
@@ -623,6 +687,14 @@ class WDTColumn {
     public function getForeignKeyRule() {
         return $this->_foreignKeyRule;
     }
+
+	public function getColumnRotationHeader() {
+			return $this->_column_rotate_header_name;
+ 	}
+
+	public function setColumnRotationHeader($column_rotate) {
+			$this->_column_rotate_header_name = $column_rotate;
+	}
 
     /**
      * @param mixed $foreignKeyRule
@@ -941,14 +1013,20 @@ class WDTColumn {
         $jsFilterDef->displayHeader = $this->getTitle();
         $jsFilterDef->possibleValuesAddEmpty = $this->getPossibleValuesAddEmpty();
         $jsFilterDef->possibleValuesAjax = $this->getPossibleValuesAjax();
+	    $jsFilterDef->column_align_fields = $this->getColumnAlignFields();
         $jsFilterDef->defaultValue = $this->getFilterDefaultValue();
+	    $jsFilterDef->column_align_header = $this->getColumnAlignHeader();
+	    $jsFilterDef->column_rotate_header_name = $this->getColumnRotationHeader();
         $jsFilterDef->exactFiltering = $this->getExactFiltering();
         $jsFilterDef->filterLabel = $this->getFilterLabel();
         $jsFilterDef->searchInSelectBox = $this->getSearchInSelectBox();
         $jsFilterDef->searchInSelectBoxEditing = $this->getSearchInSelectBoxEditing();
         $jsFilterDef->checkboxesInModal = $this->isCheckboxesInModal();
+        $jsFilterDef->andLogic = $this->isAndLogic();
         $jsFilterDef->linkButtonLabel = $this->getLinkButtonLabel();
         $jsFilterDef->rangeSlider = $this->getRangeSlider();
+        $jsFilterDef->rangeMaxValueDisplay = $this->getRangeMaxValueDisplay();
+        $jsFilterDef->customMaxRangeValue = $this->getCustomMaxRangeValue();
 
         return apply_filters(
             'wpdatatables_filter_js_filtering_definition',
@@ -1020,10 +1098,13 @@ class WDTColumn {
         $jsEditingDef->defaultValue = $this->getEditingDefaultValue();
         $jsEditingDef->defaultValue = $this->applyPlaceholders($jsEditingDef->defaultValue);
         $jsEditingDef->possibleValuesAjax = $this->getPossibleValuesAjax();
+	    $jsEditingDef->column_align_fields = $this->getColumnAlignFields();
         $jsEditingDef->mandatory = $this->isNotNull();
         $jsEditingDef->displayHeader = $this->getTitle();
         $jsEditingDef->foreignKeyRule = $this->getForeignKeyRule();
         $jsEditingDef->searchInSelectBoxEditing = $this->getSearchInSelectBoxEditing();
+	    $jsEditingDef->column_align_header = $this->getColumnAlignHeader();
+	    $jsEditingDef->column_rotate_header_name = $this->getColumnRotationHeader();
 
         return apply_filters(
             'wpdatatables_filter_js_editing_definition',

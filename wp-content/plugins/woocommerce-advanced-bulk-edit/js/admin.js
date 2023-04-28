@@ -6506,7 +6506,6 @@ W3Ex.abemodule = (function($){
 
 
 
-	
 	$('body').on('mouseenter','#gallerydiv .galleryholder li',function(){
 			$(this).parent().find('img.delete').css('visibility','hidden');
 			$(this).find('img').css('visibility','visible');
@@ -6519,7 +6518,7 @@ W3Ex.abemodule = (function($){
 	$('body').on('click','#gallerydiv .galleryholder img.delete',function(){
 			$(this).parent().remove();
 		});
-	
+
 //selection manager
 	$('body').on('click','#selectdialog .selectset',function(){
 		var item = $(this);
@@ -6538,8 +6537,8 @@ W3Ex.abemodule = (function($){
 		return;
 		
 	})
-	
-	
+
+
 	$("#bulk_sale_price").change(function() 
 	{
 		var what = $(this).val();
@@ -6569,19 +6568,7 @@ W3Ex.abemodule = (function($){
 			$('#bulk_sale_price_round').hide();
 		}
 	})
-	
-//	$("#bulk_regular_price").change(function() 
-//    {
-//    	var what = $(this).val();
-//		if(what === 'incpercent' || what === 'decpercent')
-//		{
-//			$('#bulk_regular_price_round').show();
-//		}else
-//		{
-//			$('#bulk_regular_price_round').hide();
-//		}
-//	})
-		
+
 	function DisableAllControls(bdis)
 	{
 		if(bdis)
@@ -7816,7 +7803,22 @@ W3Ex.abemodule = (function($){
 							selitem[field] = toFixedWithoutRounding((Number(price) + parseFloat(percent)), prec);
 							if(params[field+'roundvalue'] !== undefined)
 							{
-								if(params[field+'roundvalue'] === 'rounddown01')
+								if(params[field+'roundvalue'] === 'excelround')
+								{
+									selitem[field] = ((Number(price) + parseFloat(percent))).toFixed(0);
+									selitem[field] = selitem[field].toString();
+								}
+								if(params[field+'roundvalue'] === 'excelround1')
+								{
+									selitem[field] = ((Number(price) + parseFloat(percent))).toFixed(1);
+									selitem[field] = selitem[field].toString();
+								}
+								if(params[field+'roundvalue'] === 'excelround01')
+								{
+									selitem[field] = ((Number(price) + parseFloat(percent))).toFixed(prec);
+									selitem[field] = selitem[field].toString();
+								}
+								else if(params[field+'roundvalue'] === 'rounddown01')
 								{
 									let valueWithPreciosion3 = toFixedWithoutRounding( Number(price) + parseFloat(percent), 3 );
 									//selitem[field] =Math.floor(Number(selitem[field]) * 100) / 100;
@@ -7852,22 +7854,22 @@ W3Ex.abemodule = (function($){
 								}
 								else if(params[field+'roundvalue'] === 'rounddown10')
 								{
-									selitem[field] =Math.floor(Number((selitem[field]) + 1) /10) * 10;
+									selitem[field] =Math.floor((Number(selitem[field]) + 1) /10) * 10;
 									selitem[field] = selitem[field].toString();
 								}
 								else if(params[field+'roundvalue'] === 'roundup10')
 								{
-									selitem[field] = Math.ceil(Number((selitem[field]) + 1) /10) * 10;
+									selitem[field] = Math.ceil((Number(selitem[field]) + 1) /10) * 10;
 									selitem[field] = selitem[field].toString();
 								}
 								else if(params[field+'roundvalue'] === 'rounddown100')
 								{
-									selitem[field] =Math.floor(Number((selitem[field]) + 1) /100) * 100;
+									selitem[field] =Math.floor((Number(selitem[field]) + 1) /100) * 100;
 									selitem[field] = selitem[field].toString();
 								}
 								else if(params[field+'roundvalue'] === 'roundup100')
 								{
-									selitem[field] = Math.ceil(Number((selitem[field]) + 1) /100) * 100;
+									selitem[field] = Math.ceil((Number(selitem[field]) + 1) /100) * 100;
 									selitem[field] = selitem[field].toString();
 								}
 							}
@@ -7901,7 +7903,23 @@ W3Ex.abemodule = (function($){
 
 							if(params[field+'roundvalue'] !== undefined)
 							{
-								if(params[field+'roundvalue'] === 'rounddown01')
+								if(params[field+'roundvalue'] === 'excelround')
+								{
+									selitem[field] = ((Number(price) - parseFloat(percent))).toFixed(0);
+									selitem[field] = selitem[field].toString();
+								}
+								if(params[field+'roundvalue'] === 'excelround1')
+								{
+									selitem[field] = ((Number(price) - parseFloat(percent))).toFixed(1);
+									selitem[field] = selitem[field].toString();
+								}
+
+								if(params[field+'roundvalue'] === 'excelround01')
+								{
+									selitem[field] = ((Number(price) - parseFloat(percent))).toFixed(prec);
+									selitem[field] = selitem[field].toString();
+								}
+								else if(params[field+'roundvalue'] === 'rounddown01')
 								{
 									let valueWithPreciosion3 = toFixedWithoutRounding( Number(price) - parseFloat(percent), 3 );
 									//selitem[field] =Math.floor(Number(selitem[field]) * 100) / 100;
@@ -7937,22 +7955,22 @@ W3Ex.abemodule = (function($){
 								}
 								else if(params[field+'roundvalue'] === 'rounddown10')
 								{
-									selitem[field] =Math.floor(Number((selitem[field]) + 1) /10) * 10;
+									selitem[field] =Math.floor((Number(selitem[field]) + 1) /10) * 10;
 									selitem[field] = selitem[field].toString();
 								}
 								else if(params[field+'roundvalue'] === 'roundup10')
 								{
-									selitem[field] = Math.ceil(Number((selitem[field]) + 1) /10) * 10;
+									selitem[field] = Math.ceil((Number(selitem[field]) + 1) /10) * 10;
 									selitem[field] = selitem[field].toString();
 								}
 								else if(params[field+'roundvalue'] === 'rounddown100')
 								{
-									selitem[field] =Math.floor(Number((selitem[field]) + 1) /100) * 100;
+									selitem[field] =Math.floor((Number(selitem[field]) + 1) /100) * 100;
 									selitem[field] = selitem[field].toString();
 								}
 								else if(params[field+'roundvalue'] === 'roundup100')
 								{
-									selitem[field] = Math.ceil(Number((selitem[field]) + 1) /100) * 100;
+									selitem[field] = Math.ceil((Number(selitem[field]) + 1) /100) * 100;
 									selitem[field] = selitem[field].toString();
 								}
 							}
@@ -11126,6 +11144,10 @@ $("#pluginsettings").dialog({
 			settings['setting_display_top_bar_link_bulkedit'] = 1;
 		else
 			settings['setting_display_top_bar_link_bulkedit'] = 0;
+		if($('#setting-auto-regenrate-products-table-on-save-link').is(':checked'))
+			settings['setting_auto_regenrate_products_table_on_save'] = 1;
+		else
+			settings['setting_auto_regenrate_products_table_on_save'] = 0;
 		if($('#calldoaction').is(':checked'))
 			settings['calldoaction'] = 1;
 		else

@@ -183,7 +183,7 @@ function wdtCreateInput(oTable, aoColumn, columnIndex, sColumnLabel, th, serverS
 
     input.on('keyup input',_.debounce(function (e) {
         inputSearch(this.value, e.keyCode);
-    }, 500)
+    }, serverSide ? 500 : 0)
     )
 
     function inputSearch(value, keyCode) {
@@ -353,18 +353,20 @@ function wdtCreateNumberRangeInput(oTable, aoColumn, columnIndex, sColumnLabel, 
             customSearchIndexes.push(columnIndex);
 
             var numberArray = oTable.api().column(columnIndex).data();
-            var formattedNumber = numberArray.map(function (numberArray) {
+            var formattedNumber = numberArray.map(function(numberArray) {
                 if (numberFormat === 1) {
                     return parseFloat(numberArray.replace(/\./g, '').replace(',', '.'));
                 }
                 return parseFloat(numberArray.replace(/,/g, ''))
+            }).filter(function(el) {
+                return !isNaN(el);
             })
             var minValue = serverSide === false ? Math.min.apply(Math, formattedNumber) : aoColumn.minValue
             var maxValue = serverSide === false ? Math.max.apply(Math, formattedNumber) : aoColumn.maxValue
+            var sliderDecimals =  aoColumn.columnType === 'int' ? 0 : aoColumn.numberOfDecimalPlaces
 
             noUiSlider.create(slider, {
                 start: [fromDefaultValue ? fromDefaultValue : minValue, toDefaultValue ? toDefaultValue : maxValue],
-                tooltips: true,
                 connect: true,
                 behaviour: 'drag',
                 range: {
@@ -372,10 +374,32 @@ function wdtCreateNumberRangeInput(oTable, aoColumn, columnIndex, sColumnLabel, 
                     'max': maxValue
                 },
                 format: wNumb({
-                    decimals: aoColumn.columnType === 'int' ? 0 : aoColumn.numberOfDecimalPlaces,
+                    decimals: sliderDecimals,
                     thousand: numberFormat === 1 ? aoColumn.columnType === 'float' ? aoColumn.thousandsSeparator : '.' : ',',
                     mark: numberFormat === 1 ? ',' : '.'
-                })
+                }),
+                tooltips: [
+                    true,
+                    { to: function (value) {
+                            if (value === maxValue && aoColumn.rangeMaxValueDisplay !== 'default') {
+                                switch (aoColumn.rangeMaxValueDisplay) {
+                                    case 'unlimited_text':
+                                        return 'Unlimited';
+                                    case 'unlimited_symbol':
+                                        return '<div style="">∞</div>';
+                                    case 'custom_text':
+                                        let returnMaxVal = aoColumn.customMaxRangeValue ? aoColumn.customMaxRangeValue : maxValue;
+                                        return '<div class="wdt-range-custom-unlimited">' + returnMaxVal + '</div>';
+                                    case 'default':
+                                    default:
+                                        return maxValue;
+                                }
+                            }
+                            return value.toFixed(sliderDecimals);
+                        },
+                        from: function (value) { return value }
+                    }
+                ]
             });
 
             slider.noUiSlider.on('end', function () {
@@ -1119,10 +1143,21 @@ function wdtCreateMultiSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th
         // Filter the table if default value is set
         if (aoColumn.defaultValue[0] && !serverSide) {
             var search = '';
-            for (var i = 0; i < aoColumn.defaultValue.length; i++) {
-                search += buildSearchStringForMultiFilters(aoColumn.defaultValue[i], aoColumn.exactFiltering);
+            if (aoColumn.andLogic) {
+                for (var i = 0; i < aoColumn.defaultValue.length; i++) {
+                    search += buildAndSearchStringForMultiFilters(aoColumn.defaultValue[i], aoColumn.exactFiltering, i);
+                }
+                if (aoColumn.exactFiltering) {
+                    search = search.slice(0, -2);
+                    search += '$';
+                }
+                oTable.fnFilter(search, columnIndex, true, false);
+            } else {
+                for (var i = 0; i < aoColumn.defaultValue.length; i++) {
+                    search += buildSearchStringForMultiFilters(aoColumn.defaultValue[i], aoColumn.exactFiltering);
+                }
+                oTable.fnFilter(search.substring(0, search.length - 1), columnIndex, true, false);
             }
-            oTable.fnFilter(search.substring(0, search.length - 1), columnIndex, true, false);
             fnOnFiltered();
         }
     }
@@ -1135,15 +1170,26 @@ function wdtCreateMultiSelectbox(oTable, aoColumn, columnIndex, sColumnLabel, th
         var search = '', selectedOptions;
         selectedOptions = jQuery(this).selectpicker('val');
 
-        jQuery.each(selectedOptions, function (index, value) {
-            if (columnType === 'email' && serverSide === false) {
-                var startIndex = value.indexOf('mailto:') + 7;
-                var endIndex = value.lastIndexOf("%22");
-                value = value.substr(startIndex, endIndex - startIndex)
+        if (aoColumn.andLogic && !serverSide) {
+            jQuery.each(selectedOptions, function (index, value) {
+                search += buildAndSearchStringForMultiFilters(value, aoColumn.exactFiltering, index);
+            });
+            if (aoColumn.exactFiltering) {
+                search = search.slice(0, -2);
+                search += '$';
             }
-            search += buildSearchStringForMultiFilters(value, aoColumn.exactFiltering);
-        });
-        oTable.api().column(columnIndex).search(search.substring(0, search.length - 1), true, false);
+            oTable.api().column(columnIndex).search(search, true, false);
+        } else {
+            jQuery.each(selectedOptions, function (index, value) {
+                if (columnType === 'email' && serverSide === false) {
+                    var startIndex = value.indexOf('mailto:') + 7;
+                    var endIndex = value.lastIndexOf("%22");
+                    value = value.substr(startIndex, endIndex - startIndex)
+                }
+                search += buildSearchStringForMultiFilters(value, aoColumn.exactFiltering);
+            });
+            oTable.api().column(columnIndex).search(search.substring(0, search.length - 1), true, false);
+        }
 
         if (typeof wpDataTables[tableId].drawTable === 'undefined' || wpDataTables[tableId].drawTable === true) {
             oTable.api().draw();
@@ -1173,7 +1219,7 @@ function wdtCreateCheckbox(oTable, aoColumn, columnIndex, sColumnLabel, th, serv
     if (aoColumn.values === null)
         aoColumn.values = getColumnDistinctValues(tableId, columnIndex, false);
 
-    var r = '', j, iLen = aoColumn.values ? aoColumn.values.length : 0, dialogRender = true;
+    var r = '', j, iLen = aoColumn.values ? aoColumn.values.length : 0, dialogRender = true, orderCheckbox = [];
 
     if (typeof aoColumn.sSelector !== 'undefined') {
         dialogRender = aoColumn.checkboxesInModal;
@@ -1181,6 +1227,7 @@ function wdtCreateCheckbox(oTable, aoColumn, columnIndex, sColumnLabel, th, serv
 
     var labelBtn = aoColumn.filterLabel ? aoColumn.filterLabel : sColumnLabel;
     var checkboxesDivId = oTable.attr('id') + '-checkbox-' + columnIndex;
+    var useAndLogic = aoColumn.andLogic && !serverSide;
 
     if (dialogRender) {
         var buttonId = "checkbox-button-" + checkboxesDivId;
@@ -1189,7 +1236,7 @@ function wdtCreateCheckbox(oTable, aoColumn, columnIndex, sColumnLabel, th, serv
 
     r += '<div id="' + checkboxesDivId + '">';
 
-    var search = '';
+    var search = '', i = 0;
 
     for (j = 0; j < iLen; j++) {
         if (aoColumn.values[j] !== null) {
@@ -1217,9 +1264,11 @@ function wdtCreateCheckbox(oTable, aoColumn, columnIndex, sColumnLabel, th, serv
                 '</label>' +
                 '</div>';
         }
-        if (checked) {
+        if (checked && !useAndLogic) {
             search += buildSearchStringForMultiFilters(encodeURI(value), aoColumn.exactFiltering);
             oTable.api().column(columnIndex).search(search.substring(0, search.length - 1));
+        } else if (checked) {
+            search += buildAndSearchStringForMultiFilters(value, aoColumn.exactFiltering, i++);
         }
     }
 
@@ -1230,7 +1279,16 @@ function wdtCreateCheckbox(oTable, aoColumn, columnIndex, sColumnLabel, th, serv
     th.html(r);
     th.wrapInner('<span class="filter_column filter_checkbox" data-filter_type="checkbox" data-index="' + columnIndex + '" />');
 
-    if (aoColumn.defaultValue[0] && !serverSide) {
+    if (useAndLogic) {
+        if (aoColumn.exactFiltering) {
+            search = search.slice(0, -2);
+            search += '$';
+        }
+        oTable.fnFilter(search, columnIndex, true, false);
+        fnOnFiltered();
+    }
+
+    if (aoColumn.defaultValue[0] && !serverSide && !useAndLogic) {
         var search = '';
         for (var i = 0; i < aoColumn.defaultValue.length; i++) {
             search += buildSearchStringForMultiFilters(aoColumn.defaultValue[i], aoColumn.exactFiltering);
@@ -1310,20 +1368,43 @@ function wdtCreateCheckbox(oTable, aoColumn, columnIndex, sColumnLabel, th, serv
     function checkboxSearch(columnIndex, checkboxesDivId) {
         var tableDescription = JSON.parse(jQuery('#' + oTable.data('described-by')).val());
         var columnType = tableDescription.dataTableParams.columnDefs[columnIndex].wdtType;
-        var search = '', checkedInputs;
+        var search = '', checkedInputs, useAndLogic;
         checkedInputs = jQuery(this).closest('#' + checkboxesDivId).find('input:checkbox:checked');
+        useAndLogic = aoColumn.andLogic && !serverSide;
 
-        jQuery.each(checkedInputs, function () {
-            if (columnType === 'email' && serverSide === false) {
-                var startIndex = jQuery(this).val().indexOf('mailto:') + 7;
-                var endIndex = jQuery(this).val().lastIndexOf("%22");
-                var value = jQuery(this).val().substr(startIndex, endIndex - startIndex)
-            } else {
-                value = jQuery(this).val()
+        var checkedValue = jQuery(this).val();
+        if (!jQuery(this).is(':checked')){
+            orderCheckbox = orderCheckbox.filter(function(value){
+                return value !== checkedValue;
+            });
+        } else {
+            if (!orderCheckbox.includes(checkedValue)){
+                orderCheckbox.push(checkedValue)
             }
-            search += buildSearchStringForMultiFilters(value, aoColumn.exactFiltering);
+        }
+
+        var i = 0;
+        jQuery.each(checkedInputs, function () {
+            value = orderCheckbox[i] ? orderCheckbox[i] : checkedInputs[i].value;
+            if (columnType === 'email' && serverSide === false) {
+                var startIndex = value.indexOf('mailto:') + 7;
+                var endIndex = value.lastIndexOf("%22");
+                value = value.substr(startIndex, endIndex - startIndex)
+            }
+            search += useAndLogic ? buildAndSearchStringForMultiFilters(value, aoColumn.exactFiltering, i)
+                : buildSearchStringForMultiFilters(value, aoColumn.exactFiltering);
+            i++;
         });
-        oTable.api().column(columnIndex).search(search.substring(0, search.length - 1), true, false);
+
+        if (useAndLogic) {
+            if (aoColumn.exactFiltering) {
+                search = search.slice(0, -2);
+                search += '$';
+            }
+            oTable.api().column(columnIndex).search(search, true, false);
+        } else {
+            oTable.api().column(columnIndex).search(search.substring(0, search.length - 1), true, false);
+        }
 
         if (typeof wpDataTables[tableId].drawTable === 'undefined' || wpDataTables[tableId].drawTable === true) {
             oTable.api().draw();
@@ -1365,20 +1446,37 @@ function getColumnDistinctValues(tableId, columnIndex, applySearch) {
 
 /**
  * Build search string and filter the table for "Multiselectbox" and "Checkbox" filters
- * @param index
  * @param value
- * @param valuesLength
  * @param exactFiltering
  */
 function buildSearchStringForMultiFilters(value, exactFiltering) {
     var search = '', or = '|';
 
     if (exactFiltering) {
-        search = search + '^' + value.replace(/\+/g, '\\+') + '$' + or;
+        search = search + '^' + value.toString().replace(/\+/g, '\\+') + '$' + or;
     } else {
-        search = search + value.replace(/\+/g, '\\+') + or;
+        search = search + value.toString().replace(/\+/g, '\\+') + or;
     }
+    return decodeURIComponent(search);
+}
 
+/**
+ * Build search string and filter the table for "Multiselectbox" and "Checkbox" filters with AND logic
+ * @param value
+ * @param exactFiltering
+ * @param index
+ */
+function buildAndSearchStringForMultiFilters(value, exactFiltering, index) {
+    var search = '';
+
+    if (exactFiltering) {
+        if (index === 0) {
+            search = '^';
+        }
+        search += value.toString().replace(/\+/g, '\\+') + ', ';
+    } else {
+        search = search + '(?=.*' + value.toString().replace(/\+/g, '\\+') + ')';
+    }
     return decodeURIComponent(search);
 }
 

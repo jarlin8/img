@@ -11,6 +11,8 @@
 <div class="card wdt-table-settings">
 
     <?php
+    $wpRoles = new WP_Roles();
+    $wdtUserRoles = $wpRoles->get_names();
     $globalAutoUpdateOption = get_option('wdtAutoUpdateOption');
     // set connection if $connection is not set with GET parameter
     if ($connection === null) {
@@ -45,6 +47,14 @@
         </h2>
         <button class="btn hidden" id="wdt-table-id">[wpdatatable id=23]
         </button>
+        <div class="clear"></div>
+        <h2 class="pull-left">
+            <div class="col-sm-2-4 ">
+                <textarea class="form-control" value="Insert wpDataTable description" id="wdt-table-description-edit"
+                          placeholder="<?php esc_attr_e('Insert description of your wpDataTable', 'wpdatatables'); ?>"></textarea>
+<!--                <i class="wpdt-icon-pen"></i>-->
+            </div>
+        </h2>
         <div class="clear"></div>
         <ul id="wdt-tour-actions" class="actions p-t-5">
             <li>
@@ -300,7 +310,7 @@
                             <div class="form-group">
                                 <div class="col-sm-9 p-0 wdt-input-url-container">
                                     <input type="text" id="wdt-add-data-source-input" class="form-control input-sm input-url-path"
-                                           placeholder="Paste URL or path, or click Browse to choose">
+                                           placeholder="<?php esc_attr_e('Paste URL or path, or click Browse to choose','wpdatatables'); ?>">
                                 </div>
                                 <div class="col-sm-3 wdt-source-browse-container">
                                     <button class="btn bgm-blue" id="wdt-add-data-browse-button">
@@ -538,6 +548,33 @@
                             </div>
 
                         </div>
+                        <div class="col-sm-4 m-b-16">
+
+                            <h4 class="c-title-color m-b-2">
+			                    <?php esc_html_e('Table description','wpdatatables'); ?>
+                                <i class=" wpdt-icon-info-circle-thin" data-popover-content="#table-description-hint"
+                                   data-toggle="html-popover" data-trigger="hover" data-placement="right"></i>
+                            </h4>
+
+                            <!-- Hidden popover with image hint -->
+                            <div class="hidden" id="table-description-hint">
+                                <div class="popover-heading">
+				                    <?php esc_html_e('Show table description', 'wpdatatables'); ?>
+                                </div>
+
+                                <div class="popover-body">  
+				                  <?php esc_html_e('Enable this to show the table descrtiption, disable to hide.', 'wpdatatables'); ?>
+                                </div>
+                            </div>
+                            <!-- /Hidden popover with image hint -->
+
+                            <div class="toggle-switch" data-ts-color="blue">
+                                <input id="wdt-show-description" type="checkbox">
+                                <label for="wdt-show-description"
+                                       class="ts-label"><?php esc_html_e('Show table description on the page', 'wpdatatables'); ?></label>
+                            </div>
+                        </div>
+
 
                         <div class="col-sm-4 m-b-16 wdt-responsive-block">
 
@@ -911,6 +948,39 @@
                             </div>
 
                         </div>
+                        <div class="col-sm-4 m-b-16 pagination-layout-mobile-settings-block">
+
+                            <h4 class="c-title-color m-b-2">
+                                <?php esc_html_e('Pagination Layout for mobile', 'wpdatatables'); ?>
+                                <i class=" wpdt-icon-info-circle-thin" data-popover-content="#pagination-layout-mobile"
+                                   data-toggle="html-popover" data-trigger="hover" data-placement="right"></i>
+                            </h4>
+
+                            <!-- Hidden popover with image hint -->
+                            <div class="hidden" id="pagination-layout-mobile">
+                                <div class="popover-heading">
+                                    <?php esc_html_e('Pagination Layout for mobile devices', 'wpdatatables'); ?>
+                                </div>
+
+                                <div class="popover-body">
+                                    <?php esc_html_e('Here you can choose between different pagination layout for mobile devices.', 'wpdatatables'); ?>
+                                </div>
+                            </div>
+                            <!-- /Hidden popover with image hint -->
+
+                            <div class="select">
+                                <select class="form-control selectpicker"
+                                        id="wdt-pagination-layout-mobile">
+                                    <option value="full_numbers"><?php esc_html_e('"First", "Previous", "Next" and "Last" buttons, plus page numbers', 'wpdatatables'); ?></option>
+                                    <option value="simple"><?php esc_html_e('"Previous" and "Next" buttons only', 'wpdatatables'); ?></option>
+                                    <option value="simple_numbers"><?php esc_html_e('"Previous" and "Next" buttons, plus page numbers', 'wpdatatables'); ?></option>
+                                    <option value="full"><?php esc_html_e('"First", "Previous", "Next" and "Last" buttons', 'wpdatatables'); ?></option>
+                                    <option value="numbers"><?php esc_html_e('Page number buttons only', 'wpdatatables'); ?></option>
+                                    <option value="first_last_numbers"><?php esc_html_e('"First" and "Last" buttons, plus page numbers', 'wpdatatables'); ?></option>
+                                </select>
+                            </div>
+
+                        </div>
 
                     </div>
                     <!-- /.row -->
@@ -1247,7 +1317,7 @@
                                         title="<?php esc_attr_e('Everyone', 'wpdatatables'); ?>" id="wdt-editor-roles">
                                     <?php foreach ($wdtUserRoles as $wdtUserRole) {
                                         /** @noinspection $wdtUserRoles */ ?>
-                                        <option value="<?php echo esc_attr($wdtUserRole['name']) ?>"><?php echo esc_html($wdtUserRole['name']) ?></option>
+                                        <option value="<?php echo esc_attr($wdtUserRole) ?>"><?php echo esc_html($wdtUserRole) ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -2002,6 +2072,8 @@
                                                         <option value="aqua"><?php esc_html_e('Aqua', 'wpdatatables'); ?></option>
                                                         <option value="purple"><?php esc_html_e('Purple', 'wpdatatables'); ?></option>
                                                         <option value="dark"><?php esc_html_e('Dark', 'wpdatatables'); ?></option>
+                                                        <option value="raspberry-cream"><?php esc_html_e('Raspberry Cream', 'wpdatatables'); ?></option>
+                                                        <option value="mojito"><?php esc_html_e('Mojito', 'wpdatatables'); ?></option>
                                                     </select>
                                                 </div>
                                             </div>

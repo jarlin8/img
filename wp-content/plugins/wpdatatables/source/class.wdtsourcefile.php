@@ -405,7 +405,7 @@ class wpDataTableSourceFile
 
             $headingsArray = array_keys($namedDataArray[0]);
             foreach($headingsArray as $heading){
-                if ($heading == NULL)
+                if ($heading === '')
                     throw new WDTException(esc_html__('One or more columns doesn\'t have a header. Please enter headers for all columns in order to proceed.'));
             }
             $highestRow = count($namedDataArray) - 1;
@@ -433,7 +433,7 @@ class wpDataTableSourceFile
 
             $headingsArray = $objWorksheet->rangeToArray('A1:' . $this->getHighestColumn() . '1', null, true, true, true);
             foreach($headingsArray[1] as $heading){
-                if ($heading == NULL)
+                if ($heading === '')
                     throw new WDTException(esc_html__('One or more columns doesn\'t have a header. Please enter headers for all columns in order to proceed.'));
             }
             $headingsArray = array_map('trim', $headingsArray[1]);
@@ -763,7 +763,11 @@ class wpDataTableSourceFile
         $column->possibleValuesAddEmpty = 0;
         $column->possibleValuesType = null;
         $column->possibleValuesAjax = 10;
+	    $column->column_align_fields = '';
         $column->rangeSlider = 0;
+	    $column->column_align_header = '';
+        $column->rangeMaxValueDisplay = 'default';
+        $column->customMaxRangeValue = null;
         $column->skip_thousands_separator = 0;
         $column->sorting = 1;
         $column->text_after = '';
@@ -772,6 +776,7 @@ class wpDataTableSourceFile
         $column->valuesList = null;
         $column->visible = 1;
         $column->width = 0;
+	    $column->column_rotate_header_name = '';
 
         return $column;
     }

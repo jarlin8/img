@@ -28,25 +28,42 @@
                 mergeCells: true,
                 contextMenu: {
                     items: {
-                        'row_above': {},
-                        'row_below': {},
-                        'remove_row': {},
+                        'row_above': {
+                            name: wpdatatables_frontend_strings.insert_row_above
+                        },
+                        'row_below': {
+                            name: wpdatatables_frontend_strings.insert_row_below
+                        },
+                        'remove_row': {
+                            name: wpdatatables_frontend_strings.remove_row
+                        },
                         'separator': Handsontable.plugins.ContextMenu.SEPARATOR,
-                        'col_left': {},
-                        'col_right': {},
-                        'remove_col': {},
+                        'col_left': {
+                            name: wpdatatables_frontend_strings.insert_col_left
+                        },
+                        'col_right': {
+                            name: wpdatatables_frontend_strings.insert_col_right
+                        },
+                        'remove_col': {
+                            name: wpdatatables_frontend_strings.remove_column
+                        },
                         'separator2': Handsontable.plugins.ContextMenu.SEPARATOR,
-                        'undo': {},
-                        'redo': {},
+                        'undo': {
+                            name: wpdatatables_frontend_strings.undo
+                        },
+                        'redo': {
+                            name: wpdatatables_frontend_strings.redo
+                        },
                         'separator3': Handsontable.plugins.ContextMenu.SEPARATOR,
                         'alignment': {
+                            name: wpdatatables_frontend_strings.alignment,
                             submenu: {
                                 // Custom option with submenu of items
                                 items: [
 
                                     {
                                         key: 'alignment:left',
-                                        name: 'Left',
+                                        name: wpdatatables_frontend_strings.left,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 cellActionButtons[5].click()
@@ -55,7 +72,7 @@
                                     },
                                     {
                                         key: 'alignment:center',
-                                        name: 'Center',
+                                        name: wpdatatables_frontend_strings.center,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 cellActionButtons[6].click()
@@ -64,7 +81,7 @@
                                     },
                                     {
                                         key: 'alignment:right',
-                                        name: 'Right',
+                                        name: wpdatatables_frontend_strings.right,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 cellActionButtons[7].click()
@@ -73,7 +90,7 @@
                                     },
                                     {
                                         key: 'alignment:justify',
-                                        name: 'Justify',
+                                        name: wpdatatables_frontend_strings.justify,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 cellActionButtons[8].click()
@@ -85,7 +102,7 @@
                                     },
                                     {
                                         key: 'alignment:top',
-                                        name: 'Top',
+                                        name: wpdatatables_frontend_strings.top,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 cellActionButtons[10].click()
@@ -94,7 +111,7 @@
                                     },
                                     {
                                         key: 'alignment:middle',
-                                        name: 'Middle',
+                                        name: wpdatatables_frontend_strings.middle,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 cellActionButtons[9].click()
@@ -103,7 +120,7 @@
                                     },
                                     {
                                         key: 'alignment:bottom',
-                                        name: 'Bottom',
+                                        name: wpdatatables_frontend_strings.bottom,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 cellActionButtons[11].click()
@@ -115,13 +132,13 @@
                         },
                         'separator4': Handsontable.plugins.ContextMenu.SEPARATOR,
                         'wrapping': {
-                            name: 'Text wrapping',
+                            name: wpdatatables_frontend_strings.text_wrapping,
                             submenu: {
                                 // Custom option with submenu of items
                                 items: [
                                     {
                                         key: 'wrapping:wrap',
-                                        name: 'Wrap',
+                                        name: wpdatatables_frontend_strings.wrap,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 cellActionButtons[12].click()
@@ -130,7 +147,7 @@
                                     },
                                     {
                                         key: 'wrapping:overflow',
-                                        name: 'Overflow',
+                                        name: wpdatatables_frontend_strings.overflow,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 cellActionButtons[13].click()
@@ -139,7 +156,7 @@
                                     },
                                     {
                                         key: 'wrapping:clip',
-                                        name: 'Clip',
+                                        name: wpdatatables_frontend_strings.clip,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 cellActionButtons[14].click()
@@ -151,17 +168,21 @@
                             }
                         },
                         'separator5': Handsontable.plugins.ContextMenu.SEPARATOR,
-                        'cut': {},
-                        'copy': {},
+                        'cut': {
+                            name: wpdatatables_frontend_strings.cut
+                        },
+                        'copy': {
+                            name: wpdatatables_frontend_strings.copy
+                        },
                         'separator6': Handsontable.plugins.ContextMenu.SEPARATOR,
                         'add': {
-                            name: 'Insert custom',
+                            name: wpdatatables_frontend_strings.insert_custom,
                             submenu: {
                                 // Custom option with submenu of items
                                 items: [
                                     {
                                         key: 'add:link',
-                                        name: 'Link',
+                                        name: wpdatatables_frontend_strings.link,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 $('#wpdt-link').click()
@@ -170,7 +191,7 @@
                                     },
                                     {
                                         key: 'add:media',
-                                        name: 'Media',
+                                        name: wpdatatables_frontend_strings.media,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 $('#wpdt-media').click()
@@ -179,7 +200,7 @@
                                     },
                                     {
                                         key: 'add:html',
-                                        name: 'HTML code',
+                                        name: wpdatatables_frontend_strings.html_code,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 $('#wpdt-html').click()
@@ -188,7 +209,7 @@
                                     },
                                     {
                                         key: 'add:shortcode',
-                                        name: 'Shortcode',
+                                        name: wpdatatables_frontend_strings.shortcode,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 $('#wpdt-do-shortcode').click()
@@ -197,7 +218,7 @@
                                     },
                                     {
                                         key: 'add:star',
-                                        name: 'Star rating',
+                                        name: wpdatatables_frontend_strings.star_rating,
                                         callback: function (key, selection, clickEvent) {
                                             setTimeout(function () {
                                                 $('#wpdt-star-rating').click()
@@ -209,7 +230,7 @@
                         },
                         'separator7': Handsontable.plugins.ContextMenu.SEPARATOR,
                         'clear': {
-                            name: 'Clear table data',
+                            name: wpdatatables_frontend_strings.clear_table_data,
                             callback: function (key, selection, clickEvent) {
                                 setTimeout(function () {
                                     $('#wpdt-clear').click()
@@ -218,6 +239,7 @@
                         },
                         'separator8': Handsontable.plugins.ContextMenu.SEPARATOR,
                         'mergeCells': {
+                            name: wpdatatables_frontend_strings.merge_cells,
                             callback: function (key, selection, clickEvent) {
                                 setTimeout(function () {
                                     $('#wpdt-merge').click()
@@ -440,10 +462,10 @@
                             location.reload()
                         } else {
                             $('.wdt-preload-layer').animateFadeOut();
-                            var heightHT = jQuery('.ht_master .wtHider');
-                            wpdtEditor.updateSettings({
-                                height: setHeightHT(heightHT)
-                            });
+                            // var heightHT = jQuery('.ht_master .wtHider');
+                            // wpdtEditor.updateSettings({
+                            //     height: setHeightHT(heightHT)
+                            // });
                             $('.wpDataTablesSimpleWrapper-' + wpdatatable_config.id).empty().append(data.tableHTML);
                             $('#wpdt-views ul li:first-child a').click();
                         }
@@ -781,7 +803,7 @@
                             } else {
                                 newValue = value;
                             }
-                            if (newValue != ''){
+                            if (newValue != '') {
                                 newClassName = cell.className.replace(cell.className.substring(cell.className.indexOf(partClass), cell.className.indexOf(partClass) + 14), partClass + newValue);
                             } else {
                                 newClassName = cell.className.replace(cell.className.substring(cell.className.indexOf(partClass), cell.className.indexOf(partClass) + 14), '');
@@ -790,7 +812,7 @@
                             if (partClass == 'wpdt-ff-' || partClass == 'wpdt-fs-') {
                                 newClassName = cell.className + ' ' + partClass + String(value).padStart(6, '0');
                             } else {
-                                if (value != ''){
+                                if (value != '') {
                                     newClassName = cell.className + ' ' + partClass + value;
                                 } else {
                                     newClassName = cell.className + ' ';
@@ -811,6 +833,9 @@
             } else if (partClass === 'wpdt-ff-') {
                 let fontFamily = value === '0' ? 'inherit' : fontFamilyArr[value - 1];
                 addStylesheetRules('.' + partClass + String(value).padStart(6, '0'), 'font-family:' + fontFamily + ' !important;');
+            } else if (partClass === 'wpdt-sc-') {
+                addStylesheetRules('.' + partClass + value + '.rating > span.full.rated:after', 'color:#' + value + ' !important;');
+                addStylesheetRules('.' + partClass + value + '.rating > .half:before', 'color:#' + value + ' !important;');
             }
         }
 
@@ -1008,6 +1033,87 @@
             wpdtEditor.render();
         }
 
+        function wdtApplyColorPickerSC(selectedCells, selecter) {
+            var starRateElement = $("#wdt-backend-star-modal .rateYo");
+            var element = '#' + selecter,
+                defoult = jQuery(element).val() == "" ? '#FFD700' : jQuery(element).val(),
+                partClass = selecter === 'wpdt-star-rating-color' ? 'wpdt-sc-': '',
+                selectedStarColor = '';
+
+            const pickr = new Pickr({
+                el: element,
+                useAsButton: true,
+                default: defoult,
+                theme: 'classic',
+                autoReposition: true,
+                position: 'bottom-end',
+                outputPrecision: 1,
+                comparison: true,
+                lockOpacity: true,
+                swatches: [
+                    'rgba(244, 67, 54, 1)',
+                    'rgba(233, 30, 99, 1)',
+                    'rgba(156, 39, 176, 1)',
+                    'rgba(103, 58, 183, 1)',
+                    'rgba(63, 81, 181, 1)',
+                    'rgba(33, 150, 243, 1)',
+                    'rgba(3, 169, 244, 1)',
+                    'rgba(0, 188, 212, 1)',
+                    'rgba(0, 150, 136, 1)',
+                    'rgba(76, 175, 80, 1)',
+                    'rgba(139, 195, 74, 1)',
+                    'rgba(205, 220, 57, 1)',
+                    'rgba(255, 235, 59, 1)',
+                    'rgba(255, 193, 7, 1)'
+                ],
+                components: {
+                        preview: true,
+                        opacity: false,
+                        hue: true,
+                        interaction: {
+                            hex: true,
+                            rgba: true,
+                            hsla: false,
+                            hsva: false,
+                            cmyk: false,
+                            clear: true,
+                            input: true,
+                            save: true
+                        }
+                    }
+                }).on('init', pickr => {
+
+                pickr.show();
+                selectedStarColor = pickr.getColor().toHEXA().toString(0).replace('#', "");
+                jQuery(element).parent('.wdt-color-picker').find('.wpcolorpicker-icon i').css("background", pickr.getColor().toHEXA().toString(0));
+                addDynamicStyle(selectedCells, selectedStarColor, partClass);
+
+            }).on('save', color => {
+                if (color != null) {
+                    selectedStarColor = pickr.getColor().toHEXA().toString(0).replace('#', "");
+                    jQuery(element).val(pickr.getColor().toHEXA().toString(0));
+                    jQuery(element).change();
+                    starRateElement.rateYo("option", "ratedFill", pickr.getColor().toHEXA().toString(0));
+                    jQuery(element).parent('.wdt-color-picker').find('.wpcolorpicker-icon i').css("background", pickr.getColor().toHEXA().toString(0));
+                    selectedStarColor = pickr.getColor().toHEXA().toString(0).replace('#', "");
+                    addDynamicStyle(selectedCells, selectedStarColor, partClass);
+                }
+                pickr.hide();
+
+            }).on('change', color => {
+                jQuery(element).val(pickr.getColor().toHEXA().toString(0));
+                starRateElement.rateYo("option", "ratedFill", pickr.getColor().toHEXA().toString(0));
+                jQuery(element).closest('.wdt-color-picker').find('.wpcolorpicker-icon i').css("background", pickr.getColor().toHEXA().toString(0));
+                selectedStarColor = pickr.getColor().toHEXA().toString(0).replace('#', "");
+                jQuery(element).change();
+                addDynamicStyle(selectedCells, selectedStarColor, partClass);
+
+            }).on('clear', color => {
+                jQuery(element).val('');
+                jQuery(element).change();
+                jQuery(element).parent('.wdt-color-picker').find('.wpcolorpicker-icon i').css("background", 'none');
+            })
+        }
         /**
          * Apply color picker on Text and Background color of cell
          */
@@ -1259,6 +1365,15 @@
                 selectedCells = wpdtEditor.getSelected();
             $('.pcr-app').remove();
             wdtApplyColorPickerHT(selectedCells, target)
+        });
+        /**
+         * Apply color for star rating
+         */
+        $('#wpdt-star-rating-color').on('click', function (e) {
+            let target = $(this)[0].id,
+                selectedCells = wpdtEditor.getSelected();
+            $('.pcr-app').remove();
+            wdtApplyColorPickerSC(selectedCells, target);
         });
 
         /**
@@ -1623,6 +1738,7 @@
                     starRateElement.rateYo('destroy');
                 starRateElement.rateYo({
                     normalFill: "#A0A0A0",
+                    ratedFill : (starData.data('star-color') === '') ? "#FFD700" : starData.data('star-color'),
                     halfStar: true,
                     numStars: starData.data('star-num'),
                     maxValue: starData.data('star-num'),
@@ -1639,9 +1755,27 @@
                     starRateElement.css("margin-bottom", "55px");
                     starRateNumber.empty().hide().append(starData.data('star-rating') + '/' + starData.data('star-num'));
                 }
+
+                $('#wpdt-star-rating-color').val(starData.data('star-color'));
+                if (starData.data('star-color') === '') {
+                    jQuery('#wpdt-star-rating-color')
+                        .closest('.wdt-color-picker')
+                        .find('.wpcolorpicker-icon i')
+                        .css("background", 'none');
+                } else {
+                    jQuery('#wpdt-star-rating-color')
+                        .closest('.wdt-color-picker')
+                        .find('.wpcolorpicker-icon i')
+                        .css("background", starData.data('star-color'));
+                }
             } else {
                 if ($("#wdt-backend-star-modal .jq-ry-container").length)
                     starRateElement.rateYo('destroy');
+                jQuery('#wpdt-star-rating-color')
+                    .closest('.wdt-color-picker')
+                    .find('.wpcolorpicker-icon i')
+                    .css("background", 'none');
+                jQuery('#wpdt-star-rating-color').val('');
                 starRateElement.rateYo({
                     normalFill: "#A0A0A0",
                     halfStar: true,
@@ -1700,8 +1834,8 @@
                 var maxValue = parseInt(starRateElement.rateYo("option", "maxValue")),
                     rating = starRateElement.rateYo("option", "rating"),
                     showNumber = $('#wpdt-star-rating-number').is(":checked"),
+                    starColor =jQuery('#wpdt-star-rating-color').val();
                     colHeaderArr = wpdtEditor.getColHeader();
-
 
                 starRateElement.css("margin-bottom", "5px");
                 starWrapper = '<div class="rating">';
@@ -1726,6 +1860,7 @@
                 formatData += 'data-cell-id="' + colHeaderArr[highlightCol] + highlightRow + '" ';
                 formatData += 'data-star-num="' + maxValue + '" ';
                 formatData += 'data-star-rating="' + rating + '" ';
+                formatData += 'data-star-color="' + starColor + '" ';
                 formatData += 'data-star-show-number="' + showNumber + '">';
                 formatData += starWrapper;
                 formatData += '</span>';
@@ -1816,22 +1951,22 @@
                 }
                 getHeightData();
                 wpdtEditor.selectCell(0, 0)
-            });
-            wpdtEditor.addHook('beforeRemoveRow', function (from, amount) {
-                var merge = wpdtEditor.getPlugin('mergeCells').mergedCellsCollection.mergedCells,
-                    to = from + amount - 1,
-                    mergeLenght = merge.length;
-                for (var i = mergeLenght - 1; i >= 0; i--) {
-                    var row = merge[i].row;
-                    if (row >= from) {
-                        if (row <= to) {
-                            merge.splice(i, 1);
-                        } else {
-                            merge[i].row -= (amount - 1);
-                        }
-                    }
-                }
-            });
+             });
+            // wpdtEditor.addHook('beforeRemoveRow', function (from, amount) {
+            //     var merge = wpdtEditor.getPlugin('mergeCells').mergedCellsCollection.mergedCells,
+            //         to = from + amount - 1,
+            //         mergeLenght = merge.length;
+            //     for (var i = mergeLenght - 1; i >= 0; i--) {
+            //         var row = merge[i].row;
+            //         if (row >= from) {
+            //             if (row <= to) {
+            //                 merge.splice(i, 1);
+            //             } else {
+            //                 merge[i].row -= (amount - 1);
+            //             }
+            //         }
+            //     }
+            // });
             wpdtEditor.addHook('afterRemoveRow', function (from, amount) {
                 getHeightData();
                 wpdtEditor.allHeights.splice(from, amount);
@@ -1847,29 +1982,29 @@
                     }
                 }
                 disableButtons();
-                setTimeout(function () {
-                    let heightHT = $('.ht_master .wtHider');
-                    wpdtEditor.updateSettings({
-                        height: setHeightHT(heightHT)
-                    });
-                }, 500);
+                // setTimeout(function () {
+                //     let heightHT = $('.ht_master .wtHider');
+                //     wpdtEditor.updateSettings({
+                //         height: setHeightHT(heightHT)
+                //     });
+                // }, 500);
 
             });
-            wpdtEditor.addHook('beforeRemoveCol', function (from, amount) {
-                var merge = wpdtEditor.getPlugin('mergeCells').mergedCellsCollection.mergedCells,
-                    to = from + amount - 1,
-                    cntMerge = merge.length;
-                for (var i = cntMerge - 1; i >= 0; i--) {
-                    var col = merge[i].col;
-                    if (col >= from) {
-                        if (col <= to) {
-                            merge.splice(i, 1);
-                        } else {
-                            merge[i].col -= (amount - 1);
-                        }
-                    }
-                }
-            });
+            // wpdtEditor.addHook('beforeRemoveCol', function (from, amount) {
+            //     var merge = wpdtEditor.getPlugin('mergeCells').mergedCellsCollection.mergedCells,
+            //         to = from + amount - 1,
+            //         cntMerge = merge.length;
+            //     for (var i = cntMerge - 1; i >= 0; i--) {
+            //         var col = merge[i].col;
+            //         if (col >= from) {
+            //             if (col <= to) {
+            //                 merge.splice(i, 1);
+            //             } else {
+            //                 merge[i].col -= (amount - 1);
+            //             }
+            //         }
+            //     }
+            // });
             wpdtEditor.addHook('afterRemoveCol', function (from, amount) {
                 getWidthData();
                 wpdtEditor.allWidths.splice(from, amount);
@@ -1883,38 +2018,38 @@
                         plugin.setManualSize(i, wpdtEditor.allWidths[i]);
                     }
                 }
-                let heightHT = $('.ht_master .wtHider');
-                wpdtEditor.updateSettings({
-                    height: setHeightHT(heightHT)
-                });
+                // let heightHT = $('.ht_master .wtHider');
+                // wpdtEditor.updateSettings({
+                //     height: setHeightHT(heightHT)
+                // });
                 disableButtons();
             });
             wpdtEditor.addHook('afterRowResize', function (row, height) {
                 getHeightData();
                 wpdtEditor.allHeights.splice(row, 1, height);
-                let heightHT = $('.ht_master .wtHider');
-                wpdtEditor.updateSettings({
-                    height: setHeightHT(heightHT)
-                });
+                // let heightHT = $('.ht_master .wtHider');
+                // wpdtEditor.updateSettings({
+                //     height: setHeightHT(heightHT)
+                // });
             });
             wpdtEditor.addHook('afterColumnResize', function (column, width) {
                 getWidthData();
                 wpdtEditor.allWidths.splice(column, 1, width);
             });
-            wpdtEditor.addHook('afterRowMove', function (rows, target) {
-                let heightHT = $('.ht_master .wtHider');
-                wpdtEditor.updateSettings({
-                    height: setHeightHT(heightHT)
-                });
-                wpdtEditor.render();
-            });
-            wpdtEditor.addHook('afterColumnMove', function (columns, target) {
-                let heightHT = $('.ht_master .wtHider');
-                wpdtEditor.updateSettings({
-                    height: setHeightHT(heightHT)
-                });
-                wpdtEditor.render();
-            });
+            // wpdtEditor.addHook('afterRowMove', function (rows, target) {
+            //     let heightHT = $('.ht_master .wtHider');
+            //     wpdtEditor.updateSettings({
+            //         height: setHeightHT(heightHT)
+            //     });
+            //     wpdtEditor.render();
+            // });
+            // wpdtEditor.addHook('afterColumnMove', function (columns, target) {
+            //     let heightHT = $('.ht_master .wtHider');
+            //     wpdtEditor.updateSettings({
+            //         height: setHeightHT(heightHT)
+            //     });
+            //     wpdtEditor.render();
+            // });
             wpdtEditor.addHook('afterCopy', function (changes, copyCoords) {
                 getCellsMetaData(changes, copyCoords);
             });

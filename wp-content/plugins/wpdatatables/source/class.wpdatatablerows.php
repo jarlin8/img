@@ -6,6 +6,7 @@ class WPDataTableRows
 {
     protected $_tableID;
     protected $_tableName = 'New wpDataTable';
+	protected $_table_description = '';
     protected $_tableType = 'simple';
     protected $_colHeaders = [];
     protected $_colWidths = [];
@@ -23,6 +24,7 @@ class WPDataTableRows
     public function __construct(stdClass $tableData)
     {
         $this->setTableName($tableData->title);
+	    $this->setTableDescription($tableData->table_description);
         $this->setTableType($tableData->table_type);
         $this->setColNumber($tableData->content->colNumber);
         $this->setRowNumber($tableData->content->rowNumber);
@@ -64,6 +66,19 @@ class WPDataTableRows
     {
         $this->_tableName = $tableName;
     }
+
+	/**
+	 * @param string $tableName
+	 */
+	public function setTableDescription($descriptionName)
+	{
+		$this->_table_description = $descriptionName;
+	}
+
+	public function getTableDescription()
+	{
+		return $this->_table_description;
+	}
 
     /**
      * @return string
@@ -343,9 +358,9 @@ class WPDataTableRows
         $tableData->borderSpacing = isset($advancedSettings->borderSpacing) ? $advancedSettings->borderSpacing : 0;
 
         $wpDataTableRows = new WPDataTableRows($tableData);
-        $wpDataTableRows->setTableID($tableId);
+        $wpDataTableRows->setTableID($tableData->id);
 
-        $rowsDataPrepared = WDTConfigController::loadRowsDataFromDB($tableId);;
+        $rowsDataPrepared = WDTConfigController::loadRowsDataFromDB($tableData->id);
 
         $wpDataTableRows->fillFromData($rowsDataPrepared);
 
@@ -530,7 +545,11 @@ class WPDataTableRows
                 $fontSizeIndex = strval(intval(str_replace('wpdt-fs-', '', $cellClass)));
                 $fontSize = $fontSizeIndex == "0" ? '10' : $fontSizeIndex;
                 $returnData .= "." . $cellClass . " { font-size: " . $fontSize . "px !important;}\n";
-            }
+            } else if (strpos($cellClass, 'wpdt-sc-') !== false) {
+	            $starColor = str_replace('wpdt-sc-', '', $cellClass);
+	            $returnData .= "." . $cellClass . " .rating > span.full.rated:after { color: #" . $starColor . " !important;}\n";
+	            $returnData .= "." . $cellClass . " .rating > .half:before { color: #" . $starColor . " !important;}\n";
+			}
         }
 
         return $returnData;

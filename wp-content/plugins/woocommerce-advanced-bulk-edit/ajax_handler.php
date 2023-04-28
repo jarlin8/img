@@ -1,4 +1,5 @@
 <?php
+// set_time_limit(0);
 
 defined( 'ABSPATH' ) || die( 'No direct script access allowed!' );
 
@@ -222,7 +223,7 @@ class W3ExABulkEditAjaxHandler{
 				$metavalue = "";
 				if($converttoutf8)
 				{
-					$metavalue = mb_convert_encoding($val->meta_value, "UTF-8");
+					$metavalue = isset($val->meta_value) ? mb_convert_encoding($val->meta_value, "UTF-8") : '';
 				}else
 				{
 					$metavalue = $val->meta_value;
@@ -2654,7 +2655,8 @@ class W3ExABulkEditAjaxHandler{
 			self::WriteDebugInfo( "12.1 after array map " . __LINE__, $curr_settings );
 			$blogusers = array();
 			if ( in_array( 'post_author', self::$columns ) || empty( self::$columns ) ) {
-				$blogusers = get_users( array( 'role__in' => array('administrator', 'shop_manager', 'seller', 'vendor'), 'fields' => array( 'ID', 'display_name' ) ) );
+				//$blogusers = get_users( array( 'role__in' => array('administrator', 'shop_manager', 'seller', 'vendor', 'customer'), 'fields' => array( 'ID', 'display_name' ) ) );
+				$blogusers = get_users(['fields' => array( 'ID', 'display_name' )]);
 			}
 			foreach ( $ids as &$id ) {
 				if ( $id->post_parent != 0 && $id->post_type == 'product_variation' ) {
@@ -5518,7 +5520,13 @@ class W3ExABulkEditAjaxHandler{
 			}
 			$retarray[] = $newpar;
 		}
-		self::WriteDebugInfo("loop number ","","after attr refresh");
+		if (
+			function_exists('wc_update_product_lookup_tables') &&
+			(!isset($curr_settings['setting_auto_regenrate_products_table_on_save']) ||
+			 $curr_settings['setting_auto_regenrate_products_table_on_save'] == "1")
+		) {
+			wc_update_product_lookup_tables();
+		}
 		return $retarray;
 	}
 	
@@ -9314,6 +9322,10 @@ class W3ExABulkEditAjaxHandler{
 
 					if(isset($data['setting_display_top_bar_link_bulkedit'])) {
 						$curr_settings['setting_display_top_bar_link_bulkedit'] = $data['setting_display_top_bar_link_bulkedit'];
+					}
+
+					if(isset($data['setting_auto_regenrate_products_table_on_save'])) {
+						$curr_settings['setting_auto_regenrate_products_table_on_save'] = $data['setting_auto_regenrate_products_table_on_save'];
 					}
 
 					if(isset($data['debugmode']))

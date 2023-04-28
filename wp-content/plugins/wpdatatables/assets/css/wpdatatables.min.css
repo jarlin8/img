@@ -2,6 +2,10 @@
  * wpDataTables Base styles
  *
 */
+:root {
+    --wpdt-inter-google-font: 'Inter', sens-serif;
+    --wpdt-roboto-google-font: 'Roboto', sens-serif;
+}
 
 @font-face {
     font-weight: 400;
@@ -37,6 +41,7 @@
     table-layout: auto;
     margin-bottom: 10px;
     overflow: auto;
+    border: none;
 }
 .wpDataTablesWrapper table.wpDataTable > tbody > tr > td > ul {
     list-style: inherit;
@@ -155,7 +160,7 @@
     background-color: transparent;
 }
 .wpDataTablesWrapper.wpdt-pagination-center .dataTables_paginate {
-    display: table !important;
+    display: table;
     margin: 0 auto !important;
     background-color: transparent;
 }

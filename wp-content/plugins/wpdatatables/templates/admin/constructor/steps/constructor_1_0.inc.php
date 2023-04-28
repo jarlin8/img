@@ -8,12 +8,29 @@
                 <h4 class="c-title-color m-b-2">
                     <?php esc_html_e('Table name', 'wpdatatables'); ?>
                     <i class="wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                       title="<?php esc_attr_e('What is the header of the table that will be visible to the site visitors?', 'wpdatatables'); ?>?"></i>
+                       title="<?php esc_attr_e('What is the header of the table that will be visible to the site visitors?', 'wpdatatables'); ?>"></i>
                 </h4>
                 <div class="form-group">
                     <div class="fg-line">
                         <input type="text" class="form-control input-sm" value="New wpDataTable"
                                id="wdt-constructor-simple-table-name">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row wpdt-custom-center-flex">
+
+            <div class="col-sm-6">
+                <h4 class="c-title-color m-b-2">
+				    <?php esc_html_e('Table description', 'wpdatatables'); ?>
+                    <i class="wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
+                       title="<?php esc_attr_e('What is the description of the table? (optional)', 'wpdatatables'); ?>"></i>
+                </h4>
+                <div class="form-group">
+                    <div class="fg-line">
+                        <textarea class="form-control" value=""
+                                  id="wdt-constructor-simple-table-description"
+                                  placeholder="<?php esc_attr_e('Insert description of your wpDataTable', 'wpdatatables'); ?>"></textarea>
                     </div>
                 </div>
             </div>

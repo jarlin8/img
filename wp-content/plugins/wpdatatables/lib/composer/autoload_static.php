@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit8af9b86b5a79c8f068c5685066f8d474
+class ComposerStaticInitbb7a244e3a9d4399d7e5e2139fb4b2ef
 {
     public static $files = array (
         'abede361264e2ae69ec1eee813a101af' => __DIR__ . '/..' . '/markbaker/complex/classes/src/functions/abs.php',
@@ -119,9 +119,9 @@ class ComposerStaticInit8af9b86b5a79c8f068c5685066f8d474
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit8af9b86b5a79c8f068c5685066f8d474::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit8af9b86b5a79c8f068c5685066f8d474::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit8af9b86b5a79c8f068c5685066f8d474::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitbb7a244e3a9d4399d7e5e2139fb4b2ef::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitbb7a244e3a9d4399d7e5e2139fb4b2ef::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitbb7a244e3a9d4399d7e5e2139fb4b2ef::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

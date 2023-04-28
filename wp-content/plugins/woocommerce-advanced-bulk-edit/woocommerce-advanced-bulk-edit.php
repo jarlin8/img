@@ -5,16 +5,16 @@ Plugin URI: https://wpmelon.com
 Description: Edit your products both individually or in bulk.
 Author: George Iron & Yas G.
 Author URI: https://codecanyon.net/user/georgeiron/portfolio
-Version: 5.1
+Version: 5.2
 Text Domain: woocommerce-advbulkedit
-WC requires at least: 2.2
-WC tested up to: 6.4.1
+WC requires at least: 5.0
+WC tested up to: 7.6.0
 */
 
 defined( 'ABSPATH' ) || die( 'No direct script access allowed!' );
 
 define('WCABE_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('WCABE_VERSION', '5.1');
+define('WCABE_VERSION', '5.2');
 define('WCABE_SITE_URL', 'https://wpmelon.com');
 define('WCABE_SUPPORT_URL', 'https://wpmelon.com/r/support');
 
@@ -29,8 +29,10 @@ class W3ExAdvancedBulkEditMain {
 	private static $ins = null;
 	private static $idCounter = 0;
 	public static $table_name = "";
+	public static $cache_key;
+	public static $cache_expire;
+	public static $cache_allowed;
 	const PLUGIN_SLUG = 'advanced_bulk_edit';
-
 
 	public static function init()
 	{
@@ -64,13 +66,175 @@ class W3ExAdvancedBulkEditMain {
 		add_action('wp_ajax_wpmelon_wcabe',  array(__CLASS__, 'new_ajax_request'));
 		//add action to load my plugin files
 		add_action('plugins_loaded', array(self::instance(), '_load_translations'));
+		add_action( 'admin_init', array(__CLASS__, 'wcabe_settings_form_submission') );
 		//WCABE_Notice_GettingStarted::init();
 		//WCABE_Notice_Rate::init();
 		//}
 
+		self::load_extensions();
+
 		if (file_exists( __DIR__.'/integrations/acf-custom-fields-customizations-for-viktor.php')) {
 			require_once('integrations/acf-custom-fields-customizations-for-viktor.php');
 			W3ExABulkEdit_Integ_ACFCustomFieldsCustomizationsForViktor::init();
+		}
+		
+		self::$cache_key = 'wcabe_custom_update';
+		self::$cache_allowed = true;
+		self::$cache_expire = 3*DAY_IN_SECONDS;
+		if (wp_get_environment_type() == 'local') {
+			self::$cache_expire = 5;
+		}
+		add_filter( 'plugins_api', array( __CLASS__, 'info' ), 20, 3 );
+		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'update' ) );
+		add_action( 'upgrader_process_complete', array( __CLASS__, 'purge' ), 10, 2 );
+		add_action( 'in_plugin_update_message-woocommerce-advanced-bulk-edit/woocommerce-advanced-bulk-edit.php', array(__CLASS__, 'wcabe_update_message'), 10, 2 );
+	}
+	
+	public static function request(){
+		//delete_transient( self::$cache_key );
+		$remote = get_transient( self::$cache_key );
+		
+		if( false === $remote || ! self::$cache_allowed ) {
+			
+			$settings = get_option('w3exabe_settings');
+			$wcabe_license_key = $settings['license_key'] ?? '';
+			
+			$remote = wp_remote_get(
+				add_query_arg(
+					array(
+						'license_key' => urlencode( $wcabe_license_key )
+					),
+					'https://wpmelon.com/r/wcabe-update-url',
+				),
+				array(
+					'timeout' => 10,
+					'headers' => array(
+						'Accept' => 'application/json'
+					)
+				)
+			);
+			
+			if(
+				is_wp_error( $remote )
+				|| 200 !== wp_remote_retrieve_response_code( $remote )
+				|| empty( wp_remote_retrieve_body( $remote ) )
+			) {
+				return false;
+			}
+			
+			set_transient( self::$cache_key, $remote, self::$cache_expire );
+			
+		}
+		
+		$remote = json_decode( wp_remote_retrieve_body( $remote ) );
+		
+		return $remote;
+		
+	}
+	
+	public static function info( $res, $action, $args ) {
+		
+		// print_r( $action );
+		// print_r( $args );
+		
+		// do nothing if you're not getting plugin information right now
+		if( 'plugin_information' !== $action ) {
+			return $res;
+		}
+		
+		// do nothing if it is not our plugin
+		if( self::PLUGIN_SLUG !== $args->slug ) {
+			return $res;
+		}
+		
+		// get updates
+		$remote = self::request();
+		
+		if( ! $remote ) {
+			return $res;
+		}
+		
+		$res = new stdClass();
+		
+		$res->name = $remote->name;
+		$res->slug = $remote->slug;
+		$res->version = $remote->version;
+		$res->tested = $remote->tested;
+		$res->requires = $remote->requires;
+		$res->author = $remote->author;
+		$res->author_profile = $remote->author_profile;
+		$res->download_link = $remote->download_url;
+		$res->trunk = $remote->download_url;
+		$res->requires_php = $remote->requires_php;
+		$res->last_updated = $remote->last_updated;
+		$res->rating = $remote->rating;
+		$res->num_ratings = $remote->num_ratings;
+		
+		$res->sections = [];
+		foreach ($remote->sections as $section_title => $section_content ) {
+			$res->sections[$section_title] = $section_content;
+		}
+		
+		if( ! empty( $remote->banners ) ) {
+			$res->banners = array(
+				'low' => $remote->banners->low,
+				'high' => $remote->banners->high
+			);
+		}
+		
+		return $res;
+		
+	}
+	
+	public static function update( $transient ) {
+		
+		if ( empty($transient->checked ) ) {
+			return $transient;
+		}
+		
+		$remote = self::request();
+		
+		if(
+			$remote
+			&& version_compare( WCABE_VERSION, $remote->version, '<' )
+			&& version_compare( $remote->requires, get_bloginfo( 'version' ), '<=' )
+			&& version_compare( $remote->requires_php, PHP_VERSION, '<' )
+		) {
+			$res = new stdClass();
+			$res->slug = self::PLUGIN_SLUG;
+			$res->plugin = plugin_basename( __FILE__ );
+			$res->new_version = $remote->version;
+			$res->tested = $remote->tested;
+			$res->package = $remote->download_url;
+			
+			$transient->response[ $res->plugin ] = $res;
+			
+		}
+		
+		return $transient;
+		
+	}
+	
+	public static function purge( $upgrader, $options ){
+		
+		if (
+			self::$cache_allowed
+			&& 'update' === $options['action']
+			&& 'plugin' === $options[ 'type' ]
+		) {
+			// just clean the cache when new plugin version is installed
+			delete_transient( self::$cache_key );
+		}
+		
+	}
+	
+	public static function wcabe_update_message( $plugin_info_array, $plugin_info_object ) {
+		if( empty( $plugin_info_array[ 'package' ] ) ) {
+			$renew_msg = ' Please renew your support subscription to use automatic update or download the update from '.
+			             'CodeCanyon site. You can update your license key <a href="'.
+			             admin_url( 'edit.php?post_type=product&page=advanced_bulk_edit&section=wcabe_settings' ).
+			             '">here</a>';
+			echo $renew_msg;
 		}
 	}
 
@@ -115,6 +279,18 @@ class W3ExAdvancedBulkEditMain {
 			}, 200);
 		}
 
+	}
+
+	protected static function load_extensions()
+	{
+		$extensions_base_path = WCABE_PLUGIN_PATH.'extension/';
+		$extension_paths = array_map('basename', glob($extensions_base_path.'*', GLOB_ONLYDIR));
+		foreach ($extension_paths as $extension) {
+			$extension_main_file = $extensions_base_path.$extension.'/'.$extension.'.php';
+			if (file_exists($extension_main_file)) {
+				require_once ($extension_main_file);
+			}
+		}
 	}
 
 	public static function ajax_request()
@@ -173,6 +349,18 @@ class W3ExAdvancedBulkEditMain {
 		if (wp_script_is('wbm-admin'))
 		{
 			wp_deregister_script( 'wbm-admin' );
+		}
+		if (wp_script_is('lpc_admin_notices'))
+		{
+			wp_deregister_script( 'lpc_admin_notices' );
+		}
+		if (wp_script_is('paypal-for-woocommerce-multi-account-management'))
+		{
+			wp_deregister_script( 'paypal-for-woocommerce-multi-account-management' );
+		}
+		if (wp_script_is('soisy-pagamento-rateale'))
+		{
+			wp_deregister_script( 'soisy-pagamento-rateale' );
 		}
 		/*
 		//wp_enqueue_script('jquery');
@@ -279,8 +467,8 @@ class W3ExAdvancedBulkEditMain {
 		wp_enqueue_script('w3exabe-slgrid',$purl.'js/slick.grid.js', array(), $ver, true );
 		wp_enqueue_script('w3exabe-chosen',$purl.'chosen/chosen.jquery.min.js', array(), $ver, true );
 		wp_enqueue_script('w3exabe-adminjs',$purl.'js/admin.js', array(), $ver, true );
+		wp_enqueue_script('w3exabe-adminjsext',$purl.'js/admin-ext.js', array(), $ver, true );
 		wp_enqueue_script('w3exabe-adminhelpersjs',$purl.'js/admin-helpers.js', array(), $ver, true );
-		wp_enqueue_script('w3exabe-adminui',$purl.'js/admin-ui.js', array(), $ver, true );
 
 		if (!isset($settings['setting_disable_hints']) || $settings['setting_disable_hints'] != 1) {
 			wp_enqueue_script('w3exabe-tippyjs-popper',$purl.'js/tippy/popper.min.js', array(), $ver, true );
@@ -301,8 +489,28 @@ class W3ExAdvancedBulkEditMain {
 			if (wcabe_load_integration(WCABE_179_INTEG_SITE_WIDE_OPS)) {
 				W3ExABulkEdit_Integ_SiteWideOps::site_wide_ops_admin_page();
 			}
-		} else {
+		}
+		else if (isset($_GET['section']) && $_GET['section'] == 'wcabe_settings') {
+			require_once(dirname(__FILE__).'/page-settings.php');
+		}
+		else {
 			require_once(dirname(__FILE__).'/bulkedit.php');
+		}
+	}
+	
+	public static function wcabe_settings_form_submission()
+	{
+		if ( isset( $_POST['wcabe-submit-settings'] ) && ! empty( $_POST['wcabe_license_key'] ) ) {
+			$wcabe_license_key = sanitize_text_field( $_POST['wcabe_license_key'] );
+			
+			$settings = get_option('w3exabe_settings');
+			$settings['license_key'] = $wcabe_license_key;
+			update_option('w3exabe_settings',$settings);
+			delete_transient( self::$cache_key );
+			
+			$redirect_url = admin_url( 'edit.php?post_type=product&page=advanced_bulk_edit&section=wcabe_settings' );
+			wp_redirect( $redirect_url );
+			exit;
 		}
 	}
 }

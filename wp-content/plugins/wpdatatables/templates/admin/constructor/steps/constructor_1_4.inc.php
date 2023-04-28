@@ -15,7 +15,7 @@
             <h4 class="c-title-color m-b-2">
                 <?php esc_html_e('Table name', 'wpdatatables'); ?>
                 <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
-                   title="<?php esc_attr_e('What is the header of the table that will be visible to the site visitors?', 'wpdatatables'); ?>?"></i>
+                   title="<?php esc_attr_e('What is the header of the table that will be visible to the site visitors?', 'wpdatatables'); ?>"></i>
             </h4>
             <div class="form-group">
                 <div class="fg-line">
@@ -25,7 +25,22 @@
             </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-sm-6 wdt-constructor-mysql-query-table-description-block">
+            <h4 class="c-title-color m-b-2">
+				<?php esc_html_e('Table description', 'wpdatatables'); ?>
+                <i class=" wpdt-icon-info-circle-thin" data-toggle="tooltip" data-placement="right"
+                   title="<?php esc_attr_e('What is the description of the table? (optional)', 'wpdatatables'); ?>"></i>
+            </h4>
+            <div class="form-group">
+                <div class="fg-line">
+                        <textarea  class="form-control" value=""
+                                  id="wdt-constructor-mysql-query-table-description"
+                                  placeholder="<?php esc_attr_e('Insert description of your wpDataTable', 'wpdatatables'); ?>"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="wdt-constructor-mysql-tables-block" class="row">
 
         <div class="wdt-constructor-mysql-tables-all col-sm-2-6">
@@ -290,7 +305,7 @@
         <div class="col-sm-3 p-r-0">
             <div class="form-group">
                 <div class="fg-line">
-                    <input type="text" placeholder="Choose criteria" class="form-control input-sm" value="" id="wdt-constructor-where-value">
+                    <input type="text" placeholder="<?php esc_attr_e('Choose criteria','wpdatatables'); ?>" class="form-control input-sm" value="" id="wdt-constructor-where-value">
                 </div>
             </div>
         </div>

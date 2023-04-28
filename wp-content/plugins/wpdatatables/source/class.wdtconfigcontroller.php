@@ -204,6 +204,7 @@ class WDTConfigController {
             $table->pagination = (isset($advancedSettings->pagination)) ? $advancedSettings->pagination : 1;
             $table->paginationAlign = (isset($advancedSettings->paginationAlign)) ? $advancedSettings->paginationAlign : 'right';
             $table->paginationLayout = (isset($advancedSettings->paginationLayout)) ? $advancedSettings->paginationLayout : 'full_numbers';
+            $table->paginationLayoutMobile = (isset($advancedSettings->paginationLayoutMobile)) ? $advancedSettings->paginationLayoutMobile : 'simple';
             $table->global_search = (isset($advancedSettings->global_search)) ? $advancedSettings->global_search : 1;
             $table->showRowsPerPage = (isset($advancedSettings->showRowsPerPage)) ? $advancedSettings->showRowsPerPage : 1;
             $table->showAllRows = (isset($advancedSettings->showAllRows)) ? $advancedSettings->showAllRows : false;
@@ -228,6 +229,8 @@ class WDTConfigController {
             $table->tableFontColorSettings = isset($table->tableFontColorSettings) || isset($advancedSettings->tableFontColorSettings)  ? $advancedSettings->tableFontColorSettings : get_option('wdtFontColorSettings');
             $table->pdfPaperSize = isset($advancedSettings->pdfPaperSize) ? $advancedSettings->pdfPaperSize : 'A4';
             $table->pdfPageOrientation = isset($advancedSettings->pdfPageOrientation) ? $advancedSettings->pdfPageOrientation : 'portrait';
+	        $table->show_table_description = isset($advancedSettings->show_table_description) ? $advancedSettings->show_table_description : false;
+	        $table->table_description = isset($advancedSettings->table_description) ? $advancedSettings->table_description : '';
 
             $table = self::sanitizeTableConfig($table);
 
@@ -334,7 +337,7 @@ class WDTConfigController {
         $wdtVar9 = isset($table->var9) ?
             sanitize_text_field($table->var9) : '';
 
-        $tableSkin = in_array($table->tableSkin, ['material','light','graphite','aqua','purple','dark']) ? $table->tableSkin : get_option('wdtBaseSkin');
+        $tableSkin = in_array($table->tableSkin, ['material','light','graphite','aqua','purple','dark', 'raspberry-cream','mojito']) ? $table->tableSkin : get_option('wdtBaseSkin');
 
         // Preparing the config
         $tableConfig = array(
@@ -384,6 +387,7 @@ class WDTConfigController {
                     'pagination' => $table->pagination,
                     'paginationAlign' => $table->paginationAlign,
                     'paginationLayout' => $table->paginationLayout,
+                    'paginationLayoutMobile' => $table->paginationLayoutMobile,
                     'global_search' => $table->global_search,
                     'showRowsPerPage' => $table->showRowsPerPage,
                     'showAllRows' => $table->showAllRows,
@@ -407,10 +411,11 @@ class WDTConfigController {
                     'tableFontColorSettings' => $table->tableFontColorSettings,
                     'pdfPaperSize' => $table->pdfPaperSize,
                     'pdfPageOrientation' => $table->pdfPageOrientation,
+                    'table_description' => $table->table_description,
+                    'show_table_description' => $table->show_table_description
                 )
-            )
+            ),
         );
-
         $tableConfig = apply_filters('wpdatatables_filter_insert_table_array', $tableConfig);
 
         if (!$table->id) {
@@ -447,6 +452,8 @@ class WDTConfigController {
         }
         $table->title = sanitize_text_field($table->title);
         $table->show_title = (int)$table->show_title;
+	    $table->table_description = sanitize_textarea_field($table->table_description);
+	    $table->show_table_description = (int)$table->show_table_description;
         $table->table_type = sanitize_text_field($table->table_type);
         $table->tools = (int)$table->tools;
         $table->showTableToolsIncludeHTML = (int)$table->showTableToolsIncludeHTML;
@@ -465,6 +472,7 @@ class WDTConfigController {
         $table->pagination = (int)$table->pagination;
         $table->paginationAlign = sanitize_text_field($table->paginationAlign);
         $table->paginationLayout = sanitize_text_field($table->paginationLayout);
+        $table->paginationLayoutMobile = sanitize_text_field($table->paginationLayoutMobile);
         $table->file_location = sanitize_text_field($table->file_location);
         $table->simpleResponsive = (int)$table->simpleResponsive;
         $table->simpleHeader = (int)$table->simpleHeader;
@@ -591,6 +599,11 @@ class WDTConfigController {
         } else {
             $table->name = '';
         }
+	    if (isset($table->table_description)){
+		    $table->table_description = sanitize_textarea_field($table->table_description);
+	    } else {
+		    $table->table_description = '';
+	    }
 
         if (isset($table->content)){
             $isContentObj = false;
@@ -661,9 +674,9 @@ class WDTConfigController {
         if (isset($jsonParams->url)){
             $sanitizedParams->url = trim($jsonParams->url);
             $sanitizedParams->url = sanitize_url($sanitizedParams->url);
-            if ( is_admin() && ! current_user_can( 'unfiltered_html' ) )
-                $sanitizedParams->url = trim($jsonParams->url);
-                $sanitizedParams->url = sanitize_url(wp_kses_post($sanitizedParams->url));
+            if ( is_admin() && ! current_user_can( 'unfiltered_html' ) ) {
+                $sanitizedParams->url = wp_kses_post($sanitizedParams->url);
+            }
         } else {
             $sanitizedParams->url = '';
         }
@@ -797,6 +810,7 @@ class WDTConfigController {
                 $column->calculateMin = (int)$column->calculateMin;
                 $column->calculateTotal = (int)$column->calculateTotal;
                 $column->checkboxesInModal = (int)$column->checkboxesInModal;
+                $column->andLogic = (int)$column->andLogic;
                 $column->color = sanitize_text_field($column->color);
                 $column->dateInputFormat = sanitize_text_field($column->dateInputFormat);
                 $column->decimalPlaces = isset($column->decimalPlaces) ? (int)$column->decimalPlaces : get_option('wdtDecimalPlaces');
@@ -834,7 +848,12 @@ class WDTConfigController {
                 $column->possibleValuesAddEmpty = (int)$column->possibleValuesAddEmpty;
                 $column->possibleValuesAjax = (int)$column->possibleValuesAjax;
                 $column->possibleValuesType = sanitize_text_field($column->possibleValuesType);
+	            $column->column_align_header = sanitize_text_field($column->column_align_header);
+	            $column->column_align_fields = sanitize_text_field($column->column_align_fields);
                 $column->rangeSlider = (int)$column->rangeSlider;
+                $column->rangeMaxValueDisplay = sanitize_text_field($column->rangeMaxValueDisplay);
+                $column->customMaxRangeValue = sanitize_text_field($column->customMaxRangeValue);
+	            $column->column_rotate_header_name = sanitize_text_field($column->column_rotate_header_name);
                 $column->skip_thousands_separator = (int)$column->skip_thousands_separator;
                 $column->sorting = (int)$column->sorting;
                 if ( is_admin() && ! current_user_can( 'unfiltered_html' ) ) {
@@ -972,7 +991,7 @@ class WDTConfigController {
 
         try {
             foreach ($dataSourceColumnsHeaders as $dataSourceColumnsHeader)
-                if ($dataSourceColumnsHeader == '') throw new WDTException(__('One or more columns doesn\'t have a header. Please enter headers for all columns in order to proceed.'));
+                if ($dataSourceColumnsHeader === '') throw new WDTException(__('One or more columns doesn\'t have a header. Please enter headers for all columns in order to proceed.'));
         } catch (WDTException $exception) {
             die($exception);
         }
@@ -1203,10 +1222,16 @@ class WDTConfigController {
             $feColumn ? $feColumn->possibleValuesAddEmpty : 0;
         $columnConfig['advanced_settings']['possibleValuesAjax'] =
             $feColumn ? $feColumn->possibleValuesAjax : 10;
+	    $columnConfig['advanced_settings']['column_align_fields'] =
+		    $feColumn ? $feColumn->column_align_fields : '';
         $columnConfig['advanced_settings']['calculateAvg'] =
             $feColumn ? $feColumn->calculateAvg : 0;
+	    $columnConfig['advanced_settings']['column_align_header'] =
+		    $feColumn ? $feColumn->column_align_header : '';
         $columnConfig['advanced_settings']['calculateMax'] =
             $feColumn ? $feColumn->calculateMax : 0;
+	    $columnConfig['advanced_settings']['column_rotate_header_name'] =
+		    $feColumn ? $feColumn->column_rotate_header_name : '';
         $columnConfig['advanced_settings']['calculateMin'] =
             $feColumn ? $feColumn->calculateMin : 0;
         $columnConfig['advanced_settings']['sorting'] =
@@ -1223,6 +1248,8 @@ class WDTConfigController {
             $feColumn ? $feColumn->searchInSelectBoxEditing : 1;
         $columnConfig['advanced_settings']['checkboxesInModal'] =
             $feColumn ? $feColumn->checkboxesInModal : null;
+        $columnConfig['advanced_settings']['andLogic'] =
+            $feColumn ? $feColumn->andLogic : null;
         $columnConfig['advanced_settings']['editingDefaultValue'] =
             $feColumn ? $feColumn->editingDefaultValue : null;
         $columnConfig['advanced_settings']['dateInputFormat'] =
@@ -1243,6 +1270,10 @@ class WDTConfigController {
             $feColumn ? $feColumn->linkButtonClass : null;
         $columnConfig['advanced_settings']['rangeSlider'] =
             $feColumn ? $feColumn->rangeSlider : 0;
+        $columnConfig['advanced_settings']['rangeMaxValueDisplay'] =
+            $feColumn ? $feColumn->rangeMaxValueDisplay : 'default';
+        $columnConfig['advanced_settings']['customMaxRangeValue'] =
+            $feColumn ? $feColumn->customMaxRangeValue : null;
 
         // Possible values
         $columnConfig['possible_values'] = '';
@@ -1388,10 +1419,16 @@ class WDTConfigController {
             $advancedSettings->possibleValuesAjax : 0;
         $feColumn->calculateAvg = isset($advancedSettings->calculateAvg) ?
             $advancedSettings->calculateAvg : 0;
+	    $feColumn->column_align_fields = isset($advancedSettings->column_align_fields) ?
+		    $advancedSettings->column_align_fields : '';
         $feColumn->calculateMax = isset($advancedSettings->calculateMax) ?
             $advancedSettings->calculateMax : 0;
+	    $feColumn->column_align_header = isset($advancedSettings->column_align_header) ?
+		    $advancedSettings->column_align_header : '';
         $feColumn->calculateMin = isset($advancedSettings->calculateMin) ?
             $advancedSettings->calculateMin : 0;
+	    $feColumn->column_rotate_header_name = isset($advancedSettings->column_rotate_header_name) ?
+		    $advancedSettings->column_rotate_header_name : '';
         $feColumn->sorting = isset($advancedSettings->sorting) ?
             $advancedSettings->sorting : 1;
         $feColumn->exactFiltering = isset($advancedSettings->exactFiltering) ?
@@ -1404,6 +1441,8 @@ class WDTConfigController {
             $advancedSettings->searchInSelectBoxEditing : 1;
         $feColumn->checkboxesInModal = isset($advancedSettings->checkboxesInModal) ?
             $advancedSettings->checkboxesInModal : 0;
+        $feColumn->andLogic = isset($advancedSettings->andLogic) ?
+            $advancedSettings->andLogic : 0;
         $feColumn->possibleValuesType = isset($advancedSettings->possibleValuesType) ?
             $advancedSettings->possibleValuesType : 'read';
         $feColumn->editingDefaultValue = isset($advancedSettings->editingDefaultValue) ?
@@ -1428,7 +1467,10 @@ class WDTConfigController {
             $advancedSettings->linkButtonClass : null;
         $feColumn->rangeSlider = isset($advancedSettings->rangeSlider) ?
             $advancedSettings->rangeSlider : 0;
-
+        $feColumn->rangeMaxValueDisplay = isset($advancedSettings->rangeMaxValueDisplay) ?
+            $advancedSettings->rangeMaxValueDisplay : 0;
+        $feColumn->customMaxRangeValue = isset($advancedSettings->customMaxRangeValue) ?
+            $advancedSettings->customMaxRangeValue : 0;
 
         if ($feColumn->possibleValuesType === 'foreignkey') {
             if (!isset($feColumn->foreignKeyRule)) {
@@ -1477,6 +1519,7 @@ class WDTConfigController {
         $table->pagination = 1;
         $table->paginationAlign = 'right';
         $table->paginationLayout = 'full_numbers';
+        $table->paginationLayoutMobile = 'simple';
         $table->file_location = 'wp_media_lib';
         $table->simpleResponsive = 0;
         $table->simpleHeader = 0;
@@ -1515,6 +1558,8 @@ class WDTConfigController {
         $table->content = '';
         $table->pdfPaperSize = 'A4';
         $table->pdfPageOrientation = 'portrait';
+	    $table->table_description = '';
+	    $table->show_table_description = 0;
 
         return $table;
     }
