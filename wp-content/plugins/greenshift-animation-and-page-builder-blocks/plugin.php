@@ -6,7 +6,7 @@
  * Author: Wpsoul
  * Author URI: https://greenshiftwp.com
  * Plugin URI: https://greenshiftwp.com
- * Version: 5.9.2
+ * Version: 5.9.6
  * Text Domain: greenshift-animation-and-page-builder-blocks
  * License: GPL2+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
@@ -228,7 +228,7 @@ function gspb_GreenShift_plugin_init()
 function gspb_activation_redirect($plugin)
 {
 	if ($plugin == plugin_basename(__FILE__)) {
-		exit(wp_redirect(admin_url('?page=greenshift_dashboard')));
+		exit(wp_redirect(admin_url('admin.php?page=greenshift_dashboard')));
 	}
 }
 add_action('activated_plugin', 'gspb_activation_redirect');

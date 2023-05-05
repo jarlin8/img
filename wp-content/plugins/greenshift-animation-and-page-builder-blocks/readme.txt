@@ -8,7 +8,7 @@ Requires at least: 6.0
 Tested up to: 6.2
 Requires PHP: 7.0
 License: GPLv2 or later
-Stable tag: 5.9.2
+Stable tag: 5.9.6
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 More than 20 special blocks for Gutenberg to build complex pages and animations with highest possible web vitals score.
@@ -107,6 +107,14 @@ Yes, we guarantee that Greenshift is built on top of google recommendations and 
 7. **Sliding panels, popups.** Build custom sliding panels, add any block, use for mega menus
 
 == Changelog ==
+
+= 5.9.6 =
+* Added: Videobox supports Youtube shorts
+* Added: Sliding panel/popup has Modal type (uses dialog tags)
+* Added: Gallery block supports collapsing to slider for mobiles
+
+= 5.9.4 =
+* Added: Background and color options for TOC block
 
 = 5.9.2 =
 * Fixes: gradient for background, border radius for videos

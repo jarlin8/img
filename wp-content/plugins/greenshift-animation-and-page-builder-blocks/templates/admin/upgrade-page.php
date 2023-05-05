@@ -2383,7 +2383,7 @@ if (!defined('ABSPATH')) {
 
 
 
-                                        <div id="gspb_button-id-gsbp-e5d162a8-4042" class="gspb_button_wrapper gspb_button-id-gsbp-e5d162a8-4042 wp-block-greenshift-blocks-button"><a class="gspb-buttonbox" href="https://shop.greenshiftwp.com/downloads/marketing-and-seo-addon/" target="_blank" rel="noopener"><span class="gspb-buttonbox-textwrap"><span class="gspb-buttonbox-text"><span class="gspb-buttonbox-title">From $49.99</span></span></span></a></div>
+                                        <div id="gspb_button-id-gsbp-e5d162a8-4042" class="gspb_button_wrapper gspb_button-id-gsbp-e5d162a8-4042 wp-block-greenshift-blocks-button"><a class="gspb-buttonbox" href="https://shop.greenshiftwp.com/downloads/seo-pack/" target="_blank" rel="noopener"><span class="gspb-buttonbox-textwrap"><span class="gspb-buttonbox-text"><span class="gspb-buttonbox-title">From $49.99</span></span></span></a></div>
 
 
 

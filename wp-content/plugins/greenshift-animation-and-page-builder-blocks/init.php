@@ -140,7 +140,7 @@ function gspb_greenShift_register_scripts_blocks(){
 		'greenShift-scrollable-init',
 		GREENSHIFT_DIR_URL . 'libs/scrollable/init.js',
 		array(),
-		'1.4',
+		'1.5',
 		true
 	);
 
@@ -301,7 +301,7 @@ function gspb_greenShift_register_scripts_blocks(){
 		'gsslidingpanel',
 		GREENSHIFT_DIR_URL . 'libs/slidingpanel/index.js',
 		array(),
-		'2.1',
+		'2.2',
 		true
 	);
 

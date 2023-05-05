@@ -189,7 +189,9 @@ class GSToc{
               // get id
               $att_string = $matches[2][$i];
               preg_match("/id=\"([^\"]*)\"/", $att_string , $id_matches);
-              $headings[$i]["id"] = $id_matches[1];
+              if(!empty($id_matches[1])){
+                $headings[$i]["id"] = $id_matches[1];
+              }
               // get classes
               $att_string = $matches[2][$i];
               preg_match_all("/class=\"([^\"]*)\"/", $att_string , $class_matches);
