@@ -178,6 +178,23 @@ class Quick_Edit {
 			return;
 		}
 
+		global $post_type;
+		$ptype = $post_type;
+		if ( is_a( $ptype, 'WP_Post_Type' ) ) {
+			$ptype = $ptype->name;
+		}
+
+		global $pagenow;
+		if ( 'edit-tags.php' === $pagenow ) {
+			global $taxonomy;
+			$ptype = $taxonomy;
+		}
+
+		$columns = get_column_headers( 'edit-' . $ptype );
+		if ( ! isset( $columns['rank_math_seo_details'] ) && ! isset( $columns['rank_math_tax_seo_details'] ) ) {
+			return;
+		}
+
 		$robots = [
 			'index'        => __( 'Index', 'rank-math-pro' ),
 			'noindex'      => __( 'No Index', 'rank-math-pro' ),
@@ -465,6 +482,10 @@ class Quick_Edit {
 		foreach ( $save_fields as $field ) {
 			$field_name    = 'rank_math_' . $field;
 			$field_value   = Param::post( $field_name );
+			if ( false === $field_value ) {
+				continue;
+			}
+
 			$default_value = '';
 			if ( $post_type ) {
 				$default_value = Helper::get_settings( 'titles.pt_' . $post_type . '_' . $field );
@@ -538,6 +559,10 @@ class Quick_Edit {
 		foreach ( $save_fields as $field ) {
 			$field_name  = 'rank_math_' . $field;
 			$field_value = Param::post( $field_name );
+			if ( false === $field_value ) {
+				continue;
+			}
+
 			if ( 'robots' === $field ) {
 				$field_value = (array) Param::post( $field_name, false, FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 			} elseif ( 'canonical_url' === $field ) {

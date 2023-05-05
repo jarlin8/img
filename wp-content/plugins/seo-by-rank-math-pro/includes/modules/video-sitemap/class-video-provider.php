@@ -181,10 +181,6 @@ class Video_Provider extends Post_Type {
 			return false;
 		}
 
-		if ( 'post' !== $post->post_type ) {
-			$url['loc'] = trailingslashit( $url['loc'] );
-		}
-
 		$url['author'] = $post->post_author;
 		$url['videos'] = [];
 		foreach ( $schemas as $schema ) {

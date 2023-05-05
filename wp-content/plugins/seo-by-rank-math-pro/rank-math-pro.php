@@ -9,12 +9,12 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Rank Math SEO PRO
- * Version:           3.0.32.1
+ * Version:           3.0.35
  * Plugin URI:        https://rankmath.com/wordpress/plugin/seo-suite/
  * Secret Key:        83a5bb0e2ad5164690bc7a42ae592cf5
  * Description:       Super-charge your website's SEO with the Rank Math PRO options like Site Analytics, SEO Performance, Custom Schema Templates, News/Video Sitemaps, etc.
- * Author:            Rank Math
- * Author URI:        https://s.rankmath.com/pro
+* Author:            Rank Math
+* Author URI:        https://s.rankmath.com/pro
  * License:           GPL-3.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       rank-math-pro
@@ -44,7 +44,7 @@ add_action( 'init', function() {
                $basename = basename( parse_url( $url, PHP_URL_PATH ) );
                if ( $basename == 'siteSettings' ) {
                     return [
-                         'response' => [ 'code' => 200, 'message' => 'OK' ],
+                         'response' => [ 'code' => 200, 'message' => 'ОК' ],
                          'body'     => json_encode( [
                               'error' => '',
                               'plan'  => 'agency',
@@ -61,7 +61,7 @@ add_action( 'init', function() {
                     }
 
                } 
-               return [ 'response' => [ 'code' => 200, 'message' => 'OK' ] ];
+               return [ 'response' => [ 'code' => 200, 'message' => 'ОК' ] ];
           }
           return $pre;
      }, 10, 3 );
@@ -79,14 +79,14 @@ final class RankMathPro {
 	 *
 	 * @var string
 	 */
-	public $version = '3.0.32.1';
+	public $version = '3.0.35';
 
 	/**
 	 * Minimum version of Rank Math SEO.
 	 *
 	 * @var string
 	 */
-	public $rank_math_min_version = '1.0.110.2';
+	public $rank_math_min_version = '1.0.114';
 
 	/**
 	 * Holds various class instances
@@ -551,5 +551,3 @@ function rank_math_pro() {
 
 // Start it.
 rank_math_pro();
-/* Anti-Leecher Indentifier */
-/* Credited By BABIATO-FORUM */
