@@ -431,7 +431,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 					
 					$temp ['editable']			= ( !empty($default_um_disabled_cols) && in_array($meta_key, $default_um_disabled_cols) ) ? false : true;
-					$temp ['editor']			= $temp ['type'];
+					$temp ['editor']			= ( 'numeric' === $temp ['type'] ) ? 'customNumericEditor' : $temp ['type'];
 					$temp ['batch_editable']	= true; // flag for enabling the batch edit for the column
 					$temp ['sortable']			= true;
 					$temp ['resizable']			= true;

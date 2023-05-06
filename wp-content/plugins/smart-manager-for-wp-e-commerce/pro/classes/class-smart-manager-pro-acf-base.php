@@ -80,7 +80,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_ACF_Base' ) ) {
 
                 // insert field in column_model
                 $index = sizeof( $column_model );
-				$index++;
 
                 $column_model [$index] = array( 
                                                 'src'   => $src,

@@ -209,6 +209,26 @@ jQuery(document).on('smart_manager_init','#sm_editor_grid', function() {
             window.smart_manager.taskActionsModal({id: jQuery(this).attr('id'),btnText: jQuery(this).text()});
         }
     })
+})
+
+// Code for handling renaming of column titles
+.off('focusout','.sm-column-title-input').on('focusout','.sm-column-title-input', function(e){
+    e.target.readOnly = true;
+    e.target.classList.remove('sm-column-title-input-edit')
+    let parent = e.target.closest('li');
+    if(!parent) return;
+    let keyInput = parent.querySelector(".js-column-key");
+    if(!keyInput) return;
+    
+    if(!e.target.value){ //handling for empty values
+        (window.smart_manager.editedColumnTitles.hasOwnProperty(keyInput.value)) ? delete window.smart_manager.editedColumnTitles[keyInput.value] : ''
+        return;
+    }
+
+    let titleInput = parent.querySelector(".js-column-title");
+    if(!titleInput) return;
+    if(titleInput.value == e.target.value) return;
+    window.smart_manager.editedColumnTitles[keyInput.value] = e.target.value;
 });
 //Function to determine if background process is running or not
 Smart_Manager.prototype.isBackgroundProcessRunning = function() {
@@ -747,7 +767,7 @@ Smart_Manager.prototype.processBatchUpdate = function() {
             window.smart_manager.showProgressDialog(_x('Bulk Edit', 'progressbar modal title', 'smart-manager-for-wp-e-commerce')); 
 
             if( typeof (sa_sm_background_process_heartbeat) !== "undefined" && typeof (sa_sm_background_process_heartbeat) === "function" ) {
-                sa_sm_background_process_heartbeat(5000);
+                sa_sm_background_process_heartbeat(5000, 'bulk_edit');
             }
         }
     ,1);
@@ -1347,13 +1367,21 @@ Smart_Manager.prototype.showTitleModal = function() {
         return;
     }
 
-    // let description = _x('A clear and concise title for this task will make it easier for you to refer to or act on it later. We\'ve provided a pre-filled title based on your edits.','modal description','smart-manager-for-wp-e-commerce')
-    let description = sprintf(_x('Name the task for easier reference and future actions, especially for %s option. A pre-filled title has been suggested based on your changes.','modal description','smart-manager-for-wp-e-commerce'), '<strong>'+_x('Undo','modal description','smart-manager-for-wp-e-commerce')+'</strong>' )
+    let title = sprintf(_x('Edited %s','process title','smart-manager-for-wp-e-commerce'),window.smart_manager.processContent)
 
+    if(0 === window.smart_manager.showTasksTitleModal){
+        window.smart_manager.updatedTitle = title
+        if("function" === typeof(window.smart_manager.processCallback)){
+            ("undefined" !== typeof(window.smart_manager.processCallbackParams) && Object.keys(window.smart_manager.processCallbackParams).length > 0) ? window.smart_manager.processCallback(window.smart_manager.processCallbackParams) : window.smart_manager.processCallback()
+        }
+        return;
+    }
+
+    let description = sprintf(_x('Name the task for easier reference and future actions, especially for %s option. A pre-filled title has been suggested based on your changes.','modal description','smart-manager-for-wp-e-commerce'), '<strong>'+_x('Undo','modal description','smart-manager-for-wp-e-commerce')+'</strong>' )
     window.smart_manager.modal = {
         title: _x('Task Title','modal title','smart-manager-for-wp-e-commerce'),
         content: '<div style="padding-bottom: 1em; color: #6b7280!important;">'+description+'</div>'+
-                '<div id="show_modal_content"><input type="text" id="sm_add_title" placeholder="'+_x('Enter desired title here...','title placeholder','smart-manager-for-wp-e-commerce')+'" value="'+sprintf(_x('Edited %s','process title','smart-manager-for-wp-e-commerce'),window.smart_manager.processContent) +'"></div>',
+                '<div id="show_modal_content"><input type="text" id="sm_add_title" placeholder="'+_x('Enter desired title here...','title placeholder','smart-manager-for-wp-e-commerce')+'" value="'+title+'"></div>',
         autoHide: false,
         cta: {
             title: _x('Ok','button','smart-manager-for-wp-e-commerce'),
@@ -1467,4 +1495,24 @@ Smart_Manager.prototype.getExportCsv = function(args){
     if("undefined" !== typeof(window.smart_manager.showConfirmDialog) && "function" === typeof(window.smart_manager.showConfirmDialog)){
         window.smart_manager.showConfirmDialog(args.params);
     }   
+}
+
+// Function for handling display of editor for column titles
+Smart_Manager.prototype.displayColumnTitleEditor = function(e){
+    let parent = e.target.closest('li');
+    if(!parent) return;
+    let input = parent.querySelector("input[type='text']");
+    if(!input) return;
+    let cssClass = 'sm-column-title-input-edit';
+    input.readOnly = !input.readOnly;
+    if(input.readOnly){
+        input.classList.remove(cssClass)
+    }else{
+        input.classList.add(cssClass);
+        input.focus();
+        //Code for setting the cursor at end of input
+        let val = input.value;
+        input.value = '';
+        input.value = val; 
+    }
 }

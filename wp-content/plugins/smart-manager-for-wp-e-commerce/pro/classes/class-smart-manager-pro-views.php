@@ -19,6 +19,7 @@ class Smart_Manager_Pro_Views {
      * @var $instance
      */
     private static $instance = null;
+    public $req_params = array();
 
 	function __construct() {
 		$this->req_params = (!empty($_REQUEST)) ? $_REQUEST : array();

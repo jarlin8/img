@@ -182,7 +182,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 					$subscription_period = ( function_exists('wcs_get_subscription_period_strings') ) ? wcs_get_subscription_period_strings() : array();
 					$column = $this->generate_dropdown_col_model( $column, $subscription_period );				
 				} else if( !empty( $numeric_columns ) && in_array( $src, $numeric_columns ) ) {
-					$column ['type'] = $column ['editor'] = 'numeric';
+					$column ['type'] = 'numeric';
+					$column ['editor'] = ( '_billing_phone' === $src ) ? 'numeric' : 'customNumericEditor';
 				} else if( !empty( $string_columns ) && in_array( $src, $string_columns ) ) {
 					$column ['type'] = $column ['editor'] = 'text';
 				}

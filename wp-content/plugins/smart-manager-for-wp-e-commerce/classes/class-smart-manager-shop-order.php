@@ -173,7 +173,8 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 				} else if ($src == 'post_excerpt') {
 					$column ['name'] = $column ['key'] = __('Customer provided note', 'smart-manager-for-wp-e-commerce');
 				} else if( !empty( $numeric_columns ) && in_array( $src, $numeric_columns ) ) {
-					$column ['type'] = $column ['editor'] = 'numeric';
+					$column ['type'] = 'numeric';
+					$column['editor'] = ( '_billing_phone' === $src ) ? 'numeric' : 'customNumericEditor';
 				} else if( !empty( $string_columns ) && in_array( $src, $string_columns ) ) {
 					$column ['type'] = $column ['editor'] = 'text';
 				}

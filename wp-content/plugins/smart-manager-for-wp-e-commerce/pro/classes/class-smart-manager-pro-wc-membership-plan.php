@@ -85,7 +85,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_WC_Membership_Plan' ) ) {
 					if ( empty( $dashboard_model_saved ) ) {
 						if ( in_array( $src, $numeric_columns ) ) {
 							$column['type'] = 'numeric';
-							$column['editor'] = $column['type'];
+							$column['editor'] = 'customNumericEditor';
 						} elseif ( in_array( $src, $datetime_columns ) ) {
 							$column['type'] = 'sm.datetime';
 							$column['editor'] = $column['type'];

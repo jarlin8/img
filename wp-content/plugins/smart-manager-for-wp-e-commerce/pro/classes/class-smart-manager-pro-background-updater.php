@@ -106,7 +106,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 
 			?>
 			<script type="text/javascript">
-				var sa_sm_background_process_heartbeat = function(delay = 0) {
+				var sa_sm_background_process_heartbeat = function(delay = 0, process = '') {
 					
 					let admin_ajax_url = '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>';
 					admin_ajax_url = (admin_ajax_url.indexOf('?') !== -1) ? admin_ajax_url + '&action=sm_beta_include_file' : admin_ajax_url + '?action=sm_beta_include_file';
@@ -182,9 +182,42 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 													window.smart_manager.modal = {}
 													window.smart_manager.showPannelDialog('#!/')
 													jQuery('#sa_sm_background_process_complete').fadeIn();
+													window.smart_manager.showLoader();
 													setTimeout( function() {
 														jQuery('#sa_sm_background_process_complete').fadeOut();
-														window.smart_manager.refresh();	
+														if(process == 'bulk_edit'){ //code to refresh all the pages for BE
+															let p = 1;
+															while(p <= window.smart_manager.page){
+																window.smart_manager.getData({refreshPage: p});
+																p++;
+															}
+															
+															if(window.smart_manager.hot){
+																if(window.smart_manager.hot.selection){
+																	if(window.smart_manager.hot.selection.highlight){
+																		if(window.smart_manager.hot.selection.highlight.selectAll){
+																			delete window.smart_manager.hot.selection.highlight.selectAll
+																		}
+																		window.smart_manager.hot.selection.highlight.selectedRows = []
+																	}
+																}
+															}
+															window.smart_manager.hot.render();
+
+															window.smart_manager.selectedRows = [];
+															window.smart_manager.selectAll = false;
+															window.smart_manager.addRecords_count = 0;
+															window.smart_manager.dirtyRowColIds = {};
+															window.smart_manager.editedData = {};
+															window.smart_manager.updatedEditedData = {};
+															window.smart_manager.processContent = '';
+															window.smart_manager.updatedTitle = '';
+															window.smart_manager.modifiedRows = new Array();
+															window.smart_manager.isRefreshingLoadedPage = false;
+															window.smart_manager.showLoader(false);
+														} else{
+															window.smart_manager.refresh();
+														}
 													}, 1000);
 												}
 											}

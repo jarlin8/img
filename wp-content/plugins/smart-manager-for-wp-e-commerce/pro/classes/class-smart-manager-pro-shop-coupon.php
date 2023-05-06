@@ -308,7 +308,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 					case ( !empty( $numeric_columns[ $col_nm ] ) ):
 						$column['key'] = $numeric_columns[ $col_nm ];
 						$column['name'] = $column['key'];
-						$column ['type'] = $column ['editor'] = 'numeric';
+						$column['type'] = 'numeric';
+						$column['editor'] = 'customNumericEditor';
 						break;
 					case ( !empty( $checkbox_yes_no_columns[ $col_nm ] ) ):
 						$column['key'] = $checkbox_yes_no_columns[ $col_nm ];

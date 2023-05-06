@@ -166,6 +166,7 @@ Smart_Manager.prototype.init = function() {
 	this.forceCollapseAdminMenu = (sm_beta_params.hasOwnProperty('forceCollapseAdminMenu')) ? parseInt(sm_beta_params.forceCollapseAdminMenu) : 0
 	this.defaultImagePlaceholder = (sm_beta_params.hasOwnProperty('defaultImagePlaceholder')) ? sm_beta_params.defaultImagePlaceholder : ''
 	this.rowHeight = (sm_beta_params.hasOwnProperty('rowHeight')) ? sm_beta_params.rowHeight : '50px'
+	this.showTasksTitleModal = (sm_beta_params.hasOwnProperty('showTasksTitleModal')) ? parseInt(sm_beta_params.showTasksTitleModal) : 0
 
 	//Code for setting the default dashboard
 	if( typeof this.sm_dashboards != 'undefined' && this.sm_dashboards != '' ) {
@@ -209,6 +210,8 @@ Smart_Manager.prototype.init = function() {
 	this.updatedEditedData = {};
 	this.selectedAllTasks = false;
 	this.exportStore = false;
+	this.isRefreshingLoadedPage = false;
+	this.editedColumnTitles = {};
 
 	//Function to set all the states on unload
 	window.onbeforeunload = function (evt) { 
@@ -326,7 +329,7 @@ Smart_Manager.prototype.createOptGroups = function(args={}) {
 		}
 	});
 
-	window.smart_manager.dashboard_select_options += (options != '') ? '<optgroup label="'+args.label+'">'+options+'</optgroup>' : '';
+	window.smart_manager.dashboard_select_options += (options != '') ? '<optgroup style="text-transform:uppercase;" label="'+args.label+'">'+options+'</optgroup>' : '';
 }
 
 // Function to load top right bar on the page
@@ -979,8 +982,10 @@ Smart_Manager.prototype.set_data = function(response) {
 				window.smart_manager.loadedTotalRecords = 0
 			}
 
-			let loadedRecordCount = (res.hasOwnProperty('loaded_total_count')) ? parseInt(res.loaded_total_count) : res.items.length
-			window.smart_manager.loadedTotalRecords += loadedRecordCount
+			if(!window.smart_manager.isRefreshingLoadedPage){
+				let loadedRecordCount = (res.hasOwnProperty('loaded_total_count')) ? parseInt(res.loaded_total_count) : res.items.length
+				window.smart_manager.loadedTotalRecords += loadedRecordCount
+			}
 			
 			if( window.smart_manager.page > 1 ) {
 			
@@ -1163,6 +1168,7 @@ Smart_Manager.prototype.getDataDefaultParams = function(params) {
 Smart_Manager.prototype.getData = function(params = {}) {
 
 	window.smart_manager.gettingData = 1;
+	window.smart_manager.isRefreshingLoadedPage = false;
 
 	if( window.smart_manager.page == 1 ) {
 		if ( typeof (window.smart_manager.getDataDefaultParams) !== "undefined" && typeof (window.smart_manager.getDataDefaultParams) === "function" ) {
@@ -1173,6 +1179,7 @@ Smart_Manager.prototype.getData = function(params = {}) {
 		if( typeof(window.smart_manager.currentGetDataParams.data) != 'undefined' && typeof(window.smart_manager.currentGetDataParams.data.sm_page) != 'undefined' ) {
 			
 			if(params.hasOwnProperty('refreshPage')){
+				window.smart_manager.isRefreshingLoadedPage = true;
 				window.smart_manager.currentGetDataParams.data.sm_page = params.refreshPage;
 				window.smart_manager.currentGetDataParams.async = false;
 			} else {
@@ -1540,7 +1547,7 @@ Smart_Manager.prototype.loadGrid = function() {
 
 		cells: function(row, col, prop) {
 			
-			let customRenderer = window.smart_manager.getCustomRenderer( col );
+			let customRenderer = window.smart_manager.getCustomRenderer(col);
 
 			if( customRenderer != '' ) {
 				let cellProperties = {};
@@ -1664,7 +1671,7 @@ Smart_Manager.prototype.loadGrid = function() {
 
 		afterChange: function(changes, source) {
 
-			if( window.smart_manager.selectAll === true || changes === null ) {
+			if( window.smart_manager.selectAll === true || window.smart_manager.isRefreshingLoadedPage || changes === null ) {
 				return;
 			}
 
@@ -2082,6 +2089,7 @@ Smart_Manager.prototype.reset = function( fullReset = false ){
 	window.smart_manager.updatedEditedData = {};
 	window.smart_manager.processContent = '';
 	window.smart_manager.updatedTitle = '';
+	window.smart_manager.editedColumnTitles = {};
 
 	if(window.smart_manager.hot){
 		if(window.smart_manager.hot.selection){
@@ -2201,6 +2209,8 @@ Smart_Manager.prototype.event_handler = function() {
 			}
 
 			(window.smart_manager.isTaxonomyDashboard()) ? jQuery('#sm_beta_move_to_trash').hide() : jQuery('#sm_beta_move_to_trash').show();
+
+			jQuery('#sm_show_tasks_container').parents('div.sm_top_bar_action_btns').removeAttr('style');
 
 			window.smart_manager.displayShowHideColumnSettings(true);
 			jQuery('#sm_editor_grid').trigger( 'sm_dashboard_change' ); //custom trigger
@@ -2706,6 +2716,15 @@ Smart_Manager.prototype.event_handler = function() {
 			window.smart_manager.showNotification()
 		}
 	})
+	.off('click','.sm-column-title-editor-icon').on('click','.sm-column-title-editor-icon', function(e){
+		if (window.smart_manager.sm_beta_pro == 1 && 'undefined' !== typeof(window.smart_manager.displayColumnTitleEditor) && 'function' === typeof(window.smart_manager.displayColumnTitleEditor)) {
+			window.smart_manager.displayColumnTitleEditor(e);
+		} else {
+			window.smart_manager.notification = {message: sprintf(_x('This feature is available only in the %s version', 'modal content', 'smart-manager-for-wp-e-commerce'), '<a href="' + window.smart_manager.pricingPageURL + '" target="_blank">'+_x('Pro', 'modal content', 'smart-manager-for-wp-e-commerce')+'</a>'),hideDelay: window.smart_manager.notificationHideDelayInMs}
+			window.smart_manager.showNotification()
+		}
+	})
+	
 	jQuery(document).trigger('sm_event_handler');
 }
 //Function to equalize the enabled and disabled section height in column visibility dialog
@@ -2727,7 +2746,7 @@ Smart_Manager.prototype.processColumnVisibilitySearch = function(eventObj) {
 	
 	if( ulId != '' ) {
 		jQuery("#"+ulId).find('li').each( function() {
-			let txtValue = jQuery(this).text();
+			let txtValue = jQuery(this).find('.sm-column-title-input').val();
 			if (txtValue.toUpperCase().indexOf(searchString.toUpperCase()) > -1) {
 		      jQuery(this).show();
 		    } else {
@@ -2764,10 +2783,17 @@ Smart_Manager.prototype.createColumnVisibilityDialog = function() {
 			colPosition = ( colObj.hasOwnProperty('position') ) ? ( ( colObj.position != '' ) ? colObj.position - 1 : '' ) : '';
 
 
-			temp = '<li><span class="handle">::</span> '+ colText + ' ' +
-						'<input type="hidden" name="columns[]" class="js-column-key" value="'+ colVal +'"> '+
-						'<input type="hidden" name="columns_names[]" class="js-column-title" value="'+ colText +'"> '+
-					'</li>';
+			temp = `<li>
+						<span class="handle">::</span> 
+						<input type="text" class="sm-column-title-input" value="${colText}" readonly />
+						<span class="handle sm-column-title-editor-icon">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+							</svg>
+						</span>
+						<input type="hidden" name="columns[]" class="js-column-key" value="${colVal}">
+						<input type="hidden" name="columns_names[]" class="js-column-title" value="${colText}">
+					</li>`;
 
 			if( colObj.hasOwnProperty('hidden') && false === colObj.hidden ) {
 				enabledColumnsArray.push(temp);
@@ -2856,7 +2882,7 @@ Smart_Manager.prototype.columnsMoved = function() {
 
 //Function to load the updated list of enabled columns in the grid
 Smart_Manager.prototype.processColumnVisibility = function() {
-	if( false === window.smart_manager.columnsVisibilityUsed ) {
+	if( false === window.smart_manager.columnsVisibilityUsed && Object.keys(window.smart_manager.editedColumnTitles).length == 0 ) {
 		return false;
 	}
 
@@ -2873,8 +2899,7 @@ Smart_Manager.prototype.processColumnVisibility = function() {
 
 		let enabledColumnsArray = enabledColumns.split(','),
 			colVal = '',
-			position = 0,
-			index = 0;
+			position = 0;
 
 		window.smart_manager.column_names = [];
 		window.smart_manager.currentVisibleColumns = [];
@@ -2902,10 +2927,21 @@ Smart_Manager.prototype.processColumnVisibility = function() {
 		if ( "undefined" !== typeof (window.smart_manager.sortColumns) && "function" === typeof (window.smart_manager.sortColumns) ) {
 			window.smart_manager.sortColumns();
 		}
+	}
+
+	if( enabledColumns.length > 0 || Object.keys(window.smart_manager.editedColumnTitles).length > 0 ){
+		
+		let index = 0;
 
 		window.smart_manager.currentColModel.forEach(function(colObj){
 
-			let hidden = ( 'undefined' !== typeof(colObj.hidden) ) ? colObj.hidden : true;
+			let hidden = ( 'undefined' !== typeof(colObj.hidden) ) ? colObj.hidden : true,
+				data = (colObj.hasOwnProperty('data')) ? colObj.data : '';
+
+			// COde for updating the column titles
+			if( Object.keys(window.smart_manager.editedColumnTitles).length > 0 && data && window.smart_manager.editedColumnTitles.hasOwnProperty(data) ){
+				colObj.name = colObj.key = colObj.name_display = window.smart_manager.editedColumnTitles[data]
+			}
 
 			if( false === hidden ) {
 				if( false === colObj.hasOwnProperty('name_display') ) {// added for state management
@@ -2920,6 +2956,7 @@ Smart_Manager.prototype.processColumnVisibility = function() {
 			}
 		});
 
+		//code to trigger update state ajax call
 		if ( "undefined" !== typeof (window.smart_manager.updateState) && "function" === typeof (window.smart_manager.updateState) ) {
 			let params = { refreshDataModel : true, async: false };
 			window.smart_manager.isColumnModelUpdated = true
@@ -3231,6 +3268,10 @@ Smart_Manager.prototype.updateState = function(refreshParams){
 			if(refreshParams && 'undefined' !== typeof(refreshParams.isTasksEnabled)){
 				params.data['isTasks'] = refreshParams.isTasksEnabled;
 			}
+			// Code for handling renaming of columns
+			if(Object.keys(window.smart_manager.editedColumnTitles).length > 0){
+				params.data['edited_column_titles'] = window.smart_manager.editedColumnTitles;
+			}
 		}
 		params.showLoader = false;
 		if(refreshParams && 'undefined' !== typeof(refreshParams.async)){
@@ -3383,8 +3424,23 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 
 	  let dateTimeEditor = Handsontable.editors.TextEditor.prototype.extend(),
 	  		dateEditor = Handsontable.editors.TextEditor.prototype.extend(),
-	  		timeEditor = Handsontable.editors.TextEditor.prototype.extend();
+	  		timeEditor = Handsontable.editors.TextEditor.prototype.extend(),
+			customNumericEditor = Handsontable.editors.NumericEditor.prototype.extend();
 
+			customNumericEditor.prototype.createElements = function() {
+				// Call the original createElements method
+				Handsontable.editors.NumericEditor.prototype.createElements.apply(this, arguments);
+
+				// Create number input and update relevant properties
+				this.TEXTAREA = document.createElement('input');
+				this.TEXTAREA.setAttribute('type', 'number');
+
+				 // Replace textarea with number
+				 Handsontable.dom.empty(this.TEXTAREA_PARENT);
+				 this.TEXTAREA_PARENT.appendChild(this.TEXTAREA);
+			}
+
+			Handsontable.editors.registerEditor('customNumericEditor', customNumericEditor);
 
 
         dateTimeEditor.prototype.createElements = function() { window.smart_manager.dateEditor( this, arguments ) };
@@ -3535,7 +3591,7 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 				td.setAttribute('class',cellProperties.className);
 			}
 			
-			td.innerHTML = '<div class="wrapper" style="line-height:30px;">' + td.innerHTML + '</div>';
+			td.innerHTML = '<div class="wrapper">' + td.innerHTML + '</div>';
 
 			return td;
 		}
@@ -3821,11 +3877,11 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 		    	actionBtns.toggle();
 		    	if(1 === params.showHideTasks){
 		    		revDelBtns.show();
-					jQuery('#sm_show_tasks_container').parents('div.sm_top_bar_action_btns').attr('style','width: 100% !important;')
+					jQuery('#sm_show_tasks_container').parents('div.sm_top_bar_action_btns').attr('style','width: 100% !important;');
 		        	window.smart_manager.updateState();
 		    	}else{
 			    	revDelBtns.hide();
-					jQuery('#sm_show_tasks_container').parents('div.sm_top_bar_action_btns').removeAttr('style')
+					jQuery('#sm_show_tasks_container').parents('div.sm_top_bar_action_btns').removeAttr('style');
 			       	window.smart_manager.updateState({isTasksEnabled:0});
 		    	}
 		    	break;

@@ -90,7 +90,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_LLMS_Base' ) ) {
 					  		$column['width'] = 102;
 					  		break;
                         case ( ! empty( $this->numeric_columns ) && in_array( $src, $this->numeric_columns ) ):
-					  		$column['type'] = $column['editor'] = 'numeric';
+					  		$column['type'] = 'numeric';
+							$column['editor'] = 'customNumericEditor';
 							$column['min'] = 0;
 							$column['width'] = 50;
 							$column['align'] = 'right';

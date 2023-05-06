@@ -163,8 +163,7 @@ th {
 }
 
 .sm-grid-dirty-cell {
-	background:transparent no-repeat 0 0;
-	background-image: url(../images/dirty.gif);
+	background-color: #f8717152 !important
 }
 
 .multiselect {
@@ -819,8 +818,8 @@ td[aria-describedby*="postmeta_meta_key__thumbnail_id_meta_value__thumbnail_id"]
 }
 
 #sm-column-visibility .sm-sorter li {
-	border: 1px solid #8c8f94;
-	padding: 0.5rem;
+	border: 1px solid #d2d6dc;
+	padding: 0.1rem 0.5rem;
 	cursor: pointer;
 	text-align: center;
 	border-radius: 0.375rem;
@@ -833,13 +832,15 @@ td[aria-describedby*="postmeta_meta_key__thumbnail_id_meta_value__thumbnail_id"]
 	font-size: 1.2rem;
 	line-height: 1rem;
 	font-weight: 700;
+	padding-top: 0.25rem;
+	color: #9ca3afad;
 }
 
 #sm-column-visibility h3 {
 	font-size: 1.25em;
-	margin: 1rem 0;
+	margin: 0;
 	text-align: center;
-	color: #6b7280!important;
+	color: #6b7280c2!important;
 }
 
 #sm_simple_search_box, .sm-search-box, #sm_advanced_search {    
@@ -868,7 +869,7 @@ td[aria-describedby*="postmeta_meta_key__thumbnail_id_meta_value__thumbnail_id"]
 .sm-search-box {
 	margin-bottom: 1em !important;
 	padding: 0 8px !important;
-    border: 1px solid #8c8f94 !important;
+    border: 1px solid #d2d6dc !important;
 }
 
 /*#search_switch {
@@ -1607,6 +1608,10 @@ div[aria-describedby="sm_inline_dialog"] {
 	top: 4.1em !important;
 }
 
+#sm_nav_bar .select2-container--default .select2-results__group{
+	text-transform: uppercase;
+}
+
 .select2-container--default .select2-selection--single .select2-selection__rendered{
 	color: #4b5563 !important;
 }
@@ -1699,4 +1704,28 @@ div[aria-describedby="sm_inline_dialog"] {
 }
 input#sm_add_title{
 	width: 100%;
+}
+.sm-column-title-editor-icon{
+	float: right !important;
+}
+.sm-column-title-editor-icon svg{
+	width: 1.25rem !important;
+	height: 1.25rem !important;
+	margin-top: 0.05rem;
+}
+.sm-column-title-input{
+	background-color: transparent !important;
+	text-align: center !important;
+	cursor: pointer !important;
+}
+.sm-column-title-input-edit{
+	background-color: #FFF !important;
+	border: 1px solid #8c8f94 !important;
+	cursor: text !important;
+}
+.sm-column-title-input:focus{
+	box-shadow: none !important;
+}
+.sm-column-title-editor-icon:hover{
+	color: #6B7280 !important;
 }

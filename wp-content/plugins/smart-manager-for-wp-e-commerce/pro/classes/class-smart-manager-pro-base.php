@@ -1364,5 +1364,15 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			} 
 			return $col_data_type;	
 		}
+
+		/**
+		 * Function update the edited column titles for the specific dashboard
+		 *
+		 * @param  array $args request params array.
+		 * @return void
+		 */
+		public static function update_column_titles( $args = array() ){
+			( ! empty( $args['edited_column_titles'] ) && ! empty( $args['state_option_name'] ) ) ? update_option( $args['state_option_name'] .'_columns', array_merge( get_option( $args['state_option_name'] .'_columns', array() ), $args['edited_column_titles'] ), 'no' ) : '';
+		}
 	}
 }

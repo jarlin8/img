@@ -15,13 +15,17 @@ class Smart_Manager {
 			$upgrade 		= '',
 			$update_msg 	= '',
 			$success_msg 	= '',
-			$sm_dashboards_final = '',
+			$sm_dashboards_final = array(),
 			$sm_accessible_views = array(),
 			$sm_owned_views = array(),
 			$sm_public_views = array(),
 			$sm_view_post_types = array(),
 			$all_views = array(),
-			$taxonomy_dashboards = array();
+			$taxonomy_dashboards = array(),
+			$dupdater = '',
+			$dupgrade = '',
+			$sm_public_dashboards = array(),
+			$show_pricing_page = false;
 
 	protected static $_instance = null;
 
@@ -1210,6 +1214,7 @@ class Smart_Manager {
 							'forceCollapseAdminMenu' => ( 'no' === get_option( 'sm_wp_force_collapse_admin_menu', 'yes' ) ) ? 0 : 1,
 							'rowHeight' => get_option( 'sm_grid_row_height', '50px' ),
 							'defaultImagePlaceholder' => SM_IMG_URL.'image-placeholder.png',
+							'showTasksTitleModal' => ( 'no' === get_option( 'sm_show_tasks_title_modal', 'yes' ) ) ? 0 : 1,
 						);
 
 		$active_plugins = (array) get_option( 'active_plugins', array() );

@@ -116,6 +116,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 				'_unit_price_sale'					 => __( 'Sale Unit Price', 'smart-manager-for-wp-e-commerce' ),
 			);
 
+			$numeric_text_editor_columns = array( '_wc_booking_duration', '_wc_booking_min_duration', '_wc_booking_max_duration', '_wc_booking_cancel_limit', 
+												'_wc_booking_min_date', '_wc_booking_max_date' );
+
 			$checkbox_empty_one_columns = array(
 				'_wc_booking_enable_range_picker'    => __( 'Enable Calendar Range Picker?', 'smart-manager-for-wp-e-commerce' ),
 				'_wc_booking_requires_confirmation'  => __( 'Requires confirmation?', 'smart-manager-for-wp-e-commerce' ),
@@ -281,7 +284,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 					  		$column['key'] = $numeric_columns[ $col_nm ];
 					  		$column['name'] = $column['key'];
 					  		$column['type'] = 'numeric';
-					  		$column['editor'] = $column['type'];
+					  		$column['editor'] = ( in_array( $col_nm, $numeric_text_editor_columns ) ) ? $column['type'] : 'customNumericEditor';
 							$column['min'] = 0;
 							$column['width'] = 50;
 							$column['align'] = 'right';

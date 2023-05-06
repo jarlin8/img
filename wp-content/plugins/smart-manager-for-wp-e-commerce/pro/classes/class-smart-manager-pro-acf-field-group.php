@@ -95,7 +95,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Acf_Field_Group' ) ) {
                         }
 
                         if ( in_array( $src, $numeric_columns ) ) {
-							$column['type'] = $column['editor'] = 'numeric';
+							$column['type'] = 'numeric';
+							$column['editor'] = 'customNumericEditor';
 						} elseif ( in_array( $src, $datetime_columns ) ) {
 							$column['type'] = $column['editor'] = 'sm.datetime';
 						} elseif ( in_array( $src, $serialized_columns ) ) {

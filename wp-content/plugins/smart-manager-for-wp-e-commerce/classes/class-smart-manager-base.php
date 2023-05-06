@@ -397,7 +397,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 								'name'				=> $name,
 								'key'				=> $name,
 								'type'				=> $type,
-								'editor'			=> $type,
+								'editor'			=> ( 'numeric' === $type ) ? 'customNumericEditor' : $type,
 								'hidden'			=> false,
 								'editable'			=> ( empty( in_array( $type, $uneditable_types ) ) ) ? true : false,
 								'batch_editable'	=> true,
@@ -504,6 +504,8 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 						$args['editor'] = 'select';
 						$args['selectOptions'] = $args['values'];
 						$args['renderer'] = 'selectValueRenderer';
+					}else if ( 'post_excerpt' === $field_nm ) {
+						$args['type'] = 'sm.longstring';
 					}
 
 					// Code for setting the default column positions
@@ -819,9 +821,16 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					);
 				}
 
+				$saved_column_titles = ( defined('SMPRO') && true === SMPRO && ! empty( $this->store_col_model_transient_option_nm ) ) ? get_option( $this->store_col_model_transient_option_nm .'_columns', array() ) : array();
+
 				foreach( $store_model['columns'] as $key => $col ) {
 
 					$col_data = ( ! empty( $col['data'] ) ) ? strtolower( $col['data'] ) : ''; //did if the columns are stored as uppercase
+
+					// Code for handling column titles
+					if( ( defined('SMPRO') && true === SMPRO ) && ! empty( $saved_column_titles ) && ! empty( $col_data ) && ! empty( $saved_column_titles[ $col_data ] ) ) {
+						$store_model['columns'][$key]['name'] = $store_model['columns'][$key]['key'] = $store_model['columns'][$key]['name_display'] = $saved_column_titles[ $store_model['columns'][$key]['data'] ];
+					}
 
 					$store_model['columns'][$key]['width'] = ( !empty( $store_model['columns'][$key]['width'] ) ) ? $store_model['columns'][$key]['width'] : '';
 					$store_model['columns'][$key]['position'] = ( !empty( $store_model['columns'][$key]['position'] ) ) ? $store_model['columns'][$key]['position'] : '';
@@ -1294,7 +1303,12 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					delete_transient( 'sa_sm_user' );
 					$store_model_transient = false;
 					update_option( '_sm_update_740_user', 1, 'no' );
-				}	
+				}
+				if( false === get_option( '_sm_update_820'.'_'.$this->dashboard_key ) ) {
+					delete_transient( 'sa_sm_'.$this->dashboard_key );
+					$store_model_transient = false;
+					update_option( '_sm_update_820'.'_'.$this->dashboard_key, 1, 'no' );
+				}
 			}
 
 			$store_model = $store_model_transient;
@@ -2319,7 +2333,6 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 				$dashboard_type = ( ! empty( $this->req_params['is_taxonomy'] ) ) ? 'taxonomy' : 'post_type';
 				$dashboard_type = ( ! empty( $is_view ) ) ? 'view' : $dashboard_type;
-
 				
 				// Code to update the dashboards column state
 				foreach ($this->req_params['dashboard_states'] as $dashboard => $value) {
@@ -2350,6 +2363,11 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 				// code to update recently accessed dashboard type
 				update_user_meta( get_current_user_id(), 'sa_sm_recent_dashboard_type', $dashboard_type );
+			}
+
+			if( ( defined('SMPRO') && true === SMPRO ) && isset( $this->req_params['edited_column_titles'] ) && is_callable( 'Smart_Manager_Pro_Base', 'update_column_titles' ) ){
+				$this->req_params['state_option_name'] = $this->store_col_model_transient_option_nm;
+				Smart_Manager_Pro_Base::update_column_titles( $this->req_params );
 			}
 			
 			wp_send_json( array( 'ACK'=> 'Success' ) );

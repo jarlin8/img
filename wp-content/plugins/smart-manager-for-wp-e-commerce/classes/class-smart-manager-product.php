@@ -809,9 +809,10 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 							$column['type'] = 'dropdown';
 						} else if ( in_array($src, $numeric_columns) ) {
 							$column['type'] = 'numeric';
-							$column['editor'] = $column['type'];
+							$column['editor'] = 'customNumericEditor';
 						} else if ( in_array($src, $integer_columns) ) {
-							$column['type'] = $column['editor'] = 'numeric';
+							$column['type'] = 'numeric';
+							$column['editor'] = 'customNumericEditor';
 							$column['decimalPlaces'] = ( has_filter( 'woocommerce_stock_amount', 'floatval' ) && '_stock' === $src ) ? 13 : 0; //Compat for Decimal Product Quantity Plugins
 						} else if ( in_array($src, $custom_numeric_columns) ) {
 							$column['type'] = 'text';
