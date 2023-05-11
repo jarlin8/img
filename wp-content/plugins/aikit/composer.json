@@ -1,6 +1,12 @@
 {
     "require": {
-        "guzzlehttp/guzzle": "^7.4"
+        "guzzlehttp/guzzle": "^7.4",
+        "duzun/hquery": "^3.0"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.0"
+        }
     },
     "autoload": {
         "psr-4": {
@@ -17,11 +23,11 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "\"vendor/bin/mozart\" compose",
+            "php mozart.phar compose",
             "composer dump-autoload"
         ],
         "post-update-cmd": [
-            "\"vendor/bin/mozart\" compose",
+            "php mozart.phar compose",
             "composer dump-autoload"
         ]
     }

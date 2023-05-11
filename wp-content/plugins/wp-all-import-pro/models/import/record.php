@@ -439,7 +439,7 @@ class PMXI_Import_Record extends PMXI_Model_Record {
                                                                 break;
                                                             default:
                                                                 if ($final_post_type = get_post_type($missingPostRecord['post_id']) and 'trash' != get_post_status($missingPostRecord['post_id'])) {
-                                                                    wp_delete_post($missingPostRecord['post_id']);
+                                                                    wp_trash_post($missingPostRecord['post_id']);
                                                                     $this->recount_terms($missingPostRecord['post_id'], $final_post_type);
                                                                     $logger and call_user_func($logger, sprintf(__('Instead of deletion, change post with ID `%s` status to trash', 'wp_all_import_plugin'), $missingPostRecord['post_id']));
                                                                 }
@@ -5338,7 +5338,7 @@ class PMXI_Import_Record extends PMXI_Model_Record {
                                             break;
                                         default:
                                             if ($final_post_type = get_post_type($missingPostRecord['post_id']) and 'trash' != get_post_status($missingPostRecord['post_id'])) {
-                                                wp_delete_post($missingPostRecord['post_id']);
+                                                wp_trash_post($missingPostRecord['post_id']);
                                                 $this->recount_terms($missingPostRecord['post_id'], $final_post_type);
                                                 $logger and call_user_func($logger, sprintf(__('Instead of deletion, change post with ID `%s` status to trash', 'wp_all_import_plugin'), $missingPostRecord['post_id']));
                                             }

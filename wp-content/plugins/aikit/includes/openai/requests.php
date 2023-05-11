@@ -21,6 +21,8 @@ add_action( 'rest_api_init', function () {
 } );
 
 function aikit_rest_openai_generate_images ($data) {
+    ###['openai-generate-images']
+
 	$count = $data['count'] ?? 1;
 	$size = $data['size'] ?? 'small';
 	$text = $data['text'] ?? '';
@@ -33,7 +35,7 @@ function aikit_rest_openai_generate_images ($data) {
 	$model = AIKIT_IMAGE_GENERATION_MODEL;
     $prompt = sprintf("Describe an image that would be best fit for this text:\n\n %s\n\n----\nCreative image description in one sentence of 6 words:\n", $text);
     $maxTokens = min(
-        intval((calculate_word_count_utf8($text) + 150) * 1.33),
+        intval((aikit_calculate_word_count_utf8($text) + 150) * 1.33),
         aikit_get_max_tokens_for_model( $model )
     );
 
@@ -265,6 +267,7 @@ function aikit_add_selected_text_to_prompt ($prompt, $selected_text) {
 
 
 function aikit_rest_openai_do_request ( $data, $type, $language ) {
+    ###['openai-generate-text']
 
     $prompt_manager = new AIKit_Prompt_Manager();
     $promptsObject = $prompt_manager->get_prompts_by_language($language);
@@ -296,12 +299,12 @@ function aikit_rest_openai_do_request ( $data, $type, $language ) {
     if ($promptWordLengthType == AIKIT_WORD_LENGTH_TYPE_FIXED) {
         $maxTokensToGenerate = intval($promptWordLength * 1.33);
     } else {
-        $maxTokensToGenerate = intval(calculate_word_count_utf8($text) * $promptWordLength * 1.33);
+        $maxTokensToGenerate = intval(aikit_calculate_word_count_utf8($text) * $promptWordLength * 1.33);
     }
 
     $maxTokensToGenerate *= $maxTokenMultiplier;
 
-	$theoreticalMaxTokensToGenerate = aikit_get_max_tokens_for_model($model) - intval(calculate_word_count_utf8($prompt) * 1.33);
+	$theoreticalMaxTokensToGenerate = aikit_get_max_tokens_for_model($model) - intval(aikit_calculate_word_count_utf8($prompt) * 1.33);
 
 	$actualMaxTokensToGenerate = min($maxTokensToGenerate, $theoreticalMaxTokensToGenerate);
 
@@ -423,20 +426,31 @@ function aikit_get_text_generation_based_on_model ($model, $choices) {
 
 function aikit_openai_text_generation_request($prompt, $maxTokens, $temperature = 0.7)
 {
-    $model = get_option('aikit_setting_openai_model');
-    $maxTokens = min($maxTokens, aikit_get_max_tokens_for_model($model));
-    $client = new \AIKit\Dependencies\GuzzleHttp\Client();
+    ###['openai-generate-text-2']
 
-    $res = $client->request('POST', aikit_get_openai_text_completion_endpoint($model), [
-        'body' => aikit_build_text_generation_request_body($model, $prompt, $maxTokens, $temperature),
-        'headers' => [
-            'Authorization' => 'Bearer ' . get_option('aikit_setting_openai_key'),
-            'Content-Type' => 'application/json',
-        ],
-    ]);
+    try {
+        $model = get_option('aikit_setting_openai_model');
+        $maxTokens = min($maxTokens, aikit_get_max_tokens_for_model($model));
+        $client = new \AIKit\Dependencies\GuzzleHttp\Client();
 
-    $body = $res->getBody();
-    $json = json_decode($body, true);
+        $res = $client->request('POST', aikit_get_openai_text_completion_endpoint($model), [
+            'body' => aikit_build_text_generation_request_body($model, $prompt, $maxTokens, $temperature),
+            'headers' => [
+                'Authorization' => 'Bearer ' . get_option('aikit_setting_openai_key'),
+                'Content-Type' => 'application/json',
+            ],
+        ]);
+
+        $body = $res->getBody();
+        $json = json_decode($body, true);
+    } catch (\Throwable $e) {
+        $message = $e->getMessage();
+        $message .= "\n\nPrompt: " . $prompt;
+        $message .= "\n\nModel: " . $model;
+        $message .= "\n\nMax tokens: " . $maxTokens;
+
+        throw new \Exception($message);
+    }
 
     $choices = $json['choices'];
 
@@ -444,6 +458,7 @@ function aikit_openai_text_generation_request($prompt, $maxTokens, $temperature 
 }
 
 function aikit_openai_image_generation_request($prompt, $dimensions='512x512') {
+    ###['openai-generate-images-2']
 
     $client = new \AIKit\Dependencies\GuzzleHttp\Client();
 
@@ -482,6 +497,6 @@ function aikit_get_language_used() {
     return get_option('aikit_setting_openai_language', 'en');
 }
 
-function calculate_word_count_utf8($str) {
+function aikit_calculate_word_count_utf8($str) {
     return count(preg_split('~[^\p{L}\p{N}\']+~u', $str));
 }

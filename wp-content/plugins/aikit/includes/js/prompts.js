@@ -87,6 +87,8 @@ $( function() {
         let message = $(this).data('confirm-message');
         if (confirm(message)) {
             $("#aikit-prompts-form").append('<input type="hidden" name="reset" value="1">');
+            // remove all inputs except the reset input
+            $("#aikit-prompts-form").find("input:not([name='reset'])").remove();
             $("form#aikit-prompts-form")[0].submit();
         }
 

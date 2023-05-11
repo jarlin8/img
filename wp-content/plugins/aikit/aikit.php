@@ -4,7 +4,7 @@
  * Plugin Name:       AIKit
  * Plugin URI:        https://getaikit.com
  * Description:       AIKit is your WordPress AI assistant, powered by OpenAI's GPT-3 & DALL.E 2.
- * Version:           3.11.0
+ * Version:           3.14.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Domain Path:       /languages
@@ -15,8 +15,12 @@ require __DIR__ . '/includes/constants.php';
 require __DIR__ . '/includes/openai/prompt-manager.php';
 require __DIR__ . '/includes/openai/initial-prompts.php';
 require __DIR__ . '/includes/import-export.php';
+require __DIR__ . '/includes/openai/auto-writer/auto-writer-form.php';
 require __DIR__ . '/includes/openai/auto-writer/auto-writer-prompts.php';
 require __DIR__ . '/includes/openai/auto-writer/auto-writer.php';
+require __DIR__ . '/includes/openai/repurposer/youtube-subtitles.php';
+require __DIR__ . '/includes/openai/repurposer/repurposer-prompts.php';
+require __DIR__ . '/includes/openai/repurposer/repurposer.php';
 require __DIR__ . '/includes/admin.php';
 require __DIR__ . '/includes/openai/requests.php';
 
@@ -87,7 +91,6 @@ function aikit_admin_configure_notice() {
     }
 }
 
-
 function aikit_init() {
      if ( ! is_admin() ) {
          return;
@@ -100,6 +103,12 @@ function aikit_init() {
 
     if (aikit_get_plugin_version() !== get_option('aikit_plugin_version')) {
         aikit_set_default_settings();
+        $auto_writer = AIKIT_Auto_Writer::get_instance();
+        $auto_writer->do_db_migration();
+        $repurposer = AIKIT_Repurposer::get_instance();
+        $repurposer->do_db_migration();
+        $auto_writer->activate_scheduler();
+        $repurposer->activate_scheduler();
         update_option('aikit_plugin_version', aikit_get_plugin_version());
     }
 }
@@ -133,6 +142,24 @@ function aikit_uninstall() {
     foreach ($languages as $language => $obj) {
         delete_option( 'aikit_prompts_' . $language );
     }
+
+    $auto_writer = AIKIT_Auto_Writer::get_instance();
+    $auto_writer->deactivate_scheduler();
+
+    $repurposer = AIKIT_Repurposer::get_instance();
+    $repurposer->deactivate_scheduler();
+}
+
+register_deactivation_hook(
+    __FILE__,
+    'aikit_on_deactivation'
+);
+
+function aikit_on_deactivation() {
+    $auto_writer = AIKIT_Auto_Writer::get_instance();
+    $auto_writer->deactivate_scheduler();
+    $repurposer = AIKIT_Repurposer::get_instance();
+    $repurposer->deactivate_scheduler();
 }
 
 register_activation_hook(
@@ -142,6 +169,10 @@ register_activation_hook(
 
 function aikit_on_activation() {
     aikit_set_default_settings();
+    $auto_writer = AIKIT_Auto_Writer::get_instance();
+    $auto_writer->activate_scheduler();
+    $repurposer = AIKIT_Repurposer::get_instance();
+    $repurposer->activate_scheduler();
 }
 
 function aikit_set_default_settings () {
@@ -216,6 +247,8 @@ function aikit_build_plugin_js_config() {
         ],
     );
 
+    $aiKitScriptVars['isOpenAIKeyValid'] = true;
+
     return $aiKitScriptVars;
 }
 
@@ -269,7 +302,12 @@ add_action('admin_head', 'aikit_classic_mce_inline_script');
 function aikit_classic_mce_inline_script() {
     global $pagenow;
 
-    if ($pagenow !== 'post.php' && $pagenow !== 'post-new.php' && !(isset($_GET['page']) && $_GET['page'] === 'aikit_auto_writer')) {
+    if ($pagenow !== 'post.php' &&
+        $pagenow !== 'post-new.php' &&
+        !(isset($_GET['page']) && $_GET['page'] === 'aikit_auto_writer') &&
+        !(isset($_GET['page']) && $_GET['page'] === 'aikit_scheduler') &&
+        !(isset($_GET['page']) && $_GET['page'] === 'aikit_repurpose')
+    ) {
         return;
     }
 
@@ -322,3 +360,16 @@ function register_aikit_new_controls( $controls_manager ) {
 }
 
 add_action( 'elementor/controls/register', 'register_aikit_new_controls' );
+
+add_filter('cron_schedules', 'aikit_register_custom_cron_schedules' );
+
+function aikit_register_custom_cron_schedules( $schedules ) {
+    $schedules['every_5_minutes'] = array(
+        'interval' => 60 * 5,
+        'display'  => __( 'Every 5 Minutes' ),
+    );
+
+    return $schedules;
+}
+
+###['admin-notice']

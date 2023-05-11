@@ -101,7 +101,6 @@
                         if (isset($post['update_missing_cf_value']) && !is_array($post['update_missing_cf_value'])) {
                             $post['update_missing_cf_value'] = [$post['update_missing_cf_value']];
                         }
-                        $post['update_missing_cf_value'] = array_filter($post['update_missing_cf_value']);
                     ?>
                     <table class="form-table custom-params" style="max-width:none; border:none; width:350px; margin-left:9px;">
                         <thead>

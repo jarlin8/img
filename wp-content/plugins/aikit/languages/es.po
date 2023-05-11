@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AIKit 1.3.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aikit\n"
-"POT-Creation-Date: 2023-04-16T20:16:11+00:00\n"
-"PO-Revision-Date: 2023-04-16 22:18+0200\n"
+"POT-Creation-Date: 2023-05-02T20:56:16+00:00\n"
+"PO-Revision-Date: 2023-05-02 23:12+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Domain: aikit\n"
 
 #. Plugin Name of the plugin
-#: includes/admin.php:192
+#: includes/admin.php:199
 msgid "AIKit"
 msgstr "AIKit"
 
@@ -30,7 +30,7 @@ msgstr ""
 "AIKit es tu asistente de IA para WordPress, impulsado por GPT-3 y DALL.E 2 "
 "de OpenAI."
 
-#: aikit.php:79
+#: aikit.php:83
 msgid ""
 "Thank you for using AIKit! Please consider entering your OpenAI key in order "
 "to start leveraging AI content generation."
@@ -38,163 +38,174 @@ msgstr ""
 "¡Gracias por utilizar AIKit! Por favor, considera introducir tu clave OpenAI "
 "para empezar a aprovechar la generación de contenidos de IA."
 
-#: aikit.php:83
+#: aikit.php:87
 msgid "Configure AIKit"
 msgstr "Configurar AIKit"
 
-#: includes/admin.php:35
+#: includes/admin.php:37
 msgid "English"
 msgstr "Inglés"
 
-#: includes/admin.php:39
+#: includes/admin.php:41
 msgid "German"
 msgstr "Alemán"
 
-#: includes/admin.php:43
+#: includes/admin.php:45
 msgid "French"
 msgstr "Francés"
 
-#: includes/admin.php:47
+#: includes/admin.php:49
 msgid "Spanish"
 msgstr "Español"
 
-#: includes/admin.php:51
+#: includes/admin.php:53
 msgid "Italian"
 msgstr "Italiano"
 
-#: includes/admin.php:55
+#: includes/admin.php:57
 msgid "Portuguese"
 msgstr "Portugués"
 
-#: includes/admin.php:59
+#: includes/admin.php:61
 msgid "Dutch"
 msgstr "Holandés"
 
-#: includes/admin.php:63
+#: includes/admin.php:65
 msgid "Polish"
 msgstr "Polaco"
 
-#: includes/admin.php:67
+#: includes/admin.php:69
 msgid "Russian"
 msgstr "Ruso"
 
-#: includes/admin.php:71
+#: includes/admin.php:73
 msgid "Japanese"
 msgstr "Japonés"
 
-#: includes/admin.php:75
+#: includes/admin.php:77
 msgid "Chinese"
 msgstr "Chino"
 
-#: includes/admin.php:79
+#: includes/admin.php:81
 msgid "Brazilian Portuguese"
 msgstr "Portugués de Brasil"
 
-#: includes/admin.php:83
+#: includes/admin.php:85
 msgid "Turkish"
 msgstr "Turco"
 
-#: includes/admin.php:87
+#: includes/admin.php:89
 msgid "Arabic"
 msgstr "Árabe"
 
-#: includes/admin.php:91
+#: includes/admin.php:93
 msgid "Korean"
 msgstr "Coreano"
 
-#: includes/admin.php:95
+#: includes/admin.php:97
 msgid "Hindi"
 msgstr "Hindi"
 
-#: includes/admin.php:99
+#: includes/admin.php:101
 msgid "Indonesian"
 msgstr "Indonesia"
 
-#: includes/admin.php:103
+#: includes/admin.php:105
 msgid "Swedish"
 msgstr "Sueco"
 
-#: includes/admin.php:107
+#: includes/admin.php:109
 msgid "Danish"
 msgstr "Danés"
 
-#: includes/admin.php:111
+#: includes/admin.php:113
 msgid "Finnish"
 msgstr "En finés"
 
-#: includes/admin.php:115
+#: includes/admin.php:117
 msgid "Norwegian"
 msgstr "Noruega"
 
-#: includes/admin.php:119
+#: includes/admin.php:121
 msgid "Romanian"
 msgstr "Rumano"
 
-#: includes/admin.php:123
+#: includes/admin.php:125
 msgid "Georgian"
 msgstr "Georgiano"
 
-#: includes/admin.php:127
+#: includes/admin.php:129
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: includes/admin.php:131
+#: includes/admin.php:133
 msgid "Hungarian"
 msgstr "Húngaro"
 
-#: includes/admin.php:135
+#: includes/admin.php:137
 msgid "Bulgarian"
 msgstr "Búlgaro"
 
-#: includes/admin.php:139
+#: includes/admin.php:141
 msgid "Greek"
 msgstr "Griego"
 
-#: includes/admin.php:143
+#: includes/admin.php:145
 msgid "Persian"
 msgstr "Persa"
 
-#: includes/admin.php:147
+#: includes/admin.php:149
 msgid "Slovak"
 msgstr "Eslovaquia"
 
-#: includes/admin.php:151
+#: includes/admin.php:153
 msgid "Czech"
 msgstr "Checa"
 
-#: includes/admin.php:155
+#: includes/admin.php:157
 msgid "Lithuanian"
 msgstr "Lituano"
 
-#: includes/admin.php:191 includes/admin.php:201
+#: includes/admin.php:198 includes/admin.php:208
 msgid "AIKit Settings"
 msgstr "Ajustes de AIKit"
 
-#: includes/admin.php:202
+#: includes/admin.php:209
 msgid "Settings"
 msgstr "Ajustes"
 
-#: includes/admin.php:210 includes/admin.php:211
+#: includes/admin.php:217 includes/admin.php:218
 msgid "Auto Writer"
 msgstr "Escritor de automóviles"
 
-#: includes/admin.php:219
-msgid "Add/Edit Prompts (Advanced)"
-msgstr "Añadir/editar prompts (Avanzado)"
+#: includes/admin.php:226 includes/admin.php:227
+msgid "Scheduler"
+msgstr "Programador"
 
-#: includes/admin.php:220
-msgid "Prompts (Advanced)"
-msgstr "Prompts (Avanzado)"
+#: includes/admin.php:235 includes/admin.php:236
+#: includes/openai/repurposer/repurposer.php:610
+msgid "Repurpose"
+msgstr "Reutilice"
 
-#: includes/admin.php:228 includes/admin.php:229
+#: includes/admin.php:244
+msgid "Add/Edit Prompts"
+msgstr "Añadir/editar avisos"
+
+#: includes/admin.php:245 includes/admin.php:516 includes/admin.php:673
+#: includes/openai/auto-writer/auto-writer-form.php:253
+#: includes/openai/repurposer/repurposer.php:619
+msgid "Prompts"
+msgstr "Prompts"
+
+#: includes/admin.php:253 includes/admin.php:254
 msgid "Export/Import Settings"
 msgstr "Ajustes de exportación/importación"
 
-#: includes/admin.php:250 includes/admin.php:542
+#: includes/admin.php:275 includes/admin.php:567
 msgid "Save Settings"
 msgstr "Guardar configuración"
 
-#: includes/admin.php:372
+#: includes/admin.php:397
 msgid ""
 "Here you can edit or add new prompts that would appear in the \"AI\" "
 "dropdown menu. You can also reorder the prompts by dragging and dropping "
@@ -204,7 +215,7 @@ msgstr ""
 "desplegable “AI”. También puedes reordenar los avisos arrastrándolos y "
 "soltándolos en el orden que desees. "
 
-#: includes/admin.php:373
+#: includes/admin.php:398
 msgid ""
 "There are lots of online resources that could help and give you tips & trick "
 "on how to best edit prompts. Simply search YouTube/Google for \"Prompt "
@@ -214,11 +225,11 @@ msgstr ""
 "trucos sobre cómo editar mejor los prompts. Simplemente busca en YouTube/"
 "Google “Prompt engineering” para obtener más conocimientos sobre el tema."
 
-#: includes/admin.php:378
+#: includes/admin.php:403
 msgid "Add Prompt"
 msgstr "Añadir pregunta"
 
-#: includes/admin.php:380
+#: includes/admin.php:405
 msgid ""
 "Resetting prompts will remove all changes you made in this screen, and will "
 "bring back the builtin prompts that AIKit provides out of the box. Are you "
@@ -228,19 +239,19 @@ msgstr ""
 "realizado en esta pantalla y volverán a aparecer los avisos integrados que "
 "AIKit proporciona de fábrica. ¿Estás seguro de que quieres continuar?"
 
-#: includes/admin.php:381
+#: includes/admin.php:406
 msgid "Reset Prompts"
 msgstr "Restablecer indicaciones"
 
-#: includes/admin.php:403 includes/admin.php:554
+#: includes/admin.php:428 includes/admin.php:579
 msgid "Are you sure you want to remove this prompt?"
 msgstr "¿Estás seguro de que quieres eliminar este aviso?"
 
-#: includes/admin.php:412 includes/admin.php:564
+#: includes/admin.php:437 includes/admin.php:589
 msgid "Requires text selection"
 msgstr "Requiere selección de texto"
 
-#: includes/admin.php:415 includes/admin.php:567
+#: includes/admin.php:440 includes/admin.php:592
 msgid ""
 "Choose this option if you want to enforce text selection in the text editor. "
 "Most of the time you will want to leave this option selected. Deselect it "
@@ -253,11 +264,11 @@ msgstr ""
 "del autor, como si quieres que OpenAI genere un texto sobre un tema "
 "aleatorio, por ejemplo."
 
-#: includes/admin.php:422 includes/admin.php:575
+#: includes/admin.php:447 includes/admin.php:600
 msgid "Temperature"
 msgstr "Temperatura"
 
-#: includes/admin.php:428 includes/admin.php:581
+#: includes/admin.php:453 includes/admin.php:606
 msgid ""
 "Controls randomness: Lowering results in less random completions. As the "
 "temperature approaches zero, the model will become deterministic and "
@@ -267,19 +278,19 @@ msgstr ""
 "aleatorias. A medida que la temperatura se acerque a cero, el modelo se "
 "volverá determinista y repetitivo."
 
-#: includes/admin.php:435 includes/admin.php:591
+#: includes/admin.php:460 includes/admin.php:616
 msgid "Number of words to generate"
 msgstr "Número de palabras a generar"
 
-#: includes/admin.php:444 includes/admin.php:600
+#: includes/admin.php:469 includes/admin.php:625
 msgid "Fixed number of words"
 msgstr "Número fijo de palabras"
 
-#: includes/admin.php:449 includes/admin.php:605
+#: includes/admin.php:474 includes/admin.php:630
 msgid "Number of words"
 msgstr "Número de palabras"
 
-#: includes/admin.php:455 includes/admin.php:611
+#: includes/admin.php:480 includes/admin.php:636
 msgid ""
 "Choose this option if you want to generate a fixed number of words, "
 "regardless of how long the selected text is. This is helpful for certain "
@@ -290,15 +301,15 @@ msgstr ""
 "determinados tipos de indicaciones, como generar un párrafo sobre un tema "
 "concreto, por ejemplo."
 
-#: includes/admin.php:467 includes/admin.php:623
+#: includes/admin.php:492 includes/admin.php:648
 msgid "Relative to length of text selected"
 msgstr "En relación con la longitud del texto seleccionado"
 
-#: includes/admin.php:472 includes/admin.php:628
+#: includes/admin.php:497 includes/admin.php:653
 msgid "Multiplier"
 msgstr "Multiplicador"
 
-#: includes/admin.php:481 includes/admin.php:637
+#: includes/admin.php:506 includes/admin.php:662
 msgid ""
 "Choose this option if you want to calculate the length of the generated "
 "words relative to the length of words selected. 1x = same length as select "
@@ -310,29 +321,24 @@ msgstr ""
 "longitud que el texto seleccionado, 2x significa dos veces, etc. El resumen "
 "es un buen candidato para utilizar esta opción."
 
-#: includes/admin.php:491 includes/admin.php:648
-#: includes/openai/auto-writer/auto-writer.php:168
-msgid "Prompts"
-msgstr "Prompts"
-
-#: includes/admin.php:508 includes/admin.php:510 includes/admin.php:665
-#: includes/admin.php:667
+#: includes/admin.php:533 includes/admin.php:535 includes/admin.php:690
+#: includes/admin.php:692
 msgid "Menu title"
 msgstr "Título del menú"
 
-#: includes/admin.php:513 includes/admin.php:670
+#: includes/admin.php:538 includes/admin.php:695
 msgid "This is title that will appear in the AI menu for this prompt."
 msgstr "Este es el título que aparecerá en el menú AI para esta petición."
 
-#: includes/admin.php:520 includes/admin.php:678
+#: includes/admin.php:545 includes/admin.php:703
 msgid "Prompt"
 msgstr "Prompt"
 
-#: includes/admin.php:523 includes/admin.php:681
+#: includes/admin.php:548 includes/admin.php:706
 msgid "If this prompt requires text selection, the phrase"
 msgstr "Si esta pregunta requiere selección de texto, la frase"
 
-#: includes/admin.php:525 includes/admin.php:683
+#: includes/admin.php:550 includes/admin.php:708
 msgid ""
 "will be replaced by the selected text before doing the request. Make sure to "
 "include it in your prompt."
@@ -340,59 +346,101 @@ msgstr ""
 "será sustituido por el texto seleccionado antes de realizar la petición. "
 "Asegúrate de incluirlo en tu petición."
 
-#: includes/admin.php:708
+#: includes/admin.php:733
 msgid "OpenAI Settings"
 msgstr "Configuración de OpenAI"
 
-#: includes/admin.php:718
+#: includes/admin.php:743
 msgid "OpenAI Key"
 msgstr "Clave OpenAI"
 
-#: includes/admin.php:729
+#: includes/admin.php:754
+msgid "Rapid API Key"
+msgstr "Clave RapidAPI"
+
+#: includes/admin.php:765
 msgid "Language for text generation"
 msgstr "Lenguaje para la generación de textos"
 
-#: includes/admin.php:740
+#: includes/admin.php:776
 msgid "OpenAI Preferred Model"
 msgstr "Modelo preferido de OpenAI"
 
-#: includes/admin.php:751
+#: includes/admin.php:787
 msgid "Max Tokens Multiplier (text length)"
 msgstr "Multiplicador de tokens máximos (longitud del texto)"
 
-#: includes/admin.php:762
+#: includes/admin.php:798
 msgid "Autocompleted Text Background Color"
 msgstr "Color de fondo del texto autocompletado"
 
-#: includes/admin.php:773
+#: includes/admin.php:809
 msgid "Elementor support"
 msgstr "Compatibilidad con Elementor"
 
-#: includes/admin.php:783
+#: includes/admin.php:819
 msgid "Image sizes available"
 msgstr "Tamaños de imagen disponibles"
 
-#: includes/admin.php:811
+#: includes/admin.php:847
 msgid "Image counts for each size"
 msgstr "Recuento de imágenes para cada tamaño"
 
-#: includes/admin.php:821
+#: includes/admin.php:857
 msgid "Image generation styles"
 msgstr "Estilos de generación de imágenes"
 
-#: includes/admin.php:831
+#: includes/admin.php:867
 msgid "OpenAI System Message"
 msgstr "Mensaje del sistema OpenAI"
 
-#: includes/admin.php:839
+#: includes/admin.php:875
 msgid "Adjust the plugin to your needs by editing the settings here."
 msgstr "Ajusta el plugin a tus necesidades editando la configuración aquí."
 
-#: includes/admin.php:847
+#: includes/admin.php:884
+msgid "Enter your RapidAPI key for"
+msgstr "Introduce tu clave RapidAPI para"
+
+#: includes/admin.php:885
+msgid "Subtitles for YouTube"
+msgstr "Subtitles for YouTube"
+
+#: includes/admin.php:886
+msgid ""
+" here. This API is used to read YouTube video subtitles to allow you to "
+"fetch the content of videos and repurpose/spin them and create posts based "
+"on them in your website."
+msgstr ""
+" aquí. Esta API se utiliza para leer los subtítulos de los vídeos de YouTube "
+"y permitirte obtener el contenido de los vídeos y reutilizarlos/girarlos y "
+"crear entradas basadas en ellos en tu sitio web."
+
+#: includes/admin.php:887 includes/openai/repurposer/repurposer.php:521
+msgid ""
+"\"Subtitles for YouTube\" API offers a generous 100 free requests per day "
+"which will be enough for most users."
+msgstr ""
+"La API “Subtítulos para YouTube” ofrece unas generosas 100 solicitudes "
+"gratuitas al día, que serán suficientes para la mayoría de los usuarios."
+
+#: includes/admin.php:888 includes/openai/repurposer/repurposer.php:522
+msgid "If you would like to repurpose videos, please"
+msgstr "Si quieres reutilizar vídeos, por favor"
+
+#: includes/admin.php:889 includes/openai/repurposer/repurposer.php:523
+msgid "subscribe"
+msgstr "suscríbete"
+
+#: includes/admin.php:890
+msgid "to a plan, then enter your API key here."
+msgstr "a un plan, introduce aquí tu clave API."
+
+#: includes/admin.php:901
 msgid "Elementor supported?"
 msgstr "¿Es compatible con Elementor?"
 
-#: includes/admin.php:851
+#: includes/admin.php:905
 msgid ""
 "When this is enabled, you will be able to use AIKit right inside Elementor "
 "editor using a widget called \"AIKit Editor\"."
@@ -400,7 +448,7 @@ msgstr ""
 "Cuando esto esté activado, podrás utilizar AIKit directamente dentro del "
 "editor de Elementor utilizando un widget llamado “Editor de AIKit”."
 
-#: includes/admin.php:884
+#: includes/admin.php:938
 msgid ""
 "Image styles are phrases that will be added at the end an image's prompt to "
 "change the look of the image. You can use it to maintain a certain style of "
@@ -420,7 +468,7 @@ msgstr ""
 "estilo aleatorio de esta lista cada vez que genere una imagen y lo añadirá "
 "al final de la indicación. "
 
-#: includes/admin.php:920
+#: includes/admin.php:974
 msgid ""
 "This controls the number of image you want to generate for each image size, "
 "these will appear as options in the AI image generation menu. Enter comma-"
@@ -431,11 +479,11 @@ msgstr ""
 "AI. Introduce números separados por comas. Ejemplo: “1,2,4”. El número "
 "máximo permitido es 10."
 
-#: includes/admin.php:932
+#: includes/admin.php:986
 msgid "Small"
 msgstr "Pequeño"
 
-#: includes/admin.php:936
+#: includes/admin.php:990
 msgid ""
 "This controls the size of the images generated. If you want to have the "
 "option to generate small images in the AI image generation menu, check this "
@@ -445,11 +493,11 @@ msgstr ""
 "generar imágenes pequeñas en el menú de generación de imágenes AI, marca "
 "esta casilla."
 
-#: includes/admin.php:950
+#: includes/admin.php:1004
 msgid "Medium"
 msgstr "Medio"
 
-#: includes/admin.php:955
+#: includes/admin.php:1009
 msgid ""
 "If you want to have the option to generate medium images in the AI image "
 "generation menu, check this box."
@@ -457,11 +505,11 @@ msgstr ""
 "Si quieres tener la opción de generar imágenes medias en el menú de "
 "generación de imágenes AI, marca esta casilla."
 
-#: includes/admin.php:968
+#: includes/admin.php:1022
 msgid "Large"
 msgstr "Grande"
 
-#: includes/admin.php:973
+#: includes/admin.php:1027
 msgid ""
 "If you want to have the option to generate large images in the AI image "
 "generation menu, check this box."
@@ -469,26 +517,26 @@ msgstr ""
 "Si quieres tener la opción de generar imágenes grandes en el menú de "
 "generación de imágenes AI, marca esta casilla."
 
-#: includes/admin.php:990
+#: includes/admin.php:1044
 msgid "The OpenAI key is invalid. Make sure you have entered the correct key."
 msgstr ""
 "La clave de OpenAI no es válida. Asegúrese de haber introducido la clave "
 "correcta."
 
-#: includes/admin.php:997
+#: includes/admin.php:1051
 msgid "The OpenAI key is valid."
 msgstr "La clave OpenAI es válida."
 
-#: includes/admin.php:1008
+#: includes/admin.php:1062
 msgid "For instructions on how to get an OpenAI key, please visit "
 msgstr ""
 "Para obtener instrucciones sobre cómo conseguir una clave OpenAI, visita "
 
-#: includes/admin.php:1039
+#: includes/admin.php:1093
 msgid "The language of the text you want to generate."
 msgstr "La lengua del texto que quieres generar."
 
-#: includes/admin.php:1043
+#: includes/admin.php:1097
 msgid ""
 " For consistent autocomplete results, make sure that the text you write in "
 "your post is written in the same language you picked here."
@@ -497,7 +545,7 @@ msgstr ""
 "el texto que escribes en tu entrada está escrito en el mismo idioma que "
 "elegiste aquí."
 
-#: includes/admin.php:1087
+#: includes/admin.php:1141
 msgid ""
 "Some models are more capable than others. For example, the davinci model is "
 "more capable than the ada model, which is more capable than the babbage "
@@ -511,11 +559,11 @@ msgstr ""
 "modelo más caro. El modelo ada es el modelo menos capaz, pero también es el "
 "modelo menos caro."
 
-#: includes/admin.php:1089
+#: includes/admin.php:1143
 msgid " For more information, see "
 msgstr " Para más información, consulta "
 
-#: includes/admin.php:1105
+#: includes/admin.php:1159
 msgid ""
 "AIKit's builtin prompts are already preconfigured to generate a sensible "
 "number of words depending on the prompt.\n"
@@ -535,7 +583,7 @@ msgstr ""
 "generaría normalmente 100 palabras, puedes establecer el multiplicador en 2x "
 "y AIKit generará 200 palabras en su lugar."
 
-#: includes/admin.php:1114
+#: includes/admin.php:1168
 msgid ""
 "Think of this as a global way to increase/decrease the length of generated "
 "text for all existing autocomplete options/prompts at once."
@@ -544,27 +592,27 @@ msgstr ""
 "texto generado para todas las opciones/prompts de autocompletar existentes a "
 "la vez."
 
-#: includes/admin.php:1127
+#: includes/admin.php:1181
 msgid "Green"
 msgstr "Verde"
 
-#: includes/admin.php:1128
+#: includes/admin.php:1182
 msgid "Blue"
 msgstr "Azul"
 
-#: includes/admin.php:1129
+#: includes/admin.php:1183
 msgid "Red"
 msgstr "Rojo"
 
-#: includes/admin.php:1130
+#: includes/admin.php:1184
 msgid "Orange"
 msgstr "Naranja"
 
-#: includes/admin.php:1131
+#: includes/admin.php:1185
 msgid "Purple"
 msgstr "Morado"
 
-#: includes/admin.php:1136
+#: includes/admin.php:1190
 msgid ""
 "If you prefer to have the autocompleted text stand out more, you can choose "
 "a background color for the autocompleted text."
@@ -572,7 +620,7 @@ msgstr ""
 "Si prefieres que el texto autocompletado destaque más, puedes elegir un "
 "color de fondo para el texto autocompletado."
 
-#: includes/admin.php:1150
+#: includes/admin.php:1204
 msgid ""
 "System message help set the behaviour of the model. You can use it to ask "
 "the model to mimic a certain style or take a certain perspective for all "
@@ -620,6 +668,7 @@ msgstr ""
 "avisos."
 
 #: includes/import-export.php:137
+#: includes/openai/auto-writer/auto-writer.php:631
 msgid "Important:"
 msgstr "Importante:"
 
@@ -647,11 +696,216 @@ msgstr "Archivo no cargado."
 msgid "AIKit Editor"
 msgstr "AIKit Editor"
 
-#: includes/openai/auto-writer/auto-writer.php:44
+#: includes/openai/auto-writer/auto-writer-form.php:45
+#: includes/openai/repurposer/repurposer.php:468
+msgid "Draft"
+msgstr "Borrador"
+
+#: includes/openai/auto-writer/auto-writer-form.php:46
+#: includes/openai/repurposer/repurposer.php:469
+msgid "Publish"
+msgstr "Publique"
+
+#: includes/openai/auto-writer/auto-writer-form.php:50
+#: includes/openai/auto-writer/auto-writer.php:957
+msgid "Active"
+msgstr "Activo"
+
+#: includes/openai/auto-writer/auto-writer-form.php:51
+#: includes/openai/auto-writer/auto-writer.php:957
+msgid "Inactive"
+msgstr "Inactivo"
+
+#: includes/openai/auto-writer/auto-writer-form.php:55
+msgid "Scheduled"
+msgstr "Programado"
+
+#: includes/openai/auto-writer/auto-writer-form.php:56
+msgid "scheduled Successfully."
+msgstr "programado con éxito."
+
+#: includes/openai/auto-writer/auto-writer-form.php:57
+msgid "AI Auto Writer"
+msgstr "Escritor automático AIKit"
+
+#: includes/openai/auto-writer/auto-writer-form.php:69
+#: includes/openai/repurposer/repurposer.php:484
+msgid "Selected language:"
+msgstr "Idioma seleccionado:"
+
+#: includes/openai/auto-writer/auto-writer-form.php:71
+#: includes/openai/repurposer/repurposer.php:486
+msgid "Change language"
+msgstr "Cambiar de idioma"
+
+#: includes/openai/auto-writer/auto-writer-form.php:79
+msgid "« Back to Scheduler"
+msgstr "« Volver al Planificador"
+
+#: includes/openai/auto-writer/auto-writer-form.php:86
+msgid "Please enter a brief description of the topic you want to write about."
+msgstr ""
+"Introduce una breve descripción del tema sobre el que quieres escribir."
+
+#: includes/openai/auto-writer/auto-writer-form.php:87
+msgid "Write a brief description of the topic you want to write about..."
+msgstr "Escribe una breve descripción del tema sobre el que quieres escribir…"
+
+#: includes/openai/auto-writer/auto-writer-form.php:95
+#: includes/openai/auto-writer/auto-writer-form.php:96
+#: includes/openai/repurposer/repurposer.php:558
+#: includes/openai/repurposer/repurposer.php:559
+msgid "SEO keywords to focus on (comma-separated)"
+msgstr "Palabras clave SEO en las que centrarse (separadas por comas)"
+
+#: includes/openai/auto-writer/auto-writer-form.php:102
+#: includes/openai/auto-writer/auto-writer-form.php:103
+#: includes/openai/auto-writer/auto-writer-form.php:221
+#: includes/openai/auto-writer/auto-writer-form.php:222
+msgid "How many times to run (0=infinity)"
+msgstr "Cuántas veces ejecutar (0=infinito)"
+
+#: includes/openai/auto-writer/auto-writer-form.php:117
+#: includes/openai/repurposer/repurposer.php:582
+msgid "Post type"
+msgstr "Tipo de puesto"
+
+#: includes/openai/auto-writer/auto-writer-form.php:127
+#: includes/openai/repurposer/repurposer.php:592
+msgid "Post category"
+msgstr "Categoría del puesto"
+
+#: includes/openai/auto-writer/auto-writer-form.php:137
+#: includes/openai/repurposer/repurposer.php:602
+msgid "Post status"
+msgstr "Estado del puesto"
+
+#: includes/openai/auto-writer/auto-writer-form.php:154
+#: includes/openai/auto-writer/auto-writer.php:922
+msgid "Status"
+msgstr "Estado"
+
+#: includes/openai/auto-writer/auto-writer-form.php:163
+msgid "Articles: "
+msgstr "Artículos: "
+
+#: includes/openai/auto-writer/auto-writer-form.php:167
+msgid "Sections per article: "
+msgstr "Secciones por artículo: "
+
+#: includes/openai/auto-writer/auto-writer-form.php:171
+msgid "Maximum words per section: "
+msgstr "Máximo de palabras por sección: "
+
+#: includes/openai/auto-writer/auto-writer-form.php:181
+msgid "Include outline"
+msgstr "Incluir esquema"
+
+#: includes/openai/auto-writer/auto-writer-form.php:186
+msgid "Include featured article image"
+msgstr "Incluir la imagen del artículo destacado"
+
+#: includes/openai/auto-writer/auto-writer-form.php:191
+msgid "Include section images"
+msgstr "Incluir imágenes de sección"
+
+#: includes/openai/auto-writer/auto-writer-form.php:196
+msgid "Include conclusion"
+msgstr "Incluir conclusión"
+
+#: includes/openai/auto-writer/auto-writer-form.php:201
+msgid "Include TL;DR"
+msgstr "Incluir TL;DR"
+
+#: includes/openai/auto-writer/auto-writer-form.php:209
+msgid "Update"
+msgstr "Actualización"
+
+#: includes/openai/auto-writer/auto-writer-form.php:229
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: includes/openai/auto-writer/auto-writer-form.php:230
+msgid "Confirm Schedule"
+msgstr "Confirmar horario"
+
+#: includes/openai/auto-writer/auto-writer-form.php:237
+msgid "Schedule"
+msgstr "Horario"
+
+#: includes/openai/auto-writer/auto-writer-form.php:238
+msgid "Generate"
+msgstr "Genere"
+
+#: includes/openai/auto-writer/auto-writer-form.php:245
+msgid "Please don't close this page until generation is done."
+msgstr ""
+"Por favor, no cierres esta página hasta que haya terminado la generación."
+
+#: includes/openai/auto-writer/auto-writer-form.php:273
+#: includes/openai/repurposer/repurposer.php:639
+msgid " uses"
+msgstr " utiliza"
+
+#: includes/openai/auto-writer/auto-writer-form.php:279
+#: includes/openai/repurposer/repurposer.php:645
+msgid "You can use the following placeholders in your prompts:"
+msgstr ""
+"Puedes utilizar los siguientes marcadores de posición en tus indicaciones:"
+
+#: includes/openai/auto-writer/auto-writer-form.php:283
+msgid "this will be replaced with you article description/topic."
+msgstr "se sustituirá por la descripción/tema de tu artículo."
+
+#: includes/openai/auto-writer/auto-writer-form.php:284
+msgid "this will be replaced with the text of generated section."
+msgstr "se sustituirá por el texto de la sección generada."
+
+#: includes/openai/auto-writer/auto-writer-form.php:285
+#: includes/openai/repurposer/repurposer.php:649
+msgid "this will be replaced with text needed for that prompt."
+msgstr "se sustituirá por el texto necesario para esa consulta."
+
+#: includes/openai/auto-writer/auto-writer-form.php:286
+msgid ""
+"this will be replaced with the suggested headlines for the sections about to "
+"be generated."
+msgstr ""
+"se sustituirá por los titulares sugeridos para las secciones que se van a "
+"generar."
+
+#: includes/openai/auto-writer/auto-writer-form.php:287
+#: includes/openai/repurposer/repurposer.php:651
+msgid "this will be replaced with the SEO keywords you entered."
+msgstr "se sustituirá por las palabras clave SEO que hayas introducido."
+
+#: includes/openai/auto-writer/auto-writer-form.php:288
+msgid ""
+"this will be replaced with the number of headlines for the article section."
+msgstr "se sustituirá por el número de titulares de la sección del artículo."
+
+#: includes/openai/auto-writer/auto-writer-form.php:308
+msgid "Hourly"
+msgstr "Por hora"
+
+#: includes/openai/auto-writer/auto-writer-form.php:309
+msgid "Twice daily"
+msgstr "Dos veces al día"
+
+#: includes/openai/auto-writer/auto-writer-form.php:310
+msgid "Daily"
+msgstr "Diario"
+
+#: includes/openai/auto-writer/auto-writer-form.php:320
+#: includes/openai/auto-writer/auto-writer.php:923
+msgid "Interval"
+msgstr "Intervalo"
+
+#: includes/openai/auto-writer/auto-writer.php:59
 msgid "AIKit Auto Writer"
 msgstr "Escritor automático AIKit"
 
-#: includes/openai/auto-writer/auto-writer.php:45
+#: includes/openai/auto-writer/auto-writer.php:60
 msgid ""
 "AIKit Auto Writer is a tool helps you write drafts quickly, but please "
 "review and edit before publishing for best results. This is not a substitute "
@@ -662,154 +916,413 @@ msgstr ""
 "mejores resultados. No es un sustituto de la edición humana, sino una ayuda "
 "para la redacción. ¡Feliz escritura!"
 
-#: includes/openai/auto-writer/auto-writer.php:50
-msgid "Selected language:"
-msgstr "Idioma seleccionado:"
-
-#: includes/openai/auto-writer/auto-writer.php:52
-msgid "Change language"
-msgstr "Cambiar de idioma"
-
-#: includes/openai/auto-writer/auto-writer.php:59
-msgid "Please enter a brief description of the topic you want to write about."
-msgstr ""
-"Introduce una breve descripción del tema sobre el que quieres escribir."
-
-#: includes/openai/auto-writer/auto-writer.php:60
-msgid "Write a brief description of the topic you want to write about..."
-msgstr "Escribe una breve descripción del tema sobre el que quieres escribir…"
-
-#: includes/openai/auto-writer/auto-writer.php:68
-#: includes/openai/auto-writer/auto-writer.php:69
-msgid "SEO keywords to focus on (comma-separated)"
-msgstr "Palabras clave SEO en las que centrarse (separadas por comas)"
-
-#: includes/openai/auto-writer/auto-writer.php:82
-msgid "Post type"
-msgstr "Tipo de puesto"
-
-#: includes/openai/auto-writer/auto-writer.php:92
-msgid "Post category"
-msgstr "Categoría del puesto"
-
-#: includes/openai/auto-writer/auto-writer.php:98
-msgid "Draft"
-msgstr "Borrador"
-
-#: includes/openai/auto-writer/auto-writer.php:99
-msgid "Published"
-msgstr "Publicado en"
-
-#: includes/openai/auto-writer/auto-writer.php:101
-msgid "Post status"
-msgstr "Estado del puesto"
-
-#: includes/openai/auto-writer/auto-writer.php:109
-msgid "Articles: "
-msgstr "Artículos: "
-
-#: includes/openai/auto-writer/auto-writer.php:113
-msgid "Sections per article: "
-msgstr "Secciones por artículo: "
-
-#: includes/openai/auto-writer/auto-writer.php:117
-msgid "Maximum words per section: "
-msgstr "Máximo de palabras por sección: "
-
-#: includes/openai/auto-writer/auto-writer.php:127
-msgid "Include outline"
-msgstr "Incluir esquema"
-
-#: includes/openai/auto-writer/auto-writer.php:132
-msgid "Include featured article image"
-msgstr "Incluir la imagen del artículo destacado"
-
-#: includes/openai/auto-writer/auto-writer.php:137
-msgid "Include section images"
-msgstr "Incluir imágenes de sección"
-
-#: includes/openai/auto-writer/auto-writer.php:142
-msgid "Include conclusion"
-msgstr "Incluir conclusión"
-
-#: includes/openai/auto-writer/auto-writer.php:147
-msgid "Include TL;DR"
-msgstr "Incluir TL;DR"
-
-#: includes/openai/auto-writer/auto-writer.php:154
-msgid "Generate"
-msgstr "Genera"
-
-#: includes/openai/auto-writer/auto-writer.php:160
-msgid "Please don't close this page until generation is done."
-msgstr ""
-"Por favor, no cierres esta página hasta que haya terminado la generación."
-
-#: includes/openai/auto-writer/auto-writer.php:190
-msgid " uses"
-msgstr " utiliza"
-
-#: includes/openai/auto-writer/auto-writer.php:196
-msgid "You can use the following placeholders in your prompts:"
-msgstr ""
-"Puedes utilizar los siguientes marcadores de posición en tus indicaciones:"
-
-#: includes/openai/auto-writer/auto-writer.php:200
-msgid "this will be replaced with you article description/topic."
-msgstr "se sustituirá por la descripción/tema de tu artículo."
-
-#: includes/openai/auto-writer/auto-writer.php:201
-msgid "this will be replaced with the text of generated section."
-msgstr "se sustituirá por el texto de la sección generada."
-
-#: includes/openai/auto-writer/auto-writer.php:202
-msgid "this will be replaced with text needed for that prompt."
-msgstr "se sustituirá por el texto necesario para esa consulta."
-
-#: includes/openai/auto-writer/auto-writer.php:203
-msgid ""
-"this will be replaced with the suggested headlines for the sections about to "
-"be generated."
-msgstr ""
-"se sustituirá por los titulares sugeridos para las secciones que se van a "
-"generar."
-
-#: includes/openai/auto-writer/auto-writer.php:204
-msgid "this will be replaced with the SEO keywords you entered."
-msgstr "se sustituirá por las palabras clave SEO que hayas introducido."
-
-#: includes/openai/auto-writer/auto-writer.php:205
-msgid ""
-"this will be replaced with the number of headlines for the article section."
-msgstr "se sustituirá por el número de titulares de la sección del artículo."
-
-#: includes/openai/auto-writer/auto-writer.php:232
+#: includes/openai/auto-writer/auto-writer.php:84
+#: includes/openai/auto-writer/auto-writer.php:701
+#: includes/openai/repurposer/repurposer.php:798
 msgid "Type"
 msgstr "Tipo"
 
-#: includes/openai/auto-writer/auto-writer.php:233
+#: includes/openai/auto-writer/auto-writer.php:85
+#: includes/openai/auto-writer/auto-writer.php:702
+#: includes/openai/repurposer/repurposer.php:799
 msgid "Title"
 msgstr "Título"
 
-#: includes/openai/auto-writer/auto-writer.php:234
+#: includes/openai/auto-writer/auto-writer.php:86
+#: includes/openai/auto-writer/auto-writer.php:703
+#: includes/openai/repurposer/repurposer.php:678
+#: includes/openai/repurposer/repurposer.php:800
 msgid "Date created"
 msgstr "Fecha de creación"
 
-#: includes/openai/auto-writer/auto-writer.php:269
+#: includes/openai/auto-writer/auto-writer.php:121
 msgid "No auto-written posts found."
 msgstr "No se han encontrado entradas autoescritas."
 
-#: includes/openai/auto-writer/auto-writer.php:282
+#: includes/openai/auto-writer/auto-writer.php:134
+#: includes/openai/auto-writer/auto-writer.php:982
+#: includes/openai/repurposer/repurposer.php:728
 msgid "« Previous"
 msgstr "« Anterior"
 
-#: includes/openai/auto-writer/auto-writer.php:283
+#: includes/openai/auto-writer/auto-writer.php:135
+#: includes/openai/auto-writer/auto-writer.php:997
+#: includes/openai/repurposer/repurposer.php:743
 msgid "Next »"
 msgstr "Siguiente »"
 
-#: includes/openai/auto-writer/auto-writer.php:316
+#: includes/openai/auto-writer/auto-writer.php:181
 msgid "Please enter a topic."
 msgstr "Por favor, introduce un tema."
+
+#: includes/openai/auto-writer/auto-writer.php:542
+msgid "There was an error scheduling the post generation."
+msgstr "Se ha producido un error al programar la generación del post."
+
+#: includes/openai/auto-writer/auto-writer.php:548
+msgid "Post generation scheduled."
+msgstr "Generación de puestos programada."
+
+#: includes/openai/auto-writer/auto-writer.php:584
+msgid "Post generation edited."
+msgstr "Postgeneración programada. Postgeneración editada."
+
+#: includes/openai/auto-writer/auto-writer.php:619
+msgid "AIKit Scheduled AI Generators"
+msgstr "Generadores de IA programados de AIKit"
+
+#: includes/openai/auto-writer/auto-writer.php:622
+msgid ""
+"AIKit Scheduled AI Generators allow you to schedule content to be generated "
+"by AI. Please review and edit before publishing for best results. This is "
+"not a substitute for human editing, but a drafting aid. Happy writing!"
+msgstr ""
+"Los Generadores de IA programados de AIKit te permiten programar contenido "
+"para que lo genere la IA. Por favor, revisa y edita antes de publicar para "
+"obtener mejores resultados. No es un sustituto de la edición humana, sino "
+"una ayuda para la redacción. ¡Feliz escritura!"
+
+#: includes/openai/auto-writer/auto-writer.php:624
+#: includes/openai/repurposer/repurposer.php:420
+msgid "Note:"
+msgstr "Nota:"
+
+#: includes/openai/auto-writer/auto-writer.php:625
+msgid ""
+"By default, WordPress scheduled jobs only runs when someone visits your "
+"site. To ensure that your scheduled AI generators runs even if nobody visits "
+"your site, you can set up a cron job on your server to call the WordPress "
+"cron system at regular intervals. Please ask your host provider to do that "
+"for you. Here is the cron job definition:"
+msgstr ""
+"Por defecto, los trabajos programados de WordPress sólo se ejecutan cuando "
+"alguien visita tu sitio. Para asegurarte de que tus generadores de AI "
+"programados se ejecutan aunque nadie visite tu sitio, puedes configurar una "
+"tarea cron en tu servidor para que llame al sistema cron de WordPress a "
+"intervalos regulares. Pide a tu proveedor de alojamiento que lo haga por ti. "
+"Aquí tienes la definición del cron job:"
+
+#: includes/openai/auto-writer/auto-writer.php:632
+msgid ""
+"Please consider the rate limits of your OpenAI account when setting up "
+"generators in order to avoid errors. You can find the rate limits "
+msgstr ""
+"Ten en cuenta los límites de tarifa de tu cuenta OpenAI al configurar los "
+"generadores para evitar errores. Puedes encontrar los límites de tarifa "
+
+#: includes/openai/auto-writer/auto-writer.php:632
+msgid "here"
+msgstr "aquí"
+
+#: includes/openai/auto-writer/auto-writer.php:633
+msgid "Add new"
+msgstr "Añadir nuevo"
+
+#: includes/openai/auto-writer/auto-writer.php:650
+msgid "No record found."
+msgstr "No se ha encontrado ningún registro."
+
+#: includes/openai/auto-writer/auto-writer.php:656
+msgid "AIKit Scheduled AI Generator"
+msgstr "Generador de IA programada de AIKit"
+
+#: includes/openai/auto-writer/auto-writer.php:656
+msgid " - Edit"
+msgstr " - Editar"
+
+#: includes/openai/auto-writer/auto-writer.php:689
+#: includes/openai/repurposer/repurposer.php:783
+msgid "Generated Posts"
+msgstr "Mensajes generados"
+
+#: includes/openai/auto-writer/auto-writer.php:692
+#: includes/openai/repurposer/repurposer.php:789
+msgid "Logs"
+msgstr "Registros"
+
+#: includes/openai/auto-writer/auto-writer.php:709
+#: includes/openai/repurposer/repurposer.php:806
+msgid "No posts generated yet."
+msgstr "Aún no se ha generado ningún puesto."
+
+#: includes/openai/auto-writer/auto-writer.php:730
+#: includes/openai/repurposer/repurposer.php:836
+msgid "No logs found."
+msgstr "No se han encontrado registros."
+
+#: includes/openai/auto-writer/auto-writer.php:920
+msgid "Description"
+msgstr "Descripción"
+
+#: includes/openai/auto-writer/auto-writer.php:921
+#: includes/openai/repurposer/repurposer.php:675
+msgid "Keywords"
+msgstr "Palabras clave"
+
+#: includes/openai/auto-writer/auto-writer.php:924
+msgid "Last generation"
+msgstr "Última generación"
+
+#: includes/openai/auto-writer/auto-writer.php:925
+msgid "Next generation"
+msgstr "Próxima generación"
+
+#: includes/openai/auto-writer/auto-writer.php:926
+msgid "Is running"
+msgstr "Se está ejecutando"
+
+#: includes/openai/auto-writer/auto-writer.php:927
+msgid "Run count"
+msgstr "Recuento de carreras"
+
+#: includes/openai/auto-writer/auto-writer.php:928
+msgid "Max run count"
+msgstr "Número máximo de ejecuciones"
+
+#: includes/openai/auto-writer/auto-writer.php:929
+#: includes/openai/repurposer/repurposer.php:679
+msgid "Actions"
+msgstr "Acciones"
+
+#: includes/openai/auto-writer/auto-writer.php:943
+#: includes/openai/repurposer/repurposer.php:693
+msgid "No entries found"
+msgstr "No se han encontrado entradas"
+
+#: includes/openai/auto-writer/auto-writer.php:961
+#: includes/openai/repurposer/repurposer.php:708
+#: includes/openai/repurposer/repurposer.php:709
+msgid "Yes"
+msgstr "Sí"
+
+#: includes/openai/auto-writer/auto-writer.php:961
+#: includes/openai/repurposer/repurposer.php:708
+#: includes/openai/repurposer/repurposer.php:709
+msgid "No"
+msgstr "No"
+
+#: includes/openai/auto-writer/auto-writer.php:965
+msgid "Edit"
+msgstr "Editar"
+
+#: includes/openai/auto-writer/auto-writer.php:966
+#: includes/openai/repurposer/repurposer.php:713
+msgid "Delete"
+msgstr "Borrar"
+
+#: includes/openai/auto-writer/auto-writer.php:966
+msgid "Are you sure you want to delete this scheduled generator?"
+msgstr ""
+"¿Estás seguro de que quieres eliminar este aviso¿Estás seguro de que quieres "
+"eliminar este generador programado?"
+
+#: includes/openai/repurposer/repurposer.php:331
+msgid "URL is empty."
+msgstr "La URL está vacía."
+
+#: includes/openai/repurposer/repurposer.php:345
+msgid "Could not extract text from URL."
+msgstr "No se ha podido extraer el texto de la URL."
+
+#: includes/openai/repurposer/repurposer.php:361
+msgid "Could not create job."
+msgstr "No se ha podido crear empleo."
+
+#: includes/openai/repurposer/repurposer.php:366
+msgid "Job created."
+msgstr "Trabajo creado."
+
+#: includes/openai/repurposer/repurposer.php:413
+msgid "AIKit Repurpose"
+msgstr "Reutilizar AIKit"
+
+#: includes/openai/repurposer/repurposer.php:415
+msgid ""
+"AIKit repurposing jobs allow you to automatically create new posts out of "
+"existing content."
+msgstr ""
+"Las tareas de reutilización de AIKit te permiten crear automáticamente "
+"nuevas publicaciones a partir de contenido existente."
+
+#: includes/openai/repurposer/repurposer.php:416
+msgid ""
+"Please review and edit before publishing for best results. This is not a "
+"substitute for human editing, but a drafting aid. Happy writing!"
+msgstr ""
+"Por favor, revísalo y edítalo antes de publicarlo para obtener los mejores "
+"resultados. Esto no es un sustituto de la edición humana, sino una ayuda "
+"para la redacción. ¡Feliz escritura!"
+
+#: includes/openai/repurposer/repurposer.php:421
+msgid "AIKit repurposing jobs run in the background as scheduled jobs."
+msgstr ""
+"Los trabajos de reutilización de AIKit se ejecutan en segundo plano como "
+"trabajos programados."
+
+#: includes/openai/repurposer/repurposer.php:422
+msgid ""
+"By default, WordPress scheduled jobs only run when someone visits your site. "
+"To ensure that your repurposing jobs run even if nobody visits your site, "
+"you can set up a cron job on your server to call the WordPress cron system "
+"at regular intervals. Please ask your host provider to do that for you. Here "
+"is the cron job definition:"
+msgstr ""
+"Por defecto, las tareas programadas de WordPress sólo se ejecutan cuando "
+"alguien visita tu sitio. Para asegurarte de que tus tareas de redistribución "
+"se ejecutan aunque nadie visite tu sitio, puedes configurar una tarea cron "
+"en tu servidor para que llame al sistema cron de WordPress a intervalos "
+"regulares. Pide a tu proveedor de alojamiento que lo haga por ti. Aquí "
+"tienes la definición del cron job:"
+
+#: includes/openai/repurposer/repurposer.php:430
+msgid "Create Repurpose Job"
+msgstr "Crear trabajo de reasignación"
+
+#: includes/openai/repurposer/repurposer.php:433
+msgid "Jobs"
+msgstr "Empleo"
+
+#: includes/openai/repurposer/repurposer.php:473
+msgid "Created"
+msgstr "Creado"
+
+#: includes/openai/repurposer/repurposer.php:474
+msgid "Repurpose job"
+msgstr "Reasignar trabajo"
+
+#: includes/openai/repurposer/repurposer.php:475
+msgid "created Successfully."
+msgstr "creado con éxito."
+
+#: includes/openai/repurposer/repurposer.php:495
+msgid "« Back to Jobs"
+msgstr "« Volver a Empleo"
+
+#: includes/openai/repurposer/repurposer.php:502
+msgid "Choose content type:"
+msgstr "Elige el tipo de contenido:"
+
+#: includes/openai/repurposer/repurposer.php:505
+msgid "Post or article"
+msgstr "Post o artículo"
+
+#: includes/openai/repurposer/repurposer.php:509
+msgid "YouTube video"
+msgstr "Vídeo en YouTube"
+
+#: includes/openai/repurposer/repurposer.php:510
+msgid "How to setup"
+msgstr "Cómo configurar"
+
+#: includes/openai/repurposer/repurposer.php:518
+msgid ""
+"To repurpose a YouTube video, AIKit needs to read the subtitles of the "
+"video. To do so, you need to connect to "
+msgstr ""
+"Para reutilizar un vídeo de YouTube, AIKit necesita leer los subtítulos del "
+"vídeo. Para ello, necesita conectarse a "
+
+#: includes/openai/repurposer/repurposer.php:519
+msgid "Subtitles for YouTube."
+msgstr "Subtitles for YouTube."
+
+#: includes/openai/repurposer/repurposer.php:520
+msgid ""
+"This API is used to read YouTube video subtitles to allow you to fetch the "
+"content of videos and repurpose/spin them and create posts based on them in "
+"your website."
+msgstr ""
+"Esta API se utiliza para leer los subtítulos de los vídeos de YouTube y "
+"permitirte obtener el contenido de los vídeos y reutilizarlos/girarlos y "
+"crear entradas basadas en ellos en tu sitio web."
+
+#: includes/openai/repurposer/repurposer.php:524
+msgid "to a plan, then enter your API key in the"
+msgstr "a un plan, luego introduce tu clave API en el"
+
+#: includes/openai/repurposer/repurposer.php:525
+msgid "settings page."
+msgstr "página de configuración."
+
+#: includes/openai/repurposer/repurposer.php:533
+#: includes/openai/repurposer/repurposer.php:534
+msgid "URL of article, post or video"
+msgstr "URL del artículo, post o vídeo"
+
+#: includes/openai/repurposer/repurposer.php:533
+msgid "Please enter a valid URL"
+msgstr "Introduzca una URL válida"
+
+#: includes/openai/repurposer/repurposer.php:543
+msgid ""
+"Have a quick look at the extracted text to make sure it looks good and "
+"remove any unnecessary parts."
+msgstr ""
+"Echa un vistazo rápido al texto extraído para asegurarte de que queda bien y "
+"elimina las partes innecesarias."
+
+#: includes/openai/repurposer/repurposer.php:544
+msgid ""
+"Try to combine the text related to the same topic into one paragraph for "
+"better results."
+msgstr ""
+"Intenta combinar el texto relacionado con el mismo tema en un solo párrafo "
+"para obtener mejores resultados."
+
+#: includes/openai/repurposer/repurposer.php:547
+#: includes/openai/repurposer/repurposer.php:548
+#: includes/openai/repurposer/repurposer.php:786
+msgid "Extracted text"
+msgstr "Texto extraído"
+
+#: includes/openai/repurposer/repurposer.php:564
+msgid "Include featured image"
+msgstr "Incluir imagen destacada"
+
+#: includes/openai/repurposer/repurposer.php:571
+#: includes/openai/repurposer/repurposer.php:572
+msgid "Posts to generate: "
+msgstr "Puestos a generar: "
+
+#: includes/openai/repurposer/repurposer.php:650
+msgid ""
+"this will be replaced with the combination of all the summaries of all parts "
+"of the post."
+msgstr ""
+"se sustituirá por la combinación de todos los resúmenes de todas las partes "
+"del post."
+
+#: includes/openai/repurposer/repurposer.php:673
+msgid "URL"
+msgstr "URL"
+
+#: includes/openai/repurposer/repurposer.php:674
+msgid "Job Type"
+msgstr "Tipo de empleo"
+
+#: includes/openai/repurposer/repurposer.php:676
+msgid "Done"
+msgstr "Hecho"
+
+#: includes/openai/repurposer/repurposer.php:677
+msgid "Had errors"
+msgstr "Tenía errores"
+
+#: includes/openai/repurposer/repurposer.php:712
+msgid "View"
+msgstr "Ver"
+
+#: includes/openai/repurposer/repurposer.php:713
+msgid "Are you sure you want to delete this repurposing job?"
+msgstr "¿Estás seguro de que quieres eliminar este trabajo de reutilización?"
+
+#: includes/openai/repurposer/repurposer.php:762
+msgid "Invalid ID"
+msgstr "ID no válido"
+
+#: includes/openai/repurposer/repurposer.php:769
+msgid "Job not found"
+msgstr "Trabajo no encontrado"
 
 #: fe/build/index.js:418 fe/src/components/aiKitControls.js:425
 #: fe/build/index.js:425
@@ -873,3 +1386,9 @@ msgstr ""
 #: fe/build/index.js:525
 msgid "Go to settings"
 msgstr "Ir a ajustes"
+
+#~ msgid "Add/Edit Prompts (Advanced)"
+#~ msgstr "Añadir/editar prompts (Avanzado)"
+
+#~ msgid "Prompts (Advanced)"
+#~ msgstr "Prompts (Avanzado)"

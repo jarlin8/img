@@ -18,6 +18,8 @@ class AIKit_Admin {
 
     private $auto_writer;
 
+    private $repurposer;
+
     /**
      * Main AIKit_Admin Instance.
      *
@@ -167,6 +169,7 @@ class AIKit_Admin {
         $this->prompt_manager = AIKit_Prompt_Manager::get_instance();
         $this->export_import_manager = AIKit_Import_Export_Manager::get_instance($this->prompt_manager);
         $this->auto_writer = AIKIT_Auto_Writer::get_instance();
+        $this->repurposer = AIKit_Repurposer::get_instance();
         $this->init();
     }
 
@@ -176,6 +179,7 @@ class AIKit_Admin {
     public function init() {
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this->auto_writer, 'enqueue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( $this->repurposer, 'enqueue_scripts' ) );
     }
 
     public function get_languages ()
@@ -187,6 +191,9 @@ class AIKit_Admin {
      * Add options page.
      */
     public function admin_menu() {
+
+        ###['aikit-menu']
+
         add_menu_page(
             esc_html__('AIKit Settings', 'aikit'),
             esc_html__('AIKit', 'aikit'),
@@ -209,16 +216,34 @@ class AIKit_Admin {
             'aikit',
             esc_html__('Auto Writer', 'aikit'),
             esc_html__('Auto Writer', 'aikit'),
-            'manage_options',
+            'edit_posts',
             'aikit_auto_writer',
-            array( $this->auto_writer, 'render' )
+            array( $this->auto_writer, 'render_auto_writer' )
+        );
+
+        add_submenu_page(
+            'aikit',
+            esc_html__('Scheduler', 'aikit'),
+            esc_html__('Scheduler', 'aikit'),
+            'edit_posts',
+            'aikit_scheduler',
+            array( $this->auto_writer, 'render_scheduled_generators' )
+        );
+
+        add_submenu_page(
+            'aikit',
+            esc_html__('Repurpose', 'aikit'),
+            esc_html__('Repurpose', 'aikit'),
+            'edit_posts',
+            'aikit_repurpose',
+            array( $this->repurposer, 'render' )
         );
 
         add_submenu_page(
                 'aikit',
-            esc_html__('Add/Edit Prompts (Advanced)', 'aikit'),
-            esc_html__('Prompts (Advanced)', 'aikit'),
-            'manage_options',
+            esc_html__('Add/Edit Prompts', 'aikit'),
+            esc_html__('Prompts', 'aikit'),
+            'edit_posts',
             'aikit_prompts',
             array( $this, 'prompts_page' )
         );
@@ -721,6 +746,17 @@ class AIKit_Admin {
             'aikit_settings_section_openai'
         );
 
+        // RapidAPI key
+        register_setting('aikit_options', 'aikit_setting_rapidapi_key');
+
+        add_settings_field(
+            'aikit_settings_rapidapi_key',
+            esc_html__( 'Rapid API Key', 'aikit' ),
+            array ($this, 'aikit_settings_rapidapi_key_callback'),
+            'aikit',
+            'aikit_settings_section_openai'
+        );
+
         // OpenAI Language used for content generation
         register_setting('aikit_options', 'aikit_setting_openai_language');
 
@@ -837,6 +873,24 @@ class AIKit_Admin {
 
     function aikit_settings_section_openai_callback() {
         echo '<p>' . esc_html__('Adjust the plugin to your needs by editing the settings here.', 'aikit') .'</p>';
+    }
+
+    function aikit_settings_rapidapi_key_callback() {
+        $setting = get_option('aikit_setting_rapidapi_key');
+        ?>
+            <input size="100" type="text" name="aikit_setting_rapidapi_key" value="<?php echo esc_attr($setting); ?>" />
+            <p>
+                <small>
+                <?php echo esc_html__('Enter your RapidAPI key for', 'aikit'); ?>
+                <a target="_blank" href="https://rapidapi.com/yashagarwal/api/subtitles-for-youtube"><?php echo esc_html__('Subtitles for YouTube', 'aikit'); ?></a>
+                <?php echo esc_html__(' here. This API is used to read YouTube video subtitles to allow you to fetch the content of videos and repurpose/spin them and create posts based on them in your website.', 'aikit'); ?>
+                <?php echo esc_html__('"Subtitles for YouTube" API offers a generous 100 free requests per day which will be enough for most users.', 'aikit'); ?>
+                <?php echo esc_html__('If you would like to repurpose videos, please', 'aikit'); ?>
+                <a href="https://rapidapi.com/yashagarwal/api/subtitles-for-youtube/pricing" target="_blank"><?php echo esc_html__('subscribe', 'aikit'); ?></a>
+                <?php echo esc_html__('to a plan, then enter your API key here.', 'aikit'); ?>
+                <small>
+            </p>
+        <?php
     }
 
     function aikit_settings_elementor_supported_callback () {

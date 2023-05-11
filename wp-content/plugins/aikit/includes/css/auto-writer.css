@@ -9,7 +9,7 @@
     max-width: none !important;
 }
 
-form#aikit-auto-writer-form {
+form#aikit-auto-writer-form, #aikit-scheduler-generators {
     border: 1px solid #ddd;
     padding: 10px;
     border-radius: 5px;
@@ -57,7 +57,7 @@ h2 {
     font-size: 13px !important;
 }
 
-.aikit-badge {
+.aikit-badge, .aikit-badge-active {
     background-color: #0d6efdd9;
     color: #fff;
     padding: 5px 10px;
@@ -65,4 +65,38 @@ h2 {
     font-size: 12px;
     font-weight: 500;
     margin-right: 5px;
+}
+
+.aikit-badge-inactive {
+    background-color: #ccc;
+    color: #424242;
+}
+
+#aikit-auto-writer-cancel-schedule {
+    cursor: pointer;
+}
+
+.aikit-scheduler-back {
+    cursor: pointer;
+    font-size: 13px;
+    margin: 5px;
+}
+
+#aikit-scheduler-tabs li {
+    margin-bottom: 0 !important;
+
+}
+
+.aikit-scheduler-generators-pagination a {
+    margin: 5px;
+}
+
+.aikit-scheduler-generators-pagination-current {
+    font-weight: 700;
+}
+
+h1 {
+    font-size: 23px;
+    margin-top: 12px;
+    margin-bottom: 12px;
 }

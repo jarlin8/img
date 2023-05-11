@@ -5,9 +5,9 @@ Author URI: https://www.storeapps.org/woocommerce-plugins/
 Plugin URI: https://www.storeapps.org/product/smart-manager/?utm_source=wprepo&utm_medium=web&utm_campaign=smwp_readme
 Tags: woocommerce advanced bulk edit, wordpress bulk edit, woocommerce inventory management, woocommerce stock manager, woocommerce product manager, woocommerce order management, wp sheet editor, bulk stock management, wordpress inventory manager, woocommerce bulk edit, bulk edit, stock management, products editor, woocommerce, woocommerce bulk price change, woocommerce manage stock, woocommerce bulk edit products, woocommerce, store manager, bulk update, inline edit, manage variations, bulk edit, coupons, shop manager, batch update, wp ecommerce, productivity, products, variations, orders, customers, manager, pro, manager pro, pro manager, extension, premium, free, woocommerce customer management, inventory management
 Requires at least: 4.8
-Tested up to: 6.1.0
+Tested up to: 6.2
 Requires PHP: 5.6
-Stable tag: 7.2.0
+Stable tag: 8.3.0
 License: GPLv3 
 
 The #1 tool for WordPress and WooCommerce advanced bulk edit, inventory management, stock management, export, delete, duplicate...using an Excel-like sheet editor.
@@ -85,6 +85,7 @@ https://www.youtube.com/watch?v=20iodFpP5ow
 -- [WordPress SEO Plugin – Rank Math](https://wordpress.org/plugins/seo-by-rank-math/)
 -- [Germanized for WooCommerce](https://wordpress.org/plugins/woocommerce-germanized/)
 -- [LifterLMS](https://wordpress.org/plugins/lifterlms/)
+-- [TutorLMS](https://wordpress.org/plugins/tutor/)
 -- [ShopEngine](https://wordpress.org/plugins/shopengine/)
 -- [WooCommerce Dropshipping](https://woocommerce.com/products/woocommerce-dropshipping/?aff=5475)
 -- [WooCommerce Product Vendors](https://woocommerce.com/products/product-vendors/?aff=5475)
@@ -264,6 +265,59 @@ It also gives the warm feeling of supporting further development of the plugin.
 2. Bulk edit / Batch update (only in Pro version)
 
 == Changelog ==
+= 8.3.0 (04.05.2023) =
+* New: Rename column headers (Pro)
+* Fix: Inline edit not working in some cases on non-first pages post saving
+* Fix: Notification messages not showing in some cases
+* Fix: Dashboard refreshing to first page when bulk editing records on non-first pages (Pro)
+* Update: UI/UX improvements
+* Update: POT file
+
+= 8.2.0 (27.04.2023) =
+* New: HTML number field editor for numeric fields
+* New: Option 'sm_show_tasks_title_modal' to show or hide the 'Tasks Title Modal' when performing inline/bulk edits (Pro)
+* Fix: PHP 8.2 Warnings: Creation of dynamic properties is deprecated
+* Update: 'WP editor' for 'Product short description' and 'Post excerpt' fields
+* Update: UI/UX improvements
+* Update: POT file
+
+= 8.1.0 (20.04.2023) =
+* Fix: PHP 8.2 Warnings: Creation of dynamic properties is deprecated
+* Fix: Dashboard total record count incorrectly updated when inline editing records on non-first pages
+* Fix: Last field from Advanced Custom Fields plugin not displaying for WooCommerce Orders dashboard (Pro)
+* Update: UI/UX improvements
+* Update: POT file
+
+= 8.0.0 (11.04.2023) =
+* New: WordPress 6.2 compatible
+* New: Undo Changes done by Inline or Bulk Edit functionalities (Pro)
+* New: Export CSV of selected records (Pro)
+* New: Compatibility with [TutorLMS](https://wordpress.org/plugins/tutor/) (Pro)
+* Fix: 'Edit URL' breaking when exporting using Export CSV functionality (Pro) 
+* Fix: Minor fixes
+* Update: Advanced search UI improvements
+* Update: POT file
+
+= 7.4.0 (23.12.2022) =
+* New: Hide all admin notices from Smart Manager page except notices triggered from Smart Manager plugin
+* Fix: Sorting not working when advanced search is enabled in Users dashboard (Pro)
+* Fix: 'User Registered' field not showing in advanced search in Users dashboard (Pro)
+* Update: Pricing page related changes
+* Update: StoreApps Upgrade file Improvements (Pro)
+* Update: POT file
+
+= 7.3.0 (15.12.2022) =
+* New: WordPress 6.1.1 compatible
+* New: Compatibility with 'Product Labels and Sticker' plugin
+* Fix: Advanced search 'ANDing' operation within same rule group not returning correct results
+* Fix: Inline edit of WooCommerce Products 'Sale price dates to' field not saving correct timestamp
+* Fix: Bulk edit of WooCommerce Products 'Sale price dates to' field not saving correct timestamp (Pro)
+* Fix: Custom views not rendering properly when created from dashboard having advanced search conditions (Pro)
+* Fix: WordPress database error when deactivating the plugin in some cases
+* Fix: Minor fixes
+* Update: Pricing page related changes
+* Update: POT file
+
 = 7.2.0 (10.11.2022) =
 * New: WordPress 6.1.0 compatible
 * Fix: Images not getting attached to post type like WooCommerce Products, Posts, Pages, etc. when setting new uploaded images in Featured or Gallery images
@@ -730,6 +784,24 @@ It also gives the warm feeling of supporting further development of the plugin.
 [See changelog for all versions](https://www.storeapps.org/docs/sm-changelog/?utm_source=wprepo&utm_medium=web&utm_campaign=smwp_readme).
 
 == Upgrade Notice ==
+
+= 8.3.0 =
+Added support for Renaming column headers (Pro), Fixes related to Inline edit not working in some cases on non-first pages post saving, Notification messages not showing in some cases, Dashboard refreshing to first page when bulk editing records on non-first pages (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.2.0 =
+Added HTML number field editor for numeric fields, Option 'sm_show_tasks_title_modal' to show or hide the 'Tasks Title Modal' when performing inline/bulk edits (Pro), Fixes related to PHP 8.2 Warnings: Creation of dynamic properties is deprecated, added 'WP editor' for 'Product short description' and 'Post excerpt' fields along with other important fixes and updates. Recommended upgrade.
+
+= 8.1.0 =
+UI/UX improvements, Fixes related to PHP 8.2 Warnings: Creation of dynamic properties is deprecated, Dashboard total record count incorrectly updated when inline editing records on non-first pages, Last field from Advanced Custom Fields plugin not displaying for WooCommerce Orders dashboard (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.0.0 =
+WordPress 6.2 compatible, Added Undo Changes done by Inline or Bulk Edit functionalities (Pro), Export CSV of selected records (Pro), Compatibility with [TutorLMS](https://wordpress.org/plugins/tutor/) (Pro), Fixes related to 'Edit URL' breaking when exporting using Export CSV functionality (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 7.4.0 =
+Hide all admin notices from Smart Manager page except notices triggered from Smart Manager plugin, Fixes related to Sorting not working when advanced search is enabled in Users dashboard (Pro), 'User Registered' field not showing in advanced search in Users dashboard (Pro), Pricing page related changes, StoreApps Upgrade file Improvements (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 7.3.0 =
+WordPress 6.1.1 compatible, Compatibility with 'Product Labels and Sticker' plugin, Fixes related to Advanced search 'ANDing' operation within same rule group not returning correct results, Inline edit of WooCommerce Products 'Sale price dates to' field not saving correct timestamp, Bulk edit of WooCommerce Products 'Sale price dates to' field not saving correct timestamp (Pro), Custom views not rendering properly when created from dashboard having advanced search conditions (Pro) along with other important fixes and updates. Recommended upgrade.
 
 = 7.2.0 =
 WordPress 6.1.0 compatible, Fixes related to Images not getting attached to post type like WooCommerce Products, Posts, Pages, etc. when setting new uploaded images in Featured or Gallery images, Delete image functionality not working for newly uploaded images in WooCommerce Products Gallery Images, Inline edit for WooCommerce Product Attributes not working in some cases along with other important fixes and updates. Recommended upgrade.
