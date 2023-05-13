@@ -803,8 +803,11 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
                                     if (!$loop) $this->data['dom'] = $dom;
                                 }
 
-                                $this->data['elements'] = $elements;
 								$loop += $elements->length;
+
+                                if ($loop == $this->data['tagno']) {
+                                    $this->data['elements'] = $elements;
+                                }
 
                                 if ( $this->data['tagno'] > 1 and ($loop == $this->data['tagno'] or $loop == PMXI_Plugin::$session->count)) {
                                     unset($dom, $xpath, $elements);
