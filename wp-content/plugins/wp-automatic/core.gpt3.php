@@ -139,7 +139,10 @@ class WpAutomaticgpt3 extends wp_automatic {
 							// report result char length
 							echo '<br>Result length:' . strlen($result);
 
-							// add result to the temp array to be used later
+							// nl to br
+							$result = nl2br($result);
+
+ 							// add result to the temp array to be used later
 							$temp['item_content'] = $result;
 
 						}catch(Exception $e){

@@ -96,6 +96,8 @@ global $camp_post_category;
                         
                         <br>
 
+                        
+
                         <!-- top_p field -->
                         <label for="field6">
                             Top_p (Optional)

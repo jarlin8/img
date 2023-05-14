@@ -275,7 +275,7 @@ if($added == 0){
 			            
 			            <?php if ( class_exists( 'WooCommerce' ) ) {
 			            		
-			            		echo '<br><br>*Set the field name to "woo_gallery" if you want to set a product gallery from a rule that contains images <br><br>*Set the field name to "_price" if you want to set product price to an extracted value';
+			            		echo '<br><br>*Set the field name to "woo_gallery" if you want to set a product gallery from a rule that contains images <br><br>*Set the field name to "_regular_price" if you want to set product price to an extracted value<br><br>*Set the field name to "_sale_price" if you want to set product sale price to an extracted value';
 			            	
 								//echo instructions to set the field name to attribute_attributeName to set a product attribute
 								echo '<br><br>*Set the field name to "attribute_attributeName" if you want to set a product attribute to an extracted value ex: attribute_brand will set the brand attribute to the set value';

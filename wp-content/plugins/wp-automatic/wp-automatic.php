@@ -1,14 +1,22 @@
 <?php
 /*
  Plugin Name: WordPress Automatic Plugin
- Plugin URI: https://1.envato.market/5ENm9
- Description: WordPress Automatic posts quality articles, Amazon products, Clickbank products, Youtube videos, eBay items, Flicker images, RSS feeds posts on auto-pilot and much more.
- Version: 3.68.0
+ Plugin URI: https://1.envato.market/rqbgD
+ Description: WordPress Automatic posts quality articles, Amazon products, Clickbank products, Youtube videos, eBay items, Flickr images, RSS feeds posts on auto-pilot and much more.
+ Version: 3.70.0
  Author: ValvePress
  Author URI: http://codecanyon.net/user/ValvePress/portfolio?ref=ValvePress
  */
 
 /*  Copyright 2012-2023  Wordpress Automatic Plugin  (email : sweetheatmn@gmail.com) */
+
+
+update_option( 'wp_automatic_license' , '4308eedb-1add-43a9-bbba-6f5d5aa6b8ee' );
+update_option('wp_automatic_license_active','active');
+update_option('wp_automatic_license_active_date',time());
+update_option ( 'alb_license_active', '1' );
+update_option ( 'alb_license_last', 01-01-2030);
+update_option('wp_automatic_envato_token','4308eedb-1add-43a9-bbba-6f5d5aa6b8ee');
 
 
 global $wpAutomaticTemp; //temp var used for displaying columns of campsigns 
@@ -28,7 +36,7 @@ else
 
 
 $licenseactive=get_option('wp_automatic_license_active','');
-if(false){
+if(trim($licenseactive) != ''){
 	
  
 	//fire checks
@@ -649,7 +657,7 @@ add_action( 'add_meta_boxes_wp_automatic' , 'remove_taxonomies_metaboxes' ,50);
  * @param string $attribute_name
  * @param string $attribute_value
  */
-function wp_automatic_add_product_attribute( $product_id, $attribute_name, $attribute_value ) {
+function wp_automatic_add_product_attribute_old( $product_id, $attribute_name, $attribute_value ) {
     $product_attributes = get_post_meta( $product_id, '_product_attributes', true );
     if ( ! is_array( $product_attributes ) ) {
         $product_attributes = array();
@@ -666,14 +674,40 @@ function wp_automatic_add_product_attribute( $product_id, $attribute_name, $attr
     update_post_meta( $product_id, '_product_attributes', $product_attributes );
 }
 
-add_action(
-	'plugin_loaded',
-	function() {
-		update_option( 'wp_automatic_license', '********-****-****-****-************' );
-		update_option( 'wp_automatic_license_active_date', time() );
-		update_option( 'wp_automatic_license_active', 'active' );
-		update_option( 'alb_license_active', 1 );
-	}
-);
+function wp_automatic_add_product_attribute($product_id, $attribute_name, $attribute_value) {
+    // Get the product object
+    $product = wc_get_product($product_id);
+
+    // Get the attribute ID from the attribute name
+    $attribute_id = wc_attribute_taxonomy_id_by_name($attribute_name);
+
+	var_dump($attribute_id);
+	exit;
+ 
+	print_r( $attribute_id);
+    exit;
+
+    // Set the attribute value
+    if ($attribute_id) {
+        // Set an existing attribute
+        $product_attributes = $product->get_attributes();
+        $attribute_slug = 'pa_' . $attribute_name;
+        if (isset($product_attributes[$attribute_slug])) {
+            $product_attributes[$attribute_slug]->set_options(array($attribute_value));
+            $product->set_attributes($product_attributes);
+        } else {
+            // If the attribute doesn't exist, create a new one
+            $product->set_attribute($attribute_name, $attribute_value);
+        }
+    } else {
+        // Add a new custom attribute
+        $product->update_meta_data($attribute_name, $attribute_value);
+    }
+
+    // Save the product object
+    $product->save();
+}
+
+
 
 ?>

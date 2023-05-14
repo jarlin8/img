@@ -24,9 +24,15 @@ function wp_automatic_front_end_scripts()
 	}
 }
 
-add_action('wp_enqueue_scripts', 'wp_automatic_front_end_scripts'); // wp_enqueue_scripts action hook to link only on the front-end
 
+//wp automatic options
+$wp_automatic_options = get_option('wp_automatic_options',array());
 
+//if OPT_NO_FRONT_JS is in array do not load front end scripts
+if ( ! in_array('OPT_NO_FRONT_JS', $wp_automatic_options))
+{
+	add_action('wp_enqueue_scripts', 'wp_automatic_front_end_scripts'); // wp_enqueue_scripts action hook to link only on the front-end
+}
 
 add_action('admin_print_scripts-' . 'post-new.php', 'wp_automatic_admin_scripts');
 add_action('admin_print_scripts-' . 'post.php', 'wp_automatic_admin_scripts');
@@ -49,7 +55,7 @@ function wp_automatic_admin_scripts()
 		wp_enqueue_script('wp_automatic_main_script', plugins_url('js/main.js', __FILE__), array(), '1.10.0');
 
 		//enqueue tutorial script
-		wp_enqueue_script('wp_automatic_tutorial_script', plugins_url('js/tutorials.js', __FILE__), array(), '1.0.1');
+		wp_enqueue_script('wp_automatic_tutorial_script', plugins_url('js/tutorials.js', __FILE__), array(), '1.0.3');
 
 		wp_enqueue_script('wp_automatic_jqcomplete_script', plugins_url('js/jquery.gcomplete.0.1.2.js', __FILE__));
 	}

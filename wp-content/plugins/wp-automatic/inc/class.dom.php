@@ -428,13 +428,12 @@ class wpAutomaticDom {
 	function removeElementsByXPath($xpathArr){
 		$xpathObj = new DOMXPath($this->doc);
 		foreach ($xpathArr as $xpath){
-			
-			var_dump($xpath);
 
-			echo '<br>Removing element by XPath: '.$xpath;
+			echo '<br>Removing element by XPath: '. htmlentities($xpath);
 			
 			$xpathMatches = @$xpathObj->query("$xpath");
 
+			if(is_array($xpathMatches))
 			echo ' <--Found '.count($xpathMatches).' matches';
 
 			foreach ($xpathMatches as $match){

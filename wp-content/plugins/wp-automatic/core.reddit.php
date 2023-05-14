@@ -292,11 +292,15 @@ class WpAutomaticReddit extends wp_automatic {
 					if(isset($link_flair_richtext_s->t)){
 						$item_flairs_arr [] = $link_flair_richtext_s->t;
 					}else{
+						
+						//check if link_flair_richtext_s is a string
+						if(is_string($link_flair_richtext_s))
 						$item_flairs_arr [] = $link_flair_richtext_s;
 					}
 				
 				}
-				
+				 
+
 				$item_flairs = implode ( ',', $item_flairs_arr );
 			}
 			

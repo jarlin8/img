@@ -483,7 +483,7 @@
 					if($ins){
 						echo '<-- inserted';
 					}else{
-						echo '<-- not inserted ' . $wpdb->last_error;
+						echo '<-- not inserted ' . $this->db->last_error;
 					}
 					
 				} else {

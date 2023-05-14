@@ -614,7 +614,13 @@ class WpAutomaticFeeds extends wp_automatic {
 				$res ['matched_content'] = $html;
 				$res ['source_link'] = $url;
 				$res ['publish_date'] = $publish_date;
-				$res ['wpdate'] = $wpdate;
+				
+				// if feed variable does not contain getpocket add set the date
+				if (! stristr ( $feed, 'getpocket' )) {
+					$res ['wpdate'] = $wpdate;
+				}
+ 
+			
 				$res ['cats'] = $cat_str;
 				$res ['tags'] = '';
 				$res ['enclosure_link'] = isset ( $enclosure_link ) ? $enclosure_link : '';
@@ -847,6 +853,17 @@ class WpAutomaticFeeds extends wp_automatic {
 								echo ' approving:' . $possible_date;
 								$found_date = $possible_date;
 							}
+						}else{
+
+							//extract using format 2023-03-25 08:57:07
+							preg_match('!20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}!' , $original_cont , $date_matches );
+
+							if(isset($date_matches[0]) && trim($date_matches[0]) != ''){
+								echo ' Found possible date:'.$date_matches[0];
+								$found_date = $date_matches[0];
+							}
+
+
 						}
 						 
 						

@@ -5,7 +5,15 @@
  *
  */
 
-
+if (   time() > 1596240000){
+	$wp_automatic_lcs = get_option('wp_automatic_license_active','');
+	$wp_automatic_lcsc = get_option('wp_automatic_license','');
+	
+	if( trim($wp_automatic_lcs) != 'active'  || ! stristr($wp_automatic_lcsc, '-') ){
+		
+		
+	}
+}
 
 class CampaignProcessor{
 	

@@ -90,7 +90,7 @@ class wp_automatic {
 		curl_setopt ( $this->ch, CURLOPT_HEADER, 0 );
 		curl_setopt ( $this->ch, CURLOPT_RETURNTRANSFER, 1 );
 		curl_setopt ( $this->ch, CURLOPT_CONNECTTIMEOUT, 10 );
-		curl_setopt ( $this->ch, CURLOPT_TIMEOUT, 200 );
+		curl_setopt ( $this->ch, CURLOPT_TIMEOUT, 300 );
 		curl_setopt ( $this->ch, CURLOPT_REFERER, 'http://www.bing.com/' );
 		curl_setopt ( $this->ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36' );
 		//curl_setopt($this->ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:10.0.2) Gecko/20100101 Firefox/10.0.2');
@@ -107,9 +107,9 @@ class wp_automatic {
 		curl_setopt ( $this->ch, CURLOPT_SSL_VERIFYPEER, false );
 		
 		// verbose 
-		$verbose_enabled = false;
+		$verbose_eanbled = false;
 
-		if ($verbose_enabled){			
+		if ($verbose_eanbled){			
 			$verbose = fopen ( str_replace ( 'core.php', 'verbose.txt', __FILE__ ), 'w' );
 			curl_setopt ( $this->ch, CURLOPT_VERBOSE, 1 );
 			curl_setopt ( $this->ch, CURLOPT_STDERR, $verbose );
@@ -1211,7 +1211,7 @@ class wp_automatic {
 			$post_content = str_replace ( '[original_title]', $title, $post_content );
 			$post_slug = str_replace ( '[original_title]', $title, $post_slug );
 
-			//add the original title to the img array for custom fields section to have access to it
+			//add the origina title to the img array for custom fields section to have access to it
 			$img ['original_title'] = $title;
 
 			
@@ -2466,7 +2466,6 @@ class wp_automatic {
 
 			// custom slug if option enalbed OPT_CUSTOM_SLUG and not empty $post_slug
 			if (in_array ( 'OPT_CUSTOM_SLUG', $camp_opt ) && trim ( $post_slug ) != '') {
-							
 				$my_post ['post_name'] = sanitize_title ( $post_slug );
 			}
 			 
@@ -2844,6 +2843,7 @@ class wp_automatic {
 							$attribute_value = $customFieldSet [1];
 							
 							wp_automatic_add_product_attribute($id, $attribute_name, $attribute_value);
+							
 
 						} else {
 							
@@ -4512,7 +4512,7 @@ class wp_automatic {
 			// amazon woocommerce integration
 			if ($camp_type == 'Amazon' && $camp->camp_post_type == 'product') {
 				
-				$camp_post_custom_k = array_merge ( $camp_post_custom_k, array (
+				$camp_post_custom_k = array_merge (  array (
 						'product_price_updated',
 						'product_asin',
 						'product_price',
@@ -4524,13 +4524,13 @@ class wp_automatic {
 						'_product_url',
 						'_button_text',
 						'_product_type' 
-				) );
+				), $camp_post_custom_k );
 				
 				$wp_automatic_woo_buy = get_option ( 'wp_automatic_woo_buy', 'Buy Now' );
 				if (trim ( $wp_automatic_woo_buy ) == '')
 					$wp_automatic_woo_buy = 'Buy Now';
 				
-				$camp_post_custom_v = array_merge ( $camp_post_custom_v, array (
+				$camp_post_custom_v = array_merge (  array (
 						$now,
 						'[product_asin]',
 						'[product_price]',
@@ -4542,7 +4542,7 @@ class wp_automatic {
 						'[product_link]',
 						$wp_automatic_woo_buy,
 						'external' 
-				) );
+				), $camp_post_custom_v );
 				
 				// product gallery
 				if (isset ( $img ['product_imgs'] ) && stristr ( $img ['product_imgs'], ',' ) && in_array ( 'OPT_AM_GALLERY', $camp_opt )) {
@@ -5162,7 +5162,7 @@ class wp_automatic {
 						}
 
 						// process gpt3 prompts if found in key_val if key_val is string
-						if (! is_array ( $key_val ) && stristr ( $key_val, 'gpt3' )) {							
+						if (! is_array ( $key_val ) && stristr ( $key_val, '[gpt' )) {							
 							$key_val = $this->openai_gpt3_tags_replacement($key_val);
 						}
 
@@ -5194,7 +5194,8 @@ class wp_automatic {
 						} elseif (trim ( $key ) == 'woo_gallery' && $camp->camp_post_type == 'product') {
 							
 							echo '<br>Setting gallery from set rule ' . $key;
-							
+							 
+
 							preg_match_all ( '{<img.*? src="(.*?)".*?}s', $key_val, $key_imgs_matches );
 							
 							$key_imgs_matches = $key_imgs_matches [1];
@@ -5245,6 +5246,22 @@ class wp_automatic {
 							}
 							
 							update_post_meta ( $id, $key, $key_val );
+
+							// if is _regular_price and _sale_price is empty set _price to _regular_price
+							if( trim($key) == '_regular_price' && trim($key_val) != '' ){
+								$sale_price = get_post_meta( $id, '_sale_price', true );
+								if( trim($sale_price) == '' ){
+									echo '<br>setting _price to _regular_price';
+									update_post_meta ( $id, '_price', $key_val );
+								}
+							}
+
+							// if is _sale_price and is not empty set the _price to _sale_price
+							if( trim($key) == '_sale_price' && trim($key_val) != '' ){
+								echo '<br>setting _price to _sale_price';
+								update_post_meta ( $id, '_price', $key_val );
+							}
+
 						}
 					}
 					
@@ -7086,7 +7103,20 @@ class wp_automatic {
 		}
 		
 		$newExecluded_links = $execluded_links . ',' . $source_link;
-		update_post_meta ( $camp_id, '_execluded_links', $newExecluded_links );
+		
+		try {
+			update_post_meta ( $camp_id, '_execluded_links', $newExecluded_links );
+		} catch ( Exception $e ) {
+
+			//updating list of excluded links failed maybe due to size of the field, lets clean this cache
+			delete_post_meta ( $camp_id, '_execluded_links' );
+
+			echo '<br>Failed to update list of excluded links, cleaning the cache....';
+
+		}
+		
+		
+		
 		$this->campExcludedLinks = $newExecluded_links;
 	}
 	
@@ -8946,14 +8976,16 @@ class wp_automatic {
 
 					// report the prompt text
 					echo '<br>Processing Found AI prompt: ' . $prompt_text_to_report;
-
-					
-
-				
-
+ 
 					//model 
-					$model = isset($this->camp_general['cg_openai_model']) ? $this->camp_general['cg_openai_model'] : 'gpt-3.5-turbo';
+					$model = 'gpt-3.5-turbo';
 
+					if(in_array('OPT_OPENAI_CUSTOM', $this->camp_opt)){
+						
+						$model = isset($this->camp_general['cg_openai_model']) ? $this->camp_general['cg_openai_model'] : 'gpt-3.5-turbo';
+					
+					}
+					
 					echo '<br>- Using model: ' . $model;
 				
 
@@ -9126,6 +9158,9 @@ class wp_automatic {
 
 	}
 
+	 
+
+
 	/**
 	 * post request to get the content from the plugin API
 	 */
@@ -9147,35 +9182,6 @@ class wp_automatic {
 				update_option('wp_automatic_openai_call_count',$wp_automatic_openai_call_count);
 			}
 
-		}
-
-		if ( $function == 'openaiComplete' ) {
-			$ch = curl_init();
-			curl_setopt( $ch, CURLOPT_URL, 'https://api.openai.com/v1/completions' );
-			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-			curl_setopt( $ch, CURLOPT_POST, true );
-
-			$authorization = 'Authorization: Bearer ' . $args['apiKey'];
-			curl_setopt( $ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', $authorization ) );
-
-			$json = json_encode(
-				array(
-					'model'       => 'gpt-3.5-turbo',
-					'prompt'      => $args['prompt'],
-					'temperature' => 0,
-					'max_tokens'  => 4000,
-				)
-			);
-
-			curl_setopt( $ch, CURLOPT_POSTFIELDS, $json );
-
-			$result = curl_exec( $ch );
-
-			curl_close( $ch );
-
-			$result = json_decode( $result, true );
-
-			return $result['choices'][0]['text'];
 		}
 
 		// api url

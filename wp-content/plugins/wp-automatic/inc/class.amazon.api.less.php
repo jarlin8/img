@@ -234,6 +234,8 @@ class wp_automatic_amazon_api_less {
 			echo '<--' . strlen ( $item_description );
 		}
 		
+
+
 		// book description bookDesc_iframe_wrapper
 		if (stristr ( $exec, 'book_description_expander' )) {
 			
@@ -257,6 +259,8 @@ class wp_automatic_amazon_api_less {
 				echo '<--' . strlen ( $item_book_description ) . ' chars';
 			}
 		}
+
+		
 		
 		// book detailBulletsWrapper_feature_div https://www.amazon.com/dp/B00117ZTOS https://monosnap.com/file/r9XyRm2SF8b0Lzv2Wd2Js5L8cjQWue
 		if (stristr ( $exec, 'detailBulletsWrapper_feature_div' )) {

@@ -121,7 +121,7 @@ if (count($res) > 0 ){
 		$post_name = stripslashes ( $res->post_name );
 		
 		$camp_options = unserialize ( $res->camp_options );
-		
+
 		$camp_options_arr = $camp_options;
 		
 		$feeds = stripslashes ( $res->feeds );
@@ -1792,7 +1792,7 @@ if (count($res) > 0 ){
 												    	<br><br>If customFieldName is tags, then the extracted part will be set as tags
 													<br><br>If customFieldName is categories, then the extracted part will be set as categories
 												    	<br><br>Add |1 to the end of the rule if you want to get the first match only 
-												    	<br><br>Prefix the customFieldName with  "taxonomy_" if you want to add the value as a cusotm taxonomy. ex: class|tags|taxonomy_product_tag will extract the part with class named tags and set to the taxonomy named product_tag
+												    	<br><br>Prefix the customFieldName with  "taxonomy_" if you want to add the value as a custom taxonomy. ex: class|tags|taxonomy_product_tag will extract the part with class named tags and set to the taxonomy named product_tag
 												    	</i>
 												    	 
 												    	

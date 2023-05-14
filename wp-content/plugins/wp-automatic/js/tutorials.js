@@ -23,6 +23,9 @@ const tutorials = {
       title: "How to auto post Google News to WordPress",
     },
     { url: "https://youtu.be/vPTNRBcWvDY", title: "How to import Web Stories" },
+    {url:"https://valvepress.com/how-to-import-from-a-specific-category-in-an-rss-feed/",title:"How to import from a specific category in an RSS feed"},
+    {url:"https://valvepress.com/how-to-import-from-any-website-to-wordpress-in-multiple-languages/",title:"How to import from any website to WordPress in multiple languages"},
+  
   ],
   Amazon: [
     {
@@ -222,6 +225,7 @@ const tutorials = {
       title: "How to import sitemap to WordPress posts",
     },
     { url: "https://youtu.be/vPTNRBcWvDY", title: "How to import Web Stories" },
+    {url:"https://valvepress.com/how-to-import-from-any-website-to-wordpress-in-multiple-languages/",title:"How to import from any website to WordPress in multiple languages"},
   ],
   General: [
     {
@@ -231,6 +235,10 @@ const tutorials = {
     {
       url: "https://valvepress.com/how-to-automatically-generate-yoast-rank-math-seo-description-using-openai-gpt/",
       title: "How to automatically generate Yoast/Rank Math SEO description using OpenAI GPT",
+    },
+    {
+      url: "https://valvepress.com/how-to-automatically-generate-wordpress-tags-using-openai-gpt-api/",
+      title: "How to automatically generate WordPress tags using OpenAI GPT API",
     },
     {
       url: "https://valvepress.com/wordpress-internal-cron-job-work-may-need-setup-external-cron/",

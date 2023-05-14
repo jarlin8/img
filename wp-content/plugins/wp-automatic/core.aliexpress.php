@@ -151,7 +151,9 @@ class WpAutomaticaliexpress extends wp_automatic {
 					//get the item info for this video
 					$current_item_url = $temp['item_url'];
 				 	
-					
+					// update the link status to 1
+					$query = "delete from {$this->wp_prefix}automatic_general where id={$ret->id}";
+					$this->db->query ( $query );
 					
 					//curl get
 					$x='error';
@@ -248,9 +250,7 @@ class WpAutomaticaliexpress extends wp_automatic {
 					// report link
 					echo '<br>Found Link:' . $temp ['item_url'];
 					
-					// update the link status to 1
-					$query = "delete from {$this->wp_prefix}automatic_general where id={$ret->id}";
-					$this->db->query ( $query );
+					
 					
 					// if cache not active let's delete the cached videos and reset indexes
 					if (! in_array ( 'OPT_AE_CACHE', $camp_opt )) {

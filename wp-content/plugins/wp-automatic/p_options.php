@@ -70,7 +70,6 @@ function gm_setting() {
 		}
 		
 		$resarr = json_decode ( $resback );
-		$resarr->message = 'success';
 		
 		if (isset ( $resarr->message )) {
 			$wp_automatic_active_message = $resarr->message;
@@ -1104,6 +1103,14 @@ h2 span {
 										
 									</div>
 
+									<div class="field f_100">
+										<div class="option clearfix">
+											<input name="wp_automatic_options[]" <?php   echo cchecked('wp_automatic_options', 'OPT_NO_FRONT_JS')  ?> value="OPT_NO_FRONT_JS" type="checkbox"> <span class="option-title">Disable front end script and style from Automatic </span>
+											<div style="padding-left:25px" class="description"><small>* When this option is enabled, Gallery for products will not work normally. disable if you do not import galleries like Amazon product galleries</small></div>
+										</div>
+										
+									</div>
+
 									<div id="form-submit" class="field f_100 clearfix submit" style>
 										<input style="margin-left: 0" value="Save Changes" type="submit">
 									</div>
@@ -1222,7 +1229,7 @@ h2 span {
 		?>
  										
  										<div class="field f_100 ">
-										<label> Purchase code</label> <input readonly="readonly" placeholder="4308eedb-1add-43a9-bbba-6f5d5aa6b8ee" value="4308eedb-1add-43a9-bbba-6f5d5aa6b8ee" name="wp_automatic_license" type="text">
+										<label> Purchase code</label> <input placeholder="Ex: 4308eedb-1add-43a9-bbba-6f5d5aa6b8ee" value="<?php   echo $the_license ?>" name="wp_automatic_license" type="text">
 										<div class="description">Your plugin purchase code</div>
 									</div>		
  									
