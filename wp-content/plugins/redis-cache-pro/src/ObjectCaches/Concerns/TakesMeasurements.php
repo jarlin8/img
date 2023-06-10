@@ -107,7 +107,6 @@ trait TakesMeasurements
         $id = (string) $this->id('measurements', 'analytics');
 
         $measurement = Measurement::make();
-        $measurement->wp = new WordPressMetrics($this);
 
         try {
             $lastSample = $this->get('last-sample', 'analytics');
@@ -124,6 +123,9 @@ trait TakesMeasurements
 
                 $this->set('last-sample', $now, 'analytics');
             }
+
+            $measurement->wp = new WordPressMetrics($this);
+            $measurement->wp->storeWrites++;
 
             $this->connection->zadd($id, $measurement->timestamp, $measurement);
 

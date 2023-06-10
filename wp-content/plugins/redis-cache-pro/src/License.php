@@ -254,7 +254,7 @@ class License
             'plan' => $this->plan,
             'state' => 'valid',
             'token' => $this->token,
-            'organization' => $this->organization,
+            'organization' => 'organization',
             'stability' => $this->stability,
             'last_check' => current_time('timestamp'),
             'valid_as_of' => current_time('timestamp'),

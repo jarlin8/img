@@ -455,7 +455,6 @@ abstract class ObjectCache implements ObjectCacheInterface
     {
         global $wp_object_cache_errors;
 
-        /** @var \RedisCachePro\Support\ObjectCacheInfo $info */
         $info = (object) [
             'status' => false,
             'groups' => (object) [
@@ -470,7 +469,7 @@ abstract class ObjectCache implements ObjectCacheInterface
             ]),
         ];
 
-        return $info;
+        return $info; // @phpstan-ignore-line
     }
 
     /**

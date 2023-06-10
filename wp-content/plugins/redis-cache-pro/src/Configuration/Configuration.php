@@ -1479,7 +1479,7 @@ final class Configuration
         if (\is_bool($analytics)) {
             is_object($this->analytics)
                 ? $this->analytics->enabled = $analytics
-                : $this->analytics['enabled'] = $analytics; // @phpstan-ignore-line
+                : $this->analytics['enabled'] = $analytics;
 
             return;
         }

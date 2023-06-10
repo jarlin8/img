@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.18.2 - 2023-04-04
+### Added
+- Added Query Monitor constants to panel
+
+### Changed
+- Renamed `ms-cache-median` to `ms-cache-avg`
+
+### Fixed
+- Discard transactions if they fail
+- Prevent REST API responses from being cached
+- Fixed measuring analytics writes
+- Fixed `storeWaitAverage` calculation
+- Fixed supported Redis version indicator when using Relay
+
 ## 1.18.1 - 2023-03-24
 ### Changed
 - Updated End-User License Agreement

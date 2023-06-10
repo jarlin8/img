@@ -65,6 +65,7 @@ class AggregateWatcher extends Notify
     protected $defaultMetrics = [
         'ms-total',
         'ms-cache',
+        'ms-cache-avg',
         'ms-cache-ratio',
         'hits',
         'misses',
@@ -281,6 +282,16 @@ class AggregateWatcher extends Notify
         $msCacheMedian = $this->measurements->median('wp->msCache');
 
         return is_null($msCacheMedian) ? null : number_format($msCacheMedian, 2, '.', '');
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getMsCacheAvg()
+    {
+        $msCacheAvg = $this->measurements->median('wp->msCacheAvg');
+
+        return is_null($msCacheAvg) ? null : number_format($msCacheAvg, 4, '.', '');
     }
 
     /**

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright © 2019-2023 Rhubarb Tech Inc. All Rights Reserved.
  *
@@ -135,9 +134,13 @@ class Groups extends WP_REST_Controller
             }
         }
 
-        return $this->prepareGroupsForResponse(
-            array_map('count', $groups)
-        );
+        $groups = $this->prepareGroupsForResponse(array_map('count', $groups));
+
+        /** @var \WP_REST_Response $response */
+        $response = rest_ensure_response($groups);
+        $response->header('Cache-Control', 'no-store');
+
+        return $response;
     }
 
     /**
@@ -165,7 +168,7 @@ class Groups extends WP_REST_Controller
      * Transform the groups into the response format.
      *
      * @param  array<mixed>  $groups
-     * @return \WP_REST_Response|\WP_Error
+     * @return array<array<string, mixed>>
      */
     protected function prepareGroupsForResponse(array $groups)
     {
@@ -182,7 +185,7 @@ class Groups extends WP_REST_Controller
             return strcmp($a['group'], $b['group']);
         });
 
-        return rest_ensure_response($groups);
+        return $groups;
     }
 
     /**

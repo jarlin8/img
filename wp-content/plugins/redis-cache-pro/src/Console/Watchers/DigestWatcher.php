@@ -76,6 +76,7 @@ class DigestWatcher extends Notify
     protected $defaultMetrics = [
         'ms-total',
         'ms-cache',
+        'ms-cache-avg',
         'ms-cache-ratio',
         'hits',
         'misses',
@@ -318,6 +319,20 @@ class DigestWatcher extends Notify
         return (object) [
             'Metric' => WP_CLI::colorize('%cTime%n: Cache'),
             'Median' => is_null($msCacheMedian) ? '' : number_format($msCacheMedian, 2) . ' ms',
+        ];
+    }
+
+    /**
+     * @param  \RedisCachePro\Metrics\Measurements  $measurements
+     * @return object
+     */
+    protected function getMsCacheAvg(Measurements $measurements)
+    {
+        $msCacheAvg = $measurements->median('wp->msCacheAvg');
+
+        return (object) [
+            'Metric' => WP_CLI::colorize('%cTime%n: Commands'),
+            'Median' => is_null($msCacheAvg) ? '' : number_format($msCacheAvg, 4) . ' ms',
         ];
     }
 

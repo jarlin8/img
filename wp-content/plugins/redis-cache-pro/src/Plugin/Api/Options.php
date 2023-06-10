@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright © 2019-2023 Rhubarb Tech Inc. All Rights Reserved.
  *
@@ -115,7 +114,11 @@ class Options extends WP_REST_Controller
     {
         $options = $this->plugin->options();
 
-        return rest_ensure_response($options);
+        /** @var \WP_REST_Response $response */
+        $response = rest_ensure_response($options);
+        $response->header('Cache-Control', 'no-store');
+
+        return $response;
     }
 
     /**

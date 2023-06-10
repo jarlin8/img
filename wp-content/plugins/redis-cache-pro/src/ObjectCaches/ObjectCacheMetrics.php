@@ -141,6 +141,13 @@ class ObjectCacheMetrics
      */
     protected $connection;
 
+    /**
+     * Create new instance.
+     *
+     * @param  Configuration  $config
+     * @param  ?ConnectionInterface  $connection
+     * @return void
+     */
     public function __construct(Configuration $config, ?ConnectionInterface $connection = null)
     {
         $this->config = $config;
@@ -165,8 +172,8 @@ class ObjectCacheMetrics
         $metrics->computeHitRatio();
         $metrics->computeGroups($cache);
 
-        $this->storeWaitAverage = $this->storeWaitSamples
-            ? ($this->storeWait / $this->storeWaitSamples)
+        $metrics->storeWaitAverage = $metrics->storeWaitSamples
+            ? ($metrics->storeWait / $metrics->storeWaitSamples)
             : 0;
 
         if (! $this->config->prefetch) {

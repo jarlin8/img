@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright © 2019-2023 Rhubarb Tech Inc. All Rights Reserved.
  *
@@ -237,7 +236,11 @@ class Analytics extends WP_REST_Controller
             ], $request);
         }, $range);
 
-        return rest_ensure_response($collection);
+        /** @var \WP_REST_Response $response */
+        $response = rest_ensure_response($collection);
+        $response->header('Cache-Control', 'no-store');
+
+        return $response;
     }
 
     /**

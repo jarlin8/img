@@ -672,7 +672,7 @@ class Diagnostics implements ArrayAccess
             return $diagnostic->error($version)->comment('Unsupported');
         }
 
-        if (version_compare($version, '5.3.5', '<')) {
+        if (version_compare($version, '5.3.7', '<')) {
             return $diagnostic->warning($version)->comment('Outdated');
         }
 
@@ -696,6 +696,10 @@ class Diagnostics implements ArrayAccess
 
         if (version_compare($version, RelayConnector::RequiredVersion, '<')) {
             return $diagnostic->error($version)->comment('Unsupported');
+        }
+
+        if (version_compare($version, '0.6.1', '<')) {
+            return $diagnostic->warning($version)->comment('Outdated');
         }
 
         return $diagnostic->value($version);
@@ -826,7 +830,7 @@ class Diagnostics implements ArrayAccess
             return $diagnostic->warning($version)->comment('Outdated');
         }
 
-        if ($this->usingRelayCache() && version_compare($version, '6.2.8', '<')) {
+        if ($this->usingRelayCache() && version_compare($version, '6.2.7', '<')) {
             return $diagnostic->error($version)->comment('Unsupported');
         }
 
@@ -896,11 +900,11 @@ class Diagnostics implements ArrayAccess
     {
         $enabled = $this->config->relay->cache;
 
-        if (method_exists(Relay::class, 'maxMemory')) {
+        if (method_exists(Relay::class, 'maxMemory')) { // @phpstan-ignore-line
             return $enabled && Relay::maxMemory() > 0;
         }
 
-        if (method_exists(Relay::class, 'memory')) {
+        if (method_exists(Relay::class, 'memory')) { // @phpstan-ignore-line
             return $enabled && Relay::memory() > 0;
         }
 
@@ -1095,7 +1099,7 @@ class Diagnostics implements ArrayAccess
             return new WP_Error('fs', 'Size of copied test file does not match');
         }
 
-        if (! $wp_filesystem->delete($temp)) { // @phpstan-ignore-line
+        if (! $wp_filesystem->delete($temp)) {
             return new WP_Error('fs', 'Unable to delete copied test file');
         }
 

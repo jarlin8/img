@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright © 2019-2023 Rhubarb Tech Inc. All Rights Reserved.
  *
@@ -130,7 +129,11 @@ class Latency extends WP_REST_Controller
             return rest_ensure_response($this->pingReplicatedServers());
         }
 
-        return rest_ensure_response([$this->ping($config)]);
+        /** @var \WP_REST_Response $response */
+        $response = rest_ensure_response([$this->ping($config)]);
+        $response->header('Cache-Control', 'no-store');
+
+        return $response;
     }
 
     /**

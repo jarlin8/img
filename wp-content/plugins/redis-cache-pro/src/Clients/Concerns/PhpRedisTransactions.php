@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace RedisCachePro\Clients\Concerns;
 
+use Throwable;
 use LogicException;
 
 use RedisCachePro\Clients\Transaction;
@@ -65,14 +66,22 @@ trait PhpRedisTransactions
     {
         $method = $transaction->context === self::MULTI ? 'multi' : 'pipeline';
 
-        return $this->{$this->callback}(function () use ($transaction, $method) {
-            $pipe = $this->client->{$method}();
+        try {
+            return $this->{$this->callback}(function () use ($transaction, $method) {
+                $pipe = $this->client->{$method}();
 
-            foreach ($transaction->commands as $command) {
-                $pipe->{$command[0]}(...$command[1]);
+                foreach ($transaction->commands as $command) {
+                    $pipe->{$command[0]}(...$command[1]);
+                }
+
+                return $pipe->exec();
+            }, 'exec');
+        } catch (Throwable $th) {
+            if ($this->client->getMode() !== self::ATOMIC) {
+                $this->client->discard();
             }
 
-            return $pipe->exec();
-        }, 'exec');
+            throw $th;
+        }
     }
 }

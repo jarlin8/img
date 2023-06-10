@@ -186,7 +186,7 @@ class CommandsCollector extends QM_Collector
                     $message['context']['parameters'] ?? []
                 ),
                 'backtrace' => $backtraces
-                    ? new QM_Backtrace($backtraceArgs, $message['context']['backtrace'])
+                    ? new QM_Backtrace($backtraceArgs, $message['context']['backtrace'] ?? null)
                     : null,
             ];
         }

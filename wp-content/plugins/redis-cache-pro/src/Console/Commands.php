@@ -601,7 +601,7 @@ class Commands extends WP_CLI_Command
      * * sql-queries
      * * ms-total
      * * ms-cache
-     * * ms-cache-median
+     * * ms-cache-avg
      * * ms-cache-ratio
      * * redis-hits
      * * redis-misses
@@ -758,7 +758,7 @@ class Commands extends WP_CLI_Command
      * * sql-queries
      * * ms-total
      * * ms-cache
-     * * ms-cache-median
+     * * ms-cache-avg
      * * ms-cache-ratio
      * * redis-hits
      * * redis-misses
