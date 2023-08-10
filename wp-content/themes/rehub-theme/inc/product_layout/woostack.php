@@ -84,6 +84,7 @@
                                     
                                     <?php do_action('rh_woo_after_single_image');?> 
                                 </div>
+                                <?php do_action( 'rehub_360_product_image' ); ?>
                             </div>
 
 

@@ -85,6 +85,16 @@ Flatsome_Option::add_field( 'option', array(
 	),
 	'active_callback' => array(
 		array(
+			'setting'  => 'category_sidebar',
+			'operator' => '!==',
+			'value'    => 'none',
+		),
+		array(
+			'setting'  => 'category_sidebar',
+			'operator' => '!==',
+			'value'    => 'off-canvas',
+		),
+		array(
 			'setting'  => 'category_sticky_sidebar',
 			'operator' => '==',
 			'value'    => true,

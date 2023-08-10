@@ -41,7 +41,7 @@
 			<div class="rh-flex-eq-height grid_woo products col_wrap_fifth">	
 				<?php $columns = '5_col';?>
 				<?php while ( $gmw_query->have_posts() ) : $gmw_query->the_post(); ?>
-
+					<?php do_action( 'gmw_the_object_location', $post, $gmw );?>
 					<?php include(rh_locate_template('geo-my-wp/woogridpart.php')); ?>
 
 				<?php endwhile; ?>

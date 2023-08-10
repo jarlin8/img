@@ -38,6 +38,7 @@
                                     $ebay_link ='';
                                 }       
                                 ?>
+                                <?php block_template_part( 'post-single-button' );?>
                                 <?php rehub_generate_offerbtn('updateclean=1');?>
                                 <div class="clearfix"></div>
                                 <div class="ameb_search"><?php echo ''.$amazon_link; echo ''.$ebay_link;?></div>

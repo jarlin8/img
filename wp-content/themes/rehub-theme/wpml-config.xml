@@ -50,6 +50,8 @@
 		  <key name="woo_code_zone_float" />
 		  <key name="woo_code_zone_loop" />
 		  <key name="rh_woo_shop_global" />
+		  <key name="footer_template" />
+		  <key name="rehub_header_style" />
 		  <key name="rehub_top_line_content" />
 	  </key>	  	  	  	  
 	</admin-texts>  

@@ -41,6 +41,9 @@ function flatsome_render_ux_lottie_shortcode( $atts, $content, $tag ) {
 			'margin'           => '',
 			'margin__md'       => null,
 			'margin__sm'       => null,
+			'link'             => '',
+			'target'           => '_self',
+			'rel'              => '',
 			'class'            => '',
 			'visibility'       => '',
 		),
@@ -58,6 +61,11 @@ function flatsome_render_ux_lottie_shortcode( $atts, $content, $tag ) {
 	$element_atts = array(
 		'id'    => $id,
 		'class' => implode( ' ', $classes ),
+	);
+
+	$link_atts = array(
+		'target' => $atts['target'],
+		'rel'    => array( $atts['rel'] ),
 	);
 
 	$player_atts = array(
@@ -83,7 +91,9 @@ function flatsome_render_ux_lottie_shortcode( $atts, $content, $tag ) {
 
 	?>
 	<div <?php echo flatsome_html_atts( $element_atts ); ?>>
+		<?php if ( ! empty( $atts['link'] ) ) printf( '<a href="%1$s" %2$s>', esc_url( $atts['link'] ), flatsome_parse_target_rel( $link_atts, true ) ); ?>
 		<lottie-player <?php echo flatsome_html_atts( $player_atts ); ?>></lottie-player>
+		<?php if ( ! empty( $atts['link'] ) ) echo '</a>'; ?>
 		<?php
 		echo ux_builder_element_style_tag(
 			$id,
@@ -97,11 +107,11 @@ function flatsome_render_ux_lottie_shortcode( $atts, $content, $tag ) {
 					'property' => 'height',
 				),
 				'padding' => array(
-					'selector' => '> ux-lottie__player',
+					'selector' => '.ux-lottie__player',
 					'property' => 'padding',
 				),
 				'margin'  => array(
-					'selector' => '> ux-lottie__player',
+					'selector' => '.ux-lottie__player',
 					'property' => 'margin',
 				),
 			),

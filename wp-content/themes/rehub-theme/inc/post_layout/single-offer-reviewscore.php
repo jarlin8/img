@@ -125,6 +125,7 @@
                                                     <?php WPSM_Postfilters::re_show_brand_tax('logo'); //show brand logo?>
                                                 </div>
                                             <?php endif;?>
+                                            <?php block_template_part( 'post-single-button' );?>
                                             <div class="priced_block">
                                                 <?php rehub_generate_offerbtn(array('showme'=>'button', 'wrapperclass'=>'rh-flex-eq-height'));?>
                                             </div> 

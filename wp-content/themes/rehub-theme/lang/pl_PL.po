@@ -2,17 +2,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rehub_translation\n"
 "POT-Creation-Date: 2021-08-17 04:17+0300\n"
-"PO-Revision-Date: 2021-08-17 04:17+0300\n"
+"PO-Revision-Date: 2023-06-11 11:33+0300\n"
 "Last-Translator: \n"
 "Language-Team: Sizam Design <sizamtheme@gmail.com>\n"
 "Language: pl_PL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
-"X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n_noop:1,2;_x;esc_html__;esc_html_e\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -12148,10 +12148,9 @@ msgid "Leave a Reply"
 msgstr "Dodaj Odpowiedź"
 
 #: woocommerce/single-product-reviews.php:159
-#, fuzzy, php-format
-#| msgid "You must be <a href=\"%s\">logged in</a> to post a review."
+#, php-format
 msgid "You must be %s%s%s logged in %s to post a review."
-msgstr "Musisz się <a href=\"%s\">zalogować</a> aby dodać opinię."
+msgstr "Musisz się %s%s%s zalogować %s aby dodać opinię."
 
 #: woocommerce/single-product-reviews.php:175
 msgid "Your Rating"

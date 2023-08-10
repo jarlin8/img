@@ -35,7 +35,7 @@
     <div class="text_out_thumb">
     	<?php echo (!empty($small)) ? '<h3 class="lineheight25 font115 mt10 mb10">' : '<h2 class="font150 mt20 mb20 lineheight25">' ;?><a href="<?php the_permalink();?>"><?php the_title();?></a><?php echo (!empty($small))  ? '</h3>' : '</h2>' ;?>
     	<div class="post-meta mb20"> <?php meta_small( true, false, true ); ?> </div> 
-    	<?php if(!$small):?>
+    	<?php if('post' == get_post_type($post->ID) && rehub_option('exclude_cat_meta') != 1 && !$small):?>
             <p class="lineheight20"><?php kama_excerpt('maxchar=150'); ?></p> 
             <?php if($secondtype == '3'){
                 echo '<a class="blockstyle mt20" href="'.esc_url( $category_link ).'">'.$category_name.' <i class="rhicon rhi-arrow-right ml5"></i></a>';

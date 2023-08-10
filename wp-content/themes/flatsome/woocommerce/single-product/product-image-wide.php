@@ -12,8 +12,8 @@
  *
  * @see              https://docs.woocommerce.com/document/template-structure/
  * @package          WooCommerce/Templates
- * @version          3.5.1
- * @flatsome-version 3.16.0
+ * @version          7.8.0
+ * @flatsome-version 3.17.2
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -48,7 +48,7 @@ if(is_rtl()) $rtl = 'true';
 		</div>
 	</div>
 
-	<figure class="woocommerce-product-gallery__wrapper <?php echo implode( ' ', $slider_classes ); ?>"
+	<div class="woocommerce-product-gallery__wrapper <?php echo implode( ' ', $slider_classes ); ?>"
 			data-flickity-options='{
 				"cellAlign": "center",
 				"wrapAround": true,
@@ -76,7 +76,7 @@ if(is_rtl()) $rtl = 'true';
 
     do_action( 'woocommerce_product_thumbnails' );
 		?>
-	</figure>
+	</div>
 
 	<div class="loading-spin centered dark"></div>
 

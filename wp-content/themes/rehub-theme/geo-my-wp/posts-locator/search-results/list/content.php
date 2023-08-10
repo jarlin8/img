@@ -77,7 +77,7 @@
 				    <p><?php kama_excerpt('maxchar=220'); ?></p>
 			    </div>
 			    <div class="rh-gmw-list-additional"> 
-					<?php if ( isset( $gmw['your_lat'] ) && !empty( $gmw['your_lat'] ) ) { ?><span class="radius-dis">(<?php gmw_distance_to_location( $post, $gmw ); ?>)</span><?php } ?>		        
+					<?php if ( ! empty( $gmw['form_values']['lat'] ) ) { ?><span class="radius-dis">(<?php gmw_distance_to_location( $post, $gmw ); ?>)</span><?php } ?>		        
 				    <?php do_action( 'rehub_after_left_list_thumb' ); ?>  		           
 	    			<!--  Address -->
 	    			<div class="wppl-address">

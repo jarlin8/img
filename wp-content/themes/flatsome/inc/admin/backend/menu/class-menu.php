@@ -47,7 +47,7 @@ class Menu {
 	 * Menu constructor.
 	 */
 	public function __construct() {
-		if ( flatsome_wp_version_check( '5.4' ) ) {
+		if ( flatsome_wp_version_check( '5.4' ) && apply_filters( 'flatsome_admin_menu_items_enabled', true ) ) {
 			$this->ux_blocks = flatsome_get_block_list_by_id();
 
 			add_action( 'admin_enqueue_scripts', [ $this, 'register_assets' ] );

@@ -43,6 +43,11 @@ if ( function_exists( 'pll_get_post' ) || function_exists( 'icl_object_id' ) ) {
 	require $integrations_url . '/wpml/flatsome-wpml.php';
 }
 
+// WCML Integration.
+if ( defined( 'WCML_VERSION' ) ) {
+	require $integrations_url . '/wcml/class-wcml.php';
+}
+
 // Contactform7.
 if ( class_exists( 'WPCF7' ) ) {
 	require $integrations_url . '/contact-form-7/contact-form-7.php';
@@ -122,6 +127,11 @@ if ( is_woocommerce_activated() ) {
 	// Add Yith Wishlist integration.
 	if ( class_exists( 'YITH_WCWL' ) ) {
 		require $integrations_url . '/wc-yith-wishlist/yith-wishlist.php';
+	}
+
+	// YITH WooCommerce Ajax navigation integration.
+	if ( defined( 'YITH_WCAN' ) ) {
+		require $integrations_url . '/wc-yith-ajax-navigation/yith-ajax-navigation.php';
 	}
 
 	// Add Composite products integration.

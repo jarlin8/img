@@ -70,6 +70,7 @@
             </div>
             <div class="rh-video-scroll-copy"></div>
             <div class="wpsm_score_box pb0">
+                <?php block_template_part( 'post-single-button' );?>
                 <div class="priced_block">
                     <?php rehub_generate_offerbtn('wrapperclass=text-center');?>
                 </div>

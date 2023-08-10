@@ -146,6 +146,7 @@ p.demo_store { position: fixed; top: 0; left: 0; right: 0; margin: 0; width: 100
 .woocommerce .star-rating:before, .mvx_rating_wrap .star-rating:before, .wc-block-layout .wc-block-components-product-rating__stars:before { content: "★★★★★"; color: #e0dadf; float: left; top: 0; left: 0; position: absolute; }
 .woocommerce .star-rating span, .wc-block-layout .wc-block-components-product-rating__stars span { overflow: hidden; float: left; top: 0; left: 0; position: absolute; padding-top: 1.5em; }
 .woocommerce .star-rating span:before, .wc-block-layout .wc-block-components-product-rating__stars span:before{ content: "★★★★★"; top: 0; position: absolute; left: 0; font-size:21px }
+.woocommerce .gspb_rating_value .star-rating span:before{font-size:inherit}
 .woocommerce .hreview-aggregate .star-rating { margin: 10px 0 0 0; }
 .woocommerce .star-rating span, body .wc-block-grid__product-rating .wc-block-grid__product-rating__stars span:before{color: #ff8a00;}
 .wc-block-grid__product-add-to-cart.wp-block-button .wp-block-button__link.added:after, .mvx-store-list .mvx-rating-block{display:none !important}

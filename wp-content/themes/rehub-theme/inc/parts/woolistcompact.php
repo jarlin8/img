@@ -100,7 +100,7 @@
             esc_attr( $product->get_id() ),
             esc_attr( $product->get_sku() ),
             $product->is_purchasable() && $product->is_in_stock() ? 'add_to_cart_button' : '',
-            ($product->supports( 'ajax_add_to_cart' ) || $isvariable) ? 'ajax_add_to_cart' : '',
+            ($product->supports( 'ajax_add_to_cart' ) && !$isvariable) ? 'ajax_add_to_cart' : '',
             esc_attr( $product->get_type() ),
             $product->get_type() =='external' ? ' target="_blank"' : '',
             $product->get_type() =='external' ? ' rel="nofollow sponsored"' : ''

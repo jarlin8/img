@@ -49,7 +49,7 @@
                 </figure> 
             </div>
             <div class="gut-auto-btn padd20 pb0">
-                <?php rehub_generate_offerbtn('wrapperclass=text-center');?>
+                <?php block_template_part( 'post-single-button' ); rehub_generate_offerbtn('wrapperclass=text-center');?>
                 <?php $disclaimer = get_post_meta($post->ID, 'rehub_offer_disclaimer', true);?>
                 <?php if($disclaimer):?>
                     <div class="font80 guten-disclaimer text-center greycolor lineheight15 pb15"><?php echo wp_kses($disclaimer, 'post');?></div>

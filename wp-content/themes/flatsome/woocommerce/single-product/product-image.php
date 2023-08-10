@@ -11,9 +11,16 @@
  * the readme will list any important changes.
  *
  * @see              https://docs.woocommerce.com/document/template-structure/
- * @package          WooCommerce/Templates
- * @version          3.5.1
- * @flatsome-version 3.16.0
+ * @package          WooCommerce\Templates
+ * @version          7.8.0
+ * @flatsome-version 3.17.2
+ *
+ * @flatsome-parallel-template {
+ * product-image-default.php
+ * product-image-stacked.php
+ * product-image-vertical.php
+ * product-image-wide.php
+ * }
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -23,24 +30,28 @@ defined( 'ABSPATH' ) || exit;
 //	return;
 //}
 
-if(get_theme_mod('product_gallery_woocommerce')) {
-  wc_get_template_part( 'single-product/product-image', 'default' );
-  return;
+if ( get_theme_mod( 'product_gallery_woocommerce' ) ) {
+	wc_get_template_part( 'single-product/product-image', 'default' );
+
+	return;
 }
 
-if(get_theme_mod('product_layout') == 'gallery-wide'){
-  wc_get_template_part( 'single-product/product-image', 'wide' );
-  return;
+if ( get_theme_mod( 'product_layout' ) == 'gallery-wide' ) {
+	wc_get_template_part( 'single-product/product-image', 'wide' );
+
+	return;
 }
 
-if(get_theme_mod('product_layout') == 'stacked-right'){
-  wc_get_template_part( 'single-product/product-image', 'stacked' );
-  return;
+if ( get_theme_mod( 'product_layout' ) == 'stacked-right' ) {
+	wc_get_template_part( 'single-product/product-image', 'stacked' );
+
+	return;
 }
 
-if(get_theme_mod('product_image_style') == 'vertical'){
-  wc_get_template_part( 'single-product/product-image', 'vertical' );
-  return;
+if ( get_theme_mod( 'product_image_style' ) == 'vertical' ) {
+	wc_get_template_part( 'single-product/product-image', 'vertical' );
+
+	return;
 }
 
 global $product;
@@ -79,7 +90,7 @@ if(get_theme_mod('product_lightbox','default') == 'disabled'){
     <?php do_action('flatsome_product_image_tools_top'); ?>
   </div>
 
-  <figure class="woocommerce-product-gallery__wrapper <?php echo implode(' ', $slider_classes); ?>"
+  <div class="woocommerce-product-gallery__wrapper <?php echo implode(' ', $slider_classes); ?>"
         data-flickity-options='{
                 "cellAlign": "center",
                 "wrapAround": true,
@@ -105,7 +116,7 @@ if(get_theme_mod('product_lightbox','default') == 'disabled'){
 
     do_action( 'woocommerce_product_thumbnails' );
     ?>
-  </figure>
+  </div>
 
   <div class="image-tools absolute bottom left z-3">
     <?php do_action('flatsome_product_image_tools_bottom'); ?>

@@ -384,6 +384,14 @@ function flatsome_customizer_shop_product_page_options() {
 		) );
 
 		Flatsome_Option::add_field( 'option', array(
+			'type'     => 'checkbox',
+			'settings' => 'swatches_disable_deselect',
+			'label'    => __( 'Disable deselection', 'flatsome' ),
+			'section'  => 'product-page',
+			'default'  => 0,
+		) );
+
+		Flatsome_Option::add_field( 'option', array(
 			'type'      => 'color',
 			'settings'  => 'swatches_color_selected',
 			'transport' => 'postMessage',

@@ -52,7 +52,7 @@ else {
 	            } ?> 
     		</div>     	
 	    <?php endif;?>
-	    <div class="<?php if ($priceenable && $producttype) :?>mb5<?php else:?>mb10<?php endif;?> mt0"><?php do_action('rehub_in_title_post_list');?><?php if($hotenable && rehub_option('hotmeter_disable') !='1') {echo getHotLikeTitle($post->ID);}?><a href="<?php echo ''.$link;?>" <?php echo ''.$target;?> class="mr10"><?php the_title();?></a>
+	    <div class="<?php if ($priceenable && $producttype) :?>mb5<?php else:?>mb10<?php endif;?> mt0"><?php do_action('rehub_in_title_post_list');?><?php if($hotenable && rehub_option('hotmeter_disable') !='1') {echo getHotLikeTitle($post->ID);}?><a href="<?php echo ''.$link;?>" <?php echo ''.$target;?> class="mr10 blackcolor"><?php the_title();?></a>
 	    	<?php if ($priceenable && !$producttype) :?><?php rehub_create_price_for_list($post->ID);?><?php endif;?>
 	    </div>
 	    <?php if ($priceenable && $producttype) :?><?php rehub_create_price_for_list($post->ID);?><?php endif;?>

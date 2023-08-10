@@ -98,6 +98,7 @@
                                     <?php endif; ?>                                                                                          
                                 </div> 
                                 <div class="single_top_corner text-right-align"> 
+                                    <?php block_template_part( 'post-single-button' );?>
                                     <?php rehub_generate_offerbtn('wrapperclass=block_btnblock mobile_block_btnclock&updateclean=1');?>                                                         
                                 </div> 
                             </div>

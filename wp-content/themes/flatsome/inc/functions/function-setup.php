@@ -192,6 +192,7 @@ function flatsome_scripts() {
 		'options'            => array(
 			'cookie_notice_version'          => get_theme_mod( 'cookie_notice_version', '1' ),
 			'swatches_layout'                => get_theme_mod( 'swatches_layout' ),
+			'swatches_disable_deselect'      => get_theme_mod( 'swatches_disable_deselect' ),
 			'swatches_box_select_event'      => get_theme_mod( 'swatches_box_select_event' ),
 			'swatches_box_behavior_selected' => get_theme_mod( 'swatches_box_behavior_selected' ),
 			'swatches_box_update_urls'       => get_theme_mod( 'swatches_box_update_urls', '1' ),

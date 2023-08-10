@@ -68,7 +68,7 @@
             <?php if ( $product->is_on_sale()) : ?>
                 <?php 
                 $percentage=0;
-                if ($product->get_regular_price() && is_numeric($product->get_regular_price()) && $product->get_regular_price() !=0) {
+                if ($product->get_regular_price() && is_numeric($product->get_regular_price()) && $product->get_regular_price() !=0 && is_numeric($product->get_price()) ){
                     $percentage = round( ( ( $product->get_regular_price() - $product->get_price() ) / $product->get_regular_price() ) * 100 );
                 }
                 if ($percentage && $percentage>0  && !$product->is_type( 'variable' )) {
@@ -140,7 +140,7 @@
         </div>                                       
     </div>
     <?php rh_wooattr_code_loop($attrelpanel);?>
-    <?php if ( isset( $gmw['your_lat'] ) && !empty( $gmw['your_lat'] ) ) { ?>
+    <?php if ( ! empty( $gmw['form_values']['lat'] ) ) {?>
         <span class="radius-dis">(<?php gmw_distance_to_location( $post, $gmw ); ?>)</span>
         <div class="wppl-address">
             <?php echo ''.$post->address; ?>

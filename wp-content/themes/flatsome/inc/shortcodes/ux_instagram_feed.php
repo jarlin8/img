@@ -94,7 +94,7 @@ function ux_instagram_feed( $atts, $content = null ) {
 				unset( $atts['loading'] );
 
 				$value             = array_merge( $atts, array( '_id' => $_id ) );
-				$encoded_value     = base64_encode( serialize( $value ) );
+				$encoded_value     = base64_encode( wp_json_encode( $value ) );
 				$tick              = ceil( time() / MONTH_IN_SECONDS );
 				$hash              = substr( wp_hash( $tick . $encoded_value ), -12, 10 );
 				$repeater['attrs'] = 'data-flatsome-instagram="' . esc_attr( "$hash:$encoded_value" ) . '"';
@@ -463,13 +463,14 @@ function flatsome_ajax_load_instagram () {
 		wp_send_json_error( 'Invalid data' );
 	}
 
-	$atts     = maybe_unserialize( base64_decode( $value ) );
 	$tick     = ceil( time() / MONTH_IN_SECONDS );
 	$expected = substr( wp_hash( $tick . $value ), -12, 10 );
 
 	if ( ! hash_equals( $expected, $hash ) ) {
 		wp_send_json_error( 'Invalid hash' );
 	}
+
+	$atts = json_decode( base64_decode( $value ), true );
 
 	$atts['loading'] = 'eager';
 

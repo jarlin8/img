@@ -22,7 +22,7 @@ global $post; global $product;
 <?php $sales_html = ''; if ( $product->is_on_sale()) : ?>
     <?php 
     $percentage=0;
-    if ($product->get_regular_price() && is_numeric($product->get_regular_price()) && $product->get_regular_price() !=0) {
+    if ($product->get_regular_price() && is_numeric($product->get_regular_price()) && $product->get_regular_price() !=0 && is_numeric($product->get_price()) ) {
         $percentage = round( ( ( $product->get_regular_price() - $product->get_price() ) / $product->get_regular_price() ) * 100 );
     }
     if ($percentage && $percentage>0 && !$product->is_type( 'variable' )) {
@@ -102,9 +102,9 @@ global $post; global $product;
                 <div class="stock out-of-stock mb5"><?php esc_html_e('Out of Stock', 'rehub-theme');?></div>
             <?php endif;?> 
             <div class="clearbox"></div>    
-            <?php if ( isset( $gmw['your_lat'] ) && !empty( $gmw['your_lat'] ) ) { ?>
+            <?php if ( ! empty( $gmw['form_values']['lat'] ) ) : ?>
                 <span class="radius-dis">(<?php gmw_distance_to_location( $post, $gmw ); ?>)</span>       
-            <?php } ?> 
+            <?php endif ?> 
             <?php if ( isset( $gmw ) ) { ?>
                 <div class="wppl-address font90 lineheight15 mb10 greycolor">
                     <i class="rhicon rhi-map-marker-alt" aria-hidden="true"></i> <?php echo ''.$post->address; ?>

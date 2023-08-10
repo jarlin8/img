@@ -3,7 +3,7 @@
  * Mobile cart element.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.16.0
+ * @flatsome-version 3.17.5
  */
 
 if ( is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
@@ -17,6 +17,10 @@ if ( is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
   if ( $disable_mini_cart ) {
     $cart_style = 'link';
   }
+
+	if ( fl_woocommerce_version_check( '7.8.0' ) && ! wp_script_is( 'wc-cart-fragments' ) ) {
+		wp_enqueue_script( 'wc-cart-fragments' );
+	}
 ?>
 <li class="cart-item has-icon">
 

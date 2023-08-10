@@ -122,14 +122,5 @@ jQuery( function( $ ) {
 
 	});
 
-	$( document ).on( 'click', '.pgwpopuptrigger', function(e) {
-		let idpopup = $(this).data('popup');
-		$.pgwModal({
-            titleBar: false,
-            maxWidth: 600,
-            target: "#"+idpopup,
-            mainClassName : "pgwModal grid_mart woocommerce variation-sale-popup",
-        }); 
-	});
 
 });

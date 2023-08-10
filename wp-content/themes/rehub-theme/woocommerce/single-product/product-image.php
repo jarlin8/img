@@ -11,9 +11,8 @@
  * the readme will list any important changes.
  *
  * @see     https://docs.woocommerce.com/document/template-structure/
- * @author  WooThemes
- * @package WooCommerce/Templates
- * @version 3.5.1
+ * @package WooCommerce\Templates
+ * @version 9.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -54,10 +53,11 @@ $wrapper_classes   = apply_filters( 'woocommerce_single_product_image_gallery_cl
 				$html .= '</div>';
 			}
 
-			echo apply_filters( 'woocommerce_single_product_image_thumbnail_html', $html, $post_thumbnail_id );
+			echo apply_filters( 'woocommerce_single_product_image_thumbnail_html', $html, $post_thumbnail_id ); // phpcs:disable WordPress.XSS.EscapeOutput.OutputNotEscaped
 
 
 			?>
 		<?php do_action( 'woocommerce_product_thumbnails' ); ?>
 	</figure>
+	<?php do_action( 'rehub_360_product_image' ); ?>
 </div>

@@ -32,7 +32,7 @@ global $post; ?>
 if ($product->is_on_sale()) : ?>
     <?php
     $percentage = 0;
-    if ($product->get_regular_price() && is_numeric($product->get_regular_price()) && $product->get_regular_price() != 0) {
+    if ($product->get_regular_price() && is_numeric($product->get_regular_price()) && $product->get_regular_price() !=0 && is_numeric($product->get_price()) ) {
         $percentage = round((($product->get_regular_price() - $product->get_price()) / $product->get_regular_price()) * 100);
     }
     if ($percentage && $percentage > 0 && !$product->is_type('variable')) {
@@ -144,8 +144,8 @@ if ($product->is_on_sale()) : ?>
                     } else if ($isvariable) {
                         ?>
                         <div class="rh-flex-columns rh-flex-nowrap">
-                            <div class="cursorpointer pgwpopuptrigger font80 rehub-main-color rh-flex-center-align rh-flex-justify-center lineheight15 rh-woo-quantity" data-popup="ce-widgetamazon-disclaimer<?php echo (int)$post->ID;?>"><?php esc_html_e('Select variation', 'rehub-theme');?></div>
-                            <span class="cursorpointer pgwpopuptrigger rh-flex-center-align rh-flex-justify-center rh-shadow-sceu woo_loop_btn btn_offer_block add_to_cart_button ajax_add_to_cart product_type_simple" data-popup="ce-widgetamazon-disclaimer<?php echo (int)$post->ID;?>">
+                            <div class="cursorpointer csspopuptrigger font80 rehub-main-color rh-flex-center-align rh-flex-justify-center lineheight15 rh-woo-quantity" data-popup="woomartpopup<?php echo (int)$post->ID;?>"><?php esc_html_e('Select variation', 'rehub-theme');?></div>
+                            <span class="cursorpointer csspopuptrigger rh-flex-center-align rh-flex-justify-center rh-shadow-sceu woo_loop_btn btn_offer_block add_to_cart_button ajax_add_to_cart product_type_simple" data-popup="woomartpopup<?php echo (int)$post->ID;?>">
                                 <svg height="24px" version="1.1" viewBox="0 0 64 64" width="24px" xmlns="http://www.w3.org/2000/svg">
                                 <g>
                                     <path d="M56.262,17.837H26.748c-0.961,0-1.508,0.743-1.223,1.661l4.669,13.677c0.23,0.738,1.044,1.336,1.817,1.336h19.35   c0.773,0,1.586-0.598,1.815-1.336l4.069-14C57.476,18.437,57.036,17.837,56.262,17.837z" />
@@ -173,62 +173,65 @@ if ($product->is_on_sale()) : ?>
                         $variations_json = wp_json_encode($available_variations);
                         $variations_attr = function_exists('wc_esc_json') ? wc_esc_json($variations_json) : _wp_specialchars($variations_json, ENT_QUOTES, 'UTF-8', true);
                         ?>
-                        <div class="csspopup" id="ce-widgetamazon-disclaimer<?php echo (int)$post->ID;?>">
-                            <div class="padd20">
-                                <form class="variations_form cart mobilesblockdisplay width-100p" action="<?php echo esc_url(apply_filters('woocommerce_add_to_cart_form_action', $product->get_permalink())); ?>" method="post" enctype='multipart/form-data' data-product_id="<?php echo absint($product->get_id()); ?>" data-product_variations="<?php echo $variations_attr; // WPCS: XSS ok.?>">
-                                    <?php do_action('woocommerce_before_variations_form'); ?>
+                        <div class="csspopup" id="woomartpopup<?php echo (int)$post->ID;?>">
+                            <div class="csspopupinner cegg-price-alert-popup">
+                                <span class="cpopupclose cursorpointer lightgreybg rh-close-btn rh-flex-center-align rh-flex-justify-center rh-shadow5 roundborder">×</span> 
+                                <div class="padd20">
+                                    <form class="variations_form cart mobilesblockdisplay width-100p" action="<?php echo esc_url(apply_filters('woocommerce_add_to_cart_form_action', $product->get_permalink())); ?>" method="post" enctype='multipart/form-data' data-product_id="<?php echo absint($product->get_id()); ?>" data-product_variations="<?php echo $variations_attr; // WPCS: XSS ok.?>">
+                                        <?php do_action('woocommerce_before_variations_form'); ?>
 
-                                    <?php if ( !empty( $available_variations ) ) : ?>
-                                        <div class="rh-flex-columns rh-flex-nowrap width-100p woo-list-variation-wrap mb30">              
-                                            <div class="variations rh-flex-grow1 width-100p" cellspacing="0">
-                                                    <?php foreach ( $attributes as $attribute_name => $options ) : ?>
-                                                        <div class="rh-var-line-item mr10 inlinestyle mobileblockdisplay lineheight25">
-                                                            <span class="label font80 pr10"><label for="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>"><?php echo wc_attribute_label( $attribute_name ); // WPCS: XSS ok. ?></label></span>
-                                                            <div class="value">
-                                                                <?php
-                                                                    wc_dropdown_variation_attribute_options(
-                                                                        array(
-                                                                            'options'   => $options,
-                                                                            'attribute' => $attribute_name,
-                                                                            'product'   => $product,
-                                                                            'class'     => 'width-100p mb5 font80 border-grey'
-                                                                        )
-                                                                    );
-                                                                ?>
+                                        <?php if ( !empty( $available_variations ) ) : ?>
+                                            <div class="rh-flex-columns rh-flex-nowrap width-100p woo-list-variation-wrap mb30">              
+                                                <div class="variations rh-flex-grow1 width-100p" cellspacing="0">
+                                                        <?php foreach ( $attributes as $attribute_name => $options ) : ?>
+                                                            <div class="rh-var-line-item mr10 inlinestyle mobileblockdisplay lineheight25">
+                                                                <span class="label font80 pr10"><label for="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>"><?php echo wc_attribute_label( $attribute_name ); // WPCS: XSS ok. ?></label></span>
+                                                                <div class="value">
+                                                                    <?php
+                                                                        wc_dropdown_variation_attribute_options(
+                                                                            array(
+                                                                                'options'   => $options,
+                                                                                'attribute' => $attribute_name,
+                                                                                'product'   => $product,
+                                                                                'class'     => 'width-100p mb5 font80 border-grey'
+                                                                            )
+                                                                        );
+                                                                    ?>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    <?php endforeach; ?>
-                                                    <?php echo wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#">' . esc_html__( 'Clear', 'woocommerce' ) . '</a>' ) );?>
+                                                        <?php endforeach; ?>
+                                                        <?php echo wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#">' . esc_html__( 'Clear', 'woocommerce' ) . '</a>' ) );?>
+                                                </div>
                                             </div>
+                                        <?php endif;?>
+                                        <div class="rh-flex-columns variations_button woocommerce-variation-add-to-cart">
+                                            <?php if ( empty( $available_variations ) && false !== $available_variations ) : ?>
+                                                <p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'rehub-theme' ) ) ); ?></p>                
+                                            <?php else:?>
+                                                <div class="rh-woo-quantity">
+                                                    <?php rehub_cart_quantity_input(array('mb'=> 'mb0'), $product, true);?>
+                                                </div>   
+                                            <?php endif;?> 
+                                            <?php  echo apply_filters( 'wholesale_loop_add_to_cart_link',
+                                                sprintf( '<a href="%s" data-product_id="%s" data-product_sku="%s" class="single_add_to_cart_button re_track_btn woo_loop_btn rh-flex-center-align rh-flex-justify-center rh-shadow-sceu %s %s product_type_%s"%s %s><svg height="24px" version="1.1" viewBox="0 0 64 64" width="24px" xmlns="http://www.w3.org/2000/svg"><g><path d="M56.262,17.837H26.748c-0.961,0-1.508,0.743-1.223,1.661l4.669,13.677c0.23,0.738,1.044,1.336,1.817,1.336h19.35   c0.773,0,1.586-0.598,1.815-1.336l4.069-14C57.476,18.437,57.036,17.837,56.262,17.837z"/><circle cx="29.417" cy="50.267" r="4.415"/><circle cx="48.099" cy="50.323" r="4.415"/><path d="M53.4,39.004H27.579L17.242,9.261H9.193c-1.381,0-2.5,1.119-2.5,2.5s1.119,2.5,2.5,2.5h4.493l10.337,29.743H53.4   c1.381,0,2.5-1.119,2.5-2.5S54.781,39.004,53.4,39.004z"/></g></svg></a>',
+                                                esc_url( $product->add_to_cart_url() ),
+                                                esc_attr( $product->get_id() ),
+                                                esc_attr( $product->get_sku() ),
+                                                $product->is_purchasable() && $product->is_in_stock() ? 'add_to_cart_button' : '',
+                                                ($product->supports( 'ajax_add_to_cart' ) && !$isvariable) ? 'ajax_add_to_cart' : '',
+                                                esc_attr( $product->get_type() ),
+                                                $product->get_type() =='external' ? ' target="_blank"' : '',
+                                                $product->get_type() =='external' ? ' rel="nofollow sponsored"' : ''
+                                                ),
+                                            $product );?>           
+                                            <?php do_action( 'rh_woo_button_loop' ); ?>
+                                            <input type="hidden" name="add-to-cart" value="<?php echo absint( $product->get_id() ); ?>" />
+                                            <input type="hidden" name="product_id" value="<?php echo absint( $product->get_id() ); ?>" />
+                                            <input type="hidden" name="variation_id" class="variation_id" value="0" />
                                         </div>
-                                    <?php endif;?>
-                                    <div class="rh-flex-columns variations_button woocommerce-variation-add-to-cart">
-                                        <?php if ( empty( $available_variations ) && false !== $available_variations ) : ?>
-                                            <p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'rehub-theme' ) ) ); ?></p>                
-                                        <?php else:?>
-                                            <div class="rh-woo-quantity">
-                                                <?php rehub_cart_quantity_input(array('mb'=> 'mb0'), $product, true);?>
-                                            </div>   
-                                        <?php endif;?> 
-                                        <?php  echo apply_filters( 'wholesale_loop_add_to_cart_link',
-                                            sprintf( '<a href="%s" data-product_id="%s" data-product_sku="%s" class="single_add_to_cart_button re_track_btn woo_loop_btn rh-flex-center-align rh-flex-justify-center rh-shadow-sceu %s %s product_type_%s"%s %s><svg height="24px" version="1.1" viewBox="0 0 64 64" width="24px" xmlns="http://www.w3.org/2000/svg"><g><path d="M56.262,17.837H26.748c-0.961,0-1.508,0.743-1.223,1.661l4.669,13.677c0.23,0.738,1.044,1.336,1.817,1.336h19.35   c0.773,0,1.586-0.598,1.815-1.336l4.069-14C57.476,18.437,57.036,17.837,56.262,17.837z"/><circle cx="29.417" cy="50.267" r="4.415"/><circle cx="48.099" cy="50.323" r="4.415"/><path d="M53.4,39.004H27.579L17.242,9.261H9.193c-1.381,0-2.5,1.119-2.5,2.5s1.119,2.5,2.5,2.5h4.493l10.337,29.743H53.4   c1.381,0,2.5-1.119,2.5-2.5S54.781,39.004,53.4,39.004z"/></g></svg></a>',
-                                            esc_url( $product->add_to_cart_url() ),
-                                            esc_attr( $product->get_id() ),
-                                            esc_attr( $product->get_sku() ),
-                                            $product->is_purchasable() && $product->is_in_stock() ? 'add_to_cart_button' : '',
-                                            ($product->supports( 'ajax_add_to_cart' ) || $isvariable) ? 'ajax_add_to_cart' : '',
-                                            esc_attr( $product->get_type() ),
-                                            $product->get_type() =='external' ? ' target="_blank"' : '',
-                                            $product->get_type() =='external' ? ' rel="nofollow sponsored"' : ''
-                                            ),
-                                        $product );?>           
-                                        <?php do_action( 'rh_woo_button_loop' ); ?>
-                                        <input type="hidden" name="add-to-cart" value="<?php echo absint( $product->get_id() ); ?>" />
-                                        <input type="hidden" name="product_id" value="<?php echo absint( $product->get_id() ); ?>" />
-                                        <input type="hidden" name="variation_id" class="variation_id" value="0" />
-                                    </div>
-                                    <?php do_action( 'woocommerce_after_variations_form' ); ?>
-                                </form>
+                                        <?php do_action( 'woocommerce_after_variations_form' ); ?>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                         <?php

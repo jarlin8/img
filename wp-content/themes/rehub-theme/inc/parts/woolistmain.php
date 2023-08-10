@@ -82,7 +82,7 @@
                     <?php if ( $product->is_on_sale()) : ?>
                         <?php 
                         $percentage=0;
-                        if ($product->get_regular_price() && is_numeric($product->get_regular_price()) && $product->get_regular_price() !=0) {
+                        if ($product->get_regular_price() && is_numeric($product->get_regular_price()) && $product->get_regular_price() !=0 && is_numeric($product->get_price()) ){
                             $percentage = round( ( ( $product->get_regular_price() - $product->get_price() ) / $product->get_regular_price() ) * 100 );
                         }
                         if ($percentage && $percentage>0 && !$product->is_type( 'variable' )) {

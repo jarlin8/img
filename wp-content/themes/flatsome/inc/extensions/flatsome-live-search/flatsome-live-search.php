@@ -226,8 +226,16 @@ function flatsome_unique_suggestions( array $raw_results, array $suggestions ) {
 	$needs_filtering = count( array_filter( $results ) ) > 1;
 
 	if ( $needs_filtering ) {
-		$suggestions = array_map( 'unserialize', array_unique( array_map( 'serialize', $suggestions ) ) );
+		$unique_suggestions = array();
+		foreach ( $suggestions as $suggestion ) {
+			$id = $suggestion['id'];
+			if ( ! isset( $unique_suggestions[ $id ] ) ) {
+				$unique_suggestions[ $id ] = $suggestion;
+			}
+		}
+		$suggestions = array_values( $unique_suggestions );
 	}
 
 	return $suggestions;
 }
+

@@ -113,6 +113,7 @@
                                     <div class="meta post-meta floatleft mb0"><?php meta_small(false, false, true, true);?> </div>
                                 </div>
                                 <div class="right_st_postproduct floatright mobileblockdisplay">
+                                    <?php block_template_part( 'post-single-button' );?>
                                     <?php rehub_generate_offerbtn('wrapperclass=inline_compact_btnblock mobile_block_btnclock mb0&updateclean=1');?>
                                 </div>                                                                     
                             </div>                            

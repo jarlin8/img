@@ -12,8 +12,8 @@
  *
  * @see              https://docs.woocommerce.com/document/template-structure/
  * @package          WooCommerce/Templates
- * @version          3.5.1
- * @flatsome-version 3.16.0
+ * @version          7.8.0
+ * @flatsome-version 3.17.2
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -63,7 +63,7 @@ if(get_theme_mod('product_lightbox','default') == 'disabled'){
     <?php do_action('flatsome_product_image_tools_top'); ?>
   </div>
 
-  <figure class="woocommerce-product-gallery__wrapper <?php echo implode(' ', $slider_classes); ?>"
+  <div class="woocommerce-product-gallery__wrapper <?php echo implode(' ', $slider_classes); ?>"
 		  data-flickity-options='{
                 "cellAlign": "center",
                 "wrapAround": true,
@@ -90,7 +90,7 @@ if(get_theme_mod('product_lightbox','default') == 'disabled'){
 
     do_action( 'woocommerce_product_thumbnails' );
     ?>
-  </figure>
+  </div>
 </div>
 <?php do_action('flatsome_after_product_images'); ?>
 

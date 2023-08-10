@@ -76,7 +76,7 @@ if(!function_exists('rh_author_detail_box')){
                     <?php if ( function_exists('bp_core_get_user_domain') ) : ?>
                         <a href="<?php echo bp_core_get_user_domain( $author_ID ); ?>" class="see_full_profile_btn floatright mr10 mb10 ml10"><?php esc_html_e( 'Show full profile', 'rehub-theme' ); ?></a>
                     <?php endif; ?>                
-                    <h4>
+                    <strong class="mb10">
                         <a href="<?php echo get_author_posts_url( $author_ID );?>"><?php echo esc_attr($name);?></a>
                         <?php   
                             if (function_exists('bp_get_member_type')){     
@@ -88,7 +88,7 @@ if(!function_exists('rh_author_detail_box')){
                                 }
                             }
                         ?>                        
-                    </h4>
+                    </strong class="mb10">
                     <div class="social_icon small_i">
                         <div class="comm_meta_cred">
                             <?php if ( function_exists( 'mycred_get_users_badges' ) && $author_ID !=0 ) : ?>

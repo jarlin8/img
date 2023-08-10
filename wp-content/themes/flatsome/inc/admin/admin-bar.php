@@ -76,13 +76,21 @@ $wp_admin_bar->add_menu( array(
  'href' => admin_url().'admin.php?page=flatsome-setup'
 ));
 
-if(!flatsome_is_theme_enabled()){
-  $wp_admin_bar->add_menu( array(
-   'id' => 'flatsome-activate',
-   'title' => '<span class="dashicons dashicons-unlock" style="'.$icon_style.'"></span>Activate Theme',
-   'href' => admin_url() . 'admin.php?page=flatsome-panel',
-  ));
-}
+	if ( ! flatsome_is_theme_enabled() ) {
+		$wp_admin_bar->add_menu( array(
+			'id'    => 'flatsome-activate',
+			'title' => '<span class="ab-icon" aria-hidden="true"></span><span class="ab-label">' . esc_html__( 'Activate Theme', 'flatsome' ) . '</span>
+			   <style>
+				#wpadminbar #wp-admin-bar-flatsome-activate .ab-icon:before {
+			        content: "\f528";
+				}
+				#wp-admin-bar-flatsome-activate .ab-icon {
+    				margin: 2px 4px 0 0;
+				}
+				</style>',
+			'href'  => admin_url() . 'admin.php?page=flatsome-panel',
+		) );
+	}
 
 $wp_admin_bar->add_menu( array(
  'parent' => 'theme_options',

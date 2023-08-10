@@ -4,7 +4,6 @@
 <?php $maincolor = REHUB_MAIN_COLOR;?>
 <style scoped>
     #rh_woo_layout_inimage{background: <?php echo hex2rgba($maincolor, 0.05);?>}
-    .post-head-image-part img{max-height:200px}
 </style>
 <div class="rh-container"> 
     <div class="pt20 clearfix pb10">

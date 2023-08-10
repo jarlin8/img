@@ -4,9 +4,7 @@
  *
  * @package flatsome
  */
-update_option( get_template() . '_wup_purchase_code', '*******' );
-update_option( get_template() . '_wup_supported_until', '01.01.2050' );
-update_option( get_template() . '_wup_buyer', 'Licensed' );
+
 require get_template_directory() . '/inc/init.php';
 
 /**

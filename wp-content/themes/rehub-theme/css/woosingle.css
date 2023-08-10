@@ -25,6 +25,7 @@
 .rh-woo-section-title h2{font-size: 20px; margin-bottom: 30px;border-bottom: 1px solid rgba(206,206,206,0.3);padding-bottom: 20px;}
 .woocommerce div.product .summary form.cart.buy-now .button{max-width: 400px}
 .summary .woocommerce-group-attributes-public .attribute_group_name{padding: 10px 0;background-color: transparent; font-size:inherit;border-bottom: 1px solid #eee; font-weight:bold;}
+tr.attribute_row, tr.attribute_row td {padding: 0;}
 .woo_default_w_sidebar div.summary, .woo_default_full_width div.summary{ float: right; width: 48%; margin-bottom: 2em; }
 .woo_default_full_width .row_social_inpost span.share-link-image{color:#555 !important; background: none !important; border:1px solid #ddd; box-shadow:none;}
 .woo_default_no_sidebar div.summary{width: 67%;float: right;}

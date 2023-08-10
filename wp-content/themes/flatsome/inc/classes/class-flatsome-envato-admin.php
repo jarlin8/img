@@ -58,7 +58,7 @@ final class Flatsome_Envato_Admin {
 	 * Add necessary admin pages.
 	 */
 	public function add_pages() {
-		add_submenu_page( null, '', '', 'manage_options', 'flatsome-version-info', '__return_empty_string' );
+		add_submenu_page( '', '', '', 'manage_options', 'flatsome-version-info', '__return_empty_string' );
 	}
 
 	/**

@@ -157,6 +157,7 @@ add_ux_builder_shortcode( 'ux_lottie', array(
 				),
 			),
 		),
+		'link_options'     => require __DIR__ . '/commons/links.php',
 		'advanced_options' => require __DIR__ . '/commons/advanced.php',
 	),
 ) );

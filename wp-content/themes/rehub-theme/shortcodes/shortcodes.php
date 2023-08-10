@@ -1482,7 +1482,7 @@ function rehub_exerpt_function( $atts, $content = null ) {
 			$review_post = rehub_get_review_data();
 			$thecriteria = (!empty($review_post['review_post_criteria'])) ? $review_post['review_post_criteria'] : '';
 		}		
-		if(!empty($thecriteria)){
+		if(!empty($thecriteria[0]['review_post_name'])){
 			$firstcriteria = $thecriteria[0]['review_post_name'];
 		}		 
 		if($firstcriteria){

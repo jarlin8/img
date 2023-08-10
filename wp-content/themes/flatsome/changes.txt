@@ -1,3 +1,61 @@
+--- 3.17.6 ---
+This release contains an enhanced security measure. We recommend updating your sites promptly for optimal protection.
+
+--- 3.17.5 ---
+FIXED: Resolved an issue where the header cart item element was not updating in some cases.
+FIXED: Toggling of sticky-hide-on-scroll active class.
+FIXED: Banner zoom long hover style.
+
+UPDATED: Language files.
+
+--- 3.17.4 ---
+NEW: WooCommerce 7.9 compatibility.
+
+ENHANCEMENT: Improved WCML multi-currency support.
+
+FIXED: Google map Pegman & buttons placement.
+FIXED: Live search not showing results in some cases.
+FIXED: Sticky section on mobile.
+
+CHANGED: Copy as Shortcode: replaced navigator API with a prompt for reliability.
+
+UPDATED: Language files.
+
+--- 3.17.3 ---
+FIXED: Scroll-to link with full URLs not navigating in some cases.
+FIXED: Icons alignment in the admin menu dropdown.
+FIXED: Apply Coupon button color.
+
+UPDATED: Language files.
+
+--- 3.17.2 ---
+NEW: WooCommerce 7.8 compatibility.
+
+UPDATED: Google Fonts list.
+UPDATED: Language files.
+
+--- 3.17.1 ---
+NEW: Lottie link options.
+NEW: Swatches/product: Disable deselect option.
+
+ENHANCEMENT: Improved no menu assigned message in Vertical Menu.
+ENHANCEMENT: Various CSS improvements.
+
+FIXED: Catalog sidebar sticky mode option visibility.
+FIXED: flatsome-header-sticky event triggered more than once.
+FIXED: Left and right bounce in animations didn't start in some cases.
+FIXED: PHP 8.1 deprecated warning.
+FIXED: Scroll-to with numbers only.
+FIXED: Scroll-to with special chars.
+FIXED: Single product pricing currency in Safari.
+FIXED: Swatches/shop: text-right alignment.
+FIXED: WP Rocket integration script version.
+
+UPDATED: Language files.
+
+DEV: Added flatsome_admin_menu_items_enabled filter.
+
+
 --- 3.17.0 ---
 NEW: Lottie Element (Bodymovin), a powerful and flexible way to integrate Lottie animations.
 NEW: AJAX add to cart buttons on single product page & quick view (optional).

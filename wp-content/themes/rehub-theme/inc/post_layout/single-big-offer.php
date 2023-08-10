@@ -128,6 +128,8 @@
                                             echo '<span class="verifymeta mr5 mb10 greencolor blockstyle"><i class="rhicon rhi-shield-check"></i> ' . esc_attr($verify) . '</span>';
                                         } ?>
 
+                                        <?php block_template_part( 'post-single-button' );?>
+
                                         <?php if ($offer_url) : ?>
                                             <div class="wpsm_score_box buttons_col mb25">
                                                 <div class="priced_block">

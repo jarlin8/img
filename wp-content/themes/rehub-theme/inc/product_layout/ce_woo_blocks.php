@@ -112,6 +112,7 @@ wp_add_inline_script('rehub', $script);
                                         <a data-rel="rh_top_gallery" href="<?php echo esc_url($image_url); ?>" target="_blank" data-thumb="<?php echo esc_url($image_url); ?>">
                                             <?php echo WPSM_image_resizer::show_wp_image('woocommerce_single', '', array('lazydisable'=>true, 'loading'=>'eager')); ?>
                                         </a>
+                                        <?php do_action( 'rehub_360_product_image' ); ?>
                                     </figure>
                                     <?php $post_image_gallery = $product->get_gallery_image_ids(); ?>
                                     <?php if (!empty($post_image_gallery)) : ?>

@@ -4,7 +4,7 @@
 	Description: A Hybrid magazine/shop/review/news Wordpress Theme
 	Author: Wpsoul
 	Author URI: https://wpsoul.com/
-	Version: 18.9.8
+	Version: 19.0.5
 	Tags: two-columns, fluid-layout, custom-background, threaded-comments, translation-ready, custom-menu
 	License: 
 	License URI:
@@ -1470,7 +1470,7 @@ div.gmw-directions-form-wrapper ul.travel-mode-options li{margin:0; list-style: 
 /* TABLE BLOCK */
 .wpsm-table, .wp-block-table, .table-responsive{overflow: auto;}
 .wp-block-table.is-style-regular{border: 1px solid #e8e8e8; border-bottom: none; border-right: none}
-.wpsm-table table, .wp-block-table, .table-condensed { border-collapse: separate; padding-bottom: 1px; width: 100%; margin: 10px 0 20px; border-spacing: 0; font-size: 15px; }
+.wpsm-table table, .wp-block-table, .table-condensed { border-collapse: separate; padding-bottom: 1px; width: 100%; margin: 10px 0 20px !important; border-spacing: 0; font-size: 15px; }
 .wpsm-table table tr:first-child th { border-top: 0 none; }
 .wpsm-table table tr th, .wpsm-table table tr td, .wp-block-table tr td, .table-condensed tr td, .table-condensed tr th, .wp-block-table tr th { padding: 7px 14px; border-bottom: 1px solid #e8e8e8; vertical-align: middle; }
 .wp-block-table tr th{font-weight:bold;}
