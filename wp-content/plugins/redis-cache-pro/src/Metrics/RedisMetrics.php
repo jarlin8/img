@@ -211,7 +211,7 @@ class RedisMetrics
             'redis-ops-per-sec' => [
                 'title' => 'Throughput',
                 'description' => 'Number of commands processed per second.',
-                'type' => 'integer',
+                'type' => 'throughput',
             ],
             'redis-evicted-keys' => [
                 'title' => 'Evicted keys',

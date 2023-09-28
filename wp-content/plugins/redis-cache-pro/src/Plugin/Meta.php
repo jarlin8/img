@@ -31,7 +31,7 @@ trait Meta
      */
     public function bootMeta()
     {
-        add_filter('plugins_api', [$this, 'pluginInformation'], 10, 3);
+        add_filter('plugins_api', [$this, 'pluginInformation'], 1000, 3);
 
         add_filter('plugin_row_meta', [$this, 'pluginRowMeta'], 10, 4);
 
@@ -166,13 +166,10 @@ trait Meta
                 $info->download_link = null;
             }
 
-            $info->icons = (array) $info->icons;
-            $info->banners = (array) $info->banners;
-            $info->sections = (array) $info->sections;
-
-            if (isset($info->contributors)) {
-                $info->contributors = array_map('get_object_vars', get_object_vars($info->contributors));
-            }
+            $info->icons = (array) $info->icons; // @phpstan-ignore-line
+            $info->banners = (array) $info->banners; // @phpstan-ignore-line
+            $info->sections = (array) $info->sections; // @phpstan-ignore-line
+            $info->contributors = array_map('get_object_vars', (array) $info->contributors); // @phpstan-ignore-line
 
             return $info;
         }

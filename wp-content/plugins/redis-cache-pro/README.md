@@ -25,3 +25,10 @@ You’ll find the documentation on [objectcache.pro/docs](https://objectcache.pr
 - https://core.trac.wordpress.org/ticket/31245
 - https://github.com/woocommerce/woocommerce/pull/24961
 - https://github.com/woocommerce/woocommerce/pull/27696
+
+### Query caching
+- https://make.wordpress.org/core/2022/10/07/improvements-to-wp_query-performance-in-6-1/
+
+### Query splitting
+- https://core.trac.wordpress.org/changeset/56513
+- https://github.com/wpmetabox/mb-relationships/commit/06aa11e0d99be5663622c06eb39b0de9b0817bd9

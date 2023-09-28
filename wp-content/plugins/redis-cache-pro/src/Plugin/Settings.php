@@ -254,6 +254,7 @@ trait Settings
         $defaults = [
             'channel' => 'stable',
             'flushlog' => true,
+            'groupflushlog' => true,
         ];
 
         /**
@@ -352,7 +353,7 @@ trait Settings
             return;
         }
 
-        wp_safe_redirect(network_admin_url($this->baseurl), 302, 'Object Cache Pro');
+        \wp_safe_redirect(\network_admin_url($this->baseurl), 302, 'Object Cache Pro');
         exit;
     }
 

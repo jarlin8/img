@@ -110,4 +110,17 @@ class Validator
             return $this->error('invalid-type', 'Option must be boolean.');
         }
     }
+
+    /**
+     * Validate the `groupflushlog` option value.
+     *
+     * @param  bool  $value
+     * @return void|\WP_Error
+     */
+    public function groupflushlog($value)
+    {
+        if (! is_bool($value)) {
+            return $this->error('invalid-type', 'Option must be boolean.');
+        }
+    }
 }

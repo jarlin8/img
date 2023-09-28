@@ -17,7 +17,12 @@ declare(strict_types=1);
 namespace RedisCachePro\Plugin;
 
 use WP_Screen;
+
 use RedisCachePro\Plugin;
+
+use RedisCachePro\Metrics\RedisMetrics;
+use RedisCachePro\Metrics\RelayMetrics;
+use RedisCachePro\Metrics\WordPressMetrics;
 
 /**
  * @mixin \RedisCachePro\Plugin
@@ -94,6 +99,10 @@ trait Widget
 
         add_action('admin_enqueue_scripts', [$this, 'addWidgetStyles']);
 
+        if ($screen->id !== $this->screenId) {
+            $this->enqueueWidgetScripts();
+        }
+
         /**
          * Filters whether to add the dashboard widget.
          *
@@ -164,14 +173,15 @@ trait Widget
 
         switch ($action) {
             case 'flush-cache':
-                $status = wp_cache_flush() ? 'cache-flushed' : 'cache-not-flushed';
+                $this->logFlush();
+                $status = $wp_object_cache->flush() ? 'cache-flushed' : 'cache-not-flushed';
                 break;
             case 'flush-site-cache':
                 $status = $wp_object_cache->flushBlog() ? 'site-cache-flushed' : 'site-cache-not-flushed';
                 break;
             case 'flush-network-cache':
                 $this->logFlush();
-                $status = $wp_object_cache->connection()->flushdb() ? 'network-cache-flushed' : 'network-cache-not-flushed';
+                $status = $wp_object_cache->flush() ? 'network-cache-flushed' : 'network-cache-not-flushed';
                 break;
             case 'enable-dropin':
                 $status = $this->enableDropin() ? 'dropin-enabled' : 'dropin-not-enabled';
@@ -202,6 +212,42 @@ trait Widget
     public function addWidgetStyles()
     {
         wp_add_inline_style('dashboard', $this->inlineAsset('css/widget.css'));
+    }
+
+    /**
+     * Enqueue the widget scripts.
+     *
+     * @return void
+     */
+    protected function enqueueWidgetScripts()
+    {
+        if (! $this->analyticsEnabled()) {
+            return;
+        }
+
+        \wp_register_script('objectcache', false);
+        \wp_enqueue_script('objectcache');
+
+        \wp_localize_script('objectcache', 'objectcache', [
+            'rest' => [
+                'nonce' => \wp_create_nonce('wp_rest'),
+                'url'  => \rest_url(),
+            ],
+            'gmt_offset' => \get_option('gmt_offset'),
+            'refresh' => 30,
+            'interval' => 60,
+            'series' => [
+                ['field' => 'median', 'name' => 'Median'],
+            ],
+            'comboCharts' => array_map(static function ($metric) {
+                return [
+                    'containers' => array_keys($metric['type']),
+                    'labels' => $metric['labels'],
+                ];
+            }, $this->comboMetrics()),
+        ]);
+
+        $this->enqueueAnalyticsAssets();
     }
 
     /**
@@ -259,5 +305,40 @@ trait Widget
                 echo $notice('error', 'The object cache drop-in could not be disabled.');
                 break;
         }
+    }
+
+    /**
+     * Add the all metrics as widgets.
+     *
+     * @return array<string, mixed>
+     */
+    protected function widgetCharts()
+    {
+        $charts = [
+            'response-times',
+            'requests',
+        ];
+
+        $metrics = array_merge(
+            WordPressMetrics::schema(),
+            RedisMetrics::schema(),
+            $this->comboMetrics()
+        );
+
+        if ($this->diagnostics()->usingRelayCache()) {
+            $charts[] = 'relay-requests';
+            $metrics = array_merge($metrics, RelayMetrics::schema());
+        }
+
+        /**
+         * Filters the default order and available metrics on the dashboard widget.
+         *
+         * @param  array  $metrics  The available metrics.
+         */
+        $charts = (array) apply_filters('objectcache_widget_metrics', $charts);
+
+        return array_combine($charts, array_map(function ($id) use ($metrics) {
+            return $metrics[$id];
+        }, $charts));
     }
 }

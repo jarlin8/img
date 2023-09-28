@@ -390,8 +390,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			$price_columns = array( '_regular_price', '_sale_price', '_sale_price_dates_from', '_sale_price_dates_to');
 			if ( ! empty( $args['table_nm'] ) && ( 'postmeta' === $args['table_nm'] ) && ( ( ! empty( $args['col_nm'] ) ) && ( true === in_array( $args['col_nm'], $price_columns ) ) ) ) {
 				switch ( $args['col_nm'] ) {
+					case '_sale_price_dates_from':
+						update_post_meta( $args['id'], '_sale_price_dates_from', sa_sm_get_utc_timestamp_from_site_date( $args['value'].' 00:00:00' ) );
+						break;
 					case '_sale_price_dates_to':
-						update_post_meta( $args['id'], '_sale_price_dates_to', strtotime( $args['value'].' 23:59:59' ) );
+						update_post_meta( $args['id'], '_sale_price_dates_to', sa_sm_get_utc_timestamp_from_site_date( $args['value'].' 23:59:59' ) );
 						break;
 					// Code to handle setting of 'regular_price' & 'sale_price' in proper way
 					case ( empty( $args['operator'] ) || ( ! empty( $args['operator'] ) && 'set_to_regular_price' !== $args['operator'] && 'set_to_sale_price' !== $args['operator'] ) ):
@@ -719,37 +722,38 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 		*/ 
 		public static function task_details_update_by_prev_val( $args = array() ) {
 			$field_name = '';
-			if ( ! empty( $args ) ) {
-				foreach ( $args as $arg ) {
-					if ( empty( $arg['prev_val'] ) ) {
-						continue;
+			if (  empty( $args ) ) {
+				return $args;
+			}
+			foreach ( $args as $arg ) {
+				if ( empty( $arg['prev_val'] ) || ! is_array( $arg['prev_val'] ) ) {
+					continue;
+				}
+				foreach ( $arg['prev_val'] as $prev_val ) {
+					switch (true) {
+							case empty( $prev_val ):
+								$field_name = 'custom/product_attributes_add';
+								break;
+							case ( ! empty( $prev_val ) && ( empty( in_array( $arg['updated_val'], $arg['prev_val'] ) ) && ( 'all' === $arg['updated_val'] && ( 'custom/product_attributes_add' === $arg['field'] ) ) ) ):
+								$field_name = 'custom/product_attributes_remove';
+								break;
+							case ( ! empty( $prev_val ) && ! empty( in_array( $arg['updated_val'], $arg['prev_val'] ) ) ):
+								$field_name = 'custom/product_attributes_add';
+								break;
+							case ( ! empty( $prev_val ) && ( empty( in_array( $arg['updated_val'], $arg['prev_val'] ) ) ||  ( 'all' === $arg['updated_val'] && ( 'custom/product_attributes_remove' === $arg['field'] ) ) ) ):
+								$field_name = 'custom/product_attributes_add';
+								break;
 					}
-					foreach ( $arg['prev_val'] as $prev_val ) {
-						switch (true) {
-								case empty( $prev_val ):
-									$field_name = 'custom/product_attributes_add';
-									break;
-								case ( ! empty( $prev_val ) && ( empty( in_array( $arg['updated_val'], $arg['prev_val'] ) ) && ( 'all' === $arg['updated_val'] && ( 'custom/product_attributes_add' === $arg['field'] ) ) ) ):
-									$field_name = 'custom/product_attributes_remove';
-									break;
-								case ( ! empty( $prev_val ) && ! empty( in_array( $arg['updated_val'], $arg['prev_val'] ) ) ):
-									$field_name = 'custom/product_attributes_add';
-									break;
-								case ( ! empty( $prev_val ) && ( empty( in_array( $arg['updated_val'], $arg['prev_val'] ) ) ||  ( 'all' === $arg['updated_val'] && ( 'custom/product_attributes_remove' === $arg['field'] ) ) ) ):
-									$field_name = 'custom/product_attributes_add';
-									break;
-						}
-						if ( ( ! empty( $arg['task_id'] ) ) ) {
-			            	Smart_Manager_Base::$update_task_details_params[] = array(
-			            		'task_id' => $arg['task_id'],
-								'action' => $arg['action'],
-								'status' => $arg['status'],
-								'record_id' => $arg['record_id'],
-								'field' => $field_name,   
-								'prev_val' => $prev_val,
-								'updated_val' => $arg['updated_val'],
-							); 
-			        	}
+					if ( ( ! empty( $arg['task_id'] ) ) ) {
+						Smart_Manager_Base::$update_task_details_params[] = array(
+							'task_id' => $arg['task_id'],
+							'action' => $arg['action'],
+							'status' => $arg['status'],
+							'record_id' => $arg['record_id'],
+							'field' => $field_name,   
+							'prev_val' => $prev_val,
+							'updated_val' => $arg['updated_val'],
+						); 
 					}
 				}
 			}

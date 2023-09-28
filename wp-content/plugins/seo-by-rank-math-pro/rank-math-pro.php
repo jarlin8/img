@@ -9,63 +9,62 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Rank Math SEO PRO
- * Version:           3.0.35
+ * Version:           3.0.45
  * Plugin URI:        https://rankmath.com/wordpress/plugin/seo-suite/
- * Secret Key:        83a5bb0e2ad5164690bc7a42ae592cf5
- * Description:       Super-charge your website's SEO with the Rank Math PRO options like Site Analytics, SEO Performance, Custom Schema Templates, News/Video Sitemaps, etc.
-* Author:            Rank Math
-* Author URI:        https://s.rankmath.com/pro
+ * Description:       Super-charge your website’s SEO with the Rank Math PRO options like Site Analytics, SEO Performance, Custom Schema Templates, News/Video Sitemaps, etc.
+ * Author:            Rank Math
+ * Author URI:        https://rankmath.com/?utm_source=Plugin&utm_medium=Readme%20Author%20URI&utm_campaign=WP
  * License:           GPL-3.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       rank-math-pro
  * Domain Path:       /languages
  */
 
+add_filter( 'rank_math/admin/sensitive_data_encryption', '__return_false' );
+
+update_option( 'rank_math_connect_data', [
+'username' => 'user555',
+'email' => 'user555@gmail.com',
+'api_key' => '*********',
+'plan' => 'business',
+'connected' => true,
+] );
+update_option( 'rank_math_registration_skip', 1 );
+
+add_action( 'init', function() {
+add_filter( 'pre_http_request', function( $pre, $parsed_args, $url ) {
+if ( strpos( $url, 'https://rankmath.com/wp-json/rankmath/v1/' ) !== false ) {
+$basename = basename( parse_url( $url, PHP_URL_PATH ) );
+if ( $basename == 'siteSettings' ) {
+return [
+'response' => [ 'code' => 200, 'message' => 'ОК' ],
+'body' => json_encode( [
+'error' => '',
+'plan' => 'business',
+'keywords' => get_option( 'rank_math_keyword_quota', [ 'available' => 10000, 'taken' => 0 ] ),
+'analytics' => 'on',
+] ),
+];
+} elseif ( $basename == 'keywordsInfo' ) {
+if ( isset( $parsed_args['body']['count'] ) ) {
+return [
+'response' => [ 'code' => 200, 'message' => 'ОК' ],
+'body' => json_encode( [ 'available' => 10000, 'taken' => $parsed_args['body']['count'] ] ),
+];
+}
+
+}
+return [ 'response' => [ 'code' => 200, 'message' => 'ОК' ] ];
+}
+return $pre;
+}, 10, 3 );
+} );
+
 use RankMath\Helper;
 use MyThemeShop\Helpers\Param;
 use MyThemeShop\Helpers\Conditional;
 
 defined( 'ABSPATH' ) || exit;
-
-add_filter( 'rank_math/admin/sensitive_data_encryption', '__return_false' );
-
-update_option( 'rank_math_connect_data', [
-     'username'  => 'Rank-Math-Pro',
-     'email'     => 'activated@rankmath.com',
-     'api_key'   => 'rtExxTyybrRXpLfmwRHJyKhmsYqWFkpa',
-     'plan'      => 'agency',
-     'connected' => true,
-] );
-update_option( 'rank_math_registration_skip', 1 );
-
-add_action( 'init', function() {
-     add_filter( 'pre_http_request', function( $pre, $parsed_args, $url ) {
-          if ( strpos( $url, 'https://rankmath.com/wp-json/rankmath/v1/' ) !== false ) {
-               $basename = basename( parse_url( $url, PHP_URL_PATH ) );
-               if ( $basename == 'siteSettings' ) {
-                    return [
-                         'response' => [ 'code' => 200, 'message' => 'ОК' ],
-                         'body'     => json_encode( [
-                              'error' => '',
-                              'plan'  => 'agency',
-                              'keywords' => get_option( 'rank_math_keyword_quota', [ 'available' => 75000, 'taken' => 0 ] ),
-                              'analytics' => 'on',
-                         ] ),
-                     ];
-               } elseif ( $basename == 'keywordsInfo' ) {
-                    if ( isset( $parsed_args['body']['count'] ) ) {
-                         return [
-                              'response' => [ 'code' => 200, 'message' => 'OK' ],
-                              'body'     => json_encode( [ 'available' => 75000, 'taken' => $parsed_args['body']['count'] ] ),
-                         ];
-                    }
-
-               } 
-               return [ 'response' => [ 'code' => 200, 'message' => 'ОК' ] ];
-          }
-          return $pre;
-     }, 10, 3 );
-} );
 
 /**
  * RankMath class.
@@ -79,14 +78,14 @@ final class RankMathPro {
 	 *
 	 * @var string
 	 */
-	public $version = '3.0.35';
+	public $version = '3.0.45';
 
 	/**
 	 * Minimum version of Rank Math SEO.
 	 *
 	 * @var string
 	 */
-	public $rank_math_min_version = '1.0.114';
+	public $rank_math_min_version = '1.0.202';
 
 	/**
 	 * Holds various class instances
@@ -177,19 +176,19 @@ final class RankMathPro {
 		$dont_load = false;
 		if ( $this->is_free_version_being_deactivated() ) {
 			// Todo: this message is not displayed because of a redirect.
-			$this->messages[] = esc_html__( 'Rank Math free version is required to run Rank Math Pro. Both plugins are now disabled.', 'rank-math-pro' );
+			$this->messages[] = esc_html__( 'Rank Math free version is required to run Rank Math PRO. Both plugins are now disabled.', 'rank-math-pro' );
 		} elseif ( $this->is_free_version_being_rolled_back() || $this->is_free_version_being_updated() || $this->is_troubleshooting() ) {
 			$dont_load = true;
 		} else {
 			if ( ! $this->is_free_version_installed() ) {
 				if ( ! $this->install_free_version() ) {
-					$this->messages[] = esc_html__( 'Rank Math free version is required to run Rank Math Pro, but it could not be installed automatically. Please install and activate the free version first.', 'rank-math-pro' );
+					$this->messages[] = esc_html__( 'Rank Math free version is required to run Rank Math PRO, but it could not be installed automatically. Please install and activate the free version first.', 'rank-math-pro' );
 				}
 			}
 
 			if ( ! $this->is_free_version_activated() ) {
 				if ( ! $this->activate_free_version() ) {
-					$this->messages[] = esc_html__( 'Rank Math free version is required to run Rank Math Pro, but it could not be activated automatically. Please install and activate the free version first.', 'rank-math-pro' );
+					$this->messages[] = esc_html__( 'Rank Math free version is required to run Rank Math PRO, but it could not be activated automatically. Please install and activate the free version first.', 'rank-math-pro' );
 				}
 			}
 		}

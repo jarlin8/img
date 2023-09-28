@@ -11,18 +11,21 @@ class Smart_Manager_Install {
 	 */
 	private static $db_updates = array(
 		'5.0.0' => array(
-				'create_table_for_custom_views',
-				'create_dummy_views',
-				'update_500_model_transients'
+			'create_table_for_custom_views',
+			'create_dummy_views',
+			'update_500_model_transients'
 		),
 		'5.0.1' => array(
-				'update_500_model_transients'
+			'update_500_model_transients'
 		),
 		'5.16.0' => array(
-				'update_516_alter_table'
+			'update_516_alter_table'
 		),
 		'8.0.0' => array(
-				'create_tables_for_tasks'
+			'create_tables_for_tasks'
+		),
+		'8.9.0' => array(
+			'update_890_port_settings'
 		)
 	);
 
@@ -287,6 +290,7 @@ class Smart_Manager_Install {
 			}
 		}
 	}
+
 	public static function create_tables_for_tasks() {
 		global $wpdb;
 
@@ -328,6 +332,44 @@ class Smart_Manager_Install {
 							) $collate;";
 
 		dbDelta( $task_details_table );
+	}
+
+	// Function to port settings
+	public static function update_890_port_settings(){
+		if ( ! class_exists( 'Smart_Manager_Settings' ) ) {
+			return;
+		}
+		if( empty( Smart_Manager_Settings::$db_option_key ) ){
+			return;
+		}
+
+		$settings = array(
+			'general' => array(
+				'toggle' => array(
+					'wp_force_collapse_admin_menu'                  => get_option( 'sm_wp_force_collapse_admin_menu', 'yes' ),
+					'use_number_field_for_numeric_cols'             => get_option( 'sm_use_number_field_for_numeric_cols', 'yes' ),
+					'view_trash_records'                            => get_option( 'sm_view_trash_records', 'no' ),
+					'show_manage_with_smart_manager_button'         => get_option( 'sm_show_manage_with_sm_button', 'yes' ),
+					'show_smart_manager_menu_in_admin_bar'          => get_option( 'sm_show_smart_manager_menu_in_admin_bar', 'yes' )
+				),
+				'numeric' => array(
+					'per_page_record_limit' => get_option( '_sm_beta_set_record_limit', 50 )
+				),
+				'text'  => array(
+					'grid_row_height' => get_option( 'sm_grid_row_height', '50px' )
+				)
+			)
+		);
+		
+		if( defined('SMPRO') && true === SMPRO ) {
+			$settings['general']['toggle']['show_tasks_title_modal'] = get_option( 'sm_show_tasks_title_modal', 'yes' );
+			
+			$attachment_url = get_option( 'smart_manager_company_logo', '' );
+			$attachment_id = ( ! empty( $attachment_url ) ) ? attachment_url_to_postid( $attachment_url ) : 0;
+			$settings['general']['image'] = array( 'company_logo_for_print_invoice' => $attachment_id );
+		}
+
+		update_option( Smart_Manager_Settings::$db_option_key, $settings, 'no' );
 	}
 }
 

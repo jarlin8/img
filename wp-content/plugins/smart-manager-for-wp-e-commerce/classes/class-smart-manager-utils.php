@@ -531,3 +531,82 @@ function sa_sm_format_prev_val( $args = array() ) {
 			return $args['prev_val'];
 	}
 }
+
+/**
+ * Function to get site timestamp from date passed in UTC timezone
+ *
+ * @param array $date Date string in UTC timezone.
+ * @return int $timestamp Timestamp in site timezone 
+ */
+function sa_sm_get_site_timestamp_from_utc_date( $date = '' ) {
+	if( empty( $date ) ){
+		return $date;
+	}
+	$offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+	$date = ( ! is_numeric( $date ) ) ? strtotime( $date ) : $date;
+	return $date + $offset;
+}
+
+/**
+ * Function to get UTC timestamp from date passed in site timezone
+ *
+ * @param array $date Date string in site timezone.
+ * @return int $timestamp Timestamp in UTC 
+ */
+function sa_sm_get_utc_timestamp_from_site_date( $date = '' ) {
+	if( empty( $date ) ){
+		return $date;
+	}
+	$offset = get_option( 'gmt_offset' ) * HOUR_IN_SECONDS;
+	$date = ( ! is_numeric( $date ) ) ? strtotime( $date ) : $date;
+	return $date - $offset;
+}
+
+/**
+ * Format term ids to names.
+ *
+ * @param  array  $term_ids Term IDs to format.
+ * @param  string $taxonomy Taxonomy name.
+ * @return string
+ */
+function sa_sm_format_term_ids( $term_ids = array(), $taxonomy = '' ) {
+	$term_ids = wp_parse_id_list( $term_ids );
+
+	if ( ! count( $term_ids ) ) {
+		return '';
+	}
+
+	$formatted_terms = array();
+
+	if ( is_taxonomy_hierarchical( $taxonomy ) ) {
+		foreach ( $term_ids as $term_id ) {
+			$formatted_term = array();
+			$ancestor_ids   = array_reverse( get_ancestors( $term_id, $taxonomy ) );
+
+			foreach ( $ancestor_ids as $ancestor_id ) {
+				$term = get_term( $ancestor_id, $taxonomy );
+				if ( $term && ! is_wp_error( $term ) ) {
+					$formatted_term[] = $term->name;
+				}
+			}
+
+			$term = get_term( $term_id, $taxonomy );
+
+			if ( $term && ! is_wp_error( $term ) ) {
+				$formatted_term[] = $term->name;
+			}
+
+			$formatted_terms[] = implode( ' > ', $formatted_term );
+		}
+	} else {
+		foreach ( $term_ids as $term_id ) {
+			$term = get_term( $term_id, $taxonomy );
+
+			if ( $term && ! is_wp_error( $term ) ) {
+				$formatted_terms[] = $term->name;
+			}
+		}
+	}
+
+	return implode( ',', $formatted_terms );
+}

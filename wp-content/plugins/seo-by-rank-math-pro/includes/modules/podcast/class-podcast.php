@@ -25,6 +25,11 @@ class Podcast {
 	use Hooker;
 
 	/**
+	 * Store podcast feed slug.
+	 */
+	private $podcast;
+
+	/**
 	 * The Constructor.
 	 */
 	public function __construct() {
@@ -37,7 +42,8 @@ class Podcast {
 	 * Intialize.
 	 */
 	public function init() {
-		add_feed( 'podcast', [ $this, 'podcast_feed' ] );
+		$this->podcast = $this->do_filter( 'podcast/feed', 'podcast' );
+		add_feed( $this->podcast, [ $this, 'podcast_feed' ] );
 		new Podcast_RSS();
 		new Publish_Podcast();
 	}
@@ -59,11 +65,9 @@ class Podcast {
 	}
 
 	/**
-	 * Get random word from list of words. Use the object ID for the seed if persistent.
+	 * Get Podcast image from the Settings.
 	 *
-	 * @param  string $list       Words list in spintax-like format.
-	 * @param  string $persistent Get persistent return value.
-	 * @return string             Random word.
+	 * @return string Podcast image.
 	 */
 	public function get_podcast_image() {
 		return Helper::get_settings( 'general.podcast_image' );
@@ -86,7 +90,7 @@ class Podcast {
 					'desc'      => sprintf( esc_html__( 'Make your podcasts discoverable via Google Podcasts, Apple Podcasts, and similar services. %s.', 'rank-math' ), '<a href="' . KB::get( 'podcast-settings', 'Options Panel Podcast Tab' ) . '" target="_blank">' . esc_html__( 'Learn more', 'rank-math-pro' ) . '</a>' ),
 					'file'      => dirname( __FILE__ ) . '/views/options.php',
 					/* translators: Link to Podcast RSS feed */
-					'after_row' => '<div class="notice notice-alt notice-info info inline rank-math-notice"><p>' . sprintf( esc_html__( 'Your Podcast RSS feed can be found here: %s', 'rank-math-pro' ), '<a href="' . Helper::get_home_url( 'feed/podcast' ) . '" target="_blank">' . Helper::get_home_url( 'feed/podcast' ) . '</a>' ) . '</p></div>',
+					'after_row' => '<div class="notice notice-alt notice-info info inline rank-math-notice"><p>' . sprintf( esc_html__( 'Your Podcast RSS feed can be found here: %s', 'rank-math-pro' ), '<a href="' . get_feed_link( $this->podcast ) . '" target="_blank">' . get_feed_link( $this->podcast ) . '</a>' ) . '</p></div>',
 				],
 			],
 			12
@@ -101,4 +105,33 @@ class Podcast {
 	public function podcast_feed() {
 		require dirname( __FILE__ ) . '/views/feed-rss2.php';
 	}
+
+	/**
+	 * Get podcasts
+	 */
+	public function get_podcasts() {
+		$post_types = array_filter(
+			Helper::get_accessible_post_types(),
+			function( $post_type ) {
+				return 'attachment' !== $post_type;
+			}
+		);
+
+		$args = $this->do_filter(
+			'podcast_args',
+			[
+				'post_type'      => array_keys( $post_types ),
+				'posts_per_page' => get_option( 'posts_per_rss' ),
+				'meta_query'     => [
+					[
+						'key'     => 'rank_math_schema_PodcastEpisode',
+						'compare' => 'EXISTS',
+					],
+				],
+			]
+		);
+
+		return new \WP_Query( $args );
+	}
+
 }

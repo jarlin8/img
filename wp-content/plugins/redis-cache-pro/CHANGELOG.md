@@ -2,6 +2,67 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.20.0 - 2023-09-19
+### Added
+- Added cache integrity protection
+- Added analytics charts to dashboard widget
+- Added `objectcache_widget_metrics` filter
+- Added `wp redis reset` command
+- Added support for `OBJECTCACHE_OVERRIDE` and `OBJECTCACHE_MERGE` constants
+- Added support for PhpRedis v6.0
+- Added `analytics.sample_rate` configuration option
+
+### Changed
+- Reduce default `retries` from `5` to `3`
+- Refresh nonce using `X-WP-Nonce` header
+- Expose Relay license issues in Dashboard widget
+- Refactored various flush mechanisms
+- Expanded `ObjectCache::withoutMutations()` callback type from `Closure` to `callable`
+- Delete `objectcache_*` site options when uninstalling
+- Improved license API error handling
+
+### Fixed
+- Fixed failover when using Redis Sentinel
+- Bump `plugins_api` priority to prevent plugins from hijacking responses
+- Mute rare `undefined array key` notice in `flushBacktraceSummary()`
+
+### Removed
+- Removed `split_the_query` filter in favor of native WordPress 6.4 behavior
+- Removed deprecated `rediscache_*` filters
+- Removed deprecated `ObjectCache::flushMemory()` method
+- Removed `objectcache_analytics_retention` filter
+- Removed `--async` option from `wp redis flush`
+
+## 1.19.0 - 2023-07-21
+### Added
+- Added `strict` configuration option
+- Added group flush log widget
+- Added link to settings to dashboard widget
+- Added Relay memory health check
+- Added support for `OBJECTCACHE_PREFER_RELAY` environment variable
+- Added support for `path` and `socket` configuration options
+- Added support for `redis-error.php` template
+- Added `objectcache_cleanup_transients` filter
+- Added `--skip-transients` option to `wp redis enable`
+
+### Changed
+- Render connection exceptions similar to WordPress database errors
+- Throw exception when selecting non-existent database
+- Delete all transients from database after enabling cache
+- Support logging early flushes before plugin code was initialized
+- Improved `WP_Query::get_posts()` performance using `split_the_query`
+- Made Relay diagnostics more helpful
+- Renamed `relay-memory-active` to `relay-memory-used`
+- Not longer recommend disabling `prefetch` and `split_alloptions` when using Relay
+
+### Fixed
+- Display Relay's memory consumption more accurately
+- Improve handling non-fatal `MGET` failures
+- Prevent `wp_cache_init()` initializing twice
+- Avoid rare fatal error when parsing JSON responses
+- Avoid confusing hiredis error message Relay connection times out
+- Avoid fatal error when `gmt_offset` is not valid
+
 ## 1.18.2 - 2023-04-04
 ### Added
 - Added Query Monitor constants to panel

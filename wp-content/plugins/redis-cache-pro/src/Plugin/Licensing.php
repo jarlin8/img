@@ -19,6 +19,8 @@ namespace RedisCachePro\Plugin;
 use WP_Error;
 use Throwable;
 
+use Relay\Relay;
+
 use RedisCachePro\Plugin;
 use RedisCachePro\License;
 use RedisCachePro\ObjectCaches\ObjectCache;
@@ -37,6 +39,10 @@ trait Licensing
     {
         add_action('admin_notices', [$this, 'displayLicenseNotices'], -1);
         add_action('network_admin_notices', [$this, 'displayLicenseNotices'], -1);
+
+        if (is_admin() || (defined('WP_CLI') && WP_CLI)) {
+            $this->storeRelayLicense();
+        }
     }
 
     /**
@@ -166,7 +172,7 @@ trait Licensing
     /**
      * Fetch the license for configured token.
      *
-     * @return object|\WP_Error
+     * @return \RedisCachePro\Support\PluginApiLicenseResponse|\WP_Error
      */
     protected function fetchLicense()
     {
@@ -176,10 +182,83 @@ trait Licensing
             return new WP_Error('objectcache_fetch_failed', sprintf(
                 'Could not verify license. %s',
                 $response->get_error_message()
-            ), ['token' => $this->token()]);
+            ), array_merge(
+                ['token' => $this->token()],
+                $response->get_error_data()
+            ));
         }
 
+        /** @var \RedisCachePro\Support\PluginApiLicenseResponse $response */
         return $response;
+    }
+
+    /**
+     * Attempt to store Relay's license so it can be displayed.
+     *
+     * @return void
+     */
+    public function storeRelayLicense()
+    {
+        if (! extension_loaded('relay')) {
+            return;
+        }
+
+        $runtime = Relay::license();
+        $stored = get_site_option('objectcache_relay_license');
+
+        $storeRuntimeLicense = function () use ($runtime) {
+            update_site_option('objectcache_relay_license', [
+                'state' => $runtime['state'],
+                'reason' => $runtime['reason'],
+                'updated_at' => time(),
+            ]);
+        };
+
+        if (! is_array($stored)) {
+            $storeRuntimeLicense();
+
+            return;
+        }
+
+        if ($runtime['state'] === 'licensed') {
+            // update invalid licenses instantly
+            if ($stored['state'] !== 'licensed') {
+                $storeRuntimeLicense();
+            }
+
+            // update valid licenses every hour
+            if ($stored['state'] === 'licensed' && $stored['updated_at'] < (time() - 3600)) {
+                $storeRuntimeLicense();
+            }
+
+            return;
+        }
+
+        if ($stored['state'] === 'licensed') {
+            // invalidate stored licenses
+            if (in_array($runtime['state'], ['unlicensed', 'suspended'])) {
+                $storeRuntimeLicense();
+            }
+
+            // force update stored license every day
+            if ($stored['updated_at'] < (time() - 86400)) {
+                $storeRuntimeLicense();
+            }
+
+            return;
+        }
+
+        // avoid `unknown` license state
+        if ($stored['state'] === 'unknown' && $runtime['state'] !== 'unknown') {
+            $storeRuntimeLicense();
+
+            return;
+        }
+
+        // update stored license every hour
+        if ($stored['updated_at'] < (time() - 3600)) {
+            $storeRuntimeLicense();
+        }
     }
 
     /**
@@ -204,18 +283,35 @@ trait Licensing
             return $response;
         }
 
-        $status = $response['response']['code'];
         $body = wp_remote_retrieve_body($response);
+        $headers = wp_remote_retrieve_headers($response);
+        $status = wp_remote_retrieve_response_code($response);
 
         if ($status >= 400) {
             return new WP_Error(
                 'objectcache_api_error',
                 "Request returned status code {$status}",
-                ['status' => $status]
+                [
+                    'status' => $status,
+                    'cf-ray' => $headers['cf-ray'] ?? null,
+                    'cf-mitigated' => $headers['cf-mitigated'] ?? null,
+                ]
             );
         }
 
-        $json = json_decode($response['body'], false, 512, JSON_FORCE_OBJECT);
+        if (empty($body)) {
+            return new WP_Error(
+                'objectcache_api_error',
+                'Request returned empty body',
+                [
+                    'status' => $status,
+                    'cf-ray' => $headers['cf-ray'] ?? null,
+                    'cf-mitigated' => $headers['cf-mitigated'] ?? null,
+                ]
+            );
+        }
+
+        $json = json_decode($body, false, 512, JSON_FORCE_OBJECT);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             return new WP_Error(
@@ -233,17 +329,24 @@ trait Licensing
     /**
      * Performs a `plugin/info` request and returns the result.
      *
-     * @return \RedisCachePro\Support\PluginApiResponse|\WP_Error
+     * @return \RedisCachePro\Support\PluginApiInfoResponse|\WP_Error
      */
     public function pluginInfoRequest()
     {
-        return $this->request('plugin/info');
+        $response = $this->request('plugin/info');
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
+        /** @var \RedisCachePro\Support\PluginApiInfoResponse $response */
+        return $response;
     }
 
     /**
      * Performs a `plugin/update` request and returns the result.
      *
-     * @return \RedisCachePro\Support\PluginApiResponse|\WP_Error
+     * @return \RedisCachePro\Support\PluginApiUpdateResponse|\WP_Error
      */
     public function pluginUpdateRequest()
     {
@@ -253,6 +356,7 @@ trait Licensing
             return $response;
         }
 
+        /** @var \RedisCachePro\Support\PluginApiUpdateResponse $response */
         set_site_transient('objectcache_update', (object) [
             'version' => $response->version,
             'last_check' => time(),

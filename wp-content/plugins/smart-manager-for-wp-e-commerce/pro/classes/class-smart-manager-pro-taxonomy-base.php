@@ -40,7 +40,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 			add_filter( 'terms_clauses',  array( $this, 'handle_terms_clauses' ), 999, 3 );
 			
 			// hooks for inline update
-			add_filter( 'sm_beta_default_inline_update', function() { return false; } );
+			add_filter( 'sm_default_inline_update', function() { return false; } );
 			add_action( 'sm_inline_update_post', array( $this,'taxonomy_inline_update' ), 10, 2 );
 
 			add_filter( 'sm_beta_background_entire_store_ids_query', array( $this,'get_entire_store_ids_query' ), 12, 1 );
@@ -51,8 +51,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 		 */
         public static function actions() {
 			// hooks for delete functionality
-			add_filter( 'sm_default_process_delete_records', function() { return false; } );
-			add_filter( 'sm_default_process_delete_records_result', __CLASS__. '::process_delete_terms', 12, 3 );
+			add_filter( 'sm_pro_default_process_delete_records', function() { return false; } );
+			add_filter( 'sm_pro_default_process_delete_records_result', __CLASS__. '::process_delete_terms', 12, 3 );
 
 			// hooks for bulk edit functionality
 			add_filter( 'sm_beta_batch_update_prev_value', __CLASS__. '::terms_batch_update_prev_value', 10, 2 );
@@ -564,13 +564,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 				}
 			}
 
-			return array(
+			$data =  array(
 				'items'			=> ( !empty( $items ) ) ? $items : array(),
 				'start'			=> $data_col_params['offset'] + $data_col_params['limit'],
 				'page'			=> $data_col_params['current_page'],
 				'total_pages'	=> $total_pages,
 				'total_count'	=> $total_count
 			);
+			return ( ! empty( $data_model ) && is_array( $data_model ) ) ? array_merge( $data_model, $data ) : $data;
 		}
 
 		/**
@@ -800,7 +801,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 		}
 
 		/**
-		 * Static function to get taxonomy values for copy from operator for bulk edit.
+		 * Function to get taxonomy values for copy from operator for bulk edit.
 		 *
 		 * @param array $args bulk edit params.
 		 * @return string|array json encoded string or array of taxonomy values.

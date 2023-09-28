@@ -24,7 +24,8 @@ use RedisCachePro\Connections\PhpRedisConnection;
 
 class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInterface
 {
-    use Concerns\PrefetchesKeys,
+    use Concerns\KeepsMetadata,
+        Concerns\PrefetchesKeys,
         Concerns\FlushesNetworks,
         Concerns\TakesMeasurements,
         Concerns\SplitsAllOptionsIntoHash;
@@ -185,7 +186,11 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
      */
     public function boot(): bool
     {
-        $this->prefetch();
+        $this->bootMetadata();
+
+        if (! $this->isMultisite()) {
+            $this->prefetch();
+        }
 
         return true;
     }
@@ -371,7 +376,10 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
     }
 
     /**
-     * Removes all items from Redis, the runtime cache and gathered prefetches.
+     * Removes all items from Redis and the runtime cache.
+     *
+     * Will write metadata after flushing.
+     * Will dump+restore analytics when enabled.
      *
      * @return bool
      */
@@ -379,25 +387,27 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
     {
         $this->flush_runtime();
 
-        if ($this->isMultisite && $this->shouldFlushBlog()) {
-            return $this->flushBlog();
-        }
-
         if ($this->config->analytics->enabled && $this->config->analytics->persist) {
-            return $this->flushWithoutAnalytics();
+            $measurements = $this->dumpMeasurements();
         }
 
         try {
             $result = $this->connection->flushdb();
 
             $this->metrics->flush();
-
-            return $result;
+            $this->writeMetadata();
         } catch (Throwable $exception) {
+            $result = false;
+
             $this->error($exception);
         }
 
-        return false;
+        if (! empty($measurements)) {
+            $this->restoreMeasurements($measurements);
+            unset($measurements);
+        }
+
+        return $result;
     }
 
     /**
@@ -593,6 +603,10 @@ class PhpRedisObjectCache extends ObjectCache implements MeasuredObjectCacheInte
             $data = $this->connection->mget($payload);
 
             $this->metrics->read($group);
+
+            if ($data === false) {
+                $data = array_fill_keys(array_keys($payload), false);
+            }
 
             foreach ($remainingKeys as $index => $key) {
                 $values[$key] = $data[$index];

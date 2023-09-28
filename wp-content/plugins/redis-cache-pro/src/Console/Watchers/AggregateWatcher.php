@@ -457,12 +457,12 @@ class AggregateWatcher extends Notify
     /**
      * @return int|void
      */
-    protected function getRelayMemoryActive()
+    protected function getRelayMemoryUsed()
     {
         if ($this->usingRelay) {
-            $memoryActive = $this->measurements->latest('relay->memoryActive');
+            $memoryUsed = $this->measurements->latest('relay->memoryUsed');
 
-            return is_null($memoryActive) ? null : (int) round($memoryActive);
+            return is_null($memoryUsed) ? null : (int) round($memoryUsed);
         }
     }
 

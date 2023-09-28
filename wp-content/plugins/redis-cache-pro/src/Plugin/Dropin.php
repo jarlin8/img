@@ -86,7 +86,16 @@ trait Dropin
          * @param  bool  $autoflush  Whether to auto-flush the object cache. Default true.
          */
         if ((bool) apply_filters('objectcache_autoflush', true)) {
-            $this->flush();
+            $this->resetCache();
+        }
+
+        /**
+         * Filters whether to delete transients from the database after enabling the drop-in.
+         *
+         * @param  bool  $delete  Whether to delete the transients. Default true.
+         */
+        if ((bool) apply_filters('objectcache_cleanup_transients', true)) {
+            add_action('shutdown', [$this, 'deleteTransients']);
         }
 
         return $result;
@@ -123,7 +132,7 @@ trait Dropin
          * @param  bool  $autoflush  Whether to auto-flush the object cache. Default true.
          */
         if ((bool) apply_filters('objectcache_autoflush', true)) {
-            $this->flush();
+            $this->resetCache();
         }
 
         return $result;

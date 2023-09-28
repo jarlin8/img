@@ -26,6 +26,41 @@ defined( 'ABSPATH' ) || exit;
 class Import_Row {
 
 	/**
+	 * Row data.
+	 *
+	 * @var array
+	 */
+	private $data = [];
+
+	/**
+	 * Import settings.
+	 *
+	 * @var array
+	 */
+	private $settings = [];
+
+	/**
+	 * Columns.
+	 *
+	 * @var array
+	 */
+	private $columns = [];
+
+	/**
+	 * Redirection.
+	 *
+	 * @var array
+	 */
+	private $redirection = [];
+
+	/**
+	 * Object URI.
+	 *
+	 * @var string
+	 */
+	private $object_uri = '';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param array $data     Row data.
@@ -505,7 +540,6 @@ class Import_Row {
 				'header_code' => $this->redirect_type,
 			]
 		);
-		$redirection->set_nocache( true );
 		$redirection->save();
 	}
 

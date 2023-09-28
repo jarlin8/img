@@ -70,6 +70,7 @@ class Tools extends Page
         $this->addLatencyWidget();
         $this->addGroupsWidget();
         $this->addFlushLogWidget();
+        $this->addGroupFlushLogWidget();
 
         $this->enqueueScript();
         $this->enqueueAssets();
@@ -159,6 +160,24 @@ class Tools extends Page
     }
 
     /**
+     * Adds the "Flush Group Log" widget.
+     *
+     * @return void
+     */
+    protected function addGroupFlushLogWidget()
+    {
+        add_meta_box(
+            'objectcache_groupflushlog',
+            'Group flush log',
+            function () {
+                require __DIR__ . '/../templates/widgets/tools/flushlog-groups.phtml';
+            },
+            $this->plugin->screenId(),
+            'normal'
+        );
+    }
+
+    /**
      * Returns the caller name for given flush-log backtrace.
      *
      * @param  string  $backtrace
@@ -178,10 +197,6 @@ class Tools extends Page
             $backtrace
         );
 
-        if (strpos($caller, 'Plugin->deactivate')) {
-            return 'Plugin deactivated';
-        }
-
         if (strpos($caller, 'Plugin->handleWidgetActions')) {
             return 'Dashboard widget';
         }
@@ -192,6 +207,10 @@ class Tools extends Page
 
         if (strpos($caller, 'Plugin->disableDropin')) {
             return 'Drop-in disabled';
+        }
+
+        if (strpos($caller, '->bootMetadata')) {
+            return 'Integrity protection';
         }
 
         if ($caller == 'Cache_Command->flush') {
@@ -206,15 +225,27 @@ class Tools extends Page
             return 'wp redis disable';
         }
 
+        if (strpos($caller, 'Commands->flushGroup')) {
+            return 'wp redis flush-group';
+        }
+
         if (strpos($caller, 'Commands->flush')) {
             return 'wp redis flush';
+        }
+
+        if (strpos($caller, 'Commands->reset')) {
+            return 'wp redis reset';
+        }
+
+        if (strpos($caller, 'Plugin\Api\\')) {
+            return 'REST API';
         }
 
         return $caller;
     }
 
     /**
-     * Returns a clean, formatted backtrace for flush-log entry.
+     * Returns a clean, formatted backtrace for a flushlog entry.
      *
      * @param  string  $backtrace
      * @return string
@@ -223,7 +254,15 @@ class Tools extends Page
     {
         $frames = array_reverse(explode(', ', $backtrace));
 
-        $frames = array_filter($frames, static function ($frame) {
+        $stack = array_filter($frames, static function ($frame) {
+            return ! preg_match('/^(include|require)(_once)?\(/', $frame);
+        });
+
+        if (empty($stack)) {
+            $stack = $frames;
+        }
+
+        $stack = array_filter($stack, static function ($frame) {
             return ! in_array($frame, [
                 'call_user_func',
                 'call_user_func_array',
@@ -233,11 +272,14 @@ class Tools extends Page
                 'WP_Hook->apply_filters_ref_array',
                 'RedisCachePro\Plugin->flush',
                 'RedisCachePro\Plugin->maybeLogFlush',
+                'RedisCachePro\Plugin->maybeLogGroupFlush',
                 "apply_filters('pre_objectcache_flush')",
+                "apply_filters('pre_objectcache_flush_group')",
                 'wp_cache_flush',
-            ]) && ! preg_match('/^(include|require)(_once)?\(/', $frame);
+                'wp_cache_flush_group',
+            ]);
         });
 
-        return implode(', ', array_slice($frames, 0, 5));
+        return implode(', ', array_slice($stack, 0, 5));
     }
 }

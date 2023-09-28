@@ -27,7 +27,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 			add_filter( 'sm_default_dashboard_model',array(&$this,'default_user_dashboard_model') );
 			add_filter( 'sm_beta_load_default_data_model',array(&$this,'load_default_data_model') );
-			add_filter( 'sm_beta_default_inline_update', function() { return false; } );
+			add_filter( 'sm_default_inline_update', function() { return false; } );
 			add_action( 'sm_inline_update_post',array(&$this,'user_inline_update'), 10, 2 );
 			add_filter( 'sm_data_model',array(&$this,'generate_data_model'), 10, 2 );
 			add_filter( 'sm_deleter', array( &$this, 'user_deleter' ), 10, 2 );
@@ -208,11 +208,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			$results_usermeta_col = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT(meta_key) as meta_key,
 																meta_value
 															FROM {$wpdb->usermeta}
-															WHERE meta_key NOT IN ( '". implode("','", $this->usermeta_ignored_cols) ."' )
+															WHERE meta_key NOT LIKE 'sa_sm_%' AND meta_key NOT LIKE 'free-%' AND meta_key NOT LIKE '_oembed%' AND meta_key NOT IN ( '". implode("','", $this->usermeta_ignored_cols) ."' )
 																AND 1=%d
 															GROUP BY meta_key", 1), 'ARRAY_A');
 			$um_num_rows = $wpdb->num_rows;
-
 			if ($um_num_rows > 0) {
 
 				$meta_keys = array();
@@ -1081,12 +1080,13 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 	    			$index++;
 	    		}
-
-	    		if( !empty( $customer_ids ) && ( defined('SMPRO') && true === SMPRO ) ) {
-
-	    			$cust_ids = array_keys( $customer_ids );
-
-		    		$customers_order_meta = $wpdb->get_results( $wpdb->prepare( "SELECT pm.meta_value as cust_id,
+				
+	    		if( ! empty( $customer_ids ) && ( defined('SMPRO') && true === SMPRO ) ) {
+					$customers_order_meta = array();
+					if ( ! empty( Smart_Manager::$sm_is_woo79 ) && ! empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) ) {
+						$customers_order_meta = $this->sm_get_custom_order_data( $customers_order_meta, 'customers_order_meta', array_keys( $customer_ids ) );
+					} else {
+						$customers_order_meta = $wpdb->get_results( $wpdb->prepare( "SELECT pm.meta_value as cust_id,
 		    																		GROUP_CONCAT(distinct pm.post_ID 
 									 				                                    ORDER BY p.post_date DESC SEPARATOR ',' ) AS all_id,
 												                                    date_format(max(p.post_date), '%%Y-%%m-%%d, %%r') AS date,
@@ -1097,13 +1097,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 												                                    		AND p.post_type = 'shop_order'
 												                                    		AND p.post_status IN ('wc-completed','wc-processing')
 												                                    		AND pm.meta_key = %s)
-												                           WHERE pm.meta_value IN (" . implode(",",$cust_ids) . ")                           
+												                           WHERE pm.meta_value IN (" . implode( ",", array_keys( $customer_ids ) ) . ")                           
 												                           GROUP BY pm.meta_value
 												                           ORDER BY date", '_customer_user' ), 'ARRAY_A' );
+					}
 
-
-
-		    		if( !empty( $customers_order_meta ) ) {
+		    		if( ! empty( $customers_order_meta ) ) {
 
 		    			$order_ids = array();
 		    			$max_oid = array();
@@ -1124,21 +1123,17 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		    			}
 
 		    			if( !empty( $order_ids ) ) {
-
-		    				$cust_order_ids = array_keys( $order_ids );
-
-		    				$query =  $wpdb->prepare( "SELECT post_id AS order_id,
+		    				$customer_totals = array();
+							if ( ! empty( Smart_Manager::$sm_is_woo79 ) && ! empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) ) {
+								$customer_totals = $this->sm_get_custom_order_data( $customer_totals, 'customer_totals', array_keys( $order_ids ) );
+							} else {
+								$customer_totals = $wpdb->get_results( $wpdb->prepare( "SELECT post_id AS order_id,
 	    																				meta_value AS order_total
 		    																		FROM {$wpdb->prefix}postmeta
 		    																		WHERE meta_key = %s
-		    																			AND post_id IN ( ". implode( ",", $cust_order_ids ) ." )", '_order_total' );
-
-		    				$customer_totals = $wpdb->get_results( $wpdb->prepare( "SELECT post_id AS order_id,
-	    																				meta_value AS order_total
-		    																		FROM {$wpdb->prefix}postmeta
-		    																		WHERE meta_key = %s
-		    																			AND post_id IN ( ". implode( ",", $cust_order_ids ) ." )", '_order_total' ), 'ARRAY_A' );
-
+		    																			AND post_id IN ( ". implode( ",", array_keys( $order_ids ) ) ." )", '_order_total' ), 'ARRAY_A' );
+							}
+		    				
 		    				if( !empty( $customer_totals ) ) {
 		    					foreach( $customer_totals as $customer_total ) {
 		    						$order_id = ( !empty( $customer_total['order_id'] ) ) ? intval( $customer_total['order_id'] ) : '';
@@ -1513,5 +1508,42 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			}
 
 		}
+
+		/**
+	     * Function for getting custom order data.
+	     *
+	     * @param array $data customers order meta data or customers order total.
+	     * @param string $key customer order meta or order total data.
+	     * @param array $ids array of customer ids.
+	     * @return array fetched data.
+	     */
+	    public function sm_get_custom_order_data( $data = array(), $key = '', $ids = array() ) {
+			global $wpdb;
+			if ( empty( Smart_Manager::$sm_is_woo79 ) || empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) || ( empty( $key ) ) || ( empty( $ids ) )  || ( ! is_array( $ids ) ) ) {
+				return $data;
+			}
+
+			switch( $key ) {
+				case 'customers_order_meta':
+					return $wpdb->get_results( 
+						$wpdb->prepare(
+						"SELECT customer_id as cust_id, 
+								GROUP_CONCAT(ID ORDER BY date_created_gmt DESC SEPARATOR ',' ) AS all_id, 
+								date_format( max( date_created_gmt ), '%%Y-%%m-%%d, %%r' ) AS date, 
+								count( ID ) as count 
+							FROM {$wpdb->prefix}wc_orders 
+							WHERE customer_id IN (" . implode( ",", $ids ) . ") 
+								AND type = 'shop_order' 
+								AND status IN ('wc-completed','wc-processing') 
+							GROUP BY customer_id 
+							ORDER BY date" 
+						), 'ARRAY_A' );
+				case 'customer_totals':
+				return $wpdb->get_results( "SELECT id AS order_id, 
+												total_amount AS order_total 
+											FROM {$wpdb->prefix}wc_orders 
+										WHERE ID IN ( ". implode( ",", $ids ) ." )", 'ARRAY_A' );
+	      	}
+	    }
 	}
 }

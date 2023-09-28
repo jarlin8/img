@@ -32,12 +32,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 		 */
 		protected static $_instance = null;
 		/**
-		 * Instance of the class
-		 *
-		 * @param string $dashboard_key Current dashboard name.
-		 * @return object
-		 */
-		/**
 		 * Advanced search table types
 		 *
 		 * @var array
@@ -47,6 +41,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 				'sm_tasks' => 'id'
 			) 
 		);
+		/**
+		 * Instance of the class
+		 *
+		 * @param string $dashboard_key Current dashboard name.
+		 * @return object
+		 */
 		public static function instance( $dashboard_key ) {
 			if ( is_null( self::$_instance ) ) {
 				self::$_instance = new self( $dashboard_key );
@@ -70,7 +70,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 			self::actions();
 			$this->dashboard_key = $dashboard_key;
 			global $current_user;
-			$this->store_col_model_transient_option_nm = 'sa_sm_' . $current_user->user_email . '_' . $this->dashboard_key . '_tasks';
+			$this->store_col_model_transient_option_nm = 'sa_sm_' . $this->dashboard_key . '_tasks';
 			add_filter( 'sm_default_dashboard_model', array( &$this, 'generate_dashboard_model' ) );
 			add_filter( 'sm_data_model', array( &$this, 'generate_data_model' ), 10, 2 );
 			add_filter(
@@ -110,6 +110,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 			$results   = $wpdb->get_results( "SHOW COLUMNS FROM {$wpdb->prefix}sm_tasks", 'ARRAY_A' );
 			$num_rows  = $wpdb->num_rows;
 			$enum_fields = array( 'status', 'type' );
+			$display_names = array(
+				'id' => __( 'ID', 'smart-manager-for-wp-e-commerce' )
+			);
 			if ( $num_rows > 0 ) {
 				foreach ( $results as $result ) {
 					$field_nm = ( ! empty( $result['Field'] ) ) ? $result['Field'] : '';
@@ -136,9 +139,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 						}
 					} elseif ( 'actions' === $field_nm ) {
 						$args['editor'] = 'sm.serialized';
-					} if ( 'record_count' === $field_nm ) {
+					} elseif ( 'record_count' === $field_nm ) {
 						$args['width'] = 100;
 					}
+
+					if( ! empty( $display_names[$field_nm] ) ){
+						$args['name'] = $display_names[$field_nm];
+					}
+
 					$col_model [] = $this->get_default_column_model( $args );
 				}
 			}
@@ -483,7 +491,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Task' ) ) {
 		 * @return string where query
 		 */
 		public static function undo_all_task_ids_where_clause( $where = '' ) {
-			return ( ! empty( $where ) && ( false === strpos( $where, 'WHERE' ) ) ) ? 'WHERE 1=1 ' : $where;
+			return ( ! empty( $where ) && ( false === strpos( $where, 'WHERE' ) ) ) ? 'WHERE 1=1 ' : str_replace( "AND post_status != 'trash'", '', $where );
 		}
 
 		/**

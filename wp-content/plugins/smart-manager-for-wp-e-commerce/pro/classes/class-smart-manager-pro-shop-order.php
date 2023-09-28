@@ -28,6 +28,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			add_filter( 'sm_search_table_types', array( &$this, 'orders_search_table_types' ), 12, 1 ); // should be kept before calling the parent class constructor
 
 			parent::__construct($dashboard_key);
+			self::actions();
 
 			$this->plugin_path  = untrailingslashit( plugin_dir_path( __FILE__ ) );
 			$this->custom_product_search_cols = array( 
@@ -55,11 +56,19 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			add_filter( 'sm_search_woocommerce_order_items_cond', array( &$this, 'orders_advanced_search_flat_table_cond' ), 12, 2 );
 
 			add_action( 'sm_advanced_search_processing_complete', array( &$this, 'orders_advanced_search_post_processing' ), 12, 1 );
+
+			if ( ! empty( Smart_Manager::$sm_is_woo79 ) ) {
+				add_filter( 'sm_beta_background_entire_store_ids_query', array( $this,'get_entire_store_ids_query' ), 12, 1 );
+			}
 		}
 
 		public static function actions() {
+			add_filter( 'sm_beta_batch_update_prev_value',  'Smart_Manager_Shop_Order::get_previous_value', 10, 2 );
+
 			add_filter( 'sm_default_batch_update_db_updates',  __CLASS__. '::default_batch_update_db_updates', 10, 2 );
 			add_filter( 'sm_post_batch_update_db_updates', __CLASS__. '::post_batch_update_db_updates', 10, 2 );
+			add_filter( 'sm_pro_default_process_delete_records', function() { return false; } );
+			add_filter( 'sm_pro_default_process_delete_records_result', 'Smart_Manager_Shop_Order::process_delete', 12, 3 );
 		}
 
 		public function __call( $function_name, $arguments = array() ) {
@@ -84,7 +93,28 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 		}
 
 		public static function post_batch_update_db_updates( $update_flag = false, $args = array() ) {
-			if( ! empty( $args['id'] ) && 'posts' === $args['table_nm'] && 'post_status' === $args['col_nm'] && ! empty( $args['value'] ) && class_exists( 'WC_Order' ) ){
+			if ( empty( $args ) || empty( $args['id'] ) ) return $update_flag;
+			$args['order_obj'] = wc_get_order( $args['id'] );
+			if ( ! empty( Smart_Manager::$sm_is_woo79 ) ) {
+				if( ! empty( $args['curr_obj_getter_func'] ) && ! empty( $args['curr_obj_class_nm'] ) && function_exists( $args['curr_obj_getter_func'] ) && class_exists( $args['curr_obj_class_nm'] ) ) {
+					$args['order_obj'] = call_user_func( $args['curr_obj_getter_func'], $args['id'] );
+				}
+
+				//Code for handling 'copy_from' and 'copy_from_field' action
+				if( ! empty( $args ) && ! empty( $args['operator'] ) && $args['copy_from_operators'] && in_array( $args['operator'], $args['copy_from_operators'] ) && ! empty( $args['selected_table_name'] ) && ! empty( $args['selected_column_name'] ) && ! empty( $args['selected_value'] ) && is_callable( array( 'Smart_Manager_Shop_Order', 'get_previous_value') ) ) {
+					$args['value'] = Smart_Manager_Shop_Order::get_previous_value(
+							( ! empty( $args['prev_val'] ) ) ? $args['prev_val'] : '',
+							array(
+								'col_nm' => $args['selected_column_name'],
+								'table_nm' => $args['selected_table_name'],
+								'id' => intval( $args['selected_value'] ),
+								'order_obj' => wc_get_order( intval( $args['selected_value'] ) )
+							)
+						);
+				}
+				return ( is_callable( array( 'Smart_Manager_Shop_Order', 'update_order_data') ) ) ? Smart_Manager_Shop_Order::update_order_data( $args ) : $update_flag; 
+			}
+			if( 'posts' === $args['table_nm'] && 'post_status' === $args['col_nm'] && ! empty( $args['value'] ) && class_exists( 'WC_Order' ) ){
 				$order = new WC_Order( $args['id'] );
 				return $order->update_status( $args['value'], '', true );
 			}
@@ -361,6 +391,71 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			if( !empty( $this->advanced_search_option_name ) && !empty( get_option( $this->advanced_search_option_name ) ) ){
 				delete_option( $this->advanced_search_option_name );
 			}
+		}
+
+		/**
+		 * AJAX handler function for copy from operator for bulk edit.
+		 *
+		 * @param array $args bulk edit params.
+		 * @return string|array json encoded string or array of values.
+		 */
+		public function get_batch_update_copy_from_record_ids( $args = array() ) {
+			return ( is_callable( array( 'Smart_Manager_Pro_Shop_Order', 'get_copy_from_record_ids' ) ) ) ? Smart_Manager_Pro_Shop_Order::get_copy_from_record_ids( array_merge( array( 'curr_obj' => $this, 'type' => 'shop_order', 'field_title_prefix' => 'Order' ), $args ) ) : '';
+		}
+
+		/**
+		 * Function to get values for copy from operator for bulk edit.
+		 *
+		 * @param array $args function arguments.
+		 * @return string|array json encoded string or array of values.
+		 */
+		public static function get_copy_from_record_ids( $args = array() ) {
+
+			if ( empty( Smart_Manager::$sm_is_woo79 ) ) {
+				parent::get_batch_update_copy_from_record_ids( $args );
+				return;
+			}
+
+			$curr_obj = ( ! empty( $args ) && ! empty( $args['curr_obj'] ) ) ? $args['curr_obj'] : null;
+			if( empty( $curr_obj ) || empty( $args['type'] ) || empty( $args['field_title_prefix'] ) ){
+				return;
+			}
+			
+			global $wpdb;
+			$data = array();
+
+			$is_ajax = ( isset( $args['is_ajax'] )  ) ? $args['is_ajax'] : true;
+			$search_term = ( ! empty( $curr_obj->req_params['search_term'] ) ) ? $curr_obj->req_params['search_term'] : ( ( ! empty( $args['search_term'] ) ) ? $args['search_term'] : '' );
+			$select = apply_filters( 'sm_batch_update_copy_from_ids_select', "SELECT id AS id, CONCAT('". $args['field_title_prefix'] ." #', id) AS title", $args );
+			$search_cond = ( ! empty( $search_term ) ) ? " AND ( id LIKE '%".$search_term."%' OR status LIKE '%".$search_term."%' OR billing_email LIKE '%".$search_term."%' ) " : '';
+			$search_cond_ids = ( !empty( $args['search_ids'] ) ) ? " AND id IN ( ". implode(",", $args['search_ids']) ." ) " : '';
+
+			$query = $select . " FROM {$wpdb->prefix}wc_orders WHERE status != 'trash' ". $search_cond ." ". $search_cond_ids ." AND type = '" . $args['type'] . "'";
+			$results = $wpdb->get_results( $query, 'ARRAY_A' );
+
+			if( count( $results ) > 0 ) {
+				foreach( $results as $result ) {
+					$data[ $result['id'] ] = trim($result['title']);
+				}
+			}
+
+			$data = apply_filters( 'sm_batch_update_copy_from_ids', $data );
+			if( $is_ajax ){
+				wp_send_json( $data );
+			} else {
+				return $data;
+			}
+		}
+
+		/**
+		 * Function for modifying query for getting ids in case of 'entire store' option.
+		 *
+		 * @param string $query query for fetching the ids when entire store option is selected.
+		 * @return string updated query for fetching the ids when entire store option is selected.
+		 */
+		public function get_entire_store_ids_query( $query = '' ) {
+			global $wpdb;
+			return $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}wc_orders WHERE status != 'trash' AND type = %s", 'shop_order' );
 		}
 	}
 }

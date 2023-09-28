@@ -5,10 +5,10 @@ Author URI: https://www.storeapps.org/woocommerce-plugins/
 Plugin URI: https://www.storeapps.org/product/smart-manager/?utm_source=wprepo&utm_medium=web&utm_campaign=smwp_readme
 Tags: woocommerce advanced bulk edit, wordpress bulk edit, woocommerce inventory management, woocommerce stock manager, woocommerce product manager, woocommerce order management, wp sheet editor, bulk stock management, wordpress inventory manager, woocommerce bulk edit, bulk edit, stock management, products editor, woocommerce, woocommerce bulk price change, woocommerce manage stock, woocommerce bulk edit products, woocommerce, store manager, bulk update, inline edit, manage variations, bulk edit, coupons, shop manager, batch update, wp ecommerce, productivity, products, variations, orders, customers, manager, pro, manager pro, pro manager, extension, premium, free, woocommerce customer management, inventory management
 Requires at least: 4.8
-Tested up to: 6.2
+Tested up to: 6.3.1
 Requires PHP: 5.6
-Stable tag: 8.3.0
-License: GPLv3 
+Stable tag: 8.17.0
+License: GPLv2
 
 The #1 tool for WordPress and WooCommerce advanced bulk edit, inventory management, stock management, export, delete, duplicate...using an Excel-like sheet editor.
 
@@ -73,6 +73,7 @@ https://www.youtube.com/watch?v=20iodFpP5ow
 - Manage, view, filter and edit custom fields of top WooCommerce & WordPress plugins. Smart Manager is compatible with these plugins. It automatically recognizes all custom fields added by other plugins.
 -- [Advanced Custom Fields (ACF)](https://wordpress.org/plugins/advanced-custom-fields/)
 -- [WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/?aff=5475)
+-- [Affiliate For WooCommerce](https://woocommerce.com/products/affiliate-for-woocommerce/)
 -- [WooCommerce Smart Coupons](https://woocommerce.com/products/smart-coupons/)
 -- [WooCommerce Memberships](https://woocommerce.com/products/woocommerce-memberships/?aff=5475)
 -- [WooCommerce Bookings](https://woocommerce.com/products/woocommerce-bookings/?aff=5475)
@@ -81,6 +82,7 @@ https://www.youtube.com/watch?v=20iodFpP5ow
 -- [Min/Max Quantities](https://woocommerce.com/products/minmax-quantities/?aff=5475)
 -- [Min and Max Quantity for WooCommerce](https://wordpress.org/plugins/minmax-quantity-for-woocommerce/)
 -- [Woocommerce Minimum and Maximum Quantity](https://wordpress.org/plugins/woo-min-max-quantity-limit/)
+-- [Customer Email Verification](https://woocommerce.com/products/customer-email-verification/?aff=5475)
 -- [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/)
 -- [WordPress SEO Plugin – Rank Math](https://wordpress.org/plugins/seo-by-rank-math/)
 -- [Germanized for WooCommerce](https://wordpress.org/plugins/woocommerce-germanized/)
@@ -265,6 +267,133 @@ It also gives the warm feeling of supporting further development of the plugin.
 2. Bulk edit / Batch update (only in Pro version)
 
 == Changelog ==
+= 8.17.0 (22.09.2023) =
+* New: WooCommerce 8.1.1 compatible
+* Fix: WooCommerce Products dashboard fails to load data in some cases
+* Fix: Confirm dialog won't close after successful deletion of records for any dashboards (Lite)
+* Fix: Custom views based on 'WooCommerce Products' post type fails to load data in some cases (Pro)
+* Update: POT file
+
+= 8.16.0 (15.09.2023) =
+* New: WooCommerce 8.1.0 compatible
+* New: Added compatibility support for [Affiliate For WooCommerce](https://woocommerce.com/products/affiliate-for-woocommerce/) (Pro)
+* Fix: WooCommerce Orders 'Delete' functionality not working for non-HPOS stores
+* Fix: Duplicated records added to grid after updating value for any paginated records using inline edit
+* Fix: Unable to save edited records after successful inline edit
+* Fix: Duplicated records added to grid after updating value for any paginated records using bulk edit (Pro)
+* Update: Support for managing taxonomy fields in Users dashboard (Pro)
+* Update: POT file
+
+= 8.15.0 (07.09.2023) =
+* Fix: Adding multiple custom attributes using inline edit not working properly in WooCommerce Products dashboard
+* Fix: WooCommerce Orders dashboard 'Print Invoice' functionality not working for all / all filtered records (Pro)
+* Update: Exclude internal Smart Manager state management meta keys (like 'sa_sm_%') from loading in Users dashboard (Pro)
+* Update: Code improvements for WooCommerce Orders dashboard 'Print Invoice' functionality (Pro)
+* Update: POT file
+
+= 8.14.0 (01.09.2023) =
+* New: WooCommerce 8.0.3 compatible
+* New: WordPress 6.3.1 compatible
+* Fix: Duplicate dashboard names for some of the post types/taxonomies
+* Fix: Handling for blocking search functionality in Custom Views (only for ones created with search conditions) created for 'WooCommerce Orders' or any 'Taxonomy' dashboards (Pro)
+* Fix: Display notices when editing 'Simple Search' text for Custom Views (only for ones created with search conditions) (Pro)
+* Fix: Display notices when trying to switch between 'Advanced Search' and 'Simple Search' for Custom Views (only for ones created with search conditions) (Pro)
+* Fix: Empty 'Quantity' column in printed WooCommerce Order invoices (Pro)
+* Fix: Inline edit functionality not working for 'Product categories' and 'Exclude product categories' columns in Coupons dashboard (Pro)
+* Fix: Data for 'Product categories' and 'Exclude product categories' columns are not fetching correctly in Coupons dashboard (Pro)
+* Fix: Background process notification message displaying for 'Export CSV' functionality in case of any background process running (Pro)
+* Update: Additional links in plugin page for '5-star' and 'Go Pro' (in case of lite version installed)
+* Update: Proper group titles for dashboard combo box
+* Update: POT file
+
+= 8.13.0 (21.08.2023) =
+* New: Declare Smart Manager compatible with High-Performance Order Storage (HPOS)
+* New: WooCommerce 8.0.2 compatible
+* New: WordPress 6.3.0 compatible
+* New: WooCommerce Subscriptions 5.4.0 compatible
+* Fix: 'General Settings' and 'Docs' Icons 'on Focus' CSS issue
+* Fix: Advanced search with 'is not' operator not giving correct results for WooCommerce Products 'Attributes' field
+* Fix: WooCommerce Products 'Sale Price' field getting set to '0' when updating using Bulk Edit (Pro)
+* Fix: Undo functionality not working in some cases (Pro)
+* Fix: Bulk Edit and other functionalities not working properly for dashboards like WooCommerce Orders, Coupons, etc. (Pro)
+* Fix: Delete all tasks functionality not working in some cases (Pro)
+* Fix: Bulk Edit and Delete functionalities not working properly for WooCommerce Subscriptions in some cases (Pro)
+* Update: POT file
+
+= 8.12.0 (15.07.2023) =
+* New: Exporting categories or other taxonomies in a properly formatted manner that is compatible with the WooCommerce Product Import CSV suite (Pro)
+* Fix: In certain cases, the grid becomes blank when attempting to sort using any taxonomy columns
+* Fix: Extra space added after comma in exported CSV when using comma as decimal separator for numeric columns (Pro)
+* Dev: Added 'sm_decimal_separator_for_export' filter for customizing decimal separator in Export CSV for numeric columns (Pro)
+* Update: POT file
+
+= 8.11.0 (07.07.2023) =
+* New: Setting for enabling/disabling date picker for date/datetime columns
+* Fix: WooCommerce product variations title not displaying attribute list when data is sorted in the grid
+* Fix: 'Date', 'DateTime' and 'Time' columns showing incorrect placeholder when using inline edit in some cases
+* Fix: 'Export CSV' not working in Safari browser (Pro)
+* Fix: Update the dashboard state for custom views only when the columns are shown/hidden by the view's author. (Pro)
+* Fix: Functionalities like 'Bulk Edit', 'Export CSV', etc. do not consider the filtered results when switching between simple and advanced search. (Pro)
+* Update: Replace the option 'Entire Store' with 'All items in search result' for the 'Export CSV', 'Duplicate Records', and 'Delete Records' functionalities when filtered data is present. (Pro) 
+* Update: POT file
+
+= 8.10.0 (22.06.2023) =
+* New: Tooltip for column headers
+* New: Compatibility with [Customer Email Verification](https://woocommerce.com/products/customer-email-verification/?aff=5475)
+* Fix: Import CSV functionality not working in some cases
+* Fix: Settings menu not clickable in some cases
+* Fix: Progress modal getting hidden immediately when trying to use Undo or Delete Tasks functionality (Pro)
+* Update: UI/UX improvements
+* Update: POT file
+
+= 8.9.0 (17.06.2023) =
+* New: Dedicated & improved settings UI
+* Fix: Dashboard refreshing to first page when inline editing Product Gallery Images on non-first Pages
+* Fix: Unable to edit Product Gallery Images when editing after saving changes
+* Update: POT file
+
+= 8.8.0 (09.06.2023) =
+* New: Import CSV functionality for WooCommerce Products
+* New: Show Smart Manager button in WordPress Admin Bar
+* Fix: Dashboard not loading in some cases due to 'sprintf already defined' JavaScript error
+* Fix: Progress modal getting hidden immediately when trying to use Bulk Edit, Duplicate Records & Delete Records functionality (Pro)
+* Fix: State management & other minor improvements for 'Tasks' dashboards (Pro)
+* Update: Hidden option setting for controlling display of 'Manage with Smart Manager' button on post type dashboards
+* Update: POT file
+
+= 8.7.0 (02.06.2023) =
+* Fix: WooCommerce Products 'Sale price dates from' & 'Sale price dates to' fields not saving timestamp in UTC timezone when using Inline edit
+* Fix: WooCommerce Products 'Sale price dates from' & 'Sale price dates to' fields not saving timestamp in UTC timezone when using Bulk edit (Pro)
+* Fix: Advanced Search not working for 'timestamp' type columns like 'Sale price dates from', 'Sale price dates to', etc.
+* Fix: Display notices when editing 'Advanced Search' conditions for Custom Views (only for ones created with search conditions) (Pro)
+* Fix: Do not update state when switching from 'Custom Views' dashboard (Pro)
+* Update: Display dashboard count in each group in dashboard combo-box
+* Update: POT file
+
+= 8.6.0 (25.05.2023) =
+* New: WordPress 6.2.2 compatible
+* Fix: Inline edit functionality not working in Firefox browser
+* Fix: Modals and Notifications not appearing in some cases in Firefox browser
+* Fix: Column sorted arrow icon not visible in cases when column name is long
+* Fix: Few of the JavaScript files loading more than once on dashboard load
+* Fix: Incorrect version for enqueued JavaScript & CSS files
+* Fix: JavaScript errors in console in some cases when using any plugin functionality
+* Update: POT file
+
+= 8.5.0 (18.05.2023) =
+* New: WordPress 6.2.1 compatible
+* New: Option 'sm_use_number_field_for_numeric_cols' to enable/disable usage of HTML number input field for numeric columns in the grid
+* New: Keyboard shortcuts for buttons in all functionalities (like advanced search, bulk edit, etc.) using modal dialogs (Pro)
+* Update: UI/UX improvements
+* Update: POT file
+
+= 8.4.0 (11.05.2023) =
+* New: 'any of' and 'not any of' advanced search operators for text fields (Pro)
+* New: Option 'sm_update_trash_records' to consider or not consider 'Trash' records when updating 'Entire Store' using Bulk Edit/Duplicate Records/Delete Records functionality (Pro)
+* Fix: PHP Warnings when updating some of the WooCommerce Product fields using Bulk Edit (Pro) 
+* Update: UI/UX improvements
+* Update: POT file
+
 = 8.3.0 (04.05.2023) =
 * New: Rename column headers (Pro)
 * Fix: Inline edit not working in some cases on non-first pages post saving
@@ -784,6 +913,48 @@ It also gives the warm feeling of supporting further development of the plugin.
 [See changelog for all versions](https://www.storeapps.org/docs/sm-changelog/?utm_source=wprepo&utm_medium=web&utm_campaign=smwp_readme).
 
 == Upgrade Notice ==
+
+= 8.17.0 =
+WooCommerce 8.1.1 compatible, Fixes related to WooCommerce Products dashboard fails to load data in some cases, Confirm dialog won't close after successful deletion of records for any dashboards (Lite), Custom views based on 'WooCommerce Products' post type fails to load data in some cases (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.16.0 =
+WooCommerce 8.1.0 compatible, Added compatibility support for [Affiliate For WooCommerce](https://woocommerce.com/products/affiliate-for-woocommerce/) (Pro), Fixes related to WooCommerce Orders 'Delete' functionality not working for non-HPOS stores, Duplicated records added to grid after updating value for any paginated records using inline edit, Unable to save edited records after successful inline edit, Duplicated records added to grid after updating value for any paginated records using bulk edit (Pro), Added support for managing taxonomy fields in Users dashboard (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.15.0 =
+Fixes related to Adding multiple custom attributes using inline edit not working properly in WooCommerce Products dashboard, WooCommerce Orders dashboard 'Print Invoice' functionality not working for all / all filtered records (Pro), Updates related to Exclude internal Smart Manager state management meta keys (like 'sa_sm_%') from loading in Users dashboard (Pro), Code improvements for WooCommerce Orders dashboard 'Print Invoice' functionality (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.14.0 =
+WooCommerce 8.0.3 compatible, WordPress 6.3.1 compatible, Updates related to additional links in plugin page for '5-star' and 'Go Pro' (in case of lite version installed), Proper group titles for dashboard combo box, Fixes related to Duplicate dashboard names for some of the post types/taxonomies, Handling for blocking search functionality in Custom Views (only for ones created with search conditions) created for 'WooCommerce Orders' or any 'Taxonomy' dashboards (Pro), Display notices when editing 'Simple Search' text for Custom Views (only for ones created with search conditions) (Pro), Display notices when trying to switch between 'Advanced Search' and 'Simple Search' for Custom Views (only for ones created with search conditions) (Pro), Empty 'Quantity' column in printed WooCommerce Order invoices (Pro), Inline edit functionality not working for 'Product categories' and 'Exclude product categories' columns in Coupons dashboard (Pro), Data for 'Product categories' and 'Exclude product categories' columns are not fetching correctly in Coupons dashboard (Pro), Background process notification message displaying for 'Export CSV' functionality in case of any background process running (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.13.0 =
+Declare Smart Manager compatible with High-Performance Order Storage (HPOS), WooCommerce 8.0.2 compatible, WordPress 6.3.0 compatible, WooCommerce Subscriptions 5.4.0 compatible, Fixes related to 'General Settings' and 'Docs' Icons 'on Focus' CSS issue, Advanced search with 'is not' operator not giving correct results for WooCommerce Products 'Attributes' field, WooCommerce Products 'Sale Price' field getting set to '0' when updating using Bulk Edit (Pro), Delete all tasks functionality not working in some cases (Pro), Bulk Edit and Delete functionalities not working properly for WooCommerce Subscriptions in some cases (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.12.0 =
+Exporting categories or other taxonomies in a properly formatted manner that is compatible with the WooCommerce Product Import CSV suite (Pro), Fixes related to In certain cases, the grid becomes blank when attempting to sort using any taxonomy columns, Extra space added after comma in exported CSV when using comma as decimal separator for numeric columns (Pro), Added 'sm_decimal_separator_for_export' filter for customizing decimal separator in Export CSV for numeric columns (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.11.0 =
+Setting for enabling/disabling date picker for date/datetime columns, Fixes related to WooCommerce product variations title not displaying attribute list when data is sorted in the grid, 'Date', 'DateTime' and 'Time' columns showing incorrect placeholder when using inline edit in some cases, 'Export CSV' not working in Safari browser (Pro), Update the dashboard state for custom views only when the columns are shown/hidden by the view's author. (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.10.0 =
+Tooltip for column headers, Compatibility with [Customer Email Verification](https://woocommerce.com/products/customer-email-verification/?aff=5475), Fixes related to Import CSV functionality not working in some cases, Settings menu not clickable in some cases, Progress modal getting hidden immediately when trying to use Undo or Delete Tasks functionality (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.9.0 =
+Dedicated & improved settings UI, Fixes related to Dashboard refreshing to first page when inline editing Product Gallery Images on non-first Pages, Unable to edit Product Gallery Images when editing after saving changes along with other important fixes and updates. Recommended upgrade.
+
+= 8.8.0 =
+Import CSV functionality for WooCommerce Products, Show Smart Manager button in WordPress Admin Bar, Fixes related to Dashboard not loading in some cases due to 'sprintf already defined' JavaScript error, Progress modal getting hidden immediately when trying to use Bulk Edit, Duplicate Records & Delete Records functionality (Pro), State management & other minor improvements for 'Tasks' dashboards (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.7.0 =
+Display dashboard count in each group in dashboard combo-box, Fixes related to WooCommerce Products 'Sale price dates from' & 'Sale price dates to' fields not saving timestamp in UTC timezone when using Inline edit, WooCommerce Products 'Sale price dates from' & 'Sale price dates to' fields not saving timestamp in UTC timezone when using Bulk edit (Pro), Advanced Search not working for 'timestamp' type columns like 'Sale price dates from', 'Sale price dates to', etc., Display notices when editing 'Advanced Search' conditions for Custom Views (only for ones created with search conditions) (Pro), Do not update state when switching from 'Custom Views' dashboard (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.6.0 =
+WordPress 6.2.2 compatible, Fixes related to Inline edit functionality not working in Firefox browser, Modals and Notifications not appearing in some cases in Firefox browser, Column sorted arrow icon not visible in cases when column name is long, Few of the JavaScript files loading more than once on dashboard load, Incorrect version for enqueued JavaScript & CSS files along with other important fixes and updates. Recommended upgrade.
+
+= 8.5.0 =
+WordPress 6.2.1 compatible, Added Option 'sm_use_number_field_for_numeric_cols' to enable/disable usage of HTML number input field for numeric columns in the grid, Keyboard shortcuts for buttons in all functionalities (like advanced search, bulk edit, etc.) using modal dialogs (Pro) along with other important fixes and updates. Recommended upgrade.
+
+= 8.4.0 =
+Added 'any of' and 'not any of' advanced search operators for text fields (Pro), Option 'sm_update_trash_records' to consider or not consider 'Trash' records when updating 'Entire Store' using Bulk Edit/Duplicate Records/Delete Records functionality (Pro), Fixes related to PHP Warnings when updating some of the WooCommerce Product fields using Bulk Edit (Pro) along with other important fixes and updates. Recommended upgrade.
 
 = 8.3.0 =
 Added support for Renaming column headers (Pro), Fixes related to Inline edit not working in some cases on non-first pages post saving, Notification messages not showing in some cases, Dashboard refreshing to first page when bulk editing records on non-first pages (Pro) along with other important fixes and updates. Recommended upgrade.

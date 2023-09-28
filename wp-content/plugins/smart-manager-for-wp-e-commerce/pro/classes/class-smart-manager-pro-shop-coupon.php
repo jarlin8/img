@@ -88,7 +88,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 				if( !empty( $edited_row['postmeta/meta_key=sa_cbl_locations_lookup_in/meta_value=sa_cbl_locations_lookup_in'] ) ) {
 					$edited_data[$key]['postmeta/meta_key=sa_cbl_locations_lookup_in/meta_value=sa_cbl_locations_lookup_in'] = array( 'address' => $edited_data[$key]['postmeta/meta_key=sa_cbl_locations_lookup_in/meta_value=sa_cbl_locations_lookup_in'] );
 				}
-
+				if ( ! empty( $edited_row['postmeta/meta_key=product_categories/meta_value=product_categories'] ) ) {
+					$edited_data[ $key ]['postmeta/meta_key=product_categories/meta_value=product_categories'] = array_filter( explode( ",", $edited_data[ $key ]['postmeta/meta_key=product_categories/meta_value=product_categories'] ) );
+				}
+				if ( ! empty( $edited_row['postmeta/meta_key=exclude_product_categories/meta_value=exclude_product_categories'] ) ) {
+					$edited_data[ $key ]['postmeta/meta_key=exclude_product_categories/meta_value=exclude_product_categories'] = array_filter( explode( ",", $edited_data[ $key ]['postmeta/meta_key=exclude_product_categories/meta_value=exclude_product_categories'] ) );
+				}
 			}
 
 			return $edited_data;
@@ -166,6 +171,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 			if (version_compare ( $wp_version, '4.5', '>=' )) {
     			$taxonomy_obj = get_terms( array(
 									 	   'taxonomy' => $taxonomy_names,
+											'get'      => 'all',
 									));	
     		} else {
     			$taxonomy_obj = get_terms( $taxonomy_names );	
@@ -424,9 +430,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 					$data_model['items'][$key]['custom_coupon_shareable_link'] = ( !empty( $this->req_params['cmd'] ) && $this->req_params['cmd'] != 'get_export_csv' && $this->req_params['cmd'] != 'get_print_invoice' ) ? "<span class='sm_click_to_copy' title='". __('Click to copy', 'smart-manager-for-wp-e-commerce') ."'>".$link."</span>" : $link;
 				}
 			}
-
 			return $data_model;
-
 		}
 
 		//Function for overriding the select clause for fetching the ids for batch update 'copy from' functionality

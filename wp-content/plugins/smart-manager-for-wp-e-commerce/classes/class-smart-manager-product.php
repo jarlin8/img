@@ -29,6 +29,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 			// add_filter('posts_orderby',array(&$this,'sm_product_query_order_by'),10,2);
 
+			add_filter( 'split_the_query', function() { return false; } ); //Filter to restrict splitting on WP_Query specially for `parent_sort_id` needed for proper display of variations
 			add_filter('posts_fields',array(&$this,'sm_product_query_post_fields'),100,2);
 			add_filter('posts_where',array(&$this,'sm_product_query_post_where_cond'),100,2);
 			add_filter('posts_orderby',array(&$this,'sm_product_query_order_by'),100,2);
@@ -40,6 +41,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 			add_filter('sm_search_terms_cond',array(&$this,'sm_search_terms_cond'),10,2);
 
 			//filter for modifying each of the search cond
+			add_filter('sm_search_format_query_postmeta_col_value',array(&$this,'sm_search_format_query_postmeta_col_value'),10,2);
 			add_filter('sm_search_format_query_terms_col_name',array(&$this,'sm_search_format_query_terms_col_name'),10,2);
 
 			add_filter('sm_search_query_formatted',array(&$this,'sm_search_query_formatted'),10,2);
@@ -382,21 +384,26 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 					$taxonomy_cond = " ({$wpdb->prefix}term_relationships.term_taxonomy_id IN (". $search_params['result_taxonomy_ids'] .")) ";
 				}
 
-				if( !empty($col_op) && $col_op == 'NOT LIKE' &&
-					( $col_value == "''" || empty( $col_value ) )
-				 ) {
+				if( !empty($col_op) && 'NOT LIKE' === $col_op ) {
 					$taxonomy = $this->sm_search_format_query_terms_col_name($col_name);
 					
-					if (version_compare ( $wp_version, '4.5', '>=' )) {
-            			$tt_ids_to_exclude = get_terms( array(
-											 	   'taxonomy' => $taxonomy,
-											    	'fields' => 'tt_ids',
-											));	
-            		} else {
-            			$tt_ids_to_exclude = get_terms( $taxonomy, array(
-											    	'fields' => 'tt_ids',
-											));	
-            		}
+					if( "''" === $col_value || empty( $col_value ) ){
+						if (version_compare ( $wp_version, '4.5', '>=' )) {
+							$tt_ids_to_exclude = get_terms( array(
+														'taxonomy' => $taxonomy,
+														'fields' => 'tt_ids',
+												));	
+						} else {
+							$tt_ids_to_exclude = get_terms( $taxonomy, array(
+														'fields' => 'tt_ids',
+												));	
+						}
+					} else {
+						$term_meta = get_term_by( 'slug', $col_value, $taxonomy );
+						if ( ! is_wp_error( $term_meta ) && ! empty( $term_meta->term_taxonomy_id ) ) {
+							$tt_ids_to_exclude[] = $term_meta->term_taxonomy_id;
+						}
+					}
 				}
 
 				$taxonomy_cond = (!empty($taxonomy_cond)) ? ' ( '. $taxonomy_cond : '';	
@@ -637,9 +644,9 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 				$sort_order = ( !empty( $sort_params['sortOrder'] ) ) ? $sort_params['sortOrder'] : 'ASC';
 
-				if ( ( !empty( $sort_params['table'] ) ) && $sort_params['table'] == 'posts' ) {				
+				if ( ( ! empty( $sort_params['table'] ) ) && 'posts' === $sort_params['table'] ) {				
 					$order_by = $sort_params['column_nm'] .' '. $sort_order;
-				} else if ( !empty( $sort_params['table'] ) && $sort_params['table'] == 'terms' ) {
+				} else if ( ! empty( $sort_params['table'] ) && 'terms' === $sort_params['table'] && true === $this->terms_sort_join ) {
 					$order_by = ( ( $sort_params['column_nm'] == 'product_type' ) ? ' sort_term_name ' : ' taxonomy_sort.term_name ' ) .''. $sort_order ;
 				}
 
@@ -804,7 +811,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 						if ($src == 'product_cat') {
 							$column['type'] = 'sm.multilist';
 							$column['editable']	= false;
-							$column['name']	= 'Category';
+							$column['name']	= $column['key'] = 'Category';
 						} else if( $src == 'product_type' ) {
 							$column['type'] = 'dropdown';
 						} else if ( in_array($src, $numeric_columns) ) {
@@ -822,7 +829,8 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 							$column['type'] = 'sm.date';
 							$column['editor'] = $column['type'];
 							$column['date_type'] = 'timestamp';
-							$column['is_utc'] = false;
+							$column['is_utc'] = true;
+							$column['is_display_date_in_site_timezone'] = true;
 						} else if ($src == '_visibility') {
 							$column['type'] = 'dropdown';
 
@@ -1443,12 +1451,14 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 						$data['posts_post_parent'] = $post_parents[$data['posts_id']];
 					}
 
-					if( !empty( $data_model['items'][$key]['postmeta_meta_key__regular_price_meta_value__regular_price'] ) ) {
-						$data_model['items'][$key]['postmeta_meta_key__regular_price_meta_value__regular_price'] = number_format( (float)$data['postmeta_meta_key__regular_price_meta_value__regular_price'], wc_get_price_decimals(), wc_get_price_decimal_separator(), '' );	
+					if( ! empty( $data_model['items'][$key]['postmeta_meta_key__regular_price_meta_value__regular_price'] ) ) {
+						$decimal_separator = ( ! empty( $this->req_params['cmd'] ) && 'get_export_csv' == $this->req_params['cmd'] ) ? apply_filters( 'sm_decimal_separator_for_export', wc_get_price_decimal_separator(), array( 'col' => 'postmeta_meta_key__regular_price', 'data' => $data_model['items'][$key] ) ) : wc_get_price_decimal_separator();
+						$data_model['items'][$key]['postmeta_meta_key__regular_price_meta_value__regular_price'] = number_format( (float)$data['postmeta_meta_key__regular_price_meta_value__regular_price'], wc_get_price_decimals(), $decimal_separator, '' );	
 					}
 					
-					if( !empty( $data_model['items'][$key]['postmeta_meta_key__sale_price_meta_value__sale_price'] ) ) {
-						$data_model['items'][$key]['postmeta_meta_key__sale_price_meta_value__sale_price'] = number_format( (float)$data['postmeta_meta_key__sale_price_meta_value__sale_price'], wc_get_price_decimals(), wc_get_price_decimal_separator(), '' );	
+					if( ! empty( $data_model['items'][$key]['postmeta_meta_key__sale_price_meta_value__sale_price'] ) ) {
+						$decimal_separator = ( ! empty( $this->req_params['cmd'] ) && 'get_export_csv' == $this->req_params['cmd'] ) ? apply_filters( 'sm_decimal_separator_for_export', wc_get_price_decimal_separator(), array( 'col' => 'postmeta_meta_key__sale_price', 'data' => $data_model['items'][$key] ) ) : wc_get_price_decimal_separator();
+						$data_model['items'][$key]['postmeta_meta_key__sale_price_meta_value__sale_price'] = number_format( (float)$data['postmeta_meta_key__sale_price_meta_value__sale_price'], wc_get_price_decimals(), $decimal_separator, '' );	
 					}
 
 					if ( !empty($data['posts_post_parent']) ) {
@@ -1496,11 +1506,10 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 							}	
 						}
 
-						$variation_title = ( !empty( $data['posts_post_title'] ) && empty( $variation_title ) ) ? $data['posts_post_title'] : ( $parent_title .''. substr( $variation_title, 0, strlen( $variation_title )-2 ) );
+						$variation_title = ( ! empty( $data['posts_post_title'] ) && empty( $variation_title ) ) ? $data['posts_post_title'] : ( $parent_title .''. substr( $variation_title, 0, strlen( $variation_title ) - 2 ) );
 
-						if( !empty($variation_title) && $this->prod_sort === false ){
-							// float: left;
-							$data_model['items'][$key]['posts_post_title'] = ( !empty( $this->req_params['cmd'] ) && 'get_export_csv' == $this->req_params['cmd'] ) ? $variation_title : '<div style="margin-left: 2px;color: #469BDD;" class="dashicons dashicons-minus"></div>'.' <div>'.$variation_title.'</div>';	
+						if( ! empty( $variation_title ) ){
+							$data_model['items'][$key]['posts_post_title'] = ( ( ! empty( $this->req_params['cmd'] ) && 'get_export_csv' == $this->req_params['cmd'] ) || true === $this->prod_sort ) ? $variation_title : '<div style="margin-left: 2px;color: #469BDD;" class="dashicons dashicons-minus"></div>'.' <div>'.$variation_title.'</div>';	
 						}
 						
 
@@ -1742,9 +1751,10 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 						}
 					}
 
+				} elseif ( ( ! empty( $edited_data[$key]['postmeta/meta_key=_sale_price_dates_from/meta_value=_sale_price_dates_from'] ) ) && ( ! empty( $edited_row['postmeta/meta_key=_sale_price_dates_from/meta_value=_sale_price_dates_from'] ) ) ) {
+					$edited_data[$key]['postmeta/meta_key=_sale_price_dates_from/meta_value=_sale_price_dates_from'] .= ' 00:00:00';
 				} elseif ( ( ! empty( $edited_data[$key]['postmeta/meta_key=_sale_price_dates_to/meta_value=_sale_price_dates_to'] ) ) && ( ! empty( $edited_row['postmeta/meta_key=_sale_price_dates_to/meta_value=_sale_price_dates_to'] ) ) ) {
-					update_post_meta( $key, '_sale_price_dates_to', strtotime( $edited_row['postmeta/meta_key=_sale_price_dates_to/meta_value=_sale_price_dates_to'].' 23:59:59' ) );
-					unset( $edited_data[$key]['postmeta/meta_key=_sale_price_dates_to/meta_value=_sale_price_dates_to'] );
+					$edited_data[$key]['postmeta/meta_key=_sale_price_dates_to/meta_value=_sale_price_dates_to'] .= ' 23:59:59';
 				}
 
 				if( false !== strpos($key, 'sm_temp_') ) {
@@ -2148,6 +2158,17 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 		    exit;
 
+		}
+
+		//Function to modify the postmeta search column value for postmeta cols		
+		public function sm_search_format_query_postmeta_col_value( $search_value='', $search_params=array() ) {
+
+			$search_col = ( !empty( $search_params['search_col'] ) ) ? $search_params['search_col'] : '';
+			if( empty( $search_col ) || ! is_numeric( $search_value ) || ( ! empty( $search_col ) && ! in_array( $search_col, array( '_sale_price_dates_from', '_sale_price_dates_to' ) ) ) ){
+				return $search_value;
+			}
+
+			return $search_value + ( ( '_sale_price_dates_to' === $search_col ) ? (DAY_IN_SECONDS - 1) : 0 );
 		}
 	} //End of Class
 }

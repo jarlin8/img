@@ -568,15 +568,15 @@ class DigestWatcher extends Notify
      * @param  \RedisCachePro\Metrics\Measurements  $measurements
      * @return object
      */
-    protected function getRelayMemoryActive(Measurements $measurements)
+    protected function getRelayMemoryUsed(Measurements $measurements)
     {
-        $memoryActive = $this->usingRelay
-            ? $measurements->latest('relay->memoryActive')
+        $memoryUsed = $this->usingRelay
+            ? $measurements->latest('relay->memoryUsed')
             : null;
 
         return (object) [
-            'Metric' => WP_CLI::colorize('%pRelay%n: Memory active'),
-            'Median' => is_null($memoryActive) ? '' : size_format($memoryActive),
+            'Metric' => WP_CLI::colorize('%pRelay%n: Memory used'),
+            'Median' => is_null($memoryUsed) ? '' : size_format($memoryUsed),
         ];
     }
 
@@ -606,12 +606,12 @@ class DigestWatcher extends Notify
 
         if ($this->usingRelay) {
             $memoryTotal = $measurements->latest('relay->memoryTotal');
-            $memoryActive = $measurements->latest('relay->memoryActive');
+            $memoryUsed = $measurements->latest('relay->memoryUsed');
 
-            if ($memoryActive && $memoryTotal) {
+            if ($memoryUsed && $memoryTotal) {
                 $memoryHuman = sprintf(
                     '%s / %s',
-                    size_format($memoryActive),
+                    size_format($memoryUsed),
                     size_format($memoryTotal)
                 );
             }

@@ -63,6 +63,7 @@ class CommandsCollector extends QM_Collector
         'getAllOptions' => true,
         'syncAllOptions' => true,
         'deleteAllOptions' => true,
+        'withoutMutations' => true,
     ];
 
     /**
@@ -216,6 +217,7 @@ class CommandsCollector extends QM_Collector
                 $connection => true,
             ]),
             'ignore_method' => [
+                ObjectCache::class => self::IgnoredMethods,
                 RelayObjectCache::class => self::IgnoredMethods,
                 PhpRedisObjectCache::class => self::IgnoredMethods,
                 get_class($wp_object_cache) => self::IgnoredMethods,

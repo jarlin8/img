@@ -39,4 +39,15 @@ class Sanitizer
     {
         return (bool) intval($value);
     }
+
+    /**
+     * Sanitize the `groupflushlog` option value.
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function groupflushlog($value)
+    {
+        return (bool) intval($value);
+    }
 }

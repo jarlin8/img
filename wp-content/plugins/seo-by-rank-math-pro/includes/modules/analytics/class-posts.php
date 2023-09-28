@@ -156,8 +156,6 @@ class Posts {
 	 * @return array Posts rows.
 	 */
 	public function get_posts_rows_by_objects( $result, WP_REST_Request $request ) {
-		$per_page  = 25;
-		$offset    = ( $request->get_param( 'page' ) - 1 ) * $per_page;
 		$orderby   = $request->get_param( 'orderby' );
 		$order     = strtoupper( $request->get_param( 'order' ) );
 		$objects   = Stats::get()->get_objects_by_score( $request );
@@ -205,15 +203,7 @@ class Posts {
 		if ( in_array( $orderby, [ 'position', 'clicks', 'pageviews', 'impressions' ], true ) ) {
 			$new_rows = $this->analytics_array_sort( $new_rows, $order, $orderby );
 		}
-		$count = count( $new_rows );
 
-		if ( $offset + 25 <= $count ) {
-			$new_rows = array_slice( $new_rows, $offset, 25 );
-
-		} else {
-			$rest     = $count - $offset;
-			$new_rows = array_slice( $new_rows, $offset, $rest );
-		}
 		if ( empty( $new_rows ) ) {
 			$new_rows['response'] = 'No Data';
 		}
@@ -532,6 +522,8 @@ class Posts {
 				]
 			);
 
+			$data['rowsFound'] = $this->rows_found();
+
 			foreach ( $pageviews as $page => &$pageview ) {
 				$pageview['pageviews'] = [
 					'total'      => (int) $pageview['pageviews'],
@@ -601,14 +593,9 @@ class Posts {
 					}
 				}
 
-				$rows_found = DB::objects()
-					->selectCount( 'page' )
-					->where( 'is_indexable', 1 )
-					->getVar();
-
 				$history           = $this->get_graph_data_for_pages( $params );
 				$data['rows']      = Stats::get()->set_page_position_graph( $pages, $history );
-				$data['rowsFound'] = $rows_found;
+				$data['rowsFound'] = $this->rows_found();
 			}
 
 			// Get fetched page info again.
@@ -751,5 +738,17 @@ class Posts {
 		$data = Stats::get()->filter_graph_rows( $data );
 
 		return array_map( [ Stats::get(), 'normalize_graph_rows' ], $data );
+	}
+
+	/**
+	 * Count indexable pages.
+	 *
+	 * @return mixed
+	 */
+	private function rows_found() {
+		return DB::objects()
+			->selectCount( 'page' )
+			->where( 'is_indexable', 1 )
+			->getVar();
 	}
 }

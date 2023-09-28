@@ -21,6 +21,96 @@ class PluginApiResponse
     //
 }
 
+class PluginApiUpdateResponse extends PluginApiResponse
+{
+    /** @var string */
+    public $version;
+
+    /** @var string */
+    public $php;
+
+    /** @var string */
+    public $wp;
+
+    /** @var ?string */
+    public $package;
+
+    /** @var ?object */
+    public $license;
+}
+
+class PluginApiInfoResponse extends PluginApiResponse
+{
+    /** @var string */
+    public $slug;
+
+    /** @var string */
+    public $name;
+
+    /** @var string */
+    public $homepage;
+
+    /** @var ?string */
+    public $download_link;
+
+    /** @var string */
+    public $author;
+
+    /** @var string */
+    public $author_profile;
+
+    /** @var string */
+    public $requires;
+
+    /** @var string */
+    public $requires_php;
+
+    /** @var string */
+    public $tested;
+
+    /** @var string */
+    public $added;
+
+    /** @var string */
+    public $version;
+
+    /** @var string */
+    public $last_updated;
+
+    /** @var int */
+    public $active_installs;
+
+    /** @var object */
+    public $icons;
+
+    /** @var object */
+    public $banners;
+
+    /** @var object */
+    public $sections;
+
+    /** @var object */
+    public $contributors;
+}
+
+class PluginApiLicenseResponse extends PluginApiResponse
+{
+    /** @var ?string */
+    public $token;
+
+    /** @var string */
+    public $state;
+
+    /** @var string */
+    public $stability;
+
+    /** @var ?string */
+    public $plan;
+
+    /** @var object */
+    public $organization;
+}
+
 class AnalyticsConfiguration
 {
     /** @var bool */
@@ -31,6 +121,9 @@ class AnalyticsConfiguration
 
     /** @var int */
     public $retention;
+
+    /** @var int|float */
+    public $sample_rate;
 
     /** @var bool */
     public $footnote;

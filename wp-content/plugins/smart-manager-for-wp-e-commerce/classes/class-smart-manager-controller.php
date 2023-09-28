@@ -18,6 +18,10 @@ if ( ! class_exists( 'Smart_Manager_Controller' ) ) {
 			add_action('admin_footer',array(&$this,'sm_footer'));
 			//Filter for setting the wp_editor default tab
 			add_filter( 'wp_default_editor', array(&$this,'sm_wp_default_editor'),10, 1 );
+
+			// Code for resetting the 'Shop_Order' and 'Shop_Subscription' col models on WC setting update
+			add_action( 'woocommerce_update_options_advanced_custom_data_stores', array( &$this, 'migrate_wc_orders_subscriptions_col_model' ) );
+			add_action( 'woocommerce_update_options_advanced_features', array( &$this, 'migrate_wc_orders_subscriptions_col_model' ) );
 		}
 
 		public function sm_wp_default_editor( $tab ) {
@@ -129,6 +133,13 @@ if ( ! class_exists( 'Smart_Manager_Controller' ) ) {
 				return;
 			}
 
+			// Code to handle saving of settings
+			if( 'smart_manager_settings' === $_REQUEST['active_module'] && is_callable( 'Smart_Manager_Settings', 'update' ) ){
+				$settings = ( ! empty( $_REQUEST['settings'] ) ) ? json_decode( stripslashes( $_REQUEST['settings'] ), true ) : array();
+				$result = Smart_Manager_Settings::update( $settings );
+				wp_send_json( array( 'ACK'=> ( ( ! empty( $result ) ) ? 'Success' : 'Failure' ) ) );
+			}
+
 			include_once $this->plugin_path . '/class-smart-manager-base.php';
 			$this->dashboard_key = $_REQUEST['active_module'];
 			$is_taxonomy_dashboard = ( ! empty( $_REQUEST['is_taxonomy'] ) && ! empty( intval( $_REQUEST['is_taxonomy'] ) ) ) ? true : false;
@@ -210,7 +221,108 @@ if ( ! class_exists( 'Smart_Manager_Controller' ) ) {
 				$handler_obj = new $class_name($this->dashboard_key);
 				$handler_obj->$func_nm();
 			}
-		}		
+		}
 
+
+		/**
+		 * Function to re-generate the column model for 'Shop_Order' and 'Shop_Subscription' on WC settings update.
+		 */
+		public function migrate_wc_orders_subscriptions_col_model() {
+
+			global $wpdb;
+
+			$user_id = get_current_user_id();
+
+			if( empty( $user_id ) ){
+				return;
+			}
+
+			$order_column_model = get_user_meta( $user_id, 'sa_sm_shop_order', true );
+			$subscription_column_model = get_user_meta( $user_id, 'sa_sm_shop_subscription', true );
+
+			if( empty( $order_column_model ) && empty( $subscription_column_model ) ){
+				return;
+			}
+
+			if( ! class_exists( 'Smart_Manager_Shop_Order' ) && file_exists( $this->plugin_path . '/class-smart-manager-shop-order.php' ) ){
+				if( ! class_exists( 'Smart_Manager_Base' ) && file_exists( $this->plugin_path . '/class-smart-manager-base.php' ) ){
+					include_once $this->plugin_path . '/class-smart-manager-base.php';
+				}
+				include_once $this->plugin_path . '/class-smart-manager-shop-order.php';
+			}
+
+			if( ! is_callable( array( 'Smart_Manager_Shop_Order', 'migrate_col_model' ) ) ){
+				return;
+			}
+
+			if( ! empty( $order_column_model ) ) {
+				delete_transient( 'sa_sm_shop_order' );
+				update_user_meta( $user_id, 'sa_sm_shop_order' , Smart_Manager_Shop_Order::migrate_col_model( $order_column_model ) );
+			}
+
+			if( ! empty( $subscription_column_model ) ) {
+				delete_transient( 'sa_sm_shop_subscription' );
+				update_user_meta( $user_id, 'sa_sm_shop_subscription' , Smart_Manager_Shop_Order::migrate_col_model( $subscription_column_model ) );
+			}
+
+			// Code to update custom views
+			if( ! ( defined('SMPRO') && true === SMPRO ) ) {
+				return;
+			}
+
+			if ( $wpdb->prefix. 'sm_views' !== $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $wpdb->prefix. 'sm_views' ) ) ) {
+				return;
+			}
+
+			$views = $wpdb->get_results(
+				$wpdb->prepare(
+								"SELECT id,
+										params
+									FROM {$wpdb->prefix}sm_views
+									WHERE post_type=%s
+										OR post_type=%s",
+								'shop_order',
+								'shop_subscription'
+				),
+				'ARRAY_A'
+			);
+
+			if( empty( $views ) || ! is_array( $views ) ){
+				return;
+			}
+
+			$view_update_clauses = array();
+			foreach( $views as $view ){
+				if( empty( $view['id'] ) || empty( $view['params'] ) ){
+					continue;
+				}
+
+				$view['params'] = json_decode( $view['params'], true );
+
+				if( empty( $view['params'] ) || ! is_array( $view['params'] ) ){
+					continue;
+				}
+
+				$updated_col_model = Smart_Manager_Shop_Order::migrate_col_model( $view['params'] );
+				if( empty( $updated_col_model ) ){
+					continue;
+				}
+				$view_update_clauses[$view['id']] = "WHEN id={$view['id']} THEN '". wp_json_encode($updated_col_model) ."'";
+			}
+
+			if( empty( $view_update_clauses ) ){
+				return;
+			}
+
+			$query = "UPDATE {$wpdb->prefix}sm_views
+			SET params = CASE ". implode( ",", $view_update_clauses ) . " END 
+			WHERE id IN (". implode( ",", array_keys( $view_update_clauses ) ) .")";
+			
+			$wpdb->query(
+				"UPDATE {$wpdb->prefix}sm_views
+				SET params = CASE ". implode( " ", $view_update_clauses ) . " END 
+				WHERE id IN (". implode( ",", array_keys( $view_update_clauses ) ) .")"
+			);
+		}
 	}
 }

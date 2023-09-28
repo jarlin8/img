@@ -15,8 +15,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			$this->advance_search_operators = array_merge( $this->advance_search_operators, array( 
 				'startsWith' => 'like',
 				'endsWith' => 'like',
+				'anyOf' => 'like',
 				'notStartsWith' => 'not like',
-				'notEndsWith' => 'not like'
+				'notEndsWith' => 'not like',
+				'notAnyOf' => 'not like'
 			 ) );
 
 			parent::__construct($dashboard_key);
@@ -49,6 +51,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			if( ! empty( $advanced_search_filter_tables ) && is_array( $advanced_search_filter_tables ) ){
 				foreach( $advanced_search_filter_tables as $table ){
 					add_filter( 'sm_search_format_query_' . $table . '_col_value', array( &$this, 'format_search_value' ), 11, 2 );
+					add_filter( 'sm_search_'. $table .'_cond', array( &$this, 'modify_search_cond' ), 11, 2 );
 				}
 			}
 			add_filter(
@@ -351,10 +354,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 					$data_model['items'][$key]['postmeta_meta_key_rank_math_seo_score_meta_value_rank_math_seo_score'] = '<span class="rank-math-seo-score '.$class.'">
 						<strong>'.$score.'</strong></span>';
 				}
-
-
-				
-
 			}
 
 			return $data_model;
@@ -476,6 +475,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				$from = " FROM {$wpdb->prefix}posts ";
 				$where = " WHERE post_type IN ('". implode( "','", $post_type ) ."') ";
 
+				$update_trash_records = apply_filters( 'sm_update_trash_records', ( 'yes' === get_option( 'sm_update_trash_records', 'no' ) ) );
+				if( empty( $update_trash_records ) && ( is_callable( array( $this, 'is_show_trash_records' ) ) && empty( $this->is_show_trash_records() ) ) ){
+					$where .= " AND post_status != 'trash'";
+				}
+				
 				$from	= apply_filters('sm_beta_background_entire_store_ids_from', $from, $this->req_params);
 				$where	= apply_filters('sm_beta_background_entire_store_ids_where', $where, $this->req_params);
 				
@@ -791,7 +795,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			$args['value'] = $new_val;
 
 			$args = apply_filters( 'sm_beta_post_batch_process_args', $args );
-
 			self::process_batch_update_db_updates( $args );
 		}
 
@@ -989,12 +992,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 			$data = $this->get_data_model();
 
-			$columns_header = $select_cols = array();
+			$columns_header = $select_cols = $numeric_cols = array();
 
 			$getfield = '';
 
 			foreach( $col_model as $col ) {
-
 				if( empty( $col['exportable'] ) || !empty( $col['hidden'] ) ) {
 					continue;
 				}
@@ -1003,8 +1005,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 				$getfield .= $col['key'] . ',';
 
-				if( !empty( $col['values'] ) ) {
+				if( ! empty( $col['values'] ) ) {
 					$select_cols[ $col['data'] ] = $col['values'];
+				}
+
+				if( ( ( ! empty( $col['type'] ) && 'numeric' === $col['type'] ) ) || ( ( ! empty( $col['validator'] ) && 'customNumericTextEditor' === $col['validator'] ) ) ){
+					$numeric_cols[] = $col['data'];
 				}
 			}
 
@@ -1031,8 +1037,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 					$array_temp = str_replace(array("\n", "\n\r", "\r\n", "\r"), "\t", $row_each_field);
 					$array = str_replace("<br>", "\n", $array_temp);
 					$array = str_replace('"', '""', $array);
-					$array = ( ! is_array( $array ) ) ? str_getcsv ( $array , ",", "\"" , "\\") : $array;
-					$str = ( $array && is_array( $array ) ) ? implode( ', ', $array ) : '';
+					if( ! empty( $numeric_cols ) && in_array( $each_field[$i], $numeric_cols ) ){
+						$str = $array;
+					} else{
+						$array = ( ! is_array( $array ) ) ? str_getcsv ( $array , ",", "\"" , "\\") : $array;
+						$str = ( $array && is_array( $array ) ) ? implode( ', ', $array ) : '';
+					}
 					$fields .= '"'. $str . '",'; 
 
 				}	
@@ -1068,7 +1078,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			ini_set('memory_limit','512M');
 			set_time_limit(0);
 
-			$purchase_id_arr = json_decode( stripslashes( $this->req_params['selected_ids'] ), true );
+			$purchase_id_arr = ( ! empty( $this->req_params['selected_ids'] ) ) ? json_decode( stripslashes( $this->req_params['selected_ids'] ), true ) : array();
+			if ( ( ! empty( $this->req_params['storewide_option'] ) ) && ( 'entire_store' === $this->req_params['storewide_option'] ) && ( ! empty( $this->req_params['active_module'] ) ) ) { //code for fetching all the ids
+				$purchase_id_arr = $this->get_entire_store_ids();
+			}
+
 			$sm_text_domain = 'smart-manager-for-wp-e-commerce';
 			$sm_is_woo30 = ( ! empty( Smart_Manager::$sm_is_woo30 ) && 'true' === Smart_Manager::$sm_is_woo30 ) ? true : false;
 			$sm_is_woo44 = ( ! empty( Smart_Manager::$sm_is_woo44 ) && 'true' === Smart_Manager::$sm_is_woo44 ) ? true : false;
@@ -1243,7 +1257,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		public static function process_delete_record( $params ) {
 
 			$deleting_id = ( !empty( $params['id'] ) ) ? $params['id'] : '';
-			do_action('sm_beta_pre_process_delete_records', array( 'deleting_id' => $deleting_id, 'source' => __CLASS__ ) );
+			do_action('sm_pro_pre_process_delete_records', array( 'deleting_id' => $deleting_id, 'source' => __CLASS__ ) );
 
 			//code for processing logic for duplicate records
 			if( empty( $deleting_id ) ) {
@@ -1252,22 +1266,21 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 			$force_delete = ( !empty($params['delete_permanently']) ) ? true : false;
 			
-			$default_process = apply_filters( 'sm_default_process_delete_records', true );
+			$default_process = apply_filters( 'sm_pro_default_process_delete_records', true );
 			$result = false;
 			if( ! empty( $default_process ) ){
-				$result = ( $force_delete ) ? wp_delete_post( $deleting_id, $force_delete ) : wp_trash_post( $deleting_id );	
+				$result = ( $force_delete ) ? wp_delete_post( $deleting_id, $force_delete ) : wp_trash_post( $deleting_id );
 			}
 			$params[$force_delete] = $force_delete;
-			$result = apply_filters( 'sm_default_process_delete_records_result', $result, $deleting_id, $params );
+			$result = apply_filters( 'sm_pro_default_process_delete_records_result', $result, $deleting_id, $params );
 
-			do_action( 'sm_beta_post_process_delete_records', array( 'deleting_id' => $deleting_id, 'source' => __CLASS__ ) );
+			do_action( 'sm_pro_post_process_delete_records', array( 'deleting_id' => $deleting_id, 'source' => __CLASS__ ) );
 			
 			if( empty( $result ) ) {
 				return false;
 			} else {
 				return true;
 			}
-
 		}
 
 		/**
@@ -1306,6 +1319,50 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			$template_base_dir = apply_filters( 'sm_template_base_dir', $template_base_dir, $template_name );
 
 			return $template_base_dir;
+		}
+
+		/**
+		 * Function to get modify the search cond for `any of/not any of` search operators
+		 *
+		 * @param  string $cond Search condition.
+		 * @param  array $search_params Advanced search params.
+		 * 
+		 * @return string $cond Updated search condition.
+		 */
+		public function modify_search_cond( $cond = '', $search_params = array() ) {
+		
+			$operator = ( ! empty( $search_params['selected_search_operator'] ) ) ? $search_params['selected_search_operator'] : '';
+			
+			if( empty( $operator ) ){
+				return $cond;
+			}
+
+			$val = ( ! empty( $search_params['search_value'] ) ) ? $search_params['search_value'] : '';
+			$col = ( ! empty( $search_params['search_col'] ) ) ? $search_params['search_col'] : '';
+
+			if( ! in_array( $operator, array( 'anyOf', 'notAnyOf' ) ) || empty( $val ) || empty( $col ) ){
+				return $cond;
+			}
+
+			$val = explode( "|", $val );
+
+			if( ! is_array( $val ) ){
+				return $cond;
+			}
+
+			$addln_cond = '';
+			if( ! empty( $search_params['is_meta_table'] ) ){
+				$addln_cond = $search_params['table_nm'] . ".meta_key LIKE '%". trim( $col ) . "%' AND ";
+				$col = 'meta_value';
+			}
+
+			$col = $search_params['table_nm'] . "." . $col;
+
+			$cond = array_reduce( $val, function( $carry, $item ) use( $col, $operator, $addln_cond ){
+				return $carry . ( " ( ". $addln_cond . " " . $col . " ". ( ( 'notAnyOf' === $operator ) ? 'NOT ' : '' ) . "LIKE '%". trim( $item ) . "%'" . " ) ".( ( 'notAnyOf' === $operator ) ? 'AND' : 'OR' ) );
+			} );
+
+			return ( 'notAnyOf' === $operator ) ? ( ( " AND" === substr( $cond, -4 ) ) ? "( " . substr( $cond, 0, -4 ) . " )" : $cond ) : ( ( " OR" === substr( $cond, -3 ) ) ? "( " . substr( $cond, 0, -3 ) . " )" : $cond );
 		}
 
 		/**

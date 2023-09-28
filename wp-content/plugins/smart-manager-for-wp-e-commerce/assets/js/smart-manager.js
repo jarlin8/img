@@ -8,7 +8,10 @@ function Smart_Manager() {
 	var currentDashboardModel='', dashboard_key= '', dashboardName= '', dashboard_select_options= '',sm_nonce= '', column_names= new Array(), simpleSearchText = '', advancedSearchQuery= new Array(), post_data_params = '', 
 		month_names_short = '', search_count, state_apply, dashboard_states = {}, skip_default_action, current_selected_dashboard = '';
 }
-const { __, _x, _n, _nx, sprintf } = wp.i18n;
+const { __, _x, _n, _nx} = wp.i18n;
+if(typeof sprintf === 'undefined' && wp.i18n.sprintf) { //Fix added for client
+    const sprintf = wp.i18n.sprintf;
+}
 Smart_Manager.prototype.init = function() {
 
 	this.firstLoad = true
@@ -81,6 +84,8 @@ Smart_Manager.prototype.init = function() {
 	this.advancedSearchRoute = "advancedSearch";
 	this.bulkEditRoute = "bulkEdit";
 	this.columnManagerRoute = "columnManager";
+	this.defaultRoute = "dashboard";
+	this.settingsRoute = "settings";
 	this.currentColModel = '';
 
 	this.notification = {} //object for handling all notification messages
@@ -112,6 +117,20 @@ Smart_Manager.prototype.init = function() {
 					'not like': _x('not contains', "select options - operator for 'text' data type fields", 'smart-manager-for-wp-e-commerce')
 				}
 	}
+
+	// Additional operators for advanced search for 'text' type cols
+	this.proAdvancedSearchOperators = {
+		'startsWith': _x('starts with', "select options - operator for 'text' data type fields", 'smart-manager-for-wp-e-commerce'),
+		'endsWith': _x('ends with', "select options - operator for 'text' data type fields", 'smart-manager-for-wp-e-commerce'),
+		'anyOf': _x('any of', "select options - operator for 'text' data type fields", 'smart-manager-for-wp-e-commerce'),
+		'notStartsWith': _x('not starts with', "select options - operator for 'text' data type fields", 'smart-manager-for-wp-e-commerce'),
+		'notEndsWith': _x('not ends with', "select options - operator for 'text' data type fields", 'smart-manager-for-wp-e-commerce'),
+		'notAnyOf': _x('not any of', "select options - operator for 'text' data type fields", 'smart-manager-for-wp-e-commerce')
+	}
+
+    if(window.smart_manager.possibleOperators.text){
+        window.smart_manager.possibleOperators.text = {...window.smart_manager.possibleOperators.text, ...this.proAdvancedSearchOperators}
+    }
 
 	this.savedSearch = []
 	this.savedBulkEditConditions = []
@@ -167,6 +186,11 @@ Smart_Manager.prototype.init = function() {
 	this.defaultImagePlaceholder = (sm_beta_params.hasOwnProperty('defaultImagePlaceholder')) ? sm_beta_params.defaultImagePlaceholder : ''
 	this.rowHeight = (sm_beta_params.hasOwnProperty('rowHeight')) ? sm_beta_params.rowHeight : '50px'
 	this.showTasksTitleModal = (sm_beta_params.hasOwnProperty('showTasksTitleModal')) ? parseInt(sm_beta_params.showTasksTitleModal) : 0
+	this.useNumberFieldForNumericCols = (sm_beta_params.hasOwnProperty('useNumberFieldForNumericCols')) ? parseInt(sm_beta_params.useNumberFieldForNumericCols) : 0
+	this.isViewContainSearchParams = false
+	this.WCProductImportURL = (sm_beta_params.hasOwnProperty('WCProductImportURL')) ? sm_beta_params.WCProductImportURL : ''
+	this.allSettings = (sm_beta_params.hasOwnProperty('allSettings')) ? sm_beta_params.allSettings : {}
+	this.useDatePickerForDateTimeOrDateCols = (sm_beta_params.hasOwnProperty('useDatePickerForDateTimeOrDateCols')) ? parseInt(sm_beta_params.useDatePickerForDateTimeOrDateCols) : 0
 
 	//Code for setting the default dashboard
 	if( typeof this.sm_dashboards != 'undefined' && this.sm_dashboards != '' ) {
@@ -192,6 +216,7 @@ Smart_Manager.prototype.init = function() {
 
 		this.sm_nonce = this.sm_dashboards['sm_nonce'];
 		delete this.sm_dashboards['sm_nonce'];
+		this.sm_is_woo79 = (sm_beta_params.hasOwnProperty('SM_IS_WOO79')) ? sm_beta_params.SM_IS_WOO79 : '';
 	}
 	
 	window.smart_manager.setDashboardDisplayName();
@@ -212,6 +237,8 @@ Smart_Manager.prototype.init = function() {
 	this.exportStore = false;
 	this.isRefreshingLoadedPage = false;
 	this.editedColumnTitles = {};
+	this.isViewAuthor = false;
+	this.searchSwitchClicked = false;
 
 	//Function to set all the states on unload
 	window.onbeforeunload = function (evt) { 
@@ -321,15 +348,17 @@ Smart_Manager.prototype.createOptGroups = function(args={}) {
 
 	let parent = (!Array.isArray(args.parent)) ? Object.keys(args.parent) : args.parent,
 		child = (!Array.isArray(args.child)) ? Object.keys(args.child) : args.child,
-		options = '';
+		options = '',
+		count = 0;
 
 	child.map((key) => {
 		if((parent.includes(key) && args['is_recently_accessed']) || (!parent.includes(key) && !args['is_recently_accessed']) || args['isParentChildSame']){
+			count++;
 			options += '<option value="'+key+'" '+ ((key == window.smart_manager.dashboard_key) ? "selected" : "") +'>'+((args['is_recently_accessed']) ? args.parent[key] : args.child[key]) +'</option>';
 		}
 	});
 
-	window.smart_manager.dashboard_select_options += (options != '') ? '<optgroup style="text-transform:uppercase;" label="'+args.label+'">'+options+'</optgroup>' : '';
+	window.smart_manager.dashboard_select_options += (options != '') ? '<optgroup style="text-transform:uppercase;" label="'+args.label+' ('+count+')">'+options+'</optgroup>' : '';
 }
 
 // Function to load top right bar on the page
@@ -380,30 +409,30 @@ Smart_Manager.prototype.loadNavBar = function() {
 					options += '<option value="'+window.smart_manager.viewPostTypes[key]+'" '+ ((key == window.smart_manager.dashboard_key) ? "selected" : "") +'>'+window.smart_manager.sm_views[key]+'</option>';
 				}
 			});
-			window.smart_manager.dashboard_select_options += (options != '') ? '<optgroup label="'+_x('Recently used views', 'dashboard option groups', 'smart-manager-for-wp-e-commerce')+'">'+options+'</optgroup>' : '';
+			window.smart_manager.dashboard_select_options += (options != '') ? '<optgroup label="'+_x('Recently used views', 'dashboard option groups', 'smart-manager-for-wp-e-commerce')+' ('+window.smart_manager.recentViews.length+')">'+options+'</optgroup>' : '';
 		}
 
-		// Code for rendering all remmaining dashboards
+		// Code for rendering all remaining dashboards
 		if(Object.keys(window.smart_manager.sm_dashboards).length > 0){
 				window.smart_manager.createOptGroups({'parent': recentDashboards,
 					'child': window.smart_manager.sm_dashboards,
-					'label': _x('All post types', 'dashboard option groups', 'smart-manager-for-wp-e-commerce'),
+					'label': _x('Other post types', 'dashboard option groups', 'smart-manager-for-wp-e-commerce'),
 					'is_recently_accessed': false
 				});
 		}
 
-		// Code for rendering all remmaining taxonomy dashboards
+		// Code for rendering all remaining taxonomy dashboards
 		if(Object.keys(window.smart_manager.taxonomyDashboards).length > 0){
 			window.smart_manager.createOptGroups({'parent': recentTaxonomyDashboards,
 				'child': window.smart_manager.taxonomyDashboards,
-				'label': _x('All taxonomies', 'dashboard option groups', 'smart-manager-for-wp-e-commerce'),
+				'label': _x('Other taxonomies', 'dashboard option groups', 'smart-manager-for-wp-e-commerce'),
 				'is_recently_accessed': false
 			});
 		}
 
-		// Code for rendering all remmaining views
+		// Code for rendering all remaining views
 		if(Object.keys(window.smart_manager.sm_views).length > 0){
-			window.smart_manager.dashboard_select_options += '<optgroup label="'+_x('All saved views', 'dashboard option groups', 'smart-manager-for-wp-e-commerce')+'">';
+			window.smart_manager.dashboard_select_options += '<optgroup label="'+_x('Other saved views', 'dashboard option groups', 'smart-manager-for-wp-e-commerce')+' ('+(Object.keys(window.smart_manager.sm_views).length - window.smart_manager.recentViews.length)+')">';
 			Object.keys(window.smart_manager.sm_views).map((key) => {
 				if(!window.smart_manager.recentViews.includes(key) && window.smart_manager.viewPostTypes.hasOwnProperty(key)){
 					window.smart_manager.dashboard_select_options += '<option value="'+window.smart_manager.viewPostTypes[key]+'" '+ ((key == window.smart_manager.dashboard_key) ? "selected" : "") +'>'+window.smart_manager.sm_views[key]+'</option>';
@@ -452,7 +481,26 @@ Smart_Manager.prototype.loadNavBar = function() {
 
 	jQuery('#sm_nav_bar .sm_beta_left').append(navBar);
 	jQuery('#sm_dashboard_select').empty().append(window.smart_manager.dashboard_select_options);
-	jQuery('#sm_dashboard_select').select2({ width: '15em', dropdownCssClass: 'sm_beta_dashboard_select', dropdownParent: jQuery('#sm_nav_bar') });
+	jQuery('#sm_dashboard_select').select2({ width: '20em', dropdownCssClass: 'sm_beta_dashboard_select', dropdownParent: jQuery('#sm_nav_bar') });
+
+	jQuery('#sm_nav_bar #sm_nav_bar_right').append(`<div class="sm_nav_bar_links">
+					<div>
+						<a href="admin.php?page=smart-manager&landing-page=sm-faqs" class="sm_docs_settings_link" target="_blank" title="${_x('Docs', 'tooltip', 'smart-manager-for-wp-e-commerce')}">
+							<svg stroke="currentColor" fill="none" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+							</svg>
+						</a>
+					</div>
+					<div id="sm_nav_bar_settings_btn" title="${_x('Settings', 'tooltip', 'smart-manager-for-wp-e-commerce')}" style="cursor:pointer; ">
+						<a id="sm_general_settings" class="sm_docs_settings_link" href="#" title="${_x('General settings', 'tooltip', 'smart-manager-for-wp-e-commerce')}">
+							<svg stroke="currentColor" fill="none" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+							</svg>
+						</a>		
+					</div>
+				</div>`);
+
 	let sm_top_bar = '<div id="sm_top_bar" style="font-weight:400 !important;width:100%;">'+
 						'<div id="sm_top_bar_left" class="sm_beta_left" style="width:'+ window.smart_manager.grid_width +'px;background-color: white;padding: 0.5em 0em 1em 0em;">'+
 							'<div class="sm_top_bar_action_btns">'+
@@ -511,7 +559,7 @@ Smart_Manager.prototype.loadNavBar = function() {
 								'</div>'+
 								'<div id="export_csv_sm_editor_grid" class="sm_beta_dropdown">'+
 									'<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">'+
-										'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>'+
+										'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />'+
 									'</svg>'+
 									'<span>'+_x('Export CSV', 'button', 'smart-manager-for-wp-e-commerce')+'</span>'+
 									'<div class="sm_beta_dropdown_content">'+
@@ -918,6 +966,10 @@ Smart_Manager.prototype.setDashboardModel = function (response) {
 			window.smart_manager.initialize_advanced_search(); //initialize advanced search control
 		}
 
+		if ( "undefined" !== typeof (window.smart_manager.refreshColumnsTitleAttribute) && "function" === typeof (window.smart_manager.refreshColumnsTitleAttribute) ) {
+			window.smart_manager.refreshColumnsTitleAttribute();
+		}
+
 		jQuery('#sm_editor_grid').trigger( 'smart_manager_post_load_grid' ); //custom trigger
 	}
 }
@@ -957,7 +1009,7 @@ Smart_Manager.prototype.getDashboardModel = function () {
 				params.data['is_view'] = 1;
 				params.data['active_view'] = viewSlug;
 				params.data['active_module'] = (window.smart_manager.viewPostTypes.hasOwnProperty(viewSlug)) ? window.smart_manager.viewPostTypes[viewSlug] : window.smart_manager.dashboard_key;	
-				window.smart_manager.isViewAuthor(viewSlug);
+				window.smart_manager.refreshIsViewAuthor(viewSlug);
 			}
 			// Flag for handling taxonomy dashboards
 			params.data['is_taxonomy'] = window.smart_manager.isTaxonomyDashboard();
@@ -974,6 +1026,10 @@ Smart_Manager.prototype.set_data = function(response) {
 		if( response != 'null' && window.smart_manager.isJSON( response ) ) {
 			res = JSON.parse(response);
 
+			if(res && res.hasOwnProperty('meta')){
+				window.smart_manager.isViewContainSearchParams = (res.meta.hasOwnProperty('is_view_contain_search_params') && (true === res.meta.is_view_contain_search_params || 'true' === res.meta.is_view_contain_search_params)) ? true : false;
+			}
+
 			window.smart_manager.totalRecords = parseInt(res.total_count);
 			window.smart_manager.displayTotalRecords = ( res.hasOwnProperty('display_total_count') ) ? res.display_total_count : res.total_count;
 
@@ -988,9 +1044,7 @@ Smart_Manager.prototype.set_data = function(response) {
 			}
 			
 			if( window.smart_manager.page > 1 ) {
-			
 				window.smart_manager.showLoader(false);
-
 				let lastRowIndex = window.smart_manager.currentDashboardData.length;
 
 				let idsIndex = {};
@@ -1001,12 +1055,11 @@ Smart_Manager.prototype.set_data = function(response) {
 						idsIndex[id] = key
 					}
 				})
-
 				//if no matchingids then replace else push/concat
 				if(Object.keys(idsIndex).length > 0) {
 					res.items.map((data, key) => {
 						let id = (data[idKey]) ? data[idKey] : ''
-						if(idsIndex[id]){
+						if(0 <= idsIndex[id]){
 							window.smart_manager.currentDashboardData[idsIndex[id]] = data;
 						} else {
 							window.smart_manager.currentDashboardData.push(data)
@@ -1031,6 +1084,9 @@ Smart_Manager.prototype.set_data = function(response) {
 				}
 			} else {
 				window.smart_manager.currentDashboardData = ( window.smart_manager.totalRecords > 0 ) ? res.items : [];
+				document.getElementById('sm_export_entire_store').innerHTML = (window.smart_manager.isFilteredData()) ? _x('All Items In Search Results', 'export button', 'smart-manager-for-wp-e-commerce') : _x('Entire Store', 'export button', 'smart-manager-for-wp-e-commerce')
+				document.getElementById('sm_beta_dup_entire_store').innerHTML = (window.smart_manager.isFilteredData()) ? _x('All Items In Search Results', 'duplicate button', 'smart-manager-for-wp-e-commerce') : _x('Entire Store', 'duplicate button', 'smart-manager-for-wp-e-commerce')
+				
 			}
 		} else {
 			window.smart_manager.currentDashboardData = [];
@@ -1473,14 +1529,18 @@ Smart_Manager.prototype.inlineUpdateMultipleImages = function(galleryImages){
 				};
 	params.data = ("undefined" !== typeof(window.smart_manager.addTasksParams) && "function" === typeof(window.smart_manager.addTasksParams) && 1 == window.smart_manager.sm_beta_pro) ? window.smart_manager.addTasksParams(params.data) : params.data;	
 	window.smart_manager.send_request(params,function(response){
-		window.smart_manager.refresh();
+		if(galleryImages.hasOwnProperty('rowNo')){
+			window.smart_manager.getData({refreshPage: (Math.ceil((parseInt(galleryImages.rowNo)/window.smart_manager.limit)))});
+			window.smart_manager.hot.render();
+		} else{
+			window.smart_manager.refresh();
+		}
+		
 		if(1 == window.smart_manager.sm_beta_pro && 'undefined' !== typeof(window.smart_manager.displayGalleryImagesModal) && 'function' === typeof(window.smart_manager.displayGalleryImagesModal)){
-			window.smart_manager.displayGalleryImagesModal({id:galleryImages.id,src:galleryImages.src,imageGalleryHtml:galleryImages.imageGalleryHtml})
+			window.smart_manager.displayGalleryImagesModal({id:galleryImages.id,src:galleryImages.src,imageGalleryHtml:galleryImages.imageGalleryHtml,rowNo:galleryImages.rowNo || 0})
 		}
 	});
 };
-
-
 
 Smart_Manager.prototype.showImagePreview = function(params) {
 	let xOffset = 150,
@@ -1537,11 +1597,6 @@ Smart_Manager.prototype.loadGrid = function() {
 
 	window.smart_manager.hotPlugin.columnSortPlugin = window.smart_manager.hot.getPlugin('columnSorting');
 	window.smart_manager.hotPlugin.manualColumnResizePlugin = window.smart_manager.hot.getPlugin('manualColumnResize')
-
-	//Code to have title for each of the column headers
-	jQuery('table.htCore').find('.colHeader').each(function() {
-		jQuery(this).attr('title',jQuery(this).text()+' '+_x('(Click to sort)', 'tooltip', 'smart-manager-for-wp-e-commerce'));
-	});
 	
 	window.smart_manager.hot.updateSettings({
 
@@ -1804,7 +1859,7 @@ Smart_Manager.prototype.loadGrid = function() {
 
 			if( typeof (col.type) != 'undefined' && col.type == 'sm.multipleImage' ) { // code to handle the functionality to handle editing of 'image' data types
 			let galleryImages = current_cell_value,
-				imageGalleryHtml = `<div class="sm_gallery_image_parent" data-id="${row_data_id}" data-col="${col.src || ''}">`;
+				imageGalleryHtml = `<div class="sm_gallery_image_parent" data-id="${row_data_id}" data-col="${col.src || ''}" data-row= "${coords.row || 0}">`;
 
 			if( Object.keys( galleryImages ).length > 0 ) {
 				if ( typeof (window.smart_manager.generateImageGalleryDlgHtml) !== "undefined" && typeof (window.smart_manager.generateImageGalleryDlgHtml) === "function" ) {
@@ -1824,7 +1879,7 @@ Smart_Manager.prototype.loadGrid = function() {
 					}
 				}
 				if('undefined' !== typeof(window.smart_manager.displayGalleryImagesModal) && 'function' === typeof(window.smart_manager.displayGalleryImagesModal) && row_data_id && col.src && imageGalleryHtml){
-					window.smart_manager.displayGalleryImagesModal({id:row_data_id,src:col.src,imageGalleryHtml:imageGalleryHtml});
+					window.smart_manager.displayGalleryImagesModal({id:row_data_id,src:col.src,imageGalleryHtml:imageGalleryHtml,rowNo:coords.row});
 				}	
 			}
 
@@ -2026,7 +2081,7 @@ Smart_Manager.prototype.loadGrid = function() {
 					multiselect_chkbox_list += '</ul>';
 
 				window.smart_manager.modal = {
-					title: _x('Category', 'modal title', 'smart-manager-for-wp-e-commerce'),
+					title: _x((col.key || 'Taxonomy'), 'modal title', 'smart-manager-for-wp-e-commerce'),
 					content: multiselect_chkbox_list,
 					autoHide: false,
 					cta: {
@@ -2120,26 +2175,14 @@ Smart_Manager.prototype.showPannelDialog = function(route = '', currentRoute = '
 	if(!route && !currentRoute){
 		return
 	}
-
-	let url = ''
-	let currentURL = window.location.href
-
-	if(!route){
-		url = currentURL.replace(new RegExp(currentRoute, "g"), "/")
-	} else {
-		route = ("#!/" === route) ? route : "#!/"+route
-		if(currentURL.includes(route)){
-			url = currentURL.replace(new RegExp(route, "g"), route)
-		} else if(currentURL.includes("#!/")){
-			url = currentURL.replace(new RegExp("#!/", "g"), route)
-		} else {
-			url = currentURL + route
-		}
+	let routeIdentifier = "#!/"
+	let currentURL = (window.location.href.indexOf(routeIdentifier) >= 0) ? window.location.href.substring(0, window.location.href.indexOf(routeIdentifier)) : window.location.href
+	if(!currentURL){
+		return
 	}
-
-	if(url){
-		window.location.href = url
-	}
+	let defaultRoute = routeIdentifier+window.smart_manager.defaultRoute
+	route = (!route) ? ((routeIdentifier === currentRoute) ? defaultRoute : routeIdentifier) : ((routeIdentifier === route) ? route : routeIdentifier+route)
+	window.location.href = currentURL + route
 }
 
 Smart_Manager.prototype.event_handler = function() {
@@ -2229,7 +2272,6 @@ Smart_Manager.prototype.event_handler = function() {
 	
 	.off( 'click', '#sm_advanced_search' ).on( 'click', '#sm_advanced_search' ,function(e){
 		e.preventDefault();
-
 		if ( typeof (window.smart_manager.showPannelDialog) !== "undefined" && typeof (window.smart_manager.showPannelDialog) === "function" ) {
 			window.smart_manager.showPannelDialog(window.smart_manager.advancedSearchRoute)
 		}
@@ -2272,16 +2314,23 @@ Smart_Manager.prototype.event_handler = function() {
 		})			
 	})
 
-	.off( 'change', '#search_switch').on( 'change', '#search_switch' ,function(){ //request for handling switch search types
+	.off( 'click', '#search_switch').on( 'click', '#search_switch' ,function(){ //Added for setting click flag for handling for custom views
+		window.smart_manager.searchSwitchClicked = true
+	})
+
+	.off( 'change', '#search_switch').on( 'change', '#search_switch' ,function(e){ //request for handling switch search types
+		//Code for showing notice for custom views
+		if((window.smart_manager.isViewContainSearchParams) && (window.smart_manager.searchSwitchClicked) && typeof (window.smart_manager.showNotification) !== "undefined" && typeof (window.smart_manager.	showNotification) === "function" ) {
+			e.target.checked = ! e.target.checked
+			window.smart_manager.searchSwitchClicked = false
+			window.smart_manager.notification = {message: _x('Cannot switch search when using Custom Views', 'search switch notice for custom views', 'smart-manager-for-wp-e-commerce'),hideDelay: window.smart_manager.notificationHideDelayInMs}
+			window.smart_manager.showNotification()
+			return
+		}
 
 		let switchSearchType = jQuery(this).attr('switchSearchType'),
 			title = jQuery("label[for='"+ jQuery(this).attr("id") +"']").attr('title'),
 			content = '';
-
-		// if(window.smart_manager.clearSearchOnSwitch){
-		// 	window.smart_manager.advancedSearchQuery = new Array();
-		// 	window.smart_manager.simpleSearchText = '';
-		// }
 
 		jQuery(this).attr('switchSearchType', window.smart_manager.searchType);
 		jQuery("label[for='"+ jQuery(this).attr("id") +"']").attr('title', title.replace(String(switchSearchType).capitalize(), String(window.smart_manager.searchType).capitalize()));
@@ -2314,8 +2363,15 @@ Smart_Manager.prototype.event_handler = function() {
 	.off( 'keyup', '#sm_simple_search_box').on( 'keyup', '#sm_simple_search_box' ,function(){ //request for handling simple search
 		clearTimeout(window.smart_manager.searchTimeoutId);
 		window.smart_manager.searchTimeoutId = setTimeout(function () {
-			window.smart_manager.simpleSearchText = jQuery('#sm_simple_search_box').val();
-			window.smart_manager.refresh();
+			//Code for showing notice for custom views
+			if((window.smart_manager.isViewContainSearchParams) && typeof (window.smart_manager.showNotification) !== "undefined" && typeof (window.smart_manager.	showNotification) === "function" ) {
+				window.smart_manager.notification = {message: _x('Search string cannot be edited when using Custom Views', 'simple search notice for custom views', 'smart-manager-for-wp-e-commerce'),hideDelay: window.smart_manager.notificationHideDelayInMs}
+            	window.smart_manager.showNotification()
+				jQuery('#sm_simple_search_box').val(window.smart_manager.simpleSearchText)
+			} else {
+				window.smart_manager.simpleSearchText = jQuery('#sm_simple_search_box').val();
+				window.smart_manager.refresh();
+			}
 		}, 1000);
 	})
 
@@ -2418,6 +2474,10 @@ Smart_Manager.prototype.event_handler = function() {
 			let selected_text = '<span style="font-size: 1.2em;">'+sprintf(_x('Are you sure you want to %s', 'modal content', 'smart-manager-for-wp-e-commerce'), '<strong>'+ actionText +' '+_x('the selected','modal content', 'smart-manager-for-wp-e-commerce')+'</strong>'+' ') + ( ( window.smart_manager.selectedRows.length > 1 ) ? _x('records', 'modal content', 'smart-manager-for-wp-e-commerce') : _x('record', 'modal content', 'smart-manager-for-wp-e-commerce') ) + '?</span>';
 			let all_text      = '<span style="font-size: 1.2em;">'+sprintf(_x('Are you sure you want to %s the %s?', 'modal content', 'smart-manager-for-wp-e-commerce'),'<strong>'+ actionText +' '+_x('all', 'modal content', 'smart-manager-for-wp-e-commerce')+'</strong>', window.smart_manager.dashboardDisplayName)+ '</span>';
 
+			if (window.smart_manager.isFilteredData()){
+				all_text = '<span style="font-size: 1.2em;">'+sprintf(_x('Are you sure you want to %s?', 'modal content', 'smart-manager-for-wp-e-commerce'),'<strong>'+ actionText +' '+_x('all items in search results', 'modal content', 'smart-manager-for-wp-e-commerce')+'</strong>')+ '</span>';
+			}
+
 			params.btnParams.yesCallbackParams = {};
 
 			if ( window.smart_manager.sm_beta_pro == 1 ) {
@@ -2443,6 +2503,7 @@ Smart_Manager.prototype.event_handler = function() {
 				}
 			}
 			if( !isBackgroundProcessRunning ) {
+				params.btnParams.hideOnYes = (window.smart_manager.sm_beta_pro == 1) ? false : true;
 				window.smart_manager.showConfirmDialog(params);
 			}
 		}
@@ -2452,7 +2513,8 @@ Smart_Manager.prototype.event_handler = function() {
 	//Code for handling refresh event
 	.off('click', ".sm_gallery_image .sm_gallery_image_delete").on('click', ".sm_gallery_image .sm_gallery_image_delete",function(){
 		let colSrc = jQuery(this).parents('div.sm_gallery_image_parent').data('col') || '',
-		updateId = jQuery(this).parents('div.sm_gallery_image_parent').data('id') || 0;
+		updateId = jQuery(this).parents('div.sm_gallery_image_parent').data('id') || 0,
+		rowNo = parseInt(jQuery(this).parents('div.sm_gallery_image_parent').data('row') || 0);
 		jQuery(this).parents('.sm_gallery_image').remove();
 		let imageIds = new Array();
 		jQuery('.sm_gallery_image').find('img').each(function(){
@@ -2461,7 +2523,7 @@ Smart_Manager.prototype.event_handler = function() {
 		let updatedGalleryImages = {};
 		updatedGalleryImages[updateId] = {};
 		updatedGalleryImages[updateId][colSrc] = imageIds.join(',');
-		let params = {id:updateId,src:colSrc,values:updatedGalleryImages[updateId][colSrc],imageGalleryHtml:jQuery('div.modal-body').html()};
+		let params = {id:updateId,src:colSrc,values:updatedGalleryImages[updateId][colSrc],imageGalleryHtml:jQuery('div.modal-body').html(),rowNo:rowNo};
 		if(1 == window.smart_manager.sm_beta_pro && "undefined" !== typeof(window.smart_manager.displayTitleModal) && "function" === typeof(window.smart_manager.displayTitleModal)){
 			window.smart_manager.displayTitleModal(params);
 		}else if("undefined" !== typeof(window.smart_manager.inlineUpdateMultipleImages) && "function" === typeof(window.smart_manager.inlineUpdateMultipleImages)){
@@ -2573,7 +2635,8 @@ Smart_Manager.prototype.event_handler = function() {
 	})
 
 	// Code for handling the batch update & duplicate records functionality
-	.off( 'click', "#batch_update_sm_editor_grid, .sm_top_bar_action_btns .sm_beta_dropdown_content a, #print_invoice_sm_editor_grid_btn").on( 'click', "#batch_update_sm_editor_grid, .sm_top_bar_action_btns .sm_beta_dropdown_content a, #print_invoice_sm_editor_grid_btn", function(){
+	.off( 'click', "#batch_update_sm_editor_grid, .sm_top_bar_action_btns .sm_beta_dropdown_content a, #print_invoice_sm_editor_grid_btn").on( 'click', "#batch_update_sm_editor_grid, .sm_top_bar_action_btns .sm_beta_dropdown_content a, #print_invoice_sm_editor_grid_btn", function(e){
+		e.preventDefault();
 		let id = jQuery(this).attr('id'),
 			btnText = jQuery(this).text(),
 			className = jQuery(this).attr('class');
@@ -2606,6 +2669,7 @@ Smart_Manager.prototype.event_handler = function() {
 								
 								window.smart_manager.duplicateStore = ( id == 'sm_beta_dup_entire_store' ) ? true : false;
 
+								params.btnParams.hideOnYes = false;
 								window.smart_manager.showConfirmDialog(params);
 							}
 						} else if( id == 'print_invoice_sm_editor_grid_btn' ) { //code for handling Print Invoice functionality
@@ -2724,6 +2788,13 @@ Smart_Manager.prototype.event_handler = function() {
 			window.smart_manager.showNotification()
 		}
 	})
+	//Code to handle the general settings
+	.off('click','#sm_general_settings').on('click','#sm_general_settings', function(e){
+		e.preventDefault();
+		if ( typeof (window.smart_manager.showPannelDialog) !== "undefined" && typeof (window.smart_manager.showPannelDialog) === "function" ) {
+			window.smart_manager.showPannelDialog(window.smart_manager.settingsRoute)
+		}
+	})
 	
 	jQuery(document).trigger('sm_event_handler');
 }
@@ -2785,7 +2856,7 @@ Smart_Manager.prototype.createColumnVisibilityDialog = function() {
 
 			temp = `<li>
 						<span class="handle">::</span> 
-						<input type="text" class="sm-column-title-input" value="${colText}" readonly />
+						<input type="text" class="sm-column-title-input" title="${colText}" value="${colText}" readonly />
 						<span class="handle sm-column-title-editor-icon">
 							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
@@ -2959,8 +3030,17 @@ Smart_Manager.prototype.processColumnVisibility = function() {
 		//code to trigger update state ajax call
 		if ( "undefined" !== typeof (window.smart_manager.updateState) && "function" === typeof (window.smart_manager.updateState) ) {
 			let params = { refreshDataModel : true, async: false };
+			if(window.smart_manager.isViewAuthor){
+				params.updateView = true
+			}
 			window.smart_manager.isColumnModelUpdated = true
 			window.smart_manager.updateState(params); //refreshing the dashboard states
+
+			if ( "undefined" !== typeof (window.smart_manager.refreshColumnsTitleAttribute) && "function" === typeof (window.smart_manager.refreshColumnsTitleAttribute) ) {
+				setTimeout(() => {
+					window.smart_manager.refreshColumnsTitleAttribute();
+				}, 1000);
+			}
 		}
 	}
 }
@@ -3014,19 +3094,20 @@ Smart_Manager.prototype.getSelectedKeyIds = function() {
 }
 //Function to show columns menu
 
-Smart_Manager.prototype.isViewAuthor = function(viewSlug) {
-				let params = {};
-				params.data_type = 'json';
-				params.data = {
-								cmd: 'is_view_author',
-								module: 'custom_views',
-								active_module: viewSlug,
-								security: window.smart_manager.sm_nonce,
-								slug: viewSlug,
-							};
-				window.smart_manager.send_request(params, function(response){
-					window.smart_manager.displayShowHideColumnSettings(response);
-				});
+Smart_Manager.prototype.refreshIsViewAuthor = function(viewSlug) {
+	let params = {};
+	params.data_type = 'json';
+	params.data = {
+					cmd: 'is_view_author',
+					module: 'custom_views',
+					active_module: viewSlug,
+					security: window.smart_manager.sm_nonce,
+					slug: viewSlug,
+				};
+	window.smart_manager.send_request(params, function(response){
+		window.smart_manager.isViewAuthor = (response) ? true : false
+		window.smart_manager.displayShowHideColumnSettings(response);
+	});
 }
 
 //Function to delete records
@@ -3112,12 +3193,13 @@ Smart_Manager.prototype.saveData = function(){
 					// Code to get modified page nos.
 					let modifiedPageNumbers = new Set()
 					window.smart_manager.modifiedRows.map((rowNo) => {
-						modifiedPageNumbers.add(Math.ceil((rowNo/window.smart_manager.limit)))
+						modifiedPageNumbers.add(Math.ceil(((rowNo+1)/window.smart_manager.limit)))
 					})
 					window.smart_manager.dirtyRowColIds = {};
 					window.smart_manager.editedData = {};
 					window.smart_manager.modifiedRows = new Array();
 					modifiedPageNumbers.forEach(r => window.smart_manager.getData({refreshPage: r}));
+					window.smart_manager.isRefreshingLoadedPage = false;
 				}
 				window.smart_manager.hot.render();
 				window.smart_manager.notification = {message: msg}
@@ -3133,17 +3215,27 @@ Smart_Manager.prototype.saveData = function(){
 	}
 }
 
+// Function to get default route
+Smart_Manager.prototype.getDefaultRoute = function(isReplaceRoute = false){
+	return (isReplaceRoute) ?
+	((window.location.href.includes(window.smart_manager.defaultRoute) ) ? '/'+window.smart_manager.defaultRoute : '#!/')
+	: ((window.location.href.includes(window.smart_manager.defaultRoute) ) ? '#!/' : window.smart_manager.defaultRoute)
+}
+
 // Function to handle all modal dialog
 Smart_Manager.prototype.showModal = function(){
-	if(window.smart_manager.modal.hasOwnProperty('title') && '' !== window.smart_manager.modal.title && window.smart_manager.modal.hasOwnProperty('content') && '' !== window.smart_manager.modal.content){
-		window.smart_manager.showPannelDialog('#!/')
+	if(window.smart_manager.modal.hasOwnProperty('title') && '' !== window.smart_manager.modal.title && window.smart_manager.modal.hasOwnProperty('content') && '' !== window.smart_manager.modal.content && (typeof (window.smart_manager.showPannelDialog) !== "undefined" && typeof (window.smart_manager.showPannelDialog) === "function" && typeof (window.smart_manager.getDefaultRoute) !== "undefined" && typeof (window.smart_manager.getDefaultRoute) === "function")){
+		window.smart_manager.showPannelDialog(window.smart_manager.getDefaultRoute())
 	}
 }
 
 // Function to handle all notification alerts
 Smart_Manager.prototype.showNotification = function(){
-	if(window.smart_manager.notification.hasOwnProperty('message') && '' !== window.smart_manager.notification.message){
-		window.smart_manager.showPannelDialog('#!/')
+	if((!window.location.href.includes(window.smart_manager.advancedSearchRoute)  && !window.location.href.includes(window.smart_manager.bulkEditRoute)) && window.smart_manager.notification.hasOwnProperty('message') && '' !== window.smart_manager.notification.message && (typeof (window.smart_manager.showPannelDialog) !== "undefined" && typeof (window.smart_manager.showPannelDialog) === "function" && typeof (window.smart_manager.getDefaultRoute) !== "undefined" && typeof (window.smart_manager.getDefaultRoute) === "function")){
+		if(window.location.href.includes(window.smart_manager.columnManagerRoute)){ // Added as Col manager HTML & click events are not coming from raw js -- flickers for chrome. Can fix later
+			setTimeout(() => {window.smart_manager.showPannelDialog(window.smart_manager.columnManagerRoute)}, 1)
+		}
+		window.smart_manager.showPannelDialog(window.smart_manager.getDefaultRoute())
 	}
 }
 
@@ -3237,7 +3329,7 @@ Smart_Manager.prototype.refreshDashboardStates = function() {
 }
 
 //Function to handle the state apply at regular intervals
-Smart_Manager.prototype.updateState = function(refreshParams){
+Smart_Manager.prototype.updateState = function(refreshParams = {}){
 	let viewSlug = window.smart_manager.getViewSlug(window.smart_manager.dashboardName);
 	// do not refresh the states if view
 	if("undefined" !== typeof(window.smart_manager.refreshDashboardStates) && "function" === typeof(window.smart_manager.refreshDashboardStates)){
@@ -3258,7 +3350,7 @@ Smart_Manager.prototype.updateState = function(refreshParams){
 		// Code for passing extra param for view handling
 		if(1 == window.smart_manager.sm_beta_pro){
 			params.data['is_view'] = 0;
-			if(viewSlug){
+			if(viewSlug && (refreshParams.updateView || false)){
 				params.data['is_view'] = 1;
 				params.data['active_module'] = viewSlug;
 			}
@@ -3301,11 +3393,31 @@ Smart_Manager.prototype.getKeyID = function() {
         case ('undefined' !== typeof window.smart_manager.taxonomyDashboards[window.smart_manager.dashboard_key]):
 			return 'terms_term_id'
 		case ('user' === window.smart_manager.dashboard_key):
-			return 'users_id' 
+			return 'users_id'
+		case (['shop_order', 'shop_subscription'].includes(window.smart_manager.dashboard_key) && "undefined" !== typeof(window.smart_manager.sm_is_woo79) && ('true' === window.smart_manager.sm_is_woo79)):
+			return 'wc_orders_id' 
 		default:
 			return 'posts_id';
 	}
 }
+
+// Function to save settings
+Smart_Manager.prototype.saveSettings = function(settings = {}){
+	if(0 == Object.keys(settings).length || (0 < Object.keys(settings).length && !settings.hasOwnProperty('general'))){
+		return;
+	}
+	let params = {};
+	params.data = {
+					cmd: 'save_settings',
+					active_module: 'smart_manager_settings',
+					settings: JSON.stringify(settings),
+					security: window.smart_manager.sm_nonce,
+					pro: ('undefined' !== typeof(window.smart_manager.sm_beta_pro)) ? window.smart_manager.sm_beta_pro : 0
+				};
+	window.smart_manager.send_request(params,function(response){
+		location.reload();
+	});
+};
 
 if(typeof window.smart_manager === 'undefined'){
 	window.smart_manager = new Smart_Manager();
@@ -3313,7 +3425,7 @@ if(typeof window.smart_manager === 'undefined'){
 
 //Events to be handled on document ready
 jQuery(document).ready(function() {
-		window.smart_manager.init();
+	window.smart_manager.init();
 });
 
 jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, { 
@@ -3366,14 +3478,14 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 			});
 	};
 
-	Smart_Manager.prototype.dateEditor = function( currObj, arguments, format = 'Y-m-d H:i:s', placeholder = 'YYYY-MM-DD HH:MM:SS' ) {
+	Smart_Manager.prototype.dateEditor = function(currObj, arguments, format = 'Y-m-d H:i:s', placeholder = 'YYYY-MM-DD HH:MM:SS', cssClass = 'htDateTimeEditor') {
       // Call the original createElements method
       Handsontable.editors.TextEditor.prototype.createElements.apply(currObj, arguments);
 
       // Create datepicker input and update relevant properties
       currObj.TEXTAREA = document.createElement('input');
       currObj.TEXTAREA.setAttribute('type', 'text');
-      currObj.TEXTAREA.className = 'htDateTimeEditor';
+      currObj.TEXTAREA.className = cssClass;
       currObj.textareaStyle = currObj.TEXTAREA.style;
       currObj.textareaStyle.width = 0;
       currObj.textareaStyle.height = 0;
@@ -3381,15 +3493,15 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
       // Replace textarea with datepicker
       Handsontable.dom.empty(currObj.TEXTAREA_PARENT);
       currObj.TEXTAREA_PARENT.appendChild(currObj.TEXTAREA);
-
-        jQuery('.htDateTimeEditor')
-			.Zebra_DatePicker({ format: format,
-                                    show_icon: false,
-                                    show_select_today: false,
-                                    default_position: 'below',
-									readonly_element: false,
-                                })
-			.attr('placeholder',placeholder);
+		if(0 !== window.smart_manager.useDatePickerForDateTimeOrDateCols){
+			jQuery('.'+cssClass).Zebra_DatePicker({ format: format,
+				show_icon: false,
+				show_select_today: false,
+				default_position: 'below',
+				readonly_element: false,
+			})
+		}
+		jQuery('.'+cssClass).attr('placeholder',placeholder);
     };
 
 	function customNumericTextEditor(query, callback) {
@@ -3433,7 +3545,7 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 
 				// Create number input and update relevant properties
 				this.TEXTAREA = document.createElement('input');
-				this.TEXTAREA.setAttribute('type', 'number');
+				this.TEXTAREA.setAttribute('type', ((0 === window.smart_manager.useNumberFieldForNumericCols) ? 'text' : 'number'));
 
 				 // Replace textarea with number
 				 Handsontable.dom.empty(this.TEXTAREA_PARENT);
@@ -3444,8 +3556,8 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 
 
         dateTimeEditor.prototype.createElements = function() { window.smart_manager.dateEditor( this, arguments ) };
-        dateEditor.prototype.createElements = function() { window.smart_manager.dateEditor( this, arguments, 'Y-m-d', 'YYYY-MM-DD' ) };
-        timeEditor.prototype.createElements = function() { window.smart_manager.dateEditor( this, arguments, 'H:i', 'HH:MM' ) };
+        dateEditor.prototype.createElements = function() { window.smart_manager.dateEditor( this, arguments, 'Y-m-d', 'YYYY-MM-DD', 'htDateEditor' ) };
+        timeEditor.prototype.createElements = function() { window.smart_manager.dateEditor( this, arguments, 'H:i', 'HH:MM', 'htTimeEditor' ) };
 
         function numericRenderer(hotInstance, td, row, col, prop, value, cellProperties) {
 		    Handsontable.renderers.NumericRenderer.apply(this, arguments);
@@ -3785,6 +3897,7 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 		if(!galleryImageParams || !((Object.keys(galleryImageParams)).every(galleryImageParam => galleryImageParams.hasOwnProperty(galleryImageParam)))){
 			return;
 		}
+		let rowNo = (galleryImageParams.hasOwnProperty('rowNo')) ? galleryImageParams.rowNo : 0;
 		window.smart_manager.modal = {
 			title: _x('Gallery Images','gallery modal title','smart-manager-for-wp-e-commerce'),
 			content: galleryImageParams.imageGalleryHtml,
@@ -3806,7 +3919,7 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 								if('undefined' === typeof(attachments)){
 									return;
 								}
-								let imageGalleryHtml = `<div class="sm_gallery_image_parent" data-id="${galleryImageParams.row_data_id}" data-col="${galleryImageParams.src || ''}">`,
+								let imageGalleryHtml = `<div class="sm_gallery_image_parent" data-id="${galleryImageParams.id}" data-col="${galleryImageParams.src || ''}" data-row="${rowNo || 0}">`,
 									modifiedGalleryImages = [],
 									imageIds = new Set();
 								jQuery('.sm_gallery_image').find('img').each(function(){
@@ -3827,7 +3940,7 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 									imageGalleryHtml += window.smart_manager.generateImageGalleryDlgHtml(modifiedGalleryImages);
 								}
 								imageGalleryHtml += '</div>';
-								let args = {id:galleryImageParams.id,src:galleryImageParams.src,values:[...imageIds].join(','),imageGalleryHtml:imageGalleryHtml};
+								let args = {id:galleryImageParams.id,src:galleryImageParams.src,values:[...imageIds].join(','),imageGalleryHtml:imageGalleryHtml,rowNo:rowNo};
 								if(1 == window.smart_manager.sm_beta_pro && "undefined" !== typeof(window.smart_manager.displayTitleModal) && "function" === typeof(window.smart_manager.displayTitleModal)){
 									window.smart_manager.displayTitleModal(args);
 								}else if("undefined" !== typeof(window.smart_manager.inlineUpdateMultipleImages) && "function" === typeof(window.smart_manager.inlineUpdateMultipleImages)){
@@ -3855,8 +3968,8 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 		window.smart_manager.processContent = (editedColumnName) ? editedColumnName : params.src;	
 		if("undefined" !== typeof(window.smart_manager.inlineUpdateMultipleImages) && "function" === typeof(window.smart_manager.inlineUpdateMultipleImages)){
 			window.smart_manager.processCallback = window.smart_manager.inlineUpdateMultipleImages;
-		}
-		window.smart_manager.processCallbackParams = {id:params.id,src:params.src,values:params.values,imageGalleryHtml:params.imageGalleryHtml};		
+		}	
+		window.smart_manager.processCallbackParams = params;	
 		if("undefined" !== typeof(window.smart_manager.showTitleModal) && "function" === typeof (window.smart_manager.showTitleModal)){
 			window.smart_manager.showTitleModal()   
 		}
@@ -3887,63 +4000,79 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 		    	break;
 		}
 	}
+
+	//Function to add title for each of the column headers
+	Smart_Manager.prototype.refreshColumnsTitleAttribute = function(){
+		setTimeout(() => {
+			jQuery('table.htCore').find('.colHeader').each(function() {
+				jQuery(this).attr('title',jQuery(this).text()+' '+_x('(Click to sort)', 'tooltip', 'smart-manager-for-wp-e-commerce'));
+			});
+		}, 1000);
+	}
+
 	// Code for resetting search functionalities.
 	Smart_Manager.prototype.resetSearch = function(){
 		('advanced' === window.smart_manager.searchType) ? jQuery('#search_switch').prop('checked', false).trigger('change') : jQuery('#sm_simple_search_box').val('');
 	}
-	  // Register an alias for datetime
-	  Handsontable.cellTypes.registerCellType('sm.datetime', {
-        editor: dateTimeEditor,
-        renderer: datetimeRenderer,
-        allowInvalid: true,
-      });
 
-	  // Register an alias for date
-      Handsontable.cellTypes.registerCellType('sm.date', {
-        editor: dateEditor,
-        renderer: datetimeRenderer,
-        allowInvalid: true,
-      });
+	// Function to detect if filtered data or not
+	Smart_Manager.prototype.isFilteredData = function(){
+		return (('simple' === window.smart_manager.searchType && window.smart_manager.simpleSearchText !== '') || ('simple' !== window.smart_manager.searchType && window.smart_manager.advancedSearchQuery.length > 0))
+	}
 
-      // Register an alias for time
-      Handsontable.cellTypes.registerCellType('sm.time', {
-        editor: timeEditor,
-        renderer: datetimeRenderer,
-        allowInvalid: true,
-      });
+	// Register an alias for datetime
+	Handsontable.cellTypes.registerCellType('sm.datetime', {
+		editor: dateTimeEditor,
+		renderer: datetimeRenderer,
+		allowInvalid: true,
+	});
 
-	  // Register an alias for image
-	  Handsontable.cellTypes.registerCellType('sm.image', {
+	// Register an alias for date
+	Handsontable.cellTypes.registerCellType('sm.date', {
+		editor: dateEditor,
+		renderer: datetimeRenderer,
+		allowInvalid: true,
+	});
+
+	// Register an alias for time
+	Handsontable.cellTypes.registerCellType('sm.time', {
+		editor: timeEditor,
+		renderer: datetimeRenderer,
+		allowInvalid: true,
+	});
+
+	// Register an alias for image
+	Handsontable.cellTypes.registerCellType('sm.image', {
 		renderer: imageRenderer,
 		allowInvalid: true,
-	  });
+	});
 
-	  // Register an alias for multiple gallery images
-	  Handsontable.cellTypes.registerCellType('sm.multipleImage', {
+	// Register an alias for multiple gallery images
+	Handsontable.cellTypes.registerCellType('sm.multipleImage', {
 		// renderer: Handsontable.renderers.HtmlRenderer,
 		renderer: multipleImageRenderer,
 		allowInvalid: true,
-	  });
+	});
 
-	  // Register an alias for longstrings
-	  Handsontable.cellTypes.registerCellType('sm.longstring', {
+	// Register an alias for longstrings
+	Handsontable.cellTypes.registerCellType('sm.longstring', {
 		editor: defaultTextEditor,
 		renderer: multilistRenderer,
 		allowInvalid: true,
-	  });
+	});
 
-	  // Register an alias for serialized
-	  Handsontable.cellTypes.registerCellType('sm.serialized', {
+	// Register an alias for serialized
+	Handsontable.cellTypes.registerCellType('sm.serialized', {
 		editor: defaultTextEditor,
 		renderer: multilistRenderer,
 		allowInvalid: true,
-	  });
+	});
 
 	// Register an alias for multilist
-	  Handsontable.cellTypes.registerCellType('sm.multilist', {
+	Handsontable.cellTypes.registerCellType('sm.multilist', {
 		editor: defaultTextEditor,
 		renderer: multilistRenderer,
 		allowInvalid: true,
-	  });
+	});
 
 })(Handsontable);

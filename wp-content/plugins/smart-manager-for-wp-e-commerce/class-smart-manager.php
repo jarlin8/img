@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 
 class Smart_Manager {
 
-	static $text_domain, $prefix, $sku, $plugin_file, $sm_is_woo44, $sm_is_woo40, $sm_is_woo39, $sm_is_woo36, $sm_is_woo30, $sm_is_woo22, $sm_is_woo21;
+	static $text_domain, $prefix, $sku, $plugin_file, $sm_is_woo44, $sm_is_woo40, $sm_is_woo39, $sm_is_woo36, $sm_is_woo30, $sm_is_woo22, $sm_is_woo21, $sm_is_woo79, $sm_is_wc_hpos_tables_exists = false;
 
 	public  $plugin_path 	= '',
 			$plugin_url 	= '',
@@ -47,54 +47,65 @@ class Smart_Manager {
 		if( defined('WOOCOMMERCE_VERSION') ) {
 			// checking the version for WooCommerce plugin
 			define ( 'IS_WOO13', version_compare ( WOOCOMMERCE_VERSION, '1.4', '<' ) );
+			if ( version_compare( WOOCOMMERCE_VERSION , '7.9.0', '<' ) ) {
 
-			if ( version_compare( WOOCOMMERCE_VERSION , '4.4.0', '<' ) ) {
+				if ( version_compare( WOOCOMMERCE_VERSION , '4.4.0', '<' ) ) {
 
-				if ( version_compare( WOOCOMMERCE_VERSION , '4.0.0', '<' ) ) {
+					if ( version_compare( WOOCOMMERCE_VERSION , '4.0.0', '<' ) ) {
 
-					if ( version_compare( WOOCOMMERCE_VERSION , '3.9.0', '<' ) ) {
+						if ( version_compare( WOOCOMMERCE_VERSION , '3.9.0', '<' ) ) {
 
-						if ( version_compare( WOOCOMMERCE_VERSION , '3.6.0', '<' ) ) {
+							if ( version_compare( WOOCOMMERCE_VERSION , '3.6.0', '<' ) ) {
 
-							if (version_compare ( WOOCOMMERCE_VERSION, '3.0.0', '<' )) {
-									
-								if (version_compare ( WOOCOMMERCE_VERSION, '2.2.0', '<' )) {
+								if (version_compare ( WOOCOMMERCE_VERSION, '3.0.0', '<' )) {
+										
+									if (version_compare ( WOOCOMMERCE_VERSION, '2.2.0', '<' )) {
 
-									if (version_compare ( WOOCOMMERCE_VERSION, '2.1.0', '<' )) {
+										if (version_compare ( WOOCOMMERCE_VERSION, '2.1.0', '<' )) {
 
-										if (version_compare ( WOOCOMMERCE_VERSION, '2.0', '<' )) {
-											define ( 'SM_IS_WOO16', "true" );
+											if (version_compare ( WOOCOMMERCE_VERSION, '2.0', '<' )) {
+												define ( 'SM_IS_WOO16', "true" );
+											} else {
+												define ( 'SM_IS_WOO16', "false" );	
+											}
+											define ( 'SM_IS_WOO21', "false" );
 										} else {
-											define ( 'SM_IS_WOO16', "false" );	
+											define ( 'SM_IS_WOO16', "true" );
+											define ( 'SM_IS_WOO21', "true" );
 										}
-										define ( 'SM_IS_WOO21', "false" );
+										define ( 'SM_IS_WOO22', "false" );
 									} else {
 										define ( 'SM_IS_WOO16', "true" );
 										define ( 'SM_IS_WOO21', "true" );
+										define ( 'SM_IS_WOO22', "true" );
 									}
-									define ( 'SM_IS_WOO22', "false" );
+									define ( 'SM_IS_WOO30', "false" );
 								} else {
 									define ( 'SM_IS_WOO16', "true" );
 									define ( 'SM_IS_WOO21', "true" );
 									define ( 'SM_IS_WOO22', "true" );
+									define ( 'SM_IS_WOO30', "true" );
 								}
-								define ( 'SM_IS_WOO30', "false" );
+								define ( 'SM_IS_WOO36', "false" );
 							} else {
-								define ( 'SM_IS_WOO16', "true" );
-								define ( 'SM_IS_WOO21', "true" );
-								define ( 'SM_IS_WOO22', "true" );
-								define ( 'SM_IS_WOO30', "true" );
+								define( 'SM_IS_WOO36', 'true' );
+								define( 'SM_IS_WOO30', 'true' );
+								define( 'SM_IS_WOO22', 'true' );
+								define( 'SM_IS_WOO21', 'true' );
+								define( 'SM_IS_WOO16', 'true' );
 							}
-							define ( 'SM_IS_WOO36', "false" );
+							define( 'SM_IS_WOO39', 'false' );
 						} else {
+							define( 'SM_IS_WOO39', 'true' );
 							define( 'SM_IS_WOO36', 'true' );
 							define( 'SM_IS_WOO30', 'true' );
 							define( 'SM_IS_WOO22', 'true' );
 							define( 'SM_IS_WOO21', 'true' );
 							define( 'SM_IS_WOO16', 'true' );
 						}
-						define( 'SM_IS_WOO39', 'false' );
+						define( 'SM_IS_WOO40', 'false' );
 					} else {
+						define( 'SM_IS_WOO40', 'true' );
 						define( 'SM_IS_WOO39', 'true' );
 						define( 'SM_IS_WOO36', 'true' );
 						define( 'SM_IS_WOO30', 'true' );
@@ -102,8 +113,9 @@ class Smart_Manager {
 						define( 'SM_IS_WOO21', 'true' );
 						define( 'SM_IS_WOO16', 'true' );
 					}
-					define( 'SM_IS_WOO40', 'false' );
+					define( 'SM_IS_WOO44', 'false' );
 				} else {
+					define( 'SM_IS_WOO44', 'true' );
 					define( 'SM_IS_WOO40', 'true' );
 					define( 'SM_IS_WOO39', 'true' );
 					define( 'SM_IS_WOO36', 'true' );
@@ -112,16 +124,17 @@ class Smart_Manager {
 					define( 'SM_IS_WOO21', 'true' );
 					define( 'SM_IS_WOO16', 'true' );
 				}
-				define( 'SM_IS_WOO44', 'false' );
+				define( 'SM_IS_WOO79', 'false' );
 			} else {
-				define( 'SM_IS_WOO44', 'true' );
-				define( 'SM_IS_WOO40', 'true' );
-				define( 'SM_IS_WOO39', 'true' );
-				define( 'SM_IS_WOO36', 'true' );
-				define( 'SM_IS_WOO30', 'true' );
-				define( 'SM_IS_WOO22', 'true' );
-				define( 'SM_IS_WOO21', 'true' );
-				define( 'SM_IS_WOO16', 'true' );
+				( class_exists( '\Automattic\WooCommerce\Utilities\OrderUtil' ) &&  \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled() ) ? define( 'SM_IS_WOO79', 'true' ) : define( 'SM_IS_WOO79', 'false' );
+			 	define( 'SM_IS_WOO44', 'true' );
+			 	define( 'SM_IS_WOO40', 'true' );
+			 	define( 'SM_IS_WOO39', 'true' );
+			 	define( 'SM_IS_WOO36', 'true' );
+			 	define( 'SM_IS_WOO30', 'true' );
+			 	define( 'SM_IS_WOO22', 'true' );
+			 	define( 'SM_IS_WOO21', 'true' );
+			 	define( 'SM_IS_WOO16', 'true' );
 			}
 		}
 	}
@@ -183,7 +196,7 @@ class Smart_Manager {
 		$this->plugin_info = $plugin_info [SM_PLUGIN_BASE_NM];
 		
 		if( is_callable( array( 'Smart_Manager', 'get_version' ) ) ) {
-			self::get_version();
+			$this->version = self::get_version();
 		}
 		
 		$this->updater = rand(3,3);
@@ -199,12 +212,10 @@ class Smart_Manager {
 		global $wp_version, $wpdb;
 
 		$post_types = get_post_types( array(), 'objects' ); //Code to get all the custom post types as dashboards
-
 		$ignored_post_types = array('revision', 'product_variation', 'shop_order_refund');
-
 		$this->sm_dashboards_final = array();
 		$this->sm_public_dashboards = array();
-
+		$dashboard_post_types = array();
 		if( !empty( $post_types ) ) {
 			foreach( $post_types as $post_type => $obj  ) {
 
@@ -212,10 +223,18 @@ class Smart_Manager {
 					continue;
 				}
 
-				$this->sm_dashboards_final[$post_type] = $obj->label;
+				$label = ( ! empty( $obj->label ) ) ? $obj->label : $post_type;
+				$this->sm_dashboards_final[ $post_type ] = $label;
 				if( !empty( $obj->public ) && $obj->public == 1 ) {
 					$this->sm_public_dashboards[] = $post_type;
 				}
+			    if ( ! isset( $dashboard_post_types[ $label ] ) ) {
+			        $dashboard_post_types[ $label ] = array();
+			    }
+			    $dashboard_post_types[ $label ][] = $post_type;
+			}
+			if ( is_callable( array( 'Smart_Manager', 'handle_duplicate_dashboard_names' ) ) ) {
+				$this->handle_duplicate_dashboard_names( $dashboard_post_types, 'post_type' );
 			}
 		}
 		$this->sm_dashboards_final ['user'] = __(ucwords('users'), 'smart-manager-for-wp-e-commerce');
@@ -260,9 +279,19 @@ class Smart_Manager {
 	//Function for defining taxonomies dashboards
 	public function get_taxonomies() {
 		$taxonomies = get_taxonomies( array( 'public' => 1 ), 'objects' ); //TODO: later we can add compat for hidden taxonomies as well
+		$dashboard_taxonomies = array();
 		if( ! empty( $taxonomies ) ){
 			foreach( $taxonomies as $slug => $obj ){
-				$this->taxonomy_dashboards[ $slug ] = ( ! empty( $obj->label ) ) ? $obj->label : $slug;
+				$label = ( ! empty( $obj->label ) ) ? $obj->label : $slug;
+				$this->taxonomy_dashboards[ $slug ] = $label;
+				if ( ! isset( $dashboard_taxonomies[ $label ] ) ) {
+			        $dashboard_taxonomies[ $label ] = array();
+			    }
+			    $dashboard_taxonomies[ $label ][] = $slug;
+			}
+			
+			if ( is_callable( array( 'Smart_Manager', 'handle_duplicate_dashboard_names' ) ) ) {
+				$this->handle_duplicate_dashboard_names( $dashboard_taxonomies, 'taxonomy' );
 			}
 
 			if ( ! defined( 'SM_ALL_TAXONOMY_DASHBOARDS' ) ) {
@@ -278,13 +307,21 @@ class Smart_Manager {
 
 		global $current_user;
 
+		//for settings
+		if( file_exists( $this->plugin_path . '/classes/class-smart-manager-settings.php' ) ){
+			include_once $this->plugin_path . '/classes/class-smart-manager-settings.php';
+			if( defined( 'SMPRO' ) && SMPRO === true && file_exists( SM_PRO_URL . 'classes/class-smart-manager-pro-settings.php' ) ) {
+				include_once SM_PRO_URL . 'classes/class-smart-manager-pro-settings.php';
+			}
+		}
+
 		if( file_exists( $this->plugin_path . '/classes/class-smart-manager-install.php' ) ) { 
 			include_once $this->plugin_path . '/classes/class-smart-manager-install.php';
 		}
 
 		if( file_exists( $this->plugin_path . '/classes/class-smart-manager-controller.php' ) ) { 
 			include_once $this->plugin_path . '/classes/class-smart-manager-controller.php';
-			new Smart_Manager_Controller();
+			$GLOBALS['smart_manager_controller'] = new Smart_Manager_Controller();
 		}
 
 		if( file_exists( $this->plugin_path . '/classes/class-smart-manager-utils.php' ) ) { 
@@ -375,9 +412,14 @@ class Smart_Manager {
 		add_action( 'admin_footer', array( &$this, 'add_plugin_social_links' ) );
 
 		add_action( 'admin_footer', array( $this, 'smart_manager_support_ticket_content' ) );
-		add_action( 'admin_footer', array( $this, 'manage_with_smart_manager' ) );
+		if( 'yes' === Smart_Manager_Settings::get( 'show_manage_with_smart_manager_button' ) ) {
+			add_action( 'admin_footer', array( $this, 'manage_with_smart_manager' ) );
+		}
 
 		add_action( 'admin_menu', array( $this, 'add_menu_access' ), 9 );
+		if( 'yes' === Smart_Manager_Settings::get( 'show_smart_manager_menu_in_admin_bar' ) ) {
+			add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_menu' ), 99 );
+		}
 
 		if (is_admin() ) {
 			add_action ( 'wp_ajax_sm_update_to_pro', array( $this, 'update_to_pro' ) );
@@ -389,6 +431,10 @@ class Smart_Manager {
 			add_action( 'admin_init', array( $this, 'pro_activated' ) );
 			add_filter( 'plugin_auto_update_setting_html', array( $this,'auto_update_setting_html' ), 10, 3 );
 		}
+
+		// Action to declare WooCommerce HPOS compatibility.
+		add_action( 'before_woocommerce_init', array( $this, 'declare_hpos_compatibility' ) );
+		add_filter( 'plugin_row_meta', array( $this, 'add_additonal_links' ), 99, 4 );
 	}
 
 	// Find latest StoreApps Upgrade file
@@ -427,6 +473,7 @@ class Smart_Manager {
 
 		//define woo constants
 		$this->define_woo_constants();
+		self::$sm_is_woo79 = ( defined('SM_IS_WOO79') && 'true' === SM_IS_WOO79 ) ? true : false;
 		self::$sm_is_woo44 = (defined('SM_IS_WOO44')) ? SM_IS_WOO44 : '';
 		self::$sm_is_woo40 = (defined('SM_IS_WOO40')) ? SM_IS_WOO40 : '';
 		self::$sm_is_woo39 = (defined('SM_IS_WOO39')) ? SM_IS_WOO39 : '';
@@ -435,6 +482,10 @@ class Smart_Manager {
 		self::$sm_is_woo22 = (defined('SM_IS_WOO22')) ? SM_IS_WOO22 : '';
 		self::$sm_is_woo21 = (defined('SM_IS_WOO21')) ? SM_IS_WOO21 : '';
 
+		if( self::$sm_is_woo79 && function_exists( 'wc_get_container' ) && class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer' ) && wc_get_container()->get( Automattic\WooCommerce\Internal\DataStores\Orders\DataSynchronizer::class )->check_orders_table_exists() ){
+			self::$sm_is_wc_hpos_tables_exists = true;
+		}
+		
 		//Code for handling the in app offer
 		if ( ! class_exists( 'SA_SM_In_App_Offer' ) && file_exists( (dirname( SM_PLUGIN_FILE )) . '/classes/sa-includes/class-sa-sm-in-app-offer.php' ) ) {
 			include_once 'classes/sa-includes/class-sa-sm-in-app-offer.php';
@@ -696,7 +747,7 @@ class Smart_Manager {
 			}
 	
 			if( ( defined( 'SMPRO' ) && true === SMPRO  ) && ( ( ! empty( $current_user_role ) && 'administrator' === $current_user_role ) ) ) {
-				add_submenu_page( 'smart-manager', __( 'Settings', 'smart-manager-for-wp-e-commerce' ),  __( 'Settings', 'smart-manager-for-wp-e-commerce' ), 'manage_options', 'smart-manager&sm-settings', array( $this, 'add_admin_page' ) );
+				add_submenu_page( 'smart-manager', __( 'Access Privilege Settings', 'smart-manager-for-wp-e-commerce' ),  __( 'Access Privilege Settings', 'smart-manager-for-wp-e-commerce' ), 'manage_options', 'smart-manager&sm-settings', array( $this, 'add_admin_page' ) );
 			}
 	
 			add_submenu_page( 'smart-manager', __( 'Docs & Support', 'smart-manager-for-wp-e-commerce' ),  __( 'Docs & Support', 'smart-manager-for-wp-e-commerce' ), 'manage_options', 'smart-manager&landing-page=sm-about', array( $this, 'add_admin_page' ) );
@@ -1023,7 +1074,7 @@ class Smart_Manager {
 			$file_nm = 'sm_custom_'.preg_replace('/[\s\-.]/','_',substr($file, (strrpos($file, '/', -3) + 1)));
 			array_push( $registered_scripts, $file_nm );
 
-			if ( $file_nm == 'sm_custom_smart_manager_js' || $file_nm == 'sm_custom_styles_js' || $file_nm == 'sm_dashboard_js' ) {
+			if ( $file_nm == 'sm_custom_smart_manager_js' || $file_nm == 'sm_custom_styles_js' || $file_nm == 'sm_custom_admin_js' ) {
 				continue;
 			}
 
@@ -1146,15 +1197,6 @@ class Smart_Manager {
 		$deleted_successful = ( ($this->dupdater * $this->dupgrade)/$this->dupdater ) * 2;
 
 		$this->sm_dashboards_final ['sm_nonce'] = wp_create_nonce( 'smart-manager-security' );
-
-		//setting limit for the records to be displayed
-		$record_per_page = get_option( '_sm_beta_set_record_limit' );
-
-		if( empty($record_per_page) ) {
-			update_option( '_sm_beta_set_record_limit', '50', 'no' );
-			$record_per_page = '50';
-		}
-
 		$batch_background_process = false;
 		$background_process_name = '';
 
@@ -1196,7 +1238,7 @@ class Smart_Manager {
 							'SM_IS_WOO21' => self::$sm_is_woo21,
 							'SM_BETA_PRO' => SMPRO,
 							'SM_APP_ADMIN_URL' => SM_APP_ADMIN_URL,
-							'record_per_page' => $record_per_page,
+							'record_per_page' => Smart_Manager_Settings::get( 'per_page_record_limit' ),
 							'sm_admin_email' => get_option('admin_email'),
 							'batch_background_process' => $batch_background_process,
 							'background_process_name' => $background_process_name,
@@ -1209,12 +1251,17 @@ class Smart_Manager {
 							'search_type' => ( ( !empty( $search_type ) ) ? $search_type : 'simple' ),
 							'wpdb_prefix' => $wpdb->prefix,
 							'trashEnabled' => $trash_enabled,
-							'background_process_running_message' => __( 'In the meanwhile, you can use Smart Manager. But before using actions like ', 'smart-manager-for-wp-e-commerce') .' <strong>'. __( 'Bulk Edit', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __('Duplicate Records', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Delete Records', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Undo Tasks', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Delete Tasks', 'smart-manager-for-wp-e-commerce') .'</strong>, '. __('you will have to wait for the current background process to finish.', 'smart-manager-for-wp-e-commerce' ),
+							'background_process_running_message' => __( 'In the meanwhile, you can use Smart Manager. But before using actions like ', 'smart-manager-for-wp-e-commerce') .' <strong>'. __( 'Bulk Edit', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __('Duplicate Records', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Delete Records', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Undo Tasks', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Delete Tasks', 'smart-manager-for-wp-e-commerce') .'</strong>/ <strong>'. __( 'Export CSV', 'smart-manager-for-wp-e-commerce') .'</strong>, '. __('you will have to wait for the current background process to finish.', 'smart-manager-for-wp-e-commerce' ),
 							'trashAndDeletePermanently' => array( 'disable' => $disable_trash_and_delete_permanently, 'error_message' => $trash_and_delete_permanently_disable_message ),
-							'forceCollapseAdminMenu' => ( 'no' === get_option( 'sm_wp_force_collapse_admin_menu', 'yes' ) ) ? 0 : 1,
-							'rowHeight' => get_option( 'sm_grid_row_height', '50px' ),
+							'forceCollapseAdminMenu' => ( 'no' === Smart_Manager_Settings::get( 'wp_force_collapse_admin_menu' ) ) ? 0 : 1,
+							'rowHeight' => Smart_Manager_Settings::get( 'grid_row_height' ),
 							'defaultImagePlaceholder' => SM_IMG_URL.'image-placeholder.png',
-							'showTasksTitleModal' => ( 'no' === get_option( 'sm_show_tasks_title_modal', 'yes' ) ) ? 0 : 1,
+							'showTasksTitleModal' => ( 'no' === apply_filters( 'sm_show_tasks_title_modal', Smart_Manager_Settings::get( 'show_tasks_title_modal' ) ) ) ? 0 : 1,
+							'useNumberFieldForNumericCols' => ( 'no' === apply_filters( 'sm_use_number_field_for_numeric_cols', Smart_Manager_Settings::get( 'use_number_field_for_numeric_cols' ) ) ) ? 0 : 1,
+							'WCProductImportURL' => admin_url( 'edit.php?post_type=product&page=product_importer' ),
+							'allSettings' => Smart_Manager_Settings::get(),
+							'useDatePickerForDateTimeOrDateCols' => ( 'no' === apply_filters( 'sm_use_date_picker_for_date_or_datetime_cols', Smart_Manager_Settings::get( 'use_date_picker_for_date_or_datetime_cols' ) ) ) ? 0 : 1,
+							'SM_IS_WOO79' => ( ! empty( self::$sm_is_woo79 ) ) ? 'true' : 'false',
 						);
 
 		$active_plugins = (array) get_option( 'active_plugins', array() );
@@ -1533,15 +1580,7 @@ class Smart_Manager {
 					?>
 					</span>
 				</div>
-				<span id="sm_nav_bar_right" style="float: right;"> <?php
-					$settings_btn = '<a href="admin.php?page=smart-manager&sm-settings" target="_blank" title="'. __('Settings', 'smart-manager-for-wp-e-commerce') .'"><svg stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></a>';
-					$plug_page .= '<div class="sm_nav_bar_links">
-										<a href="admin.php?page=smart-manager&landing-page=sm-faqs" target="_blank" title="'. __('Docs', 'smart-manager-for-wp-e-commerce') .'"><svg stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg></a>
-										'.( ( SMPRO === true && ! is_multisite() ) ? $settings_btn : '' ).
-									'</div>';
-					printf ( __ ( '%1s' , 'smart-manager-for-wp-e-commerce'), $plug_page );
-					?>
-				</span>
+				<span id="sm_nav_bar_right" style="float: right;"></span>
 			</div>
 		<?php
 			if (! $is_pro_updated) {
@@ -1676,18 +1715,12 @@ class Smart_Manager {
 	
 		$version = '';
 	
-		if ( function_exists('smart_manager_get_data') ) {
+		if( is_callable( array( 'Smart_Manager', 'get_data' ) ) ) {
 			$plugin_data = self::get_data();
 			$version = $plugin_data['Version'];
 		}
 	
 		return $version;
-	}
-
-	function smart_manager_print_logo() {
-		if (get_option('smart_manager_company_logo') != '') {
-			return '<img src="' . get_option('smart_manager_company_logo') . '"/>';
-		}
 	}
 
 	function manage_with_smart_manager() {
@@ -1732,6 +1765,100 @@ class Smart_Manager {
 		}
 		return $html;
 	}
+
+	/**
+	 * Function for handling adding of Smart Manager in wp admin menu bar.
+	 *
+	 * @param object $wp_admin_bar WP_Admin_Bar instance.
+	 * @return void.
+	 */
+	public function add_admin_bar_menu( $wp_admin_bar = null ) {
+		if ( empty( $wp_admin_bar ) ) {
+			return;
+		}
+		
+		$current_user_role = ( is_callable( array( 'Smart_Manager', 'get_current_user_role' ) ) ) ? self::get_current_user_role() : '';
+		if( ! ( ( defined( 'SMPRO' ) && true === SMPRO  ) || ( ( ! empty( $current_user_role ) && 'administrator' === $current_user_role ) ) ) ) {
+			return;
+		}
+
+		$wp_admin_bar->add_node( array(
+			'id' => 'sm-admin-bar-btn',
+			'title' => '<span class="ab-icon dashicons-before dashicons-performance"></span>Smart Manager',
+			'href' => admin_url( 'admin.php?page=smart-manager' ),
+			'meta' => array(
+				'title' => 'Smart Manager - WooCommerce Advanced Bulk Edit, Inventory Management & more'
+			)
+		) );
+	}
+
+	/**
+	 * Function to declare WooCommerce HPOS compatibility
+	 */
+	public function declare_hpos_compatibility() {
+		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', 'smart-manager-for-wp-e-commerce/smart-manager.php', true );
+		}
+	}
+
+	/**
+	 * Function to handle duplicate dashboard names
+	 *
+	 * @param array $dashboard_slugs dashboard slugs.
+	 * @param string $dashboard_type dashboard type.
+	 */
+	public function handle_duplicate_dashboard_names( $dashboard_slugs = array(), $dashboard_type = '' ) {
+		if ( empty( $dashboard_slugs ) || ( ! is_array( $dashboard_slugs ) )  ) {
+			return;
+		}
+		array_map( function( $slug = '' ) use ( $dashboard_type ) {
+			switch ( $dashboard_type ) {
+				case 'post_type':
+					if ( isset( $this->sm_dashboards_final[ $slug ] ) ) {
+						if ( in_array( $slug, array( 'product', 'shop_order', 'shop_coupon' ) ) ) {
+							$this->sm_dashboards_final[ $slug ] = _x( 'WooCommerce - ', 'WooCommerce post type label', 'smart-manager-for-wp-e-commerce' ) . $this->sm_dashboards_final[ $slug ];
+						} else {
+							$this->sm_dashboards_final[ $slug ] = $this->sm_dashboards_final[ $slug ] . " ($slug)";
+						}
+					}
+					break;
+				case 'taxonomy':
+					if ( isset( $this->taxonomy_dashboards[ $slug ] ) ) {
+						if ( in_array( $slug, array( 'product_type', 'product_visibility', 'product_cat', 'product_tag', 'product_shipping_class' ) ) ) {
+							$this->taxonomy_dashboards[ $slug ] = _x( 'WooCommerce - ', 'WooCommerce post type label', 'smart-manager-for-wp-e-commerce' ) . $this->taxonomy_dashboards[ $slug ];
+						} else {
+					   		$this->taxonomy_dashboards[ $slug ] = $this->taxonomy_dashboards[ $slug ] . " ($slug)";
+						}
+					}
+					break;
+			}
+		}, array_reduce( $dashboard_slugs, function( $merged_slugs = array(), $slugs = array() ) {
+			return ( ( is_array( $slugs ) ) && ( count( $slugs ) > 1 ) ) ? array_merge( $merged_slugs, $slugs ) : $merged_slugs;
+		}, [] ) );
+	}
+	
+	/**
+	 * Function to add additional links under plugins meta on plugins page for 5-star and Go Pro in case of lite version installed.
+	 *
+	 * @param array  $plugin_meta Plugin meta.
+	 * @param string $plugin_file Plugin file.
+	 * @param array  $plugin_data Plugin's data.
+	 * @param string $status Plugin's status.
+	 * @return array Plugin meta with additional links.
+	 */
+	public function add_additonal_links( $plugin_meta = array(), $plugin_file = '', $plugin_data = array(), $status = '' ) {
+		if ( ( defined('SM_PLUGIN_BASE_NM' ) && ( SM_PLUGIN_BASE_NM !== $plugin_file ) ) || ( ! defined('SM_PLUGIN_BASE_NM' ) ) || empty( $plugin_file ) ) {
+			return $plugin_meta;
+		}
+		if ( ( defined('SMPRO') && false === SMPRO ) || ( ! defined('SMPRO') ) ) {
+			$plugin_meta[] = '<span class="sm_pricing_icon"> 🔥 </span> <a href="' . esc_url( admin_url( 'admin.php?page=smart-manager-pricing' ) ) . '" target="storeapps_go_pro" title="' . _x( 'Go Pro', 'go pro link title', 'smart-manager-for-wp-e-commerce' ) . '">' . _x( 'Go Pro', 'go pro link', 'smart-manager-for-wp-e-commerce' ) . '</a>';
+		}
+
+		$plugin_meta[] = sprintf( __( 'If you like <strong>Smart Manager</strong> please leave us a %1$s&#9733;&#9733;&#9733;&#9733;&#9733;%2$s rating. A huge thanks in advance!', 'smart-manager-for-wp-e-commerce' ), '<a href="https://wordpress.org/support/plugin/smart-manager-for-wp-e-commerce/reviews/?filter=5#new-post" target="storeapps_5_star" title="' . _x( '5-star review', '5-star link title', 'smart-manager-for-wp-e-commerce' ) . '">', '</a>' );
+
+		return $plugin_meta;
+	}
+
 }
 
 $GLOBALS['smart_manager_beta'] = Smart_Manager::instance();

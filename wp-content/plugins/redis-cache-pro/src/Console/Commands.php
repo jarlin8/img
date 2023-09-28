@@ -31,6 +31,8 @@ use function WP_CLI\Utils\proc_open_compat;
 use RedisCachePro\Diagnostics\Diagnostics;
 use RedisCachePro\Connections\RelayConnection;
 use RedisCachePro\Configuration\Configuration;
+
+use RedisCachePro\ObjectCaches\ObjectCacheInterface;
 use RedisCachePro\ObjectCaches\MeasuredObjectCacheInterface;
 
 use RedisCachePro\Plugin\Api\Analytics;
@@ -60,6 +62,9 @@ class Commands extends WP_CLI_Command
      *
      * [--skip-flush-notice]
      * : Omit the cache flush notice.
+     *
+     * [--skip-transients]
+     * : Omit deleting transients from the database.
      *
      * ## EXAMPLES
      *
@@ -119,13 +124,28 @@ class Commands extends WP_CLI_Command
                     'To avoid outdated data, flush the object cache by calling `%ywp cache flush%n`.'
                 ));
             }
-
-            return;
+        } else {
+            $GLOBALS['ObjectCachePro']->resetCache()
+                ? WP_CLI::success('Object cache flushed.')
+                : WP_CLI::error('Object cache could not be flushed.');
         }
 
-        $GLOBALS['ObjectCachePro']->flush()
-            ? WP_CLI::success('Object cache flushed.')
-            : WP_CLI::error('Object cache could not be flushed.');
+        if (isset($options['skip-transients'])) {
+            WP_CLI::line(
+                WP_CLI::colorize(
+                    sprintf(
+                        'To avoid outdated data, delete transients from the database by calling `%%y%s%%n`.',
+                        is_multisite()
+                            ? 'wp transient delete --all --network && wp site list --field=url | xargs -n1 -I % wp --url=% transient delete --all'
+                            : 'wp transient delete --all'
+                    )
+                )
+            );
+        } else {
+            $GLOBALS['ObjectCachePro']->deleteTransients();
+
+            WP_CLI::success('Transients deleted from the database.');
+        }
     }
 
     /**
@@ -177,7 +197,7 @@ class Commands extends WP_CLI_Command
         WP_CLI::success('Object cache disabled.');
 
         if (! isset($options['skip-flush'])) {
-            $GLOBALS['ObjectCachePro']->flush()
+            $GLOBALS['ObjectCachePro']->resetCache()
                 ? WP_CLI::success('Object cache flushed.')
                 : WP_CLI::error('Object cache could not be flushed.');
         }
@@ -297,7 +317,7 @@ class Commands extends WP_CLI_Command
                 sprintf('%%b[%s]%%n', ucfirst($groupName))
             ));
 
-            foreach ($group as $key => $diagnostic) {
+            foreach ($group as $diagnostic) {
                 if ($groupName === Diagnostics::ERRORS) {
                     WP_CLI::log(WP_CLI::colorize("%r{$diagnostic}%n"));
                 } else {
@@ -314,17 +334,10 @@ class Commands extends WP_CLI_Command
     /**
      * Flushes the object cache.
      *
-     * Flushing the object cache will flush the cache for all sites.
-     * Beware of the performance impact when flushing the object cache in production,
-     * when not using asynchronous flushing.
-     *
      * ## OPTIONS
      *
      * [<site-id>...]
      * : One or more IDs of sites to flush.
-     *
-     * [--async]
-     * : Force asynchronous flush.
      *
      * ## EXAMPLES
      *
@@ -366,8 +379,7 @@ class Commands extends WP_CLI_Command
         if (empty($arguments)) {
             try {
                 $GLOBALS['ObjectCachePro']->logFlush();
-
-                $result = $wp_object_cache->connection()->flushdb(isset($options['async']));
+                $result = $wp_object_cache->flush();
             } catch (Throwable $exception) {
                 $result = false;
             }
@@ -388,7 +400,7 @@ class Commands extends WP_CLI_Command
                 WP_CLI::error($exception->getMessage());
             }
 
-            if ($result) { // @phpstan-ignore-line
+            if ($result) {
                 WP_CLI::success(WP_CLI::colorize(
                     "Object cache of site [%y{$siteId}%n] was flushed."
                 ));
@@ -435,12 +447,14 @@ class Commands extends WP_CLI_Command
 
         foreach ($arguments as $group) {
             try {
+                $GLOBALS['ObjectCachePro']->logGroupFlush($group);
+
                 $result = $wp_object_cache->flush_group($group);
             } catch (Throwable $exception) {
                 WP_CLI::error($exception->getMessage());
             }
 
-            if ($result) { // @phpstan-ignore-line
+            if ($result) {
                 WP_CLI::success(WP_CLI::colorize(
                     "Object cache group [%y{$group}%n] was flushed."
                 ));
@@ -450,6 +464,26 @@ class Commands extends WP_CLI_Command
                 ), false);
             }
         }
+    }
+
+    /**
+     * Resets the object cache.
+     *
+     * ## EXAMPLES
+     *
+     *     # Resets the entire cache.
+     *     $ wp redis reset
+     *     Success: The object cache was reset.
+     *
+     * @param  array<int, string>  $arguments
+     * @param  array<mixed>  $options
+     * @return void
+     */
+    public function reset($arguments, $options)
+    {
+        $GLOBALS['ObjectCachePro']->resetCache()
+            ? WP_CLI::success('Object cache reset.')
+            : WP_CLI::error('Object cache could not be reset.');
     }
 
     /**
@@ -621,7 +655,7 @@ class Commands extends WP_CLI_Command
      * * relay-hit-ratio
      * * relay-ops-per-sec
      * * relay-keys
-     * * relay-memory-active
+     * * relay-memory-used
      * * relay-memory-total
      * * relay-memory-human
      * * relay-memory-ratio
@@ -648,7 +682,10 @@ class Commands extends WP_CLI_Command
         $this->abortIfNotConfigured();
         $this->abortIfNotConnected();
 
-        if (! $wp_object_cache instanceof MeasuredObjectCacheInterface) {
+        if (
+            ! $wp_object_cache instanceof ObjectCacheInterface ||
+            ! $wp_object_cache instanceof MeasuredObjectCacheInterface
+        ) {
             WP_CLI::error('Object cache does not support analytics.');
         }
 
@@ -778,7 +815,7 @@ class Commands extends WP_CLI_Command
      * * relay-hit-ratio
      * * relay-ops-per-sec
      * * relay-keys
-     * * relay-memory-active
+     * * relay-memory-used
      * * relay-memory-total
      * * relay-memory-human
      * * relay-memory-ratio

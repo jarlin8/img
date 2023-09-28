@@ -222,6 +222,11 @@ class Diagnostics implements ArrayAccess
         $this->data[self::RELAY]['relay-cache'] = $this->relayCache();
         $this->data[self::RELAY]['relay-eviction'] = $this->relayEvictionPolicy();
         $this->data[self::RELAY]['relay-license'] = $this->relayLicense();
+
+        $percentage = (int) ini_get('relay.maxmemory_pct') ?: 100;
+
+        $this->data[self::RELAY]['relay-maxmemory'] = Diagnostic::name('Relay MaxMemory')
+            ->value("{$percentage}%");
     }
 
     /**
@@ -311,12 +316,21 @@ class Diagnostics implements ArrayAccess
         $stats = $connection->memoize('stats');
         $endpointId = $connection->endpointId();
 
-        $this->data[self::STATISTICS]['relay-memory'] = Diagnostic::name('Relay Memory')
-            ->value(sprintf(
-                '%s of %s',
-                size_format($stats['memory']['active']),
-                size_format($stats['memory']['total'])
-            ));
+        $humanMemory = sprintf(
+            '%s of %s',
+            size_format($stats['memory']['used']),
+            size_format($stats['memory']['total'])
+        );
+
+        $relayMemory = Diagnostic::name('Relay Memory');
+
+        if ($this->relayAtCapacity()) {
+            $relayMemory->error($humanMemory);
+        } else {
+            $relayMemory->value($humanMemory);
+        }
+
+        $this->data[self::STATISTICS]['relay-memory'] = $relayMemory;
 
         $keys = array_sum(array_map(function ($connection) {
             return $connection['keys'][$this->config->database] ?? 0;
@@ -486,24 +500,44 @@ class Diagnostics implements ArrayAccess
      */
     protected function relayLicense()
     {
-        $license = Relay::license();
+        $license = get_site_option('objectcache_relay_license');
+
+        if (! is_array($license)) {
+            $license = Relay::license();
+        }
+
         $diagnostic = Diagnostic::name('Relay License');
 
         if (! empty($license['reason'])) {
             $diagnostic->comment($license['reason']);
         }
 
-        switch ($license['state']) {
+        $state = (string) $license['state'];
+
+        switch ($state) {
             case 'licensed':
-                return $diagnostic->success(ucwords((string) $license['state']));
-            case 'unlicensed':
+                return $diagnostic->success(ucwords($state));
             case 'unknown':
-                return $diagnostic->warning(ucwords((string) $license['state']));
+                return $diagnostic->value(ucwords($state));
             case 'suspended':
-                return $diagnostic->error(ucwords((string) $license['state']));
-            default:
-                return $diagnostic->value(ucwords((string) $license['state']));
+                return $diagnostic->error(ucwords($state));
         }
+
+        // Handle `unlicensed` state
+        switch ($license['reason']) {
+            case 'NO_KEY':
+                return $diagnostic->value(ucwords($state));
+            case 'UNKNOWN_KEY':
+            case 'DEFAULT_UUID':
+            case 'EARLY_HEARTBEAT':
+            case 'BINARY_SUSPENDED':
+            case 'LICENSE_SUSPENDED':
+            case 'INVALID_HEARTBEAT':
+            case 'SUBSCRIPTION_INACTIVE':
+                return $diagnostic->error(ucwords($state));
+        }
+
+        return $diagnostic->error(ucwords($state));
     }
 
     /**
@@ -535,6 +569,16 @@ class Diagnostics implements ArrayAccess
         }
 
         return $diagnostic->value($policy);
+    }
+
+    /**
+     * Returns Relay's max-memory percentage.
+     *
+     * @return int
+     */
+    public function relayMemoryThreshold()
+    {
+        return (int) ini_get('relay.maxmemory_pct') ?: 100;
     }
 
     /**
@@ -912,6 +956,26 @@ class Diagnostics implements ArrayAccess
     }
 
     /**
+     * Whether Relay is running at maximum memory capacity.
+     *
+     * @return bool
+     */
+    public function relayAtCapacity()
+    {
+        if (! $this->connection instanceof RelayConnection) {
+            return false;
+        }
+
+        $stats = $this->connection->memoize('stats');
+        $percentage = $this->relayMemoryThreshold();
+        $margin = 2;
+
+        $threshold = (($percentage - $margin) / 100) * $stats['memory']['total'];
+
+        return $stats['memory']['used'] > $threshold;
+    }
+
+    /**
      * Whether the object cache is disabled.
      *
      * @return bool
@@ -997,13 +1061,6 @@ class Diagnostics implements ArrayAccess
 
         $isValid = $dropin['PluginURI'] === $plugin['PluginURI'];
 
-        $isValid = (bool) apply_filters_deprecated(
-            'rediscache_validate_dropin',
-            [$isValid, $dropin, $plugin],
-            '1.14.0',
-            'objectcache_validate_dropin'
-        );
-
         /**
          * Filter the drop-in validation result.
          *
@@ -1030,13 +1087,6 @@ class Diagnostics implements ArrayAccess
         $dropin = $this->dropinMetadata();
 
         $upToDate = version_compare($dropin['Version'], $plugin['Version'], '>=');
-
-        $upToDate = (bool) apply_filters_deprecated(
-            'rediscache_validate_dropin_version',
-            [$upToDate, $dropin, $plugin],
-            '1.14.0',
-            'objectcache_validate_dropin_version'
-        );
 
         /**
          * Filter the drop-in version check result.
@@ -1177,6 +1227,10 @@ class Diagnostics implements ArrayAccess
 
         if (isset($_ENV['PANTHEON_ENVIRONMENT']) || defined('PANTHEON_ENVIRONMENT')) {
             return 'pantheon';
+        }
+
+        if (! empty($_SERVER['CS_AUTH_KEY'])) {
+            return 'cloudpress';
         }
 
         if (defined('IS_PRESSABLE') && constant('IS_PRESSABLE')) {

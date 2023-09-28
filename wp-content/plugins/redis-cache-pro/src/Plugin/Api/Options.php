@@ -154,7 +154,7 @@ class Options extends WP_REST_Controller
             return $result;
         }
 
-        update_site_option('objectcache_options', $sanitizedOptions);
+        update_site_option('objectcache_options', array_merge($this->plugin->options(), $sanitizedOptions));
 
         return $this->get_item($request);
     }

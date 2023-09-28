@@ -51,11 +51,21 @@ class News_Provider extends Post_Type {
 		$post_types = Helper::get_settings( 'sitemap.news_sitemap_post_type' );
 
 		$posts = $this->get_posts( $post_types, 1, 0 );
-		if ( ! empty( $posts ) ) {
-			$index[] = [
+		if ( empty( $posts ) ) {
+			return $index;
+		}
+
+		$item = $this->do_filter(
+			'sitemap/index/entry',
+			[
 				'loc'     => Router::get_base_url( 'news-sitemap.xml' ),
 				'lastmod' => get_lastpostdate( 'gmt' ),
-			];
+			],
+			'news',
+		);
+
+		if ( $item ) {
+			$index[] = $item;
 		}
 
 		return $index;

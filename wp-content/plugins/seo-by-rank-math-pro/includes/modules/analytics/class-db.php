@@ -342,7 +342,7 @@ class DB {
 
 			$data[] = $date;
 			$data[] = $row['query'];
-			$data[] = Stats::get_relative_url( self::remove_hash( $row['page'] ) );
+			$data[] = str_replace( Helper::get_home_url(), '', self::remove_hash( $row['page'] ) );
 			$data[] = $row['clicks'];
 			$data[] = $row['impressions'];
 			$data[] = $row['position'];
@@ -407,25 +407,36 @@ class DB {
 
 		// Build placeholders for each row, and add values to data array.
 		foreach ( $rows as $row ) {
+			$page      = '';
+			$pageviews = '';
+			$visitors  = '';
+
 			if ( ! isset( $row['dimensionValues'] ) ) {
 				if ( empty( $row['dimensions'][1] ) || Str::contains( '?', $row['dimensions'][1] ) ) {
 					continue;
 				}
-				$data[] = $date;
-				$data[] = Stats::get_relative_url( self::remove_hash( $row['dimensions'][1] ) );
-				$data[] = $row['metrics'][0]['values'][0];
-				$data[] = $row['metrics'][0]['values'][1];
+				$page      = $row['dimensions'][2] . $row['dimensions'][1];
+				$pageviews = $row['metrics'][0]['values'][0];
+				$visitors  = $row['metrics'][0]['values'][1];
 			} else {
-				if ( empty( $row['dimensionValues'][0]['value'] ) || Str::contains( '?', $row['dimensionValues'][0]['value'] ) ) {
+				if ( empty( $row['dimensionValues'][1]['value'] ) || Str::contains( '?', $row['dimensionValues'][1]['value'] ) ) {
 					continue;
 				}
-				$data[] = $date;
-				$data[] = $row['dimensionValues'][0]['value'];
-				$data[] = $row['metricValues'][0]['value'];
-				$data[] = $row['metricValues'][1]['value'];
+				$page      = $row['dimensionValues'][0]['value'] . $row['dimensionValues'][1]['value'];
+				$pageviews = $row['metricValues'][0]['value'];
+				$visitors  = $row['metricValues'][1]['value'];
 			}
 
-			$placeholders[] = '(' . implode( ', ', $placeholder ) . ')';
+			if ( $page && $pageviews && $visitors ) {
+				$page = ( is_ssl() ? 'https' : 'http' ) . '://' . $page;
+
+				$data[] = $date;
+				$data[] = Stats::get_relative_url( self::remove_hash( $page ) );
+				$data[] = $pageviews;
+				$data[] = $visitors;
+
+				$placeholders[] = '(' . implode( ', ', $placeholder ) . ')';
+			}
 		}
 
 		if ( empty( $placeholders ) ) {

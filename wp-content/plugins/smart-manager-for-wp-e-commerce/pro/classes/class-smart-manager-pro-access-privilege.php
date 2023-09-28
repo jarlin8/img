@@ -30,10 +30,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 			global $wpdb;
 			$success_msg = _x( 'Settings saved successfully!!!', 'Settings saving success message', 'smart-manager-for-wp-e-commerce' );
 			$failed_msg = _x( 'Settings saving Failed!!!', 'Settings saving failed message', 'smart-manager-for-wp-e-commerce' );
-			$company_logo = ( ! empty( $_POST['smart_manager_company_logo'] ) ) ? $_POST['smart_manager_company_logo'] : '';
-			$is_company_logo_updated = ( get_option( 'smart_manager_company_logo', '' ) === $company_logo ) ? true : update_option( 'smart_manager_company_logo', $company_logo, 'no' );
-			$msg = ( ! empty( $is_company_logo_updated ) ) ? $success_msg : $failed_msg;	
-
+			
 			$current_user_role = ( is_callable( array( 'Smart_Manager', 'get_current_user_role' ) ) ) ? Smart_Manager::get_current_user_role() : '';
 			if( ( ! empty( $current_user_role ) ) && ( 'administrator' === $current_user_role ) ) {
 				$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}options 
@@ -47,7 +44,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 		        	if( ! empty( $update_values ) ) {
 		        		$query = "INSERT INTO {$wpdb->prefix}options ( option_name, option_value, autoload) VALUES ". implode(", ",$update_values) ." ON DUPLICATE KEY UPDATE option_value = VALUES ( option_value )";
 		        		$result = $wpdb->query( $query );
-		        		$msg = ( ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) && ( ! empty( $is_company_logo_updated ) ) ) ? $success_msg : $failed_msg;
+		        		$msg = ( ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) ) ? $success_msg : $failed_msg;
 		        	}
 	        	} 		
 	        }
@@ -182,13 +179,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 			</script>
 
 			<br/>
-			<span class="sm-h2">
-			<?php
-					echo 'Smart Manager ';
-					echo '<sup style="vertical-align: super; background-color: rgb(80, 137, 145); padding: 2px 3px; border-radius: 2px; font-weight: 600; letter-spacing: 0.1em; font-size: 0.7em !important; color: #FFF !important;"><span>'.((SMPRO === true) ? 'PRO' : 'LITE').'</span></sup> ';
-					_e('Settings', 'smart-manager-for-wp-e-commerce');
-			?>
-			</span>
 
 			<form id="smart_manager_settings_form" action="<?php echo admin_url('admin-ajax.php'); ?>" method="post">
 
@@ -202,8 +192,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 				if( ( ! empty( $current_user_role ) && 'administrator' === $current_user_role ) ) {
 
 			?>
-
-					<h3 style="font-size:1rem;color:#656161"><?php _e('Privileges for Smart Manager for different System Roles', 'smart-manager-for-wp-e-commerce' );?></h3><br/>
+					<h3 style="font-size:1rem;color:#656161"><?php _e('Smart Manager Access Privilege Settings', 'smart-manager-for-wp-e-commerce' );?></h3><br/>
 
 					<table id="sm_access_privilege_settings" name="sm_access_privilege_settings" class="form-table">
 						<tbody>
@@ -278,10 +267,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 				}
 			?>
 
-			<br/><br/>
-
-			<?php self::render_company_logo_settings() ?>
-
 			<p class="submit">
 				<input type="submit" name="smart_manager_save_settings" id="smart_manager_save_settings" class="button-primary" value="Apply" style="padding: 0.5em 2em 0.5em 2em;background-color: rgb(80, 137, 145);border-color: rgb(80, 137, 145);">
 				<a style="color: rgb(80, 137, 145);padding-left: 1em;" href="<?php echo admin_url('admin.php?page=smart-manager'); ?>"> <?php _e('Back to Smart Manager', 'smart-manager-for-wp-e-commerce') ?> </a>
@@ -291,80 +276,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Access_Privilege' ) ) {
 
 			</form>
 			<?php
-		}
-
-		public static function render_company_logo_settings() {
-
-			?>
-
-			<script type="text/javascript">
-
-				jQuery(document).ready(function($) {
-
-					  let file_frame;
-					  
-					  jQuery(document).on('click','#upload_image_button', function( event ){
-
-					    event.preventDefault();
-
-					    // If the media frame already exists, reopen it.
-					    if ( file_frame ) {
-					      file_frame.open();
-					      return;
-					    }
-
-					    // Create the media frame.
-					    file_frame = wp.media.frames.file_frame = wp.media({
-					      title: jQuery( this ).data( 'uploader_title' ),
-					      button: {
-					        text: jQuery( this ).data( 'uploader_button_text' ),
-					      },
-					      multiple: false  // Set to true to allow multiple files to be selected
-					    });
-
-					    // When an image is selected, run a callback.
-					    file_frame.on( 'select', function() {
-					      // We set multiple to false so only get one image from the uploader
-					      attachment = file_frame.state().get('selection').first().toJSON();
-
-					      // Send the value of attachment.url back to PIP settings form
-					      jQuery('#smart_manager_company_logo').val(attachment.url);
-					    });
-
-					    // Finally, open the modal
-					    file_frame.open();
-					  });
-				});
-
-				function myMediaPopupHandler()
-				{
-				        window.send_to_editor = function(html) {
-				            imgurl = jQuery('img',html).attr('src');
-				            jQuery('#smart_manager_company_logo').val(imgurl);
-				            tb_remove();
-				        }
-
-				        formfield = jQuery('#smart_manager_company_logo').attr('name');
-				        tb_show('', '<?php echo admin_url(); ?>media-upload.php?type=image&tab=upload&TB_iframe=true');
-				        return false;
-				}
-			</script>
-
-			<h3 style="font-size:120%;color:#656161"><?php _e( 'Print Order Settings','smart-manager-for-wp-e-commerce' );?></h3>
-
-			<table cellspacing="15" cellpadding="5">
-    			<tr>
-        			<th style="background-color: inherit !important;"> 
-        				<label for="smart_manager_company_logo"><b><?php _e( 'Company logo:', 'smart-manager-for-wp-e-commerce' ); ?></b></label> 
-        			</th>
-    				<td>
-    					<input id="smart_manager_company_logo" type="text" style="margin:1px; padding:3px;" size="36" name="smart_manager_company_logo" value="<?php echo get_option( 'smart_manager_company_logo' ); ?>" />
-        				<input id="upload_image_button" type="button" style="margin:1px; padding:3px; cursor: pointer;" value="<?php _e( 'Upload Image', 'smart-manager-for-wp-e-commerce' ); ?>" />
-                    </td>
-                </tr>
-            </table>
-
-           	<?php
 		}
 
 		//function to get current user wp_role object

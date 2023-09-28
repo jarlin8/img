@@ -73,7 +73,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 		 * @return mixed
 		 */
 		protected function task( $params ) {
-			// sleep(2);
 			if ( !empty($params['callback']) && !empty($params['args']) ) {
 				try {
 					include_once dirname( __FILE__ ) .'/class-smart-manager-pro-utils.php';
@@ -81,11 +80,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 					include_once dirname( __FILE__ ) .'/class-smart-manager-pro-base.php';
 					include_once dirname( __FILE__ ) .'/'. $params['callback']['class_path'];
 
-					if( !empty($params['args']) && is_array($params['args']) ) {
+					if( ! class_exists( 'Smart_Manager_Pro_Task' ) && file_exists( dirname( __FILE__ ) .'/class-smart-manager-pro-task.php' ) ){
+						include_once dirname( __FILE__ ) .'/class-smart-manager-pro-task.php';
+					}
 
-						if( !empty($params['args']['dashboard_key']) && file_exists(dirname( __FILE__ ) . '/class-smart-manager-pro-'.$params['args']['dashboard_key'].'.php')) {
-							include_once dirname( __FILE__ ) . '/class-smart-manager-pro-'.$params['args']['dashboard_key'].'.php';
-							$class_name = 'Smart_Manager_Pro_'.ucfirst($params['args']['dashboard_key']);
+					if( !empty($params['args']) && is_array($params['args']) ) {
+						if( !empty($params['args']['dashboard_key']) && file_exists(dirname( __FILE__ ) . '/class-smart-manager-pro-'. str_replace( '_', '-', $params['args']['dashboard_key'] ) .'.php')) {
+							include_once dirname( __FILE__ ) . '/class-smart-manager-pro-'. str_replace( '_', '-', $params['args']['dashboard_key'] ) .'.php';
+							$class_name = 'Smart_Manager_Pro_'.ucfirst( str_replace( '-', '_', $params['args']['dashboard_key'] ) );
 							$obj = $class_name::instance($params['args']['dashboard_key']);
 						}
 						if( is_callable( array( $params['callback']['func'][0], 'actions' ) ) ) {
@@ -180,7 +182,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 													}, 10000);
 												} else {
 													window.smart_manager.modal = {}
-													window.smart_manager.showPannelDialog('#!/')
+													if(typeof (window.smart_manager.getDefaultRoute) !== "undefined" && typeof (window.smart_manager.getDefaultRoute) === "function"){
+														window.smart_manager.showPannelDialog('',window.smart_manager.getDefaultRoute(true))
+													}
+													
 													jQuery('#sa_sm_background_process_complete').fadeIn();
 													window.smart_manager.showLoader();
 													setTimeout( function() {

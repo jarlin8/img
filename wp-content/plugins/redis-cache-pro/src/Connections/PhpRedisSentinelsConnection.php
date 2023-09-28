@@ -70,28 +70,36 @@ class PhpRedisSentinelsConnection extends PhpRedisReplicatedConnection implement
      */
     protected function establishConnections(string $url)
     {
+        $version = (string) \phpversion('redis');
+
         $config = clone $this->config;
         $config->setUrl($url);
 
         $persistentId = '';
 
         $arguments = [
-            $config->host,
-            $config->port,
-            $config->timeout,
-            $persistentId,
-            $config->retry_interval,
-            $config->read_timeout,
+            'host' => $config->host,
+            'port' => $config->port,
+            'connectTimeout' => $config->timeout,
+            'persistent' => $persistentId,
+            'retryInterval' => $config->retry_interval,
+            'readTimeout' => $config->read_timeout,
         ];
 
         if ($config->password) {
-            $arguments[] = $config->username
+            $arguments['auth'] = $config->username
                 ? [$config->username, $config->password]
                 : $config->password;
         }
 
-        $this->sentinels[$url] = new PhpRedisSentinel(function () use ($arguments) {
-            return new RedisSentinel(...$arguments);
+        if ($config->tls_options && version_compare($version, '6.0', '>=')) {
+            $arguments['ssl'] = $config->tls_options;
+        }
+
+        $this->sentinels[$url] = new PhpRedisSentinel(function () use ($arguments, $version) {
+            return version_compare($version, '6.0', '<')
+                ? new RedisSentinel(...array_values($arguments))
+                : new RedisSentinel($arguments);
         }, $config->tracer);
 
         $this->discoverPrimary();

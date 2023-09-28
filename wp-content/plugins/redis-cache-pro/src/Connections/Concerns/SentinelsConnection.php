@@ -70,16 +70,14 @@ trait SentinelsConnection
                 $this->sentinels[$url] = false;
 
                 if ($this->config->debug) {
-                    error_log('objectcache.notice: ' . $error->getMessage());
+                    error_log("objectcache.notice: {$error->getMessage()}");
                 }
             }
         }
 
-        $message = isset($error)
-            ? sprintf('Unable to connect to any valid sentinels [%s]', $error->getMessage())
-            : 'Unable to connect to any valid sentinels';
+        $lastMessage = isset($error) ? "[{$error->getMessage()}]" : '';
 
-        throw new ConnectionException($message, 0, $error ?? null);
+        throw new ConnectionException("Unable to connect to any valid sentinels {$lastMessage}", 0, $error ?? null);
     }
 
     /**

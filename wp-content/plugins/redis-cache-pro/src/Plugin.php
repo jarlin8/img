@@ -16,8 +16,6 @@ declare(strict_types=1);
 
 namespace RedisCachePro;
 
-use Throwable;
-
 use RedisCachePro\Diagnostics\Diagnostics;
 use RedisCachePro\Configuration\Configuration;
 use RedisCachePro\ObjectCaches\ObjectCacheInterface;
@@ -36,6 +34,7 @@ final class Plugin
         Plugin\Meta,
         Plugin\Network,
         Plugin\Settings,
+        Plugin\Transients,
         Plugin\Updates,
         Plugin\Widget;
 
@@ -168,24 +167,5 @@ final class Plugin
         }
 
         return $diagnostics;
-    }
-
-    /**
-     * Attempt to flush the object cache on a standalone
-     * connection without throwing an error.
-     *
-     * @return bool
-     */
-    public function flush()
-    {
-        try {
-            $connection = $this->config->connector::connect($this->config);
-
-            $this->logFlush();
-
-            return $connection->flushdb($this->config->async_flush);
-        } catch (Throwable $th) {
-            return false;
-        }
     }
 }

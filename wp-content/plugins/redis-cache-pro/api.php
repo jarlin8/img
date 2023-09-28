@@ -39,9 +39,14 @@ function wp_cache_supports($feature)
  */
 function wp_cache_init()
 {
-    global $wp_object_cache, $wp_object_cache_errors;
+    global $wp_object_cache, $wp_object_cache_errors, $wp_object_cache_flushlog;
+
+    if ($wp_object_cache instanceof \RedisCachePro\ObjectCaches\ObjectCacheInterface) {
+        return;
+    }
 
     $wp_object_cache_errors = [];
+    $wp_object_cache_flushlog = [];
 
     try {
         if (! defined('\WP_REDIS_CONFIG')) {
@@ -84,10 +89,12 @@ function wp_cache_init()
 
         $objectCache->add_global_groups([
             'analytics',
+            'objectcache',
         ]);
 
         $objectCache->add_non_prefetchable_groups([
             'analytics',
+            'objectcache',
             'userlogins',
             'wc_session_id',
         ]);
@@ -95,9 +102,14 @@ function wp_cache_init()
         // set up multisite environments
         if (is_multisite()) {
             $objectCache->setMultisite(true);
+
+            // prefetch once `$blog_id` is available
+            if (method_exists($objectCache, 'prefetch')) {
+                add_action('ms_loaded', [$objectCache, 'prefetch'], 0);
+            }
         }
 
-        $connection->memoize('ping');
+        $objectCache->boot();
 
         $wp_object_cache = $objectCache;
     } catch (Throwable $exception) {
@@ -111,21 +123,13 @@ function wp_cache_init()
             $config = (new \RedisCachePro\Configuration\Configuration)->init();
         }
 
-        if ($config->debug) {
-            error_log('objectcache.info: `debug` option is enabled, throwing exception');
-
-            throw $exception;
+        if ($config->debug || $config->strict) {
+            \RedisCachePro\Exceptions\ExceptionHandler::render($config, $exception);
         }
 
         error_log('objectcache.warning: Failing over to in-memory object cache');
 
         $wp_object_cache = new \RedisCachePro\ObjectCaches\ArrayObjectCache($config);
-    }
-
-    if (\is_multisite()) {
-        \add_action('ms_loaded', [$wp_object_cache, 'boot'], 0);
-    } else {
-        $wp_object_cache->boot();
     }
 
     \register_shutdown_function([$wp_object_cache, 'close']);
@@ -234,11 +238,11 @@ function wp_cache_delete_multiple(array $keys, $group = '')
  */
 function wp_cache_flush()
 {
-    global $wp_object_cache;
+    global $wp_object_cache, $wp_object_cache_flushlog;
 
-    if (\function_exists('apply_filters')) {
-        $backtrace = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 5);
+    $backtrace = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 5);
 
+    if (\function_exists('\apply_filters')) {
         /**
          * Whether to flush the object cache.
          *
@@ -253,6 +257,15 @@ function wp_cache_flush()
             return false;
         }
     }
+
+    if ($wp_object_cache->shouldFlushBlog()) {
+        return $wp_object_cache->flushBlog();
+    }
+
+    $wp_object_cache_flushlog[] = [
+        'type' => 'flush',
+        'backtrace' => $backtrace,
+    ];
 
     return $wp_object_cache->flush();
 }
@@ -277,9 +290,35 @@ function wp_cache_flush_runtime()
  */
 function wp_cache_flush_group($group = '')
 {
-    global $wp_object_cache;
+    global $wp_object_cache, $wp_object_cache_flushlog;
 
-    return $wp_object_cache->flush_group(\trim((string) $group) ?: 'default');
+    $group = \trim((string) $group) ?: 'default';
+    $backtrace = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 5);
+
+    if (\function_exists('\apply_filters')) {
+        /**
+         * Whether to flush the cache group.
+         *
+         * Returning a falsy value from the filter will short-circuit the group flush.
+         *
+         * @param  bool  $should_flush  Whether to flush the cache group.
+         * @param  string  $group  The name of the cache group.
+         * @param  array  $backtrace  The PHP backtrace with 5 stack frames.
+         */
+        $should_flush = (bool) \apply_filters('pre_objectcache_flush_group', true, $group, $backtrace);
+
+        if (! $should_flush) {
+            return false;
+        }
+    }
+
+    $wp_object_cache_flushlog[] = [
+        'type' => 'group-flush',
+        'group' => $group,
+        'backtrace' => $backtrace,
+    ];
+
+    return $wp_object_cache->flush_group($group);
 }
 
 /**

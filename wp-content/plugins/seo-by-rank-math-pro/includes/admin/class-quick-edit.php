@@ -16,6 +16,7 @@ use RankMath\Admin\Admin_Helper;
 use RankMathPro\Admin\Admin_Helper as ProAdminHelper;
 use MyThemeShop\Helpers\Param;
 use MyThemeShop\Helpers\Arr;
+use MyThemeShop\Helpers\Conditional;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -99,8 +100,26 @@ class Quick_Edit {
 		}
 
 		$robots = array_filter( (array) get_metadata( $object_type, $object_id, 'rank_math_robots', true ) );
+
 		if ( empty( $robots ) ) {
 			$robots = Helper::get_robots_defaults();
+		}
+
+		// Maybe product with hidden visibility!
+		if ( Conditional::is_woocommerce_active() && 'product' === get_post_type( $object_id ) && Helper::get_settings( 'general.noindex_hidden_products' ) ) {
+			$product = \wc_get_product( $object_id );
+
+			if ( $product && $product->get_catalog_visibility() === 'hidden' ) {
+				// Preserve other robots values.
+				$robots = array_filter(
+					$robots,
+					function ( $robot ) {
+						return 'index' !== $robot;
+					}
+				);
+
+				$robots = array_merge( $robots, [ 'noindex' ] );
+			}
 		}
 
 		$title = get_metadata( $object_type, $object_id, 'rank_math_title', true );
@@ -480,8 +499,13 @@ class Quick_Edit {
 		];
 
 		foreach ( $save_fields as $field ) {
-			$field_name    = 'rank_math_' . $field;
-			$field_value   = Param::post( $field_name );
+			$field_name = 'rank_math_' . $field;
+			$flag       = [];
+			if ( 'robots' === $field ) {
+				$flag = FILTER_REQUIRE_ARRAY;
+			}
+
+			$field_value = Param::post( $field_name, false, FILTER_DEFAULT, $flag );
 			if ( false === $field_value ) {
 				continue;
 			}
@@ -492,7 +516,9 @@ class Quick_Edit {
 			}
 
 			if ( 'robots' === $field ) {
-				$field_value = (array) Param::post( $field_name, false, FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+				$field_value = array_filter( $field_value );
+				$field_value = array_unique( $field_value );
+				$field_value = array_intersect( $field_value, [ 'index', 'noindex', 'nofollow', 'noarchive', 'noimageindex', 'nosnippet' ] );
 			} elseif ( 'canonical_url' === $field ) {
 				$field_value = esc_url_raw( $field_value );
 			} elseif ( 'focus_keyword' === $field ) {
@@ -557,14 +583,21 @@ class Quick_Edit {
 		];
 
 		foreach ( $save_fields as $field ) {
-			$field_name  = 'rank_math_' . $field;
-			$field_value = Param::post( $field_name );
+			$field_name = 'rank_math_' . $field;
+			$flag       = [];
+			if ( 'robots' === $field ) {
+				$flag = FILTER_REQUIRE_ARRAY;
+			}
+
+			$field_value = Param::post( $field_name, false, FILTER_DEFAULT, $flag );
 			if ( false === $field_value ) {
 				continue;
 			}
 
 			if ( 'robots' === $field ) {
-				$field_value = (array) Param::post( $field_name, false, FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+				$field_value = array_filter( $field_value );
+				$field_value = array_unique( $field_value );
+				$field_value = array_intersect( $field_value, [ 'index', 'noindex', 'nofollow', 'noarchive', 'noimageindex', 'nosnippet' ] );
 			} elseif ( 'canonical_url' === $field ) {
 				$field_value = esc_url_raw( $field_value );
 			} elseif ( 'focus_keyword' === $field ) {

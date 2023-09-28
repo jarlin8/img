@@ -96,7 +96,7 @@ class RelayObjectCache extends PhpRedisObjectCache
                 'Relay Cache' => 'Enabled',
                 'Relay Memory' => sprintf(
                     '%s of %s',
-                    size_format($stats['memory']['active'], 2),
+                    size_format($stats['memory']['used'], 2),
                     size_format($stats['memory']['total'], 2)
                 ),
                 'Relay Eviction' => (string) ini_get('relay.eviction_policy'),

@@ -32,6 +32,7 @@ use RedisCachePro\Connections\RelayReplicatedConnection;
 
 use RedisCachePro\Exceptions\RelayMissingException;
 use RedisCachePro\Exceptions\RelayOutdatedException;
+use RedisCachePro\Exceptions\InvalidDatabaseException;
 use RedisCachePro\Exceptions\ConfigurationInvalidException;
 
 class RelayConnector implements ConnectorInterface
@@ -158,7 +159,7 @@ class RelayConnector implements ConnectorInterface
             $config->timeout,
             $persistentId,
             $config->retry_interval,
-            $config->read_timeout,
+            0, // set later using `setOption()`
             $context,
         ];
 
@@ -179,6 +180,9 @@ class RelayConnector implements ConnectorInterface
             }
         }
 
+        // set read-timeout as option to avoid confusing hiredis error message
+        $client->setOption(RelayClient::OPT_READ_TIMEOUT, $config->read_timeout);
+
         if ($config->username && $config->password) {
             $client->auth([$config->username, $config->password]);
         } elseif ($config->password) {
@@ -186,7 +190,9 @@ class RelayConnector implements ConnectorInterface
         }
 
         if ($config->database) {
-            $client->select($config->database);
+            if (! $client->select($config->database)) {
+                throw new InvalidDatabaseException((string) $config->database);
+            }
         }
 
         return new RelayConnection($client, $config);

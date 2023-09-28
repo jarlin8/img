@@ -35,6 +35,7 @@ use RedisCachePro\Connections\PhpRedisClusterConnection;
 use RedisCachePro\Connections\PhpRedisSentinelsConnection;
 use RedisCachePro\Connections\PhpRedisReplicatedConnection;
 
+use RedisCachePro\Exceptions\InvalidDatabaseException;
 use RedisCachePro\Exceptions\PhpRedisMissingException;
 use RedisCachePro\Exceptions\PhpRedisOutdatedException;
 use RedisCachePro\Exceptions\ConfigurationInvalidException;
@@ -187,7 +188,9 @@ class PhpRedisConnector implements ConnectorInterface
         }
 
         if ($config->database) {
-            $client->select($config->database);
+            if (! $client->select($config->database)) {
+                throw new InvalidDatabaseException((string) $config->database);
+            }
         }
 
         if ($config->read_timeout) {

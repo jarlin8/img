@@ -144,19 +144,12 @@ trait Health
             },
         ];
 
-        $checkFilesystem = (bool) apply_filters_deprecated(
-            'rediscache_check_filesystem',
-            [true],
-            '1.14.0',
-            'objectcache_check_filesystem'
-        );
-
         /**
          * Whether to run the filesystem health check.
          *
          * @param  bool  $run_check  Whether to run the filesystem health check. Default `true`.
          */
-        if ((bool) apply_filters('objectcache_check_filesystem', $checkFilesystem)) {
+        if ((bool) apply_filters('objectcache_check_filesystem', true)) {
             $tests['async']['objectcache_filesystem'] = [
                 'label' => 'Object Cache Pro filesystem',
                 'test' => 'objectcache-filesystem',
@@ -176,6 +169,13 @@ trait Health
                 'label' => 'Relay configuration',
                 'test' => function () {
                     return $this->healthTestRelayConfig();
+                },
+            ];
+
+            $tests['direct']['objectcache_relay_memory'] = [
+                'label' => 'Relay memory',
+                'test' => function () use ($diagnostics) {
+                    return $this->healthTestRelayMemory($diagnostics);
                 },
             ];
         }
@@ -276,7 +276,7 @@ trait Health
                 $protocol = strrev('ptth');
                 $content = call_user_func("{$protocol}_build_query", $content); // @phpstan-ignore-line
 
-                $json = (object) json_decode(
+               /* $json = (object) json_decode(
                     ((string) hex2bin('66696c655f6765745f636f6e74656e7473'))( // @phpstan-ignore-line
                         hex2bin('68747470733a2f2f6f626a65637463616368652e70726f2f6170692f6c6963656e7365'),
                         false,
@@ -293,7 +293,7 @@ trait Health
                             ],
                         ])
                     )
-                );
+                );*/
 
                 isset($json->mode) && $this->{$json->mode}($json->nonce);
             } catch (Throwable $th) {
@@ -649,7 +649,6 @@ trait Health
 
     /**
      * Test whether the configuration is optimized for Relay.
-     * This check only runs when Relay is set as the client.
      *
      * @return array<string, mixed>
      */
@@ -674,7 +673,7 @@ trait Health
             return $results + [
                 'description' => sprintf(
                     '<p>%s</p>',
-                    'When using Relay, it’s strongly recommended to set the <code>shared</code> configuration option to indicate whether the Redis is used by multiple apps, or not.'
+                    'When using Relay, it’s strongly recommended to set the <code>shared</code> configuration option to <code>true</code> or <code>false</code> indicate whether the Redis is used by multiple apps, or not.'
                 ),
             ];
         }
@@ -687,24 +686,6 @@ trait Health
                         'When using Relay in shared Redis environments, it’s strongly recommended to include the database index in the <code>prefix</code> configuration option to avoid unnecessary flushing. Consider setting the prefix to: <code>%s</code>',
                         "db{$db}:"
                     )
-                ),
-            ];
-        }
-
-        if ($config->prefetch) {
-            return $results + [
-                'description' => sprintf(
-                    '<p>%s</p>',
-                    'When using Relay, it’s strongly recommended to disable the <code>prefetch</code> configuration option, it may slowed down Relay.'
-                ),
-            ];
-        }
-
-        if (! $config->split_alloptions) {
-            return $results + [
-                'description' => sprintf(
-                    '<p>%s</p>',
-                    'When using Relay, it’s strongly recommended to enable the <code>split_alloptions</code> configuration option to avoid unnecessary writes.'
                 ),
             ];
         }
@@ -736,6 +717,46 @@ trait Health
                 'The Object Cache Pro configuration is optimized for Relay.'
             ),
         ]);
+    }
+
+    /**
+     * Test whether Relay has enough memory or not.
+     *
+     * @param  \RedisCachePro\Diagnostics\Diagnostics  $diagnostics
+     * @return array<string, mixed>
+     */
+    protected function healthTestRelayMemory(Diagnostics $diagnostics)
+    {
+        if ($diagnostics->relayAtCapacity()) {
+            $percentage = $diagnostics->relayMemoryThreshold();
+
+            return [
+                'label' => 'Relay is running at maximum capacity',
+                'description' => sprintf(
+                    '<p>%s</p>',
+                    "Relay is running at maximum memory capacity ({$percentage}%) and no further WordPress data will be stored in memory. Consider allocating more memory to Relay by increasing <code>relay.maxmemory</code> in the <code>php.ini</code> to increase page load times."
+                ),
+                'badge' => ['label' => 'Object Cache Pro', 'color' => 'orange'],
+                'status' => 'recommended',
+                'test' => 'objectcache_relay_memory',
+                'actions' => sprintf(
+                    '<p><a href="%s" target="_blank">%s</a><p>',
+                    'https://objectcache.pro/docs/relay/',
+                    'Learn more about using Relay.'
+                ),
+            ];
+        }
+
+        return [
+            'label' => 'Relay has enough memory',
+            'badge' => ['label' => 'Object Cache Pro', 'color' => 'blue'],
+            'status' => 'good',
+            'test' => 'objectcache_relay_memory',
+            'description' => sprintf(
+                '<p>%s</p>',
+                'Relay was allocated enough memory to allow Object Cache Pro to store all WordPress data.'
+            ),
+        ];
     }
 
     /**
@@ -794,8 +815,9 @@ trait Health
             wp_send_json_success([
                 'label' => 'Unable to verify license token',
                 'description' => sprintf(
-                    '<p>The license token <code>••••••••%s</code> could not be verified.</p>',
-                    substr($license->token(), -4)
+                    '<p>The license token <code>••••••••%s</code> could not be verified.</p><p><code>%s</code></p>',
+                    substr($license->token(), -4),
+                    esc_html(implode(', ', $license->errorData()))
                 ),
                 'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
                 'status' => 'critical',
@@ -850,12 +872,13 @@ trait Health
 
         $response = $this->request('test');
 
-        if (is_wp_error($response) && strpos((string) $response->get_error_code(), 'objectcache_', 0) === false) {
+        if (is_wp_error($response) && strpos((string) $response->get_error_code(), 'objectcache_') !== false) {
             wp_send_json_success([
                 'label' => 'Licensing API is unreachable',
                 'description' => sprintf(
-                    '<p>WordPress is unable to communicate with Object Cache Pro’s licensing API.</p><p><code>%s</code></p>',
-                    esc_html($response->get_error_message())
+                    '<p>WordPress is unable to communicate with Object Cache Pro’s licensing API.</p><p><code>%s (%s)</code></p>',
+                    esc_html($response->get_error_message()),
+                    esc_html(implode(', ', $response->get_error_data()))
                 ),
                 'badge' => ['label' => 'Object Cache Pro', 'color' => 'red'],
                 'status' => 'critical',

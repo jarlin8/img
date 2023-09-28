@@ -103,6 +103,13 @@ trait TakesMeasurements
             return;
         }
 
+        $random = (mt_rand() / mt_getrandmax()) * 100;
+        $chance = max(min($this->config->analytics->sample_rate, 100), 0);
+
+        if ($random >= $chance) {
+            return;
+        }
+
         $now = time();
         $id = (string) $this->id('measurements', 'analytics');
 
@@ -144,12 +151,7 @@ trait TakesMeasurements
      */
     public function pruneMeasurements()
     {
-        /**
-         * Filters the analytics retention time.
-         *
-         * @param  int  $duration The retention duration
-         */
-        $retention = (int) apply_filters('objectcache_analytics_retention', $this->config->analytics->retention);
+        $retention = $this->config->analytics->retention;
 
         try {
             $this->connection->zRemRangeByScore(
@@ -162,32 +164,6 @@ trait TakesMeasurements
         } catch (Throwable $exception) {
             $this->error($exception);
         }
-    }
-
-    /**
-     * Flush the database and restore the analytics afterwards.
-     *
-     * @return bool
-     */
-    protected function flushWithoutAnalytics()
-    {
-        $measurements = $this->dumpMeasurements();
-
-        try {
-            $flush = $this->connection->flushdb();
-
-            $this->metrics->flush();
-        } catch (Throwable $exception) {
-            $this->error($exception);
-
-            return false;
-        }
-
-        if ($measurements) {
-            $this->restoreMeasurements($measurements);
-        }
-
-        return $flush;
     }
 
     /**
@@ -216,7 +192,7 @@ trait TakesMeasurements
 
             return $dump;
         } catch (Throwable $exception) {
-            error_log(sprintf('objectcache.notice: Failed to dump analytics (%s)', $exception));
+            error_log("objectcache.notice: Failed to dump analytics ({$exception})");
         }
 
         return false;
@@ -237,7 +213,7 @@ trait TakesMeasurements
 
             return $result;
         } catch (Throwable $exception) {
-            error_log(sprintf('objectcache.notice: Failed to restore analytics (%s)', $exception));
+            error_log("objectcache.notice: Failed to restore analytics ({$exception})");
         }
     }
 

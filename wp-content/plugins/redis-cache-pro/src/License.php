@@ -120,7 +120,7 @@ class License
     /**
      * The last error associated with the license.
      *
-     * @var \WP_Error
+     * @var \WP_Error|null
      */
     protected $_error;
 
@@ -287,10 +287,10 @@ class License
     public static function fromResponse($response)
     {
         $license = static::fromObject($response);
-        $license->last_check = current_time('timestamp');
+        $license->last_check = static::currentTimestamp();
 
         if ($license->isValid()) {
-            $license->valid_as_of = current_time('timestamp');
+            $license->valid_as_of = static::currentTimestamp();
         }
 
         if (is_null($license->state)) {
@@ -315,9 +315,9 @@ class License
         }
 
         $license->_error = $error;
-        $license->last_check = current_time('timestamp');
+        $license->last_check = static::currentTimestamp();
 
-        error_log('objectcache.warning: ' . $error->get_error_message());
+        error_log("objectcache.warning: {$error->get_error_message()}");
 
         return $license->save();
     }
@@ -371,7 +371,7 @@ class License
 
         $validUntil = $this->last_check + ($minutes * MINUTE_IN_SECONDS);
 
-        return $validUntil < current_time('timestamp');
+        return $validUntil < self::currentTimestamp();
     }
 
     /**
@@ -399,7 +399,7 @@ class License
 
         $validUntil = $this->valid_as_of + ($hours * HOUR_IN_SECONDS);
 
-        return $validUntil < current_time('timestamp');
+        return $validUntil < self::currentTimestamp();
     }
 
     /**
@@ -429,5 +429,40 @@ class License
     public function hostingLicense()
     {
         return (bool) preg_match('/^L\d /', (string) $this->plan);
+    }
+
+    /**
+     * Returns the error meta data.
+     *
+     * @return array<string, mixed>
+     */
+    public function errorData()
+    {
+        if (! isset($this->_error)) {
+            return [];
+        }
+
+        return array_merge([
+            'code' => $this->_error->get_error_code(),
+        ], array_diff_key(
+            $this->_error->get_error_data(),
+            ['token' => null]
+        ));
+    }
+
+    /**
+     * Retrieves the current unix timestamp safely.
+     *
+     * @return int
+     */
+    public static function currentTimestamp()
+    {
+        $time = current_time('timestamp');
+
+        if (! is_int($time) || $time < 1500000000) {
+            $time = time();
+        }
+
+        return $time;
     }
 }

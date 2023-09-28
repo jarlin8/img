@@ -21,35 +21,24 @@ use Throwable;
 use RedisCachePro\Configuration\Configuration;
 
 /**
- * In non-multisite environments and when the `network_flush` configuration option is set to `all`,
- * the `FLUSHDB` command is executed when `wp_cache_flush()` is called.
+ * This is an experimental feature and not supported officially WordPress.
  *
- * When `network_flush` is set to `site`, only the current blog's cache is cleared using a Lua script.
+ * In multisite environments WordPress has no mechanism to flush an individual
+ * blog (site) and will always flush the entire network, which is inefficient.
  *
- * When `network_flush` is set to `global`, in addition to the
- * current blog's cache all global groups are flushed as well.
+ * Settings the `network_flush` configuration option to `global`, will cause
+ * Object Cache Pro to only flush the current blog's data and all global groups.
+ *
+ * Settings the `network_flush` configuration option to `site`, will cause
+ * Object Cache Pro to only flush the current blog's data.
  */
 trait FlushesNetworks
 {
     /**
-     * Returns `true` when `flushBlog()` should be called over `flush()`.
+     * Removes all cache items for an individual blog in multisite environments.
      *
-     * @return bool
-     */
-    protected function shouldFlushBlog(): bool
-    {
-        return in_array($this->config->network_flush, [
-            $this->config::NETWORK_FLUSH_SITE,
-            $this->config::NETWORK_FLUSH_GLOBAL,
-        ]);
-    }
-
-    /**
-     * Removes all cache items for a single blog in multisite environments,
-     * otherwise defaults to flushing the entire database.
-     *
-     * Unless the `$network_flush` parameter is given this method
-     * will default to `network_flush` configuration option.
+     * The `network_flush` configuration option will be used,
+     * if `$network_flush` parameter is not given.
      *
      * @param  int|null  $siteId
      * @param  string|null  $network_flush
@@ -63,10 +52,6 @@ trait FlushesNetworks
 
         if (is_null($network_flush)) {
             $network_flush = $this->config->network_flush;
-        }
-
-        if (! $this->isMultisite || $network_flush === Configuration::NETWORK_FLUSH_ALL) {
-            return $this->flush();
         }
 
         $originalBlogId = $this->blogId;

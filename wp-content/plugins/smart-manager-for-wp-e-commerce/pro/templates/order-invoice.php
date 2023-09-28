@@ -104,9 +104,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 $counter = 0;
 foreach ($purchase_id_arr as $purchase_id_value){
     $order = new WC_Order($purchase_id_value);
-    $order_data = ( $sm_is_woo30 ) ? $order->get_data() : $order;
 
-    $order_date = ( $sm_is_woo30 ) ? $order->get_date_created()->date('Y-m-d H:i:s') : $order->order_date;
+    if ( ! $order instanceof WC_Order ){
+        continue;
+    }
+
+    $order_data = ( $sm_is_woo30 && is_callable( array( $order, 'get_data' ) ) ) ? $order->get_data() : $order;
+    $order_date = ( $sm_is_woo30 && is_callable( array( $order, 'get_date_created' ) ) ) ? $order->get_date_created()->date('Y-m-d H:i:s') : $order->order_date;
     $billing_email = ( $sm_is_woo30 ) ? $order_data['billing']['email'] : $order->billing_email;
     $billing_phone = ( $sm_is_woo30 ) ? $order_data['billing']['phone'] : $order->billing_phone;
     $customer_note = ( $sm_is_woo30 ) ? $order_data['customer_note'] : $order->customer_note;
@@ -128,9 +132,15 @@ foreach ($purchase_id_arr as $purchase_id_value){
     } else {
         echo '<div id="wrapper">';
     }
-    echo $smart_manager_beta->smart_manager_print_logo();
+
+    // Code to get company logo
+    $attachment = ( is_callable( 'Smart_Manager_Settings', 'get' ) ) ? ( Smart_Manager_Settings::get( 'company_logo_for_print_invoice' ) ) : array();
+    if( ! empty( $attachment ) && ! empty( $attachment['url'] ) ){
+        echo '<img src="' . $attachment['url'] . '"/>';
+    }
+
     echo '<div style="margin-top:-0.8em;">';
-    if (get_option('smart_manager_company_logo') == '') {
+    if( empty( $attachment ) ) {
         echo '<h4 style="font:bold 1.2em/2em "Century Gothic","Trebuchet MS",Arial,Helvetica,sans-serif;
                 position:relative; 12pt;">&nbsp; '.get_bloginfo( 'name' ).'</h4>';
     }
@@ -165,10 +175,10 @@ foreach ($purchase_id_arr as $purchase_id_value){
     $total_order = 0;
 
     foreach($order->get_items() as $order_item) {
-        $_product = ($sm_is_woo44) ? $order_item->get_product() : $order->get_product_from_item( $order_item );
-        $_product_data = ($sm_is_woo30) ? $_product->get_data() : $_product;
+        $_product = ( $sm_is_woo44 && is_callable( array( $order_item, 'get_product' ) ) ) ? $order_item->get_product() : $order->get_product_from_item( $order_item );
+        $_product_data = ( $sm_is_woo30 && is_callable( array( $_product, 'get_data' ) ) ) ? $_product->get_data() : $_product;
 
-        $item = ( $sm_is_woo30 ) ? $order_item->get_data() : $order_item;
+        $item = ( $sm_is_woo30 && is_callable( array( $order_item, 'get_data' ) ) ) ? $order_item->get_data() : $order_item;
 
         if( $sm_is_woo30 ) {
             $formatted_variation = (!empty($_product_data['attributes']) && $_product->post_type == 'product_variation') ? wc_get_formatted_variation($_product_data['attributes'], true) : '';
@@ -178,9 +188,9 @@ foreach ($purchase_id_arr as $purchase_id_value){
 
         $sku = $variation = '';
         $qty = ( $sm_is_woo30 ) ? $order_item['qty'] : $item['item_meta']['_qty'][0];
-        $sku = (!empty($_product)) ? $_product->get_sku() : '';
+        $sku = ( ! empty( $_product ) && is_callable( array( $_product, 'get_sku' ) ) ) ? $_product->get_sku() : '';
         $variation = ( !empty( $formatted_variation ) ) ? ' (' . $formatted_variation . ')' : '';
-        $item_total = ($sm_is_woo30) ? $order_item->get_total() : $order_item['line_total'];
+        $item_total = ( $sm_is_woo30 && is_callable( array( $order_item, 'get_total' ) ) ) ? $order_item->get_total() : $order_item['line_total'];
         $total_order += $item_total;
         echo '<tr><td class="producthead">';
         echo $item['name'] . $variation;

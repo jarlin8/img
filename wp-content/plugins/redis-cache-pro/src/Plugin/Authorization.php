@@ -61,12 +61,6 @@ trait Authorization
      */
     public function userHasCapability($allcaps, $caps, $args)
     {
-        if ($args[0] === 'rediscache_manage') {
-            $args[0] = Plugin::Capability;
-
-            _deprecated_hook('rediscache_manage', '1.14.0', Plugin::Capability);
-        }
-
         if ($args[0] !== Plugin::Capability) {
             return $allcaps;
         }

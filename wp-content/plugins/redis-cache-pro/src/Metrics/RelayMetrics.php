@@ -57,11 +57,11 @@ class RelayMetrics
     public $keys;
 
     /**
-     * The amount of memory actually pointing to live objects.
+     * The amount of memory pointing to live objects or metadata.
      *
      * @var float
      */
-    public $memoryActive;
+    public $memoryUsed;
 
     /**
      * The total number of bytes allocated by Relay.
@@ -72,7 +72,7 @@ class RelayMetrics
 
     /**
      * The ratio of total memory allocated by Relay compared to
-     * the amount of memory actually pointing to live objects.
+     * the amount of memory pointing to live objects or metadata.
      *
      * @var float
      */
@@ -100,8 +100,8 @@ class RelayMetrics
         $this->opsPerSec = $stats['stats']['ops_per_sec'];
         $this->keys = is_null($keys) ? null : (int) $keys;
         $this->memoryTotal = $stats['memory']['total'];
-        $this->memoryActive = $stats['memory']['active'];
-        $this->memoryRatio = round(($this->memoryActive / $this->memoryTotal) * 100, 2);
+        $this->memoryUsed = $stats['memory']['used'];
+        $this->memoryRatio = round(($this->memoryUsed / $this->memoryTotal) * 100, 2);
     }
 
     /**
@@ -117,7 +117,7 @@ class RelayMetrics
             'hit-ratio' => $this->hitRatio,
             'ops-per-sec' => $this->opsPerSec,
             'keys' => $this->keys,
-            'memory-active' => $this->memoryActive,
+            'memory-used' => $this->memoryUsed,
             'memory-total' => $this->memoryTotal,
             'memory-ratio' => $this->memoryRatio,
         ];
@@ -163,21 +163,21 @@ class RelayMetrics
             'relay-ops-per-sec' => [
                 'title' => 'Throughput',
                 'description' => 'Number of commands processed per second.',
-                'type' => 'integer',
+                'type' => 'throughput',
             ],
             'relay-keys' => [
                 'title' => 'Keys',
                 'description' => 'The number of keys in Relay for the current database.',
                 'type' => 'integer',
             ],
-            'relay-memory-active' => [
-                'title' => 'Active memory',
-                'description' => 'The total amount of memory mapped into the allocator.',
+            'relay-memory-used' => [
+                'title' => 'Used memory',
+                'description' => 'The amount of bytes pointing to live objects including metadata.',
                 'type' => 'bytes',
             ],
             'relay-memory-total' => [
                 'title' => 'Total memory',
-                'description' => 'The total bytes of allocated memory by Relay.',
+                'description' => 'The total number of bytes of allocated memory by Relay.',
                 'type' => 'bytes',
             ],
             'relay-memory-ratio' => [

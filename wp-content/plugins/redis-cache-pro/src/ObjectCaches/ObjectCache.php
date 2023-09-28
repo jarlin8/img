@@ -578,23 +578,6 @@ abstract class ObjectCache implements ObjectCacheInterface
     }
 
     /**
-     * Flushes the in-memory runtime cache.
-     *
-     * @deprecated 1.15.0
-     * @see \RedisCachePro\ObjectCaches\ObjectCache::flushRuntime()
-     *
-     * @return bool
-     */
-    public function flushMemory(): bool
-    {
-        if (function_exists('\_deprecated_function')) {
-            \_deprecated_function(__METHOD__, '1.15.0', __CLASS__ . '::flushRuntime()');
-        }
-
-        return $this->flushRuntime();
-    }
-
-    /**
      * Removes all in-memory cache items for a single blog in multisite environments,
      * otherwise defaults to flushing the entire in-memory cache.
      *
@@ -610,10 +593,6 @@ abstract class ObjectCache implements ObjectCacheInterface
     {
         if (is_null($network_flush)) {
             $network_flush = $this->config->network_flush;
-        }
-
-        if (! $this->isMultisite || $network_flush === Configuration::NETWORK_FLUSH_ALL) {
-            return $this->flushRuntime();
         }
 
         $originalBlogId = $this->blogId;
@@ -643,16 +622,30 @@ abstract class ObjectCache implements ObjectCacheInterface
     }
 
     /**
+     * Whether `flushBlog()` should be called instead of `flush()`.
+     *
+     * @return bool
+     */
+    public function shouldFlushBlog(): bool
+    {
+        return $this->isMultisite
+            && in_array($this->config->network_flush, [
+                $this->config::NETWORK_FLUSH_SITE,
+                $this->config::NETWORK_FLUSH_GLOBAL,
+            ]);
+    }
+
+    /**
      * Execute the given closure without data mutations on the connection,
      * such as serialization and compression algorithms.
      *
-     * @param  Closure  $callback
+     * @param  callable  $callback
      * @return mixed
      */
-    public function withoutMutations(Closure $callback)
+    public function withoutMutations(callable $callback)
     {
         return $this->connection->withoutMutations(
-            Closure::bind($callback, $this, $this)
+            $callback instanceof Closure ? $callback->bindTo($this, $this) : $callback
         );
     }
 
