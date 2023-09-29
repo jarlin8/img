@@ -45,17 +45,10 @@ jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn(),
 } ) );
 
-// Mocking lodash here so we can just call the debounced function directly without waiting for debounce.
-jest.mock( 'lodash', () => ( {
-	...jest.requireActual( 'lodash' ),
-	__esModule: true,
-	debounce: jest.fn( ( callback ) => callback ),
-} ) );
-
 // Mocking processErrorResponse because we don't actually care about processing the error response, we just don't want
 // pushChanges to throw an error.
-jest.mock( '../utils', () => ( {
-	...jest.requireActual( '../utils' ),
+jest.mock( '../../utils', () => ( {
+	...jest.requireActual( '../../utils' ),
 	__esModule: true,
 	processErrorResponse: jest.fn(),
 } ) );
@@ -64,6 +57,7 @@ jest.mock( '../utils', () => ( {
 // need to update payment methods, they are not relevant to the tests in this file.
 jest.mock( '../update-payment-methods', () => ( {
 	debouncedUpdatePaymentMethods: jest.fn(),
+	updatePaymentMethods: jest.fn(),
 } ) );
 
 describe( 'pushChanges', () => {
@@ -83,7 +77,7 @@ describe( 'pushChanges', () => {
 					...jest
 						.requireActual( '@wordpress/data' )
 						.select( storeName ),
-					getValidationError: () => undefined,
+					getValidationError: jest.fn().mockReturnValue( undefined ),
 				};
 			}
 			return jest.requireActual( '@wordpress/data' ).select( storeName );
@@ -104,7 +98,7 @@ describe( 'pushChanges', () => {
 	} );
 	it( 'Keeps props dirty if data did not persist due to an error', async () => {
 		// Run this without changing anything because the first run does not push data (the first run is populating what was received on page load).
-		pushChanges();
+		pushChanges( false );
 
 		// Mock the returned value of `getCustomerData` to simulate a change in the shipping address.
 		getCustomerDataMock.mockReturnValue( {
@@ -134,7 +128,7 @@ describe( 'pushChanges', () => {
 		} );
 
 		// Push these changes to the server, the `updateCustomerData` mock is set to reject (in the original mock at the top of the file), to simulate a server error.
-		pushChanges();
+		pushChanges( false );
 
 		// Check that the mock was called with only the updated data.
 		await expect( updateCustomerDataMock ).toHaveBeenCalledWith( {
@@ -181,7 +175,7 @@ describe( 'pushChanges', () => {
 
 		// Although only one property was updated between calls, we should expect City, State, and Postcode to be pushed
 		// to the server because the previous push failed when they were originally changed.
-		pushChanges();
+		pushChanges( false );
 		await expect( updateCustomerDataMock ).toHaveBeenLastCalledWith( {
 			shipping_address: {
 				city: 'Houston',

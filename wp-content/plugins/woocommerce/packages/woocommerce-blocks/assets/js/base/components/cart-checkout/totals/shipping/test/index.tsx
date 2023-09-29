@@ -18,9 +18,24 @@ jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 } ) );
 
-wpData.useSelect.mockImplementation( () => {
-	return { prefersCollection: false };
-} );
+// Mock use select so we can override it when wc/store/checkout is accessed, but return the original select function if any other store is accessed.
+wpData.useSelect.mockImplementation(
+	jest.fn().mockImplementation( ( passedMapSelect ) => {
+		const mockedSelect = jest.fn().mockImplementation( ( storeName ) => {
+			if ( storeName === 'wc/store/checkout' ) {
+				return {
+					prefersCollection() {
+						return false;
+					},
+				};
+			}
+			return jest.requireActual( '@wordpress/data' ).select( storeName );
+		} );
+		passedMapSelect( mockedSelect, {
+			dispatch: jest.requireActual( '@wordpress/data' ).dispatch,
+		} );
+	} )
+);
 
 const shippingAddress = {
 	first_name: 'John',
@@ -46,6 +61,7 @@ jest.mock( '@woocommerce/base-context/hooks', () => {
 } );
 baseContextHooks.useShippingData.mockReturnValue( {
 	needsShipping: true,
+	selectShippingRate: jest.fn(),
 	shippingRates: [
 		{
 			package_id: 0,
@@ -177,7 +193,7 @@ describe( 'TotalsShipping', () => {
 					} }
 					showCalculator={ true }
 					showRateSelector={ true }
-					isCheckout={ true }
+					isCheckout={ false }
 					className={ '' }
 				/>
 			</SlotFillProvider>
@@ -222,7 +238,7 @@ describe( 'TotalsShipping', () => {
 					} }
 					showCalculator={ true }
 					showRateSelector={ true }
-					isCheckout={ true }
+					isCheckout={ false }
 					className={ '' }
 				/>
 			</SlotFillProvider>
@@ -267,7 +283,7 @@ describe( 'TotalsShipping', () => {
 					} }
 					showCalculator={ true }
 					showRateSelector={ true }
-					isCheckout={ true }
+					isCheckout={ false }
 					className={ '' }
 				/>
 			</SlotFillProvider>

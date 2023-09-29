@@ -1,6 +1,6 @@
-/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** css ../../../node_modules/.pnpm/css-loader@3.6.0_webpack@5.70.0/node_modules/css-loader/dist/cjs.js!../../../node_modules/.pnpm/postcss-loader@4.3.0_wn4p5kzkgq2ohl66pfawxjf2x4/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[0].use[2]!../../../node_modules/.pnpm/sass-loader@10.2.1_webpack@5.70.0/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[0].use[3]!./src/style.scss ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../../../node_modules/.pnpm/css-loader@3.6.0_webpack@5.70.0/node_modules/css-loader/dist/cjs.js!../../../node_modules/.pnpm/postcss-loader@4.3.0_postcss@8.4.12_webpack@5.70.0/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[0].use[2]!../../../node_modules/.pnpm/sass-loader@10.2.1_sass@1.60.0_webpack@5.70.0/node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[0].use[3]!./src/style.scss ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /**
  * Colors
  */
@@ -278,7 +278,7 @@ body.admin-color-sunrise {
   line-height: 32px;
 }
 .woocommerce-recommended-payments-banner .woocommerce-recommended-payments__header-heading {
-  color: #50575e;
+  color: #757575;
 }
 .woocommerce-recommended-payments-banner .woocommerce-recommended-payments-banner__image_container {
   display: flex;
@@ -315,24 +315,31 @@ body.admin-color-sunrise {
 
 .woocommerce-wcpay-benefits {
   background-color: #fff;
-  border: 1px solid #e2e4e7;
   border-radius: 2px;
-  padding: 40px 30px 30px;
+  padding: 36px 24px;
   width: 680px;
-  height: 344px;
+  min-height: 200px;
 }
 .woocommerce-wcpay-benefits .woocommerce-wcpay-benefits-benefit {
   flex-direction: column;
   justify-content: start;
   margin-right: 0;
   width: 186px;
+  align-items: start;
+  gap: 16px;
+}
+.woocommerce-wcpay-benefits .woocommerce-wcpay-benefits-benefit .woocommerce-wcpay-benefits-benefit-icon-container {
+  width: 48px;
+  height: 48px;
+  background-color: #F2EDFF;
+  border-radius: 12px;
+  justify-content: center;
 }
 .woocommerce-wcpay-benefits p {
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  text-align: center;
+  font-size: 13px;
+  line-height: 16px;
   color: #1d2327;
 }
 

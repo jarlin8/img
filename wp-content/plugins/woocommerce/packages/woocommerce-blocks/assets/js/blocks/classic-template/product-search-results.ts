@@ -9,17 +9,17 @@ import {
 } from '@wordpress/blocks';
 import { isWpVersion } from '@woocommerce/settings';
 import { __, sprintf } from '@wordpress/i18n';
+import {
+	INNER_BLOCKS_TEMPLATE as productsInnerBlocksTemplate,
+	QUERY_DEFAULT_ATTRIBUTES as productsQueryDefaultAttributes,
+	PRODUCT_QUERY_VARIATION_NAME as productsVariationName,
+} from '@woocommerce/blocks/product-query/constants';
 
 /**
  * Internal dependencies
  */
-import {
-	INNER_BLOCKS_TEMPLATE as productsInnerBlocksTemplate,
-	QUERY_DEFAULT_ATTRIBUTES as productsQueryDefaultAttributes,
-} from '../product-query/constants';
-import { VARIATION_NAME as productsVariationName } from '../product-query/variations/product-query';
 import { createArchiveTitleBlock, createRowBlock } from './utils';
-import { type InheritedAttributes } from './types';
+import { OnClickCallbackParameter, type InheritedAttributes } from './types';
 
 const createNoResultsParagraph = () =>
 	createBlock( 'core/paragraph', {
@@ -71,22 +71,12 @@ const extendInnerBlocksWithNoResultsContent = (
 	];
 };
 
-const createProductsBlock = (
-	inheritedAttributes: InheritedAttributes,
-	templateInnerBlocks: BlockInstance[]
-) => {
+const createProductsBlock = ( inheritedAttributes: InheritedAttributes ) => {
 	const productsInnerBlocksWithNoResults =
 		extendInnerBlocksWithNoResultsContent(
 			productsInnerBlocksTemplate,
 			inheritedAttributes
 		);
-
-	const innerBlocks = [
-		...templateInnerBlocks,
-		...createBlocksFromInnerBlocksTemplate(
-			productsInnerBlocksWithNoResults
-		),
-	];
 
 	return createBlock(
 		'core/query',
@@ -99,12 +89,12 @@ const createProductsBlock = (
 				inherit: true,
 			},
 		},
-		innerBlocks
+		createBlocksFromInnerBlocksTemplate( productsInnerBlocksWithNoResults )
 	);
 };
 
-const getBlockifiedTemplate = ( inheritedAttributes: InheritedAttributes ) => {
-	const templateInnerBlocks = [
+const getBlockifiedTemplate = ( inheritedAttributes: InheritedAttributes ) =>
+	[
 		createArchiveTitleBlock( 'search-title', inheritedAttributes ),
 		createBlock( 'woocommerce/store-notices', inheritedAttributes ),
 		createRowBlock(
@@ -114,10 +104,8 @@ const getBlockifiedTemplate = ( inheritedAttributes: InheritedAttributes ) => {
 			],
 			inheritedAttributes
 		),
+		createProductsBlock( inheritedAttributes ),
 	].filter( Boolean ) as BlockInstance[];
-
-	return createProductsBlock( inheritedAttributes, templateInnerBlocks );
-};
 
 const isConversionPossible = () => {
 	// Blockification is possible for the WP version 6.1 and above,
@@ -129,7 +117,7 @@ const getDescriptionAllowingConversion = ( templateTitle: string ) =>
 	sprintf(
 		/* translators: %s is the template title */
 		__(
-			"This block serves as a placeholder for your %s. We recommend upgrading to the Products block for more features to edit your products visually. Don't worry, you can always revert back.",
+			'Transform this template into multiple blocks so you can add, remove, reorder, and customize your %s template.',
 			'woo-gutenberg-products-block'
 		),
 		templateTitle
@@ -153,12 +141,38 @@ const getDescription = ( templateTitle: string, canConvert: boolean ) => {
 	return getDescriptionDisallowingConversion( templateTitle );
 };
 
-const getButtonLabel = () =>
-	__( 'Upgrade to Products block', 'woo-gutenberg-products-block' );
+const onClickCallback = ( {
+	clientId,
+	attributes,
+	getBlocks,
+	replaceBlock,
+	selectBlock,
+}: OnClickCallbackParameter ) => {
+	replaceBlock( clientId, getBlockifiedTemplate( attributes ) );
 
-export {
-	getBlockifiedTemplate,
-	isConversionPossible,
-	getDescription,
-	getButtonLabel,
+	const blocks = getBlocks();
+
+	const groupBlock = blocks.find(
+		( block ) =>
+			block.name === 'core/group' &&
+			block.innerBlocks.some(
+				( innerBlock ) =>
+					innerBlock.name === 'woocommerce/store-notices'
+			)
+	);
+
+	if ( groupBlock ) {
+		selectBlock( groupBlock.clientId );
+	}
 };
+
+const getButtonLabel = () =>
+	__( 'Transform into blocks', 'woo-gutenberg-products-block' );
+
+const blockifyConfig = {
+	getButtonLabel,
+	onClickCallback,
+	getBlockifiedTemplate,
+};
+
+export { isConversionPossible, getDescription, blockifyConfig };

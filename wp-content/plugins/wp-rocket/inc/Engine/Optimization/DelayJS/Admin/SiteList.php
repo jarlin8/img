@@ -220,7 +220,7 @@ class SiteList {
 
 		$active_plugins = $this->get_active_plugins();
 		foreach ( $this->get_plugins_from_list() as $plugin_key => $plugin ) {
-			if ( ! in_array( strtolower( $plugin->condition ), $active_plugins, true ) ) {
+			if ( ! in_array( $plugin->condition, $active_plugins, true ) ) {
 				continue;
 			}
 
@@ -233,7 +233,7 @@ class SiteList {
 
 		$active_theme = $this->get_active_theme();
 		foreach ( $this->get_themes_from_list() as $theme_key => $theme ) {
-			if ( strtolower( $theme->condition ) !== $active_theme ) {
+			if ( $theme->condition !== $active_theme ) {
 				continue;
 			}
 
@@ -288,14 +288,13 @@ class SiteList {
 	 * @return void
 	 */
 	public function refresh_exclusions_option() {
-		$selected_items = $this->options->get( 'delay_js_exclusions_selected', [] );
-
-		$this->options->set(
-			'delay_js_exclusions_selected_exclusions',
-			$this->get_delayjs_items_exclusions( $selected_items )
-		);
-
-		$this->options_api->set( 'settings', $this->options->get_options() );
+		$slug    = rocket_get_constant( 'WP_ROCKET_SLUG', 'wp_rocket_settings' );
+		$options = get_option( $slug, [] );
+		if ( empty( $options ) ) {
+			return;
+		}
+		$options['delay_js_exclusions_selected_exclusions'] = $this->get_delayjs_items_exclusions( $options['delay_js_exclusions_selected'] ?? [] );
+		update_option( $slug, $options );
 	}
 
 	/**
@@ -308,7 +307,7 @@ class SiteList {
 	private function get_plugin_item_ids( string $plugin_base ) {
 		$item_ids = [];
 		foreach ( $this->get_plugins_from_list() as $plugin_key => $plugin ) {
-			if ( strtolower( $plugin_base ) !== strtolower( $plugin->condition ) ) {
+			if ( $plugin_base !== $plugin->condition ) {
 				continue;
 			}
 			$item_ids[ $plugin_key ] = $plugin->is_default;
@@ -407,10 +406,10 @@ class SiteList {
 	private function get_theme_name( WP_Theme $theme ) {
 		$parent = $theme->get_template();
 		if ( ! empty( $parent ) ) {
-			return strtolower( $parent );
+			return $parent;
 		}
 
-		return strtolower( $theme->get( 'Name' ) );
+		return $theme->get( 'Name' );
 	}
 
 	/**
@@ -423,7 +422,7 @@ class SiteList {
 	private function get_theme_item_ids( $theme_name ) {
 		$item_ids = [];
 		foreach ( $this->get_themes_from_list() as $theme_key => $theme ) {
-			if ( strtolower( $theme_name ) !== strtolower( $theme->condition ) ) {
+			if ( $theme_name !== $theme->condition ) {
 				continue;
 			}
 
@@ -507,7 +506,7 @@ class SiteList {
 
 		$active_plugins = $this->get_active_plugins();
 		foreach ( $this->get_plugins_from_list() as $plugin_key => $plugin ) {
-			if ( ! in_array( strtolower( $plugin->condition ), $active_plugins, true ) || ! $plugin->is_default ) {
+			if ( ! in_array( $plugin->condition, $active_plugins, true ) || ! $plugin->is_default ) {
 				continue;
 			}
 
@@ -516,7 +515,7 @@ class SiteList {
 
 		$active_theme = $this->get_active_theme();
 		foreach ( $this->get_themes_from_list() as $theme_key => $theme ) {
-			if ( strtolower( $theme->condition ) !== $active_theme || ! $theme->is_default ) {
+			if ( $theme->condition !== $active_theme || ! $theme->is_default ) {
 				continue;
 			}
 

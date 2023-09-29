@@ -32,7 +32,7 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 		$block_hooks = array_filter(
 			$this->hook_data,
 			function( $hook ) use ( $block_name ) {
-				return $hook['block_name'] === $block_name;
+				return in_array( $block_name, $hook['block_names'], true );
 			}
 		);
 
@@ -88,16 +88,15 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 
 		if ( isset( $block['attrs'][ self::IS_FIRST_BLOCK ] ) && isset( $block['attrs'][ self::IS_LAST_BLOCK ] ) ) {
 			return sprintf(
-				'%1$s%2$s%3$s',
-				$this->get_hooks_buffer(
+				'%1$s%2$s',
+				$this->inject_hooks_after_the_wrapper(
+					$block_content,
 					array_merge(
 						$first_block_hook['before'],
 						$block_hooks,
 						$last_block_hook['before']
-					),
-					'before'
+					)
 				),
-				$block_content,
 				$this->get_hooks_buffer(
 					array_merge(
 						$first_block_hook['after'],
@@ -111,15 +110,14 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 
 		if ( isset( $block['attrs'][ self::IS_FIRST_BLOCK ] ) ) {
 			return sprintf(
-				'%1$s%2$s%3$s',
-				$this->get_hooks_buffer(
+				'%1$s%2$s',
+				$this->inject_hooks_after_the_wrapper(
+					$block_content,
 					array_merge(
 						$first_block_hook['before'],
 						$block_hooks
-					),
-					'before'
+					)
 				),
-				$block_content,
 				$this->get_hooks_buffer(
 					array_merge(
 						$first_block_hook['after'],
@@ -172,46 +170,46 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 	protected function set_hook_data() {
 		$this->hook_data = array(
 			'woocommerce_before_main_content'           => array(
-				'block_name' => '',
-				'position'   => 'before',
-				'hooked'     => array(
+				'block_names' => array(),
+				'position'    => 'before',
+				'hooked'      => array(
 					'woocommerce_output_content_wrapper' => 10,
 					'woocommerce_breadcrumb'             => 20,
 				),
 			),
 			'woocommerce_after_main_content'            => array(
-				'block_name' => '',
-				'position'   => 'after',
-				'hooked'     => array(
+				'block_names' => array(),
+				'position'    => 'after',
+				'hooked'      => array(
 					'woocommerce_output_content_wrapper_end' => 10,
 				),
 			),
 			'woocommerce_sidebar'                       => array(
-				'block_name' => '',
-				'position'   => 'after',
-				'hooked'     => array(
+				'block_names' => array(),
+				'position'    => 'after',
+				'hooked'      => array(
 					'woocommerce_get_sidebar' => 10,
 				),
 			),
 			'woocommerce_before_single_product'         => array(
-				'block_name' => '',
-				'position'   => 'before',
-				'hooked'     => array(
+				'block_names' => array(),
+				'position'    => 'before',
+				'hooked'      => array(
 					'woocommerce_output_all_notices' => 10,
 				),
 			),
 			'woocommerce_before_single_product_summary' => array(
-				'block_name' => '',
-				'position'   => 'before',
-				'hooked'     => array(
+				'block_names' => array(),
+				'position'    => 'before',
+				'hooked'      => array(
 					'woocommerce_show_product_sale_flash' => 10,
 					'woocommerce_show_product_images'     => 20,
 				),
 			),
 			'woocommerce_single_product_summary'        => array(
-				'block_name' => '',
-				'position'   => 'before',
-				'hooked'     => array(
+				'block_names' => array(),
+				'position'    => 'before',
+				'hooked'      => array(
 					'woocommerce_template_single_title'   => 5,
 					'woocommerce_template_single_rating'  => 10,
 					'woocommerce_template_single_price'   => 10,
@@ -222,31 +220,32 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 				),
 			),
 			'woocommerce_after_single_product'          => array(
-				'block_name' => '',
-				'position'   => 'after',
-				'hooked'     => array(),
+				'block_names' => array(),
+				'position'    => 'after',
+				'hooked'      => array(),
 			),
 			'woocommerce_product_meta_start'            => array(
-				'block_name' => 'woocommerce/product-meta',
-				'position'   => 'before',
-				'hooked'     => array(),
+				'block_names' => array( 'woocommerce/product-meta' ),
+				'position'    => 'before',
+				'hooked'      => array(),
 			),
 			'woocommerce_product_meta_end'              => array(
-				'block_name' => 'woocommerce/product-meta',
-				'position'   => 'after',
-				'hooked'     => array(),
+				'block_names' => array( 'woocommerce/product-meta' ),
+				'position'    => 'after',
+				'hooked'      => array(),
 			),
 			'woocommerce_share'                         => array(
-				'block_name' => 'woocommerce/product-details',
-				'position'   => 'before',
-				'hooked'     => array(),
+				'block_names' => array( 'woocommerce/product-details' ),
+				'position'    => 'before',
+				'hooked'      => array(),
 			),
 			'woocommerce_after_single_product_summary'  => array(
-				'block_name' => 'woocommerce/product-details',
-				'position'   => 'before',
-				'hooked'     => array(
+				'block_names' => array( 'woocommerce/product-details' ),
+				'position'    => 'after',
+				'hooked'      => array(
 					'woocommerce_output_product_data_tabs' => 10,
-					'woocommerce_upsell_display'           => 15,
+					// We want to display the upsell products after the last block that belongs to the Single Product.
+					// 'woocommerce_upsell_display'           => 15.
 					'woocommerce_output_related_products'  => 20,
 				),
 			),
@@ -260,20 +259,16 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 	 * @return string
 	 */
 	public static function add_compatibility_layer( $template_content ) {
+		$parsed_blocks = parse_blocks( $template_content );
+
+		if ( ! self::has_single_product_template_blocks( $parsed_blocks ) ) {
+			$template = self::inject_custom_attributes_to_first_and_last_block_single_product_template( $parsed_blocks );
+			return self::serialize_blocks( $template );
+		}
+
 		$wrapped_blocks = self::wrap_single_product_template( $template_content );
 		$template       = self::inject_custom_attributes_to_first_and_last_block_single_product_template( $wrapped_blocks );
-
-		return array_reduce(
-			$template,
-			function( $carry, $item ) {
-				if ( is_array( $item ) ) {
-					return $carry . serialize_blocks( $item );
-				}
-				return $carry . serialize_block( $item );
-			},
-			''
-		);
-
+		return self::serialize_blocks( $template );
 	}
 
 	/**
@@ -287,15 +282,13 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 		$parsed_blocks  = parse_blocks( $template_content );
 		$grouped_blocks = self::group_blocks( $parsed_blocks );
 
-		$single_product_template_blocks = array( 'woocommerce/product-image-gallery', 'woocommerce/product-details', 'woocommerce/add-to-cart-form', 'woocommerce/product-meta', 'woocommerce/product-price', 'woocommerce/breadcrumbs' );
-
 		$wrapped_blocks = array_map(
-			function( $blocks ) use ( $single_product_template_blocks ) {
+			function( $blocks ) {
 				if ( 'core/template-part' === $blocks[0]['blockName'] ) {
 					return $blocks;
 				}
 
-				$has_single_product_template_blocks = self::has_single_product_template_blocks( $blocks, $single_product_template_blocks );
+				$has_single_product_template_blocks = self::has_single_product_template_blocks( $blocks );
 
 				if ( $has_single_product_template_blocks ) {
 					$wrapped_block = self::create_wrap_block_group( $blocks );
@@ -321,9 +314,10 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 
 				$index          = $carry['index'];
 				$carry['index'] = $carry['index'] + 1;
-				$block          = $item[0];
+				// If the block is a child of a group block, we need to get the first block of the group.
+				$block = isset( $item[0] ) ? $item[0] : $item;
 
-				if ( 'core/template-part' === $block['blockName'] ) {
+				if ( 'core/template-part' === $block['blockName'] || self::is_custom_html( $block ) ) {
 					$carry['template'][] = $block;
 					return $carry;
 				}
@@ -397,10 +391,11 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 	 * woocommerce/product-gallery-image, woocommerce/product-details, woocommerce/add-to-cart-form]
 	 *
 	 * @param array $parsed_blocks Array of parsed block objects.
-	 * @param array $single_product_template_blocks Array of single product template blocks.
 	 * @return bool True if the template has a single product template block, false otherwise.
 	 */
-	private static function has_single_product_template_blocks( $parsed_blocks, $single_product_template_blocks ) {
+	private static function has_single_product_template_blocks( $parsed_blocks ) {
+		$single_product_template_blocks = array( 'woocommerce/product-image-gallery', 'woocommerce/product-details', 'woocommerce/add-to-cart-form', 'woocommerce/product-meta', 'woocommerce/product-price', 'woocommerce/breadcrumbs' );
+
 		$found = false;
 
 		foreach ( $parsed_blocks as $block ) {
@@ -435,9 +430,6 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 					$carry[] = array( $block );
 					return $carry;
 				}
-				if ( empty( $block['blockName'] ) ) {
-					return $carry;
-				}
 				$last_element_index = count( $carry ) - 1;
 				if ( isset( $carry[ $last_element_index ][0]['blockName'] ) && 'core/template-part' !== $carry[ $last_element_index ][0]['blockName'] ) {
 					$carry[ $last_element_index ][] = $block;
@@ -447,6 +439,58 @@ class SingleProductTemplateCompatibility extends AbstractTemplateCompatibility {
 				return $carry;
 			},
 			array()
+		);
+	}
+
+	/**
+	 * Inject the hooks after the div wrapper.
+	 *
+	 * @param string $block_content Block Content.
+	 * @param array  $hooks Hooks to inject.
+	 * @return array
+	 */
+	private function inject_hooks_after_the_wrapper( $block_content, $hooks ) {
+		$closing_tag_position = strpos( $block_content, '>' );
+
+		return substr_replace(
+			$block_content,
+			$this->get_hooks_buffer(
+				$hooks,
+				'before'
+			),
+			// Add 1 to the position to inject the content after the closing tag.
+			$closing_tag_position + 1,
+			0
+		);
+	}
+
+
+	/**
+	 * Plain custom HTML block is parsed as block with an empty blockName with a filled innerHTML.
+	 *
+	 * @param array $block Parse block.
+	 * @return bool
+	 */
+	private static function is_custom_html( $block ) {
+		return empty( $block['blockName'] ) && ! empty( $block['innerHTML'] );
+	}
+
+	/**
+	 * Serialize template.
+	 *
+	 * @param array $parsed_blocks Parsed blocks.
+	 * @return string
+	 */
+	private static function serialize_blocks( $parsed_blocks ) {
+		return array_reduce(
+			$parsed_blocks,
+			function( $carry, $item ) {
+				if ( is_array( $item ) ) {
+					return $carry . serialize_blocks( $item );
+				}
+				return $carry . serialize_block( $item );
+			},
+			''
 		);
 	}
 }

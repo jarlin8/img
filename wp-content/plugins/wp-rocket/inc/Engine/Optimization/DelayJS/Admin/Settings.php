@@ -143,20 +143,11 @@ class Settings {
 	 * @return string[]
 	 */
 	public static function get_delay_js_default_exclusions(): array {
-		global $wp_version;
 
 		$exclusions = [
-			'/jquery-?[0-9.](.*)(.min|.slim|.slim.min)?.js',
+			'\/jquery(-migrate)?-?([0-9.]+)?(.min|.slim|.slim.min)?.js(\?(.*))?( |\'|"|>)',
 			'js-(before|after)',
 		];
-
-		if (
-			isset( $wp_version )
-			&&
-			version_compare( $wp_version, '5.7', '<' )
-		) {
-			$exclusions[] = '/jquery-migrate(.min)?.js';
-		}
 
 		$wp_content  = wp_parse_url( content_url( '/' ), PHP_URL_PATH );
 		$wp_includes = wp_parse_url( includes_url( '/' ), PHP_URL_PATH );

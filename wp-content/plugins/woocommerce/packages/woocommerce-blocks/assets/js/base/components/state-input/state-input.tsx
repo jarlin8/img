@@ -36,6 +36,7 @@ const StateInput = ( {
 	autoComplete = 'off',
 	value = '',
 	required = false,
+	errorId = '',
 }: StateInputWithStatesProps ): JSX.Element => {
 	const countryStates = states[ country ];
 	const options = useMemo(
@@ -54,13 +55,15 @@ const StateInput = ( {
 	 */
 	const onChangeState = useCallback(
 		( stateValue: string ) => {
-			onChange(
+			const newValue =
 				options.length > 0
 					? optionMatcher( stateValue, options )
-					: stateValue
-			);
+					: stateValue;
+			if ( newValue !== value ) {
+				onChange( newValue );
+			}
 		},
-		[ onChange, options ]
+		[ onChange, options, value ]
 	);
 
 	/**
@@ -102,6 +105,7 @@ const StateInput = ( {
 					'Please select a state.',
 					'woo-gutenberg-products-block'
 				) }
+				errorId={ errorId }
 				required={ required }
 				autoComplete={ autoComplete }
 			/>

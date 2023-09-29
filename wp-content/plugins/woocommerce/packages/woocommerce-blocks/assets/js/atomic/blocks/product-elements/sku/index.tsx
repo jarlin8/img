@@ -3,7 +3,6 @@
  */
 import { registerBlockType } from '@wordpress/blocks';
 import type { BlockConfiguration } from '@wordpress/blocks';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -11,6 +10,7 @@ import classnames from 'classnames';
 import sharedConfig from '../shared/config';
 import attributes from './attributes';
 import edit from './edit';
+import { supports } from './supports';
 import {
 	BLOCK_TITLE as title,
 	BLOCK_ICON as icon,
@@ -31,23 +31,11 @@ const blockConfig: BlockConfiguration = {
 		'woocommerce/all-products',
 		'woocommerce/single-product',
 		'core/post-template',
+		'woocommerce/product-template',
 		'woocommerce/product-meta',
 	],
 	edit,
-	save: () => {
-		if (
-			attributes.isDescendentOfQueryLoop ||
-			attributes.isDescendentOfSingleProductTemplate
-		) {
-			return null;
-		}
-
-		return (
-			<div
-				className={ classnames( 'is-loading', attributes.className ) }
-			/>
-		);
-	},
+	supports,
 };
 
 registerBlockType( 'woocommerce/product-sku', { ...blockConfig } );

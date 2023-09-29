@@ -9,6 +9,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { defaultStartShoppingButtonLabel } from './constants';
+import { getVariant } from '../utils';
 
 type MiniCartShoppingButtonBlockProps = {
 	className: string;
@@ -28,8 +29,10 @@ const Block = ( {
 			<Button
 				className={ classNames(
 					className,
+					'wp-block-button__link',
 					'wc-block-mini-cart__shopping-button'
 				) }
+				variant={ getVariant( className, 'contained' ) }
 				href={ SHOP_URL }
 			>
 				{ startShoppingButtonLabel || defaultStartShoppingButtonLabel }

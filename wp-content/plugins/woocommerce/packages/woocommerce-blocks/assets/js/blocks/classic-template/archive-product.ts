@@ -8,28 +8,20 @@ import {
 } from '@wordpress/blocks';
 import { isWpVersion } from '@woocommerce/settings';
 import { __, sprintf } from '@wordpress/i18n';
+import {
+	INNER_BLOCKS_TEMPLATE as productsInnerBlocksTemplate,
+	QUERY_DEFAULT_ATTRIBUTES as productsQueryDefaultAttributes,
+	PRODUCT_QUERY_VARIATION_NAME as productsVariationName,
+} from '@woocommerce/blocks/product-query/constants';
 
 /**
  * Internal dependencies
  */
-import {
-	INNER_BLOCKS_TEMPLATE as productsInnerBlocksTemplate,
-	QUERY_DEFAULT_ATTRIBUTES as productsQueryDefaultAttributes,
-} from '../product-query/constants';
-import { VARIATION_NAME as productsVariationName } from '../product-query/variations/product-query';
 import { createArchiveTitleBlock, createRowBlock } from './utils';
-import { type InheritedAttributes } from './types';
+import { OnClickCallbackParameter, type InheritedAttributes } from './types';
 
-const createProductsBlock = (
-	inheritedAttributes: InheritedAttributes,
-	templateInnerBlocks: BlockInstance[]
-) => {
-	const innerBlocks = [
-		...templateInnerBlocks,
-		...createBlocksFromInnerBlocksTemplate( productsInnerBlocksTemplate ),
-	];
-
-	return createBlock(
+const createProductsBlock = ( inheritedAttributes: InheritedAttributes ) =>
+	createBlock(
 		'core/query',
 		{
 			...productsQueryDefaultAttributes,
@@ -40,15 +32,14 @@ const createProductsBlock = (
 				inherit: true,
 			},
 		},
-		innerBlocks
+		createBlocksFromInnerBlocksTemplate( productsInnerBlocksTemplate )
 	);
-};
 
 const getBlockifiedTemplate = (
 	inheritedAttributes: InheritedAttributes,
 	withTermDescription = false
-) => {
-	const templateInnerBlocks = [
+) =>
+	[
 		createBlock( 'woocommerce/breadcrumbs', inheritedAttributes ),
 		createArchiveTitleBlock( 'archive-title', inheritedAttributes ),
 		withTermDescription
@@ -62,10 +53,8 @@ const getBlockifiedTemplate = (
 			],
 			inheritedAttributes
 		),
+		createProductsBlock( inheritedAttributes ),
 	].filter( Boolean ) as BlockInstance[];
-
-	return createProductsBlock( inheritedAttributes, templateInnerBlocks );
-};
 
 const getBlockifiedTemplateWithTermDescription = (
 	inheritedAttributes: InheritedAttributes
@@ -81,7 +70,7 @@ const getDescriptionAllowingConversion = ( templateTitle: string ) =>
 	sprintf(
 		/* translators: %s is the template title */
 		__(
-			"This block serves as a placeholder for your %s. We recommend upgrading to the Products block for more features to edit your products visually. Don't worry, you can always revert back.",
+			'Transform this template into multiple blocks so you can add, remove, reorder, and customize your %s template.',
 			'woo-gutenberg-products-block'
 		),
 		templateTitle
@@ -106,18 +95,78 @@ const getDescription = ( templateTitle: string, canConvert: boolean ) => {
 };
 
 const getButtonLabel = () =>
-	__( 'Upgrade to Products block', 'woo-gutenberg-products-block' );
+	__( 'Transform into blocks', 'woo-gutenberg-products-block' );
+
+const onClickCallback = ( {
+	clientId,
+	attributes,
+	getBlocks,
+	replaceBlock,
+	selectBlock,
+}: OnClickCallbackParameter ) => {
+	replaceBlock( clientId, getBlockifiedTemplate( attributes ) );
+
+	const blocks = getBlocks();
+
+	const groupBlock = blocks.find(
+		( block ) =>
+			block.name === 'core/group' &&
+			block.innerBlocks.some(
+				( innerBlock ) =>
+					innerBlock.name === 'woocommerce/store-notices'
+			)
+	);
+
+	if ( groupBlock ) {
+		selectBlock( groupBlock.clientId );
+	}
+};
+
+const onClickCallbackWithTermDescription = ( {
+	clientId,
+	attributes,
+	getBlocks,
+	replaceBlock,
+	selectBlock,
+}: OnClickCallbackParameter ) => {
+	replaceBlock( clientId, getBlockifiedTemplate( attributes, true ) );
+
+	const blocks = getBlocks();
+
+	const groupBlock = blocks.find(
+		( block ) =>
+			block.name === 'core/group' &&
+			block.innerBlocks.some(
+				( innerBlock ) =>
+					innerBlock.name === 'woocommerce/store-notices'
+			)
+	);
+
+	if ( groupBlock ) {
+		selectBlock( groupBlock.clientId );
+	}
+};
+
+const productCatalogBlockifyConfig = {
+	getButtonLabel,
+	onClickCallback,
+	getBlockifiedTemplate,
+};
+
+const productTaxonomyBlockifyConfig = {
+	getButtonLabel,
+	onClickCallback: onClickCallbackWithTermDescription,
+	getBlockifiedTemplate: getBlockifiedTemplateWithTermDescription,
+};
 
 export const blockifiedProductCatalogConfig = {
-	getBlockifiedTemplate,
 	isConversionPossible,
 	getDescription,
-	getButtonLabel,
+	blockifyConfig: productCatalogBlockifyConfig,
 };
 
 export const blockifiedProductTaxonomyConfig = {
-	getBlockifiedTemplate: getBlockifiedTemplateWithTermDescription,
 	isConversionPossible,
 	getDescription,
-	getButtonLabel,
+	blockifyConfig: productTaxonomyBlockifyConfig,
 };

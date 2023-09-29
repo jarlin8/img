@@ -254,9 +254,9 @@ class Page {
 	public function customer_data() {
 		$user = $this->user_client->get_user_data();
 		$data = [
-			'license_type'       => __( 'WP Rocket', 'rocket' ),
-			'license_expiration' => __( 'Lifetime', 'rocket' ),
-			'license_class'      => 'wpr-isValid',
+			'license_type'        => __( 'Unavailable', 'rocket' ),
+			'license_expiration'  => __( 'Unavailable', 'rocket' ),
+			'license_class'       => 'wpr-isInvalid',
 			'is_from_one_dot_com' => false,
 		];
 
@@ -581,6 +581,21 @@ class Page {
 		$disable_combine_css = $this->disable_combine_css();
 		$disable_ocd         = 'local' === wp_get_environment_type();
 
+		/**
+		 * Filters the status of the RUCSS option.
+		 *
+		 * @param array $should_disable will return array with disable status and text.
+		 */
+		$rucss_status = apply_filters(
+			'rocket_disable_rucss_setting',
+			[
+				'disable' => false,
+				'text'    => '',
+			]
+		);
+
+		$invalid_license = get_option( 'wp_rocket_no_licence' );
+
 		$this->settings->add_page_section(
 			'file_optimization',
 			[
@@ -593,7 +608,7 @@ class Page {
 
 		if ( rocket_maybe_disable_minify_css() ) {
 			// translators: %1$s = type of minification (HTML, CSS or JS), %2$s = “WP Rocket”.
-			$css_section_helper[] = sprintf( __( '%1$s Minification is currently activated in <strong>Autoptimize</strong>. If you want to use %2$s’s minification, disable those options in Autoptimize.', 'rocket' ), 'CSS', WP_ROCKET_PLUGIN_NAME );
+			$css_section_helper[] = sprintf( __( '%1$s Minification is currently activated in <strong>Autoptimize</strong>. If you want to use %2$s’s minification, disable this option in Autoptimize.', 'rocket' ), 'CSS', WP_ROCKET_PLUGIN_NAME );
 		}
 
 		if ( $rucss_status['disable'] ) {
@@ -664,34 +679,10 @@ class Page {
 						'button_label' => __( 'Activate minify CSS', 'rocket' ),
 					],
 				],
-				'minify_concatenate_css'       => [
-					'type'              => 'checkbox',
-					'label'             => __( 'Combine CSS files <em>(Enable Minify CSS files to select)</em>', 'rocket' ),
-					// translators: %1$s = opening <a> tag, %2$s = closing </a> tag.
-					'description'       => sprintf( __( 'Combine CSS merges all your files into 1, reducing HTTP requests. Not recommended if your site uses HTTP/2. %1$sMore info%2$s', 'rocket' ), '<a href="' . esc_url( $combine_beacon['url'] ) . '" data-beacon-article="' . esc_attr( $combine_beacon['id'] ) . '" target="_blank">', '</a>' ),
-					'helper'            => get_rocket_option( 'remove_unused_css' ) ? __( 'For compatibility and best results, this option is disabled when Remove unused CSS is enabled.', 'rocket' ) : '',
-					'container_class'   => [
-						$disable_combine_css ? 'wpr-isDisabled' : '',
-						'wpr-field--parent',
-						'wpr-NoPaddingBottom',
-					],
-					'section'           => 'css',
-					'page'              => 'file_optimization',
-					'default'           => 0,
-					'sanitize_callback' => 'sanitize_checkbox',
-					'input_attr'        => [
-						'disabled' => $disable_combine_css ? 1 : 0,
-					],
-					'warning'           => [
-						'title'        => __( 'This could break things!', 'rocket' ),
-						'description'  => __( 'If you notice any errors on your website after having activated this setting, just deactivate it again, and your site will be back to normal.', 'rocket' ),
-						'button_label' => __( 'Activate combine CSS', 'rocket' ),
-					],
-				],
 				'exclude_css'                  => [
 					'type'              => 'textarea',
 					'label'             => __( 'Excluded CSS Files', 'rocket' ),
-					'description'       => __( 'Specify URLs of CSS files to be excluded from minification and concatenation (one per line).', 'rocket' ),
+					'description'       => __( 'Specify URLs of CSS files to be excluded from minification (one per line).', 'rocket' ),
 					'helper'            => __( '<strong>Internal:</strong> The domain part of the URL will be stripped automatically. Use (.*).css wildcards to exclude all CSS files located at a specific path.', 'rocket' ) . '<br>' .
 					// translators: %1$s = opening <a> tag, %2$s = closing </a> tag.
 					sprintf( __( '<strong>3rd Party:</strong> Use either the full URL path or only the domain name, to exclude external CSS. %1$sMore info%2$s', 'rocket' ), '<a href="' . esc_url( $exclude_css_beacon['url'] ) . '" data-beacon-article="' . esc_attr( $exclude_css_beacon['id'] ) . '" rel="noopener noreferrer" target="_blank">', '</a>' ),
@@ -712,7 +703,7 @@ class Page {
 						$disable_ocd ? 'wpr-isDisabled' : '',
 						'wpr-isParent',
 					],
-					'description'       => __( 'Optimize CSS delivery eliminates render-blocking CSS on your website. Only one method can be selected. Remove Unused CSS is recommended for optimal performance.', 'rocket' ),
+					'description'       => $invalid_license ? __( 'Optimize CSS delivery eliminates render-blocking CSS on your website. Only one method can be selected. Remove Unused CSS is recommended for optimal performance, but limited only to the users with active license.', 'rocket' ) : __( 'Optimize CSS delivery eliminates render-blocking CSS on your website. Only one method can be selected. Remove Unused CSS is recommended for optimal performance.', 'rocket' ),
 					'section'           => 'css',
 					'page'              => 'file_optimization',
 					'default'           => 0,
@@ -743,14 +734,15 @@ class Page {
 					'options'                 => [
 						'remove_unused_css' => [
 							'label'       => __( 'Remove Unused CSS', 'rocket' ),
+							'disabled'    => $invalid_license || $rucss_status['disable'] ? 'disabled' : false,
 							// translators: %1$s = opening <a> tag, %2$s = closing </a> tag.
 							'description' => sprintf( __( 'Removes unused CSS per page and helps to reduce page size and HTTP requests. Recommended for best performance. Test thoroughly! %1$sMore info%2$s', 'rocket' ), '<a href="' . esc_url( $rucss_beacon['url'] ) . '" data-beacon-article="' . esc_attr( $rucss_beacon['id'] ) . '" target="_blank">', '</a>' ),
-							'warning'     => [
+							'warning'     => $invalid_license ? [] : [
 								'title'        => __( 'This could break things!', 'rocket' ),
 								'description'  => __( 'If you notice any errors on your website after having activated this setting, just deactivate it again, and your site will be back to normal.', 'rocket' ),
 								'button_label' => __( 'Activate Remove Unused CSS', 'rocket' ),
 							],
-							'sub_fields'  => [
+							'sub_fields'  => $invalid_license ? [] : [
 								'remove_unused_css_safelist' =>
 								[
 									'type'              => 'textarea',
@@ -924,8 +916,8 @@ class Page {
 				'delay_js_exclusions_selected' => [
 					'type'              => 'categorized_multiselect',
 					'label'             => __( 'One-click exclusions', 'rocket' ),
-					'description'       => __( 'When using this feature you may notice that it takes some time, or user interaction for specific elements, e.g. a menu, or a form that is located in the viewport, to appear.', 'rocket' ),
-					'sub_description'   => __( 'If you are using any of the following plugins/themes/services you can prevent that, by selecting them below.', 'rocket' ),
+					'description'       => __( 'When using the Delay JavaScript Execution, you might experience delay loading elements located in the viewport that need to appear immediately - e.g. slider, header, menu.', 'rocket' ),
+					'sub_description'   => __( 'If you need instant visibility, click below on files that should NOT be delayed. This selection will help users interact with the elements straight away.', 'rocket' ),
 					'container_class'   => [
 						'wpr-field--children',
 					],
@@ -1007,6 +999,15 @@ class Page {
 		$disable_iframes_lazyload = (array) apply_filters( 'rocket_maybe_disable_iframes_lazyload_helper', $disable_iframes_lazyload );
 		$disable_iframes_lazyload = $this->sanitize_and_format_list( $disable_iframes_lazyload );
 
+		$disable_css_bg_img_lazyload = false;
+
+		/**
+		 * Lazyload Helper filter which disables WPR lazyload functionality for bg css.
+		 *
+		 * @param bool $disable_css_bg_img_lazyload Should the lazyload CSS be disabled.
+		 */
+		$disable_css_bg_img_lazyload = (bool) apply_filters( 'rocket_maybe_disable_css_bg_img_lazyload_helper', $disable_css_bg_img_lazyload );
+
 		/**
 		 * Lazyload Helper filter which disables WPR lazyload functionality to replace YouTube iframe with preview image.
 		 *
@@ -1062,7 +1063,7 @@ class Page {
 
 		$this->settings->add_settings_fields(
 			[
-				'lazyload'         => [
+				'lazyload'            => [
 					'type'              => 'checkbox',
 					'label'             => __( 'Enable for images', 'rocket' ),
 					'section'           => 'lazyload_section',
@@ -1078,7 +1079,22 @@ class Page {
 					// translators: %1$s = “WP Rocket”, %2$s = a list of plugin names.
 					'description'       => ! empty( $disable_images_lazyload ) ? sprintf( __( 'LazyLoad for images is currently activated in %2$s. If you want to use %1$s’s LazyLoad, disable this option in %2$s.', 'rocket' ), WP_ROCKET_PLUGIN_NAME, $disable_images_lazyload ) : '',
 				],
-				'lazyload_iframes' => [
+				'lazyload_css_bg_img' => [
+					'container_class'   => [
+						$disable_css_bg_img_lazyload ? 'wpr-isDisabled' : '',
+						'wpr-isParent',
+					],
+					'type'              => 'checkbox',
+					'label'             => __( 'Enable for CSS background images', 'rocket' ),
+					'section'           => 'lazyload_section',
+					'page'              => 'media',
+					'default'           => 0,
+					'sanitize_callback' => 'sanitize_checkbox',
+					'input_attr'        => [
+						'disabled' => $disable_css_bg_img_lazyload ? 1 : 0,
+					],
+				],
+				'lazyload_iframes'    => [
 					'container_class'   => [
 						! empty( $disable_iframes_lazyload ) ? 'wpr-isDisabled' : '',
 						'wpr-isParent',
@@ -1093,7 +1109,7 @@ class Page {
 						'disabled' => ! empty( $disable_iframes_lazyload ) ? 1 : 0,
 					],
 				],
-				'lazyload_youtube' => [
+				'lazyload_youtube'    => [
 					'container_class'   => [
 						! empty( $disable_youtube_lazyload ) ? 'wpr-isDisabled' : '',
 						'wpr-field--children',
@@ -1111,20 +1127,20 @@ class Page {
 						'disabled' => ! empty( $disable_youtube_lazyload ) ? 1 : 0,
 					],
 				],
-				'exclude_lazyload' => [
+				'exclude_lazyload'    => [
 					'container_class' => [
 						'wpr-Delayjs',
 					],
 					'type'            => 'textarea',
 					'label'           => __( 'Excluded images or iframes', 'rocket' ),
 					// translators: %1$s = opening <a> tag, %2$s = closing </a> tag.
-					'description'     => sprintf( __( 'Specify keywords (e.g. image filename, CSS class, domain) from the image or iframe code to be excluded (one per line). %1$sMore info%2$s', 'rocket' ), '<a href="' . esc_url( $exclude_lazyload['url'] ) . '" data-beacon-article="' . esc_attr( $exclude_lazyload['id'] ) . '" target="_blank" rel="noopener noreferrer">', '</a>' ),
+					'description'     => sprintf( __( 'Specify keywords (e.g. image filename, CSS filename, CSS class, domain) from the image or iframe code to be excluded (one per line). %1$sMore info%2$s', 'rocket' ), '<a href="' . esc_url( $exclude_lazyload['url'] ) . '" data-beacon-article="' . esc_attr( $exclude_lazyload['id'] ) . '" target="_blank" rel="noopener noreferrer">', '</a>' ),
 					'section'         => 'lazyload_section',
 					'page'            => 'media',
 					'default'         => [],
-					'placeholder'     => "example-image.jpg\nslider-image",
+					'placeholder'     => "example-image.jpg\nslider-image\nbackground-image-style.css",
 				],
-				'image_dimensions' => [
+				'image_dimensions'    => [
 					'type'              => 'checkbox',
 					'label'             => __( 'Add missing image dimensions', 'rocket' ),
 					'section'           => 'dimensions_section',
@@ -1609,15 +1625,21 @@ class Page {
 		);
 
 		$maybe_display_cdn_helper = '';
-		$addons                   = [];
 
-		if ( get_rocket_option( 'do_cloudflare' ) ) {
-			$addons[] = 'Cloudflare';
+		/**
+		 * Name from addons requiring the helper message.
+		 *
+		 * @param string[] addons.
+		 *
+		 * @return string []
+		 */
+		$addons = apply_filters( 'rocket_cdn_helper_addons', [] );
+
+		if ( ! is_array( $addons ) ) {
+			$addons = [];
 		}
 
-		if ( get_rocket_option( 'sucury_waf_cache_sync' ) ) {
-			$addons[] = 'Sucuri';
-		}
+		$addons = array_unique( $addons );
 
 		if ( ! empty( $addons ) ) {
 			$maybe_display_cdn_helper = wp_sprintf(
@@ -1795,26 +1817,42 @@ class Page {
 			]
 		);
 
-		$this->settings->add_settings_fields(
-			[
-				'do_cloudflare' => [
-					'type'              => 'rocket_addon',
-					'label'             => __( 'Cloudflare', 'rocket' ),
-					'logo'              => [
-						'url'    => WP_ROCKET_ASSETS_IMG_URL . 'logo-cloudflare2.svg',
-						'width'  => 153,
-						'height' => 51,
-					],
-					'title'             => __( 'Integrate your Cloudflare account with this add-on.', 'rocket' ),
-					'description'       => __( 'Provide your account email, global API key, and domain to use options such as clearing the Cloudflare cache and enabling optimal settings with WP Rocket.', 'rocket' ),
-					'section'           => 'addons',
-					'page'              => 'addons',
-					'settings_page'     => 'cloudflare',
-					'default'           => 0,
-					'sanitize_callback' => 'sanitize_checkbox',
+		$default_cf_settings = [
+			'do_cloudflare' => [
+				'type'              => 'rocket_addon',
+				'label'             => __( 'Cloudflare', 'rocket' ),
+				'logo'              => [
+					'url'    => rocket_get_constant( 'WP_ROCKET_ASSETS_IMG_URL', '' ) . 'logo-cloudflare2.svg',
+					'width'  => 153,
+					'height' => 51,
 				],
-			]
-		);
+				'title'             => __( 'Integrate your Cloudflare account with this add-on.', 'rocket' ),
+				'description'       => __( 'Provide your account email, global API key, and domain to use options such as clearing the Cloudflare cache and enabling optimal settings with WP Rocket.', 'rocket' ),
+				'helper'            => sprintf(
+				// translators: %1$s = opening span tag, %2$s = closing span tag.
+				__( '%1$sPlanning on using Automatic Platform Optimization (APO)?%2$s Just activate the official Cloudflare plugin and configure it. WP Rocket will automatically enable compatibility.', 'rocket' ),
+					'<span class="wpr-helper-title">',
+					'</span>'
+				),
+				'section'           => 'addons',
+				'page'              => 'addons',
+				'settings_page'     => 'cloudflare',
+				'default'           => 0,
+				'sanitize_callback' => 'sanitize_checkbox',
+			],
+		];
+
+		/**
+		 * Filters the Cloudflare Addon field values
+		 *
+		 * @since 3.14
+		 *
+		 * @param array $cf_settings Array of values to populate the field.
+		 */
+		$cf_settings = (array) apply_filters( 'rocket_cloudflare_field_settings', $default_cf_settings );
+		$cf_settings = wp_parse_args( $cf_settings, $default_cf_settings );
+
+		$this->settings->add_settings_fields( $cf_settings );
 
 		/**
 		 * Allow to display the "Varnish" tab in the settings page
@@ -2094,7 +2132,7 @@ class Page {
 		$this->settings->add_settings_fields(
 			[
 				'sucury_waf_api_key' => [
-					'label'       => _x( 'Firewall API key (for plugin), must be in format <code>{32 characters}/{32 characters}</code>:', 'Sucuri', 'rocket' ),
+					'label'       => _x( 'Firewall API key (for plugin), must be in format {32 characters}/{32 characters}:', 'Sucuri', 'rocket' ),
 					'description' => sprintf( '<a href="%1$s" target="_blank">%2$s</a>', 'https://kb.sucuri.net/firewall/Performance/clearing-cache', _x( 'Find your API key', 'Sucuri', 'rocket' ) ),
 					'default'     => '',
 					'section'     => 'sucuri_credentials',
@@ -2136,6 +2174,7 @@ class Page {
 					'emoji',
 					'remove_unused_css',
 					'async_css',
+					'minify_concatenate_css',
 				]
 			)
 		);

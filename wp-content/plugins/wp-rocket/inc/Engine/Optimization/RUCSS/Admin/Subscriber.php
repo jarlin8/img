@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace WP_Rocket\Engine\Optimization\RUCSS\Admin;
 
-use WP_Rocket\Engine\Admin\Settings\Settings as AdminSettings;
 use WP_Rocket\Engine\Optimization\RUCSS\Controller\Queue;
 use WP_Rocket\Engine\Common\Queue\RUCSSQueueRunner;
 use WP_Rocket\Engine\Optimization\RUCSS\Controller\UsedCSS;
@@ -63,15 +62,15 @@ class Subscriber implements Subscriber_Interface {
 		$slug = rocket_get_constant( 'WP_ROCKET_SLUG', 'wp_rocket_settings' );
 
 		return [
-			'rocket_first_install_options'            => 'add_options_first_time',
-			'rocket_input_sanitize'                   => [ 'sanitize_options', 14, 2 ],
 			'update_option_' . $slug                  => [
 				[ 'clean_used_css_and_cache', 9, 2 ],
 				[ 'maybe_set_processing_transient', 50, 2 ],
 				[ 'maybe_unlock_preload', 9, 2 ],
+				[ 'maybe_delete_transient', 10, 2 ],
 			],
 			'switch_theme'                            => 'truncate_used_css',
 			'permalink_structure_changed'             => 'truncate_used_css',
+			'rocket_domain_options_changed'           => 'truncate_used_css',
 			'wp_trash_post'                           => 'delete_used_css_on_update_or_delete',
 			'delete_post'                             => 'delete_used_css_on_update_or_delete',
 			'clean_post_cache'                        => 'delete_used_css_on_update_or_delete',
@@ -84,6 +83,8 @@ class Subscriber implements Subscriber_Interface {
 				[ 'clear_usedcss_result' ],
 				[ 'display_processing_notice' ],
 				[ 'display_success_notice' ],
+				[ 'display_wrong_license_notice' ],
+				[ 'display_saas_error_notice' ],
 				[ 'display_no_table_notice' ],
 				[ 'notice_write_permissions' ],
 			],
@@ -96,7 +97,6 @@ class Subscriber implements Subscriber_Interface {
 				[ 'set_optimize_css_delivery_method_value', 10, 1 ],
 			],
 			'rocket_localize_admin_script'            => 'add_localize_script_data',
-			'pre_update_option_wp_rocket_settings'    => [ 'maybe_disable_combine_css', 11, 2 ],
 			'wp_rocket_upgrade'                       => [
 				[ 'set_option_on_update', 14, 2 ],
 				[ 'update_safelist_items', 15, 2 ],
@@ -107,6 +107,7 @@ class Subscriber implements Subscriber_Interface {
 			'wp_ajax_rocket_spawn_cron'               => 'spawn_cron',
 			'rocket_deactivation'                     => 'cancel_queues',
 			'admin_head-tools_page_action-scheduler'  => 'delete_as_tables_transient_on_tools_page',
+			'pre_get_rocket_option_remove_unused_css' => 'disable_russ_on_wrong_license',
 			'rocket_before_rollback'                  => 'cancel_queues',
 		];
 	}
@@ -207,16 +208,6 @@ class Subscriber implements Subscriber_Interface {
 
 		$this->delete_used_css_rows();
 		$this->set_notice_transient();
-
-		wp_safe_remote_get(
-			home_url(),
-			[
-				'timeout'    => 0.01,
-				'blocking'   => false,
-				'user-agent' => 'WP Rocket/Homepage Preload',
-				'sslverify'  => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			]
-		);
 	}
 
 	/**
@@ -243,32 +234,7 @@ class Subscriber implements Subscriber_Interface {
 		do_action( 'rocket_after_clean_used_css' );
 	}
 
-	/**
-	 * Add the RUCSS options to the WP Rocket options array.
-	 *
-	 * @since 3.9
-	 *
-	 * @param array $options WP Rocket options array.
-	 *
-	 * @return array
-	 */
-	public function add_options_first_time( $options ) : array {
-		return $this->settings->add_options( $options );
-	}
 
-	/**
-	 * Sanitizes RUCSS options values when the settings form is submitted
-	 *
-	 * @since 3.9
-	 *
-	 * @param array         $input    Array of values submitted from the form.
-	 * @param AdminSettings $settings Settings class instance.
-	 *
-	 * @return array
-	 */
-	public function sanitize_options( $input, AdminSettings $settings ) : array {
-		return $this->settings->sanitize_options( $input, $settings );
-	}
 
 	/**
 	 * Truncate UsedCSS DB Table when `remove_unused_css_safelist` is changed.
@@ -327,9 +293,10 @@ class Subscriber implements Subscriber_Interface {
 			rocket_get_constant( 'WP_ROCKET_IS_TESTING', false ) ? wp_die() : exit;
 		}
 
+		rocket_clean_domain();
+
 		$this->delete_used_css_rows();
 
-		rocket_clean_domain();
 		rocket_dismiss_box( 'rocket_warning_plugin_modification' );
 
 		set_transient(
@@ -345,16 +312,6 @@ class Subscriber implements Subscriber_Interface {
 		);
 
 		$this->set_notice_transient();
-
-		wp_remote_get(
-			home_url(),
-			[
-				'timeout'    => 0.01,
-				'blocking'   => false,
-				'user-agent' => 'WP Rocket/Homepage Preload',
-				'sslverify'  => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			]
-		);
 
 		wp_safe_redirect( esc_url_raw( wp_get_referer() ) );
 		rocket_get_constant( 'WP_ROCKET_IS_TESTING', false ) ? wp_die() : exit;
@@ -448,6 +405,52 @@ class Subscriber implements Subscriber_Interface {
 	}
 
 	/**
+	 * Display a notification on wrong license.
+	 *
+	 * @return void
+	 */
+	public function display_wrong_license_notice() {
+		$transient = get_option( 'wp_rocket_no_licence' );
+
+		if ( ! $transient ) {
+			return;
+		}
+
+		$this->settings->display_wrong_license_notice();
+	}
+
+	/**
+	 * Display error notice when connection to SAAS fails
+	 *
+	 * @return void
+	 */
+	public function display_saas_error_notice() {
+		$this->settings->display_saas_error_notice();
+	}
+
+
+	/**
+	 * Display admin notice when detecting any missed Action scheduler tables.
+	 *
+	 * @since 3.11.0.3
+	 *
+	 * @return void
+	 */
+	public function display_as_missed_tables_notice() {
+		$screen = get_current_screen();
+
+		if ( isset( $screen->id ) && 'tools_page_action-scheduler' === $screen->id ) {
+			return;
+		}
+
+		if ( $this->is_valid_as_tables() ) {
+			return;
+		}
+
+		$this->settings->display_as_missed_tables_notice();
+	}
+
+	/**
 	 * Adds the notice end time to WP Rocket localize script data
 	 *
 	 * @since 3.11
@@ -496,20 +499,6 @@ class Subscriber implements Subscriber_Interface {
 	}
 
 	/**
-	 * Disable combine CSS option when RUCSS is enabled
-	 *
-	 * @since 3.11
-	 *
-	 * @param array $value     The new, unserialized option value.
-	 * @param array $old_value The old option value.
-	 *
-	 * @return array
-	 */
-	public function maybe_disable_combine_css( $value, $old_value ): array {
-		return $this->settings->maybe_disable_combine_css( $value, $old_value );
-	}
-
-	/**
 	 * Disables combine CSS if RUCSS is enabled when updating to 3.11
 	 *
 	 * @since 3.11
@@ -529,16 +518,6 @@ class Subscriber implements Subscriber_Interface {
 		$this->database->truncate_used_css_table();
 		rocket_clean_domain();
 		$this->set_notice_transient();
-
-		wp_safe_remote_get(
-			home_url(),
-			[
-				'timeout'    => 0.01,
-				'blocking'   => false,
-				'user-agent' => 'WP Rocket/Homepage Preload',
-				'sslverify'  => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			]
-		);
 	}
 
 	/**
@@ -690,6 +669,18 @@ class Subscriber implements Subscriber_Interface {
 	}
 
 	/**
+	 * Disable RUCSS on wrong license.
+	 *
+	 * @return bool
+	 */
+	public function disable_russ_on_wrong_license() {
+		if ( false !== (bool) get_option( 'wp_rocket_no_licence' ) ) {
+			return false;
+		}
+		return null;
+	}
+
+	/**
 	 * Remove the resources table & version stored in options table on update to 3.12
 	 *
 	 * @since 3.12
@@ -725,6 +716,30 @@ class Subscriber implements Subscriber_Interface {
 	 */
 	public function display_no_table_notice() {
 		$this->settings->display_no_table_notice();
+	}
+
+	/**
+	 * Maybe delete transient.
+	 *
+	 * @param mixed $old_value Option old value.
+	 * @param mixed $value     Option new value.
+	 *
+	 * @return void
+	 */
+	public function maybe_delete_transient( $old_value, $value ) {
+		if ( ! isset( $old_value['remove_unused_css'], $value['remove_unused_css'] ) ) {
+			return;
+		}
+
+		if ( 1 === (int) $value['remove_unused_css'] ) {
+			return;
+		}
+
+		if ( $old_value['remove_unused_css'] === $value['remove_unused_css'] ) {
+			return;
+		}
+
+		delete_transient( 'wp_rocket_no_licence' );
 	}
 
 	/**

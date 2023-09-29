@@ -12,6 +12,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class DefaultPaymentGateways {
 	/**
+	 * This is the default priority for countries that are not in the $recommendation_priority_map.
 	 * Priority is used to determine which payment gateway to recommend first.
 	 * The lower the number, the higher the priority.
 	 *
@@ -38,6 +39,8 @@ class DefaultPaymentGateways {
 		'amazon_payments_advanced'                        => 7,
 		'affirm'                                          => 8,
 		'afterpay'                                        => 9,
+		'zipmoney'                                        => 10,
+		'payoneer-checkout'                               => 11,
 	);
 
 	/**
@@ -227,6 +230,9 @@ class DefaultPaymentGateways {
 				'is_visible'          => array(
 					self::get_rules_for_countries(
 						array(
+							'MX',
+							'US',
+							'CA',
 							'AT',
 							'BE',
 							'CH',
@@ -241,12 +247,15 @@ class DefaultPaymentGateways {
 							'NO',
 							'PL',
 							'SE',
+							'NZ',
+							'AU',
 						)
 					),
 					self::get_rules_for_cbd( false ),
 				),
 				'category_other'      => array(),
 				'category_additional' => array(
+					'MX',
 					'US',
 					'CA',
 					'AT',
@@ -263,6 +272,8 @@ class DefaultPaymentGateways {
 					'NO',
 					'PL',
 					'SE',
+					'NZ',
+					'AU',
 				),
 			),
 			array(
@@ -306,8 +317,8 @@ class DefaultPaymentGateways {
 			),
 			array(
 				'id'                  => 'payfast',
-				'title'               => __( 'PayFast', 'woocommerce' ),
-				'content'             => __( 'The PayFast extension for WooCommerce enables you to accept payments by Credit Card and EFT via one of South Africa’s most popular payment gateways. No setup fees or monthly subscription costs. Selecting this extension will configure your store to use South African rands as the selected currency.', 'woocommerce' ),
+				'title'               => __( 'Payfast', 'woocommerce' ),
+				'content'             => __( 'The Payfast extension for WooCommerce enables you to accept payments by Credit Card and EFT via one of South Africa’s most popular payment gateways. No setup fees or monthly subscription costs. Selecting this extension will configure your store to use South African rands as the selected currency.', 'woocommerce' ),
 				'image'               => WC_ADMIN_IMAGES_FOLDER_URL . '/payfast.png',
 				'image_72x72'         => WC_ADMIN_IMAGES_FOLDER_URL . '/payment_methods/72x72/payfast.png',
 				'plugins'             => array( 'woocommerce-payfast-gateway' ),
@@ -317,6 +328,27 @@ class DefaultPaymentGateways {
 				),
 				'category_other'      => array( 'ZA' ),
 				'category_additional' => array(),
+			),
+			array(
+				'id'                  => 'payoneer-checkout',
+				'title'               => __( 'Payoneer Checkout', 'woocommerce' ),
+				'content'             => __( 'Payoneer Checkout is the next generation of payment processing platforms, giving merchants around the world the solutions and direction they need to succeed in today’s hyper-competitive global market.', 'woocommerce' ),
+				'image'               => WC_ADMIN_IMAGES_FOLDER_URL . '/onboarding/payoneer.png',
+				'image_72x72'         => WC_ADMIN_IMAGES_FOLDER_URL . '/payment_methods/72x72/payoneer.png',
+				'plugins'             => array( 'payoneer-checkout' ),
+				'is_visible'          => array(
+					self::get_rules_for_countries(
+						array(
+							'HK',
+							'CN',
+						)
+					),
+				),
+				'category_other'      => array(),
+				'category_additional' => array(
+					'HK',
+					'CN',
+				),
 			),
 			array(
 				'id'                  => 'paystack',
@@ -358,10 +390,58 @@ class DefaultPaymentGateways {
 				'image_72x72'         => WC_ADMIN_IMAGES_FOLDER_URL . '/payment_methods/72x72/paypal.png',
 				'plugins'             => array( 'woocommerce-paypal-payments' ),
 				'is_visible'          => array(
-					(object) array(
-						'type'      => 'base_location_country',
-						'value'     => 'IN',
-						'operation' => '!=',
+					self::get_rules_for_countries(
+						array(
+							'US',
+							'CA',
+							'MX',
+							'BR',
+							'AR',
+							'CL',
+							'CO',
+							'EC',
+							'PE',
+							'UY',
+							'VE',
+							'AT',
+							'BE',
+							'BG',
+							'HR',
+							'CH',
+							'CY',
+							'CZ',
+							'DK',
+							'EE',
+							'ES',
+							'FI',
+							'FR',
+							'DE',
+							'GB',
+							'GR',
+							'HU',
+							'IE',
+							'IT',
+							'LV',
+							'LT',
+							'LU',
+							'MT',
+							'NL',
+							'NO',
+							'PL',
+							'PT',
+							'RO',
+							'SK',
+							'SL',
+							'SE',
+							'AU',
+							'NZ',
+							'HK',
+							'JP',
+							'SG',
+							'CN',
+							'ID',
+							'IN',
+						)
 					),
 					self::get_rules_for_cbd( false ),
 				),
@@ -414,7 +494,6 @@ class DefaultPaymentGateways {
 					'SG',
 					'CN',
 					'ID',
-					'IN',
 				),
 				'category_additional' => array(
 					'US',
@@ -468,6 +547,7 @@ class DefaultPaymentGateways {
 					'SG',
 					'CN',
 					'ID',
+					'IN',
 				),
 			),
 			array(
@@ -516,7 +596,13 @@ class DefaultPaymentGateways {
 										'JP',
 									)
 								),
-								self::get_rules_for_selling_venues( array( 'brick-mortar', 'brick-mortar-other' ) ),
+								(object) array(
+									'type'     => 'or',
+									'operands' => (object) array(
+										self::get_rules_for_selling_venues( array( 'brick-mortar', 'brick-mortar-other' ) ),
+										self::get_rules_selling_offline(),
+									),
+								),
 							),
 						),
 					),
@@ -645,6 +731,7 @@ class DefaultPaymentGateways {
 							'AR',
 							'CL',
 							'CO',
+							'EC',
 							'PE',
 							'UY',
 							'MX',
@@ -657,6 +744,7 @@ class DefaultPaymentGateways {
 					'AR',
 					'CL',
 					'CO',
+					'EC',
 					'PE',
 					'UY',
 					'MX',
@@ -667,15 +755,15 @@ class DefaultPaymentGateways {
 			// This is for backwards compatibility only (WC < 5.10.0-dev or WCA < 2.9.0-dev).
 			array(
 				'id'          => 'woocommerce_payments',
-				'title'       => __( 'WooCommerce Payments', 'woocommerce' ),
+				'title'       => __( 'WooPayments', 'woocommerce' ),
 				'content'     => __(
-					'Manage transactions without leaving your WordPress Dashboard. Only with WooCommerce Payments.',
+					'Manage transactions without leaving your WordPress Dashboard. Only with WooPayments.',
 					'woocommerce'
 				),
 				'image'       => WC_ADMIN_IMAGES_FOLDER_URL . '/onboarding/wcpay.svg',
 				'image_72x72' => WC_ADMIN_IMAGES_FOLDER_URL . '/onboarding/wcpay.svg',
 				'plugins'     => array( 'woocommerce-payments' ),
-				'description' => __( 'With WooCommerce Payments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies. Track cash flow and manage recurring revenue directly from your store’s dashboard - with no setup costs or monthly fees.', 'woocommerce' ),
+				'description' => __( 'With WooPayments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies. Track cash flow and manage recurring revenue directly from your store’s dashboard - with no setup costs or monthly fees.', 'woocommerce' ),
 				'is_visible'  => array(
 					self::get_rules_for_cbd( false ),
 					self::get_rules_for_countries( self::get_wcpay_countries() ),
@@ -709,15 +797,15 @@ class DefaultPaymentGateways {
 			),
 			array(
 				'id'          => 'woocommerce_payments:without-in-person-payments',
-				'title'       => __( 'WooCommerce Payments', 'woocommerce' ),
+				'title'       => __( 'WooPayments', 'woocommerce' ),
 				'content'     => __(
-					'Manage transactions without leaving your WordPress Dashboard. Only with WooCommerce Payments.',
+					'Manage transactions without leaving your WordPress Dashboard. Only with WooPayments.',
 					'woocommerce'
 				),
 				'image'       => WC_ADMIN_IMAGES_FOLDER_URL . '/onboarding/wcpay.svg',
 				'image_72x72' => WC_ADMIN_IMAGES_FOLDER_URL . '/onboarding/wcpay.svg',
 				'plugins'     => array( 'woocommerce-payments' ),
-				'description' => __( 'With WooCommerce Payments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies. Track cash flow and manage recurring revenue directly from your store’s dashboard - with no setup costs or monthly fees.', 'woocommerce' ),
+				'description' => __( 'With WooPayments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies. Track cash flow and manage recurring revenue directly from your store’s dashboard - with no setup costs or monthly fees.', 'woocommerce' ),
 				'is_visible'  => array(
 					self::get_rules_for_cbd( false ),
 					self::get_rules_for_countries( array_diff( self::get_wcpay_countries(), array( 'US', 'CA' ) ) ),
@@ -744,15 +832,15 @@ class DefaultPaymentGateways {
 			// This is the same as the above, but with a different description for countries that support in-person payments such as US and CA.
 			array(
 				'id'          => 'woocommerce_payments:with-in-person-payments',
-				'title'       => __( 'WooCommerce Payments', 'woocommerce' ),
+				'title'       => __( 'WooPayments', 'woocommerce' ),
 				'content'     => __(
-					'Manage transactions without leaving your WordPress Dashboard. Only with WooCommerce Payments.',
+					'Manage transactions without leaving your WordPress Dashboard. Only with WooPayments.',
 					'woocommerce'
 				),
 				'image'       => WC_ADMIN_IMAGES_FOLDER_URL . '/onboarding/wcpay.svg',
 				'image_72x72' => WC_ADMIN_IMAGES_FOLDER_URL . '/onboarding/wcpay.svg',
 				'plugins'     => array( 'woocommerce-payments' ),
-				'description' => __( 'With WooCommerce Payments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies – with no setup costs or monthly fees – and you can now accept in-person payments with the Woo mobile app.', 'woocommerce' ),
+				'description' => __( 'With WooPayments, you can securely accept major cards, Apple Pay, and payments in over 100 currencies – with no setup costs or monthly fees – and you can now accept in-person payments with the Woo mobile app.', 'woocommerce' ),
 				'is_visible'  => array(
 					self::get_rules_for_cbd( false ),
 					self::get_rules_for_countries( array( 'US', 'CA' ) ),
@@ -776,10 +864,35 @@ class DefaultPaymentGateways {
 					),
 				),
 			),
+			array(
+				'id'                  => 'zipmoney',
+				'title'               => __( 'Zip Co - Buy Now, Pay Later', 'woocommerce' ),
+				'content'             => __( 'Give your customers the power to pay later, interest free and watch your sales grow.', 'woocommerce' ),
+				'image'               => WC_ADMIN_IMAGES_FOLDER_URL . '/onboarding/zipco.png',
+				'image_72x72'         => WC_ADMIN_IMAGES_FOLDER_URL . '/payment_methods/72x72/zipco.png',
+				'plugins'             => array( 'zipmoney-payments-woocommerce' ),
+				'is_visible'          => array(
+					self::get_rules_for_countries(
+						array(
+							'US',
+							'NZ',
+							'AU',
+						)
+					),
+				),
+				'category_other'      => array(),
+				'category_additional' => array(
+					'US',
+					'NZ',
+					'AU',
+				),
+			),
 		);
 
+		$base_location = wc_get_base_location();
+		$country       = $base_location['country'];
 		foreach ( $payment_gateways as $index => $payment_gateway ) {
-			$payment_gateways[ $index ]['recommendation_priority'] = self::get_recommendation_priority( $payment_gateway['id'] );
+			$payment_gateways[ $index ]['recommendation_priority'] = self::get_recommendation_priority( $payment_gateway['id'], $country );
 		}
 
 		return $payment_gateways;
@@ -791,7 +904,7 @@ class DefaultPaymentGateways {
 	 * @return array Array of countries.
 	 */
 	public static function get_wcpay_countries() {
-		return array( 'US', 'PR', 'AU', 'CA', 'CY', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'IE', 'IT', 'LU', 'LT', 'LV', 'NO', 'NZ', 'MT', 'AT', 'BE', 'NL', 'PL', 'PT', 'CH', 'HK', 'SI', 'SK', 'SG' );
+		return array( 'US', 'PR', 'AU', 'CA', 'CY', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'IE', 'IT', 'LU', 'LT', 'LV', 'NO', 'NZ', 'MT', 'AT', 'BE', 'NL', 'PL', 'PT', 'CH', 'HK', 'SI', 'SK', 'SG', 'BG', 'CZ', 'HR', 'HU', 'RO', 'SE', 'JP', 'AE' );
 	}
 
 	/**
@@ -851,6 +964,29 @@ class DefaultPaymentGateways {
 	}
 
 	/**
+	 * Get rules for when selling offline for core profiler.
+	 *
+	 * @return object Rules to match.
+	 */
+	public static function get_rules_selling_offline() {
+		return (object) array(
+			'type'         => 'option',
+			'transformers' => array(
+				(object) array(
+					'use'       => 'dot_notation',
+					'arguments' => (object) array(
+						'path' => 'selling_online_answer',
+					),
+				),
+			),
+			'option_name'  => 'woocommerce_onboarding_profile',
+			'operation'    => 'contains',
+			'value'        => 'no_im_selling_offline',
+			'default'      => array(),
+		);
+	}
+
+	/**
 	 * Get default rules for CBD based on given argument.
 	 *
 	 * @param bool $should_have Whether or not the store should have CBD as an industry (true) or not (false).
@@ -881,13 +1017,249 @@ class DefaultPaymentGateways {
 	}
 
 	/**
-	 * Get recommendation priority for a given payment gateway by id.
-	 * If no priority is set or the id is not found, return null.
+	 * Get recommendation priority for a given payment gateway by id and country.
+	 * If country is not supported, return null.
+	 *
+	 * @param string $gateway_id Payment gateway id.
+	 * @param string $country_code Store country code.
+	 * @return int|null Priority. Priority is 0-indexed, so 0 is the highest priority.
+	 */
+	private static function get_recommendation_priority( $gateway_id, $country_code ) {
+		$recommendation_priority_map = array(
+			'US' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'square_credit_card',
+				'amazon_payments_advanced',
+				'affirm',
+				'afterpay',
+				'klarna_payments',
+				'zipmoney',
+			],
+			'CA' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'square_credit_card',
+				'affirm',
+				'afterpay',
+				'klarna_payments',
+			],
+			'AT' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'klarna_payments',
+				'amazon_payments_advanced',
+			],
+			'BE' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'klarna_payments',
+				'amazon_payments_advanced',
+			],
+			'BG' => [ 'stripe', 'ppcp-gateway' ],
+			'HR' => [ 'ppcp-gateway' ],
+			'CH' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'klarna_payments',
+			],
+			'CY' => [ 'stripe', 'ppcp-gateway', 'amazon_payments_advanced' ],
+			'CZ' => [ 'stripe', 'ppcp-gateway' ],
+			'DK' => [
+				'stripe',
+				'ppcp-gateway',
+				'klarna_payments',
+				'amazon_payments_advanced',
+			],
+			'EE' => [ 'stripe', 'ppcp-gateway' ],
+			'ES' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'square_credit_card',
+				'klarna_payments',
+				'amazon_payments_advanced',
+			],
+			'FI' => [
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'kco',
+				'klarna_payments',
+			],
+			'FR' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'square_credit_card',
+				'klarna_payments',
+				'amazon_payments_advanced',
+			],
+			'DE' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'klarna_payments',
+				'amazon_payments_advanced',
+			],
+			'GB' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'square_credit_card',
+				'klarna_payments',
+				'amazon_payments_advanced',
+			],
+			'GR' => [ 'stripe', 'ppcp-gateway' ],
+			'HU' => [ 'stripe', 'ppcp-gateway', 'amazon_payments_advanced' ],
+			'IE' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'square_credit_card',
+				'amazon_payments_advanced',
+			],
+			'IT' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'klarna_payments',
+				'amazon_payments_advanced',
+			],
+			'LV' => [ 'stripe', 'ppcp-gateway' ],
+			'LT' => [ 'stripe', 'ppcp-gateway' ],
+			'LU' => [ 'stripe', 'ppcp-gateway', 'amazon_payments_advanced' ],
+			'MT' => [ 'stripe', 'ppcp-gateway' ],
+			'NL' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'klarna_payments',
+				'amazon_payments_advanced',
+			],
+			'NO' => [ 'stripe', 'ppcp-gateway', 'kco', 'klarna_payments' ],
+			'PL' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'mollie_wc_gateway_banktransfer',
+				'klarna_payments',
+			],
+			'PT' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'amazon_payments_advanced',
+			],
+			'RO' => [ 'stripe', 'ppcp-gateway' ],
+			'SK' => [ 'stripe', 'ppcp-gateway' ],
+			'SL' => [ 'stripe', 'ppcp-gateway', 'amazon_payments_advanced' ],
+			'SE' => [
+				'stripe',
+				'ppcp-gateway',
+				'kco',
+				'klarna_payments',
+				'amazon_payments_advanced',
+			],
+			'MX' => [
+				'stripe',
+				'woo-mercado-pago-custom',
+				'ppcp-gateway',
+				'klarna_payments',
+			],
+			'BR' => [ 'stripe', 'woo-mercado-pago-custom', 'ppcp-gateway' ],
+			'AR' => [ 'woo-mercado-pago-custom', 'ppcp-gateway' ],
+			'BO' => [],
+			'CL' => [ 'woo-mercado-pago-custom', 'ppcp-gateway' ],
+			'CO' => [ 'woo-mercado-pago-custom', 'ppcp-gateway' ],
+			'EC' => [ 'woo-mercado-pago-custom', 'ppcp-gateway' ],
+			'FK' => [],
+			'GF' => [],
+			'GY' => [],
+			'PY' => [],
+			'PE' => [ 'woo-mercado-pago-custom', 'ppcp-gateway' ],
+			'SR' => [],
+			'UY' => [ 'woo-mercado-pago-custom', 'ppcp-gateway' ],
+			'VE' => [ 'ppcp-gateway' ],
+			'AU' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'square_credit_card',
+				'eway',
+				'afterpay',
+				'klarna_payments',
+				'zipmoney',
+			],
+			'NZ' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'eway',
+				'klarna_payments',
+				'zipmoney',
+			],
+			'HK' => [
+				'woocommerce_payments',
+				'stripe',
+				'ppcp-gateway',
+				'eway',
+				'payoneer-checkout',
+			],
+			'JP' => [
+				'stripe',
+				'ppcp-gateway',
+				'square_credit_card',
+				'amazon_payments_advanced',
+			],
+			'SG' => [ 'woocommerce_payments', 'stripe', 'ppcp-gateway', 'eway' ],
+			'CN' => [ 'ppcp-gateway', 'payoneer-checkout' ],
+			'FJ' => [],
+			'GU' => [],
+			'ID' => [ 'stripe', 'ppcp-gateway' ],
+			'IN' => [ 'stripe', 'razorpay', 'payubiz', 'ppcp-gateway' ],
+			'ZA' => [ 'payfast', 'paystack' ],
+			'NG' => [ 'paystack' ],
+			'GH' => [ 'paystack' ],
+		);
+
+		// If the country code is not in the list, return default priority.
+		if ( ! isset( $recommendation_priority_map[ $country_code ] ) ) {
+			return self::get_default_recommendation_priority( $gateway_id );
+		}
+
+		$index = array_search( $gateway_id, $recommendation_priority_map[ $country_code ], true );
+
+		// If the gateway is not in the list, return the last index + 1.
+		if ( false === $index ) {
+			return count( $recommendation_priority_map[ $country_code ] );
+		}
+
+		return $index;
+	}
+
+	/**
+	 * Get the default recommendation priority for a payment gateway.
+	 * This is used when a country is not in the $recommendation_priority_map array.
 	 *
 	 * @param string $id Payment gateway id.
 	 * @return int Priority.
 	 */
-	private static function get_recommendation_priority( $id ) {
+	private static function get_default_recommendation_priority( $id ) {
 		if ( ! $id || ! array_key_exists( $id, self::$recommendation_priority ) ) {
 			return null;
 		}

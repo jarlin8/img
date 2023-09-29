@@ -8,15 +8,12 @@ import {
 } from '@wordpress/block-editor';
 import { useEffect } from '@wordpress/element';
 import type { BlockAlignment } from '@wordpress/blocks';
-import { useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import Block from './block';
-import { BLOCK_TITLE, BLOCK_ICON } from './constants';
-import { ProductSelector } from '../shared/product-selector';
+import { useIsDescendentOfSingleProductTemplate } from '../shared/use-is-descendent-of-single-product-template';
 
 type UnsupportedAligments = 'wide' | 'full';
 type AllowedAlignments = Exclude< BlockAlignment, UnsupportedAligments >;
@@ -27,6 +24,9 @@ interface BlockAttributes {
 
 interface Attributes {
 	textAlign: 'left' | 'center' | 'right';
+	isDescendentOfSingleProduct: boolean;
+	isDescendentOfSingleProductBlock: boolean;
+	productId: number;
 }
 
 interface Context {
@@ -53,19 +53,12 @@ const PriceEdit = ( {
 	};
 	const isDescendentOfQueryLoop = Number.isFinite( context.queryId );
 
-	const isDescendentOfSingleProductTemplate = useSelect(
-		( select ) => {
-			const store = select( 'core/edit-site' );
-			const postId = store?.getEditedPostId();
+	let { isDescendentOfSingleProductTemplate } =
+		useIsDescendentOfSingleProductTemplate( { isDescendentOfQueryLoop } );
 
-			return (
-				( postId === 'woocommerce/woocommerce//product-meta' ||
-					postId === 'woocommerce/woocommerce//single-product' ) &&
-				! isDescendentOfQueryLoop
-			);
-		},
-		[ isDescendentOfQueryLoop ]
-	);
+	if ( isDescendentOfQueryLoop ) {
+		isDescendentOfSingleProductTemplate = false;
+	}
 
 	useEffect(
 		() =>
@@ -80,50 +73,20 @@ const PriceEdit = ( {
 		]
 	);
 
-	const showProductSelector =
-		! isDescendentOfQueryLoop && ! isDescendentOfSingleProductTemplate;
-
-	if ( ! showProductSelector ) {
-		return (
-			<>
-				<BlockControls>
-					<AlignmentToolbar
-						value={ attributes.textAlign }
-						onChange={ ( textAlign: AllowedAlignments ) => {
-							setAttributes( { textAlign } );
-						} }
-					/>
-				</BlockControls>
-				<div { ...blockProps }>
-					<Block { ...blockAttrs } />
-				</div>
-			</>
-		);
-	}
-
 	return (
-		<div { ...blockProps }>
-			<ProductSelector
-				productId={ attributes.productId }
-				setAttributes={ setAttributes }
-				icon={ BLOCK_ICON }
-				label={ BLOCK_TITLE }
-				description={ __(
-					'Choose a product to display its price.',
-					'woo-gutenberg-products-block'
-				) }
-			>
-				<BlockControls>
-					<AlignmentToolbar
-						value={ attributes.textAlign }
-						onChange={ ( textAlign: AllowedAlignments ) => {
-							setAttributes( { textAlign } );
-						} }
-					/>
-				</BlockControls>
+		<>
+			<BlockControls>
+				<AlignmentToolbar
+					value={ attributes.textAlign }
+					onChange={ ( textAlign: AllowedAlignments ) => {
+						setAttributes( { textAlign } );
+					} }
+				/>
+			</BlockControls>
+			<div { ...blockProps }>
 				<Block { ...blockAttrs } />
-			</ProductSelector>
-		</div>
+			</div>
+		</>
 	);
 };
 
