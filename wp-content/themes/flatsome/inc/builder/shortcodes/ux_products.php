@@ -23,6 +23,7 @@ $options = array(
     ),
 ),
 'layout_options' => require( __DIR__ . '/commons/repeater-options.php' ),
+'relay_options' => require( __DIR__ . '/commons/relay.php' ),
 'layout_options_slider' => require( __DIR__ . '/commons/repeater-slider.php' ),
 'box_options' => array(
 	'type'    => 'group',

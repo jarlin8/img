@@ -56,7 +56,7 @@ function flatsome_header_nav( $nav, $walker = false ) {
 			'walker'         => new $walker(),
 		));
 
-	} else {
+	} elseif ( current_user_can( 'edit_theme_options' ) ) {
 		echo '<li><a href="' . $admin_url . '">Assign a menu in Theme Options > Menus</a></li>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }
@@ -85,7 +85,7 @@ function flatsome_header_elements( $options, $type = '' ) {
 				echo '<li class="header-divider"></li>';
 			} elseif ( $value == 'html' || $value == 'html-2' || $value == 'html-3' || $value == 'html-4' || $value == 'html-5' ) {
 				flatsome_get_header_html_element( $value );
-			} elseif ( $value == 'block-1' || $value == 'block-2' ) {
+			} elseif ( $value == 'block-1' || $value == 'block-2' || $value == 'block-3' || $value == 'block-4' ) {
 				echo do_shortcode( '<li class="header-block"><div class="header-block-' . $value . '">[block id="' . get_theme_mod( 'header-' . $value ) . '"]</div></li>' );
 			} elseif ( $value == 'nav-top' ) {
 				flatsome_header_nav( 'top_bar_nav', $walker );
@@ -314,7 +314,7 @@ class FlatsomeNavDropdown extends Walker_Nav_Menu {
 		$atts['title']  = ! empty( $item->attr_title ) ? $item->attr_title : '';
 		$atts['target'] = ! empty( $item->target ) ? $item->target : '';
 		if ( '_blank' === $item->target && empty( $item->xfn ) ) {
-			$atts['rel'] = 'noopener noreferrer';
+			$atts['rel'] = 'noopener';
 		} else {
 			$atts['rel'] = $item->xfn;
 		}
@@ -683,7 +683,7 @@ class FlatsomeNavSidebar extends Walker_Nav_Menu {
 		$atts['title']  = ! empty( $item->attr_title ) ? $item->attr_title : '';
 		$atts['target'] = ! empty( $item->target ) ? $item->target : '';
 		if ( '_blank' === $item->target && empty( $item->xfn ) ) {
-			$atts['rel'] = 'noopener noreferrer';
+			$atts['rel'] = 'noopener';
 		} else {
 			$atts['rel'] = $item->xfn;
 		}

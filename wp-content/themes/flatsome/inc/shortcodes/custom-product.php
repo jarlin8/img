@@ -4,6 +4,7 @@ add_shortcode( 'ux_product_gallery', function ( $atts ) {
 	extract( shortcode_atts( array(
 		'style'       => 'normal',
 		'grid_layout' => '',
+		'slider_type' => '',
 	), $atts ) );
 
 	if ( ! is_product() ) {
@@ -25,6 +26,10 @@ add_shortcode( 'ux_product_gallery', function ( $atts ) {
 
 	add_filter( 'theme_mod_product_gallery_grid_layout', function () use ( $grid_layout ) {
 		return $grid_layout;
+	} );
+
+	add_filter( 'theme_mod_product_gallery_slider_type', function () use ( $slider_type ) {
+		return $slider_type;
 	} );
 
 	ob_start();

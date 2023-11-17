@@ -19,7 +19,12 @@ if(function_exists('is_shop') && is_shop()) {
 $optionUrl_panel = get_admin_url().'customize.php?url='.$permalink.'&autofocus%5Bpanel%5D=';
 $optionUrl_section = get_admin_url().'customize.php?url='.$permalink.'&autofocus%5Bsection%5D=';
 $icon_style = 'font: normal 20px/1 \'dashicons\';-webkit-font-smoothing: antialiased;padding-right: 4px;margin-top:3px;';
-$flatsome_icon = '<svg style="width:20px; margin-top:-4px; height:20px;vertical-align:middle;" width="184px" height="186px" viewBox="0 0 184 186" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <!-- Generator: Sketch 3.8.1 (29687) - http://www.bohemiancoding.com/sketch --> <title>Logo-white</title> <desc>Created with Sketch.</desc> <defs></defs> <g id="Logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Logo-white" fill="#FFFFFF"> <g id="Group"> <path d="M92.6963305,153.35517 L69.6726254,130.331465 L92.6963305,107.30776 L92.6963305,66.7055226 L49.3715069,110.030346 L32.472925,93.1317642 L92.6963305,32.9083587 L92.6963305,0.803652143 L0.106126393,93.3938562 L92.6963305,185.98406 L92.6963305,153.35517 Z" id="Combined-Shape"></path> </g> <g id="Group" opacity="0.502623601" transform="translate(136.800003, 93.000000) scale(-1, 1) translate(-136.800003, -93.000000) translate(90.300003, 0.000000)"> <path d="M92.6963305,153.35517 L69.6726254,130.331465 L92.6963305,107.30776 L92.6963305,66.7055226 L49.3715069,110.030346 L32.472925,93.1317642 L92.6963305,32.9083587 L92.6963305,0.803652143 L0.106126393,93.3938562 L92.6963305,185.98406 L92.6963305,153.35517 Z" opacity="0.387068563"></path> </g> </g> </g> </svg>';
+$flatsome_icon = '
+	<svg style="width:16px; margin-top:-3px; opacity:.9; height:16px;vertical-align:middle;" width="438" height="438" viewBox="0 0 438 438" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path d="M218.505 437.013V375.737L169.875 327.108L218.505 278.476V217.2L139.236 296.471L61.2764 218.51L218.505 61.2804V0.00683594L0 218.51L218.505 437.013Z" fill="currentColor"/>
+		<path opacity="0.5" d="M218.507 61.2759L375.735 218.505L297.776 296.464L218.507 217.198V278.472L267.139 327.103L218.507 375.732V437.006L328.413 327.103L437.012 218.505L218.507 0V61.2759Z" fill="currentColor"/>
+	</svg>
+';
 
 $wp_admin_bar->add_menu( array(
  'id' => 'flatsome_panel',
@@ -400,6 +405,13 @@ $wp_admin_bar->add_menu( array(
  'href' =>  $advanced_url.'of-option-performance'
 ));
 
+	$wp_admin_bar->add_menu( array(
+		'parent' => 'options_advanced',
+		'id'     => 'options_advanced_content_delivery',
+		'title'  => 'Content Delivery',
+		'href'   => $advanced_url . 'of-option-contentdelivery',
+	) );
+
 $wp_admin_bar->add_menu( array(
  'parent' => 'options_advanced',
  'id' => 'options_advanced_site_loader',
@@ -454,13 +466,6 @@ $wp_admin_bar->add_menu( array(
  'id' => 'options_advanced_catalog_mode',
  'title' => 'Catalog Mode',
  'href' =>  $advanced_url.'of-option-catalogmode'
-));
-
-$wp_admin_bar->add_menu( array(
-	'parent' => 'options_advanced',
-	'id' => 'options_advanced_infinite_scroll',
-	'title' => 'Infinite Scroll',
-	'href' =>  $advanced_url.'of-option-infinitescroll'
 ));
 
 $wp_admin_bar->add_menu( array(

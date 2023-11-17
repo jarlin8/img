@@ -7,8 +7,9 @@ function ux_products($atts, $content = null, $tag = '' ) {
   if ( ! is_array( $atts ) ) {
     $atts = array();
   }
+	$defined_atts = $atts;
 
-	extract(shortcode_atts(array(
+	extract($atts = shortcode_atts(array(
 		'_id' => 'product-grid-'.rand(),
 		'title' => '',
 		'ids' => '',
@@ -40,6 +41,13 @@ function ux_products($atts, $content = null, $tag = '' ) {
 		'depth' => '',
    		'depth_hover' => '',
 	 	'equalize_box' => 'false',
+		// Relay
+		'relay' => '',
+		'relay_control_result_count' => 'true',
+		'relay_control_position' => 'bottom',
+		'relay_control_align' => 'center',
+		'relay_id' => '',
+		'relay_class' => '',
 	 	// posts
 	 	'products' => '8',
 		'cat' => '',
@@ -52,6 +60,7 @@ function ux_products($atts, $content = null, $tag = '' ) {
 		'tags' => '',
 		'show' => '', //featured, onsale
 		'out_of_stock' => '', // exclude.
+		'page_number' => '1',
 		// Box styles
 		'animate' => '',
 		'text_pos' => 'bottom',
@@ -150,7 +159,6 @@ function ux_products($atts, $content = null, $tag = '' ) {
 	  $current_grid = 0;
 	  $grid = flatsome_get_grid($grid);
 	  $grid_total = count($grid);
-	  flatsome_get_grid_height($grid_height, $_id);
 	}
 
 	// Fix image size
@@ -223,8 +231,6 @@ function ux_products($atts, $content = null, $tag = '' ) {
 	$repeater['depth'] = $depth;
 	$repeater['depth_hover'] = $depth_hover;
 
-	get_flatsome_repeater_start($repeater);
-
 	?>
 	<?php
 
@@ -233,6 +239,7 @@ function ux_products($atts, $content = null, $tag = '' ) {
 			// Get products
 			$atts['products'] = $products;
 			$atts['offset'] = $offset;
+			$atts['page_number'] = $page_number;
 			$atts['cat'] = $cat;
 
 			$products = ux_list_products($atts);
@@ -253,6 +260,14 @@ function ux_products($atts, $content = null, $tag = '' ) {
 
 			$products = new WP_Query( $args );
 		}
+
+	Flatsome_Relay::render_container_open( $products, $tag, $defined_atts, $atts );
+
+	if ( $type == 'grid' ) {
+		flatsome_get_grid_height( $grid_height, $_id );
+	}
+
+	get_flatsome_repeater_start($repeater);
 
 	    if ( $products->have_posts() ) : ?>
 
@@ -340,6 +355,9 @@ function ux_products($atts, $content = null, $tag = '' ) {
 	        wp_reset_query();
 
 	get_flatsome_repeater_end($repeater);
+
+	Flatsome_Relay::render_container_close();
+
 	flatsome_box_item_toggle_end( $items );
 
 	$content = ob_get_contents();

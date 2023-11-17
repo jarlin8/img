@@ -115,7 +115,7 @@ function ux_instagram_feed( $atts, $content = null ) {
 				}
 				?><div class="img has-hover no-overflow">
 					<div class="dark instagram-image-container image-<?php echo $image_hover; ?> instagram-image-type--<?php echo $item['type']; ?>">
-						<a href="<?php echo $item['link']; ?>" target="_blank" rel="noopener noreferrer" class="plain">
+						<a href="<?php echo $item['link']; ?>" target="_blank" rel="noopener" class="plain">
 							<?php echo flatsome_get_image( $image_url, false, $caption ); ?>
 							<?php if ( $image_overlay ) { ?>
 								<div class="overlay" style="background-color: <?php echo $image_overlay; ?>"></div>

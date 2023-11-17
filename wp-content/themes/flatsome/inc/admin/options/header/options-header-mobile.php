@@ -79,6 +79,21 @@ Flatsome_Option::add_field( 'option', array(
 	),
 ));
 
+Flatsome_Option::add_field( '', array(
+	'type'            => 'custom',
+	'settings'        => 'mobile_drawer_link',
+	'label'           => '',
+	'section'         => 'header_mobile',
+	'default'         => '<p><a href="#" data-to-section="lightbox">Customize Drawer &rarr;</a></p>',
+	'active_callback' => array(
+		array(
+			'setting'  => 'mobile_overlay',
+			'operator' => '!=',
+			'value'    => 'center',
+		),
+	),
+) );
+
 Flatsome_Option::add_field( 'option', array(
 	'type'        => 'radio',
 	'settings'    => 'mobile_submenu_parent_behavior',

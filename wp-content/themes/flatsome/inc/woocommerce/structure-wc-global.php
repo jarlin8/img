@@ -24,6 +24,10 @@ if ( ! function_exists( 'flatsome_woocommerce_add_notice' ) ) {
 	 * Add wc notices except for the cart page
 	 */
 	function flatsome_woocommerce_add_notice() {
+		if ( flatsome_is_login_request() || flatsome_is_register_request() ) {
+			return;
+		}
+
 		if ( is_woocommerce_activated() && ! is_cart() ) {
 			if ( function_exists( 'wc_print_notices' ) ) wc_print_notices();
 		}
@@ -662,14 +666,14 @@ if ( flatsome_is_mini_cart_reveal() ) {
  *
  * @see wc_get_rating_html()
  */
-function flatsome_get_rating_html( $rating, $count = 0 ) {
+function flatsome_get_rating_html( $rating, $count = 0, $single_product = false ) {
 	global $product;
 	$review_count = $product->get_review_count();
 	$label        = sprintf( __( 'Rated %s out of 5', 'woocommerce' ), $rating ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
 	$html         = '';
 
 	if ( $rating > 0 ) {
-		if ( is_single() ) {
+		if ( $single_product ) {
 			$style = get_theme_mod( 'product_info_review_count_style', 'inline' );
 			// Default to 'simple' when review count visibility is disabled.
 			$style = get_theme_mod( 'product_info_review_count' ) ? $style : 'simple';

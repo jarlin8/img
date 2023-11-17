@@ -31,6 +31,26 @@ function flatsome_customizer_header_content_options() {
 		'choices'     => flatsome_customizer_blocks(),
 	));
 
+	Flatsome_Option::add_field( 'option', array(
+		'type'        => 'select',
+		'settings'    => 'header-block-3',
+		'transport'   => flatsome_customizer_transport(),
+		'label'       => __( 'Header Block 3', 'flatsome-admin' ),
+		'description' => __( 'Blocks can be edited in the page builder. Select a block, go to a page and open in the the Page Builder.', 'flatsome-admin' ),
+		'section'     => 'header_content',
+		'choices'     => flatsome_customizer_blocks(),
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
+		'type'        => 'select',
+		'settings'    => 'header-block-4',
+		'transport'   => flatsome_customizer_transport(),
+		'label'       => __( 'Header Block 4', 'flatsome-admin' ),
+		'description' => __( 'Blocks can be edited in the page builder. Select a block, go to a page and open in the the Page Builder.', 'flatsome-admin' ),
+		'section'     => 'header_content',
+		'choices'     => flatsome_customizer_blocks(),
+	) );
+
 	Flatsome_Option::add_field( 'option',  array(
 		'type'        => 'textarea',
 		'settings'    => 'topbar_left',
@@ -95,43 +115,43 @@ function flatsome_refresh_header_content_partials( WP_Customize_Manager $wp_cust
 	  }
 
 	$wp_customize->selective_refresh->add_partial( 'top_right_text', array(
-	    'selector' => '.html_top_right_text',
-	    'settings' => array('top_right_text'),
-	    'render_callback' => function() {
-	        return flatsome_option('top_right_text');
-	    },
+		'selector'        => '.html_top_right_text',
+		'settings'        => array( 'top_right_text' ),
+		'render_callback' => function () {
+			return do_shortcode( get_theme_mod( 'top_right_text' ) );
+		},
 	) );
 
 	$wp_customize->selective_refresh->add_partial( 'nav_position_text_top', array(
-	    'selector' => '.html_nav_position_text_top',
-	    'settings' => array('nav_position_text_top'),
-	    'render_callback' => function() {
-	        return flatsome_option('nav_position_text_top');
-	    },
+		'selector'        => '.html_nav_position_text_top',
+		'settings'        => array( 'nav_position_text_top' ),
+		'render_callback' => function () {
+			return do_shortcode( get_theme_mod( 'nav_position_text_top' ) );
+		},
 	) );
 
 	$wp_customize->selective_refresh->add_partial( 'topbar_left', array(
-	    'selector' => '.html_topbar_left',
-	    'settings' => array('topbar_left'),
-	    'render_callback' => function() {
-	        return flatsome_option('topbar_left');
-	    },
+		'selector'        => '.html_topbar_left',
+		'settings'        => array( 'topbar_left' ),
+		'render_callback' => function () {
+			return do_shortcode( get_theme_mod( 'topbar_left' ) );
+		},
 	) );
 
 	$wp_customize->selective_refresh->add_partial( 'topbar_right', array(
-	    'selector' => '.html_topbar_right',
-	    'settings' => array('topbar_right'),
-	    'render_callback' => function() {
-	        return flatsome_option('topbar_right');
-	    },
+		'selector'        => '.html_topbar_right',
+		'settings'        => array( 'topbar_right' ),
+		'render_callback' => function () {
+			return do_shortcode( get_theme_mod( 'topbar_right' ) );
+		},
 	) );
 
 	$wp_customize->selective_refresh->add_partial( 'nav_position_text', array(
-	    'selector' => '.html_nav_position_text',
-	    'settings' => array('nav_position_text'),
-	    'render_callback' => function() {
-	        return flatsome_option('nav_position_text');
-	    },
+		'selector'        => '.html_nav_position_text',
+		'settings'        => array( 'nav_position_text' ),
+		'render_callback' => function () {
+			return do_shortcode( get_theme_mod( 'nav_position_text' ) );
+		},
 	) );
 
 
@@ -150,6 +170,22 @@ function flatsome_refresh_header_content_partials( WP_Customize_Manager $wp_cust
 	    'render_callback' => function() {
 	  		return do_shortcode('[block id="'.flatsome_option('header-block-2').'"]');
 	    },
+	) );
+
+	$wp_customize->selective_refresh->add_partial( 'header-block-3', array(
+		'selector'        => '.header-block-3',
+		'settings'        => array( 'header-block-3' ),
+		'render_callback' => function () {
+			return do_shortcode( '[block id="' . get_theme_mod( 'header-block-3' ) . '"]' );
+		},
+	) );
+
+	$wp_customize->selective_refresh->add_partial( 'header-block-4', array(
+		'selector'        => '.header-block-4',
+		'settings'        => array( 'header-block-4' ),
+		'render_callback' => function () {
+			return do_shortcode( '[block id="' . get_theme_mod( 'header-block-4' ) . '"]' );
+		},
 	) );
 }
 add_action( 'customize_register', 'flatsome_refresh_header_content_partials' );

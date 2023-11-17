@@ -67,6 +67,7 @@ add_ux_builder_shortcode( 'team_member', array(
                 'instagram' => array( 'type' => 'textfield','heading' => 'Instagram', 'default' => ''),
                 'tiktok' => array( 'type' => 'textfield','heading' => 'TikTok', 'default' => ''),
                 'snapchat' => array( 'type' => 'image', 'heading' => __( 'SnapChat' )),
+				'x' => array( 'type' => 'textfield','heading' => 'X', 'default' => ''),
 				'twitter' => array( 'type' => 'textfield','heading' => 'Twitter', 'default' => ''),
                 'email' => array( 'type' => 'textfield','heading' => 'Email', 'default' => ''),
                 'phone' => array( 'type' => 'textfield','heading' => 'Phone', 'default' => ''),

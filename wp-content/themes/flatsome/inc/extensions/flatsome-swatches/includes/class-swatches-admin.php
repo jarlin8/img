@@ -52,8 +52,12 @@ class Swatches_Admin {
 		// Add attribute option fields.
 		add_action( 'woocommerce_attribute_added', array( $this, 'add_attribute_options' ), 10, 2 );
 		add_action( 'woocommerce_attribute_updated', array( $this, 'update_attribute_options' ), 10, 3 );
-		add_action( 'woocommerce_attribute_updated', array( swatches(), 'cache_clear' ), 10, 3 );
 		add_action( 'woocommerce_attribute_deleted', array( $this, 'delete_attribute_option' ), 10 );
+
+		// Cache clear.
+		add_action( 'woocommerce_attribute_updated', array( swatches(), 'cache_clear' ), 10, 3 );
+		add_filter( 'pre_update_option_woocommerce_manage_stock', array( swatches(), 'cache_clear_on_option' ), 10, 2 );
+		add_filter( 'pre_update_option_woocommerce_hide_out_of_stock_items', array( swatches(), 'cache_clear_on_option' ), 10, 2 );
 	}
 
 	/**

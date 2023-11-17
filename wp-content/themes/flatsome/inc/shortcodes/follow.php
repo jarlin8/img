@@ -27,6 +27,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 			'instagram'  => '',
 			'tiktok'     => '',
 			'snapchat'   => '',
+			'x'          => '',
 			'twitter'    => '',
 			'linkedin'   => '',
 			'email'      => '',
@@ -61,6 +62,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'instagram' => $instagram,
 		'tiktok'    => $tiktok,
 		'snapchat'  => $snapchat,
+		'x'         => $x,
 		'twitter'   => $twitter,
 		'email'     => $email,
 		'phone'     => $phone,
@@ -76,7 +78,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		'discord'   => $discord,
 	);
 
-	$social_links        = apply_filters( "flatsome_shortcode_${tag}_social_links", $_social_links, $atts );
+	$social_links        = apply_filters( "flatsome_shortcode_{$tag}_social_links", $_social_links, $atts );
 	$custom_social_links = array_diff( $_social_links, $social_links );
 	$use_global_link     = count( array_filter( $social_links ) ) === 0 && count( array_filter( $custom_social_links ) ) === 0;
 
@@ -86,6 +88,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 		$instagram = get_theme_mod( 'follow_instagram' );
 		$tiktok    = get_theme_mod( 'follow_tiktok' );
 		$snapchat  = get_theme_mod( 'follow_snapchat' );
+		$x         = get_theme_mod( 'follow_x' );
 		$twitter   = get_theme_mod( 'follow_twitter' );
 		$email     = get_theme_mod( 'follow_email' );
 		$phone     = get_theme_mod( 'follow_phone' );
@@ -115,7 +118,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 			'atts'     => array(
 				'href'       => $facebook,
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'data-label' => 'Facebook',
 				'class'      => $style . ' facebook tooltip',
 				'title'      => esc_attr__( 'Follow on Facebook', 'flatsome' ),
@@ -129,7 +132,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 			'atts'     => array(
 				'href'       => $instagram,
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'data-label' => 'Instagram',
 				'class'      => $style . ' instagram tooltip',
 				'title'      => esc_attr__( 'Follow on Instagram', 'flatsome' ),
@@ -143,7 +146,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 			'atts'     => array(
 				'href'       => $tiktok,
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'data-label' => 'TikTok',
 				'class'      => $style . ' tiktok tooltip',
 				'title'      => esc_attr__( 'Follow on TikTok', 'flatsome' ),
@@ -161,7 +164,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'data-pos'   => 'center',
 				'data-label' => 'SnapChat',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' snapchat tooltip',
 				'title'      => esc_attr__( 'Follow on SnapChat', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Follow on SnapChat', 'flatsome' ),
@@ -174,13 +177,27 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 			),
 			'priority' => 40,
 		),
+		'x'         => array(
+			'enabled'  => ! empty( $x ),
+			'atts'     => array(
+				'href'       => $x,
+				'data-label' => esc_attr_x( 'X', 'social media', 'flatsome' ),
+				'target'     => '_blank',
+				'rel'        => 'noopener nofollow',
+				'class'      => $style . ' x tooltip',
+				'title'      => esc_attr__( 'Follow on X', 'flatsome' ),
+				'aria-label' => esc_attr__( 'Follow on X', 'flatsome' ),
+			),
+			'icon'     => get_flatsome_icon( 'icon-x' ),
+			'priority' => 50,
+		),
 		'twitter'   => array(
 			'enabled'  => ! empty( $twitter ),
 			'atts'     => array(
 				'href'       => $twitter,
 				'data-label' => 'Twitter',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' twitter tooltip',
 				'title'      => esc_attr__( 'Follow on Twitter', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Follow on Twitter', 'flatsome' ),
@@ -222,7 +239,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'href'       => $pinterest,
 				'data-label' => 'Pinterest',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' pinterest tooltip',
 				'title'      => esc_attr__( 'Follow on Pinterest', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Follow on Pinterest', 'flatsome' ),
@@ -236,7 +253,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'href'       => $rss,
 				'data-label' => 'RSS Feed',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' rss tooltip',
 				'title'      => esc_attr__( 'Subscribe to RSS', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Subscribe to RSS', 'flatsome' ),
@@ -250,7 +267,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'href'       => $linkedin,
 				'data-label' => 'LinkedIn',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' linkedin tooltip',
 				'title'      => esc_attr__( 'Follow on LinkedIn', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Follow on LinkedIn', 'flatsome' ),
@@ -264,7 +281,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'href'       => $youtube,
 				'data-label' => 'YouTube',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' youtube tooltip',
 				'title'      => esc_attr__( 'Follow on YouTube', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Follow on YouTube', 'flatsome' ),
@@ -278,7 +295,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'href'       => $flickr,
 				'data-label' => 'Flickr',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' flickr tooltip',
 				'title'      => esc_attr__( 'Flickr', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Flickr', 'flatsome' ),
@@ -292,7 +309,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'href'       => $px500,
 				'data-label' => '500px',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' px500 tooltip',
 				'title'      => esc_attr__( 'Follow on 500px', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Follow on 500px', 'flatsome' ),
@@ -306,7 +323,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'href'       => $vkontakte,
 				'data-label' => 'VKontakte',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' vk tooltip',
 				'title'      => esc_attr__( 'Follow on VKontakte', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Follow on VKontakte', 'flatsome' ),
@@ -320,7 +337,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'href'       => $telegram,
 				'data-label' => 'Telegram',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' telegram tooltip',
 				'title'      => esc_attr__( 'Follow on Telegram', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Follow on Telegram', 'flatsome' ),
@@ -334,7 +351,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'href'       => $twitch,
 				'data-label' => 'Twitch',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' twitch tooltip',
 				'title'      => esc_attr__( 'Follow on Twitch', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Follow on Twitch', 'flatsome' ),
@@ -348,7 +365,7 @@ function flatsome_follow( $atts, $content = null, $tag = '' ) {
 				'href'       => $discord,
 				'data-label' => 'Discord',
 				'target'     => '_blank',
-				'rel'        => 'noopener noreferrer nofollow',
+				'rel'        => 'noopener nofollow',
 				'class'      => $style . ' discord tooltip',
 				'title'      => esc_attr__( 'Follow on Discord', 'flatsome' ),
 				'aria-label' => esc_attr__( 'Follow on Discord', 'flatsome' ),

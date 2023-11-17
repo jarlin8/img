@@ -2,7 +2,9 @@
 // [blog_posts]
 function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 
-	extract(shortcode_atts(array(
+	$defined_atts = $atts;
+
+	extract($atts = shortcode_atts(array(
 		"_id" => 'row-'.rand(),
 		'style' => '',
 		'class' => '',
@@ -28,10 +30,16 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 		'infinitive' => 'true',
 		'depth' => '',
    		'depth_hover' => '',
-
+		// Relay
+		'relay' => '',
+		'relay_control_result_count' => 'true',
+		'relay_control_position' => 'bottom',
+		'relay_control_align' => 'center',
+		'relay_id' => '',
+		'relay_class' => '',
 		// posts
 		'posts' => '8',
-		'ids' => false, // Custom IDs
+		'ids' => '', // Custom IDs
 		'cat' => '',
 		'category' => '', // Added for Flatsome v2 fallback
 		'excerpt' => 'visible',
@@ -40,6 +48,7 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 		'orderby' => 'date',
 		'order' => 'DESC',
 		'tags' => '',
+		'page_number' => '1',
 
 		// Read more
 		'readmore' => '',
@@ -101,7 +110,6 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 	  $current_grid = 0;
 	  $grid = flatsome_get_grid($grid);
 	  $grid_total = count($grid);
-	  flatsome_get_grid_height($grid_height, $_id);
 	}
 
 	// Fix overlay
@@ -173,6 +181,7 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 		'cat' => $cat,
 		'tag__in' => $tags ? array_filter( array_map( 'trim', explode( ',', $tags ) ) ) : '',
 		'posts_per_page' => $posts,
+		'paged' => $page_number,
 		'ignore_sticky_posts' => true,
 		'orderby'             => $orderby,
 		'order'               => $order,
@@ -208,7 +217,12 @@ function shortcode_latest_from_blog($atts, $content = null, $tag = '' ) {
 
 $recentPosts = new WP_Query( $args );
 
-// Get repeater HTML.
+	Flatsome_Relay::render_container_open( $recentPosts, $tag, $defined_atts, $atts );
+
+	if ( $type == 'grid' ) {
+		flatsome_get_grid_height( $grid_height, $_id );
+	}
+
 get_flatsome_repeater_start($repeater);
 
 while ( $recentPosts->have_posts() ) : $recentPosts->the_post();
@@ -276,11 +290,8 @@ while ( $recentPosts->have_posts() ) : $recentPosts->the_post();
 					<?php if((!has_post_thumbnail() && $show_date !== 'false') || $show_date == 'text') {?><div class="post-meta is-small op-8"><?php echo get_the_date(); ?></div><?php } ?>
 					<div class="is-divider"></div>
 					<?php if($show_excerpt !== 'false') { ?>
-					<p class="from_the_blog_excerpt <?php if($show_excerpt !== 'visible'){ echo 'show-on-hover hover-'.$show_excerpt; } ?>"><?php
-					  $the_excerpt  = get_the_excerpt();
-					  $excerpt_more = apply_filters( 'excerpt_more', ' [...]' );
-					  echo flatsome_string_limit_words($the_excerpt, $excerpt_length) . $excerpt_more;
-					?>
+					<p class="from_the_blog_excerpt <?php if($show_excerpt !== 'visible'){ echo 'show-on-hover hover-'.$show_excerpt; } ?>">
+						<?php echo flatsome_get_the_excerpt( $excerpt_length ); ?>
 					</p>
 					<?php } ?>
                     <?php if ( $comments == 'true' && comments_open() && '0' != get_comments_number() ) { ?>
@@ -320,6 +331,8 @@ wp_reset_query();
 
 // Get repeater end.
 get_flatsome_repeater_end($atts);
+
+	Flatsome_Relay::render_container_close();
 
 $content = ob_get_contents();
 ob_end_clean();

@@ -65,6 +65,9 @@ class Flatsome_Upgrade {
 		'3.17.0' => array(
 			'update_3170',
 		),
+		'3.18.0' => array(
+			'update_3180',
+		),
 	);
 
 	/**
@@ -259,6 +262,16 @@ class Flatsome_Upgrade {
 	}
 
 	/**
+	 * Performs upgrades to Flatsome 3.18.0
+	 */
+	private function update_3180() {
+		if ( get_theme_mod( 'flatsome_infinite_scroll', 0 ) ) {
+			set_theme_mod( 'shop_pagination', 'infinite-scroll' );
+		}
+		remove_theme_mod( 'flatsome_infinite_scroll' );
+	}
+
+	/**
 	 * Set the DB version to the current running version.
 	 * Should only be called when all upgrades are performed.
 	 */
@@ -267,4 +280,6 @@ class Flatsome_Upgrade {
 	}
 }
 
-new Flatsome_Upgrade();
+if ( ! wp_doing_ajax() ) {
+	new Flatsome_Upgrade();
+}

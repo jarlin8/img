@@ -75,7 +75,7 @@ function flatsome_site_health_registration_test() {
 			</a>
 		</p>
 		<p>
-			<a href="<?php echo esc_url_raw( UXTHEMES_ACCOUNT_URL ); ?>" target="_blank" rel="noopener noreferrer">
+			<a href="<?php echo esc_url_raw( UXTHEMES_ACCOUNT_URL ); ?>" target="_blank" rel="noopener">
 				<?php esc_html_e( 'Manage your licenses', 'flatsome' ); ?>
 			</a>
 		</p>

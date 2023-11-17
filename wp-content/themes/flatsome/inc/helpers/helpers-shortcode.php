@@ -296,7 +296,33 @@ function flatsome_string_limit_words($string, $word_limit) {
   return implode(' ', $words);
 }
 
+/**
+ * Retrieves a custom trimmed excerpt from either the post excerpt or the post content.
+ *
+ * @param int $num_words Optional. Number of words to trim the excerpt to. Default 15.
+ *
+ * @return string The trimmed excerpt or password protection message.
+ */
+function flatsome_get_the_excerpt( $num_words = 15 ) {
+	if ( has_excerpt() ) {
+		global $post;
 
+		if ( post_password_required( $post ) ) {
+			return esc_html__( 'There is no excerpt because this is a protected post.', 'default' );
+		}
+
+		return wp_trim_words( $post->post_excerpt, $num_words, apply_filters( 'excerpt_more', ' [&hellip;]' ) );
+	} else {
+		$excerpt_length_callback = function () use ( $num_words ) {
+			return $num_words;
+		};
+		add_filter( 'excerpt_length', $excerpt_length_callback, PHP_INT_MAX );
+		$trimmed_excerpt = get_the_excerpt();
+		remove_filter( 'excerpt_length', $excerpt_length_callback, PHP_INT_MAX );
+
+		return $trimmed_excerpt;
+	}
+}
 
 /* Create RGBA color of a #HEX color */
 function flatsome_hex2rgba($color, $opacity = false) {
@@ -444,7 +470,9 @@ function flatsome_get_gradient($primary){ ?>
 
 /**
  * Parse rel attribute values based on target value.
- * Adds 'noopener noreferrer' to rel when target is _blank.
+ * Adds 'noopener' to rel when target is _blank.
+ *
+ * @deprecated 3.18 In favor of flatsome_html_atts()
  *
  * @param array $link_atts Link attributes 'target' and 'rel'.
  * @param bool  $trim      Trim start and end whitespaces?
@@ -457,7 +485,6 @@ function flatsome_parse_target_rel( array $link_atts, $trim = false ) {
 	if ( $link_atts['target'] == '_blank' ) {
 		$attrs[]            = sprintf( 'target="%s"', esc_attr( $link_atts['target'] ) );
 		$link_atts['rel'][] = 'noopener';
-		$link_atts['rel'][] = 'noreferrer';
 	}
 
 	if ( isset( $link_atts['rel'] ) && is_array( $link_atts['rel'] ) && ! empty( array_filter( $link_atts['rel'] ) ) ) {

@@ -13,6 +13,7 @@ function flatsome_team_member($atts, $content = null, $tag = ''){
       'instagram' => '',
       'tiktok' => '',
       'snapchat' => '',
+      'x' => '',
       'twitter' => '',
       'email' => '',
       'phone' => '',
@@ -115,11 +116,12 @@ function flatsome_team_member($atts, $content = null, $tag = ''){
         array( 'attribute' => 'padding-top', 'value' => $image_height),
     );
 
-	$social_links = apply_filters( "flatsome_shortcode_${tag}_social_links", array(
+	$social_links = apply_filters( "flatsome_shortcode_{$tag}_social_links", array(
 		'facebook'  => $facebook,
 		'instagram' => $instagram,
 		'tiktok'    => $tiktok,
 		'snapchat'  => $snapchat,
+		'x'         => $x,
 		'twitter'   => $twitter,
 		'email'     => $email,
 		'phone'     => $phone,

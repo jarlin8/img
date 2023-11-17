@@ -255,6 +255,24 @@ Flatsome_Option::add_field( 'option', array(
 ) );
 
 Flatsome_Option::add_field( 'option', array(
+	'type'      => 'checkbox',
+	'settings'  => 'category_show_result_count',
+	'transport' => flatsome_customizer_transport(),
+	'label'     => esc_html__( 'Show result count', 'flatsome' ),
+	'section'   => 'woocommerce_product_catalog',
+	'default'   => 1,
+) );
+
+Flatsome_Option::add_field( 'option', array(
+	'type'      => 'checkbox',
+	'settings'  => 'category_show_catalog_ordering',
+	'transport' => flatsome_customizer_transport(),
+	'label'     => esc_html__( 'Show catalog ordering', 'flatsome' ),
+	'section'   => 'woocommerce_product_catalog',
+	'default'   => 1,
+) );
+
+Flatsome_Option::add_field( 'option', array(
 	'type'     => 'checkbox',
 	'settings' => 'category_header_transparent',
 	'label'    => __( 'Transparent Header', 'flatsome-admin' ),

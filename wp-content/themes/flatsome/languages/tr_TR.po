@@ -9,9 +9,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-08-06T17:28:08+00:00\n"
-"PO-Revision-Date: 2023-08-06 17:53\n"
-"X-Generator: WP-CLI 2.6.0\n"
+"POT-Creation-Date: 2023-11-13T10:54:44+00:00\n"
+"PO-Revision-Date: 2023-11-13 10:56\n"
+"X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: flatsome\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: l10n-flatsome\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Language: tr_TR\n"
 
 #. Theme Name of the theme
-#: inc/admin/admin-notice.php:77
+#: inc/admin/admin-notice.php:75
 msgid "Flatsome"
 msgstr ""
 
@@ -113,7 +113,7 @@ msgstr "<span class=\"meta-nav\">&larr;</span> Önceki"
 msgid "Next <span class=\"meta-nav\">&rarr;</span>"
 msgstr "Sonraki <span class=\"meta-nav\">&rarr;</span>"
 
-#: inc/admin/admin-bar.php:82
+#: inc/admin/admin-bar.php:87
 msgid "Activate Theme"
 msgstr "Temayı Etkinleştir"
 
@@ -131,29 +131,30 @@ msgid "Manage registration"
 msgstr "Kayıt işlemlerini yönetin"
 
 #: inc/admin/admin-notice.php:43
+#: inc/admin/envato_setup/envato_setup.php:2018
 #: inc/functions/function-site-health.php:79
 #: template-parts/admin/envato/register-form.php:105
 msgid "Manage your licenses"
 msgstr "Lisanslarınızı yönetin"
 
 #. translators: %1$s: Theme name, %2$s: The URL to the status page.
-#: inc/admin/admin-notice.php:81
+#: inc/admin/admin-notice.php:79
 msgid "<strong>Your theme (%1$s) contains outdated copies of some Flatsome template files.</strong> These files may need updating to ensure they are compatible with the current version of Flatsome. Suggestions:"
 msgstr "<strong>Temanız (%1$s) bazı Flatsome şablon dosyalarının eski kopyalarını içeriyor.</strong> Flatsome&rsquo; un mevcut sürümüyle uyumlu olduklarından emin olmak için bu dosyaların güncellenmesi gerekebilir. Öneriler:"
 
-#: inc/admin/admin-notice.php:84
+#: inc/admin/admin-notice.php:82
 msgid "If you copied over a template file to change something, then you will need to copy the new version of the template and apply your changes again."
 msgstr "Bir şeyleri değiştirmek için bir şablon dosyasını kopyaladıysanız, şablonun yeni sürümünü tekrar kopyalamanız ve değişikliklerinizi yeniden uygulamanız gerekecektir."
 
-#: inc/admin/admin-notice.php:85
+#: inc/admin/admin-notice.php:83
 msgid "If you are unfamiliar with code/templates and resolving potential conflicts, reach out to a developer for assistance."
 msgstr "Kod/şablonlar veya olası çakışmaları çözme konusunda yeterli bilginiz yoksa, yardım için bir geliştiriciye başvurun."
 
-#: inc/admin/admin-notice.php:88
+#: inc/admin/admin-notice.php:86
 msgid "Learn more about templates"
 msgstr "Şablonlar hakkında daha fazla bilgi alın"
 
-#: inc/admin/admin-notice.php:91
+#: inc/admin/admin-notice.php:89
 msgid "View affected templates"
 msgstr "Etkilenen şablonları görüntüleyin"
 
@@ -178,106 +179,110 @@ msgstr "İptal"
 msgid "Connect"
 msgstr "Bağla"
 
-#: inc/admin/backend/menu/class-menu.php:91
+#: inc/admin/advanced/functions/functions.php:23
+msgid "Super Admin"
+msgstr ""
+
+#: inc/admin/backend/menu/class-menu.php:89
 msgid "Flatsome menu item options"
 msgstr "Flatsome menü öğesi seçenekleri"
 
-#: inc/admin/backend/menu/class-menu.php:95
+#: inc/admin/backend/menu/class-menu.php:93
 msgid "Menu dropdown"
 msgstr "Açılır menü"
 
-#: inc/admin/backend/menu/class-menu.php:98
+#: inc/admin/backend/menu/class-menu.php:96
 msgid "Design"
 msgstr "Tasarım"
 
-#: inc/admin/backend/menu/class-menu.php:100
+#: inc/admin/backend/menu/class-menu.php:98
 msgid "Default"
 msgstr "Varsayılan"
 
-#: inc/admin/backend/menu/class-menu.php:101
+#: inc/admin/backend/menu/class-menu.php:99
 msgid "Default (custom size)"
 msgstr "Varsayılan (özel boyut)"
 
-#: inc/admin/backend/menu/class-menu.php:102
+#: inc/admin/backend/menu/class-menu.php:100
 msgid "Container width"
 msgstr "Konteyner genişliği"
 
-#: inc/admin/backend/menu/class-menu.php:103
+#: inc/admin/backend/menu/class-menu.php:101
 msgid "Full width"
 msgstr "Tam genişlik"
 
-#: inc/admin/backend/menu/class-menu.php:106
+#: inc/admin/backend/menu/class-menu.php:104
 msgid "Select dropdown design."
 msgstr "Açılır menü tasarımı seçin."
 
-#: inc/admin/backend/menu/class-menu.php:110
-#: inc/admin/backend/menu/class-menu.php:161
+#: inc/admin/backend/menu/class-menu.php:108
+#: inc/admin/backend/menu/class-menu.php:159
 #: inc/admin/options/header/options-header-nav-vertical.php:55
 #: inc/admin/options/header/options-header-nav-vertical.php:146
 msgid "Width"
 msgstr "Genişlik"
 
-#: inc/admin/backend/menu/class-menu.php:116
+#: inc/admin/backend/menu/class-menu.php:114
 msgid "Height (optional)"
 msgstr "Yükseklik (isteğe bağlı)"
 
-#: inc/admin/backend/menu/class-menu.php:122
+#: inc/admin/backend/menu/class-menu.php:120
 #: inc/widgets/widget-blocks.php:88
 msgid "UX Block"
 msgstr "UX Block"
 
-#: inc/admin/backend/menu/class-menu.php:134
+#: inc/admin/backend/menu/class-menu.php:132
 msgid "Reveal"
 msgstr "Göster"
 
-#: inc/admin/backend/menu/class-menu.php:136
+#: inc/admin/backend/menu/class-menu.php:134
 msgid "On hover"
 msgstr "Üzerine gelindiğinde"
 
-#: inc/admin/backend/menu/class-menu.php:137
+#: inc/admin/backend/menu/class-menu.php:135
 msgid "On click"
 msgstr "Tıklandığında"
 
-#: inc/admin/backend/menu/class-menu.php:143
+#: inc/admin/backend/menu/class-menu.php:141
 msgid "Menu icon"
 msgstr "Menü simgesi"
 
-#: inc/admin/backend/menu/class-menu.php:146
+#: inc/admin/backend/menu/class-menu.php:144
 msgid "Icon type"
 msgstr "Simge türü"
 
-#: inc/admin/backend/menu/class-menu.php:148
+#: inc/admin/backend/menu/class-menu.php:146
 msgid "Media library"
 msgstr "Medya kütüphanesi"
 
-#: inc/admin/backend/menu/class-menu.php:149
+#: inc/admin/backend/menu/class-menu.php:147
 msgid "Custom content"
 msgstr "Özel içerik"
 
-#: inc/admin/backend/menu/class-menu.php:165
+#: inc/admin/backend/menu/class-menu.php:163
 #: inc/admin/options/header/options-header-nav-vertical.php:41
 msgid "Height"
 msgstr "Yükseklik"
 
-#: inc/admin/backend/menu/class-menu.php:168
+#: inc/admin/backend/menu/class-menu.php:166
 msgid "Icons default (empty) to 20x20."
 msgstr "Simgeler varsayılan olarak (boş) 20x20&rsquo; dir."
 
-#: inc/admin/backend/menu/class-menu.php:173
+#: inc/admin/backend/menu/class-menu.php:171
 msgid "Markup"
 msgstr "Markup"
 
-#: inc/admin/backend/menu/class-menu.php:176
+#: inc/admin/backend/menu/class-menu.php:174
 msgid "Add any HTML, SVG or shortcode here."
 msgstr "Buraya herhangi bir HTML, SVG veya kısa kod ekleyin."
 
-#: inc/admin/backend/menu/class-menu.php:247
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:222
+#: inc/admin/backend/menu/class-menu.php:245
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:226
 msgid "Select image"
 msgstr "Görsel seçin"
 
-#: inc/admin/backend/menu/class-menu.php:252
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:223
+#: inc/admin/backend/menu/class-menu.php:250
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:227
 msgid "Remove"
 msgstr "Kaldır"
 
@@ -364,8 +369,8 @@ msgstr "Geçerli etkin temanın bir alt tema olup olmadığını görüntüler."
 
 #. translators: %s: Docs link.
 #: inc/admin/classes/class-status.php:628
-msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">How to create a child theme</a>"
-msgstr "Flatsome&rsquo; u ana tema üzerinde değiştiriyorsanız, bir alt tema kullanmanızı öneririz. Bakınız: <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Alt tema nasıl oluşturulur</a>"
+msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\">How to create a child theme</a>"
+msgstr ""
 
 #: inc/admin/classes/class-status.php:634
 msgid "Release channel"
@@ -514,8 +519,8 @@ msgstr "Sitenize olan bağlantı güvenli mi?"
 
 #. translators: %s: Docs link.
 #: inc/admin/classes/class-status.php:900
-msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Learn more about HTTPS and SSL Certificates</a>."
-msgstr "Siteniz HTTPS kullanmıyor. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">HTTPS ve SSL Sertifikaları hakkında daha fazla bilgi edinin</a>."
+msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\">Learn more about HTTPS and SSL Certificates</a>."
+msgstr ""
 
 #: inc/admin/classes/class-status.php:907
 msgid "Hide errors from visitors"
@@ -554,23 +559,23 @@ msgstr "Bu bölüm, varsayılan Flatsome şablonlarını geçersiz kılan tüm d
 msgid "%1$s version %2$s is out of date. The core version is %3$s"
 msgstr "%1$s sürüm %2$s güncel değil. Çekirdek sürüm %3$s&rsquo; dir"
 
-#: inc/admin/envato_setup/envato_setup.php:2010
+#: inc/admin/envato_setup/envato_setup.php:2011
 msgid "Register Theme"
 msgstr "Temayı kaydedin"
 
-#: inc/admin/envato_setup/envato_setup.php:2031
+#: inc/admin/envato_setup/envato_setup.php:2036
 msgid "Continue"
 msgstr "Devam edin"
 
-#: inc/admin/envato_setup/envato_setup.php:2032
+#: inc/admin/envato_setup/envato_setup.php:2037
 msgid "Unregister"
 msgstr "Kaydı kaldırın"
 
-#: inc/admin/envato_setup/envato_setup.php:2034
+#: inc/admin/envato_setup/envato_setup.php:2039
 msgid "Register"
 msgstr "Kayıt edin"
 
-#: inc/admin/gutenberg/class-gutenberg.php:109
+#: inc/admin/gutenberg/class-gutenberg.php:119
 msgid "Edit with UX Builder"
 msgstr "UX Builder ile düzenleyin"
 
@@ -598,6 +603,29 @@ msgstr "Önceki/Sonraki navigasyon"
 msgid "HTML after blog posts"
 msgstr "Blog yazılarından sonra HTML"
 
+#: inc/admin/options/header/options-header-cart.php:117
+msgid "Show quantity input"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:127
+#: inc/admin/options/shop/options-shop-cart-checkout.php:81
+#: inc/admin/options/shop/options-shop-cart-checkout.php:258
+msgid "Show free shipping"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:158
+#: inc/admin/options/styles/options-lightbox.php:30
+msgid "Drawer width"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:167
+msgid "Sticky footer"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:177
+msgid "Show cross sells"
+msgstr ""
+
 #: inc/admin/options/header/options-header-logo.php:106
 msgid "Logo link"
 msgstr "Logo bağlantısı"
@@ -606,80 +634,80 @@ msgstr "Logo bağlantısı"
 msgid "Custom logo link (defaults to home page link if empty)."
 msgstr "Özel logo bağlantısı (boşsa, varsayılan olarak ana sayfa bağlantısıdır)."
 
-#: inc/admin/options/header/options-header-mobile.php:85
+#: inc/admin/options/header/options-header-mobile.php:100
 msgid "Menu item behavior"
 msgstr "Menü öğesi davranışı"
 
-#: inc/admin/options/header/options-header-mobile.php:86
+#: inc/admin/options/header/options-header-mobile.php:101
 msgid "Click behavior for menu items with a submenu"
 msgstr "Alt menüye sahip menü öğeleri için tıklama davranışı"
 
-#: inc/admin/options/header/options-header-mobile.php:91
+#: inc/admin/options/header/options-header-mobile.php:106
 msgid "Open link"
 msgstr "Bağlantıyı aç"
 
-#: inc/admin/options/header/options-header-mobile.php:92
+#: inc/admin/options/header/options-header-mobile.php:107
 msgid "Toggle submenu"
 msgstr "Alt menüyü aç/kapat"
 
-#: inc/admin/options/header/options-header-mobile.php:99
+#: inc/admin/options/header/options-header-mobile.php:114
 msgid "Submenu effect"
 msgstr "Alt menü efekti"
 
-#: inc/admin/options/header/options-header-mobile.php:104
+#: inc/admin/options/header/options-header-mobile.php:119
 msgid "Accordion"
 msgstr "Akordeon"
 
-#: inc/admin/options/header/options-header-mobile.php:105
+#: inc/admin/options/header/options-header-mobile.php:120
 msgid "Slide"
 msgstr "Kaydır"
 
-#: inc/admin/options/header/options-header-mobile.php:119
+#: inc/admin/options/header/options-header-mobile.php:134
 msgid "Submenu levels"
 msgstr "Alt menü seviyeleri"
 
-#: inc/admin/options/header/options-header-mobile.php:124
+#: inc/admin/options/header/options-header-mobile.php:139
 msgid "1 level"
 msgstr "1 seviye"
 
-#: inc/admin/options/header/options-header-mobile.php:125
+#: inc/admin/options/header/options-header-mobile.php:140
 msgid "2 levels"
 msgstr "2 seviye"
 
-#: inc/admin/options/header/options-header-mobile.php:144
+#: inc/admin/options/header/options-header-mobile.php:159
 msgid "Top content"
 msgstr "Üst içerik"
 
-#: inc/admin/options/header/options-header-mobile.php:153
+#: inc/admin/options/header/options-header-mobile.php:168
 msgid "Tabs"
 msgstr "Sekmeler"
 
-#: inc/admin/options/header/options-header-mobile.php:157
+#: inc/admin/options/header/options-header-mobile.php:172
 msgid "None"
 msgstr "Hiçbiri"
 
-#: inc/admin/options/header/options-header-mobile.php:158
+#: inc/admin/options/header/options-header-mobile.php:173
 msgid "2 Tabs"
 msgstr "2 Sekme"
 
-#: inc/admin/options/header/options-header-mobile.php:165
+#: inc/admin/options/header/options-header-mobile.php:180
 msgid "Tab 1 text"
 msgstr "Birinci sekme metni"
 
-#: inc/admin/options/header/options-header-mobile.php:180
+#: inc/admin/options/header/options-header-mobile.php:195
 msgid "Menu elements"
 msgstr "Menü öğeleri"
 
-#: inc/admin/options/header/options-header-mobile.php:191
+#: inc/admin/options/header/options-header-mobile.php:206
 msgid "Tab 2 text"
 msgstr "İkinci sekme metni"
 
-#: inc/admin/options/header/options-header-mobile.php:206
+#: inc/admin/options/header/options-header-mobile.php:221
 msgid "Menu elements tab 2"
 msgstr "Menü öğeleri ikinci sekmesi"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:9
-#: inc/functions/function-setup.php:71
+#: inc/functions/function-setup.php:91
 msgid "Vertical Menu"
 msgstr "Dikey Menü"
 
@@ -737,7 +765,7 @@ msgstr "Navigasyon rengi (üzerine gelindiğinde - :hover)"
 msgid "Nav background color :hover"
 msgstr "Navigasyon arka plan rengi (üzerine gelindiğinde - :hover)"
 
-#: inc/admin/options/notifications/options-notifications.php:98
+#: inc/admin/options/notifications/options-notifications.php:140
 #: inc/extensions/flatsome-cookie-notice/flatsome-cookie-notice.php:39
 msgid "This site uses cookies to offer you a better browsing experience. By browsing this website, you agree to our use of cookies."
 msgstr "Bu site, size daha iyi bir tarama deneyimi sunmak için çerezler kullanmaktadır. Bu web sitesinde gezinerek, çerez kullanımımızı kabul etmiş olursunuz."
@@ -754,8 +782,16 @@ msgstr "Kutulu Gönderi etiketleri"
 msgid "Show shipping estimate destination"
 msgstr "Gönderi tahmini varış yerini göster"
 
-#: inc/admin/options/shop/options-shop-category.php:748
-#: inc/admin/options/shop/options-shop-product-page.php:398
+#: inc/admin/options/shop/options-shop-category.php:261
+msgid "Show result count"
+msgstr ""
+
+#: inc/admin/options/shop/options-shop-category.php:270
+msgid "Show catalog ordering"
+msgstr ""
+
+#: inc/admin/options/shop/options-shop-category.php:766
+#: inc/admin/options/shop/options-shop-product-page.php:413
 msgid "Color :selected"
 msgstr "Renk (seçili - :selected)"
 
@@ -765,29 +801,48 @@ msgstr "Renk (seçili - :selected)"
 msgid "Custom product layout"
 msgstr "Özel ürün sayfası yerleşimi"
 
-#: inc/admin/options/shop/options-shop-product-page.php:359
+#: inc/admin/options/shop/options-shop-product-page.php:374
 msgid "Layout"
 msgstr "Yerleşim"
 
-#: inc/admin/options/shop/options-shop-product-page.php:371
+#: inc/admin/options/shop/options-shop-product-page.php:386
 msgid "Tooltip"
 msgstr "Araç İpucu"
 
-#: inc/admin/options/shop/options-shop-product-page.php:372
+#: inc/admin/options/shop/options-shop-product-page.php:387
 msgid "Show a tooltip with the term or term description."
 msgstr "Terim veya terim açıklamasıyla birlikte bir araç ipucu gösterin."
 
-#: inc/admin/options/shop/options-shop-product-page.php:380
+#: inc/admin/options/shop/options-shop-product-page.php:395
 msgid "Inactive out of stock"
 msgstr "Stokta yoksa deaktif et"
 
-#: inc/admin/options/shop/options-shop-product-page.php:381
+#: inc/admin/options/shop/options-shop-product-page.php:396
 msgid "Show out of stock items as inactive."
 msgstr "Stokta olmayan öğeleri pasif olarak göster."
 
-#: inc/admin/options/shop/options-shop-product-page.php:389
+#: inc/admin/options/shop/options-shop-product-page.php:404
 msgid "Disable deselection"
 msgstr "Seçimi kaldırmayı devre dışı bırak"
+
+#: inc/admin/options/social/options-social.php:75
+#: inc/admin/options/social/options-social.php:152
+#: inc/shortcodes/follow.php:184
+msgctxt "social media"
+msgid "X"
+msgstr ""
+
+#: inc/admin/options/styles/options-colors.php:144
+msgid "Tooltip colors"
+msgstr ""
+
+#: inc/admin/options/styles/options-colors.php:150
+msgid "Tooltip color"
+msgstr ""
+
+#: inc/admin/options/styles/options-colors.php:159
+msgid "Tooltip background color"
+msgstr ""
 
 #: inc/admin/panel/panel.php:31
 msgid "Sorry, an error occurred while accessing the API."
@@ -866,6 +921,19 @@ msgstr "Siteniz kaydedildi. Ancak satın alma kodu şu anda doğrulanamadı."
 #: inc/classes/class-flatsome-registration.php:145
 msgid "No purchase code."
 msgstr "Satın alma kodu yok."
+
+#: inc/classes/class-flatsome-relay.php:227
+#: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
+msgid "Load more"
+msgstr ""
+
+#: inc/classes/class-flatsome-relay.php:238
+msgid "Previous"
+msgstr ""
+
+#: inc/classes/class-flatsome-relay.php:243
+msgid "Next"
+msgstr ""
 
 #: inc/classes/class-flatsome-wupdates-registration.php:70
 #: inc/classes/class-flatsome-wupdates-registration.php:108
@@ -971,72 +1039,68 @@ msgctxt "cookie notice"
 msgid "Accept"
 msgstr "Kabul et"
 
-#: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
-msgid "View more"
-msgstr "Daha fazlasını görüntüle"
-
 #: inc/extensions/flatsome-live-search/flatsome-live-search.php:199
 msgid "No matches found"
 msgstr "Hiçbir eşleşme bulunamadı"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:72
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
 msgid "Swatch size"
 msgstr "Renk Örneği boyutu"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:75
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:79
 msgid "X Small"
 msgstr "X Small"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:80
 msgid "Small"
 msgstr "Small"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:77
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:81
 msgid "Medium"
 msgstr "Medium"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:78
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:82
 msgid "Large"
 msgstr "Large"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:79
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:83
 msgid "X Large"
 msgstr "X Large"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:81
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
 msgid "Determines the size of the swatches."
 msgstr "Renk örneklerinin boyutunu belirler."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
 msgid "Swatch shape"
 msgstr "Renk örneği şekli"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:88
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
 msgid "Square"
 msgstr "Kare"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:93
 msgid "Rounded"
 msgstr "Yuvarlatılmış"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:90
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:94
 msgid "Circle"
 msgstr "Yuvarlak"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
 msgid "Determines the shape of the swatches."
 msgstr "Renk örneklerinin şeklini belirler."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:97
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:100
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:101
 msgid "Use variation images?"
 msgstr "Varyasyon görselleri kullanılsın mı?"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:98
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:102
 msgid "Enable this if you want swatches for this attribute to be auto filled with variation images."
 msgstr "Eğer bu özellik için renk örneklerinin varyasyon görselleriyle otomatik olarak doldurulmasını istiyorsanız, bunu etkinleştirin."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:338
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:342
 msgid "Value"
 msgstr "Değer"
 
@@ -1056,21 +1120,21 @@ msgstr "UX Label (Etiket)"
 msgid "Quick View"
 msgstr "Hızlı Görünüm"
 
-#: inc/functions/function-custom-css.php:739
-#: inc/woocommerce/structure-wc-global.php:326
+#: inc/functions/function-custom-css.php:665
+#: inc/woocommerce/structure-wc-global.php:330
 #: inc/woocommerce/structure-wc-product-box.php:29
 msgid "New"
 msgstr "Yeni"
 
-#: inc/functions/function-custom-css.php:740
+#: inc/functions/function-custom-css.php:666
 msgid "Hot"
 msgstr "Popüler"
 
-#: inc/functions/function-custom-css.php:741
+#: inc/functions/function-custom-css.php:667
 msgid "Sale"
 msgstr "İndirim"
 
-#: inc/functions/function-custom-css.php:742
+#: inc/functions/function-custom-css.php:668
 msgid "Popular"
 msgstr "Popüler"
 
@@ -1079,45 +1143,45 @@ msgstr "Popüler"
 msgid "Follow on %s"
 msgstr "%s üzerinden Takip et"
 
-#: inc/functions/function-setup.php:65
-#: inc/functions/function-setup.php:189
+#: inc/functions/function-setup.php:85
+#: inc/functions/function-setup.php:223
 msgid "Main Menu"
 msgstr "Ana Menü"
 
-#: inc/functions/function-setup.php:66
+#: inc/functions/function-setup.php:86
 msgid "Main Menu - Mobile"
 msgstr "Ana Menü - Mobil"
 
-#: inc/functions/function-setup.php:67
+#: inc/functions/function-setup.php:87
 msgid "Secondary Menu"
 msgstr "İkincil Menü"
 
-#: inc/functions/function-setup.php:68
+#: inc/functions/function-setup.php:88
 msgid "Footer Menu"
 msgstr "Alt Menü"
 
-#: inc/functions/function-setup.php:69
+#: inc/functions/function-setup.php:89
 msgid "Top Bar Menu"
 msgstr "Üst Menü"
 
-#: inc/functions/function-setup.php:70
+#: inc/functions/function-setup.php:90
 msgid "My Account Menu"
 msgstr "Hesabım Menüsü"
 
-#: inc/functions/function-setup.php:94
+#: inc/functions/function-setup.php:125
 msgid "Sidebar"
 msgstr "Kenar Çubuğu"
 
-#: inc/functions/function-setup.php:104
+#: inc/functions/function-setup.php:135
 msgid "Footer 1"
 msgstr "Alt Bilgi 1"
 
-#: inc/functions/function-setup.php:114
+#: inc/functions/function-setup.php:145
 msgid "Footer 2"
 msgstr "Alt Bilgi 2"
 
-#: inc/functions/function-setup.php:190
-#: inc/shortcodes/accordion.php:116
+#: inc/functions/function-setup.php:224
+#: inc/shortcodes/accordion.php:140
 #: woocommerce/single-product/tabs/accordian.php:33
 msgid "Toggle"
 msgstr "Aç/Kapat"
@@ -1161,98 +1225,103 @@ msgid "Wishlist"
 msgstr "İstek Listesi"
 
 #. translators: %s: Comment count
-#: inc/shortcodes/blog_posts.php:291
+#: inc/shortcodes/blog_posts.php:302
 msgid "%s Comment"
 msgid_plural "%s Comments"
 msgstr[0] "%s Yorum"
 msgstr[1] "%s Yorum"
 
-#: inc/shortcodes/follow.php:121
-#: inc/shortcodes/follow.php:122
+#: inc/shortcodes/follow.php:124
+#: inc/shortcodes/follow.php:125
 msgid "Follow on Facebook"
 msgstr "Facebook&apos; ta takip et"
 
-#: inc/shortcodes/follow.php:135
-#: inc/shortcodes/follow.php:136
+#: inc/shortcodes/follow.php:138
+#: inc/shortcodes/follow.php:139
 msgid "Follow on Instagram"
 msgstr "Instagram&apos; da takip et"
 
-#: inc/shortcodes/follow.php:149
-#: inc/shortcodes/follow.php:150
+#: inc/shortcodes/follow.php:152
+#: inc/shortcodes/follow.php:153
 msgid "Follow on TikTok"
 msgstr "TikTok&apos; ta takip et"
 
-#: inc/shortcodes/follow.php:166
-#: inc/shortcodes/follow.php:167
+#: inc/shortcodes/follow.php:169
+#: inc/shortcodes/follow.php:170
 msgid "Follow on SnapChat"
 msgstr "Snapchat&apos; te takip et"
 
-#: inc/shortcodes/follow.php:173
+#: inc/shortcodes/follow.php:176
 msgid "Point the SnapChat camera at this to add us to SnapChat."
 msgstr "Bizi SnapChat&apos; e eklemek için bunu kameranıza okutun."
 
-#: inc/shortcodes/follow.php:185
-#: inc/shortcodes/follow.php:186
+#: inc/shortcodes/follow.php:188
+#: inc/shortcodes/follow.php:189
+msgid "Follow on X"
+msgstr ""
+
+#: inc/shortcodes/follow.php:202
+#: inc/shortcodes/follow.php:203
 msgid "Follow on Twitter"
 msgstr "Twitter&apos; da takip et"
 
-#: inc/shortcodes/follow.php:199
-#: inc/shortcodes/follow.php:200
+#: inc/shortcodes/follow.php:216
+#: inc/shortcodes/follow.php:217
 msgid "Send us an email"
 msgstr "Bize e-posta gönderin"
 
-#: inc/shortcodes/follow.php:213
-#: inc/shortcodes/follow.php:214
+#: inc/shortcodes/follow.php:230
+#: inc/shortcodes/follow.php:231
 msgid "Call us"
 msgstr "Bizi arayın"
 
-#: inc/shortcodes/follow.php:227
-#: inc/shortcodes/follow.php:228
+#: inc/shortcodes/follow.php:244
+#: inc/shortcodes/follow.php:245
 msgid "Follow on Pinterest"
 msgstr "Pinterest&apos; te takip et"
 
-#: inc/shortcodes/follow.php:241
-#: inc/shortcodes/follow.php:242
+#: inc/shortcodes/follow.php:258
+#: inc/shortcodes/follow.php:259
 msgid "Subscribe to RSS"
 msgstr "RSS&apos; e abone ol"
 
-#: inc/shortcodes/follow.php:255
-#: inc/shortcodes/follow.php:256
+#: inc/shortcodes/follow.php:272
+#: inc/shortcodes/follow.php:273
 msgid "Follow on LinkedIn"
 msgstr "Linkedin&apos; de takip et"
 
-#: inc/shortcodes/follow.php:269
-#: inc/shortcodes/follow.php:270
+#: inc/shortcodes/follow.php:286
+#: inc/shortcodes/follow.php:287
 msgid "Follow on YouTube"
 msgstr "YouTube&apos; da takip et"
 
-#: inc/shortcodes/follow.php:283
-#: inc/shortcodes/follow.php:284
+#: inc/shortcodes/follow.php:300
+#: inc/shortcodes/follow.php:301
 msgid "Flickr"
 msgstr "Flickr"
 
-#: inc/shortcodes/follow.php:297
-#: inc/shortcodes/follow.php:298
+#: inc/shortcodes/follow.php:314
+#: inc/shortcodes/follow.php:315
 msgid "Follow on 500px"
 msgstr "500px&apos; te takip et"
 
-#: inc/shortcodes/follow.php:311
-#: inc/shortcodes/follow.php:312
+#: inc/shortcodes/follow.php:328
+#: inc/shortcodes/follow.php:329
 msgid "Follow on VKontakte"
 msgstr "VKontakte&apos; de takip et"
 
-#: inc/shortcodes/follow.php:325
-#: inc/shortcodes/follow.php:326
+#: inc/shortcodes/follow.php:342
+#: inc/shortcodes/follow.php:343
 msgid "Follow on Telegram"
 msgstr "Telegram&apos; da takip et"
 
-#: inc/shortcodes/follow.php:339
-#: inc/shortcodes/follow.php:340
+#: inc/shortcodes/follow.php:356
+#: inc/shortcodes/follow.php:357
 msgid "Follow on Twitch"
 msgstr "Twitch&apos; te takip et"
 
-#: inc/shortcodes/follow.php:353
-#: inc/shortcodes/follow.php:354
+#: inc/shortcodes/follow.php:370
+#: inc/shortcodes/follow.php:371
 msgid "Follow on Discord"
 msgstr "Discord&apos; da takip et"
 
@@ -1277,41 +1346,46 @@ msgstr "Facebook&apos; ta paylaş"
 
 #: inc/shortcodes/share.php:125
 #: inc/shortcodes/share.php:126
+msgid "Share on X"
+msgstr ""
+
+#: inc/shortcodes/share.php:139
+#: inc/shortcodes/share.php:140
 msgid "Share on Twitter"
 msgstr "Twitter&apos; da paylaş"
 
 #. translators: %s: the share link.
-#: inc/shortcodes/share.php:137
+#: inc/shortcodes/share.php:151
 msgid "Check this out: %s"
 msgstr "Buna bir göz at: %s"
 
-#: inc/shortcodes/share.php:141
-#: inc/shortcodes/share.php:142
+#: inc/shortcodes/share.php:155
+#: inc/shortcodes/share.php:156
 msgid "Email to a Friend"
 msgstr "Arkadaşına e-posta ile gönder"
 
-#: inc/shortcodes/share.php:159
-#: inc/shortcodes/share.php:160
+#: inc/shortcodes/share.php:173
+#: inc/shortcodes/share.php:174
 msgid "Pin on Pinterest"
 msgstr "Pinterest&apos; te pinle"
 
-#: inc/shortcodes/share.php:173
-#: inc/shortcodes/share.php:174
+#: inc/shortcodes/share.php:187
+#: inc/shortcodes/share.php:188
 msgid "Share on VKontakte"
 msgstr "VKontakte&apos; de paylaş"
 
-#: inc/shortcodes/share.php:187
-#: inc/shortcodes/share.php:188
+#: inc/shortcodes/share.php:201
+#: inc/shortcodes/share.php:202
 msgid "Share on LinkedIn"
 msgstr "Linkedin&apos; de paylaş"
 
-#: inc/shortcodes/share.php:201
-#: inc/shortcodes/share.php:202
+#: inc/shortcodes/share.php:215
+#: inc/shortcodes/share.php:216
 msgid "Share on Tumblr"
 msgstr "Tumblr&apos; da paylaş"
 
-#: inc/shortcodes/share.php:215
-#: inc/shortcodes/share.php:216
+#: inc/shortcodes/share.php:229
+#: inc/shortcodes/share.php:230
 msgid "Share on Telegram"
 msgstr "Telegram&apos; da paylaş"
 
@@ -1426,6 +1500,20 @@ msgstr "Ürün sayfalarına üst segment ürünler ekle."
 msgid "Complete the look"
 msgstr "Görünümü tamamla"
 
+#: inc/woocommerce/class-mini-cart.php:135
+msgctxt "mini cart add to cart button label"
+msgid "Add"
+msgstr ""
+
+#. translators: %s: The threshold
+#: inc/woocommerce/class-shipping.php:131
+msgid "Add %s to cart and get free shipping!"
+msgstr ""
+
+#: inc/woocommerce/class-shipping.php:142
+msgid "Your order qualifies for free shipping 🎉"
+msgstr ""
+
 #: inc/woocommerce/structure-wc-category-page.php:97
 #: inc/woocommerce/structure-wc-product-page-fields.php:31
 msgid "Top Content"
@@ -1452,19 +1540,19 @@ msgstr "Bu kategori için özelleştirilmiş bir ürün bloğu düzeni seçin."
 msgid "I have read and agree"
 msgstr "Okudum ve kabul ediyorum"
 
-#: inc/woocommerce/structure-wc-global.php:90
+#: inc/woocommerce/structure-wc-global.php:94
 msgid "Shop Sidebar"
 msgstr "Mağaza Kenar Çubuğu"
 
-#: inc/woocommerce/structure-wc-global.php:99
+#: inc/woocommerce/structure-wc-global.php:103
 msgid "Product Sidebar"
 msgstr "Ürün Kenar Çubuğu"
 
-#: inc/woocommerce/structure-wc-global.php:258
+#: inc/woocommerce/structure-wc-global.php:262
 msgid "Posts found"
 msgstr "Bulunan Yazılar"
 
-#: inc/woocommerce/structure-wc-global.php:271
+#: inc/woocommerce/structure-wc-global.php:275
 msgid "Pages found"
 msgstr "Bulunan Sayfalar"
 
@@ -1520,6 +1608,10 @@ msgstr "Video"
 #: inc/woocommerce/structure-wc-product-page.php:104
 msgid "Zoom"
 msgstr "Yakınlaştır"
+
+#: inc/woocommerce/structure-wc-product-page.php:280
+msgid "Select options"
+msgstr ""
 
 #. Template Name of the theme
 msgid "Page - Full Width - Parallax Title"
@@ -1642,6 +1734,11 @@ msgstr "Konum"
 msgid "Contact"
 msgstr "İletişim"
 
+#: template-parts/header/partials/element-contact-mobile.php:81
+#: template-parts/header/partials/element-contact.php:92
+msgid "WhatsApp"
+msgstr ""
+
 #: template-parts/header/partials/element-menu-icon.php:13
 #: template-parts/header/partials/element-menu-icon.php:17
 #: template-parts/overlays/overlay-menu.php:45
@@ -1652,6 +1749,11 @@ msgstr "Menü"
 #: template-parts/overlays/overlay-menu.php:50
 msgid "Categories"
 msgstr "Kategoriler"
+
+#: template-parts/portfolio/portfolio-summary-full.php:30
+#: template-parts/portfolio/portfolio-summary.php:26
+msgid "Tags"
+msgstr ""
 
 #: template-parts/posts/content-none.php:14
 msgid "Nothing Found"
@@ -1695,7 +1797,7 @@ msgstr ""
 msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
 msgstr ""
 
-#: template-parts/posts/loop/post-simple.php:32
+#: template-parts/posts/loop/post-simple.php:28
 msgid "%1$s Comment"
 msgid_plural "%1$s Comments"
 msgstr[0] ""
@@ -1798,4 +1900,34 @@ msgstr ""
 #: woocommerce/myaccount/form-login-lightbox-right-panel.php:121
 msgid "Register an Account"
 msgstr "Bir Hesap Oluştur"
+
+#: inc/blocks/uxbuilder/block.json
+msgctxt "block title"
+msgid "UX Builder content"
+msgstr ""
+
+#: inc/blocks/uxbuilder/block.json
+msgctxt "block description"
+msgid "This block contains content created with UX Builder."
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Success"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Alert"
+msgstr ""
 

@@ -56,10 +56,10 @@ class Swatches_Frontend {
 		// Handle cache.
 		add_action( 'save_post', array( $this, 'cache_clear_save_post' ) );
 		add_action( 'woocommerce_before_product_object_save', array( $this, 'cache_clear_product_object_save' ) );
-		add_filter( 'pre_set_theme_mod_swatches', array( $this, 'cache_clear_all' ), 10, 2 );
-		add_filter( 'pre_set_theme_mod_swatches_box_attribute', array( $this, 'cache_clear_all' ), 10, 2 );
-		add_filter( 'pre_update_option_woocommerce_thumbnail_image_width', array( $this, 'cache_clear_all' ), 10, 2 );
-		add_filter( 'pre_update_option_woocommerce_thumbnail_cropping', array( $this, 'cache_clear_all' ), 10, 2 );
+		add_filter( 'pre_set_theme_mod_swatches', array( swatches(), 'cache_clear_on_option' ), 10, 2 );
+		add_filter( 'pre_set_theme_mod_swatches_box_attribute', array( swatches(), 'cache_clear_on_option' ), 10, 2 );
+		add_filter( 'pre_update_option_woocommerce_thumbnail_image_width', array( swatches(), 'cache_clear_on_option' ), 10, 2 );
+		add_filter( 'pre_update_option_woocommerce_thumbnail_cropping', array( swatches(), 'cache_clear_on_option' ), 10, 2 );
 
 		add_filter( 'woocommerce_variation_is_active', array( $this, 'variation_is_active' ), 10, 2 );
 	}
@@ -387,6 +387,11 @@ class Swatches_Frontend {
 		if ( empty( $swatches_to_show ) ) {
 			return;
 		}
+
+		if ( count( $swatches_to_show ) < (int) apply_filters( 'flatsome_swatches_box_display_min_count', 1, $product, $attribute ) ) {
+			return;
+		}
+
 		$html = '';
 
 		if ( get_theme_mod( 'swatches_box_shape' ) ) {
@@ -462,10 +467,10 @@ class Swatches_Frontend {
 				$data['data-image-src']    = $swatch['image_src'];
 				$data['data-image-srcset'] = $swatch['image_srcset'];
 				$data['data-image-sizes']  = $swatch['image_sizes'];
+			}
 
-				if ( ! $swatch['is_in_stock'] ) {
-					$swatch_classes[] = 'out-of-stock';
-				}
+			if ( isset( $swatch['is_in_stock'] ) && ! $swatch['is_in_stock'] ) {
+				$swatch_classes[] = 'out-of-stock';
 			}
 
 			$data['data-attribute_name'] = 'attribute_' . sanitize_title( $attribute_name );
@@ -544,6 +549,7 @@ class Swatches_Frontend {
 	 */
 	private function get_option_variations( $attribute_name, $available_variations, $option = false ) {
 		$swatches_to_show = array();
+		$all_out_of_stock = true;
 
 		foreach ( $available_variations as $key => $variation ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 			$option_variation = array();
@@ -564,6 +570,10 @@ class Swatches_Frontend {
 				);
 			}
 
+			if ( ! $option && $variation['is_in_stock'] ) {
+				$all_out_of_stock = false;
+			}
+
 			// Get only one variation by attribute option value.
 			if ( $option ) {
 				if ( $val != $option ) {
@@ -579,6 +589,11 @@ class Swatches_Frontend {
 				if ( ! array_key_exists( $val, $swatches_to_show ) ) {
 					$swatches_to_show[ $val ] = array_merge( $swatch, $option_variation );
 				}
+			}
+
+			if ( ! $option ) {
+				$swatches_to_show[ $val ]['is_in_stock'] = ! $all_out_of_stock;
+				$all_out_of_stock                        = true;
 			}
 		}
 
@@ -768,22 +783,6 @@ class Swatches_Frontend {
 		$post_id   = $product->get_id();
 		$transient = 'flatsome_swatches_cache_' . $post_id;
 		delete_transient( $transient );
-	}
-
-	/**
-	 * Clear all cache.
-	 *
-	 * @param string $new_value The new value of the theme modification.
-	 * @param string $old_value The current value of the theme modification.
-	 *
-	 * @return mixed
-	 */
-	public function cache_clear_all( $new_value, $old_value ) {
-		if ( $new_value !== $old_value ) {
-			swatches()->cache_clear();
-		}
-
-		return $new_value;
 	}
 
 	/**

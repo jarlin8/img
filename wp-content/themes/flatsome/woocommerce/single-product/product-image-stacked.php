@@ -13,7 +13,7 @@
  * @see              https://docs.woocommerce.com/document/template-structure/
  * @package          WooCommerce/Templates
  * @version          7.8.0
- * @flatsome-version 3.17.2
+ * @flatsome-version 3.18.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -47,6 +47,10 @@ if(get_theme_mod('product_zoom', 0)){
 
 $rtl = 'false';
 if(is_rtl()) $rtl = 'true';
+
+if ( get_theme_mod( 'product_gallery_slider_type' ) === 'fade' ) {
+	$slider_classes[] = 'slider-type-fade';
+}
 
 if(get_theme_mod('product_lightbox','default') == 'disabled'){
   $slider_classes[] = 'disable-lightbox';

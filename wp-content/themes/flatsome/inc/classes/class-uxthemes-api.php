@@ -110,7 +110,7 @@ final class UxThemes_API {
 	 */
 	public function get_error( $error, $context = null, $data = array() ) {
 		$status        = (int) $error->get_error_code();
-		$account_attrs = ' href="' . esc_url_raw( UXTHEMES_ACCOUNT_URL ) . '" target="_blank" rel="noopener noreferrer"';
+		$account_attrs = ' href="' . esc_url_raw( UXTHEMES_ACCOUNT_URL ) . '" target="_blank" rel="noopener"';
 
 		switch ( $status ) {
 			case 400:

@@ -130,7 +130,7 @@ function flatsome_terms_and_conditions_checkbox_text( $link_style ) {
 		return;
 	}
 
-	$terms_link = $terms_page_id ? '<a href="' . esc_url( get_permalink( $terms_page_id ) ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'terms and conditions', 'woocommerce' ) . '</a>' : esc_html__( 'terms and conditions', 'woocommerce' );
+	$terms_link = $terms_page_id ? '<a href="' . esc_url( get_permalink( $terms_page_id ) ) . '" target="_blank" rel="noopener">' . esc_html__( 'terms and conditions', 'woocommerce' ) . '</a>' : esc_html__( 'terms and conditions', 'woocommerce' );
 
 	if ( $link_style === 'lightbox' ) {
 		$terms_link = $terms_page_id ? '<a href="#terms-and-conditions-lightbox">' . esc_html__( 'terms and conditions', 'woocommerce' ) . '</a>' : esc_html__( 'terms and conditions', 'woocommerce' );

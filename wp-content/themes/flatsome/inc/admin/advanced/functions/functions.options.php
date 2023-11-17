@@ -177,6 +177,86 @@ if ( ! function_exists( 'of_options' ) ) {
 			'desc' => 'Remove jQuery Migrate. Most up-to-date front-end code and plugins don’t require jquery-migrate.min.js. More often than not, keeping this - simply adds unnecessary load to your site.',
 		);
 
+		// Content delivery.
+		$of_options[] = array(
+			'name' => 'Content Delivery',
+			'type' => 'heading',
+		);
+
+		$of_options[] = array(
+			'name' => '',
+			'type' => 'info',
+			'desc' => '<h2 style="font-size:1rem; margin-top: 40px;">AJAX loading<span class="of-tag">Experimental</span></h2><p style="font-size:14px">Fetch content from the server without reloading the whole page. This is an experimental feature and is subject to change. <b>Disable if you experience plugin compatibility issues.</b></p><p><a target="_blank" rel="noopener" href="https://docs.uxthemes.com/article/430-pjax">Learn more</a></p>',
+		);
+
+		$of_options[] = array(
+			'name'    => 'Blog pagination',
+			'id'      => 'blog_pagination',
+			'std'     => '',
+			'type'    => 'select',
+			'options' => array(
+				''     => 'Normal navigation',
+				'ajax' => 'AJAX navigation',
+			),
+		);
+
+		if ( is_woocommerce_activated() ) {
+			$of_options[] = array(
+				'name'    => 'Shop pagination',
+				'id'      => 'shop_pagination',
+				'std'     => '',
+				'type'    => 'select',
+				'options' => array(
+					''                => 'Normal navigation',
+					'ajax'            => 'AJAX navigation',
+					'infinite-scroll' => 'Infinite scroll',
+				),
+			);
+
+			$of_options[] = array(
+				'name' => 'Shop archive',
+				'id'   => 'shop_filter_widgets_pjax',
+				'desc' => 'Enable AJAX for product category widget & filter widgets',
+				'std'  => 0,
+				'type' => 'checkbox',
+			);
+		}
+
+		$of_options[] = array(
+			'name' => 'Scroll to top',
+			'id'   => 'pjax_scroll_to_top',
+			'desc' => 'Scroll to top after AJAX navigation',
+			'std'  => 0,
+			'type' => 'checkbox',
+		);
+
+		$of_options[] = array(
+			'name' => '',
+			'type' => '',
+			'desc' => '<h2 style="font-size:1rem; margin-top: 40px;">Infinite scroll settings</h2>',
+		);
+
+		$of_options[] = array(
+			'name'    => 'Loading type',
+			'id'      => 'infinite_scroll_loader_type',
+			'desc'    => 'Select loading type animation or on button click.',
+			'std'     => 'spinner',
+			'type'    => 'select',
+			'options' => array(
+				'button'  => 'Button (On click)',
+				'spinner' => 'Spinner',
+				'image'   => 'Custom Image',
+			),
+		);
+
+		$of_options[] = array(
+			'name' => 'Custom loader image',
+			'desc' => "Upload or choose a custom loader image (for loading type 'Custom Image').",
+			'id'   => 'infinite_scroll_loader_img',
+			'std'  => '',
+			'type' => 'upload',
+		);
+
 		$of_options[] = array(
 			'name' => 'Site Loader',
 			'type' => 'heading',
@@ -240,12 +320,12 @@ if ( ! function_exists( 'of_options' ) ) {
 			'std'     => '0',
 			'type'    => 'select',
 			'options' => array(
-					'0'    => 'Instant',
-					'500'  => '500 ms',
-					'1000' => '1000 ms',
-					'1500' => '1500 ms',
-					'2000' => '2000 ms',
-				),
+				'0'    => 'Instant',
+				'500'  => '500 ms',
+				'1000' => '1000 ms',
+				'1500' => '1500 ms',
+				'2000' => '2000 ms',
+			),
 		);
 
 		if ( is_woocommerce_activated() ) {
@@ -308,7 +388,7 @@ if ( ! function_exists( 'of_options' ) ) {
 		$of_options[] = array(
 			'name' => 'Feed settings',
 			'id'   => 'instagram_lazy_load',
-			'desc' => 'Lazy load Instagram feeds when they appear the viewport.',
+			'desc' => 'Lazy load Instagram feeds when they appear in the viewport.',
 			'std'  => 0,
 			'type' => 'checkbox',
 		);
@@ -344,17 +424,58 @@ if ( ! function_exists( 'of_options' ) ) {
 			'type' => 'text',
 		);
 
+		$maintenance_mode = apply_filters( 'flatsome_maintenance_mode', [ 'access_mode' => 'roles' ] );
+
 		$of_options[] = array(
 			'name' => 'Maintenance Mode',
 			'type' => 'heading',
 		);
 
+		if ( ! empty( $maintenance_mode['access_mode'] ) ) {
+			$access_mode = $maintenance_mode['access_mode'];
+
+			$supported_modes = [ 'logged_in', 'roles', 'current_user_can' ];
+			$display_mode    = in_array( $access_mode, $supported_modes, true )
+				? $access_mode
+				: sprintf( '%s (not supported)', $access_mode );
+
+			$of_options[] = array(
+				'name' => '',
+				'type' => 'info',
+				'desc' => sprintf( '<p style="font-size:14px">Access mode: %s</p>', $display_mode ),
+			);
+		}
+
 		$of_options[] = array(
 			'name' => 'Maintenance Mode',
 			'id'   => 'maintenance_mode',
-			'desc' => 'Enable Maintenance Mode for all users except admins.',
+			'desc' => 'Enable Maintenance Mode.',
 			'std'  => 0,
 			'type' => 'checkbox',
+		);
+
+		if ( ! empty( $maintenance_mode['access_mode'] && $maintenance_mode['access_mode'] === 'roles' ) ) {
+			$of_options[] = array(
+				'name'    => 'Exclude roles',
+				'id'      => 'maintenance_mode_excluded_roles',
+				'desc'    => 'Exclude roles from maintenance mode (admin always has access).',
+				'std'     => array(),
+				'type'    => 'multicheck',
+				'options' => flatsome_get_role_list( array(
+					'exclude' => array(
+						'super_admin',
+						'administrator',
+					),
+				) ),
+			);
+		}
+
+		$of_options[] = array(
+			'name' => 'Bypass key',
+			'id'   => 'maintenance_mode_bypass_key',
+			'desc' => 'This key, when passed as a parameter in the URL, allows a user to bypass the maintenance mode and access the website.<br/>f.ex: https://example.com/?nomaintenance1234',
+			'std'  => '',
+			'type' => 'text',
 		);
 
 		$of_options[] = array(
@@ -540,40 +661,6 @@ if ( ! function_exists( 'of_options' ) ) {
 				'std'  => '',
 				'type' => 'textarea',
 				'desc' => 'Enter text that will show in product quick view',
-			);
-
-			$of_options[] = array(
-				'name' => 'Infinite Scroll',
-				'type' => 'heading',
-			);
-
-			$of_options[] = array(
-				'name' => 'Infinite scroll category/products',
-				'id'   => 'flatsome_infinite_scroll',
-				'desc' => 'Enable infinite scroll for WooCommerce category/product archive.',
-				'std'  => 0,
-				'type' => 'checkbox',
-			);
-
-			$of_options[] = array(
-				'name'    => 'Loading type',
-				'id'      => 'infinite_scroll_loader_type',
-				'desc'    => 'Select loading type animation or on button click.',
-				'std'     => 'spinner',
-				'type'    => 'select',
-				'options' => array(
-					'button'  => 'Button (On click)',
-					'spinner' => 'Spinner',
-					'image'   => 'Custom Image',
-				),
-			);
-
-			$of_options[] = array(
-				'name' => 'Custom loader image',
-				'desc' => "Upload or choose a custom loader image (for loading type 'Custom Image').",
-				'id'   => 'infinite_scroll_loader_img',
-				'std'  => '',
-				'type' => 'upload',
 			);
 		}
 

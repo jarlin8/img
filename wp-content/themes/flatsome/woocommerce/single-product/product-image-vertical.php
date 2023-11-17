@@ -13,7 +13,7 @@
  * @see              https://docs.woocommerce.com/document/template-structure/
  * @package          WooCommerce/Templates
  * @version          7.8.0
- * @flatsome-version 3.17.2
+ * @flatsome-version 3.18.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -37,6 +37,10 @@ $wrapper_classes   = apply_filters( 'woocommerce_single_product_image_gallery_cl
 $slider_classes = array('product-gallery-slider','slider','slider-nav-small','mb-0');
 $rtl = 'false';
 if(is_rtl()) $rtl = 'true';
+
+if ( get_theme_mod( 'product_gallery_slider_type' ) === 'fade' ) {
+	$slider_classes[] = 'slider-type-fade';
+}
 
 // Image Zoom
 if(get_theme_mod('product_zoom', 0)){

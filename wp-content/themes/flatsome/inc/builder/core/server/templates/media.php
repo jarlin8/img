@@ -12,7 +12,7 @@
 require_once( ABSPATH . 'wp-admin/admin.php' );
 
 wp_user_settings();
-wp_enqueue_media();
+wp_enqueue_media( array( 'post' => isset( $_GET['post'] ) ? (int) $_GET['post'] : null ) );
 wp_enqueue_style( 'colors' );
 wp_enqueue_style( 'ie' );
 wp_enqueue_script( 'utils' );

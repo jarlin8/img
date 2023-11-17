@@ -80,3 +80,43 @@ if ( ! function_exists( 'is_extension_activated' ) ) {
 		return class_exists( $extension, $autoload );
 	}
 }
+
+/**
+ * Checks if the current request is a login request from WooCommerce.
+ *
+ * @return bool Returns true if all login-related POST parameters are set, false otherwise.
+ */
+function flatsome_is_login_request() {
+	return isset( $_POST['login'], $_POST['username'], $_POST['password'] ); // phpcs:ignore WordPress.Security.NonceVerification
+}
+
+/**
+ * Checks if the current request is a register request from WooCommerce.
+ *
+ * @return bool Returns true if all register-related POST parameters are set, false otherwise.
+ */
+function flatsome_is_register_request() {
+	return isset( $_POST['register'], $_POST['email'] ) && ( isset( $_POST['password'] ) || 'yes' === get_option( 'woocommerce_registration_generate_password' ) ); // phpcs:ignore WordPress.Security.NonceVerification
+}
+
+/**
+ * Checks if current page is a blog archive.
+ *
+ * @return bool
+ */
+function flatsome_is_blog_archive() {
+	return is_home() || is_search() || is_tag() || is_category() || is_date() || is_author();
+}
+
+/**
+ * Checks if current page is a WooCommerce shop archive.
+ *
+ * @return bool
+ */
+function flatsome_is_shop_archive() {
+	$queried_object               = get_queried_object();
+	$is_product_attribute_archive = ( $queried_object && property_exists( $queried_object, 'taxonomy' ) ) ? taxonomy_is_product_attribute( $queried_object->taxonomy ) : false;
+	$is_product_search_archive    = is_search() && is_post_type_archive( 'product' );
+
+	return is_shop() || is_product_category() || is_product_tag() || $is_product_search_archive || $is_product_attribute_archive;
+}

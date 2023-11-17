@@ -32,8 +32,11 @@ do_action( 'flatsome_before_page' ); ?>
 
 						<?php the_content(); ?>
 
-						<?php if ( comments_open() || '0' != get_comments_number() ){
-							comments_template(); } ?>
+					<?php
+					if ( comments_open() || get_comments_number() ) {
+						comments_template();
+					}
+					?>
 
 					<?php do_action( 'flatsome_after_page_content' ); ?>
 				<?php endwhile; // end of the loop. ?>

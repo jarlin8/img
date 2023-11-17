@@ -241,51 +241,61 @@ function flatsome_related_products_args( $args ) {
 }
 add_filter( 'woocommerce_output_related_products_args', 'flatsome_related_products_args' );
 
-
-function flatsome_sticky_add_to_cart_before() {
+/**
+ * Sticky add to cart template.
+ *
+ * @return void
+ */
+function flatsome_sticky_add_to_cart_template() {
 	global $product;
 
 	if (
 		! is_product()
+		|| ! $product->is_purchasable()
 		|| ! get_theme_mod( 'product_sticky_cart', 0 )
-		|| ! apply_filters( 'flatsome_sticky_add_to_cart_enabled', true, $product )
-		|| get_theme_mod( 'product_layout' ) === 'stacked-right' ) {
+		|| ! apply_filters( 'flatsome_sticky_add_to_cart_enabled', true, $product ) ) {
 		return;
 	}
 
-	echo '<div class="sticky-add-to-cart-wrapper">';
-	echo '<div class="sticky-add-to-cart">';
-	echo '<div class="sticky-add-to-cart__product">';
-	$image_id = $product->get_image_id();
-	$image    = wp_get_attachment_image_src( $image_id, 'woocommerce_gallery_thumbnail' );
-	if ( $image ) {
-		$image_alt = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
-		$image     = '<img src="' . $image[0] . '" alt="' . $image_alt . '" class="sticky-add-to-cart-img" />';
-		echo $image;
-	}
-	echo '<div class="product-title-small hide-for-small"><strong>' . get_the_title() . '</strong></div>';
-	if ( ! $product->is_type( 'variable' ) ) {
-		woocommerce_template_single_price();
-	}
-	echo '</div>';
+	$product_classes = implode( ' ', array_diff( wc_get_product_class( 'sticky-add-to-cart__product', $product ), [ 'product' ] ) );
+	?>
+	<!--Legacy wrapper-->
+	<div class="sticky-add-to-cart-wrapper">
+		<div class="sticky-add-to-cart" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
+			<div class="<?php echo esc_attr( $product_classes ); ?>">
+				<?php
+				echo woocommerce_get_product_thumbnail( 'woocommerce_gallery_thumbnail', array( // phpcs:ignore WordPress.Security.EscapeOutput
+					'class' => 'attachment-woocommerce_gallery_thumbnail size-woocommerce_gallery_thumbnail sticky-add-to-cart-img',
+				) );
+				?>
+				<div class="product-title-small hide-for-small"><strong><?php the_title(); ?></strong></div>
+				<?php
+				if ( $product->is_type( 'simple' ) ) :
+					woocommerce_simple_add_to_cart();
+				else :
+					echo $product->get_price_html(); // phpcs:ignore WordPress.Security.EscapeOutput
+					echo flatsome_apply_shortcode( 'button', array(
+						'class' => 'sticky-add-to-cart-select-options-button mb-0 ml-half',
+						'color' => 'secondary',
+						'text'  => $product->is_type( 'variable' ) ? esc_html__( 'Select options', 'flatsome' ) : $product->single_add_to_cart_text(),
+					) );
+				endif;
+				?>
+			</div>
+		</div>
+	</div>
+	<?php
 }
 
-add_action( 'woocommerce_before_add_to_cart_button', 'flatsome_sticky_add_to_cart_before', -100 );
+add_action( 'wp_footer', 'flatsome_sticky_add_to_cart_template' );
 
+/**
+ * Remove title attribute on product gallery images.
+ */
+function flatsome_woocommerce_gallery_image_html_attachment_image_params( $params, $attachment_id, $image_size, $main_image ) {
+	unset( $params['title'] );
 
-function flatsome_sticky_add_to_cart_after() {
-	global $product;
-
-	if (
-		! is_product()
-		|| ! get_theme_mod( 'product_sticky_cart', 0 )
-		|| ! apply_filters( 'flatsome_sticky_add_to_cart_enabled', true, $product )
-		|| get_theme_mod( 'product_layout' ) === 'stacked-right' ) {
-		return;
-	}
-
-	echo '</div>';
-	echo '</div>';
+	return $params;
 }
 
-add_action( 'woocommerce_after_add_to_cart_button', 'flatsome_sticky_add_to_cart_after', 100 );
+add_filter( 'woocommerce_gallery_image_html_attachment_image_params', 'flatsome_woocommerce_gallery_image_html_attachment_image_params', 10, 4 );

@@ -19,6 +19,8 @@
 			<key name="catalog_mode_lightbox"/>
 			<key name="catalog_mode_product"/>
 			<key name="category_filter_text"/>
+			<key name="contact_whatsapp"/>
+			<key name="contact_whatsapp_label"/>
 			<key name="contact_email"/>
 			<key name="contact_email_label"/>
 			<key name="contact_hours_details"/>
@@ -320,6 +322,12 @@
 			</attributes>
 		</shortcode>
 		<shortcode>
+			<tag>ux_html</tag>
+			<attributes>
+				<attribute>label</attribute>
+			</attributes>
+		</shortcode>
+		<shortcode>
 			<tag>ux_image</tag>
 			<attributes>
 				<attribute type="media-ids">id</attribute>
@@ -338,6 +346,13 @@
 			<attributes>
 				<attribute>title</attribute>
 				<attribute type="media-ids">img</attribute>
+				<attribute type="link">link</attribute>
+			</attributes>
+		</shortcode>
+		<shortcode>
+			<tag>ux_lottie</tag>
+			<attributes>
+				<attribute>path</attribute>
 				<attribute type="link">link</attribute>
 			</attributes>
 		</shortcode>
@@ -382,6 +397,9 @@
 <!--				<attribute>title?</attribute>-->
 <!--			</attributes>-->
 <!--		</shortcode>-->
+		<shortcode>
+			<tag>ux_slider</tag>
+		</shortcode>
 		<shortcode>
 			<tag>ux_stack</tag>
 		</shortcode>

@@ -3,7 +3,7 @@
  * Template name: Page - Full Width - Parallax Title
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.16.0
+ * @flatsome-version 3.18.0
  */
 
 get_header(); ?>
@@ -36,6 +36,12 @@ get_header(); ?>
 	<?php while ( have_posts() ) : the_post(); ?>
 
 		<?php the_content(); ?>
+
+		<?php
+		if ( comments_open() || get_comments_number() ) {
+			comments_template();
+		}
+		?>
 
 	<?php endwhile; // end of the loop. ?>
 

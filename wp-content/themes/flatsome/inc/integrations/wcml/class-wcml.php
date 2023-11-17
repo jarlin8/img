@@ -40,7 +40,7 @@ class WCML {
 	 * @return array Returns the modified array of AJAX actions.
 	 */
 	public function multi_currency_ajax_actions( $ajax_actions ) {
-		$ajax_actions[] = 'flatsome_ajax_add_to_cart';
+		$ajax_actions[] = 'flatsome_ajax_cart_item_alter_quantity';
 		$ajax_actions[] = 'flatsome_quickview';
 		$ajax_actions[] = 'flatsome_ajax_search_products';
 

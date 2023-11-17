@@ -46,9 +46,15 @@ function ux_tabgroup( $params, $content = null, $tag = '' ) {
 	if( is_array( $GLOBALS['tabs'] )){
 
 		foreach( $GLOBALS['tabs'] as $key => $tab ){
-			$id = $tab['title'] ? flatsome_to_dashed( $tab['title'] ) : wp_rand();
+			if ( ! empty( $tab['anchor'] ) ) {
+				$id = flatsome_to_dashed( $tab['anchor'] );
+				$anchor = rawurlencode( $tab['anchor'] );
+			} else {
+				$id = $tab['title'] ? flatsome_to_dashed( $tab['title'] ) : wp_rand();
+				$anchor = "tab_$id";
+			}
 			$active = $key == 0 ? ' active' : ''; // Set first tab active by default.
-			$tabs[] = '<li id="tab-'.$id.'" class="tab'.$active.' has-icon" role="presentation"><a href="#tab_'.$id.'"'.($key != 0 ? ' tabindex="-1"' : '').' role="tab" aria-selected="'.($key == 0 ? 'true' : 'false').'" aria-controls="tab_'.$id.'"><span>'.$tab['title'].'</span></a></li>';
+			$tabs[] = '<li id="tab-'.$id.'" class="tab'.$active.' has-icon" role="presentation"><a href="#'.$anchor.'"'.($key != 0 ? ' tabindex="-1"' : '').' role="tab" aria-selected="'.($key == 0 ? 'true' : 'false').'" aria-controls="tab_'.$id.'"><span>'.$tab['title'].'</span></a></li>';
 			$panes[] = '<div id="tab_'.$id.'" class="panel'.$active.' entry-content" role="tabpanel" aria-labelledby="tab-'.$id.'">'.do_shortcode( $tab['content'] ).'</div>';
 			$i++;
 		}
@@ -66,11 +72,11 @@ function ux_tabgroup( $params, $content = null, $tag = '' ) {
 function ux_tab( $params, $content = null) {
 	extract(shortcode_atts(array(
 			'title' => '',
-			'title_small' => ''
+			'anchor' => ''
 	), $params));
 
 	$x = $GLOBALS['tab_count'];
-	$GLOBALS['tabs'][ $x ] = array( 'title' => $title, 'content' => $content );
+	$GLOBALS['tabs'][ $x ] = array( 'title' => $title, 'anchor' => $anchor, 'content' => $content );
 	$GLOBALS['tab_count']++;
 }
 

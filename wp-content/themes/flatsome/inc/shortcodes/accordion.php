@@ -10,6 +10,7 @@
  */
 
 $flatsome_accordion_state = array();
+$flatsome_accordion_faq_schema = array();
 
 /**
  * Output the accordion shortcode.
@@ -22,18 +23,20 @@ $flatsome_accordion_state = array();
 function ux_accordion( $atts, $content = null ) {
 	global $flatsome_accordion_state;
 
-	extract(shortcode_atts(array(
-		'auto_open' => '',
-		'open'      => '',
-		'title'     => '',
-		'class'     => '',
-	), $atts));
+	extract( shortcode_atts( array(
+		'auto_open'  => '',
+		'open'       => '',
+		'title'      => '',
+		'class'      => '',
+		'faq_schema' => '',
+	), $atts ) );
 
 	if ($auto_open) $open = 1;
 
 	array_push( $flatsome_accordion_state, array(
-		'open'    => (int) $open,
-		'current' => 1,
+		'open'       => (int) $open,
+		'current'    => 1,
+		'faq_schema' => filter_var( $faq_schema, FILTER_VALIDATE_BOOLEAN ),
 	) );
 
 	$classes                 = array( 'accordion' );
@@ -60,7 +63,7 @@ add_shortcode( 'accordion', 'ux_accordion' );
  * @return string.
  */
 function ux_accordion_item( $atts, $content = null, $tag = '' ) {
-	global $flatsome_accordion_state;
+	global $flatsome_accordion_state, $flatsome_accordion_faq_schema;
 
 	$current = count( $flatsome_accordion_state ) - 1;
 	$state   = isset( $flatsome_accordion_state[ $current ] )
@@ -69,9 +72,10 @@ function ux_accordion_item( $atts, $content = null, $tag = '' ) {
 
 	$atts = shortcode_atts(
 		array(
-			'id'    => 'accordion-' . wp_rand(),
-			'title' => 'Accordion Panel',
-			'class' => '',
+			'id'     => 'accordion-' . wp_rand(),
+			'title'  => 'Accordion Panel',
+			'anchor' => '',
+			'class'  => '',
 		),
 		$atts,
 		$tag
@@ -92,10 +96,30 @@ function ux_accordion_item( $atts, $content = null, $tag = '' ) {
 		$flatsome_accordion_state[ $current ]['current'] ++;
 	}
 
+	if ( isset( $flatsome_accordion_state[ $current ]['faq_schema'] ) && $flatsome_accordion_state[ $current ]['faq_schema'] ) {
+		$question = wp_strip_all_tags( $atts['title'] );
+		$answer   = $content;
+
+		$answer = do_shortcode( $answer );
+		$answer = shortcode_unautop( $answer );
+		$answer = wptexturize( $answer );
+
+		if ( $GLOBALS['wp_embed'] instanceof \WP_Embed ) {
+			$answer = $GLOBALS['wp_embed']->autoembed( $answer );
+		}
+
+		$flatsome_accordion_faq_schema[] = array(
+			'question' => $question,
+			'answer'   => $answer,
+		);
+	}
+
 	$link_atts = array(
 		'id'            => esc_attr( $atts['id'] ) . '-label',
 		'class'         => esc_attr( implode( ' ', $title_classes ) ),
-		'href'          => esc_url( '#accordion-item-' . flatsome_to_underscore( $atts['title'] ) ),
+		'href'          => ! empty( $atts['anchor'] )
+			? '#' . rawurlencode( $atts['anchor'] )
+			: esc_url( '#accordion-item-' . flatsome_to_dashed( $atts['title'] ) ),
 		'aria-expanded' => $is_open ? 'true' : 'false',
 		'aria-controls' => esc_attr( $atts['id'] ) . '-content',
 	);
@@ -125,3 +149,37 @@ function ux_accordion_item( $atts, $content = null, $tag = '' ) {
 	return ob_get_clean();
 }
 add_shortcode( 'accordion-item', 'ux_accordion_item' );
+
+/**
+ * Printing FAQ Schema.
+ *
+ * @return void
+ */
+function flatsome_print_faq_schema() {
+	global $flatsome_accordion_faq_schema;
+
+	if ( empty( $flatsome_accordion_faq_schema ) ) {
+		return;
+	}
+
+	$json = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => array(),
+	);
+
+	foreach ( $flatsome_accordion_faq_schema as $faq ) {
+		$json['mainEntity'][] = array(
+			'@type'          => 'Question',
+			'name'           => wp_strip_all_tags( $faq['question'] ),
+			'acceptedAnswer' => array(
+				'@type' => 'Answer',
+				'text'  => $faq['answer'],
+			),
+		);
+	}
+
+	echo '<script type="application/ld+json">' . wp_json_encode( $json ) . '</script>';
+}
+
+add_action( 'wp_footer', 'flatsome_print_faq_schema' );

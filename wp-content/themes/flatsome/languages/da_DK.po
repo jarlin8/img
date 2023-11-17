@@ -9,9 +9,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-08-06T17:28:08+00:00\n"
-"PO-Revision-Date: 2023-08-06 17:53\n"
-"X-Generator: WP-CLI 2.6.0\n"
+"POT-Creation-Date: 2023-11-13T10:54:44+00:00\n"
+"PO-Revision-Date: 2023-11-13 10:56\n"
+"X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: flatsome\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: l10n-flatsome\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Language: da_DK\n"
 
 #. Theme Name of the theme
-#: inc/admin/admin-notice.php:77
+#: inc/admin/admin-notice.php:75
 msgid "Flatsome"
 msgstr ""
 
@@ -44,7 +44,7 @@ msgstr ""
 
 #: 404.php:23
 msgid "Oops! That page can&rsquo;t be found."
-msgstr "Ups! Siden findes ikke"
+msgstr "Ups! Den side findes ikke."
 
 #: 404.php:26
 msgid "It looks like nothing was found at this location. Maybe try one of the links below or a search?"
@@ -55,8 +55,8 @@ msgstr "Det ser ikke ud til at vi kunne finde noget. Du kunne måske prøve et a
 msgctxt "comments title"
 msgid "One thought on &ldquo;%2$s&rdquo;"
 msgid_plural "%1$s thoughts on &ldquo;%2$s&rdquo;"
-msgstr[0] "En tanke om &ldquo;%2$s&rdquo;"
-msgstr[1] "%1$s tanker om &ldquo;%2$s&rdquo;"
+msgstr[0] "En kommentar til &ldquo;%2$s&rdquo;"
+msgstr[1] "%1$s kommentarer til &ldquo;%2$s&rdquo;"
 
 #: comments.php:49
 msgid "Comment navigation"
@@ -68,11 +68,11 @@ msgstr "Tidligere kommentarer"
 
 #: comments.php:52
 msgid "Newer Comments"
-msgstr "Nyeste Kommentarer"
+msgstr "Seneste kommentarer"
 
 #: comments.php:63
 msgid "Comments are closed."
-msgstr "Kommentar er lukket"
+msgstr "Der er lukket for kommentarer."
 
 #: header.php:25
 msgid "Skip to content"
@@ -91,11 +91,11 @@ msgstr "Rediger"
 
 #: image.php:101
 msgid "<a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">Post a comment</a> or leave a trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
-msgstr "<a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">Tilføj en kommentar</a> eller lave en Traceback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
+msgstr "<a class=\"comment-link\" href=\"#respond\" title=\"Skriv en kommentar\">Skriv en kommentar</a> eller efterlad et trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback-url til dit indlæg\" rel=\"trackback\">Trackback-url</a>."
 
 #: image.php:103
 msgid "Comments are closed, but you can leave a trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
-msgstr "Kommentar er lukket, men du kan lave trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
+msgstr "Der er lukket for kommentarer, men du kan lave et trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback-url til indlægget\" rel=\"trackback\">Trackback-url</a>."
 
 #: image.php:105
 msgid "Trackbacks are closed, but you can <a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">post a comment</a>."
@@ -103,7 +103,7 @@ msgstr "Trackbacks er lukket, men du kan <a class=\"comment-link\" href=\"#respo
 
 #: image.php:107
 msgid "Both comments and trackbacks are currently closed."
-msgstr "Både kommentar og trackbacks er pt. lukket"
+msgstr "Der er lukket for både kommentarer og trackbacks i øjeblikket."
 
 #: image.php:114
 msgid "<span class=\"meta-nav\">&larr;</span> Previous"
@@ -113,7 +113,7 @@ msgstr "<span class=\"meta-nav\">&larr;</span> Forrige"
 msgid "Next <span class=\"meta-nav\">&rarr;</span>"
 msgstr "Næste <span class=\"meta-nav\">&rarr;</span>"
 
-#: inc/admin/admin-bar.php:82
+#: inc/admin/admin-bar.php:87
 msgid "Activate Theme"
 msgstr "Aktiver tema"
 
@@ -131,35 +131,36 @@ msgid "Manage registration"
 msgstr "Administrere registrering"
 
 #: inc/admin/admin-notice.php:43
+#: inc/admin/envato_setup/envato_setup.php:2018
 #: inc/functions/function-site-health.php:79
 #: template-parts/admin/envato/register-form.php:105
 msgid "Manage your licenses"
 msgstr "Administrere dine licenser"
 
 #. translators: %1$s: Theme name, %2$s: The URL to the status page.
-#: inc/admin/admin-notice.php:81
+#: inc/admin/admin-notice.php:79
 msgid "<strong>Your theme (%1$s) contains outdated copies of some Flatsome template files.</strong> These files may need updating to ensure they are compatible with the current version of Flatsome. Suggestions:"
 msgstr "<strong>Dit tema (%1$s) indeholder forældede kopier af nogle Flatsome skabelonfiler.</strong> Disse filer skal muligvis opdateres for at sikre, at de er kompatible med den aktuelle version af Flatsome. Forslag:"
 
-#: inc/admin/admin-notice.php:84
+#: inc/admin/admin-notice.php:82
 msgid "If you copied over a template file to change something, then you will need to copy the new version of the template and apply your changes again."
 msgstr "Hvis du kopierede en skabelonfil over for at ændre noget, skal du kopiere den nye version af skabelonen og anvende dine ændringer igen."
 
-#: inc/admin/admin-notice.php:85
+#: inc/admin/admin-notice.php:83
 msgid "If you are unfamiliar with code/templates and resolving potential conflicts, reach out to a developer for assistance."
 msgstr "Hvis du ikke er bekendt med kode /skabeloner og løsning af potentielle konflikter, skal du kontakte en udvikler for at få hjælp."
 
-#: inc/admin/admin-notice.php:88
+#: inc/admin/admin-notice.php:86
 msgid "Learn more about templates"
 msgstr "Lær mere om skabeloner"
 
-#: inc/admin/admin-notice.php:91
+#: inc/admin/admin-notice.php:89
 msgid "View affected templates"
 msgstr "Vis berørte skabeloner"
 
 #: inc/admin/advanced/functions/functions.facebook.php:162
 msgid "Connect Instagram Business accounts"
-msgstr "Forbind til Instagram Business-konti"
+msgstr "Opret forbindelse til Instagram Business-konti"
 
 #: inc/admin/advanced/functions/functions.facebook.php:169
 #: inc/admin/advanced/functions/functions.facebook.php:178
@@ -178,106 +179,110 @@ msgstr "Annuller"
 msgid "Connect"
 msgstr "Opret forbindelse"
 
-#: inc/admin/backend/menu/class-menu.php:91
+#: inc/admin/advanced/functions/functions.php:23
+msgid "Super Admin"
+msgstr "Superadministrator"
+
+#: inc/admin/backend/menu/class-menu.php:89
 msgid "Flatsome menu item options"
 msgstr "Flatsome menupunkt indstillinger"
 
-#: inc/admin/backend/menu/class-menu.php:95
+#: inc/admin/backend/menu/class-menu.php:93
 msgid "Menu dropdown"
 msgstr "Menu rullemenu"
 
-#: inc/admin/backend/menu/class-menu.php:98
+#: inc/admin/backend/menu/class-menu.php:96
 msgid "Design"
 msgstr "Design"
 
-#: inc/admin/backend/menu/class-menu.php:100
+#: inc/admin/backend/menu/class-menu.php:98
 msgid "Default"
 msgstr "Standard"
 
-#: inc/admin/backend/menu/class-menu.php:101
+#: inc/admin/backend/menu/class-menu.php:99
 msgid "Default (custom size)"
-msgstr "Standard (brugerdefineret størrelse)"
+msgstr "Standard (brugertilpasset størrelse)"
 
-#: inc/admin/backend/menu/class-menu.php:102
+#: inc/admin/backend/menu/class-menu.php:100
 msgid "Container width"
 msgstr "Indholdsboks bredde"
 
-#: inc/admin/backend/menu/class-menu.php:103
+#: inc/admin/backend/menu/class-menu.php:101
 msgid "Full width"
 msgstr "Fuld bredde"
 
-#: inc/admin/backend/menu/class-menu.php:106
+#: inc/admin/backend/menu/class-menu.php:104
 msgid "Select dropdown design."
-msgstr "Vælg rullemenu design"
+msgstr "Vælg rullemenu design."
 
-#: inc/admin/backend/menu/class-menu.php:110
-#: inc/admin/backend/menu/class-menu.php:161
+#: inc/admin/backend/menu/class-menu.php:108
+#: inc/admin/backend/menu/class-menu.php:159
 #: inc/admin/options/header/options-header-nav-vertical.php:55
 #: inc/admin/options/header/options-header-nav-vertical.php:146
 msgid "Width"
 msgstr "Bredde"
 
-#: inc/admin/backend/menu/class-menu.php:116
+#: inc/admin/backend/menu/class-menu.php:114
 msgid "Height (optional)"
 msgstr "Højde (valgfri)"
 
-#: inc/admin/backend/menu/class-menu.php:122
+#: inc/admin/backend/menu/class-menu.php:120
 #: inc/widgets/widget-blocks.php:88
 msgid "UX Block"
 msgstr "UX Blok"
 
-#: inc/admin/backend/menu/class-menu.php:134
+#: inc/admin/backend/menu/class-menu.php:132
 msgid "Reveal"
 msgstr "Viser"
 
-#: inc/admin/backend/menu/class-menu.php:136
+#: inc/admin/backend/menu/class-menu.php:134
 msgid "On hover"
 msgstr "Ved markering"
 
-#: inc/admin/backend/menu/class-menu.php:137
+#: inc/admin/backend/menu/class-menu.php:135
 msgid "On click"
 msgstr "Ved klik"
 
-#: inc/admin/backend/menu/class-menu.php:143
+#: inc/admin/backend/menu/class-menu.php:141
 msgid "Menu icon"
 msgstr "Menu ikon"
 
-#: inc/admin/backend/menu/class-menu.php:146
+#: inc/admin/backend/menu/class-menu.php:144
 msgid "Icon type"
 msgstr "Ikon type"
 
-#: inc/admin/backend/menu/class-menu.php:148
+#: inc/admin/backend/menu/class-menu.php:146
 msgid "Media library"
 msgstr "Medie bibliotek"
 
-#: inc/admin/backend/menu/class-menu.php:149
+#: inc/admin/backend/menu/class-menu.php:147
 msgid "Custom content"
-msgstr "Brugerdefineret indhold"
+msgstr "Brugertilpasset indhold"
 
-#: inc/admin/backend/menu/class-menu.php:165
+#: inc/admin/backend/menu/class-menu.php:163
 #: inc/admin/options/header/options-header-nav-vertical.php:41
 msgid "Height"
 msgstr "Højde"
 
-#: inc/admin/backend/menu/class-menu.php:168
+#: inc/admin/backend/menu/class-menu.php:166
 msgid "Icons default (empty) to 20x20."
 msgstr "Ikoner, standard (tom) til 20x20."
 
-#: inc/admin/backend/menu/class-menu.php:173
+#: inc/admin/backend/menu/class-menu.php:171
 msgid "Markup"
 msgstr "Markup"
 
-#: inc/admin/backend/menu/class-menu.php:176
+#: inc/admin/backend/menu/class-menu.php:174
 msgid "Add any HTML, SVG or shortcode here."
 msgstr "Tilføj HTML, SVG eller kortkode her."
 
-#: inc/admin/backend/menu/class-menu.php:247
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:222
+#: inc/admin/backend/menu/class-menu.php:245
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:226
 msgid "Select image"
 msgstr "Vælg billede"
 
-#: inc/admin/backend/menu/class-menu.php:252
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:223
+#: inc/admin/backend/menu/class-menu.php:250
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:227
 msgid "Remove"
 msgstr "Fjern"
 
@@ -364,7 +369,7 @@ msgstr "Viser, om det aktuelle aktive tema er et undertema eller ej."
 
 #. translators: %s: Docs link.
 #: inc/admin/classes/class-status.php:628
-msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">How to create a child theme</a>"
+msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\">How to create a child theme</a>"
 msgstr "Hvis du ændrer Flatsome på det overordnede tema, anbefaler vi at bruge et underordnet tema. Se: <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Sådan opretter du et underordnet tema</a>"
 
 #: inc/admin/classes/class-status.php:634
@@ -498,7 +503,7 @@ msgstr "Det maksimale antal variabler, din server kan bruge til en enkelt funkti
 
 #: inc/admin/classes/class-status.php:859
 msgid "Max upload size"
-msgstr "Max upload size"
+msgstr "Maks upload størrelse"
 
 #: inc/admin/classes/class-status.php:861
 msgid "The largest filesize that can be uploaded to your WordPress installation."
@@ -514,7 +519,7 @@ msgstr "Er forbindelsen til dit websted sikker?"
 
 #. translators: %s: Docs link.
 #: inc/admin/classes/class-status.php:900
-msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Learn more about HTTPS and SSL Certificates</a>."
+msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\">Learn more about HTTPS and SSL Certificates</a>."
 msgstr "Dit website bruger ikke HTTPS. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Få mere at vide om HTTPS- og SSL-certifikater</a>."
 
 #: inc/admin/classes/class-status.php:907
@@ -554,23 +559,23 @@ msgstr "Dette afsnit viser alle filer der tilsidesætter standard Flatsome skabe
 msgid "%1$s version %2$s is out of date. The core version is %3$s"
 msgstr "%1$s version %2$s er forældet. Kerneversionen er %3$s"
 
-#: inc/admin/envato_setup/envato_setup.php:2010
+#: inc/admin/envato_setup/envato_setup.php:2011
 msgid "Register Theme"
 msgstr "Registrer Tema"
 
-#: inc/admin/envato_setup/envato_setup.php:2031
+#: inc/admin/envato_setup/envato_setup.php:2036
 msgid "Continue"
 msgstr "Fortsæt"
 
-#: inc/admin/envato_setup/envato_setup.php:2032
+#: inc/admin/envato_setup/envato_setup.php:2037
 msgid "Unregister"
 msgstr "Afregistrér"
 
-#: inc/admin/envato_setup/envato_setup.php:2034
+#: inc/admin/envato_setup/envato_setup.php:2039
 msgid "Register"
 msgstr "Registrer"
 
-#: inc/admin/gutenberg/class-gutenberg.php:109
+#: inc/admin/gutenberg/class-gutenberg.php:119
 msgid "Edit with UX Builder"
 msgstr "Rediger med UX Builder"
 
@@ -580,7 +585,7 @@ msgstr "Fremhævet billede"
 
 #: inc/admin/options/blog/options-blog-single.php:101
 msgid "Share icons"
-msgstr "Dele ikoner"
+msgstr "Ikoner for deling"
 
 #: inc/admin/options/blog/options-blog-single.php:109
 msgid "Meta"
@@ -598,6 +603,29 @@ msgstr "Næste/forrige navigation"
 msgid "HTML after blog posts"
 msgstr "HTML efter blogindlæg"
 
+#: inc/admin/options/header/options-header-cart.php:117
+msgid "Show quantity input"
+msgstr "Vis antal indtastninger"
+
+#: inc/admin/options/header/options-header-cart.php:127
+#: inc/admin/options/shop/options-shop-cart-checkout.php:81
+#: inc/admin/options/shop/options-shop-cart-checkout.php:258
+msgid "Show free shipping"
+msgstr "Vis gratis forsendelse"
+
+#: inc/admin/options/header/options-header-cart.php:158
+#: inc/admin/options/styles/options-lightbox.php:30
+msgid "Drawer width"
+msgstr "Skuffebredde"
+
+#: inc/admin/options/header/options-header-cart.php:167
+msgid "Sticky footer"
+msgstr "Fastgjort sidefod"
+
+#: inc/admin/options/header/options-header-cart.php:177
+msgid "Show cross sells"
+msgstr "Vis krydssalg"
+
 #: inc/admin/options/header/options-header-logo.php:106
 msgid "Logo link"
 msgstr "Link til logo"
@@ -606,82 +634,82 @@ msgstr "Link til logo"
 msgid "Custom logo link (defaults to home page link if empty)."
 msgstr "Brugerdefineret logo-link (standard til startside, hvis det er tomt)."
 
-#: inc/admin/options/header/options-header-mobile.php:85
+#: inc/admin/options/header/options-header-mobile.php:100
 msgid "Menu item behavior"
 msgstr "Menupunkts adfærd"
 
-#: inc/admin/options/header/options-header-mobile.php:86
+#: inc/admin/options/header/options-header-mobile.php:101
 msgid "Click behavior for menu items with a submenu"
-msgstr "Klik adfærd for menupunkter med en undermenu"
+msgstr "Klikadfærd for menupunkter med en undermenu"
 
-#: inc/admin/options/header/options-header-mobile.php:91
+#: inc/admin/options/header/options-header-mobile.php:106
 msgid "Open link"
 msgstr "Åbn link"
 
-#: inc/admin/options/header/options-header-mobile.php:92
+#: inc/admin/options/header/options-header-mobile.php:107
 msgid "Toggle submenu"
 msgstr "Slå undermenu til/fra"
 
-#: inc/admin/options/header/options-header-mobile.php:99
+#: inc/admin/options/header/options-header-mobile.php:114
 msgid "Submenu effect"
 msgstr "Undermenu effekt"
 
-#: inc/admin/options/header/options-header-mobile.php:104
+#: inc/admin/options/header/options-header-mobile.php:119
 msgid "Accordion"
 msgstr "Harmonika"
 
-#: inc/admin/options/header/options-header-mobile.php:105
+#: inc/admin/options/header/options-header-mobile.php:120
 msgid "Slide"
 msgstr "Dias"
 
-#: inc/admin/options/header/options-header-mobile.php:119
+#: inc/admin/options/header/options-header-mobile.php:134
 msgid "Submenu levels"
 msgstr "Undermenu-niveauer"
 
-#: inc/admin/options/header/options-header-mobile.php:124
+#: inc/admin/options/header/options-header-mobile.php:139
 msgid "1 level"
 msgstr "1 niveau"
 
-#: inc/admin/options/header/options-header-mobile.php:125
+#: inc/admin/options/header/options-header-mobile.php:140
 msgid "2 levels"
 msgstr "2 niveauer"
 
-#: inc/admin/options/header/options-header-mobile.php:144
+#: inc/admin/options/header/options-header-mobile.php:159
 msgid "Top content"
 msgstr "Top indhold"
 
-#: inc/admin/options/header/options-header-mobile.php:153
+#: inc/admin/options/header/options-header-mobile.php:168
 msgid "Tabs"
 msgstr "Faner"
 
-#: inc/admin/options/header/options-header-mobile.php:157
+#: inc/admin/options/header/options-header-mobile.php:172
 msgid "None"
 msgstr "Ingen"
 
-#: inc/admin/options/header/options-header-mobile.php:158
+#: inc/admin/options/header/options-header-mobile.php:173
 msgid "2 Tabs"
-msgstr "2 Faner"
+msgstr "2 faner"
 
-#: inc/admin/options/header/options-header-mobile.php:165
+#: inc/admin/options/header/options-header-mobile.php:180
 msgid "Tab 1 text"
 msgstr "Fane 1 tekst"
 
-#: inc/admin/options/header/options-header-mobile.php:180
+#: inc/admin/options/header/options-header-mobile.php:195
 msgid "Menu elements"
 msgstr "Menu elementer"
 
-#: inc/admin/options/header/options-header-mobile.php:191
+#: inc/admin/options/header/options-header-mobile.php:206
 msgid "Tab 2 text"
 msgstr "Fane 2 tekst"
 
-#: inc/admin/options/header/options-header-mobile.php:206
+#: inc/admin/options/header/options-header-mobile.php:221
 msgid "Menu elements tab 2"
 msgstr "Menu-element fane 2"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:9
-#: inc/functions/function-setup.php:71
+#: inc/functions/function-setup.php:91
 msgid "Vertical Menu"
-msgstr "lodret menu"
+msgstr "Lodret menu"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:28
 msgid "Icon"
@@ -737,7 +765,7 @@ msgstr "Navigationsfarve :markering"
 msgid "Nav background color :hover"
 msgstr "Navigation baggrundsfarve :markering"
 
-#: inc/admin/options/notifications/options-notifications.php:98
+#: inc/admin/options/notifications/options-notifications.php:140
 #: inc/extensions/flatsome-cookie-notice/flatsome-cookie-notice.php:39
 msgid "This site uses cookies to offer you a better browsing experience. By browsing this website, you agree to our use of cookies."
 msgstr "Dette websted bruger cookies til at tilbyde dig en bedre browseroplevelse. Ved at fortsætte på denne hjemmeside accepterer du vores brug af cookies."
@@ -754,8 +782,16 @@ msgstr "Indrammede forsendelses-etiketter"
 msgid "Show shipping estimate destination"
 msgstr "Vis forsendelse estimat for destinationen"
 
-#: inc/admin/options/shop/options-shop-category.php:748
-#: inc/admin/options/shop/options-shop-product-page.php:398
+#: inc/admin/options/shop/options-shop-category.php:261
+msgid "Show result count"
+msgstr "Vis resultat antal"
+
+#: inc/admin/options/shop/options-shop-category.php:270
+msgid "Show catalog ordering"
+msgstr "Vis katalog sortering"
+
+#: inc/admin/options/shop/options-shop-category.php:766
+#: inc/admin/options/shop/options-shop-product-page.php:413
 msgid "Color :selected"
 msgstr "Farve :valgt"
 
@@ -765,29 +801,48 @@ msgstr "Farve :valgt"
 msgid "Custom product layout"
 msgstr "Brugerdefineret vare layout"
 
-#: inc/admin/options/shop/options-shop-product-page.php:359
+#: inc/admin/options/shop/options-shop-product-page.php:374
 msgid "Layout"
 msgstr "Layout"
 
-#: inc/admin/options/shop/options-shop-product-page.php:371
+#: inc/admin/options/shop/options-shop-product-page.php:386
 msgid "Tooltip"
 msgstr "Værktøjstip"
 
-#: inc/admin/options/shop/options-shop-product-page.php:372
+#: inc/admin/options/shop/options-shop-product-page.php:387
 msgid "Show a tooltip with the term or term description."
 msgstr "Vis et værktøjstip med udtrykket eller term beskrivelse."
 
-#: inc/admin/options/shop/options-shop-product-page.php:380
+#: inc/admin/options/shop/options-shop-product-page.php:395
 msgid "Inactive out of stock"
 msgstr "Inaktive ikke på lager"
 
-#: inc/admin/options/shop/options-shop-product-page.php:381
+#: inc/admin/options/shop/options-shop-product-page.php:396
 msgid "Show out of stock items as inactive."
 msgstr "Vis varer som ikke er på lager som inaktive."
 
-#: inc/admin/options/shop/options-shop-product-page.php:389
+#: inc/admin/options/shop/options-shop-product-page.php:404
 msgid "Disable deselection"
 msgstr "Deaktiver fravalg"
+
+#: inc/admin/options/social/options-social.php:75
+#: inc/admin/options/social/options-social.php:152
+#: inc/shortcodes/follow.php:184
+msgctxt "social media"
+msgid "X"
+msgstr "X"
+
+#: inc/admin/options/styles/options-colors.php:144
+msgid "Tooltip colors"
+msgstr "Farver på værktøjstips"
+
+#: inc/admin/options/styles/options-colors.php:150
+msgid "Tooltip color"
+msgstr "Farve på værktøjstip"
+
+#: inc/admin/options/styles/options-colors.php:159
+msgid "Tooltip background color"
+msgstr "Baggrundsfarve for værktøjstip"
 
 #: inc/admin/panel/panel.php:31
 msgid "Sorry, an error occurred while accessing the API."
@@ -866,6 +921,19 @@ msgstr "Dit websted er registreret. Men købskoden kunne ikke verificeres i øje
 #: inc/classes/class-flatsome-registration.php:145
 msgid "No purchase code."
 msgstr "Ingen købskode."
+
+#: inc/classes/class-flatsome-relay.php:227
+#: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
+msgid "Load more"
+msgstr "Hent flere"
+
+#: inc/classes/class-flatsome-relay.php:238
+msgid "Previous"
+msgstr "Forrige"
+
+#: inc/classes/class-flatsome-relay.php:243
+msgid "Next"
+msgstr "Næste"
 
 #: inc/classes/class-flatsome-wupdates-registration.php:70
 #: inc/classes/class-flatsome-wupdates-registration.php:108
@@ -971,72 +1039,68 @@ msgctxt "cookie notice"
 msgid "Accept"
 msgstr "Accepter"
 
-#: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
-msgid "View more"
-msgstr "Se mere"
-
 #: inc/extensions/flatsome-live-search/flatsome-live-search.php:199
 msgid "No matches found"
-msgstr "Ingen resultater fundet"
+msgstr "Det blev ikke fundet nogen match"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:72
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
 msgid "Swatch size"
 msgstr "Farveprøve størrelse"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:75
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:79
 msgid "X Small"
 msgstr "X-Small"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:80
 msgid "Small"
 msgstr "Small"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:77
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:81
 msgid "Medium"
 msgstr "Medium"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:78
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:82
 msgid "Large"
 msgstr "Large"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:79
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:83
 msgid "X Large"
 msgstr "X-Large"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:81
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
 msgid "Determines the size of the swatches."
 msgstr "Bestemmer størrelsen af farveprøverne."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
 msgid "Swatch shape"
 msgstr "Form på farveprøver"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:88
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
 msgid "Square"
 msgstr "Firkantet"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:93
 msgid "Rounded"
 msgstr "Afrundet"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:90
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:94
 msgid "Circle"
 msgstr "Cirkel"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
 msgid "Determines the shape of the swatches."
 msgstr "Bestemmer størrelsen af farveprøverne."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:97
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:100
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:101
 msgid "Use variation images?"
 msgstr "Brug variation billeder?"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:98
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:102
 msgid "Enable this if you want swatches for this attribute to be auto filled with variation images."
 msgstr "Aktiver dette hvis du ønsker at farveprøver automatisk udfyldes med variationsbilleder."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:338
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:342
 msgid "Value"
 msgstr "Værdi"
 
@@ -1056,21 +1120,21 @@ msgstr "UX Etiket"
 msgid "Quick View"
 msgstr "Vis"
 
-#: inc/functions/function-custom-css.php:739
-#: inc/woocommerce/structure-wc-global.php:326
+#: inc/functions/function-custom-css.php:665
+#: inc/woocommerce/structure-wc-global.php:330
 #: inc/woocommerce/structure-wc-product-box.php:29
 msgid "New"
 msgstr "Ny"
 
-#: inc/functions/function-custom-css.php:740
+#: inc/functions/function-custom-css.php:666
 msgid "Hot"
 msgstr "Populær"
 
-#: inc/functions/function-custom-css.php:741
+#: inc/functions/function-custom-css.php:667
 msgid "Sale"
 msgstr "Tilbud"
 
-#: inc/functions/function-custom-css.php:742
+#: inc/functions/function-custom-css.php:668
 msgid "Popular"
 msgstr "Populært"
 
@@ -1079,45 +1143,45 @@ msgstr "Populært"
 msgid "Follow on %s"
 msgstr "Følg os på %s"
 
-#: inc/functions/function-setup.php:65
-#: inc/functions/function-setup.php:189
+#: inc/functions/function-setup.php:85
+#: inc/functions/function-setup.php:223
 msgid "Main Menu"
 msgstr "Hoved Menu"
 
-#: inc/functions/function-setup.php:66
+#: inc/functions/function-setup.php:86
 msgid "Main Menu - Mobile"
 msgstr "Hovedmenu - Mobil"
 
-#: inc/functions/function-setup.php:67
+#: inc/functions/function-setup.php:87
 msgid "Secondary Menu"
 msgstr "Sekundær menu"
 
-#: inc/functions/function-setup.php:68
+#: inc/functions/function-setup.php:88
 msgid "Footer Menu"
 msgstr "Sidefod menu"
 
-#: inc/functions/function-setup.php:69
+#: inc/functions/function-setup.php:89
 msgid "Top Bar Menu"
 msgstr "Top panel menu"
 
-#: inc/functions/function-setup.php:70
+#: inc/functions/function-setup.php:90
 msgid "My Account Menu"
 msgstr "Min Konto menu"
 
-#: inc/functions/function-setup.php:94
+#: inc/functions/function-setup.php:125
 msgid "Sidebar"
 msgstr "Sidepanel"
 
-#: inc/functions/function-setup.php:104
+#: inc/functions/function-setup.php:135
 msgid "Footer 1"
 msgstr "Sidefod 1"
 
-#: inc/functions/function-setup.php:114
+#: inc/functions/function-setup.php:145
 msgid "Footer 2"
 msgstr "Sidefod 2"
 
-#: inc/functions/function-setup.php:190
-#: inc/shortcodes/accordion.php:116
+#: inc/functions/function-setup.php:224
+#: inc/shortcodes/accordion.php:140
 #: woocommerce/single-product/tabs/accordian.php:33
 msgid "Toggle"
 msgstr "Slå til/fra"
@@ -1161,98 +1225,103 @@ msgid "Wishlist"
 msgstr "Ønskeliste"
 
 #. translators: %s: Comment count
-#: inc/shortcodes/blog_posts.php:291
+#: inc/shortcodes/blog_posts.php:302
 msgid "%s Comment"
 msgid_plural "%s Comments"
 msgstr[0] "%s kommentar"
 msgstr[1] "%s kommentarer"
 
-#: inc/shortcodes/follow.php:121
-#: inc/shortcodes/follow.php:122
+#: inc/shortcodes/follow.php:124
+#: inc/shortcodes/follow.php:125
 msgid "Follow on Facebook"
 msgstr "Følg på Facebook"
 
-#: inc/shortcodes/follow.php:135
-#: inc/shortcodes/follow.php:136
+#: inc/shortcodes/follow.php:138
+#: inc/shortcodes/follow.php:139
 msgid "Follow on Instagram"
 msgstr "Følg på Instagram"
 
-#: inc/shortcodes/follow.php:149
-#: inc/shortcodes/follow.php:150
+#: inc/shortcodes/follow.php:152
+#: inc/shortcodes/follow.php:153
 msgid "Follow on TikTok"
 msgstr "Følg på TikTok"
 
-#: inc/shortcodes/follow.php:166
-#: inc/shortcodes/follow.php:167
+#: inc/shortcodes/follow.php:169
+#: inc/shortcodes/follow.php:170
 msgid "Follow on SnapChat"
 msgstr "Følg på SnapChat"
 
-#: inc/shortcodes/follow.php:173
+#: inc/shortcodes/follow.php:176
 msgid "Point the SnapChat camera at this to add us to SnapChat."
 msgstr "Ret SnapChat kameraet mod dette for at tilføje os SnapChat."
 
-#: inc/shortcodes/follow.php:185
-#: inc/shortcodes/follow.php:186
+#: inc/shortcodes/follow.php:188
+#: inc/shortcodes/follow.php:189
+msgid "Follow on X"
+msgstr "Følg på X"
+
+#: inc/shortcodes/follow.php:202
+#: inc/shortcodes/follow.php:203
 msgid "Follow on Twitter"
 msgstr "Følg på Twitter"
 
-#: inc/shortcodes/follow.php:199
-#: inc/shortcodes/follow.php:200
+#: inc/shortcodes/follow.php:216
+#: inc/shortcodes/follow.php:217
 msgid "Send us an email"
 msgstr "Send os en email"
 
-#: inc/shortcodes/follow.php:213
-#: inc/shortcodes/follow.php:214
+#: inc/shortcodes/follow.php:230
+#: inc/shortcodes/follow.php:231
 msgid "Call us"
 msgstr "Ring til os"
 
-#: inc/shortcodes/follow.php:227
-#: inc/shortcodes/follow.php:228
+#: inc/shortcodes/follow.php:244
+#: inc/shortcodes/follow.php:245
 msgid "Follow on Pinterest"
 msgstr "Følg på Pinterest"
 
-#: inc/shortcodes/follow.php:241
-#: inc/shortcodes/follow.php:242
+#: inc/shortcodes/follow.php:258
+#: inc/shortcodes/follow.php:259
 msgid "Subscribe to RSS"
 msgstr "Abonner på RSS"
 
-#: inc/shortcodes/follow.php:255
-#: inc/shortcodes/follow.php:256
+#: inc/shortcodes/follow.php:272
+#: inc/shortcodes/follow.php:273
 msgid "Follow on LinkedIn"
 msgstr "Følg på LinkedIn"
 
-#: inc/shortcodes/follow.php:269
-#: inc/shortcodes/follow.php:270
+#: inc/shortcodes/follow.php:286
+#: inc/shortcodes/follow.php:287
 msgid "Follow on YouTube"
 msgstr "Følg på YouTube"
 
-#: inc/shortcodes/follow.php:283
-#: inc/shortcodes/follow.php:284
+#: inc/shortcodes/follow.php:300
+#: inc/shortcodes/follow.php:301
 msgid "Flickr"
 msgstr "Flickr"
 
-#: inc/shortcodes/follow.php:297
-#: inc/shortcodes/follow.php:298
+#: inc/shortcodes/follow.php:314
+#: inc/shortcodes/follow.php:315
 msgid "Follow on 500px"
 msgstr "Følg på 500px"
 
-#: inc/shortcodes/follow.php:311
-#: inc/shortcodes/follow.php:312
+#: inc/shortcodes/follow.php:328
+#: inc/shortcodes/follow.php:329
 msgid "Follow on VKontakte"
 msgstr "Følg på VKontakte"
 
-#: inc/shortcodes/follow.php:325
-#: inc/shortcodes/follow.php:326
+#: inc/shortcodes/follow.php:342
+#: inc/shortcodes/follow.php:343
 msgid "Follow on Telegram"
 msgstr "Følg på Telegram"
 
-#: inc/shortcodes/follow.php:339
-#: inc/shortcodes/follow.php:340
+#: inc/shortcodes/follow.php:356
+#: inc/shortcodes/follow.php:357
 msgid "Follow on Twitch"
 msgstr "Følg på Twitch"
 
-#: inc/shortcodes/follow.php:353
-#: inc/shortcodes/follow.php:354
+#: inc/shortcodes/follow.php:370
+#: inc/shortcodes/follow.php:371
 msgid "Follow on Discord"
 msgstr "Følg på Discord"
 
@@ -1277,41 +1346,46 @@ msgstr "Del på Facebook"
 
 #: inc/shortcodes/share.php:125
 #: inc/shortcodes/share.php:126
+msgid "Share on X"
+msgstr "Del på X"
+
+#: inc/shortcodes/share.php:139
+#: inc/shortcodes/share.php:140
 msgid "Share on Twitter"
 msgstr "Del på Twitter"
 
 #. translators: %s: the share link.
-#: inc/shortcodes/share.php:137
+#: inc/shortcodes/share.php:151
 msgid "Check this out: %s"
 msgstr "Tjek dette ud: %s"
 
-#: inc/shortcodes/share.php:141
-#: inc/shortcodes/share.php:142
+#: inc/shortcodes/share.php:155
+#: inc/shortcodes/share.php:156
 msgid "Email to a Friend"
 msgstr "E-mail en ven"
 
-#: inc/shortcodes/share.php:159
-#: inc/shortcodes/share.php:160
+#: inc/shortcodes/share.php:173
+#: inc/shortcodes/share.php:174
 msgid "Pin on Pinterest"
 msgstr "Pin på Pinterest"
 
-#: inc/shortcodes/share.php:173
-#: inc/shortcodes/share.php:174
+#: inc/shortcodes/share.php:187
+#: inc/shortcodes/share.php:188
 msgid "Share on VKontakte"
 msgstr "Del på VKontakte"
 
-#: inc/shortcodes/share.php:187
-#: inc/shortcodes/share.php:188
+#: inc/shortcodes/share.php:201
+#: inc/shortcodes/share.php:202
 msgid "Share on LinkedIn"
 msgstr "Del på Linkedin"
 
-#: inc/shortcodes/share.php:201
-#: inc/shortcodes/share.php:202
+#: inc/shortcodes/share.php:215
+#: inc/shortcodes/share.php:216
 msgid "Share on Tumblr"
 msgstr "Del på Tumblr"
 
-#: inc/shortcodes/share.php:215
-#: inc/shortcodes/share.php:216
+#: inc/shortcodes/share.php:229
+#: inc/shortcodes/share.php:230
 msgid "Share on Telegram"
 msgstr "Del på Telegram"
 
@@ -1334,7 +1408,7 @@ msgstr "Forside"
 
 #: inc/structure/structure-posts.php:139
 msgid "<span class=\"icon-angle-left\"></span> Older posts"
-msgstr "<span class=\"icon-angle-left\"></span> Ældre artikel"
+msgstr "<span class=\"icon-angle-left\"></span> Tidligere indlæg"
 
 #: inc/structure/structure-posts.php:144
 msgid "Newer posts <span class=\"icon-angle-right\"></span>"
@@ -1350,7 +1424,7 @@ msgstr "%s <span class=\"says\">siger:</span>"
 
 #: inc/structure/structure-posts.php:186
 msgid "Your comment is awaiting moderation."
-msgstr "Din kommentar afventer godkendelse"
+msgstr "Din kommentar afventer godkendelse."
 
 #: inc/structure/structure-posts.php:195
 msgctxt "1: date, 2: time"
@@ -1393,13 +1467,13 @@ msgstr "Seneste Indlæg"
 #: template-parts/posts/partials/entry-footer-single.php:33
 #: template-parts/posts/partials/entry-footer.php:33
 msgid "<strong>1</strong> Comment"
-msgstr "<strong>1</strong> Komentar"
+msgstr "<strong>1</strong> Kommentar"
 
 #: inc/widgets/widget-recent-posts.php:86
 #: template-parts/posts/partials/entry-footer-single.php:33
 #: template-parts/posts/partials/entry-footer.php:33
 msgid "<strong>%</strong> Comments"
-msgstr "<strong>%</strong> Komentarer"
+msgstr "<strong>%</strong> Kommentarer"
 
 #: inc/widgets/widget-recent-posts.php:132
 msgid "Number of posts to show"
@@ -1426,6 +1500,20 @@ msgstr "Tilføj mersalgs-varer til varesiderne."
 msgid "Complete the look"
 msgstr "Fuldend udseendet"
 
+#: inc/woocommerce/class-mini-cart.php:135
+msgctxt "mini cart add to cart button label"
+msgid "Add"
+msgstr "Tilføj"
+
+#. translators: %s: The threshold
+#: inc/woocommerce/class-shipping.php:131
+msgid "Add %s to cart and get free shipping!"
+msgstr "Tilføj %s til kurv og få gratis forsendelse!"
+
+#: inc/woocommerce/class-shipping.php:142
+msgid "Your order qualifies for free shipping 🎉"
+msgstr "Din ordre kvalificerer sig til gratis forsendelse 🎉"
+
 #: inc/woocommerce/structure-wc-category-page.php:97
 #: inc/woocommerce/structure-wc-product-page-fields.php:31
 msgid "Top Content"
@@ -1433,7 +1521,7 @@ msgstr "Øverste indhold"
 
 #: inc/woocommerce/structure-wc-category-page.php:102
 msgid "Enter a value for this field. Shortcodes are allowed. This will be displayed at top of the category."
-msgstr "Indtast værdi i dette felt. Shortcodes er tilladt. Dette vil blive vist i toppen af categorien"
+msgstr "Angiv en værdi for dette felt. Kortkoder er tilladt. Dette vises øverst i kategorien."
 
 #: inc/woocommerce/structure-wc-category-page.php:119
 #: inc/woocommerce/structure-wc-product-page-fields.php:38
@@ -1446,25 +1534,25 @@ msgstr "Indtast en værdi for dette felt. Kortkoder er tilladt. Dette vil blive 
 
 #: inc/woocommerce/structure-wc-category-page.php:152
 msgid "Choose a custom product block layout for this category."
-msgstr "Vælg en brugerdefineret produkt blok layout for denne kategori."
+msgstr "Vælg et brugertilpasset vare-blok layout for denne kategori."
 
 #: inc/woocommerce/structure-wc-checkout.php:166
 msgid "I have read and agree"
 msgstr "Jeg har læst og accepteret"
 
-#: inc/woocommerce/structure-wc-global.php:90
+#: inc/woocommerce/structure-wc-global.php:94
 msgid "Shop Sidebar"
 msgstr "Shop sidepanel"
 
-#: inc/woocommerce/structure-wc-global.php:99
+#: inc/woocommerce/structure-wc-global.php:103
 msgid "Product Sidebar"
-msgstr "Produkt Sidebar"
+msgstr "Vare sidepanel"
 
-#: inc/woocommerce/structure-wc-global.php:258
+#: inc/woocommerce/structure-wc-global.php:262
 msgid "Posts found"
 msgstr "Indlæg fundet"
 
-#: inc/woocommerce/structure-wc-global.php:271
+#: inc/woocommerce/structure-wc-global.php:275
 msgid "Pages found"
 msgstr "Sider fundet"
 
@@ -1474,7 +1562,7 @@ msgstr "Vare layout"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:24
 msgid "Choose a custom product block layout for this product."
-msgstr "Vælg et brugerdefineret vare blok layout for denne vare."
+msgstr "Vælg et brugertilpasset vare-blok layout for denne vare."
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:33
 msgid "Enter content that will show after the header and before the product. Shortcodes are allowed"
@@ -1490,7 +1578,7 @@ msgstr "Ekstra"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:52
 msgid "Enable a custom bubble on this product."
-msgstr "Aktiver en brugerdefineret boble på denne vare."
+msgstr "Aktiver en brugertilpasset boble på denne vare."
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:82
 msgid "Custom Tab Content"
@@ -1498,7 +1586,7 @@ msgstr "Brugerdefineret fane indhold"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:84
 msgid "Enter content for custom product tab here. Shortcodes are allowed"
-msgstr "Indtast indhold for brugerdefineret vare fane her. Kortkoder er tilladt"
+msgstr "Indtast indhold for brugertilpasset vare fane her. Kortkoder er tilladt"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:93
 msgid "Product Video"
@@ -1520,6 +1608,10 @@ msgstr "Video"
 #: inc/woocommerce/structure-wc-product-page.php:104
 msgid "Zoom"
 msgstr "Zoom"
+
+#: inc/woocommerce/structure-wc-product-page.php:280
+msgid "Select options"
+msgstr "Vælg varianter"
 
 #. Template Name of the theme
 msgid "Page - Full Width - Parallax Title"
@@ -1635,12 +1727,17 @@ msgstr "Gå til toppen"
 #: template-parts/header/partials/element-contact-mobile.php:38
 #: template-parts/header/partials/element-contact.php:33
 msgid "Location"
-msgstr "Lokation"
+msgstr "Beliggenhed"
 
 #: template-parts/header/partials/element-contact-mobile.php:47
 #: template-parts/header/partials/element-contact.php:52
 msgid "Contact"
 msgstr "Kontakt"
+
+#: template-parts/header/partials/element-contact-mobile.php:81
+#: template-parts/header/partials/element-contact.php:92
+msgid "WhatsApp"
+msgstr "WhatsApp"
 
 #: template-parts/header/partials/element-menu-icon.php:13
 #: template-parts/header/partials/element-menu-icon.php:17
@@ -1653,6 +1750,11 @@ msgstr "Menu"
 msgid "Categories"
 msgstr "Kategorier"
 
+#: template-parts/portfolio/portfolio-summary-full.php:30
+#: template-parts/portfolio/portfolio-summary.php:26
+msgid "Tags"
+msgstr "Tags"
+
 #: template-parts/posts/content-none.php:14
 msgid "Nothing Found"
 msgstr "Intet indhold fundet"
@@ -1663,11 +1765,11 @@ msgstr "Klar til at udgive din første artikel? <a href=\"%1$s\">Kom i gang her<
 
 #: template-parts/posts/content-none.php:24
 msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
-msgstr "Beklager, der var ikke noget der matchede din søgning, Venligst prøv igen med andre ord"
+msgstr "Beklager, der var ikke noget der matchede din søgning, Venligst prøv igen med andre søgeord."
 
 #: template-parts/posts/content-none.php:29
 msgid "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help."
-msgstr "Det lader til, vi ikke kan finde det du leder efter, måske en søgning kan hjælpe"
+msgstr "﻿Det lader til at vi ikke kan finde det du leder efter. Måske en søgning kan hjælpe dig videre."
 
 #. translators: used between list items, there is a space after the comma
 #: template-parts/posts/content-single.php:31
@@ -1695,7 +1797,7 @@ msgstr "Dette indlæg var udgivet den %1$s. Bookmark <a href=\"%3$s\" title=\"Pe
 msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
 msgstr "Fortsæt med at læse <span class=\"meta-nav\">&rarr;</span>"
 
-#: template-parts/posts/loop/post-simple.php:32
+#: template-parts/posts/loop/post-simple.php:28
 msgid "%1$s Comment"
 msgid_plural "%1$s Comments"
 msgstr[0] "%1$s kommentar"
@@ -1703,7 +1805,7 @@ msgstr[1] "%1$s kommentarer"
 
 #: template-parts/posts/partials/archive-title.php:17
 msgid "Category Archives: %s"
-msgstr "Kategori Arkiver: %s"
+msgstr "Kategori arkiver: %s"
 
 #: template-parts/posts/partials/archive-title.php:20
 msgid "Tag Archives: %s"
@@ -1715,7 +1817,7 @@ msgstr "Søgeresultat for \"%s\""
 
 #: template-parts/posts/partials/archive-title.php:30
 msgid "Author Archives: %s"
-msgstr "Forfatter Arkiver: %s"
+msgstr "Forfatter arkiver: %s"
 
 #: template-parts/posts/partials/archive-title.php:38
 msgid "Daily Archives: %s"
@@ -1723,7 +1825,7 @@ msgstr "Daglige Arkiver: %s"
 
 #: template-parts/posts/partials/archive-title.php:41
 msgid "Monthly Archives: %s"
-msgstr "Månedlig Arkiver: %s"
+msgstr "Månedlige arkiver: %s"
 
 #: template-parts/posts/partials/archive-title.php:44
 msgid "Yearly Archives: %s"
@@ -1731,7 +1833,7 @@ msgstr "Årlig Arkiver: %s"
 
 #: template-parts/posts/partials/archive-title.php:47
 msgid "Asides"
-msgstr "Tilside"
+msgstr "Sidepaneler"
 
 #: template-parts/posts/partials/archive-title.php:50
 msgid "Images"
@@ -1798,4 +1900,34 @@ msgstr "Har du ikke en konto? Registrer en!"
 #: woocommerce/myaccount/form-login-lightbox-right-panel.php:121
 msgid "Register an Account"
 msgstr "Registrer en konto"
+
+#: inc/blocks/uxbuilder/block.json
+msgctxt "block title"
+msgid "UX Builder content"
+msgstr "UX Builder indhold"
+
+#: inc/blocks/uxbuilder/block.json
+msgctxt "block description"
+msgid "This block contains content created with UX Builder."
+msgstr "Denne blok indeholder indhold, der er oprettet med UX Builder."
+
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr "Primær"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr "Sekundær"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Success"
+msgstr "Gennemført"
+
+#: theme.json
+msgctxt "Color name"
+msgid "Alert"
+msgstr "Advarsel"
 

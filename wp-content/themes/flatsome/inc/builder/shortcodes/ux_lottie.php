@@ -24,17 +24,17 @@ add_ux_builder_shortcode( 'ux_lottie', array(
 			'type'    => 'group',
 			'heading' => __( 'Settings', 'flatsome' ),
 			'options' => array(
-				'loop'             => array(
+				'loop'               => array(
 					'type'    => 'checkbox',
 					'heading' => __( 'Loop', 'flatsome' ),
 					'default' => 'true',
 				),
-				'autoplay'         => array(
+				'autoplay'           => array(
 					'type'    => 'checkbox',
 					'heading' => __( 'Autoplay', 'flatsome' ),
 					'default' => 'true',
 				),
-				'trigger'          => array(
+				'trigger'            => array(
 					'type'       => 'select',
 					'heading'    => __( 'Trigger', 'flatsome' ),
 					'conditions' => 'autoplay != "true"',
@@ -46,7 +46,7 @@ add_ux_builder_shortcode( 'ux_lottie', array(
 						'scroll' => 'On scroll',
 					),
 				),
-				'mouseout'         => array(
+				'mouseout'           => array(
 					'type'       => 'select',
 					'heading'    => __( 'Mouse out', 'flatsome' ),
 					'conditions' => 'autoplay != "true" && trigger == "hover"',
@@ -56,7 +56,7 @@ add_ux_builder_shortcode( 'ux_lottie', array(
 						'reverse' => 'Reverse',
 					),
 				),
-				'speed'            => array(
+				'speed'              => array(
 					'type'       => 'slider',
 					'heading'    => __( 'Speed', 'flatsome' ),
 					'conditions' => 'autoplay == "true" || trigger == "hover" || trigger == "click"',
@@ -65,13 +65,25 @@ add_ux_builder_shortcode( 'ux_lottie', array(
 					'max'        => '5',
 					'step'       => '0.1',
 				),
-				'reverse'          => array(
+				'reverse'            => array(
 					'type'       => 'checkbox',
 					'heading'    => __( 'Reverse', 'flatsome' ),
 					'conditions' => 'autoplay == "true" || trigger == "hover" || trigger == "click"',
 					'default'    => 'false',
 				),
-				'visibility_start' => array(
+				'scroll_action_type' => array(
+					'type'       => 'radio-buttons',
+					'heading'    => __( 'Scroll action type', 'flatsome' ),
+					'full_width' => true,
+					'conditions' => 'autoplay != "true" && trigger == "scroll"',
+					'default'    => 'seek',
+					'options'    => array(
+						'seek'     => array( 'title' => 'Seek' ),
+						'play'     => array( 'title' => 'Play' ),
+						'playOnce' => array( 'title' => 'Play once' ),
+					),
+				),
+				'visibility_start'   => array(
 					'type'        => 'slider',
 					'heading'     => __( 'Visibility start', 'flatsome' ),
 					'full_width'  => true,
@@ -83,7 +95,7 @@ add_ux_builder_shortcode( 'ux_lottie', array(
 					'step'        => '1',
 					'unit'        => '%',
 				),
-				'visibility_end'   => array(
+				'visibility_end'     => array(
 					'type'        => 'slider',
 					'heading'     => __( 'Visibility end', 'flatsome' ),
 					'full_width'  => true,
@@ -95,7 +107,7 @@ add_ux_builder_shortcode( 'ux_lottie', array(
 					'step'        => '1',
 					'unit'        => '%',
 				),
-				'start'            => array(
+				'start'              => array(
 					'type'       => 'slider',
 					'heading'    => __( 'Frame start', 'flatsome' ),
 					'full_width' => true,
@@ -105,7 +117,7 @@ add_ux_builder_shortcode( 'ux_lottie', array(
 					'step'       => '1',
 					'unit'       => '%',
 				),
-				'end'              => array(
+				'end'                => array(
 					'type'       => 'slider',
 					'heading'    => __( 'Frame end', 'flatsome' ),
 					'full_width' => true,
@@ -115,7 +127,7 @@ add_ux_builder_shortcode( 'ux_lottie', array(
 					'step'       => '1',
 					'unit'       => '%',
 				),
-				'controls'         => array(
+				'controls'           => array(
 					'type'    => 'checkbox',
 					'heading' => __( 'Controls', 'flatsome' ),
 					'default' => 'false',

@@ -13,7 +13,7 @@
  * @see              https://docs.woocommerce.com/document/template-structure/
  * @package          WooCommerce/Templates
  * @version          3.6.0
- * @flatsome-version 3.16.0
+ * @flatsome-version 3.18.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,7 +33,7 @@ $average      = $product->get_average_rating();
 if ( $rating_count > 0 ) : ?>
 
 	<div class="woocommerce-product-rating">
-		<?php echo flatsome_get_rating_html( $average, $rating_count ); // WPCS: XSS ok. ?>
+		<?php echo flatsome_get_rating_html( $average, $rating_count, true ); // WPCS: XSS ok. ?>
 		<?php if ( get_theme_mod( 'product_info_review_count' ) && get_theme_mod( 'product_info_review_count_style' ) != 'tooltip' ) : ?>
 			<?php if ( comments_open() ) : ?>
 			<?php //phpcs:disable ?>

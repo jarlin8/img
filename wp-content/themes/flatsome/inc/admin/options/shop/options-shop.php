@@ -35,13 +35,21 @@ function flatsome_refresh_shop_partials( WP_Customize_Manager $wp_customize ) {
 	) );
 
 	$wp_customize->selective_refresh->add_partial( 'shop-header', array(
-	    'selector' => '.woocommerce .category-page-title',
-	    	    'fallback_refresh' => false,
-	    'settings' => array('html_shop_page','category_title_style','category_show_title','breadcrumb_home','category_filter_text'),
-	    'container_inclusive' => true,
-	    'render_callback' => function() {
-	        flatsome_category_header();
-	    },
+		'selector'            => '.woocommerce .category-page-title',
+		'fallback_refresh'    => false,
+		'settings'            => array(
+			'html_shop_page',
+			'category_title_style',
+			'category_show_title',
+			'category_show_result_count',
+			'category_show_catalog_ordering',
+			'breadcrumb_home',
+			'category_filter_text',
+		),
+		'container_inclusive' => true,
+		'render_callback'     => function () {
+			flatsome_category_header();
+		},
 	) );
 
 	$wp_customize->selective_refresh->add_partial( 'shop-grid', array(

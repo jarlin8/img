@@ -54,7 +54,7 @@ class Flatsome_Infinite_Scroll {
 		$theme         = wp_get_theme( get_template() );
 		$this->version = $theme->get( 'Version' );
 
-		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'wp', array( $this, 'init' ) );
 	}
 
 	/**
@@ -74,9 +74,9 @@ class Flatsome_Infinite_Scroll {
 	 * Initialize extension
 	 */
 	public function init() {
-		if ( is_admin() ) {
+		if ( is_admin() || ! flatsome_is_shop_archive() ) {
 			return;
-		} // Disable for admin
+		}
 
 		$this->loader_type = get_theme_mod( 'infinite_scroll_loader_type', 'spinner' );
 		$this->list_style  = get_theme_mod( 'category_grid_style', 'grid' );

@@ -9,9 +9,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-08-06T17:28:08+00:00\n"
-"PO-Revision-Date: 2023-08-06 17:53\n"
-"X-Generator: WP-CLI 2.6.0\n"
+"POT-Creation-Date: 2023-11-13T10:54:44+00:00\n"
+"PO-Revision-Date: 2023-11-13 10:56\n"
+"X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: flatsome\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
 "X-Crowdin-Project: l10n-flatsome\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Language: cs_CZ\n"
 
 #. Theme Name of the theme
-#: inc/admin/admin-notice.php:77
+#: inc/admin/admin-notice.php:75
 msgid "Flatsome"
 msgstr ""
 
@@ -115,7 +115,7 @@ msgstr "<span class=\"meta-nav\">&larr;</span> Předchozí"
 msgid "Next <span class=\"meta-nav\">&rarr;</span>"
 msgstr "Další <span class=\"meta-nav\">&rarr;</span>"
 
-#: inc/admin/admin-bar.php:82
+#: inc/admin/admin-bar.php:87
 msgid "Activate Theme"
 msgstr "Aktivovat šablonu"
 
@@ -133,29 +133,30 @@ msgid "Manage registration"
 msgstr "Spravovat registraci"
 
 #: inc/admin/admin-notice.php:43
+#: inc/admin/envato_setup/envato_setup.php:2018
 #: inc/functions/function-site-health.php:79
 #: template-parts/admin/envato/register-form.php:105
 msgid "Manage your licenses"
 msgstr "Správa vašich licencí"
 
 #. translators: %1$s: Theme name, %2$s: The URL to the status page.
-#: inc/admin/admin-notice.php:81
+#: inc/admin/admin-notice.php:79
 msgid "<strong>Your theme (%1$s) contains outdated copies of some Flatsome template files.</strong> These files may need updating to ensure they are compatible with the current version of Flatsome. Suggestions:"
 msgstr "<strong>Vaše šablona (%1$s) obsahuje zastaralé kopie některých souborů šablony Flatsome.</strong> Tyto soubory mohou vyžadovat aktualizaci, aby bylo zajištěno, že jsou kompatibilní s aktuální verzí Flatsome. Návrhy:"
 
-#: inc/admin/admin-notice.php:84
+#: inc/admin/admin-notice.php:82
 msgid "If you copied over a template file to change something, then you will need to copy the new version of the template and apply your changes again."
 msgstr "Pokud jste zkopírovali soubor šablony, abyste něco změnili, budete muset zkopírovat novou verzi šablony a znovu použít změny."
 
-#: inc/admin/admin-notice.php:85
+#: inc/admin/admin-notice.php:83
 msgid "If you are unfamiliar with code/templates and resolving potential conflicts, reach out to a developer for assistance."
 msgstr "Pokud neznáte kód šablony a řešení potenciálních konfliktů, požádejte o pomoc vývojáře."
 
-#: inc/admin/admin-notice.php:88
+#: inc/admin/admin-notice.php:86
 msgid "Learn more about templates"
 msgstr "Další informace o šablonách"
 
-#: inc/admin/admin-notice.php:91
+#: inc/admin/admin-notice.php:89
 msgid "View affected templates"
 msgstr "Zobrazit ovlivněné šablony"
 
@@ -180,106 +181,110 @@ msgstr "Zrušit"
 msgid "Connect"
 msgstr "Připojit"
 
-#: inc/admin/backend/menu/class-menu.php:91
+#: inc/admin/advanced/functions/functions.php:23
+msgid "Super Admin"
+msgstr ""
+
+#: inc/admin/backend/menu/class-menu.php:89
 msgid "Flatsome menu item options"
 msgstr "Možnosti položek menu Flatsome"
 
-#: inc/admin/backend/menu/class-menu.php:95
+#: inc/admin/backend/menu/class-menu.php:93
 msgid "Menu dropdown"
 msgstr "Rozbalovací menu"
 
-#: inc/admin/backend/menu/class-menu.php:98
+#: inc/admin/backend/menu/class-menu.php:96
 msgid "Design"
 msgstr "Design"
 
-#: inc/admin/backend/menu/class-menu.php:100
+#: inc/admin/backend/menu/class-menu.php:98
 msgid "Default"
 msgstr "Výchozí"
 
-#: inc/admin/backend/menu/class-menu.php:101
+#: inc/admin/backend/menu/class-menu.php:99
 msgid "Default (custom size)"
 msgstr "Výchozí (vlastní velikost)"
 
-#: inc/admin/backend/menu/class-menu.php:102
+#: inc/admin/backend/menu/class-menu.php:100
 msgid "Container width"
 msgstr "Šířka sloupce"
 
-#: inc/admin/backend/menu/class-menu.php:103
+#: inc/admin/backend/menu/class-menu.php:101
 msgid "Full width"
 msgstr "Na celou šířku"
 
-#: inc/admin/backend/menu/class-menu.php:106
+#: inc/admin/backend/menu/class-menu.php:104
 msgid "Select dropdown design."
 msgstr "Vyberte design rozevíracího seznamu."
 
-#: inc/admin/backend/menu/class-menu.php:110
-#: inc/admin/backend/menu/class-menu.php:161
+#: inc/admin/backend/menu/class-menu.php:108
+#: inc/admin/backend/menu/class-menu.php:159
 #: inc/admin/options/header/options-header-nav-vertical.php:55
 #: inc/admin/options/header/options-header-nav-vertical.php:146
 msgid "Width"
 msgstr "Šířka"
 
-#: inc/admin/backend/menu/class-menu.php:116
+#: inc/admin/backend/menu/class-menu.php:114
 msgid "Height (optional)"
 msgstr "Výška (volitelné)"
 
-#: inc/admin/backend/menu/class-menu.php:122
+#: inc/admin/backend/menu/class-menu.php:120
 #: inc/widgets/widget-blocks.php:88
 msgid "UX Block"
 msgstr "UX Block"
 
-#: inc/admin/backend/menu/class-menu.php:134
+#: inc/admin/backend/menu/class-menu.php:132
 msgid "Reveal"
 msgstr "Zobrazit"
 
-#: inc/admin/backend/menu/class-menu.php:136
+#: inc/admin/backend/menu/class-menu.php:134
 msgid "On hover"
 msgstr "Při najetí myši"
 
-#: inc/admin/backend/menu/class-menu.php:137
+#: inc/admin/backend/menu/class-menu.php:135
 msgid "On click"
 msgstr "Při kliknutí"
 
-#: inc/admin/backend/menu/class-menu.php:143
+#: inc/admin/backend/menu/class-menu.php:141
 msgid "Menu icon"
 msgstr "Ikona menu"
 
-#: inc/admin/backend/menu/class-menu.php:146
+#: inc/admin/backend/menu/class-menu.php:144
 msgid "Icon type"
 msgstr "Typ ikony"
 
-#: inc/admin/backend/menu/class-menu.php:148
+#: inc/admin/backend/menu/class-menu.php:146
 msgid "Media library"
 msgstr "Knihovna médií"
 
-#: inc/admin/backend/menu/class-menu.php:149
+#: inc/admin/backend/menu/class-menu.php:147
 msgid "Custom content"
 msgstr "Vlastní obsah"
 
-#: inc/admin/backend/menu/class-menu.php:165
+#: inc/admin/backend/menu/class-menu.php:163
 #: inc/admin/options/header/options-header-nav-vertical.php:41
 msgid "Height"
 msgstr "Výška"
 
-#: inc/admin/backend/menu/class-menu.php:168
+#: inc/admin/backend/menu/class-menu.php:166
 msgid "Icons default (empty) to 20x20."
 msgstr "Výchozí ikony (prázdné) jsou 20x20."
 
-#: inc/admin/backend/menu/class-menu.php:173
+#: inc/admin/backend/menu/class-menu.php:171
 msgid "Markup"
 msgstr "Značka"
 
-#: inc/admin/backend/menu/class-menu.php:176
+#: inc/admin/backend/menu/class-menu.php:174
 msgid "Add any HTML, SVG or shortcode here."
 msgstr "Zde přidejte libovolný HTML, SVG nebo shortcode."
 
-#: inc/admin/backend/menu/class-menu.php:247
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:222
+#: inc/admin/backend/menu/class-menu.php:245
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:226
 msgid "Select image"
 msgstr "Vybrat obrázek"
 
-#: inc/admin/backend/menu/class-menu.php:252
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:223
+#: inc/admin/backend/menu/class-menu.php:250
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:227
 msgid "Remove"
 msgstr "Odstranit"
 
@@ -366,8 +371,8 @@ msgstr "Zobrazuje, zda je aktuální aktivní šablona podřízenou šablonou."
 
 #. translators: %s: Docs link.
 #: inc/admin/classes/class-status.php:628
-msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">How to create a child theme</a>"
-msgstr "Pokud upravujete Flatsome v nadřazené šabloně, doporučujeme použít podřízenou šablonu. Viz: <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Jak vytvořit podřízenou šablonu</a>"
+msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\">How to create a child theme</a>"
+msgstr ""
 
 #: inc/admin/classes/class-status.php:634
 msgid "Release channel"
@@ -516,8 +521,8 @@ msgstr "Je připojení k vašemu webu bezpečné?"
 
 #. translators: %s: Docs link.
 #: inc/admin/classes/class-status.php:900
-msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Learn more about HTTPS and SSL Certificates</a>."
-msgstr "Váš web nepoužívá HTTPS. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Další informace o HTTPS a certifikátech SSL</a> ."
+msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\">Learn more about HTTPS and SSL Certificates</a>."
+msgstr ""
 
 #: inc/admin/classes/class-status.php:907
 msgid "Hide errors from visitors"
@@ -556,23 +561,23 @@ msgstr "Tato část zobrazuje všechny soubory, které přepisují výchozí ša
 msgid "%1$s version %2$s is out of date. The core version is %3$s"
 msgstr "%1$s verze %2$s je zastaralá. Základní verze je %3$s"
 
-#: inc/admin/envato_setup/envato_setup.php:2010
+#: inc/admin/envato_setup/envato_setup.php:2011
 msgid "Register Theme"
 msgstr "Registrovat šablonu"
 
-#: inc/admin/envato_setup/envato_setup.php:2031
+#: inc/admin/envato_setup/envato_setup.php:2036
 msgid "Continue"
 msgstr "Pokračovat"
 
-#: inc/admin/envato_setup/envato_setup.php:2032
+#: inc/admin/envato_setup/envato_setup.php:2037
 msgid "Unregister"
 msgstr "Zrušit registraci"
 
-#: inc/admin/envato_setup/envato_setup.php:2034
+#: inc/admin/envato_setup/envato_setup.php:2039
 msgid "Register"
 msgstr "Registrovat"
 
-#: inc/admin/gutenberg/class-gutenberg.php:109
+#: inc/admin/gutenberg/class-gutenberg.php:119
 msgid "Edit with UX Builder"
 msgstr "Upravit pomocí UX Buideru"
 
@@ -600,6 +605,29 @@ msgstr "Navigace Další/Předchozí"
 msgid "HTML after blog posts"
 msgstr "HTML po příspěvcích na blogu"
 
+#: inc/admin/options/header/options-header-cart.php:117
+msgid "Show quantity input"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:127
+#: inc/admin/options/shop/options-shop-cart-checkout.php:81
+#: inc/admin/options/shop/options-shop-cart-checkout.php:258
+msgid "Show free shipping"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:158
+#: inc/admin/options/styles/options-lightbox.php:30
+msgid "Drawer width"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:167
+msgid "Sticky footer"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:177
+msgid "Show cross sells"
+msgstr ""
+
 #: inc/admin/options/header/options-header-logo.php:106
 msgid "Logo link"
 msgstr "URL odkazu loga"
@@ -608,80 +636,80 @@ msgstr "URL odkazu loga"
 msgid "Custom logo link (defaults to home page link if empty)."
 msgstr "Vlastní odkaz loga (pokud je prázdný bude použit výchozí odkaz na domovskou stránku)."
 
-#: inc/admin/options/header/options-header-mobile.php:85
+#: inc/admin/options/header/options-header-mobile.php:100
 msgid "Menu item behavior"
 msgstr "Chování položky nabídky"
 
-#: inc/admin/options/header/options-header-mobile.php:86
+#: inc/admin/options/header/options-header-mobile.php:101
 msgid "Click behavior for menu items with a submenu"
 msgstr "Chování kliknutí pro položky nabídky s podnabídkou"
 
-#: inc/admin/options/header/options-header-mobile.php:91
+#: inc/admin/options/header/options-header-mobile.php:106
 msgid "Open link"
 msgstr "Otevřít odkaz"
 
-#: inc/admin/options/header/options-header-mobile.php:92
+#: inc/admin/options/header/options-header-mobile.php:107
 msgid "Toggle submenu"
 msgstr "Přepnout podnabídku"
 
-#: inc/admin/options/header/options-header-mobile.php:99
+#: inc/admin/options/header/options-header-mobile.php:114
 msgid "Submenu effect"
 msgstr "Efekt podnabídky"
 
-#: inc/admin/options/header/options-header-mobile.php:104
+#: inc/admin/options/header/options-header-mobile.php:119
 msgid "Accordion"
 msgstr "Rozbalovací záložky"
 
-#: inc/admin/options/header/options-header-mobile.php:105
+#: inc/admin/options/header/options-header-mobile.php:120
 msgid "Slide"
 msgstr "Slide"
 
-#: inc/admin/options/header/options-header-mobile.php:119
+#: inc/admin/options/header/options-header-mobile.php:134
 msgid "Submenu levels"
 msgstr "Úrovně podnabídky"
 
-#: inc/admin/options/header/options-header-mobile.php:124
+#: inc/admin/options/header/options-header-mobile.php:139
 msgid "1 level"
 msgstr "1 úroveň"
 
-#: inc/admin/options/header/options-header-mobile.php:125
+#: inc/admin/options/header/options-header-mobile.php:140
 msgid "2 levels"
 msgstr "2 úrovně"
 
-#: inc/admin/options/header/options-header-mobile.php:144
+#: inc/admin/options/header/options-header-mobile.php:159
 msgid "Top content"
 msgstr "Obsah nahoře"
 
-#: inc/admin/options/header/options-header-mobile.php:153
+#: inc/admin/options/header/options-header-mobile.php:168
 msgid "Tabs"
 msgstr "Záložky"
 
-#: inc/admin/options/header/options-header-mobile.php:157
+#: inc/admin/options/header/options-header-mobile.php:172
 msgid "None"
 msgstr "Žádný"
 
-#: inc/admin/options/header/options-header-mobile.php:158
+#: inc/admin/options/header/options-header-mobile.php:173
 msgid "2 Tabs"
 msgstr "2 karty"
 
-#: inc/admin/options/header/options-header-mobile.php:165
+#: inc/admin/options/header/options-header-mobile.php:180
 msgid "Tab 1 text"
 msgstr "Text karty 1"
 
-#: inc/admin/options/header/options-header-mobile.php:180
+#: inc/admin/options/header/options-header-mobile.php:195
 msgid "Menu elements"
 msgstr "Prvky menu"
 
-#: inc/admin/options/header/options-header-mobile.php:191
+#: inc/admin/options/header/options-header-mobile.php:206
 msgid "Tab 2 text"
 msgstr "Text karty 2"
 
-#: inc/admin/options/header/options-header-mobile.php:206
+#: inc/admin/options/header/options-header-mobile.php:221
 msgid "Menu elements tab 2"
 msgstr "Karta prvků nabídky 2"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:9
-#: inc/functions/function-setup.php:71
+#: inc/functions/function-setup.php:91
 msgid "Vertical Menu"
 msgstr "Vertikální menu"
 
@@ -739,7 +767,7 @@ msgstr "Barva navigace :hover"
 msgid "Nav background color :hover"
 msgstr "Barva pozadí navigace :hover"
 
-#: inc/admin/options/notifications/options-notifications.php:98
+#: inc/admin/options/notifications/options-notifications.php:140
 #: inc/extensions/flatsome-cookie-notice/flatsome-cookie-notice.php:39
 msgid "This site uses cookies to offer you a better browsing experience. By browsing this website, you agree to our use of cookies."
 msgstr "Tato stránka používá cookies, aby vám nabídla lepší zážitek z prohlížení. Prohlížením tohoto webu souhlasíte s používáním souborů cookies."
@@ -756,8 +784,16 @@ msgstr "Přepravní informace v boxu"
 msgid "Show shipping estimate destination"
 msgstr "Zobrazit odhadovaný cíl dopravy"
 
-#: inc/admin/options/shop/options-shop-category.php:748
-#: inc/admin/options/shop/options-shop-product-page.php:398
+#: inc/admin/options/shop/options-shop-category.php:261
+msgid "Show result count"
+msgstr ""
+
+#: inc/admin/options/shop/options-shop-category.php:270
+msgid "Show catalog ordering"
+msgstr ""
+
+#: inc/admin/options/shop/options-shop-category.php:766
+#: inc/admin/options/shop/options-shop-product-page.php:413
 msgid "Color :selected"
 msgstr "Barva :selected"
 
@@ -767,29 +803,48 @@ msgstr "Barva :selected"
 msgid "Custom product layout"
 msgstr "Vlastní rozložení produktu"
 
-#: inc/admin/options/shop/options-shop-product-page.php:359
+#: inc/admin/options/shop/options-shop-product-page.php:374
 msgid "Layout"
 msgstr "Rozložení"
 
-#: inc/admin/options/shop/options-shop-product-page.php:371
+#: inc/admin/options/shop/options-shop-product-page.php:386
 msgid "Tooltip"
 msgstr "Vysvětlivka"
 
-#: inc/admin/options/shop/options-shop-product-page.php:372
+#: inc/admin/options/shop/options-shop-product-page.php:387
 msgid "Show a tooltip with the term or term description."
 msgstr "Zobrazit popisek s termínem nebo popisem termínu."
 
-#: inc/admin/options/shop/options-shop-product-page.php:380
+#: inc/admin/options/shop/options-shop-product-page.php:395
 msgid "Inactive out of stock"
 msgstr "Neaktivní Vyprodáno"
 
-#: inc/admin/options/shop/options-shop-product-page.php:381
+#: inc/admin/options/shop/options-shop-product-page.php:396
 msgid "Show out of stock items as inactive."
 msgstr "Označit položky, které nejsou skladem, jako neaktivní."
 
-#: inc/admin/options/shop/options-shop-product-page.php:389
+#: inc/admin/options/shop/options-shop-product-page.php:404
 msgid "Disable deselection"
 msgstr "Zakázat zrušení výběru"
+
+#: inc/admin/options/social/options-social.php:75
+#: inc/admin/options/social/options-social.php:152
+#: inc/shortcodes/follow.php:184
+msgctxt "social media"
+msgid "X"
+msgstr ""
+
+#: inc/admin/options/styles/options-colors.php:144
+msgid "Tooltip colors"
+msgstr ""
+
+#: inc/admin/options/styles/options-colors.php:150
+msgid "Tooltip color"
+msgstr ""
+
+#: inc/admin/options/styles/options-colors.php:159
+msgid "Tooltip background color"
+msgstr ""
 
 #: inc/admin/panel/panel.php:31
 msgid "Sorry, an error occurred while accessing the API."
@@ -868,6 +923,19 @@ msgstr "Vaše stránky jsou registrovány. Nákupní kód však v tuto chvíli n
 #: inc/classes/class-flatsome-registration.php:145
 msgid "No purchase code."
 msgstr "Žádný nákupní kód."
+
+#: inc/classes/class-flatsome-relay.php:227
+#: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
+msgid "Load more"
+msgstr ""
+
+#: inc/classes/class-flatsome-relay.php:238
+msgid "Previous"
+msgstr ""
+
+#: inc/classes/class-flatsome-relay.php:243
+msgid "Next"
+msgstr ""
 
 #: inc/classes/class-flatsome-wupdates-registration.php:70
 #: inc/classes/class-flatsome-wupdates-registration.php:108
@@ -973,72 +1041,68 @@ msgctxt "cookie notice"
 msgid "Accept"
 msgstr "Přijmout"
 
-#: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
-msgid "View more"
-msgstr "Zobrazit více"
-
 #: inc/extensions/flatsome-live-search/flatsome-live-search.php:199
 msgid "No matches found"
 msgstr "Nebyly nalezeny žádné výsledky"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:72
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
 msgid "Swatch size"
 msgstr "Velikost vzorníku"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:75
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:79
 msgid "X Small"
 msgstr "Extra malé"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:80
 msgid "Small"
 msgstr "Malé"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:77
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:81
 msgid "Medium"
 msgstr "Střední"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:78
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:82
 msgid "Large"
 msgstr "Velké"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:79
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:83
 msgid "X Large"
 msgstr "Extra velké"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:81
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
 msgid "Determines the size of the swatches."
 msgstr "Určuje velikost vzorníku."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
 msgid "Swatch shape"
 msgstr "Tvar vzorníku"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:88
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
 msgid "Square"
 msgstr "Čtverec"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:93
 msgid "Rounded"
 msgstr "Zaoblené"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:90
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:94
 msgid "Circle"
 msgstr "Kruh"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
 msgid "Determines the shape of the swatches."
 msgstr "Určuje tvar vzorníku."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:97
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:100
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:101
 msgid "Use variation images?"
 msgstr "Použít obrázky variant?"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:98
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:102
 msgid "Enable this if you want swatches for this attribute to be auto filled with variation images."
 msgstr "Povolte, pokud chcete, aby se políčka pro tento atribut automaticky vyplňovala obrázky variant."
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:338
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:342
 msgid "Value"
 msgstr "Hodnota"
 
@@ -1058,21 +1122,21 @@ msgstr "Štítek UX"
 msgid "Quick View"
 msgstr "Rychlý náhled"
 
-#: inc/functions/function-custom-css.php:739
-#: inc/woocommerce/structure-wc-global.php:326
+#: inc/functions/function-custom-css.php:665
+#: inc/woocommerce/structure-wc-global.php:330
 #: inc/woocommerce/structure-wc-product-box.php:29
 msgid "New"
 msgstr "Nové"
 
-#: inc/functions/function-custom-css.php:740
+#: inc/functions/function-custom-css.php:666
 msgid "Hot"
 msgstr "Top"
 
-#: inc/functions/function-custom-css.php:741
+#: inc/functions/function-custom-css.php:667
 msgid "Sale"
 msgstr "Sleva"
 
-#: inc/functions/function-custom-css.php:742
+#: inc/functions/function-custom-css.php:668
 msgid "Popular"
 msgstr "Oblíbené"
 
@@ -1081,45 +1145,45 @@ msgstr "Oblíbené"
 msgid "Follow on %s"
 msgstr "Sledovat na %s"
 
-#: inc/functions/function-setup.php:65
-#: inc/functions/function-setup.php:189
+#: inc/functions/function-setup.php:85
+#: inc/functions/function-setup.php:223
 msgid "Main Menu"
 msgstr "Hlavní menu"
 
-#: inc/functions/function-setup.php:66
+#: inc/functions/function-setup.php:86
 msgid "Main Menu - Mobile"
 msgstr "Hlavní menu - Mobil"
 
-#: inc/functions/function-setup.php:67
+#: inc/functions/function-setup.php:87
 msgid "Secondary Menu"
 msgstr "Vedlejší menu"
 
-#: inc/functions/function-setup.php:68
+#: inc/functions/function-setup.php:88
 msgid "Footer Menu"
 msgstr "Menu v patičce"
 
-#: inc/functions/function-setup.php:69
+#: inc/functions/function-setup.php:89
 msgid "Top Bar Menu"
 msgstr "Menu v horním pruhu"
 
-#: inc/functions/function-setup.php:70
+#: inc/functions/function-setup.php:90
 msgid "My Account Menu"
 msgstr "Menu v  \"Můj účet\""
 
-#: inc/functions/function-setup.php:94
+#: inc/functions/function-setup.php:125
 msgid "Sidebar"
 msgstr "Postranní panel"
 
-#: inc/functions/function-setup.php:104
+#: inc/functions/function-setup.php:135
 msgid "Footer 1"
 msgstr "Patička č. 1"
 
-#: inc/functions/function-setup.php:114
+#: inc/functions/function-setup.php:145
 msgid "Footer 2"
 msgstr "Patička č. 2"
 
-#: inc/functions/function-setup.php:190
-#: inc/shortcodes/accordion.php:116
+#: inc/functions/function-setup.php:224
+#: inc/shortcodes/accordion.php:140
 #: woocommerce/single-product/tabs/accordian.php:33
 msgid "Toggle"
 msgstr "Přepnout"
@@ -1163,7 +1227,7 @@ msgid "Wishlist"
 msgstr "Seznam přání"
 
 #. translators: %s: Comment count
-#: inc/shortcodes/blog_posts.php:291
+#: inc/shortcodes/blog_posts.php:302
 msgid "%s Comment"
 msgid_plural "%s Comments"
 msgstr[0] "%s komentář"
@@ -1171,92 +1235,97 @@ msgstr[1] "%s komentáře"
 msgstr[2] "%s komentářů"
 msgstr[3] "%s komentářů"
 
-#: inc/shortcodes/follow.php:121
-#: inc/shortcodes/follow.php:122
+#: inc/shortcodes/follow.php:124
+#: inc/shortcodes/follow.php:125
 msgid "Follow on Facebook"
 msgstr "Sledujte nás na Facebooku"
 
-#: inc/shortcodes/follow.php:135
-#: inc/shortcodes/follow.php:136
+#: inc/shortcodes/follow.php:138
+#: inc/shortcodes/follow.php:139
 msgid "Follow on Instagram"
 msgstr "Sledujte náš Instagram"
 
-#: inc/shortcodes/follow.php:149
-#: inc/shortcodes/follow.php:150
+#: inc/shortcodes/follow.php:152
+#: inc/shortcodes/follow.php:153
 msgid "Follow on TikTok"
 msgstr "Sledujte nás na TikToku"
 
-#: inc/shortcodes/follow.php:166
-#: inc/shortcodes/follow.php:167
+#: inc/shortcodes/follow.php:169
+#: inc/shortcodes/follow.php:170
 msgid "Follow on SnapChat"
 msgstr "Sledujte nás na SnapChatu"
 
-#: inc/shortcodes/follow.php:173
+#: inc/shortcodes/follow.php:176
 msgid "Point the SnapChat camera at this to add us to SnapChat."
 msgstr "Namiřte kameru SnapChat na toto a přidejte nás do SnapChatu."
 
-#: inc/shortcodes/follow.php:185
-#: inc/shortcodes/follow.php:186
+#: inc/shortcodes/follow.php:188
+#: inc/shortcodes/follow.php:189
+msgid "Follow on X"
+msgstr ""
+
+#: inc/shortcodes/follow.php:202
+#: inc/shortcodes/follow.php:203
 msgid "Follow on Twitter"
 msgstr "Sledujte nás na Twitteru"
 
-#: inc/shortcodes/follow.php:199
-#: inc/shortcodes/follow.php:200
+#: inc/shortcodes/follow.php:216
+#: inc/shortcodes/follow.php:217
 msgid "Send us an email"
 msgstr "Pošlete nám e-mail"
 
-#: inc/shortcodes/follow.php:213
-#: inc/shortcodes/follow.php:214
+#: inc/shortcodes/follow.php:230
+#: inc/shortcodes/follow.php:231
 msgid "Call us"
 msgstr "Zavolejte nám"
 
-#: inc/shortcodes/follow.php:227
-#: inc/shortcodes/follow.php:228
+#: inc/shortcodes/follow.php:244
+#: inc/shortcodes/follow.php:245
 msgid "Follow on Pinterest"
 msgstr "Sledujte nás na Pinterestu"
 
-#: inc/shortcodes/follow.php:241
-#: inc/shortcodes/follow.php:242
+#: inc/shortcodes/follow.php:258
+#: inc/shortcodes/follow.php:259
 msgid "Subscribe to RSS"
 msgstr "Odebírat RSS"
 
-#: inc/shortcodes/follow.php:255
-#: inc/shortcodes/follow.php:256
+#: inc/shortcodes/follow.php:272
+#: inc/shortcodes/follow.php:273
 msgid "Follow on LinkedIn"
 msgstr "Sledujte nás na LinkedIn"
 
-#: inc/shortcodes/follow.php:269
-#: inc/shortcodes/follow.php:270
+#: inc/shortcodes/follow.php:286
+#: inc/shortcodes/follow.php:287
 msgid "Follow on YouTube"
 msgstr "Sledujte nás na YouTube"
 
-#: inc/shortcodes/follow.php:283
-#: inc/shortcodes/follow.php:284
+#: inc/shortcodes/follow.php:300
+#: inc/shortcodes/follow.php:301
 msgid "Flickr"
 msgstr "Flickr"
 
-#: inc/shortcodes/follow.php:297
-#: inc/shortcodes/follow.php:298
+#: inc/shortcodes/follow.php:314
+#: inc/shortcodes/follow.php:315
 msgid "Follow on 500px"
 msgstr "Sledujte nás na 500px"
 
-#: inc/shortcodes/follow.php:311
-#: inc/shortcodes/follow.php:312
+#: inc/shortcodes/follow.php:328
+#: inc/shortcodes/follow.php:329
 msgid "Follow on VKontakte"
 msgstr "Sledujte nás na VKontakte"
 
-#: inc/shortcodes/follow.php:325
-#: inc/shortcodes/follow.php:326
+#: inc/shortcodes/follow.php:342
+#: inc/shortcodes/follow.php:343
 msgid "Follow on Telegram"
 msgstr "Sledujte nás na Telegramu"
 
-#: inc/shortcodes/follow.php:339
-#: inc/shortcodes/follow.php:340
+#: inc/shortcodes/follow.php:356
+#: inc/shortcodes/follow.php:357
 msgid "Follow on Twitch"
 msgstr "Sledujte nás na Twitchi"
 
-#: inc/shortcodes/follow.php:353
-#: inc/shortcodes/follow.php:354
+#: inc/shortcodes/follow.php:370
+#: inc/shortcodes/follow.php:371
 msgid "Follow on Discord"
 msgstr "Sledujte nás na Discord"
 
@@ -1281,41 +1350,46 @@ msgstr "Sdílet na Facebooku"
 
 #: inc/shortcodes/share.php:125
 #: inc/shortcodes/share.php:126
+msgid "Share on X"
+msgstr ""
+
+#: inc/shortcodes/share.php:139
+#: inc/shortcodes/share.php:140
 msgid "Share on Twitter"
 msgstr "Sdílet na Twitteru"
 
 #. translators: %s: the share link.
-#: inc/shortcodes/share.php:137
+#: inc/shortcodes/share.php:151
 msgid "Check this out: %s"
 msgstr "Podívejte se na to: %s"
 
-#: inc/shortcodes/share.php:141
-#: inc/shortcodes/share.php:142
+#: inc/shortcodes/share.php:155
+#: inc/shortcodes/share.php:156
 msgid "Email to a Friend"
 msgstr "Poslat emailem známému"
 
-#: inc/shortcodes/share.php:159
-#: inc/shortcodes/share.php:160
+#: inc/shortcodes/share.php:173
+#: inc/shortcodes/share.php:174
 msgid "Pin on Pinterest"
 msgstr "Sdílet na Pinterestu"
 
-#: inc/shortcodes/share.php:173
-#: inc/shortcodes/share.php:174
+#: inc/shortcodes/share.php:187
+#: inc/shortcodes/share.php:188
 msgid "Share on VKontakte"
 msgstr "Sdílet na VKontakte"
 
-#: inc/shortcodes/share.php:187
-#: inc/shortcodes/share.php:188
+#: inc/shortcodes/share.php:201
+#: inc/shortcodes/share.php:202
 msgid "Share on LinkedIn"
 msgstr "Sdílet na Linkedin"
 
-#: inc/shortcodes/share.php:201
-#: inc/shortcodes/share.php:202
+#: inc/shortcodes/share.php:215
+#: inc/shortcodes/share.php:216
 msgid "Share on Tumblr"
 msgstr "Sdílet na Tumblr"
 
-#: inc/shortcodes/share.php:215
-#: inc/shortcodes/share.php:216
+#: inc/shortcodes/share.php:229
+#: inc/shortcodes/share.php:230
 msgid "Share on Telegram"
 msgstr "Sdílet na Telegramu"
 
@@ -1430,6 +1504,20 @@ msgstr "Přidání upsell produktů na stránky produktů."
 msgid "Complete the look"
 msgstr "Nastavte vzhled"
 
+#: inc/woocommerce/class-mini-cart.php:135
+msgctxt "mini cart add to cart button label"
+msgid "Add"
+msgstr ""
+
+#. translators: %s: The threshold
+#: inc/woocommerce/class-shipping.php:131
+msgid "Add %s to cart and get free shipping!"
+msgstr ""
+
+#: inc/woocommerce/class-shipping.php:142
+msgid "Your order qualifies for free shipping 🎉"
+msgstr ""
+
 #: inc/woocommerce/structure-wc-category-page.php:97
 #: inc/woocommerce/structure-wc-product-page-fields.php:31
 msgid "Top Content"
@@ -1456,19 +1544,19 @@ msgstr "Vyberte si vlastní rozvržení bloků produktů pro tuto kategorii."
 msgid "I have read and agree"
 msgstr "Přečetl jsem a souhlasím"
 
-#: inc/woocommerce/structure-wc-global.php:90
+#: inc/woocommerce/structure-wc-global.php:94
 msgid "Shop Sidebar"
 msgstr "Postranní panel obchodu"
 
-#: inc/woocommerce/structure-wc-global.php:99
+#: inc/woocommerce/structure-wc-global.php:103
 msgid "Product Sidebar"
 msgstr "Postranní panel u produktu"
 
-#: inc/woocommerce/structure-wc-global.php:258
+#: inc/woocommerce/structure-wc-global.php:262
 msgid "Posts found"
 msgstr "Příspěvky nalezeny"
 
-#: inc/woocommerce/structure-wc-global.php:271
+#: inc/woocommerce/structure-wc-global.php:275
 msgid "Pages found"
 msgstr "Stránky nalezeny"
 
@@ -1524,6 +1612,10 @@ msgstr "Video"
 #: inc/woocommerce/structure-wc-product-page.php:104
 msgid "Zoom"
 msgstr "Přiblížení"
+
+#: inc/woocommerce/structure-wc-product-page.php:280
+msgid "Select options"
+msgstr ""
 
 #. Template Name of the theme
 msgid "Page - Full Width - Parallax Title"
@@ -1646,6 +1738,11 @@ msgstr "Umístění"
 msgid "Contact"
 msgstr "Kontakt"
 
+#: template-parts/header/partials/element-contact-mobile.php:81
+#: template-parts/header/partials/element-contact.php:92
+msgid "WhatsApp"
+msgstr ""
+
 #: template-parts/header/partials/element-menu-icon.php:13
 #: template-parts/header/partials/element-menu-icon.php:17
 #: template-parts/overlays/overlay-menu.php:45
@@ -1656,6 +1753,11 @@ msgstr "Menu"
 #: template-parts/overlays/overlay-menu.php:50
 msgid "Categories"
 msgstr "Kategorie"
+
+#: template-parts/portfolio/portfolio-summary-full.php:30
+#: template-parts/portfolio/portfolio-summary.php:26
+msgid "Tags"
+msgstr ""
 
 #: template-parts/posts/content-none.php:14
 msgid "Nothing Found"
@@ -1699,7 +1801,7 @@ msgstr "Tento příspěvek byl publikován v %1$s. Nastavit záložku na <a href
 msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
 msgstr "Přečíst celé <span class=“meta-nav”>&rarr;</span>"
 
-#: template-parts/posts/loop/post-simple.php:32
+#: template-parts/posts/loop/post-simple.php:28
 msgid "%1$s Comment"
 msgid_plural "%1$s Comments"
 msgstr[0] "%1$s komentář"
@@ -1804,4 +1906,34 @@ msgstr "Nemáte účet? Zaregistrujte se!"
 #: woocommerce/myaccount/form-login-lightbox-right-panel.php:121
 msgid "Register an Account"
 msgstr "Vytvoření účtu"
+
+#: inc/blocks/uxbuilder/block.json
+msgctxt "block title"
+msgid "UX Builder content"
+msgstr ""
+
+#: inc/blocks/uxbuilder/block.json
+msgctxt "block description"
+msgid "This block contains content created with UX Builder."
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Success"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Alert"
+msgstr ""
 

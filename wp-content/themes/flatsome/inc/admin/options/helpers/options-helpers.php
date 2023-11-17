@@ -69,6 +69,8 @@ function flatsome_customizer_nav_elements() {
 		'divider_5'     => __( '|', 'flatsome-admin' ),
 		'block-1'       => __( 'Block 1', 'flatsome-admin' ),
 		'block-2'       => __( 'Block 2', 'flatsome-admin' ),
+		'block-3'       => __( 'Block 3', 'flatsome-admin' ),
+		'block-4'       => __( 'Block 4', 'flatsome-admin' ),
 		'html'          => __( 'HTML 1', 'flatsome-admin' ),
 		'html-2'        => __( 'HTML 2', 'flatsome-admin' ),
 		'html-3'        => __( 'HTML 3', 'flatsome-admin' ),

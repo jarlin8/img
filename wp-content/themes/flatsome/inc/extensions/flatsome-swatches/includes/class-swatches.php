@@ -185,6 +185,22 @@ final class Swatches {
 	}
 
 	/**
+	 * Clear all cache on option change.
+	 *
+	 * @param string $new_value The new value of the theme modification or WP option.
+	 * @param string $old_value The current value of the theme modification or WP option.
+	 *
+	 * @return mixed
+	 */
+	public function cache_clear_on_option( $new_value, $old_value ) {
+		if ( $new_value !== $old_value ) {
+			$this->cache_clear();
+		}
+
+		return $new_value;
+	}
+
+	/**
 	 * Main instance.
 	 *
 	 * @return Swatches

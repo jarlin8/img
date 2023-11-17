@@ -19,7 +19,7 @@ function ux_products_list($atts, $content = null, $tag = '' ) {
 
   ob_start();
 
-  echo '<ul class="product_list_widget">';
+  echo '<ul class="ux-products-list product_list_widget">';
     if(empty($ids)){
       $products = ux_list_products($atts);
     } else {

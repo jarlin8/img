@@ -27,7 +27,7 @@ if(is_woocommerce_activated()){
 	if(!get_theme_mod('disable_quick_view', 0)){
 		require $extensions_url.'/flatsome-wc-quick-view/flatsome-quick-view.php';
 	}
-	if ( get_theme_mod( 'flatsome_infinite_scroll' ) ) {
+	if ( get_theme_mod( 'shop_pagination' ) === 'infinite-scroll' ) {
 		require $extensions_url . '/flatsome-infinite-scroll/class-flatsome-infinite-scroll.php';
 	}
 	if ( get_theme_mod( 'cart_auto_refresh' ) ) {

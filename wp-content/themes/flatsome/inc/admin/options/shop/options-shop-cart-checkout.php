@@ -75,6 +75,13 @@ Flatsome_Option::add_field( 'option',  array(
   'default' => 1
 ));
 
+Flatsome_Option::add_field( 'option', array(
+	'type'     => 'checkbox',
+	'settings' => 'cart_shipping',
+	'label'    => esc_html__( 'Show free shipping', 'flatsome' ),
+	'section'  => 'cart-checkout',
+	'default'  => 0,
+) );
 
 Flatsome_Option::add_field( '', array(
 	'type'     => 'custom',
@@ -243,6 +250,14 @@ Flatsome_Option::add_field( 'option', array(
 			'value'    => true,
 		),
 	),
+) );
+
+Flatsome_Option::add_field( 'option', array(
+	'type'     => 'checkbox',
+	'settings' => 'checkout_shipping',
+	'label'    => esc_html__( 'Show free shipping', 'flatsome' ),
+	'section'  => 'woocommerce_checkout',
+	'default'  => 0,
 ) );
 
 Flatsome_Option::add_field( 'option',  array(

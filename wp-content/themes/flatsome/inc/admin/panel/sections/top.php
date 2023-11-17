@@ -14,7 +14,7 @@
     <a href="<?php echo admin_url().'admin.php?page=flatsome-setup'; ?>" class="button button-primary button-large"><?php _e('Setup Wizard', 'flatsome-admin' ); ?></a>
 </div>
 
-<div class="wp-badge fl-badge">Version <?php echo $flatsome_ver['Version']; ?></div>
+<div class="wp-badge fl-badge"><?php echo $flatsome_ver['Version']; ?></div>
 
 <h2 class="nav-tab-wrapper">
     <?php $url = admin_url().'admin.php?page=flatsome-panel' ?>

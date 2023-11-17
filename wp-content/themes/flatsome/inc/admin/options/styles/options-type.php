@@ -22,7 +22,7 @@ Flatsome_Option::add_field( 'option',
 		'type'        => 'checkbox',
 		'settings'    => 'google_fonts_cdn',
 		'label'       => __( 'Load Google Fonts from CDN', 'flatsome-admin' ),
-		'description' => '<strong>Enabling this is not recommended due to GDPR regulations!</strong> <a href="https://docs.uxthemes.com/article/415-google-fonts" target="_blank" rel="noopener noreferrer">Learn more</a>',
+		'description' => '<strong>Enabling this is not recommended due to GDPR regulations!</strong> <a href="https://docs.uxthemes.com/article/415-google-fonts" target="_blank" rel="noopener">Learn more</a>',
 		'section'     => 'type',
 		'default'     => 0,
 		'active_callback' => array(

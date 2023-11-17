@@ -423,6 +423,12 @@ function flatsome_formats_before_init( $settings ) {
                   'classes' => 'bullet-checkmark',
 
                 ),
+              array(
+	              'title' => 'Bullets List - Cross',
+	              'selector' => 'li',
+	              'classes' => 'bullet-cross',
+
+              ),
                 array(
                   'title' => 'Bullets List - Arrow',
                   'selector' => 'li',

@@ -20,6 +20,7 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 	/**
 	 * Envato_Theme_Setup_Wizard class
 	 */
+	#[AllowDynamicProperties]
 	class Envato_Theme_Setup_Wizard {
 
 		/**
@@ -2013,6 +2014,10 @@ if ( ! class_exists( 'Envato_Theme_Setup_Wizard' ) ) {
 
 			<p class="lead">
 				Enter your Envato purchase code.
+				<a href="<?php echo esc_url( UXTHEMES_ACCOUNT_URL ); ?>" target="_blank" rel="noopener">
+					<?php esc_html_e( 'Manage your licenses', 'flatsome' ); ?>
+					<span class="dashicons dashicons-external" style="vertical-align:middle;font-size:18px;text-decoration: none;"></span>
+				</a>
 			</p>
 
 			<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="POST" autocomplete="off" onsubmit="return onFlatsomeEnvatoSubmit(this);">

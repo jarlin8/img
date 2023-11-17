@@ -59,7 +59,8 @@ class Flatsome_Admin {
 	 * @since 1.0.0
 	 */
 	public function flatsome_panel_register_menu() {
-		add_menu_page( 'Welcome to Flatsome', 'Flatsome', 'manage_options', 'flatsome-panel', array( $this, 'flatsome_panel_welcome' ), get_template_directory_uri() . '/assets/img/logo-icon.svg', '2' );
+		$flatsome_icon = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDM4IiBoZWlnaHQ9IjQzOCIgdmlld0JveD0iMCAwIDQzOCA0MzgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMF85NTJfOSkiPgo8cGF0aCBkPSJNMjE4LjUwNSA0MzcuMDEzVjM3NS43MzdMMTY5Ljg3NSAzMjcuMTA4TDIxOC41MDUgMjc4LjQ3NlYyMTcuMkwxMzkuMjM2IDI5Ni40NzFMNjEuMjc2NCAyMTguNTFMMjE4LjUwNSA2MS4yODA0VjAuMDA2ODM1OTRMMCAyMTguNTFMMjE4LjUwNSA0MzcuMDEzWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggb3BhY2l0eT0iMC41IiBkPSJNMjE4LjUwNyA2MS4yNzU5TDM3NS43MzUgMjE4LjUwNUwyOTcuNzc2IDI5Ni40NjRMMjE4LjUwNyAyMTcuMTk4VjI3OC40NzJMMjY3LjEzOSAzMjcuMTAzTDIxOC41MDcgMzc1LjczMlY0MzcuMDA2TDMyOC40MTMgMzI3LjEwM0w0MzcuMDEyIDIxOC41MDVMMjE4LjUwNyAwVjYxLjI3NTlaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzk1Ml85Ij4KPHJlY3Qgd2lkdGg9IjQzOCIgaGVpZ2h0PSI0MzgiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==';
+		add_menu_page( 'Welcome to Flatsome', 'Flatsome', 'manage_options', 'flatsome-panel', array( $this, 'flatsome_panel_welcome' ), $flatsome_icon, '2' );
 		add_submenu_page( 'flatsome-panel', 'Theme Registration', 'Theme Registration', 'manage_options', 'admin.php?page=flatsome-panel' );
 		add_submenu_page( 'flatsome-panel', 'Help & Guides', 'Help & Guides', 'manage_options', 'flatsome-panel-support', array( $this, 'flatsome_panel_support' ) );
 		add_submenu_page( 'flatsome-panel', 'Status', 'Status', 'manage_options', 'flatsome-panel-status', array( $this, 'flatsome_panel_status' ) );

@@ -44,6 +44,17 @@ add_ux_builder_shortcode( 'ux_product_gallery', array(
 				'3-1-2' => __( '3 columns - featured - 2 columns', 'flatsome-admin' ),
 			),
 		),
+		'slider_type' => array(
+			'type'       => 'radio-buttons',
+			'heading'    => 'Slider type',
+			'full_width' => true,
+			'conditions' => 'style == "normal" || style == "vertical" || style == "stacked"',
+			'default'    => '',
+			'options'    => array(
+				''     => array( 'title' => esc_html__( 'Slide', 'flatsome-admin' ) ),
+				'fade' => array( 'title' => esc_html__( 'Fade', 'flatsome-admin' ) ),
+			),
+		),
 	),
 ) );
 

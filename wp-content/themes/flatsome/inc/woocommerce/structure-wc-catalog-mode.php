@@ -28,7 +28,7 @@ function flatsome_catalog_mode_lightbox(){
     }
     echo '<style>.woocommerce-variation-availability{display:none!important}</style>';
 }
-add_action( 'woocommerce_single_product_lightbox_summary', 'flatsome_catalog_mode_lightbox', 30 );
+add_action( 'flatsome_single_product_lightbox_summary', 'flatsome_catalog_mode_lightbox', 30 );
 
 
 /* Disable purchasing of products */
@@ -50,7 +50,7 @@ if(flatsome_option('catalog_mode_prices')) remove_action( 'woocommerce_after_sho
 if(flatsome_option('catalog_mode_prices')) remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
 
 /* Remove prices from lightbox */
-if(flatsome_option('catalog_mode_prices')) remove_action( 'woocommerce_single_product_lightbox_summary', 'woocommerce_template_single_price', 10 );
+if(flatsome_option('catalog_mode_prices')) remove_action( 'flatsome_single_product_lightbox_summary', 'woocommerce_template_single_price', 10 );
 
 /* Remove sale badges */
 if( get_theme_mod( 'catalog_mode_sale_badge', 0 )) add_filter( 'woocommerce_sale_flash', '__return_empty_string' );

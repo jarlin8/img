@@ -179,6 +179,22 @@ function flatsome_customizer_shop_product_page_options() {
 	) );
 
 	Flatsome_Option::add_field( 'option', array(
+		'type'            => 'radio-buttonset',
+		'settings'        => 'product_gallery_slider_type',
+		'active_callback' => function () {
+			return ! get_theme_mod( 'product_gallery_woocommerce' )
+			       && get_theme_mod( 'product_layout' ) !== 'gallery-wide';
+		},
+		'label'           => esc_html__( 'Type', 'flatsome-admin' ),
+		'section'         => 'product-page',
+		'default'         => '',
+		'choices'         => array(
+			''     => esc_html__( 'Slide', 'flatsome-admin' ),
+			'fade' => esc_html__( 'Fade', 'flatsome-admin' ),
+		),
+	) );
+
+	Flatsome_Option::add_field( 'option', array(
 		'type'            => 'select',
 		'settings'        => 'product_lightbox',
 		'active_callback' => function() {
@@ -284,7 +300,6 @@ function flatsome_customizer_shop_product_page_options() {
 		'type'            => 'checkbox',
 		'settings'        => 'product_sticky_cart',
 		'label'           => __( 'Sticky add to cart', 'flatsome-admin' ),
-		'description'     => __( 'For all product layouts except Stacked Layout.', 'flatsome-admin' ),
 		'section'         => 'product-page',
 		'default'         => 0,
 	) );

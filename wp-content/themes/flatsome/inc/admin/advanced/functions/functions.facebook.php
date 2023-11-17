@@ -19,7 +19,7 @@ function flatsome_facebook_login_button_html() {
   $url = flatsome_facebook_oauth_url();
   ob_start(); ?>
   <div class="notice notice-warning inline" style="margin-top: 0; margin-left: 0;">
-    <p><?php echo sprintf( __( 'Connecting Instagram Business accounts is deprecated and will be removed in a future update. Please enter an access token instead. %1$sSee documentation%2$s.', 'flatsome-admin' ), '<a href="https://docs.uxthemes.com/article/427-instagram-api" target="_blank" rel="noopener noreferrer">', '</a>' ); ?></p>
+    <p><?php echo sprintf( __( 'Connecting Instagram Business accounts is deprecated and will be removed in a future update. Please enter an access token instead. %1$sSee documentation%2$s.', 'flatsome-admin' ), '<a href="https://docs.uxthemes.com/article/427-instagram-api" target="_blank" rel="noopener">', '</a>' ); ?></p>
   </div>
   <p><?php _e('Login with Facebook to connect an Instagram Business account:')  ?></p>
   <a class="button" style="padding: 5px 15px; height: auto; background-color: #4267b2; border-color: #4267b2; color: #ffffff;" href="<?php echo $url ?>">
@@ -61,7 +61,7 @@ function flatsome_facebook_accounts_html() {
               <input type="hidden" name="facebook_accounts[<?php echo esc_attr( $username ) ?>][<?php echo esc_attr( $key ) ?>]" value="<?php echo esc_attr( $value ) ?>">
               <?php endif ?>
             <?php endforeach ?>
-            <a target="_blank" href="https://www.instagram.com/<?php echo esc_attr( $username ) ?>/" rel="noopener noreferrer">
+            <a target="_blank" href="https://www.instagram.com/<?php echo esc_attr( $username ) ?>/" rel="noopener">
               <?php echo esc_html( $username ) ?>
             </a>
             <?php if ( empty( $account['type'] ) || $account['type'] !== 'instagram' ) : ?>
@@ -101,7 +101,7 @@ function flatsome_facebook_accounts_html() {
     </table>
   </div>
   <p>
-	<a href="<?php echo esc_url( 'https://docs.uxthemes.com/article/427-instagram-api' ) ?>" target="_blank" rel="noopener noreferrer">
+	<a href="<?php echo esc_url( 'https://docs.uxthemes.com/article/427-instagram-api' ) ?>" target="_blank" rel="noopener">
 	  <?php esc_html_e( 'How to get an Instagram access token', 'flatsome-admin' ); ?>
 	</a>
   </p>

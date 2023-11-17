@@ -1,3 +1,158 @@
+--- 3.18.1 ---
+ENHANCEMENT: Made theme colors available through theme CSS custom properties (see note).
+ENHANCEMENT: Various CSS improvements.
+
+FIXED: Ajax add to cart with 'Any...' variation setup.
+FIXED: Images weren't imported correctly from Flatsome Studio in some cases.
+FIXED: An error occurred in the Page Layout section in the Block Editor in some cases.
+FIXED: Mini cart content after Pjax filtering.
+
+UPDATED: Language files.
+
+Note: In certain cases, such as when WP Global styles were disabled by a performance plugin, custom theme colors defaulted to their original values.
+
+--- 3.18.0 ---
+NEW: WooCommerce 8.3 compatibility.
+NEW: Debuting tailored Pjax functionality. Facilitates ajax-driven navigation & filtering (optional).
+NEW: Shop: AJAX for product category widget, filter widgets & sorting (optional).
+NEW: Builder: Color Eyedropper tool for effortless screen color picking.
+NEW: Scroll to the top after Pjax navigation option.
+NEW: Mini cart: Quantity input (ajax-driven) option.
+NEW: Mini cart: Free shipping bar option.
+NEW: Mini cart: Empty cart icon & return to shop button.
+NEW: Mini cart drawer: Show cross-sells option.
+NEW: Mini cart drawer: Sticky footer option.
+NEW: Cart: Free shipping bar option.
+NEW: Checkout: Free shipping bar option.
+NEW: Added advanced menu section 'Content Delivery'.
+NEW: Blog pagination type choice (Normal/AJAX).
+NEW: WooCommerce pagination type choice (Normal/AJAX/Infinite scroll).
+NEW: Blog posts element pagination (pagination links, load more, prev/next) on row, masonry & grid layout.
+NEW: Blog posts element pagination alignment.
+NEW: Blog posts element pagination ID and Class field.
+NEW: Blog posts element pagination position.
+NEW: Products element pagination (pagination links, load more, prev/next) on row, masonry & grid layout.
+NEW: Products element pagination alignment.
+NEW: Products element pagination ID and Class field.
+NEW: Products element pagination position.
+NEW: FAQ schema support to accordions, for improving SEO and search result visibility (optional).
+NEW: Lottie scroll action type option (seek, play, playOnce).
+NEW: Single product gallery type option (slide, fade).
+NEW: Custom accordion anchor.
+NEW: Custom tab anchors.
+NEW: Maintenance mode: Body class.
+NEW: Maintenance mode: Bypass by key.
+NEW: Maintenance mode: Exclude by role (default).
+NEW: Option to display WhatsApp among the Header Contact fields.
+NEW: Option to set Off-canvas / Drawer width.
+NEW: Option to set Off-canvas Cart Drawer width.
+NEW: Select theme colors in the Block Editor.
+NEW: Shop catalog ordering enable/disable option.
+NEW: Shop catalog result count enable/disable option.
+NEW: Smoother theme scroll-to animation.
+NEW: Title link rel option.
+NEW: Title link target option.
+NEW: Tooltip color & background color options.
+NEW: UX Blocks admin category filter and column.
+NEW: Added 2 header block slots.
+NEW: Bullet list cross icon.
+NEW: X (social media) icon.
+NEW: X follow link option.
+NEW: X share link option.
+
+PERFORMANCE: Optimized code execution for global Ajax requests.
+
+ENHANCEMENT: Added 'Manage your licenses' link in the setup wizard register step.
+ENHANCEMENT: Added all theme icons in the builder icon value dropdown.
+ENHANCEMENT: Added comments template to all page templates.
+ENHANCEMENT: AJAX add to cart scroll to notice on notice.
+ENHANCEMENT: Changed mini cart heading tag from h4 to span.
+ENHANCEMENT: If using lightbox login, notices will now show inside the lightbox login/register form.
+ENHANCEMENT: Improved shop swatch reset limited reset logic.
+ENHANCEMENT: Improved the theme logo in the backend.
+ENHANCEMENT: Improved various customizer options visibility (hiding options that depend on other settings).
+ENHANCEMENT: Improved WooCommerce notices on transparent header.
+ENHANCEMENT: Improved WPML configuration.
+ENHANCEMENT: Quantity button alignment in shop loop products.
+ENHANCEMENT: Remove the default sliding animations on off-canvas buttons.
+ENHANCEMENT: Removed title attribute from WooCommerce gallery images to prevent the display of image filenames in the native tooltip.
+ENHANCEMENT: Sticky add to cart functionality for stacked layouts.
+ENHANCEMENT: Support iframed Block Editor.
+ENHANCEMENT: Swatches/shop: Improved cache clearance.
+ENHANCEMENT: Use custom CSS properties for theme colors.
+ENHANCEMENT: Various customizer options are reordered more logically.
+ENHANCEMENT: Builder: Improved layout when php notices appear.
+ENHANCEMENT: Various CSS improvements.
+
+FIXED: B2B for WooCommerce Ajax add to cart product pricing.
+FIXED: Vertical menu dropdown not same height as fly out on Safari.
+FIXED: Blog posts excerpt trimming issue to ensure accurate length and avoid duplicate ellipses.
+FIXED: Ensure Flickity is initialized before attempting to destroy.
+FIXED: Header HTML slots did not render shortcode in preview in some cases.
+FIXED: hide-for-small & hide-for-medium classes did not take effect in drawers.
+FIXED: List item indentation in UX Block menu dropdown.
+FIXED: PHP 8.2 deprecations.
+FIXED: Position of slider arrows (circle/outside style) and its reveal animation.
+FIXED: Review count on related and upsell products on a single product page.
+FIXED: Swatches/shop: out-of-stock class added when only one variation was out of stock.
+FIXED: Theme file editor: Prevented false positive syntax error in header cart element template.
+FIXED: Updated and renamed old quick view hooks with flatsome prefix.
+FIXED: WooCommerce translation domain name was used in portfolio templates on some strings.
+FIXED: UX Blocks admin menu item text for adding a new block.
+FIXED: Banner: Sticky option did not function.
+FIXED: Live search results RTL styling.
+
+CHANGED: Infinite scroll button string changed to 'Load more'.
+CHANGED: Infinite scroll settings are moved to 'Content Delivery' section.
+CHANGED: Removed noreferrer from rel attributes on blank targets.
+CHANGED: Sticky add to cart now utilizes a separate template.
+
+UPDATED: Language files.
+
+DEV: Added experimental_flatsome_pjax filter.
+DEV: Added experimental_flatsome_pjax_enabled filter.
+DEV: Added flatsome_after_mini_cart_contents action.
+DEV: Added flatsome_after_mini_cart_cross_sells action.
+DEV: Added flatsome_after_mini_cart_empty_message action.
+DEV: Added flatsome_after_single_product_lightbox action.
+DEV: Added flatsome_before_mini_cart_cross_sells action.
+DEV: Added flatsome_before_mini_cart_empty_message action.
+DEV: Added flatsome_before_mini_cart_total action.
+DEV: Added flatsome_before_single_product_lightbox action.
+DEV: Added flatsome_html_atts filter.
+DEV: Added flatsome_maintenance_mode filter (filterable access mode).
+DEV: Added flatsome_relay_classes filter.
+DEV: Added flatsome_relay_control_classes filter.
+DEV: Added flatsome_relay_pagination_args filter.
+DEV: Added flatsome_shipping_free_shipping_threshold filter.
+DEV: Added flatsome_show_mini_cart_item_quantity filter.
+DEV: Added flatsome_single_product_lightbox_product_gallery action.
+DEV: Added flatsome_single_product_lightbox_summary action.
+DEV: Added flatsome_swatches_box_display_min_count filter.
+
+Note: Minimum required WP version 5.9.0.
+Note: Eyedropper tool operates only in secure 'https' contexts or on localhost, with support for Chrome and Edge browsers.
+Note: WooCommerce result count and catalog ordering will display even if removed (by code) in the shop by their old actions. Use the new UI options in the product catalog section to re-disable them if desired.
+
+--- 3.17.7 ---
+NEW: WooCommerce 8.1 compatibility.
+
+ENHANCEMENT: Body overflow prevention.
+ENHANCEMENT: Don't lazy-load images with high fetch priority.
+
+FIXED: Attach post when uploading images in UX Builder.
+FIXED: Copy as Shortcode on custom product page product elements.
+FIXED: Don't auto play sliders on mobile after scrolling if not enabled.
+FIXED: Don't redirect to product when clicking on swatches in UX Builder.
+FIXED: Image lazy-loading failed in some cases on WordPress 6.3.
+FIXED: Non-bullet styled list item indentation in UX Block menu dropdown.
+FIXED: Removed padding on text with color inside square and circle Text Box elements.
+FIXED: Responsive Stack gap with "0" as value.
+
+CHANGED: Disabled ajax add to cart on composite products.
+
+UPDATED: Language files.
+
 --- 3.17.6 ---
 This release contains an enhanced security measure. We recommend updating your sites promptly for optimal protection.
 
@@ -292,7 +447,7 @@ ENHANCEMENT: Improved Bootstrap compatibility.
 
 --- 3.15.6 ---
 FIXED: WordPress 6.0 CSS conflict.
-FIXED: Element style (padding, margin,..) not applying when column is made sticky. 
+FIXED: Element style (padding, margin,..) not applying when column is made sticky.
 
 --- 3.15.5 ---
 FIXED: Integration options showed up in Updates tab options.
@@ -1374,7 +1529,7 @@ FIXED: Various CSS bugs.
 FIXED: Klarna Payment Icon.
 FIXED: Make sure new products is visible in live search.
 
---- 2.9.9 (Old Flatsome) --- 
+--- 2.9.9 (Old Flatsome) ---
 Fixed: Outdated WooCommerce 3.0.3 files
 Fixed: Images did not change when changing variations.
 
@@ -1739,7 +1894,7 @@ NEW: Setup Wizard for new installations.
 NEW: Option to add Payment Icons to footer.
 NEW: Blocks Widget added.
 NEW: Added parallax option to Slider.
-NEW: Count Up Number text option. 
+NEW: Count Up Number text option.
 NEW: Fancy Underline text option.
 NEW: Icons for Titles.
 NEW: New layouts for Portfolio post type.
@@ -2307,7 +2462,7 @@ NEW OPTION: Possible to hide UX Slider on mobile screens. [ux_slider mobile="fal
 NEW OPTION: Blog Post Grid / masonry style. [blog_post type="grid"] [blog_post type="masonry"]
 NEW OPTION: Open lightboxes automatically! [lightbox auto_open="true" auto_timer="3000" auto_show="always/once"]
 NEW OPTION: Add ID attributes to sections and row shortcodes. (id="example")
-NEW OPTION: 'Continue Shopping' button added to Checkout and Thank you page (optional). 
+NEW OPTION: 'Continue Shopping' button added to Checkout and Thank you page (optional).
 NEW OPTION: Category list view.
 NEW OPTION: Custom Sticky header logo.
 NEW OPTION: Off-canvas Shop sidebar / Filter button.
@@ -2330,7 +2485,7 @@ FIXED: Search disappearing in latest Ajax Search plugin version.
 FIXED: Various problems with WordPress 4.2
 FIXED: Plugin support for Nested Category plugin.
 
-Important file changes: 
+Important file changes:
 functions.php, header.php, theme.js has been changed.
 You need to update them if you use them in your child theme.
 
@@ -2420,7 +2575,7 @@ FIX: Flatsome Builder improvements.
 
 --- 2.0 ---
 NEW: Flatsome Page Builder added (BETA)
-NEW: Enable minified CSS and JavaScript in Theme Options for better speed. 
+NEW: Enable minified CSS and JavaScript in Theme Options for better speed.
 NEW: New Awesome alternative focused Checkout template.
 NEW: SVG icons can be added to [featured_box]. Add any icon you find here: https://icomoon.io/
 NEW: Improved [scroll_to] shortcode for creating awesome on page navigation.
@@ -2501,7 +2656,7 @@ FIX: Improved style of Price table shortcode + fixed bugs
 FIX: Fixed lightbox for simple images in blog posts.
 FIX: Wide Nav / Centered Wide Nav on iPad potrait is now proplery hidden.
 FIX: Login button on mobile and iPad now works.
-FIX: Mini Cart now auto hides if user click outside or wait some secounds. 
+FIX: Mini Cart now auto hides if user click outside or wait some secounds.
 FIX: Fixed white gap on bottom of pages.
 FIX: Product gallery zoomed image is now correct based on variation.
 FIX: Better style for Product Add-ons.
@@ -2550,8 +2705,8 @@ NEW OPTION: Option to enable coupon box at checkout page.
 NEW OPTION: Change border color of dropdown in Theme Option > Style and Colors.
 NEW OPTION: Added rain effect to UX Banners. effect="rain".
 NEW OPTION: Instagram and LinkedIn icon added to Team Member shortcode.
-NEW OPTION: Link added to featured boxes shortcode. 
-NEW OPTION: Change padding between banners in banner grid. F.ex [ux_banner_grid padding="0px"] 
+NEW OPTION: Link added to featured boxes shortcode.
+NEW OPTION: Change padding between banners in banner grid. F.ex [ux_banner_grid padding="0px"]
 NEW OPTION: Framed layout mode.
 
 FIX: Works with WooCommerce 2.1.6+
@@ -2578,10 +2733,10 @@ FIX: WooCommerce 2.1 templates updated.
 FIX: Some banners not clickable on mobile.
 FIX: Demo content updated!
 
-NEW: Change speed of banner animations. Add animation_duration="3s" to [ux_banner]. 
+NEW: Change speed of banner animations. Add animation_duration="3s" to [ux_banner].
 
 ---- 1.8.5 -----
-FIX: WooCommerce 2.1 compitable! 
+FIX: WooCommerce 2.1 compitable!
 FIX: Cart dropdown now auto hides
 FIX: Various CSS improvements.
 FIX: Child theme updated
@@ -2620,7 +2775,7 @@ NEW: Video support for [ux_banners]
 NEW: Blank / Transparent header template.
 NEW: Added subsets to google fonts(cyrillic-ext, greek-ext,greek,vietnamese,cyrillic)
 NEW: Rain effect added to [ux_banner effect="rain"]
-NEW: Added "columns=" to product sliders and pinterest shortcode. 
+NEW: Added "columns=" to product sliders and pinterest shortcode.
 NEW: 2x new blog list layouts. (List style and Pinterest style).
 NEW: Related products are now a slider and its possible to have more than 4 products.
 NEW: Product Categries slider.
@@ -2658,7 +2813,7 @@ NEW: Full width Main navigation option!
 NEW: Facebook login button Shortcode [facebook_login_button text="" size=""]
 NEW: Facebook login on checkout option
 NEW: Light/dark main content text option.
-NEW: Change background color of main content. 
+NEW: Change background color of main content.
 NEW: Change products per row in product grid
 NEW: Change products per page in Theme Option.
 NEW: Flatsome Upsell Widget (Add to product page sidebar etc).
@@ -2678,7 +2833,7 @@ FIX: Various CSS fixes.
 
 
 ----- 1.4 (01/10/13) -----
-NEW FEATURE: Facebook Login/Register 
+NEW FEATURE: Facebook Login/Register
 NEW FEATURE: 3-column product page. Left or Right sidebar.
 
 NEW OPTION: Google plus, instagram andd RSS added to [follow] shortcode
@@ -2689,7 +2844,7 @@ NEW OPTION: Enable share icons on blog
 FIX: Various CSS fixes.
 FIX: 100% compitable with YITH WooCommerce Zoom Magnifier. (http://wordpress.org/plugins/yith-woocommerce-zoom-magnifier/)
 FIX: Author box can now be removed from blog.
-FIX: Some pages breaks in IE and Firefox. 
+FIX: Some pages breaks in IE and Firefox.
 
 
 ----- 1.3.1 (14/09/13) -----

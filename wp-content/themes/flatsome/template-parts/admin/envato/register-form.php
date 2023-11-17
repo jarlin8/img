@@ -3,7 +3,7 @@
  * Register form.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.16.0
+ * @flatsome-version 3.18.0
  */
 
 if ( $args['form'] ) : ?>
@@ -76,7 +76,7 @@ if ( $args['form'] ) : ?>
 				<label for="flatsome_envato_terms" style="display: inline-block;vertical-align: top;width: 90%;margin-top: 2px;font-size: 14px">
 					Confirm that, according to the Envato License Terms, each license entitles one person for a single project.
 					Creating multiple unregistered installations is a copyright violation.
-					<a href="https://themeforest.net/licenses/standard" target="_blank" rel="noopener noreferrer">More info</a>.
+					<a href="https://themeforest.net/licenses/standard" target="_blank" rel="noopener">More info</a>.
 				</label>
 			</p>
 		<?php endif; ?>
@@ -101,7 +101,7 @@ if ( $args['form'] ) : ?>
 			<?php if ( is_a( $registration, 'Flatsome_Envato_Registration' ) ) : ?>
 				<input name="flatsome_unregister" onclick="return onFlatsomeUnregister()" type="submit" class="button button-large button-secondary" value="Unregister token"/>
 			<?php endif; ?>
-			<a class="button button-large" href="<?php echo esc_url_raw( UXTHEMES_ACCOUNT_URL ); ?>" target="_blank" rel="noopener noreferrer">
+			<a class="button button-large" href="<?php echo esc_url_raw( UXTHEMES_ACCOUNT_URL ); ?>" target="_blank" rel="noopener">
 				<?php esc_html_e( 'Manage your licenses', 'flatsome' ); ?>
 				<span style="font-size:16px;width:auto;height:auto;vertical-align:middle;" class="dashicons dashicons-external"></span>
 			</a>

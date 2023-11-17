@@ -44,7 +44,7 @@ function ux_builder_element_style_tag( $id, $rules, $atts ) {
           if ( isset( $rule['unit'] ) ) $value = floatval( $value ) . $unit;
           $declaration = array( 'property' => $property, 'value' => $value, 'size' => $size);
           $declaration = apply_filters( 'ux_builder_css_declaration', $declaration );
-          if (!empty($declaration['value'])) {
+          if (!empty($declaration['value']) || $declaration['value'] === '0') {
 			if ( isset( $rule['important'] ) && $rule['important'] === true ) $declaration['value'] = $declaration['value'] . '!important';
             $declaration_str = trim( "{$declaration['property']}: {$declaration['value']};" );
             $styles[$breakpoint]['rules'][$selector_str][] = $declaration_str;

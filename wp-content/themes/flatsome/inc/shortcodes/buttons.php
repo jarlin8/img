@@ -89,9 +89,6 @@ function button_shortcode( $atts, $content = null ) {
 	if ( $animate ) {
 		$attributes['data-animate'] = $animate;
 	}
-	if ( $target == '_blank' ) {
-		$attributes['rel'][] = 'noopener noreferrer';
-	}
 	if ( $rel ) {
 		$attributes['rel'][] = $rel;
 	}

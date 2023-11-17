@@ -3,7 +3,7 @@
  * Header vertical menu template.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.17.1
+ * @flatsome-version 3.18.0
  */
 
 $classes_opener  = array( 'header-vertical-menu__opener' );
@@ -45,7 +45,7 @@ if ( get_theme_mod( 'header_nav_vertical_fly_out_shadow', 1 ) ) $classes_fly_out
 				'menu_class'     => 'ux-nav-vertical-menu nav-vertical-fly-out',
 				'walker'         => new FlatsomeNavDropdown(),
 			) );
-		} else {
+		} elseif ( current_user_can( 'edit_theme_options' ) ) {
 			$admin_url = get_admin_url() . 'customize.php?url=' . get_permalink() . '&autofocus%5Bsection%5D=menu_locations';
 			echo '<div class="inner-padding"><a href="' . $admin_url . '">Assign a menu in Theme Options > Menus</a></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}

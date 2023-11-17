@@ -17,8 +17,10 @@ if ( ! defined( 'UXTHEMES_ACCOUNT_URL' ) ) {
 /**
  * Require Classes
  */
+require get_template_directory() . '/inc/classes/class-flatsome.php';
 require get_template_directory() . '/inc/classes/class-flatsome-default.php';
 require get_template_directory() . '/inc/classes/class-flatsome-options.php';
+require get_template_directory() . '/inc/classes/class-flatsome-theme-json.php';
 require get_template_directory() . '/inc/classes/class-flatsome-upgrade.php';
 require get_template_directory() . '/inc/classes/class-flatsome-base-registration.php';
 require get_template_directory() . '/inc/classes/class-flatsome-wupdates-registration.php';
@@ -27,6 +29,7 @@ require get_template_directory() . '/inc/classes/class-flatsome-envato.php';
 require get_template_directory() . '/inc/classes/class-flatsome-envato-admin.php';
 require get_template_directory() . '/inc/classes/class-flatsome-envato-registration.php';
 require get_template_directory() . '/inc/classes/class-flatsome-instagram.php';
+require get_template_directory() . '/inc/classes/class-flatsome-relay.php';
 require get_template_directory() . '/inc/classes/class-uxthemes-api.php';
 
 /**
@@ -35,6 +38,7 @@ require get_template_directory() . '/inc/classes/class-uxthemes-api.php';
  */
 require get_template_directory() . '/inc/functions/function-conditionals.php';
 require get_template_directory() . '/inc/functions/function-global.php';
+require get_template_directory() . '/inc/functions/function-ajax.php';
 require get_template_directory() . '/inc/functions/function-register.php';
 require get_template_directory() . '/inc/functions/function-upgrade.php';
 require get_template_directory() . '/inc/functions/function-update.php';
@@ -148,6 +152,15 @@ if (is_woocommerce_activated()) {
  */
 if ( function_exists( 'register_block_type' ) ) {
   require get_template_directory() . '/inc/blocks/uxbuilder/index.php';
+}
+
+
+/**
+ * Load WooCommerce classes
+ */
+if ( is_woocommerce_activated() ) {
+	require get_template_directory() . '/inc/woocommerce/class-shipping.php';
+	require get_template_directory() . '/inc/woocommerce/class-mini-cart.php';
 }
 
 /**

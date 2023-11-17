@@ -15,6 +15,11 @@ function ux_list_products( $args ) {
 			$show = $options['show'];
 		}
 
+		$page_number = '1';
+		if ( isset( $options['page_number'] ) ) {
+			$page_number = $options['page_number'];
+		}
+
 		$orderby = 'date';
 		$order   = 'desc';
 		if ( isset( $options['orderby'] ) ) {
@@ -54,7 +59,7 @@ function ux_list_products( $args ) {
 		'posts_per_page'      => $number,
 		'post_status'         => 'publish',
 		'post_type'           => 'product',
-		'no_found_rows'       => 1,
+		'paged'               => $page_number,
 		'ignore_sticky_posts' => 1,
 		'order'               => $order,
 		'product_tag'         => $tags,

@@ -9,9 +9,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-08-06T17:28:08+00:00\n"
-"PO-Revision-Date: 2023-08-06 17:53\n"
-"X-Generator: WP-CLI 2.6.0\n"
+"POT-Creation-Date: 2023-11-13T10:54:44+00:00\n"
+"PO-Revision-Date: 2023-11-13 10:56\n"
+"X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: flatsome\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Crowdin-Project: l10n-flatsome\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Language: fr_FR\n"
 
 #. Theme Name of the theme
-#: inc/admin/admin-notice.php:77
+#: inc/admin/admin-notice.php:75
 msgid "Flatsome"
 msgstr ""
 
@@ -64,11 +64,11 @@ msgstr "Naviguer à travers les commentaires"
 
 #: comments.php:51
 msgid "Older Comments"
-msgstr ""
+msgstr "Commentaires plus anciens"
 
 #: comments.php:52
 msgid "Newer Comments"
-msgstr ""
+msgstr "Commentaires plus récents"
 
 #: comments.php:63
 msgid "Comments are closed."
@@ -76,18 +76,18 @@ msgstr "Commentaires désactivés"
 
 #: header.php:25
 msgid "Skip to content"
-msgstr ""
+msgstr "Passer au contenu"
 
 #: image.php:27
 msgid "Published <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\">%2$s</time></span> at <a href=\"%3$s\" title=\"Link to full-size image\">%4$s &times; %5$s</a> in <a href=\"%6$s\" title=\"Return to %7$s\" rel=\"gallery\">%8$s</a>"
-msgstr ""
+msgstr "Publié <span class=\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\">%2$s</time></span> à <a href=\"%3$s\" title=\"Lien vers l'image grandeur nature\">%4$s &times; %5$s</a> dans <a href=\"%6$s\" title=\"Revenir à %7$s\" rel=\"gallery\">%8$s</a>"
 
 #: image.php:39
 #: image.php:109
 #: inc/structure/structure-posts.php:168
 #: inc/structure/structure-posts.php:197
 msgid "Edit"
-msgstr ""
+msgstr "Éditer"
 
 #: image.php:101
 msgid "<a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">Post a comment</a> or leave a trackback: <a class=\"trackback-link\" href=\"%s\" title=\"Trackback URL for your post\" rel=\"trackback\">Trackback URL</a>."
@@ -99,11 +99,11 @@ msgstr "Les commentaires sont désactivés mais vous pouvez laisser un lien de s
 
 #: image.php:105
 msgid "Trackbacks are closed, but you can <a class=\"comment-link\" href=\"#respond\" title=\"Post a comment\">post a comment</a>."
-msgstr ""
+msgstr "Les rétroliens sont fermés, mais vous pouvez <a class=\"comment-link\" href=\"#respond\" title=\"Poster un commentaire\">poster un commentaire</a>."
 
 #: image.php:107
 msgid "Both comments and trackbacks are currently closed."
-msgstr ""
+msgstr "Les commentaires et les rétroliens sont actuellement fermés."
 
 #: image.php:114
 msgid "<span class=\"meta-nav\">&larr;</span> Previous"
@@ -113,213 +113,218 @@ msgstr "<span class=\"meta-nav\">&larr;</span> Précédent"
 msgid "Next <span class=\"meta-nav\">&rarr;</span>"
 msgstr "Suivant <span class=\"meta-nav\">&rarr;</span>"
 
-#: inc/admin/admin-bar.php:82
+#: inc/admin/admin-bar.php:87
 msgid "Activate Theme"
-msgstr ""
+msgstr "Activer le thème"
 
 #: inc/admin/admin-notice.php:21
 msgid "<a href=\"%s\">Please enter your purchase code</a> to activate Flatsome and get one-click updates."
-msgstr ""
+msgstr "<a href=\"%s\">Veuillez entrer votre code d'achat</a> pour activer Flatsome et recevoir des mises à jour en un clic."
 
 #: inc/admin/admin-notice.php:32
 msgid "Flatsome issues"
-msgstr ""
+msgstr "Problèmes liés à Flatsome"
 
 #: inc/admin/admin-notice.php:38
 #: inc/functions/function-site-health.php:74
 msgid "Manage registration"
-msgstr ""
+msgstr "Gestion de l'inscription"
 
 #: inc/admin/admin-notice.php:43
+#: inc/admin/envato_setup/envato_setup.php:2018
 #: inc/functions/function-site-health.php:79
 #: template-parts/admin/envato/register-form.php:105
 msgid "Manage your licenses"
-msgstr ""
+msgstr "Gérer vos licences"
 
 #. translators: %1$s: Theme name, %2$s: The URL to the status page.
-#: inc/admin/admin-notice.php:81
+#: inc/admin/admin-notice.php:79
 msgid "<strong>Your theme (%1$s) contains outdated copies of some Flatsome template files.</strong> These files may need updating to ensure they are compatible with the current version of Flatsome. Suggestions:"
-msgstr ""
+msgstr "<strong>Votre thème (%1$s) contient des copies obsolètes de certains fichiers modèles Flatsome.</strong> Ces fichiers peuvent avoir besoin d'une mise à jour pour s'assurer qu'ils sont compatibles avec la version actuelle de Flatsome. Suggestions:"
 
-#: inc/admin/admin-notice.php:84
+#: inc/admin/admin-notice.php:82
 msgid "If you copied over a template file to change something, then you will need to copy the new version of the template and apply your changes again."
-msgstr ""
+msgstr "Si vous avez copié un fichier de modèle pour modifier quelque chose, vous devrez copier la nouvelle version du modèle et appliquer à nouveau vos modifications."
 
-#: inc/admin/admin-notice.php:85
+#: inc/admin/admin-notice.php:83
 msgid "If you are unfamiliar with code/templates and resolving potential conflicts, reach out to a developer for assistance."
-msgstr ""
+msgstr "Si vous n'êtes pas familier avec les code/modèles et la résolution de conflits potentiels, contactez un développeur pour obtenir de l'aide."
 
-#: inc/admin/admin-notice.php:88
+#: inc/admin/admin-notice.php:86
 msgid "Learn more about templates"
-msgstr ""
+msgstr "En savoir plus sur modèles"
 
-#: inc/admin/admin-notice.php:91
+#: inc/admin/admin-notice.php:89
 msgid "View affected templates"
-msgstr ""
+msgstr "Voir les modèles affectés"
 
 #: inc/admin/advanced/functions/functions.facebook.php:162
 msgid "Connect Instagram Business accounts"
-msgstr ""
+msgstr "Connecter des comptes Instagram Business"
 
 #: inc/admin/advanced/functions/functions.facebook.php:169
 #: inc/admin/advanced/functions/functions.facebook.php:178
 msgid "Okay"
-msgstr ""
+msgstr "Ok"
 
 #: inc/admin/advanced/functions/functions.facebook.php:174
 msgid "No associated Instagram Business account was found for your Facebook user."
-msgstr ""
+msgstr "Aucun compte Instagram Business associé n'a été trouvé pour votre utilisateur Facebook."
 
 #: inc/admin/advanced/functions/functions.facebook.php:229
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: inc/admin/advanced/functions/functions.facebook.php:232
 msgid "Connect"
+msgstr "Se connecter"
+
+#: inc/admin/advanced/functions/functions.php:23
+msgid "Super Admin"
 msgstr ""
 
-#: inc/admin/backend/menu/class-menu.php:91
+#: inc/admin/backend/menu/class-menu.php:89
 msgid "Flatsome menu item options"
-msgstr ""
+msgstr "Options du menu Flatsome"
 
-#: inc/admin/backend/menu/class-menu.php:95
+#: inc/admin/backend/menu/class-menu.php:93
 msgid "Menu dropdown"
-msgstr ""
+msgstr "Menu déroulant"
+
+#: inc/admin/backend/menu/class-menu.php:96
+msgid "Design"
+msgstr "Design"
 
 #: inc/admin/backend/menu/class-menu.php:98
-msgid "Design"
-msgstr ""
+msgid "Default"
+msgstr "Défaut"
+
+#: inc/admin/backend/menu/class-menu.php:99
+msgid "Default (custom size)"
+msgstr "Par défaut (taille personnalisée)"
 
 #: inc/admin/backend/menu/class-menu.php:100
-msgid "Default"
-msgstr ""
+msgid "Container width"
+msgstr "Largeur du conteneur"
 
 #: inc/admin/backend/menu/class-menu.php:101
-msgid "Default (custom size)"
-msgstr ""
-
-#: inc/admin/backend/menu/class-menu.php:102
-msgid "Container width"
-msgstr ""
-
-#: inc/admin/backend/menu/class-menu.php:103
 msgid "Full width"
-msgstr ""
+msgstr "Pleine largeur"
 
-#: inc/admin/backend/menu/class-menu.php:106
+#: inc/admin/backend/menu/class-menu.php:104
 msgid "Select dropdown design."
-msgstr ""
+msgstr "Sélectionner l'apparence du menu déroulant."
 
-#: inc/admin/backend/menu/class-menu.php:110
-#: inc/admin/backend/menu/class-menu.php:161
+#: inc/admin/backend/menu/class-menu.php:108
+#: inc/admin/backend/menu/class-menu.php:159
 #: inc/admin/options/header/options-header-nav-vertical.php:55
 #: inc/admin/options/header/options-header-nav-vertical.php:146
 msgid "Width"
-msgstr ""
+msgstr "Largeur"
 
-#: inc/admin/backend/menu/class-menu.php:116
+#: inc/admin/backend/menu/class-menu.php:114
 msgid "Height (optional)"
-msgstr ""
+msgstr "Hauteur (facultatif)"
 
-#: inc/admin/backend/menu/class-menu.php:122
+#: inc/admin/backend/menu/class-menu.php:120
 #: inc/widgets/widget-blocks.php:88
 msgid "UX Block"
-msgstr ""
+msgstr "Bloc UX"
+
+#: inc/admin/backend/menu/class-menu.php:132
+msgid "Reveal"
+msgstr "Révéler"
 
 #: inc/admin/backend/menu/class-menu.php:134
-msgid "Reveal"
-msgstr ""
-
-#: inc/admin/backend/menu/class-menu.php:136
 msgid "On hover"
-msgstr ""
+msgstr "Au survol"
 
-#: inc/admin/backend/menu/class-menu.php:137
+#: inc/admin/backend/menu/class-menu.php:135
 msgid "On click"
-msgstr ""
+msgstr "Au clic"
 
-#: inc/admin/backend/menu/class-menu.php:143
+#: inc/admin/backend/menu/class-menu.php:141
 msgid "Menu icon"
-msgstr ""
+msgstr "Icône du menu"
+
+#: inc/admin/backend/menu/class-menu.php:144
+msgid "Icon type"
+msgstr "Type d'icône"
 
 #: inc/admin/backend/menu/class-menu.php:146
-msgid "Icon type"
-msgstr ""
-
-#: inc/admin/backend/menu/class-menu.php:148
 msgid "Media library"
-msgstr ""
+msgstr "Médiathèque"
 
-#: inc/admin/backend/menu/class-menu.php:149
+#: inc/admin/backend/menu/class-menu.php:147
 msgid "Custom content"
-msgstr ""
+msgstr "Contenu personnalisé"
 
-#: inc/admin/backend/menu/class-menu.php:165
+#: inc/admin/backend/menu/class-menu.php:163
 #: inc/admin/options/header/options-header-nav-vertical.php:41
 msgid "Height"
-msgstr ""
+msgstr "Hauteur"
 
-#: inc/admin/backend/menu/class-menu.php:168
+#: inc/admin/backend/menu/class-menu.php:166
 msgid "Icons default (empty) to 20x20."
-msgstr ""
+msgstr "Les icônes sont par défaut (vide) à 20x20."
 
-#: inc/admin/backend/menu/class-menu.php:173
+#: inc/admin/backend/menu/class-menu.php:171
 msgid "Markup"
 msgstr ""
 
-#: inc/admin/backend/menu/class-menu.php:176
+#: inc/admin/backend/menu/class-menu.php:174
 msgid "Add any HTML, SVG or shortcode here."
-msgstr ""
+msgstr "Ajoutez n'importe quel code HTML, SVG ou shortcode ici."
 
-#: inc/admin/backend/menu/class-menu.php:247
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:222
+#: inc/admin/backend/menu/class-menu.php:245
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:226
 msgid "Select image"
-msgstr ""
+msgstr "Sélectionner une image"
 
-#: inc/admin/backend/menu/class-menu.php:252
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:223
+#: inc/admin/backend/menu/class-menu.php:250
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:227
 msgid "Remove"
-msgstr ""
+msgstr "Retirer"
 
 #: inc/admin/classes/class-status.php:548
 #: inc/admin/classes/class-status.php:576
 msgid "Theme"
-msgstr ""
+msgstr "Thème"
 
 #: inc/admin/classes/class-status.php:549
 #: inc/admin/classes/class-status.php:689
 msgid "WordPress environment"
-msgstr ""
+msgstr "Environnement WordPress"
 
 #: inc/admin/classes/class-status.php:550
 #: inc/admin/classes/class-status.php:801
 msgid "Server environment"
-msgstr ""
+msgstr "Environnement du serveur"
 
 #: inc/admin/classes/class-status.php:551
 #: inc/admin/classes/class-status.php:883
 #: inc/functions/function-site-health.php:31
 #: inc/functions/function-site-health.php:52
 msgid "Security"
-msgstr ""
+msgstr "Sécurité"
 
 #: inc/admin/classes/class-status.php:552
 #: inc/admin/classes/class-status.php:939
 msgid "Database"
-msgstr ""
+msgstr "Base de données"
 
 #: inc/admin/classes/class-status.php:553
 #: inc/admin/classes/class-status.php:977
 msgid "Templates"
-msgstr ""
+msgstr "Modèles"
 
 #: inc/admin/classes/class-status.php:557
 msgid "More details"
-msgstr ""
+msgstr "Plus de détails"
 
 #: inc/admin/classes/class-status.php:582
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: inc/admin/classes/class-status.php:584
 msgid "The name of the current active theme."
@@ -327,7 +332,7 @@ msgstr ""
 
 #: inc/admin/classes/class-status.php:589
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 #: inc/admin/classes/class-status.php:591
 msgid "The version of the current active theme."
@@ -339,32 +344,32 @@ msgstr ""
 
 #: inc/admin/classes/class-status.php:598
 msgid "The theme developers URL."
-msgstr ""
+msgstr "L'URL des développeurs de thèmes."
 
 #: inc/admin/classes/class-status.php:603
 msgid "Registered"
-msgstr ""
+msgstr "Enregistré"
 
 #: inc/admin/classes/class-status.php:605
 msgid "Displays whether or not the theme is registered."
-msgstr ""
+msgstr "Indique si le thème est enregistré ou non."
 
 #: inc/admin/classes/class-status.php:612
 #: inc/functions/function-site-health.php:28
 msgid "You should register Flatsome with a purchase code"
-msgstr ""
+msgstr "Vous devez enregistrer Flatsome avec un code d'achat"
 
 #: inc/admin/classes/class-status.php:618
 msgid "Child theme"
-msgstr ""
+msgstr "Thème enfant"
 
 #: inc/admin/classes/class-status.php:620
 msgid "Displays whether or not the current active theme is a child theme."
-msgstr ""
+msgstr "Indique si le thème actif est un thème enfant ou non."
 
 #. translators: %s: Docs link.
 #: inc/admin/classes/class-status.php:628
-msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">How to create a child theme</a>"
+msgid "If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href=\"%s\" target=\"_blank\">How to create a child theme</a>"
 msgstr ""
 
 #: inc/admin/classes/class-status.php:634
@@ -373,87 +378,87 @@ msgstr ""
 
 #: inc/admin/classes/class-status.php:636
 msgid "Which updates to receive on this site."
-msgstr ""
+msgstr "Quelles mises à jour recevoir sur ce site."
 
 #: inc/admin/classes/class-status.php:650
 msgid "Parent theme name"
-msgstr ""
+msgstr "Nom du thème parent"
 
 #: inc/admin/classes/class-status.php:652
 msgid "The name of the parent theme."
-msgstr ""
+msgstr "Le nom du thème parent."
 
 #: inc/admin/classes/class-status.php:657
 msgid "Parent theme version"
-msgstr ""
+msgstr "Version du thème parent"
 
 #: inc/admin/classes/class-status.php:659
 msgid "The installed version of the parent theme."
-msgstr ""
+msgstr "La version installée du thème parent."
 
 #: inc/admin/classes/class-status.php:664
 msgid "Parent theme author URL"
-msgstr ""
+msgstr "URL de l'auteur du thème parent"
 
 #: inc/admin/classes/class-status.php:666
 msgid "The parent theme developers URL."
-msgstr ""
+msgstr "L'URL des développeurs du thème parent."
 
 #: inc/admin/classes/class-status.php:695
 msgid "WordPress version"
-msgstr ""
+msgstr "Version WordPress"
 
 #: inc/admin/classes/class-status.php:697
 msgid "The installed WordPress version (indicates the fulfillment of the minimum required version)."
-msgstr ""
+msgstr "La version WordPress installée (indique la réalisation de la version minimale requise)."
 
 #. translators: %s: The minimum required WP version number.
 #: inc/admin/classes/class-status.php:706
 msgid "The theme requires WordPress version %s or above."
-msgstr ""
+msgstr "Le thème nécessite WordPress version %s ou supérieure."
 
 #: inc/admin/classes/class-status.php:718
 msgid "WooCommerce version"
-msgstr ""
+msgstr "Version de WooCommerce"
 
 #: inc/admin/classes/class-status.php:720
 msgid "The installed WooCommerce version (indicates the fulfillment of the minimum required version)."
-msgstr ""
+msgstr "La version installée de WooCommerce (indique la réalisation de la version minimale requise)."
 
 #. translators: %s: The minimum required WC version number.
 #: inc/admin/classes/class-status.php:729
 msgid "The theme requires WooCommerce version %s or above."
-msgstr ""
+msgstr "Le thème nécessite la version %s ou supérieure de WooCommerce."
 
 #: inc/admin/classes/class-status.php:741
 msgid "WordPress memory limit"
-msgstr ""
+msgstr "Limite de mémoire WordPress"
 
 #: inc/admin/classes/class-status.php:743
 msgid "The maximum amount of memory (RAM) that your site can use at one time."
-msgstr ""
+msgstr "La quantité maximale de mémoire (RAM) que votre site peut utiliser à la fois."
 
 #. translators: %1$s: Memory limit, %2$s: Docs link.
 #: inc/admin/classes/class-status.php:750
 msgid "%1$s - We recommend setting memory to at least 256MB. See: %2$s"
-msgstr ""
+msgstr "%1$s - Nous vous recommandons de définir la mémoire à au moins 256 Mo. Voir : %2$s"
 
 #. translators: %1$s: Memory limit, %2$s: Docs link.
 #: inc/admin/classes/class-status.php:750
 msgid "Increasing memory allocated to PHP"
-msgstr ""
+msgstr "Augmenter la mémoire allouée au PHP"
 
 #: inc/admin/classes/class-status.php:757
 msgid "WordPress image sizes"
-msgstr ""
+msgstr "Taille des images WordPress"
 
 #: inc/admin/classes/class-status.php:759
 msgid "The image sizes that are registered on this site."
-msgstr ""
+msgstr "La taille des images enregistrées sur ce site."
 
 #: inc/admin/classes/class-status.php:807
 msgid "Server info"
-msgstr ""
+msgstr "Infos serveur"
 
 #: inc/admin/classes/class-status.php:808
 msgid "Information about the web server that is currently hosting your site."
@@ -461,7 +466,7 @@ msgstr ""
 
 #: inc/admin/classes/class-status.php:812
 msgid "PHP version"
-msgstr ""
+msgstr "Version PHP"
 
 #: inc/admin/classes/class-status.php:814
 msgid "The version of PHP installed on your hosting server."
@@ -490,7 +495,7 @@ msgstr ""
 
 #: inc/admin/classes/class-status.php:851
 msgid "PHP max input variables"
-msgstr ""
+msgstr "Variables d'entrée PHP maximum"
 
 #: inc/admin/classes/class-status.php:853
 msgid "The maximum number of variables your server can use for a single function to avoid overloads."
@@ -498,7 +503,7 @@ msgstr ""
 
 #: inc/admin/classes/class-status.php:859
 msgid "Max upload size"
-msgstr ""
+msgstr "Taille maximale de téléversement"
 
 #: inc/admin/classes/class-status.php:861
 msgid "The largest filesize that can be uploaded to your WordPress installation."
@@ -506,7 +511,7 @@ msgstr ""
 
 #: inc/admin/classes/class-status.php:889
 msgid "Secure connection (HTTPS)"
-msgstr ""
+msgstr "Connexion sécurisée (HTTPS)"
 
 #: inc/admin/classes/class-status.php:891
 msgid "Is the connection to your site secure?"
@@ -514,12 +519,12 @@ msgstr ""
 
 #. translators: %s: Docs link.
 #: inc/admin/classes/class-status.php:900
-msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\" rel=\"noopener noreferrer\">Learn more about HTTPS and SSL Certificates</a>."
+msgid "Your site is not using HTTPS. <a href=\"%s\" target=\"_blank\">Learn more about HTTPS and SSL Certificates</a>."
 msgstr ""
 
 #: inc/admin/classes/class-status.php:907
 msgid "Hide errors from visitors"
-msgstr ""
+msgstr "Cacher les erreurs aux visiteurs"
 
 #: inc/admin/classes/class-status.php:909
 msgid "Error messages can contain sensitive information about your site environment. These should be hidden from untrusted visitors."
@@ -531,7 +536,7 @@ msgstr ""
 
 #: inc/admin/classes/class-status.php:945
 msgid "Flatsome database version"
-msgstr ""
+msgstr "Version de la base de données Flatsome"
 
 #: inc/admin/classes/class-status.php:947
 msgid "The database version for Flatsome. This should be the same as the parent theme version."
@@ -543,7 +548,7 @@ msgstr ""
 
 #: inc/admin/classes/class-status.php:983
 msgid "Overrides"
-msgstr ""
+msgstr "Remplacer"
 
 #: inc/admin/classes/class-status.php:984
 msgid "This section shows any files that are overriding the default Flatsome templates."
@@ -554,25 +559,25 @@ msgstr ""
 msgid "%1$s version %2$s is out of date. The core version is %3$s"
 msgstr ""
 
-#: inc/admin/envato_setup/envato_setup.php:2010
+#: inc/admin/envato_setup/envato_setup.php:2011
 msgid "Register Theme"
-msgstr ""
+msgstr "Enregistrer le thème"
 
-#: inc/admin/envato_setup/envato_setup.php:2031
+#: inc/admin/envato_setup/envato_setup.php:2036
 msgid "Continue"
-msgstr ""
+msgstr "Continuer"
 
-#: inc/admin/envato_setup/envato_setup.php:2032
+#: inc/admin/envato_setup/envato_setup.php:2037
 msgid "Unregister"
 msgstr ""
 
-#: inc/admin/envato_setup/envato_setup.php:2034
+#: inc/admin/envato_setup/envato_setup.php:2039
 msgid "Register"
-msgstr ""
+msgstr "S'inscrire"
 
-#: inc/admin/gutenberg/class-gutenberg.php:109
+#: inc/admin/gutenberg/class-gutenberg.php:119
 msgid "Edit with UX Builder"
-msgstr ""
+msgstr "Modifier avec UX Builder"
 
 #: inc/admin/options/blog/options-blog-single.php:85
 msgid "Featured image"
@@ -584,7 +589,7 @@ msgstr ""
 
 #: inc/admin/options/blog/options-blog-single.php:109
 msgid "Meta"
-msgstr ""
+msgstr "Méta"
 
 #: inc/admin/options/blog/options-blog-single.php:117
 msgid "Blog author box"
@@ -598,6 +603,29 @@ msgstr ""
 msgid "HTML after blog posts"
 msgstr ""
 
+#: inc/admin/options/header/options-header-cart.php:117
+msgid "Show quantity input"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:127
+#: inc/admin/options/shop/options-shop-cart-checkout.php:81
+#: inc/admin/options/shop/options-shop-cart-checkout.php:258
+msgid "Show free shipping"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:158
+#: inc/admin/options/styles/options-lightbox.php:30
+msgid "Drawer width"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:167
+msgid "Sticky footer"
+msgstr ""
+
+#: inc/admin/options/header/options-header-cart.php:177
+msgid "Show cross sells"
+msgstr ""
+
 #: inc/admin/options/header/options-header-logo.php:106
 msgid "Logo link"
 msgstr ""
@@ -606,108 +634,108 @@ msgstr ""
 msgid "Custom logo link (defaults to home page link if empty)."
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:85
+#: inc/admin/options/header/options-header-mobile.php:100
 msgid "Menu item behavior"
-msgstr ""
+msgstr "Comportement des éléments de menu"
 
-#: inc/admin/options/header/options-header-mobile.php:86
+#: inc/admin/options/header/options-header-mobile.php:101
 msgid "Click behavior for menu items with a submenu"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:91
+#: inc/admin/options/header/options-header-mobile.php:106
 msgid "Open link"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:92
+#: inc/admin/options/header/options-header-mobile.php:107
 msgid "Toggle submenu"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:99
+#: inc/admin/options/header/options-header-mobile.php:114
 msgid "Submenu effect"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:104
+#: inc/admin/options/header/options-header-mobile.php:119
 msgid "Accordion"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:105
+#: inc/admin/options/header/options-header-mobile.php:120
 msgid "Slide"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:119
+#: inc/admin/options/header/options-header-mobile.php:134
 msgid "Submenu levels"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:124
+#: inc/admin/options/header/options-header-mobile.php:139
 msgid "1 level"
-msgstr ""
+msgstr "1 niveau"
 
-#: inc/admin/options/header/options-header-mobile.php:125
+#: inc/admin/options/header/options-header-mobile.php:140
 msgid "2 levels"
-msgstr ""
+msgstr "2 niveaux"
 
-#: inc/admin/options/header/options-header-mobile.php:144
+#: inc/admin/options/header/options-header-mobile.php:159
 msgid "Top content"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:153
+#: inc/admin/options/header/options-header-mobile.php:168
 msgid "Tabs"
-msgstr ""
+msgstr "Onglets"
 
-#: inc/admin/options/header/options-header-mobile.php:157
+#: inc/admin/options/header/options-header-mobile.php:172
 msgid "None"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:158
+#: inc/admin/options/header/options-header-mobile.php:173
 msgid "2 Tabs"
-msgstr ""
+msgstr "2 Onglets"
 
-#: inc/admin/options/header/options-header-mobile.php:165
+#: inc/admin/options/header/options-header-mobile.php:180
 msgid "Tab 1 text"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:180
+#: inc/admin/options/header/options-header-mobile.php:195
 msgid "Menu elements"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:191
+#: inc/admin/options/header/options-header-mobile.php:206
 msgid "Tab 2 text"
 msgstr ""
 
-#: inc/admin/options/header/options-header-mobile.php:206
+#: inc/admin/options/header/options-header-mobile.php:221
 msgid "Menu elements tab 2"
-msgstr ""
+msgstr "Éléments du menu de l'onglet 2"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:9
-#: inc/functions/function-setup.php:71
+#: inc/functions/function-setup.php:91
 msgid "Vertical Menu"
-msgstr ""
+msgstr "Menu Vertical"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:28
 msgid "Icon"
-msgstr ""
+msgstr "Icône"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:69
 msgid "Tag line"
-msgstr ""
+msgstr "Signature"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:78
 msgid "Text"
-msgstr ""
+msgstr "Texte"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:87
 #: inc/admin/options/header/options-header-nav-vertical.php:201
 msgid "Text base color"
-msgstr ""
+msgstr "Couleur de base du texte"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:101
 msgid "Color"
-msgstr ""
+msgstr "Couleur "
 
 #: inc/admin/options/header/options-header-nav-vertical.php:111
 #: inc/admin/options/header/options-header-nav-vertical.php:161
 msgid "Background color"
-msgstr ""
+msgstr "Couleur d'arrière-plan"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:128
 msgid "Keep open on front page"
@@ -719,7 +747,7 @@ msgstr ""
 
 #: inc/admin/options/header/options-header-nav-vertical.php:178
 msgid "Divider"
-msgstr ""
+msgstr "Diviseur"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:187
 msgid "Nav height"
@@ -731,20 +759,20 @@ msgstr ""
 
 #: inc/admin/options/header/options-header-nav-vertical.php:225
 msgid "Nav color :hover"
-msgstr ""
+msgstr "Couleur de navigation :hover"
 
 #: inc/admin/options/header/options-header-nav-vertical.php:235
 msgid "Nav background color :hover"
 msgstr ""
 
-#: inc/admin/options/notifications/options-notifications.php:98
+#: inc/admin/options/notifications/options-notifications.php:140
 #: inc/extensions/flatsome-cookie-notice/flatsome-cookie-notice.php:39
 msgid "This site uses cookies to offer you a better browsing experience. By browsing this website, you agree to our use of cookies."
 msgstr ""
 
 #: inc/admin/options/portfolio/options-portfolio.php:76
 msgid "Show share icons"
-msgstr ""
+msgstr "Afficher les icônes de partage"
 
 #: inc/admin/options/shop/options-shop-cart-checkout.php:65
 msgid "Boxed Shipping labels"
@@ -754,10 +782,18 @@ msgstr ""
 msgid "Show shipping estimate destination"
 msgstr ""
 
-#: inc/admin/options/shop/options-shop-category.php:748
-#: inc/admin/options/shop/options-shop-product-page.php:398
-msgid "Color :selected"
+#: inc/admin/options/shop/options-shop-category.php:261
+msgid "Show result count"
 msgstr ""
+
+#: inc/admin/options/shop/options-shop-category.php:270
+msgid "Show catalog ordering"
+msgstr ""
+
+#: inc/admin/options/shop/options-shop-category.php:766
+#: inc/admin/options/shop/options-shop-product-page.php:413
+msgid "Color :selected"
+msgstr "Couleur :selected"
 
 #: inc/admin/options/shop/options-shop-product-page.php:40
 #: inc/woocommerce/structure-wc-category-page.php:141
@@ -765,28 +801,47 @@ msgstr ""
 msgid "Custom product layout"
 msgstr ""
 
-#: inc/admin/options/shop/options-shop-product-page.php:359
+#: inc/admin/options/shop/options-shop-product-page.php:374
 msgid "Layout"
-msgstr ""
+msgstr "Mise en page"
 
-#: inc/admin/options/shop/options-shop-product-page.php:371
+#: inc/admin/options/shop/options-shop-product-page.php:386
 msgid "Tooltip"
-msgstr ""
+msgstr "Info-bulle"
 
-#: inc/admin/options/shop/options-shop-product-page.php:372
+#: inc/admin/options/shop/options-shop-product-page.php:387
 msgid "Show a tooltip with the term or term description."
 msgstr ""
 
-#: inc/admin/options/shop/options-shop-product-page.php:380
+#: inc/admin/options/shop/options-shop-product-page.php:395
 msgid "Inactive out of stock"
 msgstr ""
 
-#: inc/admin/options/shop/options-shop-product-page.php:381
+#: inc/admin/options/shop/options-shop-product-page.php:396
 msgid "Show out of stock items as inactive."
 msgstr ""
 
-#: inc/admin/options/shop/options-shop-product-page.php:389
+#: inc/admin/options/shop/options-shop-product-page.php:404
 msgid "Disable deselection"
+msgstr "Désactiver la désélection"
+
+#: inc/admin/options/social/options-social.php:75
+#: inc/admin/options/social/options-social.php:152
+#: inc/shortcodes/follow.php:184
+msgctxt "social media"
+msgid "X"
+msgstr ""
+
+#: inc/admin/options/styles/options-colors.php:144
+msgid "Tooltip colors"
+msgstr ""
+
+#: inc/admin/options/styles/options-colors.php:150
+msgid "Tooltip color"
+msgstr ""
+
+#: inc/admin/options/styles/options-colors.php:159
+msgid "Tooltip background color"
 msgstr ""
 
 #: inc/admin/panel/panel.php:31
@@ -799,19 +854,19 @@ msgstr ""
 
 #: inc/admin/panel/sections/tab-activate.php:17
 msgid "Status"
-msgstr ""
+msgstr "Statut"
 
 #: inc/classes/class-flatsome-base-registration.php:49
 #: inc/classes/class-flatsome-base-registration.php:58
 #: inc/classes/class-flatsome-base-registration.php:67
 #: inc/classes/class-flatsome-base-registration.php:77
 msgid "Not allowed."
-msgstr ""
+msgstr "Non autorisé."
 
 #. translators: %s: Time left.
 #: inc/classes/class-flatsome-envato-admin.php:140
 msgid "Please try again in %s."
-msgstr ""
+msgstr "Veuillez réessayer dans %s."
 
 #: inc/classes/class-flatsome-envato-admin.php:180
 msgid "You must agree to the Envato License Terms."
@@ -819,36 +874,36 @@ msgstr ""
 
 #: inc/classes/class-flatsome-envato-registration.php:36
 msgid "Missing token."
-msgstr ""
+msgstr "Jeton manquant."
 
 #: inc/classes/class-flatsome-envato-registration.php:38
 #: inc/classes/class-flatsome-registration.php:34
 msgid "No purchase code provided."
-msgstr ""
+msgstr "Aucun code d'achat fourni."
 
 #: inc/classes/class-flatsome-envato-registration.php:99
 #: inc/classes/class-flatsome-registration.php:125
 #: inc/classes/class-flatsome-wupdates-registration.php:88
 msgid "No version received."
-msgstr ""
+msgstr "Aucune version reçue."
 
 #: inc/classes/class-flatsome-envato-registration.php:103
 #: inc/classes/class-flatsome-registration.php:129
 #: inc/classes/class-flatsome-wupdates-registration.php:92
 msgid "Invalid version received."
-msgstr ""
+msgstr "Version invalide reçue."
 
 #: inc/classes/class-flatsome-envato-registration.php:133
 #: inc/classes/class-flatsome-registration.php:156
 #: inc/classes/class-flatsome-wupdates-registration.php:118
 msgid "No URL received."
-msgstr ""
+msgstr "Aucune URL reçue."
 
 #: inc/classes/class-flatsome-envato-registration.php:137
 #: inc/classes/class-flatsome-registration.php:160
 #: inc/classes/class-flatsome-wupdates-registration.php:122
 msgid "Invalid URL received."
-msgstr ""
+msgstr "URL invalide reçue."
 
 #: inc/classes/class-flatsome-registration.php:36
 msgid "The provided value seems to be a token. Please register with a purchase code instead."
@@ -856,26 +911,39 @@ msgstr ""
 
 #: inc/classes/class-flatsome-registration.php:38
 msgid "Invalid purchase code."
-msgstr ""
+msgstr "Code d'achat invalide."
 
 #: inc/classes/class-flatsome-registration.php:55
 msgid "Your site is registered. But the purchase code could not be verified at the moment."
-msgstr ""
+msgstr "Votre site est enregistré, mais le code d'achat n'a pas pu être vérifié pour le moment."
 
 #: inc/classes/class-flatsome-registration.php:102
 #: inc/classes/class-flatsome-registration.php:145
 msgid "No purchase code."
+msgstr "Pas de code d'achat."
+
+#: inc/classes/class-flatsome-relay.php:227
+#: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
+msgid "Load more"
+msgstr ""
+
+#: inc/classes/class-flatsome-relay.php:238
+msgid "Previous"
+msgstr ""
+
+#: inc/classes/class-flatsome-relay.php:243
+msgid "Next"
 msgstr ""
 
 #: inc/classes/class-flatsome-wupdates-registration.php:70
 #: inc/classes/class-flatsome-wupdates-registration.php:108
 msgid "Missing purchase code."
-msgstr ""
+msgstr "Code d'achat manquant."
 
 #. translators: %d: The status code.
 #: inc/classes/class-uxthemes-api.php:78
 msgid "Sorry, an error occurred while accessing the API. Error %d"
-msgstr ""
+msgstr "Désolé, une erreur est survenue lors de l'accès à l'API. Erreur %d"
 
 #: inc/classes/class-uxthemes-api.php:118
 msgid "Your purchase code is malformed."
@@ -883,7 +951,7 @@ msgstr ""
 
 #: inc/classes/class-uxthemes-api.php:121
 msgid "Sorry, an error occurred. Please try again."
-msgstr ""
+msgstr "Désolé, une erreur s'est produite. Veuillez réessayer."
 
 #: inc/classes/class-uxthemes-api.php:124
 msgid "Flatsome was unable to get the latest version. Your site might have changed domain after you registered it."
@@ -947,7 +1015,7 @@ msgstr ""
 
 #: inc/classes/class-uxthemes-api.php:172
 msgid "Your purchase code has been locked. Please contact support to resolve the issue."
-msgstr ""
+msgstr "Votre code d'achat a été verrouillé. Veuillez contacter l'assistance pour résoudre le problème."
 
 #: inc/classes/class-uxthemes-api.php:174
 msgid "The requested resource has been locked."
@@ -955,122 +1023,118 @@ msgstr ""
 
 #: inc/classes/class-uxthemes-api.php:176
 msgid "Sorry, the API is overloaded."
-msgstr ""
+msgstr "Désolé, l'API est surchargée."
 
 #: inc/classes/class-uxthemes-api.php:178
 msgid "Sorry, the API is unavailable at the moment."
-msgstr ""
+msgstr "Désolé, l'API n'est pas disponible pour le moment."
 
 #: inc/extensions/flatsome-cookie-notice/flatsome-cookie-notice.php:50
 msgctxt "cookie notice"
 msgid "More info"
-msgstr ""
+msgstr "Plus d'infos"
 
 #: inc/extensions/flatsome-cookie-notice/flatsome-cookie-notice.php:60
 msgctxt "cookie notice"
 msgid "Accept"
-msgstr ""
-
-#: inc/extensions/flatsome-infinite-scroll/templates/button.php:2
-msgid "View more"
-msgstr ""
+msgstr "Accepter"
 
 #: inc/extensions/flatsome-live-search/flatsome-live-search.php:199
 msgid "No matches found"
-msgstr ""
+msgstr "Aucun résultat"
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:72
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
 msgid "Swatch size"
 msgstr ""
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:75
-msgid "X Small"
-msgstr ""
-
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:76
-msgid "Small"
-msgstr ""
-
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:77
-msgid "Medium"
-msgstr ""
-
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:78
-msgid "Large"
-msgstr ""
-
 #: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:79
-msgid "X Large"
-msgstr ""
+msgid "X Small"
+msgstr "Extra Petit"
+
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:80
+msgid "Small"
+msgstr "Petit"
 
 #: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:81
+msgid "Medium"
+msgstr "Moyen"
+
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:82
+msgid "Large"
+msgstr "Large"
+
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:83
+msgid "X Large"
+msgstr "Extra Large"
+
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
 msgid "Determines the size of the swatches."
 msgstr ""
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:85
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
 msgid "Swatch shape"
 msgstr ""
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:88
-msgid "Square"
-msgstr ""
-
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:89
-msgid "Rounded"
-msgstr ""
-
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:90
-msgid "Circle"
-msgstr ""
-
 #: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:92
+msgid "Square"
+msgstr "Carré"
+
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:93
+msgid "Rounded"
+msgstr "Arrondi"
+
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:94
+msgid "Circle"
+msgstr "Cercle"
+
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
 msgid "Determines the shape of the swatches."
 msgstr ""
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:96
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:97
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:100
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:101
 msgid "Use variation images?"
 msgstr ""
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:98
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:102
 msgid "Enable this if you want swatches for this attribute to be auto filled with variation images."
 msgstr ""
 
-#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:338
+#: inc/extensions/flatsome-swatches/includes/class-swatches-admin.php:342
 msgid "Value"
-msgstr ""
+msgstr "Valeur"
 
 #: inc/extensions/flatsome-swatches/includes/class-swatches.php:44
 msgid "UX Color"
-msgstr ""
+msgstr "Couleur UX"
 
 #: inc/extensions/flatsome-swatches/includes/class-swatches.php:45
 msgid "UX Image"
-msgstr ""
+msgstr "Image UX"
 
 #: inc/extensions/flatsome-swatches/includes/class-swatches.php:46
 msgid "UX Label"
-msgstr ""
+msgstr "Label UX"
 
 #: inc/extensions/flatsome-wc-quick-view/flatsome-quick-view.php:15
 msgid "Quick View"
 msgstr "Aperçu"
 
-#: inc/functions/function-custom-css.php:739
-#: inc/woocommerce/structure-wc-global.php:326
+#: inc/functions/function-custom-css.php:665
+#: inc/woocommerce/structure-wc-global.php:330
 #: inc/woocommerce/structure-wc-product-box.php:29
 msgid "New"
 msgstr "Nouveau"
 
-#: inc/functions/function-custom-css.php:740
+#: inc/functions/function-custom-css.php:666
 msgid "Hot"
-msgstr ""
+msgstr "Populaire"
 
-#: inc/functions/function-custom-css.php:741
+#: inc/functions/function-custom-css.php:667
 msgid "Sale"
 msgstr "En action"
 
-#: inc/functions/function-custom-css.php:742
+#: inc/functions/function-custom-css.php:668
 msgid "Popular"
 msgstr "Populaire"
 
@@ -1079,48 +1143,48 @@ msgstr "Populaire"
 msgid "Follow on %s"
 msgstr ""
 
-#: inc/functions/function-setup.php:65
-#: inc/functions/function-setup.php:189
+#: inc/functions/function-setup.php:85
+#: inc/functions/function-setup.php:223
 msgid "Main Menu"
 msgstr "Menu principal"
 
-#: inc/functions/function-setup.php:66
+#: inc/functions/function-setup.php:86
 msgid "Main Menu - Mobile"
-msgstr ""
+msgstr "Menu Principal - Mobile"
 
-#: inc/functions/function-setup.php:67
+#: inc/functions/function-setup.php:87
 msgid "Secondary Menu"
-msgstr ""
+msgstr "Menu secondaire"
 
-#: inc/functions/function-setup.php:68
+#: inc/functions/function-setup.php:88
 msgid "Footer Menu"
 msgstr "Menu du footer"
 
-#: inc/functions/function-setup.php:69
+#: inc/functions/function-setup.php:89
 msgid "Top Bar Menu"
 msgstr ""
 
-#: inc/functions/function-setup.php:70
+#: inc/functions/function-setup.php:90
 msgid "My Account Menu"
-msgstr ""
+msgstr "Menu de Mon Compte"
 
-#: inc/functions/function-setup.php:94
+#: inc/functions/function-setup.php:125
 msgid "Sidebar"
-msgstr ""
+msgstr "Barre latérale"
 
-#: inc/functions/function-setup.php:104
+#: inc/functions/function-setup.php:135
 msgid "Footer 1"
-msgstr ""
+msgstr "Pied de page 1"
 
-#: inc/functions/function-setup.php:114
+#: inc/functions/function-setup.php:145
 msgid "Footer 2"
-msgstr ""
+msgstr "Pied de page 2"
 
-#: inc/functions/function-setup.php:190
-#: inc/shortcodes/accordion.php:116
+#: inc/functions/function-setup.php:224
+#: inc/shortcodes/accordion.php:140
 #: woocommerce/single-product/tabs/accordian.php:33
 msgid "Toggle"
-msgstr ""
+msgstr "Basculer"
 
 #: inc/functions/function-site-health.php:11
 msgid "Flatsome registration"
@@ -1137,7 +1201,7 @@ msgstr ""
 
 #: inc/functions/function-site-health.php:49
 msgid "Flatsome is registered"
-msgstr ""
+msgstr "Flatsome est enregistré"
 
 #: inc/functions/function-site-health.php:55
 msgid "Register Flatsome to receive updates."
@@ -1158,112 +1222,117 @@ msgstr ""
 #: inc/integrations/wc-yith-wishlist/yith-wishlist.php:61
 #: inc/integrations/wc-yith-wishlist/yith-wishlist.php:82
 msgid "Wishlist"
-msgstr ""
+msgstr "Liste de souhaits"
 
 #. translators: %s: Comment count
-#: inc/shortcodes/blog_posts.php:291
+#: inc/shortcodes/blog_posts.php:302
 msgid "%s Comment"
 msgid_plural "%s Comments"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%s Commentaire"
+msgstr[1] "%s Commentaires"
 
-#: inc/shortcodes/follow.php:121
-#: inc/shortcodes/follow.php:122
+#: inc/shortcodes/follow.php:124
+#: inc/shortcodes/follow.php:125
 msgid "Follow on Facebook"
 msgstr "Nous suivre sur Facebook"
 
-#: inc/shortcodes/follow.php:135
-#: inc/shortcodes/follow.php:136
+#: inc/shortcodes/follow.php:138
+#: inc/shortcodes/follow.php:139
 msgid "Follow on Instagram"
 msgstr "Nous suivre sur Instagram"
 
-#: inc/shortcodes/follow.php:149
-#: inc/shortcodes/follow.php:150
+#: inc/shortcodes/follow.php:152
+#: inc/shortcodes/follow.php:153
 msgid "Follow on TikTok"
 msgstr "Nous suivre sur TikTok"
 
-#: inc/shortcodes/follow.php:166
-#: inc/shortcodes/follow.php:167
+#: inc/shortcodes/follow.php:169
+#: inc/shortcodes/follow.php:170
 msgid "Follow on SnapChat"
 msgstr "Nous suivre sur SnapChat"
 
-#: inc/shortcodes/follow.php:173
+#: inc/shortcodes/follow.php:176
 msgid "Point the SnapChat camera at this to add us to SnapChat."
+msgstr "Pointez la caméra SnapChat à cet endroit pour nous ajouter sur SnapChat."
+
+#: inc/shortcodes/follow.php:188
+#: inc/shortcodes/follow.php:189
+msgid "Follow on X"
 msgstr ""
 
-#: inc/shortcodes/follow.php:185
-#: inc/shortcodes/follow.php:186
+#: inc/shortcodes/follow.php:202
+#: inc/shortcodes/follow.php:203
 msgid "Follow on Twitter"
 msgstr "Nous suivre sur Twitter"
 
-#: inc/shortcodes/follow.php:199
-#: inc/shortcodes/follow.php:200
+#: inc/shortcodes/follow.php:216
+#: inc/shortcodes/follow.php:217
 msgid "Send us an email"
 msgstr "Nous envoyer un email"
 
-#: inc/shortcodes/follow.php:213
-#: inc/shortcodes/follow.php:214
+#: inc/shortcodes/follow.php:230
+#: inc/shortcodes/follow.php:231
 msgid "Call us"
-msgstr ""
+msgstr "Appelez-nous"
 
-#: inc/shortcodes/follow.php:227
-#: inc/shortcodes/follow.php:228
+#: inc/shortcodes/follow.php:244
+#: inc/shortcodes/follow.php:245
 msgid "Follow on Pinterest"
 msgstr "Nous suivre sur Pinterest"
 
-#: inc/shortcodes/follow.php:241
-#: inc/shortcodes/follow.php:242
+#: inc/shortcodes/follow.php:258
+#: inc/shortcodes/follow.php:259
 msgid "Subscribe to RSS"
 msgstr "S'abonner à notre flux RSS"
 
-#: inc/shortcodes/follow.php:255
-#: inc/shortcodes/follow.php:256
+#: inc/shortcodes/follow.php:272
+#: inc/shortcodes/follow.php:273
 msgid "Follow on LinkedIn"
 msgstr "Nous suivre sur LinkedIn"
 
-#: inc/shortcodes/follow.php:269
-#: inc/shortcodes/follow.php:270
+#: inc/shortcodes/follow.php:286
+#: inc/shortcodes/follow.php:287
 msgid "Follow on YouTube"
 msgstr "Nous suivre sur Youtube"
 
-#: inc/shortcodes/follow.php:283
-#: inc/shortcodes/follow.php:284
+#: inc/shortcodes/follow.php:300
+#: inc/shortcodes/follow.php:301
 msgid "Flickr"
-msgstr ""
+msgstr "Flickr"
 
-#: inc/shortcodes/follow.php:297
-#: inc/shortcodes/follow.php:298
+#: inc/shortcodes/follow.php:314
+#: inc/shortcodes/follow.php:315
 msgid "Follow on 500px"
 msgstr "Nous suivre sur 500px"
 
-#: inc/shortcodes/follow.php:311
-#: inc/shortcodes/follow.php:312
+#: inc/shortcodes/follow.php:328
+#: inc/shortcodes/follow.php:329
 msgid "Follow on VKontakte"
 msgstr "Nous suivre sur VKontakte"
 
-#: inc/shortcodes/follow.php:325
-#: inc/shortcodes/follow.php:326
+#: inc/shortcodes/follow.php:342
+#: inc/shortcodes/follow.php:343
 msgid "Follow on Telegram"
 msgstr "Nous suivre sur Telegram"
 
-#: inc/shortcodes/follow.php:339
-#: inc/shortcodes/follow.php:340
+#: inc/shortcodes/follow.php:356
+#: inc/shortcodes/follow.php:357
 msgid "Follow on Twitch"
 msgstr "Nous suivre sur Twitch"
 
-#: inc/shortcodes/follow.php:353
-#: inc/shortcodes/follow.php:354
+#: inc/shortcodes/follow.php:370
+#: inc/shortcodes/follow.php:371
 msgid "Follow on Discord"
 msgstr "Nous suivre sur Discord"
 
 #: inc/shortcodes/portfolio.php:146
 #: woocommerce/product-searchform.php:39
 msgid "All"
-msgstr ""
+msgstr "Tout"
 
 #: inc/shortcodes/sections.php:154
 msgid "Scroll for more"
-msgstr ""
+msgstr "Fais défiler pour en savoir plus"
 
 #: inc/shortcodes/share.php:96
 #: inc/shortcodes/share.php:97
@@ -1277,60 +1346,65 @@ msgstr "Partager sur Facebook"
 
 #: inc/shortcodes/share.php:125
 #: inc/shortcodes/share.php:126
+msgid "Share on X"
+msgstr ""
+
+#: inc/shortcodes/share.php:139
+#: inc/shortcodes/share.php:140
 msgid "Share on Twitter"
 msgstr "Partager sur Twitter"
 
 #. translators: %s: the share link.
-#: inc/shortcodes/share.php:137
+#: inc/shortcodes/share.php:151
 msgid "Check this out: %s"
-msgstr ""
+msgstr "Regarde ça: %s"
 
-#: inc/shortcodes/share.php:141
-#: inc/shortcodes/share.php:142
+#: inc/shortcodes/share.php:155
+#: inc/shortcodes/share.php:156
 msgid "Email to a Friend"
 msgstr "Envoyer par mail"
 
-#: inc/shortcodes/share.php:159
-#: inc/shortcodes/share.php:160
+#: inc/shortcodes/share.php:173
+#: inc/shortcodes/share.php:174
 msgid "Pin on Pinterest"
 msgstr "Epingler sur Pinterest"
 
-#: inc/shortcodes/share.php:173
-#: inc/shortcodes/share.php:174
+#: inc/shortcodes/share.php:187
+#: inc/shortcodes/share.php:188
 msgid "Share on VKontakte"
 msgstr "Partager sur VKontakte"
 
-#: inc/shortcodes/share.php:187
-#: inc/shortcodes/share.php:188
+#: inc/shortcodes/share.php:201
+#: inc/shortcodes/share.php:202
 msgid "Share on LinkedIn"
 msgstr "Partager sur LinkedIn"
 
-#: inc/shortcodes/share.php:201
-#: inc/shortcodes/share.php:202
+#: inc/shortcodes/share.php:215
+#: inc/shortcodes/share.php:216
 msgid "Share on Tumblr"
 msgstr "Partager sur Tumblr"
 
-#: inc/shortcodes/share.php:215
-#: inc/shortcodes/share.php:216
+#: inc/shortcodes/share.php:229
+#: inc/shortcodes/share.php:230
 msgid "Share on Telegram"
 msgstr "Partager sur Telegram"
 
 #: inc/shortcodes/ux_instagram_feed.php:52
 msgid "Please select an Instagram account"
-msgstr ""
+msgstr "Merci de sélectionner un compte Instagram"
 
 #: inc/shortcodes/ux_instagram_feed.php:222
 msgid "Unable to communicate with Instagram."
-msgstr ""
+msgstr "Impossible de communiquer avec Instagram."
 
 #: inc/shortcodes/ux_instagram_feed.php:224
 msgid "An error occurred while retrieving media"
-msgstr ""
+msgstr "Une erreur s'est produite lors de la récupération du média"
 
 #: inc/structure/structure-portfolio.php:50
 msgctxt "breadcrumb"
 msgid "Home"
-msgstr ""
+msgstr "Accueil"
 
 #: inc/structure/structure-posts.php:139
 msgid "<span class=\"icon-angle-left\"></span> Older posts"
@@ -1361,21 +1435,21 @@ msgstr ""
 #: inc/structure/structure-posts.php:236
 msgctxt "post date by post author"
 msgid "<span class=\"posted-on\">Posted on %1$s</span> <span class=\"byline\">by %2$s</span>"
-msgstr ""
+msgstr "<span class=\"posted-on\">Publié le %1$s</span> <span class=\"byline\">par %2$s</span>"
 
 #: inc/widgets/widget-blocks.php:17
 msgid "Display a UX Block."
-msgstr ""
+msgstr "Afficher un Bloc UX."
 
 #: inc/widgets/widget-blocks.php:21
 msgid "Flatsome UX Blocks"
-msgstr ""
+msgstr "Blocs UX Flatsome"
 
 #: inc/widgets/widget-blocks.php:85
 #: inc/widgets/widget-recent-posts.php:129
 #: inc/widgets/widget-upsell.php:120
 msgid "Title"
-msgstr ""
+msgstr "Titre"
 
 #: inc/widgets/widget-recent-posts.php:18
 msgid "Display recent posts in Flatsome format."
@@ -1383,7 +1457,7 @@ msgstr ""
 
 #: inc/widgets/widget-recent-posts.php:22
 msgid "Flatsome Recent Posts"
-msgstr ""
+msgstr "Messages Récents Flatsome"
 
 #: inc/widgets/widget-recent-posts.php:49
 msgid "Recent Posts"
@@ -1403,11 +1477,11 @@ msgstr "<strong>%</strong> Commentaires"
 
 #: inc/widgets/widget-recent-posts.php:132
 msgid "Number of posts to show"
-msgstr ""
+msgstr "Nombre de publications à afficher"
 
 #: inc/widgets/widget-recent-posts.php:136
 msgid "Show thumbnail"
-msgstr ""
+msgstr "Afficher la miniature"
 
 #: inc/widgets/widget-recent-posts.php:139
 msgid "Show date stamp on thumbnail"
@@ -1426,6 +1500,20 @@ msgstr ""
 msgid "Complete the look"
 msgstr "S'associe bien avec "
 
+#: inc/woocommerce/class-mini-cart.php:135
+msgctxt "mini cart add to cart button label"
+msgid "Add"
+msgstr ""
+
+#. translators: %s: The threshold
+#: inc/woocommerce/class-shipping.php:131
+msgid "Add %s to cart and get free shipping!"
+msgstr ""
+
+#: inc/woocommerce/class-shipping.php:142
+msgid "Your order qualifies for free shipping 🎉"
+msgstr ""
+
 #: inc/woocommerce/structure-wc-category-page.php:97
 #: inc/woocommerce/structure-wc-product-page-fields.php:31
 msgid "Top Content"
@@ -1433,16 +1521,16 @@ msgstr "Haut de page"
 
 #: inc/woocommerce/structure-wc-category-page.php:102
 msgid "Enter a value for this field. Shortcodes are allowed. This will be displayed at top of the category."
-msgstr ""
+msgstr "Entrez une valeur pour ce champ. Les shortcodes sont autorisés. Ils seront affichés en haut de la catégorie."
 
 #: inc/woocommerce/structure-wc-category-page.php:119
 #: inc/woocommerce/structure-wc-product-page-fields.php:38
 msgid "Bottom Content"
-msgstr ""
+msgstr "Contenu Inférieur"
 
 #: inc/woocommerce/structure-wc-category-page.php:124
 msgid "Enter a value for this field. Shortcodes are allowed. This will be displayed at bottom of the category."
-msgstr ""
+msgstr "Entrez une valeur pour ce champ. Les shortcodes sont autorisés. Ils seront affichés en bas de la catégorie."
 
 #: inc/woocommerce/structure-wc-category-page.php:152
 msgid "Choose a custom product block layout for this category."
@@ -1450,27 +1538,27 @@ msgstr ""
 
 #: inc/woocommerce/structure-wc-checkout.php:166
 msgid "I have read and agree"
-msgstr ""
+msgstr "J'ai lu et accepté"
 
-#: inc/woocommerce/structure-wc-global.php:90
+#: inc/woocommerce/structure-wc-global.php:94
 msgid "Shop Sidebar"
 msgstr ""
 
-#: inc/woocommerce/structure-wc-global.php:99
+#: inc/woocommerce/structure-wc-global.php:103
 msgid "Product Sidebar"
-msgstr ""
+msgstr "Barre latérale du produit"
 
-#: inc/woocommerce/structure-wc-global.php:258
+#: inc/woocommerce/structure-wc-global.php:262
 msgid "Posts found"
 msgstr ""
 
-#: inc/woocommerce/structure-wc-global.php:271
+#: inc/woocommerce/structure-wc-global.php:275
 msgid "Pages found"
-msgstr ""
+msgstr "Pages trouvées"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:17
 msgid "Product layout"
-msgstr ""
+msgstr "Présentation du produit"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:24
 msgid "Choose a custom product block layout for this product."
@@ -1478,15 +1566,15 @@ msgstr ""
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:33
 msgid "Enter content that will show after the header and before the product. Shortcodes are allowed"
-msgstr ""
+msgstr "Entrez le contenu qui s'affichera après l'en-tête et avant le produit. Les shortcodes sont autorisés"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:40
 msgid "Enter content that will show after the product info. Shortcodes are allowed"
-msgstr ""
+msgstr "Entrez le contenu qui s'affichera après les infos du produit. Les shortcodes sont autorisés"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:46
 msgid "Extra"
-msgstr ""
+msgstr "Extra"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:52
 msgid "Enable a custom bubble on this product."
@@ -1494,11 +1582,11 @@ msgstr ""
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:82
 msgid "Custom Tab Content"
-msgstr ""
+msgstr "Contenu de l'onglet personnalisé"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:84
 msgid "Enter content for custom product tab here. Shortcodes are allowed"
-msgstr ""
+msgstr "Entrez le contenu de l'onglet produit personnalisé ici. Les shortcodes sont autorisés"
 
 #: inc/woocommerce/structure-wc-product-page-fields.php:93
 msgid "Product Video"
@@ -1515,10 +1603,14 @@ msgstr ""
 #: inc/woocommerce/structure-wc-product-page.php:73
 #: inc/woocommerce/structure-wc-product-page.php:139
 msgid "Video"
-msgstr ""
+msgstr "Vidéo"
 
 #: inc/woocommerce/structure-wc-product-page.php:104
 msgid "Zoom"
+msgstr "Zoom"
+
+#: inc/woocommerce/structure-wc-product-page.php:280
+msgid "Select options"
 msgstr ""
 
 #. Template Name of the theme
@@ -1531,7 +1623,7 @@ msgstr ""
 
 #. Template Name of the theme
 msgid "Page - Vertical Sub-Nav"
-msgstr ""
+msgstr "Page - Sous-Navigation Verticale"
 
 #. Template Name of the theme
 msgid "Page - Container - Center Title"
@@ -1539,15 +1631,15 @@ msgstr ""
 
 #. Template Name of the theme
 msgid "Page - Full Width"
-msgstr ""
+msgstr "Page - Pleine Largeur"
 
 #. Template Name of the theme
 msgid "WooCommerce - Cart"
-msgstr ""
+msgstr "WooCommerce - Panier"
 
 #. Template Name of the theme
 msgid "WooCommerce - Checkout"
-msgstr ""
+msgstr "WooCommerce - Commander"
 
 #. Template Name of the theme
 msgid "Portfolio"
@@ -1559,15 +1651,15 @@ msgstr ""
 
 #. Template Name of the theme
 msgid "Page - Left Sidebar"
-msgstr ""
+msgstr "Page - Barre Latérale Gauche"
 
 #. Template Name of the theme
 msgid "WooCommerce - My Account"
-msgstr ""
+msgstr "WooCommerce - Mon Compte"
 
 #. Template Name of the theme
 msgid "Page - Right Sidebar"
-msgstr ""
+msgstr "Page - Barre Latérale Droite"
 
 #. Template Name of the theme
 msgid "Page - Single Page Nav - Transparent Header - Light Text"
@@ -1579,7 +1671,7 @@ msgstr ""
 
 #. Template Name of the theme
 msgid "Page - Single Page Nav"
-msgstr ""
+msgstr "Page - Navigation Page Unique"
 
 #. Template Name of the theme
 msgid "Page - Full Width - Transparent Header - Light Text"
@@ -1592,7 +1684,7 @@ msgstr ""
 #: searchform.php:18
 #: woocommerce/product-searchform.php:65
 msgid "Submit"
-msgstr ""
+msgstr "Envoyer"
 
 #. translators: 1. Template
 #: template-parts/admin/envato/directory-warning.php:13
@@ -1609,11 +1701,11 @@ msgstr ""
 
 #: template-parts/admin/envato/register-form.php:42
 msgid "Select a purchase code:"
-msgstr ""
+msgstr "Sélectionnez un code d'achat:"
 
 #: template-parts/admin/envato/register-form.php:60
 msgid "Registered domain:"
-msgstr ""
+msgstr "Domaine enregistré:"
 
 #: template-parts/admin/envato/register-form.php:121
 msgid "Are you sure you want to unregister Flatsome?"
@@ -1622,7 +1714,7 @@ msgstr ""
 #. translators: 1: Version.
 #: template-parts/admin/envato/version-info-iframe.php:15
 msgid "Version %s"
-msgstr ""
+msgstr "Version %s"
 
 #: template-parts/admin/envato/version-info-iframe.php:18
 msgid "Read change log here"
@@ -1640,17 +1732,27 @@ msgstr ""
 #: template-parts/header/partials/element-contact-mobile.php:47
 #: template-parts/header/partials/element-contact.php:52
 msgid "Contact"
+msgstr "Contact"
+
+#: template-parts/header/partials/element-contact-mobile.php:81
+#: template-parts/header/partials/element-contact.php:92
+msgid "WhatsApp"
 msgstr ""
 
 #: template-parts/header/partials/element-menu-icon.php:13
 #: template-parts/header/partials/element-menu-icon.php:17
 #: template-parts/overlays/overlay-menu.php:45
 msgid "Menu"
-msgstr ""
+msgstr "Menu"
 
 #: template-parts/header/partials/element-nav-vertical.php:33
 #: template-parts/overlays/overlay-menu.php:50
 msgid "Categories"
+msgstr "Catégories"
+
+#: template-parts/portfolio/portfolio-summary-full.php:30
+#: template-parts/portfolio/portfolio-summary.php:26
+msgid "Tags"
 msgstr ""
 
 #: template-parts/posts/content-none.php:14
@@ -1683,7 +1785,7 @@ msgstr ","
 
 #: template-parts/posts/content-single.php:39
 msgid "This entry was posted in %1$s and tagged %2$s."
-msgstr ""
+msgstr "Cet article a été publié dans %1$s et marqué %2$s."
 
 #: template-parts/posts/content-single.php:41
 msgid "This entry was posted in %1$s. Bookmark the <a href=\"%3$s\" title=\"Permalink to %4$s\" rel=\"bookmark\">permalink</a>."
@@ -1695,7 +1797,7 @@ msgstr ""
 msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
 msgstr "Continuer la lecture <span class=\"meta-nav\">&rarr;</span>"
 
-#: template-parts/posts/loop/post-simple.php:32
+#: template-parts/posts/loop/post-simple.php:28
 msgid "%1$s Comment"
 msgid_plural "%1$s Comments"
 msgstr[0] ""
@@ -1735,7 +1837,7 @@ msgstr ""
 
 #: template-parts/posts/partials/archive-title.php:50
 msgid "Images"
-msgstr ""
+msgstr "Images"
 
 #: template-parts/posts/partials/archive-title.php:53
 msgid "Videos"
@@ -1752,7 +1854,7 @@ msgstr "Liens"
 #: template-parts/posts/partials/entry-footer-single.php:17
 #: template-parts/posts/partials/entry-footer.php:17
 msgid "Posted in %1$s"
-msgstr ""
+msgstr "Posté dans %1$s"
 
 #: template-parts/posts/partials/entry-footer-single.php:27
 #: template-parts/posts/partials/entry-footer.php:27
@@ -1797,5 +1899,35 @@ msgstr ""
 #: woocommerce/myaccount/form-login-lightbox-left-panel.php:79
 #: woocommerce/myaccount/form-login-lightbox-right-panel.php:121
 msgid "Register an Account"
+msgstr "Créer un compte"
+
+#: inc/blocks/uxbuilder/block.json
+msgctxt "block title"
+msgid "UX Builder content"
+msgstr ""
+
+#: inc/blocks/uxbuilder/block.json
+msgctxt "block description"
+msgid "This block contains content created with UX Builder."
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Primary"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Secondary"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Success"
+msgstr ""
+
+#: theme.json
+msgctxt "Color name"
+msgid "Alert"
 msgstr ""
 

@@ -3,7 +3,7 @@
  * Cart element.
  *
  * @package          Flatsome\Templates
- * @flatsome-version 3.17.5
+ * @flatsome-version 3.18.0
  */
 
 if(is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
@@ -20,6 +20,19 @@ if(is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
     $cart_style = 'link';
   }
 
+	$link_atts = array(
+		'href'  => is_customize_preview() ? '#' : esc_url( wc_get_cart_url() ), // Prevent none link mode to navigate in customizer.
+		'class' => 'header-cart-link ' . get_flatsome_icon_class( $icon_style, 'small' ),
+		'title' => esc_attr__( 'Cart', 'woocommerce' ),
+	);
+
+	if ( $cart_style === 'off-canvas' ) {
+		$link_atts['class']     .= ' off-canvas-toggle nav-top-link';
+		$link_atts['data-open']  = '#cart-popup';
+		$link_atts['data-class'] = 'off-canvas-cart';
+		$link_atts['data-pos']   = 'right';
+	}
+
 	if ( fl_woocommerce_version_check( '7.8.0' ) && ! wp_script_is( 'wc-cart-fragments' ) ) {
 		wp_enqueue_script( 'wc-cart-fragments' );
 	}
@@ -27,12 +40,7 @@ if(is_woocommerce_activated() && flatsome_is_wc_cart_available() ) {
 <li class="cart-item has-icon<?php if($cart_style == 'dropdown') { ?> has-dropdown<?php } ?>">
 <?php if($icon_style && $icon_style !== 'plain') { ?><div class="header-button"><?php } ?>
 
-<?php if($cart_style !== 'off-canvas') { ?>
-<a href="<?php echo esc_url( wc_get_cart_url() ); ?>" title="<?php _e('Cart', 'woocommerce'); ?>" class="header-cart-link <?php echo get_flatsome_icon_class($icon_style, 'small'); ?>">
-
-<?php } else if($cart_style == 'off-canvas') { ?>
-	<a href="<?php echo esc_url( wc_get_cart_url() ); ?>" class="header-cart-link off-canvas-toggle nav-top-link <?php echo get_flatsome_icon_class($icon_style, 'small'); ?>" data-open="#cart-popup" data-class="off-canvas-cart" title="<?php _e('Cart', 'woocommerce'); ?>" data-pos="right">
-<?php } ?>
+<a <?php echo flatsome_html_atts( $link_atts ); ?>>
 
 <?php  if($cart_total || $cart_title) { ?>
 <span class="header-cart-title">
@@ -81,15 +89,13 @@ else { ?>
 <?php if($cart_style == 'off-canvas') { ?>
 
   <!-- Cart Sidebar Popup -->
-  <div id="cart-popup" class="mfp-hide widget_shopping_cart">
-  <div class="cart-popup-inner inner-padding">
+  <div id="cart-popup" class="mfp-hide">
+  <div class="cart-popup-inner inner-padding<?php echo get_theme_mod( 'header_cart_sticky_footer', 1 ) ? ' cart-popup-inner--sticky' : ''; ?>">
       <div class="cart-popup-title text-center">
-          <h4 class="uppercase"><?php _e('Cart', 'woocommerce'); ?></h4>
+          <span class="heading-font uppercase"><?php _e('Cart', 'woocommerce'); ?></span>
           <div class="is-divider"></div>
       </div>
-      <div class="widget_shopping_cart_content">
-          <?php woocommerce_mini_cart(); ?>
-      </div>
+      <?php the_widget( 'WC_Widget_Cart', array( 'title' => '' ) ); ?>
       <?php if($custom_cart_content) {
         echo '<div class="header-cart-content">'.do_shortcode($custom_cart_content).'</div>'; }
       ?>

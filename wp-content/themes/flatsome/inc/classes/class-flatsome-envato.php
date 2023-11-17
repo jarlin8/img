@@ -29,6 +29,13 @@ final class Flatsome_Envato {
 	public $registration;
 
 	/**
+	 * The admin instance.
+	 *
+	 * @var Flatsome_Envato_Admin
+	 */
+	public $admin;
+
+	/**
 	 * Setup instance properties.
 	 */
 	private function __construct() {

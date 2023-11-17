@@ -625,7 +625,7 @@ final class Status {
 						echo '<mark class="success"><span class="dashicons dashicons-yes"></span></mark>';
 					} else {
 						/* translators: %s: Docs link. */
-						echo '<span class="dashicons dashicons-no-alt"></span>&ndash; ' . wp_kses_post( sprintf( __( 'If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href="%s" target="_blank" rel="noopener noreferrer">How to create a child theme</a>', 'flatsome' ), 'https://developer.wordpress.org/themes/advanced-topics/child-themes/' ) );
+						echo '<span class="dashicons dashicons-no-alt"></span>&ndash; ' . wp_kses_post( sprintf( __( 'If you are modifying Flatsome on the parent theme we recommend using a child theme. See: <a href="%s" target="_blank">How to create a child theme</a>', 'flatsome' ), 'https://developer.wordpress.org/themes/advanced-topics/child-themes/' ) );
 					}
 					?>
 				</td>
@@ -747,7 +747,7 @@ final class Status {
 						echo '<mark class="success">' . esc_html( size_format( $this->environment['wp_memory_limit'] ) ) . '</mark>';
 					} else {
 						/* translators: %1$s: Memory limit, %2$s: Docs link. */
-						echo '<mark class="warning">' . sprintf( esc_html__( '%1$s - We recommend setting memory to at least 256MB. See: %2$s', 'flatsome' ), esc_html( size_format( $this->environment['wp_memory_limit'] ) ), '<a href="https://wordpress.org/support/article/editing-wp-config-php/#increasing-memory-allocated-to-php" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Increasing memory allocated to PHP', 'flatsome' ) . '</a>' ) . '</mark>';
+						echo '<mark class="warning">' . sprintf( esc_html__( '%1$s - We recommend setting memory to at least 256MB. See: %2$s', 'flatsome' ), esc_html( size_format( $this->environment['wp_memory_limit'] ) ), '<a href="https://wordpress.org/support/article/editing-wp-config-php/#increasing-memory-allocated-to-php" target="_blank" rel="noopener">' . esc_html__( 'Increasing memory allocated to PHP', 'flatsome' ) . '</a>' ) . '</mark>';
 					}
 					?>
 				</td>
@@ -897,7 +897,7 @@ final class Status {
 						<mark class="critical"><span class="dashicons dashicons-warning"></span>
 							<?php
 							/* translators: %s: Docs link. */
-							echo wp_kses_post( sprintf( __( 'Your site is not using HTTPS. <a href="%s" target="_blank" rel="noopener noreferrer">Learn more about HTTPS and SSL Certificates</a>.', 'flatsome' ), 'https://wordpress.com/support/https-ssl/' ) );
+							echo wp_kses_post( sprintf( __( 'Your site is not using HTTPS. <a href="%s" target="_blank">Learn more about HTTPS and SSL Certificates</a>.', 'flatsome' ), 'https://wordpress.com/support/https-ssl/' ) );
 							?>
 						</mark>
 					<?php endif; ?>
