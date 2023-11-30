@@ -156,8 +156,8 @@ function begin_single_meta() {
 
 		echo '<span class="meta-date">';
 		echo '<time datetime="';
-		echo get_the_date('Y-m-d');
-		echo ' ' . get_the_time('H:i:s');
+		echo get_the_modified_date('Y-m-d');
+		echo ' ' . get_the_modified_time('H:i:s');
 		echo '">';
 		time_ago( $time_type ='posts' );
 		echo '</time></span>';
