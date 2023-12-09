@@ -643,29 +643,13 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 				) );
 
 				$taxonomy_terms = get_terms($taxonomy_nm, array('hide_empty'=> 0,'orderby'=> 'name'));
-
-				if (!empty($taxonomy_terms)) {
-					// Code for storing the parent taxonomies titles
-					$taxonomy_parents = array();
-					foreach ($taxonomy_terms as $term_obj) {
-						if( empty( $term_obj->parent ) ){
-							$taxonomy_parents[$term_obj->term_id] = $term_obj->name;
-						}
-					}
-					foreach ($taxonomy_terms as $term_obj) {
-
-						if (empty($terms_val[$term_obj->taxonomy])) {
-							$terms_val[$term_obj->taxonomy] = array();
-						}
-
-						$title = ucwords( ( ! empty( $taxonomy_parents[$term_obj->parent] ) ) ? ( $taxonomy_parents[$term_obj->parent] . ' — ' . $term_obj->name ) : $term_obj->name );
-						$terms_val[$term_obj->taxonomy][$term_obj->term_id] = $title;
-						$terms_val_search[$term_obj->taxonomy][$term_obj->slug] = $title; //for advanced search
-						$this->terms_val_parent[$term_obj->taxonomy][$term_obj->term_id] = array();
-						$this->terms_val_parent[$term_obj->taxonomy][$term_obj->term_id]['term'] = $term_obj->name;
-						$this->terms_val_parent[$term_obj->taxonomy][$term_obj->term_id]['parent'] = $term_obj->parent;
-						$this->terms_val_parent[$term_obj->taxonomy][$term_obj->term_id]['title'] = $title;
-					}	
+				if ( ! empty( $taxonomy_terms ) ) {
+					$terms_val = $this->get_parent_term_values(
+						array(
+							'taxonomy_obj'      => $taxonomy_terms,
+							'include_taxonomy'  => 'all' // include all taxonomy.
+						)
+					);
 				}
 
 				//Code for defining the col model for the terms
@@ -1332,6 +1316,22 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					$store_model_transient = false;
 					update_option( '_sm_update_8160_' . $this->dashboard_key, 1, 'no' );
 				}
+				if ( false === get_option( '_sm_update_8190_product_stock_log' ) ) {
+					delete_transient( 'sa_sm_product_stock_log_tasks' );
+					delete_user_meta( get_current_user_id(), 'sa_sm_product_stock_log_tasks' );
+					$store_model_transient = false;
+					update_option( '_sm_update_8190_product_stock_log', 1, 'no' );
+				}
+				if ( false === get_option( '_sm_update_8240_shop_coupon' ) ) {
+					delete_transient( 'sa_sm_shop_coupon' );
+					$store_model_transient = false;
+					update_option( '_sm_update_8240_shop_coupon', 1, 'no' );
+				}
+				if ( false === get_option( '_sm_update_8250_product' ) ) {
+					delete_transient( 'sa_sm_product' );
+					$store_model_transient = false;
+					update_option( '_sm_update_8250_product', 1, 'no' );
+				}
 			}
 
 			$store_model = $store_model_transient;
@@ -1646,10 +1646,14 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 				do_action( 'sm_advanced_search_processing_complete' ); //action for doing any post processing work
 		}
 
-		//Function to get the data model for the dashboard
-		public function get_data_model() {
+		/**
+	     * Function to get the data model for the dashboard.
+		 * @param  array $col_model column model array.
+		 * @return array $data_model updated data model array.
+		 */
+		public function get_data_model( $col_model = array() ) {
 			global $wpdb, $current_user;
-			$data_model = array(); 
+			$data_model = array();
 			$column_model_transient = ( ! empty( $this->store_col_model_transient_option_nm ) ) ? get_user_meta( get_current_user_id(), $this->store_col_model_transient_option_nm, true ) : array();
 			// Code for handling views
 			$is_view_contain_search_params = false;
@@ -1702,8 +1706,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 			if( !empty( $column_model_transient ) && !empty( $store_model_transient ) ) {
 				$store_model_transient = $this->map_column_to_store_model( $store_model_transient, $column_model_transient );
 			}
-
-			$col_model = (!empty($store_model_transient['columns'])) ? $store_model_transient['columns'] : array();
+			$col_model = ( ! empty( $this->req_params[ 'columnsToBeExported' ] ) && ! empty( $col_model ) && is_array( $col_model ) ) ? $col_model : ( ( ! empty( $store_model_transient['columns'] ) ) ? $store_model_transient['columns'] : array() );
 
 			$required_cols = apply_filters('sm_required_cols', array());
 
@@ -1819,7 +1822,6 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					if ($col_exploded[0] == 'terms' && $col_nm != 'object_id' ) {
 						$terms_visible_cols[$col_nm] = ( ! empty( $col['values'] ) ) ? $col['values'] : array();
 					}
-
 					if( ! empty( $col['is_display_date_in_site_timezone'] ) ){
 						$data_cols_display_date_in_site_timezone[] = $col_nm;
 					}
@@ -1853,7 +1855,8 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 										'col_model'									=> $col_model,
 										'search_cols_type'							=> $search_cols_type,
 										'visible_cols'								=> $visible_cols,
-										'terms_visible_cols'                        => $terms_visible_cols
+										'terms_visible_cols'                        => $terms_visible_cols,
+										'advance_search_operators'					=> $this->advance_search_operators
 									);
 
 			if( $load_default_data_model ) { //condition to skip the default data model
@@ -2404,14 +2407,14 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 		public function inline_update() {
 			global $wpdb, $current_user;
 			$edited_data = ( ! empty( $this->req_params['edited_data'] ) ) ? json_decode( stripslashes( $this->req_params['edited_data'] ), true ) : array();
-			$updated_edited_data = ( ! empty( $this->req_params['updatedEditedData'] ) ) ? json_decode( stripslashes( $this->req_params['updatedEditedData'] ), true ) : array();
+			$updated_edited_data = apply_filters( 'sm_filter_updated_edited_data', ( ! empty( $this->req_params['updatedEditedData'] ) ) ? json_decode( stripslashes( $this->req_params['updatedEditedData'] ), true ) : $edited_data );
 			$store_model_transient = $store_model_transient = get_transient( 'sa_sm_' . $this->dashboard_key );
 			$store_model_transient = ( ! empty( $store_model_transient ) && ! is_array( $store_model_transient ) ) ? json_decode( $store_model_transient, true ) : $this->get_dashboard_model( true );
 			$table_model = ( ! empty( $store_model_transient['tables'] ) ) ? $store_model_transient['tables'] : array();
 			$col_model = ( ! empty( $store_model_transient['columns'] ) ) ? $store_model_transient['columns'] : array();
 			if ( empty( $edited_data ) || empty( $table_model ) || empty( $col_model ) ) return;
-			if ( is_callable( array( 'Smart_Manager_Pro_Task', 'task_update' ) ) && ( is_array( $updated_edited_data ) && ( ! empty( $updated_edited_data ) ) ) && ( ! empty( $this->req_params['title'] ) ) && ( ! empty( $this->dashboard_key ) ) ) {
-				$this->task_id = Smart_Manager_Pro_Task::task_update( 
+			if ( is_callable( array( 'Smart_Manager_Task', 'task_update' ) ) && ( is_array( $updated_edited_data ) && ( ! empty( $updated_edited_data ) ) ) && ( ! empty( $this->req_params['title'] ) ) && ( ! empty( $this->dashboard_key ) ) ) {
+				$this->task_id = Smart_Manager_Task::task_update( 
 					array(
 						'title' => $this->req_params['title'],
 						'created_date' => date( 'Y-m-d H:i:s' ),
@@ -2611,8 +2614,8 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 						$update_column_name = ( 'postmeta' === $update_table ) ? $meta_key_name : $update_column;
 						$this->field_names[ $id ][ $update_column_name ] = $key;
 						// For fetching previous value	
-						if ( ( ! empty( $id ) ) && ( ! empty( $update_table ) ) && ( ! empty( $update_column_name ) ) && ( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) ){
-							$prev_val = Smart_Manager_Pro_Task::get_previous_data( $id, $update_table, $update_column_name );
+						if ( ( ! empty( $id ) ) && ( ! empty( $update_table ) ) && ( ! empty( $update_column_name ) ) && ( is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) ) ){
+							$prev_val = Smart_Manager_Task::get_previous_data( $id, $update_table, $update_column_name );
 							$prev_val = ( ! empty( $data_col_params ) ) ? sa_sm_format_prev_val( array(
 								'prev_val' => $prev_val,
 								'update_column' => $update_column_name,
@@ -2965,8 +2968,8 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 			}
 			do_action( 'sm_inline_update_post', $edited_data, $data_col_params );
 			// For updating task details table.
-			if ( ( ! empty( self::$update_task_details_params ) ) && is_callable( array( 'Smart_Manager_Pro_Task', 'task_details_update' ) ) ) {
-				Smart_Manager_Pro_Task::task_details_update();
+			if ( ( ! empty( self::$update_task_details_params ) ) && is_callable( array( 'Smart_Manager_Task', 'task_details_update' ) ) ) {
+				Smart_Manager_Task::task_details_update();
 			}
 			delete_transient('sm_beta_skip_delete_dashboard_transients', 1, DAY_IN_SECONDS); // for preventing delete dashboard transients
 			$msg_str = '';
@@ -2980,11 +2983,15 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 				$sm_inline_update_count += sizeof($edited_data);
 				update_option( 'sm_inline_update_count', $sm_inline_update_count, 'no' );
 				$resp = array( 'sm_inline_update_count' => $sm_inline_update_count,
-								'msg' => sprintf( esc_html__( '%d record%s updated successfully!', 'smart-manager-for-wp-e-commerce'), sizeof( $edited_data ), $msg_str ) );
+								'msg' => sprintf(
+									/* translators: %1$d: number of updated record %2$s: record update message */ 
+									esc_html__( '%1$d record%2$s updated successfully!', 'smart-manager-for-wp-e-commerce'), sizeof( $edited_data ), $msg_str ) );
 								
 				$msg = json_encode($resp);
 			} else {
-				$msg = sprintf( esc_html__( '%d record%s updated successfully!', 'smart-manager-for-wp-e-commerce' ), sizeof( $edited_data ), $msg_str );
+				$msg = sprintf(
+					/* translators: %1$d: number of updated record %2$s: record update message */
+					esc_html__( '%1$d record%2$s updated successfully!', 'smart-manager-for-wp-e-commerce' ), sizeof( $edited_data ), $msg_str );
 				
 			}
 
@@ -3097,7 +3104,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 						do_action( 'updated_postmeta', $value['meta_id'], $id, $meta_key, $meta_value );
 					}
 					$this->disable_task_details_update = apply_filters( 'sm_disable_task_details_update',self::$previous_vals, $this->field_names[ $id ][ $meta_key ] );
-					if ( ( defined('SMPRO') && empty( SMPRO ) ) || empty( $this->task_id ) || empty( $id ) || empty( $meta_key ) || ( is_wp_error( $result_update_meta ) ) || ! isset( $this->field_names[ $id ][ $meta_key ] ) || ( ! empty( $this->disable_task_details_update ) ) ) {
+					if ( empty( $this->task_id ) || empty( $id ) || empty( $meta_key ) || ( is_wp_error( $result_update_meta ) ) || ! isset( $this->field_names[ $id ][ $meta_key ] ) || ( ! empty( $this->disable_task_details_update ) ) ) {
 				    		continue;
 					}
 					self::$update_task_details_params[] = array(
@@ -3152,7 +3159,9 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 			}
 			
 			$delete_ids_count = apply_filters( 'sm_default_process_delete_records_result', sizeof( $delete_ids ), array( 'ids' => $delete_ids, 'this' => $this ) );
-			echo sprintf( esc_html__( '%d record%s deleted successfully!', 'smart-manager-for-wp-e-commerce' ), $delete_ids_count, ( ( $delete_ids_count > 1 ) ? 's' : '' ) );
+			echo sprintf( 
+				/* translators: %1$d: number of updated record %2$s: record update message */
+				esc_html__( '%1$d record%2$s deleted successfully!', 'smart-manager-for-wp-e-commerce' ), $delete_ids_count, ( ( $delete_ids_count > 1 ) ? 's' : '' ) );
 			exit;
 		}
 
@@ -3519,7 +3528,8 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 				$search_params = array_merge( array( 'cond_'. $meta_table .'_col_name' => (!empty($col_names[$index])) ? trim($col_names[$index]) : '',
 										'cond_'. $meta_table .'_col_value' => (!empty($col_values[$index])) ? trim($col_values[$index]) : '',
-										'cond_'. $meta_table .'_operator' => (!empty($col_ops[$index])) ? trim($col_ops[$index]) : ''
+										'cond_'. $meta_table .'_operator' => (!empty($col_ops[$index])) ? trim($col_ops[$index]) : '',
+										'flag' => $flag
 									), $params );
 
 				$cond = apply_filters('sm_search_'. $meta_table .'_condition_start', $cond, $search_params);
@@ -3605,7 +3615,9 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 										'SM_IS_WOO30' => (!empty($params['SM_IS_WOO30'])) ? $params['SM_IS_WOO30'] : '',
 										'post_type' => (!empty($params['post_type'])) ? $params['post_type'] : '',
 										'search_query' => $search_query,
-										'search_query_index' => $params['search_query_index']
+										'search_query_index' => $params['search_query_index'],
+										'flag' => $flag,
+										'cat_flag' => $cat_flag
 									);
 
 				$select = "SELECT DISTINCT ".$wpdb->prefix."". $table_nm .".". $params['key_col'] ." ". $flag ." ". $cat_flag ." ";
@@ -4116,6 +4128,184 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 							
 			$this->terms_sort_join = true;
 			return $args['join'];
+		}
+
+	    /**
+	     * Function to generate and export the CSV data.
+		 * @return void
+		 */
+		public function get_export_csv() {
+
+			global $current_user;
+
+			ini_set('memory_limit','-1');
+			set_time_limit(0);
+
+			$this->req_params['sort_params'] = json_decode( stripslashes( $this->req_params['sort_params'] ), true );
+			$this->req_params['table_model'] = json_decode( stripslashes( $this->req_params['table_model'] ), true );
+
+			$current_store_model = get_transient( 'sa_sm_'.$this->dashboard_key );
+			if( ! empty( $current_store_model ) && !is_array( $current_store_model ) ) {
+				$current_store_model = json_decode( $current_store_model, true );
+			}
+			$column_model_transient = get_user_meta(get_current_user_id(), 'sa_sm_'.$this->dashboard_key, true);
+
+			// Code for handling views
+			if( ( defined('SMPRO') && true === SMPRO ) && ! empty( $this->req_params['is_view'] ) && ! empty( $this->req_params['active_view'] ) ) {
+				if( class_exists( 'Smart_Manager_Pro_Views' ) ) {
+					$view_obj = Smart_Manager_Pro_Views::get_instance();
+					if( is_callable( array( $view_obj, 'get' ) ) ){
+						$view_slug = $this->req_params['active_view'];
+						$view_data = $view_obj->get($view_slug);
+						if( ! empty( $view_data ) ) {
+							$this->dashboard_key = $view_data['post_type'];
+							$column_model_transient = get_user_meta(get_current_user_id(), 'sa_sm_'.$view_slug, true);
+							$column_model_transient = json_decode( $view_data['params'], true );
+							if( !empty( $column_model_transient['search_params'] ) ) {
+								if( ! empty( $column_model_transient['search_params']['isAdvanceSearch'] ) ) { // For advanced search
+									if( ! empty( $column_model_transient['search_params']['params'] ) && is_array( $column_model_transient['search_params']['params'] ) ) {
+										array_walk(
+											$column_model_transient['search_params']['params'],
+											function ( &$value ) {
+												$value = ( ! empty( $value ) ) ? ( json_encode( $value ) ) : '';
+											}
+										);
+									}
+								}
+								$search_params = $column_model_transient['search_params'];
+							}
+						}
+					}
+				}
+			}
+
+			if( !empty( $column_model_transient ) && !empty( $current_store_model ) ) {
+				$current_store_model = $this->map_column_to_store_model( $current_store_model, $column_model_transient );
+			}
+
+			$col_model = (!empty($current_store_model['columns'])) ? $current_store_model['columns'] : array();
+			$col_model = apply_filters( 'sm_col_model_for_export', $col_model, $this->req_params );
+
+			$data = $this->get_data_model( $col_model );
+			if ( empty( $data ) && is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+				Smart_Manager::log( 'error', _x( 'Export CSV: no data found ', 'export data model', 'smart-manager-for-wp-e-commerce' ) );
+			}
+			$columns_header = $select_cols = $numeric_cols = array();
+
+			$getfield = '';
+
+			foreach( $col_model as $col ) {
+				if( empty( $col['exportable'] ) || !empty( $col['hidden'] ) ) {
+					continue;
+				}
+
+				$columns_header[ $col['data'] ] = $col['key'];
+
+				$getfield .= $col['key'] . ',';
+
+				if( ! empty( $col['values'] ) ) {
+					$select_cols[ $col['data'] ] = $col['values'];
+				}
+
+				if( ( ( ! empty( $col['type'] ) && 'numeric' === $col['type'] ) ) || ( ( ! empty( $col['validator'] ) && 'customNumericTextEditor' === $col['validator'] ) ) ){
+					$numeric_cols[] = $col['data'];
+				}
+			}
+
+			$fields = substr_replace($getfield, '', -1);
+			$each_field = array_keys( $columns_header );
+
+			$view_name = ( ! empty( $this->req_params['active_view'] ) ) ? $this->req_params['active_view'] . '-view_' : '';
+			$csv_file_name = sanitize_title(get_bloginfo( 'name' )) . '_' . $this->dashboard_key . '_' . $view_name . gmdate('d-M-Y_H:i:s');
+			$csv_file_name = ( ! empty( $this->req_params[ 'storewide_option' ] ) ) ? ( ( 'entire_store' === $this->req_params[ 'storewide_option' ] ? $csv_file_name : $csv_file_name . '_all_products_stock_columns') ) . ".csv" : $csv_file_name . ( ( ! empty( $this->req_params[ 'columnsToBeExported' ] ) && 'visible' === $this->req_params[ 'columnsToBeExported' ] ) ? '_selected_records' : '_selected_products_' . $this->req_params[ 'columnsToBeExported' ] . '_columns' ) . ".csv";
+
+			foreach( (array) $data['items'] as $row ){
+
+				for($i = 0; $i < count ( $columns_header ); $i++){
+
+					if( $i == 0 ){
+						$fields .= "\n";	
+					}
+
+					if( !empty( $select_cols[ $each_field[$i] ] ) && !empty( $row[$each_field[$i]] ) ) {
+						$row_each_field = !empty( $select_cols[ $each_field[$i] ][ $row[$each_field[$i]] ] ) ? $select_cols[ $each_field[$i] ][ $row[$each_field[$i]] ] : $row[$each_field[$i]];
+					} else {
+						$row_each_field = !empty($row[$each_field[$i]]) ? $row[$each_field[$i]] : '';
+					}
+					$array_temp = str_replace(array("\n", "\n\r", "\r\n", "\r"), "\t", $row_each_field);
+					$array = str_replace("<br>", "\n", $array_temp);
+					$array = str_replace('"', '""', $array);
+					if( ! empty( $numeric_cols ) && in_array( $each_field[$i], $numeric_cols ) ){
+						$str = $array;
+					} else{
+						$array = ( ! is_array( $array ) ) ? str_getcsv ( $array , ",", "\"" , "\\") : $array;
+						$str = ( $array && is_array( $array ) ) ? implode( ', ', $array ) : '';
+					}
+					$fields .= '"'. $str . '",'; 
+
+				}	
+				$fields = substr_replace($fields, '', -1); 
+			}
+
+			$upload_dir = wp_upload_dir();
+			$file_data = array();
+			$file_data['wp_upload_dir'] = $upload_dir['path'] . '/';
+			$file_data['file_name'] = $csv_file_name;
+			$file_data['file_content'] = $fields;
+			if ( empty( $file_data ) && is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+				Smart_Manager::log( 'error', _x( 'Export CSV: no file data found ', 'export file data', 'smart-manager-for-wp-e-commerce' ) );
+			}
+
+			header("Content-type: text/x-csv; charset=UTF-8"); 
+			header("Content-Transfer-Encoding: binary");
+			header("Content-Disposition: attachment; filename=".$file_data['file_name']); 
+			header("Pragma: no-cache");
+			header("Expires: 0");
+
+			while(ob_get_contents()) {
+				ob_clean();
+			}
+
+			echo $file_data['file_content'];
+			
+			exit;
+		}
+
+		/**
+	     * Function to get parent term values for taxonomies.
+		 * 
+		 * @param array $args array of taxonomy related data.
+		 * @return void
+		 */
+		public function get_parent_term_values( $args = array() ) {
+			if ( empty( $args['include_taxonomy'] ) || ! is_array( $args['taxonomy_obj'] ) ) {
+				return;
+			}
+			$terms_val = array();
+			// Code for storing the parent taxonomies titles
+			$taxonomy_parents = array();
+			foreach ( $args['taxonomy_obj'] as $term_obj ) {
+				if ( 'product_cat' === $args['include_taxonomy'] && ( 'product_cat' !== $term_obj->taxonomy ) ) {
+					continue;
+				}
+				if ( empty( $term_obj->parent ) ) {
+					$taxonomy_parents[ $term_obj->term_id ] = $term_obj->name;
+				}
+			}
+			foreach ( $args['taxonomy_obj'] as $term_obj ) {
+				if ( empty( $terms_val[ $term_obj->taxonomy ] ) ) {
+					$terms_val[ $term_obj->taxonomy ] = array();
+				}
+				$title = ucwords( ( ! empty( $taxonomy_parents[ $term_obj->parent ] ) ) ? ( $taxonomy_parents[ $term_obj->parent ] . ' — ' . $term_obj->name ) : $term_obj->name );
+				$terms_val[ $term_obj->taxonomy ][ $term_obj->term_id ] = $title;
+				$terms_val_search[ $term_obj->taxonomy ][ $term_obj->slug ] = $title; //for advanced search
+				$this->terms_val_parent[ $term_obj->taxonomy ][ $term_obj->term_id ] = array(
+					'term' => $term_obj->name,
+					'parent' => $term_obj->parent,
+					'title' => $title
+				);
+			}
+			return $terms_val;
 		}
 	}
 }

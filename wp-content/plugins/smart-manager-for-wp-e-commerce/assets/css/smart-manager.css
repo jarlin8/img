@@ -600,18 +600,18 @@ OVERRIDING JQGRID CSS
 
 /* Links inside the dropdown */
 .sm_beta_dropdown_content a {
-	color: black;
+	color: black !important;
 	padding: 6px 8px;
-	text-decoration: none;
+	text-decoration: none !important;
 	display: block;
 }
 
 .sm_beta_dropdown_content a{
-	border-bottom: 1px solid #5850ec;
+	border-bottom: 1px solid #5850ec !important;
 }
 
 /* Change color of dropdown links on hover */
-.sm_beta_dropdown_content a:hover {color: #5850ec;}
+.sm_beta_dropdown_content a:hover {color: #5850ec !important;}
 
 /*==============================================
 OVERRIDING WP CSS
@@ -1669,9 +1669,9 @@ div[aria-describedby="sm_inline_dialog"] {
 	border-left: 1px solid #d9d9d9 !important;
 }
 
-#edit_product_attributes button, #edit_product_attributes input, #edit_product_attributes select, #edit_product_attributes .chosen-container, #sm_view_name, #sm_beta_add_record_count, #sm_add_title{
+#edit_product_attributes button, #edit_product_attributes input, #edit_product_attributes select, #edit_product_attributes .chosen-container, #sm_view_name, #sm_beta_add_record_count{
 	border: 1px solid #d2d6dc;
-	padding: 0 10px !important;
+	padding: 0 10px;
 }
 
 #edit_product_attributes .chosen-container{
@@ -1707,6 +1707,10 @@ div[aria-describedby="sm_inline_dialog"] {
 .sm_beta_dashboard_select li{
 	margin-bottom: 0px !important;
 }
+input#scheduled_for{
+	width: 100%;
+	margin-left: 1.4em;
+}
 input#sm_add_title{
 	width: 100%;
 }
@@ -1739,4 +1743,26 @@ input#sm_add_title{
 	display: flex;
 	padding: 0.25em;
 	border-radius: 50%;
+}
+#sm_nav_bar .select2-container--default .select2-results__option--highlighted[aria-selected], .select2-container--default .select2-results__option--highlighted[data-selected]{
+	background-color: #0073aa !important;
+	color: #fff !important;
+}
+#sm_nav_bar .select2-dropdown--below, .select2-dropdown{
+	box-shadow: 0 1px 1px rgba(0,0,0,.1) !important;
+	border-color: #ddd !important;
+}
+/* Dropdown Content (Hidden by Default) */
+.sm_bulk_edit_dropdown_content {
+	margin-top: 1px !important;
+	border: 1px solid #5850ec !important;
+	border-bottom: 0px !important;
+	text-align: left !important;
+}
+.task_title{
+	margin-right: 3.5em;
+}
+.sm_bulk_edit_content, #sm_add_title{
+	border: 1px solid #d2d6dc !important;
+	padding: 0 10px !important;
 }

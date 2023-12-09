@@ -518,8 +518,8 @@ function sa_sm_format_prev_val( $args = array() ) {
 			return maybe_serialize( $args['prev_val'] );
 		case ( ( ! empty( $args['col_data_type']['data_cols_multiselect'] ) ) && ( in_array( $args['update_column'], $args['col_data_type']['data_cols_multiselect'], true ) ) && ( is_array( $args['prev_val'] ) ) ):
 		case ( ( ! empty( $args['col_data_type']['data_cols_list'] ) ) && ( in_array( $args['update_column'], $args['col_data_type']['data_cols_list'], true ) ) && ( is_array( $args['prev_val'] ) ) ):
-		case ( ( 'sm.multilist' === $args['col_data_type'] || 'dropdown' === $args['col_data_type'] ) && ( is_array( $args['prev_val'] ) ) ):
-			return implode( ',', $args['prev_val'] );
+		case ( ( 'sm.multilist' === $args['col_data_type'] || 'dropdown' === $args['col_data_type'] ) ):
+			return ( is_array( $args['prev_val'] ) ) ? implode( ',', $args['prev_val'] ) : $args['prev_val'];
 		case ( ( ! empty( $args['col_data_type']['data_cols_checkbox'] ) && ( ! empty( $args['updated_val'] ) ) && in_array( $args['update_column'], $args['col_data_type']['data_cols_checkbox'], true ) ) || ( 'checkbox' === $args['col_data_type'] ) ):
 			if ( in_array( $args['updated_val'], array( 'yes', 'no' ) ) ) {
 				return ( 'yes' === $args['updated_val'] ) ? 'no' : 'yes';

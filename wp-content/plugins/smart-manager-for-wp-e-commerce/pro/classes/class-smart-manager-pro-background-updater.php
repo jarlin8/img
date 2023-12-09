@@ -59,6 +59,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 			add_filter( 'action_scheduler_run_schedule', array( $this, 'modify_action_scheduler_run_schedule' ), 1000 ); // phpcs:ignore 
 			add_action( 'wp_ajax_sa_sm_stop_background_process', array( $this, 'stop_background_process' ) );
 			add_action( 'sm_schedule_tasks_cleanup', array( &$this, 'schedule_tasks_cleanup_cron' ) ); // For handling deletion of tasks those are more than x number of days.
+			add_action( 'storeapps_smart_manager_scheduled_actions', array( &$this, 'schedule_bulk_edit_actions' ) );
 		}
 
 		/**
@@ -73,6 +74,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 		 * @return mixed
 		 */
 		protected function task( $params ) {
+			if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+				Smart_Manager::log( 'info', _x( 'Background process task params ', 'background process task params', 'smart-manager-for-wp-e-commerce' ) . print_r( $params, true ) );
+			}
 			if ( !empty($params['callback']) && !empty($params['args']) ) {
 				try {
 					include_once dirname( __FILE__ ) .'/class-smart-manager-pro-utils.php';
@@ -91,7 +95,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 							$obj = $class_name::instance($params['args']['dashboard_key']);
 						}
 						if( is_callable( array( $params['callback']['func'][0], 'actions' ) ) ) {
-							call_user_func(array($params['callback']['func'][0],'actions'), $params['args']);
+							call_user_func(array($params['callback']['func'][0],'actions'));
 						}
 						call_user_func($params['callback']['func'],$params['args']);
 					}	
@@ -130,7 +134,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 										pro: true,
 									},
 									success: function( response ) {
-
 										let isBackground = false;
 
 										if( jQuery('#sa_sm_background_process_progress').length > 0 && jQuery('#sa_sm_background_process_progress').is(":visible") === true ) {
@@ -171,7 +174,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 
 											if( per < 100 ) {
 												setTimeout(function(){
-													sa_sm_background_process_heartbeat();
+													sa_sm_background_process_heartbeat(0, process);
 												}, 1000);
 											} else {
 												if( isBackground ) {
@@ -188,8 +191,17 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 													
 													jQuery('#sa_sm_background_process_complete').fadeIn();
 													window.smart_manager.showLoader();
+													let processName = process;
+													if (processName) {
+														processName = _x(processName.replace(/_/g, ' ').replace(/\b\w/g, function(match) {
+															return match.toUpperCase();
+														}), 'capitalized process name', 'smart-manager-for-wp-e-commerce');
+													}
+													let noOfRecords = ('undefined' !== typeof( window.smart_manager.selectedRows ) && window.smart_manager.selectedRows && window.smart_manager.selectedRows.length > 0) ? window.smart_manager.selectedRows.length : (window.smart_manager.selectAll ? _x('All', 'all records', 'smart-manager-for-wp-e-commerce') : 0);
 													setTimeout( function() {
 														jQuery('#sa_sm_background_process_complete').fadeOut();
+														window.smart_manager.notification = {status:'success', message: _x(`${processName} ${_x('for', 'success message', 'smart-manager-for-wp-e-commerce')} ${noOfRecords} ${_x(`${noOfRecords == 1 ? 'record' : 'records'}`, 'success notification', 'smart-manager-for-wp-e-commerce')} ${_x(' completed successfully!', 'success message', 'smart-manager-for-wp-e-commerce')}`, 'success notification', 'smart-manager-for-wp-e-commerce')}
+														window.smart_manager.showNotification()
 														if(process == 'bulk_edit'){ //code to refresh all the pages for BE
 															let p = 1;
 															while(p <= window.smart_manager.page){
@@ -380,14 +392,16 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 						</p>
 					</div>
 					<script type="text/javascript">
-						sa_sm_background_process_heartbeat();
+						sa_sm_background_process_heartbeat(0, '<?php echo esc_html( $process_name ); ?>');
 
 						jQuery('body').on('click', '#sa-sm-stop-batch-process', function(e){
 							e.preventDefault();
 							<?php /* translators: 1. The bulk process */ ?>
 							let admin_ajax_url = '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>';
 							admin_ajax_url = (admin_ajax_url.indexOf('?') !== -1) ? admin_ajax_url + '&action=sm_beta_include_file' : admin_ajax_url + '?action=sm_beta_include_file';
-							let result = window.confirm('<?php echo sprintf( esc_html__( 'Are you sure you want to stop the %s process? Click OK to stop.', 'smart-manager-for-wp-e-commerce' ), esc_html( $process_name ) ); ?>');
+							let result = window.confirm('<?php echo sprintf(
+								/* translators: %s: process name */
+								esc_html__( 'Are you sure you want to stop the %s process? Click OK to stop.', 'smart-manager-for-wp-e-commerce' ), esc_html( $process_name ) ); ?>');
 							if (result) {
 								jQuery.ajax({
 									url     : admin_ajax_url,
@@ -502,8 +516,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 		public function storeapps_smart_manager_batch_handler() {
 
 			$batch_params = get_option( $this->identifier.'_params', array() );
-			$update_ids = get_option( $this->identifier.'_ids', array() );		
-
+			$update_ids = get_option( $this->identifier.'_ids', array() );
+			if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+				Smart_Manager::log( 'info', _x( 'Batch handler params ', 'batch handler params', 'smart-manager-for-wp-e-commerce' ) . print_r( $batch_params, true ) );
+				Smart_Manager::log( 'info', _x( 'Batch handler update ids ', 'batch handler update ids', 'smart-manager-for-wp-e-commerce' ) . print_r( $update_ids, true ) );
+			}
 			if( empty( $batch_params ) || empty( $update_ids ) ) {
 				return;
 			}
@@ -556,6 +573,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 							}
 
 							$batch_complete = true;
+							if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+								if ( $this->time_exceeded() ) {
+									Smart_Manager::log( 'notice', _x( 'Time is exceeded for Bulk Edit', 'bulk edit batch handler time exceed status', 'smart-manager-for-wp-e-commerce' ) );
+								}
+								if ( $this->memory_exceeded() ) {
+									Smart_Manager::log( 'notice', _x( 'Memory is exceeded for Bulk Edit', 'bulk edit batch handler memory exceed status', 'smart-manager-for-wp-e-commerce' ) );
+								}
+							}
 							break;
 						}
 					}	
@@ -569,6 +594,17 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 					update_option( $this->identifier.'_current_time', time(), 'no' );
 
 					if( $this->time_exceeded() || $this->memory_exceeded() ) { //Code for continuing the batch
+						if ( is_callable( array( 'Smart_Manager', 'log' ) ) && ! empty( $batch_params['process_name'] ) ) {
+							if ( $this->time_exceeded() ) {
+								/* translators: %s: process name */
+								Smart_Manager::log( 'notice', sprintf( _x( 'Time is exceeded for %s', 'batch handler time exceed status', 'smart-manager-for-wp-e-commerce' ), $batch_params['process_name'] ) );
+							}
+							if ( $this->memory_exceeded() ) {
+								/* translators: %s: process name */
+								Smart_Manager::log( 'notice', sprintf( _x( 'Memory is exceeded for %s', 'batch handler memory exceed status', 'smart-manager-for-wp-e-commerce' ), $batch_params['process_name'] ) );
+							}
+						}
+						break;
 						$initial_process = get_option( $this->identifier.'_initial_process', false );
 
 						if( !empty( $initial_process ) ) {
@@ -578,10 +614,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 						$batch_complete = true;
 					}
 				}
-
 				//Code for post update
 				$update_remaining_count = $update_remaining_count - 1;
-
+				if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+					if ( empty( $batch_complete ) ) {
+						Smart_Manager::log( 'error', _x( 'Batch process not yet completed', 'batch process status', 'smart-manager-for-wp-e-commerce' ) );
+					}
+					Smart_Manager::log( 'info', _x( 'Remaining count for update in batch handler ', 'remaining count for update in batch handler', 'smart-manager-for-wp-e-commerce' ) . print_r( $update_remaining_count, true ) );
+				}
 				update_option( $this->identifier.'_remaining', $update_remaining_count, 'no' );
 
 				if( 0 === $update_remaining_count ) { // Code for handling when the batch has completed.
@@ -605,7 +645,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 					update_option( $this->identifier.'_ids', $update_ids, 'no' );
 
 					if ( function_exists( 'as_schedule_single_action' ) ) {
-						as_schedule_single_action( time() + 5, self::$batch_handler_hook );
+						as_schedule_single_action( time(), self::$batch_handler_hook );
 					}
 
 					break;
@@ -753,6 +793,37 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 			}
 		    if ( is_callable( array( 'Smart_Manager_Pro_Task', 'schedule_task_deletion' ) ) ) {
 				Smart_Manager_Pro_Task::schedule_task_deletion();
+			}
+		}
+		/**
+		 * Schedule bulk edit actions
+		 * 
+		 * @param array $args arguments of bulk edit action.
+		 * @return void
+		 */
+		public function schedule_bulk_edit_actions( $args = array() ) {
+			if ( empty( $args ) || ! is_array( $args ) || empty( $args['callback']['class_path'] ) || empty( $args['dashboard_key'] ) ) {
+				return;
+			}
+			$file_paths = array( 
+				SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-base.php',
+				dirname( __FILE__ ) . '/class-smart-manager-pro-base.php',
+				dirname( __FILE__ ) .'/'. $args['callback']['class_path'],
+				SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-task.php'
+		 	);
+			foreach ( $file_paths as $file_path ) {
+				if ( file_exists( $file_path ) ) {
+					include_once $file_path;
+				}
+			}
+			$args['scheduled_for'] = '0000-00-00 00:00:00';
+			$is_process_running = ( ! empty( get_option( $this->identifier.'_params', array() ) ) ) ? true : false;
+			$obj = ( 'Smart_Manager_Pro_' . ucfirst( str_replace( '-', '_', $args['dashboard_key'] ) ) )::instance( $args['dashboard_key'] );
+			if ( ! $is_process_running && is_callable( array( 'Smart_Manager_Pro_Base', 'send_to_background_process' ) ) ) {
+				Smart_Manager_Pro_Base::send_to_background_process( $args );	
+			} else {
+				$rescheduled_interval = apply_filters( 'sa_sm_bulk_edit_action_rescheduled_interval', intval( get_option( 'sa_sm_bulk_edit_action_rescheduled_interval', 30 ) ) );
+				as_schedule_single_action( strtotime( date( 'Y-m-d H:i:s', strtotime( "+" . $rescheduled_interval . " minutes" ) ) ), 'storeapps_smart_manager_scheduled_actions' );
 			}
 		}
 	}

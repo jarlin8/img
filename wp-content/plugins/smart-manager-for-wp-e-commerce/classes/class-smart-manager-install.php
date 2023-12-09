@@ -26,6 +26,9 @@ class Smart_Manager_Install {
 		),
 		'8.9.0' => array(
 			'update_890_port_settings'
+		),
+		'8.18.0' => array(
+			'update_8180_create_tasks_tables_for_lite_version'
 		)
 	);
 
@@ -293,11 +296,6 @@ class Smart_Manager_Install {
 
 	public static function create_tables_for_tasks() {
 		global $wpdb;
-
-		if( !( defined('SMPRO') && true === SMPRO ) ) {
-			return;
-		}
-
 		$collate = '';
 
 		if ( $wpdb->has_cap( 'collation' ) ) {
@@ -370,6 +368,10 @@ class Smart_Manager_Install {
 		}
 
 		update_option( Smart_Manager_Settings::$db_option_key, $settings, 'no' );
+	}
+
+	public static function update_8180_create_tasks_tables_for_lite_version() {
+		self::create_tables_for_tasks();
 	}
 }
 

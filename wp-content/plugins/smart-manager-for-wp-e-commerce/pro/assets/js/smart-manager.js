@@ -428,46 +428,6 @@ var sm_beta_hide_dialog = function(IDs, gID) {
 }
 
 // ========================================================================
-// EXPORT CSV
-// ========================================================================
-
-Smart_Manager.prototype.generateCsvExport = function() {
-
-    let params = {
-                            cmd: 'get_export_csv',
-                            active_module: window.smart_manager.dashboard_key,
-                            security: window.smart_manager.sm_nonce,
-                            pro: true,
-                            SM_IS_WOO30: window.smart_manager.sm_is_woo30,
-                            sort_params: (window.smart_manager.currentDashboardModel.hasOwnProperty('sort_params') ) ? window.smart_manager.currentDashboardModel.sort_params : '',
-                            table_model: (window.smart_manager.currentDashboardModel.hasOwnProperty('tables') ) ? window.smart_manager.currentDashboardModel.tables : '',
-                            search_text: (window.smart_manager.searchType == 'simple') ? window.smart_manager.simpleSearchText : '',
-						    advanced_search_query: JSON.stringify((window.smart_manager.searchType != 'simple') ? window.smart_manager.advancedSearchQuery : []),
-                            is_taxonomy: window.smart_manager.isTaxonomyDashboard() || 0,
-                            storewide_option: (true === window.smart_manager.exportStore) ? 'entire_store' : '',
-                            selected_ids: (window.smart_manager.getSelectedKeyIds()) ? JSON.stringify(window.smart_manager.getSelectedKeyIds()) : '',
-                          };
-    //Code for handling views
-    let viewSlug = window.smart_manager.getViewSlug(window.smart_manager.dashboardName);
-    
-    if(viewSlug){
-        params['is_view'] = 1;
-        params['active_view'] = viewSlug;
-        params['active_module'] = (window.smart_manager.viewPostTypes.hasOwnProperty(viewSlug)) ? window.smart_manager.viewPostTypes[viewSlug] : window.smart_manager.dashboard_key;
-    }
-
-    let export_url = window.smart_manager.sm_ajax_url + '&cmd='+ params['cmd'] +'&active_module='+ params['active_module'] +'&security='+ params['security'] +'&pro='+ params['pro'] +'&SM_IS_WOO30='+ params['SM_IS_WOO30'] +'&is_taxonomy='+ params['is_taxonomy'] +'&sort_params='+ encodeURIComponent(JSON.stringify(params['sort_params'])) +'&table_model='+ encodeURIComponent(JSON.stringify(params['table_model'])) +'&advanced_search_query='+params['advanced_search_query']+'&search_text='+ params['search_text'] + '&storewide_option=' + params['storewide_option'] + '&selected_ids=' + params['selected_ids'];
-    export_url += ( window.smart_manager.date_params.hasOwnProperty('date_filter_params') ) ? '&date_filter_params='+ window.smart_manager.date_params['date_filter_params'] : '';
-    export_url += ( window.smart_manager.date_params.hasOwnProperty('date_filter_query') ) ? '&date_filter_query='+ window.smart_manager.date_params['date_filter_query'] : '';
-    
-    if(viewSlug){
-        export_url += '&is_view='+params['is_view']+'&active_view='+params['active_view'];
-    }
-
-    setTimeout(()=>{window.location = export_url},500);
-}
-
-// ========================================================================
 // PRINT INVOICE
 // ========================================================================
 
@@ -516,17 +476,16 @@ Smart_Manager.prototype.printInvoice = function() {
 // ========================================================================
 
 Smart_Manager.prototype.duplicateRecords = function() {
-
-    if( window.smart_manager.duplicateStore === false && window.smart_manager.selectedRows.length == 0 && !window.smart_manager.selectAll ) {
+    if( !window.smart_manager.duplicateStore && window.smart_manager.selectedRows.length == 0 && !window.smart_manager.selectAll ) {
         return;
     }
-
+    window.smart_manager.selectAll = (window.smart_manager.duplicateStore || window.smart_manager.selectAll) ? true : false;
     setTimeout( function() { 
 
         window.smart_manager.showProgressDialog(_x('Duplicate Records', 'progressbar modal title', 'smart-manager-for-wp-e-commerce')); 
 
         if( typeof (sa_sm_background_process_heartbeat) !== "undefined" && typeof (sa_sm_background_process_heartbeat) === "function" ) {
-            sa_sm_background_process_heartbeat(5000);
+            sa_sm_background_process_heartbeat(1000, 'duplicate');
         }
 
     } ,1);
@@ -537,7 +496,7 @@ Smart_Manager.prototype.duplicateRecords = function() {
                         active_module: window.smart_manager.dashboard_key,
                         security: window.smart_manager.sm_nonce,
                         pro: true,
-                        storewide_option: ( window.smart_manager.duplicateStore === true ) ? 'entire_store' : '',
+                        storewide_option: (window.smart_manager.selectAll) ? 'entire_store' : '',
                         selected_ids: JSON.stringify(window.smart_manager.getSelectedKeyIds()),
                         table_model: (window.smart_manager.currentDashboardModel.hasOwnProperty('tables') ) ? window.smart_manager.currentDashboardModel.tables : '',
                         active_module_title: window.smart_manager.dashboardName,
@@ -601,7 +560,9 @@ Smart_Manager.prototype.saveView = function(action = 'create', name = '') {
             let viewSlug = (response.hasOwnProperty('slug')) ? response.slug : ''
 
             if(ack == 'Success'){
-                window.smart_manager.notification = {status:'success', message: sprintf(_x('View %sd successfully!', 'notification', 'smart-manager-for-wp-e-commerce'), String(action).capitalize())}
+                window.smart_manager.notification = {status:'success', message: sprintf(
+                    /* translators: %s: success notification message */
+                    _x('View %sd successfully!', 'notification', 'smart-manager-for-wp-e-commerce'), String(action).capitalize())}
 		        if(viewSlug != ''){
                     setTimeout(function () {
                         window.location.href = (window.smart_manager.smAppAdminURL || window.location.href) + ((window.location.href.indexOf("?")===-1)?"?":"&") + "dashboard="+viewSlug+"&is_view=1";
@@ -757,15 +718,17 @@ Smart_Manager.prototype.processBatchUpdate = function() {
 
     let actions = (ruleGroups[0].hasOwnProperty('rules')) ? ruleGroups[0].rules : [];
     let updateAll = (ruleMeta.hasOwnProperty('updateAll')) ? ruleMeta.updateAll : false;
-
-    setTimeout( function() { 
+    window.smart_manager.selectAll = (updateAll || window.smart_manager.selectAll) ? true : false;
+    if(!window.smart_manager.isScheduled){
+        setTimeout( function() { 
             window.smart_manager.showProgressDialog(_x('Bulk Edit', 'progressbar modal title', 'smart-manager-for-wp-e-commerce')); 
 
             if( typeof (sa_sm_background_process_heartbeat) !== "undefined" && typeof (sa_sm_background_process_heartbeat) === "function" ) {
-                sa_sm_background_process_heartbeat(5000, 'bulk_edit');
+                sa_sm_background_process_heartbeat(1000, 'bulk_edit');
             }
         }
     ,1);
+    }
 
     jQuery(document).trigger("sm_batch_update_on_submit"); //trigger to make changes in batch_update_actions
 
@@ -776,7 +739,7 @@ Smart_Manager.prototype.processBatchUpdate = function() {
         active_module: window.smart_manager.dashboard_key,
         security: window.smart_manager.sm_nonce,
         pro: true,
-        storewide_option: ( updateAll == true ) ? 'entire_store' : '',
+        storewide_option: (window.smart_manager.selectAll) ? 'entire_store' : '',
         selected_ids: JSON.stringify(window.smart_manager.getSelectedKeyIds()),
         batch_update_actions: JSON.stringify(actions),
         active_module_title: window.smart_manager.dashboardName,
@@ -788,11 +751,17 @@ Smart_Manager.prototype.processBatchUpdate = function() {
     };
     // Code for passing tasks params 
     params.data = ("undefined" !== typeof(window.smart_manager.addTasksParams) && "function" === typeof(window.smart_manager.addTasksParams) && 1 == window.smart_manager.sm_beta_pro) ? window.smart_manager.addTasksParams(params.data) : params.data;
-    params.showLoader = false;
+    params.showLoader = (window.smart_manager.isScheduled)? true : false;
     if(window.smart_manager.isFilteredData()) {
         params.data.filteredResults = 1;
     }
-    window.smart_manager.send_request(params, function(response) {});
+    window.smart_manager.send_request(params, function(response) {
+        if(window.smart_manager.isScheduled){
+            window.smart_manager.refresh();
+            window.smart_manager.notification = {message: response,hideDelay:25000,status:'success'}
+            window.smart_manager.showNotification()
+        }
+    });
 }
 
 Smart_Manager.prototype.resetBatchUpdate = function() {
@@ -1157,7 +1126,9 @@ Smart_Manager.prototype.createBatchUpdateDialog = function() {
                 let select2Params = {
                     width: '15em',
                     dropdownCssClass: 'sm_beta_batch_update_field',
-                    placeholder: sprintf(_x('Select %s', 'placeholder', 'smart-manager-for-wp-e-commerce'), window.smart_manager.dashboardDisplayName),
+                    placeholder: sprintf(
+                        /* translators: %s: dashboard display name */
+                        _x('Select %s', 'placeholder', 'smart-manager-for-wp-e-commerce'), window.smart_manager.dashboardDisplayName),
                     dropdownParent: jQuery('[aria-describedby="sm_inline_dialog"]'),
                     ajax: {
                         url:         window.smart_manager.sm_ajax_url,
@@ -1362,7 +1333,14 @@ Smart_Manager.prototype.showTitleModal = function(params = {}) {
         return;
     }
 
-    let title = sprintf(_x('Edited %s','process title','smart-manager-for-wp-e-commerce'),window.smart_manager.processContent)
+    let title = sprintf(
+        /* translators: %s: Task process content */
+        _x('Edited %s','process title','smart-manager-for-wp-e-commerce'),window.smart_manager.processContent)
+    let modalTitle = _x('Task Title','modal title','smart-manager-for-wp-e-commerce');
+    let taskContent = '<input type="text" id="sm_add_title" placeholder="'+_x('Enter desired title here...','title placeholder','smart-manager-for-wp-e-commerce')+'" value="'+title+'">';
+    let taskDesc = sprintf(
+        /* translators: %s: Undo modal description */
+        _x('Name the task for easier reference and future actions, especially for %s option. A pre-filled title has been suggested based on your changes.','modal description','smart-manager-for-wp-e-commerce'), '<strong>'+_x('Undo','modal description','smart-manager-for-wp-e-commerce')+'</strong>');
 
     if(0 === window.smart_manager.showTasksTitleModal){
         window.smart_manager.updatedTitle = title
@@ -1370,18 +1348,33 @@ Smart_Manager.prototype.showTitleModal = function(params = {}) {
             ("undefined" !== typeof(window.smart_manager.processCallbackParams) && Object.keys(window.smart_manager.processCallbackParams).length > 0) ? window.smart_manager.processCallback(window.smart_manager.processCallbackParams) : window.smart_manager.processCallback()
         }
         return;
+    }else if(window.smart_manager.scheduledActionContent){
+        modalTitle = _x('Schedule Bulk Edit','modal title','smart-manager-for-wp-e-commerce');
+        content = '<div id="show_modal_content"><div class="flex items-center mb-3"><label for="title" class="task_title">'+_x('Title','modal title','smart-manager-for-wp-e-commerce')+'</label>'+taskContent+'</div><div style="padding-bottom: 1em; color: #6b7280!important;">'+taskDesc+'</div><br/>'+window.smart_manager.scheduledActionContent+'</div>';
+    }else{
+        content = '<div style="padding-bottom: 1em; color: #6b7280!important;">'+taskDesc+'</div><div id="show_modal_content">'+taskContent+'</div>';
     }
-
-    let description = sprintf(_x('Name the task for easier reference and future actions, especially for %s option. A pre-filled title has been suggested based on your changes.','modal description','smart-manager-for-wp-e-commerce'), '<strong>'+_x('Undo','modal description','smart-manager-for-wp-e-commerce')+'</strong>' )
     window.smart_manager.modal = {
-        title: _x('Task Title','modal title','smart-manager-for-wp-e-commerce'),
-        content: '<div style="padding-bottom: 1em; color: #6b7280!important;">'+description+'</div>'+
-                '<div id="show_modal_content"><input type="text" id="sm_add_title" placeholder="'+_x('Enter desired title here...','title placeholder','smart-manager-for-wp-e-commerce')+'" value="'+title+'"></div>',
+        title: modalTitle,
+        content: content,
         autoHide: false,
         cta: {
             title: _x('Ok','button','smart-manager-for-wp-e-commerce'),
             closeModalOnClick: params.hasOwnProperty('btnParams') ? ((params.btnParams.hasOwnProperty('hideOnYes')) ? params.btnParams.hideOnYes : true) : true,
-            callback: function(){ 
+            callback: function(){
+                if(window.smart_manager.isScheduled){
+                    if("undefined" !== typeof(window.smart_manager.scheduledForVal) && "function" === typeof(window.smart_manager.scheduledForVal)){
+                        window.smart_manager.scheduledForVal();
+                    }
+                    if(!(window.smart_manager.scheduledFor)){
+                        window.smart_manager.notification = {message: _x('Please select your desired date & time for scheduling an action.', 'notification', 'smart-manager-for-wp-e-commerce')}
+                        window.smart_manager.showNotification()
+                        return;
+                    }
+                    if("undefined" !== typeof(window.smart_manager.hideModal) && "function" === typeof(window.smart_manager.hideModal)){
+                        window.smart_manager.hideModal();
+                    }
+                }
                 let updatedTitle = jQuery('#sm_add_title').val();
                 if(updatedTitle){
                     window.smart_manager.updatedTitle = updatedTitle;
@@ -1391,21 +1384,27 @@ Smart_Manager.prototype.showTitleModal = function(params = {}) {
                 }
             }
         },
-        closeCTA: {title: _x('Cancel','button','smart-manager-for-wp-e-commerce')}
+        closeCTA: {title: _x('Cancel','button','smart-manager-for-wp-e-commerce')},
+        onCreate: function(){
+            if("undefined" !== typeof(window.smart_manager.scheduleDatePicker) && "function" === typeof(window.smart_manager.scheduleDatePicker)){
+                window.smart_manager.scheduleDatePicker();
+            }
+        }
     }
     window.smart_manager.showModal()
 }
 // Function to handle records deletion, tasks undo and deletion of tasks records
 Smart_Manager.prototype.deleteAndUndoRecords = function(params = {}){
-    if(!params || (0 === Object.keys(params).length) || (false === params.hasOwnProperty('cmd')) || !params['cmd'] || ((0 === window.smart_manager.selectedRows.length && !window.smart_manager.selectAll) && (false === window.smart_manager.selectedAllTasks))){
+    if(!params || (0 === Object.keys(params).length) || (false === params.hasOwnProperty('cmd')) || !params['cmd'] || ((0 === window.smart_manager.selectedRows.length && !window.smart_manager.selectAll) && (!window.smart_manager.selectedAllTasks))){
         return;
     }
+    window.smart_manager.selectAll = (window.smart_manager.selectedAllTasks || window.smart_manager.selectAll) ? true : false;
     params.data = {
         cmd:params['cmd'],
         active_module: window.smart_manager.dashboard_key,
         security: window.smart_manager.sm_nonce,
         selected_ids: JSON.stringify(window.smart_manager.getSelectedKeyIds().sort(function(a, b){return b-a})),
-        storewide_option: (true === window.smart_manager.selectAll || true === window.smart_manager.selectedAllTasks) ? 'entire_store' : '',
+        storewide_option: (window.smart_manager.selectAll) ? 'entire_store' : '',
         active_module_title: window.smart_manager.dashboardName,
         backgroundProcessRunningMessage: window.smart_manager.backgroundProcessRunningMessage,
         pro: true,
@@ -1414,6 +1413,7 @@ Smart_Manager.prototype.deleteAndUndoRecords = function(params = {}){
         SM_IS_WOO21: (window.smart_manager.sm_is_woo21) ? window.smart_manager.sm_is_woo21 : ''
     };
     let processName = '', tasksParams = ['undo','delete'];
+    let currentProcessName = '';
     if(tasksParams.includes(params['cmd'])){
         params.data.isTasks = 1;
     }
@@ -1421,18 +1421,21 @@ Smart_Manager.prototype.deleteAndUndoRecords = function(params = {}){
         case 'delete_all':
             processName = _x('Delete Records','progressbar modal title','smart-manager-for-wp-e-commerce');
             params.data.deletePermanently = (params.hasOwnProperty('args') && (params.args.hasOwnProperty('deletePermanently'))) ? params.args.deletePermanently : 0;
+            currentProcessName = (params.data.deletePermanently) ? 'delete_permanently' : 'move_to_trash';
             break;
         case 'undo':
             processName = _x('Undo Tasks','progressbar modal title','smart-manager-for-wp-e-commerce');
+            currentProcessName = 'undo';
             break;
         case 'delete':
             processName = _x('Delete Tasks','progressbar modal title','smart-manager-for-wp-e-commerce');
+            currentProcessName = 'delete';
             break;
     }
     setTimeout(function(){ 
         window.smart_manager.showProgressDialog(processName); 
         if("undefined" !== typeof(sa_sm_background_process_heartbeat) && "function" === typeof(sa_sm_background_process_heartbeat)){
-            sa_sm_background_process_heartbeat(5000);
+            sa_sm_background_process_heartbeat(1000, currentProcessName);
         }
     },1);
     params.showLoader = false;
@@ -1479,21 +1482,6 @@ Smart_Manager.prototype.taskActionsModal = function(args = {}){
         }   
 }
 
-// Function for displaying warning modal before doing export csv
-Smart_Manager.prototype.getExportCsv = function(args){
-    if(!args || !((Object.keys(args)).every(arg => args.hasOwnProperty(arg)))){
-        return;
-    }
-    args.params.content = _x('Are you sure you want to export the ','modal content','smart-manager-for-wp-e-commerce') + args.btnText + '?';
-    if("undefined" !== typeof(window.smart_manager.generateCsvExport) && "function" === typeof(window.smart_manager.generateCsvExport)){
-        args.params.btnParams.yesCallback = window.smart_manager.generateCsvExport;
-    }
-    window.smart_manager.exportStore = ('sm_export_entire_store' === args.id) ? true : false;
-    if("undefined" !== typeof(window.smart_manager.showConfirmDialog) && "function" === typeof(window.smart_manager.showConfirmDialog)){
-        window.smart_manager.showConfirmDialog(args.params);
-    }   
-}
-
 // Function for handling display of editor for column titles
 Smart_Manager.prototype.displayColumnTitleEditor = function(e){
     let parent = e.target.closest('li');
@@ -1512,4 +1500,89 @@ Smart_Manager.prototype.displayColumnTitleEditor = function(e){
         input.value = '';
         input.value = val; 
     }
+}
+
+// Function for scheduling bulk edit
+Smart_Manager.prototype.showScheduleModal = function(params = {}) {
+    if(!params || Object.keys(params).length === 0){
+        return;
+    }
+    let description = sprintf(
+        /* translators: %s: schedule actions modal description */
+        _x('Schedule actions at your convenient date and time.','modal description','smart-manager-for-wp-e-commerce'), '<strong>'+_x('Schedule Actions','modal description','smart-manager-for-wp-e-commerce')+'</strong>');
+       let scheduledForContent = `<div class="flex items-center mb-6"><label>${_x('Schedule For','modal title','smart-manager-for-wp-e-commerce')}</label><input type="text" id="scheduled_for" placeholder="YYYY-MM-DD HH:MM:SS" class="sm_bulk_edit_content"/></div>${window.smart_manager.scheduledActionAdminUrl
+        ? `
+          <div class="mb-3">
+            ${_x(
+              `Check all scheduled actions <a target='_blank' href=${window.smart_manager.scheduledActionAdminUrl}>here</a>.`,
+              'scheduled action list',
+              'smart-manager-for-e-commerce'
+            )}
+          </div>
+        `
+        : ''}<div style="font-size: 1.2em;"><small><i><strong>${_x('Note: ', 'modal description', 'smart-manager-for-wp-e-commerce')}</strong>${_x('Scheduled actions follow timezone of your site. Avoid overlaps to prevent delays.','modal description','smart-manager-for-wp-e-commerce')}</i></small></div>`;
+
+
+
+    window.smart_manager.scheduledActionContent = '<div id="show_modal_content"><div style="padding-bottom: 1em; color: #6b7280!important;">'+description+'</div>'+scheduledForContent+'</div>';
+            
+    window.smart_manager.modal = {
+        title: _x('Schedule Bulk Edit','modal title','smart-manager-for-wp-e-commerce'),
+        content: window.smart_manager.scheduledActionContent,
+        autoHide: false,
+        width: 'w-1/4',
+        cta: {
+            title: _x('Ok','button','smart-manager-for-wp-e-commerce'),
+            closeModalOnClick: params.hasOwnProperty('btnParams') ? ((params.btnParams.hasOwnProperty('hideOnYes')) ? params.btnParams.hideOnYes : true) : true,
+            callback: function(){
+                if(window.smart_manager.isScheduled){
+                    if("undefined" !== typeof(window.smart_manager.scheduledForVal) && "function" === typeof(window.smart_manager.scheduledForVal)){
+                        window.smart_manager.scheduledForVal();
+                    }
+                    if(!(window.smart_manager.scheduledFor)){
+                        window.smart_manager.notification = {message: _x('Please select your desired date & time for scheduling an action.', 'notification', 'smart-manager-for-wp-e-commerce')}
+                        window.smart_manager.showNotification()
+                        return;
+                    }
+                }
+                if("function" === typeof(window.smart_manager.processCallback)){
+                    ("undefined" !== typeof(window.smart_manager.processCallbackParams) && Object.keys(window.smart_manager.processCallbackParams).length > 0) ? window.smart_manager.processCallback(window.smart_manager.processCallbackParams) : window.smart_manager.processCallback()
+                }
+                if("undefined" !== typeof(window.smart_manager.hideModal) && "function" === typeof(window.smart_manager.hideModal)){
+                    window.smart_manager.hideModal();
+                }
+            }
+        },
+        closeCTA: {title: _x('Cancel','button','smart-manager-for-wp-e-commerce')},
+        onCreate: function(){
+            if("undefined" !== typeof(window.smart_manager.scheduleDatePicker) && "function" === typeof(window.smart_manager.scheduleDatePicker)){
+                window.smart_manager.scheduleDatePicker();
+            }
+        }
+    }
+    if(1 === window.smart_manager.showTasksTitleModal){
+        if("undefined" !== typeof(window.smart_manager.showTitleModal) && "function" === typeof(window.smart_manager.showTitleModal)){
+            window.smart_manager.scheduledActionContent = scheduledForContent;
+            window.smart_manager.showTitleModal({btnParams:{hideOnYes: false}})
+        }
+    }else{
+        window.smart_manager.showModal()
+    }
+}
+// Function for initializing datepicker for schedule bulk edit
+Smart_Manager.prototype.scheduleDatePicker = function() {
+    if(window.smart_manager.scheduledActionContent){
+        jQuery('#scheduled_for').Zebra_DatePicker({
+        format: 'Y-m-d H:i:s',
+        show_icon: false,
+        show_select_today: false,
+        default_position: 'below',
+        readonly_element: false,
+    })
+    .attr('placeholder','YYYY-MM-DD HH:MM:SS')
+    }
+}
+// Function for getting scheduled for value
+Smart_Manager.prototype.scheduledForVal = function() {
+    window.smart_manager.scheduledFor = jQuery("#scheduled_for").val();
 }

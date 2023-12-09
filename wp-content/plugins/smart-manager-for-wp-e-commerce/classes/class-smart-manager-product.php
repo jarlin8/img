@@ -65,6 +65,8 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 			add_filter( 'sm_generate_column_state', array( &$this, 'product_generate_column_state' ), 10, 2 );
 			add_filter( 'sm_map_column_state_to_store_model', array( &$this, 'product_map_column_state_to_store_model' ), 10, 2 );
+			add_filter( 'sm_filter_updated_edited_data', array( &$this, 'filter_updated_edited_data' ) );
+			add_filter( 'sm_col_model_for_export', array( &$this, 'col_model_for_export' ), 12, 2 );
 		}
 
 		//Function for map the column state to include 'treegrid' for 'show_variations'
@@ -811,7 +813,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 						if ($src == 'product_cat') {
 							$column['type'] = 'sm.multilist';
 							$column['editable']	= false;
-							$column['name']	= $column['key'] = 'Category';
+							$column['name']	= $column['key'] = _x( 'Category', 'Product category', 'smart-manager-for-wp-e-commerce' );
 						} else if( $src == 'product_type' ) {
 							$column['type'] = 'dropdown';
 						} else if ( in_array($src, $numeric_columns) ) {
@@ -1732,13 +1734,14 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 					if ( $sale_price >= $regular_price ) {
 						// For fetching previous value
-						if ( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
-							$prev_val = Smart_Manager_Pro_Task::get_previous_data( $key, 'postmeta', '_sale_price' );
+						if ( is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) ) {
+							$prev_val = Smart_Manager_Task::get_previous_data( $key, 'postmeta', '_sale_price' );
 						}
 						if ( isset( $edited_data[$key]['postmeta/meta_key=_sale_price/meta_value=_sale_price'] ) ) {
 							unset( $edited_data[$key]['postmeta/meta_key=_sale_price/meta_value=_sale_price'] );
 						}
-						if ( ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) && ! is_wp_error( update_post_meta( $key, '_sale_price', '' ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) && ( ! empty( $key ) ) ) {
+						$sale_price_update = update_post_meta( $key, '_sale_price', '' );
+						if ( ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) && ! is_wp_error( $sale_price_update ) && ( ! empty( $this->task_id ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) && ( ! empty( $key ) ) ) {
 			    				Smart_Manager_Base::$update_task_details_params[] = array(
 			    					'task_id' => $this->task_id,
 								    'action' => 'set_to',
@@ -1769,11 +1772,12 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 				if ( isset( $edited_row['postmeta/meta_key=_stock/meta_value=_stock'] ) ) { //For handling product inventory updates
 					// For fetching previous value.
-					if( ! empty( $key ) && is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
-						$prev_val = Smart_Manager_Pro_Task::get_previous_data( $key, 'postmeta', '_stock' );
+					if( ! empty( $key ) && is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) ) {
+						$prev_val = Smart_Manager_Task::get_previous_data( $key, 'postmeta', '_stock' );
 					}
+					$stock_status_update = sm_update_stock_status( $key, $edited_row['postmeta/meta_key=_stock/meta_value=_stock'] );
 					// Code for updating stock and it's status.
-					if ( ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) && ( ! empty( sm_update_stock_status( $key, $edited_row['postmeta/meta_key=_stock/meta_value=_stock'] ) ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) && ( ! empty( $key ) ) ) {
+					if ( ( ! empty( $stock_status_update ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) && ( ! empty( $key ) ) ) {
 						Smart_Manager_Base::$update_task_details_params[] = array(
             						'task_id' => $this->task_id,
 							'action' => 'set_to',
@@ -1793,7 +1797,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 				if( ! empty( $edited_row['postmeta/meta_key=_product_attributes/meta_value=_product_attributes'] ) ){
 					$product_attributes = json_decode($edited_row['postmeta/meta_key=_product_attributes/meta_value=_product_attributes'],true);
 				}
-				if ( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) && ( ! empty( $saved_product_attributes ) ) && ( is_array( $saved_product_attributes ) ) ) {
+				if ( is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) && ( ! empty( $saved_product_attributes ) ) && ( is_array( $saved_product_attributes ) ) ) {
 					$term_ids = $prev_vals = array();
 					if( ( ! empty( $product_attributes ) ) && ( is_array( $product_attributes ) ) ) {
 						foreach ( $product_attributes as $attr => $attr_value ) {
@@ -1805,7 +1809,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 						}
 					}
 					foreach ( $saved_product_attributes as $taxonomy_nm => $value ) {
-						$attr_previous_vals = Smart_Manager_Base::$previous_vals[] = Smart_Manager_Pro_Task::get_previous_data( $key, 'terms', $taxonomy_nm );
+						$attr_previous_vals = Smart_Manager_Base::$previous_vals[] = Smart_Manager_Task::get_previous_data( $key, 'terms', $taxonomy_nm );
 						if ( ( is_wp_error( $attr_previous_vals ) ) || empty( $attr_previous_vals ) || ( ! is_array( $attr_previous_vals ) ) ) continue;
 						foreach ( $attr_previous_vals as $prev_val ) {
 							$attr_previous_vals['term_id'][ $prev_val ] = 'custom/product_attributes_add';
@@ -2006,8 +2010,8 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 					//set the visibility taxonomy
 					$visibility = ( ! empty($edited_row['terms/product_visibility'] ) ) ? $edited_row['terms/product_visibility'] : '';
 					// For fetching previous value
-					if ( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
-						$prev_val = Smart_Manager_Pro_Task::get_previous_data( $id, 'terms', 'product_visibility' );
+					if ( is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) ) {
+						$prev_val = Smart_Manager_Task::get_previous_data( $id, 'terms', 'product_visibility' );
 						$prev_val = ( ! empty( $prev_val ) && ( ! empty( $params ) ) ) ? sa_sm_format_prev_val( array(
 								'prev_val' => $prev_val,
 								'update_column' => 'product_visibility',
@@ -2016,7 +2020,8 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 							) ) : $prev_val;
 					}
 					if ( ! empty( $visibility ) ) {
-						if ( ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( $id ) ) && ( ! empty( $this->set_product_visibility( $id, $visibility ) ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) ) {
+						$product_visibility_update = $this->set_product_visibility( $id, $visibility );
+						if ( ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( $id ) ) && ( ! empty( $product_visibility_update ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) ) {
 			            	Smart_Manager_Base::$update_task_details_params[] = array(
 			            		'task_id' => $this->task_id,
 				                'action' => 'set_to',
@@ -2087,8 +2092,8 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 							}
 							$term_ids [] = $term_id;
 						}
-						if( ! empty( $id ) && is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
-							$prev_val = Smart_Manager_Pro_Task::get_previous_data( $id, 'terms', $taxonomy_nm );	
+						if( ! empty( $id ) && is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) ) {
+							$prev_val = Smart_Manager_Task::get_previous_data( $id, 'terms', $taxonomy_nm );	
 						}
 						wp_set_object_terms( $id, $term_ids, $taxonomy_nm );
 					} 
@@ -2170,5 +2175,67 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 			return $search_value + ( ( '_sale_price_dates_to' === $search_col ) ? (DAY_IN_SECONDS - 1) : 0 );
 		}
+		
+		/**
+	     * Function to filter updated edited data in case of editing stock value using inline edit.
+		 * @param  array $updated_edited_data array of updated edited data.
+		 * @return array $updated_edited_data filtered updated edited data array.
+		 */
+		public function filter_updated_edited_data( $updated_edited_data = array() ) {
+			if ( ( ! is_array( $updated_edited_data ) ) || ( defined('SMPRO') && ( ! empty( SMPRO ) ) ) ) {
+				return $updated_edited_data;
+			}
+			foreach ( $updated_edited_data as $key => $values ) {
+			    foreach ( $values as $col => $value ) {
+			        if ( 'postmeta/meta_key=_stock/meta_value=_stock' !== $col ) {
+			            unset( $updated_edited_data[ $key ][ $col ] );
+			        }
+			    }
+			}
+			if ( empty( $updated_edited_data ) ) {
+				return $updated_edited_data;
+			}
+			$this->req_params['title'] = _x( 'Edited Stock', 'Title for task', 'smart-manager-for-wp-e-commerce' );
+			return $updated_edited_data;
+		}
+
+		/**
+	     * Function to filter the column model for export CSV.
+		 * @param  array $col_model column model data.
+		 * @param  array $params request params array.
+		 * @return array $col_model array of updated column model data.
+		 */
+		public function col_model_for_export( $col_model = array(), $params = array() ) {
+			if ( empty( $col_model ) || ! is_array( $col_model ) || empty( $params ) || ! is_array( $params ) || ( ! empty( $params['storewide_option'] ) && 'entire_store' === $params['storewide_option'] ) || ( ! empty( $params['columnsToBeExported'] ) && 'visible' === $params['columnsToBeExported'] ) ) {
+				return $col_model;
+			}
+			$stock_cols = array( 'ID', '_sku', 'post_title', '_manage_stock', '_stock_status', '_backorders', '_stock', 'product_type', 'post_parent' );
+			foreach ( $col_model as $key => &$column ) {
+				if ( empty( $column['src'] ) ) continue;
+				$src_exploded = explode( "/", $column['src'] );
+				if ( empty( $src_exploded ) ) {
+					$src = $column['src'];
+				}
+				$src = $src_exploded[1];
+				$col_table = $src_exploded[0];
+				if ( sizeof( $src_exploded ) > 2 ) {
+					$col_table = $src_exploded[0];
+					$cond = explode( "=", $src_exploded[1] );
+					if ( 2 === sizeof( $cond ) ) {
+						$src = $cond[1];
+					}
+				}
+				if ( empty( $src ) ) {
+					continue;
+				}
+				if ( false === in_array( $src, $stock_cols ) ) {
+					unset( $col_model[ $key ] );
+					continue;
+				}
+				$column['hidden'] = false;
+			}
+			return $col_model;
+		}
+		
 	} //End of Class
 }

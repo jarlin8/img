@@ -6,13 +6,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 	class Smart_Manager_Pro_Base extends Smart_Manager_Base {
 
 		public $dashboard_key = '';
-
-		protected static $sm_beta_background_updater;
 		protected static $sm_beta_background_updater_action;
 
 		function __construct($dashboard_key) {
 			$this->dashboard_key = $dashboard_key;
-			$this->advance_search_operators = array_merge( $this->advance_search_operators, array( 
+			parent::__construct($dashboard_key);
+			$this->advance_search_operators = array_merge( $this->advance_search_operators, array(
 				'startsWith' => 'like',
 				'endsWith' => 'like',
 				'anyOf' => 'like',
@@ -21,19 +20,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				'notAnyOf' => 'not like'
 			 ) );
 
-			parent::__construct($dashboard_key);
-			self::$sm_beta_background_updater = Smart_Manager_Pro_Background_Updater::instance();
-
 			add_filter( 'sm_dashboard_model', array( &$this, 'pro_dashboard_model' ), 11, 2 );
 			add_filter( 'sm_data_model', array( &$this, 'pro_data_model' ), 11, 2);
 			add_filter( 'sm_inline_update_pre', array( &$this, 'pro_inline_update_pre' ), 11, 1);
 			add_filter( 'sm_default_dashboard_model_postmeta_cols', array( &$this, 'pro_custom_postmeta_cols' ), 11, 1 );
-			add_filter(
-				'sm_task_update_action_name',
-				function() {
-					return 'set_to';
-				}
-			);
 
 			// Code for handling of `starts with/ends with` advanced search operators
 			$advanced_search_filter_tables = array( 'posts', 'postmeta', 'terms' );
@@ -65,6 +55,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 					);
 				}
 			);
+			if ( 'yes' === Smart_Manager_Settings::get( 'delete_media_when_permanently_deleting_post_type_records' ) ) {
+				add_action( 'before_delete_post', array( &$this, 'delete_attached_media' ), 11, 2 );
+			}
 		}
 
 		public function get_yoast_meta_robots_values() {
@@ -174,7 +167,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 				switch( $col_nm ) {
 					case '_yoast_wpseo_meta-robots-noindex':
-						$column['key'] = $column['name'] = sprintf( __( 'Allow search engines to show this %1$s in search results?', 'smart-manager-for-wp-e-commerce' ), rtrim( $this->dashboard_title, 's' ) );
+						$column['key'] = $column['name'] = sprintf( 
+							/* translators: %1$s: dashboard title */
+							__( 'Allow search engines to show this %1$s in search results?', 'smart-manager-for-wp-e-commerce' ), rtrim( $this->dashboard_title, 's' ) );
 						$yoast_noindex = array( '0' => __( 'Default', 'smart-manager-for-wp-e-commerce'),
 														'2' => __( 'Yes', 'smart-manager-for-wp-e-commerce' ),
 														'1' => __( 'No', 'smart-manager-for-wp-e-commerce' ) );
@@ -183,7 +178,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 						break;
 
 					case '_yoast_wpseo_meta-robots-nofollow':
-						$column['key'] = $column['name'] = sprintf( __( 'Should search engines follow links on this %1$s?', 'smart-manager-for-wp-e-commerce' ), rtrim( $this->dashboard_title, 's' ) );
+						$column['key'] = $column['name'] = sprintf(
+							/* translators: %1$s: dashboard title */
+							__( 'Should search engines follow links on this %1$s?', 'smart-manager-for-wp-e-commerce' ), rtrim( $this->dashboard_title, 's' ) );
 						$yoast_nofollow = array('0' => __( 'Yes', 'smart-manager-for-wp-e-commerce' ),
 												'1' => __( 'No', 'smart-manager-for-wp-e-commerce' ) );
 
@@ -505,67 +502,86 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				}
 				return $batch_update_action;
 			}, $batch_update_actions);
-			$this->send_to_background_process( array( 'process_name' => 'Bulk Edit', 
-														'callback' => array( 'class_path' => $this->req_params['class_path'], 
+			$get_selected_ids_and_entire_store_flag = $this->get_selected_ids_and_entire_store_flag();
+			$selected_ids = ( ! empty( $get_selected_ids_and_entire_store_flag['selected_ids'] ) ) ? $get_selected_ids_and_entire_store_flag['selected_ids'] : array();
+			$is_entire_store = ( ! empty( $get_selected_ids_and_entire_store_flag['entire_store'] ) ) ? $get_selected_ids_and_entire_store_flag['entire_store'] : false;
+
+			self::send_to_background_process( array( 'process_name' => 'Bulk Edit',
+													 	'callback' => array( 'class_path' => $this->req_params['class_path'],
 																			'func' => array( $this->req_params['class_nm'], 'process_batch_update' ) ),
-														'actions' => $batch_update_actions ) );
+													 	'actions' => $batch_update_actions,
+														'is_scheduled' => $this->req_params['isScheduled'],
+														'scheduled_for' => $this->req_params['scheduledFor'],
+														'title' => $this->req_params['title'],
+														'selected_ids' => $selected_ids,
+														'entire_task' => $this->entire_task,
+														'storewide_option' => $this->req_params['storewide_option'],
+														'active_module' => $this->req_params['active_module'],
+														'entire_store' => $is_entire_store,
+														'dashboard_key' => $this->dashboard_key,
+														'dashboard_title' => $this->dashboard_title,
+														'class_path' => $this->req_params['class_path'],
+														'class_nm' => $this->req_params['class_nm'],
+														'backgroundProcessRunningMessage' => $this->req_params['backgroundProcessRunningMessage'],
+														'SM_IS_WOO30' => $this->req_params['SM_IS_WOO30'],
+														'scheduled_action_admin_url' => $this->req_params['scheduledActionAdminUrl']
+														 ) );
 		}
 
 		//function to handle batch update request
-		public function send_to_background_process( $params = array() ) {
-			$selected_ids = ( ! empty( $this->req_params['selected_ids'] ) ) ? json_decode( stripslashes( $this->req_params['selected_ids'] ), true ) : array();
-			$entire_store = false;
-
-			if ( ( false === $this->entire_task ) && ( ! empty( $this->req_params['storewide_option'] ) ) && ( 'entire_store' === $this->req_params['storewide_option'] ) && ( ! empty( $this->req_params['active_module'] ) ) ) { //code for fetching all the ids in case of any background process
-				$selected_ids = $this->get_entire_store_ids();
-				$entire_store = true;
+		public static function send_to_background_process( $params = array() ) {
+			if ( empty( $params ) || ! is_array( $params ) ) {
+				return;
 			}
-			$identifier = '';	
+		 	if ( ( isset( $params['is_scheduled'] ) && ! empty( $params['is_scheduled'] ) ) && ( isset( $params['scheduled_for'] ) && ! empty( $params['scheduled_for'] && '0000-00-00 00:00:00' !==  $params['scheduled_for'] ) ) && ( isset( $params['scheduled_action_admin_url'] ) && ! empty( $params['scheduled_action_admin_url'] ) ) ) {
+				$timestamp = strtotime( date( $params['scheduled_for'] ) );
+				as_schedule_single_action( $timestamp, 'storeapps_smart_manager_scheduled_actions', array( $params ) );
+				echo sprintf(
+					/* translators: %1$d: number of updated record %2$s: record update message */ 
+					_x( "Bulk Edit action scheduled successfully. Check all your scheduled actions <a target='_blank' href='%s'>here</a>.", 'success notification', 'smart-manager-for-wp-e-commerce' ), $params['scheduled_action_admin_url'] );
+				exit;
+			}
+			$identifier = '';
 			$process_name = apply_filters( 'sm_get_process_names_for_adding_tasks', $params['process_name'] );
 			if ( ! empty( $process_name ) && ( is_array( $process_name ) ) && ( in_array( $params['process_name'], $process_name, true ) ) ) {
 				$task_id = 0;
-				if ( is_callable( array( 'Smart_Manager_Pro_Task', 'task_update' ) ) && ( ! empty( $this->req_params['title'] ) ) && ( ! empty( $this->dashboard_key ) ) && ( ! empty( $params['actions'] ) ) && ( ! empty( $selected_ids ) && is_array( $selected_ids ) ) ) {
-					$task_id = Smart_Manager_Pro_Task::task_update(
+				if ( is_callable( array( 'Smart_Manager_Task', 'task_update' ) ) && ( isset( $params['title'] ) && ( ! empty( $params['title'] ) ) ) && ( ! empty( $params['dashboard_key'] ) ) && ( ! empty( $params['actions'] ) ) && ( ! empty( $params['selected_ids'] ) && is_array( $params['selected_ids'] ) ) ) {
+					$task_id = Smart_Manager_Task::task_update(
 						array(
-							'title' => $this->req_params['title'],
+							'title' => $params['title'],
 							    'created_date' => date('Y-m-d H:i:s'),
 							    'completed_date' => '0000-00-00 00:00:00',
-							    'post_type' => $this->dashboard_key,
+							    'post_type' => $params['dashboard_key'],
 							    'type' => 'bulk_edit',
 							    'status' => 'in-progress',
-							    'actions' => $params['actions'],
-							    'record_count' => count( $selected_ids ),
-							) 
+							    'actions' => ( ! empty( $params['is_scheduled'] ) && is_array( $params['actions'] ) ) ? array_merge( $params['actions'], array( 'is_scheduled' => $params['is_scheduled'] ) ) : $params['actions'],
+							    'record_count' => count( $params['selected_ids'] ),
+							)
 					);
 				}
 				$params['actions'] = array_map( function( $params_action ) use( $task_id ) {
-					$params_action['task_id'] = $task_id;	
+					$params_action['task_id'] = $task_id;
 					return $params_action;
 				}, $params['actions'] );
 			}
 			if ( is_callable( array( 'Smart_Manager_Pro_Background_Updater', 'get_identifier' ) ) ) {
 				$identifier = Smart_Manager_Pro_Background_Updater::get_identifier();
 			}
-			if ( !empty( $identifier ) && ! empty( $selected_ids ) ) {
-
-				$default_params = array( 'process_name' => 'Bulk edit / Batch update', 
-										'callback' => array( 'class_path' => $this->req_params['class_path'], 
-															'func' => array( $this->req_params['class_nm'], 'process_batch_update' ) ),
-										'id_count' => count( $selected_ids ),
-										'active_dashboard' => $this->dashboard_title,
-										'backgroundProcessRunningMessage' => $this->req_params['backgroundProcessRunningMessage'],
-										'entire_store' => $entire_store, 
-										'dashboard_key' => $this->dashboard_key,
-										'SM_IS_WOO30' => $this->req_params['SM_IS_WOO30'] );
-
+			if ( !empty( $identifier ) && ! empty( $params['selected_ids'] ) ) {
+				$default_params = array( 'process_name' => 'Bulk edit / Batch update',
+										'callback' => array( 'class_path' => $params['class_path'],
+															'func' => array( $params['class_nm'], 'process_batch_update' ) ),
+										'id_count' => count( $params['selected_ids'] ),
+										'active_dashboard' => $params['dashboard_title']
+									);
 				$params = ( !empty( $params ) ) ? array_merge( $default_params, $params ) : $default_params;
 				update_option( $identifier.'_params', $params, 'no' );
-				update_option( $identifier.'_ids', $selected_ids, 'no' );
+				update_option( $identifier.'_ids', $params['selected_ids'], 'no' );
 				update_option( $identifier.'_initial_process', 1, 'no' );
 
 				//Calling the initiate_batch_process function to initiaite the batch process
-				if ( is_callable( array( self::$sm_beta_background_updater, 'initiate_batch_process' ) ) ) {
-					self::$sm_beta_background_updater->initiate_batch_process();
+				if ( is_callable( array( Smart_Manager_Pro_Background_Updater::instance(), 'initiate_batch_process' ) ) ) {
+					Smart_Manager_Pro_Background_Updater::instance()->initiate_batch_process();
 				}
 			}
 		}
@@ -598,8 +614,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			$prev_val = $new_val = '';
 			$prev_val = apply_filters( 'sm_beta_batch_update_prev_value', $prev_val, $args );
 			if( empty( $prev_val ) ) {
-				if( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
-					$prev_val = Smart_Manager_Pro_Task::get_previous_data( $args['id'], $args['table_nm'], $args['col_nm'] );
+				if( is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) ) {
+					$prev_val = Smart_Manager_Task::get_previous_data( $args['id'], $args['table_nm'], $args['col_nm'] );
 				}	
 			}
 			if( $args['date_type'] == 'numeric' ) {
@@ -781,6 +797,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 						$term_ids = wp_get_object_terms( $args['selected_value'], $args['selected_column_name'], array( 'orderby' => 'term_id', 'order' => 'ASC', 'fields' => 'ids' ) );
 						$new_val = ( ! is_wp_error( $term_ids ) && ! empty( $term_ids ) ) ? $term_ids : array();
 						break;
+					case 'custom':
+						$new_val = apply_filters( 'sm_get_value_for_copy_from_operator', $new_val, $args );
+						break;
 					default:
 						$new_val = $value1;
 						break;
@@ -835,19 +854,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 						$update = update_post_meta( $args['id'], $args['col_nm'], $args['value'] );
 						break;
 					case 'terms':
-						if( in_array( $args['operator'], $args['copy_from_operators'] ) ) {
-							$value = $args['value'];
-						} else {
-							$value = ( is_array( $args['value'] ) && ! empty( $args['value'][0] ) ) ? intval( $args['value'][0] ) : intval( $args['value'] );
-						}
-						if( 'remove_from' === $args['operator'] ) {
-							$update = wp_remove_object_terms( $args['id'], $value, $args['col_nm'] );
-						} else {
-							$append = ( 'add_to' === $args['operator'] ) ? true : false;
-							$update = wp_set_object_terms( $args['id'], $value, $args['col_nm'], $append );
-						}
+						self::batch_update_terms_table_data( $args );
 						break;
-					
+					case ( 'custom' === $args['table_nm'] && 'copy_from' === $args['operator'] ):
+						$update = apply_filters( 'sm_update_value_for_copy_from_operator', $args );
+						break;
 					default:
 						$update = wp_update_post( array( 'ID' => $args['id'], $args['col_nm'] => $args['value'] ) );
 						$value = $args['value'];
@@ -856,9 +867,16 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			}
 			$update = apply_filters( 'sm_post_batch_update_db_updates',$update ,$args );
 			if ( is_wp_error( $update ) ) {
+				if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+					/* translators: %s process name */
+					Smart_Manager::log( 'error', sprintf( _x( '%s failed', 'update status', 'smart-manager-for-wp-e-commerce' ), ( ( ! empty( $args['process_name'] ) ) ? $args['process_name'] : '' ) ) );
+				}
 				return false;
 			} elseif ( ! empty( $args['task_id'] ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) ) {
-				$action = apply_filters( 'sm_task_update_action_name', $args['operator'], $args['type'] );
+				$action = 'set_to';
+				if ( in_array( $args['operator'], array( 'add_to', 'remove_from' ) ) ) {
+					$action = apply_filters( 'sm_task_update_action', $args['operator'], $args );
+				}
 				Smart_Manager_Base::$update_task_details_params[] = array(
 					'task_id' => $args['task_id'],
 						    'action' => $action,
@@ -873,11 +891,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 											)
 										) : $args['prev_val'],
 						    'updated_val' => $args['value'],
+						    'operator' => $args['operator'],
 				);
-			       	apply_filters( 'sm_task_details_update_by_prev_val', Smart_Manager_Base::$update_task_details_params );
+			    apply_filters( 'sm_task_details_update_by_prev_val', Smart_Manager_Base::$update_task_details_params );
 			    // For updating task details table
-				if ( ( ! empty( Smart_Manager_Base::$update_task_details_params ) ) && is_callable( array( 'Smart_Manager_Pro_Task', 'task_details_update' ) ) ) {
-					return Smart_Manager_Pro_Task::task_details_update();
+				if ( ( ! empty( Smart_Manager_Base::$update_task_details_params ) ) && is_callable( array( 'Smart_Manager_Task', 'task_details_update' ) ) ) {
+					return Smart_Manager_Task::task_details_update();
 				}
 			} else {
 				return true;
@@ -899,9 +918,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			$background_process_params = get_option( $identifier.'_params', false );
 
 			if( empty( $background_process_params ) ) {
+				if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+					Smart_Manager::log( 'error', _x( 'No batch process params found', 'batch process', 'smart-manager-for-wp-e-commerce' ) );
+				}
 				return;
 			}
-
 			delete_option( $identifier.'_params' );
 
 			// Preparing email content
@@ -936,138 +957,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 				wp_mail( $email, $subject, $message );
 			}
 
-		}
-
-		// Function to generate and export the CSV data
-		public function get_export_csv() {
-
-			global $current_user;
-
-			ini_set('memory_limit','-1');
-			set_time_limit(0);
-
-			$this->req_params['sort_params'] = json_decode( stripslashes( $this->req_params['sort_params'] ), true );
-			$this->req_params['table_model'] = json_decode( stripslashes( $this->req_params['table_model'] ), true );
-
-			$current_store_model = get_transient( 'sa_sm_'.$this->dashboard_key );
-			if( ! empty( $current_store_model ) && !is_array( $current_store_model ) ) {
-				$current_store_model = json_decode( $current_store_model, true );
-			}
-			$column_model_transient = get_user_meta(get_current_user_id(), 'sa_sm_'.$this->dashboard_key, true);
-
-			// Code for handling views
-			if( ( defined('SMPRO') && true === SMPRO ) && ! empty( $this->req_params['is_view'] ) && ! empty( $this->req_params['active_view'] ) ) {
-				if( class_exists( 'Smart_Manager_Pro_Views' ) ) {
-					$view_obj = Smart_Manager_Pro_Views::get_instance();
-					if( is_callable( array( $view_obj, 'get' ) ) ){
-						$view_slug = $this->req_params['active_view'];
-						$view_data = $view_obj->get($view_slug);
-						if( ! empty( $view_data ) ) {
-							$this->dashboard_key = $view_data['post_type'];
-							$column_model_transient = get_user_meta(get_current_user_id(), 'sa_sm_'.$view_slug, true);
-							$column_model_transient = json_decode( $view_data['params'], true );
-							if( !empty( $column_model_transient['search_params'] ) ) {
-								if( ! empty( $column_model_transient['search_params']['isAdvanceSearch'] ) ) { // For advanced search
-									if( ! empty( $column_model_transient['search_params']['params'] ) && is_array( $column_model_transient['search_params']['params'] ) ) {
-										array_walk(
-											$column_model_transient['search_params']['params'],
-											function ( &$value ) {
-												$value = ( ! empty( $value ) ) ? ( json_encode( $value ) ) : '';
-											}
-										);
-									}
-								}
-								$search_params = $column_model_transient['search_params'];
-							}
-						}
-					}
-				}
-			}
-
-			if( !empty( $column_model_transient ) && !empty( $current_store_model ) ) {
-				$current_store_model = $this->map_column_to_store_model( $current_store_model, $column_model_transient );
-			}
-
-			$col_model = (!empty($current_store_model['columns'])) ? $current_store_model['columns'] : array();
-
-			$data = $this->get_data_model();
-
-			$columns_header = $select_cols = $numeric_cols = array();
-
-			$getfield = '';
-
-			foreach( $col_model as $col ) {
-				if( empty( $col['exportable'] ) || !empty( $col['hidden'] ) ) {
-					continue;
-				}
-
-				$columns_header[ $col['data'] ] = $col['key'];
-
-				$getfield .= $col['key'] . ',';
-
-				if( ! empty( $col['values'] ) ) {
-					$select_cols[ $col['data'] ] = $col['values'];
-				}
-
-				if( ( ( ! empty( $col['type'] ) && 'numeric' === $col['type'] ) ) || ( ( ! empty( $col['validator'] ) && 'customNumericTextEditor' === $col['validator'] ) ) ){
-					$numeric_cols[] = $col['data'];
-				}
-			}
-
-			$fields = substr_replace($getfield, '', -1);
-			$each_field = array_keys( $columns_header );
-
-			$view_name = ( ! empty( $this->req_params['active_view'] ) ) ? $this->req_params['active_view'] . '-view_' : '';
-			$csv_file_name = sanitize_title(get_bloginfo( 'name' )) . '_' . $this->dashboard_key . '_' . $view_name . gmdate('d-M-Y_H:i:s');
-			$csv_file_name = ( ! empty( $this->req_params[ 'storewide_option' ] ) ) ? $csv_file_name . ".csv" : $csv_file_name . '_selected_records' . ".csv";
-
-			foreach( (array) $data['items'] as $row ){
-
-				for($i = 0; $i < count ( $columns_header ); $i++){
-
-					if( $i == 0 ){
-						$fields .= "\n";	
-					}
-
-					if( !empty( $select_cols[ $each_field[$i] ] ) && !empty( $row[$each_field[$i]] ) ) {
-						$row_each_field = !empty( $select_cols[ $each_field[$i] ][ $row[$each_field[$i]] ] ) ? $select_cols[ $each_field[$i] ][ $row[$each_field[$i]] ] : $row[$each_field[$i]];
-					} else {
-						$row_each_field = !empty($row[$each_field[$i]]) ? $row[$each_field[$i]] : '';
-					}
-					$array_temp = str_replace(array("\n", "\n\r", "\r\n", "\r"), "\t", $row_each_field);
-					$array = str_replace("<br>", "\n", $array_temp);
-					$array = str_replace('"', '""', $array);
-					if( ! empty( $numeric_cols ) && in_array( $each_field[$i], $numeric_cols ) ){
-						$str = $array;
-					} else{
-						$array = ( ! is_array( $array ) ) ? str_getcsv ( $array , ",", "\"" , "\\") : $array;
-						$str = ( $array && is_array( $array ) ) ? implode( ', ', $array ) : '';
-					}
-					$fields .= '"'. $str . '",'; 
-
-				}	
-				$fields = substr_replace($fields, '', -1); 
-			}
-
-			$upload_dir = wp_upload_dir();
-			$file_data = array();
-			$file_data['wp_upload_dir'] = $upload_dir['path'] . '/';
-			$file_data['file_name'] = $csv_file_name;
-			$file_data['file_content'] = $fields;
-
-			header("Content-type: text/x-csv; charset=UTF-8"); 
-			header("Content-Transfer-Encoding: binary");
-			header("Content-Disposition: attachment; filename=".$file_data['file_name']); 
-			header("Pragma: no-cache");
-			header("Expires: 0");
-
-			while(ob_get_contents()) {
-				ob_clean();
-			}
-
-			echo $file_data['file_content'];
-			
-			exit;
 		}
 
 		//Function to generate the data for print_invoice
@@ -1110,9 +999,22 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 		//function to handle duplicate records functionality
 		public function duplicate_records() {
-			$this->send_to_background_process( array( 'process_name' => 'Duplicate Records', 
-														'callback' => array( 'class_path' => $this->req_params['class_path'], 
-																			'func' => array( $this->req_params['class_nm'], 'process_duplicate_record' ) ) 
+			$get_selected_ids_and_entire_store_flag = $this->get_selected_ids_and_entire_store_flag();
+			$selected_ids = ( ! empty( $get_selected_ids_and_entire_store_flag['selected_ids'] ) ) ? $get_selected_ids_and_entire_store_flag['selected_ids'] : array();
+			$is_entire_store = ( ! empty( $get_selected_ids_and_entire_store_flag['entire_store'] ) ) ? $get_selected_ids_and_entire_store_flag['entire_store'] : false;
+			self::send_to_background_process( array( 'process_name' => 'Duplicate Records',
+														'callback' => array( 'class_path' => $this->req_params['class_path'],
+																			'func' => array( $this->req_params['class_nm'], 'process_duplicate_record' ) ),
+														'selected_ids' => $selected_ids,
+														'entire_task' => $this->entire_task,
+														'storewide_option' => $this->req_params['storewide_option'],'active_module' => $this->req_params['active_module'],
+														'entire_store' => $is_entire_store,
+														'dashboard_key' => $this->dashboard_key,
+														'dashboard_title' => $this->dashboard_title,
+														'class_path' => $this->req_params['class_path'],
+														'class_nm' => $this->req_params['class_nm'],
+														'backgroundProcessRunningMessage' => $this->req_params['backgroundProcessRunningMessage'],
+														'SM_IS_WOO30' => $this->req_params['SM_IS_WOO30']
 													)
 											);
 		}
@@ -1141,7 +1043,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 
 		//function to process duplicate records logic
 		public static function process_duplicate_record( $params ) {
-
 			$original_id = ( !empty( $params['id'] ) ) ? $params['id'] : '';
 
 			do_action('sm_beta_pre_process_duplicate_records', $original_id );
@@ -1227,8 +1128,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			}
 
 			do_action( 'sm_beta_post_process_duplicate_records', array( 'original_id' => $original_id, 'duplicate_id' => $duplicate_id, 'settings' => $settings, 'duplicate' => $duplicate ) );
-			
 			if( is_wp_error($duplicate_id) ) {
+				if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+					Smart_Manager::log( 'error', _x( 'Duplicate process failed', 'duplicate process', 'smart-manager-for-wp-e-commerce' ) );
+				}
 				return false;
 			} else {
 				return true;
@@ -1240,11 +1143,24 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 * Function to handle deletion via background process
 		 */
 		public function delete_all() {
-			$this->send_to_background_process( array( 'process_name' => 'Delete All Records', 
-														'callback' => array( 'class_path' => $this->req_params['class_path'], 
+			$get_selected_ids_and_entire_store_flag = $this->get_selected_ids_and_entire_store_flag();
+			$selected_ids = ( ! empty( $get_selected_ids_and_entire_store_flag['selected_ids'] ) ) ? $get_selected_ids_and_entire_store_flag['selected_ids'] : array();
+			$is_entire_store = ( ! empty( $get_selected_ids_and_entire_store_flag['entire_store'] ) ) ? $get_selected_ids_and_entire_store_flag['entire_store'] : false;
+			self::send_to_background_process( array( 'process_name' => 'Delete All Records',
+														'callback' => array( 'class_path' => $this->req_params['class_path'],
 																			'func' => array( $this->req_params['class_nm'], 'process_delete_record' ) ),
-														'callback_params' => array ( 'delete_permanently' => $this->req_params['deletePermanently'] )
-													) 
+														'callback_params' => array ( 'delete_permanently' => $this->req_params['deletePermanently'] ),
+														'selected_ids' => $selected_ids,
+														'entire_task' => $this->entire_task,
+														'storewide_option' => $this->req_params['storewide_option'],'active_module' => $this->req_params['active_module'],
+														'entire_store' => $is_entire_store,
+														'dashboard_key' => $this->dashboard_key,
+														'dashboard_title' => $this->dashboard_title,
+														'class_path' => $this->req_params['class_path'],
+														'class_nm' => $this->req_params['class_nm'],
+														'backgroundProcessRunningMessage' => $this->req_params['backgroundProcessRunningMessage'],
+														'SM_IS_WOO30' => $this->req_params['SM_IS_WOO30']
+													)
 											);
 		}
 
@@ -1255,7 +1171,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 * @return boolean
 		 */
 		public static function process_delete_record( $params ) {
-
 			$deleting_id = ( !empty( $params['id'] ) ) ? $params['id'] : '';
 			do_action('sm_pro_pre_process_delete_records', array( 'deleting_id' => $deleting_id, 'source' => __CLASS__ ) );
 
@@ -1275,8 +1190,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			$result = apply_filters( 'sm_pro_default_process_delete_records_result', $result, $deleting_id, $params );
 
 			do_action( 'sm_pro_post_process_delete_records', array( 'deleting_id' => $deleting_id, 'source' => __CLASS__ ) );
-			
 			if( empty( $result ) ) {
+				if ( is_callable( array( 'Smart_Manager', 'log' ) ) ) {
+					Smart_Manager::log( 'error', _x( 'Delete process failed', 'delete process', 'smart-manager-for-wp-e-commerce' ) );
+				}
 				return false;
 			} else {
 				return true;
@@ -1430,6 +1347,93 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 		 */
 		public static function update_column_titles( $args = array() ){
 			( ! empty( $args['edited_column_titles'] ) && ! empty( $args['state_option_name'] ) ) ? update_option( $args['state_option_name'] .'_columns', array_merge( get_option( $args['state_option_name'] .'_columns', array() ), $args['edited_column_titles'] ), 'no' ) : '';
+		}
+
+		/**
+		 * Function to batch update terms table related data
+		 *
+		 * @param  array $args request params array.
+		 * @return boolean $update result of the function call.
+		 */
+		public static function batch_update_terms_table_data( $args = array() ) {
+			if ( empty( $args ) || ( ! is_array( $args ) ) || empty( $args['operator'] ) || empty( $args['id'] ) || empty( $args['col_nm'] ) ) {
+				return false;
+			}
+			$update = false;
+			$value = ( is_array( $args['value'] ) && ! empty( $args['value'][0] ) ) ? intval( $args['value'][0] ) : intval( $args['value'] );
+			if ( ( ! empty( $args['copy_from_operators'] )  && is_array( $args['copy_from_operators'] ) ) && in_array( $args['operator'], $args['copy_from_operators'] ) ) {
+				$value = $args['value'];
+			}
+			if ( 'remove_from' === $args['operator'] ) {
+				return wp_remove_object_terms( $args['id'], $value, $args['col_nm'] );
+			} else {
+				$append = ( 'add_to' === $args['operator'] ) ? true : false;
+				return wp_set_object_terms( $args['id'], $value, $args['col_nm'], $append );
+			}
+		}
+
+		/**
+		 * Before deleting a post, do some cleanup like removing attached media.
+		 *
+		 * @param int $order_id Order ID.
+		 * @param WP_Post $post Post data.
+		 */
+		public function delete_attached_media( $post_id = 0, $post = null ) {
+			if ( empty( intval( $post_id ) ) ) {
+				return;
+			}
+			global $wpdb;
+			$attachments = get_children( array(
+				'post_parent' => $post_id,
+				'post_type'   => 'attachment', 
+				'numberposts' => -1,
+				'post_status' => 'any' 
+		  	) );
+			if ( empty( $attachments ) || ! is_array( $attachments ) ) {
+				return;
+			}
+			$attached_media_post_ids = array();
+			$post_ids = array();
+			foreach ( $attachments as $attachment ) {
+				$attachment_id = $attachment->ID;
+				if ( empty( intval( $attachment_id ) ) ) {
+					continue;
+				}
+				$attached_media_post_ids = $wpdb->get_col(
+											$wpdb->prepare( "SELECT DISTINCT post_id 
+											FROM {$wpdb->prefix}postmeta WHERE post_id <> %d AND meta_key = %s AND meta_value = %s", $post_id, '_thumbnail_id', $attachment_id )
+										); 
+				$attached_media_post_ids = apply_filters( 'sm_delete_attachment_get_matching_gallery_images_post_ids', $attached_media_post_ids, array(
+					'post_id' => $post_id,
+					'attachment_id' => $attachment_id
+				) );
+				$post_ids = $wpdb->get_col(
+									$wpdb->prepare( "SELECT DISTINCT ID 
+									FROM {$wpdb->prefix}posts WHERE ID <> %d AND post_content LIKE '%wp-image-" . $attachment_id . "%' OR post_excerpt LIKE '%wp-image-" . $attachment_id . "%' OR post_content LIKE '%wp:image {\"id\":$attachment_id%' OR post_excerpt LIKE '%wp:image {\"id\":$attachment_id%'", $post_id )
+									);
+			}
+			if ( empty( ( is_array( $attached_media_post_ids ) && is_array( $post_ids ) ) && array_merge( $attached_media_post_ids, $post_ids ) ) ) {
+				wp_delete_attachment( $attachment_id, true );
+				wp_delete_post( $attachment_id, true );
+			}
+		}
+
+		/**
+		 * Get selected ids.
+		 *
+		 * @param WP_Post $post Post data.
+		 */
+		public function get_selected_ids_and_entire_store_flag() {
+			$selected_ids =  ( ! empty( $this->req_params['selected_ids'] ) ) ? json_decode( stripslashes( $this->req_params['selected_ids'] ), true ) : array();
+			$entire_store = false;
+			if ( ( false === $this->entire_task ) && ( ! empty( $this->req_params['storewide_option'] ) ) && ( 'entire_store' === $this->req_params['storewide_option'] ) && ( ! empty( $this->req_params['active_module'] ) ) ) {
+				$selected_ids = $this->get_entire_store_ids();
+				$entire_store = true;
+			}
+			return array(
+				'selected_ids' => $selected_ids,
+				'entire_store' => $entire_store
+			);
 		}
 	}
 }

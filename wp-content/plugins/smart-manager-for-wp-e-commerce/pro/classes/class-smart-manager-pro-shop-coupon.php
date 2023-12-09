@@ -62,7 +62,31 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 			if( !empty( $args['col_nm'] ) && $args['col_nm'] == 'sa_cbl_locations_lookup_in' ) {
 				$args['value'] = array( 'address' => $args['value'] );
 			}
-
+			if ( empty( $args['table_nm'] ) || 'postmeta' !== $args['table_nm'] || ! in_array( $args['col_nm'], array( 'product_categories', 'exclude_product_categories' ) ) || in_array( $args['operator'], array( 'copy_from', 'copy_from_field' ) ) ) {
+				return $args;
+			}
+			$action = ( ! empty( $args['operator'] ) ) ? $args['operator'] : '';
+			$value = ( ! empty( $args['value'] ) ) ? intval( $args['value'] ) : 0;
+			$current_product_cat_ids = array();
+			$product_cat_ids = array( $value );
+			if ( ! empty( $action ) && 'set_to' !== $action ) {
+				$current_product_cat_ids = get_post_meta( intval( $args['id'] ), $args['col_nm'] );
+				if ( empty( $current_product_cat_ids ) || !is_array( $current_product_cat_ids ) ) {
+					return $args;
+				}
+				foreach ( $current_product_cat_ids as $current_product_cat_id ) {
+					$product_cat_ids = $current_product_cat_id;
+					if( $action == 'add_to' ) {
+						$product_cat_ids[] = $value;						
+					} else if ( $action == 'remove_from' ) {
+						$key = array_search( $value, $product_cat_ids );
+						if( false !== $key ) {
+							unset( $product_cat_ids[ $key ] );
+						}
+					}
+				}
+			}
+			$args['value'] = $product_cat_ids;
 			return $args;
 		}
 
@@ -188,7 +212,14 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 					}
 				}
 			}
-
+			if ( ! empty( $taxonomy_obj )) {
+				$terms_val = $this->get_parent_term_values(
+					array(
+						'taxonomy_obj'      => $taxonomy_obj,
+						'include_taxonomy'  => 'product_cat' // include only 'product_cat' taxonomy.
+					)
+				);
+			}
 			if( !empty( $editable_roles ) ) {
 				foreach( $editable_roles as $role_id => $role ) {
 					$role_name = translate_user_role( $role['name'] );
@@ -211,11 +242,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 			$all_products = $this->get_products();
 
 			$multiselect_serialized_columns = array(
-
-				'product_categories' 			=> array( 'title' 	=> __( 'Product categories', 'smart-manager-for-wp-e-commerce' ),
-														'values' 	=> $cat_values ),
-				'exclude_product_categories' 	=> array( 'title' 	=> __( 'Exclude categories', 'smart-manager-for-wp-e-commerce' ),
-														'values' 	=> $cat_values ),
 				'wc_sc_user_role_ids' 			=> array( 'title' 	=> __( 'Allowed user roles', 'smart-manager-for-wp-e-commerce' ),
 														'values' 	=> $editable_roles_values ) ,
 				'wc_sc_shipping_method_ids' 	=> array( 'title' 	=> __( 'Shipping methods', 'smart-manager-for-wp-e-commerce' ),
@@ -346,6 +372,11 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 						$column['type'] = $column['editor'] = 'sm.time';
 						$column['date_type'] = 'timestamp';
 						break;
+					case ( in_array( $col_nm, array( 'product_categories', 'exclude_product_categories' ) ) ):
+						$column['values'] = ( ! empty( $this->terms_val_parent['product_cat'] ) ) ? $this->terms_val_parent['product_cat'] : $cat_values;
+						$column['type'] = 'sm.multilist';
+						$column['title'] = ( 'product_categories' === $col_nm ) ? __( 'Product categories', 'smart-manager-for-wp-e-commerce' ) : __( 'Exclude categories', 'smart-manager-for-wp-e-commerce' );
+						break;
 				}
 
 			}
@@ -429,6 +460,29 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 					$link = home_url( '/?coupon-code=' . $data_model['items'][$key]['posts_post_title'] );
 					$data_model['items'][$key]['custom_coupon_shareable_link'] = ( !empty( $this->req_params['cmd'] ) && $this->req_params['cmd'] != 'get_export_csv' && $this->req_params['cmd'] != 'get_print_invoice' ) ? "<span class='sm_click_to_copy' title='". __('Click to copy', 'smart-manager-for-wp-e-commerce') ."'>".$link."</span>" : $link;
 				}
+				if ( empty( $data_col_params ) || ! is_array( $data_col_params ) || ! isset( $data_col_params['data_cols_multilist'] ) || ! is_array( $data_col_params['data_cols_multilist'] ) ) {
+					continue;
+				}
+				$multilist_separator = ', ';
+				foreach( $data_col_params['data_cols_multilist'] as $col ) {
+					$vals = maybe_unserialize( $item[ 'postmeta_meta_key_'.$col.'_meta_value_'.$col.'' ] );
+					$data_model['items'][$key]['postmeta_meta_key_'.$col.'_meta_value_'.$col.''] = '';
+					if ( empty( $vals ) || ! is_array( $vals ) ) {
+						continue;
+					}
+					foreach ( $vals as $val ) {
+						$term = get_term( $val );
+						if ( empty( $term ) ) {
+							continue;
+						}
+						$term_name = ucwords( $term->name );
+						if( empty( $data_model ['items'][$key][ 'postmeta_meta_key_'.$col.'_meta_value_'.$col.'' ] ) ) {
+							$data_model ['items'][$key][ 'postmeta_meta_key_'.$col.'_meta_value_'.$col.'' ] = $term_name;
+						} else {
+							$data_model ['items'][$key][ 'postmeta_meta_key_'.$col.'_meta_value_'.$col.'' ] .= $multilist_separator . "" . $term_name;
+						}
+					}
+				}		
 			}
 			return $data_model;
 		}

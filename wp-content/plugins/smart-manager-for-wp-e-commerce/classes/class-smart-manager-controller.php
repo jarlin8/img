@@ -173,7 +173,12 @@ if ( ! class_exists( 'Smart_Manager_Controller' ) ) {
 				    include_once $tasks_file;	
 				}
 			}
-			
+			if ( file_exists( $this->plugin_path . '/class-smart-manager-task.php' ) ) {
+				include_once $this->plugin_path . '/' . 'class-smart-manager-task.php';	
+			}
+			if ( file_exists( SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-product-stock-log.php' ) ) {
+         		include_once( SM_PLUGIN_DIR_PATH . '/classes/class-smart-manager-product-stock-log.php' );
+        	}
 			//Code for initializing the specific dashboard class
 
 			$file_nm = ( ( ! empty( $is_taxonomy_dashboard ) ) ? 'taxonomy-' : '' ) . str_replace('_', '-', $this->dashboard_key);
@@ -211,7 +216,12 @@ if ( ! class_exists( 'Smart_Manager_Controller' ) ) {
 				if ( ! empty( $is_taxonomy_dashboard ) && is_callable( $class_name, 'actions' ) ) {
 					$class_name::actions();
 				}
+				$class_name = 'Smart_Manager_Task';
+			}
+			if ( ! empty( $_REQUEST['isTasks'] ) ) {
 				$class_name = 'Smart_Manager_Pro_Task';
+			} elseif ( 'product_stock_log' === $this->dashboard_key ) {
+				$class_name = 'Smart_Manager_Product_Stock_Log';
 			}
 			$_REQUEST['class_nm'] = $class_name;
 			$_REQUEST['class_path'] = $sm_pro_class_nm;

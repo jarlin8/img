@@ -957,8 +957,8 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 					continue;
 				}
 				// For fetching previous value
-				if ( is_callable( array( 'Smart_Manager_Pro_Task', 'get_previous_data' ) ) ) {
-					$prev_val = Smart_Manager_Pro_Task::get_previous_data( $id, 'posts', 'post_status' );
+				if ( is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) ) {
+					$prev_val = Smart_Manager_Task::get_previous_data( $id, 'posts', 'post_status' );
 				}
 				if( ! empty( $edited_row['posts/post_status'] ) && class_exists( 'WC_Order' ) ) {
 					$order = new WC_Order( $id );

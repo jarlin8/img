@@ -4,7 +4,14 @@ if ( !defined( 'ABSPATH' ) ) exit;
 
 if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 	class Smart_Manager_Pro_User extends Smart_Manager_Pro_Base {
-		public $dashboard_key = '', $usermeta_ignored_cols = '';
+		public $dashboard_key = '', $usermeta_ignored_cols = '', $advanced_search_table_types = array(
+					'flat' => array( 
+						'users'         => 'id'
+					),
+					'meta' => array( 
+						'usermeta' => 'user_id' 
+					)
+				);
 
 		protected static $_instance = null;
 
@@ -16,6 +23,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		}
 
 		function __construct($dashboard_key) {
+			add_filter(
+				'sm_search_table_types',
+				function( $advanced_search_table_types = array() ) {
+					return $this->advanced_search_table_types;
+				}
+			); // should be kept before calling the parent class constructor.
 			parent::__construct($dashboard_key);
 			self::actions();
 
@@ -32,6 +45,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			add_filter( 'sm_data_model',array(&$this,'generate_data_model'), 10, 2 );
 			add_filter( 'sm_deleter', array( &$this, 'user_deleter' ), 10, 2 );
 			add_filter( 'sm_beta_delete_records_ids', array( $this, 'users_delete_record_ids' ), 10, 2 );
+			add_filter( 'sm_search_query_terms_select', array( &$this,'search_query_terms_select' ), 10, 2 );
+			add_filter( 'sm_search_query_terms_from', array( &$this,'search_query_terms_from' ), 10, 2 );
+			add_filter( 'sm_search_query_terms_where', array( &$this,'search_query_terms_where' ), 10, 2 );
 		}
 
 		public static function actions() {
@@ -72,11 +88,30 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		}
 
 		public function default_user_dashboard_model ($dashboard_model) {
-
+			if ( empty( $dashboard_model ) ) {
+				return;
+			}
 			global $wpdb, $current_user, $_wp_admin_css_colors;
-
 			$col_model = array();
-
+			$ignored_term_cols = array( 'object_id' );
+			// fetching terms columns.
+			$afwc_multilist_fields = array( 'afwc_user_tags' => _x( 'AFWC Affiliate Tags', 'AFWC Affiliate Tags field name', 'smart-manager-for-wp-e-commerce' ) );
+			foreach ( $dashboard_model['columns'] as $key => &$value ) {
+				if ( empty( $value ) || empty( $value['src'] ) ) {
+					continue;
+				}
+				$col_explode = explode( '/', $value['src'] );
+				if ( empty( $col_explode[0] ) || empty( $col_explode[1] ) ) {
+					continue;
+				}
+				if ( ( 'terms' === $col_explode[0] ) ) {
+					if ( in_array( $col_explode[1], $ignored_term_cols ) ) {
+						continue;
+					}
+					$value['name'] = $value['key'] = $afwc_multilist_fields[ $col_explode[1] ];
+					$col_model[] = $dashboard_model['columns'][$key];
+				}	
+			}
 			$default_hidden_cols = apply_filters( 'sm_users_default_hidden_cols', array( 'user_url', 'user_activation_key', 'user_status' ) );
 			$default_non_editable_cols = apply_filters( 'sm_users_default_non_editable_cols', array( 'ID', 'user_login' ) );
 			$default_ignored_cols = apply_filters( 'sm_users_default_ignored_cols', array( 'user_activation_key', 'user_status' ) );
@@ -202,7 +237,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			$default_um_visible_cols = apply_filters('sm_usermeta_visible_cols', array('first_name', 'last_name', 'description', 'rich_editing', 'billing_first_name', 'billing_last_name', 'billing_company', 'billing_address_1', 'billing_address_2', 'billing_city', 'billing_state', 'billing_postcode', 'billing_country', 'billing_email', 'billing_phone'));
 			$default_um_disabled_cols = apply_filters('sm_usermeta_disabled_cols', array('billing_country', 'billing_state'));
 			$default_um_non_searchable_cols = apply_filters( 'sm_usermeta_non_searchable_cols', array( $wpdb->prefix.'capabilities' ) );
-			$um_serialized_cols = apply_filters( 'sm_usermeta_serialized_cols', array( $wpdb->prefix.'capabilities' ) );
+			$um_serialized_cols = apply_filters( 'sm_usermeta_serialized_cols', array( $wpdb->prefix.'capabilities', 'afwc_additional_fields' ) );
 
 			//code for getting the meta cols
 			$results_usermeta_col = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT(meta_key) as meta_key,
@@ -353,7 +388,18 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 					$index++;
 				}
-
+				// Mapping for AFW plugin fields.
+				$afwc_text_fields = array( 
+					'afwc_is_affiliate' => _x( 'AFWC Is Affiliate', 'AFWC Is Affiliate field name', 'smart-manager-for-wp-e-commerce' ),
+					'afwc_ref_url_id'  => _x( 'AFWC Referral URL ID', 'AFWC Referral URL ID field name', 'smart-manager-for-wp-e-commerce' ),
+					'afwc_paypal_email'  => _x( 'AFWC PayPal Email', 'AFWC PayPal Email field name', 'smart-manager-for-wp-e-commerce' ),
+					'afwc_parent_chain' => _x( 'AFWC Parent Chain', 'AFWC Parent Chain field name', 'smart-manager-for-wp-e-commerce' ),
+					'afwc_ltc_customers' => _x( 'AFWC Lifetime Customers', 'AFWC Lifetime Customers field name', 'smart-manager-for-wp-e-commerce' ), 
+					'afwc_affiliate_desc' => _x( 'AFWC Affiliate Form Description', 'AFWC Affiliate Form Description field name', 'smart-manager-for-wp-e-commerce' ),
+					'afwc_affiliate_contact' => _x( 'AFWC Affiliate Form Contact', 'AFWC Affiliate Form Contact field name', 'smart-manager-for-wp-e-commerce' ),
+					'afwc_affiliate_skype'  => _x( 'AFWC Affiliate Skype Handle', 'AFWC Affiliate Skype Handle field name', 'smart-manager-for-wp-e-commerce' )
+				);
+				$afwc_serialized_fields = array( 'afwc_additional_fields' => _x( 'AFWC Additional Form Fields', 'AFWC Additional Form Fields field name', 'smart-manager-for-wp-e-commerce' ) );
 				foreach ($results_usermeta_col as $usermeta_col) {
 
 					$temp = array();
@@ -372,7 +418,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 					$temp ['width'] = 100;
 					$temp ['align'] = 'left';
-
 					if ( $meta_value == 'yes' || $meta_value == 'no' || $meta_value == 'true' || $meta_value == 'false' || ( is_numeric($meta_value) && ( $meta_value == 0 || $meta_value == 1 ) ) ) {
 						$type = 'checkbox';
 
@@ -404,6 +449,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 					} else if( is_serialized( $meta_value ) === true || ( !empty($um_serialized_cols) && in_array($meta_key, $um_serialized_cols) ) ) {
 						$type = 'sm.serialized';
 						$temp ['width'] = 200;
+						if ( 'afwc_additional_fields' === $meta_key ) {
+							$temp ['editor'] = $type;
+							$temp ['name'] = $temp ['key'] = $afwc_serialized_fields[ $meta_key ];
+						}
 					}
 					$type = ( 'nickname' === $meta_key ) ? 'text' : $type;
 					$temp ['type'] = $type;
@@ -419,6 +468,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 							$temp ['values'][$theme] = $name;
                 			$temp ['search_values'][] = array('key' => $theme, 'value' => $name);
 						}
+					} elseif ( ( ! empty( $afwc_text_fields ) && is_array( $afwc_text_fields ) ) && in_array( $meta_key, array_keys($afwc_text_fields) ) ) {
+						$temp['type'] = $temp['editor'] = 'text';
+					  	$temp['name'] = $temp['key'] = $afwc_text_fields[ $meta_key ];
 					}
 
 					$temp ['hidden'] = ( !empty($default_um_visible_cols) && in_array($meta_key, $default_um_visible_cols) ) ? false : true;
@@ -444,7 +496,9 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
 					$col_model [] = $temp;
 				}
-
+				if ( ! empty( $col_model ) && is_array( $col_model ) ) {
+					$col_model = &$col_model;
+				}
 			}
 
 			$dashboard_model['columns'] = $col_model;
@@ -479,21 +533,29 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
             $i = 0;
 
             $search_cols_type = ( ! empty( $params['search_cols_type'] ) ) ? $params['search_cols_type'] : array();
+            $non_flat_table_types = ( ! empty( $this->advanced_search_table_types['meta'] ) ) ? array_merge( array( 'terms' ), array_keys( $this->advanced_search_table_types['meta'] ) ) : array( 'terms' );
 
             foreach ($rule_groups as $rule_group) {
 
                 if (is_array($rule_group)) {
 
                 		// START FROM HERE
+                        if ( ! empty( $this->advanced_search_table_types ) ) {
+							if ( ! empty( $this->advanced_search_table_types['flat'] ) ) {
+								foreach ( array_keys( $this->advanced_search_table_types['flat'] ) as $table ) {
+									$advanced_search_query[$i]['cond_'. $table] = '';
+								}
+							}
 
-                        $advanced_search_query[$i] = array();
-                        $advanced_search_query[$i]['cond_users'] = '';
-                        $advanced_search_query[$i]['cond_usermeta'] = '';
-
-                        $advanced_search_query[$i]['cond_usermeta_col_name'] = '';
-                        $advanced_search_query[$i]['cond_usermeta_col_value'] = '';
-                        $advanced_search_query[$i]['cond_usermeta_operator'] = '';
-
+							if ( ! empty( $non_flat_table_types ) ) {
+								foreach ( $non_flat_table_types as $table ) {
+									$advanced_search_query[$i]['cond_'. $table] = '';
+									$advanced_search_query[$i]['cond_'. $table .'_col_name'] = '';
+									$advanced_search_query[$i]['cond_'. $table .'_col_value'] = '';
+									$advanced_search_query[$i]['cond_'. $table .'_operator'] = '';
+								}
+							}
+						}
                         $search_value_is_array = 0; //flag for array of search_values
 
 						$rule_group = apply_filters('sm_user_before_search_string_process', $rule_group);
@@ -511,6 +573,16 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 							$search_operator = ( ! empty( $this->advance_search_operators[$search_operator] ) ) ? $this->advance_search_operators[$search_operator] : $search_operator;
                             $search_data_type = ( ! empty( $search_cols_type[$rule['type']] ) ) ? $search_cols_type[$rule['type']] : 'text';
                             $search_value = (!empty($rule['value']) && $rule['value'] != "''") ? $rule['value'] : ( ( in_array( $search_data_type, array( "number", "numeric" ) ) ) ? '0' : '' );
+                            if ( 'terms' === $rule['table_name'] && "''" === $search_value ){ // For handling taxonomy empty strings
+								switch( $search_operator ){
+									case 'is':
+										$search_operator = 'is not';
+										break;
+									case 'is not':
+										$search_operator = 'is';
+										break;
+								}
+							}
 
                             $search_params = array('search_string' => $rule,
 													'search_col' => $search_col,
@@ -544,7 +616,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
                                 $users_cond = apply_filters('sm_search_users_cond', $users_cond, $search_params);
 
-                                $advanced_search_query[$i]['cond_users'] .= $users_cond ." AND ";
+                                $advanced_search_query[$i]['cond_users'] .= $users_cond ." && ";
 
                             } else if (!empty($rule['table_name']) && $rule['table_name'] == $wpdb->prefix.'usermeta') {
 
@@ -590,23 +662,29 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 
                                 $postmeta_cond = apply_filters('sm_search_usermeta_cond', $postmeta_cond, $search_params);
 
-                                $advanced_search_query[$i]['cond_usermeta'] .= $postmeta_cond ." AND ";
-                                $advanced_search_query[$i]['cond_usermeta_col_name'] .= " AND ";
-                                $advanced_search_query[$i]['cond_usermeta_col_value'] .= " AND ";
-                                $advanced_search_query[$i]['cond_usermeta_operator'] .= " AND ";
+                                $advanced_search_query[$i]['cond_usermeta'] .= $postmeta_cond ." && ";
+                                $advanced_search_query[$i]['cond_usermeta_col_name'] .= " && ";
+                                $advanced_search_query[$i]['cond_usermeta_col_value'] .= " && ";
+                                $advanced_search_query[$i]['cond_usermeta_operator'] .= " && ";
 
+                            } elseif ( ( ! empty( $rule['table_name'] ) ) && $wpdb->prefix.'terms' === $rule['table_name'] ) {
+                                $advanced_search_query[$i] = $this->create_terms_table_search_query( array(
+									'search_query' => $advanced_search_query[$i],
+									'search_params' => $search_params,
+									'rule'			=> $rule
+								) );
                             }
 
                             $advanced_search_query[$i] = apply_filters('sm_user_search_query_formatted', $advanced_search_query[$i], $search_params);
                         }
-
-                        $advanced_search_query[$i]['cond_users'] = (!empty($advanced_search_query[$i]['cond_users'])) ? substr( $advanced_search_query[$i]['cond_users'], 0, -4 ) : '';
-                        $advanced_search_query[$i]['cond_usermeta'] = (!empty($advanced_search_query[$i]['cond_usermeta'])) ? substr( $advanced_search_query[$i]['cond_usermeta'], 0, -4 ) : '';
-
-                        $advanced_search_query[$i]['cond_usermeta_col_name'] = (!empty($advanced_search_query[$i]['cond_usermeta_col_name'])) ? substr( $advanced_search_query[$i]['cond_usermeta_col_name'], 0, -4 ) : '';
-                        $advanced_search_query[$i]['cond_usermeta_col_value'] = (!empty($advanced_search_query[$i]['cond_usermeta_col_value'])) ? substr( $advanced_search_query[$i]['cond_usermeta_col_value'], 0, -4 ) : '';
-                        $advanced_search_query[$i]['cond_usermeta_operator'] = (!empty($advanced_search_query[$i]['cond_usermeta_operator'])) ? substr( $advanced_search_query[$i]['cond_usermeta_operator'], 0, -4 ) : '';
-
+                        if ( ! empty( $advanced_search_query[$i] ) ) {
+							foreach( $advanced_search_query[$i] as $key => $value ){
+								if( " && " !== substr( $value, -4 ) ){
+									continue;
+								}
+								$advanced_search_query[$i][ $key ] = ( ! empty( $value ) ) ? substr( $value, 0, -4 ) : '';
+							}
+						}
                     }
 
                     $i++;
@@ -619,15 +697,15 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		            $search_params = array();
 
 		            foreach ($advanced_search_query as &$advanced_search_query_string) {
-
+		            	$this->previous_cond_has_results = true;
 		                //Cond for usermeta
 		                if (!empty($advanced_search_query_string['cond_usermeta'])) {
 
-		                    $cond_usermeta_array = explode(" AND  ",$advanced_search_query_string['cond_usermeta']);
+		                    $cond_usermeta_array = explode(" &&  ",$advanced_search_query_string['cond_usermeta']);
 
-		                    $cond_usermeta_col_name = (!empty($advanced_search_query_string['cond_usermeta_col_name'])) ? explode(" AND ",$advanced_search_query_string['cond_usermeta_col_name']) : '';
-		                    $cond_usermeta_col_value = (!empty($advanced_search_query_string['cond_usermeta_col_value'])) ? explode(" AND ",$advanced_search_query_string['cond_usermeta_col_value']) : '';
-		                    $cond_usermeta_operator = (!empty($advanced_search_query_string['cond_usermeta_operator'])) ? explode(" AND ",$advanced_search_query_string['cond_usermeta_operator']) : '';
+		                    $cond_usermeta_col_name = (!empty($advanced_search_query_string['cond_usermeta_col_name'])) ? explode(" && ",$advanced_search_query_string['cond_usermeta_col_name']) : '';
+		                    $cond_usermeta_col_value = (!empty($advanced_search_query_string['cond_usermeta_col_value'])) ? explode(" && ",$advanced_search_query_string['cond_usermeta_col_value']) : '';
+		                    $cond_usermeta_operator = (!empty($advanced_search_query_string['cond_usermeta_operator'])) ? explode(" && ",$advanced_search_query_string['cond_usermeta_operator']) : '';
 
 		                    $index = 0;
 		                    $cond_usermeta_post_ids = '';
@@ -695,7 +773,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		                //Cond for users
 		                if (!empty($advanced_search_query_string['cond_users'])) {
 
-		                    $cond_users_array = explode(" AND ",$advanced_search_query_string['cond_users']);
+		                    $cond_users_array = explode(" && ",$advanced_search_query_string['cond_users'] );
 
 		                    $index = 0;
 		                    $cond_users_post_ids = '';
@@ -752,7 +830,12 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		                    //Query to delete the unwanted post_ids
 		                    $wpdb->query("DELETE FROM {$wpdb->base_prefix}sm_advanced_search_temp WHERE flag = 0");
 
-		                }
+		                } elseif ( ! empty( $advanced_search_query_string['cond_terms'] ) ) {
+							$this->process_terms_table_search_query( array_merge( $params, array( 
+								'search_query' 			=> $advanced_search_query_string,
+								'search_query_index' 	=> $index_search_string
+							) ) );
+						}
 		                $index_search_string++;
 		            }
 		        }
@@ -823,10 +906,16 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 				$this->req_params['advanced_search_query'] = json_decode(stripslashes($this->req_params['advanced_search_query']), true);
 
 	            if (!empty($this->req_params['advanced_search_query'])) {
-
-					$this->process_user_search_cond(array( 'search_query' => (!empty($this->req_params['advanced_search_query'])) ? $this->req_params['advanced_search_query'] : array(),
+	            	$post_type = $wpdb->prefix . $this->dashboard_key;
+	            	if ( ! empty( $this->req_params['table_model']['posts']['where']['post_type'] ) ) {
+						$post_type = ( is_array( $this->req_params['table_model']['posts']['where']['post_type'] ) ) ? $this->req_params['table_model']['posts']['where']['post_type'] : array( $this->req_params['table_model']['posts']['where']['post_type'] );
+					}
+					$this->process_user_search_cond(array( 
+														'search_query' => (!empty($this->req_params['advanced_search_query'])) ? $this->req_params['advanced_search_query'] : array(),
 														'SM_IS_WOO30' => (!empty($this->req_params['SM_IS_WOO30'])) ? $this->req_params['SM_IS_WOO30'] : '',
-														'search_cols_type' => $search_cols_type	
+														'search_cols_type' => $search_cols_type,
+
+														'post_type' => $post_type	
 													)
 												);
 
@@ -926,6 +1015,18 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		        		}
 
 						$order_by = " ORDER BY ".$wpdb->prefix."".$table_nm.".".$this->req_params['sort_params']['column_nm']." ".$this->req_params['sort_params']['sortOrder']." ";
+						if ( ! empty( $table_nm ) && 'terms' === $table_nm ) {
+							$join = $this->terms_table_column_sort_query( 
+								array(
+									'col_name'     => $this->req_params['sort_params']['column_nm'],
+									'id'           => $wpdb->prefix . 'users.id',
+									'sort_order'   => $this->req_params['sort_params']['sortOrder'],
+									'join'         => $join,
+									'wp_query_obj' => '',
+								)
+							);
+							$order_by = ' ORDER BY taxonomy_sort.term_name ' . $this->req_params['sort_params']['sortOrder'] ;
+						}
 	        		}
 	        		
 	        	}
@@ -1161,7 +1262,19 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 		    		}
 	    		}
 			}
-
+			$formatted_terms_data = $this->format_terms_data(
+				array(
+	        			'items'               => $items,
+	        			'terms_visible_cols'  => $data_col_params['terms_visible_cols'],
+	        			'data_cols_multilist' => $data_col_params['data_cols_multilist'],
+	        			'data_cols_dropdown'  => $data_col_params['data_cols_dropdown'],
+	        			'ids'                 => $user_ids,
+	        			'id_name'             => 'users_id',
+	        			'postmeta_cols'       => array()
+	        		) );
+			if ( ! empty( $formatted_terms_data ) ) {
+				$items = $formatted_terms_data;
+			}
 			$data_model ['items'] = (!empty($items)) ? $items : '';
         	$data_model ['start'] = $start+$limit;
         	$data_model ['page'] = $current_page;
@@ -1207,6 +1320,18 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 							} else if ( $update_column != 'role' ) {
 								$default_insert_users [$update_column] = $value;
 							}
+						} elseif ( 'terms' === $update_table ) {
+							$this->update_terms_table_data(
+								array(
+									'update_column' => $update_column,
+									'data_cols_multiselect' => $params['data_cols_multiselect'],
+									'data_cols_multiselect_val' => $params['data_cols_multiselect_val'],
+									'data_cols_list' => $params['data_cols_list'],
+									'data_cols_list_val' => $params['data_cols_list_val'],
+									'value' => $value,
+									'id' => $id
+								)
+							);
 						}
 					} elseif ( sizeof( $edited_value_exploded ) > 2) {
 						$cond = explode( '=', $edited_value_exploded[1]);
@@ -1374,6 +1499,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			} else if ( !empty( $args['table_nm'] ) && $args['table_nm'] == 'usermeta' ) {
 				update_user_meta( $id, $col_nm, $value );
 				$update_flag = true;
+			} elseif ( 'terms' === $args['table_nm'] ) {
+				self::batch_update_terms_table_data( $args );
 			}
 
 			return $update_flag;
@@ -1545,5 +1672,56 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 										WHERE ID IN ( ". implode( ",", $ids ) ." )", 'ARRAY_A' );
 	      	}
 	    }
+
+	    /**
+	     * Function for getting select query for terms table.
+	     *
+	     * @param string $search_query_terms_select select query for terms table.
+	     * @param array $search_params array of search_params.
+	     * @return string select query.
+	     */
+	    public function search_query_terms_select( $search_query_terms_select = '', $search_params = array() ) {
+	    	global $wpdb;
+	    	if ( ( ! is_array( $search_params ) ) || ( ! isset( $search_params['search_query_index'] ) ) ) {
+	    		return $search_query_terms_select;
+	    	}
+	    	return "SELECT DISTINCT " . $wpdb->prefix . "users.id, " . $search_params['search_query_index'] . " , 0  ";
+		}
+
+		/**
+	     * Function for getting from query for terms table.
+	     *
+	     * @param string $search_query_terms_from from query for terms table.
+	     * @param array $search_params array of search_params.
+	     * @return string from query.
+	     */
+	    public function search_query_terms_from( $search_query_terms_from = '', $search_params = array() ) {
+	    	global $wpdb;
+		    return "FROM {$wpdb->prefix}users
+							JOIN {$wpdb->prefix}term_relationships
+								ON ({$wpdb->prefix}term_relationships.object_id = {$wpdb->prefix}users.id
+								)";
+	    }
+
+		/**
+	     * Function for getting where query for terms table.
+	     *
+	     * @param string $search_query_terms_where where query for terms table.
+	     * @param array $search_params array of search_params.
+	     * @return string where query.
+	     */
+		public function search_query_terms_where( $search_query_terms_where = '', $search_params = array() ) {
+	    	global $wpdb;
+	    	if ( ( ! is_array( $search_params ) ) || ( ! isset( $search_params['result_taxonomy_ids'] ) ) ) {
+	    		return $search_query_terms_where;
+	    	}
+	    	$search_query_terms_where = "WHERE {$wpdb->prefix}term_relationships.term_taxonomy_id IN (". $search_params['result_taxonomy_ids'] .")";
+	    	if ( ! empty( $search_params['tt_ids_to_exclude'] ) ) {
+	    		$search_query_terms_where .= " AND {$wpdb->prefix}users.id NOT IN ( SELECT object_id 
+																			FROM {$wpdb->prefix}term_relationships
+																			WHERE term_taxonomy_id IN (". implode( ",", $search_params['tt_ids_to_exclude'] ) .") )";
+	    	}
+			return $search_query_terms_where;
+		}
 	}
 }
