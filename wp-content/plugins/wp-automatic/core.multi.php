@@ -20,7 +20,7 @@ if (isset ( $_GET ['debug'] ))
 	$debug = true;
 
 // cache enabled and there are cached items
-if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
+if ($cg_ml_cache == 'enabled' && wp_automatic_trim( $wp_automatic_cache ) != '') {
 	echo '<br>Cache found, loading items from the cache....';
 	
 	// injecting
@@ -28,7 +28,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 } else {
 	
 	// fixed list
-	if (in_array ( 'OPT_MULTI_FIXED_LIST', $camp_opt ) && trim($camp_general['cg_multi_posts_list'] != '' ) ) {
+	if (in_array ( 'OPT_MULTI_FIXED_LIST', $camp_opt ) && wp_automatic_trim($camp_general['cg_multi_posts_list'] != '' ) ) {
 		
 		 echo '<br>Building a feed from a fixed list';
 		 
@@ -50,7 +50,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		
 		$the_path = $pars ['path'];
 		
-		if (trim ( $the_path ) != '') {
+		if (wp_automatic_trim( $the_path ) != '') {
 			$the_path = preg_replace ( '{/[^/]*$}', '', $the_path );
 		}
 		
@@ -58,7 +58,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		$host = stristr ( $cg_ml_source, 'https' ) ? 'https://' . $host : 'http://' . $host;
 		
 		// if pagination, load the pagination URL instead
-		if (trim ( $cg_ml_cnt_method ) != 'auto' && trim ( $wp_automatic_nextpage ) != '' && $cg_ml_cache == 'enabled') {
+		if (wp_automatic_trim( $cg_ml_cnt_method ) != 'auto' && wp_automatic_trim( $wp_automatic_nextpage ) != '' && $cg_ml_cache == 'enabled') {
 			echo '<br>Pagination URL found, using it';
 			$cg_ml_source = $wp_automatic_nextpage;
 			 
@@ -80,7 +80,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		$cg_ml_lnk_method = $camp_general ['cg_ml_lnk_method'];
 		
 		// validate link existence
-		if (trim ( $cg_ml_source ) == '') {
+		if (wp_automatic_trim( $cg_ml_source ) == '') {
 			echo '<br>No source found, please add the source URL and try again';
 			return false;
 		}
@@ -121,7 +121,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 				$proxyarr = explode ( "\n", $proxies );
 				
 				foreach ( $proxyarr as $proxy ) {
-					if (trim ( $proxy ) != '') {
+					if (wp_automatic_trim( $proxy ) != '') {
 						
 						$auth = '';
 						if (substr_count ( $proxy, ':' ) == 3) {
@@ -131,10 +131,10 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 							$proxy = $proxy_parts [0] . ':' . $proxy_parts [1];
 							$auth = $proxy_parts [2] . ':' . $proxy_parts [3];
 							
-							curl_setopt ( $ch, CURLOPT_PROXY, trim ( $proxy ) );
-							curl_setopt ( $ch, CURLOPT_PROXYUSERPWD, trim ( $auth ) );
+							curl_setopt ( $ch, CURLOPT_PROXY, wp_automatic_trim( $proxy ) );
+							curl_setopt ( $ch, CURLOPT_PROXYUSERPWD, wp_automatic_trim( $auth ) );
 						} else {
-							curl_setopt ( $ch, CURLOPT_PROXY, trim ( $proxy ) );
+							curl_setopt ( $ch, CURLOPT_PROXY, wp_automatic_trim( $proxy ) );
 						}
 						
 						echo "<br>Trying using proxy :$proxy";
@@ -146,7 +146,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 						$exec = curl_exec ( $ch );
 						$x = curl_error ( $ch );
 						
-						if (trim ( $x ) != '') {
+						if (wp_automatic_trim( $x ) != '') {
 							echo '<br>Curl Proxy Error:' . curl_error ( $ch );
 						} else {
 							
@@ -157,14 +157,14 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 								// succsfull connection here
 								// echo curl_exec($ch);
 								// reordering the proxy
-								$proxies = str_replace ( ' ', '', $proxies );
+								$proxies =wp_automatic_str_replace( ' ', '', $proxies );
 								
-								if (trim ( $auth ) != '')
+								if (wp_automatic_trim( $auth ) != '')
 									$proxy = $proxy . ':' . $auth;
 								
-								$proxies = str_replace ( $proxy, '', $proxies );
+								$proxies =wp_automatic_str_replace( $proxy, '', $proxies );
 								
-								$proxies = str_replace ( "\n\n", "\n", $proxies );
+								$proxies =wp_automatic_str_replace( "\n\n", "\n", $proxies );
 								$proxies = "$proxy\n$proxies";
 								// echo $proxies;
 								update_option ( 'wp_automatic_proxy', $proxies );
@@ -194,7 +194,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		// cookie
 		$cg_sn_cookie = $camp_general ['cg_ml_cookie'];
 		
-		if (trim ( $cg_sn_cookie ) != '') {
+		if (wp_automatic_trim( $cg_sn_cookie ) != '') {
 			$headers [] = "Cookie: $cg_sn_cookie ";
 			curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
 		}
@@ -209,7 +209,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			$wp_automatic_apify_key = get_option('wp_automatic_apify_key','');
 			
 			require_once 'inc/class.apify.php';
-			$apify = new ValvePress_APIFY( $wp_automatic_apify_key , trim ( $cg_ml_source ) , $ch );
+			$apify = new ValvePress_APIFY( $wp_automatic_apify_key , wp_automatic_trim( $cg_ml_source ) , $ch );
 			
 			try {
 				
@@ -229,7 +229,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 				 
 				$x = 'error';
 				curl_setopt ( $ch, CURLOPT_HTTPGET, 1 );
-				curl_setopt ( $ch, CURLOPT_URL, trim ( $cg_ml_source ) );
+				curl_setopt ( $ch, CURLOPT_URL, wp_automatic_trim( $cg_ml_source ) );
 				$exec = curl_exec ( $ch );
 				$x = curl_error ( $ch );//end loading...
 				
@@ -239,7 +239,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			
 			$x = 'error';
 			curl_setopt ( $ch, CURLOPT_HTTPGET, 1 );
-			curl_setopt ( $ch, CURLOPT_URL, trim ( $cg_ml_source ) );
+			curl_setopt ( $ch, CURLOPT_URL, wp_automatic_trim( $cg_ml_source ) );
 			$exec = curl_exec ( $ch );
 			$x = curl_error ( $ch );//end loading...
 			
@@ -250,7 +250,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		
 		 
 		// validate response
-		if (trim ( $exec ) == '') {
+		if (wp_automatic_trim( $exec ) == '') {
 			echo '<br>Did not return valid content ' . $x;
 			return false;
 		}else{
@@ -261,7 +261,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		
 		// base URL
 		preg_match ( '{<base href="(.*?)"}', $exec, $base_matches );
-		$base_url = (isset ( $base_matches [1] ) && trim ( $base_matches [1] ) != '') ? trim ( $base_matches [1] ) : '';
+		$base_url = (isset ( $base_matches [1] ) && wp_automatic_trim( $base_matches [1] ) != '') ? wp_automatic_trim( $base_matches [1] ) : '';
 		
 	 
 		
@@ -285,7 +285,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			$cg_ml_lnk_visual = $camp_general ['cg_ml_lnk_visual'];
 			$path = isset ( $cg_ml_lnk_visual [0] ) ? $cg_ml_lnk_visual [0] : '';
 			
-			if (trim ( $path ) == '') {
+			if (wp_automatic_trim( $path ) == '') {
 				echo '<br>No path found, please set the extraction rule for the first item link';
 				return false;
 			}
@@ -356,7 +356,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			$i = 0;
 			foreach ( $cg_ml_lnk_regex as $cg_ml_lnk_regex_s ) {
 				 
-				echo '<br>Extracting content by REGEX : ' . htmlentities (  ( $cg_ml_lnk_regex_s ) );
+				echo '<br>Extracting content by REGEX : ' . wp_automatic_htmlentities (  ( $cg_ml_lnk_regex_s ) );
 				
 				$content = $wpAutomaticDom->getContentByRegex (  ( $cg_ml_lnk_regex_s ) );
 				
@@ -366,7 +366,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 				
 			 
 				
-				if (trim ( $content ) != '') {
+				if (wp_automatic_trim( $content ) != '') {
 					$finalContent .= $content . "\n";
 				}
 				
@@ -449,7 +449,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			$cg_ml_cnt_visual = $camp_general ['cg_ml_cnt_visual'];
 			$path = isset ( $cg_ml_cnt_visual [0] ) ? $cg_ml_cnt_visual [0] : '';
 			
-			if (trim ( $path ) == '') {
+			if (wp_automatic_trim( $path ) == '') {
 				echo '<br>No path found for pagination, please set the extraction rule for pagination if you want to make use of pagination.';
 			}
 			
@@ -531,7 +531,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			$i = 0;
 			foreach ( $cg_ml_cnt_regex as $cg_ml_cnt_regex_s ) {
 				
-				echo '<br>Extracting content by REGEX : ' . htmlentities ( stripslashes ( $cg_ml_cnt_regex_s ) );
+				echo '<br>Extracting content by REGEX : ' . wp_automatic_htmlentities ( stripslashes ( $cg_ml_cnt_regex_s ) );
 				
 				$content = $wpAutomaticDom->getContentByRegex ( stripslashes ( $cg_ml_cnt_regex_s ) );
 				
@@ -539,7 +539,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 				
 				echo '<-- ' . strlen ( $content ) . ' chars';
 				
-				if (trim ( $content ) != '') {
+				if (wp_automatic_trim( $content ) != '') {
 					$finalContent .= $content . "\n";
 				}
 				
@@ -552,18 +552,18 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			//second page URL
 			$cg_ml_page_2_url = $camp_general ['cg_ml_page_2_url'];
 			
-			if (trim ( $cg_ml_page_2_url ) != '') {
+			if (wp_automatic_trim( $cg_ml_page_2_url ) != '') {
 				
 				if (stristr ( $cg_ml_page_2_url, '2' ) || stristr ( $cg_ml_page_2_url, '[page_number]' )) {
 					
 					// $cg_ml_page_2_url with [page_number]
 					if (! stristr ( $cg_ml_page_2_url, '[page_number]' )) {
-						$cg_ml_page_2_url = str_replace ( '2', '[page_number]', $cg_ml_page_2_url );
+						$cg_ml_page_2_url =wp_automatic_str_replace( '2', '[page_number]', $cg_ml_page_2_url );
 					}
 					
 					// base number
 					$cg_ml_page_base = $camp_general ['cg_ml_page_base'];
-					$cg_ml_page_base = trim ( $cg_ml_page_base ) == '' ? 1 : $cg_ml_page_base;
+					$cg_ml_page_base = wp_automatic_trim( $cg_ml_page_base ) == '' ? 1 : $cg_ml_page_base;
 					
 					echo '<br>Base:' . $cg_ml_page_base;
 					
@@ -574,11 +574,11 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 					if ($camp_general ['cg_ml_cache'] == 'disabled')
 						$current_page_number = $cg_ml_page_base;
 					
-					if (trim ( $current_page_number ) == '')
+					if (wp_automatic_trim( $current_page_number ) == '')
 						$current_page_number = $cg_ml_page_base;
 					
 					// Incrementing
-					$cg_ml_page_increment = (trim ( $camp_general ['cg_ml_page_increment'] ) == '') ? 1 : ( int ) $camp_general ['cg_ml_page_increment'];
+					$cg_ml_page_increment = (wp_automatic_trim( $camp_general ['cg_ml_page_increment'] ) == '') ? 1 : ( int ) $camp_general ['cg_ml_page_increment'];
 					echo '<br>Increment:'.$cg_ml_page_increment;
 					
 					if (! is_numeric ( $cg_ml_page_increment ))
@@ -589,7 +589,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 					update_post_meta ( $campaign->camp_id, 'wp_automatic_page_number', $current_page_number );
 					
 					// generate next page link
-					$possible_next_page_link = str_replace ( '[page_number]', $current_page_number, $cg_ml_page_2_url );
+					$possible_next_page_link =wp_automatic_str_replace( '[page_number]', $current_page_number, $cg_ml_page_2_url );
 					
 					// echo '<br>Possible link ' . $possible_next_page_link;
 					echo '<br>Current link ' . $cg_ml_source;
@@ -605,24 +605,24 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		
 		// get pagination link
 		
-		if (trim ( $finalContent ) != '') {
+		if (wp_automatic_trim( $finalContent ) != '') {
 			
 			preg_match_all ( '{href\s*?=\s*?["|\'](.*?)["|\'].*?>(.*?)</a>}s', $finalContent, $link_matches );
 			
 			$found_links_pagination = $link_matches [1];
 			
-			if (isset ( $found_links_pagination [0] ) && trim ( $found_links_pagination [0] ) != '') {
+			if (isset ( $found_links_pagination [0] ) && wp_automatic_trim( $found_links_pagination [0] ) != '') {
 				
-				$found_links_pagination [0] = str_replace ( '&amp;', '&', $found_links_pagination [0] );
+				$found_links_pagination [0] =wp_automatic_str_replace( '&amp;', '&', $found_links_pagination [0] );
 				
 				$fixed_next_page_URL = wp_automatic_fix_relative_link ( $found_links_pagination [0], $host, $http_prefix, $the_path, $base_url );
 				
 				echo '<br>Pagination next page URL:' . $fixed_next_page_URL ;
 				update_post_meta ( $campaign->camp_id, 'wp_automatic_nextpage', $fixed_next_page_URL );
-			} elseif (preg_match ( '{^http}', trim ( $finalContent ) )) {
+			} elseif (preg_match ( '{^http}', wp_automatic_trim( $finalContent ) )) {
 				
-				echo '<br>Pagination next page URL:' . trim ( $finalContent );
-				update_post_meta ( $campaign->camp_id, 'wp_automatic_nextpage', trim ( $finalContent ) );
+				echo '<br>Pagination next page URL:' . wp_automatic_trim( $finalContent );
+				update_post_meta ( $campaign->camp_id, 'wp_automatic_nextpage', wp_automatic_trim( $finalContent ) );
 			} else {
 				echo '<br>Can not find next page URL, resetting page index';
 				delete_post_meta ( $campaign->camp_id, 'wp_automatic_nextpage' );
@@ -637,9 +637,9 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		
 		// search and replace
 		if (in_array ( 'OPT_MULTI_SEARCH_REPLACE', $camp_opt )) {
-			$cg_multi_search_replace = trim ( $camp_general ['cg_multi_search_replace'] );
+			$cg_multi_search_replace = wp_automatic_trim( $camp_general ['cg_multi_search_replace'] );
 			
-			if (trim ( $cg_multi_search_replace ) != '' && stristr ( $cg_multi_search_replace, '|' )) {
+			if (wp_automatic_trim( $cg_multi_search_replace ) != '' && stristr ( $cg_multi_search_replace, '|' )) {
 				
 				$cg_multi_search_replace_parts = explode ( "\n", $cg_multi_search_replace );
 				$cg_multi_search_replace_parts = array_filter ( $cg_multi_search_replace_parts );
@@ -657,7 +657,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 						$i = 0;
 						foreach ( $found_links as $found_link ) {
 							
-							$found_link = str_replace ( trim ( $cg_multi_search_replace_part_parts [0] ), trim ( $cg_multi_search_replace_part_parts [1] ), $found_link );
+							$found_link =wp_automatic_str_replace( wp_automatic_trim( $cg_multi_search_replace_part_parts [0] ), wp_automatic_trim( $cg_multi_search_replace_part_parts [1] ), $found_link );
 							
 							$found_links [$i] = $found_link;
 							
@@ -676,7 +676,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			$i = 0;
 			foreach ( $found_links as $found_link ) {
 				
-				$found_link = $found_link .  trim ( $camp_general ['cg_ml_append'] );
+				$found_link = $found_link .  wp_automatic_trim( $camp_general ['cg_ml_append'] );
 				
 				$found_links [$i] = $found_link;
 				
@@ -699,7 +699,7 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 			
 			$the_path = $pars ['path'];
 			
-			if (trim ( $the_path ) != '') {
+			if (wp_automatic_trim( $the_path ) != '') {
 				$the_path = preg_replace ( '{/[^/]*$}', '', $the_path );
 			}
 			
@@ -718,13 +718,13 @@ if ($cg_ml_cache == 'enabled' && trim ( $wp_automatic_cache ) != '') {
 		
 		foreach ( $found_links as $found_link ) {
 			
-			$found_title = htmlspecialchars ( $found_titles [$i] );
+			$found_title = wp_automatic_htmlspecialchars ( $found_titles [$i] );
 			
 			$found_link = wp_automatic_fix_relative_link ( $found_link, $host, $http_prefix, $the_path, $base_url );
 			
-			$skipped_link = htmlspecialchars ( $found_link );
+			$skipped_link = wp_automatic_htmlspecialchars ( $found_link );
 			
-			if (trim ( $found_title ) == '')
+			if (wp_automatic_trim( $found_title ) == '')
 				$found_title = $skipped_link;
 			
 			$rss .= "

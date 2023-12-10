@@ -92,7 +92,7 @@ class wp_automatic_Readability
 		'divToPElements' => '/<(a|blockquote|dl|div|img|ol|p|pre|table|ul)/i',
 		'replaceBrs' => '/(<br[^>]*>[ \n\r\t]*){2,}/i',
 		'replaceFonts' => '/<(\/?)font[^>]*>/i',
-		// 'trimRe' => '/^\s+|\s+$/g', // PHP has trim()
+		// 'trimRe' => '/^\s+|\s+$/g', // PHP has wp_automatic_trim()
 		'normalize' => '/\s{2,}/',
 		'killBreaks' => '/(<br\s*\/?>(\s|&nbsp;?)*){1,}/',
 		'video' => '!//(player\.|www\.)?(youtube|youtube-nocookie|vimeo|viddler|w\.soundcloud)\.com!i',
@@ -123,13 +123,13 @@ class wp_automatic_Readability
 				
 				$enc = mb_detect_encoding($html);
 				
-				if(trim($enc) != ''){
+				if(wp_automatic_trim($enc) != ''){
 					$html = mb_convert_encoding($html, 'HTML-ENTITIES', "UTF-8");
 				}
 			}
 		
 			
-		if (trim($html) == '') $html = '<html></html>';
+		if (wp_automatic_trim($html) == '') $html = '<html></html>';
 		if ($parser=='html5lib' && ($this->dom = HTML5_Parser::parse($html))) {
 			// all good
 		} else {
@@ -288,7 +288,7 @@ class wp_automatic_Readability
 			}
 		}
 
-		$curTitle = trim($curTitle);
+		$curTitle = wp_automatic_trim($curTitle);
 
 		if (count(explode(' ', $curTitle)) <= 4) {
 			$curTitle = $origTitle;
@@ -872,7 +872,7 @@ class wp_automatic_Readability
 			return '';
 		}
 
-		$textContent = trim($e->textContent);
+		$textContent = wp_automatic_trim($e->textContent);
 
 		if ($normalizeSpaces) {
 			return preg_replace($this->regexps['normalize'], ' ', $textContent);

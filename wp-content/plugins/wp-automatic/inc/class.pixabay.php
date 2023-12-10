@@ -13,22 +13,22 @@ class pixabay {
 	function get_images($keyword , $page = 0) {
 		 echo ' Finiding for: '. $keyword;
 		 
-		 $url = 'https://pixabay.com/api/?key='.$this->api_key.'&q=' . urlencode( trim( $keyword ) ) . '&image_type=photo&per_page=20' ; 
+		 $url = 'https://pixabay.com/api/?key='.$this->api_key.'&q=' . urlencode( wp_automatic_trim( $keyword ) ) . '&image_type=photo&per_page=20' ; 
 		 		
 		 
 		 		//pagination ?pagi=2
-		 		if($page !== 0 ) $url.= '&page=' . trim($page);
+		 		if($page !== 0 ) $url.= '&page=' . wp_automatic_trim($page);
 		 
 		 		echo '<br>Loading ' . $url ;
 		 		
 		 //curl get
 		 $x='error';
 		 curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-		 curl_setopt($this->ch, CURLOPT_URL, trim($url));
+		 curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 		 $exec=curl_exec($this->ch);
 		 $x=curl_error($this->ch);
 
-		 if(trim($exec) == ''){
+		 if(wp_automatic_trim($exec) == ''){
 		 	echo '<-- Error: empty reply from PixaBay side ' . $x;
 		 	return false;
 		 }

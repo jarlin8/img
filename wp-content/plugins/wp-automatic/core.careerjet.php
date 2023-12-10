@@ -57,12 +57,12 @@ class WpAutomaticCareerjet extends wp_automatic
 		}
 
 		//keyword
-		$searchKeyword = urlencode(trim($keyword));
+		$searchKeyword = urlencode(wp_automatic_trim($keyword));
 
 		//affiliate ID
-		$wp_automatic_cj_id = trim(get_option('wp_automatic_cj_id', ''));
+		$wp_automatic_cj_id = wp_automatic_trim(get_option('wp_automatic_cj_id', ''));
 
-		if (trim($wp_automatic_cj_id) == '') {
+		if (wp_automatic_trim($wp_automatic_cj_id) == '') {
 			echo '<br><span style="color:red">Please visit the plugin settings page and add your <b>Careerjet affiliate ID</b>.</span>';
 			return false;
 		}
@@ -78,16 +78,16 @@ class WpAutomaticCareerjet extends wp_automatic
 		$cg_cj_page .= '&sort=' . $cg_cj_sort;
 
 		//location
-		$cg_cj_location = trim($camp_general['cg_cj_location']);
+		$cg_cj_location = wp_automatic_trim($camp_general['cg_cj_location']);
 		if ($cg_cj_location != '') $cg_cj_page .= '&location=' . urlencode($cg_cj_location);
 
 		//contracttype
 		$cg_cj_contracttype = $camp_general['cg_cj_contracttype'];
-		if (trim($cg_cj_contracttype) != 'all') $cg_cj_page .= '&contracttype=' . $cg_cj_contracttype;
+		if (wp_automatic_trim($cg_cj_contracttype) != 'all') $cg_cj_page .= '&contracttype=' . $cg_cj_contracttype;
 
 		//contractperiod
 		$cg_cj_contractperiod = $camp_general['cg_cj_contractperiod'];
-		if (trim($cg_cj_contractperiod) != 'all') $cg_cj_page .= '&contractperiod=' . $cg_cj_contractperiod;
+		if (wp_automatic_trim($cg_cj_contractperiod) != 'all') $cg_cj_page .= '&contractperiod=' . $cg_cj_contractperiod;
 
 		//page
 		if ($start == 0) $start = 1;
@@ -115,13 +115,13 @@ class WpAutomaticCareerjet extends wp_automatic
 		$x = 'error';
 		$url = $cg_cj_page;
 		curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-		curl_setopt($this->ch, CURLOPT_URL, trim($url));
+		curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 		$exec = curl_exec($this->ch);
 		$x = curl_error($this->ch);
 
 
 		// error check
-		if (trim($x) != '') {
+		if (wp_automatic_trim($x) != '') {
 			echo '<br>Curl error:' . $x;
 			return false;
 		}
@@ -215,7 +215,7 @@ class WpAutomaticCareerjet extends wp_automatic
 
 			//salary check
 			if (in_array('OPT_CJ_SALARY', $camp_opt)) {
-				if (trim($itemTxt->salary) == '') {
+				if (wp_automatic_trim($itemTxt->salary) == '') {
 					echo '<-- No salary skipping.';
 					continue;
 				}
@@ -251,12 +251,12 @@ class WpAutomaticCareerjet extends wp_automatic
 		$keywords = explode(',', $camp->camp_keywords);
 		foreach ($keywords as $keyword) {
 
-			$keyword = trim($keyword);
+			$keyword = wp_automatic_trim($keyword);
 
 			//update last keyword
-			update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
+			update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
 
-			if (trim($keyword) != '') {
+			if (wp_automatic_trim($keyword) != '') {
 
 				// getting links from the db for that keyword
 				$query = "select * from {$this->wp_prefix}automatic_general where item_type=  'cj_{$camp->camp_id}_$keyword' ";
@@ -323,14 +323,15 @@ class WpAutomaticCareerjet extends wp_automatic
 						//curl get
 						$x = 'error';
 						curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-						curl_setopt($this->ch, CURLOPT_URL, trim($item_url));
+						curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($item_url));
 						$exec = $this->curl_exec_follow($this->ch);
 						$x = curl_error($this->ch);
-
+ 
 						//curlinfo
 						$curlinfo = curl_getinfo($this->ch);
+ 
 
-						if (trim($exec) == '' || stristr($exec, 'Too many requests') || stristr($exec, 'unusual traffic ') || stristr($exec, '<script src="https://www.google.com/recaptcha')) {
+						if (wp_automatic_trim($exec) == '' || stristr($exec, 'Too many requests') || stristr($exec, 'unusual traffic ') || stristr($exec, '<script src="https://www.google.com/recaptcha')) {
 							echo '<br>Failed to load the page directly, trying another method...';
 
 							//check if http_code is 200 and url contains jobad then set the url as the final_link
@@ -365,9 +366,9 @@ class WpAutomaticCareerjet extends wp_automatic
 
 						preg_match('{<section class="content">(.*?)<p class="source}s', $exec, $des_matches);
 
-						if (isset($des_matches[1]) && trim($des_matches[1]) != '') {
+						if (isset($des_matches[1]) && wp_automatic_trim($des_matches[1]) != '') {
 							echo '<-- Found full description';
-							$temp['item_description'] = trim($des_matches[1]);
+							$temp['item_description'] = wp_automatic_trim($des_matches[1]);
 
 							//logo img
 							//class="lazy logo"
@@ -381,7 +382,7 @@ class WpAutomaticCareerjet extends wp_automatic
 								$temp['item_logo'] = $logo_matches[1];
 								$temp['item_logo_html'] = '<img src="' . $logo_matches[1] . '"/>';
 							}
-						} elseif (trim($exec) == '') {
+						} elseif (wp_automatic_trim($exec) == '') {
 							echo '<-- Did not get anything from CJ, maybe proxies are needed ' . $x;
 						} else {
 							echo '<-- Can not find class content, using summary instead got ' . $x;
@@ -394,8 +395,8 @@ class WpAutomaticCareerjet extends wp_automatic
 						//source 
 						preg_match('{<p class="source">(.*?)</p>}s', $exec, $source_matchs);
 
-						if (isset($source_matchs[1]) && trim($source_matchs[1]) != '') {
-							$temp['item_source_site'] = trim($source_matchs[1]);
+						if (isset($source_matchs[1]) && wp_automatic_trim($source_matchs[1]) != '') {
+							$temp['item_source_site'] = wp_automatic_trim($source_matchs[1]);
 						}
 					}
 
@@ -439,10 +440,92 @@ class WpAutomaticCareerjet extends wp_automatic
 
 		//saudi arabia link is almehan.com
 		if ($country_parts[1] == 'sa') {
-			$final_link = str_replace('careerjet.com', 'almehan.com', $final_link);
+			$final_link = wp_automatic_str_replace('careerjet.com', 'almehan.com', $final_link);
 		} elseif ($country_parts[1] == 'de') {
-			$final_link = str_replace('careerjet.com', 'careerjet.de', $final_link);
+			$final_link = wp_automatic_str_replace('careerjet.com', 'careerjet.de', $final_link);
+		} elseif($country_parts[1] == 'gb'){
+			$final_link = wp_automatic_str_replace('careerjet.com', 'careerjet.co.uk', $final_link);
 		}
+
+		//locale
+		$locales = [
+			"cs-cz" => "careerjet.cz",
+			"da-dk" => "careerjet.dk",
+			"de-at" => "careerjet.at",
+			"de-ch" => "careerjet.ch",
+			"de-de" => "careerjet.de",
+			"en-ae" => "careerjet.ae",
+			"en-au" => "careerjet.com.au",
+			"en-ca" => "careerjet.ca",
+			"en-cn" => "career-jet.cn",
+			"en-hk" => "careerjet.hk",
+			"en-ie" => "careerjet.ie",
+			"en-in" => "careerjet.co.in",
+			"en-my" => "careerjet.com.my",
+			"en-nz" => "careerjet.co.nz",
+			"en-om" => "careerjet.com.om",
+			"en-ph" => "careerjet.ph",
+			"en-pk" => "careerjet.com.pk",
+			"en-qa" => "careerjet.com.qa",
+			"en-sg" => "careerjet.sg",
+			"en-gb" => "careerjet.com",
+			"en-us" => "careerjet.com",
+			"en-za" => "careerjet.co.za",
+			"en-tw" => "careerjet.com.tw",
+			"en-vn" => "careerjet.vn",
+			"es-ar" => "opcionempleo.com.ar",
+			"es-bo" => "opcionempleo.com.bo",
+			"es-cl" => "opcionempleo.cl",
+			"es-cr" => "opcionempleo.co.cr",
+			"es-do" => "opcionempleo.com.do",
+			"es-ec" => "opcionempleo.ec",
+			"es-es" => "opcionempleo.com",
+			"es-gt" => "opcionempleo.com.gt",
+			"es-mx" => "opcionempleo.com.mx",
+			"es-pa" => "opcionempleo.com.pa",
+			"es-pe" => "opcionempleo.pe",
+			"es-pr" => "opcionempleo.com.pr",
+			"es-py" => "opcionempleo.com.py",
+			"es-uy" => "opcionempleo.com.uy",
+			"es-ve" => "opcionempleo.com.ve",
+			"fi-fi" => "careerjet.fi",
+			"fr-ca" => "option-carriere.ca",
+			"fr-be" => "optioncarriere.be",
+			"fr-ch" => "optioncarriere.ch",
+			"fr-fr" => "optioncarriere.com",
+			"fr-lu" => "optioncarriere.lu",
+			"fr-ma" => "optioncarriere.ma",
+			"hu-hu" => "careerjet.hu",
+			"it-it" => "careerjet.it",
+			"ja-jp" => "careerjet.jp",
+			"ko-kr" => "careerjet.co.kr",
+			"nl-be" => "careerjet.be",
+			"nl-nl" => "careerjet.nl",
+			"no-no" => "careerjet.no",
+			"pl-pl" => "careerjet.pl",
+			"pt-pt" => "careerjet.pt",
+			"pt-br" => "careerjet.com.br",
+			"ru-ru" => "careerjet.ru",
+			"ru-ua" => "careerjet.com.ua",
+			"sv-se" => "careerjet.se",
+			"sk-sk" => "careerjet.sk",
+			"tr-tr" => "careerjet.com.tr",
+			"uk-ua" => "careerjet.com.ua",
+			"vi-vn" => "careerjet.com.vn",
+			"zh-cn" => "careerjet.cn"
+		  ];
+
+		  //loop all locale and if the /key/ exist in the jobtrack_link then replace careerjet.com with the value in final_link
+		  foreach($locales as $key => $value){
+			  
+			if(strpos($jobtrack_link, $key) !== false){
+
+				$final_link = wp_automatic_str_replace('careerjet.com', $value, $final_link);
+				break;
+			}
+
+
+		  }
 
 		return $final_link;
 	}

@@ -27,13 +27,16 @@ class WpAutomaticgpt3 extends wp_automatic {
 		foreach ( $keywords as $keyword ) {
 			
 			// trim keyword
-			$keyword = trim ( $keyword );
+			$keyword = wp_automatic_trim( $keyword );
 			
 			// update last keyword
-			update_post_meta ( $camp->camp_id, 'last_keyword', trim ( $keyword ) );
+			update_post_meta ( $camp->camp_id, 'last_keyword', wp_automatic_trim( $keyword ) );
 			
 			// when valid keyword
-			if (trim ( $keyword ) != '') {
+			if (wp_automatic_trim( $keyword ) != '') {
+
+				// log processed keyword
+				wp_automatic_log_new ( 'Processing keyword:' , $keyword );
 				
 				// record current used keyword
 				$this->used_keyword = $keyword;
@@ -95,10 +98,11 @@ class WpAutomaticgpt3 extends wp_automatic {
 					echo '<br>Found Title:' . $temp ['item_title'];
 					 
 					// get api key
-					$wp_automatic_openai_key = trim ( get_option ( 'wp_automatic_openai_key' ) );
-					
+					$wp_automatic_openai_key = wp_automatic_trim( wp_automatic_single_item ( 'wp_automatic_openai_key' ) );
+
+					  
 					// check if api key is set
-					if(trim($wp_automatic_openai_key) == ''){
+					if(wp_automatic_trim($wp_automatic_openai_key) == ''){
 						echo '<br><span style="color:red">OpenAI API key not set, Please visit the plugin settings page and add it</span>';
 						return;
 					}
@@ -107,15 +111,15 @@ class WpAutomaticgpt3 extends wp_automatic {
 					$cg_gp_prompt = $camp_general ['cg_gp_prompt'];
 
 					// default prompt if empty
-					if (trim ( $cg_gp_prompt ) == '') {
+					if (wp_automatic_trim( $cg_gp_prompt ) == '') {
 						$cg_gp_prompt = 'Write an article about [article_title]';
 					}
 
 					// replace [article_title] with the title
-					$cg_gp_prompt = str_replace ( '[article_title]', $temp ['item_title'], $cg_gp_prompt );
+					$cg_gp_prompt =wp_automatic_str_replace( '[article_title]', $temp ['item_title'], $cg_gp_prompt );
 					 
 					// replace [keyword] with the keyword
-					$cg_gp_prompt = str_replace ( '[keyword]', $keyword, $cg_gp_prompt );
+					$cg_gp_prompt =wp_automatic_str_replace( '[keyword]', $keyword, $cg_gp_prompt );
 					
 					//if OPT_GP_NO_CONTENT exists on camp_opt then skip openAI call
 					if(in_array('OPT_GP_NO_CONTENT', $camp_opt)){
@@ -134,13 +138,27 @@ class WpAutomaticgpt3 extends wp_automatic {
 							echo '<br>Calling OpenAI API:' . $cg_gp_prompt;
 
 							// call the api
-							$result = $this->openai_gpt3($cg_gp_prompt);
+							$result = $this->openai_gpt3($cg_gp_prompt, $wp_automatic_openai_key);
 
 							// report result char length
 							echo '<br>Result length:' . strlen($result);
 
 							// nl to br
 							$result = nl2br($result);
+
+							// if contains html and body, only get the body
+							if(strpos($result, '<body') !== false){
+								$result = $this->grab_body($result);
+								echo '<br>Result contains html, only getting the body';
+							}
+
+							// if option OPT_GP_REMOVE_H1 is enabled, remove h1 tags
+							if(in_array('OPT_GP_REMOVE_H1', $camp_opt)){
+								$result = preg_replace('/<h1[^>]*>(.*?)<\/h1>/is', '', $result);
+								echo '<br>H1 tag removal option is enabled, removing h1 tags';
+							}
+
+							//echo $result;exit;
 
  							// add result to the temp array to be used later
 							$temp['item_content'] = $result;
@@ -180,10 +198,10 @@ class WpAutomaticgpt3 extends wp_automatic {
 		echo "<br>So I should now get some articles from OpenAI gpt3 for keyword :" . $keyword;
 		
 		//api key
-		$wp_automatic_openai_key = get_option('wp_automatic_openai_key','');
+		$wp_automatic_openai_key = wp_automatic_single_item('wp_automatic_openai_key','');
 
 		// check if api key is set
-		if(trim($wp_automatic_openai_key) == ''){
+		if(wp_automatic_trim($wp_automatic_openai_key) == ''){
 			echo '<br><span style="color:red">OpenAI API key not set, Please visit the plugin settings page and add it</span>';
 			return;
 		}
@@ -228,12 +246,12 @@ class WpAutomaticgpt3 extends wp_automatic {
 		$cg_gp_prompt_titles = $camp_general['cg_gp_prompt_titles'];
 		
 		// if empty use default
-		if(trim($cg_gp_prompt_titles) == ''){
+		if(wp_automatic_trim($cg_gp_prompt_titles) == ''){
 			$cg_gp_prompt_titles = 'suggest headlines for articles about [keyword]';
 		}
 
 		// replace keyword
-		$cg_gp_prompt_titles = str_replace('[keyword]', $keyword, $cg_gp_prompt_titles);
+		$cg_gp_prompt_titles = wp_automatic_str_replace('[keyword]', $keyword, $cg_gp_prompt_titles);
 
 		// report prompt
 		echo '<br>gpt3 prompt:' . $cg_gp_prompt_titles;
@@ -245,7 +263,7 @@ class WpAutomaticgpt3 extends wp_automatic {
 			if(!in_array('OPT_GP_NO_TITLES', $camp_opt)){
 				
 				// call the api
-				$result = $this->openai_gpt3($cg_gp_prompt_titles);
+				$result = $this->openai_gpt3($cg_gp_prompt_titles, $wp_automatic_openai_key);
 
 				//split the results by new line
 				$lines = explode("\n", $result);
@@ -260,7 +278,7 @@ class WpAutomaticgpt3 extends wp_automatic {
 
 			// map lines array to remove the number followed by dot from the start of the line
 			$lines = array_map(function($line){
-				return trim( preg_replace('/^\d+\./', '', $line));
+				return wp_automatic_trim( preg_replace('/^\d+\./', '', $line));
 			}, $lines);
  
 			// report
@@ -283,7 +301,7 @@ class WpAutomaticgpt3 extends wp_automatic {
 				echo '<li>gpt3 suggested title :' . $line . '</li>';
 
 				// remove quotes from the line
-				$line = str_replace('"', '', $line);
+				$line = wp_automatic_str_replace('"', '', $line);
 				
 				// line md5
 				$md5 = md5 ( $line );
@@ -344,7 +362,7 @@ class WpAutomaticgpt3 extends wp_automatic {
 		$cg_gp_prompt_count = $camp_general['cg_gp_prompt_count'];
 
 		// if empty use default
-		if(trim($cg_gp_prompt_count) == ''){
+		if(wp_automatic_trim($cg_gp_prompt_count) == ''){
 			$cg_gp_prompt_count = 1;
 		}
 
@@ -361,5 +379,31 @@ class WpAutomaticgpt3 extends wp_automatic {
 		}
 		
 		return true;
+	}
+
+	/**
+	 * function grab_body to get the body of a html page
+	 * Check if the content contains html & body tags, if yes, return the body only
+	 * @param string $content
+	 * @return string 
+	 */
+	function grab_body($content){
+		
+		 if(strpos($content, '<body') !== false && strpos($content, '</body>') !== false){
+
+			 //math body content using regex
+			 preg_match('/<body[^>]*>(.*?)<\/body>/is', $content, $matches);
+
+			 // if matches found
+			 if(count($matches) > 0){
+
+				 // return the body
+				 return $matches[1];
+			 }
+
+		 }
+
+		 
+		return $content;
 	}
 }

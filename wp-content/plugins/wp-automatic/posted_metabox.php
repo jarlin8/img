@@ -16,11 +16,11 @@ $count=count($rows);
 
 foreach ($rows as $row){
 	
-	$displayTitle = str_replace('New post posted:','',$row->data);
+	$displayTitle = wp_automatic_str_replace('New post posted:','',$row->data);
 	
 	if(stristr($displayTitle , '></a')   ){
 		
-		$displayTitle = str_replace('><', '>(no title)<', $displayTitle);
+		$displayTitle = wp_automatic_str_replace('><', '>(no title)<', $displayTitle);
 		
 	} 
 	

@@ -52,7 +52,7 @@ class GoogleTranslator {
 		
 		echo '<br>Translated text char count: ' . $article_size;
 		
-		$wp_automatic_gtranslate_limit = trim( get_option('wp_automatic_gtranslate_limit' , 13000));
+		$wp_automatic_gtranslate_limit = wp_automatic_trim( get_option('wp_automatic_gtranslate_limit' , 13000));
 		
 		if( is_numeric( $wp_automatic_gtranslate_limit) && $wp_automatic_gtranslate_limit >13000 ){
 			//correct
@@ -79,7 +79,7 @@ class GoogleTranslator {
 				'format' => 'html',
 				'v' => '1.0',
 				'key' => 'AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw',
-				'logld' => 'vTE_20200210_00',
+				'logld' => 'vTE_20230725',
 				'sl' => $fromLanguage,
 				'tl' => $toLanguage,
 				'sp' => 'nmt',
@@ -104,7 +104,7 @@ class GoogleTranslator {
 		
 		 
 		
-		if (trim ( $exec ) == '') {
+		if (wp_automatic_trim( $exec ) == '') {
 			throw new Exception ( 'empty response from gtranslate ' . $x );
 		}
 		
@@ -143,7 +143,7 @@ class GoogleTranslator {
 		
 		$returned_text_plain = implode ( '(*)', $json_result );
 		$returned_text_plain = preg_replace ( '{<i>.*?</i>}s', '', $returned_text_plain );
-		$returned_text_plain = str_replace ( array (
+		$returned_text_plain =wp_automatic_str_replace( array (
 				'<b>',
 				'</b>' 
 		), '', $returned_text_plain );
@@ -153,7 +153,7 @@ class GoogleTranslator {
 		}
 		
 		// clean last glue if existing
-		$translated = $returned_text_plain = str_replace ( '(*)', '', $returned_text_plain );
+		$translated = $returned_text_plain =wp_automatic_str_replace( '(*)', '', $returned_text_plain );
 		
 		if (isset ( $_GET ['debug'] ))
 			echo '<br><br>Final trans:' . $translated;
@@ -172,7 +172,7 @@ class GoogleTranslator {
 		$x = 'error';
 		$url = 'https://translate.googleapis.com/translate_a/element.js';
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 		$data = curl_exec ( $this->ch );
 		
 		$response = $data;
@@ -292,7 +292,7 @@ class GoogleTranslator {
 	function old_translateText_1($sourceText, $fromLanguage, $toLanguage) {
 		
 		// saving the content to a temp file
-		if (trim ( ini_get ( 'open_basedir' ) ) != '') {
+		if (wp_automatic_trim( ini_get ( 'open_basedir' ) ) != '') {
 			
 			echo '<br>open_basedir exists';
 			$upload_dir = wp_upload_dir ();
@@ -352,7 +352,7 @@ class GoogleTranslator {
 		fclose ( $tmpHandle );
 		
 		// Empty response check
-		if (trim ( $exec ) == '') {
+		if (wp_automatic_trim( $exec ) == '') {
 			throw new Exception ( 'Empty translator reply with possible curl error ' . $x );
 		}
 		
@@ -363,8 +363,8 @@ class GoogleTranslator {
 		}
 		
 		// extra <pre removal fix
-		$exec = str_replace ( '<pre>', '', $exec );
-		$exec = str_replace ( '</pre>', '', $exec );
+		$exec =wp_automatic_str_replace( '<pre>', '', $exec );
+		$exec =wp_automatic_str_replace( '</pre>', '', $exec );
 		
 		return $exec;
 	}
@@ -387,7 +387,7 @@ class GoogleTranslator {
 		
 		// Translate a url
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 		
 		$exec = curl_exec ( $this->ch );
 		$x = curl_error ( $this->ch );
@@ -403,7 +403,7 @@ class GoogleTranslator {
 		
 		// process _p url
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $translateUrl ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $translateUrl ) );
 		
 		$exec = curl_exec ( $this->ch );
 		$x = curl_error ( $this->ch );
@@ -419,18 +419,18 @@ class GoogleTranslator {
 		
 		// process _c url
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $translateUrl2 ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $translateUrl2 ) );
 		$exec = curl_exec ( $this->ch );
 		
 		// validate final content
-		if (trim ( $exec ) == '') {
+		if (wp_automatic_trim( $exec ) == '') {
 			throw new Exception ( '_c url returned empty response' );
 		}
 		
 		// clean content
 		$exec = preg_replace ( '{<span class="google-src-text.*?>.*?</span>}', "", $exec );
 		$exec = preg_replace ( '{<span class="notranslate.*?>(.*?)</span>}', "$1", $exec );
-		$exec = str_replace ( ' style=";text-align:left;direction:ltr"', '', $exec );
+		$exec =wp_automatic_str_replace( ' style=";text-align:left;direction:ltr"', '', $exec );
 		
 		// Return result
 		return $exec;

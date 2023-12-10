@@ -18,7 +18,7 @@ class WpAutomaticReddit extends wp_automatic {
 		$camp_general = array_map ( 'wp_automatic_stripslashes', $camp_general );
 		
 		// items url
-		$cg_rd_page = trim ( $camp_general ['cg_rd_page'] );
+		$cg_rd_page = wp_automatic_trim( $camp_general ['cg_rd_page'] );
 		$cg_rd_page_md = md5 ( $cg_rd_page );
 		
 		// verify valid link
@@ -87,7 +87,7 @@ class WpAutomaticReddit extends wp_automatic {
 			echo '<br>md:' . $after_md;
 			echo '<br>current md:' . $cg_rd_page_md;
 			
-			if (trim ( $after_tag ) != '') {
+			if (wp_automatic_trim( $after_tag ) != '') {
 				
 				if ($after_md == $cg_rd_page_md) {
 					
@@ -112,12 +112,12 @@ class WpAutomaticReddit extends wp_automatic {
 		$x = 'error';
 		$url = $cg_rd_page;
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 		$exec = curl_exec ( $this->ch );
 		$x = curl_error ( $this->ch );
 		
 		// error check
-		if (trim ( $x ) != '') {
+		if (wp_automatic_trim( $x ) != '') {
 			echo '<br>Curl error:' . $x;
 			return false;
 		}
@@ -144,7 +144,7 @@ class WpAutomaticReddit extends wp_automatic {
 			$after = $jsonReply->data->after;
 			echo '<br>Next page tag:' . $after;
 			
-			if (trim ( $after ) == '') {
+			if (wp_automatic_trim( $after ) == '') {
 				delete_post_meta ( $camp->camp_id, 'after_tag' );
 			} else {
 				update_post_meta ( $camp->camp_id, 'after_tag', $after );
@@ -175,7 +175,7 @@ class WpAutomaticReddit extends wp_automatic {
 			if (isset ( $itemTxt->data->title ))
 				$item ['item_title'] = $itemTxt->data->title;
 			
-			if (trim ( $item ['item_title'] ) == '' && isset ( $itemTxt->data->link_title )) {
+			if (wp_automatic_trim( $item ['item_title'] ) == '' && isset ( $itemTxt->data->link_title )) {
 				$item ['item_title'] = $itemTxt->data->link_title;
 			}
 			
@@ -185,7 +185,7 @@ class WpAutomaticReddit extends wp_automatic {
 			// match link
 			$item_link = $item ['item_url'] = $itemTxt->data->url;
 			
-			if (trim ( $item ['item_url'] ) == '' && isset ( $itemTxt->data->link_url )) {
+			if (wp_automatic_trim( $item ['item_url'] ) == '' && isset ( $itemTxt->data->link_url )) {
 				$item_link = $item ['item_url'] = $itemTxt->data->link_url;
 			}
 			
@@ -216,7 +216,7 @@ class WpAutomaticReddit extends wp_automatic {
 			$item ['item_mp4'] = @$itemTxt->data->preview->images [0]->variants->mp4->source->url;
 			
 			// reddit gifs
-			if (trim ( $item ['item_gif'] ) == '' && trim ( $item ['item_mp4'] ) == '') {
+			if (wp_automatic_trim( $item ['item_gif'] ) == '' && wp_automatic_trim( $item ['item_mp4'] ) == '') {
 				if (isset ( $itemTxt->data->media->reddit_video->fallback_url )) {
 					$item ['item_mp4'] = $itemTxt->data->media->reddit_video->fallback_url;
 				} elseif (isset ( $itemTxt->data->preview->reddit_video_preview->fallback_url )) {
@@ -228,16 +228,16 @@ class WpAutomaticReddit extends wp_automatic {
 			$html = '';
 			$html = @$itemTxt->data->media->oembed->html;
 			
-			if (trim ( $html ) != '' && ! stristr ( $html, 'embedly-embed' ))
+			if (wp_automatic_trim( $html ) != '' && ! stristr ( $html, 'embedly-embed' ))
 				$item ['item_embed'] = html_entity_decode ( $html );
 			
 			// gfycat better mp4
 			$gyf_thumb = '';
-			if (stristr ( $item ['item_url'], 'gfycat.com' ) && trim ( $item ['item_mp4'] ) != '') {
+			if (stristr ( $item ['item_url'], 'gfycat.com' ) && wp_automatic_trim( $item ['item_mp4'] ) != '') {
 				
 				$gyf_thumb = $itemTxt->data->secure_media->oembed->thumbnail_url;
 				
-				if (trim ( $gyf_thumb ) != '') {
+				if (wp_automatic_trim( $gyf_thumb ) != '') {
 					$gyf_thumb = preg_replace ( '{-.*}', '-mobile.mp4', $gyf_thumb );
 					$item ['item_mp4'] = $gyf_thumb;
 				}
@@ -281,7 +281,7 @@ class WpAutomaticReddit extends wp_automatic {
 				
 				$link_flair_richtext = is_array ( $itemTxt->data->link_flair_richtext ) ? $itemTxt->data->link_flair_richtext : array ();
 				
-				if(count($link_flair_richtext) == 0 && isset($itemTxt->data->link_flair_text) && trim($itemTxt->data->link_flair_text) != '' ){
+				if(count($link_flair_richtext) == 0 && isset($itemTxt->data->link_flair_text) && wp_automatic_trim($itemTxt->data->link_flair_text) != '' ){
 					$link_flair_richtext = array($itemTxt->data->link_flair_text);
 				}
 				
@@ -315,7 +315,7 @@ class WpAutomaticReddit extends wp_automatic {
 			echo '<li> Link:' . $item_link;
 			
 			// No image skip
-			if (trim ( $item ['item_img'] ) == '' && in_array ( 'OPT_RD_IMG', $camp_opt )) {
+			if (wp_automatic_trim( $item ['item_img'] ) == '' && in_array ( 'OPT_RD_IMG', $camp_opt )) {
 				echo '<- No image skip';
 				continue;
 			}
@@ -324,7 +324,7 @@ class WpAutomaticReddit extends wp_automatic {
 			if (in_array ( 'OPT_RD_POST_FILTER', $camp_opt )) {
 				
 				// gifs
-				if (trim ( $item ['item_mp4'] ) != '' || isset ( $item ['item_embed'] )) {
+				if (wp_automatic_trim( $item ['item_mp4'] ) != '' || isset ( $item ['item_embed'] )) {
 					
 					if (in_array ( 'OPT_RD_POST_VIDS', $camp_opt ) && isset ( $itemTxt->data->is_video ) && $itemTxt->data->is_video == 1) {
 						
@@ -339,7 +339,7 @@ class WpAutomaticReddit extends wp_automatic {
 						echo '<-- Gif/Vid skipping...';
 						continue;
 					}
-				} elseif (trim ( $post_hint ) == '' || $post_hint == 'self') {
+				} elseif (wp_automatic_trim( $post_hint ) == '' || $post_hint == 'self') {
 					
 					// text
 					if (! in_array ( 'OPT_RD_POST_TXT', $camp_opt )) {
@@ -398,12 +398,12 @@ class WpAutomaticReddit extends wp_automatic {
 		
 		foreach ( $keywords as $keyword ) {
 			
-			$keyword = trim ( $keyword );
+			$keyword = wp_automatic_trim( $keyword );
 			
 			// update last keyword
-			update_post_meta ( $camp->camp_id, 'last_keyword', trim ( $keyword ) );
+			update_post_meta ( $camp->camp_id, 'last_keyword', wp_automatic_trim( $keyword ) );
 			
-			if (trim ( $keyword ) != '') {
+			if (wp_automatic_trim( $keyword ) != '') {
 				
 				// getting links from the db for that keyword
 				$query = "select * from {$this->wp_prefix}automatic_general where item_type=  'rd_{$camp->camp_id}_$keyword' ";
@@ -463,7 +463,7 @@ class WpAutomaticReddit extends wp_automatic {
 					echo '<br>Found Link:' . $temp ['item_link'];
 					
 					// empty item_description fix
-					if (trim ( $temp ['item_description'] ) == '')
+					if (wp_automatic_trim( $temp ['item_description'] ) == '')
 						$temp ['item_description'] = $temp ['item_title'];
 					
 					// Item img html
@@ -472,7 +472,7 @@ class WpAutomaticReddit extends wp_automatic {
 						
 						// template for img html
 						$cg_rd_full_img_t = $camp_general ['cg_rd_full_img_t'];
-						if (trim ( $cg_rd_full_img_t ) == '')
+						if (wp_automatic_trim( $cg_rd_full_img_t ) == '')
 							$cg_rd_full_img_t = '<img src="[img_src]" />';
 						
 						// build the html
@@ -480,11 +480,11 @@ class WpAutomaticReddit extends wp_automatic {
 						
 						$gallery_html = '';
 						foreach ( $item_gallery_imgs as $single_img_src ) {
-							$gallery_html .= str_replace ( '[img_src]', $single_img_src, $cg_rd_full_img_t );
+							$gallery_html .=wp_automatic_str_replace( '[img_src]', $single_img_src, $cg_rd_full_img_t );
 						}
 						
 						$temp ['item_img_html'] = $gallery_html;
-					} elseif (trim ( $temp ['item_img'] ) != '') {
+					} elseif (wp_automatic_trim( $temp ['item_img'] ) != '') {
 						$temp ['item_img_html'] = '<img src="' . $temp ['item_img'] . '" />';
 					} else {
 						$temp ['item_img_html'] = '';
@@ -500,14 +500,14 @@ class WpAutomaticReddit extends wp_automatic {
 					
 					// Gif embed
 					$temp ['item_gif_embed'] = '';
-					if (trim ( $temp ['item_gif'] ) != '') {
+					if (wp_automatic_trim( $temp ['item_gif'] ) != '') {
 						$temp ['item_embed'] = $temp ['item_gif_embed'] = '<img src="' . $temp ['item_gif'] . '"/>';
 					}
 					
 					// mp4 embed
 					$temp ['item_mp4_embed'] = '';
 					
-					if (trim ( $temp ['item_mp4'] ) != '') {
+					if (wp_automatic_trim( $temp ['item_mp4'] ) != '') {
 						
 						$loop = (in_array ( 'OPT_RD_LOOP', $camp_opt )) ? ' loop="on" ' : '';
 						$autoPlay = (in_array ( 'OPT_RD_AUTO', $camp_opt )) ? ' autoplay="on" ' : '';
@@ -545,11 +545,11 @@ class WpAutomaticReddit extends wp_automatic {
 					$temp ['item_date_formated'] = get_date_from_gmt ( gmdate ( 'Y-m-d H:i:s', ($temp ['item_date']) ) );
 					
 					// categories to set if enabled
-					if (in_array ( 'OPT_RD_CAT', $camp_opt ) && trim ( $temp ['item_flairs'] ) != '')
+					if (in_array ( 'OPT_RD_CAT', $camp_opt ) && wp_automatic_trim( $temp ['item_flairs'] ) != '')
 						$temp ['categories_to_set'] = $temp ['item_flairs'];
 					
 					// tags to set if enabled
-					if (in_array ( 'OPT_RD_TAG', $camp_opt ) && trim ( $temp ['item_flairs'] ) != '')
+					if (in_array ( 'OPT_RD_TAG', $camp_opt ) && wp_automatic_trim( $temp ['item_flairs'] ) != '')
 						$temp ['tags_to_set'] = $temp ['item_flairs'];
 					
 					return $temp;

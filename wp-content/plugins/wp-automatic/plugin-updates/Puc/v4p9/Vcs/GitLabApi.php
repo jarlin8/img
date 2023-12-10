@@ -47,7 +47,7 @@ if ( !class_exists('Puc_v4p9_Vcs_GitLabApi', false) ):
 				$this->repositoryName = $matches['repository'];
 			} elseif ( ($this->repositoryHost === 'gitlab.com') ) {
 				//This is probably a repository in a subgroup, e.g. "/organization/category/repo".
-				$parts = explode('/', trim($path, '/'));
+				$parts = explode('/', wp_automatic_trim($path, '/'));
 				if ( count($parts) < 3 ) {
 					throw new InvalidArgumentException('Invalid GitLab.com repository URL: "' . $repositoryUrl . '"');
 				}
@@ -57,7 +57,7 @@ if ( !class_exists('Puc_v4p9_Vcs_GitLabApi', false) ):
 			} else {
 				//There could be subgroups in the URL:  gitlab.domain.com/group/subgroup/subgroup2/repository
 				if ( $subgroup !== null ) {
-					$path = str_replace(trailingslashit($subgroup), '', $path);
+					$path = wp_automatic_str_replace(trailingslashit($subgroup), '', $path);
 				}
 
 				//This is not a traditional url, it could be gitlab is in a deeper subdirectory.
@@ -214,7 +214,7 @@ if ( !class_exists('Puc_v4p9_Vcs_GitLabApi', false) ):
 			);
 
 			foreach ($variables as $name => $value) {
-				$url = str_replace("/:{$name}", '/' . urlencode($value), $url);
+				$url = wp_automatic_str_replace("/:{$name}", '/' . urlencode($value), $url);
 			}
 
 			$url = substr($url, 1);

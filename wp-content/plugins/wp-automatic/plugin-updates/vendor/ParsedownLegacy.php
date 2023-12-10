@@ -27,10 +27,10 @@ class Parsedown
         $this->DefinitionData = array();
 
         # standardize line breaks
-        $text = str_replace(array("\r\n", "\r"), "\n", $text);
+        $text = wp_automatic_str_replace(array("\r\n", "\r"), "\n", $text);
 
         # remove surrounding line breaks
-        $text = trim($text, "\n");
+        $text = wp_automatic_trim($text, "\n");
 
         # split text into lines
         $lines = explode("\n", $text);
@@ -39,7 +39,7 @@ class Parsedown
         $markup = $this->lines($lines);
 
         # trim line breaks
-        $markup = trim($markup, "\n");
+        $markup = wp_automatic_trim($markup, "\n");
 
         return $markup;
     }
@@ -340,7 +340,7 @@ class Parsedown
     {
         $text = $Block['element']['text']['text'];
 
-        $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+        $text = wp_automatic_htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
         $Block['element']['text']['text'] = $text;
 
@@ -455,7 +455,7 @@ class Parsedown
     {
         $text = $Block['element']['text']['text'];
 
-        $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+        $text = wp_automatic_htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
 
         $Block['element']['text']['text'] = $text;
 
@@ -481,7 +481,7 @@ class Parsedown
                 return;
             }
 
-            $text = trim($Line['text'], '# ');
+            $text = wp_automatic_trim($Line['text'], '# ');
 
             $Block = array(
                 'element' => array(
@@ -688,7 +688,7 @@ class Parsedown
 
             $remainder = substr($Line['text'], $length);
 
-            if (trim($remainder) === '')
+            if (wp_automatic_trim($remainder) === '')
             {
                 if (isset($matches[2]) or in_array($matches[1], $this->voidElements))
                 {
@@ -797,14 +797,14 @@ class Parsedown
 
             $divider = $Line['text'];
 
-            $divider = trim($divider);
-            $divider = trim($divider, '|');
+            $divider = wp_automatic_trim($divider);
+            $divider = wp_automatic_trim($divider, '|');
 
             $dividerCells = explode('|', $divider);
 
             foreach ($dividerCells as $dividerCell)
             {
-                $dividerCell = trim($dividerCell);
+                $dividerCell = wp_automatic_trim($dividerCell);
 
                 if ($dividerCell === '')
                 {
@@ -832,14 +832,14 @@ class Parsedown
 
             $header = $Block['element']['text'];
 
-            $header = trim($header);
-            $header = trim($header, '|');
+            $header = wp_automatic_trim($header);
+            $header = wp_automatic_trim($header, '|');
 
             $headerCells = explode('|', $header);
 
             foreach ($headerCells as $index => $headerCell)
             {
-                $headerCell = trim($headerCell);
+                $headerCell = wp_automatic_trim($headerCell);
 
                 $HeaderElement = array(
                     'name' => 'th',
@@ -904,14 +904,14 @@ class Parsedown
 
             $row = $Line['text'];
 
-            $row = trim($row);
-            $row = trim($row, '|');
+            $row = wp_automatic_trim($row);
+            $row = wp_automatic_trim($row, '|');
 
             preg_match_all('/(?:(\\\\[|])|[^|`]|`[^`]+`|`)+/', $row, $matches);
 
             foreach ($matches[0] as $index => $cell)
             {
-                $cell = trim($cell);
+                $cell = wp_automatic_trim($cell);
 
                 $Element = array(
                     'name' => 'td',
@@ -1056,7 +1056,7 @@ class Parsedown
         if (preg_match('/^('.$marker.'+)[ ]*(.+?)[ ]*(?<!'.$marker.')\1(?!'.$marker.')/s', $Excerpt['text'], $matches))
         {
             $text = $matches[2];
-            $text = htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
+            $text = wp_automatic_htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
             $text = preg_replace("/[ ]*\n/", ' ', $text);
 
             return array(
@@ -1235,7 +1235,7 @@ class Parsedown
             $Element['attributes']['title'] = $Definition['title'];
         }
 
-        $Element['attributes']['href'] = str_replace(array('&', '<'), array('&amp;', '&lt;'), $Element['attributes']['href']);
+        $Element['attributes']['href'] = wp_automatic_str_replace(array('&', '<'), array('&amp;', '&lt;'), $Element['attributes']['href']);
 
         return array(
             'extent' => $extent,
@@ -1345,7 +1345,7 @@ class Parsedown
     {
         if (strpos($Excerpt['text'], '>') !== false and preg_match('/^<(\w+:\/{2}[^ >]+)>/i', $Excerpt['text'], $matches))
         {
-            $url = str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[1]);
+            $url = wp_automatic_str_replace(array('&', '<'), array('&amp;', '&lt;'), $matches[1]);
 
             return array(
                 'extent' => strlen($matches[0]),
@@ -1376,7 +1376,7 @@ class Parsedown
         else
         {
             $text = preg_replace('/(?:[ ][ ]+|[ ]*\\\\)\n/', "<br />\n", $text);
-            $text = str_replace(" \n", "\n", $text);
+            $text = wp_automatic_str_replace(" \n", "\n", $text);
         }
 
         return $text;
@@ -1446,7 +1446,7 @@ class Parsedown
     {
         $markup = $this->lines($lines);
 
-        $trimmedMarkup = trim($markup);
+        $trimmedMarkup = wp_automatic_trim($markup);
 
         if ( ! in_array('', $lines) and substr($trimmedMarkup, 0, 3) === '<p>')
         {

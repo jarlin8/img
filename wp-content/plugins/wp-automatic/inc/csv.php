@@ -18,18 +18,18 @@ $q = stripslashes($_POST['q']);
 $auth = stripslashes($_POST['auth']);
 $integ=stripslashes($_POST['integ']);
 
-if(trim($auth == '')){
+if(wp_automatic_trim($auth == '')){
 	
 	  echo 'login required';
 	exit;
 }
 
-if(trim($auth) != trim($current_user->user_pass)){
+if(wp_automatic_trim($auth) != wp_automatic_trim($current_user->user_pass)){
 	  echo 'invalid login';
 	exit;
 }
 
-if(md5(trim($q.$current_user->user_pass)) != $integ ){
+if(md5(wp_automatic_trim($q.$current_user->user_pass)) != $integ ){
 	  echo 'Tampered query';
 	exit;
 }

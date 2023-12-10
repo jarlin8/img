@@ -12,9 +12,9 @@ Class WpAutomaticFlicker extends wp_automatic{
 function flicker_fetch_items($keyword, $camp) {
 	  echo "<br>so I should now get some images from flicker for keyword :" . $keyword;
 
-	$api_key = trim(get_option ( 'wp_automatic_flicker', '' ));
+	$api_key = wp_automatic_trim(get_option ( 'wp_automatic_flicker', '' ));
 
-	if (trim ( $api_key ) == '') {
+	if (wp_automatic_trim( $api_key ) == '') {
 		  echo '<br>Flicker Api key required ';
 		exit ();
 	}
@@ -79,14 +79,14 @@ function flicker_fetch_items($keyword, $camp) {
 		$isAlbum = false; // flag to know this is an album call
 		$cg_fl_user_album = $camp_general['cg_fl_user_album'];
 		
-		if(trim($cg_fl_user_album) != ''){
-			$flink = "https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=$api_key&format=php_serial&page=$start&photoset_id=".trim($cg_fl_user_album);
+		if(wp_automatic_trim($cg_fl_user_album) != ''){
+			$flink = "https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=$api_key&format=php_serial&page=$start&photoset_id=".wp_automatic_trim($cg_fl_user_album);
 			$isAlbum = true;
 		}
 		
 		$flink = $flink . '&user_id=' . $camp_general ['cg_fl_user'];
 		// if keyword *
-		if (trim ( $keyword ) == '*') {
+		if (wp_automatic_trim( $keyword ) == '*') {
 			  echo '<br>No filtering get all ';
 		} else {
 			// specific keyword
@@ -123,8 +123,8 @@ function flicker_fetch_items($keyword, $camp) {
 	$x = 'error';
 	$url = $flink;
 	curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-	curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
-	while ( trim ( $x ) != '' ) {
+	curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
+	while ( wp_automatic_trim( $x ) != '' ) {
 		$exec = curl_exec ( $this->ch );
 		$x = curl_error ( $this->ch );
 	}
@@ -220,7 +220,7 @@ function flicker_get_post($camp) {
 	
 	$api_key = get_option ( 'wp_automatic_flicker', '' );
 
-	if (trim ( $api_key ) == '') {
+	if (wp_automatic_trim( $api_key ) == '') {
 		  echo '<br>Flicker Api key required visit settings and add it ';
 		exit ();
 	}
@@ -230,12 +230,12 @@ function flicker_get_post($camp) {
 
 	foreach ( $keywords as $keyword ) {
 			
-		$keyword = trim($keyword);
+		$keyword = wp_automatic_trim($keyword);
 
 		//update last keyword
-		update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
+		update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
 			
-		if (trim ( $keyword ) != '') {
+		if (wp_automatic_trim( $keyword ) != '') {
 
 			// getting links from the db for that keyword
 			$query = "select * from {$this->wp_prefix}automatic_general where item_type=  'fl_{$camp->camp_id}_$keyword' ";
@@ -313,13 +313,13 @@ function flicker_get_post($camp) {
 				// getting photo description
 				// curl get
 				$x = 'error';
-				$url = "https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=".trim($api_key)."&photo_id={$ret->item_id}&format=php_serial";
+				$url = "https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key=".wp_automatic_trim($api_key)."&photo_id={$ret->item_id}&format=php_serial";
 				
 				//  echo '<br>Photo details flink:'.$url;
 				
 				curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-				curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
-				while ( trim ( $x ) != '' ) {
+				curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
+				while ( wp_automatic_trim( $x ) != '' ) {
 					$exec = curl_exec ( $this->ch );
 					$x = curl_error ( $this->ch );
 				}
@@ -370,7 +370,7 @@ function flicker_get_post($camp) {
 					$x='error';
 					 
 					curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-					curl_setopt($this->ch, CURLOPT_URL, trim($furl));
+					curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($furl));
 					$exec=curl_exec($this->ch);
 					$x=curl_error($this->ch);
 					

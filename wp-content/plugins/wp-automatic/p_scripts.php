@@ -45,17 +45,17 @@ function wp_automatic_admin_scripts()
 	if ('wp_automatic' == $post_type)
 	{
 
-		wp_enqueue_style('wp_automatic_basic_styles', plugins_url('css/style.css', __FILE__), array(), '1.1.2');
+		wp_enqueue_style('wp_automatic_basic_styles', plugins_url('css/style.css', __FILE__), array(), '1.1.3');
 		wp_enqueue_style('wp_automatic_uniform', plugins_url('css/uniform.css', __FILE__));
 		wp_enqueue_style('wp_automatic_gcomplete', plugins_url('css/jquery.gcomplete.default-themes.css', __FILE__));
 
 
 		wp_enqueue_script('wp_automatic_unifom_script', plugins_url('js/jquery.uniform.min.js', __FILE__), array(), '1.2.0');
 		wp_enqueue_script('wp_automatic_jqtools_script', plugins_url('js/jquery.tools.js', __FILE__));
-		wp_enqueue_script('wp_automatic_main_script', plugins_url('js/main.js', __FILE__), array(), '1.10.0');
+		wp_enqueue_script('wp_automatic_main_script', plugins_url('js/main.js', __FILE__), array(), '1.10.6');
 
 		//enqueue tutorial script
-		wp_enqueue_script('wp_automatic_tutorial_script', plugins_url('js/tutorials.js', __FILE__), array(), '1.0.3');
+		wp_enqueue_script('wp_automatic_tutorial_script', plugins_url('js/tutorials.js', __FILE__), array(), '1.0.13');
 
 		wp_enqueue_script('wp_automatic_jqcomplete_script', plugins_url('js/jquery.gcomplete.0.1.2.js', __FILE__));
 	}

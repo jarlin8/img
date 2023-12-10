@@ -246,7 +246,7 @@ if ( !class_exists('Puc_v4p9_Vcs_GitHubApi', false) ):
 				'repo' => $this->repositoryName,
 			);
 			foreach ($variables as $name => $value) {
-				$url = str_replace('/:' . $name, '/' . urlencode($value), $url);
+				$url = wp_automatic_str_replace('/:' . $name, '/' . urlencode($value), $url);
 			}
 			$url = 'https://api.github.com' . $url;
 

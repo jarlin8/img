@@ -9,9 +9,11 @@ if (   time() > 1596240000){
 	$wp_automatic_lcs = get_option('wp_automatic_license_active','');
 	$wp_automatic_lcsc = get_option('wp_automatic_license','');
 	
-	if( trim($wp_automatic_lcs) != 'active'  || ! stristr($wp_automatic_lcsc, '-') ){
+	if( wp_automatic_trim($wp_automatic_lcs) != 'active'  || ! stristr($wp_automatic_lcsc, '-') ){
 		
-		
+		delete_option('wp_automatic_license_active');
+		echo 'Please visit the plugin settings page and add your purchase code to activate the plugin';
+		exit;
 	}
 }
 
@@ -47,17 +49,19 @@ class CampaignProcessor{
 		
 	
 		// Single or all check
-		if (trim ( $cid ) == '') {
+		if (wp_automatic_trim( $cid ) == '') {
 				
 			// All campaings
 			$last = get_option ( 'gm_last_processed', 0 );
 		 		
 			// get all the campaigns from the db lower than the last processed
-			$query = "SELECT * FROM {$this->wp_prefix}automatic_camps  where camp_id < $last ORDER BY camp_id DESC";
+			$query = "SELECT camp_id FROM {$this->wp_prefix}automatic_camps  where camp_id < $last ORDER BY camp_id DESC";
+			
+ 			
 			$camps = $this->db->get_results ( $query );
-				
+ 	
 			// check if results returned with id less than the last processed or not if not using regular method
-			$query = "SELECT * FROM {$this->wp_prefix}automatic_camps WHERE  camp_id >= $last ORDER BY camp_id DESC";
+			$query = "SELECT camp_id FROM {$this->wp_prefix}automatic_camps WHERE  camp_id >= $last ORDER BY camp_id DESC";
 			$camps2 = $this->db->get_results ( $query );
 				
 			// merging 2 arrays
@@ -79,14 +83,14 @@ class CampaignProcessor{
 			
 		}else{
 			
-			if(trim($cid) == '')   echo '<br>DB contains ('.count($camps).') campaigns<br>';
+			if(wp_automatic_trim($cid) == '')   echo '<br>DB contains ('.count($camps).') campaigns<br>';
 				
 		}
 	
 		// now processing each fetched campaign
 		$i = 0;
 		$processed_campaigns_count = 0; // count the number of campaigns processed
-		$wp_automatic_cron_campaigns_to_process = trim( get_option('wp_automatic_cron_campaigns_to_process',1)); // get the number of campaigns to process before exiting the script
+		$wp_automatic_cron_campaigns_to_process = wp_automatic_trim( get_option('wp_automatic_cron_campaigns_to_process',1)); // get the number of campaigns to process before exiting the script
 
 		//if not is numeric or not > 1 set it to 1
 		if(! is_numeric($wp_automatic_cron_campaigns_to_process) || $wp_automatic_cron_campaigns_to_process < 1 ) $wp_automatic_cron_campaigns_to_process = 1;
@@ -98,10 +102,21 @@ class CampaignProcessor{
 			$status = get_post_status ( $campaign->camp_id );
 			$camp_post_type = get_post_type($campaign->camp_id);
 			 
-			$camp_opt = unserialize ( $campaign->camp_options );
+			//if not set $campaign->camp_options grab the whole record
+			if(! isset($campaign->camp_options)){
+				
+				$query = "SELECT * FROM {$this->wp_prefix}automatic_camps  where camp_id = $campaign->camp_id";
+				
+				$campaign = $this->db->get_row ( $query );
+				
+			}
+			
 			
 			// if published process and if is a campaign really
 			if ($status == 'publish'  && $camp_post_type == 'wp_automatic') {
+			
+
+				$camp_opt = unserialize ( $campaign->camp_options );
 				
 				if ($i != 0)   echo '<br>';
 				
@@ -112,7 +127,7 @@ class CampaignProcessor{
 				update_option ( 'gm_last_processed', $campaign->camp_id );
 				
 				//check if deserve processing now or not
-				if(trim($cid) == false){
+				if(wp_automatic_trim($cid) == false){
 					 
 					//read post every x minutes
 					if( stristr($campaign->camp_general, 'a:') ) $campaign->camp_general=base64_encode($campaign->camp_general);
@@ -131,7 +146,7 @@ class CampaignProcessor{
 						
 					//get last check time
 					$last_update=get_post_meta($campaign->camp_id,'last_update',1);
-					if(trim($last_update) == '') $last_update =1388692276 ;
+					if(wp_automatic_trim($last_update) == '') $last_update =1388692276 ;
 					//  echo '<br>Last updated stamp '.$last_update;
 						
 					$difference = $this->get_time_difference($last_update, time());
@@ -321,7 +336,7 @@ class CampaignProcessor{
 			$wp_automatic_options = get_option('wp_automatic_options',array());
 			$wp_amazonpin_abk = get_option('wp_amazonpin_abk','');
 			
-			if(  in_array( 'OPT_AMAZON_NOAPI', $wp_automatic_options) || trim($wp_amazonpin_abk) == '' ){
+			if(  in_array( 'OPT_AMAZON_NOAPI', $wp_automatic_options) || wp_automatic_trim($wp_amazonpin_abk) == '' ){
 				require_once 'core.amazon.less.php';
 			}else{
 				require_once 'core.amazon.php';
@@ -329,7 +344,7 @@ class CampaignProcessor{
 			$WpAutomatic = new WpAutomaticAmazon();
 			
 			//amazon location option
-			if(  (in_array( 'OPT_AMAZON_NOAPI', $wp_automatic_options) || trim($wp_amazonpin_abk) == '' )  && ! in_array( 'OPT_AMAZON_LOC', $wp_automatic_options) ){
+			if(  (in_array( 'OPT_AMAZON_NOAPI', $wp_automatic_options) || wp_automatic_trim($wp_amazonpin_abk) == '' )  && ! in_array( 'OPT_AMAZON_LOC', $wp_automatic_options) ){
 				$WpAutomatic->isAmazonLocationSimulated = true;
 			}
 			
@@ -408,6 +423,11 @@ class CampaignProcessor{
 		
 			require_once 'core.reddit.php';
 			$WpAutomatic = new WpAutomaticReddit();
+
+		}elseif($camp_type == 'telegram'){
+		
+			require_once 'core.telegram.php';
+			$WpAutomatic = new WpAutomaticTelegram();	
 			
 		}elseif($camp_type == 'Walmart'){
 		
@@ -442,6 +462,13 @@ class CampaignProcessor{
 			
 			$WpAutomatic = new WpAutomaticFeeds();
 			
+		}elseif( $camp_type == 'Rumble' ){
+			
+			require_once 'core.rumble.php';
+			
+			if(! class_exists('WpAutomaticRumble')) return false;
+			
+			$WpAutomatic = new WpAutomaticRumble();
 			
 		
 		}else{

@@ -19,8 +19,8 @@ class PucReadmeParser {
 	}
 
 	function parse_readme_contents( $file_contents ) {
-		$file_contents = str_replace(array("\r\n", "\r"), "\n", $file_contents);
-		$file_contents = trim($file_contents);
+		$file_contents = wp_automatic_str_replace(array("\r\n", "\r"), "\n", $file_contents);
+		$file_contents = wp_automatic_trim($file_contents);
 		if ( 0 === strpos( $file_contents, "\xEF\xBB\xBF" ) )
 			$file_contents = substr( $file_contents, 3 );
 
@@ -33,7 +33,7 @@ class PucReadmeParser {
 		// Must be the very first thing.
 		if ( !preg_match('|^===(.*)===|', $file_contents, $_name) )
 			return array(); // require a name
-		$name = trim($_name[1], '=');
+		$name = wp_automatic_trim($_name[1], '=');
 		$name = $this->sanitize_text( $name );
 
 		$file_contents = $this->chop_string( $file_contents, $_name[0] );
@@ -62,7 +62,7 @@ class PucReadmeParser {
 
 		// Tags: some tag, another tag, we like tags
 		if ( preg_match('|Tags:(.*)|i', $file_contents, $_tags) ) {
-			$tags = preg_split('|,[\s]*?|', trim($_tags[1]));
+			$tags = preg_split('|,[\s]*?|', wp_automatic_trim($_tags[1]));
 			foreach ( array_keys($tags) as $t )
 				$tags[$t] = $this->sanitize_text( $tags[$t] );
 		} else {
@@ -73,10 +73,10 @@ class PucReadmeParser {
 		// Contributors: markjaquith, mdawaffe, zefrank
 		$contributors = array();
 		if ( preg_match('|Contributors:(.*)|i', $file_contents, $_contributors) ) {
-			$temp_contributors = preg_split('|,[\s]*|', trim($_contributors[1]));
+			$temp_contributors = preg_split('|,[\s]*|', wp_automatic_trim($_contributors[1]));
 			foreach ( array_keys($temp_contributors) as $c ) {
 				$tmp_sanitized = $this->user_sanitize( $temp_contributors[$c] );
-				if ( strlen(trim($tmp_sanitized)) > 0 )
+				if ( strlen(wp_automatic_trim($tmp_sanitized)) > 0 )
 					$contributors[$c] = $tmp_sanitized;
 				unset($tmp_sanitized);
 			}
@@ -98,7 +98,7 @@ class PucReadmeParser {
 			}
 		}
 
-		$file_contents = trim($file_contents);
+		$file_contents = wp_automatic_trim($file_contents);
 
 
 		// short-description fu
@@ -129,7 +129,7 @@ class PucReadmeParser {
 			} else {
 				$content = '';
 			}
-			$sections[str_replace(' ', '_', strtolower($title))] = array('title' => $title, 'content' => $content);
+			$sections[wp_automatic_str_replace(' ', '_', strtolower($title))] = array('title' => $title, 'content' => $content);
 		}
 
 
@@ -185,7 +185,7 @@ class PucReadmeParser {
 		foreach ( $sections as $s_name => $s_data ) {
 			$remaining_content .= "\n<h3>{$s_data['title']}</h3>\n{$s_data['content']}";
 		}
-		$remaining_content = trim($remaining_content);
+		$remaining_content = wp_automatic_trim($remaining_content);
 
 
 		// All done!
@@ -214,9 +214,9 @@ class PucReadmeParser {
 	function chop_string( $string, $chop ) { // chop a "prefix" from a string: Agressive! uses strstr not 0 === strpos
 		if ( $_string = strstr($string, $chop) ) {
 			$_string = substr($_string, strlen($chop));
-			return trim($_string);
+			return wp_automatic_trim($_string);
 		} else {
-			return trim($string);
+			return wp_automatic_trim($string);
 		}
 	}
 
@@ -236,12 +236,12 @@ class PucReadmeParser {
 	function sanitize_text( $text ) { // not fancy
 		$text = strip_tags($text);
 		$text = esc_html($text);
-		$text = trim($text);
+		$text = wp_automatic_trim($text);
 		return $text;
 	}
 
 	function filter_text( $text, $markdown = false ) { // fancy, Markdown
-		$text = trim($text);
+		$text = wp_automatic_trim($text);
 
 		$text = call_user_func( array( __CLASS__, 'code_trick' ), $text, $markdown ); // A better parser than Markdown's for: backticks -> CODE
 
@@ -276,7 +276,7 @@ class PucReadmeParser {
 		$text = balanceTags($text);
 		
 		$text = wp_kses( $text, $allowed );
-		$text = trim($text);
+		$text = wp_automatic_trim($text);
 		return $text;
 	}
 
@@ -286,7 +286,7 @@ class PucReadmeParser {
 		if ( $markdown )
 			$text = preg_replace_callback("!(<pre><code>|<code>)(.*?)(</code></pre>|</code>)!s", array( __CLASS__,'decodeit'), $text);
 
-		$text = str_replace(array("\r\n", "\r"), "\n", $text);
+		$text = wp_automatic_str_replace(array("\r\n", "\r"), "\n", $text);
 		if ( !$markdown ) {
 			// This gets the "inline" code blocks, but can't be used with Markdown.
 			$text = preg_replace_callback("|(`)(.*?)`|", array( __CLASS__, 'encodeit'), $text);
@@ -309,12 +309,12 @@ class PucReadmeParser {
 		if ( function_exists('encodeit') ) // bbPress native
 			return encodeit( $matches );
 
-		$text = trim($matches[2]);
-		$text = htmlspecialchars($text, ENT_QUOTES);
-		$text = str_replace(array("\r\n", "\r"), "\n", $text);
+		$text = wp_automatic_trim($matches[2]);
+		$text = wp_automatic_htmlspecialchars($text, ENT_QUOTES);
+		$text = wp_automatic_str_replace(array("\r\n", "\r"), "\n", $text);
 		$text = preg_replace("|\n\n\n+|", "\n\n", $text);
-		$text = str_replace('&amp;lt;', '&lt;', $text);
-		$text = str_replace('&amp;gt;', '&gt;', $text);
+		$text = wp_automatic_str_replace('&amp;lt;', '&lt;', $text);
+		$text = wp_automatic_str_replace('&amp;gt;', '&gt;', $text);
 		$text = "<code>$text</code>";
 		if ( "`" != $matches[1] )
 			$text = "<pre>$text</pre>";
@@ -328,9 +328,9 @@ class PucReadmeParser {
 		$text = $matches[2];
 		$trans_table = array_flip(get_html_translation_table(HTML_ENTITIES));
 		$text = strtr($text, $trans_table);
-		$text = str_replace('<br />', '', $text);
-		$text = str_replace('&#38;', '&', $text);
-		$text = str_replace('&#39;', "'", $text);
+		$text = wp_automatic_str_replace('<br />', '', $text);
+		$text = wp_automatic_str_replace('&#38;', '&', $text);
+		$text = wp_automatic_str_replace('&#39;', "'", $text);
 		if ( '<pre><code>' == $matches[1] )
 			$text = "\n$text\n";
 		return "`$text`";

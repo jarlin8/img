@@ -5,7 +5,7 @@
 				//wp-load
 				require_once('../../../wp-load.php');
 				$endpoint = plugins_url( 'ebay_clo.php' , __FILE__ );
-				$endpoint = str_replace('http:/' , 'https:/',$endpoint);
+				$endpoint = wp_automatic_str_replace('http:/' , 'https:/',$endpoint);
 				
 				$verificationToken = md5($endpoint);
 				 

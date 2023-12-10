@@ -16,8 +16,8 @@ function wp_automatic_the_content_filter($cnt){
 			$script_found_copy = $script_found;
 			
 			if(stristr($script_found_copy, '<p>') || stristr($script_found_copy, '<br')){
-				$script_found_copy = str_replace( array('<p>' , '<br>' , '<br />' ,'</p>' )  , '' , $script_found_copy  );
-				$cnt = str_replace( $script_found , $script_found_copy , $cnt );
+				$script_found_copy = wp_automatic_str_replace( array('<p>' , '<br>' , '<br />' ,'</p>' )  , '' , $script_found_copy  );
+				$cnt = wp_automatic_str_replace( $script_found , $script_found_copy , $cnt );
 			}
 			
 			
@@ -25,7 +25,7 @@ function wp_automatic_the_content_filter($cnt){
 
 		//fix broken amazon image from https://i.imgur.com/ISRHEWs.png to https://valvepress.s3.amazonaws.com/buy_amazon.png
 		if( stristr($cnt, 'i.imgur.com/ISRHEWs.png') ){
-			$cnt = str_replace('i.imgur.com/ISRHEWs.png', 'valvepress.s3.amazonaws.com/imgs/buy_now.png' , $cnt );
+			$cnt = wp_automatic_str_replace('i.imgur.com/ISRHEWs.png', 'valvepress.s3.amazonaws.com/imgs/buy_now.png' , $cnt );
 		}
 		 
 		
@@ -37,9 +37,9 @@ function wp_automatic_the_content_filter($cnt){
 			$icn_star_full = plugins_url('images/youtube_imgs/icn_star_full_11x11.gif' , __FILE__);
 				
 				
-			$cnt = str_replace('http://gdata.youtube.com/static/images/icn_star_full_11x11.gif', $icn_star_full,$cnt );
-			$cnt = str_replace('http://gdata.youtube.com/static/images/icn_star_half_11x11.gif', $icn_star_half,$cnt );
-			$cnt = str_replace('http://gdata.youtube.com/static/images/icn_star_empty_11x11.gif', $icn_star_empty,$cnt );
+			$cnt = wp_automatic_str_replace('http://gdata.youtube.com/static/images/icn_star_full_11x11.gif', $icn_star_full,$cnt );
+			$cnt = wp_automatic_str_replace('http://gdata.youtube.com/static/images/icn_star_half_11x11.gif', $icn_star_half,$cnt );
+			$cnt = wp_automatic_str_replace('http://gdata.youtube.com/static/images/icn_star_empty_11x11.gif', $icn_star_empty,$cnt );
 			
 		}
 		
@@ -77,7 +77,7 @@ function wp_automatic_the_content_filter($cnt){
 			
 			//get featured image URL
 			$thumb_url = (get_the_post_thumbnail_url($post));
-			if(trim($thumb_url) != ''){
+			if(wp_automatic_trim($thumb_url) != ''){
 				$cnt = preg_replace('{<img src="https://instagram.*?>}','<img src="'.$thumb_url.'" />',$cnt,1);
 				$cnt = preg_replace('{<img src="https://scontent.*?>}','<img src="'.$thumb_url.'" />',$cnt,1);
 				
@@ -109,10 +109,10 @@ function wp_automatic_permalink_changer($permalink , $post, $leavename=false  ){
  
 		$link_to_source = get_post_meta($post->ID, '_link_to_source', true);
  
-		if ( trim($link_to_source) != '' ) {
+		if ( wp_automatic_trim($link_to_source) != '' ) {
 			
 			$new_permalink = get_post_meta($post->ID, 'original_link', true);
-			if(trim($new_permalink) != ''  ) return $new_permalink;
+			if(wp_automatic_trim($new_permalink) != ''  ) return $new_permalink;
 			
 		}
 	}
@@ -194,13 +194,13 @@ function wp_automatic_eb_redirect_end(){
 	// check whether the current post has content in the "canonical_url" custom field
 	$wp_automatic_redirect_date = get_post_meta( $id, 'wp_automatic_redirect_date', true );
 	 
-	if(trim($wp_automatic_redirect_date) != ''){
+	if(wp_automatic_trim($wp_automatic_redirect_date) != ''){
 		if( current_time('timestamp') > $wp_automatic_redirect_date ){
 			
 			//trash 
 			$wp_automatic_trash_date = get_post_meta( $id, 'wp_automatic_trash_date', true );
 			
-			if(trim($wp_automatic_trash_date) != ''){
+			if(wp_automatic_trim($wp_automatic_trash_date) != ''){
 				//trash
 				wp_trash_post($id);
 			}
@@ -253,7 +253,7 @@ function wp_automatic_formated_date( $atts ,$cont='') {
 	
 	$timeStamp = $a['timestamp'];
 	
-	if(trim($timeStamp) == '')
+	if(wp_automatic_trim($timeStamp) == '')
 	$timeStamp = strtotime($cont);
 	
 	return date(  $a['format'] , $timeStamp);
@@ -303,10 +303,10 @@ function wp_automatic_price_update_date() {
 	
 	$utc = get_post_meta($pID,'product_price_updated',1);
 	
-	 if(! is_numeric($utc) || trim($utc) == '') $utc =  time();
+	 if(! is_numeric($utc) || wp_automatic_trim($utc) == '') $utc =  time();
 	
 	 
-	return  date ( 'M d,Y H:i:s '  , $utc ).'UTC';
+	return  date ( 'M d, Y H:i:s '  , $utc ).'UTC';
 	
 }
 
@@ -320,7 +320,7 @@ function wp_automatic_custom_comment_url($return){
 		
 		$return_parts = explode('|' , $return );
 		
-		if( isset($return_parts[1]) && trim($return_parts[1]) != '' ){
+		if( isset($return_parts[1]) && wp_automatic_trim($return_parts[1]) != '' ){
 			return 'https://www.youtube.com/channel/' . $return_parts[1] ;
 		}else{
 			return $return;
@@ -385,8 +385,8 @@ function wp_automatic_custom_comment_link (  $return , $author , $comment_id) {
 	
 	if(  stristr($return	, 'yt3.')  &&  stristr($return	, '|') ){
 		 $return =  preg_replace("{https://yt3.*?\|}", "https://www.youtube.com/channel/", $return);
-		 $return = str_replace('https://www.youtube.com/channel/\'', '#\'', $return) ;
-		 $return = str_replace('https://www.youtube.com/channel/"', '#"', $return) ;
+		 $return = wp_automatic_str_replace('https://www.youtube.com/channel/\'', '#\'', $return) ;
+		 $return = wp_automatic_str_replace('https://www.youtube.com/channel/"', '#"', $return) ;
 	}
 	
 	return $return;

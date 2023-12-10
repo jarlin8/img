@@ -15,7 +15,7 @@ function Itunes_fetch_items($keyword, $camp) {
 	
 	$wp_automatic_iu_id = get_option('wp_automatic_iu_id',true);
 	
-	if(trim($wp_automatic_iu_id) == '')   echo '<br>Please apply to the itunes program and add your id at the settings page to get commissions now you will not.';
+	if(wp_automatic_trim($wp_automatic_iu_id) == '')   echo '<br>Please apply to the itunes program and add your id at the settings page to get commissions now you will not.';
  
 	// ini options
 	$camp_opt = unserialize ( $camp->camp_options );
@@ -27,12 +27,12 @@ function Itunes_fetch_items($keyword, $camp) {
 	$cg_iu_media = $camp_general['cg_iu_media'];
 	
 	// items url
-	$itunesSearchUrl = "https://itunes.apple.com/search?term=". urlencode(trim($keyword)) ."&media=$cg_iu_media" ;
+	$itunesSearchUrl = "https://itunes.apple.com/search?term=". urlencode(wp_automatic_trim($keyword)) ."&media=$cg_iu_media" ;
 	
 	// Attribute
 	$cg_iu_attribute = $camp_general['cg_iu_attribute'];
 	
-	if(trim($cg_iu_attribute) != '' && trim($cg_iu_attribute) != 'All' ){
+	if(wp_automatic_trim($cg_iu_attribute) != '' && wp_automatic_trim($cg_iu_attribute) != 'All' ){
 		$itunesSearchUrl .= '&attribute='.$cg_iu_attribute;
 	}
 	
@@ -41,8 +41,8 @@ function Itunes_fetch_items($keyword, $camp) {
 		
 		$cg_iu_lang = $camp_general['cg_iu_lang'];
 		
-		if(trim($cg_iu_lang) != ''){
-			$itunesSearchUrl.= '&country='. trim($cg_iu_lang);
+		if(wp_automatic_trim($cg_iu_lang) != ''){
+			$itunesSearchUrl.= '&country='. wp_automatic_trim($cg_iu_lang);
 		}
 		
 	}
@@ -102,13 +102,13 @@ function Itunes_fetch_items($keyword, $camp) {
 	$x = 'error';
 	$url = $itunesSearchUrl;
 	curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-	curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+	curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 	$exec = curl_exec ( $this->ch );
 	$x = curl_error ( $this->ch );
 	
 	
 	// error check
-	if(trim($x) != ''){
+	if(wp_automatic_trim($x) != ''){
 		  echo '<br>Curl error:'.$x;
 		return false;
 	} 
@@ -186,7 +186,7 @@ function Itunes_fetch_items($keyword, $camp) {
 			
 			$itm['item_previewUrl'] = $item->previewUrl;
 				
-			$itm['item_img'] = str_replace('100x100', '600x600', $item->artworkUrl100);
+			$itm['item_img'] = wp_automatic_str_replace('100x100', '600x600', $item->artworkUrl100);
 			
 			$itm['item_artistId'] = $item->artistId;
 			$itm['item_artistName'] = $item->artistName;
@@ -208,7 +208,7 @@ function Itunes_fetch_items($keyword, $camp) {
 			$itm['item_description'] = $item->longDescription;
 			$itm['item_title'] = $item->trackName;
 			$itm['item_previewUrl'] = $item->previewUrl;
-			$itm['item_img'] = str_replace('100x100', '600x600', $item->artworkUrl100);
+			$itm['item_img'] = wp_automatic_str_replace('100x100', '600x600', $item->artworkUrl100);
 			$itm['item_artistName'] = $item->artistName;
 			$itm['item_trackName'] = $item->trackName;
 			$itm['item_price'] = $item->trackPrice;
@@ -219,7 +219,7 @@ function Itunes_fetch_items($keyword, $camp) {
 		}elseif($item->kind == 'podcast'){
 			$itm['item_description'] = $item->trackName;
 			$itm['item_title'] = $item->trackName;
-			$itm['item_img'] = str_replace('100x100', '600x600', $item->artworkUrl100);
+			$itm['item_img'] = wp_automatic_str_replace('100x100', '600x600', $item->artworkUrl100);
 			$itm['item_artistName'] = $item->artistName;
 			$itm['item_trackName'] = $item->trackName;
 			$itm['item_price'] = $item->trackPrice;
@@ -232,7 +232,7 @@ function Itunes_fetch_items($keyword, $camp) {
 			$itm['item_description'] = $item->trackName;
 			$itm['item_title'] = $item->trackName;
 			$itm['item_previewUrl'] = $item->previewUrl;
-			$itm['item_img'] = str_replace('100x100', '600x600', $item->artworkUrl100);
+			$itm['item_img'] = wp_automatic_str_replace('100x100', '600x600', $item->artworkUrl100);
 			$itm['item_artistName'] = $item->artistName;
 			$itm['item_trackName'] = $item->trackName;
 			$itm['item_price'] = $item->trackPrice;
@@ -244,7 +244,7 @@ function Itunes_fetch_items($keyword, $camp) {
 		 		
 			$itm['item_description'] = $item->description;
 			$itm['item_title'] = $item->collectionName;
-			$itm['item_img'] = str_replace('100x100', '600x600', $item->artworkUrl100);
+			$itm['item_img'] = wp_automatic_str_replace('100x100', '600x600', $item->artworkUrl100);
 			$itm['item_artistName'] = $item->artistName;
 			$itm['item_trackName'] = $item->collectionName;
 			$itm['item_price'] = $item->collectionPrice;
@@ -257,7 +257,7 @@ function Itunes_fetch_items($keyword, $camp) {
  				
 			$itm['item_description'] = $item->longDescription;
 			$itm['item_title'] = $item->trackName;
-			$itm['item_img'] = str_replace('100x100', '600x600', $item->artworkUrl100);
+			$itm['item_img'] = wp_automatic_str_replace('100x100', '600x600', $item->artworkUrl100);
 			$itm['item_artistName'] = $item->artistName;
 			$itm['item_previewUrl'] = $item->previewUrl;
 			$itm['item_trackName'] = $item->trackName;
@@ -271,7 +271,7 @@ function Itunes_fetch_items($keyword, $camp) {
  				
 			$itm['item_description'] = $item->description;
 			$itm['item_title'] = $item->trackName;
-			$itm['item_img'] = str_replace('100x100', '600x600', $item->artworkUrl100);
+			$itm['item_img'] = wp_automatic_str_replace('100x100', '600x600', $item->artworkUrl100);
 			$itm['item_artistName'] = $item->artistName;
 			$itm['item_trackName'] = $item->trackName;
 			$itm['item_price'] = $item->trackPrice;
@@ -285,7 +285,7 @@ function Itunes_fetch_items($keyword, $camp) {
  				
 			$itm['item_description'] = $item->description;
 			$itm['item_title'] = $item->trackName;
-			$itm['item_img'] = str_replace('100x100', '600x600', $item->artworkUrl100);
+			$itm['item_img'] = wp_automatic_str_replace('100x100', '600x600', $item->artworkUrl100);
 			$itm['item_artistName'] = $item->artistName;
 			$itm['item_artistViewUrl'] = $item->artistViewUrl;
 			$itm['item_supportedDevices'] = implode(',', $item->supportedDevices);
@@ -309,8 +309,8 @@ function Itunes_fetch_items($keyword, $camp) {
 		//Release date
 		if(isset($item->releaseDate)){
 			$itm['item_releaseDate'] = $item->releaseDate;
-			$itm['item_releaseDate'] =  str_replace('T', ' ', $itm['item_releaseDate']);
-			$itm['item_releaseDate'] =  str_replace('Z', '', $itm['item_releaseDate']);
+			$itm['item_releaseDate'] =  wp_automatic_str_replace('T', ' ', $itm['item_releaseDate']);
+			$itm['item_releaseDate'] =  wp_automatic_str_replace('Z', '', $itm['item_releaseDate']);
 		}
 		
 		//Time
@@ -361,12 +361,12 @@ function Itunes_get_post($camp) {
  	
 	foreach ( $keywords as $keyword ) {
 			
-		$keyword = trim($keyword);
+		$keyword = wp_automatic_trim($keyword);
 
 		//update last keyword
-		update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
+		update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
 			
-		if (trim ( $keyword ) != '') {
+		if (wp_automatic_trim( $keyword ) != '') {
 
 			// getting links from the db for that keyword
 			$query = "select * from {$this->wp_prefix}automatic_general where item_type=  'iu_{$camp->camp_id}_$keyword' ";
@@ -448,7 +448,7 @@ function Itunes_get_post($camp) {
 				// Affiliate id
 				$wp_automatic_iu_id = get_option('wp_automatic_iu_id',true);
 				
-				if(trim($wp_automatic_iu_id) == '')  {
+				if(wp_automatic_trim($wp_automatic_iu_id) == '')  {
 					$temp['affiliate_id'] = '';
 				}else{
 					$temp['affiliate_id'] = $wp_automatic_iu_id ;

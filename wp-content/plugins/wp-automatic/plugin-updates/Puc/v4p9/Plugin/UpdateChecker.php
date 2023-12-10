@@ -50,8 +50,8 @@ if ( !class_exists('Puc_v4p9_Plugin_UpdateChecker', false) ):
 			if ( $slugUsedBy ) {
 				$this->triggerError(sprintf(
 					'Plugin slug "%s" is already in use by %s. Slugs must be unique.',
-					htmlentities($slug),
-					htmlentities($slugUsedBy)
+					wp_automatic_htmlentities($slug),
+					wp_automatic_htmlentities($slugUsedBy)
 				), E_USER_ERROR);
 			}
 			add_filter($slugCheckFilter, array($this, 'getAbsolutePath'));

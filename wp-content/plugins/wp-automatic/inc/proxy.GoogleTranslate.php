@@ -22,14 +22,14 @@ class GoogleTranslateProxy{
 		
   		// Translate a url
 		curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-		curl_setopt($this->ch, CURLOPT_URL, trim($url));
+		curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($url));
 		
 		$exec=curl_exec($this->ch);
 		$x=curl_error($this->ch);
 		 
 		
 		// validate final content 
-		if(trim($exec) == ''){
+		if(wp_automatic_trim($exec) == ''){
 			throw new Exception('_c url returned empty response');
 		}
 		
@@ -38,7 +38,7 @@ class GoogleTranslateProxy{
 		// clean content 
 		$exec = preg_replace('{<span class="google-src-text.*?>.*?</span>}', "", $exec);
 		$exec = preg_replace('{<span class="notranslate.*?>(.*?)</span>}', "$1", $exec);
-		$exec = str_replace(' style=";text-align:left;direction:ltr"', '', $exec);
+		$exec = wp_automatic_str_replace(' style=";text-align:left;direction:ltr"', '', $exec);
 		
 		 	
 		

@@ -31,7 +31,7 @@ class GoogleTranslator{
 		//saving the content to a temp file
 		
 		
-		if (   trim(ini_get('open_basedir')) != ''){
+		if (   wp_automatic_trim(ini_get('open_basedir')) != ''){
 			
 			  echo '<br>open_basedir exists';
 			$upload_dir = wp_upload_dir ();
@@ -99,7 +99,7 @@ class GoogleTranslator{
 		fclose($tmpHandle);
 
 		// Empty response check 
-		if(trim($exec) == ''){
+		if(wp_automatic_trim($exec) == ''){
 			throw new Exception('Empty translator reply with possible curl error '.$x);
 		}
 		
@@ -110,8 +110,8 @@ class GoogleTranslator{
 		}
 		
 		//extra <pre removal fix
-		$exec= str_replace('<pre>','' , $exec );
-		$exec= str_replace('</pre>','' , $exec );
+		$exec= wp_automatic_str_replace('<pre>','' , $exec );
+		$exec= wp_automatic_str_replace('</pre>','' , $exec );
 		
 		return $exec ;
  		

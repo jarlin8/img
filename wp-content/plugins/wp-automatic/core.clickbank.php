@@ -82,7 +82,7 @@ function clickbank_fetch_links($keyword, $camp) {
 	$cg_cb_lang = '';
 	@$cg_cb_lang = @$camp_general['cg_cb_lang'];
 	
-	if(trim($cg_cb_lang) == ''){
+	if(wp_automatic_trim($cg_cb_lang) == ''){
 		$cg_cb_lang = 'EN';
 	}
 	
@@ -94,7 +94,7 @@ function clickbank_fetch_links($keyword, $camp) {
 	//$clickbank = "https://accounts.clickbank.com/mkplSearchResult.htm?dores=true&includeKeywords=seo";
 	//$clickbank = "https://$cbname.accounts.clickbank.com/account/mkplSearchResult.htm?includeKeywords=$clickkey&resultsPerPage=50&firstResult=$start&sortField=$sortby&$camp_cb_category&productLanguages=$cg_cb_lang";
 	
-	$search_keyword = trim($clickkey);
+	$search_keyword = wp_automatic_trim($clickkey);
 	
 	if($keyword == '*') $search_keyword = '';
 	
@@ -111,7 +111,7 @@ function clickbank_fetch_links($keyword, $camp) {
 		 
 		$url = $clickbank;
 		curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-		curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+		curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 			
 		$cont = curl_exec ( $this->ch );
 		  echo $x = curl_error ( $this->ch );
@@ -140,7 +140,7 @@ function clickbank_fetch_links($keyword, $camp) {
 	 
 	
 	curl_setopt_array($ch, array(
-			CURLOPT_URL => 'https://api.clickbank.net/graphql',
+			CURLOPT_URL => 'https://new-api.clickbank.net/graphql',
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_ENCODING => '',
 			CURLOPT_MAXREDIRS => 10,
@@ -150,7 +150,7 @@ function clickbank_fetch_links($keyword, $camp) {
 			CURLOPT_CUSTOMREQUEST => 'POST',
 			CURLOPT_POSTFIELDS => '{"query":"query ($parameters: MarketplaceSearchParameters!) {\\n\\t\\t\\tmarketplaceSearch(parameters: $parameters) {\\n\\t\\t\\t\\ttotalHits\\n\\t\\t\\t\\toffset\\n\\t\\t\\t\\thits {\\n\\t\\t\\t\\t\\tsite\\n\\t\\t\\t\\t\\ttitle\\n\\t\\t\\t\\t\\tdescription\\n\\t\\t\\t\\t\\tfavorite\\n\\t\\t\\t\\t\\turl\\n\\t\\t\\t\\t\\tmarketplaceStats {\\n\\t\\t\\t\\t\\t\\tactivateDate\\n\\t\\t\\t\\t\\t\\tcategory\\n\\t\\t\\t\\t\\t\\tsubCategory\\n\\t\\t\\t\\t\\t\\tinitialDollarsPerSale\\n\\t\\t\\t\\t\\t\\taverageDollarsPerSale\\n\\t\\t\\t\\t\\t\\tgravity\\n\\t\\t\\t\\t\\t\\ttotalRebill\\n\\t\\t\\t\\t\\t\\tde\\n\\t\\t\\t\\t\\t\\ten\\n\\t\\t\\t\\t\\t\\tes\\n\\t\\t\\t\\t\\t\\tfr\\n\\t\\t\\t\\t\\t\\tit\\n\\t\\t\\t\\t\\t\\tpt\\n\\t\\t\\t\\t\\t\\tstandard\\n\\t\\t\\t\\t\\t\\tphysical\\n\\t\\t\\t\\t\\t\\trebill\\n\\t\\t\\t\\t\\t\\tupsell\\n\\t\\t\\t\\t\\t\\tstandardUrlPresent\\n\\t\\t\\t\\t\\t\\tmobileEnabled\\n\\t\\t\\t\\t\\t\\twhitelistVendor\\n\\t\\t\\t\\t\\t\\tcpaVisible\\n\\t\\t\\t\\t\\t\\tdollarTrial\\n\\t\\t\\t\\t\\t\\thasAdditionalSiteHoplinks\\n\\t\\t\\t\\t\\t}\\n\\t\\t\\t \\t\\taffiliateToolsUrl\\n\\t\\t\\t  \\t\\taffiliateSupportEmail\\n            \\t\\tskypeName\\n\\t\\t\\t\\t}\\n\\t\\t\\t}\\n\\t\\t  }","variables":{"parameters":{"includeKeywords":"'.$search_keyword.'"' . $offset_part  . '}}}',
 			CURLOPT_HTTPHEADER => array(
-					'authority: api.clickbank.net',
+					'authority: new-api.clickbank.net',
 					'accept: application/json, text/plain, */*',
 					'accept-language: en-US,en;q=0.9,ar;q=0.8',
 					
@@ -168,13 +168,15 @@ function clickbank_fetch_links($keyword, $camp) {
 	));
 	
 	$response = curl_exec($ch);
+
+
 	
 	//reset 
 	
 	$x = curl_error ( $ch );
 	
 	//empty response
-	if(trim($response) == ''){
+	if(wp_automatic_trim($response) == ''){
 		echo ' Empty response from ClickBank ' . $x;
 	}
 	
@@ -191,7 +193,7 @@ function clickbank_fetch_links($keyword, $camp) {
 	
 	echo '<br>' .  count($items) . ' items returned ';
 	
- 
+	 
 
 	$links = array();
 	$titles= array();
@@ -215,7 +217,7 @@ function clickbank_fetch_links($keyword, $camp) {
 			
  	
 			
-		$link_url = str_replace('zzzzz', $wp_wp_automatic_cbu,$links[$i]) ;
+		$link_url = wp_automatic_str_replace('zzzzz', $wp_wp_automatic_cbu,$links[$i]) ;
 			
 		if( $this->is_execluded($camp->camp_id, $link_url) ){
 			  echo '<-- Excluded';
@@ -263,12 +265,12 @@ function clickbank_get_post($camp) {
 	
 	foreach ( $keywords as $keyword ) {
 			
-		$keyword = trim($keyword);
+		$keyword = wp_automatic_trim($keyword);
 			
-		if (trim ( $keyword ) != '') {
+		if (wp_automatic_trim( $keyword ) != '') {
 				
 			//update last keyword
-			update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
+			update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
 
 			// getting links from the db for that keyword
 			$query = "select * from {$this->wp_prefix}automatic_clickbank_links where link_keyword='$keyword' ";
@@ -316,9 +318,9 @@ function clickbank_get_post($camp) {
 			// check again if valid links found for that keyword otherwise skip it
 			if (count ( $res ) > 0) {
 				// ini
-				$cbname = trim( get_option ( 'wp_wp_automatic_cbu', '' ));
+				$cbname = wp_automatic_trim( get_option ( 'wp_wp_automatic_cbu', '' ));
 					
-				if (trim ( $cbname ) == '') {
+				if (wp_automatic_trim( $cbname ) == '') {
 					$message = '<a href="http://clickbank.net">Click Bank</a> account needed visit settings and add the username ';
 					  echo "<br>$message";
 					$this->log ( 'Error', $message );
@@ -337,7 +339,7 @@ function clickbank_get_post($camp) {
 				
 				 
 				
-				$offer_url = str_replace ( 'zzzzz', $cbname, $offer_url );
+				$offer_url =wp_automatic_str_replace( 'zzzzz', $cbname, $offer_url );
 				$offer_desc = $ret->link_desc;
 					
 				// lets call the downloader for offer_title and offer_real_link
@@ -347,7 +349,7 @@ function clickbank_get_post($camp) {
 				$downloader_link = site_url('?wp_automatic=download');
 					
 				curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-				curl_setopt ( $this->ch, CURLOPT_URL, trim ( $downloader_link . '&link=' . str_replace ( 'http:', 'httpz:', $offer_url ) ) );
+				curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $downloader_link . '&link=' .wp_automatic_str_replace( 'http:', 'httpz:', $offer_url ) ) );
 				$exec = curl_exec ( $this->ch );
     
 				$json = json_decode ( $exec );
@@ -355,9 +357,9 @@ function clickbank_get_post($camp) {
 				$original_title= ''; //ini
 				$original_link = ''; 
 				@$original_link = $json->link;
-				@$original_title = $json->title;
+				@$original_title = isset($json->title)? $json->title : '';
 				
-				if( trim($original_title) !=''){
+				if( wp_automatic_trim($original_title) !=''){
 					echo ' success found title:'.$original_title. ' link:'.$original_link;
 				}else{
 					echo ' download did not succeed';	
@@ -384,14 +386,14 @@ function clickbank_get_post($camp) {
 						
 				}
 				
-				$original_link = str_replace ( "?hop=$cbname", '', $original_link );
+				$original_link =wp_automatic_str_replace( "?hop=$cbname", '', $original_link );
 					
-				if (trim ( $original_link ) == '' || trim ( $original_title ) == '') {
+				if (wp_automatic_trim( $original_link ) == '' || wp_automatic_trim( $original_title ) == '') {
 					  echo '<br>Could not extract original url from hop link, using hop instead';
 
 					$original_title = $offer_title;
 
-					if (trim ( $original_link ) == '') {
+					if (wp_automatic_trim( $original_link ) == '') {
 						$original_link = $offer_url;
 					}
 				} else {
@@ -400,13 +402,13 @@ function clickbank_get_post($camp) {
 				}
 				
 				// img
-				$tempo = str_replace ( "http://$cbname", 'zzzz', $original_link );
-				$tempo = str_replace ( "https://$cbname", 'zzzz', $original_link );
-				$tempo = str_replace ( 'http://', '', $tempo );
-				$tempo = str_replace ( 'https://', '', $tempo );
-				$tempo = str_replace ( "?hop=$cbname", '', $tempo );
+				$tempo =wp_automatic_str_replace( "http://$cbname", 'zzzz', $original_link );
+				$tempo =wp_automatic_str_replace( "https://$cbname", 'zzzz', $original_link );
+				$tempo =wp_automatic_str_replace( 'http://', '', $tempo );
+				$tempo =wp_automatic_str_replace( 'https://', '', $tempo );
+				$tempo =wp_automatic_str_replace( "?hop=$cbname", '', $tempo );
 				
-				$tempo = urlencode ( trim ( $tempo ) );
+				$tempo = urlencode ( wp_automatic_trim( $tempo ) );
 				$wp_amazonpin_tw = get_option ( 'wp_amazonpin_tw', 400 );
 					
 				$img = '<img class="product_thumb"  src="https://www.cbtrends.com/images/vendor-pages/'. $offer_id .'-x400-thumb.jpg" />';
@@ -432,6 +434,28 @@ function clickbank_get_post($camp) {
 				$query = "delete from {$this->wp_prefix}automatic_clickbank_links where link_id={$ret->link_id}";
 				$this->db->query ( $query );
 				
+				//overwrite product_link 
+				//grab offer id and cbname and do a post request to clickbank to get the affiliate link
+				$offer_id = $offer_url_parts[1];
+				$cbname = get_option ( 'wp_wp_automatic_cbu', '' );
+
+				echo '<br>Getting affiliate link for offer id:'.$offer_id.' cbname:'.$cbname.'...';
+				
+				try{
+					$affiliate_link = $this->get_clickbank_affiliate_link($offer_id, $cbname);
+
+					echo '<br>Got affiliate link:'.$affiliate_link;
+
+					$temp['product_link'] = $affiliate_link;
+
+				}catch(Exception $e){
+					echo '<br>Could not get affiliate link for offer id:'.$offer_id.' cbname:'.$cbname.'...';
+					
+					 echo $e->getMessage();
+				
+					
+					$affiliate_link = $offer_url;
+				}
 					
 				return $temp;
 			} else {
@@ -441,5 +465,80 @@ function clickbank_get_post($camp) {
 		} // if trim
 	} // foreach keyword
 } // end funs
+
+/**
+ * function to take the offer id and cbname and do a post request to Clicbank to get the affiliate link
+ * @param $offer_id
+ * @param $cbname
+ * @return string
+ */
+function get_clickbank_affiliate_link($offer_id, $cbname){
+
+	 
+
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => 'https://new-api.clickbank.net/graphql',
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => '',
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => 'POST',
+  CURLOPT_POSTFIELDS =>'{"query":"query($affiliateNickname: String!, $vendorNickname: String!){\\n\\t\\t\\t\\t  encodeHopShieldLink(affiliate: $affiliateNickname, vendor: $vendorNickname){\\n\\t\\t\\t\\t\\t  encodedUrl\\n\\t\\t\\t\\t  }\\n\\t\\t\\t  }","variables":{"affiliateNickname":"'.$cbname.'","vendorNickname":"'.$offer_id.'"}}',
+  CURLOPT_HTTPHEADER => array(
+    'authority: new-api.clickbank.net',
+    'accept: application/json, text/plain, */*',
+    'accept-language: en-US,en;q=0.9,ar;q=0.8',
+    'content-type: application/json',
+    'origin: https://accounts.clickbank.com',
+    'referer: https://accounts.clickbank.com/',
+    'sec-ch-ua: "Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
+    'sec-ch-ua-mobile: ?0',
+    'sec-ch-ua-platform: "macOS"',
+    'sec-fetch-dest: empty',
+    'sec-fetch-mode: cors',
+    'sec-fetch-site: cross-site',
+    'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+  ),
+));
+
+$response = curl_exec($curl);
+
+//error 
+if(curl_error($curl)){
+	throw new Exception(curl_error($curl));
+}
+
+//if wordpress automatic trim response is empty throw error
+if(wp_automatic_trim($response) == ''){
+	throw new Exception('Empty response from ClickBank');
+}
+
+//example response {"data":{"encodeHopShieldLink":{"encodedUrl":"dad97m35sdx0fq08ns07w4pp6v"}}}
+//extract the encodedUrl
+$json = json_decode($response);
+
+//if not isset json->data->encodeHopShieldLink->encodedUrl throw error
+if(! isset($json->data->encodeHopShieldLink->encodedUrl)){
+	throw new Exception('Could not extract encodedUrl from response');
+}
+
+
+$encodedUrl = $json->data->encodeHopShieldLink->encodedUrl;
+
+
+//if wordpress automatic trim the encoded url is not empty then build https://b27665sfuaojbq9dhh5bd59yee.hop.clickbank.net and return
+if(wp_automatic_trim($encodedUrl) != ''){
+	return 'https://'.$encodedUrl.'.hop.clickbank.net';
+}
+
+//if we are here then throw error
+throw new Exception('Could not extract encodedUrl from response');
+
+}
+
 
 }

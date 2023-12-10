@@ -7,6 +7,11 @@ const tutorials = {
       title: "How to use OpenAI GPT3 in WordPress",
       url: "https://www.youtube.com/watch?v=cBfhaq1-BuQ",
     },
+    {
+      url: "https://valvepress.com/how-to-increase-content-length-of-generated-openai-chatgpt-content-on-wordpress-automatic-plugin/",
+      title:
+        "How to increase content length of generated OpenAI ChatGPT content on WordPress Automatic plugin",
+    },
   ],
   Articles: [],
   Feeds: [
@@ -23,9 +28,25 @@ const tutorials = {
       title: "How to auto post Google News to WordPress",
     },
     { url: "https://youtu.be/vPTNRBcWvDY", title: "How to import Web Stories" },
-    {url:"https://valvepress.com/how-to-import-from-a-specific-category-in-an-rss-feed/",title:"How to import from a specific category in an RSS feed"},
-    {url:"https://valvepress.com/how-to-import-from-any-website-to-wordpress-in-multiple-languages/",title:"How to import from any website to WordPress in multiple languages"},
-  
+    {
+      url: "https://valvepress.com/how-to-import-from-a-specific-category-in-an-rss-feed/",
+      title: "How to import from a specific category in an RSS feed",
+    },
+    {
+      url: "https://valvepress.com/how-to-import-from-any-website-to-wordpress-in-multiple-languages/",
+      title:
+        "How to import from any website to WordPress in multiple languages",
+    },
+    {
+      url: "https://valvepress.com/how-to-extract-a-substring-before-or-after-a-specific-string-in-wordpress-automatic-plugin/",
+      title:
+        "How to extract a substring before or after a specific string in WordPress Automatic plugin",
+    },
+    {
+      url: "https://valvepress.com/how-to-categorize-wordpress-posts-using-chatgpt-automatically-trick/",
+      title:
+        "How to categorize WordPress posts using ChatGPT automatically [Trick]",
+    },
   ],
   Amazon: [
     {
@@ -58,6 +79,11 @@ const tutorials = {
       title:
         "How to import Amazon products from a specific category using WordPress Automatic",
     },
+    {
+      url: "https://valvepress.com/how-to-import-amazon-products-that-are-on-sale-to-wordpress-and-skip-not-on-sale/",
+      title:
+        "How to import Amazon products that are on sale to WordPress and skip not on sale",
+    },
   ],
   Aliexpress: [
     {
@@ -88,6 +114,11 @@ const tutorials = {
     {
       url: "https://valvepress.com/how-to-display-videos-as-a-grid-in-wordpress/",
       title: "How to display videos as a grid in WordPress",
+    },
+    {
+      url: "https://valvepress.com/how-to-auto-post-recent-videos-from-a-youtube-channel-to-wordpress/",
+      title:
+        "How to auto post recent videos from a Youtube channel to WordPress",
     },
   ],
   Vimeo: [
@@ -191,11 +222,22 @@ const tutorials = {
       url: "https://www.youtube.com/watch?v=Cd2ODdH9Zpw",
     },
   ],
-  Careerjet: [],
+  Careerjet: [
+    {
+      title: "How to import from Careerjet to WordPress",
+      url: "https://valvepress.com/how-to-auto-post-from-careerjet-to-wordpress-posts-careerjet-to-wordpress-plugin/",
+    },
+  ],
   Single: [
     {
       title: "How to import from a single page to WordPress post",
       url: "https://www.youtube.com/watch?v=zxM8CGRSi_w",
+    },
+  ],
+  telegram: [
+    {
+      title: "How to import from Telegram to WordPress",
+      url: "https://valvepress.com/how-to-import-from-telegram-to-wordpress-posts-automatically/",
     },
   ],
   Multi: [
@@ -225,7 +267,34 @@ const tutorials = {
       title: "How to import sitemap to WordPress posts",
     },
     { url: "https://youtu.be/vPTNRBcWvDY", title: "How to import Web Stories" },
-    {url:"https://valvepress.com/how-to-import-from-any-website-to-wordpress-in-multiple-languages/",title:"How to import from any website to WordPress in multiple languages"},
+    {
+      url: "https://valvepress.com/how-to-import-from-any-website-to-wordpress-in-multiple-languages/",
+      title:
+        "How to import from any website to WordPress in multiple languages",
+    },
+    {
+      url: "https://valvepress.com/how-to-auto-post-from-google-trends-to-wordpress-posts/",
+      title: "How to auto post from Google Trends to WordPress posts",
+    },
+    {
+      url: "https://valvepress.com/how-to-auto-post-from-google-realtime-search-trends-to-wordpress-posts/",
+      title:
+        "How to auto post from Google Realtime search trends to WordPress posts?",
+    },
+    {
+      url: "https://valvepress.com/how-to-extract-a-substring-before-or-after-a-specific-string-in-wordpress-automatic-plugin/",
+      title:
+        "How to extract a substring before or after a specific string in WordPress Automatic plugin",
+    },
+    {
+      url: "https://valvepress.com/how-to-categorize-wordpress-posts-using-chatgpt-automatically-trick/",
+      title:
+        "How to categorize WordPress posts using ChatGPT automatically [Trick]",
+    },
+    {
+      url: "https://valvepress.com/how-to-auto-post-links-from-google-sheets-to-wordpress-posts/",
+      title: "How to auto post links from Google Sheets to WordPress posts",
+    },
   ],
   General: [
     {
@@ -234,15 +303,18 @@ const tutorials = {
     },
     {
       url: "https://valvepress.com/how-to-automatically-generate-yoast-rank-math-seo-description-using-openai-gpt/",
-      title: "How to automatically generate Yoast/Rank Math SEO description using OpenAI GPT",
+      title:
+        "How to automatically generate Yoast/Rank Math SEO description using OpenAI GPT",
     },
     {
       url: "https://valvepress.com/how-to-automatically-generate-wordpress-tags-using-openai-gpt-api/",
-      title: "How to automatically generate WordPress tags using OpenAI GPT API",
+      title:
+        "How to automatically generate WordPress tags using OpenAI GPT API",
     },
     {
       url: "https://valvepress.com/wordpress-internal-cron-job-work-may-need-setup-external-cron/",
-      title: "How to setup a cron job to run WordPress Automatic campaigns automatically",
+      title:
+        "How to setup a cron job to run WordPress Automatic campaigns automatically",
     },
 
     {
@@ -268,6 +340,16 @@ const tutorials = {
       title:
         "How to post contentiously from a specific campaign at WordPress Automatic",
     },
+    {
+      url: "https://valvepress.com/how-to-auto-post-to-wordpress-bbpress-forum-plugin/",
+      title: "How to auto post to WordPress bbPress forum plugin",
+    },
+    {
+      url: "https://valvepress.com/how-to-integrate-wordpress-automatic-plugin-with-internal-link-juicer-for-automatic-internal-links/",
+      title:
+        "How to integrate WordPress Automatic plugin with Internal Link Juicer for automatic internal links",
+    },
+    {url: "https://valvepress.com/how-to-set-the-post-template-for-posts-generated-using-wordpress-automatic-plugin/", title: "How to set the post template for posts generated using WordPress Automatic plugin"},
   ],
 };
 
@@ -297,7 +379,7 @@ jQuery(document).ready(function ($) {
     //loop through the general tutorials
     general_tutorials.forEach((tutorial) => {
       //get the value of the select with id named camp_type and set as the html of the span with class module_name
-      jQuery(".module_name").html( jQuery('#camp_type option:selected').text() );
+      jQuery(".module_name").html(jQuery("#camp_type option:selected").text());
 
       //create the html
       const html = `<li><a href="${tutorial.url}" target="_blank">${tutorial.title}</a></li>`;

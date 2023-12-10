@@ -231,17 +231,20 @@ global $camp_post_custom_v;
 		                 <button style="float:right" id="custom_new">+</button>
 		               
 		               <?php 
-		               	if(is_array($camp_post_custom_k) & count($camp_post_custom_k) >0 ){
+
+
+
+		               	if(is_array($camp_post_custom_k) && count($camp_post_custom_k) >0 ){
 		             		 
 $in=0;
 $added=0;
 foreach($camp_post_custom_k as $k){
-	if(trim($k) != ''){
+	if(wp_automatic_trim($k) != ''){
 	$added=1;
 
 	?>
 		                <div  class="custom_field_wrap">Field Name <input style="width:100px" value="<?php   echo $k ?>" name="camp_post_custom_k[]" class="no-unify"> 
-		                 value <input style="width:200px" value="<?php   echo htmlentities($camp_post_custom_v[$in],ENT_COMPAT, 'UTF-8') ;?>" name="camp_post_custom_v[]" class="no-unify"><br>   </div>
+		                 value <input style="width:200px" value="<?php   echo wp_automatic_htmlentities($camp_post_custom_v[$in],ENT_COMPAT, 'UTF-8') ;?>" name="camp_post_custom_v[]" class="no-unify"><br>   </div>
 	
 	<?php 
 	}

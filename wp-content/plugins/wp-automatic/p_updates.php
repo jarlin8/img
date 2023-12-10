@@ -1,7 +1,7 @@
 <?php
 // UPDATES
 $licenseactive=get_option('wp_automatic_license_active','');
-if(trim($licenseactive) != ''){
+if(wp_automatic_trim($licenseactive) != ''){
 	
 	//fire checks
 	require 'plugin-updates/plugin-update-checker.php';
@@ -15,7 +15,7 @@ if(trim($licenseactive) != ''){
 	$wp_automatic_UpdateChecker->addResultFilter('wp_automatic_addResultFilter');
 	function wp_automatic_addResultFilter($info){
 		
-		$wp_automatic_license = trim(get_option('wp_automatic_license',''));
+		$wp_automatic_license = wp_automatic_trim(get_option('wp_automatic_license',''));
 		
 		if(isset($info->download_url)){
 			$info->download_url = $info->download_url . '&key='.$wp_automatic_license;

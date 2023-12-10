@@ -89,16 +89,16 @@ function ebay_fetch_items($keyword, $camp) {
 	 
 	
 	// campaign id
-	if (trim ( $campaignid ) == '') {
+	if (wp_automatic_trim( $campaignid ) == '') {
 		echo '<br><span style="color:orange">Please visit the plugin settings page and add the eBay campaign ID to get commisions</span>';
 		$campaignid = 5338743934;
 	} 
 	
 	//affiliate tag 
-	$affiliate_tag = 'X-EBAY-C-ENDUSERCTX: affiliateCampaignId='.trim($campaignid);
+	$affiliate_tag = 'X-EBAY-C-ENDUSERCTX: affiliateCampaignId='.wp_automatic_trim($campaignid);
 	
 	//wp_automatic_ebay_refid ,affiliateReferenceId=referenceId
-	$wp_automatic_ebay_refid = trim(get_option('wp_automatic_ebay_refid' , ''));
+	$wp_automatic_ebay_refid = wp_automatic_trim(get_option('wp_automatic_ebay_refid' , ''));
 	if($wp_automatic_ebay_refid != '') $affiliate_tag.= ',affiliateReferenceId=' . $wp_automatic_ebay_refid  ;
 	
 	$headers_arr[] = $affiliate_tag;
@@ -108,26 +108,26 @@ function ebay_fetch_items($keyword, $camp) {
 	$elink.= '&offset=' . $start;
 	
 	//Category
-	if(in_array('OPT_EBAY_CUSTOM', $camp_opt) && trim($camp_general['cg_ebay_custom']) != '' ){
+	if(in_array('OPT_EBAY_CUSTOM', $camp_opt) && wp_automatic_trim($camp_general['cg_ebay_custom']) != '' ){
 		
 		$cg_ebay_custom = $camp_general['cg_ebay_custom'];
 		
-		$elink .= '&category_ids=' . trim(	$cg_ebay_custom);
+		$elink .= '&category_ids=' . wp_automatic_trim(	$cg_ebay_custom);
 			
 	}else{
 			
 		// ebay category cg_eb_cat
 		$cg_eb_cat = $camp_general ['cg_eb_cat'];
 			
-		if (trim ( $cg_eb_cat != '0' )) {
-			$elink .= '&category_ids=' . trim(	$cg_eb_cat);
+		if (wp_automatic_trim( $cg_eb_cat != '0' )) {
+			$elink .= '&category_ids=' . wp_automatic_trim(	$cg_eb_cat);
 		}
 	}
 
 
 	// if user
 	if (in_array ( 'OPT_EB_USER', $camp_opt )) {
-		$cg_eb_user = trim($camp_general ['cg_eb_user']);
+		$cg_eb_user = wp_automatic_trim($camp_general ['cg_eb_user']);
 		$filters_arr[] = 'sellers:{'. $cg_eb_user .'}';
 
 		$filter_number++;
@@ -169,19 +169,19 @@ function ebay_fetch_items($keyword, $camp) {
 	
 	
 	// price range filter=price:[10..50]
-	if (in_array ( 'OPT_EB_PRICE', $camp_opt ) && trim($camp_general['cg_eb_currency']) != '' ) {
-		$cg_eb_min = trim( $camp_general ['cg_eb_min']);
-		$cg_eb_max = trim($camp_general ['cg_eb_max']);
-		$cg_eb_currency = trim($camp_general ['cg_eb_currency']);
+	if (in_array ( 'OPT_EB_PRICE', $camp_opt ) && wp_automatic_trim($camp_general['cg_eb_currency']) != '' ) {
+		$cg_eb_min = wp_automatic_trim( $camp_general ['cg_eb_min']);
+		$cg_eb_max = wp_automatic_trim($camp_general ['cg_eb_max']);
+		$cg_eb_currency = wp_automatic_trim($camp_general ['cg_eb_currency']);
 		
 		//price part 
 		$cg_eb_price = '' ;
 		
 		//min
-		if( trim($cg_eb_min) != '' ) $cg_eb_price = $cg_eb_min;
+		if( wp_automatic_trim($cg_eb_min) != '' ) $cg_eb_price = $cg_eb_min;
 		
 		//max
-		if( trim($cg_eb_max) != '' ) $cg_eb_price .= '..' . $cg_eb_max;
+		if( wp_automatic_trim($cg_eb_max) != '' ) $cg_eb_price .= '..' . $cg_eb_max;
 		
 		//price:[10..50]
 		$filters_arr[] = 'price:[' . $cg_eb_price . '],priceCurrency:' . $cg_eb_currency ;
@@ -191,17 +191,17 @@ function ebay_fetch_items($keyword, $camp) {
 	
 	//currency
 	if(in_array('OPT_EB_CURRENCY' ,  $camp_opt )){
-		$cg_eb_currency_2 = trim($camp_general ['cg_eb_currency_2']);
+		$cg_eb_currency_2 = wp_automatic_trim($camp_general ['cg_eb_currency_2']);
 		$filters_arr[] = 'priceCurrency:' . $cg_eb_currency_2 ;
 	}
 	
 	//country
 	if(in_array('OPT_EB_COUNTRY' ,  $camp_opt )){
-		$cg_eb_country = trim($camp_general ['cg_eb_country']);
+		$cg_eb_country = wp_automatic_trim($camp_general ['cg_eb_country']);
 		$filters_arr[] = 'deliveryCountry:' . $cg_eb_country ;
 		
 		//cg_eb_postal
-		$cg_eb_postal =trim($camp_general ['cg_eb_postal']);
+		$cg_eb_postal =wp_automatic_trim($camp_general ['cg_eb_postal']);
 		
 		if($cg_eb_postal != '' ) $filters_arr[] = 'deliveryPostalCode:' . $cg_eb_postal ;
 	
@@ -210,17 +210,17 @@ function ebay_fetch_items($keyword, $camp) {
 	// price range filter=price:[10..50]
 	if (in_array ( 'OPT_EB_BID_COUNT', $camp_opt )   ) {
 		
-		$cg_eb_min_bid = trim( $camp_general ['cg_eb_min_bid']);
-		$cg_eb_max_bid = trim($camp_general ['cg_eb_max_bid']);
+		$cg_eb_min_bid = wp_automatic_trim( $camp_general ['cg_eb_min_bid']);
+		$cg_eb_max_bid = wp_automatic_trim($camp_general ['cg_eb_max_bid']);
 		
 		//range part
 		$cg_eb_bid_range = '' ;
 		
 		//min
-		if( trim($cg_eb_min_bid) != '' ) $cg_eb_bid_range = $cg_eb_min_bid;
+		if( wp_automatic_trim($cg_eb_min_bid) != '' ) $cg_eb_bid_range = $cg_eb_min_bid;
 		
 		//max
-		if( trim($cg_eb_max_bid) != '' ) $cg_eb_bid_range .= '..' . $cg_eb_max_bid;
+		if( wp_automatic_trim($cg_eb_max_bid) != '' ) $cg_eb_bid_range .= '..' . $cg_eb_max_bid;
 		
 		//price:[10..50]
 		$filters_arr[] = 'bidCount:[' . $cg_eb_bid_range . ']';
@@ -266,7 +266,7 @@ function ebay_fetch_items($keyword, $camp) {
 
 	// append params
 	if(in_array('OPT_EB_PARAM', $camp_opt)){
-		$elink.= trim($camp_general['cg_eb_param']);
+		$elink.= wp_automatic_trim($camp_general['cg_eb_param']);
 	}
 	
 	//affiliate affiliate.trackingId	
@@ -294,7 +294,7 @@ function ebay_fetch_items($keyword, $camp) {
 		$elink.= '&filter=' . implode(',', $filters_arr);
 	}
 	
-	$elink = str_replace('?&' , '?' , $elink );
+	$elink = wp_automatic_str_replace('?&' , '?' , $elink );
 	
 	
 	echo '<br>Link:' . $elink;
@@ -305,7 +305,7 @@ function ebay_fetch_items($keyword, $camp) {
 	$x = 'error';
 	$url = $elink;
 	curl_setopt ( $this->ch, CURLOPT_HTTPGET, 1 );
-	curl_setopt ( $this->ch, CURLOPT_URL, trim ( $url ) );
+	curl_setopt ( $this->ch, CURLOPT_URL, wp_automatic_trim( $url ) );
 	curl_setopt($this->ch,CURLOPT_HTTPHEADER, $headers_arr );
 	$exec = curl_exec ( $this->ch );
 	$x = curl_error ( $this->ch );
@@ -436,8 +436,8 @@ function ebay_fetch_items($keyword, $camp) {
 		
 		$itm ['item_end_date'] = '';
 		if(isset( $item_new->itemEndDate )){
-			$itm ['item_end_date'] = str_replace ( 'T', ' ', str_replace ( 'Z', ' ', $item_new->itemEndDate ) );
-			$itm ['item_end_date'] = trim(str_replace ( '.000', '', $itm ['item_end_date'] ));
+			$itm ['item_end_date'] =wp_automatic_str_replace( 'T', ' ',wp_automatic_str_replace( 'Z', ' ', $item_new->itemEndDate ) );
+			$itm ['item_end_date'] = wp_automatic_trim(str_replace ( '.000', '', $itm ['item_end_date'] ));
 		}
 		
 		 
@@ -497,12 +497,12 @@ function ebay_get_post($camp) {
 	// loop keywords
 	foreach ( $keywords as $keyword ) {
 			
-		$keyword = trim($keyword);
+		$keyword = wp_automatic_trim($keyword);
 			
-		if (trim ( $keyword ) != '') {
+		if (wp_automatic_trim( $keyword ) != '') {
 				
 			//update last keyword
-			update_post_meta($camp->camp_id, 'last_keyword', trim($keyword));
+			update_post_meta($camp->camp_id, 'last_keyword', wp_automatic_trim($keyword));
 
 			$this->used_keyword = $keyword;
 
@@ -593,14 +593,14 @@ function ebay_get_post($camp) {
 				$x='error';
 				$url=$the_link;
 				curl_setopt($this->ch, CURLOPT_HTTPGET, 1);
-				curl_setopt($this->ch, CURLOPT_URL, trim($the_link));
+				curl_setopt($this->ch, CURLOPT_URL, wp_automatic_trim($the_link));
 				curl_setopt($this->ch,CURLOPT_HTTPHEADER,array('Cookie: ebay=%5Ecv%3D15555%5Esbf%3D%23100000%5Ejs%3D1%5E' ));
 				$exec=$this->curl_exec_follow($this->ch);
 				$x=curl_error($this->ch);
 				
 				//dom
 				require_once 'inc/class.dom.php';
-				if(trim($exec) == ''){
+				if(wp_automatic_trim($exec) == ''){
 					echo '<br>Empty reply when loading the source page....' . $x;
 					$wpAutomaticDom = new wpAutomaticDom('<html></html>');
 				}else{
@@ -609,18 +609,19 @@ function ebay_get_post($camp) {
 				}
 				
 			 
-				
-					
+				 
 				  
 				// extract img ZOOM_GUID","URL":"https://i.ebayimg.com/images/g/-5sAAOSwRLlZo1fM/s-l500.jpg"
+				//"ZOOM_GUID","URL":"https://i.ebayimg.com/images/g/GSgAAOSw88BlQCSe/s-l500.png"
 				if(stristr($exec, 'ZOOM_GUID","URL":"')){
-					preg_match_all('{ZOOM_GUID","URL":"([^"]*?s-l500\.jpg)"}', $exec,$matches);
+ 
+					preg_match_all('{ZOOM_GUID","URL":"([^"]*?s-l500\.\w{3})"}', $exec,$matches);
 					 
 				}else{
 					//displayImgUrl":"
 					preg_match_all('{displayImgUrl":"(.*?)"}', $exec,$matches);
 				}
-					
+  				
 				$all_imgs = array_unique($matches[1]);
 				
 				$json_txt= implode('","', $all_imgs);
@@ -632,7 +633,7 @@ function ebay_get_post($camp) {
 				$img = $imgs_arr[0];
 				
 					
-				if (trim ( $img ) != '') {
+				if (wp_automatic_trim( $img ) != '') {
 					$data ['item_img'] = $img;
 				}
 					
@@ -664,26 +665,24 @@ function ebay_get_post($camp) {
 					//extract ebay site ext
 					$item_link=$data['item_link'] ;
  
-					if(trim($exec) != ''){
+					if(wp_automatic_trim($exec) != ''){
 						  	
 						//specification box
 						if(in_array('OPT_EB_FULL_DESC_SPEC', $camp_opt)){
 
 						
 							
-							$ret2 = $wpAutomaticDom->getContentByClass('x-about-this-item' , false);
-							
-							 
+							$ret2 = $wpAutomaticDom->getContentByClass('x-about-this-item-evo' , false);
 							$extract2='';
 								
 							foreach ($ret2 as $itm ) {
 								$extract2 = $extract2 . $itm ;
 							}
 								
-							if(trim($extract2) == ''){
-								  echo '<br>Nothing found to extract for x-about-this-item';
+							if(wp_automatic_trim($extract2) == ''){
+								  echo '<br>Nothing found to extract for x-about-this-item-evo';
 							}else{
-								  echo '<br>Rule x-about-this-item extracted ' . strlen($extract2) .' charchters ';
+								  echo '<br>Rule xx-about-this-item-evo extracted ' . strlen($extract2) .' charchters ';
 
 								$extract2 = preg_replace('{<span id="hiddenContent.*?span>}', '</td>', $extract2);
 								$extract2 = preg_replace('{<span id="readFull.*?span>}', '</td>', $extract2);
@@ -692,7 +691,7 @@ function ebay_get_post($camp) {
 								
 
 									
-								$extract2 = str_replace('50.0%', '30.0%', $extract2);
+								$extract2 = wp_automatic_str_replace('50.0%', '30.0%', $extract2);
 
 								$data['item_desc'] = $extract2.$data['item_desc'];
 									
@@ -710,7 +709,7 @@ function ebay_get_post($camp) {
 								$extract3 = $extract3 . $itm ;
 							}
 								
-							if(trim($extract3) == ''){
+							if(wp_automatic_trim($extract3) == ''){
 								  echo '<br>Nothing found to extract for item x-product-details';
 							}else{
 								  echo '<br>Rule x-product-details extracted ' . strlen($extract3) .' charchters ';
@@ -744,17 +743,17 @@ function ebay_get_post($camp) {
 									$extract = $extract . $itm ;
 								}
 
-								if(trim($extract) == ''){
+								if(wp_automatic_trim($extract) == ''){
 									  echo '<br>Nothing found to extract for desc_ifr';
 								}else{
 									  echo '<br>Rule desc_ifr extracted ' . strlen($extract) .' charchters ';
 
 
-									if ( trim( $camp_general['cg_eb_iframe_h'] ) == '' ){
+									if ( wp_automatic_trim( $camp_general['cg_eb_iframe_h'] ) == '' ){
 										$camp_general['cg_eb_iframe_h'] =  500;
 									}
 
-									$extract = str_replace('height="10000"', 'height="'.$camp_general['cg_eb_iframe_h'].'"', $extract);
+									$extract = wp_automatic_str_replace('height="10000"', 'height="'.$camp_general['cg_eb_iframe_h'].'"', $extract);
 										
 									$data['item_desc'] =$data['item_desc'].  $extract;
 										
@@ -798,7 +797,7 @@ function ebay_get_post($camp) {
  
 				}
 					
-				if(trim($data['item_end_date']) != '')
+				if(wp_automatic_trim($data['item_end_date']) != '')
 				$data['item_end_date'] = get_date_from_gmt($data['item_end_date']);
 				 
 					
@@ -806,9 +805,9 @@ function ebay_get_post($camp) {
 				$data['item_price'] = number_format($data['item_price'],2);
 				
 				//remove , from price
-				$data['item_price_numeric'] = str_replace(',','', $data['item_price'] );
+				$data['item_price_numeric'] = wp_automatic_str_replace(',','', $data['item_price'] );
 				
-				if( trim($data['item_bin']) != '' &&  is_float($data['item_bin']))
+				if( wp_automatic_trim($data['item_bin']) != '' &&  is_float($data['item_bin']))
 				$data['item_bin'] = number_format($data['item_bin'],2);
 			 
 				//seller
@@ -819,7 +818,7 @@ function ebay_get_post($camp) {
 				//<span class="ux-textspans ux-textspans--BOLD ux-textspans--SECONDARY"><!--F#f_7[0]-->Alicante, Spain<!--F/--><
 				preg_match('{ux-textspans ux-textspans--BOLD ux-textspans--SECONDARY"><!--.*?-->(.*?)<!--}', $exec,$loc_matches);
 				
-				if(isset( $loc_matches[1] ) && trim( $loc_matches[1]) != ''){
+				if(isset( $loc_matches[1] ) && wp_automatic_trim( $loc_matches[1]) != ''){
 					$data['item_location'] = $loc_matches[1];
 				}
 				
@@ -828,16 +827,16 @@ function ebay_get_post($camp) {
 				$data['item_ships_to'] = '';
 				preg_match('{text":"Ships to:".*?,"values".*?,"text":"(.*?)"}', $exec,$to_matches);
 				
-				if(isset( $to_matches[1] ) && trim( $to_matches[1]) != ''){
+				if(isset( $to_matches[1] ) && wp_automatic_trim( $to_matches[1]) != ''){
 					$data['item_ships_to'] = $to_matches[1];
 				}
  				
-				if(isset( $ships_to_arr[0] ) && trim( $ships_to_arr[0]) != ''){
-					$data['item_ships_to'] = trim(preg_replace( '{<span.*}s' , '' ,  $ships_to_arr[0] ) );
+				if(isset( $ships_to_arr[0] ) && wp_automatic_trim( $ships_to_arr[0]) != ''){
+					$data['item_ships_to'] = wp_automatic_trim(preg_replace( '{<span.*}s' , '' ,  $ships_to_arr[0] ) );
 				}
 				 
 				
-				$data['item_ships_to'] = trim(str_replace('|' , ' ' , $data['item_ships_to'] ) ) ;
+				$data['item_ships_to'] = wp_automatic_trim(wp_automatic_str_replace('|' , ' ' , $data['item_ships_to'] ) ) ;
 				
  				
 				//return policy "text":"Returns:"}]}],"values":[{"_type":"TextualDisplay","textSpans":[{"_type":"TextSpan","text":"30 days refund"}
@@ -845,7 +844,7 @@ function ebay_get_post($camp) {
 				preg_match('{text":"Returns:".*?,"text":"(.*?)"}', $exec,$re_matches);
 				 
 				
-				if(isset( $re_matches[1] ) && trim( $re_matches[1]) != ''){
+				if(isset( $re_matches[1] ) && wp_automatic_trim( $re_matches[1]) != ''){
 					$data['item_return_policy'] = $re_matches[1];
 				}
 			 	
@@ -855,7 +854,7 @@ function ebay_get_post($camp) {
 				$arr = array();
 				$arr = $wpAutomaticDom->getContentByClass( "sh-DlvryDtl" );
 				
-				if(isset( $arr[0] ) && trim( $arr[0]) != ''){
+				if(isset( $arr[0] ) && wp_automatic_trim( $arr[0]) != ''){
 					$data['item_shipping_start'] = $arr[0];
 				}
 				
@@ -870,12 +869,12 @@ function ebay_get_post($camp) {
 				$data['item_condition_desc'] = '' ;
 				preg_match('{conditionDetail":"(.*?)","}', $exec,$re_matches);
 				
-				if(isset( $re_matches[1] ) && trim( $re_matches[1]) != ''){
+				if(isset( $re_matches[1] ) && wp_automatic_trim( $re_matches[1]) != ''){
 					$data['item_condition_desc'] =wp_automatic_fix_json_part($re_matches[1]);
 				}
 				
 				//if item_marketing_price is empty set it to item_price
-				if(! isset($data['item_marketing_price']) || trim($data['item_marketing_price']) == '' ){
+				if(! isset($data['item_marketing_price']) || wp_automatic_trim($data['item_marketing_price']) == '' ){
 					$data['item_marketing_price'] = $data['item_price'];
 				}
 
@@ -1082,8 +1081,8 @@ function ebay_get_access_token(){
 		return get_option('wp_automatic_ebay_access_token','');
 	}
 	
-	$wp_automatic_ebay_app = trim(get_option('wp_automatic_ebay_app' , ''));
-	$wp_automatic_ebay_app_secret = trim(get_option('wp_automatic_ebay_app_secret', ''));
+	$wp_automatic_ebay_app = wp_automatic_trim(get_option('wp_automatic_ebay_app' , ''));
+	$wp_automatic_ebay_app_secret = wp_automatic_trim(get_option('wp_automatic_ebay_app_secret', ''));
 	
 	//empty app id or secret hint
 	if($wp_automatic_ebay_app == '' ||  $wp_automatic_ebay_app_secret == ''){
@@ -1111,7 +1110,7 @@ function ebay_get_access_token(){
 	
  
 	//verify returned access token 
-	if(trim($exec) == '' ){
+	if(wp_automatic_trim($exec) == '' ){
 		echo '<br>Empty reply from eBay API with a possible cURL error '.$x;
 		return false;
 	}
@@ -1124,7 +1123,7 @@ function ebay_get_access_token(){
 	$token_json = json_decode($exec);
 	$access_token = ($token_json->access_token);
 	
-	if(trim($access_token) == ''){
+	if(wp_automatic_trim($access_token) == ''){
 		echo '<br>Can not extract access token from JSON';
 		return false;
 	}

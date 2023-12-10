@@ -49,7 +49,7 @@ if ( !class_exists('Puc_v4p9_Autoloader', false) ):
 
 			if (strpos($className, $this->prefix) === 0) {
 				$path = substr($className, strlen($this->prefix));
-				$path = str_replace('_', '/', $path);
+				$path = wp_automatic_str_replace('_', '/', $path);
 				$path = $this->rootDir . $path . '.php';
 
 				if (file_exists($path)) {
