@@ -12,6 +12,8 @@ use ContentEgg\application\ModuleViewer;
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\Translator;
 
+use function ContentEgg\prnx;
+
 /**
  * ProductSearch class file
  *

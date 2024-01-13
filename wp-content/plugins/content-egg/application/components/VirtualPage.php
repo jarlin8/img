@@ -2,6 +2,7 @@
 
 namespace ContentEgg\application\components;
 
+use function ContentEgg\prnx;
 
 defined('\ABSPATH') || exit;
 
@@ -81,8 +82,13 @@ abstract class VirtualPage
 
 	protected function handleRequest($query_vars = array())
 	{
-		if (self::isRehubTheme())
-			\add_action('template_redirect', array($this, 'renderTemplate'));
+		if ($template = $this->getTemplate())
+		{
+			if (\locate_template(array($template)))
+				\add_action('template_redirect', array($this, 'renderTemplate'));
+		}
+
+		//if (self::isRehubTheme())
 
 		\add_filter('the_posts', array($this, 'createDummyPage'));
 	}
@@ -154,7 +160,6 @@ abstract class VirtualPage
 		$wp_query->is_attachment     = false;
 
 		self::$created = true;
-
 		return array($p);
 	}
 

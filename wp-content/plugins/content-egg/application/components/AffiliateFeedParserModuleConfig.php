@@ -19,7 +19,7 @@ abstract class AffiliateFeedParserModuleConfig extends AffiliateParserModuleConf
         $options = array_merge(parent::options(), array(
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Number of results for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -34,7 +34,7 @@ abstract class AffiliateFeedParserModuleConfig extends AffiliateParserModuleConf
             ),
             'entries_per_page_update' => array(
                 'title' => __('Results for updates', 'content-egg'),
-                'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 6,
                 'validator' => array(

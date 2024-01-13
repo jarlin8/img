@@ -30,6 +30,7 @@ class ContentProduct extends Content
 	public $logo;
 	public $domain;
 	public $rating;
+	public $ratingDecimal;
 	public $reviewsCount;
 	public $availability;
 	public $orig_url;
@@ -37,9 +38,13 @@ class ContentProduct extends Content
 	public $upc;
 	public $sku;
 	public $isbn;
+	public $short_description;
+	public $shipping_cost;
 	public $woo_sync;
 	public $woo_attr;
 	public $features = array();
+	public $images = array();
 	public $stock_status;
+	public $img_large;
 	public $group;
 }

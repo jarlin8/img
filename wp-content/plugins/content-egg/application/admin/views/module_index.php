@@ -23,14 +23,16 @@ function _cegg_print_module_item(array $modules)
     <div class="cegg-maincol">
     <?php endif; ?>
 
-
     <div class="wrap">
 
         <h2>
             <?php esc_html_e('Module Settings', 'content-egg'); ?>
-            <span class="egg-label egg-label-pro">pro <small>v<?php echo esc_html(\ContentEgg\application\Plugin::version()); ?></small></span>
-        </h2>
+            <span class="egg-label egg-label-pro"><?php if (\ContentEgg\application\Plugin::isPro()) : ?>pro <?php else : ?>free <?php endif; ?><small>v<?php echo esc_html(\ContentEgg\application\Plugin::version()); ?></small></span>
 
+            <?php if (!\ContentEgg\application\Plugin::isTooMuchNicheActive()) : ?>
+                <a class="egg-label-tmniche" style="color: #479f76;" href="https://www.keywordrush.com/toomuchniche?utm_source=cegg&utm_medium=referral&utm_campaign=plugin">Unlock AI Power</a>
+            <?php endif; ?>
+        </h2>
 
         <h2 class="nav-tab-wrapper">
             <a href="?page=content-egg-modules" class="nav-tab<?php if (!empty($_GET['page']) && sanitize_key(wp_unslash($_GET['page'])) == 'content-egg-modules') echo ' nav-tab-active'; ?>">

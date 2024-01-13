@@ -51,7 +51,7 @@ class UdemyConfig extends AffiliateParserModuleConfig
 			),
 			'deeplink'                     => array(
 				'title'       => 'Deeplink',
-				'description' => __('Set this parameter if you want to have commissions. Rakuten <a href="https://pubhelp.rakutenmarketing.com/hc/en-us/articles/201295755-Guide-to-Deep-Linking">Guide to Deep Linking</a>', 'content-egg'),
+				'description' => __('Set this parameter if you want to have commissions. Rakuten <a href="https://pubhelp.rakutenadvertising.com/hc/en-us/articles/360061257872-How-do-I-create-a-deep-link-">Guide to Deep Linking</a>', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => '',
 				'validator'   => array(
@@ -65,7 +65,7 @@ class UdemyConfig extends AffiliateParserModuleConfig
 			),
 			'entries_per_page'             => array(
 				'title'       => __('Results', 'content-egg'),
-				'description' => __('Number of results for one search query.', 'content-egg'),
+				'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 8,
 				'validator'   => array(
@@ -80,7 +80,7 @@ class UdemyConfig extends AffiliateParserModuleConfig
 			),
 			'entries_per_page_update'      => array(
 				'title'       => __('Results for updates and autoblogging', 'content-egg'),
-				'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+				'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
 				'callback'    => array($this, 'render_input'),
 				'default'     => 6,
 				'validator'   => array(

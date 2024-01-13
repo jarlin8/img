@@ -3,8 +3,10 @@
  * Name: Sorted offers list with store logos
  * Modules:
  * Module Types: PRODUCT
- * 
+ *
  */
+
+defined('\ABSPATH') || exit;
 
 __('Sorted offers list with store logos', 'content-egg-tpl');
 
@@ -71,9 +73,9 @@ $amazon_last_updated = TemplateHelper::getLastUpdateFormattedAmazon($data);
                             <?php endif; ?>
                         <?php endif; ?>
 
-                        <?php if ($item['module_id'] == 'Amazon' || $item['module_id'] == 'AmazonNoApi') : ?>
+                        <?php if ($item['price'] && ($item['module_id'] == 'Amazon' || $item['module_id'] == 'AmazonNoApi')) : ?>
                             <div class="cegg-font60 cegg-lineheight15">
-                                <?php echo esc_html(sprintf(TemplateHelper::__('as of %s'), TemplateHelper::dateFormatFromGmt($item['last_update']))); ?>
+                                <?php echo esc_html(sprintf(TemplateHelper::__('as of %s'), TemplateHelper::dateFormatFromGmtAmazon($item['module_id'], $item['last_update']))); ?>
                                 <?php TemplateHelper::printAmazonDisclaimer(); ?>
                             </div>
                         <?php endif; ?>

@@ -6,6 +6,8 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
+use function ContentEgg\prnx;
+
 /**
  * GNews class file
  *
@@ -115,7 +117,6 @@ class GNews extends RestClient
 			{
 				$result['img'] = $g['media']['@attributes']['url'];
 			}
-
 
 			$results[] = $result;
 		}

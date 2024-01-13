@@ -2,6 +2,8 @@
 
 namespace ContentEgg\application\libs;
 
+use function ContentEgg\prnx;
+
 defined('\ABSPATH') || exit;
 
 /**
@@ -14,9 +16,9 @@ defined('\ABSPATH') || exit;
  */
 class ParserClient
 {
-
 	protected $charset = 'utf-8';
 	protected $xpath;
+	protected $_html;
 	protected $url;
 	protected static $_httpClient = null;
 
@@ -53,8 +55,8 @@ class ParserClient
 		$_opts = array(
 			'sslverify'   => false,
 			'redirection' => 3,
-			'timeout'     => 10,
-			'user-agent'  => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:86.0) Gecko/20100101 Firefox/86.0',
+			'timeout'     => 60,
+			'user-agent'  => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0',
 		);
 		if ($opts)
 		{
@@ -91,18 +93,26 @@ class ParserClient
 
 	public function getXPath($url, $query = null)
 	{
-		return $xpath = new \DomXPath($this->getDom($url, $query));
+		return new \DomXPath($this->getDom($url, $query));
+	}
+
+	public function loadHtml($url, $query = null)
+	{
+		$this->_html = $this->restGet($url, $query);
+		if (!$this->_html)
+			throw new \Exception('Can\'t load HTML Document.');
 	}
 
 	public function getDom($url, $query = null)
 	{
-		$dom                     = new \DomDocument();
+		$dom = new \DomDocument();
 		$dom->preserveWhiteSpace = false;
 		libxml_use_internal_errors(true);
-		if (!$dom->loadHTML($this->restGet($url, $query)))
-		{
+
+		$this->loadHtml($url, $query);
+
+		if (!$dom->loadHTML($this->_html))
 			throw new \Exception('Can\'t load DOM Document.');
-		}
 
 		return $dom;
 	}
@@ -112,10 +122,10 @@ class ParserClient
 		$client = self::getHttpClient();
 		$client->resetParameters();
 		$client->setUri($uri);
+
 		if ($query)
-		{
 			$client->setParameterGet($query);
-		}
+
 		$body = $this->getResult($client->request('GET'));
 
 		return $this->decodeCharset($body);
@@ -141,20 +151,23 @@ class ParserClient
 		return \wp_remote_retrieve_body($response);
 	}
 
-	public function decodeCharset($str)
+	public function decodeCharset($str, $fix_encoding = true)
 	{
-		$encoding_hint = '<?xml encoding="UTF-8">';
+		$encoding_hint = '';
+		if ($fix_encoding)
+			$encoding_hint = '<?xml encoding="UTF-8">';
 
 		if (strtolower($this->charset) != 'utf-8')
 		{
-			$str = $encoding_hint . '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . $str;
-
-			return iconv($this->charset, 'utf-8', $str);
+			if ($fix_encoding)
+				$encoding_hint .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+			$str = $encoding_hint . $str;
+			$result = iconv($this->charset, 'UTF-8//TRANSLIT//IGNORE', $str);
 		}
 		else
-		{
-			return $encoding_hint . $str;
-		}
+			$result = $encoding_hint . $str;
+
+		return $result;
 	}
 
 	public function xpathScalar($path, $return_child = false)

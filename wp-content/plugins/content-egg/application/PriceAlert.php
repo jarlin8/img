@@ -99,7 +99,6 @@ class PriceAlert
         if ($price >= $current['price'])
             $this->jsonError(__('The price has already been reached.', 'content-egg-tpl'));
 
-        // dublicate?
         $where = array(
             'unique_id = %s AND module_id = %s AND email = %s AND status != %d',
             array($unique_id, $module_id, $email, PriceAlertModel::STATUS_DELETED)

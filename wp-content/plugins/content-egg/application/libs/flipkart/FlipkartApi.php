@@ -6,6 +6,8 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
+use function ContentEgg\prnx;
+
 /**
  * FlipkartApi class file
  *
@@ -20,7 +22,7 @@ require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATO
 
 class FlipkartApi extends RestClient
 {
-	protected static $timeout = 30; //sec
+	protected static $timeout = 60; //sec
 
 	const API_URI_BASE = 'https://affiliate-api.flipkart.net/affiliate/1.0';
 

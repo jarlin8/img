@@ -273,6 +273,7 @@ class LManager
 
     public function displayLicenseMismatchNotice()
     {
+        return;
         $this->addInlineCss();
         echo '<div class="notice notice-error egg-notice"><p>';
         echo '<img src=" ' . \ContentEgg\PLUGIN_RES . '/img/logo.png' . '" width="40" />';
@@ -284,6 +285,7 @@ class LManager
 
     public function displayCheckAgainButton()
     {
+        return;
         echo '<form style="display: inline;" action=" ' . \get_admin_url(\get_current_blog_id(), 'admin.php?page=content-egg-lic') . '" method="POST">';
         echo '<input type="hidden" name="cegg_cmd" id="cegg_cmd" value="refresh" />';
         echo '<input type="hidden" name="nonce_refresh" value="' . \esc_attr(\wp_create_nonce('license_refresh')) . '"/>';
@@ -378,7 +380,7 @@ class LManager
 
     public static function isNulled()
     {
-       return false;
+        return false;
     }
 
     public static function isValidLicFormat($value)
@@ -406,6 +408,7 @@ class LManager
 
     public static function deactivateLic()
     {
+        return;
         \update_option(Plugin::slug . '_nulled_key', LicConfig::getInstance()->option('license_key'));
         \update_option(Plugin::slug . '_nulled_deactiv_date', time());
         \delete_option(LicConfig::getInstance()->option_name());

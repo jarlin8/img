@@ -16,11 +16,13 @@ use ContentEgg\application\libs\amazon\AmazonLocales;
  */
 class AmazonNoApiConfig extends AffiliateParserModuleConfig
 {
-
-    const ALLOWED_LOCALES = array('us', 'ca', 'de', 'es', 'fr', 'in', 'it', 'uk');
-
     public function options()
     {
+        $parent = parent::options();
+        $parent['ttl_items']['title'] .= '**';
+        $parent['ttl_items']['default'] = 0;
+        $parent['ttl_items']['description'] .= '<br><br><em>'  . sprintf(__('Please be aware that frequently updating prices for the NoAPI module can be challenging. For more detailed information on this matter, please refer to our <a target="_blanl" href="%s">guidelines</a>.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/affiliate/amazon-no-api-module') . '</em>';
+
         $options = array(
             'associate_tag' => array(
                 'title' => __('Default Associate Tag', 'content-egg') . ' <span class="cegg_required">*</span>',
@@ -45,11 +47,55 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
                 'default' => self::getDefaultLocale(),
                 'section' => 'default',
             ),
+            'hide_prices' => array(
+                'title' => __('Prices' . '**', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'hide' => __('Hide prices', 'content-egg'),
+                    'display' => __('Display prices', 'content-egg'),
+                ),
+                'default' => self::getHidePricesDefault(),
+            ),
+        );
+
+        $options['ttl_items'] = $parent['ttl_items'];
+        unset($parent['ttl_items']);
+
+        $options = array_merge($options, array(
+
+            'scraperapi_token' => array(
+                'title' => __('Scraperapi API key' . '**', 'content-egg'),
+                'description' => sprintf(__('Your <a target="_blanl" href="%s">scraperapi.com</a> token.', 'content-egg'), 'https://www.keywordrush.com/go/scraperapi')
+                    . '<br><br><em>' . __('If Amazon has blocked your server IP, you can activate one of the scraping services to bypass this issue.', 'content-egg') . '</em>',
+                'callback' => array($this, 'render_password'),
+                'default' => '',
+                'validator' => array(
+                    'trim',
+                ),
+            ),
+            'proxycrawl_token' => array(
+                'title' => __('Crawlbase token' . '**', 'content-egg'),
+                'description' => __('Your crawlbase.com token.', 'content-egg'),
+                'callback' => array($this, 'render_password'),
+                'default' => '',
+                'validator' => array(
+                    'trim',
+                ),
+            ),
+            'scrapingdog_token' => array(
+                'title' => __('Scrapingdog API key' . '**', 'content-egg'),
+                'description' => __('Your scrapingdog.com token.', 'content-egg'),
+                'callback' => array($this, 'render_password'),
+                'default' => '',
+                'validator' => array(
+                    'trim',
+                ),
+            ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Number of results for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
-                'default' => 10,
+                'default' => 3,
                 'validator' => array(
                     'trim',
                     'absint',
@@ -63,9 +109,9 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
             ),
             'entries_per_page_update' => array(
                 'title' => __('Results for updates', 'content-egg'),
-                'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
-                'default' => 10,
+                'default' => 3,
                 'validator' => array(
                     'trim',
                     'absint',
@@ -116,13 +162,12 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
                 ),
                 'default' => 'true',
             ),
-        );
+        ));
 
         foreach (self::getLocalesList() as $locale_id => $locale_name)
         {
             $options['associate_tag_' . $locale_id] = array(
                 'title' => sprintf(__('Associate Tag for %s locale', 'content-egg'), $locale_name),
-                'description' => __('Type here your tracking ID for this locale if you need multiple locale parsing', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
@@ -131,8 +176,6 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
             );
         }
 
-        $parent = parent::options();
-        $parent['ttl_items']['default'] = 86400;
         $options = array_merge($parent, $options);
 
         return self::moveRequiredUp($options);
@@ -181,6 +224,11 @@ class AmazonNoApiConfig extends AffiliateParserModuleConfig
 
     public static function locales()
     {
-        return array_intersect_key(AmazonLocales::locales(), array_flip(self::ALLOWED_LOCALES));
+        return AmazonLocales::locales();
+    }
+
+    public static function getHidePricesDefault()
+    {
+        return 'hide';
     }
 }

@@ -16,6 +16,7 @@ use ContentEgg\application\components\ExtraData;
  */
 class ExtraDataShopee extends ExtraData
 {
+	public $shopId;
 	public $locale;
 	public $commissionRate;
 	public $appExistRate;
@@ -28,4 +29,5 @@ class ExtraDataShopee extends ExtraData
 	public $offerLink;
 	public $periodStartTime;
 	public $periodEndTime;
+	public $productLink;
 }

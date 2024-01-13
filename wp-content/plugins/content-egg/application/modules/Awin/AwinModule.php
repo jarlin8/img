@@ -96,14 +96,22 @@ class AwinModule extends AffiliateFeedParserModule
         $product['price'] = (float) $data['search_price'];
         $product['title'] = \sanitize_text_field($data['product_name']);
         $product['orig_url'] = $data['merchant_deep_link'];
-        if (TextHelper::isEan($data['ean']))
+        $product['ean'] = '';
+
+        if ($data['ean'])
         {
-            $product['ean'] = $data['ean'];
+            $ean = TextHelper::fixEan($data['ean']);
+            if (TextHelper::isEan($ean))
+                $product['ean'] = $ean;
         }
-        else
+
+        if ($data['product_GTIN'])
         {
-            $product['ean'] = '';
+            $ean = TextHelper::fixEan($data['product_GTIN']);
+            if (TextHelper::isEan($ean))
+                $product['ean'] = $ean;
         }
+
         $product['product'] = serialize($data);
 
         return $product;
@@ -124,7 +132,7 @@ class AwinModule extends AffiliateFeedParserModule
 
         if (TextHelper::isEan($keyword))
         {
-            $results = $this->product_model->searchByEan($keyword, $limit);
+            $results = $this->product_model->searchByEan(TextHelper::fixEan($keyword), $limit);
         }
         elseif (filter_var($keyword, FILTER_VALIDATE_URL))
         {
@@ -280,7 +288,7 @@ class AwinModule extends AffiliateFeedParserModule
         }
 
         $default_params = array(
-            'columns' => 'aw_deep_link,product_name,aw_product_id,merchant_product_id,merchant_image_url,description,merchant_category,search_price,merchant_name,merchant_id,category_name,category_id,aw_image_url,currency,store_price,delivery_cost,merchant_deep_link,language,last_updated,reviews,average_rating,rating,number_available,in_stock,stock_quantity,valid_from,valid_to,is_for_sale,web_offer,pre_order,base_price_amount,product_price_old,base_price,ean,brand_name',
+            'columns' => 'aw_deep_link,product_name,aw_product_id,merchant_product_id,merchant_image_url,description,merchant_category,search_price,merchant_name,merchant_id,category_name,category_id,aw_image_url,currency,store_price,delivery_cost,merchant_deep_link,language,last_updated,reviews,average_rating,rating,number_available,in_stock,stock_quantity,valid_from,valid_to,is_for_sale,web_offer,pre_order,base_price_amount,product_price_old,base_price,ean,brand_name,product_GTIN',
             'format' => 'csv',
             'delimiter' => '%2C',
             'compression' => 'zip',

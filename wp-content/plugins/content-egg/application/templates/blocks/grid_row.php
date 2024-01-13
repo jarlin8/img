@@ -2,11 +2,22 @@
 defined('\ABSPATH') || exit;
 
 use ContentEgg\application\helpers\TemplateHelper;
+
 ?>
-<div class="col-md-<?php echo esc_attr($col_size); ?> col-xs-6 cegg-gridbox">
+
+<?php
+
+if (isset($cols) && $cols == 3)
+    $col_size_xs = 12;
+else
+    $col_size_xs = 6;
+
+?>
+
+<div class="col-md-<?php echo esc_attr($col_size); ?> col-xs-<?php echo esc_attr($col_size_xs); ?> cegg-gridbox">
     <a<?php TemplateHelper::printRel(); ?> target="_blank" href="<?php echo esc_url_raw($item['url']); ?>">
 
-        <div class="cegg-thumb">
+        <div class="cegg-thumb" style="padding: 5px;">
             <?php if ($item['percentageSaved']) : ?>
                 <div class="cegg-promotion">
                     <span class="cegg-discount">- <?php echo esc_html($item['percentageSaved']); ?>%</span>
@@ -14,14 +25,16 @@ use ContentEgg\application\helpers\TemplateHelper;
             <?php endif; ?>
 
             <?php if ($item['img']) : ?>
-                <?php TemplateHelper::displayImage($item, 190, 170); ?>
+                <div <?php if ($cols > 2) echo 'class="cegg-image-square"'; ?>>
+                    <?php TemplateHelper::displayImage($item, 190, 170); ?>
+                </div>
             <?php endif; ?>
         </div>
 
-        <div class="producttitle">
+        <div class="producttitle" style="min-height: 90px;">
             <?php if ($merchant = TemplateHelper::getMerhantName($item)) : ?>
                 <div class="cegg-mb10">
-                    <small class="text-muted title-case"><?php echo \esc_html($merchant); ?></small>
+                    <span class="text-muted title-case"><?php echo \esc_html($merchant); ?></span>
                 </div>
             <?php endif; ?>
 

@@ -25,6 +25,11 @@ class DaisyconModule extends AffiliateFeedParserModule
 
     private $api_client = null;
 
+    public function isDeprecated()
+    {
+        return true;
+    }
+
     public function info()
     {
         return array(
@@ -272,7 +277,6 @@ class DaisyconModule extends AffiliateFeedParserModule
             {
                 $content->currencyCode = 'USD';
             }
-
 
             $data[] = $content;
         }

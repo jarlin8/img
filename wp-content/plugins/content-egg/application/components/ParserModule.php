@@ -198,8 +198,6 @@ abstract class ParserModule extends Module
         }
     }
 
-
-
     public function doMultipleRequests($keyword, $query_params = array(), $is_autoupdate = false)
     {
         list($keywords, $groups) = ContentManager::prepareMultipleKeywords($keyword);

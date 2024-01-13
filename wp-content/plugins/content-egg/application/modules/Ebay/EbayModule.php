@@ -13,6 +13,9 @@ use ContentEgg\application\components\ExtraData;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\helpers\TemplateHelper;
+use ContentEgg\application\Plugin;
+
+use function ContentEgg\prnx;
 
 /**
  * EbayModule class file
@@ -29,7 +32,7 @@ class EbayModule extends AffiliateParserModule
 
     public function info()
     {
-        if (\is_admin())
+        if (\is_admin() && !Plugin::isFree())
         {
             \add_action('admin_notices', array(__CLASS__, 'updateNotice'));
         }
@@ -331,7 +334,6 @@ class EbayModule extends AffiliateParserModule
             $filter['value'] = gmstrftime("%Y-%m-%dT%H:%M:%SZ", time() + 600);
             $options['itemFilter'][] = $filter;
 
-
             $filter['name'] = 'EndTimeTo';
             $filter['value'] = gmstrftime("%Y-%m-%dT%H:%M:%SZ", time() + $this->config('end_time_to'));
             $options['itemFilter'][] = $filter;
@@ -541,6 +543,7 @@ class EbayModule extends AffiliateParserModule
                 $img = str_replace('/m/', '/d/l225/m/', $img);
                 $content->img = $img;
             }
+
             $content->img = str_replace('http://', 'https://', $content->img);
 
             if (isset($r['primaryCategory']))

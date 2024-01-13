@@ -53,7 +53,7 @@ class GoogleNewsModule extends ParserModule
 			$gn      = new GNews;
 			$results = $gn->search($keyword, $params, (int) $entries_per_page);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			throw new \Exception(strip_tags($e->getMessage()));
 		}

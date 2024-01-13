@@ -6,7 +6,7 @@ namespace ContentEgg;
   Plugin Name: Content Egg Pro
   Plugin URI: https://www.keywordrush.com/contentegg
   Description: All in one solution for creating affiliate websites.
-  Version: 11.7.0
+  Version: 12.5.0
   Author: keywordrush.com
   Author URI: https://www.keywordrush.com
   Text Domain: content-egg
@@ -30,8 +30,8 @@ require_once PLUGIN_PATH . 'loader.php';
 \add_action('plugins_loaded', array('\ContentEgg\application\Plugin', 'getInstance'));
 if (\is_admin())
 {
-    \register_activation_hook(__FILE__, array(\ContentEgg\application\Installer::getInstance(), 'activate'));
-    \register_deactivation_hook(__FILE__, array(\ContentEgg\application\Installer::getInstance(), 'deactivate'));
-    \register_uninstall_hook(__FILE__, array('\ContentEgg\application\Installer', 'uninstall'));
-    \add_action('init', array('\ContentEgg\application\admin\PluginAdmin', 'getInstance'));
+  \register_activation_hook(__FILE__, array(\ContentEgg\application\Installer::getInstance(), 'activate'));
+  \register_deactivation_hook(__FILE__, array(\ContentEgg\application\Installer::getInstance(), 'deactivate'));
+  \register_uninstall_hook(__FILE__, array('\ContentEgg\application\Installer', 'uninstall'));
+  \add_action('init', array('\ContentEgg\application\admin\PluginAdmin', 'getInstance'));
 }

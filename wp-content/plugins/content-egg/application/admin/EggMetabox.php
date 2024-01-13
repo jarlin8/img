@@ -38,7 +38,7 @@ class EggMetabox
 
     private function addAppParam($param, $value)
     {
-        $this->app_params[$param] = $value;
+        $this->app_params[$param] = \apply_filters('content_egg_add_app_param', $value, $param);
     }
 
     private function getAppParams()
@@ -126,7 +126,7 @@ class EggMetabox
         {
             $post_meta = ContentManager::getData($post->ID, $module->getId());
 
-            if (!$post_meta)
+            if (!$post_meta || !is_array($post_meta))
                 continue;
             foreach ($post_meta as $key => $meta)
             {
@@ -203,9 +203,10 @@ class EggMetabox
 
         // Angular core
         \wp_enqueue_script('angularjs', \ContentEgg\PLUGIN_RES . '/app/vendor/angular.min.js', array('jquery'), null);
+        \wp_enqueue_script('angularjs-sanitize', \ContentEgg\PLUGIN_RES . '/app/vendor/angular-sanitize.js', array('angularjs'), null, false);
 
         // ContentEgg angular application
-        \wp_enqueue_style('contentegg-admin', \ContentEgg\PLUGIN_RES . '/css/admin.css');
+        \wp_enqueue_style('contentegg-admin', \ContentEgg\PLUGIN_RES . '/css/admin.css?11');
         \wp_enqueue_script('angular-ui-bootstrap', \ContentEgg\PLUGIN_RES . '/app/vendor/angular-ui-bootstrap/ui-bootstrap-tpls-2.5.0.min.js', array('angularjs'), Plugin::version);
 
         \wp_enqueue_script('angular-sortable', \ContentEgg\PLUGIN_RES . '/app/vendor/angular-sortable.js', array('angularjs', 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-mouse', 'jquery-ui-sortable'), Plugin::version);
@@ -260,7 +261,7 @@ class EggMetabox
         $keywords = array();
         if (isset($_POST['cegg_updateKeywords']))
         {
-            $keywords = array_map('sanitize_text_field', wp_unslash($_POST['cegg_updateKeywords']));
+            $keywords = array_map(array('ContentEgg\application\components\ContentManager', 'sanitizeKeyword'), wp_unslash($_POST['cegg_updateKeywords']));
         }
 
         $update_params = array();
@@ -278,7 +279,7 @@ class EggMetabox
             if (!$module->isAffiliateParser())
                 continue;
 
-            $keyword = \sanitize_text_field($keyword);
+            $keyword = ContentManager::sanitizeKeyword($keyword);
             if ($keyword)
             {
                 \update_post_meta($post_id, ContentManager::META_PREFIX_KEYWORD . $module_id, $keyword);
@@ -292,6 +293,14 @@ class EggMetabox
                 \delete_post_meta($post_id, ContentManager::META_PREFIX_KEYWORD . $module_id);
                 \delete_post_meta($post_id, ContentManager::META_PREFIX_UPDATE_PARAMS . $module_id);
             }
+        }
+
+        if (isset($_POST['globalUpdateKeyword']))
+        {
+            if ($global_keyword = \sanitize_text_field(\wp_unslash($_POST['globalUpdateKeyword'])))
+                \update_post_meta($post_id, '_cegg_global_autoupdate_keyword', $global_keyword);
+            else
+                \delete_post_meta($post_id, '_cegg_global_autoupdate_keyword');
         }
 
         // save content data
@@ -346,14 +355,15 @@ class EggMetabox
         if (!\current_user_can('edit_posts'))
             \wp_die('You don\'t have access to this page.');
 
-        $post_id = isset($_POST['post_id']) ? intval(wp_unslash($_POST['post_id'])) : null;
+        $post_id = isset($_POST['post_id']) ? intval(\wp_unslash($_POST['post_id'])) : null;
 
         if (!$post_id)
             \wp_die('Invalid post ID');
 
         @set_time_limit(60);
 
-        $action = isset($_POST['btn']) ? TextHelper::clear(sanitize_text_field(wp_unslash($_POST['btn']))) : null;
+        $action = isset($_POST['btn']) ? TextHelper::clear(\sanitize_text_field(\wp_unslash($_POST['btn']))) : null;
+
         if ($action == 'cegg_update_lists')
             self::updateByKeyword($post_id);
         elseif ($action == 'cegg_update_prices')
@@ -366,6 +376,7 @@ class EggMetabox
 
     private function updateByKeyword($post_id)
     {
+        @set_time_limit(180);
         ContentManager::updateAllByKeyword($post_id);
     }
 

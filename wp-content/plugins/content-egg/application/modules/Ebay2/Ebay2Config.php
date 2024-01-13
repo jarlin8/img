@@ -37,7 +37,7 @@ class Ebay2Config extends AffiliateParserModuleConfig
             'cert_id' => array(
                 'title' => 'Cert ID (Client Secret) <span class="cegg_required">*</span>',
                 'description' => __("Your application's OAuth credentials.", 'content-egg') . ' ' . sprintf(__('You can get it in <a target="_blank" href="%s">eBay Developers Program</a>.', 'content-egg'), 'http://developer.ebay.com/join'),
-                'callback' => array($this, 'render_input'),
+                'callback' => array($this, 'render_password'),
                 'default' => '',
                 'validator' => array(
                     'trim',
@@ -87,7 +87,7 @@ class Ebay2Config extends AffiliateParserModuleConfig
             ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Number of results for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -102,7 +102,7 @@ class Ebay2Config extends AffiliateParserModuleConfig
             ),
             'entries_per_page_update' => array(
                 'title' => __('Results for updates and autoblogging', 'content-egg'),
-                'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 9,
                 'validator' => array(
@@ -315,10 +315,20 @@ class Ebay2Config extends AffiliateParserModuleConfig
                 'description' => '',
                 'callback' => array($this, 'render_dropdown'),
                 'dropdown_options' => array(
-                    'small' => __('Small', 'content-egg'),
+                    'small' => __('Medium', 'content-egg'),
                     'large' => __('Large', 'content-egg'),
                 ),
-                'default' => 'large',
+                'default' => 'small',
+            ),
+            'merchant_name' => array(
+                'title' => __('Merchant name', 'content-egg'),
+                'description' => '',
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'ebay' => __('Show as eBay', 'content-egg'),
+                    'seller' => __('Show seller name', 'content-egg'),
+                ),
+                'default' => 'ebay',
             ),
         );
         $parent = parent::options();

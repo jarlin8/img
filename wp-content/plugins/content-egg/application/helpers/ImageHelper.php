@@ -22,7 +22,6 @@ class ImageHelper
 	public static function saveImgLocaly($img_uri, $title = '', $check_image_type = true)
 	{
 		$newfilename = TextHelper::truncate($title);
-		$newfilename = TextHelper::rus2latin($newfilename);
 		$newfilename = preg_replace('/[^a-zA-Z0-9\-]/', '', $newfilename);
 		$newfilename = strtolower($newfilename);
 		if (!$newfilename)
@@ -129,7 +128,7 @@ class ImageHelper
 			return false;
 		}
 		$image_type = $a[2];
-		if (in_array($image_type, array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP)))
+		if (in_array($image_type, array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WEBP)))
 		{
 			return true;
 		}

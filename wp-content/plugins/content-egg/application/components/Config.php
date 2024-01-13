@@ -2,6 +2,8 @@
 
 namespace ContentEgg\application\components;
 
+use function ContentEgg\prnx;
+
 defined('\ABSPATH') || exit;
 
 /**
@@ -45,6 +47,7 @@ abstract class Config
     protected function __construct()
     {
         $values = \get_option($this->option_name());
+
         // prevent call validators twice for first time. Settings API bug?
         if ($values === false)
         {
@@ -53,7 +56,17 @@ abstract class Config
 
         $this->option_name = $this->option_name();
         $this->options = $this->options();
-        $this->option_values = $values;
+
+        if ($values)
+            $this->option_values = $values;
+        else
+        {
+            foreach ($this->options as $key => $option)
+            {
+                $this->option_values[$key] = $this->get_default($key);
+            }
+        }
+
         $this->page_slug = $this->page_slug();
     }
 

@@ -99,7 +99,7 @@ class PluginAdmin
             'sitelang' => GeneralConfig::getInstance()->option('lang'),
         ));
 
-        \wp_enqueue_style('contentegg-admin', \ContentEgg\PLUGIN_RES . '/css/admin.css', null, '' . Plugin::version());
+        \wp_enqueue_style('contentegg-admin', \ContentEgg\PLUGIN_RES . '/css/admin.css', null, '' . Plugin::version() . '');
     }
 
     public function add_plugin_row_meta(array $links, $file)

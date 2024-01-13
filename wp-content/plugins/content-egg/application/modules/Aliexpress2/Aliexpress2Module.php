@@ -114,11 +114,10 @@ class Aliexpress2Module extends AffiliateParserModule
             $options['category_id'] = $category_id;
         }
 
-        /*
-          if ($ship_to_country = $this->config('ship_to_country'))
-          $options['ship_to_country'] = $ship_to_country;
-         *
-         */
+        if ($ship_to_country = $this->config('ship_to_country'))
+        {
+            $options['ship_to_country'] = $ship_to_country;
+        }
 
         if ($sort = $this->config('sort'))
         {

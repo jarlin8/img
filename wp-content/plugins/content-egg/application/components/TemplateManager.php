@@ -7,6 +7,7 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\helpers\TemplateHelper;
+use ContentEgg\application\Plugin;
 
 /**
  * TemplateManager class file
@@ -283,27 +284,19 @@ abstract class TemplateManager
     public function enqueueProductsStyle()
     {
         if (self::$product_style_enqueued)
-        {
             return;
-        }
 
         \wp_enqueue_style('egg-bootstrap');
         \wp_enqueue_style('egg-products');
 
         if (GeneralConfig::isShopInfoAvailable())
-        {
             \wp_enqueue_script('bootstrap-popover');
-        }
 
         if (!$background = \wp_strip_all_tags(GeneralConfig::getInstance()->option('button_color')))
-        {
             $background = '#dc3545';
-        }
 
         if (!$price_color = \wp_strip_all_tags(GeneralConfig::getInstance()->option('price_color')))
-        {
             $price_color = '#dc3545';
-        }
 
         $border = TemplateHelper::adjustBrightness($background, -0.05);
         $background_hover = TemplateHelper::adjustBrightness($background, -0.15);

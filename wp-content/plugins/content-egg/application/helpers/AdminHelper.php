@@ -7,6 +7,8 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\components\ModuleManager;
 
+use function ContentEgg\prnx;
+
 /**
  * AdminHelper class file
  *
@@ -123,6 +125,7 @@ class AdminHelper
 	{
 		$modules = ModuleManager::getInstance()->getConfigurableModules();
 		$results = array();
+
 		foreach ($modules as $module)
 		{
 			if ($module->isDeprecated() && !$module->isActive())

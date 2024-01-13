@@ -125,8 +125,13 @@ class TradedoublerProductsModule extends AffiliateParserModule
 
 			if ($r['productImage']['url'])
 			{
-				$imgs         = explode(',', $r['productImage']['url']);
-				$content->img = $imgs[0];
+				if (\apply_filters('cegg_tradedoublerproducts_split_image', true))
+				{
+					$imgs = explode(',', $r['productImage']['url']);
+					$content->img = $imgs[0];
+				}
+				else
+					$content->img = $r['productImage']['url'];
 			}
 
 			if (isset($r['offers'][0]['id']))

@@ -1,12 +1,14 @@
 <?php defined('\ABSPATH') || exit; ?>
-
 <?php if (\ContentEgg\application\Plugin::isFree() || \ContentEgg\application\Plugin::isInactiveEnvato()) : ?>
     <div class="cegg-maincol">
     <?php endif; ?>
     <div class="wrap">
         <h2>
             <?php esc_html_e('Module Settings', 'content-egg'); ?>
-            <span class="egg-label egg-label-pro">pro <small>v<?php echo esc_html(\ContentEgg\application\Plugin::version()); ?></small></span>
+            <span class="egg-label egg-label-pro"><?php if (\ContentEgg\application\Plugin::isPro()) : ?>pro <?php else : ?>free <?php endif; ?> <small>v<?php echo esc_html(\ContentEgg\application\Plugin::version()); ?></small></span>
+            <?php if (!\ContentEgg\application\Plugin::isTooMuchNicheActive()) : ?>
+                <a class="egg-label-tmniche" style="color: #479f76;" href="https://www.keywordrush.com/toomuchniche?utm_source=cegg&utm_medium=referral&utm_campaign=plugin">Unlock AI Power</a>
+            <?php endif; ?>
         </h2>
 
         <h2 class="nav-tab-wrapper">
@@ -46,11 +48,20 @@
                             <?php esc_html_e('Please', 'content-egg'); ?> <a target="_blank" href="https://ce-docs.keywordrush.com/modules/affiliate/amazon#why-amazon-module-is-not-available-in-ce-free-version"><?php esc_html_e('read more...', 'content-egg'); ?></a>
                         <?php endif; ?>
 
-                        <?php if ($module->getId() != 'Amazon') : ?>
+                        <?php if ($module->getId() != 'Amazon' && $module->getId() != 'AmazonNoApi') : ?>
                             <strong>
                                 <?php esc_html_e('WARNING:', 'content-egg'); ?>
                                 <?php esc_html_e('This module is deprecated', 'content-egg'); ?>
                                 (<a target="_blank" href="<?php echo esc_url_raw(\ContentEgg\application\Plugin::pluginDocsUrl()); ?>/modules/deprecatedmodules"><?php esc_html_e('what does this mean', 'content-egg'); ?></a>).
+                            </strong>
+                        <?php endif; ?>
+
+                        <?php if ($module->getId() == 'AmazonNoApi') : ?>
+                            <strong>
+                                <?php esc_html_e('WARNING:', 'content-egg'); ?>
+
+                                The AmazonNoAPI module is currently not fully operational. We are actively seeking solutions. For more information, please visit <a target="_blank" href="https://ce-docs.keywordrush.com/modules/affiliate/amazon-no-api-module">this links</a>.
+
                             </strong>
                         <?php endif; ?>
                     </div>
@@ -118,9 +129,7 @@
             </div>
         </div>
 
-
     </div>
-
 
     <?php if (\ContentEgg\application\Plugin::isFree() || \ContentEgg\application\Plugin::isInactiveEnvato()) : ?>
     </div>

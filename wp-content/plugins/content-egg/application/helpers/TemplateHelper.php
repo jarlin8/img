@@ -8,12 +8,14 @@ use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\models\PriceHistoryModel;
 use ContentEgg\application\helpers\ArrayHelper;
 use ContentEgg\application\admin\GeneralConfig;
-use ContentEgg\application\components\Content;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\libs\amazon\AmazonLocales;
 use ContentEgg\application\Translator;
+
+use function ContentEgg\prn;
+use function ContentEgg\prnx;
 
 /**
  * TemplateHelper class file
@@ -35,6 +37,7 @@ class TemplateHelper
     static $global_id = 0;
     static $logos = null;
     static $shop_info = null;
+    static $shop_coupons = null;
     static $merchnat_info = null;
 
     public static function formatPriceCurrency($price, $currencyCode, $before_symbol = '', $after_symbol = '')
@@ -255,6 +258,18 @@ class TemplateHelper
         return $res;
     }
 
+    public static function dateFormatFromGmtAmazon($module_id, $timestamp, $time = true)
+    {
+        if ($module_id == 'AmazonNoApi')
+        {
+            $module = ModuleManager::factory($module_id);
+            if ($module->config('hide_prices') == 'hide')
+                return '';
+        }
+
+        return self::dateFormatFromGmt($timestamp, $time);
+    }
+
     public static function dateFormatFromGmt($timestamp, $time = true)
     {
         $format = \get_option('date_format');
@@ -277,6 +292,10 @@ class TemplateHelper
         }
         elseif (isset($data['AmazonNoApi']))
         {
+            $module = ModuleManager::factory('AmazonNoApi');
+            if ($module->config('hide_prices') == 'hide')
+                return '';
+
             $item = current($data['AmazonNoApi']);
         }
         else
@@ -296,6 +315,13 @@ class TemplateHelper
 
     public static function getLastUpdateFormatted($module_id, $post_id = null, $time = true)
     {
+        if ($module_id == 'AmazonNoApi')
+        {
+            $module = ModuleManager::factory('AmazonNoApi');
+            if ($module->config('hide_prices') == 'hide')
+                return '';
+        }
+
         if (!$post_id || $post_id === true) // $post_id === true - fix func params...
         {
             global $post;
@@ -418,22 +444,17 @@ class TemplateHelper
         $params = array(
             'select' => 'date(create_date) as date, price as price',
             'where' => $where . ' AND TIMESTAMPDIFF( DAY, create_date, "' . \current_time('mysql') . '") <= ' . $days,
-            //'group' => 'date',
             'order' => 'date ASC'
         );
         $results = PriceHistoryModel::model()->findAll($params);
         $results = array_reverse($results);
         $prices = array();
-        /**
-         * php fix for selecting non-aggregate columns
-         * @see: https://stackoverflow.com/questions/1066453/mysql-group-by-and-order-by
-         */
+
         foreach ($results as $key => $r)
         {
             if ($key > 0 && $results[$key - 1]['date'] == $r['date'])
-            {
                 continue;
-            }
+
             $price = array(
                 'date' => $r['date'],
                 'price' => $r['price'],
@@ -441,15 +462,27 @@ class TemplateHelper
             $prices[] = $price;
         }
 
-        //add last known price to the chart
-        /*
-          $price = array(
-          'date' => $r['date'],
-          'price' => $r['price'],
-          );
-          $prices[] = $price;
-         *
-         */
+        if (!$prices)
+        {
+            global $post;
+            if (empty($post))
+                return;
+
+            $item = ContentManager::getProductbyUniqueId($unique_id, $module_id, $post->ID);
+            if ($item['price'])
+            {
+                $prices[] = array(
+                    'date' => date('Y-m-d'),
+                    'price' => $item['price']
+                );
+
+                $prices[] = array(
+                    'date' => date('Y-m-d', strtotime(sprintf('-%d days', $days))),
+                    'price' => $item['price']
+                );
+            }
+        }
+
         $data = array(
             'chartType' => 'Area',
             'data' => $prices,
@@ -490,7 +523,6 @@ class TemplateHelper
         {
             $html_attr .= ' ' . esc_attr($name) . '="' . esc_attr($value) . '"';
         }
-
 
         echo '<div style="direction: ltr;" id="' . esc_attr($id) . '"' . $html_attr . '></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo '<script>';
@@ -671,7 +703,7 @@ class TemplateHelper
         return self::getMerhantName($item, $print);
     }
 
-    public static function getMerhantName(array $item, $print = false)
+    public static function getMerhantName(array $item, $print = false, $small = false)
     {
         if (!empty($item['domain']))
         {
@@ -703,9 +735,16 @@ class TemplateHelper
             $name = '';
         }
 
+        if ($name == 'eBay' && $item['merchant'] != 'eBay')
+            return $item['merchant'];
+
         if ($print)
         {
+            if ($small)
+                echo '<small>';
             echo \esc_html($name);
+            if ($small)
+                echo '</small>';
         }
         else
         {
@@ -820,32 +859,22 @@ class TemplateHelper
     public static function sortByPrice(array $data, $order = 'asc', $field = 'price')
     {
         if (!in_array($order, array('asc', 'desc')))
-        {
             $order = 'asc';
-        }
 
-        if (!in_array($field, array('price', 'discount')))
-        {
+        if (!in_array($field, array('price', 'discount', 'total_price')))
             $field = 'price';
-        }
 
         // convert all prices to one currency
         $currency_codes = array();
         foreach ($data as $d)
         {
             if (empty($d['currencyCode']))
-            {
                 continue;
-            }
 
             if (!isset($currency_codes[$d['currencyCode']]))
-            {
                 $currency_codes[$d['currencyCode']] = 1;
-            }
             else
-            {
                 $currency_codes[$d['currencyCode']]++;
-            }
         }
         arsort($currency_codes);
         $base_currency = key($currency_codes);
@@ -853,51 +882,38 @@ class TemplateHelper
         {
             $rate = 1;
             if (!empty($d['currencyCode']) && $d['currencyCode'] != $base_currency)
-            {
                 $rate = CurrencyHelper::getCurrencyRate($d['currencyCode'], $base_currency);
-            }
+
             if (!$rate)
-            {
                 $rate = 1;
-            }
 
             if (isset($d['price']))
             {
                 if ($field == 'discount')
                 {
                     if (!empty($d['priceOld']))
-                    {
                         $data[$key]['converted_price'] = (float) ($d['priceOld'] - $d['price']) * $rate;
-                    }
                     else
-                    {
                         $data[$key]['converted_price'] = 0.00001;
-                    }
                 }
+                elseif ($field == 'total_price')
+                    $data[$key]['converted_price'] = ((float) $d['price'] + (float) $d['shipping_cost']) * $rate;
                 else
-                {
                     $data[$key]['converted_price'] = (float) $d['price'] * $rate;
-                }
             }
             else
             {
                 $data[$key]['converted_price'] = 0;
                 $data[$key]['price'] = 0;
-                if ($field == 'discount')
-                {
+                if ($field == 'discount' || $field == 'total_price')
                     $data[$key]['converted_price'] = 99999999999;
-                }
             }
             if (isset($d['stock_status']) && $d['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
             {
                 if ($field == 'discount')
-                {
                     $data[$key]['converted_price'] = -1;
-                }
                 else
-                {
                     $data[$key]['converted_price'] = 0;
-                }
             }
         }
 
@@ -908,13 +924,10 @@ class TemplateHelper
             $module_id = $d['module_id'];
 
             if (isset($modules_priority[$module_id]))
-            {
                 continue;
-            }
+
             if (!ModuleManager::getInstance()->moduleExists($module_id))
-            {
                 continue;
-            }
 
             $module = ModuleManager::getInstance()->factory($module_id);
             $modules_priority[$module_id] = (int) $module->config('priority');
@@ -923,42 +936,29 @@ class TemplateHelper
         // sort by price and priority
         usort($data, function ($a, $b) use ($modules_priority)
         {
-
             if (!$a['price'] && !$b['price'])
-            {
                 return $modules_priority[$a['module_id']] - $modules_priority[$b['module_id']];
-            }
 
             if (!$a['converted_price'])
-            {
                 return 1;
-            }
 
             if (!$b['converted_price'])
-            {
                 return -1;
-            }
 
             if ($a['converted_price'] == $b['converted_price'])
-            {
                 return $modules_priority[$a['module_id']] - $modules_priority[$b['module_id']];
-            }
 
             if ($modules_priority[$a['module_id']] != $modules_priority[$b['module_id']])
             {
                 if ($a['converted_price'] >= 30 && $b['converted_price'] >= 30 && abs($a['converted_price'] - $b['converted_price']) < 1)
-                {
                     return $modules_priority[$a['module_id']] - $modules_priority[$b['module_id']];
-                }
             }
 
             return ($a['converted_price'] < $b['converted_price']) ? -1 : 1;
         });
 
         if ($order == 'desc')
-        {
             $data = array_reverse($data);
-        }
 
         return $data;
     }
@@ -1305,23 +1305,28 @@ class TemplateHelper
 
     public static function generateGlobalId($prefix)
     {
+
         return $prefix . self::$global_id++;
     }
 
-    public static function isModuleDataExist($items, $module_id)
-    {
-        foreach ($items as $item)
-        {
-            if (isset($item['module_id']) && $item['module_id'] == $module_id)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
+	public static function isModuleDataExist($items, $module_ids)
+	{
+		if (!is_array($module_ids))
+			$module_ids = array($module_ids);
+
+		if (!is_array($items)) {
+			return false;
+		}
+
+		foreach ($module_ids as $module_id) {
+			foreach ($items as $item) {
+				if (isset($item['module_id']) && $item['module_id'] == $module_id)
+					return true;
+			}
+		}
+
+		return false;
+	}
 
     public static function isCashbackTrakerActive()
     {
@@ -1632,26 +1637,17 @@ class TemplateHelper
 
     public static function getOptimizedImage(array $item, $max_width, $max_height)
     {
-
         if ($item['module_id'] == 'Amazon' && strpos($item['img'], 'https://m.media-amazon.com') !== false)
         {
             if (!isset($item['extra']['primaryImages']))
-            {
                 return $item['img'];
-            }
 
             if ($max_height <= 160)
-            {
                 return $item['extra']['primaryImages']['Medium']['URL'];
-            }
             elseif ($max_height <= 75)
-            {
                 return $item['extra']['primaryImages']['Small']['URL'];
-            }
             else
-            {
                 return $item['img'];
-            }
         }
 
         return $item['img'];
@@ -1663,13 +1659,9 @@ class TemplateHelper
         {
             global $post;
             if (!empty($post->ID))
-            {
                 $post_id = $post->ID;
-            }
             else
-            {
                 $post_id = $count;
-            }
         }
 
         $ratings = array();
@@ -1678,21 +1670,13 @@ class TemplateHelper
         for ($i = 0; $i < $count; $i++)
         {
             if ($i <= 3)
-            {
                 $rand = mt_rand(0, 6) / 10;
-            }
             elseif ($count > 9 && $i > 4)
-            {
                 $rand = mt_rand(0, 3) / 10;
-            }
             elseif ($i > 8)
-            {
                 $rand = mt_rand(0, 4) / 10;
-            }
             else
-            {
                 $rand = mt_rand(0, 10) / 10;
-            }
 
             $rating = round($rating - $rand, 2);
             $ratings[] = $rating;
@@ -1704,15 +1688,13 @@ class TemplateHelper
     public static function printProgressRing($value)
     {
         if ($value <= 0)
-        {
             return;
-        }
 
         $p = round($value * 100 / 10);
         $r1 = round($p * 314 / 100);
         $r2 = 314 - $r1;
 
-        echo '<svg width="75" height="75" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="#E1E1E1" stroke-width="12"/><circle cx="60" cy="60" r="50" transform="rotate(-90 60 60)" fill="none" stroke-dashoffset="314" stroke-dasharray="314"  stroke="dodgerblue" stroke-width="12" ><animate attributeName="stroke-dasharray" dur="3s" values="0,314;' . esc_attr($r1) . ',' . esc_attr($r2) . '" fill="freeze" /></circle><text x="60" y="63" fill="black" text-anchor="middle" dy="7" font-size="27">' . esc_html($value) . '</text></svg>';
+        echo '<svg width="75" height="75" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="#E1E1E1" stroke-width="12"/><circle cx="60" cy="60" r="50" transform="rotate(-90 60 60)" fill="none" stroke-dashoffset="314" stroke-dasharray="314"  stroke="dodgerblue" stroke-width="12" ><animate attributeName="stroke-dasharray" dur="3s" values="0,314;' . esc_attr($r1) . ',' . esc_attr($r2) . '" fill="freeze" /></circle><text x="60" y="63" fill="black" text-anchor="middle" dy="7" font-size="28">' . esc_html($value) . '</text></svg>';
     }
 
     public static function getChance($position, $max = 1)
@@ -1734,9 +1716,7 @@ class TemplateHelper
     public static function getShopInfo(array $item)
     {
         if (!isset($item['domain']))
-        {
             return;
-        }
 
         $domain = $item['domain'];
 
@@ -1744,31 +1724,157 @@ class TemplateHelper
         {
             $merchants = GeneralConfig::getInstance()->option('merchants');
             if (!$merchants)
-            {
                 $merchants = array();
-            }
             foreach ($merchants as $merchant)
             {
-                self::$shop_info[$merchant['name']] = $merchant['shop_info'];
+
+                $d = \apply_filters('cegg_shop_info', \do_shortcode($merchant['shop_info']), $domain);
+                self::$shop_info[$merchant['name']] = $d;
             }
         }
 
         if (isset(self::$shop_info[$domain]))
-        {
             return self::$shop_info[$domain];
+        else
+            return '';
+    }
+
+    public static function getShopCoupons(array $item)
+    {
+        if (!isset($item['domain']))
+            return;
+
+        $domain = $item['domain'];
+
+        if (self::$shop_coupons === null)
+        {
+            $merchants = GeneralConfig::getInstance()->option('merchants');
+            if (!$merchants)
+                $merchants = array();
+
+            foreach ($merchants as $merchant)
+            {
+                if (!isset($merchant['shop_coupons']))
+                    continue;
+
+                $d = \apply_filters('cegg_shop_coupons', \do_shortcode($merchant['shop_coupons']), $domain);
+                self::$shop_coupons[$merchant['name']] = $d;
+            }
+        }
+
+        if (isset(self::$shop_coupons[$domain]))
+            return self::$shop_coupons[$domain];
+        else
+            return '';
+    }
+
+    public static function printMerchantInfo($item)
+    {
+        $name = TemplateHelper::getMerhantName($item);
+
+        if (self::getShopInfo($item))
+        {
+            $text = $name;
+            self::printShopInfo($item, array(), $text);
         }
         else
-        {
-            return '';
-        }
+            TemplateHelper::getMerhantName($item, true, true);
+
+        self::printShopCoupons($item);
     }
 
     public static function printShopInfo(array $item, array $p = array(), $text = '')
     {
-        if (!$shop_info = self::getShopInfo($item))
-        {
+        if (!self::getShopInfo($item))
             return;
+
+        $popup_type = GeneralConfig::getInstance()->option('popup_type');
+
+        if ($popup_type == 'popover')
+            self::printShopInfoPopover($item, $p, $text);
+        else
+            self::printShopInfoModal($item, $p, $text);
+    }
+
+    public static function printShopCoupons(array $item, $text = '')
+    {
+        if (!self::getShopCoupons($item))
+            return;
+
+        if (!$text)
+            $text = '[' . TemplateHelper::__('coupons') . ']';
+
+        self::printShopCouponsModal($item, $text);
+    }
+
+    public static function printShopInfoModal(array $item, array $p = array(), $text = '', $modal_id = null, $modal_label = null)
+    {
+        if (!$shop_info = self::getShopInfo($item))
+            return;
+
+        \wp_enqueue_script('bootstrap-modal');
+
+        if (!$modal_id)
+            $modal_id = TemplateHelper::generateGlobalId('cegg-modal-');
+        if (!$modal_label)
+            $modal_label = TemplateHelper::generateGlobalId('cegg-modal-label');
+
+        if ($text)
+        {
+            echo '<span class="egg-ico-info-circle" data-toggle="modal" data-target="#' . esc_attr($modal_id) . '">';
+            echo ' <small style="cursor: pointer;text-decoration: underline dotted;">' . esc_html($text) . '</small>';
         }
+        echo '</span>';
+
+        echo '<div class="modal fade" id="' . esc_attr($modal_id) . '" tabindex="-1" role="dialog" aria-labelledby="' . esc_attr($modal_label) . '">';
+        echo '<div class="modal-dialog" role="document">';
+        echo '<div class="modal-content cegg-modal-coupons">';
+        echo '<div class="modal-header" style="position: sticky; top: 0; background-color: inherit; z-index: 1055;">';
+        echo '<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="padding: 0px 5px 0px 5px"><span aria-hidden="true">&times;</span></button>';
+        echo '<h4 class="modal-title" id=" ' . esc_attr($modal_label) . '">';
+        echo '<span>' . esc_html(self::getMerhantName($item)) . '</span>';
+        echo '</h4>';
+        echo '</div>';
+        echo '<div class="modal-body">';
+        echo $shop_info; // phpcs:ignore
+        echo '</div></div></div></div>';
+    }
+
+    public static function printShopCouponsModal(array $item, $text, $modal_id = null, $modal_label = null)
+    {
+        if (!$shop_coupons = self::getShopCoupons($item))
+            return;
+
+        \wp_enqueue_script('bootstrap-modal');
+
+        if (!$modal_id)
+            $modal_id = TemplateHelper::generateGlobalId('cegg-modal-');
+        if (!$modal_label)
+            $modal_label = TemplateHelper::generateGlobalId('cegg-modal-label');
+
+        echo '<span class="text-success cegg-coupons-link" data-toggle="modal" data-target="#' . esc_attr($modal_id) . '">';
+        if ($text)
+            echo ' <small style="cursor: pointer;text-decoration: underline dotted;">' . esc_html($text) . '</small>';
+        echo '</span>';
+
+        echo '<div class="modal fade" id="' . esc_attr($modal_id) . '" tabindex="-1" role="dialog" aria-labelledby="' . esc_attr($modal_label) . '">';
+        echo '<div class="modal-dialog" role="document">';
+        echo '<div class="modal-content cegg-modal-shop-info">';
+        echo '<div class="modal-header" style="position: sticky; top: 0; background-color: inherit; z-index: 1055;">';
+        echo '<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="padding: 0px 5px 0px 5px"><span aria-hidden="true">&times;</span></button>';
+        echo '<h4 class="modal-title" id=" ' . esc_attr($modal_label) . '">';
+        echo '<span>' . esc_html(self::getMerhantName($item)) . '</span>';
+        echo '</h4>';
+        echo '</div>';
+        echo '<div class="modal-body">';
+        echo $shop_coupons; // phpcs:ignore
+        echo '</div></div></div></div>';
+    }
+
+    public static function printShopInfoPopover(array $item, array $p = array(), $text = '')
+    {
+        if (!$shop_info = self::getShopInfo($item))
+            return;
 
         $params = array(
             'data-toggle' => 'cegg-popover',
@@ -1782,15 +1888,10 @@ class TemplateHelper
 
         $params = array_merge($params, $p);
 
-        self::displayInfoIcon($params, $text);
-    }
-
-    public static function displayInfoIcon($params = array(), $text = '')
-    {
-        echo '<i class="egg-ico-info-circle" ' . self::buildTagParams($params) . '>'; // phpcs:ignore
+        echo '<span class="egg-ico-info-circle" ' . self::buildTagParams($params) . '>'; // phpcs:ignore
         if ($text)
-            echo ' <small style="cursor: pointer;">' . esc_html($text) . '</small>';
-        echo '</i>';
+            echo ' <small style="cursor: pointer;text-decoration: underline dotted;">' . esc_html($text) . '</small>';
+        echo '</span>';
     }
 
     public static function getMerchnatInfo(array $item)
@@ -1849,5 +1950,44 @@ class TemplateHelper
             return reset($items);
 
         return $selected;
+    }
+
+    public static function getGallery(array $data, $limit = null)
+    {
+        $images = array();
+        foreach ($data as $items)
+        {
+            foreach ($items as $item)
+            {
+                if (!empty($item['extra']['images']))
+                    $gallery = $item['extra']['images'];
+                elseif (!empty($item['images']))
+                    $gallery = $item['images'];
+                else
+                    continue;
+
+                foreach ($gallery as $g)
+                {
+                    $images[] = array(
+                        'url' => $item['url'],
+                        'uri' => $g,
+                        'alt' => $item['title'],
+                    );
+
+                    if ($limit && count($images) >= $limit)
+                        return $images;
+                }
+            }
+        }
+
+        return $images;
+    }
+
+    public static function convertRatingScale($OldValue, $OldMin = 1, $OldMax = 5, $NewMin = 1, $NewMax = 10)
+    {
+        if (!$OldValue)
+            return 0;
+
+        return ((($OldValue - $OldMin) * ($NewMax - $NewMin)) / ($OldMax - $OldMin)) + $NewMin;
     }
 }

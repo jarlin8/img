@@ -12,7 +12,9 @@ use ContentEgg\application\libs\shopee\ShopeeApi;
 use ContentEgg\application\modules\Shopee\ExtraDataShopee;
 use ContentEgg\application\libs\shopee\ShopeeLocales;
 use ContentEgg\application\components\LinkHandler;
+use ContentEgg\application\helpers\ArrayHelper;
 
+use function ContentEgg\prnx;
 
 /**
  * ShopeeModule class file
@@ -27,7 +29,7 @@ class ShopeeModule extends AffiliateParserModule
     public function info()
     {
         return array(
-            'name' => 'Shopee (beta)',
+            'name' => 'Shopee',
             'description' => sprintf(__('Adds products from %s.', 'content-egg'), 'Shopee'),
             'docs_uri' => 'https://ce-docs.keywordrush.com/modules/affiliate/shopee',
         );
@@ -50,30 +52,19 @@ class ShopeeModule extends AffiliateParserModule
 
     public function isItemsUpdateAvailable()
     {
-        return false;
+        return true;
     }
 
     public function isUrlSearchAllowed()
     {
-        return false;
+        return true;
     }
 
-    public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
+    private static function getProductFields()
     {
-        if ($is_autoupdate)
-            $limit = $this->config('entries_per_page_update');
-        else
-            $limit = $this->config('entries_per_page');
-
-        $keyword = str_replace('"', '', $keyword);
-        $keyword = str_replace('\'', '', $keyword);
-        $keyword = str_replace('\\', '', $keyword);
-        $offer = sprintf('keyword: \"%s\"', $keyword);
-        $offer .= sprintf(' limit: %d', $limit);
-        $offer .= sprintf(' sortType: %d', (int) $this->config('sort_type'));
-
-        $fields = array(
+        return array(
             'itemId',
+            'shopId',
             'commissionRate',
             'appExistRate',
             'appNewRate',
@@ -81,6 +72,10 @@ class ShopeeModule extends AffiliateParserModule
             'webNewRate',
             'commission',
             'price',
+            'priceMax',
+            'priceMin',
+            'ratingStar',
+            'priceDiscountRate',
             'sales',
             'imageUrl',
             'productName',
@@ -90,20 +85,84 @@ class ShopeeModule extends AffiliateParserModule
             'periodStartTime',
             'periodEndTime',
         );
+    }
 
-        $node = join(', ', $fields);
+    public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
+    {
+        if ($is_autoupdate)
+            $limit = $this->config('entries_per_page_update');
+        else
+            $limit = $this->config('entries_per_page');
+
+        if ($id = self::parseIdFromUrl($keyword))
+            $keyword = $id;
+
+        if (self::isProductId($keyword))
+        {
+            $offer = sprintf('itemId: %d', $keyword);
+            $offer .= ' limit: 1';
+        }
+        else
+        {
+            $keyword = str_replace('"', '', $keyword);
+            $keyword = str_replace('\'', '', $keyword);
+            $keyword = str_replace('\\', '', $keyword);
+            $offer = sprintf('keyword: \"%s\"', $keyword);
+            $offer .= sprintf(' limit: %d', $limit);
+            $offer .= sprintf(' sortType: %d', (int) $this->config('sort_type'));
+        }
+
+        $node = join(', ', self::getProductFields());
 
         $query = 'query {productOfferV2(' . $offer . ') {nodes {' . $node . '}}}';
         $payload = '{"query":"' . $query . '"}';
 
-        $client = $this->getApiClient();
-        $results = $client->search($payload);
+        $results = $this->getApiClient()->search($payload);
 
         if (!$results || !isset($results['data']['productOfferV2']['nodes']) || !is_array($results['data']['productOfferV2']['nodes']))
             return array();
 
-        $locale = $this->config('locale');
-        return $this->prepareResults($results['data']['productOfferV2']['nodes'], $locale);
+        return $this->prepareResults($results['data']['productOfferV2']['nodes'], $this->config('locale'));
+    }
+
+    public function doRequestItems(array $items)
+    {
+
+        $node = join(', ', self::getProductFields());
+
+        foreach ($items as $unique_id => $item)
+        {
+            $offer = sprintf('itemId: %d', $unique_id);
+            $offer .= ' limit: 1';
+            $query = 'query {productOfferV2(' . $offer . ') {nodes {' . $node . '}}}';
+            $payload = '{"query":"' . $query . '"}';
+
+            $results = $this->getApiClient()->search($payload);
+            if (!$results || !isset($results['data']['productOfferV2']['nodes']) || !is_array($results['data']['productOfferV2']['nodes']))
+                continue;
+
+            $products = $this->prepareResults($results['data']['productOfferV2']['nodes'], $this->config('locale'));
+            if (!$products)
+                continue;
+
+            $result = reset($products);
+
+            // assign new data
+            $fields = array(
+                'price',
+                'priceOld',
+                'availability',
+                'stock_status',
+            );
+            foreach ($fields as $field)
+            {
+                $items[$unique_id][$field] = $result->$field;
+            }
+
+            $items[$unique_id]['extra'] = ArrayHelper::object2Array($result->extra);
+        }
+
+        return $items;
     }
 
     private function prepareResults($results, $locale)
@@ -125,7 +184,19 @@ class ShopeeModule extends AffiliateParserModule
         $content->title = $r['productName'];
         $content->orig_url = $r['productLink'];
         $content->url = $this->generateAffiliateUrl($content->orig_url);
-        $content->price = (float) $r['price'];
+        if (isset($r['price']))
+            $content->price = (float) $r['price'];
+        elseif (isset($r['priceMin']))
+            $content->price = (float) $r['priceMin'];
+        elseif (isset($r['priceMax']))
+            $content->price = (float) $r['priceMax'];
+
+        if (isset($r['ratingStar']))
+        {
+            $content->ratingDecimal = (float) $r['ratingStar'];
+            $content->rating = TextHelper::ratingPrepare($r['ratingStar']);
+        }
+
         $content->img = $r['imageUrl'];
         $content->currencyCode = ShopeeLocales::getCurrencyCode($locale);
         $content->domain = TextHelper::getHostName($content->orig_url);
@@ -143,8 +214,13 @@ class ShopeeModule extends AffiliateParserModule
             return LinkHandler::createAffUrl($url, $deeplink);
 
         if ($affiliate_id = $this->config('affiliate_id'))
-            return 'https://shope.ee/an_redir?origin_link=' . urlencode($url) . '&affiliate_id=' . urlencode($affiliate_id);
+        {
+            $aff_url = 'https://shope.ee/an_redir?origin_link=' . urlencode($url) . '&affiliate_id=' . urlencode($affiliate_id);
+            if ($sub_id = $this->config('sub_id'))
+                $aff_url .= '&sub_id=' . urlencode($sub_id);
 
+            return $aff_url;
+        }
         return $url;
     }
 
@@ -171,5 +247,52 @@ class ShopeeModule extends AffiliateParserModule
     public function renderSearchResults()
     {
         PluginAdmin::render('_metabox_search_results', array('module_id' => $this->getId()));
+    }
+
+    private function searchById($keyword, $options)
+    {
+        if ($pid = self::parsePidFromUrl($keyword))
+            $keyword = $pid;
+
+        if (!preg_match('~\d{7,12}~', $keyword))
+            return false;
+
+        $client = $this->getApiClient();
+        try
+        {
+            $items = $client->searchSku($keyword, $options);
+        }
+        catch (\Exception $e)
+        {
+            return false;
+        }
+
+        if (!$items || !isset($items['products']))
+            return false;
+
+        return $items;
+    }
+
+    private static function parseIdFromUrl($url)
+    {
+        if (!filter_var($url, FILTER_VALIDATE_URL))
+            return '';
+
+        $url = strtok($url, '?');
+        $url = trim($url, '/');
+        $parts = explode('/', $url);
+        $id = end($parts);
+        if (is_numeric($id))
+            return (int) $id;
+        else
+            return '';
+    }
+
+    private static function isProductId($str)
+    {
+        if (preg_match('/[0-9]{10,}/', $str))
+            return true;
+        else
+            return false;
     }
 }

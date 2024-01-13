@@ -11,6 +11,9 @@ use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\components\LinkHandler;
 
+use function ContentEgg\prn;
+use function ContentEgg\prnx;
+
 /**
  * FeedModule class file
  *
@@ -25,11 +28,11 @@ class FeedModule extends AffiliateFeedParserModule
     {
         if (!$name = FeedName::getInstance()->getName($this->getId()))
         {
-            $name = __('Add new', 'content-egg');
+            $name = '+ ' . __('Add new', 'content-egg');
         }
 
         return array(
-            'name' => 'Feed:' . $name,
+            'name' => $name . ' [Feed]',
             'docs_uri' => 'https://ce-docs.keywordrush.com/modules/feed-modules',
         );
     }
@@ -187,6 +190,7 @@ class FeedModule extends AffiliateFeedParserModule
         {
             $product['orig_url'] = $mapped_data['affiliate link'];
         }
+
         $product['product'] = serialize($data);
 
         return $product;
@@ -253,9 +257,12 @@ class FeedModule extends AffiliateFeedParserModule
             $r = $this->mapProduct($r);
 
             if (isset($r['availability']))
-            {
                 $items[$key]['availability'] = $r['availability'];
-            }
+
+            if (isset($r['shipping cost']))
+                $items[$key]['shipping_cost'] = self::extractShippingCost($r['shipping cost']);
+            else
+                $items[$key]['shipping_cost'] = null;
 
             $items[$key]['stock_status'] = $product['stock_status'];
             if (!empty($r['sale price']))
@@ -281,6 +288,9 @@ class FeedModule extends AffiliateFeedParserModule
             {
                 $items[$key]['description'] = $r['description'];
             }
+
+            if (!empty($r['affiliate link']))
+                $items[$key]['affiliate link'] = $r['affiliate link'];
         }
 
         return $items;
@@ -343,9 +353,24 @@ class FeedModule extends AffiliateFeedParserModule
                 $content->description = $r['description'];
             }
 
+            if (!empty($r['short description']))
+            {
+                $content->short_description = $r['short description'];
+            }
+
+            if (isset($r['shipping cost']))
+                $content->shipping_cost = self::extractShippingCost($r['shipping cost']);
+            else
+                $content->shipping_cost = null;
+
             if (isset($r['brand']))
             {
                 $content->manufacturer = $r['brand'];
+            }
+
+            if (isset($r['isbn']))
+            {
+                $content->isbn = $r['isbn'];
             }
 
             if (isset($r['category']))
@@ -442,5 +467,33 @@ class FeedModule extends AffiliateFeedParserModule
         }
 
         return $mapped_data;
+    }
+
+    public static function extractShippingCost($shipping_cost)
+    {
+        $shipping_cost = \apply_filters('cegg_shipping_cost_value', $shipping_cost);
+
+        if (strstr($shipping_cost, ':') && strstr($shipping_cost, ','))
+        {
+            $parts = explode(',', $shipping_cost);
+            $shipping_cost = reset($parts);
+        }
+        elseif (strstr($shipping_cost, ':'))
+        {
+            $parts = explode(':', $shipping_cost);
+            foreach ($parts as $p)
+            {
+                if (strstr($p, 'EUR') || strstr($p, 'USD'))
+                {
+                    $shipping_cost = $p;
+                    break;
+                }
+            }
+        }
+
+        if ($shipping_cost == '')
+            return '';
+
+        return (float) TextHelper::parsePriceAmount($shipping_cost);
     }
 }

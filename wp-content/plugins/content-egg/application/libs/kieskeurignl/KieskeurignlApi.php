@@ -6,6 +6,8 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
+use function ContentEgg\prnx;
+
 /**
  * KieskeurignlApi class file
  *
@@ -57,6 +59,7 @@ class KieskeurignlApi extends RestClient
     {
         $options['productid'] = $id;
         $response = $this->restGet('/product.nsf/wsproductprices', $options);
+
         return $this->_decodeResponse($response);
     }
 

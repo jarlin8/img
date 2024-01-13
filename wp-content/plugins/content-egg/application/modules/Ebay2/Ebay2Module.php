@@ -13,6 +13,8 @@ use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\helpers\TemplateHelper;
 
+use function ContentEgg\prnx;
+
 /**
  * Ebay2Module class file
  *
@@ -75,10 +77,10 @@ class Ebay2Module extends AffiliateParserModule
 
         $options['fieldgroups'] = 'EXTENDED'; // This returns the shortDescription field
 
-        if ($category_id = $this->config('category_id'))
-        {
+        if ($custom_id = \apply_filters('cegg_ebay_category_id', false))
+            $options['category_ids'] = $custom_id;
+        elseif ($category_id = $this->config('category_id'))
             $options['category_ids'] = TextHelper::commaList($category_id);
-        }
 
         if ($sort_order = $this->config('sort_order'))
         {
@@ -480,6 +482,7 @@ class Ebay2Module extends AffiliateParserModule
             $items[$unique_id]['stock_status'] = $new->stock_status;
             $items[$unique_id]['img'] = $new->img;
             $items[$unique_id]['extra']['pricePerUnitDisplay'] = $new->extra->pricePerUnitDisplay;
+            $items[$unique_id]['merchant'] = $new->merchant;
         }
 
         return $items;
@@ -501,8 +504,13 @@ class Ebay2Module extends AffiliateParserModule
     {
         $content = new ContentProduct;
         $content->unique_id = $r['itemId'];
-        $content->title = strip_tags($r['title']);
-        $content->merchant = 'eBay';
+        $content->title = \sanitize_text_field($r['title']);
+
+        if (Ebay2Config::getInstance()->option('merchant_name') == 'seller' && isset($r['seller']['username']))
+            $content->merchant = \sanitize_text_field($r['seller']['username']);
+        else
+            $content->merchant = 'eBay';
+
         $content->orig_url = $r['itemWebUrl'];
         $content->domain = TextHelper::getHostName($content->orig_url);
         $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;

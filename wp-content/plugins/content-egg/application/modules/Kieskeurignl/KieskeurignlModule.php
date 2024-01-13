@@ -12,6 +12,7 @@ use ContentEgg\application\libs\kieskeurignl\KieskeurignlApi;
 use ContentEgg\application\modules\Kieskeurignl\ExtraDataKieskeurignl;
 use ContentEgg\application\helpers\ArrayHelper;
 
+use function ContentEgg\prnx;
 
 /**
  * KieskeurignlModule class file
@@ -140,10 +141,23 @@ class KieskeurignlModule extends AffiliateParserModule
         if (!isset($offers[0]) && isset($offers['id']))
             $offers = array($offers);
 
+        $exclude_domains = TextHelper::getArrayFromCommaList(strtolower($this->config('exclude_domains')));
         $data = array();
         foreach ($offers as $i => $r)
         {
+            $domain = self::getMerchantDomain($r['customer']);
+            if (!$domain)
+            {
+                $merchant = strtolower($r['customer']);
+                if (TextHelper::isValidDomainName($merchant))
+                    $domain = $merchant;
+            }
+
+            if ($exclude_domains && in_array($domain, $exclude_domains))
+                continue;
+
             $c = clone $content;
+            $c->domain = $domain;
             $c->unique_id = $r['id'];
             $c->url = $r['deeplink'];
             $c->price = $r['pricevalue'];
@@ -155,21 +169,14 @@ class KieskeurignlModule extends AffiliateParserModule
 
             $c->merchant = $r['customer'];
 
-            if ($domain = self::getMerchantDomain($r['customer']))
-                $c->domain = $domain;
-            else
-            {
-                $merchant = strtolower($r['customer']);
-                if (TextHelper::isValidDomainName($merchant))
-                    $c->domain = $merchant;
-            }
-
             /*
             if ($r['stock'] == 'yes')
-                $content->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
+                $c->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
             */
             if ($r['stock'] == 'no')
-                $content->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+                $c->stock_status = ContentProduct::STOCK_STATUS_OUT_OF_STOCK;
+            else
+                $c->stock_status = ContentProduct::STOCK_STATUS_IN_STOCK;
 
             if ($i == 0 && $features)
                 $c->features = $features;
@@ -267,6 +274,20 @@ class KieskeurignlModule extends AffiliateParserModule
         return $result['@attributes']['sid'];
     }
 
+    public function viewDataPrepare($data)
+    {
+        if ($exclude_domains = TextHelper::getArrayFromCommaList(strtolower($this->config('exclude_domains'))))
+        {
+            foreach ($data as $key => $d)
+            {
+                if (in_array($d['domain'], $exclude_domains))
+                    unset($data[$key]);
+            }
+        }
+
+        return parent::viewDataPrepare($data);
+    }
+
     private function getApiClient()
     {
         return new KieskeurignlApi($this->config('token'), $this->config('affiliate_id'), $this->config('country'));
@@ -319,6 +340,7 @@ class KieskeurignlModule extends AffiliateParserModule
             'Bol.com' => 'bol.com',
             'Blokker connect' => 'blokker.nl',
             'Bol.com Plaza' => 'bol.com',
+            'bol. Plaza' => 'bol.com',
             'Midimedia' => 'midimedia.nl',
             'Bemmel en Kroon' => 'bemmelenkroon.nl',
             'Keukenloods' => 'keukenloods.nl',

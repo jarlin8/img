@@ -72,6 +72,7 @@ class ModuleApi
         if ($query['keyword'][0] == '[' || filter_var($query['keyword'], FILTER_VALIDATE_URL))
         {
             $keyword = filter_var($query['keyword'], FILTER_SANITIZE_URL);
+            $keyword = str_replace('[cataloglimit', '[catalog limit', $keyword);
         }
         else
         {

@@ -7,7 +7,8 @@ defined('\ABSPATH') || exit;
 use \ContentEgg\application\Plugin;
 use \ContentEgg\application\helpers\TextHelper;
 use \ContentEgg\application\admin\AeIntegrationConfig;
-use ContentEgg\application\components\LManager;
+use \ContentEgg\application\components\LManager;
+use \ContentEgg\application\helpers\ArrayHelper;
 
 /**
  * ModuleManager class file
@@ -85,13 +86,9 @@ class ModuleManager
             $modules_ids = array_merge($modules_ids, $this->scanForCustomModules());
         }
 
-        sort($modules_ids);
-
         $feed_modules_ids = $this->getFeedModules();
-        natsort($feed_modules_ids);
 
         $ae_modules_ids = $this->getAffEggModules();
-        sort($ae_modules_ids);
 
         $modules_ids = array_merge($modules_ids, $feed_modules_ids, $ae_modules_ids);
         $modules_ids = \apply_filters('content_egg_modules', $modules_ids);
@@ -102,6 +99,13 @@ class ModuleManager
             // create module
             self::factory($module_id);
         }
+
+        uasort(self::$modules, function ($a, $b)
+        {
+            return strcmp($a->getName(), $b->getName());
+        });
+
+        self::$modules = \apply_filters('content_egg_modules_init', self::$modules);
 
         // fill active modules
         foreach (self::$modules as $module)
@@ -168,7 +172,7 @@ class ModuleManager
         return $founded_modules;
     }
 
-    private function getAffEggModules()
+    public function getAffEggModules()
     {
         if (!AeIntegrationConfig::isAEIntegrationPosible())
         {
@@ -189,7 +193,7 @@ class ModuleManager
         return $result;
     }
 
-    private function getFeedModules()
+    public function getFeedModules()
     {
         if (Plugin::isActivated() && LManager::isNulled())
             return array();
@@ -383,9 +387,21 @@ class ModuleManager
         return $parsers;
     }
 
-    public function getParserModulesIdList($only_active = false)
+    public function getParserModulesIdList($only_active = false, $by_priority = false)
     {
-        return array_keys($this->getParserModules($only_active));
+        $modules = $this->getParserModules($only_active);
+
+        if (!$by_priority)
+            return array_keys($modules);
+
+        $module_priorities = array();
+        foreach ($modules as $module)
+        {
+            $module_priorities[$module->getId()] = $module->config('priority');
+        }
+
+        $module_priorities = ArrayHelper::asortStable($module_priorities);
+        return array_keys($module_priorities);
     }
 
     public function getParserModulesByTypes($types, $only_active = true)
@@ -420,6 +436,7 @@ class ModuleManager
     public function getConfigurableModules($active_only = false)
     {
         $result = array();
+
         foreach ($this->getModules($active_only) as $module)
         {
             if ($module->isConfigurable())
@@ -462,8 +479,6 @@ class ModuleManager
         {
             $config = $module->getConfigInstance();
             $options[$config->option_name()] = $config->getOptionValues();
-            //$opt_name = $module->getConfigInstance()->option_name();
-            //$options[$opt_name] = \get_option($opt_name);
         }
 
         return $options;

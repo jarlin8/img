@@ -11,6 +11,8 @@ use ContentEgg\application\components\FeaturedImage;
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\admin\GeneralConfig;
 
+use function ContentEgg\prn;
+
 /**
  * AutoblogModel class file
  *
@@ -37,13 +39,13 @@ class AutoblogModel extends Model
                     last_run datetime NOT NULL default '0000-00-00 00:00:00',
                     status tinyint(1) DEFAULT '0',
                     name varchar(200) DEFAULT NULL,
-                    run_frequency int(11) NOT NULL,                    
+                    run_frequency int(11) NOT NULL,
                     keywords_per_run tinyint(3) NOT NULL,
                     post_status tinyint(1) DEFAULT '0',
                     user_id int(11) DEFAULT NULL,
                     post_count int(11) DEFAULT '0',
                     min_modules_count int(11) DEFAULT '0',
-                    template_slug varchar(255) DEFAULT NULL,                    
+                    template_slug varchar(255) DEFAULT NULL,
                     template_body text,
                     template_title text,
                     keywords mediumtext,
@@ -346,6 +348,19 @@ class AutoblogModel extends Model
         // main product
         $main_product = ContentManager::getMainProduct($modules_data, $autoblog['main_product']);
 
+        // avoid EAN/ISBN duplicates
+        if (GeneralConfig::getInstance()->option('sync_ean') == 'enabled')
+        {
+            if (isset($autoblog['config']['avoid_duplicates']) && $autoblog['config']['avoid_duplicates'] == 'enabled' && $autoblog['post_type'] == 'product')
+            {
+                if ($main_product['ean'] && self::isProductExistsByEan($main_product['ean']))
+                    throw new \Exception(sprintf(__('Product with EAN %s already exists.', 'content-egg'), $main_product['ean']));
+
+                if ($main_product['isbn'] && self::isProductExistsByIsbn($main_product['isbn']))
+                    throw new \Exception(sprintf(__('Product with ISBN %s already exists.', 'content-egg'), $main_product['isbn']));
+            }
+        }
+
         // set main product for woo sync
         $product_sync = GeneralConfig::getInstance()->option('woocommerce_product_sync');
         $woocommerce_modules = GeneralConfig::getInstance()->option('woocommerce_modules');
@@ -474,7 +489,6 @@ class AutoblogModel extends Model
         if (\get_post_type($post_id) == 'product')
         {
             // external by default
-            //\wp_set_object_terms($post_id, 'external', 'product_type');
             $classname = \WC_Product_Factory::get_product_classname($post_id, 'external');
             $product = new $classname($post_id);
             $product->save();
@@ -489,7 +503,6 @@ class AutoblogModel extends Model
                 \wp_set_object_terms($post_id, explode(',', $tags_input), 'product_tag');
             }
         }
-
 
         // save modules data & keyword for autoupdate
         $i = 0;
@@ -778,5 +791,41 @@ class AutoblogModel extends Model
         }
 
         return $parent;
+    }
+
+    public static function findWooProductByEan($ean)
+    {
+        global $wpdb;
+        $field = \apply_filters('cegg_alg_ean_field', '_alg_ean');
+        $sql = "SELECT post_id FROM {$wpdb->postmeta} AS pm JOIN {$wpdb->posts} AS p ON pm.post_id = p.ID WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_status != 'trash'";
+        $sql = $wpdb->prepare($sql, $field, $ean);
+        $product_id = $wpdb->get_var($sql);
+        return $product_id;
+    }
+
+    public static function isProductExistsByEan($ean)
+    {
+        if (self::findWooProductByEan($ean))
+            return true;
+        else
+            return false;
+    }
+
+    public static function findWooProductByIsbn($ean)
+    {
+        global $wpdb;
+        $field = \apply_filters('cegg_alg_ean_field', '_alg_isbn');
+        $sql = "SELECT post_id FROM {$wpdb->postmeta} AS pm JOIN {$wpdb->posts} AS p ON pm.post_id = p.ID WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_status != 'trash'";
+        $sql = $wpdb->prepare($sql, $field, $ean);
+        $product_id = $wpdb->get_var($sql);
+        return $product_id;
+    }
+
+    public static function isProductExistsByIsbn($ean)
+    {
+        if (self::findWooProductByIsbn($ean))
+            return true;
+        else
+            return false;
     }
 }

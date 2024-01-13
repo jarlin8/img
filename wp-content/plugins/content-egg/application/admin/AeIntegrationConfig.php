@@ -33,11 +33,10 @@ class AeIntegrationConfig extends Config
     {
         \add_submenu_page(Plugin::slug, __('Affiliate Egg integration', 'content-egg') . ' &lsaquo; Content Egg', __('Affiliate Egg integration', 'content-egg'), 'manage_options', $this->page_slug(), array($this, 'settings_page'));
 
+        global $submenu;
+
         if (Plugin::isFree() && !Plugin::isEnvato())
-        {
-            global $submenu;
-            $submenu['content-egg'][] = array('<b style="color: #00C0AC;">Go PRO</b>', 'manage_options', Plugin::pluginSiteUrl());
-        }
+            $submenu['content-egg'][] = array('<b style="color: #75b798;">Go PRO</b>', 'manage_options', Plugin::pluginSiteUrl());
     }
 
     protected function options()

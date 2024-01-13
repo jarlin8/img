@@ -181,7 +181,6 @@ class FeedConfig extends AffiliateFeedParserModuleConfig
             $display_name .= ' ' . __('(optional)', 'content-egg');
         }
 
-
         echo '<input value="' . \esc_attr($display_name) . '" class="regular-text ltr" type="text" readonly />';
         echo ' &#x203A; ';
         echo '<input name="' . \esc_attr($args['option_name']) . '['
@@ -192,9 +191,7 @@ class FeedConfig extends AffiliateFeedParserModuleConfig
     public function render_mapping_block($args)
     {
         if (!$args['value'])
-        {
             $args['value'] = array();
-        }
 
         foreach (array_keys(self::mappingFields()) as $str)
         {
@@ -203,10 +200,9 @@ class FeedConfig extends AffiliateFeedParserModuleConfig
             $this->render_mapping_row($args);
             echo '</div>';
         }
+
         if ($args['description'])
-        {
             echo '<p class="description">' . esc_html($args['description']) . '</p>';
-        }
     }
 
     public static function mappingFields()
@@ -226,7 +222,10 @@ class FeedConfig extends AffiliateFeedParserModuleConfig
             'direct link' => false,
             'brand' => false,
             'category' => false,
+            'short description' => false,
+            'isbn' => false,
             'gtin' => false,
+            'shipping cost' => false
         );
     }
 

@@ -3,7 +3,7 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\helpers\TemplateHelper;
 
-if (TemplateHelper::isModuleDataExist($items, 'Amazon', 'AmazonNoApi'))
+if (TemplateHelper::isModuleDataExist($items, array('Amazon', 'AmazonNoApi')))
 {
     \wp_enqueue_script('cegg-frontend', \ContentEgg\PLUGIN_RES . '/js/frontend.js', array('jquery'));
 }
@@ -23,7 +23,7 @@ if (TemplateHelper::isModuleDataExist($items, 'Amazon', 'AmazonNoApi'))
         <?php endforeach; ?>
     </div>
 
-    <?php if ($module_id == 'Amazon' || $module_id == 'AmazonNoApi') : ?>
+    <?php if ($item['price'] && ($module_id == 'Amazon' || $module_id == 'AmazonNoApi')) : ?>
         <div class="row cegg-no-top-margin">
             <div class="col-md-12 text-right text-muted">
                 <small>

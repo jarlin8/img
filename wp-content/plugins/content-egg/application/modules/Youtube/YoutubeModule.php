@@ -11,6 +11,8 @@ use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\admin\GeneralConfig;
 
+use function ContentEgg\prnx;
+
 /**
  * YoutubeModule class file
  *
@@ -42,38 +44,29 @@ class YoutubeModule extends ParserModule
 
 	public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
 	{
-
 		$params = array();
 
 		if ($is_autoupdate)
-		{
 			$params['maxResults'] = $this->config('entries_per_page_update');
-		}
 		else
-		{
 			$params['maxResults'] = $this->config('entries_per_page');
-		}
 
-		$params['relevanceLanguage'] = GeneralConfig::getInstance()->option('lang');
-		$params['key']               = $this->config('api_key');
+		if (!empty($query_params['relevanceLanguage']))
+			$params['relevanceLanguage'] = $query_params['relevanceLanguage'];
+		else
+			$params['relevanceLanguage'] = GeneralConfig::getInstance()->option('lang');
+
+		$params['key'] = $this->config('api_key');
 
 		if (!empty($query_params['order']))
-		{
 			$params['order'] = $query_params['order'];
-		}
 		else
-		{
 			$params['order'] = $this->config('order');
-		}
 
 		if (!empty($query_params['license']))
-		{
 			$params['videoLicense'] = $query_params['license'];
-		}
 		else
-		{
 			$params['videoLicense'] = $this->config('license');
-		}
 
 		try
 		{
@@ -81,23 +74,21 @@ class YoutubeModule extends ParserModule
 			$client = new YouTubeSearch('json');
 			$data   = $client->search($keyword, $params);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			throw new \Exception(strip_tags($e->getMessage()));
 		}
 
 		if (!isset($data['items']) || !isset($data['items'][0]))
-		{
 			$data['items'] = array();
-		}
+
+		$data['items'] = array_slice($data['items'], 0, $params['maxResults']);
 
 		$results = array();
 		foreach ($data['items'] as $r)
 		{
 			if (!isset($r['id']['videoId']))
-			{
 				continue;
-			}
 
 			$guid = $r['id']['videoId'];
 
@@ -110,14 +101,11 @@ class YoutubeModule extends ParserModule
 			{
 				$content->description = strip_tags($r['snippet']['description']);
 				if ($max_size = $this->config('description_size'))
-				{
 					$content->description = TextHelper::truncate($content->description, $max_size);
-				}
 			}
 			else
-			{
 				$content->description = '';
-			}
+
 			$content->url = 'https://www.youtube.com/watch?v=' . $r['id']['videoId'];
 
 			$extra                = new ExtraDataYoutube;
@@ -146,7 +134,6 @@ class YoutubeModule extends ParserModule
 
 	public function renderSearchResults()
 	{
-		//PluginAdmin::render('_metabox_search_results_images', array('module_id' => $this->getId()));
 		$this->render('search_results', array('module_id' => $this->getId()));
 	}
 

@@ -23,18 +23,6 @@ class ExtraDataAmazonNoApi extends ExtraData
 	public $Rating;
 	public $TotalReviews;
 	public $IsPrimeEligible;
-
-	/*
-	public $DigitalAsin;
-	public $DigitalAsinPrice;
-	public $isDigital;
-	public $ImageUrl;
-	public $LargeImageUrl;
-	public $ImageHeight;
-	public $ImageWidth;
-	public $ThumbImageUrl;
-	public $ThumbImageHeight;
-	public $ThumbImageWidth;
-	 *
-	 */
+	public $comments = array();
+	public $data = array();
 }

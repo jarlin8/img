@@ -6,6 +6,8 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\admin\LicConfig;
 
+use function ContentEgg\prnx;
+
 /**
  * Autoupdate class file
  *
@@ -15,7 +17,6 @@ use ContentEgg\application\admin\LicConfig;
  */
 class Autoupdate
 {
-
     private $current_version;
     private $api_base;
 
@@ -29,22 +30,20 @@ class Autoupdate
     public function __construct($current_version, $plugin_file, $api_base, $slug = null)
     {
         if (!LicConfig::getInstance()->option('license_key'))
-        {
             return;
-        }
+
+        if (in_array(self::getTld(), array('local', 'test', 'dev')))
+            return;
 
         $this->current_version = $current_version;
         $this->plugin_file = $plugin_file;
         $this->api_base = $api_base;
 
         if (!$slug)
-        {
             $this->slug = $slug;
-        }
         else
-        {
             $this->slug = basename($this->plugin_file, '.php');
-        }
+
         \add_filter('pre_set_site_transient_update_plugins', array($this, 'checkUpdate'));
         \add_filter('plugins_api', array($this, 'getRemoteInfo'), 10, 3);
     }
@@ -163,5 +162,15 @@ class Autoupdate
             'v' => Plugin::version(),
             'key' => LicConfig::getInstance()->option('license_key')
         );
+    }
+
+    public static function getTld()
+    {
+        $site_url = \get_site_url();
+        if (!$parsed_url = parse_url($site_url))
+            return '';
+        $host = $parsed_url['host'];
+        $host_parts = explode('.', $host);
+        return end($host_parts);
     }
 }

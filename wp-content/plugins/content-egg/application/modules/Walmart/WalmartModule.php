@@ -13,6 +13,7 @@ use ContentEgg\application\modules\Walmart\ExtraDataWalmart;
 use ContentEgg\application\components\ContentManager;
 use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\modules\Walmart\WalmartConfig;
+use ContentEgg\application\Plugin;
 
 /**
  * WalmartModule class file
@@ -28,7 +29,7 @@ class WalmartModule extends AffiliateParserModule
 
     public function info()
     {
-        if (\is_admin())
+        if (\is_admin() && !Plugin::isFree())
         {
             \add_action('admin_notices', array(__CLASS__, 'opensslNotice'));
         }
@@ -430,7 +431,7 @@ class WalmartModule extends AffiliateParserModule
           {
           return $r['productTrackingUrl'];
           }
-         * 
+         *
          */
 
         return 'https://goto.walmart.com/c/' . urlencode($this->config('publisherId')) . '/568844/9383?veh=aff&sourceid=imp_000011112222333344&u=' . urlencode($url);

@@ -13,6 +13,8 @@ use ContentEgg\application\helpers\CurrencyHelper;
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\helpers\TextHelper;
 
+use function ContentEgg\prnx;
+
 /**
  * ContentManager class file
  *
@@ -93,7 +95,7 @@ class ContentManager
         }
         $data = self::setIds($data);
         // Sanitize content for allowed HTML tags and more.
-        array_walk_recursive($data, array('self', 'sanitizeData'));
+        array_walk_recursive($data, array(__CLASS__, 'sanitizeData'));
         $module = ModuleManager::getInstance()->factory($module_id);
         $data = $module->presavePrepare($data, $post_id);
 
@@ -376,9 +378,19 @@ class ContentManager
         $is_ssl = \is_ssl();
         foreach ($data as $key => $d)
         {
+            if ($module_id == 'Amazon' && !empty($d['extra']['IsEligibleForSuperSaverShipping']))
+                $data[$key]['shipping_cost'] = '0.00';
+
+            if (isset($d['shipping_cost']) && isset($d['price']))
+                $data[$key]['total_price'] = (float) $data[$key]['price'] + (float) $data[$key]['shipping_cost'];
+            elseif (isset($d['price']))
+                $data[$key]['total_price'] = (float) $data[$key]['price'];
+            else
+                $data[$key]['total_price'] = '';
+
             if (!empty($data[$key]['title']))
             {
-                // replace non-breaking space 
+                // replace non-breaking space
                 $data[$key]['title'] = str_replace("\xc2\xa0", ' ', $data[$key]['title']);
             }
 
@@ -482,42 +494,42 @@ class ContentManager
         return null;
     }
 
-    public static function updateByKeyword($post_id, $module_id)
+    public static function updateByKeyword($post_id, $module_id, $is_last_interation = true, $force_feed_import = false)
     {
-        $keyword = \get_post_meta($post_id, ContentManager::META_PREFIX_KEYWORD . $module_id, true);
-        $keyword = \apply_filters('cegg_keyword_update', $keyword, $post_id, $module_id);
+        if (!$keyword = ContentManager::getAutoupdateKeyword($post_id, $module_id))
+        {
+            // fix
+            \delete_post_meta($post_id, self::META_PREFIX_LAST_BYKEYWORD_UPDATE . $module_id);
+            return 0;
+        }
 
-        if (!$keyword)
-            return;
-
-        $updateParams = \get_post_meta($post_id, ContentManager::META_PREFIX_UPDATE_PARAMS . $module_id, true);
-        if (!$updateParams)
+        if (!$updateParams = \get_post_meta($post_id, ContentManager::META_PREFIX_UPDATE_PARAMS . $module_id, true))
             $updateParams = array();
 
         $module = ModuleManager::getInstance()->factory($module_id);
 
-        // update time in any case...
+        if ($force_feed_import && $module->isFeedModule())
+            $module->setLastImportDate(0);
+
         ContentManager::touchUpdateTime($post_id, $module_id, false);
 
         try
         {
-            $data = $module->doMultipleRequests($keyword, $updateParams, true);
-
-            // nodata!
-            if (!$data)
+            if (!$data = $module->doMultipleRequests($keyword, $updateParams, true))
             {
                 \do_action('cegg_keyword_update_no_data', $post_id, $module_id);
-                return;
+                return -1;
             }
         }
         catch (\Exception $e)
         {
-            // error
-            return;
+            return 0;
         }
 
-        $data = array_map(array('self', 'object2Array'), $data);
-        ContentManager::saveData($data, $module_id, $post_id);
+        $data = array_map(array(__CLASS__, 'object2Array'), $data);
+
+        ContentManager::saveData($data, $module_id, $post_id, $is_last_interation);
+        return 1;
     }
 
     public static function updateItems($post_id, $module_id)
@@ -528,8 +540,12 @@ class ContentManager
 
         $items = ContentManager::getData($post_id, $module_id);
 
-        if (!$items)
+        if (!$items || !is_array($items))
+        {
+            // fix
+            \delete_post_meta($post_id, self::META_PREFIX_LAST_ITEMS_UPDATE . $module_id);
             return;
+        }
 
         try
         {
@@ -872,9 +888,17 @@ class ContentManager
 
     public static function updateAllByKeyword($post_id)
     {
-        foreach (array_keys(ModuleManager::getInstance()->getAffiliteModulesList(true)) as $module_id)
+        $i = 0;
+        $module_ids = array_keys(ModuleManager::getInstance()->getAffiliteModulesList(true));
+        foreach ($module_ids as $module_id)
         {
-            ContentManager::updateByKeyword($post_id, $module_id);
+            if ($i >= count($module_ids) - 1)
+                $is_last_interation = true;
+            else
+                $is_last_interation = false;
+
+            ContentManager::updateByKeyword($post_id, $module_id, $is_last_interation);
+            $i++;
         }
     }
 
@@ -925,7 +949,7 @@ class ContentManager
         }
 
         $keywords = array_map('trim', $keywords);
-        $keywords = array_map('sanitize_text_field', $keywords);
+        $keywords = array_map(array(__CLASS__, 'sanitizeKeyword'), $keywords);
 
         $groups = array_map('sanitize_text_field', $groups);
         $groups = array_map('trim', $groups);
@@ -933,5 +957,97 @@ class ContentManager
         $groups = array_pad($groups, count($keywords) - count($groups) + 1, '');
 
         return array($keywords, $groups);
+    }
+
+    public static function sanitizeKeyword($keyword)
+    {
+        if (!$keyword || !is_string($keyword))
+            return '';
+
+        if ($keyword[0] == '[' || filter_var($keyword, FILTER_VALIDATE_URL))
+        {
+            $keyword = filter_var($keyword, FILTER_SANITIZE_URL);
+            $keyword = str_replace('[cataloglimit', '[catalog limit', $keyword);
+        }
+        else
+            $keyword = sanitize_text_field($keyword);
+
+        return $keyword;
+    }
+
+    public static function findDuplicateIds(array $items, $field)
+    {
+        $used = array();
+        $duplicate_ids = array();
+        $modules_priority = self::getModulesPriority($items);
+
+        foreach ($items as $module_id => $module_data)
+        {
+            foreach ($module_data as $unique_id => $data)
+            {
+                if (empty($data[$field]))
+                    continue;
+
+                if (isset($used[$data[$field]]))
+                {
+                    $d_module_id = $used[$data[$field]][0];
+
+                    if ($d_module_id == $module_id)
+                    {
+                        $duplicate_ids[] = $unique_id;
+                        continue;
+                    }
+
+                    if ($modules_priority[$module_id] > $modules_priority[$d_module_id])
+                    {
+                        $used[$data[$field]] = array($module_id, $unique_id);
+                        $duplicate_ids[] = $unique_id;
+                    }
+                    else
+                        $duplicate_ids[] = $used[$data[$field]][1];
+                }
+                else
+                    $used[$data[$field]] = array($module_id, $unique_id);
+            }
+        }
+
+        $duplicate_ids = array_unique($duplicate_ids);
+
+        return $duplicate_ids;
+    }
+
+    public static function getModulesPriority(array $items)
+    {
+        $modules_priority = array();
+
+        foreach ($items as $module_id => $module_data)
+        {
+            foreach ($module_data as $unique_id => $data)
+            {
+                $module_id = $data['module_id'];
+
+                if (isset($modules_priority[$module_id]))
+                    continue;
+
+                if (!ModuleManager::getInstance()->moduleExists($module_id))
+                    continue;
+
+                $module = ModuleManager::getInstance()->factory($module_id);
+                $modules_priority[$module_id] = (int) $module->config('priority');
+            }
+        }
+
+        return $modules_priority;
+    }
+
+    public static function getAutoupdateKeyword($post_id, $module_id)
+    {
+        if (!$keyword = \get_post_meta($post_id, ContentManager::META_PREFIX_KEYWORD . $module_id, true))
+            $keyword = \get_post_meta($post_id, '_cegg_global_autoupdate_keyword', true);
+
+        if (!$keyword)
+            $keyword = '';
+
+        return \apply_filters('cegg_keyword_update', $keyword, $post_id, $module_id);
     }
 }

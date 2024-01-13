@@ -14,6 +14,7 @@ use ContentEgg\application\libs\RestClient;
  * @copyright Copyright &copy; 2023 keywordrush.com
  *
  * @link: https://affiliate.bol.com/nl/api-documentatie
+ * @link: https://api.bol.com/marketing/docs/catalog-api/api-documentation.html
  */
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'RestClient.php';
 

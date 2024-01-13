@@ -34,6 +34,9 @@ class ModuleUpdateVisit
 
     public function init()
     {
+        if (defined('\WP_CLI') && \WP_CLI)
+            return;
+
         if (GeneralConfig::getInstance()->option('filter_bots'))
         {
             if (!class_exists('\Jaybizzle\CrawlerDetect'))
@@ -80,15 +83,13 @@ class ModuleUpdateVisit
             if (!$ttl && $is_data_exists)
                 continue;
 
-            $keyword = \get_post_meta($post->ID, ContentManager::META_PREFIX_KEYWORD . $module->getId(), true);
-            $keyword = \apply_filters('cegg_keyword_update', $keyword, $post->ID, $module->getId());
-
-            if (!$keyword)
+            if (!ContentManager::getAutoupdateKeyword($post->ID, $module->getId()))
                 continue;
 
             $last_update = (int) \get_post_meta($post->ID, ContentManager::META_PREFIX_LAST_BYKEYWORD_UPDATE . $module->getId(), true);
             if ($last_update && time() - $last_update < $ttl)
                 continue;
+
             ContentManager::updateByKeyword($post->ID, $module->getId());
         }
     }

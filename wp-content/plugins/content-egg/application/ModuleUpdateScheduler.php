@@ -71,29 +71,30 @@ class ModuleUpdateScheduler extends Scheduler
                 $module = ModuleManager::getInstance()->factory($module_id);
                 $ttl = $module->config('ttl');
                 $meta_key_keyword = self::addKeywordPrefix($module_id);
+                $meta_key_keyword_global = '_cegg_global_autoupdate_keyword';
                 $meta_key_last_bykeyword_update = self::addByKeywordUpdatePrefix($module_id);
 
                 $limit = (int) \apply_filters('cegg_update_limit_keyword', self::BYKEYWORD_UPDATE_LIMIT_FOR_MODULE);
 
                 $sql = "SELECT last_bykeyword_update.post_id
             FROM    {$wpdb->postmeta} last_bykeyword_update
-            INNER JOIN  {$wpdb->postmeta} keyword 
+            INNER JOIN  {$wpdb->postmeta} keyword
             ON last_bykeyword_update.post_id = keyword.post_id
-                AND keyword.meta_key = %s
-            WHERE   
+                AND (keyword.meta_key = %s OR keyword.meta_key = %s)
+            WHERE
                 {$time} - last_bykeyword_update.meta_value  > {$ttl}
                 AND last_bykeyword_update.meta_key = %s
             ORDER BY    last_bykeyword_update.meta_value ASC
             LIMIT " . $limit;
 
-                $query = $wpdb->prepare($sql, $meta_key_keyword, $meta_key_last_bykeyword_update);
+                $query = $wpdb->prepare($sql, $meta_key_keyword, $meta_key_keyword_global, $meta_key_last_bykeyword_update);
+
                 $post_ids = $wpdb->get_col($query);
             }
 
             if (!$post_ids)
                 continue;
 
-            // update!
             foreach ($post_ids as $post_id)
             {
                 ContentManager::updateByKeyword($post_id, $module_id);
@@ -130,7 +131,7 @@ class ModuleUpdateScheduler extends Scheduler
 
             $sql = "SELECT last_update.post_id
             FROM    {$wpdb->postmeta} last_update
-            WHERE   
+            WHERE
                 {$time} - last_update.meta_value  > {$ttl_items}
                 AND last_update.meta_key = %s
             ORDER BY    last_update.meta_value ASC
@@ -141,7 +142,6 @@ class ModuleUpdateScheduler extends Scheduler
             if (!$results)
                 continue;
 
-            // update!
             foreach ($results as $r)
             {
                 ContentManager::updateItems($r->post_id, $module_id);

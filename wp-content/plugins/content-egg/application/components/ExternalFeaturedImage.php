@@ -7,6 +7,8 @@ defined('\ABSPATH') || exit;
 use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\components\FeaturedImage;
 
+use function ContentEgg\prn;
+
 /**
  * ExternalFeaturedImage class file
  *
@@ -48,7 +50,10 @@ class ExternalFeaturedImage
         $post_id_len = strlen(strval($post_id));
 
         $fake_id = self::FAKE_INT_START;
-        $fake_id .= str_repeat('0', $max_len - $post_id_len - strlen($fake_id));
+        $l = $max_len - $post_id_len - strlen($fake_id);
+        if ($l < 0)
+            $l = 0;
+        $fake_id .= str_repeat('0', $l);
         $fake_id .= $post_id;
 
         return $fake_id;
@@ -194,40 +199,29 @@ class ExternalFeaturedImage
     public static function replaceImageSrc($image, $attachment_id, $size, $icon)
     {
         if (!$post_id = self::getRealId($attachment_id))
-        {
             return $image;
-        }
 
         if (!$external_img = \get_post_meta($post_id, self::EXTERNAL_URL_META, true))
-        {
             return $image;
-        }
+
+        if (empty($external_img['url']))
+            return $image;
 
         $external_url = $external_img['url'];
 
         if ($image_size = self::getImageSize($size))
-        {
             return array($external_url, $image_size['width'], $image_size['height'], $image_size['crop']);
-        }
         else
         {
             if (!empty($external_img['width']))
-            {
                 $width = $external_img['width'];
-            }
             else
-            {
                 $width = 800;
-            }
 
             if (!empty($external_img['height']))
-            {
                 $height = $external_img['height'];
-            }
             else
-            {
                 $height = 600;
-            }
 
             return array($external_url, $width, $height, false);
         }
@@ -266,14 +260,13 @@ class ExternalFeaturedImage
     public static function replaceThumbnail($html, $post_id, $post_thumbnail_id, $size, $attr)
     {
         if (!$external_img = \get_post_meta($post_id, self::EXTERNAL_URL_META, true))
-        {
             return $html;
-        }
 
         if (GeneralConfig::getInstance()->option('external_featured_images') == 'enabled_internal_priority' && self::hasInternalImage($post_id))
-        {
             return $html;
-        }
+
+        if (empty($external_img['url']))
+            return $html;
 
         $url = $external_img['url'];
         $alt = \get_post_field('post_title', $post_id);

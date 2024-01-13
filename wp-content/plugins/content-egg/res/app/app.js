@@ -1,4 +1,4 @@
-var contentEgg = angular.module('contentEgg', ['ui.bootstrap', 'ui.sortable']);
+var contentEgg = angular.module('contentEgg', ['ui.bootstrap', 'ui.sortable', 'ngSanitize']);
 
 contentEgg.controller('ContentEggController', function ($scope, ModuleService) {
 
@@ -40,8 +40,7 @@ contentEgg.controller('ContentEggController', function ($scope, ModuleService) {
         });
 
         // init post metadata
-        if (contentegg_params.initData[module_id])
-        {
+        if (contentegg_params.initData[module_id]) {
             $scope.models[module_id].added = contentegg_params.initData[module_id];
             $scope.activeSearchTabs[module_id] = false;
             $scope.activeResultTabs[module_id] = true;
@@ -51,12 +50,10 @@ contentEgg.controller('ContentEggController', function ($scope, ModuleService) {
         }
 
         // init keywords
-        if (contentegg_params.initKeywords[module_id])
-        {
+        if (contentegg_params.initKeywords[module_id]) {
             $scope.updateKeywords[module_id] = contentegg_params.initKeywords[module_id];
         }
-        if (contentegg_params.initUpdateParams[module_id])
-        {
+        if (contentegg_params.initUpdateParams[module_id]) {
             $scope.updateParams[module_id] = contentegg_params.initUpdateParams[module_id];
         }
 
@@ -88,8 +85,7 @@ contentEgg.controller('ContentEggController', function ($scope, ModuleService) {
         $scope.models[module_id].added_changed = true;
     };
 
-    $scope.addBlank = function (module_id, type = 'contentProduct')
-    {
+    $scope.addBlank = function (module_id, type = 'contentProduct') {
         if (type != 'contentProduct' && type != 'contentCoupon')
             return;
         var contentProduct = angular.copy(contentegg_params[type]);
@@ -117,6 +113,52 @@ contentEgg.controller('ContentEggController', function ($scope, ModuleService) {
         $scope.models[module_id].added = [];
         $scope.models[module_id].added_changed = true;
         $scope.activeSearchTabs[module_id] = true;
+    };
+
+    $scope.copyKeywordProductIdsToClipboard = function (module_id, event) {
+
+        let keyword = $scope.keywords[module_id];
+        $scope.copyProductIdsToClipboard(module_id, event, keyword);
+
+    }
+
+    $scope.copyProductIdsToClipboard = function (module_id, event, keyword = '') {
+
+        event.currentTarget.classList.add('btn-primary');
+        event.currentTarget.classList.remove('btn-info');
+
+        setTimeout(() => {
+            event.currentTarget.classList.add('btn-info');
+            event.currentTarget.classList.remove('btn-primary');
+        }, 300);
+
+        var product_ids = [];
+
+        angular.forEach($scope.models[module_id].added, function (product, index) {
+
+            if (module_id.indexOf("AE__") !== -1) {
+                var asin = product['url'].match("/([a-zA-Z0-9]{10})(?:[/?]|$)");
+                if (asin) {
+                    product_ids.push(asin[1]);
+                    return;
+                }
+            }
+
+            var parts = product['unique_id'].split('-', 2);
+            if (parts.length == 2)
+                product_ids.push(parts[1]);
+            else
+                product_ids.push(parts[0]);
+
+        });
+
+        let res = keyword;
+        if (res)
+            res = res + ' ';
+        res = res + JSON.stringify(product_ids);
+
+        navigator.clipboard.writeText(res);
+
     };
 
     $scope.global_findAll = function () {
@@ -163,7 +205,16 @@ contentEgg.controller('ContentEggController', function ($scope, ModuleService) {
         return 'https://www.youtube.com/embed/' + id;
     };
 
-    $scope.setUpdateKeyword = function (module_id) {
+    $scope.setUpdateKeyword = function (module_id, event) {
+
+        event.currentTarget.classList.add('btn-primary');
+        event.currentTarget.classList.remove('btn-info');
+
+        setTimeout(() => {
+            event.currentTarget.classList.add('btn-info');
+            event.currentTarget.classList.remove('btn-primary');
+        }, 300);
+
         $scope.updateKeywords[module_id] = $scope.keywords[module_id];
         $scope.activeResultTabs[module_id] = true;
     };
@@ -185,8 +236,7 @@ contentEgg.controller('ContentEggController', function ($scope, ModuleService) {
         $scope.blockShortcode = '[content-egg-block template=' + $scope.blockShortcodeBuillder.template;
         if ($scope.blockShortcodeBuillder.group)
             $scope.blockShortcode += ' groups="' + $scope.blockShortcodeBuillder.group + '"';
-        if ($scope.blockShortcodeBuillder.next)
-        {
+        if ($scope.blockShortcodeBuillder.next) {
             var next = parseInt($scope.blockShortcodeBuillder.next);
             if (next)
                 $scope.blockShortcode += ' next=' + next;
@@ -267,34 +317,34 @@ contentEgg.directive('imageloaded', [
 ]);
 
 contentEgg.directive('justifiedGallery', ['$timeout', function ($timeout) {
-        return {
-            restrict: 'A',
-            link: function (scope, el, attrs) {
-                scope.$watch('$last', function (n, o) {
-                    if (n) {
-                        $timeout(function () {
-                            angular.element(el).justifiedGallery(scope.$eval(attrs.justifiedGallery)).on('jg.complete', function (e) {
-                                //alert('on complete');
-                            });
-                            scope.$last = false;
+    return {
+        restrict: 'A',
+        link: function (scope, el, attrs) {
+            scope.$watch('$last', function (n, o) {
+                if (n) {
+                    $timeout(function () {
+                        angular.element(el).justifiedGallery(scope.$eval(attrs.justifiedGallery)).on('jg.complete', function (e) {
+                            //alert('on complete');
                         });
-                    }
-                });
-            }
-        };
-    }]);
+                        scope.$last = false;
+                    });
+                }
+            });
+        }
+    };
+}]);
 
 contentEgg.directive('repeatDone', [function () {
-        return {
-            restrict: 'A',
-            link: function (scope, element, iAttrs) {
-                var parentScope = element.parent().scope();
-                if (scope.$last) {
-                    parentScope.$last = true;
-                }
+    return {
+        restrict: 'A',
+        link: function (scope, element, iAttrs) {
+            var parentScope = element.parent().scope();
+            if (scope.$last) {
+                parentScope.$last = true;
             }
-        };
-    }]);
+        }
+    };
+}]);
 
 contentEgg.directive('ngConfirmClick', function () {
     return {
@@ -336,4 +386,3 @@ contentEgg.directive('convertToNumber', function () {
         }
     };
 });
-

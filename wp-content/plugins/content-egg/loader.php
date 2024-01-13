@@ -15,7 +15,6 @@ defined('\ABSPATH') || exit;
  */
 class AutoLoader
 {
-
     const NS_CUSTOM_MODULES = 'ContentEggCustomModule';
 
     private static $base_dir;

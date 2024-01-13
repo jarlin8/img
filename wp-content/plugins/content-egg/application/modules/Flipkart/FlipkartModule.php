@@ -11,6 +11,8 @@ use ContentEgg\application\admin\PluginAdmin;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\LinkHandler;
 
+use function ContentEgg\prnx;
+
 /**
  * FlipkartModule class file
  *
@@ -85,6 +87,7 @@ class FlipkartModule extends AffiliateParserModule
         else
         {
             $results = $client->search($keyword, $options);
+
             if (!is_array($results))
             {
                 return array();

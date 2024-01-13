@@ -2039,7 +2039,7 @@ msgstr ""
 #: application/modules/Viglink/ViglinkConfig.php:53
 #: application/modules/Walmart/WalmartConfig.php:49
 #: application/modules/Zanox/ZanoxConfig.php:48
-msgid "Number of results for one search query."
+msgid "Specify the number of results to display for one search query."
 msgstr ""
 
 #: application/components/AffiliateFeedParserModuleConfig.php:30
@@ -2147,7 +2147,7 @@ msgstr ""
 #: application/modules/Viglink/ViglinkConfig.php:63
 #: application/modules/Walmart/WalmartConfig.php:64
 #: application/modules/Zanox/ZanoxConfig.php:64
-msgid "Number of results for automatic updates and autoblogging."
+msgid "Set the number of results for automatic updates and autoblogging."
 msgstr ""
 
 #: application/components/AffiliateFeedParserModuleConfig.php:50

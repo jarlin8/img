@@ -13,7 +13,6 @@ defined('\ABSPATH') || exit;
  */
 abstract class ParserModuleConfig extends ModuleConfig
 {
-
     public function options()
     {
         $tpl_manager = ModuleTemplateManager::getInstance($this->module_id);
@@ -134,5 +133,14 @@ abstract class ParserModuleConfig extends ModuleConfig
         $res = array_merge($res, $options);
 
         return $res;
+    }
+
+    public function applayCustomOptions(array $settings)
+    {
+        foreach ($settings as $name => $value)
+        {
+            if (isset($this->option_values[$name]))
+                $this->option_values[$name] = $value;
+        }
     }
 }

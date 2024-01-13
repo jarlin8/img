@@ -588,6 +588,14 @@ class CurrencyHelper
                 'num_decimals' => 2,
                 'name' => 'Bulgarian Lev',
             ),
+            'BDT' => array(
+                'currency_symbol' => '৳',
+                'currency_pos' => 'right',
+                'thousand_sep' => ',',
+                'decimal_sep' => '.',
+                'num_decimals' => 2,
+                'name' => 'Bangladeshi Taka',
+            ),
         );
     }
 

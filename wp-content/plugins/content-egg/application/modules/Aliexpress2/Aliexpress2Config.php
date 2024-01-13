@@ -34,7 +34,7 @@ class Aliexpress2Config extends AffiliateParserModuleConfig
             ),
             'app_secret' => array(
                 'title' => 'App Secret <span class="cegg_required">*</span>',
-                'callback' => array($this, 'render_password'),
+                'callback' => array($this, 'render_input'),
                 'default' => '',
                 'validator' => array(
                     'trim',
@@ -75,7 +75,7 @@ class Aliexpress2Config extends AffiliateParserModuleConfig
             ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Number of results for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -90,7 +90,7 @@ class Aliexpress2Config extends AffiliateParserModuleConfig
             ),
             'entries_per_page_update' => array(
                 'title' => __('Results for updates and autoblogging', 'content-egg'),
-                'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -160,6 +160,17 @@ class Aliexpress2Config extends AffiliateParserModuleConfig
                 ),
                 'default' => 'EN',
             ),
+
+            'ship_to_country' => array(
+                'title' => __('Ship to country', 'content-egg'),
+                'description' => __('Filter products that can be sent to that country. Returns the price according to the country\'s tax rate policy. Example: US', 'content-egg'),
+                'callback' => array($this, 'render_input'),
+                'default' => '',
+                'validator' => array(
+                    'trim',
+                ),
+            ),
+
             'category_id' => array(
                 'title' => __('Category ', 'content-egg'),
                 'description' => __('Limit the search of goods by this category.', 'content-egg'),

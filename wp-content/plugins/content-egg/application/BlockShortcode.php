@@ -9,6 +9,8 @@ use ContentEgg\application\components\BlockTemplateManager;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\helpers\TemplateHelper;
 
+use function ContentEgg\prn;
+
 /**
  * BlockShortcode class file
  *
@@ -60,6 +62,7 @@ class BlockShortcode
             'locale' => '',
             'ean' => '',
             'add_query_arg' => '',
+            'remove_duplicates_by' => '',
         );
 
         $allowed_atts = \apply_filters('cegg_block_shortcode_atts', $allowed_atts);
@@ -74,12 +77,13 @@ class BlockShortcode
         $a['groups'] = \sanitize_text_field($a['groups']);
         $a['group'] = \sanitize_text_field($a['group']);
         $a['hide'] = TemplateHelper::hideParamPrepare($a['hide']);
-        $a['show'] = strtolower(TextHelper::clear($a['show']));
+        $a['show'] = strtolower(sanitize_text_field($a['show']));
         $a['btn_text'] = \wp_strip_all_tags($a['btn_text'], true);
         $a['btn_class'] = \sanitize_text_field($a['btn_class']);
         $a['add_query_arg'] = \sanitize_text_field(\wp_strip_all_tags($a['add_query_arg'], true));
         $a['locale'] = TextHelper::clear($a['locale']);
         $a['ean'] = TemplateHelper::eanParamPrepare($a['ean']);
+        $a['remove_duplicates_by'] = \sanitize_text_field(\wp_strip_all_tags($a['remove_duplicates_by'], true));
 
         if ($a['group'] && !$a['groups'])
             $a['groups'] = $a['group'];
@@ -92,7 +96,7 @@ class BlockShortcode
         if ($a['add_query_arg'])
             parse_str($a['add_query_arg'], $a['add_query_arg']);
 
-        $allowed_sort = array('price', 'discount', 'reverse');
+        $allowed_sort = array('price', 'discount', 'reverse', 'total_price');
         $allowed_order = array('asc', 'desc');
         $a['sort'] = strtolower($a['sort']);
         $a['order'] = strtolower($a['order']);

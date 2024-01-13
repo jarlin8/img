@@ -39,10 +39,10 @@
             </div>
             <div class="clearfix"></div>
 
-            <?php // [RESULTS] 
+            <?php // [RESULTS]
             ?>
 
-            <div ng-init="activeResultTabs['<?php echo esc_attr($module_id); ?>'] = true" ui-sortable="{ 'ui-floating': true }" ng-model="models.<?php echo esc_attr($module_id); ?>.added" class="row">
+            <div ng-init="activeResultTabs['<?php echo esc_attr($module_id); ?>'] = true" <?php if (!\apply_filters('cegg_disable_product_sorting', false)) : ?>ui-sortable="{ 'ui-floating': true }" <?php endif; ?> ng-model="models.<?php echo esc_attr($module_id); ?>.added" class="row">
                 <div class="col-md-12 added_data" ng-repeat="data in models.<?php echo esc_attr($module_id); ?>.added">
                     <div class="row" style="padding: 5px;">
                         <div class="col-md-1" ng-if="data.img">
@@ -80,7 +80,7 @@
                                                     ng-click="startDateOpened = true"><i
                                                     class="glyphicon glyphicon-calendar"></i></button>
                                         </span>
-                                         * 
+                                         *
                                          */ ?>
                                     </div>
                                 </div>
@@ -93,13 +93,12 @@
                                                     ng-click="endDateOpened = true"><i
                                                     class="glyphicon glyphicon-calendar"></i></button>
                                         </span>
-                                         * 
+                                         *
                                          */ ?>
                                     </div>
                                 </div>
 
                                 <textarea type="text" placeholder="<?php esc_html_e('Description', 'content-egg'); ?>" rows="1" ng-model="data.description" class="col-sm-12" style="margin-top: 5px;"></textarea>
-
 
                             </div>
                         </div>
@@ -112,7 +111,7 @@
                     </div>
                 </div>
             </div>
-            <?php // [/RESULTS] 
+            <?php // [/RESULTS]
             ?>
         </uib-tab>
     </uib-tabset>

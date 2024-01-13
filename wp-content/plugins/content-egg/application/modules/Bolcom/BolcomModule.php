@@ -11,6 +11,9 @@ use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\libs\bolcom\BolcomApi;
 use ContentEgg\application\libs\bolcom\BolcomJwtApi;
 use ContentEgg\application\components\LinkHandler;
+use ContentEgg\application\Plugin;
+
+use function ContentEgg\prnx;
 
 /**
  * BolcomModule class file
@@ -24,7 +27,7 @@ class BolcomModule extends AffiliateParserModule
 
     public function info()
     {
-        if (\is_admin())
+        if (\is_admin() && !Plugin::isFree())
         {
             \add_action('admin_notices', array(__CLASS__, 'updateNotice'));
         }
@@ -70,7 +73,6 @@ class BolcomModule extends AffiliateParserModule
     public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
     {
         $client = $this->getApiClient();
-
 
         $options = array();
 
@@ -132,6 +134,7 @@ class BolcomModule extends AffiliateParserModule
             if (!empty($r['rating']))
             {
                 $content->rating = TextHelper::ratingPrepare($r['rating'] / 10);
+                $content->ratingDecimal = $r['rating'] / 10;
             }
 
             if ($description_type == 'summary' && !empty($r['summary']))
@@ -203,6 +206,17 @@ class BolcomModule extends AffiliateParserModule
                 $content->img = $r['images'][4]['url']; // XL size
             }
 
+            if (isset($r['media']))
+            {
+                $content->images = array();
+                foreach ($r['media'] as $m)
+                {
+                    if ($m['key'] != 'XL' || $m['type'] != 'IMAGE')
+                        continue;
+                    $content->images[] = $m['url'];
+                }
+            }
+
             if (isset($r['parentCategoryPaths']))
             {
                 $column_name = 'name';
@@ -266,7 +280,6 @@ class BolcomModule extends AffiliateParserModule
         {
             return $element['unique_id'];
         }, $items);
-
 
         $results = $client->products($item_ids, $options);
         if (!$results || !isset($results['products']))

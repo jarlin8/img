@@ -61,10 +61,10 @@ class WooIntegrator
 
     public static function wooHandler($data, $module_id, $post_id, $is_last_iteration)
     {
-        if (\get_post_type($post_id) != 'product' || !$product = \wc_get_product($post_id))
+        if (!$is_last_iteration)
             return;
 
-        if (!$is_last_iteration)
+        if (\get_post_type($post_id) != 'product' || !$product = \wc_get_product($post_id))
             return;
 
         // Get all post data
@@ -198,6 +198,16 @@ class WooIntegrator
                 $product->set_short_description($item['description']);
         }
 
+        if (empty($item['short_description']) && !\apply_filters('cegg_auto_short_description', false))
+        {
+            $item['short_description'] = TextHelper::trimExcerpt($item['description']);
+        }
+
+        if (!empty($item['short_description']) && $sync_description == 'full' && !\apply_filters('cegg_dont_touch_short_description', false))
+        {
+            $product->set_short_description($item['short_description']);
+        }
+
         $product->set_date_modified(time());
 
         // image
@@ -216,18 +226,39 @@ class WooIntegrator
                 \wp_set_object_terms($post_id, \sanitize_text_field($item['domain']), 'store', true);
         }
 
-        $outofstock_woo = GeneralConfig::getInstance()->option('outofstock_woo');
-        if ($item['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK && $outofstock_woo == 'hide_product')
-            $product->set_catalog_visibility('hidden');
-        elseif ($outofstock_woo == 'hide_product')
-            $product->set_catalog_visibility('visible');
+        if (isset($item['stock_status']))
+        {
+            $outofstock_woo = GeneralConfig::getInstance()->option('outofstock_woo');
+            if ($item['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK && $outofstock_woo == 'hide_product')
+                $product->set_catalog_visibility('hidden');
+            elseif ($outofstock_woo == 'hide_product')
+                $product->set_catalog_visibility('visible');
+        }
 
         // update meta
         self::setMetaSyncUniqueId($post_id, $module_id, $item['unique_id']);
 
         $res = $product->save();
 
-        if ($item['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK && $outofstock_woo == 'move_to_trash')
+        if (GeneralConfig::getInstance()->option('sync_ean') == 'enabled' && self::isEanForWoocommerceActive())
+        {
+            $field = \apply_filters('cegg_alg_ean_field', '_alg_ean');
+            if (!empty($item['ean']))
+                \update_post_meta($post_id, $field, $item['ean']);
+            else
+                \delete_post_meta($post_id, $field);
+        }
+
+        if (GeneralConfig::getInstance()->option('sync_isbn') == 'enabled' && self::isEanForWoocommerceActive())
+        {
+            $field = \apply_filters('cegg_alg_isbn_field', '_alg_isbn');
+            if (!empty($item['isbn']))
+                \update_post_meta($post_id, $field, $item['isbn']);
+            else
+                \delete_post_meta($post_id, $field);
+        }
+
+        if (isset($item['stock_status']) && $item['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK && $outofstock_woo == 'move_to_trash')
             \wp_trash_post($product->get_id());
 
         return $res;
@@ -312,7 +343,10 @@ class WooIntegrator
                     foreach ($f_value_array as $term)
                     {
                         if ($term_info = \term_exists($term, $taxonomy))
-                            $term_ids[] = $term_info['term_id'];
+                        {
+                            if (is_array($term_info) && isset($term_info['term_id']))
+                                $term_ids[] = $term_info['term_id'];
+                        }
                     }
                     $term_ids = array_map('intval', $term_ids);
                 }
@@ -613,6 +647,18 @@ class WooIntegrator
     public static function isRehubTheme()
     {
         return (in_array(basename(\get_template_directory()), array('rehub', 'rehub-theme'))) ? true : false;
+    }
+
+    public static function isEanForWoocommerceActive()
+    {
+        $active_plugins = apply_filters('active_plugins', get_option('active_plugins'));
+        if (
+            in_array('ean-for-woocommerce/ean-for-woocommerce.php', $active_plugins)
+            || in_array('ean-for-woocommerce-pro/ean-for-woocommerce-pro.php', $active_plugins)
+        )
+            return true;
+        else
+            return false;
     }
 
     public static function hideOutOfStockPrice($price, $that)

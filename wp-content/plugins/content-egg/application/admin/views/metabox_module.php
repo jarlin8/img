@@ -15,7 +15,7 @@
             <div class="data_panel">
 
                 <div clas="row">
-                    <div class="col-md-12 col-lg-6">
+                    <div class="col-md-12 col-lg-5">
                         <input class="input-sm col-sm-6 shortcode-input" ng-model="shortcodes.<?php echo esc_attr($module_id); ?>" select-on-click readonly type="text" />
                         <?php
                         $tpl_manager = ContentEgg\application\components\ModuleTemplateManager::getInstance($module_id);
@@ -36,14 +36,22 @@
 
                     </div>
 
-                    <div class="col-md-11 col-lg-5">
+                    <div class="col-md-10 col-lg-5">
                         <?php if ($module->isAffiliateParser()) : ?>
-                            <input class="input-sm col-md-4 col-sm-12" id="updateKeyword_<?php echo esc_attr($module_id); ?>" type="text" ng-model="updateKeywords.<?php echo esc_attr($module_id); ?>" placeholder="<?php esc_html_e('Keyword for update', 'content-egg'); ?>" title="<?php esc_html_e('Keyword for automatic update', 'content-egg'); ?>" />
+                            <input class="input-sm col-md-4 col-sm-12" id="updateKeyword_<?php echo esc_attr($module_id); ?>" type="text" ng-model="updateKeywords.<?php echo esc_attr($module_id); ?>" placeholder="<?php esc_html_e('Autoupdate keyword', 'content-egg'); ?>" title="<?php esc_html_e('Keyword for automatic updating of the product list', 'content-egg'); ?>" />
                             <?php $module->renderUpdatePanel(); ?>
                         <?php endif; ?>
                     </div>
-                    <div class="col-md-1 col-lg-1 text-right">
-                        <a class='btn btn-default btn-sm' ng-click="deleteAll('<?php echo esc_attr($module_id); ?>')" ng-confirm-click="<?php esc_html_e('Are you sure you want to delete all results?', 'content-egg'); ?>" ng-show='models.<?php echo esc_attr($module_id); ?>.added.length'><?php esc_html_e('Remove all', 'content-egg'); ?></a>
+                    <div class="col-md-2 col-lg-2 text-right">
+
+                        <div class="btn-group">
+
+                            <?php if (stristr($module_id, 'Amazon') || $module_id == 'Bolcom') : ?>
+                                <button title="<?php esc_html_e('Copy the product IDs for use in Too Much Niche articles', 'content-egg'); ?>" type="button" class="btn btn-info btn-sm" ng-click="copyProductIdsToClipboard('<?php echo esc_attr($module_id); ?>', $event)" ng-show='models.<?php echo esc_attr($module_id); ?>.added.length'><span class="glyphicon glyphicon-magnet"></span></button>
+                            <?php endif; ?>
+                            <button title="<?php esc_html_e('Remove all', 'content-egg'); ?>" type="button" class="btn btn-default btn-sm" ng-click="deleteAll('<?php echo esc_attr($module_id); ?>')" ng-confirm-click="<?php esc_html_e('Are you sure you want to delete all results?', 'content-egg'); ?>" ng-show='models.<?php echo esc_attr($module_id); ?>.added.length'><span class="glyphicon glyphicon-remove"></span></button>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -59,15 +67,20 @@
 
                         <div class="input-group" ng-show="!models.<?php echo esc_attr($module_id); ?>.processing">
                             <?php $module->isUrlSearchAllowed() ? $placeholder = __('Keyword or Product URL', 'content-egg') : $placeholder = __('Keyword to search', 'content-egg'); ?>
+                            <?php $placeholder = \apply_filters('content_egg_keyword_input_placeholder', $placeholder, $module_id); ?>
                             <input type="text" select-on-click ng-model="keywords.<?php echo esc_attr($module_id); ?>" on-enter="find('<?php echo esc_attr($module_id); ?>')" class="form-control" placeholder="<?php echo \esc_attr($placeholder); ?>" />
                             <div class="input-group-btn">
                                 <button title="<?php echo esc_html(__('Find', 'content-egg')); ?>" ng-disabled="!keywords.<?php echo esc_attr($module_id); ?>" ng-click="find('<?php echo esc_attr($module_id); ?>')" type="button" class="btn btn-info" aria-label="Find">
                                     <span class="glyphicon glyphicon-search"></span>
                                 </button>
                                 <?php if ($module->isAffiliateParser()) : ?>
-                                    <button title="<?php echo esc_html(__('Add keyword for autoupdate', 'content-egg')); ?>" ng-disabled="!keywords.<?php echo esc_attr($module_id); ?>" ng-click="setUpdateKeyword('<?php echo esc_attr($module_id); ?>')" type="button" class="btn btn-info">
+                                    <button title="<?php echo esc_html(__('Add keyword for autoupdate', 'content-egg')); ?>" ng-disabled="!keywords.<?php echo esc_attr($module_id); ?>" ng-click="setUpdateKeyword('<?php echo esc_attr($module_id); ?>', $event)" type="button" class="btn btn-info">
                                         <span class="glyphicon glyphicon-save"></span>
                                     </button>
+                                <?php endif; ?>
+                                <?php echo $module_id;
+                                if (stristr($module_id, 'Amazon') || $module_id == 'Bolcom') : ?>
+                                    <button title="<?php esc_html_e('Copy the keyword + product IDs for use in Too Much Niche articles', 'content-egg'); ?>" type="button" class="btn btn-info" ng-click="copyKeywordProductIdsToClipboard('<?php echo esc_attr($module_id); ?>', $event)" ng-disabled="!keywords.<?php echo esc_attr($module_id); ?> || !models.<?php echo esc_attr($module_id); ?>.added.length"><span class="glyphicon glyphicon-magnet"></span></button>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -99,7 +112,10 @@
             <?php $module->renderSearchResults(); ?>
 
             <p ng-show="!models.<?php echo esc_attr($module_id); ?>.processing && models.<?php echo esc_attr($module_id); ?>.loaded && models.<?php echo esc_attr($module_id); ?>.results.length == 0" class="bg-warning text-center"><br><?php esc_html_e('Not found...', 'content-egg'); ?><br><br></p>
-            <p ng-show="models.<?php echo esc_attr($module_id); ?>.error && !models.<?php echo esc_attr($module_id); ?>.processing" class="bg-danger text-center"><br><?php esc_html_e('Error:', 'content-egg'); ?> {{models.<?php echo esc_attr($module_id); ?>.error}}<br><br></p>
+            <p ng-show="models.<?php echo esc_attr($module_id); ?>.error && !models.<?php echo esc_attr($module_id); ?>.processing" class="bg-danger text-center"><br><?php esc_html_e('Error:', 'content-egg'); ?>
+                <span ng-bind-html="models.<?php echo esc_attr($module_id); ?>.error"></span>
+                <br><br>
+            </p>
         </uib-tab>
     </uib-tabset>
     <div class="row">

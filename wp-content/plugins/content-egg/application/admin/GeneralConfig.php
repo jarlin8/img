@@ -11,6 +11,8 @@ use ContentEgg\application\models\PriceAlertModel;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\helpers\TextHelper;
 
+use function ContentEgg\prnx;
+
 /**
  * GeneralSettings class file
  *
@@ -80,6 +82,11 @@ class GeneralConfig extends Config
             '%d days ago' => __('%d days ago', 'content-egg-tpl'),
             'Shop %d Offers' => __('Shop %d Offers', 'content-egg-tpl'),
             'from' => __('from', 'content-egg-tpl'),
+            'Free delivery' => __('Free delivery', 'content-egg-tpl'),
+            'Incl. %s delivery' => __('Incl. %s delivery', 'content-egg-tpl'),
+            '%s incl. delivery' => __('%s incl. delivery', 'content-egg-tpl'),
+            '+ Delivery *' => __('+ Delivery *', 'content-egg-tpl'),
+            '* Delivery cost shown at checkout.' => __('* Delivery cost shown at checkout.', 'content-egg-tpl'),
         );
     }
 
@@ -318,15 +325,37 @@ class GeneralConfig extends Config
                 'section' => __('WooCommerce', 'content-egg'),
             ),
             'outofstock_woo' => array(
-                'title' => __('Out of Stock products', 'external-importer'),
+                'title' => __('Out of Stock products', 'content-egg'),
                 'callback' => array($this, 'render_dropdown'),
                 'dropdown_options' => array(
-                    '' => __('Do nothing', 'external-importer'),
-                    'hide_price' => __('Hide WooCommerce price', 'external-importer'),
-                    'hide_product' => __('Set Catalog Visibility to Hidden', 'external-importer'),
-                    'move_to_trash' => __('Move WooCommerce product to trash', 'external-importer'),
+                    '' => __('Do nothing', 'content-egg'),
+                    'hide_price' => __('Hide WooCommerce price', 'content-egg'),
+                    'hide_product' => __('Set Catalog Visibility to Hidden', 'content-egg'),
+                    'move_to_trash' => __('Move WooCommerce product to trash', 'content-egg'),
                 ),
                 'default' => '',
+                'section' => __('WooCommerce', 'content-egg'),
+            ),
+            'sync_ean' => array(
+                'title' => __('Sync EAN', 'content-egg'),
+                'description' => __('EAN for Woocommerce plugin required.', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'enabled' => __('Enabled', 'content-egg'),
+                    'disabled' => __('Disabled', 'content-egg'),
+                ),
+                'default' => 'disabled',
+                'section' => __('WooCommerce', 'content-egg'),
+            ),
+            'sync_isbn' => array(
+                'title' => __('Sync ISBN', 'content-egg'),
+                'description' => __('EAN for Woocommerce plugin required.', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'enabled' => __('Enabled', 'content-egg'),
+                    'disabled' => __('Disabled', 'content-egg'),
+                ),
+                'default' => 'disabled',
                 'section' => __('WooCommerce', 'content-egg'),
             ),
             'filter_bots' => array(
@@ -614,8 +643,20 @@ class GeneralConfig extends Config
                 ),
                 'section' => __('Frontend', 'content-egg'),
             ),
+
+            'popup_type' => array(
+                'title' => __('Popup type', 'content-egg'),
+                'callback' => array($this, 'render_dropdown'),
+                'dropdown_options' => array(
+                    'popover' => __('Popover', 'content-egg'),
+                    'modal' => __('Modal', 'content-egg'),
+                ),
+                'default' => 'popover',
+                'section' => __('Shops', 'content-egg'),
+            ),
+
             'merchants' => array(
-                'title' => __('Merchant settings', 'content-egg'),
+                'title' => __('Shops', 'content-egg'),
                 'callback' => array($this, 'render_merchants_block'),
                 'validator' => array(
                     array(
@@ -624,7 +665,7 @@ class GeneralConfig extends Config
                     ),
                 ),
                 'default' => array(),
-                'section' => __('Merchants', 'content-egg'),
+                'section' => __('Shops', 'content-egg'),
             ),
         );
 
@@ -762,22 +803,38 @@ class GeneralConfig extends Config
         $i = isset($args['_field']) ? $args['_field'] : 0;
         $name = isset($args['value'][$i]['name']) ? $args['value'][$i]['name'] : '';
         $value = isset($args['value'][$i]['shop_info']) ? $args['value'][$i]['shop_info'] : '';
+        $value2 = isset($args['value'][$i]['shop_coupons']) ? $args['value'][$i]['shop_coupons'] : '';
 
         echo '<input style="margin-bottom: 5px;" name="' . \esc_attr($args['option_name']) . '['
             . \esc_attr($args['name']) . '][' . esc_attr($i) . '][name]" value="'
             . \esc_attr($name) . '" class="regular-text ltr" placeholder="' . \esc_attr(__('Domain name', 'content-egg')) . '"  type="text"/>';
 
-        echo '<textarea rows="2" name="' . \esc_attr($args['option_name']) . '['
-            . \esc_attr($args['name']) . '][' . esc_attr($i) . '][shop_info]" value="'
-            . \esc_attr($value) . '" class="large-text code" placeholder="' . \esc_attr(__('Shop info', 'content-egg')) . '"  type="text">' . \esc_html($value) . '</textarea>';
+        $settings = array(
+            'textarea_name' => \esc_attr($args['option_name']) . '[' . \esc_attr($args['name']) . '][' . esc_attr($i) . '][shop_info]',
+            'textarea_rows' => 7,
+
+        );
+        echo '<h4>Shop info:</h4>';
+
+        \wp_editor($value, 'shop_info_area' . $i, $settings);
+
+        $settings = array(
+            'textarea_name' => \esc_attr($args['option_name']) . '[' . \esc_attr($args['name']) . '][' . esc_attr($i) . '][shop_coupons]',
+            'textarea_rows' => 7,
+
+        );
+        echo '<h4>Shop coupons (experimental feature):</h4>';
+        \wp_editor($value2, 'shop_coupons_area' . $i, $settings);
+
+        echo '<br><hr>';
     }
 
     public function render_merchants_block($args)
     {
         if (is_array($args['value']))
-            $total = count($args['value']) + 3;
+            $total = count($args['value']) + 1;
         else
-            $total = 3;
+            $total = 1;
 
         for ($i = 0; $i < $total; $i++)
         {
@@ -793,6 +850,7 @@ class GeneralConfig extends Config
     public function formatMerchantFields($values)
     {
         $results = array();
+
         foreach ($values as $k => $value)
         {
             $name = strtolower(trim(\sanitize_text_field($value['name'])));
@@ -805,9 +863,10 @@ class GeneralConfig extends Config
             if (in_array($name, array_column($results, 'name')))
                 continue;
 
-            $shop_info = TextHelper::nl2br(trim(TextHelper::sanitizeHtml($value['shop_info'])));
+            $shop_info = \wp_kses_post($value['shop_info']);
+            $shop_coupons = \wp_kses_post($value['shop_coupons']);
 
-            $result = array('name' => $name, 'shop_info' => $shop_info);
+            $result = array('name' => $name, 'shop_info' => $shop_info, 'shop_coupons' => $shop_coupons);
             $results[] = $result;
         }
 

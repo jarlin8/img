@@ -75,7 +75,7 @@ abstract class Module
 
 	public function getName()
 	{
-		return $this->name;
+		return \apply_filters('cegg_module_backend_display_name', $this->name);
 	}
 
 	public function getDir()
@@ -156,7 +156,7 @@ abstract class Module
 
 	public function presavePrepare($data, $post_id)
 	{
-		return $data;
+		return \apply_filters('cegg_presave_prepare', $data, $this->getId(), $post_id);
 	}
 
 	public function getConfigInstance()

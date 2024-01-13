@@ -10,6 +10,8 @@ use ContentEgg\application\helpers\ImageHelper;
 use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\components\ExternalFeaturedImage;
 
+use function ContentEgg\prnx;
+
 /**
  * FeaturedImage class file
  *
@@ -100,7 +102,8 @@ class FeaturedImage
 
     public static function getData($post_id)
     {
-        $modules_ids = ModuleManager::getInstance()->getParserModulesIdList();
+        $modules_ids = ModuleManager::getInstance()->getParserModulesIdList(true, true);
+
         $data = array();
         foreach ($modules_ids as $module_id)
         {
@@ -144,10 +147,11 @@ class FeaturedImage
 
     public static function getImgFile($item)
     {
+        if (!empty($item['img_large']))
+            $item['img'] = $item['img_large'];
+
         if (empty($item['img']))
-        {
             return false;
-        }
 
         // already saved? dublicate image file
         if (isset($item['img_file']) && $item['img_file'])

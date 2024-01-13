@@ -40,10 +40,10 @@
             </div>
             <div class="clearfix"></div>
 
-            <?php // [RESULTS] 
+            <?php // [RESULTS]
             ?>
 
-            <div ng-init="activeResultTabs['<?php echo esc_attr($module_id); ?>'] = true" ui-sortable="{ 'ui-floating': true }" ng-model="models.<?php echo esc_attr($module_id); ?>.added" class="row">
+            <div ng-init="activeResultTabs['<?php echo esc_attr($module_id); ?>'] = true" <?php if (!\apply_filters('cegg_disable_product_sorting', false)) : ?>ui-sortable="{ 'ui-floating': true }" <?php endif; ?> ng-model="models.<?php echo esc_attr($module_id); ?>.added" class="row">
                 <div class="col-md-12 added_data" ng-repeat="data in models.<?php echo esc_attr($module_id); ?>.added">
                     <div class="row" style="padding: 5px;">
                         <div class="col-md-1 text-center" ng-if="data.img">
@@ -142,19 +142,17 @@
                             <div style="padding:0;margin:0;"><a style="color:#D03300;" ng-click="delete(data, '<?php echo esc_attr($module_id); ?>')"><i class="glyphicon glyphicon-remove"></i> <?php esc_html_e('Remove', 'content-egg'); ?>
                                 </a></div>
 
-
                             <div style="padding:4px 0 8px 0;margin:0;" ng-show="data.extra.last_error">
                                 <span class="text-danger">
                                     <span ng-show="data.last_update"><i title="<?php esc_html_e('Last XPath error', 'content-egg'); ?>" class="glyphicon glyphicon-warning-sign"></i> {{data.extra.last_error}}</abbr></span>
                                 </span>
                             </div>
 
-
                         </div>
                     </div>
                 </div>
             </div>
-            <?php // [/RESULTS] 
+            <?php // [/RESULTS]
             ?>
         </uib-tab>
     </uib-tabset>

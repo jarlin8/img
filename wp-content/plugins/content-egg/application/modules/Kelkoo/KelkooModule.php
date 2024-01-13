@@ -11,6 +11,7 @@ use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\libs\kelkoo\KelkooApi;
 use ContentEgg\application\modules\Kelkoo\ExtraDataKelkoo;
 use ContentEgg\application\helpers\ArrayHelper;
+use ContentEgg\application\Plugin;
 
 /**
  * KelkooModule class file
@@ -27,7 +28,7 @@ class KelkooModule extends AffiliateParserModule
 
     public function info()
     {
-        if (\is_admin())
+        if (\is_admin() && !Plugin::isFree())
         {
             \add_action('admin_notices', array(__CLASS__, 'updateNotice'));
         }

@@ -96,7 +96,7 @@ class EggShortcode
             $a['products'] = TextHelper::getArrayFromCommaList($a['products']);
         if ($a['add_query_arg'])
             parse_str($a['add_query_arg'], $a['add_query_arg']);
-        $allowed_sort = array('price', 'discount', 'reverse');
+        $allowed_sort = array('price', 'discount', 'reverse', 'total_price');
         $allowed_order = array('asc', 'desc');
         $a['sort'] = strtolower($a['sort']);
         $a['order'] = strtolower($a['order']);
@@ -112,7 +112,6 @@ class EggShortcode
         else
             $a['template'] = '';
 
-
         if ($a['keyword'] && !$a['groups'])
         {
             if (strstr($a['keyword'], '->'))
@@ -125,11 +124,10 @@ class EggShortcode
                 $a['groups'] = array($a['keyword']);
         }
 
-
         return $a;
     }
 
-    public function viewData($atts, $content = "", $shortcode_tag)
+    public function viewData($atts, $content)
     {
         $a = $this->prepareAttr($atts);
 

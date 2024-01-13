@@ -66,7 +66,7 @@ class ShareasaleConfig extends AffiliateParserModuleConfig
             ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Number of results for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -77,7 +77,7 @@ class ShareasaleConfig extends AffiliateParserModuleConfig
             ),
             'entries_per_page_update' => array(
                 'title' => __('Results for updates and autoblogging', 'content-egg'),
-                'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 6,
                 'validator' => array(

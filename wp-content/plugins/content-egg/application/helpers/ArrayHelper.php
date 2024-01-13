@@ -125,4 +125,20 @@ class ArrayHelper
 
 		return $min_key;
 	}
+	public static function sortByField(array $data, $field, $order = 'asc')
+	{
+		usort($data, function ($a, $b) use ($field)
+		{
+			if ($a[$field] > $b[$field])
+				return 1;
+			elseif ($a[$field] < $b[$field])
+				return -1;
+			return 0;
+		});
+
+		if ($order == 'desc')
+			$data = array_reverse($data);
+
+		return $data;
+	}
 }

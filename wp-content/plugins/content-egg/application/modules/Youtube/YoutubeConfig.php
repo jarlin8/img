@@ -15,14 +15,13 @@ use ContentEgg\application\components\ParserModuleConfig;
  */
 class YoutubeConfig extends ParserModuleConfig
 {
-
 	public function options()
 	{
-		$optiosn = array(
-			'api_key'                 => array(
+		$options = array(
+			'api_key' => array(
 				'title'       => 'API Key <span class="cegg_required">*</span>',
 				'description' => __('API access key. You can get in Google <a href="http://code.google.com/apis/console">API console</a>.', 'content-egg'),
-				'callback'    => array($this, 'render_input'),
+				'callback'    => array($this, 'render_password'),
 				'default'     => '',
 				'validator'   => array(
 					'trim',
@@ -98,6 +97,8 @@ class YoutubeConfig extends ParserModuleConfig
 		);
 		$parent  = parent::options();
 
-		return array_merge($parent, $optiosn);
+		$options = array_merge($parent, $options);
+
+		return self::moveRequiredUp($options);
 	}
 }

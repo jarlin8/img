@@ -8,6 +8,8 @@ use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\components\ModuleManager;
 use ContentEgg\application\helpers\TextHelper;
 
+use function ContentEgg\prnx;
+
 /**
  * AffiliateFeedParserModule abstract class file
  *
@@ -109,9 +111,8 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule
     public function setLastImportDate($time = null)
     {
         if ($time === null)
-        {
             $time = time();
-        }
+
         \set_transient(self::TRANSIENT_LAST_IMPORT_DATE . $this->getId(), $time);
     }
 
@@ -128,13 +129,9 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule
         if ($last_export && $last_export < 0)
         {
             if (time() + $last_export > static::IMPORT_TIME_LIMT)
-            {
                 $last_export = 0;
-            }
             else
-            {
                 throw new \Exception('Product import is in progress. Try later.');
-            }
         }
 
         if ($this->isImportTime())
@@ -145,9 +142,7 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule
             $this->maybeCreateProductTable();
 
             if (!$this->product_model->isTableExists())
-            {
                 throw new \Exception(sprintf('Table %s does not exist', $this->product_model->tableName()));
-            }
 
             $this->importProducts($this->getFeedUrl());
 
@@ -157,35 +152,41 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule
         return false;
     }
 
-    public static function getProductsTtl()
+    public function getProductsTtl()
     {
-        return \apply_filters('cegg_feed_products_ttl', self::PRODUCTS_TTL);
+        $ttl = \apply_filters('cegg_feed_products_ttl', self::PRODUCTS_TTL);
+        $ttl = \apply_filters('cegg_feed_products_module_ttl', $ttl, $this->getId());
+        return $ttl;
     }
 
     public function isImportTime()
     {
-        $last_export = $this->getLastImportDate();
-        if (!$last_export || (time() - $last_export > self::getProductsTtl()))
-        {
+        $last_import = $this->getLastImportDate();
+
+        if (!$last_import)
             return true;
-        }
+
+        if (\apply_filters('cegg_is_feed_import_time', false, $this->getId(), $last_import))
+            return true;
+
+        if (time() - $last_import > $this->getProductsTtl())
+            return true;
         else
-        {
             return false;
-        }
     }
 
     public function importProducts($feed_url)
     {
-        @set_time_limit(static::IMPORT_TIME_LIMT);
+        if (!defined('\WP_CLI') || !\WP_CLI)
+            @set_time_limit(static::IMPORT_TIME_LIMT);
+
         \wp_raise_memory_limit();
         $this->setLastImportError('');
         register_shutdown_function(array($this, 'fatalHandler'));
-
         $this->product_model->truncateTable();
         $file = $this->downlodFeed($feed_url);
-        $this->processFeed($file);
 
+        $this->processFeed($file);
         $this->setLastImportDate();
 
         @unlink($file);
@@ -333,7 +334,6 @@ abstract class AffiliateFeedParserModule extends AffiliateParserModule
 
                 return;
             }
-
 
             if (!$product)
             {

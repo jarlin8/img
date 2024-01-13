@@ -8,6 +8,8 @@ use ContentEgg\application\libs\RestClient;
 use ContentEgg\application\libs\amazon\AmazonLocales;
 use ContentEgg\application\libs\amazon\AwsV4;
 
+use function ContentEgg\prnx;
+
 /**
  * PHP interface to Amazon Product Advertising API 5.0
  *
@@ -132,9 +134,16 @@ class AmazonApi extends RestClient
         }
 
         $errors = array();
+
         foreach ($data['Errors'] as $error)
         {
             $message = $error['Message'];
+
+            if ($error['Code'] == 'NoResults')
+            {
+                return;
+            }
+
             if ($error['Code'] == 'TooManyRequests')
             {
                 $message = str_replace('Please verify the number of requests made per second to the Amazon Product Advertising API.', '', $message);

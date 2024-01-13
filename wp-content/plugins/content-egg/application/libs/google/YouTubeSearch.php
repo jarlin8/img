@@ -50,7 +50,6 @@ class YouTubeSearch extends RestClient
         $_query['videoEmbeddable'] = 'true';
         $_query['type'] = 'video';
 
-
         //$params['format'] = 5;
 
         foreach ($params as $key => $param)
@@ -78,6 +77,9 @@ class YouTubeSearch extends RestClient
                     break;
             }
         }
+        //\ContentEgg\prn($_query);
+        //\ContentEgg\prn($this->_decodeResponse($this->restGet('/search', $_query)));
+        //exit;
         $response = $this->restGet('/search', $_query);
 
         return $this->_decodeResponse($response);

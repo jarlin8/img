@@ -55,7 +55,7 @@ class StructuredData
 
         foreach ($items as $i => $d)
         {
-            if ($d['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
+            if (isset($d['stock_status']) && $d['stock_status'] == ContentProduct::STOCK_STATUS_OUT_OF_STOCK)
                 unset($items[$i]);
         }
         if (!$items = array_values($items))

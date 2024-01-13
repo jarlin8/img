@@ -6,10 +6,11 @@ use ContentEgg\application\components\ModuleManager;
 $module = ModuleManager::factory($module_id);
 $is_woo = (\get_post_type($GLOBALS['post']->ID) == 'product') ? true : false;
 $isAffiliateParser = $module->isAffiliateParser();
+
 ?>
 
 <div class="data_results" ng-if="models.<?php echo esc_attr($module_id); ?>.added.length" id="<?php echo \esc_attr($module->getId()); ?>">
-    <div ui-sortable="{ 'ui-floating': true }" ng-model="models.<?php echo esc_attr($module_id); ?>.added" class="row">
+    <div <?php if (!\apply_filters('cegg_disable_product_sorting', false)) : ?>ui-sortable="{ 'ui-floating': true }" <?php endif; ?> ng-model="models.<?php echo esc_attr($module_id); ?>.added" class="row">
         <div class="col-md-12 added_data" ng-repeat="data in models.<?php echo esc_attr($module_id); ?>.added">
             <div class="row" style="padding:0;margin:0;padding-bottom:10px;" id="{{'<?php echo \esc_attr($module->getId()); ?>' + '-' + data.unique_id}}">
                 <div class="col-md-1 text-center" ng-if="data.img">
@@ -34,11 +35,9 @@ $isAffiliateParser = $module->isAffiliateParser();
                         <input type="text" placeholder="<?php esc_html_e('Price', 'content-egg'); ?>" ng-model="data.price" class="col-md-2" style="margin-bottom: 5px;">
                     <?php endif; ?>
 
-
                     <textarea type="text" placeholder="<?php esc_html_e('Description', 'content-egg'); ?>" rows="1" ng-model="data.description" ng-class="{'col-sm-10': data.ean, 'col-sm-12': !data.ean}"></textarea>
 
                     <input readonly ng-show="data.ean" type="text" title="EAN" ng-model="data.ean" class="col-sm-2" select-on-click style="cursor: pointer;">
-
 
                     <?php if ($isAffiliateParser) : ?>
                         <div class="clearfix"></div>
@@ -50,7 +49,6 @@ $isAffiliateParser = $module->isAffiliateParser();
                             <small class="text-muted" ng-show="data.features.length"><?php esc_html_e('Attributes:', 'content-egg'); ?> {{data.features.length}}</small>
                         <?php endif; ?>
                     <?php endif; ?>
-
 
                     <a ng-show="data.features.length" ng-init="isFeaturesCollapsed = true" ng-click="isFeaturesCollapsed = !isFeaturesCollapsed" aria-label="Edit">
                         <span class="glyphicon glyphicon-edit"></span>
@@ -95,8 +93,6 @@ $isAffiliateParser = $module->isAffiliateParser();
                                 <span ng-show="data.last_update"><i class="glyphicon glyphicon-time"></i> <abbr title="<?php esc_html_e('Last updated:', 'content-egg'); ?> {{data.last_update * 1000| date:'medium'}}">{{data.last_update * 1000| date:'shortDate'}}</abbr></span>
                                 <mark ng-show="data.stock_status == - 1 || data.stock_status == 1" ng-class="{'outofstock': data.stock_status == - 1, 'instock': data.stock_status == 1}">{{data.stock_status| stockStatus}}</mark>
                             </span>
-
-
 
                         </div>
                     <?php endif; ?>

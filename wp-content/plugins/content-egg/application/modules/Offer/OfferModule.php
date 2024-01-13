@@ -10,6 +10,8 @@ use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\helpers\TextHelper;
 use ContentEgg\application\components\ContentProduct;
 
+use function ContentEgg\prnx;
+
 /**
  * OfferModule class file
  *
@@ -67,14 +69,6 @@ class OfferModule extends AffiliateParserModule
         foreach ($items as $key => $item)
         {
             $items[$key]['extra']['last_error'] = '';
-            if (isset($item['extra']['priceXpath']))
-            {
-                $custom = $item['extra']['priceXpath'];
-            }
-            else
-            {
-                $custom = '';
-            }
 
             if (!isset($item['extra']['priceXpath']))
             {
@@ -119,6 +113,8 @@ class OfferModule extends AffiliateParserModule
             {
                 $items[$key]['stock_status'] = ContentProduct::STOCK_STATUS_IN_STOCK;
             }
+
+            $items[$key]['stock_status'] = \apply_filters('cegg_offer_update_stock_status', $items[$key]['stock_status'], $parser);
 
             if (!$price)
             {

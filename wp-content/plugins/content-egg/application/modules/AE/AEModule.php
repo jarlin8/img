@@ -13,6 +13,9 @@ use ContentEgg\application\components\LinkHandler;
 use ContentEgg\application\components\ContentManager;
 use \Keywordrush\AffiliateEgg\ParserManager;
 
+use function ContentEgg\prn;
+use function ContentEgg\prnx;
+
 /**
  * AEModule class file
  *
@@ -44,7 +47,7 @@ class AEModule extends AffiliateParserModule
         }
 
         return array(
-            'name' => 'AE:' . $name,
+            'name' => $name . ' [AE]',
             'description' => sprintf(__('Affiliate Egg parser for %s', 'content-egg'), $uri),
             'docs_uri' => 'https://ce-docs.keywordrush.com/modules/affiliate-egg-integration#avoid-getting-blocked',
         );
@@ -90,13 +93,9 @@ class AEModule extends AffiliateParserModule
     public function doRequest($keyword, $query_params = array(), $is_autoupdate = false)
     {
         if ($is_autoupdate)
-        {
             $entries_per_page = $this->config('entries_per_page_update');
-        }
         else
-        {
             $entries_per_page = $this->config('entries_per_page');
-        }
 
         $results = array();
 
@@ -123,7 +122,6 @@ class AEModule extends AffiliateParserModule
 
         // 1. Url passed?
         $is_url_passed = filter_var($keyword, FILTER_VALIDATE_URL) && TextHelper::getDomainWithoutSubdomain($this->getShopHost()) == TextHelper::getHostName($keyword);
-
         try
         {
             if ($is_url_passed)
@@ -142,9 +140,7 @@ class AEModule extends AffiliateParserModule
                 // try parse catalog
                 $product_urls = ParserManager::getInstance()->parseCatalog($url, $entries_per_page);
                 if (!$product_urls)
-                {
                     return array();
-                }
             }
 
             // 2. Parse catalog
@@ -152,9 +148,7 @@ class AEModule extends AffiliateParserModule
             {
                 $product_urls = ParserManager::getInstance()->parseSearchCatalog($this->getMyShortId(), $keyword, $entries_per_page);
                 if (!$product_urls || !is_array($product_urls))
-                {
                     return array();
-                }
             }
         }
         catch (\Exception $e)
@@ -206,6 +200,9 @@ class AEModule extends AffiliateParserModule
             $content->domain = TextHelper::getHostName($r['orig_url']);
             //$content->merchant = TemplateHelper::getNameFromDomain($content->domain);
             $content->img = $r['img'];
+            if (!empty($r['orig_img_large']))
+                $content->img_large = $r['orig_img_large'];
+
             $content->title = $r['title'];
             $content->description = $r['description'];
             $content->price = $r['price'];
@@ -250,9 +247,11 @@ class AEModule extends AffiliateParserModule
             }
             if (isset($r['extra']['images']))
             {
+                $content->images = $r['extra']['images'];
                 $content->extra->images = $r['extra']['images'];
                 unset($r['extra']['images']);
             }
+
             if (isset($r['extra']['category']))
             {
                 $content->category = $r['extra']['category'];

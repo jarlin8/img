@@ -34,6 +34,11 @@ class ViglinkModule extends AffiliateParserModule
 		);
 	}
 
+	public function isDeprecated()
+	{
+		return true;
+	}
+
 	public function releaseVersion()
 	{
 		return '5.2.0';

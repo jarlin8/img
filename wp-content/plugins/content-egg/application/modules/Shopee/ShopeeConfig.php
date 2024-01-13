@@ -67,6 +67,15 @@ class ShopeeConfig extends AffiliateParserModuleConfig
                 'default'  => self::getDefaultLocale(),
                 'section'  => 'default',
             ),
+            'sub_id' => array(
+                'title' => 'Sub ID',
+                'description' => '',
+                'callback' => array($this, 'render_input'),
+                'default' => '',
+                'validator' => array(
+                    'trim',
+                ),
+            ),
             'deeplink' => array(
                 'title' => 'Deeplink',
                 'description' => sprintf(__('Set <a target="_blank" href="%s">your deeplink</a> if you want to send clicks through one of the affiliate networks with Shopee support.', 'content-egg'), 'https://ce-docs.keywordrush.com/modules/deeplink-settings'),
@@ -79,7 +88,7 @@ class ShopeeConfig extends AffiliateParserModuleConfig
             ),
             'entries_per_page' => array(
                 'title' => __('Results', 'content-egg'),
-                'description' => __('Number of results for one search query.', 'content-egg'),
+                'description' => __('Specify the number of results to display for one search query.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 10,
                 'validator' => array(
@@ -94,7 +103,7 @@ class ShopeeConfig extends AffiliateParserModuleConfig
             ),
             'entries_per_page_update' => array(
                 'title' => __('Results for updates', 'content-egg'),
-                'description' => __('Number of results for automatic updates and autoblogging.', 'content-egg'),
+                'description' => __('Set the number of results for automatic updates and autoblogging.', 'content-egg'),
                 'callback' => array($this, 'render_input'),
                 'default' => 6,
                 'validator' => array(

@@ -6,6 +6,8 @@ defined('\ABSPATH') || exit;
 
 use ContentEgg\application\libs\RestClient;
 
+use function ContentEgg\prnx;
+
 /**
  * Aliexpress2Api class file
  *

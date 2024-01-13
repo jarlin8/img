@@ -13,6 +13,8 @@ use ContentEgg\application\helpers\ArrayHelper;
 use ContentEgg\application\helpers\TemplateHelper;
 use ContentEgg\application\libs\amazon\AmazonLocales;
 
+use function ContentEgg\prnx;
+
 /**
  * AmazonModule class file
  *
@@ -268,8 +270,8 @@ class AmazonModule extends AffiliateParserModule
             if ($i > 0 && \apply_filters('cegg_amazon_one_request_per_second', true))
                 sleep(1);
 
-
             $options['ItemPage'] = $i + 1;
+
             $data = $client->SearchItems($options);
             if (!is_array($data) || !isset($data['SearchResult']['Items']))
             {
@@ -435,6 +437,7 @@ class AmazonModule extends AffiliateParserModule
 
         $content->unique_id = $locale . '-' . $r['ASIN'];
         $content->url = $r['DetailPageURL'];
+        $content->orig_url = strtok($r['DetailPageURL'], '?');
         $content->title = $r['ItemInfo']['Title']['DisplayValue'];
 
         if (isset($r['Images']['Primary']))
@@ -568,6 +571,7 @@ class AmazonModule extends AffiliateParserModule
         $offer = null;
         $content->price = 0;
         $content->priceOld = 0;
+
         if (isset($r['Offers']['Listings'][0]))
         {
             $offer = $r['Offers']['Listings'][0];
@@ -705,7 +709,7 @@ class AmazonModule extends AffiliateParserModule
         {
             return false;
         }
-        $regex = '~/(?:exec/obidos/ASIN/|o/|gp/product/|gp/offer-listing/|(?:(?:[^"\'/]*)/)?dp/|)(B[0-9]{2}[0-9A-Z]{7}|[0-9]{9}(X|0-9])|[0-9]{10}|B0B[A-Z0-9]{7})(?:(?:/|\?|\#)(?:[^"\'\s]*))?~isx';
+        $regex = '~/(?:exec/obidos/ASIN/|o/|gp/product/|gp/offer-listing/|(?:(?:[^"\'/]*)/)?dp/|)([0-9A-Z]{10})(?:(?:/|\?|\#)(?:[^"\'\s]*))?~isx';
         if (preg_match($regex, $url, $matches))
         {
             return $matches[1];

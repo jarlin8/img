@@ -2,6 +2,8 @@
 
 namespace ContentEgg\application\helpers;
 
+use function ContentEgg\prnx;
+
 defined('\ABSPATH') || exit;
 
 /**
@@ -211,90 +213,6 @@ class TextHelper
         return $truncate;
     }
 
-    static function rus2latin($str)
-    {
-        $iso = array(
-            "Є" => "YE",
-            "І" => "I",
-            "Ѓ" => "G",
-            "і" => "i",
-            "№" => "#",
-            "є" => "ye",
-            "ѓ" => "g",
-            "А" => "A",
-            "Б" => "B",
-            "В" => "V",
-            "Г" => "G",
-            "Д" => "D",
-            "Е" => "E",
-            "Ё" => "YO",
-            "Ж" => "ZH",
-            "З" => "Z",
-            "И" => "I",
-            "Й" => "J",
-            "К" => "K",
-            "Л" => "L",
-            "М" => "M",
-            "Н" => "N",
-            "О" => "O",
-            "П" => "P",
-            "Р" => "R",
-            "С" => "S",
-            "Т" => "T",
-            "У" => "U",
-            "Ф" => "F",
-            "Х" => "X",
-            "Ц" => "C",
-            "Ч" => "CH",
-            "Ш" => "SH",
-            "Щ" => "SHH",
-            "Ъ" => "'",
-            "Ы" => "Y",
-            "Ь" => "",
-            "Э" => "E",
-            "Ю" => "YU",
-            "Я" => "YA",
-            "а" => "a",
-            "б" => "b",
-            "в" => "v",
-            "г" => "g",
-            "д" => "d",
-            "е" => "e",
-            "ё" => "yo",
-            "ж" => "zh",
-            "з" => "z",
-            "и" => "i",
-            "й" => "j",
-            "к" => "k",
-            "л" => "l",
-            "м" => "m",
-            "н" => "n",
-            "о" => "o",
-            "п" => "p",
-            "р" => "r",
-            "с" => "s",
-            "т" => "t",
-            "у" => "u",
-            "ф" => "f",
-            "х" => "x",
-            "ц" => "c",
-            "ч" => "ch",
-            "ш" => "sh",
-            "щ" => "shh",
-            "ъ" => "",
-            "ы" => "y",
-            "ь" => "",
-            "э" => "e",
-            "ю" => "yu",
-            "я" => "ya",
-            "'" => "",
-            "\"" => "",
-            " " => "-"
-        );
-
-        return strtr($str, $iso);
-    }
-
     public static function clear($str)
     {
         return preg_replace('/[^a-zA-Z0-9_]/', '', $str);
@@ -307,8 +225,8 @@ class TextHelper
 
     public static function clear_utf8($str)
     {
-        $str = str_replace('/', ' ', $str);
-        $str = preg_replace("/[^\pL\s\d\-\.\+_\,]+/ui", '', $str);
+        //$str = str_replace('/', ' ', $str);
+        $str = preg_replace("/[^\pL\s\d\-\.\+_\,\/]+/ui", '', $str);
         $str = preg_replace("/\s+/ui", ' ', $str);
 
         return $str;
@@ -380,22 +298,22 @@ class TextHelper
 
     static public function br2nl($str)
     {
-        return str_ireplace(array("<br />", "<br>", "<br/>"), "\r\n", $str);
+        return str_ireplace(array("<br />", "<br>", "<br/>"), "\r\n", (string) $str);
     }
 
     static public function nl2br($str)
     {
-        return str_replace(array("\r\n", "\r", "\n"), "<br />", $str);
+        return str_replace(array("\r\n", "\r", "\n"), "<br />", (string) $str);
     }
 
     static public function removeExtraBreaks($str)
     {
-        return trim(preg_replace("/(\r\n)+/i", "\r\n", $str));
+        return trim(preg_replace("/(\r\n)+/i", "\r\n", (string) $str));
     }
 
     static public function removeExtraBr($str)
     {
-        return preg_replace('#<br[^>]*>(\s*<br[^>]*>)+#', '<br />', $str);
+        return preg_replace('#<br[^>]*>(\s*<br[^>]*>)+#', '<br />', (string) $str);
     }
 
     /**
@@ -471,12 +389,16 @@ class TextHelper
         $result = array();
         foreach ($keywords as $keyword)
         {
-            $keyword = \sanitize_text_field($keyword);
+            if (filter_var($keyword, FILTER_VALIDATE_URL))
+                $keyword = \esc_url_raw($keyword);
+            else
+                $keyword = \sanitize_text_field($keyword);
+
             $keyword = trim($keyword);
+
             if (!$keyword)
-            {
                 continue;
-            }
+
             $result[] = $keyword;
         }
 
@@ -488,11 +410,15 @@ class TextHelper
         if (is_float($money) || is_int($money))
             return $money;
 
+        if (strstr($money, '-'))
+        {
+            $parts = explode('-', $money);
+            $money = $parts[0];
+        }
+
         $cleanString = preg_replace('/([^0-9\.,])/i', '', $money);
         $onlyNumbersString = preg_replace('/([^0-9])/i', '', $money);
-
         $separatorsCountToBeErased = strlen($cleanString) - strlen($onlyNumbersString) - 1;
-
         $stringWithCommaOrDot = preg_replace('/([,\.])/', '', $cleanString, $separatorsCountToBeErased);
         $removedThousendSeparator = preg_replace('/(\.|,)(?=[0-9]{3,}$)/', '', $stringWithCommaOrDot);
 
@@ -667,7 +593,7 @@ class TextHelper
      */
     public static function isAsin($str)
     {
-        if (preg_match('/B[0-9]{2}[0-9A-Z]{7}|[0-9]{9}(X|0-9])|[0-9]{10}|B0B[A-Z0-9]{7}/', $str))
+        if (preg_match('/^(B[\dA-Z]{9}|\d{9}(X|\d))$/', $str))
         {
             return true;
         }
@@ -697,13 +623,9 @@ class TextHelper
         $rating = (float) $rating;
         $rating = abs(round($rating));
         if ($rating < $min_rating || $rating > $max_rating)
-        {
             return null;
-        }
         else
-        {
             return $rating;
-        }
     }
 
     public static function sluggable($string)
@@ -1332,6 +1254,17 @@ class TextHelper
             'span' => array('class' => array()),
             'mark' => array(),
             'a' => array('href' => array(), 'rel' => array()),
+            'dl' => array(),
+            'dt' => array(),
+            'dd' => array(),
+            'div' => array(),
+            'h1' => array(),
+            'h2' => array(),
+            'h3' => array(),
+            'h4' => array(),
+            'h5' => array(),
+            'h6' => array(),
+            'div' => array(),
         );
 
         return \wp_kses($string, $allowed_html);
@@ -1366,5 +1299,19 @@ class TextHelper
         }
 
         return false;
+    }
+
+    public static function trimExcerpt($text)
+    {
+        $raw_excerpt = $text;
+        $text = strip_shortcodes($text);
+        $text = excerpt_remove_blocks($text);
+        $text = apply_filters('the_content', $text);
+        $text = str_replace(']]>', ']]&gt;', $text);
+        $excerpt_length = (int) _x('55', 'excerpt_length');
+        $excerpt_length = (int) apply_filters('excerpt_length', $excerpt_length);
+        $excerpt_more = apply_filters('excerpt_more', ' ' . '[&hellip;]');
+        $text = wp_trim_words($text, $excerpt_length, $excerpt_more);
+        return apply_filters('wp_trim_excerpt', $text, $raw_excerpt);
     }
 }

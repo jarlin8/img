@@ -3,7 +3,7 @@
  * Name: Sorted offers list with product images
  * Modules:
  * Module Types: PRODUCT
- * 
+ *
  */
 
 __('Sorted offers list with product images', 'content-egg-tpl');
@@ -18,17 +18,15 @@ $amazon_last_updated = TemplateHelper::getLastUpdateFormattedAmazon($data);
 ?>
 
 <div class="egg-container cegg-list-withlogos">
-    <?php if ($title): ?>
+    <?php if ($title) : ?>
         <h3><?php echo \esc_html($title); ?></h3>
     <?php endif; ?>
 
-    <div class="egg-listcontainer">
+    <div class="egg-listcontainer my-custom-class">
 
-        <?php foreach ($all_items as $key => $item): ?>    
-            <?php $this->renderBlock('list_row', array('item' => $item, 'amazon_last_updated' => $amazon_last_updated));?>
+        <?php foreach ($all_items as $key => $item) : ?>
+            <?php $this->renderBlock('list_row', array('item' => $item, 'amazon_last_updated' => $amazon_last_updated)); ?>
         <?php endforeach; ?>
-        
+
     </div>
 </div>
-
-

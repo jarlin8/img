@@ -14,6 +14,9 @@ use ContentEgg\application\admin\GeneralConfig;
 use ContentEgg\application\components\ContentProduct;
 use ContentEgg\application\helpers\TemplateHelper;
 
+use function ContentEgg\prn;
+use function ContentEgg\prnx;
+
 /**
  * ModuleViewer class file
  *
@@ -27,6 +30,8 @@ class ModuleViewer
     private $module_data_pointer = array();
     private $block_data_pointer = array();
     private $data = array();
+
+    private static $total_items = 0;
 
     public static function getInstance()
     {
@@ -42,7 +47,7 @@ class ModuleViewer
 
     public function init()
     {
-        // priority = 12 because do_shortcode() is registered as a default filter on 'the_content' with a priority of 11. 
+        // priority = 12 because do_shortcode() is registered as a default filter on 'the_content' with a priority of 11.
         \add_filter('the_content', array($this, 'viewData'), 12);
     }
 
@@ -173,7 +178,7 @@ class ModuleViewer
         {
             if ($params['sort'] == 'reverse')
                 $data = array_reverse($data);
-            elseif ($params['sort'] == 'price' || $params['sort'] == 'discount')
+            elseif ($params['sort'] == 'price' || $params['sort'] == 'discount' || $params['sort'] == 'total_price')
                 $data = TemplateHelper::sortByPrice($data, $params['order'], $params['sort']);
         }
 
@@ -256,7 +261,7 @@ class ModuleViewer
             {
                 foreach ($module_data as $key => $d)
                 {
-                    if (!$d['group'] || !in_array($d['group'], $params['groups']))
+                    if (empty($d['group']) || !in_array($d['group'], $params['groups']))
                         unset($module_data[$key]);
                 }
             }
@@ -278,6 +283,8 @@ class ModuleViewer
                 {
                     foreach ($params['hide'] as $hide)
                     {
+                        if ($hide == 'title')
+                            $module_data[$key]['_alt'] = $module_data[$key]['title'];
                         if (isset($d[$hide]))
                             $module_data[$key][$hide] = '';
                     }
@@ -290,6 +297,25 @@ class ModuleViewer
             // shortcoded!
             if (!isset($params['shortcoded']) || (bool) $params['shortcoded'])
                 Shortcoded::getInstance($post_id)->setShortcodedModule($module_id);
+        }
+
+        // remove duplicates
+        if (!empty($params['remove_duplicates_by']))
+        {
+            if ($duplicate_ids = ContentManager::findDuplicateIds($data, $params['remove_duplicates_by']))
+            {
+                foreach ($data as $module_id => $module_data)
+                {
+                    foreach ($module_data as $unique_id => $d)
+                    {
+                        if (in_array($unique_id, $duplicate_ids))
+                            unset($data[$module_id][$unique_id]);
+                    }
+
+                    if (!count($data[$module_id]))
+                        unset($data[$module_id]);
+                }
+            }
         }
 
         if (!$data)

@@ -126,7 +126,7 @@ class AutoblogController
             'main_product' => 'min_price',
             'tags' => '',
             'condition' => '',
-            'config' => array('dynamic_categories' => 0, 'min_comments_count' => 0),
+            'config' => array('dynamic_categories' => 0, 'min_comments_count' => 0, 'avoid_duplicates' => 'disabled'),
         );
 
         $message = '';
@@ -153,8 +153,8 @@ class AutoblogController
             $item['required_modules'] = isset($pitem['required_modules']) ? array_map('sanitize_text_field', $pitem['required_modules']) : array();
             $item['autoupdate_modules'] = isset($pitem['autoupdate_modules']) ? array_map('sanitize_text_field', $pitem['autoupdate_modules']) : array();
             $item['min_modules_count'] = isset($pitem['min_modules_count']) ? absint($pitem['min_modules_count']) : '';
-            $item['keywords'] = isset($pitem['keywords']) ? array_map('sanitize_text_field', explode("\r\n", $pitem['keywords'])) : null;
-            $item['custom_field_names'] = isset($pitem['custom_field_names']) ? array_map('sanitize_key', $pitem['custom_field_names']) : array();
+            $item['keywords'] = isset($pitem['keywords']) ? explode("\r\n", $pitem['keywords']) : null;
+            $item['custom_field_names'] = isset($pitem['custom_field_names']) ? array_map('sanitize_text_field', $pitem['custom_field_names']) : array();
             $item['custom_field_values'] = isset($pitem['custom_field_values']) ? array_map('sanitize_text_field', $pitem['custom_field_values']) : array();
             $item['main_product'] = isset($pitem['main_product']) ? sanitize_key($pitem['main_product']) : 'min_price';
             $item['tags'] = isset($pitem['tags']) ? sanitize_text_field(TextHelper::commaList($pitem['tags'])) : '';

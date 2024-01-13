@@ -17,6 +17,78 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
+= Version 12.5.0 =
+* Improvement: The AmazonNoAPI module now functions as a web scraper.
+* Improvement: The AmazonNoAPI module now supports all Amazon locales.
+
+= Version 12.4.0 =
+* New: Added the option to hide prices in the AmazonNoAPI module.
+
+= Version 12.3.0 =
+* Added: Shopee module now supports searching by product URLs or product ID.
+* Added: Added Sub ID option to the Shopee module.
+* Added: Introduced a price update feature in the Shopee module.
+
+= Version 12.2.0 =
+* Added: Shipping cost field mapping for the Feed module.
+* Added: New template "Sorted list with store logos and shipping price".
+* Added: New template "Sorted list with store logos and shipping price + group pills".
+* Added: Sorting parameter by total_price.
+* Deprecated: The Viglink module is now deprecated.
+
+= 12.1.6 =
+* Improvement: Added 'img+url' show parameter for the "Customizable" template.
+
+= 12.1.1 =
+* Improvement: Price history charts.
+
+= 12.1.0 =
+* New: Added "Merchant name" configuration for the eBay module.
+* New: Implemented WP-CLI command to trigger updates by keyword.
+
+= 12.0.4 =
+* New: Kieskeurignl module now includes an option to exclude specific domains.
+* New: Added a button to copy product IDs for use in Too Much Niche articles.
+* Improvement: Implementation of module priority for selecting featured images.
+
+= 12.0.0 =
+* New: TooMuchNiche plugin compatibility.
+* New: Aliexpress module: Ship to country option.
+
+= 11.12.0 =
+* New: Global autoupdate keywords.
+* New: EAN synchronization for WooCommerce.
+* New: ISBN synchronization for WooCommerce.
+* New: Feed modules: ISBN field mapping.
+* New: Autoblogging: Avoid product duplicates by EAN/ISBN.
+
+= 11.11.0 =
+* New: Shop coupons (experimental feature).
+
+= 11.10.0 =
+* New: Block shortcode parameter: remove_duplicates_by="product field name".
+* New: Shop info popup type: Modal dialog or popover.
+* Improvement: Shop info settings: TinyMCE editor.
+* Improvement: Shop info settings: Shortcode support.
+
+= 11.9.0 =
+* New: Amazon module: Specifications template.
+
+= 11.8.0 =
+* New: Feed modules: Short description mapping.
+
+= 11.7.0 =
+* New: WooCommerce settings: Sync description (disabled by default).
+
+= 11.6.1 =
+* Improvement: More fields for schema markup.
+
+= 11.6.0 =
+* New: Module shortcodes: keyword parameter.
+
+= 11.5.0 =
+* New: Option to process out of stock products for WooCommerce.
+
 = 11.4.0 =
 * New: Trovaprezzi module.
 * New: Pass-through query parameters to redirect links.

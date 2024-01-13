@@ -43,6 +43,10 @@ class LicConfig extends Config
 			$this,
 			'settings_page'
 		));
+
+		global $submenu;
+		if (!Plugin::isTooMuchNicheActive())
+			$submenu['content-egg'][] = array('<b style="color: #75b798;">Unlock AI Power</b>', 'manage_options', 'https://www.keywordrush.com/toomuchniche?utm_source=cegg&utm_medium=referral&utm_campaign=plugin');
 	}
 
 	protected function options()
