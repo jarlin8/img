@@ -40,13 +40,16 @@ $store_address = apply_filters( 'dokan_store_header_adress', $short_address, $st
 	    			<a href="<?php echo esc_url($store_url); ?>"><img src="<?php echo rh_show_vendor_avatar($store_id, 150, 150); ?>" class="vendor_store_image_single" width=150 height=150 /></a>
 	    		</div>
 	    		<div id="wcvendor_profile_act_desc" class="wcvendor_profile_cell">
-	    			<div class="wcvendor_store_name">
-					<?php if ($store_featured) : ?>
-						<div class="wcv-verified-vendor">
-							<i class="rhicon rhi-shield-check" aria-hidden="true"></i> <?php esc_html_e( 'Featured vendor', 'rehub-theme' ); ?>
+	    			<div class="wcvendor_store_name" style="display: flex;align-items: center;gap: 10px;flex-wrap: wrap;">
+						<?php if ($store_featured) : ?>
+							<div class="wcv-verified-vendor">
+								<i class="rhicon rhi-shield-check" aria-hidden="true"></i> <?php esc_html_e( 'Featured vendor', 'rehub-theme' ); ?>
+							</div>
+						<?php endif; ?>						
+	    				<h1><?php echo esc_html( $store_user->get_shop_name() ); ?></h1> 
+						<div class="wcv-badges-vendor" style="margin-bottom:12px">
+							<?php apply_filters( 'dokan_store_header_after_store_name', $store_user ); ?>
 						</div>
-					<?php endif; ?>						
-	    				<h1><?php echo esc_html( $store_user->get_shop_name() ); ?></h1> 	    				
 	    			</div>
 	    			<div class="wcvendor_store_desc">
 						<div class="wcvendor_store_stars woocommerce">

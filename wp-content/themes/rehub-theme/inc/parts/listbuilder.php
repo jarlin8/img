@@ -280,13 +280,20 @@ else {
         <?php endif;?>               
     </div> 
     <?php if($disclaimer):?>
-        <?php $field = trim(esc_html($disclaimer)); $disclaimercontent = get_post_meta($postid, $field, true);?>
+        <?php 
+            $field = trim(esc_html($disclaimer)); 
+            if (strpos($field, "[") !== false) {
+                $disclaimercontent = $field;
+            }else{
+                $disclaimercontent = get_post_meta($postid, $field, true);
+            }
+        ?>
         <?php if($disclaimercontent):?>
             <div class="rev_disclaimer lightbluebg font70 lineheight15 pt10 pb10 pl15 pr15 flowhidden">
                 <?php if($togglelink == 'disclaimer'):?>
                     <span class="def_btn fontnormal floatright r_show_hide ml15 rtlmr15"><?php esc_html_e('More details +', 'rehub-theme');?></span>
                 <?php endif;?>                
-                <?php echo wp_kses($disclaimercontent, 'post');?>
+                <?php echo do_shortcode(wp_kses($disclaimercontent, 'post'));?>
             </div>
         <?php endif;?>    
     <?php endif;?>  

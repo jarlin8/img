@@ -126,7 +126,7 @@ $tf_support_date = '';
 		            </div>
 		        	<div class="col">
 						<h4><?php esc_html_e( "Step 2 - Purchase Validation", "rehub-theme" ); ?></h4>
-						<p><?php esc_html_e( "Enter your ThemeForest username, purchase code into the fields below. This will give you access to automatic theme updates, demo stacks, support, etc.", "rehub-theme" ); ?></p>
+						<p><?php esc_html_e( "Enter YOUR ThemeForest username, purchase code into the fields below. This will give you access to automatic theme updates, demo stacks, support, etc. Attention!!! You must add OWN username from Themeforest into field.", "rehub-theme" ); ?></p>
 		            </div>               	
 		            <div class="col last-feature">
 						<h4><?php esc_html_e( "Step 3 - Next Steps", "rehub-theme" ); ?></h4>
@@ -178,7 +178,7 @@ $tf_support_date = '';
 									<?php wp_nonce_field('lb_deactivate_license', 'lb_deactivate_license_sec'); ?>
 									
 									<input type="text" name="deactivate_client_name" size="50" placeholder="<?php esc_html_e( "YOUR Themeforest Username", "rehub-theme" ); ?>" required value="<?php echo esc_attr($tf_username); ?>">
-									<input type="text" name="deactivate_license_code" size="50" placeholder="<?php esc_html_e( "Enter Themeforest Purchase Code", "rehub-theme" ); ?>" required value="<?php echo esc_attr($tf_purchase_code); ?>">
+									<input type="password" name="deactivate_license_code" size="50" placeholder="<?php esc_html_e( "Enter Themeforest Purchase Code", "rehub-theme" ); ?>" required value="<?php echo esc_attr($tf_purchase_code); ?>">
 									<input type="hidden" name="lb_deactivate" value="yes">
 									<input type="submit" value="<?php esc_html_e( "Deactivate", "rehub-theme" ); ?>" class="button button-large button-primary rehub-large-button">
 								</form>
@@ -189,7 +189,7 @@ $tf_support_date = '';
 				<form action="" method="post">
 					<?php wp_nonce_field('lb_update_license', 'lb_update_license_sec'); ?>
 						<input type="text" name="client_name" size="50" placeholder="<?php esc_html_e( "Themeforest Username", "rehub-theme" ); ?>" required value="<?php echo esc_attr($tf_username); ?>">
-						<input type="text" name="license_code" size="50" placeholder="<?php esc_html_e( "Enter Themeforest Purchase Code", "rehub-theme" ); ?>" required value="<?php echo esc_attr($tf_purchase_code); ?>">
+						<input type="password" name="license_code" size="50" placeholder="<?php esc_html_e( "Enter Themeforest Purchase Code", "rehub-theme" ); ?>" required value="<?php echo esc_attr($tf_purchase_code); ?>">
 						<input type="submit" value="<?php esc_html_e( "Submit", "rehub-theme" ); ?>" class="button button-large button-primary rehub-large-button">
 				</form>
 				</div>

@@ -209,7 +209,7 @@ class WC_AJAX {
 				function( $response, $data ) use ( $ajax_callback ) {
 					return call_user_func_array( array( __CLASS__, $ajax_callback ), func_get_args() );
 				},
-				10,
+				11,
 				2
 			);
 		}
@@ -2714,11 +2714,13 @@ class WC_AJAX {
 			$variation = wc_get_product( $variation_id );
 
 			if ( 'false' !== $data['date_from'] ) {
-				$variation->set_date_on_sale_from( wc_clean( $data['date_from'] ) );
+				$date_on_sale_from = date( 'Y-m-d 00:00:00', strtotime( wc_clean( $data['date_from'] ) ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
+				$variation->set_date_on_sale_from( $date_on_sale_from );
 			}
 
 			if ( 'false' !== $data['date_to'] ) {
-				$variation->set_date_on_sale_to( wc_clean( $data['date_to'] ) );
+				$date_on_sale_to = date( 'Y-m-d 23:59:59', strtotime( wc_clean( $data['date_to'] ) ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
+				$variation->set_date_on_sale_to( $date_on_sale_to );
 			}
 
 			$variation->save();

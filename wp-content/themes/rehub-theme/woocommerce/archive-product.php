@@ -33,6 +33,13 @@ wp_enqueue_script('rhniceselect');
 <?php if (is_tax('store')):?>  
       <?php include(rh_locate_template('woocommerce/brandarchive.php')); ?>                                     
 <?php else :?> 
+
+<?php $custom_shop_layout = rehub_option('woo_columns'); ?>
+<?php if (is_numeric($custom_shop_layout) && function_exists('rh_wp_reusable_render')) : ?>
+    <div class="rh-container rh_woo_main_archive">
+        <?php echo rh_wp_reusable_render(array('id' => $custom_shop_layout));?> 
+    </div>
+<?php else : ?>
 <!-- CONTENT -->
 <?php $display_type = '';?>
 <?php $display_type = woocommerce_get_loop_display_mode();?>
@@ -172,6 +179,7 @@ wp_enqueue_script('rhniceselect');
     </div>
 </div>
 <!-- /CONTENT -->
+<?php endif;?> 
 
 <?php endif;?>  
 <?php get_footer(); ?>

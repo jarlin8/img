@@ -625,7 +625,7 @@ function RH_get_wishlist( $post_id, $wishlistadd = '',$wishlistadded = '', $wish
             $output .= '<span class="heartplus'.$onlyuser_class.'"'.$loginurl.' data-post_id="'.$post_id.'" data-informer="'.$temp.'">'.$outputtext.'</span>';
         }   
     $output .= '</span>';
-    $output .= '<span id="wishcount'.$post_id.'" class="thumbscount'; 
+    $output .= '<span data-wishcount="'.$temp.'" id="wishcount'.$post_id.'" class="thumbscount'; 
     $output .= '">'.$temp.'</span> ';                
     $output .= '</div>';    
 

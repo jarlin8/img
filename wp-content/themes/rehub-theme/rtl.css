@@ -40,6 +40,7 @@ header .mediad { float: left;  }
 .header_top_wrap .icon-in-header-small { float: left; }
 header .search { float: left; }
 nav.top_menu > ul > li:first-child{ border-right: none; }
+.rtl nav.top_menu > ul > li:last-child{border-right:1px solid rgba(0, 0, 0, 0.08) !important}
 nav.top_menu ul.menu > li.menu-item-has-children > a:before { margin: 3px 7px 0px 0px; float: left; }
 nav.top_menu ul li.menu-item-has-children ul li.menu-item-has-children > a:before { content: "\f104"; float: left; padding-right: 8px; padding-left: 0px; }
 nav.top_menu ul li ul li ul { right: 100%; left: inherit; }

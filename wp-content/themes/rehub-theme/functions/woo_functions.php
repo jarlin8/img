@@ -1712,7 +1712,7 @@ if(rehub_option('ce_custom_currency')){
 
 function rh_price_free_zero_empty( $price, $product ) {
 	$getprice = get_post_meta($product->get_id(), '_regular_price', true);
-	if ( $getprice == 0 && $getprice !=='' ) {
+	if ( ($getprice === 0 || $getprice === '0')  && $getprice !=='' ) {
 		$price = '<span class="amount">' . esc_html__( 'Free!', 'rehub-theme' ) . '</span>';
 	}
 

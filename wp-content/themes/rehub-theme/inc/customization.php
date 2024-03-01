@@ -1060,6 +1060,7 @@ body.dark_body .products .col_item{background: #2B2B2F !important;border: none;b
 	.postNavigation .postnavprev{ background-color: #868686}
 
 	.showmefulln{position: absolute;bottom: 20px;left: 20px; margin-top: 15px; line-height: 12px; font-size: 12px; font-weight: normal !important; float: right;}
+	.rtl .showmefulln{right:20px; left:auto}
 	.showmefulln:after{ font-family: rhicons; content: "\f107"; margin: 0 3px; display: inline-block; }
 	.showmefulln.compress:after{content: "\f106";}
 	.newscom_content_ajax .post_carousel_block, .newscom_content_ajax .countdown_dashboard, .newscom_content_ajax .post_slider{display: none !important}

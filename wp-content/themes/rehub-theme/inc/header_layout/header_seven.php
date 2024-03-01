@@ -50,19 +50,20 @@
                         <?php if(rehub_option('header_seven_wishlist')):?>
                             <?php $icons ++;?>
                             <div class="celldisplay text-center">
-                            <a href="<?php echo esc_url(rehub_option('header_seven_wishlist'));?>" class="rh-header-icon mobileinmenu rh-wishlistmenu-link" aria-label="Wishlist">
+                            <?php 
+                            $likedposts = '';       
+                            if ( is_user_logged_in() ) { // user is logged in
+                                global $current_user;
+                                $user_id = $current_user->ID; // current user
+                                $likedposts = get_user_meta( $user_id, "_wished_posts", true);
+                            }
+                            else{
+                                $ip = rehub_get_ip(); // user IP address
+                                $likedposts = get_transient('re_guest_wishes_' . $ip);
+                            } 
+                            ?>
+                            <a href="<?php echo esc_url(rehub_option('header_seven_wishlist'));?>" class="rh-header-icon mobileinmenu rh-wishlistmenu-link" aria-label="Wishlist" data-wishcount="<?php echo (!empty($likedposts) ? count($likedposts) : 0);?>">
                                 <?php  
-                                    $likedposts = '';       
-                                    if ( is_user_logged_in() ) { // user is logged in
-                                        global $current_user;
-                                        $user_id = $current_user->ID; // current user
-                                        $likedposts = get_user_meta( $user_id, "_wished_posts", true);
-                                    }
-                                    else{
-                                        $ip = rehub_get_ip(); // user IP address
-                                        $likedposts = get_transient('re_guest_wishes_' . $ip);
-                                    } 
-
                                     $wishnotice = (!empty($likedposts)) ? '<span class="rh-icon-notice rehub-main-color-bg">'.count($likedposts).'</span>' : '<span class="rh-icon-notice rhhidden rehub-main-color-bg"></span>';
                                 ?>
                                 <span class="rhicon rhi-hearttip position-relative">

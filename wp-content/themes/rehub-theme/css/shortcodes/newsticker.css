@@ -1,7 +1,7 @@
 /****************************************************************************
     News Scroller
 ****************************************************************************/
-.top_theme {margin: 15px auto 0 auto; height: 30px; position: relative; overflow: hidden; line-height: 30px; clear: both; }
+.top_theme {margin: 15px auto 0 auto; height: 30px; position: relative; overflow: hidden; line-height: 30px; clear: both; display:flex }
 .wpsm-news-ticker { display: block; height: 30px; white-space: nowrap; font-size: 14px; padding-left: 4px }
 ul.wpsm-news-ticker li{list-style: none; margin: 0}
 .scroller {text-align: center; cursor:pointer; margin: 0 4px; width: 18px; z-index: 100 !important; position: relative; display: block; float: left; border: none; }

@@ -4,7 +4,7 @@
 	Description: A Hybrid magazine/shop/review/news Wordpress Theme
 	Author: Wpsoul
 	Author URI: https://wpsoul.com/
-	Version: 19.0.5
+	Version: 19.6.1
 	Tags: two-columns, fluid-layout, custom-background, threaded-comments, translation-ready, custom-menu
 	License: 
 	License URI:
@@ -1282,7 +1282,7 @@ body .brand_logo_small img{max-width: 100px; height: auto; width: auto; margin-t
 .social_icon .rss { background-color: #ff9933 }
 .social_icon .sc { background-color: #ff7d2f }
 .social_icon .tm { background-color: #00acef }
-.social_icon .tw, .rh-social-square .tw:hover { background-color: #66ccff }
+.social_icon .tw, .rh-social-square .tw:hover { background-color: #111 }
 .social_icon .vk { background-color: #537599 }
 .social_icon .telegram { background-color: #2da8e4 }
 .social_icon .dscord { background-color: #7289da }
@@ -1295,7 +1295,7 @@ body .brand_logo_small img{max-width: 100px; height: auto; width: auto; margin-t
 .row_social_inpost span.share-link-image { box-shadow: 0 1px 2px #E4E4E4; width: auto;min-width: 30px;line-height: 23px;margin: 0 6px 6px 0;font-size: 16px;padding: 3px 12px;}
 .row_social_inpost span i{font-size: 15px; vertical-align: middle;}
 .row_social_inpost span.fb:after{content: "Facebook";font-size: 12px;text-decoration: none;margin-left: 8px;}
-.row_social_inpost span.tw:after{content: "Twitter";font-size: 12px;text-decoration: none;margin-left: 8px;}
+.row_social_inpost span.tw:after{content: "XTwitter";font-size: 12px;text-decoration: none;margin-left: 8px;}
 .share-link-image{color: #fff !important; cursor: pointer; display: inline-block; text-align: center; position: relative;width: 32px;height: 32px;margin-right: 2px; font-size: 20px; line-height: 32px}
 .share-link-image:hover{top: 2px; box-shadow: none;}
 .row_social_inpost span.simplefavorite-button-count {margin: 0;box-shadow: none;width: auto;height: auto;line-height: inherit;float: none;padding: 0;font-size: inherit;min-width: 1px;}

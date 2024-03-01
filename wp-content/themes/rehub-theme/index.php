@@ -12,7 +12,13 @@ $archive_layout = rehub_option('archive_layout');
     <div class="rh-content-wrap clearfix">
         <!-- Main Side -->
         <div class="main-side clearfix<?php if ($archive_layout == 'gridfull' || $archive_layout == 'dealgridfull' || $archive_layout == 'compactgridfull' || $archive_layout == 'columngridfull' || $archive_layout == 'cardblogfull') : ?> full_width<?php endif ;?>">
-            <h1 class="wpsm-title position-relative flowhidden mb25 under-title-line middle-size-title"><?php esc_html_e('Latest Posts', 'rehub-theme'); ?></h1>  
+            <h1 class="wpsm-title position-relative flowhidden mb25 under-title-line middle-size-title">
+                <?php if ( is_home() && ! is_front_page() ) : ?>
+                    <?php single_post_title(); ?>
+                <?php else:?>
+                    <?php esc_html_e('Latest Posts', 'rehub-theme'); ?>
+                <?php endif;?>  
+            </h1>  
             <?php if (have_posts()) : ?>
                 <?php if ($archive_layout == 'blog') : ?>
                     <div class="">

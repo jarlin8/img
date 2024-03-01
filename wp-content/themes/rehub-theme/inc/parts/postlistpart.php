@@ -87,7 +87,7 @@ else {
         <div class="rh_gr_img_first offer_thumb"> 
             <div class="border-grey deal_img_wrap position-relative text-center width-100"> 
             <div class="favorrightside wishonimage"><?php echo RH_get_wishlist($postid);?></div>      
-            <a href="<?php echo ''.$link;?>" <?php echo ''.$target;?> <?php echo ''.$outsidelinkpart; ?>>
+            <a title="<?php echo ''.$offer_title ;?>" href="<?php echo ''.$link;?>" <?php echo ''.$target;?> <?php echo ''.$outsidelinkpart; ?>>
             <?php if ($discountpercentage) :?>
                 <span class="height-80 rh-flex-center-align rh-flex-justify-center sale_tag_inwoolist text-center"><div class="font150 sale_letter fontbold greencolor mb0 ml0 mr0 mt0 overflow-elipse pb0 pl0 pr0 pt0"><?php echo esc_html($discountpercentage);?></div></span>
             <?php elseif (!has_post_thumbnail() && !empty($offer_price_old) && !empty($offer_price)) :?>

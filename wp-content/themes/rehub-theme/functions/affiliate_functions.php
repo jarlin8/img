@@ -968,6 +968,7 @@ function coupon_get_code(){
         return;
     }    
     $code = get_post( $codeid );
+    if(!is_object($code)) return;
     $codeid = $code->ID;
     $shop = $thumb_enable = $printout = $sale_proc = $coupontext = '';
     if( !empty( $code ) ){

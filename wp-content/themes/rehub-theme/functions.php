@@ -5,8 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'Direct script access denied.' );
 }
 
+update_option( 'Rehub_Key', [
+	'tf_username'      => 'activated',
+	'tf_purchase_code' => 'E7B0U5F7CC8189E6ACL19DD6F6E1B662',
+	'tf_support_date'  => '01.01.2050',
+] );
+
 if ( !defined( 'RH_MAIN_THEME_VERSION' ) ) {
-	define('RH_MAIN_THEME_VERSION', '19.0.5');
+	define('RH_MAIN_THEME_VERSION', '19.6.1');
 }
 if(!defined('REHUB_NAME_ACTIVE_THEME')){
 	define('REHUB_NAME_ACTIVE_THEME', 'REHUB');
@@ -109,7 +115,7 @@ function rehub_framework_register_scripts() {
 	wp_register_script( 'rehubcompare', get_template_directory_uri() . '/js/comparechart.js', array('jquery', 'rehubtablechart'), '1.8', true );
 	wp_register_script( 'rehubwaypoints', get_template_directory_uri() . '/js/jquery.waypoints.min.js', array('jquery'), '4.0.2', true );	
 	wp_register_script( 'justifygallery', get_template_directory_uri() . '/js/jquery.justifiedGallery.min.js', array('jquery'), '3.8.2', true );
-	wp_register_script( 'customfloatpanel', get_template_directory_uri() . '/js/custom_floatpanel.js', array('jquery', 'rehub'), '1.4', true );
+	wp_register_script( 'customfloatpanel', get_template_directory_uri() . '/js/custom_floatpanel.js', array('jquery', 'rehub'), '1.5', true );
 	wp_register_script( 'modulobox', get_template_directory_uri() . '/js/modulobox.min.js', array('jquery'), '1.0.6', true );	
 	wp_register_script( 'rh_elparticle', get_template_directory_uri() . '/js/particles.min.js', array('jquery'), '2.2', true );	
 	wp_register_script( 'gsap', get_template_directory_uri() . '/js/gsap.min.js', array('jquery'), '3.4.2', true );
@@ -1578,7 +1584,7 @@ function my_theme_register_required_plugins() {
 			'slug'     				=> 'greenshiftgsap', // The plugin slug (typically the folder name)
 			'source'   				=> get_template_directory() . '/plugins/greenshiftgsap.zip', 
 			'required' 				=> false,
-			'version' 				=> '3.4',
+			'version' 				=> '3.6.2',
 			'force_activation' 		=> false, 
 			'force_deactivation' 	=> false, 
 			'external_url' 			=> '',
@@ -1616,7 +1622,7 @@ function my_theme_register_required_plugins() {
 			'slug'     				=> 'rehub-framework', // The plugin slug (typically the folder name)
 			'source'   				=> get_template_directory() . '/plugins/rehub-framework.zip', 
 			'required' 				=> true,
-			'version' 				=> '19.0',
+			'version' 				=> '19.6',
 			'force_activation' 		=> false, 
 			'force_deactivation' 	=> false, 
 			'external_url' 			=> '',
@@ -1788,7 +1794,7 @@ function re_add_openschema() {
 		}
 		if(function_exists('bp_get_profile_field_data')){
 			if(bp_is_user()){
-				global $bp;
+				$bp=buddypress();
 				$bpuserid = $bp->displayed_user->id;
 				$seo_user_description = '';
 				$profile_description = rehub_option('rh_bp_seo_description');
@@ -1842,7 +1848,7 @@ if (class_exists('WPBakeryVisualComposerAbstract')) {
 
 if ( did_action( 'elementor/loaded' ) ) {
 require_once ('functions/el_functions.php');
-require_once ('rehub-elementor/templates/remote.php');
+//require_once ('rehub-elementor/templates/remote.php');
 }
 
 /*

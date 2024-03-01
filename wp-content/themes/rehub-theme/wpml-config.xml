@@ -53,6 +53,7 @@
 		  <key name="footer_template" />
 		  <key name="rehub_header_style" />
 		  <key name="rehub_top_line_content" />
+		  <key name="blog_posttype_label" />
 	  </key>	  	  	  	  
 	</admin-texts>  
 	<custom-types>

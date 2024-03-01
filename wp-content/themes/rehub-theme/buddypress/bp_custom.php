@@ -60,7 +60,7 @@ endif;
 if( ! function_exists( 'rh_content_setup_nav_profile' ) ) :
 	function rh_content_setup_nav_profile() {
 		if(rehub_option('rh_bp_user_post_name') !=''){
-			global $bp;
+			$bp=buddypress();
 			$userid = (!empty($bp->displayed_user->id)) ? $bp->displayed_user->id : '';
 			if($userid){
 				$totalposts = count_user_posts( $userid, $post_type = 'post' );	
@@ -131,7 +131,7 @@ if( ! function_exists( 'rh_content_setup_nav_profile' ) ) :
 			}						
 		}	
 		if(rehub_option('rh_bp_user_product_name') !=''){
-			global $bp;
+			$bp=buddypress();
 			$userid = (!empty($bp->displayed_user->id)) ? $bp->displayed_user->id : '';
 			if($userid){
 				$totalposts = count_user_posts( $userid, $post_type = 'product' );	

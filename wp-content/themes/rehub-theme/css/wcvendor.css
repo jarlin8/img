@@ -244,6 +244,9 @@ table.wcv-table tr td, table.wcv-table tr th{border-bottom: 1px solid #E1E1E1;}
 .dokan-booking-wrapper .wc_bookings_calendar{border: 1px solid #eee}
 #bookings_availability .table_grid table td, #bookings_persons .table_grid table td, #bookings_pricing .table_grid table td, #bookings_product_data .table_grid table td, #bookings_resources .table_grid table td, #bookings_settings .table_grid table td, .bookings_extension .table_grid table td{vertical-align: middle; position: static;}
 #dokan-product-enquiry input[type="text"], #dokan-product-enquiry input[type="email"], #dokan-product-enquiry textarea {width: 100%;padding: 12px 10px;height: auto;font-size: 15px;margin-bottom: 15px;max-width: 500px;}
+.wp-list-table thead, .wp-list-table tfoot{background: #f6f6f6;}
+.wp-list-table td{border:1px solid #eee}
+
 .wcv-grid .wcv-horizontal-gutters input[type="submit"]{margin-right: 10px}
 .wcmvendor_store_ratings a{color: #eee !important; font-size: 80% }
 .seller-rating + .text{margin: 0 5px}

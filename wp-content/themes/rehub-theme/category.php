@@ -1,5 +1,5 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
-<?php get_header(); ?>
+<?php get_header();  ?>
 <?php $catID = get_query_var( 'cat' );?>
 <?php $archive_layout = rehub_option('archive_layout');?>
 <?php $enable_pagination = (rehub_option('enable_pagination')) ? rehub_option('enable_pagination') : '1';?>
@@ -165,7 +165,11 @@ $cat_filter_panel = rehub_option('category_filter_panel');
             if ( $wp_query->have_posts() ) : ?>
                 <?php 
                     $count = 0; 
-                    $count_ad_descs = explode("\n", rehub_option('rehub_grid_ads_desc'));
+                    if(rehub_option('rehub_grid_ads_desc')){
+                        $count_ad_descs = explode("\n", rehub_option('rehub_grid_ads_desc'));
+                    }else{
+                        $count_ad_descs = [];
+                    }
                 ?>
                 <?php if ($archive_layout == 'blog') : ?>
                     <div class="<?php echo ''.$infinitescrollwrap;?>" data-filterargs='<?php echo ''.$jsonargs.'';?>' data-template="query_type2" id="<?php echo esc_attr($containerid);?>" data-innerargs='<?php echo ''.$json_innerargs.'';?>'>
