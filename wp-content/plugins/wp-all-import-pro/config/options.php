@@ -5,13 +5,14 @@
  */
 $config = array(
     "info_api_url" => "https://www.wpallimport.com",
+	"info_api_url_new" => "https://update.wpallimport.com",
 	"history_file_count" => 10000,
 	"history_file_age" => 365,
 	"highlight_limit" => 10000,
 	"upload_max_filesize" => 2048,
 	"post_max_size" => 2048,
 	"max_input_time" => -1,
-	"max_execution_time" => -1,
+	"max_execution_time" => 0,
 	"dismiss" => 0,
 	"dismiss_speed_up" => 0,
 	"html_entities" => 0,

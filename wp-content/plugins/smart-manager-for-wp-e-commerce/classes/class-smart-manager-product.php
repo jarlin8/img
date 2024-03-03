@@ -531,10 +531,9 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 			if( $wp_query_obj ){
 				$sort_params = ( ! empty( $wp_query_obj->query_vars['sm_sort_params'] ) ) ? $wp_query_obj->query_vars['sm_sort_params'] : array();		
 			}
-			
 			if ( !empty( $sort_params ) && empty( $sort_params['default'] ) && ( ( !empty( $sort_params['column_nm'] ) && ( ( $sort_params['column_nm'] != 'ID' ) || ( $sort_params['column_nm'] == 'ID' && $sort_params['sortOrder'] == 'ASC' ) ) ) || empty( $sort_params['coumn_nm'] ) ) ) {
 
-				if( empty( $sort_params['column_nm'] ) ) {
+				if( empty( $sort_params['column_nm'] ) && ! empty( $sort_params['column'] ) ) {
 					$col_exploded = explode( "/", $sort_params['column'] );
 
 					$sort_params['table'] = $col_exploded[0];
@@ -630,9 +629,9 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 				$sort_params = ( ! empty( $wp_query_obj->query_vars['sm_sort_params'] ) ) ? $wp_query_obj->query_vars['sm_sort_params'] : array();		
 			}
 			
-			if ( !empty( $sort_params ) && empty( $sort_params['default'] ) && ( ( !empty( $sort_params['column_nm'] ) && ( ( $sort_params['column_nm'] != 'ID' ) || ( $sort_params['column_nm'] == 'ID' && $sort_params['sortOrder'] == 'ASC' ) ) ) || empty( $sort_params['coumn_nm'] ) ) ) {
+			if ( ! empty( $sort_params ) && empty( $sort_params['default'] ) && ( ( ! empty( $sort_params['column_nm'] ) && ( ( $sort_params['column_nm'] != 'ID' ) || ( $sort_params['column_nm'] == 'ID' && $sort_params['sortOrder'] == 'ASC' ) ) ) || empty( $sort_params['coumn_nm'] ) ) ) {
 
-				if( empty( $sort_params['column_nm'] ) ) {
+				if( empty( $sort_params['column_nm'] ) && ! empty( $sort_params['column'] ) ) {
 					$col_exploded = explode( "/", $sort_params['column'] );
 
 					$sort_params['table'] = $col_exploded[0];
@@ -1689,8 +1688,10 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 	                    		if ( isset( $prod_attr1['is_taxonomy'] ) && $prod_attr1['is_taxonomy'] == 0 ) {
 	                    			$attributes_list .= ( ( ! empty( $prod_attr1['name'] ) ? $prod_attr1['name'] : '-' ) . ": [" . ( ! empty( $prod_attr1['value'] ) ? trim( $prod_attr1['value'] ) : '-' ) ) ."]";
 		                    	} else {
-		                    		$attributes_val_current = (!empty($attributes_val[$post_id][$prod_attr1['name']])) ? $attributes_val[$post_id][$prod_attr1['name']] : array();
-		                    		$attributes_list .= $attributes_label[$prod_attr1['name']] . ": [" . implode(" | ",$attributes_val_current) . "]";
+		                    		$attributes_val_current = ( ! empty( $attributes_val[$post_id] ) && ! empty( $attributes_val[$post_id][$prod_attr1['name']] ) ) ? $attributes_val[$post_id][ $prod_attr1['name'] ] : array();
+									if ( ! empty( $attributes_label[$prod_attr1['name']] ) && ! empty( $attributes_val_current ) && is_array( $attributes_val_current ) ) {
+										$attributes_list .= $attributes_label[$prod_attr1['name']] . ": [" . implode(" | ",$attributes_val_current) . "]";
+									}
                                     $prod_attr1['value'] = $attributes_val_current;
 		                    	}
 	                    	}
@@ -1775,11 +1776,11 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 					if( ! empty( $key ) && is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) ) {
 						$prev_val = Smart_Manager_Task::get_previous_data( $key, 'postmeta', '_stock' );
 					}
-					$stock_status_update = sm_update_stock_status( $key, $edited_row['postmeta/meta_key=_stock/meta_value=_stock'] );
+					$stock_status_update = sm_update_stock_status( $key, '_stock', $edited_row['postmeta/meta_key=_stock/meta_value=_stock'] );
 					// Code for updating stock and it's status.
 					if ( ( ! empty( $stock_status_update ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) && ( ! empty( $key ) ) ) {
 						Smart_Manager_Base::$update_task_details_params[] = array(
-            						'task_id' => $this->task_id,
+							'task_id' => $this->task_id,
 							'action' => 'set_to',
 							'status' => 'completed',
 							'record_id' => $key,
@@ -1787,7 +1788,7 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 							'prev_val' => $prev_val,
 							'updated_val' => $edited_row['postmeta/meta_key=_stock/meta_value=_stock']
 						);
-        			}
+					}
 				}
 				if ( ! isset( $edited_row['postmeta/meta_key=_product_attributes/meta_value=_product_attributes'] ) ) {
  					continue;
@@ -2053,6 +2054,25 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 				        	}
 	                    }
                     }				
+				}
+				if ( isset( $edited_row['postmeta/meta_key=_backorders/meta_value=_backorders'] ) ) {
+					// For fetching previous value.
+					if ( ! empty( $pid ) && is_callable( array( 'Smart_Manager_Task', 'get_previous_data' ) ) ) {
+						$prev_val = Smart_Manager_Task::get_previous_data( $pid, 'postmeta', '_backorders' );
+					}
+					$stock_status_update = sm_update_stock_status( $pid, '_backorders', $edited_row['postmeta/meta_key=_backorders/meta_value=_backorders'] );
+					// Code for updating stock and it's status.
+					if ( ( ! empty( $stock_status_update ) ) && ( ! empty( $this->task_id ) ) && ( ! empty( property_exists( 'Smart_Manager_Base', 'update_task_details_params' ) ) ) && ( ! empty( $pid ) ) ) {
+						Smart_Manager_Base::$update_task_details_params[] = array(
+							'task_id' => $this->task_id,
+							'action' => 'set_to',
+							'status' => 'completed',
+							'record_id' => $pid,
+							'field' => 'postmeta/meta_key=_backorders/meta_value=_backorders',                                                       
+							'prev_val' => $prev_val,
+							'updated_val' => $edited_row['postmeta/meta_key=_backorders/meta_value=_backorders']
+						);
+					}
 				}
 				$attr_edited = (!empty($edited_row['custom/product_attributes'])) ? $edited_row['custom/product_attributes'] : '';
 				$attr_edited = array_filter(explode(', <br>',$attr_edited));

@@ -29,6 +29,9 @@ class Smart_Manager_Install {
 		),
 		'8.18.0' => array(
 			'update_8180_create_tasks_tables_for_lite_version'
+		),
+		'8.31.0' => array(
+			'update_8310_port_access_privilege_settings'
 		)
 	);
 
@@ -372,6 +375,73 @@ class Smart_Manager_Install {
 
 	public static function update_8180_create_tasks_tables_for_lite_version() {
 		self::create_tables_for_tasks();
+	}
+
+	/**
+	* Function to port access privilege settings
+	*
+	*/
+	public static function update_8310_port_access_privilege_settings() {
+		global $wpdb;
+		$results = $wpdb->get_results( $wpdb->prepare( "SELECT LEFT(SUBSTR(option_name, %d), LOCATE(%s, SUBSTR(option_name, %d)) -1) as user_role,
+															option_value as dashboards
+															FROM {$wpdb->prefix}options 
+															WHERE option_name LIKE %s 
+															AND option_name LIKE %s", 
+															strlen( 'sm_beta_' ) + 1, 
+															'_accessible_dashboards',
+															strlen( 'sm_beta_' ) + 1,
+															$wpdb->esc_like( 'sm_beta_' ) . '%',
+															'%' . $wpdb->esc_like( '_accessible_dashboards' ) ), 'ARRAY_A' );
+		if ( empty( $results ) || ! is_array( $results ) ) {
+			return;
+		}
+		$post_type_dashboards = ( class_exists( 'Smart_Manager' ) && is_callable( array('Smart_Manager', 'get_dashboards') ) ) ? Smart_Manager::get_dashboards() : array();
+		$taxonomy_dashboards = ( class_exists( 'Smart_Manager' ) && is_callable( array('Smart_Manager', 'get_taxonomies') ) ) ? Smart_Manager::get_taxonomies() : array();
+		foreach ( $results as $result ) {
+			$get_user_role_accessible_dashboards = array(
+				'valid' => array(
+									'post_types' => array(),
+									'taxonomies' => array(),
+									'sm_views' => array(),
+								),
+				'not_valid' => array(
+									'post_types' => array(),
+									'taxonomies' => array(),
+									'sm_views' => array(),
+								)
+			);
+			$role = ( ! empty( $result['user_role'] ) ) ? $result['user_role'] : '';
+			if ( empty( $role ) ) {
+				continue;
+			}
+			$dashboards = ( ! empty( $result['dashboards'] ) ) ? $result['dashboards'] : '';
+			if ( empty( $dashboards ) ) {
+				continue;
+			}
+			$dashboards = explode( ",", $dashboards );
+			if ( empty( $dashboards ) ||! is_array( $dashboards ) ) {
+				continue;
+			}
+			foreach ( $dashboards as $dashboard ) {
+				switch ( $dashboard ) {
+					case ( ! empty( $post_type_dashboards ) && is_array( $post_type_dashboards ) && array_key_exists( $dashboard, $post_type_dashboards ) ):
+						$get_user_role_accessible_dashboards['valid']['post_types'][] = $dashboard;
+						break;
+					case ( ! empty( $taxonomy_dashboards ) && is_array( $taxonomy_dashboards ) && array_key_exists( $dashboard, $taxonomy_dashboards ) ):
+						$get_user_role_accessible_dashboards['valid']['taxonomies'][] = $dashboard;
+						break;
+					default:
+						$get_user_role_accessible_dashboards['valid']['sm_views'][] = $dashboard;
+						break;
+				}
+			}
+			if ( empty( $get_user_role_accessible_dashboards ) ) {
+				continue;
+			}
+			$wpdb->query( "INSERT INTO {$wpdb->prefix}options ( option_name, option_value, autoload ) VALUES ( 'sa_sm_" . $role . "_dashboards', '" . maybe_serialize( $get_user_role_accessible_dashboards ) ."', 'no' )" );
+			delete_option( "sm_beta_" . $role . "_accessible_dashboards" );
+		}
 	}
 }
 

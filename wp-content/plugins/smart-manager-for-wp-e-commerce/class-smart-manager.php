@@ -15,19 +15,19 @@ class Smart_Manager {
 			$upgrade 		= '',
 			$update_msg 	= '',
 			$success_msg 	= '',
-			$sm_dashboards_final = array(),
 			$sm_accessible_views = array(),
 			$sm_owned_views = array(),
 			$sm_public_views = array(),
 			$sm_view_post_types = array(),
 			$all_views = array(),
-			$taxonomy_dashboards = array(),
 			$dupdater = '',
 			$dupgrade = '',
-			$sm_public_dashboards = array(),
 			$show_pricing_page = false;
 
 	protected static $_instance = null;
+	public static $sm_dashboards_final = array();
+	public static $sm_public_dashboards = array();
+	public static $taxonomy_dashboards = array();
 
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
@@ -207,14 +207,14 @@ class Smart_Manager {
 	}
 
 	//Function for defining dashboards
-	public function get_dashboards() {
+	public static function get_dashboards() {
 
 		global $wp_version, $wpdb;
 
 		$post_types = get_post_types( array(), 'objects' ); //Code to get all the custom post types as dashboards
 		$ignored_post_types = array('revision', 'product_variation', 'shop_order_refund');
-		$this->sm_dashboards_final = array();
-		$this->sm_public_dashboards = array();
+		self::$sm_dashboards_final = array();
+		self::$sm_public_dashboards = array();
 		$dashboard_post_types = array();
 		if( !empty( $post_types ) ) {
 			foreach( $post_types as $post_type => $obj  ) {
@@ -224,9 +224,9 @@ class Smart_Manager {
 				}
 
 				$label = ( ! empty( $obj->label ) ) ? $obj->label : $post_type;
-				$this->sm_dashboards_final[ $post_type ] = $label;
+				self::$sm_dashboards_final[ $post_type ] = $label;
 				if( !empty( $obj->public ) && $obj->public == 1 ) {
-					$this->sm_public_dashboards[] = $post_type;
+					self::$sm_public_dashboards[] = $post_type;
 				}
 			    if ( ! isset( $dashboard_post_types[ $label ] ) ) {
 			        $dashboard_post_types[ $label ] = array();
@@ -234,30 +234,30 @@ class Smart_Manager {
 			    $dashboard_post_types[ $label ][] = $post_type;
 			}
 		}
-		$this->sm_dashboards_final ['user'] = __(ucwords('users'), 'smart-manager-for-wp-e-commerce');
+		self::$sm_dashboards_final ['user'] = __(ucwords('users'), 'smart-manager-for-wp-e-commerce');
 		if ( ( file_exists( WP_PLUGIN_DIR . '/woocommerce/woocommerce.php' ) ) && ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) ) {
 			$post_type = 'product_stock_log';
 			$label = _x( 'Product Stock Log', 'product stock log dashboard name', 'smart-manager-for-wp-e-commerce' );
-			$this->sm_dashboards_final[ $post_type ] = $label;
+			self::$sm_dashboards_final[ $post_type ] = $label;
 			if ( ! isset( $dashboard_post_types[ $label ] ) ) {
 			    $dashboard_post_types[ $label ] = array();
 			  }
 			$dashboard_post_types[ $label ][] = $post_type;
 		}
 		if ( is_callable( array( 'Smart_Manager', 'handle_duplicate_dashboard_names' ) ) ) {
-			$this->handle_duplicate_dashboard_names( $dashboard_post_types, 'post_type' );
+			self::handle_duplicate_dashboard_names( $dashboard_post_types, 'post_type' );
 		}
 		// TODO change
 		if( is_plugin_active( 'lifterlms/lifterlms.php' ) ){
-			$this->sm_dashboards_final ['llms_order'] = __( 'LifterLMS Orders', 'smart-manager-for-wp-e-commerce');
-			$this->sm_dashboards_final ['llms_coupon'] = __( 'LifterLMS Coupons', 'smart-manager-for-wp-e-commerce');
+			self::$sm_dashboards_final ['llms_order'] = __( 'LifterLMS Orders', 'smart-manager-for-wp-e-commerce');
+			self::$sm_dashboards_final ['llms_coupon'] = __( 'LifterLMS Coupons', 'smart-manager-for-wp-e-commerce');
 		}
 
 		if ( ! defined( 'SM_BETA_ALL_DASHBOARDS' ) ) {
-			define( 'SM_BETA_ALL_DASHBOARDS', json_encode( $this->sm_dashboards_final ) );
+			define( 'SM_BETA_ALL_DASHBOARDS', json_encode( self::$sm_dashboards_final ) );
 		}
 
-		$this->sm_dashboards_final = apply_filters('sm_active_dashboards', $this->sm_dashboards_final);
+		return self::$sm_dashboards_final = apply_filters( 'sm_active_dashboards', self::$sm_dashboards_final );
 	} 
 
 	//Function for getting all eligible views
@@ -270,7 +270,7 @@ class Smart_Manager {
 		if( class_exists( 'Smart_Manager_Pro_Views' ) ) {
 			$view_obj = Smart_Manager_Pro_Views::get_instance();
 			if( is_callable( array( $view_obj, 'get_all_accessible_views' ) ) ){
-				$views = $view_obj->get_all_accessible_views( array_merge( $this->sm_dashboards_final, $this->taxonomy_dashboards ) );
+				$views = $view_obj->get_all_accessible_views( array_merge( self::$sm_dashboards_final, self::$taxonomy_dashboards ) );
 				if( ! empty( $views ) ) {
 					$this->sm_accessible_views = ( ! empty( $views['accessible_views'] ) ) ? $views['accessible_views'] : array();
 					$this->sm_owned_views = ( ! empty( $views['owned_views'] ) ) ? $views['owned_views'] : array();
@@ -285,13 +285,13 @@ class Smart_Manager {
 	} 
 
 	//Function for defining taxonomies dashboards
-	public function get_taxonomies() {
+	public static function get_taxonomies() {
 		$taxonomies = get_taxonomies( array( 'public' => 1 ), 'objects' ); //TODO: later we can add compat for hidden taxonomies as well
 		$dashboard_taxonomies = array();
 		if( ! empty( $taxonomies ) ){
 			foreach( $taxonomies as $slug => $obj ){
 				$label = ( ! empty( $obj->label ) ) ? $obj->label : $slug;
-				$this->taxonomy_dashboards[ $slug ] = $label;
+				self::$taxonomy_dashboards[ $slug ] = $label;
 				if ( ! isset( $dashboard_taxonomies[ $label ] ) ) {
 			        $dashboard_taxonomies[ $label ] = array();
 			    }
@@ -299,14 +299,14 @@ class Smart_Manager {
 			}
 			
 			if ( is_callable( array( 'Smart_Manager', 'handle_duplicate_dashboard_names' ) ) ) {
-				$this->handle_duplicate_dashboard_names( $dashboard_taxonomies, 'taxonomy' );
+				self::handle_duplicate_dashboard_names( $dashboard_taxonomies, 'taxonomy' );
 			}
 
 			if ( ! defined( 'SM_ALL_TAXONOMY_DASHBOARDS' ) ) {
-				define( 'SM_ALL_TAXONOMY_DASHBOARDS', json_encode( $this->taxonomy_dashboards ) );
+				define( 'SM_ALL_TAXONOMY_DASHBOARDS', json_encode( self::$taxonomy_dashboards ) );
 			}
 
-			$this->taxonomy_dashboards = apply_filters( 'sm_active_taxonomy_dashboards', $this->taxonomy_dashboards );
+			return self::$taxonomy_dashboards = apply_filters( 'sm_active_taxonomy_dashboards', self::$taxonomy_dashboards );
 		}
 	}
 
@@ -750,10 +750,6 @@ class Smart_Manager {
 				add_submenu_page( 'smart-manager', __( '<span class="sm_pricing_icon"> 🔥 </span> Go Pro', 'smart-manager-for-wp-e-commerce' ), __( '<span class="sm_pricing_icon"> 🔥 </span> Go Pro', 'smart-manager-for-wp-e-commerce' ), 'manage_options', 'smart-manager-pricing', array( $this, 'add_admin_page' ) );
 			}
 	
-			if( ( defined( 'SMPRO' ) && true === SMPRO  ) && ( ( ! empty( $current_user_role ) && 'administrator' === $current_user_role ) ) ) {
-				add_submenu_page( 'smart-manager', __( 'Access Privilege Settings', 'smart-manager-for-wp-e-commerce' ),  __( 'Access Privilege Settings', 'smart-manager-for-wp-e-commerce' ), 'manage_options', 'smart-manager&sm-settings', array( $this, 'add_admin_page' ) );
-			}
-	
 			add_submenu_page( 'smart-manager', __( 'Docs & Support', 'smart-manager-for-wp-e-commerce' ),  __( 'Docs & Support', 'smart-manager-for-wp-e-commerce' ), 'manage_options', 'smart-manager&landing-page=sm-about', array( $this, 'add_admin_page' ) );
 	
 			$show_sa_plugins_page = true;
@@ -1125,7 +1121,7 @@ class Smart_Manager {
 		}
 		( is_callable( array( 'Smart_Manager', 'set_script_translations' ) ) ) ? self::set_script_translations( $registered_scripts ) : '';
 
-		$sm_dashboard_keys = ( !empty( $this->sm_dashboards_final ) ) ? array_keys( $this->sm_dashboards_final ) : array();
+		$sm_dashboard_keys = ( !empty( self::$sm_dashboards_final ) ) ? array_keys( self::$sm_dashboards_final ) : array();
 
 		// set the default dashboard
 		$search_type = get_transient( 'sa_sm_'.$current_user->user_email.'_search_type' );
@@ -1158,7 +1154,7 @@ class Smart_Manager {
 
 		// Code to set default if recent dashboards is blank
 		if( empty( $recent_dashboards ) && ! empty( $sm_dashboard_keys ) ){
-			$recent_dashboards = array( (is_plugin_active( 'woocommerce/woocommerce.php' ) && !empty( $this->sm_dashboards_final['product'] ) ) ? 'product' : $sm_dashboard_keys[0] );
+			$recent_dashboards = array( (is_plugin_active( 'woocommerce/woocommerce.php' ) && !empty( self::$sm_dashboards_final['product'] ) ) ? 'product' : $sm_dashboard_keys[0] );
 		}
 
 		$recent_dashboard_type = get_user_meta( get_current_user_id(), 'sa_sm_recent_dashboard_type', true );
@@ -1191,8 +1187,8 @@ class Smart_Manager {
 			$recent_taxonomy_dashboards = array( $recent_taxonomy_dashboards );
 		}
 
-		$recent_taxonomy_dashboards = ( ! empty( $recent_taxonomy_dashboards ) && ! empty( $this->taxonomy_dashboards ) ) ? array_values( array_intersect( $recent_taxonomy_dashboards, array_keys( $this->taxonomy_dashboards ) ) ) : array();
-		$recent_taxonomy_dashboards = ( empty( $recent_taxonomy_dashboards ) && empty( $recent_views ) && empty( $recent_dashboards ) && ! empty( $this->taxonomy_dashboards ) && is_array( $this->taxonomy_dashboards ) ) ? array( array_keys( $this->taxonomy_dashboards )[0] ) : $recent_taxonomy_dashboards;
+		$recent_taxonomy_dashboards = ( ! empty( $recent_taxonomy_dashboards ) && ! empty( self::$taxonomy_dashboards ) ) ? array_values( array_intersect( $recent_taxonomy_dashboards, array_keys( self::$taxonomy_dashboards ) ) ) : array();
+		$recent_taxonomy_dashboards = ( empty( $recent_taxonomy_dashboards ) && empty( $recent_views ) && empty( $recent_dashboards ) && ! empty( self::$taxonomy_dashboards ) && is_array( self::$taxonomy_dashboards ) ) ? array( array_keys( self::$taxonomy_dashboards )[0] ) : $recent_taxonomy_dashboards;
 
 		$recent_dashboard_type = ( empty( $recent_taxonomy_dashboards ) && 'taxonomy' === $recent_dashboard_type ) ? '' : $recent_dashboard_type;
 		$recent_dashboard_type = ( empty( $recent_dashboard_type ) && ! empty( $recent_taxonomy_dashboards )  && empty( $recent_views ) && empty( $recent_dashboards ) ) ? 'taxonomy' : $recent_dashboard_type;
@@ -1209,7 +1205,7 @@ class Smart_Manager {
 		//Updating The Files Recieved in SM Beta
 		$deleted_successful = ( ($this->dupdater * $this->dupgrade)/$this->dupdater ) * 2;
 
-		$this->sm_dashboards_final ['sm_nonce'] = wp_create_nonce( 'smart-manager-security' );
+		self::$sm_dashboards_final ['sm_nonce'] = wp_create_nonce( 'smart-manager-security' );
 		$batch_background_process = false;
 		$background_process_name = '';
 
@@ -1233,7 +1229,7 @@ class Smart_Manager {
 		$trash_and_delete_permanently_disable_message = apply_filters( 'sm_trash_and_delete_permanently_disable_message', __( 'This functionality has been disabled. Please contact store administrator for enabling the same.', 'smart-manager-for-wp-e-commerce' ) );
 
 		$sm_beta_params = array( 
-							'sm_dashboards' => json_encode($this->sm_dashboards_final),
+							'sm_dashboards' => json_encode(self::$sm_dashboards_final),
 							'sm_views' => json_encode($this->sm_accessible_views),
 							'sm_owned_views' => json_encode( $this->sm_owned_views ),
 							'sm_public_views' => json_encode( $this->sm_public_views ),
@@ -1241,8 +1237,8 @@ class Smart_Manager {
 							'recent_dashboards' => json_encode( $recent_dashboards ),
 							'recent_views' => json_encode( $recent_views ),
 							'recent_dashboard_type' => $recent_dashboard_type,
-							'sm_dashboards_public' => json_encode($this->sm_public_dashboards),
-							'taxonomy_dashboards' => wp_json_encode( $this->taxonomy_dashboards ),
+							'sm_dashboards_public' => json_encode(self::$sm_public_dashboards),
+							'taxonomy_dashboards' => wp_json_encode( self::$taxonomy_dashboards ),
 							'all_taxonomy_dashboards' => SM_ALL_TAXONOMY_DASHBOARDS,
 							'recent_taxonomy_dashboards' => json_encode( $recent_taxonomy_dashboards ),
 							'SM_IS_WOO36' => self::$sm_is_woo36,
@@ -1277,7 +1273,8 @@ class Smart_Manager {
 							'SM_IS_WOO79' => ( ! empty( self::$sm_is_woo79 ) ) ? 'true' : 'false',
 							'isSAOfferVisible' => SA_OFFER_VISIBLE,
 							'isSAOfferBannerVisible' => ( 'yes' === get_option( 'sa_sm_offer_bfcm_2023', 'yes' ) ) ? true : false,
-							'scheduled_action_admin_url' => admin_url( 'tools.php?page=action-scheduler&orderby=schedule&order=desc&action=-1&action2=-1&status=pending&s=storeapps_smart_manager_scheduled_actions&paged=1' )
+							'scheduled_action_admin_url' => admin_url( 'tools.php?page=action-scheduler&orderby=schedule&order=desc&action=-1&action2=-1&status=pending&s=storeapps_smart_manager_scheduled_actions&paged=1' ),
+							'is_admin' => ( 'administrator' === self::get_current_user_role() ) ? true : false
 						);
 
 		$active_plugins = (array) get_option( 'active_plugins', array() );
@@ -1826,27 +1823,27 @@ class Smart_Manager {
 	 * @param array $dashboard_slugs dashboard slugs.
 	 * @param string $dashboard_type dashboard type.
 	 */
-	public function handle_duplicate_dashboard_names( $dashboard_slugs = array(), $dashboard_type = '' ) {
+	public static function handle_duplicate_dashboard_names( $dashboard_slugs = array(), $dashboard_type = '' ) {
 		if ( empty( $dashboard_slugs ) || ( ! is_array( $dashboard_slugs ) )  ) {
 			return;
 		}
 		array_map( function( $slug = '' ) use ( $dashboard_type ) {
 			switch ( $dashboard_type ) {
 				case 'post_type':
-					if ( isset( $this->sm_dashboards_final[ $slug ] ) ) {
+					if ( isset( self::$sm_dashboards_final[ $slug ] ) ) {
 						if ( in_array( $slug, array( 'product', 'shop_order', 'shop_coupon' ) ) ) {
-							$this->sm_dashboards_final[ $slug ] = _x( 'WooCommerce - ', 'WooCommerce post type label', 'smart-manager-for-wp-e-commerce' ) . $this->sm_dashboards_final[ $slug ];
+							self::$sm_dashboards_final[ $slug ] = _x( 'WooCommerce - ', 'WooCommerce post type label', 'smart-manager-for-wp-e-commerce' ) . self::$sm_dashboards_final[ $slug ];
 						} else {
-							$this->sm_dashboards_final[ $slug ] = $this->sm_dashboards_final[ $slug ] . " ($slug)";
+							self::$sm_dashboards_final[ $slug ] = self::$sm_dashboards_final[ $slug ] . " ($slug)";
 						}
 					}
 					break;
 				case 'taxonomy':
-					if ( isset( $this->taxonomy_dashboards[ $slug ] ) ) {
+					if ( isset( self::$taxonomy_dashboards[ $slug ] ) ) {
 						if ( in_array( $slug, array( 'product_type', 'product_visibility', 'product_cat', 'product_tag', 'product_shipping_class' ) ) ) {
-							$this->taxonomy_dashboards[ $slug ] = _x( 'WooCommerce - ', 'WooCommerce post type label', 'smart-manager-for-wp-e-commerce' ) . $this->taxonomy_dashboards[ $slug ];
+							self::$taxonomy_dashboards[ $slug ] = _x( 'WooCommerce - ', 'WooCommerce post type label', 'smart-manager-for-wp-e-commerce' ) . self::$taxonomy_dashboards[ $slug ];
 						} else {
-					   		$this->taxonomy_dashboards[ $slug ] = $this->taxonomy_dashboards[ $slug ] . " ($slug)";
+					   		self::$taxonomy_dashboards[ $slug ] = self::$taxonomy_dashboards[ $slug ] . " ($slug)";
 						}
 					}
 					break;

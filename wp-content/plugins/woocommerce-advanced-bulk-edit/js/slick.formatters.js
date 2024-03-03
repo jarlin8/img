@@ -27,7 +27,8 @@
 				'SyncWith':SyncWithFormatter,
 				'AutocompleteProductSelector': AutocompleteProductSelectorFormatter,
 				'MaybeNotEditable':MaybeNotEditableFormatter,
-				'SerializedToCSV':SerializedToCSVFormatter
+				'SerializedToCSV':SerializedToCSVFormatter,
+				'SerializedToCSV2':SerializedToCSV2Formatter
 			}
 		}
 	});
@@ -243,6 +244,15 @@
 	function SerializedToCSVFormatter(row, cell, value, columnDef, dataContext) {
 		if (columnDef.field in dataContext) {
 			var unserializedVal = wcabehelper.unserializeCSV(dataContext[columnDef.field]);
+			return unserializedVal;
+		} else {
+			return '';
+		}
+	}
+
+	function SerializedToCSV2Formatter(row, cell, value, columnDef, dataContext) {
+		if (columnDef.field in dataContext) {
+			var unserializedVal = wcabehelper.unserializeCSV2(dataContext[columnDef.field]);
 			return unserializedVal;
 		} else {
 			return '';

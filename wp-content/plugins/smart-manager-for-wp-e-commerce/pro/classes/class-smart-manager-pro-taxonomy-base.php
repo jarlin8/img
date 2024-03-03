@@ -407,7 +407,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Taxonomy_Base' ) ) {
 			// Code for applying sorting to query
 			if( ! empty( $this->req_params['sort_params'] ) ){
 				$sort_params = $this->build_query_sort_params( array( 'sort_params' => $this->req_params['sort_params'],
-																		'numeric_meta_cols' => $numeric_termmeta_cols
+																		'numeric_meta_cols' => $numeric_termmeta_cols,
+'data_cols' => $data_cols
 															) );
 				if( ! empty( $sort_params ) ){
 					$col = ( ! empty( $sort_params['column_nm'] ) ) ? $sort_params['column_nm'] : '';

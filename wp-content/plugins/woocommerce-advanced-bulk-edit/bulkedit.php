@@ -519,9 +519,14 @@ class W3ExAdvBulkEditView{
 			$settings['setting_display_top_bar_link_bulkedit'] = 1;
 			update_option('w3exabe_settings',$settings);
 		}
-		
-		if (isset($_GET['setting_auto_regenrate_products_table_on_save']) && $_GET['setting_auto_regenrate_products_table_on_save'] == 1) {
-			$settings['setting_auto_regenrate_products_table_on_save'] = 1;
+
+		if (isset($_GET['setting_enable_fix_for_attribute_update']) && $_GET['setting_enable_fix_for_attribute_update'] == 1) {
+			$settings['setting_enable_fix_for_attribute_update'] = 1;
+			update_option('w3exabe_settings',$settings);
+		}
+
+		if (isset($_GET['setting_set_time_limit_for_ajax_requests']) && $_GET['setting_set_time_limit_for_ajax_requests'] == 1) {
+			$settings['setting_set_time_limit_for_ajax_requests'] = 1;
 			update_option('w3exabe_settings',$settings);
 		}
 
@@ -895,16 +900,21 @@ class W3ExAdvBulkEditView{
 			<div id="frontpageinfoholder" style="position:relative;"></div>
 			<!--<input id="showhidecustom" class="button" type="button" value="<?php _e("Save Changes","woocommerce-advbulkedit"); ?>" />-->
 			<div class="notice notice-error is-dismissible js_issue_notice">
-				<p>
-					If you see this notice, this means there is a JavaScript error which prevents the plugin from loading normally.
-					In most of the cases it's caused by another conflicting plugin.</p>
-				<p>Please, <a href="<?php echo WCABE_SUPPORT_URL; ?>" target="_blank">contact our support</a> to help you solve the issue.</p>
+                <p>
+                    <?php _e("If you encounter this notice, it implies that a JavaScript error is preventing the plugin from loading properly. Often, such errors are caused by conflicts with another plugin.", 'woocommerce-advbulkedit'); ?>
+                </p><p>
+                    <?php _e("This message is designed to display initially and will hide itself if everything is functioning correctly. However, if an issue persists, the message will remain visible. This system is in place because, in the event of a JavaScript error, there is no other reliable means to alert you of an issue.", 'woocommerce-advbulkedit'); ?>
+
+                </p>
+                <p><?php _e('Therefore, if this message continues to display after the page has fully loaded, please ', 'woocommerce-advbulkedit'); ?><a href="<?php echo WCABE_SUPPORT_URL; ?>" target="_blank"><?php _e('contact our support team', 'woocommerce-advbulkedit'); ?></a><?php _e(' for assistance in resolving the problem.', 'woocommerce-advbulkedit'); ?></p>
+                <p><?php _e('Please, note that an active support subscription might be required to get support.', 'woocommerce-advbulkedit'); ?></p>
+
 			</div>
 			<br />
 			<!--<div id="searchfilterswrapper" style="max-height:350px; overflow: auto;border: 1px solid #808080;border-radius: 7px;padding:7px;">-->
 
 			<button id="collapsefilters" class="button-wcabe" data-state="collapse"><?php _e( 'Collapse Filters -', 'woocommerce-advbulkedit');?></button>
-			<input id="searchfilters" type="text" style="width:150px;" placeholder="<?php _e('search filters', 'woocommerce-advbulkedit');?>"></input>
+			<input id="searchfilters" type="search" style="width:150px;" placeholder="<?php _e('search filters', 'woocommerce-advbulkedit');?>"></input>
             <button class="btn-info" id="btn-info-filters-section"></button>
             <template id="btn-info-filters-section-body">
                 <?php _e('You can enable/disable filters from:<br>"Plugin Settings" > "Search Fields"', 'woocommerce-advbulkedit'); ?>
@@ -1503,11 +1513,14 @@ class W3ExAdvBulkEditView{
 			<input id="updateviacsv" type="file" class="button" value="<?php _e( "Update Table via CSV", "woocommerce-advbulkedit"); ?>" />
 			<input id="updateviacsvsubmit" type="submit" value="<?php _e( "Update", "woocommerce-advbulkedit"); ?>">
 			</div>-->
-            <div id="dvCSV"></div>
+			<div id="dvCSV"></div>
 			<div id="exportinfo"></div>
 			<br/><br/><br/>
 			<div id="exportdialog">
-
+				<div class="wcabe-warning-text">
+					<?php _e( "Please, note that we've deprecated our CSV import/export functionality in favor of WooCommerce's own CSV import/export. Therefore, we do not provide support for it. Use at your own risk.", 'woocommerce-advbulkedit'); ?>
+				</div>
+				<hr>
 				<div class="oneline-radio-container">
 					<input id="exportall" type="radio" value="0" name="exportwhat" checked="checked"><label for="exportall"> <?php _e( 'All products in table', 'woocommerce-advbulkedit'); ?></label>
 					&nbsp;&nbsp;&nbsp;
@@ -2005,22 +2018,36 @@ class W3ExAdvBulkEditView{
 
 					<tr>
 						<td width="50%" style="padding-top: 20px;">
-							<label><input id="setting-auto-regenrate-products-table-on-save-link" type="checkbox"
+							<label><input id="setting-enable-fix-for-attribute-update-link" type="checkbox"
 									<?php
 									echo (
-											isset($settings['setting_auto_regenrate_products_table_on_save']) &&
-											$settings['setting_auto_regenrate_products_table_on_save'] == 0) ?
-											"" : "checked=checked"
+										isset($settings['setting_enable_fix_for_attribute_update']) &&
+										$settings['setting_enable_fix_for_attribute_update'] == 0) ?
+										"" : "checked=checked"
 									;
-									
+
 									?>
-								><?php _e( 'Enable auto regeneration of products lookup table', 'woocommerce-advbulkedit'); ?></label>
+								><?php _e( 'Enable fix for attributes updates not showing on the front pages', 'woocommerce-advbulkedit'); ?></label>
 						</td>
 						<td  style="padding-top: 20px;">
-
+							<p><?php _e( 'Experimental. Please, <a href="https://wpmelon.com/r/support" target="_blank">provide your feedback</a> if you have a chance to use this feature.', 'woocommerce-advbulkedit'); ?></p>
 						</td>
 					</tr>
 
+					<tr>
+						<td width="50%" style="padding-top: 20px;">
+							<label><input id="setting-add-set-time-limit-to-ajax-handler-link" type="checkbox"
+									<?php
+									echo (	!isset($settings['setting_set_time_limit_for_ajax_requests']) ||
+											$settings['setting_set_time_limit_for_ajax_requests'] == 0) ?
+											"" : "checked=checked";
+									?>
+								><?php _e( 'Disable execution time limit', 'woocommerce-advbulkedit'); ?></label>
+						</td>
+						<td  style="padding-top: 20px;">
+							<p><?php _e( 'Shops with lots of products could benefit from this option.', 'woocommerce-advbulkedit'); ?></p>
+						</td>
+					</tr>
 
                     <tr>
 						<td width="50%" style="padding-top: 20px;">
@@ -4434,9 +4461,12 @@ class W3ExAdvBulkEditView{
 			<div id="settingsdialog">
 			<table class="settings-table" >
 				<br/>
-			    <input id="searchsettings" type="text" style="width:150px;" placeholder="search"></input>
-			    <!--<button id="searchsettingsreset" class="button"><?php _e( 'show all', 'woocommerce-advbulkedit'); ?></button>-->
-			    <br/>
+				<div class="wcabe-dlg-top-floated">
+					<span class="fleft"><input id="searchsettings" type="search" style="width:150px;" placeholder="search"></input></span>
+					<span class="fright"> <?php _e( "Didn't find the field you are looking for? Try to find it in ", 'woocommerce-advbulkedit'); ?> <a href="#" id="findcustomfieldsopen"><?php _e( 'Custom/Meta Fields', 'woocommerce-advbulkedit'); ?></a></span>
+				</div>
+				<!--<button id="searchsettingsreset" class="button"><?php _e( 'show all', 'woocommerce-advbulkedit'); ?></button>-->
+				<br/>
 				<tr>
 
 					<td>
@@ -5408,6 +5438,7 @@ class W3ExAdvBulkEditView{
 							?>
 							<option value="url">URL</option>
 							<option value="serialized-to-csv">Serialized to CSV</option>
+                            <option value="serialized-to-csv-2">Serialized to CSV 2</option>
 						</select>
 					</td>
 					<td>

@@ -962,25 +962,26 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 			if( !empty( $this->req_params['sort_params'] ) ) {
 	        	if( !empty( $this->req_params['sort_params']['column'] ) && !empty( $this->req_params['sort_params']['sortOrder'] ) ) {
 
-	        		$usermeta_cols = $numeric_usermeta_cols = array();
+	        		$usermeta_cols = $numeric_usermeta_cols = $data_cols = array();
 
 	        		foreach( $col_model as $col ) {
 	        			if (empty($col['src'])) continue;
 
 						$src_exploded = explode("/",$col['src']);
 
-						if (empty($col_exploded)) continue;
+						if (empty($src_exploded)) continue;
 
 						$type = ( !empty( $col['type'] ) ) ? $col['type'] : '';
 
-						if ( sizeof($col_exploded) > 2) {
-							$col_meta = explode("=",$col_exploded[1]);
+						if ( sizeof($src_exploded) > 2) {
+							$col_meta = explode("=",$src_exploded[1]);
 							$col_nm = $col_meta[1];
 						} else {
-							$col_nm = $col_exploded[1];
+							$col_nm = $src_exploded[1];
 						}
+						$data_cols[] = $col_nm;
 
-						if( !empty( $col_exploded[0] ) && $col_exploded[0] == 'usermeta' && $col_nm != 'user_id' ) {
+						if( !empty( $src_exploded[0] ) && $src_exploded[0] == 'usermeta' && $col_nm != 'user_id' ) {
 							$usermeta_cols[] = $col_nm;
 
 							if( in_array( $type, array( "number", "numeric" ) ) ) {
@@ -989,46 +990,35 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 						}
 					}
 
-					if( false !== strpos($this->req_params['sort_params']['column'], "/") ) {
-		        		$col_exploded = explode( "/", $this->req_params['sort_params']['column'] );
-		        		$table_nm = $col_exploded[0];
+					// Code for handling sorting of the postmeta
+					$sort_params = $this->build_query_sort_params( array( 'sort_params' => $this->req_params['sort_params'],
+																		'numeric_meta_cols' => $numeric_usermeta_cols,
+																		'data_cols' => $data_cols
+															) );
 
-		        		if ( sizeof($col_exploded) > 2) {
-							$col_meta = explode("=",$col_exploded[1]);
-							$this->req_params['sort_params']['column_nm'] = $col_meta[0];
-
-							if( $this->req_params['sort_params']['column_nm'] == 'meta_key' ) {
-								$this->req_params['sort_params']['sort_by_meta_key'] = $col_meta[1];
-								$this->req_params['sort_params']['column_nm'] = ( !empty( $numeric_usermeta_cols ) && in_array( $col_meta[1], $numeric_usermeta_cols ) ) ? 'meta_value+0' : 'meta_value';
-							}
-						} else {
-							$this->req_params['sort_params']['column_nm'] = $col_exploded[1];
+					if( ! empty( $sort_params ) && ! empty( $sort_params['table'] ) && ! empty( $sort_params['column_nm'] && ! empty( $sort_params['sortOrder'] ) ) ) {
+						$sort_params['column_nm'] = ( 'meta_value_num' === $sort_params['column_nm'] ) ? 'meta_value+0' : $sort_params['column_nm'];
+						if( ! empty( $sort_params['sort_by_meta_key'] ) ) {
+							$join .= ( false === strpos( $join, "JOIN {$wpdb->usermeta}" ) ) ? " JOIN {$wpdb->usermeta} 
+		        					ON ({$wpdb->usermeta}.user_id = {$wpdb->users}.id)" : "";
+							$where .= " AND ( ".$wpdb->prefix."". $sort_params['table'] .".meta_key ='". $sort_params['sort_by_meta_key'] ."' ) ";
 						}
 
-						$this->req_params['sort_params']['sortOrder'] = strtoupper( $this->req_params['sort_params']['sortOrder'] );
-						if ( false === strpos( $join, "JOIN {$wpdb->usermeta}" ) ) {
-							$join .= " JOIN {$wpdb->usermeta} 
-		        					ON ({$wpdb->usermeta}.user_id = {$wpdb->users}.id)";
-		        		}
-		        		if( !empty( $this->req_params['sort_params']['sort_by_meta_key'] ) ) {
-		        			$where .= " AND ( ".$wpdb->prefix."".$table_nm.".meta_key ='".$this->req_params['sort_params']['sort_by_meta_key'] ."' ) ";
-		        		}
+						$order_by = " ORDER BY ".$wpdb->prefix."". $sort_params['table'] .".". $sort_params['column_nm'] ." ". $sort_params['sortOrder'] ." ";
 
-						$order_by = " ORDER BY ".$wpdb->prefix."".$table_nm.".".$this->req_params['sort_params']['column_nm']." ".$this->req_params['sort_params']['sortOrder']." ";
-						if ( ! empty( $table_nm ) && 'terms' === $table_nm ) {
+						if ( ! empty( $sort_params['table'] ) && 'terms' === $sort_params['table'] ) {
 							$join = $this->terms_table_column_sort_query( 
 								array(
-									'col_name'     => $this->req_params['sort_params']['column_nm'],
+									'col_name'     => $sort_params['column_nm'],
 									'id'           => $wpdb->prefix . 'users.id',
-									'sort_order'   => $this->req_params['sort_params']['sortOrder'],
+									'sort_order'   => $sort_params['sortOrder'],
 									'join'         => $join,
 									'wp_query_obj' => '',
 								)
 							);
-							$order_by = ' ORDER BY taxonomy_sort.term_name ' . $this->req_params['sort_params']['sortOrder'] ;
+							$order_by = ' ORDER BY taxonomy_sort.term_name ' . $sort_params['sortOrder'] ;
 						}
-	        		}
-	        		
+					}
 	        	}
 	        }
 
@@ -1060,6 +1050,56 @@ if ( ! class_exists( 'Smart_Manager_Pro_User' ) ) {
 																". $order_by ."
 																". $query_limit_str, 1), ARRAY_A );
 
+			if ( ! empty( $sort_params['column_nm'] ) && in_array( $sort_params['column_nm'], array( 'last_order_date','last_order_total', 'orders_count', 'orders_total' ) ) ) {
+				switch ( $sort_params['column_nm'] ) {
+					case 'orders_total':
+					case 'last_order_total':
+						$order_by = " ORDER BY order_total ". $sort_params['sortOrder'] ." ";
+						break;
+					case 'orders_count':
+						$order_by = " ORDER BY order_count ". $sort_params['sortOrder'] ." ";
+						break;
+					case 'last_order_date':
+						$order_by = " ORDER BY date ". $sort_params['sortOrder'] ." ";
+						break;
+				}
+				if ( ! empty( Smart_Manager::$sm_is_woo79 ) && ! empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) ) {
+					$join .= ( false === strpos( $join, "LEFT JOIN {$wpdb->prefix}wc_orders" ) ) ? " LEFT JOIN {$wpdb->prefix}wc_orders as wo 
+					ON( wo.customer_id = {$wpdb->prefix}users.ID )
+					AND wo.type = 'shop_order'
+					AND wo.status IN ( 'wc-completed','wc-processing' ) " : "";
+					$users_results = $wpdb->get_results( $wpdb->prepare( "SELECT {$wpdb->prefix}users.*,
+																	IFNULL(wo.total_amount, 0) AS order_total, 
+																	IFNULL(wo.customer_id, 0) AS customer_id,
+																	IFNULL( date_format( max( wo.date_created_gmt ), '%%Y-%%m-%%d, %%r' ), NULL ) AS date,
+																	IFNULL( count( wo.id ), 0 ) AS order_count
+																	FROM {$wpdb->prefix}users
+																	". $join ."
+																	WHERE 1=%d
+																	". $where ." 
+																	GROUP BY {$wpdb->prefix}users.id 
+																	". $order_by ."
+																	". $query_limit_str, 1 ), ARRAY_A );
+																	
+				} else {
+					$join .= ( false === strpos( $join, "LEFT JOIN {$wpdb->prefix}wc_order_stats" ) ) ? " LEFT JOIN {$wpdb->prefix}wc_order_stats as os
+					ON( os.customer_id = u.ID
+						AND os.status IN ( 'wc-completed','wc-processing' )
+						AND os.total_sales > 0 ) " : "";
+					$users_results = $wpdb->get_results( $wpdb->prepare( "SELECT u.*,
+														IFNULL( SUM( os.total_sales ), 0 ) as order_total,
+														IFNULL( GROUP_CONCAT( distinct os.order_id ORDER BY os.date_created DESC SEPARATOR ',' ), 0 ) AS all_id,
+														IFNULL( date_format( max( os.date_created ), '%%Y-%%m-%%d, %%r' ), NULL ) AS date,
+														IFNULL( count( os.order_id ), 0 ) AS order_count
+														FROM {$wpdb->prefix}users as u
+														". $join ."
+														WHERE 1=%d
+														". $where ." 
+														GROUP BY u.ID 
+														". $order_by ."
+														". $query_limit_str, 1 ), ARRAY_A );
+				}	
+ 			}
 			$total_pages = 1;
 
         	if( $users_total_count > $limit && $this->req_params['cmd'] != 'get_export_csv' ) {

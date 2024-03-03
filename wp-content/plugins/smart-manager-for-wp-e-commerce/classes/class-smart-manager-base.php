@@ -627,10 +627,6 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 			$taxonomy_nm = get_object_taxonomies($this->post_type);
 
 			if (!empty($taxonomy_nm)) {
-
-				$terms_val = array();
-				$terms_val_search = array();
-
 				$terms_count = 0;
 				//Code for pkey column for terms
 				$col_model[] = $this->get_default_column_model( array(
@@ -644,7 +640,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 				$taxonomy_terms = get_terms($taxonomy_nm, array('hide_empty'=> 0,'orderby'=> 'name'));
 				if ( ! empty( $taxonomy_terms ) ) {
-					$terms_val = $this->get_parent_term_values(
+					$results = $this->get_parent_term_values(
 						array(
 							'taxonomy_obj'      => $taxonomy_terms,
 							'include_taxonomy'  => 'all' // include all taxonomy.
@@ -661,17 +657,19 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 						'name'		=> ( ! empty( in_array( $field_nm, $col_titles ) ) ) ? $col_titles[$field_nm] : '',
 						'hidden'	=> ( $terms_count > 5 ) ? true : false
 					);
-
-					if ( ! empty( $terms_val[$taxonomy] ) ) {
+					if ( ! isset( $results['terms_val'] ) || ! isset( $results['terms_val_search'] ) ) {
+						continue;
+					}
+					if ( ! empty( $results['terms_val'][$taxonomy] ) ) {
 						$args['type'] 			= 'sm.multilist';
 						$args['strict'] 		= true;
 						$args['allowInvalid'] 	= false;
 						$args['editable']		= false;
-						$args['values'] 		= $terms_val[$taxonomy];
+						$args['values'] 		= $results['terms_val'][$taxonomy];
 
-						if( ! empty( $terms_val_search[$taxonomy] ) ){
+						if( ! empty( $results['terms_val_search'][$taxonomy] ) ){
 							$args['search_values'] = array();
-							foreach( $terms_val_search[$taxonomy] as $key => $value ) {
+							foreach( $results['terms_val_search'][$taxonomy] as $key => $value ) {
 								$args['search_values'][] = array( 'key' => $key, 'value' => $value );
 							}
 						}
@@ -1332,6 +1330,11 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					$store_model_transient = false;
 					update_option( '_sm_update_8250_product', 1, 'no' );
 				}
+				if ( false === get_option( '_sm_update_8260_product' ) ) {
+					delete_transient( 'sa_sm_product' );
+					$store_model_transient = false;
+					update_option( '_sm_update_8260_product', 1, 'no' );
+				}
 			}
 
 			$store_model = $store_model_transient;
@@ -1928,7 +1931,8 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 				// Code for handling sorting of the postmeta
 		        $sort_params = $this->build_query_sort_params( array( 'sort_params' => $this->req_params['sort_params'],
-																		'numeric_meta_cols' => $numeric_postmeta_cols
+																		'numeric_meta_cols' => $numeric_postmeta_cols,
+'data_cols' => $data_cols
 															) );
 
 				//WP_Query to get all the relevant post_ids
@@ -2117,7 +2121,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
         						if( in_array( $meta_key, $data_cols_serialized ) ) {
 									$meta_value = maybe_unserialize( $meta_value );
 									if( !empty( $meta_value ) ) {
-										$meta_value = ( !empty( $data_cols_serialized_text_editor[$meta_key] ) ) ? implode($data_cols_serialized_text_editor[$meta_key], $meta_value) : json_encode( $meta_value );
+										$meta_value = ( !empty( $data_cols_serialized_text_editor[$meta_key] ) && ! empty( $meta_value ) && is_array( $meta_value ) ) ? implode($data_cols_serialized_text_editor[$meta_key], $meta_value) : json_encode( $meta_value );
 									}
 		        				}
         					}
@@ -3718,37 +3722,44 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 		// Function to build query sort params from supplied arguments
 		public function build_query_sort_params( $args = array() ){
-			
 			$query_sort_params = array();
-			$sort_params = ( ! empty( $args['sort_params'] ) ) ? $args['sort_params'] : array();
+			$sort_params = ( ! empty( $args['sort_params'] ) ) ? esc_sql( $args['sort_params'] ) : array();
 
 			if( empty( $sort_params ) ){
 				return $query_sort_params;
 			}
 
 			$numeric_meta_cols = ( ! empty( $args['numeric_meta_cols'] ) ) ? $args['numeric_meta_cols'] : array();
+			$data_cols = ( ! empty( $args['data_cols'] ) ) ? $args['data_cols'] : array();
+
+			$tables = array( 'terms' );
+			foreach( $this->advanced_search_table_types as $table_types ){
+				if( ! is_array( $table_types ) ) {
+					continue;
+				}
+				$tables = array_merge( $tables, array_keys( $table_types ) );
+			}
 
 			if( !empty( $sort_params['column'] ) && !empty( $sort_params['sortOrder'] ) ) {
 
 				$col_exploded = explode( "/", $sort_params['column'] );
 
-				$query_sort_params['table'] = $col_exploded[0];
+				$query_sort_params['table'] = ( ! empty( $col_exploded[0] ) && in_array( $col_exploded[0], $tables ) ) ? $col_exploded[0] : '';
 
-				if ( sizeof($col_exploded) > 2) {
-					$col_meta = explode("=",$col_exploded[1]);
-					$query_sort_params['column_nm'] = $col_meta[0];
+				if ( sizeof( $col_exploded ) > 2) {
+					$col_meta = explode( "=", $col_exploded[1] );
+					$query_sort_params['column_nm'] = ( ! empty( $col_meta[0] ) && ( 'meta_key' === $col_meta[0] || in_array( $col_meta[0], $data_cols ) ) ) ? $col_meta[0] : '';
 
-					if( 'meta_key' === $query_sort_params['column_nm'] ) {
+					if( 'meta_key' === $query_sort_params['column_nm'] && ( ! empty( $col_meta[1] ) && in_array( $col_meta[1], $data_cols ) ) ) {
 						$query_sort_params['sort_by_meta_key'] = $col_meta[1];
-						$query_sort_params['column_nm'] = ( !empty( $numeric_meta_cols ) && in_array( $col_meta[1], $numeric_meta_cols ) ) ? 'meta_value_num' : 'meta_value';
+						$query_sort_params['column_nm'] = ( ! empty( $numeric_meta_cols ) && in_array( $col_meta[1], $numeric_meta_cols ) ) ? 'meta_value_num' : 'meta_value';
 					}
 				} else {
-					$query_sort_params['column_nm'] = ( !empty( $col_exploded[1] ) ) ? $col_exploded[1] : '';
+					$query_sort_params['column_nm'] = ( ! empty( $col_exploded[1] ) && in_array( $col_exploded[1], $data_cols ) ) ? $col_exploded[1] : '';
 				}
 
-				$query_sort_params['sortOrder'] = strtoupper( $sort_params['sortOrder'] );
+				$query_sort_params['sortOrder'] = ( ! empty( $sort_params['sortOrder'] ) && in_array( strtoupper( $sort_params['sortOrder'] ), array('ASC', 'DESC') ) ) ? strtoupper( $sort_params['sortOrder'] ) : '';
 			}
-
 			return $query_sort_params;
 		}
 
@@ -4275,13 +4286,14 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 	     * Function to get parent term values for taxonomies.
 		 * 
 		 * @param array $args array of taxonomy related data.
-		 * @return void
+		 * @return array terms data.
 		 */
 		public function get_parent_term_values( $args = array() ) {
 			if ( empty( $args['include_taxonomy'] ) || ! is_array( $args['taxonomy_obj'] ) ) {
 				return;
 			}
 			$terms_val = array();
+			$terms_val_search = array();
 			// Code for storing the parent taxonomies titles
 			$taxonomy_parents = array();
 			foreach ( $args['taxonomy_obj'] as $term_obj ) {
@@ -4305,7 +4317,9 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					'title' => $title
 				);
 			}
-			return $terms_val;
+			return array(
+				'terms_val'        => $terms_val,
+				'terms_val_search' => $terms_val_search );
 		}
 	}
 }

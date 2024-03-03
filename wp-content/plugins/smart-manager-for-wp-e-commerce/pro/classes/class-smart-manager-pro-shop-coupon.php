@@ -77,7 +77,10 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Coupon' ) ) {
 				foreach ( $current_product_cat_ids as $current_product_cat_id ) {
 					$product_cat_ids = $current_product_cat_id;
 					if( $action == 'add_to' ) {
-						$product_cat_ids[] = $value;						
+						if ( ! is_array( $product_cat_ids ) || in_array( $value, $product_cat_ids ) ) {
+							continue;
+						}	
+						$product_cat_ids[] = $value;				
 					} else if ( $action == 'remove_from' ) {
 						$key = array_search( $value, $product_cat_ids );
 						if( false !== $key ) {

@@ -457,5 +457,75 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Order' ) ) {
 			global $wpdb;
 			return $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}wc_orders WHERE status != 'trash' AND type = %s", 'shop_order' );
 		}
+
+		/**
+		 * Function to process duplicate orders
+		 *
+		 * @param array $params params array
+		 * @return boolean
+		 */
+		public static function process_duplicate_record( $params = array() ) {
+			if ( empty( $params ) || ! is_array( $params ) || empty( $params['id'] ) ) {
+                return false;
+            }
+            $original_id = intval( $params['id'] );
+            $duplicate = wc_get_order( $original_id );
+            if ( empty( $duplicate ) || ! $duplicate instanceof WC_Order ) {
+                return false;
+            }
+            $duplicate->set_id( 0 );
+			$duplicate_fields = [
+				'customer_id',
+				'billing_first_name',
+				'billing_last_name',
+				'billing_company',
+				'billing_address_1',
+				'billing_address_2',
+				'billing_city',
+				'billing_state',
+				'billing_postcode',
+				'billing_country',
+				'billing_email',
+				'billing_phone',
+				'shipping_first_name',
+				'shipping_last_name',
+				'shipping_company',
+				'shipping_address_1',
+				'shipping_address_2',
+				'shipping_city',
+				'shipping_state',
+				'shipping_postcode',
+				'shipping_country',
+				'shipping_phone'
+			];
+			$order = wc_get_order( $original_id ); // original order.
+			if ( empty( $order ) || ! $order instanceof WC_Order ) {
+                return false;
+            }
+			foreach ( $duplicate_fields as $field ) {
+			    $setter_method = "set_{$field}";
+			    $getter_method = "get_{$field}";
+				if ( ! is_callable( array( $duplicate, $setter_method ) ) || ! is_callable( array( $order, $getter_method ) ) ) {
+					continue;
+				}
+			    $duplicate->$setter_method(''); // need for duplicating the addresses.
+				$duplicate->$setter_method( $order->$getter_method() );
+			}
+			$line_items = ( is_callable( array( $order, 'get_items' ) ) ) ? $order->get_items() : array();
+			if ( empty( $line_items ) || ! is_array( $line_items ) ) {
+                return false;
+            }
+            foreach ( $line_items as $item_id => $item ) {
+				if ( empty( $item ) || ! is_callable( array( $item, 'get_product' ) ) || ! is_callable( array( $item, 'get_quantity' ) ) || ! is_callable( array( $duplicate, 'add_product' ) ) ) {
+					continue;
+				}
+                $duplicate->add_product( $item->get_product(), $item->get_quantity() );
+            }
+            $duplicate->save();
+			if ( empty( $duplicate ) || ! $duplicate instanceof WC_Order ) {
+                return false;
+            }
+            return true;
+		}
 	}
 }

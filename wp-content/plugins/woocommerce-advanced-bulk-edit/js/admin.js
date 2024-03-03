@@ -1188,7 +1188,7 @@ W3Ex.abemodule = (function($){
 			})
 		})
 	
-	$('body').on('keyup','#searchsettings',function()
+	$('body').on('keyup input','#searchsettings',function()
 	{
 		var value = $(this).val();
 		$('#settingsdialog tr').each(function()
@@ -1229,8 +1229,8 @@ W3Ex.abemodule = (function($){
 			
 		})
 	})
-	
-	$('body').on('keyup','#searchfilters',function()
+
+	$('body').on('keyup input','#searchfilters',function()
 	{
 		var value = $(this).val();
 		$('#tablesearchfilters tr').each(function()
@@ -1238,7 +1238,6 @@ W3Ex.abemodule = (function($){
 			var $tr = $(this);
 			value = value.toUpperCase();
 			var hasit = false;
-//			var $td = null;
 			var counter = 0;
 			$tr.find('td').each(function()
 			{
@@ -1249,14 +1248,11 @@ W3Ex.abemodule = (function($){
 					text = text.toUpperCase();
 					if(text.indexOf(value) !== -1)
 					{
-	//					$(this).parent().css('display','inline-block');
 						if(value === "")
 							$(this).removeClass('highlighttd').next().removeClass('highlighttd');
 						else
 							$(this).addClass('highlighttd').next().addClass('highlighttd');
 
-	//					$td = $(this).parent();
-	//					$td.css('display','inline-block');
 						hasit = true;
 					}
 					else
@@ -2290,8 +2286,8 @@ W3Ex.abemodule = (function($){
 		var trans_addsingle = "Add Single Variation";
 		if(W3Ex.trans_addsingle !== undefined && W3Ex.trans_addsingle !== "")
 			trans_addsingle = W3Ex.trans_addsingle;
-		$("#addproddialog").append('<input id="addsinglevar" style="vertical-align:middle;" class="button" type="button" value="'+trans_addsingle+'" />');
-		$("#addproddialog").append('<input id="linkallvars" style="vertical-align:middle;" class="button" type="button" value="'+W3Ex._translate_strings["trans_linkallvars"]+' ('+counter+')'+'" />');
+		$("#addproddialog").append('<input id="addsinglevar" style="vertical-align:middle;" class="button-wcabe" type="button" value="'+trans_addsingle+'" />');
+		$("#addproddialog").append('<input id="linkallvars" style="vertical-align:middle;" class="button-primary-wcabe" type="button" value="'+W3Ex._translate_strings["trans_linkallvars"]+' ('+counter+')'+'" />');
 		$("#addproddialog").append('<label><input id="skipduplicates" style="vertical-align:middle;" type="checkbox" checked=checked/>'+W3Ex._translate_strings["trans_skipduplicates"]+'</label>&nbsp;&nbsp;');
 		$("#addproddialog").append('<label><input id="copyparentprice" style="vertical-align:middle;" type="checkbox" checked=checked/>'+W3Ex._translate_strings["trans_copyparentprice"]+'</label><br/>');
 		$("#addproddialog").append('<div id="variationholder"></div>');
@@ -4448,8 +4444,8 @@ W3Ex.abemodule = (function($){
 		//				    attrarr.push(attrin);
 						}
 					}
-					$("#addproddialog").append('<input id="addsinglevar" style="vertical-align:middle;" class="button" type="button" value="'+trans_addsingle+'" />');
-					$("#addproddialog").append('<input id="linkallvars" style="vertical-align:middle;" class="button" type="button" value="'+W3Ex._translate_strings["trans_linkallvars"]+' ('+counter+')'+'" />');
+					$("#addproddialog").append('<input id="addsinglevar" style="vertical-align:middle;" class="button-wcabe" type="button" value="'+trans_addsingle+'" />');
+					$("#addproddialog").append('<input id="linkallvars" style="vertical-align:middle;" class="button-primary-wcabe" type="button" value="'+W3Ex._translate_strings["trans_linkallvars"]+' ('+counter+')'+'" />');
 					$("#addproddialog").append('<label><input id="skipduplicates" style="vertical-align:middle;" type="checkbox" checked=checked/>'+W3Ex._translate_strings["trans_skipduplicates"]+'</label>&nbsp;&nbsp;');
 					$("#addproddialog").append('<label><input id="copyparentprice" style="vertical-align:middle;" type="checkbox" checked=checked/>'+W3Ex._translate_strings["trans_copyparentprice"]+'</label><br/>');
 					$("#addproddialog").append('<div id="variationholder"></div>');
@@ -5783,6 +5779,11 @@ W3Ex.abemodule = (function($){
 					newhtml+= " data-type='serialized-to-csv' data-field='type'>type: <strong>Serialized to CSV</strong></td>";
 				}
 					break;
+				case "serialized-to-csv-2":
+				{
+					newhtml+= " data-type='serialized-to-csv-2' data-field='type'>type: <strong>Serialized to CSV 2</strong></td>";
+				}
+					break;
 				case "custom":
 				{
 					newhtml+= " data-type='custom' data-field='type' data-vals='" + customobj.isnewvals + "'>type: <strong>Custom Taxonomy</td>";
@@ -5872,6 +5873,13 @@ W3Ex.abemodule = (function($){
 					newitem.formatter = Slick.Formatters.SerializedToCSV;
 					newitem.editor = Slick.Editors.SerializedToCSV;
 					insertobj.type = 'serialized-to-csv';
+				}
+
+				else if(customobj.type == "serialized-to-csv-2")
+				{
+					newitem.formatter = Slick.Formatters.SerializedToCSV2;
+					newitem.editor = Slick.Editors.SerializedToCSV2;
+					insertobj.type = 'serialized-to-csv-2';
 				}
 
 				else if(customobj.type == "select")
@@ -6037,6 +6045,12 @@ W3Ex.abemodule = (function($){
 				{
 					newitem.formatter = Slick.Formatters.SerializedToCSV;
 					newitem.editor = Slick.Editors.SerializedToCSV;
+				}
+
+				if(item.type == "serialized-to-csv-2")
+				{
+					newitem.formatter = Slick.Formatters.SerializedToCSV2;
+					newitem.editor = Slick.Editors.SerializedToCSV2;
 				}
 
 //				if(item.textarea !== undefined)
@@ -11144,10 +11158,14 @@ $("#pluginsettings").dialog({
 			settings['setting_display_top_bar_link_bulkedit'] = 1;
 		else
 			settings['setting_display_top_bar_link_bulkedit'] = 0;
-		if($('#setting-auto-regenrate-products-table-on-save-link').is(':checked'))
-			settings['setting_auto_regenrate_products_table_on_save'] = 1;
+		if($('#setting-enable-fix-for-attribute-update-link').is(':checked'))
+			settings['setting_enable_fix_for_attribute_update'] = 1;
 		else
-			settings['setting_auto_regenrate_products_table_on_save'] = 0;
+			settings['setting_enable_fix_for_attribute_update'] = 0;
+		if($('#setting-add-set-time-limit-to-ajax-handler-link').is(':checked'))
+			settings['setting_set_time_limit_for_ajax_requests'] = 1;
+		else
+			settings['setting_set_time_limit_for_ajax_requests'] = 0;
 		if($('#calldoaction').is(':checked'))
 			settings['calldoaction'] = 1;
 		else
@@ -13639,6 +13657,12 @@ if(!pbatch)
 					  if(valtoinsert === undefined)
 						  valtoinsert = "";
 				  }
+				  if(coldef !== undefined && coldef.type === "serialized-to-csv-2")
+				  {
+					  valtoinsert = wcabehelper.serializeCSV2(selitem[key]);
+					  if(valtoinsert === undefined)
+						  valtoinsert = "";
+				  }
 				  if(key.indexOf('_ids') !== -1)
 				  {
 					  var test = key.replace('_ids','');
@@ -14895,7 +14919,14 @@ if(!pbatch)
 	{
 		$("#findcustomfieldsdialog").dialog("open");	
 	});
-	
+
+	$('#findcustomfieldsopen').click(function(event)
+	{
+		event.preventDefault();
+		$("#settingsdialog").dialog("close");
+		$("#findcustomfieldsdialog").dialog("open");
+	});
+
 	
 	$('body').on('click','#settingsdialog .dsettings',function()
 	{
@@ -16485,6 +16516,7 @@ if(!pbatch)
 							'	<option value="url">URL (clickable link)</option>' +
 							'	<option value="customsyncwith">Sync With (custom search)</option>' +
 							'	<option value="serialized-to-csv">Serialized to CSV</option>' +
+							'	<option value="serialized-to-csv-2">Serialized to CSV 2</option>' +
 							'</select></td>' +
 							'</tr>';
 					}
@@ -16738,6 +16770,11 @@ if(!pbatch)
 			case "serialized-to-csv":
 			{
 				newhtml+= " data-type='serialized-to-csv' data-field='type'>type: <strong>Serialized to CSV</strong></td>";
+			}
+			break;
+			case "serialized-to-csv-2":
+			{
+				newhtml+= " data-type='serialized-to-csv-2' data-field='type'>type: <strong>Serialized to CSV 2</strong></td>";
 			}
 			break;
 			case "customsyncwith":
@@ -17071,7 +17108,10 @@ if(!pbatch)
 							{
 								newhtml+= " data-type='serialized-to-csv' data-field='type'>type: <strong>Serialized to CSV</strong></td>";
 							}
-							// WCABE-225-new-custom-field-type-for-serialized-data-to-csv }
+							case "serialized-to-csv-2":
+							{
+								newhtml+= " data-type='serialized-to-csv-2' data-field='type'>type: <strong>Serialized to CSV 2</strong></td>";
+							}
 							break;
 							case "custom":
 							{
@@ -17169,6 +17209,13 @@ if(!pbatch)
 								newitem.formatter = Slick.Formatters.SerializedToCSV;
 								newitem.editor = Slick.Editors.SerializedToCSV;
 								insertobj.type = 'serialized-to-csv';
+							}
+							else if(customobj.type == "serialized-to-csv-2")
+							{
+								newitem.cssClass = "cell-effort-driven";
+								newitem.formatter = Slick.Formatters.SerializedToCSV2;
+								newitem.editor = Slick.Editors.SerializedToCSV2;
+								insertobj.type = 'serialized-to-csv-2';
 							}
 							else if(customobj.type == "custom")
 							{

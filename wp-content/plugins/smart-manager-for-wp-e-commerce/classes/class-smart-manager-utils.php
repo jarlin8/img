@@ -20,11 +20,18 @@ function sm_variable_parent_sync_price( $ids ) {
 
 }
 
-function sm_update_stock_status( $id = 0, $stock = 0 ) {
+/**
+* Function for updating stock status value
+*
+* @param int $id product id
+* @param string $update_column update column
+* @param mixed $update_value update value
+* @return boolean updated result
+*/ 
+
+function sm_update_stock_status( $id = 0, $update_column = '', $update_value = '' ) {
   if ( ( ( !empty( Smart_Manager::$sm_is_woo21 ) && Smart_Manager::$sm_is_woo21 == 'true' ) || ( !empty( Smart_Manager::$sm_is_woo22 ) && Smart_Manager::$sm_is_woo22 == 'true' ) || ( !empty( Smart_Manager::$sm_is_woo30 ) && Smart_Manager::$sm_is_woo30 == 'true' ) ) && !empty( $id ) ) {
-
-	  $parent_id = wp_get_post_parent_id( $id );
-
+	  	$parent_id = wp_get_post_parent_id( $id );
 		$woo_version = ( ( defined( 'WOOCOMMERCE_VERSION' ) ) ? WOOCOMMERCE_VERSION : $woocommerce->version );
 		$woo_prod_obj_stock_status = '';
 
@@ -34,28 +41,40 @@ function sm_update_stock_status( $id = 0, $stock = 0 ) {
 		   $woo_prod_obj_stock_status = new WC_Product($id);
 		}
 
-		if( !empty( $woo_prod_obj_stock_status ) ) {
-		  if( !empty( Smart_Manager::$sm_is_woo30 ) && Smart_Manager::$sm_is_woo30 == 'true' && function_exists('wc_update_product_stock') ) {
-		  		$prod = wc_get_product($id);
-		  		$prod->set_stock_quantity( $stock );
-		  		$result = wc_update_product_stock( $prod, $stock );
-		  		return ( ( empty( $result ) && 0 == $result ) || ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) ) ? true : false;
-		  } elseif ( 'yes' === get_post_meta( $id, '_manage_stock', true ) ) { //check if manage stock is enabled or not  
-			  if ( version_compare( $woo_version, '2.4', ">=" ) ) {
-				  if ( $parent_id > 0 ) {
-					  $stock_status_option = get_post_meta( $id, 'stock_status', true );
-					  $stock_status = ( ! empty( $stock_status_option ) ) ? $stock_status_option : '';
-					  if ( is_callable( array( $woo_prod_obj_stock_status, 'set_stock_status' ) ) ) {
-						$woo_prod_obj_stock_status->set_stock_status( $stock_status );
-					  }
-				  } elseif ( is_callable( array( $woo_prod_obj_stock_status, 'check_stock_status' ) ) ) {
-					  $woo_prod_obj_stock_status->check_stock_status();
-				  }
-			  } elseif ( is_callable( array( $woo_prod_obj_stock_status, 'set_stock' ) ) ) {
-                    $result = $woo_prod_obj_stock_status->set_stock( $stock );
-        			return ( ( empty( $result ) && 0 == $result ) || ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) ) ? true : false;
-			  }
-		  } 
+		if ( empty( $woo_prod_obj_stock_status ) || ! $woo_prod_obj_stock_status instanceof WC_Product ) {
+			return false;
+		}
+		switch ( $update_column ) {
+			case '_stock':
+				if( !empty( Smart_Manager::$sm_is_woo30 ) && Smart_Manager::$sm_is_woo30 == 'true' && function_exists('wc_update_product_stock') ) {
+					$prod = wc_get_product($id);
+					$prod->set_stock_quantity( $update_value );
+					$result = wc_update_product_stock( $prod, $update_value );
+					return ( ( empty( $result ) && 0 == $result ) || ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) ) ? true : false;
+				} elseif ( 'yes' === get_post_meta( $id, '_manage_stock', true ) ) { //check if manage stock is enabled or not  
+					if ( version_compare( $woo_version, '2.4', ">=" ) ) {
+						if ( $parent_id > 0 ) {
+							$stock_status_option = get_post_meta( $id, 'stock_status', true );
+							$stock_status = ( ! empty( $stock_status_option ) ) ? $stock_status_option : '';
+							if ( is_callable( array( $woo_prod_obj_stock_status, 'set_stock_status' ) ) ) {
+							$woo_prod_obj_stock_status->set_stock_status( $stock_status );
+							}
+						} elseif ( is_callable( array( $woo_prod_obj_stock_status, 'check_stock_status' ) ) ) {
+							$woo_prod_obj_stock_status->check_stock_status();
+						}
+					} elseif ( is_callable( array( $woo_prod_obj_stock_status, 'set_stock' ) ) ) {
+						$result = $woo_prod_obj_stock_status->set_stock( $update_value );
+						return ( ( empty( $result ) && 0 == $result ) || ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) ) ? true : false;
+					}
+				}
+				break;
+			case '_backorders':
+				$stock = is_callable( array( $woo_prod_obj_stock_status, 'get_stock_quantity' ) ) ? (int) $woo_prod_obj_stock_status->get_stock_quantity() : 0;
+				$low_stock_amount = ( metadata_exists( 'post', $id, '_low_stock_amount' ) ) ? get_post_meta( $id, '_low_stock_amount', true ) : get_option( 'woocommerce_notify_no_stock_amount', 0 );
+				$backorders_are_allowed =  is_callable( array( $woo_prod_obj_stock_status, 'get_backorders' ) ) ? ( 'no' !== $woo_prod_obj_stock_status->get_backorders() ) : false;
+				$new_stock_status = ( $stock > absint( $low_stock_amount ) ) ? 'instock' : ( $backorders_are_allowed ? 'onbackorder' : 'outofstock' );
+				$result = ( ! empty( $new_stock_status ) ) ? update_post_meta( $id, '_stock_status', $new_stock_status ) : false;
+				return ( ( empty( $result ) && 0 == $result ) || ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) ) ? true : false;
 		}
 	}
 }

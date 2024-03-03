@@ -604,7 +604,6 @@ if ( ! class_exists( 'Smart_Manager_Pro_Background_Updater' ) ) {
 								Smart_Manager::log( 'notice', sprintf( _x( 'Memory is exceeded for %s', 'batch handler memory exceed status', 'smart-manager-for-wp-e-commerce' ), $batch_params['process_name'] ) );
 							}
 						}
-						break;
 						$initial_process = get_option( $this->identifier.'_initial_process', false );
 
 						if( !empty( $initial_process ) ) {

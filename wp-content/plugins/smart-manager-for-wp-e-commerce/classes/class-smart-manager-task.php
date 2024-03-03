@@ -248,30 +248,13 @@ if ( ! class_exists( 'Smart_Manager_Task' ) ) {
 				$where .= " AND {$wpdb->base_prefix}sm_advanced_search_temp.flag > 0";
 			}
 			// Code for sorting task records.
-			if ( ! empty( $this->req_params['sort_params'] ) ) {
-				if ( ! empty( $this->req_params['sort_params']['column'] ) && ! empty( $this->req_params['sort_params']['sortOrder'] ) ) {
-					if ( false !== strpos( $this->req_params['sort_params']['column'], '/' ) ) {
-						$col_exploded = explode( '/', $this->req_params['sort_params']['column'] );
-		        		$col_meta = ( ! empty( $col_exploded[1] ) ) ? explode( "=", $col_exploded[1] ) : array();
-						$col_nm = ( ! empty( $col_meta ) && is_array( $col_meta ) ) ? $col_meta[0] : $col_exploded[1];
-						$this->req_params['sort_params']['column_nm'] = ( 'meta_key' === $col_nm ) ? 'meta_value' : $col_exploded[1];
-						$table_nm = $col_exploded[0];
-						if ( ( ! empty( $table_nm ) ) ) {
-							$order_by                                     = $wpdb->prefix . $table_nm . '.' . $this->req_params['sort_params']['column_nm'] . ' ' . strtoupper( $this->req_params['sort_params']['sortOrder'] ) . ' ';
-							if ( 'terms' === $table_nm ) {
-								$join = $this->terms_table_column_sort_query( 
-									array(
-										'col_name'     => $col_exploded[1],
-										'id'           => $wpdb->prefix . 'posts.ID',
-										'sort_order'   => $this->req_params['sort_params']['sortOrder'],
-										'join'         => $join,
-										'wp_query_obj' => '',
-									)
-								);
-								$order_by = 'taxonomy_sort.term_name ' . strtoupper( $this->req_params['sort_params']['sortOrder'] ) . ' ';
-							}
-						}
-					}
+			if ( ! empty( $this->req_params['sort_params'] ) && ! empty( $data_col_params['data_cols'] ) ) {
+
+				$sort_params = $this->build_query_sort_params( array( 'sort_params' => $this->req_params['sort_params'],
+																		'data_cols' => $data_col_params['data_cols']
+															) );
+				if( ! empty( $sort_params ) && ! empty( $sort_params['table'] ) && ! empty( $sort_params['column_nm'] && ! empty( $sort_params['sortOrder'] ) ) ) {
+					$order_by = $wpdb->prefix . $sort_params['table'] . '.' . $sort_params['column_nm'] . ' ' . $sort_params['sortOrder'] . ' ';
 				}
 			}
 			$query_limit_str  = ( ! empty( $this->req_params['cmd'] ) && ( 'get_export_csv' === $this->req_params['cmd'] ) ) ? '' : 'LIMIT ' . $start_offset . ', ' . $limit;

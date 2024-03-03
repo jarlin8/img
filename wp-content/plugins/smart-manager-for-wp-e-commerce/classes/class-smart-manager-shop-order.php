@@ -750,7 +750,15 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 							if( ! is_array( $src ) || ( is_array( $src ) && ( empty( $src[0] ) || empty( $src[1] ) || 'meta_key' !== trim( $src[0] ) ) ) ){
 								continue;
 							}
-							$meta_data = $order->get_meta( trim( $src[1] ) );
+
+							// Condition for handling fetching data for `date` cols which are not accessible using `get_meta` like in case of WC_Subscription
+							if( ! empty( $col['type'] ) && ( 'sm.datetime' === $col['type'] || 'sm.date' === $col['type'] ) && ! empty( $args['meta_date_getter_func'] ) && is_callable( array( $order, $args['meta_date_getter_func'] ) ) ) {
+								$src[1] = ( '_' === substr( $src[1], 0, 1) ) ? substr( $src[1], 1 ) : $src[1];
+								$meta_data = $order->{$args['meta_date_getter_func']}( $src[1] );
+							} else {
+								$meta_data = $order->get_meta( trim( $src[1] ) );
+							}
+		
 							$items[$order_id][$col['data']] = $meta_data;
 							continue;
 						}
@@ -1079,15 +1087,25 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 						}
 						$update_column = ( ! empty( $meta_src[1] ) ) ? trim( $meta_src[1] ) : $update_column;
 					}
+
+					$type = 'text';
+					if( 'wc_orders_meta' !== $update_table && ! empty( $params['data_cols_numeric'] ) && is_array( $params['data_cols_numeric'] ) && in_array( $update_column, $params['data_cols_numeric'] ) ){
+						$type = 'numeric';
+					} else if( 'wc_orders_meta' === $update_table && ! empty( $params['data_date_cols'] ) && is_array( $params['data_date_cols'] ) && in_array( $update_column, $params['data_date_cols'] ) ) { //condition for handling of meta date columns
+						$type = 'sm.date';
+					}
+
 					if ( is_callable( array( 'Smart_Manager_Shop_Order', 'update_order_data') ) ) {
 						self::update_order_data( array(
 							'id' => $id,
 							'table_nm' => $update_table,
 							'col_nm' => $update_column,
 							'value' => $value,
-							'type' => ( 'wc_orders_meta' !== $update_table && ! empty( $params['data_cols_numeric'] ) && is_array( $params['data_cols_numeric'] ) && in_array( $update_column, $params['data_cols_numeric'] ) ) ? 'numeric' : 'text',
+							'type' =>  $type,
 							'order_obj' => $order,
 							'numeric_cols_decimal_places' => ( ! empty( $params['numeric_cols_decimal_places'] ) ) ? $params['numeric_cols_decimal_places'] : array(),
+							'meta_date_getter_func' => ( ! empty( $params['meta_date_getter_func'] ) ) ? $params['meta_date_getter_func'] : '',
+							'meta_date_setter_func' => ( ! empty( $params['meta_date_setter_func'] ) ) ? $params['meta_date_setter_func'] : '',
 							'task_id' => ( ! empty( $params['task_id'] ) ) ? $params['task_id'] : $curr_obj->task_id,
 							'process' => 'inline_edit'
 						) );
@@ -1133,7 +1151,13 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 					}
 					return ( ! empty( $val ) ) ? $val : $prev_val;
 				case 'wc_orders_meta':
-					return $args['order_obj']->get_meta_data( $args['col_nm'] );
+					// Condition for handling fetching data for `date` cols which are not accessible using `get_meta` like in case of WC_Subscription
+					if( ! empty( $args['type'] ) && ( 'sm.datetime' === $args['type'] || 'sm.date' === $args['type'] ) && ! empty( $args['meta_date_getter_func'] ) && is_callable( array( $args['order_obj'], $args['meta_date_getter_func'] ) ) ) {
+						$col_nm = ( '_' === substr( $args['col_nm'], 0, 1) ) ? substr( $args['col_nm'], 1 ) : $args['col_nm'];
+						return $args['order_obj']->{$args['meta_date_getter_func']}( $col_nm );
+					} else {
+						return $args['order_obj']->get_meta( $args['col_nm'] );
+					}
 				case 'wc_orders':
 					if( empty( Smart_Manager::$sm_is_wc_hpos_tables_exists ) ) {
 						return $prev_val;
@@ -1187,6 +1211,8 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 			$setter_func1 = 'set_' . $col_property;
 			$setter_func2 = 'set' . $col_property;
 			
+			$args['type'] = ( ! empty( $args['date_type'] ) ) ? $args['date_type'] : $args['type']; //Added fr BE. Need to change it to `data_type`
+
 			if( ! empty( $args['process'] ) && 'inline_edit' === $args['process'] ){
 				$prev_val = self::get_previous_value( '', $args );
 			}
@@ -1197,7 +1223,14 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 					$args['order_obj']->save();
 					break;
 				case 'wc_orders_meta':
-					$args['order_obj']->update_meta_data( $args['col_nm'], $args['value'] );
+					// Condition for handling fetching data for `date` cols which are not accessible using `get_meta` like in case of WC_Subscription
+					// Calling `update_meta_data` in case of WC_Subscription was causing duplicate entry in meta table
+					if( ! empty( $args['type'] ) && ( 'sm.datetime' === $args['type'] || 'sm.date' === $args['type'] ) && ! empty( $args['meta_date_setter_func'] ) && is_callable( array( $args['order_obj'], $args['meta_date_setter_func'] ) ) ) {
+						$col_nm = ( '_' === substr( $args['col_nm'], 0, 1) ) ? substr( $args['col_nm'], 1 ) : $args['col_nm'];
+						$args['order_obj']->{$args['meta_date_setter_func']}( array( $col_nm => $args['value'] ) );
+					} else {
+						$args['order_obj']->update_meta_data( $args['col_nm'], $args['value'] );
+					}
 					$args['order_obj']->save();
 					break;
 				case 'wc_orders':
@@ -1425,93 +1458,84 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 				return $clauses;
 			}
 
-			$src = explode( "/" , $curr_obj->req_params['sort_params']['column'] );
-			
-			if( empty( $src ) || ! is_array( $src ) ){
+			// Code to get all valid data cols
+			$store_model_transient = ( ! empty( $curr_obj->store_col_model_transient_option_nm ) ) ? get_transient( $curr_obj->store_col_model_transient_option_nm ) : '';
+			if( ! empty( $store_model_transient ) && !is_array( $store_model_transient ) ) {
+				$store_model_transient = json_decode( $store_model_transient, true );
+			}
+			$col_model = ( ! empty( $store_model_transient['columns'] ) ) ? $store_model_transient['columns'] : array();
+
+			if( empty( $col_model ) ){
 				return $clauses;
 			}
 
-			$table_nm = ( ! empty( $src[0] ) ) ? trim( $src[0] ) : '';
-			$col_nm = ( ! empty( $src[1] ) ) ? trim( $src[1] ) : '';
+			$data_cols = $numeric_meta_cols = array();
 
-			$sort_order = strtoupper( $curr_obj->req_params['sort_params']['sortOrder'] );
+			foreach ($col_model as $col) {
+				if( ! empty( $col['hidden'] ) && ! empty( $col['data'] ) ) {
+					continue;
+				}
+
+				$type = ( ! empty( $col['type'] ) ) ? $col['type'] : '';
+				$validator = ( !empty( $col['validator'] ) ) ? $col['validator'] : '';
+				
+				$col_exploded = ( !empty( $col['src'] ) ) ? explode( "/", $col['src'] ) : array();
+
+				if( empty( $col_exploded ) ) {
+					continue;
+				}
+				
+				if ( sizeof($col_exploded) > 2) {
+					$col_meta = explode("=",$col_exploded[1]);
+					$col_nm = $col_meta[1];
+				} else {
+					$col_nm = $col_exploded[1];
+				}
+
+				$data_cols[] = $col_nm;
+				
+				if( ! empty( $col_meta[0] ) && 'wc_orders_meta' === $col_meta[0] && ( 'number' === $type || 'numeric' === $type || 'customNumericTextEditor' === $validator ) ) {
+					$numeric_meta_cols[] = $col_nm;
+				}
+			}
+
+			$sort_params = $curr_obj->build_query_sort_params( array( 'sort_params' => $curr_obj->req_params['sort_params'],
+																		'numeric_meta_cols' => $numeric_meta_cols,
+																		'data_cols' => $data_cols
+															) );
+			if( empty( $sort_params ) || ( ! empty( $sort_params ) && ( empty( $sort_params['table'] ) || empty( $sort_params['column_nm'] ) || empty( $sort_params['sortOrder'] ) ) ) ) {
+				return $clauses;
+			}
+
+			$sort_params['column_nm'] = ( 'meta_value_num' === $sort_params['column_nm'] ) ? 'meta_value+0' : $sort_params['column_nm'];
 			$order_ids = array();
 
-			if( in_array( $table_nm, $curr_obj->flat_tables ) ){
-				if( 'wc_orders' === $table_nm ){
-					$clauses['orderby'] = $wpdb->prefix . $table_nm . '.' . $col_nm . ' ' . $sort_order;
+			if( in_array( $sort_params['table'], $curr_obj->flat_tables ) ){
+				if( 'wc_orders' === $sort_params['table'] ){
+					$clauses['orderby'] = $wpdb->prefix . $sort_params['table'] . '.' . $sort_params['column_nm'] . ' ' . $sort_params['sortOrder'];
 					return $clauses;
-				} else if( 'wc_order_operational_data' === $table_nm ){
+				} else if( 'wc_order_operational_data' === $sort_params['table'] ){
 					$order_ids = $wpdb->get_col( "SELECT DISTINCT order_id 
-												FROM {$wpdb->prefix}$table_nm
-												ORDER BY ". $col_nm ." ". $sort_order );
+												FROM ". $wpdb->prefix.$sort_params['table'] ."
+												ORDER BY ". $sort_params['column_nm'] ." ". $sort_params['sortOrder'] );
 				} else {
-					$addresses_src = explode( '_', $col_nm );
+					$addresses_src = explode( '_', $sort_params['column_nm'] );
 
 					if( empty( $addresses_src ) || ( ! empty( $addresses_src ) && is_array( $addresses_src ) && ( empty( $addresses_src[0] ) || empty( $addresses_src[1] || ! in_array( $addresses_src[0], self::$address_types ) ) ) ) ){
 						return $clauses;
 					}
-					$col = trim( substr( $col_nm, strlen( $addresses_src[0] ) + 1 ) );
+					$col = trim( substr( $sort_params['column_nm'], strlen( $addresses_src[0] ) + 1 ) );
 
 					$order_ids = $wpdb->get_col( "SELECT DISTINCT order_id 
-												FROM {$wpdb->prefix}$table_nm
+												FROM ". $wpdb->prefix.$sort_params['table'] ."
 												WHERE address_type = '". $addresses_src[0] ."'
-												ORDER BY ". $col ." ". $sort_order );
+												ORDER BY ". $col ." ". $sort_params['sortOrder'] );
 				}
-			} else if( 'wc_orders_meta' === $table_nm ){
-
-				$meta_src = explode( '=', $col_nm );
-
-				if( empty( $meta_src ) || ! is_array( $meta_src ) || ( is_array( $meta_src ) && ( empty( $meta_src[0] ) || empty( $meta_src[1] ) || 'meta_key' !== trim( $meta_src[0] ) ) ) ){
-					return $clauses;
-				}
-
-				$store_model_transient = ( ! empty( $curr_obj->store_col_model_transient_option_nm ) ) ? get_transient( $curr_obj->store_col_model_transient_option_nm ) : '';
-				if( ! empty( $store_model_transient ) && !is_array( $store_model_transient ) ) {
-					$store_model_transient = json_decode( $store_model_transient, true );
-				}
-				$col_model = ( ! empty( $store_model_transient['columns'] ) ) ? $store_model_transient['columns'] : array();
-
-				if( empty( $col_model ) ){
-					return $clauses;
-				}
-
-				$meta_value = 'meta_value';
-
-				foreach ($col_model as $col) {
-					if( ! empty( $col['hidden'] ) && ! empty( $col['data'] ) ) {
-						continue;
-					}
-
-					$type = ( ! empty( $col['type'] ) ) ? $col['type'] : '';
-					$validator = ( !empty( $col['validator'] ) ) ? $col['validator'] : '';
-					
-					if( ! ( 'number' === $type || 'numeric' === $type || 'customNumericTextEditor' === $validator ) ) {
-						continue;
-					}
-
-					$col_exploded = ( !empty( $col['src'] ) ) ? explode( "/", $col['src'] ) : array();
-
-					if( empty( $col_exploded ) ) {
-						continue;
-					}
-					
-					if( sizeof( $col_exploded ) <= 2 ) {
-						continue;
-					}
-					$col_meta = explode( "=" , $col_exploded[1] );
-					$col_nm = $col_meta[1];
-					
-					if( $col_nm === $meta_src[1] ){
-						$meta_value = 'meta_value+0';
-						break;
-					}
-				}
-				
+			} else if( 'wc_orders_meta' === $sort_params['table'] && ! empty( $sort_params['sort_by_meta_key'] ) ){				
 				$order_ids = $wpdb->get_col( "SELECT DISTINCT order_id 
-											FROM {$wpdb->prefix}$table_nm
-											WHERE meta_key = '". $meta_src[1] ."'
-											ORDER BY ". $meta_value ." ". $sort_order );
+											FROM ". $wpdb->prefix.$sort_params['table'] ."
+											WHERE meta_key = '". $sort_params['sort_by_meta_key'] ."'
+											ORDER BY ". $sort_params['column_nm'] ." ". $sort_params['sortOrder'] );
 			}
 
 			if( empty( $order_ids ) ){

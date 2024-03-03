@@ -4,25 +4,36 @@ Plugin Name: WooCommerce Advanced Bulk Edit
 Plugin URI: https://wpmelon.com
 Description: Edit your products both individually or in bulk.
 Author: George Iron & Yas G.
-Author URI: https://codecanyon.net/user/georgeiron/portfolio
-Version: 5.2
+Author URI: https://wpmelon.com
+Version: 5.3.6.2
 Text Domain: woocommerce-advbulkedit
 WC requires at least: 5.0
-WC tested up to: 7.6.0
+WC tested up to: 8.4.0
 */
 
 defined( 'ABSPATH' ) || die( 'No direct script access allowed!' );
 
+add_action( 'before_woocommerce_init', function() {
+	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+	}
+} );
+
 define('WCABE_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('WCABE_VERSION', '5.2');
+define('WCABE_VERSION', '5.3.6.2');
 define('WCABE_SITE_URL', 'https://wpmelon.com');
 define('WCABE_SUPPORT_URL', 'https://wpmelon.com/r/support');
+//define('WCABE_UPDATE_URL', 'https://wpmelon.com/r/wcabe-update-url');
+//define('WCABE_UPDATE_URL', 'http://localhost/api/v1/getupdate');
+define('WCABE_UPDATE_URL', 'https://wpmelon-updates.com/be/api/v1/getupdate');
+define( 'WCABE_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 require_once WCABE_PLUGIN_PATH . 'includes/notices/rate.php';
 require_once WCABE_PLUGIN_PATH . 'includes/notices/getting-started.php';
 require_once WCABE_PLUGIN_PATH . 'includes/helpers/general.php';
 require_once WCABE_PLUGIN_PATH . 'includes/helpers/products.php';
 require_once WCABE_PLUGIN_PATH . 'includes/helpers/integrations.php';
+require_once WCABE_PLUGIN_PATH . 'includes/classes/product-attribute-updater.php';
 
 class W3ExAdvancedBulkEditMain {
 
@@ -34,8 +45,7 @@ class W3ExAdvancedBulkEditMain {
 	public static $cache_allowed;
 	const PLUGIN_SLUG = 'advanced_bulk_edit';
 
-	public static function init()
-	{
+	public static function init() {
 		$settings = get_option('w3exabe_settings');
 		if (!defined('WP_ALLOW_MULTISITE') || !WP_ALLOW_MULTISITE) {
 			require (ABSPATH . WPINC . '/pluggable.php');
@@ -88,8 +98,34 @@ class W3ExAdvancedBulkEditMain {
 		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'update' ) );
 		add_action( 'upgrader_process_complete', array( __CLASS__, 'purge' ), 10, 2 );
 		add_action( 'in_plugin_update_message-woocommerce-advanced-bulk-edit/woocommerce-advanced-bulk-edit.php', array(__CLASS__, 'wcabe_update_message'), 10, 2 );
+
+		add_filter( 'plugin_action_links_' . WCABE_PLUGIN_BASENAME, array(self::instance(), 'plugin_section_action_links') );
+		add_filter( 'plugin_row_meta', array( self::instance(), 'plugin_section_row_meta' ), 10, 2 );
 	}
 	
+	public function plugin_section_action_links($links) {
+		$wcabe_links = array(
+			'<a href="' . admin_url( 'edit.php?post_type=product&page=advanced_bulk_edit' ) . '">'.esc_html__('Bulk Edit Products', 'woocommerce-advbulkedit').'</a>'
+		);
+
+		return array_merge( $wcabe_links, $links );
+	}
+
+	public function plugin_section_row_meta($links, $file) {
+		if ( WCABE_PLUGIN_BASENAME !== $file ) {
+			return $links;
+		}
+		
+		$row_meta = array(
+			'docs'    => '<a href="https://wpmelon.com/r/support" aria-label="' . esc_attr__( 'Get WCABE support', 'woocommerce-advbulkedit' ) . '">' . esc_html__( 'Get Support', 'woocommerce-advbulkedit' ) . '</a>',
+		);
+		
+		return array_merge(
+			$links,
+			$row_meta,
+		);
+	}
+
 	public static function request(){
 		//delete_transient( self::$cache_key );
 		$remote = get_transient( self::$cache_key );
@@ -98,13 +134,14 @@ class W3ExAdvancedBulkEditMain {
 			
 			$settings = get_option('w3exabe_settings');
 			$wcabe_license_key = $settings['license_key'] ?? '';
+			$wp_url = home_url();
 			
 			$remote = wp_remote_get(
 				add_query_arg(
 					array(
-						'license_key' => urlencode( $wcabe_license_key )
+						'license' => base64_encode( "$wcabe_license_key|$wp_url" )
 					),
-					'https://wpmelon.com/r/wcabe-update-url',
+					WCABE_UPDATE_URL,
 				),
 				array(
 					'timeout' => 10,
@@ -230,10 +267,9 @@ class W3ExAdvancedBulkEditMain {
 	
 	public static function wcabe_update_message( $plugin_info_array, $plugin_info_object ) {
 		if( empty( $plugin_info_array[ 'package' ] ) ) {
-			$renew_msg = ' Please renew your support subscription to use automatic update or download the update from '.
-			             'CodeCanyon site. You can update your license key <a href="'.
+			$renew_msg = ' Please, fill a valid purchase code <a href="'.
 			             admin_url( 'edit.php?post_type=product&page=advanced_bulk_edit&section=wcabe_settings' ).
-			             '">here</a>';
+			             '">here</a> to use automatic updates';
 			echo $renew_msg;
 		}
 	}
@@ -469,6 +505,7 @@ class W3ExAdvancedBulkEditMain {
 		wp_enqueue_script('w3exabe-adminjs',$purl.'js/admin.js', array(), $ver, true );
 		wp_enqueue_script('w3exabe-adminjsext',$purl.'js/admin-ext.js', array(), $ver, true );
 		wp_enqueue_script('w3exabe-adminhelpersjs',$purl.'js/admin-helpers.js', array(), $ver, true );
+		wp_enqueue_script('w3exabe-adminui',$purl.'js/admin-ui.js', array(), $ver, true );
 
 		if (!isset($settings['setting_disable_hints']) || $settings['setting_disable_hints'] != 1) {
 			wp_enqueue_script('w3exabe-tippyjs-popper',$purl.'js/tippy/popper.min.js', array(), $ver, true );
@@ -500,7 +537,7 @@ class W3ExAdvancedBulkEditMain {
 	
 	public static function wcabe_settings_form_submission()
 	{
-		if ( isset( $_POST['wcabe-submit-settings'] ) && ! empty( $_POST['wcabe_license_key'] ) ) {
+		if ( isset( $_POST['wcabe-submit-settings'] ) ) {
 			$wcabe_license_key = sanitize_text_field( $_POST['wcabe_license_key'] );
 			
 			$settings = get_option('w3exabe_settings');
@@ -512,6 +549,7 @@ class W3ExAdvancedBulkEditMain {
 			wp_redirect( $redirect_url );
 			exit;
 		}
+
 	}
 }
 

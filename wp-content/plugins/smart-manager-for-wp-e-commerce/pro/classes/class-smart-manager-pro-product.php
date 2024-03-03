@@ -65,6 +65,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 			add_filter( 'sm_process_undo_args_before_update',__CLASS__. '::process_undo_args_before_update', 12, 1 );
 			add_filter( 'sm_task_update_action',__CLASS__. '::task_update_action', 12, 2 );
 			add_filter( 'sm_delete_attachment_get_matching_gallery_images_post_ids',__CLASS__. '::get_matching_gallery_images_post_ids', 12, 2 );
+			add_action( 'woocommerce_product_duplicate_before_save', __CLASS__. '::product_duplicate_before_save', 10, 2 );
 		}
 		
 		public static function products_post_batch_process_args( $args ) {
@@ -414,8 +415,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 				$update_flag = true;
 			}
 
-			if ( ! empty( $args['table_nm'] ) && 'postmeta' === $args['table_nm'] && ( ! empty( $args['col_nm'] ) && '_stock' === $args['col_nm'] ) ) { //For handling product inventory updates
-                $update_flag = sm_update_stock_status( $args['id'], $args['value'] );
+			if ( ! empty( $args['table_nm'] ) && 'postmeta' === $args['table_nm'] && ( ! empty( $args['col_nm'] ) && in_array( $args['col_nm'], array( '_stock', '_backorders' ) ) ) ) { //For handling product inventory updates
+                $update_flag = sm_update_stock_status( $args['id'], $args['col_nm'], $args['value'] );
             }
 
 			// Code for 'WooCommerce Product Stock Alert' plugin compat -- triggering `save_post` action
@@ -667,7 +668,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
                         $product = wc_get_product( $original_id );
 
                         $dup_prod = $woo_dup_obj->product_duplicate( $product );
-
+						do_action( 'woocommerce_product_duplicate', $dup_prod, $product ); // Added for supporting custom fields when duplicating the product.
                         if( !is_wp_error($dup_prod) ) {
                         	$dup_prod_id = $dup_prod->get_id();
                         }
@@ -869,6 +870,23 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 				return $attached_media_post_ids;
 			}
 			return array_merge( $attached_media_post_ids, $results );
+		}
+
+		/**
+		* Function for updating value before saving duplicate product
+		*
+		* @param WC_Product $duplicate product object for duplicate
+		* @param WC_Product $product product object
+		* @return void
+		*/ 
+		public static function product_duplicate_before_save( $duplicate = null, $product = null ) {
+			if ( ( is_admin() && ! empty( $_GET['page'] ) && ( 'smart-manager' !== $_GET['page'] ) ) || empty( $duplicate ) || empty( $product ) ) {
+				return;
+			}
+			$status = ( is_callable( array( $product, 'get_status' ) ) ) ? $product->get_status() : '';
+			if ( ! empty( $status ) && is_callable( array( $duplicate, 'set_status' ) ) ) {
+				$duplicate->set_status( $status );
+			}
 		}
 
 	} //End of Class

@@ -28,7 +28,10 @@
 				"DateTime": DateTimeEditor,
 				"SyncWith": SyncWithEditor,
 				"AutocompleteProductSelector": AutocompleteProductSelectorEditor,
-				"SerializedToCSV":SerializedToCSVEditor
+				"SerializedToCSV":SerializedToCSVEditor,
+				// WCABE-313-customization-for-adding-related-products-ids-like-up-sells-field {
+				"SerializedToCSV2":SerializedToCSVEditor2
+				// WCABE-313-customization-for-adding-related-products-ids-like-up-sells-field }
 			}
 		}
 	});
@@ -1005,7 +1008,7 @@
 						$('<hr><label style="white-space: nowrap;"><input id="ifvisibleproductpage" type="checkbox">Visible on the product<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; page</label><hr>')
 							.appendTo($wrapper);
 					}
-					if(args.item['product_type'].toUpperCase().indexOf("VARIABLE") !== -1) {
+					if(args.item['product_type'] !== undefined && args.item['product_type'].toUpperCase().indexOf("VARIABLE") !== -1) {
 						if(args.item[selfield + '_visiblefp'] & 2) {
 							ischecked = true;
 							$('<label style="white-space: nowrap;"><input id="ifusedforvars" type="checkbox" checked=checked>Used for variations</label><hr>')
@@ -3590,5 +3593,80 @@
 
 		this.init();
 	}
+
+	// WCABE-313-customization-for-adding-related-products-ids-like-up-sells-field {
+	function SerializedToCSVEditor2(args) {
+		var $input;
+		var defaultValue;
+		var scope = this;
+
+		this.init = function () {
+			$input = $('<INPUT type="text" class="editor-text" />')
+				.appendTo(args.container)
+				.bind('keydown.nav', function (e) {
+					if (e.keyCode === $.ui.keyCode.LEFT || e.keyCode === $.ui.keyCode.RIGHT) {
+						e.stopImmediatePropagation();
+					}
+				})
+				.focus()
+				.select();
+		};
+
+		this.destroy = function () {
+			$input.remove();
+		};
+
+		this.focus = function () {
+			$input.focus();
+		};
+
+		this.getValue = function () {
+			return $input.val();
+		};
+
+		this.setValue = function (val) {
+			$input.val(val);
+		};
+
+		this.loadValue = function (item) {
+			if(item[args.column.field] === undefined || item[args.column.field] === null)
+				item[args.column.field] = '';
+			item[args.column.field] = wcabehelper.unserializeCSV2(String(item[args.column.field]));
+			item[args.column.field] = String(item[args.column.field]);
+			defaultValue = item[args.column.field] || '';
+			$input.val(defaultValue);
+			$input[0].defaultValue = defaultValue;
+			$input.select();
+		};
+
+		this.serializeValue = function () {
+			return $input.val();
+		};
+
+		this.applyValue = function (item, state) {
+			item[args.column.field] = state;
+		};
+
+		this.isValueChanged = function () {
+			return (!($input.val() == "" && defaultValue == null)) && ($input.val() != defaultValue);
+		};
+
+		this.validate = function () {
+			if (args.column.validator) {
+				var validationResults = args.column.validator($input.val());
+				if (!validationResults.valid) {
+					return validationResults;
+				}
+			}
+
+			return {
+				valid: true,
+				msg: null
+			};
+		};
+
+		this.init();
+	}
+	// WCABE-313-customization-for-adding-related-products-ids-like-up-sells-field }
 
 })(jQuery);

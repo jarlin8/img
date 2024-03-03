@@ -1,7 +1,14 @@
 <?php
-// set_time_limit(0);
 
 defined( 'ABSPATH' ) || die( 'No direct script access allowed!' );
+
+$settings = get_option('w3exabe_settings');
+if (
+	isset($settings['setting_set_time_limit_for_ajax_requests']) &&
+	$settings['setting_set_time_limit_for_ajax_requests'] == 1)
+{
+	set_time_limit(0);
+}
 
 class W3ExABulkEditAjaxHandler{
 	
@@ -812,12 +819,12 @@ class W3ExABulkEditAjaxHandler{
 					self::$debugmode = true;
 				}
 			}
-			self::WriteDebugInfo( "0.5 after get t classes " . __LINE__, $curr_settings );
-			self::WriteDebugInfo( "clear", $curr_settings );
+			//self::WriteDebugInfo( "0.5 after get t classes " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "clear", $curr_settings );
 			
 			self::GetAttributes( $attributes, $attrmapslugtoname );
 			
-			self::WriteDebugInfo( "0.6 after get attrs " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "0.6 after get attrs " . __LINE__, $curr_settings );
 			
 			$attributekeys = array();
 			if ( is_array( $attributes ) && ! empty( $attributes ) ) {
@@ -834,7 +841,7 @@ class W3ExABulkEditAjaxHandler{
 			if ( $arrduplicate === null ) {
 				$ret = $wpdb->query( $query );
 				
-				self::WriteDebugInfo( "0.9 after create t " . __LINE__, $curr_settings );
+				//self::WriteDebugInfo( "0.9 after create t " . __LINE__, $curr_settings );
 				
 				if ( false === $ret ) {
 					return new WP_Error( 'db_query_error',
@@ -875,7 +882,7 @@ class W3ExABulkEditAjaxHandler{
 					
 				}
 				
-				self::WriteDebugInfo( "1 before truncate", $curr_settings );
+				//self::WriteDebugInfo( "1 before truncate", $curr_settings );
 				
 				$query = "TRUNCATE TABLE {$temptable}";
 				$ret   = $wpdb->query( $query );
@@ -892,7 +899,7 @@ class W3ExABulkEditAjaxHandler{
 					}
 				}
 				if ( $bdebugmode ) {
-					self::WriteDebugInfo( "2 after truncate", $curr_settings );
+					//self::WriteDebugInfo( "2 after truncate", $curr_settings );
 				}
 				$catsquery  = "";
 				$pricequery = "";
@@ -941,7 +948,7 @@ class W3ExABulkEditAjaxHandler{
 						if ( isset( $curr_settings['incchildren'] ) ) {
 							if ( $curr_settings['incchildren'] == 1 )
 								self::HandleCatParams( $catparams );
-							self::WriteDebugInfo( "incchildren", $curr_settings, array( $curr_settings['incchildren'] ) );
+								//self::WriteDebugInfo( "incchildren", $curr_settings, array( $curr_settings['incchildren'] ) );
 						}
 					}
 					//$catsquery = "INNER JOIN {$term} rel ON {$posts}.ID=rel.object_id AND rel.term_taxonomy_id IN (";
@@ -1930,7 +1937,7 @@ class W3ExABulkEditAjaxHandler{
 //    								      )";
 					}
 				}
-				self::WriteDebugInfo( "catsquery", $curr_settings, array( $catsquery ) );
+				//self::WriteDebugInfo( "catsquery", $curr_settings, array( $catsquery ) );
                 //$query = mysql_escape_string($query);
 				if ( count( $arrsearchtitle ) > 0 ) {
 					//$ret = $wpdb->query( $wpdb->prepare( $query, $arrsearchtitle ) );
@@ -1943,7 +1950,7 @@ class W3ExABulkEditAjaxHandler{
 					$ret = $wpdb->query( $query );
 				}
 				if ( $bdebugmode ) {
-					self::WriteDebugInfo( "3 after first query " . __LINE__, $curr_settings );
+					//self::WriteDebugInfo( "3 after first query " . __LINE__, $curr_settings );
 				}
 				
 				$LIMIT -= 1;
@@ -2275,7 +2282,7 @@ class W3ExABulkEditAjaxHandler{
 							__( 'Could not execute query' ), $wpdb->last_error );
 					}
 					if ( $bdebugmode ) {
-						self::WriteDebugInfo( "4 after sec query 1260" . __LINE__, $curr_settings );
+						//self::WriteDebugInfo( "4 after sec query 1260" . __LINE__, $curr_settings );
 					}
 					$query = "INSERT INTO {$temptable}(
                                 SELECT p1.ID, 0 AS type,0 AS post_parent, 0 AS useit
@@ -2434,7 +2441,7 @@ class W3ExABulkEditAjaxHandler{
 											__( 'Could not execute query' ), $wpdb->last_error );
 									}
 									if ( $bdebugmode ) {
-										self::WriteDebugInfo( "7 after attr query " . __LINE__, $curr_settings );
+										//self::WriteDebugInfo( "7 after attr query " . __LINE__, $curr_settings );
 									}
 									$query = "INSERT INTO {$temptable}(
                                                 SELECT p1.ID, 0 AS type,0 AS post_parent, 0 AS useit
@@ -2465,7 +2472,7 @@ class W3ExABulkEditAjaxHandler{
 									__( 'Could not execute query' ), $wpdb->last_error );
 							}
 							if ( $bdebugmode ) {
-								self::WriteDebugInfo( "7 after attr query " . __LINE__, $curr_settings );
+								//self::WriteDebugInfo( "7 after attr query " . __LINE__, $curr_settings );
 							}
 							$query = "INSERT INTO {$temptable}(
                                         SELECT p1.ID, 0 AS type,0 AS post_parent, 0 AS useit
@@ -2499,7 +2506,7 @@ class W3ExABulkEditAjaxHandler{
 									WHERE {$temp_cond_filter}{$idlimitquery}  AND {$id} {$notin} IN (SELECT ID FROM {$temptable}) ORDER BY p1.ID ASC {$limitquery})";
 						$ret   = $wpdb->query( $query );
 						if ( $bdebugmode ) {
-							self::WriteDebugInfo( "8 after attr query " . __LINE__, $curr_settings );
+							//self::WriteDebugInfo( "8 after attr query " . __LINE__, $curr_settings );
 						}
 						if ( is_wp_error( $ret ) ) {
 							return new WP_Error( 'db_query_error',
@@ -2516,7 +2523,7 @@ class W3ExABulkEditAjaxHandler{
 				if ( $bgetvariations ) {
 					$ret = $wpdb->query( $query );
 					if ( $bdebugmode ) {
-						self::WriteDebugInfo( "9 after attr query " . __LINE__, $curr_settings );
+						//self::WriteDebugInfo( "9 after attr query " . __LINE__, $curr_settings );
 					}
 					if ( is_wp_error( $ret ) ) {
 						return new WP_Error( 'db_query_error',
@@ -2535,7 +2542,7 @@ class W3ExABulkEditAjaxHandler{
 								__( 'Could not execute query' ), $wpdb->last_error );
 						}
 						if ( $bdebugmode ) {
-							self::WriteDebugInfo( "10 after query " . __LINE__, $curr_settings );
+							//self::WriteDebugInfo( "10 after query " . __LINE__, $curr_settings );
 						}
 					}
 				}
@@ -2564,7 +2571,7 @@ class W3ExABulkEditAjaxHandler{
 						__( 'Could not execute query' ), $wpdb->last_error );
 				}
 				if ( $bdebugmode ) {
-					self::WriteDebugInfo( "11 after query " . __LINE__, $curr_settings );
+					//self::WriteDebugInfo( "11 after query " . __LINE__, $curr_settings );
 				}
 				$useit = " WHERE {$temptable}.useit=1";
                 //if($total < $LIMIT)
@@ -2602,7 +2609,7 @@ class W3ExABulkEditAjaxHandler{
 						__( 'Could not execute query' ), $wpdb->last_error );
 				}
 				if ( $bdebugmode ) {
-					self::WriteDebugInfo( "12 after query " . __LINE__, $curr_settings );
+					//self::WriteDebugInfo( "12 after query " . __LINE__, $curr_settings );
 				}
 				$sqlfields = self::PrepareQuery( 'wp_posts' );
 				if ( $sqlfields !== "" )
@@ -2615,7 +2622,7 @@ class W3ExABulkEditAjaxHandler{
 				$info  = $wpdb->get_results( $query );
 			}
 			
-			self::WriteDebugInfo( "12 after 1 get_results " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "12 after 1 get_results " . __LINE__, $curr_settings );
 			
 			if ( $arrduplicate !== null ) {
 				$info = $arrduplicate;
@@ -2652,7 +2659,7 @@ class W3ExABulkEditAjaxHandler{
 				$ids[ $info[ $i ]->ID ] =& $info[ $i ];
 			}
 			
-			self::WriteDebugInfo( "12.1 after array map " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "12.1 after array map " . __LINE__, $curr_settings );
 			$blogusers = array();
 			if ( in_array( 'post_author', self::$columns ) || empty( self::$columns ) ) {
 				//$blogusers = get_users( array( 'role__in' => array('administrator', 'shop_manager', 'seller', 'vendor', 'customer'), 'fields' => array( 'ID', 'display_name' ) ) );
@@ -2741,7 +2748,7 @@ class W3ExABulkEditAjaxHandler{
 				}
 			}
 			
-			self::WriteDebugInfo( "12.2 after array loop " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "12.2 after array loop " . __LINE__, $curr_settings );
 			
 			$customfields = "";
 			if ( $customparam !== null ) {
@@ -2753,7 +2760,7 @@ class W3ExABulkEditAjaxHandler{
 			$metavals = array();
 			
 			
-			self::WriteDebugInfo( "12.3 after customfields loop " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "12.3 after customfields loop " . __LINE__, $curr_settings );
 			$duplicateids = "";
 			if ( $arrduplicate !== null ) {
 				foreach ( $arrduplicate as $key => $value ) {
@@ -2790,7 +2797,7 @@ class W3ExABulkEditAjaxHandler{
 							__( 'Could not execute query' ), $wpdb->last_error );
 					}
 					
-					self::WriteDebugInfo( "13.1 after meta get_results " . __LINE__, $curr_settings );
+					//self::WriteDebugInfo( "13.1 after meta get_results " . __LINE__, $curr_settings );
 					
 				} else {
 					$query = "SELECT p1.ID, p1.post_title,p1.post_parent, {$meta}.meta_key, {$meta}.meta_value
@@ -2799,7 +2806,7 @@ class W3ExABulkEditAjaxHandler{
                                 AND ({$meta}.meta_key IN ({$sqlfields}))	WHERE p1.ID IN ({$duplicateids})";
 					$metavals = $wpdb->get_results( $query );
 					
-					self::WriteDebugInfo( "14.1 after meta2 get_results " . __LINE__, $curr_settings );
+					//self::WriteDebugInfo( "14.1 after meta2 get_results " . __LINE__, $curr_settings );
 					
 					if ( is_wp_error( $metavals ) ) {
 						return new WP_Error( 'db_query_error',
@@ -2824,7 +2831,7 @@ class W3ExABulkEditAjaxHandler{
 							__( 'Could not execute query' ), $wpdb->last_error );
 					}
 					
-					self::WriteDebugInfo( "13.2 after meta get_results " . __LINE__, $curr_settings );
+					//self::WriteDebugInfo( "13.2 after meta get_results " . __LINE__, $curr_settings );
 					
 				} else {
 					$query = "SELECT p1.ID, p1.post_title,p1.post_parent, {$meta}.meta_key, {$meta}.meta_value
@@ -2833,7 +2840,7 @@ class W3ExABulkEditAjaxHandler{
                                 AND ({$meta}.meta_key IN ({$sqlfields}))	WHERE p1.ID IN ({$duplicateids})";
 					$metavals = $wpdb->get_results( $query );
 					
-					self::WriteDebugInfo( "14.2 after meta2 get_results " . __LINE__, $curr_settings );
+					//self::WriteDebugInfo( "14.2 after meta2 get_results " . __LINE__, $curr_settings );
 					
 					if ( is_wp_error( $metavals ) ) {
 						return new WP_Error( 'db_query_error',
@@ -2860,7 +2867,7 @@ class W3ExABulkEditAjaxHandler{
 							__( 'Could not execute query' ), $wpdb->last_error );
 					}
 					
-					self::WriteDebugInfo( "15 after meta2 get_results " . __LINE__, $curr_settings );
+					//self::WriteDebugInfo( "15 after meta2 get_results " . __LINE__, $curr_settings );
 					
 				} else {
 					$query    = "SELECT p1.ID, p1.post_title,p1.post_parent, {$meta}.meta_key, {$meta}.meta_value
@@ -2871,7 +2878,7 @@ class W3ExABulkEditAjaxHandler{
                                     WHERE p1.ID IN ({$duplicateids})";
 					$metavals = $wpdb->get_results( $query );
 					
-					self::WriteDebugInfo( "16 after meta2-1 get_results " . __LINE__, $curr_settings );
+					//self::WriteDebugInfo( "16 after meta2-1 get_results " . __LINE__, $curr_settings );
 					
 					if ( is_wp_error( $metavals ) ) {
 						return new WP_Error( 'db_query_error',
@@ -2880,7 +2887,7 @@ class W3ExABulkEditAjaxHandler{
 				}
 			}
 			self::LoopMetaData( $metavals, $ids, $tax_classes, $converttoutf8 );
-			self::WriteDebugInfo( "16.5 after loop meta " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "16.5 after loop meta " . __LINE__, $curr_settings );
 			unset( $metavals );
 			$thumbids         = "";
 			$thumbcounter     = 0;
@@ -3227,7 +3234,7 @@ class W3ExABulkEditAjaxHandler{
 					}
 				}
 			}
-			self::WriteDebugInfo( "16.6 after ids loop " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "16.6 after ids loop " . __LINE__, $curr_settings );
 			if ( $gal_thumbcounter !== 0 && $gal_thumbids !== "" && false ) {
 				$query = "SELECT post_id,meta_value
 		                    FROM  {$meta} WHERE post_id IN ({$gal_thumbids}) AND meta_key='_wp_attachment_metadata'";
@@ -3458,7 +3465,7 @@ class W3ExABulkEditAjaxHandler{
 					}
 				}
 			}
-			self::WriteDebugInfo( "16.7 after thumb gen " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "16.7 after thumb gen " . __LINE__, $curr_settings );
 			$cats = array();
 			if ( $arrduplicate === null ) {
 				if ( $useit != "" ) {
@@ -3497,7 +3504,7 @@ class W3ExABulkEditAjaxHandler{
 				}
 			}
 			
-			self::WriteDebugInfo( "17 after get taxonomies " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "17 after get taxonomies " . __LINE__, $curr_settings );
 			//categories
             //return new WP_Error( 'db_query_error',
             //			__( 'Could not execute query' ), $wpdb->last_error );
@@ -3574,7 +3581,7 @@ class W3ExABulkEditAjaxHandler{
 					$cats_assoc[ $category->term_taxonomy_id ] = $idmap;
 				};
 			}
-			self::WriteDebugInfo( "18 after map taxonomies " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "18 after map taxonomies " . __LINE__, $curr_settings );
 			if ( is_array( $attributes ) && ! empty( $attributes ) ) {
 				foreach ( $attributes as $attr ) {
                 //if(!property_exists($attr,'values'))
@@ -3591,7 +3598,7 @@ class W3ExABulkEditAjaxHandler{
 					}
 				}
 			}
-			self::WriteDebugInfo( "19 after map attrs " . __LINE__, $curr_settings );
+			//self::WriteDebugInfo( "19 after map attrs " . __LINE__, $curr_settings );
             //return new WP_Error( 'db_query_error',
             //			__( 'Could not execute query' ), $wpdb->last_error );
 			foreach ( $cats as &$val ) {
@@ -3755,12 +3762,23 @@ class W3ExABulkEditAjaxHandler{
 				update_post_meta($ID,'_product_attributes',$patt);
 				self::CallWooAction($ID);
 			}
-					
 	}
 
 	public static function saveProducts(&$data,&$children,&$currentpos,&$batchnumber)
 	{
 		global $wpdb;
+		global $woocommerce;
+		$curr_settings = get_option('w3exabe_settings');
+		if (
+			(
+				//!isset($curr_settings['setting_enable_fix_for_attribute_update']) ||
+				isset($curr_settings['setting_enable_fix_for_attribute_update']) &&
+				$curr_settings['setting_enable_fix_for_attribute_update'] == "1"
+			)
+		) {
+			$data = Product_Attribute_Updater::processAttributeUpdates($data);
+		}
+
 		$posts = $wpdb->posts;
 		$meta = $wpdb->postmeta;
 		$temptable = $wpdb->prefix."wpmelon_advbedit_temp";
@@ -3779,11 +3797,9 @@ class W3ExABulkEditAjaxHandler{
 		$retarray = array();
 		$counter = 0;
 		$processcounter = 0;
-		self::WriteDebugInfo("clear","");
+		//self::WriteDebugInfo("clear","");
 		$rowstoskip = -1;
 		$arr_prod_vis = array();
-		global $woocommerce;
-		$curr_settings = get_option('w3exabe_settings');
 		if(!is_array($curr_settings))
 		{
 			$curr_settings = array();
@@ -3855,7 +3871,7 @@ class W3ExABulkEditAjaxHandler{
 				}
 			}
 //			self::WriteDebugInfo("loop number ".__LINE__,$curr_settings);
-			self::WriteDebugInfo("loop number ".$counter,"");
+			//self::WriteDebugInfo("loop number ".$counter,"");
 			$ID = 0;
 			if(array_key_exists('ID',$arrrow))
 			{
@@ -5379,7 +5395,7 @@ class W3ExABulkEditAjaxHandler{
 					$bdontcheckusedfor = true;
 			}
 		}
-		self::WriteDebugInfo("loop number ","","before attr refresh");
+		//self::WriteDebugInfo("loop number ","","before attr refresh");
 		foreach($data as $arrrow)
 		{
 			if(!is_array($arrrow)) continue;
@@ -5519,13 +5535,6 @@ class W3ExABulkEditAjaxHandler{
 				
 			}
 			$retarray[] = $newpar;
-		}
-		if (
-			function_exists('wc_update_product_lookup_tables') &&
-			(!isset($curr_settings['setting_auto_regenrate_products_table_on_save']) ||
-			 $curr_settings['setting_auto_regenrate_products_table_on_save'] == "1")
-		) {
-			wc_update_product_lookup_tables();
 		}
 		return $retarray;
 	}
@@ -6759,7 +6768,7 @@ class W3ExABulkEditAjaxHandler{
 	{
 		$newarr = array();
 		
-		self::WriteDebugInfo("incchildren",null,array('entering handlecatparams'));
+		//self::WriteDebugInfo("incchildren",null,array('entering handlecatparams'));
 		
 		$args = array(
 		    'number'     => 99999,
@@ -6796,7 +6805,7 @@ class W3ExABulkEditAjaxHandler{
 				   break;
 			   }
 			};
-			self::WriteDebugInfo("incchildren",null,array('child_of'.$cat));
+			//self::WriteDebugInfo("incchildren",null,array('child_of'.$cat));
 			$woo_categories = get_terms( 'product_cat', $args );
 			if(is_wp_error($woo_categories))
 				continue;
@@ -7158,8 +7167,8 @@ class W3ExABulkEditAjaxHandler{
 			
 			if(!is_array($childids)) return;
 			if(count($childids) == 0) return;
-			self::WriteDebugInfo("loop number ","","parent id ".$parentid);
-			self::WriteDebugInfo("loop number ","","ids number ".count($childids));
+			//self::WriteDebugInfo("loop number ","","parent id ".$parentid);
+			//self::WriteDebugInfo("loop number ","","ids number ".count($childids));
 			$idin = "";
 			foreach($childids as $id)
 			{
@@ -7185,7 +7194,7 @@ class W3ExABulkEditAjaxHandler{
 			{
 				$idin = $idin.")";
 				$query = "SELECT post_id,meta_value,meta_key FROM {$meta} WHERE (meta_key='_sale_price' OR meta_key='_regular_price')  AND post_id IN ".$idin;
-				self::WriteDebugInfo("loop number ","",$query);
+				//self::WriteDebugInfo("loop number ","",$query);
 				$items =  $wpdb->get_results($query);
 				foreach($items as $obj)
 				{
@@ -7493,7 +7502,11 @@ class W3ExABulkEditAjaxHandler{
 	
 	public static function exportProducts(&$data,&$children)
 	{
-		$dir = dirname(__FILE__);
+		//$dir = dirname(__FILE__);
+		$dir = wp_upload_dir()['basedir'] . '/woocommerce-advanced-bulk-edit';
+		if (!is_dir($dir)) {
+			mkdir($dir);
+		}
 		$dh  = opendir($dir);
 		while (false !== ($filename = readdir($dh))) {
 			$ibegin = strpos($filename,"temp.csv",0);
@@ -9139,7 +9152,9 @@ class W3ExABulkEditAjaxHandler{
 			case 'exportproducts':
 			{
 				$filename = self::exportProducts($data,$children);
-				$arr['products'] = plugin_dir_url(__FILE__).$filename;
+				//$arr['products'] = plugin_dir_url(__FILE__).$filename;
+				$arr['products'] = wp_upload_dir()['baseurl'] . '/woocommerce-advanced-bulk-edit/' . $filename;
+
 			}break;
 			case 'setthumb':
 			{
@@ -9324,8 +9339,12 @@ class W3ExABulkEditAjaxHandler{
 						$curr_settings['setting_display_top_bar_link_bulkedit'] = $data['setting_display_top_bar_link_bulkedit'];
 					}
 
-					if(isset($data['setting_auto_regenrate_products_table_on_save'])) {
-						$curr_settings['setting_auto_regenrate_products_table_on_save'] = $data['setting_auto_regenrate_products_table_on_save'];
+					if(isset($data['setting_enable_fix_for_attribute_update'])) {
+						$curr_settings['setting_enable_fix_for_attribute_update'] = $data['setting_enable_fix_for_attribute_update'];
+					}
+
+					if(isset($data['setting_set_time_limit_for_ajax_requests'])) {
+						$curr_settings['setting_set_time_limit_for_ajax_requests'] = $data['setting_set_time_limit_for_ajax_requests'];
 					}
 
 					if(isset($data['debugmode']))

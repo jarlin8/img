@@ -86,6 +86,7 @@ Smart_Manager.prototype.init = function() {
 	this.columnManagerRoute = "columnManager";
 	this.defaultRoute = "dashboard";
 	this.settingsRoute = "settings";
+	this.privilegeSettingsRoute = "privilegeSettings";
 	this.currentColModel = '';
 
 	this.notification = {} //object for handling all notification messages
@@ -250,6 +251,8 @@ Smart_Manager.prototype.init = function() {
 	this.isScheduled = false;
 	this.scheduledActionAdminUrl = (sm_beta_params.scheduled_action_admin_url) ? sm_beta_params.scheduled_action_admin_url : '';
 	this.scheduledFor = '0000-00-00 00:00:00';
+    this.accessPrivilegeSettings = {};
+	this.isAdmin = (sm_beta_params.hasOwnProperty('is_admin')) ? sm_beta_params.is_admin : false
 
 	//Function to set all the states on unload
 	window.onbeforeunload = function (evt) { 
@@ -511,13 +514,15 @@ Smart_Manager.prototype.loadNavBar = function() {
 							</svg>
 						</a>
 					</div>
-					<div id="sm_nav_bar_settings_btn" title="${_x('Settings', 'tooltip', 'smart-manager-for-wp-e-commerce')}" style="cursor:pointer; ">
-						<a id="sm_general_settings" class="sm_docs_settings_link" href="#" title="${_x('General settings', 'tooltip', 'smart-manager-for-wp-e-commerce')}">
-							<svg stroke="currentColor" fill="none" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-							</svg>
-						</a>		
+					<div id="sm_nav_bar_settings_btn" style="cursor:pointer;" class="sm_beta_dropdown sm_docs_settings_link">
+						<svg stroke="currentColor" fill="none" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+						</svg>
+						<div class="sm_beta_dropdown_content settings">
+							<a id="sm_general_settings" href="#" title="${_x('General settings', 'tooltip', 'smart-manager-for-wp-e-commerce')}">${_x('General settings', 'settings button', 'smart-manager-for-wp-e-commerce')}</a>
+							<a id="sm_access_privilege_settings" href="#" title="${_x('Access Privilege settings', 'tooltip', 'smart-manager-for-wp-e-commerce')}">${_x('Access Privilege Settings', 'access privilege settings button', 'smart-manager-for-wp-e-commerce')}</a>
+						</div>
 					</div>
 				</div>`);
 
@@ -630,7 +635,8 @@ Smart_Manager.prototype.loadNavBar = function() {
 	}
 
 	(window.smart_manager.isTaxonomyDashboard()) ? jQuery('#sm_beta_move_to_trash').hide() : jQuery('#sm_beta_move_to_trash').show();
-
+	(window.smart_manager.isAdmin) ? jQuery('#sm_access_privilege_settings').show()
+ : jQuery('#sm_access_privilege_settings').hide()
 	window.smart_manager.displayShowHideColumnSettings(true);
 	if('undefined' !== typeof(window.smart_manager.displayTasks) && 'function' === typeof(window.smart_manager.displayTasks)){
 		window.smart_manager.displayTasks({hideTasks: true}); // Hide tasks for custom view dashboard
@@ -2854,6 +2860,18 @@ Smart_Manager.prototype.event_handler = function() {
 			window.smart_manager.showNotification()
 		}
 	})
+	//Code to handle access privilege settings
+	.off('click', '#sm_access_privilege_settings').on('click', '#sm_access_privilege_settings' ,function(e){
+		e.preventDefault();
+		if(0 == window.smart_manager.sm_beta_pro){
+			window.smart_manager.notification = {message: sprintf(_x('This feature is available only in the %s version','modal content', 'smart-manager-for-wp-e-commerce'),'<a href="' + window.smart_manager.pricingPageURL + '" target="_blank">'+_x('Pro','modal content','smart-manager-for-wp-e-commerce')+'</a>'),hideDelay: window.smart_manager.notificationHideDelayInMs}
+			window.smart_manager.showNotification()
+			return false;
+		}
+		if(typeof(window.smart_manager.showPannelDialog) !== "undefined" && typeof (window.smart_manager.showPannelDialog) === "function"){
+			window.smart_manager.showPannelDialog(window.smart_manager.privilegeSettingsRoute)
+		}
+	})
 	//Code to handle the general settings
 	.off('click','#sm_general_settings').on('click','#sm_general_settings', function(e){
 		e.preventDefault();
@@ -3097,11 +3115,12 @@ Smart_Manager.prototype.processColumnVisibility = function() {
 
 		//code to trigger update state ajax call
 		if ( "undefined" !== typeof (window.smart_manager.updateState) && "function" === typeof (window.smart_manager.updateState) ) {
-			let params = { refreshDataModel : true, async: false };
+			let params = { refreshDataModel : true, async: true };
 			if(window.smart_manager.isViewAuthor){
 				params.updateView = true
 			}
 			window.smart_manager.isColumnModelUpdated = true
+			window.smart_manager.showLoader();
 			window.smart_manager.updateState(params); //refreshing the dashboard states
 
 			if ( "undefined" !== typeof (window.smart_manager.refreshColumnsTitleAttribute) && "function" === typeof (window.smart_manager.refreshColumnsTitleAttribute) ) {
@@ -3488,8 +3507,17 @@ Smart_Manager.prototype.saveSettings = function(settings = {}){
 					security: window.smart_manager.sm_nonce,
 					pro: ('undefined' !== typeof(window.smart_manager.sm_beta_pro)) ? window.smart_manager.sm_beta_pro : 0
 				};
+	params.data_type = 'json'
 	window.smart_manager.send_request(params,function(response){
-		location.reload();
+		let ack = (response.hasOwnProperty('ACK')) ? response.ACK : ''
+		if('Success' === ack){
+			window.smart_manager.notification = {status:'success', message:
+				_x('Settings saved successfully!', 'notification', 'smart-manager-for-wp-e-commerce')}
+			window.smart_manager.showNotification()
+		}
+		setTimeout(function () {
+			location.reload();
+		}, 2000);
 	});
 };
 
