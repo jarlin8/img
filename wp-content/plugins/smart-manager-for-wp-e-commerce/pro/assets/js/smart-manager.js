@@ -1586,3 +1586,27 @@ Smart_Manager.prototype.scheduleDatePicker = function() {
 Smart_Manager.prototype.scheduledForVal = function() {
     window.smart_manager.scheduledFor = jQuery("#scheduled_for").val();
 }
+// ========================================================================
+// PRIVILEGE SETTINGS UPDATE
+// ========================================================================
+Smart_Manager.prototype.privilegeSettingsUpdate = function(){
+    if((window.smart_manager.privilegeSettingsRules.length <= 0)){
+        return;
+    }
+    window.smart_manager.send_request({
+        data: {
+            cmd: 'save_access_privilege_settings',
+            active_module: 'access-privilege',
+            security: window.smart_manager.sm_nonce,
+            access_privileges: JSON.stringify(window.smart_manager.privilegeSettingsRules)
+        },
+        data_type: 'json'
+    }, function(response){
+        let ack = (response.hasOwnProperty('ACK')) ? response.ACK : ''
+        if('success' === ack){
+            window.smart_manager.notification = {status:'success', message:
+                _x('Privilege settings saved successfully!', 'access privilege settings notification', 'smart-manager-for-wp-e-commerce'), hideDelay: 2000}
+            window.smart_manager.showNotification()
+        }
+    });
+}

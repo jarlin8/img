@@ -5,7 +5,7 @@
  * @since      2.0.7
  * @package    RankMath
  * @subpackage RankMathPro
- * @author     MyThemeShop <admin@mythemeshop.com>
+ * @author     RankMath <support@rankmath.com>
  */
 
 namespace RankMathPro\Schema;
@@ -13,7 +13,6 @@ namespace RankMathPro\Schema;
 use RankMath\Helper;
 use RankMath\Schema\DB;
 use RankMath\Traits\Hooker;
-use MyThemeShop\Helpers\Param;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -118,6 +117,9 @@ class Display_Conditions {
 
 			// Skip if already confirmed.
 			if ( 'include' === $operator && self::$conditions[ $category ] ) {
+				continue;
+			}
+			if ( 'exclude' === $operator && ! self::$conditions[ $category ] ) {
 				continue;
 			}
 

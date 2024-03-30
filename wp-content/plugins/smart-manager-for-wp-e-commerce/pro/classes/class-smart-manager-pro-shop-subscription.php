@@ -275,7 +275,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 		 * @return array $data_model updated data model.
 		 */
 		public function subscriptions_data_model( $data_model = array(), $data_col_params = array() ) {
-			return ( is_callable( array( 'Smart_Manager_Shop_Order', 'generate_data_model' ) ) ) ? Smart_Manager_Shop_Order::generate_data_model( $data_model, array( 'col_params' => $data_col_params, 'curr_obj' => $this, 'status_func' => 'wcs_get_subscription_statuses', 'curr_obj_getter_func' => 'wcs_get_subscription', 'curr_obj_class_nm' => 'WC_Subscription' ) ) : $data_model;
+			return ( is_callable( array( 'Smart_Manager_Shop_Order', 'generate_data_model' ) ) ) ? Smart_Manager_Shop_Order::generate_data_model( $data_model, array( 'col_params' => $data_col_params, 'curr_obj' => $this, 'status_func' => 'wcs_get_subscription_statuses', 'meta_date_getter_func' => 'get_date', 'curr_obj_getter_func' => 'wcs_get_subscription', 'curr_obj_class_nm' => 'WC_Subscription' ) ) : $data_model;
 		}
 
 		/**
@@ -299,7 +299,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 		 * @return void.
 		 */
 		public function subscriptions_inline_update( $edited_data = array(), $params = array() ) {
-			( is_callable( array( 'Smart_Manager_Shop_Order', 'process_inline_update' ) ) ) ? Smart_Manager_Shop_Order::process_inline_update( $edited_data, array_merge( array( 'curr_obj' => $this ), $params ) ) : '';
+			( is_callable( array( 'Smart_Manager_Shop_Order', 'process_inline_update' ) ) ) ? Smart_Manager_Shop_Order::process_inline_update( $edited_data, array_merge( array( 'curr_obj' => $this, 'meta_date_getter_func' => 'get_date', 'meta_date_setter_func' => 'update_dates' ), $params ) ) : '';
 		}
 
 		/**
@@ -331,7 +331,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 		 * @return string $prev_val updated prev_val 
 		 */
 		public static function get_previous_value( $prev_val = '', $args = array() ) {
-			return ( is_callable( array( 'Smart_Manager_Shop_Order', 'get_previous_value' ) ) ) ? Smart_Manager_Shop_Order::get_previous_value( $prev_val, array_merge( $args,  array( 'curr_obj_getter_func' => 'wcs_get_subscription', 'curr_obj_class_nm' => 'WC_Subscription' ) ) ) : $prev_val;
+			return ( is_callable( array( 'Smart_Manager_Shop_Order', 'get_previous_value' ) ) ) ? Smart_Manager_Shop_Order::get_previous_value( $prev_val, array_merge( $args,  array( 'curr_obj_getter_func' => 'wcs_get_subscription', 'curr_obj_class_nm' => 'WC_Subscription', 'meta_date_getter_func' => 'get_date' ) ) ) : $prev_val;
 		}
 		
 		/**
@@ -342,7 +342,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Shop_Subscription' ) ) {
 		 * @return boolean $update_flag updated update flag.
 		 */
 		public static function post_batch_update_db_updates( $update_flag = false, $args = array() ) {
-			return ( is_callable( array( 'Smart_Manager_Pro_Shop_Order', 'post_batch_update_db_updates' ) ) ) ? Smart_Manager_Pro_Shop_Order::post_batch_update_db_updates( $update_flag, array_merge( $args,  array( 'curr_obj_getter_func' => 'wcs_get_subscription', 'curr_obj_class_nm' => 'WC_Subscription' ) ) ) : $update_flag;
+			return ( is_callable( array( 'Smart_Manager_Pro_Shop_Order', 'post_batch_update_db_updates' ) ) ) ? Smart_Manager_Pro_Shop_Order::post_batch_update_db_updates( $update_flag, array_merge( $args,  array( 'curr_obj_getter_func' => 'wcs_get_subscription', 'curr_obj_class_nm' => 'WC_Subscription', 'meta_date_getter_func' => 'get_date', 'meta_date_setter_func' => 'update_dates' ) ) ) : $update_flag;
 		}
 
 		/**

@@ -635,8 +635,7 @@ Smart_Manager.prototype.loadNavBar = function() {
 	}
 
 	(window.smart_manager.isTaxonomyDashboard()) ? jQuery('#sm_beta_move_to_trash').hide() : jQuery('#sm_beta_move_to_trash').show();
-	(window.smart_manager.isAdmin) ? jQuery('#sm_access_privilege_settings').show()
- : jQuery('#sm_access_privilege_settings').hide()
+ document.getElementById('sm_access_privilege_settings').style.display = (window.smart_manager.isAdmin) ? 'block' : 'none';
 	window.smart_manager.displayShowHideColumnSettings(true);
 	if('undefined' !== typeof(window.smart_manager.displayTasks) && 'function' === typeof(window.smart_manager.displayTasks)){
 		window.smart_manager.displayTasks({hideTasks: true}); // Hide tasks for custom view dashboard
@@ -2154,6 +2153,11 @@ Smart_Manager.prototype.loadGrid = function() {
 						window.smart_manager.currentColModel[index].width = newSize
 					}
 				}
+			}
+		},
+		afterScrollHorizontally: function() {
+			if ( "undefined" !== typeof (window.smart_manager.refreshColumnsTitleAttribute) && "function" === typeof (window.smart_manager.refreshColumnsTitleAttribute) ) {
+				window.smart_manager.refreshColumnsTitleAttribute();
 			}
 		}
 	});
@@ -4118,6 +4122,11 @@ jQuery.widget('ui.dialog', jQuery.extend({}, jQuery.ui.dialog.prototype, {
 	//Function to add title for each of the column headers
 	Smart_Manager.prototype.refreshColumnsTitleAttribute = function(){
 		setTimeout(() => {
+			window.smart_manager.hot.updateSettings({
+				data: window.smart_manager.currentDashboardData,
+				columns: window.smart_manager.currentVisibleColumns,
+				colHeaders: window.smart_manager.column_names
+			});
 			jQuery('table.htCore').find('.colHeader').each(function() {
 				jQuery(this).attr('title',jQuery(this).text()+' '+_x('(Click to sort)', 'tooltip', 'smart-manager-for-wp-e-commerce'));
 			});

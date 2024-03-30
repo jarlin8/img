@@ -11,11 +11,11 @@
 namespace RankMathPro\Analytics;
 
 use RankMath\Helper;
+use RankMath\Helpers\DB as DB_Helper;
 use RankMath\Traits\Hooker;
 use RankMath\Analytics\Stats;
 use RankMath\Admin\Admin_Helper;
 use RankMathPro\Admin\Admin_Helper as ProAdminHelper;
-use MyThemeShop\Helpers\DB as DB_Helper;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -62,6 +62,11 @@ class Summary {
 			$query->leftJoin( $wpdb->prefix . 'rank_math_analytics_objects', $wpdb->prefix . 'rank_math_analytics_gsc.page', $wpdb->prefix . 'rank_math_analytics_objects.page' );
 			$query->where( $wpdb->prefix . 'rank_math_analytics_objects.object_subtype', sanitize_key( $post_type ) );
 			$summary = (object) $query->one();
+		}
+
+		$summary->pageviews = 0;
+		if ( ! \RankMath\Google\Analytics::is_analytics_connected() ) {
+			return $summary;
 		}
 
 		$summary->pageviews = DB::traffic()

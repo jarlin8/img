@@ -212,6 +212,7 @@ class Smart_Manager_Pro_Views {
 
 		wp_send_json( ( ! empty( $row_count ) ) ? true : false );
 	}
+
     /**
 	 * Function to get all accessible views based on current user
 	 *
@@ -220,30 +221,29 @@ class Smart_Manager_Pro_Views {
 	 */
 	public function get_all_accessible_views( $post_types = array() ) {
 		global $wpdb;
-
-		$response = array( 'accessible_views' => array(), 'owned_views' => array(), 'public_views' => array() );
-
-		$results = $wpdb->get_results(
-					$wpdb->prepare("SELECT title,
-											slug,
-											author,
-											is_public,
-											post_type
-										FROM {$wpdb->prefix}sm_views
-										WHERE ( post_type IN ('". implode("','", array_keys( $post_types ) ) ."')
-												AND (is_public = 1
-													OR (is_public = 0 AND author = %d) ) )
-										GROUP BY slug",
-										get_current_user_id()
-									),
-									'ARRAY_A'
-		);
-
-		if( is_callable( array( 'Smart_Manager_Pro_Access_Privilege', 'get_current_user_access_privilege_settings' ) ) ) {
+		$response = array( 'accessible_views' => array(), 'owned_views' => array(), 'public_views' => array(), 'view_post_types' => array() );
+		$results = array();
+		$view_results = array();
+		if ( ! empty( $post_types ) && is_array( $post_types ) ) {
+			$results = $wpdb->get_results(
+						$wpdb->prepare("SELECT title,
+												slug,
+												author,
+												is_public,
+												post_type
+											FROM {$wpdb->prefix}sm_views
+											WHERE ( post_type IN ('". implode("','", array_keys( $post_types ) ) ."')
+													AND (is_public = 1
+														OR (is_public = 0 AND author = %d) ) )
+											GROUP BY slug",
+											get_current_user_id()
+										),
+										'ARRAY_A'
+			);
+		}
+		if ( is_callable( array( 'Smart_Manager_Pro_Access_Privilege', 'get_current_user_access_privilege_settings' ) ) ) {
 			$accessible_dashboards = Smart_Manager_Pro_Access_Privilege::get_current_user_access_privilege_settings();
-
-			if( ! empty( $accessible_dashboards ) ) {
-
+			if ( ! empty( $accessible_dashboards ) && is_array( $accessible_dashboards ) && isset( $accessible_dashboards['valid'] ) && ! empty( $accessible_dashboards['valid'] ) && is_array( $accessible_dashboards['valid'] ) ) {
 				$view_results = $wpdb->get_results(
 									$wpdb->prepare("SELECT title,
 															slug,
@@ -251,36 +251,37 @@ class Smart_Manager_Pro_Views {
 															is_public,
 															post_type
 														FROM {$wpdb->prefix}sm_views
-														WHERE ( slug IN ('". implode("','", $accessible_dashboards ) ."')
+														WHERE ( slug IN ('". implode( "','", $accessible_dashboards['valid'] ) ."')
 															AND 1=%d)
 														GROUP BY slug",
 														1
 													),
 													'ARRAY_A'
-						);
-				if( count( $view_results ) > 0 ){
-					$results = array_merge( $results, $view_results );
-				}
+				);
 			}
 		}
-
-		if( ! empty( $results ) ) {
-			foreach( $results as $result ) {
-				$response['accessible_views'][ $result['slug'] ] = $result['title'];
-				if( ! empty( $result['author'] ) && $result['author'] == get_current_user_id() ) {
-					$response['owned_views'][] = $result['slug'];
-				}
-				if( ! empty( $result['is_public'] ) ){
-					$response['public_views'][] = $result['slug'];	
-				}
-				if( ! empty( $result['post_type'] ) ){
-					$response['view_post_types'][ $result['slug'] ] = $result['post_type'];	
-				}
+		$current_user_role = ( is_callable( array( 'Smart_Manager', 'get_current_user_role' ) ) ) ? Smart_Manager::get_current_user_role() : '';
+		if ( ! empty( $current_user_role ) && 'administrator' === $current_user_role && is_array( $results ) && is_array( $view_results ) && count( $view_results ) > 0 ) {
+			$results = array_merge( $results, $view_results );
+		} elseif ( ( ! empty( $current_user_role ) && 'administrator' !== $current_user_role ) ) {
+			$results = $view_results;
+		}
+		if ( empty( $results ) || ! is_array( $results ) ) {
+			return $response;
+		}
+		foreach ( $results as $result ) {
+			$response['accessible_views'][ $result['slug'] ] = $result['title'];
+			if ( ! empty( $result['author'] ) && get_current_user_id() === intval( $result['author'] ) ) {
+				$response['owned_views'][] = $result['slug'];
+			}
+			if ( ! empty( $result['is_public'] ) ) {
+				$response['public_views'][] = $result['slug'];	
+			}
+			if ( ! empty( $result['post_type'] ) ) {
+				$response['view_post_types'][ $result['slug'] ] = $result['post_type'];	
 			}
 		}
-
 		return $response;
-
     }
 
     /**

@@ -1330,7 +1330,7 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 		 */
 		public static function get_filtered_order_ids( $search_text = '', $dashboard = '' ) {
 			global $wpdb;
-            $userOrderIds = $skuOrderIds = $itemNameskuOrderIds = array();
+            $userOrderIds = $skuOrderIds = $itemNameskuOrderIds = $billing_email_order_ids = array();
 
 			$pIds  = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT(post_id) FROM {$wpdb->prefix}postmeta
 			              									WHERE meta_key = %s
@@ -1348,6 +1348,15 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
 									                                FROM {$wpdb->prefix}woocommerce_order_items
 									                                WHERE order_item_name LIKE %s", '%' . $wpdb->esc_like($search_text) . '%') );
 
+			//Query for getting the orders based on the email entered in the Search Box - using 'billing_email'
+			$billing_email_order_ids = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT(p.ID)
+            														FROM {$wpdb->prefix}posts AS p
+            															JOIN {$wpdb->prefix}postmeta AS pm
+            																ON( pm.post_id = p.ID
+            																	AND p.post_type = %s
+            																	AND pm.meta_key = %s )
+            														WHERE pm.meta_value LIKE %s", $dashboard, '_billing_email', '%' . $wpdb->esc_like($search_text) . '%' ) );
+
 			//Query for getting the user_id based on the email entered in the Search Box
             $userIds = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT(id)
 														FROM {$wpdb->users} 
@@ -1362,8 +1371,8 @@ if ( ! class_exists( 'Smart_Manager_Shop_Order' ) ) {
             														WHERE pm.meta_value IN( ". implode( ',', $userIds ) ." )", $dashboard, '_customer_user' ) );
             }
            
-            if( !empty( $skuOrderIds ) || !empty( $itemNameskuOrderIds ) || !empty( $userOrderIds ) ) {
-            	return array_unique( array_merge( $skuOrderIds, $itemNameskuOrderIds, $userOrderIds ) );
+            if( !empty( $skuOrderIds ) || !empty( $itemNameskuOrderIds ) || !empty( $userOrderIds ) || ! empty( $billing_email_order_ids ) ) {
+            	return array_unique( array_merge( $skuOrderIds, $itemNameskuOrderIds, $userOrderIds, $billing_email_order_ids ) );
             }
 		}
 

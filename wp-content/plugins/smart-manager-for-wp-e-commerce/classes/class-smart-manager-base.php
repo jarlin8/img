@@ -101,7 +101,8 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 
 			//Code for handling search
 			if( !empty($this->req_params) && !empty($this->req_params['advanced_search_query']) && $this->req_params['advanced_search_query'] != '[]' && strpos($where,'sm_advanced_search_temp.flag > 0') === false ) {
-				$where .= " AND {$wpdb->base_prefix}sm_advanced_search_temp.flag > 0";
+				$where .= " AND {$wpdb->base_prefix}sm_advanced_search_temp.flag > 0
+	AND ". time() ." = ". time(); // Added time() as a unique identification condition so that when using advanced search the query doesn't get cached.
 			}
 
 			//Code for handling simple search
@@ -499,7 +500,29 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 						$args['strict'] = true;
 						$args['allowInvalid'] = false;
 
-						$args['values'] = ( 'page' === $this->dashboard_key ) ? get_page_statuses() : get_post_statuses();
+						if ( 'page' === $this->dashboard_key ) {
+							$args['values'] = get_page_statuses();
+						} else {
+							$statuses = get_post_stati( array(), 'object' );
+							$args['values'] = array();
+
+							// Code for creating unused_statuses array
+							$unused_post_statuses = array( 'inherit', 'trash', 'auto-draft', 'in-progress', 'failed', 'request-pending', 'request-confirmed', 'request-failed', 'request-completed' );
+							if ( function_exists( 'wc_get_order_statuses' ) ) {
+								$unused_post_statuses = array_merge( $unused_post_statuses, array_keys( wc_get_order_statuses() ) );
+							}
+							if ( function_exists( 'wcs_get_subscription_statuses' ) ) {
+								$unused_post_statuses = array_merge( $unused_post_statuses, array_keys( wcs_get_subscription_statuses() ) );
+							}
+							$unused_post_statuses = apply_filters( 'sm_unused_post_statuses', $unused_post_statuses );
+							foreach( $statuses as $status ) {
+								if ( in_array( $status->name, $unused_post_statuses ) ) {
+									continue;
+								}
+								$args['values'][$status->name] = $status->label;
+							}
+						}
+						
 						$args['defaultValue'] = 'draft';
 
 						$args['editor'] = 'select';
@@ -1334,6 +1357,11 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 					delete_transient( 'sa_sm_product' );
 					$store_model_transient = false;
 					update_option( '_sm_update_8260_product', 1, 'no' );
+				}
+				if ( false === get_option( '_sm_update_8340_product' ) ) {
+					delete_transient( 'sa_sm_product' );
+					$store_model_transient = false;
+					update_option( '_sm_update_8340_product', 1, 'no' );
 				}
 			}
 
@@ -4229,7 +4257,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 			$view_name = ( ! empty( $this->req_params['active_view'] ) ) ? $this->req_params['active_view'] . '-view_' : '';
 			$csv_file_name = sanitize_title(get_bloginfo( 'name' )) . '_' . $this->dashboard_key . '_' . $view_name . gmdate('d-M-Y_H:i:s');
 			$csv_file_name = ( ! empty( $this->req_params[ 'storewide_option' ] ) ) ? ( ( 'entire_store' === $this->req_params[ 'storewide_option' ] ? $csv_file_name : $csv_file_name . '_all_products_stock_columns') ) . ".csv" : $csv_file_name . ( ( ! empty( $this->req_params[ 'columnsToBeExported' ] ) && 'visible' === $this->req_params[ 'columnsToBeExported' ] ) ? '_selected_records' : '_selected_products_' . $this->req_params[ 'columnsToBeExported' ] . '_columns' ) . ".csv";
-
+			$escaped_html_columns = apply_filters( 'sa_sm_escaped_html_columns', array( 'posts_post_excerpt', 'posts_post_content' ) );
 			foreach( (array) $data['items'] as $row ){
 
 				for($i = 0; $i < count ( $columns_header ); $i++){
@@ -4252,8 +4280,7 @@ if ( ! class_exists( 'Smart_Manager_Base' ) ) {
 						$array = ( ! is_array( $array ) ) ? str_getcsv ( $array , ",", "\"" , "\\") : $array;
 						$str = ( $array && is_array( $array ) ) ? implode( ', ', $array ) : '';
 					}
-					$fields .= '"'. $str . '",'; 
-
+					$fields .= ( ! empty( $each_field[ $i ] ) && ! empty( $escaped_html_columns ) && is_array( $escaped_html_columns ) && in_array( $each_field[ $i ], $escaped_html_columns ) ) ? '"'. esc_html( $str ) . '",' : '"'. $str . '",';
 				}	
 				$fields = substr_replace($fields, '', -1); 
 			}

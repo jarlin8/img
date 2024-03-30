@@ -660,13 +660,8 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 			// Code for handling increase/decrease date by operator
 
 			$date_type_fields = array( 'sm.date', 'sm.datetime', 'sm.time', 'timestamp' );
-			$additional_date_operators = array( 'increase_date_by', 'decrease_date_by' );
-
-			if( in_array( $args['date_type'], $date_type_fields ) && in_array( $args['operator'], $additional_date_operators ) )
-			{
-				$args['meta']['dateDuration'] = !empty ( $args['meta']['dateDuration'] ) ? $args['meta']['dateDuration'] : ( ( 'sm.time' === $args['date_type'] ) ? 'hours' : 'days' );
-				$args['value'] = !empty ( $args['value'] ) ? $args['value'] : 0;
-
+			$date_format = 'Y-m-d';
+			if ( in_array( $args['date_type'], $date_type_fields ) ) {
 				switch ( $args['date_type'] ) {
 					case 'timestamp': 
 					case 'sm.date':
@@ -679,7 +674,16 @@ if ( ! class_exists( 'Smart_Manager_Pro_Base' ) ) {
 						$date_format = 'h:i';
 						break;
 				}
-				$prev_val = ( ! empty( $prev_val ) ) ?  $prev_val : current_time( $date_format );
+				$args['prev_val'] = ( ! empty( $prev_val ) ? ( strtotime( $prev_val ) ? $prev_val : date( $date_format, $prev_val ) ) : current_time( $date_format ) );
+				$value1 = ( ! empty( $value1 ) ? ( strtotime( $value1 ) ? $value1 : date( $date_format, $value1 ) ) : $value1 );
+			}
+			$additional_date_operators = array( 'increase_date_by', 'decrease_date_by' );
+
+			if( in_array( $args['date_type'], $date_type_fields ) && in_array( $args['operator'], $additional_date_operators ) )
+			{
+				$args['meta']['dateDuration'] = !empty ( $args['meta']['dateDuration'] ) ? $args['meta']['dateDuration'] : ( ( 'sm.time' === $args['date_type'] ) ? 'hours' : 'days' );
+				$args['value'] = !empty ( $args['value'] ) ? $args['value'] : 0;
+				$prev_val = ( ! empty( $args['prev_val'] ) ) ? $args['prev_val'] : current_time( $date_format );
 				$value1  =  date( $date_format, strtotime( $prev_val. ( ( 'increase_date_by' === $args['operator'] ) ? '+' : '-' ) .$args['value']. $args['meta']['dateDuration'] ) );
 			}
 

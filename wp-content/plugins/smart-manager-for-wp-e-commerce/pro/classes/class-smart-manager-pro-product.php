@@ -464,7 +464,7 @@ if ( ! class_exists( 'Smart_Manager_Pro_Product' ) ) {
 
 				if( !empty($action) && $action != 'custom' ) {
 					$current_term_ids = wp_get_object_terms( $args['id'], $action, 'orderby=none&fields=ids' );
-
+					$current_term_ids = ( ! is_wp_error( $current_term_ids ) ) ? $current_term_ids : array();
 					if( !empty($args['value']) && $args['value'] == 'all' ) { //creating array of all values for the attribute
 						$taxonomy_terms = get_terms($action, array('hide_empty'=> 0,'orderby'=> 'id'));
 

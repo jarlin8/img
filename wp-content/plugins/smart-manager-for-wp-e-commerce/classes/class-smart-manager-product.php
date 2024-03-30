@@ -10,7 +10,8 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 			$terms_att_search_flag = 0, //flag for handling attrbute search
 			$product_visibility_visible_flag = 0, //flag for handling visibility search
 			$product_old_title = array(), // array for storing the old product titles
-			$product_total_count = 0; //for total products count on the grid
+			$product_total_count = 0, //for total products count on the grid
+			$is_variations_enabled_advanced_search_condition = false; // For advanced search of 'Post Status' column for variations.
 
 		function __construct($dashboard_key) {
 			parent::__construct($dashboard_key);
@@ -67,6 +68,8 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 			add_filter( 'sm_map_column_state_to_store_model', array( &$this, 'product_map_column_state_to_store_model' ), 10, 2 );
 			add_filter( 'sm_filter_updated_edited_data', array( &$this, 'filter_updated_edited_data' ) );
 			add_filter( 'sm_col_model_for_export', array( &$this, 'col_model_for_export' ), 12, 2 );
+			add_filter( 'sm_search_posts_cond', array( &$this, 'sm_search_posts_cond' ), 10, 2 );
+			add_filter( 'sm_simple_search_ignored_posts_columns', array( &$this, 'sm_simple_search_ignored_posts_columns' ), 10, 2 );
 		}
 
 		//Function for map the column state to include 'treegrid' for 'show_variations'
@@ -510,13 +513,10 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 		//function to handle posts custom where clause
 		public function sm_search_query_posts_where($posts_advanced_search_where = '', $search_params = array()) {
-
 			global $wpdb;
-
-			if( ! empty( $search_params['cond'] ) && strpos( $search_params['cond'],'post_status' ) !== FALSE && strpos( $search_params['cond'],'publish' ) === FALSE && strpos( $search_params['cond'],'private' ) === FALSE ) { //Added 'publish' & 'private' conditions for enabling searching of 'enabled' & 'disabled' product variations
+			if ( ! empty( $search_params['cond'] ) && FALSE !== strpos( $search_params['cond'],'post_status' ) && ! $this->is_variations_enabled_advanced_search_condition ) {
 	            $posts_advanced_search_where .= " AND ".$wpdb->prefix."posts.post_parent = 0 ";
 	        }
-
 			return $posts_advanced_search_where;
 		}
 
@@ -645,9 +645,9 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 
 				$sort_order = ( !empty( $sort_params['sortOrder'] ) ) ? $sort_params['sortOrder'] : 'ASC';
 
-				if ( ( ! empty( $sort_params['table'] ) ) && 'posts' === $sort_params['table'] ) {				
+				if ( ( ! empty( $sort_params['table'] ) ) && 'posts' === $sort_params['table'] && ! empty( $sort_params['column_nm'] ) ) {				
 					$order_by = $sort_params['column_nm'] .' '. $sort_order;
-				} else if ( ! empty( $sort_params['table'] ) && 'terms' === $sort_params['table'] && true === $this->terms_sort_join ) {
+				} else if ( ! empty( $sort_params['table'] ) && 'terms' === $sort_params['table'] && true === $this->terms_sort_join && ! empty( $sort_params['column_nm'] ) ) {
 					$order_by = ( ( $sort_params['column_nm'] == 'product_type' ) ? ' sort_term_name ' : ' taxonomy_sort.term_name ' ) .''. $sort_order ;
 				}
 
@@ -1280,7 +1280,34 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 			// 	$column_model [$index]['values'] = array();
 			// 	$column_model [$index]['search_values'] = array();
 			// }
-
+				$index = sizeof( $column_model );
+				//Code for including 'Variations Enabled' column for advanced search for filtering 'Post Status' column for variations.
+				$column_model[ $index ] = array();
+				$args = array(
+					'table_nm' 	=> 'posts',
+					'col'		=> 'variations_enabled',
+					'name'		=> _x('Variations Enabled', 'variations enabled column for advanced search', 'smart-manager-for-wp-e-commerce'),
+					'key' => _x('Variations Enabled', 'variations enabled column for advanced search', 'smart-manager-for-wp-e-commerce'),
+					'hidden'	=> true,
+					'allow_showhide' => false,
+					'batch_editable' => false,
+					'editable' => false,
+					'exportable' => false,
+					'resizable' => false,
+					'save_state' => false,
+					'sortable' => false,
+					'type'	=> 'dropdown',
+					'values'    => array( 'yes' => 'Yes',
+					'no' => 'No' ),
+					'searchable' => true, // Enabled advanced search for 'enabled' & 'disabled' product variations for 'Post Status' column.
+				);
+				$args['search_values'] = array();
+				if ( ! empty( $args['values'] ) && is_array( $args['values'] ) ) {
+					foreach ( $args['values'] as $key => $value ) {
+						$args['search_values'][] = array( 'key' => $key, 'value' => $value );
+					}
+				}
+				$column_model[ $index ] = $this->get_default_column_model( $args );
 			if (!empty($dashboard_model_saved)) {
 				$col_model_diff = sm_array_recursive_diff($dashboard_model_saved,$dashboard_model);	
 			}
@@ -2256,6 +2283,52 @@ if ( ! class_exists( 'Smart_Manager_Product' ) ) {
 			}
 			return $col_model;
 		}
-		
+
+		/**
+	     * Function to handle custom posts conditions for advanced search.
+		 * @param  string $posts_cond posts search condition.
+		 * @param  array $search_params search params.
+		 * @return string $posts_cond updated posts condition.
+		 */
+		public function sm_search_posts_cond( $posts_cond = '', $search_params = array() ) {
+			if ( empty( $search_params ) || empty( $search_params['search_operator'] ) || false === strpos( $posts_cond, 'variations_enabled' ) ) {
+				return $posts_cond;
+			}
+			global $wpdb;
+			$post_status = 'publish';
+			switch ( $search_params['search_operator'] ) {
+				case 'is':
+					$post_status = strpos( $posts_cond, 'yes' ) ? 'publish'	: 'private';
+					break;
+				case 'is not':
+					$post_status = strpos( $posts_cond, 'yes' ) ? 'private'	: 'publish';
+					break;
+			}
+			$posts_cond = $wpdb->prefix."posts.post_status = '{$post_status}' AND ".$wpdb->prefix."posts.post_parent > 0";
+			$this->is_variations_enabled_advanced_search_condition = true;
+			return $posts_cond;
+		}
+
+		/**
+	     * Function to ignore columns for simple search.
+		 * @param  array $ignored_cols array of ignored columns.
+		 * @param  array $col_model column model array.
+		 * @return array $ignored_cols updated array of ignored columns.
+		 */
+		public function sm_simple_search_ignored_posts_columns( $ignored_cols = array(), $col_model = array() ) {
+			if ( empty( $col_model ) || ! is_array( $col_model ) || ! is_array( $ignored_cols ) ) {
+				return $ignored_cols;
+			}
+			foreach ( $col_model as $col ) {
+				if ( empty( $col['src'] ) || empty( $col['col_name'] ) || ( ! empty( $col['col_name'] ) && 'variations_enabled' !== $col['col_name'] ) ) {
+					continue;
+				}
+				$src_exploded = explode( "/", $col['src'] );
+				if ( empty( $src_exploded ) || ! is_array( $src_exploded ) || empty( $src_exploded[0] ) || 'posts' !== $src_exploded[0] ) {
+					return $ignored_cols;
+				}
+				return array_merge( $ignored_cols, array( $col['col_name'] ) );
+			}
+		}
 	} //End of Class
 }

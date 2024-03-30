@@ -69,11 +69,11 @@ function sm_update_stock_status( $id = 0, $update_column = '', $update_value = '
 				}
 				break;
 			case '_backorders':
-				$stock = is_callable( array( $woo_prod_obj_stock_status, 'get_stock_quantity' ) ) ? (int) $woo_prod_obj_stock_status->get_stock_quantity() : 0;
-				$low_stock_amount = ( metadata_exists( 'post', $id, '_low_stock_amount' ) ) ? get_post_meta( $id, '_low_stock_amount', true ) : get_option( 'woocommerce_notify_no_stock_amount', 0 );
-				$backorders_are_allowed =  is_callable( array( $woo_prod_obj_stock_status, 'get_backorders' ) ) ? ( 'no' !== $woo_prod_obj_stock_status->get_backorders() ) : false;
-				$new_stock_status = ( $stock > absint( $low_stock_amount ) ) ? 'instock' : ( $backorders_are_allowed ? 'onbackorder' : 'outofstock' );
-				$result = ( ! empty( $new_stock_status ) ) ? update_post_meta( $id, '_stock_status', $new_stock_status ) : false;
+				$backorders = is_callable( array( $woo_prod_obj_stock_status, 'get_backorders' ) ) ? $woo_prod_obj_stock_status->get_backorders() : 'no';
+				if ( ! empty( $backorders ) && is_callable( array( $woo_prod_obj_stock_status, 'set_backorders' ) ) ) {
+					$woo_prod_obj_stock_status->set_backorders( $backorders );
+				}
+				$result = $woo_prod_obj_stock_status->save();
 				return ( ( empty( $result ) && 0 == $result ) || ( ( ! empty( $result ) ) && ( ! is_wp_error( $result ) ) ) ) ? true : false;
 		}
 	}
