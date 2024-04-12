@@ -108,3 +108,24 @@ if (!function_exists('wcabe_is_current_user_admin')) {
 		return in_array( 'administrator', (array) $current_user->roles );
 	}
 }
+
+if (!function_exists('wcabe_log')) {
+	/**
+	 * Logs a message in the  plugin's log, located in plugin's folder.
+	 *
+	 * @param $msg
+	 *
+	 * @return void
+	 */
+	function wcabe_log($msg): void {
+		
+		$condPluginPageLoaded = isset($_GET['page']) && $_GET['page'] == 'advanced_bulk_edit';
+		$condPluginAjaxRequest = isset($_POST['action']) && $_POST['action'] == 'wpmelon_adv_bulk_edit';
+//		if (!$condPluginPageLoaded && !$condPluginAjaxRequest) {
+//			return;
+//		}
+		$log_path = WCABE_PLUGIN_PATH . 'wcabe.log';
+		$log = date("Y-m-d H:i:s") . " > " . $msg . PHP_EOL;
+		file_put_contents($log_path, $log, FILE_APPEND);
+	}
+}

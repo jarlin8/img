@@ -11158,10 +11158,6 @@ $("#pluginsettings").dialog({
 			settings['setting_display_top_bar_link_bulkedit'] = 1;
 		else
 			settings['setting_display_top_bar_link_bulkedit'] = 0;
-		if($('#setting-enable-fix-for-attribute-update-link').is(':checked'))
-			settings['setting_enable_fix_for_attribute_update'] = 1;
-		else
-			settings['setting_enable_fix_for_attribute_update'] = 0;
 		if($('#setting-add-set-time-limit-to-ajax-handler-link').is(':checked'))
 			settings['setting_set_time_limit_for_ajax_requests'] = 1;
 		else

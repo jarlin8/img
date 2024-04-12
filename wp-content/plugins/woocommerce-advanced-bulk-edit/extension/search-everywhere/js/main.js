@@ -5,6 +5,28 @@ window.addEventListener('load', function () {
     if (!btnSearch) {
         return;
     }
+
+    function searchString(haystack, needle) {
+        if (checkIgnoreCase.checked) {
+            return haystack.toLowerCase().includes(needle.toLowerCase());
+        } else {
+            return haystack.includes(needle);
+        }
+    }
+
+    function searchObject(obj, needle) {
+        for (let prop in obj) {
+            if (obj[prop] !== undefined &&
+                obj[prop].value !== undefined &&
+                typeof obj[prop].value === 'string' &&
+                searchString(obj[prop].value, needle)) {
+                
+                return true;
+            }
+        }
+        return false;
+    }
+
     btnSearch.addEventListener('click', function () {
         var searchPhrase = textSearch.value;
         if (searchPhrase.trim().length === 0) {
@@ -14,21 +36,13 @@ window.addEventListener('load', function () {
             var selected_rows = [];
             W3Ex.abemodule.getGridItem().getData().forEach(function(row, i) {
                 Object.keys(row).forEach(function(cell) {
-                    if (typeof row[cell] !== 'string') {
-                        return;
+                    var resultFound = false;
+                    if (typeof row[cell] === 'string') {
+                        resultFound = searchString(row[cell], searchPhrase);
+                    } else if (typeof row[cell] === 'object') {
+                        resultFound = searchObject(row[cell], searchPhrase);
                     }
-
-                    var searchResultFound = false;
-
-                    if (checkIgnoreCase.checked) {
-                        console.log('case ignored');
-                        searchResultFound = row[cell].toLowerCase().includes(searchPhrase.toLowerCase());
-                    } else {
-                        console.log('case NOT ignored');
-                        searchResultFound = row[cell].includes(searchPhrase);
-                    }
-
-                    if (searchResultFound && selected_rows.indexOf(i) === -1) {
+                    if (resultFound && selected_rows.indexOf(i) === -1) {
                         selected_rows.push(i);
                     }
                 });

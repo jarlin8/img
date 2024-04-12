@@ -3769,15 +3769,7 @@ class W3ExABulkEditAjaxHandler{
 		global $wpdb;
 		global $woocommerce;
 		$curr_settings = get_option('w3exabe_settings');
-		if (
-			(
-				//!isset($curr_settings['setting_enable_fix_for_attribute_update']) ||
-				isset($curr_settings['setting_enable_fix_for_attribute_update']) &&
-				$curr_settings['setting_enable_fix_for_attribute_update'] == "1"
-			)
-		) {
-			$data = Product_Attribute_Updater::processAttributeUpdates($data);
-		}
+		$data = Product_Attribute_Updater::processAttributeUpdates($data);
 
 		$posts = $wpdb->posts;
 		$meta = $wpdb->postmeta;
@@ -6392,7 +6384,7 @@ class W3ExABulkEditAjaxHandler{
 									foreach($childids as $childobj)
 									{
 										$childid = $childobj->ID;
-										do_action( 'before_delete_post',$childid);
+										do_action( 'before_delete_post',$childid,get_post($childid));
 										if($deleteattach)
 										{
 											$thumbid = get_post_meta($childid, '_thumbnail_id',true);
@@ -6452,7 +6444,7 @@ class W3ExABulkEditAjaxHandler{
 					}
 					if($deleteinternal)
 					{
-						do_action( 'before_delete_post',$ID);
+						do_action( 'before_delete_post',$ID,get_post($ID));
 						$query = "DELETE FROM {$posts}
 								  WHERE  {$posts}.ID={$ID}";
 						$ret = $wpdb->query($query);
@@ -9337,10 +9329,6 @@ class W3ExABulkEditAjaxHandler{
 
 					if(isset($data['setting_display_top_bar_link_bulkedit'])) {
 						$curr_settings['setting_display_top_bar_link_bulkedit'] = $data['setting_display_top_bar_link_bulkedit'];
-					}
-
-					if(isset($data['setting_enable_fix_for_attribute_update'])) {
-						$curr_settings['setting_enable_fix_for_attribute_update'] = $data['setting_enable_fix_for_attribute_update'];
 					}
 
 					if(isset($data['setting_set_time_limit_for_ajax_requests'])) {

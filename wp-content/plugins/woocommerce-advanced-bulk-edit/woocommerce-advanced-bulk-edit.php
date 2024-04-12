@@ -5,10 +5,10 @@ Plugin URI: https://wpmelon.com
 Description: Edit your products both individually or in bulk.
 Author: George Iron & Yas G.
 Author URI: https://wpmelon.com
-Version: 5.3.6.2
+Version: 5.4.1.1
 Text Domain: woocommerce-advbulkedit
 WC requires at least: 5.0
-WC tested up to: 8.4.0
+WC tested up to: 8.7.0
 */
 
 defined( 'ABSPATH' ) || die( 'No direct script access allowed!' );
@@ -20,7 +20,7 @@ add_action( 'before_woocommerce_init', function() {
 } );
 
 define('WCABE_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('WCABE_VERSION', '5.3.6.2');
+define('WCABE_VERSION', '5.4.1.1');
 define('WCABE_SITE_URL', 'https://wpmelon.com');
 define('WCABE_SUPPORT_URL', 'https://wpmelon.com/r/support');
 //define('WCABE_UPDATE_URL', 'https://wpmelon.com/r/wcabe-update-url');
@@ -47,7 +47,9 @@ class W3ExAdvancedBulkEditMain {
 
 	public static function init() {
 		$settings = get_option('w3exabe_settings');
-		if (!defined('WP_ALLOW_MULTISITE') || !WP_ALLOW_MULTISITE) {
+		if ((!defined('WP_ALLOW_MULTISITE') || !WP_ALLOW_MULTISITE)
+			&& getenv('WCABE_UNIT_TEST') === false
+		){
 			require (ABSPATH . WPINC . '/pluggable.php');
 			$roles = [];
 			if( is_user_logged_in() ) { // check if there is a logged in user

@@ -88,7 +88,7 @@ class Product_Attribute_Updater {
 		$attr_txnms = wc_get_attribute_taxonomies();
 		
 		foreach ($attr_txnms as $attr) {
-			if ($attr_key_name != 'attribute_pa_' . $attr->attribute_name || empty($values)) {
+			if ($attr_key_name != 'attribute_pa_' . $attr->attribute_name) {
 				continue;
 			}
 			$data = self::updateProductIfVariation($product, $values, $data, $product_id, $attr_key_name);
@@ -139,7 +139,7 @@ class Product_Attribute_Updater {
 	private static function prepareAttributeToSave($values, $visible_fp, $attribute_name, $attribute_id, $attr_save, $attributes): array {
 		$attr_save->set_id($attribute_id);
 		$attr_save->set_name('pa_' . $attribute_name);
-		$values = explode(',', $values);
+		$values = !empty($values) ? explode(',', $values) : [];
 		$int_values = [];
 		foreach ($values as $val) {
 			$int_values[] = intval($val);

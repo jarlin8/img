@@ -520,11 +520,6 @@ class W3ExAdvBulkEditView{
 			update_option('w3exabe_settings',$settings);
 		}
 
-		if (isset($_GET['setting_enable_fix_for_attribute_update']) && $_GET['setting_enable_fix_for_attribute_update'] == 1) {
-			$settings['setting_enable_fix_for_attribute_update'] = 1;
-			update_option('w3exabe_settings',$settings);
-		}
-
 		if (isset($_GET['setting_set_time_limit_for_ajax_requests']) && $_GET['setting_set_time_limit_for_ajax_requests'] == 1) {
 			$settings['setting_set_time_limit_for_ajax_requests'] = 1;
 			update_option('w3exabe_settings',$settings);
@@ -2013,24 +2008,6 @@ class W3ExAdvBulkEditView{
 						</td>
 						<td  style="padding-top: 20px;">
 
-						</td>
-					</tr>
-
-					<tr>
-						<td width="50%" style="padding-top: 20px;">
-							<label><input id="setting-enable-fix-for-attribute-update-link" type="checkbox"
-									<?php
-									echo (
-										isset($settings['setting_enable_fix_for_attribute_update']) &&
-										$settings['setting_enable_fix_for_attribute_update'] == 0) ?
-										"" : "checked=checked"
-									;
-
-									?>
-								><?php _e( 'Enable fix for attributes updates not showing on the front pages', 'woocommerce-advbulkedit'); ?></label>
-						</td>
-						<td  style="padding-top: 20px;">
-							<p><?php _e( 'Experimental. Please, <a href="https://wpmelon.com/r/support" target="_blank">provide your feedback</a> if you have a chance to use this feature.', 'woocommerce-advbulkedit'); ?></p>
 						</td>
 					</tr>
 
